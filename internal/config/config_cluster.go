@@ -289,7 +289,8 @@ func clampDurationSeconds(value, minSec, maxSec, defSec int) time.Duration {
 	return time.Duration(v) * time.Second
 }
 
-// PortalUrl returns the URL of the cluster management portal server, if configured.
+// PortalUrl returns the URL of the cluster management portal server, if configured. Variables are
+// expanded on each call without changing the configured value, so the result follows the cluster domain.
 func (c *Config) PortalUrl() string {
 	if c.options.PortalUrl == "" {
 		return ""
@@ -303,13 +304,11 @@ func (c *Config) PortalUrl() string {
 	}
 
 	// Replace variables with the configured cluster domain.
-	c.options.PortalUrl = ExpandVars(c.options.PortalUrl, map[string]string{
+	return ExpandVars(c.options.PortalUrl, map[string]string{
 		"cluster-domain":            d,
 		"CLUSTER_DOMAIN":            d,
 		"PHOTOPRISM_CLUSTER_DOMAIN": d,
 	})
-
-	return c.options.PortalUrl
 }
 
 // PortalProxy reports whether portal proxy routing is enabled on this node.

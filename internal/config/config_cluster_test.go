@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -297,6 +298,36 @@ func TestConfig_PortalUrl(t *testing.T) {
 		c.options.ClusterDomain = "ignored.dev"
 		assert.Equal(t, "https://portal.example.test", c.PortalUrl())
 		c.options.PortalUrl = DefaultPortalUrl
+	})
+	t.Run("OptionUnchanged", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
+		c.options.ClusterDomain = "example.dev"
+		assert.Equal(t, "https://portal.example.dev", c.PortalUrl())
+		assert.Equal(t, "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}", c.options.PortalUrl, "the configured value must keep its variables")
+		c.options.ClusterDomain = "example.org"
+		assert.Equal(t, "https://portal.example.org", c.PortalUrl())
+		c.options.PortalUrl = DefaultPortalUrl
+	})
+	t.Run("Concurrent", func(t *testing.T) {
+		// Concurrent calls must not write the options, which only a run with -race detects.
+		c := NewConfig(CliTestContext())
+		c.options.PortalUrl = DefaultPortalUrl
+		c.options.ClusterDomain = "example.dev"
+		var wg sync.WaitGroup
+		urls := make([]string, 4)
+		for i := range urls {
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+				urls[i] = c.PortalUrl()
+			}(i)
+		}
+		wg.Wait()
+		for _, url := range urls {
+			assert.Equal(t, "https://portal.example.dev", url)
+		}
+		assert.Equal(t, DefaultPortalUrl, c.options.PortalUrl)
 	})
 }
 
