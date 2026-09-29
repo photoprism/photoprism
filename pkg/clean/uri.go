@@ -123,6 +123,17 @@ func UriRedacted(s string) string {
 // unexamined; a trailing one is given back below, as that is the message quoting the URI.
 var uriText = regexp.MustCompile(`[a-zA-Z][a-zA-Z0-9+.\-]*://[^\s"<>\\{}|^` + "`" + `]*`)
 
+// UriDelimiter reports whether r ends a URI in text as UriRedactedText reads it, i.e. an ASCII space
+// or one of the characters uriText excludes.
+func UriDelimiter(r rune) bool {
+	switch r {
+	case '\t', '\n', '\f', '\r', ' ', '"', '<', '>', '\\', '{', '}', '|', '^', '`':
+		return true
+	default:
+		return false
+	}
+}
+
 // uriQuery matches a query string, including one in a relative or malformed URL.
 var uriQuery = regexp.MustCompile(`\?[^\s'"<>]+`)
 

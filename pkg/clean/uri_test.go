@@ -319,3 +319,26 @@ func TestUriQueriesRedacted(t *testing.T) {
 		assert.Equal(t, "trailing?", UriQueriesRedacted("trailing?"))
 	})
 }
+
+func TestUriDelimiter(t *testing.T) {
+	t.Run("MatchesUriText", func(t *testing.T) {
+		for r := rune(1); r <= 0x3000; r++ {
+			if r >= 0xD800 && r <= 0xDFFF {
+				continue
+			}
+
+			s := "https://a" + string(r) + "b"
+			assert.Equal(t, uriText.FindString(s) != s, UriDelimiter(r), "%U", r)
+		}
+	})
+	t.Run("Delimiters", func(t *testing.T) {
+		for _, r := range " \t\n\f\r\"<>\\{}|^`" {
+			assert.True(t, UriDelimiter(r), "%U", r)
+		}
+	})
+	t.Run("NotDelimiters", func(t *testing.T) {
+		for _, r := range "a:/@?=&'()\v\u0085\u00a0\u2028\u3000" {
+			assert.False(t, UriDelimiter(r), "%U", r)
+		}
+	})
+}
