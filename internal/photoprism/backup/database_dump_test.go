@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -540,18 +541,21 @@ func TestRunRestore(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		// The client reads the dump from its input.
 		out := filepath.Join(t.TempDir(), "restored.sql")
-		require.NoError(t, runRestore(exec.Command("sh", "-c", "cat > '"+out+"'"), strings.NewReader("SELECT 1;\n"), "")) //nolint:gosec // G204: test command on a temp path
-		data, err := os.ReadFile(out)                                                                                     //nolint:gosec // G304: test-owned path
+		_, err := runRestore(exec.Command("sh", "-c", "cat > '"+out+"'"), strings.NewReader("SELECT 1;\n"), "") //nolint:gosec // G204: test command on a temp path
+		require.NoError(t, err)                                                                                 //nolint:gosec // G204: test command on a temp path
+		data, err := os.ReadFile(out)                                                                           //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		assert.Equal(t, "SELECT 1;\n", string(data))
 	})
 	t.Run("SuccessWarnings", func(t *testing.T) {
 		hook := captureLog(t)
-		require.NoError(t, runRestore(exec.Command("sh", "-c", "echo 'WARNING: insecure' >&2; cat >/dev/null"), strings.NewReader(""), ""))
+		failed, err := runRestore(exec.Command("sh", "-c", "echo 'WARNING: insecure' >&2; cat >/dev/null"), strings.NewReader(""), "")
+		require.NoError(t, err)
+		assert.Zero(t, failed.Count)
 		assert.Contains(t, logMessages(hook), "restore: insecure")
 	})
 	t.Run("ExitStatus", func(t *testing.T) {
-		err := runRestore(exec.Command("sh", "-c", "exit 23"), strings.NewReader(""), "")
+		_, err := runRestore(exec.Command("sh", "-c", "exit 23"), strings.NewReader(""), "")
 
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "23")
@@ -559,11 +563,43 @@ func TestRunRestore(t *testing.T) {
 	t.Run("StderrWithoutWarnings", func(t *testing.T) {
 		hook := captureLog(t)
 		script := "echo 'WARNING: insecure s3cr3tpass' >&2; echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; echo 'for s3cr3tpass' >&2; exit 1"
-		err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "s3cr3tpass")
+		_, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "s3cr3tpass")
 
 		require.Error(t, err)
 		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error; for "+txt.Masked, err.Error())
 		assert.Contains(t, logMessages(hook), "restore: insecure "+txt.Masked)
+	})
+	t.Run("FailedStatements", func(t *testing.T) {
+		// Failed statements are counted and reported by error code and line, never by content.
+		hook := captureLog(t)
+		script := `printf '%s\n' '--------------' "INSERT INTO t VALUES (3,'val-ccc'),(1,'val-ddd')" '--------------' '' ` +
+			`"ERROR 1062 (23000) at line 4: Duplicate entry '1' for key 'PRIMARY'" '--------------' ` +
+			`'CREATE TABLE u (id INT) ENGINE=NoSuchEngine' '--------------' '' ` +
+			`"ERROR 1286 (42000) at line 5: Unknown storage engine 'NoSuchEngine'" >&2; cat >/dev/null`
+		failed, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader("SELECT 1;\n"), "")
+		require.NoError(t, err)
+		assert.Equal(t, 2, failed.Count)
+		assert.Equal(t, []string{"error 1062 at line 4", "error 1286 at line 5"}, failed.Errors)
+		for _, entry := range hook.AllEntries() {
+			if entry.Level == logrus.TraceLevel {
+				continue // The trace of the test command line contains the script itself.
+			}
+			assert.NotContains(t, entry.Message, "val-")
+			assert.NotContains(t, entry.Message, "Duplicate entry")
+		}
+	})
+	t.Run("FailedStatementsExitStatus", func(t *testing.T) {
+		// A client that exits with an error after failed statements reports them by code and line.
+		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; exit 1`
+		failed, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.Error(t, err)
+		assert.Equal(t, 1, failed.Count)
+		assert.Equal(t, "exit status 1; 1 statement failed (error 1062 at line 4)", err.Error())
+	})
+	t.Run("ClientErrorExitStatus", func(t *testing.T) {
+		script := `printf '%s\n' "ERROR 2013 (HY000) at line 812: Lost connection to server during query" >&2; exit 1`
+		_, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.EqualError(t, err, "ERROR 2013 (HY000) at line 812: Lost connection to server during query; 1 statement failed (error 2013 at line 812)")
 	})
 	t.Run("PipedFromFile", func(t *testing.T) {
 		// A file or terminal is passed through a pipe, so the client never reads it interactively.
@@ -574,14 +610,15 @@ func TestRunRestore(t *testing.T) {
 		require.NoError(t, err)
 		defer f.Close()
 
-		require.NoError(t, runRestore(exec.Command("sh", "-c", "if [ -p /dev/stdin ]; then echo pipe; else echo other; fi > '"+out+"'; cat >/dev/null"), f, "")) //nolint:gosec // G204: test command on a temp path
-		data, err := os.ReadFile(out)                                                                                                                            //nolint:gosec // G304: test-owned path
+		_, err = runRestore(exec.Command("sh", "-c", "if [ -p /dev/stdin ]; then echo pipe; else echo other; fi > '"+out+"'; cat >/dev/null"), f, "") //nolint:gosec // G204: test command on a temp path
+		require.NoError(t, err)
+		data, err := os.ReadFile(out) //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		assert.Equal(t, "pipe\n", string(data))
 	})
 	t.Run("EarlyExit", func(t *testing.T) {
 		// A client that fails before reading its input reports its own error.
-		err := runRestore(exec.Command("sh", "-c", "echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; exit 1"), strings.NewReader(strings.Repeat("x", 1<<20)), "")
+		_, err := runRestore(exec.Command("sh", "-c", "echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; exit 1"), strings.NewReader(strings.Repeat("x", 1<<20)), "")
 
 		require.Error(t, err)
 		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error", err.Error())
@@ -593,7 +630,8 @@ func TestRunRestore(t *testing.T) {
 
 		done := make(chan error, 1)
 		go func() {
-			done <- runRestore(exec.Command("sh", "-c", "echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; exit 1"), pr, "")
+			_, err := runRestore(exec.Command("sh", "-c", "echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; exit 1"), pr, "")
+			done <- err
 		}()
 
 		select {

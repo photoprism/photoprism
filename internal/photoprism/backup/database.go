@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strings"
 	"syscall"
 	"time"
 
@@ -435,28 +436,48 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		defer f.Close()
 	}
 
-	if err = runRestore(cmd, f, password); err != nil {
+	failed, err := runRestore(cmd, f, password)
+
+	if err != nil {
 		log.Errorf("restore: failed to restore index database")
 		return err
 	}
 
-	log.Infof("restore: index database successfully restored")
+	logRestoreResult(failed)
 
 	return nil
 }
 
-// runRestore runs the restore command with its input read from r, returning stderr as the error if it fails.
-// The input is copied through a pipe, so the client runs in batch mode even if r is a terminal, and the
-// copy does not delay the result of a client that exits before reading all of it.
-func runRestore(cmd *exec.Cmd, r io.Reader, password string) error {
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
+// logRestoreResult logs the outcome of a restore that completed, with a warning if statements failed.
+func logRestoreResult(failed restoreFailures) {
+	if failed.Count == 0 {
+		log.Infof("restore: index database successfully restored")
+		return
+	}
+
+	log.Warnf("restore: index database restored, but %s failed and some rows may be missing (%s)",
+		english.Plural(failed.Count, "statement", "statements"), strings.Join(failed.Errors, ", "))
+}
+
+// restoreFailures describes the statements that failed while a restore continued: their number, and the
+// first ones as error code and line number.
+type restoreFailures struct {
+	Count  int
+	Errors []string
+}
+
+// runRestore runs the restore command with its input read from r, returning stderr as the error if it fails,
+// and the statements that failed while it continued. The input is copied through a pipe, so the client runs
+// in batch mode even if r is a terminal, and the copy does not delay the result of a client that exits early.
+func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFailures, err error) {
+	stderr := &restoreOutput{}
+	cmd.Stderr = stderr
 	cmd.Stdout = os.Stdout
 
 	stdin, err := cmd.StdinPipe()
 
 	if err != nil {
-		return fmt.Errorf("failed to create stdin pipe: %w", err)
+		return failed, fmt.Errorf("failed to create stdin pipe: %w", err)
 	}
 
 	go func() {
@@ -470,15 +491,23 @@ func runRestore(cmd *exec.Cmd, r io.Reader, password string) error {
 	// Log the command for debugging in trace mode.
 	log.Trace(clean.Cmd(cmd, password))
 
-	if cmdErr := cmd.Run(); cmdErr != nil {
-		if err := clientError(stderr.String(), password, "restore"); err != nil {
-			return err
+	cmdErr := cmd.Run()
+	stderr.Close()
+	failed = stderr.Failures()
+
+	if cmdErr != nil {
+		if err = clientError(stderr.String(), password, "restore"); err == nil {
+			err = cmdErr
 		}
 
-		return cmdErr
+		if failed.Count > 0 {
+			err = fmt.Errorf("%w; %s failed (%s)", err, english.Plural(failed.Count, "statement", "statements"), strings.Join(failed.Errors, ", "))
+		}
+
+		return failed, err
 	}
 
 	clientDiagnostics(stderr.String(), password, "restore")
 
-	return nil
+	return failed, nil
 }
