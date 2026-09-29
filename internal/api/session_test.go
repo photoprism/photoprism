@@ -3,6 +3,7 @@ package api
 import (
 	"math"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -18,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -73,6 +75,23 @@ func TestLookupSession(t *testing.T) {
 			assert.ErrorIs(t, err, authn.ErrInvalidToken)
 		}
 		assert.True(t, limiter.Auth.Reject("198.51.100.54"))
+	})
+	t.Run("DatabaseError", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		tempConn := &entity.DbConn{Driver: dsn.DriverSQLite3, Dsn: filepath.Join(t.TempDir(), "lookup-session-error.db")}
+		entity.SetDbProvider(tempConn)
+		t.Cleanup(func() {
+			entity.SetDbProvider(conf)
+			tempConn.Close()
+		})
+
+		for range 4 {
+			sess, err := LookupSession("198.51.100.56", rnd.AuthToken())
+			assert.Nil(t, sess)
+			assert.ErrorIs(t, err, authn.ErrInvalidToken)
+		}
+
+		assert.False(t, limiter.Auth.Reject("198.51.100.56"), "not counted")
 	})
 	t.Run("RateLimited", func(t *testing.T) {
 		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)

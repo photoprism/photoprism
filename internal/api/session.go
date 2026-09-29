@@ -16,6 +16,7 @@ func Session(clientIp, authToken string) *entity.Session {
 
 // LookupSession finds the client session for the specified auth token, or returns nil and an error that
 // names the reason: authn.ErrTokenRequired, authn.ErrInvalidToken, or authn.ErrRateLimitExceeded.
+// A failed database query also returns authn.ErrInvalidToken, without counting against the limit.
 func LookupSession(clientIp, authToken string) (*entity.Session, error) {
 	// Skip authentication and return the default session when public mode is enabled.
 	if get.Config().Public() {
@@ -37,9 +38,12 @@ func LookupSession(clientIp, authToken string) (*entity.Session, error) {
 	// Try to find an active session based on the hashed auth token.
 	sess, err := entity.FindSession(rnd.SessionID(authToken))
 
-	// Count error towards failure rate limit and return nil.
+	// Count a token without an active session towards the failure rate limit and return nil.
 	if err != nil {
-		limiter.Auth.Reserve(clientIp)
+		if entity.SessionNotFound(err) {
+			limiter.Auth.Reserve(clientIp)
+		}
+
 		return nil, authn.ErrInvalidToken
 	}
 
