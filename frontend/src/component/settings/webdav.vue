@@ -115,28 +115,39 @@ export default {
 
       return baseUrl;
     },
-    // windowsUrl returns the WebDAV resource path for Windows.
-    windowsUrl() {
+    // uncHost returns the host name for a Windows UNC path, which writes an IPv6 address as an ipv6-literal.net name.
+    uncHost(hostname) {
+      const host = hostname.replace(/^\[|\]$/g, "");
+
+      if (!host.includes(":")) {
+        return hostname;
+      }
+
+      return `${host.replace(/:/g, "-").replace(/%/g, "s")}.ipv6-literal.net`;
+    },
+    // windowsUrl returns the WebDAV resource path for Windows at the specified location.
+    windowsUrl(location = window.location) {
       let baseUrl = "";
       const resourcePath = this.webdavOriginalsPath().replace(/\//g, "\\");
+      const hostname = this.uncHost(location.hostname);
 
       if (this.$util.isHttps()) {
-        if (window.location.port && window.location.port !== "443") {
+        if (location.port && location.port !== "443") {
           /*
               \\example.com@SSL@8443\instance\pro-1\originals\
           */
-          baseUrl = `\\\\${window.location.hostname}@SSL@${window.location.port}${resourcePath}`;
+          baseUrl = `\\\\${hostname}@SSL@${location.port}${resourcePath}`;
         } else {
           /*
               \\example.com@SSL\instance\pro-1\originals\
           */
-          baseUrl = `\\\\${window.location.hostname}@SSL${resourcePath}`;
+          baseUrl = `\\\\${hostname}@SSL${resourcePath}`;
         }
       } else {
         /*
             \\localhost:2342\instance\pro-1\originals\
         */
-        baseUrl = `\\\\${window.location.host}${resourcePath}`;
+        baseUrl = `\\\\${hostname}${location.port ? ":" + location.port : ""}${resourcePath}`;
       }
 
       if (this.user.BasePath) {
