@@ -57,6 +57,21 @@ func TestNewLimit(t *testing.T) {
 			assert.False(t, l.Allow(clientIp))
 		}
 	})
+	t.Run("RejectUnknownAddress", func(t *testing.T) {
+		l := NewLimit(0.166, 10)
+
+		assert.False(t, l.Reject("192.0.2.200"))
+		assert.False(t, l.Reject(""))
+		assert.Empty(t, l.limiters)
+
+		for range 10 {
+			l.Reserve("")
+		}
+
+		assert.True(t, l.Reject(""))
+		assert.True(t, l.Reject(DefaultIP))
+		assert.Len(t, l.limiters, 1)
+	})
 	t.Run("Reserve", func(t *testing.T) {
 		// 10 per minute.
 		l := NewLimit(0.166, 10)

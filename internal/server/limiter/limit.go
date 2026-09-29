@@ -133,11 +133,17 @@ func (i *Limit) ReserveN(ip string, n int) *rate.Reservation {
 }
 
 // Reject checks if the request rate limit has been exceeded, but does not modify the counter.
-// A disabled limit, whose burst is 0, never rejects.
+// A disabled limit, whose burst is 0, never rejects, and neither does an address it has not seen.
 func (i *Limit) Reject(ip string) bool {
 	if i.rateLimit == rate.Inf {
 		return false
+	} else if ip == "" {
+		ip = DefaultIP
 	}
 
-	return i.IP(ip).Tokens() < 1
+	i.mu.RLock()
+	limiter, exists := i.limiters[ip]
+	i.mu.RUnlock()
+
+	return exists && limiter.Tokens() < 1
 }
