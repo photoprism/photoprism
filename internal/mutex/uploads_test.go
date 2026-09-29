@@ -37,3 +37,20 @@ func TestEndUploadRequest(t *testing.T) {
 	exclusive, _ := uploadLockState()
 	assert.True(t, exclusive, "the lock must be released")
 }
+
+// TestEndUploadRequest_RecordBeforeUnlock verifies that the end of a request is recorded before the lock is released.
+func TestEndUploadRequest_RecordBeforeUnlock(t *testing.T) {
+	unlock := unlockUploadBatches
+	t.Cleanup(func() { unlockUploadBatches = unlock })
+	var atUnlock uint64
+	unlockUploadBatches = func() {
+		atUnlock = UploadRequests.Load()
+		unlock()
+	}
+	BeginUploadRequest()
+	before := UploadRequests.Load()
+	EndUploadRequest()
+	assert.Equal(t, before+1, atUnlock, "expiry acquiring the lock must see the recorded end")
+	exclusive, _ := uploadLockState()
+	assert.True(t, exclusive, "the lock must be released")
+}
