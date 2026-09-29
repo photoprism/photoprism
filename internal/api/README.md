@@ -82,9 +82,10 @@ Files directly in the upload root, including avatar staging, are not batch clean
 
 Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's
 own albums or create a new one, and album UIDs must name regular albums the session can see.
-When the import cannot run or refuses files, processing answers 503 (busy, e.g. while indexing is
-being canceled or a faces migration runs), 507 (insufficient storage), or 500 instead of success and
-keeps the files that were not imported staged, so the same session can retry with the same token.
+When the import cannot run, refuses files, or cannot move some of them to the originals folder,
+processing answers 503 (busy, e.g. while indexing is being canceled or a faces migration runs), 507
+(insufficient storage), or 500 instead of success and keeps the files that were not imported staged,
+so the same session can retry with the same token.
 Processing only looks up an existing batch and never creates it; it answers 404 if there is none,
 for example after cleanup removed it or a previous request imported it.
 

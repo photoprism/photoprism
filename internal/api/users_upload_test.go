@@ -652,6 +652,23 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrBusy))
 		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
 	})
+	t.Run("MoveFailed", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		} else if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		require.NoError(t, os.Chmod(conf.OriginalsPath(), 0o500))       //nolint:gosec // Test makes a folder read-only.
+		t.Cleanup(func() { _ = os.Chmod(conf.OriginalsPath(), 0o700) }) //nolint:gosec // Test restores write access for cleanup.
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusInternalServerError, result.Code, result.Body.String())
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
 	t.Run("DuplicateAndUnsupported", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")

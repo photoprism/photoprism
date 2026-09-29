@@ -578,7 +578,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			}
 		}
 
-		// Report an import that did not run or refused files, which remain staged for another request.
+		// Report an import that did not run or did not import all files, which remain staged for another request.
 		if importErr != nil {
 			switch {
 			case errors.Is(importErr, status.ErrInsufficientStorage):

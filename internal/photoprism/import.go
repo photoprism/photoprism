@@ -69,14 +69,18 @@ func (imp *Import) insufficientStorage() bool {
 // ErrImportBusy is returned by Import.Run when the import has to wait for another task to complete.
 var ErrImportBusy = errors.New("waiting for another task to complete")
 
+// ErrImportIncomplete is returned by Import.Run when files could not be moved or copied to the originals.
+var ErrImportIncomplete = errors.New("some files could not be imported")
+
 // Start imports media files from a directory and converts/indexes them as needed.
 func (imp *Import) Start(opt ImportOptions) fs.Done {
 	done, _ := imp.Run(opt)
 	return done
 }
 
-// Run imports media files like Start and returns an error if the import did not run or refused files
-// early, such as ErrImportBusy, status.ErrInsufficientStorage, or status.ErrCanceled.
+// Run imports media files like Start and returns an error if the import did not run, refused files
+// early, or could not move or copy some of them, such as ErrImportBusy, status.ErrInsufficientStorage,
+// status.ErrCanceled, or ErrImportIncomplete (status.ErrInsufficientStorage if the storage was full).
 func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -170,6 +174,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	}
 
 	var stopped error
+	var failures ImportFailures
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
@@ -293,6 +298,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 				IndexOpt:  indexOpt,
 				ImportOpt: opt,
 				Imp:       imp,
+				Failures:  &failures,
 			}
 
 			return nil
@@ -360,6 +366,11 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 
 	config.FlushUsageCache()
 	runtime.GC()
+
+	// A stop reason takes precedence, since it applies to the files that were not attempted too.
+	if walkErr == nil {
+		walkErr = failures.Err()
+	}
 
 	return done, walkErr
 }

@@ -1,6 +1,11 @@
 package photoprism
 
 import (
+	"bytes"
+	"crypto/rand"
+	"image"
+	"image/jpeg"
+	iofs "io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,6 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
@@ -115,6 +121,78 @@ func TestImport_Run(t *testing.T) {
 		_, err := imp.Run(ImportOptionsUpload(dir, ""))
 		require.True(t, hook.fired)
 		assert.ErrorIs(t, err, status.ErrInsufficientStorage)
+	})
+	// testJpeg writes a JPEG with random pixels, so it never duplicates a file the library holds.
+	testJpeg := func(t *testing.T, fileName string) {
+		img := image.NewRGBA(image.Rect(0, 0, 24, 16))
+		_, err := rand.Read(img.Pix)
+		require.NoError(t, err)
+		var buf bytes.Buffer
+		require.NoError(t, jpeg.Encode(&buf, img, nil))
+		require.NoError(t, os.WriteFile(fileName, buf.Bytes(), fs.ModeFile))
+	}
+	t.Run("MoveFailed", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		} else if os.Geteuid() == 0 {
+			t.Skip("requires filesystem permission enforcement")
+		}
+		originals := cfg.Options().OriginalsPath
+		t.Cleanup(func() { cfg.Options().OriginalsPath = originals })
+		cfg.Options().OriginalsPath = t.TempDir()
+		require.NoError(t, os.Chmod(cfg.OriginalsPath(), 0o500))       //nolint:gosec // Test makes a folder read-only.
+		t.Cleanup(func() { _ = os.Chmod(cfg.OriginalsPath(), 0o700) }) //nolint:gosec // Test restores write access.
+		dir := stage(t)
+		file := filepath.Join(dir, "upload.jpg")
+		testJpeg(t, file)
+		for _, move := range []bool{true, false} {
+			opt := ImportOptionsUpload(dir, "")
+			opt.Move = move
+			done, err := imp.Run(opt)
+			assert.ErrorIs(t, err, ErrImportIncomplete, "move %t", move)
+			assert.Equal(t, 1, done.Processed())
+			assert.FileExists(t, file)
+		}
+
+		// Each run counts its own failures, so a later run that imports the file succeeds.
+		require.NoError(t, os.Chmod(cfg.OriginalsPath(), 0o700)) //nolint:gosec // Test restores write access.
+		_, err := imp.Run(ImportOptionsUpload(dir, ""))
+		assert.NoError(t, err)
+		assert.NoFileExists(t, file)
+	})
+	t.Run("SourceNotRemoved", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		} else if os.Geteuid() == 0 {
+			t.Skip("requires filesystem permission enforcement")
+		}
+		originals := cfg.Options().OriginalsPath
+		t.Cleanup(func() { cfg.Options().OriginalsPath = originals })
+		cfg.Options().OriginalsPath = t.TempDir()
+		dir := stage(t)
+		file := filepath.Join(dir, "upload.jpg")
+		testJpeg(t, file)
+		hash := fs.Hash(file)
+		require.NoError(t, os.Chmod(dir, 0o500))       //nolint:gosec // Test makes a folder read-only.
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o700) }) //nolint:gosec // Test restores write access.
+		_, err := imp.Run(ImportOptionsUpload(dir, ""))
+		assert.NoError(t, err)
+		assert.FileExists(t, file)
+		imported := false
+		require.NoError(t, filepath.WalkDir(cfg.OriginalsPath(), func(name string, entry iofs.DirEntry, err error) error {
+			if err == nil && !entry.IsDir() && fs.Hash(name) == hash {
+				imported = true
+			}
+			return err
+		}))
+		assert.True(t, imported, "the content must be in the originals folder")
+		indexed, err := entity.FirstFileByHash(hash)
+		require.NoError(t, err, "the imported file must be indexed")
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", indexed.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", indexed.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", indexed.PhotoID)
+		})
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		_, err := imp.Run(ImportOptionsUpload(filepath.Join(t.TempDir(), "missing"), ""))
