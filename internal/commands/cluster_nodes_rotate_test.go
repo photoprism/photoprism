@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -216,5 +218,50 @@ func TestClusterNodesRotate_ConfirmLocalRegistry(t *testing.T) {
 		if assert.NotNil(t, client) {
 			assert.False(t, client.VerifySecret(before2.ClientSecret))
 		}
+	})
+}
+
+// TestRotateNodeInRegistry_DatabaseErrors checks the exit codes of a failed database credential rotation.
+func TestRotateNodeInRegistry_DatabaseErrors(t *testing.T) {
+	conf := get.Config()
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	// restoreProvisioner restores the provisioner settings a test case changes.
+	restoreProvisioner := func(t *testing.T) {
+		driver, dsn := provisioner.DatabaseDriver, provisioner.ProvisionDSN
+		t.Cleanup(func() { provisioner.DatabaseDriver, provisioner.ProvisionDSN = driver, dsn })
+	}
+
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "sqlite3"
+
+		n := createTestNode(t, regy, "pp-rotate-driver", cluster.RoleInstance)
+
+		_, err := rotateNodeInRegistry(conf, n.Name, true, false)
+
+		require.Error(t, err)
+		assert.ErrorIs(t, err, provisioner.ErrUnsupportedDriver)
+		assert.Equal(t, 2, ExitCode(err))
+	})
+	t.Run("ProvisioningFailed", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "mysql"
+		provisioner.ProvisionDSN = "root:photoprism@tcp(127.0.0.1:1)/photoprism?timeout=2s"
+
+		n := createTestNode(t, regy, "pp-rotate-failed", cluster.RoleInstance)
+
+		resp, err := rotateNodeInRegistry(conf, n.Name, true, false)
+
+		// Remove the credentials if an open admin connection let the rotation succeed.
+		if err == nil {
+			t.Cleanup(func() { _ = provisioner.DropCredentials(context.Background(), resp.Database.Name, resp.Database.User) })
+		}
+
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, provisioner.ErrUnsupportedDriver)
+		assert.Equal(t, 1, ExitCode(err))
 	})
 }
