@@ -191,16 +191,16 @@ func TestLogQuoted(t *testing.T) {
 
 func TestLogBytes(t *testing.T) {
 	t.Run("Short", func(t *testing.T) {
-		assert.Equal(t, "photo.jpg", logBytes("photo.jpg", 16))
+		assert.Equal(t, "photo.jpg", LogBytes("photo.jpg", 16))
 	})
 	t.Run("Replaced", func(t *testing.T) {
 		// Each invalid byte becomes a 3-byte character, so the text is shortened after the replacement.
-		result := logBytes(strings.Repeat("\xff", 10), 16)
+		result := LogBytes(strings.Repeat("\xff", 10), 16)
 		assert.LessOrEqual(t, len(result), 16)
 		assert.True(t, strings.HasSuffix(result, "…"))
 	})
 	t.Run("Quoted", func(t *testing.T) {
-		assert.Equal(t, "'a b'", logBytes("a b", 16))
+		assert.Equal(t, "'a b'", LogBytes("a b", 16))
 	})
 }
 

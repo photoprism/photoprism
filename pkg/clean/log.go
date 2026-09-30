@@ -30,7 +30,7 @@ func LogNames(names []string) string {
 	out := make([]string, 0, kept)
 
 	for _, name := range names[:kept] {
-		out = append(out, logBytes(name, LogNamesBytes))
+		out = append(out, LogBytes(name, LogNamesBytes))
 	}
 
 	if omitted := len(names) - kept; omitted > 0 {
@@ -48,11 +48,11 @@ func logQuoted(s string) string {
 
 // Log sanitizes strings created from user input in response to the log4j debacle.
 func Log(s string) string {
-	return logBytes(s, LengthLog)
+	return LogBytes(s, LengthLog)
 }
 
-// logBytes sanitizes a value like Log, with the result bounded to maxBytes.
-func logBytes(s string, maxBytes int) string {
+// LogBytes sanitizes a value like Log, with the result bounded to maxBytes.
+func LogBytes(s string, maxBytes int) string {
 	s, quote := logText(s, maxBytes)
 
 	if quote {
