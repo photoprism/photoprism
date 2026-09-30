@@ -14,7 +14,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // Status values a service sync moves through.
@@ -89,16 +88,6 @@ func AddService(form form.Service) (model *Service, err error) {
 	return model, err
 }
 
-// ServiceError renders an error for the AccError column. The value is sanitized and clipped well
-// inside the column, so what remains is the status an operator acts on.
-func ServiceError(err error) string {
-	if err == nil {
-		return ""
-	}
-
-	return clip.Bytes(clean.Error(err), txt.ClipError)
-}
-
 // LogErr updates the service error count and message.
 func (m *Service) LogErr(err error) error {
 	if err == nil {
@@ -106,7 +95,7 @@ func (m *Service) LogErr(err error) error {
 	}
 
 	// Update error message and increase count.
-	m.AccError = ServiceError(err)
+	m.AccError = clean.ErrorBytes(err, txt.ClipError)
 	m.AccErrors++
 
 	// Disable sharing when the retry limit is exceeded.

@@ -302,6 +302,35 @@ func TestErrorBytes(t *testing.T) {
 		assert.NotContains(t, result, "/photos/a.jpg")
 		assert.Equal(t, Error(&iofs.PathError{Op: "open", Path: "/photos/a.jpg", Err: syscall.ENOENT}), result)
 	})
+	t.Run("KeepsTheStatus", func(t *testing.T) {
+		// The status and reason are what an operator acts on, so they must survive.
+		s := ErrorBytes(errors.New("507 Insufficient Storage: quota exceeded"), 255)
+		assert.Contains(t, s, "507")
+		assert.Contains(t, s, "Insufficient Storage")
+		assert.Contains(t, s, "quota exceeded")
+	})
+	t.Run("RemoteBodyBytesDoNotSurvive", func(t *testing.T) {
+		// The stored value must stay one line, in one field, whatever the cause contains.
+		body := "500 Internal Server Error: \x00\x01\x02\x7f\x1b[31m\nsync: \u203a admin \u203a granted\u202e\a"
+		s := ErrorBytes(errors.New(body), 255)
+		assert.NotContains(t, s, "\x00")
+		assert.NotContains(t, s, "\x1b")
+		assert.NotContains(t, s, "\a")
+		assert.NotContains(t, s, "\n", "a remote body must not add a line")
+		assert.NotContains(t, s, "\u202e", "a remote body must not carry a bidi override")
+		assert.NotContains(t, s, "\u203a", "a remote body must not add a field separator")
+		assert.True(t, utf8.ValidString(s), "the stored value must be valid UTF-8")
+	})
+	t.Run("CredentialsDoNotSurvive", func(t *testing.T) {
+		//nolint:gosec // G101: Example credential in a fixture URL, which is the subject of the test.
+		err := errors.New("PROPFIND https://sync-user:notreal@dav.example.com/photos: timeout")
+		assert.NotContains(t, ErrorBytes(err, 255), "notreal")
+	})
+	t.Run("LongKeepsTheStatus", func(t *testing.T) {
+		s := ErrorBytes(errors.New("503 Service Unavailable: "+strings.Repeat("a", 4096)), 255)
+		assert.LessOrEqual(t, len(s), 255)
+		assert.Contains(t, s, "503")
+	})
 	t.Run("Bounded", func(t *testing.T) {
 		for _, fill := range []string{"e", "\xff", "\U0001F600"} {
 			result := ErrorBytes(errors.New(strings.Repeat(fill, 1000)), 255)

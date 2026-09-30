@@ -23,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestNewSync(t *testing.T) {
@@ -253,6 +254,35 @@ func TestSyncDue(t *testing.T) {
 			assert.Equal(t, c.due, syncDue(entity.Service{SyncInterval: c.interval, SyncDate: c.date}, now))
 		})
 	}
+}
+
+func TestSync_StartStoredError(t *testing.T) {
+	isolateSyncAccounts(t)
+
+	worker := NewSync(config.TestConfig())
+
+	// The remote answers the listing with an error whose text holds a new line, a field separator and more.
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("listing failed\nsync \u203a admin " + strings.Repeat("x", 800)))
+	}))
+	t.Cleanup(server.Close)
+
+	a := newSyncAccount(t, func(a *entity.Service) {
+		a.AccURL = server.URL + "/"
+		a.AccTimeout = "low"
+		a.SyncStatus = entity.SyncStatusRefresh
+	})
+
+	require.NoError(t, worker.Start())
+
+	stored := storedSyncAccount(t, a.ID)
+	assert.Equal(t, 1, stored.AccErrors)
+	assert.NotEmpty(t, stored.AccError)
+	assert.LessOrEqual(t, len(stored.AccError), txt.ClipError)
+	assert.NotContains(t, stored.AccError, "\n")
+	assert.NotContains(t, stored.AccError, "\u203a")
 }
 
 func TestSync_StartRetryLimit(t *testing.T) {
