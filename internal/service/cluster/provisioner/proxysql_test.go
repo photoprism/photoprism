@@ -191,15 +191,15 @@ func TestNormalizeProxyDSN(t *testing.T) {
 			"admin:admin@tcp(127.0.0.1:6032)/?tls=custom", "admin:admin@tcp(127.0.0.1:6032)/?strict=1",
 			"admin:admin@tcp(127.0.0.1:6032)/?allowNativePasswords=no"} {
 			_, err := normalizeProxyDSN(in)
-			assert.EqualError(t, err, "proxysql: invalid admin dsn", in)
+			assert.EqualError(t, err, "invalid admin dsn", in)
 		}
 		assert.Empty(t, hook.AllEntries())
 	})
 	t.Run("InvalidParam", func(t *testing.T) {
 		for in, want := range map[string]string{ //nolint:gosec // G101: example DSNs
-			"admin:admin@tcp(127.0.0.1:6032)/?charset=latin1":                                     "proxysql: invalid dsn parameter charset",
-			"admin:admin@tcp(127.0.0.1:6032)/?collation=latin1_swedish_ci&interpolateParams=true": "proxysql: invalid dsn parameter collation",
-			"admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4&charset=latin1":                     "proxysql: duplicate dsn parameter charset",
+			"admin:admin@tcp(127.0.0.1:6032)/?charset=latin1":                                     "invalid dsn parameter charset",
+			"admin:admin@tcp(127.0.0.1:6032)/?collation=latin1_swedish_ci&interpolateParams=true": "invalid dsn parameter collation",
+			"admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4&charset=latin1":                     "duplicate dsn parameter charset",
 		} {
 			_, err := normalizeProxyDSN(in)
 			assert.EqualError(t, err, want, in)

@@ -134,3 +134,35 @@ func TestDropCredentials_Repeated(t *testing.T) {
 	assert.NoError(t, DropCredentials(ctx, "", dbUser), "an absent user alone must drop cleanly")
 	assert.NoError(t, DropCredentials(ctx, dbName, ""), "an absent database alone must drop cleanly")
 }
+
+// TestCredentials_ProxyError checks the error of a ProxySQL step as the provisioner reports it.
+func TestCredentials_ProxyError(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	if _, err := GetDB(ctx); err != nil {
+		t.Skip("provisioning database is unavailable")
+	}
+
+	c := config.NewConfig(config.CliTestContext())
+	c.Options().ClusterUUID = time.Now().UTC().Format("20060102-150405.000000000")
+	nodeUUID, nodeName := "11111111-1111-4111-8111-444444444444", "pp-proxy-error"
+	dbName, dbUser, _ := GenerateCredentials(c, nodeUUID, nodeName)
+
+	// Cleanups run after the test context is canceled, so the drop uses its own.
+	t.Cleanup(func() {
+		dropCtx, dropCancel := context.WithTimeout(context.Background(), time.Minute)
+		defer dropCancel()
+		if dropErr := DropCredentials(dropCtx, dbName, dbUser); dropErr != nil {
+			t.Errorf("cleanup: %v", dropErr)
+		}
+	})
+
+	origDSN := ProvisionProxyDSN
+	ProvisionProxyDSN = "admin:pa?ss=word@tcp(127.0.0.1:6032)"
+	t.Cleanup(func() { ProvisionProxyDSN = origDSN })
+
+	_, _, err := EnsureCredentials(ctx, c, nodeUUID, nodeName, true)
+	assert.EqualError(t, err, "proxysql: invalid admin dsn")
+	assert.EqualError(t, DropCredentials(ctx, "", dbUser), "drop credentials: proxysql: invalid admin dsn")
+}

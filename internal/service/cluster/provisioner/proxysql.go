@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/go-sql-driver/mysql"
@@ -71,7 +70,7 @@ func SyncProxyUser(ctx context.Context, proxyDSN, schema, user, pass string, opt
 	if password == "" {
 		if err := db.QueryRowContext(ctx, "SELECT password FROM mysql_users WHERE username = ?", user).Scan(&password); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return errors.New("proxysql: existing user not found and password not provided")
+				return errors.New("existing user not found and password not provided")
 			}
 			return err
 		}
@@ -159,14 +158,14 @@ func normalizeProxyDSN(proxyDsn string) (string, error) {
 	if proxyDsn == "" {
 		return "", nil
 	} else if !validProxyDSN(proxyDsn) {
-		return "", errors.New("proxysql: invalid admin dsn")
+		return "", errors.New("invalid admin dsn")
 	}
 
 	query := dsn.Query(proxyDsn)
 	params, dropped, err := dsn.FilterParams(query, proxyParamRules)
 
 	if err != nil {
-		return "", fmt.Errorf("proxysql: %w", err)
+		return "", err
 	} else if names := dsn.LoggableParamNames(dropped); len(names) > 0 {
 		log.Warnf("proxysql: ignored %d unsupported admin dsn parameters %s", len(dropped), clean.LogNames(names))
 	} else if len(dropped) > 0 {
