@@ -3,6 +3,7 @@ package backup
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"io"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -16,7 +17,7 @@ var (
 )
 
 const (
-	// uniqueChecksScanBytes is the size of the dump prefix in which the header line is replaced.
+	// uniqueChecksScanBytes is the size of the dump prefix in which the header line must start to be replaced.
 	uniqueChecksScanBytes = 64 << 10
 	// uniqueChecksLineBytes is the buffer size for reading lines; longer lines are passed on in parts.
 	uniqueChecksLineBytes = 4096
@@ -65,11 +66,15 @@ func (u *uniqueChecksReader) Read(p []byte) (int, error) {
 
 		u.read += len(line)
 		u.partial = !complete
-		u.done = u.done || u.read >= uniqueChecksScanBytes
 		u.pending = line
 
 		if err != nil && err != bufio.ErrBufferFull {
 			u.err = err
+		}
+
+		if !u.done && (u.read >= uniqueChecksScanBytes || errors.Is(u.err, io.EOF)) {
+			log.Debugf("restore: found no unique checks header line, reading the dump as it is")
+			u.done = true
 		}
 	}
 

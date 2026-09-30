@@ -9,6 +9,7 @@ import (
 	"testing/iotest"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -121,6 +122,24 @@ func TestRestoreReader(t *testing.T) {
 			assert.LessOrEqual(t, n, uniqueChecksLineBytes)
 		case <-time.After(5 * time.Second):
 			t.Fatal("read did not return before the line ended")
+		}
+	})
+	t.Run("NoHeaderLogged", func(t *testing.T) {
+		// A dump without the header line is reported once, at debug level.
+		for _, dump := range []string{"", "INSERT INTO t VALUES (1);\n", dumpLines(3 * uniqueChecksScanBytes)} {
+			hook := captureLog(t)
+			assert.Equal(t, dump, filterDump(t, strings.NewReader(dump)))
+			require.Len(t, hook.AllEntries(), 1, "size %d", len(dump))
+			assert.Equal(t, logrus.DebugLevel, hook.LastEntry().Level)
+			assert.Equal(t, "restore: found no unique checks header line, reading the dump as it is", hook.LastEntry().Message)
+		}
+		for _, r := range []io.Reader{
+			strings.NewReader(dumpHeader(off, "\n")),
+			io.MultiReader(strings.NewReader("INSERT"), iotest.ErrReader(errors.New("read failed"))),
+		} {
+			hook := captureLog(t)
+			_, _ = io.ReadAll(restoreReader(dsn.DriverMariaDB, r))
+			assert.Empty(t, hook.AllEntries())
 		}
 	})
 	t.Run("Empty", func(t *testing.T) {
