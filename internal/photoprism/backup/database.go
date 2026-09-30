@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -99,7 +100,8 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		conn := newMariadbConn(c, c.MariadbDumpBin())
 		logDatabaseSsl(conn, "backup")
-		password, cmd = conn.Password, conn.Cmd()
+		warnNonInnodbTables(c.Db(), conn.Name)
+		password, cmd = conn.Password, conn.Cmd(mariadbDumpArgs()...)
 	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
@@ -122,6 +124,49 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
 
 	return writeDump(cmd, backupPath, fileName, password, force, retain)
+}
+
+// mariadbDumpArgs returns the flags a MariaDB or MySQL dump is created with: from a consistent snapshot
+// without table locks, and with each INSERT statement committed on its own when restored.
+func mariadbDumpArgs() []string {
+	return []string{"--single-transaction", "--skip-add-locks", "--skip-no-autocommit"}
+}
+
+// warnNonInnodbTables logs a warning naming the tables of the database that do not use InnoDB, as the
+// snapshot a dump is created from does not cover them.
+func warnNonInnodbTables(db *gorm.DB, name string) {
+	rows, err := db.Raw("SELECT table_name FROM information_schema.tables WHERE table_schema = ? "+
+		"AND table_type <> 'VIEW' AND (engine IS NULL OR engine <> 'InnoDB') ORDER BY table_name", name).Rows()
+
+	if err != nil {
+		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))
+		return
+	}
+
+	defer rows.Close()
+
+	var tables []string
+
+	for rows.Next() {
+		var table string
+
+		if err = rows.Scan(&table); err != nil {
+			break
+		}
+
+		tables = append(tables, table)
+	}
+
+	if err == nil {
+		err = rows.Err()
+	}
+
+	if err != nil {
+		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))
+	} else if len(tables) > 0 {
+		log.Warnf("backup: found %s without InnoDB, which the consistent snapshot does not cover (%s)",
+			english.Plural(len(tables), "table", "tables"), clean.LogNames(tables))
+	}
 }
 
 // staleStageAge is the age after which a staged dump left by an interrupted run is removed.
