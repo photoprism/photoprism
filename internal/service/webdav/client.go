@@ -71,6 +71,15 @@ func (c *Client) SetDownloadLimit(maxBytes int64) {
 	c.downloadLimit = maxBytes
 }
 
+// CheckDownloadSize returns an error if size exceeds the download limit, where a size of zero or less is unknown.
+func (c *Client) CheckDownloadSize(dest string, size int64) error {
+	if c == nil || c.downloadLimit <= 0 || size <= c.downloadLimit {
+		return nil
+	}
+
+	return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.Log(path.Base(dest)), c.downloadLimit)
+}
+
 // clientUrl returns the validated server url including username and password, if specified.
 func clientUrl(serverUrl, user, pass string) (*url.URL, error) {
 	result, err := safe.URL(serverUrl)
@@ -596,8 +605,8 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 		// instead of being silently truncated into a corrupt local file.
 		if n, copyErr := io.Copy(f, io.LimitReader(reader, c.downloadLimit+1)); copyErr != nil {
 			err = copyErr
-		} else if n > c.downloadLimit {
-			return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.Log(path.Base(dest)), c.downloadLimit)
+		} else if sizeErr := c.CheckDownloadSize(dest, n); sizeErr != nil {
+			return sizeErr
 		}
 	} else {
 		_, err = f.ReadFrom(reader)

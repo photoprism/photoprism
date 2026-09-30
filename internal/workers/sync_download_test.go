@@ -366,6 +366,59 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, result, "/zz-order")
 	})
+	t.Run("SizeLimit", func(t *testing.T) {
+		// A listed size above the originals limit fails like a failed download, without a request.
+		limit := conf.Options().OriginalsLimit
+		conf.Options().OriginalsLimit = 1
+		t.Cleanup(func() { conf.Options().OriginalsLimit = limit })
+		maxBytes := conf.OriginalsLimitBytes()
+		require.Equal(t, int64(1<<20), maxBytes)
+
+		// newSizedFile adds a new remote file with the specified listed size.
+		newSizedFile := func(t *testing.T, a entity.Service, name string, size int64) {
+			f := entity.NewFileSync(a.ID, name)
+			f.Status, f.RemoteSize = entity.FileSyncNew, size
+			require.NoError(t, f.Create())
+		}
+
+		t.Run("NoLimit", func(t *testing.T) {
+			a := newAccount(t, -1)
+			newSizedFile(t, a, "/huge.jpg", maxBytes+1)
+			newSizedFile(t, a, "/ok-at-limit.txt", maxBytes)
+			newSizedFile(t, a, "/ok-unknown.txt", 0)
+
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			assert.False(t, complete)
+			assert.Equal(t, entity.FileSyncDownloaded, stored(t, a, "/ok-at-limit.txt").Status)
+			assert.Equal(t, entity.FileSyncDownloaded, stored(t, a, "/ok-unknown.txt").Status)
+
+			huge := stored(t, a, "/huge.jpg")
+			assert.Equal(t, 0, attempts("/huge.jpg"))
+			assert.Equal(t, entity.FileSyncNew, huge.Status)
+			assert.Equal(t, 1, huge.Errors)
+			assert.Equal(t, "webdav: huge.jpg exceeds the maximum size of 1048576 bytes", huge.Error)
+
+			complete, err = worker.download(a)
+			require.NoError(t, err)
+			assert.True(t, complete)
+			assert.Equal(t, 0, attempts("/huge.jpg"))
+			assert.Equal(t, 2, stored(t, a, "/huge.jpg").Errors)
+		})
+		t.Run("Limit", func(t *testing.T) {
+			a := newAccount(t, 1)
+			newSizedFile(t, a, "/huge-limit.jpg", maxBytes+1)
+
+			_, err := worker.download(a)
+			require.NoError(t, err)
+			assert.Equal(t, entity.FileSyncNew, stored(t, a, "/huge-limit.jpg").Status)
+
+			_, err = worker.download(a)
+			require.NoError(t, err)
+			assert.Equal(t, entity.FileSyncFailed, stored(t, a, "/huge-limit.jpg").Status)
+			assert.Equal(t, 0, attempts("/huge-limit.jpg"))
+		})
+	})
 	t.Run("NoLimitStart", func(t *testing.T) {
 		// The worker moves past the download stage while the failed file stays queued.
 		isolateSyncAccounts(t)

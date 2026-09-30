@@ -172,7 +172,12 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				file.Error = ""
 				file.Errors = 0
 			} else {
-				if err = client.Download(file.RemoteName, localName, false); errors.Is(err, os.ErrExist) {
+				// A listed size above the limit fails as the download would, without transferring the file.
+				if err = client.CheckDownloadSize(localName, file.RemoteSize); err == nil {
+					err = client.Download(file.RemoteName, localName, false)
+				}
+
+				if errors.Is(err, os.ErrExist) {
 					log.Infof("sync: skipped download of %s from %s because a local file was created meanwhile", clean.Log(file.RemoteName), clean.Log(a.AccName))
 					file.Status = entity.FileSyncExists
 					file.Error = ""

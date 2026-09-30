@@ -770,3 +770,24 @@ func TestClient_resolveHref(t *testing.T) {
 		assert.Equal(t, "http://127.0.0.1:1/example.jpg", href.String())
 	})
 }
+
+func TestClient_CheckDownloadSize(t *testing.T) {
+	t.Run("Unlimited", func(t *testing.T) {
+		c := &Client{}
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 1<<40))
+	})
+	t.Run("Limit", func(t *testing.T) {
+		c := &Client{}
+		c.SetDownloadLimit(100)
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", -1))
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 0))
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 100))
+		err := c.CheckDownloadSize("/tmp/photo.jpg", 101)
+		require.Error(t, err)
+		assert.Equal(t, "webdav: photo.jpg exceeds the maximum size of 100 bytes", err.Error())
+	})
+	t.Run("NilClient", func(t *testing.T) {
+		var c *Client
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 101))
+	})
+}
