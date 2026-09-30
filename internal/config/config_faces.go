@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -852,7 +851,7 @@ func (c *Config) SupersededFaceModel() face.ModelName {
 		return ""
 	}
 
-	b, err := os.ReadFile(fileName) //nolint:gosec // path derived from the config directory
+	b, err := readOptionsFile(fileName)
 
 	if err != nil {
 		return ""

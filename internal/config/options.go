@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -379,7 +378,7 @@ func (o *Options) Load(fileName string) error {
 		return fmt.Errorf("%s not found", fileName)
 	}
 
-	yamlConfig, err := os.ReadFile(fileName) //nolint:gosec // configuration file path provided by user/config
+	yamlConfig, err := readOptionsFile(fileName)
 
 	if err != nil {
 		return err
