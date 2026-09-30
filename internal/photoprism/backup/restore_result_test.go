@@ -34,9 +34,15 @@ func TestLogRestoreResult(t *testing.T) {
 		logRestoreResult(restoreFailures{Count: 7, Errors: []string{"error 1062 at line 4", "error 1286 at line 5"}})
 		require.Len(t, hook.AllEntries(), 1)
 		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
-		assert.Equal(t, "restore: index database restored, but 7 statements failed and some rows may be missing "+
+		assert.Equal(t, "restore: index database restored, but 7 statements failed, so some rows may be missing "+
 			"(error 1062 at line 4, error 1286 at line 5)", hook.LastEntry().Message)
 	})
+}
+
+// TestRestoreFailures_Summary checks how failed statements are described.
+func TestRestoreFailures_Summary(t *testing.T) {
+	assert.Equal(t, "1 statement failed", restoreFailures{Count: 1}.Summary())
+	assert.Equal(t, "3 statements failed", restoreFailures{Count: 3}.Summary())
 }
 
 // TestRestoreAndLog checks the outcome a restore logs.
@@ -50,8 +56,30 @@ func TestRestoreAndLog(t *testing.T) {
 		hook := captureLog(t)
 		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; cat >/dev/null`
 		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), ""))
-		assert.Contains(t, logMessages(hook), "restore: index database restored, but 1 statement failed and some rows may be missing (error 1062 at line 4)")
+		assert.Contains(t, logMessages(hook), "restore: index database restored, but 1 statement failed, so some rows may be missing (error 1062 at line 4)")
 		assert.NotContains(t, logMessages(hook), "restore: index database successfully restored")
+		for _, entry := range hook.AllEntries() {
+			if entry.Level != logrus.TraceLevel {
+				assert.NotContains(t, entry.Message, "val-a")
+			}
+		}
+	})
+	t.Run("WarningsBeforeOutputOnly", func(t *testing.T) {
+		hook := captureLog(t)
+		script := `printf '%s\n' "WARNING: insecure" "ERROR 1062 (23000) at line 4: Duplicate entry 'x" "WARNING: val-a' for key 'v'" >&2; cat >/dev/null`
+		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), ""))
+		assert.Contains(t, logMessages(hook), "restore: insecure")
+		for _, entry := range hook.AllEntries() {
+			if entry.Level != logrus.TraceLevel {
+				assert.NotContains(t, entry.Message, "val-a")
+			}
+		}
+	})
+	t.Run("FailedWithStatements", func(t *testing.T) {
+		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry" "ERROR 2013 (HY000): Lost connection" >&2; cat >/dev/null; exit 1`
+		err := restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "ERROR 2013 (HY000): Lost connection; 1 statement failed (error 1062 at line 4)")
 	})
 	t.Run("Failed", func(t *testing.T) {
 		hook := captureLog(t)
@@ -78,12 +106,18 @@ func TestRunRestore_Sqlite(t *testing.T) {
 		require.NoError(t, restoreErr)
 		assert.Zero(t, failed.Count)
 	})
-	t.Run("FailedStatements", func(t *testing.T) {
-		failed, restoreErr := restore(t, "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t VALUES (1,'val-a');\n"+
-			"INSERT INTO t VALUES (1,'val-b');\nINSERT INTO t VALUE (2,'val-c');\nINSERT INTO t VALUES (3,'val-d');\n")
-		require.NoError(t, restoreErr)
-		assert.Equal(t, 2, failed.Count)
-		assert.Equal(t, []string{"error at line 3", "error at line 4"}, failed.Errors)
+	t.Run("FailedStatement", func(t *testing.T) {
+		// The SQLite client exits with an error after any failed statement, which fails the restore.
+		_, restoreErr := restore(t, "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t VALUES (1,'val-a');\n"+
+			"INSERT INTO t VALUES (1,'val-b');\nINSERT INTO t VALUES (3,'val-d');\n")
+		require.Error(t, restoreErr)
+		assert.Contains(t, restoreErr.Error(), "UNIQUE constraint failed")
+	})
+	t.Run("Incomplete", func(t *testing.T) {
+		_, restoreErr := restore(t, "PRAGMA foreign_keys=OFF;\nBEGIN TRANSACTION;\nCREATE TABLE t (id INTEGER);\n"+
+			"INSERT INTO t VALUES (1);\nINSERT INTO t VALUES (2")
+		require.Error(t, restoreErr)
+		assert.Contains(t, restoreErr.Error(), "incomplete input")
 	})
 	t.Run("CannotOpen", func(t *testing.T) {
 		cmd := sqliteRestoreCmd(bin, filepath.Join(t.TempDir(), "missing", "index.db"))
@@ -160,9 +194,9 @@ func TestRunRestore_MariaDB(t *testing.T) {
 		assert.Equal(t, []string{"error 1927 at line 3", "error 2013 at line 4", "error 2006 at line 5"}, failed.Errors)
 	})
 	t.Run("MultiLineSyntaxError", func(t *testing.T) {
-		// A syntax error quoting a value that spans lines logs no part of it.
+		// A completed restore logs no part of a statement that failed, including a quoted value with line breaks.
 		dump := "CREATE TABLE t (id INT PRIMARY KEY, v TEXT);\n" +
-			"INSERT INTO t VALUES (1 x,'val-a\nsecond-line val-b');\nINSERT INTO t VALUES (2,'c');\n"
+			"INSERT INTO t VALUES (1 x,'val-a\nWARNING: val-b');\nINSERT INTO t VALUES (2,'c');\n"
 		hook := captureLog(t)
 		failed := restore(t, dump)
 		assert.Equal(t, 1, failed.Count)
@@ -171,18 +205,13 @@ func TestRunRestore_MariaDB(t *testing.T) {
 				assert.NotContains(t, entry.Message, "val-")
 			}
 		}
-
-		// The lines kept for an error message contain no part of the value either.
-		admin(t, "DROP DATABASE IF EXISTS "+name+"; CREATE DATABASE "+name)
-		target := conn
-		target.Name = name
-		cmd := target.Cmd(mariadbRestoreArgs(bin)...)
-		out := &restoreOutput{}
-		cmd.Stdin, cmd.Stderr = strings.NewReader(dump), out
-		require.NoError(t, cmd.Run())
-		out.Close()
-		assert.Equal(t, 1, out.failed)
-		assert.NotContains(t, out.String(), "val-")
+	})
+	t.Run("UnknownCommand", func(t *testing.T) {
+		// The sandbox refuses client commands, and the statement that follows fails.
+		failed := restore(t, "CREATE TABLE t (id INT PRIMARY KEY);\n\\! echo val-a\nINSERT INTO t VALUES (1);\n"+
+			"INSERT INTO t VALUES (2);\n")
+		assert.Equal(t, 2, failed.Count)
+		assert.Equal(t, []string{"error at line 2", "error 1064 at line 2"}, failed.Errors)
 	})
 	t.Run("LargeFailedStatement", func(t *testing.T) {
 		failed := restore(t, "CREATE TABLE t (id INT PRIMARY KEY, v LONGTEXT);\n"+

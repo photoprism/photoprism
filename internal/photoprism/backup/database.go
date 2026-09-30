@@ -460,8 +460,8 @@ func logRestoreResult(failed restoreFailures) {
 		return
 	}
 
-	log.Warnf("restore: index database restored, but %s failed and some rows may be missing (%s)",
-		english.Plural(failed.Count, "statement", "statements"), strings.Join(failed.Errors, ", "))
+	log.Warnf("restore: index database restored, but %s, so some rows may be missing (%s)", failed.Summary(),
+		strings.Join(failed.Errors, ", "))
 }
 
 // restoreInput reads a backup and records a read error, so it is told apart from a client that stopped
@@ -489,8 +489,14 @@ type restoreFailures struct {
 	Errors []string
 }
 
-// runRestore runs the restore command with its input read from r, returning stderr as the error if it fails,
-// and the statements that failed while it continued. The input is copied through a pipe, so the client runs
+// Summary describes the failed statements, e.g. "2 statements failed".
+func (f restoreFailures) Summary() string {
+	return fmt.Sprintf("%s failed", english.Plural(f.Count, "statement", "statements"))
+}
+
+// runRestore runs the restore command with its input read from r, returning the first lines of stderr as
+// the error if it fails, and the statements that failed while it continued. Otherwise, it logs only the
+// warnings the client wrote before any other output. The input is copied through a pipe, so the client runs
 // in batch mode even if r is a terminal, and the copy does not delay the result of a client that exits early.
 func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFailures, err error) {
 	stderr := &restoreOutput{}
@@ -521,14 +527,6 @@ func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFail
 	stderr.Close()
 	failed = stderr.Failures()
 
-	// A client that continues after failed statements and then exits with status 1, such as sqlite3, has
-	// completed the restore if it reported nothing else.
-	var exitErr *exec.ExitError
-
-	if errors.As(cmdErr, &exitErr) && exitErr.Exited() && exitErr.ExitCode() == 1 && stderr.OnlyFailedStatements() {
-		cmdErr = nil
-	}
-
 	// The result of the copy is sent before the client can read end of input, so it is available if the
 	// client read all of it; a client that exits early is not held up by input that never ends.
 	select {
@@ -545,13 +543,13 @@ func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFail
 		}
 
 		if failed.Count > 0 {
-			err = fmt.Errorf("%w; %s failed (%s)", err, english.Plural(failed.Count, "statement", "statements"), strings.Join(failed.Errors, ", "))
+			err = fmt.Errorf("%w; %s (%s)", err, failed.Summary(), strings.Join(failed.Errors, ", "))
 		}
 
 		return failed, err
 	}
 
-	clientDiagnostics(stderr.String(), password, "restore")
+	clientDiagnostics(stderr.Warnings(), password, "restore")
 
 	return failed, nil
 }
