@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** September 29, 2026
+**Last Updated:** September 30, 2026
 
 ### Overview
 
@@ -26,7 +26,7 @@
 
 ### Package Layout (Code Map)
 
-- `start.go` — main startup flow, listener selection (HTTP/HTTPS/AutoTLS/Unix socket), graceful shutdown.
+- `start.go` — main startup flow: `newRouter` builds the Gin engine with middleware, extensions, application routes, and health endpoints (`registerHealthRoutes`); `Start` then selects the listener (HTTP/HTTPS/AutoTLS/Unix socket via `listenUnixSocket`) and handles graceful shutdown.
 - `autotls.go` — Let's Encrypt certificate manager for automatic HTTPS (`AutoTLS`).
 - `routes_webapp.go` — Web UI routes and shared method helpers (`MethodsGetHead`).
 - `static_precompressed.go` — `PrecompressedStatic` handler that serves bundled `/static/*` assets from precompressed siblings emitted by `frontend/scripts/precompress.js`; the same handler accepts operator-supplied siblings for `/c/static/*` and falls back to identity when none exist. Range requests always serve identity, and `http.ServeContent` continues to handle `Last-Modified` + `If-Modified-Since` revalidation for both encoded and identity responses (the handler does not set an `ETag`, so `If-None-Match` is latent rather than active).
@@ -87,6 +87,7 @@ PhotoPrism can obtain and renew a certificate for the site domain from Let's Enc
 
 - Lint & unit tests: `golangci-lint run ./internal/server...` and `go test ./internal/server/...`
 - WebDAV behaviors are covered by `webdav_*_test.go`; they rely on temp directories and in-memory routers, including PROPFIND `207` XML/header assertions and path classification checks.
+- `TestNewRouter` builds the complete router with the fixture config, so a route that conflicts with another, which Gin reports with a panic, fails the tests instead of the server startup.
 
 ### Operational Tips
 

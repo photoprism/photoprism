@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -45,72 +46,8 @@ func Start(ctx context.Context, conf *config.Config) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Create new router engine without standard middleware.
-	router := gin.New()
-
-	// Configure trusted proxy ranges and forwarded client IP headers.
-	configureTrustedProxySettings(router, conf)
-
-	// Enable support for HTTP/2 without TLS if a trusted platform header is set.
-	if conf.TrustedPlatform() != "" {
-		router.UseH2C = true
-	}
-
-	// Register panic recovery middleware.
-	router.Use(Recovery())
-
-	// Register logger middleware if debug mode is enabled.
-	if conf.Debug() {
-		router.Use(Logger())
-	}
-
-	// Warn once per unsupported compression token so operator typos are visible.
-	for _, token := range conf.HttpCompressionUnknown() {
-		log.Warnf("server: ignored unsupported http-compression value %q", token)
-	}
-
-	// Register compression middleware if enabled in the configuration.
-	if prefs := conf.HttpCompressionPreferences(); len(prefs) > 0 {
-		router.Use(NewCompressMiddleware(conf))
-		log.Infof("server: enabled http compression (%s)", strings.Join(prefs, " > "))
-	}
-
-	// Register security middleware.
-	router.Use(Security(conf))
-
-	// Create REST API router group.
-	APIv1 = router.Group(conf.BaseUri(config.ApiUri), APIMiddleware(conf))
-
-	// Initialize package extensions.
-	Ext().Init(router, conf)
-
-	// Find and load templates.
-	router.LoadHTMLFiles(conf.TemplateFiles()...)
-
-	// Register application routes.
-	registerRoutes(router, conf)
-
-	// Register standard health check endpoints to determine whether the server is running.
-	isLive := func(c *gin.Context) {
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.AccessControlAllowOrigin, header.Any)
-		c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
-	}
-	router.Any(conf.BaseUri("/livez"), isLive)
-	router.Any(conf.BaseUri("/health"), isLive)
-	router.Any(conf.BaseUri("/healthz"), isLive)
-
-	// Register "/readyz" endpoint to check if the server has been successfully initialized.
-	isReady := func(c *gin.Context) {
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.AccessControlAllowOrigin, header.Any)
-		if conf.IsReady() {
-			c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
-		} else {
-			c.JSON(http.StatusServiceUnavailable, api.NewHealthResponse("service unavailable"))
-		}
-	}
-	router.Any(conf.BaseUri("/readyz"), isReady)
+	// Create the router engine with middleware and routes.
+	router := newRouter(conf)
 
 	var tlsErr error
 	var tlsManager *autocert.Manager
@@ -118,51 +55,22 @@ func Start(ctx context.Context, conf *config.Config) {
 
 	// Listen on a Unix domain socket instead of a TCP port?
 	if unixSocket := conf.HttpSocket(); unixSocket != nil {
-		var listener net.Listener
-		var unixAddr *net.UnixAddr
-		var err error
+		listener, err := listenUnixSocket(unixSocket)
 
-		// Check if the Unix socket already exists and delete it if the force flag is set.
-		if fs.SocketExists(unixSocket.Path) {
-			if !txt.Bool(unixSocket.Query().Get("force")) {
-				Fail("server: %s socket %s already exists", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
-				return
-			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
-				Fail("server: %s socket %s already exists and cannot be deleted", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
-				return
-			}
+		if err != nil {
+			Fail("server: %s", err)
+			return
 		}
 
-		// Create a Unix socket and listen on it.
-		if unixAddr, err = net.ResolveUnixAddr(unixSocket.Scheme, unixSocket.Path); err != nil {
-			Fail("server: invalid %s socket (%s)", clean.Log(unixSocket.Scheme), err)
-			return
-		} else if listener, err = net.ListenUnix(unixSocket.Scheme, unixAddr); err != nil {
-			Fail("server: failed to listen on %s socket (%s)", clean.Log(unixSocket.Scheme), err)
-			return
-		} else {
-			// Update socket permissions?
-			if mode := unixSocket.Query().Get("mode"); mode == "" {
-				// Skip, no socket mode was specified.
-			} else if modeErr := os.Chmod(unixSocket.Path, fs.ParseMode(mode, fs.ModeSocket)); modeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
-				log.Warnf(
-					"server: failed to change permissions of %s socket %s (%s)",
-					clean.Log(unixSocket.Scheme),
-					clean.Log(unixSocket.Path),
-					modeErr,
-				)
-			}
+		// Listen on Unix socket, which should be automatically closed and removed after use:
+		// https://pkg.go.dev/net#UnixListener.SetUnlinkOnClose.
+		server = newHTTPServer(router, conf)
+		server.Addr = listener.Addr().String()
 
-			// Listen on Unix socket, which should be automatically closed and removed after use:
-			// https://pkg.go.dev/net#UnixListener.SetUnlinkOnClose.
-			server = newHTTPServer(router, conf)
-			server.Addr = listener.Addr().String()
+		log.Infof("server: listening on %s [%s]", unixSocket.Path, time.Since(start))
 
-			log.Infof("server: listening on %s [%s]", unixSocket.Path, time.Since(start))
-
-			// Start Web server.
-			go StartHttp(server, listener)
-		}
+		// Start Web server.
+		go StartHttp(server, listener)
 	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
 		log.Infof("server: starting in auto tls mode")
 
@@ -225,6 +133,124 @@ func Start(ctx context.Context, conf *config.Config) {
 	if err != nil {
 		log.Errorf("server: shutdown failed (%s)", err)
 	}
+}
+
+// newRouter creates the router engine and registers its middleware, extensions, and routes.
+func newRouter(conf *config.Config) *gin.Engine {
+	// Create new router engine without standard middleware.
+	router := gin.New()
+
+	// Configure trusted proxy ranges and forwarded client IP headers.
+	configureTrustedProxySettings(router, conf)
+
+	// Enable support for HTTP/2 without TLS if a trusted platform header is set.
+	if conf.TrustedPlatform() != "" {
+		router.UseH2C = true
+	}
+
+	// Register panic recovery middleware.
+	router.Use(Recovery())
+
+	// Register logger middleware if debug mode is enabled.
+	if conf.Debug() {
+		router.Use(Logger())
+	}
+
+	// Warn once per unsupported compression token so operator typos are visible.
+	for _, token := range conf.HttpCompressionUnknown() {
+		log.Warnf("server: ignored unsupported http-compression value %q", token)
+	}
+
+	// Register compression middleware if enabled in the configuration.
+	if prefs := conf.HttpCompressionPreferences(); len(prefs) > 0 {
+		router.Use(NewCompressMiddleware(conf))
+		log.Infof("server: enabled http compression (%s)", strings.Join(prefs, " > "))
+	}
+
+	// Register security middleware.
+	router.Use(Security(conf))
+
+	// Create REST API router group.
+	APIv1 = router.Group(conf.BaseUri(config.ApiUri), APIMiddleware(conf))
+
+	// Initialize package extensions.
+	Ext().Init(router, conf)
+
+	// Find and load templates.
+	router.LoadHTMLFiles(conf.TemplateFiles()...)
+
+	// Register application routes.
+	registerRoutes(router, conf)
+
+	// Register health check endpoints.
+	registerHealthRoutes(router, conf)
+
+	return router
+}
+
+// registerHealthRoutes registers the endpoints that report whether the server is running and ready.
+func registerHealthRoutes(router *gin.Engine, conf *config.Config) {
+	// Register standard health check endpoints to determine whether the server is running.
+	isLive := func(c *gin.Context) {
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+		c.Header(header.AccessControlAllowOrigin, header.Any)
+		c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
+	}
+	router.Any(conf.BaseUri("/livez"), isLive)
+	router.Any(conf.BaseUri("/health"), isLive)
+	router.Any(conf.BaseUri("/healthz"), isLive)
+
+	// Register "/readyz" endpoint to check if the server has been successfully initialized.
+	isReady := func(c *gin.Context) {
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+		c.Header(header.AccessControlAllowOrigin, header.Any)
+		if conf.IsReady() {
+			c.JSON(http.StatusOK, api.NewHealthResponse("ok"))
+		} else {
+			c.JSON(http.StatusServiceUnavailable, api.NewHealthResponse("service unavailable"))
+		}
+	}
+	router.Any(conf.BaseUri("/readyz"), isReady)
+}
+
+// listenUnixSocket listens on the Unix domain socket specified in the config and applies its
+// "force" and "mode" query options, replacing an existing socket only when force is set.
+func listenUnixSocket(unixSocket *url.URL) (net.Listener, error) {
+	// Check if the Unix socket already exists and delete it if the force flag is set.
+	if fs.SocketExists(unixSocket.Path) {
+		if !txt.Bool(unixSocket.Query().Get("force")) {
+			return nil, fmt.Errorf("%s socket %s already exists", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
+		} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
+			return nil, fmt.Errorf("%s socket %s already exists and cannot be deleted", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
+		}
+	}
+
+	// Create a Unix socket and listen on it.
+	unixAddr, err := net.ResolveUnixAddr(unixSocket.Scheme, unixSocket.Path)
+
+	if err != nil {
+		return nil, fmt.Errorf("invalid %s socket (%s)", clean.Log(unixSocket.Scheme), err)
+	}
+
+	listener, err := net.ListenUnix(unixSocket.Scheme, unixAddr)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to listen on %s socket (%s)", clean.Log(unixSocket.Scheme), err)
+	}
+
+	// Update socket permissions?
+	if mode := unixSocket.Query().Get("mode"); mode == "" {
+		// Skip, no socket mode was specified.
+	} else if modeErr := os.Chmod(unixSocket.Path, fs.ParseMode(mode, fs.ModeSocket)); modeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
+		log.Warnf(
+			"server: failed to change permissions of %s socket %s (%s)",
+			clean.Log(unixSocket.Scheme),
+			clean.Log(unixSocket.Path),
+			modeErr,
+		)
+	}
+
+	return listener, nil
 }
 
 // configureTrustedProxySettings configures trusted proxy ranges and the trusted platform header
