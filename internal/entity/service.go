@@ -118,7 +118,7 @@ func (m *Service) LogErr(err error) error {
 	return m.Updates(Values{"acc_error": m.AccError, "acc_errors": m.AccErrors, "acc_share": m.AccShare})
 }
 
-// ResetErrors resets the service and related file error messages and counters.
+// ResetErrors resets the service and related file error messages and counters, keeping per-file download error counts without a retry limit.
 func (m *Service) ResetErrors(share, sync bool) error {
 	if !share && !sync || Db().NewRecord(m) {
 		return nil
@@ -135,7 +135,14 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	}
 
 	if sync {
-		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
+		values := Values{"error": "", "errors": 0}
+
+		// Without a retry limit, the count only orders the download queue, so it is kept.
+		if m.RetryLimit <= 0 {
+			values = Values{"error": ""}
+		}
+
+		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(values).Error; err != nil {
 			return err
 		}
 	}

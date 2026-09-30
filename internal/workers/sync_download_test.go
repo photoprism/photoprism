@@ -10,11 +10,14 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -79,6 +82,35 @@ func TestSync_relatedDownloads(t *testing.T) {
 	} else {
 		assert.IsType(t, Downloads{}, result)
 	}
+
+	t.Run("FailedFilesLast", func(t *testing.T) {
+		// More failed files than one batch holds sort before the new file by name.
+		a := entity.Service{AccName: "Sync Related " + rnd.Base36(8), AccType: "webdav", AccSync: true, SyncDownload: true, RetryLimit: -1}
+		require.NoError(t, entity.Db().Create(&a).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "service_id = ?", a.ID).Error)
+			assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
+		})
+
+		tx := entity.Db().Begin()
+		for i := 0; i < 960; i++ {
+			f := entity.NewFileSync(a.ID, fmt.Sprintf("/failed-%04d.jpg", i))
+			f.Status, f.Errors = entity.FileSyncNew, 1
+			if err := tx.Create(f).Error; err != nil {
+				tx.Rollback()
+				t.Fatal(err)
+			}
+		}
+		require.NoError(t, tx.Commit().Error)
+
+		f := entity.NewFileSync(a.ID, "/zz-new.jpg")
+		f.Status = entity.FileSyncNew
+		require.NoError(t, f.Create())
+
+		result, err := worker.relatedDownloads(a)
+		require.NoError(t, err)
+		assert.Contains(t, result, "/zz-new")
+	})
 }
 
 func TestSync_downloadRetryLimit(t *testing.T) {
@@ -151,13 +183,15 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 	}
 
 	t.Run("Limit", func(t *testing.T) {
-		// The related file sorts after the skipped one in the same group, so it shows that the
-		// remaining files are still attempted.
+		// Files with more errors sort after the skipped one in its group, so the ignored YAML file
+		// shows that the remaining files are still visited.
 		a := newAccount(t, 3)
+		require.NoError(t, a.Update("sync_yaml", -1))
 		newFile(t, a, "/below.jpg", 2)
 		newFile(t, a, "/at.jpg", 3)
 		newFile(t, a, "/above.jpg", 4)
 		newFile(t, a, "/above.png", 2)
+		newFile(t, a, "/above.yml", 5)
 
 		complete, err := worker.download(a)
 		require.NoError(t, err)
@@ -171,6 +205,7 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.Equal(t, 0, attempts("/above.jpg"))
 		assert.Equal(t, 4, above.Errors)
 		assert.Equal(t, entity.FileSyncNew, above.Status)
+		assert.Equal(t, entity.FileSyncIgnore, stored(t, a, "/above.yml").Status)
 
 		// A failure that stays within the limit keeps the file queued, the next one marks it failed.
 		below := stored(t, a, "/below.jpg")
@@ -241,16 +276,28 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		a := newAccount(t, -1)
 		newFile(t, a, "/ok-progress.txt", 0)
 		newFile(t, a, "/stuck.jpg", 0)
+		newFile(t, a, "/stuck.png", 0)
+
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
 
 		complete, err := worker.download(a)
 		require.NoError(t, err)
 		assert.False(t, complete)
 		assert.Equal(t, entity.FileSyncDownloaded, stored(t, a, "/ok-progress.txt").Status)
 		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/stuck.jpg").Status)
+		for _, e := range hook.AllEntries() {
+			assert.NotEqual(t, logrus.WarnLevel, e.Level, e.Message)
+		}
 
 		complete, err = worker.download(a)
 		require.NoError(t, err)
 		assert.True(t, complete)
+		require.NotNil(t, hook.LastEntry())
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+		assert.Contains(t, hook.LastEntry().Message, "failed to download 2 files from")
 		assert.Equal(t, 1, attempts("/ok-progress.txt"))
 		assert.Equal(t, 2, attempts("/stuck.jpg"))
 		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/stuck.jpg").Status)
@@ -259,10 +306,18 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		a := newAccount(t, 1)
 		newFile(t, a, "/lowest-open.jpg", 0)
 
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+
 		complete, err := worker.download(a)
 		require.NoError(t, err)
 		assert.False(t, complete)
 		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/lowest-open.jpg").Status)
+		for _, e := range hook.AllEntries() {
+			assert.NotEqual(t, logrus.WarnLevel, e.Level, e.Message)
+		}
 	})
 	t.Run("NoLimitIgnored", func(t *testing.T) {
 		// An ignored file counts as a change, like a download.
@@ -281,6 +336,35 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.True(t, complete)
 		assert.Equal(t, 0, attempts("/ignored.yml"))
 		assert.Equal(t, 2, attempts("/ignored.jpg"))
+	})
+	t.Run("NoLimitSaveKeepsOrder", func(t *testing.T) {
+		// A run where every file fails leaves the first window with one error each, and saving the
+		// account in between keeps those counts, so the next run reads the files after them.
+		a := newAccount(t, -1)
+		tx := entity.Db().Begin()
+		for i := 0; i < 960; i++ {
+			f := entity.NewFileSync(a.ID, fmt.Sprintf("/order-%04d.jpg", i))
+			f.Status = entity.FileSyncNew
+			if i < 952 {
+				f.Errors, f.Error = 1, "failed"
+			}
+			if err := tx.Create(f).Error; err != nil {
+				tx.Rollback()
+				t.Fatal(err)
+			}
+		}
+		require.NoError(t, tx.Commit().Error)
+		newFile(t, a, "/zz-order.jpg", 0)
+
+		f, err := form.NewService(a)
+		require.NoError(t, err)
+		require.NoError(t, a.SaveForm(f))
+		assert.Equal(t, 1, stored(t, a, "/order-0000.jpg").Errors)
+		assert.Equal(t, "", stored(t, a, "/order-0000.jpg").Error)
+
+		result, err := worker.relatedDownloads(a)
+		require.NoError(t, err)
+		assert.Contains(t, result, "/zz-order")
 	})
 	t.Run("NoLimitStart", func(t *testing.T) {
 		// The worker moves past the download stage while the failed file stays queued.

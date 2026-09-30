@@ -462,6 +462,91 @@ func TestService_LogErr(t *testing.T) {
 	})
 }
 
+func TestService_ResetErrors(t *testing.T) {
+	// newAccount creates a WebDAV account with sync and sharing on, one failed download, and one failed share.
+	newAccount := func(t *testing.T, limit int) *Service {
+		m, err := AddService(form.Service{AccName: "ResetErrors", AccURL: "test.com", AccType: "webdav", AccShare: true, AccSync: true, RetryLimit: limit})
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			UnscopedDb().Unscoped().Delete(&FileSync{}, "service_id = ?", m.ID)
+			UnscopedDb().Unscoped().Delete(&FileShare{}, "service_id = ?", m.ID)
+			UnscopedDb().Unscoped().Delete(m)
+		})
+		fileSync := NewFileSync(m.ID, "/reset.jpg")
+		fileSync.Status, fileSync.Errors, fileSync.Error = FileSyncNew, 3, "boom"
+		if err = fileSync.Create(); err != nil {
+			t.Fatal(err)
+		}
+		fileShare := NewFileShare(1000000, m.ID, "/reset.jpg")
+		fileShare.Errors, fileShare.Error = 2, "boom"
+		if err = fileShare.Create(); err != nil {
+			t.Fatal(err)
+		}
+		return m
+	}
+	// stored returns the stored download and share rows of the account.
+	stored := func(t *testing.T, m *Service) (FileSync, FileShare) {
+		var fileSync FileSync
+		var fileShare FileShare
+		if err := Db().Where("service_id = ?", m.ID).First(&fileSync).Error; err != nil {
+			t.Fatal(err)
+		}
+		if err := Db().Where("service_id = ?", m.ID).First(&fileShare).Error; err != nil {
+			t.Fatal(err)
+		}
+		return fileSync, fileShare
+	}
+	// save stores the account through SaveForm with the specified retry limit.
+	save := func(t *testing.T, m *Service, limit int) {
+		f, err := form.NewService(m)
+		if err != nil {
+			t.Fatal(err)
+		}
+		f.RetryLimit = limit
+		if err = m.SaveForm(f); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	t.Run("NoLimitKeepsCounts", func(t *testing.T) {
+		m := newAccount(t, -1)
+		save(t, m, -1)
+		fileSync, fileShare := stored(t, m)
+		assert.Equal(t, 3, fileSync.Errors)
+		assert.Equal(t, "", fileSync.Error)
+		assert.Equal(t, 0, fileShare.Errors)
+		assert.Equal(t, "", fileShare.Error)
+	})
+	t.Run("NoLimitToLimit", func(t *testing.T) {
+		m := newAccount(t, -1)
+		save(t, m, 3)
+		fileSync, _ := stored(t, m)
+		assert.Equal(t, 0, fileSync.Errors)
+		assert.Equal(t, "", fileSync.Error)
+	})
+	t.Run("LimitResetsCounts", func(t *testing.T) {
+		m := newAccount(t, 3)
+		save(t, m, 3)
+		fileSync, fileShare := stored(t, m)
+		assert.Equal(t, 0, fileSync.Errors)
+		assert.Equal(t, "", fileSync.Error)
+		assert.Equal(t, 0, fileShare.Errors)
+		assert.Equal(t, "", fileShare.Error)
+	})
+	t.Run("FolderListing", func(t *testing.T) {
+		m := newAccount(t, -1)
+		if err := m.LogErr(nil); err != nil {
+			t.Fatal(err)
+		}
+		fileSync, fileShare := stored(t, m)
+		assert.Equal(t, 3, fileSync.Errors)
+		assert.Equal(t, "", fileSync.Error)
+		assert.Equal(t, 0, fileShare.Errors)
+	})
+}
+
 func TestService_Create(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		account := Service{}

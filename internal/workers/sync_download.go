@@ -273,13 +273,19 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 
 	// Without a retry limit, failed files stay new, so the stage completes once a run leaves every file new.
 	if a.RetryLimit <= 0 {
+		failed := 0
+
 		for _, files := range relatedFiles {
 			for _, file := range files {
 				if file.Status != entity.FileSyncNew {
 					return false, nil
 				}
+
+				failed++
 			}
 		}
+
+		log.Warnf("sync: failed to download %s from %s, retrying in the next sync", english.Plural(failed, "file", "files"), clean.Log(a.AccName))
 
 		return true, nil
 	}

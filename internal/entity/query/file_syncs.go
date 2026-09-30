@@ -4,7 +4,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// FileSyncs returns a list of FileSync entities for a given account and status.
+// FileSyncs returns a list of FileSync entities for a given account and status, with the fewest errors first.
 func FileSyncs(accountId uint, status string, limit int) (result []entity.FileSync, err error) {
 	s := Db().Where(&entity.FileSync{})
 
@@ -16,7 +16,7 @@ func FileSyncs(accountId uint, status string, limit int) (result []entity.FileSy
 		s = s.Where("status = ?", status)
 	}
 
-	s = s.Order("remote_name ASC")
+	s = s.Order("errors ASC, remote_name ASC")
 
 	if limit > 0 {
 		s = s.Limit(limit).Offset(0)
