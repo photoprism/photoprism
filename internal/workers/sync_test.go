@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -177,6 +178,32 @@ func TestSync_StartInterval(t *testing.T) {
 		stored := storedSyncAccount(t, a.ID)
 		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
 		assert.False(t, stored.SyncDate.Valid)
+	})
+	t.Run("NeverInterval", func(t *testing.T) {
+		a := newSyncAccount(t, func(a *entity.Service) {
+			a.SyncInterval = 0
+			a.SyncDate = sql.NullTime{Time: time.Now().Add(-30 * 24 * time.Hour), Valid: true}
+		})
+
+		require.NoError(t, worker.Start())
+
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
+
+		// Saving the account still starts a new sync.
+		f, err := form.NewService(stored)
+		require.NoError(t, err)
+		require.NoError(t, stored.SaveForm(f))
+		assert.Equal(t, entity.SyncStatusRefresh, storedSyncAccount(t, a.ID).SyncStatus)
+	})
+	t.Run("NegativeInterval", func(t *testing.T) {
+		a := newSyncAccount(t, func(a *entity.Service) {
+			a.SyncInterval = -3600
+			a.SyncDate = sql.NullTime{Time: time.Now().Add(-30 * 24 * time.Hour), Valid: true}
+		})
+
+		require.NoError(t, worker.Start())
+		assert.Equal(t, entity.SyncStatusSynced, storedSyncAccount(t, a.ID).SyncStatus)
 	})
 }
 

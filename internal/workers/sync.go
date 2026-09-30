@@ -133,7 +133,7 @@ func (w *Sync) Start() (err error) {
 				syncDate.Valid = true
 			}
 		case entity.SyncStatusSynced:
-			if a.SyncDate.Valid && a.SyncDate.Time.Before(time.Now().Add(time.Duration(-1*a.SyncInterval)*time.Second)) {
+			if a.SyncInterval > 0 && a.SyncDate.Valid && a.SyncDate.Time.Before(time.Now().Add(time.Duration(-1*a.SyncInterval)*time.Second)) {
 				syncStatus = entity.SyncStatusRefresh
 			}
 		default:
