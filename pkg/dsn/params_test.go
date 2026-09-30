@@ -75,6 +75,16 @@ func TestHasParam(t *testing.T) {
 	assert.False(t, HasParam("xcharset=utf8", "charset"))
 }
 
+// TestHasQuery checks that a parameter section is found where the driver finds it.
+func TestHasQuery(t *testing.T) {
+	assert.True(t, HasQuery("user:secret@tcp(proxysql:6032)/?charset=utf8mb4"))
+	assert.True(t, HasQuery("user:p?w@tcp(proxysql:6032)/db?"))
+	assert.False(t, HasQuery("user:p?w@tcp(proxysql:6032)/"))
+	assert.False(t, HasQuery("user:p/w?x@tcp(proxysql:6032)/"))
+	assert.False(t, HasQuery("user:secret@tcp(proxysql:6032)/db"))
+	assert.False(t, HasQuery(""))
+}
+
 // TestQuery checks that DSN parameters are read as the driver reads them.
 func TestQuery(t *testing.T) {
 	assert.Equal(t, "charset=utf8mb4&parseTime=true", Query("user:secret@tcp(proxysql:6032)/?charset=utf8mb4&parseTime=true"))

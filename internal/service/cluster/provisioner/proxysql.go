@@ -138,17 +138,19 @@ func applyProxySQL(ctx context.Context, db *sql.DB) error {
 }
 
 // proxyParamRules lists the DSN parameters accepted for the ProxySQL admin interface and checks their
-// values. The character set is limited to UTF-8.
+// values. The character set is limited to UTF-8. Of the authentication settings, only allowNativePasswords
+// defaults to allowing more, so it is the one kept; the others are dropped, which keeps their defaults.
 var proxyParamRules = dsn.ParamRules{
-	"charset":           dsn.ValidCharset,
-	"collation":         dsn.ValidCollation,
-	"parseTime":         dsn.ValidBool,
-	"interpolateParams": dsn.ValidBool,
-	"timeout":           dsn.ValidDuration,
-	"readTimeout":       dsn.ValidDuration,
-	"writeTimeout":      dsn.ValidDuration,
-	"maxAllowedPacket":  dsn.ValidPacketSize,
-	"tls":               dsn.ValidTLS,
+	"allowNativePasswords": dsn.ValidBool,
+	"charset":              dsn.ValidCharset,
+	"collation":            dsn.ValidCollation,
+	"parseTime":            dsn.ValidBool,
+	"interpolateParams":    dsn.ValidBool,
+	"timeout":              dsn.ValidDuration,
+	"readTimeout":          dsn.ValidDuration,
+	"writeTimeout":         dsn.ValidDuration,
+	"maxAllowedPacket":     dsn.ValidPacketSize,
+	"tls":                  dsn.ValidTLS,
 }
 
 // normalizeProxyDSN returns a ProxySQL admin DSN with the accepted parameters only, adding
