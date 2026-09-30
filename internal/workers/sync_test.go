@@ -179,3 +179,67 @@ func TestSync_StartInterval(t *testing.T) {
 		assert.False(t, stored.SyncDate.Valid)
 	})
 }
+
+func TestSync_StartRetryLimit(t *testing.T) {
+	isolateSyncAccounts(t)
+
+	worker := NewSync(config.TestConfig())
+
+	// withErrors returns an account update that sets the retry limit and the recorded error count.
+	withErrors := func(limit, count int) func(a *entity.Service) {
+		return func(a *entity.Service) {
+			a.RetryLimit = limit
+			a.AccErrors = count
+		}
+	}
+
+	t.Run("BelowLimit", func(t *testing.T) {
+		a := newSyncAccount(t, withErrors(3, 2))
+
+		require.NoError(t, worker.Start())
+		assert.True(t, storedSyncAccount(t, a.ID).AccSync)
+	})
+	t.Run("AtLimit", func(t *testing.T) {
+		a := newSyncAccount(t, withErrors(3, 3))
+
+		require.NoError(t, worker.Start())
+		assert.True(t, storedSyncAccount(t, a.ID).AccSync)
+	})
+	t.Run("AboveLimit", func(t *testing.T) {
+		// Both accounts are due for a refresh, which the disabled account must not get in the same
+		// run, while the account sorted after it must still be processed.
+		due := sql.NullTime{Time: time.Now().Add(-2 * time.Hour), Valid: true}
+		a := newSyncAccount(t, func(a *entity.Service) {
+			withErrors(3, 4)(a)
+			a.AccName = "Sync Start A " + rnd.Base36(8)
+			a.SyncDate = due
+		})
+		other := newSyncAccount(t, func(a *entity.Service) {
+			withErrors(3, 2)(a)
+			a.AccName = "Sync Start B " + rnd.Base36(8)
+			a.SyncDate = due
+		})
+
+		require.NoError(t, worker.Start())
+
+		stored := storedSyncAccount(t, a.ID)
+		assert.False(t, stored.AccSync)
+		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
+
+		storedOther := storedSyncAccount(t, other.ID)
+		assert.True(t, storedOther.AccSync)
+		assert.Equal(t, entity.SyncStatusRefresh, storedOther.SyncStatus)
+	})
+	t.Run("HigherLimit", func(t *testing.T) {
+		a := newSyncAccount(t, withErrors(5, 4))
+
+		require.NoError(t, worker.Start())
+		assert.True(t, storedSyncAccount(t, a.ID).AccSync)
+	})
+	t.Run("NoLimit", func(t *testing.T) {
+		a := newSyncAccount(t, withErrors(-1, 100))
+
+		require.NoError(t, worker.Start())
+		assert.True(t, storedSyncAccount(t, a.ID).AccSync)
+	})
+}
