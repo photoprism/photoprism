@@ -35,7 +35,7 @@ type Services []Service
 // - AccErrors holds the number of connection errors since the last reset.
 // - AccShare enables manual upload, see SharePath, ShareSize, and ShareExpires.
 // - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
-// - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
+// - RetryLimit specifies the number of retry attempts, 0 or a negative value disables the limit.
 // - SyncYaml controls transferring YAML sidecar files: -1 disabled, 0 default (enabled), 1 enabled.
 type Service struct {
 	ID            uint         `gorm:"primary_key" json:"ID"`

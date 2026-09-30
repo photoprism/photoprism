@@ -181,7 +181,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 					file.Errors++
 					file.Error = err.Error()
 
-					if file.Errors > a.RetryLimit {
+					if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 						file.Status = entity.FileSyncFailed
 					}
 				} else {
@@ -269,6 +269,19 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 
 		// Update album, subject, and label cover thumbs.
 		w.logWarn(query.UpdateCovers())
+	}
+
+	// Without a retry limit, failed files stay new, so the stage completes once a run leaves every file new.
+	if a.RetryLimit <= 0 {
+		for _, files := range relatedFiles {
+			for _, file := range files {
+				if file.Status != entity.FileSyncNew {
+					return false, nil
+				}
+			}
+		}
+
+		return true, nil
 	}
 
 	return false, nil
