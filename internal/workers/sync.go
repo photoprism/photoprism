@@ -134,7 +134,7 @@ func (w *Sync) Start() (err error) {
 				syncDate.Valid = true
 			}
 		case entity.SyncStatusSynced:
-			if a.SyncInterval > 0 && a.SyncDate.Valid && a.SyncDate.Time.Before(time.Now().Add(time.Duration(-1*a.SyncInterval)*time.Second)) {
+			if syncDue(a, time.Now()) {
 				syncStatus = entity.SyncStatusRefresh
 			}
 		default:
@@ -158,4 +158,9 @@ func (w *Sync) Start() (err error) {
 	}
 
 	return err
+}
+
+// syncDue reports whether a synced account is due for a refresh, comparing whole seconds so no stored interval overflows.
+func syncDue(a entity.Service, now time.Time) bool {
+	return a.SyncInterval > 0 && a.SyncDate.Valid && a.SyncDate.Time.Unix() < now.Unix()-int64(a.SyncInterval)
 }

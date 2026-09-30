@@ -3,6 +3,7 @@ package workers
 import (
 	"database/sql"
 	"errors"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -222,6 +223,36 @@ func TestSync_StartInterval(t *testing.T) {
 		require.NoError(t, worker.Start())
 		assert.Equal(t, entity.SyncStatusSynced, storedSyncAccount(t, a.ID).SyncStatus)
 	})
+}
+
+func TestSyncDue(t *testing.T) {
+	now := time.Date(2026, 9, 30, 12, 0, 0, 0, time.UTC)
+	at := func(d time.Duration) sql.NullTime { return sql.NullTime{Time: now.Add(-d), Valid: true} }
+
+	// The largest interval a time.Duration can hold, computed so the table also compiles with a 32-bit int.
+	maxDuration := int64(math.MaxInt64) / int64(time.Second)
+
+	for _, c := range []struct {
+		name     string
+		interval int
+		date     sql.NullTime
+		due      bool
+	}{
+		{"OlderThanInterval", 3600, at(2 * time.Hour), true},
+		{"NewerThanInterval", 3600, at(10 * time.Minute), false},
+		{"ExactlyInterval", 3600, at(time.Hour), false},
+		{"Never", 0, at(365 * 24 * time.Hour), false},
+		{"Negative", -3600, at(365 * 24 * time.Hour), false},
+		{"NoDate", 3600, sql.NullTime{}, false},
+		{"FutureDate", 3600, at(-time.Hour), false},
+		{"LongerThanMaxDuration", int(maxDuration + 1), at(365 * 24 * time.Hour), false},
+		{"MaxInt", math.MaxInt, at(365 * 24 * time.Hour), false},
+		{"MaxClamp", 31536000, at(366 * 24 * time.Hour), true},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			assert.Equal(t, c.due, syncDue(entity.Service{SyncInterval: c.interval, SyncDate: c.date}, now))
+		})
+	}
 }
 
 func TestSync_StartRetryLimit(t *testing.T) {
