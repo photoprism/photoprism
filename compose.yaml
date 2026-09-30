@@ -420,7 +420,7 @@ services:
 
   ## Dummy OIDC Identity Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:260427
+    image: photoprism/dummy-oidc:260930
     stop_grace_period: 5s
     labels:
       - "traefik.enable=true"
