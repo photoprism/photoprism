@@ -179,6 +179,26 @@ func TestModel_GetModel(t *testing.T) {
 			wantName:    "gpt-5-mini",
 			wantVersion: "",
 		},
+		{
+			name: "OpenAIKeepsQuantSuffix",
+			model: &Model{
+				Model:  "unsloth/Qwen3.5-9B-GGUF:Q4_K_M",
+				Engine: openai.EngineName,
+			},
+			wantModel:   "unsloth/Qwen3.5-9B-GGUF:Q4_K_M",
+			wantName:    "unsloth/Qwen3.5-9B-GGUF:Q4_K_M",
+			wantVersion: "",
+		},
+		{
+			name: "OpenAIKeepsFineTuneId",
+			model: &Model{
+				Engine:  openai.EngineName,
+				Service: Service{Model: "ft:gpt-4o-mini-2024-07-18:acme::A1b2C3d4"},
+			},
+			wantModel:   "ft:gpt-4o-mini-2024-07-18:acme::A1b2C3d4",
+			wantName:    "ft:gpt-4o-mini-2024-07-18:acme::A1b2C3d4",
+			wantVersion: "",
+		},
 	}
 
 	for _, tt := range tests {
