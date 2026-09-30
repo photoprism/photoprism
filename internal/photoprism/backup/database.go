@@ -481,7 +481,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		defer f.Close()
 	}
 
-	return restoreAndLog(cmd, f, password)
+	return restoreAndLog(cmd, restoreReader(c.DatabaseDriver(), f), password)
 }
 
 // restoreAndLog runs the restore command with its input read from r and logs the outcome.

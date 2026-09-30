@@ -186,6 +186,30 @@ func TestRunRestore_MariaDB(t *testing.T) {
 		assert.Equal(t, 2, failed.Count)
 		assert.Equal(t, []string{"error 1062 at line 3", "error 1286 at line 4"}, failed.Errors)
 	})
+	t.Run("DumpHeader", func(t *testing.T) {
+		// A dump turns off unique and foreign key checks and inserts each table in one transaction, so the
+		// restore keeps the rows of a table only if its input keeps unique checks on.
+		dump := dumpHeader(string(uniqueChecksOff), "\n") +
+			"CREATE TABLE t (id INT PRIMARY KEY, v VARCHAR(20), UNIQUE KEY (v)) ENGINE=InnoDB;\n" +
+			"SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;\n" +
+			"/*!40000 ALTER TABLE `t` DISABLE KEYS */;\n" +
+			"INSERT INTO t VALUES\n(1,'val-a'),\n(2,'val-b'),\n(3,'val-c');\n" +
+			"INSERT INTO t VALUES\n(1,'val-a'),\n(2,'val-b'),\n(3,'val-c');\n" +
+			"/*!40000 ALTER TABLE `t` ENABLE KEYS */;\n" +
+			"COMMIT;\nSET AUTOCOMMIT=@OLD_AUTOCOMMIT;\n" +
+			"/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;\n" +
+			"/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;\n"
+		admin(t, "DROP DATABASE IF EXISTS "+name+"; CREATE DATABASE "+name)
+		target := conn
+		target.Name = name
+		failed, restoreErr := runRestore(target.Cmd(mariadbRestoreArgs(bin)...), restoreReader(dsn.DriverMariaDB, strings.NewReader(dump)), conn.Password)
+		require.NoError(t, restoreErr)
+		assert.Equal(t, 1, failed.Count)
+		assert.Equal(t, []string{"error 1062 at line 14"}, failed.Errors)
+		out, cmdErr := conn.Cmd("-N", "-e", "SELECT COUNT(*) FROM "+name+".t").CombinedOutput()
+		require.NoError(t, cmdErr, string(out))
+		assert.Equal(t, "3", strings.TrimSpace(string(out)))
+	})
 	t.Run("LostConnection", func(t *testing.T) {
 		// Statements after a lost connection are reported as failed, although the client exits 0.
 		failed := restore(t, "CREATE TABLE t (id INT);\nINSERT INTO t VALUES (1);\nKILL CONNECTION_ID();\n"+
