@@ -6,9 +6,7 @@ import (
 	urlpkg "net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -56,7 +54,7 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 
 		if err != nil {
 			return false, err
-		} else if names := clusterDatabaseParamNames(dropped); len(names) > 0 {
+		} else if names := dsn.LoggableParamNames(dropped); len(names) > 0 {
 			event.SystemWarn([]string{"config", "cluster", "ignored %d unsupported database dsn parameters %s"}, len(dropped), clean.LogNames(names))
 		} else if len(dropped) > 0 {
 			event.SystemWarn([]string{"config", "cluster", "ignored %d unsupported database dsn parameters"}, len(dropped))
@@ -138,30 +136,8 @@ var clusterDatabaseParamRules = dsn.ParamRules{
 	"timeout":           dsn.ValidDuration,
 	"readTimeout":       dsn.ValidDuration,
 	"writeTimeout":      dsn.ValidDuration,
-	"maxAllowedPacket": func(v string) bool {
-		n, err := strconv.Atoi(v)
-		return err == nil && n >= 0 && n <= 1<<30 && v == strconv.Itoa(n)
-	},
-	"tls": func(v string) bool {
-		return dsn.ValidBool(v) || strings.EqualFold(v, "skip-verify") || strings.EqualFold(v, "preferred")
-	},
-}
-
-// clusterDatabaseParamNameRegex matches a DSN parameter name that may be logged.
-var clusterDatabaseParamNameRegex = regexp.MustCompile(`^[A-Za-z0-9_.-]{1,64}$`)
-
-// clusterDatabaseParamNames returns the names that look like DSN parameter names, so a query segment
-// without a name, such as a stray value, is counted but never logged.
-func clusterDatabaseParamNames(names []string) []string {
-	result := make([]string, 0, len(names))
-
-	for _, name := range names {
-		if clusterDatabaseParamNameRegex.MatchString(name) {
-			result = append(result, name)
-		}
-	}
-
-	return result
+	"maxAllowedPacket":  dsn.ValidPacketSize,
+	"tls":               dsn.ValidTLS,
 }
 
 // clusterDatabaseDSN validates a MariaDB DSN received from the Portal and returns it rebuilt from its

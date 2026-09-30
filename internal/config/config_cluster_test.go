@@ -714,12 +714,17 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.ConfigPath = t.TempDir()
 		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
 
+		hook := systemLogHook(t)
 		update := cluster.OptionsUpdate{}
 		update.SetDatabaseDriver("mysql")
-		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?option=value")
+		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?option=val-a&x%20val-b=1&stray-val-c")
 		wrote, err := c.SaveClusterOptionsUpdate(update)
 		require.NoError(t, err)
 		assert.True(t, wrote)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Contains(t, hook.LastEntry().Message, "ignored 3 unsupported database dsn parameters")
+		assert.Contains(t, hook.LastEntry().Message, "option")
+		assert.NotContains(t, hook.LastEntry().Message, "val-")
 
 		content, err := os.ReadFile(c.OptionsYaml())
 		require.NoError(t, err)
@@ -1302,16 +1307,5 @@ func TestConfig_DatabaseServerDSN(t *testing.T) {
 		c.options.DatabaseDSN = "user:secret@tcp(db.example.com:3307)/photoprism?parseTime=true"
 		assert.Equal(t, "db.example.com", c.DatabaseHost())
 		assert.Equal(t, 3307, c.DatabasePort())
-	})
-}
-
-// TestClusterDatabaseParamNames checks which dropped DSN parameter names may be logged.
-func TestClusterDatabaseParamNames(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		assert.Equal(t, []string{"option", "time_zone", "a.b-c"}, clusterDatabaseParamNames([]string{"option", "time_zone", "a.b-c"}))
-	})
-	t.Run("Filtered", func(t *testing.T) {
-		assert.Equal(t, []string{"option"}, clusterDatabaseParamNames([]string{"", "x, y", "option", "a b", strings.Repeat("a", 65)}))
-		assert.Empty(t, clusterDatabaseParamNames(nil))
 	})
 }

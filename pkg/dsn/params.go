@@ -2,6 +2,7 @@ package dsn
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -40,6 +41,23 @@ func FilterParams(query string, rules ParamRules) (params string, dropped []stri
 	}
 
 	return strings.Join(kept, "&"), dropped, nil
+}
+
+// paramNameRegex matches a DSN parameter name that may be logged.
+var paramNameRegex = regexp.MustCompile(`^[A-Za-z0-9_.-]{1,64}$`)
+
+// LoggableParamNames returns the names that look like DSN parameter names, so a query segment without
+// a name, such as a stray value, is counted but never logged.
+func LoggableParamNames(names []string) []string {
+	result := make([]string, 0, len(names))
+
+	for _, name := range names {
+		if paramNameRegex.MatchString(name) {
+			result = append(result, name)
+		}
+	}
+
+	return result
 }
 
 // MergeParams appends the parameters in defaults whose names params does not contain.
@@ -87,27 +105,4 @@ func HasParam(params, name string) bool {
 func Query(s string) string {
 	_, query, _ := strings.Cut(s[strings.LastIndex(s, "/")+1:], "?")
 	return query
-}
-
-// Utf8Params reports whether every charset and collation parameter in a DSN query names UTF-8, including
-// the character_set_* and collation_* session variables the driver sets for unknown parameters.
-func Utf8Params(query string) bool {
-	for param := range strings.SplitSeq(query, "&") {
-		key, value, _ := strings.Cut(param, "=")
-		key, value = strings.ToLower(key), strings.Trim(value, `'"`)
-
-		// Session variables may be named with a scope, e.g. "@@session.character_set_client".
-		switch {
-		case key == "charset" || strings.Contains(key, "character_set"):
-			if !ValidCharset(value) {
-				return false
-			}
-		case strings.Contains(key, "collation"):
-			if !ValidCollation(value) {
-				return false
-			}
-		}
-	}
-
-	return true
 }

@@ -83,6 +83,34 @@ func TestValidDuration(t *testing.T) {
 	})
 }
 
+// TestValidTLS checks the accepted tls parameter values.
+func TestValidTLS(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, v := range []string{"true", "false", "1", "0", "skip-verify", "Skip-Verify", "preferred", "PREFERRED"} {
+			assert.True(t, ValidTLS(v), v)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, v := range []string{"", "custom", "yes", "skip_verify", "true "} {
+			assert.False(t, ValidTLS(v), v)
+		}
+	})
+}
+
+// TestValidPacketSize checks the accepted maxAllowedPacket parameter values.
+func TestValidPacketSize(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, v := range []string{"0", "4194304", "1073741824"} {
+			assert.True(t, ValidPacketSize(v), v)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, v := range []string{"", "-1", "+4", "04", "1073741825", "4M", "1e6"} {
+			assert.False(t, ValidPacketSize(v), v)
+		}
+	})
+}
+
 // TestValidCharset checks charset DSN parameter values.
 func TestValidCharset(t *testing.T) {
 	for _, v := range []string{"utf8mb4", "utf8", "utf8mb3", "utf8mb4,utf8"} {

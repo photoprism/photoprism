@@ -96,6 +96,17 @@ func ValidDuration(v string) bool {
 	return err == nil && d > 0 && !strings.ContainsAny(v, "+-")
 }
 
+// ValidTLS reports whether v is a tls DSN parameter value that needs no custom TLS configuration.
+func ValidTLS(v string) bool {
+	return ValidBool(v) || strings.EqualFold(v, "skip-verify") || strings.EqualFold(v, "preferred")
+}
+
+// ValidPacketSize reports whether v is a maxAllowedPacket DSN parameter value of up to 1 GiB.
+func ValidPacketSize(v string) bool {
+	n, err := strconv.Atoi(v)
+	return err == nil && n >= 0 && n <= 1<<30 && v == strconv.Itoa(n)
+}
+
 // ValidCharset reports whether v is a charset DSN parameter value that names UTF-8 character sets only.
 func ValidCharset(v string) bool {
 	return charsetPattern.MatchString(v)

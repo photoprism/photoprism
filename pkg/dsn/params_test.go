@@ -1,6 +1,7 @@
 package dsn
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -83,22 +84,13 @@ func TestQuery(t *testing.T) {
 	assert.Equal(t, "", Query(""))
 }
 
-// TestUtf8Params checks the charset and collation parameters of a DSN query.
-func TestUtf8Params(t *testing.T) {
-	assert.True(t, Utf8Params(""))
-	assert.True(t, Utf8Params("charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"))
-	assert.False(t, Utf8Params("charset=latin1"))
-	assert.False(t, Utf8Params("collation=latin1_swedish_ci"))
-	assert.False(t, Utf8Params("charset=utf8mb4&charset=latin1"))
-	assert.False(t, Utf8Params("charset"))
-	assert.False(t, Utf8Params("character_set_client=gbk"))
-	assert.False(t, Utf8Params("collation_connection=gbk_chinese_ci"))
-	assert.False(t, Utf8Params("character_set_results='latin1'"))
-	assert.True(t, Utf8Params("character_set_client=utf8mb4&collation_connection='utf8mb4_unicode_ci'"))
-	assert.False(t, Utf8Params("CHARACTER_SET_CLIENT=gbk"))
-	assert.False(t, Utf8Params("@@character_set_client=gbk"))
-	assert.False(t, Utf8Params("@@SESSION.character_set_client=gbk"))
-	assert.False(t, Utf8Params("@@local.collation_connection=gbk_bin"))
-	assert.False(t, Utf8Params("SESSION character_set_client=gbk"))
-	assert.False(t, Utf8Params("Collation_Connection=latin1_swedish_ci"))
+// TestLoggableParamNames checks which dropped parameter names may be logged.
+func TestLoggableParamNames(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, []string{"option", "time_zone", "a.b-c"}, LoggableParamNames([]string{"option", "time_zone", "a.b-c"}))
+	})
+	t.Run("NotLogged", func(t *testing.T) {
+		assert.Equal(t, []string{"option"}, LoggableParamNames([]string{"", "x, y", "option", "a b", "@@session.x", strings.Repeat("a", 65)}))
+		assert.Empty(t, LoggableParamNames(nil))
+	})
 }

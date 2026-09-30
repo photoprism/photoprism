@@ -4,8 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strings"
 
+	"github.com/go-sql-driver/mysql"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -133,33 +137,59 @@ func applyProxySQL(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-// normalizeProxyDSN adds interpolateParams to ProxySQL admin DSNs when missing so prepared statements work,
-// together with charset=utf8mb4 if no charset or collation is set. A charset or collation other than UTF-8
-// is refused.
+// proxyParamRules lists the DSN parameters accepted for the ProxySQL admin interface and checks their
+// values. The character set is limited to UTF-8.
+var proxyParamRules = dsn.ParamRules{
+	"charset":           dsn.ValidCharset,
+	"collation":         dsn.ValidCollation,
+	"parseTime":         dsn.ValidBool,
+	"interpolateParams": dsn.ValidBool,
+	"timeout":           dsn.ValidDuration,
+	"readTimeout":       dsn.ValidDuration,
+	"writeTimeout":      dsn.ValidDuration,
+	"maxAllowedPacket":  dsn.ValidPacketSize,
+	"tls":               dsn.ValidTLS,
+}
+
+// normalizeProxyDSN returns a ProxySQL admin DSN with the accepted parameters only, adding
+// interpolateParams=true so prepared statements work, and charset=utf8mb4 if no charset or collation is set.
 func normalizeProxyDSN(proxyDsn string) (string, error) {
+	if proxyDsn == "" {
+		return "", nil
+	} else if !validProxyDSN(proxyDsn) {
+		return "", errors.New("proxysql: invalid admin dsn")
+	}
+
 	query := dsn.Query(proxyDsn)
+	params, dropped, err := dsn.FilterParams(query, proxyParamRules)
 
-	if !dsn.Utf8Params(query) {
-		return "", errors.New("proxysql: dsn must use a UTF-8 character set")
-	} else if proxyDsn == "" || dsn.HasParam(query, "interpolateParams") {
-		return proxyDsn, nil
+	if err != nil {
+		return "", fmt.Errorf("proxysql: %w", err)
+	} else if names := dsn.LoggableParamNames(dropped); len(names) > 0 {
+		log.Warnf("proxysql: ignored %d unsupported admin dsn parameters %s", len(dropped), clean.LogNames(names))
+	} else if len(dropped) > 0 {
+		log.Warnf("proxysql: ignored %d unsupported admin dsn parameters", len(dropped))
 	}
 
-	sep := "?"
+	defaults := "charset=utf8mb4&interpolateParams=true"
 
-	if strings.Contains(proxyDsn[strings.LastIndex(proxyDsn, "/")+1:], "?") {
-		if query == "" || strings.HasSuffix(query, "&") {
-			sep = ""
-		} else {
-			sep = "&"
+	if dsn.HasParam(params, "charset") || dsn.HasParam(params, "collation") {
+		defaults = "interpolateParams=true"
+	}
+
+	return strings.TrimSuffix(proxyDsn[:len(proxyDsn)-len(query)], "?") + "?" + dsn.MergeParams(params, defaults), nil
+}
+
+// validProxyDSN reports whether the MySQL driver can parse a DSN, including one with a parameter it
+// refuses by panicking.
+func validProxyDSN(s string) (valid bool) {
+	defer func() {
+		if recover() != nil {
+			valid = false
 		}
-	}
+	}()
 
-	params := "interpolateParams=true"
+	_, err := mysql.ParseDSN(s)
 
-	if !dsn.HasParam(query, "charset") && !dsn.HasParam(query, "collation") {
-		params = "charset=utf8mb4&" + params
-	}
-
-	return proxyDsn + sep + params, nil
+	return err == nil
 }
