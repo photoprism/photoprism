@@ -177,10 +177,17 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Number of remote request retry attempts.
-	if m.RetryLimit < -1 {
+	if m.RetryLimit < -1 || m.RetryLimit == 0 {
 		m.RetryLimit = -1 // Disabled.
 	} else if m.RetryLimit > 999 {
 		m.RetryLimit = 999 // 999 retries max.
+	}
+
+	// Automatic sync interval in seconds, where 0 means never.
+	if m.SyncInterval < 0 {
+		m.SyncInterval = 0
+	} else if m.SyncInterval > 31536000 {
+		m.SyncInterval = 31536000 // One year max.
 	}
 
 	// Refresh after performing changes.

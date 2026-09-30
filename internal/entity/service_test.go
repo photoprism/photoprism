@@ -100,6 +100,37 @@ func TestService_SaveForm(t *testing.T) {
 		assert.Equal(t, "NewOwner", model.AccOwner)
 		assert.Equal(t, "new.com", model.AccURL)
 	})
+	t.Run("Limits", func(t *testing.T) {
+		for _, c := range []struct {
+			name                    string
+			interval, retry         int
+			wantInterval, wantRetry int
+		}{
+			{"Default", 86400, 3, 86400, 3},
+			{"NegativeInterval", -5, 3, 0, 3},
+			{"MaxInterval", 31536001, 3, 31536000, 3},
+			{"OneWeek", 604800, 3, 604800, 3},
+			{"NeverInterval", 0, 3, 0, 3},
+			{"ZeroRetryLimit", 3600, 0, 3600, -1},
+			{"NoRetryLimit", 3600, -1, 3600, -1},
+			{"NegativeRetryLimit", 3600, -5, 3600, -1},
+			{"MaxRetryLimit", 3600, 1000, 3600, 999},
+		} {
+			t.Run(c.name, func(t *testing.T) {
+				model, err := AddService(form.Service{AccName: "Limits", AccURL: "test.com", AccType: "webdav", SyncInterval: c.interval, RetryLimit: c.retry})
+				if err != nil {
+					t.Fatal(err)
+				}
+				t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+				var m Service
+				if err = Db().First(&m, model.ID).Error; err != nil {
+					t.Fatal(err)
+				}
+				assert.Equal(t, c.wantInterval, m.SyncInterval)
+				assert.Equal(t, c.wantRetry, m.RetryLimit)
+			})
+		}
+	})
 	t.Run("SyncYaml", func(t *testing.T) {
 		stored := func(t *testing.T, id uint) int {
 			var m Service
@@ -396,6 +427,11 @@ func TestService_LogErr(t *testing.T) {
 					t.Fatal(err)
 				}
 				t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+				// SaveForm stores 0 as -1, so the limit is set directly.
+				if err = model.Update("retry_limit", c.limit); err != nil {
+					t.Fatal(err)
+				}
+				assert.Equal(t, c.limit, model.RetryLimit)
 				// Changed in the database only, so a full-row save would revert it.
 				if err = Db().Model(&Service{ID: model.ID}).UpdateColumn("acc_name", "LogErrChanged").Error; err != nil {
 					t.Fatal(err)
