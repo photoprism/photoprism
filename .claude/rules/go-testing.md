@@ -45,7 +45,9 @@ shape it does not cover.
 LDAP exists only in Pro and Portal, so these tests belong in `pro/internal/auth`,
 `portal/internal/auth` and their `ldap` subpackages. Gate on dialing the service and skip when
 it is absent rather than on an env var - `ldapTestUri` in `pro/internal/auth/auth_test.go` is
-the pattern, and its skip message names the service so the next reader starts it. `Auth`
+the pattern, and its skip message names the service so the next reader starts it. A case that
+needs an entry or attribute added to `.ldap.cfg` calls `skipUnlessDirectory`, since a running
+service keeps the previous file until `make dummy-ldap` recreates it. `Auth`
 resolves its config through `get.Config()` behind a `sync.Once`, so a test needs
 `get.SetConfig(c)` in `TestMain` and must restore `conf` and `opt` if it overrides them.
 
