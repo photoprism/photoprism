@@ -52,6 +52,29 @@ func fileMode(t *testing.T, fileName string) os.FileMode {
 	return info.Mode().Perm()
 }
 
+// asOptionsUser makes the options file helpers see a non-root process user that owns the files the test
+// creates if the tests run as root, so tests expecting a restricted file also pass as root. The stand-in
+// user ID is negative, so no real file owner can match it.
+func asOptionsUser(t *testing.T) {
+	t.Helper()
+
+	if os.Geteuid() != 0 {
+		return
+	}
+
+	const uid = -1
+	prevProcessUid, prevFileUid := optionsProcessUid, optionsFileUid
+	optionsProcessUid = func() int { return uid }
+	optionsFileUid = func(info os.FileInfo) (int, bool) {
+		if owner, known := prevFileUid(info); !known || owner != 0 {
+			return owner, known
+		}
+
+		return uid, true
+	}
+	t.Cleanup(func() { optionsProcessUid, optionsFileUid = prevProcessUid, prevFileUid })
+}
+
 // newOptionsModeConfig returns a config that writes options.yml to a temporary directory.
 func newOptionsModeConfig(t *testing.T) *Config {
 	t.Helper()
@@ -95,6 +118,7 @@ func TestOptionsFileMode(t *testing.T) {
 
 // TestRestrictOptionsFile checks when access to an options file is restricted.
 func TestRestrictOptionsFile(t *testing.T) {
+	asOptionsUser(t)
 	restrict := func(t *testing.T, fileName string) {
 		f, err := os.Open(fileName) //nolint:gosec // test file in a temporary directory
 		require.NoError(t, err)
@@ -126,7 +150,7 @@ func TestRestrictOptionsFile(t *testing.T) {
 	t.Run("OtherOwner", func(t *testing.T) {
 		hook := systemLogHook(t)
 		previous := optionsFileUid
-		optionsFileUid = func(os.FileInfo) (int, bool) { return os.Geteuid() + 1, true }
+		optionsFileUid = func(os.FileInfo) (int, bool) { return optionsProcessUid() + 1, true }
 		t.Cleanup(func() { optionsFileUid = previous })
 		fileName := newFile(t, 0o664)
 		restrict(t, fileName)
@@ -160,6 +184,7 @@ func TestRestrictOptionsFile(t *testing.T) {
 
 // TestConfig_WriteOptionsYAMLMode checks the mode of options.yml after writes with and without credentials.
 func TestConfig_WriteOptionsYAMLMode(t *testing.T) {
+	asOptionsUser(t)
 	t.Run("NewFileWithCredential", func(t *testing.T) {
 		for _, mask := range []int{0o002, 0o022} {
 			setUmask(t, mask)
@@ -246,6 +271,7 @@ func TestConfig_WriteOptionsYAMLMode(t *testing.T) {
 
 // TestWriteOptionsFile checks that options files are written in place with the expected mode.
 func TestWriteOptionsFile(t *testing.T) {
+	asOptionsUser(t)
 	t.Run("RestrictedBeforeWrite", func(t *testing.T) {
 		// The mode is already restricted when the content is written.
 		fileName := filepath.Join(t.TempDir(), "options.yml")
@@ -294,6 +320,7 @@ func TestUrlHasCredential(t *testing.T) {
 
 // TestRestrictOptionsFileWithCredential checks that an existing options file with a credential is restricted.
 func TestRestrictOptionsFileWithCredential(t *testing.T) {
+	asOptionsUser(t)
 	write := func(t *testing.T, content string) string {
 		fileName := filepath.Join(t.TempDir(), "options.yml")
 		require.NoError(t, os.WriteFile(fileName, []byte(content), 0o664)) //nolint:gosec // mode under test
@@ -337,6 +364,7 @@ func TestRestrictOptionsFileWithCredential(t *testing.T) {
 
 // TestRestrictOptionsFile_SpecialBits checks that restricting access keeps the setgid bit.
 func TestRestrictOptionsFile_SpecialBits(t *testing.T) {
+	asOptionsUser(t)
 	fileName := filepath.Join(t.TempDir(), "options.yml")
 	require.NoError(t, os.WriteFile(fileName, []byte("DatabasePassword: secret\n"), 0o664)) //nolint:gosec // mode under test
 	require.NoError(t, os.Chmod(fileName, 0o664|os.ModeSetgid))                             //nolint:gosec // mode under test
@@ -351,6 +379,7 @@ func TestRestrictOptionsFile_SpecialBits(t *testing.T) {
 
 // TestRestrictOptionsFile_IgnoredChmod checks the warning when a filesystem accepts a mode change without applying it.
 func TestRestrictOptionsFile_IgnoredChmod(t *testing.T) {
+	asOptionsUser(t)
 	hook := systemLogHook(t)
 	previous := chmodOptionsFile
 	chmodOptionsFile = func(*os.File, os.FileMode) error { return nil }
@@ -388,11 +417,25 @@ func TestOptionsFile_Root(t *testing.T) {
 		restrictOptionsFileWithCredential(fileName)
 		assert.Equal(t, os.FileMode(0o664), fileMode(t, fileName))
 	})
+	t.Run("RestrictOptionsFile", func(t *testing.T) {
+		prevFileUid := optionsFileUid
+		optionsFileUid = func(os.FileInfo) (int, bool) { return 0, true }
+		t.Cleanup(func() { optionsFileUid = prevFileUid })
+		fileName := filepath.Join(t.TempDir(), "options.yml")
+		require.NoError(t, os.WriteFile(fileName, []byte("DatabasePassword: x\n"), 0o664)) //nolint:gosec // mode under test
+		require.NoError(t, os.Chmod(fileName, 0o664))                                      //nolint:gosec // mode under test
+		f, err := os.Open(fileName)                                                        //nolint:gosec // test file in a temporary directory
+		require.NoError(t, err)
+		restrictOptionsFile(f, fileName)
+		require.NoError(t, f.Close())
+		assert.Equal(t, os.FileMode(0o664), fileMode(t, fileName))
+	})
 	assert.Empty(t, hook.AllEntries())
 }
 
 // TestRestrictOptionsFileWithCredential_Symlink checks that loading the options leaves a symbolic link, e.g. a ConfigMap, as it is.
 func TestRestrictOptionsFileWithCredential_Symlink(t *testing.T) {
+	asOptionsUser(t)
 	dir := t.TempDir()
 	target := filepath.Join(dir, "target.yml")
 	require.NoError(t, os.WriteFile(target, []byte("DatabasePassword: secret\n"), 0o664)) //nolint:gosec // mode under test
