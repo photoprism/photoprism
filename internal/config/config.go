@@ -192,7 +192,7 @@ func NewConfig(ctx *cli.Context) *Config {
 
 		switch {
 		case err != nil:
-			event.SystemWarn([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
+			event.SystemError([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
 		case c.env == EnvDevelop:
 			// Reduce the log level to minimize noise in the test logs.
 			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))

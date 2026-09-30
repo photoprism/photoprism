@@ -206,6 +206,8 @@ var (
 	errOptionsFileType = errors.New("not a regular file")
 	// errOptionsFileSize is returned for an options file larger than optionsFileMaxBytes.
 	errOptionsFileSize = errors.New("file too large")
+	// ErrOptionsTooLarge is returned for options that would make the file larger than optionsFileMaxBytes.
+	ErrOptionsTooLarge = errors.New("options too large")
 )
 
 // openOptionsFile opens an options file that is missing or a regular file, so a special file such as a
@@ -267,6 +269,10 @@ func optionsFileMode(credential bool) os.FileMode {
 // writeOptionsFile writes options in place, so an existing file keeps its owner, group, and inode. If they
 // contain a credential, access is restricted before the content is replaced, unless the process runs as root.
 func writeOptionsFile(fileName string, data []byte, credential bool) error {
+	if len(data) > optionsFileMaxBytes {
+		return &iofs.PathError{Op: "write", Path: fileName, Err: ErrOptionsTooLarge}
+	}
+
 	restrict := credential && optionsProcessUid() != 0
 
 	f, err := openOptionsFile(fileName, os.O_WRONLY|os.O_CREATE, optionsFileMode(restrict))
