@@ -635,9 +635,23 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
 
-		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
-		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
-		assert.NoError(t, os.Chmod(secretDir, 0o500)) //nolint:gosec // making directory intentionally non-writable for fallback test
+		// A directory where the secret file belongs makes writing it fail, also for root.
+		require.NoError(t, os.MkdirAll(c.NodeClientSecretFile(), fs.ModeDir))
+
+		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
+		assert.Error(t, err)
+		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	})
+	t.Run("NodeClientSecretFallbackOnMkdir", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		// A file where the secrets directory belongs makes creating it fail, also for root.
+		secretDir := filepath.Dir(c.NodeClientSecretFile())
+		require.NoError(t, os.MkdirAll(filepath.Dir(secretDir), fs.ModeDir))
+		require.NoError(t, os.WriteFile(secretDir, nil, fs.ModeFile))
 
 		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
 		assert.Error(t, err)
@@ -809,14 +823,28 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
 
-		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
-		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
-		assert.NoError(t, os.Chmod(secretDir, 0o500)) //nolint:gosec // making directory intentionally non-writable for fallback test
+		// A directory where the token file belongs makes writing it fail, also for root.
+		require.NoError(t, os.MkdirAll(c.JoinTokenFile(), fs.ModeDir))
 
 		_, _, err := c.SaveJoinToken("")
 		assert.Error(t, err)
 		token := c.JoinToken()
 		assert.True(t, rnd.IsJoinToken(token, false))
+	})
+	t.Run("SaveJoinTokenFallbackOnMkdir", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		// A file where the secrets directory belongs makes creating it fail, also for root.
+		secretDir := filepath.Dir(c.JoinTokenFile())
+		require.NoError(t, os.MkdirAll(filepath.Dir(secretDir), fs.ModeDir))
+		require.NoError(t, os.WriteFile(secretDir, nil, fs.ModeFile))
+
+		_, _, err := c.SaveJoinToken("")
+		assert.Error(t, err)
+		assert.True(t, rnd.IsJoinToken(c.JoinToken(), false))
 	})
 	t.Run("NodeClientSecretFile", func(t *testing.T) {
 		tempCfg := t.TempDir()
