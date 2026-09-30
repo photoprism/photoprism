@@ -457,7 +457,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	}
 
 	// The command is prepared before any table is dropped.
-	cmd, password, err := restoreCmd(c)
+	restore, err := prepareRestore(c)
 
 	if err != nil {
 		return err
@@ -481,21 +481,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		defer f.Close()
 	}
 
-	return restoreAndLog(cmd, restoreReader(c.DatabaseDriver(), f), password)
-}
-
-// restoreAndLog runs the restore command with its input read from r and logs the outcome.
-func restoreAndLog(cmd *exec.Cmd, r io.Reader, password string) error {
-	failed, err := runRestore(cmd, r, password)
-
-	if err != nil {
-		log.Errorf("restore: failed to restore index database")
-		return err
-	}
-
-	logRestoreResult(failed)
-
-	return nil
+	return restore.run(f)
 }
 
 // logRestoreResult logs the outcome of a restore that completed, with a warning if statements failed.

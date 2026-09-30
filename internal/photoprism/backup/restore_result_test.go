@@ -45,17 +45,17 @@ func TestRestoreFailures_Summary(t *testing.T) {
 	assert.Equal(t, "3 statements failed", restoreFailures{Count: 3}.Summary())
 }
 
-// TestRestoreAndLog checks the outcome a restore logs.
-func TestRestoreAndLog(t *testing.T) {
+// TestPreparedRestore_RunLog checks the outcome a restore logs.
+func TestPreparedRestore_RunLog(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		hook := captureLog(t)
-		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", "cat >/dev/null"), strings.NewReader("SELECT 1;\n"), ""))
+		require.NoError(t, preparedRestore{cmd: exec.Command("sh", "-c", "cat >/dev/null")}.run(strings.NewReader("SELECT 1;\n")))
 		assert.Contains(t, logMessages(hook), "restore: index database successfully restored")
 	})
 	t.Run("FailedStatements", func(t *testing.T) {
 		hook := captureLog(t)
 		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; cat >/dev/null`
-		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), ""))
+		require.NoError(t, preparedRestore{cmd: exec.Command("sh", "-c", script)}.run(strings.NewReader("")))
 		assert.Contains(t, logMessages(hook), "restore: index database restored, but 1 statement failed, so some rows may be missing (error 1062 at line 4)")
 		assert.NotContains(t, logMessages(hook), "restore: index database successfully restored")
 		for _, entry := range hook.AllEntries() {
@@ -67,7 +67,7 @@ func TestRestoreAndLog(t *testing.T) {
 	t.Run("WarningsBeforeOutputOnly", func(t *testing.T) {
 		hook := captureLog(t)
 		script := `printf '%s\n' "WARNING: insecure" "ERROR 1062 (23000) at line 4: Duplicate entry 'x" "WARNING: val-a' for key 'v'" >&2; cat >/dev/null`
-		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), ""))
+		require.NoError(t, preparedRestore{cmd: exec.Command("sh", "-c", script)}.run(strings.NewReader("")))
 		assert.Contains(t, logMessages(hook), "restore: insecure")
 		for _, entry := range hook.AllEntries() {
 			if entry.Level != logrus.TraceLevel {
@@ -77,13 +77,13 @@ func TestRestoreAndLog(t *testing.T) {
 	})
 	t.Run("FailedWithStatements", func(t *testing.T) {
 		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry" "ERROR 2013 (HY000): Lost connection" >&2; cat >/dev/null; exit 1`
-		err := restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		err := preparedRestore{cmd: exec.Command("sh", "-c", script)}.run(strings.NewReader(""))
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "ERROR 2013 (HY000): Lost connection; 1 statement failed (error 1062 at line 4)")
 	})
 	t.Run("Failed", func(t *testing.T) {
 		hook := captureLog(t)
-		require.Error(t, restoreAndLog(exec.Command("sh", "-c", "echo 'ERROR 2002 (HY000): Can not connect' >&2; exit 1"), strings.NewReader(""), ""))
+		require.Error(t, preparedRestore{cmd: exec.Command("sh", "-c", "echo 'ERROR 2002 (HY000): Can not connect' >&2; exit 1")}.run(strings.NewReader("")))
 		assert.Contains(t, logMessages(hook), "restore: failed to restore index database")
 	})
 }
