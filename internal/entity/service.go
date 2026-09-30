@@ -109,13 +109,13 @@ func (m *Service) LogErr(err error) error {
 	m.AccError = ServiceError(err)
 	m.AccErrors++
 
-	// Disable sharing when retry limit is reached.
+	// Disable sharing when the retry limit is exceeded.
 	if m.RetryLimit > 0 && m.AccErrors > m.RetryLimit {
 		m.AccShare = false
 	}
 
 	// Update fields in database.
-	return m.Updates(Service{AccError: m.AccError, AccErrors: m.AccErrors, AccShare: m.AccShare})
+	return m.Updates(Values{"acc_error": m.AccError, "acc_errors": m.AccErrors, "acc_share": m.AccShare})
 }
 
 // ResetErrors resets the service and related file error messages and counters.

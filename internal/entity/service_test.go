@@ -372,6 +372,58 @@ func TestService_LogErr(t *testing.T) {
 		assert.Equal(t, 0, model.AccErrors)
 		assert.Equal(t, "", model.AccError)
 	})
+	t.Run("RetryLimit", func(t *testing.T) {
+		stored := func(t *testing.T, id uint) Service {
+			var m Service
+			if err := Db().First(&m, id).Error; err != nil {
+				t.Fatal(err)
+			}
+			return m
+		}
+		for _, c := range []struct {
+			name        string
+			limit, errs int
+			share       bool
+		}{
+			{"AtLimit", 2, 2, true},
+			{"AboveLimit", 2, 3, false},
+			{"ZeroLimit", 0, 5, true},
+			{"NoLimit", -1, 5, true},
+		} {
+			t.Run(c.name, func(t *testing.T) {
+				model, err := AddService(form.Service{AccName: "LogErrLimit", AccURL: "test.com", AccType: "webdav", AccShare: true, RetryLimit: c.limit})
+				if err != nil {
+					t.Fatal(err)
+				}
+				t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+				// Changed in the database only, so a full-row save would revert it.
+				if err = Db().Model(&Service{ID: model.ID}).UpdateColumn("acc_name", "LogErrChanged").Error; err != nil {
+					t.Fatal(err)
+				}
+				for i := 0; i < c.errs; i++ {
+					if err = model.LogErr(errors.New("boom")); err != nil {
+						t.Fatal(err)
+					}
+				}
+				m := stored(t, model.ID)
+				assert.Equal(t, "LogErrChanged", m.AccName)
+				assert.Equal(t, c.errs, m.AccErrors)
+				assert.Equal(t, "boom", m.AccError)
+				assert.Equal(t, c.share, m.AccShare)
+				// A success resets the counters and leaves the stored share flag alone.
+				if err = Db().Model(&Service{ID: model.ID}).UpdateColumn("acc_share", !c.share).Error; err != nil {
+					t.Fatal(err)
+				}
+				if err = model.LogErr(nil); err != nil {
+					t.Fatal(err)
+				}
+				m = stored(t, model.ID)
+				assert.Equal(t, 0, m.AccErrors)
+				assert.Equal(t, "", m.AccError)
+				assert.Equal(t, !c.share, m.AccShare)
+			})
+		}
+	})
 }
 
 func TestService_Create(t *testing.T) {
