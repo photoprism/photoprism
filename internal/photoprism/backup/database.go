@@ -2,6 +2,7 @@ package backup
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -100,7 +101,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		conn := newMariadbConn(c, c.MariadbDumpBin())
 		logDatabaseSsl(conn, "backup")
-		warnNonInnodbTables(c.Db(), conn.Name)
+		warnNonInnodbTables(c.DbIfConnected(), conn.Name)
 		password, cmd = conn.Password, conn.Cmd(mariadbDumpArgs()...)
 	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
@@ -132,11 +133,22 @@ func mariadbDumpArgs() []string {
 	return []string{"--single-transaction", "--skip-add-locks", "--skip-no-autocommit"}
 }
 
+// engineCheckTimeout bounds the query that checks the storage engine of the tables before a dump.
+var engineCheckTimeout = 5 * time.Second
+
 // warnNonInnodbTables logs a warning naming the tables of the database that do not use InnoDB, as the
-// snapshot a dump is created from does not cover them.
+// snapshot a dump is created from does not cover them. The dump does not depend on the check.
 func warnNonInnodbTables(db *gorm.DB, name string) {
-	rows, err := db.Raw("SELECT table_name FROM information_schema.tables WHERE table_schema = ? "+
-		"AND table_type <> 'VIEW' AND (engine IS NULL OR engine <> 'InnoDB') ORDER BY table_name", name).Rows()
+	if db == nil {
+		log.Debugf("backup: skipped checking the storage engine of the database tables, as the database is not connected")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), engineCheckTimeout)
+	defer cancel()
+
+	rows, err := db.DB().QueryContext(ctx, "SELECT table_name FROM information_schema.tables WHERE table_schema = ? "+
+		"AND table_type <> 'VIEW' AND (engine IS NULL OR engine <> 'InnoDB') ORDER BY table_name", name)
 
 	if err != nil {
 		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))

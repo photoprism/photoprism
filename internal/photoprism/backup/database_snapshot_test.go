@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -15,6 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -55,6 +57,13 @@ func TestMariadbDumpArgs(t *testing.T) {
 }
 
 func TestWarnNonInnodbTables(t *testing.T) {
+	t.Run("NotConnected", func(t *testing.T) {
+		hook := captureLog(t)
+		warnNonInnodbTables(nil, "photoprism")
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.DebugLevel, hook.LastEntry().Level)
+		assert.Contains(t, hook.LastEntry().Message, "as the database is not connected")
+	})
 	t.Run("QueryFailed", func(t *testing.T) {
 		// A database without information_schema cannot be checked.
 		db, err := gorm.Open(dsn.DriverSQLite3, ":memory:")
@@ -84,6 +93,15 @@ func TestWarnNonInnodbTables(t *testing.T) {
 		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
 		assert.Equal(t, "backup: found 2 tables without InnoDB, which the consistent snapshot does not cover (a, u)",
 			hook.LastEntry().Message)
+
+		// A check that does not finish in time is reported and skipped.
+		timeout := engineCheckTimeout
+		engineCheckTimeout = time.Nanosecond
+		t.Cleanup(func() { engineCheckTimeout = timeout })
+		warnNonInnodbTables(db, name)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+		assert.Equal(t, "backup: failed to check the storage engine of the database tables (context deadline exceeded)", hook.LastEntry().Message)
+		engineCheckTimeout = timeout
 
 		// The warning names the first tables only.
 		for i := 0; i < clean.LogNamesLimit+2; i++ {
@@ -162,4 +180,29 @@ func TestMariadbDump_LimitedUser(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestDatabase_NotConnected checks that a MariaDB backup without a database connection skips the storage
+// engine check instead of exiting, and reports the dump error.
+func TestDatabase_NotConnected(t *testing.T) {
+	if _, err := exec.LookPath("mariadb-dump"); err != nil {
+		t.Skip("mariadb-dump client not found")
+	}
+
+	c := config.NewMinimalTestConfig(t.TempDir())
+	c.Options().DatabaseDriver = dsn.DriverMySQL
+	c.Options().DatabaseDSN = ""
+	c.Options().DatabaseServer = "127.0.0.1:1"
+	require.Nil(t, c.DbIfConnected())
+
+	orig := get.Config()
+	get.SetConfig(c)
+	t.Cleanup(func() { get.SetConfig(orig) })
+
+	hook := captureLog(t)
+	backupPath := t.TempDir()
+
+	require.Error(t, Database(backupPath, filepath.Join(backupPath, "backup.sql"), false, true, 0))
+	assert.Contains(t, logMessages(hook), "backup: skipped checking the storage engine of the database tables, as the database is not connected")
+	assert.NoFileExists(t, filepath.Join(backupPath, "backup.sql"))
 }
