@@ -3,7 +3,10 @@ package workers
 import (
 	"database/sql"
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
+	"sync"
 	"testing"
 	"time"
 
@@ -256,6 +259,44 @@ func TestSync_StartRetryLimit(t *testing.T) {
 		storedOther := storedSyncAccount(t, other.ID)
 		assert.True(t, storedOther.AccSync)
 		assert.Equal(t, entity.SyncStatusRefresh, storedOther.SyncStatus)
+	})
+	t.Run("AboveLimitKeepsChanges", func(t *testing.T) {
+		// The remote of the account processed first changes the second one in the database after
+		// Start() has loaded it, so the switch-off must write its own column only.
+		var other *entity.Service
+		var once sync.Once
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			once.Do(func() {
+				assert.NoError(t, entity.Db().Model(&entity.Service{ID: other.ID}).
+					Updates(entity.Values{"sync_path": "/changed", "acc_share": true}).Error)
+			})
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}))
+		t.Cleanup(server.Close)
+
+		first := newSyncAccount(t, func(a *entity.Service) {
+			a.AccName = "Sync Start A " + rnd.Base36(8)
+			a.AccURL = server.URL + "/"
+			a.AccTimeout = "low"
+			a.SyncStatus = entity.SyncStatusRefresh
+		})
+		other = newSyncAccount(t, func(a *entity.Service) {
+			withErrors(3, 4)(a)
+			a.AccName = "Sync Start B " + rnd.Base36(8)
+			a.SyncPath = "/"
+		})
+
+		require.NoError(t, worker.Start())
+
+		assert.Equal(t, 1, storedSyncAccount(t, first.ID).AccErrors)
+
+		stored := storedSyncAccount(t, other.ID)
+		assert.False(t, stored.AccSync)
+		assert.True(t, stored.AccShare)
+		assert.Equal(t, "/changed", stored.SyncPath)
+		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
+		assert.Equal(t, 4, stored.AccErrors)
 	})
 	t.Run("HigherLimit", func(t *testing.T) {
 		a := newSyncAccount(t, withErrors(5, 4))

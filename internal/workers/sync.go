@@ -68,9 +68,7 @@ func (w *Sync) Start() (err error) {
 
 		// Failed too often?
 		if a.RetryLimit > 0 && a.AccErrors > a.RetryLimit {
-			a.AccSync = false
-
-			if err := entity.Db().Save(&a).Error; err != nil {
+			if err := a.Update("acc_sync", false); err != nil {
 				w.logErr(err)
 			} else {
 				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
