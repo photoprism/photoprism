@@ -15,12 +15,15 @@ import (
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -219,6 +222,9 @@ const (
 // accounts they create even when registration renamed them.
 var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009"}
 
+// oidcUnreachableUri is an https provider address that refuses connections, so discovery fails.
+const oidcUnreachableUri = "https://127.0.0.1:1"
+
 // useOidcTestConfig configures dummy-oidc as the identity provider for the duration of a test,
 // and skips the test if the provider does not announce its https issuer.
 func useOidcTestConfig(t *testing.T) *config.Config {
@@ -241,6 +247,18 @@ func useOidcTestConfig(t *testing.T) *config.Config {
 	if decodeErr != nil || discovery.Issuer != oidcTestIssuer {
 		t.Skipf("oidc: %s announces the issuer %q, restart dummy-oidc with image 260930 or later", oidcTestIssuer, discovery.Issuer)
 	}
+
+	conf := useOidcOptions(t, oidcTestIssuer)
+
+	deleteOidcTestUsers(t)
+	t.Cleanup(func() { deleteOidcTestUsers(t) })
+
+	return conf
+}
+
+// useOidcOptions enables OIDC with the specified provider URI for the duration of a test.
+func useOidcOptions(t *testing.T, providerUri string) *config.Config {
+	t.Helper()
 
 	conf := get.Config()
 	opt := conf.Options()
@@ -267,7 +285,7 @@ func useOidcTestConfig(t *testing.T) *config.Config {
 
 	conf.SetAuthMode(config.AuthModePasswd)
 	opt.SiteUrl = "https://app.localssl.dev/"
-	opt.OIDCUri = oidcTestIssuer
+	opt.OIDCUri = providerUri
 	opt.OIDCClient = "photoprism-develop"
 	opt.OIDCSecret = "9d8351a0-ca01-4556-9c37-85eb634869b9"
 	opt.OIDCRegister = true
@@ -280,9 +298,6 @@ func useOidcTestConfig(t *testing.T) *config.Config {
 
 	// Clear the cached client, so it is created for the options above.
 	get.SetConfig(conf)
-
-	deleteOidcTestUsers(t)
-	t.Cleanup(func() { deleteOidcTestUsers(t) })
 
 	return conf
 }
@@ -709,4 +724,119 @@ func TestOIDCRedirect_Username(t *testing.T) {
 		assert.Equal(t, local.AuthProvider, alice.AuthProvider)
 		assert.Equal(t, local.AuthID, alice.AuthID)
 	})
+}
+
+func TestOIDCRedirect_Unavailable(t *testing.T) {
+	t.Run("CdnRequest", func(t *testing.T) {
+		conf := useOidcOptions(t, oidcUnreachableUri)
+		app := newOidcTestApp(conf)
+
+		for _, uri := range []string{"/api/v1/oidc/login", "/api/v1/oidc/redirect?state=s1&code=c1"} {
+			req := httptest.NewRequest(http.MethodGet, uri, nil)
+			req.Header.Set(header.CdnHost, "cdn.example.com")
+			w := httptest.NewRecorder()
+			app.ServeHTTP(w, req)
+			assert.Equal(t, http.StatusNotFound, w.Code, uri)
+		}
+	})
+	t.Run("ProviderUnreachable", func(t *testing.T) {
+		conf := useOidcOptions(t, oidcUnreachableUri)
+		require.True(t, conf.OIDCEnabled())
+		app := newOidcTestApp(conf)
+
+		login := PerformRequest(app, http.MethodGet, "/api/v1/oidc/login")
+
+		assert.Equal(t, http.StatusInternalServerError, login.Code)
+		assert.Contains(t, login.Body.String(), i18n.Error(i18n.ErrConnectionFailed).Error())
+		assert.Empty(t, login.Header().Get("Location"))
+
+		redirect := PerformRequest(app, http.MethodGet, "/api/v1/oidc/redirect?state=s1&code=c1")
+
+		assertOidcLoginRefused(t, redirect, i18n.ErrInvalidCredentials)
+	})
+	t.Run("TooManyRequests", func(t *testing.T) {
+		// Requests that do not complete a login consume the client's budget, and the next one is refused.
+		conf := useOidcOptions(t, oidcUnreachableUri)
+		app := newOidcTestApp(conf)
+
+		origLogin := limiter.Login
+		t.Cleanup(func() { limiter.Login = origLogin })
+
+		cases := []struct {
+			uri    string
+			status int
+		}{
+			{"/api/v1/oidc/login", http.StatusInternalServerError},
+			{"/api/v1/oidc/redirect", http.StatusTemporaryRedirect},
+		}
+
+		for _, c := range cases {
+			limiter.Login = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+
+			for i := 0; i < 3; i++ {
+				assert.Equal(t, c.status, PerformRequest(app, http.MethodGet, c.uri).Code, c.uri)
+			}
+
+			r := PerformRequest(app, http.MethodGet, c.uri)
+			assert.Equal(t, http.StatusTooManyRequests, r.Code, c.uri)
+			assert.Contains(t, r.Body.String(), i18n.Error(i18n.ErrTooManyRequests).Error())
+		}
+	})
+}
+
+func TestOIDCRedirect_Session(t *testing.T) {
+	t.Run("DefaultRoleNotFederated", func(t *testing.T) {
+		// A default role that federation cannot grant never yields a session.
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCRole = "visitor"
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "")
+
+		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
+
+		if user := findOidcTestUser("sub00000001"); user != nil {
+			assert.NotEqual(t, "visitor", user.UserRole)
+			assert.Equal(t, 0, oidcSessionCount(t, user))
+		}
+	})
+	t.Run("NoGroupsStored", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		require.False(t, conf.Portal())
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "olivia")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		sess := oidcTestSession(t, "sub00000002")
+		assert.Empty(t, sess.GetData().Groups)
+	})
+	t.Run("PortalGroupsStored", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		origEdition, origRole := conf.Options().Edition, conf.Options().NodeRole
+		t.Cleanup(func() { conf.Options().Edition, conf.Options().NodeRole = origEdition, origRole })
+		conf.Options().Edition = config.Portal
+		require.True(t, conf.Portal())
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "olivia")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		sess := oidcTestSession(t, "sub00000002")
+		assert.ElementsMatch(t, []string{"photoprism-admin", "staff"}, sess.GetData().Groups)
+	})
+}
+
+// oidcTestSession returns the only session of the account a dummy-oidc login created for the subject.
+func oidcTestSession(t *testing.T, subject string) *entity.Session {
+	t.Helper()
+
+	user := findOidcTestUser(subject)
+	require.NotNil(t, user)
+
+	var sessions entity.Sessions
+	require.NoError(t, entity.UnscopedDb().Where("user_uid = ?", user.UserUID).Find(&sessions).Error)
+	require.Len(t, sessions, 1)
+
+	return &sessions[0]
 }
