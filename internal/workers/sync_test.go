@@ -1,17 +1,20 @@
 package workers
 
 import (
+	"database/sql"
 	"errors"
 	"net/url"
 	"testing"
-
-	"github.com/photoprism/photoprism/pkg/clean"
-
-	"github.com/photoprism/photoprism/internal/mutex"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestNewSync(t *testing.T) {
@@ -67,4 +70,112 @@ func TestSyncRefresh_RemoteCredentials(t *testing.T) {
 	rendered := clean.Error(remote)
 
 	assert.NotContains(t, rendered, "notreal", "the credential must not survive")
+}
+
+// isolateSyncAccounts disables sync for every existing account until the test ends, so Sync.Start
+// processes only the accounts the test creates and makes no network requests for the others.
+func isolateSyncAccounts(t *testing.T) {
+	t.Helper()
+
+	var ids, disabled []uint
+
+	require.NoError(t, entity.Db().Model(&entity.Service{}).Where("acc_sync = 1").Pluck("id", &ids).Error)
+
+	t.Cleanup(func() {
+		for _, id := range disabled {
+			if err := entity.Db().Model(&entity.Service{ID: id}).UpdateColumn("acc_sync", true).Error; err != nil {
+				t.Errorf("restore sync for service %d: %s", id, err)
+			}
+		}
+	})
+
+	for _, id := range ids {
+		require.NoError(t, entity.Db().Model(&entity.Service{ID: id}).UpdateColumn("acc_sync", false).Error)
+		disabled = append(disabled, id)
+	}
+}
+
+// newSyncAccount creates a WebDAV account with sync enabled in the synced state, applies update,
+// and deletes it when the test ends. Its URL is never contacted in that state.
+func newSyncAccount(t *testing.T, update func(a *entity.Service)) *entity.Service {
+	t.Helper()
+
+	a := &entity.Service{
+		AccName:      "Sync Start " + rnd.Base36(8),
+		AccURL:       "http://127.0.0.1:1/",
+		AccType:      "webdav",
+		AccSync:      true,
+		RetryLimit:   3,
+		SyncStatus:   entity.SyncStatusSynced,
+		SyncInterval: 3600,
+		SyncDate:     sql.NullTime{Time: time.Now().Add(-10 * time.Minute), Valid: true},
+	}
+
+	if update != nil {
+		update(a)
+	}
+
+	require.NoError(t, entity.Db().Create(a).Error)
+
+	t.Cleanup(func() {
+		if err := entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error; err != nil {
+			t.Errorf("delete service %d: %s", a.ID, err)
+		}
+	})
+
+	return a
+}
+
+// storedSyncAccount returns the account as currently stored in the database.
+func storedSyncAccount(t *testing.T, id uint) entity.Service {
+	t.Helper()
+
+	var m entity.Service
+
+	require.NoError(t, entity.Db().First(&m, id).Error)
+
+	return m
+}
+
+func TestSync_StartInterval(t *testing.T) {
+	isolateSyncAccounts(t)
+
+	worker := NewSync(config.TestConfig())
+
+	t.Run("OlderThanInterval", func(t *testing.T) {
+		a := newSyncAccount(t, func(a *entity.Service) {
+			a.SyncDate = sql.NullTime{Time: time.Now().Add(-2 * time.Hour), Valid: true}
+		})
+
+		require.NoError(t, worker.Start())
+		assert.Equal(t, entity.SyncStatusRefresh, storedSyncAccount(t, a.ID).SyncStatus)
+	})
+	t.Run("NewerThanInterval", func(t *testing.T) {
+		a := newSyncAccount(t, func(a *entity.Service) {
+			a.SyncDate = sql.NullTime{Time: time.Now().Add(-10 * time.Minute), Valid: true}
+		})
+
+		require.NoError(t, worker.Start())
+		assert.Equal(t, entity.SyncStatusSynced, storedSyncAccount(t, a.ID).SyncStatus)
+	})
+	t.Run("ShorterInterval", func(t *testing.T) {
+		a := newSyncAccount(t, func(a *entity.Service) {
+			a.SyncInterval = 60
+			a.SyncDate = sql.NullTime{Time: time.Now().Add(-10 * time.Minute), Valid: true}
+		})
+
+		require.NoError(t, worker.Start())
+		assert.Equal(t, entity.SyncStatusRefresh, storedSyncAccount(t, a.ID).SyncStatus)
+	})
+	t.Run("NoSyncDate", func(t *testing.T) {
+		a := newSyncAccount(t, func(a *entity.Service) {
+			a.SyncDate = sql.NullTime{}
+		})
+
+		require.NoError(t, worker.Start())
+
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
+		assert.False(t, stored.SyncDate.Valid)
+	})
 }
