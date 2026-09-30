@@ -87,10 +87,8 @@ func errorText(s string) string {
 	// Applied to the whole message, since a URL can appear in one in more than one spelling.
 	s = UriCredentials(s)
 
-	// Limit error message length.
-	if len(s) > LengthLimit {
-		s = s[:LengthLimit]
-	}
+	// Limit error message length without splitting a character.
+	s = shortenBytes(s, LengthLimit, "")
 
 	// Remove non-printable and other potentially problematic characters.
 	s = strings.Map(func(r rune) rune {
@@ -118,7 +116,8 @@ func errorText(s string) string {
 		return "unknown error"
 	}
 
-	return s
+	// Replacing an invalid byte can triple its size.
+	return shortenBytes(s, LengthLimit, "")
 }
 
 // quotedInner returns a value as strconv.Quote renders it, without the enclosing quotes, which is

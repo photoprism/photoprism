@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -38,7 +39,7 @@ func TestLog(t *testing.T) {
 			"more-or-less normal distribution of letters,as opposed to using ''Content here, content here'', making it "+
 			"look like readable English.Many desktop publishing packages and web page editors now use Lorem Ipsum as "+
 			"their default model text, and a search for''lorem ipsum'' will uncover many web sites still in their "+
-			"infancy. Various versions…'", Log(clip.LoremIpsum))
+			"infancy. Various version…'", Log(clip.LoremIpsum))
 	})
 }
 
@@ -188,31 +189,119 @@ func TestLogQuoted(t *testing.T) {
 	})
 }
 
+func TestLogBytes(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		assert.Equal(t, "photo.jpg", logBytes("photo.jpg", 16))
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		// Each invalid byte becomes a 3-byte character, so the text is shortened after the replacement.
+		result := logBytes(strings.Repeat("\xff", 10), 16)
+		assert.LessOrEqual(t, len(result), 16)
+		assert.True(t, strings.HasSuffix(result, "…"))
+	})
+	t.Run("Quoted", func(t *testing.T) {
+		assert.Equal(t, "'a b'", logBytes("a b", 16))
+	})
+}
+
+func TestLogQuotedBytes(t *testing.T) {
+	// unquote removes the enclosing quotes and every doubled pair, leaving any quote the value could close the pair with.
+	unquote := func(s string) string {
+		return strings.ReplaceAll(s[1:len(s)-1], "''", "")
+	}
+
+	t.Run("Fits", func(t *testing.T) {
+		assert.Equal(t, "'a b'", logQuotedBytes("a b", 16))
+	})
+	t.Run("Shortened", func(t *testing.T) {
+		result := logQuotedBytes(strings.Repeat("a'b c'd", 10), 32)
+		assert.LessOrEqual(t, len(result), 32)
+		assert.Greater(t, len(result), 32-4)
+		assert.True(t, strings.HasSuffix(result, "…'"))
+		assert.NotContains(t, unquote(result), "'")
+	})
+	t.Run("OnlyQuotes", func(t *testing.T) {
+		result := logQuotedBytes(strings.Repeat("'", 600), LengthLog)
+		assert.LessOrEqual(t, len(result), LengthLog)
+		assert.Greater(t, len(result), LengthLog-4)
+		assert.NotContains(t, unquote(result), "'")
+	})
+	t.Run("TinyBudget", func(t *testing.T) {
+		assert.Equal(t, "''", logQuotedBytes("abcdef", 4))
+	})
+}
+
+func TestShortenBytes(t *testing.T) {
+	t.Run("Fits", func(t *testing.T) {
+		assert.Equal(t, "abc ", shortenBytes("abc ", 4, clip.Ellipsis))
+	})
+	t.Run("Suffix", func(t *testing.T) {
+		assert.Equal(t, "abcd…", shortenBytes("abcdefgh", 7, clip.Ellipsis))
+	})
+	t.Run("NoSuffix", func(t *testing.T) {
+		assert.Equal(t, "abcdefg", shortenBytes("abcdefgh", 7, ""))
+	})
+	t.Run("MultiByte", func(t *testing.T) {
+		assert.Equal(t, "\u4e2d\u4e2d", shortenBytes(strings.Repeat("\u4e2d", 5), 8, ""))
+	})
+	t.Run("TinyBudget", func(t *testing.T) {
+		assert.Equal(t, "", shortenBytes("abcdef", 2, clip.Ellipsis))
+	})
+}
+
+func TestLogBounds(t *testing.T) {
+	// Replacing an invalid byte or keeping a multi-byte character must not grow a value past its budget.
+	for _, fill := range []string{"a", "\xff", "\u4e2d", "\U0001F600", "'", "a '"} {
+		value := strings.Repeat(fill, 1000)
+		assert.LessOrEqual(t, len(Log(value)), LengthLog, "fill %q", fill)
+		assert.LessOrEqual(t, len(LogQuote(value)), LengthLog, "fill %q", fill)
+		assert.True(t, utf8.ValidString(Log(value)), "fill %q", fill)
+		assert.True(t, utf8.ValidString(LogQuote(value)), "fill %q", fill)
+		assert.True(t, utf8.ValidString(LogNames([]string{value})), "fill %q", fill)
+		assert.LessOrEqual(t, len(LogNames([]string{value})), LogNamesBytes, "fill %q", fill)
+	}
+}
+
+func TestLogExactBudget(t *testing.T) {
+	// A value that fits its budget exactly is not marked as shortened.
+	assert.Equal(t, strings.Repeat("a", LogNamesBytes), LogNames([]string{strings.Repeat("a", LogNamesBytes)}))
+	assert.Equal(t, strings.Repeat("a", LengthLog), Log(strings.Repeat("a", LengthLog)))
+	assert.Equal(t, "'a b'", logQuotedBytes("a b", 5))
+	assert.Equal(t, "'…'", logQuotedBytes("abcdef", 5))
+}
+
+func TestLogLongerThanLimit(t *testing.T) {
+	// A value longer than the guard's limit is shortened rather than refused.
+	value := strings.Repeat("a", LengthLimit+1)
+	assert.Equal(t, strings.Repeat("a", LengthLog-len(clip.Ellipsis))+clip.Ellipsis, Log(value))
+	assert.Equal(t, strings.Repeat("a", LogNamesBytes-len(clip.Ellipsis))+clip.Ellipsis, LogNames([]string{value}))
+}
+
 func TestLogText(t *testing.T) {
 	t.Run("Plain", func(t *testing.T) {
-		s, quote := logText("filename.txt")
+		s, quote := logText("filename.txt", LengthLog)
 		assert.Equal(t, "filename.txt", s)
 		assert.False(t, quote)
 	})
 	t.Run("Space", func(t *testing.T) {
-		s, quote := logText("two words")
+		s, quote := logText("two words", LengthLog)
 		assert.Equal(t, "two words", s)
 		assert.True(t, quote)
 	})
 	t.Run("FieldSep", func(t *testing.T) {
-		s, quote := logText("a" + string(FieldSep) + "b")
+		s, quote := logText("a"+string(FieldSep)+"b", LengthLog)
 		assert.Equal(t, "a"+string(FieldSep)+"b", s)
 		assert.True(t, quote)
 	})
 	t.Run("Empty", func(t *testing.T) {
 		// Reported as needing quotes so that both callers render the empty pair.
-		s, quote := logText("")
+		s, quote := logText("", LengthLog)
 		assert.Equal(t, "", s)
 		assert.True(t, quote)
 	})
 	t.Run("Rejected", func(t *testing.T) {
 		// The marker stands for the whole value, so quoting it would misreport its extent.
-		s, quote := logText("ldap://evil/a")
+		s, quote := logText("ldap://evil/a", LengthLog)
 		assert.Equal(t, "?", s)
 		assert.False(t, quote)
 	})

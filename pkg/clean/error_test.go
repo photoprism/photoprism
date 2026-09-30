@@ -11,6 +11,7 @@ import (
 	"strings"
 	"syscall"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -62,6 +63,18 @@ func TestErrorText(t *testing.T) {
 	})
 	t.Run("Truncated", func(t *testing.T) {
 		assert.Len(t, errorText(strings.Repeat("e", LengthLimit*2)), LengthLimit)
+	})
+	t.Run("TruncatedInBytes", func(t *testing.T) {
+		// Neither a split character nor a replaced invalid byte may grow the message past the limit.
+		for _, fill := range []string{"\xff", "\u00e4", "\U0001F600"} {
+			result := errorText("e" + strings.Repeat(fill, LengthLimit))
+			assert.LessOrEqual(t, len(result), LengthLimit, "fill %q", fill)
+			assert.True(t, utf8.ValidString(result), "fill %q", fill)
+			assert.False(t, strings.HasSuffix(result, "\uFFFD") && fill != "\xff", "fill %q", fill)
+		}
+	})
+	t.Run("KeepsInnerSpaces", func(t *testing.T) {
+		assert.Equal(t, "abc ", errorText("abc \x01"))
 	})
 	t.Run("TrimmedBeforeTruncated", func(t *testing.T) {
 		// Trimming after truncation would return a message two characters short.
