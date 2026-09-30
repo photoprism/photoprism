@@ -328,15 +328,17 @@ func TestSync_StartRetryLimit(t *testing.T) {
 	t.Run("AboveLimitReset", func(t *testing.T) {
 		// The remote of the account processed first changes the second one after Start() has loaded
 		// it, as saving the account does, so sync stays on.
+		// The account is skipped in that run either way, so its loaded copy never overwrites the change.
 		for _, c := range []struct {
 			name   string
 			values entity.Values
 			sync   bool
+			errors int
 		}{
-			{"ErrorsReset", entity.Values{"acc_errors": 0}, true},
-			{"ErrorsAtLimit", entity.Values{"acc_errors": 3}, true},
-			{"LimitRemoved", entity.Values{"retry_limit": -1}, true},
-			{"SyncTurnedOff", entity.Values{"acc_sync": false}, false},
+			{"ErrorsReset", entity.Values{"acc_errors": 0}, true, 0},
+			{"ErrorsAtLimit", entity.Values{"acc_errors": 3}, true, 3},
+			{"LimitRemoved", entity.Values{"retry_limit": -1}, true, 4},
+			{"SyncTurnedOff", entity.Values{"acc_sync": false}, false, 4},
 		} {
 			t.Run(c.name, func(t *testing.T) {
 				var other *entity.Service
@@ -356,9 +358,11 @@ func TestSync_StartRetryLimit(t *testing.T) {
 					a.AccTimeout = "low"
 					a.SyncStatus = entity.SyncStatusRefresh
 				})
+				// Due for a refresh, so processing it would change its status.
 				other = newSyncAccount(t, func(a *entity.Service) {
 					withErrors(3, 4)(a)
 					a.AccName = "Sync Start B " + rnd.Base36(8)
+					a.SyncDate = sql.NullTime{Time: time.Now().Add(-2 * time.Hour), Valid: true}
 				})
 
 				logger, hook := test.NewNullLogger()
@@ -369,7 +373,10 @@ func TestSync_StartRetryLimit(t *testing.T) {
 				require.NoError(t, worker.Start())
 
 				assert.Equal(t, 1, storedSyncAccount(t, first.ID).AccErrors)
-				assert.Equal(t, c.sync, storedSyncAccount(t, other.ID).AccSync)
+				stored := storedSyncAccount(t, other.ID)
+				assert.Equal(t, c.sync, stored.AccSync)
+				assert.Equal(t, c.errors, stored.AccErrors)
+				assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
 				assert.False(t, loggedWarning(hook, "disabled sync"))
 			})
 		}
