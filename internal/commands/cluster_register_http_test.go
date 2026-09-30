@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
@@ -792,4 +793,36 @@ func TestClusterRegister_RotateSecret_JSON(t *testing.T) {
 	assert.Equal(t, "pp-node-08", gjson.Get(out, "Node.Name").String())
 	assert.Equal(t, secret, gjson.Get(out, "Secrets.ClientSecret").String())
 	assert.Equal(t, "", gjson.Get(out, "Database.Password").String())
+}
+
+// TestClusterNodesRotate_Confirm verifies that a rotation asks for confirmation before it contacts the Portal,
+// and that the command exits with a usage error when it cannot ask.
+func TestClusterNodesRotate_Confirm(t *testing.T) {
+	var calls int
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer ts.Close()
+
+	SetEnvForTest(t, "PHOTOPRISM_PORTAL_URL", ts.URL)
+	SetEnvForTest(t, "PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		_, err := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--db", "pp-node-05"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Equal(t, 0, calls)
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		_, err := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--db", "pp-node-05"})
+
+		assert.NoError(t, err)
+		assert.Equal(t, 0, calls)
+	})
 }

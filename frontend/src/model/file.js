@@ -29,6 +29,8 @@ export class File extends RestModel {
       Mime: "",
       Primary: false,
       Sidecar: false,
+      KeepStacked: false,
+      StackGroup: "",
       Missing: false,
       Portrait: false,
       Video: false,
@@ -210,7 +212,8 @@ export class File extends RestModel {
         info.push(format);
       }
 
-      if (this.MediaType && this.MediaType !== this.FileType) {
+      // The "Sidecar" prefix already names the media type of a sidecar file.
+      if (this.MediaType && this.MediaType !== this.FileType && !(this.Sidecar && this.MediaType === "sidecar")) {
         const media = $util.capitalize(this.MediaType);
         if (media) {
           info.push(media);

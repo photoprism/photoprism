@@ -7,7 +7,8 @@
     class="dialog-person-edit"
     color="background"
     @keydown.esc.exact="close"
-    @keyup.enter.exact="confirm"
+    @keydown.enter.capture="onEnterDown"
+    @keyup.enter="onEnterUp"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
@@ -35,6 +36,7 @@
             </v-col>
             <v-col cols="12">
               <v-date-input
+                v-model:menu="birthdayMenu"
                 :model-value="model.getBirthday()"
                 :label="$gettext('Birth Date')"
                 :min="minBirthday"
@@ -83,6 +85,9 @@
 import Subject, { BirthYearMin, MaxLength as SubjectMaxLength } from "model/subject";
 import { rules } from "common/form";
 
+// isModifiedKey reports whether a modifier was held, or an input method was composing text.
+const isModifiedKey = (ev) => !!ev && (ev.shiftKey || ev.ctrlKey || ev.altKey || ev.metaKey || ev.isComposing);
+
 export default {
   name: "PPeopleEditDialog",
   props: {
@@ -103,6 +108,8 @@ export default {
       today: new Date(),
       minBirthday: new Date(BirthYearMin, 0, 1),
       model: new Subject(),
+      birthdayMenu: false,
+      enterConfirms: false,
       rules,
       SubjectMaxLength,
     };
@@ -113,6 +120,7 @@ export default {
         this.model = this.person.clone();
         // Re-read on open rather than once at mount, since the dialog stays mounted between edits.
         this.today = new Date();
+        this.enterConfirms = false;
       }
     },
   },
@@ -127,6 +135,23 @@ export default {
     },
     close() {
       this.$emit("close");
+    },
+    // onEnterDown records whether Enter went down in the dialog while the date picker was closed.
+    // It runs in the capture phase, before the date input opens its picker on the same key.
+    onEnterDown(ev) {
+      this.enterConfirms = !this.birthdayMenu && !isModifiedKey(ev);
+    },
+    // onEnterUp confirms the dialog unless Enter belonged to the date picker, which it closes instead.
+    // A key pressed in the picker's menu goes down outside the dialog, so only its keyup can arrive.
+    onEnterUp(ev) {
+      const confirms = this.enterConfirms && !isModifiedKey(ev);
+      this.enterConfirms = false;
+
+      if (confirms) {
+        this.confirm();
+      } else if (this.birthdayMenu) {
+        this.birthdayMenu = false;
+      }
     },
     confirm() {
       if (this.disabled) {

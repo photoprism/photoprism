@@ -12,7 +12,7 @@
             <v-col cols="12" sm="10" class="d-flex flex-column ga-4">
               <div
                 :class="$vuetify.display.smAndDown ? 'v-table--density-compact' : 'v-table--density-comfortable'"
-                class="v-table v-table--has-top v-table--hover v-data-table elevation-0 edit-table list-view"
+                class="v-table v-table--gridlines-horizontal v-table--has-top v-table--hover v-data-table elevation-0 edit-table list-view"
               >
                 <div class="v-table__wrapper">
                   <table>

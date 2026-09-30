@@ -1,6 +1,8 @@
 package media
 
 import (
+	"path/filepath"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -10,8 +12,15 @@ func FromName(fileName string) Type {
 		return Unknown
 	}
 
+	fileType := fs.FileType(fileName)
+
+	// Proxies of other cameras share the extension of Insta360 proxies, but are not supported.
+	if fileType == fs.VideoLrv && !fs.Insta360ProxyPattern.MatchString(filepath.Base(fileName)) {
+		return Sidecar
+	}
+
 	// Find media type based on the file type.
-	if result, found := Formats[fs.FileType(fileName)]; found {
+	if result, found := Formats[fileType]; found {
 		return result
 	}
 
@@ -19,7 +28,8 @@ func FromName(fileName string) Type {
 	return Sidecar
 }
 
-// MainFile checks if the filename belongs to a main content type.
+// MainFile checks if the filename belongs to a main content type. Proxy videos are not, since
+// they are only indexed with the video they belong to.
 func MainFile(fileName string) bool {
-	return FromName(fileName).IsMain()
+	return fs.FileType(fileName) != fs.VideoLrv && FromName(fileName).IsMain()
 }

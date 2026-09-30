@@ -158,6 +158,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 		if res := stmt.
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
+			Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s f WHERE f.id = ? AND f.subj_uid = ?)", entity.Face{}.TableName()), f.ID, f.SubjUID).
 			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
 			return affected, res.Error
 		} else if res.RowsAffected > 0 {
@@ -560,6 +561,12 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 			// Compare face 1 with face 2.
 			if matched, dist := f1.Match(face.Embeddings{embeddings[j]}, f2.EmbedModel); matched {
 				if f1.SubjUID == f2.SubjUID {
+					continue
+				}
+
+				// A collision whose radius cannot narrow f1 is recorded at most once and not reported again.
+				if f1.CollisionNoted(dist) {
+					done[matchId] = true
 					continue
 				}
 

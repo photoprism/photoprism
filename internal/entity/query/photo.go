@@ -1,6 +1,7 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -151,6 +152,22 @@ func ArchivedPhotos(limit int, offset int) (entities entity.Photos, err error) {
 	return entities, err
 }
 
+// ArchivedPhoto returns the current row of the photo with the given ID if it is archived and not removed,
+// using the same condition as ArchivedPhotos, or nil if it is not.
+func ArchivedPhoto(id uint) (*entity.Photo, error) {
+	result := &entity.Photo{}
+
+	if err := UnscopedDb().
+		Where("id = ? AND photo_quality > -1 AND deleted_at IS NOT NULL", id).
+		First(result).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
 // PhotosMetadataUpdate returns photos selected for metadata maintenance.
 func PhotosMetadataUpdate(limit, offset int, delay, interval time.Duration) (photos entity.Photos, err error) {
 	err = Db().
@@ -272,7 +289,7 @@ func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
 	var pathDates []pathMaxDate
 	// Get all the paths and dates.
 	if err = entity.Db().Raw(`SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
-	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			FROM photos WHERE taken_src IN ('meta', 'modified') AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 	 			GROUP BY photo_path`).Scan(&pathDates).Error; err != nil {
 		log.Errorf("photo: get photo dates (%v)", err)
 		return photoPathDates, err

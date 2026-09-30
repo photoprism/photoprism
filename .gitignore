@@ -52,6 +52,7 @@ venv
 /frontend/tests/screenshots/
 /frontend/src/locales/*.mo
 /frontend/tests_output/
+/frontend/views/
 frontend/coverage/
 **/__screenshots__/
 /.playwright-mcp/

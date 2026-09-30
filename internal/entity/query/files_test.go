@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFilesByPath(t *testing.T) {
@@ -380,4 +381,50 @@ func TestFilesByPhotoIDs(t *testing.T) {
 		require.NoError(t, err)
 		assert.Empty(t, files)
 	})
+}
+
+// TestOriginalsByPhotoID verifies that only the originals of a picture are returned, with all columns.
+func TestOriginalsByPhotoID(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		photo := entity.PhotoFixtures.Get("19800101_000002_D640C559")
+
+		files, err := OriginalsByPhotoID(photo.ID)
+
+		require.NoError(t, err)
+		require.NotEmpty(t, files)
+
+		for _, f := range files {
+			assert.Equal(t, photo.ID, f.PhotoID)
+			assert.Equal(t, entity.RootOriginals, f.FileRoot)
+			assert.False(t, f.FileSidecar)
+			assert.False(t, f.FileMissing)
+			assert.NotEmpty(t, f.FileUID)
+		}
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		files, err := OriginalsByPhotoID(0)
+
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+}
+
+func TestFiles_DirContainment(t *testing.T) {
+	base := "zz-like-" + rnd.Base36(6)
+	inDir := likeTestPhoto(t, base+"_a%", "in-dir")
+	sibling := likeTestPhoto(t, base+"Xa%Y", "sibling")
+	likeTestPhoto(t, base+"_aZ", "sibling-z")
+	likeTestPhoto(t, base+"_A%", "sibling-case")
+
+	files, err := Files(1000, 0, base+"_a%", true)
+	require.NoError(t, err)
+
+	var uids []string
+
+	for _, f := range files {
+		uids = append(uids, f.PhotoUID)
+	}
+
+	assert.Equal(t, []string{inDir.PhotoUID}, uids)
+	assert.NotContains(t, uids, sibling.PhotoUID)
 }

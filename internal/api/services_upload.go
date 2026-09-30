@@ -107,7 +107,7 @@ func UploadToService(router *gin.RouterGroup) {
 		}
 
 		// Find files to share within the session's scope.
-		selection := query.ShareSelection(m.ShareOriginals(), m.SyncYaml)
+		selection := query.ShareSelection(m.ShareOriginals(), m.SyncYamlEnabled())
 		files, err := query.SelectedFilesForSession(frm.Selection, selection, s)
 
 		if err != nil {

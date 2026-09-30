@@ -23,6 +23,9 @@ var DateTimeRegexp = regexp.MustCompile(`\D\d{2,4}[\-_]\d{2}[\-_]\d{2}.{1,4}\d{2
 // DateWhatsAppRegexp matches WhatsApp media filenames.
 var DateWhatsAppRegexp = regexp.MustCompile(`(?:IMG|VID)-(?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})-WA`)
 
+// DateCameraRegexp matches camera file names like "IMG_20190101_120000.jpg" or "VID_20201031_094049_00_188.insv".
+var DateCameraRegexp = regexp.MustCompile(`^(?:IMG|VID|LRV)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})(?:[_.]|$)`)
+
 // DateIntRegexp matches short numeric date parts.
 var DateIntRegexp = regexp.MustCompile(`\d{1,4}`)
 

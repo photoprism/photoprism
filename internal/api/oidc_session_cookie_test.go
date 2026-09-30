@@ -260,16 +260,17 @@ func TestOIDCSessionCookieSession(t *testing.T) {
 	})
 }
 
+// TestLoadOrCreateOIDCSessionKey checks key persistence and storage errors.
 func TestLoadOrCreateOIDCSessionKey(t *testing.T) {
-	// Use a DB-backed isolated config and restore the global afterwards, matching
-	// newPortalJWTFixture; a DB-less config would leave the global entity DB unusable
-	// for later tests in this package.
+	original := get.Config()
+	// Use a DB-backed config for the key store and restore the shared providers.
 	withTempConfig := func(t *testing.T, suffix string) *config.Config {
 		conf := config.NewMinimalTestConfigWithDbTTest("oidc-session-key-"+suffix, t.TempDir(), t)
 		orig := get.Config()
 		get.SetConfig(conf)
 		t.Cleanup(func() {
 			get.SetConfig(orig)
+			entity.SetDbProvider(orig)
 		})
 		return conf
 	}
@@ -297,6 +298,8 @@ func TestLoadOrCreateOIDCSessionKey(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(conf.PortalConfigPath(), "keys"), []byte("x"), fs.ModeSecretFile))
 		assert.Nil(t, loadOrCreateOIDCSessionKey())
 	})
+	require.Same(t, original, get.Config())
+	require.Same(t, original.Db(), entity.Db())
 }
 
 func TestOIDCSessionCookieAdmission(t *testing.T) {

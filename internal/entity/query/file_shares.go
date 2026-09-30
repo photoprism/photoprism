@@ -36,7 +36,7 @@ func QueuedFileShares(account entity.Service) (result []entity.FileShare, err er
 	s := Db().Model(&entity.FileShare{}).Select("files_share.*").
 		Where("files_share.service_id = ? AND files_share.status = ?", account.ID, entity.FileShareNew)
 
-	if !account.SyncYaml {
+	if !account.SyncYamlEnabled() {
 		s = s.Joins("LEFT JOIN files ON files.id = files_share.file_id").
 			Where("(files.file_type <> ? OR files.file_type IS NULL)", fs.SidecarYaml.String())
 	}

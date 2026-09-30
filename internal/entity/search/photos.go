@@ -175,6 +175,11 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			return PhotoResults{}, 0, ErrBadFilter
 		} else {
 			frm.Filter = album.AlbumFilter
+
+			// Folder albums show the pictures in their folder, compared by exact path.
+			if p := folderAlbumPath(album); p != "" {
+				frm.Path = p
+			}
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
 		}
 
@@ -573,13 +578,13 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	if txt.IsPosInt(frm.Camera) {
 		s = s.Where("photos.camera_id = ?", txt.UInt(frm.Camera))
 	} else if txt.NotEmpty(frm.Camera) {
-		v := strings.Trim(frm.Camera, "*%") + "%"
+		v := clean.SqlLike(strings.Trim(frm.Camera, "*%")) + "%"
 		w := strings.ToLower(v)
 		switch entity.DbDialect() {
 		case dsn.DialectPostgreSQL:
 			s = s.Where("lower(cameras.camera_name) LIKE ? OR lower(cameras.camera_model) LIKE ? OR cameras.camera_slug LIKE ?", w, w, v)
 		default:
-			s = s.Where("cameras.camera_name LIKE ? OR cameras.camera_model LIKE ? OR cameras.camera_slug LIKE ?", v, v, v)
+			s = s.Where(likeCond("cameras.camera_name")+" OR "+likeCond("cameras.camera_model")+" OR "+likeCond("cameras.camera_slug"), v, v, v)
 		}
 	}
 
@@ -587,13 +592,13 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	if txt.IsPosInt(frm.Lens) {
 		s = s.Where("photos.lens_id = ?", txt.UInt(frm.Lens))
 	} else if txt.NotEmpty(frm.Lens) {
-		v := strings.Trim(frm.Lens, "*%") + "%"
+		v := clean.SqlLike(strings.Trim(frm.Lens, "*%")) + "%"
 		w := strings.ToLower(v)
 		switch entity.DbDialect() {
 		case dsn.DialectPostgreSQL:
 			s = s.Where("lower(lenses.lens_name) LIKE ? OR lower(lenses.lens_model) LIKE ? OR lenses.lens_slug LIKE ?", w, w, v)
 		default:
-			s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
+			s = s.Where(likeCond("lenses.lens_name")+" OR "+likeCond("lenses.lens_model")+" OR "+likeCond("lenses.lens_slug"), v, v, v)
 		}
 	}
 
@@ -921,14 +926,14 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if frm.Unsorted {
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = FALSE AND a.deleted_at IS NULL)")
 		} else if txt.NotEmpty(frm.Album) {
-			v := strings.Trim(frm.Album, "*%") + "%"
+			v := clean.SqlLike(strings.Trim(frm.Album, "*%")) + "%"
 			// Slugs are stored as lowercase binary strings, so the value must be
 			// folded to match on MySQL/MariaDB/Postgres as well.
 			switch entity.DbDialect() {
 			case dsn.DialectPostgreSQL:
 				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title ILIKE ? OR a.album_slug LIKE ?))", v, strings.ToLower(v))
 			default:
-				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, strings.ToLower(v))
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE ("+likeCond("a.album_title")+" OR "+likeCond("a.album_slug")+"))", v, strings.ToLower(v))
 			}
 		} else if txt.NotEmpty(frm.Albums) {
 			var wheres []string

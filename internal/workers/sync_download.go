@@ -134,7 +134,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
-			if !a.SyncYaml && fs.FileType(file.RemoteName) == fs.SidecarYaml {
+			if !a.SyncYamlEnabled() && fs.FileType(file.RemoteName) == fs.SidecarYaml {
 				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
 				w.logErr(entity.Db().Save(&file).Error)
 				files[i] = file

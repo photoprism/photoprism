@@ -79,6 +79,7 @@ func TestGetSessionResponse(t *testing.T) {
 	})
 }
 
+// TestCreateSession checks login, share redemption, and rejection paths.
 func TestCreateSession(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -148,11 +149,41 @@ func TestCreateSession(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		alice := entity.UserFixtures.Pointer("alice")
+		shareUID := "as6sg6bxpogaaba8"
+		prior := entity.FindUserShare(entity.UserShare{UserUID: alice.UserUID, ShareUID: shareUID})
+		var link entity.Link
+		if err := entity.Db().Where("link_token = ?", "1jxf3jfn2k").First(&link).Error; err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			if prior == nil {
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserShare{}, "user_uid = ? AND share_uid = ?", alice.UserUID, shareUID).Error)
+			} else {
+				assert.NoError(t, entity.UnscopedDb().Save(prior).Error)
+			}
+			alice.RefreshShares()
+			assert.NoError(t, entity.UnscopedDb().Model(&entity.Link{}).Where("link_uid = ?", link.LinkUID).
+				UpdateColumn("link_views", link.LinkViews).Error)
+			var restored entity.Link
+			assert.NoError(t, entity.Db().Where("link_uid = ?", link.LinkUID).First(&restored).Error)
+			assert.Equal(t, link.LinkViews, restored.LinkViews)
+		})
+		if prior != nil {
+			if err := entity.UnscopedDb().Delete(prior).Error; err != nil {
+				t.Fatal(err)
+			}
+			alice.RefreshShares()
+		}
 
 		authToken := AuthenticateUser(app, router, "alice", "Alice123!")
 
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"token": "1jxf3jfn2k"}`, authToken)
 		assert.Equal(t, http.StatusOK, r.Code)
+		share := entity.FindUserShare(entity.UserShare{UserUID: alice.UserUID, ShareUID: shareUID})
+		if assert.NotNil(t, share) {
+			assert.Equal(t, link.LinkUID, share.LinkUID)
+		}
 	})
 	t.Run("PublicValidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()

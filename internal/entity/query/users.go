@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -64,13 +65,14 @@ func Users(limit, offset int, sortOrder, search string, deleted bool) (result en
 		stmt = stmt.Where("id = ?", id)
 	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
-	case search != "":
+	case search != "": // ToDo: fix postgres path
+		like := clean.SqlLike(search) + "%"
 		switch entity.DbDialect() {
 		case dsn.DialectPostgreSQL:
 			lowerSearch := strings.ToLower(search + "%")
 			stmt = stmt.Where("lower(user_name) LIKE ? OR lower(user_email) LIKE ? OR lower(display_name) LIKE ?", lowerSearch, lowerSearch, lowerSearch)
 		default:
-			stmt = stmt.Where("user_name LIKE ? OR user_email LIKE ? OR display_name LIKE ?", search+"%", search+"%", search+"%")
+			stmt = stmt.Where(clean.SqlLikeAny("user_name", "user_email", "display_name"), like, like, like)
 		}
 
 	default:

@@ -256,7 +256,7 @@ func UpdateLabelCounts() (err error) {
 	start := time.Now()
 	var res *gorm.DB
 	switch DbDialect() {
-	case dsn.DialectPostgreSQL:
+	case dsn.DialectPostgreSQL: //ToDo: add deadlock retry
 		res = Db().Exec(`UPDATE labels
 					SET photo_count = (SELECT COALESCE(COUNT(DISTINCT photo_id),0) AS photo_count
 						FROM (SELECT p.id AS photo_id FROM photos p
@@ -270,7 +270,8 @@ func UpdateLabelCounts() (err error) {
 							) p2
                     )`)
 	case dsn.DialectMySQL:
-		res = Db().Exec(`UPDATE labels LEFT JOIN (
+		if err = RetryDeadlock("update label counts", func() error {
+			res = Db().Exec(`UPDATE labels LEFT JOIN (
 			SELECT p2.label_id, COUNT(DISTINCT photo_id) AS label_photos FROM (
 				SELECT pl.label_id as label_id, p.id AS photo_id FROM photos p
 					JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
@@ -283,6 +284,10 @@ func UpdateLabelCounts() (err error) {
 				) p2 GROUP BY p2.label_id
 			) b ON b.label_id = labels.id
 			SET photo_count = CASE WHEN b.label_photos IS NULL THEN 0 ELSE b.label_photos END`)
+			return res.Error
+		}); err != nil {
+			return err
+		}
 	case dsn.DialectSQLite:
 		res = Db().
 			Table("labels").

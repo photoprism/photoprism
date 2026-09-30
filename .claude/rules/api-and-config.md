@@ -18,7 +18,7 @@
 ## Handler Conventions
 
 - Reuse limiter stacks (`limiter.Auth`, `limiter.Login`) and `limiter.AbortJSON` for 429s. Lean on `api.ClientIP`, `header.BearerToken`, and `Abort*` helpers.
-- Bound the request body before anything reads it: `LimitRequestBodyBytes(c, Max<Domain>RequestBytes)` is per-handler, there is no global middleware, and form parsing (`c.PostForm`, `ParseForm`) reads the body just as `ShouldBind` does. Pair it with an `IsRequestBodyTooLarge(err)` branch returning `AbortRequestTooLarge`, and add `413` to the handler's `@Failure` list. On an unauthenticated endpoint, charge the rate limiter before the body is read, so a request that never reaches a credential check is not free to repeat.
+- Bound the request body before anything reads it: `LimitRequestBodyBytes(c, Max<Domain>RequestBytes)` is per-handler, there is no global middleware, and form parsing (`c.PostForm`, `ParseForm`) reads the body just as `ShouldBind` does. Pair it with an `IsRequestBodyTooLarge(err)` branch returning `AbortRequestTooLarge`, and add `413` to the handler's `@Failure` list; `make check-api-failure-codes`, part of `make lint`, reports a Swagger-documented handler that can answer 413 but omits it. On an unauthenticated endpoint, charge the rate limiter before the body is read, so a request that never reaches a credential check is not free to repeat.
 - Compare secrets with constant-time checks; set `Cache-Control: no-store` on sensitive responses.
 - Register routes in `internal/server/routes.go`. New list endpoints default `count=100` (max 1000) and `offset≥0`; document parameters explicitly.
 - Set portal mode via `PHOTOPRISM_NODE_ROLE=portal` plus `PHOTOPRISM_JOIN_TOKEN` when needed.

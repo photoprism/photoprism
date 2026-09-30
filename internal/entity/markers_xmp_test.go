@@ -252,9 +252,13 @@ func TestMarker_SetFace_XmpNotShared(t *testing.T) {
 		m.SetEmbeddings(face.Embeddings{testEmbeddings[0]}, face.EmbeddingModelName(), face.EngineONNX)
 		require.NoError(t, m.Create())
 
-		// A subjectless shared face to observe whether the marker's subject is
+		// A stored, subjectless shared face to observe whether the marker's subject is
 		// pushed onto it; a unique id keeps the manual-case DB write local.
-		return m, &Face{ID: "XMPSETFACE" + rnd.GenerateUID('f'), SubjUID: ""}, subj.SubjUID
+		f := &Face{ID: "XMPSETFACE" + rnd.GenerateUID('f'), SubjUID: ""}
+		require.NoError(t, UnscopedDb().Create(f).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+
+		return m, f, subj.SubjUID
 	}
 	t.Run("XmpDoesNotPropagate", func(t *testing.T) {
 		m, f, subjUID := setup(t, SrcXmp, "5eface00000000000000000000000000000000a1", "Xmp Setface Person")

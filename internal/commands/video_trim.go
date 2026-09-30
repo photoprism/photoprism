@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -26,6 +25,8 @@ var VideoTrimCommand = &cli.Command{
 	Name:      "trim",
 	Usage:     "Trims a duration from the start (positive) or end (negative) of matching videos",
 	ArgsUsage: "[filter]... <duration>",
+	Description: "Streams are copied without re-encoding, so the cut starts at a keyframe near the requested position " +
+		"rather than at the exact frame. This keeps video and audio starting together.",
 	Flags: []cli.Flag{
 		videoCountFlag,
 		OffsetFlag,
@@ -74,24 +75,22 @@ func videoTrimAction(ctx *cli.Context) error {
 			}
 		}
 
-		if !ctx.Bool("dry-run") && !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Trim %d video files?", len(plans)),
-				IsConfirm: true,
-			}
-			if _, err = prompt.Run(); err != nil {
+		if !ctx.Bool("dry-run") {
+			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Trim %d video files", len(plans))); confirmErr != nil {
+				return confirmErr
+			} else if !proceed {
 				log.Info("trim: canceled")
 				return nil
 			}
 		}
 
-		var processed, skipped, failed int
+		var planned, processed, skipped, failed int
 		convert := get.Convert()
 
 		for _, plan := range plans {
 			if ctx.Bool("dry-run") {
 				log.Infof("trim: would trim %s by %s", clean.Log(plan.IndexPath), trimDuration.String())
-				skipped++
+				planned++
 				continue
 			}
 
@@ -104,12 +103,7 @@ func videoTrimAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof(
-			"trim: processed %s, skipped %s, %s",
-			formatCount(processed, "file", "files"),
-			formatCount(skipped, "file", "files"),
-			formatFailedCount(failed, "file", "files"),
-		)
+		log.Info(formatVideoSummary("trim", ctx.Bool("dry-run"), planned, processed, skipped, failed))
 
 		if failed > 0 {
 			return fmt.Errorf("trim: %s", formatFailedCount(failed, "file", "files"))
@@ -238,7 +232,7 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 		tempDest += ext
 	}
 
-	tempPath, err := fs.CreateStageFile(tempDest)
+	tempPath, err := videoCreateStageFile(tempDest, videoCreatesSidecarDir(conf, plan.Sidecar))
 	if err != nil {
 		return err
 	}
@@ -270,18 +264,17 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 		return err
 	}
 
+	// A sidecar output never replaces a file, and a trimmed original replaces the original atomically.
 	if plan.Sidecar {
 		if fs.FileExists(plan.DestPath) {
 			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
 		}
 
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
+		if err = fs.PublishFile(tempPath, plan.DestPath, false); err != nil {
 			return err
 		}
 	} else {
-		if noBackup {
-			_ = os.Remove(plan.DestPath)
-		} else {
+		if !noBackup {
 			backupPath := plan.DestPath + ".backup"
 			if fs.FileExists(backupPath) {
 				_ = os.Remove(backupPath)
@@ -292,7 +285,7 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 			_ = os.Chmod(backupPath, fs.ModeBackupFile)
 		}
 
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
+		if err = fs.PublishFile(tempPath, plan.DestPath, true); err != nil {
 			return err
 		}
 	}

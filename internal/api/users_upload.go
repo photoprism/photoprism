@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -25,6 +26,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -67,6 +69,13 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			return
 		}
 
+		// Users whose access is limited to their base path need an upload path.
+		if uploadPathDenied(s.GetUser()) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "no upload path", status.Denied}, s.RefID)
+			AbortForbidden(c)
+			return
+		}
+
 		// Abort if there is not enough free storage to upload new files.
 		if conf.InsufficientStorage() {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
@@ -76,6 +85,12 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		start := time.Now()
 		token := clean.Token(c.Param("token"))
+		batch := uploadBatchName(s, token)
+
+		if batch == "" {
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
 
 		if totalSizeLimit := conf.UploadLimitBytes(); totalSizeLimit > 0 {
 			LimitRequestBodyBytes(c, totalSizeLimit+MaxMultipartOverheadBytes)
@@ -103,7 +118,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		var uploads []string
 
 		// Compose upload path.
-		uploadDir, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
+		uploadDir, err := conf.UserUploadBatchPath(s.UserUID, batch)
 
 		if err != nil {
 			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
@@ -262,6 +277,89 @@ func UploadUserFiles(router *gin.RouterGroup) {
 	})
 }
 
+// uploadPathDenied reports whether the user may not upload files because their access is limited to
+// their base path and they have no upload path.
+func uploadPathDenied(u *entity.User) bool {
+	return u.RequiresBasePath() && u.GetUploadPath() == ""
+}
+
+// uploadBatchName returns the name of the folder in which the session stages the files it uploads with
+// the token, or an empty string if they do not name one.
+func uploadBatchName(s *entity.Session, token string) string {
+	if s == nil || s.RefID == "" || token == "" {
+		return ""
+	}
+
+	return clean.Token(s.RefID + token)
+}
+
+// discardUpload removes the folder in which the session staged the files uploaded with the token.
+func discardUpload(s *entity.Session, token string) {
+	batch := uploadBatchName(s, token)
+
+	if batch == "" {
+		return
+	}
+
+	dir, err := get.Config().UserUploadBatchPath(s.UserUID, batch)
+
+	if err != nil {
+		return
+	} else if err = os.RemoveAll(dir); err != nil {
+		log.Warnf("upload: failed to remove staged files (%s)", clean.Error(err))
+	} else {
+		log.Infof("upload: removed rejected files of upload %s", clean.Log(batch))
+	}
+}
+
+// MaxUploadAlbums is the number of distinct albums an upload or import may add its files to.
+const MaxUploadAlbums = 100
+
+// uploadAlbumsAllowed reports whether the session may add the files it uploads or imports to albums, which
+// requires a user account, and permission and scope to create or upload to albums.
+func uploadAlbumsAllowed(s *entity.Session) bool {
+	perms := acl.Permissions{acl.ActionCreate, acl.ActionUpload}
+
+	return s != nil && s.GetUser().IsRegistered() && s.GrantsAny(acl.ResourceAlbums, perms) && s.ValidateScope(acl.ResourceAlbums, perms)
+}
+
+// uploadAlbums returns the albums that files the session uploads or imports may be added to, without
+// duplicates and at most MaxUploadAlbums: titles, which resolve among the user's own albums or create a
+// new one, and the UIDs of regular albums the session can see.
+func uploadAlbums(c *gin.Context, s *entity.Session, albums []string) []string {
+	result := make([]string, 0, min(len(albums), MaxUploadAlbums))
+	seen := make(map[string]struct{}, len(albums))
+	denied, skipped := 0, 0
+
+	for _, album := range albums {
+		if _, ok := seen[album]; ok || album == "" {
+			continue
+		}
+
+		seen[album] = struct{}{}
+
+		if len(result) >= MaxUploadAlbums {
+			skipped++
+		} else if !rnd.IsUID(album, entity.AlbumUID) {
+			result = append(result, album)
+		} else if found, err := query.AlbumByUID(album); err == nil && found.HasID() && found.IsDefault() && !found.Deleted() && found.VisibleToSession(s) {
+			result = append(result, album)
+		} else {
+			denied++
+		}
+	}
+
+	if denied > 0 {
+		event.AuditWarn([]string{ClientIP(c), "session %s", "add files to %s", status.Denied}, s.RefID, english.Plural(denied, "album", "albums"))
+	}
+
+	if skipped > 0 {
+		event.AuditWarn([]string{ClientIP(c), "session %s", "add files to %s above the limit of %d", status.Skipped}, s.RefID, english.Plural(skipped, "album", "albums"), MaxUploadAlbums)
+	}
+
+	return result
+}
+
 // UploadCheckFile checks if the file is supported and has the correct extension.
 func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (remainingSizeLimit int64, err error) {
 	baseName := filepath.Base(destName)
@@ -297,11 +395,11 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 //	@Tags		Users, Files
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid						path		string				true	"user uid"
-//	@Param		token					path		string				true	"upload token"
-//	@Param		options					body		form.UploadOptions	true	"processing options"
-//	@Success	200						{object}	i18n.Response
-//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Param		uid							path		string				true	"user uid"
+//	@Param		token						path		string				true	"upload token"
+//	@Param		options						body		form.UploadOptions	true	"processing options"
+//	@Success	200							{object}	i18n.Response
+//	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/upload/{token} [put]
 func ProcessUserUpload(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/upload/:token", func(c *gin.Context) {
@@ -313,6 +411,13 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Users may only upload their own files.
 		if s.GetUser().UserUID != clean.UID(c.Param("uid")) {
+			AbortForbidden(c)
+			return
+		}
+
+		// Users whose access is limited to their base path need an upload path.
+		if uploadPathDenied(s.GetUser()) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import uploads", "no upload path", status.Denied}, s.RefID)
 			AbortForbidden(c)
 			return
 		}
@@ -342,7 +447,14 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		}
 
 		token := clean.Token(c.Param("token"))
-		uploadPath, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
+		batch := uploadBatchName(s, token)
+
+		if batch == "" {
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		uploadPath, err := conf.UserUploadBatchPath(s.UserUID, batch)
 
 		if err != nil {
 			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
@@ -350,8 +462,14 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			return
 		}
 
+		// Discard the staged files if they are rejected, since they can never be imported.
 		if err = pruneUploadSidecars(uploadPath); err != nil {
 			log.Errorf("upload: could not prepare staged files (%s)", clean.Error(err))
+
+			if errors.Is(err, errUploadSymlink) {
+				discardUpload(s, token)
+			}
+
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}
@@ -369,10 +487,9 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		opt := photoprism.ImportOptionsUpload(uploadPath, destFolder)
 
 		// Add imported files to albums if allowed.
-		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("upload: adding files to album %s", clean.Log(txt.JoinAnd(frm.Albums)))
-			opt.Albums = frm.Albums
+		if len(frm.Albums) > 0 && uploadAlbumsAllowed(s) {
+			opt.Albums = uploadAlbums(c, s, frm.Albums)
+			log.Debugf("upload: adding files to album %s", clean.Log(txt.JoinAnd(opt.Albums)))
 		}
 
 		// Set user UID if known.
@@ -413,7 +530,10 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Update album YAML backups and notify clients of the changes.
 		for _, album := range opt.Albums {
-			if a := entity.FindAlbum(entity.AlbumSearch(album, album, entity.AlbumManual)); a != nil {
+			find := entity.AlbumSearch(album, album, entity.AlbumManual)
+			find.CreatedBy = opt.UID
+
+			if a := entity.FindAlbum(find); a != nil {
 				SaveAlbumYaml(a)
 				PublishAlbumEvent(StatusUpdated, a.AlbumUID)
 			}

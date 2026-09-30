@@ -58,6 +58,7 @@ var TypeInfo = TypeMap{
 	VideoAVCHD:      "Advanced Video Coding High Definition (AVCHD)",
 	VideoTheora:     "Ogg Media (OGG)",
 	VideoInsv:       "Insta360 Video",
+	VideoLrv:        "Insta360 Proxy Video",
 	SidecarXMP:      "Adobe Extensible Metadata Platform",
 	SidecarAppleXml: "Apple Image Edits XML",
 	SidecarXml:      "Extensible Markup Language",

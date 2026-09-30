@@ -2,9 +2,9 @@ import { Selector, t } from "testcafe";
 
 export default class Page {
   constructor() {
-    this.openImportFolderSelect = Selector(".input-import-folder input", { timeout: 15000 });
+    this.openImportFolderSelect = Selector(".input-import-folder input:not([type='hidden'])", { timeout: 15000 });
     this.import = Selector("button.action-import");
-    this.indexFolderSelect = Selector(".input-index-folder input", { timeout: 15000 });
+    this.indexFolderSelect = Selector(".input-index-folder input:not([type='hidden'])", { timeout: 15000 });
     this.index = Selector(".action-index");
     this.importTab = Selector("#tab-library_import", { timeout: 15000 });
     this.indexTab = Selector("#tab-library_index", { timeout: 15000 });

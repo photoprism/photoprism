@@ -54,8 +54,7 @@ func Cameras(frm form.SearchCameras) (results []Camera, err error) {
 			where, values := OrLikeCols([]string{"lower(cameras.camera_name)", "lower(cameras.camera_make)", "lower(cameras.camera_model)"}, strings.ToLower(likeString))
 			s = s.Where(where, values...)
 		default:
-			where, values := OrLikeCols([]string{"cameras.camera_name", "cameras.camera_make", "cameras.camera_model"}, likeString)
-			s = s.Where(where, values...)
+			s = s.Where(likeCond("cameras.camera_name")+" OR "+likeCond("cameras.camera_make")+" OR "+likeCond("cameras.camera_model"), likeString, likeString, likeString)
 		}
 	}
 

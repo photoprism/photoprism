@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/dsoprea/go-logging"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -18,14 +19,8 @@ import (
 // uid apart from a name without asking the caller which one it passed.
 const SubjectUIDPrefix = 'j'
 
-// LikeEscape is the escape character the name patterns use.
-//
-// Not a backslash: MySQL reads one inside a string literal as an escape while SQLite does not, so
-// the ESCAPE clause itself cannot be written the same way for both. Nothing needs escaping in "!".
-const LikeEscape = "!"
-
-// likeEscaper escapes the escape character first, or it would escape the ones added after it.
-var likeEscaper = strings.NewReplacer(LikeEscape, LikeEscape+LikeEscape, "%", LikeEscape+"%", "_", LikeEscape+"_")
+// LikeEscape is the escape character of the conditions LikeCond returns.
+const LikeEscape = clean.SqlLikeEscape
 
 // PersonFilter classifies a person argument for the face reports: a subject uid selects exactly one
 // person, and anything else matches the names that contain it.
@@ -41,29 +36,24 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 		return s, ""
 	}
 
-	return "", "%" + likeEscaper.Replace(s) + "%"
+	return "", "%" + clean.SqlLike(s) + "%"
 }
 
-// LikeCond returns a LIKE condition for the given column that honors the escaping PersonFilter
-// applies. SQLite has no default escape character, so a pattern built without this matches nothing
-// there while matching correctly on MariaDB - the same command answering differently per driver.
+// LikeCond returns a LIKE condition for the given column that honors the escaping of clean.SqlLike.
 // Postgres has issues with byte fields as they need to be converted, but text fields do not.
 // Hence the isByte bool flag...
 //
-// The column is part of the statement rather than a bound parameter, so it is limited to a plain
-// identifier with an optional table alias. Anything else yields a condition that binds the
-// argument and matches nothing, which keeps the caller's placeholder count right while making
-// the mistake visible in the log rather than in the statement.
+// A column that is not a plain identifier yields a condition that binds the argument and matches
+// nothing, so the placeholder count stays right and the mistake shows in the log.
 func LikeCond(col string, isByte bool) string {
 	if clean.SqlColumn(col) == "" {
 		log.Errorf("query: invalid column %s in like condition", clean.Log(col))
-		return fmt.Sprintf("1 = 0 AND '' LIKE ? ESCAPE '%s'", LikeEscape)
 	}
 
 	if isByte && DbDialect() == dsn.DialectPostgreSQL {
 		return fmt.Sprintf("%s LIKE convert_to(?, 'UTF8') ESCAPE '%s'", col, LikeEscape)
 	} else {
-		return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, LikeEscape)
+		return clean.SqlLikeCond(col)
 	}
 }
 

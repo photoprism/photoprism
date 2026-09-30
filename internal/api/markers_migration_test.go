@@ -148,6 +148,8 @@ func TestFaceMigrationRefusesWrites(t *testing.T) {
 		assert.NotEqual(t, http.StatusConflict, r.Code)
 	})
 	t.Run("NoLockDoesNotRefuse", func(t *testing.T) {
+		restoreSubjectFixtures(t, "john-doe")
+
 		app, router, _ := NewApiTest()
 		UpdateSubject(router)
 

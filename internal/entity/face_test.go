@@ -200,6 +200,153 @@ func TestFace_ResolveCollision(t *testing.T) {
 	})
 }
 
+// TestFace_ResolveCollision_InertBand pins that a collision whose radius cannot narrow the cluster
+// is recorded once, without reopening the cluster, and never widens a narrowed one.
+func TestFace_ResolveCollision_InertBand(t *testing.T) {
+	newFace := func(t *testing.T, seed uint64) *Face {
+		t.Helper()
+
+		f := NewFace(rnd.GenerateUID('j'), SrcAuto, face.Embeddings{face.FixtureEmbedding(seed)}, face.EmbeddingModelName())
+		require.NotNil(t, f)
+		require.NoError(t, f.Create())
+		require.NoError(t, f.Matched())
+		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+
+		return f
+	}
+
+	at := func(f *Face, dist float64, seed uint64) face.Embeddings {
+		return face.Embeddings{face.FixtureEmbeddingAt(f.Embedding(), dist, seed)}
+	}
+
+	band := face.CollisionDist / 2
+	require.Greater(t, band, face.AmbiguityDist())
+
+	t.Run("RecordedOnce", func(t *testing.T) {
+		f := newFace(t, 7701)
+
+		// Backdated, so a write of the stamp within the same second still shows.
+		past := time.Date(2020, 1, 2, 3, 4, 5, 0, time.UTC)
+		require.NoError(t, UnscopedDb().Model(f).UpdateColumn("matched_at", past).Error)
+		f.MatchedAt = &past
+		stamp := f.MatchedAt
+
+		intruder := at(f, band, 1)
+		reported, err := f.ResolveCollision(intruder, face.EmbeddingModelName())
+		require.NoError(t, err)
+		assert.True(t, reported)
+
+		stored := FindFace(f.ID)
+		require.NotNil(t, stored)
+		assert.Equal(t, 1, stored.Collisions)
+		assert.InDelta(t, band-face.Epsilon, stored.CollisionRadius, 1e-9)
+		assert.Equal(t, int(face.RegularFace), stored.FaceKind)
+		require.NotNil(t, stored.MatchedAt, "the cluster is not reopened")
+		assert.Equal(t, stamp.Unix(), stored.MatchedAt.Unix())
+
+		reported, err = stored.ResolveCollision(intruder, face.EmbeddingModelName())
+		require.NoError(t, err)
+		assert.False(t, reported, "the same collision is not counted again")
+		assert.Equal(t, 1, FindFace(f.ID).Collisions)
+	})
+	t.Run("CloserRecorded", func(t *testing.T) {
+		f := newFace(t, 7702)
+
+		_, err := f.ResolveCollision(at(f, band, 1), face.EmbeddingModelName())
+		require.NoError(t, err)
+
+		closer := (band + face.AmbiguityDist()) / 2
+		reported, err := f.ResolveCollision(at(f, closer, 2), face.EmbeddingModelName())
+		require.NoError(t, err)
+		assert.True(t, reported)
+		assert.Equal(t, 2, f.Collisions)
+		assert.InDelta(t, closer-face.Epsilon, f.CollisionRadius, 1e-9)
+	})
+	t.Run("NarrowedKeepsRadius", func(t *testing.T) {
+		f := newFace(t, 7703)
+		narrow := 0.5 * f.AcceptDist()
+
+		reported, err := f.ResolveCollision(at(f, narrow, 1), face.EmbeddingModelName())
+		require.NoError(t, err)
+		require.True(t, reported)
+		require.Equal(t, 1, f.Collisions)
+
+		reported, err = f.ResolveCollision(at(f, band, 2), face.EmbeddingModelName())
+		require.NoError(t, err)
+		assert.False(t, reported)
+		assert.Equal(t, 1, f.Collisions)
+		assert.InDelta(t, narrow-face.Epsilon, FindFace(f.ID).CollisionRadius, 1e-9, "a radius that cannot narrow does not widen the cluster")
+	})
+	t.Run("StaleCopy", func(t *testing.T) {
+		f := newFace(t, 7705)
+		stale := FindFace(f.ID)
+		require.NotNil(t, stale)
+		narrow := 0.5 * f.AcceptDist()
+
+		reported, err := f.ResolveCollision(at(f, narrow, 1), face.EmbeddingModelName())
+		require.NoError(t, err)
+		require.True(t, reported)
+
+		reported, err = stale.ResolveCollision(at(f, band, 2), face.EmbeddingModelName())
+		require.NoError(t, err)
+		assert.False(t, reported, "the stored row decides, not the copy")
+
+		stored := FindFace(f.ID)
+		require.NotNil(t, stored)
+		assert.Equal(t, 1, stored.Collisions)
+		assert.InDelta(t, narrow-face.Epsilon, stored.CollisionRadius, 1e-9)
+	})
+	t.Run("StaleCopyRecorded", func(t *testing.T) {
+		f := newFace(t, 7706)
+		stale := FindFace(f.ID)
+		require.NotNil(t, stale)
+		intruder := at(f, band, 1)
+
+		reported, err := f.ResolveCollision(intruder, face.EmbeddingModelName())
+		require.NoError(t, err)
+		require.True(t, reported)
+
+		reported, err = stale.ResolveCollision(intruder, face.EmbeddingModelName())
+		require.NoError(t, err)
+		assert.False(t, reported, "a copy loaded before the record does not count it again")
+		assert.Equal(t, 1, FindFace(f.ID).Collisions)
+	})
+	t.Run("AmbiguousUnchanged", func(t *testing.T) {
+		f := newFace(t, 7704)
+
+		reported, err := f.ResolveCollision(at(f, face.AmbiguityDist()/2, 1), face.EmbeddingModelName())
+		require.NoError(t, err)
+		assert.True(t, reported)
+		assert.Equal(t, int(face.AmbiguousFace), FindFace(f.ID).FaceKind)
+		assert.Equal(t, 1, FindFace(f.ID).Collisions)
+	})
+}
+
+func TestFace_CollisionNoted(t *testing.T) {
+	band := face.CollisionDist / 2
+
+	t.Run("NoRecord", func(t *testing.T) {
+		assert.False(t, (&Face{}).CollisionNoted(band))
+	})
+	t.Run("RecordedAtOrBelow", func(t *testing.T) {
+		assert.True(t, (&Face{CollisionRadius: band - face.Epsilon}).CollisionNoted(band))
+		assert.True(t, (&Face{CollisionRadius: face.Epsilon}).CollisionNoted(band))
+	})
+	t.Run("CloserThanRecorded", func(t *testing.T) {
+		assert.False(t, (&Face{CollisionRadius: band}).CollisionNoted(band-face.Epsilon))
+	})
+	t.Run("NarrowedFurtherOut", func(t *testing.T) {
+		assert.True(t, (&Face{CollisionRadius: 0.5}).CollisionNoted(band))
+	})
+	t.Run("AboveBand", func(t *testing.T) {
+		assert.False(t, (&Face{CollisionRadius: face.Epsilon}).CollisionNoted(face.CollisionDist+2*face.Epsilon))
+	})
+	t.Run("Ambiguous", func(t *testing.T) {
+		assert.False(t, (&Face{CollisionRadius: face.Epsilon}).CollisionNoted(face.AmbiguityDist()/2))
+		assert.False(t, (&Face{CollisionRadius: 0.5}).CollisionNoted(face.AmbiguityDist()/2), "a narrowed cluster can still become ambiguous")
+	})
+}
+
 func TestFace_ReviseMatches(t *testing.T) {
 	m := FaceFixtures.Get("joe-biden")
 	removed, err := m.ReviseMatches()

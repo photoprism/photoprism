@@ -57,24 +57,47 @@ export function is360Equirectangular(model) {
   return is2to1;
 }
 
+// sphereStyles caches the loading of each viewer style sheet by name.
+const sphereStyles = {};
+
+// loadSphereStyles loads the viewer style sheets and resolves once they apply. The promises are
+// shared, because the lightbox may create viewers for neighboring slides at the same time, and
+// the viewer checks its styles when it is created.
+function loadSphereStyles(isVideo) {
+  // load starts loading a style sheet once, and forgets a failed attempt so it can be retried.
+  const load = (name, loader) => {
+    if (!sphereStyles[name]) {
+      sphereStyles[name] = loader().catch((err) => {
+        delete sphereStyles[name];
+        throw err;
+      });
+    }
+    return sphereStyles[name];
+  };
+
+  return Promise.all([
+    load("core", () => import("@photo-sphere-viewer/core/index.css")),
+    isVideo ? load("video", () => import("@photo-sphere-viewer/video-plugin/index.css")) : null,
+  ]);
+}
+
 // createSphereViewer mounts a Photo Sphere Viewer instance for an equirectangular photo or video.
 // The renderer (and its ThreeJS dependency) is dynamic-imported on first call so the base bundle
 // is unaffected when no 360° media is opened.
 export async function createSphereViewer(container, src, opts = {}) {
   const [coreMod, videoMod, videoAdapterMod] = await Promise.all([
-    import(/* webpackChunkName: "sphere-viewer" */ "@photo-sphere-viewer/core"),
+    import("@photo-sphere-viewer/core"),
     opts.isVideo
-      ? import(/* webpackChunkName: "sphere-viewer" */ "@photo-sphere-viewer/video-plugin")
+      ? import("@photo-sphere-viewer/video-plugin")
       : Promise.resolve(null),
     opts.isVideo
-      ? import(/* webpackChunkName: "sphere-viewer" */ "@photo-sphere-viewer/equirectangular-video-adapter")
+      ? import("@photo-sphere-viewer/equirectangular-video-adapter")
       : Promise.resolve(null),
   ]);
 
-  await import(/* webpackChunkName: "sphere-viewer" */ "@photo-sphere-viewer/core/index.css");
+  await loadSphereStyles(!!opts.isVideo);
 
   if (opts.isVideo) {
-    await import(/* webpackChunkName: "sphere-viewer" */ "@photo-sphere-viewer/video-plugin/index.css");
     return new coreMod.Viewer({
       container,
       adapter: [videoAdapterMod.EquirectangularVideoAdapter, { muted: !!opts.muted, autoplay: false }],

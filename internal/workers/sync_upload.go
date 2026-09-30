@@ -62,7 +62,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 		yamlFile := fs.Type(file.FileType) == fs.SidecarYaml
 
-		if yamlFile && (!a.SyncYaml || yamlRefused) {
+		if yamlFile && (!a.SyncYamlEnabled() || yamlRefused) {
 			continue
 		}
 
@@ -103,7 +103,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 	if yamlRefused && !otherRefused {
 		log.Warnf("sync: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
-		w.logErr(a.Update("SyncYaml", false))
+		w.logErr(a.Update("SyncYaml", -1))
 	}
 
 	return false, nil

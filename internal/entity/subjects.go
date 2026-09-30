@@ -18,11 +18,11 @@ func (m Subjects) Delete() error {
 	return nil
 }
 
-// OrphanPeople returns unused subjects, excluding the ones a person marked verified.
+// OrphanPeople returns unused subjects, excluding people marked as Verified.
 func OrphanPeople() (Subjects, error) {
 	orphans := Subjects{}
 
-	// A verified person is kept even with nothing left pointing at them: the flag records that
+	// A person marked as Verified is kept even with nothing left pointing at them: the flag records that
 	// somebody vouched for the name, and re-clustering is expected to leave them unreferenced.
 	err := Db().
 		Where("subj_type = ? AND verified = ?", SubjPerson, false).

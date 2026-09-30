@@ -477,7 +477,9 @@ func TestPhoto_SetMediaType(t *testing.T) {
 	})
 }
 
+// TestPhoto_SaveLabels checks metadata persistence and drains its count-refresh jobs.
 func TestPhoto_SaveLabels(t *testing.T) {
+	t.Cleanup(WaitForAsyncJobs)
 	t.Run("NewPhoto", func(t *testing.T) {
 		photo := Photo{
 			ID:               11111,
@@ -1965,6 +1967,27 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 		assert.Error(t, err)
 		err = m.Restore()
 		assert.Error(t, err)
+	})
+}
+
+func TestPhoto_IsArchived(t *testing.T) {
+	deletedAt := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	t.Run("Archived", func(t *testing.T) {
+		assert.True(t, (&Photo{DeletedAt: &deletedAt}).IsArchived())
+		assert.True(t, (&Photo{DeletedAt: &deletedAt, PhotoQuality: 3}).IsArchived())
+	})
+	t.Run("NotArchived", func(t *testing.T) {
+		assert.False(t, (&Photo{}).IsArchived())
+		assert.False(t, (&Photo{PhotoQuality: 3}).IsArchived())
+	})
+	t.Run("Removed", func(t *testing.T) {
+		assert.False(t, (&Photo{DeletedAt: &deletedAt, PhotoQuality: -1}).IsArchived())
+		assert.False(t, (&Photo{PhotoQuality: -1}).IsArchived())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var m *Photo
+		assert.False(t, m.IsArchived())
 	})
 }
 

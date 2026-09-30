@@ -32,6 +32,16 @@ const (
 	AlbumState  = "state"
 )
 
+// IsAlbumType reports whether s is one of the album types above.
+func IsAlbumType(s string) bool {
+	switch s {
+	case AlbumManual, AlbumFolder, AlbumMoment, AlbumMonth, AlbumState:
+		return true
+	default:
+		return false
+	}
+}
+
 // Default sort orders, one per album type.
 var (
 	DefaultOrderAlbum  = sortby.Oldest
@@ -514,21 +524,11 @@ func FindAlbum(find Album) *Album {
 	} else {
 		switch {
 		case find.AlbumTitle != "" && namedSlug:
-			switch DbDialect() {
-			case dsn.DialectPostgreSQL:
-				stmt = stmt.Where("album_slug = ? OR album_title ILIKE ?", find.AlbumSlug, find.AlbumTitle)
-			default:
-				stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
-			}
+			stmt = stmt.Where("album_slug = ? OR "+clean.SqlLikeCond("album_title", DbDialect() == dsn.DialectPostgreSQL), find.AlbumSlug, clean.SqlLike(find.AlbumTitle))
 		case namedSlug:
 			stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
 		case find.AlbumTitle != "":
-			switch DbDialect() {
-			case dsn.DialectPostgreSQL:
-				stmt = stmt.Where("album_title ILIKE ?", find.AlbumTitle)
-			default:
-				stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
-			}
+			stmt = stmt.Where(clean.SqlLikeCond("album_title", DbDialect() == dsn.DialectPostgreSQL), clean.SqlLike(find.AlbumTitle))
 		default:
 			return nil
 		}

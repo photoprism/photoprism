@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestClientsModCommand(t *testing.T) {
@@ -104,4 +107,77 @@ func TestClientsModCommand_ModRoleToNoneAndEmpty(t *testing.T) {
 	// Restore to client for other tests
 	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=client", "cs7pvt5h8rw9aaqj"})
 	assert.NoError(t, err)
+}
+
+// newDeletedTestClient creates and deletes a client, purges it when the test ends, and returns its UID.
+func newDeletedTestClient(t *testing.T, name string) string {
+	t.Helper()
+
+	m := entity.NewClient().SetName(name).SetScope("metrics")
+	require.NoError(t, m.Create())
+	t.Cleanup(func() {
+		reopenConnection()
+		assert.NoError(t, m.Purge(), "purge test client")
+	})
+	require.NoError(t, m.Delete())
+	require.True(t, entity.FindClient(m.ClientUID).Deleted())
+
+	return m.ClientUID
+}
+
+// TestClientsModCommand_RestorePrompt checks when restoring a deleted client asks for confirmation.
+func TestClientsModCommand_RestorePrompt(t *testing.T) {
+	requireTestDb(t)
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		uid := newDeletedTestClient(t, "RestoreModTty")
+
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--scope=test", uid})
+
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "--restore")
+		assert.True(t, entity.FindClient(uid).Deleted())
+	})
+	t.Run("NonInteractiveEnv", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+		uid := newDeletedTestClient(t, "RestoreModEnv")
+
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--scope=test", uid})
+
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "--restore")
+		assert.True(t, entity.FindClient(uid).Deleted())
+	})
+	t.Run("Declined", func(t *testing.T) {
+		uid := newDeletedTestClient(t, "RestoreModNo")
+		pipeResetAnswers(t, "n\n")
+
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--scope=test", uid})
+
+		assert.ErrorContains(t, err, "has been deleted")
+
+		m := entity.FindClient(uid)
+		assert.True(t, m.Deleted())
+		assert.Equal(t, "metrics", m.AuthScope)
+	})
+	t.Run("Confirmed", func(t *testing.T) {
+		uid := newDeletedTestClient(t, "RestoreModYes")
+		pipeResetAnswers(t, "y\n")
+
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--scope=test", uid})
+
+		assert.NoError(t, err)
+		assert.False(t, entity.FindClient(uid).Deleted())
+	})
+	t.Run("RestoreFlag", func(t *testing.T) {
+		uid := newDeletedTestClient(t, "RestoreModFlag")
+
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--restore", uid})
+
+		assert.NoError(t, err)
+		assert.False(t, entity.FindClient(uid).Deleted())
+	})
 }

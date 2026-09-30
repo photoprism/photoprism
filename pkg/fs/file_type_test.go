@@ -195,6 +195,10 @@ func TestFileType(t *testing.T) {
 	t.Run("Insv", func(t *testing.T) {
 		assert.Equal(t, VideoInsv, FileType("VID_20220607_102410_00_322.insv"))
 	})
+	t.Run("Lrv", func(t *testing.T) {
+		assert.Equal(t, VideoLrv, FileType("LRV_20240415_213145_01_035.lrv"))
+		assert.Equal(t, VideoLrv, FileType("LRV_20240415_213145_01_035.LRV"))
+	})
 	t.Run("Jpeg2000", func(t *testing.T) {
 		// JPEG 2000 is not registered yet, and is never classified as ordinary JPEG. Every
 		// extension of the family is listed, since one coder decodes them all and registering

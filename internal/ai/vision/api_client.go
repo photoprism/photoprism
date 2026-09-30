@@ -88,20 +88,20 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 		return nil, fmt.Errorf("vision: response exceeds the maximum size of %d bytes", MaxResponseBytes)
 	}
 
+	if clientResp.StatusCode >= 300 {
+		logErrorResponse(body, clientResp.StatusCode)
+	}
+
 	format := apiRequest.GetResponseFormat()
 
 	if engine, ok := EngineFor(format); ok && engine.Parser != nil {
-		if clientResp.StatusCode >= 300 {
-			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
-		}
-
 		parsed, parseErr := engine.Parser.Parse(context.Background(), apiRequest, body, clientResp.StatusCode)
 		if parseErr != nil {
 			return nil, parseErr
 		}
 
-		if log.IsLevelEnabled(logrus.TraceLevel) {
-			log.Tracef("vision: response %s", string(body))
+		if clientResp.StatusCode < 300 && log.IsLevelEnabled(logrus.TraceLevel) {
+			log.Tracef("vision: response %q", body)
 		}
 
 		return parsed, nil
@@ -115,13 +115,26 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 		if apiErr = json.Unmarshal(body, apiResponse); apiErr != nil {
 			return apiResponse, apiErr
 		} else if clientResp.StatusCode >= 300 {
-			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
+			if apiResponse.Error != "" {
+				return apiResponse, fmt.Errorf("%s (status code %d)", clean.Log(apiResponse.Error), clientResp.StatusCode)
+			}
+
+			return apiResponse, fmt.Errorf("status code %d", clientResp.StatusCode)
 		}
 	default:
 		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.ResponseFormat))
 	}
 
 	return apiResponse, nil
+}
+
+// logErrorResponse logs the status code and size of a failed response, and its body at trace level.
+func logErrorResponse(body []byte, code int) {
+	log.Debugf("vision: request failed with status code %d (%d bytes)", code, len(body))
+
+	if log.IsLevelEnabled(logrus.TraceLevel) {
+		log.Tracef("vision: response %q (status code %d)", body, code)
+	}
 }
 
 // validateApiRequestURL checks that outbound API requests only use HTTP(S) URLs with a host.

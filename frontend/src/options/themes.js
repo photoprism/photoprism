@@ -945,7 +945,7 @@ let options = [
 
 // All returns an object containing all defined themes for use with Vuetify.
 export const All = () => {
-  let result = [];
+  const result = {};
 
   for (let k in themes) {
     if (themes.hasOwnProperty(k)) {

@@ -4,6 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestClients(t *testing.T) {
@@ -83,4 +87,22 @@ func TestClients(t *testing.T) {
 			assert.LessOrEqual(t, 4, len(results))
 		}
 	})
+}
+
+func TestClients_Literal(t *testing.T) {
+	base := "zzl" + rnd.Base36(5)
+
+	for _, name := range []string{base + "_a", base + "Xa"} {
+		c := entity.NewClient()
+		c.SetName(name)
+		require.NoError(t, c.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(c).Error })
+	}
+
+	result, err := Clients(100, 0, "", base+"_a", false)
+	require.NoError(t, err)
+
+	if assert.Len(t, result, 1) {
+		assert.Equal(t, base+"_a", result[0].ClientName)
+	}
 }

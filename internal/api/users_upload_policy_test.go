@@ -21,7 +21,7 @@ func TestUploadSidecarAllowed(t *testing.T) {
 		assert.False(t, uploadSidecarAllowed("nested/"+name+"/photo.jpg"), name)
 	}
 
-	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", "a.rclonelink", "nested/link.RCLONELINK/photo.jpg", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
+	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", "GL010123.LRV", "a.lrv", "LRV_20240415_213145_01_035.lrv", "a.rclonelink", "nested/link.RCLONELINK/photo.jpg", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
 		assert.False(t, uploadSidecarAllowed(name), name)
 	}
 }

@@ -402,6 +402,58 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
 }
 
+// TestConvert_JpegConvertCmds_Insta360DualStream verifies that both streams are stacked before
+// dewarping, and that the file is never dewarped as a single side-by-side frame.
+func TestConvert_JpegConvertCmds_Insta360DualStream(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to dewarp two-stream INSV files")
+	}
+
+	dir := t.TempDir()
+	f := newInsta360StreamFile(t, dir, "VID_20240415_213145_00_035.insv")
+
+	// Metadata may report the size of both lenses side by side.
+	f.width, f.height = 128, 64
+	require.True(t, f.DualFisheyeLayout())
+
+	cmds, _, err := NewConvert(cnf).JpegConvertCmds(f, filepath.Join(dir, "poster.jpg"), "")
+	require.NoError(t, err)
+	require.NotEmpty(t, cmds)
+
+	assert.Contains(t, cmds[0].String(), "[0:v:1][0:v:0]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
+
+	for _, cmd := range cmds[1:] {
+		assert.NotContains(t, cmd.String(), "v360")
+	}
+}
+
+// TestConvert_JpegConvertCmds_Insta360LensCodedPhotos verifies that photos with lens codes are not combined.
+func TestConvert_JpegConvertCmds_Insta360LensCodedPhotos(t *testing.T) {
+	cnf := config.TestConfig()
+	dir := t.TempDir()
+	leftName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg")
+	rightName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg")
+	left, err := NewMediaFile(leftName)
+	require.NoError(t, err)
+	require.Nil(t, FindInsta360Capture(left))
+
+	// The photo is converted exactly as it would be without the other file.
+	paired, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "preview.jpg"), "")
+	require.NoError(t, err)
+	require.NoError(t, os.Remove(rightName))
+	single, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "preview.jpg"), "")
+	require.NoError(t, err)
+
+	require.Equal(t, len(single), len(paired))
+
+	for i := range paired {
+		assert.NotContains(t, paired[i].String(), rightName)
+		assert.Equal(t, single[i].String(), paired[i].String())
+	}
+}
+
 // TestConvert_writeEquirectangularProjection verifies that the GPano equirectangular tag is
 // written so a dewarped derivative is self-describing to external tools.
 func TestConvert_writeEquirectangularProjection(t *testing.T) {
@@ -535,6 +587,19 @@ func TestConvert_fisheyeRoll(t *testing.T) {
 		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
 		require.NoError(t, err)
 		assert.Equal(t, 180, convert.fisheyeRoll(f))
+	})
+	t.Run("LensCodedPhotos", func(t *testing.T) {
+		dir := t.TempDir()
+		// Only the other photo identifies the camera, so a roll could only come from pairing them.
+		payload, err := os.ReadFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		payload = append(payload, append([]byte{0x12, 0x0e}, []byte("Insta360 OneRS")...)...)
+		// #nosec G703 -- the destination directory and filename are controlled by the test.
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_20220625_140410_00_008.insp"), payload, fs.ModeFile))
+		right, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"))
+		require.NoError(t, err)
+		require.Nil(t, FindInsta360Capture(right))
+		assert.Equal(t, 0, convert.fisheyeRoll(right))
 	})
 	t.Run("OneRSSquareInsv", func(t *testing.T) {
 		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))

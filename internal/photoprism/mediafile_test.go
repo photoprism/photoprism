@@ -2756,6 +2756,44 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		assert.Equal(t, "/go/src/github.com/photoprism/notExisting/xxx/beach_sand.jpg", name)
 		mediaFile.SetFileName(initialName)
 	})
+	t.Run("Insta360RightLens", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName(filepath.Join(c.SamplesPath(), "360", "VID_20220625_140410_10_008.insv"))
+
+		root, base, path, name := mediaFile.PathNameInfo(false)
+		assert.Equal(t, "samples", root)
+		assert.Equal(t, "VID_20220625_140410_00_008", base)
+		assert.Equal(t, "360", path)
+		assert.Equal(t, "360/VID_20220625_140410_10_008.insv", name)
+		assert.Equal(t, "VID_20220625_140410_10_008", mediaFile.BasePrefix(false))
+		mediaFile.SetFileName(initialName)
+	})
+}
+
+// TestMediaFile_StackPrefix verifies that capture files share the stack name of the left lens.
+func TestMediaFile_StackPrefix(t *testing.T) {
+	t.Run("Insta360", func(t *testing.T) {
+		for _, fileName := range []string{
+			"/originals/360/VID_20220625_140410_10_008.insv",
+			"/originals/360/LRV_20220625_140410_11_008.insv",
+			"/originals/360/VID_20220625_140410_10_008.insv.jpg",
+		} {
+			mediaFile := &MediaFile{fileName: fileName}
+			assert.Equal(t, "VID_20220625_140410_00_008", mediaFile.StackPrefix(false), fileName)
+			assert.Equal(t, "VID_20220625_140410_00_008", mediaFile.StackPrefix(true), fileName)
+		}
+	})
+	t.Run("Other", func(t *testing.T) {
+		mediaFile := &MediaFile{fileName: "/originals/IMG_1234 (2).jpg"}
+		assert.Equal(t, "IMG_1234 (2)", mediaFile.StackPrefix(false))
+		assert.Equal(t, "IMG_1234", mediaFile.StackPrefix(true))
+	})
 }
 
 func TestMediaFile_SubDirectory(t *testing.T) {

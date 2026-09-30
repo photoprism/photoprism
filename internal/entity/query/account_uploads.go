@@ -20,7 +20,7 @@ func AccountUploads(a entity.Service, limit int) (results entity.Files, err erro
 			media.FileTypeStrings(media.Raw), []string{media.Raw.String(), media.Video.String()})
 	}
 
-	if !a.SyncYaml {
+	if !a.SyncYamlEnabled() {
 		s = s.Where("(files.file_type <> ? OR files.file_type IS NULL)", fs.SidecarYaml.String())
 	}
 

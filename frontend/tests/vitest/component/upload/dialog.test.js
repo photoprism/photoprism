@@ -3,7 +3,6 @@ import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
-import * as labsComponents from "vuetify/labs/components";
 import * as directives from "vuetify/directives";
 import PUploadDialog from "component/upload/dialog.vue";
 
@@ -13,9 +12,9 @@ if (typeof URL.createObjectURL === "undefined") {
   URL.revokeObjectURL = () => {};
 }
 
-// Vuetify instance that includes both standard and labs components (for VFileUpload).
+// Vuetify instance with all components, including VFileUpload.
 const vuetify = createVuetify({
-  components: { ...components, ...labsComponents },
+  components,
   directives,
   theme: { defaultTheme: "light" },
 });
@@ -127,6 +126,16 @@ describe("component/upload/dialog", () => {
   });
 
   // ─── v-file-upload props ──────────────────────────────────────────────────
+
+  describe("Album chips", () => {
+    it("shows the title of a selected album and of a newly typed name", async () => {
+      wrapper.vm.selectedAlbums = [{ UID: "as6sg6bxpogaaba7", Title: "Holidays", Notes: "internal note" }, "New Album"];
+      await nextTick();
+      const chips = document.querySelectorAll(".input-albums .v-chip");
+      expect([...chips].map((c) => c.textContent.trim())).toEqual(["Holidays", "New Album"]);
+      expect(document.querySelector(".input-albums").textContent).not.toContain("internal note");
+    });
+  });
 
   describe("v-file-upload binding", () => {
     it("passes filterByType from config (the accept value)", () => {

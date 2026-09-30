@@ -117,6 +117,14 @@ func TestSearchQuality_EffectiveRole(t *testing.T) {
 
 	SearchPhotos(router)
 	SearchGeo(router)
+	folder := batchDeleteTestFolder(t, conf)
+	first, _ := batchDeleteTestPhoto(t, conf, folder, "quality-one")
+	second, _ := batchDeleteTestPhoto(t, conf, folder, "quality-two")
+	for _, photo := range []*entity.Photo{first, second} {
+		entry := entity.NewPhotoAlbum(photo.PhotoUID, sharedAlbumUID)
+		require.NoError(t, entry.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(entry).Error })
+	}
 
 	found := func(t *testing.T, route string, role acl.Role) []string {
 		t.Helper()
@@ -143,15 +151,18 @@ func TestSearchQuality_EffectiveRole(t *testing.T) {
 	// The target is taken from what the narrow principal already sees, so lowering its quality is the
 	// only thing that can remove it from the second listing.
 	visible := found(t, "/api/v1/photos", acl.RoleInstance)
-	require.NotEmpty(t, visible)
-	target := visible[0]
+	require.Contains(t, visible, first.PhotoUID)
+	require.Contains(t, visible, second.PhotoUID)
+	target := first.PhotoUID
+	var targetPhoto entity.Photo
+	require.NoError(t, entity.Db().Where("photo_uid = ?", target).First(&targetPhoto).Error)
 
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).
 		Where("photo_uid = ?", target).Update("photo_quality", 1).Error)
 
 	t.Cleanup(func() {
 		_ = entity.UnscopedDb().Model(&entity.Photo{}).
-			Where("photo_uid = ?", target).Update("photo_quality", 3).Error
+			Where("photo_uid = ?", target).Update("photo_quality", targetPhoto.PhotoQuality).Error
 	})
 
 	t.Run("PhotoSearchWithholdsFromAMixedPrincipal", func(t *testing.T) {
@@ -161,6 +172,7 @@ func TestSearchQuality_EffectiveRole(t *testing.T) {
 
 		assert.NotContains(t, after, target)
 		assert.NotEmpty(t, after, "the search must still return what the role may see")
+		assert.Contains(t, after, second.PhotoUID)
 	})
 	t.Run("PhotoSearchShowsAManagingPrincipal", func(t *testing.T) {
 		assert.Contains(t, found(t, "/api/v1/photos", acl.RoleClient), target)

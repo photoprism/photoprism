@@ -44,3 +44,18 @@ func TestFormatFailedCount(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatVideoSummary(t *testing.T) {
+	t.Run("DryRun", func(t *testing.T) {
+		want := "transcode: would process 1 file, skipped 0 files"
+		if got := formatVideoSummary("transcode", true, 1, 0, 0, 0); got != want {
+			t.Fatalf("formatVideoSummary() = %q, want %q", got, want)
+		}
+	})
+	t.Run("Run", func(t *testing.T) {
+		want := "trim: processed 2 files, skipped 1 file, 0 files failed"
+		if got := formatVideoSummary("trim", false, 0, 2, 1, 0); got != want {
+			t.Fatalf("formatVideoSummary() = %q, want %q", got, want)
+		}
+	})
+}

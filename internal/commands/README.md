@@ -1,6 +1,6 @@
 ## Commands Package Guide
 
-**Last Updated:** September 24, 2026
+**Last Updated:** September 27, 2026
 
 ### Overview
 
@@ -17,7 +17,7 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 ### Command Implementation Patterns
 
 - Construct filesystem paths with `filepath.Join` and rely on permission constants from `pkg/fs` (`fs.ModeDir`, `fs.ModeFile`, and friends) when writing to disk.
-- Follow the overwrite policy used by media helpers: require explicit confirmation (`force` flags) before replacing non-empty files. Where replacements are expected, open destinations with `O_WRONLY|O_CREATE|O_TRUNC`.
+- Follow the overwrite policy used by media helpers: require explicit confirmation (`force` flags) before replacing non-empty files. Where replacements are expected, write a staged sibling (`fs.CreateStageFile` / `fs.OpenStageFile`) and publish it with `fs.PublishFile`; reserve `O_TRUNC` for a deliberate in-place overwrite.
 - Use shared logging through `event.Log` rather than direct `fmt` printing. Sensitive information such as secrets or tokens must never be logged.
 - When integrating configuration options, call the accessors on `*config.Config` (for example, `conf.ClusterUUID()`) rather than mutating option structs directly.
 - For HTTP interactions, depend on the safe download helpers in `pkg/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
@@ -36,7 +36,7 @@ that check.
 
 New remux, trim, and transcode outputs use umask-filtered creation permissions. Remux and trim preserve an existing regular destination's permission bits before replacement, including trim with a backup; backups use `fs.ModeBackupFile`. A reused transcode keeps its permissions. The process umask is inherited by FFmpeg; container launch wrappers apply `PHOTOPRISM_UMASK` before starting PhotoPrism.
 
-Remux and trim reserve temporary siblings with `fs.CreateStageFile` until publication and clean them up on failure. Working files stay beside their destinations, so publication requires no extra copying of large media across volume mounts. Permission preservation does not copy ownership, extended attributes, or ACLs.
+Remux and trim reserve temporary siblings with `fs.CreateStageFile` until publication and clean them up on failure. They publish with `fs.PublishFile`, so a replaced original is never removed first and an output that may not replace a file is linked into place. Remux refuses a symbolic link at a separate output even with `--force`. A missing sidecar folder is created before staging when the sidecar path is absolute. Working files stay beside their destinations, so publication requires no extra copying of large media across volume mounts. Permission preservation does not copy ownership, extended attributes, or ACLs.
 
 ### Positional Arguments & Flag Order
 
@@ -94,7 +94,7 @@ For long-running operations (indexing, importing, backup) that may be canceled b
 - Place tests beside their sources (`<name>_test.go`) and group related assertions using `t.Run("CaseName", ...)` subtests. Subtest names should use PascalCase for readability.
 - Execute focused suites with `go test ./internal/commands -run '<Name>' -count=1` during development. For broader coverage, `make test-go` exercises backend packages under SQLite.
 - Wrap CLI runs with `RunWithTestContext(cmd, args)` so `urfave/cli` exit codes do not call `os.Exit` during tests. If you only need to inspect the exit status, invoke `cmd.Action(ctx)` directly and assert `cli.ExitCoder`.
-- Build configurations through helpers. Use `config.NewTestConfig("commands")` when migrations and fixtures are required, `config.NewMinimalTestConfig(t.TempDir())` when the test needs only filesystem scaffolding, or `config.NewMinimalTestConfigWithDb("commands", t.TempDir())` for an isolated SQLite schema without heavy fixtures.
+- Build configurations through helpers. Use `config.NewTestConfig("commands")` when migrations and fixtures are required, `config.NewMinimalTestConfig(t.TempDir())` for filesystem scaffolding, or `config.NewMinimalTestConfigWithDb("<distinct-name>", t.TempDir())` for a DB-backed config. The package `TestMain` uses `"commands"`; give each additional open SQLite config a distinct alphabetic name. MariaDB uses one database per package.
 - Initialize test directories via `conf.InitializeTestData()` when constructing custom configs so Originals, Import, Cache, and Temp paths exist before tests interact with the filesystem.
 - Prefer deterministic fixtures: generate entity IDs via helpers such as `rnd.GenerateUID(entity.PhotoUID)` or `rnd.UUIDv7()` instead of hard-coded strings.
 

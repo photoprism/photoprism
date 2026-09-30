@@ -7,11 +7,13 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -1201,6 +1203,32 @@ func TestAlbum_SaveForm(t *testing.T) {
 		assert.Equal(t, "Family", album.AlbumCategory)
 
 	})
+	t.Run("TypeKept", func(t *testing.T) {
+		album := NewAlbum("Type Kept Test", AlbumMoment)
+		require.NoError(t, album.Save())
+		t.Cleanup(func() { _ = album.DeletePermanently() })
+
+		frm, err := form.NewAlbum(*album)
+		require.NoError(t, err)
+		frm.AlbumTitle = "Type Kept Test Renamed"
+
+		require.NoError(t, album.SaveForm(frm))
+
+		found := FindAlbum(Album{AlbumUID: album.AlbumUID})
+		require.NotNil(t, found)
+		assert.Equal(t, AlbumMoment, found.AlbumType)
+		assert.Equal(t, "Type Kept Test Renamed", found.AlbumTitle)
+	})
+}
+
+func TestIsAlbumType(t *testing.T) {
+	for _, albumType := range []string{AlbumManual, AlbumFolder, AlbumMoment, AlbumMonth, AlbumState} {
+		assert.True(t, IsAlbumType(albumType), albumType)
+	}
+
+	for _, albumType := range []string{"", "x", "Album", " album", "album\x00", "calendar"} {
+		assert.False(t, IsAlbumType(albumType), albumType)
+	}
 }
 
 // TestAlbum_Update exercises the related album behavior.
@@ -1745,5 +1773,25 @@ func TestAlbum_Links(t *testing.T) {
 		album := AlbumFixtures.Get("christmas2030")
 		links := album.Links()
 		assert.Equal(t, "4jxf3jfn2k", links[0].LinkToken)
+	})
+}
+
+func TestFindAlbum_TitleLiteral(t *testing.T) {
+	suffix := rnd.Base36(6)
+	album := NewAlbum("Like TripX"+suffix, AlbumManual)
+	require.NoError(t, album.Create())
+	t.Cleanup(func() {
+		_ = UnscopedDb().Delete(album).Error
+		FlushAlbumCache()
+	})
+
+	t.Run("Wildcard", func(t *testing.T) {
+		assert.Nil(t, FindAlbum(Album{AlbumType: AlbumManual, AlbumSlug: UnknownSlug, AlbumTitle: "Like Trip_" + suffix}))
+		assert.Nil(t, FindAlbum(Album{AlbumType: AlbumManual, AlbumSlug: UnknownSlug, AlbumTitle: "Like Trip%"}))
+	})
+	t.Run("Exact", func(t *testing.T) {
+		if found := FindAlbum(Album{AlbumType: AlbumManual, AlbumSlug: UnknownSlug, AlbumTitle: "like tripx" + suffix}); assert.NotNil(t, found) {
+			assert.Equal(t, album.AlbumUID, found.AlbumUID)
+		}
 	})
 }

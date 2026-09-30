@@ -478,6 +478,36 @@ func TestAuthAnyVisionServiceKey(t *testing.T) {
 	assert.True(t, rnd.IsRefID(s.RefID))
 }
 
+// TestAuthAnyVisionServiceKeyScope checks that the vision service key is accepted only for using the Vision API.
+func TestAuthAnyVisionServiceKeyScope(t *testing.T) {
+	origAPI, origKey := vision.ServiceApi, vision.ServiceKey
+	t.Cleanup(func() { vision.ServiceApi, vision.ServiceKey = origAPI, origKey })
+	vision.ServiceApi = true
+	vision.ServiceKey = "vision-service-key-abc123"
+
+	for _, tc := range []struct {
+		name     string
+		resource acl.Resource
+		perms    acl.Permissions
+	}{
+		{"OtherResource", acl.ResourcePhotos, acl.Permissions{acl.ActionUse}},
+		{"OtherPermission", acl.ResourceVision, acl.Permissions{acl.ActionView}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(httptest.NewRecorder())
+			req := httptest.NewRequest(http.MethodPost, "/api/v1/vision/labels", nil)
+			header.SetAuthorization(req, vision.ServiceKey)
+			c.Request = req
+
+			s := AuthAny(c, tc.resource, tc.perms)
+			require.NotNil(t, s)
+			assert.NotEqual(t, rnd.SessionID(vision.ServiceKey), s.ID)
+			assert.NotEqual(t, acl.ResourceVision.String(), s.Scope())
+		})
+	}
+}
+
 func TestAuthAnyPortalJWT(t *testing.T) {
 	fx := newPortalJWTFixture(t, "ok")
 
@@ -584,6 +614,7 @@ type portalJWTFixture struct {
 	nodeUUID    string
 }
 
+// newPortalJWTFixture builds portal credentials with isolated test databases.
 func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 	t.Helper()
 
@@ -632,6 +663,18 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 		clusterUUID: clusterUUID,
 		nodeUUID:    nodeUUID,
 	}
+}
+
+// TestPortalJWTFixtureRestoresProvider checks that the shared database resumes after an isolated fixture.
+func TestPortalJWTFixtureRestoresProvider(t *testing.T) {
+	original := get.Config()
+
+	t.Run("Fixture", func(t *testing.T) {
+		newPortalJWTFixture(t, "provider-restore")
+	})
+
+	require.Same(t, original, get.Config())
+	require.Same(t, original.Db(), entity.Db())
 }
 
 func (fx portalJWTFixture) defaultClaimsSpec() clusterjwt.ClaimsSpec {

@@ -73,7 +73,7 @@ export default class Page {
     this.sidebarChips = Selector(".p-lightbox-sidebar .meta-chip", { timeout: 15000 });
     this.sidebarLabels = Selector(".p-lightbox-sidebar .v-list-item.meta-labels", { timeout: 15000 });
     this.faceMarkerClearSubjectButton = Selector(".metadata__person-row .meta-marker-clear-subject", { timeout: 15000 });
-    this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
+    this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input:not([type='hidden'])", { timeout: 15000 });
     this.peopleHeader = Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People");
     // Every "add" affordance in the sidebar; only sessions that may edit ever see one.
     this.sidebarAddPrompts = Selector(".p-lightbox-sidebar .meta-add-prompt", { timeout: 15000 });
@@ -135,7 +135,7 @@ export default class Page {
   // The short wait lets Vuetify's combobox seat the typed value before Enter commits it.
   async typeAndConfirmInlineChip(sectionLabel, value) {
     const sectionClass = this._chipSectionClass(sectionLabel);
-    const input = Selector(`.p-lightbox-sidebar .${sectionClass} .meta-inline-edit input`, { timeout: 15000 });
+    const input = Selector(`.p-lightbox-sidebar .${sectionClass} .meta-inline-edit input:not([type='hidden'])`, { timeout: 15000 });
     await t.click(input).typeText(input, value);
     await t.wait(200);
     await t.pressKey("enter");

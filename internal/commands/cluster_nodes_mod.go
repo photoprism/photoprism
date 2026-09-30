@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -119,13 +118,11 @@ func clusterNodesModAction(ctx *cli.Context) error {
 			return nil
 		}
 
-		confirmed := RunNonInteractively(ctx.Bool("yes"))
-		if !confirmed {
-			prompt := promptui.Prompt{Label: fmt.Sprintf("Update node %s?", clean.LogQuote(n.Name)), IsConfirm: true}
-			if _, err := prompt.Run(); err != nil {
-				log.Infof("update canceled for %s", clean.LogQuote(n.Name))
-				return nil
-			}
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Update node %s", clean.LogQuote(n.Name))); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Infof("update canceled for %s", clean.LogQuote(n.Name))
+			return nil
 		}
 
 		if err := r.Put(n); err != nil {

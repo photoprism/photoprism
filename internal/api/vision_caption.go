@@ -7,7 +7,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -18,9 +17,11 @@ import (
 //	@Id			PostVisionCaption
 //	@Tags		Vision
 //	@Produce	json
-//	@Success	200					{object}	vision.ApiResponse
-//	@Failure	401,403,404,429,501	{object}	i18n.Response
-//	@Param		images				body		vision.ApiRequest	true	"list of image file urls"
+//	@Success	200			{object}	vision.ApiResponse
+//	@Failure	400,413,500	{object}	vision.ApiResponse
+//	@Failure	403			{object}	vision.ApiResponse	"Vision API disabled; permission errors return i18n.Response"
+//	@Failure	401,429		{object}	i18n.Response
+//	@Param		images		body		vision.ApiRequest	true	"list of image file urls"
 //	@Router		/api/v1/vision/caption [post]
 func PostVisionCaption(router *gin.RouterGroup) {
 	router.POST("/vision/caption", func(c *gin.Context) {
@@ -28,6 +29,11 @@ func PostVisionCaption(router *gin.RouterGroup) {
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
+			return
+		}
+
+		// Abort if the Computer Vision API is disabled.
+		if abortVisionApiDisabled(c) {
 			return
 		}
 
@@ -49,13 +55,6 @@ func PostVisionCaption(router *gin.RouterGroup) {
 			}
 
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
-			return
-		}
-
-		// Check if the Computer Vision API is enabled, otherwise abort with an error.
-		if !get.Config().VisionApi() {
-			AbortFeatureDisabled(c)
-			c.JSON(http.StatusForbidden, vision.NewApiError(request.GetId(), http.StatusForbidden))
 			return
 		}
 

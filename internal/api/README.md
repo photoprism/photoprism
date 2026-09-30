@@ -1,5 +1,7 @@
 ## API Package Guide
 
+**Last Updated:** September 27, 2026
+
 ### Overview
 
 The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each file under `internal/api` contains the handlers, request/response DTOs, and Swagger annotations for a specific feature area. Handlers remain thin: they validate input, enforce security or ACL checks, and delegate domain work to services in `internal/photoprism`, `internal/service`, or other internal packages. Keep exported types aligned with the REST schema and avoid embedding business logic directly in handlers.
@@ -29,11 +31,29 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Authenticate requests using the standard middleware (`AuthRequired`) and check roles via helpers in `internal/auth/acl` (`acl.ParseRole`, `acl.ScopePermits`, `acl.ScopeAttrPermits`).
 - Bound request bodies before parsing JSON or multipart payloads. Use `LimitRequestBodyBytes(...)` with a route-appropriate cap before `BindJSON(...)` / `ShouldBindJSON(...)`, detect `IsRequestBodyTooLarge(err)`, and return `413 Request Entity Too Large` via `AbortRequestTooLarge(...)`.
 - Keep new JSON binding sites on the shared request-limit path by running `make check-api-request-limits` (also included in `make lint`) after adding or refactoring API handlers in the root repo or private overlays.
+- List `413` in the `@Failure` annotation of every handler that can answer it; `make check-api-failure-codes` (also included in `make lint`) reports a Swagger-documented handler that does not.
 - Never log secrets or tokens. Prefer structured logging through `event.Log` and redact sensitive values before logging.
 - Enforce rate limiting with the shared limiters (`limiter.Auth`, `limiter.Login`) and respond with `limiter.AbortJSON` to maintain consistent 429 JSON payloads.
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
 - **Upload-time NSFW screening (`users_upload.go`)** — when `PHOTOPRISM_UPLOAD_NSFW=false`, the upload handler runs `vision.DetectNSFW` against every accepted file and deletes any file flagged above the NSFW threshold before it reaches `originals/`. The check is skipped entirely when `UPLOAD_NSFW=true` (default). See [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md) for the full NSFW call-graph and flag matrix.
+
+### Photo Label Updates
+
+`PUT /api/v1/photos/{uid}/label/{id}` accepts optional `Uncertainty` and optional nested `Label.Name`.
+The route selects the assignment; other submitted fields are ignored. Omitted or null uncertainty
+keeps both the stored uncertainty and source unchanged. Explicit uncertainty must be an integer
+from 0 through 100; out-of-range values return 400 before name or assignment writes. Explicit
+acceptance (`Uncertainty: 0`) sets the manual source; other values preserve the source.
+
+Assignment edits require photo-update authority and photo visibility. Supplying a name additionally
+requires label-update authority, including credential scope, before any data is written. Name
+validation and derived slugs follow the shared label naming rules. Renaming does not merge label
+IDs or move assignments, and an existing canonical slug stays stable.
+
+Assignment writes and name writes are separate operations. Photo metadata refreshes keep loaded
+label assignments available for the response without saving those assignments again. Write errors
+are logged and returned through generic error responses.
 
 ### Web Upload Formats
 
@@ -46,10 +66,14 @@ XML, AAE, and NFO sidecars are not accepted through this endpoint, including for
 The same policy applies before direct writes, before archive extraction, during saved-file
 validation, and before importing a staged batch. Processing removes disallowed staged
 sidecars; traversal or removal errors return 400 before import starts. Staged symbolic
-links are not supported. Upload paths exclude the administrative names documented in [pkg/fs](../../pkg/fs/README.md),
+links are not supported: a batch that contains one is rejected and its staging folder removed,
+while other preparation errors keep the batch so that processing can be retried. Upload paths exclude the administrative names documented in [pkg/fs](../../pkg/fs/README.md),
 including `.github`, `.forgejo`, `.local`, and `_netrc`, at any depth, matched case-insensitively, along with
 the suffixes in `pkg/fs.ReservedPathSuffixes`. ZIP entry checks
 apply to files and directories before extraction; other hidden-directory handling is unchanged. Other import sources and WebDAV retain their format policies.
+
+Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's
+own albums or create a new one, and album UIDs must name regular albums the session can see.
 
 ### Audit Logging
 
@@ -108,9 +132,9 @@ event.ErrorMsg(i18n.ErrIndexingFailed)
 
 ### Testing Strategy
 
-- Build tests around the API harness (`NewApiTest`) to obtain a configured Gin router, config, and dependencies. This isolates filesystem paths and avoids polluting global state.
+- Build tests around `NewApiTest()` for a fresh Gin router and the package's shared config. Capture and restore the config options, fixture rows, files, and cache entries a test changes.
 - Wrap requests with helper functions (for example, `PerformRequestJSON`, `PerformAuthenticatedRequest`) to capture status codes, headers, and payloads. Assert headers using constants from `pkg/http/header`.
-- When handlers interact with the database, initialize fixtures through config helpers such as `config.NewTestConfig("api")` or `config.NewMinimalTestConfigWithDb("api", t.TempDir())` depending on fixture needs.
+- The package `TestMain` initializes the shared fixture database. Tests that need a second DB-backed config use an isolated test config and restore both `get.Config()` and the entity DB provider in `t.Cleanup`.
 - Stub external dependencies (`httptest.Server`) for remote calls and set `AllowPrivate=true` explicitly when the test server binds to loopback addresses.
 - Structure tests with table-driven subtests (`t.Run("CaseName", ...)`) and use PascalCase names. Provide cleanup functions (`t.Cleanup`) to remove temporary files or databases created during tests.
 - Do not run `internal/api` tests in parallel. These suites share fixture files, temporary assets, and database state, so parallel `go test` invocations can cause false failures and readonly/fixture-conflict errors.

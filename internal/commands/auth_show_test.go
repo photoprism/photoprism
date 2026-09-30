@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"bytes"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,7 +26,29 @@ func TestAuthShowCommand(t *testing.T) {
 
 		// Check command output for plausibility.
 		// t.Logf(output)
-		assert.Error(t, err)
+		assertExitCode(t, err, 3)
 		assert.Empty(t, output)
+	})
+	t.Run("NotFoundByToken", func(t *testing.T) {
+		token := "0123456789abcdef0123456789abcdef0123456789abcdef"
+
+		buffer := bytes.Buffer{}
+		log.SetOutput(&buffer)
+		t.Cleanup(func() { log.SetOutput(os.Stdout) })
+
+		output, err := RunWithTestContext(AuthShowCommand, []string{"show", token})
+
+		// Neither the error nor the log repeat the identifier, since it may be a token.
+		assertExitCode(t, err, 3)
+		assert.Equal(t, "session not found", err.Error())
+		assert.NotContains(t, output+buffer.String(), token)
+	})
+	t.Run("NoArgument", func(t *testing.T) {
+		_, err := RunWithTestContext(AuthShowCommand, []string{"show"})
+		assertExitCode(t, err, 2)
+	})
+	t.Run("InvalidID", func(t *testing.T) {
+		_, err := RunWithTestContext(AuthShowCommand, []string{"show", "abc"})
+		assertExitCode(t, err, 2)
 	})
 }

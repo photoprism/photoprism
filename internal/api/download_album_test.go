@@ -88,7 +88,10 @@ func TestDownloadAlbum(t *testing.T) {
 
 		DownloadAlbum(router)
 
-		q := tokens.SignDownload(entity.SessionFixtures.Get("alice").ID)
+		sess := entity.NewSession(conf.SessionMaxAge(), 0).SetUser(entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, sess.Create())
+		t.Cleanup(func() { require.NoError(t, sess.Delete()) })
+		q := tokens.SignDownload(sess.ID)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+q)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

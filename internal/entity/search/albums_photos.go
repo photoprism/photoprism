@@ -1,6 +1,8 @@
 package search
 
 import (
+	"strings"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
@@ -27,4 +29,16 @@ func AlbumPhotos(a entity.Album, count int, shared bool) (results PhotoResults, 
 	}
 
 	return results, err
+}
+
+// folderAlbumPath returns the path filter of a folder album, which the path filter compares exactly
+// because of its trailing slash, or an empty string for other albums.
+func folderAlbumPath(a entity.Album) string {
+	if a.AlbumType != entity.AlbumFolder {
+		return ""
+	} else if p := strings.Trim(a.AlbumPath, "/"); p != "" {
+		return p + "/"
+	}
+
+	return ""
 }

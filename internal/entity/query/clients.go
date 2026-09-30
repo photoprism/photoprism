@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -29,10 +30,11 @@ func Clients(limit, offset int, sortOrder, search string, deleted bool) (result 
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
 		switch entity.DbDialect() {
-		case dsn.DialectPostgreSQL:
+		case dsn.DialectPostgreSQL: // ToDo: use new clean functions, or update clean functions to support Postgres.
 			stmt = stmt.Where("lower(client_name) LIKE ? OR lower(user_name) LIKE ?", strings.ToLower(search+"%"), strings.ToLower(search+"%"))
 		default:
-			stmt = stmt.Where("client_name LIKE ? OR user_name LIKE ?", search+"%", search+"%")
+			like := clean.SqlLike(search) + "%"
+			stmt = stmt.Where(clean.SqlLikeAny("client_name", "user_name"), like, like)
 		}
 	}
 

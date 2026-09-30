@@ -2,7 +2,7 @@ package photoprism
 
 import "sync"
 
-// fileHashLock serializes indexing of files that share the same content hash.
+// fileHashLock serializes indexing of files that share the same content hash or stack name.
 type fileHashLock struct {
 	sync.Mutex
 	refs int // Number of workers holding or awaiting this lock; the entry is removed when it reaches zero.
@@ -37,4 +37,9 @@ func lockFileHash(fileHash string) (unlock func()) {
 		}
 		fileHashLocksMutex.Unlock()
 	}
+}
+
+// lockStackName acquires the indexing lock for new files stacked under the same name in a folder.
+func lockStackName(filePath, stackName string) (unlock func()) {
+	return lockFileHash("stack:" + filePath + "/" + stackName)
 }

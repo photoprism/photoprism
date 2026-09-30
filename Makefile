@@ -63,6 +63,10 @@ else
     GOTEST=go test
 endif
 
+# Optional integration matrices can be enabled with "make <target> GOTEST_TAGS=slow,develop,integration".
+# The environment is not read, so an exported GOTEST_TAGS cannot drop the default tags.
+GOTEST_TAGS := slow,develop
+
 # Ensure compatibility with "docker compose" (new) and "docker-compose" (old),
 # preferring the plugin wherever it is available.
 HAS_DOCKER_COMPOSE_PLUGIN := $(shell docker compose version 2>/dev/null)
@@ -123,11 +127,15 @@ Run:
 Test:
   test                     Run the JS and Go tests
   test-short               Run the short Go tests in parallel
-  test-go                  Run all Go tests, including slow tests, against SQLite
+  test-go                  Run the default Go suite, including slow tests, against SQLite
+  test-integration         Run the Go suite with the optional integration matrices
   test-js                  Run the frontend unit tests with Vitest
-  test-mariadb             Run all Go tests, including slow tests, against MariaDB
-  test-postgres            Run all Go tests, including slow tests, against Postgres
-  test-sqlite              Run all Go tests, including slow tests, against SQLite
+  test-mariadb             Run the default Go suite against MariaDB
+                           Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
+  test-postgres            Run the default Go suite against Postgres
+                           Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
+  test-sqlite              Run the default Go suite against SQLite
+                           Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
   reset-testdb             Reset the MariaDB, Postgres and SQLite test databases
   acceptance-run-mariadb   Run the full TestCafe acceptance tests in Chrome against MariaDB
   acceptance-run-postgres  Run the full TestCafe acceptance tests in Chrome against Postgres
@@ -143,6 +151,7 @@ Format, Lint & Docs:
   audit                    Check the dependencies for known vulnerabilities
 
 Checks (also run by lint):
+  check-api-failure-codes   Check that API handlers document their 413 responses
   check-api-request-limits  Check request-body limit coverage in API handlers
   check-audit-events        Check audit-event formatting against its baseline
   check-libheif-install     Check libheif installer selection and version handling
@@ -170,7 +179,10 @@ watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: dep-models clean-testleftovers reset-mariadb-migrate reset-postgres-migrate run-test-go
+test-go:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models clean-testleftovers reset-mariadb-migrate reset-postgres-migrate run-test-go
+test-integration:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models clean-testleftovers reset-mariadb-migrate reset-postgres-migrate run-test-go GOTEST_TAGS="$(GOTEST_TAGS),integration"
 test-hub: run-test-hub
 test-pkg: run-test-pkg
 test-ai: dep-models run-test-ai
@@ -179,10 +191,14 @@ test-video: run-test-video
 test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
-test-short: dep-models run-test-short
-test-mariadb: dep-models clean-testleftovers reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
-test-postgres: dep-models clean-testleftovers reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
-test-sqlite: dep-models clean-testleftovers reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
+test-short:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-short
+test-mariadb:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models clean-testleftovers reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
+test-postgres: 
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models clean-testleftovers reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
+test-sqlite: 
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models clean-testleftovers reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
 
 # Backward compatible SQLite acceptance tests - These call the new dbms generic targets that do the testing
 acceptance-run-chromium: acceptance-run-long-chromium-sqlite
@@ -659,8 +675,7 @@ zip-nasnet:
 zip-nsfw:
 	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
-	(cd frontend &&	env BUILD_ENV=production NODE_ENV=production npm run build)
-	(cd frontend && node scripts/precompress.js)
+	$(MAKE) -C frontend build
 build-go: build-develop
 build-develop:
 	rm -f $(BINARY_NAME)
@@ -734,8 +749,7 @@ build-setup: build-setup-nas-raspberry-pi
 build-setup-nas-raspberry-pi:
 	./scripts/setup/nas/raspberry-pi/build.sh
 watch-js:
-	(cd frontend && node scripts/precompress.js --clean)
-	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
+	$(MAKE) -C frontend watch
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)
@@ -809,53 +823,53 @@ run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/... ./.../internal/...
 run-test-go:
-	$(info Running all Go tests...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
+	$(info Running Go tests with tags "$(GOTEST_TAGS)"...)
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 run-test-hub:
 	$(info Running all Go tests with hub requests...)
-	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
+	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS),debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
-	$(info Running all Go tests on MariaDB...)
-	PHOTOPRISM_TEST_DSN_NAME="mariadb"  $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	$(info Running Go tests on MariaDB with tags "$(GOTEST_TAGS)"...)
+	PHOTOPRISM_TEST_DSN_NAME="mariadb"  $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-postgres:
 	$(info Running all Go tests on PostgreSQL...)
-	PHOTOPRISM_TEST_DSN_NAME="postgres" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	PHOTOPRISM_TEST_DSN_NAME="postgres" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-sqlite:
 	$(info Running all Go tests on SQLite...)
-	PHOTOPRISM_TEST_DSN_NAME="sqlitefile" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags "slow,develop" -timeout 20m ./pkg/... ./internal/...
+	PHOTOPRISM_TEST_DSN_NAME="sqlitefile" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags "$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/...
 run-test-ai:
 	$(info Running all AI tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ai/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/ai/...
 run-test-api:
 	$(info Running all API tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/api/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/api/...
 run-test-video:
 	$(info Running all video tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ffmpeg/... ./internal/photoprism/dl/... ./pkg/media/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/ffmpeg/... ./internal/photoprism/dl/... ./pkg/media/...
 run-test-entity:
 	$(info Running all Entity tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/entity/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/entity/...
 run-test-commands:
 	$(info Running all CLI command tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/commands/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/commands/...
 run-test-photoprism:
 	$(info Running all Go tests in "/internal/photoprism"...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/photoprism/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/photoprism/...
 test-parallel:
 	$(info Running all Go tests in parallel mode...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 test-verbose:
 	$(info Running all Go tests in verbose mode...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m -v ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m -v ./pkg/... ./internal/... ./.../internal/...
 test-race:
 	$(info Running all Go tests with race detection in verbose mode...)
-	$(GOTEST) -tags="slow,develop" -race -timeout 60m -v ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -tags="$(GOTEST_TAGS)" -race -timeout 60m -v ./pkg/... ./internal/... ./.../internal/...
 test-coverage:
 	$(info Running all Go tests with code coverage report...)
-	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="slow,develop" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/... ./.../internal/...
+	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="$(GOTEST_TAGS)" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/... ./.../internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt  | grep total:
 git-pull:
@@ -1400,7 +1414,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
+lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1413,6 +1427,9 @@ lint-sh:
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/lint/check-api-request-limits.sh
+check-api-failure-codes:
+	$(info Checking the 413 responses documented by API handlers...)
+	go run ./scripts/tools/check-api-failure-codes
 check-audit-events:
 	$(info Checking how event calls build their messages...)
 	go run ./scripts/tools/check-audit-events

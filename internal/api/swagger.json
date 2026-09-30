@@ -2215,7 +2215,7 @@
                     "type": "boolean"
                 },
                 "SyncYaml": {
-                    "type": "boolean"
+                    "type": "integer"
                 },
                 "UpdatedAt": {
                     "type": "string"
@@ -2695,9 +2695,6 @@
                 },
                 "Title": {
                     "type": "string"
-                },
-                "Type": {
-                    "type": "string"
                 }
             },
             "type": "object"
@@ -2928,11 +2925,11 @@
                 "Invalid": {
                     "type": "boolean"
                 },
-                "MarkerReview": {
-                    "type": "boolean"
-                },
                 "Name": {
                     "type": "string"
+                },
+                "Review": {
+                    "type": "boolean"
                 },
                 "Src": {
                     "type": "string"
@@ -3143,6 +3140,25 @@
             },
             "type": "object"
         },
+        "form.PhotoLabel": {
+            "properties": {
+                "Label": {
+                    "$ref": "#/definitions/form.PhotoLabelName"
+                },
+                "Uncertainty": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "form.PhotoLabelName": {
+            "properties": {
+                "Name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "form.Selection": {
             "properties": {
                 "albums": {
@@ -3257,7 +3273,8 @@
                     "type": "boolean"
                 },
                 "SyncYaml": {
-                    "type": "boolean"
+                    "description": "YAML sidecar files: -1 disabled, 0 default (enabled), 1 enabled.",
+                    "type": "integer"
                 }
             },
             "type": "object"
@@ -5448,6 +5465,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -5636,6 +5659,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -5709,6 +5738,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -6003,6 +6038,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -6144,6 +6185,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -6222,6 +6269,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -6287,6 +6340,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -6416,6 +6475,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -6470,6 +6535,12 @@
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -6544,6 +6615,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -6604,6 +6681,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -6672,6 +6755,18 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -6732,6 +6827,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -6806,6 +6907,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -6872,6 +6979,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -7035,6 +7148,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -7281,6 +7400,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -7454,6 +7579,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -7619,6 +7750,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -7687,6 +7824,12 @@
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -8104,6 +8247,12 @@
                     },
                     "409": {
                         "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -8609,6 +8758,18 @@
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "507": {
+                        "description": "Insufficient Storage",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
                     }
                 },
                 "summary": "start import",
@@ -8700,6 +8861,12 @@
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -8863,6 +9030,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -9183,6 +9356,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -9228,6 +9407,12 @@
                     },
                     "409": {
                         "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -9304,6 +9489,12 @@
                     },
                     "409": {
                         "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -9585,7 +9776,7 @@
                 ]
             },
             "post": {
-                "operationId": "OAuthLogout",
+                "operationId": "OAuthLogoutPost",
                 "produces": [
                     "application/json"
                 ],
@@ -9785,7 +9976,7 @@
                 ]
             },
             "post": {
-                "operationId": "OAuthUserinfo",
+                "operationId": "OAuthUserinfoPost",
                 "produces": [
                     "application/json"
                 ],
@@ -10318,6 +10509,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -10575,6 +10772,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -10798,6 +11001,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -10914,12 +11123,12 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to be updated (currently supports: uncertainty)",
+                        "description": "assignment uncertainty and optional label name",
                         "in": "body",
                         "name": "label",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/form.Label"
+                            "$ref": "#/definitions/form.PhotoLabel"
                         }
                     }
                 ],
@@ -10953,6 +11162,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -11415,6 +11630,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -11587,6 +11808,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -11863,6 +12090,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -12010,6 +12243,12 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -12210,6 +12449,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -12472,6 +12717,12 @@
                     },
                     "409": {
                         "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -12791,6 +13042,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -12861,6 +13118,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -12926,6 +13189,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -12975,6 +13244,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -13040,6 +13315,12 @@
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -13115,6 +13396,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -13182,6 +13469,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -13425,6 +13718,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -13508,6 +13807,12 @@
                             "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiResponse"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
@@ -13515,15 +13820,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {
@@ -13532,10 +13837,10 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
-                    "501": {
-                        "description": "Not Implemented",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     }
                 },
@@ -13572,7 +13877,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "401": {
@@ -13582,15 +13887,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {
@@ -13636,7 +13941,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "401": {
@@ -13646,15 +13951,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {
@@ -13700,7 +14005,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "401": {
@@ -13710,15 +14015,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {
@@ -13761,6 +14066,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -13823,6 +14134,15 @@
             "options": {
                 "description": "A preflight request is automatically issued by a browser and in normal cases, front-end developers don't need to craft such requests themselves. It appears when request is qualified as \"to be preflighted\" and omitted for simple requests.",
                 "operationId": "Options",
+                "parameters": [
+                    {
+                        "description": "any API path",
+                        "in": "path",
+                        "name": "any",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"

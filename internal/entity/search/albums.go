@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -168,7 +169,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 
 	// Filter by title or path?
 	if txt.NotEmpty(frm.Query) {
-		q := "%" + strings.Trim(frm.Query, " *%") + "%"
+		q := "%" + clean.SqlLike(strings.Trim(frm.Query, " *%")) + "%"
 
 		switch entity.DbDialect() {
 		case dsn.DialectPostgreSQL:
@@ -185,9 +186,9 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 				// album_path is VARBINARY and matched case-insensitively so a lowercased query still
 				// finds uppercase folder paths; album_title and album_location are VARCHAR (already
 				// case-insensitive).
-				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Name(), "albums.album_path"), q, q, q)
+				s = s.Where(likeCond("albums.album_title")+" OR "+likeCond("albums.album_location")+" OR "+PathLike(s.Name(), "albums.album_path"), q, q, q)
 			} else {
-				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
+				s = s.Where(likeCond("albums.album_title")+" OR "+likeCond("albums.album_location"), q, q)
 			}
 		}
 	}

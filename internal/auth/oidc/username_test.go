@@ -196,4 +196,18 @@ func TestUsername(t *testing.T) {
 		result := Username(info, authn.OidcClaimEmail)
 		assert.Equal(t, "jens.mander", result)
 	})
+	t.Run("ClaimWithoutName", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
+		info.PreferredUsername = "./"
+		info.Name = "Jane Doe"
+		assert.Equal(t, "jane.doe", Username(info, authn.OidcClaimPreferredUsername))
+		info.Name = ".."
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		info.Email = ".bob@example.com"
+		info.EmailVerified = true
+		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
+		info.Email = "bob@example.com"
+		assert.Equal(t, "bob@example.com", Username(info, authn.OidcClaimEmail))
+	})
 }
