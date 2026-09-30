@@ -72,14 +72,15 @@ func TestSync_refreshRemoteChanges(t *testing.T) {
 		assert.Equal(t, listed.Unix(), f.RemoteDate.Unix())
 	})
 	t.Run("NewDateChanged", func(t *testing.T) {
+		// The size stays the same, so only the date change can trigger the update.
 		write(t, "date.jpg", 100, listed)
 		refresh(t)
 
-		write(t, "date.jpg", 80, changed)
+		write(t, "date.jpg", 100, changed)
 		refresh(t)
 		f := stored(t, "/date.jpg")
 		assert.Equal(t, entity.FileSyncNew, f.Status)
-		assert.Equal(t, int64(80), f.RemoteSize)
+		assert.Equal(t, int64(100), f.RemoteSize)
 		assert.Equal(t, changed.Unix(), f.RemoteDate.Unix())
 	})
 	t.Run("NewErrorsKept", func(t *testing.T) {
