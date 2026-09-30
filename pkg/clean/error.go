@@ -77,6 +77,15 @@ func ErrorFull(err error) string {
 	return errorText(err.Error())
 }
 
+// ErrorBytes sanitizes an error message like Error and bounds it to maxBytes, for storing it in a column.
+func ErrorBytes(err error, maxBytes int) string {
+	if errorNil(err) {
+		return ""
+	}
+
+	return shortenBytes(Error(err), maxBytes, "")
+}
+
 // errorText renders an error message for a reader. The credential scrub runs before the character
 // map, which would otherwise hide a percent-encoded credential from it.
 func errorText(s string) string {

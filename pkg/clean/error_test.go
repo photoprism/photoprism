@@ -290,6 +290,28 @@ func TestError(t *testing.T) {
 	})
 }
 
+func TestErrorBytes(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", ErrorBytes(nil, 255))
+	})
+	t.Run("Sanitized", func(t *testing.T) {
+		assert.Equal(t, "upload failed: ?denied?", ErrorBytes(errors.New("upload failed: <denied>"), 255))
+	})
+	t.Run("PathMasked", func(t *testing.T) {
+		result := ErrorBytes(&iofs.PathError{Op: "open", Path: "/photos/a.jpg", Err: syscall.ENOENT}, 255)
+		assert.NotContains(t, result, "/photos/a.jpg")
+		assert.Equal(t, Error(&iofs.PathError{Op: "open", Path: "/photos/a.jpg", Err: syscall.ENOENT}), result)
+	})
+	t.Run("Bounded", func(t *testing.T) {
+		for _, fill := range []string{"e", "\xff", "\U0001F600"} {
+			result := ErrorBytes(errors.New(strings.Repeat(fill, 1000)), 255)
+			assert.LessOrEqual(t, len(result), 255, "fill %q", fill)
+			assert.Greater(t, len(result), 255-utf8.UTFMax, "fill %q", fill)
+			assert.True(t, utf8.ValidString(result), "fill %q", fill)
+		}
+	})
+}
+
 func TestErrorMatchesErrorFull(t *testing.T) {
 	// Without a path to remove, both entry points must render identically. The cases that
 	// carry a path-typed error exercise the branch where the walk runs but replaces nothing.

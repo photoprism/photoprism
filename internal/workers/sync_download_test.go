@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
@@ -19,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestSync_download(t *testing.T) {
@@ -366,6 +368,21 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, result, "/zz-order")
 	})
+	t.Run("LongNameFailed", func(t *testing.T) {
+		// A failed request names the file, and replacing invalid UTF-8 can make that longer than the column holds.
+		a := newAccount(t, -1)
+		name := "/" + strings.Repeat("\xff", 250) + ".png"
+		newFile(t, a, name, 0)
+
+		_, err := worker.download(a)
+		require.NoError(t, err)
+
+		f := stored(t, a, name)
+		assert.Equal(t, 1, f.Errors)
+		assert.LessOrEqual(t, len(f.Error), txt.ClipError)
+		assert.True(t, utf8.ValidString(f.Error))
+		assert.True(t, strings.HasPrefix(f.Error, "webdav: failed to download "))
+	})
 	t.Run("SizeLimit", func(t *testing.T) {
 		// A listed size above the originals limit fails like a failed download, without a request.
 		limit := conf.Options().OriginalsLimit
@@ -404,6 +421,23 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 			assert.True(t, complete)
 			assert.Equal(t, 0, attempts("/huge.jpg"))
 			assert.Equal(t, 2, stored(t, a, "/huge.jpg").Errors)
+		})
+		t.Run("LongName", func(t *testing.T) {
+			// The error names the file, and replacing invalid UTF-8 can make it longer than the column holds.
+			a := newAccount(t, -1)
+			name := "/" + strings.Repeat("\xff", 250) + ".jpg"
+			newSizedFile(t, a, name, maxBytes+1)
+
+			_, err := worker.download(a)
+			require.NoError(t, err)
+
+			f := stored(t, a, name)
+			assert.Equal(t, 0, attempts(name))
+			assert.Equal(t, 1, f.Errors)
+			assert.LessOrEqual(t, len(f.Error), txt.ClipError)
+			assert.True(t, utf8.ValidString(f.Error))
+			assert.True(t, strings.HasPrefix(f.Error, "webdav: "))
+			assert.True(t, strings.HasSuffix(f.Error, "exceeds the maximum size of 1048576 bytes"))
 		})
 		t.Run("Limit", func(t *testing.T) {
 			a := newAccount(t, 1)

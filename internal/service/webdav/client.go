@@ -77,7 +77,8 @@ func (c *Client) CheckDownloadSize(dest string, size int64) error {
 		return nil
 	}
 
-	return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.Log(path.Base(dest)), c.downloadLimit)
+	// The name is bounded so the reason after it survives clipping.
+	return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.LogNames([]string{path.Base(dest)}), c.downloadLimit)
 }
 
 // clientUrl returns the validated server url including username and password, if specified.

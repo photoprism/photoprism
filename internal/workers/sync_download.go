@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Downloads groups files to sync by their directory/prefix.
@@ -184,7 +185,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 					file.Errors = 0
 				} else if err != nil {
 					file.Errors++
-					file.Error = err.Error()
+					file.Error = clean.ErrorBytes(err, txt.ClipError)
 
 					if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 						file.Status = entity.FileSyncFailed
