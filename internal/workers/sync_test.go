@@ -6,10 +6,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -128,6 +131,17 @@ func newSyncAccount(t *testing.T, update func(a *entity.Service)) *entity.Servic
 	})
 
 	return a
+}
+
+// loggedWarning reports whether a warning containing text was logged.
+func loggedWarning(hook *test.Hook, text string) bool {
+	for _, e := range hook.AllEntries() {
+		if e.Level == logrus.WarnLevel && strings.Contains(e.Message, text) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // storedSyncAccount returns the account as currently stored in the database.
@@ -250,11 +264,24 @@ func TestSync_StartRetryLimit(t *testing.T) {
 			a.SyncDate = due
 		})
 
+		// An account the worker skips before the check keeps sync on, although it is over its limit too.
+		skipped := newSyncAccount(t, func(a *entity.Service) {
+			withErrors(3, 4)(a)
+			a.AccType = "test"
+		})
+
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+
 		require.NoError(t, worker.Start())
 
 		stored := storedSyncAccount(t, a.ID)
 		assert.False(t, stored.AccSync)
 		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
+		assert.True(t, loggedWarning(hook, "disabled sync"))
+		assert.True(t, storedSyncAccount(t, skipped.ID).AccSync)
 
 		storedOther := storedSyncAccount(t, other.ID)
 		assert.True(t, storedOther.AccSync)
@@ -297,6 +324,55 @@ func TestSync_StartRetryLimit(t *testing.T) {
 		assert.Equal(t, "/changed", stored.SyncPath)
 		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
 		assert.Equal(t, 4, stored.AccErrors)
+	})
+	t.Run("AboveLimitReset", func(t *testing.T) {
+		// The remote of the account processed first changes the second one after Start() has loaded
+		// it, as saving the account does, so sync stays on.
+		for _, c := range []struct {
+			name   string
+			values entity.Values
+			sync   bool
+		}{
+			{"ErrorsReset", entity.Values{"acc_errors": 0}, true},
+			{"ErrorsAtLimit", entity.Values{"acc_errors": 3}, true},
+			{"LimitRemoved", entity.Values{"retry_limit": -1}, true},
+			{"SyncTurnedOff", entity.Values{"acc_sync": false}, false},
+		} {
+			t.Run(c.name, func(t *testing.T) {
+				var other *entity.Service
+				var once sync.Once
+
+				server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					once.Do(func() {
+						assert.NoError(t, entity.Db().Model(&entity.Service{ID: other.ID}).UpdateColumns(c.values).Error)
+					})
+					w.WriteHeader(http.StatusServiceUnavailable)
+				}))
+				t.Cleanup(server.Close)
+
+				first := newSyncAccount(t, func(a *entity.Service) {
+					a.AccName = "Sync Start A " + rnd.Base36(8)
+					a.AccURL = server.URL + "/"
+					a.AccTimeout = "low"
+					a.SyncStatus = entity.SyncStatusRefresh
+				})
+				other = newSyncAccount(t, func(a *entity.Service) {
+					withErrors(3, 4)(a)
+					a.AccName = "Sync Start B " + rnd.Base36(8)
+				})
+
+				logger, hook := test.NewNullLogger()
+				prev := log
+				log = logger
+				t.Cleanup(func() { log = prev })
+
+				require.NoError(t, worker.Start())
+
+				assert.Equal(t, 1, storedSyncAccount(t, first.ID).AccErrors)
+				assert.Equal(t, c.sync, storedSyncAccount(t, other.ID).AccSync)
+				assert.False(t, loggedWarning(hook, "disabled sync"))
+			})
+		}
 	})
 	t.Run("HigherLimit", func(t *testing.T) {
 		a := newSyncAccount(t, withErrors(5, 4))

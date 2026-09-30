@@ -66,11 +66,14 @@ func (w *Sync) Start() (err error) {
 			continue
 		}
 
-		// Failed too often?
+		// Failed too often? The stored row decides, since an admin may have changed it during this run,
+		// and the account is skipped either way, so its loaded copy is never written back.
 		if a.RetryLimit > 0 && a.AccErrors > a.RetryLimit {
-			if err := a.Update("acc_sync", false); err != nil {
-				w.logErr(err)
-			} else {
+			if res := entity.Db().Model(&entity.Service{}).
+				Where("id = ? AND acc_sync = 1 AND retry_limit > 0 AND acc_errors > retry_limit", a.ID).
+				UpdateColumn("acc_sync", false); res.Error != nil {
+				w.logErr(res.Error)
+			} else if res.RowsAffected > 0 {
 				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
 			}
 
