@@ -28,7 +28,7 @@ msgstr "{0} file ({1} in totale)"
 
 #: src/locales.js:266
 msgid "{0} more"
-msgstr "{Altro"
+msgstr "Altri {0}"
 
 #: src/locales.js:271
 msgid "{0} prepended action"

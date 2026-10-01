@@ -878,7 +878,7 @@ msgstr "카드"
 
 #: src/locales.js:262
 msgid "Carousel slide {0} of {1}"
-msgstr "1}의 {0} 캐러셀 슬라이드"
+msgstr "{1}의 {0} 캐러셀 슬라이드"
 
 #: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
@@ -3412,7 +3412,7 @@ msgstr "랜덤"
 
 #: src/locales.js:306
 msgid "Rating {0} of {1}"
-msgstr "1}의 {0} 등급"
+msgstr "{1}의 {0} 등급"
 
 #: src/common/util.js:899 src/options/options.js:348
 msgid "Raw"
