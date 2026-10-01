@@ -139,7 +139,14 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
-		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},
+	}...)
+
+	// The deprecated option is reported only while it is set, like face-engine.
+	if value := c.disableClassificationReport(); value != "" {
+		rows = append(rows, []string{"disable-classification", value})
+	}
+
+	rows = append(rows, [][]string{
 		{"disable-ffmpeg", fmt.Sprintf("%t", c.DisableFFmpeg())},
 		{"disable-exiftool", fmt.Sprintf("%t", c.DisableExifTool())},
 		{"disable-sips", fmt.Sprintf("%t", c.DisableSips())},
@@ -584,6 +591,21 @@ func (c *Config) faceModelReport() string {
 	}
 
 	return faceReportValue(resolved, notes...)
+}
+
+// disableClassificationReport renders the deprecated disable-classification option while it is set,
+// noting when labels-model is set to a supported mode and overrides it, and returns "" otherwise.
+func (c *Config) disableClassificationReport() string {
+	if !c.options.DisableClassification {
+		return ""
+	}
+
+	switch strings.ToLower(strings.TrimSpace(c.options.LabelsModel)) {
+	case "auto", "none":
+		return "true (deprecated, ignored)"
+	default:
+		return "true (deprecated)"
+	}
 }
 
 // faceReportValue appends the qualifiers a report shows in parentheses after a resolved value.

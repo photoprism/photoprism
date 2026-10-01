@@ -47,9 +47,35 @@ func TestConfig_Report(t *testing.T) {
 	assert.Equal(t, "labels", values["nsfw-model"])
 
 	for _, name := range []string{"label-model", "label-model-path", "label-model-runtime", "nasnet-model-path",
-		"facenet-model-path", "nsfw-model-path", "nsfw-model-runtime"} {
+		"facenet-model-path", "nsfw-model-path", "nsfw-model-runtime", "disable-classification"} {
 		assert.NotContains(t, values, name)
 	}
+
+	// The deprecated option is listed only while it is set.
+	m.options.LabelsModel, m.options.DisableClassification = "", true
+	r, _ = m.Report()
+
+	for _, row := range r {
+		values[row[0]] = row[1]
+	}
+
+	assert.Equal(t, "true (deprecated)", values["disable-classification"])
+}
+
+// TestConfig_disableClassificationReport verifies the deprecated option is reported only while set.
+func TestConfig_disableClassificationReport(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.DisableClassification = false
+	assert.Empty(t, c.disableClassificationReport())
+	c.options.DisableClassification = true
+	c.options.LabelsModel = ""
+	assert.Equal(t, "true (deprecated)", c.disableClassificationReport())
+	c.options.LabelsModel = "unsupported"
+	assert.Equal(t, "true (deprecated)", c.disableClassificationReport())
+	c.options.LabelsModel = " Auto "
+	assert.Equal(t, "true (deprecated, ignored)", c.disableClassificationReport())
+	c.options.LabelsModel = "none"
+	assert.Equal(t, "true (deprecated, ignored)", c.disableClassificationReport())
 }
 
 func TestConfig_ReportServicesCIDROrder(t *testing.T) {

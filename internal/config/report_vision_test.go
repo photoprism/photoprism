@@ -69,7 +69,9 @@ func TestConfig_VisionReportSections(t *testing.T) {
 		assert.Contains(t, sections[0].Rows, []string{"onnx-provider", "cpu"})
 		assert.Equal(t, "Labels", sections[1].Title)
 		assert.Contains(t, sections[1].Rows, []string{"labels-model", "auto (efficientformerv2_s2)"})
-		assert.NotContains(t, sections[1].Rows, []string{"disable-classification", "true"})
+		for _, row := range sections[1].Rows {
+			assert.NotEqual(t, "disable-classification", row[0])
+		}
 		assert.Equal(t, "NSFW Detection", sections[2].Title)
 		assert.Contains(t, sections[2].Rows, []string{"nsfw-model", "auto (yahoo_open_nsfw)"})
 		assert.Contains(t, sections[2].Rows, []string{"upload-nsfw", "false"})
@@ -82,12 +84,12 @@ func TestConfig_VisionReportSections(t *testing.T) {
 		c.options.DisableClassification = true
 		rows := c.VisionReportSections()[1].Rows
 		assert.Contains(t, rows, []string{"labels-model", "none"})
-		assert.Contains(t, rows, []string{"disable-classification", "true"})
+		assert.Contains(t, rows, []string{"disable-classification", "true (deprecated)"})
 	})
 	t.Run("DeprecatedIgnored", func(t *testing.T) {
 		c := newVisionReportConfig(t, vision.NewConfig())
 		c.options.DisableClassification = true
-		assert.NotContains(t, c.VisionReportSections()[1].Rows, []string{"disable-classification", "true"})
+		assert.Contains(t, c.VisionReportSections()[1].Rows, []string{"disable-classification", "true (deprecated, ignored)"})
 	})
 }
 

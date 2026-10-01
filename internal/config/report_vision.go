@@ -72,9 +72,9 @@ func (c *Config) VisionReportSections() []StatusSection {
 		{"Thresholds.Topicality", fmt.Sprintf("%d", thresholds.GetTopicality())},
 	}}
 
-	// The deprecated option is reported only while it still decides something.
-	if c.options.DisableClassification && c.LabelModelSetting() == classify.ModelNone {
-		labels.Rows = append(labels.Rows, []string{"disable-classification", "true"})
+	// The deprecated option is reported only while it is set, like face-engine.
+	if value := c.disableClassificationReport(); value != "" {
+		labels.Rows = append(labels.Rows, []string{"disable-classification", value})
 	}
 
 	detector := vision.Config.Model(vision.ModelTypeNsfw)
