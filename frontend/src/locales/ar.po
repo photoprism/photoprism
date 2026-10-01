@@ -16,7 +16,7 @@ msgstr ""
 
 #: src/locales.js:272
 msgid "{0} appended action"
-msgstr "{0 إجراء مضاف"
+msgstr "{0} إجراء مضاف"
 
 #: src/locales.js:276
 msgid "{0} files"
