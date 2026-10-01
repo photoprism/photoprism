@@ -267,7 +267,7 @@ Missing artifacts and initialization failures do not change saved disablement. I
 
 ### CLI Quick Reference
 
-- List models: `photoprism vision ls` (shows resolved IDs, engines, options, run mode, effective enabled status, artifact installation status).
+- List models: `photoprism vision ls` (shows resolved IDs, engines, the ONNX execution provider of local models, options, run mode, effective enabled status, artifact installation status). The face entry reports the embedding model `PHOTOPRISM_FACE_MODEL` selects and the `PHOTOPRISM_FACE_RUN` schedule, since those decide what runs.
 - Run a model: `photoprism vision run -m labels --count 5` (use `--force` to bypass `Run` rules).
 - Validate config: `photoprism vision ls --json` to confirm env-expanded values without triggering calls.
 
