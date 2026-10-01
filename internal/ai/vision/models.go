@@ -49,12 +49,12 @@ var (
 	DefaultThresholds = Thresholds{
 		Confidence: 10, // 0-100%
 		Topicality: 0,  // 0-100%
-		NSFW:       NSFWThresholdAuto,
+		NSFW:       DefaultNSFWThreshold,
 	}
 )
 
-// DefaultNSFWThreshold is the fallback unsafe-score percentage.
-// DefaultThresholds leaves it unset so an explicit operator value remains distinguishable.
+// DefaultNSFWThreshold is the default threshold in percent for NSFW flags from labels models, and
+// the fallback for detectors without a calibrated threshold.
 const DefaultNSFWThreshold = 75
 
 // newDefaultLabelModel returns the registered bundled ONNX classifier as a vision model.

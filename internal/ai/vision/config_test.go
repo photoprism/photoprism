@@ -3,12 +3,8 @@ package vision
 import (
 	"os"
 	"path/filepath"
-	"strconv"
 	"sync"
 	"testing"
-
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -147,94 +143,119 @@ func TestConfigValues_Load(t *testing.T) {
 		assert.True(t, configured.Default)
 		assert.Nil(t, configured.TensorFlow)
 	})
-	t.Run("MigratesLegacyNSFWThreshold", func(t *testing.T) {
+	t.Run("NSFWThresholdForLabelsOnly", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
-		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 60\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
-		require.NotNil(t, cfg.Thresholds.NSFWLabels)
-		assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, 60, cfg.Thresholds.NSFW)
+		assert.Equal(t, 60, cfg.Thresholds.GetNSFW())
+		assert.Nil(t, cfg.Thresholds.NSFWUpload)
+		assert.Nil(t, cfg.Thresholds.NSFWIndex)
+		assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+		assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
 	})
-	t.Run("MigratesLegacyZeroNSFWThreshold", func(t *testing.T) {
-		configFile := filepath.Join(t.TempDir(), "vision.yml")
-		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\nThresholds:\n  NSFW: 0\n"), fs.ModeConfigFile)
-		require.NoError(t, err)
+	t.Run("NormalizesNSFWThreshold", func(t *testing.T) {
+		cases := map[string]int{
+			"":              DefaultNSFWThreshold,
+			"  NSFW: 0\n":   DefaultNSFWThreshold,
+			"  NSFW: -1\n":  DefaultNSFWThreshold,
+			"  NSFW: 1\n":   1,
+			"  NSFW: 100\n": 100,
+			"  NSFW: 150\n": 100,
+		}
 
-		cfg := NewConfig()
-		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
-		require.NotNil(t, cfg.Thresholds.NSFWLabels)
-		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
+		for value, expected := range cases {
+			configFile := filepath.Join(t.TempDir(), "vision.yml")
+			err := os.WriteFile(configFile, []byte("Thresholds:\n  Confidence: 10\n"+value), fs.ModeConfigFile)
+			require.NoError(t, err)
+
+			cfg := NewConfig()
+			require.NoError(t, cfg.Load(configFile))
+			assert.Equal(t, expected, cfg.Thresholds.NSFW, "%q", value)
+			assert.Equal(t, expected, cfg.Thresholds.GetNSFW(), "%q", value)
+		}
 	})
-	t.Run("MigratesSharedNSFWThreshold", func(t *testing.T) {
+	t.Run("SavesClampedNSFWThreshold", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
-		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: custom\n  ONNX: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 150\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
-		require.NotNil(t, cfg.Thresholds.NSFWLabels)
-		assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
-	})
-	t.Run("MigratesSharedNSFWThresholdWithLegacyLabels", func(t *testing.T) {
-		configFile := filepath.Join(t.TempDir(), "vision.yml")
-		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: nasnet\n  TensorFlow: {}\n- Type: nsfw\n  Name: custom\n  ONNX: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
+		require.NoError(t, cfg.Save(configFile))
+		data, err := os.ReadFile(configFile) //nolint:gosec // test file
 		require.NoError(t, err)
-
-		cfg := NewConfig()
-		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
-		require.NotNil(t, cfg.Thresholds.NSFWLabels)
-		assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
-	})
-	t.Run("MigratesExplicitZeroNSFWThreshold", func(t *testing.T) {
-		configFile := filepath.Join(t.TempDir(), "vision.yml")
-		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 0\n"), fs.ModeConfigFile)
-		require.NoError(t, err)
-
-		cfg := NewConfig()
-		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
-		require.NotNil(t, cfg.Thresholds.NSFWLabels)
-		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
+		assert.Contains(t, string(data), "NSFW: 100\n")
 	})
 	t.Run("LoadsContextNSFWThresholds", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
-		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 80\n  NSFWUpload: 60\n  NSFWIndex: 110\n  NSFWLabels: -5\n"), fs.ModeConfigFile)
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 75\n  NSFWUpload: 50\n  NSFWIndex: 110\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
 		require.NotNil(t, cfg.Thresholds.NSFWUpload)
 		require.NotNil(t, cfg.Thresholds.NSFWIndex)
-		require.NotNil(t, cfg.Thresholds.NSFWLabels)
-		assert.Equal(t, 60, *cfg.Thresholds.NSFWUpload)
+		assert.Equal(t, 50, *cfg.Thresholds.NSFWUpload)
 		assert.Equal(t, 100, *cfg.Thresholds.NSFWIndex)
-		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
-		assert.Equal(t, 80, cfg.Thresholds.NSFW)
-		assert.Equal(t, 60, cfg.Thresholds.GetNSFWUpload())
+		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+		assert.Equal(t, 50, cfg.Thresholds.GetNSFWUpload())
 		assert.Equal(t, 100, cfg.Thresholds.GetNSFWIndex())
-		assert.Equal(t, DefaultNSFWThreshold, cfg.Thresholds.GetNSFWLabels())
+		assert.Equal(t, 75, cfg.Thresholds.GetNSFW())
 	})
 	t.Run("NormalizesZeroContextNSFWThresholds", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
-		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 80\n  NSFWUpload: 0\n  NSFWIndex: 0\n  NSFWLabels: 0\n"), fs.ModeConfigFile)
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 80\n  NSFWUpload: 0\n  NSFWIndex: 0\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
 		require.NotNil(t, cfg.Thresholds.NSFWUpload)
 		require.NotNil(t, cfg.Thresholds.NSFWIndex)
-		require.NotNil(t, cfg.Thresholds.NSFWLabels)
 		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWUpload)
 		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWIndex)
-		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
 		assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
 		assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
+		assert.Equal(t, 80, cfg.Thresholds.GetNSFW())
+	})
+	t.Run("KeepsSavedNSFWThreshold", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		data, err := os.ReadFile(filepath.Join("testdata", "vision-251130.yml"))
+		require.NoError(t, err)
+		require.Contains(t, string(data), "  NSFW: 75\n")
+		require.NoError(t, os.WriteFile(configFile, data, fs.ModeConfigFile)) //nolint:gosec // test file
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+		require.NoError(t, cfg.Save(configFile))
+		saved, err := os.ReadFile(configFile) //nolint:gosec // test file
+		require.NoError(t, err)
+		assert.Contains(t, string(saved), "  NSFW: 75\n")
+		assert.NotContains(t, string(saved), "NSFWLabels")
+
+		loaded := NewConfig()
+		require.NoError(t, loaded.Load(configFile))
+		assert.Equal(t, cfg.Thresholds, loaded.Thresholds)
+		assert.Equal(t, 75, loaded.Thresholds.GetNSFW())
+	})
+	t.Run("IgnoresUnknownNSFWLabelsKey", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 75\n  NSFWLabels: 60\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 75, cfg.Thresholds.GetNSFW())
+		assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+		assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
+		require.NoError(t, cfg.Save(configFile))
+		data, err := os.ReadFile(configFile) //nolint:gosec // test file
+		require.NoError(t, err)
+		assert.NotContains(t, string(data), "NSFWLabels")
 	})
 	t.Run("PreservesExplicitClassIndexZero", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
@@ -640,17 +661,15 @@ func assertConfigShouldRun(t *testing.T, cfg *ConfigValues, when RunType, want b
 	}
 }
 
-// TestLegacyNSFWPartialContexts verifies legacy thresholds migrate independently of detector overrides.
-func TestLegacyNSFWPartialContexts(t *testing.T) {
+// TestNSFWThresholdContexts verifies that each detector path uses its own threshold.
+func TestNSFWThresholdContexts(t *testing.T) {
 	for _, context := range []string{"NSFWUpload", "NSFWIndex"} {
 		t.Run(context, func(t *testing.T) {
 			filename := filepath.Join(t.TempDir(), "vision.yml")
 			require.NoError(t, os.WriteFile(filename, []byte("Thresholds:\n  NSFW: 75\n  "+context+": 50\n"), fs.ModeConfigFile))
 			cfg := NewConfig()
 			require.NoError(t, cfg.Load(filename))
-			assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
-			require.NotNil(t, cfg.Thresholds.NSFWLabels)
-			assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
+			assert.Equal(t, 75, cfg.Thresholds.GetNSFW())
 			if context == "NSFWUpload" {
 				assert.Equal(t, 50, cfg.Thresholds.GetNSFWUpload())
 				assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
@@ -678,32 +697,4 @@ func TestModeDisablementPersistence(t *testing.T) {
 	require.NotNil(t, loaded.Model(ModelTypeLabels))
 	assert.False(t, loaded.Models[0].Disabled)
 	assert.False(t, loaded.Models[0].DisabledByMode)
-}
-
-// TestNSFWMigrationLog verifies default migration is informational and reports its value once.
-func TestNSFWMigrationLog(t *testing.T) {
-	for _, threshold := range []int{75, 80} {
-		t.Run(strconv.Itoa(threshold), func(t *testing.T) {
-			logger, hook := test.NewNullLogger()
-			previous := log
-			log = logger
-			t.Cleanup(func() { log = previous })
-			filename := filepath.Join(t.TempDir(), "vision.yml")
-			require.NoError(t, os.WriteFile(filename, []byte("Thresholds:\n  NSFW: "+strconv.Itoa(threshold)+"\n  NSFWUpload: 50\n"), fs.ModeConfigFile))
-			cfg := NewConfig()
-			require.NoError(t, cfg.Load(filename))
-			entry := hook.LastEntry()
-			require.NotNil(t, entry)
-			assert.Contains(t, entry.Message, strconv.Itoa(threshold))
-			level := logrus.WarnLevel
-			if threshold == 75 {
-				level = logrus.InfoLevel
-			}
-			assert.Equal(t, level, entry.Level)
-			require.NoError(t, cfg.Save(filename))
-			hook.Reset()
-			require.NoError(t, cfg.Load(filename))
-			assert.Empty(t, hook.AllEntries())
-		})
-	}
 }

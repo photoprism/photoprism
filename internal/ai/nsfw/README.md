@@ -57,19 +57,18 @@ All local ONNX detectors, including custom models, run during indexing with `Run
 
 ### Threshold
 
-`vision.yml` can configure the dedicated detector separately for upload screening and indexing, as well as the NSFW confidence returned by the Ollama/OpenAI labels shortcut. Both `-1` and `0` select automatic behavior; explicit operator thresholds range from `1` through `100`. Lower values are more aggressive and higher values more permissive.
+`vision.yml` can configure the dedicated detector separately for upload screening and indexing, as well as the threshold at or above which a labels model flags NSFW content. Thresholds are whole percentages from `1` through `100`; values above `100` are treated as `100`. Lower values are more aggressive and higher values more permissive.
 
 ```yaml
 Thresholds:
-  NSFW: -1
+  NSFW: 75
   NSFWUpload: -1
   NSFWIndex: -1
-  NSFWLabels: 75
 ```
 
-`NSFWUpload` controls the dedicated detector in the upload handler, `NSFWIndex` controls the dedicated detector in indexing and vision-worker runs, and `NSFWLabels` controls NSFW confidence from the Ollama/OpenAI labels shortcut. `NSFW` remains a shared fallback wherever a path-specific field is omitted. When a loaded configuration contains `NSFW` but omits `NSFWLabels`, PhotoPrism migrates it to `NSFWLabels` even if `NSFWUpload` or `NSFWIndex` is present and lets the dedicated detectors use their calibrated automatic thresholds. A path-specific `0` or `-1` explicitly selects automatic behavior even when the shared field is set.
+`NSFWUpload` controls the dedicated detector in the upload handler, and `NSFWIndex` controls the dedicated detector in indexing and vision-worker runs. When either is omitted, `0`, or `-1`, that path uses the selected detector's calibrated threshold. `NSFW` applies only to labels models, i.e. the NSFW confidence returned by Ollama or OpenAI labels models with `PHOTOPRISM_NSFW_MODEL=labels`; it never changes the dedicated detector. When `NSFW` is omitted or not positive, it is `75`.
 
-In automatic mode, the local dedicated ONNX detector uses the selected model's calibrated fallback threshold: AdamCodd FP32 uses `71.8`, AdamCodd INT8 uses `76.0`, Falconsai uses `52.9`, Freepik uses `99.2`, and Yahoo OpenNSFW uses `32.7`. The labels shortcut and remote detector results use the shared fallback of `75` because they do not expose a local detector calibration. Automatic selection is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
+In automatic mode, the local dedicated ONNX detector uses the selected model's calibrated fallback threshold: AdamCodd FP32 uses `71.8`, AdamCodd INT8 uses `76.0`, Falconsai uses `52.9`, Freepik uses `99.2`, and Yahoo OpenNSFW uses `32.7`. Remote detector results use the fallback of `75` because they do not expose a local detector calibration. Automatic selection is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
 
 Custom detectors must declare `Reduction`. `softmax-unsafe` additionally requires `UnsafeClassIndex`, while `neutral-complement` requires `NeutralClassIndex`; zero is accepted only when it is explicitly present. `sigmoid-unsafe` reduces its single output without a class index. `DefaultThreshold` is the custom detector's automatic fallback probability from 0 to 1; when omitted, it falls back to `0.98`.
 

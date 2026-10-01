@@ -52,14 +52,14 @@ func TestNSFWInitialThresholdContexts(t *testing.T) {
 
 // TestNsfwThreshold verifies which threshold the detector is asked to apply.
 func TestNsfwThreshold(t *testing.T) {
-	t.Run("OperatorValueWins", func(t *testing.T) {
+	t.Run("LabelsValueIgnored", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 90}})
 		index, indexIsSet := nsfwThreshold(nsfwThresholdIndex)
 		upload, uploadIsSet := nsfwThreshold(nsfwThresholdUpload)
-		assert.InDelta(t, 0.9, index, 1e-6)
-		assert.InDelta(t, 0.9, upload, 1e-6)
-		assert.True(t, indexIsSet)
-		assert.True(t, uploadIsSet)
+		assert.InDelta(t, 0.75, index, 1e-6)
+		assert.InDelta(t, 0.75, upload, 1e-6)
+		assert.False(t, indexIsSet)
+		assert.False(t, uploadIsSet)
 	})
 	t.Run("ContextOverrides", func(t *testing.T) {
 		upload, index := 62, 91
@@ -82,7 +82,8 @@ func TestNsfwThreshold(t *testing.T) {
 		assert.False(t, configured)
 	})
 	t.Run("AboveMaxClamps", func(t *testing.T) {
-		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 500}})
+		index := 500
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFWIndex: &index}})
 		threshold, configured := nsfwThreshold(nsfwThresholdIndex)
 		assert.InDelta(t, 1.0, threshold, 1e-6)
 		assert.True(t, configured)
@@ -121,8 +122,23 @@ func TestResolvedNSFWThreshold(t *testing.T) {
 		assert.InDelta(t, 0.63, resolvedNSFWThreshold(model), 1e-6)
 	})
 	t.Run("OperatorOverride", func(t *testing.T) {
-		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 91}})
+		index := 91
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFWIndex: &index}})
 		assert.InDelta(t, 0.91, resolvedNSFWThreshold(model), 1e-6)
+		assert.InDelta(t, 0.63, resolvedNSFWUploadThreshold(model), 1e-6)
+	})
+	t.Run("LabelsValueIgnored", func(t *testing.T) {
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 75}})
+		assert.InDelta(t, 0.63, resolvedNSFWThreshold(model), 1e-6)
+		assert.InDelta(t, 0.63, resolvedNSFWUploadThreshold(model), 1e-6)
+	})
+	t.Run("DefaultDetector", func(t *testing.T) {
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 75}})
+		description := nsfw.FindModel(nsfw.DefaultModelName())
+		require.NotNil(t, description)
+		detector := nsfw.NewModel(nsfw.Settings{DefaultThreshold: description.DefaultThreshold, Disabled: true})
+		assert.InDelta(t, 0.327, resolvedNSFWThreshold(detector), 1e-6)
+		assert.InDelta(t, 0.327, resolvedNSFWUploadThreshold(detector), 1e-6)
 	})
 	t.Run("SeparateOverrides", func(t *testing.T) {
 		upload, index := 62, 91

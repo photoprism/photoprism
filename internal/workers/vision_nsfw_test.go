@@ -80,6 +80,20 @@ func TestLabelsPrivateFlag(t *testing.T) {
 	flag, write := labelsPrivateFlag(conf, false, nil)
 	assert.False(t, flag)
 	assert.False(t, write)
+	t.Run("LabelsThreshold", func(t *testing.T) {
+		index := 90
+		vision.Config.Thresholds.NSFW = 40
+		vision.Config.Thresholds.NSFWIndex = &index
+		t.Cleanup(func() { vision.Config.Thresholds = vision.DefaultThresholds })
+		scored := classify.Labels{{Name: "beach", NSFWConfidence: 50}}
+		flag, write := labelsPrivateFlag(conf, false, scored)
+		assert.True(t, flag)
+		assert.True(t, write)
+		vision.Config.Thresholds.NSFW = 60
+		flag, write = labelsPrivateFlag(conf, false, scored)
+		assert.False(t, flag)
+		assert.False(t, write)
+	})
 	vision.Config = nil
 	flag, write = labelsPrivateFlag(conf, false, labels)
 	assert.False(t, flag)

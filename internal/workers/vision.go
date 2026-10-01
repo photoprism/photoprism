@@ -365,7 +365,7 @@ func labelsPrivateFlag(conf *config.Config, private bool, labels classify.Labels
 	if private || !conf.DetectNSFWLabels() || vision.Config == nil {
 		return private, false
 	}
-	if labels.IsNSFW(vision.Config.Thresholds.GetNSFWLabels()) {
+	if labels.IsNSFW(vision.Config.Thresholds.GetNSFW()) {
 		return true, true
 	}
 	return private, false

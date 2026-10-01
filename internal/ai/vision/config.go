@@ -110,27 +110,8 @@ func (c *ConfigValues) Load(fileName string) error {
 		return err
 	}
 
-	// Seed the sentinel so an omitted field remains distinguishable from an explicit zero.
-	c.Thresholds.NSFW = NSFWThresholdAuto
 	if err = yaml.Unmarshal(yamlConfig, c); err != nil {
 		return err
-	}
-
-	sharedNSFWIsSet := c.Thresholds.NSFW >= 0
-	if sharedNSFWIsSet && c.Thresholds.NSFWLabels == nil {
-		legacyThreshold := c.Thresholds.NSFW
-		if legacyThreshold <= 0 {
-			legacyThreshold = NSFWThresholdAuto
-		} else if legacyThreshold > 100 {
-			legacyThreshold = 100
-		}
-		c.Thresholds.NSFWLabels = &legacyThreshold
-		c.Thresholds.NSFW = NSFWThresholdAuto
-		if legacyThreshold == DefaultNSFWThreshold {
-			log.Infof("vision: migrated shared NSFW threshold %d to the labels context", legacyThreshold)
-		} else {
-			log.Warnf("vision: migrated shared NSFW threshold %d to the labels context", legacyThreshold)
-		}
 	}
 
 	// Map labels and NSFW entries for unsupported local runtimes to default placeholders.
@@ -179,11 +160,12 @@ func (c *ConfigValues) Load(fileName string) error {
 	}
 
 	if c.Thresholds.NSFW <= 0 {
-		c.Thresholds.NSFW = NSFWThresholdAuto
+		c.Thresholds.NSFW = DefaultNSFWThreshold
 	} else if c.Thresholds.NSFW > 100 {
 		c.Thresholds.NSFW = 100
 	}
-	for _, threshold := range []*int{c.Thresholds.NSFWUpload, c.Thresholds.NSFWIndex, c.Thresholds.NSFWLabels} {
+
+	for _, threshold := range []*int{c.Thresholds.NSFWUpload, c.Thresholds.NSFWIndex} {
 		switch {
 		case threshold == nil:
 			continue

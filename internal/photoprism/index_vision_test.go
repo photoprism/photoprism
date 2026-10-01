@@ -62,8 +62,27 @@ func TestIndexCaptionSource(t *testing.T) {
 // TestLabelsMarkNSFW verifies label-derived NSFW flags apply only when NSFW detection is enabled.
 func TestLabelsMarkNSFW(t *testing.T) {
 	labels := classify.Labels{{Name: "test", NSFW: true}}
-	assert.False(t, labelsMarkNSFW(labels, false, 75))
-	assert.True(t, labelsMarkNSFW(labels, true, 75))
+	assert.False(t, labelsMarkNSFW(labels, false))
+	assert.True(t, labelsMarkNSFW(labels, true))
+}
+
+// TestLabelsNSFWThreshold verifies that labels models use the labels threshold, not the detector's.
+func TestLabelsNSFWThreshold(t *testing.T) {
+	previous := vision.Config
+	t.Cleanup(func() { vision.Config = previous })
+
+	t.Run("Configured", func(t *testing.T) {
+		index := 90
+		vision.Config = vision.NewConfig()
+		vision.Config.Thresholds.NSFW = 40
+		vision.Config.Thresholds.NSFWIndex = &index
+		assert.Equal(t, 40, labelsNSFWThreshold())
+		assert.True(t, labelsMarkNSFW(classify.Labels{{Name: "beach", NSFWConfidence: 50}}, true))
+	})
+	t.Run("NoConfig", func(t *testing.T) {
+		vision.Config = nil
+		assert.Equal(t, vision.DefaultNSFWThreshold, labelsNSFWThreshold())
+	})
 }
 
 func TestIndexLabelsSource(t *testing.T) {

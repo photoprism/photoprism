@@ -3,15 +3,15 @@ package vision
 // NSFWThresholdAuto selects the calibrated threshold of the active detector.
 const NSFWThresholdAuto = -1
 
-// Thresholds are expressed as percentages and gate label acceptance, topicality,
-// and NSFW handling, with zero or -1 selecting automatic NSFW calibration.
+// Thresholds are expressed as percentages and gate label acceptance, topicality, and NSFW
+// handling. NSFW applies to labels models only; NSFWUpload and NSFWIndex apply to the dedicated
+// detector, with zero or -1 selecting its calibrated threshold.
 type Thresholds struct {
 	Confidence int  `yaml:"Confidence,omitempty" json:"confidence,omitempty"`
 	Topicality int  `yaml:"Topicality,omitempty" json:"topicality,omitempty"`
 	NSFW       int  `yaml:"NSFW,omitempty" json:"nsfw,omitempty"`
 	NSFWUpload *int `yaml:"NSFWUpload,omitempty" json:"nsfwUpload,omitempty"`
 	NSFWIndex  *int `yaml:"NSFWIndex,omitempty" json:"nsfwIndex,omitempty"`
-	NSFWLabels *int `yaml:"NSFWLabels,omitempty" json:"nsfwLabels,omitempty"`
 }
 
 // GetConfidence returns the Confidence threshold in percent from 0 to 100.
@@ -52,7 +52,7 @@ func (t *Thresholds) GetNSFWUpload() int {
 	if t != nil {
 		override = t.NSFWUpload
 	}
-	value, _ := t.nsfwValue(override)
+	value, _ := nsfwValue(override)
 	return value
 }
 
@@ -67,7 +67,7 @@ func (t *Thresholds) NSFWUploadIsSet() bool {
 	if t != nil {
 		override = t.NSFWUpload
 	}
-	_, configured := t.nsfwValue(override)
+	_, configured := nsfwValue(override)
 	return configured
 }
 
@@ -77,7 +77,7 @@ func (t *Thresholds) GetNSFWIndex() int {
 	if t != nil {
 		override = t.NSFWIndex
 	}
-	value, _ := t.nsfwValue(override)
+	value, _ := nsfwValue(override)
 	return value
 }
 
@@ -92,33 +92,26 @@ func (t *Thresholds) NSFWIndexIsSet() bool {
 	if t != nil {
 		override = t.NSFWIndex
 	}
-	_, configured := t.nsfwValue(override)
+	_, configured := nsfwValue(override)
 	return configured
 }
 
-// GetNSFWLabels returns the label-derived NSFW threshold in percent.
-func (t *Thresholds) GetNSFWLabels() int {
-	var override *int
-	if t != nil {
-		override = t.NSFWLabels
+// GetNSFW returns the threshold in percent from 1 to 100 at or above which labels models flag NSFW
+// content, or DefaultNSFWThreshold when it is not set.
+func (t *Thresholds) GetNSFW() int {
+	if t == nil || t.NSFW <= 0 {
+		return DefaultNSFWThreshold
 	}
-	value, _ := t.nsfwValue(override)
-	return value
+
+	return min(t.NSFW, 100)
 }
 
-// nsfwValue resolves a context override, the shared legacy value, or the fallback.
-func (t *Thresholds) nsfwValue(override *int) (int, bool) {
-	if override != nil {
-		if *override <= 0 {
-			return DefaultNSFWThreshold, false
-		}
-
-		return min(*override, 100), true
+// nsfwValue resolves a dedicated detector threshold and reports whether it is set, so that an
+// unset value selects the calibrated threshold of the active detector.
+func nsfwValue(override *int) (int, bool) {
+	if override == nil || *override <= 0 {
+		return DefaultNSFWThreshold, false
 	}
 
-	if t != nil && t.NSFW > 0 {
-		return min(t.NSFW, 100), true
-	}
-
-	return DefaultNSFWThreshold, false
+	return min(*override, 100), true
 }

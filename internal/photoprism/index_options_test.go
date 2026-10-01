@@ -186,7 +186,7 @@ func TestIndexOptionsNSFWModes(t *testing.T) {
 			assert.Equal(t, mode == "auto", options.DetectNsfw)
 			assert.Equal(t, mode == "labels", options.DetectNSFWLabels)
 			labels := classify.Labels{{Name: "custom", NSFW: true}}
-			assert.Equal(t, mode == "labels", labelsMarkNSFW(labels, options.DetectNSFWLabels, 75))
+			assert.Equal(t, mode == "labels", labelsMarkNSFW(labels, options.DetectNSFWLabels))
 			conf.Options().DetectNSFW = false
 			options = NewIndexOptions("/", false, false, false, false, false, conf)
 			assert.False(t, options.DetectNsfw)

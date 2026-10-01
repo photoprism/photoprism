@@ -1,6 +1,10 @@
 package vision
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestThresholds_GetConfidence(t *testing.T) {
 	t.Run("Negative", func(t *testing.T) {
@@ -58,55 +62,36 @@ func TestThresholds_GetTopicality(t *testing.T) {
 	})
 }
 
-// TestThresholds_NSFWContexts verifies caller-specific values override the shared legacy setting.
+// TestThresholds_NSFWContexts verifies that the detector paths and labels models use separate values.
 func TestThresholds_NSFWContexts(t *testing.T) {
-	upload, index, labels := 60, 90, 40
-	thresholds := Thresholds{NSFW: 80, NSFWUpload: &upload, NSFWIndex: &index, NSFWLabels: &labels}
+	t.Run("Explicit", func(t *testing.T) {
+		upload, index := 60, 90
+		thresholds := Thresholds{NSFW: 40, NSFWUpload: &upload, NSFWIndex: &index}
+		assert.Equal(t, upload, thresholds.GetNSFWUpload())
+		assert.Equal(t, index, thresholds.GetNSFWIndex())
+		assert.Equal(t, 40, thresholds.GetNSFW())
+		assert.True(t, thresholds.NSFWUploadIsSet())
+		assert.True(t, thresholds.NSFWIndexIsSet())
+	})
+	t.Run("LabelsValueDoesNotApplyToDetector", func(t *testing.T) {
+		thresholds := Thresholds{NSFW: 75}
+		assert.False(t, thresholds.NSFWUploadIsSet())
+		assert.False(t, thresholds.NSFWIndexIsSet())
+		assert.Equal(t, 75, thresholds.GetNSFW())
 
-	if got := thresholds.GetNSFWUpload(); got != upload {
-		t.Fatalf("expected upload threshold %d, got %d", upload, got)
-	}
-	if got := thresholds.GetNSFWIndex(); got != index {
-		t.Fatalf("expected index threshold %d, got %d", index, got)
-	}
-	if got := thresholds.GetNSFWLabels(); got != labels {
-		t.Fatalf("expected labels threshold %d, got %d", labels, got)
-	}
-	if !thresholds.NSFWUploadIsSet() || !thresholds.NSFWIndexIsSet() {
-		t.Fatal("expected context thresholds to be configured")
-	}
-
-	thresholds = Thresholds{NSFW: 80}
-	if got := thresholds.GetNSFWUpload(); got != 80 {
-		t.Fatalf("expected shared upload threshold 80, got %d", got)
-	}
-	if got := thresholds.GetNSFWIndex(); got != 80 {
-		t.Fatalf("expected shared index threshold 80, got %d", got)
-	}
-	if got := thresholds.GetNSFWLabels(); got != 80 {
-		t.Fatalf("expected shared labels threshold 80, got %d", got)
-	}
-
-	auto := NSFWThresholdAuto
-	thresholds = Thresholds{NSFW: 80, NSFWUpload: &auto, NSFWIndex: &auto, NSFWLabels: &auto}
-	if thresholds.NSFWUploadIsSet() || thresholds.NSFWIndexIsSet() {
-		t.Fatal("expected automatic context thresholds to override the shared value")
-	}
-	if got := thresholds.GetNSFWUpload(); got != DefaultNSFWThreshold {
-		t.Fatalf("expected automatic upload fallback %d, got %d", DefaultNSFWThreshold, got)
-	}
-	if got := thresholds.GetNSFWLabels(); got != DefaultNSFWThreshold {
-		t.Fatalf("expected automatic labels fallback %d, got %d", DefaultNSFWThreshold, got)
-	}
-
-	zero := 0
-	thresholds = Thresholds{NSFW: 0, NSFWUpload: &zero, NSFWIndex: &zero, NSFWLabels: &zero}
-	if thresholds.NSFWUploadIsSet() || thresholds.NSFWIndexIsSet() {
-		t.Fatal("expected zero context thresholds to select automatic calibration")
-	}
-	if got := thresholds.GetNSFWLabels(); got != DefaultNSFWThreshold {
-		t.Fatalf("expected zero labels fallback %d, got %d", DefaultNSFWThreshold, got)
-	}
+		thresholds.NSFW = 60
+		assert.False(t, thresholds.NSFWUploadIsSet())
+		assert.False(t, thresholds.NSFWIndexIsSet())
+	})
+	t.Run("Automatic", func(t *testing.T) {
+		auto, zero := NSFWThresholdAuto, 0
+		thresholds := Thresholds{NSFW: 80, NSFWUpload: &auto, NSFWIndex: &zero}
+		assert.False(t, thresholds.NSFWUploadIsSet())
+		assert.False(t, thresholds.NSFWIndexIsSet())
+		assert.Equal(t, DefaultNSFWThreshold, thresholds.GetNSFWUpload())
+		assert.Equal(t, DefaultNSFWThreshold, thresholds.GetNSFWIndex())
+		assert.Equal(t, 80, thresholds.GetNSFW())
+	})
 }
 
 // TestThresholds_GetNSFWUpload verifies upload overrides, fallbacks, and percentages.
@@ -151,29 +136,50 @@ func TestThresholds_GetNSFWIndex(t *testing.T) {
 	}
 }
 
-// TestThresholds_GetNSFWLabels verifies label overrides and shared fallbacks.
-func TestThresholds_GetNSFWLabels(t *testing.T) {
-	explicit := 40
-	thresholds := Thresholds{NSFW: 80, NSFWLabels: &explicit}
-	if got := thresholds.GetNSFWLabels(); got != explicit {
-		t.Fatalf("expected %d, got %d", explicit, got)
+// TestThresholds_GetNSFW verifies the labels model threshold, its default, and clamping.
+func TestThresholds_GetNSFW(t *testing.T) {
+	cases := map[int]int{
+		-1:  DefaultNSFWThreshold,
+		0:   DefaultNSFWThreshold,
+		1:   1,
+		60:  60,
+		100: 100,
+		150: 100,
 	}
 
-	thresholds.NSFWLabels = nil
-	if got := thresholds.GetNSFWLabels(); got != 80 {
-		t.Fatalf("expected shared threshold 80, got %d", got)
+	for value, expected := range cases {
+		thresholds := Thresholds{NSFW: value}
+		assert.Equal(t, expected, thresholds.GetNSFW(), "NSFW: %d", value)
 	}
+
+	var thresholds *Thresholds
+	assert.Equal(t, DefaultNSFWThreshold, thresholds.GetNSFW())
 }
 
-// TestThresholds_nsfwValue verifies automatic values and upper-bound clamping.
-func TestThresholds_nsfwValue(t *testing.T) {
-	thresholds := Thresholds{NSFW: 0}
-	if value, configured := thresholds.nsfwValue(nil); value != DefaultNSFWThreshold || configured {
-		t.Fatalf("expected automatic fallback %d, got %d configured=%t", DefaultNSFWThreshold, value, configured)
-	}
-
-	aboveMax := 150
-	if value, configured := thresholds.nsfwValue(&aboveMax); value != 100 || !configured {
-		t.Fatalf("expected configured maximum 100, got %d configured=%t", value, configured)
-	}
+// TestNsfwValue verifies automatic values, explicit values, and upper-bound clamping.
+func TestNsfwValue(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
+		value, configured := nsfwValue(nil)
+		assert.Equal(t, DefaultNSFWThreshold, value)
+		assert.False(t, configured)
+	})
+	t.Run("Automatic", func(t *testing.T) {
+		for _, v := range []int{0, NSFWThresholdAuto} {
+			value, configured := nsfwValue(&v)
+			assert.Equal(t, DefaultNSFWThreshold, value)
+			assert.False(t, configured)
+		}
+	})
+	t.Run("Explicit", func(t *testing.T) {
+		v := 40
+		value, configured := nsfwValue(&v)
+		assert.Equal(t, 40, value)
+		assert.True(t, configured)
+	})
+	t.Run("AboveMax", func(t *testing.T) {
+		v := 150
+		value, configured := nsfwValue(&v)
+		assert.Equal(t, 100, value)
+		assert.True(t, configured)
+	})
 }
