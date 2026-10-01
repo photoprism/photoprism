@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:09+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2765,7 +2765,7 @@ msgstr "Kế tiếp"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "Tháng tới"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2781,7 +2781,7 @@ msgstr "Hình ảnh tiếp theo"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "Năm sau"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3346,7 +3346,7 @@ msgstr "Trước"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "Tháng trước"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3362,7 +3362,7 @@ msgstr "Hình ảnh trước đó"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "Năm trước"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3786,7 +3786,7 @@ msgstr "Chọn thư mục nguồn để nhập tệp…"
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "Chọn tất cả"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3798,11 +3798,11 @@ msgstr "Chọn ngày"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "Chọn nhóm"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "Chọn tháng"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3821,7 +3821,7 @@ msgstr "Chọn hoặc kéo thả các tệp để tải lên…"
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "Chọn hàng"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3837,7 +3837,7 @@ msgstr "Chọn thời gian"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "Chọn năm"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4385,7 +4385,7 @@ msgstr "Hôm nay"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "Hôm nay, {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

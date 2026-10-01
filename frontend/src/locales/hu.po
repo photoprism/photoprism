@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:07+0000\n"
+"Last-Translator: Krisztián Vanyolai <vanyolai@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -2767,7 +2767,7 @@ msgstr "Következő"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "Jövő hónapban"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2783,7 +2783,7 @@ msgstr "Következő vizuális"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "Jövőre"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3348,7 +3348,7 @@ msgstr "Előző"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "Előző hónap"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3364,7 +3364,7 @@ msgstr "Előző kép"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "Előző év"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3788,7 +3788,7 @@ msgstr "Válassza ki a forrásmappát a fájlok importálásához…"
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "Összes kijelölése"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3800,11 +3800,11 @@ msgstr "Válassza ki a dátumokat"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "Csoport kiválasztása"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "Hónap kiválasztása"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3823,7 +3823,7 @@ msgstr "Válassza ki vagy tegye le a fájlokat a feltöltéshez…"
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "Sor kiválasztása"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3839,7 +3839,7 @@ msgstr "Idő kiválasztása"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "Válasszon évet"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4387,7 +4387,7 @@ msgstr "Ma"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "Ma, {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

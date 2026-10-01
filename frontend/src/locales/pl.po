@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:08+0000\n"
+"Last-Translator: lacrimal <jareeq@gmail.com>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -2767,7 +2767,7 @@ msgstr "Następny"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "W przyszłym miesiącu"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2783,7 +2783,7 @@ msgstr "Następny obraz"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "W przyszłym roku"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3348,7 +3348,7 @@ msgstr "Poprzedni"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "Poprzedni miesiąc"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3364,7 +3364,7 @@ msgstr "Poprzednia wizualizacja"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "W zeszłym roku"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3788,7 +3788,7 @@ msgstr "Wybierz folder źródłowy do importowania plików.…"
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "Zaznacz wszystko"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3800,11 +3800,11 @@ msgstr "Wybierz daty"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "Wybierz grupę"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "Wybierz miesiąc"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3823,7 +3823,7 @@ msgstr "Wybierz lub upuść pliki do przesłania…"
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "Wybierz wiersz"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3839,7 +3839,7 @@ msgstr "Wybierz czas"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "Wybierz rok"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4387,7 +4387,7 @@ msgstr "Dzisiaj"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "Dzisiaj, {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

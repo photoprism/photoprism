@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:06+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
@@ -2768,7 +2768,7 @@ msgstr "بعدی"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "ماه آینده"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2784,7 +2784,7 @@ msgstr "تصویری بعدی"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "سال آینده"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3349,7 +3349,7 @@ msgstr "قبلی"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "ماه گذشته"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3365,7 +3365,7 @@ msgstr "تصویری قبلی"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "سال گذشته"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3789,7 +3789,7 @@ msgstr "یک پوشه منبع را برای وارد کردن فایل‌ها �
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "انتخاب همه"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3801,11 +3801,11 @@ msgstr "تاریخ ها را انتخاب کنید"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "گروه را انتخاب کنید"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "ماه را انتخاب کنید"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3824,7 +3824,7 @@ msgstr "برای بارگذاری، فایل‌ها را انتخاب یا ره�
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "انتخاب سطر"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3840,7 +3840,7 @@ msgstr "زمان را انتخاب کنید"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "سال را انتخاب کنید"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4388,7 +4388,7 @@ msgstr "امروز"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "امروز، {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
