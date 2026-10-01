@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"path"
@@ -138,6 +139,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		allowedExt := conf.UploadAllow()
 		rejectArchives := !conf.UploadArchives()
 		rejectRaw := conf.DisableRaw()
+		resolutionLimit := conf.ResolutionLimit()
 		fileSizeLimit := conf.OriginalsLimitBytes()
 		totalSizeLimit := conf.UploadLimitBytes()
 
@@ -224,7 +226,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 					} else if allowedExt.Excludes(fileType.DefaultExt()) {
 						logWarn("upload", os.Remove(destName))
 						log.Errorf("upload: rejected unzipped file %s because its extension is not allowed", clean.Log(baseName))
-					} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, totalSizeLimit); err != nil {
+					} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, resolutionLimit, totalSizeLimit); err != nil {
 						log.Errorf("upload: %s", clean.Error(err))
 					} else {
 						// Add to the list of uploaded files after having verified that
@@ -232,7 +234,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 						uploads = append(uploads, destName)
 					}
 				}
-			} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, totalSizeLimit); err != nil {
+			} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, resolutionLimit, totalSizeLimit); err != nil {
 				log.Errorf("upload: %s", clean.Error(err))
 			} else {
 				// Add to the list of uploaded files after having verified that
@@ -350,8 +352,9 @@ func uploadAlbums(c *gin.Context, s *entity.Session, albums []string) []string {
 	return result
 }
 
-// UploadCheckFile checks if the file is supported and has the correct extension.
-func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (remainingSizeLimit int64, err error) {
+// UploadCheckFile checks if the file is supported, has the correct extension, and does not exceed
+// the resolution limit in megapixels, which is read from the image header where available.
+func UploadCheckFile(destName string, rejectRaw bool, resolutionLimit int, totalSizeLimit int64) (remainingSizeLimit int64, err error) {
 	baseName := filepath.Base(destName)
 
 	if fs.FileType(baseName) != fs.TypeUnknown && !uploadSidecarAllowed(baseName) {
@@ -368,6 +371,9 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 	} else if rejectRaw && mediaFile.IsRaw() {
 		logWarn("upload", os.Remove(destName))
 		return totalSizeLimit, fmt.Errorf("rejected %s because raw support is disabled", clean.Log(baseName))
+	} else if resolution := uploadMegapixels(mediaFile); resolutionLimit > 0 && resolution > resolutionLimit {
+		logWarn("upload", os.Remove(destName))
+		return totalSizeLimit, fmt.Errorf("rejected %s because it exceeds the resolution limit (%d / %d MP)", clean.Log(baseName), resolution, resolutionLimit)
 	} else if totalSizeLimit < 0 {
 		return -1, nil
 	} else if remainingSizeLimit = totalSizeLimit - mediaFile.FileSize(); totalSizeLimit == 0 || remainingSizeLimit < 1 {
@@ -376,6 +382,26 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 	} else {
 		return remainingSizeLimit, nil
 	}
+}
+
+// uploadMegapixels returns the resolution in megapixels from the header of the image format
+// detected from the file content, or 0 if no such header can be read.
+func uploadMegapixels(m *photoprism.MediaFile) (resolution int) {
+	if m == nil {
+		return 0
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			resolution = 0
+		}
+	}()
+
+	if cfg, _, err := fs.DecodeImageConfigFile(m.FileName()); err == nil {
+		resolution = int(math.Round(float64(cfg.Width) * float64(cfg.Height) / 1000000))
+	}
+
+	return resolution
 }
 
 // ProcessUserUpload triggers processing and import of previously uploaded files.

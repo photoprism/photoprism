@@ -96,7 +96,7 @@ func TestUploadCheckFile_AcceptsAndReducesLimit(t *testing.T) {
 	}
 
 	orig := int64(len(b))
-	rem, err := UploadCheckFile(dst, false, orig+100)
+	rem, err := UploadCheckFile(dst, false, -1, orig+100)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(100), rem)
 	// file remains
@@ -109,7 +109,7 @@ func TestUploadCheckFile_TotalLimitReachedDeletes(t *testing.T) {
 	dst := filepath.Join(dir, "tiny.txt")
 	assert.NoError(t, os.WriteFile(dst, []byte("hello"), 0o600))
 	// Very small total limit (0) → should remove file and error
-	_, err := UploadCheckFile(dst, false, 0)
+	_, err := UploadCheckFile(dst, false, -1, 0)
 	assert.Error(t, err)
 	_, statErr := os.Stat(dst)
 	assert.True(t, os.IsNotExist(statErr), "file should be removed when limit reached")
@@ -120,7 +120,7 @@ func TestUploadCheckFile_UnsupportedTypeDeletes(t *testing.T) {
 	// Create a file with an unknown extension; should be rejected
 	dst := filepath.Join(dir, "unknown.xyz")
 	assert.NoError(t, os.WriteFile(dst, []byte("not-an-image"), 0o600))
-	_, err := UploadCheckFile(dst, false, 1<<20)
+	_, err := UploadCheckFile(dst, false, -1, 1<<20)
 	assert.Error(t, err)
 	// The message names the rejected file and reports the cause it was given.
 	assert.Contains(t, err.Error(), "rejected")
@@ -145,7 +145,7 @@ func TestUploadCheckFile_SizeAccounting(t *testing.T) {
 	assert.NoError(t, os.WriteFile(f, data, 0o600)) //nolint:gosec // test writes to a temp path under the test's control
 	size := int64(len(data))
 	// Set remaining limit to size+1 so it does not hit the removal branch (which triggers on <=0)
-	rem, err := UploadCheckFile(f, false, size+1)
+	rem, err := UploadCheckFile(f, false, -1, size+1)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), rem)
 }
