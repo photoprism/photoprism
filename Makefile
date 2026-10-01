@@ -467,6 +467,33 @@ codex-skills:
 	else \
 	  echo "No specs/.agents/skills directory found, skipping."; \
 	fi
+	@if [ -d "specs/.agents/agents" ]; then \
+	  echo "Linking Codex agent roles from specs/.agents/agents..."; \
+	  install -d -m 755 -- ".codex/agents"; \
+	  for link in .codex/agents/*.toml; do \
+	    [ -L "$$link" ] || continue; \
+	    target=$$(readlink "$$link"); \
+	    case "$$target" in \
+	      ../../specs/.agents/agents/*.toml) \
+	        name=$$(basename "$$link"); \
+	        [ -f "specs/.agents/agents/$$name" ] || rm -- "$$link"; \
+	        ;; \
+	    esac; \
+	  done; \
+	  for src in specs/.agents/agents/*.toml; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".codex/agents/$$name"; \
+	    target="../../specs/.agents/agents/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "$$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.agents/agents directory found, skipping."; \
+	fi
 gh: dep-gh gh-version
 gh-version:
 	@echo "🐙 Installed $$(gh --version | head -n 1)."
