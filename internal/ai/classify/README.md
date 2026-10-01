@@ -6,7 +6,7 @@
 
 `internal/ai/classify` runs fixed-taxonomy image classification through ONNX Runtime. It decodes an image, applies the preprocessing declared for the selected model, executes one output tensor, converts raw logits with stable softmax, and maps the resulting probabilities through the existing label rules.
 
-The default and optional ImageNet-1k candidates share the 1000-entry vocabulary embedded from `internal/ai/classify/labels.txt`. It remains readable and diffable in the repository but no longer depends on a legacy NASNet asset directory at runtime. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
+The default and optional ImageNet-1k candidates share the 1000-entry vocabulary embedded from `internal/ai/classify/labels.txt`. It remains readable and diffable in the repository and does not depend on a model directory at runtime. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
 
 ### Registered Models
 
@@ -31,7 +31,7 @@ Models:
     Name: repvit_m1_0
 ```
 
-Alternative label models run after indexing by default; set `Run: on-index` on the entry to run inline. `photoprism vision ls` reports the selected models, effective enabled status, and whether their artifacts are installed; remote models show installation status `n/a`.
+The default model `efficientformerv2_s2` runs during indexing, whether it is selected automatically or named in `vision.yml`. Alternative label models run after indexing by default; set `Run: on-index` on the entry to run inline. `photoprism vision ls` reports the selected models, effective enabled status, and whether their artifacts are installed; remote models show installation status `n/a`.
 
 A custom model is resolved under `PHOTOPRISM_MODELS_PATH` as:
 

@@ -30,32 +30,32 @@ Custom label and NSFW classifiers are ONNX-only. Local `labels` and `nsfw` entri
 
 Run `photoprism vision save --force` to write the mapped configuration back to `vision.yml`.
 
-| Field                   | Default                                | Notes                                                                              |
-|:------------------------|:---------------------------------------|:-----------------------------------------------------------------------------------|
-| `Type` (required)       | —                                      | `labels`, `caption`, `face`, `nsfw`, `generate`. Drives routing & scheduling.      |
-| `Name`                  | derived from type/version              | Display name; lower-cased by helpers.                                              |
-| `Model`                 | `""`                                   | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.           |
-| `Version`               | `latest` (non-OpenAI)                  | OpenAI payloads omit version.                                                      |
-| `Engine`                | inferred from service/alias            | Aliases set formats, file scheme, resolution. Explicit `Service` values still win. |
-| `Run`                   | `auto`                                 | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.     |
-| `Default`               | `false`                                | Select the built-in model for a type.                                              |
-| `Disabled`              | `false`                                | Registered but inactive.                                                           |
-| `Resolution`            | model-specific / 720 (Ollama/OpenAI)  | Local ONNX geometry comes from its description or graph.                           |
-| `System` / `Prompt`     | engine defaults                        | Override prompts per model.                                                        |
-| `Format`                | `""`                                   | Response hint (`json`, `text`, `markdown`).                                        |
-| `Normalize`             | engine default                         | Label name normalization; see the table below. Labels models only.                 |
-| `Schema` / `SchemaFile` | engine defaults / empty                | Inline vs file JSON schema (labels).                                               |
-| `TensorFlow`            | nil                                    | Local TF model info (paths, tags).                                                 |
-| `ONNX`                  | nil                                    | Shared local ONNX artifact and preprocessing description.                         |
-| `LabelFile`             | `labels.txt`                           | Custom vocabulary; registered ImageNet models use the embedded vocabulary.        |
-| `CanonicalOrder`        | `false`                                | Require canonical ImageNet-1k order and reject a background offset.               |
-| `Reduction`             | —                                      | NSFW output reduction: `softmax-unsafe`, `sigmoid-unsafe`, or `neutral-complement`. |
-| `UnsafeClassIndex`      | —                                      | Required for `softmax-unsafe`; an explicit `0` is valid.                           |
-| `NeutralClassIndex`     | —                                      | Required for `neutral-complement`; an explicit `0` is valid.                       |
-| `DefaultThreshold`      | model-specific                         | Custom NSFW fallback as a probability from 0 to 1.                                 |
-| `Options`               | nil                                    | Sampling/settings merged with engine defaults.                                     |
-| `Service`               | nil                                    | Remote endpoint config (see below).                                                |
-| `Path`                  | derived from model name                | Local artifact directory or ONNX file, relative to the configured models path.     |
+| Field                   | Default                              | Notes                                                                               |
+|:------------------------|:-------------------------------------|:------------------------------------------------------------------------------------|
+| `Type` (required)       | —                                    | `labels`, `caption`, `face`, `nsfw`, `generate`. Drives routing & scheduling.       |
+| `Name`                  | derived from type/version            | Display name; lower-cased by helpers.                                               |
+| `Model`                 | `""`                                 | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.            |
+| `Version`               | `latest` (non-OpenAI)                | OpenAI payloads omit version.                                                       |
+| `Engine`                | inferred from service/alias          | Aliases set formats, file scheme, resolution. Explicit `Service` values still win.  |
+| `Run`                   | `auto`                               | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.      |
+| `Default`               | `false`                              | Select the built-in model for a type.                                               |
+| `Disabled`              | `false`                              | Registered but inactive.                                                            |
+| `Resolution`            | model-specific / 720 (Ollama/OpenAI) | Local ONNX geometry comes from its description or graph.                            |
+| `System` / `Prompt`     | engine defaults                      | Override prompts per model.                                                         |
+| `Format`                | `""`                                 | Response hint (`json`, `text`, `markdown`).                                         |
+| `Normalize`             | engine default                       | Label name normalization; see the table below. Labels models only.                  |
+| `Schema` / `SchemaFile` | engine defaults / empty              | Inline vs file JSON schema (labels).                                                |
+| `TensorFlow`            | nil                                  | Local TF model info (paths, tags).                                                  |
+| `ONNX`                  | nil                                  | Shared local ONNX artifact and preprocessing description.                           |
+| `LabelFile`             | `labels.txt`                         | Custom vocabulary; registered ImageNet models use the embedded vocabulary.          |
+| `CanonicalOrder`        | `false`                              | Require canonical ImageNet-1k order and reject a background offset.                 |
+| `Reduction`             | —                                    | NSFW output reduction: `softmax-unsafe`, `sigmoid-unsafe`, or `neutral-complement`. |
+| `UnsafeClassIndex`      | —                                    | Required for `softmax-unsafe`; an explicit `0` is valid.                            |
+| `NeutralClassIndex`     | —                                    | Required for `neutral-complement`; an explicit `0` is valid.                        |
+| `DefaultThreshold`      | model-specific                       | Custom NSFW fallback as a probability from 0 to 1.                                  |
+| `Options`               | nil                                  | Sampling/settings merged with engine defaults.                                      |
+| `Service`               | nil                                  | Remote endpoint config (see below).                                                 |
+| `Path`                  | derived from model name              | Local artifact directory or ONNX file, relative to the configured models path.      |
 
 #### Label Name Normalization
 
@@ -82,16 +82,18 @@ Phrase mode pairs with a system prompt that does not demand single-word nouns �
 
 #### Run Modes
 
-| Value           | When it runs                                                     | Recommended use                                |
-|:----------------|:-----------------------------------------------------------------|:-----------------------------------------------|
-| `auto`          | Local NSFW and default labels during index; other models via metadata/schedule | Leave as-is for most setups.                 |
-| `manual`        | Only when explicitly invoked (CLI/API)                           | Experiments and diagnostics.                   |
-| `on-index`      | During indexing + manual                                         | Fast local models.                     |
-| `newly-indexed` | Metadata worker after indexing + manual                          | External/Ollama/OpenAI without slowing import. |
-| `on-demand`     | Manual, metadata worker, and scheduled jobs                      | Broad coverage without index path.             |
-| `on-schedule`   | Scheduled jobs + manual                                          | Nightly/cron-style runs.                       |
-| `always`        | Indexing, metadata, scheduled, manual                            | High-priority models; watch resource use.      |
-| `never`         | Never executes                                                   | Keep definition without running it.            |
+| Value           | When it runs                                                                   | Recommended use                                                                                             |
+|:----------------|:-------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------|
+| `auto`          | Local NSFW and default labels during index; other models via metadata/schedule | Default; recommended for most setups.                                                                       |
+| `manual`        | Only when explicitly invoked (CLI/API)                                         | Experiments and diagnostics.                                                                                |
+| `on-index`      | During indexing + manual                                                       | Fast local models.                                                                                          |
+| `newly-indexed` | Metadata worker after indexing + manual                                        | External/Ollama/OpenAI without slowing import.                                                              |
+| `on-demand`     | Manual, metadata worker, and scheduled jobs                                    | Broad coverage without index path.                                                                          |
+| `on-schedule`   | Scheduled jobs + manual                                                        | Nightly/cron-style runs.                                                                                    |
+| `always`        | Indexing, metadata, scheduled, manual                                          | Troubleshooting only: forces runs in every context, so a classifier can run both during and after indexing. |
+| `never`         | Never executes                                                                 | Keep definition without running it.                                                                         |
+
+`auto` is the default when `Run` is omitted, except for the built-in caption model, which uses `manual`. Use `always` only to troubleshoot or deliberately force a model, not for regular operation.
 
 > **Note:** For performance reasons, `on-index` is only supported for built-in local models.
 
@@ -141,7 +143,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 | Field                              | Default                                  | Notes                                                                                                                                                                                                                                                                                         |
 |:-----------------------------------|:-----------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Uri`                              | required for remote                      | Endpoint base. Empty sends requests to `PHOTOPRISM_VISION_URI` if set, and keeps the model local (ONNX) otherwise. Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`.                                                                                                                                               |
+| `Uri`                              | required for remote                      | Endpoint base. Empty sends requests to `PHOTOPRISM_VISION_URI` if set, and keeps the model local (ONNX) otherwise. Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`.                                                                                 |
 | `Method`                           | `POST`                                   | Override verb if provider needs it.                                                                                                                                                                                                                                                           |
 | `Key`                              | `""`                                     | Bearer token; prefer env expansion (OpenAI: `OPENAI_API_KEY`, Ollama: `OLLAMA_API_KEY`).                                                                                                                                                                                                      |
 | `Username` / `Password`            | `""`                                     | Injected as basic auth when URI lacks userinfo.                                                                                                                                                                                                                                               |
@@ -280,9 +282,9 @@ Missing artifacts and initialization failures do not change saved disablement. I
 
 NSFW is wired through the same model registry as labels, captions, and faces. `PHOTOPRISM_NSFW_MODEL` chooses `auto`, `none`, or `labels`. In `auto` mode, a `Type: nsfw` entry in `vision.yml` selects a registered detector, custom ONNX graph, or remote endpoint; `Default: true` or an absent entry selects the first installed registered detector. Local ONNX NSFW detectors run inline during indexing unless an explicit `Run` setting says otherwise.
 
-There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism can ask the labels call to include `nsfw` + `nsfw_confidence` in the same response. This is gated by the package-level global `DetectNSFWLabels`, set from `config.go` when `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels`. This mode does not require `EXPERIMENTAL`. It disables dedicated detection and upload screening; startup system warnings explain unscreened uploads when `UPLOAD_NSFW=false` and unavailable detection when the labels model cannot produce NSFW fields.
+There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism can ask the labels call to include `nsfw` + `nsfw_confidence` in the same response. This is gated by the package-level global `DetectNSFWLabels`, set from `config.go` when `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels`. It disables dedicated detection and upload screening; startup system warnings explain unscreened uploads when `PHOTOPRISM_UPLOAD_NSFW=false` and unavailable detection when the labels model cannot produce NSFW fields.
 
-The indexer, metadata worker, and vision worker apply label-derived NSFW flags only in `labels` mode with `DETECT_NSFW=true`. Other modes ignore NSFW fields even when a custom prompt requests them. Dedicated detection runs only in `auto` mode, and indexing additionally requires `DETECT_NSFW=true`.
+The indexer, metadata worker, and vision worker apply label-derived NSFW flags only in `labels` mode with `PHOTOPRISM_DETECT_NSFW=true`. Other modes ignore NSFW fields even when a custom prompt requests them. Dedicated detection runs only in `auto` mode, and indexing additionally requires `PHOTOPRISM_DETECT_NSFW=true`.
 
 `DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFWUpload` and `Thresholds.NSFWIndex` independently control the dedicated detector for uploads and indexing; when omitted, `0`, or `-1`, they select the detector's calibrated threshold. `Thresholds.NSFW` applies only to labels models in the Ollama/OpenAI fast path and never to the dedicated detector; it defaults to `75` when omitted or not positive. Explicit thresholds range from `1` through `100`, and larger values are treated as `100`. Remote detector results without local calibration use the package fallback of `75`. A custom dedicated detector without `DefaultThreshold` uses the package fallback of `0.98`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 

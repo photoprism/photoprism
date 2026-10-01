@@ -4,7 +4,7 @@
 
 ### Overview
 
-`internal/ai/tensorflow` provides the shared TensorFlow helpers used by PhotoPrism’s FaceNet embeddings. Built-in label and NSFW inference now uses ONNX Runtime; TensorFlow support remains in their benchmark-only baseline tests for migration comparisons. This package wraps SavedModel loading, input/output discovery, image tensor preparation.
+`internal/ai/tensorflow` provides the shared TensorFlow helpers used by PhotoPrism’s FaceNet embeddings. Built-in label and NSFW inference uses ONNX Runtime; TensorFlow support remains in their benchmark-only baseline tests for migration comparisons. This package wraps SavedModel loading, input/output discovery, image tensor preparation.
 
 ### Key Components
 
