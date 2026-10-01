@@ -19,7 +19,7 @@ Faces are the one type this registry does not own. A `face` entry in `vision.yml
 
 #### Models
 
-The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so you no longer need placeholder stanzas. The `Thresholds` block is optional; missing values fall back to defaults, as do out-of-range `Confidence` and `Topicality` values and an `NSFW` value of `0` or less, while `NSFW`, `NSFWUpload`, and `NSFWIndex` values above `100` are treated as `100`.
+The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so placeholder stanzas are not needed. The `Thresholds` block is optional; missing values fall back to defaults, as do out-of-range `Confidence` and `Topicality` values and an `NSFW` value of `0` or less, while `NSFW`, `NSFWUpload`, and `NSFWIndex` values above `100` are treated as `100`.
 
 Custom label and NSFW classifiers are ONNX-only. Local `labels` and `nsfw` entries written for the retired TensorFlow models are mapped to the default ONNX models when the file is loaded:
 
@@ -30,32 +30,32 @@ Custom label and NSFW classifiers are ONNX-only. Local `labels` and `nsfw` entri
 
 Run `photoprism vision save --force` to write the mapped configuration back to `vision.yml`.
 
-| Field                   | Default                              | Notes                                                                               |
-|:------------------------|:-------------------------------------|:------------------------------------------------------------------------------------|
-| `Type` (required)       | —                                    | `labels`, `caption`, `face`, `nsfw`, `generate`. Drives routing & scheduling.       |
-| `Name`                  | derived from type/version            | Display name; lower-cased by helpers.                                               |
-| `Model`                 | `""`                                 | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.            |
-| `Version`               | `latest` (non-OpenAI)                | OpenAI payloads omit version.                                                       |
-| `Engine`                | inferred from service/alias          | Aliases set formats, file scheme, resolution. Explicit `Service` values still win.  |
-| `Run`                   | `auto`                               | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.      |
-| `Default`               | `false`                              | Select the built-in model for a type.                                               |
-| `Disabled`              | `false`                              | Registered but inactive.                                                            |
-| `Resolution`            | model-specific / 720 (Ollama/OpenAI) | Local ONNX geometry comes from its description or graph.                            |
-| `System` / `Prompt`     | engine defaults                      | Override prompts per model.                                                         |
-| `Format`                | `""`                                 | Response hint (`json`, `text`, `markdown`).                                         |
-| `Normalize`             | engine default                       | Label name normalization; see the table below. Labels models only.                  |
-| `Schema` / `SchemaFile` | engine defaults / empty              | Inline vs file JSON schema (labels).                                                |
-| `TensorFlow`            | nil                                  | Local TF model info (paths, tags).                                                  |
-| `ONNX`                  | nil                                  | Shared local ONNX artifact and preprocessing description.                           |
-| `LabelFile`             | `labels.txt`                         | Custom vocabulary; registered ImageNet models use the embedded vocabulary.          |
-| `CanonicalOrder`        | `false`                              | Require canonical ImageNet-1k order and reject a background offset.                 |
-| `Reduction`             | —                                    | NSFW output reduction: `softmax-unsafe`, `sigmoid-unsafe`, or `neutral-complement`. |
-| `UnsafeClassIndex`      | —                                    | Required for `softmax-unsafe`; an explicit `0` is valid.                            |
-| `NeutralClassIndex`     | —                                    | Required for `neutral-complement`; an explicit `0` is valid.                        |
-| `DefaultThreshold`      | model-specific                       | Custom NSFW fallback as a probability from 0 to 1.                                  |
-| `Options`               | nil                                  | Sampling/settings merged with engine defaults.                                      |
-| `Service`               | nil                                  | Remote endpoint config (see below).                                                 |
-| `Path`                  | derived from model name              | Local artifact directory or ONNX file, relative to the configured models path.      |
+| Field                   | Default                              | Notes                                                                                                 |
+|:------------------------|:-------------------------------------|:------------------------------------------------------------------------------------------------------|
+| `Type` (required)       | —                                    | `labels`, `caption`, `face`, `nsfw`, `generate`. Drives routing & scheduling.                         |
+| `Name`                  | derived from type/version            | Display name; lower-cased by helpers.                                                                 |
+| `Model`                 | `""`                                 | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.                              |
+| `Version`               | `latest` (non-OpenAI)                | OpenAI payloads omit version.                                                                         |
+| `Engine`                | inferred from service/alias          | Aliases set formats, file scheme, resolution. Explicit `Service` values still win.                    |
+| `Run`                   | `auto`                               | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.                        |
+| `Default`               | `false`                              | Select the built-in model for a type.                                                                 |
+| `Disabled`              | `false`                              | Registered but inactive.                                                                              |
+| `Resolution`            | model-specific / 720 (Ollama/OpenAI) | Local ONNX geometry comes from its description or graph.                                              |
+| `System` / `Prompt`     | engine defaults                      | Override prompts per model.                                                                           |
+| `Format`                | `""`                                 | Response hint (`json`, `text`, `markdown`).                                                           |
+| `Normalize`             | engine default                       | Label name normalization; see the table below. Labels models only.                                    |
+| `Schema` / `SchemaFile` | engine defaults / empty              | Inline vs file JSON schema (labels).                                                                  |
+| `TensorFlow`            | nil                                  | Local TensorFlow model info for FaceNet; labels and NSFW entries are mapped or ignore it (see above). |
+| `ONNX`                  | nil                                  | Shared local ONNX artifact and preprocessing description.                                             |
+| `LabelFile`             | `labels.txt`                         | Custom vocabulary; registered ImageNet models use the embedded vocabulary.                            |
+| `CanonicalOrder`        | `false`                              | Require canonical ImageNet-1k order and reject a background offset.                                   |
+| `Reduction`             | —                                    | NSFW output reduction: `softmax-unsafe`, `sigmoid-unsafe`, or `neutral-complement`.                   |
+| `UnsafeClassIndex`      | —                                    | Required for `softmax-unsafe`; an explicit `0` is valid.                                              |
+| `NeutralClassIndex`     | —                                    | Required for `neutral-complement`; an explicit `0` is valid.                                          |
+| `DefaultThreshold`      | model-specific                       | Custom NSFW fallback as a probability above 0 and at most 1; otherwise `0.98`.                        |
+| `Options`               | nil                                  | Sampling/settings merged with engine defaults.                                                        |
+| `Service`               | nil                                  | Remote endpoint config (see below).                                                                   |
+| `Path`                  | derived from model name              | Local artifact directory or ONNX file, relative to the configured models path.                        |
 
 #### Label Name Normalization
 
@@ -257,7 +257,7 @@ Models:
 - Preprocessing: Declare geometry, layout, color order, mean/std, resize/crop convention, and interpolation in `ONNX.Input` or embedded `photoprism.*` metadata. Mean and standard-deviation arrays follow tensor channel order after `ColorOrder` is applied. `Resolution` remains an explicit override for graphs with dynamic spatial axes.
 - Output: One tensor is required. Declare `ONNX.Output.Logits`; omitted output semantics default to raw logits with a warning.
 - Sources: Labels produced by local ONNX models are recorded with source `image`; overriding the source isn’t supported yet.
-- Config file: `vision.yml` is the conventional name; in the latest version, `.yaml` is also supported by the loader.
+- Config file: `vision.yml` is the conventional name; the loader also accepts `.yaml`.
 
 ### Labels Model Selection
 

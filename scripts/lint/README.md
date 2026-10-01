@@ -1,12 +1,13 @@
 # Repository Checks
 
-**Last Updated:** September 26, 2026
+**Last Updated:** October 1, 2026
 
 Standalone repository checks live here. Run them through the root Makefile so callers do not depend on script paths:
 
 - `make check-api-request-limits` checks request-body limit coverage.
 - `make check-libheif-install` exercises installer selection in an isolated user namespace.
 - `make check-cuda-install` exercises installation and recovery with synthetic packages and no GPU.
+- `make check-buildignore` checks that `assets/.buildignore` lets `make install` bundle exactly the models in `BUNDLED_MODELS`; `make dep-models` runs it first.
 - `make check-make-help` checks that advertised Makefile targets exist.
 - `make check-scripts-copy-mode` checks container script ownership and modes.
 

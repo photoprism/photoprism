@@ -103,7 +103,7 @@ The registered fallbacks were calibrated on 2,500 images: the manually reviewed 
 
 The latency figures describe the four-core ARM64 calibration host and are comparative rather than universal. At its historical `0.98` threshold, the previous TensorFlow detector reached 26.4% recall and a 1.6% false-positive rate. At its recalibrated comparison point of `0.468`, it reaches 94.2% recall with a 34.4% false-positive rate. Yahoo remains the default because it stays within 0.5 percentage points of Falconsai's balanced accuracy while running nearly eight times faster and using a much smaller artifact.
 
-Generate the incumbent TensorFlow scores before running the ONNX comparison:
+Generate the incumbent TensorFlow scores before running the ONNX comparison. The baseline loads the TensorFlow model from `assets/models/nsfw`, which no install target provides, so extract `https://dl.photoprism.app/tensorflow/nsfw.zip` there first:
 
 ```sh
 PHOTOPRISM_TEST_NSFW_BASELINE_DIR=/path/to/jpeg-corpus \

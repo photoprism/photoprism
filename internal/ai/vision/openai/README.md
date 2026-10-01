@@ -4,7 +4,7 @@
 
 ### Overview
 
-This package contains PhotoPrism’s adapter for the OpenAI Responses API. It enables existing caption and label workflows (`GenerateCaption`, `GenerateLabels`, and the `photoprism vision run` CLI) to call OpenAI models alongside TensorFlow and Ollama without changing worker or API code. The implementation focuses on predictable results, structured outputs, and clear observability so operators can opt in gradually.
+This package contains PhotoPrism’s adapter for the OpenAI Responses API. It enables existing caption and label workflows (`GenerateCaption`, `GenerateLabels`, and the `photoprism vision run` CLI) to call OpenAI models alongside the local ONNX models and Ollama without changing worker or API code. The implementation focuses on predictable results, structured outputs, and clear observability so operators can opt in gradually.
 
 #### Constraints
 
@@ -22,7 +22,7 @@ This package contains PhotoPrism’s adapter for the OpenAI Responses API. It en
 #### Non-Goals
 
 - Introducing a new `generate` model type or combined caption/label endpoint (reserved for a later phase).
-- Replacing the default TensorFlow models; they remain active as fallbacks.
+- Replacing the default ONNX models; PhotoPrism uses the last enabled model of each type and does not fall back to another entry.
 - Managing OpenAI billing or quota dashboards beyond surfacing token counts in logs and metrics.
 
 ### Prompt, Model, & Schema Guidance
@@ -81,7 +81,7 @@ Models:
       Tier: flex       # optional; sent as top-level "service_tier" (e.g. cheaper, slower "flex")
 ```
 
-Keep TensorFlow entries in place so PhotoPrism falls back when the external service is unavailable.
+Only the last enabled labels entry is used, so remove or disable other labels entries, including legacy TensorFlow ones, which load as the default ONNX model.
 
 > `Service.Tier` is passed through verbatim as the top-level `service_tier` field in the request body (values follow OpenAI: `auto`, `default`, `flex`, `priority`, …). It is omitted when empty (OpenAI default `auto`) and supports `${ENV}` expansion. The `flex` tier bills at roughly half the standard rate and suits the metadata worker and scheduled runs, which tolerate higher latency; such requests are more likely to return `HTTP 429` when capacity is short, which the shared client retries with bounded exponential backoff before the item falls through to the next worker pass.
 

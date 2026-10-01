@@ -64,7 +64,7 @@ Its manifest records the command, fixed metadata timestamp, and Python, PyTorch,
 
 ### Benchmarking & Calibration
 
-Before TensorFlow is removed from an environment, capture the incumbent NASNet output for a corpus with the opt-in build tag:
+Before TensorFlow is removed from an environment, capture the incumbent NASNet output for a corpus with the opt-in build tag. The baseline loads the TensorFlow model from `assets/models/nasnet`, which no install target provides, so extract `https://dl.photoprism.app/tensorflow/nasnet.zip` there first:
 
 ```bash
 PHOTOPRISM_TEST_LABEL_BASELINE_DIR=/photos/corpus \
