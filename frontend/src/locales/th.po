@@ -14,31 +14,31 @@ msgstr ""
 "X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
-#: src/locales.js:302
+#: src/locales.js:295
 msgid "{0} appended action"
 msgstr "{0} การดำเนินการผนวก"
 
-#: src/locales.js:306
+#: src/locales.js:299
 msgid "{0} files"
 msgstr "{0} ไฟล์"
 
-#: src/locales.js:307
+#: src/locales.js:300
 msgid "{0} files ({1} in total)"
 msgstr "{0} ไฟล์ (รวมทั้งหมด {1} ไฟล์)"
 
-#: src/locales.js:292
+#: src/locales.js:289
 msgid "{0} more"
 msgstr "{0} เพิ่มเติม"
 
-#: src/locales.js:301
+#: src/locales.js:294
 msgid "{0} prepended action"
 msgstr "{0} การดำเนินการที่เพิ่มมา"
 
-#: src/locales.js:249 src/locales.js:262
+#: src/locales.js:259
 msgid "{0} selected"
 msgstr "{0} เลือกแล้ว"
 
-#: src/locales.js:242
+#: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} จาก {2}"
 
@@ -79,23 +79,23 @@ msgstr "%{s} ยาวเกินไป"
 msgid "%{s} is too short"
 msgstr "%{s} สั้นเกินไป"
 
-#: src/locales.js:535
+#: src/locales.js:461
 msgid "%d entries added to %s"
 msgstr "%d รายการถูกเพิ่มไปยัง %s"
 
-#: src/locales.js:537
+#: src/locales.js:463
 msgid "%d entries removed from %s"
 msgstr "%d รายการถูกลบออกจาก %s"
 
-#: src/locales.js:559
+#: src/locales.js:485
 msgid "%d files uploaded in %d s"
 msgstr "%d ไฟล์ถูกอัปโหลดในเวลา %d วินาที"
 
-#: src/locales.js:475
+#: src/locales.js:401
 msgid "%s already exists"
 msgstr "%s มีอยู่แล้ว"
 
-#: src/locales.js:569
+#: src/locales.js:495
 msgid "%s has been restored"
 msgstr "%s ได้รับการกู้คืนแล้ว"
 
@@ -130,7 +130,7 @@ msgstr "4 ชั่วโมง"
 msgid "A click will copy it to your clipboard."
 msgstr "คลิกเพื่อคัดลอกไปยังคลิปบอร์ด"
 
-#: src/locales.js:525
+#: src/locales.js:451
 msgid "A migration is in progress"
 msgstr "การย้ายข้อมูลกำลังดำเนินการอยู่"
 
@@ -174,18 +174,18 @@ msgstr "ความสะดวกในการใช้งาน"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:432 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "บัญชี"
 
 #: src/component/user/add/dialog.vue:262 src/component/user/add/dialog.vue:278
-#: src/component/service/add.vue:131 src/locales.js:538
+#: src/component/service/add.vue:131 src/locales.js:464
 msgid "Account created"
 msgstr "สร้างบัญชีแล้ว"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:540
+#: src/locales.js:466
 msgid "Account deleted"
 msgstr "ลบบัญชีแล้ว"
 
@@ -193,7 +193,7 @@ msgstr "ลบบัญชีแล้ว"
 msgid "Account Group Mappings"
 msgstr "การเชื่อมโยงกลุ่มบัญชี"
 
-#: src/locales.js:485
+#: src/locales.js:411
 msgid "Account not found"
 msgstr "ไม่พบบัญชี"
 
@@ -201,7 +201,7 @@ msgstr "ไม่พบบัญชี"
 msgid "Account restored"
 msgstr "บัญชีได้รับการคืนสภาพแล้ว"
 
-#: src/locales.js:539
+#: src/locales.js:465
 msgid "Account saved"
 msgstr "บัญชีถูกบันทึกแล้ว"
 
@@ -209,7 +209,7 @@ msgstr "บัญชีถูกบันทึกแล้ว"
 #: src/component/cluster/node/dialog.vue:19
 #: src/component/cluster/node/dialog.vue:29 src/component/navigation.vue:196
 #: src/component/navigation.vue:458 src/component/navigation.vue:461
-#: src/page/cluster/nodes.vue:91 src/page/admin.vue:54 src/locales.js:433
+#: src/page/cluster/nodes.vue:91 src/page/admin.vue:54 src/locales.js:359
 msgid "Accounts"
 msgstr "บัญชี"
 
@@ -238,15 +238,15 @@ msgstr "การกระทำ"
 msgid "Activate"
 msgstr "เปิดใช้งาน"
 
-#: src/locales.js:226
+#: src/locales.js:237
 msgid "Activate to remove sorting."
 msgstr "เปิดใช้งานเพื่อลบการเรียงลำดับ"
 
-#: src/locales.js:228
+#: src/locales.js:239
 msgid "Activate to sort ascending."
 msgstr "เปิดใช้งานเพื่อเรียงลำดับจากน้อยไปมาก"
 
-#: src/locales.js:227
+#: src/locales.js:238
 msgid "Activate to sort descending."
 msgstr "เปิดใช้งานการเรียงลำดับจากมากไปน้อย"
 
@@ -255,7 +255,7 @@ msgid "Activation Code"
 msgstr "รหัสเปิดใช้งาน"
 
 #: src/component/navigation.vue:280 src/component/navigation.vue:431
-#: src/page/admin.vue:76 src/locales.js:449
+#: src/page/admin.vue:76 src/locales.js:375
 msgid "Activity"
 msgstr "กิจกรรม"
 
@@ -398,7 +398,7 @@ msgstr "หลังจากสองสัปดาห์"
 msgid "Album"
 msgstr "อัลบั้ม"
 
-#: src/locales.js:529
+#: src/locales.js:455
 msgid "Album %s deleted"
 msgstr "อัลบั้ม %s ถูก삭제"
 
@@ -406,11 +406,11 @@ msgstr "อัลบั้ม %s ถูก삭제"
 msgid "Album Backups"
 msgstr "การสำรองข้อมูลอัลบั้ม"
 
-#: src/locales.js:530
+#: src/locales.js:456
 msgid "Album contents cloned"
 msgstr "เนื้อหาอัลบั้มถูกคัดลอก"
 
-#: src/locales.js:527 src/page/albums.vue:1194
+#: src/locales.js:453 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "สร้างอัลบั้มแล้ว"
 
@@ -418,11 +418,11 @@ msgstr "สร้างอัลบั้มแล้ว"
 msgid "Album deleted"
 msgstr "อัลบั้มถูกลบแล้ว"
 
-#: src/locales.js:490
+#: src/locales.js:416
 msgid "Album not found"
 msgstr "ไม่พบอัลบั้ม"
 
-#: src/locales.js:528
+#: src/locales.js:454
 msgid "Album saved"
 msgstr "อัลบั้มบันทึกแล้ว"
 
@@ -435,11 +435,11 @@ msgstr "อัลบั้มบันทึกแล้ว"
 msgid "Albums"
 msgstr "อัลบั้ม"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:566
+#: src/component/album/clipboard.vue:194 src/locales.js:492
 msgid "Albums deleted"
 msgstr "ลบอัลบั้มแล้ว"
 
-#: src/locales.js:237
+#: src/locales.js:248
 msgid "All"
 msgstr "ทั้งหมด"
 
@@ -532,18 +532,6 @@ msgstr "อนุญาตให้ผู้ใช้สามารถอัป
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "อนุญาตให้ซูมได้ด้วยการใช้นิ้วบีบบนอุปกรณ์มือถือ"
 
-#: src/locales.js:398
-msgid "Alpha"
-msgstr ""
-
-#: src/locales.js:402
-msgid "Alpha value"
-msgstr ""
-
-#: src/locales.js:370
-msgid "Alt"
-msgstr ""
-
 #: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "หรือคุณสามารถอัปโหลดไฟล์โดยตรงไปยังเซิร์ฟเวอร์ WebDAV เช่น Nextcloud"
@@ -557,7 +545,7 @@ msgstr "ระดับความสูง"
 msgid "Altitude (m)"
 msgstr "ระดับความสูง (ม.)"
 
-#: src/locales.js:315
+#: src/locales.js:308
 msgid "AM"
 msgstr "เช้า"
 
@@ -592,11 +580,11 @@ msgid "API Key"
 msgstr "กุญแจ API"
 
 #: src/page/admin/sessions.vue:132 src/component/cluster/node/overview.vue:23
-#: src/page/admin/sessions.vue:172 src/locales.js:455 src/options/auth.js:45
+#: src/page/admin/sessions.vue:172 src/locales.js:381 src/options/auth.js:45
 msgid "Application"
 msgstr "แอปพลิเคชัน"
 
-#: src/locales.js:456
+#: src/locales.js:382
 msgid "Applications"
 msgstr "แอปพลิเคชัน"
 
@@ -669,7 +657,7 @@ msgstr "ศิลปิน"
 msgid "Aspect Ratio"
 msgstr "อัตราส่วน"
 
-#: src/locales.js:439
+#: src/locales.js:365
 msgid "Attributes"
 msgstr "คุณสมบัติ"
 
@@ -691,7 +679,7 @@ msgstr "เสียง"
 #: src/page/admin/sessions.vue:152 src/page/admin/sessions.vue:295
 #: src/page/admin/users.vue:289 src/component/user/edit/dialog.vue:192
 #: src/page/admin/sessions.vue:293 src/page/admin/users.vue:273
-#: src/locales.js:434
+#: src/locales.js:360
 msgid "Authentication"
 msgstr "การรับรองความถูกต้อง"
 
@@ -708,15 +696,11 @@ msgstr "กลับ"
 msgid "Back to top"
 msgstr "กลับสู่ด้านบน"
 
-#: src/locales.js:377
-msgid "Backspace"
-msgstr ""
-
 #: src/page/settings/advanced.vue:187
 msgid "Backup"
 msgstr "สำรองข้อมูล"
 
-#: src/locales.js:208
+#: src/locales.js:219
 msgid "Badge"
 msgstr "ป้าย"
 
@@ -769,10 +753,6 @@ msgstr "สีดำ"
 msgid "Blue"
 msgstr "สีฟ้า"
 
-#: src/locales.js:401
-msgid "Blue value"
-msgstr ""
-
 #: src/options/options.js:457
 msgid "Brown"
 msgstr "สีน้ำตาล"
@@ -783,7 +763,7 @@ msgstr "สีน้ำตาล"
 msgid "Browse"
 msgstr "เรียกดู"
 
-#: src/locales.js:312
+#: src/locales.js:305
 msgid "Browse Files"
 msgstr "เรียกดูไฟล์"
 
@@ -795,7 +775,7 @@ msgstr "เรียกดูรูปภาพ"
 msgid "Bug Report"
 msgstr "รายงานข้อผิดพลาด"
 
-#: src/locales.js:517
+#: src/locales.js:443
 msgid "Busy, please try again later"
 msgstr "กำลังยุ่ง กรุณาลองใหม่อีกครั้ง"
 
@@ -820,7 +800,7 @@ msgstr "ปฏิทิน"
 msgid "Camera"
 msgstr "กล้อง"
 
-#: src/locales.js:488
+#: src/locales.js:414
 msgid "Camera not found"
 msgstr "ไม่พบกล้อง"
 
@@ -874,7 +854,7 @@ msgstr "ไม่สามารถเลือกรายการเพิ่
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
 #: src/component/settings/password.vue:85 src/component/share/dialog.vue:164
-#: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
+#: src/locales.js:225 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "ยกเลิก"
@@ -896,7 +876,7 @@ msgstr "คำบรรยาย"
 msgid "Cards"
 msgstr "การ์ด"
 
-#: src/locales.js:288
+#: src/locales.js:285
 msgid "Carousel slide {0} of {1}"
 msgstr "สไลด์หมุน {0} จาก {1}"
 
@@ -914,10 +894,6 @@ msgstr "หมวดหมู่"
 #: src/page/settings/account.vue:91
 msgid "Change Avatar"
 msgstr "เปลี่ยนแฟล็กส่วนตัว"
-
-#: src/locales.js:408
-msgid "Change color format"
-msgstr ""
 
 #: src/page/auth/instances.vue:60 src/page/settings/account.vue:155
 #: src/component/settings/password.vue:16 src/page/settings/account.vue:139
@@ -944,7 +920,7 @@ msgstr "เปลี่ยนแฟล็กส่วนตัว"
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:168
 #: src/component/photo/batch-edit.vue:1440
-#: src/component/photo/edit/details.vue:636 src/locales.js:473
+#: src/component/photo/edit/details.vue:636 src/locales.js:399
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
 msgid "Changes could not be saved"
 msgstr "ไม่สามารถบันทึกการเปลี่ยนแปลง"
@@ -961,7 +937,7 @@ msgstr "ไม่สามารถบันทึกการเปลี่ย
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:566 src/component/service/edit.vue:376
 #: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
-#: src/locales.js:526 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:452 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1000,7 +976,7 @@ msgstr "ทำความสะอาด"
 msgid "Clear"
 msgstr "ชัดเจน"
 
-#: src/locales.js:300
+#: src/locales.js:293
 msgid "Clear {0}"
 msgstr "เคลียร์ {0}"
 
@@ -1041,7 +1017,7 @@ msgstr "ลูกค้า"
 #: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
-#: src/component/upload/dialog.vue:20 src/locales.js:210
+#: src/component/upload/dialog.vue:20 src/locales.js:221
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "ปิด"
@@ -1084,10 +1060,6 @@ msgstr "สีโปรไฟล์"
 #: src/page/discover.vue:5
 msgid "Colors"
 msgstr "สี"
-
-#: src/locales.js:367
-msgid "Command"
-msgstr ""
 
 #: src/page/connect.vue:117 src/page/connect.vue:124 src/page/connect.vue:133
 #: src/page/connect.vue:127 src/page/connect.vue:134 src/page/connect.vue:143
@@ -1197,7 +1169,7 @@ msgstr "คัดลอกไปยังคลิปบอร์ดแล้ว
 msgid "Copy"
 msgstr "สำเนา"
 
-#: src/locales.js:551
+#: src/locales.js:477
 msgid "Copying files from %s"
 msgstr "คัดลอกไฟล์จาก %s"
 
@@ -1209,11 +1181,11 @@ msgstr "คัดลอกไฟล์จาก %s"
 msgid "Copyright"
 msgstr "ลิขสิทธิ์"
 
-#: src/locales.js:474
+#: src/locales.js:400
 msgid "Could not be deleted"
 msgstr "ไม่สามารถลบได้"
 
-#: src/locales.js:505
+#: src/locales.js:431
 msgid "Could not connect, please try again"
 msgstr "ไม่สามารถเชื่อมต่อได้ กรุณาลองอีกครั้ง"
 
@@ -1261,14 +1233,6 @@ msgstr "สร้างเมื่อ"
 msgid "Creating thumbnails for"
 msgstr "การสร้างภาพขนาดย่อสำหรับ"
 
-#: src/locales.js:366
-msgid "Ctrl"
-msgstr ""
-
-#: src/locales.js:258
-msgid "Current month, {0}"
-msgstr ""
-
 #: src/options/options.js:503
 msgid "Current Name"
 msgstr "ชื่อปัจจุบัน"
@@ -1289,7 +1253,7 @@ msgstr "สีฟ้า"
 msgid "Daily"
 msgstr "รายวัน"
 
-#: src/component/cluster/node/overview.vue:74 src/locales.js:428
+#: src/component/cluster/node/overview.vue:74 src/locales.js:354
 msgid "Database"
 msgstr "ฐานข้อมูล"
 
@@ -1297,7 +1261,7 @@ msgstr "ฐานข้อมูล"
 msgid "Database Backups"
 msgstr "การสำรองฐานข้อมูล"
 
-#: src/locales.js:429
+#: src/locales.js:355
 msgid "Databases"
 msgstr "ฐานข้อมูล"
 
@@ -1343,7 +1307,7 @@ msgstr "โฟลเดอร์เริ่มต้น"
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
 #: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
-#: src/locales.js:418 src/page/settings/general.vue:335
+#: src/locales.js:344 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "ลบ"
 
@@ -1485,7 +1449,7 @@ msgstr "ทิ้งการเปลี่ยนแปลงที่ไม่
 msgid "Discover"
 msgstr "ค้นพบ"
 
-#: src/locales.js:211
+#: src/locales.js:222
 msgid "Dismiss"
 msgstr "อนุญาตให้ออกไป"
 
@@ -1498,7 +1462,7 @@ msgstr "อนุญาตให้ออกไป"
 #: src/component/user/edit/dialog.vue:96 src/component/user/edit/dialog.vue:97
 #: src/page/admin/users.vue:283 src/page/settings/account.vue:76
 #: src/page/settings/account.vue:78 src/page/admin/users.vue:270
-#: src/locales.js:422 src/page/settings/account.vue:64
+#: src/locales.js:348 src/page/settings/account.vue:64
 #: src/page/settings/account.vue:66
 msgid "Display Name"
 msgstr "ชื่อที่แสดง"
@@ -1549,10 +1513,6 @@ msgstr "เสร็จแล้ว"
 msgid "Done."
 msgstr "เสร็จแล้ว."
 
-#: src/locales.js:374
-msgid "Down Arrow"
-msgstr ""
-
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
 #: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
@@ -1578,11 +1538,11 @@ msgstr "ดาวน์โหลดไฟล์ระยะไกล"
 msgid "Downloading…"
 msgstr "กำลังดาวน์โหลด…"
 
-#: src/locales.js:310
+#: src/locales.js:303
 msgid "Drag and drop files here"
 msgstr "ลากและวางไฟล์ที่นี่"
 
-#: src/component/cluster/node/overview.vue:79 src/locales.js:445
+#: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
 msgstr "คนขับรถ"
 
@@ -1677,19 +1637,15 @@ msgstr "เปิดใช้งานการตั้งค่าล่วง
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr "การเปิดใช้งานการตรวจสอบสิทธิ์แบบสองปัจจัยหมายความว่าคุณจะต้องใช้รหัสยืนยันที่สร้างขึ้นแบบสุ่มเพื่อเข้าสู่ระบบ ดังนั้นแม้ว่าจะมีคนเข้าถึงรหัสผ่านของคุณ พวกเขาจะไม่สามารถเข้าถึงบัญชีของคุณได้"
 
-#: src/locales.js:446
+#: src/locales.js:372
 msgid "Engine"
 msgstr "เครื่องยนต์"
 
-#: src/locales.js:371
-msgid "Enter"
-msgstr ""
-
-#: src/locales.js:268 src/locales.js:270
+#: src/locales.js:265 src/locales.js:267
 msgid "Enter date"
 msgstr "กรอกวันที่"
 
-#: src/locales.js:265
+#: src/locales.js:262
 msgid "Enter dates"
 msgstr "ป้อนวันที่"
 
@@ -1697,19 +1653,11 @@ msgstr "ป้อนวันที่"
 msgid "Enter item name..."
 msgstr "กรุณากรอกชื่อรายการ..."
 
-#: src/locales.js:250
-msgid "Enter month"
-msgstr ""
-
-#: src/locales.js:252
-msgid "Enter months"
-msgstr ""
-
 #: src/component/settings/passcode.vue:82 src/page/auth/login.vue:31
 msgid "Enter the code generated by your authenticator app:"
 msgstr "ป้อนรหัสที่สร้างโดยแอปพลิเคชันการตรวจสอบสิทธิ์ของคุณ:"
 
-#: src/common/api.js:126 src/locales.js:303 src/locales.js:506
+#: src/common/api.js:126 src/locales.js:296 src/locales.js:432
 msgid "Enter verification code"
 msgstr "ระบุรหัสยืนยืน"
 
@@ -1717,7 +1665,7 @@ msgstr "ระบุรหัสยืนยืน"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "ป้อนรหัสผ่านของคุณเพื่อยืนยันการดำเนินการและดำเนินการต่อ:"
 
-#: src/locales.js:484
+#: src/locales.js:410
 msgid "Entity not found"
 msgstr "ไม่พบหน่วยงาน"
 
@@ -1731,10 +1679,6 @@ msgstr "ข้อผิดพลาด"
 #: src/component/navigation.vue:398 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "ข้อผิดพลาด"
-
-#: src/locales.js:372
-msgid "Escape"
-msgstr ""
 
 #: src/common/util.js:931
 msgid "Estimate"
@@ -1759,10 +1703,6 @@ msgstr "ไม่รวมซ่อน"
 #: src/page/settings/advanced.vue:175
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "จำเป็นต้องมีการแยกข้อมูลเมตาด้วย ExifTool เพื่อสนับสนุนวิดีโอเต็มรูปแบบ Live Photo และ XMP"
-
-#: src/locales.js:392
-msgid "Exit full screen"
-msgstr ""
 
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
@@ -1796,7 +1736,7 @@ msgstr "F Number"
 msgid "Face"
 msgstr "ใบหน้า"
 
-#: src/locales.js:493
+#: src/locales.js:419
 msgid "Face not found"
 msgstr "ไม่พบใบหน้า"
 
@@ -1804,11 +1744,11 @@ msgstr "ไม่พบใบหน้า"
 msgid "Faces"
 msgstr "ใบหน้า"
 
-#: src/locales.js:503
+#: src/locales.js:429
 msgid "Failed creating file, please check permissions"
 msgstr "ไม่สามารถสร้างไฟล์ได้ กรุณาตรวจสอบสิทธิ์การใช้งาน"
 
-#: src/locales.js:504
+#: src/locales.js:430
 msgid "Failed creating folder, please check permissions"
 msgstr "ไม่สามารถสร้างโฟลเดอร์ได้ กรุณาตรวจสอบสิทธิ์การใช้งาน"
 
@@ -1820,7 +1760,7 @@ msgstr "ลบลิงค์ไม่สำเร็จ"
 msgid "Failed to connect account."
 msgstr "ไม่สามารถเชื่อมต่อบัญชีได้"
 
-#: src/locales.js:513
+#: src/locales.js:439
 msgid "Failed to create zip file"
 msgstr "ไม่สามารถสร้างไฟล์ zip ได้"
 
@@ -1895,7 +1835,7 @@ msgstr "ที่ชื่นชอบ"
 msgid "Favorites"
 msgstr "รายการโปรด"
 
-#: src/locales.js:509
+#: src/locales.js:435
 msgid "Feature disabled"
 msgstr "ฟีเจอร์ถูกปิดใช้งาน"
 
@@ -1924,7 +1864,7 @@ msgstr "ไฟล์เบราว์เซอร์"
 msgid "File Conversion"
 msgstr "การแปลงไฟล์"
 
-#: src/locales.js:532
+#: src/locales.js:458
 msgid "File deleted"
 msgstr "ไฟล์ถูกลบ"
 
@@ -1934,11 +1874,11 @@ msgstr "ไฟล์ถูกลบ"
 msgid "File Name"
 msgstr "ชื่อไฟล์"
 
-#: src/locales.js:477
+#: src/locales.js:403
 msgid "File not found"
 msgstr "ไม่พบไฟล์"
 
-#: src/locales.js:531
+#: src/locales.js:457
 msgid "File removed from stack"
 msgstr "ไฟล์ถูกลบออกจากสแตก"
 
@@ -1946,11 +1886,11 @@ msgstr "ไฟล์ถูกลบออกจากสแตก"
 msgid "File Size"
 msgstr "ไฟล์"
 
-#: src/locales.js:478
+#: src/locales.js:404
 msgid "File too large"
 msgstr "ไฟล์มีขนาดใหญ่เกินไป"
 
-#: src/locales.js:558
+#: src/locales.js:484
 msgid "File uploaded"
 msgstr "ไฟล์ถูกอัปโหลดแล้ว"
 
@@ -1972,7 +1912,7 @@ msgstr "ไฟล์"
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "ไฟล์ที่มีชื่อตามลำดับ เช่น 'IMG_1234 (2)' และ 'IMG_1234 (3)' เป็นของรูปภาพเดียวกัน"
 
-#: src/locales.js:240 src/locales.js:330
+#: src/locales.js:251 src/locales.js:319
 msgid "First page"
 msgstr "หน้าแรก"
 
@@ -2031,10 +1971,6 @@ msgstr "เฟรม"
 msgid "Full Access"
 msgstr "การเข้าถึงแบบเต็ม"
 
-#: src/locales.js:391
-msgid "Full screen"
-msgstr ""
-
 #: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "เต็มจอ"
@@ -2078,7 +2014,7 @@ msgstr "ตัวเลือกระดับโลก"
 msgid "Go to Page"
 msgstr "ไปยังหน้า"
 
-#: src/locales.js:328
+#: src/locales.js:317
 msgid "Go to page {0}"
 msgstr "ไปที่หน้า {0}"
 
@@ -2093,10 +2029,6 @@ msgstr "ทอง"
 #: src/options/options.js:453
 msgid "Green"
 msgstr "สีเขียว"
-
-#: src/locales.js:400
-msgid "Green value"
-msgstr ""
 
 #: src/options/options.js:459
 msgid "Grey"
@@ -2125,14 +2057,6 @@ msgstr "ช่วย"
 #: src/app/routes.js:109
 msgid "Help & Support"
 msgstr "ช่วยเหลือและสนับสนุน"
-
-#: src/locales.js:406
-msgid "HEX value"
-msgstr ""
-
-#: src/locales.js:407
-msgid "HEX with alpha value"
-msgstr ""
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
@@ -2179,18 +2103,6 @@ msgstr "สูง"
 msgid "High Dynamic Range (HDR)"
 msgstr "ช่วงไดนามิกสูง (HDR)"
 
-#: src/locales.js:318
-msgid "Hour"
-msgstr ""
-
-#: src/locales.js:397
-msgid "Hue"
-msgstr ""
-
-#: src/locales.js:403
-msgid "Hue value"
-msgstr ""
-
 #: src/options/options.js:306
 msgid "Hybrid"
 msgstr "ไฮบริด"
@@ -2215,11 +2127,11 @@ msgstr "คุณภาพของภาพ"
 msgid "Import"
 msgstr "นำเข้า"
 
-#: src/locales.js:544
+#: src/locales.js:470
 msgid "Import canceled"
 msgstr "ยกเลิกการนำเข้า"
 
-#: src/locales.js:543
+#: src/locales.js:469
 msgid "Import completed in %d s"
 msgstr "การนำเข้าเสร็จสมบูรณ์ในเวลา %d วินาที"
 
@@ -2281,11 +2193,11 @@ msgstr "ดัชนี"
 msgid "Indexing"
 msgstr "การจัดทำดัชนี"
 
-#: src/locales.js:548
+#: src/locales.js:474
 msgid "Indexing canceled"
 msgstr "ยกเลิกการจัดทำดัชนี"
 
-#: src/locales.js:545
+#: src/locales.js:471
 msgid "Indexing completed in %d s"
 msgstr "การดัชนีเสร็จสมบูรณ์ใน %d วินาที"
 
@@ -2293,7 +2205,7 @@ msgstr "การดัชนีเสร็จสมบูรณ์ใน %d �
 msgid "Indexing failed"
 msgstr "การจัดทำดัชนีล้มเหลว"
 
-#: src/locales.js:547
+#: src/locales.js:473
 msgid "Indexing files in %s"
 msgstr "การจัดทำดัชนีไฟล์ใน %s"
 
@@ -2301,7 +2213,7 @@ msgstr "การจัดทำดัชนีไฟล์ใน %s"
 msgid "Indexing media and sidecar files…"
 msgstr "กำลังสร้างดัชนีสื่อและไฟล์ไซด์คาร์…"
 
-#: src/locales.js:546
+#: src/locales.js:472
 msgid "Indexing originals..."
 msgstr "กำลังจัดทำดัชนีต้นฉบับ..."
 
@@ -2315,7 +2227,7 @@ msgid "Inherit"
 msgstr "รับมรดก"
 
 #: src/component/cluster/node/groups.vue:146 src/options/admin.js:37
-#: src/options/admin.js:38 src/locales.js:461
+#: src/options/admin.js:38 src/locales.js:387
 msgid "Instance"
 msgstr "ตัวอย่าง"
 
@@ -2329,11 +2241,11 @@ msgstr "ไม่สามารถเข้าถึงอินสแตนซ
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:449
 #: src/component/navigation.vue:452 src/component/user/edit/dialog.vue:27
-#: src/page/admin/users.vue:286 src/app/routes.js:257 src/locales.js:462
+#: src/page/admin/users.vue:286 src/app/routes.js:257 src/locales.js:388
 msgid "Instances"
 msgstr "อินสแตนซ์"
 
-#: src/locales.js:521
+#: src/locales.js:447
 msgid "Insufficient storage"
 msgstr "พื้นที่เก็บข้อมูลไม่เพียงพอ"
 
@@ -2361,7 +2273,7 @@ msgstr "ที่อยู่ไม่ถูกต้อง"
 msgid "Invalid country"
 msgstr "ประเทศไม่ถูกต้อง"
 
-#: src/locales.js:514
+#: src/locales.js:440
 msgid "Invalid credentials"
 msgstr "ข้อมูลประจำตัวไม่ถูกต้อง"
 
@@ -2369,15 +2281,11 @@ msgstr "ข้อมูลประจำตัวไม่ถูกต้อง
 msgid "Invalid date"
 msgstr "วันที่ไม่ถูกต้อง"
 
-#: src/locales.js:359
-msgid "Invalid format"
-msgstr ""
-
-#: src/component/share/dialog.vue:226 src/locales.js:515
+#: src/component/share/dialog.vue:226 src/locales.js:441
 msgid "Invalid link"
 msgstr "ลิงก์ไม่ถูกต้อง"
 
-#: src/locales.js:516
+#: src/locales.js:442
 msgid "Invalid name"
 msgstr "ชื่อไม่ถูกต้อง"
 
@@ -2386,7 +2294,7 @@ msgstr "ชื่อไม่ถูกต้อง"
 msgid "Invalid parameters"
 msgstr "วันที่ไม่ถูกต้อง"
 
-#: src/locales.js:508
+#: src/locales.js:434
 msgid "Invalid password, please try again"
 msgstr "รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง"
 
@@ -2402,12 +2310,12 @@ msgstr "เวลาไม่ถูกต้อง"
 msgid "Invalid URL"
 msgstr "URL ไม่ถูกต้อง"
 
-#: src/locales.js:507
+#: src/locales.js:433
 msgid "Invalid verification code, please try again"
 msgstr "รหัสยืนยันไม่ถูกต้อง โปรดลองอีกครั้ง"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
-#: src/locales.js:451
+#: src/locales.js:377
 msgid "IP Address"
 msgstr "ที่อยู่ IP"
 
@@ -2420,7 +2328,7 @@ msgstr "เป็นรหัสแบบใช้ครั้งเดียว
 msgid "Item"
 msgstr "สิ่งของ"
 
-#: src/locales.js:236
+#: src/locales.js:247
 msgid "Items per page:"
 msgstr "รายการต่อหน้า:"
 
@@ -2435,10 +2343,6 @@ msgstr "ขีดจำกัดขนาด JPEG: %{n}px"
 #: src/page/library/import.vue:53
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG และภาพขนาดย่อจะแสดงผลโดยอัตโนมัติตามต้องการ"
-
-#: src/locales.js:380
-msgid "Keyboard shortcut: {0}"
-msgstr ""
 
 #: src/common/util.js:951
 msgid "Keyword"
@@ -2455,11 +2359,11 @@ msgstr "คีย์เวิร์ด"
 msgid "Label"
 msgstr "ฉลาก"
 
-#: src/locales.js:487
+#: src/locales.js:413
 msgid "Label not found"
 msgstr "ไม่พบป้ายกำกับ"
 
-#: src/locales.js:553
+#: src/locales.js:479
 msgid "Label saved"
 msgstr "ป้ายบันทึกแล้ว"
 
@@ -2470,12 +2374,12 @@ msgstr "ป้ายบันทึกแล้ว"
 #: src/component/photo/edit/dialog.vue:38
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
-#: src/component/photo/edit/dialog.vue:53 src/locales.js:426
+#: src/component/photo/edit/dialog.vue:53 src/locales.js:352
 #: src/options/options.js:265 src/page/settings/general.vue:186
 msgid "Labels"
 msgstr "ป้าย"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:552
+#: src/component/label/clipboard.vue:131 src/locales.js:478
 msgid "Labels deleted"
 msgstr "ป้ายกำกับถูกลบ"
 
@@ -2490,11 +2394,11 @@ msgid "Last Active"
 msgstr "ใช้งานล่าสุด"
 
 #: src/page/admin/users.vue:187 src/page/admin/users.vue:295
-#: src/page/admin/users.vue:279 src/locales.js:436
+#: src/page/admin/users.vue:279 src/locales.js:362
 msgid "Last Login"
 msgstr "เข้าสู่ระบบครั้งล่าสุด"
 
-#: src/locales.js:241 src/locales.js:331
+#: src/locales.js:252 src/locales.js:320
 msgid "Last page"
 msgstr "หน้าสุดท้าย"
 
@@ -2526,10 +2430,6 @@ msgstr "เรียนรู้เพิ่มเติม"
 msgid "Learn More"
 msgstr "เรียนรู้เพิ่มเติม"
 
-#: src/locales.js:375
-msgid "Left Arrow"
-msgstr ""
-
 #: src/component/navigation.vue:485 src/component/navigation.vue:783
 msgid "Legal Information"
 msgstr "ข้อมูลทางกฎหมาย"
@@ -2541,13 +2441,9 @@ msgstr "ข้อมูลทางกฎหมาย"
 msgid "Lens"
 msgstr "เลนส์"
 
-#: src/locales.js:489
+#: src/locales.js:415
 msgid "Lens not found"
 msgstr "ไม่พบเลนส์"
-
-#: src/locales.js:296
-msgid "Less"
-msgstr ""
 
 #: src/app/routes.js:612 src/app/routes.js:628 src/app/routes.js:644
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
@@ -2565,10 +2461,6 @@ msgstr "ห้องสมุด"
 #: src/component/photo/edit/details.vue:335 src/page/about/license.vue:5
 msgid "License"
 msgstr "ใบอนุญาต"
-
-#: src/locales.js:405
-msgid "Lightness value"
-msgstr ""
 
 #: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
@@ -2607,19 +2499,19 @@ msgstr "สด"
 msgid "Live Photos"
 msgstr "ภาพถ่าย"
 
-#: src/locales.js:345
+#: src/locales.js:334
 msgid "Load more"
 msgstr "โหลดเพิ่มเติม"
 
-#: src/locales.js:218
+#: src/locales.js:229
 msgid "Loading items..."
 msgstr "กำลังโหลดรายการ..."
 
-#: src/locales.js:343
+#: src/locales.js:332
 msgid "Loading..."
 msgstr "กำลังโหลด..."
 
-#: src/locales.js:442 src/options/auth.js:42 src/options/auth.js:47
+#: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:47
 #: src/options/options.js:93 src/page/settings/general.vue:46
 msgid "Local"
 msgstr "ท้องถิ่น"
@@ -2737,7 +2629,7 @@ msgid "Merge %{a} with %{b}?"
 msgstr "ผสาน %{a} กับ %{b}?"
 
 #: src/page/cluster/activity.vue:129 src/page/admin/activity.vue:128
-#: src/locales.js:453
+#: src/locales.js:379
 msgid "Message"
 msgstr "ข้อความ"
 
@@ -2752,10 +2644,6 @@ msgstr "เมตริก"
 #: src/component/navigation.vue:111 src/component/navigation.vue:58
 msgid "Minimize"
 msgstr "ย่อเล็กสุด"
-
-#: src/locales.js:319
-msgid "Minute"
-msgstr ""
 
 #: src/component/photo/edit/files.vue:251
 #: src/component/photo/edit/files.vue:252
@@ -2795,10 +2683,6 @@ msgstr "ขาวดำ"
 msgid "Month"
 msgstr "เดือน"
 
-#: src/locales.js:297
-msgid "More"
-msgstr ""
-
 #: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "ตัวเลือกเพิ่มเติม"
@@ -2815,7 +2699,7 @@ msgstr "ที่เกี่ยวข้องมากที่สุด"
 msgid "Move Files"
 msgstr "ย้ายไฟล์"
 
-#: src/locales.js:550
+#: src/locales.js:476
 msgid "Moving files from %s"
 msgstr "ย้ายไฟล์จาก %s"
 
@@ -2824,7 +2708,6 @@ msgid "Must have at least %{n} characters."
 msgstr "ต้องมีอักขระอย่างน้อย %{n} ตัว"
 
 #: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
-#: src/locales.js:389
 msgid "Mute"
 msgstr "ปิดเสียง"
 
@@ -2847,7 +2730,7 @@ msgstr "ปิดเสียง"
 #: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:173 src/component/settings/apps.vue:112
-#: src/component/settings/apps.vue:275 src/locales.js:420
+#: src/component/settings/apps.vue:275 src/locales.js:346
 #: src/page/albums.vue:393 src/page/auth/login.vue:80
 #: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
@@ -2879,15 +2762,15 @@ msgid "Newest First"
 msgstr "ใหม่ล่าสุดก่อน"
 
 #: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
-#: src/component/pdf-viewer.vue:128 src/locales.js:335
+#: src/component/pdf-viewer.vue:128 src/locales.js:324
 msgid "Next"
 msgstr "ต่อไป"
 
-#: src/locales.js:274
+#: src/locales.js:271
 msgid "Next month"
 msgstr ""
 
-#: src/locales.js:238 src/locales.js:326
+#: src/locales.js:249 src/locales.js:315
 msgid "Next page"
 msgstr "หน้าถัดไป"
 
@@ -2895,11 +2778,11 @@ msgstr "หน้าถัดไป"
 msgid "Next Page"
 msgstr "หน้าถัดไป"
 
-#: src/locales.js:286
+#: src/locales.js:283
 msgid "Next visual"
 msgstr "ภาพถัดไป"
 
-#: src/locales.js:256 src/locales.js:277
+#: src/locales.js:274
 msgid "Next year"
 msgstr ""
 
@@ -2924,19 +2807,19 @@ msgstr "ไม่มีอัลบั้มที่จัดสรร"
 msgid "No albums found"
 msgstr "ไม่พบอัลบั้ม"
 
-#: src/locales.js:511
+#: src/locales.js:437
 msgid "No albums selected"
 msgstr "ไม่พบอัลบั้มที่เลือก"
 
-#: src/locales.js:283
+#: src/locales.js:280
 msgid "No data available"
 msgstr "ไม่มีข้อมูล"
 
-#: src/locales.js:512
+#: src/locales.js:438
 msgid "No files available for download"
 msgstr "ไม่มีไฟล์ให้ดาวน์โหลด"
 
-#: src/locales.js:502
+#: src/locales.js:428
 msgid "No items selected"
 msgstr "ไม่มีรายการที่เลือก"
 
@@ -2948,15 +2831,15 @@ msgstr "ไม่มีป้ายกำกับ"
 msgid "No labels found"
 msgstr "ไม่พบป้ายกำกับ"
 
-#: src/locales.js:510
+#: src/locales.js:436
 msgid "No labels selected"
 msgstr "ไม่เลือกป้ายกำกับ"
 
-#: src/locales.js:217
+#: src/locales.js:228
 msgid "No matching records found"
 msgstr "ไม่พบรายการที่ตรงกัน"
 
-#: src/locales.js:346
+#: src/locales.js:335
 msgid "No more"
 msgstr "ไม่มีอีกต่อไป"
 
@@ -3010,11 +2893,11 @@ msgstr "ไม่มีผู้ใช้ในระบบนี้"
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr "ไม่มีคำเตือนหรือข้อผิดพลาดที่มีคีย์เวิร์ดนี้ โปรดทราบว่าการค้นหาคำนึงถึงตัวพิมพ์เล็กและตัวพิมพ์ใหญ่"
 
-#: src/locales.js:457
+#: src/locales.js:383
 msgid "Node"
 msgstr "โหนด"
 
-#: src/locales.js:458
+#: src/locales.js:384
 msgid "Nodes"
 msgstr "โหนด"
 
@@ -3033,19 +2916,19 @@ msgstr "ไม่มี"
 msgid "Not allowed"
 msgstr "ไม่อนุญาต"
 
-#: src/locales.js:494
+#: src/locales.js:420
 msgid "Not available in public mode"
 msgstr "ไม่สามารถใช้งานได้ในโหมดสาธารณะ"
 
-#: src/locales.js:495
+#: src/locales.js:421
 msgid "Not available in read-only mode"
 msgstr "ไม่สามารถใช้งานได้ในโหมดอ่านอย่างเดียว"
 
-#: src/component/lightbox.vue:1149 src/locales.js:476
+#: src/component/lightbox.vue:1149 src/locales.js:402
 msgid "Not found"
 msgstr "ไม่พบ"
 
-#: src/locales.js:225
+#: src/locales.js:236
 msgid "Not sorted."
 msgstr "ไม่ได้จัดเรียง"
 
@@ -3087,7 +2970,7 @@ msgstr "ไม่พบสิ่งใด"
 msgid "Offline"
 msgstr "ออฟไลน์"
 
-#: src/locales.js:213
+#: src/locales.js:224
 msgid "OK"
 msgstr "ตกลง"
 
@@ -3112,11 +2995,11 @@ msgstr "สัปดาห์ละครั้ง"
 msgid "One album found"
 msgstr "พบหนึ่งอัลบั้ม"
 
-#: src/locales.js:534
+#: src/locales.js:460
 msgid "One entry added to %s"
 msgstr "มีการเพิ่มรายการหนึ่งไปยัง %s"
 
-#: src/locales.js:536
+#: src/locales.js:462
 msgid "One entry removed from %s"
 msgstr "รายการหนึ่งถูกลบออกจาก %s"
 
@@ -3146,7 +3029,7 @@ msgstr "เฉพาะบัญชีที่จัดการภายใน
 
 #: src/component/cluster/node/overview.vue:38
 #: src/component/cluster/node/overview.vue:44 src/page/cluster/nodes.vue:58
-#: src/locales.js:209 src/locales.js:419
+#: src/locales.js:220 src/locales.js:345
 msgid "Open"
 msgstr "เปิด"
 
@@ -3158,15 +3041,11 @@ msgstr "เมื่อใช้เบราว์เซอร์บนเดส
 msgid "Open on Hover"
 msgstr "เปิดเมื่อนำเมาส์ไปวางเหนือ"
 
-#: src/locales.js:378
-msgid "Option"
-msgstr ""
-
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "ไม่จำเป็น"
 
-#: src/locales.js:311 src/locales.js:381
+#: src/locales.js:304
 msgid "or"
 msgstr "หรือ"
 
@@ -3205,7 +3084,7 @@ msgstr "ชื่อจริง"
 msgid "Originals"
 msgstr "ต้นฉบับ"
 
-#: src/locales.js:482
+#: src/locales.js:408
 msgid "Originals folder is empty"
 msgstr "โฟลเดอร์ต้นฉบับว่างเปล่า"
 
@@ -3222,7 +3101,7 @@ msgstr "ภารกิจของเราคือการจัดหาโ
 msgid "Outdoor"
 msgstr "กลางแจ้ง"
 
-#: src/locales.js:329
+#: src/locales.js:318
 msgid "Page {0}, Current page"
 msgstr "หน้า {0}, หน้าปัจจุบัน"
 
@@ -3233,7 +3112,7 @@ msgstr "หน้า {0}, หน้าปัจจุบัน"
 msgid "Pages"
 msgstr "หน้า"
 
-#: src/locales.js:325
+#: src/locales.js:314
 msgid "Pagination Navigation"
 msgstr "การนำทางการแบ่งหน้า"
 
@@ -3265,16 +3144,15 @@ msgstr "ส่วนหนึ่งของภาพถ่ายที่คั
 msgid "Password"
 msgstr "รหัสผ่าน"
 
-#: src/component/settings/password.vue:164 src/locales.js:542
+#: src/component/settings/password.vue:164 src/locales.js:468
 msgid "Password changed"
 msgstr "รหัสผ่านเปลี่ยน"
 
 #: src/component/lightbox.vue:82 src/component/lightbox.vue:83
-#: src/locales.js:385
 msgid "Pause"
 msgstr "หยุดชั่วคราว"
 
-#: src/locales.js:498
+#: src/locales.js:424
 msgid "Payment required"
 msgstr "ต้องชำระเงิน"
 
@@ -3294,11 +3172,11 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "คนที่คุณแชร์ลิงก์ด้วยจะสามารถดูเนื้อหาสาธารณะได้"
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:568
+#: src/locales.js:494
 msgid "Permanently deleted"
 msgstr "ลบอย่างถาวร"
 
-#: src/locales.js:497
+#: src/locales.js:423
 msgid "Permission denied"
 msgstr "ไม่อนุญาต"
 
@@ -3310,16 +3188,16 @@ msgstr "บุคคล"
 msgid "Person cover updated"
 msgstr "อัพเดทปกบุคคล"
 
-#: src/locales.js:557
+#: src/locales.js:483
 msgid "Person deleted"
 msgstr "บุคคลถูกลบ"
 
 #: src/component/photo/edit/people.vue:248
-#: src/component/photo/edit/people.vue:282 src/locales.js:492
+#: src/component/photo/edit/people.vue:282 src/locales.js:418
 msgid "Person not found"
 msgstr "ไม่พบบุคคล"
 
-#: src/locales.js:556
+#: src/locales.js:482
 msgid "Person saved"
 msgstr "บุคคลที่ได้รับการช่วยเหลือ"
 
@@ -3377,13 +3255,8 @@ msgid "Places"
 msgstr "สถานที่"
 
 #: src/component/lightbox.vue:93 src/component/lightbox.vue:94
-#: src/locales.js:384
 msgid "Play"
 msgstr "เล่น"
-
-#: src/locales.js:358
-msgid "Please choose at least one value"
-msgstr ""
 
 #: src/component/settings/password.vue:69
 msgid "Please confirm your new password."
@@ -3401,11 +3274,7 @@ msgstr "กรุณาอย่าอัพโหลดภาพส่วนต
 msgid "Please don't upload photos containing offensive content."
 msgstr "กรุณาอย่าอัปโหลดรูปภาพที่มีเนื้อหาที่ไม่เหมาะสม"
 
-#: src/locales.js:350
-msgid "Please enter a valid email"
-msgstr ""
-
-#: src/locales.js:496
+#: src/locales.js:422
 msgid "Please log in to your account"
 msgstr "กรุณาเข้าสู่ระบบบัญชีของคุณ"
 
@@ -3421,11 +3290,7 @@ msgstr "โปรดรีสตาร์ทอินสแตนซ์ของ
 msgid "Please wait…"
 msgstr "โปรดรอ…"
 
-#: src/locales.js:379
-msgid "plus"
-msgstr ""
-
-#: src/locales.js:316
+#: src/locales.js:309
 msgid "PM"
 msgstr "นายกฯ"
 
@@ -3434,7 +3299,7 @@ msgid "PNG Size Limit: %{n}px"
 msgstr "ขีดจำกัดขนาด PNG: %{n}px"
 
 #: src/component/cluster/node/groups.vue:150 src/options/admin.js:36
-#: src/locales.js:424
+#: src/locales.js:350
 msgid "Portal"
 msgstr "พอร์ทัล"
 
@@ -3478,15 +3343,15 @@ msgid "Preview Images"
 msgstr "ดูตัวอย่างรูปภาพ"
 
 #: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
-#: src/component/pdf-viewer.vue:116 src/locales.js:336
+#: src/component/pdf-viewer.vue:116 src/locales.js:325
 msgid "Previous"
 msgstr "ก่อนหน้า"
 
-#: src/locales.js:273
+#: src/locales.js:270
 msgid "Previous month"
 msgstr ""
 
-#: src/locales.js:239 src/locales.js:327
+#: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
 msgstr "หน้าก่อน"
 
@@ -3494,11 +3359,11 @@ msgstr "หน้าก่อน"
 msgid "Previous Page"
 msgstr "หน้าก่อน"
 
-#: src/locales.js:285
+#: src/locales.js:282
 msgid "Previous visual"
 msgstr "ภาพก่อนหน้า"
 
-#: src/locales.js:255 src/locales.js:276
+#: src/locales.js:273
 msgid "Previous year"
 msgstr ""
 
@@ -3522,7 +3387,7 @@ msgstr "หลัก"
 msgid "Private"
 msgstr "ส่วนตัว"
 
-#: src/locales.js:560
+#: src/locales.js:486
 msgid "Processing upload..."
 msgstr "กำลังประมวลผลไฟล์ที่อัปโหลด..."
 
@@ -3549,7 +3414,7 @@ msgstr "ตัวกรองคุณภาพ"
 msgid "Quality Score"
 msgstr "คะแนนคุณภาพ"
 
-#: src/locales.js:522
+#: src/locales.js:448
 msgid "Quota exceeded"
 msgstr "เกินโควตา"
 
@@ -3557,7 +3422,7 @@ msgstr "เกินโควตา"
 msgid "Random"
 msgstr "สุ่ม"
 
-#: src/locales.js:340
+#: src/locales.js:329
 msgid "Rating {0} of {1}"
 msgstr "คะแนน {0} จาก {1}"
 
@@ -3612,10 +3477,6 @@ msgstr "รหัสการกู้คืน"
 msgid "Red"
 msgstr "สีแดง"
 
-#: src/locales.js:399
-msgid "Red value"
-msgstr ""
-
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
 msgstr "ลดการใช้แอนิเมชันและเอฟเฟกต์การเคลื่อนไหวในอินเทอร์เฟซ"
@@ -3630,7 +3491,7 @@ msgstr "ลดการเคลื่อนไหว"
 #: src/page/cluster/activity.vue:42 src/page/cluster/nodes.vue:26
 #: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:334
 #: src/page/admin/users.vue:324 src/component/album/toolbar.vue:146
-#: src/component/photo/toolbar.vue:429 src/locales.js:417
+#: src/component/photo/toolbar.vue:429 src/locales.js:343
 #: src/page/albums.vue:479 src/page/labels.vue:270
 #: src/page/library/browse.vue:16 src/page/library/errors.vue:194
 #: src/page/people/new.vue:7 src/page/people/recognized.vue:35
@@ -3652,7 +3513,7 @@ msgstr "ภูมิภาค"
 msgid "Register"
 msgstr "ลงทะเบียน"
 
-#: src/locales.js:523
+#: src/locales.js:449
 msgid "Registration disabled"
 msgstr "การลงทะเบียนถูกปิดใช้งาน"
 
@@ -3700,11 +3561,11 @@ msgstr "ลบออกจากรูปภาพที่เลือกทั
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "ลบไฟล์ที่นำเข้าเพื่อประหยัดพื้นที่จัดเก็บ ประเภทไฟล์ที่ไม่รองรับจะไม่ถูกลบ โดยจะยังคงอยู่ในตำแหน่งปัจจุบัน"
 
-#: src/page/cluster/nodes.vue:107 src/locales.js:463
+#: src/page/cluster/nodes.vue:107 src/locales.js:389
 msgid "Remove the selected instance from the cluster registry?"
 msgstr "ลบอินสแตนซ์ที่เลือกออกจากรีจิสทรีคลัสเตอร์หรือไม่"
 
-#: src/page/cluster/nodes.vue:269 src/locales.js:427
+#: src/page/cluster/nodes.vue:269 src/locales.js:353
 msgid "Removed"
 msgstr "ลบออก"
 
@@ -3712,12 +3573,12 @@ msgstr "ลบออก"
 msgid "Removed %{name}"
 msgstr "ลบ %{name}"
 
-#: src/locales.js:549
+#: src/locales.js:475
 msgid "Removed %d files and %d photos"
 msgstr "ลบไฟล์ %d ไฟล์ และรูปภาพ %d รูป"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
-#: src/locales.js:454
+#: src/locales.js:380
 msgid "Repeated"
 msgstr "ซ้ำแล้วซ้ำเล่า"
 
@@ -3781,10 +3642,6 @@ msgstr "พิมพ์รหัสผ่านอีกครั้ง"
 msgid "Review"
 msgstr "ทบทวน"
 
-#: src/locales.js:376
-msgid "Right Arrow"
-msgstr ""
-
 #: src/component/user/add/dialog.vue:93 src/component/user/edit/dialog.vue:172
 #: src/page/admin/sessions.vue:105 src/page/admin/users.vue:179
 #: src/component/cluster/instance-access.vue:84
@@ -3794,29 +3651,25 @@ msgstr ""
 #: src/component/user/add/dialog.vue:99 src/component/user/edit/dialog.vue:181
 #: src/page/admin/groups.vue:77 src/page/admin/sessions.vue:145
 #: src/page/admin/users.vue:284 src/component/user/edit/dialog.vue:174
-#: src/page/admin/users.vue:271 src/locales.js:437
+#: src/page/admin/users.vue:271 src/locales.js:363
 msgid "Role"
 msgstr "บทบาท"
 
-#: src/locales.js:438
+#: src/locales.js:364
 msgid "Roles"
 msgstr "บทบาท"
 
-#: src/component/cluster/node/overview.vue:81 src/locales.js:447
+#: src/component/cluster/node/overview.vue:81 src/locales.js:373
 msgid "Rotated"
 msgstr "หมุน"
 
-#: src/locales.js:221
+#: src/locales.js:232
 msgid "Rows per page:"
 msgstr "จำนวนแถวต่อหน้า:"
 
 #: src/options/options.js:312
 msgid "Satellite"
 msgstr "ดาวเทียม"
-
-#: src/locales.js:404
-msgid "Saturation value"
-msgstr ""
 
 #: src/component/user/edit/dialog.vue:108
 #: src/component/user/edit/dialog.vue:109
@@ -3894,11 +3747,11 @@ msgstr "สแกน"
 #: src/page/admin/sessions.vue:139 src/page/admin/sessions.vue:223
 #: src/page/admin/sessions.vue:179 src/page/admin/sessions.vue:296
 #: src/page/admin/sessions.vue:294 src/component/settings/apps.vue:129
-#: src/component/settings/apps.vue:277 src/locales.js:440
+#: src/component/settings/apps.vue:277 src/locales.js:366
 msgid "Scope"
 msgstr "ขอบเขต"
 
-#: src/locales.js:441
+#: src/locales.js:367
 msgid "Scopes"
 msgstr "ขอบเขต"
 
@@ -3907,7 +3760,7 @@ msgstr "ขอบเขต"
 #: src/page/cluster/nodes.vue:13 src/page/admin/activity.vue:13
 #: src/component/meta/location/dialog.vue:60 src/component/navigation.vue:728
 #: src/component/navigation.vue:91 src/component/photo/toolbar.vue:34
-#: src/locales.js:416 src/options/options.js:256 src/page/albums.vue:20
+#: src/locales.js:342 src/options/options.js:256 src/page/albums.vue:20
 #: src/page/labels.vue:15 src/page/library/errors.vue:18
 #: src/page/people/recognized.vue:14 src/page/places.vue:22
 #: src/page/services.vue:15 src/page/settings/content.vue:117
@@ -3918,10 +3771,6 @@ msgstr "ค้นหา"
 msgid "Season"
 msgstr "ฤดูกาล"
 
-#: src/locales.js:320
-msgid "Second"
-msgstr ""
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "ความลับ"
@@ -3929,10 +3778,6 @@ msgstr "ความลับ"
 #: src/page/settings/account.vue:149 src/page/settings/account.vue:133
 msgid "Security and Access"
 msgstr "ความปลอดภัยและการเข้าถึง"
-
-#: src/locales.js:386
-msgid "Seek"
-msgstr ""
 
 #: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
@@ -3942,27 +3787,23 @@ msgstr "เลือก"
 msgid "Select a source folder to import files…"
 msgstr "เลือกโฟลเดอร์ต้นทางที่จะนำเข้าไฟล์…"
 
-#: src/locales.js:230
+#: src/locales.js:241
 msgid "Select all"
 msgstr ""
 
-#: src/locales.js:396
-msgid "Select color with eyedropper"
-msgstr ""
-
-#: src/locales.js:267
+#: src/locales.js:264
 msgid "Select date"
 msgstr "เลือกวันที่"
 
-#: src/locales.js:264
+#: src/locales.js:261
 msgid "Select dates"
 msgstr "เลือกวันที่"
 
-#: src/locales.js:231
+#: src/locales.js:242
 msgid "Select group"
 msgstr ""
 
-#: src/locales.js:248 src/locales.js:278
+#: src/locales.js:275
 msgid "Select month"
 msgstr ""
 
@@ -3981,7 +3822,7 @@ msgstr "เลือกหรือสร้างป้ายกำกับ"
 msgid "Select or drop files to upload…"
 msgstr "เลือกหรือปล่อยไฟล์เพื่ออัปโหลด…"
 
-#: src/locales.js:229
+#: src/locales.js:240
 msgid "Select row"
 msgstr ""
 
@@ -3993,11 +3834,11 @@ msgstr "เลือกไฟล์ที่จะอัพโหลด…"
 msgid "Select the folder to be indexed…"
 msgstr "เลือกโฟลเดอร์ที่จะสร้างดัชนี…"
 
-#: src/locales.js:317
+#: src/locales.js:310
 msgid "Select Time"
 msgstr "เลือกเวลา"
 
-#: src/locales.js:257 src/locales.js:275
+#: src/locales.js:272
 msgid "Select year"
 msgstr ""
 
@@ -4005,27 +3846,27 @@ msgstr ""
 msgid "Selection"
 msgstr "การคัดเลือก"
 
-#: src/locales.js:533
+#: src/locales.js:459
 msgid "Selection added to %s"
 msgstr "เพิ่มการคัดเลือกไปยัง %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:562
+#: src/component/photo/clipboard.vue:251 src/locales.js:488
 msgid "Selection approved"
 msgstr "อนุมัติการคัดเลือก"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:563
+#: src/component/photo/clipboard.vue:282 src/locales.js:489
 msgid "Selection archived"
 msgstr "การเลือกที่เก็บถาวร"
 
-#: src/locales.js:565
+#: src/locales.js:491
 msgid "Selection marked as private"
 msgstr "การเลือกที่ถูกทำเครื่องหมายเป็นส่วนตัว"
 
-#: src/locales.js:483
+#: src/locales.js:409
 msgid "Selection not found"
 msgstr "ไม่พบสิ่งที่เลือก"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:564
+#: src/component/photo/clipboard.vue:318 src/locales.js:490
 msgid "Selection restored"
 msgstr "คืนค่าการเลือกแล้ว"
 
@@ -4033,7 +3874,7 @@ msgstr "คืนค่าการเลือกแล้ว"
 msgid "Sequential Name"
 msgstr "ชื่อลำดับ"
 
-#: src/options/admin.js:39 src/locales.js:459
+#: src/options/admin.js:39 src/locales.js:385
 msgid "Service"
 msgstr "บริการ"
 
@@ -4046,11 +3887,11 @@ msgstr "URL บริการ"
 #: src/component/navigation.vue:423 src/component/navigation.vue:432
 #: src/component/navigation.vue:545 src/component/navigation.vue:553
 #: src/component/navigation.vue:561 src/component/navigation.vue:569
-#: src/locales.js:460 src/page/settings/general.vue:305
+#: src/locales.js:386 src/page/settings/general.vue:305
 msgid "Services"
 msgstr "URL บริการ"
 
-#: src/locales.js:443 src/model/session.js:83 src/options/auth.js:120
+#: src/locales.js:369 src/model/session.js:83 src/options/auth.js:120
 #: src/options/auth.js:71
 msgid "Session"
 msgstr "การประชุม"
@@ -4062,7 +3903,7 @@ msgstr "รหัสเซสชัน"
 
 #: src/page/admin.vue:67 src/component/navigation.vue:252
 #: src/component/navigation.vue:476 src/component/navigation.vue:479
-#: src/page/admin.vue:65 src/locales.js:444
+#: src/page/admin.vue:65 src/locales.js:370
 msgid "Sessions"
 msgstr "เซสชัน"
 
@@ -4084,7 +3925,7 @@ msgid "Settings"
 msgstr "การตั้งค่า"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:541
+#: src/component/settings/passcode.vue:366 src/locales.js:467
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "การตั้งค่าที่บันทึกไว้"
@@ -4098,7 +3939,7 @@ msgstr "ติดตั้ง"
 
 #: src/page/cluster/activity.vue:127 src/page/cluster/activity.vue:36
 #: src/page/admin/activity.vue:126 src/page/admin/activity.vue:36
-#: src/locales.js:448
+#: src/locales.js:374
 msgid "Severity"
 msgstr "ความรุนแรง"
 
@@ -4114,10 +3955,6 @@ msgstr "แบ่งปัน %{s}"
 #: src/options/options.js:505
 msgid "Share Friendly"
 msgstr "แชร์ได้ง่าย"
-
-#: src/locales.js:369
-msgid "Shift"
-msgstr ""
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
 msgid "Show"
@@ -4199,10 +4036,6 @@ msgstr "แสดงมุมมองสถานที่พร้อมแผ
 msgid "Show Titles"
 msgstr "แสดงชื่อเรื่อง"
 
-#: src/locales.js:388
-msgid "Show volume control"
-msgstr ""
-
 #: src/common/util.js:913 src/model/file.js:197
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -4227,7 +4060,7 @@ msgstr "ลงชื่อออก"
 msgid "Similar"
 msgstr "คล้ายกัน"
 
-#: src/component/cluster/node/overview.vue:36 src/locales.js:452
+#: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
 msgstr "URL ของไซต์"
 
@@ -4271,11 +4104,11 @@ msgstr "ไม่สามารถสร้างอัลบั้มบาง
 msgid "Some albums could not be updated"
 msgstr "ไม่สามารถอัปเดตอัลบั้มบางอัลบั้มได้"
 
-#: src/component/lightbox.vue:1253 src/locales.js:471
+#: src/component/lightbox.vue:1253 src/locales.js:397
 msgid "Something went wrong, try again"
 msgstr "เกิดข้อผิดพลาด โปรดลองอีกครั้ง"
 
-#: src/locales.js:233
+#: src/locales.js:244
 msgid "Sort by"
 msgstr "จัดเรียงตาม"
 
@@ -4296,11 +4129,11 @@ msgstr "จัดเรียงตามความเกี่ยวข้อ
 msgid "Sort Order"
 msgstr "เรียงลำดับ"
 
-#: src/locales.js:224
+#: src/locales.js:235
 msgid "Sorted ascending."
 msgstr "เรียงลำดับจากน้อยไปมาก"
 
-#: src/locales.js:223
+#: src/locales.js:234
 msgid "Sorted descending."
 msgstr "เรียงลำดับจากมากไปน้อย"
 
@@ -4309,10 +4142,6 @@ msgstr "เรียงลำดับจากมากไปน้อย"
 #: src/component/photo/edit/labels.vue:28
 msgid "Source"
 msgstr "แหล่งที่มา"
-
-#: src/locales.js:368
-msgid "Space"
-msgstr ""
 
 #: src/component/photo/view/cards.vue:116
 #: src/component/photo/view/mosaic.vue:71
@@ -4379,19 +4208,19 @@ msgstr "ถนน"
 msgid "Subject"
 msgstr "เรื่อง"
 
-#: src/locales.js:555
+#: src/locales.js:481
 msgid "Subject deleted"
 msgstr "หัวข้อถูกลบ"
 
-#: src/locales.js:491
+#: src/locales.js:417
 msgid "Subject not found"
 msgstr "ไม่พบหัวข้อ"
 
-#: src/locales.js:554
+#: src/locales.js:480
 msgid "Subject saved"
 msgstr "บันทึกหัวข้อแล้ว"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:571
+#: src/component/settings/passcode.vue:351 src/locales.js:497
 msgid "Successfully activated"
 msgstr "เปิดใช้งานสำเร็จแล้ว"
 
@@ -4404,7 +4233,7 @@ msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 msgid "Successfully deleted"
 msgstr "ลบเรียบร้อยแล้ว"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:570
+#: src/component/settings/passcode.vue:323 src/locales.js:496
 msgid "Successfully verified"
 msgstr "ตรวจสอบเรียบร้อยแล้ว"
 
@@ -4461,10 +4290,6 @@ msgstr "ขอบคุณสำหรับการสนับสนุน!"
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr "นั่นเป็นเหตุผลที่ PhotoPrism ถูกสร้างขึ้นใหม่ทั้งหมดเพื่อให้ทำงานได้ทุกที่ที่คุณต้องการ โดยไม่กระทบต่อเสรีภาพ ความเป็นส่วนตัว หรือฟังก์ชันการทำงาน"
 
-#: src/locales.js:357
-msgid "The {0} character is not allowed"
-msgstr ""
-
 #: src/page/library/index.vue:72
 msgid "The index currently contains %{n} hidden files."
 msgstr "ขณะนี้ดัชนีมีไฟล์ที่ซ่อนอยู่ %{n} ไฟล์"
@@ -4477,11 +4302,7 @@ msgstr "อินสแตนซ์ปฏิเสธข้อมูลประ
 msgid "The instance returned an unexpected redirect."
 msgstr "อินสแตนซ์ส่งคืนการเปลี่ยนเส้นทางที่ไม่คาดคิด"
 
-#: src/locales.js:356
-msgid "The length of the entered field is invalid"
-msgstr ""
-
-#: src/locales.js:518
+#: src/locales.js:444
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "ช่วงเวลาการปลุกคือ %s แต่ต้องเป็น 1 ชั่วโมงหรือน้อยกว่า"
 
@@ -4489,35 +4310,19 @@ msgstr "ช่วงเวลาการปลุกคือ %s แต่ต�
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "รูปแบบของไฟล์อาจไม่ได้รับการสนับสนุน ยังไม่ได้แปลงเป็น JPEG หรือมีรูปแบบที่ซ้ำกัน"
 
-#: src/component/cluster/node/overview.vue:33 src/locales.js:425
+#: src/component/cluster/node/overview.vue:33 src/locales.js:351
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "ธีม"
-
-#: src/locales.js:365
-msgid "then"
-msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
 msgstr "บัญชีนี้ไม่มีรหัสผู้ใช้และไม่สามารถแก้ไขได้"
 
-#: src/locales.js:352
-msgid "This field can only contain integer values"
-msgstr ""
-
-#: src/locales.js:351
-msgid "This field can only contain numbers"
-msgstr ""
-
-#: src/locales.js:353
-msgid "This field can only contain uppercase letters"
-msgstr ""
-
 #: src/common/form.js:234 src/common/form.js:243 src/common/form.js:252
 #: src/common/form.js:261 src/common/form.js:270 src/common/form.js:289
 #: src/common/form.js:340 src/common/form.js:350 src/common/form.js:362
-#: src/common/form.js:371 src/common/form.js:388 src/locales.js:349
+#: src/common/form.js:371 src/common/form.js:388
 msgid "This field is required"
 msgstr "ฟิลด์นี้จำเป็นต้องกรอก"
 
@@ -4530,7 +4335,7 @@ msgid "This mounts the originals folder as a network drive and allows you to ope
 msgstr "การดำเนินการนี้จะต่อเชื่อมโฟลเดอร์ต้นฉบับเป็นไดรฟ์เครือข่าย และช่วยให้คุณสามารถเปิด แก้ไข และลบไฟล์จากคอมพิวเตอร์หรือสมาร์ทโฟนได้เสมือนอยู่ในเครื่อง"
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
-#: src/locales.js:450
+#: src/locales.js:376
 msgid "Time"
 msgstr "เวลา"
 
@@ -4557,7 +4362,7 @@ msgstr "ชื่อ"
 msgid "Title / Position"
 msgstr "ชื่อเรื่องยาวเกินไป"
 
-#: src/locales.js:245
+#: src/locales.js:256
 msgid "to"
 msgstr "ถึง"
 
@@ -4577,11 +4382,11 @@ msgstr "หากต้องการสลับไปใช้แอพหร
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "หากต้องการอัปเกรด คุณสามารถป้อนรหัสเปิดใช้งานหรือคลิก \"ลงทะเบียน\" เพื่อลงทะเบียนบนเว็บไซต์ของเรา:"
 
-#: src/locales.js:293
+#: src/locales.js:290
 msgid "Today"
 msgstr "วันนี้"
 
-#: src/locales.js:280
+#: src/locales.js:277
 msgid "Today, {0}"
 msgstr ""
 
@@ -4601,7 +4406,7 @@ msgstr "โทเค็น"
 msgid "Too many files selected"
 msgstr "เลือกไฟล์มากเกินไป"
 
-#: src/common/api.js:128 src/locales.js:520
+#: src/common/api.js:128 src/locales.js:446
 msgid "Too many requests"
 msgstr "คำขอมากเกินไป"
 
@@ -4630,15 +4435,11 @@ msgstr "เปิดใช้งานการรับรองความถ
 msgid "Type"
 msgstr "พิมพ์"
 
-#: src/locales.js:362
-msgid "Type a command or search..."
-msgstr ""
-
 #: src/component/album/toolbar.vue:240
 msgid "Unable to delete"
 msgstr "ไม่สามารถลบได้"
 
-#: src/locales.js:472
+#: src/locales.js:398
 msgid "Unable to do that"
 msgstr "ไม่สามารถทำได้"
 
@@ -4692,10 +4493,6 @@ msgstr "ไม่รู้จัก"
 msgid "Unknown location"
 msgstr "สถานที่ไม่ทราบ"
 
-#: src/locales.js:390
-msgid "Unmute"
-msgstr ""
-
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:876
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
@@ -4711,21 +4508,17 @@ msgstr "ไม่เรียงลำดับ"
 msgid "Unstack"
 msgstr "แกะ"
 
-#: src/locales.js:479
+#: src/locales.js:405
 msgid "Unsupported"
 msgstr "ไม่รองรับ"
 
-#: src/locales.js:481
+#: src/locales.js:407
 msgid "Unsupported format"
 msgstr "รูปแบบไม่รองรับ"
 
-#: src/locales.js:480
+#: src/locales.js:406
 msgid "Unsupported type"
 msgstr "ประเภทที่ไม่รองรับ"
-
-#: src/locales.js:373
-msgid "Up Arrow"
-msgstr ""
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:169
 #: src/component/photo/edit/files.vue:269
@@ -4800,11 +4593,11 @@ msgid "Upload complete. Indexing…"
 msgstr "อัพโหลดเสร็จแล้ว กำลังจัดทำดัชนี…"
 
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:484
-#: src/component/upload/dialog.vue:531 src/locales.js:500
+#: src/component/upload/dialog.vue:531 src/locales.js:426
 msgid "Upload failed"
 msgstr "การอัพโหลดล้มเหลว"
 
-#: src/locales.js:561
+#: src/locales.js:487
 msgid "Upload has been processed"
 msgstr "การอัปโหลดได้รับการประมวลผลแล้ว"
 
@@ -4812,7 +4605,7 @@ msgstr "การอัปโหลดได้รับการประมว
 msgid "Upload local files"
 msgstr "อัปโหลดไฟล์ในเครื่อง"
 
-#: src/locales.js:499
+#: src/locales.js:425
 msgid "Upload might be offensive"
 msgstr "การอัปโหลดอาจไม่เหมาะสม"
 
@@ -4831,7 +4624,7 @@ msgstr "อัปโหลดเส้นทาง"
 msgid "Upload started"
 msgstr "เริ่มการอัปโหลดแล้ว"
 
-#: src/locales.js:501
+#: src/locales.js:427
 msgid "Upload to %s failed"
 msgstr "การอัปโหลดไปยัง %s ล้มเหลว"
 
@@ -4877,7 +4670,7 @@ msgstr "ใช้รหัสกู้คืนของคุณหรือต
 #: src/page/admin/sessions.vue:221 src/page/admin/sessions.vue:98
 #: src/component/cluster/node/overview.vue:77 src/model/cluster-instance.js:32
 #: src/page/admin/sessions.vue:138 src/page/admin/sessions.vue:294
-#: src/page/admin/sessions.vue:292 src/locales.js:430 src/model/user.js:458
+#: src/page/admin/sessions.vue:292 src/locales.js:356 src/model/user.js:458
 #: src/options/auth.js:9
 msgid "User"
 msgstr "ผู้ใช้"
@@ -4890,7 +4683,7 @@ msgstr "คู่มือผู้ใช้"
 msgid "User Interface"
 msgstr "หน้าจอผู้ใช้"
 
-#: src/locales.js:486
+#: src/locales.js:412
 msgid "User not found"
 msgstr "ไม่พบผู้ใช้"
 
@@ -4901,24 +4694,20 @@ msgstr "ไม่พบผู้ใช้"
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
 #: src/component/service/edit.vue:179 src/component/share/dialog.vue:162
-#: src/locales.js:421
+#: src/locales.js:347
 msgid "Username"
 msgstr "ชื่อผู้ใช้"
 
 #: src/component/navigation.vue:404 src/component/navigation.vue:405
 #: src/component/navigation.vue:417 src/component/navigation.vue:426
 #: src/component/navigation.vue:539 src/component/navigation.vue:547
-#: src/component/navigation.vue:555 src/locales.js:431
+#: src/component/navigation.vue:555 src/locales.js:357
 msgid "Users"
 msgstr "ผู้ใช้"
 
 #: src/page/cluster/nodes.vue:163
 msgid "UUID"
 msgstr "UUID"
-
-#: src/locales.js:321
-msgid "Value is not allowed"
-msgstr ""
 
 #: src/common/util.js:909 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
@@ -4941,11 +4730,11 @@ msgstr "รหัสยืนยัน"
 msgid "Verified"
 msgstr "ตรวจสอบแล้ว"
 
-#: src/locales.js:524
+#: src/locales.js:450
 msgid "Verified email required"
 msgstr "ต้องยืนยันอีเมล"
 
-#: src/component/cluster/node/overview.vue:29 src/locales.js:423
+#: src/component/cluster/node/overview.vue:29 src/locales.js:349
 msgid "Version"
 msgstr "เวอร์ชัน"
 
@@ -4994,10 +4783,6 @@ msgstr "ผู้เข้าชม"
 msgid "Visual Similarity"
 msgstr "จัดกลุ่มตามความเหมือน"
 
-#: src/locales.js:387
-msgid "Volume"
-msgstr ""
-
 #: src/page/library/errors.vue:363
 msgid "Warning"
 msgstr "คำเตือน"
@@ -5007,7 +4792,7 @@ msgstr "คำเตือน"
 #: src/component/cluster/node/users.vue:155
 #: src/component/user/add/dialog.vue:140 src/component/user/edit/dialog.vue:295
 #: src/page/admin/users.vue:294 src/component/user/edit/dialog.vue:288
-#: src/page/admin/users.vue:278 src/locales.js:435
+#: src/page/admin/users.vue:278 src/locales.js:361
 msgid "Web Login"
 msgstr "เข้าสู่ระบบเว็บ"
 
@@ -5123,15 +4908,7 @@ msgstr "เลือกได้เพียงรายการเดียว
 msgid "You may rescan your library to find additional faces."
 msgstr "คุณสามารถสแกนคลังของคุณเพื่อค้นหาใบหน้าเพิ่มเติม"
 
-#: src/locales.js:354
-msgid "You must enter a maximum of {0} characters"
-msgstr ""
-
-#: src/locales.js:355
-msgid "You must enter a minimum of {0} characters"
-msgstr ""
-
-#: src/locales.js:519
+#: src/locales.js:445
 msgid "Your account could not be connected"
 msgstr "ไม่สามารถเชื่อมต่อบัญชีของคุณได้"
 
@@ -5149,7 +4926,7 @@ msgstr "การสนับสนุนอย่างต่อเนื่อ
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "คลังของคุณได้รับการวิเคราะห์อย่างต่อเนื่องเพื่อสร้างอัลบั้มของช่วงเวลา การเดินทาง และสถานที่พิเศษโดยอัตโนมัติ"
 
-#: src/locales.js:567
+#: src/locales.js:493
 msgid "Zip created in %d s"
 msgstr "สร้างซิปเสร็จใน %d วินาที"
 
