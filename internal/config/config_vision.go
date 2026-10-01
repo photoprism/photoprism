@@ -1,11 +1,13 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -358,31 +360,42 @@ func (c *Config) VisionFilter() string {
 // specified type should execute in a given scheduling context. Face detection
 // delegates to FaceEngineShouldRun so detection and embedding stay aligned.
 func (c *Config) VisionModelShouldRun(t vision.ModelType, when vision.RunType) bool {
-	if c == nil {
-		return false
+	return c.VisionModelSkipReason(t, when) == ""
+}
+
+// VisionModelSkipReason returns why the vision model of the specified type does not run in a given
+// scheduling context, or "" when it runs, so a caller can report what keeps a requested model idle.
+func (c *Config) VisionModelSkipReason(t vision.ModelType, when vision.RunType) string {
+	switch {
+	case c == nil:
+		return "the configuration is missing"
+	case t == vision.ModelTypeFace && c.DisableFaces():
+		return "faces are disabled"
+	case t == vision.ModelTypeLabels && c.DisableClassification():
+		return "image classification is disabled"
+	case t == vision.ModelTypeNsfw && !c.DetectNSFW():
+		return "detect-nsfw is off"
+	case t == vision.ModelTypeNsfw && c.NSFWModelSetting() != nsfw.ModelAuto:
+		return fmt.Sprintf("nsfw-model is %s", c.NSFWModelSetting())
+	case vision.Config == nil:
+		return "the vision configuration is missing"
+	case t == vision.ModelTypeFace:
+		if c.FaceEngineShouldRun(when) {
+			return ""
+		} else if c.FaceEngine() == face.EngineNone {
+			return "no face detector is in force"
+		}
+
+		return fmt.Sprintf("face-run is %s", vision.ReportRunType(c.FaceEngineRunType()))
+	case vision.Config.ShouldRun(t, when):
+		return ""
 	}
 
-	if t == vision.ModelTypeFace && c.DisableFaces() {
-		return false
+	if model := vision.Config.Model(t); model != nil {
+		return fmt.Sprintf("its run type is %s", vision.ReportRunType(model.RunType()))
 	}
 
-	if t == vision.ModelTypeLabels && c.DisableClassification() {
-		return false
-	}
-
-	if t == vision.ModelTypeNsfw && (!c.DetectNSFW() || c.NSFWModelSetting() != nsfw.ModelAuto) {
-		return false
-	}
-
-	if vision.Config == nil {
-		return false
-	}
-
-	if t == vision.ModelTypeFace {
-		return c.FaceEngineShouldRun(when)
-	}
-
-	return vision.Config.ShouldRun(t, when)
+	return fmt.Sprintf("no enabled %s model is configured", clean.Log(t))
 }
 
 // VisionApi checks whether the Computer Vision API endpoints should be enabled.

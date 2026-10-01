@@ -269,7 +269,7 @@ Missing artifacts and initialization failures do not change saved disablement. I
 
 - List models: `photoprism vision ls` (shows resolved IDs, engines, the ONNX execution provider of local models, options, run mode, effective enabled status, artifact installation status). The face entry reports the embedding model `PHOTOPRISM_FACE_MODEL` selects and the `PHOTOPRISM_FACE_RUN` schedule, since those decide what runs.
 - Check status: `photoprism vision status` (`config` is an alias) states which model generates labels, NSFW flags, and captions, when it runs, and whether uploads are screened, followed by the related options and the NSFW thresholds in effect. `photoprism config` lists the `labels-model` and `nsfw-model` options as set, without the models they select.
-- Run a model: `photoprism vision run -m labels --count 5` (use `--force` to bypass `Run` rules).
+- Run a model: `photoprism vision run -m labels --count 5` (`--force` replaces existing data where the model supports it and the source priority is equal or higher). A requested model that cannot run is skipped with the reason, for example `detect-nsfw is off` for `-m nsfw`.
 - Validate config: `photoprism vision ls --json` to confirm env-expanded values without triggering calls.
 
 ### When to Choose Each Engine

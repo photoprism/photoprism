@@ -49,7 +49,7 @@ func visionRunAction(ctx *cli.Context) error {
 		models := vision.ParseModelTypes(ctx.String("models"))
 
 		if ctx.Bool("dry-run") {
-			modelList := strings.Join(models, ",")
+			modelList := strings.Join(worker.RunnableModels(models, vision.RunManual), ",")
 			if modelList == "" {
 				modelList = "(none)"
 			}

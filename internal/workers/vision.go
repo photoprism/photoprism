@@ -85,6 +85,23 @@ func (w *Vision) scheduledModels() []string {
 	return models
 }
 
+// RunnableModels returns the requested model types that may run in the specified scheduling
+// context, and logs the reason for each one that may not, so a request whose models are all
+// filtered out is not mistaken for one that named none.
+func (w *Vision) RunnableModels(models []string, runType vision.RunType) []string {
+	runnable := vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
+		return w.conf.VisionModelShouldRun(mt, when)
+	})
+
+	for _, modelType := range models {
+		if modelType = strings.TrimSpace(modelType); modelType != "" && !slices.Contains(runnable, modelType) {
+			log.Warnf("vision: skipping %s, because %s", clean.Log(modelType), w.conf.VisionModelSkipReason(modelType, runType))
+		}
+	}
+
+	return runnable
+}
+
 // Start runs the requested vision models against photos matching the search
 // filter. `customSrc` allows the caller to override the metadata source string,
 // `force` regenerates metadata regardless of existing values, and `runType`
@@ -115,9 +132,8 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	defer mutex.VisionWorker.Stop()
 
-	models = vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
-		return w.conf.VisionModelShouldRun(mt, when)
-	})
+	requested := models
+	models = w.RunnableModels(models, runType)
 
 	updateLabels := slices.Contains(models, vision.ModelTypeLabels)
 	updateNsfw := slices.Contains(models, vision.ModelTypeNsfw)
@@ -125,8 +141,10 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	detectFaces := slices.Contains(models, vision.ModelTypeFace)
 
 	// Refresh index metadata.
-	if n := len(models); n == 0 {
+	if n := len(models); n == 0 && len(requested) == 0 {
 		log.Warnf("vision: no models were specified")
+		return nil
+	} else if n == 0 {
 		return nil
 	} else {
 		log.Infof("vision: running %s models", txt.JoinAnd(models))

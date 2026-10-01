@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
@@ -503,6 +504,76 @@ func TestConfig_DetectNSFW(t *testing.T) {
 
 	result := c.DetectNSFW()
 	assert.Equal(t, true, result)
+}
+
+// TestConfig_VisionModelSkipReason verifies the reason given for each model that does not run.
+func TestConfig_VisionModelSkipReason(t *testing.T) {
+	t.Run("Runs", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		withVisionConfig(t, vision.NewConfig())
+		assert.Empty(t, c.VisionModelSkipReason(vision.ModelTypeLabels, vision.RunManual))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var c *Config
+		assert.Equal(t, "the configuration is missing", c.VisionModelSkipReason(vision.ModelTypeLabels, vision.RunManual))
+	})
+	t.Run("FacesDisabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DisableFaces = true
+		withVisionConfig(t, vision.NewConfig())
+		assert.Equal(t, "faces are disabled", c.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
+	})
+	t.Run("ClassificationDisabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.LabelsModel = "none"
+		withVisionConfig(t, vision.NewConfig())
+		assert.Equal(t, "image classification is disabled", c.VisionModelSkipReason(vision.ModelTypeLabels, vision.RunManual))
+	})
+	t.Run("DetectNSFWOff", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DetectNSFW = false
+		withVisionConfig(t, vision.NewConfig())
+		assert.Equal(t, "detect-nsfw is off", c.VisionModelSkipReason(vision.ModelTypeNsfw, vision.RunManual))
+	})
+	t.Run("NSFWLabelsMode", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DetectNSFW = true
+		c.options.NsfwModel = "labels"
+		withVisionConfig(t, vision.NewConfig())
+		assert.Equal(t, "nsfw-model is labels", c.VisionModelSkipReason(vision.ModelTypeNsfw, vision.RunManual))
+	})
+	t.Run("NilVisionConfig", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		withVisionConfig(t, nil)
+		assert.Equal(t, "the vision configuration is missing", c.VisionModelSkipReason(vision.ModelTypeLabels, vision.RunManual))
+	})
+	t.Run("RunType", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		config := vision.NewConfig()
+		config.Models[0].Run = vision.RunNever
+		withVisionConfig(t, config)
+		assert.Equal(t, "its run type is never", c.VisionModelSkipReason(vision.ModelTypeLabels, vision.RunManual))
+	})
+	t.Run("NoModel", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		withVisionConfig(t, &vision.ConfigValues{})
+		assert.Equal(t, "no enabled caption model is configured", c.VisionModelSkipReason(vision.ModelTypeCaption, vision.RunManual))
+	})
+	t.Run("NoFaceDetector", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = "none"
+		withVisionConfig(t, vision.NewConfig())
+		assert.Equal(t, "no face detector is in force", c.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
+	})
+	t.Run("FaceRun", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = vision.RunNever
+		withVisionConfig(t, vision.NewConfig())
+		if c.FaceEngine() == face.EngineNone {
+			t.Skip("no face detector is installed")
+		}
+		assert.Equal(t, "face-run is never", c.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
+	})
 }
 
 func TestConfig_VisionModelShouldRun(t *testing.T) {
