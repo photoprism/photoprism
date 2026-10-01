@@ -295,7 +295,7 @@ See Also
 - Developer Guide (Setup/Tests/API) — links in AGENTS.md → Sources of Truth
 
 Go Internal Import Rule
-- Keep temporary Go helpers inside `internal/...`; the Go toolchain blocks importing `internal/` packages from directories such as `/tmp`, so use a disposable path like `internal/tmp/` when you need scratch space.
+- Put temporary Go helpers in a per-run directory under `.local/scratch/` (`mkdir -p .local/scratch && mktemp -d .local/scratch/<name>.XXXXXX`); the Go toolchain blocks importing `internal/` packages from directories such as `/tmp`, while `.local/` is inside the module, gitignored, and skipped by `./...`.
 
 Fast Test Recipes
 - Filesystem + archives (fast): `go test ./pkg/fs -run 'Copy|Move|Unzip' -count=1`
