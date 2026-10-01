@@ -461,7 +461,7 @@ codex-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -508,7 +508,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -525,7 +525,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -542,7 +542,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -559,11 +559,27 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link already exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
 	  echo "No specs/.claude/scripts directory found, skipping."; \
+	fi
+	@if [ -d "specs/.claude/bin" ]; then \
+	  echo "Linking Claude Code model wrappers from specs/.claude/bin..."; \
+	  [ -n "$(HOME)" ] && [ "$(HOME)" != "/" ] && install -d -m 755 -- "$(HOME)/.local/bin" || true; \
+	  for src in specs/.claude/bin/*; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link="$(HOME)/.local/bin/$$name"; \
+	    if [ -e "$$link" ] || [ -L "$$link" ]; then \
+	      echo "$$link already exists, skipping"; \
+	    else \
+	      ln -s "$(CURDIR)/specs/.claude/bin/$$name" "$$link"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/bin directory found, skipping."; \
 	fi
 dep-go:
 	go build -v ./...
