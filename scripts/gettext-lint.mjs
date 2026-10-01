@@ -5,7 +5,8 @@
 //
 //   1. Placeholder integrity — the set of substitution placeholders in a
 //      translation (msgstr) must match the source string (msgid). The frontend
-//      (vue3-gettext) uses named `%{name}` placeholders; the backend (gotext)
+//      uses named `%{name}` ($gettext), positional `{0}` (Vuetify UI messages)
+//      and printf verbs (backend messages rendered by Tp); the backend (gotext)
 //      uses printf verbs (`%s`, `%d`, `%.1f`, …). A translation that renames,
 //      drops, or corrupts a placeholder silently fails to interpolate.
 //   2. Whitespace / newline edges — leading/trailing spaces and a trailing
@@ -109,6 +110,19 @@ function parsePo(path) {
 function namedPlaceholders(s) {
   return (s.replace(/%%/g, "").match(/%\{[^}]*\}/g) || []).sort();
 }
+// Positional `{0}` (Vuetify messages); the closing brace is optional, so a broken `{0` mismatches.
+function positionalPlaceholders(s) {
+  return s.match(/(?<!%)\{\d+\}?/g) || [];
+}
+// Go verbs in backend messages rendered by Tp(); same pattern as interpolatePositional in common/gettext.js.
+function frontendVerbs(s) {
+  return (s.replace(/%%/g, "").match(/%[-+0#]*\d*(?:\.\d+)?[vTtbcdoOqxXUeEfFgGsp]/g) || []);
+}
+// Frontend placeholders: named, positional, and Go verbs when the msgid has any.
+// Verbs are skipped otherwise, so prose like "100%-ban" is not read as a verb.
+function frontendPlaceholders(s, withVerbs) {
+  return [...namedPlaceholders(s), ...positionalPlaceholders(s), ...(withVerbs ? frontendVerbs(s) : [])].sort();
+}
 // printf verbs (backend). Matches Go fmt verbs incl. width/precision/index.
 function printfVerbs(s) {
   return (s.replace(/%%/g, "").match(/%(?:\d+\$)?[-+ #0]*\d*(?:\.\d+)?[bcdeEfFgGoqstTvxXsdp]/g) || []).sort();
@@ -151,9 +165,10 @@ function msgfmtCheck(path) {
 // --- Lint one catalog -------------------------------------------------------
 function lintFile(path, side) {
   const findings = [];
-  const getPlaceholders = side === "backend" ? printfVerbs : namedPlaceholders;
   for (const e of parsePo(path)) {
     if (!e.msgid) continue; // header
+    const withVerbs = frontendVerbs(e.msgid).length > 0;
+    const getPlaceholders = side === "backend" ? printfVerbs : (s) => frontendPlaceholders(s, withVerbs);
     // Compare the primary msgstr and any plural forms that carry content.
     const targets = [e.msgstr, ...e.plurals.filter(Boolean)];
     for (const str of targets) {
