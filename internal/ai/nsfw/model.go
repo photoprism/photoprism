@@ -59,7 +59,7 @@ func NewModel(settings Settings) *Model {
 		info = &onnx.ModelInfo{}
 	}
 	threshold := settings.DefaultThreshold
-	if threshold <= 0 || threshold > 1 {
+	if !validThreshold(threshold) {
 		threshold = DefaultThreshold
 	}
 	return &Model{name: NormalizeModelName(settings.Name), modelPath: settings.ModelPath, meta: info,
@@ -115,10 +115,15 @@ func (m *Model) Close() error {
 
 // DefaultThreshold returns the detector-specific fallback threshold.
 func (m *Model) DefaultThreshold() float32 {
-	if m == nil || m.defaultThreshold <= 0 || m.defaultThreshold > 1 {
+	if m == nil || !validThreshold(m.defaultThreshold) {
 		return DefaultThreshold
 	}
 	return m.defaultThreshold
+}
+
+// validThreshold reports whether the threshold is a probability above 0 and at most 1.
+func validThreshold(threshold float32) bool {
+	return threshold > 0 && threshold <= 1
 }
 
 // File returns the decision for a local image file.
@@ -160,7 +165,7 @@ func (m *Model) Run(data []byte, threshold float32) (result Result, err error) {
 	if err != nil {
 		return Unavailable(clean.Error(err)), err
 	}
-	if threshold <= 0 || threshold > 1 {
+	if !validThreshold(threshold) {
 		threshold = m.DefaultThreshold()
 	}
 	result = NewResult(probability, threshold)

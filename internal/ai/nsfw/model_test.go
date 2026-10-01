@@ -220,6 +220,11 @@ func TestRegisteredModelInference(t *testing.T) {
 	pngResult, err := model.Run(encoded.Bytes(), 0.75)
 	require.NoError(t, err)
 	assert.False(t, pngResult.IsUnavailable())
+
+	// An invalid threshold selects the detector's calibrated threshold.
+	nanResult, err := model.Run(encoded.Bytes(), float32(math.NaN()))
+	require.NoError(t, err)
+	assert.Equal(t, model.DefaultThreshold(), nanResult.Threshold)
 }
 
 // TestRegisteredModelConcurrentInference verifies shared-session results stay deterministic.
@@ -248,4 +253,35 @@ func TestRegisteredModelConcurrentInference(t *testing.T) {
 		require.NoError(t, errors[i])
 		assert.InDelta(t, scores[0], scores[i], 1e-7)
 	}
+}
+
+// TestValidThreshold verifies that only probabilities above 0 and at most 1 are accepted.
+func TestValidThreshold(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, threshold := range []float32{0.01, 0.327, 1} {
+			assert.True(t, validThreshold(threshold), "%v", threshold)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		nan := float32(math.NaN())
+		for _, threshold := range []float32{0, -1, 1.01, nan, float32(math.Inf(1)), float32(math.Inf(-1))} {
+			assert.False(t, validThreshold(threshold), "%v", threshold)
+		}
+	})
+}
+
+// TestModelDefaultThreshold verifies that an invalid detector threshold selects the package fallback.
+func TestModelDefaultThreshold(t *testing.T) {
+	t.Run("Calibrated", func(t *testing.T) {
+		assert.Equal(t, float32(0.6), NewModel(Settings{DefaultThreshold: 0.6, Disabled: true}).DefaultThreshold())
+	})
+	t.Run("NotANumber", func(t *testing.T) {
+		model := NewModel(Settings{DefaultThreshold: float32(math.NaN()), Disabled: true})
+		assert.Equal(t, DefaultThreshold, model.DefaultThreshold())
+		assert.True(t, NewResult(0.99, model.DefaultThreshold()).IsUnsafe())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var model *Model
+		assert.Equal(t, DefaultThreshold, model.DefaultThreshold())
+	})
 }
