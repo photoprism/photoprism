@@ -924,10 +924,12 @@ func TestCustomClassifyInitializationError(t *testing.T) {
 	ModelsPath = t.TempDir()
 	t.Cleanup(func() { ModelsPath = previous })
 	model := &Model{Type: ModelTypeLabels, Name: "custom", Path: "custom/model.onnx", ONNX: &onnx.ModelInfo{}}
+	hook := captureVisionLog(t)
 	assert.Nil(t, model.ClassifyModel())
 	require.Error(t, model.classifyErr)
 	assert.False(t, model.Disabled)
 	cached := model.classifyErr
 	assert.Nil(t, model.ClassifyModel())
-	assert.Equal(t, cached, model.classifyErr)
+	assert.Same(t, cached, model.classifyErr)
+	assert.Len(t, initWarnings(hook.AllEntries()), 1)
 }

@@ -755,6 +755,13 @@ func TestConfig_InitWarnVisionKey(t *testing.T) {
 
 // TestVisionModes verifies mode precedence and exclusive NSFW sources.
 func TestVisionModes(t *testing.T) {
+	// Propagate sets package globals, so the test config and the captured flag are restored.
+	previousLabels := vision.DetectNSFWLabels
+	t.Cleanup(func() {
+		TestConfig().Propagate()
+		vision.DetectNSFWLabels = previousLabels
+	})
+
 	for _, mode := range []string{"auto", "none", "labels"} {
 		t.Run(mode, func(t *testing.T) {
 			withVisionConfig(t, vision.NewConfig())
@@ -772,7 +779,6 @@ func TestVisionModes(t *testing.T) {
 			c.options.DetectNSFW = true
 			c.Propagate()
 			assert.Equal(t, mode == "labels", vision.DetectNSFWLabels)
-			t.Cleanup(func() { vision.DetectNSFWLabels = false })
 		})
 	}
 	t.Run("DeprecatedPrecedence", func(t *testing.T) {

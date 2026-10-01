@@ -8,6 +8,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -418,6 +419,7 @@ func TestGenerateLabelsMissingConcurrent(t *testing.T) {
 	t.Cleanup(func() { ModelsPath = previous })
 	model := NewLabelModel(classify.DefaultModelName())
 	withConfig(t, &ConfigValues{Models: Models{model}})
+	hook := captureVisionLog(t)
 	var workers sync.WaitGroup
 	for range 16 {
 		workers.Add(1)
@@ -433,4 +435,18 @@ func TestGenerateLabelsMissingConcurrent(t *testing.T) {
 	assert.False(t, model.Disabled)
 	require.Error(t, model.classifyErr)
 	assert.Same(t, model, Config.Model(ModelTypeLabels))
+
+	// The model is initialized once; later calls return the cached error without retrying.
+	assert.Len(t, initWarnings(hook.AllEntries()), 1)
+}
+
+// initWarnings returns the logged model initialization failures.
+func initWarnings(entries []*logrus.Entry) (result []string) {
+	for _, message := range logMessages(entries, logrus.WarnLevel) {
+		if strings.Contains(message, "fix or install it") {
+			result = append(result, message)
+		}
+	}
+
+	return result
 }
