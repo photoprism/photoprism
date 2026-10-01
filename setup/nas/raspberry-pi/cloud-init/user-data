@@ -257,7 +257,6 @@ write_files:
             PHOTOPRISM_DISABLE_SETTINGS: "false"
             PHOTOPRISM_DISABLE_TENSORFLOW: "false"
             PHOTOPRISM_DISABLE_FACES: "false"
-            PHOTOPRISM_DISABLE_CLASSIFICATION: "false"
             PHOTOPRISM_DISABLE_RAW: "false"
             PHOTOPRISM_RAW_PRESETS: "false"
             PHOTOPRISM_JPEG_QUALITY: 82
