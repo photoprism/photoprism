@@ -166,6 +166,34 @@ func TestUploadUserFilesResolutionLimit(t *testing.T) {
 	}
 }
 
+// TestUploadCheckFile_JpegScans verifies that JPEG files with more scans than supported are rejected.
+func TestUploadCheckFile_JpegScans(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("..", "..", "pkg", "fs", "testdata", "progressive.jpg"))
+	require.NoError(t, err)
+
+	t.Run("Progressive", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "progressive.jpg")
+		require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile)) //nolint:gosec // test writes to a temp path
+		_, err := UploadCheckFile(fileName, false, 150, 1<<20)
+		require.NoError(t, err)
+		assert.FileExists(t, fileName)
+	})
+	t.Run("AboveLimit", func(t *testing.T) {
+		previous := fs.MaxJpegScans
+		fs.MaxJpegScans = 9
+		t.Cleanup(func() { fs.MaxJpegScans = previous })
+		dir := t.TempDir()
+		fileName := filepath.Join(dir, "progressive.jpg")
+		require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile)) //nolint:gosec // test writes to a temp path
+		remaining, err := UploadCheckFile(fileName, false, 150, 1<<20)
+		require.Error(t, err)
+		assert.Equal(t, int64(1<<20), remaining)
+		assert.Contains(t, err.Error(), "progressive.jpg")
+		assert.NotContains(t, clean.Error(err), dir)
+		assert.NoFileExists(t, fileName)
+	})
+}
+
 // TestUploadMegapixels verifies that the resolution is read from the type and the content.
 func TestUploadMegapixels(t *testing.T) {
 	data := testJpeg(t, 3000, 2000)

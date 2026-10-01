@@ -374,6 +374,9 @@ func UploadCheckFile(destName string, rejectRaw bool, resolutionLimit int, total
 	} else if resolution := uploadMegapixels(mediaFile); resolutionLimit > 0 && resolution > resolutionLimit {
 		logWarn("upload", os.Remove(destName))
 		return totalSizeLimit, fmt.Errorf("rejected %s because it exceeds the resolution limit (%d / %d MP)", clean.Log(baseName), resolution, resolutionLimit)
+	} else if scanErr := fs.CheckJpegScansFile(destName); scanErr != nil {
+		logWarn("upload", os.Remove(destName))
+		return totalSizeLimit, fmt.Errorf("rejected %s because its format is not supported", clean.Log(baseName))
 	} else if totalSizeLimit < 0 {
 		return -1, nil
 	} else if remainingSizeLimit = totalSizeLimit - mediaFile.FileSize(); totalSizeLimit == 0 || remainingSizeLimit < 1 {

@@ -107,6 +107,14 @@ func decodeImage(reader *io.SectionReader) (image.Image, string, error) {
 		return nil, name, err
 	}
 
+	if format == imageFormatJPEG {
+		if err = CheckJpegScans(reader); err != nil {
+			return nil, name, err
+		} else if _, err = reader.Seek(0, io.SeekStart); err != nil {
+			return nil, name, err
+		}
+	}
+
 	switch format {
 	case imageFormatJPEG:
 		img, err := jpeg.Decode(reader)

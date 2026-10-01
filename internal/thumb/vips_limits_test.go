@@ -219,6 +219,20 @@ func TestCheckJpegPixels(t *testing.T) {
 		assert.Less(t, len(data), 2048, "the fixture must stay far smaller than what it declares")
 		assert.ErrorIs(t, checkJpegPixels(bytes.NewReader(data), "crafted.jpg"), fs.ErrImageTooLarge)
 	})
+	t.Run("Scans", func(t *testing.T) {
+		fs.MaxImagePixels = max
+		previous := fs.MaxJpegScans
+		t.Cleanup(func() { fs.MaxJpegScans = previous })
+		f, err := os.Open("testdata/progressive.jpg")
+		require.NoError(t, err)
+		defer f.Close()
+		assert.NoError(t, checkJpegPixels(f, "progressive.jpg"))
+		fs.MaxJpegScans = 9
+		assert.ErrorIs(t, checkJpegPixels(f, "progressive.jpg"), fs.ErrImageTooComplex)
+		pos, err := f.Seek(0, io.SeekCurrent)
+		require.NoError(t, err)
+		assert.Zero(t, pos)
+	})
 	t.Run("LeavesTheReaderAtTheStart", func(t *testing.T) {
 		// decodeImage reads the same reader afterwards, so the guard must not consume it.
 		fs.MaxImagePixels = max
