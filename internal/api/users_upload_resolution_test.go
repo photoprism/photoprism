@@ -66,13 +66,25 @@ func TestUploadCheckFile_ResolutionLimit(t *testing.T) {
 		assert.FileExists(t, fileName)
 	})
 	t.Run("ContentNotExtension", func(t *testing.T) {
-		for _, name := range []string{"large.mpo", "large.insp", "large.bmp", "large.mp4"} {
+		for _, name := range []string{"large.mpo", "large.insp"} {
 			t.Run(name, func(t *testing.T) {
 				fileName := filepath.Join(t.TempDir(), name)
 				require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile))
 				_, err := UploadCheckFile(fileName, false, 5, 1<<20)
 				require.Error(t, err)
 				assert.Contains(t, err.Error(), "resolution limit (6 / 5 MP)")
+				assert.NoFileExists(t, fileName)
+			})
+		}
+	})
+	t.Run("ContentMismatch", func(t *testing.T) {
+		for _, name := range []string{"large.bmp", "large.mp4"} {
+			t.Run(name, func(t *testing.T) {
+				fileName := filepath.Join(t.TempDir(), name)
+				require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile))
+				_, err := UploadCheckFile(fileName, false, 150, 1<<20)
+				require.Error(t, err)
+				assert.Contains(t, err.Error(), "invalid extension")
 				assert.NoFileExists(t, fileName)
 			})
 		}

@@ -1199,6 +1199,17 @@ func (m *MediaFile) FileType() fs.Type {
 	}
 }
 
+// isImageType reports whether the media type is an image format, excluding the image and sequence
+// types of the ISO base media file format, which video files share.
+func isImageType(mimeType string) bool {
+	switch mimeType {
+	case header.ContentTypeHeic, header.ContentTypeHeicS, "image/heif", "image/heif-sequence", header.ContentTypeAvif, header.ContentTypeAvifS, "image/x-icon":
+		return false
+	default:
+		return strings.HasPrefix(mimeType, "image/")
+	}
+}
+
 // CheckType returns an error if the file extension is missing or invalid,
 // see https://github.com/photoprism/photoprism/issues/3518 for details.
 func (m *MediaFile) CheckType() error {
@@ -1235,10 +1246,21 @@ func (m *MediaFile) CheckType() error {
 		valid = mimeType == header.ContentTypePsd || mimeType == header.ContentTypePsdAlt
 	case fs.ImageHeic, fs.ImageHeif:
 		valid = mimeType == header.ContentTypeHeic || mimeType == header.ContentTypeHeicS
+	case fs.ImageBmp:
+		// Some legacy BMP header versions are not identified, so only other formats are rejected.
+		valid = mimeType == header.ContentTypeBmp || mimeType == fs.MimeTypeUnknown
+	case fs.ImageWebp:
+		valid = mimeType == header.ContentTypeWebp
+	case fs.ImageJpegXL:
+		valid = mimeType == header.ContentTypeJpegXL
+	case fs.ImageMPO, fs.ImageInsp:
+		valid = mimeType == header.ContentTypeJpeg
+	case fs.VideoMjpeg:
+		// Motion JPEG streams consist of JPEG images.
+		valid = mimeType == header.ContentTypeJpeg || !isImageType(mimeType)
 	default:
-		// Skip mime type check. Note: Checks for additional formats and/or generic
-		// checks based on the media content type can be added over time as needed.
-		return nil
+		// Video files must not contain a still image.
+		valid = !m.IsVideo() || !isImageType(mimeType)
 	}
 
 	// Ok?
