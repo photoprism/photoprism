@@ -25,7 +25,7 @@ func TestValidIdent(t *testing.T) {
 func TestValidServer(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		for _, s := range []string{"mariadb", "mariadb:4001", ":3306", "db.example.com:3306", "db.example.com.", "10.0.0.5",
-			"10.0.0.5:3306", "[::1]:3306", "::1", "photoprism_mariadb_1:3306", "mariadb-primary.photoprism.svc.cluster.local"} {
+			"10.0.0.5:3306", "[::1]:3306", "::1", "fd00::10", "photoprism_mariadb_1:3306", "mariadb-primary.photoprism.svc.cluster.local"} {
 			assert.True(t, ValidServer(s), s)
 		}
 	})
@@ -33,7 +33,7 @@ func TestValidServer(t *testing.T) {
 		long := strings.TrimSuffix(strings.Repeat(strings.Repeat("a", 63)+".", 4), ".")
 		for _, s := range []string{"", "-x", "-x:3306", "mariadb:0", "mariadb:65536", "mariadb:x", ":", "[::1", "[-x]:3306",
 			"db/x", "db@x", "db?x", "tcp(db)", "db..example.com", "-db.example.com", "db-.example.com", strings.Repeat("a", 64), long,
-			"/run/mysqld/mysqld.sock:3306"} {
+			"/run/mysqld/mysqld.sock:3306", "[::1]", "[fd00::10]", "[10.0.0.5]", "[db.example.com]", "[]", "[::1]x"} {
 			assert.False(t, ValidServer(s), s)
 		}
 	})
@@ -79,6 +79,34 @@ func TestValidDuration(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
 		for _, v := range []string{"", "0s", "-5s", "+5s", "15", "x"} {
 			assert.False(t, ValidDuration(v), v)
+		}
+	})
+}
+
+// TestValidTLS checks the accepted tls parameter values.
+func TestValidTLS(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, v := range []string{"true", "false", "1", "0", "skip-verify", "Skip-Verify", "preferred", "PREFERRED"} {
+			assert.True(t, ValidTLS(v), v)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, v := range []string{"", "custom", "yes", "skip_verify", "true "} {
+			assert.False(t, ValidTLS(v), v)
+		}
+	})
+}
+
+// TestValidPacketSize checks the accepted maxAllowedPacket parameter values.
+func TestValidPacketSize(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, v := range []string{"0", "4194304", "1073741824"} {
+			assert.True(t, ValidPacketSize(v), v)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, v := range []string{"", "-1", "+4", "04", "1073741825", "4M", "1e6"} {
+			assert.False(t, ValidPacketSize(v), v)
 		}
 	})
 }

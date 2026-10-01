@@ -16,7 +16,8 @@ import (
 // TestPersistRegisterResponse checks which registration settings are saved to options.yml.
 func TestPersistRegisterResponse(t *testing.T) {
 	t.Run("UnusableServer", func(t *testing.T) {
-		// A server address the instance cannot use is skipped, and the other settings are still saved.
+		// Database settings with a server address the instance cannot use are ignored as a whole, and the
+		// cluster settings are still saved.
 		clusterUUID := "4a47c940-d5de-41b3-88a2-eb816cc659ca"
 
 		for _, host := range []string{"/run/mysqld/mysqld.sock", ""} {
@@ -41,12 +42,14 @@ func TestPersistRegisterResponse(t *testing.T) {
 			require.NoError(t, yaml.Unmarshal(content, &persisted))
 			assert.Equal(t, clusterUUID, persisted["ClusterUUID"], host)
 			assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"], host)
-			assert.Equal(t, "pp_db", persisted["DatabaseName"], host)
 
 			if host == "" {
+				assert.Equal(t, "pp_db", persisted["DatabaseName"])
 				assert.Equal(t, ":3306", persisted["DatabaseServer"])
 			} else {
-				assert.NotContains(t, persisted, "DatabaseServer")
+				for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+					assert.NotContains(t, persisted, key)
+				}
 			}
 		}
 	})

@@ -13,19 +13,11 @@ func TestRestoreOutput(t *testing.T) {
 	t.Run("FailedStatements", func(t *testing.T) {
 		o := &restoreOutput{}
 		_, _ = fmt.Fprint(o, "--------------\nINSERT INTO t VALUES (1,'val-a')\n--------------\n\n",
-			"ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'\n")
+			"ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'\n",
+			"ERROR at line 5: Unknown command '\\!'.\n",
+			"ERROR 1064 (42000) at line 6 in file: 'dump.sql': near 'val-b'\n")
 		o.Close()
-		assert.Equal(t, 1, o.failed)
-		assert.Equal(t, []string{"error 1062 at line 4"}, o.errors)
-		assert.Empty(t, o.String())
-	})
-	t.Run("MultiLineEcho", func(t *testing.T) {
-		o := &restoreOutput{}
-		_, _ = fmt.Fprint(o, "--------------\nCREATE TABLE `t` (\n  `v` varchar(20) DEFAULT 'val-b'\n) ENGINE=X\n--------------\n\n",
-			"ERROR 1286 (42000) at line 9: Unknown storage engine 'X'\nWARNING: option ignored\n")
-		o.Close()
-		assert.Equal(t, 1, o.failed)
-		assert.Equal(t, "WARNING: option ignored", o.String())
+		assert.Equal(t, restoreFailures{Count: 3, Errors: []string{"error 1062 at line 4", "error at line 5", "error 1064 at line 6"}}, o.Failures())
 	})
 	t.Run("ErrorsKept", func(t *testing.T) {
 		o := &restoreOutput{}
@@ -34,91 +26,55 @@ func TestRestoreOutput(t *testing.T) {
 		}
 		o.Close()
 		assert.Equal(t, restoreErrorsKept+3, o.failed)
-		assert.Len(t, o.errors, restoreErrorsKept)
+		assert.Len(t, o.errors, 5)
 		assert.Equal(t, "error 1062 at line 1", o.errors[0])
+	})
+	t.Run("FirstLinesKept", func(t *testing.T) {
+		// A failed restore returns these lines in its error, which the CLI prints to the operator's terminal;
+		// they are not logged, as restores run only from the CLI before logs are recorded in the database.
+		o := &restoreOutput{}
+		_, _ = fmt.Fprint(o, "ERROR 2002 (HY000): Can't connect to server on 'mariadb' (115)\n\n")
+		for i := 0; i < restoreLinesKept+10; i++ {
+			_, _ = fmt.Fprintf(o, "message %d\n", i)
+		}
+		o.Close()
+		lines := strings.Split(o.String(), "\n")
+		assert.Len(t, lines, 5)
+		assert.Equal(t, "ERROR 2002 (HY000): Can't connect to server on 'mariadb' (115)", lines[0])
+		assert.Equal(t, "message 0", lines[1])
+		assert.Zero(t, o.failed)
+	})
+	t.Run("OtherLinesNotCounted", func(t *testing.T) {
+		o := &restoreOutput{}
+		_, _ = fmt.Fprint(o, "Parse error near line 3: near \"x\": syntax error\n", "val-a' at line 1\n", "error at line 2\n")
+		o.Close()
+		assert.Zero(t, o.failed)
+	})
+	t.Run("Warnings", func(t *testing.T) {
+		// Warnings are kept only before any other output, as the client writes them when connecting.
+		o := &restoreOutput{}
+		_, _ = fmt.Fprint(o, "WARNING: option --ssl-verify-server-cert is disabled\n", "WARNING: other\n",
+			"--------------\n", "WARNING: val-a\n")
+		o.Close()
+		assert.Equal(t, "WARNING: option --ssl-verify-server-cert is disabled\nWARNING: other", o.Warnings())
 	})
 	t.Run("LongLineBounded", func(t *testing.T) {
 		// A statement of several megabytes is never held in memory as a whole.
 		o := &restoreOutput{}
-		_, _ = o.Write([]byte("--------------\nINSERT INTO t VALUES "))
+		_, _ = o.Write([]byte("INSERT INTO t VALUES "))
 		chunk := []byte(strings.Repeat("x", 64<<10))
 		for i := 0; i < 64; i++ {
 			_, _ = o.Write(chunk)
 			assert.LessOrEqual(t, len(o.line), restoreLineBytes)
 		}
-		_, _ = o.Write([]byte("\n--------------\n\nERROR 1062 (23000) at line 2: Duplicate entry\n"))
+		_, _ = o.Write([]byte("\nERROR 1062 (23000) at line 2: Duplicate entry\n"))
 		o.Close()
 		assert.Equal(t, 1, o.failed)
-		assert.Empty(t, o.String())
-	})
-	t.Run("OtherLinesKept", func(t *testing.T) {
-		o := &restoreOutput{}
-		for i := 0; i < restoreLinesKept+10; i++ {
-			_, _ = fmt.Fprintf(o, "line %d\n", i)
-		}
-		_, _ = o.Write([]byte(strings.Repeat("y", restoreLineBytes*2)))
-		o.Close()
-		assert.Len(t, strings.Split(o.String(), "\n"), restoreLinesKept)
-		assert.Zero(t, o.failed)
-	})
-	t.Run("ErrorInsideEcho", func(t *testing.T) {
-		// An unclosed echo block does not hide the failed statements that follow.
-		o := &restoreOutput{}
-		_, _ = fmt.Fprint(o, "--------------\nINSERT INTO t VALUES (1,'val-a')\n\n",
-			"ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'\n")
-		o.Close()
-		assert.Equal(t, 1, o.failed)
-		assert.Equal(t, []string{"error 1062 at line 4"}, o.errors)
-		assert.Empty(t, o.String())
-	})
-	t.Run("CarriageReturn", func(t *testing.T) {
-		o := &restoreOutput{}
-		_, _ = fmt.Fprint(o, "WARNING: option ignored\r\n--------------\r\nINSERT INTO t VALUES (1,'val-a')\r\n--------------\r\n\r\n",
-			"ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'\r\n")
-		o.Close()
-		assert.Equal(t, 1, o.failed)
-		assert.Equal(t, "WARNING: option ignored", o.String())
-	})
-	t.Run("ClientError", func(t *testing.T) {
-		// A client error is counted as a failed statement and also kept in full.
-		o := &restoreOutput{}
-		_, _ = fmt.Fprint(o, "ERROR 2013 (HY000) at line 812: Lost connection to server during query\n")
-		o.Close()
-		assert.Equal(t, 1, o.failed)
-		assert.Equal(t, []string{"error 2013 at line 812"}, o.errors)
-		assert.Equal(t, "ERROR 2013 (HY000) at line 812: Lost connection to server during query", o.String())
-	})
-	t.Run("KeptLineBounded", func(t *testing.T) {
-		o := &restoreOutput{}
-		_, _ = o.Write([]byte(strings.Repeat("y", restoreLineBytes*2) + "\n"))
-		o.Close()
-		assert.Len(t, o.String(), restoreLineBytes)
-	})
-	t.Run("DelimiterInsideStatement", func(t *testing.T) {
-		// A statement line that looks like a delimiter does not end the skipped block early.
-		o := &restoreOutput{}
-		_, _ = fmt.Fprint(o, "--------------\nINSERT INTO t VALUES ('val-a\n--------------\nWARNING: val-b')\n--------------\n\n",
-			"ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'\n",
-			"--------------\nINSERT INTO t VALUES ('val-c')\n--------------\n\n",
-			"ERROR 1062 (23000) at line 5: Duplicate entry 'val-c' for key 'PRIMARY'\nWARNING: after\n")
-		o.Close()
-		assert.Equal(t, 2, o.failed)
-		assert.Equal(t, "WARNING: after", o.String())
-	})
-	t.Run("Sqlite", func(t *testing.T) {
-		// SQLite errors are kept without the statement text the client quotes.
-		o := &restoreOutput{}
-		_, _ = fmt.Fprint(o, "Parse error near line 3: near \"VALUE\": syntax error\n",
-			"  INSERT INTO t VALUE('k2','val-c');\n",
-			"                ^--- error here\n",
-			"Runtime error near line 4: UNIQUE constraint failed: t.id (19)\n")
-		o.Close()
-		assert.Zero(t, o.failed)
-		assert.Equal(t, "Parse error near line 3\nRuntime error near line 4", o.String())
+		assert.Len(t, strings.Split(o.String(), "\n")[0], 1024)
 	})
 	t.Run("LastLineWithoutBreak", func(t *testing.T) {
 		o := &restoreOutput{}
-		_, _ = o.Write([]byte("ERROR 2026 (HY000): TLS/SSL error"))
+		_, _ = o.Write([]byte("ERROR 2026 (HY000): TLS/SSL error\r"))
 		o.Close()
 		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error", o.String())
 		assert.Zero(t, o.failed)

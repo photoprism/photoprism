@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** September 28, 2026
+**Last Updated:** September 29, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -80,6 +80,7 @@ These packages need a separate compatibility evaluation; a newer major is not ev
 | `cssnano`            | 9.x    | Requires Node.js `^22.22.3 \|\| ^24.15.0 \|\| >=26.0`, above parts of the supported engine range. A baseline change and production CSS comparison are needed.                                                                                                                                                                          |
 | `jsdom`              | 30.x   | Requires Node.js `^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0`, above parts of the supported engine range. Keep 29.x until the baseline is deliberately raised.                                                                                                                                                                               |
 | `postcss-preset-env` | 11.x   | `vite.plugins.mjs` already uses ESM, so a CommonJS config migration is not needed. Compare generated CSS and browser compatibility before upgrading from 10.x.                                                                                                                                                                         |
+| `sockette`           | any    | `src/common/websocket.js` raises `timeout` on the options object Sockette received, so the next reconnect waits longer after a rate-limited event. Confirm that a new version still reads `opts.timeout` when it schedules a reconnect, since the unit test mocks Sockette.                                                            |
 
 ## Lint Toolchain
 

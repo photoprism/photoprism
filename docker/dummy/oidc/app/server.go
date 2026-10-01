@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -27,22 +28,15 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	storage := mock.NewAuthStorage()
-
-	provider, err := newProvider(defaultIssuer, storage)
+	handler, err := newHandler(defaultIssuer, mock.NewAuthStorage())
 	if err != nil {
 		log.Printf("failed to create OIDC provider: %v", err)
 		return
 	}
 
-	router := chi.NewRouter()
-	loginHandler := newLoginHandler(storage, op.AuthCallbackURL(provider), op.NewIssuerInterceptor(provider.IssuerFromRequest))
-	router.Get("/login", loginHandler)
-	router.Mount("/", provider)
-
 	server := &http.Server{
 		Addr:              ":" + defaultPort,
-		Handler:           router,
+		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       30 * time.Second,
@@ -56,6 +50,21 @@ func main() {
 	if err = server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Printf("OIDC server stopped with error: %v", err)
 	}
+}
+
+// newHandler returns the HTTP handler that serves the provider endpoints and the dummy login.
+func newHandler(issuer string, storage *mock.AuthStorage) (http.Handler, error) {
+	provider, err := newProvider(issuer, storage)
+	if err != nil {
+		return nil, err
+	}
+
+	router := chi.NewRouter()
+	loginHandler := newLoginHandler(storage, op.AuthCallbackURL(provider), op.NewIssuerInterceptor(provider.IssuerFromRequest))
+	router.Get("/login", loginHandler)
+	router.Mount("/", provider)
+
+	return router, nil
 }
 
 // newProvider builds an OpenID provider with the dummy's permissive defaults.
@@ -72,9 +81,34 @@ func newProvider(issuer string, storage op.Storage) (*op.Provider, error) {
 		GrantTypeRefreshToken:   true,
 		RequestObjectSupported:  true,
 	}
-	return op.NewOpenIDProvider(issuer, cfg, storage,
+	return op.NewProvider(cfg, storage, requestIssuer(issuer),
 		op.WithAllowInsecure(),
 	)
+}
+
+// requestIssuer returns an issuer function that answers "https://<host>" for requests a reverse
+// proxy received over HTTPS, so clients that require an https issuer can use the dummy through
+// Traefik, and the static default issuer for all other requests.
+func requestIssuer(defaultIssuer string) func(bool) (op.IssuerFromRequest, error) {
+	return func(bool) (op.IssuerFromRequest, error) {
+		return func(r *http.Request) string {
+			if !strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https") {
+				return defaultIssuer
+			}
+
+			host := r.Header.Get("X-Forwarded-Host")
+
+			if host == "" {
+				host = r.Host
+			}
+
+			if host == "" || strings.ContainsAny(host, "/\\?#@ ") {
+				return defaultIssuer
+			}
+
+			return "https://" + host
+		}, nil
+	}
 }
 
 // newLoginHandler returns the dummy /login handler. It marks the auth request as

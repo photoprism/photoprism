@@ -461,21 +461,24 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		}
 	}
 
-	// DB settings (MySQL/MariaDB only)
+	// DB settings (MySQL/MariaDB only), which are ignored as a whole if the server address is unusable.
 	if resp.Database.Name != "" && resp.Database.User != "" {
 		driver := strings.TrimSpace(resp.Database.Driver)
 		if driver == "" {
 			driver = dsn.DriverMySQL
 		}
-		updates.SetDatabaseDriver(driver)
-		updates.SetDatabaseName(resp.Database.Name)
+
 		if server, ok := resp.Database.Server(); !ok {
-			log.Warnf("cluster: ignored unusable database server address %s", clean.Log(server))
-		} else if server != "" {
-			updates.SetDatabaseServer(server)
+			log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
+		} else {
+			updates.SetDatabaseDriver(driver)
+			updates.SetDatabaseName(resp.Database.Name)
+			if server != "" {
+				updates.SetDatabaseServer(server)
+			}
+			updates.SetDatabaseUser(resp.Database.User)
+			updates.SetDatabasePassword(resp.Database.Password)
 		}
-		updates.SetDatabaseUser(resp.Database.User)
-		updates.SetDatabasePassword(resp.Database.Password)
 	}
 
 	if !updates.IsZero() {

@@ -635,9 +635,23 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
 
-		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
-		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
-		assert.NoError(t, os.Chmod(secretDir, 0o500)) //nolint:gosec // making directory intentionally non-writable for fallback test
+		// A directory where the secret file belongs makes writing it fail, also for root.
+		require.NoError(t, os.MkdirAll(c.NodeClientSecretFile(), fs.ModeDir))
+
+		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
+		assert.Error(t, err)
+		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	})
+	t.Run("NodeClientSecretFallbackOnMkdir", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		// A file where the secrets directory belongs makes creating it fail, also for root.
+		secretDir := filepath.Dir(c.NodeClientSecretFile())
+		require.NoError(t, os.MkdirAll(filepath.Dir(secretDir), fs.ModeDir))
+		require.NoError(t, os.WriteFile(secretDir, nil, fs.ModeFile))
 
 		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
 		assert.Error(t, err)
@@ -714,12 +728,17 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.ConfigPath = t.TempDir()
 		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
 
+		hook := systemLogHook(t)
 		update := cluster.OptionsUpdate{}
 		update.SetDatabaseDriver("mysql")
-		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?option=value")
+		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?option=val-a&x%20val-b=1&stray-val-c")
 		wrote, err := c.SaveClusterOptionsUpdate(update)
 		require.NoError(t, err)
 		assert.True(t, wrote)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Contains(t, hook.LastEntry().Message, "ignored 3 unsupported database dsn parameters")
+		assert.Contains(t, hook.LastEntry().Message, "option")
+		assert.NotContains(t, hook.LastEntry().Message, "val-")
 
 		content, err := os.ReadFile(c.OptionsYaml())
 		require.NoError(t, err)
@@ -804,14 +823,28 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
 
-		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
-		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
-		assert.NoError(t, os.Chmod(secretDir, 0o500)) //nolint:gosec // making directory intentionally non-writable for fallback test
+		// A directory where the token file belongs makes writing it fail, also for root.
+		require.NoError(t, os.MkdirAll(c.JoinTokenFile(), fs.ModeDir))
 
 		_, _, err := c.SaveJoinToken("")
 		assert.Error(t, err)
 		token := c.JoinToken()
 		assert.True(t, rnd.IsJoinToken(token, false))
+	})
+	t.Run("SaveJoinTokenFallbackOnMkdir", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		// A file where the secrets directory belongs makes creating it fail, also for root.
+		secretDir := filepath.Dir(c.JoinTokenFile())
+		require.NoError(t, os.MkdirAll(filepath.Dir(secretDir), fs.ModeDir))
+		require.NoError(t, os.WriteFile(secretDir, nil, fs.ModeFile))
+
+		_, _, err := c.SaveJoinToken("")
+		assert.Error(t, err)
+		assert.True(t, rnd.IsJoinToken(c.JoinToken(), false))
 	})
 	t.Run("NodeClientSecretFile", func(t *testing.T) {
 		tempCfg := t.TempDir()
@@ -1302,16 +1335,5 @@ func TestConfig_DatabaseServerDSN(t *testing.T) {
 		c.options.DatabaseDSN = "user:secret@tcp(db.example.com:3307)/photoprism?parseTime=true"
 		assert.Equal(t, "db.example.com", c.DatabaseHost())
 		assert.Equal(t, 3307, c.DatabasePort())
-	})
-}
-
-// TestClusterDatabaseParamNames checks which dropped DSN parameter names may be logged.
-func TestClusterDatabaseParamNames(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		assert.Equal(t, []string{"option", "time_zone", "a.b-c"}, clusterDatabaseParamNames([]string{"option", "time_zone", "a.b-c"}))
-	})
-	t.Run("Filtered", func(t *testing.T) {
-		assert.Equal(t, []string{"option"}, clusterDatabaseParamNames([]string{"", "x, y", "option", "a b", strings.Repeat("a", 65)}))
-		assert.Empty(t, clusterDatabaseParamNames(nil))
 	})
 }

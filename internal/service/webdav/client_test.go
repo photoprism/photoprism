@@ -15,8 +15,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
@@ -743,6 +745,15 @@ func TestClient_Upload(t *testing.T) {
 		assert.NotErrorIs(t, err, ErrForbidden)
 		assert.Contains(t, err.Error(), "500 Internal Server Error")
 	})
+	t.Run("LongNameKeepsStatus", func(t *testing.T) {
+		// The name is bounded, so the reason after it survives a stored error of txt.ClipError bytes.
+		long := "folder/" + strings.Repeat("\xff", 200) + "/"
+		for name, reason := range map[string]string{"failed.jpg": "500 Internal Server Error", "forbidden.yml": "forbidden", "redirect.jpg": "redirected"} {
+			err := client.Upload(src, long+name)
+			require.Error(t, err, name)
+			assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), reason, name)
+		}
+	})
 	t.Run("Redirect", func(t *testing.T) {
 		err := client.Upload(src, "folder/redirect.jpg")
 		require.Error(t, err)
@@ -768,5 +779,51 @@ func TestClient_resolveHref(t *testing.T) {
 		require.NoError(t, err)
 		href := client.resolveHref("example.jpg")
 		assert.Equal(t, "http://127.0.0.1:1/example.jpg", href.String())
+	})
+}
+
+func TestClient_CheckDownloadSize(t *testing.T) {
+	t.Run("Unlimited", func(t *testing.T) {
+		c := &Client{}
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 1<<40))
+	})
+	t.Run("Limit", func(t *testing.T) {
+		c := &Client{}
+		c.SetDownloadLimit(100)
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", -1))
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 0))
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 100))
+		err := c.CheckDownloadSize("/tmp/photo.jpg", 101)
+		require.Error(t, err)
+		assert.Equal(t, "webdav: photo.jpg exceeds the maximum size of 100 bytes", err.Error())
+	})
+	t.Run("NilClient", func(t *testing.T) {
+		var c *Client
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 101))
+	})
+}
+
+func TestClient_LongNameKeepsReason(t *testing.T) {
+	// A long local name is bounded in these messages, so the reason after it survives a stored error.
+	client, err := NewClient("http://127.0.0.1:1/", "", "", TimeoutLow, "")
+	require.NoError(t, err)
+
+	notFolder := filepath.Join(t.TempDir(), strings.Repeat("\xff", 250))
+	require.NoError(t, os.WriteFile(notFolder, []byte("file"), fs.ModeFile))
+
+	t.Run("NotAFolder", func(t *testing.T) {
+		err := client.Download("/photo.jpg", filepath.Join(notFolder, "photo.jpg"), false)
+		require.Error(t, err)
+		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "is not a folder")
+	})
+	t.Run("CannotCreateFolder", func(t *testing.T) {
+		err := client.Download("/photo.jpg", filepath.Join(notFolder, "sub", "photo.jpg"), false)
+		require.Error(t, err)
+		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "not a directory")
+	})
+	t.Run("SourceNotFound", func(t *testing.T) {
+		err := client.Upload(filepath.Join(t.TempDir(), strings.Repeat("\xff", 250)), "/photo.jpg")
+		require.Error(t, err)
+		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "not found")
 	})
 }

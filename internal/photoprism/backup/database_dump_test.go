@@ -1,6 +1,7 @@
 package backup
 
 import (
+	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"syscall"
 	"testing"
+	"testing/iotest"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -562,11 +564,11 @@ func TestRunRestore(t *testing.T) {
 	})
 	t.Run("StderrWithoutWarnings", func(t *testing.T) {
 		hook := captureLog(t)
-		script := "echo 'WARNING: insecure s3cr3tpass' >&2; echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; echo 'for s3cr3tpass' >&2; exit 1"
+		script := "echo 'WARNING: insecure s3cr3tpass' >&2; echo 'ERROR 2026 (HY000): TLS/SSL error for s3cr3tpass' >&2; echo 'more' >&2; exit 1"
 		_, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "s3cr3tpass")
 
 		require.Error(t, err)
-		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error; for "+txt.Masked, err.Error())
+		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error for "+txt.Masked+"; more", err.Error())
 		assert.Contains(t, logMessages(hook), "restore: insecure "+txt.Masked)
 	})
 	t.Run("FailedStatements", func(t *testing.T) {
@@ -589,12 +591,30 @@ func TestRunRestore(t *testing.T) {
 		}
 	})
 	t.Run("FailedStatementsExitStatus", func(t *testing.T) {
-		// A client that exits with an error after failed statements reports them by code and line.
-		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; exit 1`
+		// A client that exits with an error has not completed the restore, and the failed statements are listed.
+		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry" >&2; exit 1`
 		failed, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
-		require.Error(t, err)
+		require.EqualError(t, err, "ERROR 1062 (23000) at line 4: Duplicate entry; 1 statement failed (error 1062 at line 4)")
 		assert.Equal(t, 1, failed.Count)
-		assert.Equal(t, "exit status 1; 1 statement failed (error 1062 at line 4)", err.Error())
+	})
+	t.Run("FailedWithoutStatements", func(t *testing.T) {
+		script := `printf '%s\n' "Runtime error near line 3: UNIQUE constraint failed: t.id (19)" "Runtime error near line 4: disk I/O error (10)" >&2; exit 1`
+		failed, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.EqualError(t, err, "Runtime error near line 3: UNIQUE constraint failed: t.id (19); Runtime error near line 4: disk I/O error (10)")
+		assert.Zero(t, failed.Count)
+	})
+	t.Run("KilledAfterFailedStatements", func(t *testing.T) {
+		// A client killed by a signal has not completed the restore.
+		script := `printf '%s\n' "Runtime error near line 1: UNIQUE constraint failed: t.id (19)" >&2; kill -9 $$`
+		_, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.Error(t, err)
+	})
+
+	t.Run("InputReadError", func(t *testing.T) {
+		// A backup that cannot be read to the end is not reported as restored.
+		r := io.MultiReader(strings.NewReader("SELECT 1;\n"), iotest.ErrReader(errors.New("read failed")))
+		_, err := runRestore(exec.Command("sh", "-c", "cat >/dev/null"), r, "")
+		require.EqualError(t, err, "failed to read backup: read failed")
 	})
 	t.Run("ClientErrorExitStatus", func(t *testing.T) {
 		script := `printf '%s\n' "ERROR 2013 (HY000) at line 812: Lost connection to server during query" >&2; exit 1`

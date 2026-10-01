@@ -187,12 +187,16 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
-		if err := c.options.Load(optionsYaml); err != nil {
-			event.SystemWarn([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
-		} else if c.env == EnvDevelop {
+		err := c.options.Load(optionsYaml)
+		restrictOptionsFileWithCredential(optionsYaml)
+
+		switch {
+		case err != nil:
+			event.SystemError([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
+		case c.env == EnvDevelop:
 			// Reduce the log level to minimize noise in the test logs.
 			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
-		} else {
+		default:
 			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
 	}
@@ -657,7 +661,7 @@ func (c *Config) loadOptionsYAML() (string, Values, error) {
 		return fileName, values, nil
 	}
 
-	b, err := os.ReadFile(fileName) //nolint:gosec // path derived from config directory
+	b, err := readOptionsFile(fileName)
 	if err != nil || len(b) == 0 {
 		return fileName, values, err
 	}

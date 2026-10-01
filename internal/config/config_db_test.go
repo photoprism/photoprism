@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -534,4 +535,21 @@ func TestConfig_checkDb(t *testing.T) {
 	assert.NoError(t, c.checkDb(nil))
 	t.Setenv("PHOTOPRISM_DATABASE_SKIP_VERSION_CHECK", "")
 	assert.Error(t, c.checkDb(nil))
+}
+
+func TestConfig_DbIfConnected(t *testing.T) {
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Nil(t, (*Config)(nil).DbIfConnected())
+	})
+	t.Run("NotConnected", func(t *testing.T) {
+		assert.Nil(t, NewConfig(CliTestContext()).DbIfConnected())
+	})
+	t.Run("Connected", func(t *testing.T) {
+		db, err := gorm.Open(dsn.DriverSQLite3, ":memory:")
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = db.Close() })
+		c := NewConfig(CliTestContext())
+		c.db = db
+		assert.Same(t, db, c.DbIfConnected())
+	})
 }

@@ -89,6 +89,9 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			if errors.Is(err, config.ErrInvalidOptionValue) {
 				AbortBadRequest(c, err)
 				return
+			} else if errors.Is(err, config.ErrOptionsTooLarge) {
+				AbortRequestTooLarge(c, i18n.ErrFileTooLarge)
+				return
 			}
 
 			log.Errorf("config: failed saving options patch (%s)", clean.Error(err))

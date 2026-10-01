@@ -10,29 +10,24 @@ import (
 const (
 	// restoreErrorsKept is the number of failed statements reported with their error code and line.
 	restoreErrorsKept = 5
-	// restoreLinesKept is the number of other client output lines kept for diagnostics.
-	restoreLinesKept = 50
+	// restoreLinesKept is the number of client output lines kept.
+	restoreLinesKept = 5
 	// restoreLineBytes is the number of bytes kept of a single client output line.
 	restoreLineBytes = 1024
-	// restoreEchoDelimiter encloses a failed statement that the client repeats in its output.
-	restoreEchoDelimiter = "--------------"
 )
 
-// restoreErrorRegex matches the output line of a statement that failed while the client continued.
-var restoreErrorRegex = regexp.MustCompile(`^ERROR (\d+) \([0-9A-Za-z]+\) at line (\d+):`)
+// restoreErrorRegex matches the line a client writes for a statement that failed while it continued,
+// e.g. "ERROR 1062 (23000) at line 4: ...".
+var restoreErrorRegex = regexp.MustCompile(`^ERROR(?: (\d+))?.*? at line (\d+)`)
 
-// restoreSqliteErrorRegex matches the output line of a statement the SQLite client could not run.
-var restoreSqliteErrorRegex = regexp.MustCompile(`^(Parse|Runtime) error near line (\d+):`)
-
-// restoreOutput collects the error output of a restore client with bounded memory. Failed statements
-// are counted and kept as error code and line number only, the statements the client repeats or quotes
-// are skipped, and a limited number of other lines are kept for diagnostics.
+// restoreOutput collects the error output of a restore client with bounded memory: it counts the failed
+// statements, and keeps the first lines for the error of a failed restore and the warnings before them.
 type restoreOutput struct {
-	line   []byte
-	echo   bool
-	failed int
-	errors []string
-	lines  []string
+	line     []byte
+	lines    []string
+	warnings []string
+	failed   int
+	errors   []string
 }
 
 // Write processes client output line by line and never fails.
@@ -62,46 +57,30 @@ func (o *restoreOutput) Write(p []byte) (int, error) {
 	return n, nil
 }
 
-// endLine processes the current output line. The client repeats a failed statement after a delimiter and
-// then reports it with an error line, so everything from the delimiter to that line is skipped. A client
-// error, such as a lost connection, is also kept in full since it contains no statement or row data.
+// endLine counts the current output line if it reports a failed statement, and keeps it if it is one of
+// the first lines. Warnings are kept only before any other output, as the client writes them when connecting.
 func (o *restoreOutput) endLine() {
-	raw := strings.TrimSuffix(string(o.line), "\r")
-	line := strings.TrimSpace(raw)
+	line := strings.TrimSpace(string(o.line))
 	o.line = o.line[:0]
 
-	if raw == restoreEchoDelimiter {
-		o.echo = true
+	if line == "" {
 		return
 	}
 
-	if m := restoreErrorRegex.FindStringSubmatch(line); m != nil {
-		o.echo = false
-		o.failed++
-
-		if len(o.errors) < restoreErrorsKept {
-			o.errors = append(o.errors, fmt.Sprintf("error %s at line %s", m[1], m[2]))
-		}
-
-		if strings.HasPrefix(m[1], "2") && len(m[1]) == 4 {
-			o.keep(line)
-		}
-
-		return
+	if m := restoreErrorRegex.FindStringSubmatch(line); m == nil {
+		// Not a failed statement.
+	} else if o.failed++; len(o.errors) >= restoreErrorsKept {
+		// Only the first failed statements are reported.
+	} else if m[1] == "" {
+		o.errors = append(o.errors, fmt.Sprintf("error at line %s", m[2]))
+	} else {
+		o.errors = append(o.errors, fmt.Sprintf("error %s at line %s", m[1], m[2]))
 	}
 
-	switch m := restoreSqliteErrorRegex.FindStringSubmatch(line); {
-	case m != nil:
-		o.keep(fmt.Sprintf("%s error near line %s", m[1], m[2]))
-	case o.echo || line == "" || line != raw && strings.TrimLeft(raw, " \t") != raw:
-		// Skip repeated statements and indented lines, which quote statement text.
-	default:
-		o.keep(line)
+	if len(o.warnings) == len(o.lines) && len(o.lines) < restoreLinesKept && strings.HasPrefix(line, "WARNING:") {
+		o.warnings = append(o.warnings, line)
 	}
-}
 
-// keep stores an output line for diagnostics, up to restoreLinesKept lines.
-func (o *restoreOutput) keep(line string) {
 	if len(o.lines) < restoreLinesKept {
 		o.lines = append(o.lines, line)
 	}
@@ -119,7 +98,12 @@ func (o *restoreOutput) Close() {
 	}
 }
 
-// String returns the other output lines that were kept.
+// String returns the first output lines.
 func (o *restoreOutput) String() string {
 	return strings.Join(o.lines, "\n")
+}
+
+// Warnings returns the warnings written before any other output.
+func (o *restoreOutput) Warnings() string {
+	return strings.Join(o.warnings, "\n")
 }

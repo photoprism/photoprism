@@ -443,6 +443,16 @@ func (c *Config) Db() *gorm.DB {
 	return c.db
 }
 
+// DbIfConnected returns the database connection, or nil if it is not connected, for callers that can
+// continue without it rather than exit like Db.
+func (c *Config) DbIfConnected() *gorm.DB {
+	if c == nil {
+		return nil
+	}
+
+	return c.db
+}
+
 // AsyncJobDrainTimeout bounds how long CloseDb waits for background jobs before
 // tearing down the connection, so a wedged job cannot hang shutdown forever.
 const AsyncJobDrainTimeout = 30 * time.Second

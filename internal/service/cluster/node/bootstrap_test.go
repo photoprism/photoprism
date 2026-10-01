@@ -1112,7 +1112,8 @@ func TestRegister_PersistDBFieldsIPv6(t *testing.T) {
 // TestPersistRegistration checks which database settings bootstrap saves from a registration response.
 func TestPersistRegistration(t *testing.T) {
 	t.Run("UnusableServer", func(t *testing.T) {
-		// Without a DSN, a server address the instance cannot use is skipped and the other settings are saved.
+		// Without a DSN, database settings with a server address the instance cannot use are ignored as a
+		// whole, and the cluster settings are saved.
 		c := newBootstrapTestConfig(t, "bootstrap-persist")
 		clusterUUID := rnd.UUID()
 
@@ -1135,9 +1136,9 @@ func TestPersistRegistration(t *testing.T) {
 		var persisted map[string]any
 		require.NoError(t, yaml.Unmarshal(content, &persisted))
 		assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
-		assert.Equal(t, "pp_db", persisted["DatabaseName"])
-		assert.Equal(t, "pp_user", persisted["DatabaseUser"])
-		assert.NotContains(t, persisted, "DatabaseServer")
+		for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
 	})
 	t.Run("Server", func(t *testing.T) {
 		c := newBootstrapTestConfig(t, "bootstrap-persist-server")

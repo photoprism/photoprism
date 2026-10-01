@@ -726,3 +726,56 @@ func TestConfig_DeleteOptionsPatch(t *testing.T) {
 		assert.False(t, wrote)
 	})
 }
+
+// TestConfig_SaveOptionsPatchSizeLimit checks that a patch is not saved or applied if the options file
+// would exceed the size it can be read with.
+func TestConfig_SaveOptionsPatchSizeLimit(t *testing.T) {
+	tempCfg := t.TempDir()
+	c := NewConfig(CliTestContext())
+	c.options.ConfigPath = tempCfg
+	c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+	seed, err := yaml.Marshal(Values{"SiteCaption": strings.Repeat("c", optionsFileMaxBytes-1000)})
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(c.OptionsYaml(), seed, fs.ModeFile))
+	c.options.SiteDescription = "unchanged"
+
+	_, err = c.SaveOptionsPatch(Values{"SiteDescription": strings.Repeat("d", 2000)})
+	require.ErrorIs(t, err, ErrOptionsTooLarge)
+	assert.Equal(t, "unchanged", c.options.SiteDescription)
+
+	b, err := os.ReadFile(c.OptionsYaml())
+	require.NoError(t, err)
+	assert.Equal(t, seed, b)
+
+	wrote, err := c.SaveOptionsPatch(Values{"SiteDescription": "short"})
+	require.NoError(t, err)
+	assert.True(t, wrote)
+	assert.Equal(t, "short", c.options.SiteDescription)
+}
+
+// TestNewConfig_OptionsFileTooLarge checks that an options file that is too large to read is reported
+// as an error, since none of its values apply.
+func TestNewConfig_OptionsFileTooLarge(t *testing.T) {
+	tempCfg := t.TempDir()
+	require.NoError(t, os.WriteFile(filepath.Join(tempCfg, "options.yml"),
+		[]byte("SiteCaption: "+strings.Repeat("c", optionsFileMaxBytes)+"\n"), fs.ModeFile))
+
+	ctx := CliTestContext()
+	require.NoError(t, ctx.Set("config-path", tempCfg))
+	hook := captureLog(t)
+	c := NewConfig(ctx)
+
+	assert.NotContains(t, c.SiteCaption(), "ccc")
+
+	var logged bool
+
+	for _, entry := range hook.AllEntries() {
+		if strings.Contains(entry.Message, "file too large") {
+			logged = true
+			assert.Equal(t, logrus.ErrorLevel, entry.Level)
+		}
+	}
+
+	assert.True(t, logged, "expected the ignored options file to be logged")
+}

@@ -6009,6 +6009,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -8087,6 +8093,12 @@
                         "description": "Not Found",
                         "schema": {
                             "type": "file"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
@@ -10842,6 +10854,12 @@
                         "description": "Not Found",
                         "schema": {
                             "type": "file"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
@@ -14345,6 +14363,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }

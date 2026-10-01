@@ -2,6 +2,7 @@ package dsn
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -40,6 +41,23 @@ func FilterParams(query string, rules ParamRules) (params string, dropped []stri
 	}
 
 	return strings.Join(kept, "&"), dropped, nil
+}
+
+// paramNameRegex matches a DSN parameter name that may be logged.
+var paramNameRegex = regexp.MustCompile(`^[A-Za-z0-9_.-]{1,64}$`)
+
+// LoggableParamNames returns the names that look like DSN parameter names, so a query segment without
+// a name, such as a stray value, is counted but never logged.
+func LoggableParamNames(names []string) []string {
+	result := make([]string, 0, len(names))
+
+	for _, name := range names {
+		if paramNameRegex.MatchString(name) {
+			result = append(result, name)
+		}
+	}
+
+	return result
 }
 
 // MergeParams appends the parameters in defaults whose names params does not contain.
@@ -82,27 +100,15 @@ func HasParam(params, name string) bool {
 	return false
 }
 
+// HasQuery reports whether a MySQL/MariaDB DSN has a parameter section as the driver reads it, i.e. a "?"
+// after the last "/", so a "?" in the password does not count.
+func HasQuery(s string) bool {
+	return strings.Contains(s[strings.LastIndex(s, "/")+1:], "?")
+}
+
 // Query returns the parameters of a MySQL/MariaDB DSN as the driver reads them, i.e. the part after the
 // first "?" that follows the last "/".
 func Query(s string) string {
 	_, query, _ := strings.Cut(s[strings.LastIndex(s, "/")+1:], "?")
 	return query
-}
-
-// Utf8Params reports whether every charset and collation parameter in a DSN query names UTF-8.
-func Utf8Params(query string) bool {
-	for param := range strings.SplitSeq(query, "&") {
-		switch key, value, _ := strings.Cut(param, "="); key {
-		case "charset":
-			if !ValidCharset(value) {
-				return false
-			}
-		case "collation":
-			if !ValidCollation(value) {
-				return false
-			}
-		}
-	}
-
-	return true
 }

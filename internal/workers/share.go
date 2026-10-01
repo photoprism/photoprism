@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Share represents a share worker.
@@ -156,7 +157,7 @@ func (w *Share) Start() (err error) {
 
 			if err = client.Upload(srcFileName, file.RemoteName); yamlFile && errors.Is(err, webdav.ErrForbidden) {
 				w.logErr(err)
-				file.Error = err.Error()
+				file.Error = clean.ErrorBytes(err, txt.ClipError)
 				refusedYaml = append(refusedYaml, file)
 				continue
 			} else if err != nil {
@@ -164,7 +165,7 @@ func (w *Share) Start() (err error) {
 				otherRefused = otherRefused || errors.Is(err, webdav.ErrForbidden)
 				uploadErrors++
 				file.Errors++
-				file.Error = err.Error()
+				file.Error = clean.ErrorBytes(err, txt.ClipError)
 			} else {
 				log.Infof("share: uploaded %s to %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0
@@ -251,7 +252,7 @@ func (w *Share) Start() (err error) {
 
 			if err := client.Delete(file.RemoteName); err != nil {
 				file.Errors++
-				file.Error = err.Error()
+				file.Error = clean.ErrorBytes(err, txt.ClipError)
 			} else {
 				log.Infof("share: removed %s from %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0

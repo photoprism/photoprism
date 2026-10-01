@@ -461,11 +461,38 @@ codex-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
 	  echo "No specs/.agents/skills directory found, skipping."; \
+	fi
+	@if [ -d "specs/.agents/agents" ]; then \
+	  echo "Linking Codex agent roles from specs/.agents/agents..."; \
+	  install -d -m 755 -- ".codex/agents"; \
+	  for link in .codex/agents/*.toml; do \
+	    [ -L "$$link" ] || continue; \
+	    target=$$(readlink "$$link"); \
+	    case "$$target" in \
+	      ../../specs/.agents/agents/*.toml) \
+	        name=$$(basename "$$link"); \
+	        [ -f "specs/.agents/agents/$$name" ] || rm -- "$$link"; \
+	        ;; \
+	    esac; \
+	  done; \
+	  for src in specs/.agents/agents/*.toml; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".codex/agents/$$name"; \
+	    target="../../specs/.agents/agents/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "$$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.agents/agents directory found, skipping."; \
 	fi
 gh: dep-gh gh-version
 gh-version:
@@ -508,7 +535,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -525,7 +552,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -542,7 +569,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -559,11 +586,27 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link already exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
 	  echo "No specs/.claude/scripts directory found, skipping."; \
+	fi
+	@if [ -d "specs/.claude/bin" ]; then \
+	  echo "Linking Claude Code model wrappers from specs/.claude/bin..."; \
+	  [ -n "$(HOME)" ] && [ "$(HOME)" != "/" ] && install -d -m 755 -- "$(HOME)/.local/bin" || true; \
+	  for src in specs/.claude/bin/*; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link="$(HOME)/.local/bin/$$name"; \
+	    if [ -e "$$link" ] || [ -L "$$link" ]; then \
+	      echo "$$link already exists, skipping"; \
+	    else \
+	      ln -s "$(CURDIR)/specs/.claude/bin/$$name" "$$link"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/bin directory found, skipping."; \
 	fi
 dep-go:
 	go build -v ./...

@@ -19,7 +19,7 @@
 ### Provisioner & DSN
 
 - Database/user names use UUID-based HMACs (`<prefix>d<hmac11>`, `<prefix>u<hmac11>`; prefix defaults to `cluster_`).
-- `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported. For Postgres, extend `BuildDSN` and `provisioner.DatabaseDriver` handling, add validations, and return `driver=postgres` consistently in API and CLI output.
+- `BuildDSN` accepts a `driver` but falls back to MySQL format with a warning when unsupported. For Postgres, extend `BuildDSN` and `provisioner.DatabaseDriver` handling and the instance-side allowlist in `validateClusterOptionsUpdate` / `clusterDatabaseDSN` (`internal/config/config_cluster.go`), add validations, and return `driver=postgres` consistently in API and CLI output.
 
 ### Sessions & Redaction
 
