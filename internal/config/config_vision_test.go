@@ -68,9 +68,7 @@ func TestConfig_VisionKey(t *testing.T) {
 func TestConfig_ModelsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.NasnetModelPath()
-	assert.True(t, strings.HasPrefix(path, c.ModelsPath()))
-	assert.Equal(t, ProjectRoot+"/assets/models/nasnet", path)
+	assert.Equal(t, ProjectRoot+"/assets/models", c.ModelsPath())
 }
 
 // TestConfig_LabelModel verifies automatic, named, disabled, and custom model selection.
@@ -196,6 +194,26 @@ func TestConfig_LabelModel(t *testing.T) {
 		c.applyLabelModel()
 		assert.Equal(t, filepath.Join(c.ModelsPath(), "custom", "model.ONNX"), c.LabelModelPath())
 	})
+	t.Run("RemoteRegisteredName", func(t *testing.T) {
+		remote := &vision.Model{Type: vision.ModelTypeLabels, Name: string(classify.ModelRepViTM10),
+			Service: vision.Service{Uri: "https://vision.example.com/api/v1/labels", Method: "POST"}}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{remote}})
+		c := NewConfig(CliTestContext())
+		c.options.LabelsModel = "auto"
+		c.applyLabelModel()
+		assert.Empty(t, c.LabelModelPath())
+	})
+	t.Run("Remote", func(t *testing.T) {
+		remote := &vision.Model{Type: vision.ModelTypeLabels, Engine: "ollama", Name: "qwen3-vl:4b-instruct"}
+		remote.ApplyEngineDefaults()
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{remote}})
+		c := NewConfig(CliTestContext())
+		c.options.LabelsModel = "auto"
+		c.applyLabelModel()
+		assert.Equal(t, classify.ModelName("qwen3-vl:4b-instruct"), c.EffectiveLabelModel())
+		assert.Empty(t, c.LabelModelPath())
+		assert.Equal(t, "ollama", c.LabelModelRuntime())
+	})
 }
 
 func TestConfig_TensorFlowDisabled(t *testing.T) {
@@ -296,6 +314,100 @@ func TestConfig_NSFWModel(t *testing.T) {
 		assert.Equal(t, nsfw.ModelName("custom_nsfw"), c.EffectiveNSFWModel())
 		assert.Equal(t, filepath.Join(c.ModelsPath(), "custom", "model.onnx"), c.NsfwModelPath())
 	})
+	t.Run("RemoteRegisteredName", func(t *testing.T) {
+		remote := &vision.Model{Type: vision.ModelTypeNsfw, Name: string(nsfw.ModelYahoo),
+			Service: vision.Service{Uri: "https://vision.example.com/api/v1/nsfw", Method: "POST"}}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{remote}})
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "auto"
+		c.applyNSFWModel()
+		assert.Empty(t, c.NsfwModelPath())
+	})
+	t.Run("Remote", func(t *testing.T) {
+		remote := &vision.Model{Type: vision.ModelTypeNsfw, Engine: "ollama", Name: "Qwen3-VL:4b-instruct"}
+		remote.ApplyEngineDefaults()
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{remote}})
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "auto"
+		c.applyNSFWModel()
+		assert.Equal(t, nsfw.ModelName("Qwen3-VL:4b-instruct"), c.EffectiveNSFWModel())
+		assert.Empty(t, c.NsfwModelPath())
+		assert.Equal(t, "ollama", c.NsfwModelRuntime())
+	})
+}
+
+// TestVisionModelRemote verifies that only models served by an endpoint count as remote.
+func TestVisionModelRemote(t *testing.T) {
+	t.Run("Local", func(t *testing.T) {
+		assert.False(t, visionModelRemote(vision.NewLabelModel(classify.DefaultModelName())))
+	})
+	t.Run("Engine", func(t *testing.T) {
+		remote := &vision.Model{Type: vision.ModelTypeLabels, Engine: "ollama", Name: "qwen3-vl:4b-instruct"}
+		remote.ApplyEngineDefaults()
+		assert.True(t, visionModelRemote(remote))
+	})
+	t.Run("Uri", func(t *testing.T) {
+		assert.True(t, visionModelRemote(&vision.Model{Type: vision.ModelTypeNsfw, Name: "remote",
+			Service: vision.Service{Uri: "https://vision.example.com/api/v1/nsfw", Method: "POST"}}))
+	})
+	t.Run("UnresolvedUri", func(t *testing.T) {
+		assert.True(t, visionModelRemote(&vision.Model{Type: vision.ModelTypeNsfw, Name: "remote",
+			Service: vision.Service{Uri: "${VISION_TEST_MISSING_URI}"}}))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, visionModelRemote(nil))
+	})
+}
+
+// TestVisionModelOf verifies that only enabled models are returned.
+func TestVisionModelOf(t *testing.T) {
+	config := vision.NewConfig()
+	withVisionConfig(t, config)
+	assert.Equal(t, vision.ModelTypeLabels, visionModelOf(vision.ModelTypeLabels).Type)
+	config.Models[0].Disabled = true
+	assert.Nil(t, visionModelOf(vision.ModelTypeLabels))
+	withVisionConfig(t, nil)
+	assert.Nil(t, visionModelOf(vision.ModelTypeLabels))
+}
+
+// TestLabelsModelReturnsNSFW verifies that only Ollama and OpenAI labels models return NSFW fields.
+func TestLabelsModelReturnsNSFW(t *testing.T) {
+	t.Run("Local", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		assert.False(t, labelsModelReturnsNSFW())
+	})
+	t.Run("Ollama", func(t *testing.T) {
+		remote := &vision.Model{Type: vision.ModelTypeLabels, Engine: "ollama", Name: "qwen3-vl:4b-instruct"}
+		remote.ApplyEngineDefaults()
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{remote}})
+		assert.True(t, labelsModelReturnsNSFW())
+	})
+	t.Run("VisionService", func(t *testing.T) {
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{&vision.Model{Type: vision.ModelTypeLabels, Name: "remote",
+			Service: vision.Service{Uri: "https://vision.example.com/api/v1/labels", Method: "POST"}}}})
+		assert.False(t, labelsModelReturnsNSFW())
+	})
+	t.Run("None", func(t *testing.T) {
+		withVisionConfig(t, &vision.ConfigValues{})
+		assert.False(t, labelsModelReturnsNSFW())
+	})
+}
+
+// TestConfig_PropagateVision verifies that the vision package receives the instance settings.
+func TestConfig_PropagateVision(t *testing.T) {
+	previousUri, previousKey, previousProvider := vision.ServiceUri, vision.ServiceKey, vision.OnnxProvider
+	t.Cleanup(func() {
+		vision.ServiceUri, vision.ServiceKey, vision.OnnxProvider = previousUri, previousKey, previousProvider
+	})
+
+	c := NewConfig(CliTestContext())
+	c.options.VisionUri = "https://vision.example.com/api/v1/vision"
+	c.options.VisionKey = "notreal"
+	c.options.OnnxProvider = "cuda"
+	c.PropagateVision()
+	assert.Equal(t, "https://vision.example.com/api/v1/vision", vision.ServiceUri)
+	assert.Equal(t, "notreal", vision.ServiceKey)
+	assert.Equal(t, "cuda", vision.OnnxProvider.String())
 }
 
 // TestConfig_installedVisionModels verifies automatic selection follows installed artifacts.
@@ -384,12 +496,6 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 
 		assert.Empty(t, hook.AllEntries())
 	})
-}
-
-func TestConfig_FaceNetModelPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Contains(t, c.FacenetModelPath(), "/assets/models/facenet")
 }
 
 func TestConfig_DetectNSFW(t *testing.T) {

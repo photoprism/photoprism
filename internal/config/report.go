@@ -350,15 +350,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-key", maskedSecret(c.VisionKey())},
 		{"vision-schedule", c.VisionSchedule()},
 		{"vision-filter", c.VisionFilter()},
-		{"label-model", string(c.EffectiveLabelModel())},
-		{"label-model-path", c.LabelModelPath()},
-		{"label-model-runtime", c.LabelModelRuntime()},
+		{"labels-model", string(c.LabelModelSetting())},
+		{"nsfw-model", string(c.NSFWModelSetting())},
 		{"onnx-provider", c.OnnxProvider().String()},
-		{"nasnet-model-path", c.NasnetModelPath()},
-		{"facenet-model-path", c.FacenetModelPath()},
-		{"nsfw-model", string(c.EffectiveNSFWModel())},
-		{"nsfw-model-path", c.NsfwModelPath()},
-		{"nsfw-model-runtime", c.NsfwModelRuntime()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 	}...)
 
@@ -601,9 +595,9 @@ func faceReportValue(value string, notes ...string) string {
 	return fmt.Sprintf("%s (%s)", value, strings.Join(notes, ", "))
 }
 
-// FaceReportSection is one titled table of the `photoprism faces status` report, with the note
-// that states what its values cannot.
-type FaceReportSection struct {
+// StatusSection is one titled table of a status report such as `photoprism faces status`, with
+// the note that states what its values cannot.
+type StatusSection struct {
 	Title string
 	Cols  []string
 	Rows  [][]string
@@ -613,18 +607,18 @@ type FaceReportSection struct {
 // FaceReportSections returns the face configuration grouped for `photoprism faces status`. It
 // covers the same options as Report() in the same order, so the two can be read against each
 // other, and its notes add what only a database connection reveals.
-func (c *Config) FaceReportSections() []FaceReportSection {
+func (c *Config) FaceReportSections() []StatusSection {
 	cols := []string{"Name", "Value"}
 	notes := map[faceConfigSection]string{
 		faceSectionDetection:   c.faceDetectionNote(),
 		faceSectionRecognition: c.faceRecognitionNote(),
 	}
 
-	var sections []FaceReportSection
+	var sections []StatusSection
 
 	for _, row := range c.faceConfigRows() {
 		if n := len(sections); n == 0 || sections[n-1].Title != string(row.Section) {
-			sections = append(sections, FaceReportSection{
+			sections = append(sections, StatusSection{
 				Title: string(row.Section),
 				Cols:  cols,
 				Note:  notes[row.Section],

@@ -52,7 +52,6 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/api/download"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -442,14 +441,7 @@ func (c *Config) Propagate() {
 	dl.FFprobeBin = c.FFprobeBin()
 
 	// Configure computer vision package.
-	vision.SetCachePath(c.CachePath())
-	vision.SetModelsPath(c.ModelsPath())
-	vision.SetOnnxProvider(c.OnnxProvider())
-	vision.ServiceApi = c.VisionApi()
-	vision.ServiceUri = c.VisionUri()
-	vision.ServiceKey = c.VisionKey()
-	vision.DownloadUrl = c.DownloadUrl()
-	vision.DetectNSFWLabels = c.DetectNSFWLabels()
+	c.PropagateVision()
 
 	// Set allowed path in download package.
 	download.AllowedPaths = []string{

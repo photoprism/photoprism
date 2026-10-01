@@ -54,6 +54,20 @@ func (c *Config) LoadVisionConfig() {
 	c.reportUnscreenedUploads()
 }
 
+// PropagateVision applies the settings the vision package reads, such as the global service URI
+// that routes models without their own endpoint. Propagate calls it, and a command that reports
+// on the core config calls it directly, since that config is never propagated.
+func (c *Config) PropagateVision() {
+	vision.SetCachePath(c.CachePath())
+	vision.SetModelsPath(c.ModelsPath())
+	vision.SetOnnxProvider(c.OnnxProvider())
+	vision.ServiceApi = c.VisionApi()
+	vision.ServiceUri = c.VisionUri()
+	vision.ServiceKey = c.VisionKey()
+	vision.DownloadUrl = c.DownloadUrl()
+	vision.DetectNSFWLabels = c.DetectNSFWLabels()
+}
+
 // NSFWModelSetting returns the dedicated, disabled, or labels detection mode.
 func (c *Config) NSFWModelSetting() nsfw.ModelName {
 	if c == nil {
@@ -80,6 +94,12 @@ func (c *Config) EffectiveNSFWModel() nsfw.ModelName {
 				return nsfw.ModelNone
 			}
 			if !model.Default {
+				// A model served by an endpoint is reported by the name it is requested with.
+				if visionModelRemote(model) {
+					name, _, _ := model.GetModel()
+					return nsfw.ModelName(name)
+				}
+
 				return nsfw.NormalizeModelName(nsfw.ModelName(model.Name))
 			}
 		}
@@ -191,6 +211,12 @@ func (c *Config) EffectiveLabelModel() classify.ModelName {
 	if vision.Config != nil {
 		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil {
 			if !model.Default {
+				// A model served by an endpoint is reported by the name it is requested with.
+				if visionModelRemote(model) {
+					name, _, _ := model.GetModel()
+					return classify.ModelName(name)
+				}
+
 				return classify.NormalizeModelName(classify.ModelName(model.Name))
 			}
 		}
@@ -237,6 +263,44 @@ func (c *Config) applyLabelModel() {
 		registered := vision.NewLabelModel(selected)
 		registered.Default, registered.Run, registered.Disabled = true, current.Run, current.Disabled
 		vision.Config.SetModel(registered)
+	}
+}
+
+// visionModelRemote reports whether a model is served by an endpoint, so it has no local artifact.
+func visionModelRemote(model *vision.Model) bool {
+	if model == nil {
+		return false
+	}
+
+	uri, _ := model.Endpoint()
+	return uri != "" || model.Service.UriUnresolved()
+}
+
+// visionModelOf returns the enabled model of a type, or nil when there is none.
+func visionModelOf(modelType vision.ModelType) *vision.Model {
+	if vision.Config == nil {
+		return nil
+	}
+
+	return vision.Config.Model(modelType)
+}
+
+// labelsModelReturnsNSFW reports whether the enabled labels model can return NSFW fields, which
+// only Ollama and OpenAI services do.
+func labelsModelReturnsNSFW() bool {
+	model := visionModelOf(vision.ModelTypeLabels)
+
+	if model == nil {
+		return false
+	} else if uri, method := model.Endpoint(); uri == "" || method == "" {
+		return false
+	}
+
+	switch model.EndpointRequestFormat() {
+	case vision.ApiFormatOpenAI, vision.ApiFormatOllama:
+		return true
+	default:
+		return false
 	}
 }
 
@@ -384,15 +448,6 @@ func (c *Config) ModelsPath() string {
 	return c.options.ModelsPath
 }
 
-// NasnetModelPath returns the legacy NASNet model path.
-func (c *Config) NasnetModelPath() string {
-	if c == nil {
-		return ""
-	}
-
-	return filepath.Join(c.ModelsPath(), "nasnet")
-}
-
 // LabelModelPath returns the selected ONNX classifier path.
 func (c *Config) LabelModelPath() string {
 	if c == nil {
@@ -400,7 +455,7 @@ func (c *Config) LabelModelPath() string {
 	}
 
 	name := c.EffectiveLabelModel()
-	if name == classify.ModelNone {
+	if name == classify.ModelNone || visionModelRemote(visionModelOf(vision.ModelTypeLabels)) {
 		return ""
 	}
 
@@ -453,15 +508,6 @@ func (c *Config) LabelModelRuntime() string {
 	return vision.EngineONNX
 }
 
-// FacenetModelPath returns the FaceNet model path.
-func (c *Config) FacenetModelPath() string {
-	if c == nil {
-		return ""
-	}
-
-	return filepath.Join(c.ModelsPath(), "facenet")
-}
-
 // NsfwModelPath returns the selected ONNX detector path.
 func (c *Config) NsfwModelPath() string {
 	if c == nil {
@@ -469,7 +515,7 @@ func (c *Config) NsfwModelPath() string {
 	}
 
 	name := c.EffectiveNSFWModel()
-	if name == nsfw.ModelNone {
+	if name == nsfw.ModelNone || visionModelRemote(visionModelOf(vision.ModelTypeNsfw)) {
 		return ""
 	}
 	if model := nsfw.FindModel(name); model != nil {
@@ -612,17 +658,8 @@ func (c *Config) reportVisionModes() {
 			}
 		}
 	}
-	if !c.DetectNSFWLabels() {
+	if !c.DetectNSFWLabels() || labelsModelReturnsNSFW() {
 		return
-	}
-	model := vision.Config.Model(vision.ModelTypeLabels)
-	if model != nil {
-		if uri, method := model.Endpoint(); uri != "" && method != "" {
-			switch model.EndpointRequestFormat() {
-			case vision.ApiFormatOpenAI, vision.ApiFormatOllama:
-				return
-			}
-		}
 	}
 	event.SystemWarn([]string{"config", "no nsfw detection takes place in labels mode because the labels model cannot return nsfw fields"})
 }
