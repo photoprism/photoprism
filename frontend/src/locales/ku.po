@@ -3,42 +3,42 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-31 10:40+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
-#: src/locales.js:302
+#: src/locales.js:295
 msgid "{0} appended action"
 msgstr ""
 
-#: src/locales.js:306
+#: src/locales.js:299
 msgid "{0} files"
 msgstr ""
 
-#: src/locales.js:307
+#: src/locales.js:300
 msgid "{0} files ({1} in total)"
 msgstr ""
 
-#: src/locales.js:292
+#: src/locales.js:289
 msgid "{0} more"
 msgstr ""
 
-#: src/locales.js:301
+#: src/locales.js:294
 msgid "{0} prepended action"
 msgstr ""
 
-#: src/locales.js:249 src/locales.js:262
+#: src/locales.js:259
 msgid "{0} selected"
 msgstr ""
 
-#: src/locales.js:242
+#: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr ""
 
@@ -79,23 +79,23 @@ msgstr ""
 msgid "%{s} is too short"
 msgstr ""
 
-#: src/locales.js:535
+#: src/locales.js:461
 msgid "%d entries added to %s"
 msgstr "%d تێکراو زیاد کرایە  %s"
 
-#: src/locales.js:537
+#: src/locales.js:463
 msgid "%d entries removed from %s"
 msgstr "%d تێکراو لابرا لە %s"
 
-#: src/locales.js:559
+#: src/locales.js:485
 msgid "%d files uploaded in %d s"
 msgstr "%d پەڕگە بارکرە بە %d چرکە"
 
-#: src/locales.js:475
+#: src/locales.js:401
 msgid "%s already exists"
 msgstr "%s پێشتر هەیە"
 
-#: src/locales.js:569
+#: src/locales.js:495
 msgid "%s has been restored"
 msgstr ""
 
@@ -130,7 +130,7 @@ msgstr "٤ کاتژمێر"
 msgid "A click will copy it to your clipboard."
 msgstr "کرتەیەک کۆپی دەکاتە کلیپ بۆردەکەت"
 
-#: src/locales.js:525
+#: src/locales.js:451
 msgid "A migration is in progress"
 msgstr ""
 
@@ -174,18 +174,18 @@ msgstr ""
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:432 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "هەژمار"
 
 #: src/component/user/add/dialog.vue:262 src/component/user/add/dialog.vue:278
-#: src/component/service/add.vue:131 src/locales.js:538
+#: src/component/service/add.vue:131 src/locales.js:464
 msgid "Account created"
 msgstr "هەژمارەکە دروستکرا"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:540
+#: src/locales.js:466
 msgid "Account deleted"
 msgstr "هەژمارەکە سڕایەوە"
 
@@ -193,7 +193,7 @@ msgstr "هەژمارەکە سڕایەوە"
 msgid "Account Group Mappings"
 msgstr ""
 
-#: src/locales.js:485
+#: src/locales.js:411
 msgid "Account not found"
 msgstr "هەژمارەکە نەدۆزرایەوە"
 
@@ -201,7 +201,7 @@ msgstr "هەژمارەکە نەدۆزرایەوە"
 msgid "Account restored"
 msgstr ""
 
-#: src/locales.js:539
+#: src/locales.js:465
 msgid "Account saved"
 msgstr "هەژمارەکە پاشەکەوتکرا"
 
@@ -209,7 +209,7 @@ msgstr "هەژمارەکە پاشەکەوتکرا"
 #: src/component/cluster/node/dialog.vue:19
 #: src/component/cluster/node/dialog.vue:29 src/component/navigation.vue:196
 #: src/component/navigation.vue:458 src/component/navigation.vue:461
-#: src/page/cluster/nodes.vue:91 src/page/admin.vue:54 src/locales.js:433
+#: src/page/cluster/nodes.vue:91 src/page/admin.vue:54 src/locales.js:359
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -238,15 +238,15 @@ msgstr "کردارەکان"
 msgid "Activate"
 msgstr ""
 
-#: src/locales.js:226
+#: src/locales.js:237
 msgid "Activate to remove sorting."
 msgstr ""
 
-#: src/locales.js:228
+#: src/locales.js:239
 msgid "Activate to sort ascending."
 msgstr ""
 
-#: src/locales.js:227
+#: src/locales.js:238
 msgid "Activate to sort descending."
 msgstr ""
 
@@ -255,7 +255,7 @@ msgid "Activation Code"
 msgstr ""
 
 #: src/component/navigation.vue:280 src/component/navigation.vue:431
-#: src/page/admin.vue:76 src/locales.js:449
+#: src/page/admin.vue:76 src/locales.js:375
 msgid "Activity"
 msgstr ""
 
@@ -398,7 +398,7 @@ msgstr "دوای ٢ هەفتە"
 msgid "Album"
 msgstr "ئەلبوم"
 
-#: src/locales.js:529
+#: src/locales.js:455
 msgid "Album %s deleted"
 msgstr "ئەلبومی %s سڕایەوە"
 
@@ -406,11 +406,11 @@ msgstr "ئەلبومی %s سڕایەوە"
 msgid "Album Backups"
 msgstr "Album Backups"
 
-#: src/locales.js:530
+#: src/locales.js:456
 msgid "Album contents cloned"
 msgstr "ناوەڕۆکەکانی ئەلبومەکە هاووێنە کرا"
 
-#: src/locales.js:527 src/page/albums.vue:1194
+#: src/locales.js:453 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "ئەلبومەکە دروستکرا"
 
@@ -418,11 +418,11 @@ msgstr "ئەلبومەکە دروستکرا"
 msgid "Album deleted"
 msgstr ""
 
-#: src/locales.js:490
+#: src/locales.js:416
 msgid "Album not found"
 msgstr "ئەلبومەکە نەدۆزرایەوە"
 
-#: src/locales.js:528
+#: src/locales.js:454
 msgid "Album saved"
 msgstr "ئەلبومەکە پاشەکەوتکرا"
 
@@ -435,11 +435,11 @@ msgstr "ئەلبومەکە پاشەکەوتکرا"
 msgid "Albums"
 msgstr "ئەلبومەکان"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:566
+#: src/component/album/clipboard.vue:194 src/locales.js:492
 msgid "Albums deleted"
 msgstr "ئەلبومەکان سڕایەوە"
 
-#: src/locales.js:237
+#: src/locales.js:248
 msgid "All"
 msgstr ""
 
@@ -532,18 +532,6 @@ msgstr ""
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr ""
 
-#: src/locales.js:398
-msgid "Alpha"
-msgstr ""
-
-#: src/locales.js:402
-msgid "Alpha value"
-msgstr ""
-
-#: src/locales.js:370
-msgid "Alt"
-msgstr ""
-
 #: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "لە جیاتی ئەوە، دەتوانیت ڕاستەوخۆ پەڕگەکان باربکەیتە سەر ڕاژەی WebDAV وەک Nextcloud."
@@ -557,7 +545,7 @@ msgstr "هێڵی درێژی"
 msgid "Altitude (m)"
 msgstr "بەرزی (m)"
 
-#: src/locales.js:315
+#: src/locales.js:308
 msgid "AM"
 msgstr ""
 
@@ -592,11 +580,11 @@ msgid "API Key"
 msgstr "API کلیلی"
 
 #: src/page/admin/sessions.vue:132 src/component/cluster/node/overview.vue:23
-#: src/page/admin/sessions.vue:172 src/locales.js:455 src/options/auth.js:45
+#: src/page/admin/sessions.vue:172 src/locales.js:381 src/options/auth.js:45
 msgid "Application"
 msgstr ""
 
-#: src/locales.js:456
+#: src/locales.js:382
 msgid "Applications"
 msgstr ""
 
@@ -669,7 +657,7 @@ msgstr "هونەرمەند"
 msgid "Aspect Ratio"
 msgstr "ڕێژەی ڕوو"
 
-#: src/locales.js:439
+#: src/locales.js:365
 msgid "Attributes"
 msgstr ""
 
@@ -691,7 +679,7 @@ msgstr ""
 #: src/page/admin/sessions.vue:152 src/page/admin/sessions.vue:295
 #: src/page/admin/users.vue:289 src/component/user/edit/dialog.vue:192
 #: src/page/admin/sessions.vue:293 src/page/admin/users.vue:273
-#: src/locales.js:434
+#: src/locales.js:360
 msgid "Authentication"
 msgstr "Authentication"
 
@@ -708,15 +696,11 @@ msgstr ""
 msgid "Back to top"
 msgstr ""
 
-#: src/locales.js:377
-msgid "Backspace"
-msgstr ""
-
 #: src/page/settings/advanced.vue:187
 msgid "Backup"
 msgstr "Backup"
 
-#: src/locales.js:208
+#: src/locales.js:219
 msgid "Badge"
 msgstr ""
 
@@ -769,10 +753,6 @@ msgstr "ڕەش"
 msgid "Blue"
 msgstr "شین"
 
-#: src/locales.js:401
-msgid "Blue value"
-msgstr ""
-
 #: src/options/options.js:457
 msgid "Brown"
 msgstr "قاوەیی"
@@ -783,7 +763,7 @@ msgstr "قاوەیی"
 msgid "Browse"
 msgstr "Browse"
 
-#: src/locales.js:312
+#: src/locales.js:305
 msgid "Browse Files"
 msgstr ""
 
@@ -795,7 +775,7 @@ msgstr ""
 msgid "Bug Report"
 msgstr "راپۆرتی هەڵە"
 
-#: src/locales.js:517
+#: src/locales.js:443
 msgid "Busy, please try again later"
 msgstr ""
 
@@ -820,7 +800,7 @@ msgstr "ڕۆژمێر"
 msgid "Camera"
 msgstr "کامێرا"
 
-#: src/locales.js:488
+#: src/locales.js:414
 msgid "Camera not found"
 msgstr ""
 
@@ -874,7 +854,7 @@ msgstr "ناتوانێت ئایتمی زیاتر دیاری بکات"
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
 #: src/component/settings/password.vue:85 src/component/share/dialog.vue:164
-#: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
+#: src/locales.js:225 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "هه‌ڵوه‌شاندنه‌وه"
@@ -896,7 +876,7 @@ msgstr ""
 msgid "Cards"
 msgstr "کارتەکان"
 
-#: src/locales.js:288
+#: src/locales.js:285
 msgid "Carousel slide {0} of {1}"
 msgstr ""
 
@@ -914,10 +894,6 @@ msgstr "هاوپۆله‌كان"
 #: src/page/settings/account.vue:91
 msgid "Change Avatar"
 msgstr "گۆڕینی نیشانەنوێنی تایبەت"
-
-#: src/locales.js:408
-msgid "Change color format"
-msgstr ""
 
 #: src/page/auth/instances.vue:60 src/page/settings/account.vue:155
 #: src/component/settings/password.vue:16 src/page/settings/account.vue:139
@@ -944,7 +920,7 @@ msgstr "گۆڕینی نیشانەنوێنی تایبەت"
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:168
 #: src/component/photo/batch-edit.vue:1440
-#: src/component/photo/edit/details.vue:636 src/locales.js:473
+#: src/component/photo/edit/details.vue:636 src/locales.js:399
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
 msgid "Changes could not be saved"
 msgstr "گۆڕانکاریەکان پاشەکەوت نەکراوە"
@@ -961,7 +937,7 @@ msgstr "گۆڕانکاریەکان پاشەکەوت نەکراوە"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:566 src/component/service/edit.vue:376
 #: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
-#: src/locales.js:526 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:452 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1000,7 +976,7 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: src/locales.js:300
+#: src/locales.js:293
 msgid "Clear {0}"
 msgstr ""
 
@@ -1041,7 +1017,7 @@ msgstr ""
 #: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
-#: src/component/upload/dialog.vue:20 src/locales.js:210
+#: src/component/upload/dialog.vue:20 src/locales.js:221
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "داخستن"
@@ -1084,10 +1060,6 @@ msgstr ""
 #: src/page/discover.vue:5
 msgid "Colors"
 msgstr "ڕەنگەکان"
-
-#: src/locales.js:367
-msgid "Command"
-msgstr ""
 
 #: src/page/connect.vue:117 src/page/connect.vue:124 src/page/connect.vue:133
 #: src/page/connect.vue:127 src/page/connect.vue:134 src/page/connect.vue:143
@@ -1197,7 +1169,7 @@ msgstr "کۆپی کرایە کلیپ بۆرد"
 msgid "Copy"
 msgstr ""
 
-#: src/locales.js:551
+#: src/locales.js:477
 msgid "Copying files from %s"
 msgstr "کۆپی کردنی پەڕگە لە%s"
 
@@ -1209,11 +1181,11 @@ msgstr "کۆپی کردنی پەڕگە لە%s"
 msgid "Copyright"
 msgstr "مافی لەبەرگرتنەوە"
 
-#: src/locales.js:474
+#: src/locales.js:400
 msgid "Could not be deleted"
 msgstr "نەتوانرا بسڕێتەوە"
 
-#: src/locales.js:505
+#: src/locales.js:431
 msgid "Could not connect, please try again"
 msgstr "نەیتوانی پەیوەندی بگرێت، تکایە دووبارە هەوڵ بدەوە"
 
@@ -1261,14 +1233,6 @@ msgstr "دروستکرا"
 msgid "Creating thumbnails for"
 msgstr "دروستکردنی وێنۆچکە بۆ"
 
-#: src/locales.js:366
-msgid "Ctrl"
-msgstr ""
-
-#: src/locales.js:258
-msgid "Current month, {0}"
-msgstr ""
-
 #: src/options/options.js:503
 msgid "Current Name"
 msgstr ""
@@ -1289,7 +1253,7 @@ msgstr "شینی ئاسمانی"
 msgid "Daily"
 msgstr "ڕۆژانە"
 
-#: src/component/cluster/node/overview.vue:74 src/locales.js:428
+#: src/component/cluster/node/overview.vue:74 src/locales.js:354
 msgid "Database"
 msgstr ""
 
@@ -1297,7 +1261,7 @@ msgstr ""
 msgid "Database Backups"
 msgstr ""
 
-#: src/locales.js:429
+#: src/locales.js:355
 msgid "Databases"
 msgstr ""
 
@@ -1343,7 +1307,7 @@ msgstr "بوخچەی بنه‌ڕه‌تی"
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
 #: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
-#: src/locales.js:418 src/page/settings/general.vue:335
+#: src/locales.js:344 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "سڕینەوە"
 
@@ -1485,7 +1449,7 @@ msgstr ""
 msgid "Discover"
 msgstr "دۆزینەوە"
 
-#: src/locales.js:211
+#: src/locales.js:222
 msgid "Dismiss"
 msgstr ""
 
@@ -1498,7 +1462,7 @@ msgstr ""
 #: src/component/user/edit/dialog.vue:96 src/component/user/edit/dialog.vue:97
 #: src/page/admin/users.vue:283 src/page/settings/account.vue:76
 #: src/page/settings/account.vue:78 src/page/admin/users.vue:270
-#: src/locales.js:422 src/page/settings/account.vue:64
+#: src/locales.js:348 src/page/settings/account.vue:64
 #: src/page/settings/account.vue:66
 msgid "Display Name"
 msgstr ""
@@ -1549,10 +1513,6 @@ msgstr "تەواوبوو"
 msgid "Done."
 msgstr "تەواوبوو."
 
-#: src/locales.js:374
-msgid "Down Arrow"
-msgstr ""
-
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
 #: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
@@ -1578,11 +1538,11 @@ msgstr "داگرتنی پەڕگە دوورەکان"
 msgid "Downloading…"
 msgstr "دادەگیرێت…"
 
-#: src/locales.js:310
+#: src/locales.js:303
 msgid "Drag and drop files here"
 msgstr ""
 
-#: src/component/cluster/node/overview.vue:79 src/locales.js:445
+#: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
 msgstr ""
 
@@ -1677,19 +1637,15 @@ msgstr ""
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr ""
 
-#: src/locales.js:446
+#: src/locales.js:372
 msgid "Engine"
 msgstr ""
 
-#: src/locales.js:371
-msgid "Enter"
-msgstr ""
-
-#: src/locales.js:268 src/locales.js:270
+#: src/locales.js:265 src/locales.js:267
 msgid "Enter date"
 msgstr ""
 
-#: src/locales.js:265
+#: src/locales.js:262
 msgid "Enter dates"
 msgstr ""
 
@@ -1697,19 +1653,11 @@ msgstr ""
 msgid "Enter item name..."
 msgstr ""
 
-#: src/locales.js:250
-msgid "Enter month"
-msgstr ""
-
-#: src/locales.js:252
-msgid "Enter months"
-msgstr ""
-
 #: src/component/settings/passcode.vue:82 src/page/auth/login.vue:31
 msgid "Enter the code generated by your authenticator app:"
 msgstr ""
 
-#: src/common/api.js:126 src/locales.js:303 src/locales.js:506
+#: src/common/api.js:126 src/locales.js:296 src/locales.js:432
 msgid "Enter verification code"
 msgstr ""
 
@@ -1717,7 +1665,7 @@ msgstr ""
 msgid "Enter your password to confirm the action and continue:"
 msgstr ""
 
-#: src/locales.js:484
+#: src/locales.js:410
 msgid "Entity not found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
@@ -1731,10 +1679,6 @@ msgstr "هەڵە"
 #: src/component/navigation.vue:398 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "هەڵەکان"
-
-#: src/locales.js:372
-msgid "Escape"
-msgstr ""
 
 #: src/common/util.js:931
 msgid "Estimate"
@@ -1758,10 +1702,6 @@ msgstr ""
 
 #: src/page/settings/advanced.vue:175
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr ""
-
-#: src/locales.js:392
-msgid "Exit full screen"
 msgstr ""
 
 #: src/page/settings/advanced.vue:46
@@ -1796,7 +1736,7 @@ msgstr "ژمارەی F"
 msgid "Face"
 msgstr ""
 
-#: src/locales.js:493
+#: src/locales.js:419
 msgid "Face not found"
 msgstr "نەدۆزرایەوە"
 
@@ -1804,11 +1744,11 @@ msgstr "نەدۆزرایەوە"
 msgid "Faces"
 msgstr ""
 
-#: src/locales.js:503
+#: src/locales.js:429
 msgid "Failed creating file, please check permissions"
 msgstr "شکست لە دروستکردنی پەڕگە، تکایە مۆڵەتەکان بپشکنە"
 
-#: src/locales.js:504
+#: src/locales.js:430
 msgid "Failed creating folder, please check permissions"
 msgstr "شکست لە دروستکردنی بوخچە، تکایە مۆڵەتەکان بپشکنە"
 
@@ -1820,7 +1760,7 @@ msgstr "لابردنی بەستەرەکە شکستی هێنا"
 msgid "Failed to connect account."
 msgstr ""
 
-#: src/locales.js:513
+#: src/locales.js:439
 msgid "Failed to create zip file"
 msgstr "دروستکردنی فایلی زیپ سەرکەوتوو نەبوو"
 
@@ -1895,7 +1835,7 @@ msgstr "دڵخواز"
 msgid "Favorites"
 msgstr "دڵخوازەکان"
 
-#: src/locales.js:509
+#: src/locales.js:435
 msgid "Feature disabled"
 msgstr "تایبەتمەندی ناچالاک کراوە"
 
@@ -1924,7 +1864,7 @@ msgstr "گەڕۆکی پەڕگە"
 msgid "File Conversion"
 msgstr ""
 
-#: src/locales.js:532
+#: src/locales.js:458
 msgid "File deleted"
 msgstr "پەڕگە سڕایەوە"
 
@@ -1934,11 +1874,11 @@ msgstr "پەڕگە سڕایەوە"
 msgid "File Name"
 msgstr "پەڕگە"
 
-#: src/locales.js:477
+#: src/locales.js:403
 msgid "File not found"
 msgstr "دۆسیەکە نەدۆزرایەوە"
 
-#: src/locales.js:531
+#: src/locales.js:457
 msgid "File removed from stack"
 msgstr "دۆسیەکە کۆژاوەتەوە لە کەڵەکەکە"
 
@@ -1946,11 +1886,11 @@ msgstr "دۆسیەکە کۆژاوەتەوە لە کەڵەکەکە"
 msgid "File Size"
 msgstr "پەڕگە"
 
-#: src/locales.js:478
+#: src/locales.js:404
 msgid "File too large"
 msgstr ""
 
-#: src/locales.js:558
+#: src/locales.js:484
 msgid "File uploaded"
 msgstr ""
 
@@ -1972,7 +1912,7 @@ msgstr "پەڕگەکان"
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "پەڕگەکان بە ناوی زنجیرەیی وەک 'IMG_1234 (2)' و 'IMG_1234 (3)' هی هەمان وێنەن."
 
-#: src/locales.js:240 src/locales.js:330
+#: src/locales.js:251 src/locales.js:319
 msgid "First page"
 msgstr ""
 
@@ -2031,10 +1971,6 @@ msgstr "Frames"
 msgid "Full Access"
 msgstr ""
 
-#: src/locales.js:391
-msgid "Full screen"
-msgstr ""
-
 #: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "پڕاوپڕ بەشاشە"
@@ -2078,7 +2014,7 @@ msgstr ""
 msgid "Go to Page"
 msgstr ""
 
-#: src/locales.js:328
+#: src/locales.js:317
 msgid "Go to page {0}"
 msgstr ""
 
@@ -2093,10 +2029,6 @@ msgstr "ئاڵتون"
 #: src/options/options.js:453
 msgid "Green"
 msgstr "سەوز"
-
-#: src/locales.js:400
-msgid "Green value"
-msgstr ""
 
 #: src/options/options.js:459
 msgid "Grey"
@@ -2125,14 +2057,6 @@ msgstr "یارمەتی"
 #: src/app/routes.js:109
 msgid "Help & Support"
 msgstr "پاڵپشتی کڕیار"
-
-#: src/locales.js:406
-msgid "HEX value"
-msgstr ""
-
-#: src/locales.js:407
-msgid "HEX with alpha value"
-msgstr ""
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
@@ -2179,18 +2103,6 @@ msgstr ""
 msgid "High Dynamic Range (HDR)"
 msgstr ""
 
-#: src/locales.js:318
-msgid "Hour"
-msgstr ""
-
-#: src/locales.js:397
-msgid "Hue"
-msgstr ""
-
-#: src/locales.js:403
-msgid "Hue value"
-msgstr ""
-
 #: src/options/options.js:306
 msgid "Hybrid"
 msgstr "دووڕەگ"
@@ -2215,11 +2127,11 @@ msgstr ""
 msgid "Import"
 msgstr "هاوردن"
 
-#: src/locales.js:544
+#: src/locales.js:470
 msgid "Import canceled"
 msgstr "هاوردن هەڵوەشێنرایەوە"
 
-#: src/locales.js:543
+#: src/locales.js:469
 msgid "Import completed in %d s"
 msgstr "هاوردن تەواو بوو بە %d  چرکە"
 
@@ -2281,11 +2193,11 @@ msgstr "نیشاندەر"
 msgid "Indexing"
 msgstr "نیشانەسازی"
 
-#: src/locales.js:548
+#: src/locales.js:474
 msgid "Indexing canceled"
 msgstr "نیشانەکردن هەڵوەشێنرایەوە"
 
-#: src/locales.js:545
+#: src/locales.js:471
 msgid "Indexing completed in %d s"
 msgstr "نیشانە کردن تەواو بوو بە %d چرکە"
 
@@ -2293,7 +2205,7 @@ msgstr "نیشانە کردن تەواو بوو بە %d چرکە"
 msgid "Indexing failed"
 msgstr "نیشانەسازی شکستی هێنا"
 
-#: src/locales.js:547
+#: src/locales.js:473
 msgid "Indexing files in %s"
 msgstr "نیشانەکردنی پەڕگەکان لە %s"
 
@@ -2301,7 +2213,7 @@ msgstr "نیشانەکردنی پەڕگەکان لە %s"
 msgid "Indexing media and sidecar files…"
 msgstr "پێڕستکردنی پەڕگەکانی میدیا و لاتەنیشتەکان…"
 
-#: src/locales.js:546
+#: src/locales.js:472
 msgid "Indexing originals..."
 msgstr "نیشانەکردنی ڕەسەنەکان..."
 
@@ -2315,7 +2227,7 @@ msgid "Inherit"
 msgstr ""
 
 #: src/component/cluster/node/groups.vue:146 src/options/admin.js:37
-#: src/options/admin.js:38 src/locales.js:461
+#: src/options/admin.js:38 src/locales.js:387
 msgid "Instance"
 msgstr ""
 
@@ -2329,11 +2241,11 @@ msgstr ""
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:449
 #: src/component/navigation.vue:452 src/component/user/edit/dialog.vue:27
-#: src/page/admin/users.vue:286 src/app/routes.js:257 src/locales.js:462
+#: src/page/admin/users.vue:286 src/app/routes.js:257 src/locales.js:388
 msgid "Instances"
 msgstr ""
 
-#: src/locales.js:521
+#: src/locales.js:447
 msgid "Insufficient storage"
 msgstr ""
 
@@ -2361,7 +2273,7 @@ msgstr ""
 msgid "Invalid country"
 msgstr ""
 
-#: src/locales.js:514
+#: src/locales.js:440
 msgid "Invalid credentials"
 msgstr "زانیارییەکان نادروستە"
 
@@ -2369,15 +2281,11 @@ msgstr "زانیارییەکان نادروستە"
 msgid "Invalid date"
 msgstr "بەروارێکی نادروست"
 
-#: src/locales.js:359
-msgid "Invalid format"
-msgstr ""
-
-#: src/component/share/dialog.vue:226 src/locales.js:515
+#: src/component/share/dialog.vue:226 src/locales.js:441
 msgid "Invalid link"
 msgstr "بەستەرەکە نادروستە"
 
-#: src/locales.js:516
+#: src/locales.js:442
 msgid "Invalid name"
 msgstr "بەروارێکی نادروست"
 
@@ -2386,7 +2294,7 @@ msgstr "بەروارێکی نادروست"
 msgid "Invalid parameters"
 msgstr "بەروارێکی نادروست"
 
-#: src/locales.js:508
+#: src/locales.js:434
 msgid "Invalid password, please try again"
 msgstr "تێپەرەوشە هەڵەیە، تکایە جارێکی تر هەوڵبدەوە"
 
@@ -2402,12 +2310,12 @@ msgstr ""
 msgid "Invalid URL"
 msgstr ""
 
-#: src/locales.js:507
+#: src/locales.js:433
 msgid "Invalid verification code, please try again"
 msgstr ""
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
-#: src/locales.js:451
+#: src/locales.js:377
 msgid "IP Address"
 msgstr ""
 
@@ -2420,7 +2328,7 @@ msgstr ""
 msgid "Item"
 msgstr "ئایتم"
 
-#: src/locales.js:236
+#: src/locales.js:247
 msgid "Items per page:"
 msgstr ""
 
@@ -2435,10 +2343,6 @@ msgstr "سنووری قەبارەی JPEG: %{n}px"
 #: src/page/library/import.vue:53
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG و وێنە بچووکەکان بە شێوەیەکی خودکارانە بە پێێ پێویست پیشان دەدرێن."
-
-#: src/locales.js:380
-msgid "Keyboard shortcut: {0}"
-msgstr ""
 
 #: src/common/util.js:951
 msgid "Keyword"
@@ -2455,11 +2359,11 @@ msgstr "کلیلەوشەکان"
 msgid "Label"
 msgstr "پێناس"
 
-#: src/locales.js:487
+#: src/locales.js:413
 msgid "Label not found"
 msgstr "پێناسەکە نەدۆزرایەوە"
 
-#: src/locales.js:553
+#: src/locales.js:479
 msgid "Label saved"
 msgstr "پێناسەکە پاشەکەوتکرا"
 
@@ -2470,12 +2374,12 @@ msgstr "پێناسەکە پاشەکەوتکرا"
 #: src/component/photo/edit/dialog.vue:38
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
-#: src/component/photo/edit/dialog.vue:53 src/locales.js:426
+#: src/component/photo/edit/dialog.vue:53 src/locales.js:352
 #: src/options/options.js:265 src/page/settings/general.vue:186
 msgid "Labels"
 msgstr "پێناسەکان"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:552
+#: src/component/label/clipboard.vue:131 src/locales.js:478
 msgid "Labels deleted"
 msgstr "پێناسەکان سڕانەوە"
 
@@ -2490,11 +2394,11 @@ msgid "Last Active"
 msgstr "Last Active"
 
 #: src/page/admin/users.vue:187 src/page/admin/users.vue:295
-#: src/page/admin/users.vue:279 src/locales.js:436
+#: src/page/admin/users.vue:279 src/locales.js:362
 msgid "Last Login"
 msgstr ""
 
-#: src/locales.js:241 src/locales.js:331
+#: src/locales.js:252 src/locales.js:320
 msgid "Last page"
 msgstr ""
 
@@ -2526,10 +2430,6 @@ msgstr ""
 msgid "Learn More"
 msgstr ""
 
-#: src/locales.js:375
-msgid "Left Arrow"
-msgstr ""
-
 #: src/component/navigation.vue:485 src/component/navigation.vue:783
 msgid "Legal Information"
 msgstr ""
@@ -2541,12 +2441,8 @@ msgstr ""
 msgid "Lens"
 msgstr "لێنز"
 
-#: src/locales.js:489
+#: src/locales.js:415
 msgid "Lens not found"
-msgstr ""
-
-#: src/locales.js:296
-msgid "Less"
 msgstr ""
 
 #: src/app/routes.js:612 src/app/routes.js:628 src/app/routes.js:644
@@ -2565,10 +2461,6 @@ msgstr "کتێبخانە"
 #: src/component/photo/edit/details.vue:335 src/page/about/license.vue:5
 msgid "License"
 msgstr "مۆڵەت"
-
-#: src/locales.js:405
-msgid "Lightness value"
-msgstr ""
 
 #: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
@@ -2607,19 +2499,19 @@ msgstr "زیندوو"
 msgid "Live Photos"
 msgstr "وێنەکان"
 
-#: src/locales.js:345
+#: src/locales.js:334
 msgid "Load more"
 msgstr ""
 
-#: src/locales.js:218
+#: src/locales.js:229
 msgid "Loading items..."
 msgstr ""
 
-#: src/locales.js:343
+#: src/locales.js:332
 msgid "Loading..."
 msgstr ""
 
-#: src/locales.js:442 src/options/auth.js:42 src/options/auth.js:47
+#: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:47
 #: src/options/options.js:93 src/page/settings/general.vue:46
 msgid "Local"
 msgstr ""
@@ -2737,7 +2629,7 @@ msgid "Merge %{a} with %{b}?"
 msgstr ""
 
 #: src/page/cluster/activity.vue:129 src/page/admin/activity.vue:128
-#: src/locales.js:453
+#: src/locales.js:379
 msgid "Message"
 msgstr ""
 
@@ -2752,10 +2644,6 @@ msgstr "Metrics"
 #: src/component/navigation.vue:111 src/component/navigation.vue:58
 msgid "Minimize"
 msgstr "بچووک کردنەوە"
-
-#: src/locales.js:319
-msgid "Minute"
-msgstr ""
 
 #: src/component/photo/edit/files.vue:251
 #: src/component/photo/edit/files.vue:252
@@ -2795,10 +2683,6 @@ msgstr "Monochrome"
 msgid "Month"
 msgstr "مانگ"
 
-#: src/locales.js:297
-msgid "More"
-msgstr ""
-
 #: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr ""
@@ -2815,7 +2699,7 @@ msgstr "گرنگترین"
 msgid "Move Files"
 msgstr "دۆسیەی زیاتر"
 
-#: src/locales.js:550
+#: src/locales.js:476
 msgid "Moving files from %s"
 msgstr "گواستنەوەی پەڕگە لە %s"
 
@@ -2824,7 +2708,6 @@ msgid "Must have at least %{n} characters."
 msgstr "بەلایەنی کەمەوە %{n} نووسە"
 
 #: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
-#: src/locales.js:389
 msgid "Mute"
 msgstr ""
 
@@ -2847,7 +2730,7 @@ msgstr ""
 #: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:173 src/component/settings/apps.vue:112
-#: src/component/settings/apps.vue:275 src/locales.js:420
+#: src/component/settings/apps.vue:275 src/locales.js:346
 #: src/page/albums.vue:393 src/page/auth/login.vue:80
 #: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
@@ -2879,15 +2762,15 @@ msgid "Newest First"
 msgstr "یەکەم تازەترین"
 
 #: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
-#: src/component/pdf-viewer.vue:128 src/locales.js:335
+#: src/component/pdf-viewer.vue:128 src/locales.js:324
 msgid "Next"
 msgstr ""
 
-#: src/locales.js:274
+#: src/locales.js:271
 msgid "Next month"
 msgstr ""
 
-#: src/locales.js:238 src/locales.js:326
+#: src/locales.js:249 src/locales.js:315
 msgid "Next page"
 msgstr ""
 
@@ -2895,11 +2778,11 @@ msgstr ""
 msgid "Next Page"
 msgstr ""
 
-#: src/locales.js:286
+#: src/locales.js:283
 msgid "Next visual"
 msgstr ""
 
-#: src/locales.js:256 src/locales.js:277
+#: src/locales.js:274
 msgid "Next year"
 msgstr ""
 
@@ -2924,19 +2807,19 @@ msgstr ""
 msgid "No albums found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
-#: src/locales.js:511
+#: src/locales.js:437
 msgid "No albums selected"
 msgstr "هیج لە ئەلبومەکان هەڵنەبژێردراوە"
 
-#: src/locales.js:283
+#: src/locales.js:280
 msgid "No data available"
 msgstr ""
 
-#: src/locales.js:512
+#: src/locales.js:438
 msgid "No files available for download"
 msgstr "هیچ پەڕگەیەک ئامادە نیە بۆ داگرتن"
 
-#: src/locales.js:502
+#: src/locales.js:428
 msgid "No items selected"
 msgstr "هیچ ئایتمێک دەستنیشان نەکراوە"
 
@@ -2948,15 +2831,15 @@ msgstr ""
 msgid "No labels found"
 msgstr "هیچ پێناسێکی نەدۆزیوەتەوە"
 
-#: src/locales.js:510
+#: src/locales.js:436
 msgid "No labels selected"
 msgstr "هیج لە پێناسەکان هەڵنەبژێردراوە"
 
-#: src/locales.js:217
+#: src/locales.js:228
 msgid "No matching records found"
 msgstr ""
 
-#: src/locales.js:346
+#: src/locales.js:335
 msgid "No more"
 msgstr ""
 
@@ -3010,11 +2893,11 @@ msgstr ""
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr "هیچ ئاگادارییەک یان هەڵەیەک نیە کە ئەم وشی لەخۆ گرتبێت. تێبینی بکە کە گەڕان هەستیارە (جیاکەرەوەی پیتە گەورە و چکۆلەکان)."
 
-#: src/locales.js:457
+#: src/locales.js:383
 msgid "Node"
 msgstr ""
 
-#: src/locales.js:458
+#: src/locales.js:384
 msgid "Nodes"
 msgstr ""
 
@@ -3033,19 +2916,19 @@ msgstr "هیچ"
 msgid "Not allowed"
 msgstr ""
 
-#: src/locales.js:494
+#: src/locales.js:420
 msgid "Not available in public mode"
 msgstr "بەردەست نیە بۆ دۆخی گشتی"
 
-#: src/locales.js:495
+#: src/locales.js:421
 msgid "Not available in read-only mode"
 msgstr "بەردەست نییە لە دۆخی تەنها-خوێندنەوە"
 
-#: src/component/lightbox.vue:1149 src/locales.js:476
+#: src/component/lightbox.vue:1149 src/locales.js:402
 msgid "Not found"
 msgstr "نەدۆزرایەوە"
 
-#: src/locales.js:225
+#: src/locales.js:236
 msgid "Not sorted."
 msgstr ""
 
@@ -3087,7 +2970,7 @@ msgstr ""
 msgid "Offline"
 msgstr "ده‌رهێڵ"
 
-#: src/locales.js:213
+#: src/locales.js:224
 msgid "OK"
 msgstr "OK"
 
@@ -3112,11 +2995,11 @@ msgstr "جارێك لەهەفتەیەكدا"
 msgid "One album found"
 msgstr "یەك ئەلبوم دۆزرایەوە"
 
-#: src/locales.js:534
+#: src/locales.js:460
 msgid "One entry added to %s"
 msgstr "یەک تێکراو زیاد کرایە %s"
 
-#: src/locales.js:536
+#: src/locales.js:462
 msgid "One entry removed from %s"
 msgstr "یەک تێکراو لابرا لە %s"
 
@@ -3146,7 +3029,7 @@ msgstr ""
 
 #: src/component/cluster/node/overview.vue:38
 #: src/component/cluster/node/overview.vue:44 src/page/cluster/nodes.vue:58
-#: src/locales.js:209 src/locales.js:419
+#: src/locales.js:220 src/locales.js:345
 msgid "Open"
 msgstr ""
 
@@ -3158,15 +3041,11 @@ msgstr ""
 msgid "Open on Hover"
 msgstr ""
 
-#: src/locales.js:378
-msgid "Option"
-msgstr ""
-
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr ""
 
-#: src/locales.js:311 src/locales.js:381
+#: src/locales.js:304
 msgid "or"
 msgstr ""
 
@@ -3205,7 +3084,7 @@ msgstr "ناوی ڕەسەن"
 msgid "Originals"
 msgstr "ڕەسەنەکان"
 
-#: src/locales.js:482
+#: src/locales.js:408
 msgid "Originals folder is empty"
 msgstr ""
 
@@ -3222,7 +3101,7 @@ msgstr "دنیا بینیمان ئەوەیە کە زۆرترین چارەسەر�
 msgid "Outdoor"
 msgstr "دەرەوە"
 
-#: src/locales.js:329
+#: src/locales.js:318
 msgid "Page {0}, Current page"
 msgstr ""
 
@@ -3233,7 +3112,7 @@ msgstr ""
 msgid "Pages"
 msgstr "Pages"
 
-#: src/locales.js:325
+#: src/locales.js:314
 msgid "Pagination Navigation"
 msgstr ""
 
@@ -3265,16 +3144,15 @@ msgstr ""
 msgid "Password"
 msgstr "تێپەڕەوشە"
 
-#: src/component/settings/password.vue:164 src/locales.js:542
+#: src/component/settings/password.vue:164 src/locales.js:468
 msgid "Password changed"
 msgstr "تێپەڕەوشە گۆڕدرا"
 
 #: src/component/lightbox.vue:82 src/component/lightbox.vue:83
-#: src/locales.js:385
 msgid "Pause"
 msgstr ""
 
-#: src/locales.js:498
+#: src/locales.js:424
 msgid "Payment required"
 msgstr ""
 
@@ -3294,11 +3172,11 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "ئەو کەسانەی بەستەرێکی هاوبەشیان لەگەڵ دا دروست دەکەیت، توانای بینینی ناوەڕۆکە گشتیەکانی دەبێت."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:568
+#: src/locales.js:494
 msgid "Permanently deleted"
 msgstr "بە هەمیشەیی سڕاوەتەوە"
 
-#: src/locales.js:497
+#: src/locales.js:423
 msgid "Permission denied"
 msgstr ""
 
@@ -3310,16 +3188,16 @@ msgstr ""
 msgid "Person cover updated"
 msgstr ""
 
-#: src/locales.js:557
+#: src/locales.js:483
 msgid "Person deleted"
 msgstr "ئەلبومەکان سڕانەوە"
 
 #: src/component/photo/edit/people.vue:248
-#: src/component/photo/edit/people.vue:282 src/locales.js:492
+#: src/component/photo/edit/people.vue:282 src/locales.js:418
 msgid "Person not found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
-#: src/locales.js:556
+#: src/locales.js:482
 msgid "Person saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکراو"
 
@@ -3377,13 +3255,8 @@ msgid "Places"
 msgstr "شوێنەکان"
 
 #: src/component/lightbox.vue:93 src/component/lightbox.vue:94
-#: src/locales.js:384
 msgid "Play"
 msgstr "بەگەڕ خستن"
-
-#: src/locales.js:358
-msgid "Please choose at least one value"
-msgstr ""
 
 #: src/component/settings/password.vue:69
 msgid "Please confirm your new password."
@@ -3401,11 +3274,7 @@ msgstr ""
 msgid "Please don't upload photos containing offensive content."
 msgstr "تکایە ئەو وێنانە بار مەکە کە ناوەڕۆکی سووکایەتی لەخۆ دەگرن."
 
-#: src/locales.js:350
-msgid "Please enter a valid email"
-msgstr ""
-
-#: src/locales.js:496
+#: src/locales.js:422
 msgid "Please log in to your account"
 msgstr ""
 
@@ -3421,11 +3290,7 @@ msgstr ""
 msgid "Please wait…"
 msgstr ""
 
-#: src/locales.js:379
-msgid "plus"
-msgstr ""
-
-#: src/locales.js:316
+#: src/locales.js:309
 msgid "PM"
 msgstr "PM"
 
@@ -3434,7 +3299,7 @@ msgid "PNG Size Limit: %{n}px"
 msgstr "سنووری قەبارەی PNG: %{n}px"
 
 #: src/component/cluster/node/groups.vue:150 src/options/admin.js:36
-#: src/locales.js:424
+#: src/locales.js:350
 msgid "Portal"
 msgstr "Portal"
 
@@ -3478,15 +3343,15 @@ msgid "Preview Images"
 msgstr ""
 
 #: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
-#: src/component/pdf-viewer.vue:116 src/locales.js:336
+#: src/component/pdf-viewer.vue:116 src/locales.js:325
 msgid "Previous"
 msgstr ""
 
-#: src/locales.js:273
+#: src/locales.js:270
 msgid "Previous month"
 msgstr ""
 
-#: src/locales.js:239 src/locales.js:327
+#: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
 msgstr ""
 
@@ -3494,11 +3359,11 @@ msgstr ""
 msgid "Previous Page"
 msgstr ""
 
-#: src/locales.js:285
+#: src/locales.js:282
 msgid "Previous visual"
 msgstr ""
 
-#: src/locales.js:255 src/locales.js:276
+#: src/locales.js:273
 msgid "Previous year"
 msgstr ""
 
@@ -3522,7 +3387,7 @@ msgstr "سەرەکی"
 msgid "Private"
 msgstr "تایبەتی"
 
-#: src/locales.js:560
+#: src/locales.js:486
 msgid "Processing upload..."
 msgstr ""
 
@@ -3549,7 +3414,7 @@ msgstr "پاڵاوتنی جۆرایەتی"
 msgid "Quality Score"
 msgstr "جۆرایەتی تۆمار"
 
-#: src/locales.js:522
+#: src/locales.js:448
 msgid "Quota exceeded"
 msgstr ""
 
@@ -3557,7 +3422,7 @@ msgstr ""
 msgid "Random"
 msgstr "هەڕەمەکی"
 
-#: src/locales.js:340
+#: src/locales.js:329
 msgid "Rating {0} of {1}"
 msgstr ""
 
@@ -3612,10 +3477,6 @@ msgstr "Recovery Code"
 msgid "Red"
 msgstr "سور"
 
-#: src/locales.js:399
-msgid "Red value"
-msgstr ""
-
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
 msgstr ""
@@ -3630,7 +3491,7 @@ msgstr ""
 #: src/page/cluster/activity.vue:42 src/page/cluster/nodes.vue:26
 #: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:334
 #: src/page/admin/users.vue:324 src/component/album/toolbar.vue:146
-#: src/component/photo/toolbar.vue:429 src/locales.js:417
+#: src/component/photo/toolbar.vue:429 src/locales.js:343
 #: src/page/albums.vue:479 src/page/labels.vue:270
 #: src/page/library/browse.vue:16 src/page/library/errors.vue:194
 #: src/page/people/new.vue:7 src/page/people/recognized.vue:35
@@ -3652,7 +3513,7 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-#: src/locales.js:523
+#: src/locales.js:449
 msgid "Registration disabled"
 msgstr ""
 
@@ -3700,11 +3561,11 @@ msgstr ""
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "لابردنی پەڕگە هاوردەکان بۆ بەتاڵکردنی بیرگە. جۆرەکانی پەڕگەی پشتیوانی نەکراو هەرگیز ناسڕدرێتەوە، ئەوان لە شوێنی ئێستایان دەمێننەوە."
 
-#: src/page/cluster/nodes.vue:107 src/locales.js:463
+#: src/page/cluster/nodes.vue:107 src/locales.js:389
 msgid "Remove the selected instance from the cluster registry?"
 msgstr ""
 
-#: src/page/cluster/nodes.vue:269 src/locales.js:427
+#: src/page/cluster/nodes.vue:269 src/locales.js:353
 msgid "Removed"
 msgstr ""
 
@@ -3712,12 +3573,12 @@ msgstr ""
 msgid "Removed %{name}"
 msgstr ""
 
-#: src/locales.js:549
+#: src/locales.js:475
 msgid "Removed %d files and %d photos"
 msgstr "لابردنی %d پەڕگە و  %d وێنە"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
-#: src/locales.js:454
+#: src/locales.js:380
 msgid "Repeated"
 msgstr ""
 
@@ -3781,10 +3642,6 @@ msgstr "نوسینەوەی وشه‌ی تێپه‌ڕبوون"
 msgid "Review"
 msgstr "پێشبینین"
 
-#: src/locales.js:376
-msgid "Right Arrow"
-msgstr ""
-
 #: src/component/user/add/dialog.vue:93 src/component/user/edit/dialog.vue:172
 #: src/page/admin/sessions.vue:105 src/page/admin/users.vue:179
 #: src/component/cluster/instance-access.vue:84
@@ -3794,28 +3651,24 @@ msgstr ""
 #: src/component/user/add/dialog.vue:99 src/component/user/edit/dialog.vue:181
 #: src/page/admin/groups.vue:77 src/page/admin/sessions.vue:145
 #: src/page/admin/users.vue:284 src/component/user/edit/dialog.vue:174
-#: src/page/admin/users.vue:271 src/locales.js:437
+#: src/page/admin/users.vue:271 src/locales.js:363
 msgid "Role"
 msgstr "Role"
 
-#: src/locales.js:438
+#: src/locales.js:364
 msgid "Roles"
 msgstr ""
 
-#: src/component/cluster/node/overview.vue:81 src/locales.js:447
+#: src/component/cluster/node/overview.vue:81 src/locales.js:373
 msgid "Rotated"
 msgstr ""
 
-#: src/locales.js:221
+#: src/locales.js:232
 msgid "Rows per page:"
 msgstr ""
 
 #: src/options/options.js:312
 msgid "Satellite"
-msgstr ""
-
-#: src/locales.js:404
-msgid "Saturation value"
 msgstr ""
 
 #: src/component/user/edit/dialog.vue:108
@@ -3894,11 +3747,11 @@ msgstr "پشکنینەکان"
 #: src/page/admin/sessions.vue:139 src/page/admin/sessions.vue:223
 #: src/page/admin/sessions.vue:179 src/page/admin/sessions.vue:296
 #: src/page/admin/sessions.vue:294 src/component/settings/apps.vue:129
-#: src/component/settings/apps.vue:277 src/locales.js:440
+#: src/component/settings/apps.vue:277 src/locales.js:366
 msgid "Scope"
 msgstr "Scope"
 
-#: src/locales.js:441
+#: src/locales.js:367
 msgid "Scopes"
 msgstr ""
 
@@ -3907,7 +3760,7 @@ msgstr ""
 #: src/page/cluster/nodes.vue:13 src/page/admin/activity.vue:13
 #: src/component/meta/location/dialog.vue:60 src/component/navigation.vue:728
 #: src/component/navigation.vue:91 src/component/photo/toolbar.vue:34
-#: src/locales.js:416 src/options/options.js:256 src/page/albums.vue:20
+#: src/locales.js:342 src/options/options.js:256 src/page/albums.vue:20
 #: src/page/labels.vue:15 src/page/library/errors.vue:18
 #: src/page/people/recognized.vue:14 src/page/places.vue:22
 #: src/page/services.vue:15 src/page/settings/content.vue:117
@@ -3918,20 +3771,12 @@ msgstr "گەڕان"
 msgid "Season"
 msgstr "وەرز"
 
-#: src/locales.js:320
-msgid "Second"
-msgstr ""
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "نهێنی"
 
 #: src/page/settings/account.vue:149 src/page/settings/account.vue:133
 msgid "Security and Access"
-msgstr ""
-
-#: src/locales.js:386
-msgid "Seek"
 msgstr ""
 
 #: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
@@ -3942,27 +3787,23 @@ msgstr "دەستنیشانکردن"
 msgid "Select a source folder to import files…"
 msgstr ""
 
-#: src/locales.js:230
+#: src/locales.js:241
 msgid "Select all"
 msgstr ""
 
-#: src/locales.js:396
-msgid "Select color with eyedropper"
-msgstr ""
-
-#: src/locales.js:267
+#: src/locales.js:264
 msgid "Select date"
 msgstr ""
 
-#: src/locales.js:264
+#: src/locales.js:261
 msgid "Select dates"
 msgstr ""
 
-#: src/locales.js:231
+#: src/locales.js:242
 msgid "Select group"
 msgstr ""
 
-#: src/locales.js:248 src/locales.js:278
+#: src/locales.js:275
 msgid "Select month"
 msgstr ""
 
@@ -3981,7 +3822,7 @@ msgstr ""
 msgid "Select or drop files to upload…"
 msgstr ""
 
-#: src/locales.js:229
+#: src/locales.js:240
 msgid "Select row"
 msgstr ""
 
@@ -3993,11 +3834,11 @@ msgstr ""
 msgid "Select the folder to be indexed…"
 msgstr ""
 
-#: src/locales.js:317
+#: src/locales.js:310
 msgid "Select Time"
 msgstr ""
 
-#: src/locales.js:257 src/locales.js:275
+#: src/locales.js:272
 msgid "Select year"
 msgstr ""
 
@@ -4005,27 +3846,27 @@ msgstr ""
 msgid "Selection"
 msgstr ""
 
-#: src/locales.js:533
+#: src/locales.js:459
 msgid "Selection added to %s"
 msgstr "دەستنیشان کراو زیادکرایە %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:562
+#: src/component/photo/clipboard.vue:251 src/locales.js:488
 msgid "Selection approved"
 msgstr "دەستنیشان کراو پەسەند کرا"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:563
+#: src/component/photo/clipboard.vue:282 src/locales.js:489
 msgid "Selection archived"
 msgstr "هەڵبژاردەکە ئەرشیفکرا"
 
-#: src/locales.js:565
+#: src/locales.js:491
 msgid "Selection marked as private"
 msgstr "دەستنیشانکراوەکان کران بە تایبەتی"
 
-#: src/locales.js:483
+#: src/locales.js:409
 msgid "Selection not found"
 msgstr "هەڵبژاردەکان نەدۆزرایەوە"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:564
+#: src/component/photo/clipboard.vue:318 src/locales.js:490
 msgid "Selection restored"
 msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
@@ -4033,7 +3874,7 @@ msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 msgid "Sequential Name"
 msgstr "ناوی زنجیرەیی"
 
-#: src/options/admin.js:39 src/locales.js:459
+#: src/options/admin.js:39 src/locales.js:385
 msgid "Service"
 msgstr ""
 
@@ -4046,11 +3887,11 @@ msgstr "بەستەری خزمەتگوزاری"
 #: src/component/navigation.vue:423 src/component/navigation.vue:432
 #: src/component/navigation.vue:545 src/component/navigation.vue:553
 #: src/component/navigation.vue:561 src/component/navigation.vue:569
-#: src/locales.js:460 src/page/settings/general.vue:305
+#: src/locales.js:386 src/page/settings/general.vue:305
 msgid "Services"
 msgstr "بەستەری خزمەتگوزاری"
 
-#: src/locales.js:443 src/model/session.js:83 src/options/auth.js:120
+#: src/locales.js:369 src/model/session.js:83 src/options/auth.js:120
 #: src/options/auth.js:71
 msgid "Session"
 msgstr ""
@@ -4062,7 +3903,7 @@ msgstr ""
 
 #: src/page/admin.vue:67 src/component/navigation.vue:252
 #: src/component/navigation.vue:476 src/component/navigation.vue:479
-#: src/page/admin.vue:65 src/locales.js:444
+#: src/page/admin.vue:65 src/locales.js:370
 msgid "Sessions"
 msgstr "Sessions"
 
@@ -4084,7 +3925,7 @@ msgid "Settings"
 msgstr "ڕێکخستنەکان"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:541
+#: src/component/settings/passcode.vue:366 src/locales.js:467
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکرا"
@@ -4098,7 +3939,7 @@ msgstr "دایبەزێنە"
 
 #: src/page/cluster/activity.vue:127 src/page/cluster/activity.vue:36
 #: src/page/admin/activity.vue:126 src/page/admin/activity.vue:36
-#: src/locales.js:448
+#: src/locales.js:374
 msgid "Severity"
 msgstr ""
 
@@ -4113,10 +3954,6 @@ msgstr "هاوبەشیپێکردنی %{s}"
 
 #: src/options/options.js:505
 msgid "Share Friendly"
-msgstr ""
-
-#: src/locales.js:369
-msgid "Shift"
 msgstr ""
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
@@ -4199,10 +4036,6 @@ msgstr ""
 msgid "Show Titles"
 msgstr ""
 
-#: src/locales.js:388
-msgid "Show volume control"
-msgstr ""
-
 #: src/common/util.js:913 src/model/file.js:197
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -4227,7 +4060,7 @@ msgstr ""
 msgid "Similar"
 msgstr "وەکویەک"
 
-#: src/component/cluster/node/overview.vue:36 src/locales.js:452
+#: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
 msgstr ""
 
@@ -4271,11 +4104,11 @@ msgstr ""
 msgid "Some albums could not be updated"
 msgstr ""
 
-#: src/component/lightbox.vue:1253 src/locales.js:471
+#: src/component/lightbox.vue:1253 src/locales.js:397
 msgid "Something went wrong, try again"
 msgstr ""
 
-#: src/locales.js:233
+#: src/locales.js:244
 msgid "Sort by"
 msgstr ""
 
@@ -4296,11 +4129,11 @@ msgstr ""
 msgid "Sort Order"
 msgstr "جۆری داواکاری"
 
-#: src/locales.js:224
+#: src/locales.js:235
 msgid "Sorted ascending."
 msgstr ""
 
-#: src/locales.js:223
+#: src/locales.js:234
 msgid "Sorted descending."
 msgstr ""
 
@@ -4309,10 +4142,6 @@ msgstr ""
 #: src/component/photo/edit/labels.vue:28
 msgid "Source"
 msgstr "سەرچاوه"
-
-#: src/locales.js:368
-msgid "Space"
-msgstr ""
 
 #: src/component/photo/view/cards.vue:116
 #: src/component/photo/view/mosaic.vue:71
@@ -4379,19 +4208,19 @@ msgstr "شەقامەکان"
 msgid "Subject"
 msgstr "ناونیشان"
 
-#: src/locales.js:555
+#: src/locales.js:481
 msgid "Subject deleted"
 msgstr "ناونیشان"
 
-#: src/locales.js:491
+#: src/locales.js:417
 msgid "Subject not found"
 msgstr "ناونیشان"
 
-#: src/locales.js:554
+#: src/locales.js:480
 msgid "Subject saved"
 msgstr "ناونیشان"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:571
+#: src/component/settings/passcode.vue:351 src/locales.js:497
 msgid "Successfully activated"
 msgstr ""
 
@@ -4404,7 +4233,7 @@ msgstr ""
 msgid "Successfully deleted"
 msgstr ""
 
-#: src/component/settings/passcode.vue:323 src/locales.js:570
+#: src/component/settings/passcode.vue:323 src/locales.js:496
 msgid "Successfully verified"
 msgstr ""
 
@@ -4461,10 +4290,6 @@ msgstr ""
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr ""
 
-#: src/locales.js:357
-msgid "The {0} character is not allowed"
-msgstr ""
-
 #: src/page/library/index.vue:72
 msgid "The index currently contains %{n} hidden files."
 msgstr "نوانەکە لە ئێستادا %{n} فایلی شاراوەی لەخۆ دەگرێت."
@@ -4477,11 +4302,7 @@ msgstr ""
 msgid "The instance returned an unexpected redirect."
 msgstr ""
 
-#: src/locales.js:356
-msgid "The length of the entered field is invalid"
-msgstr ""
-
-#: src/locales.js:518
+#: src/locales.js:444
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr ""
 
@@ -4489,35 +4310,19 @@ msgstr ""
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "فۆرماتەکەیان لەوانەیە پشتگیری کراو نەبێت, هێشتا نەگۆڕدراوە بۆ JPEG یان لێکچووی دووبارەبوونی هەیە."
 
-#: src/component/cluster/node/overview.vue:33 src/locales.js:425
+#: src/component/cluster/node/overview.vue:33 src/locales.js:351
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "ڕووکار"
-
-#: src/locales.js:365
-msgid "then"
-msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
 msgstr ""
 
-#: src/locales.js:352
-msgid "This field can only contain integer values"
-msgstr ""
-
-#: src/locales.js:351
-msgid "This field can only contain numbers"
-msgstr ""
-
-#: src/locales.js:353
-msgid "This field can only contain uppercase letters"
-msgstr ""
-
 #: src/common/form.js:234 src/common/form.js:243 src/common/form.js:252
 #: src/common/form.js:261 src/common/form.js:270 src/common/form.js:289
 #: src/common/form.js:340 src/common/form.js:350 src/common/form.js:362
-#: src/common/form.js:371 src/common/form.js:388 src/locales.js:349
+#: src/common/form.js:371 src/common/form.js:388
 msgid "This field is required"
 msgstr ""
 
@@ -4530,7 +4335,7 @@ msgid "This mounts the originals folder as a network drive and allows you to ope
 msgstr "ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی کە خۆماڵی بن."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
-#: src/locales.js:450
+#: src/locales.js:376
 msgid "Time"
 msgstr ""
 
@@ -4557,7 +4362,7 @@ msgstr "ناونیشان"
 msgid "Title / Position"
 msgstr "ناونیشانی زۆر درێژ"
 
-#: src/locales.js:245
+#: src/locales.js:256
 msgid "to"
 msgstr "بۆ"
 
@@ -4577,11 +4382,11 @@ msgstr ""
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr ""
 
-#: src/locales.js:293
+#: src/locales.js:290
 msgid "Today"
 msgstr ""
 
-#: src/locales.js:280
+#: src/locales.js:277
 msgid "Today, {0}"
 msgstr ""
 
@@ -4601,7 +4406,7 @@ msgstr "تۆکن"
 msgid "Too many files selected"
 msgstr ""
 
-#: src/common/api.js:128 src/locales.js:520
+#: src/common/api.js:128 src/locales.js:446
 msgid "Too many requests"
 msgstr ""
 
@@ -4630,15 +4435,11 @@ msgstr ""
 msgid "Type"
 msgstr "جۆر"
 
-#: src/locales.js:362
-msgid "Type a command or search..."
-msgstr ""
-
 #: src/component/album/toolbar.vue:240
 msgid "Unable to delete"
 msgstr ""
 
-#: src/locales.js:472
+#: src/locales.js:398
 msgid "Unable to do that"
 msgstr ""
 
@@ -4692,10 +4493,6 @@ msgstr "نەزانراو"
 msgid "Unknown location"
 msgstr ""
 
-#: src/locales.js:390
-msgid "Unmute"
-msgstr ""
-
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:876
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
@@ -4711,20 +4508,16 @@ msgstr "پۆلێن نەکراوە"
 msgid "Unstack"
 msgstr "دەرهێنان لە کەڵەکە"
 
-#: src/locales.js:479
+#: src/locales.js:405
 msgid "Unsupported"
 msgstr ""
 
-#: src/locales.js:481
+#: src/locales.js:407
 msgid "Unsupported format"
 msgstr ""
 
-#: src/locales.js:480
+#: src/locales.js:406
 msgid "Unsupported type"
-msgstr ""
-
-#: src/locales.js:373
-msgid "Up Arrow"
 msgstr ""
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:169
@@ -4800,11 +4593,11 @@ msgid "Upload complete. Indexing…"
 msgstr "بارکردن تەواو بوو. نیشانەکردن…"
 
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:484
-#: src/component/upload/dialog.vue:531 src/locales.js:500
+#: src/component/upload/dialog.vue:531 src/locales.js:426
 msgid "Upload failed"
 msgstr "بارکردنەکە سەرکەوتوو نەبوو"
 
-#: src/locales.js:561
+#: src/locales.js:487
 msgid "Upload has been processed"
 msgstr ""
 
@@ -4812,7 +4605,7 @@ msgstr ""
 msgid "Upload local files"
 msgstr "بارکردنی فایلە ناوخۆییەکان"
 
-#: src/locales.js:499
+#: src/locales.js:425
 msgid "Upload might be offensive"
 msgstr "بارکردن لەوانەیە سووکایەتی بێت"
 
@@ -4831,7 +4624,7 @@ msgstr ""
 msgid "Upload started"
 msgstr ""
 
-#: src/locales.js:501
+#: src/locales.js:427
 msgid "Upload to %s failed"
 msgstr ""
 
@@ -4877,7 +4670,7 @@ msgstr ""
 #: src/page/admin/sessions.vue:221 src/page/admin/sessions.vue:98
 #: src/component/cluster/node/overview.vue:77 src/model/cluster-instance.js:32
 #: src/page/admin/sessions.vue:138 src/page/admin/sessions.vue:294
-#: src/page/admin/sessions.vue:292 src/locales.js:430 src/model/user.js:458
+#: src/page/admin/sessions.vue:292 src/locales.js:356 src/model/user.js:458
 #: src/options/auth.js:9
 msgid "User"
 msgstr "بەکارهێنەر"
@@ -4890,7 +4683,7 @@ msgstr ""
 msgid "User Interface"
 msgstr "بەکارهێنەری ڕووکار"
 
-#: src/locales.js:486
+#: src/locales.js:412
 msgid "User not found"
 msgstr "بەکارهێنەرەکە نەدۆزرایەوە"
 
@@ -4901,24 +4694,20 @@ msgstr "بەکارهێنەرەکە نەدۆزرایەوە"
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
 #: src/component/service/edit.vue:179 src/component/share/dialog.vue:162
-#: src/locales.js:421
+#: src/locales.js:347
 msgid "Username"
 msgstr "ناوی بەکارهێنەر"
 
 #: src/component/navigation.vue:404 src/component/navigation.vue:405
 #: src/component/navigation.vue:417 src/component/navigation.vue:426
 #: src/component/navigation.vue:539 src/component/navigation.vue:547
-#: src/component/navigation.vue:555 src/locales.js:431
+#: src/component/navigation.vue:555 src/locales.js:357
 msgid "Users"
 msgstr ""
 
 #: src/page/cluster/nodes.vue:163
 msgid "UUID"
 msgstr "UUID"
-
-#: src/locales.js:321
-msgid "Value is not allowed"
-msgstr ""
 
 #: src/common/util.js:909 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
@@ -4941,11 +4730,11 @@ msgstr ""
 msgid "Verified"
 msgstr "Verified"
 
-#: src/locales.js:524
+#: src/locales.js:450
 msgid "Verified email required"
 msgstr ""
 
-#: src/component/cluster/node/overview.vue:29 src/locales.js:423
+#: src/component/cluster/node/overview.vue:29 src/locales.js:349
 msgid "Version"
 msgstr ""
 
@@ -4994,10 +4783,6 @@ msgstr ""
 msgid "Visual Similarity"
 msgstr "گروپکردن بە پێی هاوشێوەیی"
 
-#: src/locales.js:387
-msgid "Volume"
-msgstr ""
-
 #: src/page/library/errors.vue:363
 msgid "Warning"
 msgstr ""
@@ -5007,7 +4792,7 @@ msgstr ""
 #: src/component/cluster/node/users.vue:155
 #: src/component/user/add/dialog.vue:140 src/component/user/edit/dialog.vue:295
 #: src/page/admin/users.vue:294 src/component/user/edit/dialog.vue:288
-#: src/page/admin/users.vue:278 src/locales.js:435
+#: src/page/admin/users.vue:278 src/locales.js:361
 msgid "Web Login"
 msgstr ""
 
@@ -5123,15 +4908,7 @@ msgstr "دەتوانیت تەنها یەک ئایتم دیاریبکەیت"
 msgid "You may rescan your library to find additional faces."
 msgstr ""
 
-#: src/locales.js:354
-msgid "You must enter a maximum of {0} characters"
-msgstr ""
-
-#: src/locales.js:355
-msgid "You must enter a minimum of {0} characters"
-msgstr ""
-
-#: src/locales.js:519
+#: src/locales.js:445
 msgid "Your account could not be connected"
 msgstr ""
 
@@ -5149,7 +4926,7 @@ msgstr ""
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr ""
 
-#: src/locales.js:567
+#: src/locales.js:493
 msgid "Zip created in %d s"
 msgstr "زیپ بە %d چرکە دروستکرا"
 
