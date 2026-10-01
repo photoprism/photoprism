@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -408,4 +409,28 @@ func TestGenerateLabelsServiceKey(t *testing.T) {
 		assert.Equal(t, 1, own.hits)
 		assert.Equal(t, "Bearer own-key", own.auth)
 	})
+}
+
+// TestGenerateLabelsMissingConcurrent verifies initialization failures never mutate shared disablement.
+func TestGenerateLabelsMissingConcurrent(t *testing.T) {
+	previous := ModelsPath
+	ModelsPath = t.TempDir()
+	t.Cleanup(func() { ModelsPath = previous })
+	model := NewLabelModel(classify.DefaultModelName())
+	withConfig(t, &ConfigValues{Models: Models{model}})
+	var workers sync.WaitGroup
+	for range 16 {
+		workers.Add(1)
+		go func() {
+			defer workers.Done()
+			for range 8 {
+				_, err := GenerateLabels(Files{"missing.jpg"}, media.SrcLocal, entity.SrcAuto)
+				assert.Error(t, err)
+			}
+		}()
+	}
+	workers.Wait()
+	assert.False(t, model.Disabled)
+	require.Error(t, model.classifyErr)
+	assert.Same(t, model, Config.Model(ModelTypeLabels))
 }

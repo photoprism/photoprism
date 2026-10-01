@@ -3,14 +3,18 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -55,6 +59,7 @@ func visionListAction(ctx *cli.Context) error {
 			"Options",
 			"Schedule",
 			"Status",
+			"Installed",
 		}
 
 		// Show log message.
@@ -128,7 +133,8 @@ func visionListAction(ctx *cli.Context) error {
 				fmt.Sprintf("%d", model.Resolution),
 				report.Bool(model.TensorFlow != nil, fmt.Sprintf(`{"tags":"%s"}`, tags), string(options)),
 				run,
-				report.Bool(model.Disabled, report.Disabled, report.Enabled),
+				report.Bool(model.Disabled || model.DisabledByMode, report.Disabled, report.Enabled),
+				visionInstalled(model, conf.ModelsPath()),
 			}
 		}
 
@@ -138,4 +144,37 @@ func visionListAction(ctx *cli.Context) error {
 
 		return err
 	})
+}
+
+// visionInstalled reports artifact presence without initializing an inference session.
+func visionInstalled(model *vision.Model, modelsPath string) string {
+	if uri, _ := model.Endpoint(); uri != "" || model.Service.UriUnresolved() {
+		return "n/a"
+	}
+	var filename string
+	switch model.Type {
+	case vision.ModelTypeLabels:
+		if description := classify.FindModel(classify.ModelName(model.Name)); description != nil {
+			return report.Bool(description.Installed(modelsPath), "yes", "no")
+		}
+	case vision.ModelTypeNsfw:
+		if description := nsfw.FindModel(nsfw.ModelName(model.Name)); description != nil {
+			return report.Bool(description.Installed(modelsPath), "yes", "no")
+		}
+	default:
+		return "n/a"
+	}
+	filename = model.Path
+	if filename == "" {
+		filename = clean.TypeLowerUnderscore(model.Name)
+	}
+	filename = filepath.Join(modelsPath, clean.Path(filename))
+	if !strings.EqualFold(filepath.Ext(filename), ".onnx") {
+		file := filepath.Base(filename) + ".onnx"
+		if model.ONNX != nil && model.ONNX.File != "" {
+			file = model.ONNX.File
+		}
+		filename = filepath.Join(filename, file)
+	}
+	return report.Bool(fs.FileExistsNotEmpty(filename), "yes", "no")
 }

@@ -3,6 +3,8 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -168,4 +170,30 @@ func TestNewIndexOptions_DisabledModels(t *testing.T) {
 	assert.False(t, opts.DetectFaces)
 	assert.False(t, opts.GenerateLabels)
 	assert.False(t, opts.DetectNsfw)
+}
+
+// TestIndexOptionsNSFWModes verifies label detection is independent of the dedicated detector schedule.
+func TestIndexOptionsNSFWModes(t *testing.T) {
+	previous := vision.Config
+	t.Cleanup(func() { vision.Config = previous })
+	vision.Config = vision.NewConfig()
+	for _, mode := range []string{"auto", "none", "labels"} {
+		t.Run(mode, func(t *testing.T) {
+			conf := config.NewMinimalTestConfig(t.TempDir())
+			conf.Options().DetectNSFW = true
+			conf.Options().NsfwModel = mode
+			options := NewIndexOptions("/", false, false, false, false, false, conf)
+			assert.Equal(t, mode == "auto", options.DetectNsfw)
+			assert.Equal(t, mode == "labels", options.DetectNSFWLabels)
+			labels := classify.Labels{{Name: "custom", NSFW: true}}
+			assert.Equal(t, mode == "labels", labelsMarkNSFW(labels, options.DetectNSFWLabels, 75))
+			conf.Options().DetectNSFW = false
+			options = NewIndexOptions("/", false, false, false, false, false, conf)
+			assert.False(t, options.DetectNsfw)
+			assert.False(t, options.DetectNSFWLabels)
+			conf.Options().DetectNSFW = true
+			options = NewIndexOptions("/", false, false, false, true, false, conf)
+			assert.False(t, options.DetectNSFWLabels)
+		})
+	}
 }

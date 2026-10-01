@@ -10,6 +10,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
@@ -243,11 +244,9 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		// Generate labels.
 		if generateLabels {
 			if labels := file.GenerateLabels(customSrc); len(labels) > 0 {
-				if w.conf.DetectNSFW() && !m.PhotoPrivate {
-					if labels.IsNSFW(vision.Config.Thresholds.GetNSFWLabels()) {
-						m.PhotoPrivate = true
-						log.Infof("vision: changed private flag of %s to %t (labels)", logName, m.PhotoPrivate)
-					}
+				if flag, write := labelsPrivateFlag(w.conf, m.PhotoPrivate, labels); write {
+					m.PhotoPrivate = flag
+					log.Infof("vision: changed private flag of %s to %t (labels)", logName, m.PhotoPrivate)
 				}
 				m.AddLabels(labels)
 				changed = true
@@ -359,4 +358,15 @@ func nsfwPrivateFlag(private bool, result nsfw.Result) (flag, write bool) {
 	}
 
 	return result.IsUnsafe(), private != result.IsUnsafe()
+}
+
+// labelsPrivateFlag applies label-derived NSFW flags only in the configured labels mode.
+func labelsPrivateFlag(conf *config.Config, private bool, labels classify.Labels) (bool, bool) {
+	if private || !conf.DetectNSFWLabels() || vision.Config == nil {
+		return private, false
+	}
+	if labels.IsNSFW(vision.Config.Thresholds.GetNSFWLabels()) {
+		return true, true
+	}
+	return private, false
 }

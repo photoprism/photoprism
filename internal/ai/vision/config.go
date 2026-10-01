@@ -116,8 +116,7 @@ func (c *ConfigValues) Load(fileName string) error {
 	}
 
 	sharedNSFWIsSet := c.Thresholds.NSFW >= 0
-	contextNSFWIsSet := c.Thresholds.NSFWUpload != nil || c.Thresholds.NSFWIndex != nil || c.Thresholds.NSFWLabels != nil
-	if sharedNSFWIsSet && !contextNSFWIsSet {
+	if sharedNSFWIsSet && c.Thresholds.NSFWLabels == nil {
 		legacyThreshold := c.Thresholds.NSFW
 		if legacyThreshold <= 0 {
 			legacyThreshold = NSFWThresholdAuto
@@ -126,7 +125,11 @@ func (c *ConfigValues) Load(fileName string) error {
 		}
 		c.Thresholds.NSFWLabels = &legacyThreshold
 		c.Thresholds.NSFW = NSFWThresholdAuto
-		log.Warnf("vision: migrated shared NSFW threshold to the labels context")
+		if legacyThreshold == DefaultNSFWThreshold {
+			log.Infof("vision: migrated shared NSFW threshold %d to the labels context", legacyThreshold)
+		} else {
+			log.Warnf("vision: migrated shared NSFW threshold %d to the labels context", legacyThreshold)
+		}
 	}
 
 	// Replace default placeholders with canonical defaults while respecting
@@ -290,7 +293,7 @@ func (c *ConfigValues) Save(fileName string) error {
 func (c *ConfigValues) Model(t ModelType) *Model {
 	for i := len(c.Models) - 1; i >= 0; i-- {
 		m := c.Models[i]
-		if m.Type == t && !m.Disabled {
+		if m.Type == t && !m.Disabled && !m.DisabledByMode {
 			return m
 		}
 	}

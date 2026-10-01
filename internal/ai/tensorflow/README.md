@@ -1,23 +1,20 @@
 ## PhotoPrism — TensorFlow Package
 
-**Last Updated:** September 25, 2026
+**Last Updated:** October 1, 2026
 
 ### Overview
 
-`internal/ai/tensorflow` provides the shared TensorFlow helpers used by PhotoPrism’s FaceNet embeddings. Built-in label and NSFW inference now uses ONNX Runtime; TensorFlow support remains in their benchmark-only baseline tests for migration comparisons. This package wraps SavedModel loading, input/output discovery, image tensor preparation, and label handling.
+`internal/ai/tensorflow` provides the shared TensorFlow helpers used by PhotoPrism’s FaceNet embeddings. Built-in label and NSFW inference now uses ONNX Runtime; TensorFlow support remains in their benchmark-only baseline tests for migration comparisons. This package wraps SavedModel loading, input/output discovery, image tensor preparation.
 
 ### Key Components
 
 - **Model Loading** — `SavedModel`, `GetModelTagsInfo`, and `GetInputAndOutputFromSavedModel` discover and load SavedModel graphs with appropriate tags.
 - **Input Preparation** — `Image`, `ImageTransform`, and `ImageTensorBuilder` convert JPEG images to tensors with the configured resolution, color order, and resize strategy.
-- **Output Handling** — `AddSoftmax` can insert a softmax op when a model exports logits.
-- **Labels** — `LoadLabels` loads label lists for classification models.
 
 ### Model Loading Notes
 
 - FaceNet models live under `assets/models/` and are accessed through `internal/ai/face` and `internal/ai/vision`.
 - When a model lacks explicit tags or signatures, the helpers attempt to infer input/output operations. Logs will show when inference kicks in.
-- Classification models may emit logits; if `ModelInfo.Output.Logits` is true, a softmax op is injected at load time.
 
 ### Memory & Garbage Collection
 
@@ -35,7 +32,6 @@ TensorFlow tensors are allocated in C memory and freed by Go GC finalizers in th
   - `make dep-models` (or `scripts/dist/download-models.sh facenet`)
   - Re-run the face tests (`go test ./internal/ai/face -run TestNet -count=1`)
 - **Input/output mismatch:** Check logs for inferred inputs/outputs and confirm `vision.yml` overrides (name, resolution, and `TensorFlow.Input/Output`).
-- **Unexpected probabilities:** Ensure logits are handled correctly and labels match output indices.
 - **High memory usage:** Confirm `PHOTOPRISM_TF_GC_EVERY` is set appropriately; model weights remain resident for the life of the process by design.
 
 ### Related Docs

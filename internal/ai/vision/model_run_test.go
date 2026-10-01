@@ -5,6 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 )
 
 func TestParseRunType(t *testing.T) {
@@ -253,4 +257,43 @@ func TestKnownRunType(t *testing.T) {
 		assert.False(t, KnownRunType("bogus"))
 		assert.Equal(t, RunAuto, ParseRunType("whenever"))
 	})
+}
+
+// TestLocalNSFWScheduling verifies every local detector runs inline unless explicitly scheduled.
+func TestLocalNSFWScheduling(t *testing.T) {
+	for name := range nsfw.Models {
+		t.Run(string(name), func(t *testing.T) {
+			model := NewNsfwModel(name)
+			assertShouldRun(t, model, RunOnIndex, true)
+			assertShouldRun(t, model, RunNewlyIndexed, false)
+			model.Run = RunOnSchedule
+			assertShouldRun(t, model, RunOnIndex, false)
+			assertShouldRun(t, model, RunOnSchedule, true)
+		})
+	}
+	t.Run("Custom", func(t *testing.T) {
+		model := &Model{Type: ModelTypeNsfw, Name: "custom", ONNX: &onnx.ModelInfo{}}
+		assertShouldRun(t, model, RunOnIndex, true)
+		model.Run = RunNever
+		assertShouldRun(t, model, RunOnIndex, false)
+	})
+	t.Run("Remote", func(t *testing.T) {
+		model := &Model{Type: ModelTypeNsfw, Name: "custom", Service: Service{Uri: "https://example.com", Method: "POST"}}
+		assertShouldRun(t, model, RunOnIndex, false)
+		assertShouldRun(t, model, RunNewlyIndexed, true)
+	})
+	t.Run("RegisteredName", func(t *testing.T) {
+		model := &Model{Type: ModelTypeNsfw, Name: string(nsfw.ModelFalconsai)}
+		assertShouldRun(t, model, RunOnIndex, true)
+	})
+}
+
+// TestAutomaticAlternativeLabels verifies automatic selection preserves background label scheduling.
+func TestAutomaticAlternativeLabels(t *testing.T) {
+	model := NewLabelModel(classify.ModelRepViTM10)
+	model.Default = true
+	assertShouldRun(t, model, RunOnIndex, false)
+	assertShouldRun(t, model, RunNewlyIndexed, true)
+	model.Run = RunOnIndex
+	assertShouldRun(t, model, RunOnIndex, true)
 }

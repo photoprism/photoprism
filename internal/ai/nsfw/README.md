@@ -1,6 +1,6 @@
 ## PhotoPrism — NSFW Package
 
-**Last Updated:** September 25, 2026
+**Last Updated:** October 1, 2026
 
 ### Overview
 
@@ -26,15 +26,15 @@ Two upstream callers wire the package into the runtime, and they answer an undec
 
 1. **Upload handler — [`internal/api/users_upload.go`](../../api/users_upload.go).** When `PHOTOPRISM_UPLOAD_NSFW=false` (the default, since the flag has no value of its own), supported visual uploads are screened before indexing. If any file is flagged, the entire temporary batch is deleted and the request returns `403`. If an enabled detector cannot decide, the handler logs a warning and admits the upload. A detector explicitly disabled or not configured also admits the upload.
 
-2. **Index + vision-worker pipelines — [`internal/photoprism/index_mediafile.go`](../../photoprism/index_mediafile.go), [`internal/workers/vision.go`](../../workers/vision.go), [`internal/workers/meta.go`](../../workers/meta.go).** When `PHOTOPRISM_DETECT_NSFW=true` (default `false`), the indexer marks new photos as `PhotoPrivate = true` if the model flags them. **Indexing fails neutral:** an undecided result logs a warning and writes nothing, because marking a whole library private on a missing model file would be the worse outcome and an operator could not tell those photos apart afterwards. **The vision worker fails closed:** an undecided result never changes the flag, so `vision run --force`, which re-examines photos that are already private, cannot un-private them when the detector is broken.
+2. **Index + vision-worker pipelines — [`internal/photoprism/index_mediafile.go`](../../photoprism/index_mediafile.go), [`internal/workers/vision.go`](../../workers/vision.go).** When `PHOTOPRISM_DETECT_NSFW=true` (default `false`), the indexer marks new photos as `PhotoPrivate = true` if the model flags them. **Indexing fails neutral:** an undecided result logs a warning and writes nothing, because marking a whole library private on a missing model file would be the worse outcome and an operator could not tell those photos apart afterwards. **The vision worker fails closed:** an undecided result never changes the flag, so `vision run --force`, which re-examines photos that are already private, cannot un-private them when the detector is broken.
 
 Both flags are independent: you can reject uploads without flagging existing imports, flag existing imports without policing uploads, or both. The user-facing matrix lives at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 
 ### Detection Through the Labels Model
 
-When `Type: labels` is served by an Ollama or OpenAI engine and **both** `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_EXPERIMENTAL=true` are set, [`internal/config/config.go`](../../config/config.go) flips the package-level global `vision.DetectNSFWLabels` to `true`. The Ollama and OpenAI engine builders then swap their default label prompts for `LabelPromptNSFW` and the JSON schema generators add `nsfw` + `nsfw_confidence` fields, so NSFW classification piggybacks on the label-generation call instead of running as a separate inference pass.
+When `Type: labels` is served by an Ollama or OpenAI engine, `PHOTOPRISM_DETECT_NSFW=true`, and `PHOTOPRISM_NSFW_MODEL=labels`, [`internal/config/config.go`](../../config/config.go) flips the package-level global `vision.DetectNSFWLabels` to `true`. The Ollama and OpenAI engine builders then swap their default label prompts for `LabelPromptNSFW` and the JSON schema generators add `nsfw` + `nsfw_confidence` fields, so NSFW classification piggybacks on the label-generation call instead of running as a separate inference pass.
 
-When the shortcut is active, the labels-path check in `index_mediafile.go` (`labels.IsNSFW(threshold)`) can promote a photo to private without this package being touched. The dedicated ONNX model is still used whenever the labels path does not return NSFW signals and whenever `vision run --models nsfw` is invoked directly.
+When the shortcut is active, the labels-path check in `index_mediafile.go` (`labels.IsNSFW(threshold)`) can promote a photo to private without this package being touched. In `labels` mode no dedicated detector is loaded, and uploads are admitted without screening. If `UPLOAD_NSFW=false`, a startup system warning explains the missing screening. A local classifier or disabled labels model cannot provide NSFW fields, so a second warning reports that no NSFW detection takes place. In `auto` and `none` modes label responses never change the private flag, including responses to custom prompts.
 
 ### How It Works
 
@@ -45,7 +45,15 @@ When the shortcut is active, the labels-path check in `index_mediafile.go` (`lab
 
 ### Model Selection
 
-`PHOTOPRISM_NSFW_MODEL` accepts `auto`, `none`, or a registered model name. `auto` selects the first installed registered model in preference order, starting with Yahoo OpenNSFW. When no artifact is installed, the default entry remains enabled so installing it does not persist a disabled model into `vision.yml`; startup logs provide the exact download command. `none` explicitly disables the local detector. `photoprism config` reports the resolved name, artifact path, and runtime.
+`PHOTOPRISM_NSFW_MODEL` accepts `auto`, `none`, and `labels`. In `auto` mode `vision.yml` chooses the registered, custom, or remote detector. A `Default: true` entry, or no entry, selects the first installed registered model in preference order, starting with Yahoo OpenNSFW. When no artifact is installed, the default entry remains enabled; startup logs provide the download command and restart instruction. `none` disables dedicated and label-derived detection. `labels` uses only Ollama/OpenAI labels responses when `DETECT_NSFW=true`. Mode overrides are not persisted as user disablement by `vision save`.
+
+```yaml
+Models:
+  - Type: nsfw
+    Name: falconsai_nsfw_image_detection_224
+```
+
+All local ONNX detectors, including custom models, run during indexing with `Run: auto`; explicit `Run` settings take precedence. Remote detectors retain their background scheduling. `photoprism vision ls` reports effective enabled status and artifact presence without loading inference sessions.
 
 ### Threshold
 
@@ -59,7 +67,7 @@ Thresholds:
   NSFWLabels: 75
 ```
 
-`NSFWUpload` controls the dedicated detector in the upload handler, `NSFWIndex` controls the dedicated detector in indexing and vision-worker runs, and `NSFWLabels` controls NSFW confidence from the Ollama/OpenAI labels shortcut. `NSFW` remains a shared fallback wherever a path-specific field is omitted. When a legacy configuration contains only `NSFW`, PhotoPrism migrates it to `NSFWLabels` and lets the dedicated detectors use their calibrated automatic thresholds. A path-specific `0` or `-1` explicitly selects automatic behavior even when the shared field is set.
+`NSFWUpload` controls the dedicated detector in the upload handler, `NSFWIndex` controls the dedicated detector in indexing and vision-worker runs, and `NSFWLabels` controls NSFW confidence from the Ollama/OpenAI labels shortcut. `NSFW` remains a shared fallback wherever a path-specific field is omitted. When a loaded configuration contains `NSFW` but omits `NSFWLabels`, PhotoPrism migrates it to `NSFWLabels` even if `NSFWUpload` or `NSFWIndex` is present and lets the dedicated detectors use their calibrated automatic thresholds. A path-specific `0` or `-1` explicitly selects automatic behavior even when the shared field is set.
 
 In automatic mode, the local dedicated ONNX detector uses the selected model's calibrated fallback threshold: AdamCodd FP32 uses `71.8`, AdamCodd INT8 uses `76.0`, Falconsai uses `52.9`, Freepik uses `99.2`, and Yahoo OpenNSFW uses `32.7`. The labels shortcut and remote detector results use the shared fallback of `75` because they do not expose a local detector calibration. Automatic selection is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
 

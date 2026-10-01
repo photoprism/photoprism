@@ -80,7 +80,7 @@ func TestConfig_LabelModel(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
 		installVisionTestArtifact(t, c.ModelsPath(), string(classify.ModelEfficientFormerV2S2), classify.FindModel(classify.ModelEfficientFormerV2S2).ONNX.File)
-		c.options.LabelModel = "auto"
+		c.options.LabelsModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, classify.DefaultModelName(), c.EffectiveLabelModel())
 		assert.Contains(t, c.LabelModelPath(), string(classify.DefaultModelName()))
@@ -93,7 +93,7 @@ func TestConfig_LabelModel(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
 		installVisionTestArtifact(t, c.ModelsPath(), string(classify.ModelEfficientFormerV2S2), classify.FindModel(classify.ModelEfficientFormerV2S2).ONNX.File)
-		c.options.LabelModel = "auto"
+		c.options.LabelsModel = "auto"
 		c.applyLabelModel()
 		assert.True(t, vision.Config.Models[0].Disabled)
 		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
@@ -104,7 +104,7 @@ func TestConfig_LabelModel(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
-		c.options.LabelModel = "auto"
+		c.options.LabelsModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
 		require.False(t, vision.Config.Models[0].Disabled)
@@ -125,19 +125,20 @@ func TestConfig_LabelModel(t *testing.T) {
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
-		c.options.LabelModel = "auto"
+		c.options.LabelsModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
 		assert.Empty(t, c.LabelModelPath())
 		assert.Equal(t, "none", c.LabelModelRuntime())
 	})
 	t.Run("Named", func(t *testing.T) {
-		withVisionConfig(t, vision.NewConfig())
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{vision.NewLabelModel(classify.ModelRepViTM10)}})
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
-		c.options.LabelModel = string(classify.ModelRepViTM10)
-		hook := captureLog(t)
+		c.options.LabelsModel = "auto"
+		hook := captureVisionSystemLog(t)
 		c.applyLabelModel()
+		c.reportVisionModes()
 		assert.Equal(t, classify.ModelRepViTM10, c.EffectiveLabelModel())
 		assert.Equal(t, string(classify.ModelRepViTM10), vision.Config.Model(vision.ModelTypeLabels).Name)
 		require.NotNil(t, hook.LastEntry())
@@ -147,13 +148,13 @@ func TestConfig_LabelModel(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom_21k", Path: "custom_21k", Disabled: true}
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
 		c := NewConfig(CliTestContext())
-		c.options.LabelModel = "custom_21k"
+		c.options.LabelsModel = "custom_21k"
 		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
 	})
 	t.Run("Cli", func(t *testing.T) {
-		withVisionConfig(t, vision.NewConfig())
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{vision.NewLabelModel(classify.ModelEfficientNetB0)}})
 		ctx := CliTestContext()
-		assert.NoError(t, ctx.Set("label-model", string(classify.ModelEfficientNetB0)))
+		assert.NoError(t, ctx.Set("labels-model", "auto"))
 		c := NewConfig(ctx)
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelEfficientNetB0, c.EffectiveLabelModel())
@@ -161,7 +162,7 @@ func TestConfig_LabelModel(t *testing.T) {
 	t.Run("None", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
-		c.options.LabelModel = "none"
+		c.options.LabelsModel = "none"
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
 		assert.Nil(t, vision.Config.Model(vision.ModelTypeLabels))
@@ -172,7 +173,7 @@ func TestConfig_LabelModel(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom_21k", Path: "custom_21k"}
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
 		c := NewConfig(CliTestContext())
-		c.options.LabelModel = "auto"
+		c.options.LabelsModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelName("custom_21k"), c.EffectiveLabelModel())
 		assert.Contains(t, c.LabelModelPath(), filepath.Join("custom_21k", "custom_21k.onnx"))
@@ -183,7 +184,7 @@ func TestConfig_LabelModel(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom_v2", Path: "custom.v2"}
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
 		c := NewConfig(CliTestContext())
-		c.options.LabelModel = "auto"
+		c.options.LabelsModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, filepath.Join(c.ModelsPath(), "custom.v2", "custom.v2.onnx"), c.LabelModelPath())
 	})
@@ -191,7 +192,7 @@ func TestConfig_LabelModel(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom_file", Path: "custom/model.ONNX"}
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
 		c := NewConfig(CliTestContext())
-		c.options.LabelModel = "auto"
+		c.options.LabelsModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, filepath.Join(c.ModelsPath(), "custom", "model.ONNX"), c.LabelModelPath())
 	})
@@ -246,16 +247,20 @@ func TestConfig_NSFWModel(t *testing.T) {
 
 		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.ModelYahoo), nsfw.FindModel(nsfw.ModelYahoo).ONNX.File)
 		c.applyNSFWModel()
+		c.reportUnscreenedUploads()
 		assert.Equal(t, nsfw.ModelYahoo, c.EffectiveNSFWModel())
 		require.False(t, vision.Config.Models[1].Disabled)
 	})
 	t.Run("Named", func(t *testing.T) {
-		withVisionConfig(t, vision.NewConfig())
+		model := vision.NewNsfwModel(nsfw.ModelYahoo)
+		model.Default = false
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{model}})
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
-		c.options.NsfwModel = string(nsfw.ModelYahoo)
-		hook := captureLog(t)
+		c.options.NsfwModel = "auto"
+		hook := captureVisionSystemLog(t)
 		c.applyNSFWModel()
+		c.reportUnscreenedUploads()
 		assert.Equal(t, nsfw.ModelYahoo, c.EffectiveNSFWModel())
 		assert.Contains(t, c.NsfwModelPath(), string(nsfw.ModelYahoo))
 		require.NotNil(t, hook.LastEntry())
@@ -277,7 +282,8 @@ func TestConfig_NSFWModel(t *testing.T) {
 		assert.Empty(t, c.NsfwModelPath())
 		assert.Equal(t, "none", c.NsfwModelRuntime())
 		assert.Nil(t, vision.Config.Model(vision.ModelTypeNsfw))
-		require.True(t, vision.Config.Models[1].Disabled)
+		require.False(t, vision.Config.Models[1].Disabled)
+		require.True(t, vision.Config.Models[1].DisabledByMode)
 	})
 	t.Run("CustomFromVisionYaml", func(t *testing.T) {
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{&vision.Model{
@@ -333,7 +339,7 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.NsfwModel = "none"
 		c.options.UploadNSFW = false
-		hook := captureLog(t)
+		hook := captureVisionSystemLog(t)
 
 		c.reportUnscreenedUploads()
 
@@ -347,7 +353,7 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 		c.options.ModelsPath = t.TempDir()
 		c.options.NsfwModel = "auto"
 		c.options.UploadNSFW = false
-		hook := captureLog(t)
+		hook := captureVisionSystemLog(t)
 
 		c.reportUnscreenedUploads()
 
@@ -360,7 +366,7 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 		withVisionConfig(t, &vision.ConfigValues{})
 		c := NewConfig(CliTestContext())
 		c.options.UploadNSFW = true
-		hook := captureLog(t)
+		hook := captureVisionSystemLog(t)
 
 		c.reportUnscreenedUploads()
 
@@ -372,7 +378,7 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 		c.options.ModelsPath = t.TempDir()
 		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.DefaultModelName()), nsfw.FindModel(nsfw.DefaultModelName()).ONNX.File)
 		c.options.UploadNSFW = false
-		hook := captureLog(t)
+		hook := captureVisionSystemLog(t)
 
 		c.reportUnscreenedUploads()
 
@@ -730,4 +736,143 @@ func TestConfig_InitWarnVisionKey(t *testing.T) {
 	}
 
 	assert.Equal(t, []string{"config: vision key contains characters that are removed from access tokens, so it cannot authenticate with a PhotoPrism Vision API"}, warnings)
+}
+
+// TestVisionModes verifies mode precedence and exclusive NSFW sources.
+func TestVisionModes(t *testing.T) {
+	for _, mode := range []string{"auto", "none", "labels"} {
+		t.Run(mode, func(t *testing.T) {
+			withVisionConfig(t, vision.NewConfig())
+			c := NewConfig(CliTestContext())
+			c.options.NsfwModel = mode
+			c.options.DetectNSFW = true
+			c.options.Experimental = false
+			c.applyNSFWModel()
+			assert.Equal(t, mode == "labels", c.DetectNSFWLabels())
+			assert.Equal(t, mode == "auto", c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex))
+			assert.Equal(t, mode == "auto", vision.Config.Model(vision.ModelTypeNsfw) != nil)
+			c.options.DetectNSFW = false
+			assert.False(t, c.DetectNSFWLabels())
+			assert.False(t, c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex))
+			c.options.DetectNSFW = true
+			c.Propagate()
+			assert.Equal(t, mode == "labels", vision.DetectNSFWLabels)
+			t.Cleanup(func() { vision.DetectNSFWLabels = false })
+		})
+	}
+	t.Run("DeprecatedPrecedence", func(t *testing.T) {
+		c := TestConfig()
+		previousMode, previousDisabled := c.options.LabelsModel, c.options.DisableClassification
+		t.Cleanup(func() {
+			c.options.LabelsModel, c.options.DisableClassification = previousMode, previousDisabled
+		})
+		c.options.DisableClassification = true
+		c.options.LabelsModel = ""
+		assert.True(t, c.DisableClassification())
+		assert.True(t, c.ClientUser(false).Disable.Classification)
+		c.options.LabelsModel = "auto"
+		assert.False(t, c.DisableClassification())
+		assert.False(t, c.ClientUser(false).Disable.Classification)
+		c.options.DisableClassification = false
+		c.options.LabelsModel = "none"
+		assert.True(t, c.DisableClassification())
+	})
+	t.Run("InvalidModes", func(t *testing.T) {
+		withVisionConfig(t, &vision.ConfigValues{})
+		c := NewConfig(CliTestContext())
+		c.options.LabelsModel, c.options.NsfwModel = "repvit_m1_0", "yahoo_open_nsfw"
+		assert.Equal(t, classify.ModelAuto, c.LabelModelSetting())
+		assert.Equal(t, nsfw.ModelAuto, c.NSFWModelSetting())
+		system, _ := captureLogChannels(t, c.reportVisionModes)
+		assert.Len(t, system, 2)
+	})
+	t.Run("ModeSaveRoundTrip", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.LabelsModel, c.options.NsfwModel = "none", "labels"
+		c.applyLabelModel()
+		c.applyNSFWModel()
+		filename := filepath.Join(t.TempDir(), "vision.yml")
+		require.NoError(t, vision.Config.Save(filename))
+		cfg := vision.NewConfig()
+		require.NoError(t, cfg.Load(filename))
+		require.NotNil(t, cfg.Model(vision.ModelTypeLabels))
+		require.NotNil(t, cfg.Model(vision.ModelTypeNsfw))
+	})
+}
+
+// TestVisionModeWarnings verifies warnings stay on the system channel and respect remote detectors.
+func TestVisionModeWarnings(t *testing.T) {
+	t.Run("RemoteDetector", func(t *testing.T) {
+		model := &vision.Model{Type: vision.ModelTypeNsfw, Name: "remote", Service: vision.Service{Uri: "https://example.com", Method: "POST"}}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{model}})
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.NsfwModel = "auto"
+		c.options.UploadNSFW = false
+		system, browser := captureLogChannels(t, c.reportUnscreenedUploads)
+		assert.Empty(t, system)
+		assert.Empty(t, browser)
+	})
+	t.Run("LabelsUploads", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "labels"
+		c.options.UploadNSFW = false
+		system, browser := captureLogChannels(t, c.reportUnscreenedUploads)
+		require.Len(t, system, 1)
+		assert.Contains(t, system[0], "uploads are not screened")
+		assert.Empty(t, browser)
+		c.options.UploadNSFW = true
+		system, _ = captureLogChannels(t, c.reportUnscreenedUploads)
+		assert.Empty(t, system)
+	})
+	t.Run("LocalLabelsCannotDetect", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "labels"
+		c.options.DetectNSFW = true
+		system, browser := captureLogChannels(t, c.reportVisionModes)
+		assert.True(t, namesPath(system, "no nsfw detection takes place"))
+		assert.Empty(t, browser)
+	})
+	t.Run("RemoteLabelsCanDetect", func(t *testing.T) {
+		model := &vision.Model{Type: vision.ModelTypeLabels, Engine: vision.ApiFormatOllama}
+		model.ApplyEngineDefaults()
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{model}})
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "labels"
+		c.options.DetectNSFW = true
+		system, _ := captureLogChannels(t, c.reportVisionModes)
+		assert.Empty(t, system)
+	})
+}
+
+// captureVisionSystemLog captures operator-only configuration messages.
+func captureVisionSystemLog(t *testing.T) *test.Hook {
+	t.Helper()
+	previous := event.SystemLog
+	logger, hook := test.NewNullLogger()
+	event.SystemLog = logger
+	t.Cleanup(func() { event.SystemLog = previous })
+	return hook
+}
+
+// TestModeDisablesAllEntries verifies earlier entries cannot bypass an option override.
+func TestModeDisablesAllEntries(t *testing.T) {
+	cfg := vision.NewConfig()
+	cfg.Models = append(cfg.Models, &vision.Model{Type: vision.ModelTypeLabels, Name: "custom"}, &vision.Model{Type: vision.ModelTypeNsfw, Name: "custom"})
+	withVisionConfig(t, cfg)
+	c := NewConfig(CliTestContext())
+	c.options.LabelsModel, c.options.NsfwModel = "none", "labels"
+	c.applyLabelModel()
+	c.applyNSFWModel()
+	assert.Nil(t, vision.Config.Model(vision.ModelTypeLabels))
+	assert.Nil(t, vision.Config.Model(vision.ModelTypeNsfw))
+	c.options.LabelsModel, c.options.NsfwModel = "auto", "auto"
+	c.applyLabelModel()
+	c.applyNSFWModel()
+	require.NotNil(t, vision.Config.Model(vision.ModelTypeLabels))
+	require.NotNil(t, vision.Config.Model(vision.ModelTypeNsfw))
+	assert.Equal(t, "custom", vision.Config.Model(vision.ModelTypeLabels).Name)
 }

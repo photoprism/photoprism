@@ -528,7 +528,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-classification",
-			Usage:   "disables all image classification and label generation",
+			Usage:   "disables image classification (deprecated, use labels-model none)",
 			EnvVars: EnvVars("DISABLE_CLASSIFICATION"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -1351,14 +1351,14 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("VISION_FILTER"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "label-model",
-			Usage:   "image classification model `NAME` (" + classify.ModelUsageString() + ")",
-			EnvVars: EnvVars("LABEL_MODEL"),
+			Name:    "labels-model",
+			Usage:   "image classification `MODE` (auto, none)",
+			EnvVars: EnvVars("LABELS_MODEL"),
 		},
 		DocDefault: string(classify.ModelAuto)}, {
 		Flag: &cli.StringFlag{
 			Name:    "nsfw-model",
-			Usage:   "NSFW detection model `NAME` (" + nsfw.ModelUsageString() + ")",
+			Usage:   "NSFW detection `MODE` (auto, none, labels)",
 			EnvVars: EnvVars("NSFW_MODEL"),
 		},
 		DocDefault: string(nsfw.ModelAuto)}, {

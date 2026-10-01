@@ -50,39 +50,40 @@ func (c *Config) LoadVisionConfig() {
 
 	c.applyLabelModel()
 	c.applyNSFWModel()
+	c.reportVisionModes()
 	c.reportUnscreenedUploads()
 }
 
-// NSFWModelSetting returns the configured NSFW model without resolving auto.
+// NSFWModelSetting returns the dedicated, disabled, or labels detection mode.
 func (c *Config) NSFWModelSetting() nsfw.ModelName {
 	if c == nil {
 		return nsfw.ModelNone
 	}
-
-	return nsfw.ParseModelName(c.options.NsfwModel)
+	switch strings.ToLower(strings.TrimSpace(c.options.NsfwModel)) {
+	case "none":
+		return nsfw.ModelNone
+	case "labels":
+		return nsfw.ModelName("labels")
+	default:
+		return nsfw.ModelAuto
+	}
 }
 
 // EffectiveNSFWModel returns the local detector selected for this instance.
 func (c *Config) EffectiveNSFWModel() nsfw.ModelName {
-	setting := c.NSFWModelSetting()
-	if vision.Config != nil {
-		if model := configuredVisionModel(vision.Config, vision.ModelTypeNsfw); model != nil && model.Disabled {
-			return nsfw.ModelNone
-		}
+	if c.NSFWModelSetting() != nsfw.ModelAuto {
+		return nsfw.ModelNone
 	}
-
-	if setting != nsfw.ModelAuto {
-		return setting
-	}
-
 	if vision.Config != nil {
 		if model := configuredVisionModel(vision.Config, vision.ModelTypeNsfw); model != nil {
+			if model.Disabled || model.DisabledByMode {
+				return nsfw.ModelNone
+			}
 			if !model.Default {
 				return nsfw.NormalizeModelName(nsfw.ModelName(model.Name))
 			}
 		}
 	}
-
 	return c.installedNSFWModel()
 }
 
@@ -107,92 +108,65 @@ func (c *Config) applyNSFWModel() {
 	if c == nil || vision.Config == nil {
 		return
 	}
-
 	current := configuredVisionModel(vision.Config, vision.ModelTypeNsfw)
-	setting := c.NSFWModelSetting()
-	if setting == nsfw.ModelAuto && current != nil && !current.Default {
+	if current == nil {
+		current = vision.NewNsfwModel(nsfw.DefaultModelName())
+		vision.Config.SetModel(current)
+	}
+	for _, model := range vision.Config.Models {
+		if model != nil && model.Type == vision.ModelTypeNsfw {
+			model.DisabledByMode = c.NSFWModelSetting() != nsfw.ModelAuto
+		}
+	}
+	if current.DisabledByMode || !current.Default {
 		return
 	}
-
-	selected := setting
-	if setting == nsfw.ModelAuto {
-		selected = c.installedNSFWModel()
-	}
-
-	if selected == nsfw.ModelNone {
-		if setting == nsfw.ModelAuto {
-			if current == nil {
-				vision.Config.SetModel(vision.NewNsfwModel(nsfw.DefaultModelName()))
-			}
-
-			return
-		}
-
-		if current == nil {
-			current = vision.NewNsfwModel(nsfw.DefaultModelName())
-		} else {
-			current = current.Clone()
-		}
-		if current != nil {
-			current.Disabled = true
-			vision.Config.SetModel(current)
-		}
-		return
-	}
-
-	if registered := vision.NewNsfwModel(selected); registered != nil {
-		if description := nsfw.FindModel(selected); description != nil && !description.Installed(c.ModelsPath()) {
-			log.Warnf("config: nsfw model %s is not installed; run scripts/dist/download-models.sh %s", clean.Log(string(selected)), clean.Log(string(selected)))
-		}
-		if current != nil {
-			registered.Run = current.Run
-			if setting == nsfw.ModelAuto {
-				registered.Disabled = current.Disabled
-			}
-		}
+	if selected := c.installedNSFWModel(); selected != nsfw.ModelNone {
+		registered := vision.NewNsfwModel(selected)
+		registered.Default, registered.Run, registered.Disabled = true, current.Run, current.Disabled
 		vision.Config.SetModel(registered)
-		return
 	}
-
-	if current != nil && nsfw.NormalizeModelName(nsfw.ModelName(current.Name)) == selected {
-		return
-	}
-
-	vision.Config.SetModel(&vision.Model{Type: vision.ModelTypeNsfw, Name: string(selected), Path: string(selected)})
 }
 
 // reportUnscreenedUploads warns when upload screening has no configured detector.
 func (c *Config) reportUnscreenedUploads() {
-	if c.UploadNSFW() {
+	if c == nil || c.UploadNSFW() {
 		return
 	}
-
-	if c.NSFWModelSetting() == nsfw.ModelAuto && c.installedNSFWModel() == nsfw.ModelNone {
-		log.Warnf("config: uploads cannot be screened because no nsfw model is installed; run scripts/dist/download-models.sh %s and restart PhotoPrism", nsfw.DefaultModelName())
+	if c.NSFWModelSetting() == nsfw.ModelName("labels") {
+		event.SystemWarn([]string{"config", "uploads are not screened in nsfw-model labels mode"})
 		return
 	}
-
-	if vision.Config.Model(vision.ModelTypeNsfw) != nil {
+	if vision.Config == nil || vision.Config.Model(vision.ModelTypeNsfw) == nil {
+		event.SystemWarn([]string{"config", "uploads are screened for offensive content, but no nsfw model is configured"})
 		return
 	}
-
-	log.Warnf("config: uploads are screened for offensive content, but no nsfw model is configured")
+	model := vision.Config.Model(vision.ModelTypeNsfw)
+	if uri, _ := model.Endpoint(); uri != "" {
+		return
+	}
+	if description := nsfw.FindModel(nsfw.ModelName(model.Name)); description != nil && !description.Installed(c.ModelsPath()) {
+		event.SystemWarn([]string{"config", "uploads cannot be screened because nsfw model %s is not installed; run scripts/dist/download-models.sh %s and restart PhotoPrism"}, model.Name, model.Name)
+	}
 }
 
-// LabelModelSetting returns the configured label model without resolving auto.
+// LabelModelSetting returns the labels mode, including deprecated disablement.
 func (c *Config) LabelModelSetting() classify.ModelName {
 	if c == nil {
 		return classify.ModelNone
 	}
-
-	return classify.ParseModelName(c.options.LabelModel)
+	setting := strings.ToLower(strings.TrimSpace(c.options.LabelsModel))
+	if setting == "none" || c.options.LabelsModel == "" && c.options.DisableClassification {
+		return classify.ModelNone
+	}
+	return classify.ModelAuto
 }
 
 // EffectiveLabelModel returns the local classifier selected for this instance.
 func (c *Config) EffectiveLabelModel() classify.ModelName {
 	setting := c.LabelModelSetting()
 	if vision.Config != nil {
-		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil && model.Disabled {
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil && (model.Disabled || model.DisabledByMode) {
 			return classify.ModelNone
 		}
 	}
@@ -228,67 +202,29 @@ func (c *Config) installedLabelModel() classify.ModelName {
 	return classify.ModelNone
 }
 
-// applyLabelModel applies LABEL_MODEL to the local labels entry in vision.Config.
+// applyLabelModel applies LABELS_MODEL to the local labels entry in vision.Config.
 func (c *Config) applyLabelModel() {
 	if c == nil || vision.Config == nil {
 		return
 	}
-
 	current := configuredVisionModel(vision.Config, vision.ModelTypeLabels)
-	setting := c.LabelModelSetting()
-	if setting == classify.ModelAuto && current != nil && !current.Default {
+	if current == nil {
+		current = vision.NewLabelModel(classify.DefaultModelName())
+		vision.Config.SetModel(current)
+	}
+	for _, model := range vision.Config.Models {
+		if model != nil && model.Type == vision.ModelTypeLabels {
+			model.DisabledByMode = c.LabelModelSetting() == classify.ModelNone
+		}
+	}
+	if current.DisabledByMode || !current.Default {
 		return
 	}
-
-	selected := setting
-	if setting == classify.ModelAuto {
-		selected = c.installedLabelModel()
-	}
-
-	if selected == classify.ModelNone {
-		if setting == classify.ModelAuto {
-			if current == nil {
-				vision.Config.SetModel(vision.NewLabelModel(classify.DefaultModelName()))
-			}
-
-			return
-		}
-
-		if current == nil {
-			current = vision.NewLabelModel(classify.DefaultModelName())
-		} else {
-			current = current.Clone()
-		}
-		if current != nil {
-			current.Disabled = true
-			vision.Config.SetModel(current)
-		}
-		return
-	}
-
-	if registered := vision.NewLabelModel(selected); registered != nil {
-		if description := classify.FindModel(selected); description != nil && !description.Installed(c.ModelsPath()) {
-			log.Warnf("config: label model %s is not installed; run scripts/dist/download-models.sh %s", clean.Log(string(selected)), clean.Log(string(selected)))
-		}
-		if current != nil {
-			registered.Run = current.Run
-			if setting == classify.ModelAuto {
-				registered.Disabled = current.Disabled
-			}
-		}
+	if selected := c.installedLabelModel(); selected != classify.ModelNone {
+		registered := vision.NewLabelModel(selected)
+		registered.Default, registered.Run, registered.Disabled = true, current.Run, current.Disabled
 		vision.Config.SetModel(registered)
-		return
 	}
-
-	if current != nil && classify.NormalizeModelName(classify.ModelName(current.Name)) == selected {
-		return
-	}
-
-	vision.Config.SetModel(&vision.Model{
-		Type: vision.ModelTypeLabels,
-		Name: string(selected),
-		Path: string(selected),
-	})
 }
 
 // configuredVisionModel returns the latest configured model of a type, including disabled models.
@@ -357,7 +293,7 @@ func (c *Config) VisionModelShouldRun(t vision.ModelType, when vision.RunType) b
 		return false
 	}
 
-	if t == vision.ModelTypeNsfw && !c.DetectNSFW() {
+	if t == vision.ModelTypeNsfw && (!c.DetectNSFW() || c.NSFWModelSetting() != nsfw.ModelAuto) {
 		return false
 	}
 
@@ -632,4 +568,44 @@ func (c *Config) warnVisionKey() {
 			event.SystemWarn([]string{"config", "%s"}, w)
 		}
 	}
+}
+
+// DetectNSFWLabels reports whether label responses may flag offensive content.
+func (c *Config) DetectNSFWLabels() bool {
+	return c != nil && c.DetectNSFW() && c.NSFWModelSetting() == nsfw.ModelName("labels")
+}
+
+// reportVisionModes reports invalid modes and unavailable label detection at startup.
+func (c *Config) reportVisionModes() {
+	for _, mode := range []struct {
+		name, value string
+		labels      bool
+	}{
+		{"labels-model", c.options.LabelsModel, false}, {"nsfw-model", c.options.NsfwModel, true},
+	} {
+		value := strings.ToLower(strings.TrimSpace(mode.value))
+		if value != "" && value != "auto" && value != "none" && (!mode.labels || value != "labels") {
+			event.SystemWarn([]string{"config", "unsupported %s mode %s, using auto; choose the model in vision.yml"}, mode.name, clean.Log(mode.value))
+		}
+	}
+	if model := vision.Config.Model(vision.ModelTypeLabels); model != nil {
+		if uri, _ := model.Endpoint(); uri == "" {
+			if description := classify.FindModel(classify.ModelName(model.Name)); description != nil && !description.Installed(c.ModelsPath()) {
+				event.SystemWarn([]string{"config", "label model %s is not installed; run scripts/dist/download-models.sh %s and restart PhotoPrism"}, model.Name, model.Name)
+			}
+		}
+	}
+	if !c.DetectNSFWLabels() {
+		return
+	}
+	model := vision.Config.Model(vision.ModelTypeLabels)
+	if model != nil {
+		if uri, method := model.Endpoint(); uri != "" && method != "" {
+			switch model.EndpointRequestFormat() {
+			case vision.ApiFormatOpenAI, vision.ApiFormatOllama:
+				return
+			}
+		}
+	}
+	event.SystemWarn([]string{"config", "no nsfw detection takes place in labels mode because the labels model cannot return nsfw fields"})
 }

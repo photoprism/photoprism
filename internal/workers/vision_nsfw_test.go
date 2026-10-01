@@ -5,7 +5,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // TestNsfwPrivateFlag verifies that unavailable decisions preserve the private flag.
@@ -47,4 +50,38 @@ func TestNsfwPrivateFlag(t *testing.T) {
 		assert.True(t, flag)
 		assert.False(t, write)
 	})
+}
+
+// TestLabelsPrivateFlag verifies the shared worker policy never applies labels outside labels mode.
+func TestLabelsPrivateFlag(t *testing.T) {
+	previous := vision.Config
+	vision.Config = vision.NewConfig()
+	t.Cleanup(func() { vision.Config = previous })
+	labels := classify.Labels{{Name: "custom prompt", NSFW: true}}
+	for _, mode := range []string{"auto", "none", "labels"} {
+		t.Run(mode, func(t *testing.T) {
+			conf := config.NewMinimalTestConfig(t.TempDir())
+			conf.Options().NsfwModel = mode
+			conf.Options().DetectNSFW = true
+			flag, write := labelsPrivateFlag(conf, false, labels)
+			assert.Equal(t, mode == "labels", flag)
+			assert.Equal(t, mode == "labels", write)
+			flag, write = labelsPrivateFlag(conf, true, labels)
+			assert.True(t, flag)
+			assert.False(t, write)
+			conf.Options().DetectNSFW = false
+			flag, write = labelsPrivateFlag(conf, false, labels)
+			assert.False(t, flag)
+			assert.False(t, write)
+		})
+	}
+	conf := config.NewMinimalTestConfig(t.TempDir())
+	conf.Options().NsfwModel, conf.Options().DetectNSFW = "labels", true
+	flag, write := labelsPrivateFlag(conf, false, nil)
+	assert.False(t, flag)
+	assert.False(t, write)
+	vision.Config = nil
+	flag, write = labelsPrivateFlag(conf, false, labels)
+	assert.False(t, flag)
+	assert.False(t, write)
 }

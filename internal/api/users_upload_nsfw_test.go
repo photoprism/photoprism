@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -203,4 +204,33 @@ func TestNsfwUploadStatusSystemLog(t *testing.T) {
 		require.Len(t, systemHook.AllEntries(), 1)
 		assert.Equal(t, "nsfw: upload › could not check broken.heic › preview failed", systemHook.LastEntry().Message)
 	})
+}
+
+// TestUploadNSFWModes verifies mode overrides skip dedicated screening without initializing it.
+func TestUploadNSFWModes(t *testing.T) {
+	for _, mode := range []string{"auto", "none", "labels"} {
+		t.Run(mode, func(t *testing.T) {
+			previous := vision.Config
+			vision.Config = vision.NewConfig()
+			t.Cleanup(func() { vision.Config = previous })
+			conf := config.NewMinimalTestConfig(t.TempDir())
+			conf.Options().NsfwModel = mode
+			conf.Options().UploadNSFW = false
+			conf.LoadVisionConfig()
+			stubNSFW(t, nil, nil)
+			calls := 0
+			vision.SetNSFWUploadFunc(func(vision.Files, media.Src) ([]nsfw.Result, error) {
+				calls++
+				return []nsfw.Result{nsfw.NewResult(0.99, nsfw.DefaultThreshold)}, nil
+			})
+			result := nsfwUploadStatus("custom.jpg")
+			if mode == "auto" {
+				assert.Equal(t, nsfw.StatusUnsafe, result)
+				assert.Equal(t, 1, calls)
+			} else {
+				assert.Equal(t, nsfw.StatusSafe, result)
+				assert.Zero(t, calls)
+			}
+		})
+	}
 }

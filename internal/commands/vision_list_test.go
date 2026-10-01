@@ -1,9 +1,19 @@
 package commands
 
 import (
+	"encoding/json"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestVisionEndpoint(t *testing.T) {
@@ -101,4 +111,47 @@ func TestVisionEndpoint(t *testing.T) {
 			assert.Equal(t, tc.want, visionEndpoint(tc.uri, tc.method))
 		})
 	}
+}
+
+// TestVisionInstalled verifies listing inspects artifacts without loading models.
+func TestVisionInstalled(t *testing.T) {
+	modelsPath := t.TempDir()
+	model := vision.NewLabelModel(classify.DefaultModelName())
+	assert.Equal(t, "no", visionInstalled(model, modelsPath))
+	description := classify.DefaultModel()
+	filename := description.ONNX.FilePath(filepath.Join(modelsPath, string(description.Name)))
+	require.NoError(t, os.MkdirAll(filepath.Dir(filename), fs.ModeDir))
+	require.NoError(t, os.WriteFile(filename, []byte("artifact"), fs.ModeFile))
+	model.DisabledByMode = true
+	assert.Equal(t, "yes", visionInstalled(model, modelsPath))
+	detector := vision.NewNsfwModel(nsfw.ModelYahoo)
+	assert.Equal(t, "no", visionInstalled(detector, modelsPath))
+	custom := &vision.Model{Type: vision.ModelTypeNsfw, Name: "custom", Path: "custom/model.onnx"}
+	assert.Equal(t, "no", visionInstalled(custom, modelsPath))
+	require.NoError(t, os.MkdirAll(filepath.Join(modelsPath, "custom"), fs.ModeDir))
+	require.NoError(t, os.WriteFile(filepath.Join(modelsPath, "custom/model.onnx"), []byte("artifact"), fs.ModeFile))
+	assert.Equal(t, "yes", visionInstalled(custom, modelsPath))
+	custom.Service = vision.Service{Uri: "https://example.com", Method: "POST"}
+	assert.Equal(t, "n/a", visionInstalled(custom, modelsPath))
+	assert.Equal(t, "n/a", visionInstalled(&vision.Model{Type: vision.ModelTypeCaption}, modelsPath))
+}
+
+// TestVisionListCommand verifies installation status is rendered in table and JSON output.
+func TestVisionListCommand(t *testing.T) {
+	t.Run("Table", func(t *testing.T) {
+		output, err := RunWithTestContext(VisionListCommand, []string{"ls"})
+		require.NoError(t, err)
+		assert.Contains(t, strings.ToLower(output), "installed")
+	})
+	t.Run("JSON", func(t *testing.T) {
+		output, err := RunWithTestContext(VisionListCommand, []string{"ls", "--json"})
+		require.NoError(t, err)
+		var rows []map[string]any
+		require.NoError(t, json.Unmarshal([]byte(output), &rows))
+		require.NotEmpty(t, rows)
+		for _, row := range rows {
+			assert.Contains(t, row, "installed")
+			assert.Contains(t, row, "status")
+		}
+	})
 }

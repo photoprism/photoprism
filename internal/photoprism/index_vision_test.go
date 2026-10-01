@@ -59,7 +59,7 @@ func TestIndexCaptionSource(t *testing.T) {
 	})
 }
 
-// TestLabelsMarkNSFW verifies label signals cannot bypass the NSFW detection option.
+// TestLabelsMarkNSFW verifies label-derived NSFW flags apply only when NSFW detection is enabled.
 func TestLabelsMarkNSFW(t *testing.T) {
 	labels := classify.Labels{{Name: "test", NSFW: true}}
 	assert.False(t, labelsMarkNSFW(labels, false, 75))

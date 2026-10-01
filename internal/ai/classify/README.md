@@ -1,6 +1,6 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** September 21, 2026
+**Last Updated:** October 1, 2026
 
 ### Overview
 
@@ -17,11 +17,21 @@ The default and optional ImageNet-1k candidates share the 1000-entry vocabulary 
 - NCHW/NHWC layout, RGB/BGR order, per-channel mean and standard deviation;
 - resize mode, short edge, crop ratio, and interpolation.
 
-The graph is inspected at initialization and must agree with all recorded structural fields. A registered checksum mismatch, multiple outputs, a dynamic output width, a 1001-class background offset, non-finite output, or a label-count mismatch disables that labels model instead of substituting another named model.
+The graph is inspected at initialization and must agree with all recorded structural fields. A registered checksum mismatch, multiple outputs, a dynamic output width, a 1001-class background offset, non-finite output, or a label-count mismatch prevents inference instead of substituting another model. Initialization errors are cached separately from operator disablement; restart PhotoPrism after installing or repairing an artifact.
 
 ### Configuration
 
-`PHOTOPRISM_LABEL_MODEL` accepts `auto`, `none`, a registered name, or a custom model name. `auto` selects the first installed registered model in preference order, starting with `efficientformerv2_s2`, and resolves to `none` when no artifact is installed. `none` disables local classification. `photoprism config` reports `label-model`, `label-model-path`, and `label-model-runtime`.
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies only when `LABELS_MODEL` is unset; explicit `auto` overrides it.
+
+Select a registered alternative in `vision.yml`:
+
+```yaml
+Models:
+  - Type: labels
+    Name: repvit_m1_0
+```
+
+Alternative label models run after indexing by default; set `Run: on-index` on the entry to run inline. `photoprism vision ls` reports the selected models, effective enabled status, and whether their artifacts are installed; remote models show installation status `n/a`.
 
 A custom model is resolved under `PHOTOPRISM_MODELS_PATH` as:
 
@@ -77,7 +87,7 @@ EfficientFormerV2 S2 is the default because the reviewed 402-image Wikimedia cor
 
 ### Troubleshooting
 
-- **The named model is disabled:** Check the reported model path, file SHA-256, ONNX Runtime installation, and warning log. A named selection never falls back to different weights.
+- **The selected model cannot initialize:** Check the reported model path, file SHA-256, ONNX Runtime installation, and warning log. A named selection never falls back to different weights.
 - **The model output does not match labels:** Provide the exact `LabelFile`; shifted indices are rejected rather than accepted silently.
 - **Confidence behavior changed:** Use the benchmark’s threshold maps and rule-activation drift. Do not reuse the NASNet threshold without corpus calibration.
 - **A custom model produces poor labels:** Declare its color order, normalization, resize/crop convention, output type, and label file in `vision.yml` or embedded metadata.

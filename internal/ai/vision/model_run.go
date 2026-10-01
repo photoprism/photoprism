@@ -109,13 +109,24 @@ func (m *Model) ShouldRun(when RunType) bool {
 		return should
 	}
 
+	uri, _ := m.Endpoint()
+	if m.Type == ModelTypeNsfw && m.TensorFlow == nil && uri == "" && !m.Service.UriUnresolved() {
+		return when != RunNewlyIndexed && when != RunNever
+	}
+
+	inline := m.IsDefault()
+	// Automatic selection keeps Default set even when an alternative classifier runs after indexing.
+	if m.Type == ModelTypeLabels && m.ONNX != nil && uri == "" {
+		inline = m.Name == NasnetModel.Name
+	}
+
 	switch when {
 	case RunAuto, RunManual, RunOnDemand, RunOnSchedule:
 		return true
 	case RunAlways, RunOnIndex:
-		return m.IsDefault()
+		return inline
 	case RunNewlyIndexed:
-		return !m.IsDefault()
+		return !inline
 	}
 
 	return false

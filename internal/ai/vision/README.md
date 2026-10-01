@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** September 29, 2026
+**Last Updated:** October 1, 2026
 
 ### Overview
 
@@ -77,9 +77,9 @@ Phrase mode pairs with a system prompt that does not demand single-word nouns �
 
 | Value           | When it runs                                                     | Recommended use                                |
 |:----------------|:-----------------------------------------------------------------|:-----------------------------------------------|
-| `auto`          | Built-in local defaults during index; external via metadata/schedule | Leave as-is for most setups.                 |
+| `auto`          | Local NSFW and default labels during index; other models via metadata/schedule | Leave as-is for most setups.                 |
 | `manual`        | Only when explicitly invoked (CLI/API)                           | Experiments and diagnostics.                   |
-| `on-index`      | During indexing + manual                                         | Fast built-in models only.                     |
+| `on-index`      | During indexing + manual                                         | Fast local models.                     |
 | `newly-indexed` | Metadata worker after indexing + manual                          | External/Ollama/OpenAI without slowing import. |
 | `on-demand`     | Manual, metadata worker, and scheduled jobs                      | Broad coverage without index path.             |
 | `on-schedule`   | Scheduled jobs + manual                                          | Nightly/cron-style runs.                       |
@@ -250,9 +250,15 @@ Models:
 - Sources: Labels produced by local ONNX models are recorded with source `image`; overriding the source isn’t supported yet.
 - Config file: `vision.yml` is the conventional name; in the latest version, `.yaml` is also supported by the loader.
 
+### Labels Model Selection
+
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`; model names belong in `vision.yml`. A registered `Type: labels` entry loads pinned artifact metadata, while custom and remote entries retain their configuration. `Default: true` or an absent entry chooses the first installed classifier. Explicit user disablement is preserved. The deprecated `DISABLE_CLASSIFICATION` is consulted only when `LABELS_MODEL` is unset. Alternative label models run after indexing unless `Run: on-index` is configured.
+
+Missing artifacts and initialization failures do not change saved disablement. Initialization failures are cached until restart; startup warnings name the download command for missing registered artifacts.
+
 ### CLI Quick Reference
 
-- List models: `photoprism vision ls` (shows resolved IDs, engines, options, run mode, disabled flag).
+- List models: `photoprism vision ls` (shows resolved IDs, engines, options, run mode, effective enabled status, artifact installation status).
 - Run a model: `photoprism vision run -m labels --count 5` (use `--force` to bypass `Run` rules).
 - Validate config: `photoprism vision ls --json` to confirm env-expanded values without triggering calls.
 
@@ -265,13 +271,13 @@ Models:
 
 ### NSFW Detection
 
-NSFW is wired through the same model registry as labels, captions, and faces. `Type: nsfw` resolves to the registered ONNX classifier selected by `PHOTOPRISM_NSFW_MODEL`, and can be overridden in `vision.yml` with a custom ONNX graph or an Ollama or OpenAI endpoint.
+NSFW is wired through the same model registry as labels, captions, and faces. `PHOTOPRISM_NSFW_MODEL` chooses `auto`, `none`, or `labels`. In `auto` mode, a `Type: nsfw` entry in `vision.yml` selects a registered detector, custom ONNX graph, or remote endpoint; `Default: true` or an absent entry selects the first installed registered detector. Local ONNX NSFW detectors run inline during indexing unless an explicit `Run` setting says otherwise.
 
-There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism can ask the labels call to include `nsfw` + `nsfw_confidence` in the same response. This is gated by the package-level global `DetectNSFWLabels`, set from `config.go` as `DetectNSFW() && Experimental()` — both `PHOTOPRISM_DETECT_NSFW=true` **and** `PHOTOPRISM_EXPERIMENTAL=true` are required. When either flag is off, the labels prompt stays on `LabelPromptDefault` (no NSFW fields), and `labels.IsNSFW()` cannot trigger.
+There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism can ask the labels call to include `nsfw` + `nsfw_confidence` in the same response. This is gated by the package-level global `DetectNSFWLabels`, set from `config.go` when `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels`. This mode does not require `EXPERIMENTAL`. It disables dedicated detection and upload screening; startup system warnings explain unscreened uploads when `UPLOAD_NSFW=false` and unavailable detection when the labels model cannot produce NSFW fields.
 
-The runtime guards in `internal/photoprism/index_mediafile.go` and `internal/workers/vision.go` additionally short-circuit any NSFW promotion on `conf.DetectNSFW()`. The dedicated `Type: nsfw` model is filtered out of scheduled runs by `VisionModelShouldRun` whenever `DetectNSFW()` is false.
+The indexer, metadata worker, and vision worker apply label-derived NSFW flags only in `labels` mode with `DETECT_NSFW=true`. Other modes ignore NSFW fields even when a custom prompt requests them. Dedicated detection runs only in `auto` mode, and indexing additionally requires `DETECT_NSFW=true`.
 
-`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFWUpload` and `Thresholds.NSFWIndex` independently control the dedicated detector for uploads and indexing, while `Thresholds.NSFWLabels` controls the Ollama/OpenAI labels fast path. `Thresholds.NSFW` remains a shared fallback for omitted path-specific fields. Both `0` and `-1` select automatic behavior; explicit thresholds range from `1` through `100`. A legacy configuration containing only `NSFW` is migrated to `NSFWLabels`, so the dedicated local detectors use their calibrated model defaults. Labels and remote results without local calibration use the package fallback of `75`. A custom dedicated detector without `DefaultThreshold` uses the package fallback of `0.98`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
+`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFWUpload` and `Thresholds.NSFWIndex` independently control the dedicated detector for uploads and indexing, while `Thresholds.NSFWLabels` controls the Ollama/OpenAI labels fast path. `Thresholds.NSFW` remains a shared fallback for omitted path-specific fields. Both `0` and `-1` select automatic behavior; explicit thresholds range from `1` through `100`. A loaded configuration containing `NSFW` and no `NSFWLabels` is migrated to `NSFWLabels`, independently of upload and index overrides, so the dedicated local detectors use their calibrated model defaults. Labels and remote results without local calibration use the package fallback of `75`. A custom dedicated detector without `DefaultThreshold` uses the package fallback of `0.98`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 
 ### Model Unload on Idle
 

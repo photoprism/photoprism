@@ -16,20 +16,23 @@ const (
 	nsfwThresholdUpload
 )
 
-var nsfwFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+var nsfwFunc = nsfwIndex
+var nsfwUploadFunc = nsfwUpload
+
+// nsfwIndex evaluates images with the indexing threshold.
+func nsfwIndex(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
 	return nsfwInternalContext(images, mediaSrc, nsfwThresholdIndex)
 }
 
-var nsfwUploadFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+// nsfwUpload evaluates images with the upload threshold.
+func nsfwUpload(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
 	return nsfwInternalContext(images, mediaSrc, nsfwThresholdUpload)
 }
 
 // SetNSFWFunc overrides the Vision NSFW detector. Intended for tests.
 func SetNSFWFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
 	if fn == nil {
-		nsfwFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
-			return nsfwInternalContext(images, mediaSrc, nsfwThresholdIndex)
-		}
+		nsfwFunc = nsfwIndex
 		return
 	}
 
@@ -39,9 +42,7 @@ func SetNSFWFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
 // SetNSFWUploadFunc overrides the upload-specific Vision NSFW detector. Intended for tests.
 func SetNSFWUploadFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
 	if fn == nil {
-		nsfwUploadFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
-			return nsfwInternalContext(images, mediaSrc, nsfwThresholdUpload)
-		}
+		nsfwUploadFunc = nsfwUpload
 		return
 	}
 

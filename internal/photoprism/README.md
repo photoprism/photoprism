@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** September 28, 2026
+**Last Updated:** October 1, 2026
 
 ### Overview
 
@@ -41,9 +41,9 @@
 
 - Indexing: use `IndexMain` / `IndexRelated` via `IndexMediaFile` helpers; prefer `IndexOptions` factories.
 - Import: run via `ImportWorker` with `ImportOptions`; files imported together are stacked as one related set, files from separate batches only through a shared document ID or matching capture metadata.
-- Converters: use `Convert.ToImage` / `Convert.ToVideo` / `Convert.ToJson`; options come from `config.Config`.
+- Converters: use `Convert.ToImage` / `Convert.ToVideo` / `Convert.ToJson` / `Convert.TempPreview`; options come from `config.Config`.
 - Vision: thumbnails for vision models are selected in `mediafile_vision.go`; ensure models exist in `internal/ai/vision`.
-- NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when the labels-path NSFW shortcut (LLM with `DETECT_NSFW=true && EXPERIMENTAL=true`) hits or, as a fallback, when `m.DetectNSFW()` returns true and `PHOTOPRISM_DETECT_NSFW=true`. Both promotions short-circuit when `DetectNSFW()` is false. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
+- NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when `DETECT_NSFW=true` and the selected NSFW source reports unsafe content. `NSFW_MODEL=labels` uses only LLM labels; `auto` uses the dedicated detector, whose `m.DetectNSFW()` returns an `nsfw.Result`. `none` disables both sources. Label NSFW fields are ignored outside `labels` mode. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
 - Tests: targeted runs keep iteration fast, e.g.  
   - `go test ./internal/photoprism -run TestMediaFile_ -count=1`  
   - `go test ./internal/photoprism/index_mediafile_test.go -run TestIndexMediaFile`  

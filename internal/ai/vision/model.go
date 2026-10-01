@@ -61,6 +61,8 @@ type Model struct {
 	Service           Service               `yaml:"Service,omitempty" json:"service"`
 	Path              string                `yaml:"Path,omitempty" json:"-"`
 	Disabled          bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
+	DisabledByMode    bool                  `yaml:"-" json:"-"` // DisabledByMode applies an option override excluded from saved configuration.
+	classifyErr       error
 	classifyModel     *classify.Model
 	faceModel         face.Embedder
 	nsfwModel         *nsfw.Model
@@ -723,6 +725,9 @@ func (m *Model) ClassifyModel() *classify.Model {
 	if m.classifyModel != nil {
 		return m.classifyModel
 	}
+	if m.classifyErr != nil {
+		return nil
+	}
 
 	switch {
 	case m.Name == "":
@@ -733,8 +738,8 @@ func (m *Model) ClassifyModel() *classify.Model {
 		if model := classify.NewRegisteredModel(GetModelsPath(), classify.ModelName(m.Name), OnnxProvider, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
-			m.Disabled = true
-			log.Warnf("vision: %s (disable %s model)", err, clean.Log(m.Name))
+			m.classifyErr = err
+			log.Warnf("vision: %s (init %s model; fix or install it, then restart PhotoPrism)", err, clean.Log(m.Name))
 			return nil
 		} else {
 			m.classifyModel = model
@@ -792,8 +797,8 @@ func (m *Model) ClassifyModel() *classify.Model {
 		}); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
-			m.Disabled = true
-			log.Warnf("vision: %s (disable %s)", err, m.Path)
+			m.classifyErr = err
+			log.Warnf("vision: %s (init %s; fix or install it, then restart PhotoPrism)", err, m.Path)
 			return nil
 		} else {
 			m.classifyModel = model

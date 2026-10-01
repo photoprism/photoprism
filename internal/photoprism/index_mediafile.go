@@ -970,7 +970,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				labels = append(labels, extraLabels...)
 			}
 
-			isNSFW = labelsMarkNSFW(labels, o.DetectNsfw, vision.Config.Thresholds.GetNSFWLabels())
+			isNSFW = labelsMarkNSFW(labels, o.DetectNSFWLabels, vision.Config.Thresholds.GetNSFWLabels())
 		}
 
 		// Decouple NSFW detection from label generation.

@@ -56,7 +56,7 @@ func TestModelCloneExportedFields(t *testing.T) {
 	modelType := sourceValue.Type()
 	for i := range modelType.NumField() {
 		field := modelType.Field(i)
-		if !field.IsExported() {
+		if !field.IsExported() || field.Tag.Get("yaml") == "-" {
 			continue
 		}
 
@@ -658,8 +658,8 @@ func TestModel_EngineNameONNX(t *testing.T) {
 	assert.Equal(t, EngineONNX, model.EngineName())
 }
 
-// TestModel_ClassifyModelMissingRegisteredDisables verifies named models never fall back.
-func TestModel_ClassifyModelMissingRegisteredDisables(t *testing.T) {
+// TestModel_ClassifyModelMissingRegisteredCachesError verifies failed initialization preserves operator disablement.
+func TestModel_ClassifyModelMissingRegisteredCachesError(t *testing.T) {
 	previousModelsPath := ModelsPath
 	ModelsPath = t.TempDir()
 	t.Cleanup(func() { ModelsPath = previousModelsPath })
@@ -667,7 +667,13 @@ func TestModel_ClassifyModelMissingRegisteredDisables(t *testing.T) {
 	model := NewLabelModel(classify.ModelRepViTM10)
 	require.NotNil(t, model)
 	assert.Nil(t, model.ClassifyModel())
-	assert.True(t, model.Disabled)
+	assert.False(t, model.Disabled)
+	require.Error(t, model.classifyErr)
+	assert.Nil(t, model.ClassifyModel())
+	model.DisabledByMode = true
+	clone := model.Clone()
+	assert.Nil(t, clone.classifyErr)
+	assert.False(t, clone.DisabledByMode)
 }
 
 // TestModelOnnxProvider verifies registered and custom local models use the global provider.
@@ -910,4 +916,18 @@ func resetUnresolvedUriWarnings(t *testing.T) {
 	t.Helper()
 	unresolvedUriWarned.Clear()
 	t.Cleanup(unresolvedUriWarned.Clear)
+}
+
+// TestCustomClassifyInitializationError verifies custom failures preserve saved disablement.
+func TestCustomClassifyInitializationError(t *testing.T) {
+	previous := ModelsPath
+	ModelsPath = t.TempDir()
+	t.Cleanup(func() { ModelsPath = previous })
+	model := &Model{Type: ModelTypeLabels, Name: "custom", Path: "custom/model.onnx", ONNX: &onnx.ModelInfo{}}
+	assert.Nil(t, model.ClassifyModel())
+	require.Error(t, model.classifyErr)
+	assert.False(t, model.Disabled)
+	cached := model.classifyErr
+	assert.Nil(t, model.ClassifyModel())
+	assert.Equal(t, cached, model.classifyErr)
 }

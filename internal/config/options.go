@@ -263,7 +263,7 @@ type Options struct {
 	VisionKey                 string        `yaml:"VisionKey" json:"-" flag:"vision-key"`
 	VisionSchedule            string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
-	LabelModel                string        `yaml:"LabelModel" json:"-" flag:"label-model"`
+	LabelsModel               string        `yaml:"LabelsModel" json:"-" flag:"labels-model"`
 	NsfwModel                 string        `yaml:"NsfwModel" json:"-" flag:"nsfw-model"`
 	OnnxProvider              string        `yaml:"OnnxProvider" json:"-" flag:"onnx-provider"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`

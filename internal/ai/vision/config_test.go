@@ -3,8 +3,12 @@ package vision
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 	"testing"
+
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -636,5 +640,73 @@ func assertConfigShouldRun(t *testing.T, cfg *ConfigValues, when RunType, want b
 	t.Helper()
 	if got := cfg.ShouldRun(ModelTypeLabels, when); got != want {
 		t.Fatalf("ConfigValues.ShouldRun(%q) = %v, want %v", when, got, want)
+	}
+}
+
+// TestLegacyNSFWPartialContexts verifies legacy thresholds migrate independently of detector overrides.
+func TestLegacyNSFWPartialContexts(t *testing.T) {
+	for _, context := range []string{"NSFWUpload", "NSFWIndex"} {
+		t.Run(context, func(t *testing.T) {
+			filename := filepath.Join(t.TempDir(), "vision.yml")
+			require.NoError(t, os.WriteFile(filename, []byte("Thresholds:\n  NSFW: 75\n  "+context+": 50\n"), fs.ModeConfigFile))
+			cfg := NewConfig()
+			require.NoError(t, cfg.Load(filename))
+			assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+			require.NotNil(t, cfg.Thresholds.NSFWLabels)
+			assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
+			if context == "NSFWUpload" {
+				assert.Equal(t, 50, cfg.Thresholds.GetNSFWUpload())
+				assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
+			} else {
+				assert.Equal(t, 50, cfg.Thresholds.GetNSFWIndex())
+				assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+			}
+			require.NoError(t, cfg.Save(filename))
+			loaded := NewConfig()
+			require.NoError(t, loaded.Load(filename))
+			assert.Equal(t, cfg.Thresholds, loaded.Thresholds)
+		})
+	}
+}
+
+// TestModeDisablementPersistence verifies option overrides are not saved as user disablement.
+func TestModeDisablementPersistence(t *testing.T) {
+	cfg := NewConfig()
+	cfg.Models[0].DisabledByMode = true
+	assert.Nil(t, cfg.Model(ModelTypeLabels))
+	filename := filepath.Join(t.TempDir(), "vision.yml")
+	require.NoError(t, cfg.Save(filename))
+	loaded := NewConfig()
+	require.NoError(t, loaded.Load(filename))
+	require.NotNil(t, loaded.Model(ModelTypeLabels))
+	assert.False(t, loaded.Models[0].Disabled)
+	assert.False(t, loaded.Models[0].DisabledByMode)
+}
+
+// TestNSFWMigrationLog verifies default migration is informational and reports its value once.
+func TestNSFWMigrationLog(t *testing.T) {
+	for _, threshold := range []int{75, 80} {
+		t.Run(strconv.Itoa(threshold), func(t *testing.T) {
+			logger, hook := test.NewNullLogger()
+			previous := log
+			log = logger
+			t.Cleanup(func() { log = previous })
+			filename := filepath.Join(t.TempDir(), "vision.yml")
+			require.NoError(t, os.WriteFile(filename, []byte("Thresholds:\n  NSFW: "+strconv.Itoa(threshold)+"\n  NSFWUpload: 50\n"), fs.ModeConfigFile))
+			cfg := NewConfig()
+			require.NoError(t, cfg.Load(filename))
+			entry := hook.LastEntry()
+			require.NotNil(t, entry)
+			assert.Contains(t, entry.Message, strconv.Itoa(threshold))
+			level := logrus.WarnLevel
+			if threshold == 75 {
+				level = logrus.InfoLevel
+			}
+			assert.Equal(t, level, entry.Level)
+			require.NoError(t, cfg.Save(filename))
+			hook.Reset()
+			require.NoError(t, cfg.Load(filename))
+			assert.Empty(t, hook.AllEntries())
+		})
 	}
 }

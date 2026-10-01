@@ -24,6 +24,32 @@ func withConfig(t *testing.T, cfg *ConfigValues) {
 	t.Cleanup(func() { Config = previous })
 }
 
+// TestNSFWInitialThresholdContexts verifies the initial function bindings before setter resets.
+func TestNSFWInitialThresholdContexts(t *testing.T) {
+	description := nsfw.FindModel(nsfw.DefaultModelName())
+	if description == nil || !description.Installed(GetModelsPath()) {
+		t.Skip("nsfw: default model is not installed")
+	}
+	upload, index := 62, 91
+	cfg := NewConfig()
+	cfg.Thresholds.NSFWUpload, cfg.Thresholds.NSFWIndex = &upload, &index
+	withConfig(t, cfg)
+	files := Files{filepath.Join("..", "nsfw", "testdata", "hentai_2.jpg")}
+	indexed, err := nsfwIndex(files, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, indexed, 1)
+	assert.InDelta(t, 0.91, indexed[0].Threshold, 1e-6)
+	uploaded, err := nsfwUpload(files, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, uploaded, 1)
+	assert.InDelta(t, 0.62, uploaded[0].Threshold, 1e-6)
+	// Exercise the untouched initial bindings when this test runs by itself.
+	result, err := DetectNSFWUpload(files, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, result, 1)
+	assert.InDelta(t, 0.62, result[0].Threshold, 1e-6)
+}
+
 // TestNsfwThreshold verifies which threshold the detector is asked to apply.
 func TestNsfwThreshold(t *testing.T) {
 	t.Run("OperatorValueWins", func(t *testing.T) {

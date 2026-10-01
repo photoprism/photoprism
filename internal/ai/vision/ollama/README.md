@@ -1,6 +1,6 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** September 28, 2026
+**Last Updated:** October 1, 2026
 
 ### Overview
 
@@ -42,7 +42,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
   - Captions: no system prompt by default; rely on user prompt or set one explicitly for stylistic needs.
 - **User Prompts**
   - Captions use `CaptionPrompt`, which requests one sentence in active voice.
-  - Labels default to `LabelPromptDefault`; when the package-level `DetectNSFWLabels` global is true, the adapter swaps in `LabelPromptNSFW`. The global is set by `config.go` to `DetectNSFW() && Experimental()`, so both `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_EXPERIMENTAL=true` are required to enable the NSFW-aware prompt.
+  - Labels default to `LabelPromptDefault`; when the package-level `DetectNSFWLabels` global is true, the adapter swaps in `LabelPromptNSFW`. The global is set by `config.go` to `DetectNSFWLabels()`, so `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels` are required to enable the NSFW-aware prompt.
   - For stricter noun enforcement, set `Prompt` to `LabelPromptStrict`.
 - **Schemas**
   - Labels rely on `schema.LabelsJson(nsfw)` (simple JSON template). Setting `Format: json` auto-attaches a reminder (`model.SchemaInstructions()`).
