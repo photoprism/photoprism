@@ -1,3 +1,5 @@
+//go:build !notf
+
 package nsfw
 
 import (
