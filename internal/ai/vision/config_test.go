@@ -105,7 +105,7 @@ func TestNewConfigClonesModels(t *testing.T) {
 
 	firstLabel.Disabled = true
 	assert.NotNil(t, second.Model(ModelTypeLabels))
-	assert.False(t, NasnetModel.Disabled)
+	assert.False(t, DefaultLabelModel.Disabled)
 }
 
 func TestConfigValues_Load(t *testing.T) {
@@ -129,7 +129,7 @@ func TestConfigValues_Load(t *testing.T) {
 		require.NoError(t, cfg.Load(configFile))
 		require.Len(t, cfg.Models, len(DefaultModels))
 		require.NotNil(t, cfg.Model(ModelTypeLabels))
-		assert.Equal(t, NasnetModel.Name, cfg.Models[0].Name)
+		assert.Equal(t, DefaultLabelModel.Name, cfg.Models[0].Name)
 		assert.True(t, cfg.Models[0].Default)
 		assert.False(t, cfg.Models[0].Disabled)
 		assert.Nil(t, cfg.Models[0].TensorFlow)
@@ -263,9 +263,9 @@ func TestConfigValues_Load(t *testing.T) {
 		assert.False(t, model.ONNX.Output.OutputsLogits())
 	})
 	t.Run("DefaultModelWithCustomRun", func(t *testing.T) {
-		originalRun := NasnetModel.Run
+		originalRun := DefaultLabelModel.Run
 		t.Cleanup(func() {
-			NasnetModel.Run = originalRun
+			DefaultLabelModel.Run = originalRun
 		})
 
 		tempDir := t.TempDir()
@@ -298,7 +298,7 @@ func TestConfigValues_Load(t *testing.T) {
 		assert.Len(t, cfg.Models, len(DefaultModels))
 
 		if labels := cfg.Model(ModelTypeLabels); assert.NotNil(t, labels) {
-			assert.Equal(t, NasnetModel.Name, labels.Name)
+			assert.Equal(t, DefaultLabelModel.Name, labels.Name)
 		}
 
 		if caption := cfg.Model(ModelTypeCaption); assert.NotNil(t, caption) {
@@ -453,7 +453,7 @@ func TestConfigValues_applyDefaultModels(t *testing.T) {
 
 		cfg.applyDefaultModels()
 
-		if got := cfg.Models[0]; got.Name != NasnetModel.Name {
+		if got := cfg.Models[0]; got.Name != DefaultLabelModel.Name {
 			t.Fatalf("expected placeholder to become the default model, got %s", got.Name)
 		} else if got.Run != RunOnDemand {
 			t.Fatalf("expected Run to be preserved, got %s", got.Run)
@@ -516,7 +516,7 @@ func TestConfigValues_ensureDefaultModels(t *testing.T) {
 }
 
 func TestConfigModelPrefersLastEnabled(t *testing.T) {
-	defaultModel := NasnetModel.Clone()
+	defaultModel := DefaultLabelModel.Clone()
 	defaultModel.Disabled = false
 	defaultModel.Name = "nasnet-default"
 
@@ -547,7 +547,7 @@ func TestConfigModelPrefersLastEnabled(t *testing.T) {
 }
 
 func TestConfigValues_IsDefaultAndIsCustom(t *testing.T) {
-	defaultModel := NasnetModel.Clone()
+	defaultModel := DefaultLabelModel.Clone()
 	defaultModel.Default = false
 
 	t.Run("DefaultModel", func(t *testing.T) {
@@ -598,7 +598,7 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		}
 	})
 	t.Run("DefaultAutoModel", func(t *testing.T) {
-		cfg := &ConfigValues{Models: Models{NasnetModel.Clone()}}
+		cfg := &ConfigValues{Models: Models{DefaultLabelModel.Clone()}}
 		assertConfigShouldRun(t, cfg, RunManual, true)
 		assertConfigShouldRun(t, cfg, RunOnSchedule, true)
 		assertConfigShouldRun(t, cfg, RunAlways, true)
@@ -607,7 +607,7 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		assertConfigShouldRun(t, cfg, RunNever, false)
 	})
 	t.Run("CustomOverridesDefault", func(t *testing.T) {
-		defaultModel := NasnetModel.Clone()
+		defaultModel := DefaultLabelModel.Clone()
 		custom := &Model{Type: ModelTypeLabels, Name: "custom"}
 		cfg := &ConfigValues{Models: Models{defaultModel, custom}}
 		assertConfigShouldRun(t, cfg, RunManual, true)
@@ -616,7 +616,7 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		assertConfigShouldRun(t, cfg, RunNewlyIndexed, true)
 	})
 	t.Run("DisabledCustomFallsBack", func(t *testing.T) {
-		defaultModel := NasnetModel.Clone()
+		defaultModel := DefaultLabelModel.Clone()
 		custom := &Model{Type: ModelTypeLabels, Name: "custom", Disabled: true}
 		cfg := &ConfigValues{Models: Models{defaultModel, custom}}
 		assertConfigShouldRun(t, cfg, RunManual, true)

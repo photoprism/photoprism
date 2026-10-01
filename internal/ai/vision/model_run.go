@@ -3,6 +3,7 @@ package vision
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -115,9 +116,11 @@ func (m *Model) ShouldRun(when RunType) bool {
 	}
 
 	inline := m.IsDefault()
-	// Automatic selection keeps Default set even when an alternative classifier runs after indexing.
-	if m.Type == ModelTypeLabels && m.ONNX != nil && uri == "" {
-		inline = m.Name == NasnetModel.Name
+
+	// A local classifier runs during indexing only if it is the default one, so an automatically
+	// selected alternative, which has Default set, still runs after indexing.
+	if m.Type == ModelTypeLabels && m.TensorFlow == nil && uri == "" && !m.Service.UriUnresolved() {
+		inline = classify.NormalizeModelName(classify.ModelName(m.Name)) == classify.NormalizeModelName(classify.ModelName(DefaultLabelModel.Name))
 	}
 
 	switch when {

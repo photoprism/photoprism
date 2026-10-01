@@ -272,7 +272,7 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
 
 		labels := cfg.Model(ModelTypeLabels)
 		require.NotNil(t, labels)
-		assert.Equal(t, NasnetModel.Name, labels.Name)
+		assert.Equal(t, DefaultLabelModel.Name, labels.Name)
 		assert.True(t, labels.Default)
 		assert.Equal(t, RunAuto, labels.RunType())
 		assert.NotNil(t, labels.ClassifyModel())
@@ -306,7 +306,7 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
 
 		labels := cfg.Model(ModelTypeLabels)
 		require.NotNil(t, labels)
-		assert.Equal(t, NasnetModel.Name, labels.Name)
+		assert.Equal(t, DefaultLabelModel.Name, labels.Name)
 		assert.Nil(t, labels.TensorFlow)
 		assert.Equal(t, RunOnSchedule, labels.Run)
 		assert.NotNil(t, labels.ClassifyModel())
@@ -340,7 +340,7 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
 
 		labels := cfg.Model(ModelTypeLabels)
 		require.NotNil(t, labels)
-		assert.Equal(t, NasnetModel.Name, labels.Name)
+		assert.Equal(t, DefaultLabelModel.Name, labels.Name)
 		assert.Equal(t, RunAuto, labels.RunType())
 		assert.NotNil(t, labels.ClassifyModel())
 
@@ -372,7 +372,7 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
 			assert.Equal(t, "ollama", labels.Engine)
 			models := configuredModels(cfg, ModelTypeLabels)
 			require.Len(t, models, 2)
-			assert.Equal(t, NasnetModel.Name, models[0].Name)
+			assert.Equal(t, DefaultLabelModel.Name, models[0].Name)
 		})
 		t.Run("LegacyLast", func(t *testing.T) {
 			fileName := filepath.Join(t.TempDir(), "vision.yml")
@@ -380,7 +380,7 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
 			cfg, _ := loadLegacyConfig(t, fileName)
 			labels := cfg.Model(ModelTypeLabels)
 			require.NotNil(t, labels)
-			assert.Equal(t, NasnetModel.Name, labels.Name)
+			assert.Equal(t, DefaultLabelModel.Name, labels.Name)
 			models := configuredModels(cfg, ModelTypeLabels)
 			require.Len(t, models, 2)
 			assert.Equal(t, "gemma3:latest", models[0].Name)

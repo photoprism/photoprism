@@ -433,9 +433,24 @@ func TestConfig_VisionModelShouldRun(t *testing.T) {
 			t.Fatalf("expected labels model to run on index with defaults")
 		}
 	})
+	t.Run("NamedDefaultLabelsRunOnIndex", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		named := &vision.Model{Type: vision.ModelTypeLabels, Name: string(classify.DefaultModelName())}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{named}})
+		assert.True(t, c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex))
+		assert.False(t, c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunNewlyIndexed))
+	})
+	t.Run("DefaultLabelsRunAlways", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		model := vision.DefaultLabelModel.Clone()
+		model.Run = vision.RunAlways
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{model}})
+		assert.True(t, c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex))
+		assert.True(t, c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunNewlyIndexed))
+	})
 	t.Run("CustomLabelsRunAfterIndex", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		defaultModel := vision.NasnetModel.Clone()
+		defaultModel := vision.DefaultLabelModel.Clone()
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom"}
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{defaultModel, custom}})
 		if !c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunNewlyIndexed) {

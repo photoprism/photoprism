@@ -9,9 +9,9 @@ import (
 
 // Default computer vision model configuration.
 var (
-	NasnetModel  = defaultLabelModel()
-	NsfwModel    = NewNsfwModel(nsfw.DefaultModelName())
-	FacenetModel = &Model{
+	DefaultLabelModel = newDefaultLabelModel()
+	NsfwModel         = NewNsfwModel(nsfw.DefaultModelName())
+	FacenetModel      = &Model{
 		Type:       ModelTypeFace,
 		Default:    true,
 		Name:       "facenet",
@@ -41,7 +41,7 @@ var (
 		Run:    RunManual,
 	}
 	DefaultModels = Models{
-		NasnetModel,
+		DefaultLabelModel,
 		NsfwModel,
 		FacenetModel,
 		CaptionModel,
@@ -57,8 +57,8 @@ var (
 // DefaultThresholds leaves it unset so an explicit operator value remains distinguishable.
 const DefaultNSFWThreshold = 75
 
-// defaultLabelModel returns the registered bundled ONNX classifier as a vision model.
-func defaultLabelModel() *Model {
+// newDefaultLabelModel returns the registered bundled ONNX classifier as a vision model.
+func newDefaultLabelModel() *Model {
 	return NewLabelModel(classify.DefaultModelName())
 }
 

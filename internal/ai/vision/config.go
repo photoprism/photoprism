@@ -252,7 +252,7 @@ func (c *ConfigValues) applyDefaultModels() {
 
 		switch model.Type {
 		case ModelTypeLabels:
-			c.Models[i] = NasnetModel.Clone()
+			c.Models[i] = DefaultLabelModel.Clone()
 		case ModelTypeNsfw:
 			c.Models[i] = NsfwModel.Clone()
 		case ModelTypeFace:
@@ -439,9 +439,9 @@ func GetModelPath(name string) string {
 	return filepath.Join(GetModelsPath(), clean.Path(clean.TypeLowerUnderscore(name)))
 }
 
-// GetNasnetModelPath returns the absolute path of the default Nasnet model.
+// GetNasnetModelPath returns the absolute path of the default labels model.
 func GetNasnetModelPath() string {
-	return GetModelPath(NasnetModel.Name)
+	return GetModelPath(DefaultLabelModel.Name)
 }
 
 // GetFacenetModelPath returns the absolute path of the default Facenet model.

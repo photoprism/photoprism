@@ -604,8 +604,8 @@ func TestModelApplyService(t *testing.T) {
 }
 
 func TestModel_IsDefault(t *testing.T) {
-	nasnetCopy := NasnetModel.Clone() //nolint:govet // copy for test inspection only
-	nasnetCopy.Default = false
+	defaultCopy := DefaultLabelModel.Clone() //nolint:govet // copy for test inspection only
+	defaultCopy.Default = false
 
 	cases := []struct {
 		name  string
@@ -619,7 +619,7 @@ func TestModel_IsDefault(t *testing.T) {
 		},
 		{
 			name:  "NasnetCopy",
-			model: nasnetCopy,
+			model: defaultCopy,
 			want:  true,
 		},
 		{

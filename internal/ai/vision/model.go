@@ -175,7 +175,7 @@ func (m *Model) IsDefault() bool {
 
 	switch m.Type {
 	case ModelTypeLabels:
-		return m.ONNX != nil && m.Name == NasnetModel.Name
+		return m.ONNX != nil && m.Name == DefaultLabelModel.Name
 	case ModelTypeNsfw:
 		return m.ONNX != nil && m.Name == NsfwModel.Name
 	case ModelTypeFace:

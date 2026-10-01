@@ -5,10 +5,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
+	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 )
 
 func TestParseRunType(t *testing.T) {
@@ -83,7 +85,7 @@ func TestModel_RunType(t *testing.T) {
 }
 
 func TestModel_ShouldRun_AutoDefault(t *testing.T) {
-	model := NasnetModel.Clone()
+	model := DefaultLabelModel.Clone()
 	model.Run = ""
 
 	assertShouldRun(t, model, RunManual, true)
@@ -104,6 +106,77 @@ func TestModel_ShouldRun_AutoCustom(t *testing.T) {
 	assertShouldRun(t, model, RunAlways, false)
 	assertShouldRun(t, model, RunOnIndex, false)
 	assertShouldRun(t, model, RunNewlyIndexed, true)
+}
+
+// TestModel_ShouldRun_LocalLabels verifies that only the default local classifier runs during indexing.
+func TestModel_ShouldRun_LocalLabels(t *testing.T) {
+	t.Run("NamedDefault", func(t *testing.T) {
+		model := &Model{Type: ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2)}
+		assertShouldRun(t, model, RunOnIndex, true)
+		assertShouldRun(t, model, RunNewlyIndexed, false)
+		assertShouldRun(t, model, RunOnSchedule, true)
+	})
+	t.Run("DefaultSpelling", func(t *testing.T) {
+		for _, name := range []string{"EfficientFormerV2_S2", " efficientformerv2-s2 ", "efficientformerv2.s2"} {
+			t.Run(strings.TrimSpace(name), func(t *testing.T) {
+				model := &Model{Type: ModelTypeLabels, Name: name}
+				assertShouldRun(t, model, RunOnIndex, true)
+				assertShouldRun(t, model, RunNewlyIndexed, false)
+			})
+		}
+	})
+	t.Run("UnresolvedUri", func(t *testing.T) {
+		resetUnresolvedUriWarnings(t)
+		model := &Model{Type: ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2), Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}
+		assertShouldRun(t, model, RunOnIndex, false)
+		assertShouldRun(t, model, RunNewlyIndexed, true)
+	})
+	t.Run("TensorFlow", func(t *testing.T) {
+		model := &Model{Type: ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2), TensorFlow: &tensorflow.ModelInfo{}}
+		assertShouldRun(t, model, RunOnIndex, false)
+		assertShouldRun(t, model, RunNewlyIndexed, true)
+	})
+	t.Run("GlobalServiceUri", func(t *testing.T) {
+		previous := ServiceUri
+		ServiceUri = "http://photoprism-vision:5000/api/v1/vision"
+		t.Cleanup(func() { ServiceUri = previous })
+		named := &Model{Type: ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2)}
+		assertShouldRun(t, named, RunOnIndex, false)
+		assertShouldRun(t, named, RunNewlyIndexed, true)
+		disabled := &Model{Type: ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2), Service: Service{Uri: "http://localhost:5000", Disabled: true}}
+		assertShouldRun(t, disabled, RunOnIndex, false)
+		assertShouldRun(t, disabled, RunNewlyIndexed, true)
+	})
+	t.Run("RegisteredAlternative", func(t *testing.T) {
+		model := NewLabelModel(classify.ModelRepViTM10)
+		require.NotNil(t, model)
+		assertShouldRun(t, model, RunOnIndex, false)
+		assertShouldRun(t, model, RunNewlyIndexed, true)
+	})
+	t.Run("SelectedAlternative", func(t *testing.T) {
+		model := NewLabelModel(classify.ModelRepViTM10)
+		require.NotNil(t, model)
+		model.Default = true
+		assertShouldRun(t, model, RunOnIndex, false)
+		assertShouldRun(t, model, RunNewlyIndexed, true)
+	})
+	t.Run("ExplicitOnIndex", func(t *testing.T) {
+		model := NewLabelModel(classify.ModelRepViTM10)
+		require.NotNil(t, model)
+		model.Run = RunOnIndex
+		assertShouldRun(t, model, RunOnIndex, true)
+		assertShouldRun(t, model, RunNewlyIndexed, false)
+	})
+	t.Run("Remote", func(t *testing.T) {
+		model := &Model{Type: ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2), Engine: "ollama", Service: Service{Uri: "http://ollama:11434/api/generate"}}
+		assertShouldRun(t, model, RunOnIndex, false)
+		assertShouldRun(t, model, RunNewlyIndexed, true)
+	})
+	t.Run("RemoteDefault", func(t *testing.T) {
+		model := &Model{Type: ModelTypeLabels, Name: "custom", Default: true, Service: Service{Uri: "http://photoprism-vision:5000/api/v1/vision/labels"}}
+		assertShouldRun(t, model, RunOnIndex, true)
+		assertShouldRun(t, model, RunNewlyIndexed, false)
+	})
 }
 
 func TestModel_ShouldRun_RunNewlyIndexed(t *testing.T) {
