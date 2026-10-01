@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -132,6 +133,9 @@ func (c *ConfigValues) Load(fileName string) error {
 		}
 	}
 
+	// Map labels and NSFW entries for unsupported local runtimes to default placeholders.
+	c.mapLegacyModels()
+
 	// Replace default placeholders with canonical defaults while respecting
 	// explicit Run / Disabled overrides.
 	c.applyDefaultModels()
@@ -145,10 +149,15 @@ func (c *ConfigValues) Load(fileName string) error {
 			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
 		}
 
-		// Disable unsupported TensorFlow models instead of interpreting their paths as ONNX.
+		// A service ignores TensorFlow settings; without one, the entry cannot run and is disabled.
 		if (model.Type == ModelTypeLabels || model.Type == ModelTypeNsfw) && model.TensorFlow != nil {
-			model.Disabled = true
-			log.Warnf("vision: TensorFlow %s model %s is unsupported, migrate it to ONNX (disable model)", model.Type, clean.Log(model.Name))
+			if model.hasService() {
+				model.TensorFlow = nil
+				log.Debugf("vision: ignoring TensorFlow settings of %s model %s", model.Type, clean.Log(model.Name))
+			} else {
+				model.Disabled = true
+				log.Warnf("vision: TensorFlow %s model %s is not supported (disable model)", model.Type, clean.Log(model.Name))
+			}
 		}
 
 		model.ApplyEngineDefaults()
@@ -202,6 +211,32 @@ func (c *ConfigValues) SetModel(model *Model) {
 	}
 
 	c.Models = append(c.Models, model)
+}
+
+// legacyModelNames maps model types to the names of the retired built-in TensorFlow models.
+var legacyModelNames = map[ModelType]string{
+	ModelTypeLabels: "nasnet",
+	ModelTypeNsfw:   "nsfw",
+}
+
+// mapLegacyModels turns legacy labels and NSFW entries into default placeholders that keep their
+// position and their Run / Disabled settings, so the installed default model is used instead.
+func (c *ConfigValues) mapLegacyModels() {
+	for _, model := range c.Models {
+		if !model.IsLegacy() {
+			continue
+		}
+
+		if strings.EqualFold(strings.TrimSpace(model.Name), legacyModelNames[model.Type]) {
+			log.Infof("vision: using the default %s model in place of %s, run \"photoprism vision save --force\" to update the config file",
+				model.Type, clean.Log(model.Name))
+		} else {
+			log.Warnf("vision: TensorFlow %s model %s is not supported, using the default model instead",
+				model.Type, clean.Log(model.Name))
+		}
+
+		model.Default = true
+	}
 }
 
 // applyDefaultModels swaps entries marked as Default with the built-in
@@ -287,7 +322,7 @@ func (c *ConfigValues) Save(fileName string) error {
 	return os.WriteFile(fileName, data, fs.ModeConfigFile)
 }
 
-// Model returns the first enabled model with the matching type.
+// Model returns the last enabled model with the matching type.
 // It returns nil if no matching model is available or every model of that
 // type is disabled, allowing callers to chain nil-safe Model methods.
 func (c *ConfigValues) Model(t ModelType) *Model {

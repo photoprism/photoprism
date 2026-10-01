@@ -120,35 +120,32 @@ func TestConfigValues_Load(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "both TensorFlow and ONNX")
 	})
-	t.Run("DisablesTensorFlowLabelModel", func(t *testing.T) {
+	t.Run("MapsTensorFlowLabelModel", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: custom\n  TensorFlow: {}\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
-		assert.Nil(t, cfg.Model(ModelTypeLabels))
 		require.Len(t, cfg.Models, len(DefaultModels))
-		assert.True(t, cfg.Models[0].Disabled)
-		assert.NotNil(t, cfg.Models[0].TensorFlow)
+		require.NotNil(t, cfg.Model(ModelTypeLabels))
+		assert.Equal(t, NasnetModel.Name, cfg.Models[0].Name)
+		assert.True(t, cfg.Models[0].Default)
+		assert.False(t, cfg.Models[0].Disabled)
+		assert.Nil(t, cfg.Models[0].TensorFlow)
 	})
-	t.Run("DisablesTensorFlowNSFWModel", func(t *testing.T) {
+	t.Run("MapsTensorFlowNSFWModel", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
-		assert.Nil(t, cfg.Model(ModelTypeNsfw))
-		var configured *Model
-		for _, model := range cfg.Models {
-			if model != nil && model.Type == ModelTypeNsfw {
-				configured = model
-			}
-		}
+		configured := cfg.Model(ModelTypeNsfw)
 		require.NotNil(t, configured)
-		assert.True(t, configured.Disabled)
-		assert.NotNil(t, configured.TensorFlow)
+		assert.Equal(t, NsfwModel.Name, configured.Name)
+		assert.True(t, configured.Default)
+		assert.Nil(t, configured.TensorFlow)
 	})
 	t.Run("MigratesLegacyNSFWThreshold", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
@@ -457,7 +454,7 @@ func TestConfigValues_applyDefaultModels(t *testing.T) {
 		cfg.applyDefaultModels()
 
 		if got := cfg.Models[0]; got.Name != NasnetModel.Name {
-			t.Fatalf("expected placeholder to become nasnet, got %s", got.Name)
+			t.Fatalf("expected placeholder to become the default model, got %s", got.Name)
 		} else if got.Run != RunOnDemand {
 			t.Fatalf("expected Run to be preserved, got %s", got.Run)
 		} else if !got.Disabled {

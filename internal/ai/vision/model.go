@@ -185,6 +185,57 @@ func (m *Model) IsDefault() bool {
 	return false
 }
 
+// IsLegacy reports whether the model is a local labels or NSFW model for the TensorFlow runtime,
+// either declared with a TensorFlow block or named after a retired built-in TensorFlow model
+// without settings that only apply to ONNX models. Nil receivers return false.
+func (m *Model) IsLegacy() bool {
+	if m == nil || m.ONNX != nil {
+		return false
+	}
+
+	legacyName, ok := legacyModelNames[m.Type]
+
+	if !ok || m.Service.UriUnresolved() {
+		return false
+	} else if uri, _ := m.Service.Endpoint(); uri != "" {
+		return false
+	}
+
+	// Engines such as Ollama or OpenAI provide their own endpoint and are never mapped.
+	engine := strings.ToLower(strings.TrimSpace(m.Engine))
+
+	switch {
+	case m.TensorFlow != nil:
+		return engine == "" || engine == EngineTensorFlow || engine == EngineONNX || engine == EngineLocal
+	case !strings.EqualFold(strings.TrimSpace(m.Name), legacyName):
+		return false
+	default:
+		return (engine == "" || engine == EngineTensorFlow || engine == EngineLocal) && !m.hasOnnxSettings()
+	}
+}
+
+// hasService reports whether the model is meant to use a service, either through an endpoint, an
+// unresolved service URI, or an engine that provides a default endpoint.
+func (m *Model) hasService() bool {
+	if m == nil {
+		return false
+	} else if m.Service.UriUnresolved() {
+		return true
+	} else if uri, _ := m.Endpoint(); uri != "" {
+		return true
+	}
+
+	info, ok := EngineInfoFor(m.Engine)
+
+	return ok && info.Uri != ""
+}
+
+// hasOnnxSettings reports whether the model sets options that only apply to ONNX models.
+func (m *Model) hasOnnxSettings() bool {
+	return m.Reduction != "" || m.UnsafeClassIndex != nil || m.NeutralClassIndex != nil ||
+		m.DefaultThreshold != 0 || m.LabelFile != "" || m.CanonicalOrder
+}
+
 // Endpoint returns the remote service request method and endpoint URL. Nil
 // receivers return empty strings.
 func (m *Model) Endpoint() (uri, method string) {

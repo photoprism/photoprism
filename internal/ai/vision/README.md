@@ -21,7 +21,14 @@ Faces are the one type this registry does not own. A `face` entry in `vision.yml
 
 The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so you no longer need placeholder stanzas. The `Thresholds` block is optional; missing or out-of-range values fall back to defaults.
 
-Custom label and NSFW classifiers are ONNX-only. An entry of either type that still declares `TensorFlow` is disabled with a migration warning instead of being interpreted as an ONNX model or silently replaced with the bundled default.
+Custom label and NSFW classifiers are ONNX-only. Local `labels` and `nsfw` entries written for the retired TensorFlow models are mapped to the default ONNX models when the file is loaded:
+
+- An entry named `nasnet` (labels) or `nsfw` (NSFW), in any letter case, with no `Engine` or with `Engine: tensorflow` or `local`, and without an `ONNX` block or ONNX-only settings such as `Reduction`, `DefaultThreshold`, or `LabelFile`, is replaced with the default model and logged at info level.
+- Any other local entry that declares `TensorFlow` is replaced with the default model as well, with a warning that names the replaced model.
+- The entry keeps its position in the list as well as its `Run` and `Disabled` values, so `PHOTOPRISM_LABELS_MODEL=auto` and `PHOTOPRISM_NSFW_MODEL=auto` select the installed default model, and a disabled entry stays disabled.
+- Entries with their own service endpoint or a remote engine, such as Ollama or OpenAI, are never mapped; TensorFlow settings left on them are ignored. An entry that declares `TensorFlow` but has neither a local engine nor a service, for example because of a misspelled `Engine`, is disabled with a warning.
+
+Run `photoprism vision save --force` to write the mapped configuration back to `vision.yml`.
 
 | Field                   | Default                                | Notes                                                                              |
 |:------------------------|:---------------------------------------|:-----------------------------------------------------------------------------------|
