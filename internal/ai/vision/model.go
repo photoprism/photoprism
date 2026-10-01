@@ -916,7 +916,7 @@ func (m *Model) faceEmbedder() face.Embedder {
 		log.Warnf("vision: missing name, model instance cannot be created")
 		return nil
 	case FacenetModel.Name, "facenet":
-		// Load and initialize the Nasnet image classification model.
+		// Load and initialize the FaceNet embedding model.
 		if model := face.NewModel(face.ModelFaceNet, GetFacenetModelPath(), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
