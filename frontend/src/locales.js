@@ -1,5 +1,6 @@
 import { $config } from "app/session";
 import { $gettext, T } from "common/gettext";
+import { en as vuetifyEn } from "vuetify/locale";
 
 // Returns the id and messages of the current locale.
 export const Locale = () => {
@@ -202,9 +203,19 @@ export let Options = [
   },
 ];
 
-// Returns the Vuetify UI messages translated with Gettext, with the same keys as Vuetify's English locale.
+// mergeMessages returns a copy of base with the values of messages applied on top.
+const mergeMessages = (base, messages) => {
+  const result = { ...base };
+  for (const [key, value] of Object.entries(messages)) {
+    result[key] = value && typeof value === "object" ? mergeMessages(base[key] || {}, value) : value;
+  }
+  return result;
+};
+
+// Returns the Vuetify UI messages: translated with Gettext where the UI uses them, Vuetify's English text otherwise.
+// Add the keys of a Vuetify component here before using it, so its labels are translated.
 export const Messages = ($gettext) => {
-  return {
+  return mergeMessages(vuetifyEn, {
     badge: $gettext("Badge"),
     open: $gettext("Open"),
     close: $gettext("Close"),
@@ -244,20 +255,6 @@ export const Messages = ($gettext) => {
     dateRangeInput: {
       divider: $gettext("to"),
     },
-    monthPicker: {
-      title: $gettext("Select month"),
-      itemsSelected: $gettext("{0} selected"),
-      header: $gettext("Enter month"),
-      range: {
-        title: $gettext("Enter months"),
-      },
-      ariaLabel: {
-        previousYear: $gettext("Previous year"),
-        nextYear: $gettext("Next year"),
-        selectYear: $gettext("Select year"),
-        currentMonth: $gettext("Current month, {0}"),
-      },
-    },
     datePicker: {
       itemsSelected: $gettext("{0} selected"),
       range: {
@@ -292,10 +289,6 @@ export const Messages = ($gettext) => {
       moreEvents: $gettext("{0} more"),
       today: $gettext("Today"),
     },
-    heatmap: {
-      less: $gettext("Less"),
-      more: $gettext("More"),
-    },
     input: {
       clear: $gettext("Clear {0}"),
       prependAction: $gettext("{0} prepended action"),
@@ -315,10 +308,6 @@ export const Messages = ($gettext) => {
       am: $gettext("AM"),
       pm: $gettext("PM"),
       title: $gettext("Select Time"),
-      hour: $gettext("Hour"),
-      minute: $gettext("Minute"),
-      second: $gettext("Second"),
-      notAllowed: $gettext("Value is not allowed"),
     },
     pagination: {
       ariaLabel: {
@@ -345,70 +334,7 @@ export const Messages = ($gettext) => {
       loadMore: $gettext("Load more"),
       empty: $gettext("No more"),
     },
-    rules: {
-      required: $gettext("This field is required"),
-      email: $gettext("Please enter a valid email"),
-      number: $gettext("This field can only contain numbers"),
-      integer: $gettext("This field can only contain integer values"),
-      capital: $gettext("This field can only contain uppercase letters"),
-      maxLength: $gettext("You must enter a maximum of {0} characters"),
-      minLength: $gettext("You must enter a minimum of {0} characters"),
-      strictLength: $gettext("The length of the entered field is invalid"),
-      exclude: $gettext("The {0} character is not allowed"),
-      notEmpty: $gettext("Please choose at least one value"),
-      pattern: $gettext("Invalid format"),
-    },
-    command: {
-      search: $gettext("Type a command or search..."),
-    },
-    hotkey: {
-      then: $gettext("then"),
-      ctrl: $gettext("Ctrl"),
-      command: $gettext("Command"),
-      space: $gettext("Space"),
-      shift: $gettext("Shift"),
-      alt: $gettext("Alt"),
-      enter: $gettext("Enter"),
-      escape: $gettext("Escape"),
-      upArrow: $gettext("Up Arrow"),
-      downArrow: $gettext("Down Arrow"),
-      leftArrow: $gettext("Left Arrow"),
-      rightArrow: $gettext("Right Arrow"),
-      backspace: $gettext("Backspace"),
-      option: $gettext("Option"),
-      plus: $gettext("plus"),
-      shortcut: $gettext("Keyboard shortcut: {0}"),
-      or: $gettext("or"),
-    },
-    video: {
-      play: $gettext("Play"),
-      pause: $gettext("Pause"),
-      seek: $gettext("Seek"),
-      volume: $gettext("Volume"),
-      showVolume: $gettext("Show volume control"),
-      mute: $gettext("Mute"),
-      unmute: $gettext("Unmute"),
-      enterFullscreen: $gettext("Full screen"),
-      exitFullscreen: $gettext("Exit full screen"),
-    },
-    colorPicker: {
-      ariaLabel: {
-        eyedropper: $gettext("Select color with eyedropper"),
-        hueSlider: $gettext("Hue"),
-        alphaSlider: $gettext("Alpha"),
-        redInput: $gettext("Red value"),
-        greenInput: $gettext("Green value"),
-        blueInput: $gettext("Blue value"),
-        alphaInput: $gettext("Alpha value"),
-        hueInput: $gettext("Hue value"),
-        saturationInput: $gettext("Saturation value"),
-        lightnessInput: $gettext("Lightness value"),
-        hexInput: $gettext("HEX value"),
-        hexaInput: $gettext("HEX with alpha value"),
-        changeFormat: $gettext("Change color format"),
-      },
-    },
-  };
+  });
 };
 
 // Extra UI translation messages.
