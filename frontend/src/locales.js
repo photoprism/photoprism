@@ -202,7 +202,7 @@ export let Options = [
   },
 ];
 
-// Returns the Vuetify UI messages translated with Gettext.
+// Returns the Vuetify UI messages translated with Gettext, with the same keys as Vuetify's English locale.
 export const Messages = ($gettext) => {
   return {
     badge: $gettext("Badge"),
@@ -219,7 +219,6 @@ export const Messages = ($gettext) => {
     },
     dataTable: {
       itemsPerPageText: $gettext("Rows per page:"),
-      itemsPerPageAll: $gettext("All"),
       ariaLabel: {
         sortDescending: $gettext("Sorted descending."),
         sortAscending: $gettext("Sorted ascending."),
@@ -227,6 +226,9 @@ export const Messages = ($gettext) => {
         activateNone: $gettext("Activate to remove sorting."),
         activateDescending: $gettext("Activate to sort descending."),
         activateAscending: $gettext("Activate to sort ascending."),
+        selectRow: $gettext("Select row"),
+        selectAll: $gettext("Select all"),
+        selectGroup: $gettext("Select group"),
       },
       sortBy: $gettext("Sort by"),
     },
@@ -242,6 +244,20 @@ export const Messages = ($gettext) => {
     dateRangeInput: {
       divider: $gettext("to"),
     },
+    monthPicker: {
+      title: $gettext("Select month"),
+      itemsSelected: $gettext("{0} selected"),
+      header: $gettext("Enter month"),
+      range: {
+        title: $gettext("Enter months"),
+      },
+      ariaLabel: {
+        previousYear: $gettext("Previous year"),
+        nextYear: $gettext("Next year"),
+        selectYear: $gettext("Select year"),
+        currentMonth: $gettext("Current month, {0}"),
+      },
+    },
     datePicker: {
       itemsSelected: $gettext("{0} selected"),
       range: {
@@ -252,6 +268,16 @@ export const Messages = ($gettext) => {
       header: $gettext("Enter date"),
       input: {
         placeholder: $gettext("Enter date"),
+      },
+      ariaLabel: {
+        previousMonth: $gettext("Previous month"),
+        nextMonth: $gettext("Next month"),
+        selectYear: $gettext("Select year"),
+        previousYear: $gettext("Previous year"),
+        nextYear: $gettext("Next year"),
+        selectMonth: $gettext("Select month"),
+        selectDate: "{0}",
+        currentDate: $gettext("Today, {0}"),
       },
     },
     noDataText: $gettext("No data available"),
@@ -266,11 +292,15 @@ export const Messages = ($gettext) => {
       moreEvents: $gettext("{0} more"),
       today: $gettext("Today"),
     },
+    heatmap: {
+      less: $gettext("Less"),
+      more: $gettext("More"),
+    },
     input: {
       clear: $gettext("Clear {0}"),
       prependAction: $gettext("{0} prepended action"),
       appendAction: $gettext("{0} appended action"),
-      otp: $gettext("Please enter OTP character {0}"),
+      otp: $gettext("Enter verification code"),
     },
     fileInput: {
       counter: $gettext("{0} files"),
@@ -285,6 +315,10 @@ export const Messages = ($gettext) => {
       am: $gettext("AM"),
       pm: $gettext("PM"),
       title: $gettext("Select Time"),
+      hour: $gettext("Hour"),
+      minute: $gettext("Minute"),
+      second: $gettext("Second"),
+      notAllowed: $gettext("Value is not allowed"),
     },
     pagination: {
       ariaLabel: {
@@ -310,6 +344,69 @@ export const Messages = ($gettext) => {
     infiniteScroll: {
       loadMore: $gettext("Load more"),
       empty: $gettext("No more"),
+    },
+    rules: {
+      required: $gettext("This field is required"),
+      email: $gettext("Please enter a valid email"),
+      number: $gettext("This field can only contain numbers"),
+      integer: $gettext("This field can only contain integer values"),
+      capital: $gettext("This field can only contain uppercase letters"),
+      maxLength: $gettext("You must enter a maximum of {0} characters"),
+      minLength: $gettext("You must enter a minimum of {0} characters"),
+      strictLength: $gettext("The length of the entered field is invalid"),
+      exclude: $gettext("The {0} character is not allowed"),
+      notEmpty: $gettext("Please choose at least one value"),
+      pattern: $gettext("Invalid format"),
+    },
+    command: {
+      search: $gettext("Type a command or search..."),
+    },
+    hotkey: {
+      then: $gettext("then"),
+      ctrl: $gettext("Ctrl"),
+      command: $gettext("Command"),
+      space: $gettext("Space"),
+      shift: $gettext("Shift"),
+      alt: $gettext("Alt"),
+      enter: $gettext("Enter"),
+      escape: $gettext("Escape"),
+      upArrow: $gettext("Up Arrow"),
+      downArrow: $gettext("Down Arrow"),
+      leftArrow: $gettext("Left Arrow"),
+      rightArrow: $gettext("Right Arrow"),
+      backspace: $gettext("Backspace"),
+      option: $gettext("Option"),
+      plus: $gettext("plus"),
+      shortcut: $gettext("Keyboard shortcut: {0}"),
+      or: $gettext("or"),
+    },
+    video: {
+      play: $gettext("Play"),
+      pause: $gettext("Pause"),
+      seek: $gettext("Seek"),
+      volume: $gettext("Volume"),
+      showVolume: $gettext("Show volume control"),
+      mute: $gettext("Mute"),
+      unmute: $gettext("Unmute"),
+      enterFullscreen: $gettext("Full screen"),
+      exitFullscreen: $gettext("Exit full screen"),
+    },
+    colorPicker: {
+      ariaLabel: {
+        eyedropper: $gettext("Select color with eyedropper"),
+        hueSlider: $gettext("Hue"),
+        alphaSlider: $gettext("Alpha"),
+        redInput: $gettext("Red value"),
+        greenInput: $gettext("Green value"),
+        blueInput: $gettext("Blue value"),
+        alphaInput: $gettext("Alpha value"),
+        hueInput: $gettext("Hue value"),
+        saturationInput: $gettext("Saturation value"),
+        lightnessInput: $gettext("Lightness value"),
+        hexInput: $gettext("HEX value"),
+        hexaInput: $gettext("HEX with alpha value"),
+        changeFormat: $gettext("Change color format"),
+      },
     },
   };
 };
