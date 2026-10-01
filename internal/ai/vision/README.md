@@ -259,7 +259,7 @@ Models:
 
 ### Labels Model Selection
 
-`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`; model names belong in `vision.yml`. A registered `Type: labels` entry loads pinned artifact metadata, while custom and remote entries retain their configuration. `Default: true` or an absent entry chooses the first installed classifier. Explicit user disablement is preserved. The deprecated `DISABLE_CLASSIFICATION` is consulted only when `LABELS_MODEL` is unset. Alternative label models run after indexing unless `Run: on-index` is configured.
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`; model names belong in `vision.yml`. A registered `Type: labels` entry loads pinned artifact metadata, while custom and remote entries retain their configuration. `Default: true` or an absent entry chooses the first installed classifier. Explicit user disablement is preserved. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; an unsupported value does not override it. Alternative label models run after indexing unless `Run: on-index` is configured.
 
 Missing artifacts and initialization failures do not change saved disablement. Initialization failures are cached until restart; startup warnings name the download command for missing registered artifacts.
 

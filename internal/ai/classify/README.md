@@ -21,7 +21,7 @@ The graph is inspected at initialization and must agree with all recorded struct
 
 ### Configuration
 
-`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies only when `LABELS_MODEL` is unset; explicit `auto` overrides it.
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; explicit `auto` overrides it, while an unsupported value does not.
 
 Select a registered alternative in `vision.yml`:
 

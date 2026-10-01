@@ -328,10 +328,23 @@ func TestCliFlags_Deprecated(t *testing.T) {
 	t.Run("Deprecated", func(t *testing.T) {
 		assert.True(t, Flags.Deprecated("face-engine"))
 		assert.True(t, Flags.Deprecated("face-engine-threads"))
+		assert.True(t, Flags.Deprecated("disable-classification"))
 	})
 	t.Run("Supported", func(t *testing.T) {
 		assert.False(t, Flags.Deprecated("face-detector"))
 		assert.False(t, Flags.Deprecated("face-model"))
+		assert.False(t, Flags.Deprecated("labels-model"))
+	})
+	t.Run("Hidden", func(t *testing.T) {
+		found := 0
+		for _, flag := range Flags {
+			switch flag.Name() {
+			case "face-engine", "face-engine-threads", "disable-classification":
+				found++
+				assert.True(t, flag.Hidden(), "deprecated flag %s must be hidden", flag.Name())
+			}
+		}
+		assert.Equal(t, 3, found)
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.False(t, Flags.Deprecated("nonexistent"))

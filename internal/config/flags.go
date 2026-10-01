@@ -528,7 +528,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-classification",
-			Usage:   "disables image classification (deprecated, use labels-model none)",
+			Usage:   "disables image classification *deprecated*, use --labels-model none",
+			Hidden:  true,
 			EnvVars: EnvVars("DISABLE_CLASSIFICATION"),
 		}}, {
 		Flag: &cli.BoolFlag{

@@ -150,16 +150,29 @@ func (c *Config) reportUnscreenedUploads() {
 	}
 }
 
-// LabelModelSetting returns the labels mode, including deprecated disablement.
+// LabelModelSetting returns the labels mode, including deprecated disablement, which applies
+// unless labels-model is set to a supported mode.
 func (c *Config) LabelModelSetting() classify.ModelName {
 	if c == nil {
 		return classify.ModelNone
 	}
-	setting := strings.ToLower(strings.TrimSpace(c.options.LabelsModel))
-	if setting == "none" || c.options.LabelsModel == "" && c.options.DisableClassification {
+
+	switch setting := strings.ToLower(strings.TrimSpace(c.options.LabelsModel)); setting {
+	case "none":
 		return classify.ModelNone
+	case "auto":
+		if c.options.DisableClassification {
+			if _, reported := c.warnedOnce.LoadOrStore("disable-classification-ignored", true); !reported {
+				log.Infof("config: disable-classification is ignored, because labels-model %s is configured", setting)
+			}
+		}
+		return classify.ModelAuto
+	default:
+		if c.options.DisableClassification {
+			return classify.ModelNone
+		}
+		return classify.ModelAuto
 	}
-	return classify.ModelAuto
 }
 
 // EffectiveLabelModel returns the local classifier selected for this instance.
@@ -585,7 +598,11 @@ func (c *Config) reportVisionModes() {
 	} {
 		value := strings.ToLower(strings.TrimSpace(mode.value))
 		if value != "" && value != "auto" && value != "none" && (!mode.labels || value != "labels") {
-			event.SystemWarn([]string{"config", "unsupported %s mode %s, using auto; choose the model in vision.yml"}, mode.name, clean.Log(mode.value))
+			resolved := string(c.NSFWModelSetting())
+			if !mode.labels {
+				resolved = string(c.LabelModelSetting())
+			}
+			event.SystemWarn([]string{"config", "unsupported %s mode %s, using %s; choose the model in vision.yml"}, mode.name, clean.Log(mode.value), resolved)
 		}
 	}
 	if model := vision.Config.Model(vision.ModelTypeLabels); model != nil {

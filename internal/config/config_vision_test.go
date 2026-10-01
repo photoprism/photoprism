@@ -783,14 +783,68 @@ func TestVisionModes(t *testing.T) {
 		})
 		c.options.DisableClassification = true
 		c.options.LabelsModel = ""
+		assert.Equal(t, classify.ModelNone, c.LabelModelSetting())
 		assert.True(t, c.DisableClassification())
 		assert.True(t, c.ClientUser(false).Disable.Classification)
 		c.options.LabelsModel = "auto"
+		assert.Equal(t, classify.ModelAuto, c.LabelModelSetting())
 		assert.False(t, c.DisableClassification())
 		assert.False(t, c.ClientUser(false).Disable.Classification)
 		c.options.DisableClassification = false
 		c.options.LabelsModel = "none"
 		assert.True(t, c.DisableClassification())
+	})
+	t.Run("DeprecatedIgnoredReport", func(t *testing.T) {
+		// ignoredReports returns the reports that the deprecated option is ignored.
+		ignoredReports := func(hook *test.Hook) (result []*logrus.Entry) {
+			for _, entry := range hook.AllEntries() {
+				if strings.Contains(entry.Message, "disable-classification is ignored") {
+					result = append(result, entry)
+				}
+			}
+			return result
+		}
+
+		cases := []struct {
+			name     string
+			disabled bool
+			mode     string
+			expected classify.ModelName
+			reports  int
+		}{
+			{"Ignored", true, "auto", classify.ModelAuto, 1},
+			{"Honored", true, "", classify.ModelNone, 0},
+			{"Whitespace", true, "  ", classify.ModelNone, 0},
+			{"Unsupported", true, "off", classify.ModelNone, 0},
+			{"NotSet", false, "auto", classify.ModelAuto, 0},
+			{"UnsupportedNotSet", false, "off", classify.ModelAuto, 0},
+			{"PaddedNone", false, " None ", classify.ModelNone, 0},
+			{"PaddedAuto", true, " AUTO ", classify.ModelAuto, 1},
+		}
+
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				c := NewConfig(CliTestContext())
+				c.options.DisableClassification = tc.disabled
+				c.options.LabelsModel = tc.mode
+				hook := captureLog(t)
+				assert.Equal(t, tc.expected, c.LabelModelSetting())
+				assert.Equal(t, tc.expected, c.LabelModelSetting())
+				reports := ignoredReports(hook)
+				require.Len(t, reports, tc.reports)
+				for _, entry := range reports {
+					assert.Equal(t, logrus.InfoLevel, entry.Level)
+				}
+			})
+		}
+	})
+	t.Run("UnsupportedLabelsModeReport", func(t *testing.T) {
+		withVisionConfig(t, &vision.ConfigValues{})
+		c := NewConfig(CliTestContext())
+		c.options.LabelsModel, c.options.DisableClassification = "off", true
+		system, _ := captureLogChannels(t, c.reportVisionModes)
+		require.NotEmpty(t, system)
+		assert.Contains(t, system[0], "using none")
 	})
 	t.Run("InvalidModes", func(t *testing.T) {
 		withVisionConfig(t, &vision.ConfigValues{})
