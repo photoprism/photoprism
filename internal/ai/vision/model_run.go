@@ -25,7 +25,7 @@ const (
 	RunOnDemand RunType = "on-demand"
 	// RunOnSchedule runs manually and on-schedule.
 	RunOnSchedule RunType = "on-schedule"
-	// RunOnIndex runs manually and after indexing.
+	// RunOnIndex runs manually and during indexing.
 	RunOnIndex RunType = "on-index"
 )
 
