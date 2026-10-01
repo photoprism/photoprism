@@ -39,8 +39,6 @@ OPENCV_ZOO_URL="https://media.githubusercontent.com/media/opencv/opencv_zoo/main
 # its own line in version.txt.
 MODELS="\
 facenet|${TENSORFLOW_URL}/facenet.zip||bf9ae0945d2ac53ac3db27082162d2b9dda5ba2c564c0e4c4f539f31f8b670af|zip|facenet|
-nasnet|${TENSORFLOW_URL}/nasnet.zip||a0e1ad8d5a5a0ff9efc4b3ed89898bf008563ee36cacd0c804a384f8fc661588|zip|nasnet|
-nsfw|${TENSORFLOW_URL}/nsfw.zip||eb5e5d22e37961c3192a4757efff883f77bc989c0efceabb1395e0959d966f14|zip|nsfw|
 efficientformerv2_s1|${ONNX_URL}/efficientformerv2_s1.onnx||0462a5e756be23772c043ac3203a7b34f015694a2775aaea1cf555066ea16b8d|file|efficientformerv2_s1|efficientformerv2_s1.onnx
 repvit_m1_0|${ONNX_URL}/repvit_m1_0.onnx||5a797d2a73ae39ff953c76a2aed341cbcc94e8dfd339757edaea95e47176e593|file|repvit_m1_0|repvit_m1_0.onnx
 efficientnet_b0|${ONNX_URL}/efficientnet_b0.onnx||6cc4c8008f069390a588e6c3de3ee9bfc1c61e3e2a86546015bd3bc5fa5a16c0|file|efficientnet_b0|efficientnet_b0.onnx

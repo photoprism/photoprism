@@ -285,7 +285,7 @@ func TestCustomModelMetadataIntegration(t *testing.T) {
 	model := NewModel(Settings{
 		Name:      "custom_metadata",
 		ModelPath: modelPath,
-		LabelPath: filepath.Join(modelsPath, "nasnet", "labels.txt"),
+		LabelPath: "labels.txt",
 	})
 	defer func() { require.NoError(t, model.Close()) }()
 
