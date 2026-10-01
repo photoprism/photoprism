@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:05+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2765,7 +2765,7 @@ msgstr "Далей"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "Наступны месяц"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2781,7 +2781,7 @@ msgstr "Наступны візуал"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "Наступны год"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3346,7 +3346,7 @@ msgstr "Папярэдні"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "Папярэдні месяц"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3362,7 +3362,7 @@ msgstr "Папярэдні візуал"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "Папярэдні год"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3786,7 +3786,7 @@ msgstr "Выберыце зыходную папку для імпарту фа�
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "Выбраць усё"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3798,11 +3798,11 @@ msgstr "Выберыце даты"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "Выбраць групу"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "Выберыце месяц"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3821,7 +3821,7 @@ msgstr "Выберыце або перацягніце файлы для заг�
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "Выбраць радок"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3837,7 +3837,7 @@ msgstr "Выберыце Час"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "Выберыце год"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4385,7 +4385,7 @@ msgstr "сёння"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "Сёння, {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

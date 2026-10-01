@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:08+0000\n"
+"Last-Translator: Joe <reg@smakas.lt>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
@@ -2768,7 +2768,7 @@ msgstr "Kitas"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "Kitą mėnesį"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2784,7 +2784,7 @@ msgstr "Kitas vaizdas"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "Kitais metais"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3349,7 +3349,7 @@ msgstr "Ankstesnis"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "Praėjusį mėnesį"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3365,7 +3365,7 @@ msgstr "Ankstesnis vaizdinis"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "Praėjusi metai"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3789,7 +3789,7 @@ msgstr "Pasirinkite šaltinio aplanką, į kurį norite importuoti failus…"
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "Pažymėti viską"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3801,11 +3801,11 @@ msgstr "Pasirinkite datas"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "Pasirinkite grupę"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "Pasirinkite mėnesį"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3824,7 +3824,7 @@ msgstr "Pasirinkite arba numeskite failus, kuriuos norite įkelti…"
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "Pasirinkite eilutę"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3840,7 +3840,7 @@ msgstr "Pasirinkite laiką"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "Pasirinkite metus"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4388,7 +4388,7 @@ msgstr "Šiandien"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "Šiandien, {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

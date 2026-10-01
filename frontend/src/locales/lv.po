@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:08+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2764,7 +2764,7 @@ msgstr "Nākamais"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "Nākamajā mēnesī"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2780,7 +2780,7 @@ msgstr "Nākamais vizuālais materiāls"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "Nākamgad"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3345,7 +3345,7 @@ msgstr "Iepriekšējais"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "Iepriekšējais mēnesis"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3361,7 +3361,7 @@ msgstr "Iepriekšējais vizuālais materiāls"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "Iepriekšējais gads"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3785,7 +3785,7 @@ msgstr "Atlasiet avota mapi, lai importētu failus…"
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "Atlasīt visu"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3797,11 +3797,11 @@ msgstr "Izvēlieties datumus"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "Izvēlieties grupu"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "Izvēlieties mēnesi"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3820,7 +3820,7 @@ msgstr "Izvēlieties vai nometiet failus, lai augšupielādētu…"
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "Izvēlēties rindu"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3836,7 +3836,7 @@ msgstr "Izvēlieties laiku"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "Izvēlieties gadu"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4384,7 +4384,7 @@ msgstr "Šodien"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "Šodien, {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

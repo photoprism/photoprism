@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-29 13:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-10-01 13:07+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2765,7 +2765,7 @@ msgstr "Ar aghaidh"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr ""
+msgstr "An mhí seo chugainn"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2781,7 +2781,7 @@ msgstr "Amhairc seo chugainn"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr ""
+msgstr "An bhliain seo chugainn"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -3346,7 +3346,7 @@ msgstr "Roimhe Seo"
 
 #: src/locales.js:270
 msgid "Previous month"
-msgstr ""
+msgstr "An mhí roimhe sin"
 
 #: src/locales.js:250 src/locales.js:316
 msgid "Previous page"
@@ -3362,7 +3362,7 @@ msgstr "Amhairc roimhe seo"
 
 #: src/locales.js:273
 msgid "Previous year"
-msgstr ""
+msgstr "An bhliain roimhe sin"
 
 #: src/component/photo/edit/files.vue:164
 #: src/component/photo/edit/files.vue:165
@@ -3786,7 +3786,7 @@ msgstr "Roghnaigh fillteán foinse chun comhaid a iompórtáil…"
 
 #: src/locales.js:241
 msgid "Select all"
-msgstr ""
+msgstr "Roghnaigh iad go léir"
 
 #: src/locales.js:264
 msgid "Select date"
@@ -3798,11 +3798,11 @@ msgstr "Roghnaigh dátaí"
 
 #: src/locales.js:242
 msgid "Select group"
-msgstr ""
+msgstr "Roghnaigh grúpa"
 
 #: src/locales.js:275
 msgid "Select month"
-msgstr ""
+msgstr "Roghnaigh mí"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
@@ -3821,7 +3821,7 @@ msgstr "Roghnaigh nó scaoil comhaid chun iad a uaslódáil…"
 
 #: src/locales.js:240
 msgid "Select row"
-msgstr ""
+msgstr "Roinnt a roghnú"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3837,7 +3837,7 @@ msgstr "Roghnaigh Am"
 
 #: src/locales.js:272
 msgid "Select year"
-msgstr ""
+msgstr "Roghnaigh bliain"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4385,7 +4385,7 @@ msgstr "Inniu"
 
 #: src/locales.js:277
 msgid "Today, {0}"
-msgstr ""
+msgstr "Inniu, {0}"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
