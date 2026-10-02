@@ -30,6 +30,7 @@
           v-if="view === 'mosaic'"
           :context="context"
           :photos="group.photos"
+          :selection-photos="results"
           :select-mode="selectMode"
           :filter="filter"
           :edit-photo="(index, tab) => editPhotoInYear(group.year, index, tab)"
@@ -40,6 +41,7 @@
           v-else
           :context="context"
           :photos="group.photos"
+          :selection-photos="results"
           :select-mode="selectMode"
           :filter="filter"
           :open-photo="(index, merged) => openPhotoInYear(group.year, index, merged)"
