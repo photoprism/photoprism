@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-02 12:00+0000\n"
+"PO-Revision-Date: 2026-10-02 13:16+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1954,7 +1954,7 @@ msgstr "Απόκρυψη λεζάντας"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Hide Password"
-msgstr ""
+msgstr "Απόκρυψη κωδικού πρόσβασης"
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
@@ -3346,7 +3346,7 @@ msgstr "Αφαίρεση"
 
 #: src/component/photo/toolbar.vue:57
 msgid "Remove Location"
-msgstr ""
+msgstr "Διαγραφή τοποθεσίας"
 
 #: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
@@ -3521,7 +3521,7 @@ msgstr "Αναζήτηση"
 
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
-msgstr ""
+msgstr "Φίλτρα αναζήτησης"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3731,7 +3731,7 @@ msgstr "Εμφάνιση μόνο σημαντικών"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Show Password"
-msgstr ""
+msgstr "Εμφάνιση κωδικού πρόσβασης"
 
 #: src/page/settings/content.vue:141
 msgid "Show Titles"
