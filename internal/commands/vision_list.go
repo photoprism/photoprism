@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
@@ -42,16 +43,49 @@ var visionListCols = []string{
 	"Schedule",
 	"Status",
 	"Installed",
+	"Option",
+}
+
+// visionFaceCols are the columns of the face table in text and Markdown output.
+var visionFaceCols = []string{
+	"Model",
+	"Role",
+	"Engine",
+	"Provider",
+	"Resolution",
+	"Schedule",
+	"Status",
+	"Installed",
+	"Option",
+}
+
+const (
+	visionModelsTitle   = "VISION MODELS"
+	visionFacesTitle    = "FACE DETECTION & RECOGNITION"
+	visionFacesNote     = `Selected with face-detector and face-model, not in vision.yml. Run them with "photoprism vision run -m face"; see "photoprism faces status" for details.`
+	visionYamlOption    = "vision-yaml"
+	faceDetectorOption  = "face-detector"
+	faceModelOption     = "face-model"
+	faceDetectionRole   = "detection"
+	faceRecognitionRole = "recognition"
+)
+
+// visionFaceRoles names the role of each face model by the option that selects it.
+var visionFaceRoles = map[string]string{
+	faceDetectorOption: faceDetectionRole,
+	faceModelOption:    faceRecognitionRole,
 }
 
 // visionListSettings holds the instance settings that decide what a listed model runs with,
-// since "vision.yml" names neither the execution provider nor the face embedding model.
+// since "vision.yml" names neither the execution provider nor the face models.
 type visionListSettings struct {
-	ModelsPath string
-	Provider   onnx.Provider
-	FaceModel  face.ModelName
-	FaceActive bool
-	FaceRun    vision.RunType
+	ModelsPath     string
+	Provider       onnx.Provider
+	FaceModel      face.ModelName
+	FaceActive     bool
+	FaceDetector   face.DetectorName
+	DetectorActive bool
+	FaceRun        vision.RunType
 }
 
 // newVisionListSettings resolves the listing settings from the instance configuration.
@@ -64,12 +98,22 @@ func newVisionListSettings(conf *config.Config) visionListSettings {
 		faceModel = conf.FaceModelSetting()
 	}
 
+	detector := conf.FaceDetector()
+	detectorActive := detector != face.DetectorNone && !conf.DisableFaces()
+
+	// Likewise for the detector, except that "auto" with nothing to derive it from stays "none".
+	if setting := conf.FaceDetectorSetting(); detector == face.DetectorNone && setting != face.DetectorAuto {
+		detector = setting
+	}
+
 	return visionListSettings{
-		ModelsPath: conf.ModelsPath(),
-		Provider:   conf.OnnxProvider(),
-		FaceModel:  faceModel,
-		FaceActive: active,
-		FaceRun:    conf.FaceEngineRunType(),
+		ModelsPath:     conf.ModelsPath(),
+		Provider:       conf.OnnxProvider(),
+		FaceModel:      faceModel,
+		FaceActive:     active,
+		FaceDetector:   detector,
+		DetectorActive: detectorActive,
+		FaceRun:        conf.FaceEngineRunType(),
 	}
 }
 
@@ -90,35 +134,221 @@ func visionEndpoint(uri, method string) string {
 	return fmt.Sprintf("%s %s", method, uri)
 }
 
-// visionListAction displays the configured computer vision models.
+// visionListAction displays the configured computer vision models and the face models.
 func visionListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		// Show log message.
-		log.Infof("found %s", english.Plural(len(vision.Config.Models), "model", "models"))
+		var models []*vision.Model
 
-		if len(vision.Config.Models) == 0 {
-			return nil
+		if vision.Config != nil {
+			models = vision.Config.Models
 		}
 
 		settings := newVisionListSettings(conf)
-		rows := make([][]string, 0, len(vision.Config.Models))
+		rows := visionListRows(models, settings)
+		faceRows := visionFaceRows(models, settings)
 
-		for _, model := range vision.Config.Models {
-			if model != nil {
-				rows = append(rows, visionListRow(model, settings))
-			}
-		}
+		// Show log message.
+		log.Infof("found %s", english.Plural(len(rows)+len(faceRows), "model", "models"))
 
-		result, err := report.RenderFormat(rows, visionListCols, report.CliFormat(ctx))
-
-		fmt.Printf("\n%s\n", result)
-
-		return err
+		return printVisionList(report.CliFormat(ctx), rows, faceRows)
 	})
 }
 
-// visionListRow renders a model as a row of the "vision ls" table. Local face entries report the
-// embedding model FACE_MODEL selects, because that model runs regardless of the entry.
+// printVisionList prints the vision and face tables in text and Markdown output, and a single
+// flat table for CSV, TSV and JSON, so that exports keep one header and one array.
+func printVisionList(format report.Format, rows, faceRows [][]string) error {
+	switch format {
+	case report.CSV, report.TSV, report.JSON:
+		result, err := report.RenderFormat(slices.Concat(rows, faceRows), visionListCols, format)
+		fmt.Printf("\n%s\n", result)
+		return err
+	}
+
+	fmt.Println()
+
+	// Every row of this table is configured in "vision.yml", so its Option column would only repeat that.
+	optionCol := visionListColumn("Option")
+	visionRows := make([][]string, 0, len(rows))
+
+	for _, row := range rows {
+		visionRows = append(visionRows, row[:optionCol])
+	}
+
+	sections := []config.StatusSection{
+		{Title: visionModelsTitle, Cols: visionListCols[:optionCol], Rows: visionRows},
+		{Title: visionFacesTitle, Cols: visionFaceCols, Rows: visionFaceTable(faceRows), Note: visionFacesNote},
+	}
+
+	for _, section := range sections {
+		if len(section.Rows) == 0 {
+			continue
+		}
+
+		result, err := report.RenderFormat(section.Rows, section.Cols, format)
+
+		if err != nil {
+			return err
+		}
+
+		if format == report.Markdown {
+			fmt.Printf("### %s\n\n", section.Title)
+		} else {
+			fmt.Printf("%s\n\n", section.Title)
+		}
+
+		fmt.Println(result)
+
+		if section.Note != "" {
+			fmt.Printf("%s\n\n", section.Note)
+		}
+	}
+
+	return nil
+}
+
+// visionListRows renders the "vision.yml" entries, except local face entries, whose models are
+// selected with face-detector and face-model and are listed by visionFaceRows instead.
+func visionListRows(models []*vision.Model, s visionListSettings) [][]string {
+	rows := make([][]string, 0, len(models))
+
+	for _, model := range models {
+		if model == nil || model.Type == vision.ModelTypeFace && !visionRemote(model) {
+			continue
+		}
+
+		rows = append(rows, visionListRow(model, s))
+	}
+
+	return rows
+}
+
+// visionFaceRows renders the face detector and the face embedding model as rows of the flat table.
+func visionFaceRows(models []*vision.Model, s visionListSettings) [][]string {
+	entry := visionFaceEntry(models)
+	enabled := entry != nil && !entry.Disabled && !entry.DisabledByMode
+
+	return [][]string{
+		visionDetectorRow(enabled, s),
+		visionRecognitionRow(entry, s),
+	}
+}
+
+// visionFaceEntry returns the face entry in force, as vision.Config.Model resolves it, or the
+// last one listed when all are disabled, since its settings still describe the model.
+func visionFaceEntry(models []*vision.Model) *vision.Model {
+	var last *vision.Model
+
+	for i := len(models) - 1; i >= 0; i-- {
+		if m := models[i]; m == nil || m.Type != vision.ModelTypeFace {
+			continue
+		} else if !m.Disabled && !m.DisabledByMode {
+			return m
+		} else if last == nil {
+			last = m
+		}
+	}
+
+	return last
+}
+
+// visionDetectorRow renders the face detector face-detector selects. It runs while faces are
+// enabled and a "vision.yml" face entry is in force, even when that entry uses a service.
+func visionDetectorRow(entryEnabled bool, s visionListSettings) []string {
+	row := make([]string, len(visionListCols))
+	installed := report.NotAssigned
+
+	if detector := face.FindDetector(s.FaceDetector); detector != nil {
+		row[visionListColumn("Engine")] = vision.EngineONNX
+		row[visionListColumn("Provider")] = s.Provider.String()
+		installed = report.Bool(detector.Installed(s.ModelsPath), report.Yes, report.No)
+
+		if width, _ := detector.ONNX.InputSize(); width > 0 {
+			row[visionListColumn("Resolution")] = fmt.Sprintf("%d", width)
+		}
+	}
+
+	row[visionListColumn("Model")] = s.FaceDetector
+	row[visionListColumn("Type")] = vision.ModelTypeFace
+	row[visionListColumn("Schedule")] = visionRunText(s.FaceRun)
+	row[visionListColumn("Status")] = report.Bool(entryEnabled && s.DetectorActive, report.Enabled, report.Disabled)
+	row[visionListColumn("Installed")] = installed
+	row[visionListColumn("Option")] = faceDetectorOption
+
+	return row
+}
+
+// visionRecognitionRow renders the face embedding model. A face entry with a service endpoint
+// returns the vectors, which are recorded under the face-model name, so no local model is shown.
+func visionRecognitionRow(entry *vision.Model, s visionListSettings) []string {
+	if entry == nil {
+		entry = vision.FacenetModel.Clone()
+		entry.Disabled = true
+	}
+
+	row := visionListRow(entry, s)
+
+	if visionRemote(entry) {
+		row[visionListColumn("Model")] = s.FaceModel
+		row[visionListColumn("Provider")] = ""
+		row[visionListColumn("Resolution")] = ""
+		row[visionListColumn("Installed")] = report.NotAssigned
+	}
+
+	row[visionListColumn("Endpoint")] = ""
+	row[visionListColumn("Option")] = faceModelOption
+
+	return row
+}
+
+// visionFaceTable projects flat face rows onto the columns of the face table.
+func visionFaceTable(rows [][]string) [][]string {
+	result := make([][]string, 0, len(rows))
+
+	for _, row := range rows {
+		option := row[visionListColumn("Option")]
+		out := make([]string, 0, len(visionFaceCols))
+
+		for _, col := range visionFaceCols {
+			if col == "Role" {
+				out = append(out, visionFaceRoles[option])
+			} else {
+				out = append(out, row[visionListColumn(col)])
+			}
+		}
+
+		result = append(result, out)
+	}
+
+	return result
+}
+
+// visionListColumn returns the index of a column in the flat table. It panics on an unknown name,
+// which only a typo in this file can produce.
+func visionListColumn(col string) int {
+	if i := slices.Index(visionListCols, col); i >= 0 {
+		return i
+	}
+
+	panic(fmt.Sprintf("vision ls: unknown column %s", col))
+}
+
+// visionRemote reports whether a model is run by a service endpoint.
+func visionRemote(model *vision.Model) bool {
+	uri, method := model.Endpoint()
+	return uri != "" && method != ""
+}
+
+// visionRunText renders a run type for display, naming the automatic schedule.
+func visionRunText(run vision.RunType) string {
+	if run == vision.RunAuto {
+		return "auto"
+	}
+
+	return run
+}
+
+// visionListRow renders a model as a row of the flat table. Face entries report the embedding
+// model FACE_MODEL selects, because that model runs regardless of the entry.
 func visionListRow(model *vision.Model, s visionListSettings) []string {
 	modelUri, modelMethod := model.Endpoint()
 	remote := modelUri != "" && modelMethod != ""
@@ -194,10 +424,6 @@ func visionListRow(model *vision.Model, s visionListSettings) []string {
 		}
 	}
 
-	if run == vision.RunAuto {
-		run = "auto"
-	}
-
 	var provider string
 
 	if !remote && engine == vision.EngineONNX {
@@ -246,9 +472,10 @@ func visionListRow(model *vision.Model, s visionListSettings) []string {
 		normalize,
 		resolutionText,
 		options,
-		run,
+		visionRunText(run),
 		report.Bool(enabled, report.Enabled, report.Disabled),
 		installed,
+		visionYamlOption,
 	}
 }
 
