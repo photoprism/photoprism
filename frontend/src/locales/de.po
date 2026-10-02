@@ -1280,7 +1280,7 @@ msgstr "Gesichtserkennung deaktivieren"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr "Globe deaktivieren"
+msgstr "Globus deaktivieren"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1520,7 +1520,7 @@ msgstr "E-Mail"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr "Globe aktivieren"
+msgstr "Globus aktivieren"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"

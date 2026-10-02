@@ -1146,7 +1146,7 @@ msgstr "שם נוכחי"
 
 #: src/component/settings/password.vue:30
 msgid "Current Password"
-msgstr "צור סיסמה"
+msgstr "סיסמה נוכחית"
 
 #: src/options/auth.js:107 src/options/themes.js:1021
 #: src/options/themes.js:1031
