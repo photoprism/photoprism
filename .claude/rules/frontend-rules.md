@@ -60,6 +60,7 @@
 - Persistent dialogs (`persistent` prop) must handle Escape via `@keydown.esc.exact` to suppress Vuetify's rejection animation; keep other shortcuts on `@keyup` so inner inputs can cancel first.
 - Global shortcuts go through `onShortCut(ev)` in `common/view.js`, which only forwards Escape and `ctrl`/`meta` combos — don't rely on it for arbitrary keys.
 - When a dialog opens nested menus (e.g., combobox suggestions), confirm they work with the global trap; see the README for troubleshooting.
+- Clickable icons inside a form field go in its `#prepend-inner` / `#append-inner` slot as `<p-input-action :label="$gettext('…')">` (`component/input/action.vue`), not `*-icon` props with `@click:*`: Vuetify names those icons `{0} prepended action` after the field label, which is empty on placeholder-only fields.
 
 ## Frontend Translations
 

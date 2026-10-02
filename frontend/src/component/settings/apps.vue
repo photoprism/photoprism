@@ -37,11 +37,17 @@
                   autocapitalize="none"
                   autocomplete="current-password"
                   class="input-password text-monospace text-selectable"
-                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                   prepend-inner-icon="mdi-lock"
-                  @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onConfirm"
-                ></v-text-field>
+                >
+                  <template #append-inner>
+                    <p-input-action
+                      :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                      @click="showPassword = !showPassword"
+                    ></p-input-action>
+                  </template>
+                </v-text-field>
               </v-col>
             </v-row>
           </v-card-text>

@@ -16,7 +16,6 @@
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          :prepend-inner-icon="canExpand ? 'mdi-tune' : 'mdi-magnify'"
           :placeholder="$gettext('Search')"
           class="input-search background-inherit elevation-0"
           :class="{ 'input-search--expanded': expanded, 'input-search--focus': !canExpand }"
@@ -27,13 +26,23 @@
           "
           @keyup.enter="() => updateQuery()"
           @keyup.esc.exact="() => hideExpansionPanel()"
-          @click:prepend-inner.stop="toggleExpansionPanel"
           @click:clear="
             () => {
               updateQuery({ q: '' });
             }
           "
-        ></v-text-field>
+        >
+          <template #prepend-inner>
+            <p-input-action
+              v-if="canExpand"
+              icon="mdi-tune"
+              :label="$gettext('Search Filters')"
+              :aria-expanded="expanded ? 'true' : 'false'"
+              @click.stop="toggleExpansionPanel"
+            ></p-input-action>
+            <v-icon v-else icon="mdi-magnify"></v-icon>
+          </template>
+        </v-text-field>
 
         <v-btn
           v-if="canManage && staticFilter.type === 'album'"

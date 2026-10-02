@@ -29,8 +29,6 @@
           autocorrect="off"
           autocapitalize="none"
           autocomplete="off"
-          prepend-inner-icon="mdi-tune"
-          :append-inner-icon="filter.latlng ? 'mdi-map-marker-off' : ''"
           :placeholder="$gettext('Search')"
           class="input-search background-inherit elevation-0"
           :class="{ 'input-search--expanded': expanded }"
@@ -41,14 +39,24 @@
           "
           @keyup.enter="() => onUpdate()"
           @keyup.esc.exact="() => hideExpansionPanel()"
-          @click:prepend-inner.stop="toggleExpansionPanel"
-          @click:append-inner.stop="clearLocation"
           @click:clear="
             () => {
               onUpdate({ q: '' });
             }
           "
-        ></v-text-field>
+        >
+          <template #prepend-inner>
+            <p-input-action
+              icon="mdi-tune"
+              :label="$gettext('Search Filters')"
+              :aria-expanded="expanded ? 'true' : 'false'"
+              @click.stop="toggleExpansionPanel"
+            ></p-input-action>
+          </template>
+          <template v-if="filter.latlng" #append-inner>
+            <p-input-action icon="mdi-map-marker-off" :label="$gettext('Remove Location')" @click.stop="clearLocation"></p-input-action>
+          </template>
+        </v-text-field>
 
         <v-btn-toggle
           :model-value="settings.view"
