@@ -408,7 +408,6 @@
 </template>
 
 <script>
-import countries from "options/countries.json";
 import Thumb from "model/thumb";
 import { MaxLength as PhotoMaxLength } from "model/photo";
 import * as options from "options/options";
@@ -441,7 +440,7 @@ export default {
       options,
       rules,
       PhotoMaxLength,
-      countries,
+      countries: options.Countries(),
       featReview: this.$config.feature("review"),
       showDatePicker: false,
       showTimePicker: false,
