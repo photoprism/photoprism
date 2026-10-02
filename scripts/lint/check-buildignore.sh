@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Checks that the rsync filter rules in assets/.buildignore let "make install" copy exactly the
-# files of the given models, by applying them to a scratch tree with every registry model and decoys.
+# files of the given models plus models/NOTICE, by applying them to a scratch tree with every
+# registry model and decoys.
 #
 # Usage: check-buildignore.sh <buildignore> <registry> <model>...
 
@@ -68,6 +69,9 @@ for decoy in nasnet nsfw arcface scrfd "decoy-$RANDOM"; do
 done
 touch "$tmp/src/models/loose.onnx"
 
+# Adds the notice that every build ships with the bundled models.
+touch "$tmp/src/models/NOTICE"
+
 # Lists the files the bundled models must provide.
 expected=""
 for model in "$@"; do
@@ -76,6 +80,7 @@ for model in "$@"; do
   IFS='|' read -r _ type dir file <<< "$entry"
   expected+="$(entryFiles "$type" "$dir" "$file")"$'\n'
 done
+expected+="models/NOTICE"$'\n'
 expected="$(printf '%s' "$expected" | sort -u)"
 
 copied="$(rsync -r -l --safe-links --dry-run --out-format='%n' --exclude-from="$BUILDIGNORE" "$tmp/src/" "$tmp/dst")"
@@ -84,7 +89,7 @@ actual="$(grep '^models/.*[^/]$' <<< "$copied" | sort -u || true)"
 if [[ "$expected" != "$actual" ]]; then
   echo "expected files: ${expected//$'\n'/ }" >&2
   echo "copied files: ${actual//$'\n'/ }" >&2
-  fail "rules do not copy exactly the bundled models, list each as '+ /models/<name>/' before '- /models/*'"
+  fail "rules do not copy exactly the bundled models and NOTICE, list each as '+ /models/<name>/' and '+ /models/NOTICE' before '- /models/*'"
 fi
 
-echo "OK: ${BUILDIGNORE} copies exactly the bundled models."
+echo "OK: ${BUILDIGNORE} copies exactly the bundled models and NOTICE."
