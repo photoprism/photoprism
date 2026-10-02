@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-02 13:16+0000\n"
+"PO-Revision-Date: 2026-10-02 16:58+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: hr\n"
@@ -1280,7 +1280,7 @@ msgstr "Onemogući lica"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr ""
+msgstr "Onemogući Globe"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1300,7 +1300,7 @@ msgstr "Onemogućite RawTherapee"
 
 #: src/common/map.js:140
 msgid "Disable Terrain"
-msgstr ""
+msgstr "Onemogući teren"
 
 #: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
@@ -1452,7 +1452,7 @@ msgstr "Ovdje povucite i ispustite datoteke"
 
 #: src/common/map.js:136
 msgid "Drag to rotate the map, click to reset north"
-msgstr ""
+msgstr "Povucite za rotiranje karte, kliknite za resetiranje sjevera."
 
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
@@ -1520,11 +1520,11 @@ msgstr "E-mail"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr ""
+msgstr "Omogući Globe"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"
-msgstr ""
+msgstr "Omogući teren"
 
 #: src/page/settings/advanced.vue:31
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
@@ -1621,7 +1621,7 @@ msgstr "Izdvajanje metapodataka s ExifTool-om potrebno je za potpunu podršku za
 
 #: src/common/map.js:129
 msgid "Exit Fullscreen"
-msgstr ""
+msgstr "Izlazak iz punog zaslona"
 
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
@@ -1833,7 +1833,7 @@ msgstr "Datoteke s uzastopnim nazivima poput 'IMG_1234 (2)' i 'IMG_1234 (3)' pri
 
 #: src/common/map.js:130
 msgid "Find My Location"
-msgstr ""
+msgstr "Pronađi moju lokaciju"
 
 #: src/locales.js:251 src/locales.js:319
 msgid "First page"
@@ -2428,7 +2428,7 @@ msgstr "Lokacija"
 
 #: src/common/map.js:131
 msgid "Location Not Available"
-msgstr ""
+msgstr "Lokacija nije dostupna"
 
 #: src/page/library/errors.vue:74
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -2489,15 +2489,15 @@ msgstr "Ručno učitavanje"
 
 #: src/common/map.js:134
 msgid "Map"
-msgstr ""
+msgstr "Karta"
 
 #: src/common/map.js:135
 msgid "Map Marker"
-msgstr ""
+msgstr "Oznaka karte"
 
 #: src/component/places/style-control.js:27
 msgid "Map Style"
-msgstr ""
+msgstr "Stil karte"
 
 #: src/page/settings/general.vue:505
 msgid "Maps"
@@ -4201,7 +4201,7 @@ msgstr "Danas, {0}"
 
 #: src/common/map.js:127
 msgid "Toggle Attribution"
-msgstr ""
+msgstr "Pokaži/sakrij atribuciju"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

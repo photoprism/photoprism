@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-02 13:16+0000\n"
+"PO-Revision-Date: 2026-10-02 16:58+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
@@ -1276,7 +1276,7 @@ msgstr "Izslēgt sejas"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr ""
+msgstr "Atspējot „Globe“"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1296,7 +1296,7 @@ msgstr "Izslēgt RawTherapee"
 
 #: src/common/map.js:140
 msgid "Disable Terrain"
-msgstr ""
+msgstr "Atspējot reljefu"
 
 #: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
@@ -1448,7 +1448,7 @@ msgstr "Velciet un nometiet failus šeit"
 
 #: src/common/map.js:136
 msgid "Drag to rotate the map, click to reset north"
-msgstr ""
+msgstr "Velciet, lai pagrieztu karti, noklikšķiniet, lai atjaunotu ziemeļu virzienu"
 
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
@@ -1516,11 +1516,11 @@ msgstr "E-pasts"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr ""
+msgstr "Ieslēgt „Globe“"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"
-msgstr ""
+msgstr "Ieslēgt reljefu"
 
 #: src/page/settings/advanced.vue:31
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
@@ -1617,7 +1617,7 @@ msgstr "Pilnīgam XMP metadatu, videoklipu un Live Photos atbalstam ir nepiecie�
 
 #: src/common/map.js:129
 msgid "Exit Fullscreen"
-msgstr ""
+msgstr "Iziet no pilnekrāna režīma"
 
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
@@ -1829,7 +1829,7 @@ msgstr "Faili ar secīgiem nosaukumiem, piemēram, “IMG_1234 (2)” un “IMG_
 
 #: src/common/map.js:130
 msgid "Find My Location"
-msgstr ""
+msgstr "Atrast manu atrašanās vietu"
 
 #: src/locales.js:251 src/locales.js:319
 msgid "First page"
@@ -2424,7 +2424,7 @@ msgstr "Atrašanās vieta"
 
 #: src/common/map.js:131
 msgid "Location Not Available"
-msgstr ""
+msgstr "Atrašanās vieta nav pieejama"
 
 #: src/page/library/errors.vue:74
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -2485,15 +2485,15 @@ msgstr "Manuāla augšupielāde"
 
 #: src/common/map.js:134
 msgid "Map"
-msgstr ""
+msgstr "Karte"
 
 #: src/common/map.js:135
 msgid "Map Marker"
-msgstr ""
+msgstr "Kartes atzīme"
 
 #: src/component/places/style-control.js:27
 msgid "Map Style"
-msgstr ""
+msgstr "Kartes stils"
 
 #: src/page/settings/general.vue:505
 msgid "Maps"
@@ -4197,7 +4197,7 @@ msgstr "Šodien, {0}"
 
 #: src/common/map.js:127
 msgid "Toggle Attribution"
-msgstr ""
+msgstr "Pārslēgt autoru norādīšanu"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

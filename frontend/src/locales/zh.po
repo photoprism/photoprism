@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-02 13:16+0000\n"
+"PO-Revision-Date: 2026-10-02 16:58+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -1280,7 +1280,7 @@ msgstr "禁用面孔"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr ""
+msgstr "禁用地球图标"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1300,7 +1300,7 @@ msgstr "禁用 RawTherapee"
 
 #: src/common/map.js:140
 msgid "Disable Terrain"
-msgstr ""
+msgstr "禁用地形"
 
 #: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
@@ -1452,7 +1452,7 @@ msgstr "在此处拖放文件"
 
 #: src/common/map.js:136
 msgid "Drag to rotate the map, click to reset north"
-msgstr ""
+msgstr "拖动以旋转地图，点击以将地图方向重置为正北"
 
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
@@ -1520,11 +1520,11 @@ msgstr "电子邮箱"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr ""
+msgstr "启用 Globe"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"
-msgstr ""
+msgstr "启用地形"
 
 #: src/page/settings/advanced.vue:31
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
@@ -1621,7 +1621,7 @@ msgstr "要完全支持视频、实况照片和 XMP，需要使用 ExifTool 提�
 
 #: src/common/map.js:129
 msgid "Exit Fullscreen"
-msgstr ""
+msgstr "退出全屏模式"
 
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
@@ -1833,7 +1833,7 @@ msgstr "顺序名称的文件如“IMG_1234 (2)”和“IMG_1234 (3)”的文件
 
 #: src/common/map.js:130
 msgid "Find My Location"
-msgstr ""
+msgstr "查找我的位置"
 
 #: src/locales.js:251 src/locales.js:319
 msgid "First page"
@@ -2428,7 +2428,7 @@ msgstr "位置"
 
 #: src/common/map.js:131
 msgid "Location Not Available"
-msgstr ""
+msgstr "位置信息不可用"
 
 #: src/page/library/errors.vue:74
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -2489,15 +2489,15 @@ msgstr "手动上传"
 
 #: src/common/map.js:134
 msgid "Map"
-msgstr ""
+msgstr "地图"
 
 #: src/common/map.js:135
 msgid "Map Marker"
-msgstr ""
+msgstr "地图标记"
 
 #: src/component/places/style-control.js:27
 msgid "Map Style"
-msgstr ""
+msgstr "地图样式"
 
 #: src/page/settings/general.vue:505
 msgid "Maps"
@@ -4203,7 +4203,7 @@ msgstr "今天，{0}"
 
 #: src/common/map.js:127
 msgid "Toggle Attribution"
-msgstr ""
+msgstr "切换署名"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
