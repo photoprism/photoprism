@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-01 13:09+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2026-10-02 12:00+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.9.1\n"
+"X-Generator: Weblate 2026.10\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:461
@@ -93,7 +93,7 @@ msgstr "2FA"
 
 #: src/component/about/footer.vue:14
 msgid "3rd-party software packages"
-msgstr ""
+msgstr "Các gói phần mềm của bên thứ ba"
 
 #: src/options/options.js:427
 msgid "4 hours"
