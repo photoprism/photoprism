@@ -161,7 +161,18 @@ func (m *Label) Delete() error {
 	Db().Where("label_id = ? OR category_id = ?", m.ID, m.ID).Delete(&Category{})
 	Db().Where("label_id = ?", m.ID).Delete(&PhotoLabel{})
 	FlushLabelCache()
-	return Db().Delete(m).Error
+
+	if err := Db().Delete(m).Error; err != nil {
+		return err
+	}
+
+	// Carry the mark onto the in-memory record, which the driver does not do, so that Deleted,
+	// Skip and Restore agree with the row. The cache is flushed, so no lookup returns it.
+	if m.DeletedAt == nil {
+		m.DeletedAt = TimeStamp()
+	}
+
+	return nil
 }
 
 // Deleted returns true if the label is deleted.
@@ -175,9 +186,15 @@ func (m *Label) Deleted() bool {
 
 // Restore restores the label in the database.
 func (m *Label) Restore() error {
-	if m.Deleted() {
-		return UnscopedDb().Model(m).Update("DeletedAt", nil).Error
+	if !m.Deleted() {
+		return nil
 	}
+
+	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
+		return err
+	}
+
+	m.DeletedAt = nil
 
 	return nil
 }
