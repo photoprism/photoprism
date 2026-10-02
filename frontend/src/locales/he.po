@@ -212,15 +212,15 @@ msgstr "שפעול"
 
 #: src/locales.js:237
 msgid "Activate to remove sorting."
-msgstr "לשפעל כדי להסיר מיון."
+msgstr "הפעל כדי להסיר מיון."
 
 #: src/locales.js:239
 msgid "Activate to sort ascending."
-msgstr "לשפעל כדי למיין בסדר עולה."
+msgstr "הפעל כדי למיין בסדר עולה."
 
 #: src/locales.js:238
 msgid "Activate to sort descending."
-msgstr "לשפעל כדי למיין בסדר יורד."
+msgstr "הפעל כדי למיין בסדר יורד."
 
 #: src/page/connect.vue:115 src/page/connect.vue:125 src/page/connect.vue:107
 msgid "Activation Code"
@@ -658,7 +658,7 @@ msgstr "גיבוי"
 
 #: src/locales.js:219
 msgid "Badge"
-msgstr "טוטפת"
+msgstr "תג"
 
 #: src/component/cluster/node/user-edit.vue:186
 #: src/component/cluster/node/user-edit.vue:187
@@ -819,7 +819,7 @@ msgstr "לא ניתן להעתיק ללוח"
 #: src/component/photo/edit/details.vue:31
 #: src/component/photo/view/cards.vue:194
 msgid "Caption"
-msgstr "כּוֹתֶרֶת"
+msgstr "כיתוב"
 
 #: src/component/photo/toolbar.vue:398 src/component/photo/toolbar.vue:404
 msgid "Cards"
@@ -930,7 +930,7 @@ msgstr "נקה {0}"
 #: src/options/admin.js:40 src/options/auth.js:13 src/options/auth.js:43
 #: src/options/auth.js:73
 msgid "Client"
-msgstr "לָקוּחַ"
+msgstr "לקוח"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -961,7 +961,7 @@ msgstr "סגור"
 
 #: src/app/routes.js:234
 msgid "Cluster"
-msgstr "אֶשׁכּוֹל"
+msgstr "אשכול"
 
 #: src/component/user/edit/dialog.vue:285 src/page/admin/users.vue:424
 #: src/options/auth.js:7
@@ -1010,7 +1010,7 @@ msgstr "אמון"
 #: src/component/photo/album/dialog.vue:67
 #: src/component/settings/passcode.vue:110 src/page/people/new.vue:101
 msgid "Confirm"
-msgstr "לְאַשֵׁר"
+msgstr "אישור"
 
 #: src/component/service/add.vue:104 src/page/services.vue:114
 msgid "Connect"
@@ -1045,16 +1045,16 @@ msgstr "מכיל תמונה אחת."
 
 #: src/page/settings.vue:73
 msgid "Content"
-msgstr "תוֹכֶן"
+msgstr "תוכן"
 
 #: src/component/photo/batch-edit.vue:334
 msgctxt "Edit"
 msgid "Content"
-msgstr "תוֹכֶן"
+msgstr "תוכן"
 
 #: src/component/settings/apps.vue:59
 msgid "Continue"
-msgstr "לְהַמשִׁיך"
+msgstr "המשך"
 
 #: src/page/auth/login.vue:188
 msgid "Continue with %{s}"
@@ -1062,7 +1062,7 @@ msgstr "להמשיך עם %{s}"
 
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
-msgstr "תוֹרֵם"
+msgstr "תורם"
 
 #: src/page/library/index.vue:261
 msgid "Converting"
@@ -1151,7 +1151,7 @@ msgstr "צור סיסמה"
 #: src/options/auth.js:107 src/options/themes.js:1021
 #: src/options/themes.js:1031
 msgid "Custom"
-msgstr "מִנְהָג"
+msgstr "מותאם אישית"
 
 #: src/options/options.js:456
 msgid "Cyan"
@@ -1363,7 +1363,7 @@ msgstr "גלה"
 
 #: src/locales.js:222
 msgid "Dismiss"
-msgstr "לְפַטֵר"
+msgstr "סגור"
 
 #: src/component/user/add/dialog.vue:72 src/component/user/add/dialog.vue:73
 #: src/component/user/edit/dialog.vue:89 src/component/user/edit/dialog.vue:90
@@ -1392,7 +1392,7 @@ msgstr "הצג כותרות של תמונות בתוצאות החיפוש."
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:373
 msgid "Document"
-msgstr "מִסְמָך"
+msgstr "מסמך"
 
 #: src/component/navigation.vue:162
 msgid "Documents"
@@ -1456,7 +1456,7 @@ msgstr "גרור כדי לסובב את המפה, לחץ כדי להחזיר א�
 
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
-msgstr "נֶהָג"
+msgstr "מנהל התקן"
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
@@ -1556,7 +1556,7 @@ msgstr "הפעלת אימות דו-גורמי פירושה שתזדקק לקוד
 
 #: src/locales.js:372
 msgid "Engine"
-msgstr "מָנוֹעַ"
+msgstr "מנוע"
 
 #: src/locales.js:265 src/locales.js:267
 msgid "Enter date"
@@ -1597,7 +1597,7 @@ msgstr "שגיאות"
 
 #: src/common/util.js:931
 msgid "Estimate"
-msgstr "לְהַעֲרִיך"
+msgstr "הערכה"
 
 #: src/page/settings/content.vue:32
 msgid "Estimate Locations"
@@ -1657,7 +1657,7 @@ msgstr "FPS"
 
 #: src/model/face.js:149
 msgid "Face"
-msgstr "פָּנִים"
+msgstr "פנים"
 
 #: src/locales.js:419
 msgid "Face not found"
@@ -1892,7 +1892,7 @@ msgstr "כללי"
 
 #: src/component/settings/apps.vue:160
 msgid "Generate"
-msgstr "לִיצוֹר"
+msgstr "צור"
 
 #: src/page/settings/content.vue:48
 msgid "Generate Previews"
@@ -1950,7 +1950,7 @@ msgstr "קבוצות"
 
 #: src/model/cluster-instance.js:38 src/options/auth.js:12
 msgid "Guest"
-msgstr "אוֹרֵחַ"
+msgstr "אורח"
 
 #: src/component/photo/edit/files.vue:136
 msgid "Hash"
@@ -2110,7 +2110,7 @@ msgstr "אינדוקס נכשל"
 
 #: src/locales.js:473
 msgid "Indexing files in %s"
-msgstr "מאנדקס קבצים תוך %s"
+msgstr "מאנדקס קבצים ב-%s"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
@@ -2123,7 +2123,7 @@ msgstr "מאנדקס קבצי מקור..."
 #: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
-msgstr "מֵידָע"
+msgstr "מידע"
 
 #: src/options/admin.js:28
 msgid "Inherit"
@@ -2132,7 +2132,7 @@ msgstr "לרשת"
 #: src/component/cluster/node/groups.vue:146 src/options/admin.js:37
 #: src/options/admin.js:38 src/locales.js:387
 msgid "Instance"
-msgstr "דוּגמָה"
+msgstr "מופע"
 
 #: src/component/photo/edit/files.vue:128
 msgid "Instance ID"
@@ -2194,7 +2194,7 @@ msgstr "קישור לא תקין"
 
 #: src/locales.js:442
 msgid "Invalid name"
-msgstr "מספר לא תקף"
+msgstr "שם לא תקין"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
@@ -2338,7 +2338,7 @@ msgstr "עדשה"
 
 #: src/locales.js:415
 msgid "Lens not found"
-msgstr "לא נמצא עדשה"
+msgstr "לא נמצאה עדשה"
 
 #: src/app/routes.js:612 src/app/routes.js:628 src/app/routes.js:644
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
@@ -2400,12 +2400,12 @@ msgstr "טוען פריטים..."
 
 #: src/locales.js:332
 msgid "Loading..."
-msgstr "טְעִינָה..."
+msgstr "טוען..."
 
 #: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:47
 #: src/options/options.js:94 src/page/settings/general.vue:46
 msgid "Local"
-msgstr "מְקוֹמִי"
+msgstr "מקומי"
 
 #: src/component/meta/datetime/dialog.vue:165
 #: src/component/photo/edit/details.vue:109
@@ -2477,11 +2477,11 @@ msgstr "נהל חשבון"
 
 #: src/model/cluster-instance.js:30 src/options/auth.js:8
 msgid "Manager"
-msgstr "מְנַהֵל"
+msgstr "מנהל"
 
 #: src/common/util.js:963
 msgid "Manual"
-msgstr "יָדָנִי"
+msgstr "ידני"
 
 #: src/component/service/edit.vue:16
 msgid "Manual Upload"
@@ -2518,7 +2518,7 @@ msgstr "הגעת למספר המקסימלי של חשבונות."
 #: src/app/routes.js:395 src/component/navigation.vue:225
 #: src/options/options.js:259 src/page/settings/general.vue:126
 msgid "Media"
-msgstr "כְּלֵי תִקְשׁוֹרֶת"
+msgstr "מדיה"
 
 #: src/options/options.js:282
 msgid "Medium"
@@ -2526,7 +2526,7 @@ msgstr "בינוני"
 
 #: src/page/connect.vue:5
 msgid "Membership"
-msgstr "חֲבֵרוּת"
+msgstr "חברות"
 
 #: src/component/people/merge/dialog.vue:57
 msgid "Merge %{a} with %{b}?"
@@ -2535,7 +2535,7 @@ msgstr "למזג %{a} עם %{b}?"
 #: src/page/cluster/activity.vue:129 src/page/admin/activity.vue:128
 #: src/locales.js:379
 msgid "Message"
-msgstr "הוֹדָעָה"
+msgstr "הודעה"
 
 #: src/common/util.js:953
 msgid "Metadata"
@@ -2604,7 +2604,7 @@ msgstr "חייב להכיל לפחות %{n} תווים."
 
 #: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
-msgstr "לְהַשְׁתִיק"
+msgstr "השתק"
 
 #: src/component/cluster/instance-access.vue:83
 #: src/component/cluster/node/overview.vue:4
@@ -2660,7 +2660,7 @@ msgstr "הכי חדש ראשון"
 #: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
 #: src/component/pdf-viewer.vue:128 src/locales.js:324
 msgid "Next"
-msgstr "הַבָּא"
+msgstr "הבא"
 
 #: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
 msgid "Next Page"
@@ -2668,7 +2668,7 @@ msgstr "העמוד הבא"
 
 #: src/locales.js:271
 msgid "Next month"
-msgstr "בחודש הבא"
+msgstr "החודש הבא"
 
 #: src/locales.js:249 src/locales.js:315
 msgid "Next page"
@@ -2676,11 +2676,11 @@ msgstr "העמוד הבא"
 
 #: src/locales.js:283
 msgid "Next visual"
-msgstr "הוויזואלי הבא"
+msgstr "התמונה הבאה"
 
 #: src/locales.js:274
 msgid "Next year"
-msgstr "בשנה הבאה"
+msgstr "השנה הבאה"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
@@ -2737,7 +2737,7 @@ msgstr "לא נמצאו רשומות תואמות"
 
 #: src/locales.js:335
 msgid "No more"
-msgstr "לא יותר"
+msgstr "אין עוד"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
 #: src/page/people/new.vue:245 src/page/people/recognized.vue:55
@@ -2791,7 +2791,7 @@ msgstr "אין אזהרות או שגיאות המכילות מילת מפתח �
 
 #: src/locales.js:383
 msgid "Node"
-msgstr "צוֹמֶת"
+msgstr "צומת"
 
 #: src/locales.js:384
 msgid "Nodes"
@@ -2864,7 +2864,7 @@ msgstr "לא נמצא דבר."
 
 #: src/locales.js:224
 msgid "OK"
-msgstr "בְּסֵדֶר"
+msgstr "אישור"
 
 #: src/options/options.js:334
 msgid "Offline"
@@ -2983,7 +2983,7 @@ msgstr "באוויר הפתוח"
 
 #: src/locales.js:309
 msgid "PM"
-msgstr "רֹאשׁ הַמֶמשָׁלָה"
+msgstr "PM"
 
 #: src/page/settings/advanced.vue:320
 msgid "PNG Size Limit: %{n}px"
@@ -3062,7 +3062,7 @@ msgstr "גישה נדחתה"
 
 #: src/model/subject.js:192
 msgid "Person"
-msgstr "אָדָם"
+msgstr "אדם"
 
 #: src/component/photo/edit/people.vue:296
 msgid "Person cover updated"
@@ -3173,11 +3173,11 @@ msgstr "המתן בבקשה…"
 #: src/component/cluster/node/groups.vue:150 src/options/admin.js:36
 #: src/locales.js:350
 msgid "Portal"
-msgstr "שַׁעַר"
+msgstr "פורטל"
 
 #: src/component/photo/edit/files.vue:242
 msgid "Portrait"
-msgstr "דיוקן"
+msgstr "לאורך"
 
 #: src/component/service/edit.vue:148
 msgid "Preserve filenames"
@@ -3214,7 +3214,7 @@ msgstr "תצוגה מקדימה של תמונות"
 #: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
 #: src/component/pdf-viewer.vue:116 src/locales.js:325
 msgid "Previous"
-msgstr "קוֹדֵם"
+msgstr "הקודם"
 
 #: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
 msgid "Previous Page"
@@ -3230,7 +3230,7 @@ msgstr "העמוד הקודם"
 
 #: src/locales.js:282
 msgid "Previous visual"
-msgstr "חזותית קודמת"
+msgstr "התמונה הקודמת"
 
 #: src/locales.js:273
 msgid "Previous year"
@@ -3325,7 +3325,7 @@ msgstr "ההכרה מתחילה לאחר השלמת האינדקס."
 
 #: src/page/people.vue:41
 msgid "Recognized"
-msgstr "מוּכָּר"
+msgstr "מזוהים"
 
 #: src/page/auth/login.vue:40
 msgid "Recovery Code"
@@ -3354,7 +3354,7 @@ msgstr "צמצם את האנימציות ואפקטי התנועה בממשק."
 #: src/page/library/browse.vue:16 src/page/library/errors.vue:194
 #: src/page/people/new.vue:7 src/page/people/recognized.vue:35
 msgid "Refresh"
-msgstr "לְרַעֲנֵן"
+msgstr "רענן"
 
 #: src/app/routes.js:506 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
@@ -3463,7 +3463,7 @@ msgstr "לשחזר"
 
 #: src/component/lightbox.vue:3286
 msgid "Restored"
-msgstr "מְשׁוּחזָר"
+msgstr "שוחזר"
 
 #: src/component/upload/dialog.vue:122
 msgid "Retry"
@@ -3492,7 +3492,7 @@ msgstr "סקירה"
 #: src/page/admin/users.vue:284 src/component/user/edit/dialog.vue:174
 #: src/page/admin/users.vue:271 src/locales.js:363
 msgid "Role"
-msgstr "תַפְקִיד"
+msgstr "תפקיד"
 
 #: src/locales.js:364
 msgid "Roles"
@@ -3550,11 +3550,11 @@ msgstr "סריקות"
 #: src/page/admin/sessions.vue:294 src/component/settings/apps.vue:135
 #: src/component/settings/apps.vue:283 src/locales.js:366
 msgid "Scope"
-msgstr "תְחוּם"
+msgstr "תחום"
 
 #: src/locales.js:367
 msgid "Scopes"
-msgstr "טווחים"
+msgstr "תחומים"
 
 #: src/component/cluster/node/users.vue:11 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/page/cluster/activity.vue:13
@@ -3681,7 +3681,7 @@ msgstr "שמות סדרתיים"
 
 #: src/options/admin.js:39 src/locales.js:385
 msgid "Service"
-msgstr "שֵׁרוּת"
+msgstr "שירות"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:176
 #: src/component/share/dialog.vue:167
@@ -3696,7 +3696,7 @@ msgstr "שירותים"
 #: src/locales.js:369 src/model/session.js:83 src/options/auth.js:71
 #: src/options/auth.js:120
 msgid "Session"
-msgstr "מוֹשָׁב"
+msgstr "הפעלה"
 
 #: src/page/admin/sessions.vue:220 src/page/admin/sessions.vue:293
 #: src/page/admin/sessions.vue:291
@@ -3738,7 +3738,7 @@ msgstr "הגדר"
 #: src/page/admin/activity.vue:36 src/page/admin/activity.vue:126
 #: src/locales.js:374
 msgid "Severity"
-msgstr "חוּמרָה"
+msgstr "חומרה"
 
 #: src/component/album/clipboard.vue:24 src/component/album/toolbar.vue:165
 #: src/component/photo/clipboard.vue:24 src/page/settings/general.vue:290
@@ -3883,7 +3883,7 @@ msgstr "איטי"
 
 #: src/component/photo/edit/files.vue:188
 msgid "Software"
-msgstr "תוֹכנָה"
+msgstr "תוכנה"
 
 #: src/component/update.vue:15
 msgid "Software Update"
@@ -4069,11 +4069,11 @@ msgstr "ירוק כחלחל"
 
 #: src/options/options.js:325
 msgid "Terrain"
-msgstr "פְּנֵי הַשֵׁטַח"
+msgstr "פני השטח"
 
 #: src/common/form.js:282
 msgid "Text"
-msgstr "טֶקסט"
+msgstr "טקסט"
 
 #: src/page/about/about.vue:80 src/page/about/about.vue:63
 msgid "Thank You for Your Support!"
@@ -4131,7 +4131,7 @@ msgstr "פעולה זו מעגנת את תיקיית המקור ככונן רש�
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
 #: src/locales.js:376
 msgid "Time"
-msgstr "זְמַן"
+msgstr "זמן"
 
 #: src/component/meta/datetime/dialog.vue:163
 #: src/component/photo/edit/details.vue:109
@@ -4193,7 +4193,7 @@ msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ל�
 
 #: src/locales.js:290
 msgid "Today"
-msgstr "הַיוֹם"
+msgstr "היום"
 
 #: src/locales.js:277
 msgid "Today, {0}"
@@ -4413,7 +4413,7 @@ msgstr "העלאה הושלמה, מאנדקס…"
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:484
 #: src/component/upload/dialog.vue:531 src/locales.js:426
 msgid "Upload failed"
-msgstr "העלאה כשלה"
+msgstr "ההעלאה נכשלה"
 
 #: src/locales.js:487
 msgid "Upload has been processed"
@@ -4503,7 +4503,7 @@ msgstr "משתמשים"
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:369
 msgid "Vector"
-msgstr "וֶקטוֹר"
+msgstr "וקטור"
 
 #: src/component/navigation.vue:143
 msgid "Vectors"
@@ -4523,7 +4523,7 @@ msgstr "נדרשת כתובת דוא\"ל מאומתת"
 
 #: src/component/cluster/node/overview.vue:29 src/locales.js:349
 msgid "Version"
-msgstr "גִרְסָה"
+msgstr "גרסה"
 
 #: src/common/util.js:903 src/component/photo/batch-edit.vue:69
 #: src/component/photo/batch-edit.vue:128
@@ -4554,11 +4554,11 @@ msgstr "הצג את תוצאות החיפוש כרשימה."
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
-msgstr "צוֹפֶה"
+msgstr "צופה"
 
 #: src/common/util.js:965
 msgid "Vision"
-msgstr "חָזוֹן"
+msgstr "ראייה ממוחשבת"
 
 #: src/page/admin/sessions.vue:108 src/model/cluster-instance.js:40
 #: src/page/admin/sessions.vue:148 src/options/auth.js:14
@@ -4571,7 +4571,7 @@ msgstr "דמיון חזותי"
 
 #: src/page/library/errors.vue:363
 msgid "Warning"
-msgstr "אַזהָרָה"
+msgstr "אזהרה"
 
 #: src/component/user/add/dialog.vue:140 src/component/user/edit/dialog.vue:272
 #: src/page/admin/users.vue:186 src/component/cluster/node/user-edit.vue:222
@@ -4580,7 +4580,7 @@ msgstr "אַזהָרָה"
 #: src/page/admin/users.vue:294 src/component/user/edit/dialog.vue:288
 #: src/page/admin/users.vue:278 src/locales.js:361
 msgid "Web Login"
-msgstr "התחברות לאינטרנט"
+msgstr "כניסה דרך הדפדפן"
 
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:282
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
@@ -4736,7 +4736,7 @@ msgstr "אופציונלי"
 
 #: src/locales.js:304
 msgid "or"
-msgstr "אוֹ"
+msgstr "או"
 
 #: src/component/photo/clipboard.vue:359
 msgid "remove failed: unknown album"
@@ -4748,7 +4748,7 @@ msgstr "ל"
 
 #: src/locales.js:295
 msgid "{0} appended action"
-msgstr "פעולה צורפה {0}"
+msgstr "פעולה בסוף השדה {0}"
 
 #: src/locales.js:299
 msgid "{0} files"
@@ -4764,7 +4764,7 @@ msgstr "{0} נוספים"
 
 #: src/locales.js:294
 msgid "{0} prepended action"
-msgstr "פעולה מקדימה {0}"
+msgstr "פעולה בתחילת השדה {0}"
 
 #: src/locales.js:259
 msgid "{0} selected"

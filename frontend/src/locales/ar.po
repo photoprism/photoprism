@@ -108,7 +108,7 @@ msgstr "انقر للنسخ إلى الحافظة الخاصة بك."
 
 #: src/locales.js:451
 msgid "A migration is in progress"
-msgstr "العملية جارية حالياً"
+msgstr "عملية ترحيل قيد التنفيذ"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -405,7 +405,7 @@ msgstr "تم حذف الألبومات"
 
 #: src/locales.js:248
 msgid "All"
-msgstr "الجميع"
+msgstr "الكل"
 
 #: src/page/albums.vue:941
 msgid "All %{n} albums loaded"
@@ -533,7 +533,7 @@ msgstr "أي صور ومقاطع فيديو خاصة تبقى خاصة ولن ت
 #: src/page/admin/sessions.vue:132 src/component/cluster/node/overview.vue:23
 #: src/page/admin/sessions.vue:172 src/locales.js:381 src/options/auth.js:45
 msgid "Application"
-msgstr "طلب"
+msgstr "تطبيق"
 
 #: src/locales.js:382
 msgid "Applications"
@@ -685,7 +685,7 @@ msgstr "كن عضوًا اليوم ، وادعم مهمتنا واستمتع ب�
 #: src/page/about/about.vue:53 src/component/confirm/sponsor.vue:21
 #: src/page/about/about.vue:36
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "نظرًا لكوننا 100 % s ممولًا ومستقلًا ، يمكننا أن نعدك بأننا لن نبيع بياناتك أبدًا وأننا سنتحلى دائمًا بالشفافية بشأن برامجنا وخدماتنا."
+msgstr "بما أننا ممولون ذاتيًا ومستقلون بنسبة 100%، يمكننا أن نعدك بأننا لن نبيع بياناتك أبدًا وأننا سنتحلى دائمًا بالشفافية بشأن برامجنا وخدماتنا."
 
 #: src/component/user/edit/dialog.vue:155
 #: src/component/user/edit/dialog.vue:156
@@ -957,7 +957,7 @@ msgstr "العميل"
 #: src/component/upload/dialog.vue:20 src/component/upload/dialog.vue:119
 #: src/locales.js:221 src/page/library/errors.vue:105
 msgid "Close"
-msgstr "قريب"
+msgstr "إغلاق"
 
 #: src/app/routes.js:234
 msgid "Cluster"
@@ -1456,7 +1456,7 @@ msgstr "اسحب لتدوير الخريطة، وانقر لإعادة ضبط ا
 
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
-msgstr "سائق"
+msgstr "برنامج التشغيل"
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
@@ -2090,7 +2090,7 @@ msgstr "قم بزيادة حجم التخزين أو حذف الملفات لل�
 #: src/component/navigation.vue:758 src/page/library.vue:56
 #: src/page/settings/content.vue:6
 msgid "Index"
-msgstr "فِهرِس"
+msgstr "الفهرس"
 
 #: src/page/library/index.vue:230 src/page/library/index.vue:236
 msgid "Indexing"
@@ -2400,7 +2400,7 @@ msgstr "جاري تحميل المواد..."
 
 #: src/locales.js:332
 msgid "Loading..."
-msgstr "تحميل..."
+msgstr "جارٍ التحميل..."
 
 #: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:47
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2729,7 +2729,7 @@ msgstr "لم يتم العثور على تسميات"
 
 #: src/locales.js:436
 msgid "No labels selected"
-msgstr "لم يتم تحديد المعرفات"
+msgstr "لم يتم تحديد أي ملصقات"
 
 #: src/locales.js:228
 msgid "No matching records found"
@@ -2822,7 +2822,7 @@ msgstr "غير متوفر في وضع القراءة فقط"
 
 #: src/component/lightbox.vue:1149 src/locales.js:402
 msgid "Not found"
-msgstr "لم يتم العثور"
+msgstr "غير موجود"
 
 #: src/locales.js:236
 msgid "Not sorted."
@@ -2852,7 +2852,7 @@ msgstr "ملحوظات"
 
 #: src/page/library/logs.vue:5
 msgid "Nothing to see here yet."
-msgstr "لا شيء لتراه هنا حتى الآن. كن صبوراً."
+msgstr "لا شيء لتراه هنا حتى الآن."
 
 #: src/page/admin/sessions.vue:11 src/page/admin/users.vue:11
 #: src/component/cluster/node/groups.vue:23 src/page/admin/groups.vue:25
@@ -2864,7 +2864,7 @@ msgstr "لم يتم العثور على شيء."
 
 #: src/locales.js:224
 msgid "OK"
-msgstr "نعم"
+msgstr "موافق"
 
 #: src/options/options.js:334
 msgid "Offline"
@@ -2926,7 +2926,7 @@ msgstr "يمكن إعداد الحسابات المُدارة محليًا فق�
 #: src/component/cluster/node/overview.vue:44 src/page/cluster/nodes.vue:58
 #: src/locales.js:220 src/locales.js:345
 msgid "Open"
-msgstr "يفتح"
+msgstr "فتح"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
@@ -3058,7 +3058,7 @@ msgstr "تم الحذف بشكل نهائي"
 
 #: src/locales.js:423
 msgid "Permission denied"
-msgstr "طلب الاذن مرفوض"
+msgstr "تم رفض الإذن"
 
 #: src/model/subject.js:192
 msgid "Person"
@@ -3079,7 +3079,7 @@ msgstr "لم يتم العثور على الشخص"
 
 #: src/locales.js:482
 msgid "Person saved"
-msgstr "حفظ الشخص"
+msgstr "تم حفظ الشخص"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -3177,7 +3177,7 @@ msgstr "البوابة"
 
 #: src/component/photo/edit/files.vue:242
 msgid "Portrait"
-msgstr "لَوحَة"
+msgstr "عمودي"
 
 #: src/component/service/edit.vue:148
 msgid "Preserve filenames"
@@ -3214,7 +3214,7 @@ msgstr "معاينة الصور"
 #: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
 #: src/component/pdf-viewer.vue:116 src/locales.js:325
 msgid "Previous"
-msgstr "سابق"
+msgstr "السابق"
 
 #: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
 msgid "Previous Page"
@@ -3354,7 +3354,7 @@ msgstr "قلل من الرسوم المتحركة وتأثيرات الحركة 
 #: src/page/library/browse.vue:16 src/page/library/errors.vue:194
 #: src/page/people/new.vue:7 src/page/people/recognized.vue:35
 msgid "Refresh"
-msgstr "ينعش"
+msgstr "تحديث"
 
 #: src/app/routes.js:506 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
@@ -4470,7 +4470,7 @@ msgstr "استخدم رمز الاسترداد الخاص بك أو اتصل ب�
 #: src/page/admin/sessions.vue:292 src/locales.js:356 src/model/user.js:458
 #: src/options/auth.js:9
 msgid "User"
-msgstr "المستعمل"
+msgstr "المستخدم"
 
 #: src/component/navigation.vue:770
 msgid "User Guide"
@@ -4697,7 +4697,7 @@ msgstr "يساعدنا دعمك المستمر في توفير تحديثات م
 
 #: src/page/albums.vue:158
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات الحظات الخاصة والرحلات والأماكن تلقائيًا."
+msgstr "يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات اللحظات الخاصة والرحلات والأماكن تلقائيًا."
 
 #: src/locales.js:493
 msgid "Zip created in %d s"
@@ -4748,7 +4748,7 @@ msgstr "إلى"
 
 #: src/locales.js:295
 msgid "{0} appended action"
-msgstr "{0} إجراء مضاف"
+msgstr "إجراء في نهاية الحقل {0}"
 
 #: src/locales.js:299
 msgid "{0} files"
@@ -4764,7 +4764,7 @@ msgstr "{0} المزيد"
 
 #: src/locales.js:294
 msgid "{0} prepended action"
-msgstr "{0} تم إضافة الإجراء مسبقًا"
+msgstr "إجراء في بداية الحقل {0}"
 
 #: src/locales.js:259
 msgid "{0} selected"
