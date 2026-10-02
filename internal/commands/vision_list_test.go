@@ -772,6 +772,14 @@ func TestNewVisionListSettings(t *testing.T) {
 		assert.Equal(t, face.ModelAuraFace, settings.FaceModel)
 		assert.False(t, settings.FaceActive)
 	})
+	t.Run("FaceModelAutoNotInstalled", func(t *testing.T) {
+		conf := config.NewConfig(config.CliTestContext())
+		conf.Options().ModelsPath = t.TempDir()
+		conf.Options().FaceModel = face.ModelAuto
+		settings := newVisionListSettings(conf)
+		assert.Equal(t, face.ModelNone, settings.FaceModel)
+		assert.False(t, settings.FaceActive)
+	})
 
 	t.Run("FaceDetectorNone", func(t *testing.T) {
 		conf := config.NewConfig(config.CliTestContext())

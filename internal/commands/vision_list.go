@@ -94,14 +94,15 @@ func newVisionListSettings(conf *config.Config) visionListSettings {
 	active := faceModel != face.ModelNone && !conf.DisableFaces()
 
 	// Without a model in force, the setting explains why: "none", or a model that is unavailable.
-	if faceModel == face.ModelNone {
-		faceModel = conf.FaceModelSetting()
+	// As for the detector, "auto" with nothing to derive it from stays "none".
+	if setting := conf.FaceModelSetting(); faceModel == face.ModelNone && setting != face.ModelAuto {
+		faceModel = setting
 	}
 
 	detector := conf.FaceDetector()
 	detectorActive := detector != face.DetectorNone && !conf.DisableFaces()
 
-	// Likewise for the detector, except that "auto" with nothing to derive it from stays "none".
+	// Likewise for the detector.
 	if setting := conf.FaceDetectorSetting(); detector == face.DetectorNone && setting != face.DetectorAuto {
 		detector = setting
 	}
