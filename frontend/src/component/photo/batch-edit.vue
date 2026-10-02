@@ -160,13 +160,15 @@
                       :model-value="formData.Title.value"
                       :placeholder="getFieldData('text-field', 'Title').placeholder"
                       :persistent-placeholder="getFieldData('text-field', 'Title').persistent"
-                      :append-inner-icon="getIcon('text-field', 'Title')"
                       autocomplete="off"
                       density="comfortable"
                       class="input-title"
-                      @click:append-inner="toggleField('Title', $event)"
                       @update:model-value="(val) => changeValue(val, 'text-field', 'Title')"
-                    ></v-text-field>
+                    >
+                      <template v-if="fieldAction('text-field', 'Title')" #append-inner>
+                        <p-input-action v-bind="fieldAction('text-field', 'Title')" @click="toggleField('text-field', 'Title')"></p-input-action>
+                      </template>
+                    </v-text-field>
                   </v-col>
                   <v-col cols="12">
                     <v-textarea
@@ -177,13 +179,15 @@
                       :model-value="formData.Caption.value"
                       :placeholder="getFieldData('text-field', 'Caption').placeholder"
                       :persistent-placeholder="getFieldData('text-field', 'Caption').persistent"
-                      :append-inner-icon="getIcon('text-field', 'Caption')"
                       :rows="1"
                       density="comfortable"
                       class="input-caption"
-                      @click:append-inner="toggleField('Caption', $event)"
                       @update:model-value="(val) => changeValue(val, 'text-field', 'Caption')"
-                    ></v-textarea>
+                    >
+                      <template v-if="fieldAction('text-field', 'Caption')" #append-inner>
+                        <p-input-action v-bind="fieldAction('text-field', 'Caption')" @click="toggleField('text-field', 'Caption')"></p-input-action>
+                      </template>
+                    </v-textarea>
                   </v-col>
                 </v-row>
                 <v-row density="compact">
@@ -314,14 +318,16 @@
                       :model-value="formData.Altitude.value"
                       :placeholder="getFieldData('input-field', 'Altitude').placeholder"
                       :persistent-placeholder="getFieldData('input-field', 'Altitude').persistent"
-                      :append-inner-icon="getIcon('input-field', 'Altitude')"
                       color="surface-variant"
                       density="comfortable"
                       validate-on="input"
                       class="input-altitude"
-                      @click:append-inner="toggleField('Altitude', $event)"
                       @update:model-value="(val) => changeValue(val, 'input-field', 'Altitude')"
-                    ></v-text-field>
+                    >
+                      <template v-if="fieldAction('input-field', 'Altitude')" #append-inner>
+                        <p-input-action v-bind="fieldAction('input-field', 'Altitude')" @click="toggleField('input-field', 'Altitude')"></p-input-action>
+                      </template>
+                    </v-text-field>
                   </v-col>
                 </v-row>
                 <v-row density="compact">
@@ -335,13 +341,15 @@
                       :model-value="formData.DetailsSubject.value"
                       :placeholder="getFieldData('text-field', 'DetailsSubject').placeholder"
                       :persistent-placeholder="getFieldData('text-field', 'DetailsSubject').persistent"
-                      :append-inner-icon="getIcon('text-field', 'DetailsSubject')"
                       :rows="1"
                       density="comfortable"
                       class="input-subject"
-                      @click:append-inner="toggleField('DetailsSubject', $event)"
                       @update:model-value="(val) => changeValue(val, 'text-field', 'DetailsSubject')"
-                    ></v-textarea>
+                    >
+                      <template v-if="fieldAction('text-field', 'DetailsSubject')" #append-inner>
+                        <p-input-action v-bind="fieldAction('text-field', 'DetailsSubject')" @click="toggleField('text-field', 'DetailsSubject')"></p-input-action>
+                      </template>
+                    </v-textarea>
                   </v-col>
                   <v-col cols="12" sm="4">
                     <v-autocomplete
@@ -370,12 +378,14 @@
                       :model-value="formData.DetailsCopyright.value"
                       :placeholder="getFieldData('text-field', 'DetailsCopyright').placeholder"
                       :persistent-placeholder="getFieldData('text-field', 'DetailsCopyright').persistent"
-                      :append-inner-icon="getIcon('text-field', 'DetailsCopyright')"
                       density="comfortable"
                       class="input-copyright"
-                      @click:append-inner="toggleField('DetailsCopyright', $event)"
                       @update:model-value="(val) => changeValue(val, 'text-field', 'DetailsCopyright')"
-                    ></v-text-field>
+                    >
+                      <template v-if="fieldAction('text-field', 'DetailsCopyright')" #append-inner>
+                        <p-input-action v-bind="fieldAction('text-field', 'DetailsCopyright')" @click="toggleField('text-field', 'DetailsCopyright')"></p-input-action>
+                      </template>
+                    </v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
@@ -385,12 +395,14 @@
                       :model-value="formData.DetailsArtist.value"
                       :placeholder="getFieldData('text-field', 'DetailsArtist').placeholder"
                       :persistent-placeholder="getFieldData('text-field', 'DetailsArtist').persistent"
-                      :append-inner-icon="getIcon('text-field', 'DetailsArtist')"
                       density="comfortable"
                       class="input-artist"
-                      @click:append-inner="toggleField('DetailsArtist', $event)"
                       @update:model-value="(val) => changeValue(val, 'text-field', 'DetailsArtist')"
-                    ></v-text-field>
+                    >
+                      <template v-if="fieldAction('text-field', 'DetailsArtist')" #append-inner>
+                        <p-input-action v-bind="fieldAction('text-field', 'DetailsArtist')" @click="toggleField('text-field', 'DetailsArtist')"></p-input-action>
+                      </template>
+                    </v-text-field>
                   </v-col>
                   <v-col cols="12">
                     <v-textarea
@@ -401,13 +413,15 @@
                       :model-value="formData.DetailsLicense.value"
                       :placeholder="getFieldData('text-field', 'DetailsLicense').placeholder"
                       :persistent-placeholder="getFieldData('text-field', 'DetailsLicense').persistent"
-                      :append-inner-icon="getIcon('text-field', 'DetailsLicense')"
                       :rows="1"
                       density="comfortable"
                       class="input-license"
-                      @click:append-inner="toggleField('DetailsLicense', $event)"
                       @update:model-value="(val) => changeValue(val, 'text-field', 'DetailsLicense')"
-                    ></v-textarea>
+                    >
+                      <template v-if="fieldAction('text-field', 'DetailsLicense')" #append-inner>
+                        <p-input-action v-bind="fieldAction('text-field', 'DetailsLicense')" @click="toggleField('text-field', 'DetailsLicense')"></p-input-action>
+                      </template>
+                    </v-textarea>
                   </v-col>
                 </v-row>
                 <v-row v-if="canViewAlbums" density="compact">
@@ -1139,10 +1153,11 @@ export default {
         return fieldData.value;
       }
     },
-    toggleField(fieldName, event) {
-      const classList = event.target.classList;
+    // toggleField runs the clear or undo action that the field's button currently shows.
+    toggleField(fieldType, fieldName) {
+      const icon = this.getIcon(fieldType, fieldName);
 
-      if (classList.contains(iconUndo)) {
+      if (icon === iconUndo) {
         this.deletedFields[fieldName] = false;
         this.formData[fieldName].action = this.actions.none;
         this.formData[fieldName].value = this.previousFormData[fieldName]?.value || "";
@@ -1151,7 +1166,7 @@ export default {
         if (this.previousFormData[fieldName]?.mixed !== undefined) {
           this.formData[fieldName].mixed = this.previousFormData[fieldName].mixed;
         }
-      } else if (classList.contains(iconClear)) {
+      } else if (icon === iconClear) {
         this.deletedFields[fieldName] = true;
 
         if (fieldName === "Altitude") {
@@ -1163,6 +1178,17 @@ export default {
         }
       }
     },
+    // fieldAction returns the icon and accessible name of the field's clear or undo button, or null if it has none.
+    fieldAction(fieldType, fieldName) {
+      const icon = this.getIcon(fieldType, fieldName);
+
+      if (!icon) {
+        return null;
+      }
+
+      return { icon, label: icon === iconUndo ? this.$gettext("Undo") : this.$gettext("Clear") };
+    },
+    // getIcon returns the undo icon after a change, the clear icon if the field has a value, or nothing.
     getIcon(fieldType, fieldName) {
       const fieldData = this.values[fieldName];
       const isDeleted = this.deletedFields?.[fieldName];
