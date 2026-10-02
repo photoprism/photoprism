@@ -151,7 +151,7 @@ export default {
       this.filter.all = query["all"] ? query["all"] : "";
       this.lastFilter = {};
       this.routeName = this.$route.name;
-      this.path = this.$route.params.pathMatch;
+      this.path = this.routePath();
 
       this.search();
     },
@@ -162,7 +162,7 @@ export default {
       return;
     }
 
-    this.path = this.$route.params.pathMatch;
+    this.path = this.routePath();
 
     this.search();
 
@@ -196,6 +196,12 @@ export default {
           }
           return true;
       }
+    },
+    // routePath returns the folder segments of the current route, or none for the Originals root,
+    // where the router leaves the optional pathMatch param undefined.
+    routePath() {
+      const segments = this.$route.params.pathMatch;
+      return Array.isArray(segments) ? segments : [];
     },
     getBreadcrumbs() {
       let result = [];
