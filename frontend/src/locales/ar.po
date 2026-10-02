@@ -921,7 +921,7 @@ msgstr "تنظيف"
 #: src/component/meta/location/input.vue:67
 #: src/component/photo/batch-edit.vue:1189
 msgid "Clear"
-msgstr "واضح"
+msgstr "مسح"
 
 #: src/locales.js:293
 msgid "Clear {0}"
@@ -1280,7 +1280,7 @@ msgstr "تعطيل الوجوه"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr "تعطيل Globe"
+msgstr "تعطيل عرض الكرة الأرضية"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1520,7 +1520,7 @@ msgstr "البريد"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr "تمكين Globe"
+msgstr "تمكين عرض الكرة الأرضية"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"
@@ -1884,7 +1884,7 @@ msgstr "الوصول الكامل"
 #: src/common/map.js:128 src/component/lightbox.vue:1634
 #: src/component/lightbox.vue:1635
 msgid "Fullscreen"
-msgstr "شاشة كاملة"
+msgstr "ملء الشاشة"
 
 #: src/page/settings.vue:60
 msgid "General"
@@ -4201,7 +4201,7 @@ msgstr "اليوم، {0}"
 
 #: src/common/map.js:127
 msgid "Toggle Attribution"
-msgstr "تبديل مصدر الصورة"
+msgstr "إظهار/إخفاء الإسناد"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
@@ -4271,7 +4271,7 @@ msgstr "غير مصرح"
 #: src/component/photo/batch-edit.vue:1189
 #: src/component/photo/edit/people.vue:43
 msgid "Undo"
-msgstr "الغاء التحميل"
+msgstr "تراجع"
 
 #: src/page/settings/content.vue:88
 msgid "Unique ID"
@@ -4303,7 +4303,7 @@ msgstr "معرف مميز"
 #: src/page/settings/account.vue:205 src/page/settings/account.vue:225
 #: src/page/settings/account.vue:245
 msgid "Unknown"
-msgstr "مجهول"
+msgstr "غير معروف"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4711,7 +4711,7 @@ msgstr "تكبير"
 #: src/common/map.js:138 src/component/pdf-viewer.vue:97
 #: src/component/pdf-viewer.vue:98
 msgid "Zoom Out"
-msgstr "تصغير العرض"
+msgstr "تصغير"
 
 #: src/component/lightbox.vue:558
 msgid "Zoom in/out"

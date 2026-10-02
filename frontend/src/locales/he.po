@@ -921,7 +921,7 @@ msgstr "לנקות"
 #: src/component/meta/location/input.vue:67
 #: src/component/photo/batch-edit.vue:1189
 msgid "Clear"
-msgstr "נקי"
+msgstr "נקה"
 
 #: src/locales.js:293
 msgid "Clear {0}"
@@ -1280,7 +1280,7 @@ msgstr "השבת פנים"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr "השבת את Globe"
+msgstr "השבת תצוגת גלובוס"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1342,7 +1342,7 @@ msgstr "משבית את המרת קידוד וידאו וחילוץ תמונות
 #: src/component/photo/batch-edit.vue:486
 #: src/component/photo/edit/details.vue:384
 msgid "Discard"
-msgstr "לְהַשְׁלִיך"
+msgstr "בטל שינויים"
 
 #: src/component/photo/edit/details.vue:380
 msgid "Discard changes and close"
@@ -1520,7 +1520,7 @@ msgstr "אימייל"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr "הפעל את Globe"
+msgstr "הפעל תצוגת גלובוס"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"
@@ -2493,7 +2493,7 @@ msgstr "מפה"
 
 #: src/common/map.js:135
 msgid "Map Marker"
-msgstr "סימן על המפה"
+msgstr "סמן במפה"
 
 #: src/component/places/style-control.js:27
 msgid "Map Style"
@@ -4271,7 +4271,7 @@ msgstr "לא מורשה"
 #: src/component/photo/batch-edit.vue:1189
 #: src/component/photo/edit/people.vue:43
 msgid "Undo"
-msgstr "בטל"
+msgstr "בטל פעולה"
 
 #: src/page/settings/content.vue:88
 msgid "Unique ID"
@@ -4711,7 +4711,7 @@ msgstr "התקרב"
 #: src/common/map.js:138 src/component/pdf-viewer.vue:97
 #: src/component/pdf-viewer.vue:98
 msgid "Zoom Out"
-msgstr "התרחקות"
+msgstr "התרחק"
 
 #: src/component/lightbox.vue:558
 msgid "Zoom in/out"
