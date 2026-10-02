@@ -670,6 +670,8 @@ export default class Config {
             return features.places ? startPage : defaultRoute;
           case "calendar":
             return features.calendar ? startPage : defaultRoute;
+          case "discover":
+            return features.discover ? startPage : defaultRoute;
           case "moments":
             return features.moments ? startPage : defaultRoute;
           case "labels":

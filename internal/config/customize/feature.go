@@ -19,6 +19,7 @@ type FeatureSettings struct {
 	Library      bool `json:"library" yaml:"Library"`
 	Logs         bool `json:"logs" yaml:"Logs"`
 	Calendar     bool `json:"calendar" yaml:"Calendar"`
+	Discover     bool `json:"discover" yaml:"Discover"`
 	Moments      bool `json:"moments" yaml:"Moments"`
 	People       bool `json:"people" yaml:"People"`
 	Places       bool `json:"places" yaml:"Places"`
