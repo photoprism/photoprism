@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-02 13:16+0000\n"
+"PO-Revision-Date: 2026-10-02 16:58+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -1280,7 +1280,7 @@ msgstr "غیرفعال کردن چهره‌ها"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr ""
+msgstr "غیرفعال کردن گوی زمینی"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1300,7 +1300,7 @@ msgstr "غیرفعال کردن Rawtherapee"
 
 #: src/common/map.js:140
 msgid "Disable Terrain"
-msgstr ""
+msgstr "غیرفعال کردن زمین"
 
 #: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
@@ -1452,7 +1452,7 @@ msgstr "فایل ها را در اینجا بکشید و رها کنید"
 
 #: src/common/map.js:136
 msgid "Drag to rotate the map, click to reset north"
-msgstr ""
+msgstr "برای چرخاندن نقشه آن را بکشید، برای ریست کردن جهت شمال کلیک کنید."
 
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
@@ -1520,11 +1520,11 @@ msgstr "پست الکترونیک"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr ""
+msgstr "کره را فعال کنید"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"
-msgstr ""
+msgstr "نمای زمین را فعال کنید"
 
 #: src/page/settings/advanced.vue:31
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
@@ -1621,7 +1621,7 @@ msgstr "استخراج فراداده با ExifTool برای پشتیبانی ک
 
 #: src/common/map.js:129
 msgid "Exit Fullscreen"
-msgstr ""
+msgstr "خروج از نمای تمام‌صفحه"
 
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
@@ -1833,7 +1833,7 @@ msgstr "فایل‌هایی با نام‌های متوالی مانند «IMG_1
 
 #: src/common/map.js:130
 msgid "Find My Location"
-msgstr ""
+msgstr "موقعیت من را پیدا کن"
 
 #: src/locales.js:251 src/locales.js:319
 msgid "First page"
@@ -2428,7 +2428,7 @@ msgstr "محل"
 
 #: src/common/map.js:131
 msgid "Location Not Available"
-msgstr ""
+msgstr "مکان در دسترس نیست"
 
 #: src/page/library/errors.vue:74
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -2489,15 +2489,15 @@ msgstr "آپلود دستی"
 
 #: src/common/map.js:134
 msgid "Map"
-msgstr ""
+msgstr "نقشه"
 
 #: src/common/map.js:135
 msgid "Map Marker"
-msgstr ""
+msgstr "نشانگر نقشه"
 
 #: src/component/places/style-control.js:27
 msgid "Map Style"
-msgstr ""
+msgstr "سبک نقشه"
 
 #: src/page/settings/general.vue:505
 msgid "Maps"
@@ -4201,7 +4201,7 @@ msgstr "امروز، {0}"
 
 #: src/common/map.js:127
 msgid "Toggle Attribution"
-msgstr ""
+msgstr "نمایش/پنهان کردن انتساب"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"

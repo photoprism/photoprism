@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-02 13:16+0000\n"
+"PO-Revision-Date: 2026-10-02 16:58+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -1280,7 +1280,7 @@ msgstr "Lumpuhkan Wajah"
 
 #: src/common/map.js:133
 msgid "Disable Globe"
-msgstr ""
+msgstr "Matikan Globe"
 
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
@@ -1300,7 +1300,7 @@ msgstr "Lumpuhkan RawTherapee"
 
 #: src/common/map.js:140
 msgid "Disable Terrain"
-msgstr ""
+msgstr "Lumpuhkan medan"
 
 #: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
@@ -1452,7 +1452,7 @@ msgstr "Seret dan lepaskan fail di sini"
 
 #: src/common/map.js:136
 msgid "Drag to rotate the map, click to reset north"
-msgstr ""
+msgstr "Seret untuk memusingkan peta, klik untuk menetapkan semula utara."
 
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
@@ -1520,11 +1520,11 @@ msgstr "E-mel"
 
 #: src/common/map.js:132
 msgid "Enable Globe"
-msgstr ""
+msgstr "Dayakan Globe"
 
 #: src/common/map.js:139
 msgid "Enable Terrain"
-msgstr ""
+msgstr "Aktifkan medan"
 
 #: src/page/settings/advanced.vue:31
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
@@ -1621,7 +1621,7 @@ msgstr "Pengekstrakan metadata dengan ExifTool diperlukan untuk sokongan Video, 
 
 #: src/common/map.js:129
 msgid "Exit Fullscreen"
-msgstr ""
+msgstr "Keluar Penuh Skrin"
 
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
@@ -1833,7 +1833,7 @@ msgstr "Fail dengan nama berjujukan seperti 'IMG_1234 (2)' dan 'IMG_1234 (3)' te
 
 #: src/common/map.js:130
 msgid "Find My Location"
-msgstr ""
+msgstr "Cari Lokasi Saya"
 
 #: src/locales.js:251 src/locales.js:319
 msgid "First page"
@@ -2428,7 +2428,7 @@ msgstr "Lokasi"
 
 #: src/common/map.js:131
 msgid "Location Not Available"
-msgstr ""
+msgstr "Lokasi Tidak Tersedia"
 
 #: src/page/library/errors.vue:74
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -2489,15 +2489,15 @@ msgstr "Muat Naik Manual"
 
 #: src/common/map.js:134
 msgid "Map"
-msgstr ""
+msgstr "Peta"
 
 #: src/common/map.js:135
 msgid "Map Marker"
-msgstr ""
+msgstr "Penanda Peta"
 
 #: src/component/places/style-control.js:27
 msgid "Map Style"
-msgstr ""
+msgstr "Gaya Peta"
 
 #: src/page/settings/general.vue:505
 msgid "Maps"
@@ -4201,7 +4201,7 @@ msgstr "Hari ini, {0}"
 
 #: src/common/map.js:127
 msgid "Toggle Attribution"
-msgstr ""
+msgstr "Tukar atribusi"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
