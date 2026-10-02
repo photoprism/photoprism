@@ -48,6 +48,8 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 
 > **Edition runs test the overlays.** With `CUSTOM_SRC` set, `vitest.config.mjs` resolves bare imports through the same `overlayResolver` as the build, so `make -C plus test-js` and `make -C pro test-js` run the shared suite against the edition's sources. `make -C pro test-js` also runs the Pro-specific suite. `make -C portal test-js` runs the Portal-specific suite followed by the shared suite against CE sources, since several shared tests do not mock what Portal's overlays replace.
 
+> **`fsModuleCache` stays off; `isolate` stays on.** The three `vitest.config*.mjs` set both explicitly, which also stops Vitest from printing its performance hints for them. Vitest keys its persistent transform cache by file path, file contents, and plugin names, but not by plugin options, and the cached entry stores resolved import IDs. Plus and Pro runs share `vitest.config.mjs` and differ only in `CUSTOM_SRC`, so one edition's run could reuse transforms resolved against the other edition's overlay. The cache saved about 1.4 s of a 28 s run. `isolate: false` would share the reactive singletons in `src/common/` and `src/app/` across test files. To try the cache locally, pass `--fsModuleCache` to the npm `test` script, with a separate `--fsModuleCachePath` per edition.
+
 ## Dependency Pinning Policy
 
 **Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.20.0"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -S "<pkg>" -- frontend/package.json` from the repository root).

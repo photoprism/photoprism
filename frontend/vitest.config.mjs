@@ -54,6 +54,10 @@ export default defineConfig({
       },
     },
     testTimeout: 10000,
+    // Both are set explicitly, which also skips Vitest's hints for them: fsModuleCache stays off
+    // because its key omits CUSTOM_SRC, and isolation keeps the reactive singletons per file.
+    fsModuleCache: false,
+    isolate: true,
     watch: false,
     silent: true,
 
