@@ -15,6 +15,8 @@ Faces are the one type this registry does not own. A `face` entry in `vision.yml
 
 **A custom face model in `vision.yml` is therefore deprecated.** `FACE_MODEL` is authoritative; a custom entry is still loaded while no embedding model is active, logs a deprecation warning, and has its vectors recorded under the configured model's name rather than its own. Unlike a caption or label model, every face model needs code that knows its preprocessing contract — channel order, normalization, input geometry, alignment mode — so there is nothing useful to point at a different artifact here. The registry, thresholds, and provenance columns live in [`internal/ai/face`](../face/README.md).
 
+**A face entry with a service endpoint still needs the `FACE_MODEL` weights installed locally.** The endpoint computes the vectors, but they belong to the model in force: their width is checked against its dimensions, they are dropped if the response names a model they cannot be compared with, and they are recorded under its name. If no model is in force, because `FACE_MODEL` is `none`, `auto` finds no installed weights, or the named weights are missing or license-refused, embeddings are off and no request is sent. `photoprism faces status` then reports embeddings as disabled, and the recognition row of `photoprism vision ls` reads Disabled.
+
 ### Configuration
 
 #### Models
