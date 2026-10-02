@@ -169,6 +169,7 @@ describe("options/options", () => {
       library: true,
       logs: true,
       calendar: true,
+      discover: true,
       moments: true,
       people: true,
       places: true,
@@ -184,7 +185,7 @@ describe("options/options", () => {
       videos: true,
     };
     let pages = StartPages(features);
-    expect(pages.length).toBe(13);
+    expect(pages.length).toBe(14);
     expect(pages[5].value).toBe("people");
     expect(pages[5].props.disabled).toBe(false);
     expect(pages[pages.length - 1].value).toBe("settings");
@@ -192,11 +193,12 @@ describe("options/options", () => {
     features = {
       ...features, // copy previous settings
       calendar: false,
+      discover: false,
       people: false,
       settings: false,
     };
     pages = StartPages(features);
-    expect(pages.length).toBe(13);
+    expect(pages.length).toBe(14);
     expect(pages[5].value).toBe("people");
     expect(pages[5].props.disabled).toBe(true);
     expect(pages[pages.length - 1].value).toBe("settings");

@@ -289,6 +289,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Library:      true,
 			Logs:         true,
 			Calendar:     true,
+			Discover:     true,
 			Moments:      true,
 			People:       true,
 			Places:       true,
@@ -332,6 +333,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Library:      false,
 			Logs:         false,
 			Calendar:     true,
+			Discover:     true,
 			Moments:      true,
 			People:       false,
 			Places:       true,
@@ -375,6 +377,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Library:      false,
 			Logs:         false,
 			Calendar:     true,
+			Discover:     false,
 			Moments:      true,
 			People:       false,
 			Places:       true,
@@ -403,6 +406,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Videos)
 		assert.False(t, f.Albums)
 		assert.False(t, f.Calendar)
+		assert.False(t, f.Discover)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
 		assert.False(t, f.Cameras)
@@ -748,6 +752,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Videos)
 		assert.False(t, f.Albums)
 		assert.False(t, f.Calendar)
+		assert.False(t, f.Discover)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
 		assert.False(t, f.Cameras)

@@ -33,6 +33,7 @@ Features:
   Library: true
   Logs: true
   Calendar: true
+  Discover: true
   Moments: true
   People: true
   Places: true

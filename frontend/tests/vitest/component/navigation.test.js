@@ -378,4 +378,16 @@ describe("component/navigation", () => {
       expect(session.logoutEverywhere).toHaveBeenCalled();
     });
   });
+
+  describe("discover navigation", () => {
+    it("renders the Discover item when the feature is enabled", () => {
+      const { wrapper } = mountNavigation({ featureOverrides: { discover: true } });
+      expect(wrapper.find(".menu-action.nav-discover").exists()).toBe(true);
+    });
+
+    it("hides the Discover item when the feature is disabled", () => {
+      const { wrapper } = mountNavigation({ featureOverrides: { discover: false } });
+      expect(wrapper.find(".menu-action.nav-discover").exists()).toBe(false);
+    });
+  });
 });
