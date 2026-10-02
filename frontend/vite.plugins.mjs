@@ -90,11 +90,11 @@ export function overlayResolver({ roots, importers = [] }) {
 }
 
 // postcssOptions returns the build's PostCSS options: postcss-preset-env for browsers and, if minify
-// is set, cssnano, which does not round plain numbers. map: false keeps PostCSS from carrying over the
-// source maps of dependency CSS; folding selector lists into :is() is off, since it can move a
-// combinator into the list and change what a selector matches.
+// is set, cssnano, which does not round plain numbers. map: false drops dependency source maps.
+// Folding selectors into :is() can move a combinator into the list, and normalizePositions
+// rewrites "bottom center" as "100%", so both are off.
 export function postcssOptions({ browsers, minify }) {
-  const preset = ["default", { overrideBrowserslist: browsers, minifySelectors: { convertToIs: false } }];
+  const preset = ["default", { overrideBrowserslist: browsers, minifySelectors: { convertToIs: false }, normalizePositions: false }];
   return {
     map: false,
     plugins: [postcssPresetEnv({ browsers }), minify && cssnano({ preset })].filter(Boolean),

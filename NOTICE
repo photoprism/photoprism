@@ -9491,7 +9491,7 @@ axios-mock-adapter                                  MIT            Colin Timmerm
 browserslist                                        MIT            Andrey Sitnik <andrey@sitnik.es>
 core-js                                             MIT            Denis Pushkarev zloirock@zloirock.ru http://zloirock.ru
 cross-env                                           MIT            Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
-cssnano                                             MIT            Ben Briggs beneb.info@gmail.com http://beneb.info
+cssnano                                             MIT            Ben Briggs beneb.info@gmail.com https://beneb.info
 eslint                                              MIT            Nicholas C. Zakas <nicholas+npm@nczconsulting.com>
 eslint-config-prettier                              MIT            Simon Lydell
 eslint-plugin-vue                                   MIT            Toru Nagashima (https://github.com/mysticatea)

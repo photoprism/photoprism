@@ -82,7 +82,7 @@ if (cleanOnly) {
 if (typeof zlib.zstdCompressSync !== "function") {
   console.error(
     `[precompress] error: this Node.js (${process.version}) lacks built-in zstd support. ` +
-      "Upgrade to Node 22.15+ or 24.x — see frontend/package.json engines."
+      "Upgrade to Node 24.15 or later — see frontend/package.json engines."
   );
   process.exit(1);
 }

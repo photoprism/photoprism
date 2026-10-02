@@ -161,6 +161,10 @@ describe("vite.plugins", () => {
       expect(css).not.toContain(":is(");
       expect(css).toContain(".t>.w>table>tbody>tr>td");
     });
+    it("keeps two-keyword positions", async () => {
+      const css = await run(".a { background-position: bottom center; } .b { background: url(x.png) top center no-repeat; }");
+      expect(css).toBe(".a{background-position:bottom center}.b{background:url(x.png) top center no-repeat}");
+    });
     it("adds the prefixes the browser range needs", async () => {
       expect(await run(".a { hyphens: auto; }")).toContain("-webkit-hyphens:auto");
     });
