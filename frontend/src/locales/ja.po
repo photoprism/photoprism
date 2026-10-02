@@ -309,7 +309,7 @@ msgid "Adjust Date & Time"
 msgstr "日付と時刻を調整する"
 
 #: src/component/meta/location/dialog.vue:18
-#: src/component/photo/batch-edit.vue:274
+#: src/component/photo/batch-edit.vue:278
 #: src/component/photo/edit/details.vue:145
 msgid "Adjust Location"
 msgstr "場所を調整する"
@@ -393,7 +393,7 @@ msgstr "アルバムが保存されました"
 
 #: src/app/routes.js:342 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
-#: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:414
+#: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
 #: src/page/settings/collections.vue:113 src/page/settings/general.vue:81
 msgid "Albums"
@@ -504,7 +504,7 @@ msgstr "代わりに、Nextcloud などの WebDAV サーバから直接ファイ
 msgid "Altitude"
 msgstr "高度"
 
-#: src/component/photo/batch-edit.vue:313
+#: src/component/photo/batch-edit.vue:317
 #: src/component/photo/edit/details.vue:180
 msgid "Altitude (m)"
 msgstr "高度 (m)"
@@ -604,8 +604,8 @@ msgid "Are you sure?"
 msgstr "本当に実行しますか ?"
 
 #: src/component/lightbox/sidebar.vue:848
-#: src/component/photo/batch-edit.vue:382
-#: src/component/photo/batch-edit.vue:384
+#: src/component/photo/batch-edit.vue:392
+#: src/component/photo/batch-edit.vue:394
 #: src/component/photo/edit/details.vue:319
 #: src/component/photo/edit/details.vue:321
 msgid "Artist"
@@ -813,8 +813,8 @@ msgid "Cannot copy to clipboard"
 msgstr "クリップボードにコピーできない"
 
 #: src/common/util.js:949 src/component/lightbox/sidebar.vue:807
-#: src/component/photo/batch-edit.vue:173
-#: src/component/photo/batch-edit.vue:176
+#: src/component/photo/batch-edit.vue:175
+#: src/component/photo/batch-edit.vue:178
 #: src/component/photo/edit/details.vue:28
 #: src/component/photo/edit/details.vue:31
 #: src/component/photo/view/cards.vue:194
@@ -868,7 +868,7 @@ msgstr "プライベート状態を変更"
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:168
-#: src/component/photo/batch-edit.vue:1440
+#: src/component/photo/batch-edit.vue:1466
 #: src/component/photo/edit/details.vue:635 src/locales.js:399
 #: src/page/settings/account.vue:446 src/page/settings/account.vue:451
 msgid "Changes could not be saved"
@@ -883,7 +883,7 @@ msgstr "変更を保存できませんでした"
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
-#: src/component/photo/batch-edit.vue:1472
+#: src/component/photo/batch-edit.vue:1498
 #: src/component/photo/edit/files.vue:566 src/component/service/edit.vue:382
 #: src/component/share/dialog.vue:241 src/component/share/dialog.vue:260
 #: src/locales.js:452 src/page/albums.vue:1205 src/page/people/new.vue:814
@@ -919,6 +919,7 @@ msgstr "クリーンアップ"
 
 #: src/component/meta/location/input.vue:49
 #: src/component/meta/location/input.vue:67
+#: src/component/photo/batch-edit.vue:1189
 msgid "Clear"
 msgstr "クリア"
 
@@ -945,7 +946,7 @@ msgstr "クライアント"
 #: src/component/meta/location/dialog.vue:20
 #: src/component/people/edit/dialog.vue:21
 #: src/component/photo/album/dialog.vue:18
-#: src/component/photo/batch-edit.vue:18 src/component/photo/batch-edit.vue:473
+#: src/component/photo/batch-edit.vue:18 src/component/photo/batch-edit.vue:487
 #: src/component/photo/edit/details.vue:380
 #: src/component/photo/edit/details.vue:385 src/component/photo/toolbar.vue:94
 #: src/component/settings/apps.vue:91 src/component/settings/apps.vue:215
@@ -1046,7 +1047,7 @@ msgstr "1 枚の写真が含まれています。"
 msgid "Content"
 msgstr "内容"
 
-#: src/component/photo/batch-edit.vue:328
+#: src/component/photo/batch-edit.vue:334
 msgctxt "Edit"
 msgid "Content"
 msgstr "内容"
@@ -1080,8 +1081,8 @@ msgid "Copying files from %s"
 msgstr "%s からファイルをコピーしています"
 
 #: src/component/lightbox/sidebar.vue:834
-#: src/component/photo/batch-edit.vue:367
-#: src/component/photo/batch-edit.vue:369
+#: src/component/photo/batch-edit.vue:375
+#: src/component/photo/batch-edit.vue:377
 #: src/component/photo/edit/details.vue:306
 #: src/component/photo/edit/details.vue:308
 msgid "Copyright"
@@ -1103,7 +1104,7 @@ msgstr "カバーを更新できなかった"
 msgid "Couldn't find anything."
 msgstr "何も見つかりませんでした。"
 
-#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:289
+#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:293
 #: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:108
 #: src/page/settings/account.vue:286
 msgid "Country"
@@ -1172,12 +1173,12 @@ msgstr "データベースのバックアップ"
 msgid "Databases"
 msgstr "データベース"
 
-#: src/component/photo/batch-edit.vue:190
+#: src/component/photo/batch-edit.vue:194
 msgid "Date & Time"
 msgstr "日時"
 
 #: src/page/settings/account.vue:220 src/component/meta/datetime/dialog.vue:30
-#: src/component/photo/batch-edit.vue:194
+#: src/component/photo/batch-edit.vue:198
 #: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:204
 msgid "Day"
 msgstr "日"
@@ -1277,6 +1278,10 @@ msgstr "FFmpeg を無効化"
 msgid "Disable Faces"
 msgstr "顔を無効にする"
 
+#: src/common/map.js:133
+msgid "Disable Globe"
+msgstr ""
+
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
 msgstr "ImageMagick を無効化"
@@ -1292,6 +1297,10 @@ msgstr "場所を無効化"
 #: src/page/settings/advanced.vue:356
 msgid "Disable RawTherapee"
 msgstr "RawTherapee を無効化"
+
+#: src/common/map.js:140
+msgid "Disable Terrain"
+msgstr ""
 
 #: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
@@ -1330,7 +1339,7 @@ msgid "Disables video transcoding and thumbnail extraction."
 msgstr "ビデオのトランスコーディングとサムネイル抽出を無効にします。"
 
 #: src/component/lightbox/sidebar.vue:472
-#: src/component/photo/batch-edit.vue:472
+#: src/component/photo/batch-edit.vue:486
 #: src/component/photo/edit/details.vue:384
 msgid "Discard"
 msgstr "破棄する"
@@ -1441,6 +1450,10 @@ msgstr "ダウンロードしています…"
 msgid "Drag and drop files here"
 msgstr "ここにファイルをドラッグ＆ドロップしてください"
 
+#: src/common/map.js:136
+msgid "Drag to rotate the map, click to reset north"
+msgstr ""
+
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
 msgstr "ドライバー"
@@ -1489,7 +1502,7 @@ msgstr "アカウントを編集"
 msgid "Edit Photo"
 msgstr "写真を編集"
 
-#: src/component/photo/batch-edit.vue:635
+#: src/component/photo/batch-edit.vue:649
 msgid "Edit Photos (%{n})"
 msgstr "写真を編集する (%{n})"
 
@@ -1504,6 +1517,14 @@ msgstr "編集済み"
 #: src/page/settings/account.vue:79
 msgid "Email"
 msgstr "メールアドレス"
+
+#: src/common/map.js:132
+msgid "Enable Globe"
+msgstr ""
+
+#: src/common/map.js:139
+msgid "Enable Terrain"
+msgstr ""
 
 #: src/page/settings/advanced.vue:31
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
@@ -1598,6 +1619,10 @@ msgstr "隠された項目を除外"
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "ビデオ、ライブフォト、XMP を完全にサポートするには、ExifTool が必要です。"
 
+#: src/common/map.js:129
+msgid "Exit Fullscreen"
+msgstr ""
+
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
 msgstr "実験的な機能"
@@ -1690,7 +1715,7 @@ msgstr "サーバーの再起動に失敗した"
 #: src/component/lightbox/sidebar.vue:2172
 #: src/component/lightbox/sidebar.vue:2195
 #: src/component/lightbox/sidebar.vue:2225
-#: src/component/photo/batch-edit.vue:1479
+#: src/component/photo/batch-edit.vue:1505
 msgid "Failed to save changes"
 msgstr "変更の保存に失敗した"
 
@@ -1722,7 +1747,7 @@ msgstr "高速"
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
 #: src/component/people/edit/dialog.vue:52
-#: src/component/photo/batch-edit.vue:1536
+#: src/component/photo/batch-edit.vue:1562
 #: src/component/photo/edit/info.vue:159
 msgid "Favorite"
 msgstr "お気に入り"
@@ -1762,8 +1787,8 @@ msgstr "ファイルブラウザ"
 msgid "File Conversion"
 msgstr "ファイル変換"
 
-#: src/component/photo/batch-edit.vue:606
-#: src/component/photo/batch-edit.vue:626 src/component/photo/view/list.vue:34
+#: src/component/photo/batch-edit.vue:620
+#: src/component/photo/batch-edit.vue:640 src/component/photo/view/list.vue:34
 #: src/options/options.js:517
 msgid "File Name"
 msgstr "ファイル名"
@@ -1805,6 +1830,10 @@ msgstr "ファイル"
 #: src/page/settings/content.vue:104
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "「IMG_1234 (2)」や「IMG_1234 (3)」のような連名のファイルは同じ写真として扱います。"
+
+#: src/common/map.js:130
+msgid "Find My Location"
+msgstr ""
 
 #: src/locales.js:251 src/locales.js:319
 msgid "First page"
@@ -1852,7 +1881,8 @@ msgstr "フレーム"
 msgid "Full Access"
 msgstr "フルアクセス"
 
-#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
+#: src/common/map.js:128 src/component/lightbox.vue:1634
+#: src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "全画面"
 
@@ -2241,7 +2271,7 @@ msgstr "ラベルが保存されました"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:558
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
-#: src/component/photo/batch-edit.vue:430
+#: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:352
 #: src/options/options.js:266 src/page/settings/general.vue:186
@@ -2317,8 +2347,8 @@ msgstr "ライブラリ"
 
 #: src/page/connect.vue:5 src/app/routes.js:103
 #: src/component/lightbox/sidebar.vue:862 src/component/navigation.vue:575
-#: src/component/photo/batch-edit.vue:397
-#: src/component/photo/batch-edit.vue:400
+#: src/component/photo/batch-edit.vue:409
+#: src/component/photo/batch-edit.vue:412
 #: src/component/photo/edit/details.vue:332
 #: src/component/photo/edit/details.vue:335 src/page/about/license.vue:5
 msgid "License"
@@ -2385,8 +2415,8 @@ msgstr "現地時間"
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
 #: src/common/util.js:941 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
-#: src/component/photo/batch-edit.vue:263
-#: src/component/photo/batch-edit.vue:581
+#: src/component/photo/batch-edit.vue:267
+#: src/component/photo/batch-edit.vue:595
 #: src/component/photo/edit/details.vue:449
 #: src/component/photo/edit/details.vue:573
 #: src/component/photo/edit/details.vue:678
@@ -2395,6 +2425,10 @@ msgstr "現地時間"
 #: src/page/settings/account.vue:278
 msgid "Location"
 msgstr "場所"
+
+#: src/common/map.js:131
+msgid "Location Not Available"
+msgstr ""
 
 #: src/page/library/errors.vue:74
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -2452,6 +2486,18 @@ msgstr "マニュアル"
 #: src/component/service/edit.vue:16
 msgid "Manual Upload"
 msgstr "手動アップロード"
+
+#: src/common/map.js:134
+msgid "Map"
+msgstr ""
+
+#: src/common/map.js:135
+msgid "Map Marker"
+msgstr ""
+
+#: src/component/places/style-control.js:27
+msgid "Map Style"
+msgstr ""
 
 #: src/page/settings/general.vue:505
 msgid "Maps"
@@ -2526,7 +2572,7 @@ msgid "Monochrome"
 msgstr "モノクロ"
 
 #: src/page/settings/account.vue:240 src/component/meta/datetime/dialog.vue:50
-#: src/component/photo/batch-edit.vue:213
+#: src/component/photo/batch-edit.vue:217
 #: src/component/photo/edit/details.vue:67 src/component/photo/toolbar.vue:207
 #: src/page/settings/account.vue:224
 msgid "Month"
@@ -2638,7 +2684,7 @@ msgstr "来年"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
-#: src/component/photo/batch-edit.vue:1120
+#: src/component/photo/batch-edit.vue:1134
 #: src/component/photo/edit/info.vue:152 src/component/photo/edit/info.vue:166
 #: src/component/photo/edit/info.vue:180 src/component/photo/edit/info.vue:194
 #: src/component/photo/edit/info.vue:208
@@ -2649,7 +2695,7 @@ msgstr "いいえ"
 msgid "No Access"
 msgstr "アクセス不可"
 
-#: src/component/photo/batch-edit.vue:420
+#: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "アルバムの指定はない"
 
@@ -2673,7 +2719,7 @@ msgstr "ダウンロードできるファイルはありません"
 msgid "No items selected"
 msgstr "項目が選択されていません"
 
-#: src/component/photo/batch-edit.vue:438
+#: src/component/photo/batch-edit.vue:452
 msgid "No labels assigned"
 msgstr "ラベルは貼られていない"
 
@@ -2955,7 +3001,7 @@ msgstr "ページ"
 msgid "Pagination Navigation"
 msgstr "ページネーション・ナビゲーション"
 
-#: src/component/photo/batch-edit.vue:1538
+#: src/component/photo/batch-edit.vue:1564
 #: src/component/photo/edit/info.vue:201
 msgid "Panorama"
 msgstr "パノラマ"
@@ -3055,8 +3101,8 @@ msgstr "PhotoPrism+ メンバーシップ"
 msgid "Photos"
 msgstr "写真"
 
-#: src/component/photo/batch-edit.vue:600
-#: src/component/photo/batch-edit.vue:620
+#: src/component/photo/batch-edit.vue:614
+#: src/component/photo/batch-edit.vue:634
 msgid "Picture"
 msgstr "写真"
 
@@ -3197,7 +3243,7 @@ msgstr "プライマリ"
 
 #: src/app/routes.js:437 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
-#: src/component/photo/batch-edit.vue:1537
+#: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
 msgid "Private"
 msgstr "プライベート"
@@ -3474,7 +3520,7 @@ msgstr "衛星"
 #: src/component/meta/camera/dialog.vue:121
 #: src/component/meta/datetime/dialog.vue:123
 #: src/component/people/edit/dialog.vue:77
-#: src/component/photo/batch-edit.vue:483
+#: src/component/photo/batch-edit.vue:497
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:259
 #: src/component/settings/password.vue:94 src/component/share/dialog.vue:111
 msgid "Save"
@@ -3486,7 +3532,7 @@ msgstr "保存"
 msgid "Save changes"
 msgstr "変更を保存する"
 
-#: src/component/photo/batch-edit.vue:1535
+#: src/component/photo/batch-edit.vue:1561
 #: src/component/photo/edit/info.vue:187
 msgid "Scan"
 msgstr "スキャン"
@@ -3572,12 +3618,12 @@ msgstr "月を選択"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
-#: src/component/photo/batch-edit.vue:419 src/component/upload/dialog.vue:59
+#: src/component/photo/batch-edit.vue:433 src/component/upload/dialog.vue:59
 msgid "Select or create albums"
 msgstr "アルバムを選択または作成する"
 
 #: src/component/lightbox/sidebar.vue:393
-#: src/component/photo/batch-edit.vue:437
+#: src/component/photo/batch-edit.vue:451
 msgid "Select or create labels"
 msgstr "ラベルを選択または作成する"
 
@@ -3949,8 +3995,8 @@ msgid "Streets"
 msgstr "市街"
 
 #: src/common/util.js:955 src/component/lightbox/sidebar.vue:820
-#: src/component/photo/batch-edit.vue:331
-#: src/component/photo/batch-edit.vue:334
+#: src/component/photo/batch-edit.vue:337
+#: src/component/photo/batch-edit.vue:340
 #: src/component/photo/edit/details.vue:291
 #: src/component/photo/edit/details.vue:294
 msgid "Subject"
@@ -4093,7 +4139,7 @@ msgid "Time UTC"
 msgstr "UTC 時間"
 
 #: src/component/meta/datetime/dialog.vue:106
-#: src/component/photo/batch-edit.vue:251
+#: src/component/photo/batch-edit.vue:255
 #: src/component/photo/edit/details.vue:126 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "タイムゾーン"
@@ -4153,6 +4199,10 @@ msgstr "今日"
 msgid "Today, {0}"
 msgstr "今日、{0}"
 
+#: src/common/map.js:127
+msgid "Toggle Attribution"
+msgstr ""
+
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
 msgstr "サムネイルの表示/非表示を切り替える"
@@ -4188,7 +4238,7 @@ msgstr "他のフィルターまたはキーワードで試してみてくださ
 msgid "Two-factor authentication has been enabled for your account."
 msgstr "あなたのアカウントでは2要素認証が有効になっています。"
 
-#: src/component/photo/batch-edit.vue:349
+#: src/component/photo/batch-edit.vue:357
 #: src/component/photo/edit/files.vue:166
 #: src/component/photo/edit/files.vue:439 src/component/photo/edit/info.vue:21
 #: src/component/service/edit.vue:213
@@ -4218,6 +4268,7 @@ msgstr "未承認"
 #: src/component/lightbox/sidebar/toolbar.vue:11
 #: src/component/meta/location/input.vue:40
 #: src/component/meta/location/input.vue:58
+#: src/component/photo/batch-edit.vue:1189
 #: src/component/photo/edit/people.vue:43
 msgid "Undo"
 msgstr "取り消し"
@@ -4566,7 +4617,7 @@ msgid "Work Details"
 msgstr "業務内容"
 
 #: src/page/settings/account.vue:260 src/component/meta/datetime/dialog.vue:70
-#: src/component/photo/batch-edit.vue:232
+#: src/component/photo/batch-edit.vue:236
 #: src/component/photo/edit/details.vue:88 src/component/photo/toolbar.vue:188
 #: src/page/albums.vue:66 src/page/settings/account.vue:244
 msgid "Year"
@@ -4578,7 +4629,7 @@ msgstr "黄"
 
 #: src/component/confirm/dialog.vue:26 src/component/people/merge/dialog.vue:22
 #: src/component/photo/archive/dialog.vue:22
-#: src/component/photo/batch-edit.vue:1119
+#: src/component/photo/batch-edit.vue:1133
 #: src/component/photo/clipboard.vue:156 src/component/photo/edit/files.vue:197
 #: src/component/photo/edit/files.vue:229
 #: src/component/photo/edit/files.vue:237
@@ -4652,11 +4703,13 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 msgid "Zip created in %d s"
 msgstr "%d 秒で zip ファイルを作成しました"
 
-#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+#: src/common/map.js:137 src/component/pdf-viewer.vue:106
+#: src/component/pdf-viewer.vue:107
 msgid "Zoom In"
 msgstr "拡大"
 
-#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+#: src/common/map.js:138 src/component/pdf-viewer.vue:97
+#: src/component/pdf-viewer.vue:98
 msgid "Zoom Out"
 msgstr "ズームアウト"
 

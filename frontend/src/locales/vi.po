@@ -306,7 +306,7 @@ msgid "Adjust Date & Time"
 msgstr "Điều chỉnh ngày và giờ"
 
 #: src/component/meta/location/dialog.vue:18
-#: src/component/photo/batch-edit.vue:274
+#: src/component/photo/batch-edit.vue:278
 #: src/component/photo/edit/details.vue:145
 msgid "Adjust Location"
 msgstr "Điều chỉnh vị trí"
@@ -390,7 +390,7 @@ msgstr "Đã lưu album"
 
 #: src/app/routes.js:342 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
-#: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:414
+#: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
 #: src/page/settings/collections.vue:113 src/page/settings/general.vue:81
 msgid "Albums"
@@ -501,7 +501,7 @@ msgstr "Ngoài ra, bạn có thể tải tệp trực tiếp lên máy chủ Web
 msgid "Altitude"
 msgstr "Độ cao"
 
-#: src/component/photo/batch-edit.vue:313
+#: src/component/photo/batch-edit.vue:317
 #: src/component/photo/edit/details.vue:180
 msgid "Altitude (m)"
 msgstr "Độ cao (m)"
@@ -601,8 +601,8 @@ msgid "Are you sure?"
 msgstr "Bạn có chắc không?"
 
 #: src/component/lightbox/sidebar.vue:848
-#: src/component/photo/batch-edit.vue:382
-#: src/component/photo/batch-edit.vue:384
+#: src/component/photo/batch-edit.vue:392
+#: src/component/photo/batch-edit.vue:394
 #: src/component/photo/edit/details.vue:319
 #: src/component/photo/edit/details.vue:321
 msgid "Artist"
@@ -810,8 +810,8 @@ msgid "Cannot copy to clipboard"
 msgstr "Không thể sao chép vào clipboard"
 
 #: src/common/util.js:949 src/component/lightbox/sidebar.vue:807
-#: src/component/photo/batch-edit.vue:173
-#: src/component/photo/batch-edit.vue:176
+#: src/component/photo/batch-edit.vue:175
+#: src/component/photo/batch-edit.vue:178
 #: src/component/photo/edit/details.vue:28
 #: src/component/photo/edit/details.vue:31
 #: src/component/photo/view/cards.vue:194
@@ -865,7 +865,7 @@ msgstr "Thay đổi cờ riêng tư"
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:168
-#: src/component/photo/batch-edit.vue:1440
+#: src/component/photo/batch-edit.vue:1466
 #: src/component/photo/edit/details.vue:635 src/locales.js:399
 #: src/page/settings/account.vue:446 src/page/settings/account.vue:451
 msgid "Changes could not be saved"
@@ -880,7 +880,7 @@ msgstr "Không thể lưu các thay đổi"
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
-#: src/component/photo/batch-edit.vue:1472
+#: src/component/photo/batch-edit.vue:1498
 #: src/component/photo/edit/files.vue:566 src/component/service/edit.vue:382
 #: src/component/share/dialog.vue:241 src/component/share/dialog.vue:260
 #: src/locales.js:452 src/page/albums.vue:1205 src/page/people/new.vue:814
@@ -916,6 +916,7 @@ msgstr "Dọn dẹp"
 
 #: src/component/meta/location/input.vue:49
 #: src/component/meta/location/input.vue:67
+#: src/component/photo/batch-edit.vue:1189
 msgid "Clear"
 msgstr "Xóa"
 
@@ -942,7 +943,7 @@ msgstr "Khách hàng"
 #: src/component/meta/location/dialog.vue:20
 #: src/component/people/edit/dialog.vue:21
 #: src/component/photo/album/dialog.vue:18
-#: src/component/photo/batch-edit.vue:18 src/component/photo/batch-edit.vue:473
+#: src/component/photo/batch-edit.vue:18 src/component/photo/batch-edit.vue:487
 #: src/component/photo/edit/details.vue:380
 #: src/component/photo/edit/details.vue:385 src/component/photo/toolbar.vue:94
 #: src/component/settings/apps.vue:91 src/component/settings/apps.vue:215
@@ -1043,7 +1044,7 @@ msgstr "Chứa một hình ảnh."
 msgid "Content"
 msgstr "Nội dung"
 
-#: src/component/photo/batch-edit.vue:328
+#: src/component/photo/batch-edit.vue:334
 msgctxt "Edit"
 msgid "Content"
 msgstr "Nội dung"
@@ -1077,8 +1078,8 @@ msgid "Copying files from %s"
 msgstr "Sao chép tập tin từ %s"
 
 #: src/component/lightbox/sidebar.vue:834
-#: src/component/photo/batch-edit.vue:367
-#: src/component/photo/batch-edit.vue:369
+#: src/component/photo/batch-edit.vue:375
+#: src/component/photo/batch-edit.vue:377
 #: src/component/photo/edit/details.vue:306
 #: src/component/photo/edit/details.vue:308
 msgid "Copyright"
@@ -1100,7 +1101,7 @@ msgstr "Không thể cập nhật thông tin cá nhân"
 msgid "Couldn't find anything."
 msgstr "Không thể tìm thấy bất cứ điều gì."
 
-#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:289
+#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:293
 #: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:108
 #: src/page/settings/account.vue:286
 msgid "Country"
@@ -1169,12 +1170,12 @@ msgstr "Sao lưu cơ sở dữ liệu"
 msgid "Databases"
 msgstr "Cơ sở dữ liệu"
 
-#: src/component/photo/batch-edit.vue:190
+#: src/component/photo/batch-edit.vue:194
 msgid "Date & Time"
 msgstr "Ngày & Giờ"
 
 #: src/page/settings/account.vue:220 src/component/meta/datetime/dialog.vue:30
-#: src/component/photo/batch-edit.vue:194
+#: src/component/photo/batch-edit.vue:198
 #: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:204
 msgid "Day"
 msgstr "Ngày"
@@ -1274,6 +1275,10 @@ msgstr "Tắt FFmpeg"
 msgid "Disable Faces"
 msgstr "Tắt tính năng Nhận diện khuôn mặt"
 
+#: src/common/map.js:133
+msgid "Disable Globe"
+msgstr ""
+
 #: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
 msgstr "Tắt ImageMagick"
@@ -1289,6 +1294,10 @@ msgstr "Vô hiệu hóa địa điểm"
 #: src/page/settings/advanced.vue:356
 msgid "Disable RawTherapee"
 msgstr "Tắt RawTherapee"
+
+#: src/common/map.js:140
+msgid "Disable Terrain"
+msgstr ""
 
 #: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
@@ -1327,7 +1336,7 @@ msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Tắt chuyển mã video và trích xuất hình thu nhỏ."
 
 #: src/component/lightbox/sidebar.vue:472
-#: src/component/photo/batch-edit.vue:472
+#: src/component/photo/batch-edit.vue:486
 #: src/component/photo/edit/details.vue:384
 msgid "Discard"
 msgstr "Bỏ đi"
@@ -1438,6 +1447,10 @@ msgstr "Đang tải xuống…"
 msgid "Drag and drop files here"
 msgstr "Kéo và thả tập tin vào đây"
 
+#: src/common/map.js:136
+msgid "Drag to rotate the map, click to reset north"
+msgstr ""
+
 #: src/component/cluster/node/overview.vue:79 src/locales.js:371
 msgid "Driver"
 msgstr "Tài xế"
@@ -1486,7 +1499,7 @@ msgstr "Chỉnh sửa tài khoản"
 msgid "Edit Photo"
 msgstr "Chỉnh sửa hình ảnh"
 
-#: src/component/photo/batch-edit.vue:635
+#: src/component/photo/batch-edit.vue:649
 msgid "Edit Photos (%{n})"
 msgstr "Chỉnh sửa ảnh (%{n})"
 
@@ -1501,6 +1514,14 @@ msgstr "Đã chỉnh sửa"
 #: src/page/settings/account.vue:79
 msgid "Email"
 msgstr "E-mail"
+
+#: src/common/map.js:132
+msgid "Enable Globe"
+msgstr ""
+
+#: src/common/map.js:139
+msgid "Enable Terrain"
+msgstr ""
 
 #: src/page/settings/advanced.vue:31
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
@@ -1595,6 +1616,10 @@ msgstr "Loại trừ ẩn"
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Cần phải trích xuất siêu dữ liệu bằng ExifTool để hỗ trợ đầy đủ Video, Live Photo và XMP."
 
+#: src/common/map.js:129
+msgid "Exit Fullscreen"
+msgstr ""
+
 #: src/page/settings/advanced.vue:46
 msgid "Experimental Features"
 msgstr "Tính năng thử nghiệm"
@@ -1687,7 +1712,7 @@ msgstr "Không thể khởi động lại máy chủ"
 #: src/component/lightbox/sidebar.vue:2172
 #: src/component/lightbox/sidebar.vue:2195
 #: src/component/lightbox/sidebar.vue:2225
-#: src/component/photo/batch-edit.vue:1479
+#: src/component/photo/batch-edit.vue:1505
 msgid "Failed to save changes"
 msgstr "Không thể lưu các thay đổi"
 
@@ -1719,7 +1744,7 @@ msgstr "Nhanh"
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
 #: src/component/people/edit/dialog.vue:52
-#: src/component/photo/batch-edit.vue:1536
+#: src/component/photo/batch-edit.vue:1562
 #: src/component/photo/edit/info.vue:159
 msgid "Favorite"
 msgstr "Yêu thích"
@@ -1759,8 +1784,8 @@ msgstr "Trình duyệt tệp"
 msgid "File Conversion"
 msgstr "Chuyển đổi tập tin"
 
-#: src/component/photo/batch-edit.vue:606
-#: src/component/photo/batch-edit.vue:626 src/component/photo/view/list.vue:34
+#: src/component/photo/batch-edit.vue:620
+#: src/component/photo/batch-edit.vue:640 src/component/photo/view/list.vue:34
 #: src/options/options.js:517
 msgid "File Name"
 msgstr "Tên tệp"
@@ -1802,6 +1827,10 @@ msgstr "Các tập tin"
 #: src/page/settings/content.vue:104
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "Các tệp có tên tuần tự như “IMG_1234 (2)” và “IMG_1234 (3)” thuộc cùng một hình ảnh."
+
+#: src/common/map.js:130
+msgid "Find My Location"
+msgstr ""
 
 #: src/locales.js:251 src/locales.js:319
 msgid "First page"
@@ -1849,7 +1878,8 @@ msgstr "Khung"
 msgid "Full Access"
 msgstr "Toàn quyền truy cập"
 
-#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
+#: src/common/map.js:128 src/component/lightbox.vue:1634
+#: src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Toàn màn hình"
 
@@ -2238,7 +2268,7 @@ msgstr "Đã lưu nhãn"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:558
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
-#: src/component/photo/batch-edit.vue:430
+#: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:352
 #: src/options/options.js:266 src/page/settings/general.vue:186
@@ -2314,8 +2344,8 @@ msgstr "Thư viện"
 
 #: src/page/connect.vue:5 src/app/routes.js:103
 #: src/component/lightbox/sidebar.vue:862 src/component/navigation.vue:575
-#: src/component/photo/batch-edit.vue:397
-#: src/component/photo/batch-edit.vue:400
+#: src/component/photo/batch-edit.vue:409
+#: src/component/photo/batch-edit.vue:412
 #: src/component/photo/edit/details.vue:332
 #: src/component/photo/edit/details.vue:335 src/page/about/license.vue:5
 msgid "License"
@@ -2382,8 +2412,8 @@ msgstr "Giờ địa phương"
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
 #: src/common/util.js:941 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
-#: src/component/photo/batch-edit.vue:263
-#: src/component/photo/batch-edit.vue:581
+#: src/component/photo/batch-edit.vue:267
+#: src/component/photo/batch-edit.vue:595
 #: src/component/photo/edit/details.vue:449
 #: src/component/photo/edit/details.vue:573
 #: src/component/photo/edit/details.vue:678
@@ -2392,6 +2422,10 @@ msgstr "Giờ địa phương"
 #: src/page/settings/account.vue:278
 msgid "Location"
 msgstr "Vị trí"
+
+#: src/common/map.js:131
+msgid "Location Not Available"
+msgstr ""
 
 #: src/page/library/errors.vue:74
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -2449,6 +2483,18 @@ msgstr "Thủ công"
 #: src/component/service/edit.vue:16
 msgid "Manual Upload"
 msgstr "Tải lên thủ công"
+
+#: src/common/map.js:134
+msgid "Map"
+msgstr ""
+
+#: src/common/map.js:135
+msgid "Map Marker"
+msgstr ""
+
+#: src/component/places/style-control.js:27
+msgid "Map Style"
+msgstr ""
 
 #: src/page/settings/general.vue:505
 msgid "Maps"
@@ -2523,7 +2569,7 @@ msgid "Monochrome"
 msgstr "Đơn sắc"
 
 #: src/page/settings/account.vue:240 src/component/meta/datetime/dialog.vue:50
-#: src/component/photo/batch-edit.vue:213
+#: src/component/photo/batch-edit.vue:217
 #: src/component/photo/edit/details.vue:67 src/component/photo/toolbar.vue:207
 #: src/page/settings/account.vue:224
 msgid "Month"
@@ -2635,7 +2681,7 @@ msgstr "Năm sau"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
-#: src/component/photo/batch-edit.vue:1120
+#: src/component/photo/batch-edit.vue:1134
 #: src/component/photo/edit/info.vue:152 src/component/photo/edit/info.vue:166
 #: src/component/photo/edit/info.vue:180 src/component/photo/edit/info.vue:194
 #: src/component/photo/edit/info.vue:208
@@ -2646,7 +2692,7 @@ msgstr "KHÔNG"
 msgid "No Access"
 msgstr "Không được truy cập"
 
-#: src/component/photo/batch-edit.vue:420
+#: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "Không có album nào được gán"
 
@@ -2670,7 +2716,7 @@ msgstr "Không có tập tin nào để tải xuống"
 msgid "No items selected"
 msgstr "Không có mục nào được chọn"
 
-#: src/component/photo/batch-edit.vue:438
+#: src/component/photo/batch-edit.vue:452
 msgid "No labels assigned"
 msgstr "Không có nhãn nào được gán"
 
@@ -2952,7 +2998,7 @@ msgstr "Trang"
 msgid "Pagination Navigation"
 msgstr "Phân trang Điều hướng"
 
-#: src/component/photo/batch-edit.vue:1538
+#: src/component/photo/batch-edit.vue:1564
 #: src/component/photo/edit/info.vue:201
 msgid "Panorama"
 msgstr "Toàn cảnh"
@@ -3052,8 +3098,8 @@ msgstr "PhotoPrism+ Tư cách thành viên"
 msgid "Photos"
 msgstr "Ảnh"
 
-#: src/component/photo/batch-edit.vue:600
-#: src/component/photo/batch-edit.vue:620
+#: src/component/photo/batch-edit.vue:614
+#: src/component/photo/batch-edit.vue:634
 msgid "Picture"
 msgstr "Hình ảnh"
 
@@ -3194,7 +3240,7 @@ msgstr "Sơ đẳng"
 
 #: src/app/routes.js:437 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
-#: src/component/photo/batch-edit.vue:1537
+#: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Riêng tư"
@@ -3471,7 +3517,7 @@ msgstr "Vệ tinh"
 #: src/component/meta/camera/dialog.vue:121
 #: src/component/meta/datetime/dialog.vue:123
 #: src/component/people/edit/dialog.vue:77
-#: src/component/photo/batch-edit.vue:483
+#: src/component/photo/batch-edit.vue:497
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:259
 #: src/component/settings/password.vue:94 src/component/share/dialog.vue:111
 msgid "Save"
@@ -3483,7 +3529,7 @@ msgstr "Lưu"
 msgid "Save changes"
 msgstr "Lưu thay đổi"
 
-#: src/component/photo/batch-edit.vue:1535
+#: src/component/photo/batch-edit.vue:1561
 #: src/component/photo/edit/info.vue:187
 msgid "Scan"
 msgstr "Quét"
@@ -3569,12 +3615,12 @@ msgstr "Chọn tháng"
 
 #: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
-#: src/component/photo/batch-edit.vue:419 src/component/upload/dialog.vue:59
+#: src/component/photo/batch-edit.vue:433 src/component/upload/dialog.vue:59
 msgid "Select or create albums"
 msgstr "Chọn hoặc tạo album"
 
 #: src/component/lightbox/sidebar.vue:393
-#: src/component/photo/batch-edit.vue:437
+#: src/component/photo/batch-edit.vue:451
 msgid "Select or create labels"
 msgstr "Chọn hoặc tạo nhãn"
 
@@ -3946,8 +3992,8 @@ msgid "Streets"
 msgstr "Đường phố"
 
 #: src/common/util.js:955 src/component/lightbox/sidebar.vue:820
-#: src/component/photo/batch-edit.vue:331
-#: src/component/photo/batch-edit.vue:334
+#: src/component/photo/batch-edit.vue:337
+#: src/component/photo/batch-edit.vue:340
 #: src/component/photo/edit/details.vue:291
 #: src/component/photo/edit/details.vue:294
 msgid "Subject"
@@ -4090,7 +4136,7 @@ msgid "Time UTC"
 msgstr "thời gian UTC"
 
 #: src/component/meta/datetime/dialog.vue:106
-#: src/component/photo/batch-edit.vue:251
+#: src/component/photo/batch-edit.vue:255
 #: src/component/photo/edit/details.vue:126 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "Múi giờ"
@@ -4150,6 +4196,10 @@ msgstr "Hôm nay"
 msgid "Today, {0}"
 msgstr "Hôm nay, {0}"
 
+#: src/common/map.js:127
+msgid "Toggle Attribution"
+msgstr ""
+
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
 msgstr "Chuyển đổi chế độ xem hình thu nhỏ"
@@ -4185,7 +4235,7 @@ msgstr "Hãy thử lại bằng các bộ lọc hoặc từ khóa khác."
 msgid "Two-factor authentication has been enabled for your account."
 msgstr "Xác thực hai yếu tố đã được kích hoạt cho tài khoản của bạn."
 
-#: src/component/photo/batch-edit.vue:349
+#: src/component/photo/batch-edit.vue:357
 #: src/component/photo/edit/files.vue:166
 #: src/component/photo/edit/files.vue:439 src/component/photo/edit/info.vue:21
 #: src/component/service/edit.vue:213
@@ -4215,6 +4265,7 @@ msgstr "Không được phép"
 #: src/component/lightbox/sidebar/toolbar.vue:11
 #: src/component/meta/location/input.vue:40
 #: src/component/meta/location/input.vue:58
+#: src/component/photo/batch-edit.vue:1189
 #: src/component/photo/edit/people.vue:43
 msgid "Undo"
 msgstr "Hoàn tác"
@@ -4563,7 +4614,7 @@ msgid "Work Details"
 msgstr "Chi tiết công việc"
 
 #: src/page/settings/account.vue:260 src/component/meta/datetime/dialog.vue:70
-#: src/component/photo/batch-edit.vue:232
+#: src/component/photo/batch-edit.vue:236
 #: src/component/photo/edit/details.vue:88 src/component/photo/toolbar.vue:188
 #: src/page/albums.vue:66 src/page/settings/account.vue:244
 msgid "Year"
@@ -4575,7 +4626,7 @@ msgstr "Màu vàng"
 
 #: src/component/confirm/dialog.vue:26 src/component/people/merge/dialog.vue:22
 #: src/component/photo/archive/dialog.vue:22
-#: src/component/photo/batch-edit.vue:1119
+#: src/component/photo/batch-edit.vue:1133
 #: src/component/photo/clipboard.vue:156 src/component/photo/edit/files.vue:197
 #: src/component/photo/edit/files.vue:229
 #: src/component/photo/edit/files.vue:237
@@ -4649,11 +4700,13 @@ msgstr "Thư viện của bạn được phân tích liên tục để tự đ�
 msgid "Zip created in %d s"
 msgstr "Zip được tạo trong %d giây"
 
-#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+#: src/common/map.js:137 src/component/pdf-viewer.vue:106
+#: src/component/pdf-viewer.vue:107
 msgid "Zoom In"
 msgstr "Phóng to"
 
-#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+#: src/common/map.js:138 src/component/pdf-viewer.vue:97
+#: src/component/pdf-viewer.vue:98
 msgid "Zoom Out"
 msgstr "Thu nhỏ"
 
