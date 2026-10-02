@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-02 12:00+0000\n"
+"PO-Revision-Date: 2026-10-02 13:16+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
@@ -1953,7 +1953,7 @@ msgstr "Paslēpt Virsrakstu"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Hide Password"
-msgstr ""
+msgstr "Paslēpt paroli"
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
@@ -3345,7 +3345,7 @@ msgstr "Noņemt"
 
 #: src/component/photo/toolbar.vue:57
 msgid "Remove Location"
-msgstr ""
+msgstr "Dzēst atrašanās vietu"
 
 #: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
@@ -3520,7 +3520,7 @@ msgstr "Meklēt"
 
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
-msgstr ""
+msgstr "Meklēšanas filtri"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3730,7 +3730,7 @@ msgstr "Rādīt tikai svarīgos"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Show Password"
-msgstr ""
+msgstr "Rādīt paroli"
 
 #: src/page/settings/content.vue:141
 msgid "Show Titles"

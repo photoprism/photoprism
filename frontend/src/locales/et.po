@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-02 12:00+0000\n"
+"PO-Revision-Date: 2026-10-02 13:16+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1954,7 +1954,7 @@ msgstr "Peida pildiallkiri"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Hide Password"
-msgstr ""
+msgstr "Peida parool"
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
@@ -3346,7 +3346,7 @@ msgstr "Eemalda"
 
 #: src/component/photo/toolbar.vue:57
 msgid "Remove Location"
-msgstr ""
+msgstr "Asukoha eemaldamine"
 
 #: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
@@ -3521,7 +3521,7 @@ msgstr "Otsi"
 
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
-msgstr ""
+msgstr "Otsingufiltrid"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3731,7 +3731,7 @@ msgstr "Näita ainult olulist"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Show Password"
-msgstr ""
+msgstr "Näita parooli"
 
 #: src/page/settings/content.vue:141
 msgid "Show Titles"

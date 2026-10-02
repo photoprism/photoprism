@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-02 12:00+0000\n"
+"PO-Revision-Date: 2026-10-02 13:16+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -1957,7 +1957,7 @@ msgstr "कैप्शन छिपाएँ"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Hide Password"
-msgstr ""
+msgstr "पासवर्ड छिपाएँ"
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
@@ -3349,7 +3349,7 @@ msgstr "हटाना"
 
 #: src/component/photo/toolbar.vue:57
 msgid "Remove Location"
-msgstr ""
+msgstr "स्थान हटाएँ"
 
 #: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
@@ -3524,7 +3524,7 @@ msgstr "खोज"
 
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
-msgstr ""
+msgstr "खोज फ़िल्टर"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3734,7 +3734,7 @@ msgstr "केवल महत्वपूर्ण दिखाएँ"
 #: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
 #: src/page/auth/login.vue:116
 msgid "Show Password"
-msgstr ""
+msgstr "पासवर्ड दिखाएँ"
 
 #: src/page/settings/content.vue:141
 msgid "Show Titles"
