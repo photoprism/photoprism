@@ -372,8 +372,10 @@ export default {
     density() {
       return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
     },
+    // countryOptions returns the country filter options, with a localized name for the "zz" code.
     countryOptions() {
-      return this.all.countries.concat(this.config.countries);
+      const countries = this.config.countries.map((c) => (c.ID === "zz" ? { ...c, Name: this.$gettext("Unknown") } : c));
+      return this.all.countries.concat(countries);
     },
     cameraOptions() {
       return this.all.cameras.concat(this.config.cameras);
