@@ -1,6 +1,6 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** October 1, 2026
+**Last Updated:** October 2, 2026
 
 ### Overview
 
@@ -181,7 +181,7 @@ Guidelines:
 - **CLI Smoke Tests**
   - Captions: `photoprism vision run -m caption --count 5 --force`.
   - Labels: `photoprism vision run -m labels --count 5 --force`.
-  - After each run, check `photoprism vision ls` for `source=ollama`.
+  - After each run, check the new captions and labels in the UI; `photoprism vision ls` confirms which entries use the `ollama` engine.
 - **Unit Tests**
   - `go test ./internal/ai/vision/ollama ./internal/ai/vision -run Ollama -count=1` covers transport parsing and model defaults.
   - Add fixtures under `internal/ai/vision/testdata` when capturing new response shapes; keep files small and anonymized.

@@ -1,6 +1,6 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** October 1, 2026
+**Last Updated:** October 2, 2026
 
 ### Overview
 
@@ -116,7 +116,7 @@ The client applies no rate limit of its own. Transient `HTTP 429` responses are 
 
 1. Unit tests: `go test ./internal/ai/vision/openai ./internal/ai/vision -run OpenAI -count=1`. Fixtures under `internal/ai/vision/openai/testdata/` replay real Responses payloads (captions and labels).
 2. CLI smoke test: `photoprism vision run -m labels --count 1 --force` with trace logging enabled to inspect sanitized Responses.
-3. Compare worker summaries and label sources (`openai`) in the UI or via `photoprism vision ls`.
+3. Compare worker summaries and the generated labels in the UI; `photoprism vision ls` confirms which entries use the `openai` engine.
 
 #### Code Map
 
