@@ -134,7 +134,7 @@ export default {
           this.options.center = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
         }
 
-        this.map = new maplibregl.Map(this.options);
+        this.map = new maplibregl.Map({ ...this.options, locale: map.locale() });
 
         // Add controls if requested
         if (this.showControls) {
