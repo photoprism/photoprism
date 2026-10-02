@@ -20,7 +20,7 @@ var VisionRunCommand = &cli.Command{
 		&cli.StringFlag{
 			Name:    "models",
 			Aliases: []string{"m"},
-			Usage:   "computer vision `MODELS` to run, e.g. caption, labels, or nsfw",
+			Usage:   "computer vision `MODELS` to run, e.g. caption, labels, nsfw, or face",
 			Value:   "caption",
 		},
 		PicturesCountFlag(),

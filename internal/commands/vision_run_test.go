@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -47,4 +48,19 @@ func TestVisionRunCommand(t *testing.T) {
 		assert.Contains(t, messages, "vision: skipping nsfw, because detect-nsfw is off")
 		assert.Contains(t, messages, `dry-run: vision run would execute models [labels] with filter="" (count=100000, source=, force=false)`)
 	})
+}
+
+// TestVisionRunCommandFlags verifies that the models usage names every model type a run accepts.
+func TestVisionRunCommandFlags(t *testing.T) {
+	var usage string
+
+	for _, flag := range VisionRunCommand.Flags {
+		if f, ok := flag.(*cli.StringFlag); ok && f.Name == "models" {
+			usage = f.Usage
+		}
+	}
+
+	for _, model := range []string{"caption", "labels", "nsfw", "face"} {
+		assert.Contains(t, usage, model)
+	}
 }
