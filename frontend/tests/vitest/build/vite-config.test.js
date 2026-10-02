@@ -62,4 +62,36 @@ describe("vite.config", () => {
     const app = JSON.parse(emitted["assets.json"])["app.css"];
     expect(emitted[app]).toMatch(/^@layer vuetify-core, vuetify-components, vuetify-overrides, vuetify-utilities, vuetify-final;/);
   });
+  it("leaves the gettext catalog tooling out of the bundle", async () => {
+    const resolved = await load("production");
+    const bundle = (treeshake) => buildGettextEntry(resolved.root, treeshake);
+    expect(await bundle(undefined)).toContain("Content-Transfer-Encoding");
+    const code = await bundle(resolved.build.rolldownOptions.treeshake);
+    expect(code).toContain("createGettext");
+    expect(code).not.toContain("Content-Transfer-Encoding");
+  });
 });
+
+// buildGettextEntry bundles an entry that imports createGettext and returns the generated code.
+async function buildGettextEntry(root, treeshake) {
+  const { build } = await import("vite");
+  const entry = "\0gettext-entry";
+  const result = await build({
+    root,
+    configFile: false,
+    logLevel: "silent",
+    plugins: [
+      {
+        name: "gettext-entry",
+        resolveId: (id) => (id === entry ? id : null),
+        load: (id) => (id === entry ? 'export { createGettext } from "vue3-gettext";' : null),
+      },
+    ],
+    build: {
+      write: false,
+      minify: false,
+      rolldownOptions: { input: entry, external: ["vue"], treeshake, preserveEntrySignatures: "strict" },
+    },
+  });
+  return [result].flat().flatMap((r) => r.output).map((chunk) => chunk.code || "").join("\n");
+}

@@ -459,11 +459,11 @@ export default {
           } else if (response.files === 0 && response.folders === 1) {
             this.$notify.info(this.$gettext("One folder found"));
           } else if (response.files === 0 && response.folders > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} folders found"), { n: response.folders }));
+            this.$notify.info(this.$gettext("%{n} folders found", { n: response.folders }));
           } else if (response.files < this.files.limit) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("Folder contains %{n} files"), { n: response.files }));
+            this.$notify.info(this.$gettext("Folder contains %{n} files", { n: response.files }));
           } else {
-            this.$notify.warn(this.$gettextInterpolate(this.$gettext("Limit reached, showing first %{n} files"), { n: response.files }));
+            this.$notify.warn(this.$gettext("Limit reached, showing first %{n} files", { n: response.files }));
           }
         })
         .catch(() => {

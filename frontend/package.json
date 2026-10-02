@@ -96,7 +96,7 @@
     "vue": "^3.5.43",
     "vue-luxon": "^0.10.0",
     "vue-router": "^5.3.1",
-    "vue3-gettext": "^2.4.0",
+    "vue3-gettext": "^4.0.1",
     "vuetify": "4.2.3",
     "workbox-build": "^7.4.1"
   },

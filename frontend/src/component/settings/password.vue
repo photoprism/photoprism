@@ -46,7 +46,7 @@
                 :minlength="minLength"
                 :maxlength="maxLength"
                 :label="$gettext('New Password')"
-                :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), { n: minLength })"
+                :hint="$gettext('Must have at least %{n} characters.', { n: minLength })"
                 :autofocus="!oldRequired"
                 counter
                 :hide-details="false"

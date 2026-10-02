@@ -245,8 +245,7 @@ const LITERAL = /^\s*(`([^`\\]*)`|"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')/;
 // Collects every literal msgid passed to a gettext call in one source file.
 // `$pgettext`/`$npgettext` take the context first, so the msgid is their second
 // argument; plural forms are checked via the singular, which the POT also carries.
-// Aliased receivers (`view.$gettext(…)`) are matched on purpose: the extractor
-// ignores them, which is exactly the defect this check exists to surface.
+// One receiver level (`view.$gettext(…)`) is matched; the extractor matches any depth.
 function sourceMsgids(path) {
   const out = [];
   const src = stripComments(readFileSync(path, "utf8"));

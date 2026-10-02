@@ -248,7 +248,7 @@
           <v-row class="align-start">
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: parseInt(settings.ThumbSize) }) }}
+                {{ $gettext("Static Size Limit: %{n}px", { n: parseInt(settings.ThumbSize) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.ThumbSize" :min="720" :max="15360" :step="4" :disabled="isDemo" hide-details class="ma-0" @end="onChange"></v-slider>
             </v-col>
@@ -256,7 +256,7 @@
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{
-                  $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), {
+                  $gettext("Dynamic Size Limit: %{n}px", {
                     n: parseInt(settings.ThumbSizeUncached),
                   })
                 }}
@@ -303,21 +303,21 @@
           <v-row class="align-start">
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: parseInt(settings.JpegQuality) }) }}
+                {{ $gettext("JPEG Quality: %{n}", { n: parseInt(settings.JpegQuality) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :step="1" :disabled="isDemo" hide-details class="ma-0" @end="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: parseInt(settings.JpegSize) }) }}
+                {{ $gettext("JPEG Size Limit: %{n}px", { n: parseInt(settings.JpegSize) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="isDemo" class="ma-0" @end="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: parseInt(settings.PngSize) }) }}
+                {{ $gettext("PNG Size Limit: %{n}px", { n: parseInt(settings.PngSize) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="isDemo" class="ma-0" @end="onChange"></v-slider>
             </v-col>

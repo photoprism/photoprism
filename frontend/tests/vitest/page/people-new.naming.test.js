@@ -23,8 +23,7 @@ const people = [
 const interpolate = (msg, params) => String(msg).replace(/%\{(\w+)\}/g, (all, key) => (params && key in params ? params[key] : all));
 
 const mocks = () => ({
-  $gettext: (msg) => msg,
-  $gettextInterpolate: interpolate,
+  $gettext: interpolate,
   $notify: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), success: vi.fn(), blockUI: vi.fn(), unblockUI: vi.fn() },
   $config: { values: {}, get: vi.fn(() => false), feature: vi.fn(() => true) },
   $route: { query: {}, name: "people_faces" },

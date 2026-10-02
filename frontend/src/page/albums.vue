@@ -929,7 +929,7 @@ export default {
 
           if (this.scrollDisabled) {
             if (this.results.length > 1) {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), { n: this.results.length }));
+              this.$notify.info(this.$gettext("All %{n} albums loaded", { n: this.results.length }));
             }
           } else {
             this.page++;
@@ -1104,10 +1104,9 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One album found"));
             } else {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} albums found"), { n: this.results.length }));
+              this.$notify.info(this.$gettext("%{n} albums found", { n: this.results.length }));
             }
           } else {
-            // this.$notify.info(this.$gettext('More than 20 albums found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.loadMore();
