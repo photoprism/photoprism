@@ -66,10 +66,18 @@ msgstr "%{n} nájdených štítkov"
 msgid "%{n} people found"
 msgstr "%{n} nájdených ľudí"
 
+#: src/page/discover/past.vue:290
+msgid "%{n} pictures"
+msgstr ""
+
 #: src/page/album/photos.vue:395 src/page/album/photos.vue:586
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "%{n} nájdených obrázkov"
+
+#: src/page/discover/past.vue:282
+msgid "%{n} years ago"
+msgstr ""
 
 #: src/common/form.js:311 src/common/form.js:316
 #: src/component/input/chip-selector.vue:277
@@ -87,6 +95,12 @@ msgstr "%{s} je príliš krátke"
 msgid "1 hour"
 msgstr "1 hodina"
 
+#: src/page/discover/past.vue:287
+msgid "1 picture"
+msgstr ""
+#: src/page/discover/past.vue:279
+msgid "1 year ago"
+msgstr ""
 #: src/options/options.js:431
 msgid "12 hours"
 msgstr "12 hodín"
@@ -1043,10 +1057,6 @@ msgstr "Farba"
 #: src/component/photo/edit/files.vue:307
 msgid "Color Profile"
 msgstr "Farebný profil"
-
-#: src/page/discover.vue:5
-msgid "Colors"
-msgstr "Farby"
 
 #: src/page/connect.vue:141 src/page/connect.vue:151 src/page/connect.vue:123
 msgid "Compare Editions"
@@ -2923,6 +2933,12 @@ msgstr "Nenašli sa žiadne fotky"
 #: src/component/photo/export/dialog.vue:62
 msgid "No preview image available."
 msgstr "Náhľadový obrázok nie je k dispozícii."
+#: src/page/discover/past.vue:127
+msgid "No pictures from this day in past years"
+msgstr ""
+#: src/page/discover/past.vue:127
+msgid "No pictures from this month in past years"
+msgstr ""
 
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
@@ -3290,6 +3306,9 @@ msgstr "Členstvo v programe PhotoPrism+"
 msgid "Photos"
 msgstr "Fotky"
 
+#: src/page/discover/past.vue:130
+msgid "Photos taken in previous years will appear here when they match today's date."
+msgstr ""
 #: src/component/photo/batch-edit.vue:615
 #: src/component/photo/batch-edit.vue:635
 msgid "Picture"
@@ -3786,15 +3805,9 @@ msgstr "Vyhľadávacie filtre"
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
 msgstr "Vyhľadávanie a prezeranie fotografií"
-
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
 msgstr "Vyhľadávanie a prezeranie vašich videí"
-
-#: src/page/discover.vue:13
-msgid "Season"
-msgstr "Sezóna"
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Tajomstvo"
@@ -4041,6 +4054,10 @@ msgstr "Zobrazte sekciu „Albumy“, kde môžete ručne prehliadať a usporad�
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "Zobrazenie zobrazenia Kalendár na prehľadávanie knižnice podľa rokov a mesiacov."
 
+#: src/page/settings/general.vue:172
+msgid "Show the Discover section to browse pictures from this day and month in past years."
+msgstr ""
+
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr "Zobrazte sekciu „Obľúbené“, aby ste mali rýchly prístup k obrázkom, ktoré ste označili hviezdičkou."
@@ -4065,6 +4082,9 @@ msgstr "Zobrazte sekciu „Médiá“, kde môžete prehliadať videá, živé f
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Zobrazte zobrazenie Miesta s interaktívnymi mapami, aby ste si mohli prezerať fotografie podľa miesta."
 
+#: src/page/discover.vue:29
+msgid "Shuffle"
+msgstr ""
 #: src/common/util.js:967 src/model/file.js:201
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -4082,10 +4102,6 @@ msgstr "Odhlásiť sa"
 #: src/page/auth/login.vue:153
 msgid "Sign in"
 msgstr "Prihlásiť sa"
-
-#: src/page/discover.vue:9
-msgid "Similar"
-msgstr "Podobné"
 
 #: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
@@ -4339,6 +4355,22 @@ msgstr "Ich formát nemusí byť podporovaný, zatiaľ neboli prekonvertované n
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Téma"
+
+#: src/page/discover.vue:14
+msgid "This Day"
+msgstr ""
+
+#: src/page/discover.vue:13
+msgid "This Day in the Past"
+msgstr ""
+
+#: src/page/discover.vue:18
+msgid "This Month"
+msgstr ""
+
+#: src/page/discover.vue:17
+msgid "This Month in the Past"
+msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
@@ -5093,6 +5125,14 @@ msgstr "{0}-{1} z {2}"
 
 #~ msgid "No Access"
 #~ msgstr "Žiadny prístup"
+#~ msgid "Colors"
+#~ msgstr "Farby"
+
+#~ msgid "Season"
+#~ msgstr "Sezóna"
+
+#~ msgid "Similar"
+#~ msgstr "Podobné"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

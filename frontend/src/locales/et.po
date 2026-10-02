@@ -63,10 +63,18 @@ msgstr "%{n} silti leitud"
 msgid "%{n} people found"
 msgstr "%{n} inimest leitud"
 
+#: src/page/discover/past.vue:290
+msgid "%{n} pictures"
+msgstr ""
+
 #: src/page/album/photos.vue:395 src/page/album/photos.vue:586
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "%{n} pilti leitud"
+
+#: src/page/discover/past.vue:282
+msgid "%{n} years ago"
+msgstr ""
 
 #: src/common/form.js:311 src/common/form.js:316
 #: src/component/input/chip-selector.vue:277
@@ -84,6 +92,12 @@ msgstr "%{s} on liiga lühike"
 msgid "1 hour"
 msgstr "1 tund"
 
+#: src/page/discover/past.vue:287
+msgid "1 picture"
+msgstr ""
+#: src/page/discover/past.vue:279
+msgid "1 year ago"
+msgstr ""
 #: src/options/options.js:431
 msgid "12 hours"
 msgstr "12 tundi"
@@ -1040,10 +1054,6 @@ msgstr "Värv"
 #: src/component/photo/edit/files.vue:307
 msgid "Color Profile"
 msgstr "Värviprofiil"
-
-#: src/page/discover.vue:5
-msgid "Colors"
-msgstr "Värvid"
 
 #: src/page/connect.vue:141 src/page/connect.vue:151 src/page/connect.vue:123
 msgid "Compare Editions"
@@ -2920,6 +2930,12 @@ msgstr "Pilte ei leitud"
 #: src/component/photo/export/dialog.vue:62
 msgid "No preview image available."
 msgstr "Eelvaatepilt pole saadaval."
+#: src/page/discover/past.vue:127
+msgid "No pictures from this day in past years"
+msgstr ""
+#: src/page/discover/past.vue:127
+msgid "No pictures from this month in past years"
+msgstr ""
 
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
@@ -3287,6 +3303,9 @@ msgstr "PhotoPrism+ liikmelisus"
 msgid "Photos"
 msgstr "Fotod"
 
+#: src/page/discover/past.vue:130
+msgid "Photos taken in previous years will appear here when they match today's date."
+msgstr ""
 #: src/component/photo/batch-edit.vue:615
 #: src/component/photo/batch-edit.vue:635
 msgid "Picture"
@@ -3783,15 +3802,9 @@ msgstr "Otsingufiltrid"
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
 msgstr "Otsi ja vaata oma fotosid"
-
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
 msgstr "Otsi ja vaata oma videoid"
-
-#: src/page/discover.vue:13
-msgid "Season"
-msgstr "Aastaaeg"
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Salajane"
@@ -4038,6 +4051,10 @@ msgstr "Näita albumite osa, et pilte käsitsi sirvida ja korraldada."
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "Näita kalendrivaadet, et sirvida raamatukogu aasta ja kuu kaupa."
 
+#: src/page/settings/general.vue:172
+msgid "Show the Discover section to browse pictures from this day and month in past years."
+msgstr ""
+
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr "Näita lemmikute rubriiki, et pääseda kiiresti juurde oma tähistatud piltidele."
@@ -4062,6 +4079,9 @@ msgstr "Ava jaotis „Meedia”, et sirvida videoid, elavaid fotosid ja animatsi
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Näidake interaktiivsete kaartidega kohavaadet, et saaksite fotosid asukoha järgi sirvida."
 
+#: src/page/discover.vue:29
+msgid "Shuffle"
+msgstr ""
 #: src/common/util.js:967 src/model/file.js:201
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -4079,10 +4099,6 @@ msgstr "Välju"
 #: src/page/auth/login.vue:153
 msgid "Sign in"
 msgstr "Logi sisse"
-
-#: src/page/discover.vue:9
-msgid "Similar"
-msgstr "Sarnased"
 
 #: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
@@ -4336,6 +4352,22 @@ msgstr "Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Välimus"
+
+#: src/page/discover.vue:14
+msgid "This Day"
+msgstr ""
+
+#: src/page/discover.vue:13
+msgid "This Day in the Past"
+msgstr ""
+
+#: src/page/discover.vue:18
+msgid "This Month"
+msgstr ""
+
+#: src/page/discover.vue:17
+msgid "This Month in the Past"
+msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
@@ -5090,6 +5122,14 @@ msgstr "{0}-{1} of {2}"
 
 #~ msgid "No Access"
 #~ msgstr "Juurdepääs puudub"
+#~ msgid "Colors"
+#~ msgstr "Värvid"
+
+#~ msgid "Season"
+#~ msgstr "Aastaaeg"
+
+#~ msgid "Similar"
+#~ msgstr "Sarnased"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"
