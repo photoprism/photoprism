@@ -12,6 +12,7 @@
 /assets/resnet/
 /assets/vision/
 /assets/models/
+!/assets/models/NOTICE
 /storage/
 /build/
 /setup/Makefile
