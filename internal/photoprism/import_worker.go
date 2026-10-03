@@ -269,6 +269,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 						continue
 					}
 
+					// The preview gets the file orientation, which may only be readable with ExifTool.
+					if jsonErr := rf.CreateExifToolJson(imp.convert); jsonErr != nil {
+						log.Warnf("import: %s", clean.Error(jsonErr))
+					}
+
 					if img, imgErr := imp.convert.ToImage(rf, false); imgErr != nil {
 						log.Warnf("import: could not create preview image for %s (%s)", clean.Log(rf.RootRelName()), clean.Error(imgErr))
 					} else if img != nil {
