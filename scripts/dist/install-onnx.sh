@@ -188,7 +188,7 @@ echo "Verifying checksum..."
 verify_sha "${sha}" "${package_path}"
 
 echo "Extracting to ${DESTDIR}..."
-tar --overwrite --mode=755 -C "${DESTDIR}" -xzf "${package_path}"
+tar --overwrite --no-same-owner --mode=755 -C "${DESTDIR}" -xzf "${package_path}"
 
 # Normalize layout: copy libraries into ${DESTDIR}/lib and remove extracted tree.
 # The archive extracts to a top directory named after itself (minus ".tgz"),
