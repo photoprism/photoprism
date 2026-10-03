@@ -40,8 +40,8 @@ func vipsCheckPixels(img *vips.ImageRef, logName string) error {
 	return nil
 }
 
-// checkJpegPixels reads the geometry from a JPEG header and reports an error when it exceeds
-// the supported pixel budget, leaving the reader positioned at the start either way.
+// checkJpegPixels reads the geometry and structure of a JPEG stream and reports an error when
+// either exceeds a supported limit, leaving the reader positioned at the start either way.
 func checkJpegPixels(reader io.ReadSeeker, logName string) error {
 	if _, err := reader.Seek(0, io.SeekStart); err != nil {
 		return err
@@ -60,6 +60,14 @@ func checkJpegPixels(reader io.ReadSeeker, logName string) error {
 
 	if err := fs.ExceedsPixelBudget(cfg.Width, cfg.Height, 1); err != nil {
 		return fmt.Errorf("%w in %s", err, logName)
+	}
+
+	scanErr := fs.CheckJpegScans(reader)
+
+	if _, err := reader.Seek(0, io.SeekStart); err != nil {
+		return err
+	} else if scanErr != nil {
+		return fmt.Errorf("%w in %s", scanErr, logName)
 	}
 
 	return nil

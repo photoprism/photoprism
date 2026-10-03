@@ -15,9 +15,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
@@ -105,12 +107,26 @@ func TestClusterNodesRegister(t *testing.T) {
 		t.Cleanup(func() {
 			conf.Options().ClusterCIDR = prevClusterCIDR
 		})
-		conf.Options().ClusterCIDR = "192.0.2.0/24"
+		conf.Options().ClusterCIDR = "198.51.100.0/24, 192.0.2.0/24"
 		ClusterNodesRegister(router)
 
 		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-allowed"}`, cluster.ExampleJoinToken, "192.0.2.42")
 		assert.Equal(t, http.StatusCreated, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
+	})
+	t.Run("ClusterCIDRInvalidListFailsClosed", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		prevClusterCIDR := conf.Options().ClusterCIDR
+		t.Cleanup(func() {
+			conf.Options().ClusterCIDR = prevClusterCIDR
+		})
+		conf.Options().ClusterCIDR = "192.0.2.0/24,garbage"
+		ClusterNodesRegister(router)
+
+		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-invalid"}`, cluster.ExampleJoinToken, "192.0.2.42")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("ForbiddenFromCDN", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -800,6 +816,25 @@ func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.R
 	return gjson.Get(w.Body.String(), "access_token").String()
 }
 
+// TestClusterNodesRegister_RateLimit checks that each request takes one token and the limit applies once they are used.
+func TestClusterNodesRegister_RateLimit(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+	ClusterNodesRegister(router)
+
+	origLimit := limiter.Auth
+	t.Cleanup(func() { limiter.Auth = origLimit })
+	limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+
+	for range 3 {
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":""}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	}
+
+	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":""}`)
+	assert.Equal(t, http.StatusTooManyRequests, r.Code)
+}
+
 // TestBuildPortalLoginURL covers the browser-facing Portal login URL reported
 // to nodes at registration: SiteUrl origin + login route, with an absolute
 // custom LoginUri returned as-is.
@@ -1043,6 +1078,11 @@ func TestValidateSiteURL(t *testing.T) {
 		{"https://photos.example.com", true},
 		{"http://photos.example.com", false},
 		{"http://127.0.0.1:2342", true},
+		{"http://127.0.0.2:2342", true},
+		{"http://[::1]:2342", true},
+		{"http://[0:0:0:0:0:0:0:1]:2342", true},
+		{"http://[::ffff:127.0.0.1]:2342", true},
+		{"http://[2001:db8::1]:2342", false},
 		{"mailto:me@example.com", false},
 		{"://bad", false},
 	}

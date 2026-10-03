@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -762,4 +763,23 @@ func TestFolder_SyncOriginalsAlbum(t *testing.T) {
 		assert.NotContains(t, added, "\u202e", "the filter must not carry a bidi override")
 		assert.Contains(t, added, "album", "the filter must still identify the folder")
 	})
+}
+
+func TestReconcileOriginalsFolderAlbums_PathContainment(t *testing.T) {
+	base := "zz-reconcile-" + rnd.Base36(6)
+	paths := []string{base + "_a!", base + "_a!/sub", base + "Xa!/sub", base + "_A!/sub"}
+
+	for _, p := range paths {
+		folder := NewFolder(RootOriginals, p, time.Now())
+		require.NoError(t, folder.Create())
+	}
+
+	t.Cleanup(func() {
+		_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, paths).Delete(&Folder{}).Error
+		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, paths).Delete(&Album{}).Error
+	})
+
+	reconciled, err := ReconcileOriginalsFolderAlbums(base + "_a!")
+	require.NoError(t, err)
+	assert.Equal(t, 2, reconciled)
 }

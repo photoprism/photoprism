@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -42,9 +43,9 @@ func AlbumDownloadName(c *gin.Context) customize.DownloadName {
 //	@Id			DownloadAlbum
 //	@Tags		Albums, Download
 //	@Produce	application/zip
-//	@Failure	403,404,500	{object}	i18n.Response
-//	@Success	200			{file}		application/zip
-//	@Param		uid			path		string	true	"Album UID"
+//	@Failure	403,404,429,500	{object}	i18n.Response
+//	@Success	200				{file}		application/zip
+//	@Param		uid				path		string	true	"Album UID"
 //	@Router		/api/v1/albums/{uid}/dl [get]
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
@@ -59,7 +60,10 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		// The archive streams pictures, so it needs the same download authority as the ZIP endpoints; the
 		// album itself is gated by albumViewableBySession below.
 		sess, valid := AuthDownload(c, acl.Resources{acl.ResourcePhotos})
-		if !valid {
+		if !valid && DownloadRateLimited(c) {
+			limiter.AbortJSON(c)
+			return
+		} else if !valid {
 			AbortForbidden(c)
 			return
 		}

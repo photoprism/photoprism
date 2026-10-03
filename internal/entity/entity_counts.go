@@ -246,7 +246,8 @@ func UpdateLabelCounts() (err error) {
 	start := time.Now()
 	var res *gorm.DB
 	if IsDialect(dsn.DriverMySQL) {
-		res = Db().Exec(`UPDATE labels LEFT JOIN (
+		if err = RetryDeadlock("update label counts", func() error {
+			res = Db().Exec(`UPDATE labels LEFT JOIN (
 		SELECT p2.label_id, COUNT(DISTINCT photo_id) AS label_photos FROM (
 			SELECT pl.label_id as label_id, p.id AS photo_id FROM photos p
 				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
@@ -259,6 +260,10 @@ func UpdateLabelCounts() (err error) {
 			) p2 GROUP BY p2.label_id
 		) b ON b.label_id = labels.id
 		SET photo_count = CASE WHEN b.label_photos IS NULL THEN 0 ELSE b.label_photos END`)
+			return res.Error
+		}); err != nil {
+			return err
+		}
 	} else if IsDialect(dsn.DriverSQLite3) {
 		res = Db().
 			Table("labels").

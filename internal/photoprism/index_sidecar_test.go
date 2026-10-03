@@ -159,6 +159,10 @@ func TestIndex_mainForSidecar(t *testing.T) {
 }
 
 func TestIndex_Start_XmpSidecarAfterWalk(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Register a test-only main extension that sorts after .xmp.
 	const testExt = ".zzz"
 	previousType, typeExisted := fs.Extensions[testExt]
@@ -228,6 +232,10 @@ func TestIndex_Start_XmpSidecarAfterWalk(t *testing.T) {
 }
 
 func TestIndex_Start_XmpSidecarReread(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	cfg := newIndexRelatedTestConfig(t, "index-sidecar-reread")
 
 	// Point the package-global config at this isolated config so MediaFile root resolution is
@@ -393,6 +401,10 @@ func TestIndex_Start_XmpSidecarReread(t *testing.T) {
 }
 
 func TestIndex_Start_XmpSidecarRescanStillMerges(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	cfg := newIndexRelatedTestConfig(t, "index-sidecar-rescan-merges")
 	prevConf := Config()
 	SetConfig(cfg)
@@ -446,6 +458,10 @@ func TestIndex_Start_XmpSidecarRescanStillMerges(t *testing.T) {
 }
 
 func TestIndex_Start_XmpSidecarScope(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	cfg := newIndexRelatedTestConfig(t, "index-sidecar-scope")
 	prevConf := Config()
 	SetConfig(cfg)
@@ -486,6 +502,10 @@ func TestIndex_Start_XmpSidecarScope(t *testing.T) {
 // TestIndex_Start_XmpSidecarYamlBackup verifies that a sidecar-only edit refreshes the YAML
 // metadata backup on a normal incremental run, not just on a complete rescan.
 func TestIndex_Start_XmpSidecarYamlBackup(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	cfg := newIndexRelatedTestConfig(t, "index-sidecar-yaml-backup")
 	cfg.Options().SidecarYaml = true
 	cfg.Options().DisableBackups = false

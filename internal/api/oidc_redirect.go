@@ -221,7 +221,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
-		} else if oidcUser.UserName == "" {
+		} else if oidcUser.UserName == "" && entity.FindUser(oidcUser) == nil {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrUsernameRequiredToRegister.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequiredToRegister.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
@@ -404,10 +404,9 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Set email only when the IdP marks it verified and no other account
-			// holds it. The email is informational (not an auth identifier), so a
-			// clash never blocks provisioning; the Portal OP forwards real
-			// verification state, so unverified cluster emails are simply not stored.
+			// Mark the email verified only when the IdP does and no other account holds
+			// it; otherwise it is kept unverified. The email is informational (not an
+			// auth identifier), so a clash never blocks provisioning.
 			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
 				user.UserEmail = clean.Email(userInfo.Email)
 				user.VerifiedAt = entity.TimeStamp()

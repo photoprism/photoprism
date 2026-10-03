@@ -3,7 +3,10 @@ package onnx
 import (
 	"errors"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
@@ -26,6 +29,29 @@ func captureProviderLog(t *testing.T) *test.Hook {
 	t.Cleanup(func() { log = orig })
 
 	return hook
+}
+
+// stubAppendProvider replaces the provider append for the duration of the test and clears the
+// remembered failures before and after, so no test inherits another's outcome.
+func stubAppendProvider(t *testing.T, fn func(*onnxruntime.SessionOptions) error) {
+	t.Helper()
+
+	orig := appendProviderVar
+	resetProviderFailures()
+	appendProviderVar = fn
+
+	t.Cleanup(func() {
+		appendProviderVar = orig
+		resetProviderFailures()
+	})
+}
+
+// resetProviderFailures forgets every provider failure remembered by this process.
+func resetProviderFailures() {
+	providerMu.Lock()
+	defer providerMu.Unlock()
+
+	clear(providerFailures)
 }
 
 // requireSessionRuntime skips a test when the ONNX Runtime cannot be loaded, which is the case
@@ -121,26 +147,41 @@ func TestNewSessionOptions(t *testing.T) {
 		requireSessionRuntime(t)
 		hook := captureProviderLog(t)
 
-		orig := appendProviderVar
-		t.Cleanup(func() { appendProviderVar = orig })
-		appendProviderVar = func(*onnxruntime.SessionOptions) error {
+		calls := 0
+		stubAppendProvider(t, func(*onnxruntime.SessionOptions) error {
+			calls++
 			return errors.New("no CUDA-capable device is detected")
+		})
+
+		for range 2 {
+			opts, applied, err := NewSessionOptions(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 2, InterOpThreads: 1})
+			require.NoError(t, err)
+			require.NotNil(t, opts)
+			t.Cleanup(func() { DestroySessionOptions(opts) })
+			assert.Equal(t, ProviderCPU, applied)
 		}
 
-		opts, applied, err := NewSessionOptions(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 2, InterOpThreads: 1})
+		// Each model load calls this, so the failure is attempted and announced once per process.
+		assert.Equal(t, 1, calls)
+
+		var warnings []*logrus.Entry
+
+		for _, entry := range hook.AllEntries() {
+			if entry.Level == logrus.WarnLevel {
+				warnings = append(warnings, entry)
+			}
+		}
+
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0].Message, "cuda")
+		assert.Contains(t, warnings[0].Message, "no CUDA-capable device is detected")
+		// The runtime prints its own red error line first, so ours must say it is not fatal.
+		assert.Contains(t, warnings[0].Message, "running inference on the cpu")
+
+		opts, applied, err := NewSessionOptions(SessionSettings{Provider: ProviderCPU, IntraOpThreads: 1})
 		require.NoError(t, err)
-		require.NotNil(t, opts)
 		t.Cleanup(func() { DestroySessionOptions(opts) })
 		assert.Equal(t, ProviderCPU, applied)
-
-		entry := hook.LastEntry()
-		require.NotNil(t, entry)
-		assert.Equal(t, logrus.WarnLevel, entry.Level)
-		assert.Contains(t, entry.Message, "cuda")
-		assert.Contains(t, entry.Message, "no CUDA-capable device is detected")
-		// The runtime prints its own red error line first, so ours must say it is not fatal.
-		assert.Contains(t, entry.Message, "running inference on the cpu")
-		assert.Len(t, hook.AllEntries(), 1)
 	})
 	t.Run("UnimplementedProviderWarns", func(t *testing.T) {
 		// Adding a value to Providers without an implementation must not look like success.
@@ -173,15 +214,101 @@ func TestNewSessionOptions(t *testing.T) {
 	t.Run("CUDAApplied", func(t *testing.T) {
 		requireSessionRuntime(t)
 
-		orig := appendProviderVar
-		t.Cleanup(func() { appendProviderVar = orig })
-		appendProviderVar = func(*onnxruntime.SessionOptions) error { return nil }
+		calls := 0
+		stubAppendProvider(t, func(*onnxruntime.SessionOptions) error {
+			calls++
+			return nil
+		})
 
-		opts, applied, err := NewSessionOptions(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 2})
-		require.NoError(t, err)
-		require.NotNil(t, opts)
-		t.Cleanup(func() { DestroySessionOptions(opts) })
-		assert.Equal(t, ProviderCUDA, applied)
+		// A provider that was applied is applied again for every model.
+		for range 2 {
+			opts, applied, err := NewSessionOptions(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 2})
+			require.NoError(t, err)
+			require.NotNil(t, opts)
+			t.Cleanup(func() { DestroySessionOptions(opts) })
+			assert.Equal(t, ProviderCUDA, applied)
+		}
+
+		assert.Equal(t, 2, calls)
+	})
+}
+
+func TestAppendProvider(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		hook := captureProviderLog(t)
+
+		calls := 0
+		stubAppendProvider(t, func(*onnxruntime.SessionOptions) error {
+			calls++
+			return nil
+		})
+
+		assert.NoError(t, appendProvider(ProviderCUDA, nil))
+		assert.NoError(t, appendProvider(ProviderCUDA, nil))
+		assert.Equal(t, 2, calls)
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("FailureRemembered", func(t *testing.T) {
+		hook := captureProviderLog(t)
+
+		calls := 0
+		stubAppendProvider(t, func(*onnxruntime.SessionOptions) error {
+			calls++
+			return errors.New("libcuda.so.1: cannot open shared object file")
+		})
+
+		first := appendProvider(ProviderCUDA, nil)
+		require.Error(t, first)
+		second := appendProvider(ProviderCUDA, nil)
+		assert.Equal(t, first, second)
+		assert.Equal(t, 1, calls)
+
+		entries := hook.AllEntries()
+		require.Len(t, entries, 2)
+		assert.Equal(t, logrus.WarnLevel, entries[0].Level)
+		assert.Contains(t, entries[0].Message, "libcuda.so.1")
+		assert.Equal(t, logrus.DebugLevel, entries[1].Level)
+	})
+	t.Run("ConcurrentFirstCalls", func(t *testing.T) {
+		// Models load concurrently, so the first failure must still be attempted and warned once.
+		hook := captureProviderLog(t)
+
+		var calls atomic.Int32
+		stubAppendProvider(t, func(*onnxruntime.SessionOptions) error {
+			calls.Add(1)
+			time.Sleep(5 * time.Millisecond)
+			return errors.New("unavailable")
+		})
+
+		var wg sync.WaitGroup
+
+		for range 8 {
+			wg.Go(func() { assert.Error(t, appendProvider(ProviderCUDA, nil)) })
+		}
+
+		wg.Wait()
+
+		warnings := 0
+
+		for _, entry := range hook.AllEntries() {
+			if entry.Level == logrus.WarnLevel {
+				warnings++
+			}
+		}
+
+		assert.Equal(t, int32(1), calls.Load())
+		assert.Equal(t, 1, warnings)
+	})
+	t.Run("PerProvider", func(t *testing.T) {
+		captureProviderLog(t)
+		stubAppendProvider(t, func(*onnxruntime.SessionOptions) error { return errors.New("unavailable") })
+
+		require.Error(t, appendProvider(ProviderCUDA, nil))
+
+		// A failure is remembered for the provider that failed, not for every provider.
+		appendProviderVar = func(*onnxruntime.SessionOptions) error { return nil }
+		assert.NoError(t, appendProvider(Provider("coreml"), nil))
+		assert.Error(t, appendProvider(ProviderCUDA, nil))
 	})
 }
 

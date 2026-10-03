@@ -66,26 +66,41 @@ func (imp *Import) insufficientStorage() bool {
 	return true
 }
 
+// ErrImportBusy is returned by Import.Run when the import has to wait for another task to complete.
+var ErrImportBusy = errors.New("waiting for another task to complete")
+
+// ErrImportIncomplete is returned by Import.Run when files could not be moved or copied to the originals.
+var ErrImportIncomplete = errors.New("some files could not be imported")
+
 // Start imports media files from a directory and converts/indexes them as needed.
 func (imp *Import) Start(opt ImportOptions) fs.Done {
+	done, _ := imp.Run(opt)
+	return done
+}
+
+// Run imports media files like Start and returns an error if the import did not run, refused files
+// early, or could not move or copy some of them, such as ErrImportBusy, status.ErrInsufficientStorage,
+// status.ErrCanceled, or ErrImportIncomplete (status.ErrInsufficientStorage if the storage was full).
+func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("import: %s (panic)\nstack: %s", r, debug.Stack())
+			result = fmt.Errorf("import: %s", r)
 		}
 	}()
 
 	var directories []string
-	done := make(fs.Done)
+	done = make(fs.Done)
 
 	if imp.conf == nil {
 		log.Errorf("import: config is not set")
-		return done
+		return done, errors.New("config is not set")
 	}
 
 	// Importing indexes what it moves, so it reaches the same marker writes indexing does.
 	if held := imp.conf.FacesLocked(); held != "" {
 		log.Infof("import: waiting for the %s to complete", held)
-		return done
+		return done, ErrImportBusy
 	}
 
 	// The same applies once it has completed: its target is recorded rather than loaded here.
@@ -107,21 +122,21 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: directory %s not found", importPath))
-		return done
+		return done, errors.New("directory not found")
 	}
 
 	// Reset the cached disk usage so a freshly freed disk is detected immediately.
 	disk.FlushFree()
 
 	if imp.insufficientStorage() {
-		return done
+		return done, status.ErrInsufficientStorage
 	}
 
 	// Make sure to run import only once, unless otherwise requested.
 	if !opt.NonBlocking {
 		if err := mutex.IndexWorker.Start(); err != nil {
 			event.Warn(fmt.Sprintf("import: %s", err.Error()))
-			return done
+			return done, ErrImportBusy
 		}
 
 		defer mutex.IndexWorker.Stop()
@@ -158,6 +173,9 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		log.Infof(`import: ignored "%s"`, clean.Log(fs.RelName(fileName, importPath)))
 	}
 
+	var stopped error
+	var failures ImportFailures
+
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
 			return godirwalk.SkipNode
@@ -169,13 +187,20 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				}
 			}()
 
+			// The error callback skips nodes on any error, so the first reason a node is refused is kept here.
 			if mutex.IndexWorker.Canceled() {
+				if stopped == nil {
+					stopped = status.ErrCanceled
+				}
 				return status.ErrCanceled
 			}
 
-			// Stop the walk if storage drops below the threshold mid-import.
+			// Refuse further nodes if storage drops below the threshold mid-import.
 			if imp.insufficientStorage() {
 				imp.Cancel()
+				if stopped == nil {
+					stopped = status.ErrInsufficientStorage
+				}
 				return status.ErrInsufficientStorage
 			}
 
@@ -273,6 +298,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				IndexOpt:  indexOpt,
 				ImportOpt: opt,
 				Imp:       imp,
+				Failures:  &failures,
 			}
 
 			return nil
@@ -280,6 +306,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		Unsorted:            false,
 		FollowSymbolicLinks: true,
 	})
+
+	walkErr := err
+
+	if walkErr == nil {
+		walkErr = stopped
+	}
 
 	close(jobs)
 	wg.Wait()
@@ -316,7 +348,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		}
 	}
 
-	logWalkResult("import", err)
+	logWalkResult("import", walkErr)
 
 	if filesImported > 0 {
 		// Run face recognition if enabled.
@@ -335,7 +367,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	config.FlushUsageCache()
 	runtime.GC()
 
-	return done
+	// A stop reason takes precedence, since it applies to the files that were not attempted too.
+	if walkErr == nil {
+		walkErr = failures.Err()
+	}
+
+	return done, walkErr
 }
 
 // Cancel stops the current import operation.

@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -85,6 +84,7 @@ type Options struct {
 	UploadAllow               string        `yaml:"UploadAllow" json:"-" flag:"upload-allow"`
 	UploadArchives            bool          `yaml:"UploadArchives" json:"-" flag:"upload-archives"`
 	UploadLimit               int           `yaml:"UploadLimit" json:"-" flag:"upload-limit"`
+	UploadMaxAge              int64         `yaml:"UploadMaxAge" json:"-" flag:"upload-maxage"`
 	CachePath                 string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	TempPath                  string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath                string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
@@ -262,6 +262,8 @@ type Options struct {
 	VisionKey                 string        `yaml:"VisionKey" json:"-" flag:"vision-key"`
 	VisionSchedule            string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
+	LabelsModel               string        `yaml:"LabelsModel" json:"-" flag:"labels-model"`
+	NsfwModel                 string        `yaml:"NsfwModel" json:"-" flag:"nsfw-model"`
 	OnnxProvider              string        `yaml:"OnnxProvider" json:"-" flag:"onnx-provider"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	XMPFaces                  bool          `yaml:"XMPFaces" json:"XMPFaces" flag:"xmp-faces"`
@@ -378,7 +380,7 @@ func (o *Options) Load(fileName string) error {
 		return fmt.Errorf("%s not found", fileName)
 	}
 
-	yamlConfig, err := os.ReadFile(fileName) //nolint:gosec // configuration file path provided by user/config
+	yamlConfig, err := readOptionsFile(fileName)
 
 	if err != nil {
 		return err

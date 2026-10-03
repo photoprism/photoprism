@@ -2,14 +2,21 @@ package commands
 
 import (
 	"bytes"
+	"context"
+	"database/sql"
 	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"regexp"
+	"sync/atomic"
 	"testing"
+	"time"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -21,11 +28,28 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/capture"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/log/status"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var savedPath string
+var initialTestDbDSN string
+var resetDbSequence atomic.Uint64
+
+// nextResetDbName returns a distinct alphabetic SQLite name for each config.
+func nextResetDbName(prefix string) string {
+	n := resetDbSequence.Add(1)
+	var suffix [14]byte
+
+	for i := len(suffix) - 1; i >= 0; i-- {
+		suffix[i] = 'a' + byte(n%26)
+		n /= 26
+	}
+
+	return prefix + string(suffix[:])
+}
 
 // TODO: Several CLI commands defer conf.Shutdown(), which closes the shared
 // database connection. To avoid flakiness, RunWithTestContext re-initializes
@@ -38,6 +62,7 @@ func TestMain(m *testing.M) {
 	os.Exit(runTestMain(m))
 }
 
+// runTestMain initializes shared command fixtures and executes the package tests.
 func runTestMain(m *testing.M) int {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
@@ -56,6 +81,7 @@ func runTestMain(m *testing.M) int {
 	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
+	initialTestDbDSN = c.DatabaseDSN()
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
@@ -75,11 +101,10 @@ func runTestMain(m *testing.M) int {
 		return c, c.Init()
 	}
 
-	// Init core config (no database) using the shared test config so commands
-	// like "show config" and "faces status" don't fall back to a storage path
-	// derived from the real originals directory.
+	// Use the current test config for core-only commands.
 	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
-		return c, c.InitCore()
+		current := get.Config()
+		return current, current.InitCore()
 	}
 
 	// Run unit tests.
@@ -218,9 +243,86 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	return output, err
 }
 
-// resetConfigAndDB replaces the config with a generated minimal config, and may replace the database if it doesn't exist.
-func resetConfigAndDB() *config.Config {
-	c := config.NewMinimalTestConfigWithDb("commands", savedPath)
+// commandTestProcess isolates commands whose shutdown ends the native media library lifetime.
+func commandTestProcess(t *testing.T) bool {
+	t.Helper()
+	if os.Getenv("PHOTOPRISM_TEST_COMMAND_PROCESS") == t.Name() {
+		return false
+	}
+	binary, err := os.Executable()
+	require.NoError(t, err)
+	fixture, err := filepath.Abs("../../pkg/fs/testdata/directory/example.jpg")
+	require.NoError(t, err)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, binary, "-test.run=^"+regexp.QuoteMeta(t.Name())+"$", "-test.count=1", "-test.parallel=1", "-test.cpu=1", "-test.v") //nolint:gosec // Runs this test binary with a fixed test selector.
+	cmd.Dir = t.TempDir()
+	cmd.Env = append(os.Environ(), "PHOTOPRISM_TEST_COMMAND_PROCESS="+t.Name(),
+		"PHOTOPRISM_TEST_IMAGE_FILE="+fixture, "PHOTOPRISM_ASSETS_PATH="+get.Config().AssetsPath())
+	if get.Config().DatabaseDriver() == dsn.DriverSQLite3 {
+		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DRIVER=sqlite", "PHOTOPRISM_TEST_DSN=")
+	} else {
+		child, parseErr := mysql.ParseDSN(get.Config().DatabaseDSN())
+		require.NoError(t, parseErr)
+		server := child.Clone()
+		server.DBName = ""
+		prefix := "acceptance_cli_" + rnd.Base36(12)
+		child.DBName = prefix
+		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DSN="+child.FormatDSN())
+		t.Cleanup(func() {
+			cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cleanupCancel()
+			db, openErr := sql.Open(dsn.DriverMySQL, server.FormatDSN())
+			require.NoError(t, openErr)
+			defer db.Close()
+			rows, queryErr := db.QueryContext(cleanupCtx, "SELECT schema_name FROM information_schema.schemata WHERE LEFT(schema_name, ?) = ?", len(prefix)+1, prefix+"_")
+			require.NoError(t, queryErr)
+			defer rows.Close()
+			var schemas []string
+			for rows.Next() {
+				var schema string
+				require.NoError(t, rows.Scan(&schema))
+				require.Regexp(t, "^"+regexp.QuoteMeta(prefix)+"_[a-z0-9_]+$", schema)
+				schemas = append(schemas, schema)
+			}
+			require.NoError(t, rows.Err())
+			require.NoError(t, rows.Close())
+			for _, schema := range schemas {
+				_, dropErr := db.ExecContext(cleanupCtx, fmt.Sprintf("DROP DATABASE `%s`", schema)) //nolint:gosec // The child owns this validated test schema.
+				require.NoError(t, dropErr)
+			}
+		})
+	}
+	output, err := cmd.CombinedOutput()
+	require.NoError(t, err, "%s", output)
+	require.Contains(t, string(output), "--- PASS: "+t.Name(), "child must execute the selected test")
+	return true
+}
+
+// resetConfigCleanup captures the active config and registers cleanup for its replacement.
+func resetConfigCleanup(t *testing.T) func(*config.Config) {
+	t.Helper()
+	previous, previousInit := get.Config(), InitConfig
+	return func(current *config.Config) {
+		t.Cleanup(func() {
+			assert.NoError(t, current.CloseDb())
+			get.SetConfig(previous)
+			previous.RegisterDb()
+			// MariaDB configs share the package schema, including destructive fixture resets.
+			if previous.DatabaseDriver() == dsn.DriverMySQL {
+				previous.InitTestDb()
+			}
+			InitConfig = previousInit
+		})
+	}
+}
+
+// resetConfigAndDB installs a fixture-backed config for the test.
+func resetConfigAndDB(t *testing.T) *config.Config {
+	t.Helper()
+	restore := resetConfigCleanup(t)
+	c := config.NewMinimalTestConfigWithDb(nextResetDbName("commands"), savedPath)
+	restore(c)
 	get.SetConfig(c)
 	entity.SetDbProvider(c)
 
@@ -231,14 +333,14 @@ func resetConfigAndDB() *config.Config {
 	return c
 }
 
-// resetConfigAndOpenDB replaces the config with a generated minimal config, and opens the configured database.
-// it does not call Migrate and TestFixtures if the database has records in auth_users and photos.
-func resetConfigAndOpenDB() *config.Config {
-	c := config.NewMinimalTestConfig(savedPath)
-	config.RestoreDBFromCache(c) // If using sqlite (not sqlitefile) then the db is removed by NewMinimalTestConfig
-	if err := c.Init(); err != nil {
-		log.Fatalf("config: %s (init)", err.Error())
-	}
+// resetConfigAndOpenDB installs a cached test config and opens its database.
+func resetConfigAndOpenDB(t *testing.T) *config.Config {
+	t.Helper()
+	restore := resetConfigCleanup(t)
+	c := config.NewIsolatedTestConfig(nextResetDbName("commandsreset"), savedPath, false)
+	restore(c)
+	config.RestoreDBFromCache(c) // With SQLite, NewIsolatedTestConfig removes the database file first.
+	require.NoError(t, c.Init())
 	get.SetConfig(c)
 	entity.SetDbProvider(c)
 
@@ -247,6 +349,98 @@ func resetConfigAndOpenDB() *config.Config {
 	}
 
 	return c
+}
+
+// TestNextResetDbName checks that rollover names stay distinct and valid.
+func TestNextResetDbName(t *testing.T) {
+	seen := make(map[string]bool)
+
+	for i := 0; i < 27; i++ {
+		name := nextResetDbName("commands")
+		require.Equal(t, name, config.PkgNameRegexp.ReplaceAllString(name, ""))
+		require.False(t, seen[name])
+		seen[name] = true
+	}
+}
+
+// TestResetConfigAndOpenDB checks replacement databases and restores their captured test state.
+func TestResetConfigAndOpenDB(t *testing.T) {
+	previous := requireTestDb(t)
+	previousInit := InitConfig
+	sentinel := errors.New("captured test initializer")
+	InitConfig = func(*cli.Context) (*config.Config, error) { return previous, sentinel }
+	t.Cleanup(func() { InitConfig = previousInit })
+	var resets []*config.Config
+	t.Run("ReplacementConfigs", func(t *testing.T) {
+		first := resetConfigAndOpenDB(t)
+		require.Same(t, first, get.Config())
+		require.Same(t, first.Db(), entity.Db())
+		core, err := InitCoreConfig(nil, true)
+		require.NoError(t, err)
+		require.Same(t, first, core)
+
+		second := resetConfigAndOpenDB(t)
+		require.Same(t, second, get.Config())
+		require.Same(t, second.Db(), entity.Db())
+		core, err = InitCoreConfig(nil, true)
+		require.NoError(t, err)
+		require.Same(t, second, core)
+
+		restored := resetConfigAndDB(t)
+		require.Same(t, restored, get.Config())
+		require.Same(t, restored.Db(), entity.Db())
+		core, err = InitCoreConfig(nil, true)
+		require.NoError(t, err)
+		require.Same(t, restored, core)
+		restoredAgain := resetConfigAndDB(t)
+		require.Same(t, restoredAgain, get.Config())
+		require.Same(t, restoredAgain.Db(), entity.Db())
+		core, err = InitCoreConfig(nil, true)
+		require.NoError(t, err)
+		require.Same(t, restoredAgain, core)
+
+		resets = []*config.Config{first, second, restored, restoredAgain}
+		config.NewMinimalTestConfig(t.TempDir())
+
+		for name, c := range map[string]*config.Config{"first": first, "second": second, "restored": restored, "restored again": restoredAgain} {
+			if os.Getenv("PHOTOPRISM_TEST_DSN") == "" {
+				require.NotEqual(t, initialTestDbDSN, c.DatabaseDSN(), name)
+			}
+
+			label := entity.NewLabel("Reset Config Check "+name, 0)
+			require.NoError(t, c.Db().Create(label).Error, name)
+			t.Cleanup(func() { _ = c.Db().Unscoped().Delete(label).Error })
+		}
+
+		label := entity.NewLabel("Reset Config Current", 0)
+		require.NoError(t, label.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(label).Error })
+	})
+	require.Same(t, previous, get.Config())
+	require.NotNil(t, entity.Db())
+	require.Same(t, previous.Db(), entity.Db())
+	for _, c := range resets {
+		assert.False(t, c.IsDbOpen(), "reset configs must be closed")
+	}
+	restored, err := InitConfig(nil)
+	require.ErrorIs(t, err, sentinel)
+	require.Same(t, previous, restored)
+
+	fixture := entity.LabelFixtures.Get("landscape")
+	var label entity.Label
+	require.NoError(t, previous.Db().Where("label_uid = ?", fixture.LabelUID).First(&label).Error)
+	t.Run("FixtureRestoration", func(t *testing.T) {
+		c := resetConfigAndOpenDB(t)
+		result := c.Db().Unscoped().Where("label_uid = ?", fixture.LabelUID).Delete(&entity.Label{})
+		require.NoError(t, result.Error)
+		require.EqualValues(t, 1, result.RowsAffected)
+		var count int
+		require.NoError(t, c.Db().Unscoped().Model(&entity.Label{}).Where("label_uid = ?", fixture.LabelUID).Count(&count).Error)
+		require.Zero(t, count)
+	})
+	label = entity.Label{}
+	require.NoError(t, previous.Db().Where("label_uid = ?", fixture.LabelUID).First(&label).Error)
+	assert.Equal(t, fixture.LabelName, label.LabelName)
 }
 
 // requireTestDb reopens the shared database for direct registry or entity access.

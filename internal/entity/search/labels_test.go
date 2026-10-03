@@ -1,6 +1,7 @@
 package search
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestLabels(t *testing.T) {
@@ -209,4 +211,30 @@ func TestLabels(t *testing.T) {
 		assert.NotNil(t, result)
 		assert.Len(t, result, 0)
 	})
+}
+
+func TestLabels_Literal(t *testing.T) {
+	base := "zzl" + rnd.Base36(5)
+
+	// Label names cannot contain "_", which the name cleanup replaces with a space.
+	for _, name := range []string{base + " a", base + "Xa"} {
+		m := entity.NewLabel(name, 0)
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(m).Error })
+	}
+
+	// A partial name has no exact match, so the label names are searched.
+	search := func(q string) (names []string) {
+		results, err := Labels(form.SearchLabels{Query: q, Count: 100})
+		require.NoError(t, err)
+
+		for _, r := range results {
+			names = append(names, strings.ToLower(r.LabelName))
+		}
+
+		return names
+	}
+
+	assert.Empty(t, search(base[1:]+"_a"))
+	assert.Equal(t, []string{base + " a"}, search(base[1:]+" a"))
 }

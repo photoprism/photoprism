@@ -45,8 +45,8 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ## "user" starts the service with a specific non-root user and group ID (optional):
-    # user: 1000:1000
+    ## "user" starts the service with a specific non-root user ID; add a group ID only if network storage requires it (optional):
+    # user: 1000
     ## "privileged" allows to run the service on ports < 1024 (see below):
     privileged: true
     ports:
@@ -73,7 +73,6 @@ services:
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition
-      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
       PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
@@ -84,8 +83,8 @@ services:
       PHOTOPRISM_INDEX_SCHEDULE: ""                  # indexing SCHEDULE in cron format (e.g. "@every 3h" for every 3 hours; "" to disable)
       PHOTOPRISM_AUTO_INDEX: 300                     # delay before automatically indexing files in SECONDS when uploading via WebDAV (-1 to disable)
       PHOTOPRISM_AUTO_IMPORT: -1                     # delay before automatically importing files in SECONDS when uploading via WebDAV (-1 to disable)
-      PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
-      PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive
+      PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive
       PHOTOPRISM_XMP_FACES: "true"                   # imports face regions and names from XMP metadata as people markers
       # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that does not require a separate database server
       PHOTOPRISM_DATABASE_DRIVER: "mysql"            # MariaDB 10.5.12+ (MySQL successor) offers significantly better performance compared to SQLite
@@ -103,7 +102,7 @@ services:
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbps (default: 60)
-      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
+      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, 900-1250, and 2000-2100):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000

@@ -21,7 +21,7 @@ func TestUploadSidecarAllowed(t *testing.T) {
 		assert.False(t, uploadSidecarAllowed("nested/"+name+"/photo.jpg"), name)
 	}
 
-	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", "a.rclonelink", "nested/link.RCLONELINK/photo.jpg", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
+	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", "GL010123.LRV", "a.lrv", "LRV_20240415_213145_01_035.lrv", "a.rclonelink", "nested/link.RCLONELINK/photo.jpg", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
 		assert.False(t, uploadSidecarAllowed(name), name)
 	}
 }
@@ -106,7 +106,7 @@ func TestUploadCheckFileSidecars(t *testing.T) {
 		t.Run(map[string]string{"a.yml": "YAMLShortExtension", "a.yaml": "YAMLLongExtension", "a.JSON": "JSONUppercase", "a.xml": "XML", "a.aae": "AppleXML", "a.nfo": "Info", "a.txt": "Text", "a.md": "Markdown", "a.xmp": "XMP"}[name], func(t *testing.T) {
 			filename := filepath.Join(t.TempDir(), name)
 			require.NoError(t, os.WriteFile(filename, []byte("sidecar-control"), fs.ModeFile))
-			remaining, err := UploadCheckFile(filename, false, 1024)
+			remaining, err := UploadCheckFile(filename, false, -1, 1024)
 			assert.Error(t, err)
 			assert.Equal(t, int64(1024), remaining)
 			assert.NoFileExists(t, filename)
@@ -118,7 +118,7 @@ func TestUploadCheckFileSidecars(t *testing.T) {
 			filename := filepath.Join(t.TempDir(), name)
 			data := []byte("<metadata>control</metadata>")
 			require.NoError(t, os.WriteFile(filename, data, fs.ModeFile))
-			remaining, err := UploadCheckFile(filename, false, 1024)
+			remaining, err := UploadCheckFile(filename, false, -1, 1024)
 			assert.NoError(t, err)
 			assert.Equal(t, int64(1024-len(data)), remaining)
 			assert.FileExists(t, filename)

@@ -142,7 +142,7 @@ install_from_tarball() {
   echo "Extracting ${tarball} to ${target_dir}..."
   ${SUDO} rm -rf "${target_dir}"
   ${SUDO} mkdir -p "${target_dir}"
-  ${SUDO} tar -xzf "${TMPDIR}/${tarball}" -C "${target_dir}" --strip-components=1
+  ${SUDO} tar --no-same-owner -xzf "${TMPDIR}/${tarball}" -C "${target_dir}" --strip-components=1
   for bin in proxysql-admin proxysql-admin-common percona-scheduler-admin; do
     if [[ -f "${target_dir}/usr/bin/${bin}" ]]; then
       ${SUDO} install -m 0755 "${target_dir}/usr/bin/${bin}" "/usr/local/bin/${bin}"

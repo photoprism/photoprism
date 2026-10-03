@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFilesByPath(t *testing.T) {
@@ -406,4 +407,24 @@ func TestOriginalsByPhotoID(t *testing.T) {
 		require.NoError(t, err)
 		assert.Empty(t, files)
 	})
+}
+
+func TestFiles_DirContainment(t *testing.T) {
+	base := "zz-like-" + rnd.Base36(6)
+	inDir := likeTestPhoto(t, base+"_a%", "in-dir")
+	sibling := likeTestPhoto(t, base+"Xa%Y", "sibling")
+	likeTestPhoto(t, base+"_aZ", "sibling-z")
+	likeTestPhoto(t, base+"_A%", "sibling-case")
+
+	files, err := Files(1000, 0, base+"_a%", true)
+	require.NoError(t, err)
+
+	var uids []string
+
+	for _, f := range files {
+		uids = append(uids, f.PhotoUID)
+	}
+
+	assert.Equal(t, []string{inDir.PhotoUID}, uids)
+	assert.NotContains(t, uids, sibling.PhotoUID)
 }

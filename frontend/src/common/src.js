@@ -5,6 +5,7 @@ export const Manual = "manual";
 export const Estimate = "estimate";
 export const File = "file";
 export const Name = "name";
+export const Modified = "modified";
 export const Meta = "meta";
 export const Xmp = "xmp";
 export const Yaml = "yaml";

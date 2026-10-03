@@ -9,6 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
+	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -49,11 +52,241 @@ func TestOptions(t *testing.T) {
 	})
 }
 
+// TestSetOnnxProvider verifies empty values reset the shared inference provider.
+func TestSetOnnxProvider(t *testing.T) {
+	previous := OnnxProvider
+	t.Cleanup(func() { OnnxProvider = previous })
+
+	SetOnnxProvider(onnx.ProviderCUDA)
+	assert.Equal(t, onnx.ProviderCUDA, OnnxProvider)
+	SetOnnxProvider("")
+	assert.Equal(t, onnx.DefaultProvider, OnnxProvider)
+}
+
+// TestNewConfigClonesModels verifies per-config runtime state is independent.
+func TestNewConfigClonesModels(t *testing.T) {
+	first := NewConfig()
+	second := NewConfig()
+
+	firstLabel := first.Model(ModelTypeLabels)
+	secondLabel := second.Model(ModelTypeLabels)
+	require.NotNil(t, firstLabel)
+	require.NotNil(t, secondLabel)
+	require.NotSame(t, firstLabel, secondLabel)
+
+	firstLabel.classifyModel = &classify.Model{}
+	firstLabel.Options = &ModelOptions{Stop: []string{"first"}}
+	firstLabel.TensorFlow = &tensorflow.ModelInfo{
+		Tags:  []string{"first"},
+		Input: &tensorflow.PhotoInput{Intervals: []tensorflow.Interval{{Start: -1, End: 1}}},
+	}
+	clone := firstLabel.Clone()
+	require.NotNil(t, clone)
+	assert.Nil(t, clone.classifyModel)
+	require.NotNil(t, clone.Options)
+	clone.Options.Stop[0] = "second"
+	assert.Equal(t, "first", firstLabel.Options.Stop[0])
+	require.NotNil(t, clone.TensorFlow)
+	clone.TensorFlow.Tags[0] = "second"
+	clone.TensorFlow.Input.Intervals[0].Start = 0
+	assert.Equal(t, "first", firstLabel.TensorFlow.Tags[0])
+	assert.Equal(t, float32(-1), firstLabel.TensorFlow.Input.Intervals[0].Start)
+
+	unsafeClassIndex := 0
+	nsfwModel := &Model{UnsafeClassIndex: &unsafeClassIndex}
+	nsfwClone := nsfwModel.Clone()
+	require.NotNil(t, nsfwClone.UnsafeClassIndex)
+	require.NotSame(t, nsfwModel.UnsafeClassIndex, nsfwClone.UnsafeClassIndex)
+	assert.Equal(t, 0, *nsfwClone.UnsafeClassIndex)
+
+	firstLabel.Disabled = true
+	assert.NotNil(t, second.Model(ModelTypeLabels))
+	assert.False(t, DefaultLabelModel.Disabled)
+}
+
 func TestConfigValues_Load(t *testing.T) {
+	t.Run("RejectsMultipleLocalRuntimes", func(t *testing.T) {
+		tempDir := t.TempDir()
+		configFile := filepath.Join(tempDir, "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: invalid\n  TensorFlow: {}\n  ONNX: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		err = cfg.Load(configFile)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "both TensorFlow and ONNX")
+	})
+	t.Run("MapsTensorFlowLabelModel", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: custom\n  TensorFlow: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		require.Len(t, cfg.Models, len(DefaultModels))
+		require.NotNil(t, cfg.Model(ModelTypeLabels))
+		assert.Equal(t, DefaultLabelModel.Name, cfg.Models[0].Name)
+		assert.True(t, cfg.Models[0].Default)
+		assert.False(t, cfg.Models[0].Disabled)
+		assert.Nil(t, cfg.Models[0].TensorFlow)
+	})
+	t.Run("MapsTensorFlowNSFWModel", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		configured := cfg.Model(ModelTypeNsfw)
+		require.NotNil(t, configured)
+		assert.Equal(t, NsfwModel.Name, configured.Name)
+		assert.True(t, configured.Default)
+		assert.Nil(t, configured.TensorFlow)
+	})
+	t.Run("NSFWThresholdForLabelsOnly", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 60\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 60, cfg.Thresholds.NSFW)
+		assert.Equal(t, 60, cfg.Thresholds.GetNSFW())
+		assert.Nil(t, cfg.Thresholds.NSFWUpload)
+		assert.Nil(t, cfg.Thresholds.NSFWIndex)
+		assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+		assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
+	})
+	t.Run("NormalizesNSFWThreshold", func(t *testing.T) {
+		cases := map[string]int{
+			"":              DefaultNSFWThreshold,
+			"  NSFW: 0\n":   DefaultNSFWThreshold,
+			"  NSFW: -1\n":  DefaultNSFWThreshold,
+			"  NSFW: 1\n":   1,
+			"  NSFW: 100\n": 100,
+			"  NSFW: 150\n": 100,
+		}
+
+		for value, expected := range cases {
+			configFile := filepath.Join(t.TempDir(), "vision.yml")
+			err := os.WriteFile(configFile, []byte("Thresholds:\n  Confidence: 10\n"+value), fs.ModeConfigFile)
+			require.NoError(t, err)
+
+			cfg := NewConfig()
+			require.NoError(t, cfg.Load(configFile))
+			assert.Equal(t, expected, cfg.Thresholds.NSFW, "%q", value)
+			assert.Equal(t, expected, cfg.Thresholds.GetNSFW(), "%q", value)
+		}
+	})
+	t.Run("SavesClampedNSFWThreshold", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 150\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		require.NoError(t, cfg.Save(configFile))
+		data, err := os.ReadFile(configFile) //nolint:gosec // test file
+		require.NoError(t, err)
+		assert.Contains(t, string(data), "NSFW: 100\n")
+	})
+	t.Run("LoadsContextNSFWThresholds", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 75\n  NSFWUpload: 50\n  NSFWIndex: 110\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		require.NotNil(t, cfg.Thresholds.NSFWUpload)
+		require.NotNil(t, cfg.Thresholds.NSFWIndex)
+		assert.Equal(t, 50, *cfg.Thresholds.NSFWUpload)
+		assert.Equal(t, 100, *cfg.Thresholds.NSFWIndex)
+		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+		assert.Equal(t, 50, cfg.Thresholds.GetNSFWUpload())
+		assert.Equal(t, 100, cfg.Thresholds.GetNSFWIndex())
+		assert.Equal(t, 75, cfg.Thresholds.GetNSFW())
+	})
+	t.Run("NormalizesZeroContextNSFWThresholds", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 80\n  NSFWUpload: 0\n  NSFWIndex: 0\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		require.NotNil(t, cfg.Thresholds.NSFWUpload)
+		require.NotNil(t, cfg.Thresholds.NSFWIndex)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWUpload)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWIndex)
+		assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+		assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
+		assert.Equal(t, 80, cfg.Thresholds.GetNSFW())
+	})
+	t.Run("KeepsSavedNSFWThreshold", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		data, err := os.ReadFile(filepath.Join("testdata", "vision-251130.yml"))
+		require.NoError(t, err)
+		require.Contains(t, string(data), "  NSFW: 75\n")
+		require.NoError(t, os.WriteFile(configFile, data, fs.ModeConfigFile)) //nolint:gosec // test file
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+		require.NoError(t, cfg.Save(configFile))
+		saved, err := os.ReadFile(configFile) //nolint:gosec // test file
+		require.NoError(t, err)
+		assert.Contains(t, string(saved), "  NSFW: 75\n")
+		assert.NotContains(t, string(saved), "NSFWLabels")
+
+		loaded := NewConfig()
+		require.NoError(t, loaded.Load(configFile))
+		assert.Equal(t, cfg.Thresholds, loaded.Thresholds)
+		assert.Equal(t, 75, loaded.Thresholds.GetNSFW())
+	})
+	t.Run("IgnoresUnknownNSFWLabelsKey", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 75\n  NSFWLabels: 60\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 75, cfg.Thresholds.GetNSFW())
+		assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+		assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
+		require.NoError(t, cfg.Save(configFile))
+		data, err := os.ReadFile(configFile) //nolint:gosec // test file
+		require.NoError(t, err)
+		assert.NotContains(t, string(data), "NSFWLabels")
+	})
+	t.Run("PreservesExplicitClassIndexZero", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: custom\n  Reduction: softmax-unsafe\n  UnsafeClassIndex: 0\n  ONNX: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		model := cfg.Model(ModelTypeNsfw)
+		require.NotNil(t, model)
+		require.NotNil(t, model.UnsafeClassIndex)
+		assert.Equal(t, 0, *model.UnsafeClassIndex)
+	})
+	t.Run("PreservesProbabilityOutput", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: custom\n  ONNX:\n    Output:\n      Logits: false\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		model := cfg.Model(ModelTypeLabels)
+		require.NotNil(t, model)
+		require.NotNil(t, model.ONNX)
+		require.NotNil(t, model.ONNX.Output)
+		require.NotNil(t, model.ONNX.Output.Logits)
+		assert.False(t, model.ONNX.Output.OutputsLogits())
+	})
 	t.Run("DefaultModelWithCustomRun", func(t *testing.T) {
-		originalRun := NasnetModel.Run
+		originalRun := DefaultLabelModel.Run
 		t.Cleanup(func() {
-			NasnetModel.Run = originalRun
+			DefaultLabelModel.Run = originalRun
 		})
 
 		tempDir := t.TempDir()
@@ -86,7 +319,7 @@ func TestConfigValues_Load(t *testing.T) {
 		assert.Len(t, cfg.Models, len(DefaultModels))
 
 		if labels := cfg.Model(ModelTypeLabels); assert.NotNil(t, labels) {
-			assert.Equal(t, NasnetModel.Name, labels.Name)
+			assert.Equal(t, DefaultLabelModel.Name, labels.Name)
 		}
 
 		if caption := cfg.Model(ModelTypeCaption); assert.NotNil(t, caption) {
@@ -214,6 +447,18 @@ func TestConfigValues_Load(t *testing.T) {
 	})
 }
 
+// TestConfigValues_SetModel verifies replacement and append behavior by model type.
+func TestConfigValues_SetModel(t *testing.T) {
+	cfg := &ConfigValues{Models: Models{{Type: ModelTypeCaption, Name: "caption"}}}
+	cfg.SetModel(&Model{Type: ModelTypeLabels, Name: "first", ONNX: &onnx.ModelInfo{}})
+	assert.Len(t, cfg.Models, 2)
+	assert.Equal(t, "first", cfg.Model(ModelTypeLabels).Name)
+
+	cfg.SetModel(&Model{Type: ModelTypeLabels, Name: "second", ONNX: &onnx.ModelInfo{}})
+	assert.Len(t, cfg.Models, 2)
+	assert.Equal(t, "second", cfg.Model(ModelTypeLabels).Name)
+}
+
 func TestConfigValues_applyDefaultModels(t *testing.T) {
 	t.Run("ReplacesPlaceholderAndKeepsOverrides", func(t *testing.T) {
 		cfg := &ConfigValues{
@@ -229,8 +474,8 @@ func TestConfigValues_applyDefaultModels(t *testing.T) {
 
 		cfg.applyDefaultModels()
 
-		if got := cfg.Models[0]; got.Name != NasnetModel.Name {
-			t.Fatalf("expected placeholder to become nasnet, got %s", got.Name)
+		if got := cfg.Models[0]; got.Name != DefaultLabelModel.Name {
+			t.Fatalf("expected placeholder to become the default model, got %s", got.Name)
 		} else if got.Run != RunOnDemand {
 			t.Fatalf("expected Run to be preserved, got %s", got.Run)
 		} else if !got.Disabled {
@@ -292,7 +537,7 @@ func TestConfigValues_ensureDefaultModels(t *testing.T) {
 }
 
 func TestConfigModelPrefersLastEnabled(t *testing.T) {
-	defaultModel := NasnetModel.Clone()
+	defaultModel := DefaultLabelModel.Clone()
 	defaultModel.Disabled = false
 	defaultModel.Name = "nasnet-default"
 
@@ -323,7 +568,7 @@ func TestConfigModelPrefersLastEnabled(t *testing.T) {
 }
 
 func TestConfigValues_IsDefaultAndIsCustom(t *testing.T) {
-	defaultModel := NasnetModel.Clone()
+	defaultModel := DefaultLabelModel.Clone()
 	defaultModel.Default = false
 
 	t.Run("DefaultModel", func(t *testing.T) {
@@ -374,7 +619,7 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		}
 	})
 	t.Run("DefaultAutoModel", func(t *testing.T) {
-		cfg := &ConfigValues{Models: Models{NasnetModel.Clone()}}
+		cfg := &ConfigValues{Models: Models{DefaultLabelModel.Clone()}}
 		assertConfigShouldRun(t, cfg, RunManual, true)
 		assertConfigShouldRun(t, cfg, RunOnSchedule, true)
 		assertConfigShouldRun(t, cfg, RunAlways, true)
@@ -383,7 +628,7 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		assertConfigShouldRun(t, cfg, RunNever, false)
 	})
 	t.Run("CustomOverridesDefault", func(t *testing.T) {
-		defaultModel := NasnetModel.Clone()
+		defaultModel := DefaultLabelModel.Clone()
 		custom := &Model{Type: ModelTypeLabels, Name: "custom"}
 		cfg := &ConfigValues{Models: Models{defaultModel, custom}}
 		assertConfigShouldRun(t, cfg, RunManual, true)
@@ -392,7 +637,7 @@ func TestConfigValues_ShouldRun(t *testing.T) {
 		assertConfigShouldRun(t, cfg, RunNewlyIndexed, true)
 	})
 	t.Run("DisabledCustomFallsBack", func(t *testing.T) {
-		defaultModel := NasnetModel.Clone()
+		defaultModel := DefaultLabelModel.Clone()
 		custom := &Model{Type: ModelTypeLabels, Name: "custom", Disabled: true}
 		cfg := &ConfigValues{Models: Models{defaultModel, custom}}
 		assertConfigShouldRun(t, cfg, RunManual, true)
@@ -414,4 +659,42 @@ func assertConfigShouldRun(t *testing.T, cfg *ConfigValues, when RunType, want b
 	if got := cfg.ShouldRun(ModelTypeLabels, when); got != want {
 		t.Fatalf("ConfigValues.ShouldRun(%q) = %v, want %v", when, got, want)
 	}
+}
+
+// TestNSFWThresholdContexts verifies that each detector path uses its own threshold.
+func TestNSFWThresholdContexts(t *testing.T) {
+	for _, context := range []string{"NSFWUpload", "NSFWIndex"} {
+		t.Run(context, func(t *testing.T) {
+			filename := filepath.Join(t.TempDir(), "vision.yml")
+			require.NoError(t, os.WriteFile(filename, []byte("Thresholds:\n  NSFW: 75\n  "+context+": 50\n"), fs.ModeConfigFile))
+			cfg := NewConfig()
+			require.NoError(t, cfg.Load(filename))
+			assert.Equal(t, 75, cfg.Thresholds.GetNSFW())
+			if context == "NSFWUpload" {
+				assert.Equal(t, 50, cfg.Thresholds.GetNSFWUpload())
+				assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
+			} else {
+				assert.Equal(t, 50, cfg.Thresholds.GetNSFWIndex())
+				assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+			}
+			require.NoError(t, cfg.Save(filename))
+			loaded := NewConfig()
+			require.NoError(t, loaded.Load(filename))
+			assert.Equal(t, cfg.Thresholds, loaded.Thresholds)
+		})
+	}
+}
+
+// TestModeDisablementPersistence verifies option overrides are not saved as user disablement.
+func TestModeDisablementPersistence(t *testing.T) {
+	cfg := NewConfig()
+	cfg.Models[0].DisabledByMode = true
+	assert.Nil(t, cfg.Model(ModelTypeLabels))
+	filename := filepath.Join(t.TempDir(), "vision.yml")
+	require.NoError(t, cfg.Save(filename))
+	loaded := NewConfig()
+	require.NoError(t, loaded.Load(filename))
+	require.NotNil(t, loaded.Model(ModelTypeLabels))
+	assert.False(t, loaded.Models[0].Disabled)
+	assert.False(t, loaded.Models[0].DisabledByMode)
 }

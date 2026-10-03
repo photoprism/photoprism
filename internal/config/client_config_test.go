@@ -144,7 +144,7 @@ func TestClientConfig_ApplyACL(t *testing.T) {
 	t.Run("RoleAdmin", func(t *testing.T) {
 		u := apply(acl.RoleAdmin)
 		assert.Equal(t, 60, u.FilesUsedPct)
-		assert.Equal(t, 200, int(u.FilesTotal))
+		assert.EqualValues(t, 200, u.FilesTotal)
 		assert.True(t, u.StorageLow)
 		assert.Equal(t, 50, u.UsersUsedPct)
 	})
@@ -152,9 +152,9 @@ func TestClientConfig_ApplyACL(t *testing.T) {
 		u := apply(acl.RoleGuest)
 		assert.Equal(t, -1, u.FilesUsedPct)
 		assert.Equal(t, -1, u.FilesFreePct)
-		assert.Equal(t, 0, int(u.FilesUsed))
-		assert.Equal(t, 0, int(u.FilesFree))
-		assert.Equal(t, 0, int(u.FilesTotal))
+		assert.EqualValues(t, 0, u.FilesUsed)
+		assert.EqualValues(t, 0, u.FilesFree)
+		assert.EqualValues(t, 0, u.FilesTotal)
 		assert.False(t, u.StorageLow)
 		// Guests hold view on their own user record, so the account quota stays visible.
 		assert.Equal(t, 50, u.UsersUsedPct)
@@ -162,7 +162,7 @@ func TestClientConfig_ApplyACL(t *testing.T) {
 	t.Run("RoleVisitor", func(t *testing.T) {
 		u := apply(acl.RoleVisitor)
 		assert.Equal(t, -1, u.FilesUsedPct)
-		assert.Equal(t, 0, int(u.FilesTotal))
+		assert.EqualValues(t, 0, u.FilesTotal)
 		assert.Equal(t, -1, u.UsersUsedPct)
 		assert.Equal(t, -1, u.UsersFreePct)
 	})
@@ -170,7 +170,7 @@ func TestClientConfig_ApplyACL(t *testing.T) {
 		// An unrecognized role holds no grant, so the guard must clear rather than pass through.
 		u := apply(acl.Role("unknown-role"))
 		assert.Equal(t, -1, u.FilesUsedPct)
-		assert.Equal(t, 0, int(u.FilesTotal))
+		assert.EqualValues(t, 0, u.FilesTotal)
 	})
 }
 

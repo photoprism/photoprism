@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** September 23, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
@@ -23,6 +23,13 @@ Prefer these helpers over hand-written GORM calls when a model is written as a w
 - `Save(m, keys...)` tries `Update` first and falls back to GORM's `Save`, which inserts a missing row.
 
 GORM's `Updates` with a struct skips zero values, so a field reset to its zero value is not written that way; pass a `Values` map or use `Update`. `Report()` output for users, clients, and sessions is built from `ModelValues`.
+
+### Label Count Refresh
+
+`UpdateLabelCounts` keeps each driver's counting query and updates the refresh timestamp only after
+success. Its MySQL write uses `RetryDeadlock`, shared with batch label edits: at most three attempts
+with bounded backoff for recognized database lock errors. Other errors return immediately. Retries
+apply to the individual write, not to the entire HTTP handler or its preceding operations.
 
 ### Timestamps
 
@@ -77,7 +84,7 @@ MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that 
 - Face and marker embeddings are the exception to "fixtures are literals": `GenerateFaceFixtureVectors` (in `face_fixtures_vectors.go`) generates them for the configured embedding model just before the rows are written, because a stored vector has one model's width and no usable provenance under any other. `faceFixtureSeeds` gives each fixture person a centroid, and `markerFixtureVectors` places each face marker at a fraction of the distance its cluster accepts, so the geometry survives both a change of model and a recalibration.
 - `List`-style global queries (`WHERE … <> ''` with no per-test scope) see everything the package has written: rows from other tests in the same package leak in, so a `len(list) == N` assertion that holds against a per-test SQLite file can fail on MariaDB, where the whole package shares one database.
 - **Sort order is collation-dependent.** `utf8mb4_unicode_ci` sorts case-insensitively and weights punctuation by Unicode rules, while SQLite compares byte values, so `ORDER BY` on a text column yields a different sequence. Give rows a deterministic tiebreaker, or assert per dialect (`entity.Db().Dialect().GetName()`).
-- **Generated IDs restart at 1.** `Tables.Truncate` issues `TRUNCATE` where supported, which resets `AUTO_INCREMENT`, so a fixture without an explicit ID gets the same value it would in a fresh database. Plain `DELETE` would not, and IDs would drift with every reset.
+- **Generated IDs restart at 1.** On MySQL/MariaDB, `Tables.Truncate` deletes the rows and then resets `AUTO_INCREMENT` on the tables that have such a column, so a default fixture without an explicit ID, such as `UnknownCamera` and `UnknownLens`, gets the same value it would in a fresh database. `TRUNCATE` would do the same, but it is a DDL statement and several times slower per reset. SQLite keeps its counters, so tests compare against `UnknownCamera.ID` and `UnknownLens.ID` rather than a literal `1`.
 
 ### Collation & Emoji
 
@@ -87,6 +94,8 @@ MariaDB's `utf8mb4_unicode_ci` assigns most emoji the **same collation weight**,
 - `VARBINARY` columns that stay byte-exact: `albums.album_slug`, `albums.album_filter`, `albums.album_path`, `photos.photo_path`, and every `*_uid`. A `utf8mb4` column compared against a `VARBINARY` column is byte-exact (the binary operand wins).
 
 Byte-exact also means **case-sensitive**, which is the one place `VARBINARY` bites on a search path: SQLite's `LIKE` folds ASCII case, so `album_slug LIKE 'Forrest%'` finds the `forrest` slug there but nothing on MariaDB. Slugs are always generated lowercase, so fold the pattern before comparing (`strings.ToLower`), as the album filter in `search.searchPhotos` does.
+
+A value bound to `LIKE` is still a pattern: escape it with `clean.SqlLike` and use a condition that declares the escape character (`clean.SqlLikeCond`, `clean.SqlLikeAny`). A path prefix check needs `clean.SqlPrefixCond` with `clean.SqlPrefixArgs`, which adds a byte-exact comparison, because an escaped `LIKE` still folds ASCII case on SQLite.
 
 The durable fix for an identity/path column is to make it `VARBINARY` — `album_path` is `VARBINARY(1024)` so it matches `photos.photo_path` and `album_path = ?` lookups are byte-exact at the database. Where a `utf8mb4` column must stay, keep the SQL but re-verify the match byte-exact in Go before accepting it (see `FindFolderAlbum` / `findFolderAlbumByPath`, whose Go re-check is retained as defense-in-depth even now that `album_path` is `VARBINARY`). For self-join SQL where a Go re-check is awkward, `HEX(col) = HEX(col)` compares byte-exact on both MariaDB and SQLite. Legacy folder slugs drop emoji entirely (`slug.Make("ins/🪞") == "ins"`) and long paths truncate to `ClipSlug` runes, so distinct folders can still collide on `album_slug`; folder albums are therefore deduplicated by `album_filter` (the byte-exact serialized path), not by slug (see `query.RemoveDuplicateMoments`).
 

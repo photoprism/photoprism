@@ -11,6 +11,7 @@ import PPageSubjects from "page/people/recognized.vue";
 import PPageNewFaces from "page/people/new.vue";
 import Label from "model/label";
 import Subject from "model/subject";
+import { mockGettext } from "../helpers/gettext";
 
 // Captures the surface of `this` that the handlers touch.
 function newStub() {
@@ -313,8 +314,7 @@ describe("people tabs notifyResultCount", () => {
     active,
     results,
     $notify: { warn: vi.fn(), info: vi.fn() },
-    $gettext: (s) => s,
-    $gettextInterpolate: (s) => s,
+    $gettext: mockGettext,
   });
 
   for (const [name, page] of cases) {
@@ -341,7 +341,7 @@ describe("people tabs notifyResultCount", () => {
       page.methods.notifyResultCount.call(stub);
 
       expect(stub.$notify.warn).not.toHaveBeenCalled();
-      expect(stub.$notify.info).toHaveBeenCalled();
+      expect(stub.$notify.info).toHaveBeenCalledWith("2 people found");
     });
   }
 });

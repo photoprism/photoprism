@@ -1,9 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-// Imported for its side effect: installs the jsdomError filter on
-// window._virtualConsole. Already loaded transitively by setup.js, but
-// we re-import here for clarity.
-import "./jsdom-quiet";
+// Importing it installs the jsdomError filter; setup.js already loads it.
+import { virtualConsole } from "./jsdom-quiet";
 
 describe("helpers/jsdom-quiet", () => {
   let errorSpy;
@@ -17,7 +15,7 @@ describe("helpers/jsdom-quiet", () => {
   });
 
   function emit(error) {
-    window._virtualConsole.emit("jsdomError", error);
+    virtualConsole().emit("jsdomError", error);
   }
 
   function makeError({ type, message, sheetText, cause } = {}) {
@@ -33,6 +31,11 @@ describe("helpers/jsdom-quiet", () => {
     }
     return e;
   }
+
+  it("replaces the default forwarder on the JSDOM virtual console", () => {
+    expect(virtualConsole()).toBeDefined();
+    expect(virtualConsole().listenerCount("jsdomError")).toBe(1);
+  });
 
   it("drops css-parsing errors when the stylesheet contains Vuetify-flavored markers", () => {
     // Stylesheets on the Vuetify surface — whether shipped by Vuetify

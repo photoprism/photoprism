@@ -71,6 +71,6 @@ DESTDIR="${DESTDIR}/bin"
 
 echo "Extracting the nats-server binary in \"${ARCHIVE}\" to \"${DESTDIR}\"..."
 mkdir -p "${DESTDIR}"
-curl -fsSL "${GITHUB_URL}" | tar --overwrite --mode=755 -xz -C "${DESTDIR}" --strip-components=1 --wildcards --no-anchored "nats-server"
+curl -fsSL "${GITHUB_URL}" | tar --overwrite --no-same-owner --mode=755 -xz -C "${DESTDIR}" --strip-components=1 --wildcards --no-anchored "nats-server"
 
 echo "Done."

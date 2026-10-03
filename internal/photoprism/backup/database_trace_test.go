@@ -46,6 +46,11 @@ func TestDatabase_CommandTrace(t *testing.T) {
 	require.NotEmpty(t, password)
 	require.NotEmpty(t, c.MariadbDumpBin(), "the client binary must be found for the trace to name it")
 
+	// A table that does not use InnoDB is named in a warning, which shows the dumped database was checked.
+	t.Cleanup(func() { _ = c.Db().Exec("DROP TABLE IF EXISTS zz_trace_myisam").Error })
+	require.NoError(t, c.Db().Exec("DROP TABLE IF EXISTS zz_trace_myisam").Error)
+	require.NoError(t, c.Db().Exec("CREATE TABLE zz_trace_myisam (id INT) ENGINE=MyISAM").Error)
+
 	hook := captureLog(t)
 	backupPath := t.TempDir()
 
@@ -62,8 +67,15 @@ func TestDatabase_CommandTrace(t *testing.T) {
 	}
 
 	require.NotEmpty(t, traced, "expected the dump command to be traced")
+	assert.Contains(t, logMessages(hook), "backup: found 1 table without InnoDB, which the consistent snapshot does not cover (zz_trace_myisam)")
 
 	// The client reads the password from the environment, so the trace has none to mask.
 	assert.NotContains(t, traced, "-p"+txt.Masked)
 	assert.Contains(t, traced, "--no-defaults")
+	assert.Contains(t, traced, " --single-transaction --skip-add-locks --skip-no-autocommit -- ")
+
+	// A client that can verify the zero-configuration TLS certificate is asked to.
+	if major, minor, kind := mariadbClientVersion(c.MariadbDumpBin()); c.DatabaseSsl() && kind == clientMariadb && (major > 11 || major == 11 && minor >= 4) {
+		assert.Contains(t, traced, "--ssl-verify-server-cert")
+	}
 }

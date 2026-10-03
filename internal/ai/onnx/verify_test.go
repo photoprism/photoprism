@@ -46,7 +46,7 @@ func TestModelInfo_VerifyChecksum(t *testing.T) {
 func TestModelInfo_VerifyGraph(t *testing.T) {
 	registered := &ModelInfo{
 		Input:  &Input{Width: 112, Height: 112, Layout: LayoutNCHW},
-		Output: &Output{Width: 128},
+		Output: &Output{Width: 128, Count: 1},
 	}
 
 	t.Run("Success", func(t *testing.T) {
@@ -83,6 +83,12 @@ func TestModelInfo_VerifyGraph(t *testing.T) {
 		err := registered.VerifyGraph(graph)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "output width 512")
+	})
+	t.Run("OutputCountMismatch", func(t *testing.T) {
+		graph := &ModelInfo{Output: &Output{Width: 128, Count: 2}}
+		err := registered.VerifyGraph(graph)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "output count 2")
 	})
 	t.Run("NilGraph", func(t *testing.T) {
 		require.NoError(t, registered.VerifyGraph(nil))

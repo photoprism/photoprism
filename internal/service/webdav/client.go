@@ -71,6 +71,16 @@ func (c *Client) SetDownloadLimit(maxBytes int64) {
 	c.downloadLimit = maxBytes
 }
 
+// CheckDownloadSize returns an error if size exceeds the download limit, where a size of zero or less is unknown.
+func (c *Client) CheckDownloadSize(dest string, size int64) error {
+	if c == nil || c.downloadLimit <= 0 || size <= c.downloadLimit {
+		return nil
+	}
+
+	// The name is bounded so the reason after it survives clipping.
+	return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.LogBytes(path.Base(dest), clean.LogNamesBytes), c.downloadLimit)
+}
+
 // clientUrl returns the validated server url including username and password, if specified.
 func clientUrl(serverUrl, user, pass string) (*url.URL, error) {
 	result, err := safe.URL(serverUrl)
@@ -452,7 +462,7 @@ func (c *Client) Upload(src, dest string) (err error) {
 	dest = trimPath(dest)
 
 	if !fs.FileExists(src) {
-		return fmt.Errorf("file %s not found", clean.Log(path.Base(src)))
+		return fmt.Errorf("file %s not found", clean.LogBytes(path.Base(src), clean.LogNamesBytes))
 	}
 
 	f, err := os.OpenFile(src, os.O_RDONLY, 0) //nolint:gosec // path provided by caller; read-only
@@ -493,11 +503,11 @@ func (c *Client) Upload(src, dest string) (err error) {
 	switch {
 	case resp.Request != nil && resp.Request.Method != http.MethodPut:
 		// The client follows 301, 302, and 303 with a GET, whose status does not report the upload.
-		return fmt.Errorf("webdav: failed to upload %s (redirected)", clean.Log(dest))
+		return fmt.Errorf("webdav: failed to upload %s (redirected)", clean.LogBytes(dest, clean.LogNamesBytes))
 	case resp.StatusCode == http.StatusForbidden:
-		return fmt.Errorf("webdav: failed to upload %s (%w)", clean.Log(dest), ErrForbidden)
+		return fmt.Errorf("webdav: failed to upload %s (%w)", clean.LogBytes(dest, clean.LogNamesBytes), ErrForbidden)
 	case resp.StatusCode/100 != 2:
-		return fmt.Errorf("webdav: failed to upload %s (%d %s)", clean.Log(dest), resp.StatusCode, http.StatusText(resp.StatusCode))
+		return fmt.Errorf("webdav: failed to upload %s (%d %s)", clean.LogBytes(dest, clean.LogNamesBytes), resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 
 	return nil
@@ -540,10 +550,10 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	if err != nil {
 		// Create local storage path.
 		if err = fs.MkdirAll(dir); err != nil {
-			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), clean.Error(err))
+			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.LogBytes(dir, clean.LogNamesBytes), clean.Error(err))
 		}
 	} else if !dirInfo.IsDir() {
-		return fmt.Errorf("webdav: %s is not a folder", clean.Log(dir))
+		return fmt.Errorf("webdav: %s is not a folder", clean.LogBytes(dir, clean.LogNamesBytes))
 	}
 
 	var reader io.ReadCloser
@@ -596,8 +606,8 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 		// instead of being silently truncated into a corrupt local file.
 		if n, copyErr := io.Copy(f, io.LimitReader(reader, c.downloadLimit+1)); copyErr != nil {
 			err = copyErr
-		} else if n > c.downloadLimit {
-			return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.Log(path.Base(dest)), c.downloadLimit)
+		} else if sizeErr := c.CheckDownloadSize(dest, n); sizeErr != nil {
+			return sizeErr
 		}
 	} else {
 		_, err = f.ReadFrom(reader)

@@ -75,7 +75,6 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_DISABLE_PLACES="false" \
     PHOTOPRISM_DISABLE_TENSORFLOW="false" \
     PHOTOPRISM_DISABLE_FACES="false" \
-    PHOTOPRISM_DISABLE_CLASSIFICATION="false" \
     PHOTOPRISM_RAW_PRESETS="false" \
     PHOTOPRISM_THUMB_UNCACHED="false" \
     PHOTOPRISM_AUTO_INDEX="300" \
@@ -102,7 +101,7 @@ WORKDIR /photoprism
 EXPOSE 2342 2443
 
 # Copy app files.
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root /opt/photoprism/ /opt/photoprism
 
 # Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]

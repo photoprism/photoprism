@@ -1,3 +1,5 @@
+import { $gettext } from "common/gettext";
+
 export default class MapStyleControl {
   constructor(styles, defaultStyle, setStyle) {
     this.styles = styles || MapStyleControl.DEFAULT_STYLES;
@@ -22,6 +24,8 @@ export default class MapStyleControl {
     this.mapStyleContainer = document.createElement("div");
     this.styleButton = document.createElement("button");
     this.styleButton.type = "button";
+    this.styleButton.title = $gettext("Map Style");
+    this.styleButton.setAttribute("aria-label", this.styleButton.title);
     this.mapStyleContainer.classList.add("maplibregl-style-list");
     for (const style of this.styles) {
       const styleElement = document.createElement("button");

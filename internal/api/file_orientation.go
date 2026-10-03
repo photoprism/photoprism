@@ -22,11 +22,11 @@ import (
 //	@Tags		Files
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid						path		string		true	"photo uid"
-//	@Param		fileuid					path		string		true	"file uid"
-//	@Param		file					body		form.File	true	"file orientation"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
+//	@Param		uid							path		string		true	"photo uid"
+//	@Param		fileuid						path		string		true	"file uid"
+//	@Param		file						body		form.File	true	"file orientation"
 //	@Router		/api/v1/photos/{uid}/files/{fileuid}/orientation [put]
 func ChangeFileOrientation(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/files/:file_uid/orientation", func(c *gin.Context) {

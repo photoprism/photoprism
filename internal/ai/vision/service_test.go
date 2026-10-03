@@ -37,6 +37,24 @@ func TestServiceEndpoint(t *testing.T) {
 			wantMethod: ServiceMethod,
 		},
 		{
+			name:       "Unresolved",
+			svc:        Service{Uri: "${VISION_TEST_MISSING_URI}"},
+			wantURI:    "",
+			wantMethod: "",
+		},
+		{
+			name:       "UnresolvedWithBasicAuth",
+			svc:        Service{Uri: "${VISION_TEST_MISSING_URI}", Username: "user", Password: "secret"},
+			wantURI:    "",
+			wantMethod: "",
+		},
+		{
+			name:       "NestedPlaceholder",
+			svc:        Service{Uri: "${VISION_TEST_NESTED_URI}"},
+			wantURI:    "",
+			wantMethod: "",
+		},
+		{
 			name:       "ExpandsBaseUrlEnv",
 			svc:        Service{Uri: "${OLLAMA_BASE_URL}/api/generate"},
 			wantURI:    "http://custom:11434/api/generate",
@@ -57,6 +75,8 @@ func TestServiceEndpoint(t *testing.T) {
 				t.Setenv("OLLAMA_BASE_URL", "http://custom:11434")
 			case "FallbacksWhenEnvMissing":
 				t.Setenv("OLLAMA_BASE_URL", "http://ollama:11434")
+			case "NestedPlaceholder":
+				t.Setenv("VISION_TEST_NESTED_URI", "${VISION_TEST_NESTED}")
 			}
 
 			uri, method := tt.svc.Endpoint()

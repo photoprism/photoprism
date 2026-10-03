@@ -375,7 +375,7 @@ fi
 # set, so removing the versioned files first leaves exactly one candidate.
 rm -f "${DESTDIR}"/lib/libheif.so.1.*
 
-if ! tar --overwrite --mode=755 -xzf "$TMPTAR" -C "$DESTDIR"; then
+if ! tar --overwrite --no-same-owner --mode=755 -xzf "$TMPTAR" -C "$DESTDIR"; then
   echo "❌ Failed to extract \"$URL\" to \"$DESTDIR\"."
   exit 1
 fi

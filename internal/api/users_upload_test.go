@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -11,11 +12,23 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestUploadUserFiles(t *testing.T) {
@@ -83,7 +96,7 @@ func TestUploadCheckFile_AcceptsAndReducesLimit(t *testing.T) {
 	}
 
 	orig := int64(len(b))
-	rem, err := UploadCheckFile(dst, false, orig+100)
+	rem, err := UploadCheckFile(dst, false, -1, orig+100)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(100), rem)
 	// file remains
@@ -96,7 +109,7 @@ func TestUploadCheckFile_TotalLimitReachedDeletes(t *testing.T) {
 	dst := filepath.Join(dir, "tiny.txt")
 	assert.NoError(t, os.WriteFile(dst, []byte("hello"), 0o600))
 	// Very small total limit (0) → should remove file and error
-	_, err := UploadCheckFile(dst, false, 0)
+	_, err := UploadCheckFile(dst, false, -1, 0)
 	assert.Error(t, err)
 	_, statErr := os.Stat(dst)
 	assert.True(t, os.IsNotExist(statErr), "file should be removed when limit reached")
@@ -107,7 +120,7 @@ func TestUploadCheckFile_UnsupportedTypeDeletes(t *testing.T) {
 	// Create a file with an unknown extension; should be rejected
 	dst := filepath.Join(dir, "unknown.xyz")
 	assert.NoError(t, os.WriteFile(dst, []byte("not-an-image"), 0o600))
-	_, err := UploadCheckFile(dst, false, 1<<20)
+	_, err := UploadCheckFile(dst, false, -1, 1<<20)
 	assert.Error(t, err)
 	// The message names the rejected file and reports the cause it was given.
 	assert.Contains(t, err.Error(), "rejected")
@@ -132,7 +145,7 @@ func TestUploadCheckFile_SizeAccounting(t *testing.T) {
 	assert.NoError(t, os.WriteFile(f, data, 0o600)) //nolint:gosec // test writes to a temp path under the test's control
 	size := int64(len(data))
 	// Set remaining limit to size+1 so it does not hit the removal branch (which triggers on <=0)
-	rem, err := UploadCheckFile(f, false, size+1)
+	rem, err := UploadCheckFile(f, false, -1, size+1)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), rem)
 }
@@ -192,4 +205,527 @@ func TestUploadUserFilesStorageFolderError(t *testing.T) {
 		assert.NotContains(t, line, adminUid)
 		assert.NotContains(t, line, longToken)
 	})
+}
+
+func TestUploadPathDenied(t *testing.T) {
+	key := acl.RoleContributor.String()
+
+	if _, had := acl.UserRoles[key]; !had {
+		acl.UserRoles[key] = acl.RoleContributor
+		t.Cleanup(func() { delete(acl.UserRoles, key) })
+	}
+
+	t.Run("ContributorWithoutPaths", func(t *testing.T) {
+		assert.True(t, uploadPathDenied(&entity.User{UserName: ".", UserRole: key}))
+	})
+	t.Run("ContributorWithBasePath", func(t *testing.T) {
+		assert.False(t, uploadPathDenied(&entity.User{UserName: "jane", UserRole: key}))
+	})
+	t.Run("ContributorWithUploadPath", func(t *testing.T) {
+		assert.False(t, uploadPathDenied(&entity.User{UserName: ".", UserRole: key, UploadPath: "inbox"}))
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.False(t, uploadPathDenied(&entity.User{UserName: "admin", UserRole: acl.RoleAdmin.String()}))
+	})
+}
+
+func TestUploadAlbumsAllowed(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.True(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("AlbumsScope", func(t *testing.T) {
+		s := &entity.Session{AuthScope: "files albums"}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.True(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("FilesScope", func(t *testing.T) {
+		s := &entity.Session{AuthScope: "files"}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.False(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("RestrictedClientForAdmin", func(t *testing.T) {
+		assert.False(t, uploadAlbumsAllowed(mixedPrincipalSession()))
+	})
+	t.Run("ClientWithoutUser", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetClient(&entity.Client{ClientRole: acl.RoleClient.String(), AuthProvider: authn.ProviderClient.String()})
+		require.True(t, s.GrantsAny(acl.ResourceAlbums, acl.Permissions{acl.ActionCreate, acl.ActionUpload}))
+		assert.False(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, uploadAlbumsAllowed(nil))
+	})
+}
+
+func TestUploadAlbums(t *testing.T) {
+	// An album alice owns, one she holds a share for, and one she neither owns nor holds a share for.
+	owned := entity.NewUserAlbum("Upload Albums "+rnd.Base36(6), entity.AlbumManual, "", entity.UserFixtures.Pointer("alice").UserUID)
+	require.NoError(t, owned.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(owned).Error })
+	other := entity.AlbumFixtures.Get("holiday-2030").AlbumUID
+	missing := rnd.GenerateUID(entity.AlbumUID)
+
+	// Only regular albums take added pictures.
+	folder := entity.AlbumFixtures.Get("april-1990").AlbumUID
+	moment := entity.AlbumFixtures.Get("emptyMoment").AlbumUID
+	deleted := entity.NewUserAlbum("Upload Albums "+rnd.Base36(6), entity.AlbumManual, "", entity.UserFixtures.Pointer("alice").UserUID)
+	require.NoError(t, deleted.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Unscoped().Delete(deleted).Error })
+	require.NoError(t, deleted.Delete())
+
+	// Look up the deleted album, which caches it, so the check must not depend on the cache.
+	require.NotNil(t, entity.FindAlbum(entity.Album{AlbumUID: deleted.AlbumUID}))
+
+	albums := []string{owned.AlbumUID, sharedAlbumUID, other, missing, deleted.AlbumUID, folder, moment, "New Album", owned.AlbumUID, "New Album"}
+
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/users/uqxetse3cy5eo9z2/upload/abc", nil)
+
+	t.Run("FullAccess", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.Equal(t, []string{owned.AlbumUID, sharedAlbumUID, other, "New Album"}, uploadAlbums(c, s, albums))
+	})
+	t.Run("SharedAccessOnly", func(t *testing.T) {
+		s := mixedPrincipalSession()
+		require.True(t, s.HasSharedAccessOnly(acl.ResourceAlbums))
+		assert.Equal(t, []string{owned.AlbumUID, sharedAlbumUID, "New Album"}, uploadAlbums(c, s, albums))
+	})
+	t.Run("None", func(t *testing.T) {
+		s := mixedPrincipalSession()
+		assert.Empty(t, uploadAlbums(c, s, nil))
+	})
+	t.Run("Limit", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		titles := make([]string, 0, MaxUploadAlbums+4)
+		titles = append(titles, other, missing, "", "")
+		for i := 0; i < MaxUploadAlbums+1; i++ {
+			titles = append(titles, fmt.Sprintf("Limit %d", i))
+		}
+		titles = append(titles, "Limit 0")
+
+		// Refused, empty and repeated entries take no place; the album after the limit is skipped.
+		result := uploadAlbums(c, s, titles)
+		require.Len(t, result, MaxUploadAlbums)
+		assert.Equal(t, other, result[0])
+		assert.Equal(t, fmt.Sprintf("Limit %d", MaxUploadAlbums-2), result[MaxUploadAlbums-1])
+	})
+}
+
+func TestProcessUserUploadAlbums(t *testing.T) {
+	app, router, conf := NewApiTest()
+	ProcessUserUpload(router)
+	options := *conf.Options()
+	mode := conf.AuthMode()
+	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode) })
+	conf.SetAuthMode(config.AuthModePasswd)
+	conf.Options().StoragePath = t.TempDir()
+	conf.Options().OriginalsPath = t.TempDir()
+	conf.Options().SidecarPath = t.TempDir()
+	conf.Options().ImportAllow = ""
+	conf.Options().BackupAlbums = true
+	user := entity.UserFixtures.Pointer("alice")
+	sess := clientCredentialSession(t, conf, "client", "*", user)
+
+	// Only the album that exists receives the uploaded picture.
+	album := entity.NewUserAlbum("Upload Target "+rnd.Base36(6), entity.AlbumManual, "", user.UserUID)
+	require.NoError(t, album.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Unscoped().Delete(album).Error })
+	missing := rnd.GenerateUID(entity.AlbumUID)
+
+	// A title resolves among the user's own albums, so another user's album with the same title is not used.
+	title := "Upload Title " + rnd.Base36(6)
+	foreign := entity.NewUserAlbum(title, entity.AlbumManual, "", rnd.GenerateUID(entity.UserUID))
+	require.NoError(t, foreign.Create())
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "album_uid IN (SELECT album_uid FROM albums WHERE album_title = ?)", title).Error
+		_ = entity.UnscopedDb().Unscoped().Delete(&entity.Album{}, "album_title = ?", title).Error
+	})
+
+	token := rnd.Base36(10)
+	dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)
+	require.NoError(t, err)
+	filename := filepath.Join(dir, "upload.jpg")
+	require.NoError(t, os.WriteFile(filename, NewTestJpeg(t, 153, 103), fs.ModeFile))
+	hash := fs.Hash(filename)
+	t.Cleanup(func() {
+		file, err := entity.FirstFileByHash(hash)
+		if err != nil {
+			return
+		}
+		entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "photo_uid = ?", file.PhotoUID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+	})
+
+	body := fmt.Sprintf(`{"albums":[%q, %q, %q]}`, missing, album.AlbumUID, title)
+	result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, body, sess.AuthToken())
+	require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+	file, err := entity.FirstFileByHash(hash)
+	require.NoError(t, err)
+
+	var count int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ?", file.PhotoUID, album.AlbumUID).Count(&count).Error)
+	assert.Equal(t, 1, count)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", missing).Count(&count).Error)
+	assert.Equal(t, 0, count)
+
+	// The picture is added to a new album of the user, and only that album's backup file is written.
+	var created entity.Album
+	require.NoError(t, entity.UnscopedDb().Where("album_title = ? AND created_by = ?", title, user.UserUID).First(&created).Error)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ?", file.PhotoUID, created.AlbumUID).Count(&count).Error)
+	assert.Equal(t, 1, count)
+	createdYaml, _, err := created.YamlFileName(conf.BackupAlbumsPath())
+	require.NoError(t, err)
+	assert.FileExists(t, createdYaml)
+	foreignYaml, _, err := foreign.YamlFileName(conf.BackupAlbumsPath())
+	require.NoError(t, err)
+	assert.NoFileExists(t, foreignYaml)
+}
+
+func TestProcessUserUploadAlbumLimit(t *testing.T) {
+	app, router, conf := NewApiTest()
+	ProcessUserUpload(router)
+	options := *conf.Options()
+	mode := conf.AuthMode()
+	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode) })
+	conf.SetAuthMode(config.AuthModePasswd)
+	conf.Options().StoragePath = t.TempDir()
+	conf.Options().OriginalsPath = t.TempDir()
+	conf.Options().SidecarPath = t.TempDir()
+	conf.Options().ImportAllow = ""
+	user := entity.UserFixtures.Pointer("alice")
+	sess := clientCredentialSession(t, conf, "client", "*", user)
+	prefix := "Too Many " + rnd.Base36(6)
+	titles := make([]string, MaxUploadAlbums+1)
+
+	for i := range titles {
+		titles[i] = fmt.Sprintf("%s %d", prefix, i)
+	}
+
+	// The picture is imported and added to the first MaxUploadAlbums albums only.
+	token := rnd.Base36(10)
+	dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)
+	require.NoError(t, err)
+	filename := filepath.Join(dir, "upload.jpg")
+	require.NoError(t, os.WriteFile(filename, NewTestJpeg(t, 157, 107), fs.ModeFile))
+	hash := fs.Hash(filename)
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Unscoped().Delete(&entity.Album{}, "album_title LIKE ?", prefix+"%").Error
+		file, err := entity.FirstFileByHash(hash)
+		if err != nil {
+			return
+		}
+		entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "photo_uid = ?", file.PhotoUID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+	})
+
+	body, err := json.Marshal(form.UploadOptions{Albums: titles})
+	require.NoError(t, err)
+
+	result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, string(body), sess.AuthToken())
+	require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+	file, err := entity.FirstFileByHash(hash)
+	require.NoError(t, err)
+
+	var count int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title LIKE ?", prefix+"%").Count(&count).Error)
+	assert.Equal(t, MaxUploadAlbums, count)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ?", file.PhotoUID).Count(&count).Error)
+	assert.Equal(t, MaxUploadAlbums, count)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title = ?", titles[MaxUploadAlbums]).Count(&count).Error)
+	assert.Equal(t, 0, count)
+}
+
+func TestUploadBatchName(t *testing.T) {
+	s := &entity.Session{RefID: "sessabcdefgh"}
+
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "sessabcdefghx1y2z3a", uploadBatchName(s, "x1y2z3a"))
+	})
+	t.Run("EmptyToken", func(t *testing.T) {
+		assert.Equal(t, "", uploadBatchName(s, ""))
+	})
+	t.Run("NoRefID", func(t *testing.T) {
+		assert.Equal(t, "", uploadBatchName(&entity.Session{}, "x1y2z3a"))
+		assert.Equal(t, "", uploadBatchName(nil, "x1y2z3a"))
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		token := strings.Repeat("a", clean.LengthLimit-4)
+		require.Equal(t, token, clean.Token(token))
+		assert.Equal(t, "", uploadBatchName(s, token))
+	})
+}
+
+func TestDiscardUpload(t *testing.T) {
+	conf := get.Config()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
+	conf.Options().StoragePath = t.TempDir()
+	user := entity.UserFixtures.Pointer("alice")
+	s := &entity.Session{RefID: "sess" + rnd.Base36(8), UserUID: user.UserUID}
+
+	t.Run("Success", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadPath(user.UserUID, s.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "upload.jpg"), []byte("staged"), fs.ModeFile))
+		other, err := conf.UserUploadPath(user.UserUID, s.RefID+rnd.Base36(10))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.RemoveAll(other) })
+
+		discardUpload(s, token)
+
+		assert.NoDirExists(t, dir)
+		assert.DirExists(t, other)
+	})
+	t.Run("EmptyToken", func(t *testing.T) {
+		other, err := conf.UserUploadPath(user.UserUID, s.RefID+rnd.Base36(10))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.RemoveAll(other) })
+
+		discardUpload(s, "")
+		discardUpload(s, strings.Repeat("a", clean.LengthLimit-4))
+		discardUpload(&entity.Session{UserUID: user.UserUID}, "")
+		discardUpload(&entity.Session{UserUID: user.UserUID}, rnd.Base36(10))
+		discardUpload(nil, rnd.Base36(10))
+
+		assert.DirExists(t, other)
+	})
+	t.Run("NoStorageFolder", func(t *testing.T) {
+		conf.Options().StoragePath = t.TempDir()
+		discardUpload(s, rnd.Base36(10))
+		assert.NoDirExists(t, filepath.Join(conf.UsersStoragePath(), user.UserUID))
+	})
+}
+
+func TestProcessUserUploadStagedFiles(t *testing.T) {
+	app, router, conf := NewApiTest()
+	ProcessUserUpload(router)
+	options := *conf.Options()
+	mode := conf.AuthMode()
+	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode) })
+	conf.SetAuthMode(config.AuthModePasswd)
+	conf.Options().StoragePath = t.TempDir()
+	user := entity.UserFixtures.Pointer("alice")
+	sess := clientCredentialSession(t, conf, "client", "*", user)
+
+	// stage returns a new upload token and the folder with the file staged for it.
+	stage := func(t *testing.T) (token, dir string) {
+		token = rnd.Base36(10)
+		dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "upload.jpg"), NewTestJpeg(t, 159, 109), fs.ModeFile))
+		return token, dir
+	}
+
+	t.Run("InvalidRequest", func(t *testing.T) {
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{"albums":`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("Processed", func(t *testing.T) {
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		token, dir := stage(t)
+		hash := fs.Hash(filepath.Join(dir, "upload.jpg"))
+		t.Cleanup(func() {
+			file, err := entity.FirstFileByHash(hash)
+			if err != nil {
+				return
+			}
+			entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+		})
+
+		// A file the import leaves behind keeps the folder, which is only removed when it is empty.
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "other.txt"), []byte("kept"), fs.ModeFile))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code)
+		_, err := entity.FirstFileByHash(hash)
+		assert.NoError(t, err)
+		assert.FileExists(t, filepath.Join(dir, "other.txt"))
+	})
+	t.Run("TokenTooLong", func(t *testing.T) {
+		_, dir := stage(t)
+		token := strings.Repeat("a", clean.LengthLimit-4)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("PruneError", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+
+		// A sidecar that cannot be removed fails the preparation without rejecting the batch.
+		token, dir := stage(t)
+		locked := filepath.Join(dir, "locked")
+		require.NoError(t, fs.MkdirAll(locked))
+		require.NoError(t, os.WriteFile(filepath.Join(locked, "meta.json"), []byte("{}"), fs.ModeFile))
+		require.NoError(t, os.Chmod(locked, 0o555))       //nolint:gosec // Test makes a folder read-only.
+		t.Cleanup(func() { _ = os.Chmod(locked, 0o755) }) //nolint:gosec // Test restores write access for cleanup.
+
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("OtherUser", func(t *testing.T) {
+		token, dir := stage(t)
+		other := entity.UserFixtures.Pointer("bob")
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+other.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusForbidden, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("MissingBatch", func(t *testing.T) {
+		storagePath := conf.Options().StoragePath
+		t.Cleanup(func() { conf.Options().StoragePath = storagePath })
+		conf.Options().StoragePath = t.TempDir()
+		token := rnd.Base36(10)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusNotFound, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.NoDirExists(t, filepath.Join(conf.UsersStoragePath(), user.UserUID))
+	})
+	t.Run("DanglingLink", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadBatchDir(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dir)))
+		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing"), dir))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		_, err = os.Lstat(dir)
+		assert.True(t, os.IsNotExist(err), "rejected batch link must be discarded")
+	})
+	t.Run("BatchNotADirectory", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadBatchDir(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dir)))
+		require.NoError(t, os.WriteFile(dir, []byte("file"), fs.ModeFile))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, dir)
+	})
+	t.Run("StorageNotAccessible", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+		token, dir := stage(t)
+		upload := filepath.Dir(dir)
+		require.NoError(t, os.Chmod(upload, 0))           //nolint:gosec // Test makes a folder inaccessible.
+		t.Cleanup(func() { _ = os.Chmod(upload, 0o700) }) //nolint:gosec // Test restores access for cleanup.
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		require.NoError(t, os.Chmod(upload, 0o700)) //nolint:gosec // Test restores access.
+		assert.Equal(t, http.StatusInternalServerError, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("FacesLocked", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusServiceUnavailable, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrBusy))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("InsufficientStorage", func(t *testing.T) {
+		quota := conf.Options().FilesQuota
+		t.Cleanup(func() { conf.Options().FilesQuota = quota; config.FlushUsageCache() })
+		conf.Options().OriginalsPath = options.OriginalsPath
+		conf.Options().FilesQuota = 1
+		config.FlushUsageCache()
+		require.True(t, conf.InsufficientStorage())
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusInsufficientStorage, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrInsufficientStorage))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("Canceled", func(t *testing.T) {
+		require.NoError(t, mutex.IndexWorker.Start())
+		t.Cleanup(mutex.IndexWorker.Stop)
+		mutex.IndexWorker.Cancel()
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusServiceUnavailable, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrBusy))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("MoveFailed", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		} else if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		require.NoError(t, os.Chmod(conf.OriginalsPath(), 0o500))       //nolint:gosec // Test makes a folder read-only.
+		t.Cleanup(func() { _ = os.Chmod(conf.OriginalsPath(), 0o700) }) //nolint:gosec // Test restores write access for cleanup.
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusInternalServerError, result.Code, result.Body.String())
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("DuplicateAndUnsupported", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		token, dir := stage(t)
+		hash := fs.Hash(filepath.Join(dir, "upload.jpg"))
+		t.Cleanup(func() {
+			file, err := entity.FirstFileByHash(hash)
+			if err != nil {
+				return
+			}
+			entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+		})
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+		// The same content again is a duplicate, which the import skips.
+		token, _ = stage(t)
+		result = AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+		// A batch without media files imports nothing.
+		token, dir = stage(t)
+		require.NoError(t, os.Remove(filepath.Join(dir, "upload.jpg")))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "notes.txt"), []byte("notes"), fs.ModeFile))
+		result = AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
+	})
+}
+
+// TestLogUploadNsfwErr checks that an upload content check that could not run is logged to the system log only.
+func TestLogUploadNsfwErr(t *testing.T) {
+	hook := captureLog(t)
+	systemHook := captureSystemLog(t)
+
+	logUploadNsfwErr("/tmp/upload/cat.jpg", errors.New("service uri of nsfw model custom does not resolve"))
+
+	assert.Empty(t, hook.AllEntries())
+	require.Len(t, systemHook.AllEntries(), 1)
+	assert.Equal(t, logrus.WarnLevel, systemHook.LastEntry().Level)
+	assert.Equal(t, "nsfw: upload › could not check cat.jpg › service uri of nsfw model custom does not resolve", systemHook.LastEntry().Message)
 }

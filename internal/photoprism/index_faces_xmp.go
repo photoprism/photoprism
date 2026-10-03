@@ -205,15 +205,17 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 
 	// Remember the prior link so a stale or empty SubjUID is repaired and
 	// persisted even when the marker name string stays the same: SetName
-	// short-circuits on an identical name and reports no change.
+	// short-circuits on an identical name from an XMP source.
 	prevSubjUID := m.SubjUID
 	prevSubjSrc := m.SubjSrc
 
-	if subj := entity.FindSubjectByName(name, false); subj != nil {
-		m.SetSubjectLink(subj)
-		name = subj.SubjName
-	} else {
+	// A deleted person is not linked here; Marker.Subject restores them below, as for a name typed by hand.
+	if subj := entity.FindSubjectByName(name, false); subj == nil {
 		m.SetSubjectLink(nil)
+	} else if name = subj.SubjName; subj.Deleted() {
+		m.SetSubjectLink(nil)
+	} else {
+		m.SetSubjectLink(subj)
 	}
 
 	nameChanged, err := m.SetName(name, entity.SrcXmp)
@@ -221,8 +223,8 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 		return false, fmt.Errorf("faces: cannot import xmp name %s: %w", clean.Log(name), err)
 	}
 
-	// SetName's identical-name short-circuit skips SyncSubject, which would leave
-	// an empty SubjUID or persist a detached link, so resolve the Person here.
+	// Resolve the Person here if SetName left the marker unlinked, so an empty
+	// SubjUID or a detached link is not persisted.
 	// Claiming SubjSrc for XMP first satisfies Subject's non-auto guard; the
 	// priority check above already ran, so this never downgrades.
 	if m.SubjUID == "" && m.MarkerName != "" {
@@ -238,12 +240,19 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 	// applied only when it was durably saved, so a DB failure is not counted.
 	if changed && m.MarkerUID != "" {
 		m.MarkerReview = false
-		if err := m.Updates(entity.Values{
+		values := entity.Values{
 			"subj_uid":      m.SubjUID,
 			"subj_src":      m.SubjSrc,
 			"marker_name":   m.MarkerName,
 			"marker_review": m.MarkerReview,
-		}); err != nil {
+		}
+
+		// SetName clears the match stamp of a marker without a cluster, so it is matched again.
+		if m.MatchedAt == nil {
+			values["matched_at"] = nil
+		}
+
+		if err := m.Updates(values); err != nil {
 			return false, fmt.Errorf("faces: cannot save xmp marker %s: %w", clean.Log(m.MarkerUID), err)
 		}
 	}

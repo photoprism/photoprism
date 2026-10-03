@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	_ "embed"
 	"fmt"
+	"net"
 	"net/url"
 	"os"
 	"path"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
@@ -143,16 +145,16 @@ func (c *Config) SiteDomain() string {
 	}
 }
 
-// SiteHost returns the public hostname and port number in the format "domain:port".
+// SiteHost returns the public host and port number as in a URL, e.g. "domain:port" or "[2001:db8::1]:8443".
 func (c *Config) SiteHost() string {
 	if u, err := url.Parse(c.SiteUrl()); err != nil {
 		return localhost
 	} else if hostname := u.Hostname(); hostname == "" {
 		return localhost
 	} else if port := u.Port(); port != "" {
-		return fmt.Sprintf("%s:%s", hostname, port)
+		return net.JoinHostPort(hostname, port)
 	} else {
-		return hostname
+		return dns.BracketHost(hostname)
 	}
 }
 

@@ -587,6 +587,10 @@ func regenerateTestXmp(names []string, markers ...entity.Marker) string {
 // TestFaces_ResetAndReindex_Regenerate runs "faces reset --detector" through the real faces-only
 // index, on markers left in the state an earlier detector would leave them in.
 func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	useTestDb(t, "faces-regenerate")
 	cfg := config.NewMinimalTestConfigWithDb("faces-regenerate", filepath.Join(t.TempDir(), "storage"))
 	oldCfg := Config()

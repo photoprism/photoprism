@@ -68,10 +68,10 @@ func GetSubject(router *gin.RouterGroup) {
 //	@Tags		Subjects
 //	@Accept		json
 //	@Produce	json
-//	@Success	200							{object}	entity.Subject
-//	@Failure	400,401,403,404,409,429,500	{object}	i18n.Response
-//	@Param		uid							path		string			true	"subject uid"
-//	@Param		subject						body		form.Subject	true	"properties to be updated (only submit values that should be changed)"
+//	@Success	200								{object}	entity.Subject
+//	@Failure	400,401,403,404,409,413,429,500	{object}	i18n.Response
+//	@Param		uid								path		string			true	"subject uid"
+//	@Param		subject							body		form.Subject	true	"properties to be updated (only submit values that should be changed)"
 //	@Router		/api/v1/subjects/{uid} [put]
 func UpdateSubject(router *gin.RouterGroup) {
 	router.PUT("/subjects/:uid", func(c *gin.Context) {

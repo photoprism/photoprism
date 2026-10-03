@@ -345,19 +345,28 @@ func TestWebAppRoutes(t *testing.T) {
 		assert.Equal(t, header.ContentTypeJavaScript, w.Header().Get(header.ContentType))
 	})
 	t.Run("GetServiceWorkerScopeCleanup", func(t *testing.T) {
-		scopeCleanupFile := conf.StaticBuildFile(fs.SwScopeCleanupJsFile)
-		require.NoError(t, os.MkdirAll(filepath.Dir(scopeCleanupFile), fs.ModeDir))
-		require.NoError(t, os.WriteFile(scopeCleanupFile, []byte(`self.addEventListener("activate", () => {});`), fs.ModeFile))
-		require.FileExists(t, scopeCleanupFile)
-		t.Cleanup(func() { _ = os.Remove(scopeCleanupFile) })
+		buildConf := config.NewMinimalTestConfig(t.TempDir())
+		buildConf.Options().AssetsPath = t.TempDir()
 
-		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/"+fs.SwScopeCleanupJsFile, nil)
-		r.ServeHTTP(w, req)
-		assert.Equal(t, 200, w.Code)
-		assert.NotEmpty(t, w.Body.String())
-		assert.Equal(t, header.CacheControlNoStore, w.Header().Get(header.CacheControl))
-		assert.Contains(t, w.Header().Get(header.ContentType), "javascript")
+		scopeCleanupJs := `self.addEventListener("activate", () => {});`
+		scopeCleanupFile := buildConf.StaticBuildFile(fs.SwScopeCleanupJsFile)
+		require.NoError(t, os.MkdirAll(filepath.Dir(scopeCleanupFile), fs.ModeDir))
+		require.NoError(t, os.WriteFile(scopeCleanupFile, []byte(scopeCleanupJs), fs.ModeFile))
+
+		buildConf.Options().SiteUrl = "https://portal.example.com/i/acme/"
+
+		buildRouter := gin.New()
+		registerWebAppRoutes(buildRouter, buildConf)
+
+		for _, scopeCleanupPath := range []string{"/" + fs.SwScopeCleanupJsFile, buildConf.BaseUri("/" + fs.SwScopeCleanupJsFile)} {
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest(header.MethodGet, scopeCleanupPath, nil)
+			buildRouter.ServeHTTP(w, req)
+			assert.Equal(t, http.StatusOK, w.Code, scopeCleanupPath)
+			assert.Equal(t, scopeCleanupJs, w.Body.String(), scopeCleanupPath)
+			assert.Equal(t, header.CacheControlNoStore, w.Header().Get(header.CacheControl), scopeCleanupPath)
+			assert.Contains(t, w.Header().Get(header.ContentType), "javascript", scopeCleanupPath)
+		}
 	})
 	t.Run("HeadServiceWorkerScopeCleanup", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -423,44 +432,80 @@ func TestWebAppRoutes(t *testing.T) {
 			})
 		}
 	})
-	t.Run("GetWorkboxHelperRoot", func(t *testing.T) {
-		workboxFile := conf.StaticBuildFile("workbox-123abc.js")
+	t.Run("GetWorkboxHelper", func(t *testing.T) {
+		buildConf := config.NewMinimalTestConfig(t.TempDir())
+		buildConf.Options().AssetsPath = t.TempDir()
+		buildConf.Options().SiteUrl = "https://portal.example.com/i/acme/"
+
+		workboxJs := `console.log("workbox");`
+		workboxFile := buildConf.StaticBuildFile("workbox-123abc.js")
 		require.NoError(t, os.MkdirAll(filepath.Dir(workboxFile), fs.ModeDir))
-		require.NoError(t, os.WriteFile(workboxFile, []byte(`console.log("workbox");`), fs.ModeFile))
-		require.FileExists(t, workboxFile)
-		t.Cleanup(func() { _ = os.Remove(workboxFile) })
+		require.NoError(t, os.WriteFile(workboxFile, []byte(workboxJs), fs.ModeFile))
 
-		h := newWorkboxHandler(conf)
-		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest("GET", "/workbox-123abc.js", nil)
-		c.Params = gin.Params{gin.Param{Key: "hash", Value: "123abc.js"}}
+		buildRouter := gin.New()
+		registerWebAppRoutes(buildRouter, buildConf)
 
-		h(c)
-		assert.Equal(t, 200, w.Code)
-		assert.NotEmpty(t, w.Body)
-	})
-	t.Run("GetWorkboxHelperBaseUri", func(t *testing.T) {
-		workboxPath := conf.BaseUri("/workbox-123abc.js")
-		if workboxPath == "/workbox-123abc.js" {
-			return
+		// Files that exist but do not match the helper name pattern are not served either.
+		for _, name := range []string{"workbox-123abc.css", "workbox-a.b.js", "workbox-..js", "workbox-123abc.JS", "workbox-123abc.js.gz"} {
+			require.NoError(t, os.WriteFile(buildConf.StaticBuildFile(name), []byte(workboxJs), fs.ModeFile))
 		}
 
-		workboxFile := conf.StaticBuildFile("workbox-123abc.js")
-		require.NoError(t, os.MkdirAll(filepath.Dir(workboxFile), fs.ModeDir))
-		require.NoError(t, os.WriteFile(workboxFile, []byte(`console.log("workbox");`), fs.ModeFile))
-		require.FileExists(t, workboxFile)
-		t.Cleanup(func() { _ = os.Remove(workboxFile) })
+		for _, workboxPath := range []string{"/workbox-123abc.js", buildConf.BaseUri("/workbox-123abc.js")} {
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest(header.MethodGet, workboxPath, nil)
+			buildRouter.ServeHTTP(w, req)
+			assert.Equal(t, http.StatusOK, w.Code, workboxPath)
+			assert.Equal(t, workboxJs, w.Body.String(), workboxPath)
+			assert.Contains(t, w.Header().Get(header.ContentType), "javascript", workboxPath)
+		}
 
-		h := newWorkboxHandler(conf)
+		for _, method := range []string{header.MethodGet, header.MethodHead} {
+			for _, workboxPath := range []string{
+				"/workbox-missing.js",
+				"/workbox-123abc.css",
+				"/workbox-a.b.js",
+				"/workbox-..js",
+				"/workbox-123abc.JS",
+				"/workbox-123abc.js.gz",
+				buildConf.BaseUri("/workbox-123abc.css"),
+			} {
+				w := httptest.NewRecorder()
+				req := httptest.NewRequest(method, workboxPath, nil)
+				buildRouter.ServeHTTP(w, req)
+				assert.Equal(t, http.StatusNotFound, w.Code, method+" "+workboxPath)
+			}
+		}
+	})
+	t.Run("InvalidHelperName", func(t *testing.T) {
+		buildConf := config.NewMinimalTestConfig(t.TempDir())
+		buildConf.Options().AssetsPath = t.TempDir()
+
+		workboxJs := `console.log("workbox");`
+		require.NoError(t, os.MkdirAll(buildConf.StaticBuildPath(), fs.ModeDir))
+		require.NoError(t, os.WriteFile(buildConf.StaticFile("x.js"), []byte(`console.log("x");`), fs.ModeFile))
+		for _, name := range []string{"workbox-123abc.js", `workbox-..\x.js`, "workbox-"} {
+			require.NoError(t, os.WriteFile(buildConf.StaticBuildFile(name), []byte(workboxJs), fs.ModeFile))
+		}
+
+		h := newWorkboxHandler(buildConf)
+
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest("GET", workboxPath, nil)
+		c.Request = httptest.NewRequest(header.MethodGet, "/workbox-123abc.js", nil)
 		c.Params = gin.Params{gin.Param{Key: "hash", Value: "123abc.js"}}
-
 		h(c)
-		assert.Equal(t, 200, w.Code)
-		assert.NotEmpty(t, w.Body)
+		assert.Equal(t, http.StatusOK, c.Writer.Status())
+		assert.Equal(t, workboxJs, w.Body.String())
+
+		for _, name := range []string{"/../../x.js", "a/../../x.js", `..\x.js`, ""} {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request = httptest.NewRequest(header.MethodGet, "/workbox-helper.js", nil)
+			c.Params = gin.Params{gin.Param{Key: "hash", Value: name}}
+			h(c)
+			assert.Equal(t, http.StatusNotFound, c.Writer.Status(), name)
+			assert.Empty(t, w.Body.String(), name)
+		}
 	})
 }
 

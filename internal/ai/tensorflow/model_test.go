@@ -11,9 +11,23 @@ import (
 var assetsPath = fs.Abs("../../../assets")
 var testDataPath = fs.Abs("testdata")
 
+// nasnetModelPath returns the TensorFlow NASNet model directory, or skips the test when the
+// model is not installed.
+func nasnetModelPath(t *testing.T) string {
+	t.Helper()
+
+	dir := filepath.Join(assetsPath, "models", "nasnet")
+
+	if !fs.PathExists(dir) {
+		t.Skip("tensorflow nasnet model is not installed")
+	}
+
+	return dir
+}
+
 func TestTF1ModelLoad(t *testing.T) {
 	model, err := SavedModel(
-		filepath.Join(assetsPath, "models", "nasnet"),
+		nasnetModelPath(t),
 		[]string{"photoprism"})
 
 	if err != nil {

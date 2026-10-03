@@ -1037,16 +1037,20 @@ func parseSubSec(s string) int {
 	return n
 }
 
-// formatExposure renders a duration as "1/N" for sub-second values
-// and as a decimal for one-second-or-longer durations.
+// formatExposure renders an exposure time as "1/N" up to a quarter second and as a decimal with one
+// decimal place otherwise, like ExifTool, or returns an empty string if it is not plausible.
 func formatExposure(secs float64) string {
-	if secs <= 0 {
+	switch {
+	case secs <= 0 || math.IsNaN(secs) || secs > exposureMaxSeconds:
 		return ""
+	case secs < 0.25001:
+		if n := math.Round(1 / secs); n <= math.MaxInt32 {
+			return fmt.Sprintf("1/%d", int(n))
+		}
+		return ""
+	default:
+		return strings.TrimSuffix(strconv.FormatFloat(secs, 'f', 1, 64), ".0")
 	}
-	if secs >= 1 {
-		return strconv.FormatFloat(secs, 'f', -1, 64)
-	}
-	return fmt.Sprintf("1/%d", int(math.Round(1/secs)))
 }
 
 // apexToSeconds converts an APEX shutter-speed value (Tv) to seconds

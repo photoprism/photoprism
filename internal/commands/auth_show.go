@@ -6,7 +6,6 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -30,11 +29,11 @@ func authShowAction(ctx *cli.Context) error {
 			return ShowUsageError(ctx)
 		}
 
-		// Find session by name.
-		sess, err := query.Session(id)
+		// Find session by access token, session ID, or reference ID.
+		sess, err := authFindSession(id)
 
 		if err != nil {
-			return fmt.Errorf("session %s not found: %s", clean.Log(id), err)
+			return err
 		}
 
 		// Get session information.

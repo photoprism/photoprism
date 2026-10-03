@@ -188,7 +188,7 @@ echo "Verifying checksum..."
 verify_sha "${sha}" "${package_path}"
 
 echo "Extracting to ${DESTDIR}..."
-tar --overwrite --mode=755 -C "${DESTDIR}" -xzf "${package_path}"
+tar --overwrite --no-same-owner --mode=755 -C "${DESTDIR}" -xzf "${package_path}"
 
 # Normalize layout: copy libraries into ${DESTDIR}/lib and remove extracted tree.
 # The archive extracts to a top directory named after itself (minus ".tgz"),
@@ -210,6 +210,10 @@ if [[ -n "${extracted_name}" && -d "${extracted}/lib" ]]; then
   find "${extracted}/lib" -maxdepth 1 -type l -name "libonnxruntime*.so*" -print0 | while IFS= read -r -d '' link; do
     target=$(readlink "${link}")
     ln -sf "${target}" "${output_lib_dir}/$(basename "${link}")"
+  done
+  # Keep the license and third-party notices, which must be distributed with the libraries.
+  for notice in LICENSE ThirdPartyNotices.txt; do
+    install -D -m 0644 "${extracted}/${notice}" "${DESTDIR}/share/doc/onnxruntime/${notice}"
   done
   rm -rf "${extracted}"
 fi

@@ -4,7 +4,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
-// IP returns the sanitized and normalized network address if it is valid, or the default otherwise.
+// IP returns the normalized network address if it is valid, or the default otherwise.
 func IP(s, defaultIp string) string {
 	return header.IP(s, defaultIp)
 }

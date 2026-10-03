@@ -1,12 +1,13 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** August 23, 2026
+**Last Updated:** October 2, 2026
 
 ### Overview
 
-`internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to one of three engines:
+`internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to local ONNX/TensorFlow engines or remote services:
 
-- **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection to return that memory to the OS; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
+- **ONNX Runtime (built-in labels and NSFW)** — fixed-taxonomy classifiers run locally with per-model preprocessing and checksum validation.
+- **TensorFlow (transitional)** — FaceNet remains local until its separate ONNX migration is completed.
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults. The default model is `gemma4:latest` (self-hosted) or `minimax-m3:cloud` (cloud), and reasoning is disabled by default (`Service.Think: "false"`) so thinking-capable models do not leak reasoning into results. That flag is a correctness guard rather than a performance one — a reasoning build still generates the reasoning and bills the tokens for it, so prefer a non-reasoning tag (for example `qwen3-vl:4b-instruct` over `qwen3-vl:4b`) where one exists.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
 
@@ -14,30 +15,49 @@ Faces are the one type this registry does not own. A `face` entry in `vision.yml
 
 **A custom face model in `vision.yml` is therefore deprecated.** `FACE_MODEL` is authoritative; a custom entry is still loaded while no embedding model is active, logs a deprecation warning, and has its vectors recorded under the configured model's name rather than its own. Unlike a caption or label model, every face model needs code that knows its preprocessing contract — channel order, normalization, input geometry, alignment mode — so there is nothing useful to point at a different artifact here. The registry, thresholds, and provenance columns live in [`internal/ai/face`](../face/README.md).
 
+**A face entry with a service endpoint still needs the `FACE_MODEL` weights installed locally.** The endpoint computes the vectors, but they belong to the model in force: their width is checked against its dimensions, they are dropped if the response names a model they cannot be compared with, and they are recorded under its name. If no model is in force, because `FACE_MODEL` is `none`, `auto` finds no installed weights, or the named weights are missing or license-refused, embeddings are off and no request is sent. `photoprism faces status` then reports embeddings as disabled, and the recognition row of `photoprism vision ls` reads Disabled.
+
 ### Configuration
 
 #### Models
 
-The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so you no longer need placeholder stanzas. The `Thresholds` block is optional; missing or out-of-range values fall back to defaults.
+The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so placeholder stanzas are not needed. The `Thresholds` block is optional; missing values fall back to defaults, as do out-of-range `Confidence` and `Topicality` values and an `NSFW` value of `0` or less, while `NSFW`, `NSFWUpload`, and `NSFWIndex` values above `100` are treated as `100`.
 
-| Field                   | Default                                | Notes                                                                              |
-|:------------------------|:---------------------------------------|:-----------------------------------------------------------------------------------|
-| `Type` (required)       | —                                      | `labels`, `caption`, `face`, `nsfw`, `generate`. Drives routing & scheduling.      |
-| `Name`                  | derived from type/version              | Display name; lower-cased by helpers.                                              |
-| `Model`                 | `""`                                   | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.           |
-| `Version`               | `latest` (non-OpenAI)                  | OpenAI payloads omit version.                                                      |
-| `Engine`                | inferred from service/alias            | Aliases set formats, file scheme, resolution. Explicit `Service` values still win. |
-| `Run`                   | `auto`                                 | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.     |
-| `Default`               | `false`                                | Keep one per type for TensorFlow fallbacks.                                        |
-| `Disabled`              | `false`                                | Registered but inactive.                                                           |
-| `Resolution`            | 224 (TensorFlow) / 720 (Ollama/OpenAI) | Thumbnail edge in px; TensorFlow models default to 224 unless you override.        |
-| `System` / `Prompt`     | engine defaults                        | Override prompts per model.                                                        |
-| `Format`                | `""`                                   | Response hint (`json`, `text`, `markdown`).                                        |
-| `Normalize`             | engine default                         | Label name normalization; see the table below. Labels models only.                 |
-| `Schema` / `SchemaFile` | engine defaults / empty                | Inline vs file JSON schema (labels).                                               |
-| `TensorFlow`            | nil                                    | Local TF model info (paths, tags).                                                 |
-| `Options`               | nil                                    | Sampling/settings merged with engine defaults.                                     |
-| `Service`               | nil                                    | Remote endpoint config (see below).                                                |
+Custom label and NSFW classifiers are ONNX-only. Local `labels` and `nsfw` entries written for the retired TensorFlow models are mapped to the default ONNX models when the file is loaded:
+
+- An entry named `nasnet` (labels) or `nsfw` (NSFW), in any letter case, with no `Engine` or with `Engine: tensorflow` or `local`, and without an `ONNX` block or ONNX-only settings such as `Reduction`, `DefaultThreshold`, or `LabelFile`, is replaced with the default model and logged at info level.
+- Any other local entry that declares `TensorFlow` is replaced with the default model as well, with a warning that names the replaced model.
+- The entry keeps its position in the list as well as its `Run` and `Disabled` values, so `PHOTOPRISM_LABELS_MODEL=auto` and `PHOTOPRISM_NSFW_MODEL=auto` select the installed default model, and a disabled entry stays disabled.
+- Entries with their own service endpoint or a remote engine, such as Ollama or OpenAI, are never mapped; TensorFlow settings left on them are ignored. An entry that declares `TensorFlow` but has neither a local engine nor a service, for example because of a misspelled `Engine`, is disabled with a warning.
+
+Run `photoprism vision save --force` to write the mapped configuration back to `vision.yml`.
+
+| Field                   | Default                              | Notes                                                                                                 |
+|:------------------------|:-------------------------------------|:------------------------------------------------------------------------------------------------------|
+| `Type` (required)       | —                                    | `labels`, `caption`, `face`, `nsfw`, `generate`. Drives routing & scheduling.                         |
+| `Name`                  | derived from type/version            | Display name; lower-cased by helpers.                                                                 |
+| `Model`                 | `""`                                 | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.                              |
+| `Version`               | `latest` (non-OpenAI)                | OpenAI payloads omit version.                                                                         |
+| `Engine`                | inferred from service/alias          | Aliases set formats, file scheme, resolution. Explicit `Service` values still win.                    |
+| `Run`                   | `auto`                               | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.                        |
+| `Default`               | `false`                              | Select the built-in model for a type.                                                                 |
+| `Disabled`              | `false`                              | Registered but inactive.                                                                              |
+| `Resolution`            | model-specific / 720 (Ollama/OpenAI) | Local ONNX geometry comes from its description or graph.                                              |
+| `System` / `Prompt`     | engine defaults                      | Override prompts per model.                                                                           |
+| `Format`                | `""`                                 | Response hint (`json`, `text`, `markdown`).                                                           |
+| `Normalize`             | engine default                       | Label name normalization; see the table below. Labels models only.                                    |
+| `Schema` / `SchemaFile` | engine defaults / empty              | Inline vs file JSON schema (labels).                                                                  |
+| `TensorFlow`            | nil                                  | Local TensorFlow model info for FaceNet; labels and NSFW entries are mapped or ignore it (see above). |
+| `ONNX`                  | nil                                  | Shared local ONNX artifact and preprocessing description.                                             |
+| `LabelFile`             | `labels.txt`                         | Custom vocabulary; registered ImageNet models use the embedded vocabulary.                            |
+| `CanonicalOrder`        | `false`                              | Require canonical ImageNet-1k order and reject a background offset.                                   |
+| `Reduction`             | —                                    | NSFW output reduction: `softmax-unsafe`, `sigmoid-unsafe`, or `neutral-complement`.                   |
+| `UnsafeClassIndex`      | —                                    | Required for `softmax-unsafe`; an explicit `0` is valid.                                              |
+| `NeutralClassIndex`     | —                                    | Required for `neutral-complement`; an explicit `0` is valid.                                          |
+| `DefaultThreshold`      | model-specific                       | Custom NSFW fallback as a probability above 0 and at most 1; otherwise `0.98`.                        |
+| `Options`               | nil                                  | Sampling/settings merged with engine defaults.                                                        |
+| `Service`               | nil                                  | Remote endpoint config (see below).                                                                   |
+| `Path`                  | derived from model name              | Local artifact directory or ONNX file, relative to the configured models path.                        |
 
 #### Label Name Normalization
 
@@ -64,18 +84,20 @@ Phrase mode pairs with a system prompt that does not demand single-word nouns �
 
 #### Run Modes
 
-| Value           | When it runs                                                     | Recommended use                                |
-|:----------------|:-----------------------------------------------------------------|:-----------------------------------------------|
-| `auto`          | TensorFlow defaults during index; external via metadata/schedule | Leave as-is for most setups.                   |
-| `manual`        | Only when explicitly invoked (CLI/API)                           | Experiments and diagnostics.                   |
-| `on-index`      | During indexing + manual                                         | Fast built-in models only.                     |
-| `newly-indexed` | Metadata worker after indexing + manual                          | External/Ollama/OpenAI without slowing import. |
-| `on-demand`     | Manual, metadata worker, and scheduled jobs                      | Broad coverage without index path.             |
-| `on-schedule`   | Scheduled jobs + manual                                          | Nightly/cron-style runs.                       |
-| `always`        | Indexing, metadata, scheduled, manual                            | High-priority models; watch resource use.      |
-| `never`         | Never executes                                                   | Keep definition without running it.            |
+| Value           | When it runs                                                                   | Recommended use                                                                                             |
+|:----------------|:-------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------|
+| `auto`          | Local NSFW and default labels during index; other models via metadata/schedule | Default; recommended for most setups.                                                                       |
+| `manual`        | Only when explicitly invoked (CLI/API)                                         | Experiments and diagnostics.                                                                                |
+| `on-index`      | During indexing + manual                                                       | Fast local models.                                                                                          |
+| `newly-indexed` | Metadata worker after indexing + manual                                        | External/Ollama/OpenAI without slowing import.                                                              |
+| `on-demand`     | Manual, metadata worker, and scheduled jobs                                    | Broad coverage without index path.                                                                          |
+| `on-schedule`   | Scheduled jobs + manual                                                        | Nightly/cron-style runs.                                                                                    |
+| `always`        | Indexing, metadata, scheduled, manual                                          | Troubleshooting only: forces runs in every context, so a classifier can run both during and after indexing. |
+| `never`         | Never executes                                                                 | Keep definition without running it.                                                                         |
 
-> **Note:** For performance reasons, `on-index` is only supported for the built-in TensorFlow models.
+`auto` is the default when `Run` is omitted, except for the built-in caption model, which uses `manual`. Use `always` only to troubleshoot or deliberately force a model, not for regular operation.
+
+> **Note:** For performance reasons, `on-index` is only supported for built-in local models.
 
 #### Model Options
 
@@ -123,7 +145,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 | Field                              | Default                                  | Notes                                                                                                                                                                                                                                                                                         |
 |:-----------------------------------|:-----------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Uri`                              | required for remote                      | Endpoint base. Empty keeps model local (TensorFlow). Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`.                                                                                                                                               |
+| `Uri`                              | required for remote                      | Endpoint base. Empty sends requests to `PHOTOPRISM_VISION_URI` if set, and keeps the model local (ONNX) otherwise. Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`.                                                                                 |
 | `Method`                           | `POST`                                   | Override verb if provider needs it.                                                                                                                                                                                                                                                           |
 | `Key`                              | `""`                                     | Bearer token; prefer env expansion (OpenAI: `OPENAI_API_KEY`, Ollama: `OLLAMA_API_KEY`).                                                                                                                                                                                                      |
 | `Username` / `Password`            | `""`                                     | Injected as basic auth when URI lacks userinfo.                                                                                                                                                                                                                                               |
@@ -135,7 +157,9 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 | `FileScheme`                       | set by engine alias (`data` or `base64`) | Controls image transport.                                                                                                                                                                                                                                                                     |
 | `Disabled`                         | `false`                                  | Disable the endpoint without removing the model.                                                                                                                                                                                                                                              |
 
-> **Authentication:** All credentials and identifiers support `${ENV_VAR}` expansion. `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` injects HTTP basic authentication into the service URI when it is not already present. When `Service.Key` is empty, PhotoPrism defaults to `OPENAI_API_KEY` (OpenAI engine) or `OLLAMA_API_KEY` (Ollama engine), also honoring their `_FILE` counterparts. Key and schema file paths must reference readable regular files (directories are ignored/rejected).
+> **Authentication:** All credentials and identifiers support `${ENV_VAR}` expansion. `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` injects HTTP basic authentication into the service URI when it is not already present. When `Service.Key` is empty, PhotoPrism defaults to `OPENAI_API_KEY` (OpenAI engine) or `OLLAMA_API_KEY` (Ollama engine), also honoring their `_FILE` counterparts. The shared `PHOTOPRISM_VISION_KEY` is only sent when a model's requests go to `PHOTOPRISM_VISION_URI`, i.e. its `Service` is disabled or its `Uri` is blank; a model with a blank `Uri` and an enabled `Service` sends its own `Key` there instead if it has one. A model with its own endpoint sends its own `Key` or none, so set `Key: ${PHOTOPRISM_VISION_KEY}` to reuse the shared key when it is supplied through that variable. Only an instance with `PHOTOPRISM_VISION_API` enabled accepts the key, and it compares it as written, while outgoing requests send it with environment variables expanded. A warning is logged at startup if the key as used contains characters other than ASCII letters and digits, single spaces, and `"-+/=#$@:;_.`, which are removed from access tokens, or is longer than 4096 bytes, and if it contains `$` while the Vision API is enabled. While the Vision API is disabled, the key is refused with 401 like any other token. Remove `PHOTOPRISM_VISION_URI` from the instances that call a service before disabling its Vision API, since requests that keep failing authentication can be rate-limited there, which can also block sign-ins from the same address. A wrong key in access-token or app-password format, such as 48 hexadecimal characters, counts against the authentication rate limit like an invalid access token, and requests from an address that is over that limit are refused. A wrong key in another format is not counted, so such a key must be long and random, for example at least 32 random letters and digits. A `Uri` that expands to an empty string, for example because the variable it names is not set, leaves the model without a service: its requests are not sent to `PHOTOPRISM_VISION_URI`, a warning is logged once, and labels, NSFW, and caption requests for that model fail with `service uri of <type> model <name> does not resolve`, while face embeddings are computed locally. Service redirects are not followed, so configure the final URL. Key and schema file paths must reference readable regular files (directories are ignored/rejected).
+
+> **Errors:** A failed request returns an error that names the service format and HTTP status, e.g. `openai service request failed (status 400)`, `(status 307, redirect not followed)` for a redirect, whose target is written to the system log without userinfo and with its query masked, `(invalid service uri)` for a URI that is not a valid request URL, or `(timeout)` / `(connection error)` if no response was received, and a response that cannot be parsed returns `<format> service returned an invalid response (status 200)`. The response text or error cause is written to the system log on the console only, clipped to 4 KiB before quoting. A failed Ollama request returns the same error, with a warning that names the model and status from 400. When the Vision API serves a request that fails, the log view shows only `vision: <request> request failed (details in system log)`; the error text goes to the system log with URI userinfo and queries redacted on a best-effort basis.
 
 > **Retries:** The shared service client retries transient `HTTP 429` responses (rate limiting, `flex`-tier capacity pressure) with bounded exponential backoff — `ServiceMaxRetries` attempts, `ServiceRetryDelay` base delay, capped at `ServiceRetryMaxDelay` — honoring a `Retry-After` header when present (also capped at `ServiceRetryMaxDelay`, so a provider asking for a longer pause is retried sooner and may fail through to the next worker pass) and keeping the total within `ServiceTimeout`. Other error statuses stay terminal, so the item is only reattempted on the next worker pass.
 
@@ -150,7 +174,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 ### Minimal Examples
 
-#### TensorFlow (built‑in defaults)
+#### Built-in Local Defaults
 
 ```yaml
 Models:
@@ -212,52 +236,64 @@ Models:
 
 More OpenAI guidance: [`internal/ai/vision/openai/README.md`](openai/README.md).
 
-#### Custom TensorFlow Labels (SavedModel)
+#### Custom ONNX Labels
 
 ```yaml
 Models:
   - Type: labels
-    Name: transformer
-    Engine: tensorflow
-    Path: transformer   # resolved under assets/models
-    Resolution: 224     # keep standard TF input size unless your model differs
-    TensorFlow:
+    Name: custom_21k
+    Engine: onnx
+    Path: custom_21k
+    LabelFile: labels-imagenet21k.txt
+    ONNX:
+      File: custom_21k.onnx
       Output:
-        Logits: true    # set true for most TF2 SavedModel classifiers
+        Logits: true
 ```
 
-### Custom TensorFlow Models — What’s Supported
+### Custom ONNX Label Models — What’s Supported
 
-- Scope: Classification tasks only (`labels`). TensorFlow models cannot generate captions today; use Ollama or OpenAI for captions.
+- Scope: Fixed-taxonomy local classification (`labels`). Use Ollama or OpenAI for captions and open-vocabulary labels.
 - Location & paths: If `Path` is empty, the model is loaded from `assets/models/<name>` (lowercased, underscores). If `Path` is set, it is still searched under `assets/models`; absolute paths are not supported.
-- Expected files: `saved_model.pb`, a `variables/` directory, and a `labels.txt` alongside the model; use TF2 SavedModel classifiers.
-- Resolution: Stays at 224px unless your model requires a different input size; adjust `Resolution` and the `TensorFlow.Input` block if needed.
-- Sources: Labels produced by TensorFlow models are recorded with source `image`; overriding the source isn’t supported yet.
-- Config file: `vision.yml` is the conventional name; in the latest version, `.yaml` is also supported by the loader.
+- Expected files: One `.onnx` graph and the exact label file declared by `LabelFile`. The output width must equal the number of labels.
+- Preprocessing: Declare geometry, layout, color order, mean/std, resize/crop convention, and interpolation in `ONNX.Input` or embedded `photoprism.*` metadata. Mean and standard-deviation arrays follow tensor channel order after `ColorOrder` is applied. `Resolution` remains an explicit override for graphs with dynamic spatial axes.
+- Output: One tensor is required. Declare `ONNX.Output.Logits`; omitted output semantics default to raw logits with a warning.
+- Sources: Labels produced by local ONNX models are recorded with source `image`; overriding the source isn’t supported yet.
+- Config file: `vision.yml` is the conventional name; the loader also accepts `.yaml`.
+
+### Labels Model Selection
+
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`; model names belong in `vision.yml`. A registered `Type: labels` entry loads pinned artifact metadata, while custom and remote entries retain their configuration. `Default: true` or an absent entry chooses the first installed classifier. Explicit user disablement is preserved. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; an unsupported value does not override it. `photoprism config` and `photoprism vision status` list it only while it is set, marked as ignored when `PHOTOPRISM_LABELS_MODEL` overrides it. Alternative label models run after indexing unless `Run: on-index` is configured.
+
+Missing artifacts and initialization failures do not change saved disablement. Initialization failures are cached until restart; startup warnings name the download command for missing registered artifacts.
 
 ### CLI Quick Reference
 
-- List models: `photoprism vision ls` (shows resolved IDs, engines, options, run mode, disabled flag).
-- Run a model: `photoprism vision run -m labels --count 5` (use `--force` to bypass `Run` rules).
+- List models: `photoprism vision ls` (shows resolved IDs, engines, the ONNX execution provider of local models, options, run mode, effective enabled status, artifact installation status). Text and Markdown output has two tables: `VISION MODELS` lists the configured models except local face entries, and `FACE DETECTION & RECOGNITION` lists the detector `PHOTOPRISM_FACE_DETECTOR` selects and the embedding model `PHOTOPRISM_FACE_MODEL` selects, with their role, the `PHOTOPRISM_FACE_RUN` schedule, and the option that selects them. A face entry with a service endpoint stays in the first table, and the recognition row then names the `face-model` its vectors are recorded under. `--csv`, `--tsv`, and `--json` return one flat list with an `Option` column (`vision-yaml`, `face-detector`, or `face-model`).
+- Check status: `photoprism vision status` (`config` is an alias) states which model generates labels, NSFW flags, and captions, when it runs, and whether uploads are screened, followed by the related options and the NSFW thresholds in effect. `photoprism config` lists the `labels-model` and `nsfw-model` options as set, without the models they select.
+- Run a model: `photoprism vision run -m labels --count 5` (`--force` replaces existing data where the model supports it and the source priority is equal or higher). A requested model that cannot run is skipped with the reason, for example `detect-nsfw is off` for `-m nsfw`.
 - Validate config: `photoprism vision ls --json` to confirm env-expanded values without triggering calls.
 
 ### When to Choose Each Engine
 
-- **TensorFlow**: fast, offline defaults for core features (labels, faces, NSFW). Zero external deps.
+- **ONNX Runtime**: fast, offline fixed-taxonomy labels and face models with one shared native runtime.
+- **TensorFlow**: transitional local FaceNet support until its ONNX migration lands.
 - **Ollama**: private, GPU/CPU-hosted multimodal LLMs; best for richer captions/labels without cloud traffic.
 - **OpenAI**: highest quality reasoning and multimodal support; requires API key and network access.
 
 ### NSFW Detection
 
-NSFW is wired through the same model registry as labels, captions, and faces — `Type: nsfw` resolves to the built-in TensorFlow classifier by default, and can be overridden in `vision.yml` to point at an Ollama or OpenAI endpoint.
+NSFW is wired through the same model registry as labels, captions, and faces. `PHOTOPRISM_NSFW_MODEL` chooses `auto`, `none`, or `labels`. In `auto` mode, a `Type: nsfw` entry in `vision.yml` selects a registered detector, custom ONNX graph, or remote endpoint; `Default: true` or an absent entry selects the first installed registered detector. Local ONNX NSFW detectors run inline during indexing unless an explicit `Run` setting says otherwise.
 
-There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism can ask the labels call to include `nsfw` + `nsfw_confidence` in the same response. This is gated by the package-level global `DetectNSFWLabels`, set from `config.go` as `DetectNSFW() && Experimental()` — both `PHOTOPRISM_DETECT_NSFW=true` **and** `PHOTOPRISM_EXPERIMENTAL=true` are required. When either flag is off, the labels prompt stays on `LabelPromptDefault` (no NSFW fields), and `labels.IsNSFW()` cannot trigger.
+There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism can ask the labels call to include `nsfw` + `nsfw_confidence` in the same response. This is gated by the package-level global `DetectNSFWLabels`, set from `config.go` when `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels`. It disables dedicated detection and upload screening; startup system warnings explain unscreened uploads when `PHOTOPRISM_UPLOAD_NSFW=false` and unavailable detection when the labels model cannot produce NSFW fields.
 
-The runtime guards in `internal/photoprism/index_mediafile.go` and `internal/workers/vision.go` additionally short-circuit any NSFW promotion on `conf.DetectNSFW()`. The dedicated `Type: nsfw` model is filtered out of scheduled runs by `VisionModelShouldRun` whenever `DetectNSFW()` is false. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the full call-graph and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
+The indexer, metadata worker, and vision worker apply label-derived NSFW flags only in `labels` mode with `PHOTOPRISM_DETECT_NSFW=true`. Other modes ignore NSFW fields even when a custom prompt requests them. Dedicated detection runs only in `auto` mode, and indexing additionally requires `PHOTOPRISM_DETECT_NSFW=true`.
+
+`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFWUpload` and `Thresholds.NSFWIndex` independently control the dedicated detector for uploads and indexing; when omitted, `0`, or `-1`, they select the detector's calibrated threshold. `Thresholds.NSFW` applies only to labels models in the Ollama/OpenAI fast path and never to the dedicated detector; it defaults to `75` when omitted or not positive. Explicit thresholds range from `1` through `100`, and larger values are treated as `100`. Remote detector results without local calibration use the package fallback of `75`. A custom dedicated detector without `DefaultThreshold` uses the package fallback of `0.98`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 
 ### Model Unload on Idle
 
-PhotoPrism currently keeps TensorFlow models resident for the lifetime of the process to avoid repeated load costs. A future “model unload on idle” mode would track last-use timestamps and close the TensorFlow session/graph after a configurable idle period, releasing the model’s memory footprint back to the OS. The trade-off is higher latency and CPU overhead when a model is used again, plus extra I/O to reload weights. This may be attractive for low-frequency or memory-constrained deployments but would slow continuous indexing jobs, so it is not enabled today.
+PhotoPrism currently keeps local ONNX and TensorFlow models resident for the lifetime of the process to avoid repeated load costs. A future “model unload on idle” mode would track last-use timestamps and close the session after a configurable idle period. The trade-off is higher latency and CPU overhead on the next request, so it is not enabled today.
 
 ### Troubleshooting
 

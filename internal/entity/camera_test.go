@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,7 +17,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 	t.Run("UnknownCamera", func(t *testing.T) {
 		m := UnknownCamera
 
-		assert.Equal(t, uint(1), m.ID)
+		require.NotZero(t, UnknownCamera.ID)
 		assert.Equal(t, UnknownID, m.CameraSlug)
 
 		result := FirstOrCreateCamera(&m)
@@ -25,9 +26,9 @@ func TestFirstOrCreateCamera(t *testing.T) {
 			t.Fatal("result must not be nil")
 		}
 
-		assert.Equal(t, uint(1), m.ID)
+		assert.Equal(t, UnknownCamera.ID, m.ID)
 		assert.Equal(t, UnknownID, m.CameraSlug)
-		assert.Equal(t, uint(1), result.ID)
+		assert.Equal(t, UnknownCamera.ID, result.ID)
 		assert.Equal(t, UnknownID, result.CameraSlug)
 	})
 	t.Run("ExistingCamera", func(t *testing.T) {

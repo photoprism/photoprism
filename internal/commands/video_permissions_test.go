@@ -41,9 +41,15 @@ printf 'trimmed' > "$output"
 
 // TestVideoTranscodeActionCreationMode checks the CLI action's output permissions after conversion.
 func TestVideoTranscodeActionCreationMode(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	ffmpegBin, err := exec.LookPath("ffmpeg")
 	if err != nil {
 		t.Skip("ffmpeg is required for the one-frame transcode fixture")
+	}
+	if commandTestProcess(t) {
+		return
 	}
 	conf := get.Config()
 	saved := *conf.Options()
@@ -71,11 +77,11 @@ func TestVideoTranscodeActionCreationMode(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", photo.PhotoUID).Delete(&entity.File{}).Error)
 		require.NoError(t, entity.UnscopedDb().Delete(&photo).Error)
 	})
-	dest, err := fs.FileName(src, conf.SidecarPath(), conf.OriginalsPath(), fs.ExtAvc)
+	dest, err := fs.FilePath(src, conf.SidecarPath(), conf.OriginalsPath(), fs.ExtAvc)
 	require.NoError(t, err)
 	outputDir := filepath.Join(conf.SidecarPath(), filepath.Base(dir))
 	require.Equal(t, outputDir, filepath.Dir(dest))
-	require.NoError(t, fs.MkdirAll(outputDir))
+	require.NoDirExists(t, outputDir, "the command must create the sidecar folder")
 	t.Cleanup(func() { require.NoError(t, os.RemoveAll(outputDir)) })
 	control := filepath.Join(dir, "mode-control")
 	require.NoError(t, os.WriteFile(control, nil, fs.ModeFile))

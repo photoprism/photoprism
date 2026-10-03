@@ -75,7 +75,7 @@ esac
 echo "Extracting \"${URL}\" to \"${DESTDIR}/go\"..."
 set -eux;
 sudo rm -rf "${DESTDIR}/go"
-curl -fsSL "${URL}" | sudo tar -xz -C "${DESTDIR}"
+curl -fsSL "${URL}" | sudo tar --no-same-owner -xz -C "${DESTDIR}"
 set +x
 echo "Done."
 

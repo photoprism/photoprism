@@ -46,9 +46,9 @@ func GetConfigOptions(router *gin.RouterGroup) {
 //	@Tags		Config, Settings
 //	@Accept		json
 //	@Produce	json
-//	@Success	200					{object}	config.Options
-//	@Failure	400,401,403,429,500	{object}	i18n.Response
-//	@Param		options				body		config.Options	true	"properties to be updated (only submit values that should be changed)"
+//	@Success	200						{object}	config.Options
+//	@Failure	400,401,403,413,429,500	{object}	i18n.Response
+//	@Param		options					body		config.Options	true	"properties to be updated (only submit values that should be changed)"
 //	@Router		/api/v1/config/options [post]
 func SaveConfigOptions(router *gin.RouterGroup) {
 	router.POST("/config/options", func(c *gin.Context) {
@@ -88,6 +88,9 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			// A value that does not fit the option it sets is the request's fault, not the server's.
 			if errors.Is(err, config.ErrInvalidOptionValue) {
 				AbortBadRequest(c, err)
+				return
+			} else if errors.Is(err, config.ErrOptionsTooLarge) {
+				AbortRequestTooLarge(c, i18n.ErrFileTooLarge)
 				return
 			}
 

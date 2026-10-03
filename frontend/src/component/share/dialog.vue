@@ -27,7 +27,7 @@
             <v-expansion-panel-text>
               <v-card color="secondary-light">
                 <v-card-text class="dense">
-                  <v-row align="center" dense>
+                  <v-row class="align-center" density="compact">
                     <v-col cols="12">
                       <v-text-field
                         :model-value="link.url()"
@@ -85,10 +85,16 @@
                         :label="label.pass"
                         :placeholder="link.HasPassword ? '••••••••' : 'optional'"
                         color="surface-variant"
-                        :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                         :type="showPassword ? 'text' : 'password'"
-                        @click:append-inner="showPassword = !showPassword"
-                      ></v-text-field>
+                      >
+                        <template #append-inner>
+                          <p-input-action
+                            :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                            :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                            @click="showPassword = !showPassword"
+                          ></p-input-action>
+                        </template>
+                      </v-text-field>
                     </v-col> -->
                     <v-col cols="12" class="d-flex justify-space-between align-center ga-3">
                       <v-btn

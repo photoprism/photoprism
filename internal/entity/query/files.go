@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -50,7 +51,7 @@ func Files(limit, offset int, dir string, includeMissing bool) (files entity.Fil
 	}
 
 	if dir != "" {
-		stmt = stmt.Where("files.file_name LIKE ?", dir+"/%")
+		stmt = stmt.Where(clean.SqlPrefixCond("files.file_name"), clean.SqlPrefixArgs(dir+"/")...)
 	}
 
 	err = stmt.Order("id").Limit(limit).Offset(offset).Find(&files).Error

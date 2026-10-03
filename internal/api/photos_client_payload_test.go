@@ -81,13 +81,87 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 	const (
 		photoUID = "ps6sg6be2lvl0yh7" // shared photo for general payload checks
 		labelUID = "ps6sg6be2lvl0y14" // Photo07, mutated by the round trip below
-		label    = "Client Payload Probe"
 	)
+	label := "Client Payload Probe " + rnd.Base36(6)
+	labelName := entity.NewLabel(label, 0).LabelName
 
 	app, router, conf := NewApiTest()
 	GetPhoto(router)
 	UpdatePhoto(router)
 	AddPhotoLabel(router)
+	var photo entity.Photo
+	require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", photoUID).First(&photo).Error)
+	var file entity.File
+	require.NoError(t, entity.UnscopedDb().Where("photo_id = ? AND file_hash = ?", photo.ID, jpegFixtureHash).First(&file).Error)
+	require.Equal(t, photo.ID, file.PhotoID)
+	var priorKeywords []entity.PhotoKeyword
+	require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&priorKeywords).Error)
+	var priorLabels []entity.PhotoLabel
+	require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&priorLabels).Error)
+	var existingKeywords []entity.Keyword
+	require.NoError(t, entity.UnscopedDb().Find(&existingKeywords).Error)
+	existingKeywordIDs := make(map[uint]bool, len(existingKeywords))
+	for _, keyword := range existingKeywords {
+		existingKeywordIDs[keyword.ID] = true
+	}
+	t.Cleanup(func() {
+		db := entity.UnscopedDb()
+		var current entity.Photo
+		if err := db.Where("id = ?", photo.ID).First(&current).Error; assert.NoError(t, err) {
+			assert.NoError(t, current.SetFavorite(photo.PhotoFavorite))
+		}
+		assert.NoError(t, db.Model(&entity.Photo{}).Where("id = ?", photo.ID).
+			UpdateColumns(entity.Values{"deleted_at": photo.DeletedAt, "photo_quality": photo.PhotoQuality,
+				"photo_private": photo.PhotoPrivate, "photo_favorite": photo.PhotoFavorite,
+				"edited_at": photo.EditedAt, "updated_at": photo.UpdatedAt}).Error)
+		assert.NoError(t, db.Model(&entity.File{}).Where("id = ?", file.ID).
+			UpdateColumns(entity.Values{"deleted_at": file.DeletedAt, "file_missing": file.FileMissing,
+				"file_primary": file.FilePrimary, "updated_at": file.UpdatedAt}).Error)
+		assert.NoError(t, db.Unscoped().Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+		for _, relation := range priorKeywords {
+			assert.NoError(t, db.Create(&relation).Error)
+		}
+		assert.NoError(t, db.Unscoped().Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+		for _, relation := range priorLabels {
+			assert.NoError(t, db.Create(&relation).Error)
+		}
+		entity.FlushPhotoKeywordCache()
+		entity.FlushPhotoLabelCache()
+		var currentKeywords []entity.Keyword
+		assert.NoError(t, db.Find(&currentKeywords).Error)
+		for _, keyword := range currentKeywords {
+			if existingKeywordIDs[keyword.ID] {
+				continue
+			}
+			var references int
+			assert.NoError(t, db.Model(&entity.PhotoKeyword{}).Where("keyword_id = ?", keyword.ID).Count(&references).Error)
+			if references == 0 {
+				assert.NoError(t, db.Unscoped().Delete(&entity.Keyword{}, "id = ?", keyword.ID).Error)
+			}
+		}
+		entity.FlushKeywordCache()
+		entity.RegenerateIndexForPhotoIDs([]uint{photo.ID})
+	})
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).
+		Updates(entity.Values{"deleted_at": nil, "photo_quality": 3, "photo_private": false}).Error)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", file.ID).
+		Updates(entity.Values{"deleted_at": nil, "file_missing": false, "file_primary": true}).Error)
+	entity.RegenerateIndexForPhotoIDs([]uint{photo.ID})
+	album := entity.NewAlbum("Client Payload "+rnd.Base36(6), entity.AlbumManual)
+	require.NoError(t, album.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Unscoped().Delete(album).Error })
+	entry := entity.NewPhotoAlbum(photoUID, album.AlbumUID)
+	require.NoError(t, entry.Save())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(entry).Error })
+	var details entity.Details
+	require.NoError(t, entity.Db().Where("photo_id = ?", photo.ID).First(&details).Error)
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Model(&entity.Details{}).Where("photo_id = ?", photo.ID).
+			UpdateColumns(entity.Values{"keywords": details.Keywords, "updated_at": details.UpdatedAt}).Error
+	})
+	const keywords = "client payload probe"
+	require.NoError(t, entity.Db().Model(&entity.Details{}).Where("photo_id = ?", photo.ID).
+		UpdateColumn("keywords", keywords).Error)
 
 	prevAuthMode := conf.AuthMode()
 	conf.SetAuthMode(config.AuthModePasswd)
@@ -109,13 +183,16 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 
 	require.NotZero(t, markerCount(admin), "the fixture has to carry markers for the case to mean anything")
 	require.NotEmpty(t, admin.Get("Details").Raw, "and details, which the reduced payload drops")
+	require.Equal(t, keywords, admin.Get("Details.Keywords").String())
 	require.NotEmpty(t, admin.Get("Albums").Array(), "and album membership, which is answered separately")
+	require.Equal(t, album.AlbumUID, admin.Get("Albums.#(UID==\""+album.AlbumUID+"\").UID").String())
 
 	t.Run("UnrestrictedScope", func(t *testing.T) {
 		client := picture(t, photoUID, token(t, "*"))
 		assert.Equal(t, markerCount(admin), markerCount(client))
 		assert.Equal(t, len(admin.Get("Labels").Array()), len(client.Get("Labels").Array()))
 		assert.Equal(t, admin.Get("Details.Keywords").String(), client.Get("Details.Keywords").String())
+		assert.Equal(t, album.AlbumUID, client.Get("Albums.#(UID==\""+album.AlbumUID+"\").UID").String())
 		assert.Equal(t, admin.Get("CameraSerial").String(), client.Get("CameraSerial").String())
 		assert.Equal(t, admin.Get("UUID").String(), client.Get("UUID").String())
 		assert.Equal(t, admin.Get("CreatedBy").String(), client.Get("CreatedBy").String())
@@ -176,12 +253,33 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 
 		photo := entity.Photo{}
 		require.NoError(t, entity.UnscopedDb().First(&photo, "photo_uid = ?", labelUID).Error)
+		var priorDetails []entity.Details
+		require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&priorDetails).Error)
+		var priorKeywords []entity.PhotoKeyword
+		require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&priorKeywords).Error)
+		var priorLabels []entity.PhotoLabel
+		require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&priorLabels).Error)
 
 		t.Cleanup(func() {
-			entity.UnscopedDb().Unscoped().
-				Exec("DELETE FROM photos_labels WHERE photo_id = ? AND label_id IN (SELECT id FROM labels WHERE label_name = ?)",
-					photo.ID, label)
-			entity.UnscopedDb().Unscoped().Delete(&entity.Label{}, "label_name = ?", label)
+			db := entity.UnscopedDb().Unscoped()
+			assert.NoError(t, db.Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			for _, relation := range priorLabels {
+				assert.NoError(t, db.Create(&relation).Error)
+			}
+			assert.NoError(t, db.Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+			for _, relation := range priorKeywords {
+				assert.NoError(t, db.Create(&relation).Error)
+			}
+			assert.NoError(t, db.Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
+			for _, details := range priorDetails {
+				assert.NoError(t, db.Create(&details).Error)
+			}
+			assert.NoError(t, db.Model(&entity.Photo{}).Where("id = ?", photo.ID).
+				UpdateColumns(entity.Values{"photo_quality": photo.PhotoQuality, "updated_at": photo.UpdatedAt,
+					"edited_at": photo.EditedAt}).Error)
+			assert.NoError(t, db.Delete(&entity.Label{}, "label_name = ?", labelName).Error)
+			entity.FlushPhotoLabelCache()
+			entity.FlushPhotoKeywordCache()
 		})
 
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/photos/"+labelUID+"/label",
@@ -189,7 +287,7 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code)
 
 		stored := entity.Label{}
-		require.NoError(t, entity.UnscopedDb().First(&stored, "label_name = ?", label).Error)
+		require.NoError(t, entity.UnscopedDb().First(&stored, "label_name = ?", labelName).Error)
 		require.NotEmpty(t, stored.LabelUID)
 
 		assert.Contains(t, gjson.Get(r.Body.String(), "Labels").Raw, stored.LabelUID,

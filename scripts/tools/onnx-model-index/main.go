@@ -133,7 +133,7 @@ func main() {
 		return
 	}
 
-	if err = os.WriteFile(*output, encoded, 0o644); err != nil {
+	if err = os.WriteFile(*output, encoded, 0o644); err != nil { //nolint:gosec // G306: public catalogue published beside the models
 		fmt.Fprintf(os.Stderr, "onnx-model-index: %s\n", err)
 		os.Exit(1)
 	}
@@ -367,7 +367,7 @@ func PublisherFromSource(source string) string {
 // FileSHA256 returns the hex-encoded SHA-256 of a file, streaming it so a multi-hundred-megabyte
 // artifact does not have to be held in memory.
 func FileSHA256(path string) (string, error) {
-	f, err := os.Open(path)
+	f, err := os.Open(path) //nolint:gosec // G304: path comes from the command line
 
 	if err != nil {
 		return "", err

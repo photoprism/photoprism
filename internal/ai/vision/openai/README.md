@@ -1,10 +1,10 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** August 9, 2026
+**Last Updated:** October 2, 2026
 
 ### Overview
 
-This package contains PhotoPrism’s adapter for the OpenAI Responses API. It enables existing caption and label workflows (`GenerateCaption`, `GenerateLabels`, and the `photoprism vision run` CLI) to call OpenAI models alongside TensorFlow and Ollama without changing worker or API code. The implementation focuses on predictable results, structured outputs, and clear observability so operators can opt in gradually.
+This package contains PhotoPrism’s adapter for the OpenAI Responses API. It enables existing caption and label workflows (`GenerateCaption`, `GenerateLabels`, and the `photoprism vision run` CLI) to call OpenAI models alongside the local ONNX models and Ollama without changing worker or API code. The implementation focuses on predictable results, structured outputs, and clear observability so operators can opt in gradually.
 
 #### Constraints
 
@@ -22,13 +22,13 @@ This package contains PhotoPrism’s adapter for the OpenAI Responses API. It en
 #### Non-Goals
 
 - Introducing a new `generate` model type or combined caption/label endpoint (reserved for a later phase).
-- Replacing the default TensorFlow models; they remain active as fallbacks.
+- Replacing the default ONNX models; PhotoPrism uses the last enabled model of each type and does not fall back to another entry.
 - Managing OpenAI billing or quota dashboards beyond surfacing token counts in logs and metrics.
 
 ### Prompt, Model, & Schema Guidance
 
 - **Models:** The adapter targets GPT‑5 vision tiers (e.g. `gpt-5-nano`, `gpt-5-mini`). These models support image inputs, structured outputs, and deterministic settings. Set `Name` to the exact provider identifier so defaults are applied correctly. Caption models share the same configuration surface and run through the same adapter.
-- **Prompts:** Defaults live in `defaults.go`. Captions use a single-sentence instruction; labels use `LabelPromptDefault` (or `LabelPromptNSFW` when the package-level `vision.DetectNSFWLabels` global is true, which requires both `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_EXPERIMENTAL=true`). Custom prompts should retain schema reminders so structured outputs stay valid.
+- **Prompts:** Defaults live in `defaults.go`. Captions use a single-sentence instruction; labels use `LabelPromptDefault` (or `LabelPromptNSFW` when the package-level `vision.DetectNSFWLabels` global is true, which requires `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels`). Custom prompts should retain schema reminders so structured outputs stay valid.
 - **Schemas:** Labels use the JSON schema returned by `schema.LabelsJsonSchema(nsfw)`; the response format name is derived via `schema.JsonSchemaName` (e.g. `photoprism_vision_labels_v1`). Captions omit schemas unless operators explicitly request a structured format.
 - **Label names:** OpenAI's own models (`gpt-*`, `o1`/`o3`/`o4`) default to `Normalize: phrase`, so a compound name such as `ferris wheel` is stored whole instead of collapsing to `Ferris` — those tiers return a compound only when the subject has one. The default is keyed on the model identifier rather than the engine, so an OpenAI-compatible endpoint serving an open-weight model locally keeps `single-word`. Either can be overridden per model.
 - **When to keep defaults:** For most deployments, leaving `System`, `Prompt`, `Schema`, and `Options` unset yields stable output with minimal configuration. Override them only when domain-specific language or custom scoring is necessary, and add regression tests alongside.
@@ -81,7 +81,7 @@ Models:
       Tier: flex       # optional; sent as top-level "service_tier" (e.g. cheaper, slower "flex")
 ```
 
-Keep TensorFlow entries in place so PhotoPrism falls back when the external service is unavailable.
+Only the last enabled labels entry is used, so remove or disable other labels entries, including legacy TensorFlow ones, which load as the default ONNX model.
 
 > `Service.Tier` is passed through verbatim as the top-level `service_tier` field in the request body (values follow OpenAI: `auto`, `default`, `flex`, `priority`, …). It is omitted when empty (OpenAI default `auto`) and supports `${ENV}` expansion. The `flex` tier bills at roughly half the standard rate and suits the metadata worker and scheduled runs, which tolerate higher latency; such requests are more likely to return `HTTP 429` when capacity is short, which the shared client retries with bounded exponential backoff before the item falls through to the next worker pass.
 
@@ -110,13 +110,13 @@ Keep TensorFlow entries in place so PhotoPrism falls back when the external serv
 
 #### Rate Limiting
 
-OpenAI calls respect the existing `limiter.Auth` configuration used by the vision service. Transient `HTTP 429` responses are retried with bounded exponential backoff (`ServiceMaxRetries` attempts, `ServiceRetryDelay` base, capped at `ServiceRetryMaxDelay`), honoring a `Retry-After` header when present — itself capped at `ServiceRetryMaxDelay`, so a longer requested pause is retried sooner and may fail through to the next worker pass — and staying within `ServiceTimeout`; other error statuses surface as standard HTTP errors and are not retried. Operators should still ensure they have adequate account limits and consider external rate limiting when sharing credentials.
+The client applies no rate limit of its own. Transient `HTTP 429` responses are retried with bounded exponential backoff (`ServiceMaxRetries` attempts, `ServiceRetryDelay` base, capped at `ServiceRetryMaxDelay`), honoring a `Retry-After` header when present — itself capped at `ServiceRetryMaxDelay`, so a longer requested pause is retried sooner and may fail through to the next worker pass — and staying within `ServiceTimeout`; other error statuses return `openai service request failed (status N)` and are not retried, with the response text in the console system log. Operators should still ensure they have adequate account limits and consider external rate limiting when sharing credentials.
 
 #### Testing & Validation
 
 1. Unit tests: `go test ./internal/ai/vision/openai ./internal/ai/vision -run OpenAI -count=1`. Fixtures under `internal/ai/vision/openai/testdata/` replay real Responses payloads (captions and labels).
-2. CLI smoke test: `photoprism vision run -m labels --count 1 --force` with trace logging enabled to inspect sanitised Responses.
-3. Compare worker summaries and label sources (`openai`) in the UI or via `photoprism vision ls`.
+2. CLI smoke test: `photoprism vision run -m labels --count 1 --force` with trace logging enabled to inspect sanitized Responses.
+3. Compare worker summaries and the generated labels in the UI; `photoprism vision ls` confirms which entries use the `openai` engine.
 
 #### Code Map
 

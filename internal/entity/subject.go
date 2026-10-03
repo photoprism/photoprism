@@ -147,13 +147,13 @@ func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 
 // AfterSave is a hook that updates the name cache after saving.
 func (m *Subject) AfterSave() (err error) {
-	SubjNames.Set(m.SubjUID, m.SubjName)
+	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 
 // AfterFind is a hook that updates the name cache after querying.
 func (m *Subject) AfterFind() (err error) {
-	SubjNames.Set(m.SubjUID, m.SubjName)
+	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 
@@ -221,7 +221,17 @@ func (m *Subject) Delete() error {
 
 	log.Infof("subject: flagged %s %s as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
 
-	return Db().Delete(m).Error
+	if err := Db().Delete(m).Error; err != nil {
+		return err
+	}
+
+	// Carry the mark onto the in-memory record, which the driver does not do, so that Restore
+	// and DeletePermanently see the subject as deleted without reading the row again.
+	if m.DeletedAt == nil {
+		m.DeletedAt = TimeStamp()
+	}
+
+	return nil
 }
 
 // DeletePermanently permanently removes a subject from the index after is has been soft deleted.
@@ -238,8 +248,13 @@ func (m *Subject) DeletePermanently() error {
 	return UnscopedDb().Delete(m).Error
 }
 
-// AfterDelete resets file and photo counters when the entity was deleted.
+// AfterDelete resets file and photo counters when the entity was deleted. A delete by condition
+// through an empty model names no row, and the update would then reset every subject.
 func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
+	if m.SubjUID == "" {
+		return nil
+	}
+
 	tx.Model(m).Updates(Values{
 		"FileCount":  0,
 		"PhotoCount": 0,
@@ -348,17 +363,17 @@ func FindSubjectByName(name string, restore bool) *Subject {
 
 	result := Subject{}
 
-	// Fetch existing record by uid, if possible
+	// Fetch existing record by uid, if possible, and only if it still carries the name.
 	if uid := SubjNames.Key(name); uid == "" {
-	} else if found := FindSubject(uid); found != nil {
-		result = *found
-	} else {
+	} else if found := FindSubject(uid); found == nil {
 		log.Debugf("subject: cannot find record for uid %s", clean.Log(uid))
+	} else if strings.ToLower(found.SubjName) == strings.ToLower(name) { //nolint:staticcheck // Compares like the cache key.
+		result = *found
 	}
 
 	// Search existing record by name, otherwise.
 	if result.SubjUID != "" {
-	} else if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+	} else if err := UnscopedDb().Where(clean.SqlLikeCond("subj_name"), clean.SqlLike(name)).First(&result).Error; err != nil {
 		log.Debugf("subject: %s does not exist yet", clean.Log(name))
 		return nil
 	}
@@ -640,7 +655,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	} else if err = m.Updates(Values{"subj_name": m.SubjName, "subj_slug": m.SubjSlug}); err != nil {
 		return m, err
 	} else {
-		SubjNames.Set(m.SubjUID, m.SubjName)
+		setSubjName(m.SubjUID, m.SubjName)
 	}
 
 	// Log result.

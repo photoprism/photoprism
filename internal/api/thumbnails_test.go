@@ -8,9 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
+// TestGetThumb checks thumbnail responses and missing-original handling.
 func TestGetThumb(t *testing.T) {
 	t.Run("InvalidType", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -27,6 +29,19 @@ func TestGetThumb(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("WrongFile", func(t *testing.T) {
+		var photo entity.Photo
+		require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", "ps6sg6be2lvl0yh7").First(&photo).Error)
+		var files []entity.File
+		require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&files).Error)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).
+				Updates(entity.Values{"deleted_at": photo.DeletedAt, "photo_quality": photo.PhotoQuality}).Error)
+			for _, file := range files {
+				require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", file.ID).
+					Updates(entity.Values{"deleted_at": file.DeletedAt, "file_missing": file.FileMissing}).Error)
+			}
+			entity.RegenerateIndexForPhotoIDs([]uint{photo.ID})
+		})
 		app, router, conf := NewApiTest()
 		GetThumb(router)
 		r := PerformRequest(app, "GET", "/api/v1/t/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818/"+conf.PreviewToken()+"/fit_7680")

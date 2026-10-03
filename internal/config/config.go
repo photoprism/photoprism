@@ -52,7 +52,6 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/api/download"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -187,12 +186,16 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
-		if err := c.options.Load(optionsYaml); err != nil {
-			event.SystemWarn([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
-		} else if c.env == EnvDevelop {
+		err := c.options.Load(optionsYaml)
+		restrictOptionsFileWithCredential(optionsYaml)
+
+		switch {
+		case err != nil:
+			event.SystemError([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
+		case c.env == EnvDevelop:
 			// Reduce the log level to minimize noise in the test logs.
 			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
-		} else {
+		default:
 			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
 	}
@@ -252,6 +255,9 @@ func (c *Config) Init() error {
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
+
+	// Show warnings for a Vision API key that cannot authenticate requests as configured.
+	c.warnVisionKey()
 
 	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
@@ -435,13 +441,7 @@ func (c *Config) Propagate() {
 	dl.FFprobeBin = c.FFprobeBin()
 
 	// Configure computer vision package.
-	vision.SetCachePath(c.CachePath())
-	vision.SetModelsPath(c.ModelsPath())
-	vision.ServiceApi = c.VisionApi()
-	vision.ServiceUri = c.VisionUri()
-	vision.ServiceKey = c.VisionKey()
-	vision.DownloadUrl = c.DownloadUrl()
-	vision.DetectNSFWLabels = c.DetectNSFW() && c.Experimental()
+	c.PropagateVision()
 
 	// Set allowed path in download package.
 	download.AllowedPaths = []string{
@@ -653,7 +653,7 @@ func (c *Config) loadOptionsYAML() (string, Values, error) {
 		return fileName, values, nil
 	}
 
-	b, err := os.ReadFile(fileName) //nolint:gosec // path derived from config directory
+	b, err := readOptionsFile(fileName)
 	if err != nil || len(b) == 0 {
 		return fileName, values, err
 	}
@@ -700,15 +700,15 @@ func mergeOptionValues(dst Values, src Values) bool {
 	return changed
 }
 
-// writeOptionsYAML persists merged options values. It does not touch the in-memory options,
-// which the caller applies through applyOptionValues when it changed one.
+// writeOptionsYAML persists merged options values with writeOptionsFile. It does not touch the in-memory
+// options, which the caller applies through applyOptionValues when it changed one.
 func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) {
 	b, err := yaml.Marshal(values)
 	if err != nil {
 		return false, err
 	}
 
-	if err = os.WriteFile(fileName, b, fs.ModeConfigFile); err != nil {
+	if err = writeOptionsFile(fileName, b, hasCredentialOption(values)); err != nil {
 		return false, err
 	}
 

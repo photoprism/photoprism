@@ -2,8 +2,10 @@ package meta
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media/projection"
@@ -1087,7 +1089,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, float32(32.843544), float32(data.Lat))
 		assert.Equal(t, float32(-117.28025), float32(data.Lng))
 		assert.Equal(t, 18, clean.Altitude(data.Altitude))
-		assert.Equal(t, "0.002", data.Exposure)
+		assert.Equal(t, "1/500", data.Exposure)
 		assert.Equal(t, "Canon", data.CameraMake)
 		assert.Equal(t, "Canon EOS 6D", data.CameraModel)
 		assert.Equal(t, "", data.CameraOwner)
@@ -1183,7 +1185,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, float32(65.05558), float32(data.Lat))
 		assert.Equal(t, float32(-16.625702), float32(data.Lng))
 		assert.Equal(t, 30, clean.Altitude(data.Altitude))
-		assert.Equal(t, "0.125", data.Exposure)
+		assert.Equal(t, "1/8", data.Exposure)
 		assert.Equal(t, "NIKON CORPORATION", data.CameraMake)
 		assert.Equal(t, "NIKON D800E", data.CameraModel)
 		assert.Equal(t, "", data.CameraOwner)
@@ -1428,4 +1430,32 @@ func TestData_Exiftool_Software(t *testing.T) {
 		data := exiftoolSoftware(t, `"Software":"Adobe Photoshop 24.0","CreatorTool":"Adobe Lightroom 14.2"`)
 		assert.Equal(t, "Adobe Photoshop 24.0", data.Software)
 	})
+}
+
+// TestData_Exiftool_ModifiedAt verifies that the modify time keys are read into ModifiedAt only.
+func TestData_Exiftool_ModifiedAt(t *testing.T) {
+	for name, tc := range map[string]struct {
+		json       string
+		takenAt    string
+		modifiedAt string
+	}{
+		"XmpTiffDateTime":   {`[{"DateTime":"2020:01:01 10:00:06"}]`, "", "2020-01-01 10:00:06"},
+		"ModifyDate":        {`[{"ModifyDate":"2020:01:01 10:00:03","DateTime":"2020:01:01 10:00:06"}]`, "", "2020-01-01 10:00:03"},
+		"DateTimeOriginal":  {`[{"DateTime":"2020:01:01 10:00:06","DateTimeOriginal":"2020:01:01 10:00:01"}]`, "2020-01-01 10:00:01", "2020-01-01 10:00:06"},
+		"DateTimeDigitized": {`[{"ModifyDate":"2020:01:01 10:00:03","DateTimeDigitized":"2020:01:01 10:00:05"}]`, "2020-01-01 10:00:05", "2020-01-01 10:00:03"},
+		"CreateDate":        {`[{"ModifyDate":"2020:01:01 10:00:03","CreateDate":"2020:01:01 10:00:02"}]`, "2020-01-01 10:00:02", "2020-01-01 10:00:03"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			var data Data
+			require.NoError(t, data.Exiftool([]byte(tc.json), ""))
+
+			if tc.takenAt == "" {
+				assert.True(t, data.TakenAt.IsZero())
+			} else {
+				assert.Equal(t, tc.takenAt, data.TakenAt.UTC().Format(time.DateTime))
+			}
+
+			assert.Equal(t, tc.modifiedAt, data.ModifiedAt.Format(time.DateTime))
+		})
+	}
 }

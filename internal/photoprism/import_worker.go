@@ -1,13 +1,18 @@
 package photoprism
 
 import (
+	"errors"
+	"fmt"
 	"path/filepath"
+	"sync/atomic"
+	"syscall"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // ImportJob describes a media import task pulled from the worker queue.
@@ -17,6 +22,45 @@ type ImportJob struct {
 	IndexOpt  IndexOptions
 	ImportOpt ImportOptions
 	Imp       *Import
+	Failures  *ImportFailures // Counts files whose content did not reach the originals, if set.
+}
+
+// ImportFailures counts the files of an import run whose content could not be moved or copied to
+// the originals folder, and whether the storage was full.
+type ImportFailures struct {
+	files   atomic.Int64
+	noSpace atomic.Bool
+}
+
+// add counts a file that could not be imported because of err.
+func (f *ImportFailures) add(err error) {
+	if f == nil {
+		return
+	}
+	f.files.Add(1)
+	if errors.Is(err, syscall.ENOSPC) || errors.Is(err, syscall.EDQUOT) {
+		f.noSpace.Store(true)
+	}
+}
+
+// Err returns status.ErrInsufficientStorage if the storage was full, ErrImportIncomplete if other
+// files could not be imported, or nil.
+func (f *ImportFailures) Err() error {
+	if f == nil {
+		return nil
+	} else if n := f.files.Load(); n == 0 {
+		return nil
+	} else if f.noSpace.Load() {
+		return fmt.Errorf("%w (%d)", status.ErrInsufficientStorage, n)
+	} else {
+		return fmt.Errorf("%w (%d)", ErrImportIncomplete, n)
+	}
+}
+
+// importedContent reports whether the file at dest is a regular file with the given hash, so a failed
+// move or copy, e.g. of a source that could not be removed afterwards, still placed the content.
+func importedContent(dest, hash string) bool {
+	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
 // ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
@@ -63,7 +107,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			log.Warnf("import: %s", clean.Error(jsonErr))
 		}
 
-		for _, f := range related.Files {
+		for _, f := range insta360ImportOrder(related) {
 			relFileName := f.RelName(src)
 
 			if destFileName, err := imp.DestinationFilename(related.Main, f, opt.DestFolder); err == nil {
@@ -94,16 +138,31 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				logRelName := clean.Log(fs.RelName(destFileName, imp.originalsPath()))
+				srcHash := f.Hash()
+
+				var importErr error
 
 				if opt.Move {
-					if moveErr := f.Move(destFileName, false); moveErr != nil {
-						log.Error(clean.Error(moveErr))
+					if importErr = f.Move(destFileName, false); importErr != nil {
+						log.Error(clean.Error(importErr))
 						log.Warnf("import: could not move file to %s", logRelName)
 					}
-				} else {
-					if copyErr := f.Copy(destFileName, false); copyErr != nil {
-						log.Error(clean.Error(copyErr))
-						log.Warnf("import: could not copy file to %s", logRelName)
+				} else if importErr = f.Copy(destFileName, false); importErr != nil {
+					log.Error(clean.Error(importErr))
+					log.Warnf("import: could not copy file to %s", logRelName)
+				}
+
+				// A file whose content did not reach the originals is counted and, if it is the main
+				// file, not indexed, since whatever the destination holds is not this file.
+				switch {
+				case importErr == nil:
+				case importedContent(destFileName, srcHash):
+					log.Warnf("import: %s already holds the content, the staged file remains", logRelName)
+				default:
+					job.Failures.add(importErr)
+
+					if destMainFileName == destFileName {
+						destMainFileName = ""
 					}
 				}
 			} else {
@@ -195,6 +254,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 			if o.Convert {
 				for _, rf := range related.Files {
 					if rf == nil || !rf.IsMedia() || rf.HasPreviewImage() {
+						continue
+					} else if insta360ImportedMember(originalName, relatedOriginalNames[rf.FileName()]) {
+						// The combined preview of an imported capture is made from its left lens.
 						continue
 					}
 
@@ -290,6 +352,34 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// Log result.
 				log.Infof("import: %s related %s file %s", res, file.FileType(), clean.Log(file.RootRelName()))
 			}
+
+			// Renamed capture files are only recognized by their original names once they are indexed, so the
+			// preview of the left lens is then made again from both lenses.
+			if o.Convert && photoUID != "" && related.Main != nil {
+				imp.updateInsta360Preview(related.Main, o, photoUID, opt.UID)
+			}
 		}
 	}
+}
+
+// updateInsta360Preview replaces the preview of an imported capture's left lens with one made from both lenses.
+func (imp *Import) updateInsta360Preview(main *MediaFile, o IndexOptions, photoUID, userUID string) {
+	if capture := FindInsta360Capture(main); !capture.ValidPair() || capture.Left.FileName() != main.FileName() {
+		return
+	} else if !imp.conf.FFmpegEnabled() || !imp.convert.FFmpegAllowed(main) {
+		return
+	}
+
+	img, err := imp.convert.ToImage(main, true)
+
+	if err != nil || img == nil {
+		log.Warnf("import: could not create equirectangular preview for %s (%s)", clean.Log(main.RootRelName()), clean.Error(err))
+		return
+	} else if thumbsErr := img.GenerateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
+		log.Warnf("import: failed to generate thumbnails for %s (%s)", clean.Log(img.RootRelName()), thumbsErr.Error())
+	}
+
+	img.SetRelatedMain(main)
+	res := imp.index.UserMediaFile(img, o, "", photoUID, userUID)
+	log.Infof("import: %s related %s file %s", res, img.FileType(), clean.Log(img.RootRelName()))
 }

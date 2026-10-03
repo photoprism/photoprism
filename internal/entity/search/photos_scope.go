@@ -98,8 +98,9 @@ func scopePhotosForSession(stmt *gorm.DB, sess *entity.Session, allowUIDs []stri
 		conds = append(conds, "photos.created_by = ?", "photos.published_at > ?")
 		args = append(args, user.UserUID, entity.Now())
 	} else {
-		conds = append(conds, "photos.created_by = ?", "photos.published_at > ?", "photos.photo_path = ?", "photos.photo_path LIKE ?")
-		args = append(args, user.UserUID, entity.Now(), basePath, basePath+"/%")
+		conds = append(conds, "photos.created_by = ?", "photos.published_at > ?", "photos.photo_path = ?", clean.SqlPrefixCond("photos.photo_path"))
+		args = append(args, user.UserUID, entity.Now(), basePath)
+		args = append(args, clean.SqlPrefixArgs(basePath+"/")...)
 	}
 
 	return stmt.Where(strings.Join(conds, " OR "), args...)

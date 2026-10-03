@@ -22,7 +22,7 @@
         </v-toolbar>
 
         <v-card-text class="dense">
-          <v-row align="center" dense>
+          <v-row class="align-center" density="compact">
             <v-col v-if="album.Type !== 'month'" cols="12">
               <v-text-field
                 v-model="model.Title"

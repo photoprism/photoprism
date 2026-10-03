@@ -33,6 +33,15 @@ func TestRelName(t *testing.T) {
 }
 
 func TestFileName(t *testing.T) {
+	t.Run("CreatesFolder", func(t *testing.T) {
+		baseDir := t.TempDir()
+		sidecar := filepath.Join(t.TempDir(), "sidecar")
+
+		result, err := FileName(filepath.Join(baseDir, "2026", "clip.avi"), sidecar, baseDir, ExtAvc)
+		assert.NoError(t, err)
+		assert.Equal(t, filepath.Join(sidecar, "2026", "clip.avi.avc"), result)
+		assert.DirExists(t, filepath.Join(sidecar, "2026"))
+	})
 	t.Run("TestCopyThreeJpg", func(t *testing.T) {
 		result, err := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp")
 		assert.NoError(t, err)
@@ -58,6 +67,33 @@ func TestFileName(t *testing.T) {
 		result, err := FileName("testdata/FOO.XMP", "", Abs("testdata"), ".jpeg")
 		assert.NoError(t, err)
 		assert.Equal(t, "testdata/FOO.XMP.jpeg", result)
+	})
+}
+
+func TestFilePath(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		baseDir := t.TempDir()
+		sidecar := filepath.Join(t.TempDir(), "sidecar")
+
+		result, err := FilePath(filepath.Join(baseDir, "2026", "clip.avi"), sidecar, baseDir, ExtAvc)
+		assert.NoError(t, err)
+		assert.Equal(t, filepath.Join(sidecar, "2026", "clip.avi.avc"), result)
+
+		// Unlike FileName, it does not create the folder.
+		assert.NoDirExists(t, filepath.Join(sidecar, "2026"))
+	})
+	t.Run("SameDir", func(t *testing.T) {
+		result, err := FilePath("testdata/clip.avi", "", "", ExtAvc)
+		assert.NoError(t, err)
+		assert.Equal(t, "testdata/clip.avi.avc", result)
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		_, err := FilePath("", ".photoprism", "", ExtAvc)
+		assert.Error(t, err)
+	})
+	t.Run("EmptyExt", func(t *testing.T) {
+		_, err := FilePath("testdata/clip.avi", ".photoprism", "", "")
+		assert.Error(t, err)
 	})
 }
 

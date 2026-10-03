@@ -20,6 +20,19 @@ func TestWebsocketTopicsExcludeSystem(t *testing.T) {
 				"websocket topic %q would forward the system channel to clients", topic)
 		}
 	})
+	t.Run("NoDelivery", func(t *testing.T) {
+		h := event.NewHub()
+		sub := h.NonBlockingSubscribe(10, WebsocketTopics...)
+
+		for _, topic := range []string{"system.log.error", "system.log.warning", "system.log.info", "system.cluster.error"} {
+			h.Publish(event.Message{Name: topic})
+		}
+
+		require.Empty(t, sub.Receiver, "a websocket topic matches the system channel")
+
+		h.Publish(event.Message{Name: "log.error"})
+		require.Len(t, sub.Receiver, 1, "positive control: log.error is forwarded")
+	})
 	t.Run("NoHooks", func(t *testing.T) {
 		// A hook on the system logger would republish its entries as "log.*", which is
 		// subscribed. The ordinary logger carries one by design.

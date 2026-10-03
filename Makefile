@@ -63,6 +63,10 @@ else
     GOTEST=go test
 endif
 
+# Optional integration matrices can be enabled with "make <target> GOTEST_TAGS=slow,develop,integration".
+# The environment is not read, so an exported GOTEST_TAGS cannot drop the default tags.
+GOTEST_TAGS := slow,develop
+
 # Ensure compatibility with "docker compose" (new) and "docker-compose" (old),
 # preferring the plugin wherever it is available.
 HAS_DOCKER_COMPOSE_PLUGIN := $(shell docker compose version 2>/dev/null)
@@ -114,9 +118,11 @@ Run:
 Test:
   test                     Run the JS and Go tests
   test-short               Run the short Go tests in parallel
-  test-go                  Run all Go tests, including slow tests
+  test-go                  Run the default Go suite, including slow tests
+  test-integration         Run the Go suite with the optional integration matrices
   test-js                  Run the frontend unit tests with Vitest
-  test-mariadb             Run all Go tests against MariaDB instead of SQLite
+  test-mariadb             Run the default Go suite against MariaDB
+                           Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
   reset-testdb             Reset the SQLite and MariaDB test databases
   acceptance-run-chromium  Run the TestCafe acceptance tests in Chrome
   Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai
@@ -130,10 +136,12 @@ Format, Lint & Docs:
   audit                    Check the dependencies for known vulnerabilities
 
 Checks (also run by lint):
+  check-api-failure-codes   Check that API handlers document their 413 responses
   check-api-request-limits  Check request-body limit coverage in API handlers
   check-audit-events        Check audit-event formatting against its baseline
   check-libheif-install     Check libheif installer selection and version handling
   check-cuda-install        Check CUDA installation recovery without a GPU
+  check-buildignore         Check that packages bundle exactly the listed models
   check-make-help           Check that advertised Makefile targets exist
   check-scripts-copy-mode   Check container script ownership and modes
 
@@ -157,7 +165,10 @@ watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: dep-models run-test-go
+test-go:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-go
+test-integration:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-go GOTEST_TAGS="$(GOTEST_TAGS),integration"
 test-hub: run-test-hub
 test-pkg: run-test-pkg
 test-ai: dep-models run-test-ai
@@ -166,8 +177,10 @@ test-video: run-test-video
 test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
-test-short: dep-models run-test-short
-test-mariadb: reset-acceptance run-test-mariadb
+test-short:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-short
+test-mariadb:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
 acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth acceptance-auth-sqlite-stop
@@ -449,11 +462,38 @@ codex-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
 	  echo "No specs/.agents/skills directory found, skipping."; \
+	fi
+	@if [ -d "specs/.agents/agents" ]; then \
+	  echo "Linking Codex agent roles from specs/.agents/agents..."; \
+	  install -d -m 755 -- ".codex/agents"; \
+	  for link in .codex/agents/*.toml; do \
+	    [ -L "$$link" ] || continue; \
+	    target=$$(readlink "$$link"); \
+	    case "$$target" in \
+	      ../../specs/.agents/agents/*.toml) \
+	        name=$$(basename "$$link"); \
+	        [ -f "specs/.agents/agents/$$name" ] || rm -- "$$link"; \
+	        ;; \
+	    esac; \
+	  done; \
+	  for src in specs/.agents/agents/*.toml; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".codex/agents/$$name"; \
+	    target="../../specs/.agents/agents/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "$$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.agents/agents directory found, skipping."; \
 	fi
 gh: dep-gh gh-version
 gh-version:
@@ -496,7 +536,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -513,7 +553,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -530,7 +570,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -547,11 +587,27 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link already exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
 	  echo "No specs/.claude/scripts directory found, skipping."; \
+	fi
+	@if [ -d "specs/.claude/bin" ]; then \
+	  echo "Linking Claude Code model wrappers from specs/.claude/bin..."; \
+	  [ -n "$(HOME)" ] && [ "$(HOME)" != "/" ] && install -d -m 755 -- "$(HOME)/.local/bin" || true; \
+	  for src in specs/.claude/bin/*; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link="$(HOME)/.local/bin/$$name"; \
+	    if [ -e "$$link" ] || [ -L "$$link" ]; then \
+	      echo "$$link already exists, skipping"; \
+	    else \
+	      ln -s "$(CURDIR)/specs/.claude/bin/$$name" "$$link"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/bin directory found, skipping."; \
 	fi
 dep-go:
 	go build -v ./...
@@ -560,9 +616,10 @@ dep-upgrade:
 frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
-# Installs every model a development build runs or ships.
-dep-models:
-	scripts/dist/download-models.sh facenet nasnet nsfw sface yunet
+# Installs every model a development build runs or ships; assets/.buildignore must list the same.
+BUNDLED_MODELS = efficientformerv2_s2 facenet sface yahoo_open_nsfw yunet
+dep-models: check-buildignore
+	scripts/dist/download-models.sh $(BUNDLED_MODELS)
 dep-tensorflow: dep-models
 dep-onnx: dep-models
 dep-acceptance: storage/acceptance
@@ -570,13 +627,8 @@ storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
 zip-facenet:
 	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
-zip-nasnet:
-	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
-zip-nsfw:
-	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
-	(cd frontend &&	env BUILD_ENV=production NODE_ENV=production npm run build)
-	(cd frontend && node scripts/precompress.js)
+	$(MAKE) -C frontend build
 build-go: build-develop
 build-develop:
 	rm -f $(BINARY_NAME)
@@ -650,8 +702,7 @@ build-setup: build-setup-nas-raspberry-pi
 build-setup-nas-raspberry-pi:
 	./scripts/setup/nas/raspberry-pi/build.sh
 watch-js:
-	(cd frontend && node scripts/precompress.js --clean)
-	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
+	$(MAKE) -C frontend watch
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)
@@ -715,47 +766,47 @@ run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/... ./.../internal/...
 run-test-go:
-	$(info Running all Go tests...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
+	$(info Running Go tests with tags "$(GOTEST_TAGS)"...)
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 run-test-hub:
 	$(info Running all Go tests with hub requests...)
-	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
+	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS),debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
-	$(info Running all Go tests on MariaDB...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	$(info Running Go tests on MariaDB with tags "$(GOTEST_TAGS)"...)
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/...
 run-test-ai:
 	$(info Running all AI tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ai/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/ai/...
 run-test-api:
 	$(info Running all API tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/api/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/api/...
 run-test-video:
 	$(info Running all video tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ffmpeg/... ./internal/photoprism/dl/... ./pkg/media/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/ffmpeg/... ./internal/photoprism/dl/... ./pkg/media/...
 run-test-entity:
 	$(info Running all Entity tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/entity/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/entity/...
 run-test-commands:
 	$(info Running all CLI command tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/commands/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/commands/...
 run-test-photoprism:
 	$(info Running all Go tests in "/internal/photoprism"...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/photoprism/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/photoprism/...
 test-parallel:
 	$(info Running all Go tests in parallel mode...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 test-verbose:
 	$(info Running all Go tests in verbose mode...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m -v ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m -v ./pkg/... ./internal/... ./.../internal/...
 test-race:
 	$(info Running all Go tests with race detection in verbose mode...)
-	$(GOTEST) -tags="slow,develop" -race -timeout 60m -v ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -tags="$(GOTEST_TAGS)" -race -timeout 60m -v ./pkg/... ./internal/... ./.../internal/...
 test-coverage:
 	$(info Running all Go tests with code coverage report...)
-	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="slow,develop" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/... ./.../internal/...
+	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="$(GOTEST_TAGS)" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/... ./.../internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt  | grep total:
 git-pull:
@@ -1282,7 +1333,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
+lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-buildignore check-make-help check-scripts-copy-mode
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1295,6 +1346,9 @@ lint-sh:
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/lint/check-api-request-limits.sh
+check-api-failure-codes:
+	$(info Checking the 413 responses documented by API handlers...)
+	go run ./scripts/tools/check-api-failure-codes
 check-audit-events:
 	$(info Checking how event calls build their messages...)
 	go run ./scripts/tools/check-audit-events
@@ -1307,6 +1361,9 @@ check-cuda-install:
 check-make-help:
 	$(info Checking that "make help" only advertises existing targets...)
 	bash ./scripts/lint/check-make-help.sh
+check-buildignore:
+	$(info Checking that packages bundle exactly the listed models...)
+	bash ./scripts/lint/check-buildignore.sh assets/.buildignore scripts/dist/download-models.sh $(BUNDLED_MODELS)
 check-scripts-copy-mode:
 	$(info Checking that the dist scripts are copied with an explicit owner and mode...)
 	bash ./scripts/lint/check-scripts-copy-mode.sh

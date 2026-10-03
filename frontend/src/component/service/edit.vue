@@ -32,7 +32,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="dense">
-          <v-row v-if="scope === 'sharing'" dense>
+          <v-row v-if="scope === 'sharing'" density="compact">
             <v-col cols="12">
               <v-autocomplete
                 v-model="model.SharePath"
@@ -83,7 +83,7 @@
               ></v-checkbox>
             </v-col>
           </v-row>
-          <v-row v-else-if="scope === 'sync'" dense>
+          <v-row v-else-if="scope === 'sync'" density="compact">
             <v-col cols="12" sm="6">
               <v-autocomplete
                 v-model="model.SyncPath"
@@ -168,7 +168,7 @@
               ></v-checkbox>
             </v-col>
           </v-row>
-          <v-row v-else dense>
+          <v-row v-else density="compact">
             <v-col cols="12">
               <v-text-field v-model="model.AccName" autofocus autocomplete="off" :label="$gettext('Name')" placeholder=""></v-text-field>
             </v-col>
@@ -185,10 +185,16 @@
                 autocomplete="new-password"
                 :label="$gettext('Password')"
                 placeholder="********"
-                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 :type="showPassword ? 'text' : 'password'"
-                @click:append-inner="showPassword = !showPassword"
-              ></v-text-field>
+              >
+                <template #append-inner>
+                  <p-input-action
+                    :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                    @click="showPassword = !showPassword"
+                  ></p-input-action>
+                </template>
+              </v-text-field>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field

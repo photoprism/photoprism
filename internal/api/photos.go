@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -88,10 +89,10 @@ func GetPhoto(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid						path		string		true	"Photo UID"
-//	@Param		photo					body		form.Photo	true	"properties to be updated (only submit values that should be changed)"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
+//	@Param		uid							path		string		true	"Photo UID"
+//	@Param		photo						body		form.Photo	true	"properties to be updated (only submit values that should be changed)"
 //	@Router		/api/v1/photos/{uid} [put]
 func UpdatePhoto(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid", func(c *gin.Context) {
@@ -176,14 +177,18 @@ func UpdatePhoto(router *gin.RouterGroup) {
 //	@Id			GetPhotoDownload
 //	@Tags		Images, Files
 //	@Produce	application/octet-stream
-//	@Failure	403,404	{file}	image/svg+xml
-//	@Success	200		{file}	application/octet-stream
-//	@Param		uid		path	string	true	"photo uid"
+//	@Failure	403,404	{file}		image/svg+xml
+//	@Failure	429		{object}	i18n.Response
+//	@Success	200		{file}		application/octet-stream
+//	@Param		uid		path		string	true	"photo uid"
 //	@Router		/api/v1/photos/{uid}/dl [get]
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
 		sess, valid := AuthDownload(c, acl.Resources{acl.ResourcePhotos})
-		if !valid {
+		if !valid && DownloadRateLimited(c) {
+			limiter.AbortJSON(c)
+			return
+		} else if !valid {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}

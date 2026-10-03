@@ -448,6 +448,25 @@ func TestLabel_Delete(t *testing.T) {
 
 		assert.Len(t, labels, 0)
 	})
+	t.Run("MarksRecord", func(t *testing.T) {
+		label := createTestLabel(t, "DeleteMarks")
+		cached, err := FindLabel(label.LabelName, true)
+		require.NoError(t, err)
+		assert.Equal(t, label.ID, cached.ID)
+		require.NoError(t, label.Delete())
+		assert.True(t, label.Deleted())
+		assert.True(t, label.Skip())
+
+		// The cache no longer returns the label, and restoring the same record brings it back.
+		_, err = FindLabel(label.LabelName, true)
+		assert.Error(t, err)
+		require.NoError(t, label.Restore())
+		assert.False(t, label.Deleted())
+		restored, err := FindLabel(label.LabelName, true)
+		require.NoError(t, err)
+		assert.Equal(t, label.ID, restored.ID)
+		assert.False(t, restored.Deleted())
+	})
 }
 
 func TestLabel_Restore(t *testing.T) {

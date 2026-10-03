@@ -11,12 +11,16 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// TestClusterMetrics_EmptyCounts checks the response for an empty node registry.
 func TestClusterMetrics_EmptyCounts(t *testing.T) {
-	// Remove the fixture record
-	require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error)
-	defer func() {
-		require.NoError(t, entity.Db().Create(entity.ClientFixtures.Pointer("node")).Error)
-	}()
+	var nodes []entity.Client
+	require.NoError(t, entity.Db().Where("node_uuid <> ''").Find(&nodes).Error)
+	t.Cleanup(func() {
+		for _, node := range nodes {
+			require.NoError(t, entity.Db().Model(&entity.Client{}).Where("client_uid = ?", node.ClientUID).UpdateColumn("node_uuid", node.NodeUUID).Error)
+		}
+	})
+	require.NoError(t, entity.Db().Model(&entity.Client{}).Where("node_uuid <> ''").UpdateColumn("node_uuid", "").Error)
 
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)

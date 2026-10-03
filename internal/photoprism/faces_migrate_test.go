@@ -118,9 +118,7 @@ func installedOtherFaceModel(t *testing.T, conf *config.Config) face.ModelName {
 	return ""
 }
 
-// otherFaceModel returns a registered embedding model that is not the specified one, so
-// tests can exercise the cross-model guards without assuming which model a test library
-// resolves to.
+// otherFaceModel returns a registered embedding model that is not the specified one.
 func otherFaceModel(t *testing.T, configured face.ModelName) face.ModelName {
 	t.Helper()
 
@@ -133,6 +131,22 @@ func otherFaceModel(t *testing.T, configured face.ModelName) face.ModelName {
 	}
 
 	t.Fatalf("no embedding model other than %s is registered", configured)
+
+	return ""
+}
+
+// uninstalledOtherFaceModel returns a registered alternative whose artifact is unavailable.
+func uninstalledOtherFaceModel(t *testing.T, conf *config.Config) face.ModelName {
+	t.Helper()
+
+	configured := face.NormalizeModelName(conf.FaceModel())
+	for _, name := range face.EmbeddingModelNames() {
+		if name != configured && !face.FindEmbeddingModel(name).Installed(conf.ModelsPath()) {
+			return name
+		}
+	}
+
+	t.Skip("faces: no uninstalled alternative embedding model")
 
 	return ""
 }
@@ -218,7 +232,7 @@ func TestFaces_migrationEmbedder(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, configured, embedder.ModelName())
 
-	_, err = w.migrationEmbedder(otherFaceModel(t, w.conf.FaceModel()))
+	_, err = w.migrationEmbedder(uninstalledOtherFaceModel(t, w.conf))
 	require.Error(t, err)
 }
 
@@ -259,7 +273,7 @@ func TestFaces_restoreEmbedder(t *testing.T) {
 		w := NewFaces(config.TestConfig())
 		configured := face.NormalizeModelName(w.conf.FaceModel())
 
-		_, err := w.migrationEmbedder(otherFaceModel(t, configured))
+		_, err := w.migrationEmbedder(uninstalledOtherFaceModel(t, w.conf))
 
 		require.Error(t, err)
 		assert.Equal(t, configured, face.ConfiguredModel())
@@ -1641,6 +1655,8 @@ func TestFacesRunResult_Moved(t *testing.T) {
 		assert.True(t, facesRunResult{Resolved: 1}.Moved())
 		assert.True(t, facesRunResult{Merged: 1}.Moved())
 		assert.True(t, facesRunResult{Added: 1}.Moved())
+		assert.True(t, facesRunResult{Retried: 1}.Moved())
+		assert.True(t, facesRunResult{Named: 1}.Moved())
 		assert.True(t, facesRunResult{Updated: 1}.Moved())
 	})
 	t.Run("AssignedOnly", func(t *testing.T) {
@@ -1704,5 +1720,30 @@ func TestSettleFaceClusters(t *testing.T) {
 			t.Fatal("must not run")
 			return facesRunResult{}, nil
 		}))
+	})
+}
+
+func TestLiftsRejection(t *testing.T) {
+	vector := face.Embeddings{{0.1, 0.2, 0.3, 0.4}}.JSON()
+	rejected := func(model string, emb []byte) entity.Marker {
+		return entity.Marker{MarkerType: entity.MarkerFace, SubjSrc: entity.SrcManual, EmbedModel: model, EmbeddingsJSON: emb}
+	}
+
+	t.Run("OtherModel", func(t *testing.T) {
+		assert.True(t, liftsRejection(rejected(face.ModelSFace, vector), face.ModelFaceNet))
+	})
+	t.Run("LegacyFaceNet", func(t *testing.T) {
+		assert.True(t, liftsRejection(rejected("", vector), face.ModelSFace))
+	})
+	t.Run("SameModel", func(t *testing.T) {
+		assert.False(t, liftsRejection(rejected(face.ModelFaceNet, vector), face.ModelFaceNet))
+	})
+	t.Run("NoVector", func(t *testing.T) {
+		assert.False(t, liftsRejection(rejected("", nil), face.ModelSFace))
+	})
+	t.Run("NotRejected", func(t *testing.T) {
+		m := rejected(face.ModelSFace, vector)
+		m.SubjSrc = entity.SrcAuto
+		assert.False(t, liftsRejection(m, face.ModelFaceNet))
 	})
 }

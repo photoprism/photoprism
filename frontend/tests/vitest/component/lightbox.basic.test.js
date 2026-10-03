@@ -38,6 +38,28 @@ const sidebarKey = `${storagePrefix}lightbox.sidebar`;
 const mutedKey = `${storagePrefix}lightbox.muted`;
 const captionKey = `${storagePrefix}lightbox.caption`;
 
+// optionsFor returns the PhotoSwipe options the lightbox builds for the given text direction.
+const optionsFor = (isRtl) =>
+  PLightbox.methods.getOptions.call({
+    $isRtl: isRtl,
+    $gettext: (s) => s,
+    index: 0,
+    getLightboxElement: () => null,
+  });
+
+describe("PLightbox arrow titles", () => {
+  it("names the arrows by their direction in left-to-right languages", () => {
+    const options = optionsFor(false);
+    expect(options.arrowPrevTitle).toBe("Previous");
+    expect(options.arrowNextTitle).toBe("Next");
+  });
+  it("swaps the arrow names in right-to-left languages, where the slide order is reversed", () => {
+    const options = optionsFor(true);
+    expect(options.arrowPrevTitle).toBe("Next");
+    expect(options.arrowNextTitle).toBe("Previous");
+  });
+});
+
 const mountLightbox = () =>
   mount(PLightbox, {
     global: {

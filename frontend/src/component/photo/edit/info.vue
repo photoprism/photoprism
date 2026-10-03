@@ -95,6 +95,7 @@
                   <div>{{ view.model.getDateString() }}</div>
                   <v-icon v-if="view.model.TakenSrc === ''" icon="mdi-file-clock-outline" class="src"></v-icon>
                   <!-- v-icon v-else-if="view.model.TakenSrc === 'meta'" icon="mdi-camera" class="src"></v-icon -->
+                  <v-icon v-else-if="view.model.TakenSrc === 'modified'" icon="mdi-clock-edit-outline" class="src"></v-icon>
                   <v-icon v-else-if="view.model.TakenSrc === 'name'" icon="mdi-file-tree-outline" class="src"></v-icon>
                   <v-icon v-else-if="view.model.TakenSrc === 'estimate'" icon="mdi-file-question" class="src"></v-icon>
                   <v-icon v-else-if="view.model.TakenSrc === 'manual'" icon="mdi-check" class="src"></v-icon>

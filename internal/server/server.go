@@ -25,10 +25,7 @@ Additional information can be found in our Developer Guide:
 package server
 
 import (
-	"net/http"
-
 	"github.com/photoprism/photoprism/internal/event"
 )
 
 var log = event.Log
-var httpsRedirect = http.StatusMovedPermanently

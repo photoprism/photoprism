@@ -8,7 +8,6 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -20,9 +19,11 @@ import (
 //	@Id			PostVisionFace
 //	@Tags		Vision
 //	@Produce	json
-//	@Success	200					{object}	vision.ApiResponse
-//	@Failure	400,401,403,413,429	{object}	i18n.Response
-//	@Param		images				body		vision.ApiRequest	true	"list of image file urls"
+//	@Success	200		{object}	vision.ApiResponse
+//	@Failure	400,413	{object}	vision.ApiResponse
+//	@Failure	403		{object}	vision.ApiResponse	"Vision API disabled; permission errors return i18n.Response"
+//	@Failure	401,429	{object}	i18n.Response
+//	@Param		images	body		vision.ApiRequest	true	"list of image file urls"
 //	@Router		/api/v1/vision/face [post]
 func PostVisionFace(router *gin.RouterGroup) {
 	router.POST("/vision/face", func(c *gin.Context) {
@@ -30,6 +31,11 @@ func PostVisionFace(router *gin.RouterGroup) {
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
+			return
+		}
+
+		// Abort if the Computer Vision API is disabled.
+		if abortVisionApiDisabled(c) {
 			return
 		}
 
@@ -54,13 +60,6 @@ func PostVisionFace(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the Computer Vision API is enabled, otherwise abort with an error.
-		if !get.Config().VisionApi() {
-			AbortFeatureDisabled(c)
-			c.JSON(http.StatusForbidden, vision.NewApiError(request.GetId(), http.StatusForbidden))
-			return
-		}
-
 		// Return if no thumbnail filenames were given.
 		if len(request.Images) == 0 {
 			log.Errorf("vision: at least one image required (run face embeddings)")
@@ -78,7 +77,7 @@ func PostVisionFace(router *gin.RouterGroup) {
 
 			// A rejected reference fails closed with 400, mirroring the labels endpoint.
 			if err != nil {
-				log.Errorf("vision: %s (read face embedding from url)", err)
+				logVisionErr("face image", err)
 				c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 				return
 			}
@@ -90,7 +89,7 @@ func PostVisionFace(router *gin.RouterGroup) {
 			result, faceErr := vision.GenerateFaceEmbeddings(data)
 
 			if faceErr != nil {
-				log.Errorf("vision: %s (run face embeddings)", faceErr)
+				logVisionErr("face embeddings", faceErr)
 				c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 				return
 			}

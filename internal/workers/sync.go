@@ -12,6 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Sync represents a sync worker.
@@ -66,13 +68,14 @@ func (w *Sync) Start() (err error) {
 			continue
 		}
 
-		// Failed too often?
+		// Failed too often? The stored row decides, since an admin may have changed it during this run,
+		// and the account is skipped either way, so its loaded copy is never written back.
 		if a.RetryLimit > 0 && a.AccErrors > a.RetryLimit {
-			a.AccSync = false
-
-			if err := entity.Db().Save(&a).Error; err != nil {
-				w.logErr(err)
-			} else {
+			if res := entity.Db().Model(&entity.Service{}).
+				Where("id = ? AND acc_sync = 1 AND retry_limit > 0 AND acc_errors > retry_limit", a.ID).
+				UpdateColumn("acc_sync", false); res.Error != nil {
+				w.logErr(res.Error)
+			} else if res.RowsAffected > 0 {
 				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
 			}
 
@@ -90,7 +93,7 @@ func (w *Sync) Start() (err error) {
 		case entity.SyncStatusRefresh:
 			if complete, err := w.refresh(a); err != nil {
 				accErrors++
-				accError = entity.ServiceError(err)
+				accError = clean.ErrorBytes(err, txt.ClipError)
 			} else if complete {
 				accErrors = 0
 				accError = ""
@@ -109,7 +112,7 @@ func (w *Sync) Start() (err error) {
 		case entity.SyncStatusDownload:
 			if complete, downloadErr := w.download(a); downloadErr != nil {
 				accErrors++
-				accError = entity.ServiceError(downloadErr)
+				accError = clean.ErrorBytes(downloadErr, txt.ClipError)
 				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				if a.SyncUpload {
@@ -124,7 +127,7 @@ func (w *Sync) Start() (err error) {
 		case entity.SyncStatusUpload:
 			if complete, uploadErr := w.upload(a); uploadErr != nil {
 				accErrors++
-				accError = entity.ServiceError(uploadErr)
+				accError = clean.ErrorBytes(uploadErr, txt.ClipError)
 				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				synced = true
@@ -133,7 +136,7 @@ func (w *Sync) Start() (err error) {
 				syncDate.Valid = true
 			}
 		case entity.SyncStatusSynced:
-			if a.SyncDate.Valid && a.SyncDate.Time.Before(time.Now().Add(time.Duration(-1*a.SyncInterval)*time.Second)) {
+			if syncDue(a, time.Now()) {
 				syncStatus = entity.SyncStatusRefresh
 			}
 		default:
@@ -157,4 +160,9 @@ func (w *Sync) Start() (err error) {
 	}
 
 	return err
+}
+
+// syncDue reports whether a synced account is due for a refresh, comparing whole seconds so no stored interval overflows.
+func syncDue(a entity.Service, now time.Time) bool {
+	return a.SyncInterval > 0 && a.SyncDate.Valid && a.SyncDate.Time.Unix() < now.Unix()-int64(a.SyncInterval)
 }

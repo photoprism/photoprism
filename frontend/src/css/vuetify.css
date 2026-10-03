@@ -1,4 +1,4 @@
-/* Custom Vuetify 3 Component Styles */
+/* Custom Vuetify Component Styles */
 
 .v-overlay__scrim {
     background: rgb(var(--v-overlay-color, #121212));
@@ -13,10 +13,6 @@
 
 .v-tabs button.v-tab.v-btn--disabled {
     opacity: var(--v-disabled-opacity, 0.6);
-}
-
-.v-tab.v-tab.v-btn {
-    min-width: 60px;
 }
 
 .v-slide-group .v-ripple__container {
@@ -115,8 +111,6 @@ body > .v-overlay-container .v-overlay__scrim {
 }
 
 .v-overlay.v-dialog.v-dialog--sidepanel:not(.v-dialog--fullscreen) {
-    align-items: center;
-    justify-content: end;
     border-radius: 0;
 }
 
@@ -637,6 +631,12 @@ body .v-table > .v-table__wrapper > table {
     justify-content: center;
 }
 
+/* Pagination lists keep the padding of lists in app.css, which Vuetify 4 resets. */
+ul.v-pagination__list {
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
 .v-table .v-data-table-footer .v-data-table-footer__pagination ul.v-pagination__list > li {
     margin-top: 4px;
     margin-bottom: 4px;
@@ -686,13 +686,8 @@ body .v-table > .v-table__wrapper > table {
     margin: 0;
 }
 
-.v-row--dense > .v-col,
-.v-row--dense > [class*="v-col-"] {
-    padding: 8px;
-}
-
-.v-row--dense > .v-col,
-.v-row--dense > [class*="v-col-"] {
+.v-row--density-compact > .v-col,
+.v-row--density-compact > [class*="v-col-"] {
     padding: 8px;
 }
 

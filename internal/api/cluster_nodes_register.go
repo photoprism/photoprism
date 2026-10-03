@@ -4,7 +4,6 @@ import (
 	"crypto/subtle"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -23,6 +22,7 @@ import (
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -37,9 +37,9 @@ import (
 //	@Tags		Cluster
 //	@Accept		json
 //	@Produce	json
-//	@Param		request				body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client."
-//	@Success	200,201				{object}	cluster.RegisterResponse
-//	@Failure	400,401,403,409,429	{object}	i18n.Response
+//	@Param		request					body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client."
+//	@Success	200,201					{object}	cluster.RegisterResponse
+//	@Failure	400,401,403,409,413,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/register [post]
 func ClusterNodesRegister(router *gin.RouterGroup) {
 	router.POST("/cluster/nodes/register", func(c *gin.Context) {
@@ -64,7 +64,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		clientIp := ClientIP(c)
 		r := limiter.Auth.Request(clientIp)
 
-		if r.Reject() || limiter.Auth.Reject(clientIp) {
+		if r.Reject() {
 			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", status.RateLimited})
 			limiter.AbortJSON(c)
 			return
@@ -622,7 +622,7 @@ func validateSiteURL(u string) bool {
 	}
 
 	if parsed.Scheme == "http" {
-		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
+		if dns.IsLoopbackHost(host) || isClusterServiceHost(host) {
 			return true
 		}
 		return false
@@ -756,7 +756,7 @@ func validateRedirectURI(u string) bool {
 	}
 
 	if parsed.Scheme == "http" {
-		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
+		if dns.IsLoopbackHost(host) || isClusterServiceHost(host) {
 			return true
 		}
 	}
@@ -788,14 +788,7 @@ func isClusterServiceHost(host string) bool {
 
 // clusterCIDRAllowsClientIP reports whether clientIP is within the configured cidr.
 func clusterCIDRAllowsClientIP(cidr, clientIP string) bool {
-	ip := net.ParseIP(clientIP)
-	_, block, err := net.ParseCIDR(cidr)
-
-	if err != nil || ip == nil || block == nil {
-		return false
-	}
-
-	return block.Contains(ip)
+	return cluster.CIDRsContain(cidr, clientIP)
 }
 
 // registerNameConflictError returns a clear operator-facing conflict message.

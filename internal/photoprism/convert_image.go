@@ -283,6 +283,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 
 		if reloaded, reloadErr := NewMediaFile(result.FileName()); reloadErr == nil {
+			reloaded.SetVisualProjection(projection.Equirectangular)
 			result = reloaded
 		}
 

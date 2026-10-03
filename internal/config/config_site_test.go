@@ -174,6 +174,12 @@ func TestConfig_SiteHost(t *testing.T) {
 	assert.Equal(t, "localhost:2342", c.SiteHost())
 	c.options.SiteUrl = "https://foo.bar.com:2342/"
 	assert.Equal(t, "foo.bar.com:2342", c.SiteHost())
+	c.options.SiteUrl = "https://[2001:db8::1]:8443/"
+	assert.Equal(t, "[2001:db8::1]:8443", c.SiteHost())
+	c.options.SiteUrl = "https://[2001:db8::1]/"
+	assert.Equal(t, "[2001:db8::1]", c.SiteHost())
+	c.options.SiteUrl = "https://192.0.2.1/"
+	assert.Equal(t, "192.0.2.1", c.SiteHost())
 	c.options.SiteUrl = ""
 	assert.Equal(t, "localhost:2342", c.SiteHost())
 }

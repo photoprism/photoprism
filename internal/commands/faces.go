@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
@@ -241,15 +240,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 			"starts no new indexing and refuses people edits while it runs, but a pass already under way can " +
 			"still force a re-run; restart the instance afterwards to load %s"}, clean.Log(plan.Target))
 
-		if !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Migrate all face embeddings to %s?", plan.Target),
-				IsConfirm: true,
-			}
-			if _, promptErr := prompt.Run(); promptErr != nil {
-				log.Info("faces: migration canceled")
-				return nil
-			}
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Migrate all face embeddings to %s", plan.Target)); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Info("faces: migration canceled")
+			return nil
 		}
 
 		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{
@@ -286,6 +281,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// detection did not find it again, most often because a person drew it by hand.
 		if result.Retained > 0 {
 			log.Infof("faces: %d markers kept the vector another detector's crop produced", result.Retained)
+		}
+		// A person removed these names under the previous model, which the new one may recognize.
+		if result.LiftedRejections > 0 {
+			log.Infof("faces: %d re-embedded marker(s) whose name a person had removed can be recognized again",
+				result.LiftedRejections)
 		}
 		// Excluded assignments keep their person but seed no cluster, so the count is what
 		// tells an operator how much of a curated library did not shape its own centroids.
@@ -589,11 +589,10 @@ func facesResetAllAction(ctx *cli.Context) error {
 
 	if err := query.RemovePeopleAndFaces(); err != nil {
 		return err
-	} else {
-		elapsed := time.Since(start)
-
-		log.Infof("completed in %s", elapsed)
 	}
+
+	log.Infof("faces: removed all faces, people, and face markers; run \"photoprism faces index\" to detect faces again")
+	log.Infof("completed in %s", time.Since(start))
 
 	return nil
 }

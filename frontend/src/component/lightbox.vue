@@ -556,8 +556,9 @@ export default {
         getViewportSizeFn: () => this.getViewport(),
         closeTitle: this.$gettext("Close"),
         zoomTitle: this.$gettext("Zoom in/out"),
-        arrowPrevTitle: this.$gettext("Previous"),
-        arrowNextTitle: this.$gettext("Next"),
+        // Right-to-left languages reverse the slide order, so the left arrow moves to the next picture.
+        arrowPrevTitle: this.$isRtl ? this.$gettext("Next") : this.$gettext("Previous"),
+        arrowNextTitle: this.$isRtl ? this.$gettext("Previous") : this.$gettext("Next"),
         errorMsg: this.$gettext("Error"),
       };
     },
@@ -603,7 +604,7 @@ export default {
 
       return Promise.resolve();
     },
-    // Loads the pictures that belong to a component and displays them in the lightbox.
+    // showView opens the selected photo using the view context or cached results.
     showView(view, index) {
       if (this.isBusy("show context")) {
         return Promise.reject();

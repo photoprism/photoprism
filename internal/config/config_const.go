@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math"
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -74,6 +75,9 @@ const RecommendedMem = 3 * GigaByte // 3,000,000,000 Bytes
 // DefaultResolutionLimit defines the default resolution limit.
 const DefaultResolutionLimit = 150 // 150 Megapixels
 
+// MaxSizeLimit is the largest originals and upload size limit in MB, 2 PiB in total.
+const MaxSizeLimit = math.MaxInt32
+
 // DefaultConvertTimeout defines the default budget for converting one still image, document,
 // or RAW file, in minutes. It is shared by the converters tried for that file.
 const DefaultConvertTimeout = 10
@@ -99,6 +103,15 @@ const DefaultSessionMaxAge = unix.Week * 2
 
 // DefaultSessionTimeout defines the standard session idle time in seconds.
 const DefaultSessionTimeout = unix.Week
+
+// DefaultUploadMaxAge defines the time in seconds after which staged uploads are removed.
+const DefaultUploadMaxAge = unix.Week
+
+// MinUploadMaxAge defines the shortest time in seconds for which staged uploads are kept.
+const MinUploadMaxAge = unix.Day
+
+// MaxUploadMaxAge defines the longest time in seconds for which staged uploads are kept before removal.
+const MaxUploadMaxAge = unix.Year * 100
 
 // DefaultSessionCache defines the default session cache duration in seconds.
 const DefaultSessionCache = unix.Minute * 15

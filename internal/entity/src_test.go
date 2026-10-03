@@ -13,3 +13,21 @@ func TestPriorities_Report(t *testing.T) {
 		assert.NotEmpty(t, rows)
 	})
 }
+
+// TestSrcSubjects pins the sources a subject assignment can have, at their general priorities.
+func TestSrcSubjects(t *testing.T) {
+	t.Run("Sources", func(t *testing.T) {
+		for _, src := range []Src{SrcAuto, SrcMarker, SrcMeta, SrcXmp, SrcBatch, SrcManual} {
+			p, ok := SrcSubjects[src]
+			assert.True(t, ok, src)
+			assert.Equal(t, SrcPriority[src], p, src)
+		}
+		assert.Len(t, SrcSubjects, 6)
+	})
+	t.Run("Overrides", func(t *testing.T) {
+		for _, src := range []Src{SrcAdmin, SrcVision} {
+			_, ok := SrcSubjects[src]
+			assert.False(t, ok, src)
+		}
+	})
+}

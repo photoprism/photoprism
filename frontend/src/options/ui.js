@@ -41,6 +41,8 @@ export const colorsDark = {
 };
 
 export const variablesDark = {
+  "theme-on-dark": "#FFFFFF", // Foreground Vuetify derives for `on-*` colors a theme does not set, on dark colors.
+  "theme-on-light": "#000000", // Foreground Vuetify derives for `on-*` colors a theme does not set, on light colors.
   "btn-height": "34px", // Fixed pixel height for `VBtn`.
   "table-row-height": "44px", // Fixed pixel height for `VDataTable` body rows.
   "table-header-height": "44px", // Fixed pixel height for `VDataTable` header rows.

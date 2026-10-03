@@ -81,7 +81,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 
 	log.Debugf("config: sending feedback to %s", GetServiceHost())
 
-	if j, reqErr := json.Marshal(feedback); reqErr != nil {
+	if j, reqErr := json.Marshal(feedback); reqErr != nil { //nolint:gosec // G117: request carries the key by design
 		return reqErr
 	} else if req, reqErr = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); reqErr != nil {
 		return reqErr

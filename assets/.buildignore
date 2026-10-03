@@ -1,9 +1,23 @@
+# rsync filter rules for "make install": the first matching rule wins. Plain lines are excludes;
+# "+ /models/<name>/" includes a model directory and must precede "- /models/*", which drops every
+# other model; "+ /models/NOTICE" keeps their license notices. A "!" line clears all previous
+# rules in rsync, so gitignore-style negation must not be used. "make check-buildignore" verifies
+# the result.
 examples
 models/arcface
 models/auraface
 models/scrfd
 README.md
 Thumbs.db
+*~
 docs
 .*
 _*
+- /models/yunet/face_detection_yunet_2023mar.onnx
++ /models/NOTICE
++ /models/efficientformerv2_s2/
++ /models/facenet/
++ /models/sface/
++ /models/yahoo_open_nsfw/
++ /models/yunet/
+- /models/*

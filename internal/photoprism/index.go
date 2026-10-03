@@ -60,6 +60,14 @@ func (ind *Index) thumbPath() string {
 	return ind.conf.ThumbCachePath()
 }
 
+// forgetReplacedPreview evicts a sidecar preview rewritten by a forced conversion from the file cache,
+// so the same run indexes it even if its whole-second time is unchanged.
+func (ind *Index) forgetReplacedPreview(img *MediaFile) {
+	if img != nil && img.InSidecar() {
+		ind.files.Remove(img.RootRelName(), img.Root())
+	}
+}
+
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
 	mutex.IndexWorker.Cancel()
@@ -323,6 +331,21 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				if !o.Rescan && !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
 					if mainRel := ind.mainForSidecar(relName); mainRel != "" {
 						changedXmpMainFiles[mainRel] = struct{}{}
+					}
+				}
+
+				return nil
+			}
+
+			// A new LRV proxy queues the video it belongs to, since it is only indexed with that video.
+			if fs.FileType(fileName) == fs.VideoLrv {
+				if !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
+					if proxy, proxyErr := NewMediaFile(fileName); proxyErr == nil {
+						if partnerName := insta360ProxyPartner(proxy); partnerName != "" && !ignore.Ignore(partnerName) {
+							if partner, partnerErr := NewMediaFile(partnerName); partnerErr == nil {
+								enqueueRelated(partner)
+							}
+						}
 					}
 				}
 

@@ -25,22 +25,6 @@ func loadTestResponse(t *testing.T, name string) *Response {
 	return &resp
 }
 
-func TestParseErrorMessage(t *testing.T) {
-	t.Run("MessagePresent", func(t *testing.T) {
-		raw := []byte(`{"error":{"message":"Invalid schema"}}`)
-		msg := ParseErrorMessage(raw)
-		if msg != "Invalid schema" {
-			t.Fatalf("expected message, got %q", msg)
-		}
-	})
-	t.Run("ErrorMissing", func(t *testing.T) {
-		raw := []byte(`{"output":[]}`)
-		if msg := ParseErrorMessage(raw); msg != "" {
-			t.Fatalf("expected empty message, got %q", msg)
-		}
-	})
-}
-
 func TestResponseFirstTextCaption(t *testing.T) {
 	resp := loadTestResponse(t, "caption-response.json")
 

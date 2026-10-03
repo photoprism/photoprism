@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-form p-form--table p-form-photo-labels" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <div class="form-body">
         <div class="form-controls">
-          <v-row dense align="start">
+          <v-row density="compact" class="align-start">
             <v-col cols="0" sm="2" class="form-thumb">
               <div>
                 <img :alt="view?.model.Title" :src="view?.model.thumbnailUrl('tile_500')" class="clickable" @click.stop.prevent.exact="openPhoto()" />
@@ -12,7 +12,7 @@
             <v-col cols="12" sm="10" class="d-flex flex-column ga-4">
               <div
                 :class="$vuetify.display.smAndDown ? 'v-table--density-compact' : 'v-table--density-comfortable'"
-                class="v-table v-table--has-top v-table--hover v-data-table elevation-0 edit-table list-view"
+                class="v-table v-table--gridlines-horizontal v-table--has-top v-table--hover v-data-table elevation-0 edit-table list-view"
               >
                 <div class="v-table__wrapper">
                   <table>

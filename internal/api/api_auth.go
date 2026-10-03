@@ -1,6 +1,9 @@
 package api
 
 import (
+	"crypto/subtle"
+	"errors"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -8,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -35,15 +39,31 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// Disable response caching.
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
-	// Allow requests based on an access token for specific resources.
-	if resource == acl.ResourceVision && perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && vision.ServiceKey == authToken {
+	// Warn if requests forwarded by the Portal are attributed to its own address.
+	warnUntrustedPortal(c, clientIp)
+
+	// Refuse clients that exceeded the authentication failure rate limit.
+	if limiter.Auth.Reject(clientIp) {
+		return entity.SessionStatusTooManyRequests()
+	}
+
+	// Allow requests based on an access token for specific resources. Session() counts a failed
+	// token with the format of an access token or app password against the rate limit above.
+	if resource == acl.ResourceVision && perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && subtle.ConstantTimeCompare([]byte(vision.ServiceKey), []byte(authToken)) == 1 {
 		s = entity.NewSessionFromToken(c, authToken, acl.ResourceVision.String(), "service-key")
 		event.AuditInfo([]string{clientIp, "%s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 		return s
 	}
 
 	// Find active session to perform authorization check or deny if no session was found.
-	if s = Session(clientIp, authToken); s == nil {
+	var err error
+
+	if s, err = LookupSession(clientIp, authToken); s == nil {
+		// Refuse a client that exceeded the rate limit after the check above, again without an audit event.
+		if errors.Is(err, authn.ErrRateLimitExceeded) {
+			return entity.SessionStatusTooManyRequests()
+		}
+
 		if s = authAnyJWT(c, clientIp, authToken, resource, perms); s != nil {
 			event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 			return s

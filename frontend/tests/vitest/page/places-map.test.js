@@ -4,7 +4,7 @@ import Places from "page/places.vue";
 import * as maps from "common/map";
 import api from "common/api";
 
-vi.mock("common/map", () => ({ supportsWebGL2: vi.fn(), load: vi.fn(), groupGeoFeatures: vi.fn() }));
+vi.mock("common/map", () => ({ supportsWebGL2: vi.fn(), load: vi.fn(), groupGeoFeatures: vi.fn(), locale: vi.fn(() => ({})) }));
 vi.mock("common/api", () => ({ default: { get: vi.fn() } }));
 vi.mock("page/photos.vue", () => ({ default: { template: "<div />" } }));
 

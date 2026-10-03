@@ -25,8 +25,12 @@ import (
 var exifIfdMapping *exifcommon.IfdMapping
 var exifTagIndex = exif.NewTagIndex()
 var exifMutex = sync.Mutex{}
-var exifDateTimeTags = []string{"DateTimeOriginal", "DateTimeCreated", "CreateDate", "DateTime", "DateTimeDigitized"}
+var exifDateTimeTags = []string{"DateTimeOriginal", "DateTimeCreated", "CreateDate", "DateTimeDigitized"}
 var exifSubSecTags = []string{"SubSecTimeOriginal", "SubSecTime", "SubSecTimeDigitized"}
+
+// exifModifiedTag is the Exif tag 0x0132, which stores when the file was last changed and which ExifTool reports as
+// ModifyDate, whereas exifDateTimeTags store when the picture was taken or digitized.
+const exifModifiedTag = "DateTime"
 
 func init() {
 	exifIfdMapping = exifcommon.NewIfdMapping()
@@ -177,16 +181,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	}
 
 	if value, ok := data.exif["ExposureTime"]; ok {
-		if n := strings.Split(value, "/"); len(n) == 2 {
-			if n[0] != "1" && len(n[0]) < len(n[1]) {
-				n0, _ := strconv.ParseUint(n[0], 10, 64)
-				if n1, err := strconv.ParseUint(n[1], 10, 64); err == nil && n0 > 0 && n1 > 0 {
-					value = fmt.Sprintf("1/%d", n1/n0)
-				}
-			}
-		}
-
-		data.Exposure = value
+		data.Exposure = normalizeExposure(value)
 	}
 
 	if value, ok := data.exif["FNumber"]; ok {
@@ -284,9 +279,16 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 		}
 	}
 
-	// Fallback to GPS timestamp.
+	if data.ModifiedAt.IsZero() {
+		data.ModifiedAt = txt.ParseTime(data.exif[exifModifiedTag], data.TimeZone)
+	}
+
+	// Fallback to GPS timestamp, which is in UTC, so the local time is only known with a time zone.
+	localUnknown := false
+
 	if takenAt.IsZero() && !data.TakenGps.IsZero() {
-		takenAt = data.TakenGps.UTC()
+		takenAt = data.TakenGps.In(tz.Find(data.TimeZone))
+		localUnknown = tz.IsLocal(data.TimeZone)
 	}
 
 	// Nanoseconds.
@@ -301,7 +303,10 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 
 	// UniqueID time found in Exif metadata?
 	if !takenAt.IsZero() {
-		if takenAtLocal, err := time.ParseInLocation("2006-01-02T15:04:05", takenAt.Format("2006-01-02T15:04:05"), time.UTC); err == nil {
+		// Without a time zone, the local time is derived from UTC once the zone is known, e.g. from a sidecar.
+		if localUnknown {
+			data.TakenAtLocal = time.Time{}
+		} else if takenAtLocal, err := time.ParseInLocation("2006-01-02T15:04:05", takenAt.Format("2006-01-02T15:04:05"), time.UTC); err == nil {
 			data.TakenAtLocal = takenAtLocal
 		} else {
 			data.TakenAtLocal = takenAt
@@ -314,7 +319,10 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	if data.TakenAt.Nanosecond() == 0 {
 		if ns := time.Duration(data.TakenNs); ns > 0 && ns <= time.Second {
 			data.TakenAt = data.TakenAt.Truncate(time.Second).UTC().Add(ns)
-			data.TakenAtLocal = data.TakenAtLocal.Truncate(time.Second).Add(ns)
+
+			if !data.TakenAtLocal.IsZero() {
+				data.TakenAtLocal = data.TakenAtLocal.Truncate(time.Second).Add(ns)
+			}
 		}
 	}
 

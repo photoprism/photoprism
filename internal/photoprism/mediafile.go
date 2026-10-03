@@ -67,6 +67,8 @@ type MediaFile struct {
 	videoOnce        sync.Once
 	insta360Model    string
 	insta360Once     sync.Once
+	importedCapture  *Insta360Capture
+	importedOnce     sync.Once
 	visualProjection projection.Type
 	fileMutex        sync.Mutex
 	location         *entity.Cell
@@ -206,11 +208,9 @@ func (m *MediaFile) DateCreated() time.Time {
 	return takenAt
 }
 
-// TakenAt returns the UTC creation timestamp, the local timestamp and the source
-// used to derive it. The value is cached so repeated calls avoid re-reading
-// metadata. Extraction order: EXIF metadata, filename parsing, file modification
-// time; if none of those succeed the timestamps remain set to the current time
-// captured when the method first ran.
+// TakenAt returns the UTC and local time the file was taken, and their source, and caches them. It tries the capture
+// time from the metadata, a date in the file name, the modify time from the metadata, and the file modification time;
+// otherwise, it returns the time of the first call.
 func (m *MediaFile) TakenAt() (utc time.Time, local time.Time, source string) {
 	// Check if creation time has been cached.
 	if !m.takenAt.IsZero() {
@@ -238,6 +238,15 @@ func (m *MediaFile) TakenAt() (utc time.Time, local time.Time, source string) {
 		m.takenAtLocal = nameTime.Truncate(time.Second).Local()
 		m.takenAt = nameTime.Truncate(time.Second).UTC()
 		m.takenAtSrc = entity.SrcName
+		log.Infof("media: %s was taken at %s (%s)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String(), m.takenAtSrc)
+		return m.takenAt, m.takenAtLocal, m.takenAtSrc
+	}
+
+	// Then fall back to the time the file was last modified according to its metadata.
+	if modifiedAt, _, _, modified := data.TakenOrModified(); data.Error == nil && modified && modifiedAt.Year() > 1000 {
+		m.takenAtLocal = modifiedAt.Truncate(time.Second).Local()
+		m.takenAt = m.takenAtLocal.UTC()
+		m.takenAtSrc = entity.SrcModified
 		log.Infof("media: %s was taken at %s (%s)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String(), m.takenAtSrc)
 		return m.takenAt, m.takenAtLocal, m.takenAtSrc
 	}
@@ -1042,13 +1051,37 @@ func (m *MediaFile) FisheyeDngProjection() projection.Type {
 }
 
 // DualFisheyeLayout reports whether the frame is compatible with the side-by-side dual-fisheye
-// input that "v360=input=dfisheye" expects, i.e. a ~2:1 aspect ratio.
-// An unknown aspect (0) counts as compatible so the extension-authoritative .insp/.insv path still
-// dewarps; known non-2:1 frames (X3/X4 per-lens streams, single-lens sources) are rejected.
+// input that "v360=input=dfisheye" expects, i.e. a ~2:1 aspect ratio (exactly 2:1 for .insp). An .insv
+// without known dimensions uses its first video track size; any other unknown aspect counts as compatible.
 func (m *MediaFile) DualFisheyeLayout() bool {
 	r := float64(m.AspectRatio())
 
-	return r <= 0 || math.Abs(r-2.0) <= 0.2
+	if r <= 0 && m.IsInsv() {
+		if sizes := m.VideoInfo().TrackSizes; len(sizes) > 0 {
+			r = float64(sizes[0].Width) / float64(sizes[0].Height)
+		}
+	}
+
+	// Photos are exactly 2:1 when they hold both lenses, while single-lens modes use 16:9 and similar.
+	tolerance := 0.2
+	if m.IsInsp() {
+		tolerance = 0.02
+	}
+
+	return r <= 0 || math.Abs(r-2.0) <= tolerance
+}
+
+// Insta360DualStream reports whether the file is an .insv that stores each lens as a separate,
+// square video stream of the same size.
+func (m *MediaFile) Insta360DualStream() bool {
+	if m == nil || !m.IsInsv() {
+		return false
+	}
+
+	sizes := m.VideoInfo().TrackSizes
+
+	return len(sizes) == 2 && sizes[0] == sizes[1] && sizes[0].Height > 0 &&
+		math.Abs(float64(sizes[0].Width)/float64(sizes[0].Height)-1) <= insta360PairAspectTolerance
 }
 
 // StackedDualFisheyeLayout reports whether two square fisheye frames are stacked vertically.
@@ -1166,6 +1199,17 @@ func (m *MediaFile) FileType() fs.Type {
 	}
 }
 
+// isImageType reports whether the media type is an image format, excluding the image and sequence
+// types of the ISO base media file format, which video files share.
+func isImageType(mimeType string) bool {
+	switch mimeType {
+	case header.ContentTypeHeic, header.ContentTypeHeicS, "image/heif", "image/heif-sequence", header.ContentTypeAvif, header.ContentTypeAvifS, "image/x-icon":
+		return false
+	default:
+		return strings.HasPrefix(mimeType, "image/")
+	}
+}
+
 // CheckType returns an error if the file extension is missing or invalid,
 // see https://github.com/photoprism/photoprism/issues/3518 for details.
 func (m *MediaFile) CheckType() error {
@@ -1202,10 +1246,21 @@ func (m *MediaFile) CheckType() error {
 		valid = mimeType == header.ContentTypePsd || mimeType == header.ContentTypePsdAlt
 	case fs.ImageHeic, fs.ImageHeif:
 		valid = mimeType == header.ContentTypeHeic || mimeType == header.ContentTypeHeicS
+	case fs.ImageBmp:
+		// Some legacy BMP header versions are not identified, so only other formats are rejected.
+		valid = mimeType == header.ContentTypeBmp || mimeType == fs.MimeTypeUnknown
+	case fs.ImageWebp:
+		valid = mimeType == header.ContentTypeWebp
+	case fs.ImageJpegXL:
+		valid = mimeType == header.ContentTypeJpegXL
+	case fs.ImageMPO, fs.ImageInsp:
+		valid = mimeType == header.ContentTypeJpeg
+	case fs.VideoMjpeg:
+		// Motion JPEG streams consist of JPEG images.
+		valid = mimeType == header.ContentTypeJpeg || !isImageType(mimeType)
 	default:
-		// Skip mime type check. Note: Checks for additional formats and/or generic
-		// checks based on the media content type can be added over time as needed.
-		return nil
+		// Video files must not contain a still image.
+		valid = !m.IsVideo() || !isImageType(mimeType)
 	}
 
 	// Ok?

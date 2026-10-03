@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -47,8 +48,8 @@ func auditArchiveAccess(c *gin.Context, sess *entity.Session, action, outcome, b
 //	@Id			ZipCreate
 //	@Tags		Download
 //	@Produce	json
-//	@Failure	400,403,404	{object}	i18n.Response
-//	@Success	200			{file}		application/zip
+//	@Failure	400,403,404,413	{object}	i18n.Response
+//	@Success	200				{file}		application/zip
 //	@Router		/api/v1/zip [post]
 func ZipCreate(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
@@ -208,15 +209,18 @@ func ZipCreate(router *gin.RouterGroup) {
 //	@Id			ZipDownload
 //	@Tags		Download
 //	@Produce	application/zip
-//	@Failure	403,404,500	{object}	i18n.Response
-//	@Success	200			{file}		application/zip
-//	@Param		filename	path		string	true	"zip archive filename returned by the POST /api/v1/zip endpoint"
+//	@Failure	403,404,429,500	{object}	i18n.Response
+//	@Success	200				{file}		application/zip
+//	@Param		filename		path		string	true	"zip archive filename returned by the POST /api/v1/zip endpoint"
 //	@Router		/api/v1/zip/{filename} [get]
 func ZipDownload(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
 		sess, valid := AuthDownload(c, acl.Resources{acl.ResourcePhotos})
 
-		if !valid {
+		if !valid && DownloadRateLimited(c) {
+			limiter.AbortJSON(c)
+			return
+		} else if !valid {
 			AbortForbidden(c)
 			return
 		}

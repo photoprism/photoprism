@@ -341,6 +341,20 @@ describe("component/photo/toolbar", () => {
       expect(openUrl).toHaveBeenCalledWith("/library/places_browse?q=country:US");
     });
   });
+
+  describe("countryOptions", () => {
+    it("localizes the name of the unknown country from the server list", () => {
+      const ctx = {
+        all: { countries: [{ ID: "", Name: "All Countries" }] },
+        config: { countries: [{ ID: "de", Name: "Germany" }, { ID: "zz", Name: "Unknown" }] },
+        $gettext: (msgid) => (msgid === "Unknown" ? "Unbekannt" : msgid),
+      };
+      expect(PPhotoToolbar.computed.countryOptions.call(ctx)).toEqual([
+        { ID: "", Name: "All Countries" },
+        { ID: "de", Name: "Germany" },
+        { ID: "zz", Name: "Unbekannt" },
+      ]);
+      expect(ctx.config.countries[1].Name).toBe("Unknown");
+    });
+  });
 });
-
-

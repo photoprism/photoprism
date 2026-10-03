@@ -339,11 +339,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Clear (previous) file error.
 	file.FileError = ""
 
-	// Flag first JPEG as primary file for this photo.
+	// Flag first JPEG as primary file for this photo, or the combined preview of an Insta360 capture
+	// whose primary file is a preview of its right lens or proxy; saving the file unflags the others.
 	if !file.FilePrimary {
 		if photoExists {
 			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
 				file.FilePrimary = m.IsPreviewImage()
+			} else if capture := insta360PairPreview(m); capture != nil && capture.MemberPreview(primaryFile.FileName) {
+				file.FilePrimary = true
 			}
 		} else {
 			file.FilePrimary = m.IsPreviewImage()
@@ -505,10 +508,15 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
+		// Previews of an Insta360 right lens show one lens, so a stored projection is cleared.
+		if insta360RightLensSidecar(m) {
+			file.FileProjection = ""
+		}
+
 		// Update file metadata.
 		if data := m.MetaData(); data.Error == nil {
 			file.FileCodec = data.Codec
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
@@ -642,7 +650,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Update basic metadata.
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
 
@@ -672,7 +680,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetPages(data.Pages)
 			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
@@ -736,17 +744,20 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		// Insta360 .insp originals store dual-fisheye 360° content; record the projection regardless
-		// of metadata errors (these files often lack EXIF) so the dewarped derivative routes correctly.
-		if m.DualFisheye() {
+		// Insta360 .insp originals with a ~2:1 frame store dual-fisheye 360° content; record the projection
+		// regardless of metadata errors (these files often lack EXIF) so the dewarped derivative routes
+		// correctly. Single-lens shots have other dimensions and are not labeled.
+		if m.DualFisheye() && m.DualFisheyeLayout() {
 			file.SetProjection(projection.DualFisheye.String())
+		} else if m.DualFisheye() && file.FileProjection == projection.DualFisheye.String() {
+			file.FileProjection = ""
 		}
 	case m.IsVector():
 		if data := m.MetaData(); data.Error == nil {
 			// Update basic metadata.
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -774,7 +785,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetPages(data.Pages)
 			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
@@ -793,7 +804,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if data := m.MetaData(); data.Error == nil {
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -821,7 +832,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetPages(data.Pages)
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -838,7 +849,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if data := m.MetaData(); data.Error == nil {
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
 
@@ -868,7 +879,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetDuration(data.Duration)
 			file.SetFPS(data.FPS)
 			file.SetFrames(data.Frames)
@@ -928,12 +939,16 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Set taken date based on file mod time or name if other metadata is missing.
 	if m.IsMedia() && entity.SrcPriority[photo.TakenSrc] <= entity.SrcPriority[entity.SrcName] {
-		// Try to extract time from original file name first.
-		if taken := txt.DateFromFilePath(photo.OriginalName); !taken.IsZero() {
+		if data := m.MetaData(); data.Error == nil && data.TakenAt.Year() > 1000 {
+			// Use the capture time of any file in the stack, including files that are not primary.
+			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+		} else if taken := txt.DateFromFilePath(photo.OriginalName); !taken.IsZero() {
+			// Try to extract time from original file name first.
 			photo.SetTakenAt(taken, taken, tz.Local, entity.SrcName)
 		} else if takenAt, takenAtLocal, takenSrc := m.TakenAt(); takenSrc == entity.SrcName {
 			photo.SetTakenAt(takenAt, takenAtLocal, tz.Local, entity.SrcName)
-		} else if !takenAt.IsZero() && !takenAtLocal.IsZero() {
+		} else if takenSrc != entity.SrcModified && !takenAt.IsZero() && !takenAtLocal.IsZero() {
+			// A modify time is only set with its time zone by setTakenAtMeta, never from a JPEG or PNG that is not primary.
 			photo.SetTakenAt(takenAt, takenAtLocal, tz.Local, takenSrc)
 		}
 	}
@@ -946,7 +961,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if file.FilePrimary {
 		primaryFile = file
 
-		// Classify images with TensorFlow if the run enables automatic labels.
+		// Classify images if the run enables automatic labels.
 		if o.GenerateLabels {
 			labels = m.GenerateLabels(entity.SrcAuto)
 
@@ -955,7 +970,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				labels = append(labels, extraLabels...)
 			}
 
-			isNSFW = labels.IsNSFW(vision.Config.Thresholds.GetNSFW())
+			isNSFW = labelsMarkNSFW(labels, o.DetectNSFWLabels)
 		}
 
 		// Decouple NSFW detection from label generation.
@@ -963,7 +978,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if isNSFW {
 				photo.PhotoPrivate = true
 			} else if o.DetectNsfw {
-				photo.PhotoPrivate = m.DetectNSFW()
+				if result := m.DetectNSFW(); result.IsUnsafe() {
+					photo.PhotoPrivate = true
+				} else if result.IsUnavailable() {
+					// Preserve the existing flag when the detector cannot decide.
+					log.Warnf("index: nsfw detection unavailable for %s (%s)", clean.Log(m.RootRelName()), clean.Log(result.Reason))
+				}
 			}
 		}
 
@@ -972,7 +992,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Update basic metadata.
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
 
@@ -1229,4 +1249,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	return result
+}
+
+// labelsNSFWThreshold returns the configured threshold for NSFW flags from labels models.
+func labelsNSFWThreshold() int {
+	if vision.Config == nil {
+		return vision.DefaultNSFWThreshold
+	}
+
+	return vision.Config.Thresholds.GetNSFW()
+}
+
+// labelsMarkNSFW reports label-derived unsafe content when detection is enabled.
+func labelsMarkNSFW(labels classify.Labels, enabled bool) bool {
+	return enabled && labels.IsNSFW(labelsNSFWThreshold())
 }

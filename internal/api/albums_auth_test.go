@@ -4,10 +4,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// TestAlbumViewableBySession checks album visibility for session roles and shares.
 func TestAlbumViewableBySession(t *testing.T) {
 	// albumViewableBySession reads only AlbumUID and CreatedBy, so a minimal album is sufficient.
 	shared := entity.Album{AlbumUID: "as6sg6bxpogaaba8"}   // redeemed by the visitor fixture
@@ -17,7 +19,10 @@ func TestAlbumViewableBySession(t *testing.T) {
 		assert.False(t, albumViewableBySession(nil, shared))
 	})
 	t.Run("AdminSeesEverything", func(t *testing.T) {
-		sess, err := entity.FindSession(entity.SessionFixtures.Get("alice").ID)
+		created := entity.NewSession(3600, 0).SetUser(entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, created.Create())
+		t.Cleanup(func() { assert.NoError(t, created.Delete()) })
+		sess, err := entity.FindSession(created.ID)
 		assert.NoError(t, err)
 		assert.True(t, albumViewableBySession(sess, unshared))
 	})
@@ -48,12 +53,16 @@ func TestAlbumViewableBySession(t *testing.T) {
 	})
 }
 
+// TestAlbumShareRequired checks when an album action needs a share.
 func TestAlbumShareRequired(t *testing.T) {
 	shared := "as6sg6bxpogaaba8"   // redeemed by the visitor fixture
 	unshared := "as6sg6bxpogaaba9" // not shared with the visitor
 
 	t.Run("AdminNeverRequiresShare", func(t *testing.T) {
-		sess, err := entity.FindSession(entity.SessionFixtures.Get("alice").ID)
+		created := entity.NewSession(3600, 0).SetUser(entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, created.Create())
+		t.Cleanup(func() { assert.NoError(t, created.Delete()) })
+		sess, err := entity.FindSession(created.ID)
 		assert.NoError(t, err)
 		assert.False(t, albumShareRequired(sess, unshared))
 	})
