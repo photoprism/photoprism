@@ -590,19 +590,41 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 		t.Skip("FFmpeg must be available to dewarp paired INSV files")
 	}
 
-	dir := t.TempDir()
-	leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
-	rightName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
-	left, err := NewMediaFile(leftName)
-	require.NoError(t, err)
+	t.Run("Pair", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName, rightName := filepath.Join(dir, insta360StackLeft), filepath.Join(dir, insta360StackRight)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackRight)
+		left, err := NewMediaFile(leftName)
+		require.NoError(t, err)
 
-	cmds, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "poster.jpg"), "")
-	require.NoError(t, err)
-	require.NotEmpty(t, cmds)
+		cmds, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "poster.jpg"), "")
+		require.NoError(t, err)
+		require.NotEmpty(t, cmds)
 
-	assert.Contains(t, cmds[0].String(), "-i "+leftName+" -i "+rightName)
-	assert.Contains(t, cmds[0].String(), "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
-	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
+		assert.Contains(t, cmds[0].String(), "-i "+leftName+" -i "+rightName)
+		assert.Contains(t, cmds[0].String(), "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+		assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := filepath.Join(dir, insta360StackLeft)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		rightName := filepath.Join(dir, insta360StackRight)
+		writeInsta360Photo(t, cnf, rightName, "320x320")
+		left, err := NewMediaFile(leftName)
+		require.NoError(t, err)
+		require.True(t, FindInsta360Capture(left).ValidPair(), "the capture is still grouped")
+
+		cmds, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "poster.jpg"), "")
+		require.NoError(t, err)
+		require.NotEmpty(t, cmds)
+
+		for _, cmd := range cmds {
+			assert.NotContains(t, cmd.String(), rightName)
+			assert.NotContains(t, cmd.String(), "v360")
+		}
+	})
 }
 
 // TestConvert_JpegConvertCmds_Insta360DualStream verifies that both streams are stacked before

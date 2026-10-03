@@ -153,17 +153,13 @@ func GetVideo(router *gin.RouterGroup) {
 			return
 		}
 
-		// Original fisheye pixels must never be sent to the sphere viewer or converted inline in an
-		// HTTP request. Index/import workers create the AVC; an older LRV derivative is a safe fallback.
-		if mediaFile.DewarpableInsv() {
-			playable := photoprism.DewarpedVideoFile(mediaFile)
-
-			if playable == nil {
-				log.Warnf("video: equirectangular derivative for %s is not ready", clean.Log(f.FileName))
-				AbortVideo(c)
-				return
-			}
-
+		// Footage that can be dewarped is never converted inline in an HTTP request: index/import workers
+		// create its AVC, and an older LRV derivative is a safe fallback. Other footage plays as it is.
+		if playable, ready := photoprism.Insta360PlaybackFile(mediaFile); !ready {
+			log.Warnf("video: equirectangular derivative for %s is not ready", clean.Log(f.FileName))
+			AbortVideo(c)
+			return
+		} else if playable != mediaFile {
 			mediaFile = playable
 			videoFileName = playable.FileName()
 			videoFileType = playable.FileType()

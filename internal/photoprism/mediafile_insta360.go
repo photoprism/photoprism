@@ -272,7 +272,7 @@ func insta360RightLensSidecar(m *MediaFile) bool {
 // 2:1 while its right lens is among the pending files, i.e. was made before both lenses were present.
 func insta360StalePreview(f *MediaFile, pending MediaFiles) bool {
 	capture := FindInsta360Capture(f)
-	if !capture.ValidPair() || capture.Left.FileName() != f.FileName() {
+	if !capture.Dewarpable() || capture.Left.FileName() != f.FileName() {
 		return false
 	}
 
@@ -314,7 +314,14 @@ func (m *Insta360Capture) MemberPreview(rootRelName string) bool {
 	return false
 }
 
-// ValidPair reports whether the two full-resolution lens files can safely be combined.
+// Dewarpable reports whether the two lens files of a valid pair can be combined, which also requires
+// the content of both lenses to match their type.
+func (m *Insta360Capture) Dewarpable() bool {
+	return m.ValidPair() && m.Left.CheckType() == nil && m.Right.CheckType() == nil
+}
+
+// ValidPair reports whether the two lens files match in dimensions, frame rate, and duration, which
+// decides grouping and stacking. Dewarpable decides whether they are combined.
 func (m *Insta360Capture) ValidPair() bool {
 	if m == nil || m.Left == nil || m.Right == nil || !m.Left.IsInsv() || !m.Right.IsInsv() {
 		return false
@@ -370,6 +377,20 @@ func (m *MediaFile) DewarpableInsv() bool {
 		return false
 	}
 
+	if capture := FindInsta360Capture(m); capture != nil && capture.Dewarpable() {
+		return true
+	}
+
+	return m.Insta360DualStream() || m.DualFisheyeLayout()
+}
+
+// Insta360Fisheye reports whether an INSV holds or belongs to dual-fisheye footage, including a
+// grouped capture whose lenses are not dewarpable.
+func (m *MediaFile) Insta360Fisheye() bool {
+	if m == nil || !m.IsInsv() {
+		return false
+	}
+
 	if capture := FindInsta360Capture(m); capture != nil && capture.ValidPair() {
 		return true
 	}
@@ -377,9 +398,10 @@ func (m *MediaFile) DewarpableInsv() bool {
 	return m.Insta360DualStream() || m.DualFisheyeLayout()
 }
 
-// DewarpedVideoFile returns an existing equirectangular AVC for an Insta360 video.
+// DewarpedVideoFile returns an existing AVC derivative of an Insta360 video, which is equirectangular
+// unless the footage cannot be dewarped.
 func DewarpedVideoFile(m *MediaFile) *MediaFile {
-	if m == nil || !m.DewarpableInsv() {
+	if m == nil || !m.Insta360Fisheye() {
 		return nil
 	}
 
@@ -392,6 +414,21 @@ func DewarpedVideoFile(m *MediaFile) *MediaFile {
 	}
 
 	return nil
+}
+
+// Insta360PlaybackFile returns the file to play for a video, and false while the equirectangular
+// AVC of footage that can be dewarped is not ready. Footage that cannot be dewarped and has no
+// derivative is played as it is.
+func Insta360PlaybackFile(m *MediaFile) (*MediaFile, bool) {
+	if m == nil {
+		return nil, false
+	} else if playable := DewarpedVideoFile(m); playable != nil {
+		return playable, true
+	} else if m.DewarpableInsv() {
+		return nil, false
+	}
+
+	return m, true
 }
 
 // absDuration returns the absolute value of a duration.

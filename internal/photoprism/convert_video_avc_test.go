@@ -626,8 +626,9 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 	})
 	t.Run("Insta360SeparateLensPair", func(t *testing.T) {
 		dir := t.TempDir()
-		leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
-		rightName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+		leftName, rightName := filepath.Join(dir, insta360StackLeft), filepath.Join(dir, insta360StackRight)
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, conf, dir, insta360StackRight)
 		mf, err := NewMediaFile(leftName)
 		if err != nil {
 			t.Fatal(err)
@@ -644,6 +645,23 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		assert.Contains(t, args, "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 		assert.Contains(t, args, "-map [v] -map 0:a:0?")
 		assert.Contains(t, args, "libx264")
+	})
+	t.Run("Insta360RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := filepath.Join(dir, insta360StackLeft)
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		rightName := filepath.Join(dir, insta360StackRight)
+		writeInsta360Photo(t, conf, rightName, "320x320")
+		mf, err := NewMediaFile(leftName)
+		require.NoError(t, err)
+		require.True(t, FindInsta360Capture(mf).ValidPair(), "the capture is still grouped")
+
+		r, _, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.Encoder("intel"))
+		require.NoError(t, err)
+		args := strings.Join(r.Args, " ")
+		assert.Contains(t, args, "-i "+leftName)
+		assert.NotContains(t, args, rightName)
+		assert.NotContains(t, args, "v360")
 	})
 	t.Run("Mp4NoV360", func(t *testing.T) {
 		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))

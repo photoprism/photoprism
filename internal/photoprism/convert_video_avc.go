@@ -384,7 +384,7 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 	// Complete separate-lens captures are combined before dewarping. Single-file INSV originals are
 	// dewarped only when their decoded frame is already a side-by-side ~2:1 dual-fisheye layout.
 	capture := FindInsta360Capture(f)
-	dewarpPair := capture.ValidPair() && capture.Left.FileName() == f.FileName()
+	dewarpPair := capture != nil && capture.Left != nil && capture.Left.FileName() == f.FileName() && capture.Dewarpable()
 	dewarpStreams := !dewarpPair && f.Insta360DualStream()
 	dewarp := dewarpPair || dewarpStreams || f.IsInsv() && f.DualFisheyeLayout()
 

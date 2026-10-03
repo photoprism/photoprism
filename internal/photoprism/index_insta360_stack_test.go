@@ -1403,3 +1403,73 @@ func backdateInsta360Previews(t *testing.T, dir string) {
 		require.NoError(t, os.Chtimes(fileName, past, past))
 	}
 }
+
+// TestIndex_Insta360RightLensTypeMismatch indexes a square left lens with a right lens holding JPEG
+// bytes: the capture stays grouped, but is converted like an incomplete one until the right lens is valid.
+func TestIndex_Insta360RightLensTypeMismatch(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	folder := "insta360rightmismatch"
+	cfg := newInsta360StackConfig(t, folder, false)
+	dir := filepath.Join(cfg.OriginalsPath(), folder)
+	writeInsta360StackMedia(t, cfg, dir, insta360StackLeft)
+	writeInsta360Photo(t, cfg, filepath.Join(dir, insta360StackRight), "320x320")
+
+	left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+	require.NoError(t, err)
+	require.True(t, FindInsta360Capture(left).ValidPair(), "capture must stay grouped")
+	right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+	require.NoError(t, err)
+	require.Error(t, right.CheckType(), "right lens must fail the type check")
+
+	hook := newInsta360LogHook(t)
+	indexInsta360StackFolder(cfg, folder, false, true)
+
+	previews := insta360StackPreviews(t, folder)
+	require.Contains(t, previews, insta360StackLeft+".jpg")
+	assert.NotContains(t, previews, insta360StackRight+".jpg")
+	assert.Equal(t, "", previews[insta360StackLeft+".jpg"].FileProjection)
+
+	t.Run("NoEquirectangularVideo", func(t *testing.T) {
+		var count int
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_name LIKE ? AND file_projection = ?", folder+"/%", "equirectangular").Count(&count).Error)
+		assert.Equal(t, 0, count, "no file of the capture is equirectangular")
+		assert.False(t, left.DewarpableInsv())
+	})
+	t.Run("NoForcedPreviewOnSidecarChange", func(t *testing.T) {
+		previewName := filepath.Join(cfg.SidecarPath(), folder, insta360StackLeft+".jpg")
+		before, statErr := os.Stat(previewName)
+		require.NoError(t, statErr)
+
+		backdateInsta360Previews(t, filepath.Join(cfg.SidecarPath(), folder))
+		before, statErr = os.Stat(previewName)
+		require.NoError(t, statErr)
+
+		// An XMP sidecar change re-queues the left lens, with the never-indexed right lens still pending.
+		xmp := `<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:RDF></x:xmpmeta>`
+		require.NoError(t, os.WriteFile(filepath.Join(dir, insta360StackLeft+".xmp"), []byte(xmp), 0o644))
+
+		hook.Reset()
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		after, statErr := os.Stat(previewName)
+		require.NoError(t, statErr)
+		assert.True(t, before.ModTime().Equal(after.ModTime()), "an unchanged left-only preview is not rebuilt")
+	})
+	t.Run("RightLensRepaired", func(t *testing.T) {
+		// The right lens is replaced with valid content of its type, e.g. restored from a backup.
+		require.NoError(t, os.Remove(filepath.Join(dir, insta360StackRight)))
+		writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		previews := insta360StackPreviews(t, folder)
+		assert.Equal(t, "equirectangular", previews[insta360StackLeft+".jpg"].FileProjection)
+
+		var avc entity.File
+		require.NoError(t, entity.UnscopedDb().First(&avc, "file_name = ?", folder+"/"+insta360StackLeft+".avc").Error)
+		assert.Equal(t, 2*avc.FileHeight, avc.FileWidth, "the AVC is made from both lenses once both are valid")
+	})
+}

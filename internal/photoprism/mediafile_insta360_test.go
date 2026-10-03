@@ -212,10 +212,16 @@ func newInsta360PreviewFixture(t *testing.T, dir string) (*MediaFile, string) {
 		_ = os.RemoveAll(sidecars)
 	})
 
-	left, err := NewMediaFile(writeInsta360CaptureFile(t, originals, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg"))
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	// The lens files are square videos, as the content of both lenses must match their type.
+	writeInsta360StackMedia(t, conf, originals, "VID_20220625_140410_00_008.insv")
+	writeInsta360StackMedia(t, conf, originals, "VID_20220625_140410_10_008.insv")
+	writeInsta360StackMedia(t, conf, originals, "LRV_20220625_140410_11_008.insv")
+	left, err := NewMediaFile(filepath.Join(originals, "VID_20220625_140410_00_008.insv"))
 	require.NoError(t, err)
-	writeInsta360CaptureFile(t, originals, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
-	writeInsta360CaptureFile(t, originals, "LRV_20220625_140410_11_008.insv", "testdata/flash.jpg")
 
 	return left, sidecars
 }
@@ -288,6 +294,12 @@ func TestInsta360StalePreview(t *testing.T) {
 		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-square")
 		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
 		assert.True(t, insta360StalePreview(left, rightLens(t, "stale-preview-square")))
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-mismatch")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
+		writeInsta360Photo(t, Config(), filepath.Join(Config().OriginalsPath(), "stale-preview-mismatch", "VID_20220625_140410_10_008.insv"), "320x320")
+		assert.False(t, insta360StalePreview(left, rightLens(t, "stale-preview-mismatch")))
 	})
 	t.Run("RightLensIndexed", func(t *testing.T) {
 		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-indexed")
@@ -370,6 +382,125 @@ func TestDewarpedVideoFile(t *testing.T) {
 	assert.Nil(t, DewarpedVideoFile(nil))
 }
 
+func TestInsta360PlaybackFile(t *testing.T) {
+	conf := config.TestConfig()
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	// newCapture returns the left lens of a square capture, with a right lens that holds JPEG bytes
+	// unless dewarpable is set.
+	newCapture := func(t *testing.T, dewarpable bool) *MediaFile {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		if dewarpable {
+			writeInsta360StackMedia(t, conf, dir, insta360StackRight)
+		} else {
+			writeInsta360Photo(t, conf, filepath.Join(dir, insta360StackRight), "320x320")
+		}
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		return left
+	}
+
+	// addAvc copies a video fixture to the AVC sidecar name of m.
+	addAvc := func(t *testing.T, m *MediaFile) string {
+		avcName, err := fs.FileName(m.FileName(), conf.SidecarPath(), conf.OriginalsPath(), fs.ExtAvc)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.Remove(avcName) })
+		require.NoError(t, fs.Copy(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"), avcName, false))
+		return avcName
+	}
+
+	t.Run("NotReady", func(t *testing.T) {
+		left := newCapture(t, true)
+		playable, ready := Insta360PlaybackFile(left)
+		assert.False(t, ready)
+		assert.Nil(t, playable)
+	})
+	t.Run("Dewarped", func(t *testing.T) {
+		left := newCapture(t, true)
+		avcName := addAvc(t, left)
+		playable, ready := Insta360PlaybackFile(left)
+		require.True(t, ready)
+		assert.Equal(t, avcName, playable.FileName())
+	})
+	t.Run("NotDewarpable", func(t *testing.T) {
+		left := newCapture(t, false)
+		assert.True(t, left.Insta360Fisheye())
+		assert.False(t, left.DewarpableInsv())
+		playable, ready := Insta360PlaybackFile(left)
+		require.True(t, ready)
+		assert.Same(t, left, playable, "the lens is played as it is")
+	})
+	t.Run("NotDewarpableWithDerivative", func(t *testing.T) {
+		left := newCapture(t, false)
+		avcName := addAvc(t, left)
+		playable, ready := Insta360PlaybackFile(left)
+		require.True(t, ready)
+		assert.Equal(t, avcName, playable.FileName(), "an existing derivative is played")
+	})
+	t.Run("Ordinary", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"))
+		require.NoError(t, err)
+		playable, ready := Insta360PlaybackFile(mf)
+		require.True(t, ready)
+		assert.Same(t, mf, playable)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		playable, ready := Insta360PlaybackFile(nil)
+		assert.False(t, ready)
+		assert.Nil(t, playable)
+	})
+}
+
+func TestMediaFile_Insta360Fisheye(t *testing.T) {
+	conf := config.TestConfig()
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	t.Run("Pair", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, conf, dir, insta360StackRight)
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		assert.True(t, left.Insta360Fisheye())
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360Photo(t, conf, filepath.Join(dir, insta360StackRight), "320x320")
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		assert.True(t, left.Insta360Fisheye())
+	})
+	t.Run("LoneLens", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		assert.False(t, left.Insta360Fisheye())
+	})
+	t.Run("DualFisheyeFrame", func(t *testing.T) {
+		mf, err := NewMediaFile("testdata/insta360.insv")
+		require.NoError(t, err)
+		assert.True(t, mf.Insta360Fisheye())
+	})
+	t.Run("DualStream", func(t *testing.T) {
+		mf := newInsta360StreamFile(t, t.TempDir(), "dual.insv")
+		mf.width, mf.height = 64, 64
+		assert.True(t, mf.Insta360Fisheye())
+	})
+	t.Run("Ordinary", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"))
+		require.NoError(t, err)
+		assert.False(t, mf.Insta360Fisheye())
+		assert.False(t, (*MediaFile)(nil).Insta360Fisheye())
+	})
+}
+
 // TestInsta360Capture_ValidPair verifies geometry and timing safeguards.
 func TestInsta360Capture_ValidPair(t *testing.T) {
 	dir := t.TempDir()
@@ -393,6 +524,48 @@ func TestInsta360Capture_ValidPair(t *testing.T) {
 	require.NoError(t, err)
 	photo.width, photo.height = 3072, 3072
 	assert.False(t, (&Insta360Capture{Left: left, Right: photo}).ValidPair())
+}
+
+func TestInsta360Capture_Dewarpable(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	t.Run("Pair", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackRight)
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		capture := FindInsta360Capture(left)
+		assert.True(t, capture.Dewarpable())
+		assert.True(t, left.DewarpableInsv())
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		writeInsta360Photo(t, cnf, filepath.Join(dir, insta360StackRight), "320x320")
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		capture := FindInsta360Capture(left)
+		assert.True(t, capture.ValidPair(), "the capture stays grouped")
+		assert.False(t, capture.Dewarpable())
+		assert.False(t, left.DewarpableInsv())
+	})
+	t.Run("LeftLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360Photo(t, cnf, filepath.Join(dir, insta360StackLeft), "320x320")
+		writeInsta360StackMedia(t, cnf, dir, insta360StackRight)
+		right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+		require.NoError(t, err)
+		capture := FindInsta360Capture(right)
+		assert.True(t, capture.ValidPair(), "the capture stays grouped")
+		assert.False(t, capture.Dewarpable())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, (*Insta360Capture)(nil).Dewarpable())
+	})
 }
 
 // TestAbsDuration verifies duration normalization.
