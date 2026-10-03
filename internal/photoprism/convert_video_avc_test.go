@@ -306,6 +306,79 @@ func TestConvert_ToAvc_FallbackWarning(t *testing.T) {
 	})
 }
 
+func TestConvert_ToAvc_FallbackPreset(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	conf := config.TestConfig()
+
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to transcode videos")
+	}
+
+	resetTranscodeFallbacks()
+	t.Cleanup(resetTranscodeFallbacks)
+
+	// The wrapper records the arguments of every command and fails NVENC commands.
+	argsLog := filepath.Join(t.TempDir(), "args.log")
+	fakeBin := filepath.Join(t.TempDir(), "ffmpeg")
+	script := fmt.Sprintf("#!/bin/sh\nprintf '%%s\\n' \"$*\" >> %s\ncase \"$*\" in\n  *h264_nvenc*) exit 1;;\nesac\nexec %s \"$@\"\n", transportShellQuote(argsLog), transportShellQuote(conf.FFmpegBin()))
+
+	// #nosec G306 -- the script must be executable.
+	if err := os.WriteFile(fakeBin, []byte(script), 0o700); err != nil {
+		t.Fatal(err)
+	}
+
+	origBin, origPreset := conf.Options().FFmpegBin, conf.Options().FFmpegPreset
+	conf.Options().FFmpegBin = fakeBin
+	t.Cleanup(func() {
+		conf.Options().FFmpegBin = origBin
+		conf.Options().FFmpegPreset = origPreset
+	})
+
+	outputName := filepath.Join(conf.SidecarPath(), conf.SamplesPath(), "gopher-video.mp4.avc")
+	t.Cleanup(func() { _ = os.Remove(outputName) })
+
+	mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cases := []struct{ preset, want string }{
+		{"p1", encode.PresetSuperFast},
+		{"p2", encode.PresetVeryFast},
+		{"p3", encode.PresetFaster},
+		{"p4", encode.PresetFast},
+		{"p5", encode.PresetMedium},
+		{"p6", encode.PresetSlow},
+		{"p7", encode.PresetSlower},
+		{" P6 ", encode.PresetSlow},
+		{"placebo", encode.PresetVerySlow},
+		{"9", encode.PresetVerySlow},
+		{"turbo", encode.PresetFast},
+	}
+
+	for _, c := range cases {
+		conf.Options().FFmpegPreset = c.preset
+		_ = os.Remove(argsLog)
+		_ = os.Remove(outputName)
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.NvidiaAvc, false, true)
+		require.NoError(t, avcErr, c.preset)
+		require.NotNil(t, avcFile, c.preset)
+
+		args, readErr := os.ReadFile(argsLog) //nolint:gosec // test-owned temporary file
+		require.NoError(t, readErr, c.preset)
+		lines := strings.Split(strings.TrimSpace(string(args)), "\n")
+		require.Len(t, lines, 2, c.preset)
+		assert.Contains(t, lines[0], "-c:v h264_nvenc", c.preset)
+		assert.Contains(t, lines[1], "-c:v libx264", c.preset)
+		assert.Contains(t, lines[1], "-preset "+c.want+" ", c.preset)
+	}
+}
+
 func TestConvert_AvcBitrate(t *testing.T) {
 	conf := config.TestConfig()
 	convert := NewConvert(conf)

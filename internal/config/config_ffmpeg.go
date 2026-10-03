@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -110,13 +111,17 @@ func (c *Config) FFmpegBitrateExceeded(bitrate float64) bool {
 }
 
 // FFmpegPreset returns the ffmpeg encoding preset from "ultrafast" to "veryslow",
-// see https://trac.ffmpeg.org/wiki/Encode/H.264#Preset.
+// see https://trac.ffmpeg.org/wiki/Encode/H.264#Preset. Unknown names fall back to "fast".
 func (c *Config) FFmpegPreset() string {
-	if c.options.FFmpegPreset == "" {
-		return encode.PresetFast
+	preset, ok := encode.ParsePreset(c.options.FFmpegPreset)
+
+	if !ok {
+		if _, warned := c.warnedOnce.LoadOrStore("ffmpeg-preset: "+c.options.FFmpegPreset, true); !warned {
+			log.Warnf("config: unsupported ffmpeg preset %s, using %s", clean.LogQuote(c.options.FFmpegPreset), preset)
+		}
 	}
 
-	return c.options.FFmpegPreset
+	return preset
 }
 
 // FFmpegDevice returns the ffmpeg device path for supported hardware encoders (optional).

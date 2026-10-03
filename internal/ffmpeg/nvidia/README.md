@@ -40,7 +40,7 @@ The encoder runs in VBR mode with a constant quality target (`-cq`) and no avera
 
 #### Presets
 
-`Preset()` maps `PHOTOPRISM_FFMPEG_PRESET` from the x264 names to the NVENC presets `p1` (fastest) to `p7` (slowest), passes `p1` to `p7` through, and uses `p4` for any other value. Use the x264 names: the same setting reaches the software encoder that a failed NVENC transcode falls back to, and the Intel encoder, and both reject `p1` to `p7`.
+`Preset()` maps `PHOTOPRISM_FFMPEG_PRESET` from the x264 names to the NVENC presets `p1` (fastest) to `p7` (slowest), passes `p1` to `p7` through, and uses `p4` for any other value. `Config.FFmpegPreset()` already turns `p1` to `p7` into the x264 name of the same speed (`p1` `superfast`, `p2` `veryfast`, `p3` `faster`, `p4` `fast`, `p5` `medium`, `p6` `slow`, `p7` `slower`), so the software encoder that a failed NVENC transcode falls back to, and the Intel encoder, also receive a name they accept, and the round trip selects the same NVENC preset.
 
 | x264 Name                | NVENC Preset |
 |--------------------------|--------------|

@@ -6,7 +6,10 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestConfig_FFmpegEncoder(t *testing.T) {
@@ -142,7 +145,62 @@ func TestConfig_FFmpegPreset(t *testing.T) {
 
 	c.options.FFmpegPreset = "fast"
 	assert.Equal(t, encode.PresetFast, c.FFmpegPreset())
+}
 
+func TestConfig_FFmpegPreset_Normalize(t *testing.T) {
+	orig := log
+	logger, hook := logtest.NewNullLogger()
+	log = logger
+	t.Cleanup(func() { log = orig })
+
+	t.Run("NvencNames", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		expected := map[string]string{
+			"p1": encode.PresetSuperFast,
+			"p2": encode.PresetVeryFast,
+			"p3": encode.PresetFaster,
+			"p4": encode.PresetFast,
+			"p5": encode.PresetMedium,
+			"p6": encode.PresetSlow,
+			"p7": encode.PresetSlower,
+		}
+
+		for name, want := range expected {
+			c.options.FFmpegPreset = name
+			assert.Equal(t, want, c.FFmpegPreset(), name)
+		}
+	})
+	t.Run("CaseAndWhitespace", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		hook.Reset()
+		c.options.FFmpegPreset = " Slow "
+		assert.Equal(t, encode.PresetSlow, c.FFmpegPreset())
+		c.options.FFmpegPreset = "P7"
+		assert.Equal(t, encode.PresetSlower, c.FFmpegPreset())
+		c.options.FFmpegPreset = "placebo"
+		assert.Equal(t, encode.PresetVerySlow, c.FFmpegPreset())
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		hook.Reset()
+		c.options.FFmpegPreset = "turbo"
+
+		for range 3 {
+			assert.Equal(t, encode.PresetFast, c.FFmpegPreset())
+		}
+
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+		assert.Contains(t, hook.LastEntry().Message, "unsupported ffmpeg preset")
+		assert.Contains(t, hook.LastEntry().Message, "turbo")
+
+		c.options.FFmpegPreset = "warp"
+		assert.Equal(t, encode.PresetFast, c.FFmpegPreset())
+		assert.Equal(t, encode.PresetFast, c.FFmpegPreset())
+		require.Len(t, hook.AllEntries(), 2)
+		assert.Contains(t, hook.LastEntry().Message, "warp")
+	})
 }
 
 func TestConfig_FFmpegDevice(t *testing.T) {

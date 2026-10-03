@@ -37,6 +37,13 @@ func TestPreset(t *testing.T) {
 		assert.Equal(t, DefaultPreset, Preset("placebo"))
 		assert.Equal(t, DefaultPreset, Preset("fast -x"))
 	})
+	t.Run("RoundTrip", func(t *testing.T) {
+		for _, p := range []string{"p1", "p2", "p3", "p4", "p5", "p6", "p7"} {
+			name, ok := encode.ParsePreset(p)
+			assert.True(t, ok, p)
+			assert.Equal(t, p, Preset(name), p)
+		}
+	})
 	t.Run("DefaultPreset", func(t *testing.T) {
 		assert.Equal(t, "p4", DefaultPreset)
 		assert.Equal(t, presets[encode.PresetFast], DefaultPreset)
