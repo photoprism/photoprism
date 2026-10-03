@@ -169,6 +169,7 @@
   </div>
 </template>
 <script>
+import Axios from "axios";
 import $api from "common/api";
 import $notify from "common/notify";
 import download from "common/download";
@@ -401,6 +402,14 @@ export default {
               if (downloaded > 0) {
                 $notify.success(this.$gettext("Downloading…"));
               } else {
+                $notify.warn(this.$gettext("No files available for download"));
+              }
+            })
+            .catch((err) => {
+              console.warn("download failed", err);
+
+              // The API client already notifies the user of failed requests.
+              if (!Axios.isAxiosError(err)) {
                 $notify.warn(this.$gettext("No files available for download"));
               }
             })

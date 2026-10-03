@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { flushPromises, shallowMount } from "@vue/test-utils";
+import { AxiosError } from "axios";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import Photo from "model/photo";
 import Rest from "model/rest";
@@ -174,6 +175,55 @@ describe("component/photo/clipboard", () => {
       expect(warnSpy).toHaveBeenCalledWith(warnMessage);
       expect(wrapper.vm.busy).toBe(false);
       findSpy.mockRestore();
+      successSpy.mockRestore();
+      warnSpy.mockRestore();
+    });
+
+    it("logs the error and warns when the single photo download throws", async () => {
+      const { wrapper } = mountClipboard();
+      const found = new Photo({ UID: "pt5y3865st5p3k5l" });
+      const err = new Error("unexpected file data");
+      const findSpy = vi.spyOn(Rest.prototype, "find").mockResolvedValue(found);
+      vi.spyOn(found, "downloadAll").mockImplementation(() => {
+        throw err;
+      });
+      const logSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const successSpy = vi.spyOn($notify, "success").mockImplementation(() => {});
+      const warnSpy = vi.spyOn($notify, "warn").mockImplementation(() => {});
+      wrapper.vm.selection = ["pt5y3865st5p3k5l"];
+
+      wrapper.vm.download();
+      await flushPromises();
+
+      expect(logSpy).toHaveBeenCalledWith("download failed", err);
+      expect(successSpy).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledWith(warnMessage);
+      expect(wrapper.vm.busy).toBe(false);
+      findSpy.mockRestore();
+      logSpy.mockRestore();
+      successSpy.mockRestore();
+      warnSpy.mockRestore();
+    });
+
+    it("leaves failed single photo requests to the API client notification", async () => {
+      const { wrapper } = mountClipboard();
+      const err = new AxiosError("Request failed with status code 404", AxiosError.ERR_BAD_REQUEST);
+      const findSpy = vi.spyOn(Rest.prototype, "find").mockRejectedValue(err);
+      const logSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const successSpy = vi.spyOn($notify, "success").mockImplementation(() => {});
+      const warnSpy = vi.spyOn($notify, "warn").mockImplementation(() => {});
+      wrapper.vm.selection = ["pt5y3865st5p3k5l"];
+
+      wrapper.vm.download();
+      await flushPromises();
+
+      expect(logSpy).toHaveBeenCalledWith("download failed", err);
+      expect(successSpy).not.toHaveBeenCalled();
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(wrapper.vm.busy).toBe(false);
+      findSpy.mockRestore();
+      logSpy.mockRestore();
       successSpy.mockRestore();
       warnSpy.mockRestore();
     });

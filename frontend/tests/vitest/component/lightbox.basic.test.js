@@ -1,5 +1,6 @@
 import { mount, flushPromises, config as VTUConfig } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { AxiosError } from "axios";
 import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
@@ -1390,6 +1391,42 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(ctx.$notify.success).not.toHaveBeenCalled();
       expect(ctx.$notify.warn).toHaveBeenCalledTimes(1);
       expect(ctx.$notify.warn).toHaveBeenCalledWith(warnMessage);
+      findSpy.mockRestore();
+    });
+
+    it("logs the error and warns when downloadAll throws", async () => {
+      const wrapper = mountLightbox();
+      const found = new Photo({ UID: "ps6sg6be2lvl0yh7" });
+      const { findSpy, dlSpy } = stubPhotoFind(found);
+      const err = new Error("unexpected file data");
+      dlSpy.mockImplementation(() => {
+        throw err;
+      });
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await flushPromises();
+
+      expect(ctx.log).toHaveBeenCalledWith("download failed", err);
+      expect(ctx.$notify.success).not.toHaveBeenCalled();
+      expect(ctx.$notify.warn).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.warn).toHaveBeenCalledWith(warnMessage);
+      findSpy.mockRestore();
+    });
+
+    it("leaves failed requests to the API client notification", async () => {
+      const wrapper = mountLightbox();
+      const err = new AxiosError("Request failed with status code 404", AxiosError.ERR_BAD_REQUEST);
+      const findSpy = vi.spyOn(Rest.prototype, "find").mockRejectedValue(err);
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await flushPromises();
+
+      expect(findSpy).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
+      expect(ctx.log).toHaveBeenCalledWith("download failed", err);
+      expect(ctx.$notify.success).not.toHaveBeenCalled();
+      expect(ctx.$notify.warn).not.toHaveBeenCalled();
       findSpy.mockRestore();
     });
   });
