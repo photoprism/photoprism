@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -142,6 +143,207 @@ func TestConvert_ToImage(t *testing.T) {
 		assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel)
 
 		_ = os.Remove(jpgFilename)
+	})
+	t.Run("RawEmbeddedPreviewOrientation", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "portrait-preview-orientation.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		// #nosec G204 -- arguments are the configured ExifTool binary and a test fixture path.
+		require.NoError(t, exec.Command(cnf.ExifToolBin(), "-q", "-overwrite_original", "-n", "-Orientation=8", rawFile).Run())
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		assert.Equal(t, 8, rawMediaFile.Orientation())
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.Equal(t, 8, preview.Orientation())
+		info, err := os.Stat(preview.FileName())
+		require.NoError(t, err)
+		assert.Equal(t, info.Size(), preview.FileSize(), "the returned preview must describe the tagged file")
+
+		img, err := thumb.Open(preview.FileName(), preview.Orientation())
+		require.NoError(t, err)
+		assert.Less(t, img.Bounds().Dx(), img.Bounds().Dy(), "preview must render in portrait orientation")
+	})
+	t.Run("RawEmbeddedPreviewKeepsOwnOrientation", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "preview-keeps-orientation.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		setExifOrientationTag(t, cnf, rawFile, "8")
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		require.Equal(t, 8, rawMediaFile.Orientation())
+
+		// The stub returns an embedded preview that carries an Orientation tag of its own.
+		tagged := extractTestPreview(t, cnf, filepath.Join(t.TempDir(), "tagged.jpg"))
+		setExifOrientationTag(t, cnf, tagged, "3")
+		useExifToolStub(t, cnf, fmt.Sprintf("case \" $* \" in *\" -PreviewImage \"*) exec /bin/cat '%s';; esac\nexec '%s' \"$@\"\n", tagged, cnf.ExifToolBin()))
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.Equal(t, "3", exifOrientationTag(t, cnf, preview.FileName()))
+		assert.Equal(t, 3, preview.Orientation())
+	})
+	t.Run("RawEmbeddedPreviewOrientationWriteFails", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "preview-orientation-fails.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		setExifOrientationTag(t, cnf, rawFile, "8")
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		require.Equal(t, 8, rawMediaFile.Orientation())
+
+		// The stub refuses every orientation write and runs ExifTool for anything else.
+		useExifToolStub(t, cnf, fmt.Sprintf("for a; do case \"$a\" in -Orientation=*) echo 'write refused' >&2; exit 1;; esac; done\nexec '%s' \"$@\"\n", cnf.ExifToolBin()))
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err, "a failed orientation write must keep the preview")
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.True(t, preview.IsJpeg())
+		assert.Empty(t, exifOrientationTag(t, cnf, preview.FileName()))
+		assert.Equal(t, 1, preview.Orientation())
+		leftovers, _ := filepath.Glob(filepath.Join(filepath.Dir(preview.FileName()), "*_exiftool_tmp"))
+		assert.Empty(t, leftovers)
+		staged, _ := filepath.Glob(filepath.Join(filepath.Dir(preview.FileName()), "."+filepath.Base(preview.FileName())+".*"))
+		assert.Empty(t, staged)
+	})
+	t.Run("RawEmbeddedPreviewTaggedBeforePublishing", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "preview-tagged-before-publishing.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		setExifOrientationTag(t, cnf, rawFile, "8")
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		require.Equal(t, 8, rawMediaFile.Orientation())
+
+		imageName, err := fs.FileName(rawFile, cnf.SidecarPath(), cnf.OriginalsPath(), fs.ExtJpeg)
+		require.NoError(t, err)
+
+		// The stub refuses the orientation write once the preview is visible under its final name.
+		useExifToolStub(t, cnf, fmt.Sprintf("for a; do case \"$a\" in -Orientation=*) [ -e '%s' ] && { echo 'published' >&2; exit 1; };; esac; done\nexec '%s' \"$@\"\n", imageName, cnf.ExifToolBin()))
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.Equal(t, imageName, preview.FileName())
+		assert.Equal(t, "8", exifOrientationTag(t, cnf, preview.FileName()))
+	})
+	t.Run("RawEmbeddedPreviewUndecodableFallsBack", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "preview-undecodable-falls-back.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		setExifOrientationTag(t, cnf, rawFile, "8")
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+
+		// The stub returns a JPEG header followed by zeros for -JpgFromRaw, which passes the MIME sniff only.
+		bogus := filepath.Join(t.TempDir(), "bogus.jpg")
+		require.NoError(t, os.WriteFile(bogus, append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, make([]byte, 1024)...), 0o600))
+		useExifToolStub(t, cnf, fmt.Sprintf("case \" $* \" in *\" -JpgFromRaw \"*) exec /bin/cat '%s';; esac\nexec '%s' \"$@\"\n", bogus, cnf.ExifToolBin()))
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.Equal(t, "8", exifOrientationTag(t, cnf, preview.FileName()))
+		require.NoError(t, thumb.Verify(preview.FileName()))
+		staged, _ := filepath.Glob(filepath.Join(filepath.Dir(preview.FileName()), "."+filepath.Base(preview.FileName())+".*"))
+		assert.Empty(t, staged)
+	})
+	t.Run("RawEmbeddedPreviewWrittenDirectly", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "preview-written-directly.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		setExifOrientationTag(t, cnf, rawFile, "8")
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		require.Equal(t, 8, rawMediaFile.Orientation())
+
+		imageName, err := fs.FileName(rawFile, cnf.SidecarPath(), cnf.OriginalsPath(), fs.ExtJpeg)
+		require.NoError(t, err)
+
+		// The stub writes the untagged preview to the target file itself instead of to stdout.
+		untagged := extractTestPreview(t, cnf, filepath.Join(t.TempDir(), "untagged.jpg"))
+		useExifToolStub(t, cnf, fmt.Sprintf("case \" $* \" in *\" -JpgFromRaw \"*) exec /bin/cp '%s' '%s';; esac\nexec '%s' \"$@\"\n", untagged, imageName, cnf.ExifToolBin()))
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.Equal(t, imageName, preview.FileName())
+		assert.Empty(t, exifOrientationTag(t, cnf, preview.FileName()), "a file written by the command itself is not tagged")
 	})
 	t.Run("Svg", func(t *testing.T) {
 		svgFile := fs.Abs("./testdata/agpl.svg")
@@ -641,13 +843,19 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	}
 
 	convert := NewConvert(cnf)
-	rawFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng")
-	jpegFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng.jpg")
+	dir := t.TempDir()
+	rawFile := dngFixture(t, dir, "portrait.dng", false)
+	jpegFile := filepath.Join(dir, "portrait.dng.jpg")
+
+	// #nosec G204 -- arguments are the configured ExifTool binary and a temp file path.
+	require.NoError(t, exec.Command(cnf.ExifToolBin(), "-q", "-overwrite_original", "-n", "-Orientation=6", rawFile).Run())
 
 	mediaFile, err := NewMediaFile(rawFile)
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	require.Equal(t, 6, mediaFile.Orientation())
 
 	cmds, _, err := convert.JpegConvertCmds(mediaFile, jpegFile, "")
 	if err != nil {
@@ -675,10 +883,60 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	assert.GreaterOrEqual(t, jpgFromRaw, 0, "expected a -JpgFromRaw extraction command")
 	assert.GreaterOrEqual(t, previewImage, 0, "expected a -PreviewImage extraction command")
 	assert.Less(t, jpgFromRaw, previewImage, "JpgFromRaw must be tried before PreviewImage")
+	assert.Equal(t, 6, cmds[jpgFromRaw].SourceOrientation, "JpgFromRaw must carry the RAW orientation")
+	assert.Equal(t, 6, cmds[previewImage].SourceOrientation, "PreviewImage must carry the RAW orientation")
+	for i, cmd := range cmds {
+		if i != jpgFromRaw && i != previewImage {
+			assert.Zero(t, cmd.SourceOrientation, "only the embedded-preview extractions carry the RAW orientation: %s", cmd.String())
+		}
+	}
 	if cnf.RawTherapeeEnabled() {
 		assert.GreaterOrEqual(t, rawTherapee, 0, "expected a RawTherapee command")
 		assert.Less(t, rawTherapee, jpgFromRaw, "RawTherapee must be tried before the embedded preview")
 		assert.Empty(t, rawTherapeeCmd.RejectStderr, "a non-gated RAW format (.dng) must keep its render, so no stderr rejection is attached")
+	}
+}
+
+// TestConvert_JpegConvertCmds_FisheyeDngOrientation verifies that the embedded-preview extractions of a
+// fisheye DNG carry no source orientation, so the preview reaches the dewarp as extracted.
+func TestConvert_JpegConvertCmds_FisheyeDngOrientation(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+	}
+
+	convert := NewConvert(cnf)
+
+	for name, tags := range map[string][]string{
+		"Insta360": {"-Make=Insta360", "-Model=Insta360 X4"},
+		"Theta":    {"-Make=RICOH", "-Model=RICOH THETA Z1"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			dir := t.TempDir()
+			rawFile := dngFixture(t, dir, "fisheye.dng", false)
+			args := append([]string{"-q", "-overwrite_original", "-n", "-Orientation=8"}, append(tags, rawFile)...)
+
+			// #nosec G204 -- arguments are the configured ExifTool binary, fixed tags, and a temp file path.
+			require.NoError(t, exec.Command(cnf.ExifToolBin(), args...).Run())
+
+			mediaFile, err := NewMediaFile(rawFile)
+			require.NoError(t, err)
+			require.True(t, mediaFile.FisheyeDng())
+			require.Equal(t, 8, mediaFile.Orientation())
+
+			cmds, _, err := convert.JpegConvertCmds(mediaFile, filepath.Join(dir, "fisheye.dng.jpg"), "")
+			require.NoError(t, err)
+
+			extractions := 0
+			for _, cmd := range cmds {
+				if s := cmd.String(); strings.Contains(s, "-JpgFromRaw") || strings.Contains(s, "-PreviewImage") {
+					extractions++
+				}
+				assert.Zero(t, cmd.SourceOrientation, cmd.String())
+			}
+			assert.Equal(t, 2, extractions, "expected the -JpgFromRaw and -PreviewImage extraction commands")
+		})
 	}
 }
 
@@ -993,4 +1251,119 @@ func TestConvert_JpegConvertCmds_ImageMagickFormats(t *testing.T) {
 			assert.True(t, jpegFile.IsJpeg())
 		})
 	}
+}
+
+func TestConvert_publishImageOutput(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available")
+	}
+
+	convert := NewConvert(cnf)
+	data, err := os.ReadFile(extractTestPreview(t, cnf, filepath.Join(t.TempDir(), "preview.jpg")))
+	require.NoError(t, err)
+
+	// noSiblings fails the test if the directory holds anything but the published file.
+	noSiblings := func(t *testing.T, dir string, published ...string) {
+		entries, readErr := os.ReadDir(dir)
+		require.NoError(t, readErr)
+		names := make([]string, 0, len(entries))
+		for _, e := range entries {
+			names = append(names, e.Name())
+		}
+		assert.ElementsMatch(t, published, names)
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
+		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		assert.Equal(t, "6", exifOrientationTag(t, cnf, imageName))
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("NoSourceOrientation", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification()
+		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		assert.Empty(t, exifOrientationTag(t, cnf, imageName))
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("Undecodable", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
+		assert.Error(t, convert.publishImageOutput(c, append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, make([]byte, 1024)...), imageName))
+		noSiblings(t, dir)
+	})
+	t.Run("KeepsExistingFile", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		require.NoError(t, os.WriteFile(imageName, []byte("existing"), 0o600))
+		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
+		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, "existing", string(content))
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("ReplacesEmptyFile", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		require.NoError(t, os.WriteFile(imageName, nil, 0o600))
+		c := NewConvertCmd(exec.Command("exiftool"))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, data, content)
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("MissingDirectory", func(t *testing.T) {
+		c := NewConvertCmd(exec.Command("exiftool"))
+		assert.Error(t, convert.publishImageOutput(c, data, filepath.Join(t.TempDir(), "missing", "raw.dng.jpg")))
+	})
+	t.Run("RefusesSymlink", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		require.NoError(t, os.Symlink(filepath.Join(dir, "target.jpg"), imageName))
+		c := NewConvertCmd(exec.Command("exiftool"))
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		assert.True(t, fs.IsSymlink(imageName))
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("RefusesLiveSymlink", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		target := filepath.Join(dir, "target.jpg")
+		require.NoError(t, os.WriteFile(target, []byte("target"), 0o600))
+		require.NoError(t, os.Symlink(target, imageName))
+		c := NewConvertCmd(exec.Command("exiftool"))
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		content, readErr := os.ReadFile(target) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, "target", string(content))
+		noSiblings(t, dir, "raw.dng.jpg", "target.jpg")
+	})
+	t.Run("RefusesDirectory", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		require.NoError(t, os.Mkdir(imageName, 0o700))
+		c := NewConvertCmd(exec.Command("exiftool"))
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("OrientationWriteFails", func(t *testing.T) {
+		// The stub leaves the temporary file ExifTool would write in place of its last argument.
+		useExifToolStub(t, cnf, "for a; do last=$a; done\nfor a; do case \"$a\" in -Orientation=*) : > \"${last}_exiftool_tmp\"; exit 1;; esac; done\nexit 1\n")
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
+		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, data, content, "the preview is published unchanged")
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
 }

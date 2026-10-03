@@ -136,29 +136,41 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			continue
 		}
 
-		// Set main file.
+		// Set main file. A file whose content does not match its extension is replaced as main file
+		// by an image that can be shown.
+		setMain := func() {
+			// A file that fails the type check only becomes the main file if there is no other.
+			if result.Main != nil && f.CheckType() != nil {
+				return
+			}
+
+			result.Main = f
+		}
+
 		switch {
 		case result.Main == nil && f.IsPreviewImage():
+			result.Main = f
+		case f.IsPreviewImage() && result.Main.CheckType() != nil:
 			result.Main = f
 		case f.IsRaw():
 			// A secondary RAW accompanies another RAW of the same name and never displaces it:
 			// an Olympus High Res Shot writes the composite .orf and one plain frame .ori.
 			if result.Main == nil || !result.Main.IsRaw() || !fs.IsSecondaryRaw(f.FileName()) {
-				result.Main = f
+				setMain()
 			}
 		case f.IsVector():
-			result.Main = f
+			setMain()
 		case f.IsDocument():
-			result.Main = f
+			setMain()
 		case f.IsHeic():
 			isHeic = true
-			result.Main = f
+			setMain()
 		case f.IsHeif():
-			result.Main = f
+			setMain()
 		case f.IsImage() && !f.IsPreviewImage() && !f.IsThumb():
-			result.Main = f
+			setMain()
 		case f.IsVideo() && !isHeic:
-			result.Main = f
+			setMain()
 		case result.Main != nil && f.IsPreviewImage() && result.Main.IsPreviewImage() && len(result.Main.FileName()) > len(f.FileName()):
 			result.Main = f
 		}

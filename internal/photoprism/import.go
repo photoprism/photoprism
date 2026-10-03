@@ -251,7 +251,9 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 
 			// Report files that have a missing or invalid filename extension,
 			// see https://github.com/photoprism/photoprism/issues/3518.
-			if typeErr := mf.CheckType(); typeErr != nil {
+			typeErr := mf.CheckType()
+
+			if typeErr != nil {
 				if !opt.RemoveInvalidFiles {
 					log.Warnf("import: %s %s and will not be indexed", clean.Log(mf.RootRelName()), typeErr)
 				} else if removeErr := mf.Remove(); removeErr != nil {
@@ -263,9 +265,12 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 				}
 			}
 
-			// Create JSON sidecar file, if needed.
-			if err = mf.CreateExifToolJson(imp.convert); err != nil {
-				log.Warnf("import: %s", clean.Error(err))
+			// Create JSON sidecar file, if needed. A file that failed the type check is still moved
+			// with its stack, but not read by ExifTool.
+			if typeErr == nil {
+				if err = mf.CreateExifToolJson(imp.convert); err != nil {
+					log.Warnf("import: %s", clean.Error(err))
+				}
 			}
 
 			// Find related files to import.

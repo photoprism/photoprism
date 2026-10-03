@@ -65,6 +65,28 @@ func TestUploadCheckFile_ResolutionLimit(t *testing.T) {
 		require.NoError(t, err)
 		assert.FileExists(t, fileName)
 	})
+	t.Run("Rounded", func(t *testing.T) {
+		// 3000x1900 is 5.7 MP, which rounds to 6 like the resolution of indexed files.
+		rounded := testJpeg(t, 3000, 1900)
+		fileName := filepath.Join(t.TempDir(), "rounded.jpg")
+		require.NoError(t, os.WriteFile(fileName, rounded, fs.ModeFile))
+		_, err := UploadCheckFile(fileName, false, 6, 1<<24)
+		require.NoError(t, err)
+		_, err = UploadCheckFile(fileName, false, 5, 1<<24)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "resolution limit (6 / 5 MP)")
+	})
+	t.Run("FrameHeader", func(t *testing.T) {
+		// The size of a JPEG the Go decoder does not support is read from its frame header.
+		src, err := os.ReadFile(filepath.Join("testdata", "arithmetic.jpg"))
+		require.NoError(t, err)
+		fileName := filepath.Join(t.TempDir(), "arithmetic.jpg")
+		require.NoError(t, os.WriteFile(fileName, src, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		_, err = UploadCheckFile(fileName, false, 5, 1<<20)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "resolution limit (6 / 5 MP)")
+		assert.NoFileExists(t, fileName)
+	})
 	t.Run("ContentNotExtension", func(t *testing.T) {
 		for _, name := range []string{"large.mpo", "large.insp"} {
 			t.Run(name, func(t *testing.T) {

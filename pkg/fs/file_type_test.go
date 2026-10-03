@@ -254,6 +254,15 @@ func TestFileType(t *testing.T) {
 	})
 }
 
+func TestIsPreviewImageExt(t *testing.T) {
+	for _, name := range []string{"photo.jpg", "photo.jpeg", "photo.JPEG", "photo.MP.jpg", "image.png", "image.PNG"} {
+		assert.True(t, IsPreviewImageExt(name), name)
+	}
+	for _, name := range []string{"", "photo", "photo.webp", "photo.heic", "photo.dng", "photo.jpg.xmp", "video.mp4"} {
+		assert.False(t, IsPreviewImageExt(name), name)
+	}
+}
+
 func TestIsAnimatedImage(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.False(t, IsAnimatedImage(""))

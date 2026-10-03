@@ -173,6 +173,10 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 
 			if err != nil || f.Empty() || f.IsPreviewImage() || !f.IsMedia() {
 				return nil
+			} else if typeErr := f.CheckType(); typeErr != nil {
+				// Files whose content does not match their extension are not passed to converters.
+				log.Debugf("convert: skipped %s because it %s", clean.Log(f.RootRelName()), typeErr)
+				return nil
 			}
 
 			done[fileName] = fs.Processed
