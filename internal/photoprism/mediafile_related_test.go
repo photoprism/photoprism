@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -9,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestMediaFile_RelatedFiles(t *testing.T) {
@@ -395,4 +397,122 @@ func TestMediaFile_RelatedFiles_HighResRawPair(t *testing.T) {
 		require.NotNil(t, related.Main)
 		assert.True(t, related.Main.IsRaw())
 	})
+}
+
+// TestMediaFile_RelatedFiles_MislabeledPreview verifies that a file whose content does not match its
+// extension does not become the main file of a group that has another one.
+func TestMediaFile_RelatedFiles_MislabeledPreview(t *testing.T) {
+	png, err := os.ReadFile("testdata/photoprism.png")
+	require.NoError(t, err)
+
+	// writeGroup copies the source files and the mislabeled JPEG into a new folder.
+	writeGroup := func(t *testing.T, sources map[string]string) string {
+		dir := t.TempDir()
+
+		for name, src := range sources {
+			data, readErr := os.ReadFile(src) //nolint:gosec // G304: test fixture path
+			require.NoError(t, readErr)
+			require.NoError(t, os.WriteFile(filepath.Join(dir, name), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		}
+
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.jpg"), png, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+
+		return dir
+	}
+
+	samples := fs.Abs("../../assets/samples")
+
+	for name, src := range map[string]string{
+		"IMG_1.dng":  filepath.Join(samples, "canon_eos_6d.dng"),
+		"IMG_1.heic": filepath.Join(samples, "iphone_7.heic"),
+	} {
+		t.Run(filepath.Ext(name), func(t *testing.T) {
+			dir := writeGroup(t, map[string]string{name: src})
+			f, newErr := NewMediaFile(filepath.Join(dir, name))
+			require.NoError(t, newErr)
+			related, relErr := f.RelatedFiles(false)
+			require.NoError(t, relErr)
+			require.NotNil(t, related.Main)
+			assert.Equal(t, name, related.Main.BaseName())
+		})
+	}
+	t.Run(".png", func(t *testing.T) {
+		// The JPEG name sorts first and is replaced by the PNG that can be shown.
+		src, readErr := os.ReadFile("testdata/photoprism.png")
+		require.NoError(t, readErr)
+		dir := writeGroup(t, nil)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.png"), src, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.jpg"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_1.png", related.Main.BaseName())
+	})
+	t.Run(".webp", func(t *testing.T) {
+		// Another image name with JPEG content does not displace the JPEG that sorts before it.
+		jpg, readErr := os.ReadFile("testdata/flash.jpg")
+		require.NoError(t, readErr)
+		dir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_2.jpg"), jpg, fs.ModeFile))                //nolint:gosec // G703: test-owned path
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_2.webp"), append(jpg, 0x00), fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_2.jpg"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_2.jpg", related.Main.BaseName())
+		assert.Len(t, related.Files, 2)
+	})
+	t.Run("Alone", func(t *testing.T) {
+		dir := writeGroup(t, nil)
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.jpg"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_1.jpg", related.Main.BaseName())
+	})
+}
+
+// TestMediaFile_RelatedFiles_Insta360InvalidLeft verifies that the left lens stays the main file of an
+// Insta360 capture even if its content does not match its extension, so that the capture is not
+// indexed with the right lens alone.
+func TestMediaFile_RelatedFiles_Insta360InvalidLeft(t *testing.T) {
+	dir := filepath.Join(Config().OriginalsPath(), "insta360-invalid-left-"+rnd.Base36(8))
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+
+	left := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+	right := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/insta360.insv")
+
+	f, err := NewMediaFile(right)
+	require.NoError(t, err)
+	related, err := f.RelatedFiles(false)
+	require.NoError(t, err)
+	require.NotNil(t, related.Main)
+	assert.Equal(t, left, related.Main.FileName())
+	assert.Error(t, related.Main.CheckType())
+}
+
+// TestMediaFile_RelatedFiles_RawAfterJpeg verifies that a RAW file becomes the main file, even if it
+// sorts after the JPEG of the same name.
+func TestMediaFile_RelatedFiles_RawAfterJpeg(t *testing.T) {
+	dir := t.TempDir()
+	samples := fs.Abs("../../assets/samples")
+
+	for name, src := range map[string]string{
+		"IMG_3.jpg": "testdata/flash.jpg",
+		"IMG_3.nef": filepath.Join(samples, "canon_eos_6d.dng"),
+	} {
+		data, err := os.ReadFile(src) //nolint:gosec // G304: test fixture path
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, name), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+	}
+
+	f, err := NewMediaFile(filepath.Join(dir, "IMG_3.jpg"))
+	require.NoError(t, err)
+	related, err := f.RelatedFiles(false)
+	require.NoError(t, err)
+	require.NotNil(t, related.Main)
+	assert.Equal(t, "IMG_3.nef", related.Main.BaseName())
 }
