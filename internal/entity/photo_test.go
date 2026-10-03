@@ -120,6 +120,78 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.Equal(t, SrcBatch, photo.TakenSrc)
 		assert.True(t, photo.TakenAt.Equal(expectedUTC))
 	})
+	t.Run("CountryOnlyChangeKeepsCoordinates", func(t *testing.T) {
+		photo := PhotoFixtures.Get("Photo01")
+		originalCountry := photo.PhotoCountry
+		originalLat := photo.PhotoLat
+		originalLng := photo.PhotoLng
+		originalCellID := photo.CellID
+		originalPlaceID := photo.PlaceID
+		originalPlaceSrc := photo.PlaceSrc
+
+		defer func() {
+			require.NoError(t, Db().Model(&Photo{}).Where("id = ?", photo.ID).Updates(Values{
+				"photo_country": originalCountry,
+				"photo_lat":     originalLat,
+				"photo_lng":     originalLng,
+				"cell_id":       originalCellID,
+				"place_id":      originalPlaceID,
+				"place_src":     originalPlaceSrc,
+			}).Error)
+		}()
+
+		formSnapshot, err := form.NewPhoto(&photo)
+		require.NoError(t, err)
+		formSnapshot.PhotoCountry = "ua"
+		formSnapshot.PlaceSrc = SrcManual
+
+		require.NoError(t, SavePhotoForm(&photo, formSnapshot))
+		require.NoError(t, Db().First(&photo, photo.ID).Error)
+
+		require.Equal(t, "ua", photo.PhotoCountry)
+		require.Equal(t, originalLat, photo.PhotoLat)
+		require.Equal(t, originalLng, photo.PhotoLng)
+		require.Equal(t, originalCellID, photo.CellID)
+		require.Equal(t, originalPlaceID, photo.PlaceID)
+		require.Equal(t, SrcManual, photo.PlaceSrc)
+	})
+	t.Run("CountryChangeWithCoordinatesKeepsManualCountry", func(t *testing.T) {
+		photo := PhotoFixtures.Get("Photo01")
+		originalCountry := photo.PhotoCountry
+		originalLat := photo.PhotoLat
+		originalLng := photo.PhotoLng
+		originalCellID := photo.CellID
+		originalPlaceID := photo.PlaceID
+		originalPlaceSrc := photo.PlaceSrc
+		originalTimeZone := photo.TimeZone
+
+		defer func() {
+			require.NoError(t, Db().Model(&Photo{}).Where("id = ?", photo.ID).Updates(Values{
+				"photo_country": originalCountry,
+				"photo_lat":     originalLat,
+				"photo_lng":     originalLng,
+				"cell_id":       originalCellID,
+				"place_id":      originalPlaceID,
+				"place_src":     originalPlaceSrc,
+				"time_zone":     originalTimeZone,
+			}).Error)
+		}()
+
+		formSnapshot, err := form.NewPhoto(&photo)
+		require.NoError(t, err)
+		formSnapshot.PhotoLat = originalLat + 0.01
+		formSnapshot.PhotoLng = originalLng + 0.01
+		formSnapshot.PhotoCountry = "ua"
+		formSnapshot.PlaceSrc = SrcManual
+
+		require.NoError(t, SavePhotoForm(&photo, formSnapshot))
+		require.NoError(t, Db().First(&photo, photo.ID).Error)
+
+		require.Equal(t, "ua", photo.PhotoCountry)
+		require.Equal(t, formSnapshot.PhotoLat, photo.PhotoLat)
+		require.Equal(t, formSnapshot.PhotoLng, photo.PhotoLng)
+		require.Equal(t, SrcManual, photo.PlaceSrc)
+	})
 }
 
 func TestPhoto_LabelKeywords(t *testing.T) {

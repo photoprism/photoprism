@@ -84,8 +84,9 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 		p.UpdateDateFields()
 	}
 
-	locationChanged := formValues.PhotoLat.Action == ActionUpdate ||
-		formValues.PhotoLng.Action == ActionUpdate ||
+	coordinatesChanged := formValues.PhotoLat.Action == ActionUpdate ||
+		formValues.PhotoLng.Action == ActionUpdate
+	locationChanged := coordinatesChanged ||
 		formValues.PhotoCountry.Action == ActionUpdate ||
 		formValues.PhotoAltitude.Action == ActionUpdate
 
@@ -107,7 +108,13 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 
 	if locationChanged {
 		p.PlaceSrc = entity.SrcBatch
+	}
+
+	if coordinatesChanged {
 		locKeywords, locLabels := p.UpdateLocation()
+		if formValues.PhotoCountry.Action == ActionUpdate {
+			p.PhotoCountry = formValues.PhotoCountry.Value
+		}
 		if len(locLabels) > 0 {
 			p.AddLabels(locLabels)
 		}
