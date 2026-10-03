@@ -99,12 +99,13 @@ func TestModel_GetModelClipped(t *testing.T) {
 
 	t.Run("Model", func(t *testing.T) {
 		resetClippedModelIdWarnings(t)
-		_, hook := captureLogs(t)
+		logHook, hook := captureLogs(t)
 		model, name, version := (&Model{Model: longId, Engine: openai.EngineName}).GetModel()
 		assert.Equal(t, clippedId, model)
 		assert.Equal(t, clippedId, name)
 		assert.Equal(t, "", version)
 		assert.Len(t, clipWarnings(hook), 1)
+		assert.Empty(t, clipWarnings(logHook))
 	})
 	t.Run("ServiceModel", func(t *testing.T) {
 		resetClippedModelIdWarnings(t)
@@ -117,10 +118,11 @@ func TestModel_GetModelClipped(t *testing.T) {
 	})
 	t.Run("Name", func(t *testing.T) {
 		resetClippedModelIdWarnings(t)
-		_, hook := captureLogs(t)
+		logHook, hook := captureLogs(t)
 		model, _, _ := (&Model{Name: longId, Engine: openai.EngineName}).GetModel()
 		assert.Equal(t, clippedId, model)
 		assert.Len(t, clipWarnings(hook), 1)
+		assert.Empty(t, clipWarnings(logHook))
 	})
 	t.Run("UnusedNameNotReported", func(t *testing.T) {
 		resetClippedModelIdWarnings(t)

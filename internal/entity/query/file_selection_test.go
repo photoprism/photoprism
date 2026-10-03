@@ -443,7 +443,8 @@ func TestSelectedFiles_SkipVideoStills(t *testing.T) {
 		assert.ElementsMatch(t, []string{"vr/clip.mp4", "vr/clip.jpg", "vr/clip.xmp"}, videoRuleFileNames(t, video, DownloadSelection(true, true, true)))
 	})
 	t.Run("AlbumDownload", func(t *testing.T) {
-		assert.NotContains(t, videoRuleFileNames(t, video, AlbumDownloadSelection(true, true, false, true)), "vr/clip.mp4.jpg")
+		assert.ElementsMatch(t, []string{"vr/clip.mp4", "vr/clip.jpg", "vr/clip.xmp", "vr/clip.mp4.json", "vr/clip.mp4.yml",
+			"vr/clip.avc", "vr/clip.hevc.mp4", "vr/clip.live.jpg"}, videoRuleFileNames(t, video, AlbumDownloadSelection(true, true, false, true)))
 	})
 	t.Run("ShareUnchanged", func(t *testing.T) {
 		assert.Contains(t, videoRuleFileNames(t, video, ShareSelection(false, true)), "vr/clip.mp4.jpg")
