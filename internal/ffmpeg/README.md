@@ -39,7 +39,7 @@
 
 ### Package Layout (Code Map)
 
-- `encode/` — shared option structs, quality helpers, default map/metadata flags, software AVC command builder.
+- `encode/` — shared option structs, quality and preset helpers, default map/metadata flags, software AVC command builder.
 - `apple/`, `intel/`, `nvidia/`, `vaapi/`, `vulkan/`, `v4l/` — hardware-specific AVC command builders.
 - `remux.go` — container-only transfers with metadata copy and temp-file safety.
 - `transcode_cmd.go` — selects encoder, handles animated image inputs, and signals mutex usage.

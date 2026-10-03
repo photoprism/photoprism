@@ -1,6 +1,6 @@
 ## PhotoPrism — VA-API Hardware Transcoding
 
-**Last Updated:** May 30, 2026
+**Last Updated:** October 3, 2026
 
 ### Overview
 
@@ -35,6 +35,12 @@ ffmpeg -hide_banner -y -strict -2 \
 #### FFmpeg 8 Requirement
 
 FFmpeg 8 no longer derives a filter device from `-hwaccel vaapi` alone, so the `hwupload` filter aborts with `A hardware device reference is required to upload frames to.` unless a filter device is provided explicitly. The builder therefore creates a named device with `-init_hw_device vaapi=va[:<device>]` and points both the decoder (`-hwaccel_device va`) and the filter graph (`-filter_hw_device va`) at it. The legacy `-vaapi_device <path>` shorthand also works but is decoder-agnostic; the named-device form keeps hardware decode and filtering on the same device.
+
+#### Rate Control
+
+`-qp` selects constant QP (CQP), so the size follows the content. `encode.QpQuality()` maps `PHOTOPRISM_FFMPEG_QUALITY` to `(100 - quality) / 2`, the CRF scale of the software encoder: 30 gives 35, the default 50 gives 25, and 80 gives 10. The encoder spends more bits than `libx264` for the same quality: on an Intel UHD 770 with 4K HEVC, 4K AV1 and 1080p phone samples, the default writes 2.4 to 3.1 times the data of `libx264 -preset fast -crf 25` at a higher SSIM and XPSNR, and quality 80 1.6 to 3.8 times that of `-crf 10`. Matching `libx264` takes a `-qp` about 4 higher than the CRF value (29 for `-crf 25`).
+
+There is no bitrate limit: `Options.MaxBitrate` is not passed, since CQP ignores `-maxrate`. A peak limit would need the QVBR mode (`-rc_mode QVBR` with `-global_quality`, `-b:v` and `-maxrate`), which the iHD driver supports.
 
 ### Flags
 

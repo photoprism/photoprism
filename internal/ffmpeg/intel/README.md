@@ -31,6 +31,16 @@ ffmpeg -hide_banner -y -strict -2 \
 2. **Filter** — `scale_qsv=…:format=nv12` scales and converts on the GPU, so there is no `hwupload` step (and none of the filter-device requirement the VA-API path has under FFmpeg 8).
 3. **Encode** — `h264_qsv` encodes the QSV surfaces directly.
 
+#### Rate Control
+
+`-global_quality` without a bitrate selects intelligent constant quality (ICQ), so the size follows the content. `encode.GlobalQuality()` maps `PHOTOPRISM_FFMPEG_QUALITY` to `(100 - quality) / 2`, the CRF scale of the software encoder: 30 gives 35, the default 50 gives 25, and 80 gives 10. On an Intel UHD 770 with 4K HEVC, 4K AV1 and 1080p phone samples, the default writes about 1.8 times the data of `libx264 -preset fast -crf 25` at a higher SSIM and XPSNR; matching it takes a `-global_quality` of about 28 (39 for `-crf 35`, 9 for `-crf 10`).
+
+There is no bitrate limit: `Options.MaxBitrate` is not passed, since `h264_qsv` leaves ICQ when `-maxrate` is set: without `-b:v` it switches to constant QP, which ignores the quality setting, and with `-b:v` equal to `-maxrate` to CBR. A peak limit would need the QVBR mode (`-global_quality` with `-b:v` below `-maxrate`).
+
+#### Presets
+
+Quick Sync accepts the x264 preset names from `veryfast` to `veryslow`. `Preset()` passes those through, maps `ultrafast` and `superfast` to `veryfast`, and uses `fast` for any other value.
+
 ### Flags
 
 | Flag                     | Value                      | Purpose                                                              |
@@ -42,10 +52,6 @@ ffmpeg -hide_banner -y -strict -2 \
 | `-c:v`                   | `h264_qsv`                 | Quick Sync H.264 encoder.                                            |
 | `-preset`                | `fast`                     | Encoder speed/quality trade-off, via `Preset(Options.Preset)`.       |
 | `-global_quality`        | `25` (`DefaultQuality` 50) | Quality-based rate-control target, via `Options.GlobalQuality()`.    |
-
-#### Presets
-
-Quick Sync accepts the x264 preset names from `veryfast` to `veryslow`. `Preset()` passes those through, maps `ultrafast` and `superfast` to `veryfast`, and uses `fast` for any other value.
 
 ### Encoders & Decoders
 
