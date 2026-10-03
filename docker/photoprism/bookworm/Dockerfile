@@ -100,7 +100,7 @@ WORKDIR /photoprism
 EXPOSE 2342 2443
 
 # copy dist files
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root /opt/photoprism/ /opt/photoprism
 
 # Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]

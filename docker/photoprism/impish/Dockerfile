@@ -85,7 +85,7 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_INIT="https"
 
 # Copy dist files and scripts.
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root /opt/photoprism/ /opt/photoprism
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 
 # Update base image and add dependencies.

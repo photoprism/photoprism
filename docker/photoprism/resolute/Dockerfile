@@ -103,4 +103,4 @@ WORKDIR /photoprism
 EXPOSE 2342 2443
 
 # Copy app files.
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root /opt/photoprism/ /opt/photoprism
