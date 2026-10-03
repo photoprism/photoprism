@@ -110,7 +110,7 @@ A test that passes alone and in the full package but fails under `-run` subsets 
 
 ### FFmpeg & Hardware Gating
 
-- Gate GPU/HW encoder integrations with `PHOTOPRISM_FFMPEG_ENCODER`; CI skips them by default.
+- Gate GPU/HW encoder integrations with `PHOTOPRISM_FFMPEG_TEST_ENCODER`; they are skipped by default, and the runtime `PHOTOPRISM_FFMPEG_ENCODER` is ignored by the tests.
 - Negative paths (missing ffmpeg, unwritable dest) must stay fast and always run. Prefer command-string assertions when hardware is unavailable.
 
 ### API/CLI Test Pitfalls

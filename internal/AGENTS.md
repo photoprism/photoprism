@@ -1,6 +1,6 @@
 # Internal Go Guidelines
 
-**Last Updated:** September 25, 2026
+**Last Updated:** October 3, 2026
 
 This file applies to `internal/` and defers subtree-specific rules to the narrower guides under `internal/api/`, `internal/config/`, `internal/commands/`, `internal/photoprism/`, and `internal/service/cluster/`.
 
@@ -39,6 +39,6 @@ This file applies to `internal/` and defers subtree-specific rules to the narrow
 
 ## FFmpeg Hardware Gating
 
-- Do not run GPU or hardware encoder integrations in CI by default; gate them with `PHOTOPRISM_FFMPEG_ENCODER` set to `vaapi`, `intel`, or `nvidia`.
+- Do not run GPU or hardware encoder integrations in CI by default; gate them with `PHOTOPRISM_FFMPEG_TEST_ENCODER` set to `vaapi`, `intel`, `nvidia`, or `vulkan`.
 - Keep negative-path ffmpeg tests fast and always runnable: missing ffmpeg should fail immediately, and unwritable destinations should fail without creating files.
 - When hardware is unavailable, prefer command-string assertions; enable full hardware runs locally only when a device is configured.
