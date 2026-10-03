@@ -211,6 +211,10 @@ if [[ -n "${extracted_name}" && -d "${extracted}/lib" ]]; then
     target=$(readlink "${link}")
     ln -sf "${target}" "${output_lib_dir}/$(basename "${link}")"
   done
+  # Keep the license and third-party notices, which must be distributed with the libraries.
+  for notice in LICENSE ThirdPartyNotices.txt; do
+    install -D -m 0644 "${extracted}/${notice}" "${DESTDIR}/share/doc/onnxruntime/${notice}"
+  done
   rm -rf "${extracted}"
 fi
 
