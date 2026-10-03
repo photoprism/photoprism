@@ -15,6 +15,7 @@ type Options struct {
 	SizeLimit   int           // Maximum width and height of the output video file in pixels.
 	Quality     int           // See https://ffmpeg.org/ffmpeg-codecs.html
 	Preset      string        // See https://trac.ffmpeg.org/wiki/Encode/H.264#Preset
+	MaxBitrate  int           // Peak video bitrate in Mbit/s for encoders that support a limit, 0 for no limit.
 	Device      string        // See https://trac.ffmpeg.org/wiki/Limiting%20the%20output%20bitrate
 	MapVideo    string        // See https://trac.ffmpeg.org/wiki/Map#Videostreamsonly
 	MapAudio    string        // See https://trac.ffmpeg.org/wiki/Map#Audiostreamsonly
@@ -160,7 +161,16 @@ func (o *Options) QpQuality() string {
 	return QpQuality(o.Quality)
 }
 
-// CqQuality returns the video encoding quality as "-cq" parameter string.
+// CqQuality returns the video encoding quality as NVENC "-cq" parameter string.
 func (o *Options) CqQuality() string {
 	return CqQuality(o.Quality)
+}
+
+// MaxRate returns the peak video bitrate as "-maxrate" parameter string, or an empty string for no limit.
+func (o *Options) MaxRate() string {
+	if o.MaxBitrate <= 0 {
+		return ""
+	}
+
+	return fmt.Sprintf("%dM", o.MaxBitrate)
 }

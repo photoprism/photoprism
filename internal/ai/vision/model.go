@@ -95,7 +95,6 @@ func (m *Model) GetModel() (model, name, version string) {
 	// Sanitize the configured values without lowercasing: upstream catalogs
 	// (Ollama tags, Hugging Face IDs served by OpenAI-compatible endpoints)
 	// match identifiers verbatim, so case must round-trip from vision.yml.
-	name = clean.Type(m.Name)
 	version = clean.Type(m.Version)
 
 	// Build a base name from the highest-priority override:
@@ -107,12 +106,21 @@ func (m *Model) GetModel() (model, name, version string) {
 	case serviceModel != "":
 		name = serviceModel
 	case strings.TrimSpace(m.Model) != "":
-		name = clean.Type(m.Model)
+		name = cleanModelId(m.Model)
+	default:
+		name = cleanModelId(m.Name)
 	}
 
 	// Return if no model is configured.
 	if name == "" {
 		return "", "", ""
+	}
+
+	engine := m.requestEngine()
+
+	// OpenAI-compatible servers match identifiers verbatim, colons included.
+	if engine == openai.EngineName {
+		return name, name, ""
 	}
 
 	// Split "name:version" strings so callers can access versioned models
@@ -122,18 +130,37 @@ func (m *Model) GetModel() (model, name, version string) {
 		version = parts[1]
 	}
 
-	// Default to "latest" for non-OpenAI engines when no version was set.
+	// Default to "latest" when no version was set.
 	if version == "" {
 		version = VersionLatest
 	}
 
-	switch m.Engine {
-	case openai.EngineName:
-		return name, name, ""
+	switch engine {
 	case ollama.EngineName:
 		return strings.Join([]string{name, version}, ":"), name, version
 	default:
 		return name, name, version
+	}
+}
+
+// requestEngine returns the configured engine, or the engine implied by the service request
+// format if none is set. Unlike EngineName, it does not resolve the endpoint.
+func (m *Model) requestEngine() string {
+	if m == nil {
+		return ""
+	}
+
+	if engine := strings.TrimSpace(strings.ToLower(m.Engine)); engine != "" {
+		return engine
+	}
+
+	switch m.Service.EndpointRequestFormat() {
+	case ApiFormatOpenAI:
+		return openai.EngineName
+	case ApiFormatOllama:
+		return ollama.EngineName
+	default:
+		return ""
 	}
 }
 
@@ -295,7 +322,7 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 		return
 	}
 
-	if m.Engine == openai.EngineName {
+	if m.requestEngine() == openai.EngineName {
 		apiRequest.Org = m.Service.EndpointOrg()
 		apiRequest.Project = m.Service.EndpointProject()
 		apiRequest.Tier = m.Service.EndpointTier()

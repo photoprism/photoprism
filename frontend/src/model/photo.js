@@ -747,13 +747,19 @@ export class Photo extends RestModel {
     return `${$config.apiUri}/dl/${this.fileHash()}?t=${$config.downloadToken}`;
   }
 
+  // isVideoFileKept checks if a file of a video is a video, a live photo part, or a metadata sidecar.
+  isVideoFileKept(file) {
+    return file.MediaType === media.Video || file.MediaType === media.Live || file.MediaType === media.Sidecar || !!file.Video || !!file.Sidecar;
+  }
+
   // Downloads all related files if they exist and depending on the settings.
+  // Returns { downloaded, skipped } so callers can report the outcome.
   downloadAll() {
     const s = $config.getSettings();
 
     if (!s || !s.features || !s.download || !s.features.download || s.download.disabled) {
       console.log("download: disabled in settings", s.features, s.download);
-      return;
+      return { downloaded: 0, skipped: 0 };
     }
 
     const token = $config.downloadToken;
@@ -763,25 +769,38 @@ export class Photo extends RestModel {
       const hash = this.fileHash();
 
       if (hash) {
-        download(`/${$config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));
+        download(`${$config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));
+        return { downloaded: 1, skipped: 0 };
       } else if ($config.debug) {
         console.log("download: failed, empty file hash", this);
       }
 
-      return;
+      return { downloaded: 0, skipped: 0 };
     }
 
-    this.Files.forEach((file) => {
+    let downloaded = 0;
+    let skipped = 0;
+
+    let files = this.Files;
+
+    // Start the video files of a video first, since some browsers keep only the first of several downloads.
+    if (this.Type === media.Video) {
+      const isVideo = (file) => !!file && (file.MediaType === media.Video || !!file.Video);
+      files = [...files.filter(isVideo), ...files.filter((file) => !isVideo(file))];
+    }
+
+    files.forEach((file) => {
       if (!file || !file.Hash) {
         return;
       }
 
       // Originals only?
-      if (s.download.originals && file.Root.length > 1) {
+      if (s.download.originals && file.Root !== "/") {
         // Don't download broken files and sidecars.
         if ($config.debug) {
           console.log(`download: skipped ${file.Root} file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -791,6 +810,7 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped sidecar file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -799,20 +819,25 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped raw file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
-      // If this is a video, always skip stacked images...
-      // see https://github.com/photoprism/photoprism/issues/1436
-      if (this.Type === media.Video && !(file.MediaType === media.Video || file.Video)) {
+      // Skip generated still images of videos, i.e. files outside the originals folder that
+      // are neither a video, a live photo part, nor a metadata sidecar.
+      if (this.Type === media.Video && typeof file.Root === "string" && file.Root !== "/" && !this.isVideoFileKept(file)) {
         if ($config.debug) {
-          console.log(`download: skipped video sidecar ${file.Name}`);
+          console.log(`download: skipped video still ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
       download(`${$config.apiUri}/dl/${file.Hash}?t=${token}`, this.fileBase(file.Name));
+      downloaded++;
     });
+
+    return { downloaded, skipped };
   }
 
   calculateSize(width, height) {

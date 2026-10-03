@@ -1,11 +1,13 @@
-import { mount, config as VTUConfig } from "@vue/test-utils";
+import { mount, flushPromises, config as VTUConfig } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { AxiosError } from "axios";
 import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
 import Photo from "model/photo";
 import Thumb from "model/thumb";
 import Album from "model/album";
+import Rest from "model/rest";
 import $util from "common/util";
 import { buildNamespace } from "common/storage";
 import { FaceMarkerDisplay, FaceMarkerEdit } from "options/face-marker";
@@ -1314,6 +1316,118 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(evictSpy).not.toHaveBeenCalled();
       removeSpy.mockRestore();
       evictSpy.mockRestore();
+    });
+  });
+
+  describe("onDownload wiring", () => {
+    const warnMessage = "No files available for download";
+
+    const makeCtx = (wrapper, model) => ({
+      ...wrapper.vm,
+      canDownload: true,
+      pauseSlideshow: vi.fn(),
+      model,
+      $notify: { ...wrapper.vm.$notify, success: vi.fn(), warn: vi.fn() },
+      $gettext: VTUConfig.global.mocks.$gettext,
+      log: vi.fn(),
+    });
+
+    // Rest.prototype.find is the shared fetch used by new Photo().find();
+    // stubbing it resolves onDownload with a Photo whose downloadAll()
+    // return value drives the prompt decision.
+    const stubPhotoFind = (found) => {
+      const findSpy = vi.spyOn(Rest.prototype, "find").mockResolvedValue(found);
+      const dlSpy = vi.spyOn(found, "downloadAll");
+      return { findSpy, dlSpy };
+    };
+
+    it("shows the Downloading prompt when downloadAll started a download", async () => {
+      const wrapper = mountLightbox();
+      const found = new Photo({ UID: "ps6sg6be2lvl0yh7" });
+      const { findSpy, dlSpy } = stubPhotoFind(found);
+      dlSpy.mockReturnValue({ downloaded: 1, skipped: 0 });
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await flushPromises();
+
+      expect(findSpy).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
+      expect(dlSpy).toHaveBeenCalledTimes(1);
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.success).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.success).toHaveBeenCalledWith("Downloading…");
+      expect(ctx.$notify.warn).not.toHaveBeenCalled();
+      findSpy.mockRestore();
+    });
+
+    it("warns instead when every file was excluded and no download started", async () => {
+      const wrapper = mountLightbox();
+      const found = new Photo({ UID: "ps6sg6be2lvl0yh7" });
+      const { findSpy, dlSpy } = stubPhotoFind(found);
+      dlSpy.mockReturnValue({ downloaded: 0, skipped: 1 });
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await flushPromises();
+
+      expect(dlSpy).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.success).not.toHaveBeenCalled();
+      expect(ctx.$notify.warn).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.warn).toHaveBeenCalledWith(warnMessage);
+      findSpy.mockRestore();
+    });
+
+    it("warns when the photo has no files to download at all", async () => {
+      const wrapper = mountLightbox();
+      const found = new Photo({ UID: "ps6sg6be2lvl0yh7" });
+      const { findSpy, dlSpy } = stubPhotoFind(found);
+      dlSpy.mockReturnValue({ downloaded: 0, skipped: 0 });
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await flushPromises();
+
+      expect(dlSpy).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.success).not.toHaveBeenCalled();
+      expect(ctx.$notify.warn).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.warn).toHaveBeenCalledWith(warnMessage);
+      findSpy.mockRestore();
+    });
+
+    it("logs the error and warns when downloadAll throws", async () => {
+      const wrapper = mountLightbox();
+      const found = new Photo({ UID: "ps6sg6be2lvl0yh7" });
+      const { findSpy, dlSpy } = stubPhotoFind(found);
+      const err = new Error("unexpected file data");
+      dlSpy.mockImplementation(() => {
+        throw err;
+      });
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await flushPromises();
+
+      expect(ctx.log).toHaveBeenCalledWith("download failed", err);
+      expect(ctx.$notify.success).not.toHaveBeenCalled();
+      expect(ctx.$notify.warn).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.warn).toHaveBeenCalledWith(warnMessage);
+      findSpy.mockRestore();
+    });
+
+    it("leaves failed requests to the API client notification", async () => {
+      const wrapper = mountLightbox();
+      const err = new AxiosError("Request failed with status code 404", AxiosError.ERR_BAD_REQUEST);
+      const findSpy = vi.spyOn(Rest.prototype, "find").mockRejectedValue(err);
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await flushPromises();
+
+      expect(findSpy).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
+      expect(ctx.log).toHaveBeenCalledWith("download failed", err);
+      expect(ctx.$notify.success).not.toHaveBeenCalled();
+      expect(ctx.$notify.warn).not.toHaveBeenCalled();
+      findSpy.mockRestore();
     });
   });
 

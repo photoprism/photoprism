@@ -52,7 +52,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 
 		switch {
 		case f.IsAnimated():
-			// Extract metadata and add it to the cached metadata, which the type check may already have read.
+			// Extract metadata and add it to the cached metadata, which the Insta360 capture check above may already have read.
 			if jsonErr := f.CreateExifToolJson(job.convert); jsonErr != nil {
 				log.Debugf("convert: %s", clean.Error(jsonErr))
 			}
@@ -75,6 +75,14 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 				handleErr(err, job)
 			}
 		default:
+			// Read metadata with ExifTool before creating a preview, so it gets the orientation of
+			// the file even when the native parser cannot read it.
+			if !f.IsPreviewImage() && (job.force || !f.HasPreviewImage()) {
+				if jsonErr := f.CreateExifToolJson(job.convert); jsonErr != nil {
+					log.Debugf("convert: %s", clean.Error(jsonErr))
+				}
+			}
+
 			// Create preview image.
 			if _, err := job.convert.ToImage(f, job.force); err != nil {
 				handleErr(err, job)

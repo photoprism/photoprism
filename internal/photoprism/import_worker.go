@@ -269,6 +269,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 						continue
 					}
 
+					// The preview gets the file orientation, which may only be readable with ExifTool.
+					if jsonErr := rf.CreateExifToolJson(imp.convert); jsonErr != nil {
+						log.Warnf("import: %s", clean.Error(jsonErr))
+					}
+
 					if img, imgErr := imp.convert.ToImage(rf, false); imgErr != nil {
 						log.Warnf("import: could not create preview image for %s (%s)", clean.Log(rf.RootRelName()), clean.Error(imgErr))
 					} else if img != nil {
@@ -346,7 +351,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Extract metadata to a JSON file with Exiftool and add it to the cached metadata, which
-				// the type check above may already have read.
+				// the resolution check above may already have read.
 				if jsonErr := file.CreateExifToolJson(imp.convert); jsonErr != nil {
 					log.Warnf("import: %s", clean.Error(jsonErr))
 				}

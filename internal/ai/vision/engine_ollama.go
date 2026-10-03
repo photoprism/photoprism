@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -153,19 +154,38 @@ func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files, media
 	return req, nil
 }
 
+// ollamaFailures holds the last failure status logged per model until a request succeeds.
+var ollamaFailures sync.Map
+
+// ollamaInvalidLabels holds the models whose invalid labels were logged until labels parse again.
+var ollamaInvalidLabels sync.Map
+
+// warnOllamaFailure logs a failed request once per model and status, and repeats at debug level.
+func warnOllamaFailure(model string, status int) {
+	if prev, loaded := ollamaFailures.Swap(model, status); loaded && prev == status {
+		log.Debugf("vision: ollama request for model %s failed again (status %d)", clean.Log(model), status)
+		return
+	}
+
+	if status == http.StatusNotFound || status == http.StatusGone {
+		log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(model), status)
+	} else {
+		log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(model), status)
+	}
+}
+
 // Parse processes the Ollama service response.
 func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
 	// Return an error for a failed request, as its response text is not a result.
 	if status >= http.StatusMultipleChoices {
-		switch {
-		case status == http.StatusNotFound || status == http.StatusGone:
-			log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(req.Model), status)
-		case status >= http.StatusBadRequest:
-			log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(req.Model), status)
+		if status >= http.StatusBadRequest {
+			warnOllamaFailure(req.Model, status)
 		}
 
 		return nil, serviceError(ApiFormatOllama, status)
 	}
+
+	ollamaFailures.Delete(req.Model)
 
 	ollamaResp, err := decodeOllamaResponse(raw)
 
@@ -201,7 +221,9 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 
 	if !parsedLabels && fallbackJSON != "" && (req.Format == FormatJSON || strings.HasPrefix(fallbackJSON, "{")) {
 		if labels, parseErr := parseOllamaLabels(fallbackJSON); parseErr != nil {
-			log.Warnf("vision: ollama returned invalid labels for model %s", clean.Log(req.Model))
+			if _, warned := ollamaInvalidLabels.LoadOrStore(req.Model, struct{}{}); !warned {
+				log.Warnf("vision: ollama returned invalid labels for model %s", clean.Log(req.Model))
+			}
 			log.Debugf("vision: %q (parse ollama labels)", parseErr.Error())
 		} else if len(labels) > 0 {
 			response.Result.Labels = append(response.Result.Labels, labels...)
@@ -210,6 +232,7 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	}
 
 	if parsedLabels {
+		ollamaInvalidLabels.Delete(req.Model)
 		normalize := req.GetNormalize()
 		filtered := response.Result.Labels[:0]
 		for i := range response.Result.Labels {

@@ -23,6 +23,14 @@ func TestNormalizeBaseURL(t *testing.T) {
 		{"AlreadyNormalized", "https://example.com/", "https://example.com/"},
 		{"NoTrailingSlash", "https://example.com", "https://example.com/"},
 		{"ExtraTrailingSlashes", "https://example.com:443////", "https://example.com/"},
+		{"LeadingSlashes", "https://example.com//photos/", "https://example.com/photos/"},
+		{"LeadingAndTrailingSlashes", "https://example.com///photos//", "https://example.com/photos/"},
+		{"InnerSlashesPreserved", "https://example.com/a//b/", "https://example.com/a//b/"},
+		{"EncodedLeadingSlash", "https://example.com/%2F/photos/", "https://example.com/photos/"},
+		{"SchemelessInnerSlashesPreserved", "example.com//x/", "example.com//x/"},
+		{"SchemelessLeadingSlashes", "///x/", "/x/"},
+		{"UserinfoLeadingSlashes", "https://user:secret@example.com//x/", "https://user:secret@example.com/x/"},
+		{"UnixSchemeLeadingSlashes", "unix:////var/run/photoprism.sock", "unix:///var/run/photoprism.sock/"},
 
 		// Default-port stripping.
 		{"HttpsDefaultPort", "https://example.com:443/", "https://example.com/"},
@@ -123,6 +131,8 @@ func TestResolveAdvertiseURL(t *testing.T) {
 		{"AdvertiseUnparseable", "://not-a-url", "https://app.example.com/i/pro-1/", "://not-a-url/"},
 		{"AdvertiseEqualsSite_ReturnsSite", "https://app.example.com/i/pro-1/", "https://app.example.com/i/pro-1/", "https://app.example.com/i/pro-1/"},
 		{"AdvertisePathFixedToMatchSite_ReturnsSite", "https://app.example.com/", "https://app.example.com/i/pro-1/", "https://app.example.com/i/pro-1/"},
+		{"SiteLeadingSlashes_PathGrafted", "http://127.0.0.1:3001/", "https://app.example.com//i/pro-1/", "http://127.0.0.1:3001/i/pro-1/"},
+		{"AdvertiseLeadingSlashes_Normalized", "http://127.0.0.1:3001//i/pro-1/", "", "http://127.0.0.1:3001/i/pro-1/"},
 	}
 
 	for _, tc := range cases {

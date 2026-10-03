@@ -1,6 +1,6 @@
 ## PhotoPrism — FFmpeg Integration
 
-**Last Updated:** September 25, 2026
+**Last Updated:** October 3, 2026
 
 ### Overview
 
@@ -32,6 +32,7 @@
 - **NVIDIA NVENC:** `internal/ffmpeg/nvidia` (`h264_nvenc`).
 - **Apple VideoToolbox:** `internal/ffmpeg/apple` (`h264_videotoolbox`).
 - **VA-API:** `internal/ffmpeg/vaapi` (`h264_vaapi`) supporting optional device paths.
+- **Vulkan:** `internal/ffmpeg/vulkan` (`h264_vulkan`), requires FFmpeg 8 or later.
 - **V4L2 M2M:** `internal/ffmpeg/v4l` (`h264_v4l2m2m`) for ARM/embedded targets.
 - **Containers:** MP4 is the primary target (`fs.VideoMp4`); `RemuxCmd` can handle other `fs.Type` values when provided.
 - **Streaming flags:** `encode.MovFlags` defaults to `use_metadata_tags+faststart` to keep outputs stream-friendly.
@@ -39,7 +40,7 @@
 ### Package Layout (Code Map)
 
 - `encode/` — shared option structs, quality helpers, default map/metadata flags, software AVC command builder.
-- `apple/`, `intel/`, `nvidia/`, `vaapi/`, `v4l/` — hardware-specific AVC command builders.
+- `apple/`, `intel/`, `nvidia/`, `vaapi/`, `vulkan/`, `v4l/` — hardware-specific AVC command builders.
 - `remux.go` — container-only transfers with metadata copy and temp-file safety.
 - `transcode_cmd.go` — selects encoder, handles animated image inputs, and signals mutex usage.
 - `extract_image_cmd.go` — JPEG/PNG preview frame extraction with color-space presets.
@@ -58,7 +59,7 @@
 - Clamp size and quality via `NewVideoOptions` to `[1, 15360]` pixels and the defined quality bounds.
 - Remuxing respects `Options.Force`; without it existing outputs are preserved.
 - Metadata copying uses `-map_metadata` and `clean` sanitizers; only safe string fields (title, description, comment, author, creation_time) are added when set.
-- Hardware helpers expect the matching FFmpeg build and devices; callers should gate selection via config or environment (see `PHOTOPRISM_FFMPEG_ENCODER` guidance in `AGENTS.md`).
+- Hardware helpers expect the matching FFmpeg build and devices; callers select one at runtime with `PHOTOPRISM_FFMPEG_ENCODER`.
 
 ### Testing
 

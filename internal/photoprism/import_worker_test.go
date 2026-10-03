@@ -2,7 +2,9 @@ package photoprism
 
 import (
 	"errors"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"syscall"
@@ -15,6 +17,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
@@ -246,6 +249,93 @@ func TestImportWorker_StackedVectorPreviews(t *testing.T) {
 	}
 
 	assert.GreaterOrEqual(t, photo.PhotoQuality, 0, "stacked vector photo must not be hidden")
+}
+
+// TestImportWorker_StackedRawOrientation verifies that a stacked file converted on import gets its
+// orientation from ExifTool when the native parser cannot read it.
+func TestImportWorker_StackedRawOrientation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	useTestDb(t, "import-stacked-raw")
+
+	cfg := config.NewMinimalTestConfigWithDb("import-stacked-raw", filepath.Join(t.TempDir(), "storage"))
+
+	if !cfg.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+	}
+
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	// Embedded previews are the only RAW converter, and the native parser refuses every file.
+	cfg.Options().DisableDarktable = true
+	cfg.Options().DisableRawTherapee = true
+	cfg.Options().DisableSips = true
+	cfg.Settings().Stack.Name = true
+	maxBytes := meta.ExifMaxFileBytes
+	meta.ExifMaxFileBytes = 1024
+	t.Cleanup(func() { meta.ExifMaxFileBytes = maxBytes })
+
+	// Two byte-unique RAW copies tagged 8 that stack by their shared name prefix.
+	importDir := filepath.Join(t.TempDir(), "import")
+	require.NoError(t, os.MkdirAll(importDir, fs.ModeDir))
+	mainName := filepath.Join(importDir, "shot.dng")
+	altName := filepath.Join(importDir, "shot.alt.dng")
+
+	for i, fileName := range []string{mainName, altName} {
+		require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "canon_eos_6d.dng"), fileName, true))
+		// #nosec G204 -- arguments are the configured ExifTool binary, fixed values, and a test file path.
+		require.NoError(t, exec.Command(cfg.ExifToolBin(), "-q", "-overwrite_original", "-n", "-Orientation=8", fmt.Sprintf("-Artist=Copy %d", i), fileName).Run())
+	}
+
+	mainFile, err := NewMediaFile(mainName)
+	require.NoError(t, err)
+	related, err := mainFile.RelatedFiles(cfg.Settings().StackSequences())
+	require.NoError(t, err)
+	require.Len(t, related.Files, 2)
+
+	for _, f := range related.Files {
+		jsonName, jsonErr := f.ExifToolJsonName()
+		require.NoError(t, jsonErr)
+		require.NoError(t, os.RemoveAll(jsonName))
+	}
+
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+	imp := NewImport(cfg, ind, convert)
+
+	jobs := make(chan ImportJob)
+	done := make(chan bool)
+	go func() {
+		ImportWorker(jobs)
+		done <- true
+	}()
+	jobs <- ImportJob{
+		FileName:  mainName,
+		Related:   related,
+		IndexOpt:  IndexOptionsAll(cfg),
+		ImportOpt: ImportOptionsMove(importDir, ""),
+		Imp:       imp,
+	}
+	close(jobs)
+	<-done
+
+	var rawFiles entity.Files
+	require.NoError(t, entity.UnscopedDb().Where("original_name IN (?)", []string{"shot.dng", "shot.alt.dng"}).Find(&rawFiles).Error)
+	require.Len(t, rawFiles, 2)
+
+	for _, file := range rawFiles {
+		rawName := FileName(file.FileRoot, file.FileName)
+		jpegName := fs.ImageJpeg.FindFirst(rawName, []string{cfg.SidecarPath(), fs.PPHiddenPathname}, cfg.OriginalsPath(), false)
+		require.NotEmpty(t, jpegName, "%s has no preview", file.FileName)
+		assert.Equal(t, "8", exifOrientationTag(t, cfg, jpegName), "preview of %s", file.FileName)
+	}
 }
 
 // TestImportWorker_TypeCheck verifies that files whose content does not match their extension are

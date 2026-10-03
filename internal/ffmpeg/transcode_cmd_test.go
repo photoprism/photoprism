@@ -3,10 +3,12 @@ package ffmpeg
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -145,7 +147,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset fast -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v constqp -cq 25 -tune 2 -profile:v 1 -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset p4 -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v vbr -cq 31 -b:v 0 -tune hq -profile:v high -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "nvidia" {
@@ -168,7 +170,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset fast -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v constqp -cq 25 -tune 2 -profile:v 1 -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset p4 -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v vbr -cq 31 -b:v 0 -tune hq -profile:v high -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "nvidia" {
@@ -218,6 +220,65 @@ func TestTranscodeCmd(t *testing.T) {
 		}
 
 		assert.Contains(t, r.String(), "ffmpeg -hide_banner -y -strict -2 -i VID123.mov -c:v h264_v4l2m2m -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -num_output_buffers 72 -num_capture_buffers 64 -max_muxing_queue_size 1024 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 VID123.mov.avc")
+	})
+}
+
+// Only the NVENC command reads the peak bitrate, so the other commands must not change with it.
+func TestTranscodeCmd_MaxBitrate(t *testing.T) {
+	encoders := []encode.Encoder{encode.SoftwareAvc, encode.IntelAvc, encode.AppleAvc, encode.VaapiAvc, encode.V4LAvc, encode.VulkanAvc}
+
+	for _, device := range []string{"", "/dev/dri/renderD128"} {
+		for _, encoder := range encoders {
+			t.Run(encoder.String()+device, func(t *testing.T) {
+				opt := encode.NewVideoOptions("/usr/bin/ffmpeg", encoder, 1500, encode.DefaultQuality, encode.PresetFast, device, "", "")
+				unlimited, _, err := TranscodeCmd("SRC.mov", "DEST.mp4", opt)
+				require.NoError(t, err)
+
+				opt.MaxBitrate = 25
+				limited, _, err := TranscodeCmd("SRC.mov", "DEST.mp4", opt)
+				require.NoError(t, err)
+
+				assert.Equal(t, unlimited.String(), limited.String())
+			})
+		}
+	}
+	t.Run(encode.NvidiaAvc.String(), func(t *testing.T) {
+		opt := encode.NewVideoOptions("/usr/bin/ffmpeg", encode.NvidiaAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
+		opt.MaxBitrate = 25
+		cmd, _, err := TranscodeCmd("SRC.mov", "DEST.mp4", opt)
+		require.NoError(t, err)
+		assert.Contains(t, cmd.String(), " -maxrate 25M ")
+	})
+}
+
+// The converter recognizes a hardware transcode by the encoder name in the command arguments.
+func TestTranscodeCmd_EncoderArg(t *testing.T) {
+	// Every supported encoder, so that a new one cannot be left out.
+	var encoders []encode.Encoder
+
+	for _, encoder := range encode.AvcEncoders {
+		if !slices.Contains(encoders, encoder) {
+			encoders = append(encoders, encoder)
+		}
+	}
+
+	require.Len(t, encoders, 7)
+
+	for _, device := range []string{"", "/dev/dri/renderD128"} {
+		for _, encoder := range encoders {
+			t.Run(encoder.String()+device, func(t *testing.T) {
+				opt := encode.NewVideoOptions("/usr/bin/ffmpeg", encoder, 1500, encode.DefaultQuality, encode.PresetFast, device, "", "")
+				cmd, _, err := TranscodeCmd("SRC.mov", "DEST.mp4", opt)
+				require.NoError(t, err)
+				assert.True(t, slices.Contains(cmd.Args, encoder.String()), cmd.String())
+			})
+		}
+	}
+	t.Run("AnimatedImage", func(t *testing.T) {
+		opt := encode.NewVideoOptions("/usr/bin/ffmpeg", encode.NvidiaAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
+		cmd, _, err := TranscodeCmd("SRC.gif", "DEST.mp4", opt)
+		require.NoError(t, err)
+		assert.False(t, slices.Contains(cmd.Args, encode.NvidiaAvc.String()), cmd.String())
 	})
 }
 

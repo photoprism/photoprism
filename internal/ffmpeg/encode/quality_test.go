@@ -49,10 +49,16 @@ func TestQpQuality(t *testing.T) {
 
 func TestCqQuality(t *testing.T) {
 	t.Run("Defaults", func(t *testing.T) {
-		assert.Equal(t, "25", CqQuality(0))
+		assert.Equal(t, "31", CqQuality(0))
 		assert.Equal(t, "1", CqQuality(BestQuality))
-		assert.Equal(t, "25", CqQuality(DefaultQuality))
-		assert.Equal(t, "49", CqQuality(WorstQuality))
+		assert.Equal(t, "31", CqQuality(DefaultQuality))
+		assert.Equal(t, "50", CqQuality(WorstQuality))
 		assert.Equal(t, "1", CqQuality(123))
+	})
+	t.Run("Scale", func(t *testing.T) {
+		assert.Equal(t, "13", CqQuality(80))
+		assert.Equal(t, "43", CqQuality(30))
+		assert.Equal(t, "50", CqQuality(15))
+		assert.Equal(t, "50", CqQuality(2))
 	})
 }

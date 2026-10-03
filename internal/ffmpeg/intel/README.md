@@ -1,6 +1,6 @@
 ## PhotoPrism — Intel Quick Sync Transcoding
 
-**Last Updated:** May 30, 2026
+**Last Updated:** October 3, 2026
 
 ### Overview
 
@@ -40,8 +40,12 @@ ffmpeg -hide_banner -y -strict -2 \
 | `-hwaccel_output_format` | `qsv`                      | Keeps decoded frames as on-GPU QSV surfaces.                         |
 | `-vf scale_qsv=…`        | from `encode.FormatQSV`    | On-GPU scale and NV12 conversion (computes the auto axis with `-1`). |
 | `-c:v`                   | `h264_qsv`                 | Quick Sync H.264 encoder.                                            |
-| `-preset`                | `fast`                     | Encoder speed/quality trade-off, via `Options.Preset`.               |
+| `-preset`                | `fast`                     | Encoder speed/quality trade-off, via `Preset(Options.Preset)`.       |
 | `-global_quality`        | `25` (`DefaultQuality` 50) | Quality-based rate-control target, via `Options.GlobalQuality()`.    |
+
+#### Presets
+
+Quick Sync accepts the x264 preset names from `veryfast` to `veryslow`. `Preset()` passes those through, maps `ultrafast` and `superfast` to `veryfast`, and uses `fast` for any other value.
 
 ### Encoders & Decoders
 

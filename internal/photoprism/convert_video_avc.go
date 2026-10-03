@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -170,6 +171,12 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		return nil, err
 	}
 
+	// Animated images and dewarped videos do not use a hardware encoder, so they are logged as software
+	// transcodes and are not retried with the same command if they fail.
+	if encoder != encode.SoftwareAvc && !slices.Contains(cmd.Args, encoder.String()) {
+		encoder = encode.SoftwareAvc
+	}
+
 	// Make sure only one convert command runs at a time.
 	if useMutex && !noMutex {
 		w.cmdMutex.Lock()
@@ -227,14 +234,19 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			log.Debugf("%s: %s for %s", encoder, s, logFileName)
 		}
 
-		// Log filename and transcoding time.
-		log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		// Log filename and transcoding time. A hardware encoder that falls back to software below is
+		// logged as a warning only until it succeeds again, since an unusable GPU fails for every file.
+		if encoder != encode.SoftwareAvc && !disk.IsNoSpace(err) && !firstTranscodeFallback(encoder) {
+			log.Debugf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		} else {
+			log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		}
 
-		// Remove broken video file.
+		// Remove broken video file, keeping the transcoding error for the checks below.
 		if !fs.FileExists(avcName) {
 			// Do nothing.
-		} else if err = os.Remove(avcName); err != nil {
-			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), err)
+		} else if removeErr := os.Remove(avcName); removeErr != nil {
+			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), removeErr)
 		}
 
 		switch {
@@ -245,12 +257,17 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			// Retry in software within the current destination operation.
 			return w.toAvc(f, encode.SoftwareAvc, true, false, false)
 		default:
-			return nil, err
+			return nil, fmt.Errorf("convert: failed to transcode %s (%w)", logFileName, err)
 		}
 	}
 
 	// Log filename and transcoding time.
 	log.Infof("%s: created %s [%s]", encoder, filepath.Base(avcName), time.Since(start))
+
+	// Log the next fallback as a warning again, as the encoder works.
+	if encoder != encode.SoftwareAvc {
+		clearTranscodeFallback(encoder)
+	}
 
 	// Return AVC media file and keep the successful dewarp projection available to the indexer even
 	// when ExifTool is disabled. Later reindexes infer the same value from source and sidecar paths.
@@ -437,22 +454,33 @@ func (w *Convert) fisheyeRoll(f *MediaFile) int {
 	return roll
 }
 
-// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
+// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second for the output resolution, capped by
+// the configured limit. Encoders that support a peak bitrate use it, so a video of unknown size gets the limit.
 func (w *Convert) AvcBitrate(f *MediaFile) string {
 	const defaultBitrate = "8M"
 
-	if f == nil {
-		return defaultBitrate
+	limit := w.conf.FFmpegBitrate()
+	quality := 12.0
+
+	var bitrate int
+
+	if f != nil {
+		if width, height := float64(f.Width()), float64(f.Height()); width > 0 && height > 0 {
+			// Transcoding scales the longer side down to the configured size limit.
+			if longest, size := math.Max(width, height), float64(w.conf.FFmpegSize()); longest > size {
+				width, height = width*size/longest, height*size/longest
+			}
+
+			bitrate = int(math.Ceil(width * height * quality / 1000000))
+		}
 	}
 
-	limit := w.conf.FFmpegBitrate()
-	quality := 12
-
-	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*quality) / 1000000))
-
-	if bitrate <= 0 {
+	switch {
+	case bitrate <= 0 && limit > 0:
+		bitrate = limit
+	case bitrate <= 0:
 		return defaultBitrate
-	} else if bitrate > limit {
+	case limit > 0 && bitrate > limit:
 		bitrate = limit
 	}
 
