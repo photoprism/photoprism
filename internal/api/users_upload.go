@@ -614,7 +614,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 }
 
 // logUploadNsfwErr writes an upload content check that could not run to the system log, as the
-// upload is accepted and the error names the configured model.
+// upload is accepted and the error may name a file or the model type.
 func logUploadNsfwErr(filename string, err error) {
 	event.SystemWarn([]string{"nsfw", "upload", "could not check %s", "%s"}, clean.Log(filepath.Base(filename)), clean.Error(err))
 }

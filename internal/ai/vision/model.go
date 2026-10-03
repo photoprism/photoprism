@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	visionschema "github.com/photoprism/photoprism/internal/ai/vision/schema"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
@@ -292,7 +293,9 @@ func (m *Model) warnUnresolvedUri() {
 	key := m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
 
 	if _, warned := unresolvedUriWarned.LoadOrStore(key, struct{}{}); !warned {
-		log.Warnf("vision: %s, so no service is used", m.unresolvedUriErrText())
+		name, _, _ := m.GetModel()
+		log.Warnf("vision: %s, so no service is used (details in system log)", m.unresolvedUriErrText())
+		event.SystemWarn([]string{"vision", "service uri of %s model %s does not resolve"}, clean.Log(m.Type), clean.Log(name))
 	}
 }
 
@@ -308,11 +311,10 @@ func (m *Model) unresolvedUriErr() error {
 	return m.unresolvedUriErrText()
 }
 
-// unresolvedUriErrText returns the error for a model whose service URI does not resolve.
+// unresolvedUriErrText returns the error for a model whose service URI does not resolve. It names
+// the model type only, as the model identifier may be expanded from the environment.
 func (m *Model) unresolvedUriErrText() error {
-	name, _, _ := m.GetModel()
-
-	return fmt.Errorf("service uri of %s model %s does not resolve", clean.Log(m.Type), clean.Log(name))
+	return fmt.Errorf("service uri of %s model does not resolve", clean.Log(m.Type))
 }
 
 // ApplyService updates the ApiRequest with service-specific

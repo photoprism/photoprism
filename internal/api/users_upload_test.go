@@ -722,10 +722,10 @@ func TestLogUploadNsfwErr(t *testing.T) {
 	hook := captureLog(t)
 	systemHook := captureSystemLog(t)
 
-	logUploadNsfwErr("/tmp/upload/cat.jpg", errors.New("service uri of nsfw model custom does not resolve"))
+	logUploadNsfwErr("/tmp/upload/cat.jpg", errors.New("service uri of nsfw model does not resolve"))
 
 	assert.Empty(t, hook.AllEntries())
 	require.Len(t, systemHook.AllEntries(), 1)
 	assert.Equal(t, logrus.WarnLevel, systemHook.LastEntry().Level)
-	assert.Equal(t, "nsfw: upload › could not check cat.jpg › service uri of nsfw model custom does not resolve", systemHook.LastEntry().Message)
+	assert.Equal(t, "nsfw: upload › could not check cat.jpg › service uri of nsfw model does not resolve", systemHook.LastEntry().Message)
 }
