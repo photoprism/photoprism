@@ -717,6 +717,8 @@ func TestIndexRelated_TypeCheck(t *testing.T) {
 	require.NoError(t, err)
 	mov, err := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "earth.mov"))
 	require.NoError(t, err)
+	heic, err := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "iphone_7.heic"))
+	require.NoError(t, err)
 
 	// indexGroup writes the files to a new originals folder and indexes them with the first as main.
 	indexGroup := func(t *testing.T, name string, convert bool, files map[string][]byte, order ...string) IndexResult {
@@ -763,6 +765,13 @@ func TestIndexRelated_TypeCheck(t *testing.T) {
 		// Without conversion, no preview image is created for the video.
 		result := indexGroup(t, "index-related-type-video", false, map[string][]byte{"a.mov": mov, "a.webp": png}, "a.mov", "a.webp")
 		assert.False(t, result.Failed())
+		notIndexed(t, png)
+	})
+	t.Run("HeicWithoutPreview", func(t *testing.T) {
+		// Without conversion, a HEIC has no preview image either, so the group fails like the video.
+		result := indexGroup(t, "index-related-type-heic", false, map[string][]byte{"a.heic": heic, "a.jpg": png}, "a.heic", "a.jpg")
+		assert.True(t, result.Failed())
+		assert.ErrorContains(t, result.Err, "a.jpg")
 		notIndexed(t, png)
 	})
 	t.Run("MissingPreview", func(t *testing.T) {

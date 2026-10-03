@@ -45,22 +45,17 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		return f, nil
 	}
 
-	imageName := fs.ImagePng.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-
-	if imageName == "" {
-		imageName = fs.ImageJpeg.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-	}
-
-	mediaFile, err := NewMediaFile(imageName)
+	var imageName string
 
 	// Replace existing sidecar if "force" is true.
-	if err == nil && mediaFile.IsPreviewImage() {
+	if mediaFile := findPreviewImage(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), false, fs.ImagePng, fs.ImageJpeg); mediaFile != nil {
 		if force && mediaFile.InSidecar() {
 			if removeErr := mediaFile.Remove(); removeErr != nil {
 				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(mediaFile.RootRelName()), removeErr)
 			}
 
 			log.Infof("convert: replacing %s", clean.Log(mediaFile.RootRelName()))
+			imageName = mediaFile.FileName()
 		} else {
 			return mediaFile, nil
 		}

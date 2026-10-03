@@ -473,6 +473,62 @@ func TestMediaFile_RelatedFiles_MislabeledPreview(t *testing.T) {
 		require.NotNil(t, related.Main)
 		assert.Equal(t, "IMG_1.jpg", related.Main.BaseName())
 	})
+	t.Run("SidecarPreview", func(t *testing.T) {
+		// The preview in the sidecar folder is found although the mislabeled JPEG has a matching name.
+		folder := "related-mislabeled-sidecar-" + rnd.Base36(8)
+		dir := filepath.Join(Config().OriginalsPath(), folder)
+		sidecarDir := filepath.Join(Config().SidecarPath(), folder)
+		t.Cleanup(func() {
+			_ = os.RemoveAll(dir)
+			_ = os.RemoveAll(sidecarDir)
+		})
+		require.NoError(t, fs.MkdirAll(dir))
+		require.NoError(t, fs.MkdirAll(sidecarDir))
+		require.NoError(t, fs.Copy(filepath.Join(samples, "iphone_7.heic"), filepath.Join(dir, "IMG_1.heic"), false))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.jpg"), png, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		require.NoError(t, fs.Copy("testdata/flash.jpg", filepath.Join(sidecarDir, "IMG_1.heic.jpg"), false))
+
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.heic"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_1.heic", related.Main.BaseName())
+		assert.True(t, related.HasPreview())
+
+		names := make([]string, 0, len(related.Files))
+		for _, file := range related.Files {
+			names = append(names, file.FileName())
+		}
+		assert.ElementsMatch(t, []string{filepath.Join(dir, "IMG_1.heic"), filepath.Join(dir, "IMG_1.jpg"), filepath.Join(sidecarDir, "IMG_1.heic.jpg")}, names)
+	})
+	t.Run("MislabeledSidecarPreview", func(t *testing.T) {
+		// A sidecar JPEG whose content is not a JPEG is skipped in favor of a valid PNG preview.
+		folder := "related-mislabeled-sidecar-png-" + rnd.Base36(8)
+		dir := filepath.Join(Config().OriginalsPath(), folder)
+		sidecarDir := filepath.Join(Config().SidecarPath(), folder)
+		t.Cleanup(func() {
+			_ = os.RemoveAll(dir)
+			_ = os.RemoveAll(sidecarDir)
+		})
+		require.NoError(t, fs.MkdirAll(dir))
+		require.NoError(t, fs.MkdirAll(sidecarDir))
+		require.NoError(t, fs.Copy(filepath.Join(samples, "iphone_7.heic"), filepath.Join(dir, "IMG_1.heic"), false))
+		require.NoError(t, os.WriteFile(filepath.Join(sidecarDir, "IMG_1.heic.jpg"), png, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		require.NoError(t, fs.Copy("testdata/photoprism.png", filepath.Join(sidecarDir, "IMG_1.heic.png"), false))
+
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.heic"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		assert.True(t, related.HasPreview())
+
+		names := make([]string, 0, len(related.Files))
+		for _, file := range related.Files {
+			names = append(names, file.FileName())
+		}
+		assert.ElementsMatch(t, []string{filepath.Join(dir, "IMG_1.heic"), filepath.Join(sidecarDir, "IMG_1.heic.png")}, names)
+	})
 }
 
 // TestMediaFile_RelatedFiles_Insta360InvalidLeft verifies that the left lens stays the main file of an

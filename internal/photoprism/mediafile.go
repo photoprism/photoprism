@@ -1494,18 +1494,8 @@ func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 		return nil, fmt.Errorf("%s is empty", m.RootRelName())
 	}
 
-	jpegName := fs.ImageJpeg.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if jpegName != "" {
-		return NewMediaFile(jpegName)
-	}
-
-	pngName := fs.ImagePng.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if pngName != "" {
-		return NewMediaFile(pngName)
+	if preview := findPreviewImage(m.FileName(), Config().SidecarPath(), Config().OriginalsPath(), false, fs.ImageJpeg, fs.ImagePng); preview != nil {
+		return preview, nil
 	}
 
 	return nil, fmt.Errorf("no preview image found for %s", m.RootRelName())
@@ -1523,21 +1513,9 @@ func (m *MediaFile) HasPreviewImage() bool {
 		return true
 	}
 
-	jpegName := fs.ImageJpeg.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+	m.hasPreviewImage = findPreviewImage(m.FileName(), Config().SidecarPath(), Config().OriginalsPath(), false, fs.ImageJpeg, fs.ImagePng) != nil
 
-	if m.hasPreviewImage = fs.MimeType(jpegName) == header.ContentTypeJpeg; m.hasPreviewImage {
-		return true
-	}
-
-	pngName := fs.ImagePng.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if m.hasPreviewImage = fs.MimeType(pngName) == header.ContentTypePng; m.hasPreviewImage {
-		return true
-	}
-
-	return false
+	return m.hasPreviewImage
 }
 
 func (m *MediaFile) decodeDimensions() error {

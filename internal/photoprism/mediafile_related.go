@@ -201,14 +201,8 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden preview image if needed.
 	if !result.HasPreview() {
-		if jpegName := fs.ImageJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); jpegName != "" {
-			if resultFile, _ := NewMediaFile(jpegName); resultFile.Ok() {
-				result.Files = append(result.Files, resultFile)
-			}
-		} else if pngName := fs.ImagePng.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); pngName != "" {
-			if resultFile, _ := NewMediaFile(pngName); resultFile.Ok() {
-				result.Files = append(result.Files, resultFile)
-			}
+		if preview := findPreviewImage(result.Main.FileName(), Config().SidecarPath(), Config().OriginalsPath(), stripSequence, fs.ImageJpeg, fs.ImagePng); preview != nil {
+			result.Files = append(result.Files, preview)
 		}
 	}
 
