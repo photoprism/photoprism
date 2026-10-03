@@ -672,13 +672,19 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	}
 
 	convert := NewConvert(cnf)
-	rawFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng")
-	jpegFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng.jpg")
+	dir := t.TempDir()
+	rawFile := dngFixture(t, dir, "portrait.dng", false)
+	jpegFile := filepath.Join(dir, "portrait.dng.jpg")
+
+	// #nosec G204 -- arguments are the configured ExifTool binary and a temp file path.
+	require.NoError(t, exec.Command(cnf.ExifToolBin(), "-q", "-overwrite_original", "-n", "-Orientation=6", rawFile).Run())
 
 	mediaFile, err := NewMediaFile(rawFile)
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	require.Equal(t, 6, mediaFile.Orientation())
 
 	cmds, _, err := convert.JpegConvertCmds(mediaFile, jpegFile, "")
 	if err != nil {
@@ -706,12 +712,60 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	assert.GreaterOrEqual(t, jpgFromRaw, 0, "expected a -JpgFromRaw extraction command")
 	assert.GreaterOrEqual(t, previewImage, 0, "expected a -PreviewImage extraction command")
 	assert.Less(t, jpgFromRaw, previewImage, "JpgFromRaw must be tried before PreviewImage")
-	assert.Equal(t, mediaFile.Orientation(), cmds[jpgFromRaw].SourceOrientation, "JpgFromRaw must preserve the RAW orientation")
-	assert.Equal(t, mediaFile.Orientation(), cmds[previewImage].SourceOrientation, "PreviewImage must preserve the RAW orientation")
+	assert.Equal(t, 6, cmds[jpgFromRaw].SourceOrientation, "JpgFromRaw must carry the RAW orientation")
+	assert.Equal(t, 6, cmds[previewImage].SourceOrientation, "PreviewImage must carry the RAW orientation")
+	for i, cmd := range cmds {
+		if i != jpgFromRaw && i != previewImage {
+			assert.Zero(t, cmd.SourceOrientation, "only the embedded-preview extractions carry the RAW orientation: %s", cmd.String())
+		}
+	}
 	if cnf.RawTherapeeEnabled() {
 		assert.GreaterOrEqual(t, rawTherapee, 0, "expected a RawTherapee command")
 		assert.Less(t, rawTherapee, jpgFromRaw, "RawTherapee must be tried before the embedded preview")
 		assert.Empty(t, rawTherapeeCmd.RejectStderr, "a non-gated RAW format (.dng) must keep its render, so no stderr rejection is attached")
+	}
+}
+
+// TestConvert_JpegConvertCmds_FisheyeDngOrientation verifies that the embedded-preview extractions of a
+// fisheye DNG carry no source orientation, so the preview reaches the dewarp as extracted.
+func TestConvert_JpegConvertCmds_FisheyeDngOrientation(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+	}
+
+	convert := NewConvert(cnf)
+
+	for name, tags := range map[string][]string{
+		"Insta360": {"-Make=Insta360", "-Model=Insta360 X4"},
+		"Theta":    {"-Make=RICOH", "-Model=RICOH THETA Z1"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			dir := t.TempDir()
+			rawFile := dngFixture(t, dir, "fisheye.dng", false)
+			args := append([]string{"-q", "-overwrite_original", "-n", "-Orientation=8"}, append(tags, rawFile)...)
+
+			// #nosec G204 -- arguments are the configured ExifTool binary, fixed tags, and a temp file path.
+			require.NoError(t, exec.Command(cnf.ExifToolBin(), args...).Run())
+
+			mediaFile, err := NewMediaFile(rawFile)
+			require.NoError(t, err)
+			require.True(t, mediaFile.FisheyeDng())
+			require.Equal(t, 8, mediaFile.Orientation())
+
+			cmds, _, err := convert.JpegConvertCmds(mediaFile, filepath.Join(dir, "fisheye.dng.jpg"), "")
+			require.NoError(t, err)
+
+			extractions := 0
+			for _, cmd := range cmds {
+				if s := cmd.String(); strings.Contains(s, "-JpgFromRaw") || strings.Contains(s, "-PreviewImage") {
+					extractions++
+				}
+				assert.Zero(t, cmd.SourceOrientation, cmd.String())
+			}
+			assert.Equal(t, 2, extractions, "expected the -JpgFromRaw and -PreviewImage extraction commands")
+		})
 	}
 }
 

@@ -122,8 +122,15 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		// and the only option when RAW rendering is disabled. Colors stay correct for sensors they
 		// cannot identify (recent Canon CR3 bodies otherwise come out magenta). Skipped if unusable.
 		if w.conf.ExifToolEnabled() && raw.PreviewExtAllowed(fileExt) {
-			result = append(result, NewConvertCmd(raw.ExifToolJpgFromRawCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification().WithSourceOrientation(f.Orientation()))
-			result = append(result, NewConvertCmd(raw.ExifToolPreviewImageCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification().WithSourceOrientation(f.Orientation()))
+			// Fisheye DNGs get no source orientation, since their preview may be dewarped afterwards.
+			sourceOrientation := 0
+
+			if !f.FisheyeDng() {
+				sourceOrientation = f.Orientation()
+			}
+
+			result = append(result, NewConvertCmd(raw.ExifToolJpgFromRawCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification().WithSourceOrientation(sourceOrientation))
+			result = append(result, NewConvertCmd(raw.ExifToolPreviewImageCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification().WithSourceOrientation(sourceOrientation))
 		}
 	}
 
