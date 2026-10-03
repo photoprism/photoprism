@@ -346,7 +346,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Extract metadata to a JSON file with Exiftool and add it to the cached metadata, which
-				// the type check above may already have read.
+				// the resolution check above may already have read.
 				if jsonErr := file.CreateExifToolJson(imp.convert); jsonErr != nil {
 					log.Warnf("import: %s", clean.Error(jsonErr))
 				}

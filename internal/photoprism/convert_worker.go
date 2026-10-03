@@ -52,7 +52,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 
 		switch {
 		case f.IsAnimated():
-			// Extract metadata and add it to the cached metadata, which the type check may already have read.
+			// Extract metadata and add it to the cached metadata, which the Insta360 capture check above may already have read.
 			if jsonErr := f.CreateExifToolJson(job.convert); jsonErr != nil {
 				log.Debugf("convert: %s", clean.Error(jsonErr))
 			}
