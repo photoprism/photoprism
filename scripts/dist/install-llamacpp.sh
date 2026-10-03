@@ -253,7 +253,7 @@ if [[ -n ${LLAMA_SHA256:-} ]]; then
 fi
 
 echo "Extracting ${ASSET_NAME}..."
-tar xzf "${tmp_tar}" -C "${workdir}"
+tar --no-same-owner -xzf "${tmp_tar}" -C "${workdir}"
 
 # The archive extracts to a single top-level "llama-<tag>" directory.
 srcdir=$(find "${workdir}" -mindepth 1 -maxdepth 1 -type d | head -n1)

@@ -112,7 +112,7 @@ fi
 echo "Extracting \"$TMPDIR/$INSTALL_FILE\" to \"$DESTDIR\"."
 
 if [ -f "$TMPDIR/$INSTALL_FILE" ]; then
-  tar --overwrite --mode=755 -C "$DESTDIR" -xzf "$TMPDIR/$INSTALL_FILE"
+  tar --overwrite --no-same-owner --mode=755 -C "$DESTDIR" -xzf "$TMPDIR/$INSTALL_FILE"
 else
   echo "Fatal: \"$TMPDIR/$INSTALL_FILE\" not found"
   exit 1
