@@ -115,6 +115,11 @@ func (m *Model) GetModel() (model, name, version string) {
 		return "", "", ""
 	}
 
+	// OpenAI-compatible servers match identifiers verbatim, colons included.
+	if m.Engine == openai.EngineName {
+		return name, name, ""
+	}
+
 	// Split "name:version" strings so callers can access versioned models
 	// without repeating parsing logic at each call site.
 	if parts := strings.SplitN(name, ":", 2); len(parts) == 2 && parts[0] != "" && parts[1] != "" {
@@ -128,8 +133,6 @@ func (m *Model) GetModel() (model, name, version string) {
 	}
 
 	switch m.Engine {
-	case openai.EngineName:
-		return name, name, ""
 	case ollama.EngineName:
 		return strings.Join([]string{name, version}, ":"), name, version
 	default:
