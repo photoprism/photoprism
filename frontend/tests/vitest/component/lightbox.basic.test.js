@@ -1,4 +1,4 @@
-import { mount, config as VTUConfig } from "@vue/test-utils";
+import { mount, flushPromises, config as VTUConfig } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as contexts from "options/contexts";
 import { nextTick } from "vue";
@@ -1348,8 +1348,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
 
       wrapper.vm.$options.methods.onDownload.call(ctx);
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       expect(findSpy).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
       expect(dlSpy).toHaveBeenCalledTimes(1);
@@ -1368,8 +1367,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
 
       wrapper.vm.$options.methods.onDownload.call(ctx);
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       expect(dlSpy).toHaveBeenCalledTimes(1);
       expect(ctx.$notify.success).not.toHaveBeenCalled();
@@ -1386,8 +1384,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
 
       wrapper.vm.$options.methods.onDownload.call(ctx);
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       expect(dlSpy).toHaveBeenCalledTimes(1);
       expect(ctx.$notify.success).not.toHaveBeenCalled();

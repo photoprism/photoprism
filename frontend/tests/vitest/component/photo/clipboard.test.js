@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { shallowMount } from "@vue/test-utils";
+import { flushPromises, shallowMount } from "@vue/test-utils";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import Photo from "model/photo";
 import Rest from "model/rest";
@@ -41,6 +41,8 @@ function mountClipboard({ featureOverrides = {}, allowAccessAll = true } = {}) {
           allow: allowMock,
           feature: vi.fn().mockReturnValue(true),
           values: {},
+          apiUri: "/api/v1",
+          downloadToken: "2lbh9x09",
         },
         $clipboard: clipboard,
         $notify: {
@@ -119,8 +121,7 @@ describe("component/photo/clipboard", () => {
       wrapper.vm.selection = ["pt5y3865st5p3k5l"];
 
       wrapper.vm.download();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       expect(findSpy).toHaveBeenCalledWith("pt5y3865st5p3k5l");
       expect(dlSpy).toHaveBeenCalledTimes(1);
@@ -143,8 +144,7 @@ describe("component/photo/clipboard", () => {
       wrapper.vm.selection = ["pt5y3865st5p3k5l"];
 
       wrapper.vm.download();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       expect(dlSpy).toHaveBeenCalledTimes(1);
       expect(successSpy).not.toHaveBeenCalled();
@@ -166,8 +166,7 @@ describe("component/photo/clipboard", () => {
       wrapper.vm.selection = ["pt5y3865st5p3k5l"];
 
       wrapper.vm.download();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       expect(dlSpy).toHaveBeenCalledTimes(1);
       expect(successSpy).not.toHaveBeenCalled();
@@ -184,14 +183,22 @@ describe("component/photo/clipboard", () => {
       const postSpy = vi.spyOn($api, "post").mockResolvedValue({ data: { filename: "photos-123.zip" } });
       const successSpy = vi.spyOn($notify, "success").mockImplementation(() => {});
       const warnSpy = vi.spyOn($notify, "warn").mockImplementation(() => {});
+      const hrefs = [];
+      vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function () {
+        hrefs.push(this.getAttribute("href"));
+      });
 
       wrapper.vm.download();
-      await Promise.resolve();
-      await Promise.resolve();
 
-      expect(postSpy).toHaveBeenCalledWith("zip", { photos: clipboard.selection });
       expect(successSpy).toHaveBeenCalledTimes(1);
       expect(successSpy).toHaveBeenCalledWith("Downloading…");
+      expect(wrapper.vm.busy).toBe(true);
+
+      await flushPromises();
+
+      expect(postSpy).toHaveBeenCalledWith("zip", { photos: clipboard.selection });
+      expect(hrefs).toEqual(["/api/v1/zip/photos-123.zip?t=2lbh9x09"]);
+      expect(successSpy).toHaveBeenCalledTimes(1);
       expect(warnSpy).not.toHaveBeenCalled();
       expect(wrapper.vm.busy).toBe(false);
       postSpy.mockRestore();

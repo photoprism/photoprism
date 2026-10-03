@@ -748,7 +748,7 @@ export class Photo extends RestModel {
   }
 
   // Downloads all related files if they exist and depending on the settings.
-  // Returns { downloaded, skipped } so a prompt can be shown to report download status
+  // Returns { downloaded, skipped } so callers can report the outcome.
   downloadAll() {
     const s = $config.getSettings();
 

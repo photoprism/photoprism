@@ -207,7 +207,7 @@ describe("model/photo", () => {
   describe("downloadAll", () => {
     const allowAll = (overrides = {}) => ({
       features: { download: true },
-      download: { name: "file", ...overrides },
+      download: { name: "file", mediaRaw: true, mediaSidecar: true, ...overrides },
     });
 
     const mockSettings = (settings) => vi.spyOn($config, "getSettings").mockReturnValue(settings);
@@ -218,13 +218,12 @@ describe("model/photo", () => {
     // download> click. Spying on the anchor click observes those requests
     // (and their URLs / file names) without hitting the network.
     let clicks;
-    let clickSpy;
 
     const hrefs = () => clicks.map((c) => c.href);
 
     beforeEach(() => {
       clicks = [];
-      clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function () {
+      vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function () {
         clicks.push({ href: this.getAttribute("href"), name: this.getAttribute("download") });
       });
     });
@@ -251,9 +250,10 @@ describe("model/photo", () => {
 
     it("reports every file as skipped when the settings exclude them all", () => {
       mockSettings(allowAll({ mediaRaw: false }));
-      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [raw("r1")] });
+      const dng = { Hash: "r2", Name: "1980/01/kitten.dng", Root: "/", FileType: "raw", MediaType: "image" };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [raw("r1"), dng] });
 
-      expect(photo.downloadAll()).toEqual({ downloaded: 0, skipped: 1 });
+      expect(photo.downloadAll()).toEqual({ downloaded: 0, skipped: 2 });
       expect(clicks).toHaveLength(0);
     });
 
@@ -263,6 +263,63 @@ describe("model/photo", () => {
 
       expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 1 });
       expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09"]);
+    });
+
+    it("skips sidecar files unless sidecar downloads are enabled", () => {
+      const xmp = { Hash: "s1", Name: "1980/01/kitten.xmp", Root: "/", FileType: "xmp", MediaType: "sidecar" };
+      const json = { Hash: "s2", Name: "1980/01/kitten.json", Root: "/", FileType: "json", MediaType: "", Sidecar: true };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [jpg("f1"), xmp, json] });
+
+      mockSettings(allowAll({ mediaSidecar: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 2 });
+      expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09"]);
+
+      clicks = [];
+      mockSettings(allowAll({ mediaSidecar: true }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 3, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09", "/api/v1/dl/s1?t=2lbh9x09", "/api/v1/dl/s2?t=2lbh9x09"]);
+    });
+
+    it("skips files outside the originals root when only originals are downloaded", () => {
+      const generated = { Hash: "g1", Name: "1980/01/kitten.cr2.jpg", Root: "sidecar", FileType: "jpg", MediaType: "image" };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [jpg("f1"), generated] });
+
+      mockSettings(allowAll({ originals: true }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 1 });
+      expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09"]);
+
+      clicks = [];
+      mockSettings(allowAll({ originals: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09", "/api/v1/dl/g1?t=2lbh9x09"]);
+    });
+
+    it("skips the still images of a video", () => {
+      const mp4 = { Hash: "v1", Name: "1980/01/clip.mp4", Root: "/", FileType: "mp4", MediaType: "video" };
+      const mov = { Hash: "v2", Name: "1980/01/clip.mov", Root: "/", FileType: "mov", MediaType: "", Video: true };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [mp4, mov, jpg("j1", "1980/01/clip.jpg")] });
+
+      mockSettings(allowAll());
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 1 });
+      expect(hrefs()).toEqual(["/api/v1/dl/v1?t=2lbh9x09", "/api/v1/dl/v2?t=2lbh9x09"]);
+    });
+
+    it("reports a skip when a video has only still images", () => {
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [jpg("j1", "1980/01/clip.jpg")] });
+
+      mockSettings(allowAll());
+      expect(photo.downloadAll()).toEqual({ downloaded: 0, skipped: 1 });
+      expect(clicks).toHaveLength(0);
+    });
+
+    it("reports nothing downloaded when no file has a hash", () => {
+      const none = { downloaded: 0, skipped: 0 };
+      const hashless = { Name: "1980/01/kitten.jpg", Root: "/", FileType: "jpg", MediaType: "image" };
+      mockSettings(allowAll());
+
+      expect(new Photo({ UID: "pt9x2vksm3p4q8ft", FileName: "1980/01/tiger.jpg" }).downloadAll()).toEqual(none);
+      expect(new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [hashless] }).downloadAll()).toEqual(none);
+      expect(clicks).toHaveLength(0);
     });
   });
 
