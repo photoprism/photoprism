@@ -377,6 +377,50 @@ describe("common/config", () => {
     expect(cfg.getDefaultRoute()).toBe("browse");
   });
 
+  it("honors discover start page when the feature is enabled", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.ui = {
+      ...settings.ui,
+      startPage: "discover",
+    };
+    settings.features = {
+      ...settings.features,
+      search: true,
+      discover: true,
+      settings: true,
+    };
+    cfg.set("settings", settings);
+    cfg.set("acl", {
+      photos: { full_access: false, access_library: true },
+      settings: { full_access: false, update: true },
+    });
+
+    expect(cfg.getDefaultRoute()).toBe("discover");
+  });
+
+  it("falls back to default route when discover is disabled", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.ui = {
+      ...settings.ui,
+      startPage: "discover",
+    };
+    settings.features = {
+      ...settings.features,
+      search: true,
+      discover: false,
+      settings: true,
+    };
+    cfg.set("settings", settings);
+    cfg.set("acl", {
+      photos: { full_access: false, access_library: true },
+      settings: { full_access: false, update: true },
+    });
+
+    expect(cfg.getDefaultRoute()).toBe("browse");
+  });
+
   it("should return language locale", () => {
     const cfg = new Config(new StorageShim(), Object.assign({}, window.__CONFIG__));
     expect(cfg.getLanguageLocale()).toBe("en");

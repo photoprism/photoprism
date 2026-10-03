@@ -54,10 +54,18 @@ msgstr "%{n} etiket bulundu"
 msgid "%{n} people found"
 msgstr "%{n} kişi bulundu"
 
+#: src/page/discover/past.vue:290
+msgid "%{n} pictures"
+msgstr ""
+
 #: src/page/album/photos.vue:395 src/page/album/photos.vue:586
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "%{n} resim bulundu"
+
+#: src/page/discover/past.vue:282
+msgid "%{n} years ago"
+msgstr ""
 
 #: src/common/form.js:291 src/common/form.js:296
 #: src/component/input/chip-selector.vue:277
@@ -74,6 +82,14 @@ msgstr "%{s} çok kısa"
 #: src/options/options.js:426
 msgid "1 hour"
 msgstr "1 saat"
+
+#: src/page/discover/past.vue:287
+msgid "1 picture"
+msgstr ""
+
+#: src/page/discover/past.vue:279
+msgid "1 year ago"
+msgstr ""
 
 #: src/options/options.js:428
 msgid "12 hours"
@@ -987,10 +1003,6 @@ msgstr "Renk"
 #: src/component/photo/edit/files.vue:307
 msgid "Color Profile"
 msgstr "Renk Profili"
-
-#: src/page/discover.vue:5
-msgid "Colors"
-msgstr "Renkler"
 
 #: src/page/connect.vue:141 src/page/connect.vue:151 src/page/connect.vue:123
 msgid "Compare Editions"
@@ -2752,6 +2764,14 @@ msgstr "Hiç kimse bulunamadı"
 msgid "No pictures found"
 msgstr "Resim bulunamadı"
 
+#: src/page/discover/past.vue:127
+msgid "No pictures from this day in past years"
+msgstr ""
+
+#: src/page/discover/past.vue:127
+msgid "No pictures from this month in past years"
+msgstr ""
+
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
 msgid "No recently edited pictures"
@@ -3100,6 +3120,10 @@ msgstr "PhotoPrism+ Üyeliği"
 #: src/app/routes.js:322
 msgid "Photos"
 msgstr "Fotoğraflar"
+
+#: src/page/discover/past.vue:130
+msgid "Photos taken in previous years will appear here when they match today's date."
+msgstr ""
 
 #: src/component/photo/batch-edit.vue:614
 #: src/component/photo/batch-edit.vue:634
@@ -3572,10 +3596,6 @@ msgstr "Arama"
 msgid "Search Filters"
 msgstr "Arama Filtreleri"
 
-#: src/page/discover.vue:13
-msgid "Season"
-msgstr "Sezon"
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Gizli"
@@ -3818,6 +3838,10 @@ msgstr "Fotoğrafları manuel olarak taramak ve düzenlemek için “Albümler�
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "Kütüphaneye yıl ve aya göre göz atmak için Takvim görünümünü gösterin."
 
+#: src/page/settings/general.vue:172
+msgid "Show the Discover section to browse pictures from this day and month in past years."
+msgstr ""
+
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr "Yıldızladığınız resimlere hızlıca erişmek için “Favoriler” bölümünü görüntüleyin."
@@ -3842,6 +3866,10 @@ msgstr "Videolara, canlı fotoğraflara ve animasyonlara göz atmak için “Med
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Fotoğraflara konuma göre göz atabilmeniz için Yerler görünümünü etkileşimli haritalarla gösterin."
 
+#: src/page/discover.vue:29
+msgid "Shuffle"
+msgstr ""
+
 #: src/common/util.js:913 src/model/file.js:197
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -3859,10 +3887,6 @@ msgstr "Çıkış"
 #: src/page/auth/login.vue:153
 msgid "Sign in"
 msgstr "Giriş Yap"
-
-#: src/page/discover.vue:9
-msgid "Similar"
-msgstr "Benzer"
 
 #: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
@@ -4108,6 +4132,22 @@ msgstr "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Tema"
+
+#: src/page/discover.vue:14
+msgid "This Day"
+msgstr ""
+
+#: src/page/discover.vue:13
+msgid "This Day in the Past"
+msgstr ""
+
+#: src/page/discover.vue:18
+msgid "This Month"
+msgstr ""
+
+#: src/page/discover.vue:17
+msgid "This Month in the Past"
+msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
@@ -4773,6 +4813,15 @@ msgstr "{0} seçildi"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{2} içinden {0}-{1}"
+
+#~ msgid "Colors"
+#~ msgstr "Renkler"
+
+#~ msgid "Season"
+#~ msgstr "Sezon"
+
+#~ msgid "Similar"
+#~ msgstr "Benzer"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

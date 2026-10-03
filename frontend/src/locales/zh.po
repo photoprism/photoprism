@@ -54,10 +54,18 @@ msgstr "已找到 %{n} 个标签"
 msgid "%{n} people found"
 msgstr "已找到 %{n} 个人物"
 
+#: src/page/discover/past.vue:290
+msgid "%{n} pictures"
+msgstr ""
+
 #: src/page/album/photos.vue:395 src/page/album/photos.vue:586
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "已找到 %{n} 张图片"
+
+#: src/page/discover/past.vue:282
+msgid "%{n} years ago"
+msgstr ""
 
 #: src/common/form.js:291 src/common/form.js:296
 #: src/component/input/chip-selector.vue:277
@@ -74,6 +82,14 @@ msgstr "%{s}太短"
 #: src/options/options.js:426
 msgid "1 hour"
 msgstr "1 小时"
+
+#: src/page/discover/past.vue:287
+msgid "1 picture"
+msgstr ""
+
+#: src/page/discover/past.vue:279
+msgid "1 year ago"
+msgstr ""
 
 #: src/options/options.js:428
 msgid "12 hours"
@@ -987,10 +1003,6 @@ msgstr "颜色"
 #: src/component/photo/edit/files.vue:307
 msgid "Color Profile"
 msgstr "颜色简介"
-
-#: src/page/discover.vue:5
-msgid "Colors"
-msgstr "颜色"
 
 #: src/page/connect.vue:141 src/page/connect.vue:151 src/page/connect.vue:123
 msgid "Compare Editions"
@@ -2752,6 +2764,14 @@ msgstr "找不到人物"
 msgid "No pictures found"
 msgstr "找不到图片"
 
+#: src/page/discover/past.vue:127
+msgid "No pictures from this day in past years"
+msgstr ""
+
+#: src/page/discover/past.vue:127
+msgid "No pictures from this month in past years"
+msgstr ""
+
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
 msgid "No recently edited pictures"
@@ -3101,6 +3121,10 @@ msgstr "照片棱镜+会员资格"
 #: src/app/routes.js:322
 msgid "Photos"
 msgstr "照片"
+
+#: src/page/discover/past.vue:130
+msgid "Photos taken in previous years will appear here when they match today's date."
+msgstr ""
 
 #: src/component/photo/batch-edit.vue:614
 #: src/component/photo/batch-edit.vue:634
@@ -3574,10 +3598,6 @@ msgstr "搜索"
 msgid "Search Filters"
 msgstr "搜索筛选条件"
 
-#: src/page/discover.vue:13
-msgid "Season"
-msgstr "季节"
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "密钥"
@@ -3820,6 +3840,10 @@ msgstr "显示“相册”部分，以便手动浏览和整理照片。"
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "显示日历视图，按年月浏览图书馆。"
 
+#: src/page/settings/general.vue:172
+msgid "Show the Discover section to browse pictures from this day and month in past years."
+msgstr ""
+
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr "显示“收藏”部分，以便快速访问您标星的图片。"
@@ -3844,6 +3868,10 @@ msgstr "显示“媒体”部分，以浏览视频、实时照片和动画。"
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "显示带有交互式地图的 \"地点 \"视图，以便按地点浏览照片。"
 
+#: src/page/discover.vue:29
+msgid "Shuffle"
+msgstr ""
+
 #: src/common/util.js:913 src/model/file.js:197
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -3861,10 +3889,6 @@ msgstr "退出"
 #: src/page/auth/login.vue:153
 msgid "Sign in"
 msgstr "登录"
-
-#: src/page/discover.vue:9
-msgid "Similar"
-msgstr "相似"
 
 #: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
@@ -4110,6 +4134,22 @@ msgstr "它们的格式可能不受支持，它们尚未转换为 JPEG 或存在
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "主题"
+
+#: src/page/discover.vue:14
+msgid "This Day"
+msgstr ""
+
+#: src/page/discover.vue:13
+msgid "This Day in the Past"
+msgstr ""
+
+#: src/page/discover.vue:18
+msgid "This Month"
+msgstr ""
+
+#: src/page/discover.vue:17
+msgid "This Month in the Past"
+msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
@@ -4775,6 +4815,15 @@ msgstr "{0}已选定"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{2}的{0}-{1}部分"
+
+#~ msgid "Colors"
+#~ msgstr "颜色"
+
+#~ msgid "Season"
+#~ msgstr "季节"
+
+#~ msgid "Similar"
+#~ msgstr "相似"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

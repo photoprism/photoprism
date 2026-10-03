@@ -16,6 +16,7 @@ func (s *Settings) ApplyACL(list acl.ACL, role acl.Role) *Settings {
 	m.Features.Cameras = s.Features.Cameras && list.AllowAny(acl.ResourceCameras, role, acl.Permissions{acl.ActionSearch})
 	m.Features.Lenses = s.Features.Lenses && list.AllowAny(acl.ResourceLenses, role, acl.Permissions{acl.ActionSearch})
 	m.Features.Calendar = s.Features.Calendar && list.AllowAny(acl.ResourceCalendar, role, acl.Permissions{acl.ActionSearch})
+	m.Features.Discover = s.Features.Discover && list.AllowAny(acl.ResourcePhotos, role, acl.Permissions{acl.ActionSearch})
 	m.Features.Moments = s.Features.Moments && list.AllowAny(acl.ResourceMoments, role, acl.Permissions{acl.ActionSearch})
 	m.Features.People = s.Features.People && list.AllowAny(acl.ResourcePeople, role, acl.Permissions{acl.ActionSearch})
 	m.Features.Places = s.Features.Places && list.AllowAny(acl.ResourcePlaces, role, acl.Permissions{acl.ActionSearch, acl.ActionView})

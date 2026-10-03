@@ -50,6 +50,17 @@ const c = window.__CONFIG__;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 const loginRoute = "login";
 
+// requireDiscover sends unauthenticated or Discover-disabled sessions away from Discover routes.
+const requireDiscover = (to, from, next) => {
+  if ($session.loginRequired()) {
+    next({ name: loginRoute });
+  } else if (!$config.feature("discover") || $config.deny("photos", "search")) {
+    next({ name: $session.getDefaultRoute() });
+  } else {
+    next();
+  }
+};
+
 // safeReturnTo validates the `return_to` query parameter so callers can route
 // the user back to a same-origin destination without enabling an open-redirect
 // vector. Accepts root-relative paths or absolute URLs whose origin matches
@@ -744,27 +755,38 @@ export default [
     component: Discover,
     meta: { title: $gettext("Discover"), requiresAuth: true, background: "background" },
     props: { tab: 0 },
+    beforeEnter: requireDiscover,
   },
   {
-    name: "discover_similar",
-    path: "/discover/similar",
+    name: "discover_month",
+    path: "/discover/month",
     component: Discover,
     meta: { title: $gettext("Discover"), requiresAuth: true, background: "background" },
     props: { tab: 1 },
-  },
-  {
-    name: "discover_season",
-    path: "/discover/season",
-    component: Discover,
-    meta: { title: $gettext("Discover"), requiresAuth: true, background: "background" },
-    props: { tab: 2 },
+    beforeEnter: requireDiscover,
   },
   {
     name: "discover_random",
     path: "/discover/random",
     component: Discover,
     meta: { title: $gettext("Discover"), requiresAuth: true, background: "background" },
-    props: { tab: 3 },
+    props: { tab: 2 },
+    beforeEnter: requireDiscover,
+  },
+  {
+    name: "discover_similar",
+    path: "/discover/similar",
+    redirect: { name: "discover" },
+  },
+  {
+    name: "discover_colors",
+    path: "/discover/colors",
+    redirect: { name: "discover" },
+  },
+  {
+    name: "discover_season",
+    path: "/discover/season",
+    redirect: { name: "discover" },
   },
   {
     path: "/:pathMatch(.*)*",
