@@ -3306,12 +3306,12 @@ export default {
       }
 
       new Photo().find(this.model.UID).then((p) => {
-        const { downloaded, skipped } = p.downloadAll();
+        const { downloaded } = p.downloadAll();
 
         if (downloaded > 0) {
           this.$notify.success(this.$gettext("Downloading…"));
-        } else if (skipped > 0) {
-          this.$notify.warn(this.$gettext("No files to download: all files are excluded by the download settings"));
+        } else {
+          this.$notify.warn(this.$gettext("No files available for download"));
         }
       });
     },

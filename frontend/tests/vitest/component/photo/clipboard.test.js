@@ -107,7 +107,7 @@ describe("component/photo/clipboard", () => {
   });
 
   describe("download() prompt", () => {
-    const warnMessage = "No files to download: all files are excluded by the download settings";
+    const warnMessage = "No files available for download";
 
     it("shows the Downloading prompt when the single photo download starts", async () => {
       const { wrapper } = mountClipboard();
@@ -124,6 +124,7 @@ describe("component/photo/clipboard", () => {
 
       expect(findSpy).toHaveBeenCalledWith("pt5y3865st5p3k5l");
       expect(dlSpy).toHaveBeenCalledTimes(1);
+      expect(successSpy).toHaveBeenCalledTimes(1);
       expect(successSpy).toHaveBeenCalledWith("Downloading…");
       expect(warnSpy).not.toHaveBeenCalled();
       expect(wrapper.vm.busy).toBe(false);
@@ -147,6 +148,30 @@ describe("component/photo/clipboard", () => {
 
       expect(dlSpy).toHaveBeenCalledTimes(1);
       expect(successSpy).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledWith(warnMessage);
+      expect(wrapper.vm.busy).toBe(false);
+      findSpy.mockRestore();
+      successSpy.mockRestore();
+      warnSpy.mockRestore();
+    });
+
+    it("warns when the single photo has no files to download at all", async () => {
+      const { wrapper } = mountClipboard();
+      const found = new Photo({ UID: "pt5y3865st5p3k5l" });
+      const findSpy = vi.spyOn(Rest.prototype, "find").mockResolvedValue(found);
+      const dlSpy = vi.spyOn(found, "downloadAll").mockReturnValue({ downloaded: 0, skipped: 0 });
+      const successSpy = vi.spyOn($notify, "success").mockImplementation(() => {});
+      const warnSpy = vi.spyOn($notify, "warn").mockImplementation(() => {});
+      wrapper.vm.selection = ["pt5y3865st5p3k5l"];
+
+      wrapper.vm.download();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(dlSpy).toHaveBeenCalledTimes(1);
+      expect(successSpy).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalledTimes(1);
       expect(warnSpy).toHaveBeenCalledWith(warnMessage);
       expect(wrapper.vm.busy).toBe(false);
       findSpy.mockRestore();
@@ -158,16 +183,20 @@ describe("component/photo/clipboard", () => {
       const { wrapper, clipboard } = mountClipboard();
       const postSpy = vi.spyOn($api, "post").mockResolvedValue({ data: { filename: "photos-123.zip" } });
       const successSpy = vi.spyOn($notify, "success").mockImplementation(() => {});
+      const warnSpy = vi.spyOn($notify, "warn").mockImplementation(() => {});
 
       wrapper.vm.download();
       await Promise.resolve();
       await Promise.resolve();
 
       expect(postSpy).toHaveBeenCalledWith("zip", { photos: clipboard.selection });
+      expect(successSpy).toHaveBeenCalledTimes(1);
       expect(successSpy).toHaveBeenCalledWith("Downloading…");
+      expect(warnSpy).not.toHaveBeenCalled();
       expect(wrapper.vm.busy).toBe(false);
       postSpy.mockRestore();
       successSpy.mockRestore();
+      warnSpy.mockRestore();
     });
   });
 });

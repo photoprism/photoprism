@@ -396,12 +396,12 @@ export default {
           new Photo()
             .find(this.selection[0])
             .then((p) => {
-              const { downloaded, skipped } = p.downloadAll();
+              const { downloaded } = p.downloadAll();
 
               if (downloaded > 0) {
                 $notify.success(this.$gettext("Downloading…"));
-              } else if (skipped > 0) {
-                $notify.warn(this.$gettext("No files to download: all files are excluded by the download settings"));
+              } else {
+                $notify.warn(this.$gettext("No files available for download"));
               }
             })
             .finally(() => {
