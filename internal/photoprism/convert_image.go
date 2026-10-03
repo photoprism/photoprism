@@ -249,8 +249,11 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 			log.Warnf("convert: %s in %s (change orientation)", err, clean.Log(result.RootRelName()))
 		}
 	} else if sourceOrientation > 1 {
-		if err = result.ChangeOrientation(sourceOrientation); err != nil {
-			log.Warnf("convert: %s in %s (copy source orientation)", err, clean.Log(result.RootRelName()))
+		// The preview is kept either way, untagged if the orientation cannot be written.
+		if written, tagErr := w.writeMissingOrientation(imageName, sourceOrientation); tagErr != nil {
+			log.Warnf("convert: %s in %s (write orientation)", clean.Error(tagErr), clean.Log(result.RootRelName()))
+		} else if !written {
+			log.Debugf("convert: orientation of %s left unchanged", clean.Log(result.RootRelName()))
 		} else if result, err = NewMediaFile(imageName); err != nil {
 			return result, err
 		}

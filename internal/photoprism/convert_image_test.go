@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -169,10 +170,78 @@ func TestConvert_ToImage(t *testing.T) {
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = preview.Remove() })
 		assert.Equal(t, 8, preview.Orientation())
+		info, err := os.Stat(preview.FileName())
+		require.NoError(t, err)
+		assert.Equal(t, info.Size(), preview.FileSize(), "the returned preview must describe the tagged file")
 
 		img, err := thumb.Open(preview.FileName(), preview.Orientation())
 		require.NoError(t, err)
 		assert.Less(t, img.Bounds().Dx(), img.Bounds().Dy(), "preview must render in portrait orientation")
+	})
+	t.Run("RawEmbeddedPreviewKeepsOwnOrientation", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "preview-keeps-orientation.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		setExifOrientationTag(t, cnf, rawFile, "8")
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		require.Equal(t, 8, rawMediaFile.Orientation())
+
+		// The stub returns an embedded preview that carries an Orientation tag of its own.
+		tagged := extractTestPreview(t, cnf, filepath.Join(t.TempDir(), "tagged.jpg"))
+		setExifOrientationTag(t, cnf, tagged, "3")
+		useExifToolStub(t, cnf, fmt.Sprintf("case \" $* \" in *\" -PreviewImage \"*) exec /bin/cat '%s';; esac\nexec '%s' \"$@\"\n", tagged, cnf.ExifToolBin()))
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.Equal(t, "3", exifOrientationTag(t, cnf, preview.FileName()))
+		assert.Equal(t, 3, preview.Orientation())
+	})
+	t.Run("RawEmbeddedPreviewOrientationWriteFails", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "preview-orientation-fails.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		setExifOrientationTag(t, cnf, rawFile, "8")
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		require.Equal(t, 8, rawMediaFile.Orientation())
+
+		// The stub refuses every orientation write and runs ExifTool for anything else.
+		useExifToolStub(t, cnf, fmt.Sprintf("for a; do case \"$a\" in -Orientation=*) echo 'write refused' >&2; exit 1;; esac; done\nexec '%s' \"$@\"\n", cnf.ExifToolBin()))
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err, "a failed orientation write must keep the preview")
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.True(t, preview.IsJpeg())
+		assert.Empty(t, exifOrientationTag(t, cnf, preview.FileName()))
+		assert.Equal(t, 1, preview.Orientation())
+		leftovers, _ := filepath.Glob(filepath.Join(filepath.Dir(preview.FileName()), "*_exiftool_tmp"))
+		assert.Empty(t, leftovers)
 	})
 	t.Run("Svg", func(t *testing.T) {
 		svgFile := fs.Abs("./testdata/agpl.svg")
