@@ -39,14 +39,14 @@
 
 ### Usage & Test Guidelines
 
-- Indexing: use `IndexMain` / `IndexRelated` via `IndexMediaFile` helpers; prefer `IndexOptions` factories.
+- Indexing: use `IndexMain` / `IndexRelated`; prefer `IndexOptions` factories.
 - Import: run via `ImportWorker` with `ImportOptions`; files imported together are stacked as one related set, files from separate batches only through a shared document ID or matching capture metadata.
-- Converters: use `Convert.ToImage` / `Convert.ToVideo` / `Convert.ToJson` / `Convert.TempPreview`; options come from `config.Config`.
+- Converters: use `Convert.ToImage` / `Convert.ToAvc` / `Convert.ToJson` / `Convert.TempPreview`; options come from `config.Config`.
 - Vision: thumbnails for vision models are selected in `mediafile_vision.go`; ensure models exist in `internal/ai/vision`.
 - NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when `PHOTOPRISM_DETECT_NSFW=true` and the selected NSFW source reports unsafe content. `PHOTOPRISM_NSFW_MODEL=labels` uses only LLM labels; `auto` uses the dedicated detector, whose `m.DetectNSFW()` returns an `nsfw.Result`. `none` disables both sources. Label NSFW fields are ignored outside `labels` mode. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
 - Tests: targeted runs keep iteration fast, e.g.  
   - `go test ./internal/photoprism -run TestMediaFile_ -count=1`  
-  - `go test ./internal/photoprism/index_mediafile_test.go -run TestIndexMediaFile`  
+  - `go test ./internal/photoprism -run TestIndex_MediaFile -count=1`  
   Full suite: `go test ./internal/photoprism/...` (heavy; migrates fixtures).
   `-short` skips the tests that run the indexer or importer on fixture media.
 - Fixtures live under `storage/testdata`; tests expect initialized config (`config.TestConfig()` / `config.NewMinimalTestConfigWithDb`).

@@ -8,7 +8,7 @@ This package contains PhotoPrism’s adapter for the OpenAI Responses API. It en
 
 #### Constraints
 
-- OpenAI requests flow through the existing vision client (`internal/ai/vision/api_client.go`) and must honour PhotoPrism’s timeout, logging, and ACL rules.
+- OpenAI requests flow through the existing vision client (`internal/ai/vision/api_client.go`) and must honor PhotoPrism’s timeout, logging, and ACL rules.
 - Structured outputs are preferred but the adapter must gracefully handle free-form text; `output_text` responses are parsed both as JSON and as plain captions.
 - Costs should remain predictable: requests are limited to a single 720 px thumbnail (`detail=low`) and capped token budgets (512 caption, 1024 labels).
 - Secrets are supplied per model (`Service.Key`) with fallbacks to `OPENAI_API_KEY` / `_FILE`. Logs must redact sensitive data.
