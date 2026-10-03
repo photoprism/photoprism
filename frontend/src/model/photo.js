@@ -764,7 +764,7 @@ export class Photo extends RestModel {
       const hash = this.fileHash();
 
       if (hash) {
-        download(`/${$config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));
+        download(`${$config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));
         return { downloaded: 1, skipped: 0 };
       } else if ($config.debug) {
         console.log("download: failed, empty file hash", this);

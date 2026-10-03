@@ -245,7 +245,7 @@ describe("model/photo", () => {
 
       expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 0 });
       expect(clicks).toHaveLength(1);
-      expect(clicks[0].href).toContain("/dl/primary1?t=2lbh9x09");
+      expect(clicks[0].href).toBe("/api/v1/dl/primary1?t=2lbh9x09");
       expect(clicks[0].name).toBe("tiger.jpg");
     });
 
