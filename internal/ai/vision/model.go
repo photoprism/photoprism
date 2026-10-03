@@ -130,7 +130,7 @@ func (m *Model) GetModel() (model, name, version string) {
 		version = parts[1]
 	}
 
-	// Default to "latest" for non-OpenAI engines when no version was set.
+	// Default to "latest" when no version was set.
 	if version == "" {
 		version = VersionLatest
 	}
