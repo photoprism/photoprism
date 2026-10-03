@@ -282,6 +282,100 @@ func TestModel_GetModel(t *testing.T) {
 	}
 }
 
+func TestModel_GetModelRequestEngine(t *testing.T) {
+	t.Run("EngineLessOpenAI", func(t *testing.T) {
+		m := &Model{Model: "unsloth/Qwen3.5-9B-GGUF:Q4_K_M", Service: Service{RequestFormat: ApiFormatOpenAI}}
+		model, name, version := m.GetModel()
+		assert.Equal(t, "unsloth/Qwen3.5-9B-GGUF:Q4_K_M", model)
+		assert.Equal(t, "unsloth/Qwen3.5-9B-GGUF:Q4_K_M", name)
+		assert.Equal(t, "", version)
+	})
+	t.Run("EngineLessOpenAIServiceModel", func(t *testing.T) {
+		t.Setenv("VISION_TEST_FT_MODEL", "ft:gpt-4o-mini-2024-07-18:acme::A1b2C3d4")
+		m := &Model{Name: "ignored", Service: Service{Model: "${VISION_TEST_FT_MODEL}", RequestFormat: ApiFormatOpenAI}}
+		model, name, version := m.GetModel()
+		assert.Equal(t, "ft:gpt-4o-mini-2024-07-18:acme::A1b2C3d4", model)
+		assert.Equal(t, "ft:gpt-4o-mini-2024-07-18:acme::A1b2C3d4", name)
+		assert.Equal(t, "", version)
+	})
+	t.Run("MixedCaseEngine", func(t *testing.T) {
+		model, _, version := (&Model{Model: "qwen3-vl:8b", Engine: "OpenAI"}).GetModel()
+		assert.Equal(t, "qwen3-vl:8b", model)
+		assert.Equal(t, "", version)
+	})
+	t.Run("EngineWinsOverFormat", func(t *testing.T) {
+		m := &Model{Name: "gemma3:27b", Engine: ollama.EngineName, Service: Service{RequestFormat: ApiFormatOpenAI}}
+		model, name, version := m.GetModel()
+		assert.Equal(t, "gemma3:27b", model)
+		assert.Equal(t, "gemma3", name)
+		assert.Equal(t, "27b", version)
+	})
+	t.Run("DisabledServiceFormatIgnored", func(t *testing.T) {
+		m := &Model{Name: "gemma3:27b", Service: Service{RequestFormat: ApiFormatOpenAI, Disabled: true}}
+		model, name, version := m.GetModel()
+		assert.Equal(t, "gemma3", model)
+		assert.Equal(t, "gemma3", name)
+		assert.Equal(t, "27b", version)
+	})
+	t.Run("VisionSplitsVersion", func(t *testing.T) {
+		for _, m := range []*Model{
+			{Name: "custom:v2", Engine: EngineVision},
+			{Name: "custom:v2", Service: Service{RequestFormat: ApiFormatVision}},
+		} {
+			model, name, version := m.GetModel()
+			assert.Equal(t, "custom", model)
+			assert.Equal(t, "custom", name)
+			assert.Equal(t, "v2", version)
+		}
+	})
+	t.Run("OllamaHuggingFaceId", func(t *testing.T) {
+		m := &Model{Name: "hf.co/unsloth/Qwen3.5-9B-GGUF:Q4_K_M", Engine: ollama.EngineName}
+		model, name, version := m.GetModel()
+		assert.Equal(t, "hf.co/unsloth/Qwen3.5-9B-GGUF:Q4_K_M", model)
+		assert.Equal(t, "hf.co/unsloth/Qwen3.5-9B-GGUF", name)
+		assert.Equal(t, "Q4_K_M", version)
+	})
+	t.Run("EngineDefaults", func(t *testing.T) {
+		for engine, want := range map[string]string{openai.EngineName: "gpt-5-mini", ollama.EngineName: "gemma4:latest"} {
+			m := &Model{Engine: engine}
+			m.ApplyEngineDefaults()
+			model, _, _ := m.GetModel()
+			assert.Equal(t, want, model)
+		}
+	})
+}
+
+func TestModel_RequestEngine(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", (*Model)(nil).requestEngine())
+	})
+	t.Run("Engine", func(t *testing.T) {
+		assert.Equal(t, openai.EngineName, (&Model{Engine: " OpenAI "}).requestEngine())
+		assert.Equal(t, ollama.EngineName, (&Model{Engine: ollama.EngineName, Service: Service{RequestFormat: ApiFormatOpenAI}}).requestEngine())
+		assert.Equal(t, EngineVision, (&Model{Engine: EngineVision}).requestEngine())
+	})
+	t.Run("RequestFormat", func(t *testing.T) {
+		assert.Equal(t, openai.EngineName, (&Model{Service: Service{RequestFormat: ApiFormatOpenAI}}).requestEngine())
+		assert.Equal(t, ollama.EngineName, (&Model{Service: Service{RequestFormat: ApiFormatOllama}}).requestEngine())
+	})
+	t.Run("NoEndpointResolution", func(t *testing.T) {
+		resetUnresolvedUriWarnings(t)
+		logHook, _ := captureLogs(t)
+		m := &Model{Type: ModelTypeLabels, Name: "custom", Service: Service{Uri: "${VISION_TEST_MISSING_URI}", RequestFormat: ApiFormatOpenAI}}
+		assert.Equal(t, openai.EngineName, m.requestEngine())
+		m.GetModel()
+		assert.Empty(t, logHook.AllEntries())
+		m.EngineName()
+		assert.NotEmpty(t, logHook.AllEntries())
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.Equal(t, "", (&Model{}).requestEngine())
+		assert.Equal(t, "", (&Model{Service: Service{RequestFormat: ApiFormatVision}}).requestEngine())
+		assert.Equal(t, "", (&Model{Service: Service{RequestFormat: "custom"}}).requestEngine())
+		assert.Equal(t, "", (&Model{Service: Service{RequestFormat: ApiFormatOpenAI, Disabled: true}}).requestEngine())
+	})
+}
+
 func TestModelGetOptionsRespectsCustomValues(t *testing.T) {
 	model := &Model{
 		Type:   ModelTypeLabels,

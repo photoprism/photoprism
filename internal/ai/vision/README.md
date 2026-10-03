@@ -165,7 +165,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 ### Field Behavior & Precedence
 
-- Model identifier resolution order: `Service.Model` → `Model` → `Name`. `Model.GetModel()` returns `(id, name, version)` where Ollama receives `name:version`, OpenAI receives the identifier verbatim, including any colons, and other engines receive `name` plus a separate `Version`.
+- Model identifier resolution order: `Service.Model` → `Model` → `Name`. `Model.GetModel()` returns `(id, name, version)`: Ollama receives `name:version`, OpenAI-compatible services receive the identifier verbatim (colons included), and other engines receive `name` plus a separate `Version`. Without an `Engine`, `RequestFormat: openai` selects the OpenAI behavior.
 - Env expansion runs for all `Service` credentials and `Model` overrides; empty or disabled models return empty identifiers.
 - Identifiers are limited to 64 ASCII characters. A longer one is shortened, and a warning is written to the system log once per shortened identifier.
 - Options merging: engine defaults fill missing fields; explicit values always win. Temperature is capped at `MaxTemperature`.

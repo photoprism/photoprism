@@ -117,7 +117,7 @@ func (m *Model) GetModel() (model, name, version string) {
 	}
 
 	// OpenAI-compatible servers match identifiers verbatim, colons included.
-	if m.Engine == openai.EngineName {
+	if m.requestEngine() == openai.EngineName {
 		return name, name, ""
 	}
 
@@ -138,6 +138,27 @@ func (m *Model) GetModel() (model, name, version string) {
 		return strings.Join([]string{name, version}, ":"), name, version
 	default:
 		return name, name, version
+	}
+}
+
+// requestEngine returns the configured engine, or the engine implied by the service request
+// format if none is set. Unlike EngineName, it does not resolve the endpoint.
+func (m *Model) requestEngine() string {
+	if m == nil {
+		return ""
+	}
+
+	if engine := strings.TrimSpace(strings.ToLower(m.Engine)); engine != "" {
+		return engine
+	}
+
+	switch m.Service.EndpointRequestFormat() {
+	case ApiFormatOpenAI:
+		return openai.EngineName
+	case ApiFormatOllama:
+		return ollama.EngineName
+	default:
+		return ""
 	}
 }
 
