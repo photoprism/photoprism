@@ -795,7 +795,7 @@ export class Photo extends RestModel {
       }
 
       // Originals only?
-      if (s.download.originals && file.Root.length > 1) {
+      if (s.download.originals && file.Root !== "/") {
         // Don't download broken files and sidecars.
         if ($config.debug) {
           console.log(`download: skipped ${file.Root} file ${file.Name}`);

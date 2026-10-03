@@ -433,6 +433,19 @@ describe("model/photo", () => {
       expect(hrefs()).toEqual(["/api/v1/dl/n1?t=2lbh9x09", "/api/v1/dl/n2?t=2lbh9x09"]);
     });
 
+    it("skips files without the originals root when only originals are downloaded", () => {
+      const file = (hash, root) => ({ Hash: hash, Name: `1980/01/${hash}.jpg`, Root: root, FileType: "jpg", MediaType: "image" });
+      const photo = new Photo({
+        UID: "pt9x2vksm3p4q8ft",
+        Type: "image",
+        Files: [file("o1", "/"), file("o2", undefined), file("o3", null), file("o4", ""), file("o5", "sidecar")],
+      });
+
+      mockSettings(allowAll({ originals: true }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 4 });
+      expect(hrefs()).toEqual(["/api/v1/dl/o1?t=2lbh9x09"]);
+    });
+
     it("reports nothing downloaded when no file has a hash", () => {
       const none = { downloaded: 0, skipped: 0 };
       const hashless = { Name: "1980/01/kitten.jpg", Root: "/", FileType: "jpg", MediaType: "image" };
