@@ -36,9 +36,9 @@ func newInsta360ReconcileFixture(t *testing.T, name string) (RelatedFiles, []ent
 
 	dir := filepath.Join(cfg.OriginalsPath(), name)
 	fileNames := []string{
-		writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg"),
-		writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg"),
-		writeInsta360CaptureFile(t, dir, "LRV_20220625_140410_11_008.insv", "testdata/flash.jpg"),
+		writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/insta360.insv"),
+		writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/insta360.insv"),
+		writeInsta360CaptureFile(t, dir, "LRV_20220625_140410_11_008.insv", "testdata/insta360.insv"),
 	}
 
 	left, err := NewMediaFile(fileNames[0])
