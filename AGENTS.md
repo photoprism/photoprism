@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** September 27, 2026
+**Last Updated:** October 1, 2026
 
 ## Purpose
 
@@ -67,6 +67,7 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 
 - Markdown headings use a Chicago-style title case, with additional code- and path-aware normalization rules (see *Title Case rules* below). Always spell the product name as `PhotoPrism`.
 - Put option flags before positional arguments unless the command requires another order.
+- Name environment variables in full in user-facing docs, READMEs, examples, and templates (`PHOTOPRISM_DETECT_NSFW`, not `DETECT_NSFW`), since readers copy them verbatim. CLI flags (`--detect-nsfw`) and YAML option keys keep their own names.
 - Use RFC 3339 UTC timestamps and valid ID, UID, and UUID examples in docs and tests.
 - The nested `specs/` repository may be absent. Do not add main-repo `Makefile` targets that depend on it; when present, you may run its tools manually.
 - Testing guides live at `specs/dev/backend-testing.md` and `specs/dev/frontend-testing.md`.

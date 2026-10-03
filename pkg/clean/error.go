@@ -77,6 +77,15 @@ func ErrorFull(err error) string {
 	return errorText(err.Error())
 }
 
+// ErrorBytes sanitizes an error message like Error and bounds it to maxBytes, for storing it in a column.
+func ErrorBytes(err error, maxBytes int) string {
+	if errorNil(err) {
+		return ""
+	}
+
+	return shortenBytes(Error(err), maxBytes, "")
+}
+
 // errorText renders an error message for a reader. The credential scrub runs before the character
 // map, which would otherwise hide a percent-encoded credential from it.
 func errorText(s string) string {
@@ -87,10 +96,8 @@ func errorText(s string) string {
 	// Applied to the whole message, since a URL can appear in one in more than one spelling.
 	s = UriCredentials(s)
 
-	// Limit error message length.
-	if len(s) > LengthLimit {
-		s = s[:LengthLimit]
-	}
+	// Limit error message length without splitting a character.
+	s = shortenBytes(s, LengthLimit, "")
 
 	// Remove non-printable and other potentially problematic characters.
 	s = strings.Map(func(r rune) rune {
@@ -118,7 +125,8 @@ func errorText(s string) string {
 		return "unknown error"
 	}
 
-	return s
+	// Replacing an invalid byte can triple its size.
+	return shortenBytes(s, LengthLimit, "")
 }
 
 // quotedInner returns a value as strconv.Quote renders it, without the enclosing quotes, which is

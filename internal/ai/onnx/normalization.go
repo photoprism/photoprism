@@ -3,8 +3,8 @@ package onnx
 // Normalization describes the preprocessing a model expects as (channel - Mean) / StdDev, applied
 // per channel to values in the 0-255 range.
 //
-// Per channel rather than scalar, because ImageNet-pretrained classifiers use a different mean and
-// standard deviation for each one, which a single value cannot express.
+// Mean and StdDev follow tensor channel order after ColorOrder is applied. Per-channel values are
+// required because ImageNet-pretrained classifiers do not use uniform normalization.
 type Normalization struct {
 	Mean   [Channels]float32 `yaml:"Mean,omitempty" json:"mean,omitempty"`
 	StdDev [Channels]float32 `yaml:"StdDev,omitempty" json:"stdDev,omitempty"`

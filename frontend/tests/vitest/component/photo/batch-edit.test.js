@@ -726,14 +726,12 @@ describe("component/photo/batch-edit", () => {
       wrapper.vm.setFormData();
     });
 
-    const makeEvent = (cls) => ({ target: { classList: { contains: (c) => c === cls } } });
-
     it("shows delete icon for text field, then shows <deleted> + undo after delete", () => {
       // Delete icon visible before deleting
       expect(wrapper.vm.getIcon("text-field", "Title")).toBe("mdi-close-circle");
 
       // Click delete icon
-      wrapper.vm.toggleField("Title", makeEvent("mdi-close-circle"));
+      wrapper.vm.toggleField("text-field", "Title");
 
       // Now undo icon should be visible and placeholder should show <deleted>
       expect(wrapper.vm.getIcon("text-field", "Title")).toBe("mdi-undo");
@@ -743,7 +741,7 @@ describe("component/photo/batch-edit", () => {
       expect(wrapper.vm.deletedFields.Title).toBe(true);
 
       // Click undo icon
-      wrapper.vm.toggleField("Title", makeEvent("mdi-undo"));
+      wrapper.vm.toggleField("text-field", "Title");
       expect(wrapper.vm.deletedFields.Title).toBe(false);
       expect(wrapper.vm.formData.Title.action).toBe("none");
       expect(wrapper.vm.getIcon("text-field", "Title")).toBe("mdi-close-circle");
@@ -754,16 +752,25 @@ describe("component/photo/batch-edit", () => {
       expect(wrapper.vm.getIcon("input-field", "Altitude")).toBe("mdi-close-circle");
 
       // Click delete icon
-      wrapper.vm.toggleField("Altitude", makeEvent("mdi-close-circle"));
+      wrapper.vm.toggleField("input-field", "Altitude");
 
       // Now undo icon should be visible and value should be zeroed
       expect(wrapper.vm.getIcon("input-field", "Altitude")).toBe("mdi-undo");
       expect(wrapper.vm.formData.Altitude.value).toBe(0);
 
       // Undo
-      wrapper.vm.toggleField("Altitude", makeEvent("mdi-undo"));
+      wrapper.vm.toggleField("input-field", "Altitude");
       expect(wrapper.vm.formData.Altitude.value).toBe(123);
       expect(wrapper.vm.getIcon("input-field", "Altitude")).toBe("mdi-close-circle");
+    });
+
+    it("names the button by the action it performs", () => {
+      expect(wrapper.vm.fieldAction("text-field", "Title")).toEqual({ icon: "mdi-close-circle", label: "Clear" });
+      wrapper.vm.toggleField("text-field", "Title");
+      expect(wrapper.vm.fieldAction("text-field", "Title")).toEqual({ icon: "mdi-undo", label: "Undo" });
+      wrapper.vm.values = { ...wrapper.vm.values, Caption: { value: "", mixed: false } };
+      wrapper.vm.setFormData();
+      expect(wrapper.vm.fieldAction("text-field", "Caption")).toBeNull();
     });
   });
 

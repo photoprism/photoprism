@@ -16,7 +16,6 @@
           autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
-          :prepend-inner-icon="canExpand ? 'mdi-tune' : 'mdi-magnify'"
           :placeholder="$gettext('Search')"
           class="input-search background-inherit elevation-0"
           :class="{ 'input-search--expanded': expanded, 'input-search--focus': !canExpand }"
@@ -27,13 +26,23 @@
           "
           @keyup.enter="() => updateQuery()"
           @keyup.esc.exact="() => hideExpansionPanel()"
-          @click:prepend-inner.stop="toggleExpansionPanel"
           @click:clear="
             () => {
               updateQuery({ q: '' });
             }
           "
-        ></v-text-field>
+        >
+          <template #prepend-inner>
+            <p-input-action
+              v-if="canExpand"
+              icon="mdi-tune"
+              :label="$gettext('Search Filters')"
+              :aria-expanded="expanded ? 'true' : 'false'"
+              @click.stop="toggleExpansionPanel"
+            ></p-input-action>
+            <v-icon v-else icon="mdi-magnify"></v-icon>
+          </template>
+        </v-text-field>
 
         <v-btn
           v-if="canManage && staticFilter.type === 'album'"
@@ -929,7 +938,7 @@ export default {
 
           if (this.scrollDisabled) {
             if (this.results.length > 1) {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), { n: this.results.length }));
+              this.$notify.info(this.$gettext("All %{n} albums loaded", { n: this.results.length }));
             }
           } else {
             this.page++;
@@ -1104,10 +1113,9 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One album found"));
             } else {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} albums found"), { n: this.results.length }));
+              this.$notify.info(this.$gettext("%{n} albums found", { n: this.results.length }));
             }
           } else {
-            // this.$notify.info(this.$gettext('More than 20 albums found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.loadMore();

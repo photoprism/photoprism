@@ -742,7 +742,7 @@ export default {
 
           if (this.scrollDisabled) {
             if (this.results.length > 1) {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), { n: this.results.length }));
+              this.$notify.info(this.$gettext("All %{n} labels loaded", { n: this.results.length }));
             }
           } else {
             this.page++;
@@ -938,10 +938,9 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One label found"));
             } else {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), { n: this.results.length }));
+              this.$notify.info(this.$gettext("%{n} labels found", { n: this.results.length }));
             }
           } else {
-            // this.$notify.info(this.$gettext('More than 20 labels found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.loadMore();

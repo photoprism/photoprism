@@ -41,11 +41,17 @@
                   autocapitalize="none"
                   autocomplete="current-password"
                   prepend-inner-icon="mdi-lock"
-                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                   class="input-password text-selectable"
-                  @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onSetup"
-                ></v-text-field>
+                >
+                  <template #append-inner>
+                    <p-input-action
+                      :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                      @click="showPassword = !showPassword"
+                    ></p-input-action>
+                  </template>
+                </v-text-field>
               </v-col>
               <v-col cols="12" class="text-body-2">
                 {{
@@ -177,10 +183,16 @@
                   autocomplete="current-password"
                   class="input-password text-selectable"
                   prepend-inner-icon="mdi-lock"
-                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                  @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onDeactivate"
-                ></v-text-field>
+                >
+                  <template #append-inner>
+                    <p-input-action
+                      :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                      @click="showPassword = !showPassword"
+                    ></p-input-action>
+                  </template>
+                </v-text-field>
               </v-col>
             </v-row>
           </v-card-text>

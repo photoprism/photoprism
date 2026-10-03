@@ -27,6 +27,7 @@ func init() {
 	})
 
 	registerOllamaEngineDefaults()
+	Config = NewConfig()
 }
 
 // registerOllamaEngineDefaults selects the default Ollama endpoint based on the

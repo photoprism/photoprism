@@ -94,7 +94,7 @@ func (c *Config) XMPFaces() bool {
 
 // DisableClassification checks if image classification is disabled.
 func (c *Config) DisableClassification() bool {
-	return c.options.DisableClassification
+	return c.LabelModelSetting() == "none"
 }
 
 // DisableFFmpeg checks if FFmpeg is disabled for video transcoding.

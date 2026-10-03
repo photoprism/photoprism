@@ -1,0 +1,29 @@
+Models:
+- Type: labels
+  Name: inception
+  Version: v3
+  Resolution: 299
+  TensorFlow:
+    Tags:
+    - serve
+    Input:
+      Name: input
+      Height: 299
+      Width: 299
+    Output:
+      Name: predictions
+      Outputs: 1000
+- Type: nsfw
+  Name: custom-nsfw
+  Resolution: 224
+  Run: always
+  TensorFlow:
+    Tags:
+    - serve
+    Input:
+      Name: input
+      Height: 224
+      Width: 224
+    Output:
+      Name: output
+      Outputs: 5

@@ -556,8 +556,9 @@ export default {
         getViewportSizeFn: () => this.getViewport(),
         closeTitle: this.$gettext("Close"),
         zoomTitle: this.$gettext("Zoom in/out"),
-        arrowPrevTitle: this.$gettext("Previous"),
-        arrowNextTitle: this.$gettext("Next"),
+        // Right-to-left languages reverse the slide order, so the left arrow moves to the next picture.
+        arrowPrevTitle: this.$isRtl ? this.$gettext("Next") : this.$gettext("Previous"),
+        arrowNextTitle: this.$isRtl ? this.$gettext("Previous") : this.$gettext("Next"),
         errorMsg: this.$gettext("Error"),
       };
     },

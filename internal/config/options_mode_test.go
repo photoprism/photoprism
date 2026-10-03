@@ -325,6 +325,28 @@ func TestWriteOptionsFile(t *testing.T) {
 	t.Run("MissingDirectory", func(t *testing.T) {
 		assert.Error(t, writeOptionsFile(filepath.Join(t.TempDir(), "missing", "options.yml"), []byte("x: 1\n"), false))
 	})
+	t.Run("TooLarge", func(t *testing.T) {
+		// Options the reader would refuse are not written, and an existing file keeps its content.
+		fileName := filepath.Join(t.TempDir(), "options.yml")
+		require.NoError(t, os.WriteFile(fileName, []byte("Existing: value\n"), 0o600))
+		data := []byte(strings.Repeat("x", optionsFileMaxBytes+1))
+		assert.ErrorIs(t, writeOptionsFile(fileName, data, false), ErrOptionsTooLarge)
+		content, err := os.ReadFile(fileName) //nolint:gosec // test file in a temporary directory
+		require.NoError(t, err)
+		assert.Equal(t, "Existing: value\n", string(content))
+		missing := filepath.Join(t.TempDir(), "options.yml")
+		assert.ErrorIs(t, writeOptionsFile(missing, data, false), ErrOptionsTooLarge)
+		assert.NoFileExists(t, missing)
+	})
+	t.Run("MaxSize", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "options.yml")
+		data := []byte("x: " + strings.Repeat("y", optionsFileMaxBytes-4) + "\n")
+		require.Len(t, data, optionsFileMaxBytes)
+		require.NoError(t, writeOptionsFile(fileName, data, false))
+		read, err := readOptionsFile(fileName)
+		require.NoError(t, err)
+		assert.Equal(t, data, read)
+	})
 	t.Run("NamedPipe", func(t *testing.T) {
 		fileName := filepath.Join(t.TempDir(), "options.yml")
 		require.NoError(t, syscall.Mkfifo(fileName, 0o664))

@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Downloads groups files to sync by their directory/prefix.
@@ -172,16 +173,21 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				file.Error = ""
 				file.Errors = 0
 			} else {
-				if err = client.Download(file.RemoteName, localName, false); errors.Is(err, os.ErrExist) {
+				// A listed size above the limit fails as the download would, without transferring the file.
+				if err = client.CheckDownloadSize(localName, file.RemoteSize); err == nil {
+					err = client.Download(file.RemoteName, localName, false)
+				}
+
+				if errors.Is(err, os.ErrExist) {
 					log.Infof("sync: skipped download of %s from %s because a local file was created meanwhile", clean.Log(file.RemoteName), clean.Log(a.AccName))
 					file.Status = entity.FileSyncExists
 					file.Error = ""
 					file.Errors = 0
 				} else if err != nil {
 					file.Errors++
-					file.Error = err.Error()
+					file.Error = clean.ErrorBytes(err, txt.ClipError)
 
-					if file.Errors > a.RetryLimit {
+					if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 						file.Status = entity.FileSyncFailed
 					}
 				} else {
@@ -269,6 +275,25 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 
 		// Update album, subject, and label cover thumbs.
 		w.logWarn(query.UpdateCovers())
+	}
+
+	// Without a retry limit, failed files stay new, so the stage completes once a run leaves every file new.
+	if a.RetryLimit <= 0 {
+		failed := 0
+
+		for _, files := range relatedFiles {
+			for _, file := range files {
+				if file.Status != entity.FileSyncNew {
+					return false, nil
+				}
+
+				failed++
+			}
+		}
+
+		log.Warnf("sync: failed to download %s from %s, retrying in the next sync", english.Plural(failed, "file", "files"), clean.Log(a.AccName))
+
+		return true, nil
 	}
 
 	return false, nil

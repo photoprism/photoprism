@@ -17,6 +17,8 @@ const (
 	EngineVision ModelEngine = "vision"
 	// EngineTensorFlow represents on-device TensorFlow models.
 	EngineTensorFlow ModelEngine = "tensorflow"
+	// EngineONNX represents on-device ONNX Runtime models.
+	EngineONNX ModelEngine = "onnx"
 	// EngineLocal is used when no explicit engine can be determined.
 	EngineLocal ModelEngine = "local"
 )

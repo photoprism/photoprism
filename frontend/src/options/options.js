@@ -56,8 +56,9 @@ export const Batch = (items, mixed) => {
   return items;
 };
 
+// Countries returns the country options, with a localized name for the "zz" code.
 export const Countries = () => {
-  return countries;
+  return countries.map((c) => (c.Code === "zz" ? { ...c, Name: $gettext("Unknown") } : c));
 };
 
 export const GmtOffsets = [

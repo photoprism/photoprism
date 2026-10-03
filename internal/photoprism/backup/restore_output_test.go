@@ -26,10 +26,12 @@ func TestRestoreOutput(t *testing.T) {
 		}
 		o.Close()
 		assert.Equal(t, restoreErrorsKept+3, o.failed)
-		assert.Len(t, o.errors, restoreErrorsKept)
+		assert.Len(t, o.errors, 5)
 		assert.Equal(t, "error 1062 at line 1", o.errors[0])
 	})
 	t.Run("FirstLinesKept", func(t *testing.T) {
+		// A failed restore returns these lines in its error, which the CLI prints to the operator's terminal;
+		// they are not logged, as restores run only from the CLI before logs are recorded in the database.
 		o := &restoreOutput{}
 		_, _ = fmt.Fprint(o, "ERROR 2002 (HY000): Can't connect to server on 'mariadb' (115)\n\n")
 		for i := 0; i < restoreLinesKept+10; i++ {
@@ -37,7 +39,7 @@ func TestRestoreOutput(t *testing.T) {
 		}
 		o.Close()
 		lines := strings.Split(o.String(), "\n")
-		assert.Len(t, lines, restoreLinesKept)
+		assert.Len(t, lines, 5)
 		assert.Equal(t, "ERROR 2002 (HY000): Can't connect to server on 'mariadb' (115)", lines[0])
 		assert.Equal(t, "message 0", lines[1])
 		assert.Zero(t, o.failed)
@@ -68,7 +70,7 @@ func TestRestoreOutput(t *testing.T) {
 		_, _ = o.Write([]byte("\nERROR 1062 (23000) at line 2: Duplicate entry\n"))
 		o.Close()
 		assert.Equal(t, 1, o.failed)
-		assert.Len(t, strings.Split(o.String(), "\n")[0], restoreLineBytes)
+		assert.Len(t, strings.Split(o.String(), "\n")[0], 1024)
 	})
 	t.Run("LastLineWithoutBreak", func(t *testing.T) {
 		o := &restoreOutput{}

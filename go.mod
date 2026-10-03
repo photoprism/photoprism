@@ -12,7 +12,7 @@ require (
 	github.com/dustin/go-humanize v1.1.0
 	github.com/gin-contrib/gzip v1.2.6 // indirect
 	github.com/gin-gonic/gin v1.12.0
-	github.com/golang/geo v0.0.0-20260818125358-b200a1149890
+	github.com/golang/geo v0.0.0-20260928092222-7d12f68cfadb
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -69,10 +69,10 @@ require github.com/go-ldap/ldap/v3 v3.4.14
 
 require (
 	github.com/prometheus/client_golang v1.24.1
-	github.com/prometheus/common v0.71.0
+	github.com/prometheus/common v0.72.0
 )
 
-require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
+require github.com/dustinkirkland/golang-petname v0.0.0-20260929120758-6e3915f1a6a8
 
 require golang.org/x/text v0.42.0
 
@@ -84,7 +84,7 @@ require (
 	github.com/go-co-op/gocron/v2 v2.22.0
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/klauspost/compress v1.20.0
+	github.com/klauspost/compress v1.20.1
 	github.com/pquerna/otp v1.5.0
 	github.com/prometheus/client_model v0.6.3
 	github.com/robfig/cron/v3 v3.0.1
@@ -94,7 +94,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.36.0
-	github.com/zitadel/oidc/v3 v3.51.3
+	github.com/zitadel/oidc/v3 v3.51.11
 	golang.org/x/mod v0.41.0
 	golang.org/x/sys v0.48.0
 	google.golang.org/protobuf v1.36.12

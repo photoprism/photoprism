@@ -27,7 +27,6 @@
                 :type="showPassword ? 'text' : 'password'"
                 :disabled="busy"
                 :maxlength="maxLength"
-                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 :label="$gettext('Current Password')"
                 :autofocus="oldRequired"
                 hide-details
@@ -35,8 +34,15 @@
                 autocapitalize="none"
                 autocomplete="current-password"
                 class="input-current-password"
-                @click:append-inner="showPassword = !showPassword"
-              ></v-text-field>
+              >
+                <template #append-inner>
+                  <p-input-action
+                    :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                    @click="showPassword = !showPassword"
+                  ></p-input-action>
+                </template>
+              </v-text-field>
             </v-col>
 
             <v-col cols="12">
@@ -46,7 +52,7 @@
                 :minlength="minLength"
                 :maxlength="maxLength"
                 :label="$gettext('New Password')"
-                :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), { n: minLength })"
+                :hint="$gettext('Must have at least %{n} characters.', { n: minLength })"
                 :autofocus="!oldRequired"
                 counter
                 :hide-details="false"

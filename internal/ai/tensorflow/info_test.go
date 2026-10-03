@@ -7,6 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Resize Operation Tests
@@ -18,8 +20,12 @@ var allOperations = []ResizeOperation{
 }
 
 func TestGetModelTagsInfo(t *testing.T) {
-	info, err := GetModelTagsInfo(
-		filepath.Join(assetsPath, "models", "nasnet"))
+	dir := filepath.Join(assetsPath, "models", "facenet")
+	if !fs.PathExists(dir) {
+		t.Skip("tensorflow facenet model is not installed")
+	}
+
+	info, err := GetModelTagsInfo(dir)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -29,8 +35,8 @@ func TestGetModelTagsInfo(t *testing.T) {
 		t.Fatalf("Expected 1 info but got %d", len(info))
 	case len(info[0].Tags) != 1:
 		t.Fatalf("Expected 1 tag, but got %d", len(info[0].Tags))
-	case info[0].Tags[0] != "photoprism":
-		t.Fatalf("Expected tag photoprism, but have %s", info[0].Tags[0])
+	case info[0].Tags[0] != "serve":
+		t.Fatalf("Expected tag serve, but have %s", info[0].Tags[0])
 	}
 }
 

@@ -8,8 +8,40 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 )
+
+// TestLabelModelDocDefault verifies the published default and supported modes.
+func TestLabelModelDocDefault(t *testing.T) {
+	for _, flag := range Flags {
+		if flag.Name() != "labels-model" {
+			continue
+		}
+
+		assert.Equal(t, string(classify.ModelAuto), flag.Default())
+		assert.Contains(t, flag.Usage(), "auto, none")
+		assert.NotContains(t, flag.Usage(), string(classify.DefaultModelName()))
+		return
+	}
+
+	t.Fatal("labels-model flag not found")
+}
+
+// TestNSFWModelDocDefault verifies the published default and supported modes.
+func TestNSFWModelDocDefault(t *testing.T) {
+	for _, flag := range Flags {
+		if flag.Name() != "nsfw-model" {
+			continue
+		}
+		assert.Equal(t, string(nsfw.ModelAuto), flag.Default())
+		assert.Contains(t, flag.Usage(), "auto, none, labels")
+		assert.NotContains(t, flag.Usage(), string(nsfw.DefaultModelName()))
+		return
+	}
+	t.Fatal("nsfw-model flag not found")
+}
 
 // TestFaceDocDefaults pins that the face options publish the number that actually applies on a
 // default install. The generated end-user reference and "--help" both print a numeric option

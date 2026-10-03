@@ -20,6 +20,7 @@ type IndexOptions struct {
 	Stack            bool
 	FacesOnly        bool
 	DetectFaces      bool              // Detect primary-file faces during indexing.
+	DetectNSFWLabels bool              // Allow label-derived NSFW flags for this run.
 	DetectNsfw       bool              // Flag sensitive content while importing/updating photos.
 	GenerateLabels   bool              // Generate automatic vision labels for newly indexed files.
 	ImportFaceTags   bool              // Import face regions and names from XMP metadata.
@@ -56,6 +57,7 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 		}
 
 		result.DetectFaces = c.VisionModelShouldRun(vision.ModelTypeFace, facesRunType)
+		result.DetectNSFWLabels = !facesOnly && c.DetectNSFWLabels()
 		result.DetectNsfw = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex)
 		result.GenerateLabels = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex)
 

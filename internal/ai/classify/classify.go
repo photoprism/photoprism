@@ -1,5 +1,5 @@
 /*
-Package classify encapsulates image classification using TensorFlow.
+Package classify encapsulates image classification using ONNX Runtime.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 

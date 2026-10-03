@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -18,44 +20,56 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
+// TestGenerateLabels verifies local ONNX labeling and error handling.
 func TestGenerateLabels(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		result, err := GenerateLabels(Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
+	description := classify.DefaultModel()
+	if description == nil || !description.Installed(GetModelsPath()) {
+		t.Skip("classify: default ONNX model is not installed")
+	}
 
-		assert.NoError(t, err)
+	t.Run("Success", func(t *testing.T) {
+		result, err := GenerateLabels(Files{samplesPath + "/dog_orange.jpg"}, media.SrcLocal, entity.SrcAuto)
+
+		require.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
-		assert.Equal(t, 1, len(result))
+		require.Len(t, result, 1)
 
 		t.Log(result)
 
+		assert.Equal(t, "dog", result[0].Name)
+	})
+	t.Run("Chameleon", func(t *testing.T) {
+		result, err := GenerateLabels(Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
+
+		require.NoError(t, err)
+		require.Len(t, result, 1)
 		assert.Equal(t, "chameleon", result[0].Name)
-		assert.InDelta(t, 7, result[0].Uncertainty, 3)
 	})
 	t.Run("Cat224", func(t *testing.T) {
 		result, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
-		assert.Equal(t, 1, len(result))
+		require.Len(t, result, 1)
 
 		t.Log(result)
 
 		assert.Equal(t, "cat", result[0].Name)
-		assert.InDelta(t, 59, result[0].Uncertainty, 10)
-		assert.InDelta(t, float32(0.41), result[0].Confidence(), 0.1)
+		assert.InDelta(t, 21, result[0].Uncertainty, 10)
+		assert.InDelta(t, float32(0.79), result[0].Confidence(), 0.1)
 	})
 	t.Run("Cat720", func(t *testing.T) {
 		result, err := GenerateLabels(Files{samplesPath + "/cat_720.jpeg"}, media.SrcLocal, entity.SrcAuto)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
-		assert.Equal(t, 1, len(result))
+		require.Len(t, result, 1)
 
 		t.Log(result)
 
 		assert.Equal(t, "cat", result[0].Name)
-		assert.InDelta(t, 60, result[0].Uncertainty, 10)
-		assert.InDelta(t, float32(0.4), result[0].Confidence(), 0.1)
+		assert.InDelta(t, 20, result[0].Uncertainty, 10)
+		assert.InDelta(t, float32(0.8), result[0].Confidence(), 0.1)
 	})
 	t.Run("CustomSourceLocal", func(t *testing.T) {
 		labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcManual)
@@ -396,4 +410,43 @@ func TestGenerateLabelsServiceKey(t *testing.T) {
 		assert.Equal(t, 1, own.hits)
 		assert.Equal(t, "Bearer own-key", own.auth)
 	})
+}
+
+// TestGenerateLabelsMissingConcurrent verifies initialization failures never mutate shared disablement.
+func TestGenerateLabelsMissingConcurrent(t *testing.T) {
+	previous := ModelsPath
+	ModelsPath = t.TempDir()
+	t.Cleanup(func() { ModelsPath = previous })
+	model := NewLabelModel(classify.DefaultModelName())
+	withConfig(t, &ConfigValues{Models: Models{model}})
+	hook := captureVisionLog(t)
+	var workers sync.WaitGroup
+	for range 16 {
+		workers.Add(1)
+		go func() {
+			defer workers.Done()
+			for range 8 {
+				_, err := GenerateLabels(Files{"missing.jpg"}, media.SrcLocal, entity.SrcAuto)
+				assert.Error(t, err)
+			}
+		}()
+	}
+	workers.Wait()
+	assert.False(t, model.Disabled)
+	require.Error(t, model.classifyErr)
+	assert.Same(t, model, Config.Model(ModelTypeLabels))
+
+	// The model is initialized once; later calls return the cached error without retrying.
+	assert.Len(t, initWarnings(hook.AllEntries()), 1)
+}
+
+// initWarnings returns the logged model initialization failures.
+func initWarnings(entries []*logrus.Entry) (result []string) {
+	for _, message := range logMessages(entries, logrus.WarnLevel) {
+		if strings.Contains(message, "fix or install it") {
+			result = append(result, message)
+		}
+	}
+
+	return result
 }

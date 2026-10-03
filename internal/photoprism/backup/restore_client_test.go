@@ -216,27 +216,28 @@ func TestSqliteRestoreCmd(t *testing.T) {
 	})
 }
 
-func TestRestoreCmd(t *testing.T) {
+func TestPrepareRestore(t *testing.T) {
 	c := get.Config()
 
-	cmd, password, err := restoreCmd(c)
+	restore, err := prepareRestore(c)
 
 	require.NoError(t, err)
+	assert.Equal(t, c.DatabaseDriver(), restore.driver)
 
 	switch c.DatabaseDriver() {
 	case dsn.DriverSQLite3:
-		assert.Equal(t, sqliteRestoreCmd(c.SqliteBin(), c.DatabaseFile()).Args, cmd.Args)
-		assert.Empty(t, password)
+		assert.Equal(t, sqliteRestoreCmd(c.SqliteBin(), c.DatabaseFile()).Args, restore.cmd.Args)
+		assert.Empty(t, restore.password)
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		assert.Subset(t, cmd.Args, mariadbRestoreArgs(c.MariadbBin()))
-		assert.Equal(t, "--no-defaults", cmd.Args[1])
-		assert.Equal(t, c.DatabaseName(), cmd.Args[len(cmd.Args)-1])
+		assert.Subset(t, restore.cmd.Args, mariadbRestoreArgs(c.MariadbBin()))
+		assert.Equal(t, "--no-defaults", restore.cmd.Args[1])
+		assert.Equal(t, c.DatabaseName(), restore.cmd.Args[len(restore.cmd.Args)-1])
 	default:
 		t.Skipf("unsupported test driver %s", c.DatabaseDriver())
 	}
 }
 
-func TestRestoreCmd_MariaDB(t *testing.T) {
+func TestPrepareRestore_MariaDB(t *testing.T) {
 	c := config.NewMinimalTestConfig(t.TempDir())
 	c.Options().DatabaseDriver = dsn.DriverMySQL
 
@@ -244,13 +245,50 @@ func TestRestoreCmd_MariaDB(t *testing.T) {
 		t.Skip("mariadb client not found")
 	}
 
-	cmd, password, err := restoreCmd(c)
+	restore, err := prepareRestore(c)
 
 	require.NoError(t, err)
-	assert.Equal(t, c.DatabasePassword(), password)
-	assert.Equal(t, newMariadbConn(c, c.MariadbBin()).Cmd(mariadbRestoreArgs(c.MariadbBin())...).Args, cmd.Args)
-	assert.Equal(t, "--no-defaults", cmd.Args[1])
-	assert.Equal(t, c.DatabaseName(), cmd.Args[len(cmd.Args)-1])
-	assert.Contains(t, cmd.Args, "--local-infile=0")
-	assert.Contains(t, cmd.Args, "--binary-mode")
+	assert.Equal(t, dsn.DriverMySQL, restore.driver)
+	assert.Equal(t, c.DatabasePassword(), restore.password)
+	assert.Equal(t, newMariadbConn(c, c.MariadbBin()).Cmd(mariadbRestoreArgs(c.MariadbBin())...).Args, restore.cmd.Args)
+	assert.Equal(t, "--no-defaults", restore.cmd.Args[1])
+	assert.Equal(t, c.DatabaseName(), restore.cmd.Args[len(restore.cmd.Args)-1])
+	assert.Contains(t, restore.cmd.Args, "--local-infile=0")
+	assert.Contains(t, restore.cmd.Args, "--binary-mode")
+}
+
+// TestPreparedRestore_Run checks the input a restore client receives for each driver.
+func TestPreparedRestore_Run(t *testing.T) {
+	dump := dumpHeader(string(uniqueChecksOff), "\n") + "INSERT INTO t VALUES (1);\n"
+
+	received := func(t *testing.T, driver string) string {
+		t.Helper()
+		out := filepath.Join(t.TempDir(), "stdin")
+		restore := preparedRestore{cmd: exec.Command("sh", "-c", `cat > "$0"`, out), driver: driver} //nolint:gosec // G204: test command
+		require.NoError(t, restore.run(strings.NewReader(dump)))
+		data, err := os.ReadFile(out) //nolint:gosec // G304: test-owned path
+		require.NoError(t, err)
+		return string(data)
+	}
+
+	t.Run("MariaDB", func(t *testing.T) {
+		for _, driver := range []string{dsn.DriverMySQL, dsn.DriverMariaDB} {
+			assert.Equal(t, dumpHeader(string(uniqueChecksOn), "\n")+"INSERT INTO t VALUES (1);\n", received(t, driver), driver)
+		}
+	})
+	t.Run("Sqlite", func(t *testing.T) {
+		assert.Equal(t, dump, received(t, dsn.DriverSQLite3))
+	})
+	t.Run("Failed", func(t *testing.T) {
+		restore := preparedRestore{cmd: exec.Command("sh", "-c", "cat >/dev/null; echo 'ERROR 2002 (HY000): x' >&2; exit 1"), driver: dsn.DriverMySQL}
+		assert.Error(t, restore.run(strings.NewReader(dump)))
+	})
+	t.Run("PasswordMasked", func(t *testing.T) {
+		restore := preparedRestore{cmd: exec.Command("sh", "-c", `cat >/dev/null; echo "ERROR 1045 (28000): $0" >&2; exit 1`, "Sup3rSecret42"), //nolint:gosec // G204: test command
+			password: "Sup3rSecret42", driver: dsn.DriverMySQL}
+		err := restore.run(strings.NewReader(dump))
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "ERROR 1045 (28000)")
+		assert.NotContains(t, err.Error(), "Sup3rSecret42")
+	})
 }

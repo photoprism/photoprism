@@ -52,7 +52,6 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/api/download"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -192,7 +191,7 @@ func NewConfig(ctx *cli.Context) *Config {
 
 		switch {
 		case err != nil:
-			event.SystemWarn([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
+			event.SystemError([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
 		case c.env == EnvDevelop:
 			// Reduce the log level to minimize noise in the test logs.
 			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
@@ -442,13 +441,7 @@ func (c *Config) Propagate() {
 	dl.FFprobeBin = c.FFprobeBin()
 
 	// Configure computer vision package.
-	vision.SetCachePath(c.CachePath())
-	vision.SetModelsPath(c.ModelsPath())
-	vision.ServiceApi = c.VisionApi()
-	vision.ServiceUri = c.VisionUri()
-	vision.ServiceKey = c.VisionKey()
-	vision.DownloadUrl = c.DownloadUrl()
-	vision.DetectNSFWLabels = c.DetectNSFW() && c.Experimental()
+	c.PropagateVision()
 
 	// Set allowed path in download package.
 	download.AllowedPaths = []string{

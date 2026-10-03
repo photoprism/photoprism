@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -99,13 +100,37 @@ func sqliteRestoreCmd(bin, dbFile string) *exec.Cmd {
 	return exec.Command(bin, dbFile) // #nosec G204 configured binary and database path
 }
 
-// restoreCmd returns the command that restores a dump into the configured database, and the password
-// its rendering must mask.
-func restoreCmd(c *config.Config) (cmd *exec.Cmd, password string, err error) {
+// preparedRestore is the client command that restores a dump, with the password its rendering must mask
+// and the driver whose dumps it reads.
+type preparedRestore struct {
+	cmd      *exec.Cmd
+	password string
+	driver   string
+}
+
+// run restores the dump read from r through restoreReader and logs the outcome.
+func (p preparedRestore) run(r io.Reader) error {
+	failed, err := runRestore(p.cmd, restoreReader(p.driver, r), p.password)
+
+	if err != nil {
+		log.Errorf("restore: failed to restore index database")
+		return err
+	}
+
+	logRestoreResult(failed)
+
+	return nil
+}
+
+// prepareRestore returns the restore of a dump into the configured database.
+func prepareRestore(c *config.Config) (restore preparedRestore, err error) {
+	var cmd *exec.Cmd
+	var password string
+
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		if c.MariadbBin() == "" {
-			return nil, "", errors.New("mariadb client not found")
+			return restore, errors.New("mariadb client not found")
 		}
 
 		conn := newMariadbConn(c, c.MariadbBin())
@@ -113,18 +138,18 @@ func restoreCmd(c *config.Config) (cmd *exec.Cmd, password string, err error) {
 		cmd, password = conn.Cmd(mariadbRestoreArgs(conn.Bin)...), conn.Password
 	case dsn.DriverSQLite3:
 		if c.SqliteBin() == "" {
-			return nil, "", errors.New("sqlite3 client not found")
+			return restore, errors.New("sqlite3 client not found")
 		}
 
 		cmd = sqliteRestoreCmd(c.SqliteBin(), c.DatabaseFile())
 	default:
-		return nil, "", fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
+		return restore, fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
 	}
 
 	// A client that was not found is reported before the restore changes anything.
 	if cmd.Err != nil {
-		return nil, "", cmd.Err
+		return restore, cmd.Err
 	}
 
-	return cmd, password, nil
+	return preparedRestore{cmd: cmd, password: password, driver: c.DatabaseDriver()}, nil
 }

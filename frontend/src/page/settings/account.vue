@@ -328,7 +328,6 @@ import PSettingsApps from "component/settings/apps.vue";
 import PSettingsPasscode from "component/settings/passcode.vue";
 import PSettingsPassword from "component/settings/password.vue";
 import PSettingsWebdav from "component/settings/webdav.vue";
-import countries from "options/countries.json";
 import User from "model/user";
 import * as options from "options/options";
 import { rules } from "common/form";
@@ -355,7 +354,7 @@ export default {
       valid: true,
       rtl: this.$isRtl,
       user: user,
-      countries: countries,
+      countries: options.Countries(),
       session: this.$session,
       dialog: {
         apps: false,

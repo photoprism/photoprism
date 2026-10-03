@@ -118,9 +118,7 @@ func installedOtherFaceModel(t *testing.T, conf *config.Config) face.ModelName {
 	return ""
 }
 
-// otherFaceModel returns a registered embedding model that is not the specified one, so
-// tests can exercise the cross-model guards without assuming which model a test library
-// resolves to.
+// otherFaceModel returns a registered embedding model that is not the specified one.
 func otherFaceModel(t *testing.T, configured face.ModelName) face.ModelName {
 	t.Helper()
 
@@ -133,6 +131,22 @@ func otherFaceModel(t *testing.T, configured face.ModelName) face.ModelName {
 	}
 
 	t.Fatalf("no embedding model other than %s is registered", configured)
+
+	return ""
+}
+
+// uninstalledOtherFaceModel returns a registered alternative whose artifact is unavailable.
+func uninstalledOtherFaceModel(t *testing.T, conf *config.Config) face.ModelName {
+	t.Helper()
+
+	configured := face.NormalizeModelName(conf.FaceModel())
+	for _, name := range face.EmbeddingModelNames() {
+		if name != configured && !face.FindEmbeddingModel(name).Installed(conf.ModelsPath()) {
+			return name
+		}
+	}
+
+	t.Skip("faces: no uninstalled alternative embedding model")
 
 	return ""
 }
@@ -218,7 +232,7 @@ func TestFaces_migrationEmbedder(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, configured, embedder.ModelName())
 
-	_, err = w.migrationEmbedder(otherFaceModel(t, w.conf.FaceModel()))
+	_, err = w.migrationEmbedder(uninstalledOtherFaceModel(t, w.conf))
 	require.Error(t, err)
 }
 
@@ -259,7 +273,7 @@ func TestFaces_restoreEmbedder(t *testing.T) {
 		w := NewFaces(config.TestConfig())
 		configured := face.NormalizeModelName(w.conf.FaceModel())
 
-		_, err := w.migrationEmbedder(otherFaceModel(t, configured))
+		_, err := w.migrationEmbedder(uninstalledOtherFaceModel(t, w.conf))
 
 		require.Error(t, err)
 		assert.Equal(t, configured, face.ConfiguredModel())

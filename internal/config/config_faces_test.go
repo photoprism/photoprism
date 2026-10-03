@@ -2092,6 +2092,9 @@ func TestConfig_ClearFaceModel(t *testing.T) {
 	t.Run("UnwritableFile", func(t *testing.T) {
 		// The pin has to stay in memory when it could not be removed from the file, or the run
 		// resolves a detected model while a restart pins the old one again.
+		if os.Geteuid() == 0 {
+			t.Skip("root can write read-only files")
+		}
 		c := NewConfig(CliTestContext())
 		c.options.ConfigPath = t.TempDir()
 		require.NoError(t, c.SetFaceModel(face.ModelFaceNet))

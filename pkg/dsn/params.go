@@ -100,6 +100,12 @@ func HasParam(params, name string) bool {
 	return false
 }
 
+// HasQuery reports whether a MySQL/MariaDB DSN has a parameter section as the driver reads it, i.e. a "?"
+// after the last "/", so a "?" in the password does not count.
+func HasQuery(s string) bool {
+	return strings.Contains(s[strings.LastIndex(s, "/")+1:], "?")
+}
+
 // Query returns the parameters of a MySQL/MariaDB DSN as the driver reads them, i.e. the part after the
 // first "?" that follows the last "/".
 func Query(s string) string {

@@ -1,3 +1,5 @@
+import { $gettext } from "common/gettext";
+
 let loading = null;
 let maplibregl = null;
 
@@ -117,6 +119,26 @@ export function groupGeoFeatures(features, project, tolerance = stackTolerancePx
   }
 
   return groups;
+}
+
+// locale returns translated labels for the map controls, passed as the locale option of a new map.
+export function locale() {
+  return {
+    "AttributionControl.ToggleAttribution": $gettext("Toggle Attribution"),
+    "FullscreenControl.Enter": $gettext("Fullscreen"),
+    "FullscreenControl.Exit": $gettext("Exit Fullscreen"),
+    "GeolocateControl.FindMyLocation": $gettext("Find My Location"),
+    "GeolocateControl.LocationNotAvailable": $gettext("Location Not Available"),
+    "GlobeControl.Enable": $gettext("Enable Globe"),
+    "GlobeControl.Disable": $gettext("Disable Globe"),
+    "Map.Title": $gettext("Map"),
+    "Marker.Title": $gettext("Map Marker"),
+    "NavigationControl.ResetBearing": $gettext("Drag to rotate the map, click to reset north"),
+    "NavigationControl.ZoomIn": $gettext("Zoom In"),
+    "NavigationControl.ZoomOut": $gettext("Zoom Out"),
+    "TerrainControl.Enable": $gettext("Enable Terrain"),
+    "TerrainControl.Disable": $gettext("Disable Terrain"),
+  };
 }
 
 // supportsWebGL2 reports whether this browser can create a WebGL2 context.

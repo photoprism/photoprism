@@ -6,7 +6,9 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -526,7 +528,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-classification",
-			Usage:   "disables all image classification and label generation",
+			Usage:   "disables image classification *deprecated*, use --labels-model none",
+			Hidden:  true,
 			EnvVars: EnvVars("DISABLE_CLASSIFICATION"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -1349,6 +1352,18 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("VISION_FILTER"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "labels-model",
+			Usage:   "image classification `MODE` (auto, none)",
+			EnvVars: EnvVars("LABELS_MODEL"),
+		},
+		DocDefault: string(classify.ModelAuto)}, {
+		Flag: &cli.StringFlag{
+			Name:    "nsfw-model",
+			Usage:   "NSFW detection `MODE` (auto, none, labels)",
+			EnvVars: EnvVars("NSFW_MODEL"),
+		},
+		DocDefault: string(nsfw.ModelAuto)}, {
+		Flag: &cli.StringFlag{
 			Name:    "onnx-provider",
 			Usage:   "execution `PROVIDER` for ONNX inference (" + onnx.ProviderUsageString() + "), falls back to the CPU when unavailable",
 			Value:   onnx.DefaultProvider.String(),
@@ -1356,7 +1371,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
-			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
+			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
 		Flag: &cli.BoolFlag{

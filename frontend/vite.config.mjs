@@ -137,6 +137,8 @@ export default defineConfig(async () => ({
         splash: path.join(root, "src/splash.js"),
       },
       preserveEntrySignatures: "strict",
+      // The vue3-gettext entry imports pofile for its catalog tooling, which the app never calls.
+      treeshake: { moduleSideEffects: [{ test: /[\\/]node_modules[\\/]pofile[\\/]/, sideEffects: false }] },
       output: {
         entryFileNames: "[name].[hash].js",
         chunkFileNames: chunkName,

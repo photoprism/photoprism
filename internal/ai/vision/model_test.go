@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sync"
 	"testing"
 
@@ -11,13 +12,82 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
+
+// TestModelCloneExportedFields verifies every exported configuration field is copied.
+func TestModelCloneExportedFields(t *testing.T) {
+	unsafeIndex, neutralIndex := 1, 2
+	mean, stdDev, logits := float32(0.5), float32(0.25), true
+	source := &Model{
+		Type: ModelTypeNsfw, Default: true, Model: "model", Name: "name", Version: "version",
+		Engine: EngineONNX, Run: RunAlways, System: "system", Prompt: "prompt", Format: "json",
+		Normalize: NormalizePhrase, Schema: "schema", SchemaFile: "schema.json", Resolution: 224,
+		TensorFlow: &tensorflow.ModelInfo{
+			TFVersion: "2", Tags: []string{"serve"},
+			Input: &tensorflow.PhotoInput{
+				Name: "input", Intervals: []tensorflow.Interval{{Start: 0, End: 1, Mean: &mean, StdDev: &stdDev}},
+				Height: 224, Width: 224, Shape: tensorflow.DefaultPhotoInputShape(),
+			},
+			Output: &tensorflow.ModelOutput{Name: "output", NumOutputs: 10, OutputsLogits: true},
+		},
+		ONNX: &onnx.ModelInfo{
+			File: "model.onnx", Input: &onnx.Input{Name: "input", Width: 224, Height: 224},
+			Output: &onnx.Output{Name: "output", Width: 10, Logits: &logits},
+		},
+		LabelFile: "labels.txt", CanonicalOrder: true, Reduction: nsfw.ReductionSoftmaxUnsafe,
+		UnsafeClassIndex: &unsafeIndex, NeutralClassIndex: &neutralIndex, DefaultThreshold: 0.9,
+		Options: &ModelOptions{Temperature: 0.1, Stop: []string{"stop"}}, Service: Service{Uri: "https://example.com"},
+		Path: "models/name", Disabled: true,
+	}
+	clone := source.Clone()
+	require.NotNil(t, clone)
+
+	sourceValue := reflect.ValueOf(source).Elem()
+	cloneValue := reflect.ValueOf(clone).Elem()
+	modelType := sourceValue.Type()
+	for i := range modelType.NumField() {
+		field := modelType.Field(i)
+		if !field.IsExported() || field.Tag.Get("yaml") == "-" {
+			continue
+		}
+
+		assert.False(t, sourceValue.Field(i).IsZero(), "fixture must populate Model.%s", field.Name)
+		assert.Equal(t, sourceValue.Field(i).Interface(), cloneValue.Field(i).Interface(), field.Name)
+	}
+
+	require.NotSame(t, source.UnsafeClassIndex, clone.UnsafeClassIndex)
+	require.NotSame(t, source.NeutralClassIndex, clone.NeutralClassIndex)
+	require.NotSame(t, source.TensorFlow, clone.TensorFlow)
+	require.NotSame(t, source.TensorFlow.Input, clone.TensorFlow.Input)
+	require.NotSame(t, source.TensorFlow.Output, clone.TensorFlow.Output)
+	require.NotSame(t, source.TensorFlow.Input.Intervals[0].Mean, clone.TensorFlow.Input.Intervals[0].Mean)
+	require.NotSame(t, source.TensorFlow.Input.Intervals[0].StdDev, clone.TensorFlow.Input.Intervals[0].StdDev)
+	require.NotSame(t, source.ONNX, clone.ONNX)
+	require.NotSame(t, source.ONNX.Input, clone.ONNX.Input)
+	require.NotSame(t, source.ONNX.Output, clone.ONNX.Output)
+	require.NotSame(t, source.ONNX.Output.Logits, clone.ONNX.Output.Logits)
+	require.NotSame(t, source.Options, clone.Options)
+
+	clone.TensorFlow.Tags[0] = "changed"
+	clone.TensorFlow.Input.Intervals[0].Start = -1
+	clone.TensorFlow.Input.Shape[0] = tensorflow.ShapeColor
+	clone.ONNX.Input.Width = 512
+	clone.Options.Stop[0] = "changed"
+	assert.Equal(t, "serve", source.TensorFlow.Tags[0])
+	assert.Zero(t, source.TensorFlow.Input.Intervals[0].Start)
+	assert.Equal(t, tensorflow.ShapeBatch, source.TensorFlow.Input.Shape[0])
+	assert.Equal(t, 224, source.ONNX.Input.Width)
+	assert.Equal(t, "stop", source.Options.Stop[0])
+}
 
 func TestReadSchemaFile(t *testing.T) {
 	t.Run("ReadsRegularFile", func(t *testing.T) {
@@ -554,8 +624,8 @@ func TestModelApplyService(t *testing.T) {
 }
 
 func TestModel_IsDefault(t *testing.T) {
-	nasnetCopy := NasnetModel.Clone() //nolint:govet // copy for test inspection only
-	nasnetCopy.Default = false
+	defaultCopy := DefaultLabelModel.Clone() //nolint:govet // copy for test inspection only
+	defaultCopy.Default = false
 
 	cases := []struct {
 		name  string
@@ -569,7 +639,7 @@ func TestModel_IsDefault(t *testing.T) {
 		},
 		{
 			name:  "NasnetCopy",
-			model: nasnetCopy,
+			model: defaultCopy,
 			want:  true,
 		},
 		{
@@ -600,6 +670,57 @@ func TestModel_IsDefault(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestModel_EngineNameONNX verifies local ONNX models report their runtime.
+func TestModel_EngineNameONNX(t *testing.T) {
+	model := &Model{Type: ModelTypeLabels, ONNX: &onnx.ModelInfo{}}
+	assert.Equal(t, EngineONNX, model.EngineName())
+}
+
+// TestModel_ClassifyModelMissingRegisteredCachesError verifies failed initialization preserves operator disablement.
+func TestModel_ClassifyModelMissingRegisteredCachesError(t *testing.T) {
+	previousModelsPath := ModelsPath
+	ModelsPath = t.TempDir()
+	t.Cleanup(func() { ModelsPath = previousModelsPath })
+
+	model := NewLabelModel(classify.ModelRepViTM10)
+	require.NotNil(t, model)
+	assert.Nil(t, model.ClassifyModel())
+	assert.False(t, model.Disabled)
+	require.Error(t, model.classifyErr)
+	assert.Nil(t, model.ClassifyModel())
+	model.DisabledByMode = true
+	clone := model.Clone()
+	assert.Nil(t, clone.classifyErr)
+	assert.False(t, clone.DisabledByMode)
+}
+
+// TestModelOnnxProvider verifies registered and custom local models use the global provider.
+func TestModelOnnxProvider(t *testing.T) {
+	previousProvider := OnnxProvider
+	OnnxProvider = onnx.ProviderCUDA
+	t.Cleanup(func() { OnnxProvider = previousProvider })
+
+	registeredLabels := NewLabelModel(classify.DefaultModelName())
+	require.NotNil(t, registeredLabels)
+	registeredLabels.Disabled = true
+	require.NotNil(t, registeredLabels.ClassifyModel())
+	assert.Equal(t, onnx.ProviderCUDA, registeredLabels.ClassifyModel().Provider())
+
+	customLabels := &Model{Type: ModelTypeLabels, Name: "custom-labels", Path: "custom-labels.onnx", ONNX: &onnx.ModelInfo{}, Disabled: true}
+	require.NotNil(t, customLabels.ClassifyModel())
+	assert.Equal(t, onnx.ProviderCUDA, customLabels.ClassifyModel().Provider())
+
+	registeredNSFW := NewNsfwModel(nsfw.DefaultModelName())
+	require.NotNil(t, registeredNSFW)
+	registeredNSFW.Disabled = true
+	require.NotNil(t, registeredNSFW.NsfwModel())
+	assert.Equal(t, onnx.ProviderCUDA, registeredNSFW.NsfwModel().Provider())
+
+	customNSFW := &Model{Type: ModelTypeNsfw, Name: "custom-nsfw", Path: "custom-nsfw.onnx", ONNX: &onnx.ModelInfo{}, Disabled: true}
+	require.NotNil(t, customNSFW.NsfwModel())
+	assert.Equal(t, onnx.ProviderCUDA, customNSFW.NsfwModel().Provider())
 }
 
 func TestModel_FaceModel(t *testing.T) {
@@ -815,4 +936,20 @@ func resetUnresolvedUriWarnings(t *testing.T) {
 	t.Helper()
 	unresolvedUriWarned.Clear()
 	t.Cleanup(unresolvedUriWarned.Clear)
+}
+
+// TestCustomClassifyInitializationError verifies custom failures preserve saved disablement.
+func TestCustomClassifyInitializationError(t *testing.T) {
+	previous := ModelsPath
+	ModelsPath = t.TempDir()
+	t.Cleanup(func() { ModelsPath = previous })
+	model := &Model{Type: ModelTypeLabels, Name: "custom", Path: "custom/model.onnx", ONNX: &onnx.ModelInfo{}}
+	hook := captureVisionLog(t)
+	assert.Nil(t, model.ClassifyModel())
+	require.Error(t, model.classifyErr)
+	assert.False(t, model.Disabled)
+	cached := model.classifyErr
+	assert.Nil(t, model.ClassifyModel())
+	assert.Same(t, cached, model.classifyErr)
+	assert.Len(t, initWarnings(hook.AllEntries()), 1)
 }

@@ -77,6 +77,7 @@ func TestPostVisionLabels(t *testing.T) {
 		}
 
 		assert.Len(t, apiResponse.Result.Labels, 1)
+		require.NotNil(t, apiResponse.Model)
 		assert.Equal(t, vision.ModelTypeLabels, apiResponse.Model.Type)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
@@ -86,7 +87,7 @@ func TestPostVisionLabels(t *testing.T) {
 
 		files := vision.Files{
 			fs.Abs("./testdata/cat_224x224.jpg"),
-			fs.Abs("./testdata/green_224x224.jpg"),
+			fs.Abs("../../assets/samples/dog_orange.jpg"),
 		}
 
 		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
@@ -114,6 +115,7 @@ func TestPostVisionLabels(t *testing.T) {
 		}
 
 		assert.Len(t, apiResponse.Result.Labels, 2)
+		require.NotNil(t, apiResponse.Model)
 		assert.Equal(t, vision.ModelTypeLabels, apiResponse.Model.Type)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

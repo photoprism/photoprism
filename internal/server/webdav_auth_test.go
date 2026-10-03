@@ -469,3 +469,16 @@ func TestWebDAVAuthSession_RateLimit(t *testing.T) {
 		assert.False(t, limiter.Auth.Reject("198.51.100.62"), "not counted")
 	})
 }
+
+func TestWebDAVAbortServerError(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+
+		WebDAVAbortServerError(c)
+
+		assert.True(t, c.IsAborted())
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		assert.Equal(t, BasicAuthRealm, w.Header().Get("WWW-Authenticate"))
+	})
+}

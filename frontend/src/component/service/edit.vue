@@ -185,10 +185,16 @@
                 autocomplete="new-password"
                 :label="$gettext('Password')"
                 placeholder="********"
-                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 :type="showPassword ? 'text' : 'password'"
-                @click:append-inner="showPassword = !showPassword"
-              ></v-text-field>
+              >
+                <template #append-inner>
+                  <p-input-action
+                    :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                    @click="showPassword = !showPassword"
+                  ></p-input-action>
+                </template>
+              </v-text-field>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field

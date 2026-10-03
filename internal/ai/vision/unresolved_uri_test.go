@@ -32,7 +32,7 @@ func TestUnresolvedServiceUri(t *testing.T) {
 			return err
 		}, "service uri of labels model gemma3:4b does not resolve"},
 		{"NsfwEngine", &Model{Type: ModelTypeNsfw, Name: "qwen3-vl:4b", Engine: ollama.EngineName, Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}, func() error {
-			_, err := nsfwInternal(images, media.SrcLocal)
+			_, err := nsfwInternalContext(images, media.SrcLocal, nsfwThresholdIndex)
 			return err
 		}, "service uri of nsfw model qwen3-vl:4b does not resolve"},
 		{"CaptionEngine", &Model{Type: ModelTypeCaption, Name: "gemma3:4b", Engine: ollama.EngineName, Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}, func() error {
@@ -56,13 +56,11 @@ func TestUnresolvedServiceUri(t *testing.T) {
 	}
 }
 
-// TestModel_NsfwModelWithoutTensorFlow checks that a custom nsfw model without TensorFlow settings does not panic.
+// TestModel_NsfwModelWithoutTensorFlow checks that a custom nsfw model without runtime settings does not panic.
 func TestModel_NsfwModelWithoutTensorFlow(t *testing.T) {
 	_, _ = captureLogs(t)
 
 	model := &Model{Type: ModelTypeNsfw, Name: "custom-nsfw-missing", Path: "custom-nsfw-missing"}
 
 	require.NotPanics(t, func() { assert.Nil(t, model.NsfwModel()) })
-	require.NotNil(t, model.TensorFlow)
-	require.NotNil(t, model.TensorFlow.Input)
 }

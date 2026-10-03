@@ -54,7 +54,7 @@ export default {
         return "";
       }
 
-      return this.$gettextInterpolate(this.$gettext("Merge %{a} with %{b}?"), {
+      return this.$gettext("Merge %{a} with %{b}?", {
         a: this.subj1.originalValue("Name"),
         b: this.subj2.Name,
       });

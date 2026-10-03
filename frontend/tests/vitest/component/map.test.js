@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import PMap from "component/map.vue";
 
-const mocks = vi.hoisted(() => ({ load: vi.fn(), supportsWebGL2: vi.fn() }));
+const mocks = vi.hoisted(() => ({ load: vi.fn(), supportsWebGL2: vi.fn(), locale: vi.fn(() => ({ "Map.Title": "Karte" })) }));
 vi.mock("common/map", () => mocks);
 
 let wrapper;
@@ -94,7 +94,7 @@ describe("PMap", () => {
   it("preserves controls, coordinate ordering, click and drag events, and cleanup", async () => {
     wrapper = mountMap({ interactive: true, clickable: true, draggable: true, showControls: true });
     await flushPromises();
-    expect(namespace.Map).toHaveBeenCalledWith(expect.objectContaining({ center: [16.5, 47.5] }));
+    expect(namespace.Map).toHaveBeenCalledWith(expect.objectContaining({ center: [16.5, 47.5], locale: { "Map.Title": "Karte" } }));
     expect(renderer.addControl).toHaveBeenCalledTimes(3);
     expect(renderer.setMissingStyleImageResolver).toHaveBeenCalledOnce();
     expect(events.styleimagemissing).toBeUndefined();

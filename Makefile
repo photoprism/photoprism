@@ -141,6 +141,7 @@ Checks (also run by lint):
   check-audit-events        Check audit-event formatting against its baseline
   check-libheif-install     Check libheif installer selection and version handling
   check-cuda-install        Check CUDA installation recovery without a GPU
+  check-buildignore         Check that packages bundle exactly the listed models
   check-make-help           Check that advertised Makefile targets exist
   check-scripts-copy-mode   Check container script ownership and modes
 
@@ -461,11 +462,38 @@ codex-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
 	  echo "No specs/.agents/skills directory found, skipping."; \
+	fi
+	@if [ -d "specs/.agents/agents" ]; then \
+	  echo "Linking Codex agent roles from specs/.agents/agents..."; \
+	  install -d -m 755 -- ".codex/agents"; \
+	  for link in .codex/agents/*.toml; do \
+	    [ -L "$$link" ] || continue; \
+	    target=$$(readlink "$$link"); \
+	    case "$$target" in \
+	      ../../specs/.agents/agents/*.toml) \
+	        name=$$(basename "$$link"); \
+	        [ -f "specs/.agents/agents/$$name" ] || rm -- "$$link"; \
+	        ;; \
+	    esac; \
+	  done; \
+	  for src in specs/.agents/agents/*.toml; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".codex/agents/$$name"; \
+	    target="../../specs/.agents/agents/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "$$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.agents/agents directory found, skipping."; \
 	fi
 gh: dep-gh gh-version
 gh-version:
@@ -508,7 +536,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -525,7 +553,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -542,7 +570,7 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
@@ -559,11 +587,27 @@ claude-skills:
 	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
 	      ln -sfn "$$target" "$$link"; \
 	    else \
-	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	      echo "$$link already exists and is not a symlink, skipping"; \
 	    fi; \
 	  done; \
 	else \
 	  echo "No specs/.claude/scripts directory found, skipping."; \
+	fi
+	@if [ -d "specs/.claude/bin" ]; then \
+	  echo "Linking Claude Code model wrappers from specs/.claude/bin..."; \
+	  [ -n "$(HOME)" ] && [ "$(HOME)" != "/" ] && install -d -m 755 -- "$(HOME)/.local/bin" || true; \
+	  for src in specs/.claude/bin/*; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link="$(HOME)/.local/bin/$$name"; \
+	    if [ -e "$$link" ] || [ -L "$$link" ]; then \
+	      echo "$$link already exists, skipping"; \
+	    else \
+	      ln -s "$(CURDIR)/specs/.claude/bin/$$name" "$$link"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/bin directory found, skipping."; \
 	fi
 dep-go:
 	go build -v ./...
@@ -572,9 +616,10 @@ dep-upgrade:
 frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
-# Installs every model a development build runs or ships.
-dep-models:
-	scripts/dist/download-models.sh facenet nasnet nsfw sface yunet
+# Installs every model a development build runs or ships; assets/.buildignore must list the same.
+BUNDLED_MODELS = efficientformerv2_s2 facenet sface yahoo_open_nsfw yunet
+dep-models: check-buildignore
+	scripts/dist/download-models.sh $(BUNDLED_MODELS)
 dep-tensorflow: dep-models
 dep-onnx: dep-models
 dep-acceptance: storage/acceptance
@@ -582,10 +627,6 @@ storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
 zip-facenet:
 	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
-zip-nasnet:
-	(cd assets && zip -r nasnet.zip nasnet -x "*/.*" -x "*/version.txt")
-zip-nsfw:
-	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
 	$(MAKE) -C frontend build
 build-go: build-develop
@@ -1292,7 +1333,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
+lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-buildignore check-make-help check-scripts-copy-mode
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1320,6 +1361,9 @@ check-cuda-install:
 check-make-help:
 	$(info Checking that "make help" only advertises existing targets...)
 	bash ./scripts/lint/check-make-help.sh
+check-buildignore:
+	$(info Checking that packages bundle exactly the listed models...)
+	bash ./scripts/lint/check-buildignore.sh assets/.buildignore scripts/dist/download-models.sh $(BUNDLED_MODELS)
 check-scripts-copy-mode:
 	$(info Checking that the dist scripts are copied with an explicit owner and mode...)
 	bash ./scripts/lint/check-scripts-copy-mode.sh

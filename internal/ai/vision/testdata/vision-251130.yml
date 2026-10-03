@@ -1,0 +1,78 @@
+Models:
+- Type: labels
+  Default: true
+  Name: nasnet
+  Version: mobile
+  Run: on-schedule
+  Resolution: 224
+  TensorFlow:
+    Tags:
+    - photoprism
+    Input:
+      Name: input_1
+      Intervals:
+      - Start: -1
+        End: 1
+      ResizeOperation: CenterCrop
+      ColorChannelOrder: RGB
+      Height: 224
+      Width: 224
+      Shape:
+      - Batch
+      - Height
+      - Width
+      - Color
+    Output:
+      Name: predictions/Softmax
+      Outputs: 1000
+- Type: nsfw
+  Default: true
+  Name: nsfw
+  Version: latest
+  Resolution: 224
+  TensorFlow:
+    Tags:
+    - serve
+    Input:
+      Name: input_tensor
+      Height: 224
+      Width: 224
+      Shape:
+      - Batch
+      - Height
+      - Width
+      - Color
+    Output:
+      Name: nsfw_cls_model/final_prediction
+      Outputs: 5
+  Disabled: true
+- Type: face
+  Default: true
+  Name: facenet
+  Version: latest
+  Resolution: 160
+  TensorFlow:
+    Tags:
+    - serve
+    Input:
+      Name: input
+      Height: 160
+      Width: 160
+      Shape:
+      - Batch
+      - Height
+      - Width
+      - Color
+    Output:
+      Name: embeddings
+      Outputs: 512
+- Type: caption
+  Name: gemma3
+  Version: latest
+  Engine: ollama
+  Resolution: 720
+  Service:
+    Uri: http://ollama:11434/api/generate
+Thresholds:
+  Confidence: 10
+  NSFW: 75

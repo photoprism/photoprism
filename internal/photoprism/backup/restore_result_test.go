@@ -45,17 +45,17 @@ func TestRestoreFailures_Summary(t *testing.T) {
 	assert.Equal(t, "3 statements failed", restoreFailures{Count: 3}.Summary())
 }
 
-// TestRestoreAndLog checks the outcome a restore logs.
-func TestRestoreAndLog(t *testing.T) {
+// TestPreparedRestore_RunLog checks the outcome a restore logs.
+func TestPreparedRestore_RunLog(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		hook := captureLog(t)
-		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", "cat >/dev/null"), strings.NewReader("SELECT 1;\n"), ""))
+		require.NoError(t, preparedRestore{cmd: exec.Command("sh", "-c", "cat >/dev/null")}.run(strings.NewReader("SELECT 1;\n")))
 		assert.Contains(t, logMessages(hook), "restore: index database successfully restored")
 	})
 	t.Run("FailedStatements", func(t *testing.T) {
 		hook := captureLog(t)
 		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; cat >/dev/null`
-		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), ""))
+		require.NoError(t, preparedRestore{cmd: exec.Command("sh", "-c", script)}.run(strings.NewReader("")))
 		assert.Contains(t, logMessages(hook), "restore: index database restored, but 1 statement failed, so some rows may be missing (error 1062 at line 4)")
 		assert.NotContains(t, logMessages(hook), "restore: index database successfully restored")
 		for _, entry := range hook.AllEntries() {
@@ -67,7 +67,7 @@ func TestRestoreAndLog(t *testing.T) {
 	t.Run("WarningsBeforeOutputOnly", func(t *testing.T) {
 		hook := captureLog(t)
 		script := `printf '%s\n' "WARNING: insecure" "ERROR 1062 (23000) at line 4: Duplicate entry 'x" "WARNING: val-a' for key 'v'" >&2; cat >/dev/null`
-		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), ""))
+		require.NoError(t, preparedRestore{cmd: exec.Command("sh", "-c", script)}.run(strings.NewReader("")))
 		assert.Contains(t, logMessages(hook), "restore: insecure")
 		for _, entry := range hook.AllEntries() {
 			if entry.Level != logrus.TraceLevel {
@@ -77,13 +77,13 @@ func TestRestoreAndLog(t *testing.T) {
 	})
 	t.Run("FailedWithStatements", func(t *testing.T) {
 		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry" "ERROR 2013 (HY000): Lost connection" >&2; cat >/dev/null; exit 1`
-		err := restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		err := preparedRestore{cmd: exec.Command("sh", "-c", script)}.run(strings.NewReader(""))
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "ERROR 2013 (HY000): Lost connection; 1 statement failed (error 1062 at line 4)")
 	})
 	t.Run("Failed", func(t *testing.T) {
 		hook := captureLog(t)
-		require.Error(t, restoreAndLog(exec.Command("sh", "-c", "echo 'ERROR 2002 (HY000): Can not connect' >&2; exit 1"), strings.NewReader(""), ""))
+		require.Error(t, preparedRestore{cmd: exec.Command("sh", "-c", "echo 'ERROR 2002 (HY000): Can not connect' >&2; exit 1")}.run(strings.NewReader("")))
 		assert.Contains(t, logMessages(hook), "restore: failed to restore index database")
 	})
 }
@@ -185,6 +185,30 @@ func TestRunRestore_MariaDB(t *testing.T) {
 			"INSERT INTO t VALUES (5,'val-f');\n")
 		assert.Equal(t, 2, failed.Count)
 		assert.Equal(t, []string{"error 1062 at line 3", "error 1286 at line 4"}, failed.Errors)
+	})
+	t.Run("DumpHeader", func(t *testing.T) {
+		// A dump turns off unique and foreign key checks and inserts each table in one transaction, so the
+		// restore keeps the rows of a table only if its input keeps unique checks on.
+		dump := dumpHeader(string(uniqueChecksOff), "\n") +
+			"CREATE TABLE t (id INT PRIMARY KEY, v VARCHAR(20), UNIQUE KEY (v)) ENGINE=InnoDB;\n" +
+			"SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;\n" +
+			"/*!40000 ALTER TABLE `t` DISABLE KEYS */;\n" +
+			"INSERT INTO t VALUES\n(1,'val-a'),\n(2,'val-b'),\n(3,'val-c');\n" +
+			"INSERT INTO t VALUES\n(1,'val-a'),\n(2,'val-b'),\n(3,'val-c');\n" +
+			"/*!40000 ALTER TABLE `t` ENABLE KEYS */;\n" +
+			"COMMIT;\nSET AUTOCOMMIT=@OLD_AUTOCOMMIT;\n" +
+			"/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;\n" +
+			"/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;\n"
+		admin(t, "DROP DATABASE IF EXISTS "+name+"; CREATE DATABASE "+name)
+		target := conn
+		target.Name = name
+		failed, restoreErr := runRestore(target.Cmd(mariadbRestoreArgs(bin)...), restoreReader(dsn.DriverMariaDB, strings.NewReader(dump)), conn.Password)
+		require.NoError(t, restoreErr)
+		assert.Equal(t, 1, failed.Count)
+		assert.Equal(t, []string{"error 1062 at line 14"}, failed.Errors)
+		out, cmdErr := conn.Cmd("-N", "-e", "SELECT COUNT(*) FROM "+name+".t").CombinedOutput()
+		require.NoError(t, cmdErr, string(out))
+		assert.Equal(t, "3", strings.TrimSpace(string(out)))
 	})
 	t.Run("LostConnection", func(t *testing.T) {
 		// Statements after a lost connection are reported as failed, although the client exits 0.
