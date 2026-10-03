@@ -3,9 +3,11 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
@@ -134,4 +136,68 @@ func TestNewConvert_CapturesFFmpegExclude(t *testing.T) {
 	convert := NewConvert(config.TestConfig())
 	assert.False(t, convert.FFmpegAllowed(fakeMediaFile("magicyuv", "/tmp/clip.mp4")))
 	assert.True(t, convert.FFmpegAllowed(fakeMediaFile("avc1", "/tmp/clip.mp4")))
+}
+
+// TestConvert_StartTypeCheck verifies that files whose content does not match their extension are
+// not passed to converters.
+func TestConvert_StartTypeCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	c := config.NewMinimalTestConfig(t.TempDir())
+	oldCfg := Config()
+	SetConfig(c)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	png, err := os.ReadFile("testdata/photoprism.png")
+	require.NoError(t, err)
+	require.NoError(t, fs.MkdirAll(c.OriginalsPath()))
+	require.NoError(t, os.WriteFile(filepath.Join(c.OriginalsPath(), "image.jpg"), png, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+
+	require.NoError(t, NewConvert(c).Start(c.OriginalsPath(), nil, false))
+
+	var created []string
+	for _, dir := range []string{c.OriginalsPath(), c.SidecarPath()} {
+		_ = filepath.Walk(dir, func(fileName string, info os.FileInfo, walkErr error) error {
+			if walkErr == nil && !info.IsDir() && strings.HasPrefix(filepath.Base(fileName), "image.jpg.") {
+				created = append(created, fileName)
+			}
+			return nil
+		})
+	}
+	assert.Empty(t, created)
+}
+
+// TestConvert_StartAvcMetadata verifies that the type check does not keep the ExifTool metadata of a
+// video from the converter, so that a video in a playable format is not transcoded.
+func TestConvert_StartAvcMetadata(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	c := config.NewMinimalTestConfig(t.TempDir())
+	oldCfg := Config()
+	SetConfig(c)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	if !c.ExifToolEnabled() || !c.FFmpegEnabled() {
+		t.Skip("ExifTool and FFmpeg must be available")
+	}
+
+	mp4, err := os.ReadFile(filepath.Join(c.SamplesPath(), "gopher-video.mp4"))
+	require.NoError(t, err)
+	require.NoError(t, fs.MkdirAll(c.OriginalsPath()))
+	require.NoError(t, os.WriteFile(filepath.Join(c.OriginalsPath(), "clip.mp4"), mp4, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+
+	require.NoError(t, NewConvert(c).Start(c.OriginalsPath(), nil, false))
+
+	var transcoded []string
+	_ = filepath.Walk(c.SidecarPath(), func(fileName string, info os.FileInfo, walkErr error) error {
+		if walkErr == nil && !info.IsDir() && strings.HasSuffix(fileName, fs.ExtAvc) {
+			transcoded = append(transcoded, fileName)
+		}
+		return nil
+	})
+	assert.Empty(t, transcoded)
 }

@@ -28,10 +28,10 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	return w.toAvc(f, encoder, noMutex, force, true)
 }
 
-// avcSource returns the file a transcode of f is made from, which is the left lens for every member of a
-// complete Insta360 video capture.
+// avcSource returns the file from which a transcoded version is made, which is the left lens
+// for each member of a complete Insta360 video capture.
 func avcSource(f *MediaFile) *MediaFile {
-	if capture := FindInsta360Capture(f); capture.ValidPair() {
+	if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() && capture.Left.CheckType() == nil {
 		return capture.Left
 	}
 
