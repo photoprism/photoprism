@@ -32,6 +32,13 @@
       "session.error",
       "session.messageId",
       "session.messageParams",
+      // The unprefixed names the app still adopts on load, so a callback leaves nothing for the
+      // migration in session.js to pick up. Keep in step with the keys it reads.
+      "authToken",
+      "sessionId",
+      "sessionData",
+      "user",
+      "provider",
     ];
     const storages = [localStorage, sessionStorage].filter(Boolean);
     const preferredStorage =

@@ -1,10 +1,10 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** August 9, 2026
+**Last Updated:** October 2, 2026
 
 ### Overview
 
-This package provides PhotoPrism’s native adapter for Ollama-compatible multimodal models. It lets Caption, Labels, and future Generate workflows call locally hosted models without changing worker logic, reusing the shared API client (`internal/ai/vision/api_client.go`) and result types (`LabelResult`, `CaptionResult`). Requests stay inside your infrastructure, rely on base64 thumbnails, and honor the same ACL, timeout, and logging hooks as the default TensorFlow engines. The adapter resolves `${OLLAMA_BASE_URL}/api/generate`, trimming trailing slashes and defaulting to `http://ollama:11434`; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
+This package provides PhotoPrism’s native adapter for Ollama-compatible multimodal models. It lets Caption, Labels, and future Generate workflows call locally hosted models without changing worker logic, reusing the shared API client (`internal/ai/vision/api_client.go`) and result types (`LabelResult`, `CaptionResult`). Requests stay inside your infrastructure, rely on base64 thumbnails, and honor the same ACL, timeout, and logging hooks as the default local engines. The adapter resolves `${OLLAMA_BASE_URL}/api/generate`, trimming trailing slashes and defaulting to `http://ollama:11434`; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
 
 #### Constraints
 
@@ -12,7 +12,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 - Reasoning is disabled by default (`DefaultThink = "false"`, applied to `Service.Think` when empty) so thinking-capable models do not leak their reasoning into captions or invalidate label JSON. Re-enable it explicitly with `Service.Think: "true"`.
 - Responses may arrive as newline-delimited JSON chunks. `decodeOllamaResponse` keeps the most recent chunk, while the parser supports both `response` and `thinking` fallbacks for captions and labels and strips a leading, well-delimited `<think>...</think>` block from the response body as a defensive fallback.
 - Structured JSON is optional for captions but enforced for labels when `Format: json` (default for label models targeting the Ollama engine).
-- The adapter never overwrites TensorFlow defaults. If an Ollama call fails, downstream code still has Nasnet, NSFW, and Face models available.
+- The adapter never overwrites local defaults. If an Ollama call fails, downstream code still has label, NSFW, and face models available.
 - Workers assume a single-image payload per request. Run `photoprism vision run` to validate multi-image prompts before changing that invariant.
 
 #### Goals
@@ -42,7 +42,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
   - Captions: no system prompt by default; rely on user prompt or set one explicitly for stylistic needs.
 - **User Prompts**
   - Captions use `CaptionPrompt`, which requests one sentence in active voice.
-  - Labels default to `LabelPromptDefault`; when the package-level `DetectNSFWLabels` global is true, the adapter swaps in `LabelPromptNSFW`. The global is set by `config.go` to `DetectNSFW() && Experimental()`, so both `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_EXPERIMENTAL=true` are required to enable the NSFW-aware prompt.
+  - Labels default to `LabelPromptDefault`; when the package-level `DetectNSFWLabels` global is true, the adapter swaps in `LabelPromptNSFW`. The global is set by `config.go` to `DetectNSFWLabels()`, so `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels` are required to enable the NSFW-aware prompt.
   - For stricter noun enforcement, set `Prompt` to `LabelPromptStrict`.
 - **Schemas**
   - Labels rely on `schema.LabelsJson(nsfw)` (simple JSON template). Setting `Format: json` auto-attaches a reminder (`model.SchemaInstructions()`).
@@ -125,7 +125,7 @@ The table below reports median single-image latency over a fixed 16-image benchm
 - `OLLAMA_HOST`, `OLLAMA_MODELS`, `OLLAMA_MAX_QUEUE`, `OLLAMA_NUM_PARALLEL`, etc. — Provided in `compose*.yaml` to tune the Ollama daemon. Adjust `OLLAMA_KEEP_ALIVE` if you want models to stay loaded between worker batches.
 - `OLLAMA_API_KEY` / `OLLAMA_API_KEY_FILE` — Default bearer token picked up when `Service.Key` is empty; useful for hosted Ollama services (e.g., Ollama Cloud).
 - `OLLAMA_BASE_URL` — Base URL for the Ollama API; defaults to `http://ollama:11434`, trailing slashes are trimmed. Set to `https://ollama.com` to enable cloud defaults.
-- `PHOTOPRISM_LOG_LEVEL=trace` — Enables verbose request/response previews (truncated to avoid leaking images). Use temporarily when debugging parsing issues.
+- `PHOTOPRISM_LOG_LEVEL=trace` — Logs request payloads with base64 images shortened, and the full body of a successful response (quoted). Use temporarily when debugging parsing issues. The body of a failed response, or the error for a response that cannot be parsed, is written to the console system log at error level, clipped to 4 KiB.
 
 #### `vision.yml` Example
 
@@ -161,18 +161,18 @@ Models:
 
 Guidelines:
 
-- Place new entries after the default TensorFlow models so they take precedence while Nasnet/NSFW remain as fallbacks.
+- Place new entries after the default local models so they take precedence while local label and NSFW models remain as fallbacks.
 - Always specify the exact Ollama tag (`model:version`) so upgrades are deliberate.
 - `Service.Think` defaults to `"false"` for the Ollama engine (reasoning off) and is sent whenever non-empty. Keep it quoted (for example `"false"`, `"true"`, or `"low"`) so YAML preserves it as a string; PhotoPrism serializes `"true"` / `"false"` as JSON booleans for Ollama compatibility. Set `Service.Think: "true"` to re-enable reasoning for a model that benefits from it.
 - Model support is not universal: `think:true` may fail on models that do not implement reasoning, and `think:false` can still yield empty `response` fields on some reasoning-capable models (which then stream their JSON via the `thinking` field — the parser handles this).
 - Keep option flags before positional arguments in CLI snippets (`photoprism vision run -m labels --count 1`).
-- If you proxy requests (e.g., through Traefik), set `Service.Key` to `Bearer <token>` and configure the proxy to inject/validate it.
+- If you proxy requests (e.g., through Traefik), set `Service.Key` to the token (the client adds the `Bearer` prefix) and configure the proxy to inject/validate it.
 
 ### Operational Checklist
 
 - **Scheduling** — Use `Run: newly-indexed` for incremental runs, `Run: manual` for ad-hoc CLI calls, or `Run: on-schedule` when paired with the scheduler. Leave `Run: auto` if you want the worker to decide based on other model states.
 - **Timeouts & Retries** — Default timeout is 10 minutes (`ServiceTimeout`). Transient `HTTP 429` responses are retried with bounded exponential backoff (within `ServiceTimeout`, honoring `Retry-After` up to `ServiceRetryMaxDelay`); other errors are terminal. Ollama streaming responses complete faster in practice; if you need stricter SLAs, wrap `photoprism vision run` in a job runner and retry failed batches manually.
-- **Fallbacks** — Keep Nasnet configured even when Ollama labels are primary. `labels.go` stops at the first successful engine, so duplicates are avoided.
+- **One Labels Model** — PhotoPrism uses the last enabled `Type: labels` entry in `vision.yml` and does not fall back to another entry. Remove or disable a `nasnet` or default labels entry when Ollama is meant to generate labels.
 - **Security** — When exposing Ollama beyond localhost, terminate TLS at Traefik and enable API keys. Never return full JSON payloads in logs; rely on trace mode only for debugging and sanitize before sharing.
 - **Model Storage** — Bind-mount `./storage/services/ollama:/root/.ollama` (see Compose) so pulled models survive container restarts. Run `docker compose exec ollama ollama list` during deployments to verify availability.
 
@@ -181,13 +181,13 @@ Guidelines:
 - **CLI Smoke Tests**
   - Captions: `photoprism vision run -m caption --count 5 --force`.
   - Labels: `photoprism vision run -m labels --count 5 --force`.
-  - After each run, check `photoprism vision ls` for `source=ollama`.
+  - After each run, check the new captions and labels in the UI; `photoprism vision ls` confirms which entries use the `ollama` engine.
 - **Unit Tests**
   - `go test ./internal/ai/vision/ollama ./internal/ai/vision -run Ollama -count=1` covers transport parsing and model defaults.
   - Add fixtures under `internal/ai/vision/testdata` when capturing new response shapes; keep files small and anonymized.
 - **Logging**
   - Set `PHOTOPRISM_LOG_LEVEL=debug` to watch summary lines (“processed labels/caption via ollama”).
-  - Use `log.Trace` sparingly; it prints truncated JSON blobs for troubleshooting.
+  - Use `log.Trace` sparingly; it prints shortened requests and the full body of successful responses for troubleshooting; failed responses go to the console system log.
 - **Metrics**
   - `/api/v1/metrics` exposes counts per label source; scrape after a batch to compare throughput with TensorFlow/OpenAI runs.
 

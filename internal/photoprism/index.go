@@ -60,6 +60,14 @@ func (ind *Index) thumbPath() string {
 	return ind.conf.ThumbCachePath()
 }
 
+// forgetReplacedPreview evicts a sidecar preview rewritten by a forced conversion from the file cache,
+// so the same run indexes it even if its whole-second time is unchanged.
+func (ind *Index) forgetReplacedPreview(img *MediaFile) {
+	if img != nil && img.InSidecar() {
+		ind.files.Remove(img.RootRelName(), img.Root())
+	}
+}
+
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
 	mutex.IndexWorker.Cancel()
@@ -185,7 +193,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`index: ignored "%s"`, fs.RelName(fileName, originalsPath))
+		log.Infof(`index: ignored "%s"`, clean.Log(fs.RelName(fileName, originalsPath)))
 	}
 
 	// enqueueRelated queues unprocessed related files as one indexing job.
@@ -283,8 +291,17 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			isSymlink := info.IsSymlink()
 			relName := fs.RelName(fileName, originalsPath)
 
+			wasFound := found[fileName].Exists()
+
 			// Skip directories and known files.
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, found, ignore); skip {
+				// A regeneration reports what the index was set to skip rather than failing on it.
+				if !wasFound && !isDir && media.MainFile(fileName) {
+					o.FaceRegeneration.addSkipped(fileName)
+				} else if !wasFound && errors.Is(result, filepath.SkipDir) {
+					o.FaceRegeneration.addSkippedDir(fileName)
+				}
+
 				if !isDir {
 					return result
 				}
@@ -292,8 +309,8 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				if !errors.Is(result, filepath.SkipDir) {
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.ModTime(fileName))
 
-					if err := folder.Create(); err == nil {
-						log.Infof("index: added folder /%s", folder.Path)
+					if err := folder.Create(); err == nil && folder.Path != "" {
+						log.Infof("index: added folder /%s", clean.Log(folder.Path))
 					}
 				}
 
@@ -314,6 +331,21 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				if !o.Rescan && !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
 					if mainRel := ind.mainForSidecar(relName); mainRel != "" {
 						changedXmpMainFiles[mainRel] = struct{}{}
+					}
+				}
+
+				return nil
+			}
+
+			// A new LRV proxy queues the video it belongs to, since it is only indexed with that video.
+			if fs.FileType(fileName) == fs.VideoLrv {
+				if !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
+					if proxy, proxyErr := NewMediaFile(fileName); proxyErr == nil {
+						if partnerName := insta360ProxyPartner(proxy); partnerName != "" && !ignore.Ignore(partnerName) {
+							if partner, partnerErr := NewMediaFile(partnerName); partnerErr == nil {
+								enqueueRelated(partner)
+							}
+						}
 					}
 				}
 
@@ -350,6 +382,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			// Skip RAW image?
 			if mf.IsRaw() && skipRaw {
 				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
+				o.FaceRegeneration.addSkipped(fileName)
 				return nil
 			}
 

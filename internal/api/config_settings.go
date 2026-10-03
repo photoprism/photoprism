@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -48,9 +49,9 @@ func GetSettings(router *gin.RouterGroup) {
 //	@Tags		Settings
 //	@Accept		json
 //	@Produce	json
-//	@Success	200					{object}	customize.Settings
-//	@Failure	400,401,403,404,500	{object}	i18n.Response
-//	@Param		settings			body		customize.Settings	true	"user settings"
+//	@Success	200						{object}	customize.Settings
+//	@Failure	400,401,403,404,413,500	{object}	i18n.Response
+//	@Param		settings				body		customize.Settings	true	"user settings"
 //	@Router		/api/v1/settings [post]
 func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
@@ -99,14 +100,14 @@ func SaveSettings(router *gin.RouterGroup) {
 
 			// Update global defaults.
 			if err := settings.Save(conf.SettingsYaml()); err != nil {
-				log.Debugf("config: %s (save app settings)", err)
-				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+				log.Debugf("config: %s (save app settings)", clean.Error(err))
+				AbortSaveFailed(c)
 				return
 			}
 
 			// Update user preferences.
 			if err := user.Settings().Apply(settings).Save(); err != nil {
-				log.Debugf("config: %s (save user settings)", err)
+				log.Debugf("config: %s (save user settings)", clean.Error(err))
 				AbortSaveFailed(c)
 				return
 			}

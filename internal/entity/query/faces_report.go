@@ -1,6 +1,7 @@
 package query
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -15,14 +17,8 @@ import (
 // uid apart from a name without asking the caller which one it passed.
 const SubjectUIDPrefix = 'j'
 
-// LikeEscape is the escape character the name patterns use.
-//
-// Not a backslash: MySQL reads one inside a string literal as an escape while SQLite does not, so
-// the ESCAPE clause itself cannot be written the same way for both. Nothing needs escaping in "!".
-const LikeEscape = "!"
-
-// likeEscaper escapes the escape character first, or it would escape the ones added after it.
-var likeEscaper = strings.NewReplacer(LikeEscape, LikeEscape+LikeEscape, "%", LikeEscape+"%", "_", LikeEscape+"_")
+// LikeEscape is the escape character of the conditions LikeCond returns.
+const LikeEscape = clean.SqlLikeEscape
 
 // PersonFilter classifies a person argument for the face reports: a subject uid selects exactly one
 // person, and anything else matches the names that contain it.
@@ -38,14 +34,18 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 		return s, ""
 	}
 
-	return "", "%" + likeEscaper.Replace(s) + "%"
+	return "", "%" + clean.SqlLike(s) + "%"
 }
 
-// LikeCond returns a LIKE condition for the given column that honors the escaping PersonFilter
-// applies. SQLite has no default escape character, so a pattern built without this matches nothing
-// there while matching correctly on MariaDB - the same command answering differently per driver.
+// LikeCond returns a LIKE condition for the given column that honors the escaping of clean.SqlLike.
+// A column that is not a plain identifier yields a condition that binds the argument and matches
+// nothing, so the placeholder count stays right and the mistake shows in the log.
 func LikeCond(col string) string {
-	return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, LikeEscape)
+	if clean.SqlColumn(col) == "" {
+		log.Errorf("query: invalid column %s in like condition", clean.Log(col))
+	}
+
+	return clean.SqlLikeCond(col)
 }
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
@@ -146,16 +146,23 @@ type FaceReport struct {
 	Markers         int
 	MatchedAt       *time.Time
 
+	// EmbedDetail is the mean share of the crop their sources supplied, over the members that
+	// recorded one, and -1 where none did. Measured members only: the column is three-state, so an
+	// average taken over the sentinels as well produces a plausible number that means nothing.
+	EmbedDetail float64
+
 	// EmbedModel names the space the centroid lives in and EmbeddingDims its width, 0 where the row
 	// holds no vector and InvalidJSON where what is stored cannot be parsed.
 	EmbedModel    string
 	EmbeddingDims int
 }
 
-// faceReportRow carries the stored vector, which is read for its width and then dropped.
+// faceReportRow carries the stored vector, which is read for its width and then dropped, and the
+// mean detail as the database returns it - NULL where the cluster holds no measured member.
 type faceReportRow struct {
 	FaceReport
-	EmbeddingJSON json.RawMessage
+	EmbeddingJSON  json.RawMessage
+	EmbedDetailAvg sql.NullFloat64
 }
 
 // FaceReports returns clusters ordered by the number of samples they were built from.
@@ -181,11 +188,12 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 	stmt := fmt.Sprintf(`SELECT f.id, f.subj_uid, COALESCE(s.subj_name, '') AS subj_name, f.face_src, f.face_kind,
 		f.samples, f.sample_radius, f.collisions, f.collision_radius, f.matched_at,
 		f.embed_model, f.embedding_json,
-		COALESCE(n.markers, 0) AS markers
+		COALESCE(n.markers, 0) AS markers, n.embed_detail_avg
 		FROM %s f
 		LEFT JOIN %s s ON s.subj_uid = f.subj_uid
 		LEFT JOIN (
-			SELECT face_id, COUNT(*) AS markers FROM %s
+			SELECT face_id, COUNT(*) AS markers,
+				AVG(CASE WHEN embed_detail >= 1 THEN embed_detail END) AS embed_detail_avg FROM %s
 			WHERE %s
 			GROUP BY face_id
 		) n ON n.face_id = f.id
@@ -205,6 +213,11 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 	for i := range rows {
 		row := rows[i].FaceReport
 		row.EmbeddingDims = faceEmbeddingDims(rows[i].EmbeddingJSON)
+		row.EmbedDetail = -1
+
+		if rows[i].EmbedDetailAvg.Valid {
+			row.EmbedDetail = rows[i].EmbedDetailAvg.Float64
+		}
 		result = append(result, row)
 	}
 
@@ -254,6 +267,9 @@ type MarkerReport struct {
 	// ThumbSize is the extent in pixels of the image the embedding was sampled from, which says
 	// how much detail the vector rests on. Below 1 where it was never recorded.
 	ThumbSize int
+	// EmbedDetail is the share of the crop that extent supplied, which is what tells a vector drawn
+	// from real pixels from one interpolated up to the same size. Three-state, see the column.
+	EmbedDetail int
 
 	// EmbeddingDims is the vector width the marker holds, 0 when it holds none, and
 	// InvalidJSON when what is stored cannot be parsed.
@@ -289,7 +305,7 @@ type MarkerReportFilter struct {
 func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 	stmt := UnscopedDb().
 		Table(entity.Marker{}.TableName()).
-		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_src, marker_name, w, thumb_size, score, face_dist, marker_invalid, matched_at, embed_model, detect_model, embeddings_json, landmarks_json").
+		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_src, marker_name, w, thumb_size, embed_detail, score, face_dist, marker_invalid, matched_at, embed_model, detect_model, embeddings_json, landmarks_json").
 		Where("marker_type = ?", entity.MarkerFace)
 
 	if subjUID, nameLike := PersonFilter(f.Person); subjUID != "" {

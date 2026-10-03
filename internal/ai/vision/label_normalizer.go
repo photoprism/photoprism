@@ -231,7 +231,14 @@ func resolveLabelRaw(raw string) (string, canonicalLabel) {
 
 	// Callers read the thresholds from meta and ignore meta.Name, so a renaming rule
 	// can be applied here without renaming anything.
-	meta, _ := canonicalLabelFor(phrase)
+	meta, ok := canonicalLabelFor(phrase)
+
+	// A rule keyed on the singular governs the plural too, as it does in the other modes.
+	if !ok {
+		if singular := trimPlural(phrase); singular != phrase {
+			meta, _ = canonicalLabelFor(singular)
+		}
+	}
 
 	return phrase, meta
 }
@@ -343,7 +350,7 @@ func lookupExistingLabel(name string) (canonicalLabel, bool) {
 	return canonicalLabel{}, false
 }
 
-// canonicalLabelFor reads canonical names from classify.Rules (TensorFlow vocabulary).
+// canonicalLabelFor reads canonical names from the fixed classify.Rules vocabulary.
 func canonicalLabelFor(name string) (canonicalLabel, bool) {
 	ensureCanonicalLabels()
 

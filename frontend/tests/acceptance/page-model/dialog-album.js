@@ -6,7 +6,7 @@ export default class Page {
     this.dialogSave = Selector(".action-confirm", { timeout: 15000 });
     this.title = Selector(".input-title input", { timeout: 15000 });
     this.description = Selector(".input-description textarea", { timeout: 15000 });
-    this.category = Selector(".input-category input", { timeout: 15000 });
+    this.category = Selector(".input-category input:not([type='hidden'])", { timeout: 15000 });
     this.location = Selector(".input-location input", { timeout: 15000 });
     this.sortOrderSelect = Selector(".form-album-edit .v-select", { timeout: 15000 });
     this.sortOrderValue = Selector(".form-album-edit .v-select .v-field__input", { timeout: 15000 });

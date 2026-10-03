@@ -22,10 +22,10 @@ import (
 //	@Tags		Lenses
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	entity.Lens
-//	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		id				path		string		true	"Lens ID"
-//	@Param		lens			body		form.Lens	true	"Properties to be updated, only Make and Model supported"
+//	@Success	200					{object}	entity.Lens
+//	@Failure	401,403,404,413,429	{object}	i18n.Response
+//	@Param		id					path		string		true	"Lens ID"
+//	@Param		lens				body		form.Lens	true	"Properties to be updated, only Make and Model supported"
 //	@Router		/api/v1/lenses/{id} [put]
 func UpdateLens(router *gin.RouterGroup) {
 	router.PUT("/lenses/:id", func(c *gin.Context) {
@@ -42,6 +42,10 @@ func UpdateLens(router *gin.RouterGroup) {
 
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrLensNotFound)
+			return
+		} else if m.Unknown() {
+			// The placeholder for unknown lenses is shared by all pictures without lens information.
+			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
 			return
 		}
 

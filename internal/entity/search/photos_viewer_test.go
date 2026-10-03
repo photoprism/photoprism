@@ -73,6 +73,45 @@ func TestPhoto_ViewerResult(t *testing.T) {
 	assert.Equal(t, "/api/v1/dl/img-hash?t=download-token", result.DownloadUrl)
 }
 
+// TestPhoto_ViewerResult_FisheyeRaw checks that the frame, projection, and thumbnails agree.
+func TestPhoto_ViewerResult_FisheyeRaw(t *testing.T) {
+	photo := Photo{
+		PhotoUID:       rnd.GenerateUID(entity.PhotoUID),
+		PhotoType:      entity.MediaRaw,
+		PhotoPanorama:  true,
+		FileHash:       "primary-jpeg",
+		FileMime:       "image/jpeg",
+		FileCodec:      "jpeg",
+		FileWidth:      5760,
+		FileHeight:     2880,
+		FileProjection: "equirectangular",
+		FilePrimary:    true,
+		Files: []entity.File{
+			{MediaType: entity.MediaImage, FileHash: "primary-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: "equirectangular", FilePrimary: true},
+			{MediaType: entity.MediaRaw, FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: "dual-fisheye"},
+		},
+	}
+
+	result := photo.ViewerResult("/content", "/api/v1", "preview-token", "download-token")
+
+	assert.Equal(t, entity.MediaRaw, result.Type)
+	assert.True(t, result.Panorama)
+	assert.False(t, result.Playable)
+	assert.Equal(t, "equirectangular", result.Projection)
+	assert.Equal(t, 5760, result.Width)
+	assert.Equal(t, 2880, result.Height)
+	assert.Equal(t, float64(2), float64(result.Width)/float64(result.Height))
+	assert.Equal(t, "primary-jpeg", result.Hash)
+	assert.Equal(t, "jpeg", result.Codec)
+	assert.Equal(t, "image/jpeg", result.Mime)
+	if assert.NotNil(t, result.Thumbs) && assert.NotNil(t, result.Thumbs.Fit720) {
+		assert.Equal(t, 720, result.Thumbs.Fit720.W)
+		assert.Equal(t, 360, result.Thumbs.Fit720.H)
+		assert.Equal(t, "/content/t/primary-jpeg/preview-token/fit_720", result.Thumbs.Fit720.Src)
+	}
+	assert.Equal(t, "/api/v1/dl/primary-jpeg?t=download-token", result.DownloadUrl)
+}
+
 func TestPhotoResults_ViewerFormatting(t *testing.T) {
 	uid1 := rnd.GenerateUID(entity.PhotoUID)
 	uid2 := rnd.GenerateUID(entity.PhotoUID)

@@ -95,12 +95,20 @@ func TestUpdateClientConfig(t *testing.T) {
 	t.Run("OmitsTokensFromBroadcast", func(t *testing.T) {
 		_, _, conf := NewApiTest()
 
-		// Sanity-check that the un-redacted user config would carry
-		// non-empty tokens, so the assertion below proves the strip is
-		// the load-bearing control rather than an empty default.
+		// The base config carries no tokens of its own, as ClientSession is the only
+		// place a session token is assigned.
 		direct := conf.ClientUser(false)
-		require.NotEmpty(t, direct.PreviewToken)
-		require.NotEmpty(t, direct.DownloadToken)
+		require.Empty(t, direct.PreviewToken)
+		require.Empty(t, direct.DownloadToken)
+
+		// Prove the strip is still load-bearing rather than passing on an empty default: a config
+		// that does carry tokens must lose them before the broadcast.
+		seeded := conf.ClientUser(false)
+		seeded.PreviewToken = "preview-token"
+		seeded.DownloadToken = "download-token"
+		stripBroadcastTokens(seeded)
+		require.Empty(t, seeded.PreviewToken)
+		require.Empty(t, seeded.DownloadToken)
 
 		sub := event.Subscribe("config.updated")
 		defer event.Unsubscribe(sub)

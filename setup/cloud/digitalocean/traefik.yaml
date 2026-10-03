@@ -35,9 +35,19 @@ entryPoints:
   web:
     address: ":80"
     http:
+      # Drop request headers whose name holds a character other than a letter, digit or dash
+      # (default "keep"): CGI/WSGI/PHP/NGINX backends read "X_Auth_Token" and "X-Auth-Token" as
+      # one variable. See https://doc.traefik.io/traefik/security/header-aliases/
+      aliasHeadersStrategy: delete
       # Set every option explicitly: Traefik changed these defaults within the v3.6 patch
-      # series, so relying on them means the behaviour can change under you.
+      # series, so relying on them means the behavior can change under you.
       # See https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#encoded-characters
+      #
+      # A file name may legitimately contain a percent, hash, question mark, semicolon or
+      # backslash, and WebDAV and the download routes address files by name, so those are
+      # forwarded. An encoded slash is forwarded because clients send one and the application
+      # resolves it inside the library root itself. A null byte cannot occur in a file name on
+      # any supported filesystem, so it is the one that is refused here.
       encodedCharacters:
         allowEncodedSlash: true
         allowEncodedPercent: true
@@ -45,7 +55,7 @@ entryPoints:
         allowEncodedQuestionMark: true
         allowEncodedSemicolon: true
         allowEncodedBackSlash: true
-        allowEncodedNullCharacter: true
+        allowEncodedNullCharacter: false
       redirections:
         entryPoint:
           to: websecure
@@ -58,9 +68,19 @@ entryPoints:
   websecure:
     address: ":443"
     http:
+      # Drop request headers whose name holds a character other than a letter, digit or dash
+      # (default "keep"): CGI/WSGI/PHP/NGINX backends read "X_Auth_Token" and "X-Auth-Token" as
+      # one variable. See https://doc.traefik.io/traefik/security/header-aliases/
+      aliasHeadersStrategy: delete
       # Set every option explicitly: Traefik changed these defaults within the v3.6 patch
-      # series, so relying on them means the behaviour can change under you.
+      # series, so relying on them means the behavior can change under you.
       # See https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#encoded-characters
+      #
+      # A file name may legitimately contain a percent, hash, question mark, semicolon or
+      # backslash, and WebDAV and the download routes address files by name, so those are
+      # forwarded. An encoded slash is forwarded because clients send one and the application
+      # resolves it inside the library root itself. A null byte cannot occur in a file name on
+      # any supported filesystem, so it is the one that is refused here.
       encodedCharacters:
         allowEncodedSlash: true
         allowEncodedPercent: true
@@ -68,7 +88,7 @@ entryPoints:
         allowEncodedQuestionMark: true
         allowEncodedSemicolon: true
         allowEncodedBackSlash: true
-        allowEncodedNullCharacter: true
+        allowEncodedNullCharacter: false
     transport:
       respondingTimeouts:
         readTimeout: "3h"

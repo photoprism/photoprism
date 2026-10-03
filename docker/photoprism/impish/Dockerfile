@@ -39,8 +39,8 @@ ARG BUILD_TAG
 ENV DO_NOT_TRACK=true \
     ORT_DISABLE_TELEMETRY=1 \
     PHOTOPRISM_ARCH=$TARGETARCH \
+    PHOTOPRISM_CONTAINER="true" \
     DOCKER_TAG=$BUILD_TAG \
-    DOCKER_ENV="prod" \
     PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
@@ -78,7 +78,6 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_DISABLE_PLACES="false" \
     PHOTOPRISM_DISABLE_TENSORFLOW="false" \
     PHOTOPRISM_DISABLE_FACES="false" \
-    PHOTOPRISM_DISABLE_CLASSIFICATION="false" \
     PHOTOPRISM_RAW_PRESETS="false" \
     PHOTOPRISM_THUMB_UNCACHED="false" \
     PHOTOPRISM_AUTO_INDEX="300" \
@@ -86,7 +85,7 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_INIT="https"
 
 # Copy dist files and scripts.
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root /opt/photoprism/ /opt/photoprism
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 
 # Update base image and add dependencies.
@@ -119,7 +118,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     && \
     /scripts/install-darktable.sh && \
     /scripts/install-bashrc.sh && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    /scripts/install-sudoers.sh --image ce && \
     /scripts/install-dircolors.sh && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \

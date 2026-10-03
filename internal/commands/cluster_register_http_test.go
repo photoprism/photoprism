@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
@@ -105,7 +106,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 		w.WriteHeader(http.StatusCreated)
 		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
 			UUID:        clusterUUID,
-			ClusterCIDR: "192.0.2.0/24",
+			ClusterCIDR: "192.0.2.0/24, 2001:db8::/64",
 			JWKSUrl:     jwksURL,
 			Node: cluster.Node{
 				UUID:     nodeUUID,
@@ -118,7 +119,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 			},
 			Database: cluster.RegisterDatabase{
 				Driver:   dsn.DriverMySQL,
-				Host:     "database",
+				Host:     "fd00::10",
 				Port:     3306,
 				Name:     "pp_db",
 				User:     "pp_user",
@@ -151,11 +152,12 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 	assert.NoError(t, yaml.Unmarshal(optionsContent, &persisted))
 
 	assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
-	assert.Equal(t, "192.0.2.0/24", persisted["ClusterCIDR"])
+	assert.Equal(t, "192.0.2.0/24, 2001:db8::/64", persisted["ClusterCIDR"])
 	assert.Equal(t, nodeUUID, persisted["NodeUUID"])
 	assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
 	assert.Equal(t, jwksURL, persisted["JWKSUrl"])
 	assert.Equal(t, "pp_db", persisted["DatabaseName"])
+	assert.Equal(t, "[fd00::10]:3306", persisted["DatabaseServer"])
 	assert.Equal(t, "pp_user", persisted["DatabaseUser"])
 	assert.Equal(t, "pwd", persisted["DatabasePassword"])
 	_, hasInlineSecret := persisted["NodeClientSecret"]
@@ -328,6 +330,21 @@ func TestClusterNodesRotate_HTTPJson(t *testing.T) {
 	assert.Equal(t, "pp_db", parsed.Name)
 }
 
+// setClusterOptionsForTest points the shared config at a portal for one test and restores what
+// was there afterwards.
+func setClusterOptionsForTest(t *testing.T, portalUrl, clusterDomain string) {
+	t.Helper()
+
+	o := get.Config().Options()
+	prevUrl, prevDomain := o.PortalUrl, o.ClusterDomain
+
+	t.Cleanup(func() {
+		o.PortalUrl, o.ClusterDomain = prevUrl, prevDomain
+	})
+
+	o.PortalUrl, o.ClusterDomain = portalUrl, clusterDomain
+}
+
 func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/api/v1/cluster/nodes/register" {
@@ -483,9 +500,10 @@ func TestClusterRegister_HTTPConflict(t *testing.T) {
 }
 
 func TestClusterRegister_DryRun_JSON(t *testing.T) {
-	// No server needed; dry-run avoids HTTP
-	get.Config().Options().PortalUrl = cfg.DefaultPortalUrl
-	get.Config().Options().ClusterDomain = "cluster.dev"
+	// No server needed; dry-run avoids HTTP. The config is shared by the package, so the
+	// values are captured and put back: a portal URL left behind outranks the environment a
+	// later test sets, and that test then reaches this one's portal instead of its own server.
+	setClusterOptionsForTest(t, cfg.DefaultPortalUrl, "cluster.dev")
 	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
 		"register", "--dry-run", "--json",
 	})
@@ -776,4 +794,51 @@ func TestClusterRegister_RotateSecret_JSON(t *testing.T) {
 	assert.Equal(t, "pp-node-08", gjson.Get(out, "Node.Name").String())
 	assert.Equal(t, secret, gjson.Get(out, "Secrets.ClientSecret").String())
 	assert.Equal(t, "", gjson.Get(out, "Database.Password").String())
+}
+
+// TestClusterNodesRotate_Confirm verifies that a rotation asks for confirmation before it contacts the Portal,
+// and that the command exits with a usage error when it cannot ask.
+func TestClusterNodesRotate_Confirm(t *testing.T) {
+	var calls int
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer ts.Close()
+
+	SetEnvForTest(t, "PHOTOPRISM_PORTAL_URL", ts.URL)
+	SetEnvForTest(t, "PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		_, err := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--db", "pp-node-05"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Equal(t, 0, calls)
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		_, err := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--db", "pp-node-05"})
+
+		assert.NoError(t, err)
+		assert.Equal(t, 0, calls)
+	})
+}
+
+func TestWarnInsecurePublicURL(t *testing.T) {
+	for u, want := range map[string]bool{
+		"https://photos.example.com":    false,
+		"http://photos.example.com":     true,
+		"http://localhost:2342":         false,
+		"http://127.0.0.2:2342":         false,
+		"http://[::1]:2342":             false,
+		"http://[0:0:0:0:0:0:0:1]:2342": false,
+		"http://[2001:db8::1]:2342":     true,
+		"://bad":                        false,
+	} {
+		assert.Equal(t, want, warnInsecurePublicURL(u), u)
+	}
 }

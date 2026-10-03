@@ -1,22 +1,20 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // AuthRemoveCommand configures the command name, flags, and action.
 var AuthRemoveCommand = &cli.Command{
 	Name:      "rm",
-	Usage:     "Deletes a session by id or access token",
+	Usage:     "Deletes a session by the ID shown in auth ls or by access token",
 	ArgsUsage: "[identifier]",
+	Flags:     []cli.Flag{YesFlag()},
 	Action:    authRemoveAction,
 }
 
@@ -27,32 +25,29 @@ func authRemoveAction(ctx *cli.Context) error {
 
 		// ID provided?
 		if id == "" {
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
-		if RunNonInteractively(false) {
-			// proceed without prompt
-			if m, err := query.Session(id); err != nil {
-				return errors.New("session not found")
-			} else if err := m.Delete(); err != nil {
-				return err
-			} else {
-				log.Infof("session %s has been removed", clean.LogQuote(id))
-			}
-		} else {
-			actionPrompt := promptui.Prompt{Label: fmt.Sprintf("Remove session %s?", clean.LogQuote(id)), IsConfirm: true}
-			if _, err := actionPrompt.Run(); err == nil {
-				if m, err := query.Session(id); err != nil {
-					return errors.New("session not found")
-				} else if err := m.Delete(); err != nil {
-					return err
-				} else {
-					log.Infof("session %s has been removed", clean.LogQuote(id))
-				}
-			} else {
-				log.Infof("session %s was not removed", clean.LogQuote(id))
-			}
+		m, err := authFindSession(id)
+
+		if err != nil {
+			return err
 		}
+
+		label := authSessionLabel(m)
+
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Remove %s?", label)); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Infof("session %s was not removed", clean.Log(m.RefID))
+			return nil
+		}
+
+		if err = m.Delete(); err != nil {
+			return cli.Exit(err, 1)
+		}
+
+		log.Infof("%s has been removed", label)
 
 		return nil
 	})

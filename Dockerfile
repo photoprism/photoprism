@@ -1,5 +1,5 @@
 # Ubuntu 26.04 LTS (Resolute Raccoon)
-FROM photoprism/develop:260824-resolute
+FROM photoprism/develop:260921-resolute
 
 # Harden npm usage by default (applies to npm ci / install in dev container)
 ENV NPM_CONFIG_IGNORE_SCRIPTS=true
@@ -28,7 +28,15 @@ WORKDIR "${WORKING_DIR}"
 COPY . .
 
 # Update scripts in image.
-COPY --chown=root:root ./scripts/dist/ /scripts/
+COPY --chown=root:root --chmod=755 ./scripts/dist/ /scripts/
+
+# Record the image, which the scripts copied above read at startup. Stated here rather than
+# inherited, so that the copy does not install readers onto a base that predates the file.
+RUN printf 'DOCKER_ENV=develop\nDOCKER_IMG=develop\n' > /scripts/.env && chmod 0444 /scripts/.env
+
+# Normalize the mode of the installed scripts. This copy lands after the base image ran
+# "cleanup.sh", so it repeats what that script does at the end of every build.
+RUN chmod -R go-w /scripts
 
 # Re-install the dev "mariadb" client config so a custom MARIADB_PORT in .env
 # is honored even when the base image was built before the port=<n> line was

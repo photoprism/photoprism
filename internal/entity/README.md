@@ -1,10 +1,35 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** August 26, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
 `internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v1 (`github.com/jinzhu/gorm`) and are shared by the API, workers, and CLI.
+
+### Account & Session Caches
+
+`User.Save` evicts that account's cached sessions and WebDAV authentication entries after a successful database save. `FlushUserSessionCache` matches the user UID and leaves other users' entries and persisted credentials intact. `FlushSessionCache` clears both caches when a global refresh is required.
+
+WebDAV uses `CachedWebDAVUser` and `CacheWebDAVUser` for its one-minute credential cache. Authentication captures `CurrentAuthCacheGeneration` before loading the user or session, and insertion checks that generation under the same short mutex used by invalidation. A superseded result is not cached, but the request is not canceled. Per-user invalidation leaves other accounts' pending cache writes valid; a global flush invalidates every older snapshot and clears the per-user revision table. Account changes are therefore handled at the same persistence boundary as the general session cache. Sessions created or loaded through the entity helpers retain their generation so an in-flight object cannot repopulate the general cache after eviction. A raw untracked record may be cached only before its user is resolved. This is process-local invalidation; writes through another process or directly to the database do not signal a running server.
+
+A session read from or written to the database is only ever updated afterwards: `Session.Save` writes it through `Update`, and inserts only a session that was never stored. `Session.VerifyStored` confirms that a session's row still exists; app-password sign-in, the OAuth password and session grants, and `OIDCSessionEligible` call it before deriving a credential from a session, and a missing row evicts the session from the session and preview token caches.
+
+### Update & Save Helpers
+
+Prefer these helpers over hand-written GORM calls when a model is written as a whole:
+
+- `ModelValues(m, omit...)` returns the exported column values of a model as `Values`, keyed by field name and including zero values. It skips `CreatedAt`/`UpdatedAt`, relations, maps and other non-byte slices, but keeps byte slices such as `json.RawMessage` columns. Omitted fields are returned separately, which is how the key values reach `Update`.
+- `Update(m, keys...)` updates an existing row with every value from `ModelValues`, zero values included, and never inserts; GORM sets `updated_at`. When the update changes no row, it counts the rows matching the keys and returns an error unless exactly one exists, since MariaDB reports changed rather than matched rows.
+- `Save(m, keys...)` tries `Update` first and falls back to GORM's `Save`, which inserts a missing row.
+
+GORM's `Updates` with a struct skips zero values, so a field reset to its zero value is not written that way; pass a `Values` map or use `Update`. `Report()` output for users, clients, and sessions is built from `ModelValues`.
+
+### Label Count Refresh
+
+`UpdateLabelCounts` keeps each driver's counting query and updates the refresh timestamp only after
+success. Its MySQL write uses `RetryDeadlock`, shared with batch label edits: at most three attempts
+with bounded backoff for recognized database lock errors. Other errors return immediately. Retries
+apply to the individual write, not to the entire HTTP handler or its preceding operations.
 
 ### Timestamps
 
@@ -59,7 +84,7 @@ MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that 
 - Face and marker embeddings are the exception to "fixtures are literals": `GenerateFaceFixtureVectors` (in `face_fixtures_vectors.go`) generates them for the configured embedding model just before the rows are written, because a stored vector has one model's width and no usable provenance under any other. `faceFixtureSeeds` gives each fixture person a centroid, and `markerFixtureVectors` places each face marker at a fraction of the distance its cluster accepts, so the geometry survives both a change of model and a recalibration.
 - `List`-style global queries (`WHERE … <> ''` with no per-test scope) see everything the package has written: rows from other tests in the same package leak in, so a `len(list) == N` assertion that holds against a per-test SQLite file can fail on MariaDB, where the whole package shares one database.
 - **Sort order is collation-dependent.** `utf8mb4_unicode_ci` sorts case-insensitively and weights punctuation by Unicode rules, while SQLite compares byte values, so `ORDER BY` on a text column yields a different sequence. Give rows a deterministic tiebreaker, or assert per dialect (`entity.Db().Dialect().GetName()`).
-- **Generated IDs restart at 1.** `Tables.Truncate` issues `TRUNCATE` where supported, which resets `AUTO_INCREMENT`, so a fixture without an explicit ID gets the same value it would in a fresh database. Plain `DELETE` would not, and IDs would drift with every reset.
+- **Generated IDs restart at 1.** On MySQL/MariaDB, `Tables.Truncate` deletes the rows and then resets `AUTO_INCREMENT` on the tables that have such a column, so a default fixture without an explicit ID, such as `UnknownCamera` and `UnknownLens`, gets the same value it would in a fresh database. `TRUNCATE` would do the same, but it is a DDL statement and several times slower per reset. SQLite keeps its counters, so tests compare against `UnknownCamera.ID` and `UnknownLens.ID` rather than a literal `1`.
 
 ### Collation & Emoji
 
@@ -69,6 +94,8 @@ MariaDB's `utf8mb4_unicode_ci` assigns most emoji the **same collation weight**,
 - `VARBINARY` columns that stay byte-exact: `albums.album_slug`, `albums.album_filter`, `albums.album_path`, `photos.photo_path`, and every `*_uid`. A `utf8mb4` column compared against a `VARBINARY` column is byte-exact (the binary operand wins).
 
 Byte-exact also means **case-sensitive**, which is the one place `VARBINARY` bites on a search path: SQLite's `LIKE` folds ASCII case, so `album_slug LIKE 'Forrest%'` finds the `forrest` slug there but nothing on MariaDB. Slugs are always generated lowercase, so fold the pattern before comparing (`strings.ToLower`), as the album filter in `search.searchPhotos` does.
+
+A value bound to `LIKE` is still a pattern: escape it with `clean.SqlLike` and use a condition that declares the escape character (`clean.SqlLikeCond`, `clean.SqlLikeAny`). A path prefix check needs `clean.SqlPrefixCond` with `clean.SqlPrefixArgs`, which adds a byte-exact comparison, because an escaped `LIKE` still folds ASCII case on SQLite.
 
 The durable fix for an identity/path column is to make it `VARBINARY` — `album_path` is `VARBINARY(1024)` so it matches `photos.photo_path` and `album_path = ?` lookups are byte-exact at the database. Where a `utf8mb4` column must stay, keep the SQL but re-verify the match byte-exact in Go before accepting it (see `FindFolderAlbum` / `findFolderAlbumByPath`, whose Go re-check is retained as defense-in-depth even now that `album_path` is `VARBINARY`). For self-join SQL where a Go re-check is awkward, `HEX(col) = HEX(col)` compares byte-exact on both MariaDB and SQLite. Legacy folder slugs drop emoji entirely (`slug.Make("ins/🪞") == "ins"`) and long paths truncate to `ClipSlug` runes, so distinct folders can still collide on `album_slug`; folder albums are therefore deduplicated by `album_filter` (the byte-exact serialized path), not by slug (see `query.RemoveDuplicateMoments`).
 
@@ -81,3 +108,21 @@ An `ORDER BY` in such a statement needs a total order. A prefix that leaves ties
 ### VARBINARY Index Prefix Limit
 
 InnoDB caps an index key prefix at **767 bytes** on the `COMPACT`/`REDUNDANT` row formats, and only allows up to 3072 bytes on `DYNAMIC`/`COMPRESSED`. On a `VARBINARY` column the prefix is counted in **bytes** (on `utf8mb4` it is counted in characters, i.e. up to 4 bytes each), so converting a long text column to `VARBINARY` can push an existing prefix index over the limit on older or non-`DYNAMIC` installs. Keep prefix indexes on long `VARBINARY` path/filter columns at **≤ 767 bytes**; the project convention is **512** (`albums.album_filter(512)`, `albums.album_path(512)`). A prefix index only narrows candidate rows — the full-column comparison stays exact — so a shorter prefix costs nothing for correctness.
+
+### File Export Eligibility
+
+`File.Exportable` applies the YAML export policy after download admission and row visibility.
+YAML is recognized by its filename or recorded file type, including `.yml` and `.yaml`.
+An identified registered reader or client must have effective read permission on photos or
+files. Share-link visitors and unidentified downloads do not export YAML. Registered guests,
+Contributors, and files-only readers keep their existing eligible downloads. Other file
+formats are unchanged. `SelectedFilesForSession` uses the same decision for download selections as direct downloads;
+`SelectedFiles` remains unrestricted for internal workflows.
+
+### Ignored Transfers
+
+Excluded queued service shares use `FileShareIgnore`, with no retry error. Automatic sync
+uses `FileSyncIgnore`; upload dispositions have a per-FileID internal key under the reserved
+`.photoprism/sync` namespace so matching filenames in different roots cannot collide. These
+keys are state identifiers, never remote transfer destinations. Existing deduplication rules
+and retry handling for genuine transfer failures remain unchanged.

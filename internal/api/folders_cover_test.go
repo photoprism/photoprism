@@ -38,8 +38,7 @@ func TestGetFolderCover(t *testing.T) {
 	})
 	t.Run("LimitsSize", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().ThumbUncached = true
-		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestThumbUncached(t, true)
 		CreateTestFolderCover(t, "dqo63pn35k2d495z", "1990/Photo16.jpg")
 		FolderCover(router)
 		small := PerformRequest(app, "GET", "/api/v1/folders/t/dqo63pn35k2d495z/"+conf.PreviewToken()+"/fit_720")
@@ -51,8 +50,7 @@ func TestGetFolderCover(t *testing.T) {
 	t.Run("ServedInline", func(t *testing.T) {
 		// Cover responses are always inline.
 		app, router, conf := NewApiTest()
-		conf.Options().ThumbUncached = true
-		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestThumbUncached(t, true)
 		CreateTestFolderCover(t, "dqo63pn35k2d495z", "1990/Photo16.jpg")
 		FolderCover(router)
 		// Repeated so that the cache hit is covered as well as the render path.
@@ -72,8 +70,7 @@ func TestGetFolderCover(t *testing.T) {
 	})
 	t.Run("SizeExceedsLimit", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().ThumbUncached = true
-		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestThumbUncached(t, true)
 		original := CreateTestFolderCover(t, "dqo63pn35k2d495z", "1990/Photo16.jpg")
 		FolderCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/folders/t/dqo63pn35k2d495z/"+conf.PreviewToken()+"/fit_15360")

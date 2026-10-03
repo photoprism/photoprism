@@ -154,3 +154,43 @@ func TestUserShare_UpdateLink(t *testing.T) {
 		assert.Equal(t, "", m.Comment)
 	})
 }
+
+func TestUserShare_Expired(t *testing.T) {
+	t.Run("NoExpiry", func(t *testing.T) {
+		assert.False(t, (&UserShare{}).Expired())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var m *UserShare
+		assert.False(t, m.Expired())
+	})
+	t.Run("Future", func(t *testing.T) {
+		expires := Now().Add(time.Hour)
+		assert.False(t, (&UserShare{ExpiresAt: &expires}).Expired())
+	})
+	t.Run("Past", func(t *testing.T) {
+		expires := Now().Add(-time.Hour)
+		assert.True(t, (&UserShare{ExpiresAt: &expires}).Expired())
+	})
+}
+
+func TestUserShare_IssuedBy(t *testing.T) {
+	link := Link{LinkUID: "ss62xpryd1ob7gtf", ShareUID: "as6sg6bxpogaaba8"}
+
+	t.Run("SameLink", func(t *testing.T) {
+		assert.True(t, (&UserShare{LinkUID: link.LinkUID}).IssuedBy(link))
+	})
+	t.Run("OtherLink", func(t *testing.T) {
+		assert.False(t, (&UserShare{LinkUID: "ss62xpryd1ob8gtf"}).IssuedBy(link))
+	})
+	t.Run("NoLink", func(t *testing.T) {
+		assert.False(t, (&UserShare{}).IssuedBy(link))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var m *UserShare
+		assert.False(t, m.IssuedBy(link))
+	})
+	t.Run("Lapsed", func(t *testing.T) {
+		expires := Now().Add(-time.Hour)
+		assert.False(t, (&UserShare{LinkUID: link.LinkUID, ExpiresAt: &expires}).IssuedBy(link))
+	})
+}

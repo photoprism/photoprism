@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -65,29 +64,27 @@ func videoRemuxAction(ctx *cli.Context) error {
 			}
 		}
 
-		if !ctx.Bool("dry-run") && !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Remux %d video files?", len(plans)),
-				IsConfirm: true,
-			}
-			if _, err = prompt.Run(); err != nil {
+		if !ctx.Bool("dry-run") && len(plans) > 0 {
+			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Remux %d video files", len(plans))); confirmErr != nil {
+				return confirmErr
+			} else if !proceed {
 				log.Info("remux: canceled")
 				return nil
 			}
 		}
 
-		var processed, failed int
+		var planned, processed, failed int
 		convert := get.Convert()
 
 		for _, plan := range plans {
 			if ctx.Bool("dry-run") {
 				log.Infof("remux: would remux %s to %s", clean.Log(plan.SrcPath), clean.Log(plan.DestPath))
-				skipped++
+				planned++
 				continue
 			}
 
-			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name), true); err != nil {
-				log.Errorf("remux: %s", clean.Error(err))
+			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name)); err != nil {
+				log.Errorf("remux: %s", clean.ErrorFull(err))
 				failed++
 				continue
 			}
@@ -95,12 +92,7 @@ func videoRemuxAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof(
-			"remux: processed %s, skipped %s, %s",
-			formatCount(processed, "file", "files"),
-			formatCount(skipped, "file", "files"),
-			formatFailedCount(failed, "file", "files"),
-		)
+		log.Info(formatVideoSummary("remux", ctx.Bool("dry-run"), planned, processed, skipped, failed))
 
 		if failed > 0 {
 			return fmt.Errorf("remux: %s", formatFailedCount(failed, "file", "files"))
@@ -124,6 +116,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 	plans := make([]videoRemuxPlan, 0, len(results))
 	preflight := make([]videoOutputPlan, 0, len(results))
 	skipped := 0
+	inputs := make([]string, 0, len(results))
 
 	for _, found := range results {
 		videoFile, ok := videoPrimaryFile(found)
@@ -131,6 +124,13 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			log.Warnf("remux: missing video file for %s", clean.Log(found.PhotoUID))
 			skipped++
 			continue
+		}
+
+		srcPath := photoprism.ConfigFileName(conf, videoFile.FileRoot, videoFile.FileName)
+		sourceExists := fs.FileExistsNotEmpty(srcPath)
+
+		if sourceExists {
+			inputs = append(inputs, srcPath)
 		}
 
 		if videoFile.FileSidecar {
@@ -145,8 +145,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			continue
 		}
 
-		srcPath := photoprism.FileName(videoFile.FileRoot, videoFile.FileName)
-		if !fs.FileExistsNotEmpty(srcPath) {
+		if !sourceExists {
 			log.Warnf("remux: missing file %s", clean.Log(srcPath))
 			skipped++
 			continue
@@ -201,16 +200,26 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 		})
 	}
 
+	if err := videoValidateRemuxPlans(plans, inputs); err != nil {
+		return nil, nil, skipped, err
+	}
+
 	return plans, preflight, skipped, nil
 }
 
 // videoRemuxFile runs ffmpeg remuxing and refreshes previews/thumbnails before reindexing.
-func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan videoRemuxPlan, force, noBackup bool) error {
-	tempDir := filepath.Dir(plan.DestPath)
-	tempPath, err := videoTempPath(tempDir, ".remux-*.mp4")
+func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan videoRemuxPlan, force bool) error {
+	tempPath, err := videoCreateStageFile(plan.DestPath, videoCreatesSidecarDir(conf, plan.Sidecar))
 	if err != nil {
 		return err
 	}
+
+	published := false
+	defer func() {
+		if !published {
+			_ = os.Remove(tempPath)
+		}
+	}()
 
 	opt := encode.NewRemuxOptions(conf.FFmpegBin(), fs.VideoMp4, true)
 	opt.Force = true
@@ -224,59 +233,27 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 	}
 
 	if !fs.FileExistsNotEmpty(tempPath) {
-		_ = os.Remove(tempPath)
 		return fmt.Errorf("remux output missing for %s", clean.Log(plan.SrcPath))
 	}
 
-	if err = os.Chmod(tempPath, fs.ModeFile); err != nil {
+	if err = videoPreserveMode(tempPath, plan.DestPath); err != nil {
 		return err
 	}
 
-	if plan.Sidecar {
-		if fs.FileExists(plan.DestPath) && !force {
-			_ = os.Remove(tempPath)
-			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
-		}
+	// An existing output is replaced atomically, and only with force unless it is the source itself.
+	replace := force || !plan.Sidecar && plan.DestPath == plan.SrcPath
 
-		if fs.FileExists(plan.DestPath) {
-			_ = os.Remove(plan.DestPath)
-		}
-
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			_ = os.Remove(tempPath)
-			return err
-		}
-	} else {
-		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) && !force {
-			_ = os.Remove(tempPath)
-			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
-		}
-
-		if noBackup {
-			if plan.DestPath != plan.SrcPath {
-				_ = os.Remove(plan.DestPath)
-			}
-		} else {
-			backupPath := plan.SrcPath + ".backup"
-			if fs.FileExists(backupPath) {
-				_ = os.Remove(backupPath)
-			}
-			if err = os.Rename(plan.SrcPath, backupPath); err != nil {
-				_ = os.Remove(tempPath)
-				return err
-			}
-			_ = os.Chmod(backupPath, fs.ModeBackupFile)
-		}
-
-		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) {
-			_ = os.Remove(plan.DestPath)
-		}
-
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			_ = os.Remove(tempPath)
-			return err
-		}
+	if !replace && fs.FileExists(plan.DestPath) {
+		return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
+	} else if plan.DestPath != plan.SrcPath && fs.IsSymlink(plan.DestPath) {
+		return fmt.Errorf("output %s is a symbolic link", clean.Log(plan.DestPath))
 	}
+
+	if err = fs.PublishFile(tempPath, plan.DestPath, replace); err != nil {
+		return err
+	}
+
+	published = true
 
 	mediaFile, err := photoprism.NewMediaFile(plan.DestPath)
 	if err != nil {
@@ -285,10 +262,10 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 
 	if convert != nil {
 		if img, imgErr := convert.ToImage(mediaFile, true); imgErr != nil {
-			log.Warnf("remux: %s", clean.Error(imgErr))
+			log.Warnf("remux: %s", clean.ErrorFull(imgErr))
 		} else if img != nil {
 			if thumbsErr := img.GenerateThumbnails(conf.ThumbCachePath(), true); thumbsErr != nil {
-				log.Warnf("remux: %s", clean.Error(thumbsErr))
+				log.Warnf("remux: %s", clean.ErrorFull(thumbsErr))
 			}
 		}
 	}

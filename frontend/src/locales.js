@@ -1,5 +1,6 @@
 import { $config } from "app/session";
 import { $gettext, T } from "common/gettext";
+import { en as vuetifyEn } from "vuetify/locale";
 
 // Returns the id and messages of the current locale.
 export const Locale = () => {
@@ -202,9 +203,19 @@ export let Options = [
   },
 ];
 
-// Returns the Vuetify UI messages translated with Gettext.
+// mergeMessages returns a copy of base with the values of messages applied on top.
+const mergeMessages = (base, messages) => {
+  const result = { ...base };
+  for (const [key, value] of Object.entries(messages)) {
+    result[key] = value && typeof value === "object" ? mergeMessages(base[key] || {}, value) : value;
+  }
+  return result;
+};
+
+// Returns the Vuetify UI messages: translated with Gettext where the UI uses them, Vuetify's English text otherwise.
+// Add the keys of a Vuetify component here before using it, so its labels are translated.
 export const Messages = ($gettext) => {
-  return {
+  return mergeMessages(vuetifyEn, {
     badge: $gettext("Badge"),
     open: $gettext("Open"),
     close: $gettext("Close"),
@@ -219,7 +230,6 @@ export const Messages = ($gettext) => {
     },
     dataTable: {
       itemsPerPageText: $gettext("Rows per page:"),
-      itemsPerPageAll: $gettext("All"),
       ariaLabel: {
         sortDescending: $gettext("Sorted descending."),
         sortAscending: $gettext("Sorted ascending."),
@@ -227,6 +237,9 @@ export const Messages = ($gettext) => {
         activateNone: $gettext("Activate to remove sorting."),
         activateDescending: $gettext("Activate to sort descending."),
         activateAscending: $gettext("Activate to sort ascending."),
+        selectRow: $gettext("Select row"),
+        selectAll: $gettext("Select all"),
+        selectGroup: $gettext("Select group"),
       },
       sortBy: $gettext("Sort by"),
     },
@@ -253,6 +266,16 @@ export const Messages = ($gettext) => {
       input: {
         placeholder: $gettext("Enter date"),
       },
+      ariaLabel: {
+        previousMonth: $gettext("Previous month"),
+        nextMonth: $gettext("Next month"),
+        selectYear: $gettext("Select year"),
+        previousYear: $gettext("Previous year"),
+        nextYear: $gettext("Next year"),
+        selectMonth: $gettext("Select month"),
+        selectDate: "{0}",
+        currentDate: $gettext("Today, {0}"),
+      },
     },
     noDataText: $gettext("No data available"),
     carousel: {
@@ -270,7 +293,7 @@ export const Messages = ($gettext) => {
       clear: $gettext("Clear {0}"),
       prependAction: $gettext("{0} prepended action"),
       appendAction: $gettext("{0} appended action"),
-      otp: $gettext("Please enter OTP character {0}"),
+      otp: $gettext("Enter verification code"),
     },
     fileInput: {
       counter: $gettext("{0} files"),
@@ -311,7 +334,7 @@ export const Messages = ($gettext) => {
       loadMore: $gettext("Load more"),
       empty: $gettext("No more"),
     },
-  };
+  });
 };
 
 // Extra UI translation messages.

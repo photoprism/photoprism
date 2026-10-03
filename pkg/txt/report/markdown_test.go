@@ -32,8 +32,8 @@ func TestRenderFormatOptionsAlignMarkdown(t *testing.T) {
 	out, err := RenderFormatOptions(rows, cols, Markdown, Options{Align: []Align{AlignDefault, AlignRight}})
 	assert.NoError(t, err)
 
-	// Markdown carries alignment in the delimiter row, and the renderer resolves it from the header
-	// rather than the body - so setting it on the rows alone reaches the output nowhere.
+	// Markdown carries alignment in the delimiter row, which the renderer resolves from the first
+	// body row - the same per-column alignment is set on the header and the rows, so both agree.
 	assert.Contains(t, out, "---:", "a right-aligned column has to mark the delimiter row")
 	assert.NotContains(t, out, ":----------:", "nothing here asked to be centered")
 }

@@ -20,13 +20,13 @@ func TestUsersModCommand(t *testing.T) {
 		assert.Empty(t, output)
 	})
 	t.Run("ModDeletedUser", func(t *testing.T) {
-		// Run command with test context.
-		output, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=New", "--email=new@test.de", "deleted"})
+		t.Setenv("PHOTOPRISM_CLI", "")
 
-		// Check command output for plausibility.
-		// t.Logf(output)
-		assert.Error(t, err)
-		assert.Empty(t, output)
+		// Restoring the deleted account needs a confirmation, which cannot be asked without a terminal.
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=New", "--email=new@test.de", "deleted"})
+
+		assert.Equal(t, 1, ExitCode(err))
+		assert.True(t, entity.FindUserByName("deleted").IsDeleted())
 	})
 	t.Run("AdoptOidcIdentityWithIssuer", func(t *testing.T) {
 		// Create a fresh local account, then adopt it into an OIDC identity with a
@@ -60,5 +60,72 @@ func TestUsersModCommand(t *testing.T) {
 			assert.Equal(t, "Alice", alice.DisplayName)
 			assert.Equal(t, "admin", alice.UserRole)
 		}
+	})
+}
+
+func TestUsersModCommand_Restore(t *testing.T) {
+	requireTestDb(t)
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		newDeletedTestUser(t, "restoremodtty")
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=Changed", "restoremodtty"})
+
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "--restore")
+		assert.True(t, entity.FindUserByName("restoremodtty").IsDeleted())
+	})
+	t.Run("NonInteractiveEnv", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+		newDeletedTestUser(t, "restoremodenv")
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=Changed", "restoremodenv"})
+
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "--restore")
+		assert.True(t, entity.FindUserByName("restoremodenv").IsDeleted())
+	})
+	t.Run("Declined", func(t *testing.T) {
+		newDeletedTestUser(t, "restoremodno")
+		pipeResetAnswers(t, "n\n")
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=Changed", "restoremodno"})
+
+		assert.EqualError(t, err, "user already exists")
+
+		m := entity.FindUserByName("restoremodno")
+		assert.True(t, m.IsDeleted())
+		assert.NotEqual(t, "Changed", m.DisplayName)
+	})
+	t.Run("Confirmed", func(t *testing.T) {
+		newDeletedTestUser(t, "restoremodyes")
+		pipeResetAnswers(t, "y\n")
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=Changed", "restoremodyes"})
+
+		assert.NoError(t, err)
+
+		m := entity.FindUserByName("restoremodyes")
+		assert.False(t, m.IsDeleted())
+		assert.Equal(t, "Changed", m.DisplayName)
+	})
+	t.Run("YesDoesNotRestore", func(t *testing.T) {
+		newDeletedTestUser(t, "restoremodyes2")
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--yes", "--name=Changed", "restoremodyes2"})
+
+		assert.Error(t, err)
+		assert.True(t, entity.FindUserByName("restoremodyes2").IsDeleted())
+	})
+	t.Run("RestoreFlag", func(t *testing.T) {
+		newDeletedTestUser(t, "restoremodflag")
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--restore", "--name=Changed", "restoremodflag"})
+
+		assert.NoError(t, err)
+		assert.False(t, entity.FindUserByName("restoremodflag").IsDeleted())
 	})
 }

@@ -63,14 +63,15 @@ func GetSession(router *gin.RouterGroup) {
 		// Get auth token from headers.
 		authToken := AuthToken(c)
 
+		// Update user information. This precedes the cookie refresh below, which admits
+		// the session by its account state, so the poll reads the current record.
+		s.RefreshUser()
+
 		// On the Portal (OIDC OP), refresh the narrowly-scoped session cookie so the
 		// short-lived signed session reference stays available to /api/v1/oauth/authorize.
 		if conf.Portal() && authToken != "" {
 			SetOIDCSessionCookie(c, s, OIDCSessionCookiePath(conf), conf.SiteHttps())
 		}
-
-		// Update user information.
-		s.RefreshUser()
 
 		// Response includes user data, session data, and client config values.
 		response := GetSessionResponse(authToken, s, get.Config().ClientSession(s))

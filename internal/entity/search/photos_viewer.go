@@ -19,7 +19,7 @@ func PhotosViewerResults(frm form.SearchPhotos, contentUri, apiUri, previewToken
 // permissions encoded in the session (for example shared albums and private
 // visibility) before returning viewer-formatted results.
 func UserPhotosViewerResults(frm form.SearchPhotos, sess *entity.Session, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
-	if results, count, err := searchPhotos(frm, sess, PhotosColsView); err != nil {
+	if results, count, err := searchPhotos(frm, sess, PhotosColsView, false); err != nil {
 		return viewer.Results{}, count, err
 	} else {
 		return results.ViewerResults(contentUri, apiUri, previewToken, downloadToken), count, err

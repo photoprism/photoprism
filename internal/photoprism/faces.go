@@ -124,10 +124,15 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 // order and each consumes what an earlier one produced, so a pass that moved something leaves work
 // for the next: the clusters it adds are created after collisions and merges were evaluated.
 type facesRunResult struct {
-	Subjects   int
-	Resolved   int
-	Merged     int
-	Added      int
+	Subjects int
+	Resolved int
+	Merged   int
+	Added    int
+	// Retried counts the clusters the second pass at face-cluster-core-retry added, apart from
+	// Added, since an operator reading one combined number cannot tell whether it did anything.
+	Retried int
+	// Named counts the clusters named after the person their recognized faces agree on.
+	Named      int
 	Updated    int
 	Assigned   int
 	Recognized int
@@ -141,7 +146,7 @@ type facesRunResult struct {
 func (r facesRunResult) Moved() bool {
 	matches := FacesMatchResult{Updated: int64(r.Updated), Assigned: int64(r.Assigned)}
 
-	return r.Subjects > 0 || r.Resolved > 0 || r.Merged > 0 || r.Added > 0 || matches.MovedSubjects()
+	return r.Subjects > 0 || r.Resolved > 0 || r.Merged > 0 || r.Added > 0 || r.Retried > 0 || r.Named > 0 || matches.MovedSubjects()
 }
 
 // start performs face clustering and matching while the caller holds the faces worker lock.
@@ -197,13 +202,25 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 
 	// Create known marker subjects if needed.
 	start = time.Now()
-	if affected, err := query.CreateMarkerSubjects(); err != nil {
-		log.Errorf("markers: %s (create subjects)", err)
-	} else if affected > 0 {
+	// Counts reached before an error are kept, so what was linked still refreshes counts and covers.
+	subjects, linked, subjErr := query.CreateMarkerSubjects()
+
+	if subjErr != nil {
+		log.Errorf("markers: %s (create subjects)", subjErr)
+	}
+
+	if subjects+linked > 0 {
 		changed = true
-		result.Subjects = int(affected)
-		log.Infof("markers: added %d known subjects [%s]", affected, time.Since(start))
-	} else {
+		result.Subjects = int(subjects + linked)
+
+		if subjects > 0 {
+			log.Infof("markers: resolved %s [%s]", english.Plural(int(subjects), "name to a person", "names to people"), time.Since(start))
+		}
+
+		if linked > 0 {
+			log.Infof("markers: linked %s to existing people [%s]", english.Plural(int(linked), "marker", "markers"), time.Since(start))
+		}
+	} else if subjErr == nil {
 		log.Debugf("markers: found no missing subjects [%s]", time.Since(start))
 	}
 
@@ -232,11 +249,12 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 	}
 
 	var added entity.Faces
+	var clustered bool
 
 	// Cluster existing face embeddings. A new cluster carries no person, so it is deliberately
 	// not counted as a change: the matching below is what assigns one, and reports it.
 	start = time.Now()
-	if added, err = w.Cluster(opt); err != nil {
+	if added, clustered, err = w.cluster(opt, face.ClusterCore, false); err != nil {
 		log.Errorf("faces: %s (cluster)", err)
 	} else if n := len(added); n > 0 {
 		result.Added = n
@@ -247,10 +265,13 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 
 	// Match markers with faces and subjects.
 	start = time.Now()
-	matches, err := w.Match(opt)
+	matches, matchErr := w.Match(opt)
 
-	if err != nil {
-		log.Errorf("faces: %s (match)", err)
+	// matched records whether every matching step of this run finished.
+	matched := matchErr == nil
+
+	if matchErr != nil {
+		log.Errorf("faces: %s (match)", matchErr)
 	}
 
 	result.Updated = int(matches.Updated)
@@ -264,6 +285,65 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 		log.Infof("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
 	} else {
 		log.Debugf("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
+	}
+
+	// Cluster what matching left over, at a lower core.
+	//
+	// After matching rather than beside the pass above, because clustering reads only markers with
+	// no face_id: once matching has attached what it could, this sees exactly the residue. The
+	// clusters it forms hold no markers until something matches them, and DeleteOrphanFaces below
+	// removes a cluster no marker points at - so a second matching pass is what makes them real,
+	// and it runs only when this one formed something.
+	//
+	// Gated on the first pass having run rather than on what it found: the trigger it evaluated
+	// asks whether this wake is worth a pass at all, and asking it again here would answer no
+	// wherever the first pass created a cluster, since that is what the count is measured against.
+	//
+	// And gated on matching having finished. A pass that stopped early - a database fault, or the
+	// worker being canceled - leaves markers unattached that it would have attached, and this pass
+	// would cluster exactly those, at a lower core, and stamp them matched. That survives the run
+	// that caused it, so a transient fault would become a durable mis-clustering.
+	if core := w.conf.FaceClusterCoreRetry(); core > 0 && clustered && matchErr == nil {
+		start = time.Now()
+
+		if retried, retryErr := w.ClusterRetry(core); retryErr != nil {
+			log.Errorf("faces: %s (cluster retry)", retryErr)
+		} else if n := len(retried); n > 0 {
+			result.Retried = n
+			log.Infof("faces: added %d new faces at a core of %d [%s]", n, core, time.Since(start))
+
+			start = time.Now()
+
+			// Only the new clusters, rather than a second full matching pass: nothing else in the
+			// library changed, and they are the only candidates the residue has not been compared
+			// with already.
+			if retryMatches, retryMatchErr := w.MatchNewClusters(retried); retryMatchErr != nil {
+				matched = false
+				log.Errorf("faces: %s (match retry)", retryMatchErr)
+			} else {
+				// Not Assigned: only query.MatchFaceMarkers writes it, which propagates a subject
+				// from an already-named cluster and which this pass does not run. A retry cluster
+				// that acquires one therefore propagates it on the next run rather than this one.
+				result.Updated += int(retryMatches.Updated)
+				result.Recognized += int(retryMatches.Recognized)
+
+				if retryMatches.MovedSubjects() {
+					changed = true
+				}
+
+				log.Infof("faces: updated %s from the retry pass [%s]",
+					english.Plural(int(retryMatches.Updated), "marker", "markers"), time.Since(start))
+			}
+		} else {
+			log.Debugf("faces: found no new faces at a core of %d [%s]", core, time.Since(start))
+		}
+	}
+
+	// Name the clusters whose recognized faces agree on one person. Gated on matching like the retry
+	// pass, since a run that stopped early leaves markers where it would not have left them.
+	if named := w.nameByConsensus(matched); named > 0 {
+		changed = true
+		result.Named = named
 	}
 
 	// Remove unused people.

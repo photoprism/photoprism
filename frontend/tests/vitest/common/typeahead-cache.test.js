@@ -3,6 +3,7 @@ import Album from "model/album";
 import Label from "model/label";
 import Subject from "model/subject";
 import $event from "common/event";
+import Session from "common/session";
 import { typeaheadCache, CAP, SelfEchoTtl, EchoGraceMs } from "common/typeahead-cache";
 
 // People events evict after a short grace period, so tests that publish one must
@@ -623,6 +624,8 @@ describe("typeaheadCache.evict / clear", () => {
   });
 
   it("session.logout clears all lists", async () => {
+    // The live session also handles the event; its delayed login redirect must not outlive the test file.
+    const redirectSpy = vi.spyOn(Session.prototype, "followRedirect").mockImplementation(() => {});
     const labelSpy = vi
       .spyOn(Label, "search")
       .mockResolvedValueOnce({ models: [{ Name: "L1", UID: "1" }] })
@@ -647,6 +650,7 @@ describe("typeaheadCache.evict / clear", () => {
     expect(labelSpy).toHaveBeenCalledTimes(2);
     expect(albumSpy).toHaveBeenCalledTimes(2);
     expect(personSpy).toHaveBeenCalledTimes(2);
+    expect(redirectSpy).toHaveBeenCalled();
   });
 });
 

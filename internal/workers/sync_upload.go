@@ -1,7 +1,9 @@
 package workers
 
 import (
+	"errors"
 	"path"
+	"strconv"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -11,10 +13,16 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Uploads local files to a remote account
+// upload transfers eligible local files to a remote account.
 func (w *Sync) upload(a entity.Service) (complete bool, err error) {
+	if webdav.SkipSyncPath(a.SyncPath) {
+		log.Tracef("sync: skipping excluded path %s for service %s (upload)", clean.Log(a.SyncPath), clean.Log(a.AccName))
+		return true, nil
+	}
+
 	maxResults := 250
 
 	// Get upload file list from database
@@ -36,9 +44,26 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		return false, err
 	}
 
+	// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
+	var yamlRefused, otherRefused bool
+
 	for _, file := range files {
 		if mutex.SyncWorker.Canceled() {
 			return false, nil
+		}
+
+		if webdav.SkipSyncPath(file.FileName) {
+			log.Debugf("sync: skipping excluded path %s", clean.Log(file.FileName))
+			ignored := entity.NewFileSync(a.ID, path.Join(fs.PPHiddenPathname, "sync", strconv.FormatUint(uint64(file.ID), 10)))
+			ignored.FileID, ignored.Status = file.ID, entity.FileSyncIgnore
+			w.logErr(entity.Db().Save(ignored).Error)
+			continue
+		}
+
+		yamlFile := fs.Type(file.FileType) == fs.SidecarYaml
+
+		if yamlFile && (!a.SyncYamlEnabled() || yamlRefused) {
+			continue
 		}
 
 		fileName := photoprism.FileName(file.FileRoot, file.FileName)
@@ -50,7 +75,11 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			log.Debugf("sync: %s", err)
 		}
 
-		if err = client.Upload(fileName, remoteName); err != nil {
+		if err = client.Upload(fileName, remoteName); errors.Is(err, webdav.ErrForbidden) {
+			yamlRefused, otherRefused = yamlRefused || yamlFile, otherRefused || !yamlFile
+			w.logErr(err)
+			continue
+		} else if err != nil {
 			w.logErr(err)
 			continue // try again next time
 		}
@@ -70,6 +99,11 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		}
 
 		w.logErr(entity.Db().Save(&fileSync).Error)
+	}
+
+	if yamlRefused && !otherRefused {
+		log.Warnf("sync: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
+		w.logErr(a.Update("SyncYaml", -1))
 	}
 
 	return false, nil

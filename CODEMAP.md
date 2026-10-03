@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** September 1, 2026
+**Last Updated:** October 1, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -10,7 +10,7 @@ Quick Start
 - Inside dev container (recommended):
   - Install deps: `make dep`
   - Build backend: `make build-go`
-  - Lint Go (golangci-lint): `make lint-go` (uses `.golangci.yml`; prints findings without failing) or run both stacks with `make lint`
+  - Lint Go (golangci-lint): `make lint-go` (uses `.golangci.yml`; prints findings without failing) or run every lint and repository check with `make lint`
   - Run server: `./photoprism start`
   - Open: http://localhost:2342/ or https://app.localssl.dev/ (Traefik required)
 - On host (manages Docker):
@@ -38,7 +38,9 @@ High-Level Package Map (Go)
   - Label lookup helpers now live in `internal/entity/label*.go`; reuse `FindLabels(...)`, `FindLabelIDs(...)`, and `LabelSlugs(...)` for homophone-aware exact-name/slug resolution instead of duplicating slug SQL in callers.
 - `internal/photoprism` — core domain logic (indexing, import, faces, thumbnails, cleanup)
 - `internal/ai/vision` — multi-engine computer vision pipeline (models, adapters, schema). Adapter docs: [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md) and [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md).
-- `internal/ai/onnx` — shared ONNX model description: artifact identity and checksum, graph inspection and verification, preprocessing contract, runtime loading. Consumed today by `internal/ai/face`. See [`internal/ai/onnx/README.md`](internal/ai/onnx/README.md).
+- `internal/ai/classify` — fixed-taxonomy ONNX image labeling, model registry, embedded vocabulary, and preprocessing. See [`internal/ai/classify/README.md`](internal/ai/classify/README.md).
+- `internal/ai/nsfw` — local ONNX offensive-content detection, calibrated model registry, and safe/unsafe/unavailable results. See [`internal/ai/nsfw/README.md`](internal/ai/nsfw/README.md).
+- `internal/ai/onnx` — shared ONNX model description and session construction: artifact identity and checksum, graph inspection and verification, preprocessing contract, runtime loading, and execution-provider selection. Consumed by `internal/ai/face`, `internal/ai/classify`, and `internal/ai/nsfw`. See [`internal/ai/onnx/README.md`](internal/ai/onnx/README.md).
 - `internal/ai/face` — face detection and embedding: the detector registry selected by `FACE_DETECTOR`, the embedding-model registry selected by `FACE_MODEL`, landmark alignment, and distance thresholds. See [`internal/ai/face/README.md`](internal/ai/face/README.md).
 - `internal/workers` — background schedulers (index, vision, sync, meta, backup)
 - `internal/auth` — ACL, sessions, OIDC
@@ -122,7 +124,7 @@ Media Processing
 - Thumbnails: `internal/thumb/*` and helpers in `internal/photoprism/mediafile_thumbs.go`.
 - Metadata: `internal/meta/*`.
 - FFmpeg integration: `internal/ffmpeg/*`.
-- 360° originals (Insta360 `.insp`/`.insv`, fisheye DNG): recognized in `pkg/fs/file_types.go` and `pkg/media/insta360.go`, with the projection vocabulary in `pkg/media/projection`. Detection and capture grouping live in `internal/photoprism/mediafile_insta360.go` / `mediafile_projection.go`; `internal/ffmpeg/v360.go` builds the dewarp commands that `convert_image*.go` and `convert_video_avc.go` run, always writing a derivative and never touching the original. Only the equirectangular derivative is reported to the viewer (`sphereProjection` in `internal/entity/search/photos_results.go`); `fisheye:` finds the originals behind it.
+- 360° originals (Insta360 `.insp`/`.insv` and `.lrv` proxies, fisheye DNG): recognized in `pkg/fs/file_types.go` and `pkg/media/insta360.go`, with the projection vocabulary in `pkg/media/projection`. Detection and capture grouping live in `internal/photoprism/mediafile_insta360.go` / `mediafile_projection.go`, and `fs.StackPrefix` (`pkg/fs/stack.go`) gives all files of a capture the `_00` stack name; `internal/ffmpeg/v360.go` builds the dewarp commands that `convert_image*.go` and `convert_video_avc.go` run, always writing a derivative and never touching the original. Only the equirectangular derivative is reported to the viewer (`sphereProjection` in `internal/entity/search/photos_results.go`); `fisheye:` finds the originals behind it.
 - HEIF tooling: distribution binaries live under `scripts/dist/install-libheif.sh`; regenerate archives with `make build-libheif-*` (wraps `scripts/dist/build-libheif.sh` for each supported distro/arch) before publishing to `dl.photoprism.app/dist/libheif/`.
 - Folder album consistency:
   - `internal/entity/folder.go` keeps `FindFolder(...)` unscoped for create/index conflict handling, so a soft-deleted row cannot cause repeated insert/fail/not-found loops.
@@ -181,7 +183,7 @@ Common How‑Tos
   - Tests: run against SQLite by default; for MySQL cases, gate appropriately
 
 Testing
-- Full suite: `make test` (frontend + backend). Backend only: `make test-go`.
+- Full suite: `make test` (frontend + backend). Backend only: `make test-go`. `make test-short` skips tests that run the indexer or importer on fixture media.
 - Focused packages: `go test ./internal/<pkg> -run <Name>`.
 - CLI tests: `PHOTOPRISM_CLI=noninteractive` or pass `--yes` to avoid prompts; use `RunWithTestContext` to prevent `os.Exit`.
 - SQLite DSN in tests is per‑suite (not empty). Clean up files if you capture the DSN.
@@ -228,7 +230,7 @@ Conventions & Rules of Thumb
 
 Filesystem Permissions & io/fs Aliasing
 - Use `github.com/photoprism/photoprism/pkg/fs` permission variables when creating files/dirs:
-  - `fs.ModeDir` (0o755 with umask), `fs.ModeFile` (0o644 with umask), `fs.ModeConfigFile` (0o664), `fs.ModeSecretFile` (0o600), `fs.ModeBackupFile` (0o600).
+  - `fs.ModeDir` (0o777 before umask), `fs.ModeFile` (0o666 before umask), `fs.ModeConfigFile` (0o664), `fs.ModeSecretFile` (0o600), `fs.ModeBackupFile` (0o600). These are the modes passed to the create call, which the process umask then filters; do not read them as the resulting permissions.
 - Do not use stdlib `io/fs` mode bits as permission arguments. When importing stdlib `io/fs`, alias it (`iofs`/`gofs`) to avoid `fs.*` collisions with our package.
 - Prefer `filepath.Join` for filesystem paths across platforms; use `path.Join` for URLs only.
 
@@ -295,7 +297,7 @@ See Also
 - Developer Guide (Setup/Tests/API) — links in AGENTS.md → Sources of Truth
 
 Go Internal Import Rule
-- Keep temporary Go helpers inside `internal/...`; the Go toolchain blocks importing `internal/` packages from directories such as `/tmp`, so use a disposable path like `internal/tmp/` when you need scratch space.
+- Put temporary Go helpers in a per-run directory under `.local/scratch/` (`mkdir -p .local/scratch && mktemp -d .local/scratch/<name>.XXXXXX`); the Go toolchain blocks importing `internal/` packages from directories such as `/tmp`, while `.local/` is inside the module, gitignored, and skipped by `./...`.
 
 Fast Test Recipes
 - Filesystem + archives (fast): `go test ./pkg/fs -run 'Copy|Move|Unzip' -count=1`

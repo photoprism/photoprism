@@ -117,7 +117,7 @@ describe("common/pdf", () => {
       // "new Worker(url)" requires a same-origin script and CORS cannot lift that, so the
       // worker must be built by pdfjs, which wraps a cross-origin source in a blob.
       expect(h.workerCtor).not.toHaveBeenCalled();
-      expect(h.globalWorkerOptions.workerSrc).toContain("pdf.worker");
+      expect(h.globalWorkerOptions.workerSrc).toContain("pdf-worker");
     });
   });
   describe("loadPdfDocument without a usable worker", () => {
@@ -133,7 +133,7 @@ describe("common/pdf", () => {
       // set, which is what made the viewer fail closed instead of degrading.
       const params = h.getDocument.mock.calls.at(-1)[0];
       expect(params.worker).toBeUndefined();
-      expect(h.globalWorkerOptions.workerSrc).toContain("pdf.worker");
+      expect(h.globalWorkerOptions.workerSrc).toContain("pdf-worker");
       expect(warn).toHaveBeenCalled();
       warn.mockRestore();
       h.pdfWorkerThrows = false;

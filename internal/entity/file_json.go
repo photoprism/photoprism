@@ -25,6 +25,8 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		MediaType      string        `json:",omitempty"`
 		Mime           string        `json:",omitempty"`
 		Sidecar        bool          `json:",omitempty"`
+		KeepStacked    bool          `json:",omitempty"`
+		StackGroup     string        `json:",omitempty"`
 		Missing        bool          `json:",omitempty"`
 		Portrait       bool          `json:",omitempty"`
 		Video          bool          `json:",omitempty"`
@@ -73,6 +75,8 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		MediaType:      m.MediaType,
 		Mime:           m.FileMime,
 		Sidecar:        m.FileSidecar,
+		KeepStacked:    m.KeepStacked(),
+		StackGroup:     m.StackGroup(),
 		Missing:        m.FileMissing,
 		Portrait:       m.FilePortrait,
 		Video:          m.FileVideo,
@@ -102,6 +106,6 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		UpdatedAt:      m.UpdatedAt,
 		UpdatedIn:      m.UpdatedIn,
 		DeletedAt:      m.DeletedAt,
-		Markers:        m.Markers(),
+		Markers:        m.MarkersForJSON(),
 	})
 }

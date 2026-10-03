@@ -1,9 +1,11 @@
 package entity
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -33,15 +35,57 @@ func TestLink_Expired(t *testing.T) {
 
 	assert.False(t, link.Expired())
 
-	link.LinkExpires = oneDay * 300
-	link.LinkViews = 9
-	link.MaxViews = 10
+	t.Run("ViewLimitIsNotExpiry", func(t *testing.T) {
+		reached := NewLink("ss6sg6bxpogaaba1", true, false)
+		reached.LinkViews = 10
+		reached.MaxViews = 10
 
-	assert.False(t, link.Expired())
+		assert.False(t, reached.Expired())
+	})
+}
 
-	link.Redeem()
+func TestLink_Redeemable(t *testing.T) {
+	const oneDay = 60 * 60 * 24
 
-	assert.True(t, link.Expired())
+	t.Run("NoLimits", func(t *testing.T) {
+		link := NewLink("ss6sg6bxpogaaba1", true, false)
+		assert.True(t, link.Redeemable())
+	})
+	t.Run("ViewsRemaining", func(t *testing.T) {
+		link := NewLink("ss6sg6bxpogaaba1", true, false)
+		link.MaxViews = 2
+		link.LinkViews = 1
+
+		assert.True(t, link.Redeemable())
+	})
+	t.Run("ViewLimitReached", func(t *testing.T) {
+		link := NewLink("ss6sg6bxpogaaba1", true, false)
+		link.MaxViews = 2
+		link.LinkViews = 2
+
+		assert.False(t, link.Redeemable())
+	})
+	t.Run("ViewLimitExceeded", func(t *testing.T) {
+		link := NewLink("ss6sg6bxpogaaba1", true, false)
+		link.MaxViews = 2
+		link.LinkViews = 3
+
+		assert.False(t, link.Redeemable())
+	})
+	t.Run("UnlimitedViews", func(t *testing.T) {
+		link := NewLink("ss6sg6bxpogaaba1", true, false)
+		link.MaxViews = 0
+		link.LinkViews = 500
+
+		assert.True(t, link.Redeemable())
+	})
+	t.Run("Expired", func(t *testing.T) {
+		link := NewLink("ss6sg6bxpogaaba1", true, false)
+		link.ModifiedAt = Now().Add(-7 * Day)
+		link.LinkExpires = oneDay
+
+		assert.False(t, link.Redeemable())
+	})
 }
 
 func TestLink_Redeem(t *testing.T) {
@@ -194,10 +238,91 @@ func TestFindLinks(t *testing.T) {
 	})
 }
 
-func TestFindValidLinksLinks(t *testing.T) {
+func TestFindRedeemableLinks(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		r := FindValidLinks("1jxf3jfn2k", "")
+		r := FindRedeemableLinks("1jxf3jfn2k", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
+	})
+}
+
+func TestFindRedeemableLinksByToken(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		r := FindRedeemableLinksByToken("1jxf3jfn2k", "holiday-2030")
+		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
+	})
+	t.Run("WrongToken", func(t *testing.T) {
+		r := FindRedeemableLinksByToken("wrongtoken", "holiday-2030")
+		assert.Empty(t, r)
+	})
+	t.Run("EmptyToken", func(t *testing.T) {
+		r := FindRedeemableLinksByToken("", "holiday-2030")
+		assert.Empty(t, r)
+	})
+	t.Run("RejectsOversizedToken", func(t *testing.T) {
+		r := FindRedeemableLinksByToken(strings.Repeat("a", 161), "holiday-2030")
+		assert.Empty(t, r)
+	})
+	t.Run("RejectsUnusableToken", func(t *testing.T) {
+		r := FindRedeemableLinksByToken("....", "as6sg6bxpogaaba8")
+		assert.Empty(t, r)
+	})
+	t.Run("ViewLimitReached", func(t *testing.T) {
+		link := newTestLink(t, 1)
+		link.Redeem()
+
+		assert.Empty(t, FindRedeemableLinksByToken(link.LinkToken, ""))
+	})
+}
+
+func TestFindRedeemedLinks(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		r := FindRedeemedLinks("1jxf3jfn2k", "")
+		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
+	})
+	t.Run("ViewLimitReached", func(t *testing.T) {
+		// The view limit bounds new redemptions, so a link that has reached it still resolves here.
+		link := newTestLink(t, 1)
+		link.Redeem()
+
+		r := FindRedeemedLinks(link.LinkToken, "")
+
+		require.Len(t, r, 1)
+		assert.Equal(t, link.ShareUID, r[0].ShareUID)
+	})
+	t.Run("Expired", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		expireTestLink(t, link)
+
+		assert.Empty(t, FindRedeemedLinks(link.LinkToken, ""))
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		link := newTestLink(t, 0)
+
+		if err := link.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Empty(t, FindRedeemedLinks(link.LinkToken, ""))
+	})
+	t.Run("WrongShareUID", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		assert.Empty(t, FindRedeemedLinks(link.LinkToken, "as6sg6bxpogaaba7"))
+	})
+}
+
+func TestFindRedeemedLinksByToken(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		r := FindRedeemedLinksByToken("  1jxf3jfn2k  ", "holiday-2030")
+		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
+	})
+	t.Run("EmptyToken", func(t *testing.T) {
+		assert.Empty(t, FindRedeemedLinksByToken("", "holiday-2030"))
+	})
+	t.Run("RejectsUnusableToken", func(t *testing.T) {
+		assert.Empty(t, FindRedeemedLinksByToken("....", "as6sg6bxpogaaba8"))
+	})
+	t.Run("RejectsOversizedToken", func(t *testing.T) {
+		assert.Empty(t, FindRedeemedLinksByToken(strings.Repeat("a", 161), "holiday-2030"))
 	})
 }
 

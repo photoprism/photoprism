@@ -115,6 +115,26 @@ var ClientFixtures = ClientMap{
 		AuthEnabled:  false,
 		LastActive:   0,
 	},
+	// Reserved for tests that mint and then use an access token, so that token creation
+	// elsewhere cannot consume this client's token budget.
+	"isolated": {
+		ClientUID:    "cs5cpu17n6gj2rvk",
+		UserUID:      "",
+		UserName:     "",
+		user:         nil,
+		ClientName:   "Isolated",
+		ClientRole:   acl.RoleClient.String(),
+		ClientType:   authn.ClientConfidential,
+		ClientURL:    "",
+		CallbackURL:  "",
+		AuthProvider: authn.ProviderClient.String(),
+		AuthMethod:   authn.MethodOAuth2.String(),
+		AuthScope:    "metrics",
+		AuthExpires:  unix.Hour,
+		AuthTokens:   2,
+		AuthEnabled:  true,
+		LastActive:   0,
+	},
 	"analytics": {
 		ClientUID:    "cs7pvt5h8rw9aaqj",
 		UserUID:      "",

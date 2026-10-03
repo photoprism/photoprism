@@ -27,9 +27,9 @@ import (
 //	@Tags		Library
 //	@Accept		json
 //	@Produce	json
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,429,500	{object}	i18n.Response
-//	@Param		options				body		form.IndexOptions	true	"index options"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,413,429,500	{object}	i18n.Response
+//	@Param		options					body		form.IndexOptions	true	"index options"
 //	@Router		/api/v1/index [post]
 func StartIndexing(router *gin.RouterGroup) {
 	router.POST("/index", func(c *gin.Context) {
@@ -81,7 +81,6 @@ func StartIndexing(router *gin.RouterGroup) {
 		}
 
 		// Configure index options.
-		path := conf.OriginalsPath()
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		skipArchived := settings.Index.SkipArchived
 
@@ -183,23 +182,21 @@ func StartIndexing(router *gin.RouterGroup) {
 			}
 		}
 
-		elapsed := int(time.Since(start).Seconds())
+		elapsed := time.Since(start)
+		seconds := int(elapsed.Seconds())
+
+		log.Infof("library: indexed %s in %s", english.Plural(len(found), "file", "files"), elapsed)
 
 		// Report success only if at least one file was indexed.
 		if indexed > 0 {
-			event.SuccessMsg(i18n.MsgIndexingCompletedIn, elapsed)
+			event.PublishSuccessMsg(i18n.MsgIndexingCompletedIn, seconds)
 		}
 
-		event.Publish("index.completed", event.Data{
-			"uid":     indOpt.UID,
-			"action":  indOpt.Action,
-			"path":    path,
-			"seconds": elapsed,
-		})
+		event.PublishCompleted([]string{"index.completed"}, indOpt.UID, indOpt.Action, seconds)
 
 		UpdateClientConfig()
 
-		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgIndexingCompletedIn, elapsed))
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgIndexingCompletedIn, seconds))
 	})
 }
 

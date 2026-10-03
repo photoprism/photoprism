@@ -29,6 +29,7 @@ const (
 	ImageTiff   Type = "tiff"  // TIFF Image
 	ImagePsd    Type = "psd"   // Adobe Photoshop
 	ImageBmp    Type = "bmp"   // BMP Image
+	ImageCineon Type = "cin"   // Kodak Cineon Image, the log-encoded predecessor of SMPTE DPX
 	ImageMPO    Type = "mpo"   // Stereoscopic Image that consists of two JPG images that are combined into one 3D image
 	ImageAvif   Type = "avif"  // AV1 Image File (AVIF)
 	ImageAvifS  Type = "avifs" // AV1 Image Sequence (Animated AVIF)
@@ -95,6 +96,7 @@ const (
 	VideoWMV    Type = "wmv"  // Windows Media Video (based on ASF)
 	VideoDV     Type = "dv"   // DV Video (https://en.wikipedia.org/wiki/DV)
 	VideoInsv   Type = "insv" // Insta360 Video (MP4 container carrying dual-fisheye data)
+	VideoLrv    Type = "lrv"  // Insta360 Proxy Video (low-resolution MP4 of a capture)
 )
 
 // TypeUnknown is the default type used when a file cannot be classified.

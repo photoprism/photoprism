@@ -88,8 +88,8 @@ func MarkdownTable(rows [][]string, cols []string, opt Options) string {
 	rowAlign := rowAlignment(cols, opt.Align)
 
 	if opt.Valid {
-		// Set on both because the renderer resolves alignment once, from the header, and Markdown
-		// carries it in the delimiter row for the whole column rather than for the body alone.
+		// Set on both because Markdown carries alignment in the delimiter row for the whole column:
+		// the renderer takes it from the first body row, or from the header when there are no rows.
 		tableRenderer = renderer.NewMarkdown()
 		tableConfig = tablewriter.Config{
 			Header: tw.CellConfig{

@@ -3,7 +3,9 @@ package api
 import (
 	"net/http"
 	"path"
+	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
 
@@ -27,13 +29,14 @@ import (
 //	@Tags			Users
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			uid					path		string	true	"user uid"
-//	@Param			files				formData	file	true	"avatar image (png or jpeg, <= 20 MB)"
-//	@Success		200					{object}	entity.User
-//	@Failure		400,401,403,404,429	{object}	i18n.Response
+//	@Param			uid						path		string	true	"user uid"
+//	@Param			files					formData	file	true	"avatar image (png or jpeg, <= 20 MB)"
+//	@Success		200						{object}	entity.User
+//	@Failure		400,401,403,404,413,429	{object}	i18n.Response
 //	@Router			/api/v1/users/{uid}/avatar [post]
 func UploadUserAvatar(router *gin.RouterGroup) {
 	router.POST("/users/:uid/avatar", func(c *gin.Context) {
+		start := time.Now()
 		conf := get.Config()
 
 		if conf.Demo() || conf.DisableSettings() {
@@ -166,7 +169,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 		s.ClearCache()
 
 		// Show success message.
-		log.Info(i18n.Msg(i18n.MsgFileUploaded))
+		log.Infof("avatar: uploaded %s in %s", english.Plural(len(files), "file", "files"), time.Since(start))
 
 		// Return updated user profile.
 		c.JSON(http.StatusOK, entity.FindUserByUID(uid))

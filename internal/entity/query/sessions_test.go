@@ -1,10 +1,13 @@
 package query
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -22,6 +25,7 @@ func TestSession(t *testing.T) {
 		result, err := Session("1234")
 		assert.Error(t, err)
 		assert.Equal(t, "invalid session id", err.Error())
+		assert.ErrorIs(t, err, ErrInvalidSessionID)
 		assert.NotNil(t, result)
 		assert.Equal(t, "", result.ID)
 		assert.Equal(t, "", result.UserUID)
@@ -113,4 +117,33 @@ func TestSessions(t *testing.T) {
 			// t.Logf("sessions: %#v", results)
 		}
 	})
+}
+
+func TestSession_ExactID(t *testing.T) {
+	id := rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
+
+	result, err := Session(id)
+	require.NoError(t, err)
+	assert.Equal(t, id, result.ID)
+
+	_, err = Session(strings.ToUpper(id))
+	assert.Error(t, err)
+}
+
+func TestSessions_Literal(t *testing.T) {
+	base := "zzl" + rnd.Base36(5)
+
+	for _, name := range []string{base + "_a", base + "Xa"} {
+		s := entity.NewSession(3600, 0)
+		s.UserName = name
+		require.NoError(t, s.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(s).Error })
+	}
+
+	result, err := Sessions(100, 0, "", base+"_a")
+	require.NoError(t, err)
+
+	if assert.Len(t, result, 1) {
+		assert.Equal(t, base+"_a", result[0].UserName)
+	}
 }

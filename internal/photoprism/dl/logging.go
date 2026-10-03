@@ -1,9 +1,15 @@
 package dl
 
-import "strings"
+import (
+	"strings"
 
-// redactArgs returns a copy of args with sensitive header values masked.
-// It looks for patterns: --add-header "Name: Value" and rewrites Value as ****.
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
+)
+
+// redactArgs returns a copy of args for the trace: the value of an --add-header "Name: Value" pair
+// becomes the shared marker, and a URI has its credentials removed, which re-encodes it. Arguments
+// stay unquoted, as the trace prints them as a list.
 func redactArgs(args []string) []string {
 	out := make([]string, len(args))
 	copy(out, args)
@@ -12,12 +18,15 @@ func redactArgs(args []string) []string {
 			hv := out[i+1]
 			if idx := strings.Index(hv, ":"); idx > 0 {
 				name := strings.TrimSpace(hv[:idx])
-				out[i+1] = name + ": ****"
+				out[i+1] = name + ": " + txt.Masked
 			} else {
-				out[i+1] = "****"
+				out[i+1] = txt.Masked
 			}
 			i++
+			continue
 		}
+
+		out[i] = clean.UriRedactedText(out[i])
 	}
 	return out
 }

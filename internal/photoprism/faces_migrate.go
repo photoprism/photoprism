@@ -7,7 +7,6 @@ import (
 	"image"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
@@ -124,6 +123,10 @@ type FacesMigrateResult struct {
 	FailedNamed  int
 	FailedManual int
 
+	// LiftedRejections counts the markers whose name a person had removed under the previous model,
+	// which the new one may recognize again.
+	LiftedRejections int
+
 	// RenderedThumbs counts the renditions the run had to render because the cache held none wide
 	// enough for a file's crops, which is what it does instead of embedding from upscaled pixels.
 	// FailedThumbs counts the files it could not write one for, whose crops were upscaled after
@@ -235,7 +238,7 @@ type FacesMigrateRerunError struct {
 // run reconciles them.
 func (e *FacesMigrateRerunError) Error() string {
 	return fmt.Sprintf("faces: %s, so replacing the clusters was rolled back and nothing was lost; "+
-		"%d regenerated marker(s) stay unmatched until the migration is run again with the server stopped",
+		"%d regenerated marker(s) stay unmatched until the migration is run again",
 		e.Cause, e.Migrated)
 }
 
@@ -709,7 +712,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// from failures: counting them would make every retry look partially failed.
 	result.Unlinked = plan.Markers.Unlinked
 
-	var failedMarkerUIDs []string
+	var failedMarkerUIDs, rejectedMarkerUIDs []string
 	batchSize := opt.BatchSize
 	if batchSize < 1 {
 		batchSize = facesMigrateBatchSize
@@ -747,6 +750,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 			result.FailedNamed += fileResult.Named
 			result.FailedManual += fileResult.Manual
 			failedMarkerUIDs = append(failedMarkerUIDs, fileResult.Failed...)
+			rejectedMarkerUIDs = append(rejectedMarkerUIDs, fileResult.Rejected...)
 			if fileResult.Detected {
 				result.DetectedFiles++
 			}
@@ -798,7 +802,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// Any failure here rolls the whole finalize back, so the clusters are still the old
 	// model's while the markers this run regenerated are the target's. That is recoverable
 	// only by running again, which the operator has to be told rather than left to infer.
-	if err = query.FinalizeFaceMigration(plan.Target, identities, clusters, failedMarkerUIDs); err != nil {
+	if result.LiftedRejections, err = query.FinalizeFaceMigration(plan.Target, identities, clusters, failedMarkerUIDs, rejectedMarkerUIDs); err != nil {
 		return result, &FacesMigrateRerunError{Migrated: result.Migrated, Cause: err}
 	}
 
@@ -883,9 +887,10 @@ func (w *Faces) settleFaceClusters() error {
 		if err == nil && result.Moved() {
 			// Assigned is named beside Updated because a pass whose only work was propagating
 			// subjects from named clusters would otherwise report nothing it did.
-			log.Infof("faces: clustering pass %d updated %s, assigned %s and recognized %s",
+			log.Infof("faces: clustering pass %d updated %s, assigned %s, named %s and recognized %s",
 				round, english.Plural(result.Updated, "marker", "markers"),
 				english.Plural(result.Assigned, "marker", "markers"),
+				english.Plural(result.Named, "cluster", "clusters"),
 				english.Plural(result.Recognized, "face", "faces"))
 		}
 
@@ -1016,6 +1021,9 @@ type faceMigrationFile struct {
 	Skipped  int
 	Retained int
 	Failed   []string
+	// Rejected lists the rejected matches this file re-embedded from a model the target cannot
+	// compare with, whose rejection the finalize lifts.
+	Rejected []string
 	// Unreadable counts the failed markers this file lost because it could not be read at all,
 	// as distinct from the ones a successful detection did not find again.
 	Unreadable int
@@ -1139,6 +1147,11 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	for _, marker := range stale {
 		if values, ok := generated[marker.MarkerUID]; ok && face.ValidEmbeddings(values, embedder.Dims()) {
 			result.Migrated++
+
+			if liftsRejection(marker, target) {
+				result.Rejected = append(result.Rejected, marker.MarkerUID)
+			}
+
 			continue
 		}
 
@@ -1184,6 +1197,12 @@ func markerUIDsOf(markers entity.Markers) []string {
 	}
 
 	return uids
+}
+
+// liftsRejection reports whether re-embedding a marker for the target lifts its rejection, which is
+// when it is a rejected match holding a vector from a model the target cannot compare with.
+func liftsRejection(m entity.Marker, target string) bool {
+	return m.RejectedMatch() && len(m.EmbeddingsJSON) > 0 && !face.ModelsComparable(m.EmbedModel, target)
 }
 
 // staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset of
@@ -1278,7 +1297,7 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 	source := ConfigFileName(w.conf, file.FileRoot, file.FileName)
 
 	for _, marker := range markers {
-		area := markerCropArea(marker)
+		area := marker.CropArea()
 		thumbName, thumbErr := crop.ThumbFileName(file.FileHash, area, size, w.conf.ThumbCachePath())
 		if thumbErr != nil {
 			thumbName = source
@@ -1362,7 +1381,7 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 // marker's own detection sits in that slice. Matching considers every marker the file holds, so
 // a detection a marker needing no work accounts for is not handed to a second marker as well.
 func assignedMigrationDetections(markers, stale entity.Markers, detected face.Faces) (assigned face.Faces, order map[string]int) {
-	assignments := matchMigrationDetections(markers, detected)
+	assignments := markers.MatchFaces(detected)
 	assigned = make(face.Faces, 0, len(stale))
 	order = make(map[string]int, len(stale))
 
@@ -1393,85 +1412,6 @@ func migrationDetectionThumb(conf *config.Config, thumbPath string, file *entity
 	}
 
 	return mediaFile.Thumbnail(thumbPath, thumb.Fit720)
-}
-
-type migrationDetectionPair struct {
-	markerUID string
-	detected  int
-	overlap   int
-	score     int
-}
-
-// migrationOverlapMax bounds how much larger than the marker a detection claiming it may be.
-//
-// OverlapPercent divides by the marker's own surface, so a box that merely contains the marker
-// scores a perfect 100 while the correctly fitting detection scores less. At the floors a
-// migration detects at, a low-confidence head-and-shoulders box is exactly that shape.
-const migrationOverlapMax = 4
-
-// matchMigrationDetections assigns each detected face to at most one stored marker, and returns
-// the index of the detection each marker was given.
-func matchMigrationDetections(markers entity.Markers, detected face.Faces) map[string]int {
-	pairs := make([]migrationDetectionPair, 0)
-	for _, marker := range markers {
-		area := markerCropArea(marker)
-		for i := range detected {
-			candidate := detected[i].CropArea()
-
-			if overlap := candidate.OverlapPercent(area); overlap > face.OverlapThresholdFloor &&
-				!oversizedMigrationDetection(candidate, area) {
-				pairs = append(pairs, migrationDetectionPair{
-					markerUID: marker.MarkerUID,
-					detected:  i,
-					overlap:   overlap,
-					score:     detected[i].Score,
-				})
-			}
-		}
-	}
-
-	// Confidence breaks a tie before detector output order does. Containment scores 100, so
-	// several candidates reach the top and the order they were decoded in decided which one
-	// claimed the marker.
-	sort.Slice(pairs, func(i, j int) bool {
-		switch {
-		case pairs[i].overlap != pairs[j].overlap:
-			return pairs[i].overlap > pairs[j].overlap
-		case pairs[i].score != pairs[j].score:
-			return pairs[i].score > pairs[j].score
-		case pairs[i].markerUID != pairs[j].markerUID:
-			return pairs[i].markerUID < pairs[j].markerUID
-		default:
-			return pairs[i].detected < pairs[j].detected
-		}
-	})
-
-	result := make(map[string]int)
-	used := make(map[int]bool)
-	for _, pair := range pairs {
-		if _, ok := result[pair.markerUID]; ok || used[pair.detected] {
-			continue
-		}
-		result[pair.markerUID] = pair.detected
-		used[pair.detected] = true
-	}
-
-	return result
-}
-
-// oversizedMigrationDetection reports whether a detection is too much larger than the marker it
-// overlaps to be the same face. Without it a box containing the marker outranks every other
-// candidate, because the overlap is measured against the marker's surface alone.
-func oversizedMigrationDetection(candidate, area crop.Area) bool {
-	markerSurface := float64(area.W) * float64(area.H)
-	candidateSurface := float64(candidate.W) * float64(candidate.H)
-
-	return markerSurface > 0 && candidateSurface > markerSurface*migrationOverlapMax
-}
-
-// markerCropArea returns the normalized crop geometry stored on a marker.
-func markerCropArea(marker entity.Marker) crop.Area {
-	return crop.Area{Name: "face", X: marker.X, Y: marker.Y, W: marker.W, H: marker.H}
 }
 
 // buildFaceMigrationClusters creates one replacement cluster per identified subject, seeded from

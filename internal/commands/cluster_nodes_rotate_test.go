@@ -1,0 +1,267 @@
+package commands
+
+import (
+	"context"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
+	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/rnd"
+)
+
+// createTestNode registers a node for the duration of a test and removes it afterwards.
+func createTestNode(t *testing.T, regy *reg.ClientRegistry, name, role string) *reg.Node {
+	t.Helper()
+
+	n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: name, Role: role}}
+	assert.NoError(t, regy.Create(n))
+	t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+
+	return n
+}
+
+func TestRotateNodeInRegistry(t *testing.T) {
+	conf := get.Config()
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+
+	t.Run("RotateSecret", func(t *testing.T) {
+		n := createTestNode(t, regy, "pp-rotate-local", cluster.RoleInstance)
+		before, err := regy.RotateSecret(n.UUID)
+		assert.NoError(t, err)
+
+		resp, err := rotateNodeInRegistry(conf, "pp-rotate-local", false, true)
+		assert.NoError(t, err)
+		assert.Equal(t, n.UUID, resp.Node.UUID)
+		assert.Equal(t, before.ClientID, resp.Node.ClientID)
+		assert.True(t, resp.AlreadyRegistered)
+
+		// The reported secret is the one now stored, and the previous one no longer matches.
+		if assert.NotNil(t, resp.Secrets) {
+			assert.NotEmpty(t, resp.Secrets.ClientSecret)
+
+			client := entity.FindClientByUID(before.ClientID)
+
+			if assert.NotNil(t, client) {
+				assert.True(t, client.VerifySecret(resp.Secrets.ClientSecret))
+				assert.False(t, client.VerifySecret(before.ClientSecret))
+			}
+		}
+	})
+	t.Run("RotatesTheResolvedRecord", func(t *testing.T) {
+		n := createTestNode(t, regy, "pp-rotate-target", cluster.RoleInstance)
+		target, err := regy.RotateSecret(n.UUID)
+		assert.NoError(t, err)
+
+		// A second record sharing the UUID must not receive the new secret, as the rotation
+		// addresses the record the name resolved to.
+		other := entity.NewClient()
+		other.ClientName = "pp-rotate-shadow"
+		other.NodeUUID = n.UUID
+		assert.NoError(t, other.Create())
+		assert.NoError(t, other.SetSecret(cluster.ExampleClientSecret))
+		t.Cleanup(func() { _ = other.Delete() })
+
+		resp, err := rotateNodeInRegistry(conf, "pp-rotate-target", false, true)
+		assert.NoError(t, err)
+		assert.Equal(t, target.ClientID, resp.Node.ClientID)
+
+		if assert.NotNil(t, resp.Secrets) {
+			shadow := entity.FindClientByUID(other.ClientUID)
+
+			if assert.NotNil(t, shadow) {
+				assert.True(t, shadow.VerifySecret(cluster.ExampleClientSecret))
+				assert.False(t, shadow.VerifySecret(resp.Secrets.ClientSecret))
+			}
+		}
+	})
+	t.Run("ReportsStoredDatabaseMetadata", func(t *testing.T) {
+		n := createTestNode(t, regy, "pp-rotate-db", cluster.RoleInstance)
+		n.Database = &cluster.NodeDatabase{Name: "cluster_dtest", User: "cluster_utest", Driver: "mysql", RotatedAt: "2026-09-10T00:00:00Z"}
+		assert.NoError(t, regy.Put(n))
+
+		// Rotating only the secret still reports what the record holds, as the HTTP path does.
+		resp, err := rotateNodeInRegistry(conf, "pp-rotate-db", false, true)
+		assert.NoError(t, err)
+		assert.Equal(t, "cluster_dtest", resp.Database.Name)
+		assert.Equal(t, "cluster_utest", resp.Database.User)
+		assert.Equal(t, "mysql", resp.Database.Driver)
+		assert.True(t, resp.AlreadyProvisioned)
+		assert.Empty(t, resp.Database.Password, "a password is reported only when it is rotated")
+	})
+	t.Run("UnknownNode", func(t *testing.T) {
+		_, err := rotateNodeInRegistry(conf, "pp-rotate-missing", false, true)
+
+		if assert.Error(t, err) {
+			var exitErr cli.ExitCoder
+			assert.ErrorAs(t, err, &exitErr)
+			assert.Equal(t, 3, exitErr.ExitCode())
+		}
+	})
+	t.Run("NotANodeClient", func(t *testing.T) {
+		// An ordinary OAuth client shares the name space and is not eligible.
+		other := entity.NewClient()
+		other.ClientName = "pp-rotate-plain"
+		assert.NoError(t, other.Create())
+		t.Cleanup(func() { _ = other.Delete() })
+
+		_, err := rotateNodeInRegistry(conf, "pp-rotate-plain", false, true)
+
+		if assert.Error(t, err) {
+			var exitErr cli.ExitCoder
+			assert.ErrorAs(t, err, &exitErr)
+			assert.Equal(t, 3, exitErr.ExitCode())
+		}
+	})
+	t.Run("NoRotationRequested", func(t *testing.T) {
+		n := createTestNode(t, regy, "pp-rotate-none", cluster.RoleInstance)
+
+		resp, err := rotateNodeInRegistry(conf, "pp-rotate-none", false, false)
+		assert.NoError(t, err)
+		assert.Nil(t, resp.Secrets)
+		assert.Equal(t, n.UUID, resp.Node.UUID)
+
+		// The operator view reports the client identifier so the table can print it.
+		assert.NotEmpty(t, resp.Node.ClientID)
+	})
+}
+
+// TestClusterNodesRotate_NothingSelected verifies that disabling both rotation flags is a usage error.
+func TestClusterNodesRotate_NothingSelected(t *testing.T) {
+	_, err := RunWithTestContext(ClusterNodesRotateCommand, []string{
+		"rotate", "--portal-url=http://127.0.0.1:9", "--db=false", "--secret=false", "--yes", "pp-node-07",
+	})
+
+	var exit cli.ExitCoder
+	require.ErrorAs(t, err, &exit)
+	assert.Equal(t, 2, exit.ExitCode())
+	assert.Contains(t, err.Error(), "nothing to rotate")
+
+	_, err = RunWithTestContext(ClusterNodesRotateCommand, []string{
+		"rotate", "--dry-run", "--db=false", "--secret=false", "pp-node-07",
+	})
+
+	require.ErrorAs(t, err, &exit)
+	assert.Equal(t, 2, exit.ExitCode())
+}
+
+// TestClusterNodesRotate_ConfirmLocalRegistry covers the Portal's own local-registry rotation path,
+// which TestClusterNodesRotate_Confirm in cluster_register_http_test.go does not reach; it also proves
+// the positive case, that a confirmed rotation actually replaces the secret.
+func TestClusterNodesRotate_ConfirmLocalRegistry(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	c := get.Config()
+	prevEdition := c.Options().Edition
+	prevRole := c.Options().NodeRole
+	c.Options().Edition = config.Portal
+	c.Options().NodeRole = cluster.RolePortal
+	t.Cleanup(func() {
+		c.Options().Edition = prevEdition
+		c.Options().NodeRole = prevRole
+	})
+
+	regy, err := reg.NewClientRegistryWithConfig(c)
+	require.NoError(t, err)
+
+	n := createTestNode(t, regy, "pp-rotate-confirm", cluster.RoleInstance)
+	before, err := regy.RotateSecret(n.UUID)
+	require.NoError(t, err)
+
+	secretUnchanged := func() bool {
+		client := entity.FindClientByUID(before.ClientID)
+		return client != nil && client.VerifySecret(before.ClientSecret)
+	}
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, runErr, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Contains(t, runErr.Error(), "--yes")
+		assert.True(t, secretUnchanged())
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.True(t, secretUnchanged())
+	})
+	t.Run("AnsweredYes", func(t *testing.T) {
+		pipeResetAnswers(t, "y\n")
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.False(t, secretUnchanged())
+	})
+	t.Run("YesFlag", func(t *testing.T) {
+		before2, rotErr := regy.RotateSecret(n.UUID)
+		require.NoError(t, rotErr)
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "--yes", "pp-rotate-confirm"})
+		require.NoError(t, runErr)
+
+		client := entity.FindClientByUID(before2.ClientID)
+		if assert.NotNil(t, client) {
+			assert.False(t, client.VerifySecret(before2.ClientSecret))
+		}
+	})
+}
+
+// TestRotateNodeInRegistry_DatabaseErrors checks the exit codes of a failed database credential rotation.
+func TestRotateNodeInRegistry_DatabaseErrors(t *testing.T) {
+	conf := get.Config()
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	// restoreProvisioner restores the provisioner settings a test case changes.
+	restoreProvisioner := func(t *testing.T) {
+		driver, dsn := provisioner.DatabaseDriver, provisioner.ProvisionDSN
+		t.Cleanup(func() { provisioner.DatabaseDriver, provisioner.ProvisionDSN = driver, dsn })
+	}
+
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "sqlite3"
+
+		n := createTestNode(t, regy, "pp-rotate-driver", cluster.RoleInstance)
+
+		_, err := rotateNodeInRegistry(conf, n.Name, true, false)
+
+		require.Error(t, err)
+		assert.ErrorIs(t, err, provisioner.ErrUnsupportedDriver)
+		assert.Equal(t, 2, ExitCode(err))
+	})
+	t.Run("ProvisioningFailed", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "mysql"
+		provisioner.ProvisionDSN = "root:photoprism@tcp(127.0.0.1:1)/photoprism?timeout=2s"
+
+		n := createTestNode(t, regy, "pp-rotate-failed", cluster.RoleInstance)
+
+		resp, err := rotateNodeInRegistry(conf, n.Name, true, false)
+
+		// Remove the credentials if an open admin connection let the rotation succeed.
+		if err == nil {
+			t.Cleanup(func() { _ = provisioner.DropCredentials(context.Background(), resp.Database.Name, resp.Database.User) })
+		}
+
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, provisioner.ErrUnsupportedDriver)
+		assert.Equal(t, 1, ExitCode(err))
+	})
+}

@@ -48,14 +48,15 @@ PPA_CODENAME="${VERSION_CODENAME:-jammy}"
 KEYRING_PATH="/etc/apt/keyrings/libvips-archive-keyring.gpg"
 SOURCES_PATH="/etc/apt/sources.list.d/libvips-ppa.list"
 
-LIBVIPS_MIN_VERSION="${LIBVIPS_MIN_VERSION:-8.13}"
+LIBVIPS_MIN_VERSION="${LIBVIPS_MIN_VERSION:-8.14}"
 
 export DEBIAN_FRONTEND="noninteractive"
 
 # Prefer the distribution's own libvips-dev when it is recent enough; only the
-# old releases that ship a pre-8.13 libvips need the backport PPA. This avoids
-# adding a PPA for a codename it was never built for, which would 404 on the
-# Release file and break every subsequent "apt-get update".
+# old releases that ship a pre-8.14 libvips need the backport PPA. The floor is
+# the minimum govips documents. This avoids adding a PPA for a codename it was
+# never built for, which would 404 on the Release file and break every
+# subsequent "apt-get update".
 ${SUDO} apt-get update
 
 distro_candidate="$(apt-cache policy libvips-dev 2>/dev/null | awk '/Candidate:/ { print $2 }')"

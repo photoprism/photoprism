@@ -20,7 +20,7 @@
         <!-- Confirm -->
         <template v-if="confirmAction !== ''">
           <v-card-text class="dense">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" class="text-body-2">
                 {{ $gettext(`Enter your password to confirm the action and continue:`) }}
               </v-col>
@@ -37,11 +37,17 @@
                   autocapitalize="none"
                   autocomplete="current-password"
                   class="input-password text-monospace text-selectable"
-                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                   prepend-inner-icon="mdi-lock"
-                  @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onConfirm"
-                ></v-text-field>
+                >
+                  <template #append-inner>
+                    <p-input-action
+                      :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                      @click="showPassword = !showPassword"
+                    ></p-input-action>
+                  </template>
+                </v-text-field>
               </v-col>
             </v-row>
           </v-card-text>
@@ -57,7 +63,7 @@
         <!-- Copy -->
         <template v-else-if="action === 'copy'">
           <v-card-text class="dense">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" class="text-body-2">
                 {{
                   $gettext(`Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:`)
@@ -95,7 +101,7 @@
         <!-- Add -->
         <template v-else-if="action === 'add'">
           <v-card-text class="dense">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" class="text-body-2">
                 {{
                   $gettext(
@@ -158,7 +164,7 @@
         <!-- Apps -->
         <template v-else>
           <v-card-text>
-            <v-row align="start" no-gutters>
+            <v-row class="align-start" no-gutters>
               <v-col cols="12">
                 <v-data-table
                   v-model="selected"

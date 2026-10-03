@@ -26,11 +26,15 @@ Additional information can be found in our Developer Guide:
 package dsn
 
 import (
+	"fmt"
 	"net"
 	"regexp"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/photoprism/photoprism/pkg/http/dns"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // dsnPattern is a regular expression matching a database DSN string.
@@ -60,6 +64,24 @@ func (d *DSN) String() string {
 	return d.DSN
 }
 
+// MySQL returns a MySQL/MariaDB DSN built from the user, password, network, server, name, and parameters,
+// using "tcp" if no network is set.
+func (d *DSN) MySQL() string {
+	network := d.Net
+
+	if network == "" {
+		network = "tcp"
+	}
+
+	s := fmt.Sprintf("%s:%s@%s(%s)/%s", d.User, d.Password, network, d.Server, d.Name)
+
+	if d.Params != "" {
+		s += "?" + d.Params
+	}
+
+	return s
+}
+
 // MaskPassword hides the password portion of a DSN while leaving the rest untouched for logging/reporting.
 func (d *DSN) MaskPassword() (s string) {
 	if d.DSN == "" || d.Password == "" {
@@ -71,7 +93,7 @@ func (d *DSN) MaskPassword() (s string) {
 	// Mask password in regular DSN.
 	needle := ":" + d.Password + "@"
 	if strings.Contains(s, needle) {
-		return strings.Replace(s, needle, ":***@", 1)
+		return strings.Replace(s, needle, ":"+txt.Masked+"@", 1)
 	}
 
 	// Mask password in PostgreSQL-style DSN.
@@ -92,11 +114,11 @@ func (d *DSN) MaskPassword() (s string) {
 
 			switch {
 			case strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`):
-				return prefix + `"` + "***" + `"`
+				return prefix + `"` + txt.Masked + `"`
 			case strings.HasPrefix(value, `'`) && strings.HasSuffix(value, `'`):
-				return prefix + `'` + "***" + `'`
+				return prefix + `'` + txt.Masked + `'`
 			default:
-				return prefix + "***"
+				return prefix + txt.Masked
 			}
 		})
 	}
@@ -161,7 +183,7 @@ func (d *DSN) splitHostPort() (host, port string) {
 	host, port, err = net.SplitHostPort(server)
 
 	if err != nil {
-		return server, ""
+		return dns.TrimBrackets(server), ""
 	}
 
 	return host, port
@@ -259,7 +281,7 @@ func (d *DSN) parsePostgres() bool {
 
 	switch {
 	case host != "" && port != "":
-		d.Server = host + ":" + port
+		d.Server = net.JoinHostPort(dns.TrimBrackets(host), port)
 	case host != "":
 		d.Server = host
 	case port != "":

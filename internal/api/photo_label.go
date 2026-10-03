@@ -15,7 +15,6 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // AddPhotoLabel adds a label to a photo.
@@ -25,10 +24,10 @@ import (
 //	@Tags		Labels, Photos
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		label					body		form.Label	true	"label properties"
-//	@Param		uid						path		string		true	"photo uid"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
+//	@Param		label						body		form.Label	true	"label properties"
+//	@Param		uid							path		string		true	"photo uid"
 //	@Router		/api/v1/photos/{uid}/label [post]
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
@@ -111,12 +110,14 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if err = p.SaveLabels(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
+			logErr("label", err)
+			AbortSaveFailed(c)
 			return
 		}
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -181,13 +182,17 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 
 		switch {
 		case (label.LabelSrc == classify.SrcManual || label.LabelSrc == entity.SrcBatch) && label.Uncertainty < 100:
-			logErr("label", entity.Db().Delete(&label).Error)
+			if err = label.Delete(); err != nil {
+				logErr("label", err)
+				AbortDeleteFailed(c)
+				return
+			}
 		case label.LabelSrc != classify.SrcManual && label.LabelSrc != entity.SrcBatch:
-			label.Uncertainty = 100
-			label.LabelSrc = entity.SrcManual
-			logErr("label", entity.Db().Save(&label).Error)
-		default:
-			logErr("label", entity.Db().Save(&label).Error)
+			if err = label.Updates(entity.Values{"uncertainty": 100, "label_src": entity.SrcManual}); err != nil {
+				logErr("label", err)
+				AbortSaveFailed(c)
+				return
+			}
 		}
 
 		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
@@ -197,15 +202,23 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		logErr("label", p.RemoveKeyword(label.Label.LabelName))
+		if label.Label != nil {
+			if err = p.RemoveKeyword(label.Label.LabelName); err != nil {
+				logErr("label", err)
+				AbortSaveFailed(c)
+				return
+			}
+		}
 
 		if err := p.SaveLabels(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
+			logErr("label", err)
+			AbortSaveFailed(c)
 			return
 		}
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -217,11 +230,11 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 //	@Tags		Labels, Photos
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid						path		string		true	"photo uid"
-//	@Param		id						path		string		true	"label id"
-//	@Param		label					body		form.Label	true	"properties to be updated (currently supports: uncertainty)"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
+//	@Param		uid							path		string			true	"photo uid"
+//	@Param		id							path		string			true	"label id"
+//	@Param		label						body		form.PhotoLabel	true	"assignment uncertainty and optional label name"
 //	@Router		/api/v1/photos/{uid}/label/{id} [put]
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
@@ -230,8 +243,6 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		if s.Abort(c) {
 			return
 		}
-
-		// TODO: Clean up and simplify this.
 
 		uid := clean.UID(c.Param("uid"))
 
@@ -271,9 +282,10 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
+		frm := form.PhotoLabel{}
 		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
 
-		if err = c.BindJSON(label); err != nil {
+		if err = c.BindJSON(&frm); err != nil {
 			if IsRequestBodyTooLarge(err) {
 				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
@@ -283,14 +295,44 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		// Ensure that re-activating a blocked label sets the source to manual.
-		if label.Uncertainty == 0 && label.LabelSrc != entity.SrcManual {
-			label.LabelSrc = entity.SrcManual
+		if frm.Uncertainty != nil && (*frm.Uncertainty < 0 || *frm.Uncertainty > 100) {
+			AbortBadRequest(c, errors.New("uncertainty must be between 0 and 100"))
+			return
 		}
 
-		if err = label.Save(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
-			return
+		if frm.Label != nil && frm.Label.Name != nil {
+			if Auth(c, acl.ResourceLabels, acl.ActionUpdate).Abort(c) {
+				return
+			}
+			name := form.Label{LabelName: *frm.Label.Name}
+			if err = name.Validate(); err != nil {
+				AbortInvalidName(c)
+				return
+			} else if label.Label == nil {
+				Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
+				return
+			} else if err = label.Label.Rename(*frm.Label.Name); err != nil {
+				logErr("label", err)
+				AbortSaveFailed(c)
+				return
+			}
+			RemoveFromLabelCoverCache(label.Label.LabelUID)
+			PublishLabelEvent(StatusUpdated, label.Label.LabelUID)
+		}
+
+		values := entity.Values{}
+		if frm.Uncertainty != nil {
+			values["uncertainty"] = *frm.Uncertainty
+			if *frm.Uncertainty == 0 && label.LabelSrc != entity.SrcManual {
+				values["label_src"] = entity.SrcManual
+			}
+		}
+		if len(values) > 0 {
+			if err = label.Updates(values); err != nil {
+				logErr("label", err)
+				AbortSaveFailed(c)
+				return
+			}
 		}
 
 		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
@@ -301,12 +343,14 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if err = p.SaveLabels(); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
+			logErr("label", err)
+			AbortSaveFailed(c)
 			return
 		}
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }

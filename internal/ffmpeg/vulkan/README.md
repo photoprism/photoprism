@@ -34,13 +34,13 @@ ffmpeg -hide_banner -y -strict -2 \
 
 ### Flags
 
-| Flag                          | Value                             | Purpose                                                                |
-|-------------------------------|-----------------------------------|------------------------------------------------------------------------|
+| Flag                          | Value                              | Purpose                                                                                     |
+|-------------------------------|------------------------------------|---------------------------------------------------------------------------------------------|
 | `-init_hw_device`             | `vulkan=vk` or `vulkan=vk:<index>` | Creates the named Vulkan device `vk`; `<index>` is a physical-device index, not a DRM path. |
-| `-filter_hw_device`           | `vk`                              | Supplies the device that `hwupload` and the encoder attach to.         |
-| `-vf … ,format=nv12,hwupload` | from `encode.FormatNV12`          | Software scale, NV12 conversion, then a single upload to a Vulkan frame. |
-| `-c:v`                        | `h264_vulkan`                     | Vulkan video H.264 encoder (FFmpeg 8+).                                |
-| `-qp`                         | `25` (`DefaultQuality` 50)        | Constant-QP quality, via `Options.QpQuality()`.                       |
+| `-filter_hw_device`           | `vk`                               | Supplies the device that `hwupload` and the encoder attach to.                              |
+| `-vf … ,format=nv12,hwupload` | from `encode.FormatNV12`           | Software scale, NV12 conversion, then a single upload to a Vulkan frame.                    |
+| `-c:v`                        | `h264_vulkan`                      | Vulkan video H.264 encoder (FFmpeg 8+).                                                     |
+| `-qp`                         | `25` (`DefaultQuality` 50)         | Constant-QP quality, via `Options.QpQuality()`.                                             |
 
 ### Encoders & Decoders
 

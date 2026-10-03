@@ -130,8 +130,9 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	// Set the read DTO field, not the registry.Node write-control GroupsSrc.
 	n.Node.GroupsSrc = entity.ClientGroupsSrcNode
 
-	// Non-admin (default opts): redact advertise/database and access rules
+	// Non-admin (default opts): redact client id, advertise/database and access rules
 	out := BuildClusterNode(n, NodeOpts{})
+	assert.Empty(t, out.ClientID)
 	assert.Equal(t, "", out.AdvertiseUrl)
 	assert.Nil(t, out.Database)
 	assert.Nil(t, out.AllowGroups)
@@ -143,6 +144,12 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	out2 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true})
 	assert.Equal(t, "http://node:2342", out2.AdvertiseUrl)
 	assert.Nil(t, out2.Database)
+	assert.Empty(t, out2.ClientID, "client id requires IncludeClientID")
+
+	// Include client id only
+	out2b := BuildClusterNode(n, NodeOpts{IncludeClientID: true})
+	assert.Equal(t, "cs5gfen1bgxz7s9i", out2b.ClientID)
+	assert.Equal(t, "", out2b.AdvertiseUrl)
 
 	// Include advertise + database
 	out3 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true})
@@ -153,7 +160,8 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	assert.Nil(t, out3.AllowGroups, "access rules require IncludeAccessRules")
 
 	// Include access rules (full admin view)
-	out4 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true, IncludeAccessRules: true})
+	out4 := BuildClusterNode(n, NodeOpts{IncludeClientID: true, IncludeAdvertiseUrl: true, IncludeDatabase: true, IncludeAccessRules: true})
+	assert.Equal(t, "cs5gfen1bgxz7s9i", out4.ClientID)
 	assert.Equal(t, []string{"media-acme-admin"}, out4.AllowGroups)
 	assert.Equal(t, map[string]string{"media-acme-admin": "admin"}, out4.AllowGroupRoles)
 	if assert.NotNil(t, out4.GroupsFullView) {
@@ -245,19 +253,42 @@ func TestNodeOptsForSession_AdminVsNonAdmin(t *testing.T) {
 	sAdmin, _ := entity.NewSession(0, 0), (&entity.User{})
 	sAdmin.SetUser(admin)
 	optsA := NodeOptsForSession(sAdmin)
+	assert.True(t, optsA.IncludeClientID)
 	assert.True(t, optsA.IncludeAdvertiseUrl)
 	assert.True(t, optsA.IncludeDatabase)
 
 	// Non-admin: empty session/user
 	s := &entity.Session{}
 	opts := NodeOptsForSession(s)
+	assert.False(t, opts.IncludeClientID)
 	assert.False(t, opts.IncludeAdvertiseUrl)
 	assert.False(t, opts.IncludeDatabase)
 
 	// Nil session defaults to redacted
 	optsNil := NodeOptsForSession(nil)
+	assert.False(t, optsNil.IncludeClientID)
 	assert.False(t, optsNil.IncludeAdvertiseUrl)
 	assert.False(t, optsNil.IncludeDatabase)
+}
+
+func TestNodeOptsForSelf(t *testing.T) {
+	opts := NodeOptsForSelf()
+
+	// A node's own registration response reports its client id and nothing else.
+	assert.True(t, opts.IncludeClientID)
+	assert.False(t, opts.IncludeAdvertiseUrl)
+	assert.False(t, opts.IncludeDatabase)
+	assert.False(t, opts.IncludeAccessRules)
+}
+
+func TestNodeOptsForOperator(t *testing.T) {
+	opts := NodeOptsForOperator()
+
+	// Local operator tooling sees the identifiers and database metadata it prints.
+	assert.True(t, opts.IncludeClientID)
+	assert.True(t, opts.IncludeAdvertiseUrl)
+	assert.True(t, opts.IncludeDatabase)
+	assert.False(t, opts.IncludeAccessRules)
 }
 
 func TestToNode_Mapping(t *testing.T) {

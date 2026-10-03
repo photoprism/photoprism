@@ -70,25 +70,16 @@ export default defineConfig([
       "curly": ["warn", "all"],
       // Forces braced bodies onto their own line so curly's autofix produces
       // multi-line `if (x) {\n  return;\n}` instead of `if (x) {return;}`.
-      // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 9.
+      // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 10.
       "brace-style": ["warn", "1tbs", { allowSingleLine: false }],
       "no-unused-vars": ["warn"],
+      // Grids use density and utility classes instead of the deprecated v-row/v-col props.
+      "vuetify/no-legacy-grid-props": ["error"],
+      // Explicit initial values can document a variable's intended type or default.
+      "no-useless-assignment": "off",
       "no-console": 0,
       "no-case-declarations": 0,
       "no-prototype-builtins": 0,
-      // A native void element leaves the serialized markup unterminated for
-      // `vue-gettext-extract`, which silently drops every later bare `{{ $gettext() }}`
-      // sibling — the string never reaches the catalog and renders English forever.
-      // Wrapping the interpolation in an element (e.g. `<span>`) keeps it extractable.
-      "vue/no-restricted-syntax": [
-        "error",
-        {
-          selector:
-            "VElement[rawName=/^(img|br|hr|input|area|base|col|embed|link|meta|param|source|track|wbr)$/i] ~ VExpressionContainer CallExpression[callee.name=/^\\$n?p?gettext$/]",
-          message:
-            "Wrap this interpolation in an element (e.g. <span>): a preceding void element makes gettext extraction skip it.",
-        },
-      ],
       "vue/no-v-text-v-html-on-component": 0,
       "vue/no-v-model-argument": 0,
       "vue/valid-model-definition": 0,

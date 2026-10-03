@@ -1,7 +1,9 @@
 package photoprism
 
 import (
+	"errors"
 	"image"
+	iofs "io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,9 +12,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -1640,6 +1644,100 @@ func TestMediaFile_CheckType(t *testing.T) {
 			assert.Error(t, result)
 		}
 	})
+	t.Run("ContentTypes", func(t *testing.T) {
+		jpegData, err := os.ReadFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		pngData, err := os.ReadFile("testdata/orientation.png")
+		require.NoError(t, err)
+
+		// copyAs writes data to a temporary file with the given name.
+		copyAs := func(t *testing.T, name string, data []byte) *MediaFile {
+			t.Helper()
+			fileName := filepath.Join(t.TempDir(), name)
+			require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile))
+			f, newErr := NewMediaFile(fileName)
+			require.NoError(t, newErr)
+			return f
+		}
+
+		// sample returns a media file from the samples path.
+		sample := func(t *testing.T, name string) *MediaFile {
+			t.Helper()
+			f, newErr := NewMediaFile(filepath.Join(c.SamplesPath(), name))
+			require.NoError(t, newErr)
+			return f
+		}
+
+		t.Run("Bmp", func(t *testing.T) {
+			assert.NoError(t, sample(t, "example.bmp").CheckType())
+			assert.Error(t, copyAs(t, "image.bmp", jpegData).CheckType())
+			// A bitmap with a 12-byte core header is not identified and is accepted.
+			core := []byte{'B', 'M', 0x22, 0, 0, 0, 0, 0, 0, 0, 0x1A, 0, 0, 0, 0x0C, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0x18, 0, 0, 0, 0xFF, 0, 0, 0, 0, 0}
+			assert.NoError(t, copyAs(t, "core.bmp", core).CheckType())
+		})
+		t.Run("WebP", func(t *testing.T) {
+			assert.Error(t, copyAs(t, "image.webp", pngData).CheckType())
+			assert.Error(t, copyAs(t, "image.webp", jpegData).CheckType())
+		})
+		t.Run("JpegXL", func(t *testing.T) {
+			assert.NoError(t, sample(t, "dice.jxl").CheckType())
+			assert.Error(t, copyAs(t, "image.jxl", jpegData).CheckType())
+			assert.Error(t, copyAs(t, "image.jxl", pngData).CheckType())
+		})
+		t.Run("Mpo", func(t *testing.T) {
+			assert.NoError(t, copyAs(t, "image.mpo", jpegData).CheckType())
+			assert.Error(t, copyAs(t, "image.mpo", pngData).CheckType())
+		})
+		t.Run("Insp", func(t *testing.T) {
+			f, newErr := NewMediaFile("testdata/insta360.insp")
+			require.NoError(t, newErr)
+			assert.NoError(t, f.CheckType())
+			assert.Error(t, copyAs(t, "image.insp", pngData).CheckType())
+		})
+		t.Run("Video", func(t *testing.T) {
+			assert.NoError(t, sample(t, "blue-go-video.mp4").CheckType())
+			assert.NoError(t, sample(t, "earth.avi").CheckType())
+			assert.NoError(t, sample(t, "earth.mov").CheckType())
+			err := copyAs(t, "video.mp4", jpegData).CheckType()
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "image/jpeg")
+			assert.Error(t, copyAs(t, "video.avi", pngData).CheckType())
+		})
+		t.Run("VideoNotIdentified", func(t *testing.T) {
+			assert.NoError(t, copyAs(t, "video.dv", []byte("not identified video content")).CheckType())
+			// An image sequence brand is not a still image format the native decoders read.
+			sequence := []byte{0, 0, 0, 0x18, 'f', 't', 'y', 'p', 'm', 's', 'f', '1', 0, 0, 0, 0, 'm', 's', 'f', '1', 'h', 'e', 'v', 'c'}
+			assert.NoError(t, copyAs(t, "video.mp4", sequence).CheckType())
+		})
+		t.Run("MotionJpeg", func(t *testing.T) {
+			assert.NoError(t, copyAs(t, "video.mjpeg", append(append([]byte{}, jpegData...), jpegData...)).CheckType())
+			assert.Error(t, copyAs(t, "video.mjpg", pngData).CheckType())
+		})
+		t.Run("VideoWithJpeg2000", func(t *testing.T) {
+			jp2 := []byte{0, 0, 0, 0x0C, 'j', 'P', ' ', ' ', 0x0D, 0x0A, 0x87, 0x0A, 0, 0, 0, 0x14, 'f', 't', 'y', 'p', 'j', 'p', '2', ' ', 0, 0, 0, 0, 'j', 'p', '2', ' '}
+			assert.Error(t, copyAs(t, "video.mp4", jp2).CheckType())
+		})
+		t.Run("OtherFormats", func(t *testing.T) {
+			assert.NoError(t, sample(t, "fox.profile0.8bpc.yuv420.avif").CheckType())
+			f, newErr := NewMediaFile("testdata/animated-earth.thm")
+			require.NoError(t, newErr)
+			assert.NoError(t, f.CheckType())
+		})
+	})
+}
+
+// TestIsImageType verifies which media types count as images that video files must not contain.
+func TestIsImageType(t *testing.T) {
+	t.Run("Image", func(t *testing.T) {
+		for _, mimeType := range []string{header.ContentTypeJpeg, header.ContentTypePng, header.ContentTypeGif, header.ContentTypeBmp, header.ContentTypeWebp, header.ContentTypeTiff, "image/jp2", header.ContentTypeJpegXL} {
+			assert.True(t, isImageType(mimeType), mimeType)
+		}
+	})
+	t.Run("Other", func(t *testing.T) {
+		for _, mimeType := range []string{"", header.ContentTypeHeic, header.ContentTypeAvif, "image/heif-sequence", "image/x-icon", header.ContentTypeMp4} {
+			assert.False(t, isImageType(mimeType), mimeType)
+		}
+	})
 }
 
 func TestMediaFile_IsSidecar(t *testing.T) {
@@ -2753,6 +2851,44 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		assert.Equal(t, "/go/src/github.com/photoprism/notExisting/xxx/beach_sand.jpg", name)
 		mediaFile.SetFileName(initialName)
 	})
+	t.Run("Insta360RightLens", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/beach_sand.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName(filepath.Join(c.SamplesPath(), "360", "VID_20220625_140410_10_008.insv"))
+
+		root, base, path, name := mediaFile.PathNameInfo(false)
+		assert.Equal(t, "samples", root)
+		assert.Equal(t, "VID_20220625_140410_00_008", base)
+		assert.Equal(t, "360", path)
+		assert.Equal(t, "360/VID_20220625_140410_10_008.insv", name)
+		assert.Equal(t, "VID_20220625_140410_10_008", mediaFile.BasePrefix(false))
+		mediaFile.SetFileName(initialName)
+	})
+}
+
+// TestMediaFile_StackPrefix verifies that capture files share the stack name of the left lens.
+func TestMediaFile_StackPrefix(t *testing.T) {
+	t.Run("Insta360", func(t *testing.T) {
+		for _, fileName := range []string{
+			"/originals/360/VID_20220625_140410_10_008.insv",
+			"/originals/360/LRV_20220625_140410_11_008.insv",
+			"/originals/360/VID_20220625_140410_10_008.insv.jpg",
+		} {
+			mediaFile := &MediaFile{fileName: fileName}
+			assert.Equal(t, "VID_20220625_140410_00_008", mediaFile.StackPrefix(false), fileName)
+			assert.Equal(t, "VID_20220625_140410_00_008", mediaFile.StackPrefix(true), fileName)
+		}
+	})
+	t.Run("Other", func(t *testing.T) {
+		mediaFile := &MediaFile{fileName: "/originals/IMG_1234 (2).jpg"}
+		assert.Equal(t, "IMG_1234 (2)", mediaFile.StackPrefix(false))
+		assert.Equal(t, "IMG_1234", mediaFile.StackPrefix(true))
+	})
 }
 
 func TestMediaFile_SubDirectory(t *testing.T) {
@@ -3094,5 +3230,30 @@ func TestMediaFile_SetRelatedMain(t *testing.T) {
 		var m *MediaFile
 		m.SetRelatedMain(nil)
 		assert.Nil(t, m.RelatedMain())
+	})
+}
+
+func TestNewMediaFileSkipResolve(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := config.TestConfig()
+		fileName := c.SamplesPath() + "/telegram_2020-01-30_09-57-18.jpg"
+		mediaFile, err := NewMediaFileSkipResolve(fileName, fileName)
+
+		assert.NoError(t, err)
+		assert.Equal(t, fileName, mediaFile.FileName())
+	})
+	t.Run("MissingFile", func(t *testing.T) {
+		// The name is carried as the error's path, so that a renderer can remove it.
+		fileName := filepath.Join(t.TempDir(), "missing.jpg")
+		_, err := NewMediaFileSkipResolve(fileName, fileName)
+
+		assert.Error(t, err)
+
+		var pathErr *iofs.PathError
+
+		assert.True(t, errors.As(err, &pathErr), "the error must carry the name as a path")
+		assert.Equal(t, fileName, pathErr.Path)
+		assert.NotContains(t, clean.Error(err), fileName)
+		assert.Contains(t, clean.Error(err), "***")
 	})
 }

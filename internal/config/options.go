@@ -3,13 +3,13 @@ package config
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"time"
 
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -84,6 +84,7 @@ type Options struct {
 	UploadAllow               string        `yaml:"UploadAllow" json:"-" flag:"upload-allow"`
 	UploadArchives            bool          `yaml:"UploadArchives" json:"-" flag:"upload-archives"`
 	UploadLimit               int           `yaml:"UploadLimit" json:"-" flag:"upload-limit"`
+	UploadMaxAge              int64         `yaml:"UploadMaxAge" json:"-" flag:"upload-maxage"`
 	CachePath                 string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	TempPath                  string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath                string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
@@ -230,6 +231,8 @@ type Options struct {
 	FFmpegMapVideo            string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`
 	FFmpegMapAudio            string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
 	FFmpegExclude             string        `yaml:"FFmpegExclude" json:"-" flag:"ffmpeg-exclude"`
+	ConvertTimeout            int           `yaml:"ConvertTimeout" json:"-" flag:"convert-timeout"`
+	TranscodeTimeout          int           `yaml:"TranscodeTimeout" json:"-" flag:"transcode-timeout"`
 	ExifToolBin               string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	SipsBin                   string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
 	SipsExclude               string        `yaml:"SipsExclude" json:"-" flag:"sips-exclude"`
@@ -259,6 +262,9 @@ type Options struct {
 	VisionKey                 string        `yaml:"VisionKey" json:"-" flag:"vision-key"`
 	VisionSchedule            string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
+	LabelsModel               string        `yaml:"LabelsModel" json:"-" flag:"labels-model"`
+	NsfwModel                 string        `yaml:"NsfwModel" json:"-" flag:"nsfw-model"`
+	OnnxProvider              string        `yaml:"OnnxProvider" json:"-" flag:"onnx-provider"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	XMPFaces                  bool          `yaml:"XMPFaces" json:"XMPFaces" flag:"xmp-faces"`
 	FaceRun                   string        `yaml:"FaceRun" json:"-" flag:"face-run"`
@@ -277,6 +283,7 @@ type Options struct {
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`
 	FaceClusterCore           int           `yaml:"-" json:"-" flag:"face-cluster-core"`
+	FaceClusterCoreRetry      int           `yaml:"-" json:"-" flag:"face-cluster-core-retry"`
 	FaceClusterSplitRounds    int           `yaml:"-" json:"-" flag:"face-cluster-split-rounds"`
 	FaceClusterSplitShrink    float64       `yaml:"-" json:"-" flag:"face-cluster-split-shrink"`
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
@@ -337,12 +344,12 @@ func NewOptions(ctx *cli.Context) *Options {
 	if c.DefaultsYaml = defaultsYaml(ctx); !fs.FileExistsNotEmpty(c.DefaultsYaml) {
 		log.Tracef("config: defaults file is empty or missing")
 	} else if err := c.Load(c.DefaultsYaml); err != nil {
-		log.Warnf("config: failed loading defaults from %s (%s)", clean.Log(c.DefaultsYaml), err)
+		event.SystemWarn([]string{"config", "defaults", "load %s", "%s"}, clean.Log(c.DefaultsYaml), clean.ErrorFull(err))
 	}
 
 	// Apply options specified with environment variables and command-line flags.
 	if err := c.ApplyCliContext(ctx); err != nil {
-		log.Error(err)
+		log.Errorf("config: %s", clean.Error(err))
 	}
 
 	return c
@@ -373,7 +380,7 @@ func (o *Options) Load(fileName string) error {
 		return fmt.Errorf("%s not found", fileName)
 	}
 
-	yamlConfig, err := os.ReadFile(fileName) //nolint:gosec // configuration file path provided by user/config
+	yamlConfig, err := readOptionsFile(fileName)
 
 	if err != nil {
 		return err

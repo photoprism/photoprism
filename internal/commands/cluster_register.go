@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -143,14 +144,6 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			payload.RotateDatabase = true
 		}
 
-		// If we already have client credentials for this node (e.g., re-registering the
-		// same instance), include them so the portal can verify UUID/name changes. Avoid
-		// sending the portal's own credentials when registering a different node.
-		if id, secret := strings.TrimSpace(conf.NodeClientID()), strings.TrimSpace(conf.NodeClientSecret()); id != "" && secret != "" && strings.EqualFold(conf.NodeName(), name) {
-			payload.ClientID = id
-			payload.ClientSecret = secret
-		}
-
 		if site != "" {
 			payload.SiteUrl = site
 		}
@@ -206,14 +199,16 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			return cli.Exit(fmt.Errorf("portal URL is required (use --portal-url or set portal-url)"), 2)
 		}
 
-		token := ctx.String("join-token")
+		joinToken := ctx.String("join-token")
 
-		if token == "" {
-			token = conf.JoinToken()
+		if joinToken == "" {
+			joinToken = conf.JoinToken()
 		}
 
-		if token == "" {
-			return cli.Exit(fmt.Errorf("portal token is required (use --join-token or set join-token)"), 2)
+		token, err := clusterRegisterToken(conf, portalURL, joinToken, name)
+
+		if err != nil {
+			return cli.Exit(err, clusterTokenExitCode(err))
 		}
 
 		// POST with bounded backoff on 429
@@ -344,7 +339,7 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 		retry, err := func() (bool, error) {
 			defer func() {
 				if closeErr := resp.Body.Close(); closeErr != nil {
-					log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+					log.Debugf("cluster: %s (close register response body)", clean.ErrorFull(closeErr))
 				}
 			}()
 
@@ -408,7 +403,7 @@ func warnInsecurePublicURL(u string) bool {
 		return false
 	}
 	h := parsed.Hostname()
-	if h == "localhost" || h == "127.0.0.1" || h == "::1" {
+	if dns.IsLoopbackHost(h) {
 		return false
 	}
 	return true
@@ -466,17 +461,24 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		}
 	}
 
-	// DB settings (MySQL/MariaDB only)
+	// DB settings (MySQL/MariaDB only), which are ignored as a whole if the server address is unusable.
 	if resp.Database.Name != "" && resp.Database.User != "" {
 		driver := strings.TrimSpace(resp.Database.Driver)
 		if driver == "" {
 			driver = dsn.DriverMySQL
 		}
-		updates.SetDatabaseDriver(driver)
-		updates.SetDatabaseName(resp.Database.Name)
-		updates.SetDatabaseServer(fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port))
-		updates.SetDatabaseUser(resp.Database.User)
-		updates.SetDatabasePassword(resp.Database.Password)
+
+		if server, ok := resp.Database.Server(); !ok {
+			log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
+		} else {
+			updates.SetDatabaseDriver(driver)
+			updates.SetDatabaseName(resp.Database.Name)
+			if server != "" {
+				updates.SetDatabaseServer(server)
+			}
+			updates.SetDatabaseUser(resp.Database.User)
+			updates.SetDatabasePassword(resp.Database.Password)
+		}
 	}
 
 	if !updates.IsZero() {

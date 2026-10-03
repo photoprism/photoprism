@@ -6,7 +6,10 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
@@ -273,7 +276,7 @@ var Flags = CliFlags{
 			Usage:   "loads default config values from `FILENAME` if it exists, does not override CLI flags or environment variables",
 			// fs.ConfigFilePath lets existing installations keep a defaults.yml file
 			// while new deployments may drop in defaults.yaml without updating the flag.
-			Value:     fs.ConfigFilePath("/etc/photoprism", "defaults", fs.ExtYml),
+			Value:     fs.ConfigFilePath("/etc/photoprism", fs.ConfigDefaultsName, fs.ExtYml),
 			EnvVars:   EnvVars("DEFAULTS_YAML"),
 			TakesFile: true,
 		}}, {
@@ -287,8 +290,8 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "originals-limit",
 			Aliases: []string{"mb"},
-			Value:   1000,
-			Usage:   "maximum size of media files in `MB` (1-100000; -1 to disable)",
+			Value:   5000,
+			Usage:   "maximum size of a single media file in `MB` (-1 to disable)",
 			EnvVars: EnvVars("ORIGINALS_LIMIT"),
 		}}, {
 		Flag: &cli.IntFlag{
@@ -330,7 +333,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "upload-allow",
-			Usage:   "restricts uploads to these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			Usage:   "further restricts web uploads to these file types (comma-separated list of `EXTENSIONS`)",
 			EnvVars: EnvVars("UPLOAD_ALLOW"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -340,9 +343,15 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "upload-limit",
-			Value:   1000,
-			Usage:   "maximum total size of uploaded files in `MB` (1-100000; -1 to disable)",
+			Value:   5000,
+			Usage:   "maximum total size of web uploads in `MB` (-1 to disable)",
 			EnvVars: EnvVars("UPLOAD_LIMIT"),
+		}}, {
+		Flag: &cli.Int64Flag{
+			Name:    "upload-maxage",
+			Value:   DefaultUploadMaxAge,
+			Usage:   fmt.Sprintf("time in `SECONDS` after which staged uploads that were never imported are removed (%d-%d; -1 to keep them)", MinUploadMaxAge, MaxUploadMaxAge),
+			EnvVars: EnvVars("UPLOAD_MAXAGE"),
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "cache-path",
@@ -519,7 +528,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-classification",
-			Usage:   "disables all image classification and label generation",
+			Usage:   "disables image classification *deprecated*, use --labels-model none",
+			Hidden:  true,
 			EnvVars: EnvVars("DISABLE_CLASSIFICATION"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -743,7 +753,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
-			Usage:   "cluster `CIDR` for IP-based authorization, e.g. 10.0.0.0/8",
+			Usage:   "cluster `CIDR` ranges for IP-based authorization, separated by commas, e.g. 10.0.0.0/8",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
 			Hidden:  true,
 		}}, {
@@ -898,9 +908,9 @@ var Flags = CliFlags{
 		Flag: &cli.StringSliceFlag{
 			Name:    "trusted-proxy",
 			Usage:   "`CIDR` ranges or IPv4/v6 addresses from which reverse proxy headers can be trusted, separated by commas",
-			Value:   cli.NewStringSlice(header.CidrDockerInternal),
+			Value:   cli.NewStringSlice(header.CidrDockerInternal, header.CidrLoopback, header.IPv6Loopback),
 			EnvVars: EnvVars("TRUSTED_PROXY"),
-		}}, {
+		}, DocDefault: header.CidrDockerInternal + ", " + header.CidrLoopback + ", " + header.IPv6Loopback}, {
 		Flag: &cli.StringSliceFlag{
 			Name:    "proxy-client-header",
 			Usage:   "proxy client IP header `NAME`, e.g. X-Forwarded-For, X-Client-IP, X-Real-IP, or CF-Connecting-IP",
@@ -926,7 +936,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-tls",
-			Usage:   "disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available",
+			Usage:   "disables HTTPS/TLS even if the site URL starts with https:// and a certificate or TLS email is configured",
 			EnvVars: EnvVars("DISABLE_TLS"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -936,18 +946,17 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "tls-email",
-			Usage:   "`EMAIL` address to enable automatic HTTPS via Let's Encrypt",
+			Usage:   "`EMAIL` address to obtain an HTTPS certificate for the site domain from Let's Encrypt, which must reach the Web server on port 443",
 			EnvVars: EnvVars("TLS_EMAIL"),
-			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "tls-cert",
-			Usage:   "public HTTPS certificate `FILENAME` (.crt), ignored for Unix domain sockets",
+			Usage:   "public HTTPS certificate `FILENAME` (.crt), ignored for Unix domain sockets and with automatic HTTPS",
 			EnvVars: EnvVars("TLS_CERT"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "tls-key",
-			Usage:   "private HTTPS key `FILENAME` (.key), ignored for Unix domain sockets",
+			Usage:   "private HTTPS key `FILENAME` (.key), ignored for Unix domain sockets and with automatic HTTPS",
 			EnvVars: EnvVars("TLS_KEY"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1159,6 +1168,18 @@ var Flags = CliFlags{
 			Value:   ffmpeg.DefaultExclude,
 			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "convert-timeout",
+			Usage:   "time in `MINUTES` after which converting a still image, document, or RAW file is given up (-1 to disable)",
+			Value:   DefaultConvertTimeout,
+			EnvVars: EnvVars("CONVERT_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "transcode-timeout",
+			Usage:   "time in `MINUTES` after which transcoding a video is given up (disabled by default)",
+			Value:   DefaultTranscodeTimeout,
+			EnvVars: EnvVars("TRANSCODE_TIMEOUT"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
@@ -1330,9 +1351,27 @@ var Flags = CliFlags{
 			Value:   "public:true",
 			EnvVars: EnvVars("VISION_FILTER"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "labels-model",
+			Usage:   "image classification `MODE` (auto, none)",
+			EnvVars: EnvVars("LABELS_MODEL"),
+		},
+		DocDefault: string(classify.ModelAuto)}, {
+		Flag: &cli.StringFlag{
+			Name:    "nsfw-model",
+			Usage:   "NSFW detection `MODE` (auto, none, labels)",
+			EnvVars: EnvVars("NSFW_MODEL"),
+		},
+		DocDefault: string(nsfw.ModelAuto)}, {
+		Flag: &cli.StringFlag{
+			Name:    "onnx-provider",
+			Usage:   "execution `PROVIDER` for ONNX inference (" + onnx.ProviderUsageString() + "), falls back to the CPU when unavailable",
+			Value:   onnx.DefaultProvider.String(),
+			EnvVars: EnvVars("ONNX_PROVIDER"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
-			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
+			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -1439,6 +1478,15 @@ var Flags = CliFlags{
 			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-core-retry",
+			Usage:   "`NUMBER` of faces forming a cluster core in a second pass over what matching left unclustered, -1 to disable",
+			EnvVars: EnvVars("FACE_CLUSTER_CORE_RETRY"),
+		},
+		// No Value, or the option would be non-zero on every start and FaceClusterCoreRetry would
+		// never reach its derivation. Flat rather than one less than the first pass, see there.
+		DocDefault: fmt.Sprintf("%d (off where face-cluster-core is below %d)",
+			face.ClusterCoreRetryDefault, face.ClusterCoreDefault)}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-split-rounds",
 			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",

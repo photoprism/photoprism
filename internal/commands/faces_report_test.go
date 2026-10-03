@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/txt/report"
@@ -492,6 +493,50 @@ func TestReportThumbPixels(t *testing.T) {
 		// rather than reading as zero pixels.
 		assert.Equal(t, reportUnrecorded, reportThumbPixels(0))
 		assert.Equal(t, reportUnrecorded, reportThumbPixels(-1))
+	})
+}
+
+// TestReportEmbedDetail covers the column that says how much of the crop a source supplied. The
+// two sentinels are the point: a raw -1 under a percentage heading reads as a bad measurement.
+func TestReportEmbedDetail(t *testing.T) {
+	t.Run("Measured", func(t *testing.T) {
+		assert.Equal(t, "100%", reportEmbedDetail(100))
+		assert.Equal(t, "46%", reportEmbedDetail(46))
+		assert.Equal(t, "1%", reportEmbedDetail(1))
+	})
+	t.Run("Unmeasurable", func(t *testing.T) {
+		// A sampling reached this marker and could not measure the ratio, which is not the same
+		// as never having sampled it - and neither is a percentage.
+		assert.Equal(t, reportUnmeasured, reportEmbedDetail(entity.EmbedDetailUnknown))
+		assert.NotEqual(t, reportUnrecorded, reportEmbedDetail(entity.EmbedDetailUnknown))
+	})
+	t.Run("NeverSampled", func(t *testing.T) {
+		assert.Equal(t, reportUnrecorded, reportEmbedDetail(-1))
+		assert.Equal(t, reportUnrecorded, reportEmbedDetail(0))
+	})
+	t.Run("NoSentinelRendersAsANumber", func(t *testing.T) {
+		// Whatever the column holds below 1, what it prints is one of the two tokens - never the
+		// stored value, which under a percentage heading would read as a measurement.
+		for _, v := range []int{0, -1, entity.EmbedDetailUnknown, -99} {
+			rendered := reportEmbedDetail(v)
+
+			assert.Contains(t, []string{reportUnrecorded, reportUnmeasured}, rendered)
+			assert.NotContains(t, rendered, "%")
+		}
+	})
+}
+
+// TestReportEmbedDetailMean covers the per-cluster average, where "no measured markers" and
+// "measured, and low" are opposite readings that must not render alike.
+func TestReportEmbedDetailMean(t *testing.T) {
+	t.Run("Measured", func(t *testing.T) {
+		assert.Equal(t, "100%", reportEmbedDetailMean(100))
+		assert.Equal(t, "87%", reportEmbedDetailMean(86.6))
+	})
+	t.Run("NoMeasuredMembers", func(t *testing.T) {
+		// The state every cluster is in before a library re-embeds, so it is the common case.
+		assert.Equal(t, reportUnrecorded, reportEmbedDetailMean(-1))
+		assert.Equal(t, reportUnrecorded, reportEmbedDetailMean(0))
 	})
 }
 

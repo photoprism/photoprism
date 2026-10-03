@@ -41,7 +41,6 @@ ENV DO_NOT_TRACK=true \
     ORT_DISABLE_TELEMETRY=1 \
     PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
-    DOCKER_ENV="prod" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL=4 \
@@ -76,7 +75,6 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_DISABLE_PLACES="false" \
     PHOTOPRISM_DISABLE_TENSORFLOW="false" \
     PHOTOPRISM_DISABLE_FACES="false" \
-    PHOTOPRISM_DISABLE_CLASSIFICATION="false" \
     PHOTOPRISM_RAW_PRESETS="false" \
     PHOTOPRISM_THUMB_UNCACHED="false" \
     PHOTOPRISM_AUTO_INDEX="300" \
@@ -85,6 +83,11 @@ ENV DO_NOT_TRACK=true \
 
 # Copy scripts.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
+
+# Record the published image, which the startup scripts read instead of taking it from
+# the caller. This image does not run "install-sudoers.sh", so it states its own identity
+# rather than inheriting the base image's.
+RUN printf 'DOCKER_ENV=prod\nDOCKER_IMG=ce\n' > /scripts/.env && chmod 0444 /scripts/.env
 
 # Update pre-installed packages.
 RUN apt-get update && \
@@ -99,4 +102,4 @@ WORKDIR /photoprism
 EXPOSE 2342 2443
 
 # Copy app files.
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root /opt/photoprism/ /opt/photoprism

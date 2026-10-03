@@ -43,6 +43,28 @@ func TestClusterHealth(t *testing.T) {
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
+	t.Run("ClusterCIDRList", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		prevClusterCIDR := conf.Options().ClusterCIDR
+		t.Cleanup(func() { conf.Options().ClusterCIDR = prevClusterCIDR })
+		ClusterHealth(router)
+
+		// request returns the status of a health check from the specified address.
+		request := func(remoteAddr string) int {
+			req := httptest.NewRequest(http.MethodGet, "/api/v1/cluster/health", nil)
+			req.RemoteAddr = remoteAddr
+			w := httptest.NewRecorder()
+			app.ServeHTTP(w, req)
+			return w.Code
+		}
+
+		conf.Options().ClusterCIDR = "198.51.100.0/24, 192.0.2.0/24"
+		assert.Equal(t, http.StatusOK, request("192.0.2.42:12345"))
+		assert.Equal(t, http.StatusUnauthorized, request("203.0.113.9:12345"))
+		conf.Options().ClusterCIDR = "192.0.2.0/24,garbage"
+		assert.Equal(t, http.StatusUnauthorized, request("192.0.2.42:12345"))
+	})
 	t.Run("ClusterCIDRAllowed", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)

@@ -46,6 +46,46 @@ func TestFacesMigrateAction(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, before, after)
 	})
+	t.Run("Confirm", func(t *testing.T) {
+		// Without confirmation, the migration neither starts nor changes the configured model, which
+		// differs from the target here.
+		t.Setenv("PHOTOPRISM_CLI", "")
+		options.FaceModel = face.ModelSFace
+		t.Cleanup(func() { options.FaceModel = face.ModelFaceNet })
+
+		before, err := query.FaceMigrationCounts(face.ModelFaceNet)
+		require.NoError(t, err)
+
+		// The command harness restores the options after each run, but not what the command saved.
+		savedBefore, _ := os.ReadFile(conf.OptionsYaml())
+
+		unchanged := func() {
+			t.Helper()
+
+			after, countErr := query.FaceMigrationCounts(face.ModelFaceNet)
+			require.NoError(t, countErr)
+			assert.Equal(t, before, after)
+			assert.Equal(t, face.ModelSFace, options.FaceModel)
+			assert.Equal(t, face.ModelSFace, conf.FaceModel())
+
+			savedAfter, _ := os.ReadFile(conf.OptionsYaml())
+			assert.Equal(t, string(savedBefore), string(savedAfter))
+		}
+
+		_, err = RunWithTestContext(FacesMigrateCommand, []string{"migrate", "--to=facenet"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Contains(t, err.Error(), "could not ask for confirmation")
+		unchanged()
+
+		pipeResetAnswers(t, "n\n")
+
+		_, err = RunWithTestContext(FacesMigrateCommand, []string{"migrate", "--to=facenet"})
+		assert.NoError(t, err)
+		unchanged()
+	})
 	t.Run("TargetNotInstalled", func(t *testing.T) {
 		// A target that differs from the configured model is the command's normal input,
 		// so what it refuses here is weights it cannot load.
@@ -73,11 +113,12 @@ func TestFacesMigrateAction(t *testing.T) {
 }
 
 func TestFacesMigrateCommand(t *testing.T) {
-	t.Run("DescribesTheServerConstraint", func(t *testing.T) {
-		// The worker guards are process-local, so the operator is the only thing that can
-		// keep a running instance away from the rows being replaced. "photoprism help" has
-		// to say so, because nothing in the code can enforce it.
-		assert.Contains(t, FacesMigrateCommand.Description, "Stop the server")
+	t.Run("DescribesTheRestart", func(t *testing.T) {
+		// The lock keeps a running instance off the rows being replaced, so the operator does
+		// not have to stop it. Nothing reloads the model the run records, though, so
+		// "photoprism help" has to name the restart, which no guard can perform.
+		assert.Contains(t, FacesMigrateCommand.Description, "restart the instance afterwards")
+		assert.NotContains(t, FacesMigrateCommand.Description, "Stop the server")
 		assert.NotEmpty(t, FacesMigrateCommand.Usage)
 	})
 }

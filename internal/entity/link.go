@@ -103,17 +103,23 @@ func (m *Link) ExpiresAt() *time.Time {
 	return &expires
 }
 
-// Expired checks if the share link has expired.
+// Expired checks if the share link has passed its expiration time.
 func (m *Link) Expired() bool {
-	if m.MaxViews > 0 && m.LinkViews >= m.MaxViews {
-		return true
-	}
-
 	if expires := m.ExpiresAt(); expires == nil {
 		return false
 	} else {
 		return Now().After(*expires)
 	}
+}
+
+// Redeemable checks if the link admits a new redemption. The view limit is read here rather than by
+// Expired, which decides what an earlier redemption keeps.
+func (m *Link) Redeemable() bool {
+	if m.MaxViews > 0 && m.LinkViews >= m.MaxViews {
+		return false
+	}
+
+	return !m.Expired()
 }
 
 // SetSlug sets the URL slug of the link.
@@ -210,6 +216,27 @@ func FindLink(linkUid string) *Link {
 	return &result
 }
 
+// FindRedeemableLinksByToken returns the links a request-supplied share token may be redeemed
+// through. The token is required: it is sanitized first and must still be non-empty, so a caller
+// cannot reach the lookup without one. Internal callers listing a record's links use FindLinks.
+func FindRedeemableLinksByToken(token, shared string) Links {
+	if token = clean.ShareToken(token); token == "" {
+		return Links{}
+	}
+
+	return FindRedeemableLinks(token, shared)
+}
+
+// FindRedeemedLinksByToken returns the links a token resolves that are within their expiration time,
+// which is what a redemption keeps. The token is sanitized as it is for a request-supplied one.
+func FindRedeemedLinksByToken(token, shared string) Links {
+	if token = clean.ShareToken(token); token == "" {
+		return Links{}
+	}
+
+	return FindRedeemedLinks(token, shared)
+}
+
 // FindLinks returns a slice of links for a token and a share UID (at least one must be specified).
 func FindLinks(token, shared string) (found Links) {
 	found = Links{}
@@ -240,8 +267,25 @@ func FindLinks(token, shared string) (found Links) {
 	return found
 }
 
-// FindValidLinks returns a slice of non-expired links for a token and share UID (at least one must be provided).
-func FindValidLinks(token, shared string) (found Links) {
+// FindRedeemableLinks returns the links for a token and share UID that admit a new redemption
+// (at least one of the two must be provided).
+func FindRedeemableLinks(token, shared string) (found Links) {
+	found = Links{}
+
+	for _, link := range FindLinks(token, shared) {
+		if !link.Redeemable() {
+			continue
+		}
+
+		found = append(found, link)
+	}
+
+	return found
+}
+
+// FindRedeemedLinks returns the links for a token and share UID that are still within their
+// expiration time, which is the access a redemption keeps (at least one of the two must be provided).
+func FindRedeemedLinks(token, shared string) (found Links) {
 	found = Links{}
 
 	for _, link := range FindLinks(token, shared) {

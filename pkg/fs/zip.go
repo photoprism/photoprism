@@ -11,6 +11,9 @@ import (
 	"strings"
 )
 
+// ErrArchiveSymlink identifies an unsupported symbolic-link archive entry.
+var ErrArchiveSymlink = errors.New("archive symlinks are not supported")
+
 // MaxUnzipEntries caps the number of entries extracted by Unzip. It may be tuned via config/env later.
 var MaxUnzipEntries = 100000
 
@@ -103,8 +106,8 @@ func ZipFile(zipWriter *zip.Writer, fileName, fileAlias string, compress bool) (
 }
 
 // Unzip extracts the contents of a zip file to the target directory.
-// totalSizeLimit: 0 means unlimited; -1 also means unlimited (reserved for backward compatibility).
-func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64) (files []string, skipped []string, err error) {
+// Nonpositive total size limits are unlimited; optional filters select entries before extraction.
+func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64, filters ...func(string, bool) bool) (files []string, skipped []string, err error) {
 	zipReader, err := zip.OpenReader(zipName)
 
 	if err != nil {
@@ -128,7 +131,14 @@ func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64) (files []st
 		}
 
 		// Skip directories like __OSX and potentially malicious file names containing "..".
-		skipEntry := strings.HasPrefix(zipFile.Name, "__") || strings.Contains(zipFile.Name, "..")
+		skipEntry := strings.HasPrefix(zipFile.Name, "__") || strings.Contains(zipFile.Name, "..") || HasReservedComponent(zipFile.Name) || zipFile.Mode()&os.ModeSymlink != 0
+
+		for _, filter := range filters {
+			if filter != nil && !filter(zipFile.Name, zipFile.FileInfo().IsDir()) {
+				skipEntry = true
+				break
+			}
+		}
 
 		if !skipEntry && fileSizeLimit > 0 {
 			if zipFile.UncompressedSize64 > uint64(math.MaxInt64) {
@@ -161,6 +171,12 @@ func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64) (files []st
 		}
 
 		fileName, unzipErr := unzipFileWithLimit(zipFile, dir, fileSizeLimit)
+
+		if errors.Is(unzipErr, ErrReservedPath) || errors.Is(unzipErr, ErrArchiveSymlink) {
+			skipped = append(skipped, zipFile.Name)
+			continue
+		}
+
 		if unzipErr != nil {
 			return files, skipped, unzipErr
 		}
@@ -178,6 +194,12 @@ func UnzipFile(f *zip.File, dir string) (fileName string, err error) {
 
 // unzipFileWithLimit writes a file from a zip archive to the target destination while applying a size limit.
 func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName string, err error) {
+	if HasReservedComponent(f.Name) {
+		return "", ErrReservedPath
+	} else if f.Mode()&os.ModeSymlink != 0 {
+		return "", ErrArchiveSymlink
+	}
+
 	rc, err := f.Open()
 	if err != nil {
 		return fileName, err
@@ -209,6 +231,7 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 	}
 
 	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode()) //nolint:gosec // destination derived from SafeJoin
+
 	if err != nil {
 		return fileName, err
 	}
@@ -231,6 +254,7 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 	}
 
 	written, copyErr := io.CopyN(fd, rc, limit)
+
 	if copyErr != nil && !errors.Is(copyErr, io.EOF) && !errors.Is(copyErr, io.ErrUnexpectedEOF) {
 		return fileName, copyErr
 	}

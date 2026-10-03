@@ -8,6 +8,11 @@ import (
 func Resample(img image.Image, width, height int, opts ...ResampleOption) image.Image {
 	method, filter, _ := ResampleOptions(opts...)
 
+	return ResampleWithFilter(img, width, height, method, filter)
+}
+
+// ResampleWithFilter resizes an image with an explicit method and interpolation filter.
+func ResampleWithFilter(img image.Image, width, height int, method ResampleOption, filter ResampleFilter) image.Image {
 	switch method {
 	case ResampleFit:
 		return fitImage(img, width, height, filter)

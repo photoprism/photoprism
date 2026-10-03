@@ -12,7 +12,26 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// restoreSubjectFixtures saves the named subject fixtures now and again when the test ends. Marker
+// edits delete people who no longer have markers, and the subject tests edit these rows as well.
+func restoreSubjectFixtures(t *testing.T, names ...string) {
+	t.Helper()
+
+	restore := func() {
+		for _, name := range names {
+			m := entity.SubjectFixtures.Get(name)
+			require.NotEmpty(t, m.SubjUID, name)
+			require.NoError(t, entity.UnscopedDb().Save(&m).Error)
+		}
+	}
+
+	restore()
+	t.Cleanup(restore)
+}
+
 func TestGetSubject(t *testing.T) {
+	restoreSubjectFixtures(t, "dangling")
+
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetSubject(router)
@@ -68,6 +87,18 @@ func TestFindSubjectForSession(t *testing.T) {
 	t.Run("PrivateAllowed", func(t *testing.T) {
 		assert.NotNil(t, FindSubjectForSession(m.SubjUID, entity.SessionFixtures.Pointer("alice")))
 	})
+	// Hidden withholds the name for the same roles private does, so the guard reads both flags.
+	t.Run("HiddenDenied", func(t *testing.T) {
+		h := entity.NewSubject("Hidden Handler Subject", entity.SubjPerson, entity.SrcManual)
+		require.NotNil(t, h)
+		h.SubjHidden = true
+		require.NoError(t, h.Create())
+
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", h.SubjUID) })
+
+		assert.Nil(t, FindSubjectForSession(h.SubjUID, entity.SessionFixtures.Pointer("visitor")))
+		assert.NotNil(t, FindSubjectForSession(h.SubjUID, entity.SessionFixtures.Pointer("alice")))
+	})
 	t.Run("Deleted", func(t *testing.T) {
 		// Refused for everyone, including the role that may see a private person.
 		require.NoError(t, m.Delete())
@@ -114,6 +145,8 @@ func TestSubjectHandlersRefuseDeleted(t *testing.T) {
 }
 
 func TestLikeSubject(t *testing.T) {
+	restoreSubjectFixtures(t, "joe-biden")
+
 	t.Run("InvalidSubject", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		LikeSubject(router)
@@ -148,6 +181,8 @@ func TestLikeSubject(t *testing.T) {
 }
 
 func TestDislikeSubject(t *testing.T) {
+	restoreSubjectFixtures(t, "john-doe")
+
 	t.Run("InvalidSubject", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikeSubject(router)
@@ -182,6 +217,8 @@ func TestDislikeSubject(t *testing.T) {
 }
 
 func TestUpdateSubject(t *testing.T) {
+	restoreSubjectFixtures(t, "john-doe", "joe-biden")
+
 	t.Run("SuccessfulRequestPerson", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateSubject(router)

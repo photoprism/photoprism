@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/manifoldco/promptui"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -22,6 +22,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// FacesResetDescription explains what each scope of the faces reset command removes and keeps.
+const FacesResetDescription = "Without flags, this command removes the automatically recognized faces and matches, as well as people who were created from faces and are left without any, and keeps the names you assigned. " +
+	"With --all, it also removes the names you assigned and unverified people, keeping the markers. " +
+	"With --force, it removes all faces, people, and markers, so faces must be detected again with \"photoprism faces index\". " +
+	"With --detector, it removes all faces instead of only the automatically recognized ones, and detects faces in all pictures again, " +
+	"which updates the markers the detector finds, adds new ones, and removes the unnamed markers it does not find. " +
+	"Run it while the instance is stopped or idle, and set the face detector in the configuration to the same value. " +
+	"Afterwards, run \"photoprism faces update\" to recognize faces again."
 
 // FacesCommands configures the command name, flags, and action.
 var FacesCommands = &cli.Command{
@@ -83,24 +92,31 @@ var FacesCommands = &cli.Command{
 			Action: facesStatsAction,
 		},
 		{
-			Name:  "reset",
-			Usage: "Removes people and faces after confirmation",
+			Name:        "reset",
+			Usage:       "Removes people and faces after confirmation",
+			Description: FacesResetDescription,
 			Flags: []cli.Flag{
-				ForceFlag("removes all people, faces, and markers, so faces must be detected again"),
 				&cli.BoolFlag{
 					Name:    "all",
 					Aliases: []string{"a"},
-					Usage:   "also removes manually created faces and names, keeping the markers",
+					Usage:   "removes all faces, names, and unverified people, keeping the markers",
 				},
+				ForceFlag("removes all faces, people, and markers, so faces must be detected again"),
 				&cli.StringFlag{
 					Name:  "detector",
-					Usage: "regenerate markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
+					Usage: "regenerates all markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
 				},
 				&cli.StringFlag{
 					Name:   "engine",
 					Usage:  "regenerate markers using detection engine `NAME` *deprecated*, use --detector",
 					Hidden: true,
 				},
+				&cli.BoolFlag{
+					Name:    "trace",
+					Aliases: []string{"t"},
+					Usage:   "shows trace logs for debugging",
+				},
+				YesFlag(),
 			},
 			Action: facesResetAction,
 		},
@@ -113,8 +129,9 @@ var FacesMigrateCommand = &cli.Command{
 	Usage: "Migrates face embeddings to a supported model",
 	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
 		"the target is recorded as the configured model. It defaults to " + face.DefaultModelName() +
-		", the model this release supports, so an ordinary migration needs no target. Stop the server " +
-		"before running it, as the migration replaces every face cluster in one transaction.",
+		", the model this release supports, so an ordinary migration needs no target. A running " +
+		"instance does not have to be stopped, but start this when no indexing or import is under " +
+		"way, and restart the instance afterwards to load the model it recorded.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:  "to",
@@ -216,21 +233,18 @@ func facesMigrateAction(ctx *cli.Context) error {
 			return nil
 		}
 
-		// The worker guards in Migrate are process-local, so they cannot see a server that
-		// is indexing or matching the same rows. Stopping it is the operator's job, and the
-		// prompt is the last point at which saying so still helps.
-		event.SystemWarn([]string{"faces", "migrate", "this replaces every face cluster; indexing and vision hold off " +
-			"while it runs, but changes made in the app are not covered, so stopping the server is still the safe way"})
+		// A running instance reads the lock file this run takes, so it starts no new indexing and
+		// refuses people edits. A pass already under way is not interrupted, and what it writes can
+		// roll the finalize back, which is why the warning names that as well as the restart.
+		event.SystemWarn([]string{"faces", "migrate", "this replaces every face cluster; a running instance " +
+			"starts no new indexing and refuses people edits while it runs, but a pass already under way can " +
+			"still force a re-run; restart the instance afterwards to load %s"}, clean.Log(plan.Target))
 
-		if !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Migrate all face embeddings to %s, with the server stopped?", plan.Target),
-				IsConfirm: true,
-			}
-			if _, promptErr := prompt.Run(); promptErr != nil {
-				log.Info("faces: migration canceled")
-				return nil
-			}
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Migrate all face embeddings to %s", plan.Target)); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Info("faces: migration canceled")
+			return nil
 		}
 
 		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{
@@ -267,6 +281,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// detection did not find it again, most often because a person drew it by hand.
 		if result.Retained > 0 {
 			log.Infof("faces: %d markers kept the vector another detector's crop produced", result.Retained)
+		}
+		// A person removed these names under the previous model, which the new one may recognize.
+		if result.LiftedRejections > 0 {
+			log.Infof("faces: %d re-embedded marker(s) whose name a person had removed can be recognized again",
+				result.LiftedRejections)
 		}
 		// Excluded assignments keep their person but seed no cluster, so the count is what
 		// tells an operator how much of a curated library did not shape its own centroids.
@@ -391,7 +410,8 @@ func facesAuditAction(ctx *cli.Context) error {
 	return nil
 }
 
-// facesResetAction resets face clusters and matches.
+// facesResetAction removes faces, matches, and people in the scope the flags select, and regenerates
+// the markers when a detector is named.
 func facesResetAction(ctx *cli.Context) error {
 	if ctx.Bool("force") {
 		// The two do not compose: --force removes every person, face and marker, and the names go
@@ -399,36 +419,56 @@ func facesResetAction(ctx *cli.Context) error {
 		// half alone. Refused rather than reordered, because which of the two they meant is not
 		// knowable from the command.
 		if ctx.IsSet("detector") || ctx.IsSet("engine") {
-			return cli.Exit("faces: --force removes all people and faces, so it cannot be combined with --detector", 1)
+			return cli.Exit("faces: --force removes all faces, people, and markers, so it cannot be combined with --detector", 2)
 		}
 
 		// Refused rather than treated as the wider of the two: the flags name different outcomes
 		// for the markers table, and which one a caller meant is not knowable from the command.
 		if ctx.Bool("all") {
-			return cli.Exit("faces: --force also removes the markers, so it cannot be combined with --all", 1)
+			return cli.Exit("faces: --force also removes the markers, so it cannot be combined with --all", 2)
 		}
 
 		return facesResetAllAction(ctx)
 	}
 
 	all := ctx.Bool("all")
+	detector := facesResetDetector(ctx)
 
-	label := "Remove automatically recognized faces, matches, and dangling subjects?"
-
-	if all {
-		label = "Remove all faces and matches, including names, keeping the markers?"
+	if !face.KnownDetectorName(detector) {
+		return cli.Exit(fmt.Sprintf("faces: unsupported face detector %s", clean.Log(detector)), 2)
 	}
 
-	actionPrompt := promptui.Prompt{
-		Label:     label,
-		IsConfirm: true,
+	regenerate := detector != "" && face.ParseDetectorName(detector) != face.DetectorNone
+	detectorName := detector
+
+	// Auto names the configured detector, which only the config knows. It is loaded without the
+	// database, so a declined or refused prompt changes nothing.
+	if regenerate && face.ParseDetectorName(detector) == face.DetectorAuto {
+		coreConf, coreErr := InitCoreConfig(ctx, false)
+
+		if coreErr != nil {
+			return coreErr
+		} else if detectorName = facesResetDetectorName(coreConf, detector); face.ParseDetectorName(detectorName) == face.DetectorNone {
+			return cli.Exit("faces: no face detector can be used, so markers cannot be regenerated", 2)
+		}
 	}
 
-	if _, err := actionPrompt.Run(); err != nil {
+	// The run cannot see a running instance, so the operator is asked to rule out a concurrent pass.
+	if regenerate && !RunNonInteractively(ctx.Bool("yes")) {
+		log.Warnf("faces: make sure the instance is stopped or idle before you continue")
+	}
+
+	if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), facesResetLabel(all, detectorName)); confirmErr != nil {
+		return confirmErr
+	} else if !proceed {
+		log.Infof("faces: no faces were removed")
 		return nil
 	}
 
-	start := time.Now()
+	if ctx.Bool("trace") {
+		log.SetLevel(logrus.TraceLevel)
+		log.Infoln("reset: enabled trace mode")
+	}
 
 	conf, err := InitConfig(ctx)
 
@@ -442,19 +482,8 @@ func facesResetAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
+	start := time.Now()
 	w := get.Faces()
-
-	detector := strings.TrimSpace(ctx.String("detector"))
-
-	// The deprecated flag names a runtime that every detector shares, so it can only ask for the
-	// detector already configured, or for no regeneration at all.
-	if detector == "" {
-		if engine := strings.TrimSpace(ctx.String("engine")); engine != "" {
-			if detector = face.DetectorAuto; face.ParseEngine(engine) == face.EngineNone {
-				detector = ""
-			}
-		}
-	}
 
 	var resetErr error
 
@@ -477,15 +506,71 @@ func facesResetAction(ctx *cli.Context) error {
 	return nil
 }
 
-// facesResetAllAction removes all people, faces, and face markers.
-func facesResetAllAction(ctx *cli.Context) error {
-	actionPrompt := promptui.Prompt{
-		Label:     "Permanently remove all people and faces?",
-		IsConfirm: true,
+// facesResetDetector returns the detector the markers are regenerated with, or "" to reset only.
+// The deprecated --engine flag names a runtime every detector shares, so it can only ask for the
+// configured detector, or for no regeneration at all.
+func facesResetDetector(ctx *cli.Context) string {
+	if detector := strings.TrimSpace(ctx.String("detector")); detector != "" {
+		return detector
 	}
 
-	if _, err := actionPrompt.Run(); err != nil {
+	if engine := strings.TrimSpace(ctx.String("engine")); engine != "" && face.ParseEngine(engine) != face.EngineNone {
+		return face.DetectorAuto
+	}
+
+	return ""
+}
+
+// facesResetDetectorName returns the name of the detector a reset regenerates the markers with, which
+// is the configured one when auto is requested.
+func facesResetDetectorName(conf *config.Config, detector string) string {
+	if conf != nil && detector != "" && face.ParseDetectorName(detector) == face.DetectorAuto {
+		return string(conf.FaceDetector())
+	}
+
+	return detector
+}
+
+// facesResetLabel returns the confirmation prompt for the scope and detector a reset was given.
+func facesResetLabel(all bool, detector string) string {
+	var with string
+
+	switch face.ParseDetectorName(detector) {
+	case face.DetectorNone:
+	case face.DetectorAuto:
+		if strings.TrimSpace(detector) != "" {
+			with = "the configured detector"
+		}
+	default:
+		with = clean.Log(detector)
+	}
+
+	switch {
+	case with != "" && all:
+		return fmt.Sprintf("Remove all faces, matches, names, and unverified people, then detect faces in all pictures with %s "+
+			"and remove the unnamed markers it does not find again?", with)
+	case with != "":
+		return fmt.Sprintf("Remove all faces and automatic matches, then detect faces in all pictures with %s "+
+			"and remove the unnamed markers it does not find again?", with)
+	case all:
+		return "Remove all faces and matches, including names and unverified people, keeping the markers?"
+	default:
+		return "Remove automatically recognized faces, matches, and people left without faces?"
+	}
+}
+
+// facesResetAllAction removes all people, faces, and face markers.
+func facesResetAllAction(ctx *cli.Context) error {
+	if proceed, err := ConfirmAction(ctx.Bool("yes"), "Permanently remove all faces, people, and markers?"); err != nil {
+		return err
+	} else if !proceed {
+		log.Infof("faces: no people or faces were removed")
 		return nil
+	}
+
+	if ctx.Bool("trace") {
+		log.SetLevel(logrus.TraceLevel)
+		log.Infoln("reset: enabled trace mode")
 	}
 
 	start := time.Now()
@@ -504,11 +589,10 @@ func facesResetAllAction(ctx *cli.Context) error {
 
 	if err := query.RemovePeopleAndFaces(); err != nil {
 		return err
-	} else {
-		elapsed := time.Since(start)
-
-		log.Infof("completed in %s", elapsed)
 	}
+
+	log.Infof("faces: removed all faces, people, and face markers; run \"photoprism faces index\" to detect faces again")
+	log.Infof("completed in %s", time.Since(start))
 
 	return nil
 }

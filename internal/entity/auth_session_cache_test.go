@@ -1,19 +1,37 @@
 package entity
 
 import (
+	"errors"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+func TestSessionNotFound(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
+		assert.True(t, SessionNotFound(ErrSessionIdInvalid))
+		assert.True(t, SessionNotFound(ErrSessionNotFound))
+		assert.True(t, SessionNotFound(ErrSessionExpired))
+		assert.True(t, SessionNotFound(fmt.Errorf("%w %s", ErrSessionIdInvalid, "'x'")))
+	})
+	t.Run("Other", func(t *testing.T) {
+		assert.False(t, SessionNotFound(nil))
+		assert.False(t, SessionNotFound(errors.New("no such table: auth_sessions")))
+	})
+}
+
 func TestFlushSessionCache(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
+		CacheWebDAVUser("flush-test", NewUser(), CurrentAuthCacheGeneration())
 		require.NotPanics(t, func() { FlushSessionCache() })
 		assert.Equal(t, 0, sessionCache.ItemCount())
+		assert.Nil(t, CachedWebDAVUser("flush-test"))
 	})
 }
 
@@ -85,19 +103,31 @@ func TestFindSessionByAuthToken(t *testing.T) {
 
 func TestFindSession(t *testing.T) {
 	t.Run("EmptyID", func(t *testing.T) {
-		if _, err := FindSession(""); err == nil {
-			t.Fatal("error expected")
-		}
+		_, err := FindSession("")
+		assert.ErrorIs(t, err, ErrSessionIdInvalid)
 	})
 	t.Run("InvalidID", func(t *testing.T) {
-		if _, err := FindSession("as6sg6bxpogaaba7"); err == nil {
-			t.Fatal("error expected")
-		}
+		_, err := FindSession("as6sg6bxpogaaba7")
+		assert.ErrorIs(t, err, ErrSessionIdInvalid)
 	})
 	t.Run("NotFound", func(t *testing.T) {
-		if _, err := FindSession(rnd.AuthToken()); err == nil {
-			t.Fatal("error expected")
-		}
+		_, err := FindSession(rnd.SessionID(rnd.AuthToken()))
+		assert.ErrorIs(t, err, ErrSessionNotFound)
+		assert.True(t, SessionNotFound(err))
+	})
+	t.Run("DatabaseError", func(t *testing.T) {
+		originalProvider := dbConn
+		tempConn := &DbConn{Driver: dsn.DriverSQLite3, Dsn: fmt.Sprintf("%s/%s", t.TempDir(), "find-session-error.db")}
+
+		SetDbProvider(tempConn)
+		t.Cleanup(func() {
+			SetDbProvider(originalProvider)
+			tempConn.Close()
+		})
+
+		_, err := FindSession(rnd.SessionID(rnd.AuthToken()))
+		require.Error(t, err)
+		assert.False(t, SessionNotFound(err))
 	})
 	t.Run("Alice", func(t *testing.T) {
 		if result, err := FindSession(rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")); err != nil {

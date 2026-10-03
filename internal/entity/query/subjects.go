@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -61,11 +62,9 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 	return result, err
 }
 
-// RemoveOrphanSubjects permanently removes dangling marker subjects from the index.
-//
-// A live verified person is kept: re-clustering leaves them unreferenced by design, and the row is
-// what makes the same name comparable across runs. A soft-deleted one is collected whatever the flag
-// says, since this is also the garbage collection for the tombstone MergeWith leaves.
+// RemoveOrphanSubjects permanently removes dangling marker subjects from the index. A live person
+// marked as Verified is kept, so the name stays comparable across re-clustering runs; a soft-deleted
+// one is collected whatever the flag says, as this also removes the tombstone MergeWith leaves.
 func RemoveOrphanSubjects() (removed int64, err error) {
 	res := UnscopedDb().
 		Where("subj_src = ?", entity.SrcMarker).
@@ -77,26 +76,48 @@ func RemoveOrphanSubjects() (removed int64, err error) {
 	return res.RowsAffected, res.Error
 }
 
-// CreateMarkerSubjects adds and references known marker subjects.
-func CreateMarkerSubjects() (affected int64, err error) {
+// CreateMarkerSubjects adds and references known marker subjects, and returns how many names it linked
+// markers to and how many XMP markers it linked to existing people, also on an error. A name from a
+// source that may not name its person, such as XMP, is linked only to an existing person.
+func CreateMarkerSubjects() (subjects, linked int64, err error) {
 	var markers entity.Markers
 
 	if err = Db().
 		Where("subj_uid = '' AND marker_name <> '' AND subj_src <> ?", entity.SrcAuto).
 		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
-		Order("marker_name").
+		// Sorted by source within a name, so a person another source creates exists before an XMP
+		// marker of the same name looks for it.
+		Order("LOWER(marker_name), subj_src").
 		Find(&markers).Error; err != nil {
-		return affected, err
+		return subjects, linked, err
 	} else if len(markers) == 0 {
-		return affected, nil
+		return subjects, linked, nil
 	}
 
-	var name string
-	var subj *entity.Subject
+	// People resolved in this pass, keyed by the lowercase name, so case variants of one name are
+	// resolved once and counted once, when the first marker is linked.
+	resolved := make(map[string]*entity.Subject)
+	counted := make(map[string]bool)
 
 	for _, m := range markers {
-		if name == m.MarkerName && subj != nil {
-			// Do nothing.
+		// A name from a source that may not name its person, such as XMP, is linked only to a person
+		// who already exists, and never names the cluster.
+		if !m.SourceNamesFace() {
+			if found := entity.FindSubjectByName(m.MarkerName, false); found == nil || found.Deleted() || !found.IsPerson() {
+				continue
+			} else if err = m.Updates(entity.Values{"subj_uid": found.SubjUID, "marker_name": found.SubjName, "marker_review": false}); err != nil {
+				return subjects, linked, err
+			}
+
+			linked++
+			continue
+		}
+
+		key := strings.ToLower(clean.Name(m.MarkerName))
+		subj := resolved[key]
+
+		if subj != nil {
+			// Resolved already.
 		} else if subj = entity.NewSubject(m.MarkerName, entity.SubjPerson, entity.SrcMarker); subj == nil {
 			log.Errorf("faces: invalid subject %s", clean.Log(m.MarkerName))
 			continue
@@ -104,23 +125,25 @@ func CreateMarkerSubjects() (affected int64, err error) {
 			log.Errorf("faces: failed to add subject %s", clean.Log(m.MarkerName))
 			continue
 		} else {
-			affected++
+			resolved[key] = subj
 		}
 
-		name = m.MarkerName
 		m.SubjUID = subj.SubjUID
 		m.MarkerReview = false
 
 		if err = m.Updates(entity.Values{"subj_uid": m.SubjUID, "marker_review": m.MarkerReview}); err != nil {
-			return affected, err
+			return subjects, linked, err
+		} else if !counted[key] {
+			counted[key] = true
+			subjects++
 		}
 
 		if m.FaceID == "" {
 			continue
 		} else if err = Db().Model(&entity.Face{}).Where("id = ? AND subj_uid = ''", m.FaceID).Update("subj_uid", m.SubjUID).Error; err != nil {
-			return affected, err
+			return subjects, linked, err
 		}
 	}
 
-	return affected, err
+	return subjects, linked, err
 }

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUIDs_String(t *testing.T) {
@@ -33,6 +34,31 @@ func TestSessionData_RedeemToken(t *testing.T) {
 	data.RedeemToken("1jxf3jfn2k")
 	assert.True(t, data.HasShare("def444"))
 	assert.True(t, data.HasShare("as6sg6bxpogaaba8"))
+	t.Run("StoresSanitizedToken", func(t *testing.T) {
+		d := SessionData{}
+		assert.Equal(t, 1, d.RedeemToken("  1jxf3jfn2k  "))
+		assert.Equal(t, []string{"1jxf3jfn2k"}, d.Tokens)
+		assert.True(t, d.HasShare("as6sg6bxpogaaba8"))
+	})
+	t.Run("RejectsUnusableToken", func(t *testing.T) {
+		// The unusable value must be refused before the query runs, so the link is left untouched.
+		before := FindLink("ss62xpryd1ob7gtf").LinkViews
+		d := SessionData{}
+		assert.Equal(t, 0, d.RedeemToken("...."))
+		assert.Equal(t, 0, d.RedeemToken(strings.Repeat("a", 161)))
+		assert.Empty(t, d.Tokens)
+		assert.Equal(t, before, FindLink("ss62xpryd1ob7gtf").LinkViews)
+	})
+	t.Run("RedeemsOnlyOncePerToken", func(t *testing.T) {
+		d := SessionData{}
+		assert.Equal(t, 1, d.RedeemToken("1jxf3jfn2k"))
+		views := FindLink("ss62xpryd1ob7gtf").LinkViews
+
+		// A repeat redeem still reports the links it resolves, but counts no further view.
+		assert.Equal(t, 1, d.RedeemToken("1jxf3jfn2k"))
+		assert.Equal(t, []string{"1jxf3jfn2k"}, d.Tokens)
+		assert.Equal(t, views, FindLink("ss62xpryd1ob7gtf").LinkViews)
+	})
 }
 
 func TestSessionData_SetGroups(t *testing.T) {
@@ -100,4 +126,40 @@ func TestSessionData_SharedUIDs(t *testing.T) {
 		Tokens: []string{"5jxf3jfn2k"}}
 	assert.Equal(t, "fs6sg6bw45bn0004", data2.SharedUIDs()[0])
 
+}
+
+func TestSessionData_RedeemedLinks(t *testing.T) {
+	t.Run("Redeemable", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		data := &SessionData{Tokens: []string{link.LinkToken}}
+
+		require.Len(t, data.RedeemedLinks(link.LinkToken), 1)
+	})
+	t.Run("ReachedViewLimitWithoutTheLink", func(t *testing.T) {
+		link := newTestLink(t, 1)
+		link.Redeem()
+
+		data := &SessionData{Tokens: []string{link.LinkToken}}
+
+		assert.Empty(t, data.RedeemedLinks(link.LinkToken))
+	})
+	t.Run("ReachedViewLimitWithTheLink", func(t *testing.T) {
+		link := newTestLink(t, 1)
+		link.Redeem()
+
+		data := &SessionData{Tokens: []string{link.LinkToken}, Links: UIDs{link.LinkUID}}
+
+		require.Len(t, data.RedeemedLinks(link.LinkToken), 1)
+	})
+	t.Run("Expired", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		expireTestLink(t, link)
+
+		data := &SessionData{Tokens: []string{link.LinkToken}, Links: UIDs{link.LinkUID}}
+
+		assert.Empty(t, data.RedeemedLinks(link.LinkToken))
+	})
+	t.Run("UnknownToken", func(t *testing.T) {
+		assert.Empty(t, (&SessionData{}).RedeemedLinks("neverissued"))
+	})
 }

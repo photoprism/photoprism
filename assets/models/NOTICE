@@ -1,0 +1,116 @@
+Models bundled with PhotoPrism (https://photoprism.app/).
+
+Each model below is redistributed under the license stated by its upstream
+publisher. This file records attribution only and grants no rights of its own.
+
+It lists the models that builds include in assets/models. The NOTICE files on
+https://dl.photoprism.app/onnx/models/ cover every model PhotoPrism mirrors and
+record the full provenance, including source checksums.
+
+--------------------------------------------------------------------------------
+face_recognition_sface_2021dec.onnx
+
+  SFace face recognition model.
+  Upstream: OpenCV Zoo
+            https://github.com/opencv/opencv_zoo/tree/main/models/face_recognition_sface
+  Reference: Zhong et al., "SFace: Sigmoid-Constrained Hypersphere Loss for
+             Robust Face Recognition" - https://ieeexplore.ieee.org/document/9318547
+             https://github.com/zhongyy/SFace
+  License:  Apache License 2.0
+            https://www.apache.org/licenses/LICENSE-2.0
+            The upstream directory states: "All files in this directory are
+            licensed under Apache 2.0 License."
+  Redistributed unmodified.
+
+--------------------------------------------------------------------------------
+face_detection_yunet_2026may.onnx
+
+  YuNet face detection model (bounding boxes + 5 keypoints).
+  Upstream: OpenCV Zoo
+            https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet
+  Trained by: https://github.com/ShiqiYu/libfacedetection.train (BSD-3-Clause)
+  Reference: Wu et al., "YuNet: A Tiny Millisecond-level Face Detector"
+             https://link.springer.com/article/10.1007/s11633-023-1423-y
+  License:  MIT License, Copyright (c) 2020 Shiqi Yu <shiqi.yu@gmail.com>
+            The upstream directory states: "All files in this directory are
+            licensed under MIT License."
+  Redistributed unmodified. This export uses dynamic input dimensions.
+
+--------------------------------------------------------------------------------
+efficientformerv2_s2.onnx
+
+  EfficientFormerV2-S2 image classification model (ImageNet-1k, 1000 classes).
+  Upstream: Weights published by timm (Ross Wightman, Hugging Face)
+            https://huggingface.co/timm/efficientformerv2_s2.snap_dist_in1k
+            Architecture and original checkpoints by Snap Research
+            https://github.com/snap-research/EfficientFormer
+  Reference: Li et al., "Rethinking Vision Transformers for MobileNet Size and
+             Speed" - https://arxiv.org/abs/2212.08059
+  License:  Apache License 2.0, as stated by the timm model card.
+            https://www.apache.org/licenses/LICENSE-2.0
+            The weights are Snap Research's distilled checkpoints; the timm
+            model card names https://github.com/snap-research/EfficientFormer
+            as the original. Snap Inc. publishes them under the license below,
+            which permits sublicensing and requires its notice in all copies:
+            https://github.com/snap-research/EfficientFormer/blob/7916a85a1ad43f8549ba0f51696fb06c4816fa22/LICENSE
+
+    For Snap Research EfficientFormer software:
+    Copyright (c) 2022 Snap Inc.
+
+    All rights reserved.
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to
+    deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+    sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+    IN THE SOFTWARE.
+
+  Training data: ImageNet-1k (ILSVRC-2012-CLS).
+  Source:   model.safetensors at revision
+            1c56a76355000c79568559d34ba3fa24416b5107
+            SHA256 c46c28768173ee0e518b7cd94af1e832cb88d2115068a81386c08650cc22a24f
+  Exported to ONNX by PhotoPrism from the checkpoint above.
+
+--------------------------------------------------------------------------------
+yahoo_open_nsfw.onnx
+
+  Yahoo OpenNSFW detection model (thin ResNet-50 1by2, two classes). The
+  publisher documents its scope as pornographic imagery, and excludes sketches,
+  cartoons, text and graphic violence.
+  Upstream: Yahoo Inc. - https://github.com/yahoo/open_nsfw
+  License:  BSD 2-Clause License, Copyright (c) 2016, Yahoo Inc.
+            https://github.com/yahoo/open_nsfw/blob/master/LICENSE.md
+            The Caffe weights are published inside that repository rather than
+            under separately stated terms.
+  Training data: Not disclosed by the publisher.
+  Source:   nsfw_model/resnet_50_1by2_nsfw.caffemodel at revision
+            a4e13931465f4380742545932657eeea0a10aa48
+            SHA256 74b7c0374425c2b324f73b134f8a7254eab9bbddc9e452a22d934b8c17015ad2
+            nsfw_model/deploy.prototxt, same revision
+            SHA256 a359e2d7b23abca938bb52580acf578c1b78870263fea814afa294fb4f315a4b
+  Converted from Caffe to ONNX by PhotoPrism from the files above.
+
+--------------------------------------------------------------------------------
+saved_model.pb (facenet)
+
+  FaceNet face recognition model (Inception-ResNet-v1, TensorFlow).
+  Upstream: David Sandberg - https://github.com/davidsandberg/facenet
+  Reference: Schroff et al., "FaceNet: A Unified Embedding for Face
+             Recognition and Clustering" - https://arxiv.org/abs/1503.03832
+  License:  MIT License, Copyright (c) 2016 David Sandberg
+            https://github.com/davidsandberg/facenet/blob/master/LICENSE.md
+            The pretrained models are linked from that repository's README
+            rather than published under separately stated terms.
+  Redistributed unmodified.

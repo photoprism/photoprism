@@ -338,6 +338,11 @@ func (m *User) InitAccount(initName, initPasswd, scope string) (updated bool) {
 
 // Create new entity in the database.
 func (m *User) Create() (err error) {
+	// The initial admin account is exempt, so that it can always be created from the config.
+	if m.ID != 1 && m.UserName != "" && !m.ValidHandle() {
+		return fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))
+	}
+
 	err = Db().Create(m).Error
 
 	if err == nil {
@@ -347,7 +352,7 @@ func (m *User) Create() (err error) {
 	return err
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save persists the user and invalidates their cached authentication on success.
 func (m *User) Save() (err error) {
 	m.GenerateTokens(false)
 
@@ -355,6 +360,7 @@ func (m *User) Save() (err error) {
 
 	if err == nil {
 		m.SaveRelated()
+		FlushUserSessionCache(m.UserUID)
 	}
 
 	return err
@@ -507,6 +513,16 @@ func (m *User) DenyLogIn() bool {
 	return !m.CanLogIn()
 }
 
+// DenyClientAccess checks if client applications bound to the user must be refused. Unlike DenyLogIn,
+// it does not consult CanLogin, so they keep working within their own scope while web login is disabled.
+func (m *User) DenyClientAccess() bool {
+	if m == nil {
+		return true
+	}
+
+	return m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() || m.HasProvider(authn.ProviderNone)
+}
+
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
 func (m *User) CanUseWebDAV() bool {
 	if m == nil {
@@ -536,18 +552,36 @@ func (m *User) CanUpload() bool {
 	}
 }
 
-// DefaultBasePath returns the default base path of the user based on the username.
+// DefaultBasePath returns the default base path of the user, named after the user handle or, if the
+// username has no valid handle, "+" and the user UID, a name no handle can take. It returns an empty
+// string if neither is available.
 func (m *User) DefaultBasePath() string {
-	if s := m.Handle(); s == "" {
-		return ""
-	} else {
-		return path.Join(UsersPath, s)
+	if m.ValidHandle() {
+		return path.Join(UsersPath, m.Handle())
+	} else if rnd.IsUID(m.UserUID, UserUID) {
+		return path.Join(UsersPath, "+"+m.UserUID)
 	}
+
+	return ""
 }
 
-// GetBasePath returns the user's relative base path.
+// ValidHandle reports whether the username yields a handle that can name the user's default folder.
+func (m *User) ValidHandle() bool {
+	return m.Handle() != ""
+}
+
+// RequiresBasePath reports whether the user may only access files in their own base path, so that
+// access requires one.
+func (m *User) RequiresBasePath() bool {
+	return m.HasRole(acl.RoleContributor)
+}
+
+// GetBasePath returns the user's relative base path. A default resolved from a username without a
+// valid handle is replaced by the default based on the user UID.
 func (m *User) GetBasePath() string {
-	if m.BasePath == "" && m.HasRole("contributor") {
+	if m.BasePath == "" && m.RequiresBasePath() {
+		m.BasePath = m.DefaultBasePath()
+	} else if !m.ValidHandle() && (m.BasePath == UsersPath || m.BasePath == ".") {
 		m.BasePath = m.DefaultBasePath()
 	}
 
@@ -749,7 +783,11 @@ func (m *User) SetUsername(login string) (err error) {
 	} else if m.UserName == login {
 		return nil
 	} else if m.UserName != "" && m.ID != 1 {
-		return fmt.Errorf("username cannot be changed")
+		// An account whose stored name the sanitizer no longer accepts may be renamed, since
+		// that is the only way to repair it.
+		if _, nameErr := authn.Username(m.UserName); nameErr == nil {
+			return fmt.Errorf("username cannot be changed")
+		}
 	}
 
 	// Update username and slug.
@@ -1074,10 +1112,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len([]rune(password)) < PasswordLength {
-		return fmt.Errorf("password must have at least %d characters", PasswordLength)
-	} else if len(password) > txt.ClipPassword {
-		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	if err := ValidatePasswordLength(password); err != nil {
+		return err
 	}
 
 	pw := NewPassword(m.UserUID, password, false)
@@ -1087,6 +1123,17 @@ func (m *User) SetPassword(password string) error {
 	}
 
 	return m.RegenerateTokens()
+}
+
+// ValidatePasswordLength returns an error if the password is too short or too long to be set.
+func ValidatePasswordLength(password string) error {
+	if len([]rune(password)) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
+	} else if len(password) > txt.ClipPassword {
+		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	}
+
+	return nil
 }
 
 // DeletePassword removes the password of the user account, if one has been set.
@@ -1221,16 +1268,29 @@ func (m *User) DeactivatePasscode() (passcode *Passcode, err error) {
 
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
-	// Validate username.
-	if userName, nameErr := authn.Username(m.UserName); nameErr != nil {
-		return fmt.Errorf("username is %s", nameErr.Error())
-	} else {
-		m.UserName = userName
+	// Validate username. A stored name the sanitizer no longer accepts as written is normalized
+	// rather than refused, so an account provisioned earlier stays editable; a new one is refused,
+	// so the caller sees what was rejected.
+	userName, nameErr := authn.Username(m.UserName)
+
+	if nameErr != nil && m.ID > 0 && userName != "" {
+		userName, nameErr = authn.Username(userName)
 	}
+
+	if nameErr != nil {
+		return fmt.Errorf("username is %s", nameErr.Error())
+	}
+
+	m.UserName = userName
 
 	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
 		return fmt.Errorf("username must have at least %d characters", UsernameLength)
+	}
+
+	// Refuse a new username that does not yield a valid handle.
+	if m.ID == 0 && !m.ValidHandle() {
+		return fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))
 	}
 
 	// Check user role.
@@ -1391,29 +1451,60 @@ func (m *User) RedeemToken(token string) (n int) {
 		return 0
 	}
 
-	// Find links.
-	links := FindValidLinks(token, "")
+	granted := false
 
-	// Found?
-	if n = len(links); n == 0 {
-		return n
+	// A share this link issued is counted without a new redemption, as the sharing page redeems on
+	// every load. Every other outcome needs the link to admit it, and a link that admits none leaves
+	// the share as it stands.
+	for _, link := range FindRedeemedLinksByToken(token, "") {
+		found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID})
+
+		if !link.Redeemable() {
+			if found.IssuedBy(link) {
+				n++
+			}
+
+			continue
+		}
+
+		if found != nil {
+			// A lapsed row grants nothing, so reinstating it admits the account and counts a view as a
+			// first share does. Taking over a row that still grants the record counts none, since the
+			// account holds it either way.
+			readmitted := found.Expired()
+
+			if err := found.UpdateLink(link); err != nil {
+				event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
+			} else if readmitted {
+				link.Redeem()
+
+				granted = true
+			}
+
+			n++
+
+			continue
+		}
+
+		share := NewUserShare(m.GetUID(), link.ShareUID, link.Perm, link.ExpiresAt())
+		share.LinkUID = link.LinkUID
+		share.Comment = link.Comment
+
+		if err := share.Save(); err != nil {
+			event.AuditErr([]string{"user %s", "share token redeem failed", status.Error(err)}, m.RefID)
+			continue
+		}
+
+		link.Redeem()
+
+		granted = true
+		n++
 	}
 
-	// Find shares.
-	for _, link := range links {
-		if found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID}); found == nil {
-			share := NewUserShare(m.GetUID(), link.ShareUID, link.Perm, link.ExpiresAt())
-			share.LinkUID = link.LinkUID
-			share.Comment = link.Comment
-
-			if err := share.Save(); err != nil {
-				event.AuditErr([]string{"user %s", "share token redeem failed", status.Error(err)}, m.RefID)
-			} else {
-				link.Redeem()
-			}
-		} else if err := found.UpdateLink(link); err != nil {
-			event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
-		}
+	// Reload the shares, so the caller sees what this redemption added. A cached list is re-derived
+	// on read only while it is empty.
+	if granted {
+		m.RefreshShares()
 	}
 
 	return n

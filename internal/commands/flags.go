@@ -35,6 +35,12 @@ func ForceFlag(usage string) *cli.BoolFlag {
 	return &cli.BoolFlag{Name: "force", Aliases: []string{"f"}, Usage: usage}
 }
 
+// DeprecatedForceFlag returns the hidden --force alias of --yes kept by commands that took it for
+// confirmation, since --force means "do more" on other commands.
+func DeprecatedForceFlag() *cli.BoolFlag {
+	return &cli.BoolFlag{Name: "force", Aliases: []string{"f"}, Usage: "runs the command non-interactively *deprecated*, use --yes", Hidden: true}
+}
+
 // SuperAdminFlag returns the shared super admin CLI flag definition.
 func SuperAdminFlag(usage string) *cli.BoolFlag {
 	if usage == "" {

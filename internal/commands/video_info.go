@@ -44,7 +44,7 @@ func videoInfoAction(ctx *cli.Context) error {
 		for _, found := range results {
 			entry, err := videoInfoEntryFor(conf, found, ctx.Bool(videoVerboseFlag.Name))
 			if err != nil {
-				log.Warnf("info: %s", clean.Error(err))
+				log.Warnf("info: %s", clean.ErrorFull(err))
 			}
 			entries = append(entries, entry)
 		}

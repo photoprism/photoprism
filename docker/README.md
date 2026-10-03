@@ -33,13 +33,13 @@ A virtual machine with a dedicated operating system environment provides even mo
 
 ### Which Image Should I Use?
 
-> **Use the latest image whenever possible.** The base image used by the top-level [`Dockerfile`](../Dockerfile) is recommended for development. Currently, this is Ubuntu 25.10 ("Questing Quokka"), i.e. `photoprism/develop:questing` and `photoprism/photoprism:questing`.
+> **Use the latest image whenever possible.** The base image used by the top-level [`Dockerfile`](../Dockerfile) is recommended for development. Currently, this is Ubuntu 26.04 LTS ("Resolute Raccoon"), i.e. `photoprism/develop:resolute` and `photoprism/photoprism:resolute`.
 
 New container deployments should pull the `:latest` tag (or an explicit current release tag) from Docker Hub. Contributors setting up a local development environment should follow the [Developer Guide](https://docs.photoprism.app/developer-guide/setup/), which is kept in sync with the top-level `Dockerfile` and `compose.yaml`.
 
 ### Legacy Images ("Use at Your Own Risk")
 
-The `develop/` and `photoprism/` directories also contain Dockerfiles for a number of **older Linux distributions**, for example Ubuntu *Jammy*, *Noble*, *Oracular*, *Plucky*, *Impish*, *Lunar*, *Mantic* and Debian *Buster*, *Bullseye*, *Bookworm*, as well as an `armv7` variant.
+The `develop/` and `photoprism/` directories also contain Dockerfiles for a number of **older Linux distributions**, for example Ubuntu *Jammy*, *Noble*, *Oracular*, *Plucky*, *Questing*, *Impish*, *Lunar*, *Mantic* and Debian *Buster*, *Bullseye*, *Bookworm*, as well as an `armv7` variant.
 
 These files are **kept for documentation and reference purposes only**:
 

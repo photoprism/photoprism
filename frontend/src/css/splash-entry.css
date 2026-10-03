@@ -1,0 +1,7 @@
+/* Splash Entry Styles */
+
+/* The splash styles, in the same cascade layer as the application styles, since the server inlines
+   them after the application style sheet. */
+@import url("layers.css");
+@import url("root.css") layer(vuetify-components);
+@import url("splash.css") layer(vuetify-components);

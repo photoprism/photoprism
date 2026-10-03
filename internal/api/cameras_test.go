@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// TestUpdateCamera checks camera updates and read-only placeholders.
 func TestUpdateCamera(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		defer func() {
@@ -51,5 +53,28 @@ func TestUpdateCamera(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Camera not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("UnknownCamera", func(t *testing.T) {
+		previous := entity.UnknownCamera
+		var count int
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.Camera{}).Where("camera_slug = ?", previous.CameraSlug).Count(&count).Error)
+		entity.CreateUnknownCamera()
+		createdID := entity.UnknownCamera.ID
+		t.Cleanup(func() {
+			if count == 0 {
+				assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Camera{}, "id = ?", createdID).Error)
+			}
+			entity.UnknownCamera = previous
+			entity.FlushCameraCache()
+		})
+		app, router, _ := NewApiTest()
+		UpdateCamera(router)
+		r := PerformRequestWithBody(app, "PUT", fmt.Sprintf("/api/v1/cameras/%d", entity.UnknownCamera.ID), `{"Make": "Example", "Model": "Example"}`)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+
+		// The shared placeholder must keep its name.
+		found := entity.Camera{}
+		assert.NoError(t, entity.Db().First(&found, "id = ?", entity.UnknownCamera.ID).Error)
+		assert.Equal(t, entity.UnknownCamera.CameraName, found.CameraName)
 	})
 }

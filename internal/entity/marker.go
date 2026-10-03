@@ -172,6 +172,11 @@ func (m *Marker) SameEmbeddingModel() bool {
 	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
 }
 
+// CropArea returns the normalized crop geometry stored on the marker.
+func (m *Marker) CropArea() crop.Area {
+	return crop.Area{Name: "face", X: m.X, Y: m.Y, W: m.W, H: m.H}
+}
+
 // UpdateFile sets the file uid and thumb and updates the index if the marker already exists.
 func (m *Marker) UpdateFile(file *File) (updated bool) {
 	if file.FileUID != "" && m.FileUID != file.FileUID {
@@ -219,15 +224,25 @@ func (m *Marker) SetName(name, src string) (changed bool, err error) {
 		return false, nil
 	}
 
-	if m.MarkerName == name {
-		// Name didn't change.
+	// An unchanged name needs no update, unless a source that may name a person confirms it for a
+	// valid marker that is not linked yet.
+	if m.MarkerName == name && (m.SubjUID != "" || !subjSrcSharesFace(src) || m.MarkerInvalid) {
 		return false, nil
 	}
 
 	m.SubjSrc = src
 	m.MarkerName = name
 
-	return true, m.SyncSubject(true)
+	if err = m.SyncSubject(true); err != nil {
+		return true, err
+	}
+
+	// A marker left without a cluster is matched again under its new name once the caller saves it.
+	if m.FaceID == "" {
+		m.MatchedAt = nil
+	}
+
+	return true, nil
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
@@ -273,18 +288,36 @@ func (m *Marker) HasFace(f *Face, dist float64) bool {
 }
 
 // subjSrcSharesFace reports whether a subject source may propagate its name onto
-// the shared Face and its related markers. SrcAuto never does (that is what face
-// clustering itself manages), and SrcXmp is excluded too so an imported XMP name
-// labels only its own marker - there is no XMP-driven clustering in v1.
+// the shared Face and its related markers. One SrcAuto or SrcXmp name never does, so
+// an imported XMP name labels only its own marker; names that agree may still name a
+// cluster through consensus naming.
 func subjSrcSharesFace(src string) bool {
 	return src != SrcAuto && src != SrcXmp
 }
 
 // NamesFace reports whether assigning this marker to an anonymous cluster would name that cluster
-// after its subject. SetFace does exactly that, and SetSubjectUID then spreads the name across the
-// cluster, so a caller choosing between clusters needs to know.
+// after its subject. SetFace does exactly that, and Face.ClaimSubject then spreads the name across
+// the cluster, so a caller choosing between clusters needs to know.
 func (m *Marker) NamesFace() bool {
-	return m != nil && m.SubjUID != "" && subjSrcSharesFace(m.SubjSrc)
+	return m != nil && m.SubjUID != "" && m.SourceNamesFace()
+}
+
+// SourceNamesFace reports whether the source of the marker's name may create or rename its person
+// and name its cluster, which an automatic or XMP name may not.
+func (m *Marker) SourceNamesFace() bool {
+	return m != nil && subjSrcSharesFace(m.SubjSrc)
+}
+
+// RejectedMatch reports whether a person removed the name of this face marker, which leaves it with a
+// manual source, no subject and no name. Unlike MarkerInvalid, it rejects the match, not the face.
+func (m *Marker) RejectedMatch() bool {
+	return m != nil && m.MarkerType == MarkerFace && m.SubjSrc == SrcManual && m.SubjUID == "" && m.MarkerName == ""
+}
+
+// RejectedMatchCond returns the SQL condition selecting the markers RejectedMatch reports, reading a
+// missing subject or name as empty as the struct does.
+func RejectedMatchCond() (string, []any) {
+	return "marker_type = ? AND subj_src = ? AND COALESCE(subj_uid, '') = '' AND COALESCE(marker_name, '') = ''", []any{MarkerFace, SrcManual}
 }
 
 // SetSubjectLink links the marker to an already-resolved subject without renaming it, so
@@ -325,17 +358,25 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	} else if reported {
 		log.Warnf("faces: marker %s face %s has ambiguous subjects %s <> %s, subject source %s", clean.Log(m.MarkerUID), clean.Log(f.ID), clean.Log(m.SubjUID), clean.Log(f.SubjUID), SrcString(m.SubjSrc))
 		return false, nil
+	} else if f.refreshCollision(); m.joins(f) {
+		// The stored cluster is unnamed or carries the marker's person by now, so the marker is assigned below.
+	} else if f.CollisionNoted(dist) {
+		// The cluster keeps refusing this marker without anything left to record, so it is not
+		// matched against it again until a forced run or the cluster is reopened.
+		return false, m.Matched()
 	} else {
 		return false, nil
 	}
 
-	UpdateFaces.Store(true)
+	previous := *m
 
-	// Update face with known subject from marker?
+	// Name an unnamed cluster after the marker's person, unless someone named it since it was loaded.
 	if !subjSrcSharesFace(m.SubjSrc) || m.SubjUID == "" || f.SubjUID != "" {
 		// Don't update if face has a known subject, or marker subject is unknown.
-	} else if err = f.SetSubjectUID(m.SubjUID); err != nil {
-		return false, err
+	} else if carries, claimErr := f.ClaimSubject(m.SubjUID); claimErr != nil {
+		return false, claimErr
+	} else if !carries {
+		return false, nil
 	}
 
 	// Set face.
@@ -345,13 +386,19 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	if m.SubjUID == f.SubjUID && m.FaceID == f.ID {
 		// Update matching timestamp.
 		m.MatchedAt = TimeStamp()
-		return false, m.Updates(Values{"matched_at": m.MatchedAt})
+		applied, updateErr := m.updateFaceMatch(f, m.FaceDist, Values{"matched_at": m.MatchedAt})
+		if !applied {
+			*m = previous
+		}
+		return false, updateErr
 	}
 
 	// Remember current values for comparison.
 	faceID := m.FaceID
+	faceDist := m.FaceDist
 	subjUID := m.SubjUID
 	subjSrc := m.SubjSrc
+	markerName := m.MarkerName
 
 	m.FaceID = f.ID
 	m.FaceDist = dist
@@ -360,19 +407,27 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 		m.FaceDist = m.Embeddings().Dist(f.Embedding())
 	}
 
-	if f.SubjUID != "" {
+	// A rejected match may belong to the cluster, but never takes its subject.
+	if f.SubjUID != "" && !m.RejectedMatch() {
 		m.SubjUID = f.SubjUID
 	}
 
-	if err = m.SyncSubject(false); err != nil {
-		return false, err
+	if m.SubjSrc != SrcAuto && !m.RejectedMatch() {
+		if err = m.SyncSubject(false); err != nil {
+			return false, err
+		}
 	}
 
-	// Update face subject?
+	// Update face subject? A cluster that carries another person keeps it, and the marker is not
+	// matched against it again until a forced run or the cluster is reopened.
 	if !subjSrcSharesFace(m.SubjSrc) || m.SubjUID == "" || f.SubjUID == m.SubjUID {
 		// Not needed.
-	} else if err = f.SetSubjectUID(m.SubjUID); err != nil {
-		return false, err
+	} else if carries, claimErr := f.ClaimSubject(m.SubjUID); claimErr != nil {
+		return false, claimErr
+	} else if !carries {
+		m.face, m.FaceID, m.FaceDist = nil, faceID, faceDist
+		m.subject, m.SubjUID, m.MarkerName = nil, subjUID, markerName
+		return false, m.Matched()
 	}
 
 	updated = m.FaceID != faceID || m.SubjUID != subjUID || m.SubjSrc != subjSrc
@@ -380,14 +435,53 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	// Update matching timestamp.
 	m.MatchedAt = TimeStamp()
 
-	if err = m.Updates(Values{"face_id": m.FaceID, "face_dist": m.FaceDist, "subj_uid": m.SubjUID,
-		"subj_src": m.SubjSrc, "marker_review": false, "matched_at": m.MatchedAt}); err != nil {
+	applied, err := m.updateFaceMatch(f, m.FaceDist, Values{"face_id": m.FaceID, "face_dist": m.FaceDist, "subj_uid": m.SubjUID,
+		"subj_src": m.SubjSrc, "marker_review": false, "matched_at": m.MatchedAt})
+	if !applied {
+		*m = previous
 		return false, err
 	} else if !updated {
 		return false, nil
 	}
 
 	return true, m.RefreshPhotos()
+}
+
+// updateFaceMatch writes marker values only while the stored cluster accepts the assignment.
+func (m *Marker) updateFaceMatch(f *Face, dist float64, values Values) (bool, error) {
+	res := UnscopedDb().Model(m).Where("marker_uid = ?", m.MarkerUID).
+		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s f WHERE f.id = ? AND COALESCE(f.subj_uid, '') = ? AND (COALESCE(f.collision_radius, 0) <= ? OR f.collision_radius >= ?))", Face{}.TableName()),
+			f.ID, f.SubjUID, face.CollisionDist, dist).Updates(values)
+
+	if res.Error != nil {
+		return false, res.Error
+	} else if res.RowsAffected > 0 {
+		UpdateFaces.Store(true)
+		return true, nil
+	}
+
+	if stored := FindFace(f.ID); stored != nil {
+		f.SubjUID = stored.SubjUID
+		f.Collisions = stored.Collisions
+		f.CollisionRadius = stored.CollisionRadius
+		f.FaceKind = stored.FaceKind
+	} else {
+		// A missing cluster is no longer a candidate in this run's index.
+		f.FaceKind = int(face.AmbiguousFace)
+	}
+
+	return false, nil
+}
+
+// joins reports whether cluster f is unnamed or carries this marker's person, and still accepts it.
+func (m *Marker) joins(f *Face) bool {
+	if f == nil || f.SubjUID != "" && f.SubjUID != m.SubjUID || f.SkipMatching() {
+		return false
+	}
+
+	ok, _ := f.Match(m.Embeddings(), m.EmbedModel)
+
+	return ok
 }
 
 // SyncSubject maintains the marker subject relationship.
@@ -426,33 +520,117 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		m.MarkerName = subj.SubjName
 	}
 
-	// Create known face for subject?
-	if m.FaceID != "" {
-		// Do nothing.
-	} else if f := m.Face(); f != nil {
+	f := m.face
+
+	if f != nil && f.ID != m.FaceID {
+		f = nil
+	}
+
+	// A marker without a cluster gets one of its own person, as far as it can seed one.
+	if m.FaceID == "" {
+		if f = m.Face(); f == nil {
+			return nil
+		}
+
 		m.FaceID = f.ID
 	}
 
-	// Update related markers?
-	if m.FaceID == "" || m.SubjUID == "" {
-		// Do nothing.
-	} else if res := Db().Model(&Face{}).Where("id = ? AND subj_uid = ''", m.FaceID).UpdateColumn("subj_uid", m.SubjUID); res.Error != nil {
-		return fmt.Errorf("%s (update known face)", res.Error)
-	} else if !updateRelated {
+	if m.SubjUID == "" {
 		return nil
-	} else if err := Db().Model(&Marker{}).
+	}
+
+	// Name an unnamed cluster after this marker's person. Any other cluster is loaded only when the
+	// related markers may follow, so matching adds no query here.
+	if f == nil || f.SubjUID == "" {
+		if res := Db().Model(&Face{}).Where("id = ? AND COALESCE(subj_uid, '') = ''", m.FaceID).UpdateColumn("subj_uid", m.SubjUID); res.Error != nil {
+			return fmt.Errorf("%s (update known face)", res.Error)
+		} else if res.RowsAffected > 0 {
+			// A local copy, so a face the caller holds still shows the cluster as it was loaded.
+			f = &Face{ID: m.FaceID, SubjUID: m.SubjUID}
+		} else if !updateRelated {
+			return nil
+		} else if f = FindFace(m.FaceID); f == nil {
+			return nil
+		}
+	}
+
+	if !updateRelated {
+		return nil
+	}
+
+	// A cluster named after another person keeps its markers, and this one is reported to it.
+	if f.SubjUID != m.SubjUID {
+		if err = m.resolveSubjectCollision(f); err != nil || m.FaceID != f.ID {
+			return err
+		}
+
+		// The stored cluster is unnamed or carries this marker's person, so an unnamed one is named.
+		if err = Db().Model(&Face{}).Where("id = ? AND COALESCE(subj_uid, '') = ''", m.FaceID).UpdateColumn("subj_uid", m.SubjUID).Error; err != nil {
+			return fmt.Errorf("%s (update known face)", err)
+		}
+	}
+
+	// The cluster carries this marker's person, so its automatic markers follow, as long as the stored
+	// cluster still does.
+	if res := Db().Model(&Marker{}).
 		Where("marker_uid <> ?", m.MarkerUID).
 		Where("face_id = ?", m.FaceID).
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
-		UpdateColumns(Values{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
-		return fmt.Errorf("%s (update related markers)", err)
-	} else if res.RowsAffected > 0 && m.face != nil {
+		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s f WHERE f.id = ? AND f.subj_uid = ?)", Face{}.TableName()), m.FaceID, m.SubjUID).
+		UpdateColumns(Values{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}); res.Error != nil {
+		return fmt.Errorf("%s (update related markers)", res.Error)
+	} else if res.RowsAffected > 0 {
 		log.Debugf("markers: matched %s with %s", subj, m.FaceID)
-		return m.face.RefreshPhotos()
+		return f.RefreshPhotos()
 	}
 
 	return nil
+}
+
+// resolveSubjectCollision reports the marker to its cluster f as a collision when the stored cluster is
+// named after another person, and moves the marker to a face of its own person, or leaves it for
+// matching. A cluster that no longer carries another person keeps the marker. Reporting is best
+// effort: the name is kept either way.
+func (m *Marker) resolveSubjectCollision(f *Face) error {
+	if f == nil || f.SubjUID == "" || f.SubjUID == m.SubjUID {
+		return nil
+	} else if stored := FindFace(f.ID); stored != nil && (stored.SubjUID == "" || stored.SubjUID == m.SubjUID) {
+		return nil
+	} else if stored != nil {
+		f = stored
+	}
+
+	if m.MarkerInvalid {
+		// A region flagged as not a face is no evidence against the cluster.
+	} else if resolved, err := f.ResolveCollision(m.Embeddings(), m.EmbedModel); err != nil {
+		log.Warnf("faces: %s (report collision of marker %s with face %s)", err, clean.Log(m.MarkerUID), clean.Log(f.ID))
+	} else if resolved {
+		log.Debugf("faces: marker %s resolved ambiguous subjects for face %s", clean.Log(m.MarkerUID), clean.Log(f.ID))
+	}
+
+	m.face = nil
+	m.FaceID = ""
+	m.FaceDist = -1.0
+	m.MatchedAt = nil
+
+	if m.MarkerUID == "" {
+		return nil
+	}
+
+	// Anchor the marker to a face of its own person, as naming a marker without a cluster does. A face
+	// with the same embedding may still belong to someone else, so that one is left for matching.
+	if m.MarkerInvalid {
+		// No face for a region that is not a face.
+	} else if own := m.Face(); own != nil && own.SubjUID == m.SubjUID && !own.SkipMatching() {
+		m.MatchedAt = TimeStamp()
+	} else {
+		m.face = nil
+		m.FaceID = ""
+		m.FaceDist = -1.0
+	}
+
+	return m.Updates(Values{"face_id": m.FaceID, "face_dist": m.FaceDist, "matched_at": m.MatchedAt})
 }
 
 // InvalidArea tests if the marker area is invalid or out of range.
@@ -510,6 +688,10 @@ func (m *Marker) Embeddings() face.Embeddings {
 		return m.embeddings
 	} else if err := json.Unmarshal(m.EmbeddingsJSON, &m.embeddings); err != nil {
 		log.Errorf("markers: %s while parsing embeddings json", err)
+	} else {
+		// Scaled to unit length on read, like the query path does, since every distance these
+		// are compared with is stated for unit vectors and a stored one need not have that shape.
+		m.embeddings.Normalize()
 	}
 
 	return m.embeddings
@@ -553,6 +735,41 @@ func (m *Marker) Subject() (subj *Subject) {
 	m.subject = FindSubject(m.SubjUID)
 
 	return m.subject
+}
+
+// WithheldFromSession reports whether the marker names a person this session may not see, so a
+// handler can refuse the marker rather than answer with its identity. Classified on the name as
+// well as the link, the way MarshalJSON resolves one.
+func (m *Marker) WithheldFromSession(sess *Session) bool {
+	if m.SubjUID == "" && m.MarkerName == "" {
+		return false
+	} else if sess.SeesPrivatePeople() {
+		return false
+	}
+
+	withheld, err := FindWithheldPeople()
+
+	if err != nil {
+		log.Warnf("markers: %s while resolving people visibility", err)
+		return true
+	}
+
+	return withheld.Withholds(m.SubjUID, m.MarkerName)
+}
+
+// RedactForSession clears the identity of a marker the session may not see, so a write answers
+// with no more than a read of the same marker would. The write itself is left alone: the session
+// supplied the name, and only the resolved link would be news to it.
+func (m *Marker) RedactForSession(sess *Session) *Marker {
+	if m == nil || !m.WithheldFromSession(sess) {
+		return m
+	}
+
+	m.MarkerName = ""
+	m.SubjUID = ""
+	m.SubjSrc = ""
+
+	return m
 }
 
 // ClearSubject removes an existing subject association, and reports a collision.
@@ -679,20 +896,27 @@ func (m *Marker) RefreshPhotos() error {
 		return fmt.Errorf("empty marker uid")
 	}
 
-	var err error
+	return refreshMarkerPhotos([]string{m.MarkerUID})
+}
+
+// refreshMarkerPhotos flags the photos of the specified markers for metadata maintenance.
+func refreshMarkerPhotos(uids []string) error {
+	if len(uids) == 0 {
+		return nil
+	}
+
 	switch DbDialect() {
 	case dsn.DriverMySQL:
-		err = UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
+		return UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
 			JOIN ? m ON m.file_uid = f.file_uid SET p.checked_at = NULL
-			WHERE m.marker_uid = ?`,
-			gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
+			WHERE m.marker_uid IN (?)`,
+			gorm.Expr(Marker{}.TableName()), uids).Error
 	default:
-		err = UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
+		return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
 			(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid
-			WHERE m.marker_uid = ? GROUP BY f.photo_id)`,
-			gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
+			WHERE m.marker_uid IN (?) GROUP BY f.photo_id)`,
+			gorm.Expr(Marker{}.TableName()), uids).Error
 	}
-	return err
 }
 
 // Matched updates the match timestamp.
@@ -702,9 +926,6 @@ func (m *Marker) Matched() error {
 }
 
 // Unmatched clears the match timestamp, so the next run compares this marker against every cluster.
-//
-// ClearFace stamps instead, right where the matcher found no face: it had just compared against all
-// of them. Wrong after a conflict narrowed a cluster and dropped the marker, since nothing has.
 func (m *Marker) Unmatched() error {
 	m.MatchedAt = nil
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": nil}).Error

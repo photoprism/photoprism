@@ -4,8 +4,18 @@ Agents MAY run either inside the Development Environment container (recommended)
 
 ### Detecting the Environment
 
-- **Inside container if** `/.dockerenv` exists (authoritative signal).
+- **Inside the dev container if** `/.dockerenv` exists. Docker creates it when a container starts, so it answers this for the development environment and for any `docker run`.
 - Path hint: when the project path is `/go/src/github.com/photoprism/photoprism` *and* `/.dockerenv` is absent, assume you are on the host with a bind mount.
+- ⚠ **`/.dockerenv` answers "is this process in a Docker container right now", and nothing wider.** It is absent during an image build, since BuildKit never creates it, and absent under podman (`/run/.containerenv`) and containerd/CRI-O. A script that gates on it takes the host path twice over: in every image build, and again at runtime wherever the image is not run by Docker, which includes Kubernetes and podman deployments. Use it to orient yourself in the development environment, where it holds; never to decide what a script under `scripts/dist/` does, since those ship in every production image.
+- **Scripts that ship in the images read `PHOTOPRISM_CONTAINER` instead.** Every Dockerfile whose final `FROM` is not one of ours sets `PHOTOPRISM_CONTAINER=true` in its `ENV` block, and images built from those inherit it. It is set during the build as well as at runtime, and the `PHOTOPRISM_*` prefix passes the sudoers allow-list, so it survives the init path too. Regenerate the set that must set it rather than keeping a list here:
+
+  ```sh
+  for f in docker/develop/*/Dockerfile docker/photoprism/*/Dockerfile \
+           plus/docker/*/Dockerfile pro/docker/*/Dockerfile portal/docker/Dockerfile; do
+    [ -f "$f" ] || continue
+    grep -q '^FROM photoprism/' <<<"$(grep '^FROM' "$f" | tail -1)" || echo "$f"
+  done
+  ```
 
 ### Host Mode
 
@@ -13,7 +23,7 @@ Agents MAY run either inside the Development Environment container (recommended)
 - Start services: `docker compose up` (add `-d` for background)
 - Follow live app logs: `docker compose logs -f --tail=100 photoprism`
 - Execute a single command in the app container: `docker compose exec photoprism <command>`
-  - Run as non-root to avoid root-owned files: `docker compose exec -u "$(id -u):$(id -g)" photoprism <command>`
+  - Run as non-root to avoid root-owned files: `docker compose exec -u "$(id -u)" photoprism <command>`. Pass the UID alone: the image has an account for it, so its supplementary groups (e.g. `ssl-cert`, which some tests need) apply, while adding `:$(id -g)` drops them.
 - Open a terminal session: `make terminal`
 - Stop everything: `docker compose --profile=all down --remove-orphans` (`make down`)
 

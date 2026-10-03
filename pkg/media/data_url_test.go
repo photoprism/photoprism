@@ -174,3 +174,62 @@ func TestDataUrl_WebpDetection(t *testing.T) {
 	s := DataUrl(bytes.NewReader(buf))
 	assert.True(t, strings.HasPrefix(s, "data:image/webp;base64,"))
 }
+
+func TestReadUrlImage(t *testing.T) {
+	max := MaxImageBytes
+	defer func() { MaxImageBytes = max }()
+
+	t.Run("WithinBudget", func(t *testing.T) {
+		MaxImageBytes = max
+		dataUrl := "data:image/png;base64," + gopher
+		data, err := ReadUrlImage(dataUrl, []string{"https", "data"})
+		assert.NoError(t, err)
+		assert.NotEmpty(t, data)
+	})
+	t.Run("InlineAboveBudget", func(t *testing.T) {
+		// The download options never see an inline payload, so the budget has to be applied
+		// to the decoded result as well.
+		MaxImageBytes = 16
+		dataUrl := "data:image/png;base64," + gopher
+		data, err := ReadUrlImage(dataUrl, []string{"https", "data"})
+		assert.ErrorIs(t, err, ErrImageTooLarge)
+		assert.Empty(t, data)
+	})
+	t.Run("RemoteOptionsCarryTheBudget", func(t *testing.T) {
+		// The remote budget cannot be exercised through ReadUrlImage itself, which refuses the
+		// loopback address a test server listens on, so the options it passes are asserted
+		// directly. Without this, nothing pins that the image budget is applied at all.
+		MaxImageBytes = 32 << 20
+		opt := imageDownloadOptions()
+		assert.Equal(t, MaxImageBytes, opt.MaxSizeBytes)
+		assert.Equal(t, ImageReadTimeout, opt.Timeout)
+		assert.False(t, opt.AllowPrivate)
+		assert.Equal(t, imageAcceptHeader, opt.Accept)
+		assert.Less(t, opt.MaxSizeBytes, int64(200*1024*1024),
+			"an image reference must not be allowed as much as a generic download")
+	})
+	t.Run("RemoteAboveBudget", func(t *testing.T) {
+		ts := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write(bytes.Repeat([]byte("x"), 4096))
+		})
+
+		MaxImageBytes = 16
+
+		// The options ReadUrlImage builds, with only the address policy relaxed so a loopback
+		// test server is reachable.
+		opt := imageDownloadOptions()
+		opt.AllowPrivate = true
+
+		_, err := ReadUrlWithOptions(ts.URL, []string{"http", "https"}, opt)
+		assert.ErrorIs(t, err, safe.ErrSizeExceeded)
+	})
+	t.Run("InlineBudgetDisabled", func(t *testing.T) {
+		// Only the inline check is disabled: a remote transfer still falls back to the
+		// generic download budget rather than to none.
+		MaxImageBytes = 0
+		dataUrl := "data:image/png;base64," + gopher
+		data, err := ReadUrlImage(dataUrl, []string{"https", "data"})
+		assert.NoError(t, err)
+		assert.NotEmpty(t, data)
+	})
+}

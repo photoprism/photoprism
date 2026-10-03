@@ -7,11 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/api/download"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -41,9 +43,10 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 //	@Id			GetDownload
 //	@Tags		Images, Files
 //	@Produce	application/octet-stream
-//	@Failure	403,404	{file}	image/svg+xml
-//	@Success	200		{file}	application/octet-stream
-//	@Param		file	path	string	true	"file hash or unique download id"
+//	@Failure	403,404	{file}		image/svg+xml
+//	@Failure	429		{object}	i18n.Response
+//	@Success	200		{file}		application/octet-stream
+//	@Param		file	path		string	true	"file hash or unique download id"
 //	@Router		/api/v1/dl/{file} [get]
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:file", func(c *gin.Context) {
@@ -67,8 +70,13 @@ func GetDownload(router *gin.RouterGroup) {
 
 		// If the file is identified by its hash, the request must be authorized: a valid "?t=" download
 		// token, or a Portal JWT in the request header.
-		sess, valid := AuthDownload(c)
-		if !valid {
+		// The hash addresses a picture's original file and this is the URL the web client uses, so a scope
+		// naming either resource authorizes the download.
+		sess, valid := AuthDownload(c, acl.Resources{acl.ResourceFiles, acl.ResourcePhotos})
+		if !valid && DownloadRateLimited(c) {
+			limiter.AbortJSON(c)
+			return
+		} else if !valid {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
@@ -85,7 +93,7 @@ func GetDownload(router *gin.RouterGroup) {
 
 		// Every negative path returns the identical SVG 404 so an unknown hash is indistinguishable
 		// from one hidden or missing (no existence disclosure to a valid token holder).
-		if err != nil {
+		if err != nil || !f.Exportable(sess) {
 			c.Data(http.StatusNotFound, "image/svg+xml", brokenIconSvg)
 			return
 		}

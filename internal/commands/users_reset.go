@@ -1,7 +1,10 @@
 package commands
 
 import (
-	"github.com/manifoldco/promptui"
+	"fmt"
+
+	"github.com/dustin/go-humanize/english"
+	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
@@ -10,7 +13,7 @@ import (
 )
 
 // UsersResetDescription explains the effect of the users reset command.
-const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
+const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that all account passwords, sessions, access tokens, app passwords, 2FA passcodes, and user shares are deleted as well, and so are the client applications registered to users."
 
 // UsersResetCommand configures the command name, flags, and action.
 var UsersResetCommand = &cli.Command{
@@ -23,30 +26,19 @@ var UsersResetCommand = &cli.Command{
 			Aliases: []string{"t"},
 			Usage:   "shows trace logs for debugging",
 		},
-		&cli.BoolFlag{
-			Name:    "yes",
-			Aliases: []string{"y"},
-			Usage:   "runs the command non-interactively",
-		},
+		YesFlag(),
 	},
 	Action: usersResetAction,
 }
 
-// usersResetAction deletes recreates the user management database tables.
+// usersResetAction drops and recreates the user management database tables.
 func usersResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := RunNonInteractively(ctx.Bool("yes"))
-
-		// Show prompt?
-		if !confirmed {
-			actionPrompt := promptui.Prompt{
-				Label:     "Reset the user database to a clean state?",
-				IsConfirm: true,
-			}
-
-			if _, err := actionPrompt.Run(); err != nil {
-				return nil
-			}
+		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all user accounts, sessions, access tokens, app passwords, 2FA passcodes, user shares, and the client applications registered to them?"); err != nil {
+			return err
+		} else if !proceed {
+			log.Infof("no user accounts were removed")
+			return nil
 		}
 
 		if ctx.Bool("trace") {
@@ -56,43 +48,108 @@ func usersResetAction(ctx *cli.Context) error {
 
 		db := conf.Db()
 
+		// Before the account tables are dropped, since it looks the accounts up there.
+		if err := LogDeleteUserPasswords(db); err != nil {
+			return cli.Exit(err, 1)
+		}
+
 		// Drop existing user management tables.
 		if err := db.DropTableIfExists(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}, entity.Passcode{}, entity.Session{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users.
 		if err := db.CreateTable(entity.User{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_details.
 		if err := db.CreateTable(entity.UserDetails{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_settings.
 		if err := db.CreateTable(entity.UserSettings{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_shares.
 		if err := db.CreateTable(entity.UserShare{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create passcodes.
 		if err := db.CreateTable(entity.Passcode{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_sessions.
 		if err := db.CreateTable(entity.Session{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
+		}
+
+		if err := LogDeleteUserClients(db); err != nil {
+			return cli.Exit(err, 1)
 		}
 
 		log.Infof("the user database has been recreated and is now in a clean state")
 
 		return nil
 	})
+}
+
+// DeleteUserPasswords deletes the passwords of all user accounts, including soft-deleted ones, and
+// keeps the client secrets stored in the same table.
+func DeleteUserPasswords(db *gorm.DB) (int64, error) {
+	if db == nil {
+		return 0, fmt.Errorf("database not connected")
+	} else if !db.HasTable(entity.User{}) || !db.HasTable(entity.Password{}) {
+		return 0, nil
+	}
+
+	res := db.Exec(fmt.Sprintf("DELETE FROM %s WHERE uid IN (SELECT user_uid FROM %s)",
+		entity.Password{}.TableName(), entity.User{}.TableName()))
+
+	return res.RowsAffected, res.Error
+}
+
+// LogDeleteUserPasswords deletes the passwords of all user accounts and logs how many were deleted.
+func LogDeleteUserPasswords(db *gorm.DB) error {
+	deleted, err := DeleteUserPasswords(db)
+
+	if err != nil {
+		return err
+	}
+
+	log.Infof("deleted %s", english.Plural(int(deleted), "account password", "account passwords"))
+
+	return nil
+}
+
+// DeleteUserClients deletes the client applications registered to a user account, including
+// soft-deleted ones, and returns how many were deleted.
+func DeleteUserClients(db *gorm.DB) (int64, error) {
+	if db == nil {
+		return 0, fmt.Errorf("database not connected")
+	} else if !db.HasTable(entity.Client{}) {
+		return 0, nil
+	}
+
+	res := db.Unscoped().Where("user_uid <> ''").Delete(&entity.Client{})
+
+	return res.RowsAffected, res.Error
+}
+
+// LogDeleteUserClients deletes the client applications registered to a user account and logs
+// how many were deleted.
+func LogDeleteUserClients(db *gorm.DB) error {
+	deleted, err := DeleteUserClients(db)
+
+	if err != nil {
+		return err
+	}
+
+	log.Infof("deleted %s", english.Plural(int(deleted), "client application", "client applications"))
+
+	return nil
 }

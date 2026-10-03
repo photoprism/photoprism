@@ -150,7 +150,7 @@ func NewApiError(id string, code int) ApiResponse {
 // NewLabelsResponse generates a new Vision API image classification service response.
 func NewLabelsResponse(id string, model *Model, results classify.Labels) ApiResponse {
 	if model == nil {
-		model = NasnetModel
+		model = DefaultLabelModel
 	}
 
 	var labels = make([]LabelResult, 0, len(results))

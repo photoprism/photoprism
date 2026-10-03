@@ -3,8 +3,11 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
@@ -232,6 +235,30 @@ func TestUpdateAlbumLink(t *testing.T) {
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("InvalidToken", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbumLink(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba7/links/"+uid, `{"Token": "not a token!", "Expires": 8000}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("UnknownLink", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbumLink(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba7/links/ss6sg6bxpogaaba9", `{"Expires": 8000}`)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("WrongAlbum", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbumLink(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba8/links/"+uid, `{"Expires": 8000}`)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("MalformedAlbumUID", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbumLink(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/x/links/"+uid, `{"Token": "attacker", "Expires": 0}`)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
 	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateAlbumLink(router)
@@ -256,6 +283,18 @@ func TestDeleteAlbumLink(t *testing.T) {
 	r2 := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba7/links")
 	len := gjson.Get(r2.Body.String(), "#")
 
+	t.Run("UnknownLink", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		DeleteAlbumLink(router)
+		r := PerformRequest(app, "DELETE", "/api/v1/albums/as6sg6bxpogaaba7/links/ss6sg6bxpogaaba9")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("MalformedAlbumUID", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		DeleteAlbumLink(router)
+		r := PerformRequest(app, "DELETE", "/api/v1/albums/x/links/"+uid)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
 	t.Run("SuccessfulDeletion", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DeleteAlbumLink(router)
@@ -546,3 +585,60 @@ func TestGetLabelLinks(t *testing.T) {
 	})
 }
 */
+
+func TestLinkToken(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "newtoken", linkToken("newToken"))
+		assert.Equal(t, "a-b_c:1", linkToken("  A-B_c:1  "))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", linkToken(""))
+		assert.Equal(t, "", linkToken("   "))
+	})
+	t.Run("TooShort", func(t *testing.T) {
+		assert.Equal(t, "", linkToken("a"))
+		assert.Equal(t, "", linkToken(strings.Repeat("a", LinkTokenMinLength-1)))
+		assert.NotEmpty(t, linkToken(strings.Repeat("a", LinkTokenMinLength)))
+	})
+	t.Run("InvalidCharacters", func(t *testing.T) {
+		assert.Equal(t, "", linkToken("not a token!"))
+		assert.Equal(t, "", linkToken("...."))
+		assert.Equal(t, "", linkToken("token/../etc"))
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		assert.Equal(t, "", linkToken(strings.Repeat("a", 161)))
+	})
+}
+
+func TestFindRequestLink(t *testing.T) {
+	newContext := func(uid, link string) *gin.Context {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Params = gin.Params{{Key: "uid", Value: uid}, {Key: "link", Value: link}}
+		return c
+	}
+
+	fixture := entity.LinkFixtures["1jxf3jfn2k"]
+
+	t.Run("Success", func(t *testing.T) {
+		link := findRequestLink(newContext(fixture.ShareUID, fixture.LinkUID))
+		if assert.NotNil(t, link) {
+			assert.Equal(t, fixture.ShareUID, link.ShareUID)
+		}
+	})
+	t.Run("UnknownLink", func(t *testing.T) {
+		assert.Nil(t, findRequestLink(newContext(fixture.ShareUID, "ss6sg6bxpogaaba9")))
+	})
+	t.Run("InvalidLink", func(t *testing.T) {
+		assert.Nil(t, findRequestLink(newContext(fixture.ShareUID, "xxx")))
+	})
+	t.Run("WrongParent", func(t *testing.T) {
+		assert.Nil(t, findRequestLink(newContext("as6sg6bxpogaaba1", fixture.LinkUID)))
+	})
+	t.Run("NoParent", func(t *testing.T) {
+		assert.Nil(t, findRequestLink(newContext("", fixture.LinkUID)))
+	})
+	t.Run("MalformedParent", func(t *testing.T) {
+		assert.Nil(t, findRequestLink(newContext("x", fixture.LinkUID)))
+		assert.Nil(t, findRequestLink(newContext(strings.Repeat("a", 65), fixture.LinkUID)))
+	})
+}

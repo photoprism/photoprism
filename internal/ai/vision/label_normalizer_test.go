@@ -188,6 +188,13 @@ func TestResolveLabelPhrase(t *testing.T) {
 			t.Fatalf("expected concatenation to be left alone, got %q", name)
 		}
 	})
+	t.Run("MixedScript", func(t *testing.T) {
+		// A mixed-script name keeps the mode's own behavior, so both tokens survive here. Single-word
+		// mode resolves the same name to "Beach" (see TestResolveLabelName).
+		if name, _ := resolveLabelPhrase("شاطئ beach"); name != "شاطئ Beach" {
+			t.Fatalf("expected both tokens to be kept, got %q", name)
+		}
+	})
 	t.Run("SeparatorsOnly", func(t *testing.T) {
 		if name, _ := resolveLabelPhrase("---"); name != "" {
 			t.Fatalf("expected an empty name, got %q", name)
@@ -207,6 +214,14 @@ func TestResolveLabelRaw(t *testing.T) {
 			t.Fatalf("expected the rule threshold to still apply, got %q %f", name, meta.Threshold)
 		}
 	})
+	t.Run("KeepsPluralRuleMetadata", func(t *testing.T) {
+		// The name a model returned is kept as it is, while the rule the singular carries still
+		// decides whether the label is reported at all.
+		name, meta := resolveLabelRaw("backgrounds")
+		if name != "Backgrounds" || meta.Threshold != 1 || !meta.hasRule {
+			t.Fatalf("expected the background rule to apply to the plural, got %q %f %v", name, meta.Threshold, meta.hasRule)
+		}
+	})
 	t.Run("OutOfVocabulary", func(t *testing.T) {
 		name, meta := resolveLabelRaw("trash cans")
 		if name != "Trash Cans" || meta.hasRule {
@@ -218,6 +233,35 @@ func TestResolveLabelRaw(t *testing.T) {
 			t.Fatalf("expected an empty name, got %q", name)
 		}
 	})
+}
+
+// TestTrimPlural pins the shape of the singular candidate, which decides which rule a plural
+// inherits in every normalize mode.
+func TestTrimPlural(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		out  string
+	}{
+		{name: "TrimsTrailingS", in: "backgrounds", out: "background"},
+		{name: "TrimsOnlyOneCharacter", in: "buses", out: "buse"},
+		{name: "KeepsLastWordOfPhrase", in: "Sea Lions", out: "Sea Lion"},
+		{name: "UppercaseS", in: "CATS", out: "CAT"},
+		{name: "NoTrailingS", in: "carousel", out: "carousel"},
+		{name: "TooShortToTrim", in: "cds", out: "cds"},
+		{name: "RemainderTooShort", in: "cats", out: "cat"},
+		{name: "KeepsThreeLetterRemainder", in: "buss", out: "bus"},
+		{name: "Empty", in: "", out: ""},
+		{name: "NonLatin", in: "حمار", out: "حمار"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := trimPlural(tc.in); got != tc.out {
+				t.Fatalf("trimPlural(%q) = %q, want %q", tc.in, got, tc.out)
+			}
+		})
+	}
 }
 
 func TestHasLatinLetters(t *testing.T) {
@@ -327,6 +371,16 @@ func TestNormalizeLabelResult(t *testing.T) {
 
 		if label.Name != "" {
 			t.Fatalf("expected background to be ignored, got %q", label.Name)
+		}
+	})
+	t.Run("IgnoredThresholdPluralWithoutNormalization", func(t *testing.T) {
+		// Keeping the model's name does not opt the label out of the rules, so a plural filler
+		// name is dropped in this mode as well.
+		label := LabelResult{Name: "backgrounds", Confidence: 0.95, Topicality: 0.9}
+		normalizeLabelResult(&label, NormalizeFalse)
+
+		if label.Name != "" {
+			t.Fatalf("expected backgrounds to be ignored, got %q", label.Name)
 		}
 	})
 	t.Run("GlobalThreshold", func(t *testing.T) {

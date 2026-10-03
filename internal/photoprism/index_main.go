@@ -42,8 +42,10 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		log.Warnf("index: %s", clean.Error(jsonErr))
 	}
 
-	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
-	forcePreview := forceDewarpPreview(f, o.Rescan)
+	// Create JPEG sidecar for media files in other formats so that thumbnails can be created. The left
+	// lens preview of a capture completed in this run is replaced only if FFmpeg can create the new one.
+	forcePreview := forceDewarpPreview(f, o.Rescan) ||
+		ind.conf.FFmpegEnabled() && ind.convert.FFmpegAllowed(f) && insta360StalePreview(f, related.Files)
 	if o.Convert && f.IsMedia() && (!f.HasPreviewImage() || forcePreview) {
 		if img, imgErr := ind.convert.ToImage(f, forcePreview); imgErr != nil {
 			// Stop the run instead of masking a full disk as a generic preview error.
@@ -67,6 +69,11 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		} else {
 			log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
+			// Report 360° originals whose new preview shows the raw lens frames.
+			if img.InSidecar() && insta360ExpectsDewarp(f) && img.visualProjection.Unknown() {
+				log.Warnf("index: %s could not be dewarped to an equirectangular preview", clean.Log(f.RootRelName()))
+			}
+
 			if imgErr = img.GenerateThumbnails(ind.thumbPath(), false); imgErr != nil {
 				// Stop the run instead of masking a full disk as a generic thumbnail error.
 				if errors.Is(imgErr, status.ErrInsufficientStorage) {
@@ -79,6 +86,10 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 				result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), imgErr.Error())
 				result.Status = IndexFailed
 				return result
+			}
+
+			if forcePreview {
+				ind.forgetReplacedPreview(img)
 			}
 
 			img.SetRelatedMain(f)
@@ -95,7 +106,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 			result.Status = IndexFailed
 			return result
 		} else if avcErr != nil {
-			log.Warnf("index: could not create equirectangular video for %s (%s)", clean.Log(f.RootRelName()), avcErr)
+			log.Warnf("index: could not create equirectangular video for %s (%s)", clean.Log(f.RootRelName()), clean.Error(avcErr))
 		} else if avc != nil {
 			related.Files = append(related.Files, avc)
 		}
@@ -108,7 +119,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 
 	// Save file error.
 	if fileUid, err := result.FileError(); err != nil {
-		query.SetFileError(fileUid, err.Error())
+		query.SetFileError(fileUid, clean.Error(err))
 	}
 
 	// Log index result.

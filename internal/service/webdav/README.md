@@ -1,6 +1,6 @@
 ## PhotoPrism — WebDAV Service Client
 
-**Last Updated:** March 7, 2026
+**Last Updated:** September 25, 2026
 
 ### Overview
 
@@ -26,6 +26,28 @@ This behavior exists because some providers and appliances accept `Depth: 1` but
 
 - service folder browsing via `entity.Service.Directories()`,
 - sync refresh in `internal/workers/sync_refresh.go`.
+
+### Transfer Path Policy
+
+Directory discovery retains its existing hidden-name and traversal exclusions. Logical
+transfer paths are also checked before listing, upload, download, directory creation, or
+deletion: `SkipSyncPath` reports an excluded name and `UnsafeSyncPath` reports one carrying a
+parent-directory segment. Reserved names use the shared `pkg/fs` set; other hidden components
+are omitted from sync as well. Endpoint prefixes and absolute local storage roots are not
+passed as logical transfer paths.
+
+Excluded entries are normal skips, not remote failures: they return `ErrSkipPath`, and sync
+and share workers store an `ignore` disposition with empty error fields, so an ignored leading
+batch still allows later eligible work to progress. A path carrying a parent-directory segment
+returns `ErrUnsafePath` instead and is recorded as a transfer failure. The exclusion is checked
+first, so a name that is both reserved and traversing reports the skip. Workers check original
+relative source names before aliases or thumbnails can replace them, and recheck queued paths.
+Existing traversal checks, safe joins, download-size limits, overwrite protection, timeouts,
+and service network restrictions remain in force.
+
+### Upload Responses
+
+`Upload()` sends the `PUT` request itself with the file size as `Content-Length`. A `403 Forbidden` response returns an error wrapping `ErrForbidden`, so callers can tell a refused file from a failed transfer. Any other non-2xx status returns an error naming the status code, and so does a `301`, `302`, or `303` redirect, since the HTTP client follows it with a `GET` whose status does not describe the upload.
 
 ### Timeout Behavior
 
@@ -57,6 +79,7 @@ When a recursive `PROPFIND` fails, the client logs the failure and emits an info
 - `client.go` — outbound WebDAV client wrapper and compatibility fallback.
 - `path.go` — shared path normalization helpers.
 - `client_test.go` — unit tests, including a local `httptest` WebDAV fixture for depth-limited servers.
+- `transfer_policy_test.go` — exclusion and containment regressions for the transfer and listing calls.
 
 ### Related Files
 
@@ -67,6 +90,7 @@ When a recursive `PROPFIND` fails, the client logs the failure and emits an info
 ### Testing
 
 - Focused client tests: `go test ./internal/service/webdav -run 'TestClient_Directories' -count=1`
+- Upload responses: `go test ./internal/service/webdav -run 'TestClient_Upload' -count=1`
 - Service-level regression checks: `go test ./internal/entity -run 'TestService_Directories' -count=1`
 
 The local test server in `client_test.go` simulates both compliant servers and depth-1-only servers so the fallback can be validated without relying on the external dummy WebDAV container.

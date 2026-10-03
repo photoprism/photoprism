@@ -53,6 +53,10 @@ const (
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
 	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
 	ClusterCoreDefault = 5
+	// ClusterCoreRetryDefault is the core the second clustering pass uses, over what matching left
+	// unclustered. A flat number rather than one derived from the first pass: only 5 to 4 has been
+	// measured, and it is the floor those measurements support at any core above it.
+	ClusterCoreRetryDefault = 4
 	// ClusterPercentileDefault is the default share of a cluster's member distances its radius has
 	// to cover. Taking the maximum instead lets one loose member decide how far a whole cluster
 	// reaches, with only the clamp to stop it; under twenty members the two are the same value.
@@ -124,8 +128,8 @@ var (
 	// MatchDist is the distance offset threshold used to match new faces with existing clusters.
 	MatchDist = MatchDistDefault
 	// CollisionDist is the floor below which a cluster's recorded CollisionRadius is discarded and
-	// the cluster keeps its full accept distance: narrowing that far would exclude its own members,
-	// so the code stops separating the two and flags the face ambiguous instead.
+	// the cluster keeps its full accept distance: narrowing that far would exclude its own members.
+	// One closer than AmbiguityDist flags the cluster ambiguous; any other is recorded at most once.
 	CollisionDist = CollisionDistDefault
 	// MatchMargin is how much closer the nearest cluster has to be than the runner-up before a
 	// marker is assigned to it. A face between two people is large, sharp and confidently scored,

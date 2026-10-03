@@ -552,6 +552,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		data.FacesPartial = regions.Partial
 	}
 
+	data.Exposure = normalizeExposure(data.Exposure)
+
 	// Normalize codec name.
 	data.Codec = strings.ToLower(data.Codec)
 	if strings.Contains(data.Codec, CodecJpeg) { // JPEG Image?

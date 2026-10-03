@@ -122,22 +122,3 @@ func (r *Response) FirstText() string {
 
 	return ""
 }
-
-// ParseErrorMessage extracts a human readable error message from a Responses API payload.
-func ParseErrorMessage(raw []byte) string {
-	var errResp struct {
-		Error *struct {
-			Message string `json:"message"`
-		} `json:"error"`
-	}
-
-	if err := json.Unmarshal(raw, &errResp); err != nil {
-		return ""
-	}
-
-	if errResp.Error != nil {
-		return strings.TrimSpace(errResp.Error.Message)
-	}
-
-	return ""
-}

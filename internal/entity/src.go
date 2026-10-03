@@ -26,6 +26,7 @@ const (
 	SrcDefault  Src = "default"            // Prio 1
 	SrcEstimate Src = "estimate"           // Prio 2
 	SrcFile     Src = "file"               // Prio 2
+	SrcModified Src = "modified"           // Prio 3
 	SrcName     Src = "name"               // Prio 4
 	SrcYaml     Src = "yaml"               // Prio 8
 	SrcOIDC     Src = "oidc"               // Prio 8
@@ -64,6 +65,7 @@ var SrcPriority = Priorities{
 	SrcDefault:  1,
 	SrcEstimate: 2,
 	SrcFile:     2,
+	SrcModified: 3,
 	SrcName:     4,
 	SrcYaml:     8,
 	SrcOIDC:     8,
@@ -98,6 +100,17 @@ var SrcGenerated = Priorities{
 	SrcVision: SrcPriority[SrcVision],
 }
 
+// SrcSubjects contains the sources a subject assignment can have, on a marker or when a person is created.
+// The overrides SrcAdmin and SrcVision are for operator commands and are not subject sources.
+var SrcSubjects = Priorities{
+	SrcAuto:   SrcPriority[SrcAuto],
+	SrcMarker: SrcPriority[SrcMarker],
+	SrcMeta:   SrcPriority[SrcMeta],
+	SrcXmp:    SrcPriority[SrcXmp],
+	SrcBatch:  SrcPriority[SrcBatch],
+	SrcManual: SrcPriority[SrcManual],
+}
+
 // SrcVisionCommands maps source names to the sources that can be used as arguments for computer vision commands.
 var SrcVisionCommands = SrcMap{
 	SrcAuto:            SrcAuto,
@@ -117,6 +130,7 @@ var SrcDesc = map[Src]string{
 	SrcEstimate: "Estimated",
 	SrcFile:     "File System",
 	SrcName:     "File Name",
+	SrcModified: "Modify Time",
 	SrcYaml:     "YAML Sidecar",
 	SrcOIDC:     "OpenID Connect (OIDC)",
 	SrcLDAP:     "LDAP / Active Directory",

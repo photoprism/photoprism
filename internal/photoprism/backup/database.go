@@ -2,18 +2,20 @@ package backup
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"sort"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -43,6 +45,15 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	if !toStdOut {
 		if backupPath == "" {
 			backupPath = c.BackupDatabasePath()
+		}
+
+		// The same absolute paths are used for writing, rotation, and the cleanup of staged files.
+		if backupPath, err = filepath.Abs(backupPath); err != nil {
+			return err
+		} else if fileName != "" {
+			if fileName, err = filepath.Abs(fileName); err != nil {
+				return err
+			}
 		}
 
 		// Create the backup path if it does not already exist.
@@ -83,46 +94,15 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 
 	var cmd *exec.Cmd
 
+	// The password the command was built with, which its rendering must mask.
+	var password string
+
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		// Connect via Unix Domain Socket?
-		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
-			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
-				c.MariadbDumpBin(),
-				"--protocol", "socket",
-				"-S", socketName,
-				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
-				c.DatabaseName(),
-			)
-		} else if c.DatabaseSsl() {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("backup: server supports zero-configuration ssl")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
-				c.MariadbDumpBin(),
-				"--protocol", "tcp",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
-				c.DatabaseName(),
-			)
-		} else {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("backup: zero-configuration ssl not supported by the server")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
-				c.MariadbDumpBin(),
-				"--protocol", "tcp",
-				"--skip-ssl",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
-				c.DatabaseName(),
-			)
-		}
+		conn := newMariadbConn(c, c.MariadbDumpBin())
+		logDatabaseSsl(conn, "backup")
+		warnNonInnodbTables(c.DbIfConnected(), conn.Name)
+		password, cmd = conn.Password, conn.Cmd(mariadbDumpArgs()...)
 	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
@@ -137,60 +117,288 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 		return fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
 	}
 
-	// Write to stdout or file.
-	var f *os.File
 	if toStdOut {
 		log.Infof("backup: sending database backup to stdout")
-		f = os.Stdout
-		// #nosec G304 backup path validated by configuration
-	} else if f, err = os.OpenFile(fileName, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeBackupFile); err != nil {
-		return fmt.Errorf("failed to create %s (%s)", clean.Log(fileName), err)
-	} else {
-		log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
-		defer f.Close()
+		return runDump(cmd, os.Stdout, password)
 	}
 
+	log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
+
+	return writeDump(cmd, backupPath, fileName, password, force, retain)
+}
+
+// mariadbDumpArgs returns the flags a MariaDB or MySQL dump is created with: from a consistent snapshot
+// without table locks, and with each INSERT statement committed on its own when restored.
+func mariadbDumpArgs() []string {
+	return []string{"--single-transaction", "--skip-add-locks", "--skip-no-autocommit"}
+}
+
+// engineCheckTimeout bounds the query that checks the storage engine of the tables before a dump.
+var engineCheckTimeout = 5 * time.Second
+
+// warnNonInnodbTables logs a warning naming the tables of the database that do not use InnoDB, as the
+// snapshot a dump is created from does not cover them. The dump does not depend on the check.
+func warnNonInnodbTables(db *gorm.DB, name string) {
+	if db == nil {
+		log.Debugf("backup: skipped checking the storage engine of the database tables, as the database is not connected")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), engineCheckTimeout)
+	defer cancel()
+
+	rows, err := db.DB().QueryContext(ctx, "SELECT table_name FROM information_schema.tables WHERE table_schema = ? "+
+		"AND table_type <> 'VIEW' AND (engine IS NULL OR engine <> 'InnoDB') ORDER BY table_name", name)
+
+	if err != nil {
+		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))
+		return
+	}
+
+	defer rows.Close()
+
+	var tables []string
+
+	for rows.Next() {
+		var table string
+
+		if err = rows.Scan(&table); err != nil {
+			break
+		}
+
+		tables = append(tables, table)
+	}
+
+	if err == nil {
+		err = rows.Err()
+	}
+
+	if err != nil {
+		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))
+	} else if len(tables) > 0 {
+		log.Warnf("backup: found %s without InnoDB, which the consistent snapshot does not cover (%s)",
+			english.Plural(len(tables), "table", "tables"), clean.LogNames(tables))
+	}
+}
+
+// staleStageAge is the age after which a staged dump left by an interrupted run is removed.
+const staleStageAge = 24 * time.Hour
+
+// writeDump runs the dump command into a staged sibling of fileName and publishes it only once it
+// completed, so a failed run leaves an existing file under that name untouched. Older dumps in
+// backupPath are then rotated to retain.
+func writeDump(cmd *exec.Cmd, backupPath, fileName, password string, force bool, retain int) (err error) {
+	baseName := filepath.Base(fileName)
+
+	if info, statErr := os.Lstat(fileName); statErr == nil {
+		switch {
+		case info.Mode()&os.ModeSymlink != 0:
+			return fmt.Errorf("%s is a symbolic link", clean.Log(baseName))
+		case info.Mode().IsRegular():
+		case isDumpName(baseName):
+			return fmt.Errorf("%s is not a regular file", clean.Log(baseName))
+		default:
+			// A pipe or device named explicitly cannot be replaced by a rename, and holds no dump to keep.
+			return writeDumpTo(cmd, fileName, password, os.Geteuid())
+		}
+	}
+
+	removeStaleStages(filepath.Dir(fileName), staleStageAge)
+
+	f, err := fs.OpenStageFileMode(fileName, fs.ModeBackupFile)
+
+	if err != nil {
+		return fmt.Errorf("failed to create %s (%s)", clean.Log(fileName), err)
+	}
+
+	stageName := f.Name()
+	published := false
+
+	defer func() {
+		_ = f.Close()
+
+		if !published {
+			_ = os.Remove(stageName)
+		}
+	}()
+
+	// Copying through a pipe returns write errors that some dump clients ignore.
+	w := &dumpWriter{w: f}
+
+	if err = runDump(cmd, w, password); w.err != nil {
+		return w.err
+	} else if err != nil {
+		return err
+	}
+
+	if err = f.Sync(); err != nil {
+		return err
+	}
+
+	info, err := f.Stat()
+
+	if err != nil {
+		return err
+	} else if info.Size() == 0 {
+		return fmt.Errorf("database dump for %s is empty", clean.Log(baseName))
+	}
+
+	if err = f.Close(); err != nil {
+		return err
+	}
+
+	if err = fs.PublishFile(stageName, fileName, force); err != nil {
+		return err
+	}
+
+	published = true
+
+	return rotateDumps(backupPath, retain)
+}
+
+// writeDumpTo runs the dump command into an existing pipe or device owned by uid, without following
+// a symlink.
+func writeDumpTo(cmd *exec.Cmd, fileName, password string, uid int) error {
+	// Checked before the open as well, since opening a pipe without a reader blocks.
+	if info, err := os.Lstat(fileName); err == nil && !info.Mode().IsRegular() && !dumpTargetOwned(info, uid) {
+		return fmt.Errorf("%s is not owned by the current user", clean.Log(filepath.Base(fileName)))
+	}
+
+	// #nosec G304 the name is an explicit destination checked by the caller
+	f, err := os.OpenFile(fileName, os.O_WRONLY|fs.OpenNoFollow, 0)
+
+	if err != nil {
+		return fmt.Errorf("failed to open %s (%s)", clean.Log(fileName), err)
+	}
+
+	defer f.Close()
+
+	// A regular file is written only through a staged sibling.
+	if info, statErr := f.Stat(); statErr != nil {
+		return statErr
+	} else if info.Mode().IsRegular() {
+		return fmt.Errorf("%s is a regular file", clean.Log(filepath.Base(fileName)))
+	} else if !dumpTargetOwned(info, uid) {
+		return fmt.Errorf("%s is not owned by the current user", clean.Log(filepath.Base(fileName)))
+	}
+
+	if err = runDump(cmd, f, password); err != nil {
+		return err
+	}
+
+	return f.Close()
+}
+
+// dumpTargetOwned reports whether a pipe is owned by uid, or a device by uid or root.
+func dumpTargetOwned(info os.FileInfo, uid int) bool {
+	st, ok := info.Sys().(*syscall.Stat_t)
+
+	if !ok {
+		return false
+	}
+
+	owner := int(st.Uid)
+
+	if info.Mode()&os.ModeNamedPipe != 0 {
+		return owner == uid
+	}
+
+	return owner == uid || owner == 0
+}
+
+// isDumpName reports whether a base name matches the dated names of rotated database dumps.
+func isDumpName(baseName string) bool {
+	matched, _ := filepath.Match(SqlBackupFileNamePattern, baseName)
+	return matched
+}
+
+// removeStaleStages removes staged dumps in dir that were last written more than maxAge ago.
+// A younger stage may belong to a run in another process, so it is kept.
+func removeStaleStages(dir string, maxAge time.Duration) {
+	files, err := globIn(dir, "."+SqlBackupFileNamePattern+".*"+fs.ExtTmp+".sql")
+
+	if err != nil {
+		return
+	}
+
+	for _, name := range files {
+		if info, statErr := os.Lstat(name); statErr != nil || !info.Mode().IsRegular() || time.Since(info.ModTime()) <= maxAge {
+			continue
+		} else if err = os.Remove(name); err != nil {
+			log.Warnf("backup: failed to remove stale database backup file %s (%s)", clean.Log(filepath.Base(name)), err)
+		} else {
+			log.Infof("backup: removed stale database backup file %s", clean.Log(filepath.Base(name)))
+		}
+	}
+}
+
+// dumpWriter passes writes to w and records the first write error.
+type dumpWriter struct {
+	w   io.Writer
+	err error
+}
+
+// Write writes p to the underlying writer and records the first error.
+func (d *dumpWriter) Write(p []byte) (int, error) {
+	n, err := d.w.Write(p)
+
+	if err != nil && d.err == nil {
+		d.err = err
+	}
+
+	return n, err
+}
+
+// runDump runs the dump command with its output sent to w, returning stderr as the error if it fails.
+func runDump(cmd *exec.Cmd, w io.Writer, password string) error {
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
-	cmd.Stdout = f
+	cmd.Stdout = w
 
-	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	// Log the command for debugging in trace mode.
+	log.Trace(clean.Cmd(cmd, password))
 
-	// Run backup command.
 	if cmdErr := cmd.Run(); cmdErr != nil {
-		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-			return errors.New(errStr)
+		if err := clientError(stderr.String(), password, "backup"); err != nil {
+			return err
 		}
 
 		return cmdErr
 	}
 
-	// Delete old backups if the number of backup files to keep has been specified.
-	if !toStdOut && backupPath != "" && retain > 0 {
-		files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
+	clientDiagnostics(stderr.String(), password, "backup")
 
-		if globErr != nil {
-			return globErr
+	return nil
+}
+
+// rotateDumps removes the oldest dumps in backupPath until only retain remain, if retain is set.
+func rotateDumps(backupPath string, retain int) error {
+	if backupPath == "" || retain <= 0 {
+		return nil
+	}
+
+	files, err := globIn(backupPath, SqlBackupFileNamePattern)
+
+	if err != nil {
+		return err
+	}
+
+	if len(files) == 0 {
+		return fmt.Errorf("found no database backup files in %s", backupPath)
+	} else if len(files) <= retain {
+		return nil
+	}
+
+	sort.Strings(files)
+
+	log.Infof("backup: retaining %s", english.Plural(retain, "database backup", "database backups"))
+
+	for i := 0; i < len(files)-retain; i++ {
+		if err = os.Remove(files[i]); err != nil {
+			return err
 		}
 
-		if len(files) == 0 {
-			return fmt.Errorf("found no database backup files in %s", backupPath)
-		} else if len(files) <= retain {
-			return nil
-		}
-
-		sort.Strings(files)
-
-		log.Infof("backup: retaining %s", english.Plural(retain, "database backup", "database backups"))
-
-		for i := 0; i < len(files)-retain; i++ {
-			if err = os.Remove(files[i]); err != nil {
-				return err
-			} else {
-				log.Infof("backup: removed database backup file %s", clean.Log(filepath.Base(files[i])))
-			}
-		}
+		log.Infof("backup: removed database backup file %s", clean.Log(filepath.Base(files[i])))
 	}
 
 	return nil
@@ -211,7 +419,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				backupPath = c.BackupDatabasePath()
 			}
 
-			files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
+			files, globErr := globIn(backupPath, SqlBackupFileNamePattern)
 
 			if globErr != nil {
 				return globErr
@@ -260,62 +468,16 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		log.Warnf("restore: existing index with %d pictures will be replaced", counts.Photos)
 	}
 
-	tables := entity.Entities
+	// The command is prepared before any table is dropped.
+	restore, err := prepareRestore(c)
 
-	var cmd *exec.Cmd
+	if err != nil {
+		return err
+	}
 
-	switch c.DatabaseDriver() {
-	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		// Connect via Unix Domain Socket?
-		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
-			cmd = exec.Command( // #nosec G204 database connection parameters from config
-				c.MariadbBin(),
-				"--protocol", "socket",
-				"-S", socketName,
-				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
-				"-f",
-				c.DatabaseName(),
-			)
-		} else if c.DatabaseSsl() {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("restore: server supports zero-configuration ssl")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from config
-				c.MariadbBin(),
-				"--protocol", "tcp",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
-				"-f",
-				c.DatabaseName(),
-			)
-		} else {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("restore: zero-configuration ssl not supported by the server")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from config
-				c.MariadbBin(),
-				"--protocol", "tcp",
-				"--skip-ssl",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
-				"-f",
-				c.DatabaseName(),
-			)
-		}
-	case dsn.DriverSQLite3:
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		log.Infoln("restore: dropping existing sqlite database tables")
-		tables.Drop(c.Db())
-		cmd = exec.Command( // #nosec G204 sqlite restore uses configured binary and db path
-			c.SqliteBin(),
-			c.DatabaseFile(),
-		)
-	default:
-		return fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
+		entity.Entities.Drop(c.Db())
 	}
 
 	// Read from stdin or file.
@@ -331,38 +493,106 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		defer f.Close()
 	}
 
-	var stderr bytes.Buffer
-	var stdin io.WriteCloser
-	cmd.Stderr = &stderr
+	return restore.run(f)
+}
+
+// logRestoreResult logs the outcome of a restore that completed, with a warning if statements failed.
+func logRestoreResult(failed restoreFailures) {
+	if failed.Count == 0 {
+		log.Infof("restore: index database successfully restored")
+		return
+	}
+
+	log.Warnf("restore: index database restored, but %s, so some rows may be missing (%s)", failed.Summary(),
+		strings.Join(failed.Errors, ", "))
+}
+
+// restoreInput reads a backup and records a read error, so it is told apart from a client that stopped
+// reading its input.
+type restoreInput struct {
+	r   io.Reader
+	err error
+}
+
+// Read reads from the backup and records any error other than the end of input.
+func (i *restoreInput) Read(p []byte) (int, error) {
+	n, err := i.r.Read(p)
+
+	if err != nil && !errors.Is(err, io.EOF) {
+		i.err = err
+	}
+
+	return n, err
+}
+
+// restoreFailures describes the statements that failed while a restore continued: their number, and the
+// first ones as error code and line number.
+type restoreFailures struct {
+	Count  int
+	Errors []string
+}
+
+// Summary describes the failed statements, e.g. "2 statements failed".
+func (f restoreFailures) Summary() string {
+	return fmt.Sprintf("%s failed", english.Plural(f.Count, "statement", "statements"))
+}
+
+// runRestore runs the restore command with its input read from r, returning the first lines of stderr as
+// the error if it fails, and the statements that failed while it continued. Otherwise, it logs only the
+// warnings the client wrote before any other output. The input is copied through a pipe, so the client runs
+// in batch mode even if r is a terminal, and the copy does not delay the result of a client that exits early.
+func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFailures, err error) {
+	stderr := &restoreOutput{}
+	cmd.Stderr = stderr
 	cmd.Stdout = os.Stdout
-	stdin, err = cmd.StdinPipe()
+
+	stdin, err := cmd.StdinPipe()
 
 	if err != nil {
-		return fmt.Errorf("restore: failed to create stdin pipe: %w", err)
+		return failed, fmt.Errorf("failed to create stdin pipe: %w", err)
 	}
+
+	// The client reads end of input if the copy fails, so a failed copy is returned once it exits.
+	copied := make(chan error, 1)
 
 	go func() {
 		defer stdin.Close()
-		if _, err = io.Copy(stdin, f); err != nil {
-			log.Errorf(err.Error())
-		}
+
+		in := &restoreInput{r: r}
+		_, _ = io.Copy(stdin, in)
+		copied <- in.err
 	}()
 
-	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	// Log the command for debugging in trace mode.
+	log.Trace(clean.Cmd(cmd, password))
 
-	// Run restore command.
-	if cmdErr := cmd.Run(); cmdErr != nil {
-		log.Errorf("restore: failed to restore index database")
+	cmdErr := cmd.Run()
+	stderr.Close()
+	failed = stderr.Failures()
 
-		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-			return errors.New(errStr)
+	// The result of the copy is sent before the client can read end of input, so it is available if the
+	// client read all of it; a client that exits early is not held up by input that never ends.
+	select {
+	case copyErr := <-copied:
+		if copyErr != nil {
+			return failed, fmt.Errorf("failed to read backup: %s", clean.Error(copyErr))
 		}
-
-		return cmdErr
-	} else {
-		log.Infof("restore: index database successfully restored")
+	default:
 	}
 
-	return nil
+	if cmdErr != nil {
+		if err = clientError(stderr.String(), password, "restore"); err == nil {
+			err = cmdErr
+		}
+
+		if failed.Count > 0 {
+			err = fmt.Errorf("%w; %s (%s)", err, failed.Summary(), strings.Join(failed.Errors, ", "))
+		}
+
+		return failed, err
+	}
+
+	clientDiagnostics(stderr.Warnings(), password, "restore")
+
+	return failed, nil
 }

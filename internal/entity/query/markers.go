@@ -1,13 +1,17 @@
 package query
 
 import (
+	"database/sql"
 	"fmt"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // MarkerByUID returns a Marker based on the UID.
@@ -75,14 +79,36 @@ func UnmatchedFaceMarkers(limit int, after string, matchedBefore *time.Time) (re
 	return result, err
 }
 
-// FaceMarkers returns all face markers sorted by id.
-func FaceMarkers(limit, offset int) (result entity.Markers, err error) {
-	err = whereEmbeddingModel(Db().
-		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName()).
-		Order("marker_uid").Limit(limit).Offset(offset).
-		Find(&result).Error
+// FaceMarkers returns the next page of face markers of the configured embedding model after the given
+// uid, sorted by uid, up to and including the last uid if one is given.
+func FaceMarkers(limit int, after, last string) (result entity.Markers, err error) {
+	db := whereEmbeddingModel(Db().
+		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName())
+
+	if after != "" {
+		db = db.Where("marker_uid > ?", after)
+	}
+
+	if last != "" {
+		db = db.Where("marker_uid <= ?", last)
+	}
+
+	err = db.Order("marker_uid").Limit(limit).Find(&result).Error
 
 	return result, err
+}
+
+// LastMarkerUID returns the highest marker uid, or an empty string if there are no markers.
+func LastMarkerUID() (uid string, err error) {
+	var result struct {
+		UID sql.NullString `gorm:"column:uid"`
+	}
+
+	if err = UnscopedDb().Model(&entity.Marker{}).Select("MAX(marker_uid) AS uid").Scan(&result).Error; err != nil {
+		return "", err
+	}
+
+	return result.UID.String, nil
 }
 
 // Embeddings returns existing face embeddings.
@@ -98,10 +124,8 @@ func Embeddings(single, unclustered bool, size, score int, model string) (result
 
 	stmt = whereEmbeddingModel(stmt, model)
 
-	if size > 0 {
-		sizeCond, sizeArgs := entity.ClusterSizeCond("", size)
-		stmt = stmt.Where(sizeCond, sizeArgs...)
-	}
+	sizeCond, sizeArgs := entity.ClusterSizeCond("", size)
+	stmt = stmt.Where(sizeCond, sizeArgs...)
 
 	stmt = whereClusterScore(stmt, score)
 
@@ -317,4 +341,47 @@ func RemoveOrphanMarkers() (removed int64, err error) {
 	}
 
 	return removed, nil
+}
+
+// FaceMarkerFile describes the face markers of one file, and where the file is stored.
+type FaceMarkerFile struct {
+	PhotoID  uint
+	FileRoot string
+	FileName string
+	Markers  int
+}
+
+// FaceMarkerFiles returns the face markers each primary file in the specified originals folder, or the
+// matching sidecar folder, holds, keyed by file uid, leaving out deleted and missing files and those of
+// removed pictures. An empty dir, "." or "/" covers all files.
+func FaceMarkerFiles(dir string) (result map[string]FaceMarkerFile, err error) {
+	var rows []struct {
+		FileUID  string
+		PhotoID  uint
+		FileRoot string
+		FileName string
+		Count    int
+	}
+
+	stmt := Db().Table(entity.Marker{}.TableName()+" m").
+		Select("m.file_uid AS file_uid, f.photo_id AS photo_id, f.file_root AS file_root, f.file_name AS file_name, COUNT(*) AS count").
+		Joins(fmt.Sprintf("JOIN %s f ON f.file_uid = m.file_uid", entity.File{}.TableName())).
+		Joins(fmt.Sprintf("JOIN %s p ON p.id = f.photo_id", entity.Photo{}.TableName())).
+		Where("m.marker_type = ? AND f.file_primary = 1 AND f.deleted_at IS NULL AND f.file_missing = 0", entity.MarkerFace)
+
+	if dir = strings.Trim(path.Clean("/"+dir), "/"); dir != "" {
+		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name"), clean.SqlLike(dir)+"/%")
+	}
+
+	if err = stmt.Group("m.file_uid, f.photo_id, f.file_root, f.file_name").Scan(&rows).Error; err != nil {
+		return nil, err
+	}
+
+	result = make(map[string]FaceMarkerFile, len(rows))
+
+	for _, row := range rows {
+		result[row.FileUID] = FaceMarkerFile{PhotoID: row.PhotoID, FileRoot: row.FileRoot, FileName: row.FileName, Markers: row.Count}
+	}
+
+	return result, nil
 }

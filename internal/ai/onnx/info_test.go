@@ -55,11 +55,18 @@ func TestInput_Merge(t *testing.T) {
 func TestOutput_Merge(t *testing.T) {
 	t.Run("FillsEmpty", func(t *testing.T) {
 		output := &Output{Width: 128}
-		output.Merge(&Output{Name: "embedding", Width: 512, Logits: true})
+		output.Merge(&Output{Name: "embedding", Width: 512, Count: 1, Logits: Bool(true)})
 
 		assert.Equal(t, "embedding", output.Name)
 		assert.Equal(t, 128, output.Width)
-		assert.True(t, output.Logits)
+		assert.Equal(t, 1, output.Count)
+		assert.True(t, output.OutputsLogits())
+	})
+	t.Run("PreservesExplicitFalse", func(t *testing.T) {
+		output := &Output{Logits: Bool(false)}
+		output.Merge(&Output{Logits: Bool(true)})
+
+		assert.False(t, output.OutputsLogits())
 	})
 	t.Run("NilReceiver", func(t *testing.T) {
 		var output *Output
@@ -108,6 +115,7 @@ func TestModelInfo_Merge(t *testing.T) {
 		m := &ModelInfo{File: "sface.onnx", Input: &Input{Width: 112}}
 		m.Merge(&ModelInfo{
 			File:         "other.onnx",
+			Source:       "https://example.com/sface.onnx",
 			SHA256:       "0ba9fbfa",
 			License:      "Apache-2.0",
 			Quantization: "fp32",
@@ -116,6 +124,7 @@ func TestModelInfo_Merge(t *testing.T) {
 		})
 
 		assert.Equal(t, "sface.onnx", m.File)
+		assert.Equal(t, "https://example.com/sface.onnx", m.Source)
 		assert.Equal(t, "0ba9fbfa", m.SHA256)
 		assert.Equal(t, "Apache-2.0", m.License)
 		assert.Equal(t, "fp32", m.Quantization)

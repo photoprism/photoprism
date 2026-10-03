@@ -3,6 +3,7 @@ package vision
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -24,7 +25,7 @@ const (
 	RunOnDemand RunType = "on-demand"
 	// RunOnSchedule runs manually and on-schedule.
 	RunOnSchedule RunType = "on-schedule"
-	// RunOnIndex runs manually and after indexing.
+	// RunOnIndex runs manually and during indexing.
 	RunOnIndex RunType = "on-index"
 )
 
@@ -109,13 +110,26 @@ func (m *Model) ShouldRun(when RunType) bool {
 		return should
 	}
 
+	uri, _ := m.Endpoint()
+	if m.Type == ModelTypeNsfw && m.TensorFlow == nil && uri == "" && !m.Service.UriUnresolved() {
+		return when != RunNewlyIndexed && when != RunNever
+	}
+
+	inline := m.IsDefault()
+
+	// A local classifier runs during indexing only if it is the default one, so an automatically
+	// selected alternative, which has Default set, still runs after indexing.
+	if m.Type == ModelTypeLabels && m.TensorFlow == nil && uri == "" && !m.Service.UriUnresolved() {
+		inline = classify.NormalizeModelName(classify.ModelName(m.Name)) == classify.NormalizeModelName(classify.ModelName(DefaultLabelModel.Name))
+	}
+
 	switch when {
 	case RunAuto, RunManual, RunOnDemand, RunOnSchedule:
 		return true
 	case RunAlways, RunOnIndex:
-		return m.IsDefault()
+		return inline
 	case RunNewlyIndexed:
-		return !m.IsDefault()
+		return !inline
 	}
 
 	return false

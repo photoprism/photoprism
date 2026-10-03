@@ -27,11 +27,17 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 ## Testing
 
 **Run all tests:**
-- `make test` — runs the JS and Go tests on SQLite; it does not cover MariaDB or the editions
-- `make test-go` — all Go tests on SQLite (~3-15 min)
+- `make test` — runs the JS and Go tests on SQLite; it does not cover MariaDB. Its Go half sweeps
+  `./pkg/... ./internal/... ./.../internal/...`, so the editions' `internal/` packages **are** included;
+  what it leaves out is MariaDB and each edition's own `make -C <edition> test` extras
+- `make test-go` — the Go tests on SQLite (~3-15 min), without the opt-in `integration` build tag
+- `make test-integration` — the same run plus the `integration` matrices (Insta360 stacking, import and
+  reconciliation); run it when changing those areas
 - `make test-mariadb` — the same Go suite against MariaDB (~5-20 min)
 - `make test-js` — frontend unit tests (Vitest)
-- `make test-short` — short Go tests in parallel (~2-5 min)
+- `make test-short` — short Go tests in parallel (~3-5 min); skips tests that run the indexer or
+  importer on fixture media. Its `-timeout 5m` applies per package, and under full-suite load
+  `internal/api` (~3.5 min) and `internal/photoprism` (~2.5 min) come closest to it
 
 Go runs packages concurrently, so wall-clock time depends on the core count, on how warm the
 build cache is, and on what else is using the host. Treat the ranges as orders of magnitude.
@@ -66,9 +72,9 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 
 ## Formatting & Linting
 
-Available targets: `make fmt` (everything), `make fmt-go`, `make fmt-js`, `make fmt-swag` / `make swag` (Swagger), `make lint-go`, `make lint-js`. Detailed conventions live in `.claude/rules/go-code-style.md` and `.claude/rules/frontend-rules.md`.
+Available targets: `make fmt` (everything), `make fmt-go`, `make fmt-js`, `make fmt-swag` / `make swag` (Swagger), `make lint-go`, `make lint-js`, `make lint-sh`. Detailed conventions live in `.claude/rules/go-code-style.md` and `.claude/rules/frontend-rules.md`.
 
-When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings. When editing Markdown files that contain tables, format them with `npx --yes markdown-table-formatter <filename>`.
+When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings. `make lint-sh` runs it over every script under `scripts/dist/`, which ship in the container images, so those are gated rather than left to the habit. When editing Markdown files that contain tables, format them with `npx --yes markdown-table-formatter <filename>`.
 
 The curated `make help` overviews are maintained by hand in a `HELP_TEXT` block per Makefile. After renaming or removing a target, run `make check-make-help` (also part of `make lint`) to confirm that no overview still advertises it.
 
@@ -92,7 +98,7 @@ Migration files live in `internal/entity/migrate/`.
 
 ## Architecture Overview
 
-PhotoPrism is a self-hosted photo management app. The backend is Go, the frontend is Vue 3 + Vuetify 3, and the database is MariaDB or SQLite (via GORM).
+PhotoPrism is a self-hosted photo management app. The backend is Go, the frontend is Vue 3 + Vuetify 4, and the database is MariaDB or SQLite (via GORM).
 
 ### Backend (`internal/`, `pkg/`, `cmd/`)
 
@@ -125,7 +131,7 @@ PhotoPrism is a self-hosted photo management app. The backend is Go, the fronten
 
 ### Frontend (`frontend/`)
 
-Vue 3 app using the Options API and Vuetify 3.
+Vue 3 app using the Options API and Vuetify 4.
 
 | Directory                 | Purpose                                                                                         |
 |---------------------------|-------------------------------------------------------------------------------------------------|

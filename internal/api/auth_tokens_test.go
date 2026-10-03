@@ -7,7 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -22,8 +24,15 @@ func downloadCtx(query string) *gin.Context {
 	return c
 }
 
+// TestDownloadSession checks signed download token and header session resolution.
 func TestDownloadSession(t *testing.T) {
 	conf := get.Config()
+	signedSession := entity.NewSession(conf.SessionMaxAge(), 0).SetUser(entity.UserFixtures.Pointer("alice"))
+	require.NoError(t, signedSession.Create())
+	t.Cleanup(func() { require.NoError(t, signedSession.Delete()) })
+	headerSession := entity.NewSession(conf.SessionMaxAge(), 0).SetUser(entity.UserFixtures.Pointer("alice"))
+	require.NoError(t, headerSession.Create())
+	t.Cleanup(func() { require.NoError(t, headerSession.Delete()) })
 
 	t.Run("PublicModeReturnsPublicSession", func(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePublic)
@@ -34,20 +43,18 @@ func TestDownloadSession(t *testing.T) {
 	defer conf.SetAuthMode(config.AuthModePublic)
 
 	t.Run("SignedTokenResolvesSession", func(t *testing.T) {
-		sess := entity.SessionFixtures.Get("alice")
-		got := DownloadSession(downloadCtx("t=" + tokens.SignDownload(sess.ID)))
-		assert.NotNil(t, got)
-		assert.Equal(t, sess.ID, got.ID)
+		got := DownloadSession(downloadCtx("t=" + tokens.SignDownload(signedSession.ID)))
+		require.NotNil(t, got)
+		assert.Equal(t, signedSession.ID, got.ID)
 	})
 	t.Run("VerboseSignedTokenResolvesSession", func(t *testing.T) {
 		// The CDN-facing verbose form (token=…&expires=…&sid=…) signs the same message as the compact
 		// "?t=" value, so a compact token split into query params resolves to the same session.
-		sess := entity.SessionFixtures.Get("alice")
-		parts := strings.SplitN(tokens.SignDownload(sess.ID), ".", 3)
+		parts := strings.SplitN(tokens.SignDownload(signedSession.ID), ".", 3)
 		q := "token=" + parts[2] + "&expires=" + parts[0] + "&sid=" + parts[1]
 		got := DownloadSession(downloadCtx(q))
-		assert.NotNil(t, got)
-		assert.Equal(t, sess.ID, got.ID)
+		require.NotNil(t, got)
+		assert.Equal(t, signedSession.ID, got.ID)
 	})
 	t.Run("ForgedSignedTokenReturnsNil", func(t *testing.T) {
 		assert.Nil(t, DownloadSession(downloadCtx("t=1784883674.ad041bd1d789b2926104c07bc481bd6dec898650351b2b4d9269223db960d4bc.HS256-forgedsignaturevalue")))
@@ -63,30 +70,27 @@ func TestDownloadSession(t *testing.T) {
 	t.Run("NonJwtHeaderNotAcceptedForDownload", func(t *testing.T) {
 		// Header auth on downloads is restricted to cluster JWTs; a regular session bearer/X-Auth-Token
 		// does not resolve here (it must use a "?t=" token). With no "?t=" the request has no session.
-		sess := entity.SessionFixtures.Get("alice")
 		c := downloadCtx("")
-		c.Request.Header.Set("X-Auth-Token", sess.AuthToken())
+		c.Request.Header.Set("X-Auth-Token", signedSession.AuthToken())
 		assert.Nil(t, DownloadSession(c))
 	})
 	t.Run("NonJwtHeaderFallsBackToQueryToken", func(t *testing.T) {
 		// A non-JWT header must not shadow a valid "?t=" token — the token still resolves the session.
-		sess := entity.SessionFixtures.Get("alice")
-		c := downloadCtx("t=" + tokens.SignDownload(sess.ID))
-		c.Request.Header.Set("X-Auth-Token", sess.AuthToken())
+		c := downloadCtx("t=" + tokens.SignDownload(signedSession.ID))
+		c.Request.Header.Set("X-Auth-Token", headerSession.AuthToken())
 		got := DownloadSession(c)
-		assert.NotNil(t, got)
-		assert.Equal(t, sess.ID, got.ID)
+		require.NotNil(t, got)
+		assert.Equal(t, signedSession.ID, got.ID)
 	})
 	t.Run("BasicAuthHeaderFallsBackToQueryToken", func(t *testing.T) {
 		// A request behind a basic-auth reverse proxy carries "Authorization: Basic …" on every request.
 		// That is not a bearer token, so it must not route to header auth — the signed "?t=" token still
 		// resolves the session.
-		sess := entity.SessionFixtures.Get("alice")
-		c := downloadCtx("t=" + tokens.SignDownload(sess.ID))
+		c := downloadCtx("t=" + tokens.SignDownload(signedSession.ID))
 		c.Request.Header.Set("Authorization", "Basic dXNlcjpwYXNzd29yZA==")
 		got := DownloadSession(c)
-		assert.NotNil(t, got)
-		assert.Equal(t, sess.ID, got.ID)
+		require.NotNil(t, got)
+		assert.Equal(t, signedSession.ID, got.ID)
 	})
 }
 
@@ -111,42 +115,50 @@ func TestVerifyDownloadParams(t *testing.T) {
 	})
 }
 
+// TestInvalidDownloadToken checks public, signed, coarse, and unknown tokens.
 func TestInvalidDownloadToken(t *testing.T) {
 	conf := get.Config()
 
 	t.Run("PublicModeAcceptsAnyToken", func(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePublic)
-		assert.False(t, InvalidDownloadToken(downloadCtx("t=whatever")))
+		assert.False(t, InvalidDownloadToken(downloadCtx("t=whatever"), acl.Resources{acl.ResourceFiles}))
 	})
 
 	conf.SetAuthMode(config.AuthModePasswd)
 	defer conf.SetAuthMode(config.AuthModePublic)
 
 	t.Run("SignedTokenAccepted", func(t *testing.T) {
-		v := tokens.SignDownload(entity.SessionFixtures.Get("alice").ID)
-		assert.False(t, InvalidDownloadToken(downloadCtx("t="+v)))
+		sess := entity.NewSession(conf.SessionMaxAge(), 0).SetUser(entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, sess.Create())
+		t.Cleanup(func() { require.NoError(t, sess.Delete()) })
+		v := tokens.SignDownload(sess.ID)
+		assert.False(t, InvalidDownloadToken(downloadCtx("t="+v), acl.Resources{acl.ResourceFiles}))
 	})
 	t.Run("CoarseTokenAccepted", func(t *testing.T) {
 		// The coarse instance token is not session-bound but stays valid, so static-token links keep working.
 		orig := tokens.CoarseDownload
 		tokens.CoarseDownload = "coarse-xyz"
 		defer func() { tokens.CoarseDownload = orig }()
-		assert.False(t, InvalidDownloadToken(downloadCtx("t=coarse-xyz")))
+		assert.False(t, InvalidDownloadToken(downloadCtx("t=coarse-xyz"), acl.Resources{acl.ResourceFiles}))
 	})
 	t.Run("UnknownTokenRejected", func(t *testing.T) {
 		orig := tokens.CoarseDownload
 		tokens.CoarseDownload = "coarse-xyz"
 		defer func() { tokens.CoarseDownload = orig }()
-		assert.True(t, InvalidDownloadToken(downloadCtx("t=totally-unknown")))
+		assert.True(t, InvalidDownloadToken(downloadCtx("t=totally-unknown"), acl.Resources{acl.ResourceFiles}))
 	})
 }
 
+// TestAuthDownload checks download authorization and session binding.
 func TestAuthDownload(t *testing.T) {
 	conf := get.Config()
+	signedSession := entity.NewSession(conf.SessionMaxAge(), 0).SetUser(entity.UserFixtures.Pointer("alice"))
+	require.NoError(t, signedSession.Create())
+	t.Cleanup(func() { require.NoError(t, signedSession.Delete()) })
 
 	t.Run("PublicModeValidWithSession", func(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePublic)
-		sess, valid := AuthDownload(downloadCtx("t=anything"))
+		sess, valid := AuthDownload(downloadCtx("t=anything"), acl.Resources{acl.ResourceFiles})
 		assert.True(t, valid)
 		assert.NotNil(t, sess)
 	})
@@ -155,23 +167,22 @@ func TestAuthDownload(t *testing.T) {
 	defer conf.SetAuthMode(config.AuthModePublic)
 
 	t.Run("SignedTokenReturnsSession", func(t *testing.T) {
-		s := entity.SessionFixtures.Get("alice")
-		sess, valid := AuthDownload(downloadCtx("t=" + tokens.SignDownload(s.ID)))
+		sess, valid := AuthDownload(downloadCtx("t="+tokens.SignDownload(signedSession.ID)), acl.Resources{acl.ResourceFiles})
 		assert.True(t, valid)
 		if assert.NotNil(t, sess) {
-			assert.Equal(t, s.ID, sess.ID)
+			assert.Equal(t, signedSession.ID, sess.ID)
 		}
 	})
 	t.Run("CoarseTokenValidNoSession", func(t *testing.T) {
 		orig := tokens.CoarseDownload
 		tokens.CoarseDownload = "coarse-abc"
 		defer func() { tokens.CoarseDownload = orig }()
-		sess, valid := AuthDownload(downloadCtx("t=coarse-abc"))
+		sess, valid := AuthDownload(downloadCtx("t=coarse-abc"), acl.Resources{acl.ResourceFiles})
 		assert.True(t, valid)
 		assert.Nil(t, sess)
 	})
 	t.Run("UnknownTokenInvalid", func(t *testing.T) {
-		sess, valid := AuthDownload(downloadCtx("t=nope"))
+		sess, valid := AuthDownload(downloadCtx("t=nope"), acl.Resources{acl.ResourceFiles})
 		assert.False(t, valid)
 		assert.Nil(t, sess)
 	})

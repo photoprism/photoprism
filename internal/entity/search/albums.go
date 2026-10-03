@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -47,7 +48,6 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	// Check session permissions and apply as needed.
 	if sess != nil {
 		user := sess.GetUser()
-		aclRole := user.AclRole()
 
 		// Determine resource to check.
 		var aclResource acl.Resource
@@ -72,20 +72,26 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			}
 		}
 
-		// Check user permissions.
-		if acl.Rules.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary, acl.AccessShared, acl.AccessOwn}) {
+		// Check the session's effective permissions: for a client session, the intersection of the
+		// client and user roles.
+		if sess.DeniesAll(aclResource, acl.Permissions{acl.AccessAll, acl.AccessLibrary, acl.AccessShared, acl.AccessOwn}) {
 			return AlbumResults{}, ErrForbidden
 		}
 
-		// Limit results by UID, owner and path.
-		if sess.IsVisitor() || sess.NotRegistered() {
+		// Limit results by UID, owner and path. The unlimited branch asks albums as well as the
+		// type's own resource, so it cannot admit a row a read by uid refuses.
+		reach := acl.Permissions{acl.AccessAll, acl.AccessLibrary}
+
+		if sess.GrantsAny(aclResource, reach) && sess.GrantsAny(acl.ResourceAlbums, reach) {
+			// Whole-library reach needs no limitation.
+		} else if sess.IsVisitor() || sess.NotRegistered() {
 			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.Now())
-		} else if acl.Rules.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+		} else {
 			s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
 		}
 
 		// Exclude private content?
-		if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) || acl.Rules.Deny(aclResource, aclRole, acl.AccessPrivate) {
+		if sess.Denies(acl.ResourcePhotos, acl.AccessPrivate) || sess.Denies(aclResource, acl.AccessPrivate) {
 			frm.Public = true
 			frm.Private = false
 		}
@@ -157,15 +163,15 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 
 	// Filter by title or path?
 	if txt.NotEmpty(frm.Query) {
-		q := "%" + strings.Trim(frm.Query, " *%") + "%"
+		q := "%" + clean.SqlLike(strings.Trim(frm.Query, " *%")) + "%"
 
 		if frm.Type == entity.AlbumFolder {
 			// album_path is VARBINARY and matched case-insensitively so a lowercased query still
 			// finds uppercase folder paths; album_title and album_location are VARCHAR (already
 			// case-insensitive).
-			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Dialect().GetName(), "albums.album_path"), q, q, q)
+			s = s.Where(likeCond("albums.album_title")+" OR "+likeCond("albums.album_location")+" OR "+PathLike(s.Dialect().GetName(), "albums.album_path"), q, q, q)
 		} else {
-			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
+			s = s.Where(likeCond("albums.album_title")+" OR "+likeCond("albums.album_location"), q, q)
 		}
 	}
 

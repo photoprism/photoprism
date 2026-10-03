@@ -2,9 +2,14 @@ package limiter
 
 import (
 	"fmt"
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"golang.org/x/time/rate"
 )
 
 func TestNewLimit(t *testing.T) {
@@ -51,6 +56,21 @@ func TestNewLimit(t *testing.T) {
 			assert.True(t, l.Reject(clientIp))
 			assert.False(t, l.Allow(clientIp))
 		}
+	})
+	t.Run("RejectUnknownAddress", func(t *testing.T) {
+		l := NewLimit(0.166, 10)
+
+		assert.False(t, l.Reject("192.0.2.200"))
+		assert.False(t, l.Reject(""))
+		assert.Empty(t, l.limiters)
+
+		for range 10 {
+			l.Reserve("")
+		}
+
+		assert.True(t, l.Reject(""))
+		assert.True(t, l.Reject(DefaultIP))
+		assert.Len(t, l.limiters, 1)
 	})
 	t.Run("Reserve", func(t *testing.T) {
 		// 10 per minute.
@@ -115,5 +135,221 @@ func TestNewLimit(t *testing.T) {
 			assert.False(t, allow)
 			assert.True(t, r.Reject())
 		}
+	})
+}
+
+func TestLimitSweep(t *testing.T) {
+	clientIp := "192.0.2.1"
+
+	// sweepNow makes a sweep due and runs it at the given time, which stands in for elapsed time
+	// the bucket would otherwise have to wait out.
+	sweepNow := func(l *Limit, now time.Time) {
+		l.mu.Lock()
+		l.swept = now.Add(-2 * SweepInterval)
+		l.sweep(now)
+		l.mu.Unlock()
+	}
+
+	t.Run("RemovesAFullBucket", func(t *testing.T) {
+		l := NewLimit(0.166, 10)
+		require.NotNil(t, l.IP(clientIp))
+		require.Len(t, l.limiters, 1)
+		sweepNow(l, time.Now())
+		assert.Empty(t, l.limiters)
+	})
+	t.Run("KeepsASpentBucket", func(t *testing.T) {
+		l := NewLimit(0.166, 10)
+		for range 10 {
+			require.True(t, l.Allow(clientIp))
+		}
+		require.False(t, l.Allow(clientIp))
+		sweepNow(l, time.Now())
+		assert.Contains(t, l.limiters, clientIp)
+		assert.False(t, l.Allow(clientIp))
+	})
+	t.Run("RemovesABucketOnceItHasRefilled", func(t *testing.T) {
+		l := NewLimit(0.166, 10)
+		for range 10 {
+			require.True(t, l.Allow(clientIp))
+		}
+		sweepNow(l, time.Now().Add(2*time.Minute))
+		assert.Empty(t, l.limiters)
+	})
+	t.Run("KeepsABucketInDebt", func(t *testing.T) {
+		// A reservation takes a bucket below zero, and the token test sees that and keeps it.
+		l := NewLimit(0.166, 10)
+		for range 50 {
+			l.Reserve(clientIp)
+		}
+		sweepNow(l, time.Now().Add(2*time.Minute))
+		assert.Contains(t, l.limiters, clientIp)
+	})
+	t.Run("KeepsABucketThatNeverRefills", func(t *testing.T) {
+		l := NewLimit(0, 10)
+		require.True(t, l.Allow(clientIp))
+		sweepNow(l, time.Now().Add(24*time.Hour))
+		assert.Contains(t, l.limiters, clientIp)
+	})
+	t.Run("RemovesEverythingWithNoLimit", func(t *testing.T) {
+		l := NewLimit(rate.Inf, 0)
+		require.NotNil(t, l.IP(clientIp))
+		sweepNow(l, time.Now())
+		assert.Empty(t, l.limiters)
+	})
+	t.Run("RunsNoOftenerThanTheInterval", func(t *testing.T) {
+		l := NewLimit(0.166, 10)
+		require.NotNil(t, l.IP(clientIp))
+		now := time.Now()
+		l.mu.Lock()
+		l.swept = now
+		l.sweep(now)
+		l.mu.Unlock()
+		assert.Contains(t, l.limiters, clientIp)
+	})
+}
+
+func TestLimitAddKeepsAnExistingBucket(t *testing.T) {
+	// The read lock is released before add runs, so add may find the address already present; it
+	// returns the bucket it finds rather than a new one.
+	clientIp := "192.0.2.1"
+	l := NewLimit(0.166, 10)
+	first := l.IP(clientIp)
+
+	for range 10 {
+		require.True(t, first.Allow())
+	}
+
+	second := l.add(clientIp, time.Now())
+
+	assert.Same(t, first, second)
+	assert.False(t, second.Allow())
+	assert.Len(t, l.limiters, 1)
+}
+
+func TestLimitConcurrentFirstRequests(t *testing.T) {
+	// Contention over the real IP path, with a sweep due so one fires under it.
+	// TestLimitAddKeepsAnExistingBucket owns the one-bucket-per-address invariant.
+	const burst = 10
+
+	l := NewLimit(0.166, burst)
+	l.swept = time.Now().Add(-2 * SweepInterval)
+	clientIp := "192.0.2.2"
+
+	var allowed atomic.Int64
+	var wg sync.WaitGroup
+
+	for range 200 {
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+
+			if l.Allow(clientIp) {
+				allowed.Add(1)
+			}
+		}()
+	}
+
+	wg.Wait()
+
+	assert.Equal(t, int64(burst), allowed.Load())
+	assert.Len(t, l.limiters, 1)
+}
+
+// TestLimitReject checks that a limit rejects once its burst is used up, and that a disabled limit never rejects.
+func TestLimitReject(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+		for range 3 {
+			assert.False(t, l.Reject("192.0.2.1"))
+			l.Reserve("192.0.2.1")
+		}
+		assert.True(t, l.Reject("192.0.2.1"))
+		assert.False(t, l.Reject("192.0.2.2"))
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 0)
+		for range 5 {
+			assert.False(t, l.Reject("192.0.2.1"))
+			l.Reserve("192.0.2.1")
+			assert.True(t, l.Allow("192.0.2.1"))
+		}
+		assert.False(t, l.Reject("192.0.2.1"))
+	})
+}
+
+func TestKey(t *testing.T) {
+	t.Run("IPv4", func(t *testing.T) {
+		assert.Equal(t, "192.0.2.1", key("192.0.2.1"))
+		assert.Equal(t, "192.0.2.1", key("::ffff:192.0.2.1"))
+	})
+	t.Run("IPv6", func(t *testing.T) {
+		assert.Equal(t, "2001:db8:1:2::/64", key("2001:db8:1:2::10"))
+	})
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, DefaultIP, key(""))
+		assert.Equal(t, DefaultIP, key("unknown"))
+		assert.Equal(t, DefaultIP, key(DefaultIP))
+	})
+}
+
+func TestLimit_IPv6Network(t *testing.T) {
+	t.Run("SameNetwork", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for i := range 3 {
+			assert.True(t, l.Allow(fmt.Sprintf("2001:db8:1:2::%x", i+1)))
+		}
+
+		assert.False(t, l.Allow("2001:db8:1:2:ffff:ffff:ffff:ffff"))
+		assert.True(t, l.Reject("2001:db8:1:2::abcd"))
+		assert.Len(t, l.limiters, 1)
+	})
+	t.Run("OtherNetworks", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for range 3 {
+			l.Reserve("2001:db8:1:2::1")
+		}
+
+		assert.True(t, l.Reject("2001:db8:1:2::2"))
+		assert.False(t, l.Reject("2001:db8:1:3::1"))
+		assert.True(t, l.Allow("2001:db8:1:3::1"))
+		assert.True(t, l.Allow("2001:db8:2:2::1"))
+	})
+	t.Run("IPv4", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for range 3 {
+			l.Reserve("192.0.2.1")
+		}
+
+		assert.True(t, l.Reject("192.0.2.1"))
+		assert.True(t, l.Reject("::ffff:192.0.2.1"))
+		assert.False(t, l.Reject("192.0.2.2"))
+		assert.True(t, l.Allow("192.0.2.2"))
+	})
+	t.Run("EntryPoints", func(t *testing.T) {
+		// Each entry point takes its tokens from the one bucket of the network, 9 in total.
+		l := NewLimit(rate.Every(time.Hour), 9)
+
+		assert.True(t, l.AllowN("2001:db8:1:2::1", 2))
+		assert.True(t, l.Request("2001:db8:1:2::2").Allow())
+		assert.True(t, l.RequestN("2001:db8:1:2::3", 2).Allow())
+		l.Reserve("2001:db8:1:2::4")
+		l.ReserveN("2001:db8:1:2::5", 2)
+		assert.True(t, l.Allow("2001:db8:1:2::6"))
+		assert.Len(t, l.limiters, 1)
+		assert.True(t, l.Reject("2001:db8:1:2::7"))
+	})
+	t.Run("PerAddress", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for range 3 {
+			l.Reserve("fd00:1::2")
+		}
+
+		assert.True(t, l.Reject("fd00:1::2"))
+		assert.False(t, l.Reject("fd00:1::3"))
 	})
 }

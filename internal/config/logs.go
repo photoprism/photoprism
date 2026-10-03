@@ -11,10 +11,18 @@ import (
 // log points to the global logger.
 var log = event.Log
 
-// SetLogLevel sets the application log level.
+// SetLogLevel sets the application log level, including the one TensorFlow reads.
 func SetLogLevel(level logrus.Level) {
 	SetTensorFlowLogLevel(level)
+	SetAppLogLevel(level)
+}
+
+// SetAppLogLevel sets the level of both application loggers. It leaves the TensorFlow variable
+// alone, because that is process environment rather than a package value, and the callers that
+// reach it at runtime are HTTP handlers running beside a loaded model.
+func SetAppLogLevel(level logrus.Level) {
 	log.SetLevel(level)
+
 	if event.SystemLog != nil {
 		event.SystemLog.SetLevel(level)
 	}

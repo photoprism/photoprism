@@ -123,6 +123,35 @@ func reportThumbPixels(px int) string {
 	return strconv.Itoa(px) + "px"
 }
 
+// reportUnmeasured marks a sampling that reached a marker and could not measure what it was drawn
+// from, which is not the same as one nothing has sampled.
+const reportUnmeasured = "?"
+
+// reportEmbedDetail renders how much of the crop the source supplied, as a percentage.
+//
+// The sentinels get their own tokens rather than reaching the column as negative numbers: a "-1"
+// under a percentage heading reads as a measurement, and a bad one.
+func reportEmbedDetail(detail int) string {
+	switch {
+	case detail >= 1:
+		return strconv.Itoa(detail) + "%"
+	case detail == entity.EmbedDetailUnknown:
+		return reportUnmeasured
+	default:
+		return reportUnrecorded
+	}
+}
+
+// reportEmbedDetailMean renders the mean detail of a cluster's measured members, and says so
+// distinctly where it holds none: "low" and "unknown" are opposite readings of the same row.
+func reportEmbedDetailMean(mean float64) string {
+	if mean < 1 {
+		return reportUnrecorded
+	}
+
+	return strconv.FormatFloat(mean, 'f', 0, 64) + "%"
+}
+
 // reportEmbedding renders the vector a marker holds as the model that produced it and its width.
 //
 // The model is named because a distance only means something within one embedding space, and a
@@ -260,14 +289,14 @@ func facesListAction(ctx *cli.Context) error {
 
 		// Samples first and Markers last: the first is what the cluster was built from and the second
 		// what it holds now, and the two drift.
-		cols := []string{"Face", "Name", "Subject", "Src", "Kind", "Embedding", "Samples", "Radius", "Collisions", "Collision Radius", "Markers", "Matched At"}
+		cols := []string{"Face", "Name", "Subject", "Src", "Kind", "Embedding", "Samples", "Radius", "Collisions", "Collision Radius", "Markers", "Detail", "Matched At"}
 
 		keys := []string{
 			"face_id", "subj_name", "subj_uid", "face_src", "face_kind", "embedding",
-			"samples", "sample_radius", "collisions", "collision_radius", "markers", "matched_at",
+			"samples", "sample_radius", "collisions", "collision_radius", "markers", "embed_detail", "matched_at",
 		}
 
-		align := rightAligned(cols, "Samples", "Radius", "Collisions", "Collision Radius", "Markers")
+		align := rightAligned(cols, "Samples", "Radius", "Collisions", "Collision Radius", "Markers", "Detail")
 		rows := make([][]string, 0, len(faces))
 
 		for _, f := range faces {
@@ -276,7 +305,7 @@ func facesListAction(ctx *cli.Context) error {
 				reportEmbedding(f.EmbedModel, f.EmbeddingDims),
 				strconv.Itoa(f.Samples), report.Distance(f.SampleRadius),
 				strconv.Itoa(f.Collisions), report.Distance(f.CollisionRadius),
-				strconv.Itoa(f.Markers), report.DateTime(f.MatchedAt),
+				strconv.Itoa(f.Markers), reportEmbedDetailMean(f.EmbedDetail), report.DateTime(f.MatchedAt),
 			})
 		}
 
@@ -299,7 +328,7 @@ func reportResolution(c query.FaceConflict) string {
 		return "narrow"
 	default:
 		// Past AmbiguityDist but too close for the recorded radius to clear CollisionDist, so
-		// resolution writes a number nothing enforces.
+		// resolution writes a number nothing enforces, at most once.
 		return "inert"
 	}
 }
@@ -385,7 +414,7 @@ func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNote
 	lines := []string{
 		fmt.Sprintf("Compared %s across %s.",
 			english.Plural(scan.Compared, "pair", "pairs"), english.Plural(scan.Clusters, "cluster", "clusters")),
-		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous and above %s narrows it; in between it records a radius the matcher ignores.",
+		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous and above %s narrows it; in between it records a radius the matcher ignores, at most once.",
 			report.Distance(face.AmbiguityDist()), report.Distance(face.CollisionDist+face.Epsilon)),
 	}
 
@@ -418,9 +447,9 @@ func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNote
 	return lines
 }
 
-// unresolvedConflicts counts reported pairs the resolver will not act on, which is every row whose
-// reported side names nobody. The other side always names somebody, since two anonymous clusters
-// never pair.
+// unresolvedConflicts counts reported pairs the resolver will not act on because the reported side
+// names nobody; an inert pair it has recorded already is not acted on again either. The other side
+// always names somebody, since two anonymous clusters never pair.
 func unresolvedConflicts(conflicts []query.FaceConflict) (n int) {
 	for _, c := range conflicts {
 		if c.SubjUID == "" {
@@ -480,12 +509,12 @@ func facesMarkersAction(ctx *cli.Context) error {
 
 		// Embedding and Landmarks sit together as the two vectors a marker stores, with the detector
 		// that produced the crop after them.
-		cols := []string{"Marker", "Src", "Size", "in %", "Score", "Name", "Subject", "Src", "Face", "Dist", "Invalid", "Embedding", "Landmarks", "Detector", "File", "Matched At"}
+		cols := []string{"Marker", "Src", "Size", "in %", "Detail", "Score", "Name", "Subject", "Src", "Face", "Dist", "Invalid", "Embedding", "Landmarks", "Detector", "File", "Matched At"}
 
-		align := rightAligned(cols, "Size", "in %", "Score", "Dist", "Landmarks")
+		align := rightAligned(cols, "Size", "in %", "Detail", "Score", "Dist", "Landmarks")
 
 		keys := []string{
-			"marker_uid", "marker_src", "thumb_size", "frame_share", "score",
+			"marker_uid", "marker_src", "thumb_size", "frame_share", "embed_detail", "score",
 			"marker_name", "subj_uid", "subj_src", "face_id", "face_dist", "marker_invalid",
 			"embedding", "landmarks", "detect_model", "file_uid", "matched_at",
 		}
@@ -495,7 +524,8 @@ func facesMarkersAction(ctx *cli.Context) error {
 		for _, m := range markers {
 			rows = append(rows, []string{
 				m.MarkerUID, entity.SrcString(m.MarkerSrc),
-				reportThumbPixels(m.ThumbSize), reportFrameShare(m.W), strconv.Itoa(m.Score),
+				reportThumbPixels(m.ThumbSize), reportFrameShare(m.W), reportEmbedDetail(m.EmbedDetail),
+				strconv.Itoa(m.Score),
 				m.MarkerName, m.SubjUID, entity.SrcString(m.SubjSrc),
 				m.FaceID, report.Distance(m.FaceDist), reportBool(m.MarkerInvalid),
 				reportEmbedding(m.EmbedModel, m.EmbeddingDims), reportVectors(m.Landmarks),

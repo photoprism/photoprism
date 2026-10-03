@@ -1,7 +1,10 @@
 package meta
 
 import (
+	"fmt"
+	"math"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -142,4 +145,142 @@ func TestNormalizeGPS(t *testing.T) {
 	assert.Equal(t, 100.25485277777778, normalizeCoord(100.25485277777778, 120.25485277777778))
 	assert.Equal(t, 110.25485277777778, normalizeCoord(-130.25485277777778, 120.25485277777778))
 	assert.Equal(t, -120.25485277777778, normalizeCoord(120.25485277777778, 120.25485277777778))
+}
+
+func TestIsFinite(t *testing.T) {
+	t.Run("Number", func(t *testing.T) {
+		assert.True(t, isFinite(0))
+		assert.True(t, isFinite(-51.25))
+		assert.True(t, isFinite(math.MaxFloat64))
+	})
+	t.Run("NaN", func(t *testing.T) {
+		assert.False(t, isFinite(math.NaN()))
+	})
+	t.Run("Inf", func(t *testing.T) {
+		assert.False(t, isFinite(math.Inf(1)))
+		assert.False(t, isFinite(math.Inf(-1)))
+	})
+}
+
+// TestNormalizeCoord covers the magnitudes at which a 2*max step falls below the representable
+// precision, so a regression surfaces as a deadline rather than as a wrong value.
+func TestNormalizeCoord(t *testing.T) {
+	cases := []struct {
+		name  string
+		value float64
+		want  float64
+	}{
+		{"InRange", 51.25, 51.25},
+		{"LowerBound", -LngMax, -LngMax},
+		{"UpperBound", LngMax, -LngMax},
+		{"AboveRange", 190, -170},
+		{"BelowRange", -190, 170},
+		{"FullTurn", 360, 0},
+		{"LargeFinite", 1e300, 0},
+		{"BeyondStepSize", math.Pow(2, 63), 8},
+		{"LargeFiniteWrapped", 1e17, -80},
+		{"SlowConvergence", 1e15, -80},
+		{"PosInf", math.Inf(1), 0},
+		{"NegInf", math.Inf(-1), 0},
+		{"NaN", math.NaN(), 0},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			assert.Equal(t, c.want, mustReturn(t, func() float64 { return normalizeCoord(c.value, LngMax) }))
+		})
+	}
+}
+
+// TestNormalizeGPSNonFinite covers that a position with a non-finite coordinate is reported as
+// unknown rather than normalized to an arbitrary point.
+func TestNormalizeGPSNonFinite(t *testing.T) {
+	cases := []struct {
+		name     string
+		lat, lng float64
+	}{
+		{"InfLng", 48.5, math.Inf(1)},
+		{"NegInfLng", 48.5, math.Inf(-1)},
+		{"InfLat", math.Inf(1), 8.5},
+		{"NaNLat", math.NaN(), 8.5},
+		{"NaNLng", 48.5, math.NaN()},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			lat, lng := mustReturn2(t, func() (float64, float64) { return NormalizeGPS(c.lat, c.lng) })
+			assert.Equal(t, float64(0), lat)
+			assert.Equal(t, float64(0), lng)
+		})
+	}
+	t.Run("ValidPosition", func(t *testing.T) {
+		lat, lng := NormalizeGPS(48.5, 8.5)
+		assert.Equal(t, 48.5, lat)
+		assert.Equal(t, 8.5, lng)
+	})
+}
+
+// TestNormalizeGPSRange covers the half-open longitude range: the upper bound wraps to the
+// lower one, and a position inside the range is returned untouched.
+func TestNormalizeGPSRange(t *testing.T) {
+	t.Run("UpperBoundWraps", func(t *testing.T) {
+		lat, lng := NormalizeGPS(LatMax, LngMax)
+		assert.Equal(t, float64(LatMax), lat)
+		assert.Equal(t, float64(-LngMax), lng)
+	})
+	t.Run("LowerBoundKept", func(t *testing.T) {
+		lat, lng := NormalizeGPS(-LatMax, -LngMax)
+		assert.Equal(t, float64(-LatMax), lat)
+		assert.Equal(t, float64(-LngMax), lng)
+	})
+	t.Run("PoleWithInRangeLng", func(t *testing.T) {
+		lat, lng := NormalizeGPS(LatMax, 100)
+		assert.Equal(t, float64(LatMax), lat)
+		assert.Equal(t, float64(100), lng)
+	})
+}
+
+// TestNormalizeCoordSignOfZero covers that a full turn yields positive zero, since math.Mod
+// would otherwise carry the sign of the dividend into the stored coordinate.
+func TestNormalizeCoordSignOfZero(t *testing.T) {
+	for _, v := range []float64{-2 * LngMax, -4 * LngMax, 2 * LngMax, 4 * LngMax} {
+		t.Run(fmt.Sprintf("%v", v), func(t *testing.T) {
+			assert.Equal(t, uint64(0), math.Float64bits(normalizeCoord(v, LngMax)))
+		})
+	}
+	t.Run("NegativeZeroInput", func(t *testing.T) {
+		v := math.Copysign(0, -1)
+		assert.Equal(t, math.Float64bits(v), math.Float64bits(normalizeCoord(v, LngMax)))
+	})
+}
+
+// mustReturn fails the test if fn does not return within a short deadline.
+func mustReturn(t *testing.T, fn func() float64) float64 {
+	t.Helper()
+	done := make(chan float64, 1)
+	go func() { done <- fn() }()
+
+	select {
+	case v := <-done:
+		return v
+	case <-time.After(5 * time.Second):
+		t.Fatal("did not return")
+		return 0
+	}
+}
+
+// mustReturn2 fails the test if fn does not return within a short deadline.
+func mustReturn2(t *testing.T, fn func() (float64, float64)) (float64, float64) {
+	t.Helper()
+	type pair struct{ a, b float64 }
+	done := make(chan pair, 1)
+	go func() { a, b := fn(); done <- pair{a, b} }()
+
+	select {
+	case v := <-done:
+		return v.a, v.b
+	case <-time.After(5 * time.Second):
+		t.Fatal("did not return")
+		return 0, 0
+	}
 }

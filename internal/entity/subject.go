@@ -50,6 +50,92 @@ func (Subject) TableName() string {
 	return "subjects"
 }
 
+// visiblePersonCond keeps a row whose joined person is visible. A row with no person joined is
+// kept, which is what a marker carrying no subject needs.
+const visiblePersonCond = "(%[1]s.subj_uid IS NULL OR (%[1]s.subj_private = 0 AND %[1]s.subj_hidden = 0))"
+
+// NameWithheld reports whether the person's name is withheld from sessions denied private access
+// to people, and from generated titles, captions and keywords. Marking someone private or hidden
+// both have that effect.
+func (m *Subject) NameWithheld() bool {
+	return m.SubjPrivate || m.SubjHidden
+}
+
+// VisiblePeopleFilter returns the joins and the condition that together keep only the rows of the
+// given table whose people are visible. Both joins resolve a unique key, so each adds one index
+// lookup per row rather than a subquery the driver re-runs. withNames also resolves the person a
+// row's own marker_name points at; pass false for a table without that column, such as faces.
+func VisiblePeopleFilter(table string, withNames bool) (joins []string, cond string) {
+	subjTable := Subject{}.TableName()
+	linked := table + "_subj"
+
+	joins = []string{fmt.Sprintf("LEFT JOIN %s %s ON %s.subj_uid = %s.subj_uid",
+		subjTable, linked, linked, table)}
+	conds := []string{fmt.Sprintf(visiblePersonCond, linked)}
+
+	if withNames {
+		named := table + "_named"
+
+		joins = append(joins, fmt.Sprintf("LEFT JOIN %s %s ON %s.subj_name = %s.marker_name",
+			subjTable, named, named, table))
+		conds = append(conds, fmt.Sprintf(visiblePersonCond, named))
+	}
+
+	return joins, strings.Join(conds, " AND ")
+}
+
+// WithheldPeople is a set of the subject uids and names whose identity is withheld.
+type WithheldPeople struct {
+	uids  map[string]struct{}
+	names map[string]struct{}
+}
+
+// Withholds reports whether a marker names a withheld person, through its subject link or through
+// the name it carries. Either is enough, so a marker whose two disagree is withheld on both counts.
+func (w WithheldPeople) Withholds(subjUID, markerName string) bool {
+	if subjUID != "" {
+		if _, found := w.uids[subjUID]; found {
+			return true
+		}
+	}
+
+	if markerName != "" {
+		if _, found := w.names[strings.ToLower(markerName)]; found {
+			return true
+		}
+	}
+
+	return false
+}
+
+// FindWithheldPeople loads the people whose name is withheld, so a caller can classify identities
+// it already holds. It selects them all rather than filtering by the candidates: the set is a
+// handful in any library, and matching in Go is the only way to compare names the same way on both
+// drivers - subj_name is a case-insensitive VARCHAR on MariaDB and a case-sensitive one on SQLite.
+func FindWithheldPeople() (WithheldPeople, error) {
+	w := WithheldPeople{uids: make(map[string]struct{}), names: make(map[string]struct{})}
+
+	var found []struct {
+		SubjUID  string
+		SubjName string
+	}
+
+	stmt := UnscopedDb().Table(Subject{}.TableName()).
+		Select("subj_uid, subj_name").
+		Where("subj_private = 1 OR subj_hidden = 1")
+
+	if err := stmt.Scan(&found).Error; err != nil {
+		return WithheldPeople{}, err
+	}
+
+	for _, s := range found {
+		w.uids[s.SubjUID] = struct{}{}
+		w.names[strings.ToLower(s.SubjName)] = struct{}{}
+	}
+
+	return w, nil
+}
+
 // BeforeCreate creates a random uid if needed before inserting a new row to the database.
 func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsUnique(m.SubjUID, 'j') {
@@ -61,13 +147,13 @@ func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 
 // AfterSave is a hook that updates the name cache after saving.
 func (m *Subject) AfterSave() (err error) {
-	SubjNames.Set(m.SubjUID, m.SubjName)
+	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 
 // AfterFind is a hook that updates the name cache after querying.
 func (m *Subject) AfterFind() (err error) {
-	SubjNames.Set(m.SubjUID, m.SubjName)
+	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 
@@ -135,7 +221,17 @@ func (m *Subject) Delete() error {
 
 	log.Infof("subject: flagged %s %s as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
 
-	return Db().Delete(m).Error
+	if err := Db().Delete(m).Error; err != nil {
+		return err
+	}
+
+	// Carry the mark onto the in-memory record, which the driver does not do, so that Restore
+	// and DeletePermanently see the subject as deleted without reading the row again.
+	if m.DeletedAt == nil {
+		m.DeletedAt = TimeStamp()
+	}
+
+	return nil
 }
 
 // DeletePermanently permanently removes a subject from the index after is has been soft deleted.
@@ -152,8 +248,13 @@ func (m *Subject) DeletePermanently() error {
 	return UnscopedDb().Delete(m).Error
 }
 
-// AfterDelete resets file and photo counters when the entity was deleted.
+// AfterDelete resets file and photo counters when the entity was deleted. A delete by condition
+// through an empty model names no row, and the update would then reset every subject.
 func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
+	if m.SubjUID == "" {
+		return nil
+	}
+
 	tx.Model(m).Updates(Values{
 		"FileCount":  0,
 		"PhotoCount": 0,
@@ -262,17 +363,17 @@ func FindSubjectByName(name string, restore bool) *Subject {
 
 	result := Subject{}
 
-	// Fetch existing record by uid, if possible
+	// Fetch existing record by uid, if possible, and only if it still carries the name.
 	if uid := SubjNames.Key(name); uid == "" {
-	} else if found := FindSubject(uid); found != nil {
-		result = *found
-	} else {
+	} else if found := FindSubject(uid); found == nil {
 		log.Debugf("subject: cannot find record for uid %s", clean.Log(uid))
+	} else if strings.ToLower(found.SubjName) == strings.ToLower(name) { //nolint:staticcheck // Compares like the cache key.
+		result = *found
 	}
 
 	// Search existing record by name, otherwise.
 	if result.SubjUID != "" {
-	} else if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+	} else if err := UnscopedDb().Where(clean.SqlLikeCond("subj_name"), clean.SqlLike(name)).First(&result).Error; err != nil {
 		log.Debugf("subject: %s does not exist yet", clean.Log(name))
 		return nil
 	}
@@ -453,6 +554,10 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		changed = true
 	}
 
+	// Generated titles, captions and keywords carry the names of the people in a picture, so a
+	// change to what NameWithheld reads has to reach the pictures that already carry one.
+	nameVisibilityChanged := m.SubjPrivate != frm.SubjPrivate || m.SubjHidden != frm.SubjHidden
+
 	// Change visibility?
 	if m.SubjHidden != frm.SubjHidden || m.SubjPrivate != frm.SubjPrivate || m.SubjExcluded != frm.SubjExcluded {
 		m.SubjHidden = frm.SubjHidden
@@ -491,17 +596,24 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 			values["ThumbSrc"] = m.ThumbSrc
 		}
 
-		if updateErr := m.Updates(values); updateErr == nil {
-			event.EntitiesUpdated("subjects", []string{m.SubjUID})
-
-			if m.IsPerson() {
-				event.EntitiesUpdated("people", []string{m.SubjUID})
-			}
-
-			return true, nil
-		} else {
+		if updateErr := m.Updates(values); updateErr != nil {
 			return false, updateErr
 		}
+
+		// Flagged after the write, so a refused update leaves no pass scheduled for it.
+		if nameVisibilityChanged {
+			if refreshErr := m.RefreshPhotos(); refreshErr != nil {
+				log.Warnf("subject: %s while flagging the pictures of %s for maintenance", refreshErr, clean.Log(m.SubjUID))
+			}
+		}
+
+		event.EntitiesUpdated("subjects", []string{m.SubjUID})
+
+		if m.IsPerson() {
+			event.EntitiesUpdated("people", []string{m.SubjUID})
+		}
+
+		return true, nil
 	}
 
 	return false, nil
@@ -543,7 +655,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	} else if err = m.Updates(Values{"subj_name": m.SubjName, "subj_slug": m.SubjSlug}); err != nil {
 		return m, err
 	} else {
-		SubjNames.Set(m.SubjUID, m.SubjName)
+		setSubjName(m.SubjUID, m.SubjName)
 	}
 
 	// Log result.
@@ -602,7 +714,9 @@ func (m *Subject) UpdateMarkerNames() error {
 	return m.RefreshPhotos()
 }
 
-// RefreshPhotos flags related photos for metadata maintenance.
+// RefreshPhotos flags related photos for metadata maintenance. It joins on markers.subj_uid, so a
+// picture linked to this person only through markers.marker_name is not requeued here and waits for
+// the ordinary age-based pass instead.
 func (m *Subject) RefreshPhotos() error {
 	if m.SubjUID == "" {
 		return fmt.Errorf("empty subject uid")

@@ -1,6 +1,7 @@
 package query
 
 import (
+	"database/sql"
 	"testing"
 	"time"
 
@@ -36,6 +37,35 @@ func TestAlbumHasThumb(t *testing.T) {
 		})
 	}
 
+	// setFileError sets the error column of a file fixture and restores it afterwards. Writing a
+	// NULL takes a map update, since a typed zero value is skipped as unset.
+	setFileError := func(t *testing.T, fileHash string, value any) {
+		var current []sql.NullString
+
+		if err := Db().Model(entity.File{}).Where("file_hash = ?", fileHash).Limit(1).Pluck("file_error", &current).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		require.Len(t, current, 1)
+
+		setValue := func(v any) error {
+			return Db().Model(entity.File{}).Where("file_hash = ?", fileHash).
+				Updates(entity.Values{"file_error": v}).Error
+		}
+
+		if err := setValue(value); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			if current[0].Valid {
+				_ = setValue(current[0].String)
+			} else {
+				_ = setValue(nil)
+			}
+		})
+	}
+
 	t.Run("NoThumb", func(t *testing.T) {
 		setAlbumThumb(t, "as6sg6bxpogaaba7", "")
 		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
@@ -47,6 +77,20 @@ func TestAlbumHasThumb(t *testing.T) {
 	t.Run("StaleThumb", func(t *testing.T) {
 		// A hash no client can resolve must not gate the cover query.
 		setAlbumThumb(t, "as6sg6bxpogaaba7", "0000000000000000000000000000000000000000")
+		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
+	})
+	t.Run("NullFileError", func(t *testing.T) {
+		// The join compares the column to an empty string, which a NULL does not satisfy, so the
+		// fail-safe direction is a cover query rather than a placeholder clients cannot resolve.
+		setFileError(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", nil)
+
+		var stored []sql.NullString
+		require.NoError(t, Db().Model(entity.File{}).Where("file_hash = ?", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818").
+			Limit(1).Pluck("file_error", &stored).Error)
+		require.Len(t, stored, 1)
+		require.False(t, stored[0].Valid, "the column must be NULL for this case to mean anything")
+
+		setAlbumThumb(t, "as6sg6bxpogaaba7", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
 	})
 	t.Run("NotFound", func(t *testing.T) {
@@ -168,6 +212,45 @@ func TestUpdateAlbumDates(t *testing.T) {
 		assert.Equal(t, 1990, actual.AlbumYear)
 		assert.Equal(t, 3, actual.AlbumMonth)
 		assert.Equal(t, 31, actual.AlbumDay)
+	})
+	t.Run("ModifiedSource", func(t *testing.T) {
+		// A modify time dates the album, a date parsed from the file name does not.
+		album := entity.Album{
+			AlbumUID: "as6sg6bxpogaabz7", AlbumType: entity.AlbumFolder,
+			AlbumTitle: "Modified Source", AlbumSlug: "modified-source-album", AlbumPath: "1990/02",
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&album).Error)
+		modified := entity.Photo{
+			PhotoUID:     "ps6sg6bxpogaabz5",
+			PhotoName:    "modifiedsourcealbum",
+			PhotoPath:    "1990/02",
+			TakenAt:      time.Date(1990, 2, 14, 9, 0, 0, 0, time.UTC),
+			TakenAtLocal: time.Date(1990, 2, 14, 9, 0, 0, 0, time.UTC),
+			TakenSrc:     entity.SrcModified,
+			PhotoQuality: 3,
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&modified).Error)
+		name := entity.Photo{
+			PhotoUID:     "ps6sg6bxpogaabz6",
+			PhotoName:    "namesourcealbum",
+			PhotoPath:    "1990/02",
+			TakenAt:      time.Date(1990, 2, 27, 9, 0, 0, 0, time.UTC),
+			TakenAtLocal: time.Date(1990, 2, 27, 9, 0, 0, 0, time.UTC),
+			TakenSrc:     entity.SrcName,
+			PhotoQuality: 3,
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&name).Error)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM albums WHERE album_uid = ?", "as6sg6bxpogaabz7").Error)
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM photos WHERE photo_uid IN (?, ?)", "ps6sg6bxpogaabz5", "ps6sg6bxpogaabz6").Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		_, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		actual := entity.FindAlbum(entity.Album{AlbumUID: "as6sg6bxpogaabz7"})
+		assert.Equal(t, 1990, actual.AlbumYear)
+		assert.Equal(t, 2, actual.AlbumMonth)
+		assert.Equal(t, 14, actual.AlbumDay)
 	})
 	t.Run("MaxWithTimeOffset", func(t *testing.T) {
 		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})

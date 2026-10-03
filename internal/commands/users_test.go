@@ -47,7 +47,7 @@ func TestUsersCommand(t *testing.T) {
 
 		// Remove John
 		// Run command with test context.
-		output5, err := RunWithTestContext(UsersRemoveCommand, []string{"rm", "--force", "john.admin"})
+		output5, err := RunWithTestContext(UsersRemoveCommand, []string{"rm", "--yes", "john.admin"})
 
 		// Check command output for plausibility.
 		// t.Logf(output5)

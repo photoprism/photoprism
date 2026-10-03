@@ -30,6 +30,7 @@ Additional information can be found in our Developer Guide:
 package registry
 
 import (
+	"errors"
 	"os"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -52,3 +53,7 @@ type Registry interface {
 
 // ErrNotFound is returned when a node cannot be found.
 var ErrNotFound = os.ErrNotExist
+
+// ErrIdentifierMismatch is returned when a node UUID and a client ID name different records,
+// so a write cannot be attributed to a single registration.
+var ErrIdentifierMismatch = errors.New("node uuid and client id refer to different records")

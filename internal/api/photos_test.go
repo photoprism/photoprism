@@ -144,6 +144,7 @@ func TestGetPhotoDownload(t *testing.T) {
 	})
 }
 
+// TestLikePhoto checks photo reactions and scoped response shaping.
 func TestLikePhoto(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -177,23 +178,51 @@ func TestLikePhoto(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		guest := entity.FindUserByName("guest")
+		if guest == nil {
+			t.Fatal("guest fixture is missing")
+		}
+		var priorPhoto entity.Photo
+		if err := entity.UnscopedDb().Where("photo_uid = ?", "ps6sg6be2lvl0y21").First(&priorPhoto).Error; err != nil {
+			t.Fatal(err)
+		}
+		shareUID := "as6sg6bxpogaaba8"
+		prior := entity.FindUserShare(entity.UserShare{UserUID: guest.UserUID, ShareUID: shareUID})
+		var link entity.Link
+		if err := entity.Db().Where("link_token = ?", "1jxf3jfn2k").First(&link).Error; err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			if prior == nil {
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserShare{}, "user_uid = ? AND share_uid = ?", guest.UserUID, shareUID).Error)
+			} else {
+				assert.NoError(t, entity.UnscopedDb().Save(prior).Error)
+			}
+			guest.RefreshShares()
+			entity.UserFixtures.Pointer("guest").RefreshShares()
+			assert.NoError(t, entity.UnscopedDb().Model(&entity.Link{}).Where("link_uid = ?", link.LinkUID).
+				UpdateColumn("link_views", link.LinkViews).Error)
+			var restored entity.Link
+			assert.NoError(t, entity.Db().Where("link_uid = ?", link.LinkUID).First(&restored).Error)
+			assert.Equal(t, link.LinkViews, restored.LinkViews)
+		})
 
-		// A guest session that has redeemed a share to an album containing a non-private picture
-		// reaches the redaction branch: the picture is returned, but identifying metadata is stripped.
-		// Photo "ps6sg6be2lvl0y21" is shared via album "as6sg6bxpogaaba8" (token "1jxf3jfn2k") and is
-		// not touched by any mutation test, so a combined "-run" filter that archives/privatizes a
-		// shared picture before this subtest cannot push it out of scope and flip the result to 404.
+		// A guest with an album share receives the picture with identifying details redacted.
 		sess := entity.NewSession(conf.SessionMaxAge(), 0)
-		sess.SetUser(entity.FindUserByName("guest"))
+		sess.SetUser(guest)
 		sess.RedeemToken("1jxf3jfn2k")
 		if err := sess.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, sess.Delete()) })
 
 		LikePhoto(router)
 		r := AuthenticatedRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0y21/like", sess.AuthToken())
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, "ps6sg6be2lvl0y21", gjson.Get(r.Body.String(), "photo.UID").String())
+		var liked entity.Photo
+		assert.NoError(t, entity.Db().Where("id = ?", priorPhoto.ID).First(&liked).Error)
+		assert.Equal(t, priorPhoto.PhotoFavorite, liked.PhotoFavorite)
 		// A non-redacted field stays present (the genuine record is returned), while the labels are
 		// stripped — the fixture attaches one, so the empty result proves redaction.
 		assert.Equal(t, "Title", gjson.Get(r.Body.String(), "photo.Title").String())

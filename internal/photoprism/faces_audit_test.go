@@ -612,3 +612,43 @@ func TestFaces_auditMarkerSampleShortfall(t *testing.T) {
 		assert.NotPanics(t, func() { (*Faces)(nil).auditMarkerSampleShortfall() })
 	})
 }
+
+// TestFaces_AuditNamingSources preserves names assigned by a person during conflict repair.
+func TestFaces_AuditNamingSources(t *testing.T) {
+	for _, tc := range []struct {
+		name, src string
+		keep      bool
+	}{
+		{"Manual", entity.SrcManual, true}, {"Batch", entity.SrcBatch, true}, {"Auto", entity.SrcAuto, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			w := isolatedTestFaces(t, "auditnamingsources"+tc.name)
+			owner := auditSubject(t, "Audit Cluster Owner")
+			named := auditSubject(t, "Audit Marker Name")
+			f := auditNamedCluster(t, owner.SubjUID, 9521)
+			m := auditMarker(t, f.ID, named.SubjUID, tc.src, 9521)
+			require.NoError(t, m.Updates(entity.Values{"marker_name": named.SubjName, "matched_at": entity.TimeStamp()}))
+			require.NoError(t, w.Audit(false, owner.SubjUID))
+			before := entity.FindMarker(m.MarkerUID)
+			require.NotNil(t, before)
+			assert.Equal(t, named.SubjUID, before.SubjUID)
+			assert.Equal(t, f.ID, before.FaceID)
+			require.NoError(t, w.Audit(true, owner.SubjUID))
+			after := entity.FindMarker(m.MarkerUID)
+			require.NotNil(t, after)
+			if tc.keep {
+				assert.Equal(t, named.SubjUID, after.SubjUID)
+				assert.Equal(t, named.SubjName, after.MarkerName)
+				assert.Equal(t, tc.src, after.SubjSrc)
+				assert.Empty(t, after.FaceID)
+				assert.Equal(t, -1.0, after.FaceDist)
+				assert.Nil(t, after.MatchedAt)
+				assert.True(t, after.MarkerReview)
+			} else {
+				assert.Equal(t, owner.SubjUID, after.SubjUID)
+				assert.Equal(t, f.ID, after.FaceID)
+				assert.Equal(t, entity.SrcAuto, after.SubjSrc)
+			}
+		})
+	}
+}

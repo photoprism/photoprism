@@ -37,9 +37,9 @@ func SharePreview(router *gin.RouterGroup) {
 	router.GET("/:token/:shared/preview", func(c *gin.Context) {
 		conf := get.Config()
 
-		token := clean.Token(c.Param("token"))
+		token := clean.ShareToken(c.Param("token"))
 		shared := clean.UID(c.Param("shared"))
-		links := entity.FindLinks(token, shared)
+		links := entity.FindRedeemableLinksByToken(token, shared)
 
 		if len(links) != 1 {
 			log.Warn("share: invalid token (preview)")
@@ -50,7 +50,7 @@ func SharePreview(router *gin.RouterGroup) {
 		thumbPath := path.Join(conf.ThumbCachePath(), "share")
 
 		if err := fs.MkdirAll(thumbPath); err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (create preview path)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -62,6 +62,13 @@ func SharePreview(router *gin.RouterGroup) {
 		if info, err := os.Stat(previewFilename); err != nil {
 			log.Debugf("share: creating new preview for %s", clean.Log(shared))
 		} else if info.ModTime().After(expires) {
+			// An empty file marks an album that composed no image, so that answer is as cheap to
+			// repeat as a cached card and expires on the same schedule.
+			if info.Size() == 0 {
+				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+				return
+			}
+
 			log.Debugf("share: using cached preview for %s", clean.Log(shared))
 			c.File(previewFilename)
 			return
@@ -74,14 +81,16 @@ func SharePreview(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(shared)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (find album)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
 
 		var frm form.SearchPhotos
 
-		// Covers may only contain public content in shared albums.
+		// Covers may only contain public content in shared albums. SharedPhotos below applies
+		// the same five constraints after any smart-album filter, so the values here are the
+		// request's starting point rather than the boundary.
 		frm.Album = shared
 		frm.Public = true
 		frm.Private = false
@@ -95,15 +104,15 @@ func SharePreview(router *gin.RouterGroup) {
 		frm.Order = a.AlbumOrder
 
 		if parseErr := frm.ParseQueryString(); parseErr != nil {
-			log.Errorf("preview: %s", parseErr)
+			log.Errorf("share: %s (parse album order)", clean.Error(parseErr))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
 
-		p, count, err := search.Photos(frm)
+		p, count, err := search.SharedPhotos(frm)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (find pictures)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -130,24 +139,33 @@ func SharePreview(router *gin.RouterGroup) {
 			thumbnail, imgErr := thumb.FromFile(fileName, file.FileHash, conf.ThumbCachePath(), size.Width, size.Height, file.FileOrientation, size.Options...)
 
 			if imgErr != nil {
-				log.Warn(imgErr)
+				log.Warnf("share: %s (create thumbnail)", clean.Error(imgErr))
 				continue
 			}
 
 			img, _, imgErr := fs.DecodeImageFile(thumbnail)
 
 			if imgErr != nil {
-				log.Warn(imgErr)
+				log.Warnf("share: %s (decode thumbnail)", clean.Error(imgErr))
 				continue
 			}
 
 			images = append(images, img)
 		}
 
+		// A selection that yields no image has nothing to compose, so the request serves the site
+		// preview and marks the album with an empty file for the lifetime of a preview.
+		if len(images) == 0 {
+			log.Debugf("share: no image to compose for %s", clean.Log(shared))
+			markEmptyPreview(previewFilename)
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
+
 		// Create album preview from thumbnail images.
 		preview, err := frame.Collage(frame.Polaroid, images)
 		if err != nil {
-			log.Warnf("preview collage: %v", err)
+			log.Warnf("share: %s (compose preview)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -159,11 +177,27 @@ func SharePreview(router *gin.RouterGroup) {
 		err = thumb.Save(preview, previewFilename, thumb.JpegQualitySmall())
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (save preview)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
 
 		c.File(previewFilename)
 	})
+}
+
+// markEmptyPreview creates the empty file that marks an album as composing no preview image. The
+// name is claimed exclusively, so only a call that finds it free writes the marker.
+func markEmptyPreview(fileName string) {
+	// #nosec G304 -- the name is a validated UID under the thumbnail cache.
+	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_EXCL|os.O_WRONLY, fs.ModeFile)
+
+	if err != nil {
+		log.Debugf("share: %s (mark preview)", clean.Error(err))
+		return
+	}
+
+	if err = f.Close(); err != nil {
+		log.Debugf("share: %s (mark preview)", clean.Error(err))
+	}
 }

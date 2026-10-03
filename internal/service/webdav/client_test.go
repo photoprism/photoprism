@@ -15,8 +15,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const (
@@ -126,7 +128,7 @@ func newTestWebDAVServerWithOptions(options testWebDAVServerOptions) *httptest.S
 		switch depth {
 		case "1":
 			if options.redirectSlashlessDepthOne && requestPath != "/" && !strings.HasSuffix(rawPath, "/") {
-				http.Redirect(w, r, rawPath+"/", http.StatusMovedPermanently)
+				http.Redirect(w, r, rawPath+"/", http.StatusMovedPermanently) //nolint:gosec // G710: test server
 				return
 			}
 
@@ -690,5 +692,138 @@ func TestClient_DownloadLimit(t *testing.T) {
 		info, statErr := os.Stat(dest)
 		require.NoError(t, statErr)
 		assert.Equal(t, int64(bodySize), info.Size())
+	})
+}
+
+func TestClient_Upload(t *testing.T) {
+	var gotPath, gotUser, gotPass string
+	var gotLength int64
+	var gotBody []byte
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch path.Base(r.URL.Path) {
+		case "forbidden.yml":
+			w.WriteHeader(http.StatusForbidden)
+		case "failed.jpg":
+			w.WriteHeader(http.StatusInternalServerError)
+		case "redirect.jpg":
+			http.Redirect(w, r, "/dav/elsewhere.jpg", http.StatusFound)
+		case "elsewhere.jpg":
+			w.WriteHeader(http.StatusOK)
+		default:
+			gotPath, gotLength = r.URL.Path, r.ContentLength
+			gotUser, gotPass, _ = r.BasicAuth()
+			gotBody, _ = io.ReadAll(r.Body)
+			w.WriteHeader(http.StatusCreated)
+		}
+	}))
+	t.Cleanup(server.Close)
+
+	client, err := NewClient(server.URL+"/dav/", testUser, testPass, TimeoutLow, "")
+	require.NoError(t, err)
+
+	src := fs.Abs("testdata/example.jpg")
+	data, err := os.ReadFile(src) //nolint:gosec // Test reads a controlled fixture.
+	require.NoError(t, err)
+
+	t.Run("Success", func(t *testing.T) {
+		require.NoError(t, client.Upload(src, "/folder/example.jpg"))
+		assert.Equal(t, "/dav/folder/example.jpg", gotPath)
+		assert.Equal(t, int64(len(data)), gotLength)
+		assert.Equal(t, data, gotBody)
+		assert.Equal(t, testUser, gotUser)
+		assert.Equal(t, testPass, gotPass)
+	})
+	t.Run("Forbidden", func(t *testing.T) {
+		err := client.Upload(src, "folder/forbidden.yml")
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrForbidden)
+	})
+	t.Run("ServerError", func(t *testing.T) {
+		err := client.Upload(src, "folder/failed.jpg")
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrForbidden)
+		assert.Contains(t, err.Error(), "500 Internal Server Error")
+	})
+	t.Run("LongNameKeepsStatus", func(t *testing.T) {
+		// The name is bounded, so the reason after it survives a stored error of txt.ClipError bytes.
+		long := "folder/" + strings.Repeat("\xff", 200) + "/"
+		for name, reason := range map[string]string{"failed.jpg": "500 Internal Server Error", "forbidden.yml": "forbidden", "redirect.jpg": "redirected"} {
+			err := client.Upload(src, long+name)
+			require.Error(t, err, name)
+			assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), reason, name)
+		}
+	})
+	t.Run("Redirect", func(t *testing.T) {
+		err := client.Upload(src, "folder/redirect.jpg")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "redirected")
+	})
+	t.Run("MissingSource", func(t *testing.T) {
+		err := client.Upload(filepath.Join(t.TempDir(), "missing.jpg"), "folder/missing.jpg")
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrForbidden)
+	})
+}
+
+func TestClient_resolveHref(t *testing.T) {
+	t.Run("EndpointPath", func(t *testing.T) {
+		client, err := NewClient("http://127.0.0.1:1/dav/", testUser, testPass, TimeoutLow, "")
+		require.NoError(t, err)
+		href := client.resolveHref("folder/example.jpg")
+		assert.Equal(t, "/dav/folder/example.jpg", href.Path)
+		assert.Equal(t, testUser, href.User.Username())
+	})
+	t.Run("EmptyPath", func(t *testing.T) {
+		client, err := NewClient("http://127.0.0.1:1", "", "", TimeoutLow, "")
+		require.NoError(t, err)
+		href := client.resolveHref("example.jpg")
+		assert.Equal(t, "http://127.0.0.1:1/example.jpg", href.String())
+	})
+}
+
+func TestClient_CheckDownloadSize(t *testing.T) {
+	t.Run("Unlimited", func(t *testing.T) {
+		c := &Client{}
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 1<<40))
+	})
+	t.Run("Limit", func(t *testing.T) {
+		c := &Client{}
+		c.SetDownloadLimit(100)
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", -1))
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 0))
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 100))
+		err := c.CheckDownloadSize("/tmp/photo.jpg", 101)
+		require.Error(t, err)
+		assert.Equal(t, "webdav: photo.jpg exceeds the maximum size of 100 bytes", err.Error())
+	})
+	t.Run("NilClient", func(t *testing.T) {
+		var c *Client
+		assert.NoError(t, c.CheckDownloadSize("/tmp/photo.jpg", 101))
+	})
+}
+
+func TestClient_LongNameKeepsReason(t *testing.T) {
+	// A long local name is bounded in these messages, so the reason after it survives a stored error.
+	client, err := NewClient("http://127.0.0.1:1/", "", "", TimeoutLow, "")
+	require.NoError(t, err)
+
+	notFolder := filepath.Join(t.TempDir(), strings.Repeat("\xff", 250))
+	require.NoError(t, os.WriteFile(notFolder, []byte("file"), fs.ModeFile))
+
+	t.Run("NotAFolder", func(t *testing.T) {
+		err := client.Download("/photo.jpg", filepath.Join(notFolder, "photo.jpg"), false)
+		require.Error(t, err)
+		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "is not a folder")
+	})
+	t.Run("CannotCreateFolder", func(t *testing.T) {
+		err := client.Download("/photo.jpg", filepath.Join(notFolder, "sub", "photo.jpg"), false)
+		require.Error(t, err)
+		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "not a directory")
+	})
+	t.Run("SourceNotFound", func(t *testing.T) {
+		err := client.Upload(filepath.Join(t.TempDir(), strings.Repeat("\xff", 250)), "/photo.jpg")
+		require.Error(t, err)
+		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "not found")
 	})
 }

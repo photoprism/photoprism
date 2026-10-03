@@ -155,10 +155,13 @@ func (c *Config) AutoImport() time.Duration {
 	return time.Duration(c.options.AutoImport) * time.Second
 }
 
-// OriginalsLimit returns the maximum size of originals in MB.
+// OriginalsLimit returns the maximum size of originals in MB, or -1 if there is none. A larger value
+// is clamped to MaxSizeLimit.
 func (c *Config) OriginalsLimit() int {
-	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
+	if c.options.OriginalsLimit <= 0 {
 		return -1
+	} else if c.options.OriginalsLimit > MaxSizeLimit {
+		return MaxSizeLimit
 	}
 
 	return c.options.OriginalsLimit
@@ -171,6 +174,25 @@ func (c *Config) OriginalsLimitBytes() int64 {
 	} else {
 		return int64(result) * 1024 * 1024
 	}
+}
+
+// DecodeHeadroom is how far above the configured resolution limit a decoder still accepts a
+// geometry. The limit states which originals are supported; files above it are reported and
+// still rendered, so the decode budget has to sit above it rather than on it.
+const DecodeHeadroom = 4
+
+// DecodeLimitPixels returns the largest geometry the decoders accept for the given resolution
+// limit in megapixels, or 0 when the limit is disabled.
+func DecodeLimitPixels(megapixels int) int {
+	if megapixels <= 0 {
+		return 0
+	}
+
+	if megapixels < DefaultResolutionLimit {
+		megapixels = DefaultResolutionLimit
+	}
+
+	return megapixels * 1000000 * DecodeHeadroom
 }
 
 // ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).

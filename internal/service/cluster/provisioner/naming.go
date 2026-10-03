@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -65,14 +66,14 @@ func BuildDSN(driver, host string, port int, user, pass, name string) string {
 	d := strings.ToLower(driver)
 	switch d {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
-			user, pass, host, port, name, dsn.Params[dsn.DriverMySQL],
-		)
+		dsnParams := fmt.Sprint(dsn.Params[dsn.DriverMySQL])
+		result := dsn.DSN{User: user, Password: pass, Server: dns.JoinHostPort(host, port), Name: name, Params: dsnParams}
+		return result.MySQL()
 	default:
 		log.Warnf("provisioner: unsupported driver %q, falling back to mysql DSN format", driver)
-		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true",
-			user, pass, host, port, name,
-		)
+		dsnParams := "charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true"
+		result := dsn.DSN{User: user, Password: pass, Server: dns.JoinHostPort(host, port), Name: name, Params: dsnParams}
+		return result.MySQL()
 	}
 }
 

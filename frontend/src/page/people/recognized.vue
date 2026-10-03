@@ -276,7 +276,7 @@ export default {
       } else if (this.results.length === 1) {
         this.$notify.info(this.$gettext("One person found"));
       } else {
-        this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
+        this.$notify.info(this.$gettext("%{n} people found", { n: this.results.length }));
       }
     },
     edit(subject) {
@@ -574,7 +574,7 @@ export default {
           if (this.scrollDisabled) {
             this.setOffset(resp.offset);
             if (this.results.length > 1) {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), { n: this.results.length }));
+              this.$notify.info(this.$gettext("All %{n} people loaded", { n: this.results.length }));
             }
           } else {
             this.setOffset(resp.offset + resp.limit);
@@ -739,7 +739,6 @@ export default {
           if (this.scrollDisabled) {
             this.notifyResultCount();
           } else {
-            // this.$notify.info(this.$gettext('More than 20 people found'));
             this.$nextTick(() => {
               if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
                 this.loadMore();

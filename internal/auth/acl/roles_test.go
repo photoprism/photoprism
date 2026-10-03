@@ -6,7 +6,49 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/list"
 )
+
+// TestRoleStrings_Attr checks sorted role attributes and empty input handling.
+func TestRoleStrings_Attr(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, list.Attr{}, (RoleStrings(nil)).Attr())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, list.Attr{}, (RoleStrings{}).Attr())
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		assert.Equal(t, list.Attr{}, (RoleStrings{"": RoleNone}).Attr())
+	})
+	t.Run("UserRoles", func(t *testing.T) {
+		got := UserRoles.Attr()
+
+		// Expect deterministic, sorted output.
+		expected := list.Attr{
+			&list.KeyValue{Key: "admin", Value: RoleAdmin.String()},
+			&list.KeyValue{Key: "guest", Value: RoleGuest.String()},
+			&list.KeyValue{Key: "none", Value: RoleNone.String()},
+			&list.KeyValue{Key: "visitor", Value: RoleVisitor.String()},
+		}
+		assert.Equal(t, expected, got)
+	})
+	t.Run("ClientRoles", func(t *testing.T) {
+		got := ClientRoles.Attr()
+
+		// Expect deterministic, sorted output.
+		expected := list.Attr{
+			&list.KeyValue{Key: "admin", Value: RoleAdmin.String()},
+			&list.KeyValue{Key: "app", Value: RoleInstance.String()},
+			&list.KeyValue{Key: "client", Value: RoleClient.String()},
+			&list.KeyValue{Key: "instance", Value: RoleInstance.String()},
+			&list.KeyValue{Key: "none", Value: RoleNone.String()},
+			&list.KeyValue{Key: "portal", Value: RolePortal.String()},
+			&list.KeyValue{Key: "service", Value: RoleService.String()},
+		}
+		assert.Equal(t, expected, got)
+	})
+}
 
 func TestRoleStrings_Strings_SortedAndNoEmpty(t *testing.T) {
 	m := RoleStrings{

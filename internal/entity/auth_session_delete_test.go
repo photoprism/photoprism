@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"sort"
+	"strings"
 	"testing"
 	"time"
 
@@ -84,10 +86,10 @@ func TestDeleteClientSessions(t *testing.T) {
 	client.ClientUID = clientUID
 
 	// Make sure no sessions exist yet and test missing arguments.
-	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodUndefined, -1))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodDefault, 0))
+	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodUndefined, -1, ""))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1, ""))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0, ""))
+	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodDefault, 0, ""))
 
 	// Create 10 test client sessions.
 	for range 10 {
@@ -100,12 +102,144 @@ func TestDeleteClientSessions(t *testing.T) {
 	}
 
 	// Check if the expected number of sessions is deleted until none are left.
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodDefault, 1))
-	assert.Equal(t, 9, DeleteClientSessions(client, authn.MethodOAuth2, 1))
-	assert.Equal(t, 1, DeleteClientSessions(client, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodUndefined, 0))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1, ""))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodDefault, 1, ""))
+	assert.Equal(t, 9, DeleteClientSessions(client, authn.MethodOAuth2, 1, ""))
+	assert.Equal(t, 1, DeleteClientSessions(client, authn.MethodOAuth2, 0, ""))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0, ""))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodUndefined, 0, ""))
+}
+
+// newClientSessions creates n sessions for the client, all stamped with createdAt, and returns
+// their IDs sorted ascending so a case can pick the one the ID tiebreak ranks last.
+// Whatever survives the case is removed again, so the shared test database is left as found.
+func newClientSessions(t *testing.T, client *Client, n int, createdAt time.Time) []string {
+	ids := make([]string, 0, n)
+
+	t.Cleanup(func() {
+		if _, err := client.DeleteSessions(); err != nil {
+			t.Error(err)
+		}
+	})
+
+	for range n {
+		sess := NewSession(3600, 0)
+		sess.SetClient(client)
+
+		if err := sess.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := sess.Updates(Values{"created_at": createdAt}); err != nil {
+			t.Fatal(err)
+		}
+
+		ids = append(ids, sess.ID)
+	}
+
+	sort.Strings(ids)
+
+	return ids
+}
+
+func TestDeleteClientSessionsOrder(t *testing.T) {
+	sameSecond := time.Date(2026, 9, 11, 10, 0, 0, 0, time.UTC)
+	t.Run("KeepsNewest", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00001"
+
+		older := newClientSessions(t, client, 2, sameSecond.Add(-time.Hour))
+		newer := newClientSessions(t, client, 2, sameSecond)
+
+		assert.Equal(t, 2, DeleteClientSessions(client, authn.MethodOAuth2, 2, ""))
+		assertSessions(t, newer, older)
+	})
+	t.Run("BreaksTiesByID", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00002"
+
+		ids := newClientSessions(t, client, 3, sameSecond)
+
+		assert.Equal(t, 2, DeleteClientSessions(client, authn.MethodOAuth2, 1, ""))
+		assertSessions(t, ids[2:], ids[:2])
+	})
+	t.Run("ReservedRanksFirstInItsSecond", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00003"
+
+		// The lowest ID is the one the tiebreak alone would delete first.
+		ids := newClientSessions(t, client, 4, sameSecond)
+
+		assert.Equal(t, 3, DeleteClientSessions(client, authn.MethodOAuth2, 1, ids[0]))
+		assertSessions(t, ids[:1], ids[1:])
+	})
+	t.Run("ReservedCountsTowardLimit", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00004"
+
+		ids := newClientSessions(t, client, 4, sameSecond)
+
+		assert.Equal(t, 2, DeleteClientSessions(client, authn.MethodOAuth2, 2, ids[0]))
+		assertSessions(t, []string{ids[0], ids[3]}, []string{ids[1], ids[2]})
+	})
+	t.Run("ReservedDoesNotOutrankANewerSession", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00005"
+
+		older := newClientSessions(t, client, 1, sameSecond.Add(-time.Hour))
+		newer := newClientSessions(t, client, 1, sameSecond)
+
+		assert.Equal(t, 1, DeleteClientSessions(client, authn.MethodOAuth2, 1, older[0]))
+		assertSessions(t, newer, older)
+	})
+	t.Run("UnknownID", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00006"
+
+		ids := newClientSessions(t, client, 3, sameSecond)
+
+		assert.Equal(t, 2, DeleteClientSessions(client, authn.MethodOAuth2, 1, "sessxkkcabcdefgh"))
+		assertSessions(t, ids[2:], ids[:2])
+	})
+	t.Run("OtherClientID", func(t *testing.T) {
+		other := NewClient()
+		other.ClientUID = "cs5gfen1bgx00007"
+		foreign := newClientSessions(t, other, 1, sameSecond)
+
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00008"
+		ids := newClientSessions(t, client, 2, sameSecond)
+
+		assert.Equal(t, 1, DeleteClientSessions(client, authn.MethodOAuth2, 1, foreign[0]))
+		assertSessions(t, append(ids[1:], foreign...), ids[:1])
+	})
+	t.Run("ZeroLimitDeletesAll", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00009"
+
+		ids := newClientSessions(t, client, 3, sameSecond)
+
+		assert.Equal(t, 3, DeleteClientSessions(client, authn.MethodOAuth2, 0, ids[2]))
+		assertSessions(t, nil, ids)
+	})
+	t.Run("NilClient", func(t *testing.T) {
+		assert.Equal(t, 0, DeleteClientSessions(nil, authn.MethodOAuth2, 1, ""))
+	})
+}
+
+// assertSessions verifies that every ID in kept still resolves and every ID in gone does not.
+func assertSessions(t *testing.T, kept, gone []string) {
+	for _, id := range kept {
+		if _, err := FindSession(id); err != nil {
+			t.Errorf("session %s should have been retained: %s", id, err)
+		}
+	}
+
+	for _, id := range gone {
+		if _, err := FindSession(id); err == nil {
+			t.Errorf("session %s should have been deleted", id)
+		}
+	}
 }
 
 func TestDeleteExpiredSessions(t *testing.T) {
@@ -134,4 +268,58 @@ func TestDeleteFromSessionCache(t *testing.T) {
 	r3, b3 := sessionCache.Get(id)
 	assert.Empty(t, r3)
 	assert.False(t, b3)
+}
+
+func TestSessionSaveTokenLimit(t *testing.T) {
+	// Session IDs that outrank any generated one, so the session saved below is retained
+	// only because it is the one being saved.
+	highIDs := []string{strings.Repeat("f", 64), strings.Repeat("e", 64)}
+
+	// A synthetic user keeps these sessions out of the fixture accounts other tests count.
+	user := &User{UserUID: rnd.GenerateUID(UserUID), UserName: "session-save-token-limit"}
+
+	newAppSession := func(id string) *Session {
+		sess := NewSession(3600, 0)
+
+		if id != "" {
+			sess.ID = id
+		}
+
+		sess.SetUser(user)
+		sess.SetClientName("TestSessionSaveTokenLimit")
+		sess.SetProvider(authn.ProviderApplication)
+		sess.SetMethod(authn.MethodSession)
+
+		return sess
+	}
+
+	// Stamp the existing sessions with the second the save will run in, since sessions
+	// created in the same second are the case a save must not evict itself in.
+	second := Now().Add(time.Second)
+
+	for _, id := range highIDs {
+		sess := newAppSession(id)
+
+		if err := sess.Create(); err != nil {
+			t.Fatal(err)
+		} else if err = sess.Updates(Values{"created_at": second}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	time.Sleep(time.Until(second))
+
+	saved := newAppSession("")
+
+	if err := saved.Save(); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		if err := saved.Delete(); err != nil {
+			t.Error(err)
+		}
+	})
+
+	assertSessions(t, []string{saved.ID}, highIDs)
 }

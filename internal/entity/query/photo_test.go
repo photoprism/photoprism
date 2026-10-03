@@ -105,13 +105,42 @@ func TestPhotoPreloadByUIDs(t *testing.T) {
 
 // TestMissingPhotos validates photo query behavior.
 func TestMissingPhotos(t *testing.T) {
-	result, err := MissingPhotos(15, 0)
+	t.Run("Success", func(t *testing.T) {
+		result, err := MissingPhotos(15, 0)
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	assert.LessOrEqual(t, 1, len(result))
+		assert.LessOrEqual(t, 1, len(result))
+	})
+	t.Run("ArchivedNotRemoved", func(t *testing.T) {
+		deletedAt := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+		active := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingActive", PhotoQuality: 3}
+		archived := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingArchived", PhotoQuality: 3, DeletedAt: &deletedAt}
+		removed := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingRemoved", PhotoQuality: -1, DeletedAt: &deletedAt}
+
+		for _, photo := range []*entity.Photo{&active, &archived, &removed} {
+			require.NoError(t, UnscopedDb().Create(photo).Error)
+		}
+
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Where("id IN (?)", []uint{active.ID, archived.ID, removed.ID}).Delete(&entity.Photo{}).Error)
+		})
+
+		result, err := MissingPhotos(100000, 0)
+		require.NoError(t, err)
+
+		found := make(map[uint]bool, len(result))
+
+		for _, photo := range result {
+			found[photo.ID] = true
+		}
+
+		assert.True(t, found[active.ID])
+		assert.True(t, found[archived.ID])
+		assert.False(t, found[removed.ID])
+	})
 }
 
 // TestArchivedPhotos validates photo query behavior.
@@ -325,6 +354,38 @@ func TestFlagHiddenPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("SkipArchived", func(t *testing.T) {
+		archivedAt := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+		archived := entity.Photo{
+			PhotoUID:     rnd.GenerateUID(entity.PhotoUID),
+			PhotoName:    "FlagHiddenArchived",
+			PhotoQuality: 3,
+			DeletedAt:    &archivedAt,
+		}
+		active := entity.Photo{
+			PhotoUID:     rnd.GenerateUID(entity.PhotoUID),
+			PhotoName:    "FlagHiddenActive",
+			PhotoQuality: 3,
+		}
+
+		require.NoError(t, UnscopedDb().Create(&archived).Error)
+		require.NoError(t, UnscopedDb().Create(&active).Error)
+
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Where("id IN (?)", []uint{archived.ID, active.ID}).Delete(&entity.Photo{}).Error)
+		})
+
+		require.NoError(t, FlagHiddenPhotos())
+
+		var result entity.Photo
+		require.NoError(t, UnscopedDb().Where("id = ?", archived.ID).First(&result).Error)
+		assert.Equal(t, 3, result.PhotoQuality)
+		require.NotNil(t, result.DeletedAt)
+
+		result = entity.Photo{}
+		require.NoError(t, UnscopedDb().Where("id = ?", active.ID).First(&result).Error)
+		assert.Equal(t, -1, result.PhotoQuality)
+	})
 }
 
 // qualifyingPhotoPaths returns the distinct photo paths photoPathMaxDates is expected to
@@ -412,4 +473,35 @@ func TestPhotoPathMaxDates(t *testing.T) {
 			}
 		}
 	})
+}
+
+func TestArchivedPhoto(t *testing.T) {
+	photo := likeTestPhoto(t, "zz-archived-"+rnd.Base36(6), "photo")
+
+	result, err := ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	assert.Nil(t, result)
+
+	require.NoError(t, photo.Archive())
+	result, err = ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Equal(t, photo.PhotoUID, result.PhotoUID)
+
+	// The row is read again, so later changes are returned.
+	require.NoError(t, photo.Update("photo_name", "renamed"))
+	require.NoError(t, photo.Update("photo_quality", 0))
+	result, err = ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Equal(t, "renamed", result.PhotoName)
+
+	require.NoError(t, photo.Update("photo_quality", -1))
+	result, err = ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	assert.Nil(t, result)
+
+	result, err = ArchivedPhoto(0)
+	require.NoError(t, err)
+	assert.Nil(t, result)
 }

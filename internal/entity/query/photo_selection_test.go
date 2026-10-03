@@ -2,11 +2,16 @@ package query
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestSelectedPhotoUIDsForSession(t *testing.T) {
@@ -123,4 +128,144 @@ func TestPhotoSelection(t *testing.T) {
 		}
 	})
 
+}
+
+// likeTestPhoto creates a photo with one original in dir and removes both when the test ends.
+func likeTestPhoto(t *testing.T, dir, name string) *entity.Photo {
+	t.Helper()
+
+	photo := &entity.Photo{PhotoPath: dir, PhotoName: name, PhotoType: entity.MediaImage, PhotoQuality: 3}
+	require.NoError(t, photo.Create())
+
+	file := &entity.File{
+		PhotoID:     photo.ID,
+		PhotoUID:    photo.PhotoUID,
+		FileName:    dir + "/" + name + ".jpg",
+		FileRoot:    entity.RootOriginals,
+		FileHash:    rnd.GenerateUID(entity.FileUID),
+		FileType:    "jpg",
+		FilePrimary: true,
+	}
+	require.NoError(t, file.Create())
+
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&entity.Details{}).Error
+		_ = entity.UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&entity.File{}).Error
+		_ = entity.UnscopedDb().Where("id = ?", photo.ID).Delete(&entity.Photo{}).Error
+	})
+
+	return photo
+}
+
+// likeTestFolder creates an originals folder row for dir and removes it and its album when the test ends.
+func likeTestFolder(t *testing.T, dir string) entity.Folder {
+	t.Helper()
+
+	folder := entity.NewFolder(entity.RootOriginals, dir, time.Now())
+	require.NoError(t, folder.Create())
+
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Where("folder_uid = ?", folder.FolderUID).Delete(&entity.Folder{}).Error
+		_ = entity.UnscopedDb().Where("album_type = ? AND album_path = ?", entity.AlbumFolder, dir).Delete(&entity.Album{}).Error
+	})
+
+	return folder
+}
+
+func TestSubfolderCond(t *testing.T) {
+	t.Run("MySQL", func(t *testing.T) {
+		cond, err := subfolderCond(dsn.DriverMySQL)
+		require.NoError(t, err)
+		assert.Equal(t, "b.path LIKE CONCAT(REPLACE(REPLACE(REPLACE(a.path, '!', '!!'), '%', '!%'), '_', '!_'), '/%') ESCAPE '!'"+
+			" AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = CONCAT(a.path, '/')", cond)
+	})
+	t.Run("SQLite", func(t *testing.T) {
+		cond, err := subfolderCond(dsn.DriverSQLite3)
+		require.NoError(t, err)
+		assert.Equal(t, "b.path LIKE REPLACE(REPLACE(REPLACE(a.path, '!', '!!'), '%', '!%'), '_', '!_') || '/%' ESCAPE '!'"+
+			" AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = a.path || '/'", cond)
+	})
+	t.Run("UnknownDialect", func(t *testing.T) {
+		cond, err := subfolderCond("postgres")
+		assert.Error(t, err)
+		assert.Empty(t, cond)
+	})
+}
+
+func TestSelectedPhotos_SubfolderContainment(t *testing.T) {
+	base := "zz-like-" + rnd.Base36(6)
+	folder := likeTestFolder(t, base+"_a!b!%")
+	likeTestFolder(t, base+"_a!b!%/sub")
+	likeTestFolder(t, base+"Xa!b!Y/sub")
+	likeTestFolder(t, base+"_a!b!Z/sub")
+	likeTestFolder(t, base+"_A!b!%/sub")
+	inFolder := likeTestPhoto(t, base+"_a!b!%", "in-folder")
+	inSubfolder := likeTestPhoto(t, base+"_a!b!%/sub", "in-subfolder")
+	sibling := likeTestPhoto(t, base+"Xa!b!Y/sub", "sibling")
+	likeTestPhoto(t, base+"_a!b!Z/sub", "sibling-z")
+	likeTestPhoto(t, base+"_A!b!%/sub", "sibling-case")
+
+	results, err := SelectedPhotos(form.Selection{Files: []string{folder.FolderUID}})
+	require.NoError(t, err)
+
+	uids := results.UIDs()
+	assert.ElementsMatch(t, []string{inFolder.PhotoUID, inSubfolder.PhotoUID}, uids)
+	assert.NotContains(t, uids, sibling.PhotoUID)
+}
+
+func TestSelectedPhotosForSession(t *testing.T) {
+	guest := aclSession("guest")
+
+	// Create a picture the guest may see as its own, and reach it through a new label along with
+	// the fixtures, which the guest may not see.
+	shared := likeTestPhoto(t, "zz-scope-"+rnd.Base36(6), "own")
+	require.NoError(t, shared.Update("created_by", guest.GetUser().UserUID))
+
+	ok, err := search.PhotoVisibleToSession(shared.PhotoUID, guest)
+	require.NoError(t, err)
+	require.True(t, ok)
+
+	label := entity.NewLabel("Selection Scope "+rnd.Base36(6), 0)
+	require.NoError(t, label.Create())
+	require.NoError(t, entity.NewPhotoLabel(shared.ID, label.ID, 0, entity.SrcManual).Create())
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Where("label_id = ?", label.ID).Delete(&entity.PhotoLabel{}).Error
+		_ = entity.UnscopedDb().Delete(label).Error
+	})
+
+	labels := []string{label.LabelUID}
+
+	for _, l := range entity.LabelFixtures {
+		labels = append(labels, l.LabelUID)
+	}
+
+	frm := form.Selection{Labels: labels}
+
+	unscoped, err := SelectedPhotos(frm)
+	require.NoError(t, err)
+	require.Contains(t, unscoped.UIDs(), shared.PhotoUID)
+
+	t.Run("AdminUnchanged", func(t *testing.T) {
+		result, err := SelectedPhotosForSession(frm, aclSession("alice"))
+		require.NoError(t, err)
+		assert.ElementsMatch(t, unscoped.UIDs(), result.UIDs())
+	})
+	t.Run("GuestScoped", func(t *testing.T) {
+		result, err := SelectedPhotosForSession(frm, guest)
+		require.NoError(t, err)
+		assert.Contains(t, result.UIDs(), shared.PhotoUID)
+		assert.Less(t, len(result), len(unscoped))
+		assert.Subset(t, unscoped.UIDs(), result.UIDs())
+
+		for _, uid := range result.UIDs() {
+			ok, err := search.PhotoVisibleToSession(uid, guest)
+			require.NoError(t, err)
+			assert.True(t, ok, uid)
+		}
+	})
+	t.Run("NilSessionUnchanged", func(t *testing.T) {
+		result, err := SelectedPhotosForSession(frm, nil)
+		require.NoError(t, err)
+		assert.ElementsMatch(t, unscoped.UIDs(), result.UIDs())
+	})
 }

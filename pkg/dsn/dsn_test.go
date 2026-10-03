@@ -27,6 +27,12 @@ func TestDSN_HostAndPort(t *testing.T) {
 			port: 3307,
 		},
 		{
+			name: "MySQLIPv6DefaultPort",
+			in:   "user:secret@tcp([2001:db8::1])/photoprism",
+			host: "2001:db8::1",
+			port: 3306,
+		},
+		{
 			name: "MySQLDefaultPort",
 			in:   "user:secret@tcp(mysql.local)/photoprism",
 			host: "mysql.local",
@@ -119,6 +125,32 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			ok: true,
 		},
 		{
+			name: "IPv6Host",
+			in:   "user=alice password=s3cr3t dbname=app host=::1 port=5432",
+			want: DSN{
+				DSN:      "user=alice password=s3cr3t dbname=app host=::1 port=5432",
+				Driver:   DriverPostgres,
+				User:     "alice",
+				Password: "s3cr3t",
+				Server:   "[::1]:5432",
+				Name:     "app",
+			},
+			ok: true,
+		},
+		{
+			name: "BracketedIPv6Host",
+			in:   "user=alice password=s3cr3t dbname=app host=[::1] port=5432",
+			want: DSN{
+				DSN:      "user=alice password=s3cr3t dbname=app host=[::1] port=5432",
+				Driver:   DriverPostgres,
+				User:     "alice",
+				Password: "s3cr3t",
+				Server:   "[::1]:5432",
+				Name:     "app",
+			},
+			ok: true,
+		},
+		{
 			name: "QuotedValues",
 			in:   `user="alice" password="s ec ret" dbname="app" host=db.internal`,
 			want: DSN{
@@ -155,4 +187,21 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestDSN_MySQL checks the MySQL/MariaDB DSN builder.
+func TestDSN_MySQL(t *testing.T) {
+	t.Run("Tcp", func(t *testing.T) {
+		d := DSN{User: "user", Password: "secret", Server: "mariadb:4001", Name: "photoprism", Params: "parseTime=true"}
+		assert.Equal(t, "user:secret@tcp(mariadb:4001)/photoprism?parseTime=true", d.MySQL())
+	})
+	t.Run("Unix", func(t *testing.T) {
+		d := DSN{User: "user", Password: "secret", Net: "unix", Server: "/run/mysqld/mysqld.sock", Name: "photoprism"}
+		assert.Equal(t, "user:secret@unix(/run/mysqld/mysqld.sock)/photoprism", d.MySQL())
+	})
+	t.Run("RoundTrip", func(t *testing.T) {
+		in := "user:secret@tcp([::1]:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
+		d := Parse(in)
+		assert.Equal(t, in, d.MySQL())
+	})
 }

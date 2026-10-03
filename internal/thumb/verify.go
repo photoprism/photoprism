@@ -2,8 +2,11 @@ package thumb
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/davidbyttow/govips/v2/vips"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // VerifySize is the target edge length used to force a thumbnail decode during Verify;
@@ -28,6 +31,10 @@ func Verify(fileName string) error {
 		}
 
 		defer img.Close()
+
+		if err = vipsCheckPixels(img, clean.Log(filepath.Base(fileName))); err != nil {
+			return err
+		}
 
 		// libvips loads JPEGs lazily, so force the decode now (it would otherwise fail later in
 		// GenerateThumbnails and mark the photo IndexFailed). Mirror the center-crop tile path,

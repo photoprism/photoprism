@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -47,6 +48,21 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 		return false, err
 	}
 
+	// Store a DSN rebuilt from its validated parts and accepted parameters.
+	if update.DatabaseDSN != nil {
+		dsnValue, dropped, err := clusterDatabaseDSN(*update.DatabaseDSN, c.DatabaseTimeout())
+
+		if err != nil {
+			return false, err
+		} else if names := dsn.LoggableParamNames(dropped); len(names) > 0 {
+			event.SystemWarn([]string{"config", "cluster", "ignored %d unsupported database dsn parameters %s"}, len(dropped), clean.LogNames(names))
+		} else if len(dropped) > 0 {
+			event.SystemWarn([]string{"config", "cluster", "ignored %d unsupported database dsn parameters"}, len(dropped))
+		}
+
+		update.DatabaseDSN = &dsnValue
+	}
+
 	patch := Values{}
 	setOptionString(patch, "ClusterUUID", update.ClusterUUID)
 	setOptionString(patch, "ClusterCIDR", update.ClusterCIDR)
@@ -74,7 +90,88 @@ func validateClusterOptionsUpdate(update cluster.OptionsUpdate) error {
 		return fmt.Errorf("invalid node UUID")
 	}
 
+	if update.DatabaseDriver != nil && dsn.ParseDriver(*update.DatabaseDriver) != dsn.DriverMySQL {
+		return fmt.Errorf("invalid database driver")
+	}
+
+	if err := validateClusterDatabase(update.DatabaseName, update.DatabaseUser, update.DatabaseServer); err != nil {
+		return err
+	}
+
+	if update.DatabaseDSN != nil {
+		if _, _, err := clusterDatabaseDSN(*update.DatabaseDSN, 0); err != nil {
+			return err
+		}
+	}
+
 	return nil
+}
+
+// validateClusterDatabase checks the database name, user, and server of a cluster options update.
+// Empty values are accepted, since they select the defaults.
+func validateClusterDatabase(name, user, server *string) error {
+	if name != nil && *name != "" && !dsn.ValidIdent(*name) {
+		return fmt.Errorf("invalid database name")
+	}
+
+	if user != nil && *user != "" && !dsn.ValidIdent(*user) {
+		return fmt.Errorf("invalid database user")
+	}
+
+	if server != nil && *server != "" && !dsn.ValidServer(*server) {
+		return fmt.Errorf("invalid database server")
+	}
+
+	return nil
+}
+
+// clusterDatabaseParamRules lists the DSN parameters a cluster instance accepts from the Portal and
+// checks their values. The character set is limited to UTF-8.
+var clusterDatabaseParamRules = dsn.ParamRules{
+	"charset":           dsn.ValidCharset,
+	"collation":         dsn.ValidCollation,
+	"parseTime":         dsn.IsTrue,
+	"interpolateParams": dsn.ValidBool,
+	"rejectReadOnly":    dsn.ValidBool,
+	"timeout":           dsn.ValidDuration,
+	"readTimeout":       dsn.ValidDuration,
+	"writeTimeout":      dsn.ValidDuration,
+	"maxAllowedPacket":  dsn.ValidPacketSize,
+	"tls":               dsn.ValidTLS,
+}
+
+// clusterDatabaseDSN validates a MariaDB DSN received from the Portal and returns it rebuilt from its
+// user, password, server, name, and accepted parameters, adding missing defaults and the dial timeout
+// in seconds. It also returns the names of the parameters it dropped. An empty DSN is returned as is.
+func clusterDatabaseDSN(s string, timeout int) (result string, dropped []string, err error) {
+	if s == "" {
+		return "", nil, nil
+	}
+
+	d := dsn.Parse(s)
+
+	if d.Driver != dsn.DriverMySQL || d.Net != "tcp" || d.Name == "" || d.User == "" {
+		return "", nil, fmt.Errorf("invalid database dsn")
+	}
+
+	if err = validateClusterDatabase(&d.Name, &d.User, &d.Server); err != nil {
+		return "", nil, err
+	}
+
+	if d.Params, dropped, err = dsn.FilterParams(d.Params, clusterDatabaseParamRules); err != nil {
+		return "", nil, fmt.Errorf("invalid database dsn")
+	}
+
+	// A character set and collation must match, so neither default is added if the Portal sets one.
+	defaults := fmt.Sprint(dsn.Params[dsn.DriverMySQL])
+
+	if dsn.HasParam(d.Params, "charset") || dsn.HasParam(d.Params, "collation") {
+		defaults = "parseTime=true"
+	}
+
+	d.Params = dsn.MergeParams(d.Params, fmt.Sprintf("%s&timeout=%ds", defaults, timeout))
+
+	return d.MySQL(), dropped, nil
 }
 
 // ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
@@ -289,7 +386,8 @@ func clampDurationSeconds(value, minSec, maxSec, defSec int) time.Duration {
 	return time.Duration(v) * time.Second
 }
 
-// PortalUrl returns the URL of the cluster management portal server, if configured.
+// PortalUrl returns the URL of the cluster management portal server, if configured. Variables are
+// expanded on each call without changing the configured value, so the result follows the cluster domain.
 func (c *Config) PortalUrl() string {
 	if c.options.PortalUrl == "" {
 		return ""
@@ -303,13 +401,11 @@ func (c *Config) PortalUrl() string {
 	}
 
 	// Replace variables with the configured cluster domain.
-	c.options.PortalUrl = ExpandVars(c.options.PortalUrl, map[string]string{
+	return ExpandVars(c.options.PortalUrl, map[string]string{
 		"cluster-domain":            d,
 		"CLUSTER_DOMAIN":            d,
 		"PHOTOPRISM_CLUSTER_DOMAIN": d,
 	})
-
-	return c.options.PortalUrl
 }
 
 // PortalProxy reports whether portal proxy routing is enabled on this node.
@@ -381,7 +477,7 @@ func (c *Config) JoinToken() string {
 
 		if fs.FileExistsNotEmpty(fileName) {
 			if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from config directory
-				event.SystemWarn([]string{"config", "cluster join token", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+				event.SystemWarn([]string{"config", "cluster join token", "read %s", "%s"}, clean.Log(fileName), clean.ErrorFull(err))
 			} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
 				if c.cache != nil {
 					c.cache.SetDefault(fileName, s)
@@ -398,7 +494,7 @@ func (c *Config) JoinToken() string {
 	if !c.Portal() {
 		return ""
 	} else if token, _, err := c.SaveJoinToken(""); err != nil {
-		log.Errorf("config: %v", err)
+		event.SystemError([]string{"config", "cluster join token", "%s"}, clean.ErrorFull(err))
 		return ""
 	} else {
 		return token
@@ -568,7 +664,7 @@ func (c *Config) NodeUUID() string {
 	c.options.NodeUUID = uuid
 
 	if err := c.SaveNodeUUID(uuid); err != nil {
-		log.Warnf("config: could not save node UUID to %s (%s)", c.OptionsYaml(), err)
+		log.Warnf("config: could not save node UUID (%s)", clean.Error(err))
 	}
 
 	return uuid
@@ -592,14 +688,10 @@ func (c *Config) NodeClientSecret() string {
 			return string(b)
 		}
 
-		if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
-			log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
-		}
-
 		if _, err := os.Stat(fileName); os.IsNotExist(err) {
 			event.SystemDebug([]string{"config", "node client secret", "%s", "not found"}, clean.Log(fileName))
 		} else if err != nil {
-			event.SystemWarn([]string{"config", "node client secret", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+			event.SystemWarn([]string{"config", "node client secret", "read %s", "%s"}, clean.Log(fileName), clean.ErrorFull(err))
 		}
 	}
 
@@ -629,14 +721,14 @@ func (c *Config) SaveNodeClientSecret(clientSecret string) (fileName string, err
 	if err = fs.MkdirAll(dir); err != nil {
 		// Use memory to store client secret if directory is not writable.
 		c.options.NodeClientSecret = clientSecret
-		return fileName, fmt.Errorf("could not create node secrets path (%s)", err)
+		return fileName, fmt.Errorf("could not create node secrets path (%w)", err)
 	}
 
 	// Write secret to file.
 	if err = fs.WriteFile(fileName, []byte(clientSecret), fs.ModeSecretFile); err != nil {
 		// Use memory to store client secret if file is not writable.
 		c.options.NodeClientSecret = clientSecret
-		return "", fmt.Errorf("could not write node client secret (%s)", err)
+		return "", fmt.Errorf("could not write node client secret (%w)", err)
 	}
 
 	c.options.NodeClientSecret = ""

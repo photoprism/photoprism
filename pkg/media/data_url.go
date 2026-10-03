@@ -8,6 +8,7 @@ import (
 	"os"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/gabriel-vasile/mimetype"
 
@@ -18,6 +19,18 @@ import (
 )
 
 const imageAcceptHeader = "image/jpeg, image/png, image/webp, image/avif, image/heic, image/heif, */*;q=0.1"
+
+// ErrImageTooLarge is returned when image data exceeds MaxImageBytes.
+var ErrImageTooLarge = errors.New("image data exceeds the supported size")
+
+var (
+	// MaxImageBytes limits image data read from a URL. It is sized for a full-resolution frame
+	// in the formats the Accept header requests, not for a generic file download.
+	MaxImageBytes int64 = 32 << 20
+
+	// ImageReadTimeout limits how long reading image data from a remote URL may take.
+	ImageReadTimeout = 30 * time.Second
+)
 
 // DataUrl generates a data URL of the binary data from the specified io.Reader.
 func DataUrl(r io.Reader) string {
@@ -66,12 +79,34 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 	return ReadUrlWithOptions(fileUrl, schemes, nil)
 }
 
-// ReadUrlImage reads binary image data with strict remote URL safety defaults.
-func ReadUrlImage(fileUrl string, schemes []string) (data []byte, err error) {
-	return ReadUrlWithOptions(fileUrl, schemes, &safe.Options{
+// imageDownloadOptions returns the transfer options used for reading image data from a URL.
+// They are stated here rather than inherited, so an image reference cannot deliver as much as
+// a generic file download may.
+func imageDownloadOptions() *safe.Options {
+	return &safe.Options{
 		AllowPrivate: false,
 		Accept:       imageAcceptHeader,
-	})
+		MaxSizeBytes: MaxImageBytes,
+		Timeout:      ImageReadTimeout,
+	}
+}
+
+// ReadUrlImage reads binary image data with strict remote URL safety defaults and an image
+// budget, so that an image reference cannot deliver as much as a generic download may.
+func ReadUrlImage(fileUrl string, schemes []string) (data []byte, err error) {
+	data, err = ReadUrlWithOptions(fileUrl, schemes, imageDownloadOptions())
+
+	if err != nil {
+		return data, err
+	}
+
+	// Also applies to the schemes that carry their data inline, which the download options
+	// above never see.
+	if MaxImageBytes > 0 && int64(len(data)) > MaxImageBytes {
+		return nil, fmt.Errorf("%w (%d bytes)", ErrImageTooLarge, len(data))
+	}
+
+	return data, nil
 }
 
 // ReadUrlWithOptions reads binary data while applying optional safe HTTP options for remote URLs.
@@ -105,6 +140,10 @@ func ReadUrlWithOptions(fileUrl string, schemes []string, opt *safe.Options) (da
 	case scheme.Data:
 		if _, binaryData, found := strings.Cut(u.Opaque, ";base64,"); !found || len(binaryData) == 0 {
 			return data, fmt.Errorf("invalid %s url", u.Scheme)
+		} else if opt != nil && opt.MaxSizeBytes > 0 && int64(len(binaryData))/4*3 > opt.MaxSizeBytes {
+			// Checked on the encoded length, so an oversized payload is refused before it is
+			// decoded rather than after.
+			return data, fmt.Errorf("%w (%d bytes)", ErrImageTooLarge, len(binaryData)/4*3)
 		} else {
 			return DecodeBase64String(binaryData)
 		}

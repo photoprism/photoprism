@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -57,6 +58,21 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			}
 		}
 
+		// Originals of a multi-file capture stay with the files stacked under their name.
+		keepStacked := file.KeepStacked()
+
+		if !keepStacked && file.StackGroup() != "" {
+			photoFiles, filesErr := query.OriginalsByPhotoID(file.PhotoID)
+
+			if filesErr != nil {
+				log.Errorf("photo: %s (unstack)", filesErr)
+				AbortUnexpectedError(c)
+				return
+			}
+
+			keepStacked = file.KeepStackedWith(photoFiles)
+		}
+
 		switch {
 		case file.FilePrimary:
 			log.Errorf("photo: cannot unstack primary file")
@@ -68,6 +84,10 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		case file.FileRoot != entity.RootOriginals:
 			log.Errorf("photo: only originals can be unstacked")
+			AbortBadRequest(c)
+			return
+		case keepStacked:
+			log.Errorf("photo: cannot unstack files of a multi-file capture")
 			AbortBadRequest(c)
 			return
 		}
@@ -120,7 +140,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		var files photoprism.MediaFiles
 		unstackSingle := false
 
-		if unstackFile.BasePrefix(false) == stackPhoto.PhotoName {
+		if unstackFile.StackPrefix(false) == stackPhoto.PhotoName {
 			if conf.ReadOnly() {
 				log.Errorf("photo: cannot rename files in read only mode (unstack %s)", clean.Log(baseName))
 				AbortFeatureDisabled(c)
@@ -141,7 +161,18 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			files = append(files, unstackFile)
 			unstackSingle = true
 		} else {
-			files = related.Files
+			// Lens and proxy originals, and files stacked under their names, stay with the capture.
+			stackName := unstackFile.StackPrefix(false)
+
+			for _, f := range related.Files {
+				switch prefix := f.StackPrefix(false); {
+				case f.FileName() == unstackFile.FileName():
+					files = append(files, f)
+				case fs.StackGroup(f.FileName()) != "":
+				case prefix == stackName || prefix == f.BasePrefix(false):
+					files = append(files, f)
+				}
+			}
 		}
 
 		// Create new photo, also flagged as unstacked / not stackable.
@@ -228,6 +259,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }

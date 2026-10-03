@@ -15,6 +15,10 @@ import (
 // can reproduce a full page without seeding one.
 var faceMatchBatchSize = 500
 
+// faceMatchPause yields between match pages that changed or tried to assign a marker. It is a
+// variable so a test can observe the pause without waiting for it.
+var faceMatchPause = func() { time.Sleep(50 * time.Millisecond) }
+
 // FacesMatchResult represents the outcome of Faces.Match().
 type FacesMatchResult struct {
 	Updated    int64
@@ -27,6 +31,9 @@ type FacesMatchResult struct {
 	// which writes subj_uid without going through Updated. Counted apart from Recognized, which
 	// also covers a marker that merely has a subject after being matched.
 	Assigned int64
+	// Refused counts markers not held by the selected cluster, including those keeping
+	// a closer cluster or naming a different person.
+	Refused int64
 }
 
 // MovedSubjects reports whether this run wrote a marker's person assignment, which is what the
@@ -88,6 +95,7 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 	r.Unknown += result.Unknown
 	r.Ambiguous += result.Ambiguous
 	r.Assigned += result.Assigned
+	r.Refused += result.Refused
 }
 
 // buildFaceIndex filters the provided faces down to candidates that can be matched, decoding each
@@ -121,6 +129,21 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 	}
 
 	return idx
+}
+
+// refresh copies a cluster's current eligibility into its cached candidate.
+func (idx faceIndex) refresh(f *entity.Face) {
+	for i := range idx.candidates {
+		c := &idx.candidates[i]
+		if c.ref != f {
+			continue
+		}
+		c.collisionRadius = f.CollisionRadius
+		if f.SkipMatching() {
+			c.emb = nil
+		}
+		return
+	}
 }
 
 // limit returns the largest distance at which this candidate would still accept a marker, which
@@ -304,6 +327,24 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		result.Assigned += m
 	}
 
+	w.updateMatchStats(stats)
+
+	if result.Refused > 0 {
+		log.Debugf("faces: %s not taken by the nearest cluster",
+			english.Plural(int(result.Refused), "marker was", "markers were"))
+	}
+
+	// Named because the run otherwise reads as one that simply recognized less.
+	if result.Ambiguous > 0 {
+		log.Infof("faces: left %s unassigned between clusters of two different people, see face-match-margin",
+			english.Plural(int(result.Ambiguous), "marker", "markers"))
+	}
+
+	return result, nil
+}
+
+// updateMatchStats writes back what each cluster a pass touched actually matched.
+func (w *Faces) updateMatchStats(stats map[string]*faceMatchStats) {
 	declined := 0
 
 	for _, stat := range stats {
@@ -337,12 +378,28 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		log.Infof("faces: left %s unmeasured, see face-recompute-stats",
 			english.Plural(declined, "cluster", "clusters"))
 	}
+}
 
-	// Named because the run otherwise reads as one that simply recognized less.
-	if result.Ambiguous > 0 {
-		log.Infof("faces: left %s unassigned between clusters of two different people, see face-match-margin",
-			english.Plural(int(result.Ambiguous), "marker", "markers"))
+// MatchNewClusters attaches markers to the clusters a pass has just created, and reports what it
+// moved. Without it they hold nothing, and DeleteOrphanFaces removes a cluster no marker points at.
+//
+// Scanned with force, because these clusters have never been compared with anything: the markers
+// they exist for are the ones an earlier pass in the same run examined and left unassigned, which
+// the timestamp filter Match uses would skip. A marker already closer to another cluster keeps it,
+// by the same rule every other pass applies.
+func (w *Faces) MatchNewClusters(added entity.Faces) (result FacesMatchResult, err error) {
+	if len(added) == 0 {
+		return result, nil
 	}
+
+	stats := make(map[string]*faceMatchStats)
+
+	if result, err = w.MatchFaces(added, true, nil, stats); err != nil {
+		return result, err
+	}
+
+	stampMatchedFaces(added)
+	w.updateMatchStats(stats)
 
 	return result, nil
 }
@@ -427,19 +484,37 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		return result, nil
 	}
 
-	maxMarkers := query.CountMarkers(entity.MarkerFace)
-	processed := make(map[string]struct{}, maxMarkers)
+	processed := make(map[string]struct{}, limit)
 	totalProcessed := 0
 
-	offset := 0
-	cursor := ""
+	cursor, last := "", ""
+
+	// The full walk stops at the highest uid when it starts. Uids begin with their creation
+	// second, so markers detected in a later second are not part of it.
+	if force {
+		if last, err = query.LastMarkerUID(); err != nil || last == "" {
+			return result, err
+		}
+	}
+
 	start := time.Now()
+	var pending []*entity.Marker
+	var pageMatchedAt *time.Time
+
+	// Flush records this page before another query or a return can expose its markers again.
+	flush := func() {
+		if err := entity.StampMarkerMatches(pending, pageMatchedAt); err != nil {
+			log.Warnf("faces: %s while updating marker match timestamps", err)
+		}
+		pending = nil
+	}
+	defer flush()
 
 	for {
 		var markers entity.Markers
 
 		if force {
-			markers, err = query.FaceMarkers(limit, offset)
+			markers, err = query.FaceMarkers(limit, cursor, last)
 		} else {
 			markers, err = query.UnmatchedFaceMarkers(limit, cursor, matchedBefore)
 		}
@@ -452,18 +527,13 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			break
 		}
 
-		if force {
-			offset += len(markers)
-			if offset >= maxMarkers {
-				offset = maxMarkers
-			}
-		} else {
-			// The cursor advances even when every marker in this page is skipped, which is what
-			// keeps a page of markers that are never stamped from being returned forever.
-			cursor = markers[len(markers)-1].MarkerUID
-		}
+		// The cursor advances past every marker in the page, skipped ones included, so no page
+		// is read twice.
+		cursor = markers[len(markers)-1].MarkerUID
 
 		batchProcessed := 0
+		batchChanged := false
+		pageMatchedAt = entity.TimeStamp()
 
 		for _, marker := range markers {
 			if _, seen := processed[marker.MarkerUID]; seen {
@@ -511,6 +581,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 
 					if updated {
 						result.Updated++
+						batchChanged = true
 					}
 				}
 
@@ -521,34 +592,38 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			if !marker.HasFace(selFace, dist) {
 				// Marker needs a (new) face.
 			} else {
-				log.Debugf("faces: marker %s already has the best matching face %s with dist %f", marker.MarkerUID, marker.FaceID, marker.FaceDist)
+				log.Tracef("faces: marker %s already has the best matching face %s with dist %f", marker.MarkerUID, marker.FaceID, marker.FaceDist)
 
-				if err := marker.Matched(); err != nil {
-					log.Warnf("faces: %s while updating marker %s match timestamp", err, marker.MarkerUID)
+				pending = append(pending, &marker)
+
+				if selFace != nil && marker.FaceID == selFace.ID {
+					recordFaceMatch(stats, selFace, dist)
+				} else if selFace != nil {
+					result.Refused++
 				}
-
-				recordFaceMatch(stats, selFace, dist)
 
 				continue
 			}
 
-			// No matching face?
+			// HasFace holds for any marker with a face when none is selected, so this one has
+			// no face and no candidate accepts it: it only needs the page's match stamp.
 			if selFace == nil {
-				if updated, err := marker.ClearFace(); err != nil {
-					log.Warnf("faces: %s (clear marker face)", err)
-				} else if updated {
-					result.Updated++
-					w.rememberVeto(marker.MarkerUID)
-				}
-
+				pending = append(pending, &marker)
 				continue
 			}
 
 			// Assign matching face to marker.
+			batchChanged = true
 			updated, err := marker.SetFace(selFace, dist)
+			index.refresh(selFace)
 
 			if err != nil {
 				log.Warnf("faces: %s while setting a face for marker %s", err, marker.MarkerUID)
+				continue
+			} else if marker.FaceID != selFace.ID {
+				// Refused: the cluster did not take the marker, so it neither counts as recognized
+				// nor widens what the cluster accepts.
+				result.Refused++
 				continue
 			}
 
@@ -567,6 +642,8 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 		}
 
+		flush()
+
 		if batchProcessed == 0 {
 			log.Debugf("faces: no new markers to match, stopping")
 			break
@@ -579,11 +656,11 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			log.Debugf("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
 		}
 
-		if totalProcessed >= maxMarkers {
-			break
+		// Paused only after a page that changed or tried to assign a marker; a page that was
+		// only stamped resumes at once.
+		if batchChanged {
+			faceMatchPause()
 		}
-
-		time.Sleep(50 * time.Millisecond)
 	}
 
 	return result, err

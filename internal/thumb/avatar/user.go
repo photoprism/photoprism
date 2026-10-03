@@ -79,7 +79,7 @@ func SetUserImage(m *entity.User, imageName, imageSrc, thumbPath string) error {
 
 	if mediaFile, mediaErr := photoprism.NewMediaFile(imageName); mediaErr != nil {
 		return mediaErr
-	} else if err := mediaFile.GenerateThumbnails(thumbPath, false); err != nil {
+	} else if err := mediaFile.GenerateAvatarThumbnails(thumbPath, false); err != nil {
 		return err
 	} else {
 		return m.SetAvatar(mediaFile.Hash(), imageSrc)

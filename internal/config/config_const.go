@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math"
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -74,8 +75,20 @@ const RecommendedMem = 3 * GigaByte // 3,000,000,000 Bytes
 // DefaultResolutionLimit defines the default resolution limit.
 const DefaultResolutionLimit = 150 // 150 Megapixels
 
-// serialName defines the name of the unique storage serial.
-const serialName = "serial"
+// MaxSizeLimit is the largest originals and upload size limit in MB, 2 PiB in total.
+const MaxSizeLimit = math.MaxInt32
+
+// DefaultConvertTimeout defines the default budget for converting one still image, document,
+// or RAW file, in minutes. It is shared by the converters tried for that file.
+const DefaultConvertTimeout = 10
+
+// DefaultTranscodeTimeout defines the default budget for transcoding one video, in minutes.
+// Video length is not bounded by anything PhotoPrism configures, so there is no limit unless
+// an operator sets one.
+const DefaultTranscodeTimeout = -1
+
+// MaxConvertTimeout defines the largest accepted conversion or transcoding budget, in minutes.
+const MaxConvertTimeout = 1440
 
 // serialPrefix is the UID prefix of the storage serial, used to validate the value read from disk so
 // a truncated or corrupted file is rejected instead of silently becoming the serial.
@@ -85,16 +98,20 @@ const serialPrefix = 'z'
 // never registered as a valid token, so previews fail closed rather than accepting a guessable value.
 const PreviewTokenPlaceholder = "********"
 
-// signingKeyName defines the name of the secret file (under KeysPath) holding the HMAC key that signs
-// the app's URL tokens (downloads today, previews next); one shared key signs every token kind. It is
-// regenerated automatically when missing, so it is not backed up.
-const signingKeyName = "signing.key"
-
 // DefaultSessionMaxAge defines the standard session expiration time in seconds.
 const DefaultSessionMaxAge = unix.Week * 2
 
 // DefaultSessionTimeout defines the standard session idle time in seconds.
 const DefaultSessionTimeout = unix.Week
+
+// DefaultUploadMaxAge defines the time in seconds after which staged uploads are removed.
+const DefaultUploadMaxAge = unix.Week
+
+// MinUploadMaxAge defines the shortest time in seconds for which staged uploads are kept.
+const MinUploadMaxAge = unix.Day
+
+// MaxUploadMaxAge defines the longest time in seconds for which staged uploads are kept before removal.
+const MaxUploadMaxAge = unix.Year * 100
 
 // DefaultSessionCache defines the default session cache duration in seconds.
 const DefaultSessionCache = unix.Minute * 15

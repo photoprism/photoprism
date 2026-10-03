@@ -7,17 +7,50 @@
 
 - Tests live next to sources (`<file>_test.go`); group cases with `t.Run(...)` using **PascalCase** names (`Success`, `InvalidRequest`). Consecutive subtests inside the same `Test*` function are written without blank lines between them so the cases read as a compact table; reserve blank lines for separating distinct setup blocks.
 - Do not run multiple test commands in parallel — suites share fixtures, temp assets, and DB state.
-- Keep Go scratch work inside `internal/...` (Go refuses `internal/` imports from `/tmp`), and name
-  it `internal/zz<something>` — that prefix is gitignored, so a `git add` that sweeps a directory
-  cannot carry a throwaway copy of a package into a commit. Single files follow `zz_*.go`.
-- Prefer focused runs: `go test ./internal/<pkg> -run <Name> -count=1`. Avoid `./...` unless needed; heavy packages (`internal/entity`, `internal/photoprism`) take 30–120s on first run.
+- Put Go scratch work in a per-run directory under `.local/scratch/`:
+  `mkdir -p .local/scratch && mktemp -d .local/scratch/<name>.XXXXXX`. Code there can import
+  `internal/...` (Go refuses that from `/tmp`), `.local/` is gitignored, and `./...` skips it, so
+  it never joins a full suite. The `../../storage` fallback in the test config helpers resolves to
+  `.local/storage` from there, so `config.TestConfig()` needs `PHOTOPRISM_STORAGE_PATH` set (the
+  development environment sets it). Delete the directory when done.
+- A test that runs the indexer or importer on fixture media (`Index.Start`, `IndexMain`/`IndexRelated`,
+  `UserMediaFile`, `Import.Start`, the import worker) starts with
+  `if testing.Short() { t.Skip("skipping test in short mode.") }`, placed before any setup; gate only the subtest
+  when the rest of the test is unit-level. `make test-short` then stays within its per-package `-timeout 5m`, and
+  non-short runs with the required build tags still run the test. Classify by what the test runs, not by its name.
+- Prefer focused runs: `go test ./internal/<pkg> -run <Name> -count=1`. Avoid `./...` unless needed; full integration packages such as `internal/photoprism` can take many minutes, depending on the database backend and media tools.
+
+### Optional Integration Matrices
+
+The root Makefile defaults `GOTEST_TAGS` to `slow,develop`. The full Insta360 synthetic-media stack/import and database reconciliation matrices require `integration`; fast capture-state, parsing, grouping and media-file tests remain in default runs. Use `make test-integration` or `make test-mariadb GOTEST_TAGS=slow,develop,integration` when changing capture stacking, reconciliation, import naming, proxy selection, preview replacement or dewarping. Existing short-mode guards still apply. This tag does not gate all integration tests.
 
 ### Fast, Focused Test Recipes
+
+The root `make test-go`, `make test-integration`, `make test-short`, and `make test-mariadb` targets print total elapsed wall time, including model/database setup, on success and failure; the exit status is displayed only on failure. Go's `-timeout` applies to each package's test binary, not the complete Make target. To retain per-test durations and failure details, run `make test-mariadb GOTEST='go test -json' > test-mariadb.log 2>&1`; JSON events are mixed with Make and timing output. The direct `run-test-*` targets do not include the outer timer.
 
 - FS + archives (fast): `go test ./pkg/fs -run 'Copy|Move|Unzip' -count=1`
 - Media helpers (fast): `go test ./pkg/media/... -count=1`
 - Thumbnails (libvips, moderate): `go test ./internal/thumb/... -count=1`
 - FFmpeg builders (moderate): `go test ./internal/ffmpeg -run 'Remux|Transcode|Extract' -count=1`
+
+### LDAP Runs (Pro & Portal Only)
+
+The development environment ships a directory: `compose.yaml` defines a `dummy-ldap` service
+(glauth) seeded from `.ldap.cfg` in the repo root, reachable at `dummy-ldap:389` inside the
+compose network and `127.0.0.1:389` from the host. Every account in it has the password
+`photoprism`, and group membership maps to a role via `PHOTOPRISM_LDAP_ROLE_DN` - `sven`,
+`laura` and `max` are admins, `mona` is a manager, `jan` is a viewer, and none of the names
+collides with `internal/entity/auth_user_fixtures.go`. Extend `.ldap.cfg` when a case needs a
+shape it does not cover.
+
+LDAP exists only in Pro and Portal, so these tests belong in `pro/internal/auth`,
+`portal/internal/auth` and their `ldap` subpackages. Gate on dialing the service and skip when
+it is absent rather than on an env var - `ldapTestUri` in `pro/internal/auth/auth_test.go` is
+the pattern, and its skip message names the service so the next reader starts it. A case that
+needs an entry or attribute added to `.ldap.cfg` calls `skipUnlessDirectory`, since a running
+service keeps the previous file until `make dummy-ldap` recreates it. `Auth`
+resolves its config through `get.Config()` behind a `sync.Once`, so a test needs
+`get.SetConfig(c)` in `TestMain` and must restore `conf` and `opt` if it overrides them.
 
 ### MariaDB Runs
 
@@ -27,10 +60,16 @@ Makefile recipes talk to the development database through `$(MARIADB)`, which de
 
 ### Test Config Helpers
 
-- Default to `config.NewMinimalTestConfig(t.TempDir())` for FS/config scaffolding, or `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` for a fresh SQLite schema.
+- Default to `config.NewMinimalTestConfig(t.TempDir())` for FS/config scaffolding, or `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` for a DB-backed config that can restore the cached test database.
 - Reserve `config.TestConfig()` for tests that truly need the fully seeded fixture snapshot (runs `InitializeTestData()`, wipes `storage/testdata`).
 - Config helpers auto-discover `assets/`; don't set `PHOTOPRISM_ASSETS_PATH` in `init()`. Hub traffic is disabled by default; re-enable with `PHOTOPRISM_TEST_HUB=test`.
 - A test config whose SQLite name is empty resolves to the shared `.test.db` and **removes that file**, so it must never be built mid-suite in a package whose `TestMain` opened the same database. The symptom is a later test failing with `no such table: <name>` while the same test passes in isolation. `NewMinimalTestConfig` names its database for this reason; keep it named if you add a helper beside it.
+- Every named test config also removes its own `.<name>.db` when it is built, so never `Init` or open a database
+  through a `NewMinimalTestConfig` config: the next one built anywhere in the package deletes `.minimal.db` under
+  the open connection, and writes fail with `attempt to write a readonly database`. A config that opens a database
+  gets a name of its own via `NewIsolatedTestConfig("<name>", path, false)`, as `resetConfigAndOpenDB` does.
+- With an implicit SQLite DSN, use a distinct database name for each replacement of an open test config. Test
+  database names retain letters, hyphens, and underscores but strip digits, so numeric suffixes are not distinct.
 
 ### Environment Traps in `internal/config` and Nested Packages
 
@@ -48,6 +87,9 @@ A test that passes alone and in the full package but fails under `-run` subsets 
 
 - Assert only on state the test itself created, and delete anything it derives from a shared cache first. The ExifTool export cache (`ExifToolJsonName`) is keyed by file hash, so any test importing the same sample poisons a later `NeedsExifToolJson` assertion until an unrelated indexing test happens to remove it.
 - When a test fails only in a subset, bisect with `-run 'A|B'` rather than reordering: the pair that reproduces it names both the polluter and the victim.
+- A test that overrides a package-level var **captures the old value and restores it in `t.Cleanup`**, rather than reassigning a literal at the end of the body. A trailing reassignment is skipped by every way out except the last line - a failed `require`, a `t.Fatal`, a panic - and a hard-coded literal silently stops being the default it was copied from. `restoreSizeLimits` in `internal/thumb/sizes_test.go` is the pattern for a group of related vars.
+- `internal/api` uses one fixture DB across its tests. A second DB-backed config must restore both `get.Config()` and the entity DB provider. Tests that redeem a link for a registered account, create registry nodes, or alter fixture rows must restore those records in `t.Cleanup`.
+- When restoring a file that was marked missing or deleted, rebuild its derived search index with `entity.RegenerateIndexForPhotoIDs` after restoring the row. Clearing the flags alone does not restore its `media_id`.
 
 ### Fixtures
 

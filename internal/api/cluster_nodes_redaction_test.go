@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
@@ -41,30 +42,38 @@ func TestClusterListNodes_Redaction(t *testing.T) {
 	tokenAdmin := AuthenticateAdmin(app, router)
 	r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", tokenAdmin)
 	assert.Equal(t, http.StatusOK, r.Code)
-	// First item should include AdvertiseUrl and Database for admins
-	assert.NotEqual(t, "", gjson.Get(r.Body.String(), "0.AdvertiseUrl").String())
-	assert.True(t, gjson.Get(r.Body.String(), "0.Database").Exists())
+
+	node := listedNode(r.Body.String(), n.UUID)
+	require.True(t, node.Exists(), "seeded node should be listed")
+
+	// Admins see the client identifier, AdvertiseUrl, and Database.
+	assert.Equal(t, n.ClientID, node.Get("ClientID").String())
+	assert.Equal(t, "http://pp-node:2342", node.Get("AdvertiseUrl").String())
+	assert.True(t, node.Get("Database").Exists())
+}
+
+// listedNode returns the node with the given UUID from a cluster node list response.
+func listedNode(body, uuid string) gjson.Result {
+	return gjson.Get(body, `#(UUID=="`+uuid+`")`)
 }
 
 // Verifies redaction for client-scoped sessions (no user attached).
 func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
-	// TODO: This test expects client-scoped sessions to receive redacted
-	// fields (no AdvertiseUrl/Database). In practice, AdvertiseUrl appears
-	// in the response, likely due to session/ACL interactions in the test
-	// harness. Skipping for now; admin redaction coverage is in a separate
-	// test, and server-side opts are implemented. Revisit when signal/DB
-	// lifecycle and session fixtures are simplified.
-	t.Skip("todo: client-scope redaction behavior needs dedicated harness setup")
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
+
+	// Public mode resolves every request to the admin visitor, which would hide the redaction.
+	prevAuthMode := conf.AuthMode()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(prevAuthMode) })
 
 	ClusterListNodes(router)
 
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
 
-	// Seed node with internal URL and DB meta.
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-redact2", Role: cluster.RoleInstance, AdvertiseUrl: "http://pp-node2:2342", SiteUrl: "https://photos2.example.com"}}
+	// List() selects on node_uuid, so a record seeded without one is not returned at all.
+	n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-redact2", Role: cluster.RoleInstance, AdvertiseUrl: "http://pp-node2:2342", SiteUrl: "https://photos2.example.com"}}
 	n.Database = &cluster.NodeDatabase{Name: "pp_db2", User: "pp_user2"}
 	assert.NoError(t, regy.Put(n))
 
@@ -75,8 +84,13 @@ func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
 
 	r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", token)
 	assert.Equal(t, http.StatusOK, r.Code)
-	// Redacted: AdvertiseUrl and Database omitted for client sessions; SiteUrl is visible.
-	assert.Equal(t, "", gjson.Get(r.Body.String(), "0.AdvertiseUrl").String())
-	assert.True(t, gjson.Get(r.Body.String(), "0.SiteUrl").Exists())
-	assert.False(t, gjson.Get(r.Body.String(), "0.Database").Exists())
+
+	node := listedNode(r.Body.String(), n.UUID)
+	require.True(t, node.Exists(), "seeded node should be listed")
+
+	// Redacted: ClientID, AdvertiseUrl, and Database; SiteUrl is visible.
+	assert.Empty(t, node.Get("ClientID").String())
+	assert.Empty(t, node.Get("AdvertiseUrl").String())
+	assert.False(t, node.Get("Database").Exists())
+	assert.Equal(t, "https://photos2.example.com", node.Get("SiteUrl").String())
 }

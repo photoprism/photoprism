@@ -1,0 +1,945 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PhotoPrism Plus Values",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "default": 1,
+      "title": "Replica Count",
+      "description": "Number of application replicas. PhotoPrism keeps state on its volumes, so values above 1 require storage that supports the configured access modes.",
+      "minimum": 0
+    },
+    "image": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "repository": {
+          "type": "string",
+          "default": "docker.io/photoprism/photoprism",
+          "title": "Repository",
+          "description": "Container image repository to pull the application from."
+        },
+        "tag": {
+          "type": "string",
+          "default": "",
+          "title": "Image Tag",
+          "description": "Override the container tag; leave empty to use the chart appVersion."
+        },
+        "pullPolicy": {
+          "type": "string",
+          "default": "IfNotPresent",
+          "title": "Pull Policy",
+          "description": "Image pull policy passed to Kubernetes.",
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
+        }
+      },
+      "title": "Image",
+      "description": "Container image to deploy."
+    },
+    "command": {
+      "type": "array",
+      "title": "Command",
+      "description": "Overrides the container entrypoint. Leave empty to use the image default."
+    },
+    "args": {
+      "type": "array",
+      "title": "Args",
+      "description": "Overrides the container arguments. Leave empty to use the image default."
+    },
+    "securityContext": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "allowPrivilegeEscalation": {
+          "type": "boolean",
+          "default": false,
+          "title": "Allow Privilege Escalation",
+          "description": "Whether a process may gain more privileges than its parent."
+        },
+        "runAsNonRoot": {
+          "type": "boolean",
+          "default": true,
+          "title": "Run As Non Root",
+          "description": "Requires the container to run as a non-root user."
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "drop": {
+              "type": "array",
+              "title": "Drop",
+              "description": "Linux capabilities removed from the container."
+            }
+          },
+          "title": "Capabilities",
+          "description": "Linux capabilities added to or removed from the container."
+        },
+        "seccompProfile": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "type": {
+              "type": "string",
+              "default": "RuntimeDefault",
+              "title": "Type",
+              "description": "Seccomp profile applied to the container.",
+              "enum": [
+                "RuntimeDefault",
+                "Localhost",
+                "Unconfined"
+              ]
+            }
+          },
+          "title": "Seccomp Profile",
+          "description": "Seccomp profile applied to the container."
+        },
+        "runAsUser": {
+          "type": "integer",
+          "default": 1000,
+          "title": "Run As User",
+          "description": "UID the container process runs as."
+        },
+        "runAsGroup": {
+          "type": "integer",
+          "default": 1000,
+          "title": "Run As Group",
+          "description": "GID the container process runs as."
+        }
+      },
+      "title": "Security Context",
+      "description": "Security settings applied to the application container."
+    },
+    "podSecurityContext": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "fsGroup": {
+          "type": "integer",
+          "default": 1000,
+          "title": "Fs Group",
+          "description": "Supplemental group applied to mounted volumes, so the container can write to them."
+        },
+        "fsGroupChangePolicy": {
+          "type": "string",
+          "default": "OnRootMismatch",
+          "title": "Fs Group Change Policy",
+          "description": "When Kubernetes reapplies fsGroup ownership to volume contents.",
+          "enum": [
+            "OnRootMismatch",
+            "Always"
+          ]
+        }
+      },
+      "title": "Pod Security Context",
+      "description": "Security settings applied to the pod as a whole."
+    },
+    "nameOverride": {
+      "type": "string",
+      "default": "",
+      "title": "Name Override",
+      "description": "Replaces the chart name used to build resource names."
+    },
+    "fullnameOverride": {
+      "type": "string",
+      "default": "",
+      "title": "Fullname Override",
+      "description": "Replaces the full release name used for resource names."
+    },
+    "adminUser": {
+      "type": "string",
+      "default": "admin",
+      "title": "Admin Username",
+      "description": "Initial administrator account."
+    },
+    "adminPassword": {
+      "type": "string",
+      "default": "",
+      "title": "Admin Password",
+      "description": "Leave empty to auto-generate and store the password in a secret."
+    },
+    "cluster": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "integration": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "title": "Enable Portal Integration",
+              "description": "Set to true when a PhotoPrism Portal is available."
+            },
+            "secretName": {
+              "type": "string",
+              "default": "",
+              "title": "Secret Name",
+              "description": "Existing secret holding the cluster join credentials. Leave empty to have the chart create one."
+            },
+            "domain": {
+              "type": "string",
+              "default": "",
+              "title": "Domain",
+              "description": "Cluster DOMAIN (lowercase DNS name; 1–63 chars)."
+            },
+            "portalURL": {
+              "type": "string",
+              "default": "",
+              "title": "Portal URL",
+              "description": "Base URL of the cluster management portal."
+            },
+            "uuid": {
+              "type": "string",
+              "default": "",
+              "title": "UUID",
+              "description": "Cluster UUID (v4) to scope node credentials."
+            },
+            "cidr": {
+              "type": "string",
+              "default": "",
+              "title": "CIDR",
+              "description": "Cluster CIDR for IP-based authorization, e.g. 10.0.0.0/8."
+            },
+            "trustedProxy": {
+              "type": "string",
+              "default": "",
+              "title": "Trusted Proxy",
+              "description": "CIDR ranges or IPv4/v6 addresses from which reverse proxy headers can be trusted, separated by commas."
+            },
+            "joinToken": {
+              "type": "string",
+              "default": "",
+              "title": "Join Token",
+              "description": "Secret TOKEN required to join a cluster; min 24 chars."
+            },
+            "jwtScope": {
+              "type": "string",
+              "default": "",
+              "title": "JWT Scope",
+              "description": "Allowed JWT SCOPES (space separated). Leave empty to accept defaults."
+            }
+          },
+          "title": "Integration",
+          "description": "Connection details used to register with a Portal."
+        }
+      },
+      "title": "Cluster",
+      "description": "Settings for running this instance as part of a PhotoPrism cluster."
+    },
+    "persistence": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "storageClassName": {
+          "type": "string",
+          "default": "",
+          "title": "Storage Class Name",
+          "description": "StorageClass used for the volume claims. Leave empty to use the cluster default."
+        },
+        "originals": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "title": "Enable Originals PVC",
+              "description": "Provision a PVC for originals; disable when mounting NFS manually."
+            },
+            "size": {
+              "type": "string",
+              "default": "10Gi",
+              "title": "Size",
+              "description": "Requested capacity of the originals volume."
+            },
+            "accessModes": {
+              "type": "array",
+              "title": "Access Modes",
+              "description": "Access modes requested for the originals volume.",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ReadWriteOnce",
+                  "ReadOnlyMany",
+                  "ReadWriteMany",
+                  "ReadWriteOncePod"
+                ]
+              }
+            },
+            "mountPath": {
+              "type": "string",
+              "default": "/photoprism/originals",
+              "title": "Mount Path",
+              "description": "Path the originals volume is mounted at inside the container."
+            },
+            "nfs": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "title": "Enabled",
+                  "description": "Mounts the originals from an NFS export instead of a volume claim."
+                },
+                "server": {
+                  "type": "string",
+                  "default": "",
+                  "title": "Server",
+                  "description": "NFS server hostname or address. Required when NFS mode is enabled."
+                },
+                "path": {
+                  "type": "string",
+                  "default": "",
+                  "title": "Path",
+                  "description": "Exported NFS path to mount. Required when NFS mode is enabled."
+                }
+              },
+              "title": "NFS",
+              "description": "Mounts the originals from an NFS export instead of a volume claim."
+            }
+          },
+          "title": "Originals",
+          "description": "Volume holding the imported media files."
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "title": "Enabled",
+              "description": "Creates a volume for the storage folder holding the cache, sidecar files and database."
+            },
+            "size": {
+              "type": "string",
+              "default": "5Gi",
+              "title": "Storage Volume Size",
+              "description": "PVC size for /photoprism/storage (can be expanded later)."
+            },
+            "accessModes": {
+              "type": "array",
+              "title": "Access Modes",
+              "description": "Access modes requested for the storage volume.",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ReadWriteOnce",
+                  "ReadOnlyMany",
+                  "ReadWriteMany",
+                  "ReadWriteOncePod"
+                ]
+              }
+            },
+            "mountPath": {
+              "type": "string",
+              "default": "/photoprism/storage",
+              "title": "Mount Path",
+              "description": "Path the storage volume is mounted at inside the container."
+            }
+          },
+          "title": "Storage",
+          "description": "Volume holding the cache, sidecar files and database."
+        }
+      },
+      "title": "Persistence",
+      "description": "Volumes for the originals and storage folders."
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "title": "Enabled",
+          "description": "Creates a Service for the application."
+        },
+        "type": {
+          "type": "string",
+          "default": "ClusterIP",
+          "title": "Type",
+          "description": "Service type to create.",
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
+        },
+        "port": {
+          "type": "integer",
+          "default": 2342,
+          "title": "Port",
+          "description": "Port the Service listens on.",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "title": "Service",
+      "description": "Service exposing the application inside the cluster."
+    },
+    "ingress": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enabled",
+          "description": "Creates an Ingress resource for the application."
+        },
+        "className": {
+          "type": "string",
+          "default": "",
+          "title": "Class Name",
+          "description": "IngressClass that should handle the Ingress."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Annotations",
+          "description": "Annotations added to the Ingress, for controller-specific settings."
+        },
+        "hosts": {
+          "type": "array",
+          "title": "Hosts",
+          "description": "Host rules to route to the application."
+        },
+        "tls": {
+          "type": "array",
+          "title": "TLS",
+          "description": "TLS configuration referencing the secrets that hold the certificates."
+        }
+      },
+      "title": "Ingress",
+      "description": "Ingress exposing the application outside the cluster."
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "limits": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "cpu": {
+              "type": "string",
+              "default": "4000m",
+              "title": "CPU",
+              "description": "Maximum CPU the container may use."
+            },
+            "memory": {
+              "type": "string",
+              "default": "6Gi",
+              "title": "Memory",
+              "description": "Maximum memory the container may use."
+            }
+          },
+          "title": "Limits",
+          "description": "Upper CPU and memory bound for the container."
+        },
+        "requests": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "cpu": {
+              "type": "string",
+              "default": "500m",
+              "title": "CPU",
+              "description": "CPU reserved for the container."
+            },
+            "memory": {
+              "type": "string",
+              "default": "1Gi",
+              "title": "Memory",
+              "description": "Memory reserved for the container."
+            }
+          },
+          "title": "Requests",
+          "description": "Minimum CPU and memory reserved for the container."
+        }
+      },
+      "title": "Resources",
+      "description": "CPU and memory requests and limits for the container."
+    },
+    "nodeSelector": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Node Selector",
+      "description": "Node labels the pod must match to be scheduled."
+    },
+    "tolerations": {
+      "type": "array",
+      "title": "Tolerations",
+      "description": "Taints the pod tolerates when scheduling."
+    },
+    "affinity": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Affinity",
+      "description": "Affinity and anti-affinity rules applied to the pod."
+    },
+    "oidc": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "PHOTOPRISM_DISABLE_OIDC": {
+          "type": "boolean",
+          "default": true,
+          "title": "Disable OpenID Connect",
+          "description": "Set to false to enable OpenID Connect login with the settings below."
+        },
+        "PHOTOPRISM_OIDC_URI": {
+          "type": "string",
+          "default": "",
+          "title": "OIDC URI",
+          "description": "Issuer URI for single sign-on via OpenID Connect, e.g. https://accounts.google.com."
+        },
+        "PHOTOPRISM_OIDC_CLIENT": {
+          "type": "string",
+          "default": "",
+          "title": "OIDC Client",
+          "description": "Client ID for single sign-on via OpenID Connect."
+        },
+        "PHOTOPRISM_OIDC_SECRET": {
+          "type": "string",
+          "default": "",
+          "title": "OIDC Secret",
+          "description": "Client SECRET for single sign-on via OpenID Connect."
+        },
+        "PHOTOPRISM_OIDC_SCOPES": {
+          "type": "string",
+          "default": "openid email profile",
+          "title": "OIDC Scopes",
+          "description": "Client authorization SCOPES for single sign-on via OpenID Connect."
+        },
+        "PHOTOPRISM_OIDC_PROMPT": {
+          "type": "string",
+          "default": "",
+          "title": "OIDC Prompt",
+          "description": "Authorization PROMPT for single sign-on via OpenID Connect (login, select_account, consent)."
+        },
+        "PHOTOPRISM_OIDC_REGISTER": {
+          "type": "boolean",
+          "default": true,
+          "title": "OIDC Register",
+          "description": "Allows new users to create an account when they sign in with OpenID Connect."
+        },
+        "PHOTOPRISM_OIDC_REDIRECT": {
+          "type": "boolean",
+          "default": false,
+          "title": "OIDC Redirect",
+          "description": "Automatically redirects unauthenticated users to the configured identity provider."
+        },
+        "PHOTOPRISM_OIDC_USERNAME": {
+          "type": "string",
+          "default": "email",
+          "title": "OIDC Username",
+          "description": "Preferred username CLAIM for new OpenID Connect users (preferred_username, name, nickname, email)."
+        },
+        "PHOTOPRISM_OIDC_PROVIDER": {
+          "type": "string",
+          "default": "",
+          "title": "OIDC Provider",
+          "description": "Custom identity provider NAME, e.g. Google."
+        },
+        "PHOTOPRISM_OIDC_ICON": {
+          "type": "string",
+          "default": "",
+          "title": "OIDC Icon",
+          "description": "Custom identity provider icon URI."
+        },
+        "PHOTOPRISM_OIDC_WEBDAV": {
+          "type": "boolean",
+          "default": false,
+          "title": "OIDC Webdav",
+          "description": "Allows new OpenID Connect users to use WebDAV when they have a role that allows it."
+        }
+      },
+      "title": "OIDC",
+      "description": "OpenID Connect settings. Each key is passed to the container as that environment variable."
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "PHOTOPRISM_SITE_URL": {
+          "type": "string",
+          "default": "",
+          "title": "Site URL",
+          "description": "Canonical site URL used in generated links and to determine HTTPS/TLS (scheme://host[:port])."
+        },
+        "PHOTOPRISM_SITE_NAME": {
+          "type": "string",
+          "default": "",
+          "title": "Site Name",
+          "description": "Optional short name identifying this instance in cluster switchers and selectors. Example: Acme Media."
+        },
+        "PHOTOPRISM_SITE_TITLE": {
+          "type": "string",
+          "default": "PhotoPrism",
+          "title": "Site Title",
+          "description": "Displayed title in the PhotoPrism UI. Example: Photo Library."
+        },
+        "PHOTOPRISM_SITE_CAPTION": {
+          "type": "string",
+          "default": "",
+          "title": "Site Caption",
+          "description": "Optional tagline shown beneath the title. Example: Explore Your Media."
+        },
+        "PHOTOPRISM_SITE_DESCRIPTION": {
+          "type": "string",
+          "default": "",
+          "title": "Site Description",
+          "description": "Short description used in metadata and link previews. Example: Private family archive."
+        },
+        "PHOTOPRISM_SITE_AUTHOR": {
+          "type": "string",
+          "default": "",
+          "title": "Site Author",
+          "description": "Owner or copyright notice displayed in metadata. Example: © 2025 The Smith Family."
+        },
+        "PHOTOPRISM_SITE_FAVICON": {
+          "type": "string",
+          "default": "",
+          "title": "Site Favicon",
+          "description": "Filename or URL of the favicon asset. Example: /photoprism/assets/favicon.ico."
+        },
+        "PHOTOPRISM_SITE_PREVIEW": {
+          "type": "string",
+          "default": "",
+          "title": "Sharing Preview URL",
+          "description": "Image URL used for social previews. Example: https://example.com/preview.jpg."
+        },
+        "PHOTOPRISM_APP_NAME": {
+          "type": "string",
+          "default": "PhotoPrism",
+          "title": "App Name",
+          "description": "Display name when PhotoPrism is installed as a PWA."
+        },
+        "PHOTOPRISM_APP_ICON": {
+          "type": "string",
+          "default": "",
+          "title": "App Icon",
+          "description": "Icon style for the PWA shortcut (logo, app, mint, square, etc.). Example: logo."
+        },
+        "PHOTOPRISM_APP_COLOR": {
+          "type": "string",
+          "default": "#19191a",
+          "title": "App Color",
+          "description": "Hex color used for the PWA splash screen and tint. Example: #19191a."
+        },
+        "PHOTOPRISM_DEFAULT_THEME": {
+          "type": "string",
+          "default": "",
+          "title": "Default Theme",
+          "description": "Theme name applied to new users (leave blank for PhotoPrism default)."
+        },
+        "PHOTOPRISM_DEFAULT_LOCALE": {
+          "type": "string",
+          "default": "en",
+          "title": "Default Locale",
+          "description": "Language code assigned to new users. Example: en or de."
+        },
+        "PHOTOPRISM_DEFAULT_TIMEZONE": {
+          "type": "string",
+          "default": "",
+          "title": "Default Timezone",
+          "description": "Timezone name used for scheduling (e.g. Europe/Berlin)."
+        },
+        "PHOTOPRISM_PLACES_LOCALE": {
+          "type": "string",
+          "default": "local",
+          "title": "Places Locale",
+          "description": "Language code for location details (en, de, local, etc.)."
+        },
+        "PHOTOPRISM_AUTH_MODE": {
+          "type": "string",
+          "default": "password",
+          "title": "Authentication Mode",
+          "description": "Select password-protected or public access.",
+          "enum": [
+            "password",
+            "public"
+          ]
+        },
+        "PHOTOPRISM_PASSWORD_LENGTH": {
+          "type": "string",
+          "default": "8",
+          "title": "Minimum Password Length",
+          "description": "Enforce a minimum password length for local users."
+        },
+        "PHOTOPRISM_SESSION_MAXAGE": {
+          "type": "string",
+          "default": "1209600",
+          "title": "Session Max Age (Seconds)",
+          "description": "Maximum session lifetime; doubled when 2FA is enabled."
+        },
+        "PHOTOPRISM_SESSION_TIMEOUT": {
+          "type": "string",
+          "default": "604800",
+          "title": "Session Idle Timeout (Seconds)",
+          "description": "Maximum idle time before users are signed out."
+        },
+        "PHOTOPRISM_SESSION_CACHE": {
+          "type": "string",
+          "default": "900",
+          "title": "Session Cache TTL (Seconds)",
+          "description": "Duration session data is cached in memory (60-3600)."
+        },
+        "PHOTOPRISM_LOGIN_INFO": {
+          "type": "string",
+          "default": "",
+          "title": "Login Footer Text",
+          "description": "Optional message displayed below the login form."
+        },
+        "PHOTOPRISM_LOG_LEVEL": {
+          "type": "string",
+          "default": "info",
+          "title": "Log Level",
+          "description": "Application log verbosity. Example: info.",
+          "enum": [
+            "trace",
+            "debug",
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "PHOTOPRISM_HTTP_COMPRESSION": {
+          "type": "string",
+          "default": "zstd,gzip",
+          "title": "HTTP Compression",
+          "description": "Web server compression METHODS as a comma-separated preference list (e.g. \"zstd,gzip\"; supported: gzip, zstd, none)."
+        },
+        "PHOTOPRISM_CDN_URL": {
+          "type": "string",
+          "default": "",
+          "title": "CDN URL",
+          "description": "Base URL for serving static assets via CDN. Example: https://cdn.example.com."
+        },
+        "PHOTOPRISM_CDN_VIDEO": {
+          "type": "string",
+          "default": "",
+          "title": "CDN Video URL",
+          "description": "Optional CDN endpoint for streaming videos. Example: https://videos.example.com."
+        },
+        "PHOTOPRISM_CORS_ORIGIN": {
+          "type": "string",
+          "default": "",
+          "title": "CORS Allowed Origin",
+          "description": "Origin allowed to issue cross-origin requests. Example: https://app.example.com."
+        },
+        "PHOTOPRISM_CORS_HEADERS": {
+          "type": "string",
+          "default": "Accept, Accept-Ranges, Content-Disposition, Content-Encoding, Content-Range, Location",
+          "title": "CORS Headers",
+          "description": "Comma-separated headers exposed for cross-origin requests."
+        },
+        "PHOTOPRISM_CORS_METHODS": {
+          "type": "string",
+          "default": "GET, HEAD, OPTIONS",
+          "title": "CORS Methods",
+          "description": "Allowed HTTP methods for cross-origin requests."
+        },
+        "PHOTOPRISM_LEGAL_INFO": {
+          "type": "string",
+          "default": "",
+          "title": "Legal Notice Text",
+          "description": "Text displayed in the footer for legal notices."
+        },
+        "PHOTOPRISM_LEGAL_URL": {
+          "type": "string",
+          "default": "",
+          "title": "Legal Notice URL",
+          "description": "Link to full legal information."
+        },
+        "PHOTOPRISM_BACKUP_SCHEDULE": {
+          "type": "string",
+          "default": "daily",
+          "title": "Backup Schedule",
+          "description": "Cron schedule or keyword (daily/weekly) controlling automated backups. Example: 0 3 * * *."
+        },
+        "PHOTOPRISM_BACKUP_RETAIN": {
+          "type": "string",
+          "default": "3",
+          "title": "Backups to Keep",
+          "description": "Number of backup archives to retain (-1 keeps all). Example: 3."
+        },
+        "PHOTOPRISM_BACKUP_DATABASE": {
+          "type": "boolean",
+          "default": true,
+          "title": "Backup Database",
+          "description": "Enable scheduled database backups."
+        },
+        "PHOTOPRISM_BACKUP_ALBUMS": {
+          "type": "boolean",
+          "default": true,
+          "title": "Backup Albums",
+          "description": "Include YAML album metadata in backups."
+        },
+        "PHOTOPRISM_BACKUP_PATH": {
+          "type": "string",
+          "default": "",
+          "title": "Backup Path",
+          "description": "Custom base directory for backups. Example: /photoprism/backups."
+        },
+        "PHOTOPRISM_FILES_QUOTA": {
+          "type": "string",
+          "default": "0",
+          "title": "Total File Quota (GB)",
+          "description": "Limit the total size of indexed originals (0 for unlimited)."
+        },
+        "PHOTOPRISM_ORIGINALS_LIMIT": {
+          "type": "string",
+          "default": "5000",
+          "title": "Maximum Original Size (MB)",
+          "description": "Largest allowed original file size."
+        },
+        "PHOTOPRISM_UPLOAD_LIMIT": {
+          "type": "string",
+          "default": "5000",
+          "title": "Maximum Upload Size (MB)",
+          "description": "Largest allowed upload size."
+        },
+        "PHOTOPRISM_UPLOAD_ALLOW": {
+          "type": "string",
+          "default": "zip,jpeg,jpg,png,gif,bmp,avif,webp,heic,heif,tiff,pdf,ai,svg,xmp",
+          "title": "Allowed Upload Types",
+          "description": "Comma-separated list of permitted upload extensions."
+        },
+        "PHOTOPRISM_IMPORT_ALLOW": {
+          "type": "string",
+          "default": "zip,jpeg,jpg,png,gif,bmp,avif,webp,heic,heif,tiff,pdf,ai,svg,xmp",
+          "title": "Allowed Import Types",
+          "description": "Comma-separated list of permitted import extensions."
+        },
+        "PHOTOPRISM_UPLOAD_ARCHIVES": {
+          "type": "boolean",
+          "default": true,
+          "title": "Upload Archives",
+          "description": "Allows upload of zip archives (will be extracted before import)."
+        },
+        "PHOTOPRISM_UPLOAD_NSFW": {
+          "type": "boolean",
+          "default": true,
+          "title": "Upload NSFW",
+          "description": "Allows uploads that might be offensive (when disabled, files flagged by the NSFW model are rejected before indexing)."
+        },
+        "PHOTOPRISM_DISABLE_TLS": {
+          "type": "boolean",
+          "default": true,
+          "title": "Disable TLS",
+          "description": "Disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available."
+        },
+        "PHOTOPRISM_DISABLE_STS": {
+          "type": "boolean",
+          "default": true,
+          "title": "Disable STS",
+          "description": "Disables HTTP Strict-Transport-Security (STS) header."
+        },
+        "PHOTOPRISM_DISABLE_MCP": {
+          "type": "boolean",
+          "default": false,
+          "title": "Disable Mcp",
+          "description": "Disables the Model Context Protocol (MCP) API endpoint for AI agent integrations."
+        },
+        "PHOTOPRISM_WALLPAPER_URI": {
+          "type": "string",
+          "default": "",
+          "title": "Wallpaper URI",
+          "description": "Background image URL for the login screen."
+        }
+      },
+      "title": "Config",
+      "description": "Application configuration. Each key is passed to the container as that environment variable."
+    },
+    "database": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "driver": {
+          "type": "string",
+          "default": "sqlite",
+          "title": "Driver",
+          "description": "Set to mysql when connecting to MariaDB/MySQL.",
+          "enum": [
+            "sqlite",
+            "mysql"
+          ]
+        },
+        "server": {
+          "type": "string",
+          "default": "",
+          "title": "Server",
+          "description": "Host:port or socket path for the database server."
+        },
+        "name": {
+          "type": "string",
+          "default": "photoprism",
+          "title": "Database Name",
+          "description": "Schema name when using MariaDB/MySQL."
+        },
+        "user": {
+          "type": "string",
+          "default": "photoprism",
+          "title": "Database Username",
+          "description": "User account for the schema."
+        },
+        "password": {
+          "type": "string",
+          "default": "",
+          "title": "Database Password",
+          "description": "Optional password stored in the chart-managed secret. Ignored when an external secret is referenced."
+        },
+        "passwordSecretName": {
+          "type": "string",
+          "default": "",
+          "title": "Password Secret Name",
+          "description": "Reference an existing Kubernetes Secret for the password instead of the chart-managed secret."
+        },
+        "passwordSecretKey": {
+          "type": "string",
+          "default": "",
+          "title": "Password Secret Key",
+          "description": "Key within the referenced secret (defaults to PHOTOPRISM_DATABASE_PASSWORD)."
+        },
+        "timeout": {
+          "type": "integer",
+          "default": 15,
+          "title": "Connection Timeout (Seconds)",
+          "description": "Timeout when establishing a database connection."
+        },
+        "conns": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max Open Connections",
+          "description": "Maximum number of open connections (0 lets PhotoPrism decide)."
+        },
+        "connsIdle": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max Idle Connections",
+          "description": "Maximum number of idle connections (0 lets PhotoPrism decide)."
+        }
+      },
+      "title": "Database",
+      "description": "External database connection details.",
+      "required": [
+        "driver",
+        "server",
+        "name",
+        "user"
+      ]
+    }
+  }
+}

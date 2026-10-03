@@ -21,6 +21,8 @@ const (
 	MaxVisionRequestBytes int64 = 32 * 1024 * 1024
 	// MaxSessionRequestBytes bounds login request payloads.
 	MaxSessionRequestBytes int64 = MaxAuthRequestBytes
+	// MaxOAuthRequestBytes bounds OAuth2 token, revoke, and OIDC endpoint payloads.
+	MaxOAuthRequestBytes int64 = MaxAuthRequestBytes
 	// MaxAlbumRequestBytes bounds album create and update payloads.
 	MaxAlbumRequestBytes int64 = MaxMutationRequestBytes
 	// MaxSettingsRequestBytes bounds settings and config option payloads.
@@ -35,6 +37,10 @@ const (
 	MaxMultipartOverheadBytes int64 = 1024 * 1024
 	// MaxAvatarUploadBytes bounds avatar uploads including multipart overhead.
 	MaxAvatarUploadBytes int64 = 20000000 + MaxMultipartOverheadBytes
+	// MaxWebDAVMetadataRequestBytes bounds the XML bodies of the WebDAV metadata methods, which the
+	// handler parses into memory and, for a LOCK owner, retains for the lifetime of the lock. Clients
+	// send a few hundred bytes to a few kilobytes here, so this leaves ample headroom.
+	MaxWebDAVMetadataRequestBytes int64 = 128 * 1024
 	// MaxMCPRequestBytes bounds Model Context Protocol (MCP) JSON-RPC payloads.
 	// The upstream SDK reads the full POST body into memory via io.ReadAll, so
 	// this cap must be enforced at the handler boundary before dispatch.

@@ -4,6 +4,8 @@ import (
 	"path/filepath"
 	"strings"
 	"unicode"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // FileNameRedacted returns a file name with its last dash-separated segment replaced by a placeholder,
@@ -13,10 +15,10 @@ func FileNameRedacted(s string) string {
 	name := strings.TrimSuffix(s, ext)
 
 	if i := strings.LastIndex(name, "-"); i > 0 {
-		return name[:i+1] + "***" + ext
+		return name[:i+1] + txt.Masked + ext
 	}
 
-	return "***" + ext
+	return txt.Masked + ext
 }
 
 // FileName removes invalid character from a filename string.

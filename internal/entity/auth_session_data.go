@@ -3,6 +3,8 @@ package entity
 import (
 	"slices"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // UIDs represents a slice of unique ID strings.
@@ -22,6 +24,7 @@ func (u UIDs) Join(s string) string {
 type SessionData struct {
 	Tokens []string `json:"tokens"`           // Share Tokens.
 	Shares UIDs     `json:"shares"`           // Share UIDs.
+	Links  UIDs     `json:"links,omitempty"`  // UIDs of the links the tokens were redeemed through.
 	Groups []string `json:"groups,omitempty"` // Normalized login-time group identifiers (OIDC/LDAP).
 }
 
@@ -37,18 +40,28 @@ func NewSessionData() *SessionData {
 	return &SessionData{}
 }
 
-// RefreshShares updates the list of shared UIDs in the session data.
+// RedeemedLinks returns the links a token resolves that the session still holds: those within their
+// expiration time that either admit a redemption or already admitted this session.
+func (data *SessionData) RedeemedLinks(token string) (found Links) {
+	for _, link := range FindRedeemedLinksByToken(token, "") {
+		if !link.Redeemable() && !slices.Contains(data.Links, link.LinkUID) {
+			continue
+		}
+
+		found = append(found, link)
+	}
+
+	return found
+}
+
+// RefreshShares updates the list of shared UIDs in the session data. A redeemed link keeps its share
+// until it is removed or reaches its expiration time, so the view limit bounds how many sessions a
+// link admits rather than how long each of them lasts.
 func (data *SessionData) RefreshShares() *SessionData {
 	var shares []string
 
 	for _, token := range data.Tokens {
-		links := FindValidLinks(token, "")
-
-		if len(links) == 0 {
-			continue
-		}
-
-		for _, link := range links {
+		for _, link := range data.RedeemedLinks(token) {
 			shares = append(shares, link.ShareUID)
 		}
 	}
@@ -59,10 +72,22 @@ func (data *SessionData) RefreshShares() *SessionData {
 }
 
 // RedeemToken appends a new token and updates the list of shared UIDs in the session data.
+// The token is stored in its sanitized form so it still resolves on the next lookup, and a value
+// that cannot be sanitized is refused before the query runs.
 func (data *SessionData) RedeemToken(token string) (n int) {
-	links := FindValidLinks(token, "")
+	if token = clean.ShareToken(token); token == "" {
+		return 0
+	}
 
-	// No valid links found?
+	// A token the session already holds needs no new redemption, as the sharing page redeems on
+	// every load. It reports what the session still holds through it, without counting another view.
+	if slices.Contains(data.Tokens, token) {
+		return len(data.RedeemedLinks(token))
+	}
+
+	links := FindRedeemableLinksByToken(token, "")
+
+	// No redeemable links found?
 	if n = len(links); n == 0 {
 		return n
 	}
@@ -70,9 +95,10 @@ func (data *SessionData) RedeemToken(token string) (n int) {
 	// Append new token.
 	data.Tokens = append(data.Tokens, token)
 
-	// Append new shares.
+	// Append the shares and the links they were redeemed through.
 	for _, link := range links {
 		data.Shares = append(data.Shares, link.ShareUID)
+		data.Links = append(data.Links, link.LinkUID)
 		link.Redeem()
 	}
 

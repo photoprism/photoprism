@@ -123,25 +123,22 @@ func (c *Config) DatabaseDSN() string {
 	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
 		case dsn.DriverMySQL:
-			databaseServer := c.DatabaseServer()
-
-			// Connect via Unix Domain Socket?
-			if strings.HasPrefix(databaseServer, "/") {
-				log.Debugf("mariadb: connecting via Unix domain socket")
-				databaseServer = fmt.Sprintf("unix(%s)", databaseServer)
-			} else {
-				databaseServer = fmt.Sprintf("tcp(%s)", databaseServer)
+			d := dsn.DSN{
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Net:      "tcp",
+				Server:   c.DatabaseServer(),
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("%s&timeout=%ds", dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()),
 			}
 
-			return fmt.Sprintf(
-				"%s:%s@%s/%s?%s&timeout=%ds",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				databaseServer,
-				c.DatabaseName(),
-				dsn.Params[dsn.DriverMySQL],
-				c.DatabaseTimeout(),
-			)
+			// Connect via Unix Domain Socket?
+			if strings.HasPrefix(d.Server, "/") {
+				log.Debugf("mariadb: connecting via Unix domain socket")
+				d.Net = "unix"
+			}
+
+			return d.MySQL()
 		case dsn.DriverPostgres:
 			databaseServer := c.DatabaseServer()
 			d := dsn.DSN{
@@ -244,7 +241,7 @@ func (c *Config) DatabaseHost() string {
 		return ""
 	}
 
-	d := dsn.Parse(c.DatabaseDSN())
+	d := c.databaseServerDSN()
 	return d.Host()
 }
 
@@ -256,8 +253,18 @@ func (c *Config) DatabasePort() int {
 		return 0
 	}
 
-	d := dsn.Parse(c.DatabaseDSN())
+	d := c.databaseServerDSN()
 	return d.Port()
+}
+
+// databaseServerDSN returns the DSN that holds the database server address: the configured DSN, or,
+// without one, the configured server, so a password is never parsed as part of the address.
+func (c *Config) databaseServerDSN() dsn.DSN {
+	if c.HasDatabaseDSN() {
+		return dsn.Parse(c.DatabaseDSN())
+	}
+
+	return dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer()}
 }
 
 // DatabasePortString the database server port as string.
@@ -312,7 +319,7 @@ func (c *Config) DatabasePassword() string {
 		// No password set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from environment variable for DB password
-		event.SystemWarn([]string{"config", "database password", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+		event.SystemWarn([]string{"config", "database password", "read %s", "%s"}, clean.Log(fileName), clean.ErrorFull(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -436,6 +443,16 @@ func (c *Config) Db() *gorm.DB {
 	return c.db
 }
 
+// DbIfConnected returns the database connection, or nil if it is not connected, for callers that can
+// continue without it rather than exit like Db.
+func (c *Config) DbIfConnected() *gorm.DB {
+	if c == nil {
+		return nil
+	}
+
+	return c.db
+}
+
 // AsyncJobDrainTimeout bounds how long CloseDb waits for background jobs before
 // tearing down the connection, so a wedged job cannot hang shutdown forever.
 const AsyncJobDrainTimeout = 30 * time.Second
@@ -495,7 +512,7 @@ func (c *Config) RegisterDb() {
 	if err := c.connectDb(); err != nil {
 		// Report via the system log, not the database-persisted logger, so a
 		// connection failure cannot trigger a follow-up error writing to the DB.
-		event.SystemError([]string{"config", "database", "register", "%s"}, clean.Error(err))
+		event.SystemError([]string{"config", "database", "register", "%s"}, clean.ErrorFull(err))
 		return
 	}
 
@@ -675,7 +692,7 @@ func (c *Config) connectDb() error {
 		if c.Unsafe() {
 			// Report via the system log so a database problem is not written to
 			// the database-persisted error log.
-			event.SystemError([]string{"config", "database", "check", "%s"}, clean.Error(err))
+			event.SystemError([]string{"config", "database", "check", "%s"}, clean.ErrorFull(err))
 		} else {
 			return err
 		}

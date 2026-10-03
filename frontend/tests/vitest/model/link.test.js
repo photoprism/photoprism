@@ -98,4 +98,21 @@ describe("model/link", () => {
     const result = Link.getModelName();
     expect(result).toBe("Link");
   });
+
+  it("should accept a valid custom token", () => {
+    expect(Link.validateToken("")).toBe(true);
+    expect(Link.validateToken(null)).toBe(true);
+    expect(Link.validateToken("1jxf3jfn2k")).toBe(true);
+    expect(Link.validateToken("  Summer-2030_a:b  ")).toBe(true);
+    expect(Link.validateToken("abcdef")).toBe(true);
+    expect(Link.validateToken("a".repeat(160))).toBe(true);
+  });
+
+  it("should reject a token the server could not resolve", () => {
+    expect(Link.validateToken("abc")).not.toBe(true);
+    expect(Link.validateToken("not a token!")).not.toBe(true);
+    expect(Link.validateToken("....")).not.toBe(true);
+    expect(Link.validateToken("token/../etc")).not.toBe(true);
+    expect(Link.validateToken("a".repeat(161))).not.toBe(true);
+  });
 });

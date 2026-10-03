@@ -1,19 +1,44 @@
 {
   "permissions": {
-    "additionalDirectories": ["/go", "/tmp", "/home"],
+    "additionalDirectories": [
+      "/go",
+      "/tmp",
+      "/home"
+    ],
     "allow": [
-      "Bash(make:*)",
-      "Bash(go:*)",
-      "Bash(npx --yes markdown-table-formatter:*)",
+      "Bash(*)",
       "Read",
       "Write",
       "Edit",
+      "NotebookEdit",
       "Grep",
       "Glob",
       "WebSearch",
-      "mcp__playwright__*"
+      "mcp__playwright__*",
+      "WebFetch(domain:photoprism.app)",
+      "WebFetch(domain:docs.photoprism.app)",
+      "WebFetch(domain:dl.photoprism.app)",
+      "WebFetch(domain:charts.photoprism.app)",
+      "WebFetch(domain:docs.docker.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:doc.traefik.io)",
+      "WebFetch(domain:documentation.ubuntu.com)",
+      "WebFetch(domain:packages.ubuntu.com)",
+      "WebFetch(domain:www.keycloak.org)",
+      "WebFetch(domain:www.rfc-editor.org)",
+      "WebFetch(domain:vuetifyjs.com)",
+      "WebFetch(domain:developers.openai.com)"
     ],
     "defaultMode": "acceptEdits"
   },
-  "awaySummaryEnabled": false
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "enabledMcpjsonServers": [
+    "gopls"
+  ],
+  "awaySummaryEnabled": false,
+  "autoDreamEnabled": true
 }

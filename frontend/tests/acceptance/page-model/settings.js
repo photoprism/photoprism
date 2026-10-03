@@ -3,7 +3,7 @@ import { Selector, t } from "testcafe";
 export default class Page {
   constructor() {
     this.generalTab = Selector("#tab-settings_general");
-    this.languageInput = Selector(".input-language input");
+    this.languageInput = Selector(".input-language input:not([type='hidden'])");
     this.languageOpenSelection = Selector(".input-language div.v-input__control");
     this.startpageOpenSelection = Selector(".input-startpage div.v-input__control");
     this.uploadCheckbox = Selector(".input-upload div.v-selection-control__input");

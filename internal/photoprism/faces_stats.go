@@ -8,6 +8,11 @@ import (
 )
 
 // Stats shows statistics on face embeddings.
+//
+// Over what clustering would read rather than over every stored vector: passing no size bar still
+// applies the crop-detail condition, so a marker embedded from a crop its source could not fill is
+// left out. That is deliberate - the distances an operator reads here are the ones the clustering
+// distances are compared against - and it is the only caller that passes no bar at all.
 func (w *Faces) Stats() (err error) {
 	if embeddings, err := query.Embeddings(true, false, 0, 0, face.EmbeddingModelName()); err != nil {
 		return err

@@ -27,7 +27,7 @@
             <v-expansion-panel-text>
               <v-card color="secondary-light">
                 <v-card-text class="dense">
-                  <v-row align="center" dense>
+                  <v-row class="align-center" density="compact">
                     <v-col cols="12">
                       <v-text-field
                         :model-value="link.url()"
@@ -64,13 +64,14 @@
                     <v-col cols="12" sm="6">
                       <v-text-field
                         v-model="link.Token"
-                        hide-details
                         density="comfortable"
                         variant="solo"
                         flat
                         autocomplete="off"
                         autocorrect="off"
                         autocapitalize="none"
+                        maxlength="160"
+                        :rules="tokenRules"
                         :label="$gettext('Secret')"
                         :placeholder="$gettext('Token')"
                         class="input-secret"
@@ -84,10 +85,16 @@
                         :label="label.pass"
                         :placeholder="link.HasPassword ? '••••••••' : 'optional'"
                         color="surface-variant"
-                        :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                         :type="showPassword ? 'text' : 'password'"
-                        @click:append-inner="showPassword = !showPassword"
-                      ></v-text-field>
+                      >
+                        <template #append-inner>
+                          <p-input-action
+                            :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                            :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
+                            @click="showPassword = !showPassword"
+                          ></p-input-action>
+                        </template>
+                      </v-text-field>
                     </v-col> -->
                     <v-col cols="12" class="d-flex justify-space-between align-center ga-3">
                       <v-btn
@@ -131,6 +138,7 @@
 </template>
 <script>
 import * as options from "options/options";
+import Link from "model/link";
 
 export default {
   name: "PShareDialog",
@@ -154,6 +162,7 @@ export default {
       search: null,
       links: [],
       options: options,
+      tokenRules: [Link.validateToken],
       label: {
         url: this.$gettext("Service URL"),
         user: this.$gettext("Username"),
@@ -214,6 +223,13 @@ export default {
     update(link) {
       if (!link) {
         this.$notify.error(this.$gettext("Failed updating link"));
+        return;
+      }
+
+      // The server resolves links by the same character set and length limit, so a value it could
+      // not match is reported here instead of being saved as an unusable URL.
+      if (Link.validateToken(link.Token) !== true) {
+        this.$notify.error(this.$gettext("Invalid link"));
         return;
       }
 

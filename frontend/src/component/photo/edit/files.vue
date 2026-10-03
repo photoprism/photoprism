@@ -28,7 +28,7 @@
                 >
                   {{ file.Error }}
                 </v-alert>
-                <v-row class="d-flex align-stretch" align="center" justify="center">
+                <v-row class="d-flex align-stretch align-center justify-center">
                   <v-col cols="12" class="pa-0 flex-grow-1">
                     <div class="v-table__overflow">
                       <v-table tile hover density="compact" class="photo-files d-flex bg-table">
@@ -80,7 +80,7 @@
                                   <v-icon icon="mdi-image" size="18" end></v-icon>
                                 </v-btn>
                                 <v-btn
-                                  v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'"
+                                  v-if="features.edit && !file.Sidecar && !keepStacked(file) && !file.Error && !file.Primary && file.Root === '/'"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -288,14 +288,14 @@
                                 class="input-orientation"
                                 @update:model-value="changeOrientation(file)"
                               >
-                                <template #selection="{ item }">
-                                  <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
-                                  <span>{{ item.title }}</span>
+                                <template #selection="{ internalItem }">
+                                  <v-icon :class="orientationClass(internalItem)">mdi-account-box-outline</v-icon>
+                                  <span>{{ internalItem.title }}</span>
                                 </template>
-                                <template #item="{ props, item }">
+                                <template #item="{ props, internalItem }">
                                   <v-list-item v-bind="props">
                                     <template #prepend>
-                                      <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
+                                      <v-icon :class="orientationClass(internalItem)">mdi-account-box-outline</v-icon>
                                     </template>
                                   </v-list-item>
                                 </template>
@@ -451,6 +451,20 @@ export default {
     };
   },
   methods: {
+    // keepStacked reports whether the file must stay with the originals of its capture.
+    keepStacked(file) {
+      if (!file) {
+        return false;
+      } else if (file.KeepStacked) {
+        return true;
+      } else if (!file.StackGroup) {
+        return false;
+      }
+
+      return this.view.model
+        .fileModels()
+        .some((f) => f.UID !== file.UID && f.KeepStacked && f.StackGroup === file.StackGroup && f.Root === "/" && !f.Sidecar && !f.Missing);
+    },
     orientationClass(file) {
       if (!file) {
         return [];

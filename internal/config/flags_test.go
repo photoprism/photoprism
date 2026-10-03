@@ -2,13 +2,46 @@ package config
 
 import (
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 )
+
+// TestLabelModelDocDefault verifies the published default and supported modes.
+func TestLabelModelDocDefault(t *testing.T) {
+	for _, flag := range Flags {
+		if flag.Name() != "labels-model" {
+			continue
+		}
+
+		assert.Equal(t, string(classify.ModelAuto), flag.Default())
+		assert.Contains(t, flag.Usage(), "auto, none")
+		assert.NotContains(t, flag.Usage(), string(classify.DefaultModelName()))
+		return
+	}
+
+	t.Fatal("labels-model flag not found")
+}
+
+// TestNSFWModelDocDefault verifies the published default and supported modes.
+func TestNSFWModelDocDefault(t *testing.T) {
+	for _, flag := range Flags {
+		if flag.Name() != "nsfw-model" {
+			continue
+		}
+		assert.Equal(t, string(nsfw.ModelAuto), flag.Default())
+		assert.Contains(t, flag.Usage(), "auto, none, labels")
+		assert.NotContains(t, flag.Usage(), string(nsfw.DefaultModelName()))
+		return
+	}
+	t.Fatal("nsfw-model flag not found")
+}
 
 // TestFaceDocDefaults pins that the face options publish the number that actually applies on a
 // default install. The generated end-user reference and "--help" both print a numeric option
@@ -72,4 +105,50 @@ func TestFaceDocDefault(t *testing.T) {
 func TestFaceModelDocDefault(t *testing.T) {
 	assert.Equal(t, "0.72", faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterDist }))
 	assert.Empty(t, faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return 0 }))
+}
+
+// TestFlagsSecretAnnotation pins that every flag carrying credential material sets Secret.
+// A new flag matching one of the patterns below must either set it or join the reviewed
+// exceptions, which name a location, a lifetime, or a length rather than a credential.
+func TestFlagsSecretAnnotation(t *testing.T) {
+	patterns := []string{"password", "token", "secret", "key", "salt", "jwks"}
+
+	exceptions := map[string]bool{
+		"download-token-maxage": true,
+		"jwks-cache-ttl":        true,
+		"jwks-url":              true,
+		"password-length":       true,
+		"tls-key":               true,
+	}
+
+	matched := 0
+
+	for _, flag := range Flags {
+		name := flag.Name()
+
+		if exceptions[name] {
+			continue
+		}
+
+		pattern := ""
+
+		for _, p := range patterns {
+			if strings.Contains(strings.ToLower(name), p) || strings.Contains(strings.ToLower(flag.EnvVar()), p) {
+				pattern = p
+				break
+			}
+		}
+
+		if pattern == "" {
+			continue
+		}
+
+		matched++
+
+		assert.True(t, flag.Secret, "flag %q matches %q, so it must set Secret or be a reviewed exception", name, pattern)
+	}
+
+	// Guard the scan itself: without this a rename that stops matching every pattern would leave
+	// the loop asserting nothing and still reporting success.
+	assert.GreaterOrEqual(t, matched, 9, "expected the known credential flags to match; the patterns may be stale")
 }

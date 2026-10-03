@@ -1,5 +1,5 @@
 /*
-Package dns provides helpers for validating and classifying hostnames that are
+Package dns provides helpers for validating, classifying, and joining hostnames that are
 safe to use in cluster URLs, node identifiers, and other HTTP-facing settings.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.

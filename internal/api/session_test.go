@@ -1,17 +1,25 @@
 package api
 
 import (
+	"math"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -22,6 +30,85 @@ func TestSession(t *testing.T) {
 		sess := get.Session().Public()
 		assert.Equal(t, sess, Session("1.2.3.4", ""))
 		assert.Equal(t, sess, Session("1.2.3.4", "1234ffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0"))
+	})
+}
+
+// TestLookupSession checks that a missing session is returned with the reason.
+func TestLookupSession(t *testing.T) {
+	conf := get.Config()
+	origAuthMode, origLimit := conf.AuthMode(), limiter.Auth
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() {
+		conf.SetAuthMode(origAuthMode)
+		limiter.Auth = origLimit
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		sess, err := entity.AddClientSession("lookup-session", conf.SessionMaxAge(), "*", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		found, err := LookupSession("198.51.100.51", sess.AuthToken())
+		require.NoError(t, err)
+		require.NotNil(t, found)
+		assert.Equal(t, sess.ID, found.ID)
+		assert.False(t, limiter.Auth.Reject("198.51.100.51"))
+	})
+	t.Run("TokenRequired", func(t *testing.T) {
+		sess, err := LookupSession("198.51.100.52", "")
+		assert.Nil(t, sess)
+		assert.ErrorIs(t, err, authn.ErrTokenRequired)
+	})
+	t.Run("InvalidFormat", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		sess, err := LookupSession("198.51.100.53", "not-a-session-token")
+		assert.Nil(t, sess)
+		assert.ErrorIs(t, err, authn.ErrInvalidToken)
+		assert.Equal(t, 3.0, math.Round(limiter.Auth.IP("198.51.100.53").Tokens()), "not counted")
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		for range 3 {
+			sess, err := LookupSession("198.51.100.54", rnd.AuthToken())
+			assert.Nil(t, sess)
+			assert.ErrorIs(t, err, authn.ErrInvalidToken)
+		}
+		assert.True(t, limiter.Auth.Reject("198.51.100.54"))
+	})
+	t.Run("DatabaseError", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		tempConn := &entity.DbConn{Driver: dsn.DriverSQLite3, Dsn: filepath.Join(t.TempDir(), "lookup-session-error.db")}
+		entity.SetDbProvider(tempConn)
+		t.Cleanup(func() {
+			entity.SetDbProvider(conf)
+			tempConn.Close()
+		})
+
+		for range 4 {
+			sess, err := LookupSession("198.51.100.56", rnd.AuthToken())
+			assert.Nil(t, sess)
+			assert.ErrorIs(t, err, authn.ErrInvalidToken)
+		}
+
+		assert.False(t, limiter.Auth.Reject("198.51.100.56"), "not counted")
+	})
+	t.Run("RateLimited", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		for range 3 {
+			limiter.Auth.Reserve("198.51.100.55")
+		}
+		sess, err := LookupSession("198.51.100.55", rnd.AuthToken())
+		assert.Nil(t, sess)
+		assert.ErrorIs(t, err, authn.ErrRateLimitExceeded)
+		assert.Greater(t, limiter.Auth.IP("198.51.100.55").Tokens(), -0.5, "not counted over the limit")
+	})
+	t.Run("Public", func(t *testing.T) {
+		conf.SetAuthMode(config.AuthModePublic)
+		t.Cleanup(func() { conf.SetAuthMode(config.AuthModePasswd) })
+		sess, err := LookupSession("198.51.100.56", "")
+		assert.NoError(t, err)
+		assert.Equal(t, get.Session().Public(), sess)
 	})
 }
 
@@ -79,6 +166,7 @@ func TestGetSessionResponse(t *testing.T) {
 	})
 }
 
+// TestCreateSession checks login, share redemption, and rejection paths.
 func TestCreateSession(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -148,11 +236,41 @@ func TestCreateSession(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		alice := entity.UserFixtures.Pointer("alice")
+		shareUID := "as6sg6bxpogaaba8"
+		prior := entity.FindUserShare(entity.UserShare{UserUID: alice.UserUID, ShareUID: shareUID})
+		var link entity.Link
+		if err := entity.Db().Where("link_token = ?", "1jxf3jfn2k").First(&link).Error; err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			if prior == nil {
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserShare{}, "user_uid = ? AND share_uid = ?", alice.UserUID, shareUID).Error)
+			} else {
+				assert.NoError(t, entity.UnscopedDb().Save(prior).Error)
+			}
+			alice.RefreshShares()
+			assert.NoError(t, entity.UnscopedDb().Model(&entity.Link{}).Where("link_uid = ?", link.LinkUID).
+				UpdateColumn("link_views", link.LinkViews).Error)
+			var restored entity.Link
+			assert.NoError(t, entity.Db().Where("link_uid = ?", link.LinkUID).First(&restored).Error)
+			assert.Equal(t, link.LinkViews, restored.LinkViews)
+		})
+		if prior != nil {
+			if err := entity.UnscopedDb().Delete(prior).Error; err != nil {
+				t.Fatal(err)
+			}
+			alice.RefreshShares()
+		}
 
 		authToken := AuthenticateUser(app, router, "alice", "Alice123!")
 
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"token": "1jxf3jfn2k"}`, authToken)
 		assert.Equal(t, http.StatusOK, r.Code)
+		share := entity.FindUserShare(entity.UserShare{UserUID: alice.UserUID, ShareUID: shareUID})
+		if assert.NotNil(t, share) {
+			assert.Equal(t, link.LinkUID, share.LinkUID)
+		}
 	})
 	t.Run("PublicValidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()

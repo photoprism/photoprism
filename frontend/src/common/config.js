@@ -195,8 +195,8 @@ export default class Config {
       $event.publish("dialog.update", { values });
     }
 
-    if (values.DefaultLocale && options.DefaultLocale !== values.DefaultLocale) {
-      options.SetDefaultLocale(values.DefaultLocale);
+    if (values.defaultLocale && options.DefaultLocale !== values.defaultLocale) {
+      options.SetDefaultLocale(values.defaultLocale);
     }
 
     for (let key in values) {
@@ -396,12 +396,8 @@ export default class Config {
     }
 
     try {
-      // Dynamically import the translation JSON file.
-      await import(
-        /* webpackChunkName: "[request]" */
-        /* webpackMode: "lazy" */
-        `../locales/json/${locale}.json`
-      ).then((module) => {
+      // Dynamically import the translation JSON file, which the build emits as its own chunk.
+      await import(`../locales/json/${locale}.json`).then((module) => {
         Object.assign(this.translations, module.default);
       });
     } catch (error) {

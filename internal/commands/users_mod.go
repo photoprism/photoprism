@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -20,7 +19,7 @@ var UsersModCommand = &cli.Command{
 	Flags: append(UserFlags, &cli.BoolFlag{
 		Name:  "disable-2fa",
 		Usage: UserDisable2FA,
-	}),
+	}, UserRestoreFlag()),
 	Action: usersModAction,
 }
 
@@ -33,7 +32,7 @@ func usersModAction(ctx *cli.Context) error {
 
 		// Name or UID provided?
 		if id == "" {
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		// Reject flags placed after the username; the stdlib flag parser
@@ -57,12 +56,9 @@ func usersModAction(ctx *cli.Context) error {
 
 		// Check if account exists but is deleted.
 		if m.IsDeleted() {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Restore user %s?", m.String()),
-				IsConfirm: true,
-			}
-
-			if _, err := prompt.Run(); err != nil {
+			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
+				return err
+			} else if !restore {
 				return fmt.Errorf("user already exists")
 			}
 

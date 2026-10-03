@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	gc "github.com/patrickmn/go-cache"
 	"github.com/urfave/cli/v2"
 
@@ -274,6 +275,16 @@ func NewMinimalTestConfig(dataPath string) *Config {
 var testDbCache []byte
 var testDbMutex sync.Mutex
 
+// OpenTestDb opens a test connection without publishing it as the entity provider.
+// Configure callbacks before Init or RegisterDb makes the connection available to workers.
+func (c *Config) OpenTestDb() (*gorm.DB, error) {
+	if err := c.connectDb(); err != nil {
+		return nil, err
+	}
+
+	return c.db, nil
+}
+
 // NewMinimalTestConfigWithDb creates a lightweight test Config (minimal filesystem).
 //
 // Creates an isolated SQLite DB (cached after first run) without seeding media fixtures.
@@ -477,6 +488,8 @@ func CliTestContext() *cli.Context {
 	globalSet.String("ffmpeg-exclude", config.FFmpegExclude, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("vision-api", config.VisionApi, "doc")
+	globalSet.String("labels-model", "", "doc")
+	globalSet.String("nsfw-model", "auto", "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 	globalSet.Bool("xmp-faces", config.XMPFaces, "doc")
 	globalSet.Bool("debug", false, "doc")
@@ -515,6 +528,8 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("ffmpeg-exclude", "magicyuv"))
 	LogErr(c.Set("wakeup-interval", "1h34m9s"))
 	LogErr(c.Set("vision-api", "true"))
+	LogErr(c.Set("labels-model", ""))
+	LogErr(c.Set("nsfw-model", "auto"))
 	LogErr(c.Set("detect-nsfw", "true"))
 	LogErr(c.Set("debug", "false"))
 	LogErr(c.Set("sponsor", "true"))
@@ -685,7 +700,7 @@ func (c *Config) CleanupTestFolder() {
 
 	if filepath.Base(td) == fs.TestdataDir && strings.HasPrefix(filepath.Base(parent), "test-photoprism") {
 		if err := os.RemoveAll(parent); err != nil {
-			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.Error(err))
+			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.ErrorFull(err))
 			return
 		}
 		event.SystemDebug([]string{"config", "test", "cleanup %s", status.Succeeded}, parent)

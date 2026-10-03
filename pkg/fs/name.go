@@ -7,8 +7,25 @@ import (
 	"strings"
 )
 
-// FileName returns the file path for a sidecar file with the specified extension.
+// FileName returns the file path for a sidecar file with the specified extension and creates its folder.
 func FileName(fileName, dirName, baseDir, fileExt string) (string, error) {
+	result, err := FilePath(fileName, dirName, baseDir, fileExt)
+
+	if err != nil {
+		return "", err
+	}
+
+	// Create parent directories if they do not exist yet.
+	if err = MkdirAll(filepath.Dir(result)); err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// FilePath returns the file path for a sidecar file with the specified extension, like FileName, but
+// without creating its folder, e.g. to plan an output before any file is written.
+func FilePath(fileName, dirName, baseDir, fileExt string) (string, error) {
 	if fileName == "" {
 		return "", fmt.Errorf("file name is empty")
 	} else if fileExt == "" {
@@ -27,15 +44,8 @@ func FileName(fileName, dirName, baseDir, fileExt string) (string, error) {
 		}
 	}
 
-	// Create parent directories if they do not exist yet.
-	if err := MkdirAll(dirName); err != nil {
-		return "", err
-	}
-
 	// Compose and return file path.
-	result := filepath.Join(dirName, filepath.Base(fileName)) + fileExt
-
-	return result, nil
+	return filepath.Join(dirName, filepath.Base(fileName)) + fileExt, nil
 }
 
 // RelName returns the file name relative to a directory.

@@ -41,7 +41,8 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 
 	// Filter by username and/or auth provider name?
 	if search != "" && search != "all" {
-		stmt = stmt.Where("user_name LIKE ? OR client_name LIKE ?", search+"%", search+"%")
+		like := clean.SqlLike(search) + "%"
+		stmt = stmt.Where(clean.SqlLikeAny("user_name", "client_name"), like, like)
 	}
 
 	// Filter by authentication providers?

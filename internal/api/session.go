@@ -4,35 +4,49 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Session finds the client session for the specified auth token, or returns nil if not found.
-func Session(clientIp, authToken string) (sess *entity.Session) {
+func Session(clientIp, authToken string) *entity.Session {
+	sess, _ := LookupSession(clientIp, authToken)
+	return sess
+}
+
+// LookupSession finds the client session for the specified auth token, or returns nil and an error that
+// names the reason: authn.ErrTokenRequired, authn.ErrInvalidToken, or authn.ErrRateLimitExceeded.
+// A failed database query also returns authn.ErrInvalidToken, without counting against the limit.
+func LookupSession(clientIp, authToken string) (*entity.Session, error) {
 	// Skip authentication and return the default session when public mode is enabled.
 	if get.Config().Public() {
-		return get.Session().Public()
+		return get.Session().Public(), nil
 	}
 
 	// Check auth token format and return nil if it is invalid.
-	if !rnd.IsAuthAny(authToken) {
-		return nil
+	if authToken == "" {
+		return nil, authn.ErrTokenRequired
+	} else if !rnd.IsAuthAny(authToken) {
+		return nil, authn.ErrInvalidToken
 	}
 
 	// Check failure rate limit and return nil if it has been exceeded.
 	if limiter.Auth.Reject(clientIp) {
-		return nil
+		return nil, authn.ErrRateLimitExceeded
 	}
 
 	// Try to find an active session based on the hashed auth token.
 	sess, err := entity.FindSession(rnd.SessionID(authToken))
 
-	// Count error towards failure rate limit and return nil.
+	// Count a token without an active session towards the failure rate limit and return nil.
 	if err != nil {
-		limiter.Auth.Reserve(clientIp)
-		return nil
+		if entity.SessionNotFound(err) {
+			limiter.Auth.Reserve(clientIp)
+		}
+
+		return nil, authn.ErrInvalidToken
 	}
 
 	// Return session.
-	return sess
+	return sess, nil
 }

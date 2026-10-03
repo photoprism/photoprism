@@ -33,6 +33,8 @@ func TestClientAssets_Load(t *testing.T) {
 		assert.Equal(t, "/static/build/splash.test.css", a.SplashCssUri())
 		assert.Equal(t, "splash.test.css", a.SplashCssFile())
 		assert.NotEmpty(t, a.SplashCssFileContents())
+		assert.Equal(t, "/static/build/splash.test.js", a.SplashJsUri())
+		assert.Equal(t, "splash.test.js", a.SplashJsFile())
 	})
 	t.Run("Error", func(t *testing.T) {
 		testBuildPath := "testdata/foo"
@@ -51,6 +53,8 @@ func TestClientAssets_Load(t *testing.T) {
 		assert.Equal(t, "", a.ShareCssUri())
 		assert.Equal(t, "", a.ShareJs)
 		assert.Equal(t, "", a.ShareJsUri())
+		assert.Equal(t, "", a.SplashJsUri())
+		assert.Equal(t, "", a.SplashJsFile())
 	})
 }
 
@@ -108,4 +112,31 @@ func TestClientManifestUri(t *testing.T) {
 	c.options.SiteUrl = "http://myhost/foo"
 
 	assert.True(t, strings.HasPrefix(c.ClientManifestUri(), "/foo/manifest.json?2e5b4b86"))
+}
+
+func TestClientAssets_Missing(t *testing.T) {
+	t.Run("Complete", func(t *testing.T) {
+		a := &ClientAssets{AppCss: "app.css", AppJs: "app.js", ShareJs: "share.js"}
+		assert.Empty(t, a.Missing())
+	})
+	t.Run("Partial", func(t *testing.T) {
+		a := &ClientAssets{AppCss: "app.css"}
+		assert.Equal(t, []string{"app.js", "share.js"}, a.Missing())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, []string{"app.css", "app.js", "share.js"}, (&ClientAssets{}).Missing())
+	})
+}
+
+func TestClientAssets_SplashJs(t *testing.T) {
+	t.Run("ShareOnly", func(t *testing.T) {
+		a := &ClientAssets{BaseUri: "/static", ShareJs: "share.js"}
+		assert.Equal(t, "", a.SplashJsUri())
+		assert.Equal(t, "", a.SplashJsFile())
+	})
+	t.Run("SplashOnly", func(t *testing.T) {
+		a := &ClientAssets{BaseUri: "/static", SplashJs: "splash.js"}
+		assert.Equal(t, "/static/build/splash.js", a.SplashJsUri())
+		assert.Equal(t, "splash.js", a.SplashJsFile())
+	})
 }

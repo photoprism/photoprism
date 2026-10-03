@@ -44,6 +44,9 @@ echo "Extracting frontend translations from: ${src_dirs[*]}"
     -e 's#\.\./pro/frontend#src#g' \
     -e 's#\.\./portal/frontend#src#g' \
     src/locales/translations.pot
+
+  # Sort entries by msgid, so moving code between files does not reorder the catalogs.
+  msgcat --sort-output --no-wrap -o src/locales/translations.pot src/locales/translations.pot
 )
 
 echo "Merging gettext catalogs..."

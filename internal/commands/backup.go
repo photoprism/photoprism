@@ -9,7 +9,6 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -19,7 +18,9 @@ The --database flag can be omitted in this case. When using Docker, please run t
 to prevent log messages from being sent to stdout. If nothing else is specified, the database and album backup paths
 will be automatically determined based on the current configuration.
 
-Backups to stdout (-), bypass the insufficient storage check, so dumps can be streamed even when the local storage is full.`
+Backups to stdout (-) bypass the insufficient storage check, so dumps can be streamed even when the local storage is full.
+A backup file is replaced only once the new dump is complete. The filename must not be a symbolic link, even with --force,
+so use - rather than /dev/stdout to send the backup to stdout.`
 
 // BackupCommand configures the command name, flags, and action.
 var BackupCommand = &cli.Command{
@@ -59,23 +60,33 @@ var backupFlags = []cli.Flag{
 		TakesFile: true,
 	},
 	&cli.IntFlag{
-		Name:    "retain",
-		Aliases: []string{"r"},
-		Usage:   "`NUMBER` of database backups to keep (-1 to keep all)",
-		Value:   config.DefaultBackupRetain,
+		Name:        "retain",
+		Aliases:     []string{"r"},
+		Usage:       "`NUMBER` of database backups to keep (-1 to keep all)",
+		DefaultText: "global value",
 	},
+}
+
+// backupRetain returns the number of database backups to keep. The command flag is an override,
+// so an unset flag takes the configured value that defaults.yml, options.yml and the environment
+// also set, rather than the flag's own zero value.
+func backupRetain(ctx *cli.Context, configured int) int {
+	if ctx.IsSet("retain") {
+		return ctx.Int("retain")
+	}
+
+	return configured
 }
 
 // backupAction creates a database backup.
 func backupAction(ctx *cli.Context) error {
 	// Use command argument as backup file name.
 	fileName := ctx.Args().First()
-	databasePath := ctx.String("database-path")
+	databasePath := absPathArg(ctx.String("database-path"))
 	backupDatabase := ctx.Bool("database") || fileName != "" || databasePath != ""
-	albumsPath := ctx.String("albums-path")
+	albumsPath := absPathArg(ctx.String("albums-path"))
 	backupAlbums := ctx.Bool("albums") || albumsPath != ""
 	force := ctx.Bool("force")
-	retain := ctx.Int("retain")
 
 	if !backupDatabase && !backupAlbums {
 		return cli.ShowSubcommandHelp(ctx)
@@ -93,6 +104,8 @@ func backupAction(ctx *cli.Context) error {
 	}
 
 	defer conf.Shutdown()
+
+	retain := backupRetain(ctx, conf.BackupRetain())
 
 	if backupDatabase {
 		// Use default if no explicit filename was provided.

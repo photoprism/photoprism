@@ -1,6 +1,7 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -128,11 +129,12 @@ func uniqueUIDs(uids []string) []string {
 	return result
 }
 
-// MissingPhotos returns photo entities without existing files.
+// MissingPhotos returns active and archived photo entities without existing files, excluding removed photos.
 func MissingPhotos(limit int, offset int) (entities entity.Photos, err error) {
-	err = Db().
+	err = UnscopedDb().
 		Select("photos.*").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
+		Where("deleted_at IS NULL OR photo_quality > -1").
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 
@@ -149,6 +151,22 @@ func ArchivedPhotos(limit int, offset int) (entities entity.Photos, err error) {
 		Limit(limit).Offset(offset).Find(&entities).Error
 
 	return entities, err
+}
+
+// ArchivedPhoto returns the current row of the photo with the given ID if it is archived and not removed,
+// using the same condition as ArchivedPhotos, or nil if it is not.
+func ArchivedPhoto(id uint) (*entity.Photo, error) {
+	result := &entity.Photo{}
+
+	if err := UnscopedDb().
+		Where("id = ? AND photo_quality > -1 AND deleted_at IS NOT NULL", id).
+		First(result).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // PhotosMetadataUpdate returns photos selected for metadata maintenance.
@@ -228,7 +246,8 @@ func FixPrimaries() error {
 	return nil
 }
 
-// FlagHiddenPhotos sets the quality score of photos without valid primary file to -1.
+// FlagHiddenPhotos sets the quality score of active photos without valid primary file to -1.
+// Archived photos keep their score, since -1 marks an archived photo as removed.
 func FlagHiddenPhotos() (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
@@ -240,7 +259,7 @@ func FlagHiddenPhotos() (err error) {
 	affected := 0
 
 	ids := Db().Select("id").
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1 AND deleted_at IS NULL").
 		Table(entity.Photo{}.TableName()).SubQuery()
 	if result := UnscopedDb().Table(entity.Photo{}.TableName()).
 		Where("id IN (?) AND photo_quality > -1", ids).
@@ -272,7 +291,7 @@ func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
 	var pathDates []pathMaxDate
 	// Get all the paths and dates.
 	if err = entity.Db().Raw(`SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
-	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			FROM photos WHERE taken_src IN ('meta', 'modified') AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 	 			GROUP BY photo_path`).Scan(&pathDates).Error; err != nil {
 		log.Errorf("photo: get photo dates (%v)", err)
 		return photoPathDates, err

@@ -121,13 +121,46 @@ func TestUnmatchedFaceMarkers(t *testing.T) {
 
 func TestFaceMarkers(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		results, err := FaceMarkers(3, 0)
+		results, err := FaceMarkers(3, "", "")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, 3, len(results))
+	})
+	t.Run("After", func(t *testing.T) {
+		first, err := FaceMarkers(2, "", "")
+		require.NoError(t, err)
+		require.Len(t, first, 2)
+		next, err := FaceMarkers(2, first[1].MarkerUID, "")
+		require.NoError(t, err)
+		require.NotEmpty(t, next)
+		assert.Greater(t, next[0].MarkerUID, first[1].MarkerUID)
+		all, err := FaceMarkers(4, "", "")
+		require.NoError(t, err)
+		require.Len(t, all, 4)
+		assert.Equal(t, all[2].MarkerUID, next[0].MarkerUID, "the next page starts right after the cursor")
+	})
+}
+
+func TestLastMarkerUID(t *testing.T) {
+	last, err := LastMarkerUID()
+	require.NoError(t, err)
+	require.NotEmpty(t, last)
+	_, err = MarkerByUID(last)
+	require.NoError(t, err, "the last uid belongs to a stored marker")
+	var count int
+	require.NoError(t, UnscopedDb().Model(&entity.Marker{}).Where("marker_uid > ?", last).Count(&count).Error)
+	assert.Zero(t, count, "no marker sorts after the last uid")
+	t.Run("Bound", func(t *testing.T) {
+		all, err := FaceMarkers(4, "", "")
+		require.NoError(t, err)
+		require.Len(t, all, 4)
+		bounded, err := FaceMarkers(4, "", all[1].MarkerUID)
+		require.NoError(t, err)
+		require.Len(t, bounded, 2, "the last uid is included, later ones are not")
+		assert.Equal(t, all[1].MarkerUID, bounded[1].MarkerUID)
 	})
 }
 
@@ -168,7 +201,7 @@ func TestFaceMarkerModelBoundaries(t *testing.T) {
 	assert.False(t, foundLegacy)
 	assert.Equal(t, beforeUnmatched+1, CountUnmatchedFaceMarkers())
 
-	all, err := FaceMarkers(1000, 0)
+	all, err := FaceMarkers(1000, "", "")
 	require.NoError(t, err)
 	foundCompatible, foundLegacy = false, false
 	for _, marker := range all {
@@ -225,7 +258,7 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 		assert.True(t, found(markers))
 	})
 	t.Run("FaceMarkers", func(t *testing.T) {
-		markers, err := FaceMarkers(1000, 0)
+		markers, err := FaceMarkers(1000, "", "")
 		require.NoError(t, err)
 		assert.True(t, found(markers))
 	})
@@ -558,5 +591,70 @@ func TestResetAllFaceMarkerMatches(t *testing.T) {
 		assert.Equal(t, named.Size, m.Size)
 		assert.Equal(t, named.Score, m.Score)
 		assert.NotEmpty(t, m.Thumb)
+	})
+}
+
+func TestFaceMarkerFiles(t *testing.T) {
+	const fileUID = "fs6sg6bw45bn0004" // Germany/bridge.jpg
+
+	t.Run("All", func(t *testing.T) {
+		result, err := FaceMarkerFiles("")
+
+		require.NoError(t, err)
+		assert.Greater(t, result[fileUID].Markers, 0)
+		assert.Greater(t, result["fs6sg6bq45bnlqd0"].Markers, 0) // London/bridge1.jpg
+
+		dot, err := FaceMarkerFiles(".")
+		require.NoError(t, err)
+		assert.Equal(t, result, dot)
+	})
+	t.Run("PrimaryOnly", func(t *testing.T) {
+		// London/bridge3.jpg holds a marker but is not the primary file, which the index does not reach.
+		result, err := FaceMarkerFiles("")
+
+		require.NoError(t, err)
+		assert.NotContains(t, result, "fs6sg6bwhhbnlqdn")
+	})
+	t.Run("Folder", func(t *testing.T) {
+		result, err := FaceMarkerFiles("/Germany/")
+
+		require.NoError(t, err)
+		assert.Greater(t, result[fileUID].Markers, 0)
+		assert.NotContains(t, result, "fs6sg6bq45bnlqd0", "files in other folders are left out")
+	})
+	t.Run("FileName", func(t *testing.T) {
+		result, err := FaceMarkerFiles("Germany")
+
+		require.NoError(t, err)
+		assert.Equal(t, entity.RootOriginals, result[fileUID].FileRoot)
+		assert.Equal(t, "Germany/bridge.jpg", result[fileUID].FileName)
+		assert.NotZero(t, result[fileUID].PhotoID)
+	})
+	t.Run("SidecarFolder", func(t *testing.T) {
+		// A folder run covers the matching sidecar folder, which mirrors the originals folder.
+		result, err := FaceMarkerFiles("Holiday")
+
+		require.NoError(t, err)
+		require.Contains(t, result, "fs6sg6bw45bn0008")
+		assert.Equal(t, entity.RootSidecar, result["fs6sg6bw45bn0008"].FileRoot)
+
+		result, err = FaceMarkerFiles("2000")
+
+		require.NoError(t, err)
+		assert.Contains(t, result, "fs6sg6bqhhinlple")
+	})
+	t.Run("Wildcards", func(t *testing.T) {
+		for _, dir := range []string{"Lond_n", "Lon%", "German_"} {
+			result, err := FaceMarkerFiles(dir)
+
+			require.NoError(t, err)
+			assert.Empty(t, result, dir)
+		}
+	})
+	t.Run("MissingFolder", func(t *testing.T) {
+		result, err := FaceMarkerFiles("missing-folder")
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
 	})
 }

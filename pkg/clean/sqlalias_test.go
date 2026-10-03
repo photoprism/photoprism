@@ -48,3 +48,28 @@ func TestSqlAlias(t *testing.T) {
 		assert.Equal(t, "", SqlAlias("m\t"))
 	})
 }
+
+func TestSqlColumn(t *testing.T) {
+	t.Run("Accepted", func(t *testing.T) {
+		for _, col := range []string{"subj_name", "s.subj_name", "_x", "A1", "t9.col_2"} {
+			assert.Equalf(t, col, SqlColumn(col), "%s must be accepted", col)
+		}
+	})
+	t.Run("Rejected", func(t *testing.T) {
+		// Anything that is not a plain identifier, since the column is part of the statement
+		// rather than a bound parameter.
+		for _, col := range []string{
+			"", " ", "1col", "subj name", "subj_name'", "subj_name;", "a.b.c", ".x", "x.",
+			"subj_name) OR (1=1", "subj_name--", "subj_name/*", "subj_name\n", "s.subj_name ",
+		} {
+			assert.Emptyf(t, SqlColumn(col), "%s must be rejected", col)
+		}
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		// Each part carries the SqlAlias length bound, which the caller inherits.
+		long := strings.Repeat("a", SqlAliasMax+1)
+		assert.Empty(t, SqlColumn(long))
+		assert.Empty(t, SqlColumn("t."+long))
+		assert.Empty(t, SqlColumn(long+".col"))
+	})
+}

@@ -4,13 +4,19 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Clients finds clients and returns them.
-func Clients(limit, offset int, sortOrder, search string) (result entity.Clients, err error) {
+// Clients finds clients and returns them. When deleted is true it reports the retired
+// records instead of the current ones, so an operator can see what a deletion left behind.
+func Clients(limit, offset int, sortOrder, search string, deleted bool) (result entity.Clients, err error) {
 	result = entity.Clients{}
 	stmt := Db()
+
+	if deleted {
+		stmt = UnscopedDb().Where("deleted_at IS NOT NULL")
+	}
 
 	search = strings.TrimSpace(search)
 
@@ -22,7 +28,8 @@ func Clients(limit, offset int, sortOrder, search string) (result entity.Clients
 	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
-		stmt = stmt.Where("client_name LIKE ? OR user_name LIKE ?", search+"%", search+"%")
+		like := clean.SqlLike(search) + "%"
+		stmt = stmt.Where(clean.SqlLikeAny("client_name", "user_name"), like, like)
 	}
 
 	if sortOrder == "" {

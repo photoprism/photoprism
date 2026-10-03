@@ -23,10 +23,10 @@ import (
 //	@Tags		Users, Authentication
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid					path		string				true	"user uid"
-//	@Param		request				body		form.ChangePassword	true	"old and new password"
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		uid						path		string				true	"user uid"
+//	@Param		request					body		form.ChangePassword	true	"old and new password"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,404,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/password [put]
 func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
@@ -114,11 +114,11 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		}
 
 		// Log event.
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "password", "changed"}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "password", "changed"}, s.RefID, clean.LogQuote(u.UserName))
 
 		// Revoke other user sessions after a privilege level change,
 		// except for app passwords and client access tokens.
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "revoked %s"}, s.RefID,
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "revoked %s"}, s.RefID, clean.LogQuote(u.UserName),
 			english.Plural(u.RevokeDerivedSessions([]string{s.ID}), "session", "sessions"))
 
 		AddTokenHeaders(c, s)

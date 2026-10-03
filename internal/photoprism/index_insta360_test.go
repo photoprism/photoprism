@@ -1,10 +1,16 @@
+//go:build integration
+
 package photoprism
 
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -103,20 +109,39 @@ func insta360KeywordIDs(t *testing.T, photoID uint) []uint {
 	return result
 }
 
+// setInsta360PhotoState sets the archive state and quality of a photo without side effects.
+func setInsta360PhotoState(t *testing.T, photo entity.Photo, deletedAt *time.Time, quality int) {
+	t.Helper()
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).
+		UpdateColumns(entity.Values{"deleted_at": deletedAt, "photo_quality": quality}).Error)
+}
+
+// findInsta360Photo returns the photo with the specified ID, including deleted rows.
+func findInsta360Photo(t *testing.T, id uint) (result entity.Photo) {
+	t.Helper()
+	require.NoError(t, entity.UnscopedDb().First(&result, "id = ?", id).Error)
+	return result
+}
+
 // TestReconcileInsta360Photos verifies force-reindex state preservation and file reassignment.
 func TestReconcileInsta360Photos(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		related, photos, relNames := newInsta360ReconcileFixture(t, "insta360reconcile")
 
 		archivedAt := entity.Now()
-		photos[0].DeletedAt = &archivedAt
 		photos[1].DeletedAt = &archivedAt
 		photos[1].PhotoFavorite = true
+		photos[1].PhotoTitle = "Manual Title"
+		photos[1].TitleSrc = entity.SrcManual
+		photos[2].PhotoPrivate = true
+		photos[2].PhotoPanorama = true
 		photos[2].PhotoCaption = "preserved manual caption"
 		photos[2].CaptionSrc = entity.SrcManual
 		for i := range photos {
 			require.NoError(t, photos[i].Save())
 		}
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_name IN (?)", relNames).
+			UpdateColumn("file_primary", true).Error)
 
 		sharedAlbum := entity.NewAlbum("Shared Album", entity.AlbumManual)
 		require.NoError(t, sharedAlbum.Create())
@@ -138,12 +163,24 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		linkInsta360Associations(t, photos[1], sharedAlbum.AlbumUID, sharedLabel.ID, sharedKeyword.ID)
 		linkInsta360Associations(t, photos[2], uniqueAlbum.AlbumUID, uniqueLabel.ID, uniqueKeyword.ID)
 
+		logger := logrus.StandardLogger()
+		oldHooks := make(logrus.LevelHooks, len(logger.Hooks))
+		for level, hooks := range logger.Hooks {
+			oldHooks[level] = append([]logrus.Hook(nil), hooks...)
+		}
+		hook := test.NewGlobal()
+		t.Cleanup(func() { logger.ReplaceHooks(oldHooks) })
+
 		require.NoError(t, reconcileInsta360Photos(related))
 
 		var canonical entity.Photo
 		require.NoError(t, entity.UnscopedDb().First(&canonical, "id = ?", photos[0].ID).Error)
 		assert.True(t, canonical.PhotoFavorite)
+		assert.True(t, canonical.PhotoPrivate)
+		assert.True(t, canonical.PhotoPanorama)
 		assert.Nil(t, canonical.DeletedAt)
+		assert.Equal(t, "Manual Title", canonical.PhotoTitle)
+		assert.Equal(t, entity.SrcManual, canonical.TitleSrc)
 		assert.Equal(t, "preserved manual caption", canonical.PhotoCaption)
 		assert.Equal(t, entity.SrcManual, canonical.CaptionSrc)
 
@@ -153,7 +190,17 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		for _, file := range files {
 			assert.Equal(t, canonical.ID, file.PhotoID)
 			assert.Equal(t, canonical.PhotoUID, file.PhotoUID)
+			assert.Equal(t, file.FileName == relNames[0], file.FilePrimary, file.FileName)
 		}
+
+		var merges []string
+		for _, entry := range hook.AllEntries() {
+			if entry.Level == logrus.InfoLevel && strings.HasPrefix(entry.Message, "index: merged ") {
+				merges = append(merges, entry.Message)
+			}
+		}
+		require.Len(t, merges, 1)
+		assert.Contains(t, merges[0], photos[1].PhotoUID+", "+photos[2].PhotoUID+" into "+canonical.PhotoUID)
 
 		assert.ElementsMatch(t, []string{sharedAlbum.AlbumUID, uniqueAlbum.AlbumUID}, insta360AlbumUIDs(t, canonical.PhotoUID))
 		assert.ElementsMatch(t, []uint{sharedLabel.ID, uniqueLabel.ID}, insta360LabelIDs(t, canonical.ID))
@@ -185,6 +232,136 @@ func TestReconcileInsta360Photos(t *testing.T) {
 			assert.Equal(t, -1, merged.PhotoQuality)
 		}
 	})
+	t.Run("CanonicalArchived", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360canonicalarchived")
+		archivedAt := entity.Now()
+		setInsta360PhotoState(t, photos[0], &archivedAt, 3)
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.NotNil(t, canonical.DeletedAt)
+		assert.Equal(t, 3, canonical.PhotoQuality)
+	})
+	t.Run("MemberArchived", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360memberarchived")
+		archivedAt := entity.Now()
+		setInsta360PhotoState(t, photos[0], nil, 3)
+		setInsta360PhotoState(t, photos[1], &archivedAt, 3)
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.Nil(t, canonical.DeletedAt)
+		assert.Equal(t, 3, canonical.PhotoQuality)
+	})
+	t.Run("MemberRemoved", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360memberremoved")
+		removedAt := entity.Now()
+		setInsta360PhotoState(t, photos[0], nil, 3)
+		setInsta360PhotoState(t, photos[2], &removedAt, -1)
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.Nil(t, canonical.DeletedAt)
+		assert.Equal(t, 3, canonical.PhotoQuality)
+	})
+	t.Run("CanonicalRemoved", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360canonicalremoved")
+		removedAt := entity.Now()
+		setInsta360PhotoState(t, photos[0], &removedAt, -1)
+		setInsta360PhotoState(t, photos[1], nil, 3)
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.Nil(t, canonical.DeletedAt)
+		assert.Equal(t, 3, canonical.PhotoQuality)
+	})
+	t.Run("CanonicalRemovedMemberArchived", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360removedarchived")
+		removedAt := entity.Now()
+		setInsta360PhotoState(t, photos[0], &removedAt, -1)
+		setInsta360PhotoState(t, photos[1], &removedAt, -1)
+		setInsta360PhotoState(t, photos[2], &removedAt, 4)
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.NotNil(t, canonical.DeletedAt)
+		assert.Equal(t, 4, canonical.PhotoQuality)
+	})
+	t.Run("MemberArchivedBeforeRemoval", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360archivedbefore")
+		archivedAt := entity.Now().Add(-time.Minute)
+		removedAt := entity.Now()
+		setInsta360PhotoState(t, photos[0], &removedAt, -1)
+		setInsta360PhotoState(t, photos[1], &archivedAt, 4)
+		setInsta360PhotoState(t, photos[2], &removedAt, -1)
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		// The indexer restores the photo when it indexes the capture again.
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.NotNil(t, canonical.DeletedAt)
+		assert.Equal(t, -1, canonical.PhotoQuality)
+	})
+	t.Run("AllRemoved", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360allremoved")
+		removedAt := entity.Now()
+		for _, photo := range photos {
+			setInsta360PhotoState(t, photo, &removedAt, -1)
+		}
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		// The indexer restores the photo when it indexes the capture again.
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.NotNil(t, canonical.DeletedAt)
+		assert.Equal(t, -1, canonical.PhotoQuality)
+	})
+	t.Run("AllRemovedRestored", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		_, photos, relNames := newInsta360ReconcileFixture(t, "insta360allremovedrestored")
+		removedAt := entity.Now()
+		for _, photo := range photos {
+			setInsta360PhotoState(t, photo, &removedAt, -1)
+		}
+
+		// Indexing the capture again merges its rows and restores the photo.
+		indexInsta360StackFolder(Config(), "insta360allremovedrestored", true, true)
+
+		owners := insta360StackOwners(t, "insta360allremovedrestored")
+		require.Len(t, owners, len(relNames))
+		for _, relName := range relNames {
+			owner := owners[filepath.Base(relName)]
+			assert.Equal(t, photos[0].ID, owner.ID, relName)
+			assert.Nil(t, owner.DeletedAt, relName)
+			assert.GreaterOrEqual(t, owner.PhotoQuality, 0, relName)
+		}
+	})
+	t.Run("Mixed", func(t *testing.T) {
+		related, photos, _ := newInsta360ReconcileFixture(t, "insta360mixed")
+		archivedAt := entity.Now()
+		setInsta360PhotoState(t, photos[0], &archivedAt, 3)
+		setInsta360PhotoState(t, photos[1], nil, 3)
+		setInsta360PhotoState(t, photos[2], &archivedAt, -1)
+
+		require.NoError(t, reconcileInsta360Photos(related))
+
+		canonical := findInsta360Photo(t, photos[0].ID)
+		assert.NotNil(t, canonical.DeletedAt)
+		assert.Equal(t, 3, canonical.PhotoQuality)
+		for _, duplicate := range photos[1:] {
+			merged := findInsta360Photo(t, duplicate.ID)
+			assert.NotNil(t, merged.DeletedAt)
+			assert.Equal(t, -1, merged.PhotoQuality)
+		}
+	})
 	t.Run("IncompletePair", func(t *testing.T) {
 		related, photos, relNames := newInsta360ReconcileFixture(t, "insta360incomplete")
 
@@ -203,4 +380,61 @@ func TestReconcileInsta360Photos(t *testing.T) {
 			assert.NotEqual(t, -1, unchanged.PhotoQuality)
 		}
 	})
+}
+
+// TestReconcileInsta360Photos_LensCodedPhotos verifies that photos with lens codes are never merged.
+func TestReconcileInsta360Photos_LensCodedPhotos(t *testing.T) {
+	name := "insta360reconcilephoto"
+	cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	dir := filepath.Join(cfg.OriginalsPath(), name)
+	fileNames := []string{
+		writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg"),
+		writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"),
+	}
+
+	photos := make([]entity.Photo, len(fileNames))
+
+	for i, fileName := range fileNames {
+		photos[i] = entity.NewPhoto(true)
+		require.NoError(t, photos[i].Create())
+		mediaFile, err := NewMediaFile(fileName)
+		require.NoError(t, err)
+		file := entity.File{
+			PhotoID:   photos[i].ID,
+			PhotoUID:  photos[i].PhotoUID,
+			FileName:  mediaFile.RootRelName(),
+			FileRoot:  entity.RootOriginals,
+			FileHash:  mediaFile.Hash(),
+			FileType:  mediaFile.FileType().String(),
+			MediaType: media.Image.String(),
+		}
+		require.NoError(t, file.Create())
+	}
+
+	left, err := NewMediaFile(fileNames[0])
+	require.NoError(t, err)
+	related, err := left.RelatedFiles(false)
+	require.NoError(t, err)
+	require.Len(t, related.Files, 1)
+
+	require.NoError(t, reconcileInsta360Photos(related))
+
+	var files []entity.File
+	require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", name+"/%").Order("file_name").Find(&files).Error)
+	require.Len(t, files, 2)
+
+	for i, file := range files {
+		assert.Equal(t, photos[i].ID, file.PhotoID, file.FileName)
+	}
+
+	var other entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&other, "id = ?", photos[1].ID).Error)
+	assert.Nil(t, other.DeletedAt)
 }

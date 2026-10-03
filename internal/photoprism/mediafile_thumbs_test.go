@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -321,5 +322,107 @@ func TestMediaFile_ChangeOrientation(t *testing.T) {
 		if err = m.ChangeOrientation(orig); err != nil {
 			t.Fatal(err)
 		}
+	})
+}
+
+func TestMediaFile_configBounds(t *testing.T) {
+	c := config.TestConfig()
+
+	t.Run("Image", func(t *testing.T) {
+		m, err := NewMediaFile(filepath.Join(c.SamplesPath(), "elephants.jpg"))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		b := m.configBounds()
+		cfg, cfgErr := m.DecodeConfig()
+
+		if cfgErr != nil {
+			t.Fatal(cfgErr)
+		}
+
+		assert.Equal(t, cfg.Width, b.Max.X)
+		assert.Equal(t, cfg.Height, b.Max.Y)
+		assert.False(t, b.Empty())
+	})
+	t.Run("NotAnImage", func(t *testing.T) {
+		m, err := NewMediaFile(filepath.Join(c.SamplesPath(), "blue-go-video.mp4"))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, m.configBounds().Empty())
+	})
+}
+
+// TestMediaFile_GenerateAvatarThumbnails covers that avatar thumbnails are written without
+// consulting the file metadata, which an avatar does not need.
+func TestMediaFile_GenerateAvatarThumbnails(t *testing.T) {
+	c := config.TestConfig()
+
+	thumbsPath, err := filepath.Abs("./.test_mediafile_avatarthumbnails")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer func() {
+		_ = os.RemoveAll(thumbsPath)
+	}()
+
+	if err = c.CreateDirectories(); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		m, mErr := NewMediaFile(filepath.Join(c.SamplesPath(), "elephants.jpg"))
+
+		if mErr != nil {
+			t.Fatal(mErr)
+		}
+
+		if genErr := m.GenerateAvatarThumbnails(thumbsPath, true); genErr != nil {
+			t.Fatal(genErr)
+		}
+
+		thumbFilename, fErr := thumb.FileName(m.Hash(), thumbsPath, thumb.Sizes[thumb.Tile50].Width, thumb.Sizes[thumb.Tile50].Height, thumb.Sizes[thumb.Tile50].Options...)
+
+		if fErr != nil {
+			t.Fatal(fErr)
+		}
+
+		assert.FileExists(t, thumbFilename)
+		// The point of the avatar path: the file metadata is never read.
+		assert.Equal(t, meta.Data{}, m.metaData)
+	})
+	t.Run("RegularPathReadsMetadata", func(t *testing.T) {
+		m, mErr := NewMediaFile(filepath.Join(c.SamplesPath(), "elephants.jpg"))
+
+		if mErr != nil {
+			t.Fatal(mErr)
+		}
+
+		if genErr := m.GenerateThumbnails(thumbsPath, true); genErr != nil {
+			t.Fatal(genErr)
+		}
+
+		assert.NotEqual(t, meta.Data{}, m.metaData)
+	})
+	t.Run("CachedRunReadsNothing", func(t *testing.T) {
+		m, mErr := NewMediaFile(filepath.Join(c.SamplesPath(), "elephants.jpg"))
+
+		if mErr != nil {
+			t.Fatal(mErr)
+		}
+
+		// Every size is already cached by the subtests above, so no size needs generating
+		// and the source bounds are never resolved.
+		if genErr := m.GenerateThumbnails(thumbsPath, false); genErr != nil {
+			t.Fatal(genErr)
+		}
+
+		assert.Equal(t, meta.Data{}, m.metaData)
 	})
 }

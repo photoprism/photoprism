@@ -317,7 +317,7 @@ func (c *Config) ConfigPath() string {
 // signing key (config/keys). Portal-role keys (cluster JWT, OIDC session cookie) live under
 // PortalConfigPath instead.
 func (c *Config) KeysPath() string {
-	return filepath.Join(c.ConfigPath(), "keys")
+	return filepath.Join(c.ConfigPath(), fs.KeysDir)
 }
 
 // OptionsYaml returns the absolute path to the options configuration file.
@@ -325,7 +325,7 @@ func (c *Config) KeysPath() string {
 // newly created instances may use `.yaml` without additional wiring.
 func (c *Config) OptionsYaml() string {
 	if c.options.OptionsYaml == "" {
-		return fs.ConfigFilePath(c.ConfigPath(), "options", fs.ExtYml)
+		return fs.ConfigFilePath(c.ConfigPath(), fs.ConfigOptionsName, fs.ExtYml)
 	}
 
 	return fs.Abs(c.options.OptionsYaml)
@@ -362,7 +362,7 @@ func defaultsYaml(ctx *cli.Context) string {
 		return fs.Abs(fileName)
 	}
 
-	fileName = fs.ConfigFilePath(resolveConfigPath(ctx), "defaults", fs.ExtYml)
+	fileName = fs.ConfigFilePath(resolveConfigPath(ctx), fs.ConfigDefaultsName, fs.ExtYml)
 
 	if fs.FileExistsNotEmpty(fileName) {
 		return fs.Abs(fileName)
@@ -383,14 +383,14 @@ func (c *Config) DefaultsYaml() string {
 // traditional `.yml` suffix or an existing `.yaml` variant in the config
 // directory.
 func (c *Config) HubConfigFile() string {
-	return fs.ConfigFilePath(c.ConfigPath(), "hub", fs.ExtYml)
+	return fs.ConfigFilePath(c.ConfigPath(), fs.ConfigHubName, fs.ExtYml)
 }
 
 // SettingsYaml returns the path to the UI settings file. Like other helpers it
 // defers to fs.ConfigFilePath so administrators can store the file as
 // `settings.yml` or `settings.yaml`.
 func (c *Config) SettingsYaml() string {
-	return fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)
+	return fs.ConfigFilePath(c.ConfigPath(), fs.ConfigSettingsName, fs.ExtYml)
 }
 
 // SettingsYamlDefaults returns the defaults file that should seed new settings
@@ -403,7 +403,7 @@ func (c *Config) SettingsYamlDefaults(settingsYml string) string {
 		// Use regular settings YAML file.
 	} else if dir := filepath.Dir(defaultsYml); dir == "" || dir == "." {
 		// Use regular settings YAML file.
-	} else if fileName := fs.ConfigFilePath(dir, "settings", fs.ExtYml); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
+	} else if fileName := fs.ConfigFilePath(dir, fs.ConfigSettingsName, fs.ExtYml); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
 		// Use default settings YAML file.
 		return fileName
 	}
@@ -524,19 +524,49 @@ func (c *Config) UserStoragePath(userUid string) string {
 	return dir
 }
 
-// UserUploadPath returns the upload path for the specified user.
+// UserUploadPath returns the upload path for the specified user, or an error if the user's storage folder
+// is not available.
 func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 	if !rnd.IsUID(userUid, 0) {
 		return "", fmt.Errorf("invalid uid")
 	}
 
-	dir := filepath.Join(c.UserStoragePath(userUid), fs.UploadDir, clean.Token(token))
+	userDir := c.UserStoragePath(userUid)
+
+	if userDir == "" {
+		return "", fmt.Errorf("user storage folder is not available")
+	}
+
+	dir := filepath.Join(userDir, fs.UploadDir, clean.Token(token))
 
 	if err := fs.MkdirAll(dir); err != nil {
 		return "", err
 	}
 
 	return dir, nil
+}
+
+// UserUploadBatchPath returns the folder in which the files a user uploads under the batch name are
+// staged, creating it if needed. It refuses a name that is empty after cleaning, so a batch never
+// resolves to the upload folder itself.
+func (c *Config) UserUploadBatchPath(userUid, batch string) (string, error) {
+	if name := clean.Token(batch); name == "" {
+		return "", fmt.Errorf("invalid upload batch")
+	} else {
+		return c.UserUploadPath(userUid, name)
+	}
+}
+
+// UserUploadBatchDir returns the folder of an upload batch like UserUploadBatchPath, but creates
+// neither it nor the user's storage folder, so it can be used to look up an existing batch.
+func (c *Config) UserUploadBatchDir(userUid, batch string) (string, error) {
+	if !rnd.IsUID(userUid, 0) {
+		return "", fmt.Errorf("invalid uid")
+	} else if name := clean.Token(batch); name == "" {
+		return "", fmt.Errorf("invalid upload batch")
+	} else {
+		return filepath.Join(c.UsersStoragePath(), userUid, fs.UploadDir, name), nil
+	}
 }
 
 // WebStoragePath returns the path used for serving web content.

@@ -14,7 +14,7 @@ Do not add `Co-Authored-By: Claude …` trailers (or any other AI-authorship tra
 
 ## GitHub Issues
 
-Issue titles MUST be concise, use the imperative mood, and start with a single capitalized prefix followed by a colon and a space, e.g. `Search: Add filter for RAW image formats`.
+Issue titles MUST be concise, use the imperative mood, and start with a single capitalized prefix followed by a colon and a space, e.g. `Search: Add filter for RAW image formats`. A `Bug` title states what does not work instead, e.g. `PWA: Unable to download or share files`.
 
 Issue descriptions MUST begin with a one-sentence **User Story** in the format: `**As a <role>, I want <goal>, so that <outcome>.**`
 Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
@@ -34,13 +34,27 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 
 > Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
 
-The repo's issue templates use the new GitHub `type:` property (`Bug`, `Feature`) instead of `bug`/`idea` labels. `gh issue create` does not yet accept a `--type` flag, so when filing issues programmatically use `--label` only and tell the user to set the issue type via the web UI.
+The repo's issue templates use the GitHub `type:` property instead of `bug`/`idea` labels. The types are configured for the organization, not in this repo, so read them with `gh api orgs/photoprism/issue-types --jq '.[].name'` rather than assuming — as of September 2026 they are `Task`, `Bug`, `Feature`, `Enhancement` and `Epic`, and the templates name only some of them. `gh issue create --type <name>` sets the type when filing, and `gh issue edit --type <name>` changes it afterwards; neither needs the web UI.
+
+### Which issue type to choose?
+
+The types `Bug`, `Enhancement`, `Feature`, and `Task` are distinguished by what the code was already supposed to do, not by how much work is involved:
+
+- **`Bug`** — Broken functionality that is implemented but does not work as documented.
+- **`Enhancement`** — A new capability on top of functionality that already works.
+- **`Feature`** — Entirely new functionality that does not yet exist.
+- **`Task`** — Something that should work, but was never fully developed, needs refinement, or requires an update (e.g., a dependency upgrade). It is neither a regression nor an addition to working behavior.
+
+The title is a quick test: if it reads naturally as a failure (`Faces: Slow recognition after a correction`), the issue is a `Bug`; if it reads naturally as an imperative, it is not. Once the type is chosen, word the title to match it.
+
+A half-wired mechanism may look like a defect: helpers exist, the intent is legible in the code, and nothing calls them. This is not a `Bug` because nothing regressed; it was never finished. In this case, choose `Task` rather than arguing the intent into a defect. An `Epic` is a tracking issue that remains open until all sub-issues are closed.
 
 ## Specifications & Documentation
 
 - Document headings use a **Chicago-style title case**, with additional code- and path-aware normalization rules (see below). Always spell the product name as `PhotoPrism`.
 - Use US English spelling in all documentation, headings, issue and PR text, and commit messages (`behavior`, `color`, `labeled`, `license`, `analyze`, `normalize`, `optimize`) — not the British `-our` / `-ise` / `-re` / `-lled` variants. Leave code spans, identifiers, file paths, and quoted external text such as third-party license names verbatim. `.claude/rules/code-comments.md` applies the same rule to code comments.
 - When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
+- Name environment variables in full in user-facing docs, READMEs, examples, and templates (`PHOTOPRISM_DETECT_NSFW`, not `DETECT_NSFW`), since readers copy them verbatim. CLI flags (`--detect-nsfw`) and YAML option keys keep their own names.
 - Use RFC 3339 UTC timestamps in request and response examples, and valid ID, UID and UUID examples in docs and tests.
 - Technical specifications in the nested `specs/` subrepository may not be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths.
   - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyze, or modify anything in this directory.

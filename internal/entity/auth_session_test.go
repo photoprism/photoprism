@@ -8,10 +8,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/list"
@@ -742,7 +745,7 @@ func TestSession_SetProvider(t *testing.T) {
 
 func TestSession_ChangePassword(t *testing.T) {
 	m := FindSessionByRefID("sessxkkcabce")
-	assert.Empty(t, m.PreviewToken)
+	before := m.PreviewToken
 
 	err := m.ChangePassword("photoprism123")
 
@@ -750,7 +753,10 @@ func TestSession_ChangePassword(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Changing the password regenerates the user's tokens and mirrors them onto the session.
 	assert.NotEmpty(t, m.PreviewToken)
+	assert.NotEqual(t, before, m.PreviewToken)
+	assert.Equal(t, m.GetUser().PreviewToken, m.PreviewToken)
 
 	err2 := m.ChangePassword("Bobbob123!")
 
@@ -1256,6 +1262,46 @@ func TestSession_SetClientIP(t *testing.T) {
 		m.SetClientIP("2001:db8::68")
 		assert.Equal(t, "2001:db8::68", m.ClientIP)
 	})
+	t.Run("ChangeLog", func(t *testing.T) {
+		orig := event.AuditLog
+		logger, hook := logtest.NewNullLogger()
+		logger.SetLevel(logrus.TraceLevel)
+		event.AuditLog = logger
+		t.Cleanup(func() { event.AuditLog = orig })
+
+		m := &Session{RefID: "sessxkkcabce"}
+		m.SetClientIP("2001:db8:1:2::10")
+		assert.Empty(t, hook.AllEntries())
+
+		// A change within the same /64 keeps the full address without a log line.
+		m.SetClientIP("2001:db8:1:2:a:b:c:d")
+		assert.Equal(t, "2001:db8:1:2:a:b:c:d", m.ClientIP)
+		assert.Empty(t, hook.AllEntries())
+
+		// A change to another network is logged.
+		m.SetClientIP("2001:db8:1:3::10")
+		assert.Equal(t, "2001:db8:1:3::10", m.ClientIP)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Contains(t, hook.LastEntry().Message, "client address has changed from '2001:db8:1:2:a:b:c:d' to '2001:db8:1:3::10'")
+
+		hook.Reset()
+		m.SetClientIP("198.51.100.7")
+		m.SetClientIP("198.51.100.8")
+		assert.Len(t, hook.AllEntries(), 2)
+
+		// A NAT64 address counts as the IPv4 client it embeds, a 6to4 address does not.
+		hook.Reset()
+		m.SetClientIP("64:ff9b::198.51.100.8")
+		assert.Empty(t, hook.AllEntries())
+		m.SetClientIP("2002:c633:6408::1")
+		assert.Len(t, hook.AllEntries(), 1)
+
+		hook.Reset()
+		m.SetClientIP("fd00:1::2")
+		m.SetClientIP("fd00:1::3")
+		assert.Len(t, hook.AllEntries(), 2)
+		assert.Equal(t, "2001:db8:1:2::10", m.LoginIP)
+	})
 }
 
 func TestSession_HttpStatus(t *testing.T) {
@@ -1282,6 +1328,36 @@ func TestSession_NoScopeAndHasScope(t *testing.T) {
 	assert.True(t, sess.HasScope())
 }
 
+func TestSession_ScopePermitsDownload(t *testing.T) {
+	t.Run("NoScope", func(t *testing.T) {
+		assert.True(t, (&Session{}).ScopePermitsDownload())
+		assert.True(t, (&Session{AuthScope: list.Any}).ScopePermitsDownload())
+	})
+	t.Run("Photos", func(t *testing.T) {
+		assert.True(t, (&Session{AuthScope: "photos albums"}).ScopePermitsDownload())
+	})
+	t.Run("Files", func(t *testing.T) {
+		assert.True(t, (&Session{AuthScope: "files"}).ScopePermitsDownload())
+	})
+	t.Run("Read", func(t *testing.T) {
+		assert.True(t, (&Session{AuthScope: "read"}).ScopePermitsDownload())
+	})
+	t.Run("Unrelated", func(t *testing.T) {
+		assert.False(t, (&Session{AuthScope: "albums shares"}).ScopePermitsDownload())
+		assert.False(t, (&Session{AuthScope: "config"}).ScopePermitsDownload())
+		assert.False(t, (&Session{AuthScope: "metrics"}).ScopePermitsDownload())
+	})
+	t.Run("WriteOnly", func(t *testing.T) {
+		assert.False(t, (&Session{AuthScope: "photos write"}).ScopePermitsDownload())
+		assert.False(t, (&Session{AuthScope: "files write"}).ScopePermitsDownload())
+	})
+	t.Run("ValueTerm", func(t *testing.T) {
+		// A scope term carrying a value does not match its own resource, so it permits nothing here.
+		assert.False(t, (&Session{AuthScope: "photos:read"}).ScopePermitsDownload())
+		assert.False(t, (&Session{AuthScope: "files:read"}).ScopePermitsDownload())
+	})
+}
+
 func TestSession_SetUserScopeDefault(t *testing.T) {
 	t.Run("DefaultsToUserScope", func(t *testing.T) {
 		sess := &Session{}
@@ -1303,22 +1379,24 @@ func TestSession_SetUserScopeDefault(t *testing.T) {
 	})
 }
 
-func TestClampIdToken(t *testing.T) {
+func TestUsableIdToken(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		clamped, truncated := ClampIdToken("")
-		assert.Equal(t, "", clamped)
-		assert.False(t, truncated)
+		usable, dropped := UsableIdToken("")
+		assert.Equal(t, "", usable)
+		assert.False(t, dropped)
 	})
 	t.Run("WithinLimit", func(t *testing.T) {
 		token := strings.Repeat("a", IdTokenMaxSize)
-		clamped, truncated := ClampIdToken(token)
-		assert.Equal(t, token, clamped)
-		assert.False(t, truncated)
+		usable, dropped := UsableIdToken(token)
+		assert.Equal(t, token, usable)
+		assert.False(t, dropped)
 	})
 	t.Run("ExceedsLimit", func(t *testing.T) {
+		// Nothing is stored, so the logout path takes its no-hint branch rather than sending a
+		// token the provider refuses.
 		token := strings.Repeat("a", IdTokenMaxSize+100)
-		clamped, truncated := ClampIdToken(token)
-		assert.True(t, truncated)
-		assert.Len(t, clamped, IdTokenMaxSize)
+		usable, dropped := UsableIdToken(token)
+		assert.True(t, dropped)
+		assert.Empty(t, usable)
 	})
 }

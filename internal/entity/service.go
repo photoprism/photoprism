@@ -11,9 +11,9 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // Status values a service sync moves through.
@@ -34,7 +34,8 @@ type Services []Service
 // - AccErrors holds the number of connection errors since the last reset.
 // - AccShare enables manual upload, see SharePath, ShareSize, and ShareExpires.
 // - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
-// - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
+// - RetryLimit specifies the number of retry attempts, 0 or a negative value disables the limit.
+// - SyncYaml controls transferring YAML sidecar files: -1 disabled, 0 default (enabled), 1 enabled.
 type Service struct {
 	ID            uint         `gorm:"primary_key" json:"ID"`
 	AccName       string       `gorm:"type:VARCHAR(160);" json:"AccName"`
@@ -61,6 +62,7 @@ type Service struct {
 	SyncDownload  bool         `json:"SyncDownload"`
 	SyncFilenames bool         `json:"SyncFilenames"`
 	SyncRaw       bool         `json:"SyncRaw"`
+	SyncYaml      int          `gorm:"type:SMALLINT;default:0;" json:"SyncYaml"`
 	CreatedAt     time.Time    `deepcopier:"skip" json:"CreatedAt"`
 	UpdatedAt     time.Time    `deepcopier:"skip" json:"UpdatedAt"`
 	DeletedAt     *time.Time   `deepcopier:"skip" sql:"index" json:"DeletedAt"`
@@ -93,19 +95,19 @@ func (m *Service) LogErr(err error) error {
 	}
 
 	// Update error message and increase count.
-	m.AccError = clip.Bytes(err.Error(), txt.ClipError)
+	m.AccError = clean.ErrorBytes(err, txt.ClipError)
 	m.AccErrors++
 
-	// Disable sharing when retry limit is reached.
+	// Disable sharing when the retry limit is exceeded.
 	if m.RetryLimit > 0 && m.AccErrors > m.RetryLimit {
 		m.AccShare = false
 	}
 
 	// Update fields in database.
-	return m.Updates(Service{AccError: m.AccError, AccErrors: m.AccErrors, AccShare: m.AccShare})
+	return m.Updates(Values{"acc_error": m.AccError, "acc_errors": m.AccErrors, "acc_share": m.AccShare})
 }
 
-// ResetErrors resets the service and related file error messages and counters.
+// ResetErrors resets the service and related file error messages and counters, keeping per-file download error counts without a retry limit.
 func (m *Service) ResetErrors(share, sync bool) error {
 	if !share && !sync || Db().NewRecord(m) {
 		return nil
@@ -122,7 +124,14 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	}
 
 	if sync {
-		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
+		values := Values{"error": "", "errors": 0}
+
+		// Without a retry limit, the count only orders the download queue, so it is kept.
+		if m.RetryLimit <= 0 {
+			values = Values{"error": ""}
+		}
+
+		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(values).Error; err != nil {
 			return err
 		}
 	}
@@ -164,10 +173,17 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Number of remote request retry attempts.
-	if m.RetryLimit < -1 {
+	if m.RetryLimit < -1 || m.RetryLimit == 0 {
 		m.RetryLimit = -1 // Disabled.
 	} else if m.RetryLimit > 999 {
 		m.RetryLimit = 999 // 999 retries max.
+	}
+
+	// Automatic sync interval in seconds, where 0 means never.
+	if m.SyncInterval < 0 {
+		m.SyncInterval = 0
+	} else if m.SyncInterval > 31536000 {
+		m.SyncInterval = 31536000 // One year max.
 	}
 
 	// Refresh after performing changes.
@@ -184,8 +200,20 @@ func (m *Service) SaveForm(form form.Service) error {
 	m.AccName = txt.Clip(m.AccName, txt.ClipName)
 	m.AccOwner = txt.Clip(m.AccOwner, txt.ClipName)
 
+	// Limit the YAML sidecar option to disabled, default, and enabled.
+	if m.SyncYaml < -1 {
+		m.SyncYaml = -1
+	} else if m.SyncYaml > 1 {
+		m.SyncYaml = 1
+	}
+
 	// Save changes.
 	return db.Save(m).Error
+}
+
+// SyncYamlEnabled reports whether YAML sidecar files are transferred, which is the default.
+func (m *Service) SyncYamlEnabled() bool {
+	return m.SyncYaml >= 0
 }
 
 // Delete deletes the entity from the database.

@@ -45,6 +45,16 @@ func (embeddings Embeddings) One() bool {
 	return embeddings.Count() == 1
 }
 
+// Normalize scales every embedding to unit length in place, so that vectors from a source
+// that does not normalize its own output are held to the same shape as the built-in models.
+func (embeddings Embeddings) Normalize() Embeddings {
+	for i := range embeddings {
+		normalizeEmbedding(embeddings[i])
+	}
+
+	return embeddings
+}
+
 // ValidEmbeddings checks the cardinality, dimensions, and values of an embedding result.
 // Non-finite values survive JSON and storage but poison every later distance, so they are
 // rejected where the vector enters the index rather than where it is compared.
@@ -60,7 +70,13 @@ func ValidEmbeddings(embeddings Embeddings, dims int) bool {
 	}
 
 	// A vector with no magnitude is not a face, and normalization cannot turn it into one.
-	return !embeddings[0].Zero()
+	if embeddings[0].Zero() {
+		return false
+	}
+
+	// Every comparison and every configured distance is stated for unit vectors, so one that
+	// did not come out of normalization at unit length is not measurable against them.
+	return embeddings[0].Unit()
 }
 
 // Dims returns the number of values shared by all embeddings, 0 when there are none,

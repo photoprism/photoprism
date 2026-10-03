@@ -6,11 +6,24 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
+
+// shareBootstrapConfig clears the values the sharing bootstrap page does not use itself.
+// The page only redeems the share token and redirects; clients receive their session tokens and the
+// remaining values from the client config endpoint once the session exists.
+func shareBootstrapConfig(cfg *config.ClientConfig) *config.ClientConfig {
+	cfg.PreviewToken = ""
+	cfg.DownloadToken = ""
+	cfg.MapKey = ""
+	cfg.Customer = ""
+
+	return cfg
+}
 
 // ShareToken creates a session using the specified share token and renders the generic sharing bootstrap page.
 //
@@ -26,8 +39,8 @@ func ShareToken(router *gin.RouterGroup) {
 	router.GET("/:token", func(c *gin.Context) {
 		conf := get.Config()
 
-		token := clean.Token(c.Param("token"))
-		links := entity.FindValidLinks(token, "")
+		token := clean.ShareToken(c.Param("token"))
+		links := entity.FindRedeemableLinksByToken(token, "")
 
 		if len(links) == 0 {
 			log.Debugf("share: invalid token")
@@ -35,7 +48,7 @@ func ShareToken(router *gin.RouterGroup) {
 			return
 		}
 
-		clientConfig := conf.ClientShare()
+		clientConfig := shareBootstrapConfig(conf.ClientShare())
 		clientConfig.SiteUrl += path.Join("s", token)
 
 		uri := conf.FrontendUri("/albums")
@@ -58,10 +71,10 @@ func ShareTokenShared(router *gin.RouterGroup) {
 	router.GET("/:token/:shared", func(c *gin.Context) {
 		conf := get.Config()
 
-		token := clean.Token(c.Param("token"))
+		token := clean.ShareToken(c.Param("token"))
 		shared := clean.Token(c.Param("shared"))
 
-		links := entity.FindValidLinks(token, shared)
+		links := entity.FindRedeemableLinksByToken(token, shared)
 
 		if len(links) < 1 {
 			log.Debugf("share: invalid token or slug")
@@ -70,7 +83,7 @@ func ShareTokenShared(router *gin.RouterGroup) {
 		}
 
 		uid := links[0].ShareUID
-		clientConfig := conf.ClientShare()
+		clientConfig := shareBootstrapConfig(conf.ClientShare())
 		clientConfig.SiteUrl += path.Join("s", token, uid)
 		clientConfig.SitePreview = clientConfig.SiteUrl + "/preview"
 

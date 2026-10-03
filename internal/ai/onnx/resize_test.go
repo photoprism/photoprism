@@ -14,6 +14,6 @@ func TestResize_IsZero(t *testing.T) {
 		assert.False(t, Resize{Mode: ResizePad}.IsZero())
 	})
 	t.Run("ShortEdgeConvention", func(t *testing.T) {
-		assert.False(t, Resize{Mode: ResizeCenterCrop, ShortEdge: 236, CropRatio: 0.95}.IsZero())
+		assert.False(t, Resize{Mode: ResizeCenterCrop, ShortEdge: 236, CropRatio: 0.95, Interpolation: InterpolationBicubic}.IsZero())
 	})
 }

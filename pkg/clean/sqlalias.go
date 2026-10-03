@@ -1,5 +1,7 @@
 package clean
 
+import "strings"
+
 // SqlAliasMax is the maximum length of a table alias, which is well above any the code uses and
 // far below the identifier limits the supported databases enforce.
 const SqlAliasMax = 24
@@ -27,4 +29,23 @@ func SqlAlias(s string) string {
 	}
 
 	return s
+}
+
+// SqlColumn returns a column name that is safe to interpolate into a statement, or an empty
+// string. The name may be qualified by a table alias, and both parts must satisfy SqlAlias.
+//
+// A column cannot be bound as a parameter either, so the same rule applies: reject rather than
+// strip, since a stripped name would silently read a different column.
+func SqlColumn(s string) string {
+	alias, name, qualified := strings.Cut(s, ".")
+
+	if qualified {
+		if SqlAlias(alias) == "" || SqlAlias(name) == "" {
+			return ""
+		}
+
+		return s
+	}
+
+	return SqlAlias(s)
 }

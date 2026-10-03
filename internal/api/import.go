@@ -24,11 +24,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// UploadPath is the root directory underneath which user uploads are staged.
-const (
-	UploadPath = "/upload"
-)
-
 // StartImport imports media files from a directory and converts/indexes them as needed.
 //
 //	@Summary	start import
@@ -36,15 +31,22 @@ const (
 //	@Tags		Library
 //	@Accept		json
 //	@Produce	json
-//	@Success	200			{object}	i18n.Response
-//	@Failure	400,401,403	{object}	i18n.Response
-//	@Param		options		body		form.ImportOptions	true	"import options"
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,413,507	{object}	i18n.Response
+//	@Param		options				body		form.ImportOptions	true	"import options"
 //	@Router		/api/v1/import/ [post]
 func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
 
 		if s.Abort(c) {
+			return
+		}
+
+		// Users whose access is limited to their base path need an upload path.
+		if uploadPathDenied(s.GetUser()) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files", "no upload path", status.Denied}, s.RefID)
+			AbortForbidden(c)
 			return
 		}
 
@@ -90,11 +92,8 @@ func StartImport(router *gin.RouterGroup) {
 			srcFolder = clean.UserPath(frm.Path)
 		}
 
-		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
-		if token := path.Base(srcFolder); token != "" && path.Dir(srcFolder) == UploadPath {
-			srcFolder = path.Join(UploadPath, s.RefID+token)
-			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", status.Granted}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
-		} else if acl.Rules.Deny(acl.ResourceFiles, s.GetUserRole(), acl.ActionManage) {
+		// Importing files requires permission to manage them.
+		if acl.Rules.Deny(acl.ResourceFiles, s.GetUserRole(), acl.ActionManage) {
 			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", status.Denied}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
 			AbortForbidden(c)
 			return
@@ -124,10 +123,9 @@ func StartImport(router *gin.RouterGroup) {
 		}
 
 		// Add imported files to albums if allowed.
-		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("import: adding files to album %s", clean.Log(txt.JoinAnd(frm.Albums)))
-			opt.Albums = frm.Albums
+		if len(frm.Albums) > 0 && uploadAlbumsAllowed(s) {
+			opt.Albums = uploadAlbums(c, s, frm.Albums)
+			log.Debugf("import: adding files to album %s", clean.Log(txt.JoinAnd(opt.Albums)))
 		}
 
 		// Set user UID if known.
@@ -141,40 +139,34 @@ func StartImport(router *gin.RouterGroup) {
 		// Delete empty import directory.
 		if srcFolder != "" && importPath != conf.ImportPath() && fs.DirIsEmpty(importPath) {
 			if err := os.Remove(importPath); err != nil {
-				log.Errorf("import: failed to delete empty folder %s: %s", clean.Log(importPath), err)
+				log.Errorf("import: failed to delete empty folder %s (%s)", clean.Log(srcFolder), clean.Error(err))
 			} else {
-				log.Infof("import: deleted empty folder %s", clean.Log(importPath))
+				log.Infof("import: deleted empty folder %s", clean.Log(srcFolder))
 			}
 		}
 
 		// Update moments if files have been imported.
-		if n := len(imported); n == 0 {
-			log.Infof("import: found no new files to import from %s", clean.Log(importPath))
+		if imported.Processed() == 0 {
+			log.Infof("import: found no new files to import from %s", clean.Log(srcFolder))
 		} else {
-			log.Infof("import: imported %s", english.Plural(n, "file", "files"))
 			if moments := get.Moments(); moments == nil {
 				log.Warnf("import: moments service not set - you may have found a bug")
 			} else if err := moments.Start(); err != nil {
-				log.Warnf("moments: %s", err)
+				log.Warnf("moments: %s", clean.Error(err))
 			}
 		}
 
-		elapsed := int(time.Since(start).Seconds())
+		elapsed := time.Since(start)
+		seconds := int(elapsed.Seconds())
+
+		log.Infof("library: imported %s in %s", english.Plural(imported.Processed(), "file", "files"), elapsed)
 
 		// Show success message.
-		event.SuccessMsg(i18n.MsgImportCompletedIn, elapsed)
+		event.PublishSuccessMsg(i18n.MsgImportCompletedIn, seconds)
 
-		eventData := event.Data{
-			"uid":     opt.UID,
-			"action":  opt.Action,
-			"path":    importPath,
-			"seconds": elapsed,
-		}
+		event.PublishCompleted([]string{"import.completed", "index.completed"}, opt.UID, opt.Action, seconds)
 
-		event.Publish("import.completed", eventData)
-		event.Publish("index.completed", eventData)
-
-		for _, uid := range frm.Albums {
+		for _, uid := range opt.Albums {
 			PublishAlbumEvent(StatusUpdated, uid)
 		}
 
@@ -183,10 +175,10 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Update album, label, and subject cover thumbs.
 		if err := query.UpdateCovers(); err != nil {
-			log.Warnf("index: %s (update covers)", err)
+			log.Warnf("index: %s (update covers)", clean.Error(err))
 		}
 
-		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgImportCompletedIn, elapsed))
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgImportCompletedIn, seconds))
 	})
 }
 

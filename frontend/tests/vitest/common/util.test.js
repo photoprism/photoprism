@@ -307,6 +307,40 @@ describe("common/util", () => {
     });
   });
 
+  describe("fileType", () => {
+    it("returns the label for known file types", () => {
+      expect($util.fileType("jpg")).toBe("JPEG");
+      expect($util.fileType("cin")).toBe("Kodak Cineon");
+      expect($util.fileType("insp")).toBe("Insta360 Panoramic");
+      expect($util.fileType("insv")).toBe("Insta360");
+      expect($util.fileType("lrv")).toBe("Insta360 Proxy");
+      expect($util.fileType("thm")).toBe("Thumbnail");
+      expect($util.fileType("dv")).toBe("DV");
+      expect($util.fileType("mpo")).toBe("Stereoscopic JPEG (3D)");
+      expect($util.fileType("mxf")).toBe("Material Exchange Format (MXF)");
+      expect($util.fileType("3g2")).toBe("Mobile Multimedia Container (CDMA2000)");
+    });
+
+    it("should return the label of a metadata source", () => {
+      expect($util.sourceName("modified")).toBe("Modified");
+      expect($util.sourceName("meta")).toBe("Metadata");
+      expect($util.sourceName("name")).toBe("Name");
+      expect($util.sourceName("", "File")).toBe("File");
+    });
+    it("distinguishes the AV1 image format from the AV1 codec", () => {
+      expect($util.fileType("avif")).toBe("AV1 Image File Format (AVIF)");
+      expect($util.fileType("av1")).toBe("AOMedia Video 1 (AV1)");
+    });
+    it("falls back to the uppercase type", () => {
+      expect($util.fileType("json")).toBe("JSON");
+    });
+    it("returns empty for missing or non-string input", () => {
+      expect($util.fileType("")).toBe("");
+      expect($util.fileType(null)).toBe("");
+      expect($util.fileType(42)).toBe("");
+    });
+  });
+
   describe("typeName", () => {
     it("returns the localized label for known media types", () => {
       expect($util.typeName("image")).toBe("Image");
