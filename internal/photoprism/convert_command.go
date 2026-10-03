@@ -37,10 +37,13 @@ func (c *ConvertCmd) ResetOrientation() *ConvertCmd {
 	return c.WithOrientation(media.ResetOrientation)
 }
 
-// WithSourceOrientation copies the source file's EXIF orientation to the converted image.
+// WithSourceOrientation sets the EXIF orientation to write to output that has none. Values outside
+// 2..8 clear it, since 1 is the default.
 func (c *ConvertCmd) WithSourceOrientation(o int) *ConvertCmd {
-	if o >= 1 && o <= 8 {
+	if o >= 2 && o <= 8 {
 		c.SourceOrientation = o
+	} else {
+		c.SourceOrientation = 0
 	}
 
 	return c

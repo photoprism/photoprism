@@ -411,7 +411,7 @@ func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName strin
 	}
 
 	// The preview is published either way, untagged if the orientation cannot be written.
-	if c.SourceOrientation > 1 {
+	if c.SourceOrientation != 0 {
 		if written, tagErr := w.writeMissingOrientation(stagedName, c.SourceOrientation); tagErr != nil {
 			log.Warnf("convert: %s in %s (write orientation)", clean.Error(tagErr), clean.Log(filepath.Base(imageName)))
 		} else if !written {
