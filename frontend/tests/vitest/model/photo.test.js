@@ -358,6 +358,42 @@ describe("model/photo", () => {
       expect(hrefs()).toEqual(["/api/v1/dl/j1?t=2lbh9x09"]);
     });
 
+    it("starts the video files of a video first", () => {
+      const file = (hash, name, mediaType) => ({ Hash: hash, Name: name, Root: "/", FileType: name.split(".").pop().toLowerCase(), MediaType: mediaType });
+      mockSettings(allowAll({ originals: true }));
+
+      const mp4 = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [file("j1", "1980/01/clip.jpg", "image"), file("v1", "1980/01/clip.MP4", "video")] });
+      expect(mp4.downloadAll()).toEqual({ downloaded: 2, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/v1?t=2lbh9x09", "/api/v1/dl/j1?t=2lbh9x09"]);
+
+      clicks = [];
+      const mov = { ...file("v2", "1980/01/IMG_1.MOV", ""), Video: true };
+      const xmp = file("x2", "1980/01/IMG_1.xmp", "sidecar");
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [xmp, file("j2", "1980/01/IMG_1.jpg", "image"), mov] });
+      expect(photo.downloadAll()).toEqual({ downloaded: 3, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/v2?t=2lbh9x09", "/api/v1/dl/x2?t=2lbh9x09", "/api/v1/dl/j2?t=2lbh9x09"]);
+    });
+
+    it("skips null entries and excluded videos after moving videos first", () => {
+      const mp4 = { Hash: "v1", Name: "1980/01/clip.mp4", Root: "/", FileType: "mp4", MediaType: "video" };
+      const avc = { Hash: "v2", Name: "1980/01/clip.avc", Root: "sidecar", FileType: "avc", MediaType: "video" };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [null, jpg("j1", "1980/01/clip.jpg"), avc, mp4] });
+
+      mockSettings(allowAll({ originals: true }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 1 });
+      expect(hrefs()).toEqual(["/api/v1/dl/v1?t=2lbh9x09", "/api/v1/dl/j1?t=2lbh9x09"]);
+    });
+
+    it("keeps the file order of a live photo", () => {
+      const heic = { Hash: "l1", Name: "1980/01/live.heic", Root: "/", FileType: "heic", MediaType: "image" };
+      const mov = { Hash: "l2", Name: "1980/01/live.MOV", Root: "/", FileType: "mov", MediaType: "video", Video: true };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "live", Files: [heic, mov] });
+
+      mockSettings(allowAll({ originals: true }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/l1?t=2lbh9x09", "/api/v1/dl/l2?t=2lbh9x09"]);
+    });
+
     it("reports a skip when a video has only generated still images", () => {
       const still = { Hash: "j1", Name: "1980/01/clip.mp4.jpg", Root: "sidecar", FileType: "jpg", MediaType: "image" };
       const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [still] });

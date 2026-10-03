@@ -781,7 +781,15 @@ export class Photo extends RestModel {
     let downloaded = 0;
     let skipped = 0;
 
-    this.Files.forEach((file) => {
+    let files = this.Files;
+
+    // Start the video files of a video first, since some browsers keep only the first of several downloads.
+    if (this.Type === media.Video) {
+      const isVideo = (file) => !!file && (file.MediaType === media.Video || !!file.Video);
+      files = [...files.filter(isVideo), ...files.filter((file) => !isVideo(file))];
+    }
+
+    files.forEach((file) => {
       if (!file || !file.Hash) {
         return;
       }
