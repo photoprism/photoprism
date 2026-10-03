@@ -52,8 +52,10 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 
 		switch {
 		case f.IsAnimated():
-			// Extract metadata.
-			_, _ = job.convert.ToJson(f, false)
+			// Extract metadata and add it to the cached metadata, which the type check may already have read.
+			if jsonErr := f.CreateExifToolJson(job.convert); jsonErr != nil {
+				log.Debugf("convert: %s", clean.Error(jsonErr))
+			}
 
 			// Create cover image.
 			if _, err := job.convert.ToImage(f, job.force); err != nil {

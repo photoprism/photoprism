@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -700,5 +701,73 @@ func TestIndexRelated(t *testing.T) {
 		if assert.NotNil(t, xmpFile, "malformed XMP file row must exist") {
 			assert.NotEmpty(t, xmpFile.FileError, "FileError must record the parse failure")
 		}
+	})
+}
+
+// TestIndexRelated_TypeCheck verifies that a related file with an invalid type only fails the group
+// when the group has no other image to show.
+func TestIndexRelated_TypeCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	png, err := os.ReadFile("testdata/photoprism.png")
+	require.NoError(t, err)
+	jpg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	require.NoError(t, err)
+	mov, err := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "earth.mov"))
+	require.NoError(t, err)
+
+	// indexGroup writes the files to a new originals folder and indexes them with the first as main.
+	indexGroup := func(t *testing.T, name string, convert bool, files map[string][]byte, order ...string) IndexResult {
+		cfg := newIndexRelatedTestConfig(t, name)
+		testPath := filepath.Join(cfg.OriginalsPath(), rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(testPath))
+
+		related := RelatedFiles{}
+
+		for _, fileName := range order {
+			require.NoError(t, os.WriteFile(filepath.Join(testPath, fileName), files[fileName], fs.ModeFile)) //nolint:gosec // G703: test-owned path
+			f, newErr := NewMediaFile(filepath.Join(testPath, fileName))
+			require.NoError(t, newErr)
+			related.Files = append(related.Files, f)
+		}
+
+		related.Main = related.Files[0]
+		opt := IndexOptionsAll(cfg)
+		opt.Convert = convert
+
+		return IndexRelated(related, NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos()), opt)
+	}
+
+	// notIndexed requires that no file with the given content is indexed.
+	notIndexed := func(t *testing.T, data []byte) {
+		var count int
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_size = ?", len(data)).Count(&count).Error)
+		assert.Zero(t, count)
+	}
+
+	t.Run("OptionalFile", func(t *testing.T) {
+		result := indexGroup(t, "index-related-type-optional", true, map[string][]byte{"a.jpg": jpg, "a.webp": png}, "a.jpg", "a.webp")
+		assert.False(t, result.Failed())
+		assert.True(t, result.Success())
+		notIndexed(t, png)
+	})
+	t.Run("OtherPreview", func(t *testing.T) {
+		result := indexGroup(t, "index-related-type-other", true, map[string][]byte{"a.jpg": jpg, "a.edit.jpg": png}, "a.jpg", "a.edit.jpg")
+		assert.False(t, result.Failed())
+		assert.True(t, result.Success())
+		notIndexed(t, png)
+	})
+	t.Run("OptionalWithoutPreview", func(t *testing.T) {
+		// Without conversion, no preview image is created for the video.
+		result := indexGroup(t, "index-related-type-video", false, map[string][]byte{"a.mov": mov, "a.webp": png}, "a.mov", "a.webp")
+		assert.False(t, result.Failed())
+		notIndexed(t, png)
+	})
+	t.Run("MissingPreview", func(t *testing.T) {
+		result := indexGroup(t, "index-related-type-preview", false, map[string][]byte{"a.mov": mov, "a.jpg": png}, "a.mov", "a.jpg")
+		assert.True(t, result.Failed())
+		assert.ErrorContains(t, result.Err, "a.jpg")
 	})
 }

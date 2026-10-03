@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
@@ -64,8 +65,16 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		// Skip files if the filename extension does not match their mime type,
 		// see https://github.com/photoprism/photoprism/issues/3518 for details.
 		if typeErr := f.CheckType(); typeErr != nil {
-			result.Err = fmt.Errorf("index: skipped %s because it %w", clean.Log(f.RootRelName()), typeErr)
-			result.Status = IndexFailed
+			typeErr = fmt.Errorf("index: skipped %s because it %w", clean.Log(f.RootRelName()), typeErr)
+
+			// The group only fails if it has no other image to show; other related files are optional.
+			if fs.IsPreviewImageExt(f.FileName()) && !related.HasPreview() {
+				result.Err = typeErr
+				result.Status = IndexFailed
+			} else {
+				log.Warn(typeErr)
+			}
+
 			continue
 		}
 

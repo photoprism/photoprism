@@ -4,9 +4,12 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -243,4 +246,235 @@ func TestImportWorker_StackedVectorPreviews(t *testing.T) {
 	}
 
 	assert.GreaterOrEqual(t, photo.PhotoQuality, 0, "stacked vector photo must not be hidden")
+}
+
+// TestImportWorker_TypeCheck verifies that files whose content does not match their extension are
+// moved to the originals folder, so that no file of a stack is lost, but are not processed or indexed.
+func TestImportWorker_TypeCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	jpg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	require.NoError(t, err)
+
+	// importFiles writes the files to a new import folder and imports them as one group.
+	importFiles := func(t *testing.T, name string, files map[string][]byte, main string) *config.Config {
+		useTestDb(t, name)
+		cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+		oldCfg := Config()
+		SetConfig(cfg)
+		t.Cleanup(func() {
+			SetConfig(oldCfg)
+			oldCfg.RegisterDb()
+		})
+
+		importDir := filepath.Join(t.TempDir(), "import")
+		require.NoError(t, fs.MkdirAll(importDir))
+
+		for fileName, data := range files {
+			require.NoError(t, os.WriteFile(filepath.Join(importDir, fileName), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		}
+
+		mainFile, newErr := NewMediaFile(filepath.Join(importDir, main))
+		require.NoError(t, newErr)
+		related, relErr := mainFile.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.Len(t, related.Files, len(files))
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+
+		jobs := make(chan ImportJob)
+		done := make(chan bool)
+		go func() {
+			ImportWorker(jobs)
+			done <- true
+		}()
+		jobs <- ImportJob{
+			FileName:  mainFile.FileName(),
+			Related:   related,
+			IndexOpt:  IndexOptionsAll(cfg),
+			ImportOpt: ImportOptionsMove(importDir, ""),
+			Imp:       NewImport(cfg, ind, convert),
+		}
+		close(jobs)
+		<-done
+
+		return cfg
+	}
+
+	// findFiles returns the names of the files with the given extension below the directory.
+	findFiles := func(t *testing.T, dir, ext string) (names []string) {
+		require.NoError(t, filepath.Walk(dir, func(fileName string, info os.FileInfo, walkErr error) error {
+			if walkErr == nil && !info.IsDir() && strings.HasSuffix(fileName, ext) {
+				names = append(names, fileName)
+			}
+			return nil
+		}))
+		return names
+	}
+
+	t.Run("RelatedFile", func(t *testing.T) {
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+		hooks := logger.ReplaceHooks(make(logrus.LevelHooks))
+		t.Cleanup(func() { logger.ReplaceHooks(hooks) })
+		hook := test.NewLocal(logger)
+
+		cfg := importFiles(t, "import-type-related", map[string][]byte{
+			"photo.jpg":       jpg,
+			"photo.edit.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		}, "photo.jpg")
+
+		jpgFiles := findFiles(t, cfg.OriginalsPath(), ".jpg")
+		require.Len(t, jpgFiles, 1)
+		webpFiles := findFiles(t, cfg.OriginalsPath(), ".webp")
+		require.Len(t, webpFiles, 1, "the related file is moved to originals")
+		assert.Empty(t, findFiles(t, cfg.SidecarPath(), ".edit.webp.jpg"), "no preview is created for it")
+
+		_, findErr := entity.FirstFileByHash(fs.Hash(jpgFiles[0]))
+		assert.NoError(t, findErr, "the main file is indexed")
+		_, findErr = entity.FirstFileByHash(fs.Hash(webpFiles[0]))
+		assert.Error(t, findErr, "the related file is not indexed")
+
+		// The related file is only moved and reported, so no converter or other tool reads it.
+		destName := filepath.Base(webpFiles[0])
+		reported := false
+		for _, entry := range hook.AllEntries() {
+			switch {
+			case !strings.Contains(entry.Message, destName):
+				continue
+			case strings.Contains(entry.Message, "was not indexed"):
+				reported = true
+			default:
+				assert.Contains(t, entry.Message, "moving related")
+			}
+		}
+		assert.True(t, reported)
+	})
+	t.Run("RelatedFileOfVideo", func(t *testing.T) {
+		// The preview of a video has its own name, so the related file is not covered by it.
+		mov, readErr := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "earth.mov"))
+		require.NoError(t, readErr)
+
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+		hooks := logger.ReplaceHooks(make(logrus.LevelHooks))
+		t.Cleanup(func() { logger.ReplaceHooks(hooks) })
+		hook := test.NewLocal(logger)
+
+		cfg := importFiles(t, "import-type-video", map[string][]byte{
+			"clip.mov":       mov,
+			"clip.edit.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		}, "clip.mov")
+
+		webpFiles := findFiles(t, cfg.OriginalsPath(), ".webp")
+		require.Len(t, webpFiles, 1, "the related file is moved to originals")
+		_, findErr := entity.FirstFileByHash(fs.Hash(webpFiles[0]))
+		assert.Error(t, findErr, "the related file is not indexed")
+
+		destName := filepath.Base(webpFiles[0])
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, destName) && !strings.Contains(entry.Message, "was not indexed") {
+				assert.Contains(t, entry.Message, "moving related")
+			}
+		}
+	})
+	t.Run("RelatedVideoMetadata", func(t *testing.T) {
+		// Checking the type of a related video must not keep its ExifTool metadata from the index.
+		heic, readErr := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "iphone_7.heic"))
+		require.NoError(t, readErr)
+		mp4, readErr := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "gopher-video.mp4"))
+		require.NoError(t, readErr)
+
+		cfg := importFiles(t, "import-type-video-meta", map[string][]byte{"live.heic": heic, "live.mp4": mp4}, "live.heic")
+		mp4Files := findFiles(t, cfg.OriginalsPath(), ".mp4")
+		require.Len(t, mp4Files, 1)
+
+		file, findErr := entity.FirstFileByHash(fs.Hash(mp4Files[0]))
+		require.NoError(t, findErr)
+		assert.Equal(t, "avc1", file.FileCodec)
+		assert.Positive(t, file.FileDuration)
+	})
+	t.Run("MainFile", func(t *testing.T) {
+		cfg := importFiles(t, "import-type-main", map[string][]byte{
+			"photo.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		}, "photo.webp")
+
+		webpFiles := findFiles(t, cfg.OriginalsPath(), ".webp")
+		require.Len(t, webpFiles, 1, "the main file is moved to originals")
+		assert.Empty(t, findFiles(t, cfg.SidecarPath(), ".webp.jpg"), "no preview is created for it")
+		assert.Empty(t, findFiles(t, cfg.CachePath(), ".json"), "no metadata is extracted from it")
+
+		_, findErr := entity.FirstFileByHash(fs.Hash(webpFiles[0]))
+		assert.Error(t, findErr, "the main file is not indexed")
+	})
+}
+
+// TestImport_TypeCheck verifies that the import walk moves files whose content does not match their
+// extension with their stack, without extracting their metadata.
+func TestImport_TypeCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	jpg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	require.NoError(t, err)
+
+	// startImport writes the files to a new import folder and imports it with Import.Start.
+	startImport := func(t *testing.T, name string, files map[string][]byte) *config.Config {
+		useTestDb(t, name)
+		cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+		oldCfg := Config()
+		SetConfig(cfg)
+		t.Cleanup(func() {
+			SetConfig(oldCfg)
+			oldCfg.RegisterDb()
+		})
+
+		importDir := filepath.Join(cfg.ImportPath(), name)
+		require.NoError(t, fs.MkdirAll(importDir))
+
+		for fileName, data := range files {
+			require.NoError(t, os.WriteFile(filepath.Join(importDir, fileName), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		}
+
+		convert := NewConvert(cfg)
+		NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert).Start(ImportOptionsMove(importDir, ""))
+
+		return cfg
+	}
+
+	// assertMovedNotRead requires a single moved file with the extension, without ExifTool metadata or index entry.
+	assertMovedNotRead := func(t *testing.T, cfg *config.Config, ext string) {
+		var moved []string
+		require.NoError(t, filepath.Walk(cfg.OriginalsPath(), func(fileName string, info os.FileInfo, walkErr error) error {
+			if walkErr == nil && !info.IsDir() && strings.HasSuffix(fileName, ext) {
+				moved = append(moved, fileName)
+			}
+			return nil
+		}))
+		require.Len(t, moved, 1)
+		hash := fs.Hash(moved[0])
+		jsonName, jsonErr := ExifToolCacheName(hash)
+		require.NoError(t, jsonErr)
+		assert.NoFileExists(t, jsonName)
+		_, findErr := entity.FirstFileByHash(hash)
+		assert.Error(t, findErr)
+	}
+
+	t.Run("MainFile", func(t *testing.T) {
+		cfg := startImport(t, "import-start-type-main", map[string][]byte{
+			"photo.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		})
+		assertMovedNotRead(t, cfg, ".webp")
+	})
+	t.Run("RelatedFileFirst", func(t *testing.T) {
+		cfg := startImport(t, "import-start-type-related", map[string][]byte{
+			"photo.edit.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+			"photo.jpg":       jpg,
+		})
+		assertMovedNotRead(t, cfg, ".webp")
+	})
 }

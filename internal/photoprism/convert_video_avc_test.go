@@ -847,6 +847,18 @@ func TestConvert_FindAvc(t *testing.T) {
 }
 
 func TestAvcSource(t *testing.T) {
+	t.Run("InvalidLeft", func(t *testing.T) {
+		// A left lens whose content does not match its extension is not used as source.
+		folder := "insta360avcinvalidleft"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+		writeInsta360CaptureFile(t, dir, insta360StackLeft, "testdata/flash.jpg")
+		writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+
+		right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+		require.NoError(t, err)
+		assert.Same(t, right, avcSource(right))
+	})
 	t.Run("Video", func(t *testing.T) {
 		conf := Config()
 		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))

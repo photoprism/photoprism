@@ -102,9 +102,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 			"subFolder": opt.DestFolder,
 		})
 
+		// Files whose content does not match their extension are moved or copied, so that no file of
+		// a stack is left behind, but no external tool reads them.
+		mainTypeErr := related.Main.CheckType()
+
 		// Create JSON sidecar file, if needed.
-		if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
-			log.Warnf("import: %s", clean.Error(jsonErr))
+		if mainTypeErr == nil {
+			if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
+				log.Warnf("import: %s", clean.Error(jsonErr))
+			}
 		}
 
 		for _, f := range insta360ImportOrder(related) {
@@ -208,6 +214,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 			if err != nil {
 				log.Errorf("import: %s in %s", err.Error(), clean.Log(fs.RelName(destMainFileName, imp.originalsPath())))
 				continue
+			} else if typeErr := f.CheckType(); typeErr != nil {
+				log.Warnf("import: %s %s and was not indexed", clean.Log(f.RootRelName()), typeErr)
+				continue
 			}
 
 			// Create JSON sidecar file, if needed.
@@ -253,7 +262,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// indexed primary without a matching sidecar so its photo stays hidden until a rescan.
 			if o.Convert {
 				for _, rf := range related.Files {
-					if rf == nil || !rf.IsMedia() || rf.HasPreviewImage() {
+					if rf == nil || !rf.IsMedia() || rf.HasPreviewImage() || rf.CheckType() != nil {
 						continue
 					} else if insta360ImportedMember(originalName, relatedOriginalNames[rf.FileName()]) {
 						// The combined preview of an imported capture is made from its left lens.
@@ -323,6 +332,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				done[file.FileName()] = true
 
+				// Skip related files whose content does not match their extension.
+				if typeErr := file.CheckType(); typeErr != nil {
+					log.Warnf("import: %s %s and was not indexed", clean.Log(file.RootRelName()), typeErr)
+					continue
+				}
+
 				// Show warning if sidecar file exceeds size or resolution limit.
 				if _, limitErr := file.ExceedsBytes(o.ByteLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
@@ -330,14 +345,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Warnf("import: %s", limitErr)
 				}
 
-				// Extract metadata to a JSON file with Exiftool.
-				if file.NeedsExifToolJson() {
-					if jsonName, err := imp.convert.ToJson(file, false); err != nil {
-						log.Tracef("exiftool: %s", clean.Error(err))
-						log.Debugf("exiftool: failed parsing %s", clean.Log(file.RootRelName()))
-					} else {
-						log.Debugf("import: created %s", filepath.Base(jsonName))
-					}
+				// Extract metadata to a JSON file with Exiftool and add it to the cached metadata, which
+				// the type check above may already have read.
+				if jsonErr := file.CreateExifToolJson(imp.convert); jsonErr != nil {
+					log.Warnf("import: %s", clean.Error(jsonErr))
 				}
 
 				// Index related media file including its original filename.

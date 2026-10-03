@@ -1654,7 +1654,7 @@ func TestMediaFile_CheckType(t *testing.T) {
 		copyAs := func(t *testing.T, name string, data []byte) *MediaFile {
 			t.Helper()
 			fileName := filepath.Join(t.TempDir(), name)
-			require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile))
+			require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
 			f, newErr := NewMediaFile(fileName)
 			require.NoError(t, newErr)
 			return f
@@ -1724,6 +1724,39 @@ func TestMediaFile_CheckType(t *testing.T) {
 			assert.NoError(t, f.CheckType())
 		})
 	})
+	t.Run("HeifBrands", func(t *testing.T) {
+		// The detected type follows the major brand of the writer, e.g. "mif1" or AV1 coding.
+		data, err := os.ReadFile(filepath.Join(c.SamplesPath(), "iphone_7.heic"))
+		require.NoError(t, err)
+		dir := t.TempDir()
+		for _, brand := range []string{"heic", "heix", "mif1", "msf1", "avif"} {
+			for _, ext := range []string{".heic", ".heif", ".hif"} {
+				fileName := filepath.Join(dir, brand+ext)
+				patched := append([]byte(nil), data...)
+				copy(patched[8:12], brand)
+				require.NoError(t, os.WriteFile(fileName, patched, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+				f, newErr := NewMediaFile(fileName)
+				require.NoError(t, newErr)
+				assert.NoError(t, f.CheckType(), brand+ext)
+				assert.True(t, f.IsHeic(), brand+ext)
+			}
+		}
+	})
+	t.Run("BigTiff", func(t *testing.T) {
+		f, err := NewMediaFile(filepath.Join(fs.Abs("../../pkg/fs/testdata"), "bigtiff.tif"))
+		require.NoError(t, err)
+		assert.NoError(t, f.CheckType())
+	})
+}
+
+// TestIsHeifType verifies which media types belong to the HEIF container.
+func TestIsHeifType(t *testing.T) {
+	for _, mimeType := range []string{header.ContentTypeHeic, header.ContentTypeHeicS, "image/heif", "image/heif-sequence", header.ContentTypeAvif, header.ContentTypeAvifS} {
+		assert.True(t, isHeifType(mimeType), mimeType)
+	}
+	for _, mimeType := range []string{"", header.ContentTypeJpeg, header.ContentTypePng, header.ContentTypeMp4, "image/x-icon"} {
+		assert.False(t, isHeifType(mimeType), mimeType)
+	}
 }
 
 // TestIsImageType verifies which media types count as images that video files must not contain.

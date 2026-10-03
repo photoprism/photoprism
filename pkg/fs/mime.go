@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"bytes"
 	"errors"
 	"path/filepath"
 	"strings"
@@ -14,6 +15,17 @@ const (
 	// MimeTypeUnknown represents an unknown mime type.
 	MimeTypeUnknown = ""
 )
+
+// init registers the BigTIFF signature, which the content detector does not know.
+func init() {
+	mimetype.Lookup(header.ContentTypeBinary).Extend(isBigTiff, header.ContentTypeTiff, ".tif")
+}
+
+// isBigTiff reports whether the data starts with a BigTIFF header, which uses 64-bit offsets.
+func isBigTiff(raw []byte, _ uint32) bool {
+	return bytes.HasPrefix(raw, []byte{'I', 'I', 0x2B, 0x00, 0x08, 0x00, 0x00, 0x00}) ||
+		bytes.HasPrefix(raw, []byte{'M', 'M', 0x00, 0x2B, 0x00, 0x08, 0x00, 0x00})
+}
 
 // DetectMimeType returns the MIME type of the specified file,
 // or an error if the type could not be detected.

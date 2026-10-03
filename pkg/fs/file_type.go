@@ -26,6 +26,12 @@ func IsAnimatedImage(fileName string) bool {
 	return false
 }
 
+// IsPreviewImageExt checks if the filename has a JPEG or PNG extension, the formats used to show images.
+func IsPreviewImageExt(fileName string) bool {
+	t := FileType(fileName)
+	return t == ImageJpeg || t == ImagePng
+}
+
 // NewType creates a new file type from a filename extension.
 func NewType(ext string) Type {
 	return Type(TrimExt(ext))

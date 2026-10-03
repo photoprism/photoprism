@@ -12,11 +12,12 @@ import (
 // ConvertCmd represents a command to be executed for converting a MediaFile.
 // including any options to be used for this.
 type ConvertCmd struct {
-	Cmd          *exec.Cmd
-	Orientation  media.Orientation
-	VerifyImage  bool
-	RejectStderr []string
-	Projection   projection.Type
+	Cmd               *exec.Cmd
+	Orientation       media.Orientation
+	SourceOrientation int
+	VerifyImage       bool
+	RejectStderr      []string
+	Projection        projection.Type
 }
 
 // String returns the conversion command as string e.g. for logging, so a caller needs no
@@ -34,6 +35,18 @@ func (c *ConvertCmd) WithOrientation(o media.Orientation) *ConvertCmd {
 // ResetOrientation resets the media Orientation after successful conversion.
 func (c *ConvertCmd) ResetOrientation() *ConvertCmd {
 	return c.WithOrientation(media.ResetOrientation)
+}
+
+// WithSourceOrientation sets the EXIF orientation to write to output that has none. Values outside
+// 2..8 clear it, since 1 is the default.
+func (c *ConvertCmd) WithSourceOrientation(o int) *ConvertCmd {
+	if o >= 2 && o <= 8 {
+		c.SourceOrientation = o
+	} else {
+		c.SourceOrientation = 0
+	}
+
+	return c
 }
 
 // WithImageVerification marks the command's output for a decode check before acceptance,
