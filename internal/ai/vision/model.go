@@ -95,7 +95,6 @@ func (m *Model) GetModel() (model, name, version string) {
 	// Sanitize the configured values without lowercasing: upstream catalogs
 	// (Ollama tags, Hugging Face IDs served by OpenAI-compatible endpoints)
 	// match identifiers verbatim, so case must round-trip from vision.yml.
-	name = clean.Type(m.Name)
 	version = clean.Type(m.Version)
 
 	// Build a base name from the highest-priority override:
@@ -107,7 +106,9 @@ func (m *Model) GetModel() (model, name, version string) {
 	case serviceModel != "":
 		name = serviceModel
 	case strings.TrimSpace(m.Model) != "":
-		name = clean.Type(m.Model)
+		name = cleanModelId(m.Model)
+	default:
+		name = cleanModelId(m.Name)
 	}
 
 	// Return if no model is configured.

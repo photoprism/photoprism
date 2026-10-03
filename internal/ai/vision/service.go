@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
@@ -86,7 +85,7 @@ func (m *Service) GetModel() string {
 
 	ensureEnv()
 
-	return clean.Type(os.ExpandEnv(m.Model))
+	return cleanModelId(os.ExpandEnv(m.Model))
 }
 
 // EndpointKey returns the access token belonging to the remote service endpoint, if any.

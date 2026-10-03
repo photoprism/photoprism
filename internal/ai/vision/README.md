@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** October 2, 2026
+**Last Updated:** October 3, 2026
 
 ### Overview
 
@@ -167,6 +167,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 - Model identifier resolution order: `Service.Model` → `Model` → `Name`. `Model.GetModel()` returns `(id, name, version)` where Ollama receives `name:version`, OpenAI receives the identifier verbatim, including any colons, and other engines receive `name` plus a separate `Version`.
 - Env expansion runs for all `Service` credentials and `Model` overrides; empty or disabled models return empty identifiers.
+- Identifiers are limited to 64 ASCII characters. A longer one is shortened, and a warning is written to the system log once per shortened identifier.
 - Options merging: engine defaults fill missing fields; explicit values always win. Temperature is capped at `MaxTemperature`.
 - Authentication: `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` inject HTTP basic auth into the service URI when not already present. `Username`, `Password`, and `Key` are never serialized to JSON, and `photoprism vision ls` prints the endpoint with the password redacted, so a shared terminal transcript or report does not carry it.
 - Reasoning control: `Service.Think` maps to `ApiRequest.Think` and is serialized only when non-empty (`omitempty`). The Ollama engine defaults it to `"false"` via its engine alias (applied when `Service.Think` is empty), so reasoning is off out of the box; other engines leave it empty. During JSON encoding, `"true"` / `"false"` are converted to boolean `true` / `false`; other non-empty values are sent as strings.
