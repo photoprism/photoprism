@@ -232,3 +232,29 @@ func TestDownloadAlbum(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
+
+// TestDownloadAlbum_VideoStills checks that album archives skip the generated still images of videos.
+func TestDownloadAlbum_VideoStills(t *testing.T) {
+	app, router, conf := NewApiTest()
+	DownloadAlbum(router)
+
+	photo := videoStillTestPhoto(t, conf)
+
+	album := entity.NewAlbum("Video Stills Download", entity.AlbumManual)
+	require.NoError(t, album.Create())
+	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "album_uid = ?", album.AlbumUID)
+		entity.UnscopedDb().Unscoped().Delete(album)
+		entity.FlushAlbumCache()
+	})
+	require.NoError(t, entity.NewPhotoAlbum(photo.PhotoUID, album.AlbumUID).Create())
+
+	conf.Settings().Albums.Download.Disabled = false
+	conf.Settings().Albums.Download.Originals = false
+	conf.Settings().Albums.Download.MediaRaw = true
+	conf.Settings().Albums.Download.MediaSidecar = true
+
+	r := PerformRequest(app, http.MethodGet, "/api/v1/albums/"+album.AlbumUID+"/dl?name=file&t="+conf.DownloadToken())
+	require.Equal(t, http.StatusOK, r.Code)
+	assert.ElementsMatch(t, []string{"clip.mp4", "clip.jpg", "clip.xmp"}, zipEntryNames(t, r.Body.Bytes()))
+}

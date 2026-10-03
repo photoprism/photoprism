@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -376,4 +377,122 @@ func TestSelectedFiles_SubfolderContainment(t *testing.T) {
 
 	assert.ElementsMatch(t, []string{inFolder.PhotoUID, inSubfolder.PhotoUID}, uids)
 	assert.NotContains(t, uids, sibling.PhotoUID)
+}
+
+// videoRuleTestPhoto creates a photo of the given type with the given files for the video still rule tests.
+func videoRuleTestPhoto(t *testing.T, photoType media.Type, files []entity.File) *entity.Photo {
+	t.Helper()
+
+	photo := entity.NewPhoto(false)
+	photo.PhotoType = photoType.String()
+	require.NoError(t, photo.Save())
+
+	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(photo)
+	})
+
+	for i := range files {
+		f := files[i]
+		f.PhotoID, f.PhotoUID, f.FileHash = photo.ID, photo.PhotoUID, rnd.Base36(40)
+		require.NoError(t, f.Create())
+	}
+
+	return &photo
+}
+
+// videoRuleFileNames returns the names of the selected files of a photo.
+func videoRuleFileNames(t *testing.T, photo *entity.Photo, o FileSelection) (result []string) {
+	t.Helper()
+
+	files, err := SelectedFiles(form.Selection{Photos: []string{photo.PhotoUID}}, o)
+	require.NoError(t, err)
+
+	for _, f := range files {
+		result = append(result, f.FileName)
+	}
+
+	return result
+}
+
+func TestSelectedFiles_SkipVideoStills(t *testing.T) {
+	video := videoRuleTestPhoto(t, media.Video, []entity.File{
+		{FileName: "vr/clip.mp4", FileRoot: entity.RootOriginals, FileType: "mp4", MediaType: "video", FileVideo: true},
+		{FileName: "vr/clip.jpg", FileRoot: entity.RootOriginals, FileType: "jpg", MediaType: "image"},
+		{FileName: "vr/clip.xmp", FileRoot: entity.RootOriginals, FileType: "xmp", MediaType: "sidecar", FileSidecar: true},
+		{FileName: "vr/clip.mp4.jpg", FileRoot: entity.RootSidecar, FileType: "jpg", MediaType: "image"},
+		{FileName: "vr/clip.mp4.json", FileRoot: entity.RootSidecar, FileType: "json", MediaType: "sidecar"},
+		{FileName: "vr/clip.mp4.yml", FileRoot: entity.RootSidecar, FileType: "yml", MediaType: "image", FileSidecar: true},
+		{FileName: "vr/clip.avc", FileRoot: entity.RootSidecar, FileType: "avc", MediaType: "video"},
+		{FileName: "vr/clip.hevc.mp4", FileRoot: entity.RootSidecar, FileType: "mp4", MediaType: "image", FileVideo: true},
+		{FileName: "vr/clip.live.jpg", FileRoot: entity.RootSidecar, FileType: "jpg", MediaType: "live"},
+	})
+
+	t.Run("VideoAllFiles", func(t *testing.T) {
+		assert.ElementsMatch(t, []string{"vr/clip.mp4", "vr/clip.jpg", "vr/clip.xmp", "vr/clip.mp4.json", "vr/clip.mp4.yml",
+			"vr/clip.avc", "vr/clip.hevc.mp4", "vr/clip.live.jpg"}, videoRuleFileNames(t, video, DownloadSelection(true, true, false)))
+	})
+	t.Run("VideoWithoutSidecars", func(t *testing.T) {
+		names := videoRuleFileNames(t, video, DownloadSelection(true, false, false))
+		assert.Contains(t, names, "vr/clip.jpg")
+		assert.NotContains(t, names, "vr/clip.xmp")
+		assert.NotContains(t, names, "vr/clip.mp4.jpg")
+	})
+	t.Run("VideoOriginals", func(t *testing.T) {
+		assert.ElementsMatch(t, []string{"vr/clip.mp4", "vr/clip.jpg", "vr/clip.xmp"}, videoRuleFileNames(t, video, DownloadSelection(true, true, true)))
+	})
+	t.Run("AlbumDownload", func(t *testing.T) {
+		assert.NotContains(t, videoRuleFileNames(t, video, AlbumDownloadSelection(true, true, false, true)), "vr/clip.mp4.jpg")
+	})
+	t.Run("ShareUnchanged", func(t *testing.T) {
+		assert.Contains(t, videoRuleFileNames(t, video, ShareSelection(false, true)), "vr/clip.mp4.jpg")
+	})
+	t.Run("Live", func(t *testing.T) {
+		live := videoRuleTestPhoto(t, media.Live, []entity.File{
+			{FileName: "vr/live.heic", FileRoot: entity.RootOriginals, FileType: "heic", MediaType: "image"},
+			{FileName: "vr/live.mov", FileRoot: entity.RootOriginals, FileType: "mov", MediaType: "video", FileVideo: true},
+			{FileName: "vr/live.heic.jpg", FileRoot: entity.RootSidecar, FileType: "jpg", MediaType: "image"},
+		})
+		assert.ElementsMatch(t, []string{"vr/live.heic", "vr/live.mov", "vr/live.heic.jpg"}, videoRuleFileNames(t, live, DownloadSelection(true, true, false)))
+	})
+	t.Run("Image", func(t *testing.T) {
+		image := videoRuleTestPhoto(t, media.Image, []entity.File{
+			{FileName: "vr/image.heic", FileRoot: entity.RootOriginals, FileType: "heic", MediaType: "image"},
+			{FileName: "vr/image.heic.jpg", FileRoot: entity.RootSidecar, FileType: "jpg", MediaType: "image"},
+		})
+		assert.ElementsMatch(t, []string{"vr/image.heic", "vr/image.heic.jpg"}, videoRuleFileNames(t, image, DownloadSelection(true, true, false)))
+	})
+	t.Run("Animated", func(t *testing.T) {
+		animated := videoRuleTestPhoto(t, media.Animated, []entity.File{
+			{FileName: "vr/anim.gif", FileRoot: entity.RootOriginals, FileType: "gif", MediaType: "animated"},
+			{FileName: "vr/anim.gif.jpg", FileRoot: entity.RootSidecar, FileType: "jpg", MediaType: "image"},
+		})
+		assert.ElementsMatch(t, []string{"vr/anim.gif", "vr/anim.gif.jpg"}, videoRuleFileNames(t, animated, DownloadSelection(true, true, false)))
+	})
+	t.Run("Insta360", func(t *testing.T) {
+		insta := videoRuleTestPhoto(t, media.Video, []entity.File{
+			{FileName: "vr/VID_00_10_00.insv", FileRoot: entity.RootOriginals, FileType: "insv", MediaType: "video", FileVideo: true},
+			{FileName: "vr/VID_10_10_00.insv", FileRoot: entity.RootOriginals, FileType: "insv", MediaType: "video", FileVideo: true},
+			{FileName: "vr/VID_00_10_00.insv.avc", FileRoot: entity.RootSidecar, FileType: "avc", MediaType: "video", FileVideo: true},
+			{FileName: "vr/VID_00_10_00.insv.jpg", FileRoot: entity.RootSidecar, FileType: "jpg", MediaType: "image"},
+		})
+		assert.ElementsMatch(t, []string{"vr/VID_00_10_00.insv", "vr/VID_10_10_00.insv", "vr/VID_00_10_00.insv.avc"},
+			videoRuleFileNames(t, insta, DownloadSelection(true, true, false)))
+	})
+	t.Run("NullColumns", func(t *testing.T) {
+		for _, column := range []string{"photos.photo_type", "files.file_root", "files.media_type", "files.file_video", "files.file_sidecar"} {
+			table, name, _ := strings.Cut(column, ".")
+			fileName := "vr/null-" + name + ".mp4.jpg"
+			legacy := videoRuleTestPhoto(t, media.Video, []entity.File{
+				{FileName: fileName, FileRoot: entity.RootSidecar, FileType: "jpg", MediaType: "image"},
+			})
+			where := "photo_id = ?"
+			if table == "photos" {
+				where = "id = ?"
+			}
+			require.NoError(t, entity.UnscopedDb().Exec(fmt.Sprintf("UPDATE %s SET %s = NULL WHERE %s", table, name, where), legacy.ID).Error)
+			assert.ElementsMatch(t, []string{fileName}, videoRuleFileNames(t, legacy, DownloadSelection(true, true, false)), column)
+		}
+	})
 }
