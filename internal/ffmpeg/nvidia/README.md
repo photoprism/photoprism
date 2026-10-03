@@ -18,7 +18,7 @@ ffmpeg -hide_banner -y -strict -2 \
   -c:v h264_nvenc \
   -map 0:v:0 -map 0:a:0? -ignore_unknown \
   -c:a aac \
-  -preset fast -pixel_format yuv420p -gpu any \
+  -preset p4 -pixel_format yuv420p -gpu any \
   -vf "scale='if(gte(iw,ih), min(<size>, iw), -2):if(gte(iw,ih), -2, min(<size>, ih))',format=yuv420p" \
   -rc:v vbr -cq 31 -b:v 0 [-maxrate <n>M] \
   -tune hq -profile:v high -level:v auto -coder:v 1 \
@@ -38,6 +38,22 @@ The encoder runs in VBR mode with a constant quality target (`-cq`) and no avera
 
 `Options.MaxBitrate` limits the peak bitrate with `-maxrate`. `Convert.AvcBitrate()` sets it from the output resolution, i.e. the source size scaled down to `PHOTOPRISM_FFMPEG_SIZE`, at 12 bits per second for each pixel of the frame (25 Mbit/s for 1080p), limited by `PHOTOPRISM_FFMPEG_BITRATE` (60 Mbit/s by default), which also applies when the size is unknown. With `PHOTOPRISM_FFMPEG_BITRATE=-1`, no `-maxrate` is emitted. The limit is a rate control target rather than a hard cap: at common frame rates, noisy content can exceed it by about a third. NVENC applies it per frame at the nominal frame rate, so it is stricter for videos whose actual frame rate is lower, such as phone videos recorded with a variable frame rate. A `-bufsize` is not set, since it has no effect in constant-quality mode.
 
+#### Presets
+
+`Preset()` maps `PHOTOPRISM_FFMPEG_PRESET` from the x264 names to the NVENC presets `p1` (fastest) to `p7` (slowest), passes `p1` to `p7` through, and uses `p4` for any other value. Use the x264 names: the same setting reaches the software encoder that a failed NVENC transcode falls back to, and the Intel encoder, and both reject `p1` to `p7`.
+
+| x264 Name                | NVENC Preset |
+|--------------------------|--------------|
+| `ultrafast`, `superfast` | `p1`         |
+| `veryfast`               | `p2`         |
+| `faster`                 | `p3`         |
+| `fast` (default)         | `p4`         |
+| `medium`                 | `p5`         |
+| `slow`                   | `p6`         |
+| `slower`, `veryslow`     | `p7`         |
+
+At the same `-cq` on an RTX 4060, `p1` and `p2` write about a third more data than `p4` for the same quality, as they use no B-frames. `p5` matches `p4` in size and quality, and `p6`/`p7` gain a little quality for larger files. Where the encoder is the bottleneck, as with 4K sources, `p1` and `p2` take 30-40% less time than `p4`, `p5` about 60% more, and `p6`/`p7` up to about twice as much; where decoding and scaling dominate, the presets differ far less.
+
 ### Flags
 
 | Flag                         | Value                                    | Purpose                                                     |
@@ -48,7 +64,7 @@ The encoder runs in VBR mode with a constant quality target (`-cq`) and no avera
 | `-gpu`                       | `any`                                    | Lets the driver choose an NVENC-capable GPU.                |
 | `-rc:v` / `-cq` / `-b:v`     | `vbr` / `31` / `0` (`DefaultQuality` 50) | VBR with a quality target, via `Options.CqQuality()`.       |
 | `-maxrate`                   | `Options.MaxRate()`                      | Peak bitrate target, omitted without a limit.               |
-| `-preset`                    | `fast`                                   | Encoder speed/quality trade-off, via `Options.Preset`.      |
+| `-preset`                    | `p4`                                     | Speed/size trade-off, via `Preset(Options.Preset)`.         |
 | `-tune`                      | `hq`                                     | NVENC tuning info — high quality.                           |
 | `-profile:v`                 | `high`                                   | H.264 High profile, as written by the software encoder.     |
 | `-level:v`                   | `auto`                                   | Lets the encoder derive the H.264 level.                    |

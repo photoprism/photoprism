@@ -21,7 +21,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-map", opt.MapAudio,
 		"-ignore_unknown",
 		"-c:a", "aac",
-		"-preset", opt.Preset,
+		"-preset", Preset(opt.Preset),
 		"-pixel_format", "yuv420p",
 		"-gpu", "any",
 		"-vf", opt.VideoFilter(encode.FormatYUV420P),
