@@ -733,6 +733,36 @@ func TestModelApplyService(t *testing.T) {
 		assert.Equal(t, "keep", req.Tier)
 		assert.Equal(t, "false", req.Think)
 	})
+	t.Run("EngineLessOpenAIHeaders", func(t *testing.T) {
+		req := &ApiRequest{}
+		model := &Model{Service: Service{RequestFormat: ApiFormatOpenAI, Org: "org-123", Project: "proj-abc", Tier: "flex"}}
+
+		model.ApplyService(req)
+
+		assert.Equal(t, "org-123", req.Org)
+		assert.Equal(t, "proj-abc", req.Project)
+		assert.Equal(t, "flex", req.Tier)
+	})
+	t.Run("EngineWinsOverFormat", func(t *testing.T) {
+		req := &ApiRequest{}
+		model := &Model{Engine: ollama.EngineName, Service: Service{RequestFormat: ApiFormatOpenAI, Org: "org-123", Project: "proj-abc", Tier: "flex"}}
+
+		model.ApplyService(req)
+
+		assert.Equal(t, "", req.Org)
+		assert.Equal(t, "", req.Project)
+		assert.Equal(t, "", req.Tier)
+	})
+	t.Run("EngineLessOllamaIgnoresOpenAIHeaders", func(t *testing.T) {
+		req := &ApiRequest{}
+		model := &Model{Service: Service{RequestFormat: ApiFormatOllama, Org: "org-123", Project: "proj-abc", Tier: "flex"}}
+
+		model.ApplyService(req)
+
+		assert.Equal(t, "", req.Org)
+		assert.Equal(t, "", req.Project)
+		assert.Equal(t, "", req.Tier)
+	})
 }
 
 func TestModel_IsDefault(t *testing.T) {

@@ -167,6 +167,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 - Model identifier resolution order: `Service.Model` → `Model` → `Name`. `Model.GetModel()` returns `(id, name, version)`: Ollama receives `name:version`, OpenAI-compatible services receive the identifier verbatim (colons included), and other engines receive `name` plus a separate `Version`. Without an `Engine`, `RequestFormat: openai` or `ollama` selects the matching behavior.
 - Env expansion runs for all `Service` credentials and `Model` overrides; empty or disabled models return empty identifiers.
+- `Org`, `Project`, and `Tier` apply to the OpenAI engine, including models without an `Engine` that set `RequestFormat: openai`.
 - Identifiers are limited to 64 ASCII characters. A longer one is shortened, and a warning is written to the system log once per shortened identifier.
 - Options merging: engine defaults fill missing fields; explicit values always win. Temperature is capped at `MaxTemperature`.
 - Authentication: `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` inject HTTP basic auth into the service URI when not already present. `Username`, `Password`, and `Key` are never serialized to JSON, and `photoprism vision ls` prints the endpoint with the password redacted, so a shared terminal transcript or report does not carry it.
