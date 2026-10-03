@@ -193,4 +193,36 @@ func TestConfig_FFmpegOptions(t *testing.T) {
 	assert.Equal(t, encode.DefaultMapAudio, opt.MapAudio)
 	assert.Equal(t, c.FFmpegMapVideo(), opt.MapVideo)
 	assert.Equal(t, c.FFmpegMapAudio(), opt.MapAudio)
+	assert.Equal(t, 25, opt.MaxBitrate)
+}
+
+func TestConfig_FFmpegOptions_MaxBitrate(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Limit", func(t *testing.T) {
+		c.options.FFmpegBitrate = 0
+		opt, err := c.FFmpegOptions(encode.NvidiaAvc, "60M")
+		assert.NoError(t, err)
+		assert.Equal(t, 60, opt.MaxBitrate)
+	})
+	t.Run("NoBitrateLimit", func(t *testing.T) {
+		t.Cleanup(func() { c.options.FFmpegBitrate = 0 })
+		c.options.FFmpegBitrate = -1
+		opt, err := c.FFmpegOptions(encode.NvidiaAvc, "25M")
+		assert.NoError(t, err)
+		assert.Equal(t, 0, opt.MaxBitrate)
+		c.options.FFmpegBitrate = -5
+		opt, err = c.FFmpegOptions(encode.NvidiaAvc, "25M")
+		assert.NoError(t, err)
+		assert.Equal(t, 0, opt.MaxBitrate)
+	})
+	t.Run("InvalidBitrate", func(t *testing.T) {
+		opt, err := c.FFmpegOptions(encode.NvidiaAvc, "-1M")
+		assert.NoError(t, err)
+		assert.Equal(t, 0, opt.MaxBitrate)
+	})
+	t.Run("EmptyBitrate", func(t *testing.T) {
+		_, err := c.FFmpegOptions(encode.NvidiaAvc, "")
+		assert.Error(t, err)
+	})
 }

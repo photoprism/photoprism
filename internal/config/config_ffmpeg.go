@@ -175,5 +175,10 @@ func (c *Config) FFmpegOptions(encoder encode.Encoder, bitrate string) (encode.O
 		return opt, fmt.Errorf("encoder must not be empty")
 	}
 
+	// Set the peak bitrate target for encoders that support it, unless the limit is disabled.
+	if c.FFmpegBitrate() != encode.NoBitrateLimit {
+		opt.MaxBitrate = encode.ParseBitrate(bitrate)
+	}
+
 	return opt, nil
 }

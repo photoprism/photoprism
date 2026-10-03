@@ -437,22 +437,33 @@ func (w *Convert) fisheyeRoll(f *MediaFile) int {
 	return roll
 }
 
-// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
+// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second for the output resolution, capped by
+// the configured limit. Encoders that support a peak bitrate use it, so a video of unknown size gets the limit.
 func (w *Convert) AvcBitrate(f *MediaFile) string {
 	const defaultBitrate = "8M"
 
-	if f == nil {
-		return defaultBitrate
+	limit := w.conf.FFmpegBitrate()
+	quality := 12.0
+
+	var bitrate int
+
+	if f != nil {
+		if width, height := float64(f.Width()), float64(f.Height()); width > 0 && height > 0 {
+			// Transcoding scales the longer side down to the configured size limit.
+			if longest, size := math.Max(width, height), float64(w.conf.FFmpegSize()); longest > size {
+				width, height = width*size/longest, height*size/longest
+			}
+
+			bitrate = int(math.Ceil(width * height * quality / 1000000))
+		}
 	}
 
-	limit := w.conf.FFmpegBitrate()
-	quality := 12
-
-	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*quality) / 1000000))
-
-	if bitrate <= 0 {
+	switch {
+	case bitrate <= 0 && limit > 0:
+		bitrate = limit
+	case bitrate <= 0:
 		return defaultBitrate
-	} else if bitrate > limit {
+	case limit > 0 && bitrate > limit:
 		bitrate = limit
 	}
 

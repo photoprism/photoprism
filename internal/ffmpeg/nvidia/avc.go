@@ -9,9 +9,7 @@ import (
 // TranscodeToAvcCmd returns the FFmpeg command for hardware-accelerated transcoding to MPEG-4 AVC.
 func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 	// ffmpeg -hide_banner -h encoder=h264_nvenc
-	// #nosec G204 -- command arguments are built from validated options and paths.
-	return exec.Command(
-		opt.Bin,
+	args := []string{
 		"-hide_banner",
 		"-y",
 		"-strict", "-2",
@@ -27,10 +25,19 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-pixel_format", "yuv420p",
 		"-gpu", "any",
 		"-vf", opt.VideoFilter(encode.FormatYUV420P),
-		"-rc:v", "constqp",
+		"-rc:v", "vbr",
 		"-cq", opt.CqQuality(),
-		"-tune", "2",
-		"-profile:v", "1",
+		"-b:v", "0",
+	}
+
+	// The peak bitrate is a rate control target applied per frame at the nominal frame rate, not a hard cap.
+	if maxRate := opt.MaxRate(); maxRate != "" {
+		args = append(args, "-maxrate", maxRate)
+	}
+
+	args = append(args,
+		"-tune", "hq",
+		"-profile:v", "high",
 		"-level:v", "auto",
 		"-coder:v", "1",
 		"-f", "mp4",
@@ -38,4 +45,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-map_metadata", opt.MapMetadata,
 		destName,
 	)
+
+	// #nosec G204 -- command arguments are built from validated options and paths.
+	return exec.Command(opt.Bin, args...)
 }

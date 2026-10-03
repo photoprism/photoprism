@@ -86,7 +86,8 @@ func QpQuality(q int) string {
 	}
 }
 
-// CqQuality returns the video encoding quality as "-cq" parameter string.
+// CqQuality returns the video encoding quality as NVENC "-cq" parameter string.
+// The scale is steeper than CRF, so that the default quality matches libx264 at "-crf 25".
 func CqQuality(q int) string {
 	if q <= 0 {
 		q = DefaultQuality
@@ -94,7 +95,7 @@ func CqQuality(q int) string {
 		q = BestQuality
 	}
 
-	result := (100 - q) / 2
+	result := 1 + (100-q)*3/5
 
 	switch {
 	case result < 1:

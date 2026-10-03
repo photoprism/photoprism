@@ -1129,7 +1129,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "ffmpeg-bitrate",
-			Usage:   fmt.Sprintf("bitrate `LIMIT` in Mbps for forced transcoding of non-AVC videos (%d-%d; %d to disable)", encode.MinBitrateLimit, encode.MaxBitrateLimit, encode.NoBitrateLimit),
+			Usage:   fmt.Sprintf("bitrate `LIMIT` in Mbps for forced transcoding of non-AVC videos, also limits the NVIDIA peak bitrate (%d-%d; %d to disable)", encode.MinBitrateLimit, encode.MaxBitrateLimit, encode.NoBitrateLimit),
 			Value:   encode.DefaultBitrateLimit,
 			EnvVars: EnvVars("FFMPEG_BITRATE"),
 		}}, {

@@ -97,7 +97,10 @@ func TestConvert_AvcBitrate(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "1M", convert.AvcBitrate(mf))
+		mf.width = 270
+		mf.height = 480
+
+		assert.Equal(t, "2M", convert.AvcBitrate(mf))
 	})
 	t.Run("Medium", func(t *testing.T) {
 		fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
@@ -147,6 +150,65 @@ func TestConvert_AvcBitrate(t *testing.T) {
 
 		assert.Equal(t, "60M", convert.AvcBitrate(mf))
 	})
+	t.Run("UnknownSize", func(t *testing.T) {
+		assert.Equal(t, "60M", convert.AvcBitrate(nil))
+		assert.Equal(t, "60M", convert.AvcBitrate(&MediaFile{}))
+	})
+	t.Run("UnreadableSize", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "unreadable.mp4")
+
+		if err := os.WriteFile(fileName, []byte("not a video"), fs.ModeFile); err != nil {
+			t.Fatal(err)
+		}
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, -1, mf.Width())
+		assert.Equal(t, -1, mf.Height())
+		assert.Equal(t, "60M", convert.AvcBitrate(mf))
+	})
+	t.Run("OutputSize", func(t *testing.T) {
+		size := conf.Options().FFmpegSize
+		conf.Options().FFmpegSize = 1920
+		t.Cleanup(func() { conf.Options().FFmpegSize = size })
+
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 7680
+		mf.height = 4320
+
+		assert.Equal(t, "25M", convert.AvcBitrate(mf))
+
+		mf.width = 1 << 40
+		mf.height = 1 << 40
+
+		assert.Equal(t, "45M", convert.AvcBitrate(mf))
+	})
+	t.Run("NoBitrateLimit", func(t *testing.T) {
+		limit := conf.Options().FFmpegBitrate
+		conf.Options().FFmpegBitrate = encode.NoBitrateLimit
+		t.Cleanup(func() { conf.Options().FFmpegBitrate = limit })
+
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 4096
+		mf.height = 2160
+
+		assert.Equal(t, "107M", convert.AvcBitrate(mf))
+		assert.Equal(t, "8M", convert.AvcBitrate(nil))
+	})
 }
 
 func TestConvert_TranscodeToAvcCmd(t *testing.T) {
@@ -169,6 +231,25 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 
 		assert.Contains(t, r.Path, "ffmpeg")
 		assert.Contains(t, r.Args, "mp4")
+	})
+	t.Run("Nvidia", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mf.width = 1920
+		mf.height = 1080
+
+		r, _, err := convert.TranscodeToAvcCmd(mf, "avc1", encode.NvidiaAvc)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Contains(t, r.String(), " -c:v h264_nvenc ")
+		assert.Contains(t, r.String(), " -b:v 0 -maxrate 25M -tune hq ")
 	})
 	t.Run("Jpeg", func(t *testing.T) {
 		fileName := filepath.Join(conf.SamplesPath(), "cat_black.jpg")
