@@ -154,6 +154,16 @@ func decodeConfig(reader *io.SectionReader, format imageFormat) (image.Config, s
 	switch format {
 	case imageFormatJPEG:
 		cfg, err := jpeg.DecodeConfig(reader)
+
+		// Read the frame header directly if the Go decoder cannot, e.g. for arithmetic coding.
+		if err != nil {
+			if _, seekErr := reader.Seek(0, io.SeekStart); seekErr == nil {
+				if frameCfg, frameErr := jpegFrameConfig(reader); frameErr == nil {
+					return frameCfg, "jpeg", nil
+				}
+			}
+		}
+
 		return cfg, "jpeg", err
 	case imageFormatPNG:
 		cfg, err := png.DecodeConfig(reader)
