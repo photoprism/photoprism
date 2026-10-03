@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -301,6 +302,7 @@ func TestOllamaParserFallbacks(t *testing.T) {
 
 func TestOllamaParserUnavailableStatus(t *testing.T) {
 	t.Run("Gone", func(t *testing.T) {
+		resetOllamaFailures(t)
 		logHook, _ := captureLogs(t)
 		raw, err := json.Marshal(ollama.Response{})
 		require.NoError(t, err)
@@ -313,6 +315,7 @@ func TestOllamaParserUnavailableStatus(t *testing.T) {
 		assert.Contains(t, logHook.LastEntry().Message, "is unavailable (status 410)")
 	})
 	t.Run("ServerErrorCaption", func(t *testing.T) {
+		resetOllamaFailures(t)
 		logHook, _ := captureLogs(t)
 		raw, err := json.Marshal(ollama.Response{Model: "qwen2.5vl:latest", Response: "A caption from a failed request."})
 		require.NoError(t, err)
@@ -336,8 +339,100 @@ func TestOllamaParserUnavailableStatus(t *testing.T) {
 	})
 }
 
+// resetOllamaFailures clears the logged request failures before and after a test.
+func resetOllamaFailures(t *testing.T) {
+	t.Helper()
+	ollamaFailures.Clear()
+	t.Cleanup(ollamaFailures.Clear)
+}
+
+// ollamaFailureWarnings returns the logged warnings about failed Ollama requests.
+func ollamaFailureWarnings(hook *logtest.Hook) []string {
+	var result []string
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.WarnLevel && strings.HasPrefix(entry.Message, "vision: ollama ") {
+			result = append(result, entry.Message)
+		}
+	}
+
+	return result
+}
+
+func TestWarnOllamaFailure(t *testing.T) {
+	failed := func(t *testing.T, model string, status int) {
+		t.Helper()
+		_, err := ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: model}, []byte("{}"), status)
+		require.Error(t, err)
+	}
+
+	t.Run("RepeatedAtDebugLevel", func(t *testing.T) {
+		resetOllamaFailures(t)
+		logHook, _ := captureLogs(t)
+		failed(t, "gemma3:27b", http.StatusNotFound)
+		failed(t, "gemma3:27b", http.StatusNotFound)
+		failed(t, "gemma3:27b", http.StatusNotFound)
+		assert.Equal(t, []string{"vision: ollama model gemma3:27b is unavailable (status 404), it may have been retired or renamed"}, ollamaFailureWarnings(logHook))
+		require.NotNil(t, logHook.LastEntry())
+		assert.Equal(t, logrus.DebugLevel, logHook.LastEntry().Level)
+		assert.Equal(t, "vision: ollama request for model gemma3:27b failed again (status 404)", logHook.LastEntry().Message)
+	})
+	t.Run("StatusChange", func(t *testing.T) {
+		resetOllamaFailures(t)
+		logHook, _ := captureLogs(t)
+		failed(t, "gemma3:27b", http.StatusServiceUnavailable)
+		failed(t, "gemma3:27b", http.StatusNotFound)
+		failed(t, "gemma3:27b", http.StatusNotFound)
+		assert.Len(t, ollamaFailureWarnings(logHook), 2)
+	})
+	t.Run("PerModel", func(t *testing.T) {
+		resetOllamaFailures(t)
+		logHook, _ := captureLogs(t)
+		failed(t, "gemma3:27b", http.StatusInternalServerError)
+		failed(t, "qwen3-vl:8b", http.StatusInternalServerError)
+		assert.Len(t, ollamaFailureWarnings(logHook), 2)
+	})
+	t.Run("ClearedBySuccess", func(t *testing.T) {
+		resetOllamaFailures(t)
+		logHook, _ := captureLogs(t)
+		failed(t, "gemma3:27b", http.StatusInternalServerError)
+		raw, err := json.Marshal(ollama.Response{Model: "gemma3:27b", Response: "A caption."})
+		require.NoError(t, err)
+		_, err = ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: "gemma3:27b"}, raw, http.StatusOK)
+		require.NoError(t, err)
+		failed(t, "gemma3:27b", http.StatusInternalServerError)
+		assert.Len(t, ollamaFailureWarnings(logHook), 2)
+	})
+	t.Run("ClearedByInvalidBody", func(t *testing.T) {
+		resetOllamaFailures(t)
+		logHook, _ := captureLogs(t)
+		failed(t, "gemma3:27b", http.StatusInternalServerError)
+		_, err := ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: "gemma3:27b"}, []byte("not json"), http.StatusOK)
+		require.Error(t, err)
+		failed(t, "gemma3:27b", http.StatusInternalServerError)
+		assert.Len(t, ollamaFailureWarnings(logHook), 2)
+	})
+	t.Run("RedirectKeepsState", func(t *testing.T) {
+		resetOllamaFailures(t)
+		logHook, _ := captureLogs(t)
+		failed(t, "gemma3:27b", http.StatusInternalServerError)
+		failed(t, "gemma3:27b", http.StatusMultipleChoices)
+		failed(t, "gemma3:27b", http.StatusInternalServerError)
+		assert.Len(t, ollamaFailureWarnings(logHook), 1)
+	})
+	t.Run("RedirectNotLogged", func(t *testing.T) {
+		resetOllamaFailures(t)
+		logHook, _ := captureLogs(t)
+		failed(t, "gemma3:27b", http.StatusMultipleChoices)
+		assert.Empty(t, logHook.AllEntries())
+		_, loaded := ollamaFailures.Load("gemma3:27b")
+		assert.False(t, loaded)
+	})
+}
+
 // TestOllamaParserInvalidLabels checks that invalid label JSON from the model is only quoted at debug level.
 func TestOllamaParserInvalidLabels(t *testing.T) {
+	resetOllamaInvalidLabels(t)
 	logHook, _ := captureLogs(t)
 
 	digits := strings.Repeat("9", 60)
@@ -367,6 +462,42 @@ func TestOllamaParserInvalidLabels(t *testing.T) {
 
 	assert.Equal(t, 1, warn)
 	assert.Equal(t, 1, debug)
+}
+
+// resetOllamaInvalidLabels clears the logged invalid-label models before and after a test.
+func resetOllamaInvalidLabels(t *testing.T) {
+	t.Helper()
+	ollamaInvalidLabels.Clear()
+	t.Cleanup(ollamaInvalidLabels.Clear)
+}
+
+func TestOllamaParserInvalidLabelsOnce(t *testing.T) {
+	parse := func(t *testing.T, model, text string) {
+		t.Helper()
+		raw, err := json.Marshal(ollama.Response{Model: model, Response: text})
+		require.NoError(t, err)
+		_, err = ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: model, Format: FormatJSON}, raw, http.StatusOK)
+		require.NoError(t, err)
+	}
+	invalid := `{"labels":[{"name":"cat","priority":"high"}]}`
+	valid := `{"labels":[{"name":"cat","confidence":0.9,"topicality":0.9}]}`
+
+	t.Run("Repeated", func(t *testing.T) {
+		resetOllamaInvalidLabels(t)
+		logHook, _ := captureLogs(t)
+		parse(t, "gemma3:27b", invalid)
+		parse(t, "gemma3:27b", invalid)
+		parse(t, "qwen3-vl:8b", invalid)
+		assert.Len(t, ollamaFailureWarnings(logHook), 2)
+	})
+	t.Run("ClearedByValidLabels", func(t *testing.T) {
+		resetOllamaInvalidLabels(t)
+		logHook, _ := captureLogs(t)
+		parse(t, "gemma3:27b", invalid)
+		parse(t, "gemma3:27b", valid)
+		parse(t, "gemma3:27b", invalid)
+		assert.Len(t, ollamaFailureWarnings(logHook), 2)
+	})
 }
 
 func TestStripReasoningBlock(t *testing.T) {
