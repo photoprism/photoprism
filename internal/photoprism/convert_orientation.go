@@ -16,6 +16,9 @@ import (
 // exifToolConditionFailed is the ExifTool exit status when every file failed the -if condition.
 const exifToolConditionFailed = 2
 
+// exifToolTmpSuffix is appended to a file name for the temporary file ExifTool writes in its place.
+const exifToolTmpSuffix = "_exiftool_tmp"
+
 // writeMissingOrientation writes the EXIF orientation to an image that has no Orientation tag yet,
 // and reports whether it did. An existing tag is kept, and values outside 2..8 are never written.
 func (w *Convert) writeMissingOrientation(fileName string, orientation int) (written bool, err error) {

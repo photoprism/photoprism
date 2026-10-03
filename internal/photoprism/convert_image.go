@@ -85,7 +85,6 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 	fileName := f.RelName(w.conf.OriginalsPath())
 	fileOrientation := media.KeepOrientation
-	sourceOrientation := 0
 	fileProjection := projection.Unknown
 	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
@@ -194,12 +193,13 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 			RemoveConvertOutput(imageName, cmd)
 
 			continue
-		} else if fs.FileExistsNotEmpty(imageName) {
-			// The command wrote the target file directly (e.g. Darktable, RawTherapee).
-		} else if res := out.Bytes(); len(res) < 512 || !mimetype.Detect(res).Is(expectedMime) {
-			continue
-		} else if err = os.WriteFile(imageName, res, fs.ModeFile); err != nil {
-			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
+		}
+
+		// Most converters write the target file themselves; the ExifTool extractions write to stdout.
+		direct := fs.FileExistsNotEmpty(imageName)
+		res := out.Bytes()
+
+		if !direct && (len(res) < 512 || !mimetype.Detect(res).Is(expectedMime)) {
 			continue
 		}
 
@@ -207,28 +207,29 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		// unsupported sensor) so the loop falls back to the next converter.
 		if c.StderrRejected(stderr.String()) {
 			log.Debugf("convert: discarding %s from %s (untrustworthy output)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
-			if removeErr := os.Remove(imageName); removeErr != nil && !os.IsNotExist(removeErr) {
-				log.Tracef("convert: %s (%s)", removeErr, filepath.Base(cmd.Path))
+			if direct {
+				RemoveConvertOutput(imageName, cmd)
 			}
 			continue
 		}
 
-		// Reject undecodable output (e.g. a truncated/bogus embedded RAW preview that passed
-		// the MIME sniff) so the loop tries the next converter instead of indexing a file
-		// whose thumbnails will fail.
-		if c.VerifyImage {
+		if !direct {
+			if err = w.publishImageOutput(c, res, imageName); err != nil {
+				log.Debugf("convert: discarding %s from %s (%s)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path), clean.Error(err))
+				continue
+			}
+		} else if c.VerifyImage {
+			// Reject undecodable output so the loop tries the next converter instead of indexing a
+			// file whose thumbnails will fail.
 			if err = thumb.Verify(imageName); err != nil {
 				log.Debugf("convert: discarding undecodable %s from %s (%s)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path), clean.Error(err))
-				if removeErr := os.Remove(imageName); removeErr != nil && !os.IsNotExist(removeErr) {
-					log.Tracef("convert: %s (%s)", removeErr, filepath.Base(cmd.Path))
-				}
+				RemoveConvertOutput(imageName, cmd)
 				continue
 			}
 		}
 
 		log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
 		fileOrientation = c.Orientation
-		sourceOrientation = c.SourceOrientation
 		fileProjection = c.Projection
 		break
 	}
@@ -247,15 +248,6 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	if fileOrientation == media.ResetOrientation {
 		if err = result.ChangeOrientation(1); err != nil {
 			log.Warnf("convert: %s in %s (change orientation)", err, clean.Log(result.RootRelName()))
-		}
-	} else if sourceOrientation > 1 {
-		// The preview is kept either way, untagged if the orientation cannot be written.
-		if written, tagErr := w.writeMissingOrientation(imageName, sourceOrientation); tagErr != nil {
-			log.Warnf("convert: %s in %s (write orientation)", clean.Error(tagErr), clean.Log(result.RootRelName()))
-		} else if !written {
-			log.Debugf("convert: orientation of %s left unchanged", clean.Log(result.RootRelName()))
-		} else if result, err = NewMediaFile(imageName); err != nil {
-			return result, err
 		}
 	}
 
@@ -376,4 +368,64 @@ func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.
 	}
 
 	return os.Rename(tmpName, fileName)
+}
+
+// publishImageOutput writes converter output to a staged sibling of the image file, verifies it and
+// writes a missing source orientation as the command requires, and then publishes it.
+func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName string) (err error) {
+	staged, err := fs.OpenStageFile(imageName)
+
+	if err != nil {
+		return err
+	}
+
+	stagedName := staged.Name()
+	published := false
+
+	// Remove only the files this call created, on every way out including a panic.
+	defer func() {
+		names := []string{stagedName + exifToolTmpSuffix}
+
+		if !published {
+			names = append(names, stagedName)
+		}
+
+		for _, name := range names {
+			if removeErr := os.Remove(name); removeErr != nil && !os.IsNotExist(removeErr) {
+				log.Tracef("convert: %s", clean.Error(removeErr))
+			}
+		}
+	}()
+
+	if _, err = staged.Write(data); err != nil {
+		_ = staged.Close()
+		return err
+	} else if err = staged.Close(); err != nil {
+		return err
+	}
+
+	if c.VerifyImage {
+		if err = thumb.Verify(stagedName); err != nil {
+			return fmt.Errorf("undecodable (%w)", err)
+		}
+	}
+
+	// The preview is published either way, untagged if the orientation cannot be written.
+	if c.SourceOrientation > 1 {
+		if written, tagErr := w.writeMissingOrientation(stagedName, c.SourceOrientation); tagErr != nil {
+			log.Warnf("convert: %s in %s (write orientation)", clean.Error(tagErr), clean.Log(filepath.Base(imageName)))
+		} else if !written {
+			log.Debugf("convert: orientation of %s left unchanged", clean.Log(filepath.Base(imageName)))
+		}
+	}
+
+	// A link fails when the name is taken, so a non-empty regular file that appeared meanwhile is used
+	// rather than replaced, while a symlink or directory at that name fails the candidate.
+	if err = fs.PublishFile(stagedName, imageName, false); err == nil {
+		published = true
+	} else if errors.Is(err, os.ErrExist) && fs.FileExistsNotEmpty(imageName) && !fs.IsSymlink(imageName) {
+		return nil
+	}
+
+	return err
 }
