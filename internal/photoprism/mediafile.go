@@ -1110,7 +1110,7 @@ func (m *MediaFile) IsHeic() bool {
 	}
 
 	// Check the mime type after other tests have passed to improve performance.
-	return m.HasMimeType(header.ContentTypeHeic) || m.HasMimeType(header.ContentTypeHeicS)
+	return isHeifType(m.BaseType())
 }
 
 // IsHeicS checks if the file is a HEIC image sequence with a supported file type extension.
@@ -1199,15 +1199,22 @@ func (m *MediaFile) FileType() fs.Type {
 	}
 }
 
-// isImageType reports whether the media type is an image format, excluding the image and sequence
-// types of the ISO base media file format, which video files share.
-func isImageType(mimeType string) bool {
+// isHeifType reports whether the media type is an image or sequence type of the HEIF container, which
+// the content detector reports depending on the brand of the writer, e.g. "image/heif" for "mif1".
+func isHeifType(mimeType string) bool {
 	switch mimeType {
-	case header.ContentTypeHeic, header.ContentTypeHeicS, "image/heif", "image/heif-sequence", header.ContentTypeAvif, header.ContentTypeAvifS, "image/x-icon":
-		return false
+	case header.ContentTypeHeic, header.ContentTypeHeicS, "image/heif", "image/heif-sequence", header.ContentTypeAvif, header.ContentTypeAvifS:
+		return true
 	default:
-		return strings.HasPrefix(mimeType, "image/")
+		return false
 	}
+}
+
+// isImageType reports whether the media type is an image format. HEIF types are excluded because
+// they share the ISO base media file format with videos, and "image/x-icon" because the detector
+// reports it for MP4 files whose first box is 256 or 512 bytes long.
+func isImageType(mimeType string) bool {
+	return mimeType != "image/x-icon" && !isHeifType(mimeType) && strings.HasPrefix(mimeType, "image/")
 }
 
 // CheckType returns an error if the file extension is missing or invalid,
@@ -1245,7 +1252,7 @@ func (m *MediaFile) CheckType() error {
 	case fs.ImagePsd:
 		valid = mimeType == header.ContentTypePsd || mimeType == header.ContentTypePsdAlt
 	case fs.ImageHeic, fs.ImageHeif:
-		valid = mimeType == header.ContentTypeHeic || mimeType == header.ContentTypeHeicS
+		valid = isHeifType(mimeType)
 	case fs.ImageBmp:
 		// Some legacy BMP header versions are not identified, so only other formats are rejected.
 		valid = mimeType == header.ContentTypeBmp || mimeType == fs.MimeTypeUnknown
