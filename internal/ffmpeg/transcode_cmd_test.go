@@ -3,6 +3,7 @@ package ffmpeg
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -247,6 +248,37 @@ func TestTranscodeCmd_MaxBitrate(t *testing.T) {
 		cmd, _, err := TranscodeCmd("SRC.mov", "DEST.mp4", opt)
 		require.NoError(t, err)
 		assert.Contains(t, cmd.String(), " -maxrate 25M ")
+	})
+}
+
+// The converter recognizes a hardware transcode by the encoder name in the command arguments.
+func TestTranscodeCmd_EncoderArg(t *testing.T) {
+	// Every supported encoder, so that a new one cannot be left out.
+	var encoders []encode.Encoder
+
+	for _, encoder := range encode.AvcEncoders {
+		if !slices.Contains(encoders, encoder) {
+			encoders = append(encoders, encoder)
+		}
+	}
+
+	require.Len(t, encoders, 7)
+
+	for _, device := range []string{"", "/dev/dri/renderD128"} {
+		for _, encoder := range encoders {
+			t.Run(encoder.String()+device, func(t *testing.T) {
+				opt := encode.NewVideoOptions("/usr/bin/ffmpeg", encoder, 1500, encode.DefaultQuality, encode.PresetFast, device, "", "")
+				cmd, _, err := TranscodeCmd("SRC.mov", "DEST.mp4", opt)
+				require.NoError(t, err)
+				assert.True(t, slices.Contains(cmd.Args, encoder.String()), cmd.String())
+			})
+		}
+	}
+	t.Run("AnimatedImage", func(t *testing.T) {
+		opt := encode.NewVideoOptions("/usr/bin/ffmpeg", encode.NvidiaAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
+		cmd, _, err := TranscodeCmd("SRC.gif", "DEST.mp4", opt)
+		require.NoError(t, err)
+		assert.False(t, slices.Contains(cmd.Args, encode.NvidiaAvc.String()), cmd.String())
 	})
 }
 

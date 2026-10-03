@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -146,6 +148,161 @@ func TestConvert_ToAvc_Failed(t *testing.T) {
 
 		// The software retry replaces the incomplete output of the failed hardware encoder.
 		assert.Greater(t, fs.FileSize(outputName), int64(len("partial")))
+	})
+}
+
+// transcodeFailures returns the levels of the logged transcoding failures of the encoder.
+func transcodeFailures(hook *logtest.Hook, encoder encode.Encoder) (levels []logrus.Level) {
+	for _, entry := range hook.AllEntries() {
+		if strings.HasPrefix(entry.Message, encoder.String()+": failed to transcode ") {
+			levels = append(levels, entry.Level)
+		}
+	}
+
+	return levels
+}
+
+func TestConvert_ToAvc_FallbackWarning(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	conf := config.TestConfig()
+
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to transcode videos")
+	}
+
+	orig := log
+	logger, hook := logtest.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	log = logger
+	t.Cleanup(func() { log = orig })
+
+	resetTranscodeFallbacks()
+	t.Cleanup(resetTranscodeFallbacks)
+
+	outputName := filepath.Join(conf.SidecarPath(), conf.SamplesPath(), "gopher-video.mp4.avc")
+
+	_ = os.Remove(outputName)
+	t.Cleanup(func() { _ = os.Remove(outputName) })
+
+	mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("Hardware", func(t *testing.T) {
+		fakeFFmpeg(t, conf, "h264_nvenc")
+		hook.Reset()
+
+		for range 2 {
+			avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.NvidiaAvc, false, true)
+			require.NoError(t, avcErr)
+			require.NotNil(t, avcFile)
+			assert.Greater(t, fs.FileSize(outputName), int64(len("partial")))
+		}
+
+		assert.Equal(t, []logrus.Level{logrus.WarnLevel, logrus.DebugLevel}, transcodeFailures(hook, encode.NvidiaAvc))
+		assert.Empty(t, transcodeFailures(hook, encode.SoftwareAvc))
+	})
+	t.Run("OtherEncoder", func(t *testing.T) {
+		fakeFFmpeg(t, conf, "h264_qsv")
+		firstTranscodeFallback(encode.NvidiaAvc)
+		hook.Reset()
+
+		for range 2 {
+			avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.IntelAvc, false, true)
+			require.NoError(t, avcErr)
+			require.NotNil(t, avcFile)
+		}
+
+		assert.Equal(t, []logrus.Level{logrus.WarnLevel, logrus.DebugLevel}, transcodeFailures(hook, encode.IntelAvc))
+	})
+	t.Run("Software", func(t *testing.T) {
+		fakeFFmpeg(t, conf, "libx264")
+		hook.Reset()
+
+		for range 2 {
+			avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.SoftwareAvc, false, true)
+			assert.Error(t, avcErr)
+			assert.Nil(t, avcFile)
+		}
+
+		assert.Equal(t, []logrus.Level{logrus.WarnLevel, logrus.WarnLevel}, transcodeFailures(hook, encode.SoftwareAvc))
+	})
+	t.Run("SoftwareRetry", func(t *testing.T) {
+		resetTranscodeFallbacks()
+		fakeFFmpeg(t, conf, "h264_nvenc*|*libx264")
+		hook.Reset()
+
+		for range 2 {
+			avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.NvidiaAvc, false, true)
+			assert.Error(t, avcErr)
+			assert.Nil(t, avcFile)
+		}
+
+		assert.Equal(t, []logrus.Level{logrus.WarnLevel, logrus.DebugLevel}, transcodeFailures(hook, encode.NvidiaAvc))
+		assert.Equal(t, []logrus.Level{logrus.WarnLevel, logrus.WarnLevel}, transcodeFailures(hook, encode.SoftwareAvc))
+	})
+	t.Run("Rearm", func(t *testing.T) {
+		resetTranscodeFallbacks()
+		hook.Reset()
+
+		// The script fails while the marker file exists and otherwise writes a result.
+		marker := filepath.Join(t.TempDir(), "fail")
+		fakeBin := filepath.Join(t.TempDir(), "ffmpeg")
+		script := fmt.Sprintf("#!/bin/sh\ncase \"$*\" in\n  *h264_nvenc*) for last; do :; done; if [ -e %s ]; then exit 1; fi; printf ok > \"$last\"; exit 0;;\nesac\nexec %s \"$@\"\n", transportShellQuote(marker), transportShellQuote(conf.FFmpegBin()))
+
+		// #nosec G306 -- the script must be executable.
+		require.NoError(t, os.WriteFile(fakeBin, []byte(script), 0o700))
+		require.NoError(t, os.WriteFile(marker, nil, fs.ModeFile))
+
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = fakeBin
+		t.Cleanup(func() { conf.Options().FFmpegBin = orig })
+
+		transcode := func(fail bool) {
+			if fail {
+				require.NoError(t, os.WriteFile(marker, nil, fs.ModeFile))
+			} else {
+				require.NoError(t, os.Remove(marker))
+			}
+
+			avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.NvidiaAvc, false, true)
+			require.NoError(t, avcErr)
+			require.NotNil(t, avcFile)
+		}
+
+		transcode(true)
+		transcode(true)
+		transcode(false)
+		transcode(true)
+
+		assert.Equal(t, []logrus.Level{logrus.WarnLevel, logrus.DebugLevel, logrus.WarnLevel}, transcodeFailures(hook, encode.NvidiaAvc))
+	})
+	t.Run("Dewarp", func(t *testing.T) {
+		resetTranscodeFallbacks()
+		fakeFFmpeg(t, conf, "v360")
+		hook.Reset()
+
+		insv, insvErr := NewMediaFile("testdata/insta360.insv")
+		require.NoError(t, insvErr)
+
+		convert := NewConvert(conf)
+		insvName, nameErr := convert.avcName(insv)
+		require.NoError(t, nameErr)
+		t.Cleanup(func() { _ = os.Remove(insvName) })
+
+		avcFile, avcErr := convert.ToAvc(insv, encode.NvidiaAvc, false, true)
+		assert.Error(t, avcErr)
+		assert.Nil(t, avcFile)
+
+		// The dewarp runs in software, so it fails once and leaves the hardware warning unused.
+		assert.Empty(t, transcodeFailures(hook, encode.NvidiaAvc))
+		assert.Equal(t, []logrus.Level{logrus.WarnLevel}, transcodeFailures(hook, encode.SoftwareAvc))
+		assert.True(t, firstTranscodeFallback(encode.NvidiaAvc))
 	})
 }
 

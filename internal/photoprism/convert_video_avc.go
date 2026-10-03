@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -170,6 +171,12 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		return nil, err
 	}
 
+	// Animated images and dewarped videos do not use a hardware encoder, so they are logged as software
+	// transcodes and are not retried with the same command if they fail.
+	if encoder != encode.SoftwareAvc && !slices.Contains(cmd.Args, encoder.String()) {
+		encoder = encode.SoftwareAvc
+	}
+
 	// Make sure only one convert command runs at a time.
 	if useMutex && !noMutex {
 		w.cmdMutex.Lock()
@@ -227,8 +234,13 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			log.Debugf("%s: %s for %s", encoder, s, logFileName)
 		}
 
-		// Log filename and transcoding time.
-		log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		// Log filename and transcoding time. A hardware encoder that falls back to software below is
+		// logged as a warning only until it succeeds again, since an unusable GPU fails for every file.
+		if encoder != encode.SoftwareAvc && !disk.IsNoSpace(err) && !firstTranscodeFallback(encoder) {
+			log.Debugf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		} else {
+			log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		}
 
 		// Remove broken video file, keeping the transcoding error for the checks below.
 		if !fs.FileExists(avcName) {
@@ -251,6 +263,11 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 
 	// Log filename and transcoding time.
 	log.Infof("%s: created %s [%s]", encoder, filepath.Base(avcName), time.Since(start))
+
+	// Log the next fallback as a warning again, as the encoder works.
+	if encoder != encode.SoftwareAvc {
+		clearTranscodeFallback(encoder)
+	}
 
 	// Return AVC media file and keep the successful dewarp projection available to the indexer even
 	// when ExifTool is disabled. Later reindexes infer the same value from source and sidecar paths.
