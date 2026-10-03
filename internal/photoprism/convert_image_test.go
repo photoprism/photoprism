@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -1279,7 +1280,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		assert.Equal(t, "6", exifOrientationTag(t, cnf, imageName))
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
@@ -1287,7 +1288,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification()
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		assert.Empty(t, exifOrientationTag(t, cnf, imageName))
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
@@ -1295,7 +1296,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
-		assert.Error(t, convert.publishImageOutput(c, append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, make([]byte, 1024)...), imageName))
+		assert.Error(t, convert.publishImageOutput(c, append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, make([]byte, 1024)...), imageName, nil))
 		noSiblings(t, dir)
 	})
 	t.Run("KeepsExistingFile", func(t *testing.T) {
@@ -1303,7 +1304,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.WriteFile(imageName, []byte("existing"), 0o600))
 		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "existing", string(content))
@@ -1314,7 +1315,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.WriteFile(imageName, nil, 0o600))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, data, content)
@@ -1322,14 +1323,14 @@ func TestConvert_publishImageOutput(t *testing.T) {
 	})
 	t.Run("MissingDirectory", func(t *testing.T) {
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.Error(t, convert.publishImageOutput(c, data, filepath.Join(t.TempDir(), "missing", "raw.dng.jpg")))
+		assert.Error(t, convert.publishImageOutput(c, data, filepath.Join(t.TempDir(), "missing", "raw.dng.jpg"), nil))
 	})
 	t.Run("RefusesSymlink", func(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.Symlink(filepath.Join(dir, "target.jpg"), imageName))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName, nil), os.ErrExist)
 		assert.True(t, fs.IsSymlink(imageName))
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
@@ -1340,7 +1341,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		require.NoError(t, os.WriteFile(target, []byte("target"), 0o600))
 		require.NoError(t, os.Symlink(target, imageName))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName, nil), os.ErrExist)
 		content, readErr := os.ReadFile(target) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "target", string(content))
@@ -1351,7 +1352,31 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.Mkdir(imageName, 0o700))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName, nil), os.ErrExist)
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("BudgetExhausted", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, &ConvertBudget{limited: true}))
+		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, data, content, "the preview is published untagged")
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("SlowWriteStopped", func(t *testing.T) {
+		// The stub leaves the temporary file ExifTool would write and blocks until it is stopped.
+		useExifToolStub(t, cnf, "for a; do last=$a; done\n: > \"${last}_exiftool_tmp\"\nexec sleep 30\n")
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
+		start := time.Now()
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, NewConvertBudget(500*time.Millisecond)))
+		assert.Less(t, time.Since(start), 10*time.Second)
+		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, data, content, "the preview is published unchanged")
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
 	t.Run("OrientationWriteFails", func(t *testing.T) {
@@ -1360,7 +1385,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, data, content, "the preview is published unchanged")

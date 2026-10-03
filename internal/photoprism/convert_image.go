@@ -214,7 +214,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 
 		if !direct {
-			if err = w.publishImageOutput(c, res, imageName); err != nil {
+			if err = w.publishImageOutput(c, res, imageName, budget); err != nil {
 				log.Debugf("convert: discarding %s from %s (%s)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path), clean.Error(err))
 				continue
 			}
@@ -371,8 +371,8 @@ func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.
 }
 
 // publishImageOutput writes converter output to a staged sibling of the image file, verifies it and
-// writes a missing source orientation as the command requires, and then publishes it.
-func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName string) (err error) {
+// writes a missing source orientation within the budget as the command requires, and then publishes it.
+func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName string, budget *ConvertBudget) (err error) {
 	staged, err := fs.OpenStageFile(imageName)
 
 	if err != nil {
@@ -412,7 +412,7 @@ func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName strin
 
 	// The preview is published either way, untagged if the orientation cannot be written.
 	if c.SourceOrientation != 0 {
-		if written, tagErr := w.writeMissingOrientation(stagedName, c.SourceOrientation); tagErr != nil {
+		if written, tagErr := w.writeMissingOrientation(stagedName, c.SourceOrientation, budget); tagErr != nil {
 			log.Warnf("convert: %s in %s (write orientation)", clean.Error(tagErr), clean.Log(filepath.Base(imageName)))
 		} else if !written {
 			log.Debugf("convert: orientation of %s left unchanged", clean.Log(filepath.Base(imageName)))
