@@ -747,6 +747,11 @@ export class Photo extends RestModel {
     return `${$config.apiUri}/dl/${this.fileHash()}?t=${$config.downloadToken}`;
   }
 
+  // isVideoFileKept checks if a file of a video is a video, a live photo part, or a metadata sidecar.
+  isVideoFileKept(file) {
+    return file.MediaType === media.Video || file.MediaType === media.Live || file.MediaType === media.Sidecar || !!file.Video || !!file.Sidecar;
+  }
+
   // Downloads all related files if they exist and depending on the settings.
   // Returns { downloaded, skipped } so callers can report the outcome.
   downloadAll() {
@@ -810,11 +815,11 @@ export class Photo extends RestModel {
         return;
       }
 
-      // If this is a video, always skip stacked images...
-      // see https://github.com/photoprism/photoprism/issues/1436
-      if (this.Type === media.Video && !(file.MediaType === media.Video || file.Video)) {
+      // Skip generated still images of videos, i.e. files outside the originals folder that
+      // are neither a video, a live photo part, nor a metadata sidecar.
+      if (this.Type === media.Video && typeof file.Root === "string" && file.Root !== "/" && !this.isVideoFileKept(file)) {
         if ($config.debug) {
-          console.log(`download: skipped video sidecar ${file.Name}`);
+          console.log(`download: skipped video still ${file.Name}`);
         }
         skipped++;
         return;

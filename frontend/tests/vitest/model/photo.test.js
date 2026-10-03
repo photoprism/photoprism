@@ -204,6 +204,18 @@ describe("model/photo", () => {
     expect(result).toBe("/api/v1/dl/97b8cf7b3710bec95f6609487bbdd62489b95fb2?t=2lbh9x09");
   });
 
+  it("should check if a file of a video is kept", () => {
+    const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video" });
+    expect(photo.isVideoFileKept({ MediaType: "video" })).toBe(true);
+    expect(photo.isVideoFileKept({ MediaType: "live" })).toBe(true);
+    expect(photo.isVideoFileKept({ MediaType: "sidecar" })).toBe(true);
+    expect(photo.isVideoFileKept({ MediaType: "image", Video: true })).toBe(true);
+    expect(photo.isVideoFileKept({ MediaType: "image", Sidecar: true })).toBe(true);
+    expect(photo.isVideoFileKept({ MediaType: "image" })).toBe(false);
+    expect(photo.isVideoFileKept({ MediaType: "raw" })).toBe(false);
+    expect(photo.isVideoFileKept({})).toBe(false);
+  });
+
   describe("downloadAll", () => {
     const allowAll = (overrides = {}) => ({
       features: { download: true },
@@ -294,22 +306,95 @@ describe("model/photo", () => {
       expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09", "/api/v1/dl/g1?t=2lbh9x09"]);
     });
 
-    it("skips the still images of a video", () => {
+    it("skips the generated still images of a video", () => {
       const mp4 = { Hash: "v1", Name: "1980/01/clip.mp4", Root: "/", FileType: "mp4", MediaType: "video" };
-      const mov = { Hash: "v2", Name: "1980/01/clip.mov", Root: "/", FileType: "mov", MediaType: "", Video: true };
-      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [mp4, mov, jpg("j1", "1980/01/clip.jpg")] });
+      const still = { Hash: "j1", Name: "1980/01/clip.mp4.jpg", Root: "sidecar", FileType: "jpg", MediaType: "image" };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [mp4, still] });
 
-      mockSettings(allowAll());
-      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 1 });
-      expect(hrefs()).toEqual(["/api/v1/dl/v1?t=2lbh9x09", "/api/v1/dl/v2?t=2lbh9x09"]);
+      mockSettings(allowAll({ originals: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 1 });
+      expect(hrefs()).toEqual(["/api/v1/dl/v1?t=2lbh9x09"]);
     });
 
-    it("reports a skip when a video has only still images", () => {
+    it("keeps the videos, live parts and sidecars of a video outside the originals folder", () => {
+      const sidecar = (hash, name, extra) => ({ Hash: hash, Name: name, Root: "sidecar", FileType: "jpg", MediaType: "image", ...extra });
+      const photo = new Photo({
+        UID: "pt9x2vksm3p4q8ft",
+        Type: "video",
+        Files: [
+          sidecar("a1", "1980/01/clip.avc", { FileType: "avc", MediaType: "video" }),
+          sidecar("a2", "1980/01/clip.hevc.mp4", { FileType: "mp4", Video: true }),
+          sidecar("a3", "1980/01/clip.live.jpg", { MediaType: "live" }),
+          sidecar("a4", "1980/01/clip.mp4.json", { FileType: "json", MediaType: "sidecar" }),
+          sidecar("a5", "1980/01/clip.mp4.yml", { FileType: "yml", Sidecar: true }),
+        ],
+      });
+
+      mockSettings(allowAll({ originals: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 5, skipped: 0 });
+      expect(hrefs()).toEqual(["a1", "a2", "a3", "a4", "a5"].map((h) => `/api/v1/dl/${h}?t=2lbh9x09`));
+    });
+
+    it("keeps the original images and sidecars of a video", () => {
+      const mp4 = { Hash: "v1", Name: "1980/01/clip.mp4", Root: "/", FileType: "mp4", MediaType: "video", Video: true };
+      const xmp = { Hash: "x1", Name: "1980/01/clip.xmp", Root: "/", FileType: "xmp", MediaType: "sidecar", Sidecar: true };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [mp4, jpg("j1", "1980/01/clip.jpg"), xmp] });
+
+      mockSettings(allowAll({ originals: true }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 3, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/v1?t=2lbh9x09", "/api/v1/dl/j1?t=2lbh9x09", "/api/v1/dl/x1?t=2lbh9x09"]);
+
+      clicks = [];
+      mockSettings(allowAll({ originals: true, mediaSidecar: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 1 });
+      expect(hrefs()).toEqual(["/api/v1/dl/v1?t=2lbh9x09", "/api/v1/dl/j1?t=2lbh9x09"]);
+    });
+
+    it("downloads a JPEG-only photo whose type is video", () => {
       const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [jpg("j1", "1980/01/clip.jpg")] });
 
-      mockSettings(allowAll());
+      mockSettings(allowAll({ originals: true }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/j1?t=2lbh9x09"]);
+    });
+
+    it("reports a skip when a video has only generated still images", () => {
+      const still = { Hash: "j1", Name: "1980/01/clip.mp4.jpg", Root: "sidecar", FileType: "jpg", MediaType: "image" };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [still] });
+
+      mockSettings(allowAll({ originals: false }));
       expect(photo.downloadAll()).toEqual({ downloaded: 0, skipped: 1 });
       expect(clicks).toHaveLength(0);
+    });
+
+    it("keeps both parts and the generated still of a live photo", () => {
+      const heic = { Hash: "l1", Name: "1980/01/live.heic", Root: "/", FileType: "heic", MediaType: "image" };
+      const mov = { Hash: "l2", Name: "1980/01/live.mov", Root: "/", FileType: "mov", MediaType: "video", Video: true };
+      const still = { Hash: "l3", Name: "1980/01/live.heic.jpg", Root: "sidecar", FileType: "jpg", MediaType: "image" };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "live", Files: [heic, mov, still] });
+
+      mockSettings(allowAll({ originals: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 3, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/l1?t=2lbh9x09", "/api/v1/dl/l2?t=2lbh9x09", "/api/v1/dl/l3?t=2lbh9x09"]);
+    });
+
+    it("keeps the generated still of an image", () => {
+      const heic = { Hash: "i1", Name: "1980/01/image.heic", Root: "/", FileType: "heic", MediaType: "image" };
+      const still = { Hash: "i2", Name: "1980/01/image.heic.jpg", Root: "sidecar", FileType: "jpg", MediaType: "image" };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [heic, still] });
+
+      mockSettings(allowAll({ originals: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 0 });
+      expect(hrefs()).toEqual(["/api/v1/dl/i1?t=2lbh9x09", "/api/v1/dl/i2?t=2lbh9x09"]);
+    });
+
+    it("keeps a video file without a root and skips one with an empty root", () => {
+      const file = (hash, root) => ({ Hash: hash, Name: `1980/01/${hash}.mp4.jpg`, Root: root, FileType: "jpg", MediaType: "image" });
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [file("n1", undefined), file("n2", null), file("n3", "")] });
+
+      mockSettings(allowAll({ originals: false }));
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 1 });
+      expect(hrefs()).toEqual(["/api/v1/dl/n1?t=2lbh9x09", "/api/v1/dl/n2?t=2lbh9x09"]);
     });
 
     it("reports nothing downloaded when no file has a hash", () => {
