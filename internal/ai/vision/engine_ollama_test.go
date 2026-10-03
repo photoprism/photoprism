@@ -14,7 +14,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 func TestRegisterOllamaEngineDefaults(t *testing.T) {
@@ -474,6 +476,26 @@ func TestRegisterOllamaEngineDefaultsNormalize(t *testing.T) {
 			if got := model.GetNormalize(); got != tc.want {
 				t.Fatalf("expected %q for %s, got %q", tc.want, tc.baseUrl, got)
 			}
+		})
+	}
+}
+
+func TestOllamaBuilderBuildModelId(t *testing.T) {
+	images := Files{fs.Abs("./testdata/face_160x160.jpg")}
+
+	for _, tc := range []struct {
+		name string
+		want string
+	}{
+		{"gemma3:27b", "gemma3:27b"},
+		{"gemma3", "gemma3:latest"},
+	} {
+		t.Run(tc.want, func(t *testing.T) {
+			model := &Model{Type: ModelTypeLabels, Name: tc.name, Service: Service{RequestFormat: ApiFormatOllama}}
+			req, err := ollamaBuilder{}.Build(context.Background(), model, images, media.SrcLocal)
+			require.NoError(t, err)
+			assert.Equal(t, tc.want, req.Model)
+			assert.Equal(t, "", req.Version)
 		})
 	}
 }

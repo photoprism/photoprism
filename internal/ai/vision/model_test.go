@@ -317,6 +317,24 @@ func TestModel_GetModelRequestEngine(t *testing.T) {
 		assert.Equal(t, "gemma3", name)
 		assert.Equal(t, "27b", version)
 	})
+	t.Run("EngineLessOllama", func(t *testing.T) {
+		m := &Model{Name: "gemma3:27b", Service: Service{RequestFormat: ApiFormatOllama}}
+		model, name, version := m.GetModel()
+		assert.Equal(t, "gemma3:27b", model)
+		assert.Equal(t, "gemma3", name)
+		assert.Equal(t, "27b", version)
+	})
+	t.Run("EngineLessOllamaAddsLatest", func(t *testing.T) {
+		m := &Model{Name: "gemma3", Service: Service{RequestFormat: ApiFormatOllama}}
+		model, name, version := m.GetModel()
+		assert.Equal(t, "gemma3:latest", model)
+		assert.Equal(t, "gemma3", name)
+		assert.Equal(t, "latest", version)
+	})
+	t.Run("MixedCaseOllamaEngine", func(t *testing.T) {
+		model, _, _ := (&Model{Name: "gemma3:27b", Engine: "Ollama"}).GetModel()
+		assert.Equal(t, "gemma3:27b", model)
+	})
 	t.Run("VisionSplitsVersion", func(t *testing.T) {
 		for _, m := range []*Model{
 			{Name: "custom:v2", Engine: EngineVision},

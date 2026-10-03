@@ -116,8 +116,10 @@ func (m *Model) GetModel() (model, name, version string) {
 		return "", "", ""
 	}
 
+	engine := m.requestEngine()
+
 	// OpenAI-compatible servers match identifiers verbatim, colons included.
-	if m.requestEngine() == openai.EngineName {
+	if engine == openai.EngineName {
 		return name, name, ""
 	}
 
@@ -133,7 +135,7 @@ func (m *Model) GetModel() (model, name, version string) {
 		version = VersionLatest
 	}
 
-	switch m.Engine {
+	switch engine {
 	case ollama.EngineName:
 		return strings.Join([]string{name, version}, ":"), name, version
 	default:
