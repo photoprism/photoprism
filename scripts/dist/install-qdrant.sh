@@ -67,6 +67,6 @@ DESTDIR="${DESTDIR}/bin"
 
 echo "Extracting the qdrant binary in \"${ARCHIVE}\" to \"${DESTDIR}\"..."
 mkdir -p "${DESTDIR}"
-curl -fsSL "${GITHUB_URL}" | tar --overwrite --mode=755 -xz -C "${DESTDIR}" --wildcards --no-anchored "qdrant"
+curl -fsSL "${GITHUB_URL}" | tar --overwrite --no-same-owner --mode=755 -xz -C "${DESTDIR}" --wildcards --no-anchored "qdrant"
 
 echo "Done."

@@ -141,7 +141,7 @@ echo "Downloading from: $URL"
 
 "${SUDO[@]}" mkdir -p "${DESTDIR}"
 
-if ! curl -fsSL "$URL" | "${SUDO[@]}" tar --strip-components=1 --overwrite --mode=755 -x --xz -C "$DESTDIR"; then
+if ! curl -fsSL "$URL" | "${SUDO[@]}" tar --strip-components=1 --overwrite --no-same-owner --mode=755 -x --xz -C "$DESTDIR"; then
   echo "Error: Failed to download or extract FFmpeg archive." 1>&2
   echo "Please check your network connection and try again." 1>&2
   exit 1
