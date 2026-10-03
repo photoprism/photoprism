@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"sync"
 
 	onnxruntime "github.com/yalue/onnxruntime_go"
 
@@ -39,6 +40,12 @@ var Providers = []Provider{ProviderCPU, ProviderCUDA}
 // appendProviderVar applies a non-default execution provider, and is a variable so that the
 // fall back can be tested on a machine where the provider does work.
 var appendProviderVar = appendCUDAProvider
+
+var (
+	// providerFailures remembers why a provider could not be applied, so it is tried once per process.
+	providerFailures = make(map[Provider]error)
+	providerMu       sync.Mutex
+)
 
 // String returns the provider name as it is written in the configuration and in logs.
 func (p Provider) String() string {
@@ -85,9 +92,9 @@ type SessionSettings struct {
 // NewSessionOptions builds session options for the requested provider and reports the provider
 // that was actually applied, so a caller can log which one a model loaded with.
 //
-// A provider that cannot be applied is not an error: one warning names the reason and CPU-only
-// options are returned, because an instance that loses its GPU should keep indexing. Callers
-// must Destroy the options they receive.
+// A provider that cannot be applied is not an error: one warning per process names the reason
+// and CPU-only options are returned, because an instance that loses its GPU should keep
+// indexing. Callers must Destroy the options they receive.
 func NewSessionOptions(settings SessionSettings) (*onnxruntime.SessionOptions, Provider, error) {
 	opts, err := newBaseSessionOptions(settings)
 
@@ -100,14 +107,9 @@ func NewSessionOptions(settings SessionSettings) (*onnxruntime.SessionOptions, P
 		// An unset provider is the default, not an unimplemented one.
 		return opts, ProviderCPU, nil
 	case ProviderCUDA:
-		if err = appendProviderVar(opts); err == nil {
+		if err = appendProvider(ProviderCUDA, opts); err == nil {
 			return opts, ProviderCUDA, nil
 		}
-
-		// The runtime prints its own error line for a missing device before returning this
-		// error, so the warning has to say plainly that the fall back is not fatal.
-		log.Warnf("onnx: %s execution provider is unavailable (%s), running inference on the %s",
-			ProviderCUDA, providerError(err), ProviderCPU)
 	default:
 		// A provider that parses but has no implementation here would otherwise run on the CPU
 		// with a log line that reads as though it had been honored.
@@ -126,6 +128,34 @@ func NewSessionOptions(settings SessionSettings) (*onnxruntime.SessionOptions, P
 	}
 
 	return opts, ProviderCPU, nil
+}
+
+// appendProvider applies a provider to the options, or returns the error it failed with earlier
+// in this process. Only failures are remembered: a missing driver, library, or device does not
+// recover without a restart, while a provider that was applied is applied again for each model.
+func appendProvider(p Provider, opts *onnxruntime.SessionOptions) error {
+	providerMu.Lock()
+	defer providerMu.Unlock()
+
+	if err := providerFailures[p]; err != nil {
+		log.Debugf("onnx: %s execution provider is unavailable, running inference on the %s", p, ProviderCPU)
+		return err
+	}
+
+	err := appendProviderVar(opts)
+
+	if err == nil {
+		return nil
+	}
+
+	providerFailures[p] = err
+
+	// The runtime prints its own error line for a missing device before returning this error,
+	// so the warning has to say plainly that the fall back is not fatal.
+	log.Warnf("onnx: %s execution provider is unavailable (%s), running inference on the %s",
+		p, providerError(err), ProviderCPU)
+
+	return err
 }
 
 // newBaseSessionOptions builds the session options every provider shares. Thread settings are

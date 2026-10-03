@@ -1,6 +1,6 @@
 ## ONNX Model Description
 
-**Last Updated:** September 21, 2026
+**Last Updated:** October 3, 2026
 
 ### Overview
 
@@ -62,7 +62,7 @@ Run `make check-cuda-install` to verify installation and recovery using syntheti
 
 `Provider` names the execution provider a session runs on: `cpu`, the default, or `cuda`. It is selected once from `PHOTOPRISM_ONNX_PROVIDER` / `--onnx-provider`, read through `Config.OnnxProvider`, and passed to each model loader. `ParseProvider` resolves an empty value as the default and reports an unknown one rather than failing, so an unusable setting cannot stop inference.
 
-Build a session through `NewSessionConfig`, whose `Options` also serve the metadata call a loader makes first, and create the session with `SessionConfig.NewSession`. A provider that cannot be applied falls back to the CPU with one warning, and `SessionConfig.Provider` reports what is actually in force so a loader can log it.
+Build a session through `NewSessionConfig`, whose `Options` also serve the metadata call a loader makes first, and create the session with `SessionConfig.NewSession`. A provider that cannot be applied falls back to the CPU with one warning per process: `NewSessionOptions` remembers the failure and does not try that provider again until restart, whereas a provider that was applied is applied again for each model. An applied provider that then fails to load a particular model adds one warning for that model, and `SessionConfig.Provider` reports what is actually in force so a loader can log it.
 
 Three properties are worth knowing before changing this:
 

@@ -28,9 +28,7 @@ func embeddingGraph(t *testing.T) (inputName, outputName string) {
 func forceProvider(t *testing.T) {
 	t.Helper()
 
-	orig := appendProviderVar
-	t.Cleanup(func() { appendProviderVar = orig })
-	appendProviderVar = func(*onnxruntime.SessionOptions) error { return nil }
+	stubAppendProvider(t, func(*onnxruntime.SessionOptions) error { return nil })
 }
 
 func TestNewSessionConfig(t *testing.T) {
@@ -48,9 +46,7 @@ func TestNewSessionConfig(t *testing.T) {
 		requireSessionRuntime(t)
 		captureProviderLog(t)
 
-		orig := appendProviderVar
-		t.Cleanup(func() { appendProviderVar = orig })
-		appendProviderVar = func(*onnxruntime.SessionOptions) error { return errors.New("not enabled in this build") }
+		stubAppendProvider(t, func(*onnxruntime.SessionOptions) error { return errors.New("not enabled in this build") })
 
 		cfg, err := NewSessionConfig(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 2})
 		require.NoError(t, err)
