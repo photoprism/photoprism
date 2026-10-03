@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -79,6 +80,72 @@ func TestConvert_ToAvc(t *testing.T) {
 		avcFile, err := convert.ToAvc(mf, "", false, false)
 		assert.Error(t, err)
 		assert.Nil(t, avcFile)
+	})
+}
+
+// fakeFFmpeg installs an FFmpeg script for the test that writes incomplete output and fails for commands
+// that match pattern, and runs the real binary for all others.
+func fakeFFmpeg(t *testing.T, conf *config.Config, pattern string) {
+	t.Helper()
+
+	realBin := conf.FFmpegBin()
+	fakeBin := filepath.Join(t.TempDir(), "ffmpeg")
+	script := fmt.Sprintf("#!/bin/sh\ncase \"$*\" in\n  *%s*) for last; do :; done; printf partial > \"$last\"; exit 1;;\nesac\nexec %s \"$@\"\n", pattern, transportShellQuote(realBin))
+
+	// #nosec G306 -- the script must be executable.
+	if err := os.WriteFile(fakeBin, []byte(script), 0o700); err != nil {
+		t.Fatal(err)
+	}
+
+	orig := conf.Options().FFmpegBin
+	conf.Options().FFmpegBin = fakeBin
+	t.Cleanup(func() { conf.Options().FFmpegBin = orig })
+}
+
+func TestConvert_ToAvc_Failed(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	conf := config.TestConfig()
+
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to transcode videos")
+	}
+
+	fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
+	outputName := filepath.Join(conf.SidecarPath(), conf.SamplesPath(), "gopher-video.mp4.avc")
+
+	_ = os.Remove(outputName)
+	t.Cleanup(func() { _ = os.Remove(outputName) })
+
+	mf, err := NewMediaFile(fileName)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("Software", func(t *testing.T) {
+		fakeFFmpeg(t, conf, "libx264")
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.SoftwareAvc, false, false)
+
+		var exitErr *exec.ExitError
+		assert.ErrorAs(t, avcErr, &exitErr)
+		assert.Nil(t, avcFile)
+		assert.False(t, fs.FileExists(outputName))
+	})
+	t.Run("Hardware", func(t *testing.T) {
+		fakeFFmpeg(t, conf, "h264_nvenc")
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.NvidiaAvc, false, false)
+
+		require.NoError(t, avcErr)
+		require.NotNil(t, avcFile)
+		assert.Equal(t, outputName, avcFile.FileName())
+
+		// The software retry replaces the incomplete output of the failed hardware encoder.
+		assert.Greater(t, fs.FileSize(outputName), int64(len("partial")))
 	})
 }
 

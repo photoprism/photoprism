@@ -230,11 +230,11 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		// Log filename and transcoding time.
 		log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
 
-		// Remove broken video file.
+		// Remove broken video file, keeping the transcoding error for the checks below.
 		if !fs.FileExists(avcName) {
 			// Do nothing.
-		} else if err = os.Remove(avcName); err != nil {
-			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), err)
+		} else if removeErr := os.Remove(avcName); removeErr != nil {
+			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), removeErr)
 		}
 
 		switch {
@@ -245,7 +245,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			// Retry in software within the current destination operation.
 			return w.toAvc(f, encode.SoftwareAvc, true, false, false)
 		default:
-			return nil, err
+			return nil, fmt.Errorf("convert: failed to transcode %s (%w)", logFileName, err)
 		}
 	}
 
