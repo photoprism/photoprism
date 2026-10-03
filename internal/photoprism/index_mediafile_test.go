@@ -1,7 +1,10 @@
 package photoprism
 
 import (
+	"bytes"
 	"fmt"
+	"image"
+	"image/png"
 	"os"
 	"path/filepath"
 	"sync"
@@ -12,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -469,4 +473,244 @@ func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
 	var after entity.Photo
 	require.NoError(t, entity.Db().Where("photo_uid = ?", result.PhotoUID).First(&after).Error)
 	assert.Equal(t, 0, after.PhotoFaces, "photo face count must be recomputed after a delete-only faces run")
+}
+
+// indexArchivedPhotoFixture reproduces the database state of issue #5766: a
+// converted picture whose original (e.g. a .raw or .heic, still present in
+// originals/) is stacked with a generated preview JPEG (the kind of file the
+// converter places in storage/sidecar/), both belonging to one photo.
+//
+// The generated preview is indexed first so it becomes the photo's primary
+// file; the original is indexed second as a stacked file, which links it to
+// the same photo without replacing the primary.
+//
+// The test environment uses libvips stubs that cannot decode images, so a
+// thumbnail is pre-seeded into the cache for every size the indexer would
+// generate. This turns GenerateThumbnails into a no-op for the rest of the
+// test and lets it exercise the archive/restore code path without image
+// processing.
+func indexArchivedPhotoFixture(t *testing.T, db, storageName, origBase string) (mfPreview *MediaFile, ind *Index, preview, original *entity.File, photo *entity.Photo) {
+	t.Helper()
+
+	useTestDb(t, db)
+
+	cfg := config.NewMinimalTestConfigWithDb(db, filepath.Join(t.TempDir(), storageName))
+
+	// MediaFile.Root() and the ExifTool cache resolve against the package-level
+	// config, so it must point to the test config for this run.
+	oldCfg := Config()
+	SetConfig(cfg)
+
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	ind = NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+
+	srcFile, err := NewMediaFile("testdata/flash.jpg")
+	require.NoError(t, err)
+
+	// The original picture stays in originals/ while the generated preview is
+	// indexed as its stacked file (photo_stack > -1) and becomes the photo's
+	// primary file.
+	origName := filepath.Join(cfg.OriginalsPath(), storageName, origBase)
+	require.NoError(t, srcFile.Copy(origName, false))
+
+	// A converted preview is never byte-identical to its original, and the
+	// indexer treats equal hashes as duplicates. Keep the hashes distinct.
+	origBytes, err := os.ReadFile(origName)
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(origName, append(origBytes, 0x00), fs.ModeFile))
+
+	genName := filepath.Join(cfg.OriginalsPath(), storageName, origBase+".jpg")
+	require.NoError(t, srcFile.Copy(genName, false))
+
+	// Pre-seed the thumbnail cache so indexing runs without a working image
+	// processor; otherwise GenerateThumbnails fails before the index reaches
+	// the code path under test. The seed must be a decodable PNG because the
+	// indexer reads back the cached Colors thumbnail, and a decode error
+	// would drop the primary flag.
+	var seedPng []byte
+	{
+		buf := &bytes.Buffer{}
+		require.NoError(t, png.Encode(buf, image.NewRGBA(image.Rect(0, 0, 1, 1))))
+		seedPng = buf.Bytes()
+	}
+
+	for _, name := range []string{origName, genName} {
+		mf, err := NewMediaFile(name)
+		require.NoError(t, err)
+		thumbHash := mf.Hash()
+
+		for _, sizeName := range thumb.Names {
+			if size := thumb.Sizes[sizeName]; !size.Uncached() {
+				fileName, err := size.FileName(thumbHash, cfg.ThumbCachePath())
+				require.NoError(t, err)
+				require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+				require.NoError(t, os.WriteFile(fileName, seedPng, fs.ModeFile))
+			}
+		}
+	}
+
+	// The pre-seeded 1x1 color thumbnail is a valid image, so the color
+	// detector would classify it with the TensorFlow stubs and panic on this
+	// platform. Classification is not the code path under test.
+	opt := IndexOptionsSingle(cfg)
+	opt.GenerateLabels = false
+	opt.DetectNsfw = false
+
+	// Index the generated preview first so it becomes the primary file.
+	mfPreview, err = NewMediaFile(genName)
+	require.NoError(t, err)
+	require.NoError(t, mfPreview.CreateExifToolJson(NewConvert(cfg)))
+	res := ind.MediaFile(mfPreview, opt, "", "")
+	require.True(t, res.Success(), "initial index of the preview must succeed: %v", res.Err)
+
+	// Index the original second, stacked with the preview.
+	mfOrig, err := NewMediaFile(origName)
+	require.NoError(t, err)
+	require.NoError(t, mfOrig.CreateExifToolJson(NewConvert(cfg)))
+	res = ind.MediaFile(mfOrig, opt, "", "")
+	require.True(t, res.Success(), "initial index of the original must succeed: %v", res.Err)
+
+	var previewFile entity.File
+	require.NoError(t, entity.UnscopedDb().First(&previewFile, "file_hash = ? AND file_name = ?", mfPreview.Hash(), filepath.Join(storageName, origBase+".jpg")).Error)
+	require.True(t, previewFile.FilePrimary, "the generated preview must be the photo's primary file")
+
+	var originalFile entity.File
+	require.NoError(t, entity.UnscopedDb().First(&originalFile, "file_hash = ? AND file_name = ?", mfOrig.Hash(), filepath.Join(storageName, origBase)).Error)
+
+	var photoRow entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&photoRow, "id = ?", previewFile.PhotoID).Error)
+	require.False(t, photoRow.AllFilesMissing(), "fixture must start with present files")
+
+	return mfPreview, ind, &previewFile, &originalFile, &photoRow
+}
+
+// TestIndex_ArchivedPhotoKeepsArchiveState reproduces issue #5766: a photo the
+// user archived must keep its deleted_at when a later index pass sees
+// photo_quality == -1 (set by query.FlagHiddenPhotos) after a purge run
+// marked the missing generated preview as absent. The original is still
+// present, which separates a user-archived photo from one that was purged
+// automatically.
+func TestIndex_ArchivedPhotoKeepsArchiveState(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	_, ind, _, _, photo := indexArchivedPhotoFixture(t, "index-keep-archive", "keep-archive", "photo.raw")
+
+	// The user archived the photo: Photo.Archive sets deleted_at and leaves
+	// photo_quality untouched.
+	require.NoError(t, photo.Archive())
+
+	// A purge run then marked the missing generated preview as absent and
+	// query.FlagHiddenPhotos set photo_quality to -1 because the primary file
+	// is gone. The original is still present on disk.
+	require.NoError(t, previewPurge(t, "keep-archive", "photo.raw"))
+	require.NoError(t, photo.Update("photo_quality", -1))
+	require.NoError(t, entity.UnscopedDb().First(photo, "id = ?", photo.ID).Error)
+
+	require.NotNil(t, photo.DeletedAt, "fixture must start with an archived photo")
+	require.Equal(t, -1, photo.PhotoQuality, "fixture must start with a hidden quality")
+	require.False(t, photo.AllFilesMissing(), "fixture must keep a present file (the original)")
+
+	// Re-index the present original. Its file row is found by path, the
+	// primary preview is flagged missing, and photo_quality is -1.
+	mfOrig, err := NewMediaFile(filepath.Join(ind.conf.OriginalsPath(), "keep-archive", "photo.raw"))
+	require.NoError(t, err)
+	opt := IndexOptionsSingle(Config())
+	opt.GenerateLabels = false
+	opt.DetectNsfw = false
+	res := ind.MediaFile(mfOrig, opt, "", "")
+	require.True(t, res.Success(), "re-index must succeed: %v", res.Err)
+
+	var reloaded entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&reloaded, "id = ?", photo.ID).Error)
+	require.NotNil(t, reloaded.DeletedAt, "indexing must keep deleted_at for a user-archived photo whose quality is -1 while a file is still present")
+}
+
+// TestIndex_ArchivedHeicKeepsArchiveState covers the HEIC variant of issue
+// #5766: a converted HEIC picture keeps its original in originals/ while the
+// converter output is the JPEG sidecar, so the missing-file scenario applies
+// to HEIC pictures as well and the archive state must be preserved.
+func TestIndex_ArchivedHeicKeepsArchiveState(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	_, ind, _, _, photo := indexArchivedPhotoFixture(t, "index-keep-archive-heic", "keep-archive-heic", "photo.heic")
+
+	require.NoError(t, photo.Archive())
+	require.NoError(t, previewPurge(t, "keep-archive-heic", "photo.heic"))
+	require.NoError(t, photo.Update("photo_quality", -1))
+	require.NoError(t, entity.UnscopedDb().First(photo, "id = ?", photo.ID).Error)
+
+	require.NotNil(t, photo.DeletedAt, "fixture must start with an archived photo")
+	require.Equal(t, -1, photo.PhotoQuality, "fixture must start with a hidden quality")
+	require.False(t, photo.AllFilesMissing(), "fixture must keep a present file (the original)")
+
+	mfOrig, err := NewMediaFile(filepath.Join(ind.conf.OriginalsPath(), "keep-archive-heic", "photo.heic"))
+	require.NoError(t, err)
+	opt := IndexOptionsSingle(Config())
+	opt.GenerateLabels = false
+	opt.DetectNsfw = false
+	res := ind.MediaFile(mfOrig, opt, "", "")
+	require.True(t, res.Success(), "re-index must succeed: %v", res.Err)
+
+	var reloaded entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&reloaded, "id = ?", photo.ID).Error)
+	require.NotNil(t, reloaded.DeletedAt, "indexing must keep deleted_at for a user-archived HEIC photo whose quality is -1 while a file is still present")
+}
+
+// previewPurge marks the generated preview file (the one that is not on disk
+// anymore) as missing and non-primary, as the purge step does for files that
+// disappeared from storage/sidecar/.
+func previewPurge(t *testing.T, storageName, origBase string) (err error) {
+	t.Helper()
+
+	var preview entity.File
+
+	if err = entity.UnscopedDb().First(&preview, "file_name = ?", filepath.Join(storageName, origBase+".jpg")).Error; err != nil {
+		return err
+	}
+
+	return preview.Purge()
+}
+
+// TestIndex_AutoPurgedPhotoIsRestored guards the existing purpose of the
+// restore branch: a photo purged automatically (all of its files missing)
+// must be restored when one of its files is found again.
+func TestIndex_AutoPurgedPhotoIsRestored(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	mfPreview, ind, preview, original, photo := indexArchivedPhotoFixture(t, "index-restore-purged", "restore-purged", "photo.raw")
+
+	// Simulate the end state of an automatic purge: the photo carries
+	// deleted_at and photo_quality -1 (Photo.Delete's effect) and every file
+	// row is flagged missing (the purge step's effect on files that
+	// disappeared from disk).
+	require.NoError(t, photo.Archive())
+	require.NoError(t, preview.Purge())
+	require.NoError(t, original.Purge())
+	require.NoError(t, photo.Update("photo_quality", -1))
+	require.NoError(t, entity.UnscopedDb().First(photo, "id = ?", photo.ID).Error)
+
+	require.NotNil(t, photo.DeletedAt, "fixture must start with a purged photo")
+	require.Equal(t, -1, photo.PhotoQuality, "fixture must start with a hidden quality")
+	require.True(t, photo.AllFilesMissing(), "fixture must start with all files missing")
+
+	// Re-index the preview file that is present again on disk.
+	opt := IndexOptionsSingle(Config())
+	opt.GenerateLabels = false
+	opt.DetectNsfw = false
+	res := ind.MediaFile(mfPreview, opt, "", "")
+	require.True(t, res.Success(), "re-index must succeed: %v", res.Err)
+
+	var reloaded entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&reloaded, "id = ?", photo.ID).Error)
+	require.Nil(t, reloaded.DeletedAt, "indexing must restore a photo that was purged automatically")
 }
