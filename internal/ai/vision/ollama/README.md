@@ -8,7 +8,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 
 #### Constraints
 
-- Engine defaults live in `internal/ai/vision/ollama` and are applied whenever a model sets `Engine: ollama`. Aliases map to `ApiFormatOllama`, `scheme.Base64`, and a default 720 px thumbnail. The default model is `gemma4:latest` for self-hosted instances and `minimax-m3:cloud` when `OLLAMA_BASE_URL` equals `https://ollama.com` (cloud defaults are only selected on that exact match). Label normalization follows the same split: a model tagged `:cloud`, or one whose endpoint is the cloud host, defaults to `Normalize: phrase`, because hosted models only return a compound label name when the subject has one. Self-hosted models stay on `single-word`.
+- Engine defaults live in `internal/ai/vision/ollama` and are applied whenever a model sets `Engine: ollama`. Aliases map to `ApiFormatOllama`, `scheme.Base64`, and a default 720 px thumbnail. The default model is `OLLAMA_MODEL` if set, otherwise `gemma4:latest` for self-hosted instances and `minimax-m3:cloud` when `OLLAMA_BASE_URL` equals `https://ollama.com` (cloud defaults are only selected on that exact match). Label normalization follows the same split: a model tagged `:cloud`, or one whose endpoint is the cloud host, defaults to `Normalize: phrase`, because hosted models only return a compound label name when the subject has one. Self-hosted models stay on `single-word`.
 - Reasoning is disabled by default (`DefaultThink = "false"`, applied to `Service.Think` when empty) so thinking-capable models do not leak their reasoning into captions or invalidate label JSON. Re-enable it explicitly with `Service.Think: "true"`.
 - Responses may arrive as newline-delimited JSON chunks. `decodeOllamaResponse` keeps the most recent chunk, while the parser supports both `response` and `thinking` fallbacks for captions and labels and strips a leading, well-delimited `<think>...</think>` block from the response body as a defensive fallback.
 - Structured JSON is optional for captions but enforced for labels when `Format: json` (default for label models targeting the Ollama engine).
@@ -198,7 +198,7 @@ Guidelines:
 - `internal/ai/vision/engine_ollama.go` — Builder/parser glue plus label/caption normalization.
 - `internal/ai/vision/api_ollama.go` — Base64 payload builder.
 - `internal/ai/vision/api_client.go` — Streaming decoder shared among engines.
-- `internal/ai/vision/models.go` — Default caption model definition (`gemma4:latest`, `minimax-m3:cloud` for Ollama Cloud).
+- `internal/ai/vision/models.go` — Default caption model definition (`Engine: ollama`, model from the engine defaults in `engine_ollama.go`).
 - `compose*.yaml` — Ollama service profile, Traefik labels, and persistent volume wiring.
 - `frontend/src/common/util.js` — Maps `src="ollama"` to the correct badge; keep it updated when adding new source strings.
 
