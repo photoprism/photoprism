@@ -10,7 +10,7 @@ import (
 )
 
 // ClientsResetDescription explains the effect of the clients reset command.
-const ClientsResetDescription = "This command recreates the auth_clients database table so that it is compatible with the current version. As a result, all registered client applications are removed, including those registered to users, and the access tokens issued to them are deleted. App passwords are not affected."
+const ClientsResetDescription = "This command recreates the auth_clients database table so that it is compatible with the current version. As a result, all registered client applications are removed, including those registered to users, and their secrets and the access tokens issued to them are deleted. App passwords are not affected."
 
 // ClientsResetCommand configures the command name, flags, and action.
 var ClientsResetCommand = &cli.Command{
@@ -31,7 +31,7 @@ var ClientsResetCommand = &cli.Command{
 // clientsResetAction removes all registered client applications.
 func clientsResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all registered client applications and the access tokens issued to them?"); err != nil {
+		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all registered client applications, their secrets, and the access tokens issued to them?"); err != nil {
 			return err
 		} else if !proceed {
 			log.Infof("no client applications were removed")
@@ -44,6 +44,17 @@ func clientsResetAction(ctx *cli.Context) error {
 		}
 
 		db := conf.Db()
+
+		// Delete the secrets of all clients, including deleted ones, before their table is dropped.
+		if db.HasTable(entity.Client{}) && db.HasTable(entity.Password{}) {
+			res := db.Where("uid IN (?)", db.Unscoped().Model(&entity.Client{}).Select("client_uid").QueryExpr()).Delete(&entity.Password{})
+
+			if res.Error != nil {
+				return cli.Exit(res.Error, 1)
+			}
+
+			log.Infof("deleted %s", english.Plural(int(res.RowsAffected), "client secret", "client secrets"))
+		}
 
 		// Drop existing auth_clients table.
 		if err := db.DropTableIfExists(entity.Client{}).Error; err != nil {

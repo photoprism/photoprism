@@ -70,6 +70,36 @@ func TestClientsResetCommand(t *testing.T) {
 		assert.Equal(t, 1, countSessionRows(t, appPasswordID))
 		assert.Equal(t, 1, countSessionRows(t, orphanID))
 
+		// Only the secrets of the registered clients are deleted with them.
+		metricsUID := entity.ClientFixtures.Get("metrics").ClientUID
+		aliceUID := entity.UserFixtures.Get("alice").UserUID
+		otherPw := entity.NewPassword(rnd.GenerateUID(entity.ClientUID), "Other123!", false)
+
+		if err = otherPw.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", otherPw.UID) })
+
+		// A deleted client keeps its row until the table is dropped, so its secret is deleted as well.
+		deletedClient := entity.NewClient()
+		deletedClient.ClientName = "deleted-client"
+
+		if err = deletedClient.Create(); err != nil {
+			t.Fatal(err)
+		} else if err = deletedClient.SetSecret(rnd.ClientSecret()); err != nil {
+			t.Fatal(err)
+		} else if err = deletedClient.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", deletedClient.ClientUID) })
+
+		assert.Equal(t, 1, countPasswordRows(t, metricsUID))
+		assert.Equal(t, 1, countPasswordRows(t, deletedClient.ClientUID))
+		assert.Equal(t, 1, countPasswordRows(t, aliceUID))
+		assert.Equal(t, 1, countPasswordRows(t, otherPw.UID))
+
 		// Run command with test context.
 		output, err := RunWithTestContext(ClientsResetCommand, []string{"reset"})
 
@@ -97,8 +127,13 @@ func TestClientsResetCommand(t *testing.T) {
 		assert.Equal(t, 0, countSessionRows(t, clientSessID))
 		assert.Equal(t, 1, countSessionRows(t, appPasswordID))
 		assert.Equal(t, 0, countSessionRows(t, orphanID))
+		assert.Equal(t, 0, countPasswordRows(t, metricsUID))
+		assert.Equal(t, 0, countPasswordRows(t, deletedClient.ClientUID))
+		assert.Equal(t, 1, countPasswordRows(t, aliceUID))
+		assert.Equal(t, 1, countPasswordRows(t, otherPw.UID))
 
 		entity.CreateClientFixtures()
+		entity.CreatePasswordFixtures()
 		entity.CreateSessionFixtures()
 
 		// Run command with test context.
@@ -118,6 +153,17 @@ func countSessionRows(t *testing.T, id string) (n int) {
 	t.Helper()
 
 	if err := entity.Db().Model(&entity.Session{}).Where("id = ?", id).Count(&n).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	return n
+}
+
+// countPasswordRows returns the number of stored passwords with the specified UID.
+func countPasswordRows(t *testing.T, uid string) (n int) {
+	t.Helper()
+
+	if err := entity.Db().Model(&entity.Password{}).Where("uid = ?", uid).Count(&n).Error; err != nil {
 		t.Fatal(err)
 	}
 
