@@ -12,7 +12,6 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -84,12 +83,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
 	// Publish file conversion event.
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": fileName,
-		"baseName": filepath.Base(fileName),
-		"xmpName":  filepath.Base(xmpName),
-	})
+	publishConverting(f, fileName, filepath.Base(xmpName))
 
 	start := time.Now()
 

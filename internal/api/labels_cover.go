@@ -113,7 +113,7 @@ func LabelCover(router *gin.RouterGroup) {
 		}
 
 		if err != nil {
-			log.Errorf("%s: %s", labelCover, err)
+			log.Errorf("%s: %s in %s", labelCover, clean.Error(err), clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		} else if thumbnail == "" {

@@ -121,7 +121,7 @@ func GetVideo(router *gin.RouterGroup) {
 				c.DataFromReader(http.StatusOK, info.VideoSize(), info.VideoContentType(), reader, nil)
 				return
 			} else if cacheName, cacheErr := fs.CacheFileFromReader(filepath.Join(conf.MediaFileCachePath(f.FileHash), f.FileHash+info.VideoFileExt()), reader); cacheErr != nil {
-				log.Errorf("video: failed to cache %s embedded in %s (%s)", videoFileType.ToUpper(), clean.Log(f.FileName), cacheErr)
+				log.Errorf("video: failed to cache %s embedded in %s (%s)", videoFileType.ToUpper(), clean.Log(f.FileName), clean.Error(cacheErr))
 				AbortVideo(c)
 				return
 			} else {

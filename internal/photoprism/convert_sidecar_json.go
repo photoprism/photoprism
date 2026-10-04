@@ -74,7 +74,7 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 			err = fmt.Errorf("%w: %s", err, s)
 		}
 
-		LogConvertError(err, cmd, clean.Log(filepath.Base(jsonName)))
+		LogConvertError(err, cmd, clean.Log(f.RootRelName()))
 
 		return "", err
 	}

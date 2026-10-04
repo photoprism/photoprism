@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -209,12 +208,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()),
 	}...)
 
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": relName,
-		"baseName": filepath.Base(relName),
-		"xmpName":  "",
-	})
+	publishConverting(f, relName, "")
 
 	log.Infof("%s: transcoding %s to %s", encoder, clean.Log(relName), fs.VideoAvc)
 

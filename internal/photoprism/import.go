@@ -435,7 +435,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 				// still holding it, so the message says what was matched rather than claiming the
 				// two files are identical. StoredCopyOf is what establishes that, for the caller
 				// that removes its source.
-				return existingFilename, fmt.Errorf("%s is already indexed as %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
+				return existingFilename, fmt.Errorf("%s is already indexed as %s", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName))
 			} else if !fs.IsSymlink(existingFilename) {
 				return existingFilename, nil
 			}

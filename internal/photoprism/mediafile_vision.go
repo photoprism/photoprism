@@ -136,7 +136,7 @@ func (m *MediaFile) DetectNSFW() nsfw.Result {
 
 	switch {
 	case modelErr != nil:
-		log.Errorf("vision: %s in %s (detect nsfw)", modelErr, clean.Log(m.RootRelName()))
+		log.Errorf("vision: %s in %s (detect nsfw)", clean.Error(modelErr), clean.Log(m.RootRelName()))
 		return nsfw.Unavailable(clean.Error(modelErr))
 	case len(results) < 1:
 		log.Errorf("vision: nsfw model returned no result for %s", clean.Log(m.RootRelName()))

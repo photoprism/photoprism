@@ -173,7 +173,7 @@ func NewApiRequestImages(images Files, fileScheme scheme.Type, mediaSrc media.Sr
 			case scheme.Data:
 				file, err := os.Open(images[i])
 				if err != nil {
-					return nil, fmt.Errorf("%s (create data url)", err)
+					return nil, fmt.Errorf("%w (create data url)", err)
 				}
 				imageUrls[i] = media.DataUrl(file)
 				if err := file.Close(); err != nil {

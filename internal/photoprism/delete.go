@@ -81,10 +81,10 @@ func DeleteFiles(files entity.Files, originals bool) (numFiles int) {
 		if exifJson, _ := ExifToolCacheName(file.FileHash); !fs.FileExists(exifJson) {
 			// Do nothing.
 		} else if err = os.Remove(exifJson); err != nil {
-			log.Warnf("files: failed to delete sidecar %s", clean.Log(filepath.Base(exifJson)))
+			log.Warnf("files: failed to delete cached metadata of %s", clean.Log(file.FileName))
 		} else {
 			numFiles++
-			log.Infof("files: deleted sidecar %s", clean.Log(filepath.Base(exifJson)))
+			log.Infof("files: deleted cached metadata of %s", clean.Log(file.FileName))
 		}
 
 		// Remove any other files in the sidecar folder.

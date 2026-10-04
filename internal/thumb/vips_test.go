@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
 )
 
@@ -304,26 +305,15 @@ func TestVipsJpegExportParams(t *testing.T) {
 func TestWrapVipsExportErr(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		inner := errors.New("vips2png: unable to write to target")
-		err := wrapVipsExportErr("png", "/cache/1/2/3/colors.png", 3, 3, inner)
+		err := wrapVipsExportErr("png", 3, 3, inner)
 
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "png export failed")
-		assert.Contains(t, err.Error(), "colors.png")
-		assert.Contains(t, err.Error(), "3x3")
-		assert.Contains(t, err.Error(), "unable to write to target")
+		assert.Equal(t, "vips: png export failed at 3x3 (vips2png: unable to write to target)", err.Error())
 		assert.True(t, errors.Is(err, inner), "wrapped error must remain unwrappable")
 	})
-	t.Run("ShortensTarget", func(t *testing.T) {
-		err := wrapVipsExportErr("jpeg", "/cache/deep/nested/path/photo.jpg", 1920, 1080, errors.New("boom"))
-
-		assert.Contains(t, err.Error(), "photo.jpg")
-		assert.NotContains(t, err.Error(), "/cache/deep/nested")
-	})
 	t.Run("KeepsInnerErrorVerbatim", func(t *testing.T) {
-		// Only the wrapper's own reference to the target is shortened. libvips names
-		// its temporary files in the message, and those are kept as reported.
-		err := wrapVipsExportErr("jpeg", "/cache/1/2/3/photo.jpg", 720, 720,
-			errors.New("VipsImage: unable to write to \"/tmp/vips-0-267872348.v\""))
+		// libvips names its temporary files in the message, and those are kept as reported.
+		err := wrapVipsExportErr("jpeg", 720, 720, errors.New("VipsImage: unable to write to \"/tmp/vips-0-267872348.v\""))
 
 		assert.Contains(t, err.Error(), "/tmp/vips-0-267872348.v")
 	})
@@ -332,29 +322,21 @@ func TestWrapVipsExportErr(t *testing.T) {
 func TestWrapVipsWriteErr(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		inner := errors.New("no space left on device")
-		err := wrapVipsWriteErr("/cache/1/2/3/colors.png", inner)
+		err := wrapVipsWriteErr(inner)
 
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "failed to write thumbnail")
-		assert.Contains(t, err.Error(), "colors.png")
-		assert.Contains(t, err.Error(), "no space left on device")
+		assert.Equal(t, "vips: failed to write thumbnail (no space left on device)", err.Error())
 		assert.True(t, errors.Is(err, inner), "wrapped error must remain unwrappable")
 	})
-	t.Run("ShortensTarget", func(t *testing.T) {
-		err := wrapVipsWriteErr("/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", errors.New("boom"))
+	t.Run("MasksDestination", func(t *testing.T) {
+		// The inner error from os.WriteFile repeats the destination, which is named after the file
+		// hash; it stays in the chain, so clean.Error masks it.
+		dest := "/photoprism/storage/cache/thumbnails/2/c/a/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818_720x720_fit.jpg"
+		inner := &fs.PathError{Op: "open", Path: dest, Err: syscall.ENOSPC}
+		err := wrapVipsWriteErr(inner)
 
-		assert.Contains(t, err.Error(), "photo.jpg")
-		assert.NotContains(t, err.Error(), "/photoprism/storage")
-	})
-	t.Run("KeepsInnerErrorVerbatim", func(t *testing.T) {
-		// The real inner error is the *fs.PathError from os.WriteFile, which repeats the
-		// absolute destination. Shortening the argument does not remove it, so this is a
-		// compactness measure and not a redaction — assert what the message really holds.
-		inner := &fs.PathError{Op: "open", Path: "/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", Err: syscall.ENOSPC}
-		err := wrapVipsWriteErr("/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", inner)
-
-		assert.Contains(t, err.Error(), "/photoprism/storage/cache/thumbnails")
 		assert.True(t, errors.Is(err, syscall.ENOSPC), "errno must stay unwrappable")
+		assert.Equal(t, "vips: failed to write thumbnail (open ***: no space left on device)", clean.Error(err))
 	})
 }
 
