@@ -128,6 +128,21 @@ func TestConvert_TempPreview(t *testing.T) {
 		cleanup()
 		assert.NoDirExists(t, filepath.Dir(preview))
 	})
+	t.Run("NilBudget", func(t *testing.T) {
+		// A nil budget is replaced with the preview budget, so the converters still have a deadline.
+		mediaFile, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "canon_eos_6d.dng"))
+		require.NoError(t, err)
+
+		prevLimit := uploadPreviewLimit
+		uploadPreviewLimit = time.Millisecond
+		t.Cleanup(func() { uploadPreviewLimit = prevLimit })
+
+		preview, cleanup, err := converter.tempPreview(mediaFile, nil)
+		require.Error(t, err)
+		assert.True(t, errors.Is(err, proc.ErrTimeout))
+		assert.Empty(t, preview)
+		assert.Nil(t, cleanup)
+	})
 	t.Run("BudgetExhausted", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "canon_eos_6d.dng"))
 		require.NoError(t, err)

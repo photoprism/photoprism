@@ -44,11 +44,17 @@ func uploadPreviewBudget(convertTimeout, limit time.Duration) time.Duration {
 	return limit
 }
 
-// tempPreview creates a temporary JPEG preview, running all converters within the given budget.
+// tempPreview creates a temporary JPEG preview, running all converters within the given budget,
+// or within a new preview budget if it is nil.
 func (w *Convert) tempPreview(f *MediaFile, budget *ConvertBudget) (fileName string, cleanup func(), err error) {
 	if w == nil || w.conf == nil {
 		return "", nil, fmt.Errorf("convert: no configuration provided")
 	}
+
+	if budget == nil {
+		budget = NewConvertBudget(w.previewBudget())
+	}
+
 	if f == nil || !f.Exists() || f.Empty() {
 		return "", nil, fmt.Errorf("convert: invalid media file")
 	}
