@@ -13,7 +13,7 @@ import (
 type TypesExt map[Type][]string
 
 // FileTypes contains the default file type extensions.
-var FileTypes = Extensions.Types(ignoreCase)
+var FileTypes = ExtensionList.Types(ignoreCase)
 
 // FileTypesLower contains lowercase extensions for case-insensitive lookup.
-var FileTypesLower = Extensions.Types(true)
+var FileTypesLower = ExtensionList.Types(true)

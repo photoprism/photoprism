@@ -25,7 +25,7 @@ var ShowFileFormatsCommand = &cli.Command{
 
 // showFileFormatsAction displays supported media and sidecar file formats.
 func showFileFormatsAction(ctx *cli.Context) error {
-	rows, cols := media.Report(fs.Extensions.Types(true), !ctx.Bool("short"), true, true)
+	rows, cols := media.Report(fs.ExtensionList.Types(true), !ctx.Bool("short"), true, true)
 	format, formatErr := report.CliFormatStrict(ctx)
 	if formatErr != nil {
 		return formatErr
