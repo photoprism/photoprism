@@ -33,6 +33,11 @@ func TestBasePrefix(t *testing.T) {
 		result := BasePrefix("/testdata/Test (3).jpg", true)
 		assert.Equal(t, "Test", result)
 	})
+	t.Run("SequenceOnly", func(t *testing.T) {
+		assert.Equal(t, "(1)", BasePrefix("/testdata/(1).heic", true))
+		assert.Equal(t, " copy 2", BasePrefix("/testdata/ copy 2.jpg", true))
+		assert.Equal(t, "(1)", BasePrefix("/testdata/(1).heic", false))
+	})
 	t.Run("TestJpg", func(t *testing.T) {
 		result := BasePrefix("/testdata/Test.jpg", false)
 		assert.Equal(t, "Test", result)

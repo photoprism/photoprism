@@ -85,6 +85,11 @@ func TestRoot(t *testing.T) {
 	t.Run("SidecarPath", func(t *testing.T) {
 		assert.Equal(t, entity.RootSidecar, Root(FileName("sidecar", "test.jpg")))
 	})
+	t.Run("SiblingPrefix", func(t *testing.T) {
+		assert.Equal(t, entity.RootOriginals, Root(FileName(entity.RootOriginals, "2024/test.jpg")))
+		assert.Equal(t, entity.RootUnknown, Root(Config().OriginalsPath()+"2/2024/test.jpg"))
+		assert.Equal(t, entity.RootUnknown, Root(Config().SidecarPath()+"-other/test.jpg"))
+	})
 }
 
 func TestRootRelName(t *testing.T) {

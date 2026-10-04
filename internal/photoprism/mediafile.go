@@ -443,15 +443,7 @@ func (m *MediaFile) RelName(directory string) string {
 // RelPath returns the relative directory (without filename) by trimming the
 // provided base directory from the stored file path.
 func (m *MediaFile) RelPath(directory string) string {
-	pathname := m.fileName
-
-	if i := strings.Index(pathname, directory); i == 0 {
-		if i = strings.LastIndex(directory, string(os.PathSeparator)); i == len(directory)-1 {
-			pathname = pathname[len(directory):]
-		} else if i = strings.LastIndex(directory, string(os.PathSeparator)); i != len(directory) {
-			pathname = pathname[len(directory)+1:]
-		}
-	}
+	pathname := fs.RelName(m.fileName, directory)
 
 	if end := strings.LastIndex(pathname, string(os.PathSeparator)); end != -1 {
 		pathname = pathname[:end]
@@ -553,28 +545,28 @@ func (m *MediaFile) Root() string {
 		return m.fileRoot
 	}
 
-	if strings.HasPrefix(m.FileName(), Config().OriginalsPath()) {
+	if fs.InDir(m.FileName(), Config().OriginalsPath()) {
 		m.fileRoot = entity.RootOriginals
 		return m.fileRoot
 	}
 
 	importPath := Config().ImportPath()
 
-	if importPath != "" && strings.HasPrefix(m.FileName(), importPath) {
+	if importPath != "" && fs.InDir(m.FileName(), importPath) {
 		m.fileRoot = entity.RootImport
 		return m.fileRoot
 	}
 
 	sidecarPath := Config().SidecarPath()
 
-	if sidecarPath != "" && strings.HasPrefix(m.FileName(), sidecarPath) {
+	if sidecarPath != "" && fs.InDir(m.FileName(), sidecarPath) {
 		m.fileRoot = entity.RootSidecar
 		return m.fileRoot
 	}
 
 	samplesPath := Config().SamplesPath()
 
-	if samplesPath != "" && strings.HasPrefix(m.FileName(), samplesPath) {
+	if samplesPath != "" && fs.InDir(m.FileName(), samplesPath) {
 		m.fileRoot = entity.RootSamples
 		return m.fileRoot
 	}

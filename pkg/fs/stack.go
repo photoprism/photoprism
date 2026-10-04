@@ -27,7 +27,8 @@ var stackRules = []stackRule{
 
 // StackPrefix returns the name under which a file is stacked with the other files of a photo.
 // Files of a multi-file Insta360 capture and their sidecars share the name of the left lens file,
-// regardless of stripSequence. For all other files, it returns the same as BasePrefix.
+// regardless of stripSequence. For all other files, it returns the same as BasePrefix, except that a
+// base starting with a sequence form is stripped to an empty name, as existing stack names depend on it.
 func StackPrefix(fileName string, stripSequence bool) string {
 	prefix := BasePrefix(fileName, false)
 

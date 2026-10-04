@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path"
 	"path/filepath"
-	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -85,25 +84,25 @@ func RootPath(fileName string) string {
 func Root(fileName string) string {
 	originalsPath := Config().OriginalsPath()
 
-	if originalsPath != "" && strings.HasPrefix(fileName, originalsPath) {
+	if originalsPath != "" && fs.InDir(fileName, originalsPath) {
 		return entity.RootOriginals
 	}
 
 	importPath := Config().ImportPath()
 
-	if importPath != "" && strings.HasPrefix(fileName, importPath) {
+	if importPath != "" && fs.InDir(fileName, importPath) {
 		return entity.RootImport
 	}
 
 	sidecarPath := Config().SidecarPath()
 
-	if sidecarPath != "" && strings.HasPrefix(fileName, sidecarPath) {
+	if sidecarPath != "" && fs.InDir(fileName, sidecarPath) {
 		return entity.RootSidecar
 	}
 
 	samplesPath := Config().SamplesPath()
 
-	if samplesPath != "" && strings.HasPrefix(fileName, samplesPath) {
+	if samplesPath != "" && fs.InDir(fileName, samplesPath) {
 		return entity.RootSamples
 	}
 

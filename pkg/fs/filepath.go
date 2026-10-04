@@ -33,15 +33,18 @@ func StripSequence(fileName string) string {
 	return fileName
 }
 
-// BasePrefix returns the filename base without any extensions and path.
+// BasePrefix returns the filename base without any extensions and path. A sequence is only stripped
+// if a name remains, e.g. "(1).jpg" keeps "(1)".
 func BasePrefix(fileName string, stripSequence bool) string {
 	fileBase := StripKnownExt(StripExt(filepath.Base(fileName)))
 
 	if !stripSequence {
 		return fileBase
+	} else if prefix := StripSequence(fileBase); prefix != "" {
+		return prefix
 	}
 
-	return StripSequence(fileBase)
+	return fileBase
 }
 
 // RelPrefix returns the relative filename.

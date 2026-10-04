@@ -1,9 +1,12 @@
 package fs
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestType_String(t *testing.T) {
@@ -163,6 +166,35 @@ func TestType_FindAll(t *testing.T) {
 	t.Run("CatyellowJpg", func(t *testing.T) {
 		result := ImageJpeg.FindAll("testdata/CATYELLOW.JSON", dirs, "", false)
 		assert.Contains(t, result, "testdata/CATYELLOW.jpg")
+	})
+	t.Run("EmptyBase", func(t *testing.T) {
+		// A name without a base must not match a file named after its folder.
+		parent := t.TempDir()
+		dir := filepath.Join(parent, "2024")
+		require.NoError(t, os.MkdirAll(dir, 0o700))
+		require.NoError(t, os.WriteFile(filepath.Join(parent, "2024.jpg"), []byte("x"), 0o600))
+		assert.Empty(t, ImageJpeg.FindAll(filepath.Join(dir, ".heic"), dirs, parent, false))
+		assert.Equal(t, "", ImageJpeg.FindFirst(filepath.Join(dir, ".heic"), dirs, parent, false))
+		assert.Equal(t, "", ImageJpeg.Find(filepath.Join(dir, ".heic"), false))
+	})
+	t.Run("SequenceOnly", func(t *testing.T) {
+		// A sequence-only name keeps its own base when sequences are stripped.
+		dir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "(1).jpg"), []byte("x"), 0o600))
+		assert.Equal(t, filepath.Join(dir, "(1).jpg"), ImageJpeg.FindFirst(filepath.Join(dir, "(1).heic"), dirs, dir, true))
+		assert.Contains(t, ImageJpeg.FindAll(filepath.Join(dir, "(1).heic"), dirs, dir, true), filepath.Join(dir, "(1).jpg"))
+	})
+	t.Run("SiblingRoot", func(t *testing.T) {
+		// Sidecars are looked up only below the base folder.
+		base := t.TempDir()
+		originals := filepath.Join(base, "photos")
+		sidecar := filepath.Join(base, "sidecar")
+		require.NoError(t, os.MkdirAll(filepath.Join(sidecar, "2024"), 0o700))
+		require.NoError(t, os.WriteFile(filepath.Join(sidecar, "2024", "IMG_1.heic.jpg"), []byte("x"), 0o600))
+		fileName := filepath.Join(base, "photos2", "2024", "IMG_1.heic")
+		assert.Empty(t, ImageJpeg.FindAll(fileName, []string{sidecar}, originals, false))
+		assert.Equal(t, "", ImageJpeg.FindFirst(fileName, []string{sidecar}, originals, false))
+		assert.Equal(t, filepath.Join(sidecar, "2024", "IMG_1.heic.jpg"), ImageJpeg.FindFirst(filepath.Join(originals, "2024", "IMG_1.heic"), []string{sidecar}, originals, false))
 	})
 }
 

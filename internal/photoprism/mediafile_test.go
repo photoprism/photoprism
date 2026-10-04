@@ -512,6 +512,34 @@ func TestMediaFile_RootRelPath(t *testing.T) {
 	})
 }
 
+func TestMediaFile_Root(t *testing.T) {
+	c := config.TestConfig()
+
+	t.Run("Originals", func(t *testing.T) {
+		m := &MediaFile{fileName: filepath.Join(c.OriginalsPath(), "2024", "test.jpg")}
+		assert.Equal(t, entity.RootOriginals, m.Root())
+	})
+	t.Run("SiblingPrefix", func(t *testing.T) {
+		m := &MediaFile{fileName: c.OriginalsPath() + "2/2024/test.jpg"}
+		assert.Equal(t, entity.RootUnknown, m.Root())
+	})
+	t.Run("SiblingSidecarPath", func(t *testing.T) {
+		// A sidecar folder named like the originals folder plus a suffix is not part of it.
+		prev := c.Options().SidecarPath
+		c.Options().SidecarPath = c.OriginalsPath() + "-sidecar"
+		t.Cleanup(func() { c.Options().SidecarPath = prev })
+		m := &MediaFile{fileName: filepath.Join(c.OriginalsPath()+"-sidecar", "2024", "test.heic.jpg")}
+		assert.Equal(t, entity.RootSidecar, m.Root())
+		assert.Equal(t, entity.RootSidecar, Root(m.FileName()))
+	})
+	t.Run("RelPathSiblingPrefix", func(t *testing.T) {
+		m := &MediaFile{fileName: c.OriginalsPath() + "2/2024/test.jpg"}
+		assert.Equal(t, filepath.Dir(m.FileName()), m.RelPath(c.OriginalsPath()))
+		m = &MediaFile{fileName: filepath.Join(c.OriginalsPath(), "2024", "test.jpg")}
+		assert.Equal(t, "2024", m.RelPath(c.OriginalsPath()))
+	})
+}
+
 func TestMediaFile_RootPath(t *testing.T) {
 	c := config.TestConfig()
 

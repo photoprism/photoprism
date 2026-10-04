@@ -70,6 +70,11 @@ func (t Type) Find(fileName string, stripSequence bool) string {
 	base := BasePrefix(fileName, stripSequence)
 	dir := filepath.Dir(fileName)
 
+	// A name without a base would match files named after the folder.
+	if base == "" {
+		return ""
+	}
+
 	prefix := filepath.Join(dir, base)
 	prefixLower := filepath.Join(dir, strings.ToLower(base))
 	prefixUpper := filepath.Join(dir, strings.ToUpper(base))
@@ -101,6 +106,11 @@ func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSeq
 	fileBasePrefix := BasePrefix(fileName, stripSequence)
 	fileBaseLower := strings.ToLower(fileBasePrefix)
 	fileBaseUpper := strings.ToUpper(fileBasePrefix)
+
+	// A name without a base would match files named after the folder.
+	if fileBasePrefix == "" {
+		return ""
+	}
 
 	filePath := filepath.Dir(fileName)
 	search := append([]string{filePath}, dirs...)
@@ -150,6 +160,11 @@ func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSeque
 	fileBasePrefix := BasePrefix(fileName, stripSequence)
 	fileBaseLower := strings.ToLower(fileBasePrefix)
 	fileBaseUpper := strings.ToUpper(fileBasePrefix)
+
+	// A name without a base would match files named after the folder.
+	if fileBasePrefix == "" {
+		return nil
+	}
 
 	filePath := filepath.Dir(fileName)
 	search := append([]string{filePath}, dirs...)
