@@ -439,6 +439,38 @@ var (
 	originalsMounts          = fs.MountPoints
 )
 
+// Case modes of the storage-case and originals-case options.
+const (
+	CaseModeAuto        = Auto
+	CaseModeSensitive   = "sensitive"
+	CaseModeInsensitive = "insensitive"
+)
+
+// StorageCase returns the configured case mode of the storage file system.
+func (c *Config) StorageCase() string {
+	c.options.StorageCase = caseMode("storage-case", c.options.StorageCase)
+	return c.options.StorageCase
+}
+
+// OriginalsCase returns the configured case mode of the originals file system.
+func (c *Config) OriginalsCase() string {
+	c.options.OriginalsCase = caseMode("originals-case", c.options.OriginalsCase)
+	return c.options.OriginalsCase
+}
+
+// caseMode normalizes the value of a case mode option and returns CaseModeAuto, with a warning, if it is invalid.
+func caseMode(name, value string) string {
+	switch mode := strings.ToLower(strings.TrimSpace(value)); mode {
+	case "", CaseModeAuto:
+		return CaseModeAuto
+	case CaseModeSensitive, CaseModeInsensitive:
+		return mode
+	default:
+		log.Warnf("config: invalid %s value %s, using %s", name, clean.LogQuote(value), CaseModeAuto)
+		return CaseModeAuto
+	}
+}
+
 // CaseInsensitive checks if the storage path is case-insensitive.
 func (c *Config) CaseInsensitive() (result bool, err error) {
 	return storageCaseInsensitive(c.StoragePath())
@@ -450,19 +482,52 @@ func (c *Config) OriginalsCaseInsensitive(skip ...string) (insensitive bool, err
 	return originalsCaseInsensitive(c.OriginalsPath(), skip...)
 }
 
-// initCaseMode makes file lookups case-insensitive where the storage or originals path is. Originals follow the
-// storage result if their own is unknown, and file systems mounted below them check all case variants.
-func (c *Config) initCaseMode() error {
-	storage, err := c.CaseInsensitive()
-
-	if err != nil {
-		return err
-	} else if storage {
-		log.Infof("config: case-insensitive file system detected for storage")
-		fs.IgnoreCase()
+// caseLookups returns the name of the lookup mode for logs.
+func caseLookups(insensitive bool) string {
+	if insensitive {
+		return "case-insensitive"
 	}
 
+	return "case-sensitive"
+}
+
+// initCaseMode makes file lookups case-insensitive where the storage or originals path is, as configured or
+// detected. Detected originals follow the storage mode if their own is unknown, and file systems mounted below
+// them check all case variants; a configured originals mode applies to all folders below originals.
+func (c *Config) initCaseMode() error {
+	logf := log.Debugf
+
+	if c.start {
+		logf = log.Infof
+	}
+
+	var storage bool
+
+	switch c.StorageCase() {
+	case CaseModeAuto:
+		var err error
+
+		if storage, err = c.CaseInsensitive(); err != nil {
+			return err
+		}
+
+		logf("config: using %s lookups for storage (detected)", caseLookups(storage))
+	default:
+		storage = c.StorageCase() == CaseModeInsensitive
+		logf("config: using %s lookups for storage (configured)", caseLookups(storage))
+	}
+
+	fs.SetIgnoreCase(storage)
+
 	originalsPath := c.OriginalsPath()
+
+	if mode := c.OriginalsCase(); mode != CaseModeAuto {
+		originals := mode == CaseModeInsensitive
+		logf("config: using %s lookups for originals (configured)", caseLookups(originals))
+		fs.SetCaseScopes(fs.CaseScope{Dir: originalsPath, Ignore: originals})
+		return nil
+	}
+
 	mounts, mountsErr := originalsMounts(originalsPath)
 
 	switch {
@@ -476,12 +541,10 @@ func (c *Config) initCaseMode() error {
 	scopes := make([]fs.CaseScope, 0, len(mounts)+1)
 
 	if originals, originalsErr := c.OriginalsCaseInsensitive(mounts...); originalsErr != nil {
-		log.Debugf("config: case sensitivity of originals not detected (%s), using the storage result", originalsErr)
+		log.Debugf("config: case sensitivity of originals not detected (%s)", originalsErr)
+		logf("config: using %s lookups for originals (storage)", caseLookups(storage))
 	} else {
-		if originals {
-			log.Infof("config: case-insensitive file system detected for originals")
-		}
-
+		logf("config: using %s lookups for originals (detected)", caseLookups(originals))
 		scopes = append(scopes, fs.CaseScope{Dir: originalsPath, Ignore: originals})
 	}
 

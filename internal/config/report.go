@@ -56,6 +56,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Storage.
 		{"storage-path", c.StoragePath()},
 		{"storage-free", fmt.Sprintf("%.0f", c.StorageFree())},
+		{"storage-case", c.StorageCase()},
 
 		// Config.
 		{"config-path", c.ConfigPath()},
@@ -74,6 +75,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Originals.
 		{"originals-path", c.OriginalsPath()},
+		{"originals-case", c.OriginalsCase()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
 

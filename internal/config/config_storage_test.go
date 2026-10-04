@@ -9,8 +9,11 @@ import (
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -909,5 +912,224 @@ func TestConfig_InitCaseModeMounts(t *testing.T) {
 		require.NoError(t, c.initCaseMode())
 		assert.Equal(t, "", find(originals))
 		assert.Equal(t, "", find(nas))
+	})
+}
+
+func TestCaseMode(t *testing.T) {
+	for value, want := range map[string]string{
+		"":               CaseModeAuto,
+		"auto":           CaseModeAuto,
+		" AUTO ":         CaseModeAuto,
+		"sensitive":      CaseModeSensitive,
+		" INSENSITIVE ":  CaseModeInsensitive,
+		"Insensitive":    CaseModeInsensitive,
+		"Yes":            CaseModeAuto,
+		"case-sensitive": CaseModeAuto,
+	} {
+		assert.Equal(t, want, caseMode("originals-case", value), value)
+	}
+}
+
+func TestCaseLookups(t *testing.T) {
+	assert.Equal(t, "case-insensitive", caseLookups(true))
+	assert.Equal(t, "case-sensitive", caseLookups(false))
+}
+
+func TestConfig_StorageCase(t *testing.T) {
+	c := NewMinimalTestConfig(t.TempDir())
+	assert.Equal(t, CaseModeAuto, c.StorageCase())
+	c.options.StorageCase = " Insensitive"
+	assert.Equal(t, CaseModeInsensitive, c.StorageCase())
+	assert.Equal(t, CaseModeInsensitive, c.options.StorageCase)
+
+	// An invalid value is replaced, so that it is reported once.
+	c.options.StorageCase = "Yes"
+	assert.Equal(t, CaseModeAuto, c.StorageCase())
+	assert.Equal(t, CaseModeAuto, c.options.StorageCase)
+}
+
+func TestConfig_OriginalsCase(t *testing.T) {
+	c := NewMinimalTestConfig(t.TempDir())
+	assert.Equal(t, CaseModeAuto, c.OriginalsCase())
+	c.options.OriginalsCase = "SENSITIVE"
+	assert.Equal(t, CaseModeSensitive, c.OriginalsCase())
+	assert.Equal(t, CaseModeSensitive, c.options.OriginalsCase)
+	c.options.OriginalsCase = "on"
+	assert.Equal(t, CaseModeAuto, c.OriginalsCase())
+	assert.Equal(t, CaseModeAuto, c.options.OriginalsCase)
+}
+
+func TestCliFlags_CaseModes(t *testing.T) {
+	for name, env := range map[string]string{"originals-case": "PHOTOPRISM_ORIGINALS_CASE", "storage-case": "PHOTOPRISM_STORAGE_CASE"} {
+		var flag *cli.StringFlag
+
+		for i := range Flags {
+			if Flags[i].Name() == name {
+				flag, _ = Flags[i].Flag.(*cli.StringFlag)
+				break
+			}
+		}
+
+		if assert.NotNil(t, flag, name) {
+			assert.Equal(t, CaseModeAuto, flag.Value)
+			assert.Contains(t, flag.EnvVars, env)
+			assert.Contains(t, flag.Usage, "auto, sensitive, insensitive")
+		}
+	}
+}
+
+func TestConfig_InitCaseModeOptions(t *testing.T) {
+	// Configured modes skip their detection: the stubs fail the test if a skipped one is called.
+	c := NewMinimalTestConfig(t.TempDir())
+	originals, storage := c.OriginalsPath(), c.StoragePath()
+
+	if insensitive, err := fs.CaseInsensitive(t.TempDir()); err != nil {
+		t.Fatal(err)
+	} else if insensitive {
+		t.Skip("requires a case-sensitive file system")
+	}
+
+	nas := filepath.Join(originals, "nas")
+
+	for _, dir := range []string{originals, nas, storage} {
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.raw"), []byte("raw"), fs.ModeFile))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "img_1.jpg"), []byte("jpg"), fs.ModeFile))
+	}
+
+	find := func(dir string) string { return fs.ImageJpeg.Find(filepath.Join(dir, "IMG_1.raw"), false) }
+	found := func(dir string) string { return filepath.Join(dir, "img_1.jpg") }
+
+	// stubCaseOptions sets the modes and stubs the detection, which reports storage and originals as
+	// case-insensitive with a mount below originals, and counts the calls.
+	stubCaseOptions := func(t *testing.T, storageCase, originalsCase string) (storageCalls, originalsCalls, mountsCalls *int) {
+		stubCaseDetection(t, true, true, nil, nil)
+		storageCalls, originalsCalls, mountsCalls = new(int), new(int), new(int)
+		storageCaseInsensitive = func(string) (bool, error) { *storageCalls++; return true, nil }
+		originalsCaseInsensitive = func(string, ...string) (bool, error) { *originalsCalls++; return true, nil }
+		originalsMounts = func(string) ([]string, error) { *mountsCalls++; return []string{nas}, nil }
+		prevStorage, prevOriginals := c.options.StorageCase, c.options.OriginalsCase
+		t.Cleanup(func() { c.options.StorageCase, c.options.OriginalsCase = prevStorage, prevOriginals })
+		c.options.StorageCase, c.options.OriginalsCase = storageCase, originalsCase
+		return storageCalls, originalsCalls, mountsCalls
+	}
+
+	t.Run("Auto", func(t *testing.T) {
+		storageCalls, originalsCalls, mountsCalls := stubCaseOptions(t, "", "")
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, []int{1, 1, 1}, []int{*storageCalls, *originalsCalls, *mountsCalls})
+		assert.Equal(t, "", find(storage))
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, found(nas), find(nas))
+	})
+	t.Run("StorageSensitive", func(t *testing.T) {
+		storageCalls, _, _ := stubCaseOptions(t, CaseModeSensitive, "")
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, 0, *storageCalls)
+		assert.Equal(t, found(storage), find(storage))
+		assert.Equal(t, "", find(originals))
+	})
+	t.Run("StorageInsensitive", func(t *testing.T) {
+		storageCalls, _, _ := stubCaseOptions(t, CaseModeInsensitive, "")
+		storageCaseInsensitive = func(string) (bool, error) { *storageCalls++; return false, errors.New("storage not writable") }
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, 0, *storageCalls)
+		assert.Equal(t, "", find(storage))
+	})
+	t.Run("StorageNotWritable", func(t *testing.T) {
+		// A configured storage mode does not write, so a storage path that is not writable does not fail.
+		_, _, _ = stubCaseOptions(t, CaseModeSensitive, "")
+		storageCaseInsensitive = func(string) (bool, error) { return false, errors.New("storage not writable") }
+		require.NoError(t, c.initCaseMode())
+		c.options.StorageCase = CaseModeAuto
+		assert.EqualError(t, c.initCaseMode(), "storage not writable")
+	})
+	t.Run("OriginalsSensitive", func(t *testing.T) {
+		storageCalls, originalsCalls, mountsCalls := stubCaseOptions(t, "", CaseModeSensitive)
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, []int{1, 0, 0}, []int{*storageCalls, *originalsCalls, *mountsCalls})
+		assert.Equal(t, "", find(storage))
+		assert.Equal(t, found(originals), find(originals))
+		assert.Equal(t, found(nas), find(nas))
+	})
+	t.Run("OriginalsInsensitive", func(t *testing.T) {
+		storageCalls, originalsCalls, mountsCalls := stubCaseOptions(t, CaseModeSensitive, CaseModeInsensitive)
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, []int{0, 0, 0}, []int{*storageCalls, *originalsCalls, *mountsCalls})
+		assert.Equal(t, found(storage), find(storage))
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, "", find(nas))
+	})
+	t.Run("OriginalsUnknownStorageConfigured", func(t *testing.T) {
+		// Originals whose mode is unknown follow the configured storage mode.
+		_, _, _ = stubCaseOptions(t, CaseModeInsensitive, "")
+		originalsCaseInsensitive = func(string, ...string) (bool, error) { return false, errors.New("folder not readable") }
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, found(nas), find(nas))
+	})
+	t.Run("StorageReset", func(t *testing.T) {
+		// A configured sensitive storage mode replaces an insensitive one set before.
+		_, _, _ = stubCaseOptions(t, CaseModeSensitive, "")
+		fs.IgnoreCase()
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, found(storage), find(storage))
+	})
+	t.Run("InvalidValue", func(t *testing.T) {
+		storageCalls, originalsCalls, _ := stubCaseOptions(t, "Yes", " INSENSITIVE ")
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, 1, *storageCalls)
+		assert.Equal(t, 0, *originalsCalls)
+		assert.Equal(t, "", find(nas))
+	})
+}
+
+func TestConfig_InitCaseModeLogs(t *testing.T) {
+	// The modes are logged at info level when the server starts and at debug level otherwise, and an invalid
+	// value is reported once.
+	orig := log
+	logger, hook := logtest.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	log = logger
+	t.Cleanup(func() { log = orig })
+
+	c := NewMinimalTestConfig(t.TempDir())
+	stubCaseDetection(t, true, false, errors.New("folder not readable"), nil)
+	prevStart, prevOriginals := c.start, c.options.OriginalsCase
+	t.Cleanup(func() { c.start, c.options.OriginalsCase = prevStart, prevOriginals })
+
+	messages := func(level logrus.Level) (result []string) {
+		for _, e := range hook.AllEntries() {
+			if e.Level == level {
+				result = append(result, e.Message)
+			}
+		}
+
+		return result
+	}
+
+	t.Run("Start", func(t *testing.T) {
+		hook.Reset()
+		c.start = true
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, []string{
+			"config: using case-insensitive lookups for storage (detected)",
+			"config: using case-insensitive lookups for originals (storage)",
+		}, messages(logrus.InfoLevel))
+		assert.Contains(t, messages(logrus.DebugLevel), "config: case sensitivity of originals not detected (folder not readable)")
+	})
+	t.Run("Command", func(t *testing.T) {
+		hook.Reset()
+		c.start = false
+		require.NoError(t, c.initCaseMode())
+		assert.Empty(t, messages(logrus.InfoLevel))
+		assert.Contains(t, messages(logrus.DebugLevel), "config: using case-insensitive lookups for storage (detected)")
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		hook.Reset()
+		c.options.OriginalsCase = "Yes"
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, CaseModeAuto, c.OriginalsCase())
+		assert.Equal(t, []string{"config: invalid originals-case value 'Yes', using auto"}, messages(logrus.WarnLevel))
 	})
 }

@@ -39,6 +39,18 @@ func TestIgnoreCase(t *testing.T) {
 	assert.Equal(t, ExtensionList.Types(true), FileTypes)
 }
 
+func TestSetIgnoreCase(t *testing.T) {
+	restoreCaseMode(t)
+
+	SetIgnoreCase(true)
+	assert.True(t, ignoreCase)
+	assert.Equal(t, ExtensionList.Types(true), FileTypes)
+
+	SetIgnoreCase(false)
+	assert.False(t, ignoreCase)
+	assert.Equal(t, ExtensionList.Types(false), FileTypes)
+}
+
 // restoreCaseMode restores the case-insensitive lookup settings when the test ends.
 func restoreCaseMode(t *testing.T) {
 	t.Helper()

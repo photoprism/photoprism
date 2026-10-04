@@ -47,8 +47,13 @@ func CaseInsensitive(storagePath string) (result bool, err error) {
 
 // IgnoreCase enables the case-insensitive mode for lookups outside the folders set with SetCaseScopes.
 func IgnoreCase() {
-	ignoreCase = true
-	FileTypes = ExtensionList.Types(true)
+	SetIgnoreCase(true)
+}
+
+// SetIgnoreCase sets the case mode for lookups outside the folders set with SetCaseScopes.
+func SetIgnoreCase(enabled bool) {
+	ignoreCase = enabled
+	FileTypes = ExtensionList.Types(enabled)
 }
 
 // CaseScope describes whether lookups in Dir and below are case-insensitive.

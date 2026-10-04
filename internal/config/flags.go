@@ -261,6 +261,12 @@ var Flags = CliFlags{
 			Value:   DefaultStorageFree,
 			EnvVars: EnvVars("STORAGE_FREE"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "storage-case",
+			Usage:   "case `MODE` of the storage file system (auto, sensitive, insensitive); insensitive also applies to other folders outside originals and to originals whose mode is not detected, where files whose names differ only in letter case are then not found unless their file system is case-insensitive",
+			Value:   Auto,
+			EnvVars: EnvVars("STORAGE_CASE"),
+		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "config-path",
 			Aliases:   []string{"config", "c"},
@@ -286,6 +292,12 @@ var Flags = CliFlags{
 			Usage:     "storage `PATH` of your original media files (photos and videos)",
 			EnvVars:   EnvVars("ORIGINALS_PATH"),
 			TakesFile: true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "originals-case",
+			Usage:   "case `MODE` of the originals file system (auto, sensitive, insensitive); with insensitive, files whose names differ only in letter case, such as previews and sidecars, are not found unless all folders below originals are case-insensitive",
+			Value:   Auto,
+			EnvVars: EnvVars("ORIGINALS_CASE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "originals-limit",
