@@ -309,3 +309,20 @@ func TestService_ExpandedUriNotLogged(t *testing.T) {
 		}
 	}
 }
+
+// TestForgetRefusedEnv checks that only the refusals of the given field and value are removed.
+func TestForgetRefusedEnv(t *testing.T) {
+	resetRefusedEnvWarned(t)
+	refusedEnvWarned.Store("Service.Uri\x00${A_TOKEN}/x\x00A_TOKEN", struct{}{})
+	refusedEnvWarned.Store("Service.Uri\x00${A_TOKEN}/xy\x00A_TOKEN", struct{}{})
+	refusedEnvWarned.Store("Service.Model\x00${A_TOKEN}/x\x00A_TOKEN", struct{}{})
+
+	forgetRefusedEnv("Service.Uri", "${A_TOKEN}/x")
+
+	_, removed := refusedEnvWarned.Load("Service.Uri\x00${A_TOKEN}/x\x00A_TOKEN")
+	assert.False(t, removed)
+	_, kept := refusedEnvWarned.Load("Service.Uri\x00${A_TOKEN}/xy\x00A_TOKEN")
+	assert.True(t, kept)
+	_, kept = refusedEnvWarned.Load("Service.Model\x00${A_TOKEN}/x\x00A_TOKEN")
+	assert.True(t, kept)
+}

@@ -71,6 +71,19 @@ func envNameValid(name string) bool {
 	return true
 }
 
+// forgetRefusedEnv removes the logged refusals of a field and configured value, so they are logged again.
+func forgetRefusedEnv(field, value string) {
+	prefix := field + "\x00" + value + "\x00"
+
+	refusedEnvWarned.Range(func(key, _ any) bool {
+		if k, ok := key.(string); ok && strings.HasPrefix(k, prefix) {
+			refusedEnvWarned.Delete(key)
+		}
+
+		return true
+	})
+}
+
 // warnRefusedEnv logs a warning once per field, configured value, and refused variable name. Only the
 // name of a variable that is set is quoted, as other text after a "$" may be part of a literal value.
 func warnRefusedEnv(field, value string, refused []string, suffixes []string) {

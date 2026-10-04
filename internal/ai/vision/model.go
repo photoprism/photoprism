@@ -288,19 +288,56 @@ func (m *Model) Endpoint() (uri, method string) {
 // unresolvedUriWarned holds the models whose unresolved service URI was logged.
 var unresolvedUriWarned sync.Map
 
+// firstRunWarned holds the models whose configuration warnings were logged again when they first ran.
+var firstRunWarned sync.Map
+
+// firstRunMutex makes concurrent first runs wait until the warnings of the model were cleared.
+var firstRunMutex sync.Mutex
+
+// warnKey returns the key under which the configuration warnings of the model are logged once.
+func (m *Model) warnKey() string {
+	return m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
+}
+
 // warnUnresolvedUri logs once per model that its service URI does not resolve.
 func (m *Model) warnUnresolvedUri() {
-	key := m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
-
-	if _, warned := unresolvedUriWarned.LoadOrStore(key, struct{}{}); !warned {
+	if _, warned := unresolvedUriWarned.LoadOrStore(m.warnKey(), struct{}{}); !warned {
 		log.Warnf("vision: %s, so no service is used", m.unresolvedUriErrText())
 	}
+}
+
+// warnOnFirstRun lets the configuration warnings of the model be logged once more when it first runs,
+// as warnings logged while the config is loaded precede the log shown in the web UI.
+func (m *Model) warnOnFirstRun() {
+	key := m.warnKey()
+
+	if _, done := firstRunWarned.Load(key); done {
+		return
+	}
+
+	firstRunMutex.Lock()
+	defer firstRunMutex.Unlock()
+
+	if _, done := firstRunWarned.Load(key); done {
+		return
+	}
+
+	unresolvedUriWarned.Delete(key)
+	forgetRefusedEnv("Service.Uri", m.Service.Uri)
+	forgetRefusedEnv("Service.Model", m.Service.Model)
+	firstRunWarned.Store(key, struct{}{})
 }
 
 // unresolvedUriErr returns an error, and logs a warning once, if the model's service URI does not
 // resolve after expanding environment variables.
 func (m *Model) unresolvedUriErr() error {
-	if m == nil || !m.Service.UriUnresolved() {
+	if m == nil {
+		return nil
+	}
+
+	m.warnOnFirstRun()
+
+	if !m.Service.UriUnresolved() {
 		return nil
 	}
 

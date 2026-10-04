@@ -1113,7 +1113,11 @@ func TestService_UriUnresolved(t *testing.T) {
 func resetUnresolvedUriWarnings(t *testing.T) {
 	t.Helper()
 	unresolvedUriWarned.Clear()
-	t.Cleanup(unresolvedUriWarned.Clear)
+	firstRunWarned.Clear()
+	t.Cleanup(func() {
+		unresolvedUriWarned.Clear()
+		firstRunWarned.Clear()
+	})
 }
 
 // TestCustomClassifyInitializationError verifies custom failures preserve saved disablement.
