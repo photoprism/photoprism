@@ -26,15 +26,33 @@ type Service struct {
 	Disabled       bool      `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
 }
 
-// UriUnresolved reports whether the service has a Uri that expands to nothing, so it has no endpoint.
+// UriUnresolved reports whether the service has no endpoint although it is meant to use one: its Uri
+// expands to nothing, or it has no Uri and a request format that the Vision API does not accept.
 func (m *Service) UriUnresolved() bool {
-	if m == nil || m.Disabled || strings.TrimSpace(m.Uri) == "" {
+	if m == nil || m.Disabled {
 		return false
+	} else if strings.TrimSpace(m.Uri) == "" {
+		return m.UriMissing()
 	}
 
 	uri, _ := m.Endpoint()
 
 	return uri == ""
+}
+
+// UriMissing reports whether the service has no Uri although its request format is not accepted by the
+// Vision API, so its requests cannot be sent to the shared service.
+func (m *Service) UriMissing() bool {
+	if m == nil || m.Disabled || strings.TrimSpace(m.Uri) != "" {
+		return false
+	}
+
+	switch strings.ToLower(strings.TrimSpace(m.RequestFormat)) {
+	case "", ApiFormatVision, ApiFormatImages, ApiFormatUrl:
+		return false
+	default:
+		return true
+	}
 }
 
 // Endpoint returns the remote service request method and endpoint URL, if any. The URI expands only

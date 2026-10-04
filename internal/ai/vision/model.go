@@ -227,7 +227,8 @@ func (m *Model) IsLegacy() bool {
 
 	legacyName, ok := legacyModelNames[m.Type]
 
-	if !ok || m.Service.UriUnresolved() {
+	// A legacy entry without a Uri is mapped regardless of its request format, so it keeps a local model.
+	if !ok || m.Service.UriUnresolved() && !m.Service.UriMissing() {
 		return false
 	} else if uri, _ := m.Service.Endpoint(); uri != "" {
 		return false
@@ -350,9 +351,17 @@ func (m *Model) unresolvedUriErr() error {
 	return m.unresolvedUriErrText()
 }
 
-// unresolvedUriErrText returns the error for a model whose service URI does not resolve.
+// unresolvedUriErrText returns the error for a model whose service URI does not resolve or is missing.
 func (m *Model) unresolvedUriErrText() error {
 	name, _, _ := m.GetModel()
+
+	if m.Service.UriMissing() && strings.TrimSpace(m.Engine) != "" {
+		return fmt.Errorf("%s model %s needs a service uri for the %s request format",
+			clean.Log(m.Type), clean.Log(name), clean.Log(m.Service.RequestFormat))
+	} else if m.Service.UriMissing() {
+		return fmt.Errorf("%s model %s needs a service uri or an engine for the %s request format",
+			clean.Log(m.Type), clean.Log(name), clean.Log(m.Service.RequestFormat))
+	}
 
 	return fmt.Errorf("service uri of %s model %s does not resolve", clean.Log(m.Type), clean.Log(name))
 }
