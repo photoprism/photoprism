@@ -697,7 +697,7 @@ func (m *Model) SchemaTemplate() string {
 		if m.Type == ModelTypeLabels {
 			if envFile := strings.TrimSpace(os.Getenv(labelSchemaEnvVar)); envFile != "" {
 				if schemaFromFile, err := readSchemaFile(envFile); err != nil {
-					log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(envFile), err)
+					warnSchemaFile(m.Type, envFile, err)
 				} else {
 					schemaText = schemaFromFile
 				}
@@ -710,7 +710,7 @@ func (m *Model) SchemaTemplate() string {
 
 		if schemaText == "" && strings.TrimSpace(m.SchemaFile) != "" {
 			if schemaFromFile, err := readSchemaFile(m.SchemaFile); err != nil {
-				log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(m.SchemaFile), err)
+				warnSchemaFile(m.Type, m.SchemaFile, err)
 			} else {
 				schemaText = schemaFromFile
 			}
@@ -730,6 +730,12 @@ func (m *Model) SchemaTemplate() string {
 	})
 
 	return m.schema
+}
+
+// warnSchemaFile logs that a schema file could not be read, with its name and the error only in the system log.
+func warnSchemaFile(modelType ModelType, fileName string, err error) {
+	log.Warnf("vision: failed to read the schema file of the %s model (details in system log)", clean.Log(modelType))
+	event.SystemWarn([]string{"vision", "failed to read schema file %s", "%s"}, clean.Log(fileName), clean.Error(err))
 }
 
 // readSchemaFile resolves and reads a schema file path from config or env.

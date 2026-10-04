@@ -113,6 +113,37 @@ func TestReadSchemaFile(t *testing.T) {
 	})
 }
 
+// TestWarnSchemaFile checks that the name of a schema file that cannot be read is only written to the system log.
+func TestWarnSchemaFile(t *testing.T) {
+	dir := t.TempDir()
+	missing := filepath.Join(dir, "missing-schema.json")
+
+	t.Run("SchemaTemplate", func(t *testing.T) {
+		logHook, systemHook := captureLogs(t)
+		m := &Model{Type: ModelTypeCaption, SchemaFile: missing}
+		assert.Equal(t, "", m.SchemaTemplate())
+
+		require.Len(t, logHook.AllEntries(), 1)
+		assert.Equal(t, logrus.WarnLevel, logHook.LastEntry().Level)
+		assert.Contains(t, logHook.LastEntry().Message, "caption model (details in system log)")
+		assert.NotContains(t, logHook.LastEntry().Message, dir)
+		assert.NotContains(t, logHook.LastEntry().Message, "missing-schema.json")
+
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Contains(t, systemHook.LastEntry().Message, "missing-schema.json")
+	})
+	t.Run("ErrorText", func(t *testing.T) {
+		logHook, systemHook := captureLogs(t)
+		_, err := readSchemaFile(missing)
+		require.Error(t, err)
+		warnSchemaFile(ModelTypeLabels, missing, err)
+		require.Len(t, logHook.AllEntries(), 1)
+		assert.NotContains(t, logHook.LastEntry().Message, "no such file")
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Contains(t, systemHook.LastEntry().Message, "no such file")
+	})
+}
+
 func TestModelGetOptionsDefaultsOllamaLabels(t *testing.T) {
 	ollamaModel := "redule26/huihui_ai_qwen2.5-vl-7b-abliterated:latest"
 
