@@ -1289,10 +1289,10 @@ var Rules = LabelRules{
 		Categories: []string{"dining", "food"},
 	},
 	"cardigan": {
-		Label:      "dog",
-		Threshold:  0.450000,
-		Priority:   5,
-		Categories: []string{"animal"},
+		Label:      "portrait",
+		Threshold:  0.500000,
+		Priority:   0,
+		Categories: []string{},
 	},
 	"cardigan dog": {
 		Label:      "dog",
@@ -1550,7 +1550,7 @@ var Rules = LabelRules{
 		Label:      "",
 		Threshold:  0.850000,
 		Priority:   0,
-		Categories: []string{},
+		Categories: []string{"theater"},
 	},
 	"cleaver": {
 		Label:      "",
@@ -4421,9 +4421,9 @@ var Rules = LabelRules{
 		Categories: []string{},
 	},
 	"nail": {
-		Label:      "portrait",
-		Threshold:  0.500000,
-		Priority:   0,
+		Label:      "",
+		Threshold:  1.000000,
+		Priority:   -3,
 		Categories: []string{},
 	},
 	"neck brace": {

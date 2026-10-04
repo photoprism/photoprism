@@ -527,7 +527,7 @@ func (m *Model) bestLabels(probabilities []float32, confidenceThreshold int) Lab
 		labelText := strings.ToLower(m.labels[i])
 		rule, _ := Rules.Find(labelText)
 
-		if probability < rule.Threshold {
+		if rule.Priority <= priorityIgnore || probability < rule.Threshold {
 			continue
 		}
 

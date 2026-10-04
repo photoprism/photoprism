@@ -226,7 +226,7 @@ maillot:
   see: fashion
 
 nail:
-  see: fashion
+  see: ignore
 
 neck brace:
   see: fashion
@@ -2227,13 +2227,6 @@ pembroke dog:
   label: dog
   priority: 5
   threshold: 0.15
-  categories:
-    - animal
-
-cardigan:
-  label: dog
-  priority: 5
-  threshold: 0.45
   categories:
     - animal
 
@@ -5168,7 +5161,7 @@ christmas stocking:
 
 cinema:
   threshold: 0.85
-  category:
+  categories:
     - theater
 
 cowboy hat:

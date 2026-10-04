@@ -250,6 +250,66 @@ func TestModelBestLabels(t *testing.T) {
 	assert.Equal(t, SrcImage, result[0].Source)
 }
 
+// TestModelBestLabelsClassSenses verifies distinct ImageNet meanings keep their intended labels.
+func TestModelBestLabelsClassSenses(t *testing.T) {
+	model := &Model{labels: imageNetLabelNames}
+	for _, test := range []struct {
+		name       string
+		class      int
+		confidence float32
+		want       string
+	}{
+		{"CardiganGarment", 474, 0.75, "portrait"},
+		{"CardiganGarmentBelowFloor", 474, 0.49, ""},
+		{"CardiganDog", 264, 0.75, "dog"},
+		{"CardiganDogBelowFloor", 264, 0.44, ""},
+		{"NailFastener", 677, 0.75, ""},
+		{"NailSaturated", 677, 1, ""},
+		{"ToiletSeatSaturated", 861, 1, ""},
+		{"ToiletTissueSaturated", 999, 1, ""},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			probabilities := make([]float32, len(model.labels))
+			probabilities[test.class] = test.confidence
+			probabilities[999] += 1 - test.confidence
+			result := model.bestLabels(probabilities, 10)
+			if test.want == "" {
+				require.Empty(t, result)
+			} else {
+				require.Len(t, result, 1)
+				assert.Equal(t, test.want, result[0].Name)
+			}
+		})
+	}
+}
+
+// TestModelBestLabelsIgnoredPriority verifies the ignore boundary without excluding active priorities.
+func TestModelBestLabelsIgnoredPriority(t *testing.T) {
+	original := Rules
+	t.Cleanup(func() { Rules = original })
+	model := &Model{labels: []string{"synthetic"}}
+	for _, test := range []struct {
+		name     string
+		priority int
+		active   bool
+	}{
+		{"IgnoreBoundary", -3, false},
+		{"BelowIgnoreBoundary", -4, false},
+		{"ActiveNegativePriority", -2, true},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			Rules = LabelRules{"synthetic": {Label: "synthetic", Threshold: 0.1, Priority: test.priority}}
+			result := model.bestLabels([]float32{1}, 10)
+			if test.active {
+				require.Len(t, result, 1)
+				assert.Equal(t, "synthetic", result[0].Name)
+			} else {
+				require.Empty(t, result)
+			}
+		})
+	}
+}
+
 // TestRegisteredModelIntegration verifies a bundled ONNX graph can classify a fixture.
 func TestRegisteredModelIntegration(t *testing.T) {
 	if testing.Short() {

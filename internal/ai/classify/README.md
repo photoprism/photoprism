@@ -1,12 +1,18 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** October 1, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
 `internal/ai/classify` runs fixed-taxonomy image classification through ONNX Runtime. It decodes an image, applies the preprocessing declared for the selected model, executes one output tensor, converts raw logits with stable softmax, and maps the resulting probabilities through the existing label rules.
 
 The default and optional ImageNet-1k candidates share the 1000-entry vocabulary embedded from `internal/ai/classify/labels.txt`. It remains readable and diffable in the repository and does not depend on a model directory at runtime. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
+
+### Label Rules
+
+`rules.yml` maps lowercase raw class names to visible labels, confidence minimums, categories and priorities. Class meanings stay distinct: `cardigan` is clothing and uses the fashion/Portrait rule, while `cardigan dog` is the dog breed. The hardware class `nail` is ignored. Rules with priority -3 or lower are excluded even when a probability reaches exactly 1.
+
+Regenerate `rules.go` with `go generate ./internal/ai/classify`. Generation rejects duplicate keys, unknown fields, uppercase names, missing alias targets and aliases that do not reference a direct rule. The package tests verify that the generated map matches the complete YAML source. The generator and its rejection tests are a normally compiled package; run them with `go test ./internal/ai/classify/gen`.
 
 ### Registered Models
 
@@ -84,6 +90,12 @@ go test ./internal/ai/classify -run TestExternalLabelBenchmark -count=1
 The report includes top-5 overlap, visible-label agreement, rule-activation drift, threshold crossings and calibration points, p50/p95 latency, model load time, Linux peak RSS, artifact size, and optional correct/false-positive counts when the manifest contains human annotations. The harness runs each candidate in a separate process so peak RSS is model-specific. Repeat the comparison on x86-64 and ARM64 with a representative photo corpus.
 
 EfficientFormerV2 S2 is the default because the reviewed 402-image Wikimedia corpus reached 81.8% visible-label coverage, compared with 73.4% for S1, leaving 73 rather than 107 images unlabeled. Its higher ARM64 latency (80 ms p50 and 121 ms p95, versus 52 ms and 75 ms) and peak RSS (350 MB versus 319 MB) are accepted for the materially better indexing coverage and mean top-1 quality.
+
+### Corpus Calibration
+
+Raw-vector capture and crop/rule experiments are developer tooling, not ordinary package tests.
+Calibration runs require an explicitly selected corpus; their images and reports stay outside the repository.
+The regular suite uses repository fixtures and synthetic data, without private calibration inputs.
 
 ### Troubleshooting
 
