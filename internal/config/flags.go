@@ -263,7 +263,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "storage-case",
-			Usage:   "case `MODE` of the storage file system (auto, sensitive, insensitive); insensitive also applies to other folders outside originals and to originals whose mode is not detected, where files whose names differ only in letter case are then not found unless their file system is case-insensitive",
+			Usage:   "case `MODE` of storage, also used outside originals and for originals of unknown mode (auto, sensitive, insensitive)",
 			Value:   Auto,
 			EnvVars: EnvVars("STORAGE_CASE"),
 		}}, {
@@ -295,7 +295,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "originals-case",
-			Usage:   "case `MODE` of the originals file system (auto, sensitive, insensitive); with insensitive, files whose names differ only in letter case, such as previews and sidecars, are not found unless all folders below originals are case-insensitive",
+			Usage:   "case `MODE` of originals (auto, sensitive, insensitive), insensitive only if all folders below are case-insensitive",
 			Value:   Auto,
 			EnvVars: EnvVars("ORIGINALS_CASE"),
 		}}, {
