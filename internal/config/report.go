@@ -55,8 +55,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Storage.
 		{"storage-path", c.StoragePath()},
-		{"storage-free", fmt.Sprintf("%.0f", c.StorageFree())},
 		{"storage-case", c.StorageCase()},
+		{"storage-free", fmt.Sprintf("%.0f", c.StorageFree())},
 
 		// Config.
 		{"config-path", c.ConfigPath()},

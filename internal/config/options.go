@@ -69,8 +69,8 @@ type Options struct {
 	Demo                      bool          `yaml:"-" json:"-" flag:"demo"`
 	Sponsor                   bool          `yaml:"-" json:"-" flag:"sponsor"`
 	StoragePath               string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
-	StorageFree               float64       `yaml:"StorageFree" json:"-" flag:"storage-free"`
 	StorageCase               string        `yaml:"StorageCase" json:"-" flag:"storage-case"`
+	StorageFree               float64       `yaml:"StorageFree" json:"-" flag:"storage-free"`
 	ConfigPath                string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	OptionsYaml               string        `json:"-" yaml:"-" flag:"-"`
 	DefaultsYaml              string        `json:"-" yaml:"-" flag:"defaults-yaml"`

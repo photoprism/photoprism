@@ -255,17 +255,17 @@ var Flags = CliFlags{
 			EnvVars:   EnvVars("STORAGE_PATH"),
 			TakesFile: true,
 		}}, {
-		Flag: &cli.Float64Flag{
-			Name:    "storage-free",
-			Usage:   "minimum `PERCENT` (1-99) of free storage required for indexing, importing, and uploads, -1 disables the check",
-			Value:   DefaultStorageFree,
-			EnvVars: EnvVars("STORAGE_FREE"),
-		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "storage-case",
 			Usage:   "case `MODE` of storage, also used outside originals and for originals of unknown mode (auto, sensitive, insensitive)",
 			Value:   Auto,
 			EnvVars: EnvVars("STORAGE_CASE"),
+		}}, {
+		Flag: &cli.Float64Flag{
+			Name:    "storage-free",
+			Usage:   "minimum `PERCENT` (1-99) of free storage required for indexing, importing, and uploads, -1 disables the check",
+			Value:   DefaultStorageFree,
+			EnvVars: EnvVars("STORAGE_FREE"),
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "config-path",
