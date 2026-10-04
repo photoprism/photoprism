@@ -1558,6 +1558,11 @@ func TestMediaFile_CheckType(t *testing.T) {
 			assert.NoError(t, f.CheckType())
 		}
 	})
+	t.Run("GIF", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
+		require.NoError(t, err)
+		assert.NoError(t, f.CheckType())
+	})
 	t.Run("PNG", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/orientation.png"); err != nil {
 			t.Fatal(err)

@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestConvert_ToAvc(t *testing.T) {
@@ -81,6 +82,49 @@ func TestConvert_ToAvc(t *testing.T) {
 
 		avcFile, err := convert.ToAvc(mf, "", false, false)
 		assert.Error(t, err)
+		assert.Nil(t, avcFile)
+	})
+	t.Run("TypeMismatch", func(t *testing.T) {
+		conf := config.TestConfig()
+		convert := NewConvert(conf)
+
+		// The FFmpeg stub records each call, so the test can tell that no command ran.
+		marker := filepath.Join(t.TempDir(), "ffmpeg-called")
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		require.NoError(t, os.WriteFile(stub, []byte("#!/bin/sh\ntouch "+transportShellQuote(marker)+"\nexit 1\n"), 0o700)) //nolint:gosec // G306: test executable
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = stub
+		t.Cleanup(func() { conf.Options().FFmpegBin = orig })
+
+		for _, name := range []string{"clip.mp4", "clip.gif"} {
+			fileName := filepath.Join(t.TempDir(), name)
+			require.NoError(t, fs.Copy("testdata/flash.jpg", fileName, false))
+			mf, err := NewMediaFile(fileName)
+			require.NoError(t, err)
+			require.Error(t, mf.CheckType(), name)
+
+			avcFile, err := convert.ToAvc(mf, encode.SoftwareAvc, false, true)
+			assert.ErrorContains(t, err, "image/jpeg", name)
+			assert.Nil(t, avcFile, name)
+			assert.NoFileExists(t, marker, name)
+		}
+
+		// An existing transcode of a source that fails the check is not returned either.
+		folder := "avc-type-mismatch-" + rnd.Base36(8)
+		t.Cleanup(func() {
+			_ = os.RemoveAll(filepath.Join(conf.OriginalsPath(), folder))
+			_ = os.RemoveAll(filepath.Join(conf.SidecarPath(), folder))
+		})
+		fileName := filepath.Join(conf.OriginalsPath(), folder, "existing.mp4")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+		require.NoError(t, fs.Copy("testdata/flash.jpg", fileName, false))
+		mf, err := NewMediaFile(fileName)
+		require.NoError(t, err)
+		avcName, err := convert.AvcName(mf)
+		require.NoError(t, err)
+		require.NoError(t, fs.Copy(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"), avcName, true))
+		avcFile, err := convert.ToAvc(mf, encode.SoftwareAvc, false, false)
+		assert.ErrorContains(t, err, "image/jpeg")
 		assert.Nil(t, avcFile)
 	})
 }

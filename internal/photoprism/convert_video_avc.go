@@ -101,11 +101,14 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	// Sanitized relative filename for use in logs.
 	logFileName := clean.Log(f.RootRelName())
 
-	// Abort if the source media file does not exist.
+	// Abort if the source media file does not exist or its content does not match its type.
 	if !f.Exists() {
 		return nil, fmt.Errorf("convert: %s not found", logFileName)
 	} else if f.Empty() {
 		return nil, fmt.Errorf("convert: %s is empty", logFileName)
+	} else if typeErr := f.CheckType(); typeErr != nil {
+		log.Warnf("convert: skipping %s because it %s", logFileName, typeErr)
+		return nil, fmt.Errorf("convert: %s %s", logFileName, typeErr)
 	}
 
 	// Skip files whose codec or container is on the FFmpeg exclude list.
