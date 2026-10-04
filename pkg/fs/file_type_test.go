@@ -248,7 +248,7 @@ func TestType_FindEach(t *testing.T) {
 		var visited []string
 		assert.Equal(t, "", find(func(name string) bool { visited = append(visited, name); return false }))
 		assert.Equal(t, ImageJpeg.FindAll(fileName, dirs, filepath.Join(parent, "originals"), false), visited)
-		assert.Equal(t, []string{files[0], files[0], files[1], files[2], files[2]}, visited)
+		assert.Equal(t, []string{files[0], files[1], files[2]}, visited)
 	})
 	t.Run("NameOrder", func(t *testing.T) {
 		// The full name comes before the base name, and both before their lower and upper case variants.
@@ -267,13 +267,86 @@ func TestType_FindEach(t *testing.T) {
 		assert.Equal(t, filepath.Join(sidecar, "2024", "IMG_3.heic.jpg"), ImageJpeg.FindFirst(filepath.Join(dir, "IMG_3.heic"), dirs, filepath.Join(parent, "originals"), false))
 	})
 	t.Run("RepeatedDir", func(t *testing.T) {
-		repeated := []string{sidecar, sidecar, PPHiddenPathname, PPHiddenPathname}
-		assert.Equal(t, ImageJpeg.FindAll(fileName, dirs, filepath.Join(parent, "originals"), false), ImageJpeg.FindAll(fileName, repeated, filepath.Join(parent, "originals"), false))
+		// Each directory is checked once, also if it is given again or resolves to the folder of the file.
+		repeated := []string{sidecar, dir, sidecar, ".", PPHiddenPathname, sidecar, PPHiddenPathname}
+		assert.Equal(t, files, ImageJpeg.FindAll(fileName, repeated, filepath.Join(parent, "originals"), false))
 	})
 	t.Run("EmptyBase", func(t *testing.T) {
 		called := false
 		assert.Equal(t, "", ImageJpeg.FindEach(dir+string(os.PathSeparator)+".", dirs, parent, false, func(string) bool { called = true; return true }))
 		assert.False(t, called)
+	})
+}
+
+func TestType_FindGenerated(t *testing.T) {
+	parent := t.TempDir()
+	originals := filepath.Join(parent, "originals")
+	dir := filepath.Join(originals, "2024")
+	sidecar := filepath.Join(parent, "sidecar")
+	dirs := []string{sidecar, PPHiddenPathname}
+
+	// write creates empty files with the given names.
+	write := func(t *testing.T, names ...string) {
+		for _, name := range names {
+			require.NoError(t, os.MkdirAll(filepath.Dir(name), 0o700))
+			require.NoError(t, os.WriteFile(name, []byte("x"), 0o600))
+		}
+	}
+
+	// findAll returns the names FindGenerated visits for the given original.
+	findAll := func(fileName string) (visited []string) {
+		ImageJpeg.FindGenerated(fileName, dirs, originals, false, func(name string) bool {
+			visited = append(visited, name)
+			return false
+		})
+		return visited
+	}
+
+	t.Run("OwnFolder", func(t *testing.T) {
+		write(t, filepath.Join(dir, "IMG_1.jpeg"), filepath.Join(dir, "img_1.JPG"))
+		assert.ElementsMatch(t, []string{filepath.Join(dir, "IMG_1.jpeg"), filepath.Join(dir, "img_1.JPG")}, findAll(filepath.Join(dir, "IMG_1.heic")))
+	})
+	t.Run("GeneratedNames", func(t *testing.T) {
+		generated := []string{
+			filepath.Join(sidecar, "2024", "IMG_2.heic.jpg"),
+			filepath.Join(sidecar, "2024", "IMG_2.jpg"),
+			filepath.Join(dir, PPHiddenPathname, "IMG_2.heic.jpg"),
+		}
+		write(t, generated...)
+		write(t,
+			filepath.Join(sidecar, "2024", "IMG_2.heic.JPG"),
+			filepath.Join(sidecar, "2024", "IMG_2.jpeg"),
+			filepath.Join(sidecar, "2024", "img_2.jpg"),
+			filepath.Join(dir, PPHiddenPathname, "IMG_2.JPG"),
+		)
+		assert.Equal(t, generated, findAll(filepath.Join(dir, "IMG_2.heic")))
+		assert.Equal(t, generated[0], ImageJpeg.FindGenerated(filepath.Join(dir, "IMG_2.heic"), dirs, originals, false, nil))
+	})
+	t.Run("RelativeSidecar", func(t *testing.T) {
+		write(t, filepath.Join(dir, ".sidecar", "IMG_3.heic.jpg"), filepath.Join(dir, ".sidecar", "IMG_3.JPEG"))
+		var visited []string
+		ImageJpeg.FindGenerated(filepath.Join(dir, "IMG_3.heic"), []string{".sidecar"}, originals, false, func(name string) bool { visited = append(visited, name); return false })
+		assert.Equal(t, []string{filepath.Join(dir, ".sidecar", "IMG_3.heic.jpg")}, visited)
+	})
+	t.Run("SidecarInOriginals", func(t *testing.T) {
+		// A sidecar folder that is the folder of the file keeps all variants.
+		write(t, filepath.Join(dir, "IMG_4.heic.jpg"), filepath.Join(dir, "IMG_4.JPG"))
+		want := []string{filepath.Join(dir, "IMG_4.heic.jpg"), filepath.Join(dir, "IMG_4.JPG")}
+		for _, sidecarDir := range []string{".", originals} {
+			var visited []string
+			ImageJpeg.FindGenerated(filepath.Join(dir, "IMG_4.heic"), []string{sidecarDir, PPHiddenPathname}, originals, false, func(name string) bool { visited = append(visited, name); return false })
+			assert.ElementsMatch(t, want, visited, sidecarDir)
+		}
+	})
+	t.Run("Png", func(t *testing.T) {
+		write(t, filepath.Join(sidecar, "2024", "logo.svg.png"), filepath.Join(sidecar, "2024", "logo.svg.PNG"), filepath.Join(sidecar, "2024", "logo.svg.apng"))
+		var visited []string
+		ImagePng.FindGenerated(filepath.Join(dir, "logo.svg"), dirs, originals, false, func(name string) bool { visited = append(visited, name); return false })
+		assert.Equal(t, []string{filepath.Join(sidecar, "2024", "logo.svg.png")}, visited)
+	})
+	t.Run("EmptyBase", func(t *testing.T) {
+		write(t, filepath.Join(originals, "2024.jpg"))
+		assert.Empty(t, findAll(dir+string(os.PathSeparator)+"."))
 	})
 }
 

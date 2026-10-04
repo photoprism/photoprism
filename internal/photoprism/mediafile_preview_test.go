@@ -74,6 +74,15 @@ func TestFindPreviewImage(t *testing.T) {
 		assert.Equal(t, filepath.Join(sidecarDir, "IMG_1.heic.jpg"), find(fileName, fs.ImageJpeg, fs.ImagePng).FileName())
 		assert.Equal(t, filepath.Join(sidecarDir, "IMG_1.heic.png"), find(fileName, fs.ImagePng, fs.ImageJpeg).FileName())
 	})
+	t.Run("SidecarGeneratedNames", func(t *testing.T) {
+		dir, sidecarDir := newPreviewFolders(t)
+		fileName := filepath.Join(dir, "IMG_1.heic")
+		require.NoError(t, fs.Copy("testdata/flash.jpg", filepath.Join(sidecarDir, "IMG_1.heic.JPG"), false))
+		require.NoError(t, fs.Copy("testdata/flash.jpg", filepath.Join(sidecarDir, "IMG_1.jpeg"), false))
+		assert.Nil(t, find(fileName, fs.ImageJpeg, fs.ImagePng))
+		require.NoError(t, fs.Copy("testdata/flash.jpg", filepath.Join(sidecarDir, "IMG_1.jpg"), false))
+		assert.Equal(t, filepath.Join(sidecarDir, "IMG_1.jpg"), find(fileName, fs.ImageJpeg, fs.ImagePng).FileName())
+	})
 	t.Run("NotFound", func(t *testing.T) {
 		dir, _ := newPreviewFolders(t)
 		require.NoError(t, fs.Copy("testdata/photoprism.png", filepath.Join(dir, "IMG_1.jpg"), false))

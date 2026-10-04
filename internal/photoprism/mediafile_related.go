@@ -74,7 +74,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			}
 
 			// Existing previews of each member are reindexed with the capture, e.g. on a forced rescan.
-			if jpegName := fs.ImageJpeg.FindFirst(captureFile.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false); jpegName != "" {
+			if jpegName := fs.ImageJpeg.FindGenerated(captureFile.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false, nil); jpegName != "" {
 				matches = list.Join(matches, []string{jpegName})
 			}
 		}

@@ -25,8 +25,11 @@ func TestIgnoreCase(t *testing.T) {
 	}
 
 	assert.Equal(t, isCS, ignoreCase)
+
+	prevIgnoreCase, prevFileTypes := ignoreCase, FileTypes
+	t.Cleanup(func() { ignoreCase, FileTypes = prevIgnoreCase, prevFileTypes })
+
 	IgnoreCase()
 	assert.True(t, ignoreCase)
-	ignoreCase = false
-	assert.False(t, ignoreCase)
+	assert.Equal(t, ExtensionList.Types(true), FileTypes)
 }

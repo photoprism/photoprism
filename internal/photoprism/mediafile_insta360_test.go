@@ -295,6 +295,12 @@ func TestInsta360StalePreview(t *testing.T) {
 		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
 		assert.True(t, insta360StalePreview(left, rightLens(t, "stale-preview-square")))
 	})
+	t.Run("SidecarVariant", func(t *testing.T) {
+		// Only the names PhotoPrism generates are previews in the sidecar folder.
+		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-variant")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.JPG", "testdata/flash.jpg")
+		assert.False(t, insta360StalePreview(left, rightLens(t, "stale-preview-variant")))
+	})
 	t.Run("RightLensTypeMismatch", func(t *testing.T) {
 		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-mismatch")
 		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
@@ -328,6 +334,24 @@ func TestInsta360StalePreview(t *testing.T) {
 		assert.False(t, insta360StalePreview(ordinary, MediaFiles{ordinary}))
 		assert.False(t, insta360StalePreview(nil, nil))
 	})
+}
+
+// TestInsta360RelatedPreviews verifies that the existing previews of capture files are grouped by their generated names.
+func TestInsta360RelatedPreviews(t *testing.T) {
+	left, sidecars := newInsta360PreviewFixture(t, "related-previews")
+	generated := writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_10_008.insv.jpg", "testdata/flash.jpg")
+	variant := writeInsta360CaptureFile(t, sidecars, "LRV_20220625_140410_11_008.insv.JPG", "testdata/flash.jpg")
+
+	related, err := left.RelatedFiles(false)
+	require.NoError(t, err)
+
+	var names []string
+	for _, f := range related.Files {
+		names = append(names, f.FileName())
+	}
+
+	assert.Contains(t, names, generated)
+	assert.NotContains(t, names, variant)
 }
 
 // TestInsta360Capture_MemberPreview verifies that only previews of the right lens and proxy match.

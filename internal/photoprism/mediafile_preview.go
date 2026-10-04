@@ -9,7 +9,8 @@ import (
 )
 
 // findPreviewImage returns the first image of the given types named after fileName, in its own folder,
-// the sidecar folder, or the hidden folder, whose content matches its type.
+// the sidecar folder, or the hidden folder, whose content matches its type. In the sidecar and hidden
+// folders, only the names PhotoPrism generates are checked.
 func findPreviewImage(fileName, sidecarPath, originalsPath string, stripSequence bool, types ...fs.Type) *MediaFile {
 	if fileName == "" {
 		return nil
@@ -21,7 +22,7 @@ func findPreviewImage(fileName, sidecarPath, originalsPath string, stripSequence
 	var preview *MediaFile
 
 	for _, fileType := range types {
-		fileType.FindEach(fileName, dirs, originalsPath, stripSequence, func(name string) bool {
+		fileType.FindGenerated(fileName, dirs, originalsPath, stripSequence, func(name string) bool {
 			if checked[name] {
 				return false
 			}

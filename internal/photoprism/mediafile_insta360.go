@@ -289,7 +289,7 @@ func insta360StalePreview(f *MediaFile, pending MediaFiles) bool {
 		return false
 	}
 
-	previewName := fs.ImageJpeg.FindFirst(f.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+	previewName := fs.ImageJpeg.FindGenerated(f.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false, nil)
 	if previewName == "" {
 		return false
 	}

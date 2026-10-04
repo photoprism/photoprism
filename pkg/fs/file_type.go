@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -119,6 +120,17 @@ func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSeque
 // directory and name variant, and returns the first file that accept takes, or the first file found if accept
 // is nil. It returns "" if there is none.
 func (t Type) FindEach(fileName string, dirs []string, baseDir string, stripSequence bool, accept func(fileName string) bool) string {
+	return t.findEach(fileName, dirs, baseDir, stripSequence, false, accept)
+}
+
+// FindGenerated searches like FindEach, except that in directories other than the folder of the file it only
+// checks the names PhotoPrism generates: the full name and BasePrefix with the default extension of the type.
+func (t Type) FindGenerated(fileName string, dirs []string, baseDir string, stripSequence bool, accept func(fileName string) bool) string {
+	return t.findEach(fileName, dirs, baseDir, stripSequence, true, accept)
+}
+
+// findEach implements FindEach and FindGenerated. Each directory and name variant is checked once.
+func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequence, generated bool, accept func(fileName string) bool) string {
 	fileBasePrefix := BasePrefix(fileName, stripSequence)
 
 	// A name without a base would match files named after the folder.
@@ -126,37 +138,51 @@ func (t Type) FindEach(fileName string, dirs []string, baseDir string, stripSequ
 		return ""
 	}
 
-	names := []string{filepath.Base(fileName), fileBasePrefix}
+	generatedNames := appendUnique(nil, filepath.Base(fileName), fileBasePrefix)
+	names := generatedNames
 
 	if !ignoreCase {
-		names = append(names, strings.ToLower(fileBasePrefix), strings.ToUpper(fileBasePrefix))
+		names = appendUnique(slices.Clone(names), strings.ToLower(fileBasePrefix), strings.ToUpper(fileBasePrefix))
 	}
 
 	filePath := filepath.Dir(fileName)
-	search := make([]string, 0, len(dirs)+1)
-	lastDir := ""
+	search := []string{filePath}
+	lastDir := filePath
 
-	for _, dir := range append([]string{filePath}, dirs...) {
+	for _, dir := range dirs {
 		if dir == "" || dir == lastDir {
 			continue
 		}
 
 		lastDir = dir
 
-		if dir != filePath {
-			if filepath.IsAbs(dir) {
-				dir = filepath.Join(dir, RelName(filePath, baseDir))
-			} else {
-				dir = filepath.Join(filePath, dir)
-			}
+		switch {
+		case dir == filePath:
+			continue
+		case filepath.IsAbs(dir):
+			dir = filepath.Join(dir, RelName(filePath, baseDir))
+		default:
+			dir = filepath.Join(filePath, dir)
 		}
 
-		search = append(search, dir)
+		search = appendUnique(search, dir)
 	}
 
+	defaultExt := t.DefaultExt()
+
 	for _, ext := range FileTypes[t] {
-		for _, dir := range search {
-			for _, name := range names {
+		for i, dir := range search {
+			candidates := names
+
+			if generated && i > 0 {
+				if ext != defaultExt {
+					continue
+				}
+
+				candidates = generatedNames
+			}
+
+			for _, name := range candidates {
 				if info, err := os.Stat(filepath.Join(dir, name) + ext); err != nil || !info.Mode().IsRegular() {
 					continue
 				} else if found := filepath.Join(dir, info.Name()); accept == nil || accept(found) {
@@ -167,4 +193,15 @@ func (t Type) FindEach(fileName string, dirs []string, baseDir string, stripSequ
 	}
 
 	return ""
+}
+
+// appendUnique appends the values that the list does not contain yet.
+func appendUnique(list []string, values ...string) []string {
+	for _, v := range values {
+		if !slices.Contains(list, v) {
+			list = append(list, v)
+		}
+	}
+
+	return list
 }
