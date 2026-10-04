@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -193,11 +193,11 @@ Testing
 
 Security & Hot Spots (Where to Look)
 - Zip extraction (path traversal prevention): `pkg/fs/zip.go`
-  - Uses `safeJoin` to reject absolute/volume paths and `..` traversal; enforces per-file and total size limits.
+  - Uses `fs.SafeJoin` (`pkg/fs/join.go`) to reject absolute/volume paths and `..` traversal; enforces per-file and total size limits.
   - Tests: `pkg/fs/zip_test.go` covers abs/volume/.. cases and limits.
 - Force-aware Copy/Move and truncation-safe writes:
   - App helpers: `internal/photoprism/mediafile.go` (`MediaFile.Copy/Move` with `force`).
-  - Utils: `pkg/fs/copy_move.go` — `fs.Copy` / `fs.Move` (use `O_TRUNC` to avoid trailing bytes).
+  - Utils: `pkg/fs/copy_move.go` — `fs.Copy` / `fs.Move` (write through a staged sibling and publish by rename or link).
 - FFmpeg command builders and encoders:
   - Core: `internal/ffmpeg/transcode_cmd.go`, `internal/ffmpeg/remux.go`, `internal/ffmpeg/v360.go`.
   - Encoders (string builders only): `internal/ffmpeg/{apple,intel,nvidia,vaapi,vulkan,v4l}/avc.go`.

@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -81,6 +81,9 @@ Output beyond that limit returns `meta.ErrJSONFileTooLarge` without publishing a
 cache file. Diagnostic output is retained up to 64 KiB, with a truncation marker on errors;
 normal conversion timeouts and process cleanup remain in effect. Cached/external sidecars
 are independently bounded by the [metadata JSON reader](../meta/README.md#json-sidecar-reader).
+A cached export is reused only when it is a regular file enclosed in `[`...`]`; an empty or truncated
+cache is exported again, output that is not a JSON array is refused and not cached, and the cache is
+written through a staged sibling.
 
 Operators can override the shared JSON byte limit with `PHOTOPRISM_JSON_LIMIT` (positive
 decimal bytes, for example `4194304` for 4 MiB). Empty, invalid, zero, negative, or
