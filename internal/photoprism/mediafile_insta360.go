@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -315,9 +316,20 @@ func (m *Insta360Capture) MemberPreview(rootRelName string) bool {
 }
 
 // Dewarpable reports whether the two lens files of a valid pair can be combined, which also requires
-// the content of both lenses to match their type.
+// the content of both lenses to match their type and to be an MP4 or QuickTime container.
 func (m *Insta360Capture) Dewarpable() bool {
-	return m.ValidPair() && m.Left.CheckType() == nil && m.Right.CheckType() == nil
+	return m.ValidPair() && m.Left.CheckType() == nil && m.Right.CheckType() == nil &&
+		insta360LensContainer(m.Left.FileName()) && insta360LensContainer(m.Right.FileName())
+}
+
+// insta360LensContainer reports whether the file header shows an MP4 or QuickTime container.
+func insta360LensContainer(fileName string) bool {
+	switch fs.BaseType(fs.MimeType(fileName)) {
+	case header.ContentTypeMp4, header.ContentTypeMov:
+		return true
+	default:
+		return false
+	}
 }
 
 // ValidPair reports whether the two lens files match in dimensions, frame rate, and duration, which

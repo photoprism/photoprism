@@ -602,7 +602,7 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 		require.NoError(t, err)
 		require.NotEmpty(t, cmds)
 
-		assert.Contains(t, cmds[0].String(), "-i "+leftName+" -i "+rightName)
+		assert.Contains(t, cmds[0].String(), "-f mov -i "+leftName+" -f mov -i "+rightName)
 		assert.Contains(t, cmds[0].String(), "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 		assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
 	})

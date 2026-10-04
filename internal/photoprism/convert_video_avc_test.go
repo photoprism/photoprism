@@ -641,7 +641,7 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 
 		args := strings.Join(r.Args, " ")
 		assert.True(t, useMutex)
-		assert.Contains(t, args, "-i "+leftName+" -i "+rightName)
+		assert.Contains(t, args, "-f mov -i "+leftName+" -f mov -i "+rightName)
 		assert.Contains(t, args, "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 		assert.Contains(t, args, "-map [v] -map 0:a:0?")
 		assert.Contains(t, args, "libx264")
