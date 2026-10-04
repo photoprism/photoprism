@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,6 +33,22 @@ func TestBasePrefix(t *testing.T) {
 	t.Run("TestThreeJpg", func(t *testing.T) {
 		result := BasePrefix("/testdata/Test (3).jpg", true)
 		assert.Equal(t, "Test", result)
+	})
+	t.Run("DotName", func(t *testing.T) {
+		// A sequence form that reduces to a dot name keeps the unstripped base.
+		assert.Equal(t, " .", BasePrefix("/testdata/2024/ ..jpg", true))
+		assert.Equal(t, " .(1)", BasePrefix("/testdata/2024/ .(1).jpg", true))
+		assert.Equal(t, " ..", BasePrefix("/testdata/2024/ ...jpg", true))
+		assert.Equal(t, filepath.Join("/testdata/2024", " ."), AbsPrefix("/testdata/2024/ ..jpg", true))
+		// A base that is a dot name keeps its extensions.
+		for _, strip := range []bool{false, true} {
+			assert.Equal(t, ".jpg", BasePrefix("/testdata/2024/.jpg", strip))
+			assert.Equal(t, "..jpg", BasePrefix("/testdata/2024/..jpg", strip))
+			assert.Equal(t, "...jpg", BasePrefix("/testdata/2024/...jpg", strip))
+			assert.Equal(t, "/testdata/2024/..jpg", AbsPrefix("/testdata/2024/..jpg", strip))
+			assert.Equal(t, "2024/..jpg", RelPrefix("/testdata/2024/..jpg", "/testdata", strip))
+			assert.Equal(t, "", BasePrefix("/testdata/2024/..", strip))
+		}
 	})
 	t.Run("SequenceOnly", func(t *testing.T) {
 		assert.Equal(t, "(1)", BasePrefix("/testdata/(1).heic", true))
@@ -155,5 +172,18 @@ func TestAbsPrefix(t *testing.T) {
 	})
 	t.Run("LowerCase", func(t *testing.T) {
 		assert.Equal(t, "/foo/bar/IMG_E4120", AbsPrefix("/foo/bar/IMG_E4120.JPG", false))
+	})
+}
+
+func TestNoBaseName(t *testing.T) {
+	t.Run("NoName", func(t *testing.T) {
+		assert.True(t, NoBaseName(""))
+		assert.True(t, NoBaseName("."))
+		assert.True(t, NoBaseName(".."))
+	})
+	t.Run("Name", func(t *testing.T) {
+		assert.False(t, NoBaseName(" ."))
+		assert.False(t, NoBaseName("..."))
+		assert.False(t, NoBaseName("IMG_1"))
 	})
 }

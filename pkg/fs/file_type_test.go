@@ -168,14 +168,26 @@ func TestType_FindAll(t *testing.T) {
 		assert.Contains(t, result, "testdata/CATYELLOW.jpg")
 	})
 	t.Run("EmptyBase", func(t *testing.T) {
-		// A name without a base must not match a file named after its folder.
+		// A folder name has no base and finds no files.
 		parent := t.TempDir()
 		dir := filepath.Join(parent, "2024")
 		require.NoError(t, os.MkdirAll(dir, 0o700))
 		require.NoError(t, os.WriteFile(filepath.Join(parent, "2024.jpg"), []byte("x"), 0o600))
-		assert.Empty(t, ImageJpeg.FindAll(filepath.Join(dir, ".heic"), dirs, parent, false))
-		assert.Equal(t, "", ImageJpeg.FindFirst(filepath.Join(dir, ".heic"), dirs, parent, false))
-		assert.Equal(t, "", ImageJpeg.Find(filepath.Join(dir, ".heic"), false))
+		for _, name := range []string{dir + string(os.PathSeparator) + ".", dir + string(os.PathSeparator) + ".."} {
+			assert.Empty(t, ImageJpeg.FindAll(name, dirs, parent, false), name)
+			assert.Equal(t, "", ImageJpeg.FindFirst(name, dirs, parent, false), name)
+			assert.Equal(t, "", ImageJpeg.Find(name, false), name)
+		}
+	})
+	t.Run("DotName", func(t *testing.T) {
+		// Names whose base is or reduces to a dot name find the files named after their own base.
+		dir := t.TempDir()
+		for name, want := range map[string]string{"..heic": "..heic.jpg", "...heic": "...heic.jpg", " ..heic": " ..jpg", " ...heic": " ...jpg"} {
+			require.NoError(t, os.WriteFile(filepath.Join(dir, want), []byte("x"), 0o600))
+			assert.Equal(t, filepath.Join(dir, want), ImageJpeg.Find(filepath.Join(dir, name), true), name)
+			assert.Equal(t, filepath.Join(dir, want), ImageJpeg.FindFirst(filepath.Join(dir, name), dirs, dir, true), name)
+			assert.Contains(t, ImageJpeg.FindAll(filepath.Join(dir, name), dirs, dir, true), filepath.Join(dir, want), name)
+		}
 	})
 	t.Run("SequenceOnly", func(t *testing.T) {
 		// A sequence-only name keeps its own base when sequences are stripped.
