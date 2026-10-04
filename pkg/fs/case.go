@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"syscall"
 )
 
@@ -19,11 +20,9 @@ const (
 	caseProbeDepth = 3
 )
 
-// caseDir is the folder whose lookups follow caseDirIgnore rather than ignoreCase, e.g. the originals path.
-var caseDir string
-
-// caseDirIgnore indicates whether lookups in caseDir and below are case-insensitive.
-var caseDirIgnore bool
+// caseScopes contains the folders whose lookups follow their own case mode rather than ignoreCase, the most
+// specific first, e.g. the originals path and the file systems mounted below it.
+var caseScopes []CaseScope
 
 // fileTypesAll contains each extension followed by its uppercase variant, the search order of FileTypes
 // in case-sensitive mode.
@@ -46,56 +45,98 @@ func CaseInsensitive(storagePath string) (result bool, err error) {
 	return result, err
 }
 
-// IgnoreCase enables the case-insensitive mode for lookups outside the folder set with SetCaseDir.
+// IgnoreCase enables the case-insensitive mode for lookups outside the folders set with SetCaseScopes.
 func IgnoreCase() {
 	ignoreCase = true
 	FileTypes = ExtensionList.Types(true)
 }
 
-// SetCaseDir sets whether lookups in dir and below are case-insensitive, regardless of IgnoreCase.
-func SetCaseDir(dir string, ignore bool) {
-	caseDir = filepath.Clean(dir)
-	caseDirIgnore = ignore
+// CaseScope describes whether lookups in Dir and below are case-insensitive.
+type CaseScope struct {
+	Dir    string
+	Ignore bool
+}
 
-	if dir == "" {
-		caseDir, caseDirIgnore = "", false
+// SetCaseScopes replaces the folders whose lookups follow their own case mode, regardless of IgnoreCase. In
+// nested folders, the most specific one applies; for the same folder, the last one given.
+func SetCaseScopes(scopes ...CaseScope) {
+	result := make([]CaseScope, 0, len(scopes))
+
+	for _, s := range scopes {
+		if s.Dir == "" {
+			continue
+		}
+
+		s.Dir = filepath.Clean(s.Dir)
+		result = slices.DeleteFunc(result, func(r CaseScope) bool { return r.Dir == s.Dir })
+		result = append(result, s)
 	}
+
+	// Sort the most specific first; for the same length, case-sensitive first.
+	slices.SortStableFunc(result, func(a, b CaseScope) int {
+		if n := len(b.Dir) - len(a.Dir); n != 0 {
+			return n
+		} else if a.Ignore == b.Ignore {
+			return 0
+		} else if a.Ignore {
+			return 1
+		}
+
+		return -1
+	})
+
+	caseScopes = result
 }
 
 // CaseMode represents the case-insensitive lookup settings, so that tests can restore them.
 type CaseMode struct {
-	ignoreCase    bool
-	caseDir       string
-	caseDirIgnore bool
-	fileTypes     TypesExt
+	ignoreCase bool
+	caseScopes []CaseScope
+	fileTypes  TypesExt
 }
 
 // GetCaseMode returns the current case-insensitive lookup settings.
 func GetCaseMode() CaseMode {
-	return CaseMode{ignoreCase: ignoreCase, caseDir: caseDir, caseDirIgnore: caseDirIgnore, fileTypes: FileTypes}
+	return CaseMode{ignoreCase: ignoreCase, caseScopes: caseScopes, fileTypes: FileTypes}
 }
 
 // RestoreCaseMode restores settings returned by GetCaseMode.
 func RestoreCaseMode(m CaseMode) {
-	ignoreCase, caseDir, caseDirIgnore, FileTypes = m.ignoreCase, m.caseDir, m.caseDirIgnore, m.fileTypes
+	ignoreCase, caseScopes, FileTypes = m.ignoreCase, m.caseScopes, m.fileTypes
 }
 
-// ignoreCaseIn reports whether lookups in dir are case-insensitive.
+// ignoreCaseIn reports whether lookups in dir are case-insensitive. Case-sensitive scopes match regardless of
+// letter case, as a case-insensitive parent file system may list a mount point under another spelling.
 func ignoreCaseIn(dir string) bool {
-	if caseDir != "" && InDir(dir, caseDir) {
-		return caseDirIgnore
+	for _, s := range caseScopes {
+		if s.Ignore && InDir(dir, s.Dir) || !s.Ignore && inDirFold(dir, s.Dir) {
+			return s.Ignore
+		}
 	}
 
 	return ignoreCase
 }
 
+// inDirFold works like InDir, but compares letters case-insensitively.
+func inDirFold(fileName, dir string) bool {
+	switch {
+	case fileName == "" || dir == "" || len(fileName) < len(dir):
+		return false
+	case len(fileName) == len(dir):
+		return strings.EqualFold(fileName, dir)
+	case strings.HasSuffix(dir, string(os.PathSeparator)):
+		return strings.EqualFold(fileName[:len(dir)], dir)
+	default:
+		return fileName[len(dir)] == os.PathSeparator && strings.EqualFold(fileName[:len(dir)], dir)
+	}
+}
+
 // CaseInsensitiveDir tests if dir is on a case-insensitive file system without writing to it, and returns an
 // error naming the reason if it cannot tell. It looks up a file name with its ASCII letter case swapped, reading
-// at most caseProbeDirs folders on the same device without following links below dir. The result describes the
-// file system of dir, not mounts below it, which are opened but not read; a CIFS mount with noserverino reads as
-// unknown.
-func CaseInsensitiveDir(dir string) (insensitive bool, err error) {
-	return caseProbe{readDir: readDirN, lstat: os.Lstat}.run(dir)
+// at most caseProbeDirs folders on the same device without following links below dir, and does not open the
+// paths in skip, e.g. mount points. A CIFS mount with noserverino reads as unknown.
+func CaseInsensitiveDir(dir string, skip ...string) (insensitive bool, err error) {
+	return caseProbe{readDir: readDirN, lstat: os.Lstat, skip: skip}.run(dir)
 }
 
 // errOtherDevice is returned by readDirN for a folder on another device than the root.
@@ -116,6 +157,7 @@ const anyDevice = ^uint64(0)
 type caseProbe struct {
 	readDir func(dir string, n int, dev uint64) ([]os.DirEntry, uint64, error)
 	lstat   func(name string) (os.FileInfo, error)
+	skip    []string
 }
 
 // run checks the first regular file in dir, or in a folder below it, whose name changes with its letter case
@@ -160,7 +202,7 @@ func (p caseProbe) run(dir string) (insensitive bool, err error) {
 
 			// Only regular files are looked up, as a CIFS client stops using server inode numbers for
 			// the whole mount when it finds a folder under a second spelling.
-			if swapped == name || !entries[i].Type().IsRegular() {
+			if swapped == name || !entries[i].Type().IsRegular() || p.skipped(filepath.Join(f.path, name)) {
 				continue
 			} else if slices.Contains(names, swapped) {
 				return false, nil
@@ -192,13 +234,20 @@ func (p caseProbe) run(dir string) (insensitive bool, err error) {
 
 		// Push in reverse, so that the first subfolder listed is read next.
 		for i := len(entries) - 1; i >= 0; i-- {
-			if entries[i].IsDir() {
-				stack = append(stack, folder{path: filepath.Join(f.path, entries[i].Name()), depth: f.depth + 1})
+			if !entries[i].IsDir() {
+				continue
+			} else if sub := filepath.Join(f.path, entries[i].Name()); !p.skipped(sub) {
+				stack = append(stack, folder{path: sub, depth: f.depth + 1})
 			}
 		}
 	}
 
 	return false, errCaseNoName
+}
+
+// skipped reports whether name is in skip, regardless of letter case.
+func (p caseProbe) skipped(name string) bool {
+	return slices.ContainsFunc(p.skip, func(s string) bool { return strings.EqualFold(s, name) })
 }
 
 // readDirN returns up to n entries of dir in directory order and the device number of dir. Unless dev is

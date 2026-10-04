@@ -3,6 +3,8 @@ package fs
 import (
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 	"syscall"
 	"testing"
 	"time"
@@ -111,6 +113,18 @@ func TestCaseInsensitiveDir(t *testing.T) {
 		assertCaseResult(t, insensitive, reason, false, errCaseNoName)
 		insensitive, reason = CaseInsensitiveDir("")
 		assertCaseResult(t, insensitive, reason, false, errCaseRead)
+	})
+	t.Run("Skip", func(t *testing.T) {
+		dir := t.TempDir()
+		writeCaseTestFiles(t, dir, "nas/IMG_0001.jpg")
+		insensitive, reason := CaseInsensitiveDir(dir, filepath.Join(dir, "nas"))
+		assertCaseResult(t, insensitive, reason, false, errCaseNoName)
+	})
+	t.Run("SkipSpelling", func(t *testing.T) {
+		dir := t.TempDir()
+		writeCaseTestFiles(t, dir, "NAS/IMG_0001.jpg")
+		insensitive, reason := CaseInsensitiveDir(dir, filepath.Join(dir, "nas"))
+		assertCaseResult(t, insensitive, reason, false, errCaseNoName)
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		insensitive, reason := CaseInsensitiveDir(filepath.Join(t.TempDir(), "missing"))
@@ -442,6 +456,34 @@ func TestCaseProbe_Run(t *testing.T) {
 		assert.Equal(t, anyDevice, devs[0])
 		assert.NotEqual(t, anyDevice, devs[1])
 	})
+	t.Run("SkipMounts", func(t *testing.T) {
+		// Paths in skip, such as mount points, are neither read nor looked up at any depth. The listing is
+		// sorted, so that each skipped path comes first in its folder.
+		dir := t.TempDir()
+		writeCaseTestFiles(t, dir, "a/IMG_1.jpg", "b/IMG_0.jpg", "b/a/IMG_2.jpg", "b/c/IMG_3.jpg")
+		skip := []string{filepath.Join(dir, "a"), filepath.Join(dir, "b", "IMG_0.jpg"), filepath.Join(dir, "b", "a")}
+
+		var opened []string
+
+		p := caseProbe{
+			readDir: func(name string, n int, dev uint64) ([]os.DirEntry, uint64, error) {
+				opened = append(opened, name)
+				entries, d, err := readDirN(name, n, dev)
+				slices.SortFunc(entries, func(x, y os.DirEntry) int { return strings.Compare(x.Name(), y.Name()) })
+				return entries, d, err
+			},
+			lstat: func(name string) (os.FileInfo, error) {
+				opened = append(opened, name)
+				return caseInsensitiveLstat(name)
+			},
+			skip: skip,
+		}
+
+		insensitive, reason := p.run(dir)
+		assertCaseResult(t, insensitive, reason, true, nil)
+		assert.Equal(t, []string{dir, filepath.Join(dir, "b"), filepath.Join(dir, "b", "c"),
+			filepath.Join(dir, "b", "c", "IMG_3.jpg"), filepath.Join(dir, "b", "c", "img_3.JPG")}, opened)
+	})
 }
 
 func TestCaseProbeErrors(t *testing.T) {
@@ -545,32 +587,59 @@ func TestTypeExts(t *testing.T) {
 
 func TestGetCaseMode(t *testing.T) {
 	restoreCaseMode(t)
-	SetCaseDir("/x/photos", true)
+	SetCaseScopes(CaseScope{Dir: "/x/photos", Ignore: true})
 
 	m := GetCaseMode()
-	assert.Equal(t, "/x/photos", m.caseDir)
-	assert.True(t, m.caseDirIgnore)
+	assert.Equal(t, []CaseScope{{Dir: "/x/photos", Ignore: true}}, m.caseScopes)
 	assert.Equal(t, ignoreCase, m.ignoreCase)
 	assert.Equal(t, FileTypes, m.fileTypes)
 }
 
-func TestSetCaseDir(t *testing.T) {
-	restoreCaseMode(t)
+func TestSetCaseScopes(t *testing.T) {
+	t.Run("Sorted", func(t *testing.T) {
+		restoreCaseMode(t)
+		SetCaseScopes(
+			CaseScope{Dir: "/x/photos/", Ignore: true},
+			CaseScope{Dir: "/x/photos/nas/usb", Ignore: true},
+			CaseScope{Dir: "", Ignore: true},
+			CaseScope{Dir: "/x/photos/nas", Ignore: false},
+		)
+		assert.Equal(t, []CaseScope{
+			{Dir: "/x/photos/nas/usb", Ignore: true},
+			{Dir: "/x/photos/nas", Ignore: false},
+			{Dir: "/x/photos", Ignore: true},
+		}, caseScopes)
+	})
+	t.Run("SameDir", func(t *testing.T) {
+		restoreCaseMode(t)
+		SetCaseScopes(CaseScope{Dir: "/x/photos", Ignore: true}, CaseScope{Dir: "/x/photos/", Ignore: false})
+		assert.Equal(t, []CaseScope{{Dir: "/x/photos", Ignore: false}}, caseScopes)
+	})
+	t.Run("Reset", func(t *testing.T) {
+		restoreCaseMode(t)
+		SetCaseScopes(CaseScope{Dir: "/x/photos", Ignore: true})
+		SetCaseScopes()
+		assert.Empty(t, caseScopes)
+	})
+}
 
-	SetCaseDir("/x/photos/", true)
-	assert.Equal(t, "/x/photos", caseDir)
-	assert.True(t, caseDirIgnore)
-
-	SetCaseDir("", true)
-	assert.Equal(t, "", caseDir)
-	assert.False(t, caseDirIgnore)
+func TestInDirFold(t *testing.T) {
+	assert.True(t, inDirFold("/x/photos/USB", "/x/photos/usb"))
+	assert.True(t, inDirFold("/x/Photos/USB/2024", "/x/photos/usb"))
+	assert.True(t, inDirFold("/x/photos/usb", "/x/photos/usb"))
+	assert.True(t, inDirFold("/x/photos/usb", "/"))
+	assert.False(t, inDirFold("/x/photos/USB2", "/x/photos/usb"))
+	assert.False(t, inDirFold("/x/photos", "/x/photos/usb"))
+	assert.False(t, inDirFold("/x/other/usb", "/x/photos/usb"))
+	assert.False(t, inDirFold("", "/x/photos"))
+	assert.False(t, inDirFold("/x/photos", ""))
 }
 
 func TestIgnoreCaseIn(t *testing.T) {
 	t.Run("Scoped", func(t *testing.T) {
 		restoreCaseMode(t)
 		ignoreCase = false
-		SetCaseDir("/x/photos", true)
+		SetCaseScopes(CaseScope{Dir: "/x/photos", Ignore: true})
 
 		assert.True(t, ignoreCaseIn("/x/photos"))
 		assert.True(t, ignoreCaseIn("/x/photos/2024/.photoprism"))
@@ -580,15 +649,49 @@ func TestIgnoreCaseIn(t *testing.T) {
 	t.Run("Reverse", func(t *testing.T) {
 		restoreCaseMode(t)
 		ignoreCase = true
-		SetCaseDir("/x/photos", false)
+		SetCaseScopes(CaseScope{Dir: "/x/photos", Ignore: false})
 
 		assert.False(t, ignoreCaseIn("/x/photos/2024"))
 		assert.True(t, ignoreCaseIn("/x/photos2"))
 		assert.True(t, ignoreCaseIn("/x/storage/sidecar/2024"))
 	})
+	t.Run("Mounts", func(t *testing.T) {
+		restoreCaseMode(t)
+		ignoreCase = false
+		SetCaseScopes(
+			CaseScope{Dir: "/x/photos", Ignore: true},
+			CaseScope{Dir: "/x/photos/nas", Ignore: false},
+			CaseScope{Dir: "/x/photos/nas/usb", Ignore: true},
+		)
+
+		assert.True(t, ignoreCaseIn("/x/photos/2024"))
+		assert.False(t, ignoreCaseIn("/x/photos/nas"))
+		assert.False(t, ignoreCaseIn("/x/photos/nas/2024/.photoprism"))
+		assert.True(t, ignoreCaseIn("/x/photos/nas/usb/2024"))
+		assert.True(t, ignoreCaseIn("/x/photos/nas2"))
+		assert.False(t, ignoreCaseIn("/x/storage"))
+	})
+	t.Run("SameLength", func(t *testing.T) {
+		restoreCaseMode(t)
+		ignoreCase = false
+		SetCaseScopes(CaseScope{Dir: "/x/photos/USB", Ignore: true}, CaseScope{Dir: "/x/photos/usb", Ignore: false})
+
+		assert.False(t, ignoreCaseIn("/x/photos/USB/2024"))
+	})
+	t.Run("Spelling", func(t *testing.T) {
+		// Case-sensitive scopes also match a folder listed under another spelling, case-insensitive ones don't.
+		restoreCaseMode(t)
+		ignoreCase = false
+		SetCaseScopes(CaseScope{Dir: "/x/photos", Ignore: true}, CaseScope{Dir: "/x/photos/usb", Ignore: false})
+
+		assert.False(t, ignoreCaseIn("/x/photos/USB/2024"))
+		assert.False(t, ignoreCaseIn("/x/photos/Usb"))
+		assert.True(t, ignoreCaseIn("/x/photos/USB2"))
+		assert.False(t, ignoreCaseIn("/x/PHOTOS/2024"))
+	})
 	t.Run("Unset", func(t *testing.T) {
 		restoreCaseMode(t)
-		SetCaseDir("", false)
+		SetCaseScopes()
 
 		ignoreCase = false
 		assert.False(t, ignoreCaseIn("/x/photos"))
@@ -604,7 +707,7 @@ func TestRestoreCaseMode(t *testing.T) {
 	func() {
 		defer RestoreCaseMode(m)
 		IgnoreCase()
-		SetCaseDir("/x/photos", true)
+		SetCaseScopes(CaseScope{Dir: "/x/photos", Ignore: true})
 	}()
 
 	assert.Equal(t, m, GetCaseMode())
@@ -631,7 +734,7 @@ func TestType_FindEach_CaseDir(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		restoreCaseMode(t)
 		ignoreCase = false
-		SetCaseDir(originals, false)
+		SetCaseScopes(CaseScope{Dir: originals, Ignore: false})
 
 		assert.Equal(t, []string{
 			filepath.Join(originals, "2024", "img_1234.jpg"),
@@ -645,7 +748,7 @@ func TestType_FindEach_CaseDir(t *testing.T) {
 	t.Run("OriginalsInsensitive", func(t *testing.T) {
 		restoreCaseMode(t)
 		ignoreCase = false
-		SetCaseDir(originals, true)
+		SetCaseScopes(CaseScope{Dir: originals, Ignore: true})
 
 		assert.Equal(t, []string{
 			filepath.Join(sidecar, "2024", "img_1234.JPG"),
@@ -659,7 +762,7 @@ func TestType_FindEach_CaseDir(t *testing.T) {
 	t.Run("StorageInsensitive", func(t *testing.T) {
 		restoreCaseMode(t)
 		IgnoreCase()
-		SetCaseDir(originals, false)
+		SetCaseScopes(CaseScope{Dir: originals, Ignore: false})
 
 		assert.Equal(t, []string{
 			filepath.Join(originals, "2024", "img_1234.jpg"),
@@ -680,9 +783,29 @@ func TestType_FindEach_CaseDir(t *testing.T) {
 		orig, side := filepath.Join(root, "photos"), filepath.Join(root, "sidecar")
 		writeCaseTestFiles(t, orig, "2024/IMG_1234.raw")
 		writeCaseTestFiles(t, side, "2024/IMG_1234.JPG", "2024/IMG_1234.jpeg")
-		SetCaseDir(orig, true)
+		SetCaseScopes(CaseScope{Dir: orig, Ignore: true})
 
 		name := filepath.Join(orig, "2024", "IMG_1234.raw")
 		assert.Equal(t, filepath.Join(side, "2024", "IMG_1234.JPG"), ImageJpeg.FindFirst(name, []string{side}, orig, false))
+	})
+	t.Run("Mount", func(t *testing.T) {
+		// A case-sensitive file system mounted below case-insensitive originals keeps all case variants.
+		restoreCaseMode(t)
+		ignoreCase = false
+
+		root := t.TempDir()
+		orig, side := filepath.Join(root, "photos"), filepath.Join(root, "sidecar")
+		mount := filepath.Join(orig, "nas")
+		writeCaseTestFiles(t, orig, "2024/IMG_1.raw", "2024/img_1.jpg", "nas/2024/IMG_2.raw", "nas/2024/img_2.jpg",
+			"nas/2024/.photoprism/img_2.jpg")
+		SetCaseScopes(CaseScope{Dir: orig, Ignore: true}, CaseScope{Dir: mount, Ignore: false})
+
+		dirs := []string{side, PPHiddenPathname}
+		assert.Equal(t, "", ImageJpeg.FindFirst(filepath.Join(orig, "2024", "IMG_1.raw"), dirs, orig, false))
+		assert.Equal(t, []string{
+			filepath.Join(mount, "2024", "img_2.jpg"),
+			filepath.Join(mount, "2024", ".photoprism", "img_2.jpg"),
+		}, ImageJpeg.FindAll(filepath.Join(mount, "2024", "IMG_2.raw"), dirs, orig, false))
+		assert.Equal(t, filepath.Join(mount, "2024", "img_2.jpg"), ImageJpeg.Find(filepath.Join(mount, "2024", "IMG_2.raw"), false))
 	})
 }

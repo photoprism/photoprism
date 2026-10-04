@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,6 +11,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -429,10 +431,12 @@ func (c *Config) LogFilename() string {
 	return fs.Abs(c.options.LogFilename)
 }
 
-// storageCaseInsensitive and originalsCaseInsensitive detect the case mode of the storage and originals paths.
+// storageCaseInsensitive, originalsCaseInsensitive, and originalsMounts detect the case mode of the storage
+// and originals paths, and the file systems mounted below originals.
 var (
 	storageCaseInsensitive   = fs.CaseInsensitive
 	originalsCaseInsensitive = fs.CaseInsensitiveDir
+	originalsMounts          = fs.MountPoints
 )
 
 // CaseInsensitive checks if the storage path is case-insensitive.
@@ -440,14 +444,14 @@ func (c *Config) CaseInsensitive() (result bool, err error) {
 	return storageCaseInsensitive(c.StoragePath())
 }
 
-// OriginalsCaseInsensitive checks if the originals path is case-insensitive, without writing to it, and returns
-// an error naming the reason if it cannot tell.
-func (c *Config) OriginalsCaseInsensitive() (insensitive bool, err error) {
-	return originalsCaseInsensitive(c.OriginalsPath())
+// OriginalsCaseInsensitive checks if the originals path is case-insensitive, without writing to it or opening
+// the folders in skip, and returns an error naming the reason if it cannot tell.
+func (c *Config) OriginalsCaseInsensitive(skip ...string) (insensitive bool, err error) {
+	return originalsCaseInsensitive(c.OriginalsPath(), skip...)
 }
 
-// initCaseMode makes file lookups case-insensitive where the storage or originals path is. Originals follow
-// the storage result if their own cannot be detected.
+// initCaseMode makes file lookups case-insensitive where the storage or originals path is. Originals follow the
+// storage result if their own is unknown, and file systems mounted below them check all case variants.
 func (c *Config) initCaseMode() error {
 	storage, err := c.CaseInsensitive()
 
@@ -458,18 +462,38 @@ func (c *Config) initCaseMode() error {
 		fs.IgnoreCase()
 	}
 
-	originals, err := c.OriginalsCaseInsensitive()
+	originalsPath := c.OriginalsPath()
+	mounts, mountsErr := originalsMounts(originalsPath)
 
 	switch {
-	case err != nil:
-		log.Debugf("config: case sensitivity of originals not detected (%s), using the storage result", err)
-		fs.SetCaseDir("", false)
-		return nil
-	case originals:
-		log.Infof("config: case-insensitive file system detected for originals")
+	case mountsErr == nil:
+	case !errors.Is(mountsErr, os.ErrNotExist):
+		log.Debugf("config: file systems mounted below originals not fully detected (%s)", mountsErr)
+	case runtime.GOOS == "linux":
+		log.Debugf("config: file systems mounted below originals not detected (mount table not found)")
 	}
 
-	fs.SetCaseDir(c.OriginalsPath(), originals)
+	scopes := make([]fs.CaseScope, 0, len(mounts)+1)
+
+	if originals, originalsErr := c.OriginalsCaseInsensitive(mounts...); originalsErr != nil {
+		log.Debugf("config: case sensitivity of originals not detected (%s), using the storage result", originalsErr)
+	} else {
+		if originals {
+			log.Infof("config: case-insensitive file system detected for originals")
+		}
+
+		scopes = append(scopes, fs.CaseScope{Dir: originalsPath, Ignore: originals})
+	}
+
+	if len(mounts) > 0 {
+		log.Debugf("config: %s mounted below originals, checking all case variants there", english.Plural(len(mounts), "file system", "file systems"))
+	}
+
+	for _, m := range mounts {
+		scopes = append(scopes, fs.CaseScope{Dir: m, Ignore: false})
+	}
+
+	fs.SetCaseScopes(scopes...)
 
 	return nil
 }

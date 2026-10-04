@@ -717,15 +717,16 @@ func TestConfig_StorageFree(t *testing.T) {
 func stubCaseDetection(t *testing.T, storage, originals bool, originalsErr, storageErr error) {
 	t.Helper()
 
-	mode, prevStorage, prevOriginals := fs.GetCaseMode(), storageCaseInsensitive, originalsCaseInsensitive
+	mode, prevStorage, prevOriginals, prevMounts := fs.GetCaseMode(), storageCaseInsensitive, originalsCaseInsensitive, originalsMounts
 
 	t.Cleanup(func() {
 		fs.RestoreCaseMode(mode)
-		storageCaseInsensitive, originalsCaseInsensitive = prevStorage, prevOriginals
+		storageCaseInsensitive, originalsCaseInsensitive, originalsMounts = prevStorage, prevOriginals, prevMounts
 	})
 
 	storageCaseInsensitive = func(string) (bool, error) { return storage, storageErr }
-	originalsCaseInsensitive = func(string) (bool, error) { return originals, originalsErr }
+	originalsCaseInsensitive = func(string, ...string) (bool, error) { return originals, originalsErr }
+	originalsMounts = func(string) ([]string, error) { return nil, nil }
 }
 
 func TestConfig_CaseInsensitive(t *testing.T) {
@@ -811,7 +812,7 @@ func TestConfig_InitCaseMode(t *testing.T) {
 	})
 	t.Run("OriginalsUnknown", func(t *testing.T) {
 		stubCaseDetection(t, true, false, errors.New("no file name with ASCII letters within reach"), nil)
-		fs.SetCaseDir(originals, false)
+		fs.SetCaseScopes(fs.CaseScope{Dir: originals, Ignore: false})
 		require.NoError(t, c.initCaseMode())
 		assert.Equal(t, "", findOriginals())
 		assert.Equal(t, "", findStorage())
@@ -826,5 +827,87 @@ func TestConfig_InitCaseMode(t *testing.T) {
 		stubCaseDetection(t, false, true, nil, errors.New("storage not writable"))
 		assert.Error(t, c.initCaseMode())
 		assert.Equal(t, filepath.Join(originals, "img_1.jpg"), findOriginals())
+	})
+}
+
+func TestConfig_InitCaseModeMounts(t *testing.T) {
+	// File systems mounted below originals check all case variants; the stubs stand in for the root probe and
+	// the mount table, and "nas2" is a folder next to the "nas" mount, not below it.
+	c := NewMinimalTestConfig(t.TempDir())
+	originals := c.OriginalsPath()
+
+	if insensitive, err := fs.CaseInsensitive(t.TempDir()); err != nil {
+		t.Fatal(err)
+	} else if insensitive {
+		t.Skip("requires a case-sensitive file system")
+	}
+
+	nas, nas2, sd := filepath.Join(originals, "nas"), filepath.Join(originals, "nas2"), filepath.Join(originals, "nas", "sd")
+
+	for _, dir := range []string{originals, nas, nas2, sd} {
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.raw"), []byte("raw"), fs.ModeFile))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "img_1.jpg"), []byte("jpg"), fs.ModeFile))
+	}
+
+	find := func(dir string) string { return fs.ImageJpeg.Find(filepath.Join(dir, "IMG_1.raw"), false) }
+
+	t.Run("InsensitiveRoot", func(t *testing.T) {
+		stubCaseDetection(t, false, true, nil, nil)
+
+		var skipped []string
+
+		originalsCaseInsensitive = func(dir string, skip ...string) (bool, error) {
+			skipped = skip
+			return true, nil
+		}
+		originalsMounts = func(string) ([]string, error) { return []string{nas, sd}, nil }
+
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, []string{nas, sd}, skipped)
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, "", find(nas2))
+		assert.Equal(t, filepath.Join(nas, "img_1.jpg"), find(nas))
+		assert.Equal(t, filepath.Join(sd, "img_1.jpg"), find(sd))
+	})
+	t.Run("NoMounts", func(t *testing.T) {
+		stubCaseDetection(t, false, true, nil, nil)
+
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, "", find(nas))
+	})
+	t.Run("SensitiveRoot", func(t *testing.T) {
+		stubCaseDetection(t, true, false, nil, nil)
+		originalsMounts = func(string) ([]string, error) { return []string{nas}, nil }
+
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, filepath.Join(originals, "img_1.jpg"), find(originals))
+		assert.Equal(t, filepath.Join(nas, "img_1.jpg"), find(nas))
+	})
+	t.Run("OriginalsUnknown", func(t *testing.T) {
+		// Originals follow the storage result, but the mounts below them still check all case variants.
+		stubCaseDetection(t, true, false, errors.New("no file name with ASCII letters within reach"), nil)
+		originalsMounts = func(string) ([]string, error) { return []string{nas}, nil }
+
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, filepath.Join(nas, "img_1.jpg"), find(nas))
+	})
+	t.Run("MountTableError", func(t *testing.T) {
+		stubCaseDetection(t, false, true, nil, nil)
+		originalsMounts = func(string) ([]string, error) { return nil, errors.New("mount table not readable") }
+
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, "", find(nas))
+	})
+	t.Run("MountTableMissing", func(t *testing.T) {
+		stubCaseDetection(t, false, true, nil, nil)
+		originalsMounts = func(string) ([]string, error) { return nil, os.ErrNotExist }
+
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, "", find(originals))
+		assert.Equal(t, "", find(nas))
 	})
 }
