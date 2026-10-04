@@ -76,6 +76,23 @@ func TestPhoto_YamlFileName(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("NotFileName", func(t *testing.T) {
+		t.Cleanup(func() { _ = os.RemoveAll("xxx") })
+		for _, photoPath := range []string{"2790/02", ""} {
+			for _, name := range []string{"", ".", "..", "a/b"} {
+				m := &Photo{PhotoPath: photoPath, PhotoName: name}
+				fileName, relative, err := m.YamlFileName("xxx", "yyy")
+				assert.ErrorIs(t, err, ErrPhotoYamlName, name)
+				assert.Empty(t, fileName, name)
+				assert.Empty(t, relative, name)
+			}
+		}
+		assert.NoDirExists(t, "xxx")
+	})
+	t.Run("Nil", func(t *testing.T) {
+		_, _, err := (*Photo)(nil).YamlFileName("xxx", "yyy")
+		assert.Error(t, err)
+	})
 }
 
 func TestPhoto_SaveSidecarYaml(t *testing.T) {

@@ -16,9 +16,12 @@ func DeletePhoto(p *entity.Photo, mediaFiles bool, originals bool) (numFiles int
 		return 0, errors.New("photo is nil")
 	}
 
+	// A photo without a usable name has no sidecar backup.
 	yamlFileName, yamlRelName, err := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
-	if err != nil {
+	if errors.Is(err, entity.ErrPhotoYamlName) {
+		log.Debugf("photo: %s has no sidecar backup (%s)", clean.Log(p.PhotoUID), err)
+	} else if err != nil {
 		log.Warnf("photo: %s (delete %s)", err, clean.Log(yamlRelName))
 	}
 
