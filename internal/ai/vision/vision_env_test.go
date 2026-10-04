@@ -37,6 +37,27 @@ func TestInitEnvUrl(t *testing.T) {
 		t.Fatalf("slashes: expected http://default.local, got %s", got)
 	}
 
+	// Case: trims the trailing slash of the path and keeps the query.
+	t.Setenv(envName, "https://gw.example.com/v1/?token=abc")
+	initEnvUrl(envName, "http://default.local")
+	if got := os.Getenv(envName); got != "https://gw.example.com/v1?token=abc" {
+		t.Fatalf("query: expected https://gw.example.com/v1?token=abc, got %s", got)
+	}
+
+	// Case: keeps a value whose path ends with a query unchanged.
+	t.Setenv(envName, "https://gw.example.com/v1?api-version=preview/")
+	initEnvUrl(envName, "http://default.local")
+	if got := os.Getenv(envName); got != "https://gw.example.com/v1?api-version=preview/" {
+		t.Fatalf("query slash: expected the value unchanged, got %s", got)
+	}
+
+	// Case: trims the trailing slash of the path before a fragment.
+	t.Setenv(envName, "https://gw.example.com/v1/#top")
+	initEnvUrl(envName, "http://default.local")
+	if got := os.Getenv(envName); got != "https://gw.example.com/v1#top" {
+		t.Fatalf("fragment: expected https://gw.example.com/v1#top, got %s", got)
+	}
+
 	// Case: leaves already-normalized value untouched.
 	t.Setenv(envName, "http://kept.local")
 	initEnvUrl(envName, "http://ignored.local")

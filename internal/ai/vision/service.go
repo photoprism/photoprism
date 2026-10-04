@@ -38,14 +38,14 @@ func (m *Service) UriUnresolved() bool {
 }
 
 // Endpoint returns the remote service request method and endpoint URL, if any. The URI expands only
-// variables whose names end in _URL, _URI, or _HOST.
+// variables whose names end in _URL, _URI, or _HOST, see expandUriEnv.
 func (m *Service) Endpoint() (uri, method string) {
 	if m.Disabled || strings.TrimSpace(m.Uri) == "" {
 		return "", ""
 	}
 
 	// A refused variable leaves the URI without a service rather than with a partial value.
-	expanded, refused := expandEnvSuffix(m.Uri, uriEnvSuffixes)
+	expanded, refused := expandUriEnv(m.Uri)
 
 	if len(refused) > 0 {
 		warnRefusedEnv("Service.Uri", m.Uri, refused, uriEnvSuffixes)

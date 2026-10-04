@@ -2,6 +2,7 @@ package vision
 
 import (
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -21,6 +22,12 @@ var refusedEnvWarned sync.Map
 // expandEnvSuffix expands the environment variables in s whose names end in one of the suffixes. Other
 // variables expand to an empty string, and their names are returned as refused.
 func expandEnvSuffix(s string, suffixes []string) (expanded string, refused []string) {
+	return expandEnvValues(s, suffixes, nil)
+}
+
+// expandEnvValues expands the environment variables in s whose names end in one of the suffixes, passing
+// each value through fn, if set. Other variables expand to an empty string, and their names are returned.
+func expandEnvValues(s string, suffixes []string, fn func(string) string) (expanded string, refused []string) {
 	if !strings.Contains(s, "$") {
 		return s, nil
 	}
@@ -28,16 +35,97 @@ func expandEnvSuffix(s string, suffixes []string) (expanded string, refused []st
 	ensureEnv()
 
 	expanded = os.Expand(s, func(name string) string {
-		if envNameAllowed(name, suffixes) {
-			return os.Getenv(name)
+		if !envNameAllowed(name, suffixes) {
+			refused = append(refused, name)
+			return ""
+		} else if fn != nil {
+			return fn(os.Getenv(name))
 		}
 
-		refused = append(refused, name)
-
-		return ""
+		return os.Getenv(name)
 	})
 
 	return expanded, refused
+}
+
+// expandUriEnv expands the variables in a service URI like expandEnvSuffix. A value that ends the path part
+// of the URI has its fragment dropped and its query moved to the end, after the URI's own query, so the text
+// after a base URL variable stays in the path. Other values are expanded as written.
+func expandUriEnv(s string) (expanded string, refused []string) {
+	if strings.Contains(s, "\x00") {
+		return expandEnvSuffix(s, uriEnvSuffixes)
+	}
+
+	var suffixes []string
+
+	// The query and fragment of each value are replaced by numbered markers, which are resolved once
+	// their position is known.
+	expanded, refused = expandEnvValues(s, uriEnvSuffixes, func(value string) string {
+		if i := strings.IndexAny(value, "?#"); i >= 0 {
+			suffixes = append(suffixes, value[i:])
+			return value[:i] + "\x00" + strconv.Itoa(len(suffixes)-1) + "\x00"
+		}
+
+		return value
+	})
+
+	if len(suffixes) == 0 {
+		return expanded, refused
+	}
+
+	var moved []string
+	var b strings.Builder
+
+	for rest := expanded; rest != ""; {
+		before, marker, found := strings.Cut(rest, "\x00")
+		b.WriteString(before)
+
+		if !found {
+			break
+		}
+
+		index, after, _ := strings.Cut(marker, "\x00")
+		suffix := suffixes[txt.Int(index)]
+		rest = after
+
+		if !uriPathEnd(b.String(), after) {
+			b.WriteString(suffix)
+		} else if query, _, _ := strings.Cut(suffix, "#"); len(query) > 1 {
+			moved = append(moved, query[1:])
+		}
+	}
+
+	if expanded = b.String(); len(moved) == 0 {
+		return expanded, refused
+	}
+
+	expanded, fragment, hasFragment := strings.Cut(expanded, "#")
+
+	switch {
+	case !strings.Contains(expanded, "?"):
+		expanded += "?"
+	case !strings.HasSuffix(expanded, "?") && !strings.HasSuffix(expanded, "&"):
+		expanded += "&"
+	}
+
+	expanded += strings.Join(moved, "&")
+
+	if hasFragment {
+		expanded += "#" + fragment
+	}
+
+	return expanded, refused
+}
+
+// uriPathEnd reports whether the position between before and after ends the path part of a URI, i.e. its
+// authority started in before, which has no query or fragment, and after continues with a path, query, or
+// fragment, if anything.
+func uriPathEnd(before, after string) bool {
+	if !strings.Contains(before, "//") || strings.ContainsAny(before, "?#") {
+		return false
+	}
+
+	return after == "" || strings.ContainsAny(after[:1], "/?#")
 }
 
 // envNameAllowed reports whether the name is a valid variable name that ends in one of the suffixes.

@@ -1,6 +1,7 @@
 package vision
 
 import (
+	"sync"
 	"testing"
 )
 
@@ -132,5 +133,62 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 
 	if got := svc.EndpointTier(); got != "flex" {
 		t.Fatalf("tier: got %q", got)
+	}
+}
+
+// TestServiceEndpoint_BaseUrlQuery checks that the query of an expanded base URL is moved to the end of the
+// service URI, for engine and custom URIs.
+func TestServiceEndpoint_BaseUrlQuery(t *testing.T) {
+	cases := []struct {
+		name string
+		env  string
+		val  string
+		uri  string
+		want string
+	}{
+		{"OpenAIApiVersion", "OPENAI_BASE_URL", "https://example.openai.azure.com/openai/v1?api-version=preview", "${OPENAI_BASE_URL}/responses", "https://example.openai.azure.com/openai/v1/responses?api-version=preview"},
+		{"OpenAIToken", "OPENAI_BASE_URL", "https://gateway.example.com/v1?token=abc", "${OPENAI_BASE_URL}/responses", "https://gateway.example.com/v1/responses?token=abc"},
+		{"OpenAINoQuery", "OPENAI_BASE_URL", "https://api.openai.com/v1", "${OPENAI_BASE_URL}/responses", "https://api.openai.com/v1/responses"},
+		{"OllamaToken", "OLLAMA_BASE_URL", "http://ollama:11434?key=abc", "${OLLAMA_BASE_URL}/api/generate", "http://ollama:11434/api/generate?key=abc"},
+		{"CustomTemplateQuery", "VISION_TEST_GATEWAY_URL", "https://gw.example.com/v1?token=abc#top", "${VISION_TEST_GATEWAY_URL}/chat?stream=false", "https://gw.example.com/v1/chat?stream=false&token=abc"},
+		{"CustomHost", "VISION_TEST_GATEWAY_HOST", "gw.example.com", "https://${VISION_TEST_GATEWAY_HOST}/api?x=1", "https://gw.example.com/api?x=1"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv(tc.env, tc.val)
+
+			uri, method := (&Service{Uri: tc.uri}).Endpoint()
+
+			if uri != tc.want {
+				t.Fatalf("uri: got %q want %q", uri, tc.want)
+			} else if method != ServiceMethod {
+				t.Fatalf("method: got %q want %q", method, ServiceMethod)
+			}
+		})
+	}
+
+	t.Run("WithBasicAuth", func(t *testing.T) {
+		t.Setenv("VISION_TEST_GATEWAY_URL", "https://gw.example.com/v1?token=abc")
+
+		uri, _ := (&Service{Uri: "${VISION_TEST_GATEWAY_URL}/chat", Username: "user", Password: "secret"}).Endpoint()
+
+		//nolint:gosec // G101: Credential-style URLs are intentional test fixtures.
+		if want := "https://user:secret@gw.example.com/v1/chat?token=abc"; uri != want {
+			t.Fatalf("uri: got %q want %q", uri, want)
+		}
+	})
+}
+
+// TestServiceEndpoint_NormalizedBaseUrl checks the URI of a base URL that is normalized by ensureEnv.
+func TestServiceEndpoint_NormalizedBaseUrl(t *testing.T) {
+	t.Setenv("OPENAI_BASE_URL", "https://gw.example.com/v1/?token=abc#top")
+	ensureEnvOnce = sync.Once{}
+	t.Cleanup(func() { ensureEnvOnce = sync.Once{} })
+
+	uri, _ := (&Service{Uri: "${OPENAI_BASE_URL}/responses"}).Endpoint()
+
+	if want := "https://gw.example.com/v1/responses?token=abc"; uri != want {
+		t.Fatalf("uri: got %q want %q", uri, want)
 	}
 }

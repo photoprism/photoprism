@@ -27,12 +27,19 @@ func ensureEnv() {
 	})
 }
 
-// initEnvUrl removes surrounding whitespace and trailing slashes from the variable, and sets the
-// default value if nothing is left.
+// initEnvUrl removes surrounding whitespace and the trailing slashes of the path from the variable, and
+// sets the default value if nothing is left.
 func initEnvUrl(envName, defaultUrl string) {
 	raw := os.Getenv(envName)
+	normalized := strings.TrimSpace(raw)
 
-	if normalized := strings.TrimRight(strings.TrimSpace(raw), "/"); normalized != "" {
+	if i := strings.IndexAny(normalized, "?#"); i >= 0 {
+		normalized = strings.TrimRight(normalized[:i], "/") + normalized[i:]
+	} else {
+		normalized = strings.TrimRight(normalized, "/")
+	}
+
+	if normalized != "" {
 		if normalized != raw {
 			_ = os.Setenv(envName, normalized)
 		}

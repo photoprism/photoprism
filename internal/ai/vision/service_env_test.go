@@ -1,6 +1,7 @@
 package vision
 
 import (
+	"net/url"
 	"strings"
 	"testing"
 
@@ -10,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // resetRefusedEnvWarned clears the logged refused variables before and after a test.
@@ -325,4 +327,146 @@ func TestForgetRefusedEnv(t *testing.T) {
 	assert.True(t, kept)
 	_, kept = refusedEnvWarned.Load("Service.Model\x00${A_TOKEN}/x\x00A_TOKEN")
 	assert.True(t, kept)
+}
+
+// TestExpandUriEnv checks that the query of an expanded variable is moved to the end of the URI.
+func TestExpandUriEnv(t *testing.T) {
+	t.Setenv("VISION_TEST_BASE_URL", "https://gw.example.com/v1?token=abc")
+	t.Setenv("VISION_TEST_PLAIN_URL", "https://plain.example.com/v1/")
+	t.Setenv("VISION_TEST_FRAGMENT_URL", "https://gw.example.com/v1#top")
+	t.Setenv("VISION_TEST_OTHER_URL", "https://other.example.com?b=2")
+	t.Setenv("VISION_TEST_MULTI_URL", "https://x.example.com/p?a=1&b=2")
+	t.Setenv("VISION_TEST_EMPTY_QUERY_URL", "https://gw.example.com/v1?")
+	t.Setenv("VISION_TEST_SECRET", "s3cr3t-value")
+
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"NoVariable", "https://api.example.com/v1/responses?x=1", "https://api.example.com/v1/responses?x=1"},
+		{"NoQuery", "${VISION_TEST_PLAIN_URL}/responses", "https://plain.example.com/v1//responses"},
+		{"Query", "${VISION_TEST_BASE_URL}/responses", "https://gw.example.com/v1/responses?token=abc"},
+		{"TemplateQuery", "${VISION_TEST_BASE_URL}/responses?stream=false", "https://gw.example.com/v1/responses?stream=false&token=abc"},
+		{"TemplateEmptyQuery", "${VISION_TEST_BASE_URL}/responses?", "https://gw.example.com/v1/responses?token=abc"},
+		{"TemplateFragment", "${VISION_TEST_BASE_URL}/responses#part", "https://gw.example.com/v1/responses?token=abc#part"},
+		{"ValueFragment", "${VISION_TEST_FRAGMENT_URL}/responses", "https://gw.example.com/v1/responses"},
+		{"TwoQueries", "${VISION_TEST_BASE_URL}/x/${VISION_TEST_OTHER_URL}", "https://gw.example.com/v1/x/https://other.example.com?token=abc&b=2"},
+		{"TemplateAmpersand", "${VISION_TEST_BASE_URL}/responses?stream=false&", "https://gw.example.com/v1/responses?stream=false&token=abc"},
+		{"ContinuedQuery", "${VISION_TEST_BASE_URL}&stream=false", "https://gw.example.com/v1?token=abc&stream=false"},
+		{"ValueInTemplateQuery", "https://h.example.com/api?cb=${VISION_TEST_MULTI_URL}", "https://h.example.com/api?cb=https://x.example.com/p?a=1&b=2"},
+		{"MovedAndInTemplateQuery", "${VISION_TEST_BASE_URL}/api?cb=${VISION_TEST_MULTI_URL}", "https://gw.example.com/v1/api?cb=https://x.example.com/p?a=1&b=2&token=abc"},
+		{"EmptyQuery", "${VISION_TEST_EMPTY_QUERY_URL}/responses", "https://gw.example.com/v1/responses"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			expanded, refused := expandUriEnv(tc.in)
+			assert.Equal(t, tc.want, expanded)
+			assert.Empty(t, refused)
+		})
+	}
+
+	t.Run("NullByte", func(t *testing.T) {
+		expanded, refused := expandUriEnv("${VISION_TEST_BASE_URL}/x\x00")
+		assert.Equal(t, "https://gw.example.com/v1?token=abc/x\x00", expanded)
+		assert.Empty(t, refused)
+	})
+	t.Run("Refused", func(t *testing.T) {
+		expanded, refused := expandUriEnv("${VISION_TEST_BASE_URL}/${VISION_TEST_SECRET}")
+		assert.Equal(t, "https://gw.example.com/v1/?token=abc", expanded)
+		assert.Equal(t, []string{"VISION_TEST_SECRET"}, refused)
+	})
+}
+
+// TestExpandEnvValues checks that the expanded values pass through the function.
+func TestExpandEnvValues(t *testing.T) {
+	t.Setenv("VISION_TEST_MODEL", "qwen3-vl:8b")
+	t.Setenv("VISION_TEST_SECRET", "s3cr3t-value")
+
+	expanded, refused := expandEnvValues("${VISION_TEST_MODEL}-${VISION_TEST_SECRET}", modelEnvSuffixes, strings.ToUpper)
+	assert.Equal(t, "QWEN3-VL:8B-", expanded)
+	assert.Equal(t, []string{"VISION_TEST_SECRET"}, refused)
+
+	expanded, refused = expandEnvValues("plain", modelEnvSuffixes, strings.ToUpper)
+	assert.Equal(t, "plain", expanded)
+	assert.Empty(t, refused)
+}
+
+// TestUriPathEnd checks which positions in a URI end its path part.
+func TestUriPathEnd(t *testing.T) {
+	assert.False(t, uriPathEnd("", ""))
+	assert.False(t, uriPathEnd("https:", "//evil.example.com/api"))
+	assert.True(t, uriPathEnd("https://h", "/api"))
+	assert.True(t, uriPathEnd("https://h/v1", "?x=1"))
+	assert.True(t, uriPathEnd("https://h/v1", "#top"))
+	assert.False(t, uriPathEnd("https://h/api?cb=", ""))
+	assert.False(t, uriPathEnd("https://h/api#", ""))
+	assert.False(t, uriPathEnd("https://", ":8443/api"))
+	assert.False(t, uriPathEnd("https://", ".example.com/api"))
+	assert.False(t, uriPathEnd("https://h/v1", "&stream=false"))
+}
+
+// TestExpandUriEnv_Authority checks that moving a query never changes the scheme, user, or host of the URI
+// compared with expanding the values as written.
+func TestExpandUriEnv_Authority(t *testing.T) {
+	values := []string{
+		"good.example.com?token=X",
+		"https://good.example.com/v1?token=X",
+		"https://good.example.com/v1/?token=X#frag",
+		"?token=X",
+		"https://u:p@good.example.com?token=X",
+		"https://good.example.com?a=1@evil.example.com",
+		"https://[fe80::1%25eth0]:8080?token=X",
+		"https://good.example.com/v1",
+		"https://good.example.com#x",
+		"https://good.example.com#x?token=X",
+		"good.example.com#x",
+		"https://good.example.com#%zz",
+		"https:?token=X",
+	}
+	templates := []string{
+		"${VISION_TEST_V_URL}/responses",
+		"${VISION_TEST_V_URL}",
+		"https://${VISION_TEST_V_URL}:8443/api",
+		"https://${VISION_TEST_V_URL}.example.com/api",
+		"https://${VISION_TEST_V_URL}@good.example.com/api",
+		"https://${VISION_TEST_V_URL}${VISION_TEST_W_URL}/api",
+		"${VISION_TEST_V_URL}${VISION_TEST_W_URL}",
+		"https://h.example.com/api#${VISION_TEST_V_URL}",
+		"https://h.example.com/api?cb=${VISION_TEST_V_URL}",
+		"${VISION_TEST_V_URL}&stream=false",
+		"${VISION_TEST_V_URL}/x?y=1#z",
+		"${VISION_TEST_V_URL}@evil.example.com/api",
+		"${VISION_TEST_V_URL}.evil.example.com/api",
+		"${VISION_TEST_V_URL}//evil.example.com/api",
+		"https:${VISION_TEST_V_URL}//evil.example.com/api",
+	}
+
+	t.Setenv("VISION_TEST_W_URL", "https://other.example.com/w?w=1")
+
+	for _, value := range values {
+		for _, tmpl := range templates {
+			t.Setenv("VISION_TEST_V_URL", value)
+
+			inline, _ := expandEnvSuffix(tmpl, uriEnvSuffixes)
+			moved, _ := expandUriEnv(tmpl)
+			inlineUrl, inlineErr := url.Parse(inline)
+			movedUrl, movedErr := url.Parse(moved)
+
+			// A URI that cannot be sent as written may only be sent to the host of the value itself, e.g.
+			// once an invalid fragment was dropped.
+			if inlineErr != nil || inlineUrl.Host == "" {
+				_, safeErr := safe.URL(moved)
+				assert.True(t, movedErr != nil || safeErr != nil || movedUrl.Host == "" ||
+					strings.HasPrefix(value, movedUrl.Scheme+"://"+movedUrl.Host), "%s with %s", tmpl, value)
+				continue
+			}
+
+			require.NoError(t, movedErr, "%s with %s", tmpl, value)
+			assert.Equal(t, inlineUrl.Scheme, movedUrl.Scheme, "%s with %s", tmpl, value)
+			assert.Equal(t, inlineUrl.User.String(), movedUrl.User.String(), "%s with %s", tmpl, value)
+			assert.Equal(t, inlineUrl.Host, movedUrl.Host, "%s with %s", tmpl, value)
+		}
+	}
 }

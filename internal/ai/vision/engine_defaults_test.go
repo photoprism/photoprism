@@ -279,6 +279,17 @@ func TestLogOpenAIBaseUrl(t *testing.T) {
 		assert.Contains(t, systemHook.LastEntry().Message, "llm.example.com/v1")
 		assert.NotContains(t, systemHook.LastEntry().Message, "secret")
 	})
+	t.Run("Query", func(t *testing.T) {
+		t.Setenv(openai.BaseUrlEnv, "https://llm.example.com/v1?token=s3cr3t-value&api-version=preview")
+		logHook, systemHook := captureLogs(t)
+
+		logOpenAIBaseUrl()
+
+		assert.Empty(t, logHook.AllEntries())
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Contains(t, systemHook.LastEntry().Message, "llm.example.com/v1")
+		assert.NotContains(t, systemHook.LastEntry().Message, "s3cr3t-value")
+	})
 	t.Run("Invalid", func(t *testing.T) {
 		t.Setenv(openai.BaseUrlEnv, "https://llm.example.com/%zz")
 		logHook, systemHook := captureLogs(t)
