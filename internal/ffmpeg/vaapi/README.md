@@ -1,6 +1,6 @@
 ## PhotoPrism — VA-API Hardware Transcoding
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -21,7 +21,7 @@ ffmpeg -hide_banner -y -strict -2 \
   -vf "scale='if(gte(iw,ih), min(<size>, iw), -2):if(gte(iw,ih), -2, min(<size>, ih))',format=nv12,hwupload" \
   -c:v h264_vaapi \
   -map 0:v:0 -map 0:a:0? -ignore_unknown \
-  -qp 25 \
+  -qp 29 \
   -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 \
   <dest>
 ```
@@ -38,7 +38,7 @@ FFmpeg 8 no longer derives a filter device from `-hwaccel vaapi` alone, so the `
 
 #### Rate Control
 
-`-qp` selects constant QP (CQP), so the size follows the content. `encode.QpQuality()` maps `PHOTOPRISM_FFMPEG_QUALITY` to `(100 - quality) / 2`, the CRF scale of the software encoder: 30 gives 35, the default 50 gives 25, and 80 gives 10. The encoder spends more bits than `libx264` for the same quality: on an Intel UHD 770 with 4K HEVC, 4K AV1 and 1080p phone samples, the default writes 2.4 to 3.1 times the data of `libx264 -preset fast -crf 25` at a higher SSIM and XPSNR, and quality 80 1.6 to 3.8 times that of `-crf 10`. Matching `libx264` takes a `-qp` about 4 higher than the CRF value (29 for `-crf 25`).
+`-qp` selects constant QP (CQP), so the size follows the content. `encode.VaapiQuality()` maps `PHOTOPRISM_FFMPEG_QUALITY` to `(100 - quality) / 2 + 4`, 4 above the CRF scale of the software encoder: 30 gives 39, the default 50 gives 29, and 80 gives 14. On an Intel UHD 770 with 4K HEVC, 4K AV1 and 1080p phone samples, these come within one step of matching `libx264 -preset fast` in SSIM and XPSNR at `-crf 35`, `25` and `10`, although the encoder spends more bits than `libx264` for the same quality: about 1.4 times at the default.
 
 There is no bitrate limit: `Options.MaxBitrate` is not passed, since CQP ignores `-maxrate`. A peak limit would need the QVBR mode (`-rc_mode QVBR` with `-global_quality`, `-b:v` and `-maxrate`), which the iHD driver supports.
 
@@ -52,7 +52,7 @@ There is no bitrate limit: `Options.MaxBitrate` is not passed, since CQP ignores
 | `-filter_hw_device`           | `va`                              | Supplies the device that `hwupload` uploads to.                      |
 | `-vf … ,format=nv12,hwupload` | from `encode.FormatNV12`          | Software scale, NV12 conversion, then upload to a VA-API surface.    |
 | `-c:v`                        | `h264_vaapi`                      | VA-API H.264 encoder.                                                |
-| `-qp`                         | `25` (`DefaultQuality` 50)        | Constant-QP quality, via `Options.QpQuality()`.                      |
+| `-qp`                         | `29` (`DefaultQuality` 50)        | Constant-QP quality, via `Options.VaapiQuality()`.                   |
 
 ### Encoders & Decoders
 

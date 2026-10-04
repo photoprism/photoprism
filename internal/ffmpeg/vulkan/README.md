@@ -1,6 +1,6 @@
 ## PhotoPrism — Vulkan Video Transcoding
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -34,7 +34,7 @@ ffmpeg -hide_banner -y -strict -2 \
 
 #### Rate Control
 
-`-qp` selects constant QP, mapped from `PHOTOPRISM_FFMPEG_QUALITY` by `encode.QpQuality()` as `(100 - quality) / 2`, like the [VA-API](../vaapi/README.md) encoder; the default 50 gives 25. Size and quality relative to the software encoder have not been measured, since no Vulkan encode driver was available. `Options.MaxBitrate` is not passed, so there is no bitrate limit.
+`-qp` selects constant QP, mapped from `PHOTOPRISM_FFMPEG_QUALITY` by `encode.QpQuality()` as `(100 - quality) / 2`, the CRF scale of the software encoder; the default 50 gives 25. Size and quality relative to the software encoder have not been measured, since no Vulkan encode driver was available. `Options.MaxBitrate` is not passed, so there is no bitrate limit.
 
 ### Flags
 

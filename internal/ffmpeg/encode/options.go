@@ -146,7 +146,7 @@ func (o *Options) QvQuality() string {
 	return QvQuality(o.Quality)
 }
 
-// GlobalQuality returns the video encoding quality as "-global_quality" parameter string.
+// GlobalQuality returns the video encoding quality as Intel QSV "-global_quality" parameter string.
 func (o *Options) GlobalQuality() string {
 	return GlobalQuality(o.Quality)
 }
@@ -159,6 +159,11 @@ func (o *Options) CrfQuality() string {
 // QpQuality returns the video encoding quality as "-qp" parameter string.
 func (o *Options) QpQuality() string {
 	return QpQuality(o.Quality)
+}
+
+// VaapiQuality returns the video encoding quality as VA-API "-qp" parameter string.
+func (o *Options) VaapiQuality() string {
+	return VaapiQuality(o.Quality)
 }
 
 // CqQuality returns the video encoding quality as NVENC "-cq" parameter string.

@@ -1,6 +1,6 @@
 ## PhotoPrism — Intel Quick Sync Transcoding
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -20,7 +20,7 @@ ffmpeg -hide_banner -y -strict -2 \
   -vf "scale_qsv=w='if(gte(iw,ih), min(<size>, iw), -1)':h='if(gte(iw,ih), -1, min(<size>, ih))':format=nv12" \
   -c:v h264_qsv \
   -map 0:v:0 -map 0:a:0? -ignore_unknown \
-  -preset fast -global_quality 25 \
+  -preset fast -global_quality 28 \
   -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 \
   <dest>
 ```
@@ -33,7 +33,7 @@ ffmpeg -hide_banner -y -strict -2 \
 
 #### Rate Control
 
-`-global_quality` without a bitrate selects intelligent constant quality (ICQ), so the size follows the content. `encode.GlobalQuality()` maps `PHOTOPRISM_FFMPEG_QUALITY` to `(100 - quality) / 2`, the CRF scale of the software encoder: 30 gives 35, the default 50 gives 25, and 80 gives 10. On an Intel UHD 770 with 4K HEVC, 4K AV1 and 1080p phone samples, the default writes about 1.8 times the data of `libx264 -preset fast -crf 25` at a higher SSIM and XPSNR; matching it takes a `-global_quality` of about 28 (39 for `-crf 35`, 9 for `-crf 10`).
+`-global_quality` without a bitrate selects intelligent constant quality (ICQ), so the size follows the content. `encode.GlobalQuality()` maps `PHOTOPRISM_FFMPEG_QUALITY` linearly to `-global_quality` as `(100 - quality) * 3 / 5 - 2`: 30 gives 40, the default 50 gives 28, and 80 gives 10. On an Intel UHD 770 with 4K HEVC, 4K AV1 and 1080p phone samples, this comes within one step of the values that match `libx264 -preset fast` in SSIM and XPSNR at `-crf 35`, `25` and `10` (about 39, 27 to 28, and 9); at the default, QSV writes 1.0 to 1.3 times the data of `-crf 25`.
 
 There is no bitrate limit: `Options.MaxBitrate` is not passed, since `h264_qsv` leaves ICQ when `-maxrate` is set: without `-b:v` it switches to constant QP, which ignores the quality setting, and with `-b:v` equal to `-maxrate` to CBR. A peak limit would need the QVBR mode (`-global_quality` with `-b:v` below `-maxrate`).
 
@@ -51,7 +51,7 @@ Quick Sync accepts the x264 preset names from `veryfast` to `veryslow`. `Preset(
 | `-vf scale_qsv=…`        | from `encode.FormatQSV`    | On-GPU scale and NV12 conversion (computes the auto axis with `-1`). |
 | `-c:v`                   | `h264_qsv`                 | Quick Sync H.264 encoder.                                            |
 | `-preset`                | `fast`                     | Encoder speed/quality trade-off, via `Preset(Options.Preset)`.       |
-| `-global_quality`        | `25` (`DefaultQuality` 50) | Quality-based rate-control target, via `Options.GlobalQuality()`.    |
+| `-global_quality`        | `28` (`DefaultQuality` 50) | Quality-based rate-control target, via `Options.GlobalQuality()`.    |
 
 ### Encoders & Decoders
 

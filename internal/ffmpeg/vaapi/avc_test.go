@@ -16,7 +16,7 @@ func TestVaapi_TranscodeToAvcCmd_WithDevice(t *testing.T) {
 	assert.True(t, strings.Contains(s, "-init_hw_device vaapi=va:/dev/dri/renderD128"))
 	assert.True(t, strings.Contains(s, "-hwaccel vaapi -hwaccel_device va -filter_hw_device va"))
 	assert.True(t, strings.Contains(s, "-c:v h264_vaapi"))
-	assert.True(t, strings.Contains(s, "-qp 25"))
+	assert.True(t, strings.Contains(s, "-qp 29"))
 }
 
 func TestVaapi_TranscodeToAvcCmd_NoDevice(t *testing.T) {
