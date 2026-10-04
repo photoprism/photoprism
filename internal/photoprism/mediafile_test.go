@@ -2935,6 +2935,20 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		assert.Equal(t, "VID_20220625_140410_10_008", mediaFile.BasePrefix(false))
 		mediaFile.SetFileName(initialName)
 	})
+	t.Run("SequenceOnly", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/beach_sand.jpg")
+		require.NoError(t, err)
+
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName(filepath.Join(c.SamplesPath(), "b2", "(1).heic"))
+
+		_, base, _, _ := mediaFile.PathNameInfo(true)
+		assert.Equal(t, "(1)", base)
+		mediaFile.SetFileName(filepath.Join(c.SamplesPath(), "b2", "IMG_1 (2).heic"))
+		_, base, _, _ = mediaFile.PathNameInfo(true)
+		assert.Equal(t, "IMG_1", base)
+		mediaFile.SetFileName(initialName)
+	})
 }
 
 // TestMediaFile_StackPrefix verifies that capture files share the stack name of the left lens.

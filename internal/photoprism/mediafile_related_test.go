@@ -399,6 +399,26 @@ func TestMediaFile_RelatedFiles_HighResRawPair(t *testing.T) {
 	})
 }
 
+// TestMediaFile_RelatedFiles_Folder verifies that folders matching the related file pattern are skipped.
+func TestMediaFile_RelatedFiles_Folder(t *testing.T) {
+	c := config.TestConfig()
+	dir := t.TempDir()
+	require.NoError(t, fs.Copy(filepath.Join(c.SamplesPath(), "beach_sand.jpg"), filepath.Join(dir, "b2.jpg"), false))
+	require.NoError(t, fs.MkdirAll(filepath.Join(dir, "b2")))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "b2", "x.txt"), []byte("x"), fs.ModeFile))
+	require.NoError(t, fs.MkdirAll(filepath.Join(dir, "b2 (2)")))
+	require.NoError(t, os.Symlink(filepath.Join(dir, "b2"), filepath.Join(dir, "b2 (3)")))
+	require.NoError(t, os.Symlink(filepath.Join(dir, "b2.jpg"), filepath.Join(dir, "b2 (4).jpg")))
+
+	mediaFile, err := NewMediaFile(filepath.Join(dir, "b2.jpg"))
+	require.NoError(t, err)
+
+	related, err := mediaFile.RelatedFiles(true)
+	require.NoError(t, err)
+	require.Len(t, related.Files, 2)
+	assert.Equal(t, "b2 (4).jpg", filepath.Base(related.Files[1].FileName()))
+}
+
 // TestMediaFile_RelatedFiles_MislabeledPreview verifies that a file whose content does not match its
 // extension does not become the main file of a group that has another one.
 func TestMediaFile_RelatedFiles_MislabeledPreview(t *testing.T) {

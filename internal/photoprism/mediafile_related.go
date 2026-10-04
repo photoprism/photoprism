@@ -112,6 +112,12 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		}
 
 		processedMatches[fileName] = true
+
+		// The pattern also matches folders whose names start with the prefix.
+		if !fs.FileExists(fileName) {
+			continue
+		}
+
 		f, fileErr := NewMediaFile(fileName)
 
 		if fileErr != nil || f.Empty() || f.IsArchive() {

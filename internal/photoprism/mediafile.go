@@ -400,7 +400,11 @@ func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relati
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.StackPrefix(stripSequence)
+	// A file whose stack name is empty is not stacked by name, so its photo gets the unstripped name.
+	if fileBase = m.StackPrefix(stripSequence); fileBase == "" {
+		fileBase = m.StackPrefix(false)
+	}
+
 	relativePath = m.RelPath(rootPath)
 	relativeName = m.RelName(rootPath)
 
