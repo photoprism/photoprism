@@ -217,6 +217,38 @@ func TestEnvModel(t *testing.T) {
 	})
 }
 
+// TestEnvModelTagged checks that the identifier is sanitized without being shortened.
+func TestEnvModelTagged(t *testing.T) {
+	t.Run("Set", func(t *testing.T) {
+		t.Setenv("VISION_TEST_MODEL", "  qwen3-vl:8b  ")
+		assert.Equal(t, "qwen3-vl:8b", envModelTagged("VISION_TEST_MODEL"))
+	})
+	t.Run("Blank", func(t *testing.T) {
+		t.Setenv("VISION_TEST_MODEL", "   ")
+		assert.Equal(t, "", envModelTagged("VISION_TEST_MODEL"))
+	})
+	t.Run("Long", func(t *testing.T) {
+		t.Setenv("VISION_TEST_MODEL", strings.Repeat("m", 100))
+		assert.Len(t, envModelTagged("VISION_TEST_MODEL"), 100)
+	})
+}
+
+// TestOllamaEnvModelTag checks that a long OLLAMA_MODEL keeps its tag when it is sent.
+func TestOllamaEnvModelTag(t *testing.T) {
+	resetClippedModelIdWarnings(t)
+	_, _ = captureLogs(t)
+	t.Setenv(ollama.ModelEnv, "hf.co/some-org/"+strings.Repeat("x", 43)+":Q4_K_M-instr")
+	registerOllamaEngineDefaults()
+	t.Cleanup(registerOllamaEngineDefaults)
+
+	model := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName}
+	model.ApplyEngineDefaults()
+
+	id, _, version := model.GetModel()
+	assert.Equal(t, "Q4_K_M-instr", version)
+	assert.Equal(t, "hf.co/some-org/"+strings.Repeat("x", 43)+":Q4_K_M-instr", id)
+}
+
 // TestOpenaiRequestModel checks the model named for a request.
 func TestOpenaiRequestModel(t *testing.T) {
 	t.Run("Configured", func(t *testing.T) {

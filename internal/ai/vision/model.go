@@ -102,14 +102,15 @@ func (m *Model) GetModel() (model, name, version string) {
 	// 1) Service-specific override (expanded for env vars)
 	// 2) Model-specific override
 	// 3) Declarative model name
+	// The name is shortened only once the version is split off, so a tag is not cut.
 	serviceModel := m.Service.GetModel()
 	switch {
 	case serviceModel != "":
 		name = serviceModel
 	case strings.TrimSpace(m.Model) != "":
-		name = cleanModelId(m.Model)
+		name = modelIdText(m.Model)
 	default:
-		name = cleanModelId(m.Name)
+		name = modelIdText(m.Name)
 	}
 
 	// Return if no model is configured.
@@ -121,6 +122,7 @@ func (m *Model) GetModel() (model, name, version string) {
 
 	// OpenAI-compatible servers match identifiers verbatim, colons included.
 	if engine == openai.EngineName {
+		name = cleanModelId(name)
 		return name, name, ""
 	}
 
@@ -128,13 +130,15 @@ func (m *Model) GetModel() (model, name, version string) {
 	// without repeating parsing logic at each call site.
 	if parts := strings.SplitN(name, ":", 2); len(parts) == 2 && parts[0] != "" && parts[1] != "" {
 		name = parts[0]
-		version = parts[1]
+		version = cleanModelId(parts[1])
 	}
 
 	// Default to "latest" when no version was set.
 	if version == "" {
 		version = VersionLatest
 	}
+
+	name = cleanModelId(name)
 
 	switch engine {
 	case ollama.EngineName:
@@ -359,6 +363,8 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 	if m == nil || apiRequest == nil {
 		return
 	}
+
+	apiRequest.Engine = m.EngineName()
 
 	if m.requestEngine() == openai.EngineName {
 		apiRequest.Org = m.Service.EndpointOrg()

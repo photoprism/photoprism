@@ -80,8 +80,8 @@ func (m *Service) Endpoint() (uri, method string) {
 	return uri, method
 }
 
-// GetModel returns the model identifier override for the endpoint, if any. It expands only variables
-// whose names end in _MODEL. Case is preserved, as upstream catalogs match identifiers verbatim.
+// GetModel returns the model identifier override for the endpoint, if any, without shortening it. It
+// expands only variables whose names end in _MODEL. Case is preserved, as catalogs match it verbatim.
 func (m *Service) GetModel() string {
 	if m.Disabled {
 		return ""
@@ -93,7 +93,7 @@ func (m *Service) GetModel() string {
 		warnRefusedEnv("Service.Model", m.Model, refused, modelEnvSuffixes)
 	}
 
-	return cleanModelId(expanded)
+	return modelIdText(expanded)
 }
 
 // EndpointKey returns the access token belonging to the remote service endpoint, if any.

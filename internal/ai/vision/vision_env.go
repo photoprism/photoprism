@@ -75,3 +75,9 @@ func loadEnvKeyFromFile(envVar, fileVar string) {
 func envModel(name string) string {
 	return cleanModelId(strings.TrimSpace(os.Getenv(name)))
 }
+
+// envModelTagged returns the model identifier set in the environment variable without shortening it, so
+// Model.GetModel can keep its tag, or an empty string.
+func envModelTagged(name string) string {
+	return modelIdText(os.Getenv(name))
+}

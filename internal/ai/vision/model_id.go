@@ -27,3 +27,8 @@ func cleanModelId(s string) string {
 
 	return id
 }
+
+// modelIdText sanitizes a model identifier like cleanModelId, without shortening it.
+func modelIdText(s string) string {
+	return strings.TrimSpace(clean.ASCII(s))
+}

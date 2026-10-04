@@ -212,7 +212,7 @@ func (openaiBuilder) Build(ctx context.Context, model *Model, files Files, media
 // Parse converts an OpenAI Responses API payload into the internal ApiResponse representation.
 func (openaiParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
 	// Return an error for a failed request, as its response text is not a result.
-	if err := serviceStatusError(openai.EngineName, ApiFormatOpenAI, openaiRequestModel(req), status); err != nil {
+	if err := serviceStatusError(req.engineName(openai.EngineName), ApiFormatOpenAI, openaiRequestModel(req), status); err != nil {
 		return nil, err
 	}
 

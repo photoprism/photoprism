@@ -57,6 +57,16 @@ type ApiRequest struct {
 	Schema         json.RawMessage    `form:"schema" yaml:"Schema,omitempty" json:"schema,omitempty"`
 	Normalize      NormalizeType      `form:"-" yaml:"-" json:"-"`
 	ResponseFormat ApiFormat          `form:"-" yaml:"-" json:"-"`
+	Engine         string             `form:"-" yaml:"-" json:"-"`
+}
+
+// engineName returns the engine of the model the request was built for, or the given default.
+func (r *ApiRequest) engineName(defaultName string) string {
+	if r == nil || r.Engine == "" {
+		return defaultName
+	}
+
+	return r.Engine
 }
 
 // NewApiRequest returns a new service API request with the specified format and payload.

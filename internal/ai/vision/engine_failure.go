@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -17,19 +16,20 @@ func serviceFailureKey(engine, model string) string {
 }
 
 // warnServiceFailure logs a failed request once per engine, model, and status, and repeats at debug level.
-func warnServiceFailure(engine, model string, status int) {
+// The hint for a missing model depends on the request format, as the engine may use another API.
+func warnServiceFailure(engine string, format ApiFormat, model string, status int) {
 	if prev, loaded := serviceFailures.Swap(serviceFailureKey(engine, model), status); loaded && prev == status {
-		log.Debugf("vision: %s request for model %s failed again (status %d)", engine, clean.Log(model), status)
+		log.Debugf("vision: %s request for model %s failed again (status %d)", clean.Log(engine), clean.Log(model), status)
 		return
 	}
 
 	switch {
-	case status == http.StatusNotFound && engine == openai.EngineName:
-		log.Warnf("vision: %s model %s is unavailable (status %d), check the model name and the service uri", engine, clean.Log(model), status)
+	case status == http.StatusNotFound && format == ApiFormatOpenAI:
+		log.Warnf("vision: %s model %s is unavailable (status %d), check the model name and the service uri", clean.Log(engine), clean.Log(model), status)
 	case status == http.StatusNotFound || status == http.StatusGone:
-		log.Warnf("vision: %s model %s is unavailable (status %d), it may have been retired or renamed", engine, clean.Log(model), status)
+		log.Warnf("vision: %s model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(engine), clean.Log(model), status)
 	default:
-		log.Warnf("vision: %s request for model %s failed (status %d)", engine, clean.Log(model), status)
+		log.Warnf("vision: %s request for model %s failed (status %d)", clean.Log(engine), clean.Log(model), status)
 	}
 }
 
@@ -47,7 +47,7 @@ func serviceStatusError(engine string, format ApiFormat, model string, status in
 	}
 
 	if status >= http.StatusBadRequest {
-		warnServiceFailure(engine, model, status)
+		warnServiceFailure(engine, format, model, status)
 	}
 
 	return serviceError(format, status)

@@ -39,7 +39,7 @@ func registerOllamaEngineDefaults() {
 	defaultModel := ollama.DefaultModel
 
 	// Use the model set in the environment, or a different default model for the Ollama cloud service.
-	if envDefault := envModel(ollama.ModelEnv); envDefault != "" {
+	if envDefault := envModelTagged(ollama.ModelEnv); envDefault != "" {
 		defaultModel = envDefault
 	} else if baseUrl := os.Getenv(ollama.BaseUrlEnv); baseUrl == ollama.CloudBaseUrl {
 		defaultModel = ollama.CloudModel
@@ -158,7 +158,7 @@ var ollamaInvalidLabels sync.Map
 // Parse processes the Ollama service response.
 func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
 	// Return an error for a failed request, as its response text is not a result.
-	if err := serviceStatusError(ollama.EngineName, ApiFormatOllama, req.Model, status); err != nil {
+	if err := serviceStatusError(req.engineName(ollama.EngineName), ApiFormatOllama, req.Model, status); err != nil {
 		return nil, err
 	}
 
