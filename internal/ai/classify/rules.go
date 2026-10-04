@@ -5592,13 +5592,13 @@ var Rules = LabelRules{
 	},
 	"schipperke": {
 		Label:      "dog",
-		Threshold:  0.960000,
+		Threshold:  0.995000,
 		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"schipperke dog": {
 		Label:      "dog",
-		Threshold:  0.960000,
+		Threshold:  0.995000,
 		Priority:   5,
 		Categories: []string{"animal"},
 	},

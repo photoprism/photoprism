@@ -283,6 +283,38 @@ func TestModelBestLabelsClassSenses(t *testing.T) {
 	}
 }
 
+// TestModelBestLabelsSchipperkeFloor verifies fractional floors use raw probabilities before rounding.
+func TestModelBestLabelsSchipperkeFloor(t *testing.T) {
+	for _, alias := range []struct{ name, class string }{
+		{"LegacyAlias", "schipperke"},
+		{"CanonicalClass", "schipperke dog"},
+	} {
+		t.Run(alias.name, func(t *testing.T) {
+			model := &Model{labels: []string{alias.class, "toilet tissue"}}
+			for _, test := range []struct {
+				name        string
+				probability float32
+				accepted    bool
+			}{
+				{"ReviewedCatProbability", 0.99247146, false},
+				{"BelowFractionalFloor", 0.9949, false},
+				{"AtFractionalFloor", 0.995, true},
+				{"AboveFractionalFloor", 0.9951, true},
+			} {
+				t.Run(test.name, func(t *testing.T) {
+					result := model.bestLabels([]float32{test.probability, 1 - test.probability}, 10)
+					if test.accepted {
+						require.Len(t, result, 1)
+						assert.Equal(t, "dog", result[0].Name)
+					} else {
+						require.Empty(t, result)
+					}
+				})
+			}
+		})
+	}
+}
+
 // TestModelBestLabelsIgnoredPriority verifies the ignore boundary without excluding active priorities.
 func TestModelBestLabelsIgnoredPriority(t *testing.T) {
 	original := Rules

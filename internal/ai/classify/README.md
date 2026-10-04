@@ -10,7 +10,7 @@ The default and optional ImageNet-1k candidates share the 1000-entry vocabulary 
 
 ### Label Rules
 
-`rules.yml` maps lowercase raw class names to visible labels, confidence minimums, categories and priorities. Class meanings stay distinct: `cardigan` is clothing and uses the fashion/Portrait rule, while `cardigan dog` is the dog breed. The hardware class `nail` is ignored. Rules with priority -3 or lower are excluded even when a probability reaches exactly 1.
+`rules.yml` maps lowercase raw class names to visible labels, confidence minimums, categories and priorities. Class meanings stay distinct: `cardigan` is clothing and uses the fashion/Portrait rule, while `cardigan dog` is the dog breed. The hardware class `nail` is ignored. Rules with priority -3 or lower are excluded even when a probability reaches exactly 1. Schipperke aliases require a raw probability of at least 0.995 (99.5%); class minimums compare float32 probabilities before visible-label confidence is rounded.
 
 Regenerate `rules.go` with `go generate ./internal/ai/classify`. Generation rejects duplicate keys, unknown fields, uppercase names, missing alias targets and aliases that do not reference a direct rule. The package tests verify that the generated map matches the complete YAML source. The generator and its rejection tests are a normally compiled package; run them with `go test ./internal/ai/classify/gen`.
 

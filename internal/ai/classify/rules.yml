@@ -1846,14 +1846,14 @@ kuvasz dog:
 schipperke:
   label: dog
   priority: 5
-  threshold: 0.96
+  threshold: 0.995
   categories:
     - animal
 
 schipperke dog:
   label: dog
   priority: 5
-  threshold: 0.96
+  threshold: 0.995
   categories:
     - animal
 
