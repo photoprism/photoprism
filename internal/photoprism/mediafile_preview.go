@@ -18,19 +18,27 @@ func findPreviewImage(fileName, sidecarPath, originalsPath string, stripSequence
 	dirs := []string{sidecarPath, fs.PPHiddenPathname}
 	checked := make(map[string]bool)
 
+	var preview *MediaFile
+
 	for _, fileType := range types {
-		for _, name := range fileType.FindAll(fileName, dirs, originalsPath, stripSequence) {
+		fileType.FindEach(fileName, dirs, originalsPath, stripSequence, func(name string) bool {
 			if checked[name] {
-				continue
+				return false
 			}
 
 			checked[name] = true
 
 			if !previewContentMatches(name, fileType) {
 				log.Debugf("media: %s is not used as preview, as its content does not match its type", clean.Log(filepath.Base(name)))
-			} else if preview, err := NewMediaFile(name); err == nil && preview.Ok() && preview.IsPreviewImage() {
-				return preview
+			} else if f, err := NewMediaFile(name); err == nil && f.Ok() && f.IsPreviewImage() {
+				preview = f
 			}
+
+			return preview != nil
+		})
+
+		if preview != nil {
+			return preview
 		}
 	}
 

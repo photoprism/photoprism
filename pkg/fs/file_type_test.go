@@ -210,6 +210,73 @@ func TestType_FindAll(t *testing.T) {
 	})
 }
 
+func TestType_FindEach(t *testing.T) {
+	parent := t.TempDir()
+	dir := filepath.Join(parent, "originals", "2024")
+	sidecar := filepath.Join(parent, "sidecar")
+	dirs := []string{sidecar, PPHiddenPathname}
+	fileName := filepath.Join(dir, "IMG_1.heic")
+	files := []string{
+		filepath.Join(dir, "IMG_1.jpg"),
+		filepath.Join(sidecar, "2024", "IMG_1.heic.jpg"),
+		filepath.Join(dir, PPHiddenPathname, "IMG_1.jpg"),
+	}
+
+	for _, name := range files {
+		require.NoError(t, os.MkdirAll(filepath.Dir(name), 0o700))
+		require.NoError(t, os.WriteFile(name, []byte("x"), 0o600))
+	}
+
+	find := func(accept func(string) bool) string {
+		return ImageJpeg.FindEach(fileName, dirs, filepath.Join(parent, "originals"), false, accept)
+	}
+
+	t.Run("NilAccept", func(t *testing.T) {
+		assert.Equal(t, files[0], find(nil))
+		assert.Equal(t, ImageJpeg.FindFirst(fileName, dirs, filepath.Join(parent, "originals"), false), find(nil))
+	})
+	t.Run("StopsAtFirstAccepted", func(t *testing.T) {
+		var visited []string
+		assert.Equal(t, files[0], find(func(name string) bool { visited = append(visited, name); return true }))
+		assert.Equal(t, []string{files[0]}, visited)
+	})
+	t.Run("SkipsRejected", func(t *testing.T) {
+		assert.Equal(t, files[1], find(func(name string) bool { return name != files[0] }))
+		assert.Equal(t, files[2], find(func(name string) bool { return name == files[2] }))
+	})
+	t.Run("FindAllOrder", func(t *testing.T) {
+		var visited []string
+		assert.Equal(t, "", find(func(name string) bool { visited = append(visited, name); return false }))
+		assert.Equal(t, ImageJpeg.FindAll(fileName, dirs, filepath.Join(parent, "originals"), false), visited)
+		assert.Equal(t, []string{files[0], files[0], files[1], files[2], files[2]}, visited)
+	})
+	t.Run("NameOrder", func(t *testing.T) {
+		// The full name comes before the base name, and both before their lower and upper case variants.
+		dir := t.TempDir()
+		for _, name := range []string{"Img_2.heic.jpg", "Img_2.jpg", "img_2.jpg", "IMG_2.jpg"} {
+			require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte("x"), 0o600))
+		}
+		var visited []string
+		ImageJpeg.FindEach(filepath.Join(dir, "Img_2.heic"), nil, dir, false, func(name string) bool { visited = append(visited, filepath.Base(name)); return false })
+		assert.Equal(t, []string{"Img_2.heic.jpg", "Img_2.jpg", "img_2.jpg", "IMG_2.jpg"}, visited)
+	})
+	t.Run("ExtensionOrder", func(t *testing.T) {
+		// Each extension is searched in all directories before the next one.
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_3.jpeg"), []byte("x"), 0o600))
+		require.NoError(t, os.WriteFile(filepath.Join(sidecar, "2024", "IMG_3.heic.jpg"), []byte("x"), 0o600))
+		assert.Equal(t, filepath.Join(sidecar, "2024", "IMG_3.heic.jpg"), ImageJpeg.FindFirst(filepath.Join(dir, "IMG_3.heic"), dirs, filepath.Join(parent, "originals"), false))
+	})
+	t.Run("RepeatedDir", func(t *testing.T) {
+		repeated := []string{sidecar, sidecar, PPHiddenPathname, PPHiddenPathname}
+		assert.Equal(t, ImageJpeg.FindAll(fileName, dirs, filepath.Join(parent, "originals"), false), ImageJpeg.FindAll(fileName, repeated, filepath.Join(parent, "originals"), false))
+	})
+	t.Run("EmptyBase", func(t *testing.T) {
+		called := false
+		assert.Equal(t, "", ImageJpeg.FindEach(dir+string(os.PathSeparator)+".", dirs, parent, false, func(string) bool { called = true; return true }))
+		assert.False(t, called)
+	})
+}
+
 func TestFileType(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		result := FileType("")

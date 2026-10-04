@@ -102,112 +102,69 @@ func (t Type) Find(fileName string, stripSequence bool) string {
 
 // FindFirst searches a list of directories for the first file with the same base name and a given type.
 func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSequence bool) string {
-	fileBase := filepath.Base(fileName)
+	return t.FindEach(fileName, dirs, baseDir, stripSequence, nil)
+}
+
+// FindAll searches a list of directories for files with the same base name and a given type.
+func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSequence bool) (results []string) {
+	t.FindEach(fileName, dirs, baseDir, stripSequence, func(name string) bool {
+		results = append(results, name)
+		return false
+	})
+
+	return results
+}
+
+// FindEach searches a list of directories for files with the same base name and a given type, by extension,
+// directory and name variant, and returns the first file that accept takes, or the first file found if accept
+// is nil. It returns "" if there is none.
+func (t Type) FindEach(fileName string, dirs []string, baseDir string, stripSequence bool, accept func(fileName string) bool) string {
 	fileBasePrefix := BasePrefix(fileName, stripSequence)
-	fileBaseLower := strings.ToLower(fileBasePrefix)
-	fileBaseUpper := strings.ToUpper(fileBasePrefix)
 
 	// A name without a base would match files named after the folder.
 	if NoBaseName(fileBasePrefix) {
 		return ""
 	}
 
+	names := []string{filepath.Base(fileName), fileBasePrefix}
+
+	if !ignoreCase {
+		names = append(names, strings.ToLower(fileBasePrefix), strings.ToUpper(fileBasePrefix))
+	}
+
 	filePath := filepath.Dir(fileName)
-	search := append([]string{filePath}, dirs...)
+	search := make([]string, 0, len(dirs)+1)
+	lastDir := ""
+
+	for _, dir := range append([]string{filePath}, dirs...) {
+		if dir == "" || dir == lastDir {
+			continue
+		}
+
+		lastDir = dir
+
+		if dir != filePath {
+			if filepath.IsAbs(dir) {
+				dir = filepath.Join(dir, RelName(filePath, baseDir))
+			} else {
+				dir = filepath.Join(filePath, dir)
+			}
+		}
+
+		search = append(search, dir)
+	}
 
 	for _, ext := range FileTypes[t] {
-		lastDir := ""
-
 		for _, dir := range search {
-			if dir == "" || dir == lastDir {
-				continue
-			}
-
-			lastDir = dir
-
-			if dir != filePath {
-				if filepath.IsAbs(dir) {
-					dir = filepath.Join(dir, RelName(filePath, baseDir))
-				} else {
-					dir = filepath.Join(filePath, dir)
+			for _, name := range names {
+				if info, err := os.Stat(filepath.Join(dir, name) + ext); err != nil || !info.Mode().IsRegular() {
+					continue
+				} else if found := filepath.Join(dir, info.Name()); accept == nil || accept(found) {
+					return found
 				}
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			} else if info, err = os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			}
-
-			if ignoreCase {
-				continue
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			} else if info, err = os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
 			}
 		}
 	}
 
 	return ""
-}
-
-// FindAll searches a list of directories for files with the same base name and a given type.
-func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSequence bool) (results []string) {
-	fileBase := filepath.Base(fileName)
-	fileBasePrefix := BasePrefix(fileName, stripSequence)
-	fileBaseLower := strings.ToLower(fileBasePrefix)
-	fileBaseUpper := strings.ToUpper(fileBasePrefix)
-
-	// A name without a base would match files named after the folder.
-	if NoBaseName(fileBasePrefix) {
-		return nil
-	}
-
-	filePath := filepath.Dir(fileName)
-	search := append([]string{filePath}, dirs...)
-
-	for _, ext := range FileTypes[t] {
-		lastDir := ""
-
-		for _, dir := range search {
-			if dir == "" || dir == lastDir {
-				continue
-			}
-
-			lastDir = dir
-
-			if dir != filePath {
-				if filepath.IsAbs(dir) {
-					dir = filepath.Join(dir, RelName(filePath, baseDir))
-				} else {
-					dir = filepath.Join(filePath, dir)
-				}
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
-
-			if ignoreCase {
-				continue
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
-		}
-	}
-
-	return results
 }
