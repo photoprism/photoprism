@@ -90,9 +90,10 @@ func ignoreCaseIn(dir string) bool {
 }
 
 // CaseInsensitiveDir tests if dir is on a case-insensitive file system without writing to it, and returns an
-// error naming the reason if it cannot tell. It looks up a name with its ASCII letter case swapped, reading at most
-// caseProbeDirs folders on the same device without following links below dir. The result describes the file
-// system of dir, not mounts below it, which are opened but not read; a CIFS mount with noserverino reads as unknown.
+// error naming the reason if it cannot tell. It looks up a file name with its ASCII letter case swapped, reading
+// at most caseProbeDirs folders on the same device without following links below dir. The result describes the
+// file system of dir, not mounts below it, which are opened but not read; a CIFS mount with noserverino reads as
+// unknown.
 func CaseInsensitiveDir(dir string) (insensitive bool, err error) {
 	return caseProbe{readDir: readDirN, lstat: os.Lstat}.run(dir)
 }
@@ -117,9 +118,9 @@ type caseProbe struct {
 	lstat   func(name string) (os.FileInfo, error)
 }
 
-// run checks the first entry of dir, or of a folder below it, whose name changes with its letter case swapped.
-// Both spellings in the listing, or a missing swapped name, mean case-sensitive, and the same file means
-// case-insensitive; a different file, an error, or no such entry within the budget leave it unknown.
+// run checks the first regular file in dir, or in a folder below it, whose name changes with its letter case
+// swapped. Both spellings in the listing, or a missing swapped name, mean case-sensitive, and the same file means
+// case-insensitive; a different file, an error, or no such file within the budget leave it unknown.
 func (p caseProbe) run(dir string) (insensitive bool, err error) {
 	type folder struct {
 		path  string
@@ -154,10 +155,12 @@ func (p caseProbe) run(dir string) (insensitive bool, err error) {
 			names[i] = e.Name()
 		}
 
-		for _, name := range names {
+		for i, name := range names {
 			swapped := swapASCIICase(name)
 
-			if swapped == name {
+			// Only regular files are looked up, as a CIFS client stops using server inode numbers for
+			// the whole mount when it finds a folder under a second spelling.
+			if swapped == name || !entries[i].Type().IsRegular() {
 				continue
 			} else if slices.Contains(names, swapped) {
 				return false, nil

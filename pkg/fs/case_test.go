@@ -266,6 +266,30 @@ func TestCaseProbe_Run(t *testing.T) {
 		assertCaseResult(t, insensitive, reason, true, nil)
 		assert.Equal(t, 3, readDirs)
 	})
+	t.Run("FolderNames", func(t *testing.T) {
+		// A CIFS client returns a new inode number for a folder found under a second spelling, so folder
+		// names are not looked up; the probe reads the files below them instead.
+		dir := t.TempDir()
+		writeCaseTestFiles(t, dir, "Holiday/IMG_0001.jpg")
+		other := t.TempDir()
+
+		var readDirs, lstats int
+
+		cifsLstat := func(name string) (os.FileInfo, error) {
+			info, err := caseInsensitiveLstat(name)
+
+			if _, nameErr := os.Lstat(name); err == nil && nameErr != nil && info.IsDir() {
+				return os.Lstat(other)
+			}
+
+			return info, err
+		}
+
+		insensitive, reason := countingCaseProbe(cifsLstat, &readDirs, &lstats).run(dir)
+		assertCaseResult(t, insensitive, reason, true, nil)
+		assert.Equal(t, 2, readDirs)
+		assert.Equal(t, 2, lstats)
+	})
 	t.Run("BelowDepth", func(t *testing.T) {
 		dir := t.TempDir()
 		writeCaseTestFiles(t, dir, "2024/01/02/IMG_0001.jpg")
