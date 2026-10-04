@@ -293,9 +293,7 @@ func (m *Model) warnUnresolvedUri() {
 	key := m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
 
 	if _, warned := unresolvedUriWarned.LoadOrStore(key, struct{}{}); !warned {
-		name, _, _ := m.GetModel()
-		log.Warnf("vision: %s, so no service is used (details in system log)", m.unresolvedUriErrText())
-		event.SystemWarn([]string{"vision", "service uri of %s model %s does not resolve"}, clean.Log(m.Type), clean.Log(name))
+		log.Warnf("vision: %s, so no service is used", m.unresolvedUriErrText())
 	}
 }
 
@@ -311,10 +309,11 @@ func (m *Model) unresolvedUriErr() error {
 	return m.unresolvedUriErrText()
 }
 
-// unresolvedUriErrText returns the error for a model whose service URI does not resolve. It names
-// the model type only, as the model identifier may be expanded from the environment.
+// unresolvedUriErrText returns the error for a model whose service URI does not resolve.
 func (m *Model) unresolvedUriErrText() error {
-	return fmt.Errorf("service uri of %s model does not resolve", clean.Log(m.Type))
+	name, _, _ := m.GetModel()
+
+	return fmt.Errorf("service uri of %s model %s does not resolve", clean.Log(m.Type), clean.Log(name))
 }
 
 // ApplyService updates the ApiRequest with service-specific

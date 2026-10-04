@@ -465,7 +465,6 @@ func TestPerformApiRequestErrorLog(t *testing.T) {
 		{"OpenAIDecodeError", ApiFormatOpenAI, http.StatusOK, `{"output":"` + marker + `"}`, "openai service returned an invalid response (status 200)"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			resetOllamaFailures(t)
 			logHook, systemHook := captureLogs(t)
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -493,24 +492,9 @@ func TestPerformApiRequestErrorLog(t *testing.T) {
 				logged = serviceError(tc.format, tc.code).Error()
 			}
 
-			// A failed Ollama request also writes its once-per-model warning to the system log.
-			var errorEntries, warnEntries []*logrus.Entry
-			for _, e := range systemHook.AllEntries() {
-				switch e.Level {
-				case logrus.ErrorLevel:
-					errorEntries = append(errorEntries, e)
-				case logrus.WarnLevel:
-					warnEntries = append(warnEntries, e)
-				}
-			}
-			if tc.format == ApiFormatOllama && tc.code >= http.StatusBadRequest {
-				require.Len(t, warnEntries, 1)
-			} else {
-				require.Empty(t, warnEntries)
-			}
-			require.Len(t, systemHook.AllEntries(), len(errorEntries)+len(warnEntries))
-			require.Len(t, errorEntries, 1)
-			entry := errorEntries[0]
+			require.Len(t, systemHook.AllEntries(), 1)
+			entry := systemHook.LastEntry()
+			assert.Equal(t, logrus.ErrorLevel, entry.Level)
 			assert.True(t, strings.HasPrefix(entry.Message, "vision: "+logged+" › "), entry.Message)
 			assert.NotContains(t, entry.Message, "\x1b[")
 

@@ -37,15 +37,20 @@ func (m *Service) UriUnresolved() bool {
 	return uri == ""
 }
 
-// Endpoint returns the remote service request method and endpoint URL, if any.
+// Endpoint returns the remote service request method and endpoint URL, if any. The URI expands only
+// variables whose names end in _URL, _URI, or _HOST.
 func (m *Service) Endpoint() (uri, method string) {
 	if m.Disabled || strings.TrimSpace(m.Uri) == "" {
 		return "", ""
 	}
 
-	ensureEnv()
+	// A refused variable leaves the URI without a service rather than with a partial value.
+	expanded, refused := expandEnvSuffix(m.Uri, uriEnvSuffixes)
 
-	if uri = strings.TrimSpace(os.ExpandEnv(m.Uri)); uri == "" || strings.Contains(uri, "${") {
+	if len(refused) > 0 {
+		warnRefusedEnv("Service.Uri", m.Uri, refused, uriEnvSuffixes)
+		return "", ""
+	} else if uri = strings.TrimSpace(expanded); uri == "" || strings.Contains(uri, "${") {
 		return "", ""
 	}
 
@@ -75,17 +80,20 @@ func (m *Service) Endpoint() (uri, method string) {
 	return uri, method
 }
 
-// GetModel returns the model identifier override for the endpoint, if any.
-// Case is preserved because upstream catalogs (e.g. Hugging Face IDs on
-// OpenAI-compatible servers) match identifiers verbatim.
+// GetModel returns the model identifier override for the endpoint, if any. It expands only variables
+// whose names end in _MODEL. Case is preserved, as upstream catalogs match identifiers verbatim.
 func (m *Service) GetModel() string {
 	if m.Disabled {
 		return ""
 	}
 
-	ensureEnv()
+	expanded, refused := expandEnvSuffix(m.Model, modelEnvSuffixes)
 
-	return cleanModelId(os.ExpandEnv(m.Model))
+	if len(refused) > 0 {
+		warnRefusedEnv("Service.Model", m.Model, refused, modelEnvSuffixes)
+	}
+
+	return cleanModelId(expanded)
 }
 
 // EndpointKey returns the access token belonging to the remote service endpoint, if any.

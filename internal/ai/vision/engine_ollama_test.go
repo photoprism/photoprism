@@ -316,7 +316,7 @@ func TestOllamaParserUnavailableStatus(t *testing.T) {
 	})
 	t.Run("ServerErrorCaption", func(t *testing.T) {
 		resetOllamaFailures(t)
-		logHook, systemHook := captureLogs(t)
+		logHook, _ := captureLogs(t)
 		raw, err := json.Marshal(ollama.Response{Model: "qwen2.5vl:latest", Response: "A caption from a failed request."})
 		require.NoError(t, err)
 
@@ -325,10 +325,7 @@ func TestOllamaParserUnavailableStatus(t *testing.T) {
 		assert.EqualError(t, err, "ollama service request failed (status 500)")
 		require.NotNil(t, logHook.LastEntry())
 		assert.Equal(t, logrus.WarnLevel, logHook.LastEntry().Level)
-		assert.Equal(t, "vision: ollama request failed (status 500, details in system log)", logHook.LastEntry().Message)
-		require.NotNil(t, systemHook.LastEntry())
-		assert.Equal(t, logrus.WarnLevel, systemHook.LastEntry().Level)
-		assert.Equal(t, "vision: ollama request for model qwen2.5vl:latest failed (status 500)", systemHook.LastEntry().Message)
+		assert.Equal(t, "vision: ollama request for model qwen2.5vl:latest failed (status 500)", logHook.LastEntry().Message)
 	})
 	t.Run("Redirect", func(t *testing.T) {
 		logHook, _ := captureLogs(t)
@@ -371,30 +368,14 @@ func TestWarnOllamaFailure(t *testing.T) {
 
 	t.Run("RepeatedAtDebugLevel", func(t *testing.T) {
 		resetOllamaFailures(t)
-		logHook, systemHook := captureLogs(t)
+		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusNotFound)
 		failed(t, "gemma3:27b", http.StatusNotFound)
 		failed(t, "gemma3:27b", http.StatusNotFound)
-		assert.Equal(t, []string{"vision: ollama model is unavailable (status 404), it may have been retired or renamed (details in system log)"}, ollamaFailureWarnings(logHook))
-		assert.Equal(t, []string{"vision: ollama model gemma3:27b is unavailable (status 404)"}, ollamaFailureWarnings(systemHook))
-		require.NotNil(t, systemHook.LastEntry())
-		assert.Equal(t, logrus.DebugLevel, systemHook.LastEntry().Level)
-		assert.Equal(t, "vision: ollama request for model gemma3:27b failed again (status 404)", systemHook.LastEntry().Message)
-	})
-	t.Run("ModelInSystemLogOnly", func(t *testing.T) {
-		resetOllamaFailures(t)
-		logHook, systemHook := captureLogs(t)
-		failed(t, "private/vision-model:q4", http.StatusNotFound)
-		failed(t, "private/vision-model:q4", http.StatusNotFound)
-		failed(t, "private/vision-model:q4", http.StatusInternalServerError)
-		require.NotEmpty(t, logHook.AllEntries())
-		for _, entry := range logHook.AllEntries() {
-			assert.NotContains(t, entry.Message, "private/vision-model")
-		}
-		assert.Len(t, systemHook.AllEntries(), 3)
-		for _, entry := range systemHook.AllEntries() {
-			assert.Contains(t, entry.Message, "private/vision-model:q4")
-		}
+		assert.Equal(t, []string{"vision: ollama model gemma3:27b is unavailable (status 404), it may have been retired or renamed"}, ollamaFailureWarnings(logHook))
+		require.NotNil(t, logHook.LastEntry())
+		assert.Equal(t, logrus.DebugLevel, logHook.LastEntry().Level)
+		assert.Equal(t, "vision: ollama request for model gemma3:27b failed again (status 404)", logHook.LastEntry().Message)
 	})
 	t.Run("StatusChange", func(t *testing.T) {
 		resetOllamaFailures(t)
@@ -441,10 +422,9 @@ func TestWarnOllamaFailure(t *testing.T) {
 	})
 	t.Run("RedirectNotLogged", func(t *testing.T) {
 		resetOllamaFailures(t)
-		logHook, systemHook := captureLogs(t)
+		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusMultipleChoices)
 		assert.Empty(t, logHook.AllEntries())
-		assert.Empty(t, ollamaFailureWarnings(systemHook))
 		_, loaded := ollamaFailures.Load("gemma3:27b")
 		assert.False(t, loaded)
 	})
@@ -469,7 +449,7 @@ func TestOllamaParserInvalidLabels(t *testing.T) {
 		switch entry.Level {
 		case logrus.WarnLevel:
 			warn++
-			assert.Equal(t, "vision: ollama returned invalid labels (details in system log)", entry.Message)
+			assert.Equal(t, "vision: ollama returned invalid labels for model qwen2.5vl:latest", entry.Message)
 		case logrus.DebugLevel:
 			if strings.Contains(entry.Message, "(parse ollama labels)") {
 				debug++
@@ -482,7 +462,7 @@ func TestOllamaParserInvalidLabels(t *testing.T) {
 
 	assert.Equal(t, 1, warn)
 	assert.Equal(t, 1, debug)
-	assert.Equal(t, []string{"vision: ollama returned invalid labels for model qwen2.5vl:latest"}, ollamaFailureWarnings(systemHook))
+	assert.Empty(t, systemHook.AllEntries())
 }
 
 // resetOllamaInvalidLabels clears the logged invalid-label models before and after a test.
@@ -505,12 +485,11 @@ func TestOllamaParserInvalidLabelsOnce(t *testing.T) {
 
 	t.Run("Repeated", func(t *testing.T) {
 		resetOllamaInvalidLabels(t)
-		logHook, systemHook := captureLogs(t)
+		logHook, _ := captureLogs(t)
 		parse(t, "gemma3:27b", invalid)
 		parse(t, "gemma3:27b", invalid)
 		parse(t, "qwen3-vl:8b", invalid)
 		assert.Len(t, ollamaFailureWarnings(logHook), 2)
-		assert.Len(t, ollamaFailureWarnings(systemHook), 2)
 	})
 	t.Run("ClearedByValidLabels", func(t *testing.T) {
 		resetOllamaInvalidLabels(t)

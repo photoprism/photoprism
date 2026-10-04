@@ -9,7 +9,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -162,19 +161,16 @@ var ollamaFailures sync.Map
 var ollamaInvalidLabels sync.Map
 
 // warnOllamaFailure logs a failed request once per model and status, and repeats at debug level.
-// The model is named in the system log only, as it may be expanded from the environment.
 func warnOllamaFailure(model string, status int) {
 	if prev, loaded := ollamaFailures.Swap(model, status); loaded && prev == status {
-		event.SystemDebug([]string{"vision", "ollama request for model %s failed again (status %d)"}, clean.Log(model), status)
+		log.Debugf("vision: ollama request for model %s failed again (status %d)", clean.Log(model), status)
 		return
 	}
 
 	if status == http.StatusNotFound || status == http.StatusGone {
-		log.Warnf("vision: ollama model is unavailable (status %d), it may have been retired or renamed (details in system log)", status)
-		event.SystemWarn([]string{"vision", "ollama model %s is unavailable (status %d)"}, clean.Log(model), status)
+		log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(model), status)
 	} else {
-		log.Warnf("vision: ollama request failed (status %d, details in system log)", status)
-		event.SystemWarn([]string{"vision", "ollama request for model %s failed (status %d)"}, clean.Log(model), status)
+		log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(model), status)
 	}
 }
 
@@ -226,8 +222,7 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	if !parsedLabels && fallbackJSON != "" && (req.Format == FormatJSON || strings.HasPrefix(fallbackJSON, "{")) {
 		if labels, parseErr := parseOllamaLabels(fallbackJSON); parseErr != nil {
 			if _, warned := ollamaInvalidLabels.LoadOrStore(req.Model, struct{}{}); !warned {
-				log.Warnf("vision: ollama returned invalid labels (details in system log)")
-				event.SystemWarn([]string{"vision", "ollama returned invalid labels for model %s"}, clean.Log(req.Model))
+				log.Warnf("vision: ollama returned invalid labels for model %s", clean.Log(req.Model))
 			}
 			log.Debugf("vision: %q (parse ollama labels)", parseErr.Error())
 		} else if len(labels) > 0 {

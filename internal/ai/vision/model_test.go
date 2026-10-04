@@ -1036,13 +1036,10 @@ func TestModel_EndpointUnresolved(t *testing.T) {
 
 		require.Len(t, logHook.AllEntries(), 2)
 		assert.Equal(t, logrus.WarnLevel, logHook.AllEntries()[0].Level)
-		assert.Equal(t, "vision: service uri of labels model does not resolve, so no service is used (details in system log)", logHook.AllEntries()[0].Message)
-		assert.Equal(t, "vision: service uri of caption model does not resolve, so no service is used (details in system log)", logHook.AllEntries()[1].Message)
-		require.Len(t, systemHook.AllEntries(), 2)
-		assert.Equal(t, logrus.WarnLevel, systemHook.AllEntries()[0].Level)
-		assert.Equal(t, "vision: service uri of labels model custom does not resolve", systemHook.AllEntries()[0].Message)
-		assert.Equal(t, "vision: service uri of caption model gemma3 does not resolve", systemHook.AllEntries()[1].Message)
-		assert.NotContains(t, systemHook.AllEntries()[0].Message, "pass")
+		assert.Equal(t, "vision: service uri of labels model custom does not resolve, so no service is used", logHook.AllEntries()[0].Message)
+		assert.Equal(t, "vision: service uri of caption model gemma3 does not resolve, so no service is used", logHook.AllEntries()[1].Message)
+		assert.Empty(t, systemHook.AllEntries())
+		assert.NotContains(t, logHook.AllEntries()[0].Message, "pass")
 	})
 	t.Run("ResolvedOrBlank", func(t *testing.T) {
 		useSharedService(t, "https://vision.example.com/api/v1/vision", "shared-vision-key")
@@ -1062,30 +1059,14 @@ func TestModel_EndpointUnresolved(t *testing.T) {
 // TestModel_UnresolvedUriErr checks the error for a model whose own service URI does not resolve.
 func TestModel_UnresolvedUriErr(t *testing.T) {
 	t.Run("Unresolved", func(t *testing.T) {
-		logHook, systemHook := captureLogs(t)
+		logHook, _ := captureLogs(t)
 		resetUnresolvedUriWarnings(t)
 
 		model := &Model{Type: ModelTypeNsfw, Name: "qwen3-vl:4b", Engine: ollama.EngineName, Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}
-		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model does not resolve")
-		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model does not resolve")
+		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model qwen3-vl:4b does not resolve")
+		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model qwen3-vl:4b does not resolve")
 		require.Len(t, logHook.AllEntries(), 1)
-		assert.Equal(t, "vision: service uri of nsfw model does not resolve, so no service is used (details in system log)", logHook.LastEntry().Message)
-		require.Len(t, systemHook.AllEntries(), 1)
-		assert.Equal(t, "vision: service uri of nsfw model qwen3-vl:4b does not resolve", systemHook.LastEntry().Message)
-	})
-	t.Run("ServiceModelFromEnv", func(t *testing.T) {
-		logHook, systemHook := captureLogs(t)
-		resetUnresolvedUriWarnings(t)
-		t.Setenv("VISION_TEST_SERVICE_MODEL", "private/vision-model:q4")
-
-		model := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Model: "${VISION_TEST_SERVICE_MODEL}"}}
-		assert.EqualError(t, model.unresolvedUriErr(), "service uri of caption model does not resolve")
-		require.Len(t, logHook.AllEntries(), 1)
-		for _, entry := range logHook.AllEntries() {
-			assert.NotContains(t, entry.Message, "private/vision-model")
-		}
-		require.Len(t, systemHook.AllEntries(), 1)
-		assert.Contains(t, systemHook.LastEntry().Message, "private/vision-model:q4")
+		assert.Equal(t, "vision: service uri of nsfw model qwen3-vl:4b does not resolve, so no service is used", logHook.LastEntry().Message)
 	})
 	t.Run("Resolved", func(t *testing.T) {
 		assert.NoError(t, (&Model{Type: ModelTypeLabels, Service: Service{Uri: "https://models.example.com/api"}}).unresolvedUriErr())
@@ -1097,7 +1078,7 @@ func TestModel_UnresolvedUriErr(t *testing.T) {
 
 // TestModel_WarnUnresolvedUri checks that the warning for an unresolved service URI is logged once per model.
 func TestModel_WarnUnresolvedUri(t *testing.T) {
-	logHook, systemHook := captureLogs(t)
+	logHook, _ := captureLogs(t)
 	resetUnresolvedUriWarnings(t)
 
 	model := &Model{Type: ModelTypeLabels, Name: "custom", Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}
@@ -1106,7 +1087,6 @@ func TestModel_WarnUnresolvedUri(t *testing.T) {
 	(&Model{Type: ModelTypeLabels, Name: "other", Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}).warnUnresolvedUri()
 
 	require.Len(t, logHook.AllEntries(), 2)
-	require.Len(t, systemHook.AllEntries(), 2)
 }
 
 // TestService_UriUnresolved checks which service URIs count as unresolved.

@@ -1,6 +1,6 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -95,7 +95,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 
 #### Ollama Cloud Models
 
-Set `OLLAMA_BASE_URL=https://ollama.com` and provide `OLLAMA_API_KEY` to use hosted models (no local download or GPU required). The default cloud model is `minimax-m3:cloud`. The cloud catalog changes over time and models are occasionally retired without notice, so treat this as a snapshot and consult <https://ollama.com/search?c=cloud> for the current list; PhotoPrism logs a warning when a configured model returns HTTP 404/410, once until a request succeeds again; the model is named in the console system log only, as its identifier may be expanded from the environment.
+Set `OLLAMA_BASE_URL=https://ollama.com` and provide `OLLAMA_API_KEY` to use hosted models (no local download or GPU required). The default cloud model is `minimax-m3:cloud`. The cloud catalog changes over time and models are occasionally retired without notice, so treat this as a snapshot and consult <https://ollama.com/search?c=cloud> for the current list; PhotoPrism logs a warning when a configured model returns HTTP 404/410, once until a request succeeds again, naming the model.
 
 The table below reports median single-image latency over a fixed 16-image benchmark, and how reliably each model honors a requested output language. All six returned well-formed JSON for every English request, so the differences are in verbosity, speed, and language handling rather than reliability.
 
