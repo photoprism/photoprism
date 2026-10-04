@@ -278,6 +278,47 @@ func TestType_FindEach(t *testing.T) {
 	})
 }
 
+func TestFullNameCases(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, []string{"IMG_1234.raw", "IMG_1234.RAW", "img_1234.raw", "img_1234.RAW"}, fullNameCases("/photos/IMG_1234.raw"))
+		assert.Equal(t, []string{"Img_1.Cr2", "Img_1.cr2", "Img_1.CR2", "img_1.Cr2", "img_1.cr2", "img_1.CR2", "IMG_1.Cr2", "IMG_1.cr2", "IMG_1.CR2"}, fullNameCases("Img_1.Cr2"))
+	})
+	t.Run("NoExtension", func(t *testing.T) {
+		assert.Equal(t, []string{"IMG_1", "img_1"}, fullNameCases("/photos/IMG_1"))
+	})
+	t.Run("DotName", func(t *testing.T) {
+		assert.Equal(t, []string{"..jpg", "..JPG"}, fullNameCases("/photos/..jpg"))
+	})
+}
+
+func TestType_FindGenerated_SidecarCases(t *testing.T) {
+	// Each of these names is found for a RAW file named IMG_1234.raw or img_1234.RAW, in any case.
+	names := []string{
+		"img_1234.jpg", "IMG_1234.jpg", "img_1234.JPG", "IMG_1234.JPG",
+		"img_1234.jpeg", "IMG_1234.jpeg", "img_1234.JPEG", "IMG_1234.JPEG",
+		"img_1234.raw.jpg", "IMG_1234.raw.jpg", "img_1234.RAW.JPG", "IMG_1234.RAW.JPG",
+		"img_1234.raw.jpeg", "IMG_1234.raw.jpeg", "img_1234.RAW.JPEG", "IMG_1234.RAW.JPEG",
+	}
+
+	dir := t.TempDir()
+
+	for _, name := range names {
+		require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte("x"), 0o600))
+	}
+
+	for _, original := range []string{"IMG_1234.raw", "img_1234.RAW", "IMG_1234.RAW", "img_1234.raw"} {
+		var found []string
+		ImageJpeg.FindGenerated(filepath.Join(dir, original), nil, dir, false, func(name string) bool {
+			found = append(found, filepath.Base(name))
+			return false
+		})
+		assert.ElementsMatch(t, names, found, original)
+	}
+
+	// Other lookups only check the full name as given.
+	assert.NotContains(t, ImageJpeg.FindAll(filepath.Join(dir, "IMG_1234.raw"), nil, dir, false), filepath.Join(dir, "img_1234.RAW.JPG"))
+}
+
 func TestType_FindGenerated(t *testing.T) {
 	parent := t.TempDir()
 	originals := filepath.Join(parent, "originals")
@@ -306,6 +347,11 @@ func TestType_FindGenerated(t *testing.T) {
 		write(t, filepath.Join(dir, "IMG_1.jpeg"), filepath.Join(dir, "img_1.JPG"))
 		assert.ElementsMatch(t, []string{filepath.Join(dir, "IMG_1.jpeg"), filepath.Join(dir, "img_1.JPG")}, findAll(filepath.Join(dir, "IMG_1.heic")))
 	})
+	t.Run("FullNameCasesLast", func(t *testing.T) {
+		// The full name in other cases comes after the other names of the same extension.
+		write(t, filepath.Join(dir, "img_5.HEIC.jpg"), filepath.Join(dir, "IMG_5.jpg"))
+		assert.Equal(t, []string{filepath.Join(dir, "IMG_5.jpg"), filepath.Join(dir, "img_5.HEIC.jpg")}, findAll(filepath.Join(dir, "IMG_5.heic")))
+	})
 	t.Run("GeneratedNames", func(t *testing.T) {
 		generated := []string{
 			filepath.Join(sidecar, "2024", "IMG_2.heic.jpg"),
@@ -314,6 +360,8 @@ func TestType_FindGenerated(t *testing.T) {
 		}
 		write(t, generated...)
 		write(t,
+			filepath.Join(sidecar, "2024", "IMG_2.HEIC.jpg"),
+			filepath.Join(sidecar, "2024", "img_2.heic.jpg"),
 			filepath.Join(sidecar, "2024", "IMG_2.heic.JPG"),
 			filepath.Join(sidecar, "2024", "IMG_2.jpeg"),
 			filepath.Join(sidecar, "2024", "img_2.jpg"),

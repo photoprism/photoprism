@@ -125,6 +125,7 @@ func (t Type) FindEach(fileName string, dirs []string, baseDir string, stripSequ
 
 // FindGenerated searches like FindEach, except that in directories other than the folder of the file it only
 // checks the names PhotoPrism generates: the full name and BasePrefix with the default extension of the type.
+// In the folder of the file, it also checks the full name in other cases, see fullNameCases.
 func (t Type) FindGenerated(fileName string, dirs []string, baseDir string, stripSequence bool, accept func(fileName string) bool) string {
 	return t.findEach(fileName, dirs, baseDir, stripSequence, true, accept)
 }
@@ -143,6 +144,12 @@ func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequ
 
 	if !ignoreCase {
 		names = appendUnique(slices.Clone(names), strings.ToLower(fileBasePrefix), strings.ToUpper(fileBasePrefix))
+	}
+
+	ownNames := names
+
+	if generated && !ignoreCase {
+		ownNames = appendUnique(slices.Clone(names), fullNameCases(fileName)...)
 	}
 
 	filePath := filepath.Dir(fileName)
@@ -174,11 +181,12 @@ func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequ
 		for i, dir := range search {
 			candidates := names
 
-			if generated && i > 0 {
-				if ext != defaultExt {
-					continue
-				}
-
+			switch {
+			case i == 0:
+				candidates = ownNames
+			case generated && ext != defaultExt:
+				continue
+			case generated:
 				candidates = generatedNames
 			}
 
@@ -193,6 +201,20 @@ func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequ
 	}
 
 	return ""
+}
+
+// fullNameCases returns the full base name with its name and its extensions each as given, in lower case, or in
+// upper case, e.g. "img_1234.RAW" for "IMG_1234.raw".
+func fullNameCases(fileName string) (result []string) {
+	fullName := filepath.Base(fileName)
+	name := BasePrefix(fileName, false)
+	exts := strings.TrimPrefix(fullName, name)
+
+	for _, n := range []string{name, strings.ToLower(name), strings.ToUpper(name)} {
+		result = appendUnique(result, n+exts, n+strings.ToLower(exts), n+strings.ToUpper(exts))
+	}
+
+	return result
 }
 
 // appendUnique appends the values that the list does not contain yet.
