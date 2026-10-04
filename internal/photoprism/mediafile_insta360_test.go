@@ -906,3 +906,99 @@ func TestMediaFile_RelatedFiles_Insta360Proxy(t *testing.T) {
 		})
 	}
 }
+
+// TestInsta360LensNotVideo verifies which files are reported as .insv files that are not a video.
+func TestInsta360LensNotVideo(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	dir := t.TempDir()
+	newFile := func(t *testing.T, name, content string) *MediaFile {
+		t.Helper()
+		if content == "mp4" {
+			writeInsta360StackMedia(t, cnf, dir, name)
+		} else {
+			writeInsta360LensContent(t, cnf, filepath.Join(dir, name), content)
+		}
+		f, err := NewMediaFile(filepath.Join(dir, name))
+		require.NoError(t, err)
+		return f
+	}
+
+	t.Run("Mp4Lens", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(newFile(t, insta360StackLeft, "mp4")))
+	})
+	t.Run("QuickTimeLens", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(newFile(t, "VID_20220625_140410_10_009.insv", "mov")))
+	})
+	t.Run("TextLens", func(t *testing.T) {
+		assert.True(t, insta360LensNotVideo(newFile(t, insta360StackRight, "text")))
+		assert.True(t, insta360LensNotVideo(newFile(t, insta360StackProxy, "text")))
+	})
+	t.Run("MatroskaLens", func(t *testing.T) {
+		assert.True(t, insta360LensNotVideo(newFile(t, "VID_20220625_140410_00_010.insv", "matroska")))
+	})
+	t.Run("OtherName", func(t *testing.T) {
+		assert.True(t, insta360LensNotVideo(newFile(t, "clip.insv", "text")))
+	})
+	t.Run("LrvProxy", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(newFile(t, "LRV_20240415_213145_01_035.lrv", "text")))
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		f := newFile(t, "VID_20220625_140410_10_011.insv", "text")
+		require.NoError(t, os.Chmod(f.FileName(), 0))
+		t.Cleanup(func() { _ = os.Chmod(f.FileName(), fs.ModeFile) })
+		if _, err := os.ReadFile(f.FileName()); err == nil {
+			t.Skip("file permissions are not enforced for this user")
+		}
+		assert.False(t, insta360LensNotVideo(f))
+	})
+	t.Run("CameraBrands", func(t *testing.T) {
+		for _, brand := range []string{"isom", "avc1", "iso4", "qt  "} {
+			fileName := filepath.Join(dir, "VID_20220625_140410_00_012.insv")
+			data := append([]byte{0, 0, 0, 24, 'f', 't', 'y', 'p'}, brand...)
+			data = append(data, 0, 0, 0, 0)
+			data = append(data, brand...)
+			data = append(data, "mp41"...)
+			require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile))
+			f, err := NewMediaFile(fileName)
+			require.NoError(t, err)
+			assert.False(t, insta360LensNotVideo(f), brand)
+		}
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(nil))
+	})
+}
+
+// TestWarnInsta360LensNotVideo verifies that only .insv files that are not a video are reported.
+func TestWarnInsta360LensNotVideo(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	hook := newSequenceLogHook(t)
+	dir := t.TempDir()
+	writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+	writeInsta360LensContent(t, cnf, filepath.Join(dir, insta360StackRight), "text")
+	left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+	require.NoError(t, err)
+	right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+	require.NoError(t, err)
+
+	t.Run("Video", func(t *testing.T) {
+		hook.Reset()
+		warnInsta360LensNotVideo("index", left)
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("Text", func(t *testing.T) {
+		hook.Reset()
+		warnInsta360LensNotVideo("index", right)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Contains(t, hook.LastEntry().Message, "index: ")
+		assert.Contains(t, hook.LastEntry().Message, insta360StackRight)
+	})
+}

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -329,6 +330,34 @@ func insta360LensContainer(fileName string) bool {
 		return true
 	default:
 		return false
+	}
+}
+
+// insta360LensNotVideo reports whether f is an .insv file whose header was read and shows no MP4 or
+// QuickTime container, as Insta360 cameras write.
+func insta360LensNotVideo(f *MediaFile) bool {
+	if f == nil || !f.IsInsv() {
+		return false
+	}
+
+	mimeType, err := fs.DetectMimeType(f.FileName())
+
+	if err != nil {
+		return false
+	}
+
+	switch fs.BaseType(mimeType) {
+	case header.ContentTypeMp4, header.ContentTypeMov:
+		return false
+	default:
+		return true
+	}
+}
+
+// warnInsta360LensNotVideo logs a warning with the given prefix if f is an .insv file that is not a video.
+func warnInsta360LensNotVideo(prefix string, f *MediaFile) {
+	if insta360LensNotVideo(f) {
+		log.Warnf("%s: %s is not an MP4 or QuickTime video", prefix, clean.Log(f.RootRelName()))
 	}
 }
 
