@@ -102,6 +102,23 @@ func TestMediaFile_NeedsExifToolJson(t *testing.T) {
 	t.Run("JsonSidecar", func(t *testing.T) {
 		assert.False(t, needsJson(t, "blue-go-video.mp4.json"))
 	})
+	t.Run("Cached", func(t *testing.T) {
+		if !c.ExifToolEnabled() {
+			t.Skip("ExifTool must be enabled")
+		}
+
+		mediaFile, err := NewMediaFile(filepath.Join(c.SamplesPath(), "beach_sand.jpg"))
+		require.NoError(t, err)
+		jsonName, err := mediaFile.ExifToolJsonName()
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.Remove(jsonName) })
+		require.NoError(t, fs.MkdirAll(filepath.Dir(jsonName)))
+
+		for data, needed := range map[string]bool{"": true, "[{\"SourceFile\":": true, "[{}]\n": false} {
+			require.NoError(t, os.WriteFile(jsonName, []byte(data), fs.ModeFile))
+			assert.Equal(t, needed, mediaFile.NeedsExifToolJson(), data)
+		}
+	})
 }
 
 func TestMediaFile_CreateExifToolJson(t *testing.T) {

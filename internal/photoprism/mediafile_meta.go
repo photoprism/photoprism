@@ -56,7 +56,7 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 		return false
 	}
 
-	return !fs.FileExists(jsonName)
+	return !exifToolCacheValid(jsonName)
 }
 
 // CreateExifToolJson runs ExifTool via the provided Convert helper and merges
