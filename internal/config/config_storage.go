@@ -429,10 +429,49 @@ func (c *Config) LogFilename() string {
 	return fs.Abs(c.options.LogFilename)
 }
 
+// storageCaseInsensitive and originalsCaseInsensitive detect the case mode of the storage and originals paths.
+var (
+	storageCaseInsensitive   = fs.CaseInsensitive
+	originalsCaseInsensitive = fs.CaseInsensitiveDir
+)
+
 // CaseInsensitive checks if the storage path is case-insensitive.
 func (c *Config) CaseInsensitive() (result bool, err error) {
-	storagePath := c.StoragePath()
-	return fs.CaseInsensitive(storagePath)
+	return storageCaseInsensitive(c.StoragePath())
+}
+
+// OriginalsCaseInsensitive checks if the originals path is case-insensitive, without writing to it, and returns
+// an error naming the reason if it cannot tell.
+func (c *Config) OriginalsCaseInsensitive() (insensitive bool, err error) {
+	return originalsCaseInsensitive(c.OriginalsPath())
+}
+
+// initCaseMode makes file lookups case-insensitive where the storage or originals path is. Originals follow
+// the storage result if their own cannot be detected.
+func (c *Config) initCaseMode() error {
+	storage, err := c.CaseInsensitive()
+
+	if err != nil {
+		return err
+	} else if storage {
+		log.Infof("config: case-insensitive file system detected for storage")
+		fs.IgnoreCase()
+	}
+
+	originals, err := c.OriginalsCaseInsensitive()
+
+	switch {
+	case err != nil:
+		log.Debugf("config: case sensitivity of originals not detected (%s), using the storage result", err)
+		fs.SetCaseDir("", false)
+		return nil
+	case originals:
+		log.Infof("config: case-insensitive file system detected for originals")
+	}
+
+	fs.SetCaseDir(c.OriginalsPath(), originals)
+
+	return nil
 }
 
 // OriginalsPath returns the originals.

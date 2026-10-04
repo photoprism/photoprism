@@ -79,13 +79,14 @@ func (t Type) Find(fileName string, stripSequence bool) string {
 	prefix := filepath.Join(dir, base)
 	prefixLower := filepath.Join(dir, strings.ToLower(base))
 	prefixUpper := filepath.Join(dir, strings.ToUpper(base))
+	ignore := ignoreCaseIn(dir)
 
-	for _, ext := range FileTypes[t] {
+	for _, ext := range typeExts(t, ignore) {
 		if info, err := os.Stat(prefix + ext); err == nil && info.Mode().IsRegular() {
 			return filepath.Join(dir, info.Name())
 		}
 
-		if ignoreCase {
+		if ignore {
 			continue
 		}
 
@@ -139,16 +140,12 @@ func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequ
 		return ""
 	}
 
+	// Folders in case-insensitive mode check only the generated names.
 	generatedNames := appendUnique(nil, filepath.Base(fileName), fileBasePrefix)
-	names := generatedNames
-
-	if !ignoreCase {
-		names = appendUnique(slices.Clone(names), strings.ToLower(fileBasePrefix), strings.ToUpper(fileBasePrefix))
-	}
-
+	names := appendUnique(slices.Clone(generatedNames), strings.ToLower(fileBasePrefix), strings.ToUpper(fileBasePrefix))
 	ownNames := names
 
-	if generated && !ignoreCase {
+	if generated {
 		ownNames = appendUnique(slices.Clone(names), fullNameCases(fileName)...)
 	}
 
@@ -175,18 +172,34 @@ func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequ
 		search = appendUnique(search, dir)
 	}
 
-	defaultExt := t.DefaultExt()
+	ignore := make([]bool, len(search))
 
-	for _, ext := range FileTypes[t] {
+	for i, dir := range search {
+		ignore[i] = ignoreCaseIn(dir)
+	}
+
+	defaultExt := t.DefaultExt()
+	lowerExts := FileTypesLower[t]
+
+	// Folders in case-insensitive mode skip the uppercase extensions, so each finds the same file first.
+	for _, ext := range fileTypesAll[t] {
+		upperExt := !slices.Contains(lowerExts, ext)
+
 		for i, dir := range search {
 			candidates := names
 
 			switch {
+			case ignore[i] && upperExt:
+				continue
 			case i == 0:
 				candidates = ownNames
 			case generated && ext != defaultExt:
 				continue
 			case generated:
+				candidates = generatedNames
+			}
+
+			if ignore[i] {
 				candidates = generatedNames
 			}
 
@@ -201,6 +214,15 @@ func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequ
 	}
 
 	return ""
+}
+
+// typeExts returns the extensions of a type, without the uppercase variants if ignore is set.
+func typeExts(t Type, ignore bool) []string {
+	if ignore {
+		return FileTypesLower[t]
+	}
+
+	return fileTypesAll[t]
 }
 
 // fullNameCases returns the full base name with its name and its extensions each as given, in lower case, or in

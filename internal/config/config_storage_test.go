@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -709,5 +710,121 @@ func TestConfig_StorageFree(t *testing.T) {
 		assert.Equal(t, 5.0, c.StorageFree())
 		c.options.StorageFree = 99
 		assert.Equal(t, 99.0, c.StorageFree())
+	})
+}
+
+// stubCaseDetection replaces the case detection of the storage and originals paths until the test ends.
+func stubCaseDetection(t *testing.T, storage, originals bool, originalsErr, storageErr error) {
+	t.Helper()
+
+	mode, prevStorage, prevOriginals := fs.GetCaseMode(), storageCaseInsensitive, originalsCaseInsensitive
+
+	t.Cleanup(func() {
+		fs.RestoreCaseMode(mode)
+		storageCaseInsensitive, originalsCaseInsensitive = prevStorage, prevOriginals
+	})
+
+	storageCaseInsensitive = func(string) (bool, error) { return storage, storageErr }
+	originalsCaseInsensitive = func(string) (bool, error) { return originals, originalsErr }
+}
+
+func TestConfig_CaseInsensitive(t *testing.T) {
+	c := NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, os.MkdirAll(c.StoragePath(), fs.ModeDir))
+
+	insensitive, err := c.CaseInsensitive()
+	require.NoError(t, err)
+	assert.Equal(t, insensitive, fileExistsAfterCaseSwap(t, c.StoragePath()))
+}
+
+func TestConfig_OriginalsCaseInsensitive(t *testing.T) {
+	c := NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, os.MkdirAll(c.OriginalsPath(), fs.ModeDir))
+
+	_, err := c.OriginalsCaseInsensitive()
+	assert.Error(t, err)
+
+	require.NoError(t, os.WriteFile(filepath.Join(c.OriginalsPath(), "IMG_1.jpg"), []byte("x"), fs.ModeFile))
+
+	insensitive, err := c.OriginalsCaseInsensitive()
+	assert.NoError(t, err)
+	assert.Equal(t, fileExistsAfterCaseSwap(t, c.OriginalsPath()), insensitive)
+}
+
+// fileExistsAfterCaseSwap creates a file in dir and reports whether it is found with its name in another case.
+func fileExistsAfterCaseSwap(t *testing.T, dir string) bool {
+	t.Helper()
+	fileName := filepath.Join(dir, "Case_Test.tmp")
+	require.NoError(t, os.WriteFile(fileName, []byte("x"), fs.ModeFile))
+	t.Cleanup(func() { _ = os.Remove(fileName) })
+	return fs.FileExists(filepath.Join(dir, "cASE_tEST.TMP"))
+}
+
+func TestConfig_InitCaseModeCalled(t *testing.T) {
+	// Init and InitCore return the error of the storage test before they connect to a database.
+	for name, initFn := range map[string]func(*Config) error{"Init": (*Config).Init, "InitCore": (*Config).InitCore} {
+		t.Run(name, func(t *testing.T) {
+			stubCaseDetection(t, false, false, nil, errors.New("storage not writable"))
+			c := NewMinimalTestConfig(t.TempDir())
+			assert.ErrorContains(t, initFn(c), "storage not writable")
+		})
+	}
+}
+
+func TestConfig_InitCaseMode(t *testing.T) {
+	// The host may have no case-insensitive file system, so the detection is stubbed and a lookup in
+	// case-insensitive mode misses the lowercase names of the case-sensitive temp folders.
+	c := NewMinimalTestConfig(t.TempDir())
+	originals, storage := c.OriginalsPath(), c.StoragePath()
+
+	if insensitive, err := fs.CaseInsensitive(t.TempDir()); err != nil {
+		t.Fatal(err)
+	} else if insensitive {
+		t.Skip("requires a case-sensitive file system")
+	}
+
+	for name, dir := range map[string]string{"IMG_1.raw": originals, "img_1.jpg": originals, "IMG_2.raw": storage, "img_2.jpg": storage} {
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte(name), fs.ModeFile))
+	}
+
+	findOriginals := func() string { return fs.ImageJpeg.Find(filepath.Join(originals, "IMG_1.raw"), false) }
+	findStorage := func() string { return fs.ImageJpeg.Find(filepath.Join(storage, "IMG_2.raw"), false) }
+
+	t.Run("OriginalsInsensitive", func(t *testing.T) {
+		stubCaseDetection(t, false, true, nil, nil)
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, "", findOriginals())
+		assert.Equal(t, filepath.Join(storage, "img_2.jpg"), findStorage())
+	})
+	t.Run("StorageInsensitive", func(t *testing.T) {
+		stubCaseDetection(t, true, false, nil, nil)
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, filepath.Join(originals, "img_1.jpg"), findOriginals())
+		assert.Equal(t, "", findStorage())
+	})
+	t.Run("CaseSensitive", func(t *testing.T) {
+		stubCaseDetection(t, false, false, nil, nil)
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, filepath.Join(originals, "img_1.jpg"), findOriginals())
+		assert.Equal(t, filepath.Join(storage, "img_2.jpg"), findStorage())
+	})
+	t.Run("OriginalsUnknown", func(t *testing.T) {
+		stubCaseDetection(t, true, false, errors.New("no file name with ASCII letters within reach"), nil)
+		fs.SetCaseDir(originals, false)
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, "", findOriginals())
+		assert.Equal(t, "", findStorage())
+	})
+	t.Run("OriginalsUnknownStorageSensitive", func(t *testing.T) {
+		stubCaseDetection(t, false, true, errors.New("no file name with ASCII letters within reach"), nil)
+		require.NoError(t, c.initCaseMode())
+		assert.Equal(t, filepath.Join(originals, "img_1.jpg"), findOriginals())
+		assert.Equal(t, filepath.Join(storage, "img_2.jpg"), findStorage())
+	})
+	t.Run("StorageError", func(t *testing.T) {
+		stubCaseDetection(t, false, true, nil, errors.New("storage not writable"))
+		assert.Error(t, c.initCaseMode())
+		assert.Equal(t, filepath.Join(originals, "img_1.jpg"), findOriginals())
 	})
 }
