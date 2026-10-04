@@ -493,7 +493,7 @@ func TestModelApplyEngineDefaultsSetsServiceDefaults(t *testing.T) {
 
 		model.ApplyEngineDefaults()
 
-		assert.Equal(t, "https://api.openai.com/v1/responses", model.Service.Uri)
+		assert.Equal(t, openai.DefaultUri, model.Service.Uri)
 		assert.Equal(t, ApiFormatOpenAI, model.Service.RequestFormat)
 		assert.Equal(t, ApiFormatOpenAI, model.Service.ResponseFormat)
 		assert.Equal(t, scheme.Data, model.Service.FileScheme)
@@ -646,6 +646,10 @@ func clearEngineKeys(t *testing.T) {
 
 // TestModelEndpointKey checks that the shared key is only returned for models that use the shared service.
 func TestModelEndpointKey(t *testing.T) {
+	t.Setenv(openai.BaseUrlEnv, "")
+	ensureEnvOnce = sync.Once{}
+	t.Cleanup(func() { ensureEnvOnce = sync.Once{} })
+
 	const sharedUri = "https://vision.example.com/api/v1/vision"
 	const sharedKey = "shared-vision-key"
 	const ownUri = "https://models.example.com/api/generate"

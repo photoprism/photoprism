@@ -40,6 +40,7 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 	})
 	t.Run("SelfHosted", func(t *testing.T) {
 		ensureEnvOnce = sync.Once{}
+		t.Setenv(ollama.ModelEnv, "")
 		CaptionModel = testCaptionModel.Clone()
 		t.Setenv(ollama.APIKeyEnv, "")
 		t.Setenv(ollama.BaseUrlEnv, ollama.DefaultBaseUrl)
@@ -73,6 +74,7 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 	})
 	t.Run("Cloud", func(t *testing.T) {
 		ensureEnvOnce = sync.Once{}
+		t.Setenv(ollama.ModelEnv, "")
 		CaptionModel = testCaptionModel.Clone()
 		t.Setenv(ollama.BaseUrlEnv, ollama.CloudBaseUrl+"/")
 
@@ -105,6 +107,7 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 	})
 	t.Run("ApiKeyAloneKeepsLocalDefaults", func(t *testing.T) {
 		ensureEnvOnce = sync.Once{}
+		t.Setenv(ollama.ModelEnv, "")
 		CaptionModel = testCaptionModel.Clone()
 		t.Setenv(ollama.APIKeyEnv, cloudToken)
 		t.Setenv(ollama.BaseUrlEnv, ollama.DefaultBaseUrl)
@@ -302,7 +305,7 @@ func TestOllamaParserFallbacks(t *testing.T) {
 
 func TestOllamaParserUnavailableStatus(t *testing.T) {
 	t.Run("Gone", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		raw, err := json.Marshal(ollama.Response{})
 		require.NoError(t, err)
@@ -315,7 +318,7 @@ func TestOllamaParserUnavailableStatus(t *testing.T) {
 		assert.Contains(t, logHook.LastEntry().Message, "is unavailable (status 410)")
 	})
 	t.Run("ServerErrorCaption", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		raw, err := json.Marshal(ollama.Response{Model: "qwen2.5vl:latest", Response: "A caption from a failed request."})
 		require.NoError(t, err)
@@ -339,11 +342,11 @@ func TestOllamaParserUnavailableStatus(t *testing.T) {
 	})
 }
 
-// resetOllamaFailures clears the logged request failures before and after a test.
-func resetOllamaFailures(t *testing.T) {
+// resetServiceFailures clears the logged request failures before and after a test.
+func resetServiceFailures(t *testing.T) {
 	t.Helper()
-	ollamaFailures.Clear()
-	t.Cleanup(ollamaFailures.Clear)
+	serviceFailures.Clear()
+	t.Cleanup(serviceFailures.Clear)
 }
 
 // ollamaFailureWarnings returns the logged warnings about failed Ollama requests.
@@ -359,7 +362,7 @@ func ollamaFailureWarnings(hook *logtest.Hook) []string {
 	return result
 }
 
-func TestWarnOllamaFailure(t *testing.T) {
+func TestOllamaParserFailure(t *testing.T) {
 	failed := func(t *testing.T, model string, status int) {
 		t.Helper()
 		_, err := ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: model}, []byte("{}"), status)
@@ -367,7 +370,7 @@ func TestWarnOllamaFailure(t *testing.T) {
 	}
 
 	t.Run("RepeatedAtDebugLevel", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusNotFound)
 		failed(t, "gemma3:27b", http.StatusNotFound)
@@ -378,7 +381,7 @@ func TestWarnOllamaFailure(t *testing.T) {
 		assert.Equal(t, "vision: ollama request for model gemma3:27b failed again (status 404)", logHook.LastEntry().Message)
 	})
 	t.Run("StatusChange", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusServiceUnavailable)
 		failed(t, "gemma3:27b", http.StatusNotFound)
@@ -386,14 +389,14 @@ func TestWarnOllamaFailure(t *testing.T) {
 		assert.Len(t, ollamaFailureWarnings(logHook), 2)
 	})
 	t.Run("PerModel", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusInternalServerError)
 		failed(t, "qwen3-vl:8b", http.StatusInternalServerError)
 		assert.Len(t, ollamaFailureWarnings(logHook), 2)
 	})
 	t.Run("ClearedBySuccess", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusInternalServerError)
 		raw, err := json.Marshal(ollama.Response{Model: "gemma3:27b", Response: "A caption."})
@@ -404,7 +407,7 @@ func TestWarnOllamaFailure(t *testing.T) {
 		assert.Len(t, ollamaFailureWarnings(logHook), 2)
 	})
 	t.Run("ClearedByInvalidBody", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusInternalServerError)
 		_, err := ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: "gemma3:27b"}, []byte("not json"), http.StatusOK)
@@ -413,7 +416,7 @@ func TestWarnOllamaFailure(t *testing.T) {
 		assert.Len(t, ollamaFailureWarnings(logHook), 2)
 	})
 	t.Run("RedirectKeepsState", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusInternalServerError)
 		failed(t, "gemma3:27b", http.StatusMultipleChoices)
@@ -421,11 +424,11 @@ func TestWarnOllamaFailure(t *testing.T) {
 		assert.Len(t, ollamaFailureWarnings(logHook), 1)
 	})
 	t.Run("RedirectNotLogged", func(t *testing.T) {
-		resetOllamaFailures(t)
+		resetServiceFailures(t)
 		logHook, _ := captureLogs(t)
 		failed(t, "gemma3:27b", http.StatusMultipleChoices)
 		assert.Empty(t, logHook.AllEntries())
-		_, loaded := ollamaFailures.Load("gemma3:27b")
+		_, loaded := serviceFailures.Load(serviceFailureKey(ollama.EngineName, "gemma3:27b"))
 		assert.False(t, loaded)
 	})
 }

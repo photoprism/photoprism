@@ -1,6 +1,6 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -46,6 +46,8 @@ Budget-conscious operators can experiment with lighter prompts or lower-resoluti
 #### Environment Variables
 
 - `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` — fallback credentials when a model’s `Service.Key` is unset.
+- `OPENAI_BASE_URL` — Base URL of an OpenAI-compatible API, including the version path as in the OpenAI SDKs; defaults to `https://api.openai.com/v1`, trailing slashes are trimmed. The engine's default service URI is `${OPENAI_BASE_URL}/responses`, so models without their own `Service.Uri` send their requests, images, and API key to that host; set `Service.Uri` explicitly if the variable is also set for other tools. As the URI is built from it, a value without `/v1` (e.g. `https://api.openai.com`) yields `https://api.openai.com/responses`.
+- `OPENAI_MODEL` — Default model of the OpenAI engine, used for models that configure none of `Service.Model`, `Model`, or `Name` and for requests without a model; defaults to `gpt-5-mini`.
 - Existing `PHOTOPRISM_VISION_*` variables remain authoritative (see the [Getting Started Guide](https://docs.photoprism.app/getting-started/config-options/#computer-vision) for full lists).
 
 #### `vision.yml` Examples

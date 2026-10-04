@@ -11,6 +11,16 @@ const (
 	APIKeyFileEnv = "OPENAI_API_KEY_FILE" //nolint:gosec // environment variable name, not a secret
 	// APIKeyPlaceholder is the `${VAR}` form injected when no explicit key is provided.
 	APIKeyPlaceholder = "${" + APIKeyEnv + "}"
+	// BaseUrlEnv defines the environment variable used for the OpenAI API base URL, including the version path.
+	BaseUrlEnv = "OPENAI_BASE_URL"
+	// BaseUrlPlaceholder is the `${VAR}` form injected when no explicit URL is provided.
+	BaseUrlPlaceholder = "${" + BaseUrlEnv + "}"
+	// DefaultBaseUrl is the official OpenAI API base URL used when the environment variable is unset.
+	DefaultBaseUrl = "https://api.openai.com/v1"
+	// DefaultUri is the default service URI of the Responses API.
+	DefaultUri = BaseUrlPlaceholder + "/responses"
+	// ModelEnv defines the environment variable that sets the default model.
+	ModelEnv = "OPENAI_MODEL"
 	// DefaultModel is the model used by default when accessing the OpenAI API.
 	DefaultModel = "gpt-5-mini"
 	// DefaultResolution is the default thumbnail size submitted to the OpenAI.

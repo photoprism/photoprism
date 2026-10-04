@@ -443,6 +443,8 @@ func captureLogs(t *testing.T) (logHook, systemHook *logtest.Hook) {
 func TestPerformApiRequestErrorLog(t *testing.T) {
 	const marker = "remote-body-marker"
 
+	resetServiceFailures(t)
+
 	for _, tc := range []struct {
 		name   string
 		format ApiFormat

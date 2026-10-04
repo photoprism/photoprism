@@ -125,6 +125,7 @@ The table below reports median single-image latency over a fixed 16-image benchm
 - `OLLAMA_HOST`, `OLLAMA_MODELS`, `OLLAMA_MAX_QUEUE`, `OLLAMA_NUM_PARALLEL`, etc. — Provided in `compose*.yaml` to tune the Ollama daemon. Adjust `OLLAMA_KEEP_ALIVE` if you want models to stay loaded between worker batches.
 - `OLLAMA_API_KEY` / `OLLAMA_API_KEY_FILE` — Default bearer token picked up when `Service.Key` is empty; useful for hosted Ollama services (e.g., Ollama Cloud).
 - `OLLAMA_BASE_URL` — Base URL for the Ollama API; defaults to `http://ollama:11434`, trailing slashes are trimmed. Set to `https://ollama.com` to enable cloud defaults.
+- `OLLAMA_MODEL` — Default model of the Ollama engine, used for models that configure none of `Service.Model`, `Model`, or `Name`, including the default caption model; it takes precedence over the cloud default model. `OLLAMA_MODELS`, the daemon's storage path, is not read.
 - `PHOTOPRISM_LOG_LEVEL=trace` — Logs request payloads with base64 images shortened, and the full body of a successful response (quoted). Use temporarily when debugging parsing issues. The body of a failed response, or the error for a response that cannot be parsed, is written to the console system log at error level, clipped to 4 KiB.
 
 #### `vision.yml` Example

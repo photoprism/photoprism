@@ -14,25 +14,26 @@ import (
 
 var ensureEnvOnce sync.Once
 
-// ensureEnv loads environment-backed credentials once so adapters can look up
-// OPENAI_API_KEY / OLLAMA_API_KEY even when operators rely on *_FILE fallbacks.
-// Future engine integrations can reuse this hook to normalize additional
-// secrets.
+// ensureEnv loads the engine API keys from their *_FILE variables and normalizes the engine base URLs once,
+// so that adapters and variable expansion read the final values.
 func ensureEnv() {
 	ensureEnvOnce.Do(func() {
 		loadEnvKeyFromFile(openai.APIKeyEnv, openai.APIKeyFileEnv)
 		loadEnvKeyFromFile(ollama.APIKeyEnv, ollama.APIKeyFileEnv)
 
-		// Init the Ollama base URL by trimming trailing slashes or using the default.
+		// Init the base URLs by trimming trailing slashes or using the defaults.
 		initEnvUrl(ollama.BaseUrlEnv, ollama.DefaultBaseUrl)
+		initEnvUrl(openai.BaseUrlEnv, openai.DefaultBaseUrl)
 	})
 }
 
-// initEnvUrl ensures that the variable contains no trailing
-// slashes and sets a default value if it is missing.
+// initEnvUrl removes surrounding whitespace and trailing slashes from the variable, and sets the
+// default value if nothing is left.
 func initEnvUrl(envName, defaultUrl string) {
-	if base := strings.TrimSpace(os.Getenv(envName)); base != "" {
-		if normalized := strings.TrimRight(base, "/"); normalized != base {
+	raw := os.Getenv(envName)
+
+	if normalized := strings.TrimRight(strings.TrimSpace(raw), "/"); normalized != "" {
+		if normalized != raw {
 			_ = os.Setenv(envName, normalized)
 		}
 	} else if defaultUrl != "" {
@@ -61,4 +62,9 @@ func loadEnvKeyFromFile(envVar, fileVar string) {
 			_ = os.Setenv(envVar, key)
 		}
 	}
+}
+
+// envModel returns the model identifier set in the environment variable, or an empty string.
+func envModel(name string) string {
+	return cleanModelId(strings.TrimSpace(os.Getenv(name)))
 }

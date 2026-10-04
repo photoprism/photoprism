@@ -433,7 +433,7 @@ func (r *ApiRequest) openAIJSON() ([]byte, error) {
 	}
 
 	if payload.Model == "" {
-		payload.Model = openai.DefaultModel
+		payload.Model = openaiDefaultModel()
 	}
 
 	if strings.HasPrefix(strings.ToLower(payload.Model), "gpt-5") {

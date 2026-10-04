@@ -125,6 +125,8 @@ func (c *ConfigValues) Load(fileName string) error {
 	// vision.yml. Custom models continue to override defaults when present.
 	c.ensureDefaultModels()
 
+	usesOpenAIBaseUrl := false
+
 	for _, model := range c.Models {
 		if model.TensorFlow != nil && model.ONNX != nil {
 			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
@@ -143,12 +145,18 @@ func (c *ConfigValues) Load(fileName string) error {
 
 		model.ApplyEngineDefaults()
 
+		usesOpenAIBaseUrl = usesOpenAIBaseUrl || model.usesOpenAIDefaultUri()
+
 		// Report a misspelled mode once instead of silently normalizing names the other way.
 		if !IsNormalizeType(model.Normalize) {
 			log.Warnf("vision: invalid normalize type %s for model %s, using %s",
 				clean.Log(model.Normalize), clean.Log(model.Name), ReportNormalizeType(NormalizeAuto))
 			model.Normalize = NormalizeAuto
 		}
+	}
+
+	if usesOpenAIBaseUrl {
+		logOpenAIBaseUrl()
 	}
 
 	if c.Thresholds.Confidence <= 0 || c.Thresholds.Confidence > 100 {

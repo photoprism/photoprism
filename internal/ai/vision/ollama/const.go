@@ -21,6 +21,8 @@ const (
 	CloudBaseUrl = "https://ollama.com"
 	// DefaultUri is the default service URI for self-hosted Ollama instances.
 	DefaultUri = BaseUrlPlaceholder + "/api/generate"
+	// ModelEnv defines the environment variable that sets the default model, unlike OLLAMA_MODELS (storage path).
+	ModelEnv = "OLLAMA_MODEL"
 	// DefaultModel names the default vision model bundled with our adapter defaults, see https://ollama.com/library/gemma4.
 	DefaultModel = "gemma4:latest"
 	// CloudModel names the default vision model for the Ollama cloud service, see https://ollama.com/cloud.
