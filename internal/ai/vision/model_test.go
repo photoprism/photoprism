@@ -1040,8 +1040,8 @@ func TestModel_EndpointUnresolved(t *testing.T) {
 
 		require.Len(t, logHook.AllEntries(), 2)
 		assert.Equal(t, logrus.WarnLevel, logHook.AllEntries()[0].Level)
-		assert.Equal(t, "vision: service uri of labels model custom does not resolve, so no service is used", logHook.AllEntries()[0].Message)
-		assert.Equal(t, "vision: service uri of caption model gemma3 does not resolve, so no service is used", logHook.AllEntries()[1].Message)
+		assert.Equal(t, "audit: vision › service uri of labels model custom does not resolve, so no service is used", logHook.AllEntries()[0].Message)
+		assert.Equal(t, "audit: vision › service uri of caption model gemma3 does not resolve, so no service is used", logHook.AllEntries()[1].Message)
 		assert.Empty(t, systemHook.AllEntries())
 		assert.NotContains(t, logHook.AllEntries()[0].Message, "pass")
 	})
@@ -1070,7 +1070,7 @@ func TestModel_UnresolvedUriErr(t *testing.T) {
 		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model qwen3-vl:4b does not resolve")
 		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model qwen3-vl:4b does not resolve")
 		require.Len(t, logHook.AllEntries(), 1)
-		assert.Equal(t, "vision: service uri of nsfw model qwen3-vl:4b does not resolve, so no service is used", logHook.LastEntry().Message)
+		assert.Equal(t, "audit: vision › service uri of nsfw model qwen3-vl:4b does not resolve, so no service is used", logHook.LastEntry().Message)
 	})
 	t.Run("Resolved", func(t *testing.T) {
 		assert.NoError(t, (&Model{Type: ModelTypeLabels, Service: Service{Uri: "https://models.example.com/api"}}).unresolvedUriErr())

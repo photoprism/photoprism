@@ -304,13 +304,9 @@ func (m *Model) warnKey() string {
 	return m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
 }
 
-// warnModel reports a model configuration warning in the audit log if it is enabled, and logs it otherwise.
+// warnModel records a model configuration warning in the audit log.
 func warnModel(format string, args ...any) {
-	if event.AuditEnabled() {
-		event.AuditWarn([]string{"vision", format}, args...)
-	} else {
-		log.Warnf("vision: "+format, args...)
-	}
+	event.AuditWarn([]string{"vision", format}, args...)
 }
 
 // warnUnresolvedUri reports once per model that its service URI does not resolve.

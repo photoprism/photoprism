@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/pkg/log/dummy"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
@@ -125,19 +124,4 @@ func TestAuditLevels(t *testing.T) {
 			Unsubscribe(s)
 		}
 	})
-}
-
-// TestAuditEnabled checks that only a logger other than the dummy logger enables audit messages.
-func TestAuditEnabled(t *testing.T) {
-	orig := AuditLog
-	t.Cleanup(func() { AuditLog = orig })
-
-	AuditLog = dummy.NewLogger()
-	assert.False(t, AuditEnabled())
-
-	AuditLog = nil
-	assert.False(t, AuditEnabled())
-
-	AuditLog = logrus.New()
-	assert.True(t, AuditEnabled())
 }

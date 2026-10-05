@@ -129,8 +129,8 @@ func TestWarnRefusedEnv(t *testing.T) {
 
 		require.Len(t, logHook.AllEntries(), 2)
 		assert.Equal(t, logrus.WarnLevel, logHook.AllEntries()[0].Level)
-		assert.Equal(t, "vision: Service.Model does not expand OLLAMA_API_KEY, as only variables ending in _MODEL are expanded there", logHook.AllEntries()[0].Message)
-		assert.Equal(t, "vision: Service.Uri does not expand OLLAMA_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", logHook.AllEntries()[1].Message)
+		assert.Equal(t, "audit: vision › Service.Model does not expand OLLAMA_API_KEY, as only variables ending in _MODEL are expanded there", logHook.AllEntries()[0].Message)
+		assert.Equal(t, "audit: vision › Service.Uri does not expand OLLAMA_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", logHook.AllEntries()[1].Message)
 	})
 	t.Run("InvalidReference", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
@@ -140,7 +140,7 @@ func TestWarnRefusedEnv(t *testing.T) {
 		warnRefusedEnv("Service.Uri", value, []string{"OLLAMA_BASE_URL:-https://user:pa55@ollama.example.com"}, uriEnvSuffixes)
 
 		require.Len(t, logHook.AllEntries(), 1)
-		assert.Equal(t, "vision: Service.Uri contains an unset or invalid variable reference, which is not expanded", logHook.LastEntry().Message)
+		assert.Equal(t, "audit: vision › Service.Uri contains an unset or invalid variable reference, which is not expanded", logHook.LastEntry().Message)
 	})
 	t.Run("LiteralDollar", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
@@ -153,7 +153,7 @@ func TestWarnRefusedEnv(t *testing.T) {
 
 		assert.Equal(t, "", uri)
 		require.Len(t, logHook.AllEntries(), 1)
-		assert.Equal(t, "vision: Service.Uri contains an unset or invalid variable reference, which is not expanded", logHook.LastEntry().Message)
+		assert.Equal(t, "audit: vision › Service.Uri contains an unset or invalid variable reference, which is not expanded", logHook.LastEntry().Message)
 		assert.NotContains(t, logHook.LastEntry().Message, "Xyz123word")
 	})
 	t.Run("None", func(t *testing.T) {
@@ -281,8 +281,8 @@ func TestService_RefusedEnv(t *testing.T) {
 		assert.EqualError(t, err, "service uri of labels model qwen3-vl does not resolve")
 		assert.False(t, strings.Contains(err.Error(), secret))
 		require.Len(t, logHook.AllEntries(), 2)
-		assert.Equal(t, "vision: Service.Uri does not expand OPENAI_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", logHook.AllEntries()[0].Message)
-		assert.Equal(t, "vision: service uri of labels model qwen3-vl does not resolve, so no service is used", logHook.AllEntries()[1].Message)
+		assert.Equal(t, "audit: vision › Service.Uri does not expand OPENAI_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", logHook.AllEntries()[0].Message)
+		assert.Equal(t, "audit: vision › service uri of labels model qwen3-vl does not resolve, so no service is used", logHook.AllEntries()[1].Message)
 		assert.Empty(t, systemHook.AllEntries())
 	})
 }

@@ -20,7 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// captureVisionLog replaces the package logger and disables the audit logger for the duration of a test.
+// captureVisionLog replaces the package and audit loggers for the duration of a test.
 func captureVisionLog(t *testing.T) *test.Hook {
 	t.Helper()
 
@@ -31,7 +31,7 @@ func captureVisionLog(t *testing.T) *test.Hook {
 	t.Cleanup(func() { log = previous })
 
 	previousAudit := event.AuditLog
-	event.AuditLog = nil
+	event.AuditLog = logger
 	t.Cleanup(func() { event.AuditLog = previousAudit })
 
 	return hook

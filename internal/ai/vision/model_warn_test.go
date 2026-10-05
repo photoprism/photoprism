@@ -178,7 +178,7 @@ func captureAuditLog(t *testing.T) *test.Hook {
 	return hook
 }
 
-// TestWarnModel checks that model configuration warnings go to the audit log when it is enabled.
+// TestWarnModel checks that model configuration warnings go to the audit log.
 func TestWarnModel(t *testing.T) {
 	t.Run("AuditLog", func(t *testing.T) {
 		hook := captureVisionLog(t)
@@ -190,21 +190,10 @@ func TestWarnModel(t *testing.T) {
 		require.Len(t, warnMessages(audit.AllEntries()), 1)
 		assert.Equal(t, "audit: vision › nsfw model x needs a service uri", warnMessages(audit.AllEntries())[0])
 	})
-	t.Run("Log", func(t *testing.T) {
-		hook := captureVisionLog(t)
-		prev := event.AuditLog
-		t.Cleanup(func() { event.AuditLog = prev })
-		event.AuditLog = nil
-
-		warnModel("%s model %s needs a service uri", "nsfw", "x")
-
-		require.Len(t, warnMessages(hook.AllEntries()), 1)
-		assert.Equal(t, "vision: nsfw model x needs a service uri", warnMessages(hook.AllEntries())[0])
-	})
 }
 
 // TestModel_WarnOnFirstRunAuditLog checks that the warnings of a model, including those repeated on its
-// first run, go only to the audit log when it is enabled.
+// first run, go only to the audit log.
 func TestModel_WarnOnFirstRunAuditLog(t *testing.T) {
 	images := Files{fs.Abs("./testdata/cat_224x224.jpg")}
 
@@ -234,8 +223,7 @@ func TestModel_WarnOnFirstRunAuditLog(t *testing.T) {
 	assert.NotContains(t, strings.Join(warnings, "\n"), "s3cr3t-value")
 }
 
-// TestModel_NsfwModelAuditLog checks that an NSFW model initialization warning goes to the audit log
-// when it is enabled.
+// TestModel_NsfwModelAuditLog checks that an NSFW model initialization warning goes to the audit log.
 func TestModel_NsfwModelAuditLog(t *testing.T) {
 	hook := captureVisionLog(t)
 	audit := captureAuditLog(t)

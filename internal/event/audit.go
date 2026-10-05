@@ -7,7 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/pkg/log/dummy"
 )
 
 // AuditLog optionally logs security events.
@@ -43,17 +42,6 @@ func Audit(level logrus.Level, ev []string, args ...any) {
 			},
 		)
 	}
-}
-
-// AuditEnabled reports whether audit log messages are written.
-func AuditEnabled() bool {
-	if AuditLog == nil {
-		return false
-	}
-
-	_, disabled := AuditLog.(*dummy.Logger)
-
-	return !disabled
 }
 
 // AuditIP returns the client address of an audit event, which the Who-What-Outcome convention puts
