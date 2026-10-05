@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -1413,4 +1414,46 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		assert.Equal(t, data, content, "the preview is published unchanged")
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
+}
+
+// TestConvert_ToImageLogsFirstAttempt verifies that only the first converter tried for a file is logged at
+// info level.
+func TestConvert_ToImageLogsFirstAttempt(t *testing.T) {
+	cnf := config.NewMinimalTestConfig(t.TempDir())
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be enabled")
+	}
+
+	cnf.Options().DisableDarktable = true
+	cnf.Options().DisableRawTherapee = true
+	cnf.Options().DisableImageMagick = true
+	cnf.Options().DisableSips = true
+
+	dir := t.TempDir()
+	fileName := filepath.Join(dir, "canon_eos_6d.dng")
+	require.NoError(t, fs.Copy(filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng"), fileName, false))
+
+	mediaFile, err := NewMediaFile(fileName)
+	require.NoError(t, err)
+
+	hook := newSequenceLogHook(t)
+	img, err := NewConvert(cnf).ToImage(mediaFile, true)
+	require.NoError(t, err)
+	require.NotNil(t, img)
+
+	var order []string
+	created := false
+	for _, entry := range hook.AllEntries() {
+		switch {
+		case entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "convert: converting"):
+			order = append(order, "info")
+		case entry.Level == logrus.DebugLevel && strings.Contains(entry.Message, "convert: trying exiftool"):
+			order = append(order, "debug")
+		case entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "created in") && strings.HasSuffix(entry.Message, "(exiftool)"):
+			created = true
+		}
+	}
+
+	assert.Equal(t, []string{"info", "debug"}, order)
+	assert.True(t, created)
 }

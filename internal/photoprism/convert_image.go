@@ -154,7 +154,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	budget := NewConvertBudget(w.conf.ConvertTimeout())
 
 	// Try compatible converters.
-	for _, c := range cmds {
+	for i, c := range cmds {
 		// Fetch command output.
 		var out bytes.Buffer
 		var stderr bytes.Buffer
@@ -167,7 +167,12 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 			fmt.Sprintf("LD_LIBRARY_PATH=%s", w.conf.CmdLibPath()),
 		}...)
 
-		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
+		// Further candidates, e.g. a second ExifTool extraction, are logged at debug level.
+		if i == 0 {
+			log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
+		} else {
+			log.Debugf("convert: trying %s for %s", filepath.Base(cmd.Path), clean.Log(filepath.Base(imageName)))
+		}
 
 		// Log exact command in debug mode.
 		log.Debug(clean.Cmd(cmd))
