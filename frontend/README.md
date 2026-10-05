@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 4, 2026
+**Last Updated:** October 5, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -100,6 +100,8 @@ MapLibre GL JS 6 renders Places, lightbox mini-maps, and the location editor. It
 The build emits `maplibre-gl-worker.mjs` and its sibling `maplibre-gl-shared.mjs` together under `maplibre/<package-version>/`. The version is read from the installed package, so the worker and its relative import stay aligned through upgrades. Both assets appear in the flat manifest and production precache. Keep the worker as a module asset; emitting it without its shared sibling leaves maps unable to load tiles.
 
 `component/map.vue` supplies missing style images through `setMissingStyleImageResolver`. Places waits for `GeoJSONSource.setData()` before reconciling markers. Verify style/language changes, clustering, marker clicks and dragging, globe/terrain controls, and the unavailable-WebGL2 path when updating the renderer.
+
+In Adjust Location, dragging the pin or clicking the map preserves the current center and zoom. A drag's trailing click does not select another location; the next mouse or touch gesture can place the pin normally. Search results and typed-coordinate changes still recenter the map. Direct placement stops any active camera animation.
 
 ## Production Build
 
