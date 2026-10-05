@@ -46,7 +46,7 @@ Budget-conscious operators can experiment with lighter prompts or lower-resoluti
 #### Environment Variables
 
 - `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` — fallback credentials when a model’s `Service.Key` is unset.
-- `OPENAI_BASE_URL` — Base URL of an OpenAI-compatible API, including the version path as in the OpenAI SDKs; defaults to `https://api.openai.com/v1`, trailing slashes are trimmed. The engine's default service URI is `${OPENAI_BASE_URL}/responses`, so models without their own `Service.Uri` send their requests, images, and API key to that host; set `Service.Uri` explicitly if the variable is also set for other tools. As the URI is built from it, a value without `/v1` (e.g. `https://api.openai.com`) yields `https://api.openai.com/responses`.
+- `OPENAI_BASE_URL` — Base URL of an OpenAI-compatible API, including the version path as in the OpenAI SDKs; defaults to `https://api.openai.com/v1`; trailing slashes of the path are trimmed, and a query such as `?api-version=...` is moved to the end of the request URL. The engine's default service URI is `${OPENAI_BASE_URL}/responses`, so models without their own `Service.Uri` send their requests, images, and API key to that host; set `Service.Uri` explicitly if the variable is also set for other tools. As the URI is built from it, a value without `/v1` (e.g. `https://api.openai.com`) yields `https://api.openai.com/responses`.
 - `OPENAI_MODEL` — Default model of the OpenAI engine, used for models that configure none of `Service.Model`, `Model`, or `Name` and for requests without a model; defaults to `gpt-5-mini`.
 - Existing `PHOTOPRISM_VISION_*` variables remain authoritative (see the [Getting Started Guide](https://docs.photoprism.app/getting-started/config-options/#computer-vision) for full lists).
 
@@ -131,4 +131,4 @@ The client applies no rate limit of its own. Transient `HTTP 429` responses are 
 
 - [ ] Introduce the future `generate` model type that combines captions, labels, and optional markers.
 - [ ] Evaluate additional OpenAI models as pricing and capabilities evolve.
-- [ ] Expose token usage metrics (input/output/reasoning) via Prometheus once the schema stabilises.
+- [ ] Expose token usage metrics (input/output/reasoning) via Prometheus once the schema stabilizes.
