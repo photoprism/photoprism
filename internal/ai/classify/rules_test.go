@@ -44,3 +44,38 @@ func TestLabelRulesSource(t *testing.T) {
 		require.Equal(t, entry.LabelRule, Rules[name], name)
 	}
 }
+
+// TestLabelRulesDogFloor verifies all Dog rules and preserves higher class minimums.
+func TestLabelRulesDogFloor(t *testing.T) {
+	count := 0
+	for name, rule := range Rules {
+		if rule.Label != "dog" {
+			continue
+		}
+		count++
+		assert.GreaterOrEqual(t, rule.Threshold, float32(0.60), name)
+	}
+	require.Positive(t, count)
+	for name, floor := range map[string]float32{
+		"bouvier des flandres":            0.73,
+		"bouvier des flandres dog":        0.73,
+		"dalmatian":                       0.69,
+		"dalmatian dog":                   0.69,
+		"dingo":                           0.89,
+		"german short-haired pointer":     0.64,
+		"german short-haired pointer dog": 0.64,
+		"irish water spaniel":             0.66,
+		"irish water spaniel dog":         0.66,
+		"komondor":                        0.93,
+		"komondor dog":                    0.93,
+		"schipperke":                      0.995,
+		"schipperke dog":                  0.995,
+		"sussex spaniel":                  0.6,
+		"sussex spaniel dog":              0.6,
+		"wire-haired fox terrier":         0.67,
+		"wire-haired fox terrier dog":     0.67,
+	} {
+		require.Contains(t, Rules, name)
+		assert.Equal(t, floor, Rules[name].Threshold, name)
+	}
+}

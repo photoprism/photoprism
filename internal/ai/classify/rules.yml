@@ -1089,7 +1089,7 @@ sea lion:
 
 dog:
   label: dog
-  threshold: 0.2
+  threshold: 0.60
   priority: 5
   categories:
     - animal
@@ -1097,14 +1097,14 @@ dog:
 chihuahua:
   label: dog
   priority: 5
-  threshold: 0.29
+  threshold: 0.60
   categories:
     - animal
 
 chihuahua dog:
   label: dog
   priority: 5
-  threshold: 0.29
+  threshold: 0.60
   categories:
     - animal
 
@@ -1138,28 +1138,28 @@ blenheim spaniel dog:
 papillon:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 papillon dog:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 toy terrier:
   label: dog
   priority: 5
-  threshold: 0.44
+  threshold: 0.60
   categories:
     - animal
 
 toy terrier dog:
   label: dog
   priority: 5
-  threshold: 0.44
+  threshold: 0.60
   categories:
     - animal
 
@@ -1190,28 +1190,28 @@ beagle dog:
 bloodhound:
   label: dog
   priority: 5
-  threshold: 0.25
+  threshold: 0.60
   categories:
     - animal
 
 bloodhound dog:
   label: dog
   priority: 5
-  threshold: 0.25
+  threshold: 0.60
   categories:
     - animal
 
 bluetick:
   label: dog
   priority: 5
-  threshold: 0.27
+  threshold: 0.60
   categories:
     - animal
 
 bluetick dog:
   label: dog
   priority: 5
-  threshold: 0.27
+  threshold: 0.60
   categories:
     - animal
 
@@ -1242,84 +1242,84 @@ redbone dog:
 borzoi:
   label: dog
   priority: 5
-  threshold: 0.48
+  threshold: 0.60
   categories:
     - animal
 
 borzoi dog:
   label: dog
   priority: 5
-  threshold: 0.48
+  threshold: 0.60
   categories:
     - animal
 
 irish wolfhound:
   label: dog
   priority: 5
-  threshold: 0.24
+  threshold: 0.60
   categories:
     - animal
 
 irish wolfhound dog:
   label: dog
   priority: 5
-  threshold: 0.24
+  threshold: 0.60
   categories:
     - animal
 
 italian greyhound:
   label: dog
   priority: 5
-  threshold: 0.41
+  threshold: 0.60
   categories:
     - animal
 
 italian greyhound dog:
   label: dog
   priority: 5
-  threshold: 0.41
+  threshold: 0.60
   categories:
     - animal
 
 whippet:
   label: dog
   priority: 5
-  threshold: 0.21
+  threshold: 0.60
   categories:
     - animal
 
 whippet dog:
   label: dog
   priority: 5
-  threshold: 0.21
+  threshold: 0.60
   categories:
     - animal
 
 ibizan hound:
   label: dog
   priority: 5
-  threshold: 0.22
+  threshold: 0.60
   categories:
     - animal
 
 ibizan hound dog:
   label: dog
   priority: 5
-  threshold: 0.22
+  threshold: 0.60
   categories:
     - animal
 
 norwegian elkhound:
   label: dog
   priority: 5
-  threshold: 0.53
+  threshold: 0.60
   categories:
     - animal
 
 norwegian elkhound dog:
   label: dog
   priority: 5
-  threshold: 0.53
+  threshold: 0.60
   categories:
     - animal
 
@@ -1332,56 +1332,56 @@ otterhound dog:
 saluki:
   label: dog
   priority: 5
-  threshold: 0.12
+  threshold: 0.60
   categories:
     - animal
 
 saluki dog:
   label: dog
   priority: 5
-  threshold: 0.12
+  threshold: 0.60
   categories:
     - animal
 
 scottish deerhound:
   label: dog
   priority: 5
-  threshold: 0.47
+  threshold: 0.60
   categories:
     - animal
 
 scottish deerhound dog:
   label: dog
   priority: 5
-  threshold: 0.47
+  threshold: 0.60
   categories:
     - animal
 
 weimaraner:
   label: dog
   priority: 5
-  threshold: 0.31
+  threshold: 0.60
   categories:
     - animal
 
 weimaraner dog:
   label: dog
   priority: 5
-  threshold: 0.31
+  threshold: 0.60
   categories:
     - animal
 
 staffordshire bullterrier:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
 staffordshire bullterrier dog:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
@@ -1394,56 +1394,56 @@ american staffordshire terrier dog:
 bedlington terrier:
   label: dog
   priority: 5
-  threshold: 0.54
+  threshold: 0.60
   categories:
     - animal
 
 bedlington terrier dog:
   label: dog
   priority: 5
-  threshold: 0.54
+  threshold: 0.60
   categories:
     - animal
 
 border terrier:
   label: dog
   priority: 5
-  threshold: 0.32
+  threshold: 0.60
   categories:
     - animal
 
 border terrier dog:
   label: dog
   priority: 5
-  threshold: 0.32
+  threshold: 0.60
   categories:
     - animal
 
 kerry blue terrier:
   label: dog
   priority: 5
-  threshold: 0.35
+  threshold: 0.60
   categories:
     - animal
 
 kerry blue terrier dog:
   label: dog
   priority: 5
-  threshold: 0.35
+  threshold: 0.60
   categories:
     - animal
 
 irish terrier:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 irish terrier dog:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
@@ -1482,14 +1482,14 @@ wire-haired fox terrier dog:
 lakeland terrier:
   priority: 5
   label: dog
-  threshold: 0.31
+  threshold: 0.60
   categories:
     - animal
 
 lakeland terrier dog:
   priority: 5
   label: dog
-  threshold: 0.31
+  threshold: 0.60
   categories:
     - animal
 
@@ -1502,14 +1502,14 @@ sealyham terrier dog:
 airedale:
   label: dog
   priority: 5
-  threshold: 0.38
+  threshold: 0.60
   categories:
     - animal
 
 airedale dog:
   label: dog
   priority: 5
-  threshold: 0.38
+  threshold: 0.60
   categories:
     - animal
 
@@ -1522,14 +1522,14 @@ cairn dog:
 australian terrier:
   label: dog
   priority: 5
-  threshold: 0.11
+  threshold: 0.60
   categories:
     - animal
 
 australian terrier dog:
   label: dog
   priority: 5
-  threshold: 0.11
+  threshold: 0.60
   categories:
     - animal
 
@@ -1542,28 +1542,28 @@ dandie dinmont dog:
 boston bull:
   label: dog
   priority: 5
-  threshold: 0.25
+  threshold: 0.60
   categories:
     - animal
 
 boston bull dog:
   label: dog
   priority: 5
-  threshold: 0.25
+  threshold: 0.60
   categories:
     - animal
 
 miniature schnauzer:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
 miniature schnauzer dog:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
@@ -1582,14 +1582,14 @@ standard schnauzer dog:
 scotch terrier:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
 scotch terrier dog:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
@@ -1608,28 +1608,28 @@ silky terrier dog:
 soft-coated wheaten terrier:
   label: dog
   priority: 5
-  threshold: 0.12
+  threshold: 0.60
   categories:
     - animal
 
 soft-coated wheaten terrier dog:
   label: dog
   priority: 5
-  threshold: 0.12
+  threshold: 0.60
   categories:
     - animal
 
 west highland white terrier:
   label: dog
   priority: 5
-  threshold: 0.43
+  threshold: 0.60
   categories:
     - animal
 
 west highland white terrier dog:
   label: dog
   priority: 5
-  threshold: 0.43
+  threshold: 0.60
   categories:
     - animal
 
@@ -1642,70 +1642,70 @@ lhasa dog:
 flat-coated retriever:
   label: dog
   priority: 5
-  threshold: 0.16
+  threshold: 0.60
   categories:
     - animal
 
 flat-coated retriever dog:
   label: dog
   priority: 5
-  threshold: 0.16
+  threshold: 0.60
   categories:
     - animal
 
 curly-coated retriever:
   label: dog
   priority: 5
-  threshold: 0.17
+  threshold: 0.60
   categories:
     - animal
 
 curly-coated retriever dog:
   label: dog
   priority: 5
-  threshold: 0.17
+  threshold: 0.60
   categories:
     - animal
 
 golden retriever:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 
 golden retriever dog:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 
 labrador retriever:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
 labrador retriever dog:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
 chesapeake bay retriever:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
 chesapeake bay retriever dog:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
@@ -1738,42 +1738,42 @@ english setter dog:
 irish setter:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 irish setter dog:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 gordon setter:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 gordon setter dog:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 brittany spaniel:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
 brittany spaniel dog:
   label: dog
   priority: 5
-  threshold: 0.18
+  threshold: 0.60
   categories:
     - animal
 
@@ -1832,14 +1832,14 @@ irish water spaniel dog:
 kuvasz:
   label: dog
   priority: 5
-  threshold: 0.41
+  threshold: 0.60
   categories:
     - animal
 
 kuvasz dog:
   label: dog
   priority: 5
-  threshold: 0.41
+  threshold: 0.60
   categories:
     - animal
 
@@ -1860,14 +1860,14 @@ schipperke dog:
 groenendael:
   label: dog
   priority: 5
-  threshold: 0.56
+  threshold: 0.60
   categories:
     - animal
 
 groenendael dog:
   label: dog
   priority: 5
-  threshold: 0.56
+  threshold: 0.60
   categories:
     - animal
 
@@ -1918,14 +1918,14 @@ collie dog:
 border collie:
   label: dog
   priority: 5
-  threshold: 0.14
+  threshold: 0.60
   categories:
     - animal
 
 border collie dog:
   label: dog
   priority: 5
-  threshold: 0.14
+  threshold: 0.60
   categories:
     - animal
 
@@ -1952,14 +1952,14 @@ rottweiler dog:
 german shepherd:
   label: dog
   priority: 5
-  threshold: 0.11
+  threshold: 0.60
   categories:
     - animal
 
 german shepherd dog:
   label: dog
   priority: 5
-  threshold: 0.11
+  threshold: 0.60
   categories:
     - animal
 
@@ -2014,28 +2014,28 @@ tibetan mastiff dog:
 french bulldog:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 
 french bulldog dog:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 
 great dane:
   label: dog
   priority: 5
-  threshold: 0.12
+  threshold: 0.60
   categories:
     - animal
 
 great dane dog:
   label: dog
   priority: 5
-  threshold: 0.12
+  threshold: 0.60
   categories:
     - animal
 
@@ -2048,35 +2048,35 @@ saint bernard dog:
 eskimo dog:
   label: dog
   priority: 5
-  threshold: 0.31
+  threshold: 0.60
   categories:
     - animal
 
 malamute:
   label: dog
   priority: 5
-  threshold: 0.25
+  threshold: 0.60
   categories:
     - animal
 
 malamute dog:
   label: dog
   priority: 5
-  threshold: 0.25
+  threshold: 0.60
   categories:
     - animal
 
 siberian husky:
   label: dog
   priority: 5
-  threshold: 0.55
+  threshold: 0.60
   categories:
     - animal
 
 siberian husky dog:
   label: dog
   priority: 5
-  threshold: 0.55
+  threshold: 0.60
   categories:
     - animal
 
@@ -2097,42 +2097,42 @@ dalmatian dog:
 affenpinscher:
   label: dog
   priority: 5
-  threshold: 0.3
+  threshold: 0.60
   categories:
     - animal
 
 affenpinscher dog:
   label: dog
   priority: 5
-  threshold: 0.3
+  threshold: 0.60
   categories:
     - animal
 
 basenji:
   label: dog
   priority: 5
-  threshold: 0.3
+  threshold: 0.60
   categories:
     - animal
 
 basenji dog:
   label: dog
   priority: 5
-  threshold: 0.3
+  threshold: 0.60
   categories:
     - animal
 
 pug:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 
 pug dog:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 
@@ -2151,42 +2151,42 @@ newfoundland dog:
 great pyrenees:
   label: dog
   priority: 5
-  threshold: 0.33
+  threshold: 0.60
   categories:
     - animal
 
 great pyrenees dog:
   label: dog
   priority: 5
-  threshold: 0.33
+  threshold: 0.60
   categories:
     - animal
 
 samoyed:
   label: dog
   priority: 5
-  threshold: 0.38
+  threshold: 0.60
   categories:
     - animal
 
 samoyed dog:
   label: dog
   priority: 5
-  threshold: 0.38
+  threshold: 0.60
   categories:
     - animal
 
 pomeranian:
   label: dog
   priority: 5
-  threshold: 0.16
+  threshold: 0.60
   categories:
     - animal
 
 pomeranian dog:
   label: dog
   priority: 5
-  threshold: 0.16
+  threshold: 0.60
   categories:
     - animal
 
@@ -2205,91 +2205,91 @@ keeshond dog:
 brabancon griffon:
   label: dog
   priority: 5
-  threshold: 0.14
+  threshold: 0.60
   categories:
     - animal
 
 brabancon griffon dog:
   label: dog
   priority: 5
-  threshold: 0.14
+  threshold: 0.60
   categories:
     - animal
 
 pembroke:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
 pembroke dog:
   label: dog
   priority: 5
-  threshold: 0.15
+  threshold: 0.60
   categories:
     - animal
 
 cardigan dog:
   label: dog
   priority: 5
-  threshold: 0.45
+  threshold: 0.60
   categories:
     - animal
 
 toy poodle:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
 toy poodle dog:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
 miniature poodle:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
 miniature poodle dog:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
 standard poodle:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
 standard poodle dog:
   label: dog
   priority: 5
-  threshold: 0.4
+  threshold: 0.60
   categories:
     - animal
 
 mexican hairless:
   label: dog
   priority: 5
-  threshold: 0.24
+  threshold: 0.60
   categories:
     - animal
 
 mexican hairless dog:
   label: dog
   priority: 5
-  threshold: 0.24
+  threshold: 0.60
   categories:
     - animal
 
@@ -2311,7 +2311,7 @@ red wolf:
 coyote:
   label: dog
   priority: 5
-  threshold: 0.29
+  threshold: 0.60
   categories:
     - animal
 
@@ -2325,14 +2325,14 @@ dingo:
 dhole:
   label: dog
   priority: 5
-  threshold: 0.5
+  threshold: 0.60
   categories:
     - animal
 
 african hunting dog:
   label: dog
   priority: 5
-  threshold: 0.55
+  threshold: 0.60
   categories:
     - animal
 

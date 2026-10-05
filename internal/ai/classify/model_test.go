@@ -557,8 +557,45 @@ func TestModelBestLabelsSussexFloor(t *testing.T) {
 	}
 	t.Run("OtherBreed", func(t *testing.T) {
 		model := &Model{labels: []string{"cocker spaniel dog"}}
-		result := model.bestLabels([]float32{0.34}, 20)
+		result := model.bestLabels([]float32{0.65}, 20)
 		require.Len(t, result, 1)
 		assert.Equal(t, "dog", result[0].Name)
 	})
+}
+
+// TestModelBestLabelsDogFloor verifies the Dog minimum before rounding and global filtering.
+func TestModelBestLabelsDogFloor(t *testing.T) {
+	for _, alias := range []struct{ name, class string }{
+		{"BaseRule", "dog"},
+		{"InheritedAlias", "cocker spaniel dog"},
+		{"LegacyAlias", "yorkshire terrier"},
+		{"CanonicalClass", "yorkshire terrier dog"},
+		{"WildCanid", "coyote"},
+	} {
+		t.Run(alias.name, func(t *testing.T) {
+			model := &Model{labels: []string{alias.class}}
+			for _, test := range []struct {
+				name        string
+				probability float32
+				threshold   int
+				accepted    bool
+			}{
+				{"BelowFloor", 0.5999, 20, false},
+				{"AtFloor", 0.60, 20, true},
+				{"AboveFloor", 0.6001, 20, true},
+				{"LowerGlobalFloor", 0.34, 10, false},
+				{"HigherGlobalFloor", 0.60, 80, false},
+			} {
+				t.Run(test.name, func(t *testing.T) {
+					result := model.bestLabels([]float32{test.probability}, test.threshold)
+					if test.accepted {
+						require.Len(t, result, 1)
+						assert.Equal(t, "dog", result[0].Name)
+					} else {
+						require.Empty(t, result)
+					}
+				})
+			}
+		})
+	}
 }

@@ -18,7 +18,7 @@ The global confidence floor defaults to 20%; an explicit `Thresholds.Confidence`
 
 ### Label Rules
 
-`rules.yml` maps lowercase raw class names to visible labels, confidence minimums, categories and priorities. Class meanings stay distinct: `cardigan` is clothing and uses the fashion/Portrait rule, while `cardigan dog` is the dog breed. The hardware class `nail` is ignored. Rules with priority -3 or lower are excluded even when a probability reaches exactly 1. Sussex spaniel aliases require a raw probability of at least 0.60 (60%), and Schipperke aliases require at least 0.995 (99.5%); class minimums compare float32 probabilities before visible-label confidence is rounded.
+`rules.yml` defines how raw model classes map to visible labels, class-specific confidence minimums, categories, and priorities. The classifier applies the global floor to rounded confidence percentages and class-specific minimums to raw probabilities. Excluded rules do not produce labels. Changes to these rules affect subsequent classification; they do not rewrite labels already stored in a library.
 
 Regenerate `rules.go` with `go generate ./internal/ai/classify`. Generation rejects duplicate keys, unknown fields, uppercase names, missing alias targets and aliases that do not reference a direct rule. The package tests verify that the generated map matches the complete YAML source. The generator and its rejection tests are a normally compiled package; run them with `go test ./internal/ai/classify/gen`.
 
