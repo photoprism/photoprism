@@ -1,10 +1,16 @@
 ## PhotoPrism — Thumbnails Package
 
-**Last Updated:** September 14, 2026
+**Last Updated:** October 5, 2026
 
 ### Overview
 
 `internal/thumb` builds thumbnails with libvips, handling resize/crop options, color management, metadata stripping, and format export (JPEG/PNG). It also contains bounded helper paths for reading trusted cached thumbs plus lightweight stdlib/x-image helpers for already-decoded in-memory images.
+
+### Eager & On-Demand Sizes
+
+`Names` lists sizes generated during indexing. It includes `tile_224` for the UI and local S2 center input. `left_224` and `right_224` remain registered in `Sizes` and render on demand, but are not generated eagerly. Indexing does not remove or replace existing side-crop cache files. API generation of missing thumbnails still honors `PHOTOPRISM_THUMB_UNCACHED`; cached files remain servable when generation is disabled.
+
+`OpenInputSource` prepares oriented model sources with the configured renderer. Native inputs stay lazy until the selected region is cropped and resized; only the final input pixels are copied into Go. Enabled ICC profiles are converted to sRGB for model input, without changing thumbnail export policy.
 
 ### Constraints
 
@@ -25,7 +31,7 @@
 ### Non-Goals
 
 - Serving or caching thumbnails (handled elsewhere).
-- Full ICC workflow management; only minimal embedding for interop-index cases.
+- Full ICC workflow management; thumbnail export retains its profile policy while model inputs request sRGB pixels.
 
 ### Package Layout (Code Map)
 

@@ -1,6 +1,8 @@
 package api
 
 import (
+	"bytes"
+	"image/jpeg"
 	"net/http"
 	"path/filepath"
 	"testing"
@@ -196,4 +198,28 @@ func TestThumbLogName(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "unknown file", thumbLogName(""))
 	})
+}
+
+// TestGetThumbLabelSizes verifies UI tiles and registered side crops remain servable.
+func TestGetThumbLabelSizes(t *testing.T) {
+	for _, name := range []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224} {
+		t.Run(string(name), func(t *testing.T) {
+			app, router, conf := NewApiTest()
+			SetTestThumbUncached(t, true)
+			hash := "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+			CreateTestFileOriginal(t, hash)
+			GetThumb(router)
+			response := PerformRequest(app, "GET", "/api/v1/t/"+hash+"/"+conf.PreviewToken()+"/"+string(name))
+			require.Equal(t, http.StatusOK, response.Code)
+			require.Equal(t, "image/jpeg", response.Header().Get("Content-Type"))
+			pixels, err := jpeg.Decode(bytes.NewReader(response.Body.Bytes()))
+			require.NoError(t, err)
+			assert.Equal(t, 224, pixels.Bounds().Dx())
+			assert.Equal(t, 224, pixels.Bounds().Dy())
+			SetTestThumbUncached(t, false)
+			cached := PerformRequest(app, "GET", "/api/v1/t/"+hash+"/"+conf.PreviewToken()+"/"+string(name))
+			require.Equal(t, http.StatusOK, cached.Code)
+			assert.Equal(t, response.Body.Bytes(), cached.Body.Bytes())
+		})
+	}
 }

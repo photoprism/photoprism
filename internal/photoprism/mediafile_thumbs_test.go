@@ -1,11 +1,13 @@
 package photoprism
 
 import (
+	"image"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/meta"
@@ -425,4 +427,53 @@ func TestMediaFile_GenerateAvatarThumbnails(t *testing.T) {
 
 		assert.Equal(t, meta.Data{}, m.metaData)
 	})
+}
+
+// TestMediaFileEagerLabelThumbnails verifies UI tiles and on-demand side crops.
+func TestMediaFileEagerLabelThumbnails(t *testing.T) {
+	previous, library := Config(), thumb.Library
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(previous); thumb.Library = library })
+	for _, backend := range []thumb.Lib{thumb.LibVips, thumb.LibAuto} {
+		t.Run(string(backend), func(t *testing.T) {
+			thumb.Library = backend
+			source := filepath.Join(t.TempDir(), "source.png")
+			require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 600, 400)), source))
+			m, err := NewMediaFile(source)
+			require.NoError(t, err)
+			cache := t.TempDir()
+			require.NoError(t, m.GenerateThumbnails(cache, false))
+			tile, err := thumb.SizeTile224.FileName(m.Hash(), cache)
+			require.NoError(t, err)
+			require.FileExists(t, tile)
+			cfg, _, err := fs.DecodeImageConfigFile(tile)
+			require.NoError(t, err)
+			assert.Equal(t, 224, cfg.Width)
+			for _, name := range []thumb.Name{thumb.Left224, thumb.Right224} {
+				size, ok := thumb.Sizes[name]
+				require.True(t, ok)
+				path, err := size.FileName(m.Hash(), cache)
+				require.NoError(t, err)
+				require.NoFileExists(t, path, "side crop must not be generated eagerly")
+				requested, err := m.Thumbnail(cache, name)
+				require.NoError(t, err)
+				require.Equal(t, path, requested)
+				require.FileExists(t, path)
+				decoded, _, err := fs.DecodeImageConfigFile(path)
+				require.NoError(t, err)
+				assert.Equal(t, 224, decoded.Width)
+				assert.Equal(t, 224, decoded.Height)
+				before, err := os.ReadFile(path) //nolint:gosec // Read the isolated thumbnail fixture.
+				require.NoError(t, err)
+				before = append(before, []byte("existing side cache")...)
+				require.NoError(t, os.WriteFile(path, before, fs.ModeFile)) //nolint:gosec // Mark the isolated side-cache fixture.
+				require.NoError(t, m.GenerateThumbnails(cache, true))
+				after, err := os.ReadFile(path) //nolint:gosec // Read the isolated thumbnail fixture.
+				require.NoError(t, err)
+				assert.Equal(t, before, after, "existing side crops remain untouched")
+			}
+		})
+	}
 }
