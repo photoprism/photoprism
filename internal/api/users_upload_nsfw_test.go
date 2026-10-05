@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -16,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -113,8 +116,41 @@ func TestNsfwUploadStatusUsesUploadDetector(t *testing.T) {
 	assert.Equal(t, nsfw.StatusUnsafe, nsfwUploadStatus("upload.jpg"))
 }
 
-// TestUploadUserFilesAdmitsUnavailableScreening verifies undecided uploads remain staged.
+// TestUploadUserFilesAdmitsUnavailableScreening verifies undecided uploads remain staged and are
+// reported in the audit log when it is enabled.
 func TestUploadUserFilesAdmitsUnavailableScreening(t *testing.T) {
+	for name, audit := range map[string]bool{"AuditLog": true, "GeneralLog": false} {
+		t.Run(name, func(t *testing.T) {
+			logged, audited := uploadUnavailableScreening(t, audit)
+			if audit {
+				assert.NotContains(t, logged, "nsfw: upload batch was admitted without a screening decision")
+				assert.Contains(t, audited, "admitted without a screening decision")
+			} else {
+				assert.Contains(t, logged, "nsfw: upload batch was admitted without a screening decision")
+				assert.Empty(t, audited)
+			}
+		})
+	}
+}
+
+// uploadUnavailableScreening uploads a file without a screening decision and returns the general
+// and audit log messages.
+func uploadUnavailableScreening(t *testing.T, audit bool) (logged, audited string) {
+	t.Helper()
+
+	logger, logHook := logtest.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	auditLogger, auditHook := logtest.NewNullLogger()
+	auditLogger.SetLevel(logrus.TraceLevel)
+	prevLog, prevAudit := log, event.AuditLog
+	t.Cleanup(func() { log, event.AuditLog = prevLog, prevAudit })
+	log = logger
+	event.AuditLog = nil
+
+	if audit {
+		event.AuditLog = auditLogger
+	}
+
 	app, router, conf := NewApiTest()
 	conf.Options().StoragePath = t.TempDir()
 	conf.Options().UploadAllow = "jpg"
@@ -138,6 +174,16 @@ func TestUploadUserFilesAdmitsUnavailableScreening(t *testing.T) {
 	require.Equal(t, http.StatusOK, out.Code, out.Body.String())
 	uploadBase := filepath.Join(conf.UserStoragePath(entity.Admin.UserUID), "upload")
 	assert.NotEmpty(t, findUploadedFilesForToken(t, uploadBase, uploadToken))
+
+	for _, entry := range logHook.AllEntries() {
+		logged += entry.Message + "\n"
+	}
+
+	for _, entry := range auditHook.AllEntries() {
+		audited += entry.Message + "\n"
+	}
+
+	return logged, audited
 }
 
 // TestRemoveScreenedUploads verifies rejected batches are removed before returning an error.
