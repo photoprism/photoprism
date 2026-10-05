@@ -102,6 +102,30 @@ func TestSchemaLabelsReturnsValidJSON(t *testing.T) {
 	}
 }
 
+func TestIsCloudUrl(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		out  bool
+	}{
+		{name: "DefaultBase", in: DefaultBaseUrl, out: true},
+		{name: "Responses", in: DefaultBaseUrl + "/responses", out: true},
+		{name: "Uppercase", in: "https://API.OpenAI.com/v1/responses", out: true},
+		{name: "OtherHost", in: "https://llm.example.com/v1/responses", out: false},
+		{name: "LocalIP", in: "http://192.0.2.10:8080/v1/responses", out: false},
+		{name: "Empty", in: "", out: false},
+		{name: "NotAUrl", in: "gpt-5-mini", out: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := IsCloudUrl(tc.in); got != tc.out {
+				t.Fatalf("IsCloudUrl(%q) = %v, want %v", tc.in, got, tc.out)
+			}
+		})
+	}
+}
+
 func TestIsCloudModel(t *testing.T) {
 	cases := []struct {
 		name string

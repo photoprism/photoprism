@@ -10,11 +10,13 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"sync"
 
 	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	httpclient "github.com/photoprism/photoprism/pkg/http/client"
@@ -30,6 +32,8 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 		return apiResponse, errors.New("api request is nil")
 	} else if err = validateApiRequestURL(uri); err != nil {
 		return apiResponse, invalidUriError(apiRequest.GetResponseFormat(), err)
+	} else if key == "" && requiresApiKey(uri) {
+		return apiResponse, missingKeyError(apiRequest)
 	}
 
 	data, jsonErr := apiRequest.JSON()
@@ -232,6 +236,26 @@ func logServiceResponse(err error, text []byte) {
 }
 
 // validateApiRequestURL checks that outbound API requests only use HTTP(S) URLs with a host.
+// missingKeyWarned holds the services and models whose missing API key was logged.
+var missingKeyWarned sync.Map
+
+// requiresApiKey reports whether the URI belongs to the OpenAI API or Ollama Cloud, which need an API key.
+func requiresApiKey(uri string) bool {
+	return openai.IsCloudUrl(uri) || ollama.IsCloudUrl(uri)
+}
+
+// missingKeyError returns the error for a request that is not sent because the service needs an API key,
+// and writes a model configuration warning once per service and model.
+func missingKeyError(apiRequest *ApiRequest) error {
+	service := serviceName(apiRequest.GetResponseFormat())
+
+	if _, warned := missingKeyWarned.LoadOrStore(serviceFailureKey(service, apiRequest.Model), struct{}{}); !warned {
+		warnModel("%s model %s has no api key, so no request is sent", service, clean.Log(apiRequest.Model))
+	}
+
+	return fmt.Errorf("%s service request failed (missing api key)", service)
+}
+
 func validateApiRequestURL(rawURL string) error {
 	_, err := safe.URL(rawURL)
 	return err
