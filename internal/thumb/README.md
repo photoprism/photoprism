@@ -40,6 +40,7 @@
 - `vips_convert.go` — HEIC/HEIF/AVIF and other format conversion via libvips (`vipsConvert`).
 - `vips_icc.go` — EXIF InteroperabilityIndex handling and ICC embedding.
 - `icc.go` — lists bundled ICC filenames (`IccProfiles`) and `GetIccProfile` helper.
+- `open_input.go` — lazy oriented model-input sources, bounded region resampling, and source cleanup.
 - `open.go`, `open_jpeg.go` — bounded file decode helpers for non-libvips paths, including explicit JPEG color handling and TIFF-safe dispatch via `pkg/fs`.
 - `resample.go`, `sizes.go`, `size.go` — resample options, the predefined size catalog (`MaxSize`, `MaxRenderSize`, `InvalidSize`), and the per-size helpers (`Uncached`, `ExceedsLimit`, `Clamp`, `Limit`).
 - `config.go` — package defaults for `SizeCached`, `SizeOnDemand` and `SizeFace`, assigned from the configuration by `Config.Propagate`.
