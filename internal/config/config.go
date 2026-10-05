@@ -240,7 +240,7 @@ func (c *Config) Init() error {
 	// Show warning if less than 1 GB RAM was detected.
 	if LowMem {
 		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/GigaByte)
-		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
+		log.Warnf("config: face recognition as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
 	// Show swap space disclaimer.
@@ -368,7 +368,7 @@ func (c *Config) InitCore() error {
 	// Show warning if less than 1 GB RAM was detected.
 	if LowMem {
 		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/GigaByte)
-		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
+		log.Warnf("config: face recognition as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
 	// Show swap space disclaimer.
