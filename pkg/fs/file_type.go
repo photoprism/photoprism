@@ -164,6 +164,11 @@ func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequ
 		case dir == filePath:
 			continue
 		case filepath.IsAbs(dir):
+			// A file in the folder itself, e.g. a generated sidecar, is not looked up below its absolute path.
+			if InDir(filePath, dir) && !InDir(filePath, baseDir) {
+				continue
+			}
+
 			dir = filepath.Join(dir, RelName(filePath, baseDir))
 		default:
 			dir = filepath.Join(filePath, dir)

@@ -164,3 +164,23 @@ func TestFileNameHidden(t *testing.T) {
 		assert.False(t, FileNameHidden(""))
 	})
 }
+
+// TestFilePath_InSearchDir verifies that a file in the sidecar folder outside the base folder gets its sidecar
+// next to it, while other files keep their names below the sidecar folder.
+func TestFilePath_InSearchDir(t *testing.T) {
+	t.Run("FileInSidecar", func(t *testing.T) {
+		result, err := FilePath("/storage/sidecar/2024/x.mp4", "/storage/sidecar", "/originals", ".jpg")
+		assert.NoError(t, err)
+		assert.Equal(t, "/storage/sidecar/2024/x.mp4.jpg", result)
+	})
+	t.Run("FileOutsideBaseDir", func(t *testing.T) {
+		result, err := FilePath("/samples/x.mp4", "/storage/sidecar", "/originals", ".jpg")
+		assert.NoError(t, err)
+		assert.Equal(t, "/storage/sidecar/samples/x.mp4.jpg", result)
+	})
+	t.Run("SidecarInOriginals", func(t *testing.T) {
+		result, err := FilePath("/originals/.photoprism/sidecar/2024/x.mp4", "/originals/.photoprism/sidecar", "/originals", ".jpg")
+		assert.NoError(t, err)
+		assert.Equal(t, "/originals/.photoprism/sidecar/.photoprism/sidecar/2024/x.mp4.jpg", result)
+	})
+}

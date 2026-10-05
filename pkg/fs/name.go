@@ -24,7 +24,8 @@ func FileName(fileName, dirName, baseDir, fileExt string) (string, error) {
 }
 
 // FilePath returns the file path for a sidecar file with the specified extension, like FileName, but
-// without creating its folder, e.g. to plan an output before any file is written.
+// without creating its folder, e.g. to plan an output before any file is written. A file that already
+// lies in an absolute dirName outside baseDir gets its sidecar next to it.
 func FilePath(fileName, dirName, baseDir, fileExt string) (string, error) {
 	if fileName == "" {
 		return "", fmt.Errorf("file name is empty")
@@ -34,14 +35,16 @@ func FilePath(fileName, dirName, baseDir, fileExt string) (string, error) {
 
 	dir := filepath.Dir(fileName)
 
-	if dirName == "" || dirName == "." {
+	switch {
+	case dirName == "" || dirName == "." || dir == dirName:
 		dirName = dir
-	} else if dir != dirName {
-		if filepath.IsAbs(dirName) {
-			dirName = filepath.Join(dirName, RelName(dir, baseDir))
-		} else {
-			dirName = filepath.Join(dir, dirName)
-		}
+	case filepath.IsAbs(dirName) && InDir(dir, dirName) && !InDir(dir, baseDir):
+		// A file in the folder itself is written next to it, where Type.FindEach looks it up.
+		dirName = dir
+	case filepath.IsAbs(dirName):
+		dirName = filepath.Join(dirName, RelName(dir, baseDir))
+	default:
+		dirName = filepath.Join(dir, dirName)
 	}
 
 	// Compose and return file path.

@@ -530,3 +530,82 @@ func TestIsAnimatedImage(t *testing.T) {
 		assert.True(t, IsAnimatedImage("file.heics"))
 	})
 }
+
+// TestType_FindInSearchDir verifies that a file in a search folder is not looked up below that folder under its
+// absolute path, while files outside the base folder keep their absolute fallback.
+func TestType_FindInSearchDir(t *testing.T) {
+	setup := func(t *testing.T) (originals, sidecar string) {
+		t.Helper()
+		root := t.TempDir()
+		originals, sidecar = filepath.Join(root, "originals"), filepath.Join(root, "sidecar")
+		require.NoError(t, os.MkdirAll(originals, 0o700))
+		require.NoError(t, os.MkdirAll(sidecar, 0o700))
+		return originals, sidecar
+	}
+	write := func(t *testing.T, fileName string) {
+		t.Helper()
+		require.NoError(t, os.MkdirAll(filepath.Dir(fileName), 0o700))
+		require.NoError(t, os.WriteFile(fileName, []byte("x"), 0o600))
+	}
+
+	t.Run("FileInSidecar", func(t *testing.T) {
+		originals, sidecar := setup(t)
+		fileName := filepath.Join(sidecar, "2024", "IMG_1.jpg")
+		write(t, fileName)
+		write(t, filepath.Join(sidecar, filepath.Dir(fileName), "IMG_1.json"))
+		assert.Equal(t, "", SidecarJson.FindFirst(fileName, []string{sidecar}, originals, false))
+		assert.Empty(t, SidecarJson.FindAll(fileName, []string{sidecar}, originals, false))
+	})
+	t.Run("FileOutsideBaseDir", func(t *testing.T) {
+		originals, sidecar := setup(t)
+		samples := filepath.Join(filepath.Dir(originals), "samples")
+		fileName := filepath.Join(samples, "IMG_1.jpg")
+		want := filepath.Join(sidecar, samples, "IMG_1.json")
+		write(t, fileName)
+		write(t, want)
+		assert.Equal(t, want, SidecarJson.FindFirst(fileName, []string{sidecar}, originals, false))
+	})
+	t.Run("FileInOriginals", func(t *testing.T) {
+		originals, sidecar := setup(t)
+		fileName := filepath.Join(originals, "2024", "IMG_1.jpg")
+		want := filepath.Join(sidecar, "2024", "IMG_1.json")
+		write(t, fileName)
+		write(t, want)
+		assert.Equal(t, want, SidecarJson.FindFirst(fileName, []string{sidecar}, originals, false))
+	})
+	t.Run("SidecarInOriginals", func(t *testing.T) {
+		originals, _ := setup(t)
+		sidecar := filepath.Join(originals, ".photoprism", "storage", "sidecar")
+		fileName := filepath.Join(sidecar, "2024", "IMG_1.jpg")
+		want, err := FilePath(fileName, sidecar, originals, ".json")
+		require.NoError(t, err)
+		write(t, fileName)
+		write(t, want)
+		assert.Equal(t, want, SidecarJson.FindFirst(fileName, []string{sidecar}, originals, false))
+	})
+	t.Run("FilePathAgrees", func(t *testing.T) {
+		originals, sidecar := setup(t)
+		samples := filepath.Join(filepath.Dir(originals), "samples")
+
+		for _, fileName := range []string{
+			filepath.Join(sidecar, "2024", "IMG_1.jpg"),
+			filepath.Join(samples, "IMG_1.jpg"),
+			filepath.Join(originals, "2024", "IMG_1.jpg"),
+			filepath.Join(originals, "IMG_1.jpg"),
+		} {
+			want, err := FilePath(fileName, sidecar, originals, ".json")
+			require.NoError(t, err)
+			write(t, fileName)
+			write(t, want)
+			assert.Equal(t, want, SidecarJson.FindFirst(fileName, []string{sidecar}, originals, false), fileName)
+		}
+	})
+	t.Run("FileInOriginalsRoot", func(t *testing.T) {
+		originals, sidecar := setup(t)
+		fileName := filepath.Join(originals, "IMG_1.jpg")
+		want := filepath.Join(sidecar, "IMG_1.json")
+		write(t, fileName)
+		write(t, want)
+		assert.Equal(t, want, SidecarJson.FindFirst(fileName, []string{sidecar}, originals, false))
+	})
+}
