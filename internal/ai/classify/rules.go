@@ -6342,13 +6342,13 @@ var Rules = LabelRules{
 	},
 	"sussex spaniel": {
 		Label:      "dog",
-		Threshold:  0.130000,
+		Threshold:  0.600000,
 		Priority:   5,
 		Categories: []string{"animal"},
 	},
 	"sussex spaniel dog": {
 		Label:      "dog",
-		Threshold:  0.130000,
+		Threshold:  0.600000,
 		Priority:   5,
 		Categories: []string{"animal"},
 	},

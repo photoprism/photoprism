@@ -1804,14 +1804,14 @@ cocker spaniel dog:
 sussex spaniel:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 
 sussex spaniel dog:
   label: dog
   priority: 5
-  threshold: 0.13
+  threshold: 0.60
   categories:
     - animal
 

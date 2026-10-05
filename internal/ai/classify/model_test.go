@@ -525,3 +525,40 @@ func probabilitySum(probabilities []float32) float64 {
 
 	return result
 }
+
+// TestModelBestLabelsSussexFloor verifies both aliases and unrelated Dog classes.
+func TestModelBestLabelsSussexFloor(t *testing.T) {
+	for _, alias := range []struct{ name, class string }{
+		{"LegacyAlias", "sussex spaniel"},
+		{"CanonicalClass", "sussex spaniel dog"},
+	} {
+		t.Run(alias.name, func(t *testing.T) {
+			model := &Model{labels: []string{alias.class}}
+			for _, test := range []struct {
+				name        string
+				probability float32
+				accepted    bool
+			}{
+				{"BelowFloor", 0.5999, false},
+				{"AtFloor", 0.60, true},
+				{"AboveFloor", 0.6001, true},
+			} {
+				t.Run(test.name, func(t *testing.T) {
+					result := model.bestLabels([]float32{test.probability}, 20)
+					if test.accepted {
+						require.Len(t, result, 1)
+						assert.Equal(t, "dog", result[0].Name)
+					} else {
+						require.Empty(t, result)
+					}
+				})
+			}
+		})
+	}
+	t.Run("OtherBreed", func(t *testing.T) {
+		model := &Model{labels: []string{"cocker spaniel dog"}}
+		result := model.bestLabels([]float32{0.34}, 20)
+		require.Len(t, result, 1)
+		assert.Equal(t, "dog", result[0].Name)
+	})
+}
