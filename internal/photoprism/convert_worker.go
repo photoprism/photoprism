@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -26,7 +27,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 		}
 
 		fileName := job.file.RelName(job.convert.conf.OriginalsPath())
-		log.Errorf("convert: %s for %s", clean.Error(err), clean.Log(fileName))
+		log.Errorf("convert: %s for %s", convertErrText(err), clean.Log(fileName))
 		return false
 	}
 
@@ -89,4 +90,9 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 			}
 		}
 	}
+}
+
+// convertErrText returns the sanitized error text without the "convert: " prefix that the log line adds.
+func convertErrText(err error) string {
+	return strings.TrimPrefix(clean.Error(err), "convert: ")
 }

@@ -1,7 +1,9 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
+	iofs "io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -119,5 +121,23 @@ func TestConvertWorker(t *testing.T) {
 		jobs <- ConvertJob{file: &MediaFile{}}
 		close(jobs)
 		assert.NotPanics(t, func() { ConvertWorker(jobs) })
+	})
+}
+
+// TestConvertErrText verifies that the log prefix is not repeated.
+func TestConvertErrText(t *testing.T) {
+	t.Run("Prefixed", func(t *testing.T) {
+		assert.Equal(t, "failed to transcode clip.mp4", convertErrText(errors.New("convert: failed to transcode clip.mp4")))
+	})
+	t.Run("Plain", func(t *testing.T) {
+		assert.Equal(t, "file is empty", convertErrText(errors.New("file is empty")))
+	})
+	t.Run("Once", func(t *testing.T) {
+		assert.Equal(t, "convert: x", convertErrText(errors.New("convert: convert: x")))
+	})
+	t.Run("Sanitized", func(t *testing.T) {
+		assert.NotContains(t, convertErrText(errors.New(`convert: "quoted"`)), `"`)
+		err := fmt.Errorf("convert: %w", &iofs.PathError{Op: "open", Path: "/abs/originals/clip.mp4", Err: iofs.ErrNotExist})
+		assert.NotContains(t, convertErrText(err), "/abs")
 	})
 }

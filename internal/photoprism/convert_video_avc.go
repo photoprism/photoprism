@@ -167,9 +167,8 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 
 	cmd, useMutex, err := w.TranscodeToAvcCmd(f, avcName, encoder)
 
-	// Return if an error occurred.
+	// Return if an error occurred, which the caller logs.
 	if err != nil {
-		log.Errorf("convert: %s for %s (transcode command)", clean.Error(err), logFileName)
 		return nil, err
 	}
 

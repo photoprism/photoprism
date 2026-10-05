@@ -199,6 +199,10 @@ func GetVideo(router *gin.RouterGroup) {
 				return
 			} else {
 				// Log error and default to 404.mp4
+				if avcErr != nil {
+					log.Debugf("video: %s", clean.Error(avcErr))
+				}
+
 				log.Errorf("video: failed to transcode %s", clean.Log(f.FileName))
 				AbortVideo(c)
 				return
