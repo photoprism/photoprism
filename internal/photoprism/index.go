@@ -138,7 +138,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	if !fs.PathExists(optionsPath) {
-		event.Error(fmt.Sprintf("index: directory %s not found", clean.Log(optionsPath)))
+		event.Error(fmt.Sprintf("index: directory %s not found", clean.Log(displayFolder(optionsPath, originalsPath))))
 		return found, updated
 	} else if fs.DirIsEmpty(originalsPath) {
 		event.InfoMsg(i18n.ErrOriginalsEmpty)

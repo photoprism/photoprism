@@ -121,7 +121,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 
 	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
-		event.Error(fmt.Sprintf("import: directory %s not found", importPath))
+		event.Error(fmt.Sprintf("import: directory %s not found", clean.Log(displayFolder(importPath, folderBase))))
 		return done, errors.New("directory not found")
 	}
 

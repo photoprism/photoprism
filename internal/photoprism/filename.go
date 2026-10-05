@@ -113,3 +113,17 @@ func Root(fileName string) string {
 func RootRelName(fileName string) string {
 	return RelName(fileName, RootPath(fileName))
 }
+
+// displayFolder returns the name of a folder relative to its base folder, "/" for the base folder itself, or
+// its base name if it has no base folder, so notifications do not show the storage path.
+func displayFolder(folder, base string) string {
+	folder = filepath.Clean(folder)
+
+	if base == "" || !fs.InDir(folder, base) {
+		return filepath.Base(folder)
+	} else if rel := fs.RelName(folder, base); rel != "" {
+		return rel
+	}
+
+	return "/"
+}

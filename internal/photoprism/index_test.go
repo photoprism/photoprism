@@ -3,14 +3,17 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+	"github.com/leandro-lugaresi/hub"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -112,4 +115,44 @@ func TestIndex_forgetReplacedPreview(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		assert.NotPanics(t, func() { ind.forgetReplacedPreview(nil) })
 	})
+}
+
+// TestIndex_StartMissingPath verifies that the notification for a missing folder names it relative to originals.
+func TestIndex_StartMissingPath(t *testing.T) {
+	cfg := config.TestConfig()
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+
+	s := event.Subscribe("notify.error")
+	defer event.Unsubscribe(s)
+
+	opt := IndexOptionsAll(cfg)
+	opt.Path = "e2e-missing/folder"
+	found, updated := ind.Start(opt)
+	assert.Empty(t, found)
+	assert.Equal(t, 0, updated)
+
+	assertMissingFolderNotice(t, s.Receiver, "index: directory", "e2e-missing/folder", cfg.OriginalsPath())
+}
+
+// assertMissingFolderNotice waits for the notification with the prefix and checks the folder name it shows.
+func assertMissingFolderNotice(t *testing.T, receiver <-chan hub.Message, prefix, folder, storagePath string) {
+	t.Helper()
+	timeout := time.After(5 * time.Second)
+
+	for {
+		select {
+		case msg := <-receiver:
+			message, _ := msg.Fields["message"].(string)
+
+			if !strings.HasPrefix(message, prefix) {
+				continue
+			}
+
+			assert.Contains(t, message, folder)
+			assert.NotContains(t, message, storagePath)
+			return
+		case <-timeout:
+			t.Fatal("no notification")
+		}
+	}
 }
