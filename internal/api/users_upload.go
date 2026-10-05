@@ -255,10 +255,8 @@ func UploadUserFiles(router *gin.RouterGroup) {
 				removeScreenedUploads(uploads)
 				Abort(c, http.StatusForbidden, i18n.ErrOffensiveUpload)
 				return
-			} else if screeningStatus == nsfw.StatusUnavailable && event.AuditEnabled() {
-				event.AuditWarn([]string{ClientIP(c), "session %s", "upload files", "admitted without a screening decision"}, s.RefID)
 			} else if screeningStatus == nsfw.StatusUnavailable {
-				log.Warnf("nsfw: upload batch was admitted without a screening decision")
+				event.SystemWarn([]string{"nsfw", "upload batch was admitted without a screening decision"})
 			}
 		}
 
