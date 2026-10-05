@@ -9,17 +9,29 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// labelInputGeometry records the oriented source and selected input region.
+type labelInputGeometry struct {
+	SourceBounds image.Rectangle `json:"sourceBounds"`
+	CropBounds   image.Rectangle `json:"cropBounds"`
+}
+
 // PrepareLabelInputs builds the S2 center and capped whole-photo inputs.
 func (m *MediaFile) PrepareLabelInputs() ([]classify.Input, error) {
+	inputs, _, err := m.prepareLabelInputsWithGeometry()
+	return inputs, err
+}
+
+// prepareLabelInputsWithGeometry returns inputs and their actual preparation regions.
+func (m *MediaFile) prepareLabelInputsWithGeometry() ([]classify.Input, []labelInputGeometry, error) {
 	if m == nil {
-		return nil, fmt.Errorf("missing media file")
+		return nil, nil, fmt.Errorf("missing media file")
 	}
 	cfg, err := m.DecodeConfig()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	bounds := image.Rect(0, 0, cfg.Width, cfg.Height)
-	inputs, inputErr := prepareLabelInputs(bounds, func() (*thumb.InputSource, error) {
+	inputs, geometry, inputErr := prepareLabelInputs(bounds, func() (*thumb.InputSource, error) {
 		if min(cfg.Width, cfg.Height) < 224 || (cfg.Width == cfg.Height && cfg.Width <= 224) {
 			return thumb.OpenInputSource(m.FileName(), m.Orientation())
 		}
@@ -30,7 +42,7 @@ func (m *MediaFile) PrepareLabelInputs() ([]classify.Input, error) {
 		return thumb.OpenInputSource(name, 1)
 	}, m.labelWholeSource)
 	if inputErr == nil {
-		return inputs, nil
+		return inputs, geometry, nil
 	}
 	original := func() (*thumb.InputSource, error) { return thumb.OpenInputSource(m.FileName(), m.Orientation()) }
 	return prepareLabelInputs(bounds, original, original)
@@ -62,9 +74,9 @@ func (m *MediaFile) labelWholeSource() (*thumb.InputSource, error) {
 }
 
 // prepareLabelInputs applies the S2 geometry once to each selected source region.
-func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.InputSource, error)) ([]classify.Input, error) {
+func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.InputSource, error)) ([]classify.Input, []labelInputGeometry, error) {
 	if bounds.Empty() {
-		return nil, fmt.Errorf("invalid label source dimensions")
+		return nil, nil, fmt.Errorf("invalid label source dimensions")
 	}
 	single := bounds.Dx() == bounds.Dy() || min(bounds.Dx(), bounds.Dy()) < 224
 	count := 2
@@ -72,6 +84,7 @@ func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.Inp
 		count = 1
 	}
 	inputs := make([]classify.Input, 0, count)
+	geometry := make([]labelInputGeometry, 0, count)
 	for i := 0; i < count; i++ {
 		load := center
 		if i == 1 {
@@ -79,13 +92,13 @@ func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.Inp
 		}
 		source, err := load()
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		if source == nil || source.Bounds().Empty() {
 			if source != nil {
 				source.Close()
 			}
-			return nil, fmt.Errorf("invalid label source")
+			return nil, nil, fmt.Errorf("invalid label source")
 		}
 		region := source.Bounds()
 		w, h := region.Dx(), region.Dy()
@@ -96,7 +109,7 @@ func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.Inp
 		} else {
 			if min(w, h) < 224 {
 				source.Close()
-				return nil, fmt.Errorf("whole-photo label source is too small")
+				return nil, nil, fmt.Errorf("whole-photo label source is too small")
 			}
 			cropW, cropH := w, h
 			if w > h {
@@ -107,12 +120,13 @@ func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.Inp
 			region.Min = region.Min.Add(image.Pt((w-cropW)/2, (h-cropH)/2))
 			region.Max = region.Min.Add(image.Pt(cropW, cropH))
 		}
+		geometry = append(geometry, labelInputGeometry{SourceBounds: source.Bounds(), CropBounds: region})
 		pixels, resizeErr := source.Resample(region, 224, 224)
 		source.Close()
 		if resizeErr != nil {
-			return nil, resizeErr
+			return nil, nil, resizeErr
 		}
 		inputs = append(inputs, classify.Input{Image: pixels, Prepared: true})
 	}
-	return inputs, nil
+	return inputs, geometry, nil
 }

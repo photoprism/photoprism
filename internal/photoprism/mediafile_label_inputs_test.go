@@ -48,7 +48,7 @@ func TestPrepareLabelInputsGeometry(t *testing.T) {
 			expectedSource := image.NewNRGBA(image.Rect(0, 0, tc.cw, tc.ch))
 			draw.Draw(expectedSource, expectedSource.Bounds(), source, region.Min, draw.Src)
 			expected := thumb.ResampleWithFilter(expectedSource, 224, 224, thumb.ResampleResize, thumb.ResampleCubic)
-			inputs, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil })
+			inputs, geometry, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil })
 			require.NoError(t, err)
 			require.Len(t, inputs, 2)
 			for _, input := range inputs {
@@ -56,13 +56,16 @@ func TestPrepareLabelInputsGeometry(t *testing.T) {
 				assert.True(t, input.Prepared)
 			}
 			assert.Equal(t, expected, inputs[1].Image)
+			require.Len(t, geometry, 2)
+			assert.Equal(t, source.Bounds(), geometry[1].SourceBounds)
+			assert.Equal(t, region, geometry[1].CropBounds)
 
 		})
 	}
 	t.Run("EdgeAnimal", func(t *testing.T) {
 		source := image.NewNRGBA(image.Rect(0, 0, 600, 400))
 		draw.Draw(source, image.Rect(60, 100, 100, 300), &image.Uniform{C: color.White}, image.Point{}, draw.Src)
-		inputs, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil })
+		inputs, _, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil })
 		require.NoError(t, err)
 		r, _, _, _ := inputs[1].Image.At(20, 112).RGBA()
 		assert.Greater(t, r, uint32(60000))
@@ -70,11 +73,11 @@ func TestPrepareLabelInputsGeometry(t *testing.T) {
 		assert.Zero(t, r)
 	})
 	t.Run("LoadError", func(t *testing.T) {
-		_, err := prepareLabelInputs(image.Rect(0, 0, 300, 300), func() (*thumb.InputSource, error) { return nil, errors.New("read failed") }, nil)
+		_, _, err := prepareLabelInputs(image.Rect(0, 0, 300, 300), func() (*thumb.InputSource, error) { return nil, errors.New("read failed") }, nil)
 		require.ErrorContains(t, err, "read failed")
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		_, err := prepareLabelInputs(image.Rectangle{}, nil, nil)
+		_, _, err := prepareLabelInputs(image.Rectangle{}, nil, nil)
 		require.Error(t, err)
 	})
 }
@@ -206,7 +209,7 @@ func TestSmallLabelInputGeometry(t *testing.T) {
 	source := image.NewNRGBA(image.Rect(0, 0, 180, 120))
 	draw.Draw(source, image.Rect(30, 0, 150, 120), &image.Uniform{C: color.White}, image.Point{}, draw.Src)
 	calls := 0
-	inputs, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { calls++; return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) {
+	inputs, _, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { calls++; return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) {
 		t.Fatal("small image must not request a whole-photo input")
 		return nil, nil
 	})

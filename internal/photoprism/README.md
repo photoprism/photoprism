@@ -31,7 +31,7 @@
 
 ### Label Input Preparation
 
-`MediaFile.PrepareLabelInputs` prepares the local S2 classifier's center and capped whole-photo inputs. Squares and originals with a short side below 224 pixels use one input. Source selection checks decoded cached dimensions and falls back to the original when no adequate whole-photo rendition is cached. Cached thumbnails are already oriented; original inputs use the media orientation. Both use the configured thumbnail color handling. No additional encoded derivative is written for the capped input.
+`MediaFile.PrepareLabelInputs` prepares the local S2 classifier's center and capped whole-photo inputs. Squares and originals with a short side below 224 pixels use one input. Source selection checks decoded cached dimensions and falls back to the original when no adequate whole-photo rendition is cached. Cached thumbnails are already oriented; original inputs use the media orientation. Both use the configured thumbnail color handling. No additional encoded derivative is written for the capped input. Shared preparation records the actual oriented source and crop bounds alongside the inputs for diagnostics.
 
 `GenerateLabels` selects this path only for local S2 models using the default thumbnail size. Other ONNX models, custom resolutions, and remote engines retain their thumbnail branches.
 
