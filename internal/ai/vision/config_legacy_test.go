@@ -414,7 +414,8 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
     - photoprism
 - Type: nsfw
   Name: nsfw
-  Engine: Ollama
+  Service:
+    Uri: http://photoprism-vision:5000/api/v1/vision/nsfw
   TensorFlow:
     Tags:
     - serve
@@ -433,7 +434,7 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
 		detector := cfg.Model(ModelTypeNsfw)
 		require.NotNil(t, detector)
 		assert.Equal(t, "nsfw", detector.Name)
-		assert.Equal(t, "ollama", detector.Engine)
+		assert.Equal(t, "http://photoprism-vision:5000/api/v1/vision/nsfw", detector.Service.Uri)
 		assert.Nil(t, detector.TensorFlow)
 
 		assert.Empty(t, mappedLogMessages(entries, logrus.InfoLevel))
