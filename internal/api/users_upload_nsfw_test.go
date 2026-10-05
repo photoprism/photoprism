@@ -117,27 +117,27 @@ func TestNsfwUploadStatusUsesUploadDetector(t *testing.T) {
 }
 
 // TestUploadUserFilesAdmitsUnavailableScreening verifies undecided uploads remain staged and are
-// reported in the system log only.
+// reported in the audit log only.
 func TestUploadUserFilesAdmitsUnavailableScreening(t *testing.T) {
-	logged, system := uploadUnavailableScreening(t)
+	logged, audited := uploadUnavailableScreening(t)
 	assert.NotContains(t, logged, "screening decision")
-	assert.Contains(t, system, "nsfw: upload batch was admitted without a screening decision")
+	assert.Contains(t, audited, "upload files › admitted without a screening decision")
 }
 
 // uploadUnavailableScreening uploads a file without a screening decision and returns the messages of
-// the general and audit logs, which share one, and of the system log.
-func uploadUnavailableScreening(t *testing.T) (logged, system string) {
+// the general and system logs, which share one, and of the audit log.
+func uploadUnavailableScreening(t *testing.T) (logged, audited string) {
 	t.Helper()
 
 	logger, logHook := logtest.NewNullLogger()
 	logger.SetLevel(logrus.TraceLevel)
-	systemLogger, systemHook := logtest.NewNullLogger()
-	systemLogger.SetLevel(logrus.TraceLevel)
+	auditLogger, auditHook := logtest.NewNullLogger()
+	auditLogger.SetLevel(logrus.TraceLevel)
 	prevLog, prevAudit, prevSystem := log, event.AuditLog, event.SystemLog
 	t.Cleanup(func() { log, event.AuditLog, event.SystemLog = prevLog, prevAudit, prevSystem })
 	log = logger
-	event.AuditLog = logger
-	event.SystemLog = systemLogger
+	event.SystemLog = logger
+	event.AuditLog = auditLogger
 
 	app, router, conf := NewApiTest()
 	conf.Options().StoragePath = t.TempDir()
@@ -167,11 +167,11 @@ func uploadUnavailableScreening(t *testing.T) (logged, system string) {
 		logged += entry.Message + "\n"
 	}
 
-	for _, entry := range systemHook.AllEntries() {
-		system += entry.Message + "\n"
+	for _, entry := range auditHook.AllEntries() {
+		audited += entry.Message + "\n"
 	}
 
-	return logged, system
+	return logged, audited
 }
 
 // TestRemoveScreenedUploads verifies rejected batches are removed before returning an error.
