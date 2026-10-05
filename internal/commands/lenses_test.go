@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -159,6 +160,20 @@ func TestLensesCommand(t *testing.T) {
 		assert.Error(t, err)
 		assert.Contains(t, output, "add - Adds a lens")
 		assert.Contains(t, err.Error(), `Required flag "model" not set`)
+	})
+	t.Run("UpdateWithControlCharacters", func(t *testing.T) {
+		output, err := RunWithTestContext(LensesCommand, []string{"lenses", "update", "--id=1000002", "--make=Example", "--model=A\nB"})
+		require.Error(t, err)
+		assert.Len(t, output, 0)
+		assert.Contains(t, err.Error(), "make and model must not contain control characters")
+		assertExitCode(t, err, 2)
+	})
+	t.Run("AddWithControlCharacters", func(t *testing.T) {
+		output, err := RunWithTestContext(LensesCommand, []string{"lenses", "add", "--make=A\tB\nC", "--model=ctrl"})
+		require.Error(t, err)
+		assert.Len(t, output, 0)
+		assert.Contains(t, err.Error(), "make and model must not contain control characters")
+		assertExitCode(t, err, 2)
 	})
 	t.Run("AddWithEmptyMakeAndModel", func(t *testing.T) {
 		output, err := RunWithTestContext(LensesCommand, []string{"lenses", "add", "--make= ", "--model="})

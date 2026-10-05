@@ -155,6 +155,8 @@ func AddLens(makeName, modelName string) (result *Lens, created bool, err error)
 
 	if makeName == "" || modelName == "" {
 		return nil, false, fmt.Errorf("%w: make and model must not be empty", ErrInvalidValue)
+	} else if err = checkMakeModel(makeName, modelName); err != nil {
+		return nil, false, err
 	}
 
 	m := NewLens(makeName, modelName)
@@ -389,6 +391,8 @@ func (m *Lens) UpdateMakeModel(makeName, modelName string) error {
 
 	if makeName == "" || modelName == "" {
 		return fmt.Errorf("make and model must not be empty")
+	} else if err := checkMakeModel(makeName, modelName); err != nil {
+		return err
 	}
 
 	l := NewLens(makeName, modelName)
