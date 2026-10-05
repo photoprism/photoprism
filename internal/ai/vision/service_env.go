@@ -172,7 +172,7 @@ func forgetRefusedEnv(field, value string) {
 	})
 }
 
-// warnRefusedEnv logs a warning once per field, configured value, and refused variable name. Only the
+// warnRefusedEnv reports a warning once per field, configured value, and refused variable name. Only the
 // name of a variable that is set is quoted, as other text after a "$" may be part of a literal value.
 func warnRefusedEnv(field, value string, refused []string, suffixes []string) {
 	for _, name := range refused {
@@ -181,10 +181,10 @@ func warnRefusedEnv(field, value string, refused []string, suffixes []string) {
 		}
 
 		if _, set := os.LookupEnv(name); set && envNameValid(name) {
-			log.Warnf("vision: %s does not expand %s, as only variables ending in %s are expanded there",
+			warnModel("%s does not expand %s, as only variables ending in %s are expanded there",
 				field, clean.Log(name), txt.JoinOr(suffixes))
 		} else {
-			log.Warnf("vision: %s contains an unset or invalid variable reference, which is not expanded", field)
+			warnModel("%s contains an unset or invalid variable reference, which is not expanded", field)
 		}
 	}
 }

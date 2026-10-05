@@ -6,10 +6,13 @@ import (
 	"testing"
 
 	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -160,4 +163,86 @@ func TestModel_WarnOnFirstRunConcurrent(t *testing.T) {
 	wg.Wait()
 
 	assert.Len(t, warnMessages(hook.AllEntries()), 1)
+}
+
+// captureAuditLog replaces the audit logger with one whose entries are captured by the returned hook.
+func captureAuditLog(t *testing.T) *test.Hook {
+	t.Helper()
+
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	previous := event.AuditLog
+	event.AuditLog = logger
+	t.Cleanup(func() { event.AuditLog = previous })
+
+	return hook
+}
+
+// TestWarnModel checks that model configuration warnings go to the audit log when it is enabled.
+func TestWarnModel(t *testing.T) {
+	t.Run("AuditLog", func(t *testing.T) {
+		hook := captureVisionLog(t)
+		audit := captureAuditLog(t)
+
+		warnModel("%s model %s needs a service uri", "nsfw", "x")
+
+		assert.Empty(t, warnMessages(hook.AllEntries()))
+		require.Len(t, warnMessages(audit.AllEntries()), 1)
+		assert.Equal(t, "audit: vision › nsfw model x needs a service uri", warnMessages(audit.AllEntries())[0])
+	})
+	t.Run("Log", func(t *testing.T) {
+		hook := captureVisionLog(t)
+		prev := event.AuditLog
+		t.Cleanup(func() { event.AuditLog = prev })
+		event.AuditLog = nil
+
+		warnModel("%s model %s needs a service uri", "nsfw", "x")
+
+		require.Len(t, warnMessages(hook.AllEntries()), 1)
+		assert.Equal(t, "vision: nsfw model x needs a service uri", warnMessages(hook.AllEntries())[0])
+	})
+}
+
+// TestModel_WarnOnFirstRunAuditLog checks that the warnings of a model, including those repeated on its
+// first run, go only to the audit log when it is enabled.
+func TestModel_WarnOnFirstRunAuditLog(t *testing.T) {
+	images := Files{fs.Abs("./testdata/cat_224x224.jpg")}
+
+	resetUnresolvedUriWarnings(t)
+	resetRefusedEnvWarned(t)
+	t.Setenv("VISION_TEST_TOKEN", "s3cr3t-value")
+	hook := captureVisionLog(t)
+	audit := captureAuditLog(t)
+	model := &Model{Type: ModelTypeNsfw, Name: "nsfw-test", Service: Service{Uri: "https://vision.example.com/${VISION_TEST_TOKEN}"}}
+
+	prevConfig := Config
+	t.Cleanup(func() { Config = prevConfig })
+	Config = &ConfigValues{Models: Models{model}, Thresholds: DefaultThresholds}
+
+	model.Endpoint()
+
+	for i := 0; i < 2; i++ {
+		_, err := nsfwInternalContext(images, media.SrcLocal, nsfwThresholdIndex)
+		require.Error(t, err)
+	}
+
+	assert.Empty(t, warnMessages(hook.AllEntries()))
+	warnings := warnMessages(audit.AllEntries())
+	require.Len(t, warnings, 4)
+	assert.Contains(t, strings.Join(warnings, "\n"), "VISION_TEST_TOKEN")
+	assert.Contains(t, strings.Join(warnings, "\n"), "does not resolve")
+	assert.NotContains(t, strings.Join(warnings, "\n"), "s3cr3t-value")
+}
+
+// TestModel_NsfwModelAuditLog checks that an NSFW model initialization warning goes to the audit log
+// when it is enabled.
+func TestModel_NsfwModelAuditLog(t *testing.T) {
+	hook := captureVisionLog(t)
+	audit := captureAuditLog(t)
+	model := &Model{Type: ModelTypeNsfw, Name: "custom-nsfw", Reduction: nsfw.ReductionSoftmaxUnsafe}
+
+	assert.Nil(t, model.NsfwModel())
+	assert.Empty(t, warnMessages(hook.AllEntries()))
+	require.Len(t, warnMessages(audit.AllEntries()), 1)
+	assert.Contains(t, warnMessages(audit.AllEntries())[0], "unsafe class index is required")
 }

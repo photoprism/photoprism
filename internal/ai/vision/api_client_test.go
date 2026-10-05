@@ -421,12 +421,14 @@ func TestPerformApiRequestVisionStatus(t *testing.T) {
 	})
 }
 
-// captureLogs replaces the package logger and the system log with test loggers and returns their hooks.
+// captureLogs replaces the package logger and the system log with test loggers, disables the audit logger,
+// and returns their hooks.
 func captureLogs(t *testing.T) (logHook, systemHook *logtest.Hook) {
 	t.Helper()
 
-	prevLog, prevSystem := log, event.SystemLog
-	t.Cleanup(func() { log, event.SystemLog = prevLog, prevSystem })
+	prevLog, prevSystem, prevAudit := log, event.SystemLog, event.AuditLog
+	t.Cleanup(func() { log, event.SystemLog, event.AuditLog = prevLog, prevSystem, prevAudit })
+	event.AuditLog = nil
 
 	logger, logHook := logtest.NewNullLogger()
 	logger.SetLevel(logrus.TraceLevel)

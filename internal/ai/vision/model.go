@@ -304,10 +304,19 @@ func (m *Model) warnKey() string {
 	return m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
 }
 
-// warnUnresolvedUri logs once per model that its service URI does not resolve.
+// warnModel reports a model configuration warning in the audit log if it is enabled, and logs it otherwise.
+func warnModel(format string, args ...any) {
+	if event.AuditEnabled() {
+		event.AuditWarn([]string{"vision", format}, args...)
+	} else {
+		log.Warnf("vision: "+format, args...)
+	}
+}
+
+// warnUnresolvedUri reports once per model that its service URI does not resolve.
 func (m *Model) warnUnresolvedUri() {
 	if _, warned := unresolvedUriWarned.LoadOrStore(m.warnKey(), struct{}{}); !warned {
-		log.Warnf("vision: %s, so no service is used", m.unresolvedUriErrText())
+		warnModel("%s, so no service is used", m.unresolvedUriErrText())
 	}
 }
 
@@ -1072,7 +1081,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 	switch {
 	case m.Name == "":
-		log.Warnf("vision: missing name, model instance cannot be created")
+		warnModel("missing name, model instance cannot be created")
 		return nil
 	case nsfw.FindModel(nsfw.ModelName(m.Name)) != nil:
 		// Load and initialize a registered ONNX detector.
@@ -1080,7 +1089,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
-			log.Warnf("vision: %s (init %s model; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Name))
+			warnModel("%s (init %s model; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Name))
 			return nil
 		}
 
@@ -1113,14 +1122,14 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			unsafeClassIndex = *m.UnsafeClassIndex
 		} else if m.Reduction == nsfw.ReductionSoftmaxUnsafe {
 			m.nsfwErr = fmt.Errorf("nsfw: unsafe class index is required for %s", m.Reduction)
-			log.Warnf("vision: %s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
+			warnModel("%s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
 			return nil
 		}
 		if m.NeutralClassIndex != nil {
 			neutralClassIndex = *m.NeutralClassIndex
 		} else if m.Reduction == nsfw.ReductionNeutralComplement {
 			m.nsfwErr = fmt.Errorf("nsfw: neutral class index is required for %s", m.Reduction)
-			log.Warnf("vision: %s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
+			warnModel("%s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
 			return nil
 		}
 
@@ -1132,7 +1141,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
-			log.Warnf("vision: %s (init %s; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Path))
+			warnModel("%s (init %s; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Path))
 			return nil
 		}
 
