@@ -81,35 +81,45 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 		labelSrc = model.GetSource()
 	}
 
-	size := vision.Thumb(vision.ModelTypeLabels)
-
-	// The thumbnail size may need to be adjusted to use other models.
-	switch {
-	case size.Name != "" && size.Name != thumb.Tile224:
-		sizes = []thumb.Name{size.Name}
-		thumbnails = make([]string, 0, 1)
-	case m.Square():
-		// Only one thumbnail is required for square images.
-		sizes = []thumb.Name{thumb.Tile224}
-		thumbnails = make([]string, 0, 1)
-	default:
-		// Use three thumbnails otherwise (center, left, right).
-		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
-		thumbnails = make([]string, 0, 3)
-	}
-
-	// Get thumbnail filenames for the selected sizes.
-	for _, s := range sizes {
-		if thumbnail, fileErr := m.Thumbnail(Config().ThumbCachePath(), s); fileErr != nil {
-			log.Debugf("%s in %s", fileErr, clean.Log(m.RootRelName()))
-			continue
-		} else {
-			thumbnails = append(thumbnails, thumbnail)
+	if model.UsesPreparedLabels() {
+		inputs, inputErr := m.PrepareLabelInputs()
+		if inputErr != nil {
+			log.Debugf("labels: %s in %s", inputErr, clean.Log(m.RootRelName()))
+			return labels
 		}
-	}
+		labels, err = vision.GeneratePreparedLabels(inputs, labelSrc)
+	} else {
+		size := vision.Thumb(vision.ModelTypeLabels)
 
-	// Run the configured vision model to obtain labels for the generated thumbnails.
-	if labels, err = vision.GenerateLabels(thumbnails, media.SrcLocal, labelSrc); err != nil {
+		// The thumbnail size may need to be adjusted to use other models.
+		switch {
+		case size.Name != "" && size.Name != thumb.Tile224:
+			sizes = []thumb.Name{size.Name}
+			thumbnails = make([]string, 0, 1)
+		case m.Square():
+			// Only one thumbnail is required for square images.
+			sizes = []thumb.Name{thumb.Tile224}
+			thumbnails = make([]string, 0, 1)
+		default:
+			// Use three thumbnails otherwise (center, left, right).
+			sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
+			thumbnails = make([]string, 0, 3)
+		}
+
+		// Get thumbnail filenames for the selected sizes.
+		for _, s := range sizes {
+			if thumbnail, fileErr := m.Thumbnail(Config().ThumbCachePath(), s); fileErr != nil {
+				log.Debugf("%s in %s", fileErr, clean.Log(m.RootRelName()))
+				continue
+			} else {
+				thumbnails = append(thumbnails, thumbnail)
+			}
+		}
+
+		// Run the configured vision model to obtain labels for the generated thumbnails.
+		labels, err = vision.GenerateLabels(thumbnails, media.SrcLocal, labelSrc)
+	}
+	if err != nil {
 		log.Debugf("labels: %s in %s", err, clean.Log(m.RootRelName()))
 		return labels
 	}

@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** October 4, 2026
+**Last Updated:** October 5, 2026
 
 ### Overview
 
@@ -28,6 +28,12 @@
 - Downloads: `dl/` (export and download handlers/helpers).
 - Service registry: `get/` (registry lookups and helper commands).
 - Tests & fixtures: `*_test.go`, `testdata/`, uses shared test config (`config.TestConfig()`).
+
+### Label Input Preparation
+
+`MediaFile.PrepareLabelInputs` prepares the local S2 classifier's center and capped whole-photo inputs. Squares and originals with a short side below 224 pixels use one input. Source selection checks decoded cached dimensions and falls back to the original when no adequate whole-photo rendition is cached. Cached thumbnails are already oriented; original inputs use the media orientation. Both use the configured thumbnail color handling. No additional encoded derivative is written for the capped input.
+
+`GenerateLabels` selects this path only for local S2 models using the default thumbnail size. Other ONNX models, custom resolutions, and remote engines retain their thumbnail branches.
 
 ### Related Packages & Docs
 

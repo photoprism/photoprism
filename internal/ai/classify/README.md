@@ -1,12 +1,20 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** October 4, 2026
+**Last Updated:** October 5, 2026
 
 ### Overview
 
 `internal/ai/classify` runs fixed-taxonomy image classification through ONNX Runtime. It decodes an image, applies the preprocessing declared for the selected model, executes one output tensor, converts raw logits with stable softmax, and maps the resulting probabilities through the existing label rules.
 
 The default and optional ImageNet-1k candidates share the 1000-entry vocabulary embedded from `internal/ai/classify/labels.txt`. It remains readable and diffable in the repository and does not depend on a model directory at runtime. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
+
+### Photo Inputs
+
+The bundled S2 classifier uses a `tile_224` center input and a whole-photo input with distortion capped at 4:3. Both become 224×224 pixels. Beyond 4:3, the whole-photo input crops the excess from both ends before resampling; within 4:3, it retains the whole photo. Its source is an existing whole-photo rendition with at least 224 pixels on the short side, or the original, never `fit_720`.
+
+Exact square images use one whole-square input; squares no larger than 224 pixels use the original directly. Images with either decoded dimension below 224 pixels also use one input: an aspect-ratio-preserving center crop from the original, resized to the model dimensions. Rotation preserves the square and short-side decisions. Prepared inputs explicitly bypass S2's native resize/crop while retaining RGB/NCHW ImageNet normalization. Other models and remote services keep their own preprocessing.
+
+The global confidence floor defaults to 20%; an explicit `Thresholds.Confidence` in `vision.yml` takes precedence. Each input retains at most five qualifying labels, then the existing merge combines them using maximum confidence without an additional per-photo cap.
 
 ### Label Rules
 

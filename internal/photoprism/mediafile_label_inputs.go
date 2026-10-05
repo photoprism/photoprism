@@ -1,0 +1,118 @@
+package photoprism
+
+import (
+	"fmt"
+	"image"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+// PrepareLabelInputs builds the S2 center and capped whole-photo inputs.
+func (m *MediaFile) PrepareLabelInputs() ([]classify.Input, error) {
+	if m == nil {
+		return nil, fmt.Errorf("missing media file")
+	}
+	cfg, err := m.DecodeConfig()
+	if err != nil {
+		return nil, err
+	}
+	bounds := image.Rect(0, 0, cfg.Width, cfg.Height)
+	inputs, inputErr := prepareLabelInputs(bounds, func() (*thumb.InputSource, error) {
+		if min(cfg.Width, cfg.Height) < 224 || (cfg.Width == cfg.Height && cfg.Width <= 224) {
+			return thumb.OpenInputSource(m.FileName(), m.Orientation())
+		}
+		name, thumbErr := m.Thumbnail(Config().ThumbCachePath(), thumb.Tile224)
+		if thumbErr != nil {
+			return nil, thumbErr
+		}
+		return thumb.OpenInputSource(name, 1)
+	}, m.labelWholeSource)
+	if inputErr == nil {
+		return inputs, nil
+	}
+	original := func() (*thumb.InputSource, error) { return thumb.OpenInputSource(m.FileName(), m.Orientation()) }
+	return prepareLabelInputs(bounds, original, original)
+}
+
+// labelWholeSource opens an adequate cached whole-photo rendition or the original.
+func (m *MediaFile) labelWholeSource() (*thumb.InputSource, error) {
+	for _, size := range thumb.All {
+		if !size.Fit || size.Name == thumb.Fit720 {
+			continue
+		}
+		name, err := size.FileName(m.Hash(), Config().ThumbCachePath())
+		if err != nil {
+			continue
+		}
+		cfg, _, err := fs.DecodeImageConfigFile(name)
+		if err != nil || min(cfg.Width, cfg.Height) < 224 {
+			continue
+		}
+		img, err := thumb.OpenInputSource(name, 1)
+		if err == nil && min(img.Bounds().Dx(), img.Bounds().Dy()) >= 224 {
+			return img, nil
+		}
+		if img != nil {
+			img.Close()
+		}
+	}
+	return thumb.OpenInputSource(m.FileName(), m.Orientation())
+}
+
+// prepareLabelInputs applies the S2 geometry once to each selected source region.
+func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.InputSource, error)) ([]classify.Input, error) {
+	if bounds.Empty() {
+		return nil, fmt.Errorf("invalid label source dimensions")
+	}
+	single := bounds.Dx() == bounds.Dy() || min(bounds.Dx(), bounds.Dy()) < 224
+	count := 2
+	if single {
+		count = 1
+	}
+	inputs := make([]classify.Input, 0, count)
+	for i := 0; i < count; i++ {
+		load := center
+		if i == 1 {
+			load = whole
+		}
+		source, err := load()
+		if err != nil {
+			return nil, err
+		}
+		if source == nil || source.Bounds().Empty() {
+			if source != nil {
+				source.Close()
+			}
+			return nil, fmt.Errorf("invalid label source")
+		}
+		region := source.Bounds()
+		w, h := region.Dx(), region.Dy()
+		if i == 0 {
+			side := min(w, h)
+			region.Min = region.Min.Add(image.Pt((w-side)/2, (h-side)/2))
+			region.Max = region.Min.Add(image.Pt(side, side))
+		} else {
+			if min(w, h) < 224 {
+				source.Close()
+				return nil, fmt.Errorf("whole-photo label source is too small")
+			}
+			cropW, cropH := w, h
+			if w > h {
+				cropW = min(w, h*4/3)
+			} else {
+				cropH = min(h, w*4/3)
+			}
+			region.Min = region.Min.Add(image.Pt((w-cropW)/2, (h-cropH)/2))
+			region.Max = region.Min.Add(image.Pt(cropW, cropH))
+		}
+		pixels, resizeErr := source.Resample(region, 224, 224)
+		source.Close()
+		if resizeErr != nil {
+			return nil, resizeErr
+		}
+		inputs = append(inputs, classify.Input{Image: pixels, Prepared: true})
+	}
+	return inputs, nil
+}
