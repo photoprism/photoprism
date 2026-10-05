@@ -592,3 +592,84 @@ func TestMediaFile_RelatedFiles_RawAfterJpeg(t *testing.T) {
 	require.NotNil(t, related.Main)
 	assert.Equal(t, "IMG_3.nef", related.Main.BaseName())
 }
+
+// TestMediaFile_RelatedFiles_SidecarPreviewByRoot verifies that only files in originals are related to previews in
+// the sidecar folder, including a group resolved from a sidecar file.
+func TestMediaFile_RelatedFiles_SidecarPreviewByRoot(t *testing.T) {
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	other := t.TempDir()
+
+	cases := []struct {
+		name      string
+		heic      string
+		preview   string
+		fromCover bool
+		want      bool
+	}{
+		{"Originals", filepath.Join(cfg.OriginalsPath(), "a", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), "a", "IMG_0001.heic.jpg"), false, true},
+		{"SidecarPrimary", filepath.Join(cfg.OriginalsPath(), "b", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), "b", "IMG_0001.heic.jpg"), true, true},
+		{"Import", filepath.Join(cfg.ImportPath(), "c", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), cfg.ImportPath(), "c", "IMG_0001.heic.jpg"), false, false},
+		{"Unknown", filepath.Join(other, "d", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), other, "d", "IMG_0001.heic.jpg"), false, false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "iphone_7.heic"), tc.heic, false))
+			require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "beach_sand.jpg"), tc.preview, false))
+
+			lookup := tc.heic
+			if tc.fromCover {
+				lookup = tc.preview
+			}
+
+			mediaFile, err := NewMediaFile(lookup)
+			require.NoError(t, err)
+			related, err := mediaFile.RelatedFiles(false)
+			require.NoError(t, err)
+			require.NotNil(t, related.Main)
+			assert.Equal(t, tc.heic, related.Main.FileName())
+
+			found := false
+			for _, f := range related.Files {
+				if f.FileName() == tc.preview {
+					found = true
+				}
+			}
+
+			assert.Equal(t, tc.want, found)
+		})
+	}
+}
+
+// TestSidecarPathFor verifies the sidecar folder used for the generated files of a file.
+func TestSidecarPathFor(t *testing.T) {
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	originalsName := filepath.Join(cfg.OriginalsPath(), "x.jpg")
+	importName := filepath.Join(cfg.ImportPath(), "x.jpg")
+
+	for _, name := range []string{originalsName, importName} {
+		require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "beach_sand.jpg"), name, false))
+	}
+
+	t.Run("Originals", func(t *testing.T) {
+		f, err := NewMediaFile(originalsName)
+		require.NoError(t, err)
+		assert.Equal(t, cfg.SidecarPath(), sidecarPathFor(f))
+	})
+	t.Run("Import", func(t *testing.T) {
+		f, err := NewMediaFile(importName)
+		require.NoError(t, err)
+		assert.Equal(t, "", sidecarPathFor(f))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", sidecarPathFor(nil))
+	})
+}

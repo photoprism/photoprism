@@ -3,6 +3,7 @@ package photoprism
 import (
 	"errors"
 	"fmt"
+	iofs "io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -567,4 +568,61 @@ func TestImport_TypeCheck(t *testing.T) {
 		})
 		assertMovedNotRead(t, cfg, ".webp")
 	})
+}
+
+// TestImportWorker_SidecarPreview verifies that a preview in the sidecar folder is not imported with a file from the
+// import folder.
+func TestImportWorker_SidecarPreview(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	useTestDb(t, "import-sidecar-preview")
+
+	cfg := config.NewMinimalTestConfigWithDb("import-sidecar-preview", filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	// A HEIC without a JPEG of its own, and an unrelated JPEG at the sidecar name of its absolute path.
+	importDir := filepath.Join(cfg.ImportPath(), "trip")
+	heicName := filepath.Join(importDir, "IMG_0001.heic")
+	foreignName := filepath.Join(cfg.SidecarPath(), importDir, "IMG_0001.heic.jpg")
+	require.NoError(t, os.MkdirAll(importDir, fs.ModeDir))
+	require.NoError(t, os.MkdirAll(filepath.Dir(foreignName), fs.ModeDir))
+	require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "iphone_7.heic"), heicName, false))
+	require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "beach_sand.jpg"), foreignName, false))
+
+	mainFile, err := NewMediaFile(heicName)
+	require.NoError(t, err)
+	related, err := mainFile.RelatedFiles(false)
+	require.NoError(t, err)
+
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+	jobs := make(chan ImportJob, 1)
+	jobs <- ImportJob{FileName: heicName, Related: related, IndexOpt: IndexOptionsAll(cfg), ImportOpt: ImportOptionsMove(cfg.ImportPath(), ""), Imp: imp}
+	close(jobs)
+	ImportWorker(jobs)
+
+	// The unrelated preview stays where it is, no copy of it reaches originals, and the HEIC is imported.
+	assert.FileExists(t, foreignName)
+	foreignHash := fs.Hash(foreignName)
+	heicImported := false
+	err = filepath.WalkDir(cfg.OriginalsPath(), func(name string, d iofs.DirEntry, walkErr error) error {
+		if walkErr == nil && !d.IsDir() {
+			assert.NotEqual(t, foreignHash, fs.Hash(name), name)
+			heicImported = heicImported || strings.EqualFold(filepath.Ext(name), ".heic")
+		}
+		return nil
+	})
+	require.NoError(t, err)
+	assert.True(t, heicImported)
+
+	var files entity.Files
+	require.NoError(t, entity.UnscopedDb().Where("file_hash = ?", foreignHash).Find(&files).Error)
+	assert.Empty(t, files)
 }

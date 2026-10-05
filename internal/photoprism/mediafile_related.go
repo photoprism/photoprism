@@ -74,7 +74,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			}
 
 			// Existing previews of each member are reindexed with the capture, e.g. on a forced rescan.
-			if jpegName := fs.ImageJpeg.FindGenerated(captureFile.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false, nil); jpegName != "" {
+			if jpegName := fs.ImageJpeg.FindGenerated(captureFile.FileName(), []string{sidecarPathFor(captureFile), fs.PPHiddenPathname}, Config().OriginalsPath(), false, nil); jpegName != "" {
 				matches = list.Join(matches, []string{jpegName})
 			}
 		}
@@ -207,7 +207,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden preview image if needed.
 	if !result.HasPreview() {
-		if preview := findPreviewImage(result.Main.FileName(), Config().SidecarPath(), Config().OriginalsPath(), stripSequence, fs.ImageJpeg, fs.ImagePng); preview != nil {
+		if preview := findPreviewImage(result.Main.FileName(), sidecarPathFor(result.Main), Config().OriginalsPath(), stripSequence, fs.ImageJpeg, fs.ImagePng); preview != nil {
 			result.Files = append(result.Files, preview)
 		}
 	}
@@ -245,4 +245,15 @@ func (m *MediaFile) RelatedSidecarFiles(stripSequence bool) (files []string, err
 	files = append(files, matches...)
 
 	return files, nil
+}
+
+// sidecarPathFor returns the sidecar folder in which generated files of f are looked up, or an empty string
+// if f is not in originals, e.g. in the import folder, so it is only related to files in its own folder and
+// its hidden subfolder.
+func sidecarPathFor(f *MediaFile) string {
+	if f == nil || !f.InOriginals() {
+		return ""
+	}
+
+	return Config().SidecarPath()
 }
