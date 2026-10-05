@@ -35,7 +35,7 @@ require (
 	github.com/sevlyar/go-daemon v0.1.7
 	github.com/sirupsen/logrus v1.10.2
 	github.com/stretchr/testify v1.12.1
-	github.com/tidwall/gjson v1.19.0
+	github.com/tidwall/gjson v1.20.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
 	golang.org/x/crypto v0.57.0
@@ -78,8 +78,8 @@ require golang.org/x/text v0.42.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
-	github.com/antchfx/xmlquery v1.5.1
-	github.com/antchfx/xpath v1.3.8
+	github.com/antchfx/xmlquery v1.5.2
+	github.com/antchfx/xpath v1.3.9
 	github.com/davidbyttow/govips/v2 v2.19.0
 	github.com/go-co-op/gocron/v2 v2.22.0
 	github.com/go-sql-driver/mysql v1.10.1
