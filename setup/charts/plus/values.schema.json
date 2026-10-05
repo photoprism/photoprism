@@ -719,7 +719,7 @@
           "type": "string",
           "default": "zstd,gzip",
           "title": "HTTP Compression",
-          "description": "Web server compression METHODS as a comma-separated preference list (e.g. \"zstd,gzip\"; supported: gzip, zstd, none)."
+          "description": "Web server compression METHODS in order of preference (gzip, zstd, none), e.g. \"zstd,gzip\"."
         },
         "PHOTOPRISM_CDN_URL": {
           "type": "string",
@@ -833,7 +833,7 @@
           "type": "boolean",
           "default": true,
           "title": "Upload NSFW",
-          "description": "Allows uploads that might be offensive (when disabled, files flagged by the NSFW model are rejected before indexing)."
+          "description": "Allows uploads that might be offensive (skips NSFW screening)."
         },
         "PHOTOPRISM_DISABLE_TLS": {
           "type": "boolean",
