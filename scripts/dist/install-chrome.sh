@@ -51,6 +51,11 @@
 # removal" or similar dep-resolver errors. Install chromium only into the
 # full (non-slim) develop images.
 #
+# After installing the browser, the script adds a managed policy file that
+# disables Chrome's generative AI features, including the on-device model
+# download, so automated test runs see the same browser on every build.
+# Set CHROME_AI_POLICY=skip to leave the policies out.
+#
 # This script must run as root. Use one of these invocations:
 #
 #   # Pipe via stdin (recommended one-liner — works everywhere, incl. SSH):
@@ -135,6 +140,40 @@ EOF
     chromium chromium-common chromium-driver chromium-sandbox
 }
 
+# Writes a managed policy file that disables generative AI features to the given policy directory.
+install_ai_policies() {
+  local dir="$1/managed"
+
+  if [[ ${CHROME_AI_POLICY:-} == "skip" ]]; then
+    echo "Skipping AI feature policies (CHROME_AI_POLICY=skip)."
+    return 0
+  fi
+
+  install -m 0755 -d "$dir"
+  cat > "$dir/disable-ai.json" <<EOF
+{
+  "GenAILocalFoundationalModelSettings": 1,
+  "BuiltInAIAPIsEnabled": false,
+  "AIModeSettings": 1,
+  "AutofillPredictionSettings": 2,
+  "ChromeSuggestionsSettings": 1,
+  "CreateThemesSettings": 2,
+  "DevToolsGenAiSettings": 2,
+  "GeminiActOnWebSettings": 1,
+  "GeminiSparkSettings": 1,
+  "HelpMeWriteSettings": 2,
+  "HistorySearchSettings": 2,
+  "SearchContentSharingSettings": 1,
+  "SmartTabSharingSettings": 1,
+  "TabCompareSettings": 2,
+  "ThirdPartyAiChatSettings": 1,
+  "VoiceTypingSettings": 2
+}
+EOF
+  chmod 0644 "$dir/disable-ai.json"
+  echo "Installed AI feature policies in $dir."
+}
+
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
     echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
@@ -148,6 +187,7 @@ case $DESTARCH in
     echo "deb [arch=amd64 signed-by=${chrome_keyring}] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
     apt-get update
     apt-get -qq install google-chrome-stable
+    install_ai_policies /etc/opt/chrome/policies
     ;;
 
   arm64 | ARM64 | aarch64)
@@ -182,6 +222,7 @@ case $DESTARCH in
         exit 1
         ;;
     esac
+    install_ai_policies /etc/chromium/policies
     ;;
 
   *)
