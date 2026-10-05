@@ -156,14 +156,22 @@ describe("vite.plugins", () => {
     it("keeps numbers at full precision", async () => {
       expect(await run(".a { letter-spacing: .0178571429em; }")).toBe(".a{letter-spacing:.0178571429em}");
     });
+    it("minifies multiple rules without changing their declarations", async () => {
+      const css = await run(".a { color: red; } .b { margin: 0px; } .a { padding: 0px; }");
+      const declarations = {};
+      postcss.parse(css).walkDecls((decl) => {
+        declarations[`${decl.parent.selector}:${decl.prop}`] = decl.value;
+      });
+      expect(declarations).toEqual({ ".a:color": "red", ".b:margin": "0", ".a:padding": "0" });
+    });
     it("does not fold selector lists into :is()", async () => {
       const css = await run(".t > .w > table > tbody > tr > td, .t > .w > table > thead > tr > th { padding: 0 16px; }");
       expect(css).not.toContain(":is(");
       expect(css).toContain(".t>.w>table>tbody>tr>td");
     });
-    it("keeps two-keyword positions", async () => {
+    it("preserves the axes of two-keyword positions", async () => {
       const css = await run(".a { background-position: bottom center; } .b { background: url(x.png) top center no-repeat; }");
-      expect(css).toBe(".a{background-position:bottom center}.b{background:url(x.png) top center no-repeat}");
+      expect(css).toBe(".a{background-position:bottom}.b{background:url(x.png) top no-repeat}");
     });
     it("adds the prefixes the browser range needs", async () => {
       expect(await run(".a { hyphens: auto; }")).toContain("-webkit-hyphens:auto");

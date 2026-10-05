@@ -47,7 +47,7 @@ var (
 		CaptionModel,
 	}
 	DefaultThresholds = Thresholds{
-		Confidence: 10, // 0-100%
+		Confidence: 20, // 0-100%
 		Topicality: 0,  // 0-100%
 		NSFW:       DefaultNSFWThreshold,
 	}

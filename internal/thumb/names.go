@@ -48,7 +48,7 @@ const (
 	Fit15360 Name = "fit_15360"
 )
 
-// Names contains all default size names.
+// Names lists thumbnail sizes generated during indexing.
 var Names = []Name{
 	Fit15360,
 	Fit7680,
@@ -60,8 +60,6 @@ var Names = []Name{
 	Tile500,
 	Fit720,
 	Tile224,
-	Right224,
-	Left224,
 	Tile100,
 	Tile50,
 	Colors,

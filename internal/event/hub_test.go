@@ -41,6 +41,11 @@ func TestError(t *testing.T) {
 	assert.Equal(t, "notify.error", msg.Name)
 	assert.Equal(t, Data{"message": "error message"}, msg.Fields)
 
+	Error("thumb 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 not found")
+	msg = <-s.Receiver
+
+	assert.Equal(t, Data{"message": "thumb 2ca*** not found"}, msg.Fields)
+
 	Unsubscribe(s)
 }
 
@@ -84,4 +89,24 @@ func TestWarning(t *testing.T) {
 	assert.Equal(t, Data{"message": "warning message"}, msg.Fields)
 
 	Unsubscribe(s)
+}
+
+func TestNotifyMasksHashes(t *testing.T) {
+	const msg = "thumb 2cad9168fa6acc5c5c2965ddf6ec465ca42fd818 not found"
+
+	for topic, notify := range map[string]func(string){
+		"notify.error":   Error,
+		"notify.success": Success,
+		"notify.info":    Info,
+		"notify.warning": Warn,
+	} {
+		t.Run(topic, func(t *testing.T) {
+			s := Subscribe(topic)
+			defer Unsubscribe(s)
+
+			notify(msg)
+
+			assert.Equal(t, Data{"message": "thumb 2ca*** not found"}, (<-s.Receiver).Fields)
+		})
+	}
 }

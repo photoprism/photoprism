@@ -102,6 +102,41 @@ func TestMediaFile_NeedsExifToolJson(t *testing.T) {
 	t.Run("JsonSidecar", func(t *testing.T) {
 		assert.False(t, needsJson(t, "blue-go-video.mp4.json"))
 	})
+	t.Run("Insta360LensNotVideo", func(t *testing.T) {
+		if !c.FFmpegEnabled() {
+			t.Skip("FFmpeg must be available to create synthetic capture files")
+		}
+
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, c, dir, insta360StackLeft)
+		writeInsta360LensContent(t, c, filepath.Join(dir, insta360StackRight), "text")
+
+		for name, want := range map[string]bool{insta360StackLeft: true, insta360StackRight: false} {
+			mediaFile, err := NewMediaFile(filepath.Join(dir, name))
+			require.NoError(t, err)
+			if jsonName, nameErr := mediaFile.ExifToolJsonName(); nameErr == nil {
+				require.NoError(t, os.RemoveAll(jsonName))
+			}
+			assert.Equal(t, want, mediaFile.NeedsExifToolJson(), name)
+		}
+	})
+	t.Run("Cached", func(t *testing.T) {
+		if !c.ExifToolEnabled() {
+			t.Skip("ExifTool must be enabled")
+		}
+
+		mediaFile, err := NewMediaFile(filepath.Join(c.SamplesPath(), "beach_sand.jpg"))
+		require.NoError(t, err)
+		jsonName, err := mediaFile.ExifToolJsonName()
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.Remove(jsonName) })
+		require.NoError(t, fs.MkdirAll(filepath.Dir(jsonName)))
+
+		for data, needed := range map[string]bool{"": true, "[{\"SourceFile\":": true, "[{}]\n": false} {
+			require.NoError(t, os.WriteFile(jsonName, []byte(data), fs.ModeFile))
+			assert.Equal(t, needed, mediaFile.NeedsExifToolJson(), data)
+		}
+	})
 }
 
 func TestMediaFile_CreateExifToolJson(t *testing.T) {

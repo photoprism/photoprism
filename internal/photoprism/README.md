@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 5, 2026
 
 ### Overview
 
@@ -29,6 +29,12 @@
 - Service registry: `get/` (registry lookups and helper commands).
 - Tests & fixtures: `*_test.go`, `testdata/`, uses shared test config (`config.TestConfig()`).
 
+### Label Input Preparation
+
+`MediaFile.PrepareLabelInputs` prepares the local S2 classifier's center and capped whole-photo inputs. Squares and originals with a short side below 224 pixels use one input. Source dimensions use the configured renderer when the standard header decoder does not support the format. Source selection checks decoded cached dimensions, prefers the smallest rendition with a 224 px short side, takes the largest cached one otherwise, and uses original pixels only after cached candidates are exhausted. Candidates are ranked by actual pixel area, not preset name; preparation retries another cached source if decoding or resampling fails. Cached thumbnails are already oriented; original inputs use the media orientation. Both use the configured thumbnail color handling. No additional encoded derivative is written for the capped input. Shared preparation records the actual oriented source and crop bounds alongside the inputs for diagnostics.
+
+`GenerateLabels` selects this path only for local S2 models using the default thumbnail size. Other ONNX models, custom resolutions, and remote engines retain their thumbnail branches.
+
 ### Related Packages & Docs
 
 - [`internal/entity`](../entity) — persistence models and DB helpers used by the indexer.
@@ -39,14 +45,14 @@
 
 ### Usage & Test Guidelines
 
-- Indexing: use `IndexMain` / `IndexRelated` via `IndexMediaFile` helpers; prefer `IndexOptions` factories.
+- Indexing: use `IndexMain` / `IndexRelated`; prefer `IndexOptions` factories.
 - Import: run via `ImportWorker` with `ImportOptions`; files imported together are stacked as one related set, files from separate batches only through a shared document ID or matching capture metadata.
-- Converters: use `Convert.ToImage` / `Convert.ToVideo` / `Convert.ToJson` / `Convert.TempPreview`; options come from `config.Config`.
+- Converters: use `Convert.ToImage` / `Convert.ToAvc` / `Convert.ToJson` / `Convert.TempPreview`; options come from `config.Config`.
 - Vision: thumbnails for vision models are selected in `mediafile_vision.go`; ensure models exist in `internal/ai/vision`.
 - NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when `PHOTOPRISM_DETECT_NSFW=true` and the selected NSFW source reports unsafe content. `PHOTOPRISM_NSFW_MODEL=labels` uses only LLM labels; `auto` uses the dedicated detector, whose `m.DetectNSFW()` returns an `nsfw.Result`. `none` disables both sources. Label NSFW fields are ignored outside `labels` mode. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
 - Tests: targeted runs keep iteration fast, e.g.  
   - `go test ./internal/photoprism -run TestMediaFile_ -count=1`  
-  - `go test ./internal/photoprism/index_mediafile_test.go -run TestIndexMediaFile`  
+  - `go test ./internal/photoprism -run TestIndex_MediaFile -count=1`  
   Full suite: `go test ./internal/photoprism/...` (heavy; migrates fixtures).
   `-short` skips the tests that run the indexer or importer on fixture media.
 - Fixtures live under `storage/testdata`; tests expect initialized config (`config.TestConfig()` / `config.NewMinimalTestConfigWithDb`).
@@ -81,6 +87,9 @@ Output beyond that limit returns `meta.ErrJSONFileTooLarge` without publishing a
 cache file. Diagnostic output is retained up to 64 KiB, with a truncation marker on errors;
 normal conversion timeouts and process cleanup remain in effect. Cached/external sidecars
 are independently bounded by the [metadata JSON reader](../meta/README.md#json-sidecar-reader).
+A cached export is reused only when it is a regular file enclosed in `[`...`]`; an empty or truncated
+cache is exported again, output that is not a JSON array is refused and not cached, and the cache is
+written through a staged sibling.
 
 Operators can override the shared JSON byte limit with `PHOTOPRISM_JSON_LIMIT` (positive
 decimal bytes, for example `4194304` for 4 MiB). Empty, invalid, zero, negative, or

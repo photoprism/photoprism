@@ -1,12 +1,26 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** October 1, 2026
+**Last Updated:** October 5, 2026
 
 ### Overview
 
 `internal/ai/classify` runs fixed-taxonomy image classification through ONNX Runtime. It decodes an image, applies the preprocessing declared for the selected model, executes one output tensor, converts raw logits with stable softmax, and maps the resulting probabilities through the existing label rules.
 
 The default and optional ImageNet-1k candidates share the 1000-entry vocabulary embedded from `internal/ai/classify/labels.txt`. It remains readable and diffable in the repository and does not depend on a model directory at runtime. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
+
+### Photo Inputs
+
+The bundled S2 classifier uses a `tile_224` center input and a whole-photo input with distortion capped at 4:3. Both become 224×224 pixels. Beyond 4:3, the whole-photo input crops the excess from both ends before resampling; within 4:3, it retains the whole photo. Its source is the smallest cached whole-photo rendition with at least 224 pixels on the short side, otherwise the largest cached rendition; the original is opened only after usable cached candidates are exhausted. Renditions are ranked by decoded pixel area, and a failed cached source does not prevent trying another one.
+
+Exact square images use one whole-square input. Images with either decoded dimension below 224 pixels also use one aspect-ratio-preserving center input. Both prefer cached pixels and only use the original when no cached source can be used. Rotation preserves the square and short-side decisions. Prepared inputs explicitly bypass S2's native resize/crop while retaining RGB/NCHW ImageNet normalization. Other models and remote services keep their own preprocessing.
+
+The global confidence floor defaults to 20%; an explicit `Thresholds.Confidence` in `vision.yml` takes precedence. Each input retains at most five qualifying labels, then the existing merge combines them using maximum confidence without an additional per-photo cap.
+
+### Label Rules
+
+`rules.yml` defines how raw model classes map to visible labels, class-specific confidence minimums, categories, and priorities. The classifier applies the global floor to rounded confidence percentages and class-specific minimums to raw probabilities. Excluded rules do not produce labels. Changes to these rules affect subsequent classification; they do not rewrite labels already stored in a library.
+
+Regenerate `rules.go` with `go generate ./internal/ai/classify`. Generation rejects duplicate keys, unknown fields, uppercase names, missing alias targets and aliases that do not reference a direct rule. The package tests verify that the generated map matches the complete YAML source. The generator and its rejection tests are a normally compiled package; run them with `go test ./internal/ai/classify/gen`.
 
 ### Registered Models
 
@@ -21,7 +35,9 @@ The graph is inspected at initialization and must agree with all recorded struct
 
 ### Configuration
 
-`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; explicit `auto` overrides it, while an unsupported value does not.
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart.
+
+`download-models.sh <name>` installs a registered model and verifies its checksum; `--list` shows all models it can install. The script is in `PATH` in the development environment and the production images. It installs into `${PHOTOPRISM_ASSETS_PATH:-assets}/models` and does not read `PHOTOPRISM_MODELS_PATH`, so pass a custom models path as `MODELS_PATH`. In Docker, mount a host directory at `/opt/photoprism/assets/models/<name>` to keep a downloaded model when the container is recreated; mounting over the whole models path hides the bundled models. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; explicit `auto` overrides it, while an unsupported value does not.
 
 Select a registered alternative in `vision.yml`:
 
@@ -84,6 +100,12 @@ go test ./internal/ai/classify -run TestExternalLabelBenchmark -count=1
 The report includes top-5 overlap, visible-label agreement, rule-activation drift, threshold crossings and calibration points, p50/p95 latency, model load time, Linux peak RSS, artifact size, and optional correct/false-positive counts when the manifest contains human annotations. The harness runs each candidate in a separate process so peak RSS is model-specific. Repeat the comparison on x86-64 and ARM64 with a representative photo corpus.
 
 EfficientFormerV2 S2 is the default because the reviewed 402-image Wikimedia corpus reached 81.8% visible-label coverage, compared with 73.4% for S1, leaving 73 rather than 107 images unlabeled. Its higher ARM64 latency (80 ms p50 and 121 ms p95, versus 52 ms and 75 ms) and peak RSS (350 MB versus 319 MB) are accepted for the materially better indexing coverage and mean top-1 quality.
+
+### Corpus Calibration
+
+Raw-vector capture and crop/rule experiments are developer tooling, not ordinary package tests.
+Calibration runs require an explicitly selected corpus; their images and reports stay outside the repository.
+The regular suite uses repository fixtures and synthetic data, without private calibration inputs.
 
 ### Troubleshooting
 

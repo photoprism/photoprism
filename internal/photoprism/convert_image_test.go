@@ -7,7 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -589,19 +591,41 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 		t.Skip("FFmpeg must be available to dewarp paired INSV files")
 	}
 
-	dir := t.TempDir()
-	leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
-	rightName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
-	left, err := NewMediaFile(leftName)
-	require.NoError(t, err)
+	t.Run("Pair", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName, rightName := filepath.Join(dir, insta360StackLeft), filepath.Join(dir, insta360StackRight)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackRight)
+		left, err := NewMediaFile(leftName)
+		require.NoError(t, err)
 
-	cmds, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "poster.jpg"), "")
-	require.NoError(t, err)
-	require.NotEmpty(t, cmds)
+		cmds, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "poster.jpg"), "")
+		require.NoError(t, err)
+		require.NotEmpty(t, cmds)
 
-	assert.Contains(t, cmds[0].String(), "-i "+leftName+" -i "+rightName)
-	assert.Contains(t, cmds[0].String(), "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
-	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
+		assert.Contains(t, cmds[0].String(), "-f mov -i "+leftName+" -f mov -i "+rightName)
+		assert.Contains(t, cmds[0].String(), "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+		assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := filepath.Join(dir, insta360StackLeft)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		rightName := filepath.Join(dir, insta360StackRight)
+		writeInsta360Photo(t, cnf, rightName, "320x320")
+		left, err := NewMediaFile(leftName)
+		require.NoError(t, err)
+		require.True(t, FindInsta360Capture(left).ValidPair(), "the capture is still grouped")
+
+		cmds, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "poster.jpg"), "")
+		require.NoError(t, err)
+		require.NotEmpty(t, cmds)
+
+		for _, cmd := range cmds {
+			assert.NotContains(t, cmd.String(), rightName)
+			assert.NotContains(t, cmd.String(), "v360")
+		}
+	})
 }
 
 // TestConvert_JpegConvertCmds_Insta360DualStream verifies that both streams are stacked before
@@ -1279,7 +1303,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		assert.Equal(t, "6", exifOrientationTag(t, cnf, imageName))
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
@@ -1287,7 +1311,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification()
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		assert.Empty(t, exifOrientationTag(t, cnf, imageName))
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
@@ -1295,7 +1319,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
-		assert.Error(t, convert.publishImageOutput(c, append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, make([]byte, 1024)...), imageName))
+		assert.Error(t, convert.publishImageOutput(c, append([]byte{0xFF, 0xD8, 0xFF, 0xE0}, make([]byte, 1024)...), imageName, nil))
 		noSiblings(t, dir)
 	})
 	t.Run("KeepsExistingFile", func(t *testing.T) {
@@ -1303,7 +1327,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.WriteFile(imageName, []byte("existing"), 0o600))
 		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "existing", string(content))
@@ -1314,7 +1338,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.WriteFile(imageName, nil, 0o600))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, data, content)
@@ -1322,14 +1346,14 @@ func TestConvert_publishImageOutput(t *testing.T) {
 	})
 	t.Run("MissingDirectory", func(t *testing.T) {
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.Error(t, convert.publishImageOutput(c, data, filepath.Join(t.TempDir(), "missing", "raw.dng.jpg")))
+		assert.Error(t, convert.publishImageOutput(c, data, filepath.Join(t.TempDir(), "missing", "raw.dng.jpg"), nil))
 	})
 	t.Run("RefusesSymlink", func(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.Symlink(filepath.Join(dir, "target.jpg"), imageName))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName, nil), os.ErrExist)
 		assert.True(t, fs.IsSymlink(imageName))
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
@@ -1340,7 +1364,7 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		require.NoError(t, os.WriteFile(target, []byte("target"), 0o600))
 		require.NoError(t, os.Symlink(target, imageName))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName, nil), os.ErrExist)
 		content, readErr := os.ReadFile(target) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "target", string(content))
@@ -1351,7 +1375,31 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		require.NoError(t, os.Mkdir(imageName, 0o700))
 		c := NewConvertCmd(exec.Command("exiftool"))
-		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName), os.ErrExist)
+		assert.ErrorIs(t, convert.publishImageOutput(c, data, imageName, nil), os.ErrExist)
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("BudgetExhausted", func(t *testing.T) {
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithImageVerification().WithSourceOrientation(6)
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, &ConvertBudget{limited: true}))
+		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, data, content, "the preview is published untagged")
+		noSiblings(t, dir, "raw.dng.jpg")
+	})
+	t.Run("SlowWriteStopped", func(t *testing.T) {
+		// The stub leaves the temporary file ExifTool would write and blocks until it is stopped.
+		useExifToolStub(t, cnf, "for a; do last=$a; done\n: > \"${last}_exiftool_tmp\"\nexec sleep 30\n")
+		dir := t.TempDir()
+		imageName := filepath.Join(dir, "raw.dng.jpg")
+		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
+		start := time.Now()
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, NewConvertBudget(500*time.Millisecond)))
+		assert.Less(t, time.Since(start), 10*time.Second)
+		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
+		require.NoError(t, readErr)
+		assert.Equal(t, data, content, "the preview is published unchanged")
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
 	t.Run("OrientationWriteFails", func(t *testing.T) {
@@ -1360,10 +1408,52 @@ func TestConvert_publishImageOutput(t *testing.T) {
 		dir := t.TempDir()
 		imageName := filepath.Join(dir, "raw.dng.jpg")
 		c := NewConvertCmd(exec.Command("exiftool")).WithSourceOrientation(6)
-		require.NoError(t, convert.publishImageOutput(c, data, imageName))
+		require.NoError(t, convert.publishImageOutput(c, data, imageName, nil))
 		content, readErr := os.ReadFile(imageName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, data, content, "the preview is published unchanged")
 		noSiblings(t, dir, "raw.dng.jpg")
 	})
+}
+
+// TestConvert_ToImageLogsFirstAttempt verifies that only the first converter tried for a file is logged at
+// info level.
+func TestConvert_ToImageLogsFirstAttempt(t *testing.T) {
+	cnf := config.NewMinimalTestConfig(t.TempDir())
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be enabled")
+	}
+
+	cnf.Options().DisableDarktable = true
+	cnf.Options().DisableRawTherapee = true
+	cnf.Options().DisableImageMagick = true
+	cnf.Options().DisableSips = true
+
+	dir := t.TempDir()
+	fileName := filepath.Join(dir, "canon_eos_6d.dng")
+	require.NoError(t, fs.Copy(filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng"), fileName, false))
+
+	mediaFile, err := NewMediaFile(fileName)
+	require.NoError(t, err)
+
+	hook := newSequenceLogHook(t)
+	img, err := NewConvert(cnf).ToImage(mediaFile, true)
+	require.NoError(t, err)
+	require.NotNil(t, img)
+
+	var order []string
+	created := false
+	for _, entry := range hook.AllEntries() {
+		switch {
+		case entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "convert: converting"):
+			order = append(order, "info")
+		case entry.Level == logrus.DebugLevel && strings.Contains(entry.Message, "convert: trying exiftool"):
+			order = append(order, "debug")
+		case entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "created in") && strings.HasSuffix(entry.Message, "(exiftool)"):
+			created = true
+		}
+	}
+
+	assert.Equal(t, []string{"info", "debug"}, order)
+	assert.True(t, created)
 }

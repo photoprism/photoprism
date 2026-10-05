@@ -57,6 +57,16 @@ type ApiRequest struct {
 	Schema         json.RawMessage    `form:"schema" yaml:"Schema,omitempty" json:"schema,omitempty"`
 	Normalize      NormalizeType      `form:"-" yaml:"-" json:"-"`
 	ResponseFormat ApiFormat          `form:"-" yaml:"-" json:"-"`
+	Engine         string             `form:"-" yaml:"-" json:"-"`
+}
+
+// engineName returns the engine of the model the request was built for, or the given default.
+func (r *ApiRequest) engineName(defaultName string) string {
+	if r == nil || r.Engine == "" {
+		return defaultName
+	}
+
+	return r.Engine
 }
 
 // NewApiRequest returns a new service API request with the specified format and payload.
@@ -173,7 +183,7 @@ func NewApiRequestImages(images Files, fileScheme scheme.Type, mediaSrc media.Sr
 			case scheme.Data:
 				file, err := os.Open(images[i])
 				if err != nil {
-					return nil, fmt.Errorf("%s (create data url)", err)
+					return nil, fmt.Errorf("%w (create data url)", err)
 				}
 				imageUrls[i] = media.DataUrl(file)
 				if err := file.Close(); err != nil {
@@ -433,7 +443,7 @@ func (r *ApiRequest) openAIJSON() ([]byte, error) {
 	}
 
 	if payload.Model == "" {
-		payload.Model = openai.DefaultModel
+		payload.Model = openaiDefaultModel()
 	}
 
 	if strings.HasPrefix(strings.ToLower(payload.Model), "gpt-5") {

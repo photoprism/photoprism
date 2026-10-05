@@ -150,7 +150,7 @@ func (w *Share) Start() (err error) {
 				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, w.conf.ThumbCachePath(), size.Width, size.Height, file.File.FileOrientation, size.Options...)
 
 				if err != nil {
-					w.logErr(err)
+					log.Errorf("share: %s in %s (create thumbnail)", clean.Error(err), clean.Log(file.File.FileName))
 					continue
 				}
 			}

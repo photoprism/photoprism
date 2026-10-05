@@ -223,11 +223,8 @@ func (c *Config) Init() error {
 	}
 
 	// Detect whether files are stored on a case-insensitive file system.
-	if insensitive, err := c.CaseInsensitive(); err != nil {
+	if err := c.initCaseMode(); err != nil {
 		return err
-	} else if insensitive {
-		log.Infof("config: case-insensitive file system detected")
-		fs.IgnoreCase()
 	}
 
 	// Detect the CPU type and available memory.
@@ -354,11 +351,8 @@ func (c *Config) InitCore() error {
 	}
 
 	// Detect whether files are stored on a case-insensitive file system.
-	if insensitive, err := c.CaseInsensitive(); err != nil {
+	if err := c.initCaseMode(); err != nil {
 		return err
-	} else if insensitive {
-		log.Infof("config: case-insensitive file system detected")
-		fs.IgnoreCase()
 	}
 
 	// Detect the CPU type and available memory.

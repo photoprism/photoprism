@@ -142,6 +142,8 @@ func TestVisionInstalled(t *testing.T) {
 	assert.Equal(t, report.Yes, visionInstalled(custom, modelsPath))
 	custom.Service = vision.Service{Uri: "https://example.com", Method: "POST"}
 	assert.Equal(t, report.NotAssigned, visionInstalled(custom, modelsPath))
+	custom.Service = vision.Service{RequestFormat: vision.ApiFormatOllama}
+	assert.Equal(t, report.NotAssigned, visionInstalled(custom, modelsPath))
 	assert.Equal(t, report.NotAssigned, visionInstalled(&vision.Model{Type: vision.ModelTypeCaption}, modelsPath))
 }
 

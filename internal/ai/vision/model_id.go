@@ -13,7 +13,7 @@ var clippedModelIdWarned sync.Map
 
 // cleanModelId sanitizes a model identifier with clean.Type and logs a warning once per
 // identifier that had to be shortened to clean.LengthType characters. It writes to the
-// system log, as Service.Model is expanded from the environment.
+// system log, as a shortened identifier is a configuration issue for the operator.
 func cleanModelId(s string) string {
 	id := clean.Type(s)
 
@@ -26,4 +26,9 @@ func cleanModelId(s string) string {
 	}
 
 	return id
+}
+
+// modelIdText sanitizes a model identifier like cleanModelId, without shortening it.
+func modelIdText(s string) string {
+	return strings.TrimSpace(clean.ASCII(s))
 }

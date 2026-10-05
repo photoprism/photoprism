@@ -26,10 +26,13 @@ type Service struct {
 	Disabled       bool      `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
 }
 
-// UriUnresolved reports whether the service has a Uri that expands to nothing, so it has no endpoint.
+// UriUnresolved reports whether the service has no endpoint although it is meant to use one: its Uri
+// expands to nothing, or it has no Uri and a request format that the Vision API does not accept.
 func (m *Service) UriUnresolved() bool {
-	if m == nil || m.Disabled || strings.TrimSpace(m.Uri) == "" {
+	if m == nil || m.Disabled {
 		return false
+	} else if strings.TrimSpace(m.Uri) == "" {
+		return m.UriMissing()
 	}
 
 	uri, _ := m.Endpoint()
@@ -37,15 +40,35 @@ func (m *Service) UriUnresolved() bool {
 	return uri == ""
 }
 
-// Endpoint returns the remote service request method and endpoint URL, if any.
+// UriMissing reports whether the service has no Uri although its request format is not accepted by the
+// Vision API, so its requests cannot be sent to the shared service.
+func (m *Service) UriMissing() bool {
+	if m == nil || m.Disabled || strings.TrimSpace(m.Uri) != "" {
+		return false
+	}
+
+	switch strings.ToLower(strings.TrimSpace(m.RequestFormat)) {
+	case "", ApiFormatVision, ApiFormatImages, ApiFormatUrl:
+		return false
+	default:
+		return true
+	}
+}
+
+// Endpoint returns the remote service request method and endpoint URL, if any. The URI expands only
+// variables whose names end in _URL, _URI, or _HOST, see expandUriEnv.
 func (m *Service) Endpoint() (uri, method string) {
 	if m.Disabled || strings.TrimSpace(m.Uri) == "" {
 		return "", ""
 	}
 
-	ensureEnv()
+	// A refused variable leaves the URI without a service rather than with a partial value.
+	expanded, refused := expandUriEnv(m.Uri)
 
-	if uri = strings.TrimSpace(os.ExpandEnv(m.Uri)); uri == "" || strings.Contains(uri, "${") {
+	if len(refused) > 0 {
+		warnRefusedEnv("Service.Uri", m.Uri, refused, uriEnvSuffixes)
+		return "", ""
+	} else if uri = strings.TrimSpace(expanded); uri == "" || strings.Contains(uri, "${") {
 		return "", ""
 	}
 
@@ -75,17 +98,20 @@ func (m *Service) Endpoint() (uri, method string) {
 	return uri, method
 }
 
-// GetModel returns the model identifier override for the endpoint, if any.
-// Case is preserved because upstream catalogs (e.g. Hugging Face IDs on
-// OpenAI-compatible servers) match identifiers verbatim.
+// GetModel returns the model identifier override for the endpoint, if any, without shortening it. It
+// expands only variables whose names end in _MODEL. Case is preserved, as catalogs match it verbatim.
 func (m *Service) GetModel() string {
 	if m.Disabled {
 		return ""
 	}
 
-	ensureEnv()
+	expanded, refused := expandEnvSuffix(m.Model, modelEnvSuffixes)
 
-	return cleanModelId(os.ExpandEnv(m.Model))
+	if len(refused) > 0 {
+		warnRefusedEnv("Service.Model", m.Model, refused, modelEnvSuffixes)
+	}
+
+	return modelIdText(expanded)
 }
 
 // EndpointKey returns the access token belonging to the remote service endpoint, if any.

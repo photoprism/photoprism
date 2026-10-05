@@ -982,7 +982,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 					photo.PhotoPrivate = true
 				} else if result.IsUnavailable() {
 					// Preserve the existing flag when the detector cannot decide.
-					log.Warnf("index: nsfw detection unavailable for %s (%s)", clean.Log(m.RootRelName()), clean.Log(result.Reason))
+					event.SystemWarn([]string{"index", "nsfw detection unavailable for %s (%s)"}, clean.Log(m.RootRelName()), clean.Log(result.Reason))
 				}
 			}
 		}

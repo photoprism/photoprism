@@ -33,15 +33,34 @@ func StripSequence(fileName string) string {
 	return fileName
 }
 
-// BasePrefix returns the filename base without any extensions and path.
+// BasePrefix returns the filename base without any extensions and path. A sequence is only stripped
+// if a name remains, e.g. "(1).jpg" keeps "(1)", and a name whose base is a dot name keeps its
+// extensions, e.g. "..jpg", so the prefix of a file name never names a folder.
 func BasePrefix(fileName string, stripSequence bool) string {
-	fileBase := StripKnownExt(StripExt(filepath.Base(fileName)))
+	baseName := filepath.Base(fileName)
+	fileBase := StripKnownExt(StripExt(baseName))
+
+	if NoBaseName(fileBase) {
+		if NoBaseName(baseName) {
+			return ""
+		}
+
+		fileBase = baseName
+	}
 
 	if !stripSequence {
 		return fileBase
+	} else if prefix := StripSequence(fileBase); !NoBaseName(prefix) {
+		return prefix
 	}
 
-	return StripSequence(fileBase)
+	return fileBase
+}
+
+// NoBaseName reports whether a base name is empty or a dot name, which names a folder rather than a file
+// when joined with a path.
+func NoBaseName(base string) bool {
+	return base == "" || base == "." || base == ".."
 }
 
 // RelPrefix returns the relative filename.

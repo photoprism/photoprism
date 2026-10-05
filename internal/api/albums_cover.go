@@ -124,7 +124,7 @@ func AlbumCover(router *gin.RouterGroup) {
 		}
 
 		if err != nil {
-			log.Errorf("%s: %s", albumCover, err)
+			log.Errorf("%s: %s in %s", albumCover, clean.Error(err), clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		} else if thumbnail == "" {

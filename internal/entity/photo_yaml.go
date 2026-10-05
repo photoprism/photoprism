@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -61,8 +62,17 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	return fs.WriteFile(fileName, data, fs.ModeFile)
 }
 
+// ErrPhotoYamlName is returned for a photo whose name cannot name a YAML sidecar file.
+var ErrPhotoYamlName = errors.New("photo name is empty or not a file name")
+
 // YamlFileName returns both the absolute file path and the relative name for the YAML sidecar file, e.g. for logging.
+// A photo whose name is empty or not a plain file name has none, as it would name the file of another photo.
 func (m *Photo) YamlFileName(originalsPath, sidecarPath string) (absolute, relative string, err error) {
+	if m == nil || m.PhotoName == "" || m.PhotoName == "." || m.PhotoName == ".." ||
+		filepath.Base(filepath.Join(m.PhotoPath, m.PhotoName)) != m.PhotoName {
+		return "", "", ErrPhotoYamlName
+	}
+
 	absolute, err = fs.FileName(filepath.Join(originalsPath, m.PhotoPath, m.PhotoName), sidecarPath, originalsPath, fs.ExtYml)
 	relative = filepath.Join(m.PhotoPath, m.PhotoName) + fs.ExtYml
 

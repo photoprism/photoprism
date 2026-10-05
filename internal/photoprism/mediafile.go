@@ -400,7 +400,11 @@ func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relati
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.StackPrefix(stripSequence)
+	// A file whose stack name is empty is not stacked by name, so its photo gets the unstripped name.
+	if fileBase = m.StackPrefix(stripSequence); fileBase == "" {
+		fileBase = m.StackPrefix(false)
+	}
+
 	relativePath = m.RelPath(rootPath)
 	relativeName = m.RelName(rootPath)
 
@@ -443,15 +447,7 @@ func (m *MediaFile) RelName(directory string) string {
 // RelPath returns the relative directory (without filename) by trimming the
 // provided base directory from the stored file path.
 func (m *MediaFile) RelPath(directory string) string {
-	pathname := m.fileName
-
-	if i := strings.Index(pathname, directory); i == 0 {
-		if i = strings.LastIndex(directory, string(os.PathSeparator)); i == len(directory)-1 {
-			pathname = pathname[len(directory):]
-		} else if i = strings.LastIndex(directory, string(os.PathSeparator)); i != len(directory) {
-			pathname = pathname[len(directory)+1:]
-		}
-	}
+	pathname := fs.RelName(m.fileName, directory)
 
 	if end := strings.LastIndex(pathname, string(os.PathSeparator)); end != -1 {
 		pathname = pathname[:end]
@@ -553,28 +549,28 @@ func (m *MediaFile) Root() string {
 		return m.fileRoot
 	}
 
-	if strings.HasPrefix(m.FileName(), Config().OriginalsPath()) {
+	if fs.InDir(m.FileName(), Config().OriginalsPath()) {
 		m.fileRoot = entity.RootOriginals
 		return m.fileRoot
 	}
 
 	importPath := Config().ImportPath()
 
-	if importPath != "" && strings.HasPrefix(m.FileName(), importPath) {
+	if importPath != "" && fs.InDir(m.FileName(), importPath) {
 		m.fileRoot = entity.RootImport
 		return m.fileRoot
 	}
 
 	sidecarPath := Config().SidecarPath()
 
-	if sidecarPath != "" && strings.HasPrefix(m.FileName(), sidecarPath) {
+	if sidecarPath != "" && fs.InDir(m.FileName(), sidecarPath) {
 		m.fileRoot = entity.RootSidecar
 		return m.fileRoot
 	}
 
 	samplesPath := Config().SamplesPath()
 
-	if samplesPath != "" && strings.HasPrefix(m.FileName(), samplesPath) {
+	if samplesPath != "" && fs.InDir(m.FileName(), samplesPath) {
 		m.fileRoot = entity.RootSamples
 		return m.fileRoot
 	}
@@ -1494,18 +1490,8 @@ func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 		return nil, fmt.Errorf("%s is empty", m.RootRelName())
 	}
 
-	jpegName := fs.ImageJpeg.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if jpegName != "" {
-		return NewMediaFile(jpegName)
-	}
-
-	pngName := fs.ImagePng.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if pngName != "" {
-		return NewMediaFile(pngName)
+	if preview := findPreviewImage(m.FileName(), Config().SidecarPath(), Config().OriginalsPath(), false, fs.ImageJpeg, fs.ImagePng); preview != nil {
+		return preview, nil
 	}
 
 	return nil, fmt.Errorf("no preview image found for %s", m.RootRelName())
@@ -1523,21 +1509,9 @@ func (m *MediaFile) HasPreviewImage() bool {
 		return true
 	}
 
-	jpegName := fs.ImageJpeg.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+	m.hasPreviewImage = findPreviewImage(m.FileName(), Config().SidecarPath(), Config().OriginalsPath(), false, fs.ImageJpeg, fs.ImagePng) != nil
 
-	if m.hasPreviewImage = fs.MimeType(jpegName) == header.ContentTypeJpeg; m.hasPreviewImage {
-		return true
-	}
-
-	pngName := fs.ImagePng.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if m.hasPreviewImage = fs.MimeType(pngName) == header.ContentTypePng; m.hasPreviewImage {
-		return true
-	}
-
-	return false
+	return m.hasPreviewImage
 }
 
 func (m *MediaFile) decodeDimensions() error {

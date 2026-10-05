@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/proc"
 )
 
 // exifToolConditionFailed is the ExifTool exit status when every file failed the -if condition.
@@ -21,9 +20,14 @@ const exifToolTmpSuffix = "_exiftool_tmp"
 
 // writeMissingOrientation writes the EXIF orientation to an image that has no Orientation tag yet,
 // and reports whether it did. An existing tag is kept, and values outside 2..8 are never written.
-func (w *Convert) writeMissingOrientation(fileName string, orientation int) (written bool, err error) {
+// The write is charged to the given budget, or to a new one if it is nil.
+func (w *Convert) writeMissingOrientation(fileName string, orientation int, budget *ConvertBudget) (written bool, err error) {
 	if orientation < 2 || orientation > 8 {
 		return false, nil
+	}
+
+	if budget == nil {
+		budget = NewConvertBudget(w.conf.ConvertTimeout())
 	}
 
 	// #nosec G204 -- arguments are the configured ExifTool binary, a bounded number, and a file path.
@@ -36,7 +40,7 @@ func (w *Convert) writeMissingOrientation(fileName string, orientation int) (wri
 
 	log.Trace(clean.Cmd(cmd))
 
-	if err = proc.Run(cmd, w.conf.ConvertTimeout()); err == nil {
+	if err = budget.Run(cmd, nil); err == nil {
 		return true, nil
 	}
 

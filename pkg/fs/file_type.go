@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -70,16 +71,22 @@ func (t Type) Find(fileName string, stripSequence bool) string {
 	base := BasePrefix(fileName, stripSequence)
 	dir := filepath.Dir(fileName)
 
+	// A name without a base would match files named after the folder.
+	if NoBaseName(base) {
+		return ""
+	}
+
 	prefix := filepath.Join(dir, base)
 	prefixLower := filepath.Join(dir, strings.ToLower(base))
 	prefixUpper := filepath.Join(dir, strings.ToUpper(base))
+	ignore := ignoreCaseIn(dir)
 
-	for _, ext := range FileTypes[t] {
+	for _, ext := range typeExts(t, ignore) {
 		if info, err := os.Stat(prefix + ext); err == nil && info.Mode().IsRegular() {
 			return filepath.Join(dir, info.Name())
 		}
 
-		if ignoreCase {
+		if ignore {
 			continue
 		}
 
@@ -97,46 +104,116 @@ func (t Type) Find(fileName string, stripSequence bool) string {
 
 // FindFirst searches a list of directories for the first file with the same base name and a given type.
 func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSequence bool) string {
-	fileBase := filepath.Base(fileName)
+	return t.FindEach(fileName, dirs, baseDir, stripSequence, nil)
+}
+
+// FindAll searches a list of directories for files with the same base name and a given type.
+func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSequence bool) (results []string) {
+	t.FindEach(fileName, dirs, baseDir, stripSequence, func(name string) bool {
+		results = append(results, name)
+		return false
+	})
+
+	return results
+}
+
+// FindEach searches a list of directories for files with the same base name and a given type, by extension,
+// directory and name variant, and returns the first file that accept takes, or the first file found if accept
+// is nil. It returns "" if there is none.
+func (t Type) FindEach(fileName string, dirs []string, baseDir string, stripSequence bool, accept func(fileName string) bool) string {
+	return t.findEach(fileName, dirs, baseDir, stripSequence, false, accept)
+}
+
+// FindGenerated searches like FindEach, except that in directories other than the folder of the file it only
+// checks the names PhotoPrism generates: the full name and BasePrefix with the default extension of the type.
+// In the folder of the file, it also checks the full name in other cases, see fullNameCases.
+func (t Type) FindGenerated(fileName string, dirs []string, baseDir string, stripSequence bool, accept func(fileName string) bool) string {
+	return t.findEach(fileName, dirs, baseDir, stripSequence, true, accept)
+}
+
+// findEach implements FindEach and FindGenerated. Each directory and name variant is checked once.
+func (t Type) findEach(fileName string, dirs []string, baseDir string, stripSequence, generated bool, accept func(fileName string) bool) string {
 	fileBasePrefix := BasePrefix(fileName, stripSequence)
-	fileBaseLower := strings.ToLower(fileBasePrefix)
-	fileBaseUpper := strings.ToUpper(fileBasePrefix)
+
+	// A name without a base would match files named after the folder.
+	if NoBaseName(fileBasePrefix) {
+		return ""
+	}
+
+	// Folders in case-insensitive mode check only the generated names.
+	generatedNames := appendUnique(nil, filepath.Base(fileName), fileBasePrefix)
+	names := appendUnique(slices.Clone(generatedNames), strings.ToLower(fileBasePrefix), strings.ToUpper(fileBasePrefix))
+	ownNames := names
+
+	if generated {
+		ownNames = appendUnique(slices.Clone(names), fullNameCases(fileName)...)
+	}
 
 	filePath := filepath.Dir(fileName)
-	search := append([]string{filePath}, dirs...)
+	search := []string{filePath}
+	lastDir := filePath
 
-	for _, ext := range FileTypes[t] {
-		lastDir := ""
+	for _, dir := range dirs {
+		if dir == "" || dir == lastDir {
+			continue
+		}
 
-		for _, dir := range search {
-			if dir == "" || dir == lastDir {
+		lastDir = dir
+
+		switch {
+		case dir == filePath:
+			continue
+		case filepath.IsAbs(dir):
+			// A file in the folder itself, e.g. a generated sidecar, is not looked up below its absolute path.
+			if InDir(filePath, dir) && !InDir(filePath, baseDir) {
 				continue
 			}
 
-			lastDir = dir
+			dir = filepath.Join(dir, RelName(filePath, baseDir))
+		default:
+			dir = filepath.Join(filePath, dir)
+		}
 
-			if dir != filePath {
-				if filepath.IsAbs(dir) {
-					dir = filepath.Join(dir, RelName(filePath, baseDir))
-				} else {
-					dir = filepath.Join(filePath, dir)
+		search = appendUnique(search, dir)
+	}
+
+	ignore := make([]bool, len(search))
+
+	for i, dir := range search {
+		ignore[i] = ignoreCaseIn(dir)
+	}
+
+	defaultExt := t.DefaultExt()
+	lowerExts := FileTypesLower[t]
+
+	// Folders in case-insensitive mode skip the uppercase extensions, so each finds the same file first.
+	for _, ext := range fileTypesAll[t] {
+		upperExt := !slices.Contains(lowerExts, ext)
+
+		for i, dir := range search {
+			candidates := names
+
+			switch {
+			case ignore[i] && upperExt:
+				continue
+			case i == 0:
+				candidates = ownNames
+			case generated && ext != defaultExt:
+				continue
+			case generated:
+				candidates = generatedNames
+			}
+
+			if ignore[i] {
+				candidates = generatedNames
+			}
+
+			for _, name := range candidates {
+				if info, err := os.Stat(filepath.Join(dir, name) + ext); err != nil || !info.Mode().IsRegular() {
+					continue
+				} else if found := filepath.Join(dir, info.Name()); accept == nil || accept(found) {
+					return found
 				}
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			} else if info, err = os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			}
-
-			if ignoreCase {
-				continue
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
-			} else if info, err = os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				return filepath.Join(dir, info.Name())
 			}
 		}
 	}
@@ -144,55 +221,36 @@ func (t Type) FindFirst(fileName string, dirs []string, baseDir string, stripSeq
 	return ""
 }
 
-// FindAll searches a list of directories for files with the same base name and a given type.
-func (t Type) FindAll(fileName string, dirs []string, baseDir string, stripSequence bool) (results []string) {
-	fileBase := filepath.Base(fileName)
-	fileBasePrefix := BasePrefix(fileName, stripSequence)
-	fileBaseLower := strings.ToLower(fileBasePrefix)
-	fileBaseUpper := strings.ToUpper(fileBasePrefix)
+// typeExts returns the extensions of a type, without the uppercase variants if ignore is set.
+func typeExts(t Type, ignore bool) []string {
+	if ignore {
+		return FileTypesLower[t]
+	}
 
-	filePath := filepath.Dir(fileName)
-	search := append([]string{filePath}, dirs...)
+	return fileTypesAll[t]
+}
 
-	for _, ext := range FileTypes[t] {
-		lastDir := ""
+// fullNameCases returns the full base name with its name and its extensions each as given, in lower case, or in
+// upper case, e.g. "img_1234.RAW" for "IMG_1234.raw".
+func fullNameCases(fileName string) (result []string) {
+	fullName := filepath.Base(fileName)
+	name := BasePrefix(fileName, false)
+	exts := strings.TrimPrefix(fullName, name)
 
-		for _, dir := range search {
-			if dir == "" || dir == lastDir {
-				continue
-			}
+	for _, n := range []string{name, strings.ToLower(name), strings.ToUpper(name)} {
+		result = appendUnique(result, n+exts, n+strings.ToLower(exts), n+strings.ToUpper(exts))
+	}
 
-			lastDir = dir
+	return result
+}
 
-			if dir != filePath {
-				if filepath.IsAbs(dir) {
-					dir = filepath.Join(dir, RelName(filePath, baseDir))
-				} else {
-					dir = filepath.Join(filePath, dir)
-				}
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBase) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBasePrefix) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
-
-			if ignoreCase {
-				continue
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseLower) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
-
-			if info, err := os.Stat(filepath.Join(dir, fileBaseUpper) + ext); err == nil && info.Mode().IsRegular() {
-				results = append(results, filepath.Join(dir, info.Name()))
-			}
+// appendUnique appends the values that the list does not contain yet.
+func appendUnique(list []string, values ...string) []string {
+	for _, v := range values {
+		if !slices.Contains(list, v) {
+			list = append(list, v)
 		}
 	}
 
-	return results
+	return list
 }

@@ -13,7 +13,7 @@ set -e
 # NodeJS major version to be installed (armhf still requires 22.x).
 NODE_MAJOR=24
 NPM_VERSION=latest
-TESTCAFE_VERSION=3.7.4
+TESTCAFE_VERSION=3.7.6
 MERMAID_VERSION=latest
 
 if [ "$(dpkg --print-architecture)" = "armhf" ]; then

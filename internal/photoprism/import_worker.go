@@ -219,6 +219,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
+			warnInsta360LensNotVideo("import", f)
+
 			// Create JSON sidecar file, if needed.
 			if jsonErr := f.CreateExifToolJson(imp.convert); jsonErr != nil {
 				log.Warnf("import: %s", clean.Error(jsonErr))
@@ -349,6 +351,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 				} else if _, limitErr = file.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
 				}
+
+				warnInsta360LensNotVideo("import", file)
 
 				// Extract metadata to a JSON file with Exiftool and add it to the cached metadata, which
 				// the resolution check above may already have read.

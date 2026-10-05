@@ -1,6 +1,6 @@
 ## PhotoPrism — FFmpeg Integration
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -39,12 +39,12 @@
 
 ### Package Layout (Code Map)
 
-- `encode/` — shared option structs, quality helpers, default map/metadata flags, software AVC command builder.
+- `encode/` — shared option structs, quality and preset helpers, default map/metadata flags, software AVC command builder.
 - `apple/`, `intel/`, `nvidia/`, `vaapi/`, `vulkan/`, `v4l/` — hardware-specific AVC command builders.
 - `remux.go` — container-only transfers with metadata copy and temp-file safety.
 - `transcode_cmd.go` — selects encoder, handles animated image inputs, and signals mutex usage.
 - `extract_image_cmd.go` — JPEG/PNG preview frame extraction with color-space presets.
-- `v360.go` — `v360` filter strings and dewarp commands that turn fisheye/dual-fisheye 360° sources into equirectangular JPEG or AVC derivatives, including the two lens streams of separate files (`DewarpDualFisheyePair*`) or of one file (`DewarpDualStream*`), which are stacked side by side first.
+- `v360.go` — `v360` filter strings and dewarp commands that turn fisheye/dual-fisheye 360° sources into equirectangular JPEG or AVC derivatives, including the two lens streams of separate files (`DewarpDualFisheyePair*`) or of one file (`DewarpDualStream*`), which are stacked side by side first. These lens videos are read with the MOV/MP4 demuxer (`-f mov`).
 - `test.go` & `*_test.go` — reusable command runner and smoke tests (use fixtures in `testdata/`).
 - `ffmpeg.go` — package logger hook.
 

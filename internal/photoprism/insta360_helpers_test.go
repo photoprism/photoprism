@@ -97,3 +97,22 @@ func writeInsta360Photo(t *testing.T, cfg *config.Config, fileName, size string)
 		"-frames:v", "1", "-f", "image2", "-c:v", "mjpeg", "-metadata", "comment="+filepath.Base(fileName), fileName).CombinedOutput()
 	require.NoError(t, err, strings.TrimSpace(string(out)))
 }
+
+// writeInsta360LensContent writes a lens file with the given content: a square Matroska or QuickTime
+// clip, or plain text.
+func writeInsta360LensContent(t *testing.T, cfg *config.Config, fileName, content string) {
+	t.Helper()
+	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+
+	switch content {
+	case "matroska", "mov":
+		// #nosec G204 -- arguments are test constants.
+		out, err := exec.Command(cfg.FFmpegBin(), "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size=320x320:rate=30",
+			"-t", "1", "-c:v", "mpeg4", "-f", content, fileName).CombinedOutput()
+		require.NoError(t, err, strings.TrimSpace(string(out)))
+	case "text":
+		require.NoError(t, os.WriteFile(fileName, []byte("not a video\n"), fs.ModeFile))
+	default:
+		t.Fatalf("unknown lens content %s", content)
+	}
+}

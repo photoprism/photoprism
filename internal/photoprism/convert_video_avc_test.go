@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestConvert_ToAvc(t *testing.T) {
@@ -81,6 +82,49 @@ func TestConvert_ToAvc(t *testing.T) {
 
 		avcFile, err := convert.ToAvc(mf, "", false, false)
 		assert.Error(t, err)
+		assert.Nil(t, avcFile)
+	})
+	t.Run("TypeMismatch", func(t *testing.T) {
+		conf := config.TestConfig()
+		convert := NewConvert(conf)
+
+		// The FFmpeg stub records each call, so the test can tell that no command ran.
+		marker := filepath.Join(t.TempDir(), "ffmpeg-called")
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		require.NoError(t, os.WriteFile(stub, []byte("#!/bin/sh\ntouch "+transportShellQuote(marker)+"\nexit 1\n"), 0o700)) //nolint:gosec // G306: test executable
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = stub
+		t.Cleanup(func() { conf.Options().FFmpegBin = orig })
+
+		for _, name := range []string{"clip.mp4", "clip.gif"} {
+			fileName := filepath.Join(t.TempDir(), name)
+			require.NoError(t, fs.Copy("testdata/flash.jpg", fileName, false))
+			mf, err := NewMediaFile(fileName)
+			require.NoError(t, err)
+			require.Error(t, mf.CheckType(), name)
+
+			avcFile, err := convert.ToAvc(mf, encode.SoftwareAvc, false, true)
+			assert.ErrorContains(t, err, "image/jpeg", name)
+			assert.Nil(t, avcFile, name)
+			assert.NoFileExists(t, marker, name)
+		}
+
+		// An existing transcode of a source that fails the check is not returned either.
+		folder := "avc-type-mismatch-" + rnd.Base36(8)
+		t.Cleanup(func() {
+			_ = os.RemoveAll(filepath.Join(conf.OriginalsPath(), folder))
+			_ = os.RemoveAll(filepath.Join(conf.SidecarPath(), folder))
+		})
+		fileName := filepath.Join(conf.OriginalsPath(), folder, "existing.mp4")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+		require.NoError(t, fs.Copy("testdata/flash.jpg", fileName, false))
+		mf, err := NewMediaFile(fileName)
+		require.NoError(t, err)
+		avcName, err := convert.AvcName(mf)
+		require.NoError(t, err)
+		require.NoError(t, fs.Copy(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"), avcName, true))
+		avcFile, err := convert.ToAvc(mf, encode.SoftwareAvc, false, false)
+		assert.ErrorContains(t, err, "image/jpeg")
 		assert.Nil(t, avcFile)
 	})
 }
@@ -626,8 +670,9 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 	})
 	t.Run("Insta360SeparateLensPair", func(t *testing.T) {
 		dir := t.TempDir()
-		leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
-		rightName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+		leftName, rightName := filepath.Join(dir, insta360StackLeft), filepath.Join(dir, insta360StackRight)
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, conf, dir, insta360StackRight)
 		mf, err := NewMediaFile(leftName)
 		if err != nil {
 			t.Fatal(err)
@@ -640,10 +685,27 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 
 		args := strings.Join(r.Args, " ")
 		assert.True(t, useMutex)
-		assert.Contains(t, args, "-i "+leftName+" -i "+rightName)
+		assert.Contains(t, args, "-f mov -i "+leftName+" -f mov -i "+rightName)
 		assert.Contains(t, args, "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 		assert.Contains(t, args, "-map [v] -map 0:a:0?")
 		assert.Contains(t, args, "libx264")
+	})
+	t.Run("Insta360RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := filepath.Join(dir, insta360StackLeft)
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		rightName := filepath.Join(dir, insta360StackRight)
+		writeInsta360Photo(t, conf, rightName, "320x320")
+		mf, err := NewMediaFile(leftName)
+		require.NoError(t, err)
+		require.True(t, FindInsta360Capture(mf).ValidPair(), "the capture is still grouped")
+
+		r, _, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.Encoder("intel"))
+		require.NoError(t, err)
+		args := strings.Join(r.Args, " ")
+		assert.Contains(t, args, "-i "+leftName)
+		assert.NotContains(t, args, rightName)
+		assert.NotContains(t, args, "v360")
 	})
 	t.Run("Mp4NoV360", func(t *testing.T) {
 		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))

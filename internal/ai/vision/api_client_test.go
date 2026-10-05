@@ -327,6 +327,69 @@ func TestPerformApiRequestRetry(t *testing.T) {
 	})
 }
 
+// countingTransport records requests that would leave the process and answers none of them.
+type countingTransport struct {
+	requests atomic.Int32
+}
+
+// RoundTrip counts the request and fails it without a network connection.
+func (c *countingTransport) RoundTrip(*http.Request) (*http.Response, error) {
+	c.requests.Add(1)
+	return nil, errors.New("request not expected")
+}
+
+// TestPerformApiRequestMissingKey checks that requests to the OpenAI API and Ollama Cloud are not sent
+// without an API key, with one system log warning per service and model.
+func TestPerformApiRequestMissingKey(t *testing.T) {
+	transport := &countingTransport{}
+	previous := http.DefaultTransport
+	http.DefaultTransport = transport
+	t.Cleanup(func() { http.DefaultTransport = previous })
+
+	cases := []struct {
+		name   string
+		uri    string
+		format ApiFormat
+		model  string
+	}{
+		{name: "OpenAI", uri: "https://api.openai.com/v1/responses", format: ApiFormatOpenAI, model: "gpt-5-mini-missing-key"},
+		{name: "OllamaCloud", uri: ollama.CloudBaseUrl + "/api/generate", format: ApiFormatOllama, model: "minimax-m3:cloud-missing-key"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			system := captureSystemLog(t)
+			apiRequest := &ApiRequest{
+				Id:             "test",
+				Model:          tc.model,
+				Images:         []string{"data:image/jpeg;base64,AA=="},
+				ResponseFormat: tc.format,
+			}
+
+			for range 2 {
+				_, err := PerformApiRequest(apiRequest, tc.uri, http.MethodPost, "")
+				require.Error(t, err)
+				assert.Equal(t, fmt.Sprintf("%s service request failed (missing api key)", tc.format), err.Error())
+			}
+
+			warnings := warnMessages(system.AllEntries())
+			require.Len(t, warnings, 1)
+			assert.Contains(t, warnings[0], "has no api key, so no request is sent")
+			assert.Contains(t, warnings[0], tc.model)
+		})
+	}
+
+	assert.Zero(t, transport.requests.Load())
+
+	t.Run("KeySet", func(t *testing.T) {
+		apiRequest := &ApiRequest{Id: "test", Model: "gpt-5-mini", Images: []string{"data:image/jpeg;base64,AA=="}, ResponseFormat: ApiFormatOpenAI}
+		_, err := PerformApiRequest(apiRequest, "https://api.openai.com/v1/responses", http.MethodPost, "sk-test")
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "missing api key")
+		assert.Positive(t, transport.requests.Load())
+	})
+}
+
 func TestValidateApiRequestURL(t *testing.T) {
 	t.Run("AcceptHttpAndHttps", func(t *testing.T) {
 		assert.NoError(t, validateApiRequestURL("http://localhost:1234/api"))
@@ -442,6 +505,8 @@ func captureLogs(t *testing.T) (logHook, systemHook *logtest.Hook) {
 // TestPerformApiRequestErrorLog checks that the text of a failed response is only written to the system log.
 func TestPerformApiRequestErrorLog(t *testing.T) {
 	const marker = "remote-body-marker"
+
+	resetServiceFailures(t)
 
 	for _, tc := range []struct {
 		name   string

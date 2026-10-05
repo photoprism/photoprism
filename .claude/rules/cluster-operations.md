@@ -1,7 +1,6 @@
 ## Cluster Operations
 
 - Keep bootstrap decoupled: avoid importing `internal/service/cluster/node/*` from `internal/config` or the cluster root; nodes talk to the Portal over HTTP(S) using constants from `internal/service/cluster/const.go`.
-- Bootstrap refreshes node OAuth credentials on 401/403 (rotate secret + retry, info-level log). If the secret file can't be written, the rotated value stays cached in memory so the current process continues.
 - Portal validation accepts HTTP advertise URLs only for loopback or cluster-internal domains (`*.svc`, `*.cluster.local`, `*.internal`); everything else must use HTTPS.
 - Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; reinstall only when `app.js` is missing and always use the header helpers in `pkg/http/header`.
 - Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials; treat 401/403/404 as terminal; persist only newly generated secrets or DB settings.

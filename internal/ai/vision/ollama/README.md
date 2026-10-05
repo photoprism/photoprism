@@ -1,6 +1,6 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -8,7 +8,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 
 #### Constraints
 
-- Engine defaults live in `internal/ai/vision/ollama` and are applied whenever a model sets `Engine: ollama`. Aliases map to `ApiFormatOllama`, `scheme.Base64`, and a default 720 px thumbnail. The default model is `gemma4:latest` for self-hosted instances and `minimax-m3:cloud` when `OLLAMA_BASE_URL` equals `https://ollama.com` (cloud defaults are only selected on that exact match). Label normalization follows the same split: a model tagged `:cloud`, or one whose endpoint is the cloud host, defaults to `Normalize: phrase`, because hosted models only return a compound label name when the subject has one. Self-hosted models stay on `single-word`.
+- Engine defaults live in `internal/ai/vision/ollama` and are applied whenever a model sets `Engine: ollama`. Aliases map to `ApiFormatOllama`, `scheme.Base64`, and a default 720 px thumbnail. The default model is `OLLAMA_MODEL` if set, otherwise `gemma4:latest` for self-hosted instances and `minimax-m3:cloud` when `OLLAMA_BASE_URL` equals `https://ollama.com` (cloud defaults are only selected on that exact match). Label normalization follows the same split: a model tagged `:cloud`, or one whose endpoint is the cloud host, defaults to `Normalize: phrase`, because hosted models only return a compound label name when the subject has one. Self-hosted models stay on `single-word`.
 - Reasoning is disabled by default (`DefaultThink = "false"`, applied to `Service.Think` when empty) so thinking-capable models do not leak their reasoning into captions or invalidate label JSON. Re-enable it explicitly with `Service.Think: "true"`.
 - Responses may arrive as newline-delimited JSON chunks. `decodeOllamaResponse` keeps the most recent chunk, while the parser supports both `response` and `thinking` fallbacks for captions and labels and strips a leading, well-delimited `<think>...</think>` block from the response body as a defensive fallback.
 - Structured JSON is optional for captions but enforced for labels when `Format: json` (default for label models targeting the Ollama engine).
@@ -95,7 +95,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 
 #### Ollama Cloud Models
 
-Set `OLLAMA_BASE_URL=https://ollama.com` and provide `OLLAMA_API_KEY` to use hosted models (no local download or GPU required). The default cloud model is `minimax-m3:cloud`. The cloud catalog changes over time and models are occasionally retired without notice, so treat this as a snapshot and consult <https://ollama.com/search?c=cloud> for the current list; PhotoPrism logs a clear warning when a configured cloud model returns HTTP 404/410, once until a request succeeds again.
+Set `OLLAMA_BASE_URL=https://ollama.com` and provide `OLLAMA_API_KEY` to use hosted models (no local download or GPU required). The default cloud model is `minimax-m3:cloud`. The cloud catalog changes over time and models are occasionally retired without notice, so treat this as a snapshot and consult <https://ollama.com/search?c=cloud> for the current list; PhotoPrism logs a warning when a configured model returns HTTP 404/410, once until a request succeeds again, naming the model.
 
 The table below reports median single-image latency over a fixed 16-image benchmark, and how reliably each model honors a requested output language. All six returned well-formed JSON for every English request, so the differences are in verbosity, speed, and language handling rather than reliability.
 
@@ -125,6 +125,7 @@ The table below reports median single-image latency over a fixed 16-image benchm
 - `OLLAMA_HOST`, `OLLAMA_MODELS`, `OLLAMA_MAX_QUEUE`, `OLLAMA_NUM_PARALLEL`, etc. — Provided in `compose*.yaml` to tune the Ollama daemon. Adjust `OLLAMA_KEEP_ALIVE` if you want models to stay loaded between worker batches.
 - `OLLAMA_API_KEY` / `OLLAMA_API_KEY_FILE` — Default bearer token picked up when `Service.Key` is empty; useful for hosted Ollama services (e.g., Ollama Cloud).
 - `OLLAMA_BASE_URL` — Base URL for the Ollama API; defaults to `http://ollama:11434`, trailing slashes are trimmed. Set to `https://ollama.com` to enable cloud defaults.
+- `OLLAMA_MODEL` — Default model of the Ollama engine, used for models that configure none of `Service.Model`, `Model`, or `Name`, including the default caption model; it takes precedence over the cloud default model. `OLLAMA_MODELS`, the daemon's storage path, is not read.
 - `PHOTOPRISM_LOG_LEVEL=trace` — Logs request payloads with base64 images shortened, and the full body of a successful response (quoted). Use temporarily when debugging parsing issues. The body of a failed response, or the error for a response that cannot be parsed, is written to the console system log at error level, clipped to 4 KiB.
 
 #### `vision.yml` Example
@@ -197,7 +198,7 @@ Guidelines:
 - `internal/ai/vision/engine_ollama.go` — Builder/parser glue plus label/caption normalization.
 - `internal/ai/vision/api_ollama.go` — Base64 payload builder.
 - `internal/ai/vision/api_client.go` — Streaming decoder shared among engines.
-- `internal/ai/vision/models.go` — Default caption model definition (`gemma4:latest`, `minimax-m3:cloud` for Ollama Cloud).
+- `internal/ai/vision/models.go` — Default caption model definition (`Engine: ollama`, model from the engine defaults in `engine_ollama.go`).
 - `compose*.yaml` — Ollama service profile, Traefik labels, and persistent volume wiring.
 - `frontend/src/common/util.js` — Maps `src="ollama"` to the correct badge; keep it updated when adding new source strings.
 

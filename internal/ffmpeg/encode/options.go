@@ -16,7 +16,7 @@ type Options struct {
 	Quality     int           // See https://ffmpeg.org/ffmpeg-codecs.html
 	Preset      string        // See https://trac.ffmpeg.org/wiki/Encode/H.264#Preset
 	MaxBitrate  int           // Peak video bitrate in Mbit/s for encoders that support a limit, 0 for no limit.
-	Device      string        // See https://trac.ffmpeg.org/wiki/Limiting%20the%20output%20bitrate
+	Device      string        // Hardware device path or index, see https://trac.ffmpeg.org/wiki/HWAccelIntro
 	MapVideo    string        // See https://trac.ffmpeg.org/wiki/Map#Videostreamsonly
 	MapAudio    string        // See https://trac.ffmpeg.org/wiki/Map#Audiostreamsonly
 	MapMetadata string        // See https://ffmpeg.org/ffmpeg.html
@@ -141,12 +141,12 @@ func (o *Options) VideoFilter(format PixelFormat) string {
 	return prefix + fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s", o.SizeLimit, o.SizeLimit, format)
 }
 
-// QvQuality  returns the video encoding quality as "-q:v" parameter string.
+// QvQuality returns the video encoding quality as "-q:v" parameter string.
 func (o *Options) QvQuality() string {
 	return QvQuality(o.Quality)
 }
 
-// GlobalQuality returns the video encoding quality as "-global_quality" parameter string.
+// GlobalQuality returns the video encoding quality as Intel QSV "-global_quality" parameter string.
 func (o *Options) GlobalQuality() string {
 	return GlobalQuality(o.Quality)
 }
@@ -159,6 +159,11 @@ func (o *Options) CrfQuality() string {
 // QpQuality returns the video encoding quality as "-qp" parameter string.
 func (o *Options) QpQuality() string {
 	return QpQuality(o.Quality)
+}
+
+// VaapiQuality returns the video encoding quality as VA-API "-qp" parameter string.
+func (o *Options) VaapiQuality() string {
+	return VaapiQuality(o.Quality)
 }
 
 // CqQuality returns the video encoding quality as NVENC "-cq" parameter string.

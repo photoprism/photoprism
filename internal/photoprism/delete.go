@@ -16,9 +16,12 @@ func DeletePhoto(p *entity.Photo, mediaFiles bool, originals bool) (numFiles int
 		return 0, errors.New("photo is nil")
 	}
 
+	// A photo without a usable name has no sidecar backup.
 	yamlFileName, yamlRelName, err := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
-	if err != nil {
+	if errors.Is(err, entity.ErrPhotoYamlName) {
+		log.Debugf("photo: %s has no sidecar backup (%s)", clean.Log(p.PhotoUID), err)
+	} else if err != nil {
 		log.Warnf("photo: %s (delete %s)", err, clean.Log(yamlRelName))
 	}
 
@@ -78,10 +81,10 @@ func DeleteFiles(files entity.Files, originals bool) (numFiles int) {
 		if exifJson, _ := ExifToolCacheName(file.FileHash); !fs.FileExists(exifJson) {
 			// Do nothing.
 		} else if err = os.Remove(exifJson); err != nil {
-			log.Warnf("files: failed to delete sidecar %s", clean.Log(filepath.Base(exifJson)))
+			log.Warnf("files: failed to delete cached metadata of %s", clean.Log(file.FileName))
 		} else {
 			numFiles++
-			log.Infof("files: deleted sidecar %s", clean.Log(filepath.Base(exifJson)))
+			log.Infof("files: deleted cached metadata of %s", clean.Log(file.FileName))
 		}
 
 		// Remove any other files in the sidecar folder.

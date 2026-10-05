@@ -6,6 +6,8 @@ import (
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 var (
@@ -49,21 +51,27 @@ func vipsInit() {
 	vipsStarted = true
 
 	// Configure logging.
-	vips.LoggingSettings(func(domain string, level vips.LogLevel, msg string) {
-		switch level {
-		case vips.LogLevelError, vips.LogLevelCritical:
-			log.Errorf("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
-		case vips.LogLevelWarning:
-			log.Debugf("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
-		default:
-			log.Tracef("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
-		}
-	}, vipsLogLevel())
+	vips.LoggingSettings(vipsLog, vipsLogLevel())
 
 	// Start libvips.
 	if err := vips.Startup(vipsConfig()); err != nil {
 		vipsStarted = false
 		log.Errorf("vips: %s", err)
+	}
+}
+
+// vipsLog writes a libvips message to the log. Errors go to the system log, as libvips names the
+// cache files it reads and writes.
+func vipsLog(domain string, level vips.LogLevel, msg string) {
+	domain = strings.TrimSpace(strings.ToLower(domain))
+
+	switch level {
+	case vips.LogLevelError, vips.LogLevelCritical:
+		event.SystemError([]string{"vips", "%s: %s"}, domain, msg)
+	case vips.LogLevelWarning:
+		log.Debugf("%s: %s", domain, msg)
+	default:
+		log.Tracef("%s: %s", domain, msg)
 	}
 }
 

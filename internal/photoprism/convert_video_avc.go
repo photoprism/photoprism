@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -101,11 +100,14 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	// Sanitized relative filename for use in logs.
 	logFileName := clean.Log(f.RootRelName())
 
-	// Abort if the source media file does not exist.
+	// Abort if the source media file does not exist or its content does not match its type.
 	if !f.Exists() {
 		return nil, fmt.Errorf("convert: %s not found", logFileName)
 	} else if f.Empty() {
 		return nil, fmt.Errorf("convert: %s is empty", logFileName)
+	} else if typeErr := f.CheckType(); typeErr != nil {
+		log.Warnf("convert: skipping %s because it %s", logFileName, typeErr)
+		return nil, fmt.Errorf("convert: %s %s", logFileName, typeErr)
 	}
 
 	// Skip files whose codec or container is on the FFmpeg exclude list.
@@ -165,9 +167,8 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 
 	cmd, useMutex, err := w.TranscodeToAvcCmd(f, avcName, encoder)
 
-	// Return if an error occurred.
+	// Return if an error occurred, which the caller logs.
 	if err != nil {
-		log.Errorf("convert: %s for %s (transcode command)", clean.Error(err), logFileName)
 		return nil, err
 	}
 
@@ -206,12 +207,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()),
 	}...)
 
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": relName,
-		"baseName": filepath.Base(relName),
-		"xmpName":  "",
-	})
+	publishConverting(f, relName, "")
 
 	log.Infof("%s: transcoding %s to %s", encoder, clean.Log(relName), fs.VideoAvc)
 
@@ -384,7 +380,7 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 	// Complete separate-lens captures are combined before dewarping. Single-file INSV originals are
 	// dewarped only when their decoded frame is already a side-by-side ~2:1 dual-fisheye layout.
 	capture := FindInsta360Capture(f)
-	dewarpPair := capture.ValidPair() && capture.Left.FileName() == f.FileName()
+	dewarpPair := capture != nil && capture.Left != nil && capture.Left.FileName() == f.FileName() && capture.Dewarpable()
 	dewarpStreams := !dewarpPair && f.Insta360DualStream()
 	dewarp := dewarpPair || dewarpStreams || f.IsInsv() && f.DualFisheyeLayout()
 

@@ -31,7 +31,7 @@ func NewApiRequestOllama(images Files, fileScheme scheme.Type, mediaSrc media.Sr
 			case scheme.Data, scheme.Base64:
 				file, err := os.Open(images[i])
 				if err != nil {
-					return nil, fmt.Errorf("%s (create data url)", err)
+					return nil, fmt.Errorf("%w (create data url)", err)
 				}
 				imagesData[i] = media.DataBase64(file)
 				if err := file.Close(); err != nil {

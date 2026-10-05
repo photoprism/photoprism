@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -60,7 +61,7 @@ func GetThumb(router *gin.RouterGroup) {
 			fileName, err := crop.FromRequest(fileHash, cropArea, cropSize, conf.ThumbCachePath())
 
 			if err != nil {
-				log.Warnf("%s: %s", logPrefix, err)
+				log.Warnf("%s: %s in %s", logPrefix, clean.Error(err), thumbLogName(fileHash))
 				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 				return
 			} else if fileName == "" {
@@ -120,7 +121,9 @@ func GetThumb(router *gin.RouterGroup) {
 			cached := cacheData.(ThumbCache)
 
 			if !fs.FileExists(cached.FileName) {
-				log.Errorf("%s: %s not found", logPrefix, fileHash)
+				log.Errorf("%s: cached %s of %s is missing", logPrefix, sizeName, thumbLogName(fileHash))
+				event.SystemWarn([]string{"thumb", "cached file %s is missing"}, clean.Log(cached.FileName))
+				cache.Delete(cacheKey)
 				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 				return
 			}
@@ -210,7 +213,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Failed?
 		if err != nil {
-			log.Errorf("%s: %s", logPrefix, err)
+			log.Errorf("%s: %s in %s", logPrefix, clean.Error(err), clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 			return
 		} else if thumbName == "" {
@@ -233,4 +236,14 @@ func GetThumb(router *gin.RouterGroup) {
 			c.File(thumbName)
 		}
 	})
+}
+
+// thumbLogName returns the name of the original a thumbnail belongs to, for naming it in a log message
+// instead of its file hash.
+func thumbLogName(fileHash string) string {
+	if f, err := query.FileByHash(fileHash); err == nil && f.FileName != "" {
+		return clean.Log(f.FileName)
+	}
+
+	return "unknown file"
 }

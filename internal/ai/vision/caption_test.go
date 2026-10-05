@@ -51,6 +51,8 @@ func TestGenerateCaption(t *testing.T) {
 func TestGenerateCaptionServiceError(t *testing.T) {
 	const marker = "remote-error-marker"
 
+	resetServiceFailures(t)
+
 	prevConfig := Config
 	t.Cleanup(func() { Config = prevConfig })
 

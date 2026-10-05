@@ -69,11 +69,13 @@ type Options struct {
 	Demo                      bool          `yaml:"-" json:"-" flag:"demo"`
 	Sponsor                   bool          `yaml:"-" json:"-" flag:"sponsor"`
 	StoragePath               string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
+	StorageCase               string        `yaml:"StorageCase" json:"-" flag:"storage-case"`
 	StorageFree               float64       `yaml:"StorageFree" json:"-" flag:"storage-free"`
 	ConfigPath                string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	OptionsYaml               string        `json:"-" yaml:"-" flag:"-"`
 	DefaultsYaml              string        `json:"-" yaml:"-" flag:"defaults-yaml"`
 	OriginalsPath             string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
+	OriginalsCase             string        `yaml:"OriginalsCase" json:"-" flag:"originals-case"`
 	OriginalsLimit            int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit           int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	UsersPath                 string        `yaml:"UsersPath" json:"-" flag:"users-path"`

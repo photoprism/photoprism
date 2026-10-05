@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 5, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -137,8 +137,8 @@ Background Workers
 Cluster / Portal
 - Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
-  - Registration now retries once on 401/403 by rotating the node client secret with the join token and persists the new credentials (falling back to in-memory storage if the secrets directory is read-only).
-  - Theme sync logs explicitly when refresh/rotation occurs so operators can trace credential churn in standard log levels.
+  - Registration treats 401, 403 and 404 as final and does not rotate credentials; only 429 is retried with bounded backoff.
+  - Theme sync logs at info level when it downloads, updates, or skips a bundle, so operators can trace it in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
 - Portal-only extensions: `portal/internal/portal` (Portal defaults, flags, provisioning options, `/i/*` proxy router).
@@ -193,11 +193,11 @@ Testing
 
 Security & Hot Spots (Where to Look)
 - Zip extraction (path traversal prevention): `pkg/fs/zip.go`
-  - Uses `safeJoin` to reject absolute/volume paths and `..` traversal; enforces per-file and total size limits.
+  - Uses `fs.SafeJoin` (`pkg/fs/join.go`) to reject absolute/volume paths and `..` traversal; enforces per-file and total size limits.
   - Tests: `pkg/fs/zip_test.go` covers abs/volume/.. cases and limits.
 - Force-aware Copy/Move and truncation-safe writes:
   - App helpers: `internal/photoprism/mediafile.go` (`MediaFile.Copy/Move` with `force`).
-  - Utils: `pkg/fs/copy_move.go` — `fs.Copy` / `fs.Move` (use `O_TRUNC` to avoid trailing bytes).
+  - Utils: `pkg/fs/copy_move.go` — `fs.Copy` / `fs.Move` (write through a staged sibling and publish by rename or link).
 - FFmpeg command builders and encoders:
   - Core: `internal/ffmpeg/transcode_cmd.go`, `internal/ffmpeg/remux.go`, `internal/ffmpeg/v360.go`.
   - Encoders (string builders only): `internal/ffmpeg/{apple,intel,nvidia,vaapi,vulkan,v4l}/avc.go`.

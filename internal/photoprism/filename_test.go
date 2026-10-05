@@ -85,10 +85,35 @@ func TestRoot(t *testing.T) {
 	t.Run("SidecarPath", func(t *testing.T) {
 		assert.Equal(t, entity.RootSidecar, Root(FileName("sidecar", "test.jpg")))
 	})
+	t.Run("SiblingPrefix", func(t *testing.T) {
+		assert.Equal(t, entity.RootOriginals, Root(FileName(entity.RootOriginals, "2024/test.jpg")))
+		assert.Equal(t, entity.RootUnknown, Root(Config().OriginalsPath()+"2/2024/test.jpg"))
+		assert.Equal(t, entity.RootUnknown, Root(Config().SidecarPath()+"-other/test.jpg"))
+	})
 }
 
 func TestRootRelName(t *testing.T) {
 	t.Run("SidecarPath", func(t *testing.T) {
 		assert.Equal(t, "foo/test.jpg", RootRelName(FileName("sidecar", "foo/test.jpg")))
+	})
+}
+
+// TestDisplayFolder verifies the folder names shown in notifications.
+func TestDisplayFolder(t *testing.T) {
+	t.Run("Subfolder", func(t *testing.T) {
+		assert.Equal(t, "2024/trip", displayFolder("/photoprism/originals/2024/trip", "/photoprism/originals"))
+	})
+	t.Run("Base", func(t *testing.T) {
+		assert.Equal(t, "/", displayFolder("/photoprism/originals", "/photoprism/originals"))
+	})
+	t.Run("NoBase", func(t *testing.T) {
+		assert.Equal(t, "batch1", displayFolder("/photoprism/storage/users/u1/upload/batch1", ""))
+	})
+	t.Run("Uncleaned", func(t *testing.T) {
+		assert.Equal(t, "etc/x", displayFolder("/photoprism/import//etc/x/", "/photoprism/import"))
+		assert.Equal(t, "x", displayFolder("/photoprism/import/../import/./x", "/photoprism/import"))
+	})
+	t.Run("OutsideBase", func(t *testing.T) {
+		assert.Equal(t, "other", displayFolder("/tmp/other", "/photoprism/import"))
 	})
 }

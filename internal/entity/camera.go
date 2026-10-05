@@ -160,6 +160,8 @@ func AddCamera(makeName, modelName string) (result *Camera, created bool, err er
 
 	if makeName == "" || modelName == "" {
 		return nil, false, fmt.Errorf("%w: make and model must not be empty", ErrInvalidValue)
+	} else if err = checkMakeModel(makeName, modelName); err != nil {
+		return nil, false, err
 	}
 
 	m := NewCamera(makeName, modelName)
@@ -418,6 +420,8 @@ func (m *Camera) UpdateMakeModel(makeName, modelName string) error {
 
 	if makeName == "" || modelName == "" {
 		return fmt.Errorf("make and model must not be empty")
+	} else if err := checkMakeModel(makeName, modelName); err != nil {
+		return err
 	}
 
 	cam := NewCamera(makeName, modelName)

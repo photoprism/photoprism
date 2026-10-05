@@ -106,7 +106,7 @@ func FolderCover(router *gin.RouterGroup) {
 		}
 
 		if err != nil {
-			log.Errorf("%s: %s", folderCover, err)
+			log.Errorf("%s: %s in %s", folderCover, clean.Error(err), clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		} else if thumbnail == "" {

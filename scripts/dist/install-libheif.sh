@@ -74,7 +74,7 @@ fi
 DESTDIR=$(realpath "${1:-/usr/local}")
 
 # In addition, you can specify a custom version to be installed as the second argument.
-LIBHEIF_VERSION=${2:-v1.23.4}
+LIBHEIF_VERSION=${2:-v1.23.5}
 
 # A private staging directory this script owns.
 if ! STAGING_DIR="$(mktemp -d "${TMPDIR:-/tmp}/photoprism-libheif.XXXXXXXX")"; then

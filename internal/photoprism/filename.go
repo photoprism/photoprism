@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path"
 	"path/filepath"
-	"strings"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -85,25 +84,25 @@ func RootPath(fileName string) string {
 func Root(fileName string) string {
 	originalsPath := Config().OriginalsPath()
 
-	if originalsPath != "" && strings.HasPrefix(fileName, originalsPath) {
+	if originalsPath != "" && fs.InDir(fileName, originalsPath) {
 		return entity.RootOriginals
 	}
 
 	importPath := Config().ImportPath()
 
-	if importPath != "" && strings.HasPrefix(fileName, importPath) {
+	if importPath != "" && fs.InDir(fileName, importPath) {
 		return entity.RootImport
 	}
 
 	sidecarPath := Config().SidecarPath()
 
-	if sidecarPath != "" && strings.HasPrefix(fileName, sidecarPath) {
+	if sidecarPath != "" && fs.InDir(fileName, sidecarPath) {
 		return entity.RootSidecar
 	}
 
 	samplesPath := Config().SamplesPath()
 
-	if samplesPath != "" && strings.HasPrefix(fileName, samplesPath) {
+	if samplesPath != "" && fs.InDir(fileName, samplesPath) {
 		return entity.RootSamples
 	}
 
@@ -113,4 +112,18 @@ func Root(fileName string) string {
 // RootRelName returns the relative filename, and automatically detects the root path.
 func RootRelName(fileName string) string {
 	return RelName(fileName, RootPath(fileName))
+}
+
+// displayFolder returns the name of a folder relative to its base folder, "/" for the base folder itself, or
+// its base name if it has no base folder, so notifications do not show the storage path.
+func displayFolder(folder, base string) string {
+	folder = filepath.Clean(folder)
+
+	if base == "" || !fs.InDir(folder, base) {
+		return filepath.Base(folder)
+	} else if rel := fs.RelName(folder, base); rel != "" {
+		return rel
+	}
+
+	return "/"
 }

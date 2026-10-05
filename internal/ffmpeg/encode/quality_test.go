@@ -19,10 +19,14 @@ func TestConstantQuality(t *testing.T) {
 
 func TestGlobalQuality(t *testing.T) {
 	t.Run("Defaults", func(t *testing.T) {
-		assert.Equal(t, "25", GlobalQuality(0))
+		assert.Equal(t, "28", GlobalQuality(0))
+		assert.Equal(t, "28", GlobalQuality(-5))
+		assert.Equal(t, "1", GlobalQuality(99))
 		assert.Equal(t, "1", GlobalQuality(BestQuality))
-		assert.Equal(t, "25", GlobalQuality(DefaultQuality))
-		assert.Equal(t, "49", GlobalQuality(WorstQuality))
+		assert.Equal(t, "28", GlobalQuality(DefaultQuality))
+		assert.Equal(t, "40", GlobalQuality(30))
+		assert.Equal(t, "10", GlobalQuality(80))
+		assert.Equal(t, "51", GlobalQuality(WorstQuality))
 		assert.Equal(t, "1", GlobalQuality(102))
 	})
 }
@@ -60,5 +64,19 @@ func TestCqQuality(t *testing.T) {
 		assert.Equal(t, "43", CqQuality(30))
 		assert.Equal(t, "50", CqQuality(15))
 		assert.Equal(t, "50", CqQuality(2))
+	})
+}
+
+func TestVaapiQuality(t *testing.T) {
+	t.Run("Range", func(t *testing.T) {
+		assert.Equal(t, "29", VaapiQuality(0))
+		assert.Equal(t, "29", VaapiQuality(-5))
+		assert.Equal(t, "4", VaapiQuality(BestQuality))
+		assert.Equal(t, "4", VaapiQuality(99))
+		assert.Equal(t, "4", VaapiQuality(102))
+		assert.Equal(t, "29", VaapiQuality(DefaultQuality))
+		assert.Equal(t, "39", VaapiQuality(30))
+		assert.Equal(t, "14", VaapiQuality(80))
+		assert.Equal(t, "51", VaapiQuality(WorstQuality))
 	})
 }

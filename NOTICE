@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-10-02
+Date generated: 2026-10-05
 
 ================================================================================
 
@@ -295,8 +295,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/antchfx/xmlquery
-Version: v1.5.1
-License: MIT (https://github.com/antchfx/xmlquery/blob/v1.5.1/LICENSE)
+Version: v1.5.2
+License: MIT (https://github.com/antchfx/xmlquery/blob/v1.5.2/LICENSE)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -318,8 +318,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/antchfx/xpath
-Version: v1.3.8
-License: MIT (https://github.com/antchfx/xpath/blob/v1.3.8/LICENSE)
+Version: v1.3.9
+License: MIT (https://github.com/antchfx/xpath/blob/v1.3.9/LICENSE)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -6821,8 +6821,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/tidwall/gjson
-Version: v1.19.0
-License: MIT (https://github.com/tidwall/gjson/blob/v1.19.0/LICENSE)
+Version: v1.20.0
+License: MIT (https://github.com/tidwall/gjson/blob/v1.20.0/LICENSE)
 
 The MIT License (MIT)
 

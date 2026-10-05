@@ -74,7 +74,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			}
 
 			// Existing previews of each member are reindexed with the capture, e.g. on a forced rescan.
-			if jpegName := fs.ImageJpeg.FindFirst(captureFile.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false); jpegName != "" {
+			if jpegName := fs.ImageJpeg.FindGenerated(captureFile.FileName(), []string{sidecarPathFor(captureFile), fs.PPHiddenPathname}, Config().OriginalsPath(), false, nil); jpegName != "" {
 				matches = list.Join(matches, []string{jpegName})
 			}
 		}
@@ -112,6 +112,12 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		}
 
 		processedMatches[fileName] = true
+
+		// The pattern also matches folders whose names start with the prefix.
+		if !fs.FileExists(fileName) {
+			continue
+		}
+
 		f, fileErr := NewMediaFile(fileName)
 
 		if fileErr != nil || f.Empty() || f.IsArchive() {
@@ -201,14 +207,8 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden preview image if needed.
 	if !result.HasPreview() {
-		if jpegName := fs.ImageJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); jpegName != "" {
-			if resultFile, _ := NewMediaFile(jpegName); resultFile.Ok() {
-				result.Files = append(result.Files, resultFile)
-			}
-		} else if pngName := fs.ImagePng.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); pngName != "" {
-			if resultFile, _ := NewMediaFile(pngName); resultFile.Ok() {
-				result.Files = append(result.Files, resultFile)
-			}
+		if preview := findPreviewImage(result.Main.FileName(), sidecarPathFor(result.Main), Config().OriginalsPath(), stripSequence, fs.ImageJpeg, fs.ImagePng); preview != nil {
+			result.Files = append(result.Files, preview)
 		}
 	}
 
@@ -245,4 +245,15 @@ func (m *MediaFile) RelatedSidecarFiles(stripSequence bool) (files []string, err
 	files = append(files, matches...)
 
 	return files, nil
+}
+
+// sidecarPathFor returns the sidecar folder in which generated files of f are looked up, or an empty string
+// if f is not in originals, e.g. in the import folder, so it is only related to files in its own folder and
+// its hidden subfolder.
+func sidecarPathFor(f *MediaFile) string {
+	if f == nil || !f.InOriginals() {
+		return ""
+	}
+
+	return Config().SidecarPath()
 }

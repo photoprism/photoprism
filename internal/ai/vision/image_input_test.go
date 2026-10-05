@@ -2,13 +2,16 @@ package vision
 
 import (
 	"bytes"
+	iofs "io/fs"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -25,6 +28,15 @@ func TestNewApiRequestImages_SrcLocal(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, req.Images, 1)
 	assert.True(t, strings.HasPrefix(req.Images[0], "data:image/"))
+}
+
+func TestNewApiRequestImages_MissingFile(t *testing.T) {
+	missing := filepath.Join(t.TempDir(), "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818_720x720_fit.jpg")
+
+	_, err := NewApiRequestImages(Files{missing}, scheme.Data, media.SrcLocal)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, iofs.ErrNotExist)
+	assert.Equal(t, "open ***: no such file or directory (create data url)", clean.Error(err))
 }
 
 func TestNewApiRequestImages_SrcRemote(t *testing.T) {
@@ -80,6 +92,14 @@ func TestNewApiRequestOllama_Source(t *testing.T) {
 	t.Run("SrcRemoteLocalPathRejected", func(t *testing.T) {
 		_, err := NewApiRequestOllama(Files{"/private/example.txt"}, scheme.Base64, media.SrcRemote)
 		assert.Error(t, err)
+	})
+	t.Run("SrcLocalMissingFile", func(t *testing.T) {
+		missing := filepath.Join(t.TempDir(), "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818_720x720_fit.jpg")
+
+		_, err := NewApiRequestOllama(Files{missing}, scheme.Base64, media.SrcLocal)
+		require.Error(t, err)
+		assert.ErrorIs(t, err, iofs.ErrNotExist)
+		assert.Equal(t, "open ***: no such file or directory (create data url)", clean.Error(err))
 	})
 }
 

@@ -69,6 +69,18 @@ func DewarpDualStreamToJpegCmd(inputName, jpegName string, fov, roll int, opt *e
 	return dewarpLensesToJpegCmd([]string{inputName}, "[0:v:1][0:v:0]", jpegName, fov, roll, opt)
 }
 
+// lensInputArgs returns the input arguments for Insta360 lens videos, which are read with the MOV/MP4
+// demuxer only, as their container format.
+func lensInputArgs(inputNames []string) []string {
+	args := make([]string, 0, 4*len(inputNames))
+
+	for _, inputName := range inputNames {
+		args = append(args, "-f", "mov", "-i", inputName)
+	}
+
+	return args
+}
+
 // dewarpLensesToJpegCmd stacks the specified lens streams side by side and dewarps one frame.
 func dewarpLensesToJpegCmd(inputNames []string, lenses, jpegName string, fov, roll int, opt *encode.Options) *exec.Cmd {
 	v360Filter := V360DualFisheyeToEquirect(fov, roll)
@@ -78,10 +90,7 @@ func dewarpLensesToJpegCmd(inputNames []string, lenses, jpegName string, fov, ro
 		v360Filter = scaled.VideoFilter("")
 	}
 
-	args := []string{"-hide_banner", "-loglevel", "error", "-y"}
-	for _, inputName := range inputNames {
-		args = append(args, "-i", inputName)
-	}
+	args := append([]string{"-hide_banner", "-loglevel", "error", "-y"}, lensInputArgs(inputNames)...)
 
 	args = append(args,
 		"-filter_complex", fmt.Sprintf("%shstack=inputs=2:shortest=1,%s[v]", lenses, v360Filter),
@@ -130,10 +139,7 @@ func DewarpDualStreamToAvcCmd(inputName, avcName string, opt encode.Options) *ex
 
 // dewarpLensesToAvcCmd stacks the specified lens streams side by side and encodes the dewarped video.
 func dewarpLensesToAvcCmd(inputNames []string, lenses, avcName string, opt encode.Options) *exec.Cmd {
-	args := []string{"-hide_banner", "-y", "-strict", "-2"}
-	for _, inputName := range inputNames {
-		args = append(args, "-i", inputName)
-	}
+	args := append([]string{"-hide_banner", "-y", "-strict", "-2"}, lensInputArgs(inputNames)...)
 
 	args = append(args,
 		"-filter_complex", fmt.Sprintf("%shstack=inputs=2:shortest=1,%s[v]", lenses, opt.VideoFilter(encode.FormatYUV420P)),

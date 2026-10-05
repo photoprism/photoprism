@@ -183,7 +183,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "download-token",
-			Usage:   "shared static `TOKEN` accepted for permanent download URLs without identifying a session (leave blank to accept signed tokens only)",
+			Usage:   "shared static `TOKEN` for permanent download URLs (leave blank to accept signed tokens only)",
 			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
 		}, Secret: true}, {
 		Flag: &cli.Int64Flag{
@@ -255,16 +255,22 @@ var Flags = CliFlags{
 			EnvVars:   EnvVars("STORAGE_PATH"),
 			TakesFile: true,
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "storage-case",
+			Usage:   "file name case `MODE` of storage, also used for originals of unknown mode (auto, sensitive, insensitive)",
+			Value:   Auto,
+			EnvVars: EnvVars("STORAGE_CASE"),
+		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "storage-free",
-			Usage:   "minimum `PERCENT` (1-99) of free storage required for indexing, importing, and uploads, -1 disables the check",
+			Usage:   "minimum free storage in `PERCENT` required for indexing, importing, and uploads (1-99; -1 to disable)",
 			Value:   DefaultStorageFree,
 			EnvVars: EnvVars("STORAGE_FREE"),
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "config-path",
 			Aliases:   []string{"config", "c"},
-			Usage:     "config storage `PATH` or options.yml filename, values in this file override CLI flags and environment variables if present",
+			Usage:     "config storage `PATH` or options.yml filename (values override CLI flags and environment variables)",
 			EnvVars:   EnvVars("CONFIG_PATH"),
 			TakesFile: true,
 		}}, {
@@ -273,7 +279,7 @@ var Flags = CliFlags{
 			// Alias was changed from "y" to "defaults" since "y" is a reserved alias for "yes".
 			// Since our examples and end-user docs for this flag don't include any aliases, the change should be safe.
 			Aliases: []string{"defaults"},
-			Usage:   "loads default config values from `FILENAME` if it exists, does not override CLI flags or environment variables",
+			Usage:   "default config `FILENAME` (values do not override CLI flags or environment variables)",
 			// fs.ConfigFilePath lets existing installations keep a defaults.yml file
 			// while new deployments may drop in defaults.yaml without updating the flag.
 			Value:     fs.ConfigFilePath("/etc/photoprism", fs.ConfigDefaultsName, fs.ExtYml),
@@ -286,6 +292,12 @@ var Flags = CliFlags{
 			Usage:     "storage `PATH` of your original media files (photos and videos)",
 			EnvVars:   EnvVars("ORIGINALS_PATH"),
 			TakesFile: true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "originals-case",
+			Usage:   "file name case `MODE` of originals (auto, sensitive, insensitive)",
+			Value:   Auto,
+			EnvVars: EnvVars("ORIGINALS_CASE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "originals-limit",
@@ -328,7 +340,7 @@ var Flags = CliFlags{
 		Flag: &cli.BoolFlag{
 			Name:    "upload-nsfw",
 			Aliases: []string{"n"},
-			Usage:   "allows uploads that might be offensive (when disabled, files flagged by the NSFW model are rejected before indexing)",
+			Usage:   "allows uploads that might be offensive (skips NSFW screening)",
 			EnvVars: EnvVars("UPLOAD_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -350,7 +362,7 @@ var Flags = CliFlags{
 		Flag: &cli.Int64Flag{
 			Name:    "upload-maxage",
 			Value:   DefaultUploadMaxAge,
-			Usage:   fmt.Sprintf("time in `SECONDS` after which staged uploads that were never imported are removed (%d-%d; -1 to keep them)", MinUploadMaxAge, MaxUploadMaxAge),
+			Usage:   fmt.Sprintf("maximum age of staged uploads that were not imported in `SECONDS` (%d-%d; -1 to keep them)", MinUploadMaxAge, MaxUploadMaxAge),
 			EnvVars: EnvVars("UPLOAD_MAXAGE"),
 		}}, {
 		Flag: &cli.PathFlag{
@@ -730,7 +742,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "cors-origin",
-			Usage:   "origin `URL` from which browsers are allowed to perform cross-origin requests (leave blank to disable or use * to allow all)",
+			Usage:   "origin `URL` allowed to make cross-origin requests (leave blank to disable, * to allow all)",
 			EnvVars: EnvVars("CORS_ORIGIN"),
 			Value:   header.DefaultAccessControlAllowOrigin,
 		}}, {
@@ -946,7 +958,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "tls-email",
-			Usage:   "`EMAIL` address to obtain an HTTPS certificate for the site domain from Let's Encrypt, which must reach the Web server on port 443",
+			Usage:   "`EMAIL` address to obtain an HTTPS certificate from Let's Encrypt, which must reach port 443",
 			EnvVars: EnvVars("TLS_EMAIL"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -968,7 +980,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "http-compression",
 			Aliases: []string{"z"},
-			Usage:   "Web server compression `METHODS` as a comma-separated preference list (e.g. \"zstd,gzip\"; supported: gzip, zstd, none)",
+			Usage:   "Web server compression `METHODS` in order of preference (gzip, zstd, none), e.g. \"zstd,gzip\"",
 			EnvVars: EnvVars("HTTP_COMPRESSION"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1170,7 +1182,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "convert-timeout",
-			Usage:   "time in `MINUTES` after which converting a still image, document, or RAW file is given up (-1 to disable)",
+			Usage:   "timeout in `MINUTES` for converting still images, documents, and RAW files (-1 to disable)",
 			Value:   DefaultConvertTimeout,
 			EnvVars: EnvVars("CONVERT_TIMEOUT"),
 		}}, {
@@ -1287,7 +1299,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size-face",
-			Usage:   "maximum size in `PIXELS` (720-15360) of the source rendered on demand so face crops are not upscaled, 0 to disable",
+			Usage:   "maximum size of face crop sources rendered on demand in `PIXELS` (720-15360; 0 to disable)",
 			Value:   thumb.SizeFit4096.Width,
 			EnvVars: EnvVars("THUMB_SIZE_FACE"),
 		}}, {
@@ -1342,7 +1354,7 @@ var Flags = CliFlags{
 		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "vision-schedule",
-			Usage:   "vision worker `SCHEDULE` for background processing (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
+			Usage:   "vision worker `SCHEDULE` in cron format (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
 			EnvVars: EnvVars("VISION_SCHEDULE"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1427,13 +1439,13 @@ var Flags = CliFlags{
 			face.RetrySizeThreshold, face.RetrySizeThresholdLimited)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
-			Usage:   "minimum face `QUALITY` score (1-100), replacing the detector's own calibrated cutoff, -1 disables the check",
+			Usage:   "minimum face `QUALITY` score (1-100; -1 to disable), calibrated per detector when unset",
 			EnvVars: EnvVars("FACE_SCORE"),
 		},
 		DocDefault: faceDocDefault(face.DetectorScore(face.DefaultDetectorName()))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-migrate-size",
-			Usage:   "minimum size of faces in `PIXELS` while a migration re-detects them, which is where a marker an earlier detector placed is found or lost",
+			Usage:   "minimum size of faces in `PIXELS` when a migration re-detects them",
 			EnvVars: EnvVars("FACE_MIGRATE_SIZE"),
 		},
 		DocDefault: faceDocDefault(float64(face.MinSizeThreshold))}, {
@@ -1451,7 +1463,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-model",
-			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "), detected from the library unless named, and changed with photoprism faces migrate",
+			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "), changed with photoprism faces migrate",
 			EnvVars: EnvVars("FACE_MODEL"),
 		},
 		DocDefault: face.DefaultModelName()}, {
@@ -1462,13 +1474,13 @@ var Flags = CliFlags{
 		}, DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-size",
-			Usage:   "minimum size of automatically clustered faces in `PIXELS` of the image their embedding was sampled from (20-10000), calibrated per face model when unset",
+			Usage:   "minimum size of automatically clustered faces in embedding source `PIXELS` (20-10000), calibrated per face model when unset",
 			EnvVars: EnvVars("FACE_CLUSTER_SIZE"),
 		},
 		DocDefault: faceDocDefault(float64(face.ClusterSize(face.DefaultModelName())))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-score",
-			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100), overriding the bar calibrated per detector, -1 disables the check",
+			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100; -1 to disable), calibrated per detector when unset",
 			EnvVars: EnvVars("FACE_CLUSTER_SCORE"),
 		},
 		DocDefault: faceDocDefault(float64(face.DefaultDetectorClusterScore()))}, {
@@ -1489,7 +1501,7 @@ var Flags = CliFlags{
 			face.ClusterCoreRetryDefault, face.ClusterCoreDefault)}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-split-rounds",
-			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",
+			Usage:   "`NUMBER` of times an overly wide cluster may be split (0 to discard it, -1 to keep it whole)",
 			Value:   face.ClusterSplitRoundsDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_SPLIT_ROUNDS"),
 			Hidden:  true,
@@ -1513,7 +1525,7 @@ var Flags = CliFlags{
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-percentile",
-			Usage:   "`PERCENTILE` of the member distances a cluster's radius is derived from (1-100), where 100 uses the maximum and lets one loose face decide how far the cluster reaches",
+			Usage:   "`PERCENTILE` of member distances that determines a cluster's radius (1-100; 100 uses the maximum)",
 			EnvVars: EnvVars("FACE_CLUSTER_PERCENTILE"),
 		}, DocDefault: strconv.Itoa(face.ClusterPercentileDefault)}, {
 		Flag: &cli.Float64Flag{
@@ -1523,7 +1535,7 @@ var Flags = CliFlags{
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.MatchDist })}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-margin",
-			Usage:   "minimum `DISTANCE` by which the nearest cluster must beat the runner-up, leaving a face between two people unassigned instead of guessing, 0 reads as unset and -1 disables the check",
+			Usage:   "minimum `DISTANCE` by which the best matching cluster must beat the runner-up (-1 to disable)",
 			EnvVars: EnvVars("FACE_MATCH_MARGIN"),
 		}, DocDefault: faceDocDefault(face.MatchMarginDefault)}, {
 		Flag: &cli.Float64Flag{
@@ -1533,12 +1545,12 @@ var Flags = CliFlags{
 		}, DocDefault: faceDocDefault(face.CollisionDistDefault)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   fmt.Sprintf("collision tolerance `DELTA` appended to max match distances (up to %g), the same for every face model; twice it is the distance at which a colliding cluster is retired for good", face.EpsilonDistMax),
+			Usage:   fmt.Sprintf("collision tolerance `DELTA` added to maximum match distances (up to %g), the same for every face model", face.EpsilonDistMax),
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
 		Flag: &cli.BoolFlag{
 			Name:    "face-recompute-stats",
-			Usage:   "derive a cluster's radius from the markers it holds, rather than from the widest distance one matching pass accepted",
+			Usage:   "derives cluster radii from their markers instead of the widest accepted match distance",
 			EnvVars: EnvVars("FACE_RECOMPUTE_STATS"),
 			Hidden:  true,
 		}}, {

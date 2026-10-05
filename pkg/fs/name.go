@@ -24,7 +24,8 @@ func FileName(fileName, dirName, baseDir, fileExt string) (string, error) {
 }
 
 // FilePath returns the file path for a sidecar file with the specified extension, like FileName, but
-// without creating its folder, e.g. to plan an output before any file is written.
+// without creating its folder, e.g. to plan an output before any file is written. A file that already
+// lies in an absolute dirName outside baseDir gets its sidecar next to it.
 func FilePath(fileName, dirName, baseDir, fileExt string) (string, error) {
 	if fileName == "" {
 		return "", fmt.Errorf("file name is empty")
@@ -34,41 +35,49 @@ func FilePath(fileName, dirName, baseDir, fileExt string) (string, error) {
 
 	dir := filepath.Dir(fileName)
 
-	if dirName == "" || dirName == "." {
+	switch {
+	case dirName == "" || dirName == "." || dir == dirName:
 		dirName = dir
-	} else if dir != dirName {
-		if filepath.IsAbs(dirName) {
-			dirName = filepath.Join(dirName, RelName(dir, baseDir))
-		} else {
-			dirName = filepath.Join(dir, dirName)
-		}
+	case filepath.IsAbs(dirName) && InDir(dir, dirName) && !InDir(dir, baseDir):
+		// A file in the folder itself is written next to it, where Type.FindEach looks it up.
+		dirName = dir
+	case filepath.IsAbs(dirName):
+		dirName = filepath.Join(dirName, RelName(dir, baseDir))
+	default:
+		dirName = filepath.Join(dir, dirName)
 	}
 
 	// Compose and return file path.
 	return filepath.Join(dirName, filepath.Base(fileName)) + fileExt, nil
 }
 
-// RelName returns the file name relative to a directory.
+// InDir reports whether fileName is dir or a path below it. Names are compared as given, without
+// resolving them, and a directory only contains names that continue after a path separator.
+func InDir(fileName, dir string) bool {
+	switch {
+	case fileName == "" || dir == "":
+		return false
+	case fileName == dir:
+		return true
+	case strings.HasSuffix(dir, string(os.PathSeparator)):
+		return strings.HasPrefix(fileName, dir)
+	default:
+		return strings.HasPrefix(fileName, dir+string(os.PathSeparator))
+	}
+}
+
+// RelName returns the file name relative to a directory, or the file name itself if it is not below it.
 func RelName(fileName, dir string) string {
-	if fileName == dir {
+	switch {
+	case fileName == dir:
 		return ""
-	}
-
-	if dir == "" {
+	case !InDir(fileName, dir):
 		return fileName
+	case strings.HasSuffix(dir, string(os.PathSeparator)):
+		return fileName[len(dir):]
+	default:
+		return fileName[len(dir)+1:]
 	}
-
-	if i := strings.Index(fileName, dir); i == 0 {
-		if i = strings.LastIndex(dir, string(os.PathSeparator)); i == len(dir)-1 {
-			pos := len(dir)
-			return fileName[pos:]
-		} else if i = strings.LastIndex(dir, string(os.PathSeparator)); i != len(dir) {
-			pos := len(dir) + 1
-			return fileName[pos:]
-		}
-	}
-
-	return fileName
 }
 
 // FileNameHidden tests is a file name belongs to a hidden file.

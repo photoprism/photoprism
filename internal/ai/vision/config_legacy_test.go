@@ -16,10 +16,11 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// captureVisionLog replaces the package logger for the duration of a test.
+// captureVisionLog replaces the package and system loggers with one test logger for the duration of a test.
 func captureVisionLog(t *testing.T) *test.Hook {
 	t.Helper()
 
@@ -28,6 +29,10 @@ func captureVisionLog(t *testing.T) *test.Hook {
 	previous := log
 	log = logger
 	t.Cleanup(func() { log = previous })
+
+	previousSystem := event.SystemLog
+	event.SystemLog = logger
+	t.Cleanup(func() { event.SystemLog = previousSystem })
 
 	return hook
 }
@@ -409,7 +414,8 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
     - photoprism
 - Type: nsfw
   Name: nsfw
-  Engine: Ollama
+  Service:
+    Uri: http://photoprism-vision:5000/api/v1/vision/nsfw
   TensorFlow:
     Tags:
     - serve
@@ -428,7 +434,7 @@ func TestConfigValues_LoadLegacy(t *testing.T) {
 		detector := cfg.Model(ModelTypeNsfw)
 		require.NotNil(t, detector)
 		assert.Equal(t, "nsfw", detector.Name)
-		assert.Equal(t, "ollama", detector.Engine)
+		assert.Equal(t, "http://photoprism-vision:5000/api/v1/vision/nsfw", detector.Service.Uri)
 		assert.Nil(t, detector.TensorFlow)
 
 		assert.Empty(t, mappedLogMessages(entries, logrus.InfoLevel))

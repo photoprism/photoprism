@@ -5,6 +5,8 @@ import (
 
 	"github.com/leandro-lugaresi/hub"
 	"github.com/sirupsen/logrus"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // TextFormatter for log messages.
@@ -29,7 +31,8 @@ func NewHook(hub *hub.Hub) *Hook {
 	return &Hook{hub: hub}
 }
 
-// Fire publishes a new log event,
+// Fire publishes a new log event. The published message has hex checksums masked, as it is shown in
+// the web UI, while the console output keeps the full text.
 func (h *Hook) Fire(entry *logrus.Entry) error {
 	if entry == nil {
 		return fmt.Errorf("log entry is empty")
@@ -46,7 +49,7 @@ func (h *Hook) Fire(entry *logrus.Entry) error {
 		Fields: Data{
 			"time":    entry.Time,
 			"level":   entry.Level.String(),
-			"message": entry.Message,
+			"message": clean.MaskHashes(entry.Message),
 		},
 	})
 

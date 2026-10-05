@@ -12,7 +12,6 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -45,22 +44,17 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		return f, nil
 	}
 
-	imageName := fs.ImagePng.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-
-	if imageName == "" {
-		imageName = fs.ImageJpeg.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-	}
-
-	mediaFile, err := NewMediaFile(imageName)
+	var imageName string
 
 	// Replace existing sidecar if "force" is true.
-	if err == nil && mediaFile.IsPreviewImage() {
+	if mediaFile := findPreviewImage(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), false, fs.ImagePng, fs.ImageJpeg); mediaFile != nil {
 		if force && mediaFile.InSidecar() {
 			if removeErr := mediaFile.Remove(); removeErr != nil {
 				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(mediaFile.RootRelName()), removeErr)
 			}
 
 			log.Infof("convert: replacing %s", clean.Log(mediaFile.RootRelName()))
+			imageName = mediaFile.FileName()
 		} else {
 			return mediaFile, nil
 		}
@@ -89,12 +83,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
 	// Publish file conversion event.
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": fileName,
-		"baseName": filepath.Base(fileName),
-		"xmpName":  filepath.Base(xmpName),
-	})
+	publishConverting(f, fileName, filepath.Base(xmpName))
 
 	start := time.Now()
 
@@ -165,7 +154,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	budget := NewConvertBudget(w.conf.ConvertTimeout())
 
 	// Try compatible converters.
-	for _, c := range cmds {
+	for i, c := range cmds {
 		// Fetch command output.
 		var out bytes.Buffer
 		var stderr bytes.Buffer
@@ -178,7 +167,12 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 			fmt.Sprintf("LD_LIBRARY_PATH=%s", w.conf.CmdLibPath()),
 		}...)
 
-		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
+		// Further candidates, e.g. a second ExifTool extraction, are logged at debug level.
+		if i == 0 {
+			log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
+		} else {
+			log.Debugf("convert: trying %s for %s", filepath.Base(cmd.Path), clean.Log(filepath.Base(imageName)))
+		}
 
 		// Log exact command in debug mode.
 		log.Debug(clean.Cmd(cmd))
@@ -214,7 +208,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 
 		if !direct {
-			if err = w.publishImageOutput(c, res, imageName); err != nil {
+			if err = w.publishImageOutput(c, res, imageName, budget); err != nil {
 				log.Debugf("convert: discarding %s from %s (%s)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path), clean.Error(err))
 				continue
 			}
@@ -371,8 +365,8 @@ func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.
 }
 
 // publishImageOutput writes converter output to a staged sibling of the image file, verifies it and
-// writes a missing source orientation as the command requires, and then publishes it.
-func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName string) (err error) {
+// writes a missing source orientation within the budget as the command requires, and then publishes it.
+func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName string, budget *ConvertBudget) (err error) {
 	staged, err := fs.OpenStageFile(imageName)
 
 	if err != nil {
@@ -412,7 +406,7 @@ func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName strin
 
 	// The preview is published either way, untagged if the orientation cannot be written.
 	if c.SourceOrientation != 0 {
-		if written, tagErr := w.writeMissingOrientation(stagedName, c.SourceOrientation); tagErr != nil {
+		if written, tagErr := w.writeMissingOrientation(stagedName, c.SourceOrientation, budget); tagErr != nil {
 			log.Warnf("convert: %s in %s (write orientation)", clean.Error(tagErr), clean.Log(filepath.Base(imageName)))
 		} else if !written {
 			log.Debugf("convert: orientation of %s left unchanged", clean.Log(filepath.Base(imageName)))

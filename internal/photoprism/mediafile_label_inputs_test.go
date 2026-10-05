@@ -1,0 +1,515 @@
+package photoprism
+
+import (
+	"bytes"
+	"encoding/binary"
+	"errors"
+	"image"
+	"image/color"
+	"image/draw"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/davidbyttow/govips/v2/vips"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
+)
+
+// TestPrepareLabelInputsGeometry verifies bounded crops using independently placed edge markers.
+func TestPrepareLabelInputsGeometry(t *testing.T) {
+	for _, tc := range []struct {
+		name                    string
+		w, h, left, top, cw, ch int
+	}{
+		{"FourThirds", 400, 300, 0, 0, 400, 300},
+		{"ThreeTwo", 450, 300, 25, 0, 400, 300},
+		{"Wide", 1600, 900, 200, 0, 1200, 900},
+		{"Panorama", 1200, 300, 400, 0, 400, 300},
+		{"Portrait", 300, 400, 0, 0, 300, 400},
+		{"Tall", 300, 1200, 0, 400, 300, 400},
+		{"Rounding", 453, 301, 26, 0, 401, 301},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			source := image.NewNRGBA(image.Rect(0, 0, tc.w, tc.h))
+			draw.Draw(source, source.Bounds(), &image.Uniform{C: color.NRGBA{B: 255, A: 255}}, image.Point{}, draw.Src)
+			region := image.Rect(tc.left, tc.top, tc.left+tc.cw, tc.top+tc.ch)
+			draw.Draw(source, region, &image.Uniform{C: color.NRGBA{R: 255, A: 255}}, image.Point{}, draw.Src)
+			for y := region.Min.Y; y < region.Max.Y; y++ {
+				for x := region.Min.X; x < region.Max.X; x++ {
+					source.SetNRGBA(x, y, color.NRGBA{R: uint8((x*17 + y*13) % 256), G: uint8((x*7 + y*19) % 256), B: uint8((x + y) % 256), A: 255}) //nolint:gosec // Synthetic channels are bounded to 0-255.
+				}
+			}
+			expectedSource := image.NewNRGBA(image.Rect(0, 0, tc.cw, tc.ch))
+			draw.Draw(expectedSource, expectedSource.Bounds(), source, region.Min, draw.Src)
+			expected := thumb.ResampleWithFilter(expectedSource, 224, 224, thumb.ResampleResize, thumb.ResampleCubic)
+			inputs, geometry, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil })
+			require.NoError(t, err)
+			require.Len(t, inputs, 2)
+			for _, input := range inputs {
+				assert.Equal(t, image.Rect(0, 0, 224, 224), input.Image.Bounds())
+				assert.True(t, input.Prepared)
+			}
+			assert.Equal(t, expected, inputs[1].Image)
+			require.Len(t, geometry, 2)
+			assert.Equal(t, source.Bounds(), geometry[1].SourceBounds)
+			assert.Equal(t, region, geometry[1].CropBounds)
+
+		})
+	}
+	t.Run("EdgeAnimal", func(t *testing.T) {
+		source := image.NewNRGBA(image.Rect(0, 0, 600, 400))
+		draw.Draw(source, image.Rect(60, 100, 100, 300), &image.Uniform{C: color.White}, image.Point{}, draw.Src)
+		inputs, _, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) { return thumb.NewInputSource(source), nil })
+		require.NoError(t, err)
+		r, _, _, _ := inputs[1].Image.At(20, 112).RGBA()
+		assert.Greater(t, r, uint32(60000))
+		r, _, _, _ = inputs[0].Image.At(20, 112).RGBA()
+		assert.Zero(t, r)
+	})
+	t.Run("LoadError", func(t *testing.T) {
+		_, _, err := prepareLabelInputs(image.Rect(0, 0, 300, 300), func() (*thumb.InputSource, error) { return nil, errors.New("read failed") }, nil)
+		require.ErrorContains(t, err, "read failed")
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		_, _, err := prepareLabelInputs(image.Rectangle{}, nil, nil)
+		require.Error(t, err)
+	})
+}
+
+// TestMediaFilePreparedLabels verifies production selection and exact input counts.
+func TestMediaFilePreparedLabels(t *testing.T) {
+	previous, previousVision := Config(), vision.Config
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(previous)
+		vision.Config = previousVision
+		vision.SetPreparedLabelsFunc(nil)
+		vision.SetLabelsFunc(nil)
+	})
+	for _, tc := range []struct {
+		name        string
+		w, h, count int
+	}{
+		{"Square", 300, 300, 1}, {"NearSquare", 301, 300, 2}, {"Landscape", 600, 400, 2},
+		{"Small", 180, 120, 1}, {"SmallTall", 120, 600, 1}, {"Boundary", 336, 224, 2},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			file := filepath.Join(t.TempDir(), "source.png")
+			require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, tc.w, tc.h)), file))
+			m, err := NewMediaFile(file)
+			require.NoError(t, err)
+			vision.Config = &vision.ConfigValues{Models: vision.Models{vision.NewLabelModel(classify.ModelEfficientFormerV2S2)}}
+			calls := 0
+			vision.SetPreparedLabelsFunc(func(inputs []classify.Input, src entity.Src) (classify.Labels, error) {
+				calls++
+				assert.Len(t, inputs, tc.count)
+				for _, input := range inputs {
+					assert.True(t, input.Prepared)
+					assert.Equal(t, image.Rect(0, 0, 224, 224), input.Image.Bounds())
+				}
+				return classify.Labels{{Name: "test", Source: src}}, nil
+			})
+			vision.SetLabelsFunc(func(vision.Files, media.Src, entity.Src) (classify.Labels, error) {
+				t.Fatal("unexpected native path")
+				return nil, nil
+			})
+			labels := m.GenerateLabels(entity.SrcManual)
+			require.Len(t, labels, 1)
+			assert.Equal(t, 1, calls)
+			assert.Equal(t, entity.SrcManual, labels[0].Source)
+		})
+	}
+}
+
+// TestLabelWholeSource verifies that the smallest adequate cached rendition is used, the largest cached one
+// otherwise, and the original only when nothing is cached.
+func TestLabelWholeSource(t *testing.T) {
+	cached, demand := thumb.SizeCached, thumb.SizeOnDemand
+	thumb.SizeCached, thumb.SizeOnDemand = 4096, 4096
+	t.Cleanup(func() { thumb.SizeCached, thumb.SizeOnDemand = cached, demand })
+	previous := Config()
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(previous) })
+	file := filepath.Join(t.TempDir(), "source.png")
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 6000, 600)), file))
+	m, err := NewMediaFile(file)
+	require.NoError(t, err)
+	for _, size := range []thumb.Size{thumb.SizeFit720, thumb.SizeFit1920} {
+		_, err = m.Thumbnail(cfg.ThumbCachePath(), size.Name)
+		require.NoError(t, err)
+	}
+	// No cached rendition has a 224 px short side, so the largest cached one is used, not the original.
+	img, err := m.labelWholeSource(nil)
+	require.NoError(t, err)
+	assert.Equal(t, 1920, img.Bounds().Dx())
+	img.Close()
+	_, err = m.Thumbnail(cfg.ThumbCachePath(), thumb.Fit4096)
+	require.NoError(t, err)
+	img, err = m.labelWholeSource(nil)
+	require.NoError(t, err)
+	assert.Equal(t, 4096, img.Bounds().Dx())
+	assert.Less(t, img.Bounds().Dy(), 600)
+	img.Close()
+
+	// A 3:2 source: fit_720 is adequate and preferred over larger renditions.
+	file = filepath.Join(t.TempDir(), "landscape.png")
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 3000, 2000)), file))
+	m, err = NewMediaFile(file)
+	require.NoError(t, err)
+	img, err = m.labelWholeSource(nil)
+	require.NoError(t, err)
+	assert.Equal(t, image.Rect(0, 0, 3000, 2000), img.Bounds(), "original when nothing is cached")
+	img.Close()
+	for _, size := range []thumb.Size{thumb.SizeFit720, thumb.SizeFit1920} {
+		_, err = m.Thumbnail(cfg.ThumbCachePath(), size.Name)
+		require.NoError(t, err)
+	}
+	img, err = m.labelWholeSource(nil)
+	require.NoError(t, err)
+	assert.Equal(t, 720, img.Bounds().Dx())
+	img.Close()
+}
+
+// TestMediaFileNativeLabelModels verifies unchanged custom-size and remote thumbnail branches.
+func TestMediaFileNativeLabelModels(t *testing.T) {
+	previous, previousVision := Config(), vision.Config
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(previous)
+		vision.Config = previousVision
+		vision.SetPreparedLabelsFunc(nil)
+		vision.SetLabelsFunc(nil)
+	})
+	file := filepath.Join(t.TempDir(), "source.png")
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 600, 400)), file))
+	m, err := NewMediaFile(file)
+	require.NoError(t, err)
+	for _, tc := range []struct {
+		name  string
+		model *vision.Model
+		count int
+	}{
+		{"OtherONNX", vision.NewLabelModel(classify.ModelRepViTM10), 3},
+		{"CustomSize", &vision.Model{Type: vision.ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2), Resolution: 384}, 1},
+		{"Remote", &vision.Model{Type: vision.ModelTypeLabels, Name: string(classify.ModelEfficientFormerV2S2), Service: vision.Service{Uri: "http://localhost:5000"}}, 3},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			vision.Config = &vision.ConfigValues{Models: vision.Models{tc.model}}
+			vision.SetPreparedLabelsFunc(func([]classify.Input, entity.Src) (classify.Labels, error) {
+				t.Fatal("unexpected prepared path")
+				return nil, nil
+			})
+			calls := 0
+			vision.SetLabelsFunc(func(files vision.Files, source media.Src, labelSource entity.Src) (classify.Labels, error) {
+				calls++
+				assert.Len(t, files, tc.count)
+				assert.Equal(t, media.SrcLocal, source)
+				return classify.Labels{{Name: "native", Source: labelSource}}, nil
+			})
+			require.Len(t, m.GenerateLabels(entity.SrcImage), 1)
+			assert.Equal(t, 1, calls)
+		})
+	}
+}
+
+// TestSmallLabelInputGeometry verifies the single small input preserves proportions.
+func TestSmallLabelInputGeometry(t *testing.T) {
+	source := image.NewNRGBA(image.Rect(0, 0, 180, 120))
+	draw.Draw(source, image.Rect(30, 0, 150, 120), &image.Uniform{C: color.White}, image.Point{}, draw.Src)
+	calls := 0
+	inputs, _, err := prepareLabelInputs(source.Bounds(), func() (*thumb.InputSource, error) { calls++; return thumb.NewInputSource(source), nil }, func() (*thumb.InputSource, error) {
+		t.Fatal("small image must not request a whole-photo input")
+		return nil, nil
+	})
+	require.NoError(t, err)
+	require.Len(t, inputs, 1)
+	assert.Equal(t, 1, calls)
+	for _, x := range []int{0, 112, 223} {
+		r, _, _, _ := inputs[0].Image.At(x, 112).RGBA()
+		assert.Equal(t, uint32(65535), r)
+	}
+}
+
+// TestPrepareLabelInputsDecodeFallback verifies renderer and center-cache recovery.
+func TestPrepareLabelInputsDecodeFallback(t *testing.T) {
+	previous, library := Config(), thumb.Library
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	thumb.Library = thumb.LibVips
+	t.Cleanup(func() { SetConfig(previous); thumb.Library = library })
+	t.Run("ArithmeticJPEG", func(t *testing.T) {
+		m, err := NewMediaFile("../../pkg/fs/testdata/arithmetic.jpg")
+		require.NoError(t, err)
+		inputs, err := m.PrepareLabelInputs()
+		require.NoError(t, err)
+		require.Len(t, inputs, 1)
+	})
+	t.Run("CorruptCenter", func(t *testing.T) {
+		file := filepath.Join(t.TempDir(), "source.png")
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 600, 400)), file))
+		m, err := NewMediaFile(file)
+		require.NoError(t, err)
+		cached, err := m.Thumbnail(cfg.ThumbCachePath(), thumb.Tile224)
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(cached, []byte("invalid image"), fs.ModeFile))
+		inputs, err := m.PrepareLabelInputs()
+		require.NoError(t, err)
+		require.Len(t, inputs, 2)
+		data, err := os.ReadFile(cached) //nolint:gosec // Read the isolated thumbnail fixture.
+		require.NoError(t, err)
+		assert.Equal(t, "invalid image", string(data))
+	})
+
+}
+
+// TestPrepareSmallSquareCache verifies a square input uses cached pixels without the original.
+func TestPrepareSmallSquareCache(t *testing.T) {
+	previous := Config()
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(previous) })
+	source := image.NewNRGBA(image.Rect(0, 0, 224, 224))
+	draw.Draw(source, source.Bounds(), &image.Uniform{C: color.NRGBA{R: 255, A: 255}}, image.Point{}, draw.Src)
+	file := filepath.Join(t.TempDir(), "square.png")
+	require.NoError(t, thumb.Save(source, file))
+	m, err := NewMediaFile(file)
+	require.NoError(t, err)
+	cached, err := thumb.SizeTile224.FileName(m.Hash(), cfg.ThumbCachePath())
+	require.NoError(t, err)
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 224, 224)), cached))
+	_, err = m.DecodeConfig()
+	require.NoError(t, err)
+	require.NoError(t, os.Remove(file))
+	inputs, err := m.PrepareLabelInputs()
+	require.NoError(t, err)
+	require.Len(t, inputs, 1)
+	r, _, _, _ := inputs[0].Image.At(112, 112).RGBA()
+	assert.Zero(t, r)
+}
+
+// TestLabelSourceBounds verifies configured-renderer dimensions and decoding limits.
+func TestLabelSourceBounds(t *testing.T) {
+	previous, library, limit := Config(), thumb.Library, fs.MaxImagePixels
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	thumb.Library = thumb.LibVips
+	t.Cleanup(func() { SetConfig(previous); thumb.Library = library; fs.MaxImagePixels = limit })
+	file := filepath.Join(t.TempDir(), "source.png")
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 30, 20)), file))
+	thumb.VipsInit()
+	native, err := vips.LoadImageFromFile(file, vips.NewImportParams())
+	require.NoError(t, err)
+	require.NoError(t, native.ToColorSpace(vips.InterpretationCMYK))
+	data, _, err := native.ExportTiff(vips.NewTiffExportParams())
+	native.Close()
+	require.NoError(t, err)
+	tiff := filepath.Join(t.TempDir(), "source.tif")
+	require.NoError(t, os.WriteFile(tiff, data, fs.ModeFile)) //nolint:gosec // Write the isolated renderer fixture.
+	m, err := NewMediaFile(tiff)
+	require.NoError(t, err)
+	_, err = m.DecodeConfig()
+	require.Error(t, err, "fixture must require the native dimension reader")
+	t.Run("Native", func(t *testing.T) {
+		bounds, err := m.labelSourceBounds()
+		require.NoError(t, err)
+		assert.Equal(t, image.Rect(0, 0, 30, 20), bounds)
+		inputs, err := m.PrepareLabelInputs()
+		require.NoError(t, err)
+		require.Len(t, inputs, 1)
+		assert.Equal(t, image.Rect(0, 0, 224, 224), inputs[0].Image.Bounds())
+	})
+	t.Run("GoRenderer", func(t *testing.T) {
+		thumb.Library = thumb.LibAuto
+		_, err := m.labelSourceBounds()
+		require.Error(t, err)
+		thumb.Library = thumb.LibVips
+	})
+	t.Run("PixelBudget", func(t *testing.T) {
+		fs.MaxImagePixels = 4
+		_, err := m.labelSourceBounds()
+		require.ErrorIs(t, err, fs.ErrImageTooLarge)
+		fs.MaxImagePixels = limit
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var missing *MediaFile
+		_, err := missing.labelSourceBounds()
+		require.Error(t, err)
+	})
+}
+
+// TestLabelWholeSourceActualSize verifies portrait cache ordering by decoded dimensions.
+func TestLabelWholeSourceActualSize(t *testing.T) {
+	previous, library, cached, demand := Config(), thumb.Library, thumb.SizeCached, thumb.SizeOnDemand
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	thumb.Library = thumb.LibVips
+	thumb.SizeCached, thumb.SizeOnDemand = 1920, 1920
+	t.Cleanup(func() {
+		SetConfig(previous)
+		thumb.Library = library
+		thumb.SizeCached, thumb.SizeOnDemand = cached, demand
+	})
+	for _, tc := range []struct {
+		name string
+		w, h int
+		want thumb.Name
+	}{{"SmallestAdequate", 900, 3000, thumb.Fit1600}, {"LargestUndersized", 600, 6000, thumb.Fit1280}} {
+		t.Run(tc.name, func(t *testing.T) {
+			file := filepath.Join(t.TempDir(), "source.png")
+			require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, tc.w, tc.h)), file))
+			m, err := NewMediaFile(file)
+			require.NoError(t, err)
+			var expected image.Rectangle
+			for _, name := range []thumb.Name{thumb.Fit1280, thumb.Fit1600} {
+				path, err := m.Thumbnail(cfg.ThumbCachePath(), name)
+				require.NoError(t, err)
+				header, _, err := fs.DecodeImageConfigFile(path)
+				require.NoError(t, err)
+				if name == tc.want {
+					expected = image.Rect(0, 0, header.Width, header.Height)
+				}
+			}
+			selected, err := m.labelWholeSource(nil)
+			require.NoError(t, err)
+			defer selected.Close()
+			assert.Equal(t, expected, selected.Bounds())
+		})
+	}
+}
+
+// TestLabelInputsUseAvailableCaches verifies preparation without original pixel access.
+func TestLabelInputsUseAvailableCaches(t *testing.T) {
+	previous, library, cached, demand := Config(), thumb.Library, thumb.SizeCached, thumb.SizeOnDemand
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, cfg.CreateDirectories())
+	SetConfig(cfg)
+	thumb.SizeCached, thumb.SizeOnDemand = 1920, 1920
+	t.Cleanup(func() {
+		SetConfig(previous)
+		thumb.Library = library
+		thumb.SizeCached, thumb.SizeOnDemand = cached, demand
+	})
+	for _, tc := range []struct {
+		name                                          string
+		corruptCenter                                 bool
+		width, height, cacheWidth, cacheHeight, count int
+	}{{"MissingCenter", false, 30000, 30300, 100, 101, 2}, {"CorruptCenter", true, 30000, 30300, 100, 101, 2}, {"Small", false, 180, 120, 150, 100, 1}, {"SmallSquare", false, 200, 200, 100, 100, 1}} {
+		t.Run(tc.name, func(t *testing.T) {
+			thumb.Library = thumb.LibVips
+			file := filepath.Join(t.TempDir(), "source.png")
+			require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, min(tc.width, 400), min(tc.height, 404))), file))
+			m, err := NewMediaFile(file)
+			require.NoError(t, err)
+			hash := m.Hash()
+			m.imageConfig = &image.Config{Width: tc.width, Height: tc.height}
+			fitted, err := thumb.SizeFit720.FileName(hash, cfg.ThumbCachePath())
+			require.NoError(t, err)
+			require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, tc.cacheWidth, tc.cacheHeight)), fitted))
+			if tc.corruptCenter {
+				tile, err := thumb.SizeTile224.FileName(hash, cfg.ThumbCachePath())
+				require.NoError(t, err)
+				require.NoError(t, os.WriteFile(tile, []byte("invalid image"), fs.ModeFile)) //nolint:gosec // Write the isolated cache fixture.
+			}
+			require.NoError(t, os.Remove(file))
+			inputs, geometry, err := m.prepareLabelInputsWithGeometry()
+			require.NoError(t, err, "cached inputs must not depend on original pixels")
+			require.Len(t, inputs, tc.count)
+			require.Len(t, geometry, tc.count)
+			for _, item := range geometry {
+				assert.Equal(t, image.Rect(0, 0, tc.cacheWidth, tc.cacheHeight), item.SourceBounds)
+			}
+		})
+	}
+	t.Run("CorruptLargest", func(t *testing.T) {
+		thumb.Library = thumb.LibAuto
+		file := filepath.Join(t.TempDir(), "source.png")
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 6000, 600)), file))
+		m, err := NewMediaFile(file)
+		require.NoError(t, err)
+		_, err = m.DecodeConfig()
+		require.NoError(t, err)
+		hash := m.Hash()
+		small, err := thumb.SizeFit720.FileName(hash, cfg.ThumbCachePath())
+		require.NoError(t, err)
+		large, err := thumb.SizeFit1920.FileName(hash, cfg.ThumbCachePath())
+		require.NoError(t, err)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 720, 72)), small))
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 1920, 192)), large))
+		data, err := os.ReadFile(large) //nolint:gosec // Read the isolated cache fixture.
+		require.NoError(t, err)
+		scan := bytes.Index(data, []byte{0xff, 0xda})
+		require.Greater(t, scan, 0)
+		end := scan + 2 + int(binary.BigEndian.Uint16(data[scan+2:scan+4]))
+		require.NoError(t, os.WriteFile(large, data[:end], fs.ModeFile)) //nolint:gosec // Truncate only the isolated cache fixture.
+		_, _, err = fs.DecodeImageConfigFile(large)
+		require.NoError(t, err, "fixture header must remain valid")
+		failed, err := thumb.OpenInputSource(large, 1)
+		if failed != nil {
+			failed.Close()
+		}
+		require.Error(t, err, "fixture pixels must fail decoding")
+		require.NoError(t, os.Remove(file))
+		inputs, geometry, err := m.prepareLabelInputsWithGeometry()
+		require.NoError(t, err)
+		require.Len(t, inputs, 2)
+		for _, item := range geometry {
+			assert.Equal(t, image.Rect(0, 0, 720, 72), item.SourceBounds)
+		}
+	})
+}
+
+// TestPrepareLabelInputsRetry verifies completed inputs are retained and exhaustion is explicit.
+func TestPrepareLabelInputsRetry(t *testing.T) {
+	for _, exhausted := range []bool{false, true} {
+		name := "Recover"
+		if exhausted {
+			name = "Exhausted"
+		}
+		t.Run(name, func(t *testing.T) {
+			centerCalls, wholeCalls := 0, 0
+			center := func() (*thumb.InputSource, error) {
+				centerCalls++
+				return thumb.NewInputSource(image.NewNRGBA(image.Rect(0, 0, 224, 224))), nil
+			}
+			whole := func() (*thumb.InputSource, error) {
+				wholeCalls++
+				if wholeCalls == 1 || exhausted {
+					return nil, errors.New("source unavailable")
+				}
+				return thumb.NewInputSource(image.NewNRGBA(image.Rect(0, 0, 400, 300))), nil
+			}
+			retry := func(index int) bool { require.Equal(t, 1, index); return wholeCalls < 2 }
+			inputs, geometry, err := prepareLabelInputs(image.Rect(0, 0, 600, 400), center, whole, retry)
+			assert.Equal(t, 1, centerCalls)
+			assert.Equal(t, 2, wholeCalls)
+			if exhausted {
+				require.Error(t, err)
+				assert.Empty(t, inputs)
+				assert.Empty(t, geometry)
+				return
+			}
+			require.NoError(t, err)
+			assert.Len(t, inputs, 2)
+			assert.Len(t, geometry, 2)
+		})
+	}
+}

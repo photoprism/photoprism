@@ -250,6 +250,98 @@ func TestModelBestLabels(t *testing.T) {
 	assert.Equal(t, SrcImage, result[0].Source)
 }
 
+// TestModelBestLabelsClassSenses verifies distinct ImageNet meanings keep their intended labels.
+func TestModelBestLabelsClassSenses(t *testing.T) {
+	model := &Model{labels: imageNetLabelNames}
+	for _, test := range []struct {
+		name       string
+		class      int
+		confidence float32
+		want       string
+	}{
+		{"CardiganGarment", 474, 0.75, "portrait"},
+		{"CardiganGarmentBelowFloor", 474, 0.49, ""},
+		{"CardiganDog", 264, 0.75, "dog"},
+		{"CardiganDogBelowFloor", 264, 0.44, ""},
+		{"NailFastener", 677, 0.75, ""},
+		{"NailSaturated", 677, 1, ""},
+		{"ToiletSeatSaturated", 861, 1, ""},
+		{"ToiletTissueSaturated", 999, 1, ""},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			probabilities := make([]float32, len(model.labels))
+			probabilities[test.class] = test.confidence
+			probabilities[999] += 1 - test.confidence
+			result := model.bestLabels(probabilities, 10)
+			if test.want == "" {
+				require.Empty(t, result)
+			} else {
+				require.Len(t, result, 1)
+				assert.Equal(t, test.want, result[0].Name)
+			}
+		})
+	}
+}
+
+// TestModelBestLabelsSchipperkeFloor verifies fractional floors use raw probabilities before rounding.
+func TestModelBestLabelsSchipperkeFloor(t *testing.T) {
+	for _, alias := range []struct{ name, class string }{
+		{"LegacyAlias", "schipperke"},
+		{"CanonicalClass", "schipperke dog"},
+	} {
+		t.Run(alias.name, func(t *testing.T) {
+			model := &Model{labels: []string{alias.class, "toilet tissue"}}
+			for _, test := range []struct {
+				name        string
+				probability float32
+				accepted    bool
+			}{
+				{"ReviewedCatProbability", 0.99247146, false},
+				{"BelowFractionalFloor", 0.9949, false},
+				{"AtFractionalFloor", 0.995, true},
+				{"AboveFractionalFloor", 0.9951, true},
+			} {
+				t.Run(test.name, func(t *testing.T) {
+					result := model.bestLabels([]float32{test.probability, 1 - test.probability}, 10)
+					if test.accepted {
+						require.Len(t, result, 1)
+						assert.Equal(t, "dog", result[0].Name)
+					} else {
+						require.Empty(t, result)
+					}
+				})
+			}
+		})
+	}
+}
+
+// TestModelBestLabelsIgnoredPriority verifies the ignore boundary without excluding active priorities.
+func TestModelBestLabelsIgnoredPriority(t *testing.T) {
+	original := Rules
+	t.Cleanup(func() { Rules = original })
+	model := &Model{labels: []string{"synthetic"}}
+	for _, test := range []struct {
+		name     string
+		priority int
+		active   bool
+	}{
+		{"IgnoreBoundary", -3, false},
+		{"BelowIgnoreBoundary", -4, false},
+		{"ActiveNegativePriority", -2, true},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			Rules = LabelRules{"synthetic": {Label: "synthetic", Threshold: 0.1, Priority: test.priority}}
+			result := model.bestLabels([]float32{1}, 10)
+			if test.active {
+				require.Len(t, result, 1)
+				assert.Equal(t, "synthetic", result[0].Name)
+			} else {
+				require.Empty(t, result)
+			}
+		})
+	}
+}
+
 // TestRegisteredModelIntegration verifies a bundled ONNX graph can classify a fixture.
 func TestRegisteredModelIntegration(t *testing.T) {
 	if testing.Short() {
@@ -432,4 +524,78 @@ func probabilitySum(probabilities []float32) float64 {
 	}
 
 	return result
+}
+
+// TestModelBestLabelsSussexFloor verifies both aliases and unrelated Dog classes.
+func TestModelBestLabelsSussexFloor(t *testing.T) {
+	for _, alias := range []struct{ name, class string }{
+		{"LegacyAlias", "sussex spaniel"},
+		{"CanonicalClass", "sussex spaniel dog"},
+	} {
+		t.Run(alias.name, func(t *testing.T) {
+			model := &Model{labels: []string{alias.class}}
+			for _, test := range []struct {
+				name        string
+				probability float32
+				accepted    bool
+			}{
+				{"BelowFloor", 0.5999, false},
+				{"AtFloor", 0.60, true},
+				{"AboveFloor", 0.6001, true},
+			} {
+				t.Run(test.name, func(t *testing.T) {
+					result := model.bestLabels([]float32{test.probability}, 20)
+					if test.accepted {
+						require.Len(t, result, 1)
+						assert.Equal(t, "dog", result[0].Name)
+					} else {
+						require.Empty(t, result)
+					}
+				})
+			}
+		})
+	}
+	t.Run("OtherBreed", func(t *testing.T) {
+		model := &Model{labels: []string{"cocker spaniel dog"}}
+		result := model.bestLabels([]float32{0.65}, 20)
+		require.Len(t, result, 1)
+		assert.Equal(t, "dog", result[0].Name)
+	})
+}
+
+// TestModelBestLabelsDogFloor verifies the Dog minimum before rounding and global filtering.
+func TestModelBestLabelsDogFloor(t *testing.T) {
+	for _, alias := range []struct{ name, class string }{
+		{"BaseRule", "dog"},
+		{"InheritedAlias", "cocker spaniel dog"},
+		{"LegacyAlias", "yorkshire terrier"},
+		{"CanonicalClass", "yorkshire terrier dog"},
+		{"WildCanid", "coyote"},
+	} {
+		t.Run(alias.name, func(t *testing.T) {
+			model := &Model{labels: []string{alias.class}}
+			for _, test := range []struct {
+				name        string
+				probability float32
+				threshold   int
+				accepted    bool
+			}{
+				{"BelowFloor", 0.5999, 20, false},
+				{"AtFloor", 0.60, 20, true},
+				{"AboveFloor", 0.6001, 20, true},
+				{"LowerGlobalFloor", 0.34, 10, false},
+				{"HigherGlobalFloor", 0.60, 80, false},
+			} {
+				t.Run(test.name, func(t *testing.T) {
+					result := model.bestLabels([]float32{test.probability}, test.threshold)
+					if test.accepted {
+						require.Len(t, result, 1)
+						assert.Equal(t, "dog", result[0].Name)
+					} else {
+						require.Empty(t, result)
+					}
+				})
+			}
+		})
+	}
 }

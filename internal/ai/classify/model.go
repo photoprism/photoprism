@@ -201,7 +201,18 @@ func (m *Model) infer(data []byte) ([]float32, error) {
 		return nil, err
 	}
 
-	blob, err := m.buildBlob(img)
+	return m.inferInput(Input{Image: img})
+}
+
+// inferInput returns the validated probabilities for a decoded model input.
+func (m *Model) inferInput(input Input) ([]float32, error) {
+	if m == nil || m.disabled {
+		return nil, nil
+	}
+	if err := m.loadModel(); err != nil {
+		return nil, err
+	}
+	blob, err := m.buildInputBlob(input)
 	if err != nil {
 		return nil, err
 	}
@@ -527,7 +538,7 @@ func (m *Model) bestLabels(probabilities []float32, confidenceThreshold int) Lab
 		labelText := strings.ToLower(m.labels[i])
 		rule, _ := Rules.Find(labelText)
 
-		if probability < rule.Threshold {
+		if rule.Priority <= priorityIgnore || probability < rule.Threshold {
 			continue
 		}
 
@@ -555,12 +566,23 @@ func (m *Model) bestLabels(probabilities []float32, confidenceThreshold int) Lab
 
 // buildBlob converts an image into the model's normalized tensor layout.
 func (m *Model) buildBlob(img image.Image) ([]float32, error) {
+	return m.buildInputBlob(Input{Image: img})
+}
+
+// buildInputBlob normalizes an explicitly prepared or native model input.
+func (m *Model) buildInputBlob(prepared Input) ([]float32, error) {
+	img := prepared.Image
 	if img == nil || m.meta == nil || m.meta.Input == nil {
 		return nil, fmt.Errorf("classify: invalid model input")
 	}
 
 	input := m.meta.Input
-	img = resizeInput(img, input.Width, input.Height, input.Resize)
+	if prepared.Prepared && m.name != ModelEfficientFormerV2S2 {
+		return nil, fmt.Errorf("classify: prepared inputs require EfficientFormerV2-S2")
+	}
+	if !prepared.Prepared {
+		img = resizeInput(img, input.Width, input.Height, input.Resize)
+	}
 
 	if img.Bounds().Dx() != input.Width || img.Bounds().Dy() != input.Height {
 		return nil, fmt.Errorf("classify: resized image is %dx%d, expected %dx%d", img.Bounds().Dx(), img.Bounds().Dy(), input.Width, input.Height)

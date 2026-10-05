@@ -2,7 +2,6 @@ package vision
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"strings"
 	"sync"
@@ -31,19 +30,18 @@ func init() {
 	Config = NewConfig()
 }
 
-// registerOllamaEngineDefaults selects the default Ollama endpoint based on the
-// configured base URL and registers the engine alias accordingly. When
-// OLLAMA_BASE_URL points at the cloud host we only switch the default model to
-// the cloud preset; the actual base URL continues to come from
-// OLLAMA_BASE_URL (or falls back to the local compose default) so we don't
-// accidentally talk to the hosted service without an explicit endpoint.
+// registerOllamaEngineDefaults registers the Ollama engine alias with the default model from OLLAMA_MODEL,
+// or the cloud preset when OLLAMA_BASE_URL is the cloud host. The endpoint always comes from OLLAMA_BASE_URL,
+// so the hosted service is never used without an explicit base URL.
 func registerOllamaEngineDefaults() {
 	ensureEnv()
 
 	defaultModel := ollama.DefaultModel
 
-	// Use different default model for the Ollama cloud service.
-	if baseUrl := os.Getenv(ollama.BaseUrlEnv); baseUrl == ollama.CloudBaseUrl {
+	// Use the model set in the environment, or a different default model for the Ollama cloud service.
+	if envDefault := envModelTagged(ollama.ModelEnv); envDefault != "" {
+		defaultModel = envDefault
+	} else if baseUrl := os.Getenv(ollama.BaseUrlEnv); baseUrl == ollama.CloudBaseUrl {
 		defaultModel = ollama.CloudModel
 	}
 
@@ -154,38 +152,15 @@ func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files, media
 	return req, nil
 }
 
-// ollamaFailures holds the last failure status logged per model until a request succeeds.
-var ollamaFailures sync.Map
-
 // ollamaInvalidLabels holds the models whose invalid labels were logged until labels parse again.
 var ollamaInvalidLabels sync.Map
-
-// warnOllamaFailure logs a failed request once per model and status, and repeats at debug level.
-func warnOllamaFailure(model string, status int) {
-	if prev, loaded := ollamaFailures.Swap(model, status); loaded && prev == status {
-		log.Debugf("vision: ollama request for model %s failed again (status %d)", clean.Log(model), status)
-		return
-	}
-
-	if status == http.StatusNotFound || status == http.StatusGone {
-		log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(model), status)
-	} else {
-		log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(model), status)
-	}
-}
 
 // Parse processes the Ollama service response.
 func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
 	// Return an error for a failed request, as its response text is not a result.
-	if status >= http.StatusMultipleChoices {
-		if status >= http.StatusBadRequest {
-			warnOllamaFailure(req.Model, status)
-		}
-
-		return nil, serviceError(ApiFormatOllama, status)
+	if err := serviceStatusError(req.engineName(ollama.EngineName), ApiFormatOllama, req.Model, status); err != nil {
+		return nil, err
 	}
-
-	ollamaFailures.Delete(req.Model)
 
 	ollamaResp, err := decodeOllamaResponse(raw)
 

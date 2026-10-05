@@ -35,7 +35,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
 		"-ignore_unknown",
-		"-qp", opt.QpQuality(),
+		"-qp", opt.VaapiQuality(),
 		"-f", "mp4",
 		"-movflags", opt.MovFlags,
 		"-map_metadata", opt.MapMetadata,

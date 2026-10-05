@@ -101,7 +101,7 @@ services:
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-15360) (default: 3840)
-      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbps (default: 60)
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # transcoding bitrate threshold in Mbps, also NVIDIA peak limit (default: 60)
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, 900-1250, and 2000-2100):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000

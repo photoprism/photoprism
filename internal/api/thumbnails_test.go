@@ -1,19 +1,63 @@
 package api
 
 import (
+	"bytes"
+	"image/jpeg"
 	"net/http"
+	"path/filepath"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // TestGetThumb checks thumbnail responses and missing-original handling.
 func TestGetThumb(t *testing.T) {
+	t.Run("CachedFileMissing", func(t *testing.T) {
+		const fileHash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+
+		f, err := query.FileByHash(fileHash)
+		require.NoError(t, err)
+
+		cacheKey := CacheKey("thumbs", fileHash, string(thumb.Tile500))
+		get.ThumbCache().SetDefault(cacheKey, ThumbCache{FileName: filepath.Join(t.TempDir(), fileHash+"_500x500_center.jpg")})
+		t.Cleanup(func() { get.ThumbCache().Delete(cacheKey) })
+
+		hook := captureLog(t)
+
+		s := event.Subscribe("system.log.warning")
+		defer event.Unsubscribe(s)
+
+		app, router, conf := NewApiTest()
+		GetThumb(router)
+		r := PerformRequest(app, "GET", "/api/v1/t/"+fileHash+"/"+conf.PreviewToken()+"/tile_500")
+
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		select {
+		case msg := <-s.Receiver:
+			assert.Contains(t, msg.Fields["message"], fileHash+"_500x500_center.jpg is missing")
+		case <-time.After(time.Second):
+			t.Fatal("no system log event was published")
+		}
+
+		require.NotNil(t, hook.LastEntry())
+		assert.Equal(t, logrus.ErrorLevel, hook.LastEntry().Level)
+		assert.Equal(t, "thumb: cached tile_500 of "+f.FileName+" is missing", hook.LastEntry().Message)
+		assert.NotContains(t, hook.LastEntry().Message, fileHash)
+
+		_, cached := get.ThumbCache().Get(cacheKey)
+		assert.False(t, cached, "stale cache entry must be removed")
+	})
 	t.Run("InvalidType", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetThumb(router)
@@ -140,4 +184,42 @@ func TestGetThumb(t *testing.T) {
 		assert.Equal(t, "image/jpeg", r.Header().Get("Content-Type"))
 		assert.NotEqual(t, original, r.Body.Bytes())
 	})
+}
+
+func TestThumbLogName(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		f, err := query.FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		require.NoError(t, err)
+		assert.Equal(t, f.FileName, thumbLogName(f.FileHash))
+	})
+	t.Run("UnknownHash", func(t *testing.T) {
+		assert.Equal(t, "unknown file", thumbLogName("0000000000000000000000000000000000000000"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "unknown file", thumbLogName(""))
+	})
+}
+
+// TestGetThumbLabelSizes verifies UI tiles and registered side crops remain servable.
+func TestGetThumbLabelSizes(t *testing.T) {
+	for _, name := range []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224} {
+		t.Run(string(name), func(t *testing.T) {
+			app, router, conf := NewApiTest()
+			SetTestThumbUncached(t, true)
+			hash := "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+			CreateTestFileOriginal(t, hash)
+			GetThumb(router)
+			response := PerformRequest(app, "GET", "/api/v1/t/"+hash+"/"+conf.PreviewToken()+"/"+string(name))
+			require.Equal(t, http.StatusOK, response.Code)
+			require.Equal(t, "image/jpeg", response.Header().Get("Content-Type"))
+			pixels, err := jpeg.Decode(bytes.NewReader(response.Body.Bytes()))
+			require.NoError(t, err)
+			assert.Equal(t, 224, pixels.Bounds().Dx())
+			assert.Equal(t, 224, pixels.Bounds().Dy())
+			SetTestThumbUncached(t, false)
+			cached := PerformRequest(app, "GET", "/api/v1/t/"+hash+"/"+conf.PreviewToken()+"/"+string(name))
+			require.Equal(t, http.StatusOK, cached.Code)
+			assert.Equal(t, response.Body.Bytes(), cached.Body.Bytes())
+		})
+	}
 }

@@ -46,7 +46,7 @@ func (m *MediaFile) ExifToolJsonName() (string, error) {
 // NeedsExifToolJson indicates whether a new ExifTool JSON export should be
 // generated for this media file.
 func (m *MediaFile) NeedsExifToolJson() bool {
-	if m.InSidecar() && m.IsImage() || !m.IsMedia() || m.Empty() {
+	if m.InSidecar() && m.IsImage() || !m.IsMedia() || m.Empty() || insta360LensNotVideo(m) {
 		return false
 	}
 
@@ -56,7 +56,7 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 		return false
 	}
 
-	return !fs.FileExists(jsonName)
+	return !exifToolCacheValid(jsonName)
 }
 
 // CreateExifToolJson runs ExifTool via the provided Convert helper and merges

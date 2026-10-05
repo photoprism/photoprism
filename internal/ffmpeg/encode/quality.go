@@ -26,7 +26,8 @@ func QvQuality(q int) string {
 	}
 }
 
-// GlobalQuality returns the video encoding quality as "-global_quality" parameter string.
+// GlobalQuality returns the video encoding quality as Intel QSV "-global_quality" parameter string.
+// The scale is steeper than CRF, so that the default quality matches libx264 at "-crf 25".
 func GlobalQuality(q int) string {
 	if q <= 0 {
 		q = DefaultQuality
@@ -34,13 +35,13 @@ func GlobalQuality(q int) string {
 		q = BestQuality
 	}
 
-	result := (100 - q) / 2
+	result := (100-q)*3/5 - 2
 
 	switch {
 	case result < 1:
 		return "1"
-	case result > 50:
-		return "50"
+	case result > 51:
+		return "51"
 	default:
 		return fmt.Sprintf("%d", result)
 	}
@@ -105,4 +106,22 @@ func CqQuality(q int) string {
 	default:
 		return fmt.Sprintf("%d", result)
 	}
+}
+
+// VaapiQuality returns the video encoding quality as VA-API "-qp" parameter string.
+// It is offset from the CRF scale, so that the default quality matches libx264 at "-crf 25".
+func VaapiQuality(q int) string {
+	if q <= 0 {
+		q = DefaultQuality
+	} else if q > BestQuality {
+		q = BestQuality
+	}
+
+	result := (100-q)/2 + 4
+
+	if result > 51 {
+		return "51"
+	}
+
+	return fmt.Sprintf("%d", result)
 }

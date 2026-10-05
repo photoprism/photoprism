@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -266,4 +267,18 @@ func TestImport_Start(t *testing.T) {
 	opt := ImportOptionsMove(cfg.ImportPath(), "")
 
 	imp.Start(opt)
+}
+
+// TestImport_StartMissingPath verifies that the notification for a missing folder names it relative to import.
+func TestImport_StartMissingPath(t *testing.T) {
+	cfg := config.TestConfig()
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+	s := event.Subscribe("notify.error")
+	defer event.Unsubscribe(s)
+
+	imp.Start(ImportOptionsCopy(filepath.Join(cfg.ImportPath(), "e2e-missing/folder"), ""))
+
+	assertMissingFolderNotice(t, s.Receiver, "import: directory", "e2e-missing/folder", cfg.ImportPath())
 }

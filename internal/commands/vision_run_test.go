@@ -17,13 +17,18 @@ import (
 // reason for each requested one that would not.
 func TestVisionRunCommand(t *testing.T) {
 	t.Run("DryRunSkipsModel", func(t *testing.T) {
-		// The command logs through this package's logger, the vision worker through the shared one.
+		// The command logs through this package's logger, the vision worker through the shared and system ones.
 		logger, ok := log.(*logrus.Logger)
 		require.True(t, ok)
 		hook := test.NewLocal(logger)
 		shared, ok := event.Log.(*logrus.Logger)
 		require.True(t, ok)
 		sharedHook := test.NewLocal(shared)
+		systemLogger, systemHook := test.NewNullLogger()
+		systemLogger.SetLevel(logrus.TraceLevel)
+		prevSystem := event.SystemLog
+		event.SystemLog = systemLogger
+		t.Cleanup(func() { event.SystemLog = prevSystem })
 
 		conf := get.Config()
 		detectNSFW := conf.Options().DetectNSFW
@@ -39,13 +44,18 @@ func TestVisionRunCommand(t *testing.T) {
 		_, err := RunWithTestContext(VisionRunCommand, []string{"run", "-m", "nsfw,labels", "--dry-run"})
 		require.NoError(t, err)
 
-		var messages []string
+		var messages, systemMessages []string
 
 		for _, entry := range append(hook.AllEntries(), sharedHook.AllEntries()...) {
 			messages = append(messages, entry.Message)
 		}
 
-		assert.Contains(t, messages, "vision: skipping nsfw, because detect-nsfw is off")
+		for _, entry := range systemHook.AllEntries() {
+			systemMessages = append(systemMessages, entry.Message)
+		}
+
+		assert.Contains(t, systemMessages, "vision: skipping nsfw, because detect-nsfw is off")
+		assert.NotContains(t, messages, "vision: skipping nsfw, because detect-nsfw is off")
 		assert.Contains(t, messages, `dry-run: vision run would execute models [labels] with filter="" (count=100000, source=, force=false)`)
 	})
 }

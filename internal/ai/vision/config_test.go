@@ -116,6 +116,48 @@ func TestConfigValues_Load(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "both TensorFlow and ONNX")
 	})
+	t.Run("ReplacesOllamaNsfwModel", func(t *testing.T) {
+		system := captureSystemLog(t)
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		require.NoError(t, os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: gemma4\n  Engine: ollama\n  Run: manual\n"), fs.ModeConfigFile))
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		configured := cfg.Model(ModelTypeNsfw)
+		require.NotNil(t, configured)
+		assert.Equal(t, NsfwModel.Name, configured.Name)
+		assert.NotNil(t, configured.ONNX)
+		assert.Empty(t, configured.Engine)
+		assert.Equal(t, RunManual, configured.Run)
+
+		warnings := warnMessages(system.AllEntries())
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0], "nsfw model gemma4:latest cannot use the ollama request format, so the built-in detector is used")
+	})
+	t.Run("ReplacesOpenAINsfwModel", func(t *testing.T) {
+		captureSystemLog(t)
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		require.NoError(t, os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: gpt-5-mini\n  Engine: openai\n"), fs.ModeConfigFile))
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		configured := cfg.Model(ModelTypeNsfw)
+		require.NotNil(t, configured)
+		assert.Equal(t, NsfwModel.Name, configured.Name)
+		assert.Equal(t, NsfwModel.Run, configured.Run)
+	})
+	t.Run("KeepsVisionApiNsfwModel", func(t *testing.T) {
+		system := captureSystemLog(t)
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		require.NoError(t, os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: remote-nsfw\n  Service:\n    Uri: https://vision.example.com/api/v1/vision/nsfw\n"), fs.ModeConfigFile))
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		configured := cfg.Model(ModelTypeNsfw)
+		require.NotNil(t, configured)
+		assert.Equal(t, "remote-nsfw", configured.Name)
+		assert.Empty(t, warnMessages(system.AllEntries()))
+	})
 	t.Run("MapsTensorFlowLabelModel", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: custom\n  TensorFlow: {}\n"), fs.ModeConfigFile)

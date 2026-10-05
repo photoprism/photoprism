@@ -125,6 +125,8 @@ func (c *ConfigValues) Load(fileName string) error {
 	// vision.yml. Custom models continue to override defaults when present.
 	c.ensureDefaultModels()
 
+	usesOpenAIBaseUrl := false
+
 	for _, model := range c.Models {
 		if model.TensorFlow != nil && model.ONNX != nil {
 			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
@@ -143,6 +145,8 @@ func (c *ConfigValues) Load(fileName string) error {
 
 		model.ApplyEngineDefaults()
 
+		usesOpenAIBaseUrl = usesOpenAIBaseUrl || model.usesOpenAIDefaultUri()
+
 		// Report a misspelled mode once instead of silently normalizing names the other way.
 		if !IsNormalizeType(model.Normalize) {
 			log.Warnf("vision: invalid normalize type %s for model %s, using %s",
@@ -150,6 +154,12 @@ func (c *ConfigValues) Load(fileName string) error {
 			model.Normalize = NormalizeAuto
 		}
 	}
+
+	if usesOpenAIBaseUrl {
+		logOpenAIBaseUrl()
+	}
+
+	c.replaceUnsupportedNsfwModels()
 
 	if c.Thresholds.Confidence <= 0 || c.Thresholds.Confidence > 100 {
 		c.Thresholds.Confidence = DefaultThresholds.Confidence
@@ -218,6 +228,32 @@ func (c *ConfigValues) mapLegacyModels() {
 		}
 
 		model.Default = true
+	}
+}
+
+// replaceUnsupportedNsfwModels replaces NSFW entries that use the Ollama or OpenAI request format, which
+// return no NSFW results, with the built-in detector while keeping their Run override.
+func (c *ConfigValues) replaceUnsupportedNsfwModels() {
+	for i, model := range c.Models {
+		if model == nil || model.Type != ModelTypeNsfw || model.Disabled {
+			continue
+		}
+
+		format := model.EndpointRequestFormat()
+
+		if format != ApiFormatOllama && format != ApiFormatOpenAI {
+			continue
+		}
+
+		name, _, _ := model.GetModel()
+		warnModel("nsfw model %s cannot use the %s request format, so the built-in detector is used", clean.Log(name), format)
+
+		runType := model.Run
+		c.Models[i] = NsfwModel.Clone()
+
+		if runType != RunAuto {
+			c.Models[i].Run = runType
+		}
 	}
 }
 

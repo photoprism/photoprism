@@ -1,6 +1,6 @@
 ## PhotoPrism — Event System
 
-**Last Updated:** September 12, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -43,6 +43,8 @@ Log hook (used by default logger):
 hook := event.NewHook(event.SharedHub())
 log.AddHook(hook)
 ```
+
+The hook publishes each entry as `log.<level>` for the live log and the errors view. In the published message, every run of 32 or more hex digits is masked except for its first three digits, e.g. `2ca***` (`clean.MaskHashes`), while the console output keeps the full text. `notify.*` messages are masked the same way; `event.Audit*` is not.
 
 Entity events (content-channel payloads carry only identity strings — UIDs/slugs — never entity bodies):
 ```go

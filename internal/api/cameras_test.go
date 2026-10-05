@@ -46,6 +46,14 @@ func TestUpdateCamera(t *testing.T) {
 		assert.Equal(t, "Invalid name", val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
+	t.Run("ControlCharacters", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateCamera(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/cameras/1000002", `{"Make": "Pentax", "Model": "K\t1"}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, "Invalid name", val.String())
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateCamera(router)

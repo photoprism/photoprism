@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	visionschema "github.com/photoprism/photoprism/internal/ai/vision/schema"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
@@ -101,14 +102,15 @@ func (m *Model) GetModel() (model, name, version string) {
 	// 1) Service-specific override (expanded for env vars)
 	// 2) Model-specific override
 	// 3) Declarative model name
+	// The name is shortened only once the version is split off, so a tag is not cut.
 	serviceModel := m.Service.GetModel()
 	switch {
 	case serviceModel != "":
 		name = serviceModel
 	case strings.TrimSpace(m.Model) != "":
-		name = cleanModelId(m.Model)
+		name = modelIdText(m.Model)
 	default:
-		name = cleanModelId(m.Name)
+		name = modelIdText(m.Name)
 	}
 
 	// Return if no model is configured.
@@ -120,6 +122,7 @@ func (m *Model) GetModel() (model, name, version string) {
 
 	// OpenAI-compatible servers match identifiers verbatim, colons included.
 	if engine == openai.EngineName {
+		name = cleanModelId(name)
 		return name, name, ""
 	}
 
@@ -127,13 +130,15 @@ func (m *Model) GetModel() (model, name, version string) {
 	// without repeating parsing logic at each call site.
 	if parts := strings.SplitN(name, ":", 2); len(parts) == 2 && parts[0] != "" && parts[1] != "" {
 		name = parts[0]
-		version = parts[1]
+		version = cleanModelId(parts[1])
 	}
 
 	// Default to "latest" when no version was set.
 	if version == "" {
 		version = VersionLatest
 	}
+
+	name = cleanModelId(name)
 
 	switch engine {
 	case ollama.EngineName:
@@ -222,7 +227,8 @@ func (m *Model) IsLegacy() bool {
 
 	legacyName, ok := legacyModelNames[m.Type]
 
-	if !ok || m.Service.UriUnresolved() {
+	// A legacy entry without a Uri is mapped regardless of its request format, so it keeps a local model.
+	if !ok || m.Service.UriUnresolved() && !m.Service.UriMissing() {
 		return false
 	} else if uri, _ := m.Service.Endpoint(); uri != "" {
 		return false
@@ -287,19 +293,61 @@ func (m *Model) Endpoint() (uri, method string) {
 // unresolvedUriWarned holds the models whose unresolved service URI was logged.
 var unresolvedUriWarned sync.Map
 
-// warnUnresolvedUri logs once per model that its service URI does not resolve.
-func (m *Model) warnUnresolvedUri() {
-	key := m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
+// firstRunWarned holds the models whose configuration warnings were logged again when they first ran.
+var firstRunWarned sync.Map
 
-	if _, warned := unresolvedUriWarned.LoadOrStore(key, struct{}{}); !warned {
-		log.Warnf("vision: %s, so no service is used", m.unresolvedUriErrText())
+// firstRunMutex makes concurrent first runs wait until the warnings of the model were cleared.
+var firstRunMutex sync.Mutex
+
+// warnKey returns the key under which the configuration warnings of the model are logged once.
+func (m *Model) warnKey() string {
+	return m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
+}
+
+// warnModel records a model configuration warning in the system log.
+func warnModel(format string, args ...any) {
+	event.SystemWarn([]string{"vision", format}, args...)
+}
+
+// warnUnresolvedUri reports once per model that its service URI does not resolve.
+func (m *Model) warnUnresolvedUri() {
+	if _, warned := unresolvedUriWarned.LoadOrStore(m.warnKey(), struct{}{}); !warned {
+		warnModel("%s, so no service is used", m.unresolvedUriErrText())
 	}
+}
+
+// warnOnFirstRun lets the configuration warnings of the model be recorded once more when it first runs,
+// so they are recorded again once the server is running.
+func (m *Model) warnOnFirstRun() {
+	key := m.warnKey()
+
+	if _, done := firstRunWarned.Load(key); done {
+		return
+	}
+
+	firstRunMutex.Lock()
+	defer firstRunMutex.Unlock()
+
+	if _, done := firstRunWarned.Load(key); done {
+		return
+	}
+
+	unresolvedUriWarned.Delete(key)
+	forgetRefusedEnv("Service.Uri", m.Service.Uri)
+	forgetRefusedEnv("Service.Model", m.Service.Model)
+	firstRunWarned.Store(key, struct{}{})
 }
 
 // unresolvedUriErr returns an error, and logs a warning once, if the model's service URI does not
 // resolve after expanding environment variables.
 func (m *Model) unresolvedUriErr() error {
-	if m == nil || !m.Service.UriUnresolved() {
+	if m == nil {
+		return nil
+	}
+
+	m.warnOnFirstRun()
+
+	if !m.Service.UriUnresolved() {
 		return nil
 	}
 
@@ -308,9 +356,17 @@ func (m *Model) unresolvedUriErr() error {
 	return m.unresolvedUriErrText()
 }
 
-// unresolvedUriErrText returns the error for a model whose service URI does not resolve.
+// unresolvedUriErrText returns the error for a model whose service URI does not resolve or is missing.
 func (m *Model) unresolvedUriErrText() error {
 	name, _, _ := m.GetModel()
+
+	if m.Service.UriMissing() && strings.TrimSpace(m.Engine) != "" {
+		return fmt.Errorf("%s model %s needs a service uri for the %s request format",
+			clean.Log(m.Type), clean.Log(name), clean.Log(m.Service.RequestFormat))
+	} else if m.Service.UriMissing() {
+		return fmt.Errorf("%s model %s needs a service uri or an engine for the %s request format",
+			clean.Log(m.Type), clean.Log(name), clean.Log(m.Service.RequestFormat))
+	}
 
 	return fmt.Errorf("service uri of %s model %s does not resolve", clean.Log(m.Type), clean.Log(name))
 }
@@ -321,6 +377,8 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 	if m == nil || apiRequest == nil {
 		return
 	}
+
+	apiRequest.Engine = m.EngineName()
 
 	if m.requestEngine() == openai.EngineName {
 		apiRequest.Org = m.Service.EndpointOrg()
@@ -695,7 +753,7 @@ func (m *Model) SchemaTemplate() string {
 		if m.Type == ModelTypeLabels {
 			if envFile := strings.TrimSpace(os.Getenv(labelSchemaEnvVar)); envFile != "" {
 				if schemaFromFile, err := readSchemaFile(envFile); err != nil {
-					log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(envFile), err)
+					warnSchemaFile(m.Type, envFile, err)
 				} else {
 					schemaText = schemaFromFile
 				}
@@ -708,7 +766,7 @@ func (m *Model) SchemaTemplate() string {
 
 		if schemaText == "" && strings.TrimSpace(m.SchemaFile) != "" {
 			if schemaFromFile, err := readSchemaFile(m.SchemaFile); err != nil {
-				log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(m.SchemaFile), err)
+				warnSchemaFile(m.Type, m.SchemaFile, err)
 			} else {
 				schemaText = schemaFromFile
 			}
@@ -728,6 +786,12 @@ func (m *Model) SchemaTemplate() string {
 	})
 
 	return m.schema
+}
+
+// warnSchemaFile logs that a schema file could not be read, with its name and the error only in the system log.
+func warnSchemaFile(modelType ModelType, fileName string, err error) {
+	log.Warnf("vision: failed to read the schema file of the %s model (details in system log)", clean.Log(modelType))
+	event.SystemWarn([]string{"vision", "failed to read schema file %s", "%s"}, clean.Log(fileName), clean.Error(err))
 }
 
 // readSchemaFile resolves and reads a schema file path from config or env.
@@ -1013,7 +1077,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 	switch {
 	case m.Name == "":
-		log.Warnf("vision: missing name, model instance cannot be created")
+		warnModel("missing name, model instance cannot be created")
 		return nil
 	case nsfw.FindModel(nsfw.ModelName(m.Name)) != nil:
 		// Load and initialize a registered ONNX detector.
@@ -1021,7 +1085,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
-			log.Warnf("vision: %s (init %s model; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Name))
+			warnModel("%s (init %s model; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Name))
 			return nil
 		}
 
@@ -1054,14 +1118,14 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			unsafeClassIndex = *m.UnsafeClassIndex
 		} else if m.Reduction == nsfw.ReductionSoftmaxUnsafe {
 			m.nsfwErr = fmt.Errorf("nsfw: unsafe class index is required for %s", m.Reduction)
-			log.Warnf("vision: %s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
+			warnModel("%s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
 			return nil
 		}
 		if m.NeutralClassIndex != nil {
 			neutralClassIndex = *m.NeutralClassIndex
 		} else if m.Reduction == nsfw.ReductionNeutralComplement {
 			m.nsfwErr = fmt.Errorf("nsfw: neutral class index is required for %s", m.Reduction)
-			log.Warnf("vision: %s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
+			warnModel("%s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
 			return nil
 		}
 
@@ -1073,7 +1137,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
-			log.Warnf("vision: %s (init %s; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Path))
+			warnModel("%s (init %s; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Path))
 			return nil
 		}
 
