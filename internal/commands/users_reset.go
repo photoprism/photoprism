@@ -13,7 +13,7 @@ import (
 )
 
 // UsersResetDescription explains the effect of the users reset command.
-const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that all account passwords, sessions, access tokens, app passwords, 2FA passcodes, and user shares are deleted as well, and so are the client applications registered to users."
+const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that all account passwords, sessions, access tokens, app passwords, 2FA passcodes, and user shares are deleted as well, and so are the client applications registered to users and their secrets."
 
 // UsersResetCommand configures the command name, flags, and action.
 var UsersResetCommand = &cli.Command{
@@ -34,7 +34,7 @@ var UsersResetCommand = &cli.Command{
 // usersResetAction drops and recreates the user management database tables.
 func usersResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all user accounts, sessions, access tokens, app passwords, 2FA passcodes, user shares, and the client applications registered to them?"); err != nil {
+		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all user accounts, sessions, access tokens, app passwords, 2FA passcodes, user shares, and the client applications registered to them with their secrets?"); err != nil {
 			return err
 		} else if !proceed {
 			log.Infof("no user accounts were removed")
@@ -127,29 +127,42 @@ func LogDeleteUserPasswords(db *gorm.DB) error {
 }
 
 // DeleteUserClients deletes the client applications registered to a user account, including
-// soft-deleted ones, and returns how many were deleted.
-func DeleteUserClients(db *gorm.DB) (int64, error) {
+// soft-deleted ones, together with their secrets, and returns how many of each were deleted.
+func DeleteUserClients(db *gorm.DB) (clients, secrets int64, err error) {
 	if db == nil {
-		return 0, fmt.Errorf("database not connected")
+		return 0, 0, fmt.Errorf("database not connected")
 	} else if !db.HasTable(entity.Client{}) {
-		return 0, nil
+		return 0, 0, nil
+	}
+
+	// Delete the secrets of these clients, including deleted ones, before the clients themselves.
+	if db.HasTable(entity.Password{}) {
+		uids := db.Unscoped().Model(&entity.Client{}).Select("client_uid").Where("user_uid <> ''").QueryExpr()
+		res := db.Where("uid IN (?)", uids).Delete(&entity.Password{})
+
+		if res.Error != nil {
+			return 0, 0, res.Error
+		}
+
+		secrets = res.RowsAffected
 	}
 
 	res := db.Unscoped().Where("user_uid <> ''").Delete(&entity.Client{})
 
-	return res.RowsAffected, res.Error
+	return res.RowsAffected, secrets, res.Error
 }
 
 // LogDeleteUserClients deletes the client applications registered to a user account and logs
 // how many were deleted.
 func LogDeleteUserClients(db *gorm.DB) error {
-	deleted, err := DeleteUserClients(db)
+	clients, secrets, err := DeleteUserClients(db)
 
 	if err != nil {
 		return err
 	}
 
-	log.Infof("deleted %s", english.Plural(int(deleted), "client application", "client applications"))
+	log.Infof("deleted %s and %s", english.Plural(int(clients), "client application", "client applications"),
+		english.Plural(int(secrets), "client secret", "client secrets"))
 
 	return nil
 }
