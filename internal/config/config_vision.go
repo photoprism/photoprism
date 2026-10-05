@@ -168,7 +168,7 @@ func (c *Config) reportUnscreenedUploads() {
 		return
 	}
 	if description := nsfw.FindModel(nsfw.ModelName(model.Name)); description != nil && !description.Installed(c.ModelsPath()) {
-		event.SystemWarn([]string{"config", "uploads cannot be screened because nsfw model %s is not installed; run scripts/dist/download-models.sh %s and restart PhotoPrism"}, model.Name, model.Name)
+		event.SystemWarn([]string{"config", "uploads cannot be screened because nsfw model %s is not installed; run download-models.sh %s and restart PhotoPrism"}, model.Name, model.Name)
 	}
 }
 
@@ -667,7 +667,7 @@ func (c *Config) reportVisionModes() {
 	if model := vision.Config.Model(vision.ModelTypeLabels); model != nil {
 		if uri, _ := model.Endpoint(); uri == "" {
 			if description := classify.FindModel(classify.ModelName(model.Name)); description != nil && !description.Installed(c.ModelsPath()) {
-				event.SystemWarn([]string{"config", "label model %s is not installed; run scripts/dist/download-models.sh %s and restart PhotoPrism"}, model.Name, model.Name)
+				event.SystemWarn([]string{"config", "label model %s is not installed; run download-models.sh %s and restart PhotoPrism"}, model.Name, model.Name)
 			}
 		}
 	}

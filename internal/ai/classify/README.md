@@ -35,7 +35,9 @@ The graph is inspected at initialization and must agree with all recorded struct
 
 ### Configuration
 
-`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; explicit `auto` overrides it, while an unsupported value does not.
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart.
+
+`download-models.sh <name>` installs a registered model and verifies its checksum; `--list` shows all models it can install. The script is in `PATH` in the development environment and the production images. It installs into `${PHOTOPRISM_ASSETS_PATH:-assets}/models` and does not read `PHOTOPRISM_MODELS_PATH`, so pass a custom models path as `MODELS_PATH`. In Docker, mount a host directory at `/opt/photoprism/assets/models/<name>` to keep a downloaded model when the container is recreated; mounting over the whole models path hides the bundled models. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; explicit `auto` overrides it, while an unsupported value does not.
 
 Select a registered alternative in `vision.yml`:
 

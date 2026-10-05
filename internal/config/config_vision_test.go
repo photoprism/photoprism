@@ -141,7 +141,7 @@ func TestConfig_LabelModel(t *testing.T) {
 		assert.Equal(t, classify.ModelRepViTM10, c.EffectiveLabelModel())
 		assert.Equal(t, string(classify.ModelRepViTM10), vision.Config.Model(vision.ModelTypeLabels).Name)
 		require.NotNil(t, hook.LastEntry())
-		assert.Contains(t, hook.LastEntry().Message, "scripts/dist/download-models.sh repvit_m1_0")
+		assert.Contains(t, hook.LastEntry().Message, "run download-models.sh repvit_m1_0 and")
 	})
 	t.Run("NamedDisabledCustom", func(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom_21k", Path: "custom_21k", Disabled: true}
@@ -283,7 +283,7 @@ func TestConfig_NSFWModel(t *testing.T) {
 		assert.Equal(t, nsfw.ModelYahoo, c.EffectiveNSFWModel())
 		assert.Contains(t, c.NsfwModelPath(), string(nsfw.ModelYahoo))
 		require.NotNil(t, hook.LastEntry())
-		assert.Contains(t, hook.LastEntry().Message, "scripts/dist/download-models.sh yahoo_open_nsfw")
+		assert.Contains(t, hook.LastEntry().Message, "run download-models.sh yahoo_open_nsfw and")
 	})
 	t.Run("NamedDisabledCustom", func(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeNsfw, Name: "custom_nsfw", Path: "custom/model.onnx", Disabled: true}
@@ -472,7 +472,7 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 
 		entry := hook.LastEntry()
 		require.NotNil(t, entry)
-		assert.Contains(t, entry.Message, "scripts/dist/download-models.sh yahoo_open_nsfw")
+		assert.Contains(t, entry.Message, "run download-models.sh yahoo_open_nsfw and")
 		assert.Contains(t, entry.Message, "restart PhotoPrism")
 	})
 	t.Run("UploadsAllowed", func(t *testing.T) {

@@ -256,7 +256,7 @@ Models:
 ### Custom ONNX Label Models — What’s Supported
 
 - Scope: Fixed-taxonomy local classification (`labels`). Use Ollama or OpenAI for captions and open-vocabulary labels.
-- Location & paths: If `Path` is empty, the model is loaded from `assets/models/<name>` (lowercased, underscores). If `Path` is set, it is still searched under `assets/models`; absolute paths are not supported.
+- Location & paths: Models are loaded from the models path, `PHOTOPRISM_MODELS_PATH`, which defaults to `assets/models` (`/opt/photoprism/assets/models` in the Docker images). If `Path` is empty, the model is loaded from `<models path>/<name>` (lowercased, underscores). If `Path` is set, it is resolved relative to the models path; absolute paths are not supported.
 - Expected files: One `.onnx` graph and the exact label file declared by `LabelFile`. The output width must equal the number of labels.
 - Preprocessing: Declare geometry, layout, color order, mean/std, resize/crop convention, and interpolation in `ONNX.Input` or embedded `photoprism.*` metadata. Mean and standard-deviation arrays follow tensor channel order after `ColorOrder` is applied. `Resolution` remains an explicit override for graphs with dynamic spatial axes.
 - Output: One tensor is required. Declare `ONNX.Output.Logits`; omitted output semantics default to raw logits with a warning.

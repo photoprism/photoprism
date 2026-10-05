@@ -1,6 +1,6 @@
 ## PhotoPrism — NSFW Package
 
-**Last Updated:** October 1, 2026
+**Last Updated:** October 5, 2026
 
 ### Overview
 
@@ -114,7 +114,7 @@ go test -tags nsfwbaseline ./internal/ai/nsfw \
 
 ### Troubleshooting Tips
 
-- **Model fails to load:** Run `scripts/dist/download-models.sh <model-name>` and verify the reported checksum.
+- **Model fails to load:** Run `download-models.sh <model-name>` and verify the reported checksum.
 - **Model was repaired or installed after an initialization failure:** Restart PhotoPrism. Initialization errors are cached for the process lifetime to avoid repeatedly loading a broken artifact.
 - **Unexpected scores:** Confirm the input resolution matches the model and that logits are handled correctly.
 - **High memory usage:** Select an INT8 model or reduce concurrent indexing load.
