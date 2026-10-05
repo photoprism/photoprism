@@ -10,7 +10,7 @@ The default and optional ImageNet-1k candidates share the 1000-entry vocabulary 
 
 ### Photo Inputs
 
-The bundled S2 classifier uses a `tile_224` center input and a whole-photo input with distortion capped at 4:3. Both become 224×224 pixels. Beyond 4:3, the whole-photo input crops the excess from both ends before resampling; within 4:3, it retains the whole photo. Its source is an existing whole-photo rendition with at least 224 pixels on the short side, or the original, never `fit_720`.
+The bundled S2 classifier uses a `tile_224` center input and a whole-photo input with distortion capped at 4:3. Both become 224×224 pixels. Beyond 4:3, the whole-photo input crops the excess from both ends before resampling; within 4:3, it retains the whole photo. Its source is the smallest cached whole-photo rendition with at least 224 pixels on the short side, otherwise the largest cached rendition; the original is opened only when none is cached.
 
 Exact square images use one whole-square input; squares no larger than 224 pixels use the original directly. Images with either decoded dimension below 224 pixels also use one input: an aspect-ratio-preserving center crop from the original, resized to the model dimensions. Rotation preserves the square and short-side decisions. Prepared inputs explicitly bypass S2's native resize/crop while retaining RGB/NCHW ImageNet normalization. Other models and remote services keep their own preprocessing.
 

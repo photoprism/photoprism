@@ -129,7 +129,8 @@ func TestMediaFilePreparedLabels(t *testing.T) {
 	}
 }
 
-// TestLabelWholeSource verifies actual rendition dimensions and original fallback.
+// TestLabelWholeSource verifies that the smallest adequate cached rendition is used, the largest cached one
+// otherwise, and the original only when nothing is cached.
 func TestLabelWholeSource(t *testing.T) {
 	cached, demand := thumb.SizeCached, thumb.SizeOnDemand
 	thumb.SizeCached, thumb.SizeOnDemand = 4096, 4096
@@ -147,9 +148,10 @@ func TestLabelWholeSource(t *testing.T) {
 		_, err = m.Thumbnail(cfg.ThumbCachePath(), size.Name)
 		require.NoError(t, err)
 	}
+	// No cached rendition has a 224 px short side, so the largest cached one is used, not the original.
 	img, err := m.labelWholeSource()
 	require.NoError(t, err)
-	assert.Equal(t, image.Rect(0, 0, 6000, 600), img.Bounds())
+	assert.Equal(t, 1920, img.Bounds().Dx())
 	img.Close()
 	_, err = m.Thumbnail(cfg.ThumbCachePath(), thumb.Fit4096)
 	require.NoError(t, err)
@@ -157,6 +159,24 @@ func TestLabelWholeSource(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 4096, img.Bounds().Dx())
 	assert.Less(t, img.Bounds().Dy(), 600)
+	img.Close()
+
+	// A 3:2 source: fit_720 is adequate and preferred over larger renditions.
+	file = filepath.Join(t.TempDir(), "landscape.png")
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 3000, 2000)), file))
+	m, err = NewMediaFile(file)
+	require.NoError(t, err)
+	img, err = m.labelWholeSource()
+	require.NoError(t, err)
+	assert.Equal(t, image.Rect(0, 0, 3000, 2000), img.Bounds(), "original when nothing is cached")
+	img.Close()
+	for _, size := range []thumb.Size{thumb.SizeFit720, thumb.SizeFit1920} {
+		_, err = m.Thumbnail(cfg.ThumbCachePath(), size.Name)
+		require.NoError(t, err)
+	}
+	img, err = m.labelWholeSource()
+	require.NoError(t, err)
+	assert.Equal(t, 720, img.Bounds().Dx())
 	img.Close()
 }
 

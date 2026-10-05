@@ -48,10 +48,15 @@ func (m *MediaFile) prepareLabelInputsWithGeometry() ([]classify.Input, []labelI
 	return prepareLabelInputs(bounds, original, original)
 }
 
-// labelWholeSource opens an adequate cached whole-photo rendition or the original.
+// labelWholeSource opens the smallest cached whole-photo rendition with a short side of at least 224 px,
+// otherwise the largest cached rendition, and the original only if none is cached, so a large original is
+// never decoded for a 224 px input.
 func (m *MediaFile) labelWholeSource() (*thumb.InputSource, error) {
+	var largest string
+
+	// thumb.All is sorted by width, so the first adequate rendition is the smallest.
 	for _, size := range thumb.All {
-		if !size.Fit || size.Name == thumb.Fit720 {
+		if !size.Fit {
 			continue
 		}
 		name, err := size.FileName(m.Hash(), Config().ThumbCachePath())
@@ -59,14 +64,23 @@ func (m *MediaFile) labelWholeSource() (*thumb.InputSource, error) {
 			continue
 		}
 		cfg, _, err := fs.DecodeImageConfigFile(name)
-		if err != nil || min(cfg.Width, cfg.Height) < 224 {
+		if err != nil {
 			continue
 		}
-		img, err := thumb.OpenInputSource(name, 1)
-		if err == nil && min(img.Bounds().Dx(), img.Bounds().Dy()) >= 224 {
-			return img, nil
+		largest = name
+		if min(cfg.Width, cfg.Height) < 224 {
+			continue
 		}
-		if img != nil {
+		if img, openErr := thumb.OpenInputSource(name, 1); openErr == nil {
+			return img, nil
+		} else if img != nil {
+			img.Close()
+		}
+	}
+	if largest != "" {
+		if img, err := thumb.OpenInputSource(largest, 1); err == nil {
+			return img, nil
+		} else if img != nil {
 			img.Close()
 		}
 	}
@@ -107,10 +121,6 @@ func prepareLabelInputs(bounds image.Rectangle, center, whole func() (*thumb.Inp
 			region.Min = region.Min.Add(image.Pt((w-side)/2, (h-side)/2))
 			region.Max = region.Min.Add(image.Pt(side, side))
 		} else {
-			if min(w, h) < 224 {
-				source.Close()
-				return nil, nil, fmt.Errorf("whole-photo label source is too small")
-			}
 			cropW, cropH := w, h
 			if w > h {
 				cropW = min(w, h*4/3)
