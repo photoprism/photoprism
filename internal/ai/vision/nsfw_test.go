@@ -282,7 +282,11 @@ func TestDetectNSFWThresholdContexts(t *testing.T) {
 // requested for, and that current and legacy scores use the local threshold.
 func TestNormalizeNsfwResults(t *testing.T) {
 	t.Run("TooFew", func(t *testing.T) {
+		logHook, systemHook := captureLogs(t)
 		result := normalizeNsfwResults([]nsfw.Result{nsfw.NewResult(0.9, 0.75)}, 3, 0.75)
+		assert.Empty(t, logHook.AllEntries())
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Equal(t, "nsfw: service returned 1 results for 3 images", systemHook.AllEntries()[0].Message)
 		require.Len(t, result, 3)
 		assert.True(t, result[0].IsUnsafe())
 		assert.True(t, result[1].IsUnavailable())

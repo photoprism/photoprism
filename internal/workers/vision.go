@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -94,7 +95,11 @@ func (w *Vision) RunnableModels(models []string, runType vision.RunType) []strin
 	})
 
 	for _, modelType := range models {
-		if modelType = strings.TrimSpace(modelType); modelType != "" && !slices.Contains(runnable, modelType) {
+		if modelType = strings.TrimSpace(modelType); modelType == "" || slices.Contains(runnable, modelType) {
+			continue
+		} else if modelType == string(vision.ModelTypeNsfw) {
+			event.SystemWarn([]string{"vision", "skipping %s, because %s"}, clean.Log(modelType), w.conf.VisionModelSkipReason(modelType, runType))
+		} else {
 			log.Warnf("vision: skipping %s, because %s", clean.Log(modelType), w.conf.VisionModelSkipReason(modelType, runType))
 		}
 	}
@@ -280,7 +285,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 				changed = true
 				log.Infof("vision: changed private flag of %s to %t", logName, m.PhotoPrivate)
 			} else if result.IsUnavailable() {
-				log.Warnf("vision: nsfw detection unavailable for %s (%s)", logName, clean.Log(result.Reason))
+				event.SystemWarn([]string{"vision", "nsfw detection unavailable for %s (%s)"}, logName, clean.Log(result.Reason))
 			}
 		}
 

@@ -304,9 +304,9 @@ func (m *Model) warnKey() string {
 	return m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
 }
 
-// warnModel records a model configuration warning in the audit log.
+// warnModel records a model configuration warning in the system log.
 func warnModel(format string, args ...any) {
-	event.AuditWarn([]string{"vision", format}, args...)
+	event.SystemWarn([]string{"vision", format}, args...)
 }
 
 // warnUnresolvedUri reports once per model that its service URI does not resolve.
@@ -316,8 +316,8 @@ func (m *Model) warnUnresolvedUri() {
 	}
 }
 
-// warnOnFirstRun lets the configuration warnings of the model be logged once more when it first runs,
-// as warnings logged while the config is loaded precede the log shown in the web UI.
+// warnOnFirstRun lets the configuration warnings of the model be recorded once more when it first runs,
+// so they are recorded again once the server is running.
 func (m *Model) warnOnFirstRun() {
 	key := m.warnKey()
 

@@ -88,7 +88,7 @@ func TestModel_EndpointUriMissing(t *testing.T) {
 
 		warnings := warnMessages(hook.AllEntries())
 		require.GreaterOrEqual(t, len(warnings), 2)
-		assert.Equal(t, "audit: vision › caption model gpt-5-mini needs a service uri or an engine for the openai request format, so no service is used", warnings[0])
+		assert.Equal(t, "vision: caption model gpt-5-mini needs a service uri or an engine for the openai request format, so no service is used", warnings[0])
 		assert.Equal(t, warnings[0], warnings[1])
 	})
 	t.Run("VisionFormat", func(t *testing.T) {

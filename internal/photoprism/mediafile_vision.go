@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -138,7 +139,7 @@ func (m *MediaFile) DetectNSFW() nsfw.Result {
 	filename, err := m.Thumbnail(Config().ThumbCachePath(), thumb.Fit720)
 
 	if err != nil {
-		log.Errorf("vision: %s in %s (detect nsfw)", clean.Error(err), clean.Log(m.RootRelName()))
+		event.SystemError([]string{"vision", "%s in %s (detect nsfw)"}, clean.Error(err), clean.Log(m.RootRelName()))
 		return nsfw.Unavailable(clean.Error(err))
 	}
 
@@ -146,10 +147,10 @@ func (m *MediaFile) DetectNSFW() nsfw.Result {
 
 	switch {
 	case modelErr != nil:
-		log.Errorf("vision: %s in %s (detect nsfw)", clean.Error(modelErr), clean.Log(m.RootRelName()))
+		event.SystemError([]string{"vision", "%s in %s (detect nsfw)"}, clean.Error(modelErr), clean.Log(m.RootRelName()))
 		return nsfw.Unavailable(clean.Error(modelErr))
 	case len(results) < 1:
-		log.Errorf("vision: nsfw model returned no result for %s", clean.Log(m.RootRelName()))
+		event.SystemError([]string{"vision", "nsfw model returned no result for %s"}, clean.Log(m.RootRelName()))
 		return nsfw.Unavailable("no result")
 	}
 

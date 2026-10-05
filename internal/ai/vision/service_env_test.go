@@ -121,30 +121,30 @@ func TestWarnRefusedEnv(t *testing.T) {
 	t.Run("OncePerFieldValueAndName", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
 		t.Setenv(ollama.APIKeyEnv, "test-key")
-		logHook, _ := captureLogs(t)
+		_, systemHook := captureLogs(t)
 
 		warnRefusedEnv("Service.Model", "${OLLAMA_API_KEY}", []string{"OLLAMA_API_KEY"}, modelEnvSuffixes)
 		warnRefusedEnv("Service.Model", "${OLLAMA_API_KEY}", []string{"OLLAMA_API_KEY"}, modelEnvSuffixes)
 		warnRefusedEnv("Service.Uri", "${OLLAMA_API_KEY}", []string{"OLLAMA_API_KEY"}, uriEnvSuffixes)
 
-		require.Len(t, logHook.AllEntries(), 2)
-		assert.Equal(t, logrus.WarnLevel, logHook.AllEntries()[0].Level)
-		assert.Equal(t, "audit: vision › Service.Model does not expand OLLAMA_API_KEY, as only variables ending in _MODEL are expanded there", logHook.AllEntries()[0].Message)
-		assert.Equal(t, "audit: vision › Service.Uri does not expand OLLAMA_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", logHook.AllEntries()[1].Message)
+		require.Len(t, systemHook.AllEntries(), 2)
+		assert.Equal(t, logrus.WarnLevel, systemHook.AllEntries()[0].Level)
+		assert.Equal(t, "vision: Service.Model does not expand OLLAMA_API_KEY, as only variables ending in _MODEL are expanded there", systemHook.AllEntries()[0].Message)
+		assert.Equal(t, "vision: Service.Uri does not expand OLLAMA_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", systemHook.AllEntries()[1].Message)
 	})
 	t.Run("InvalidReference", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
-		logHook, _ := captureLogs(t)
+		_, systemHook := captureLogs(t)
 
 		value := "${OLLAMA_BASE_URL:-https://user:pa55@ollama.example.com}/api/generate"
 		warnRefusedEnv("Service.Uri", value, []string{"OLLAMA_BASE_URL:-https://user:pa55@ollama.example.com"}, uriEnvSuffixes)
 
-		require.Len(t, logHook.AllEntries(), 1)
-		assert.Equal(t, "audit: vision › Service.Uri contains an unset or invalid variable reference, which is not expanded", logHook.LastEntry().Message)
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Equal(t, "vision: Service.Uri contains an unset or invalid variable reference, which is not expanded", systemHook.LastEntry().Message)
 	})
 	t.Run("LiteralDollar", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
-		logHook, _ := captureLogs(t)
+		_, systemHook := captureLogs(t)
 
 		// A "$" inside an inline password is read as a variable reference by os.Expand.
 		//nolint:gosec // G101: test fixture, not a credential.
@@ -152,9 +152,9 @@ func TestWarnRefusedEnv(t *testing.T) {
 		uri, _ := s.Endpoint()
 
 		assert.Equal(t, "", uri)
-		require.Len(t, logHook.AllEntries(), 1)
-		assert.Equal(t, "audit: vision › Service.Uri contains an unset or invalid variable reference, which is not expanded", logHook.LastEntry().Message)
-		assert.NotContains(t, logHook.LastEntry().Message, "Xyz123word")
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Equal(t, "vision: Service.Uri contains an unset or invalid variable reference, which is not expanded", systemHook.LastEntry().Message)
+		assert.NotContains(t, systemHook.LastEntry().Message, "Xyz123word")
 	})
 	t.Run("None", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
@@ -198,10 +198,10 @@ func TestService_RefusedEnv(t *testing.T) {
 		assert.Equal(t, "", (&Service{Model: "${OLLAMA_API_KEY}"}).GetModel())
 		assert.Equal(t, "", (&Service{Model: "${HOME}"}).GetModel())
 
-		require.Len(t, logHook.AllEntries(), 2)
-		assert.Contains(t, logHook.AllEntries()[0].Message, "does not expand OLLAMA_API_KEY")
-		assert.Contains(t, logHook.AllEntries()[1].Message, "does not expand HOME")
-		noSecret(t, logHook, systemHook)
+		require.Len(t, systemHook.AllEntries(), 2)
+		assert.Contains(t, systemHook.AllEntries()[0].Message, "does not expand OLLAMA_API_KEY")
+		assert.Contains(t, systemHook.AllEntries()[1].Message, "does not expand HOME")
+		noSecret(t, systemHook, logHook)
 	})
 	t.Run("ModelFallback", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
@@ -213,7 +213,7 @@ func TestService_RefusedEnv(t *testing.T) {
 		assert.Equal(t, "gemma3:latest", model)
 		assert.Equal(t, "gemma3", name)
 		assert.Equal(t, "latest", version)
-		noSecret(t, logHook, systemHook)
+		noSecret(t, systemHook, logHook)
 	})
 	t.Run("UriDocumented", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
@@ -238,9 +238,9 @@ func TestService_RefusedEnv(t *testing.T) {
 		assert.Equal(t, "", uri)
 		assert.Equal(t, "", method)
 		assert.True(t, s.UriUnresolved())
-		require.NotEmpty(t, logHook.AllEntries())
-		assert.Contains(t, logHook.AllEntries()[0].Message, "Service.Uri does not expand OPENAI_API_KEY")
-		noSecret(t, logHook, systemHook)
+		require.NotEmpty(t, systemHook.AllEntries())
+		assert.Contains(t, systemHook.AllEntries()[0].Message, "Service.Uri does not expand OPENAI_API_KEY")
+		noSecret(t, systemHook, logHook)
 	})
 	t.Run("UriDefaultValueSyntax", func(t *testing.T) {
 		resetRefusedEnvWarned(t)
@@ -250,9 +250,9 @@ func TestService_RefusedEnv(t *testing.T) {
 		uri, _ := s.Endpoint()
 
 		assert.Equal(t, "", uri)
-		require.NotEmpty(t, logHook.AllEntries())
+		require.NotEmpty(t, systemHook.AllEntries())
 
-		for _, entry := range append(logHook.AllEntries(), systemHook.AllEntries()...) {
+		for _, entry := range append(systemHook.AllEntries(), logHook.AllEntries()...) {
 			assert.NotContains(t, entry.Message, "pa55")
 		}
 	})
@@ -280,10 +280,10 @@ func TestService_RefusedEnv(t *testing.T) {
 
 		assert.EqualError(t, err, "service uri of labels model qwen3-vl does not resolve")
 		assert.False(t, strings.Contains(err.Error(), secret))
-		require.Len(t, logHook.AllEntries(), 2)
-		assert.Equal(t, "audit: vision › Service.Uri does not expand OPENAI_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", logHook.AllEntries()[0].Message)
-		assert.Equal(t, "audit: vision › service uri of labels model qwen3-vl does not resolve, so no service is used", logHook.AllEntries()[1].Message)
-		assert.Empty(t, systemHook.AllEntries())
+		require.Len(t, systemHook.AllEntries(), 2)
+		assert.Equal(t, "vision: Service.Uri does not expand OPENAI_API_KEY, as only variables ending in _URL, _URI, or _HOST are expanded there", systemHook.AllEntries()[0].Message)
+		assert.Equal(t, "vision: service uri of labels model qwen3-vl does not resolve, so no service is used", systemHook.AllEntries()[1].Message)
+		assert.Empty(t, logHook.AllEntries())
 	})
 }
 

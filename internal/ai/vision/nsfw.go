@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -182,7 +183,7 @@ func nsfwInternalContext(images Files, mediaSrc media.Src, context nsfwThreshold
 // This keeps the configured threshold authoritative for current and legacy services.
 func normalizeNsfwResults(results []nsfw.Result, count int, threshold float32) []nsfw.Result {
 	if len(results) != count {
-		log.Warnf("nsfw: service returned %d results for %d images", len(results), count)
+		event.SystemWarn([]string{"nsfw", "service returned %d results for %d images"}, len(results), count)
 	}
 
 	normalized := undecidedResults(count, "no result")
