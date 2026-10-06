@@ -415,6 +415,11 @@ func (m *EmbeddingModel) Aligned() bool {
 	return m != nil && m.Alignment == AlignArcFace5
 }
 
+// RequiresTensorFlow reports whether the model generates embeddings through TensorFlow.
+func (m *EmbeddingModel) RequiresTensorFlow() bool {
+	return m != nil && m.Runtime == RuntimeTensorFlow
+}
+
 // String returns the model name, or "none" for nil receivers.
 func (m *EmbeddingModel) String() string {
 	if m == nil {

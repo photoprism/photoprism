@@ -170,6 +170,15 @@ func TestFaces_PlanMigration(t *testing.T) {
 		_, err := w.PlanMigration(face.ModelNone)
 		require.Error(t, err)
 	})
+	t.Run("TensorFlowDisabled", func(t *testing.T) {
+		conf := config.TestConfig()
+		disabled := conf.Options().DisableTensorFlow
+		conf.Options().DisableTensorFlow = true
+		t.Cleanup(func() { conf.Options().DisableTensorFlow = disabled })
+
+		_, err := NewFaces(conf).PlanMigration(face.ModelFaceNet)
+		require.ErrorContains(t, err, "requires TensorFlow")
+	})
 	t.Run("MissingConfig", func(t *testing.T) {
 		_, err := (&Faces{}).PlanMigration("")
 		require.Error(t, err)

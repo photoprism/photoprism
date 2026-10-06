@@ -335,7 +335,9 @@ func (w *Faces) migrationTarget(target string) (string, error) {
 	}
 
 	model := face.FindEmbeddingModel(target)
-	if model == nil || !model.Installed(w.conf.ModelsPath()) {
+	if model.RequiresTensorFlow() && w.conf.DisableTensorFlow() {
+		return "", fmt.Errorf("faces: embedding model %s requires TensorFlow, which is disabled", clean.Log(target))
+	} else if model == nil || !model.Installed(w.conf.ModelsPath()) {
 		return "", fmt.Errorf("faces: embedding model %s is not installed", clean.Log(target))
 	}
 

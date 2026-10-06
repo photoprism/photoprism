@@ -69,7 +69,8 @@ func (c *Config) ExifToolEnabled() bool {
 	return !c.DisableExifTool()
 }
 
-// DisableTensorFlow checks if all features depending on TensorFlow should be disabled.
+// DisableTensorFlow checks if models that run on TensorFlow, such as the FaceNet face embedding
+// model, should be disabled. Models that run on ONNX Runtime are not affected.
 func (c *Config) DisableTensorFlow() bool {
 	if LowMem && !c.options.DisableTensorFlow {
 		c.options.DisableTensorFlow = true
@@ -78,13 +79,13 @@ func (c *Config) DisableTensorFlow() bool {
 	return c.options.DisableTensorFlow
 }
 
-// DisableFaces checks if face recognition is disabled.
+// DisableFaces checks if face detection and recognition are disabled.
 func (c *Config) DisableFaces() bool {
-	if c.DisableTensorFlow() || c.options.DisableFaces {
-		return true
+	if LowMem && !c.options.DisableFaces {
+		c.options.DisableFaces = true
 	}
 
-	return false
+	return c.options.DisableFaces
 }
 
 // XMPFaces checks if importing face regions and names from XMP metadata is enabled.

@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** September 27, 2026
+**Last Updated:** October 6, 2026
 
 ### Overview
 
@@ -340,7 +340,7 @@ Additional safeguards limit how often stubborn clusters are retried:
 
 ### FaceNet Integration Recommendations
 
-- Face detection and recognition are disabled as a unit by `PHOTOPRISM_DISABLE_FACES`; `PHOTOPRISM_DISABLE_TENSORFLOW` also stops FaceNet and is deprecated. `FACE_MODEL=none` keeps detection and disables embedding generation.
+- Face detection and recognition are disabled as a unit by `PHOTOPRISM_DISABLE_FACES`, and `FACE_MODEL=none` keeps detection and disables embedding generation. `PHOTOPRISM_DISABLE_TENSORFLOW` is deprecated and only stops models that run on TensorFlow: a FaceNet library then behaves as with `FACE_MODEL=none`, and FaceNet is neither selected automatically nor accepted as a migration target.
 - If you expose similarity scores, convert Euclidean distance to cosine using: `cos θ = 1 - (d² / 2)` (since embeddings are normalized).
 - Keep distance thresholds (e.g., merge, clustering) expressed in the Euclidean domain unless downstream tooling mandates cosine values. The current merge tests expect distances around **0.040** for identical subjects.
 - When updating pretrained models or embedding datasets, re-run the dedicated benchmarks and fixture-based tests:

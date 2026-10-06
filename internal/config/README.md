@@ -46,7 +46,7 @@ The `PHOTOPRISM_CONFIG_PATH` variable controls where PhotoPrism looks for YAML f
 ### Startup Memory Limits
 
 At package initialization, detected system memory below `MinMem` (1 GB) enables
-low-memory limits that disable face recognition (via `DisableTensorFlow`) and RAW
+low-memory limits that disable face detection and recognition, TensorFlow models, and RAW
 indexing and conversion. `PHOTOPRISM_UNSAFE=true` or `--unsafe` bypasses these low-memory limits;
 `--unsafe=false` takes precedence over the environment variable. This early check
 runs before YAML configuration is loaded. The separate startup requirement of at

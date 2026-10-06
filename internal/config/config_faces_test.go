@@ -2953,3 +2953,60 @@ func TestConfig_faceAcceptThresholds(t *testing.T) {
 		assert.Equal(t, 1, warnings)
 	})
 }
+
+// TestConfig_FaceModelTensorFlow checks that disabling TensorFlow refuses only face models that run on it.
+func TestConfig_FaceModelTensorFlow(t *testing.T) {
+	// modelsDir returns a models folder that contains only the specified models.
+	modelsDir := func(t *testing.T, names ...face.ModelName) string {
+		dir := t.TempDir()
+
+		for _, name := range names {
+			model := face.FindEmbeddingModel(name)
+			require.NotNil(t, model)
+
+			if model.ONNX == nil {
+				require.NoError(t, os.MkdirAll(model.FilePath(dir), fs.ModeDir))
+			} else {
+				require.NoError(t, os.MkdirAll(filepath.Dir(model.FilePath(dir)), fs.ModeDir))
+				require.NoError(t, os.WriteFile(model.FilePath(dir), []byte("onnx"), fs.ModeFile))
+			}
+		}
+
+		return dir
+	}
+
+	t.Run("ConfiguredFaceNet", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = modelsDir(t, face.ModelFaceNet)
+		c.options.FaceModel = string(face.ModelFaceNet)
+
+		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
+
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelNone, c.FaceModel())
+		assert.False(t, c.DisableFaces())
+	})
+	t.Run("AutoSkipsFaceNet", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = modelsDir(t, face.ModelFaceNet)
+
+		assert.Equal(t, face.ModelFaceNet, c.installedFaceModel())
+
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelNone, c.installedFaceModel())
+	})
+	t.Run("SFaceNotAffected", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = modelsDir(t, face.ModelSFace, face.ModelFaceNet)
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelSFace, c.installedFaceModel())
+
+		c.options.FaceModel = string(face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, c.FaceModel())
+		assert.False(t, c.DisableFaces())
+	})
+}

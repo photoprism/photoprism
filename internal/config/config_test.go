@@ -86,6 +86,7 @@ func TestInitMemory(t *testing.T) {
 
 			c := &Config{options: &Options{}}
 			assert.Equal(t, tt.low, c.DisableTensorFlow())
+			assert.Equal(t, tt.low, c.DisableFaces())
 			assert.Equal(t, tt.low, c.DisableRaw())
 		})
 	}

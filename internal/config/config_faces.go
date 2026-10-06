@@ -504,6 +504,12 @@ func (c *Config) usableFaceModel(name face.ModelName) face.ModelName {
 		return face.ModelNone
 	}
 
+	if face.FindEmbeddingModel(name).RequiresTensorFlow() && c.DisableTensorFlow() {
+		c.warnFaceConfig("face-model-tensorflow", "config: face model %s requires TensorFlow, which is disabled, so face embeddings are disabled", clean.Log(name))
+
+		return face.ModelNone
+	}
+
 	if !face.FindEmbeddingModel(name).Installed(c.ModelsPath()) {
 		// Falling forward to another model would start a second vector space the library
 		// cannot compare with, and an image upgrade removes opt-in models from assets, so
@@ -740,6 +746,8 @@ func (c *Config) installedFaceModel() face.ModelName {
 
 	for _, candidate := range face.AutoModelPreference {
 		if face.LicenseRefused(candidate, edition) != nil {
+			continue
+		} else if face.FindEmbeddingModel(candidate).RequiresTensorFlow() && c.DisableTensorFlow() {
 			continue
 		} else if face.FindEmbeddingModel(candidate).Installed(modelsPath) {
 			return candidate
