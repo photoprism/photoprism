@@ -719,7 +719,7 @@
           "type": "string",
           "default": "zstd,gzip",
           "title": "HTTP Compression",
-          "description": "Web server compression METHODS in order of preference (gzip, zstd, none), e.g. \"zstd,gzip\"."
+          "description": "enabled compression METHODS in order of preference (gzip, zstd, none), e.g. \"zstd,gzip\"."
         },
         "PHOTOPRISM_CDN_URL": {
           "type": "string",
