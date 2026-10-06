@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** October 5, 2026
+**Last Updated:** October 6, 2026
 
 ### Overview
 
@@ -68,6 +68,16 @@ force/mutex settings queue for that destination and recheck the output; unrelate
 their existing scheduling. Each caller receives its own media object. Completed operations are
 released for later retries; overlapping compatible callers share failures.
 This is not a cross-process lock and does not alter animated-WebP or encoder mutex behavior.
+
+### Animated WebP Conversion
+
+Animated WebP uses ImageMagick to decode and coalesce frames before its FFmpeg delegate
+encodes an H.264 MP4 sidecar. Transparent pixels are composited onto black; odd raw canvas
+dimensions are padded on the right or bottom to the next even number, without resizing or
+cropping. The output pixel format is explicitly `yuv420p`. Canvas dimensions come from the
+WebP header, not orientation-adjusted metadata; unreadable dimensions stop conversion.
+ImageMagick exclusions, conversion deadlines, sidecar reuse, and force rules still apply.
+Other image and video formats do not use this normalization.
 
 ### Operational Notes
 

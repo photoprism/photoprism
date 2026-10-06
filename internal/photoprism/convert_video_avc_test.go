@@ -552,6 +552,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 	})
 }
 
+// TestConvert_TranscodeToAvcCmd checks format and encoder routing.
 func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 	conf := config.TestConfig()
 	convert := NewConvert(conf)
@@ -572,6 +573,8 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 
 		assert.Contains(t, r.Path, "ffmpeg")
 		assert.Contains(t, r.Args, "mp4")
+		assert.NotContains(t, r.Args, "-coalesce")
+		assert.NotContains(t, r.Args, "-extent")
 	})
 	t.Run("Nvidia", func(t *testing.T) {
 		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
@@ -623,8 +626,8 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 
 		assert.False(t, useMutex)
 		assert.Contains(t, r.Path, "convert")
-		assert.Contains(t, r.Args, webpName)
-		assert.Contains(t, r.Args, avcName)
+		assert.Equal(t, []string{webpName, "-coalesce", "-background", "black", "-alpha", "remove", "-alpha", "off",
+			"-gravity", "northwest", "-extent", "500x314", "-define", "video:pixel-format=yuv420p", avcName}, r.Args[1:])
 	})
 	t.Run("Insv", func(t *testing.T) {
 		mf, err := NewMediaFile("testdata/insta360.insv")

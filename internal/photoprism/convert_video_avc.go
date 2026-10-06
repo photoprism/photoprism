@@ -373,8 +373,18 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 
 	// Try to transcode animated WebP images with ImageMagick.
 	if w.conf.ImageMagickEnabled() && f.IsWebp() && w.imageMagickExclude.Allow(fileExt) {
+		info, infoErr := f.DecodeConfig()
+		if infoErr != nil || info.Width <= 0 || info.Height <= 0 {
+			return nil, false, fmt.Errorf("convert: cannot read WebP dimensions for %s", clean.Log(f.BaseName()))
+		}
+
+		// Coalesce before flattening transparency; pad the raw canvas for H.264 4:2:0 without cropping.
+		geometry := fmt.Sprintf("%dx%d", info.Width+info.Width%2, info.Height+info.Height%2)
+		args := []string{fileName, "-coalesce", "-background", "black", "-alpha", "remove", "-alpha", "off",
+			"-gravity", "northwest", "-extent", geometry, "-define", "video:pixel-format=yuv420p", avcName}
+
 		// #nosec G204 -- arguments are built from validated config and file paths.
-		return exec.Command(w.conf.ImageMagickBin(), f.FileName(), avcName), false, nil
+		return exec.Command(w.conf.ImageMagickBin(), args...), false, nil
 	}
 
 	// Complete separate-lens captures are combined before dewarping. Single-file INSV originals are
