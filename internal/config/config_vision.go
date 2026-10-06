@@ -384,6 +384,8 @@ func (c *Config) VisionModelSkipReason(t vision.ModelType, when vision.RunType) 
 			return ""
 		} else if c.FaceEngine() == face.EngineNone {
 			return "no face detector is in force"
+		} else if reason := faceEmbeddingsUnavailable(); reason != "" {
+			return reason
 		}
 
 		return fmt.Sprintf("face-run is %s", vision.ReportRunType(c.FaceEngineRunType()))

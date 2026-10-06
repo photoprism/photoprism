@@ -120,10 +120,10 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 		Embeddings:  face.Embeddings{testEmbeddings[0]},
 	}
 
-	restoreModel := face.ConfiguredModel()
+	restoreModel := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restoreModel, Model: face.FindEmbeddingModel(restoreModel)})
+		_ = face.ConfigureEmbedder(restoreModel)
 	})
 
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
@@ -158,10 +158,10 @@ func TestFile_AddFace_RecordsProducerModel(t *testing.T) {
 	}
 	require.NoError(t, file.Create())
 
-	restoreModel := face.ConfiguredModel()
+	restoreModel := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restoreModel, Model: face.FindEmbeddingModel(restoreModel)})
+		_ = face.ConfigureEmbedder(restoreModel)
 	})
 
 	// The configured model deliberately differs from the one that produced the vector.

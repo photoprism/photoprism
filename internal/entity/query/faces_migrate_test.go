@@ -534,10 +534,10 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 }
 
 func TestFinalizeFaceMigration(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelFaceNet, Model: face.FindEmbeddingModel(face.ModelFaceNet)}))
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	originalDb := entity.Db()

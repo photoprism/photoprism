@@ -75,7 +75,7 @@ func TestDetectorsComparable(t *testing.T) {
 		// A blank names no detector and "onnx" names only the runtime, so neither can be shown
 		// to agree with the crop the current detector would place.
 		assert.False(t, DetectorsComparable("", DetectorYuNet))
-		assert.False(t, DetectorsComparable(string(EngineONNX), DetectorYuNet))
+		assert.False(t, DetectorsComparable(EngineONNX, DetectorYuNet))
 	})
 	t.Run("NoCurrentDetector", func(t *testing.T) {
 		// Nothing is running to disagree with, so this must not report every stored crop as
@@ -165,7 +165,7 @@ func TestDetectorInstallers(t *testing.T) {
 	t.Run("DefaultModels", func(t *testing.T) {
 		models := bundledModels(t)
 		require.NotNil(t, DefaultModel())
-		assert.Contains(t, models, string(DefaultModelName()), "make dep-models must install the default embedding model")
+		assert.Contains(t, models, DefaultModelName(), "make dep-models must install the default embedding model")
 		assert.Contains(t, models, string(classify.DefaultModelName()), "make dep-models must install the default labels model")
 		assert.Contains(t, models, string(nsfw.DefaultModelName()), "make dep-models must install the default NSFW model")
 	})

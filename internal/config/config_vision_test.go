@@ -508,6 +508,8 @@ func TestConfig_DetectNSFW(t *testing.T) {
 
 // TestConfig_VisionModelSkipReason verifies the reason given for each model that does not run.
 func TestConfig_VisionModelSkipReason(t *testing.T) {
+	useUnconfiguredTestEmbedder(t)
+
 	t.Run("Runs", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		withVisionConfig(t, vision.NewConfig())
@@ -565,6 +567,15 @@ func TestConfig_VisionModelSkipReason(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		assert.Equal(t, "no face detector is in force", c.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
 	})
+	t.Run("FaceEmbeddingsDisabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		withVisionConfig(t, vision.NewConfig())
+		if c.FaceEngine() == face.EngineNone {
+			t.Skip("no face detector is installed")
+		}
+		disableTestEmbeddings(t)
+		assert.Equal(t, "face embeddings are disabled", c.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
+	})
 	t.Run("FaceRun", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceRun = vision.RunNever
@@ -577,6 +588,8 @@ func TestConfig_VisionModelSkipReason(t *testing.T) {
 }
 
 func TestConfig_VisionModelShouldRun(t *testing.T) {
+	useUnconfiguredTestEmbedder(t)
+
 	t.Run("ClassificationDisabledLabels", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.DisableClassification = true

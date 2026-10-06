@@ -413,6 +413,8 @@ func TestConfig_FaceReportSections(t *testing.T) {
 }
 
 func TestConfig_FaceStatus(t *testing.T) {
+	useUnconfiguredTestEmbedder(t)
+
 	t.Run("Nil", func(t *testing.T) {
 		assert.Equal(t, []string{"Face detection and recognition are unavailable."}, (*Config)(nil).FaceStatus())
 	})
@@ -427,6 +429,37 @@ func TestConfig_FaceStatus(t *testing.T) {
 		c.options.FaceDetector = face.DetectorNone
 
 		assert.Contains(t, c.FaceStatus()[0], "Face detection is disabled")
+	})
+	t.Run("NoEmbeddingModel", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+
+		assert.Equal(t, "Face embeddings are disabled, so face detection is skipped.", c.FaceStatus()[0])
+	})
+	t.Run("FailedToLoad", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		if c.FaceDetector() == face.DetectorNone {
+			t.Skip("faces: skipping, no face detector is installed here")
+		}
+
+		setTestEmbedder(t, face.EmbedderSettings{Name: face.ModelSFace, Model: face.FindEmbeddingModel(face.ModelSFace)})
+		require.Error(t, face.EmbedderError())
+
+		assert.Equal(t, "The face embedding model failed to load, so face detection is skipped.", c.FaceStatus()[0])
+	})
+	t.Run("Paused", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		if c.FaceDetector() == face.DetectorNone || c.EffectiveFaceModel() == face.ModelNone {
+			t.Skip("faces: skipping, the detector or the embedding model is not installed here")
+		}
+
+		t.Cleanup(face.UnblockEmbeddings)
+		face.BlockEmbeddings("12 marker(s) use facenet")
+
+		assert.Equal(t, []string{
+			"Face detection and recognition are paused.",
+			"Face embeddings are paused, because 12 marker(s) use facenet.",
+		}, c.FaceStatus()[:2])
 	})
 	t.Run("NeverScheduled", func(t *testing.T) {
 		// Everything is installed and configured, and nothing will ever run it. No value in the
@@ -510,10 +543,10 @@ func TestConfig_ReportURIRedaction(t *testing.T) {
 }
 
 func TestFaceModelStatus(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -546,10 +579,10 @@ func TestFaceModelStatus(t *testing.T) {
 func TestConfig_faceModelReport(t *testing.T) {
 	// The embedder is process-wide, and a test that leaves it in an error state would otherwise
 	// show up here as every model failing to load.
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	t.Run("Named", func(t *testing.T) {
@@ -590,6 +623,24 @@ func TestConfig_faceModelReport(t *testing.T) {
 
 		assert.Equal(t, face.ModelNone+" (embeddings disabled)", c.faceModelReport())
 	})
+	t.Run("TensorFlowDisabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = face.ModelFaceNet
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelNone+" (facenet requires TensorFlow, which is disabled)", c.faceModelReport())
+	})
+	t.Run("AutoTensorFlowDisabled", func(t *testing.T) {
+		// FaceNet is installed, so "no embedding model is installed" would send the operator
+		// to install weights that are already there.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = ""
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelNone+" (facenet requires TensorFlow, which is disabled)", c.faceModelReport())
+	})
 	t.Run("Paused", func(t *testing.T) {
 		t.Cleanup(face.UnblockEmbeddings)
 		c := newSFaceTestConfig(t)
@@ -606,6 +657,99 @@ func TestConfig_faceModelReport(t *testing.T) {
 		c.options.FaceModel = face.ModelAuto
 
 		assert.Contains(t, c.faceModelReport(), "(default")
+	})
+}
+
+func TestConfig_faceModelNeedsTensorFlow(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("TensorFlowEnabled", func(t *testing.T) {
+		c.options.DisableTensorFlow = false
+		assert.False(t, c.faceModelNeedsTensorFlow(face.ModelFaceNet))
+	})
+	t.Run("TensorFlowDisabled", func(t *testing.T) {
+		c.options.DisableTensorFlow = true
+		assert.True(t, c.faceModelNeedsTensorFlow(face.ModelFaceNet))
+	})
+	t.Run("ONNXModel", func(t *testing.T) {
+		c.options.DisableTensorFlow = true
+		assert.False(t, c.faceModelNeedsTensorFlow(face.ModelSFace))
+	})
+	t.Run("NoModel", func(t *testing.T) {
+		c.options.DisableTensorFlow = true
+		assert.False(t, c.faceModelNeedsTensorFlow(""))
+		assert.False(t, c.faceModelNeedsTensorFlow(face.ModelNone))
+	})
+}
+
+func TestConfig_tensorFlowFaceModel(t *testing.T) {
+	t.Run("TensorFlowEnabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+
+		assert.Empty(t, c.tensorFlowFaceModel(face.ModelFaceNet))
+		assert.Empty(t, c.tensorFlowFaceModel(""))
+	})
+	t.Run("LibraryModel", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelFaceNet, c.tensorFlowFaceModel(face.ModelFaceNet))
+		assert.Empty(t, c.tensorFlowFaceModel(face.ModelSFace))
+	})
+	t.Run("InstalledModel", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelFaceNet, c.tensorFlowFaceModel(""))
+	})
+	t.Run("NotInstalled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.DisableTensorFlow = true
+
+		assert.Empty(t, c.tensorFlowFaceModel(""))
+	})
+}
+
+func TestFaceTensorFlowReason(t *testing.T) {
+	assert.Equal(t, "facenet requires TensorFlow, which is disabled", faceTensorFlowReason(face.ModelFaceNet))
+}
+
+func TestConfig_faceTensorFlowStatus(t *testing.T) {
+	t.Cleanup(face.UnblockEmbeddings)
+	face.BlockEmbeddings("12 marker(s) use facenet, which this instance cannot load")
+
+	c := NewConfig(CliTestContext())
+	c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+	c.options.FaceModel = face.ModelFaceNet
+
+	t.Run("TensorFlowDisabled", func(t *testing.T) {
+		c.options.DisableTensorFlow = true
+		assert.Equal(t, "Face model facenet requires TensorFlow, which is disabled.", c.faceTensorFlowStatus(face.ModelFaceNet))
+	})
+	t.Run("ONNXModel", func(t *testing.T) {
+		c.options.DisableTensorFlow = true
+		assert.Empty(t, c.faceTensorFlowStatus(face.ModelSFace))
+	})
+	t.Run("TensorFlowEnabled", func(t *testing.T) {
+		c.options.DisableTensorFlow = false
+		assert.Empty(t, c.faceTensorFlowStatus(face.ModelFaceNet))
+	})
+	t.Run("ModelInForce", func(t *testing.T) {
+		// A mismatch with a model in force is resolved by a migration, not by enabling TensorFlow.
+		m := NewConfig(CliTestContext())
+		m.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		m.options.FaceModel = face.ModelSFace
+		m.options.DisableTensorFlow = true
+		assert.Empty(t, m.faceTensorFlowStatus(face.ModelFaceNet))
+	})
+	t.Run("NotPaused", func(t *testing.T) {
+		face.UnblockEmbeddings()
+		c.options.DisableTensorFlow = true
+		assert.Empty(t, c.faceTensorFlowStatus(face.ModelFaceNet))
 	})
 }
 
@@ -1039,10 +1183,10 @@ func TestConfig_faceClusterScoreFloor(t *testing.T) {
 func TestConfig_faceEmbedderStatus(t *testing.T) {
 	// The embedder is process-wide, so a test that read it as another test left it would report
 	// every model as failing to load - which is the state this is supposed to detect.
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	c := NewConfig(CliTestContext())

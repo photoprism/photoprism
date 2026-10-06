@@ -901,10 +901,10 @@ func TestModelOnnxProvider(t *testing.T) {
 }
 
 func TestModel_FaceModel(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	t.Run("EmbeddingsDisabled", func(t *testing.T) {

@@ -136,10 +136,10 @@ func TestDetectFaces(t *testing.T) {
 	})
 	t.Run("DisabledEmbeddingsRenderNothing", func(t *testing.T) {
 		// The same for an instance configured to embed nothing at all.
-		prev := face.ConfiguredModel()
+		prev := face.EmbedderConfig()
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
 		t.Cleanup(func() {
-			require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: prev}))
+			_ = face.ConfigureEmbedder(prev)
 		})
 
 		called := false

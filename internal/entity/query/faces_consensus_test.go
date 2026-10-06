@@ -143,13 +143,13 @@ func TestFaceConsensus_Agrees(t *testing.T) {
 func consensusTestModel(t *testing.T) {
 	t.Helper()
 
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
 		Name:  face.ModelFaceNet,
 		Model: face.FindEmbeddingModel(face.ModelFaceNet),
 	}))
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 	require.Equal(t, face.ModelFaceNet, face.EmbeddingModelName())
 }

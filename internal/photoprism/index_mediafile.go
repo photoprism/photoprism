@@ -44,6 +44,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Skip known file.
 		result.Status = IndexSkipped
 		return result
+	} else if o.FacesOnly && !o.DetectFaces && !o.ImportFaceTags {
+		// Skip file when indexing faces only, but neither detection nor XMP import may run.
+		result.Status = IndexSkipped
+		return result
 	} else if o.FacesOnly && !m.IsJpeg() && (!o.RegenerateFaces || !m.IsPreviewImage()) {
 		// Skip non-jpeg file when indexing faces only, unless its markers are regenerated.
 		result.Status = IndexSkipped

@@ -55,10 +55,9 @@ func EmbedFaces(fileName string, result face.Faces, cacheCrop bool, cropSource C
 		return errors.New("missing face model")
 	}
 
-	// A library the configured model cannot read is migrated rather than added to, so the
-	// faces are still recorded and their vectors are filled in afterwards. Returning an
-	// error instead would drop the detections, and an endpoint is no exemption: its
-	// vectors are stamped with the configured model and land in the same second space.
+	// A library the configured model cannot read is migrated rather than added to, and an
+	// endpoint is no exemption: its vectors are stamped with the configured model and land
+	// in the same second space. Scheduled detection is skipped while this lasts.
 	if face.EmbeddingsBlocked() {
 		log.Debugf("vision: skipping face embeddings while they are paused")
 		return nil

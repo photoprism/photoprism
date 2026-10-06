@@ -434,6 +434,19 @@ func TestEmbeddingModel_Aligned(t *testing.T) {
 	})
 }
 
+func TestEmbeddingModel_RequiresTensorFlow(t *testing.T) {
+	t.Run("TensorFlow", func(t *testing.T) {
+		assert.True(t, FindEmbeddingModel(ModelFaceNet).RequiresTensorFlow())
+	})
+	t.Run("ONNX", func(t *testing.T) {
+		assert.False(t, FindEmbeddingModel(ModelSFace).RequiresTensorFlow())
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		var m *EmbeddingModel
+		assert.False(t, m.RequiresTensorFlow())
+	})
+}
+
 func TestEmbeddingModel_InputSize(t *testing.T) {
 	t.Run("ONNXModel", func(t *testing.T) {
 		width, height := FindEmbeddingModel(ModelSFace).InputSize()

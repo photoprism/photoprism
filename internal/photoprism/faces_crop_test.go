@@ -50,7 +50,7 @@ func TestEmbedCropWidth(t *testing.T) {
 		t.Cleanup(func() { delete(face.EmbeddingModels, name) })
 
 		require.Greater(t, 224, face.CropSize.Width, "the case only tests something above the box")
-		assert.Equal(t, 224, embedCropWidth(string(name)))
+		assert.Equal(t, 224, embedCropWidth(name))
 	})
 	t.Run("UnknownModel", func(t *testing.T) {
 		assert.Equal(t, face.CropSize.Width, embedCropWidth("nonesuch"))

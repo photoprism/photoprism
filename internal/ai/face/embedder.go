@@ -84,6 +84,22 @@ func ConfiguredModel() ModelName {
 	return name
 }
 
+// EmbedderConfig returns the settings the embedding model was last configured with, so a caller
+// that replaces the model can configure the same one again with ConfigureEmbedder.
+func EmbedderConfig() EmbedderSettings {
+	embedderMu.RLock()
+	defer embedderMu.RUnlock()
+
+	settings := embedderSettings
+
+	// Not configured yet, which ConfigureEmbedder would otherwise record as ModelNone.
+	if settings.Name == "" {
+		settings.Name = configuredModel
+	}
+
+	return settings
+}
+
 // ExpectedDims returns the embedding length that the configured model produces.
 // Persistence uses it to reject vectors from a different model instead of mixing
 // incompatible embedding spaces in the same library.

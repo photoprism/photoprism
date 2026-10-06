@@ -140,7 +140,7 @@ func TestMatchFaceMarkers(t *testing.T) {
 func TestMatchFaceMarkers_ConcurrentRename(t *testing.T) {
 	ada, bea := rnd.GenerateUID('j'), rnd.GenerateUID('j')
 	f := entity.Face{ID: "MATCHRENAMECLUSTER", FaceSrc: entity.SrcManual, FaceKind: int(face.RegularFace),
-		SubjUID: ada, Samples: face.ManualClusterCore, EmbedModel: string(face.EmbeddingModelName())}
+		SubjUID: ada, Samples: face.ManualClusterCore, EmbedModel: face.EmbeddingModelName()}
 	require.NoError(t, entity.UnscopedDb().Create(&f).Error)
 	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID) })
 
@@ -177,7 +177,7 @@ func TestMatchableFacesClusterCore(t *testing.T) {
 		t.Helper()
 		require.NoError(t, entity.UnscopedDb().Create(&entity.Face{
 			ID: id, FaceSrc: entity.SrcManual, FaceKind: int(face.RegularFace),
-			SubjUID: subj, Samples: samples, EmbedModel: string(face.EmbeddingModelName()),
+			SubjUID: subj, Samples: samples, EmbedModel: face.EmbeddingModelName(),
 		}).Error)
 		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", id) })
 	}
@@ -490,13 +490,13 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 }
 
 func TestResolveFaceCollisions(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
 		Name:  face.ModelFaceNet,
 		Model: face.FindEmbeddingModel(face.ModelFaceNet),
 	}))
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	// Two clusters of different people, close enough that one accepts the other. The test
@@ -553,13 +553,13 @@ func TestResolveFaceCollisions(t *testing.T) {
 // TestResolveFaceCollisions_InertBand pins that a collision whose radius cannot narrow the cluster
 // is recorded once and not reported by later passes.
 func TestResolveFaceCollisions_InertBand(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
 		Name:  face.ModelFaceNet,
 		Model: face.FindEmbeddingModel(face.ModelFaceNet),
 	}))
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	// Settles what the index already holds, so the counts below are this pair's alone.
@@ -943,10 +943,10 @@ func TestNotEmbeddingModel(t *testing.T) {
 }
 
 func TestFacesFromOtherModels(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	t.Run("NoModelConfigured", func(t *testing.T) {
@@ -997,10 +997,10 @@ func TestFacesFromOtherModels(t *testing.T) {
 }
 
 func TestMatchableFaces(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{

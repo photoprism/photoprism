@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -525,7 +526,7 @@ func facesResetDetector(ctx *cli.Context) string {
 // is the configured one when auto is requested.
 func facesResetDetectorName(conf *config.Config, detector string) string {
 	if conf != nil && detector != "" && face.ParseDetectorName(detector) == face.DetectorAuto {
-		return string(conf.FaceDetector())
+		return conf.FaceDetector()
 	}
 
 	return detector
@@ -640,6 +641,10 @@ func facesIndexAction(ctx *cli.Context) error {
 		_, lastFound = w.LastRun()
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true, conf)
+
+		if !opt.DetectFaces {
+			log.Warnf("faces: skipping detection, because %s", conf.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
+		}
 
 		found, indexed = w.Start(opt)
 

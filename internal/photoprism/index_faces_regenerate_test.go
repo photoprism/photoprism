@@ -764,14 +764,14 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		t.Cleanup(face.UnblockEmbeddings)
 		face.BlockEmbeddings("12 marker(s) use facenet, but this instance is configured for sface")
 
-		_, blockedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+		_, blockedErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 
 		require.Error(t, blockedErr)
 		assert.Equal(t, before, regenerateTestMarkers(t, namedFileUID, addedFileUID, xmpFileUID))
 		assert.NotNil(t, entity.FindFace(cluster.ID), "nothing may be removed when the request is refused")
 	})
 
-	stats, err := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+	stats, err := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 	require.NoError(t, err)
 	require.NotNil(t, stats)
 
@@ -788,7 +788,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 	})
 	t.Run("EveryMatchedMarkerIsRegenerated", func(t *testing.T) {
 		for _, uid := range []string{named[0].MarkerUID, named[1].MarkerUID, added[0].MarkerUID} {
-			assert.Equal(t, string(face.DetectorYuNet), after[uid].DetectModel, uid)
+			assert.Equal(t, face.DetectorYuNet, after[uid].DetectModel, uid)
 			assert.NotEmpty(t, after[uid].Embeddings, uid)
 		}
 
@@ -809,7 +809,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		require.True(t, ok)
 
 		assert.True(t, m.Invalid)
-		assert.Equal(t, string(face.DetectorYuNet), m.DetectModel)
+		assert.Equal(t, face.DetectorYuNet, m.DetectModel)
 		assert.InDelta(t, named[1].X-0.02, m.X, 0.0001, "a rejected marker must not move")
 
 		n := 0
@@ -865,7 +865,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		require.True(t, ok)
 
 		assert.Equal(t, "Cara", m.Name, "the sidecar name must stay on the marker it named")
-		assert.Equal(t, string(face.DetectorYuNet), m.DetectModel)
+		assert.Equal(t, face.DetectorYuNet, m.DetectModel)
 		assert.Equal(t, xmpBox.X, m.X, "the marker a sidecar named must not move")
 		assert.Len(t, regenerateTestMarkers(t, xmpFileUID), xmpMarkerCount, "no marker may be added for the region")
 	})
@@ -879,7 +879,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		assert.Equal(t, before[rejectedSmall.MarkerUID].DetectModel, r.DetectModel, "it must not take the face's detection")
 	})
 	t.Run("RunTwice", func(t *testing.T) {
-		again, againErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+		again, againErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 		require.NoError(t, againErr)
 
 		assert.Equal(t, fmt.Sprintf("0 updated, 0 added, 0 removed, %d kept unmatched, 0 failed", len(kept)), again.String())
@@ -887,7 +887,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 	})
 	t.Run("AllKeepsSidecarRegion", func(t *testing.T) {
 		// Names are cleared first, so the sidecar region is what keeps the marker it names in place.
-		_, allErr := w.resetAndReindex(string(face.DetectorYuNet), ind, true, "regenerate")
+		_, allErr := w.resetAndReindex(face.DetectorYuNet, ind, true, "regenerate")
 		require.NoError(t, allErr)
 
 		markers := regenerateTestMarkers(t, xmpFileUID)
@@ -938,7 +938,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		// The original is gone, so the index does not reach the file.
 		newMarkedFile(t, "unreached.jpg", nil)
 
-		_, unreachedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+		_, unreachedErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 
 		require.Error(t, unreachedErr)
 		assert.True(t, strings.HasPrefix(unreachedErr.Error(), "faces: could not regenerate 1 marker in 1 file the index did not reach"))
@@ -959,7 +959,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 
 		buffer := captureRegenerateLog(t)
 
-		_, skippedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+		_, skippedErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 
 		require.NoError(t, skippedErr)
 		assert.Contains(t, buffer.String(), "skipped 2 markers in 2 files the index is set to skip")
@@ -987,7 +987,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 
 		buffer := captureRegenerateLog(t)
 
-		_, skippedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+		_, skippedErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 
 		require.NoError(t, skippedErr)
 		assert.Contains(t, buffer.String(), "skipped 1 marker in 1 file the index is set to skip")
@@ -999,7 +999,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 
 		buffer := captureRegenerateLog(t)
 
-		_, skippedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+		_, skippedErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 
 		require.NoError(t, skippedErr)
 		assert.Contains(t, buffer.String(), "skipped 1 marker in 1 file because of errors")

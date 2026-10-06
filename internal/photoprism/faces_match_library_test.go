@@ -88,7 +88,7 @@ func seedMatchLibrary(t *testing.T, clusters, perCluster uint64) (faces entity.F
 				require.NoError(t, err)
 			}
 			rows = append(rows, "(?, ?, 'face', 'image', '', 0, 0, ?, ?, ?, ?, ?, 'scrfd', ?, ?, 0.1, 0.1, 0.2, 0.2, 200, 720, 100, 50, ?, ?, ?, ?)")
-			args = append(args, rnd.GenerateUID('m'), rnd.GenerateUID('f'), msubj, msrc, faceID, dist, string(model), ej, []byte(matchLibraryLandmarks), rnd.Base36(40), past, past, past)
+			args = append(args, rnd.GenerateUID('m'), rnd.GenerateUID('f'), msubj, msrc, faceID, dist, model, ej, []byte(matchLibraryLandmarks), rnd.Base36(40), past, past, past)
 			if len(rows) >= 200 {
 				flush()
 			}

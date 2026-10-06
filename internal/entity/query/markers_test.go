@@ -165,9 +165,9 @@ func TestLastMarkerUID(t *testing.T) {
 }
 
 func TestFaceMarkerModelBoundaries(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
 	beforeUnmatched := CountUnmatchedFaceMarkers()
@@ -223,9 +223,9 @@ func TestFaceMarkerModelBoundaries(t *testing.T) {
 }
 
 func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	recorded := &entity.Marker{
@@ -281,9 +281,9 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 }
 
 func TestFaceMarkersWithEmptyEmbeddings(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
 		Name:  face.ModelFaceNet,

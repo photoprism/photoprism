@@ -468,10 +468,10 @@ func TestFace_SetEmbeddings(t *testing.T) {
 		assert.Less(t, m.SampleRadius, face.ClusterRadius)
 	})
 	t.Run("DimensionMismatch", func(t *testing.T) {
-		restore := face.ConfiguredModel()
+		restore := face.EmbedderConfig()
 
 		t.Cleanup(func() {
-			_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+			_ = face.ConfigureEmbedder(restore)
 		})
 
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
@@ -995,10 +995,10 @@ func TestFace_SetSubjectUID(t *testing.T) {
 }
 
 func TestFace_SameEmbeddingModel(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
@@ -1026,10 +1026,10 @@ func TestFace_SameEmbeddingModel(t *testing.T) {
 }
 
 func TestFace_MatchOtherModel(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
@@ -1067,10 +1067,10 @@ func TestFace_MatchOtherModel(t *testing.T) {
 }
 
 func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{

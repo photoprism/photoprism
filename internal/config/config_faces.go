@@ -73,14 +73,14 @@ func (c *Config) FaceEngineRunType() vision.RunType {
 }
 
 // FaceEngineShouldRun reports whether the face detection engine should execute in the
-// specified scheduling context. The decision mirrors the face model run schedule in
-// the vision subsystem, so detection stays aligned with embedding generation.
+// specified scheduling context. It never does while no embeddings can be generated,
+// since a detected face is only saved with its embedding.
 func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	if c == nil {
 		return false
 	}
 
-	if c.DisableFaces() || c.FaceEngine() == face.EngineNone {
+	if c.DisableFaces() || c.FaceEngine() == face.EngineNone || faceEmbeddingsUnavailable() != "" {
 		return false
 	}
 
@@ -112,6 +112,21 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	}
 
 	return false
+}
+
+// faceEmbeddingsUnavailable returns why this process generates no face embeddings, or "" when it
+// does. Detection is skipped then, because a detected face is only saved with its embedding.
+func faceEmbeddingsUnavailable() string {
+	switch {
+	case face.EmbedderError() != nil:
+		return "the face embedding model failed to load"
+	case face.EmbeddingsDisabled():
+		return "face embeddings are disabled"
+	case face.EmbeddingsBlocked():
+		return "face embeddings are paused"
+	}
+
+	return ""
 }
 
 // faceEngineRunsOnIndex reports whether this host is fast enough to detect faces while indexing
@@ -745,11 +760,14 @@ func (c *Config) installedFaceModel() face.ModelName {
 	edition := c.Edition()
 
 	for _, candidate := range face.AutoModelPreference {
-		if face.LicenseRefused(candidate, edition) != nil {
+		model := face.FindEmbeddingModel(candidate)
+
+		switch {
+		case face.LicenseRefused(candidate, edition) != nil:
 			continue
-		} else if face.FindEmbeddingModel(candidate).RequiresTensorFlow() && c.DisableTensorFlow() {
+		case model.RequiresTensorFlow() && c.DisableTensorFlow():
 			continue
-		} else if face.FindEmbeddingModel(candidate).Installed(modelsPath) {
+		case model.Installed(modelsPath):
 			return candidate
 		}
 	}

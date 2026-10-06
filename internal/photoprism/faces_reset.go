@@ -209,13 +209,13 @@ func (w *Faces) resetAndReindex(detector string, index *Index, all bool, path st
 func (w *Faces) regenerateRefused(index *Index, opt IndexOptions) error {
 	switch {
 	case w.conf.FaceDetector() == face.DetectorNone:
-		return fmt.Errorf("faces: face detector %s cannot be used, so markers cannot be regenerated", clean.Log(string(w.conf.Options().FaceDetector)))
-	case !opt.DetectFaces:
-		return fmt.Errorf("faces: face detection is disabled, so markers cannot be regenerated")
+		return fmt.Errorf("faces: face detector %s cannot be used, so markers cannot be regenerated", clean.Log(w.conf.Options().FaceDetector))
 	case face.EmbeddingsDisabled():
 		return fmt.Errorf("faces: face embeddings are disabled, so markers cannot be regenerated")
 	case face.EmbeddingsBlocked():
 		return fmt.Errorf("faces: %s, so markers cannot be regenerated until the library is migrated", face.EmbeddingsBlockedReason())
+	case !opt.DetectFaces:
+		return fmt.Errorf("faces: face detection is disabled, so markers cannot be regenerated")
 	case w.conf.FacesLocked() != "":
 		return fmt.Errorf("faces: waiting for the %s to complete", w.conf.FacesLocked())
 	case mutex.IndexWorker.Running():

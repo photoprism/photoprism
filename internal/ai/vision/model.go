@@ -957,15 +957,14 @@ func (m *Model) FaceModel() face.Embedder {
 		return nil
 	}
 
-	// FACE_MODEL=none turns embedding generation off, so no model may be loaded even
-	// when vision.yml still schedules face processing to detect regions.
+	// FACE_MODEL=none turns embedding generation off, so no model may be loaded.
 	if face.EmbeddingsDisabled() {
 		return nil
 	}
 
 	// A library whose stored vectors were produced by another model has to be migrated
-	// rather than added to, so nothing is embedded until it is. Detection keeps running,
-	// because DetectFaces returns its markers instead of failing when this hands out none.
+	// rather than added to, so nothing is embedded until it is. DetectFaces then returns
+	// its faces without embeddings instead of failing.
 	if face.EmbeddingsBlocked() {
 		return nil
 	}
