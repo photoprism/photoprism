@@ -63,7 +63,7 @@ services:
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 15360)
       PHOTOPRISM_JPEG_SIZE: 15360             # size limit for converted image files in pixels (720-30000)
       TF_CPP_MIN_LOG_LEVEL: 1                 # show TensorFlow log messages for development
-      # PHOTOPRISM_INIT: "http gpu tensorflow yt-dlp"  # Options: "update https gpu tensorflow davfs clitools clean"
+      # PHOTOPRISM_INIT: "http gpu yt-dlp"             # Options: "update https gpu davfs clitools clean"
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"     # Options: "software", "intel", "nvidia", "apple", "raspberry"
       PHOTOPRISM_STORAGE_PATH: "/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/photoprism/storage/originals"

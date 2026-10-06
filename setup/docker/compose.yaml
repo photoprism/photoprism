@@ -92,7 +92,7 @@ services:
       PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database username, must be the same as MARIADB_USER
       PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB database password, must be the same as MARIADB_PASSWORD
       ## Run/install on first startup (https://docs.photoprism.app/getting-started/config-options/#docker-image):
-      PHOTOPRISM_INIT: "https tensorflow"            # options: update https tensorflow tensorflow-gpu intel gpu davfs yt-dlp
+      PHOTOPRISM_INIT: "https"                       # options: update https intel gpu davfs yt-dlp
       ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
       PHOTOPRISM_VISION_API: "false"                 # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)

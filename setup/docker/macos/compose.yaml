@@ -85,7 +85,7 @@ services:
       PHOTOPRISM_SITE_DESCRIPTION: ""                # longer description shown in SEO and social meta tags
       PHOTOPRISM_SITE_AUTHOR: ""                     # site owner shown in the author meta tag
       ## Run/install on first startup, see https://github.com/photoprism/photoprism/blob/develop/scripts/dist/Makefile:
-      PHOTOPRISM_INIT: "https tensorflow"            # common options: update https tensorflow tensorflow-gpu intel gpu davfs yt-dlp
+      PHOTOPRISM_INIT: "https"                       # common options: update https intel gpu davfs yt-dlp
       ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
       PHOTOPRISM_VISION_API: "false"                 # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)

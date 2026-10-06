@@ -136,8 +136,8 @@ services:
       PHOTOPRISM_FFMPEG_ENCODER: "intel"             # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # transcoding bitrate threshold in Mbps, also NVIDIA peak limit (default: 60)
-      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
-      PHOTOPRISM_INIT: "https intel tensorflow"
+      ## Run/install on first startup (options: update https intel gpu davfs yt-dlp):
+      PHOTOPRISM_INIT: "https intel"
       ## Additional dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
       GOCACHE: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gocache"
