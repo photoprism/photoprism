@@ -34,6 +34,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -100,14 +101,9 @@ type Config struct {
 // Values is a shorthand alias for map[string]interface{}.
 type Values = map[string]any
 
+// init initializes memory limits, entity caching, and public thumbnail sizes.
 func init() {
-	TotalMem = memory.TotalMemory()
-
-	// Check available memory if not running in unsafe mode.
-	if Env(EnvUnsafe) {
-		// Disable features with high memory requirements?
-		LowMem = TotalMem < MinMem
-	}
+	initMemory(memory.TotalMemory())
 
 	// Disable entity cache if requested.
 	if txt.Bool(os.Getenv(EnvVar("disable-photolabelcache"))) {
@@ -117,6 +113,13 @@ func init() {
 	initThumbs()
 }
 
+// initMemory records system memory and enables low-memory limits outside unsafe mode.
+func initMemory(total uint64) {
+	TotalMem = total
+	LowMem = !Env(EnvUnsafe) && TotalMem < MinMem
+}
+
+// initThumbs rebuilds the public thumbnail sizes in reverse preset order.
 func initThumbs() {
 	initThumbsMutex.Lock()
 	defer initThumbsMutex.Unlock()
@@ -125,8 +128,7 @@ func initThumbs() {
 	Thumbs = ThumbSizes{}
 
 	// Init public thumb sizes for use in client apps.
-	for i := len(thumb.Names) - 1; i >= 0; i-- {
-		name := thumb.Names[i]
+	for _, name := range slices.Backward(thumb.Names) {
 		t := thumb.Sizes[name]
 
 		if t.Width > maxSize {

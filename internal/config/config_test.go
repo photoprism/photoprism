@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -48,6 +49,89 @@ func runTestMain(m *testing.M) int {
 	}()
 
 	return m.Run()
+}
+
+// TestInitMemory checks memory thresholds and environment or CLI unsafe overrides.
+func TestInitMemory(t *testing.T) {
+	origTotal, origLow, origArgs := TotalMem, LowMem, os.Args
+	t.Cleanup(func() {
+		TotalMem, LowMem, os.Args = origTotal, origLow, origArgs
+	})
+
+	for _, tt := range []struct {
+		name   string
+		total  uint64
+		unsafe string
+		args   []string
+		low    bool
+	}{
+		{name: "UnknownMemory", low: true},
+		{name: "BelowMinimum", total: MinMem - 1, low: true},
+		{name: "AtMinimum", total: MinMem},
+		{name: "AboveMinimum", total: MinMem + 1},
+		{name: "UnsafeEnvironment", total: MinMem - 1, unsafe: "true"},
+		{name: "SafeEnvironment", total: MinMem - 1, unsafe: "false", low: true},
+		{name: "UnsafeFlag", total: MinMem - 1, args: []string{"--unsafe"}},
+		{name: "SafeFlagOverridesEnvironment", total: MinMem - 1, unsafe: "true", args: []string{"--unsafe=false"}, low: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv("PHOTOPRISM_UNSAFE", tt.unsafe)
+			os.Args = append([]string{origArgs[0]}, tt.args...)
+			LowMem = !tt.low
+
+			initMemory(tt.total)
+
+			assert.Equal(t, tt.total, TotalMem)
+			assert.Equal(t, tt.low, LowMem)
+
+			c := &Config{options: &Options{}}
+			assert.Equal(t, tt.low, c.DisableTensorFlow())
+			assert.Equal(t, tt.low, c.DisableRaw())
+		})
+	}
+}
+
+// TestInitThumbs checks public size filtering, reverse order, and repeated initialization.
+func TestInitThumbs(t *testing.T) {
+	origNames, origSizes, origThumbs := thumb.Names, thumb.Sizes, Thumbs
+	origCached, origOnDemand := thumb.SizeCached, thumb.SizeOnDemand
+	t.Cleanup(func() {
+		thumb.Names, thumb.Sizes, Thumbs = origNames, origSizes, origThumbs
+		thumb.SizeCached, thumb.SizeOnDemand = origCached, origOnDemand
+	})
+
+	thumb.Names = []thumb.Name{"small", "private", "boundary", "large"}
+	thumb.Sizes = thumb.SizeMap{
+		"small":    {Width: 100, Height: 80, Public: true, Usage: "Small"},
+		"private":  {Width: 150, Height: 150, Public: false},
+		"boundary": {Width: 200, Height: 160, Public: true, Usage: "Boundary"},
+		"large":    {Width: 300, Height: 240, Public: true, Usage: "Large"},
+	}
+	thumb.SizeCached, thumb.SizeOnDemand = 100, 200
+	want := ThumbSizes{
+		{Size: "boundary", Usage: "Boundary", Width: 200, Height: 160},
+		{Size: "small", Usage: "Small", Width: 100, Height: 80},
+	}
+
+	t.Run("PublicSizesInReverseOrder", func(t *testing.T) {
+		initThumbs()
+		assert.Equal(t, want, Thumbs)
+	})
+	t.Run("RebuildWithoutDuplicates", func(t *testing.T) {
+		initThumbs()
+		initThumbs()
+		assert.Equal(t, want, Thumbs)
+	})
+	t.Run("CachedLimit", func(t *testing.T) {
+		thumb.SizeCached, thumb.SizeOnDemand = 200, 100
+		initThumbs()
+		assert.Equal(t, want, Thumbs)
+	})
+	t.Run("EmptyPresets", func(t *testing.T) {
+		thumb.Names = nil
+		initThumbs()
+		assert.Empty(t, Thumbs)
+	})
 }
 
 func TestNewConfig(t *testing.T) {

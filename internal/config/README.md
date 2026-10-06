@@ -1,6 +1,6 @@
 ## PhotoPrism — Config Package
 
-**Last Updated:** September 18, 2026
+**Last Updated:** October 6, 2026
 
 ### Overview
 
@@ -42,6 +42,15 @@ PhotoPrism loads configuration in the following order:
 The `PHOTOPRISM_CONFIG_PATH` variable controls where PhotoPrism looks for YAML files (defaults to `storage/config`).
 
 > Any change to configuration (flags, env vars, YAML files) requires a restart. The Go process reads options during startup and does not watch for changes.
+
+### Startup Memory Limits
+
+At package initialization, detected system memory below `MinMem` (1 GB) enables
+low-memory limits that disable TensorFlow-dependent features and RAW indexing and
+conversion. `PHOTOPRISM_UNSAFE=true` or `--unsafe` bypasses these low-memory limits;
+`--unsafe=false` takes precedence over the environment variable. This early check
+runs before YAML configuration is loaded. The separate startup requirement of at
+least 128 MB remains in effect even in unsafe mode.
 
 ### HTTP Hardening Defaults
 
