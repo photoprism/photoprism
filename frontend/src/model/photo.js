@@ -1327,6 +1327,45 @@ export class Photo extends RestModel {
     }
   }
 
+  // mergeUnchanged copies the editable text fields and their sources from values into fields without
+  // unsaved edits and records them as saved, so a refresh from the server never discards local edits.
+  mergeUnchanged(values) {
+    if (!values) {
+      return;
+    }
+
+    const changes = {};
+
+    for (const key of ["Title", "Caption"]) {
+      if (this[key] === this.originalValue(key)) {
+        for (const field of [key, `${key}Src`]) {
+          if (values[field] !== undefined) {
+            changes[field] = values[field];
+          }
+        }
+      }
+    }
+
+    this.setValues(changes, true);
+
+    const details = this.Details;
+    const saved = this.__originalValues.Details;
+
+    if (!details || !saved || !values.Details) {
+      return;
+    }
+
+    for (const key of ["Subject", "Artist", "Copyright", "License", "Keywords", "Notes"]) {
+      if (details[key] === saved[key]) {
+        for (const field of [key, `${key}Src`]) {
+          if (values.Details[field] !== undefined) {
+            details[field] = saved[field] = values.Details[field];
+          }
+        }
+      }
+    }
+  }
+
   update() {
     this.trimInputs();
     const values = this.getValues(true);

@@ -63,6 +63,118 @@ describe("model/photo", () => {
     expect(photo.Slug).toBe(" untouched ");
   });
 
+  describe("mergeUnchanged", () => {
+    // saved returns a photo as loaded from the server, with all editable text fields set.
+    const saved = () =>
+      new Photo({
+        UID: "ps6sg6be2lvl0yh7",
+        Title: "Saved Title",
+        TitleSrc: "auto",
+        Caption: "Saved caption",
+        CaptionSrc: "",
+        Details: { Subject: "Saved subject", SubjectSrc: "", Notes: "Saved notes", NotesSrc: "", Keywords: "saved", KeywordsSrc: "" },
+      });
+
+    // server returns the refetched photo with every editable text field changed.
+    const server = () =>
+      new Photo({
+        UID: "ps6sg6be2lvl0yh7",
+        Title: "Server Title",
+        TitleSrc: "ollama",
+        Caption: "Server caption",
+        CaptionSrc: "ollama",
+        Details: {
+          Subject: "Server subject",
+          SubjectSrc: "manual",
+          Artist: "Server artist",
+          ArtistSrc: "manual",
+          Copyright: "Server copyright",
+          CopyrightSrc: "manual",
+          License: "Server license",
+          LicenseSrc: "manual",
+          Keywords: "server",
+          KeywordsSrc: "manual",
+          Notes: "Server notes",
+          NotesSrc: "manual",
+        },
+      });
+
+    it("updates fields without unsaved edits and records them as saved", () => {
+      const photo = saved();
+
+      photo.mergeUnchanged(server());
+
+      expect(photo.Title).toBe("Server Title");
+      expect(photo.TitleSrc).toBe("ollama");
+      expect(photo.Caption).toBe("Server caption");
+      expect(photo.CaptionSrc).toBe("ollama");
+      expect(photo.Details.Subject).toBe("Server subject");
+      expect(photo.Details.SubjectSrc).toBe("manual");
+      expect(photo.Details.Artist).toBe("Server artist");
+      expect(photo.Details.Copyright).toBe("Server copyright");
+      expect(photo.Details.License).toBe("Server license");
+      expect(photo.Details.Keywords).toBe("server");
+      expect(photo.Details.Notes).toBe("Server notes");
+      expect(photo.Details.NotesSrc).toBe("manual");
+      expect(photo.wasChanged()).toBe(false);
+    });
+
+    it("keeps unsaved edits of top-level and Details fields", () => {
+      const photo = saved();
+      photo.Caption = "Typed caption";
+      photo.Details.Subject = "Typed subject";
+
+      photo.mergeUnchanged(server());
+
+      expect(photo.Caption).toBe("Typed caption");
+      expect(photo.CaptionSrc).toBe("");
+      expect(photo.originalValue("Caption")).toBe("Saved caption");
+      expect(photo.Details.Subject).toBe("Typed subject");
+      expect(photo.Details.SubjectSrc).toBe("");
+      expect(photo.originalValue("Details").Subject).toBe("Saved subject");
+      expect(photo.Title).toBe("Server Title");
+      expect(photo.Details.Notes).toBe("Server notes");
+
+      // Saving sends the typed edits; the merged server values count as unchanged.
+      const values = photo.getValues(true);
+      expect(values.Caption).toBe("Typed caption");
+      expect(values.Title).toBeUndefined();
+      expect(values.Details.Subject).toBe("Typed subject");
+      expect(values.Details.Notes).toBe("Server notes");
+    });
+
+    it("skips fields the response does not contain", () => {
+      const photo = saved();
+
+      photo.mergeUnchanged({ Title: "Server Title", Details: { Notes: "Server notes" } });
+
+      expect(photo.Title).toBe("Server Title");
+      expect(photo.TitleSrc).toBe("auto");
+      expect(photo.Caption).toBe("Saved caption");
+      expect(photo.Details.Notes).toBe("Server notes");
+      expect(photo.Details.Subject).toBe("Saved subject");
+      expect(photo.wasChanged()).toBe(false);
+    });
+
+    it("is a no-op without values", () => {
+      const photo = saved();
+
+      photo.mergeUnchanged(null);
+
+      expect(photo.Title).toBe("Saved Title");
+      expect(photo.wasChanged()).toBe(false);
+    });
+
+    it("updates top-level fields when the server returns no Details", () => {
+      const photo = saved();
+
+      photo.mergeUnchanged({ Title: "Server Title", TitleSrc: "manual", Caption: "Server caption", CaptionSrc: "manual" });
+
+      expect(photo.Title).toBe("Server Title");
+      expect(photo.Details.Subject).toBe("Saved subject");
+    });
+  });
+
   it("trimInputs() is safe to call on a Photo without Details", () => {
     const photo = new Photo({ Title: " bare " });
     expect(() => photo.trimInputs()).not.toThrow();

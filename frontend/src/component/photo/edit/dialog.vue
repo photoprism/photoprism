@@ -214,14 +214,15 @@ export default {
       switch (type) {
         case ACTION_UPDATED:
           // photos.updated carries only UIDs; refetch the open photo through
-          // the scoped REST API to mirror Title/Caption edits made by other
-          // clients into the form.
+          // the scoped REST API to mirror text field changes made by other
+          // clients or background workers into fields without unsaved edits.
           if (data.entities.includes(this.model.UID)) {
             this.model
               .find(this.model.UID)
               .then((values) => {
-                if (values.Title) {
-                  this.model.setValues({ Title: values.Title, Caption: values.Caption }, true);
+                // Skip responses for another photo, e.g. if the user moved on while the request was pending.
+                if (values?.UID === this.model.UID) {
+                  this.model.mergeUnchanged(values);
                 }
               })
               .catch(() => {});

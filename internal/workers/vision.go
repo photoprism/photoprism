@@ -137,6 +137,10 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	defer mutex.VisionWorker.Stop()
 
+	// Notify clients about saved photos, including when the run is canceled.
+	events := event.NewEntityBatch("photos", event.EntityUpdated)
+	defer events.Flush()
+
 	requested := models
 	models = w.RunnableModels(models, runType)
 
@@ -206,6 +210,8 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 			return errors.New("vision: worker canceled")
 		}
 
+		events.FlushDue()
+
 		if done[photo.PhotoUID] {
 			continue
 		}
@@ -231,7 +237,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 		processed++
 
-		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
+		fileName := photoprism.ConfigFileName(w.conf, photo.FileRoot, photo.FileName)
 		file, fileErr := photoprism.NewMediaFile(fileName)
 
 		if fileErr != nil {
@@ -307,6 +313,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		if changed {
 			if saveErr := m.SaveVision(); saveErr == nil {
 				updated++
+				events.Add(m.PhotoUID)
 
 				// Save sidecar YAML backup if enabled. Writing it only after a successful
 				// save keeps the backup from describing metadata the database rejected.
@@ -322,6 +329,9 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 			return errors.New("vision: worker canceled")
 		}
 	}
+
+	// Publish the last batch before face recognition and the index updates, which can take minutes.
+	events.Flush()
 
 	elapsed := time.Since(start)
 
