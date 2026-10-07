@@ -1364,6 +1364,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("VISION_FILTER"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "onnx-provider",
+			Usage:   "execution `PROVIDER` for ONNX inference (" + onnx.ProviderUsageString() + "), falls back to the CPU when unavailable",
+			Value:   onnx.DefaultProvider.String(),
+			EnvVars: EnvVars("ONNX_PROVIDER"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "labels-model",
 			Usage:   "image classification `MODE` (auto, none)",
 			EnvVars: EnvVars("LABELS_MODEL"),
@@ -1375,12 +1381,6 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("NSFW_MODEL"),
 		},
 		DocDefault: string(nsfw.ModelAuto)}, {
-		Flag: &cli.StringFlag{
-			Name:    "onnx-provider",
-			Usage:   "execution `PROVIDER` for ONNX inference (" + onnx.ProviderUsageString() + "), falls back to the CPU when unavailable",
-			Value:   onnx.DefaultProvider.String(),
-			EnvVars: EnvVars("ONNX_PROVIDER"),
-		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model)",
