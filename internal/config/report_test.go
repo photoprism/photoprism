@@ -89,6 +89,32 @@ func TestConfig_disableClassificationReport(t *testing.T) {
 	assert.Equal(t, "true (deprecated, ignored)", c.disableClassificationReport())
 }
 
+// TestConfig_ReportFlagOrder pins the report rows that belong to a flag to the order flags.go
+// declares them, so "photoprism show config" stays in the order of the config options reference.
+func TestConfig_ReportFlagOrder(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	rows, _ := c.Report()
+
+	pos := make(map[string]int, len(Flags))
+
+	for i, flag := range Flags {
+		pos[flag.Name()] = i
+	}
+
+	last, lastName := -1, ""
+
+	for _, row := range rows {
+		i, ok := pos[row[0]]
+
+		if !ok {
+			continue
+		}
+
+		assert.Greaterf(t, i, last, "%s is reported after %s, but flags.go declares it first", row[0], lastName)
+		last, lastName = i, row[0]
+	}
+}
+
 func TestConfig_ReportServicesCIDROrder(t *testing.T) {
 	conf := NewConfig(CliTestContext())
 	rows, _ := conf.Report()

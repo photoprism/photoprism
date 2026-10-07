@@ -329,9 +329,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},
 		{"darktable-bin", c.DarktableBin()},
+		{"darktable-exclude", c.DarktableExclude()},
 		{"darktable-cache-path", c.DarktableCachePath()},
 		{"darktable-config-path", c.DarktableConfigPath()},
-		{"darktable-exclude", c.DarktableExclude()},
 		{"rawtherapee-bin", c.RawTherapeeBin()},
 		{"rawtherapee-exclude", c.RawTherapeeExclude()},
 		{"imagemagick-bin", c.ImageMagickBin()},
@@ -359,9 +359,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-key", maskedSecret(c.VisionKey())},
 		{"vision-schedule", c.VisionSchedule()},
 		{"vision-filter", c.VisionFilter()},
+		{"onnx-provider", c.OnnxProvider().String()},
 		{"labels-model", string(c.LabelModelSetting())},
 		{"nsfw-model", string(c.NSFWModelSetting())},
-		{"onnx-provider", c.OnnxProvider().String()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 	}...)
 
