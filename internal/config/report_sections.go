@@ -11,7 +11,7 @@ type ReportSection struct {
 var faceFlagsInfo = `!!! info ""
     Changing the face model requires running ` + "`photoprism faces migrate`" + `. Leaving the distance thresholds unset is recommended since they are calibrated for the configured face model. A range that fits one embedding model does not transfer to another. Higher values cluster more aggressively and produce more false positives. After changing any of the clustering parameters or after migration, run ` + "`photoprism faces update --force`" + `: it clusters what is unassigned and matches every face against the clusters again, so an automatically matched face may end up in a different cluster while a face that you assigned manually keeps its assignment.
 
-We recommend that only advanced users change the detector, model, and clustering parameters:`
+We recommend that only advanced users change the detector, model, or clustering parameters:`
 
 // OptionsReportSections is used to generate config options reports in ../commands/show_config_options.go.
 var OptionsReportSections = []ReportSection{
