@@ -118,8 +118,8 @@ export function chunkName(chunk) {
   return "chunk/[name].[hash].js";
 }
 
-// assetName returns the file name pattern of an asset. The MapLibre worker stays beside its shared
-// module, which it imports relatively, and the sphere viewer styles are named after their package.
+// assetName returns the file name pattern of an asset. The MapLibre worker goes into a directory named
+// after the package version, and the sphere viewer styles are named after their package.
 export function assetName(maplibreDir) {
   return (asset) => {
     const name = asset.names?.[0] || "";

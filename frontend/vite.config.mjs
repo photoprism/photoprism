@@ -109,7 +109,6 @@ export default defineConfig(async () => ({
     vuetify({ autoImport: true, styles: { configFile: "src/css/vuetify/settings.scss" } }),
     emitStatic([
       { source: path.join(root, "src/sw-scope-cleanup.js"), fileName: "sw-scope-cleanup.js", minify: !isDev },
-      { source: require.resolve("maplibre-gl/dist/maplibre-gl-shared.mjs"), fileName: `${maplibreDir}/maplibre-gl-shared.mjs` },
     ]),
     staticAssets(/^maplibre\//),
     flatManifest({ layers: LAYERS }),

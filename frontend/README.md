@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 6, 2026
+**Last Updated:** October 8, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -97,7 +97,7 @@ MapLibre GL JS 6 renders Places, lightbox mini-maps, and the location editor. It
 
 `src/common/map.js` probes WebGL2 and shares the lazy renderer import between concurrent map mounts. `src/common/maplibregl.js` uses namespace imports, configures the same-origin module worker, and preserves the language-label adapter's fluent `setStyle` contract. Arabic and bidirectional text use MapLibre's built-in shaping rather than a separate RTL plugin.
 
-The build emits `maplibre-gl-worker.mjs` and its sibling `maplibre-gl-shared.mjs` together under `maplibre/<package-version>/`. The version is read from the installed package, so the worker and its relative import stay aligned through upgrades. Both assets appear in the flat manifest and production precache. Keep the worker as a module asset; emitting it without its shared sibling leaves maps unable to load tiles.
+The build emits the self-contained `maplibre-gl-worker.mjs` under `maplibre/<package-version>/`. The version is read from the installed package, so a cached worker from an earlier release is never loaded by a newer bundle. The worker appears in the flat manifest and production precache; keep it as a module asset. Since MapLibre 6.13, `maplibre-gl-shared.mjs` is an empty file kept only for existing copy steps, so the build does not emit it.
 
 `component/map.vue` supplies missing style images through `setMissingStyleImageResolver`. Places waits for `GeoJSONSource.setData()` before reconciling markers. Verify style/language changes, clustering, marker clicks and dragging, globe/terrain controls, and the unavailable-WebGL2 path when updating the renderer.
 
