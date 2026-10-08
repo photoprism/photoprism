@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
@@ -1149,4 +1150,16 @@ func TestConfig_RootPathsAbsolute(t *testing.T) {
 	} {
 		assert.True(t, filepath.IsAbs(path), "%s returned %s", name, path)
 	}
+}
+
+func TestConfig_Propagate_OriginalsPath(t *testing.T) {
+	orig := entity.OriginalsPath
+	t.Cleanup(func() { entity.OriginalsPath = orig })
+
+	c := NewConfig(CliTestContext())
+	c.options.OriginalsPath = t.TempDir()
+	entity.OriginalsPath = ""
+	c.Propagate()
+	assert.Equal(t, c.OriginalsPath(), entity.OriginalsPath)
+	assert.True(t, filepath.IsAbs(entity.OriginalsPath))
 }

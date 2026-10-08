@@ -340,6 +340,7 @@ func (m *User) Create() (err error) {
 
 	if err == nil {
 		m.SaveRelated()
+		m.WarnExistingBasePath()
 	}
 
 	return err

@@ -475,6 +475,9 @@ func (c *Config) Propagate() {
 	// Set path for user assets.
 	entity.UsersPath = c.UsersPath()
 
+	// Set the originals folder in which the default base paths of new accounts are checked.
+	entity.OriginalsPath = c.OriginalsPath()
+
 	// Set the API preview default token (the download token is no longer stored per session). The
 	// placeholder is never registered, so a missing signing key rejects previews instead of admitting it.
 	if previewToken := c.PreviewToken(); previewToken != PreviewTokenPlaceholder {
