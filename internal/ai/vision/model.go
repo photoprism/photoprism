@@ -306,7 +306,7 @@ func (m *Model) warnKey() string {
 
 // warnModel records a model configuration warning in the system log.
 func warnModel(format string, args ...any) {
-	event.SystemWarn([]string{"vision", format}, args...)
+	event.SystemWarn([]string{"vision", "%s"}, fmt.Sprintf(format, args...))
 }
 
 // warnUnresolvedUri reports once per model that its service URI does not resolve.
