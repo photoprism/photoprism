@@ -14,7 +14,8 @@ call in a file that already has some still shows up. The baseline carries no lin
 keeps it from churning as code moves, so read the group a change touches rather than the count
 alone. The rule set is ours, so unlike a third-party linter the
 count moves only when this repository does. Run with -update after fixing sites to record the lower
-numbers, and -list to print every finding.
+numbers, and -list to print every finding. An update keeps the entries of directories it did not
+scan, such as edition repositories missing from a clone.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 */
@@ -75,7 +76,7 @@ func main() {
 		roots = defaultRoots
 	}
 
-	findings, err := check(roots)
+	findings, scanned, err := check(roots)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "check-audit-events: %s\n", err)
@@ -91,7 +92,14 @@ func main() {
 	keys := keysOf(findings)
 
 	if update {
-		if err = writeBaseline(keys); err != nil {
+		baseline, readErr := readBaseline()
+
+		if readErr != nil {
+			fmt.Fprintf(os.Stderr, "check-audit-events: %s\n", readErr)
+			os.Exit(2)
+		}
+
+		if err = writeBaseline(mergeUnscanned(keys, baseline, scanned)); err != nil {
 			fmt.Fprintf(os.Stderr, "check-audit-events: %s\n", err)
 			os.Exit(2)
 		}
@@ -170,8 +178,8 @@ func (f finding) first(findings []finding) bool {
 	return false
 }
 
-// check walks every root that exists and returns the findings, sorted by location.
-func check(roots []string) (findings []finding, err error) {
+// check walks every root that exists and returns the findings, sorted by location, and the roots it walked.
+func check(roots []string) (findings []finding, scanned []string, err error) {
 	for _, root := range roots {
 		if _, statErr := os.Stat(root); statErr != nil { //nolint:gosec // G703: roots come from the command line or the default list
 			continue
@@ -180,10 +188,11 @@ func check(roots []string) (findings []finding, err error) {
 		found, checkErr := checkRoot(root)
 
 		if checkErr != nil {
-			return nil, checkErr
+			return nil, nil, checkErr
 		}
 
 		findings = append(findings, found...)
+		scanned = append(scanned, root)
 	}
 
 	// Sorted by file and then numerically by line: comparing the rendered position
@@ -196,7 +205,40 @@ func check(roots []string) (findings []finding, err error) {
 		return findings[i].Line < findings[j].Line
 	})
 
-	return findings, nil
+	return findings, scanned, nil
+}
+
+// mergeUnscanned returns the counts with the baseline entries of files outside the scanned roots
+// added, so an update from a clone without the edition repositories does not drop their entries.
+func mergeUnscanned(keys, baseline map[string]int, scanned []string) map[string]int {
+	merged := make(map[string]int, len(keys)+len(baseline))
+
+	for key, n := range keys {
+		merged[key] = n
+	}
+
+	for key, n := range baseline {
+		file, _, _ := strings.Cut(key, "\t")
+
+		if !underRoot(file, scanned) {
+			merged[key] = n
+		}
+	}
+
+	return merged
+}
+
+// underRoot checks if the slash-separated file path is inside one of the roots.
+func underRoot(file string, roots []string) bool {
+	for _, root := range roots {
+		root = strings.TrimSuffix(filepath.ToSlash(filepath.Clean(root)), "/")
+
+		if root == "." || strings.HasPrefix(file, root+"/") {
+			return true
+		}
+	}
+
+	return false
 }
 
 // key identifies a call without its line, so moving code does not churn the baseline while a new
