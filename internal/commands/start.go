@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/internal/server"
@@ -52,6 +53,9 @@ var startFlags = []cli.Flag{
 
 // startAction starts the Web server and initializes the daemon.
 func startAction(ctx *cli.Context) error {
+	// Leave audit persistence to the event hub, so that requests do not wait for audit writes.
+	event.SetAuditRecorder(nil)
+
 	conf, err := InitConfig(ctx)
 
 	if err != nil {
