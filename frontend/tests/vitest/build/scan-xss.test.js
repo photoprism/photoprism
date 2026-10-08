@@ -85,6 +85,10 @@ describe("findUnreviewedSinks", () => {
     const lines = ['h("iframe", { srcdoc: html })', '<iframe v-bind="{ srcdoc: html }"></iframe>', "h('div', { innerHTML })", "const props = { id, innerHTML };"];
     expect(findUnreviewedSinks(lines.join("\n"))).toEqual([1, 2, 3, 4]);
   });
+  it("reports shorthand properties on lines of their own", () => {
+    const source = ["h(\"div\", {", "  id,", "  innerHTML,", "});", "const frame = {", "  srcdoc", "};", "const attrs = {", "  srcDoc }"].join("\n");
+    expect(findUnreviewedSinks(source)).toEqual([3, 6, 9]);
+  });
   it("ignores similar names and text properties", () => {
     const lines = ["const innerHTMLLength = 3;", "{ textContent: text }", "if (frame.srcdoc === html) {}", "parseFromStringValue = 1;", "const srcdocs = [];", 'frame.setAttribute("src", url);'];
     expect(findUnreviewedSinks(lines.join("\n"))).toEqual([]);

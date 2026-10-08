@@ -33,7 +33,7 @@ const DOM_SINKS = [
   new RegExp(`\\.${HTML_PROPS}\\s*(?:\\+|\\|\\||\\?\\?|&&)?=(?!=)`),
   new RegExp(`\\[\\s*["'\`]${HTML_PROPS}["'\`]\\s*\\]\\s*(?:\\+|\\|\\||\\?\\?|&&)?=(?!=)`),
   new RegExp(`(?:^|[\\s{,(])["'\`]?${HTML_PROPS}["'\`]?\\s*:`),
-  new RegExp(`[{,]\\s*${HTML_PROPS}\\s*[,}]`),
+  new RegExp(`(?:^|[{,])\\s*${HTML_PROPS}\\s*(?:[,}]|$)`),
   new RegExp(`setAttribute\\s*\\(\\s*["'\`]${SRCDOC}["'\`]`),
   /insertAdjacentHTML\s*\(/,
   /document\.write(?:ln)?\s*\(/,
