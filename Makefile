@@ -144,6 +144,7 @@ Checks (also run by lint):
   check-buildignore         Check that packages bundle exactly the listed models
   check-make-help           Check that advertised Makefile targets exist
   check-scripts-copy-mode   Check container script ownership and modes
+  check-sql-dumps           Check that SQL dumps are only in the expected directories
 
 Translations:
   gettext-extract          Extract the translation strings into the catalogs
@@ -1333,7 +1334,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-buildignore check-make-help check-scripts-copy-mode
+lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-buildignore check-make-help check-scripts-copy-mode check-sql-dumps
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1367,6 +1368,9 @@ check-buildignore:
 check-scripts-copy-mode:
 	$(info Checking that the dist scripts are copied with an explicit owner and mode...)
 	bash ./scripts/lint/check-scripts-copy-mode.sh
+check-sql-dumps:
+	$(info Checking that SQL dumps and database files are only in the expected directories...)
+	python3 ./scripts/lint/check-sql-dumps.py
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:
