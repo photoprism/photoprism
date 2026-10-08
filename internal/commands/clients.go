@@ -112,7 +112,6 @@ var ClientModFlags = []cli.Flag{
 		Name:    "role",
 		Aliases: []string{"r"},
 		Usage:   ClientRoleUsage,
-		Value:   acl.RoleClient.String(),
 	},
 	ScopeFlag(ClientAuthScope),
 	&cli.StringFlag{
