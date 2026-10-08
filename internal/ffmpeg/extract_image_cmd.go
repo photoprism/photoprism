@@ -26,42 +26,50 @@ func ExtractJpegImageCmd(videoName, imageName string, opt *encode.Options) *exec
 	//       see https://github.com/photoprism/photoprism/issues/4488.
 	// Unfortunately, this filter would render thumbnails of non-HDR videos too dark:
 	// "-vf", "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=gamma:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p",
-	// #nosec G204 -- paths and flags are created by the application, not user input.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-loglevel", "error",
 		"-y", "-strict", "-2", // support new video codecs
 		"-hwaccel", "none", // disable hardware acceleration
 		"-err_detect", "ignore_err", // ignore errors
 		"-ss", opt.SeekOffset, // open video at this position
-		"-i", videoName, // input video file name
+	}, encode.InputArgs(videoName)...)
+
+	args = append(args,
 		"-ss", opt.TimeOffset, // extract image at this position
 		// "-map", opt.MapVideo, "-an", "-sn", "-dn", // map streams (seems not required)
 		// "-skip_frame", "nokey", // skip non-keyframes
 		"-vf", "setparams=range=tv:color_primaries=bt709:color_trc=bt709:colorspace=bt709,scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=1,format=yuvj422p",
 		"-frames:v", "1", // extract one frame
+		"-update", "1", // write a single image, not a numbered sequence
 		imageName, // output image file name
 	)
+
+	// #nosec G204 -- paths and flags are created by the application, not user input.
+	return exec.Command(opt.Bin, args...)
 }
 
 // ExtractPngImageCmd extracts a PNG still image from the specified source video file.
 func ExtractPngImageCmd(videoName, imageName string, opt *encode.Options) *exec.Cmd {
-	// #nosec G204 -- paths and flags are created by the application, not user input.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-loglevel", "error",
 		"-y", "-strict", "-2", // support new video codecs
 		"-hwaccel", "none", // disable hardware acceleration
 		"-err_detect", "ignore_err", // ignore errors
 		"-ss", opt.SeekOffset, // open video at this position
-		"-i", videoName, // input video file name
+	}, encode.InputArgs(videoName)...)
+
+	args = append(args,
 		"-ss", opt.TimeOffset, // extract image at this position
 		// "-map", opt.MapVideo, "-an", "-sn", "-dn", // map streams (seems not required)
 		// "-skip_frame", "nokey", // skip non-keyframes
 		"-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=1",
 		"-frames:v", "1", // extract one frame
+		"-update", "1", // write a single image, not a numbered sequence
 		imageName, // output image file name
 	)
+
+	// #nosec G204 -- paths and flags are created by the application, not user input.
+	return exec.Command(opt.Bin, args...)
 }

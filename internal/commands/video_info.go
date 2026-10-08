@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -153,7 +154,7 @@ func videoIndexSummary(found search.Photo, file entity.File) map[string]any {
 
 // videoRunFFprobe executes ffprobe and returns parsed JSON plus raw output.
 func videoRunFFprobe(ffprobeBin, filePath string) (any, string, error) {
-	cmd := exec.Command(ffprobeBin, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filePath) //nolint:gosec // args are validated paths
+	cmd := exec.Command(ffprobeBin, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", "-format_whitelist", encode.InputFormatWhitelist(), filePath) //nolint:gosec // args are validated paths
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer

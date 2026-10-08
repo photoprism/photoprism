@@ -45,17 +45,21 @@ func DewarpFisheyeToJpegCmd(inputName, jpegName, filter string, opt *encode.Opti
 		filter = scaled.VideoFilter("")
 	}
 
-	// #nosec G204 -- paths and flags are created by the application, not user input.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-loglevel", "error",
 		"-y",
-		"-i", inputName, // input dual-fisheye image
+	}, encode.InputArgs(inputName)...)
+
+	args = append(args,
 		"-vf", filter, // dewarp to equirectangular
 		"-frames:v", "1", // write a single frame
+		"-update", "1", // write a single image, not a numbered sequence
 		jpegName, // output equirectangular JPEG
 	)
+
+	// #nosec G204 -- paths and flags are created by the application, not user input.
+	return exec.Command(opt.Bin, args...)
 }
 
 // DewarpDualFisheyePairToJpegCmd combines separate left and right lens frames and dewarps them to JPEG.
@@ -96,6 +100,7 @@ func dewarpLensesToJpegCmd(inputNames []string, lenses, jpegName string, fov, ro
 		"-filter_complex", fmt.Sprintf("%shstack=inputs=2:shortest=1,%s[v]", lenses, v360Filter),
 		"-map", "[v]",
 		"-frames:v", "1",
+		"-update", "1",
 		jpegName,
 	)
 
@@ -113,18 +118,22 @@ func DewarpStackedDualFisheyeToJpegCmd(inputName, jpegName string, fov, roll int
 	}
 	filter := fmt.Sprintf("[0:v:0]crop=iw:ih/2:0:0[top];[0:v:0]crop=iw:ih/2:0:ih/2[bottom];[top][bottom]hstack=inputs=2:shortest=1,%s[v]", v360Filter)
 
-	// #nosec G204 -- paths and flags are created by the application, not user input.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-loglevel", "error",
 		"-y",
-		"-i", inputName,
+	}, encode.InputArgs(inputName)...)
+
+	args = append(args,
 		"-filter_complex", filter,
 		"-map", "[v]",
 		"-frames:v", "1",
+		"-update", "1",
 		jpegName,
 	)
+
+	// #nosec G204 -- paths and flags are created by the application, not user input.
+	return exec.Command(opt.Bin, args...)
 }
 
 // DewarpDualFisheyePairToAvcCmd combines separate lens videos and encodes an equirectangular AVC derivative.

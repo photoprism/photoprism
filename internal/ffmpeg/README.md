@@ -1,6 +1,6 @@
 ## PhotoPrism — FFmpeg Integration
 
-**Last Updated:** October 4, 2026
+**Last Updated:** October 8, 2026
 
 ### Overview
 
@@ -39,7 +39,7 @@
 
 ### Package Layout (Code Map)
 
-- `encode/` — shared option structs, quality and preset helpers, default map/metadata flags, software AVC command builder.
+- `encode/` — shared option structs, quality and preset helpers, default map/metadata flags, software AVC command builder, and `InputArgs`, which every builder uses to open a source file.
 - `apple/`, `intel/`, `nvidia/`, `vaapi/`, `vulkan/`, `v4l/` — hardware-specific AVC command builders.
 - `remux.go` — container-only transfers with metadata copy and temp-file safety.
 - `transcode_cmd.go` — selects encoder, handles animated image inputs, and signals mutex usage.
@@ -58,6 +58,8 @@
 
 - Clamp size and quality via `NewVideoOptions` to `[1, 15360]` pixels and the defined quality bounds.
 - Remuxing respects `Options.Force`; without it existing outputs are preserved.
+- Input formats: `encode.InputArgs` reads JPEG and `.insp` sources as JPEG (`-f jpeg_pipe`), `.insv` and `.lrv` sources as MOV/MP4 (`-f mov`), and limits every other source to the demuxers in `encode.InputFormats` (`-format_whitelist`). A supported file type whose container is not in that list needs an entry there.
+- Commands that write one image pass `-update 1`, so the output name is used as given.
 - Metadata copying uses `-map_metadata` and `clean` sanitizers; only safe string fields (title, description, comment, author, creation_time) are added when set.
 - Hardware helpers expect the matching FFmpeg build and devices; callers select one at runtime with `PHOTOPRISM_FFMPEG_ENCODER`.
 

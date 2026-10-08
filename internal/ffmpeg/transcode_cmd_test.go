@@ -37,7 +37,7 @@ func TestTranscodeCmd(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Contains(t, r.String(), "bin/ffmpeg -hide_banner -y -strict -2 -i VID123.gif -ignore_unknown -pix_fmt yuv420p -vf scale='trunc(iw/2)*2:trunc(ih/2)*2' -f mp4 -movflags +faststart VID123.gif.avc")
+		assert.Contains(t, r.String(), "bin/ffmpeg -hide_banner -y -strict -2 "+testInputWhitelist+" -i VID123.gif -ignore_unknown -pix_fmt yuv420p -vf scale='trunc(iw/2)*2:trunc(ih/2)*2' -f mp4 -movflags +faststart VID123.gif.avc")
 	})
 	t.Run("VP9toAVC", func(t *testing.T) {
 		opt := encode.NewVideoOptions(ffmpegBin, encode.SoftwareAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
@@ -55,7 +55,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -i SRC -c:v libx264 -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset fast -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -max_muxing_queue_size 1024 -crf 25 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 "+testInputWhitelist+" -i SRC -c:v libx264 -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset fast -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -max_muxing_queue_size 1024 -crf 25 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// Run generated command to test software transcoding.
 		RunCommandTest(t, opt.Encoder, srcName, destName, cmd, true)
@@ -76,7 +76,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -init_hw_device vaapi=va -hwaccel vaapi -hwaccel_device va -filter_hw_device va -i SRC -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=nv12,hwupload -c:v h264_vaapi -map 0:v:0 -map 0:a:0? -ignore_unknown -qp 29 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -init_hw_device vaapi=va -hwaccel vaapi -hwaccel_device va -filter_hw_device va "+testInputWhitelist+" -i SRC -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=nv12,hwupload -c:v h264_vaapi -map 0:v:0 -map 0:a:0? -ignore_unknown -qp 29 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "vaapi" {
@@ -100,7 +100,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel qsv -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format qsv -i SRC -c:a aac -vf scale_qsv=w='if(gte(iw,ih), min(1500, iw), -1)':h='if(gte(iw,ih), -1, min(1500, ih))':format=nv12 -c:v h264_qsv -map 0:v:0 -map 0:a:0? -ignore_unknown -preset fast -global_quality 28 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel qsv -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format qsv "+testInputWhitelist+" -i SRC -c:a aac -vf scale_qsv=w='if(gte(iw,ih), min(1500, iw), -1)':h='if(gte(iw,ih), -1, min(1500, ih))':format=nv12 -c:v h264_qsv -map 0:v:0 -map 0:a:0? -ignore_unknown -preset fast -global_quality 28 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "intel" {
@@ -123,7 +123,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel qsv -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format qsv -i SRC -c:a aac -vf scale_qsv=w='if(gte(iw,ih), min(1500, iw), -1)':h='if(gte(iw,ih), -1, min(1500, ih))':format=nv12 -c:v h264_qsv -map 0:v:0 -map 0:a:0? -ignore_unknown -preset fast -global_quality 28 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel qsv -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format qsv "+testInputWhitelist+" -i SRC -c:a aac -vf scale_qsv=w='if(gte(iw,ih), min(1500, iw), -1)':h='if(gte(iw,ih), -1, min(1500, ih))':format=nv12 -c:v h264_qsv -map 0:v:0 -map 0:a:0? -ignore_unknown -preset fast -global_quality 28 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "intel" {
@@ -147,7 +147,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset p4 -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v vbr -cq 31 -b:v 0 -tune hq -profile:v high -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto "+testInputWhitelist+" -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset p4 -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v vbr -cq 31 -b:v 0 -tune hq -profile:v high -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "nvidia" {
@@ -170,7 +170,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset p4 -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v vbr -cq 31 -b:v 0 -tune hq -profile:v high -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel auto "+testInputWhitelist+" -i SRC -pix_fmt yuv420p -c:v h264_nvenc -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -preset p4 -pixel_format yuv420p -gpu any -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -rc:v vbr -cq 31 -b:v 0 -tune hq -profile:v high -level:v auto -coder:v 1 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "nvidia" {
@@ -193,7 +193,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -init_hw_device vulkan=vk -filter_hw_device vk -i SRC -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=nv12,hwupload -c:v h264_vulkan -map 0:v:0 -map 0:a:0? -ignore_unknown -qp 25 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -init_hw_device vulkan=vk -filter_hw_device vk "+testInputWhitelist+" -i SRC -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=nv12,hwupload -c:v h264_vulkan -map 0:v:0 -map 0:a:0? -ignore_unknown -qp 25 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a Vulkan device that advertises the video encode
 		// extensions (VK_KHR_video_encode_queue/h264); select it with PHOTOPRISM_FFMPEG_DEVICE if needed:
@@ -209,7 +209,7 @@ func TestTranscodeCmd(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Contains(t, r.String(), "ffmpeg -hide_banner -y -strict -2 -i VID123.mov -c:v h264_videotoolbox -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -profile high -level 51 -q:v 50 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 VID123.mov.avc")
+		assert.Contains(t, r.String(), "ffmpeg -hide_banner -y -strict -2 "+testInputWhitelist+" -i VID123.mov -c:v h264_videotoolbox -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -profile high -level 51 -q:v 50 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 VID123.mov.avc")
 	})
 	t.Run("Video4Linux", func(t *testing.T) {
 		opt := encode.NewVideoOptions("", encode.V4LAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
@@ -219,7 +219,7 @@ func TestTranscodeCmd(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Contains(t, r.String(), "ffmpeg -hide_banner -y -strict -2 -i VID123.mov -c:v h264_v4l2m2m -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -num_output_buffers 72 -num_capture_buffers 64 -max_muxing_queue_size 1024 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 VID123.mov.avc")
+		assert.Contains(t, r.String(), "ffmpeg -hide_banner -y -strict -2 "+testInputWhitelist+" -i VID123.mov -c:v h264_v4l2m2m -map 0:v:0 -map 0:a:0? -ignore_unknown -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=yuv420p -num_output_buffers 72 -num_capture_buffers 64 -max_muxing_queue_size 1024 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 VID123.mov.avc")
 	})
 }
 

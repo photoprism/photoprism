@@ -4,13 +4,13 @@ import "os/exec"
 
 // TranscodeToAvcCmd returns the default FFmpeg command for transcoding video files to MPEG-4 AVC.
 func TranscodeToAvcCmd(srcName, destName string, opt Options) *exec.Cmd {
-	// #nosec G204 -- command arguments are built from validated options and paths.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-y",
 		"-strict", "-2",
-		"-i", srcName,
+	}, InputArgs(srcName)...)
+
+	args = append(args,
 		"-c:v", opt.Encoder.String(),
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
@@ -25,4 +25,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt Options) *exec.Cmd {
 		"-map_metadata", opt.MapMetadata,
 		destName,
 	)
+
+	// #nosec G204 -- command arguments are built from validated options and paths.
+	return exec.Command(opt.Bin, args...)
 }

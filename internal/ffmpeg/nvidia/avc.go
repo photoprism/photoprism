@@ -9,12 +9,14 @@ import (
 // TranscodeToAvcCmd returns the FFmpeg command for hardware-accelerated transcoding to MPEG-4 AVC.
 func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 	// ffmpeg -hide_banner -h encoder=h264_nvenc
-	args := []string{
+	args := append([]string{
 		"-hide_banner",
 		"-y",
 		"-strict", "-2",
 		"-hwaccel", "auto",
-		"-i", srcName,
+	}, encode.InputArgs(srcName)...)
+
+	args = append(args,
 		"-pix_fmt", encode.FormatYUV420P.String(),
 		"-c:v", opt.Encoder.String(),
 		"-map", opt.MapVideo,
@@ -28,7 +30,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-rc:v", "vbr",
 		"-cq", opt.CqQuality(),
 		"-b:v", "0",
-	}
+	)
 
 	// The peak bitrate is a rate control target applied per frame at the nominal frame rate, not a hard cap.
 	if maxRate := opt.MaxRate(); maxRate != "" {

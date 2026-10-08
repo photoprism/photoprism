@@ -20,15 +20,15 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 	// encode.FormatNV12, so it must not be appended a second time.
 	videoFilter := opt.VideoFilter(encode.FormatNV12)
 
-	// #nosec G204 -- command arguments are built from validated options and paths.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-y",
 		"-strict", "-2",
 		"-init_hw_device", hwDevice,
 		"-filter_hw_device", "vk",
-		"-i", srcName,
+	}, encode.InputArgs(srcName)...)
+
+	args = append(args,
 		"-c:a", "aac",
 		"-vf", videoFilter,
 		"-c:v", opt.Encoder.String(),
@@ -41,4 +41,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-map_metadata", opt.MapMetadata,
 		destName,
 	)
+
+	// #nosec G204 -- command arguments are built from validated options and paths.
+	return exec.Command(opt.Bin, args...)
 }

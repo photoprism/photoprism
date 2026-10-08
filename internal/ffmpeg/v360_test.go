@@ -36,7 +36,7 @@ func TestDewarpDualFisheyeToJpegCmd(t *testing.T) {
 	cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 	cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-	assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -loglevel error -y -i SRC -vf "+V360DualFisheyeToEquirect(190, 180)+" -frames:v 1 DEST", cmdStr)
+	assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -loglevel error -y -f jpeg_pipe -i SRC -vf "+V360DualFisheyeToEquirect(190, 180)+" -frames:v 1 -update 1 DEST", cmdStr)
 }
 
 // Negative: ffmpeg binary is missing; command execution should error immediately.
@@ -57,21 +57,23 @@ func TestDewarpDualFisheyePairToJpegCmd(t *testing.T) {
 
 	assert.Contains(t, cmdStr, "-f mov -i LEFT -f mov -i RIGHT")
 	assert.Contains(t, cmdStr, "[0:v:0][1:v:0]hstack=inputs=2:shortest=1,"+V360DualFisheyeToEquirect(204, 180)+"[v]")
-	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 DEST")
+	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 -update 1 DEST")
 }
 
 // TestDewarpStackedDualFisheyeToJpegCmd verifies vertical lens splitting and horizontal stacking.
 func TestDewarpStackedDualFisheyeToJpegCmd(t *testing.T) {
 	opt := &encode.Options{Bin: "/usr/bin/ffmpeg", SizeLimit: 15360}
-	cmd := DewarpStackedDualFisheyeToJpegCmd("SOURCE", "DEST", 204, 180, opt)
+	cmd := DewarpStackedDualFisheyeToJpegCmd("SOURCE.jpg", "DEST", 204, 180, opt)
 	cmdStr := cmd.String()
+
+	assert.Contains(t, cmdStr, "-y -f jpeg_pipe -i SOURCE.jpg -filter_complex")
 
 	assert.Contains(t, cmdStr, "[0:v:0]crop=iw:ih/2:0:0[top]")
 	assert.Contains(t, cmdStr, "[0:v:0]crop=iw:ih/2:0:ih/2[bottom]")
 	assert.Contains(t, cmdStr, "[top][bottom]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 	assert.Contains(t, cmdStr, "roll=180")
 	assert.Contains(t, cmdStr, "min(15360, iw)")
-	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 DEST")
+	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 -update 1 DEST")
 }
 
 // TestDewarpDualFisheyePairToAvcCmd verifies video, audio, and metadata mapping for paired lenses.
@@ -98,7 +100,7 @@ func TestDewarpDualStreamToJpegCmd(t *testing.T) {
 	assert.NotContains(t, cmdStr, "-i SOURCE -i")
 	assert.Contains(t, cmdStr, "[0:v:1][0:v:0]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 	assert.Contains(t, cmdStr, "min(15360, iw)")
-	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 DEST")
+	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 -update 1 DEST")
 }
 
 // TestDewarpDualStreamToAvcCmd verifies video, audio, and metadata mapping for two streams in one input.

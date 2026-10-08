@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -321,8 +322,9 @@ func videoTrimCmd(ffmpegBin, srcName, destName string, start, duration time.Dura
 		args = append(args, "-ss", videoFFmpegSeconds(start))
 	}
 
+	args = append(args, encode.InputArgs(srcName)...)
+
 	args = append(args,
-		"-i", srcName,
 		"-t", videoFFmpegSeconds(duration),
 		"-map", "0",
 		"-dn",
