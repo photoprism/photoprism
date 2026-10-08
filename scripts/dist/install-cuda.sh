@@ -263,7 +263,8 @@ mkdir -p "${transaction_dir}/new" "${transaction_dir}/previous"
 install_names=()
 
 # prepare_libraries stages the full set and preserves existing files and symlinks.
-# Snapshots share old inodes; only staged replacements receive permission changes.
+# Snapshots share old inodes; only staged replacements receive permission changes, and
+# they are owned by the installing user rather than the owner stored in the package.
 prepare_libraries() {
   local file name target staged
 
@@ -282,7 +283,7 @@ prepare_libraries() {
       return 1
     fi
 
-    cp -a -- "${file}" "${staged}" || return 1
+    cp -a --no-preserve=ownership -- "${file}" "${staged}" || return 1
 
     if [[ -f "${staged}" && ! -L "${staged}" ]]; then
       chmod 0644 "${staged}" || return 1

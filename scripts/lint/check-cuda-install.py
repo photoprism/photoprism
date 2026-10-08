@@ -88,6 +88,9 @@ else:
 
     if command == "cp":
         kind = "backup" if "--link" in args else "copy"
+        if kind == "copy" and target.parent.name == "new":
+            with (base / "copies.jsonl").open("a") as log:
+                log.write(json.dumps(args) + "\n")
         if count(kind) == 2 and mode == kind:
             sys.exit(1)
     elif command == "chmod" and target.parent.name == "new":
@@ -222,6 +225,10 @@ class CudaInstallTest(unittest.TestCase):
             self.assertEqual(0o644, stat.S_IMODE(path.stat().st_mode))
             self.assertEqual(path.name, os.readlink(self.output / (name + ".so")))
         self.assertEqual([], list(self.output.glob(".cuda-*")))
+        copies = [json.loads(line) for line in (self.base / "copies.jsonl").read_text().splitlines()]
+        self.assertTrue(copies)
+        for args in copies:
+            self.assertIn("--no-preserve=ownership", args)
         self.assertEqual("leave this alone", self.note.read_text())
         self.assertTrue((self.base / "ldconfig.called").exists())
         self.assertEqual(4, len(PACKAGES))
