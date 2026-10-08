@@ -233,7 +233,7 @@ func underRoot(file string, roots []string) bool {
 	for _, root := range roots {
 		root = strings.TrimSuffix(filepath.ToSlash(filepath.Clean(root)), "/")
 
-		if root == "." || strings.HasPrefix(file, root+"/") {
+		if root == "." || file == root || strings.HasPrefix(file, root+"/") {
 			return true
 		}
 	}
