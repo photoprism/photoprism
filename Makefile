@@ -143,6 +143,7 @@ Checks (also run by lint):
   check-cuda-install        Check CUDA installation recovery without a GPU
   check-buildignore         Check that packages bundle exactly the listed models
   check-make-help           Check that advertised Makefile targets exist
+  check-migrations          Check that generated migration files match their SQL
   check-scripts-copy-mode   Check container script ownership and modes
   check-sql-dumps           Check that SQL dumps are only in the expected directories
 
@@ -1335,7 +1336,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-buildignore check-make-help check-scripts-copy-mode check-sql-dumps
+lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-buildignore check-make-help check-migrations check-scripts-copy-mode check-sql-dumps
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1360,6 +1361,9 @@ check-libheif-install:
 check-cuda-install:
 	$(info Checking CUDA installation and recovery...)
 	python3 ./scripts/lint/check-cuda-install.py
+check-migrations:
+	$(info Checking that the generated migration files match their SQL sources...)
+	go test ./internal/entity/migrate -run '^TestGeneratedDialects$$' -count=1
 check-make-help:
 	$(info Checking that "make help" only advertises existing targets...)
 	bash ./scripts/lint/check-make-help.sh

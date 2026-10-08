@@ -1,12 +1,12 @@
 # Migration Package Guidelines
 
-**Last Updated:** August 18, 2026
+**Last Updated:** October 8, 2026
 
 This file applies to `internal/entity/migrate/`. Read [`README.md`](README.md) here for the runtime flow, retry behavior, and CLI troubleshooting commands.
 
 ## Editing Migrations
 
-- Add or change SQL in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/); do not hand-edit the generated [`dialect_mysql.go`](dialect_mysql.go) or [`dialect_sqlite3.go`](dialect_sqlite3.go) files.
+- Add or change SQL in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/); never hand-edit the generated [`dialect_mysql.go`](dialect_mysql.go) or [`dialect_sqlite3.go`](dialect_sqlite3.go) files, not even to add a comment. `TestGeneratedDialects` (also `make check-migrations`, part of `make lint`) fails when they differ from what the SQL files generate. Put the reasoning for a migration in the commit message or the specs, since generated files cannot carry it.
 - Reuse the same timestamp-based migration ID across dialects for the same logical change.
 - Use `.pre.sql` only when the SQL must run before GORM `AutoMigrate(...)`, typically for renames or shape changes that the ORM must see afterward.
 - Keep migrations idempotent when possible with `IF EXISTS`, `IF NOT EXISTS`, or safe update conditions. Failed migrations are recorded once and then skipped on normal startup, so noisy or brittle SQL creates persistent operator friction until someone retries it manually.
@@ -15,7 +15,7 @@ This file applies to `internal/entity/migrate/`. Read [`README.md`](README.md) h
 
 ## Generation & Verification
 
-- From the repository root, after changing migration SQL, run `go generate ./internal/entity/migrate`.
+- From the repository root, after changing migration SQL, run `go generate ./internal/entity/migrate`. The parsing and rendering live in [`source.go`](source.go) (`DialectSource`, `DialectCode`), which [`generate.go`](generate.go) and the drift test share. `generate.go` compiles this package, so after a merge conflict in a generated file, take either side first, then regenerate.
 - After Go edits in this package, run `make fmt-go` from the repository root.
 - Verify the package with `go test ./internal/entity/migrate -count=1`.
 - When a change affects operator workflows, also verify the CLI help and status paths with `./photoprism migrations --help`, `./photoprism migrations ls --help`, and `./photoprism migrations run --help`.
