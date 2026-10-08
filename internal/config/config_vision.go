@@ -619,7 +619,7 @@ func visionKeyWarnings(key string, incoming, outgoing bool) (warnings []string) 
 
 	stripped := incoming && header.ID(key) != key
 
-	if sent := strings.TrimSpace(os.ExpandEnv(key)); !stripped && outgoing && header.ID(sent) != sent {
+	if sent := strings.TrimSpace(vision.ExpandEnv(key)); !stripped && outgoing && header.ID(sent) != sent {
 		stripped = true
 	}
 

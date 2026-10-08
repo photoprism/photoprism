@@ -411,7 +411,7 @@ func (m *Model) EndpointKey() (key string) {
 
 	ensureEnv()
 
-	return strings.TrimSpace(os.ExpandEnv(ServiceKey))
+	return strings.TrimSpace(expandEnv(ServiceKey))
 }
 
 // EndpointFileScheme returns the endpoint API request file scheme type. Nil

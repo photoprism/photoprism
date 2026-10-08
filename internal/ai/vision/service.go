@@ -2,7 +2,6 @@ package vision
 
 import (
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/http/scheme"
@@ -122,7 +121,7 @@ func (m *Service) EndpointKey() string {
 
 	ensureEnv()
 
-	return strings.TrimSpace(os.ExpandEnv(m.Key))
+	return strings.TrimSpace(expandEnv(m.Key))
 }
 
 // EndpointOrg returns the organization identifier for the endpoint, if any.
@@ -133,7 +132,7 @@ func (m *Service) EndpointOrg() string {
 
 	ensureEnv()
 
-	return strings.TrimSpace(os.ExpandEnv(m.Org))
+	return strings.TrimSpace(expandEnv(m.Org))
 }
 
 // EndpointProject returns the project identifier for the endpoint, if any.
@@ -144,7 +143,7 @@ func (m *Service) EndpointProject() string {
 
 	ensureEnv()
 
-	return strings.TrimSpace(os.ExpandEnv(m.Project))
+	return strings.TrimSpace(expandEnv(m.Project))
 }
 
 // EndpointTier returns the optional service tier for the endpoint, if any.
@@ -155,7 +154,7 @@ func (m *Service) EndpointTier() string {
 
 	ensureEnv()
 
-	return strings.TrimSpace(os.ExpandEnv(m.Tier))
+	return strings.TrimSpace(expandEnv(m.Tier))
 }
 
 // EndpointThink returns the optional thinking/reasoning setting for the endpoint, if any.
@@ -166,14 +165,14 @@ func (m *Service) EndpointThink() string {
 
 	ensureEnv()
 
-	return strings.TrimSpace(os.ExpandEnv(m.Think))
+	return strings.TrimSpace(expandEnv(m.Think))
 }
 
 // BasicAuth returns the username and password for basic authentication.
 func (m *Service) BasicAuth() (username, password string) {
 	ensureEnv()
-	username = strings.TrimSpace(os.ExpandEnv(m.Username))
-	password = strings.TrimSpace(os.ExpandEnv(m.Password))
+	username = strings.TrimSpace(expandEnv(m.Username))
+	password = strings.TrimSpace(expandEnv(m.Password))
 	return username, password
 }
 

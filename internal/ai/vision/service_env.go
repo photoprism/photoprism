@@ -39,10 +39,10 @@ func expandEnvValues(s string, suffixes []string, fn func(string) string) (expan
 			refused = append(refused, name)
 			return ""
 		} else if fn != nil {
-			return fn(os.Getenv(name))
+			return fn(getEnv(name))
 		}
 
-		return os.Getenv(name)
+		return getEnv(name)
 	})
 
 	return expanded, refused
@@ -180,7 +180,7 @@ func warnRefusedEnv(field, value string, refused []string, suffixes []string) {
 			continue
 		}
 
-		if _, set := os.LookupEnv(name); set && envNameValid(name) {
+		if _, set := lookupEnv(name); set && envNameValid(name) {
 			warnModel("%s does not expand %s, as only variables ending in %s are expanded there",
 				field, clean.Log(name), txt.JoinOr(suffixes))
 		} else {
