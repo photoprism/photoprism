@@ -469,28 +469,29 @@ codex-skills:
 	else \
 	  echo "No specs/.agents/skills directory found, skipping."; \
 	fi
-	@if [ -d "specs/.agents/agents" ]; then \
-	  echo "Linking Codex agent roles from specs/.agents/agents..."; \
-	  install -d -m 755 -- ".codex/agents"; \
-	  for link in .codex/agents/*.toml; do \
-	    [ -L "$$link" ] || continue; \
-	    target=$$(readlink "$$link"); \
-	    case "$$target" in \
-	      ../../specs/.agents/agents/*.toml) \
-	        name=$$(basename "$$link"); \
-	        [ -f "specs/.agents/agents/$$name" ] || rm -- "$$link"; \
-	        ;; \
-	    esac; \
+	@set -e; if [ -d "specs/.agents/agents" ]; then \
+	  echo "Installing Codex agent roles from specs/.agents/agents..."; \
+	  install -d -m 755 -- ".codex/agents" ".codex/.managed-agents"; \
+	  for dest in .codex/agents/*.toml; do \
+	    name=$$(basename "$$dest"); \
+	    if [ -L "$$dest" ]; then \
+	      target=$$(readlink "$$dest"); \
+	      case "$$target" in \
+	        ../../specs/.agents/agents/"$$name") rm -- "$$dest" ;; \
+	      esac; \
+	    elif [ -f ".codex/.managed-agents/$$name" ] && [ ! -f "specs/.agents/agents/$$name" ]; then \
+	      rm -f -- "$$dest" ".codex/.managed-agents/$$name"; \
+	    fi; \
 	  done; \
 	  for src in specs/.agents/agents/*.toml; do \
 	    [ -f "$$src" ] || continue; \
 	    name=$$(basename "$$src"); \
-	    link=".codex/agents/$$name"; \
-	    target="../../specs/.agents/agents/$$name"; \
-	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
-	      ln -sfn "$$target" "$$link"; \
+	    dest=".codex/agents/$$name"; \
+	    if [ -L "$$dest" ] || { [ -e "$$dest" ] && [ ! -f ".codex/.managed-agents/$$name" ]; }; then \
+	      echo "$$dest exists and is not managed, skipping"; \
 	    else \
-	      echo "$$link exists and is not a symlink, skipping"; \
+	      install -m 644 -- "$$src" "$$dest"; \
+	      touch -- ".codex/.managed-agents/$$name"; \
 	    fi; \
 	  done; \
 	else \
