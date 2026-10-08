@@ -123,15 +123,6 @@ func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
 	}
 }
 
-// LdapUser creates a new LDAP user entity.
-func LdapUser(username, dn string) User {
-	return User{
-		UserName:     clean.Username(username),
-		AuthID:       dn,
-		AuthProvider: authn.ProviderLDAP.String(),
-	}
-}
-
 // FindUser returns the matching user or nil if it was not found.
 func FindUser(find User) *User {
 	m := &User{}

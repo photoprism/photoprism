@@ -134,11 +134,6 @@ func TestOidcUser(t *testing.T) {
 	})
 }
 
-func TestLdapUser(t *testing.T) {
-	m := LdapUser("user-ldap", "ldap@test.com")
-	assert.Equal(t, "ldap", m.AuthProvider)
-}
-
 func TestFindLocalUser(t *testing.T) {
 	t.Run("Admin", func(t *testing.T) {
 		m := FindLocalUser("admin")
