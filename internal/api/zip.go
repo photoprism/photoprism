@@ -142,6 +142,16 @@ func ZipCreate(router *gin.RouterGroup) {
 		// Arm the periodic sweep.
 		mutex.TempArchives.Store(true)
 
+		// An archive that is not completed is closed and removed on every way out.
+		completed := false
+
+		defer func() {
+			if !completed {
+				_ = newZipFile.Close()
+				_ = os.Remove(zipFileName)
+			}
+		}()
+
 		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
 
@@ -192,6 +202,8 @@ func ZipCreate(router *gin.RouterGroup) {
 			Error(c, http.StatusInternalServerError, ferr, i18n.ErrZipFailed)
 			return
 		}
+
+		completed = true
 
 		elapsed := int(time.Since(start).Seconds())
 

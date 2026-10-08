@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +20,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -61,6 +65,41 @@ func TestZip(t *testing.T) {
 	t.Run("ErrNotFound", func(t *testing.T) {
 		response := PerformRequest(app, "GET", "/api/v1/zip/xxx?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+	t.Run("FailedArchiveRemoved", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("file modes do not apply to root")
+		}
+
+		resetZipDownloadFixtures(t)
+
+		// listArchives returns the names of the archives in the zip folder.
+		zipPath := filepath.Join(conf.TempPath(), fs.ZipDir)
+		listArchives := func(t *testing.T) []string {
+			t.Helper()
+			entries, err := os.ReadDir(zipPath)
+			if os.IsNotExist(err) {
+				return nil
+			}
+			require.NoError(t, err)
+			names := make([]string, 0, len(entries))
+			for _, entry := range entries {
+				names = append(names, entry.Name())
+			}
+			return names
+		}
+
+		before := listArchives(t)
+
+		fileName := photoprism.FileName(entity.RootOriginals, "Germany/bridge.jpg")
+		require.NoFileExists(t, fileName)
+		require.NoError(t, os.MkdirAll(filepath.Dir(fileName), fs.ModeDir))
+		require.NoError(t, os.WriteFile(fileName, []byte("unreadable"), 0o000))
+		t.Cleanup(func() { _ = os.Remove(fileName) })
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/zip", `{"photos": ["ps6sg6be2lvl0y11"]}`)
+		assert.Equal(t, http.StatusInternalServerError, r.Code)
+		assert.Subset(t, before, listArchives(t), "no archive may be left after a failed request")
 	})
 }
 
