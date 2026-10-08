@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { findUnreviewedSinks, findUnreviewedVHtml, listFiles, scan } from "../../../scripts/scan-xss.mjs";
+import { defaultDirs, findUnreviewedSinks, findUnreviewedVHtml, listFiles, scan } from "../../../scripts/scan-xss.mjs";
 
 const script = path.resolve(import.meta.dirname, "../../../scripts/scan-xss.mjs");
 const note = "<!-- eslint-disable-next-line vue/no-v-html -- value is sanitized -->";
@@ -45,6 +45,10 @@ describe("findUnreviewedVHtml", () => {
     const lines = [`<div v-html='html'></div>`, `<div v-html = "html"></div>`, `<div :innerHTML="html"></div>`, `<div v-bind:innerHTML="html"></div>`, `<div :innerHTML.prop="html"></div>`, `<div :outerHTML="html"></div>`];
     expect(findUnreviewedVHtml(lines.join("\n"))).toEqual([1, 2, 3, 4, 5, 6]);
   });
+  it("reports srcdoc bindings", () => {
+    const lines = [`<iframe :srcdoc="html"></iframe>`, `<iframe v-bind:srcdoc="html"></iframe>`, `<iframe :srcdoc.prop="html"></iframe>`, `<iframe v-bind:srcdoc.prop="html"></iframe>`, `<iframe :srcDoc="html"></iframe>`];
+    expect(findUnreviewedVHtml(lines.join("\n"))).toEqual([1, 2, 3, 4, 5]);
+  });
   it("ignores mentions without a binding", () => {
     expect(findUnreviewedVHtml(`// v-html fields like caption and notes`)).toEqual([]);
   });
@@ -68,6 +72,22 @@ describe("findUnreviewedSinks", () => {
   });
   it("ignores text assignments", () => {
     expect(findUnreviewedSinks("el.textContent = text;")).toEqual([]);
+  });
+  it("reports HTML properties in objects", () => {
+    const lines = ['<div v-bind="{ innerHTML: html }"></div>', 'h("div", { innerHTML: html })', "Object.assign(el, {outerHTML: html})", 'const props = { "innerHTML": html };', "  innerHTML: html,"];
+    expect(findUnreviewedSinks(lines.join("\n"))).toEqual([1, 2, 3, 4, 5]);
+  });
+  it("reports srcdoc assignments and parse calls", () => {
+    const lines = ["frame.srcdoc = html;", "range.createContextualFragment(html);", "el.setHTMLUnsafe(html);", "Document.parseHTMLUnsafe(html);", 'new DOMParser().parseFromString(html, "text/html");', "frame.srcdoc += html;", "frame.srcdoc ||= html;", 'frame["srcdoc"] = html;', 'frame.setAttribute("srcdoc", html);', "frame.setAttribute('srcDoc', html);", "frame.srcDoc = html;"];
+    expect(findUnreviewedSinks(lines.join("\n"))).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  });
+  it("reports srcdoc properties and shorthand properties in objects", () => {
+    const lines = ['h("iframe", { srcdoc: html })', '<iframe v-bind="{ srcdoc: html }"></iframe>', "h('div', { innerHTML })", "const props = { id, innerHTML };"];
+    expect(findUnreviewedSinks(lines.join("\n"))).toEqual([1, 2, 3, 4]);
+  });
+  it("ignores similar names and text properties", () => {
+    const lines = ["const innerHTMLLength = 3;", "{ textContent: text }", "if (frame.srcdoc === html) {}", "parseFromStringValue = 1;", "const srcdocs = [];", 'frame.setAttribute("src", url);'];
+    expect(findUnreviewedSinks(lines.join("\n"))).toEqual([]);
   });
 });
 
@@ -109,7 +129,33 @@ describe("listFiles, scan, and the command", () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("OK:");
   });
-  it("finds nothing in the application sources", () => {
-    expect(scan([path.resolve(import.meta.dirname, "../../../src")])).toEqual([]);
+  it("skips test and dependency directories", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "scan-xss-skip-"));
+
+    try {
+      for (const sub of ["tests", "node_modules", "page"]) {
+        fs.mkdirSync(path.join(root, sub));
+        fs.writeFileSync(path.join(root, sub, "x.js"), "el.innerHTML = html;\n");
+      }
+
+      expect(listFiles(root).map((f) => path.relative(root, f))).toEqual([path.join("page", "x.js")]);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+  it("includes the edition overlays that exist", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "scan-xss-overlays-"));
+
+    try {
+      fs.mkdirSync(path.join(root, "frontend", "src"), { recursive: true });
+      fs.mkdirSync(path.join(root, "pro", "frontend"), { recursive: true });
+
+      expect(defaultDirs(path.join(root, "frontend"))).toEqual([path.join(root, "frontend", "src"), path.join(root, "pro", "frontend")]);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+  it("finds nothing in the application sources and edition overlays", () => {
+    expect(scan(defaultDirs(path.resolve(import.meta.dirname, "../../..")))).toEqual([]);
   });
 });
