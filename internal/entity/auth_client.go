@@ -798,9 +798,13 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 		m.ClientUID = id
 	}
 
-	// Set values from form.
+	// Set values from form; an empty role keeps the current one.
 	m.SetName(frm.Name())
-	m.SetRole(frm.Role())
+
+	if role := frm.Role(); role != "" {
+		m.SetRole(role)
+	}
+
 	m.SetProvider(frm.Provider())
 	m.SetMethod(frm.Method())
 	m.SetScope(frm.Scope())

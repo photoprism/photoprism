@@ -782,6 +782,15 @@ func TestClient_SetFormValues_Role(t *testing.T) {
 		assert.Equal(t, "client", c.ClientRole)
 		assert.True(t, c.HasRole(acl.RoleClient))
 	})
+	t.Run("EmptyRoleKeepsCurrent", func(t *testing.T) {
+		m := Client{ClientName: "KeepRole", ClientUID: "cs5cpu17n6gj9r09", ClientRole: "instance"}
+
+		c := m.SetFormValues(form.Client{ClientName: "KeepRoleRenamed"})
+
+		assert.Equal(t, "KeepRoleRenamed", c.ClientName)
+		assert.Equal(t, "instance", c.ClientRole)
+		assert.True(t, c.HasRole(acl.RoleInstance))
+	})
 	t.Run("ChangeRoleFromClientToAdmin", func(t *testing.T) {
 		m := NewClient()
 		m.ClientName = "ChangeRole"

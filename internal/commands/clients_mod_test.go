@@ -96,7 +96,27 @@ func TestClientsModCommand_ModRoleScopeLimits(t *testing.T) {
 	assert.Contains(t, out1, "AuthTokens   │ 3")
 }
 
+func TestClientsModCommand_ModWithoutRole(t *testing.T) {
+	_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--role=portal", "cs7pvt5h8rw9aaqj"})
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_, _ = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=client", "cs7pvt5h8rw9aaqj"})
+	})
+
+	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--expires=900", "cs7pvt5h8rw9aaqj"})
+	require.NoError(t, err)
+
+	out, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
+	require.NoError(t, err)
+	assert.Contains(t, out, "ClientRole   │ \"portal\"")
+	assert.Contains(t, out, "AuthExpires  │ 900")
+}
+
 func TestClientsModCommand_ModRoleToNoneAndEmpty(t *testing.T) {
+	t.Cleanup(func() {
+		_, _ = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=client", "cs7pvt5h8rw9aaqj"})
+	})
+
 	// Set to explicit none
 	_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--role=none", "cs7pvt5h8rw9aaqj"})
 	assert.NoError(t, err)
@@ -106,15 +126,13 @@ func TestClientsModCommand_ModRoleToNoneAndEmpty(t *testing.T) {
 	assert.Contains(t, out1, "ClientRole   │ \"\"")
 
 	// Set to explicit empty string (treated as none)
+	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=client", "cs7pvt5h8rw9aaqj"})
+	assert.NoError(t, err)
 	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=", "cs7pvt5h8rw9aaqj"})
 	assert.NoError(t, err)
 	out2, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 	assert.NoError(t, err)
 	assert.Contains(t, out2, "ClientRole   │ \"\"")
-
-	// Restore to client for other tests
-	_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=client", "cs7pvt5h8rw9aaqj"})
-	assert.NoError(t, err)
 }
 
 // newDeletedTestClient creates and deletes a client, purges it when the test ends, and returns its UID.

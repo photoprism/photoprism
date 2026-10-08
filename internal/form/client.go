@@ -114,8 +114,11 @@ func ModClientFromCli(ctx *cli.Context) Client {
 		f.ClientName = clean.Name(ctx.String("name"))
 	}
 
+	// An explicitly empty role selects none, since an empty form value keeps the current role.
 	if ctx.IsSet("role") {
-		f.ClientRole = clean.Name(ctx.String("role"))
+		if f.ClientRole = clean.Name(ctx.String("role")); clean.Role(f.ClientRole) == "" {
+			f.ClientRole = acl.RoleAliasNone
+		}
 	}
 
 	if ctx.IsSet("provider") {
