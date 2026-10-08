@@ -24,7 +24,7 @@ func usersListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
 
-		cols := []string{"UID", "Username", "Role", "Authentication", "Super Admin", "Web Login", "WebDAV"}
+		cols := []string{"UID", "Username", "Email", "Role", "Authentication", "Super Admin", "Web Login", "WebDAV"}
 
 		if ctx.Bool("login") {
 			cols = append(cols, "Last Login")
@@ -59,6 +59,7 @@ func usersListAction(ctx *cli.Context) error {
 			rows[i] = []string{
 				user.GetUID(),
 				user.Username(),
+				user.Email(),
 				user.AclRole().Pretty(),
 				user.AuthInfo(),
 				report.Bool(user.SuperAdmin, report.Yes, report.No),

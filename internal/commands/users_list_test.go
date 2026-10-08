@@ -65,7 +65,8 @@ func TestUsersListCommand(t *testing.T) {
 		// Check command output for plausibility.
 		// t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "UID;Username;Role;Authentication;Super Admin;Web Login;")
+		assert.Contains(t, output, "UID;Username;Email;Role;Authentication;Super Admin;Web Login;")
+		assert.Contains(t, output, "friend@example.com")
 		assert.Contains(t, output, "friend")
 		assert.Contains(t, output, "uqxqg7i1kperxvu7")
 		assert.NotContains(t, output, "bob")
