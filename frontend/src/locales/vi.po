@@ -51,10 +51,18 @@ msgstr "Đã tìm thấy %{n} nhãn"
 msgid "%{n} people found"
 msgstr "Đã tìm thấy %{n} người"
 
+#: src/page/discover/past.vue:290
+msgid "%{n} pictures"
+msgstr ""
+
 #: src/page/album/photos.vue:395 src/page/album/photos.vue:586
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "Đã tìm thấy %{n} ảnh"
+
+#: src/page/discover/past.vue:282
+msgid "%{n} years ago"
+msgstr ""
 
 #: src/common/form.js:291 src/common/form.js:296
 #: src/component/input/chip-selector.vue:277
@@ -71,6 +79,14 @@ msgstr "%{s} quá ngắn"
 #: src/options/options.js:426
 msgid "1 hour"
 msgstr "1 giờ"
+
+#: src/page/discover/past.vue:287
+msgid "1 picture"
+msgstr ""
+
+#: src/page/discover/past.vue:279
+msgid "1 year ago"
+msgstr ""
 
 #: src/options/options.js:428
 msgid "12 hours"
@@ -984,10 +1000,6 @@ msgstr "Màu sắc"
 #: src/component/photo/edit/files.vue:307
 msgid "Color Profile"
 msgstr "Hồ sơ màu"
-
-#: src/page/discover.vue:5
-msgid "Colors"
-msgstr "Màu sắc"
 
 #: src/page/connect.vue:141 src/page/connect.vue:151 src/page/connect.vue:123
 msgid "Compare Editions"
@@ -2749,6 +2761,14 @@ msgstr "Không tìm thấy người nào"
 msgid "No pictures found"
 msgstr "Không tìm thấy hình ảnh nào"
 
+#: src/page/discover/past.vue:127
+msgid "No pictures from this day in past years"
+msgstr ""
+
+#: src/page/discover/past.vue:127
+msgid "No pictures from this month in past years"
+msgstr ""
+
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
 msgid "No recently edited pictures"
@@ -3097,6 +3117,10 @@ msgstr "PhotoPrism+ Tư cách thành viên"
 #: src/app/routes.js:322
 msgid "Photos"
 msgstr "Ảnh"
+
+#: src/page/discover/past.vue:130
+msgid "Photos taken in previous years will appear here when they match today's date."
+msgstr ""
 
 #: src/component/photo/batch-edit.vue:614
 #: src/component/photo/batch-edit.vue:634
@@ -3569,10 +3593,6 @@ msgstr "Tìm kiếm"
 msgid "Search Filters"
 msgstr "Bộ lọc tìm kiếm"
 
-#: src/page/discover.vue:13
-msgid "Season"
-msgstr "Mùa"
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Bí mật"
@@ -3815,6 +3835,10 @@ msgstr "Hiển thị phần “Album” để cậu có thể duyệt và sắp 
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "Hiển thị chế độ xem Lịch để duyệt thư viện theo năm và tháng."
 
+#: src/page/settings/general.vue:172
+msgid "Show the Discover section to browse pictures from this day and month in past years."
+msgstr ""
+
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr "Hiển thị phần “Yêu thích” để truy cập nhanh vào những bức ảnh cậu đã đánh dấu sao."
@@ -3839,6 +3863,10 @@ msgstr "Mở phần “Phương tiện” để xem các video, ảnh động v�
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Hiển thị chế độ xem Địa điểm với bản đồ tương tác để cậu có thể duyệt ảnh theo vị trí."
 
+#: src/page/discover.vue:29
+msgid "Shuffle"
+msgstr ""
+
 #: src/common/util.js:913 src/model/file.js:197
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -3856,10 +3884,6 @@ msgstr "Đăng xuất"
 #: src/page/auth/login.vue:153
 msgid "Sign in"
 msgstr "Đăng nhập"
-
-#: src/page/discover.vue:9
-msgid "Similar"
-msgstr "Tương tự"
 
 #: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
@@ -4105,6 +4129,22 @@ msgstr "Định dạng của chúng có thể không được hỗ trợ, chúng
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "chủ đề"
+
+#: src/page/discover.vue:14
+msgid "This Day"
+msgstr ""
+
+#: src/page/discover.vue:13
+msgid "This Day in the Past"
+msgstr ""
+
+#: src/page/discover.vue:18
+msgid "This Month"
+msgstr ""
+
+#: src/page/discover.vue:17
+msgid "This Month in the Past"
+msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
@@ -4770,6 +4810,15 @@ msgstr "{0} đã chọn"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} của {2}"
+
+#~ msgid "Colors"
+#~ msgstr "Màu sắc"
+
+#~ msgid "Season"
+#~ msgstr "Mùa"
+
+#~ msgid "Similar"
+#~ msgstr "Tương tự"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

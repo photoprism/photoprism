@@ -235,6 +235,8 @@ const clientConfig = {
       library: true,
       import: true,
       logs: true,
+      calendar: true,
+      discover: true,
     },
     import: {
       path: "/",
