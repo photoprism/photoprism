@@ -668,7 +668,7 @@ func TestOIDCRedirect_Email(t *testing.T) {
 		assert.False(t, user.EmailVerified())
 	})
 	t.Run("InUse", func(t *testing.T) {
-		// An email another account holds is kept unverified and does not prevent the registration.
+		// An email another account also holds is stored and marked verified like any other.
 		conf := useOidcTestConfig(t)
 		app := newOidcTestApp(conf)
 
@@ -689,7 +689,7 @@ func TestOIDCRedirect_Email(t *testing.T) {
 		user := findOidcTestUser("sub00000003")
 		require.NotNil(t, user)
 		assert.Equal(t, "oscar@example.com", user.UserEmail)
-		assert.False(t, user.EmailVerified())
+		assert.True(t, user.EmailVerified())
 	})
 }
 

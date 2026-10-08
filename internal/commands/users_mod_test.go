@@ -43,6 +43,41 @@ func TestUsersModCommand(t *testing.T) {
 		assert.Equal(t, "us9k2lqd8m3n7abc", m.AuthID)
 		assert.Equal(t, "https://portal.example.com/", m.AuthIssuer)
 	})
+	t.Run("SharedEmail", func(t *testing.T) {
+		// Accounts may share an email address, and changing one of them does not depend on it.
+		for _, name := range []string{"sharedmail1", "sharedmail2"} {
+			_, err := RunWithTestContext(UsersAddCommand, []string{"add", "--email=shared@example.com", "--password=test1234", "--role=guest", name})
+			require.NoError(t, err)
+
+			m := entity.FindUserByName(name)
+			require.NotNil(t, m)
+			t.Cleanup(func() {
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+			})
+		}
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--role=admin", "sharedmail1"})
+		require.NoError(t, err)
+
+		m := entity.FindUserByName("sharedmail1")
+		require.NotNil(t, m)
+		assert.Equal(t, "admin", m.UserRole)
+		assert.Equal(t, "shared@example.com", m.UserEmail)
+
+		// Changing the address clears its verification.
+		require.NoError(t, entity.UnscopedDb().Model(m).Update("VerifiedAt", entity.TimeStamp()).Error)
+		require.True(t, entity.FindUserByName("sharedmail1").EmailVerified())
+
+		_, err = RunWithTestContext(UsersModCommand, []string{"mod", "--email=other@example.com", "sharedmail1"})
+		require.NoError(t, err)
+
+		m = entity.FindUserByName("sharedmail1")
+		require.NotNil(t, m)
+		assert.Equal(t, "other@example.com", m.UserEmail)
+		assert.False(t, m.EmailVerified())
+	})
 	t.Run("RejectFlagsAfterPositional", func(t *testing.T) {
 		// Run with the broken arg order QA reported (positional first, then flags).
 		// The stdlib flag parser stops at "alice", so --name / --role would

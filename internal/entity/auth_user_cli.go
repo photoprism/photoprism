@@ -17,7 +17,7 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 
 	// Email address.
 	if ctx.IsSet("email") {
-		m.UserEmail = frm.Email()
+		m.SetEmail(frm.Email())
 	}
 
 	// Display name.

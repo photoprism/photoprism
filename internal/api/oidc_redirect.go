@@ -310,12 +310,10 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Update email only when the IdP marks it verified and no other account
-			// holds it. The email is informational, so a clash never blocks login; the
-			// Portal OP forwards real verification state, so unverified cluster emails
-			// are simply not stored.
-			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
-				user.UserEmail = clean.Email(userInfo.Email)
+			// Update email only when the IdP marks it verified; the Portal OP forwards
+			// real verification state, so unverified cluster emails are not stored.
+			if email := oidc.VerifiedEmail(userInfo); email != "" {
+				user.UserEmail = email
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
@@ -404,11 +402,9 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Mark the email verified only when the IdP does and no other account holds
-			// it; otherwise it is kept unverified. The email is informational (not an
-			// auth identifier), so a clash never blocks provisioning.
-			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
-				user.UserEmail = clean.Email(userInfo.Email)
+			// Mark the email verified only when the IdP does; otherwise it is kept unverified.
+			if email := oidc.VerifiedEmail(userInfo); email != "" {
+				user.UserEmail = email
 				user.VerifiedAt = entity.TimeStamp()
 			}
 

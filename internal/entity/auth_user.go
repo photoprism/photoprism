@@ -145,8 +145,6 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("auth_provider = ? AND auth_id = ? OR user_name = ?", find.AuthProvider, find.AuthID, find.UserName)
 	} else if find.UserName != "" {
 		stmt = stmt.Where("user_name = ?", find.UserName)
-	} else if find.UserEmail != "" {
-		stmt = stmt.Where("user_email = ?", find.UserEmail)
 	} else if find.AuthProvider != "" && find.AuthID != "" {
 		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
 	} else {
@@ -189,18 +187,15 @@ func FindUserByName(userName string) *User {
 	return FindUser(User{UserName: userName})
 }
 
-// UserEmailAvailable reports whether email is unused or only held by the account
-// with exceptUID. The email field is informational — not verified, and not unique
-// as an identity — so external (OIDC/LDAP) provisioning skips a colliding email
-// instead of letting Validate reject the account and block the login.
-func UserEmailAvailable(email, exceptUID string) bool {
-	if email = clean.Email(email); email == "" {
-		return false
+// SetEmail sets the email address and clears its verification if the address changes.
+func (m *User) SetEmail(email string) {
+	if email == m.UserEmail {
+		return
 	}
 
-	found := FindUser(User{UserEmail: email})
-
-	return found == nil || found.UserUID == exceptUID
+	m.UserEmail = email
+	m.VerifiedAt = nil
+	m.VerifyToken = GenerateToken()
 }
 
 // EmailVerified reports whether the account's email address has been verified,
@@ -1300,8 +1295,8 @@ func (m *User) Validate() (err error) {
 		return err
 	}
 
-	// Skip email check?
-	if m.UserEmail == "" {
+	// Check the email address only if it is new or has changed, since it does not have to be unique.
+	if m.UserEmail == "" || m.UserEmail == m.storedEmail() {
 		return nil
 	}
 
@@ -1314,16 +1309,22 @@ func (m *User) Validate() (err error) {
 		m.UserEmail = email
 	}
 
-	// Check if the email is unique.
-	if err = Db().
-		Where("user_email = ? AND id <> ?", m.UserEmail, m.ID).
-		First(&duplicate).Error; err == nil {
-		return fmt.Errorf("email %s already exists", clean.Log(m.UserEmail))
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
+	return nil
+}
+
+// storedEmail returns the email address saved for the account, or an empty string if it has not been saved.
+func (m *User) storedEmail() string {
+	if m.ID <= 0 {
+		return ""
 	}
 
-	return nil
+	stored := User{}
+
+	if err := UnscopedDb().Select("user_email").Where("id = ?", m.ID).First(&stored).Error; err != nil {
+		return ""
+	}
+
+	return stored.UserEmail
 }
 
 // SetFormValues sets the values specified in the form.
@@ -1570,10 +1571,8 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 	}
 
 	// Sanitize email address.
-	if email := frm.Email(); email != "" && email != m.UserEmail {
-		m.UserEmail = email
-		m.VerifiedAt = nil
-		m.VerifyToken = GenerateToken()
+	if email := frm.Email(); email != "" {
+		m.SetEmail(email)
 	}
 
 	// Apply privilege-level changes only when the caller is authorized as an

@@ -511,26 +511,6 @@ func TestFirstOrCreateUser(t *testing.T) {
 	})
 }
 
-func TestUserEmailAvailable(t *testing.T) {
-	alice := FindUserByName("alice")
-	require.NotNil(t, alice)
-	require.NotEmpty(t, alice.UserEmail)
-	t.Run("UnusedEmail", func(t *testing.T) {
-		assert.True(t, UserEmailAvailable("brand-new-unused-email@example.com", ""))
-	})
-	t.Run("TakenByOtherAccount", func(t *testing.T) {
-		assert.False(t, UserEmailAvailable(alice.UserEmail, ""))
-		assert.False(t, UserEmailAvailable(alice.UserEmail, "u00000000000other"))
-	})
-	t.Run("FreeForSameAccount", func(t *testing.T) {
-		assert.True(t, UserEmailAvailable(alice.UserEmail, alice.UserUID))
-	})
-	t.Run("EmptyEmail", func(t *testing.T) {
-		assert.False(t, UserEmailAvailable("", ""))
-		assert.False(t, UserEmailAvailable("   ", ""))
-	})
-}
-
 func TestUser_EmailVerified(t *testing.T) {
 	t.Run("NilVerifiedAt", func(t *testing.T) {
 		assert.False(t, (&User{}).EmailVerified())
@@ -544,7 +524,27 @@ func TestUser_EmailVerified(t *testing.T) {
 	})
 }
 
+// deleteTestUser removes an account created by a test, including its details and settings.
+func deleteTestUser(t *testing.T, m *User) {
+	t.Helper()
+
+	if m == nil || m.UserUID == "" {
+		return
+	}
+
+	assert.NoError(t, UnscopedDb().Delete(&UserDetails{}, "user_uid = ?", m.UserUID).Error)
+	assert.NoError(t, UnscopedDb().Delete(&UserSettings{}, "user_uid = ?", m.UserUID).Error)
+	assert.NoError(t, UnscopedDb().Delete(&User{}, "user_uid = ?", m.UserUID).Error)
+}
+
 func TestFindUser(t *testing.T) {
+	t.Run("EmailOnly", func(t *testing.T) {
+		alice := FindUserByName("alice")
+		require.NotNil(t, alice)
+		require.NotEmpty(t, alice.UserEmail)
+
+		assert.Nil(t, FindUser(User{UserEmail: alice.UserEmail}))
+	})
 	t.Run("ID", func(t *testing.T) {
 		m := FindUser(User{ID: 1})
 
@@ -996,27 +996,34 @@ func TestUser_Validate(t *testing.T) {
 
 		assert.Error(t, u.Validate())
 	})
-	t.Run("EmailNotUnique", func(t *testing.T) {
-		FirstOrCreateUser(&User{
-			UserEmail: "notunique2@example.com",
+	t.Run("EmailShared", func(t *testing.T) {
+		shared := FirstOrCreateUser(&User{
+			UserName:    "sharedemail1",
+			UserEmail:   "sharedemail@example.com",
+			DisplayName: "Shared Email",
+			UserRole:    acl.RoleAdmin.String(),
 		})
+		require.NotNil(t, shared)
+		require.Equal(t, "sharedemail@example.com", shared.UserEmail)
+		t.Cleanup(func() { deleteTestUser(t, shared) })
 
 		u := &User{
-			UserName:    "notunique2",
-			UserEmail:   "notunique2@example.com",
-			DisplayName: "Not Unique",
+			UserName:    "sharedemail2",
+			UserEmail:   "sharedemail@example.com",
+			DisplayName: "Shared Email",
 			UserRole:    acl.RoleAdmin.String(),
 		}
 
-		assert.Error(t, u.Validate())
+		assert.NoError(t, u.Validate())
 	})
-	t.Run("EmailNotUnique", func(t *testing.T) {
-		FirstOrCreateUser(&User{
+	t.Run("NameNotUniqueSameEmail", func(t *testing.T) {
+		existing := FirstOrCreateUser(&User{
 			UserName:    "notunique3",
 			UserEmail:   "notunique3@example.com",
 			DisplayName: "Not Unique",
 			UserRole:    acl.RoleAdmin.String(),
 		})
+		t.Cleanup(func() { deleteTestUser(t, existing) })
 
 		u := FirstOrCreateUser(&User{
 			UserName:    "notunique30",
@@ -1024,6 +1031,8 @@ func TestUser_Validate(t *testing.T) {
 			DisplayName: "Not Unique",
 			UserRole:    acl.RoleAdmin.String(),
 		})
+		require.NotNil(t, u)
+		t.Cleanup(func() { deleteTestUser(t, u) })
 
 		u.UserName = "notunique3"
 
@@ -1508,6 +1517,32 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 }
 
 func TestUser_SaveForm(t *testing.T) {
+	t.Run("EmailChangeClearsVerification", func(t *testing.T) {
+		m := FirstOrCreateUser(&User{
+			UserName:    "saveformemail",
+			UserEmail:   "saveform-old@example.com",
+			DisplayName: "Save Form Email",
+			UserRole:    acl.RoleGuest.String(),
+		})
+		require.NotNil(t, m)
+		t.Cleanup(func() { deleteTestUser(t, m) })
+		require.NoError(t, UnscopedDb().Model(m).Update("VerifiedAt", TimeStamp()).Error)
+
+		m = FindUserByUID(m.UserUID)
+		require.True(t, m.EmailVerified())
+		frm, err := m.Form()
+		require.NoError(t, err)
+
+		frm.UserEmail = "saveform-old@example.com"
+		require.NoError(t, m.SaveForm(frm, m, false, false))
+		assert.True(t, FindUserByUID(m.UserUID).EmailVerified())
+
+		frm.UserEmail = "saveform-new@example.com"
+		require.NoError(t, m.SaveForm(frm, m, false, false))
+		saved := FindUserByUID(m.UserUID)
+		assert.Equal(t, "saveform-new@example.com", saved.UserEmail)
+		assert.False(t, saved.EmailVerified())
+	})
 	t.Run("UnknownUser", func(t *testing.T) {
 		frm, err := UnknownUser.Form()
 		assert.NoError(t, err)
@@ -2293,6 +2328,95 @@ func TestUser_Create_ValidHandle(t *testing.T) {
 		u.UserRole = acl.RoleAdmin.String()
 		require.NoError(t, u.Create())
 		t.Cleanup(func() { _ = UnscopedDb().Delete(u).Error })
+	})
+}
+
+func TestUser_Validate_StoredEmail(t *testing.T) {
+	m := FirstOrCreateUser(&User{
+		UserName:    "storedemail",
+		UserEmail:   "storedemail@example.com",
+		DisplayName: "Stored Email",
+		UserRole:    acl.RoleGuest.String(),
+	})
+	require.NotNil(t, m)
+	require.NoError(t, UnscopedDb().Model(m).Update("UserEmail", "not-an-email").Error)
+	t.Cleanup(func() { deleteTestUser(t, m) })
+
+	t.Run("UnchangedInvalid", func(t *testing.T) {
+		u := FindUserByUID(m.UserUID)
+		require.NotNil(t, u)
+		require.Equal(t, "not-an-email", u.UserEmail)
+		u.UserRole = acl.RoleAdmin.String()
+
+		assert.NoError(t, u.Validate())
+	})
+	t.Run("ChangedInvalid", func(t *testing.T) {
+		u := FindUserByUID(m.UserUID)
+		require.NotNil(t, u)
+		u.UserEmail = "still-not-an-email"
+
+		assert.Error(t, u.Validate())
+	})
+	t.Run("UnchangedInvalidDeleted", func(t *testing.T) {
+		require.NoError(t, UnscopedDb().Model(m).Update("DeletedAt", Now()).Error)
+		t.Cleanup(func() { UnscopedDb().Model(m).Update("DeletedAt", nil) })
+
+		u := FindUser(User{ID: m.ID})
+		require.NotNil(t, u)
+		require.True(t, u.IsDeleted())
+		u.UserRole = acl.RoleAdmin.String()
+
+		assert.NoError(t, u.Validate())
+	})
+	t.Run("ChangedValid", func(t *testing.T) {
+		u := FindUserByUID(m.UserUID)
+		require.NotNil(t, u)
+		u.UserEmail = "Stored Email <stored-email@example.com>"
+
+		assert.NoError(t, u.Validate())
+		assert.Equal(t, "stored-email@example.com", u.UserEmail)
+	})
+}
+
+func TestUser_SetEmail(t *testing.T) {
+	verified := TimeStamp()
+	t.Run("Changed", func(t *testing.T) {
+		m := &User{UserEmail: "old@example.com", VerifiedAt: verified, VerifyToken: "token"}
+		m.SetEmail("new@example.com")
+
+		assert.Equal(t, "new@example.com", m.UserEmail)
+		assert.Nil(t, m.VerifiedAt)
+		assert.NotEqual(t, "token", m.VerifyToken)
+		assert.NotEmpty(t, m.VerifyToken)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		m := &User{UserEmail: "same@example.com", VerifiedAt: verified, VerifyToken: "token"}
+		m.SetEmail("same@example.com")
+
+		assert.Equal(t, verified, m.VerifiedAt)
+		assert.Equal(t, "token", m.VerifyToken)
+	})
+	t.Run("Cleared", func(t *testing.T) {
+		m := &User{UserEmail: "old@example.com", VerifiedAt: verified}
+		m.SetEmail("")
+
+		assert.Equal(t, "", m.UserEmail)
+		assert.Nil(t, m.VerifiedAt)
+	})
+}
+
+func TestUser_storedEmail(t *testing.T) {
+	t.Run("Saved", func(t *testing.T) {
+		alice := FindUserByName("alice")
+		require.NotNil(t, alice)
+		require.NotEmpty(t, alice.UserEmail)
+
+		assert.Equal(t, alice.UserEmail, (&User{ID: alice.ID, UserEmail: "changed@example.com"}).storedEmail())
+	})
+	t.Run("NotSaved", func(t *testing.T) {
+		assert.Equal(t, "", (&User{UserEmail: "new@example.com"}).storedEmail())
+		assert.Equal(t, "", (&User{ID: -1}).storedEmail())
+		assert.Equal(t, "", (&User{ID: 999999999}).storedEmail())
 	})
 }
 
