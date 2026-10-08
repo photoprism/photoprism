@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -264,6 +265,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			// Update user profile information.
 			details := user.Details()
+			emailChanged := false
 
 			// Update user display name.
 			if entity.SrcPriority[details.NameSrc] <= entity.SrcPriority[entity.SrcOIDC] {
@@ -313,6 +315,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Update email only when the IdP marks it verified; the Portal OP forwards
 			// real verification state, so unverified cluster emails are not stored.
 			if email := oidc.VerifiedEmail(userInfo); email != "" {
+				emailChanged = email != user.UserEmail
 				user.UserEmail = email
 				user.VerifiedAt = entity.TimeStamp()
 			}
@@ -340,6 +343,8 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
+			} else if emailChanged {
+				user.ReportSharedEmail()
 			}
 
 			// Set user avatar image?
@@ -433,6 +438,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
+			}
+
+			// Report an email address that other accounts also hold.
+			if count, _ := user.ReportSharedEmail(); count > 0 {
+				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", "email is also assigned to %s"}, clean.LogQuote(userName), english.Plural(count, "other account", "other accounts"))
 			}
 
 			// Set user avatar image.

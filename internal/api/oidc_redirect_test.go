@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -683,6 +684,7 @@ func TestOIDCRedirect_Email(t *testing.T) {
 			assert.NoError(t, entity.UnscopedDb().Delete(other).Error)
 		})
 
+		audit := captureAuditLog(t)
 		r := oidcLogin(t, app, "oscar")
 
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
@@ -690,6 +692,54 @@ func TestOIDCRedirect_Email(t *testing.T) {
 		require.NotNil(t, user)
 		assert.Equal(t, "oscar@example.com", user.UserEmail)
 		assert.True(t, user.EmailVerified())
+
+		var reported bool
+
+		for _, entry := range audit.AllEntries() {
+			if strings.Contains(entry.Message, "email is also assigned to 1 other account") {
+				reported = entry.Level == logrus.WarnLevel
+			}
+		}
+
+		assert.True(t, reported, "registering an account with a shared email address is reported")
+	})
+	t.Run("UpdateInUse", func(t *testing.T) {
+		// A verified address that changes on a later login is reported if another account also holds it.
+		conf := useOidcTestConfig(t)
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "oscar")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000003")
+		require.NotNil(t, user)
+		require.NoError(t, entity.UnscopedDb().Model(user).Update("UserEmail", "oscar-old@example.com").Error)
+
+		other := entity.NewUser()
+		other.UserName = "zz-oidc-email-update"
+		other.UserEmail = "oscar@example.com"
+		other.SetProvider(authn.ProviderLocal)
+		require.NoError(t, other.Create())
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", other.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", other.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(other).Error)
+		})
+
+		system := captureSystemLog(t)
+		r = oidcLogin(t, app, "oscar")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, "oscar@example.com", findOidcTestUser("sub00000003").UserEmail)
+
+		var reported bool
+
+		for _, entry := range system.AllEntries() {
+			if strings.HasSuffix(entry.Message, "› email is also assigned to 1 other account") {
+				reported = true
+			}
+		}
+
+		assert.True(t, reported, "an updated address another account holds is reported")
 	})
 }
 

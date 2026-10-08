@@ -395,3 +395,50 @@ func TestUpdateUserAuditFields(t *testing.T) {
 	assert.Equal(t, "'alice'", fields[3])
 	assert.Equal(t, status.Denied, fields[5])
 }
+
+func TestUpdateUserSharedEmail(t *testing.T) {
+	audit := captureAuditLog(t)
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	UpdateUser(router)
+
+	alice := entity.FindUserByName("alice")
+	require.NotNil(t, alice)
+	other := newSharedEmailUser(t, "update-shared-email", "update-shared-email@example.com", false)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.User{}).Where("user_uid = ?", alice.UserUID).Updates(entity.Values{
+			"user_email":   alice.UserEmail,
+			"verified_at":  alice.VerifiedAt,
+			"verify_token": alice.VerifyToken,
+		}).Error)
+	})
+
+	sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
+	// reported returns whether the audit log reports the email address of alice as shared.
+	reported := func() (found bool) {
+		for _, entry := range audit.AllEntries() {
+			if strings.Contains(entry.Message, "'alice' › email is also assigned to 1 other account") {
+				found = entry.Level == logrus.InfoLevel
+			}
+		}
+
+		return found
+	}
+
+	body, _ := json.Marshal(form.User{UserName: "alice", UserEmail: other.UserEmail, UserRole: alice.UserRole}) //nolint:gosec // test marshals a form with a password field to build the request body
+	audit.Reset()
+
+	r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+alice.UserUID, string(body), sessId)
+	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+	assert.Equal(t, other.UserEmail, entity.FindUserByUID(alice.UserUID).UserEmail)
+	assert.True(t, reported(), "an email address another account holds is reported")
+
+	// Saving the account again without changing the address is not reported.
+	audit.Reset()
+
+	r = AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+alice.UserUID, string(body), sessId)
+	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+	assert.False(t, reported(), "an unchanged address is not reported again")
+}

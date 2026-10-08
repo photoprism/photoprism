@@ -76,6 +76,7 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 
 			log.Infof("user %s has been restored", m.String())
+			AuditSharedEmail(m, true)
 
 			return nil
 		}
@@ -137,6 +138,12 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 		}
 
-		return entity.AddUser(frm)
+		if err := entity.AddUser(frm); err != nil {
+			return err
+		}
+
+		AuditSharedEmail(entity.FindUserByName(frm.UserName), true)
+
+		return nil
 	})
 }

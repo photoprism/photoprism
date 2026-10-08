@@ -156,6 +156,8 @@ func UpdateUser(router *gin.RouterGroup) {
 		// Persist form values. The cluster JWT is a user-less principal that
 		// u.IsAdmin()/u.IsSuperAdmin() reject, so authorize it explicitly for both admin and
 		// super-admin-level changes (else its role, login, and 2FA edits are silently dropped).
+		previousEmail, wasDeleted := m.UserEmail, m.IsDeleted()
+
 		if err = m.SaveForm(f, u, u.IsAdmin() || isClusterJWT, isClusterJWT); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "update", status.Error(err)}, s.RefID, clean.LogQuote(m.UserName))
 			AbortSaveFailed(c)
@@ -164,6 +166,10 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "updated"}, s.RefID, clean.LogQuote(m.UserName))
+
+		if restored := wasDeleted && !m.IsDeleted(); restored || m.UserEmail != previousEmail {
+			AuditSharedEmail(c, s, m, restored)
+		}
 
 		// Revoke other user sessions after a privilege level change,
 		// except for app passwords and client access tokens.

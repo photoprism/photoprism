@@ -55,6 +55,8 @@ func usersModAction(ctx *cli.Context) error {
 		}
 
 		// Check if account exists but is deleted.
+		restored := false
+
 		if m.IsDeleted() {
 			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
 				return err
@@ -63,10 +65,13 @@ func usersModAction(ctx *cli.Context) error {
 			}
 
 			m.DeletedAt = nil
+			restored = true
 			log.Infof("user %s will be restored", m.String())
 		}
 
 		// Set values.
+		previousEmail := m.UserEmail
+
 		if err := m.SetValuesFromCli(ctx); err != nil {
 			return err
 		}
@@ -88,6 +93,10 @@ func usersModAction(ctx *cli.Context) error {
 		}
 
 		log.Infof("user %s has been updated", m.String())
+
+		if restored || m.UserEmail != previousEmail {
+			AuditSharedEmail(m, restored)
+		}
 
 		return nil
 	})
