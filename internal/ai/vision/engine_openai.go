@@ -4,12 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"os"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -54,28 +52,6 @@ func registerOpenAIEngineDefaults() {
 		DefaultResolution: openai.DefaultResolution,
 		DefaultKey:        openai.APIKeyPlaceholder,
 	})
-}
-
-// logOpenAIBaseUrl writes the OpenAI base URL to the system log if it is not the default, as it receives the
-// requests and keys of models without their own service URI.
-func logOpenAIBaseUrl() {
-	baseUrl := os.Getenv(openai.BaseUrlEnv)
-
-	if baseUrl == "" || baseUrl == openai.DefaultBaseUrl {
-		return
-	}
-
-	if redacted := clean.UriRedacted(baseUrl); redacted != "" {
-		event.SystemInfo([]string{"vision", "openai engine uses base url %s"}, redacted)
-	} else {
-		event.SystemWarn([]string{"vision", "openai engine uses an invalid base url"})
-	}
-}
-
-// usesOpenAIDefaultUri reports whether the model sends its requests to the base URL of the OpenAI engine.
-func (m *Model) usesOpenAIDefaultUri() bool {
-	return m != nil && !m.Disabled && !m.Service.Disabled && m.Engine == openai.EngineName &&
-		strings.TrimSpace(m.Service.Uri) == openai.DefaultUri
 }
 
 // openaiDefaultModel returns the registered default model of the OpenAI engine.

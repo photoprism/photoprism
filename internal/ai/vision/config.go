@@ -125,7 +125,7 @@ func (c *ConfigValues) Load(fileName string) error {
 	// vision.yml. Custom models continue to override defaults when present.
 	c.ensureDefaultModels()
 
-	usesOpenAIBaseUrl := false
+	usesBaseUrl := make(map[string]bool, len(engineBaseUrls))
 
 	for _, model := range c.Models {
 		if model.TensorFlow != nil && model.ONNX != nil {
@@ -145,7 +145,11 @@ func (c *ConfigValues) Load(fileName string) error {
 
 		model.ApplyEngineDefaults()
 
-		usesOpenAIBaseUrl = usesOpenAIBaseUrl || model.usesOpenAIDefaultUri()
+		for _, baseUrl := range engineBaseUrls {
+			if baseUrl.UsedBy(model) {
+				usesBaseUrl[baseUrl.Engine] = true
+			}
+		}
 
 		// Report a misspelled mode once instead of silently normalizing names the other way.
 		if !IsNormalizeType(model.Normalize) {
@@ -155,8 +159,10 @@ func (c *ConfigValues) Load(fileName string) error {
 		}
 	}
 
-	if usesOpenAIBaseUrl {
-		logOpenAIBaseUrl()
+	for _, baseUrl := range engineBaseUrls {
+		if usesBaseUrl[baseUrl.Engine] {
+			baseUrl.Log()
+		}
 	}
 
 	c.replaceUnsupportedNsfwModels()

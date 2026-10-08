@@ -297,13 +297,17 @@ func TestOpenaiDefaultModel(t *testing.T) {
 	})
 }
 
-// TestLogOpenAIBaseUrl checks that a base URL other than the default is written to the system log only.
-func TestLogOpenAIBaseUrl(t *testing.T) {
+// TestEngineBaseUrl_Log checks that a base URL other than the default is written to the system log only.
+func TestEngineBaseUrl_Log(t *testing.T) {
+	openaiBaseUrl, ollamaBaseUrl := engineBaseUrls[0], engineBaseUrls[1]
+	require.Equal(t, openai.EngineName, openaiBaseUrl.Engine)
+	require.Equal(t, ollama.EngineName, ollamaBaseUrl.Engine)
+
 	t.Run("Custom", func(t *testing.T) {
 		t.Setenv(openai.BaseUrlEnv, "https://user:secret@llm.example.com/v1")
 		logHook, systemHook := captureLogs(t)
 
-		logOpenAIBaseUrl()
+		openaiBaseUrl.Log()
 
 		assert.Empty(t, logHook.AllEntries())
 		require.Len(t, systemHook.AllEntries(), 1)
@@ -315,7 +319,7 @@ func TestLogOpenAIBaseUrl(t *testing.T) {
 		t.Setenv(openai.BaseUrlEnv, "https://llm.example.com/v1?token=s3cr3t-value&api-version=preview")
 		logHook, systemHook := captureLogs(t)
 
-		logOpenAIBaseUrl()
+		openaiBaseUrl.Log()
 
 		assert.Empty(t, logHook.AllEntries())
 		require.Len(t, systemHook.AllEntries(), 1)
@@ -326,7 +330,7 @@ func TestLogOpenAIBaseUrl(t *testing.T) {
 		t.Setenv(openai.BaseUrlEnv, "https://llm.example.com/%zz")
 		logHook, systemHook := captureLogs(t)
 
-		logOpenAIBaseUrl()
+		openaiBaseUrl.Log()
 
 		assert.Empty(t, logHook.AllEntries())
 		require.Len(t, systemHook.AllEntries(), 1)
@@ -336,7 +340,26 @@ func TestLogOpenAIBaseUrl(t *testing.T) {
 		t.Setenv(openai.BaseUrlEnv, openai.DefaultBaseUrl)
 		logHook, systemHook := captureLogs(t)
 
-		logOpenAIBaseUrl()
+		openaiBaseUrl.Log()
+
+		assert.Empty(t, logHook.AllEntries())
+		assert.Empty(t, systemHook.AllEntries())
+	})
+	t.Run("Ollama", func(t *testing.T) {
+		t.Setenv(ollama.BaseUrlEnv, "https://user:secret@ollama.example.com")
+		logHook, systemHook := captureLogs(t)
+
+		ollamaBaseUrl.Log()
+
+		assert.Empty(t, logHook.AllEntries())
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Equal(t, "vision: ollama engine uses base url https://user:***@ollama.example.com", systemHook.LastEntry().Message)
+	})
+	t.Run("OllamaDefault", func(t *testing.T) {
+		t.Setenv(ollama.BaseUrlEnv, ollama.DefaultBaseUrl)
+		logHook, systemHook := captureLogs(t)
+
+		ollamaBaseUrl.Log()
 
 		assert.Empty(t, logHook.AllEntries())
 		assert.Empty(t, systemHook.AllEntries())
@@ -367,25 +390,51 @@ func TestLogOpenAIBaseUrl(t *testing.T) {
 		assert.Empty(t, load(t, "Models:\n- Type: caption\n  Engine: openai\n  Service:\n    Uri: https://llm.example.com/v1/responses\n"))
 		assert.Empty(t, load(t, "Models:\n- Type: caption\n  Engine: ollama\n"))
 	})
+	t.Run("OllamaConfigLoad", func(t *testing.T) {
+		reregisterEngineDefaults(t, map[string]string{ollama.BaseUrlEnv: "https://ollama.example.com"})
+
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		require.NoError(t, os.WriteFile(configFile, []byte("Models:\n- Type: caption\n  Engine: ollama\n"), fs.ModeConfigFile))
+		_, systemHook := captureLogs(t)
+		require.NoError(t, NewConfig().Load(configFile))
+
+		var messages []string
+
+		for _, entry := range systemHook.AllEntries() {
+			if strings.Contains(entry.Message, "engine uses") {
+				messages = append(messages, entry.Message)
+			}
+		}
+
+		assert.Equal(t, []string{"vision: ollama engine uses base url https://ollama.example.com"}, messages)
+	})
 }
 
-// TestModel_UsesOpenAIDefaultUri checks which models send their requests to the OpenAI base URL.
-func TestModel_UsesOpenAIDefaultUri(t *testing.T) {
+// TestEngineBaseUrl_UsedBy checks which models send their requests to the base URL of an engine.
+func TestEngineBaseUrl_UsedBy(t *testing.T) {
+	openaiBaseUrl, ollamaBaseUrl := engineBaseUrls[0], engineBaseUrls[1]
+
 	enabled := &Model{Type: ModelTypeCaption, Engine: openai.EngineName}
 	enabled.ApplyEngineDefaults()
-	assert.True(t, enabled.usesOpenAIDefaultUri())
+	assert.True(t, openaiBaseUrl.UsedBy(enabled))
+	assert.False(t, ollamaBaseUrl.UsedBy(enabled))
 
 	disabled := enabled.Clone()
 	disabled.Disabled = true
-	assert.False(t, disabled.usesOpenAIDefaultUri())
+	assert.False(t, openaiBaseUrl.UsedBy(disabled))
 
 	own := &Model{Type: ModelTypeCaption, Engine: openai.EngineName, Service: Service{Uri: "https://llm.example.com/v1/responses"}}
 	own.ApplyEngineDefaults()
-	assert.False(t, own.usesOpenAIDefaultUri())
+	assert.False(t, openaiBaseUrl.UsedBy(own))
 
 	ollamaModel := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName}
 	ollamaModel.ApplyEngineDefaults()
-	assert.False(t, ollamaModel.usesOpenAIDefaultUri())
+	assert.False(t, openaiBaseUrl.UsedBy(ollamaModel))
+	assert.True(t, ollamaBaseUrl.UsedBy(ollamaModel))
 
-	assert.False(t, (*Model)(nil).usesOpenAIDefaultUri())
+	ollamaOwn := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName, Service: Service{Uri: "http://gpu.example.com:11434/api/generate"}}
+	ollamaOwn.ApplyEngineDefaults()
+	assert.False(t, ollamaBaseUrl.UsedBy(ollamaOwn))
+
+	assert.False(t, openaiBaseUrl.UsedBy(nil))
 }

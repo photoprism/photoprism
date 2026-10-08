@@ -1,6 +1,6 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** October 4, 2026
+**Last Updated:** October 8, 2026
 
 ### Overview
 
@@ -124,7 +124,7 @@ The table below reports median single-image latency over a fixed 16-image benchm
 - `PHOTOPRISM_VISION_YAML` — Custom `vision.yml` path. Keep it synced in Git if you automate deployments.
 - `OLLAMA_HOST`, `OLLAMA_MODELS`, `OLLAMA_MAX_QUEUE`, `OLLAMA_NUM_PARALLEL`, etc. — Provided in `compose*.yaml` to tune the Ollama daemon. Adjust `OLLAMA_KEEP_ALIVE` if you want models to stay loaded between worker batches.
 - `OLLAMA_API_KEY` / `OLLAMA_API_KEY_FILE` — Default bearer token picked up when `Service.Key` is empty; useful for hosted Ollama services (e.g., Ollama Cloud).
-- `OLLAMA_BASE_URL` — Base URL for the Ollama API; defaults to `http://ollama:11434`, trailing slashes are trimmed. Set to `https://ollama.com` to enable cloud defaults.
+- `OLLAMA_BASE_URL` — Base URL for the Ollama API; defaults to `http://ollama:11434`, trailing slashes are trimmed. Set to `https://ollama.com` to enable cloud defaults. The engine's default service URI is `${OLLAMA_BASE_URL}/api/generate`, so models without their own `Service.Uri` send their requests, images, and `OLLAMA_API_KEY` to that host, and a value other than the default is written to the system log at startup. Other tools such as Open WebUI read the same variable, so set `Service.Uri` explicitly if the environment is shared.
 - `OLLAMA_MODEL` — Default model of the Ollama engine, used for models that configure none of `Service.Model`, `Model`, or `Name`, including the default caption model; it takes precedence over the cloud default model. `OLLAMA_MODELS`, the daemon's storage path, is not read.
 - `PHOTOPRISM_LOG_LEVEL=trace` — Logs request payloads with base64 images shortened, and the full body of a successful response (quoted). Use temporarily when debugging parsing issues. The body of a failed response, or the error for a response that cannot be parsed, is written to the console system log at error level, clipped to 4 KiB.
 
