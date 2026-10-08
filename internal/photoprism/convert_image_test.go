@@ -722,10 +722,48 @@ func TestConvert_dewarpFileInPlace(t *testing.T) {
 		dir := t.TempDir()
 		dst := copyFixture(t, dir, "df.jpg", "testdata/insta360.insp") // 2:1 dual-fisheye JPEG.
 		require.NoError(t, convert.dewarpFileInPlace(dst, projection.DualFisheye, false, 204, 0))
-		assert.False(t, fs.FileExists(dst+".dewarp.jpg"), "temp file must not leak")
+		entries, err := os.ReadDir(dir)
+		require.NoError(t, err)
+		require.Len(t, entries, 1, "staged output must not leak")
 		out, err := NewMediaFile(dst)
 		require.NoError(t, err)
 		assert.InDelta(t, 2.0, float64(out.AspectRatio()), 0.2) // equirectangular output is ~2:1.
+	})
+	t.Run("LeavesOtherNamesAlone", func(t *testing.T) {
+		if !cnf.FFmpegEnabled() {
+			t.Skip("FFmpeg must be available to dewarp")
+		}
+		dir := t.TempDir()
+		dst := copyFixture(t, dir, "df.jpg", "testdata/insta360.insp")
+		other := dst + ".dewarp.jpg"
+		require.NoError(t, os.WriteFile(other, []byte("KEEP"), fs.ModeFile))
+		require.NoError(t, convert.dewarpFileInPlace(dst, projection.DualFisheye, false, 204, 0))
+		data, err := os.ReadFile(other) //nolint:gosec // test file in a temporary folder
+		require.NoError(t, err)
+		assert.True(t, string(data) == "KEEP", "other files must be left unchanged")
+	})
+	t.Run("NoOutput", func(t *testing.T) {
+		if !cnf.FFmpegEnabled() {
+			t.Skip("FFmpeg must be available to dewarp")
+		}
+		dir := t.TempDir()
+		dst := filepath.Join(dir, "df.jpg")
+		require.NoError(t, os.WriteFile(dst, []byte("not an image"), fs.ModeFile))
+		assert.Error(t, convert.dewarpFileInPlace(dst, projection.DualFisheye, false, 204, 0))
+		entries, err := os.ReadDir(dir)
+		require.NoError(t, err)
+		assert.Len(t, entries, 1, "staged output must be removed")
+	})
+	t.Run("SymlinkRefused", func(t *testing.T) {
+		dir := t.TempDir()
+		src := copyFixture(t, dir, "df.jpg", "testdata/insta360.insp")
+		link := filepath.Join(dir, "link.jpg")
+		require.NoError(t, os.Symlink(src, link))
+		assert.Error(t, convert.dewarpFileInPlace(link, projection.DualFisheye, false, 204, 0))
+		assert.True(t, fs.IsSymlink(link))
+		entries, err := os.ReadDir(dir)
+		require.NoError(t, err)
+		assert.Len(t, entries, 2)
 	})
 	t.Run("SingleFisheye", func(t *testing.T) {
 		if !cnf.FFmpegEnabled() {

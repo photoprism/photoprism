@@ -322,18 +322,28 @@ func (w *Convert) writeEquirectangularProjection(fileName string) error {
 }
 
 // dewarpFileInPlace dewarps a fisheye image to equirectangular with the FFmpeg v360 filter, writing
-// to a temporary file and renaming it over the original because FFmpeg cannot read and write the
+// to a staged sibling and publishing it over the original because FFmpeg cannot read and write the
 // same path in one pass. Stacked inputs are rearranged before applying the spherical profile.
 func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.Type, stacked bool, fov, roll int) error {
 	if !w.conf.FFmpegEnabled() {
 		return errors.New("ffmpeg is disabled")
+	} else if fs.IsSymlink(fileName) {
+		return errors.New("refusing to replace a symbolic link")
 	}
 
-	tmpName := fileName + ".dewarp.jpg"
+	tmpName, err := fs.CreateStageFile(fileName)
 
-	// Always clean up the temp file: it is renamed over fileName on success (making this a no-op),
-	// and removed on any error path so no stray "<name>.dewarp.jpg" is left to be indexed.
-	defer func() { _ = os.Remove(tmpName) }()
+	if err != nil {
+		return err
+	}
+
+	published := false
+
+	defer func() {
+		if !published {
+			_ = os.Remove(tmpName)
+		}
+	}()
 
 	filter := ffmpeg.V360DualFisheyeToEquirect(fov, roll)
 	if inputProjection.Equal(projection.Fisheye.String()) {
@@ -361,7 +371,13 @@ func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.
 		return errors.New("no output produced")
 	}
 
-	return os.Rename(tmpName, fileName)
+	if err = fs.PublishFile(tmpName, fileName, true); err != nil {
+		return err
+	}
+
+	published = true
+
+	return nil
 }
 
 // publishImageOutput writes converter output to a staged sibling of the image file, verifies it and
