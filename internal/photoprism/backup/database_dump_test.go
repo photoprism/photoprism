@@ -18,6 +18,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -733,5 +734,84 @@ func TestRestoreDatabase_StageFiles(t *testing.T) {
 
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "failed to open 2026-09-24.sql")
+	})
+}
+
+func TestRestoreDatabase_Input(t *testing.T) {
+	c := get.Config()
+
+	if _, err := prepareRestore(c); err != nil {
+		t.Skipf("restore client unavailable: %s", err)
+	}
+
+	// photoCount returns the number of pictures in the index.
+	photoCount := func(t *testing.T) int {
+		t.Helper()
+		counts := struct{ Photos int }{}
+		require.NoError(t, c.Db().Unscoped().Table("photos").Select("COUNT(*) AS photos").Take(&counts).Error)
+		return counts.Photos
+	}
+
+	before := photoCount(t)
+	require.Positive(t, before)
+
+	t.Run("Empty", func(t *testing.T) {
+		dir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "2026-10-08.sql"), nil, fs.ModeBackupFile))
+
+		err := RestoreDatabase(dir, "2026-10-08.sql", false, true)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is empty")
+		assert.Equal(t, before, photoCount(t))
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("file modes do not apply to root")
+		}
+
+		dir := t.TempDir()
+		fileName := filepath.Join(dir, "2026-10-08.sql")
+		require.NoError(t, os.WriteFile(fileName, []byte("SELECT 1;\n"), 0o000))
+
+		err := RestoreDatabase(dir, "2026-10-08.sql", false, true)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to open")
+		assert.Equal(t, before, photoCount(t))
+	})
+	t.Run("UnreadableStdin", func(t *testing.T) {
+		stdin, err := os.Open(t.TempDir())
+		require.NoError(t, err)
+
+		orig := os.Stdin
+		os.Stdin = stdin
+		t.Cleanup(func() {
+			os.Stdin = orig
+			_ = stdin.Close()
+		})
+
+		err = RestoreDatabase("", "", true, true)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to read")
+		assert.Equal(t, before, photoCount(t))
+	})
+	t.Run("EmptyStdin", func(t *testing.T) {
+		stdin, err := os.Open(os.DevNull)
+		require.NoError(t, err)
+
+		orig := os.Stdin
+		os.Stdin = stdin
+		t.Cleanup(func() {
+			os.Stdin = orig
+			_ = stdin.Close()
+		})
+
+		err = RestoreDatabase("", "", true, true)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is empty")
+		assert.Equal(t, before, photoCount(t))
 	})
 }

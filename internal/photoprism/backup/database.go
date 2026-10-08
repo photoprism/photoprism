@@ -1,6 +1,7 @@
 package backup
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"errors"
@@ -475,25 +476,39 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		return err
 	}
 
+	// Read from stdin or file.
+	var in io.Reader
+	inputName := "stdin"
+
+	if fromStdIn {
+		in = os.Stdin
+		// #nosec G304 backup path validated by configuration
+	} else if f, openErr := os.OpenFile(fileName, os.O_RDONLY, 0); openErr != nil {
+		return fmt.Errorf("failed to open %s: %s", clean.Log(fileName), openErr)
+	} else {
+		inputName = filepath.Base(fileName)
+		defer f.Close()
+		in = f
+	}
+
+	// The backup is read before any table is dropped, so one that cannot be read or is empty leaves the
+	// index as it is.
+	input := bufio.NewReader(in)
+
+	if _, err = input.Peek(1); errors.Is(err, io.EOF) {
+		return fmt.Errorf("backup %s is empty, index cannot be restored", clean.Log(inputName))
+	} else if err != nil {
+		return fmt.Errorf("failed to read %s: %s", clean.Log(inputName), err)
+	}
+
+	log.Infof("restore: restoring database backup from %s", clean.Log(inputName))
+
 	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		log.Infoln("restore: dropping existing sqlite database tables")
 		entity.Entities.Drop(c.Db())
 	}
 
-	// Read from stdin or file.
-	var f *os.File
-	if fromStdIn {
-		log.Infof("restore: restoring database backup from stdin")
-		f = os.Stdin
-		// #nosec G304 backup path validated by configuration
-	} else if f, err = os.OpenFile(fileName, os.O_RDONLY, 0); err != nil {
-		return fmt.Errorf("failed to open %s: %s", clean.Log(fileName), err)
-	} else {
-		log.Infof("restore: restoring database backup from %s", clean.Log(filepath.Base(fileName)))
-		defer f.Close()
-	}
-
-	return restore.run(f)
+	return restore.run(input)
 }
 
 // logRestoreResult logs the outcome of a restore that completed, with a warning if statements failed.
