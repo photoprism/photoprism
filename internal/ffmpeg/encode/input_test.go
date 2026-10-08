@@ -27,6 +27,10 @@ func TestInputArgs(t *testing.T) {
 	t.Run("Insp", func(t *testing.T) {
 		assert.Equal(t, []string{"-f", "jpeg_pipe", "-i", "/a/b.insp"}, InputArgs("/a/b.insp"))
 	})
+	t.Run("Mjpeg", func(t *testing.T) {
+		assert.Equal(t, []string{"-format_whitelist", InputFormatWhitelist() + ",jpeg_pipe", "-i", "/a/b.mjpg"}, InputArgs("/a/b.mjpg"))
+		assert.Equal(t, []string{"-format_whitelist", InputFormatWhitelist() + ",jpeg_pipe", "-i", "/a/b.MJPEG"}, InputArgs("/a/b.MJPEG"))
+	})
 	t.Run("Insv", func(t *testing.T) {
 		assert.Equal(t, []string{"-f", "mov", "-i", "/a/b.insv"}, InputArgs("/a/b.insv"))
 	})
@@ -38,5 +42,20 @@ func TestInputArgs(t *testing.T) {
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Equal(t, []string{"-format_whitelist", InputFormatWhitelist(), "-i", "SRC"}, InputArgs("SRC"))
+	})
+}
+
+func TestInputFormatArgs(t *testing.T) {
+	t.Run("Jpeg", func(t *testing.T) {
+		assert.Equal(t, []string{"-f", "jpeg_pipe"}, InputFormatArgs("/a/b.jpg"))
+	})
+	t.Run("Insv", func(t *testing.T) {
+		assert.Equal(t, []string{"-f", "mov"}, InputFormatArgs("/a/b.insv"))
+	})
+	t.Run("Mjpeg", func(t *testing.T) {
+		assert.Equal(t, []string{"-format_whitelist", InputFormatWhitelist() + ",jpeg_pipe"}, InputFormatArgs("/a/b.mjpeg"))
+	})
+	t.Run("Video", func(t *testing.T) {
+		assert.Equal(t, []string{"-format_whitelist", InputFormatWhitelist()}, InputFormatArgs("/a/b.mp4"))
 	})
 }

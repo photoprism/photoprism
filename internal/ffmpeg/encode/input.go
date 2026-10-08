@@ -18,15 +18,23 @@ func InputFormatWhitelist() string {
 	return strings.Join(InputFormats, ",")
 }
 
-// InputArgs returns the FFmpeg arguments that open the specified source file. JPEG and Insta360
-// images are read as JPEG and Insta360 videos as MOV/MP4; other files are limited to InputFormats.
+// InputArgs returns the FFmpeg arguments that open the specified source file.
 func InputArgs(fileName string) []string {
+	return append(InputFormatArgs(fileName), "-i", fileName)
+}
+
+// InputFormatArgs returns the FFmpeg options that select the demuxer for the specified source file. JPEG
+// and Insta360 images are read as JPEG and Insta360 videos as MOV/MP4; other files are limited to
+// InputFormats, and Motion JPEG files may also be read as a JPEG stream.
+func InputFormatArgs(fileName string) []string {
 	switch fs.FileType(fileName) {
 	case fs.ImageJpeg, fs.ImageInsp:
-		return []string{"-f", "jpeg_pipe", "-i", fileName}
+		return []string{"-f", "jpeg_pipe"}
 	case fs.VideoInsv, fs.VideoLrv:
-		return []string{"-f", "mov", "-i", fileName}
+		return []string{"-f", "mov"}
+	case fs.VideoMjpeg:
+		return []string{"-format_whitelist", InputFormatWhitelist() + ",jpeg_pipe"}
 	default:
-		return []string{"-format_whitelist", InputFormatWhitelist(), "-i", fileName}
+		return []string{"-format_whitelist", InputFormatWhitelist()}
 	}
 }

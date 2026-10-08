@@ -50,6 +50,20 @@ func TestExtractJpegImageCmd_InputFormat(t *testing.T) {
 			assert.FileExists(t, jpegName)
 		})
 	}
+	// FFmpeg probes Motion JPEG streams with frames of this size as "jpeg_pipe".
+	for name, frames := range map[string]string{"MotionJpeg": "5", "MotionJpegFrame": "1"} {
+		t.Run(name, func(t *testing.T) {
+			fileName := filepath.Join(dir, name+".mjpeg")
+			// #nosec G204 -- arguments are test constants.
+			out, runErr := exec.Command(bin, "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=320x240:rate=5",
+				"-frames:v", frames, "-c:v", "mjpeg", "-f", "mjpeg", fileName).CombinedOutput()
+			require.NoError(t, runErr, string(out))
+			jpegName := fileName + ".jpg"
+			out, runErr = ExtractJpegImageCmd(fileName, jpegName, encode.NewPreviewImageOptions(bin, 0)).CombinedOutput()
+			require.NoError(t, runErr, string(out))
+			assert.FileExists(t, jpegName)
+		})
+	}
 	t.Run("Text", func(t *testing.T) {
 		fileName := filepath.Join(dir, "text.mp4")
 		require.NoError(t, os.WriteFile(fileName, []byte("not a video\n"), 0o600))

@@ -154,7 +154,8 @@ func videoIndexSummary(found search.Photo, file entity.File) map[string]any {
 
 // videoRunFFprobe executes ffprobe and returns parsed JSON plus raw output.
 func videoRunFFprobe(ffprobeBin, filePath string) (any, string, error) {
-	cmd := exec.Command(ffprobeBin, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", "-format_whitelist", encode.InputFormatWhitelist(), filePath) //nolint:gosec // args are validated paths
+	args := append([]string{"-v", "quiet", "-print_format", "json", "-show_format", "-show_streams"}, encode.InputFormatArgs(filePath)...)
+	cmd := exec.Command(ffprobeBin, append(args, filePath)...) //nolint:gosec // args are validated paths
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer

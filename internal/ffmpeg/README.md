@@ -58,7 +58,7 @@
 
 - Clamp size and quality via `NewVideoOptions` to `[1, 15360]` pixels and the defined quality bounds.
 - Remuxing respects `Options.Force`; without it existing outputs are preserved.
-- Input formats: `encode.InputArgs` reads JPEG and `.insp` sources as JPEG (`-f jpeg_pipe`), `.insv` and `.lrv` sources as MOV/MP4 (`-f mov`), and limits every other source to the demuxers in `encode.InputFormats` (`-format_whitelist`). A supported file type whose container is not in that list needs an entry there.
+- Input formats: `encode.InputArgs` reads JPEG and `.insp` sources as JPEG (`-f jpeg_pipe`), `.insv` and `.lrv` sources as MOV/MP4 (`-f mov`), and limits every other source to the demuxers in `encode.InputFormats` (`-format_whitelist`); `.mjpg` and `.mjpeg` sources may also be read as a JPEG stream (`jpeg_pipe`). `encode.InputFormatArgs` returns the same options without `-i` for ffprobe. A supported file type whose container is not in that list needs an entry there.
 - Commands that write one image pass `-update 1`, so the output name is used as given.
 - Metadata copying uses `-map_metadata` and `clean` sanitizers; only safe string fields (title, description, comment, author, creation_time) are added when set.
 - Hardware helpers expect the matching FFmpeg build and devices; callers select one at runtime with `PHOTOPRISM_FFMPEG_ENCODER`.
