@@ -62,6 +62,10 @@ func clientsModAction(ctx *cli.Context) error {
 			}
 
 			log.Infof("client %s has been restored", client.String())
+
+			if !ctx.Bool("regenerate") && frm.Secret() == "" {
+				log.Warnf("client %s has no secret, use --regenerate to create one", client.String())
+			}
 		}
 
 		// Update client from form values.

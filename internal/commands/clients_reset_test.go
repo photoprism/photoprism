@@ -81,7 +81,8 @@ func TestClientsResetCommand(t *testing.T) {
 
 		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", otherPw.UID) })
 
-		// A deleted client keeps its row until the table is dropped, so its secret is deleted as well.
+		// A deleted client keeps its row until the table is dropped, so a secret still stored for it
+		// is deleted as well. The record is marked directly, since Delete removes the secret itself.
 		deletedClient := entity.NewClient()
 		deletedClient.ClientName = "deleted-client"
 
@@ -89,7 +90,7 @@ func TestClientsResetCommand(t *testing.T) {
 			t.Fatal(err)
 		} else if err = deletedClient.SetSecret(rnd.ClientSecret()); err != nil {
 			t.Fatal(err)
-		} else if err = deletedClient.Delete(); err != nil {
+		} else if err = entity.Db().Delete(deletedClient).Error; err != nil {
 			t.Fatal(err)
 		}
 

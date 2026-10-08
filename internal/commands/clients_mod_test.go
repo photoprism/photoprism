@@ -188,4 +188,33 @@ func TestClientsModCommand_RestorePrompt(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, entity.FindClient(uid).Deleted())
 	})
+	t.Run("PreviousSecretNotRestored", func(t *testing.T) {
+		m := entity.NewClient().SetName("RestoreModSecret").SetScope("metrics")
+		require.NoError(t, m.Create())
+		t.Cleanup(func() {
+			reopenConnection()
+			assert.NoError(t, m.Purge(), "purge test client")
+		})
+
+		secret, err := m.NewSecret()
+		require.NoError(t, err)
+
+		// Marks the record as deleted while its secret is still stored.
+		require.NoError(t, entity.Db().Delete(m).Error)
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--restore", m.ClientUID})
+
+		require.NoError(t, err)
+		assert.False(t, entity.FindClient(m.ClientUID).Deleted())
+		assert.False(t, entity.FindClient(m.ClientUID).VerifySecret(secret))
+	})
+	t.Run("RestoreRegenerate", func(t *testing.T) {
+		uid := newDeletedTestClient(t, "RestoreModRegenerate")
+
+		output, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--restore", "--regenerate", uid})
+
+		require.NoError(t, err)
+		assert.Contains(t, output, "Client Secret")
+		assert.NotNil(t, entity.FindPassword(uid))
+	})
 }

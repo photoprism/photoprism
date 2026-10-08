@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/report"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewClient(t *testing.T) {
@@ -308,6 +309,20 @@ func TestClient_Delete(t *testing.T) {
 		err := m.Delete()
 
 		assert.NoError(t, err)
+	})
+	t.Run("RemovesSecret", func(t *testing.T) {
+		m := NewClient().SetName("pp-delete-secret")
+
+		require.NoError(t, m.Create())
+
+		secret, err := m.NewSecret()
+
+		require.NoError(t, err)
+		require.True(t, m.VerifySecret(secret))
+		require.NoError(t, m.Delete())
+
+		assert.Nil(t, FindPassword(m.ClientUID))
+		assert.False(t, m.VerifySecret(secret))
 	})
 	t.Run("EmptyUID", func(t *testing.T) {
 		var m = Client{ClientName: "No UUID"}
@@ -1126,6 +1141,35 @@ func TestClient_Restore(t *testing.T) {
 			assert.NoError(t, restored.Validate())
 		}
 	})
+	t.Run("SecretNotRestored", func(t *testing.T) {
+		m := NewClient().SetName("pp-restore-secret")
+
+		require.NoError(t, m.Create())
+
+		secret, err := m.NewSecret()
+
+		require.NoError(t, err)
+
+		// Marks the record as deleted while its secret is still stored.
+		require.NoError(t, Db().Delete(m).Error)
+		require.NotNil(t, FindPassword(m.ClientUID))
+		require.NoError(t, m.Restore())
+
+		restored := FindClientByUID(m.ClientUID)
+
+		if assert.NotNil(t, restored) {
+			assert.False(t, restored.Deleted())
+			assert.False(t, restored.VerifySecret(secret))
+		}
+
+		assert.Nil(t, FindPassword(m.ClientUID))
+
+		// A new secret can be set after the restore.
+		secret, err = m.NewSecret()
+
+		require.NoError(t, err)
+		assert.True(t, m.VerifySecret(secret))
+	})
 	t.Run("NotDeleted", func(t *testing.T) {
 		m := NewClient().SetName("pp-restore-live")
 
@@ -1142,6 +1186,31 @@ func TestClient_Restore(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var m *Client
 		assert.Error(t, m.Restore())
+	})
+}
+
+func TestClient_DeleteSecret(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewClient().SetName("pp-delete-secret-only")
+
+		require.NoError(t, m.Create())
+
+		_, err := m.NewSecret()
+
+		require.NoError(t, err)
+		require.NoError(t, m.DeleteSecret())
+
+		assert.Nil(t, FindPassword(m.ClientUID))
+		assert.False(t, m.Deleted())
+	})
+	t.Run("NoSecret", func(t *testing.T) {
+		m := NewClient().SetName("pp-delete-no-secret")
+
+		require.NoError(t, m.Create())
+		assert.NoError(t, m.DeleteSecret())
+	})
+	t.Run("InvalidUID", func(t *testing.T) {
+		assert.Error(t, (&Client{}).DeleteSecret())
 	})
 }
 
