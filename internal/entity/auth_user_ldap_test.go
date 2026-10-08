@@ -190,3 +190,21 @@ func TestLdapNameMatch(t *testing.T) {
 		assert.False(t, ldapNameMatch(&User{UserName: "", AuthProvider: "ldap"}, ""))
 	})
 }
+
+func TestUser_LdapNameMatch(t *testing.T) {
+	t.Run("Provider", func(t *testing.T) {
+		for _, provider := range []string{"", "default", "ldap"} {
+			assert.True(t, (&User{UserName: "jose", AuthProvider: provider}).LdapNameMatch(), "provider %q", provider)
+		}
+		for _, provider := range []string{"none", "local", "oidc"} {
+			assert.False(t, (&User{UserName: "jose", AuthProvider: provider}).LdapNameMatch(), "provider %q", provider)
+		}
+	})
+	t.Run("SuperAdmin", func(t *testing.T) {
+		assert.False(t, (&User{UserName: "admin", AuthProvider: "default", SuperAdmin: true}).LdapNameMatch())
+		assert.True(t, (&User{UserName: "admin", AuthProvider: "ldap", SuperAdmin: true}).LdapNameMatch())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, (*User)(nil).LdapNameMatch())
+	})
+}

@@ -1261,20 +1261,14 @@ func (m *User) DeactivatePasscode() (passcode *Passcode, err error) {
 
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
-	// Validate username. A stored name the sanitizer no longer accepts as written is normalized
-	// rather than refused, so an account provisioned earlier stays editable; a new one is refused,
-	// so the caller sees what was rejected.
-	userName, nameErr := authn.Username(m.UserName)
-
-	if nameErr != nil && m.ID > 0 && userName != "" {
-		userName, nameErr = authn.Username(userName)
-	}
+	// Validate username. A stored name keeps its form if a deleted account holds the normalized one.
+	userName, nameErr := m.normalizedUsername()
 
 	if nameErr != nil {
-		return fmt.Errorf("username is %s", nameErr.Error())
+		return nameErr
+	} else if m.ID <= 0 || userName == m.UserName || !m.deletedUsernameHolder(userName) {
+		m.UserName = userName
 	}
-
-	m.UserName = userName
 
 	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
@@ -1291,13 +1285,13 @@ func (m *User) Validate() (err error) {
 		return fmt.Errorf("unsupported user role")
 	}
 
-	// Check if the username is unique.
+	// Check if the username, and the normalized form of a kept name, is unique.
 	var duplicate = User{}
 
 	if err = Db().
-		Where("user_name = ? AND id <> ?", m.UserName, m.ID).
+		Where("user_name IN (?) AND id <> ?", []string{m.UserName, userName}, m.ID).
 		First(&duplicate).Error; err == nil {
-		return fmt.Errorf("user %s already exists", clean.LogQuote(m.UserName))
+		return fmt.Errorf("user %s already exists", clean.LogQuote(userName))
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -1317,6 +1311,23 @@ func (m *User) Validate() (err error) {
 	}
 
 	return nil
+}
+
+// normalizedUsername returns the username in the form Validate stores it. A stored name the sanitizer
+// no longer accepts as written is normalized rather than refused, so an account provisioned earlier
+// stays editable; a new one is refused, so the caller sees what was rejected.
+func (m *User) normalizedUsername() (string, error) {
+	userName, err := authn.Username(m.UserName)
+
+	if err != nil && m.ID > 0 && userName != "" {
+		userName, err = authn.Username(userName)
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("username is %s", err.Error())
+	}
+
+	return userName, nil
 }
 
 // storedEmail returns the email address saved for the account, or an empty string if it has not been saved.

@@ -16,10 +16,19 @@ func ldapNameProvider(provider string) bool {
 }
 
 // ldapNameMatch checks if a directory login may resolve the account by its username: the stored name
-// must be identical to the login name, the provider must allow it, and a super admin account must
-// already be a directory account.
+// must be identical to the login name, and LdapNameMatch must allow it.
 func ldapNameMatch(m *User, name string) bool {
-	if m == nil || name == "" || m.UserName != name || !ldapNameProvider(m.AuthProvider) {
+	if m == nil || name == "" || m.UserName != name {
+		return false
+	}
+
+	return m.LdapNameMatch()
+}
+
+// LdapNameMatch checks if a directory login may resolve the account by its username: the provider must
+// allow it, and a super admin account must already be a directory account.
+func (m *User) LdapNameMatch() bool {
+	if m == nil || !ldapNameProvider(m.AuthProvider) {
 		return false
 	}
 
