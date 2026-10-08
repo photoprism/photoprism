@@ -19,7 +19,7 @@ var UsersModCommand = &cli.Command{
 	Flags: append(UserFlags, &cli.BoolFlag{
 		Name:  "disable-2fa",
 		Usage: UserDisable2FA,
-	}, UserRestoreFlag()),
+	}, UserRestoreFlag(), UserUsernameFlag()),
 	Action: usersModAction,
 }
 
@@ -69,10 +69,16 @@ func usersModAction(ctx *cli.Context) error {
 			log.Infof("user %s will be restored", m.String())
 		}
 
-		// Set values.
+		// Set the new username before the other values, so that a refused name changes nothing.
 		previousEmail := m.UserEmail
+		oldName, err := PrepareUserRename(ctx, m)
 
-		if err := m.SetValuesFromCli(ctx); err != nil {
+		if err != nil {
+			return err
+		}
+
+		// Set values.
+		if err = m.SetValuesFromCli(ctx); err != nil {
 			return err
 		}
 
@@ -88,11 +94,9 @@ func usersModAction(ctx *cli.Context) error {
 		}
 
 		// Save values.
-		if err := m.Save(); err != nil {
+		if err = SaveUserRename(ctx, conf, m, oldName, false); err != nil {
 			return err
 		}
-
-		log.Infof("user %s has been updated", m.String())
 
 		if restored || m.UserEmail != previousEmail {
 			AuditSharedEmail(m, restored)
