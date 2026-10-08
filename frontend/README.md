@@ -65,9 +65,9 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 
 `frontend/package.json` and root `package.json` declare matching `overrides`. npm applies the root declarations when resolving the workspace; the frontend copy alone does not control installation. Keep both declarations aligned.
 
-| Override                           | Reason                                                                       |
-|------------------------------------|------------------------------------------------------------------------------|
-| `"serialize-javascript": "^7.0.5"` | Keeps the Workbox minification dependency on the reviewed maintenance range. |
+| Override                           | Reason                                                                                                                            |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `"serialize-javascript": "^7.1.2"` | Keeps the Workbox minification dependency on the reviewed maintenance range and above every release a published advisory affects. |
 
 Retire an override only when upstream dependency ranges select an acceptable version without it, then rerun `make audit` and the build/test checks.
 
