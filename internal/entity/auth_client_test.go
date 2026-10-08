@@ -1186,8 +1186,12 @@ func TestClient_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		secret, err := m.NewSecret()
+		require.NoError(t, err)
+
 		assert.NoError(t, m.Restore())
 		assert.False(t, m.Deleted())
+		assert.True(t, m.VerifySecret(secret), "the secret of a client that is not deleted is kept")
 	})
 	t.Run("EmptyUID", func(t *testing.T) {
 		assert.Error(t, (&Client{}).Restore())

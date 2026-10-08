@@ -436,8 +436,10 @@ func (m *Client) Restore() error {
 	}
 
 	// A secret stored before the deletion is not carried over.
-	if err := m.DeleteSecret(); err != nil {
-		return err
+	if stored := m.Stored(); stored != nil && stored.Deleted() {
+		if err := m.DeleteSecret(); err != nil {
+			return err
+		}
 	}
 
 	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
