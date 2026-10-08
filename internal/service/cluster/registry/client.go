@@ -203,9 +203,9 @@ func (r *ClientRegistry) Put(n *Node) error {
 	// 3) Finally, try by Name (latest by UpdatedAt). Avoid mismatching when a UUID is provided but
 	// name belongs to another node. Deleted records are skipped: a name is released by deletion,
 	// so a request carrying one creates a record rather than writing into the retired one.
-	if m == nil && n.Name != "" {
+	if name := clean.DNSLabel(n.Name); m == nil && name != "" {
 		var list []entity.Client
-		if err := entity.Db().Where("client_name = ?", n.Name).Find(&list).Error; err == nil && len(list) > 0 {
+		if err := entity.Db().Where("client_name = ?", name).Find(&list).Error; err == nil && len(list) > 0 {
 			// pick latest
 			latest := &list[0]
 			for i := 1; i < len(list); i++ {
