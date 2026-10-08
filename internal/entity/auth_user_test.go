@@ -56,6 +56,16 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestOidcUser(t *testing.T) {
+	t.Run("UnverifiedEmail", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Email = "jane@doe.com"
+		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
+
+		m := OidcUser(info, "", "jane.doe")
+
+		assert.Equal(t, "", m.UserEmail)
+		assert.Equal(t, "jane.doe", m.UserName)
+	})
 	t.Run("Success", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"
@@ -1534,14 +1544,38 @@ func TestUser_SaveForm(t *testing.T) {
 		require.NoError(t, err)
 
 		frm.UserEmail = "saveform-old@example.com"
-		require.NoError(t, m.SaveForm(frm, m, false, false))
+		require.NoError(t, m.SaveForm(frm, UserFixtures.Pointer("alice"), true, false))
 		assert.True(t, FindUserByUID(m.UserUID).EmailVerified())
 
 		frm.UserEmail = "saveform-new@example.com"
-		require.NoError(t, m.SaveForm(frm, m, false, false))
+		require.NoError(t, m.SaveForm(frm, UserFixtures.Pointer("alice"), true, false))
 		saved := FindUserByUID(m.UserUID)
 		assert.Equal(t, "saveform-new@example.com", saved.UserEmail)
 		assert.False(t, saved.EmailVerified())
+	})
+	t.Run("EmailRequiresAdmin", func(t *testing.T) {
+		m := FirstOrCreateUser(&User{
+			UserName:    "saveformemailowner",
+			UserEmail:   "saveform-owner@example.com",
+			DisplayName: "Save Form Email Owner",
+			UserRole:    acl.RoleGuest.String(),
+		})
+		require.NotNil(t, m)
+		t.Cleanup(func() { deleteTestUser(t, m) })
+		require.NoError(t, UnscopedDb().Model(m).Update("VerifiedAt", TimeStamp()).Error)
+
+		m = FindUserByUID(m.UserUID)
+		frm, err := m.Form()
+		require.NoError(t, err)
+
+		frm.UserEmail = "saveform-changed@example.com"
+		frm.DisplayName = "Changed By Owner"
+		require.NoError(t, m.SaveForm(frm, m, false, false))
+
+		saved := FindUserByUID(m.UserUID)
+		assert.Equal(t, "saveform-owner@example.com", saved.UserEmail)
+		assert.True(t, saved.EmailVerified())
+		assert.Equal(t, "Changed By Owner", saved.DisplayName)
 	})
 	t.Run("UnknownUser", func(t *testing.T) {
 		frm, err := UnknownUser.Form()
@@ -1565,7 +1599,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"), false, false)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)

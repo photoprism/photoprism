@@ -72,7 +72,7 @@
                       v-model="user.Email"
                       type="email"
                       maxlength="255"
-                      :disabled="busy"
+                      :disabled="busy || !canEditEmail"
                       autocomplete="off"
                       autocorrect="off"
                       autocapitalize="none"
@@ -380,6 +380,11 @@ export default {
       }
 
       return this.$gettext("Unregistered");
+    },
+    // canEditEmail checks if the account may change its email address, which requires permission to manage accounts.
+    canEditEmail() {
+      const user = this.$session.getUser();
+      return !!user && (user.SuperAdmin || this.$config.allowAny("users", ["manage", "manage_own"]));
     },
   },
   created() {

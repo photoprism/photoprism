@@ -55,6 +55,16 @@ func oidcReconcileHint(userName, provider, subject string) string {
 		clean.LogQuote(userName), clean.LogQuote(provider), userName, clean.Log(subject))
 }
 
+// oidcEmailUsername reports whether the username of a new account is its verified email address, as with the
+// email username claim, and whether the address is a valid username as it is.
+func oidcEmailUsername(claim, name, verifiedEmail string) (fromEmail, valid bool) {
+	if claim != authn.OidcClaimEmail || verifiedEmail == "" || name != verifiedEmail {
+		return false, false
+	}
+
+	return true, clean.Username(name) == name
+}
+
 // OIDCRedirect completes the OIDC flow, creates a session, and renders a page that stores the token client-side.
 //
 //	@Summary	complete OIDC login (callback)
@@ -365,9 +375,39 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			userName = oidcUser.Username()
 
-			// Resolve potential naming conflict by adding a random number to the username.
-			if found := entity.FindUserByName(userName); found != nil {
+			// A username taken from the email address must match it, so it is never changed to resolve a conflict.
+			emailUsername, validEmailUsername := oidcEmailUsername(conf.OIDCUsername(), oidcUser.UserName, oidc.VerifiedEmail(userInfo))
+
+			if emailUsername && !validEmailUsername {
+				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrInvalidUsername.Error()}, clean.LogQuote(userName))
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidUsername.Error())
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+				return
+			} else if entity.FindUserByName(userName) == nil {
+				// The username is available.
+			} else if emailUsername {
+				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrUsernameAlreadyExists.Error()}, clean.LogQuote(userName))
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrUsernameAlreadyExists.Error())
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+				return
+			} else {
+				// Resolve the naming conflict by adding a random number to the username.
 				userName += rnd.Base10(6)
+			}
+
+			// An email address used as username must not be assigned to another account.
+			if emailUsername {
+				if count, _, err := oidcUser.OtherEmailHolders(); err != nil {
+					event.AuditErr([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrAccountCreateFailed.Error(), status.Error(err)}, clean.LogQuote(userName))
+					event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error())
+					c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+					return
+				} else if count > 0 {
+					event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrEmailAlreadyExists.Error()}, clean.LogQuote(userName))
+					event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrEmailAlreadyExists.Error())
+					c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+					return
+				}
 			}
 
 			event.AuditInfo([]string{clientIp, "create session", "oidc", "create user", clean.LogQuote(userName)})
@@ -407,7 +447,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Mark the email verified only when the IdP does; otherwise it is kept unverified.
+			// Mark the email verified, which it only holds if the IdP has verified it.
 			if email := oidc.VerifiedEmail(userInfo); email != "" {
 				user.UserEmail = email
 				user.VerifiedAt = entity.TimeStamp()

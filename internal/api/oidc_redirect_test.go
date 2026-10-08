@@ -656,7 +656,7 @@ func TestOIDCRedirect_Email(t *testing.T) {
 		assert.Nil(t, findOidcTestUser("sub00000004"))
 	})
 	t.Run("Unverified", func(t *testing.T) {
-		// Without a domain requirement the account is created, and the email is kept unverified.
+		// Without a domain requirement the account is created, and an unverified email is not stored.
 		conf := useOidcTestConfig(t)
 		app := newOidcTestApp(conf)
 
@@ -665,7 +665,7 @@ func TestOIDCRedirect_Email(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		user := findOidcTestUser("sub00000004")
 		require.NotNil(t, user)
-		assert.Equal(t, "otto@example.com", user.UserEmail)
+		assert.Equal(t, "", user.UserEmail)
 		assert.False(t, user.EmailVerified())
 	})
 	t.Run("InUse", func(t *testing.T) {
@@ -889,4 +889,138 @@ func oidcTestSession(t *testing.T, subject string) *entity.Session {
 	require.Len(t, sessions, 1)
 
 	return &sessions[0]
+}
+
+// newOidcEmailHolder stores a local account with the given name and email address, and removes it after the test.
+func newOidcEmailHolder(t *testing.T, name, email string) *entity.User {
+	t.Helper()
+
+	m := entity.NewUser()
+	m.UserName = name
+	m.UserEmail = email
+	m.SetProvider(authn.ProviderLocal)
+	require.NoError(t, m.Create())
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(m).Error)
+	})
+
+	return m
+}
+
+func TestOidcEmailUsername(t *testing.T) {
+	t.Run("FromEmail", func(t *testing.T) {
+		fromEmail, valid := oidcEmailUsername(authn.OidcClaimEmail, "jane@example.com", "jane@example.com")
+		assert.True(t, fromEmail)
+		assert.True(t, valid)
+	})
+	t.Run("NotUsableAsName", func(t *testing.T) {
+		for _, email := range []string{"jo~e@example.com", "jane+tag@example.com", "o'brien@example.com"} {
+			fromEmail, valid := oidcEmailUsername(authn.OidcClaimEmail, email, email)
+			assert.True(t, fromEmail, email)
+			assert.False(t, valid, email)
+		}
+	})
+	t.Run("OtherClaim", func(t *testing.T) {
+		fromEmail, _ := oidcEmailUsername(authn.OidcClaimPreferredUsername, "jane@example.com", "jane@example.com")
+		assert.False(t, fromEmail)
+	})
+	t.Run("FallbackName", func(t *testing.T) {
+		fromEmail, _ := oidcEmailUsername(authn.OidcClaimEmail, "jane", "")
+		assert.False(t, fromEmail)
+		fromEmail, _ = oidcEmailUsername(authn.OidcClaimEmail, "jane", "jane@example.com")
+		assert.False(t, fromEmail)
+	})
+}
+
+func TestOIDCRedirect_EmailUsername(t *testing.T) {
+	t.Run("Register", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCUsername = authn.OidcClaimEmail
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "oscar")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000003")
+		require.NotNil(t, user)
+		assert.Equal(t, "oscar@example.com", user.UserName)
+	})
+	t.Run("UsernameTaken", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCUsername = authn.OidcClaimEmail
+		app := newOidcTestApp(conf)
+		newOidcEmailHolder(t, "oscar@example.com", "")
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "oscar")
+
+		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
+		assert.Nil(t, findOidcTestUser("sub00000003"))
+		assert.True(t, oidcAuditContains(audit, "create user 'oscar@example.com' › username already exists"))
+	})
+	t.Run("EmailInUse", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCUsername = authn.OidcClaimEmail
+		app := newOidcTestApp(conf)
+		newOidcEmailHolder(t, "zz-oidc-email-holder", "Oscar@Example.com")
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "oscar")
+
+		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
+		assert.Nil(t, findOidcTestUser("sub00000003"))
+		assert.True(t, oidcAuditContains(audit, "create user 'oscar@example.com' › email already exists"))
+	})
+	t.Run("EmailHeldByDeletedAccount", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCUsername = authn.OidcClaimEmail
+		app := newOidcTestApp(conf)
+		holder := newOidcEmailHolder(t, "zz-oidc-email-deleted", "oscar@example.com")
+		require.NoError(t, holder.Delete())
+
+		r := oidcLogin(t, app, "oscar")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.NotNil(t, findOidcTestUser("sub00000003"))
+	})
+	t.Run("UnverifiedEmail", func(t *testing.T) {
+		// The username falls back to another claim, so the address does not need to be unique.
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCUsername = authn.OidcClaimEmail
+		app := newOidcTestApp(conf)
+		newOidcEmailHolder(t, "zz-oidc-email-otto", "otto@example.com")
+
+		r := oidcLogin(t, app, "otto")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000004")
+		require.NotNil(t, user)
+		assert.Equal(t, "otto", user.UserName)
+	})
+	t.Run("DefaultClaimSuffix", func(t *testing.T) {
+		// Other username claims keep resolving a conflict with a numeric suffix.
+		conf := useOidcTestConfig(t)
+		app := newOidcTestApp(conf)
+		newOidcEmailHolder(t, "oscar", "oscar@example.com")
+
+		r := oidcLogin(t, app, "oscar")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000003")
+		require.NotNil(t, user)
+		assert.Regexp(t, `^oscar[0-9]{6}$`, user.UserName)
+	})
+}
+
+// oidcAuditContains reports whether an audit warning contains the specified text.
+func oidcAuditContains(hook *logtest.Hook, text string) bool {
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.WarnLevel && strings.Contains(entry.Message, text) {
+			return true
+		}
+	}
+
+	return false
 }

@@ -158,6 +158,15 @@ func UpdateUser(router *gin.RouterGroup) {
 		// super-admin-level changes (else its role, login, and 2FA edits are silently dropped).
 		previousEmail, wasDeleted := m.UserEmail, m.IsDeleted()
 
+		// Only roles that may manage user accounts can change email addresses.
+		if !userEmailChangeAllowed(s, isClusterJWT) {
+			if email := f.Email(); email != "" && email != m.UserEmail {
+				event.AuditWarn([]string{ClientIP(c), "session %s", "users", "%s", "change email", status.Denied}, s.RefID, clean.LogQuote(m.UserName))
+			}
+
+			f.UserEmail = ""
+		}
+
 		if err = m.SaveForm(f, u, u.IsAdmin() || isClusterJWT, isClusterJWT); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "update", status.Error(err)}, s.RefID, clean.LogQuote(m.UserName))
 			AbortSaveFailed(c)

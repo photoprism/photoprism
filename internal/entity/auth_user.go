@@ -113,10 +113,17 @@ func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
 		return User{}
 	}
 
+	// Keep the email address only if the provider has verified it.
+	var email string
+
+	if bool(userInfo.EmailVerified) {
+		email = clean.Email(userInfo.Email)
+	}
+
 	return User{
 		UserName:     userName,
 		DisplayName:  userInfo.Name,
-		UserEmail:    clean.Email(userInfo.Email),
+		UserEmail:    email,
 		AuthProvider: authn.ProviderOIDC.String(),
 		AuthIssuer:   clean.Uri(issuer),
 		AuthID:       authId,
@@ -1570,8 +1577,8 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 		m.DisplayName = m.FullName()
 	}
 
-	// Sanitize email address.
-	if email := frm.Email(); email != "" {
+	// Only admins may change the email address, since it is not verified.
+	if email := frm.Email(); email != "" && byAdmin {
 		m.SetEmail(email)
 	}
 

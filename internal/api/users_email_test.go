@@ -113,3 +113,30 @@ func TestAuditSharedEmail(t *testing.T) {
 		assert.Empty(t, audit.AllEntries())
 	})
 }
+
+func TestUserEmailChangeAllowed(t *testing.T) {
+	// sessionFor returns a session of the specified user.
+	sessionFor := func(m *entity.User) *entity.Session {
+		s := &entity.Session{}
+		s.SetUser(m)
+		return s
+	}
+	t.Run("ManageOwn", func(t *testing.T) {
+		admin := &entity.User{UserUID: "uqxetse3cy5eo9z2", UserName: "admin-test", UserRole: acl.RoleAdmin.String()}
+		assert.True(t, userEmailChangeAllowed(sessionFor(admin), false))
+	})
+	t.Run("SuperAdmin", func(t *testing.T) {
+		super := &entity.User{UserUID: "uqxetse3cy5eo9z2", UserName: "super-test", UserRole: acl.RoleGuest.String(), SuperAdmin: true}
+		assert.True(t, userEmailChangeAllowed(sessionFor(super), false))
+	})
+	t.Run("Guest", func(t *testing.T) {
+		guest := &entity.User{UserUID: "uqxc08w3d0ej2283", UserName: "guest-test", UserRole: acl.RoleGuest.String()}
+		assert.False(t, userEmailChangeAllowed(sessionFor(guest), false))
+	})
+	t.Run("ClusterJWT", func(t *testing.T) {
+		assert.True(t, userEmailChangeAllowed(&entity.Session{}, true))
+	})
+	t.Run("NoSession", func(t *testing.T) {
+		assert.False(t, userEmailChangeAllowed(nil, true))
+	})
+}

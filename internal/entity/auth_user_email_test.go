@@ -51,7 +51,8 @@ func TestUser_OtherEmailHolders(t *testing.T) {
 	t.Run("Unique", func(t *testing.T) {
 		m := newEmailTestUser(t, "emailholders-unique", "emailholders-unique@example.com", false)
 
-		count, verified := m.OtherEmailHolders()
+		count, verified, err := m.OtherEmailHolders()
+		require.NoError(t, err)
 		assert.Equal(t, 0, count)
 		assert.False(t, verified)
 	})
@@ -59,7 +60,8 @@ func TestUser_OtherEmailHolders(t *testing.T) {
 		m := newEmailTestUser(t, "emailholders-shared1", "emailholders-shared@example.com", false)
 		newEmailTestUser(t, "emailholders-shared2", "emailholders-shared@example.com", false)
 
-		count, verified := m.OtherEmailHolders()
+		count, verified, err := m.OtherEmailHolders()
+		require.NoError(t, err)
 		assert.Equal(t, 1, count)
 		assert.False(t, verified)
 	})
@@ -68,7 +70,8 @@ func TestUser_OtherEmailHolders(t *testing.T) {
 		newEmailTestUser(t, "emailholders-verified2", "emailholders-verified@example.com", false)
 		newEmailTestUser(t, "emailholders-verified3", "emailholders-verified@example.com", true)
 
-		count, verified := m.OtherEmailHolders()
+		count, verified, err := m.OtherEmailHolders()
+		require.NoError(t, err)
 		assert.Equal(t, 2, count)
 		assert.True(t, verified)
 	})
@@ -77,7 +80,8 @@ func TestUser_OtherEmailHolders(t *testing.T) {
 		other := newEmailTestUser(t, "emailholders-case2", "emailholders-case@example.com", false)
 		require.NoError(t, UnscopedDb().Model(other).Update("UserEmail", "EmailHolders-Case@Example.com").Error)
 
-		count, verified := m.OtherEmailHolders()
+		count, verified, err := m.OtherEmailHolders()
+		require.NoError(t, err)
 		assert.Equal(t, 1, count)
 		assert.False(t, verified)
 	})
@@ -87,17 +91,20 @@ func TestUser_OtherEmailHolders(t *testing.T) {
 		other := newEmailTestUser(t, "emailholders-deleted3", "emailholders-deleted@example.com", true)
 		require.NoError(t, UnscopedDb().Model(other).Update("DeletedAt", Now()).Error)
 
-		count, verified := m.OtherEmailHolders()
+		count, verified, err := m.OtherEmailHolders()
+		require.NoError(t, err)
 		assert.Equal(t, 1, count)
 		assert.False(t, verified)
 	})
 	t.Run("NoEmail", func(t *testing.T) {
-		count, verified := (&User{UserUID: "u000000000000000"}).OtherEmailHolders()
+		count, verified, err := (&User{UserUID: "u000000000000000"}).OtherEmailHolders()
+		require.NoError(t, err)
 		assert.Equal(t, 0, count)
 		assert.False(t, verified)
 	})
 	t.Run("Nil", func(t *testing.T) {
-		count, verified := (*User)(nil).OtherEmailHolders()
+		count, verified, err := (*User)(nil).OtherEmailHolders()
+		require.NoError(t, err)
 		assert.Equal(t, 0, count)
 		assert.False(t, verified)
 	})
