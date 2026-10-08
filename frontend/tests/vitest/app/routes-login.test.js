@@ -421,6 +421,17 @@ describe("app/routes safeReturnTo", () => {
     expect(safeReturnTo("//attacker.example/")).toBe("");
     expect(safeReturnTo("\\\\attacker.example\\path")).toBe("");
   });
+  it("resolves values that start with a slash before comparing origins", () => {
+    expect(safeReturnTo("/\\other.example/path")).toBe("");
+    expect(safeReturnTo("/\t/other.example/path")).toBe("");
+    expect(safeReturnTo("/library/../library/albums?q=1")).toBe("/library/albums?q=1");
+  });
+  it("rejects values whose resolved path starts with two slashes", () => {
+    expect(safeReturnTo("/.//other.example/path")).toBe("");
+    expect(safeReturnTo("/..//other.example/path")).toBe("");
+    expect(safeReturnTo("/./\\other.example")).toBe("");
+    expect(safeReturnTo(window.location.origin + "/.//other.example/path")).toBe("");
+  });
   it("rejects empty, whitespace, or non-string inputs", () => {
     expect(safeReturnTo("")).toBe("");
     expect(safeReturnTo("   ")).toBe("");
