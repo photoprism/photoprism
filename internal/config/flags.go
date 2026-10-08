@@ -1044,7 +1044,7 @@ var Flags = CliFlags{
 			Aliases: []string{"dsn"},
 			Usage:   "database connection `DSN` (sqlite file, optional for mysql)",
 			EnvVars: EnvVars("DATABASE_DSN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "database-name",
 			Aliases: []string{"db-name"},
@@ -1107,13 +1107,13 @@ var Flags = CliFlags{
 			Usage:   "auto-provisioning `DSN`",
 			EnvVars: EnvVars("DATABASE_PROVISION_DSN"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "database-provision-proxy-dsn",
 			Usage:   "ProxySQL admin `DSN` (port 6032 by default) for keeping user accounts in sync",
 			EnvVars: EnvVars("DATABASE_PROVISION_PROXY_DSN"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-bin",
 			Usage:   "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",

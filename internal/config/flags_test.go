@@ -2,11 +2,11 @@ package config
 
 import (
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -108,47 +108,39 @@ func TestFaceModelDocDefault(t *testing.T) {
 }
 
 // TestFlagsSecretAnnotation pins that every flag carrying credential material sets Secret.
-// A new flag matching one of the patterns below must either set it or join the reviewed
-// exceptions, which name a location, a lifetime, or a length rather than a credential.
+// A new flag matching SecretFlagPatterns must either set it or join the reviewed exceptions.
 func TestFlagsSecretAnnotation(t *testing.T) {
-	patterns := []string{"password", "token", "secret", "key", "salt", "jwks"}
+	missing, matched := FlagsWithoutSecret(Flags)
 
-	exceptions := map[string]bool{
-		"download-token-maxage": true,
-		"jwks-cache-ttl":        true,
-		"jwks-url":              true,
-		"password-length":       true,
-		"tls-key":               true,
-	}
-
-	matched := 0
-
-	for _, flag := range Flags {
-		name := flag.Name()
-
-		if exceptions[name] {
-			continue
-		}
-
-		pattern := ""
-
-		for _, p := range patterns {
-			if strings.Contains(strings.ToLower(name), p) || strings.Contains(strings.ToLower(flag.EnvVar()), p) {
-				pattern = p
-				break
-			}
-		}
-
-		if pattern == "" {
-			continue
-		}
-
-		matched++
-
-		assert.True(t, flag.Secret, "flag %q matches %q, so it must set Secret or be a reviewed exception", name, pattern)
-	}
+	assert.Empty(t, missing, "these flags match a credential pattern, so they must set Secret or be a reviewed exception")
 
 	// Guard the scan itself: without this a rename that stops matching every pattern would leave
-	// the loop asserting nothing and still reporting success.
-	assert.GreaterOrEqual(t, matched, 9, "expected the known credential flags to match; the patterns may be stale")
+	// the check asserting nothing and still reporting success.
+	assert.GreaterOrEqual(t, matched, 12, "expected the known credential flags to match; the patterns may be stale")
+}
+
+func TestFlagsWithoutSecret(t *testing.T) {
+	flags := CliFlags{
+		{Flag: &cli.StringFlag{Name: "example-password", EnvVars: EnvVars("EXAMPLE_PASSWORD")}, Secret: true},
+		{Flag: &cli.StringFlag{Name: "example-dsn", EnvVars: EnvVars("EXAMPLE_DSN")}},
+		{Flag: &cli.StringFlag{Name: "example-path", EnvVars: EnvVars("EXAMPLE_TOKEN_PATH")}},
+		{Flag: &cli.StringFlag{Name: "tls-key", EnvVars: EnvVars("TLS_KEY")}},
+		{Flag: &cli.StringFlag{Name: "example-name", EnvVars: EnvVars("EXAMPLE_NAME")}},
+	}
+
+	t.Run("Missing", func(t *testing.T) {
+		missing, matched := FlagsWithoutSecret(flags)
+		assert.Equal(t, []string{"example-dsn", "example-path"}, missing)
+		assert.Equal(t, 3, matched)
+	})
+	t.Run("Exceptions", func(t *testing.T) {
+		missing, matched := FlagsWithoutSecret(flags, "example-path")
+		assert.Equal(t, []string{"example-dsn"}, missing)
+		assert.Equal(t, 2, matched)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		missing, matched := FlagsWithoutSecret(nil)
+		assert.Empty(t, missing)
+		assert.Zero(t, matched)
+	})
 }
