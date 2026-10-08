@@ -244,7 +244,7 @@ func (c *Config) CreateDirectories() error {
 	return nil
 }
 
-// StoragePath returns the path for generated files like cache and index.
+// StoragePath returns the absolute path for generated files like cache and index.
 func (c *Config) StoragePath() string {
 	if c.options.StoragePath == "" {
 		// Default directories.
@@ -561,7 +561,8 @@ func (c *Config) initCaseMode() error {
 	return nil
 }
 
-// OriginalsPath returns the originals.
+// OriginalsPath returns the absolute path of the originals, or an empty string if none is configured or
+// found. Converters receive media file names below it as arguments, so the names must not be relative.
 func (c *Config) OriginalsPath() string {
 	if c.options.OriginalsPath == "" {
 		// Try to find the right directory by iterating through a list.
@@ -576,7 +577,7 @@ func (c *Config) OriginalsDeletable() bool {
 	return !c.ReadOnly() && fs.Writable(c.OriginalsPath()) && c.Settings().Features.Delete
 }
 
-// ImportPath returns the import directory.
+// ImportPath returns the absolute path of the import directory, or an empty string, see OriginalsPath.
 func (c *Config) ImportPath() string {
 	if c.options.ImportPath == "" {
 		// Try to find the right directory by iterating through a list.

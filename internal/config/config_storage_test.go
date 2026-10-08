@@ -1133,3 +1133,20 @@ func TestConfig_InitCaseModeLogs(t *testing.T) {
 		assert.Equal(t, []string{"config: invalid originals-case value 'Yes', using auto"}, messages(logrus.WarnLevel))
 	})
 }
+
+// TestConfig_RootPathsAbsolute checks that the root folders are absolute when they are configured as
+// relative paths.
+func TestConfig_RootPathsAbsolute(t *testing.T) {
+	c := NewMinimalTestConfig(t.TempDir())
+	c.options.OriginalsPath = "relative/originals"
+	c.options.ImportPath = "relative/import"
+	c.options.StoragePath = "relative/storage"
+
+	for name, path := range map[string]string{
+		"OriginalsPath": c.OriginalsPath(),
+		"ImportPath":    c.ImportPath(),
+		"StoragePath":   c.StoragePath(),
+	} {
+		assert.True(t, filepath.IsAbs(path), "%s returned %s", name, path)
+	}
+}
