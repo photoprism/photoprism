@@ -334,16 +334,29 @@ func TestRemoveRedactedOptionValues(t *testing.T) {
 }
 
 func TestExposedOptionNames(t *testing.T) {
-	// ExposedOptionCount pins how many options the API returns. Adding a field without json:"-"
-	// changes this number, so the author is asked once whether it can carry a credential and
-	// therefore belongs in RedactedOptionNames.
-	const ExposedOptionCount = 96
-
-	fields := optionFields()
+	// The API returns exactly these options. Adding a field without json:"-" changes the list, so the
+	// author is asked whether it can carry a credential and therefore belongs in RedactedOptionNames.
+	expected := []string{
+		"AppColor", "AppIcon", "AppMode", "AppName", "AutoImport", "AutoIndex", "BackupAlbums", "BackupDatabase",
+		"BackupRetain", "BackupSchedule", "CdnUrl", "CdnVideo", "Debug", "DefaultLocale", "DefaultTLS",
+		"DefaultTheme", "DefaultTimezone", "DetectNSFW", "DisableBackups", "DisableClassification",
+		"DisableDarktable", "DisableExifTool", "DisableFFmpeg", "DisableFaces", "DisableHeifConvert",
+		"DisableImageMagick", "DisableJpegXL", "DisableMCP", "DisableOIDC", "DisablePlaces", "DisableRaw",
+		"DisableRawTherapee", "DisableSips", "DisableTLS", "DisableTensorFlow", "DisableVectors", "DisableWebDAV",
+		"ExifBruteForce", "Experimental", "FFmpegBitrate", "FFmpegEncoder", "FFmpegFisheyeFov", "FFmpegMapAudio",
+		"FFmpegMapVideo", "FFmpegPreset", "FFmpegQuality", "FFmpegSize", "HttpCacheMaxAge", "HttpCachePublic",
+		"HttpVideoMaxAge", "HttpsProxy", "HttpsProxyInsecure", "ImportAllow", "IndexSchedule", "IndexWorkers",
+		"JpegQuality", "JpegSize", "LegalInfo", "LegalUrl", "OIDCIcon", "OIDCLogout", "OIDCProvider",
+		"OIDCRedirect", "OIDCRegister", "OriginalsLimit", "PlacesLocale", "PngSize", "Prod", "RawPresets",
+		"ReadOnly", "ResolutionLimit", "SidecarYaml", "SiteAuthor", "SiteCaption", "SiteDescription",
+		"SiteFavicon", "SiteName", "SitePreview", "SiteTitle", "SiteUrl", "TLSCert", "TLSEmail", "TLSKey",
+		"ThumbColor", "ThumbLibrary", "ThumbSize", "ThumbSizeFace", "ThumbSizeUncached", "ThumbUncached", "Trace",
+		"UsageInfo", "VisionFilter", "VisionSchedule", "WakeupInterval", "WallpaperUri", "XMPFaces",
+	}
 
 	var exposed []string
 
-	for name, field := range fields {
+	for name, field := range optionFields() {
 		if field.Exposed {
 			exposed = append(exposed, name)
 		}
@@ -351,9 +364,8 @@ func TestExposedOptionNames(t *testing.T) {
 
 	sort.Strings(exposed)
 
-	assert.Len(t, exposed, ExposedOptionCount,
-		"the set of options the API returns changed; if the new one can carry a credential, add it to RedactedOptionNames")
-	assert.Contains(t, exposed, "HttpsProxy")
+	assert.Equal(t, expected, exposed,
+		"the set of options the API returns changed; update the expected list, and if a new option can carry a credential, add it to RedactedOptionNames")
 	assert.NotContains(t, exposed, "StoragePath", `a field tagged json:"-" is not returned`)
 
 	for _, name := range RedactedOptionNames {
