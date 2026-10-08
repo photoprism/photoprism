@@ -70,8 +70,8 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 		)
 	}
 
-	// Use ImageMagick for other media file formats if the type and extension are allowed.
-	if w.conf.ImageMagickEnabled() && w.imageMagickExclude.Allow(fileExt) {
+	// Use ImageMagick for other media file formats if the type, extension, and file names are allowed.
+	if w.conf.ImageMagickEnabled() && w.imageMagickExclude.Allow(fileExt) && magickNames(f.FileName(), pngName) {
 		resize := fmt.Sprintf("%dx%d>", w.conf.PngSize(), w.conf.PngSize())
 		switch {
 		case f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHeif():

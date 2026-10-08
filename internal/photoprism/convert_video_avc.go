@@ -371,8 +371,8 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded", f.FileType(), clean.Log(f.BaseName()))
 	}
 
-	// Try to transcode animated WebP images with ImageMagick.
-	if w.conf.ImageMagickEnabled() && f.IsWebp() && w.imageMagickExclude.Allow(fileExt) {
+	// Try to transcode animated WebP images with ImageMagick if the file names are allowed.
+	if w.conf.ImageMagickEnabled() && f.IsWebp() && w.imageMagickExclude.Allow(fileExt) && magickNames(fileName, avcName) {
 		info, infoErr := f.DecodeConfig()
 		if infoErr != nil || info.Width <= 0 || info.Height <= 0 {
 			return nil, false, fmt.Errorf("convert: cannot read WebP dimensions for %s", clean.Log(f.BaseName()))

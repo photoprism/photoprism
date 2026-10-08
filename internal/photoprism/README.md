@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** October 6, 2026
+**Last Updated:** October 8, 2026
 
 ### Overview
 
@@ -78,6 +78,10 @@ cropping. The output pixel format is explicitly `yuv420p`. Canvas dimensions com
 WebP header, not orientation-adjusted metadata; unreadable dimensions stop conversion.
 ImageMagick exclusions, conversion deadlines, sidecar reuse, and force rules still apply.
 Other image and video formats do not use this normalization.
+
+ImageMagick is a fallback converter and is not run for a file whose path contains `%` or whose
+base name contains one of `*?[]{}`, since it reads such names as patterns. Other converters still
+apply where they support the format; an animated WebP with such a name gets no video.
 
 ### Operational Notes
 
