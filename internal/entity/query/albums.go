@@ -177,7 +177,7 @@ func UpdateAlbumDates() (updated int, err error) {
 		result := UnscopedDb().Exec(`UPDATE albums
 			SET album_year = date_part('year', taken_max), album_month = date_part('month', taken_max), album_day = date_part('day', taken_max)
 			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
-	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			FROM photos WHERE taken_src IN ('meta', 'modified') AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 	 			GROUP BY photo_path
 			) AS p
 			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL
