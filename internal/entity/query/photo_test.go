@@ -432,7 +432,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 		}
 	})
 	t.Run("ForcedBadDate", func(t *testing.T) {
-		if entity.DbDialect() != dsn.DriverSQLite3 {
+		if entity.DbDialect() != dsn.DialectSQLite {
 			t.Skip("This test is only for SQLite")
 		}
 		bp := entity.PhotoFixtures.Pointer("Photo18")

@@ -239,7 +239,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	case sortby.Title:
 		s = s.Order(OrderExpr("photos.photo_title ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
 	case sortby.Random:
-		s = s.Order(sortby.RandomExpr(s.Dialect()))
+		s = s.Order(sortby.RandomExpr(entity.DbDialect()))
 	case sortby.Default, sortby.Imported, sortby.Added:
 		s = s.Order(OrderExpr("files.media_id", frm.Reverse))
 	default:

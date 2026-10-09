@@ -117,13 +117,13 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 
 		var statements []string
 		switch entity.DbDialect() {
-		case dsn.DriverMySQL:
+		case dsn.DialectMySQL:
 			statements = []string{
 				"UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?",
 			}
-		case dsn.DriverSQLite3:
+		case dsn.DialectSQLite:
 			statements = []string{
 				"UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?",

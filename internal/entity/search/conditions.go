@@ -13,9 +13,9 @@ import (
 
 // PathLike returns a case-insensitive likeCond condition for a VARBINARY path column such as album_path
 // or photo_path, which MySQL compares byte-exact, so that a query in any letter case finds a path.
-// SQLite LIKE is already ASCII case-insensitive. The dialect is the GORM dialect name.
+// SQLite LIKE is already ASCII case-insensitive. The dialect is one of the dsn.Dialect constants.
 func PathLike(dialect, col string) string {
-	if dialect == dsn.DriverMySQL {
+	if dialect == dsn.DialectMySQL {
 		return likeCond("CONVERT(" + col + " USING utf8mb4) COLLATE utf8mb4_general_ci")
 	}
 

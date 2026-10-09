@@ -58,7 +58,7 @@ func runTestMain(m *testing.M) int {
 
 func TestDbDialect(t *testing.T) {
 	t.Run("TestDriver", func(t *testing.T) {
-		assert.Equal(t, testDriver(), DbDialect())
+		assert.Equal(t, dsn.DialectFromDriver(testDriver()), DbDialect())
 	})
 }
 

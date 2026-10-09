@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity/sqlcount"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestDbHasTable(t *testing.T) {
@@ -76,4 +77,30 @@ func closedTestDb(t *testing.T) *gorm.DB {
 	require.NoError(t, p.Close())
 
 	return p.DB
+}
+
+func TestIsDialect(t *testing.T) {
+	dialect := DbDialect()
+	require.NotEmpty(t, dialect)
+
+	t.Run("Current", func(t *testing.T) {
+		assert.True(t, IsDialect(dialect))
+	})
+	t.Run("DriverName", func(t *testing.T) {
+		switch dialect {
+		case dsn.DialectSQLite:
+			assert.True(t, IsDialect(dsn.DriverSQLite3))
+			assert.False(t, IsDialect(dsn.DriverMySQL))
+		case dsn.DialectMySQL:
+			assert.True(t, IsDialect(dsn.DriverMariaDB))
+			assert.False(t, IsDialect(dsn.DriverSQLite3))
+		default:
+			t.Fatalf("unexpected dialect %s", dialect)
+		}
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		assert.False(t, IsDialect(""))
+		assert.False(t, IsDialect(dsn.DriverTiDB))
+		assert.False(t, IsDialect(dsn.DriverAuto))
+	})
 }

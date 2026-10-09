@@ -372,9 +372,9 @@ func markerUIDs(markers []Marker) []string {
 // TestBatchSize pins the number of values a batch binds per database dialect.
 func TestBatchSize(t *testing.T) {
 	switch dialect := DbDialect(); dialect {
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		assert.Equal(t, 333, BatchSize())
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		assert.Equal(t, 1000, BatchSize())
 	default:
 		t.Fatalf("unexpected dialect %s", dialect)

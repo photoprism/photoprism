@@ -160,7 +160,7 @@ func UpdateAlbumDates() (updated int, err error) {
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		result := UnscopedDb().Exec(`UPDATE albums INNER JOIN (
              SELECT photo_path, MAX(taken_at_local) AS taken_max
 			 FROM photos WHERE taken_src IN ('meta', 'modified') AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
@@ -173,7 +173,7 @@ func UpdateAlbumDates() (updated int, err error) {
 			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(album_year, '-', album_month, '-', album_day), '%Y-%c-%e'), DATE('1000-01-01'))
 		)`)
 		return int(result.RowsAffected), result.Error
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		// SQLite has potential locking issues if the update is done on all albums at once.
 		var albums entity.Albums
 		if albums, err = AlbumsByType(entity.AlbumFolder, true); err != nil {

@@ -159,7 +159,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 	condition := gorm.Expr("subj_type = ?", SubjPerson)
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res = Db().Exec(`UPDATE ? LEFT JOIN (
 		SELECT m.subj_uid, COUNT(DISTINCT f.id) AS subj_files, COUNT(DISTINCT f.photo_id) AS subj_photos
 			FROM files f
@@ -170,7 +170,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 		SET subjects.file_count = CASE WHEN b.subj_files IS NULL THEN 0 ELSE b.subj_files END, 
 			subjects.photo_count = CASE WHEN b.subj_photos IS NULL THEN 0 ELSE b.subj_photos END
 		WHERE ?`, gorm.Expr(subjTable), photosJoin, condition)
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		// Update files count.
 		res = Db().Table(subjTable).
 			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id)"+
@@ -245,7 +245,7 @@ func UpdateLabelCounts() (err error) {
 
 	start := time.Now()
 	var res *gorm.DB
-	if IsDialect(dsn.DriverMySQL) {
+	if IsDialect(dsn.DialectMySQL) {
 		if err = RetryDeadlock("update label counts", func() error {
 			res = Db().Exec(`UPDATE labels LEFT JOIN (
 		SELECT p2.label_id, COUNT(DISTINCT photo_id) AS label_photos FROM (
@@ -264,7 +264,7 @@ func UpdateLabelCounts() (err error) {
 		}); err != nil {
 			return err
 		}
-	} else if IsDialect(dsn.DriverSQLite3) {
+	} else if IsDialect(dsn.DialectSQLite) {
 		res = Db().
 			Table("labels").
 			UpdateColumn("photo_count",

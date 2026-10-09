@@ -82,20 +82,29 @@ func (g *DbConn) Close() {
 	}
 }
 
-// IsDialect returns true if the given sql dialect is used.
+// IsDialect returns true if the database uses the SQL dialect of the given dialect or driver name.
 func IsDialect(name string) bool {
-	return name == Db().Dialect().GetName()
+	dialect := dsn.DialectFromDriver(name)
+
+	return dialect != "" && dialect == DbDialect()
 }
 
-// DbDialect returns the sql dialect name.
+// DbDialect returns the SQL dialect of the database as one of the dsn.Dialect constants, or the name
+// the ORM reports if the dialect is not supported.
 func DbDialect() string {
-	return Db().Dialect().GetName()
+	name := Db().Dialect().GetName()
+
+	if dialect := dsn.DialectFromDriver(name); dialect != "" {
+		return dialect
+	}
+
+	return name
 }
 
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
 	switch DbDialect() {
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		return 333
 	default:
 		return 1000

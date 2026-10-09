@@ -174,13 +174,13 @@ func likeTestFolder(t *testing.T, dir string) entity.Folder {
 
 func TestSubfolderCond(t *testing.T) {
 	t.Run("MySQL", func(t *testing.T) {
-		cond, err := subfolderCond(dsn.DriverMySQL)
+		cond, err := subfolderCond(dsn.DialectMySQL)
 		require.NoError(t, err)
 		assert.Equal(t, "b.path LIKE CONCAT(REPLACE(REPLACE(REPLACE(a.path, '!', '!!'), '%', '!%'), '_', '!_'), '/%') ESCAPE '!'"+
 			" AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = CONCAT(a.path, '/')", cond)
 	})
 	t.Run("SQLite", func(t *testing.T) {
-		cond, err := subfolderCond(dsn.DriverSQLite3)
+		cond, err := subfolderCond(dsn.DialectSQLite)
 		require.NoError(t, err)
 		assert.Equal(t, "b.path LIKE REPLACE(REPLACE(REPLACE(a.path, '!', '!!'), '%', '!%'), '_', '!_') || '/%' ESCAPE '!'"+
 			" AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = a.path || '/'", cond)

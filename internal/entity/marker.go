@@ -906,7 +906,7 @@ func refreshMarkerPhotos(uids []string) error {
 	}
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		return UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
 			JOIN ? m ON m.file_uid = f.file_uid SET p.checked_at = NULL
 			WHERE m.marker_uid IN (?)`,

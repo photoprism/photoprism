@@ -120,10 +120,10 @@ func (list Tables) Truncate(db *gorm.DB) {
 // is a slower DDL statement there; the restart commits implicitly, so pass db, not
 // a transaction. SQLite deletes the rows and keeps its counters; others truncate.
 func truncateTable(db *gorm.DB, name string, autoInc bool) error {
-	switch db.Dialect().GetName() {
-	case dsn.DriverSQLite3:
+	switch dsn.DialectFromDriver(db.Dialect().GetName()) {
+	case dsn.DialectSQLite:
 		return db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		if err := RetryDeadlock("truncate "+name, func() error {
 			return db.Exec(fmt.Sprintf("DELETE FROM `%s`", name)).Error
 		}); err != nil {
@@ -147,7 +147,7 @@ func truncateTable(db *gorm.DB, name string, autoInc bool) error {
 func autoIncrementTables(db *gorm.DB) map[string]bool {
 	result := make(map[string]bool)
 
-	if db.Dialect().GetName() != dsn.DriverMySQL {
+	if dsn.DialectFromDriver(db.Dialect().GetName()) != dsn.DialectMySQL {
 		return result
 	}
 

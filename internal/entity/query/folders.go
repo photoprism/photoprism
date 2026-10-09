@@ -94,7 +94,7 @@ func UpdateFolderDates() (updated int, err error) {
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		result := UnscopedDb().Exec(`UPDATE folders
 		INNER JOIN
 			(SELECT photo_path, MAX(taken_at_local) AS taken_max
@@ -106,7 +106,7 @@ func UpdateFolderDates() (updated int, err error) {
 			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(folder_year, '-', folder_month,'-', folder_day), '%Y-%c-%e'), DATE('1000-01-01'))
 		)`, entity.RootOriginals)
 		return int(result.RowsAffected), result.Error
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		// SQLite has potential locking issues if the update is done on all folders at once.
 		var folders entity.Folders
 		// Only update Original's folders.

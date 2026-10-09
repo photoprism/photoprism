@@ -37,10 +37,10 @@ func SelectedPhotoUIDsForSession(photoUIDs []string, sess *entity.Session) (scop
 // subfolderCond returns the join condition that matches the subfolders b of the folders a.
 func subfolderCond(dialect string) (string, error) {
 	switch dialect {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		return fmt.Sprintf("b.path LIKE CONCAT(%s, '/%%') ESCAPE '%s' AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = CONCAT(a.path, '/')",
 			clean.SqlLikeExpr("a.path"), clean.SqlLikeEscape), nil
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		return fmt.Sprintf("b.path LIKE %s || '/%%' ESCAPE '%s' AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = a.path || '/'",
 			clean.SqlLikeExpr("a.path"), clean.SqlLikeEscape), nil
 	default:
