@@ -101,9 +101,11 @@ func TestNewFolder(t *testing.T) {
 func TestFirstOrCreateFolder(t *testing.T) {
 	t.Run("ExistingRootFolder", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, RootPath, time.Now().UTC())
-		result := FirstOrCreateFolder(&folder)
+		result, _, err := FirstOrCreateFolder(&folder)
 
-		if result == nil {
+		if err != nil {
+			t.Fatal(err)
+		} else if result == nil {
 			t.Fatal("result must not be nil")
 		}
 
@@ -148,16 +150,99 @@ func TestFirstOrCreateFolder(t *testing.T) {
 		}
 
 		createCandidate := NewFolder(RootOriginals, folderPath, time.Now().UTC())
-		result := FirstOrCreateFolder(&createCandidate)
+		result, created, err := FirstOrCreateFolder(&createCandidate)
 
-		if result == nil {
+		if err != nil {
+			t.Fatal(err)
+		} else if result == nil {
 			t.Fatal("result must not be nil")
 		}
+
+		assert.False(t, created)
 
 		if result.DeletedAt == nil {
 			t.Fatal("expected soft-deleted folder from unscoped conflict lookup")
 		}
 	})
+}
+
+// cleanupTestFolder removes a folder created by a test and the folder album it adds.
+func cleanupTestFolder(t *testing.T, folderPath string) {
+	t.Cleanup(func() {
+		_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
+		_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+	})
+}
+
+func TestFirstOrCreateFolder_Created(t *testing.T) {
+	folderPath := "first-or-create-new-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+	cleanupTestFolder(t, folderPath)
+
+	folder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+	result, created, err := FirstOrCreateFolder(&folder)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.True(t, created)
+	assert.Equal(t, folderPath, result.Path)
+
+	again := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+	existing, created, err := FirstOrCreateFolder(&again)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.False(t, created)
+	assert.Equal(t, result.FolderUID, existing.FolderUID)
+}
+
+func TestFirstOrCreateFolder_LookupFirst(t *testing.T) {
+	folderPath := "first-or-create-lookup-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+	cleanupTestFolder(t, folderPath)
+
+	folder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+	_, created, err := FirstOrCreateFolder(&folder)
+	require.NoError(t, err)
+	require.True(t, created)
+
+	statements := countedStatements(t, func() {
+		again := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+		_, created, err = FirstOrCreateFolder(&again)
+	})
+
+	require.NoError(t, err)
+	assert.False(t, created)
+	require.NotEmpty(t, statements)
+
+	// An existing folder is found without attempting an insert.
+	for _, s := range statements {
+		assert.NotContains(t, s, "INSERT", s)
+	}
+}
+
+func TestFirstOrCreateFolder_ClippedPath(t *testing.T) {
+	// A parent whose path fills the byte budget clips its children to the parent path plus a slash.
+	parentPath := "clipped-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano)) + "-"
+	parentPath += strings.Repeat("x", len(ClipPath(strings.Repeat("x", 4096)))-len(parentPath)-1)
+
+	parent := NewFolder(RootOriginals, parentPath, time.Now().UTC())
+	child := NewFolder(RootOriginals, parentPath+"/child", time.Now().UTC())
+	require.Equal(t, parentPath, parent.Path)
+	require.NotEqual(t, parent.Path, child.Path)
+
+	cleanupTestFolder(t, parent.Path)
+	cleanupTestFolder(t, child.Path)
+
+	parentResult, _, err := FirstOrCreateFolder(&parent)
+	require.NoError(t, err)
+
+	childResult, created, err := FirstOrCreateFolder(&child)
+	require.NoError(t, err)
+	assert.True(t, created)
+	assert.NotEqual(t, parentResult.FolderUID, childResult.FolderUID)
 }
 
 func TestFolder_SetValuesFromPath(t *testing.T) {

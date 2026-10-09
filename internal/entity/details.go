@@ -91,16 +91,18 @@ func (m *Details) Updates(values any) error {
 func FirstOrCreateDetails(m *Details) *Details {
 	result := Details{}
 
-	if err := m.Create(); err == nil {
-		return m
-	} else if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
+	if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
 		if m.CreatedAt.IsZero() {
 			m.CreatedAt = Now()
 		}
 
 		return &result
+	} else if createErr := m.Create(); createErr == nil {
+		return m
+	} else if err = Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
+		return &result
 	} else {
-		log.Errorf("details: %s (find or create %d)", err, m.PhotoID)
+		log.Errorf("details: %s (find or create %d)", createErr, m.PhotoID)
 	}
 
 	return nil

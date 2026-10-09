@@ -215,6 +215,17 @@ func (m *Cell) Find(api string) error {
 	m.CellPostcode = l.Postcode()
 	m.CellCategory = l.Category()
 
+	place := m.Place
+	m.Place = nil
+
+	if findErr := db.Preload("Place").First(m, "id = ?", m.ID).Error; findErr == nil {
+		m.ensurePlace()
+		log.Tracef("cell: found %s [%s]", m.ID, time.Since(start))
+		return nil
+	}
+
+	m.Place = place
+
 	if createErr := db.Create(m).Error; createErr == nil {
 		log.Debugf("cell: added %s [%s]", m.ID, time.Since(start))
 		return nil

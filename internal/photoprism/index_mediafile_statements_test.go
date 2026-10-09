@@ -88,9 +88,9 @@ func TestIndex_UserMediaFileStatements(t *testing.T) {
 
 	switch c.DatabaseDriver() {
 	case dsn.DriverSQLite3:
-		added, updated = 40, 45
+		added, updated = 40, 44
 	case dsn.DriverMySQL:
-		added, updated = 40, 49
+		added, updated = 40, 48
 	default:
 		t.Skipf("no statement ceiling for driver %s", c.DatabaseDriver())
 	}

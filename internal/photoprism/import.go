@@ -219,7 +219,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 				if folderBase != "" {
 					folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, folderBase), fs.ModTime(fileName))
 
-					if err := folder.Create(); err == nil && folder.Path != "" {
+					if _, created, err := entity.FirstOrCreateFolder(&folder); err == nil && created && folder.Path != "" {
 						log.Infof("import: added folder /%s", clean.Log(folder.Path))
 					}
 				}

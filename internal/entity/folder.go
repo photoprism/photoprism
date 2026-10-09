@@ -315,6 +315,12 @@ func FindFolder(root, dir string) *Folder {
 		dir = ""
 	}
 
+	return findFolderKey(root, dir)
+}
+
+// findFolderKey returns the folder stored with the root and path given verbatim, including
+// soft-deleted ones, or nil if there is none.
+func findFolderKey(root, dir string) *Folder {
 	result := Folder{}
 
 	if err := UnscopedDb().Where("path = ? AND root = ?", dir, root).First(&result).Error; err == nil {
@@ -328,19 +334,19 @@ func FindFolder(root, dir string) *Folder {
 	return nil
 }
 
-// FirstOrCreateFolder returns the existing row, inserts a new row or nil in case of errors.
-func FirstOrCreateFolder(m *Folder) *Folder {
-	if result := FindFolder(m.Root, m.Path); result != nil {
-		return result
+// FirstOrCreateFolder returns the folder stored with the same root and path, or inserts it, and
+// reports whether it was created.
+func FirstOrCreateFolder(m *Folder) (folder *Folder, created bool, err error) {
+	if result := findFolderKey(m.Root, m.Path); result != nil {
+		return result, false, nil
 	} else if createErr := m.Create(); createErr == nil {
-		return m
-	} else if result = FindFolder(m.Root, m.Path); result != nil {
-		return result
+		return m, true, nil
+	} else if result = findFolderKey(m.Root, m.Path); result != nil {
+		return result, false, nil
 	} else {
 		log.Errorf("folder: %s (find or create %s)", clean.Error(createErr), clean.Log(m.Path))
+		return nil, false, createErr
 	}
-
-	return nil
 }
 
 // Updates selected properties in the database.
