@@ -31,7 +31,7 @@ func CountUsers(registered, active bool, includeRoles, excludeRoles []string) (c
 	}
 
 	if active {
-		stmt = stmt.Where("(can_login > 0 OR webdav > 0) AND user_name <> ''")
+		stmt = stmt.Where("(can_login = TRUE OR webdav = TRUE) AND user_name <> ''")
 	}
 
 	if len(includeRoles) > 0 {
@@ -40,11 +40,13 @@ func CountUsers(registered, active bool, includeRoles, excludeRoles []string) (c
 		stmt = stmt.Where("user_role NOT IN (?)", excludeRoles)
 	}
 
-	if err := stmt.Count(&count).Error; err != nil {
+	var n int64
+
+	if err := stmt.Count(&n).Error; err != nil {
 		log.Errorf("users: %s (count)", err)
 	}
 
-	return count
+	return int(n)
 }
 
 // Users finds user accounts based on the specified parameters.
