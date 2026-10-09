@@ -27,6 +27,10 @@ func FindLegacyUser(find User) *legacy.User {
 		return nil
 	}
 
+	if found, err := DbHasTable(Db(), m.TableName()); err != nil || !found {
+		return nil
+	}
+
 	// Find matching record.
 	if err := stmt.First(m).Error; err != nil {
 		return nil
@@ -38,6 +42,10 @@ func FindLegacyUser(find User) *legacy.User {
 // FindLegacyUsers finds registered legacy users.
 func FindLegacyUsers(search string) legacy.Users {
 	result := legacy.Users{}
+
+	if found, err := DbHasTable(Db(), legacy.User{}.TableName()); err != nil || !found {
+		return result
+	}
 
 	stmt := Db()
 

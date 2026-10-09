@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -946,7 +948,24 @@ func (c *Config) libraryFaceModels() (counts []query.MarkerEmbeddingModelCount, 
 		return nil, false
 	}
 
-	counts, err := query.RecordedMarkerEmbeddingModels()
+	if found, tableErr := entity.DbHasTable(c.db, entity.Marker{}.TableName()); tableErr != nil {
+		log.Debugf("config: %s (find markers table)", tableErr)
+		return nil, false
+	} else if !found {
+		log.Debugf("config: no markers table (find face embedding models)")
+		return nil, false
+	}
+
+	var err error
+
+	if found, columnErr := entity.DbHasColumn(c.db, entity.Marker{}.TableName(), "embed_model"); columnErr != nil {
+		log.Debugf("config: %s (find embed_model column)", columnErr)
+		return nil, false
+	} else if found {
+		counts, err = query.RecordedMarkerEmbeddingModels()
+	} else {
+		err = errors.New("no embed_model column")
+	}
 
 	if err != nil {
 		// The schema is migrated after the configuration is propagated, so on the first

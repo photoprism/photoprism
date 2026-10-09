@@ -1240,6 +1240,64 @@ func TestConfig_libraryFaceModels(t *testing.T) {
 		assert.Equal(t, len(uids), legacy)
 		assert.Equal(t, face.ModelFaceNet, dominantFaceModel(counts))
 	})
+	t.Run("WithoutProvenanceColumn", func(t *testing.T) {
+		// A schema from before the provenance column is answered from the vectors it holds.
+		c := NewIsolatedTestConfig("face-models-schema", t.TempDir(), true)
+
+		if c.DatabaseDriver() != dsn.DriverSQLite3 {
+			t.Skip("requires a SQLite database of its own")
+		}
+
+		t.Cleanup(func() {
+			_ = c.CloseDb()
+			entity.SetDbProvider(TestConfig())
+			TestConfig().Propagate()
+		})
+
+		require.NoError(t, c.connectDb())
+		c.RegisterDb()
+
+		require.NoError(t, c.Db().Exec("CREATE TABLE markers (marker_uid TEXT, marker_type TEXT, embeddings_json BLOB)").Error)
+		require.NoError(t, c.Db().Exec("INSERT INTO markers VALUES ('m1', ?, '[[0.1]]')", entity.MarkerFace).Error)
+
+		counts, ok := c.libraryFaceModels()
+
+		assert.True(t, ok)
+		assert.Equal(t, []query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 1}}, counts)
+	})
+	t.Run("WithoutMarkersTable", func(t *testing.T) {
+		c := NewIsolatedTestConfig("face-models-empty", t.TempDir(), true)
+
+		if c.DatabaseDriver() != dsn.DriverSQLite3 {
+			t.Skip("requires a SQLite database of its own")
+		}
+
+		t.Cleanup(func() {
+			_ = c.CloseDb()
+			entity.SetDbProvider(TestConfig())
+			TestConfig().Propagate()
+		})
+
+		require.NoError(t, c.connectDb())
+		c.RegisterDb()
+
+		counts, ok := c.libraryFaceModels()
+
+		assert.Nil(t, counts)
+		assert.False(t, ok)
+	})
+	t.Run("UnreadableDatabase", func(t *testing.T) {
+		c := NewIsolatedTestConfig("face-models-closed", t.TempDir(), true)
+		t.Cleanup(func() { c.db = nil })
+
+		require.NoError(t, c.connectDb())
+		require.NoError(t, c.Db().DB().Close())
+
+		counts, ok := c.libraryFaceModels()
+
+		assert.Nil(t, counts)
+		assert.False(t, ok)
+	})
 	t.Run("WithoutDatabase", func(t *testing.T) {
 		// Not being able to ask is not the same answer as an empty library.
 		counts, ok := NewConfig(CliTestContext()).libraryFaceModels()

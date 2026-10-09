@@ -89,3 +89,19 @@ func TestFindLegacyUsers_Literal(t *testing.T) {
 		assert.Equal(t, base+"_a", found[0].UserName)
 	}
 }
+
+func TestFindLegacyUser_NoTable(t *testing.T) {
+	require.NoError(t, Db().DropTableIfExists(legacy.User{}).Error)
+
+	statements := countedStatements(t, func() {
+		assert.Nil(t, FindLegacyUser(Admin))
+		assert.Empty(t, FindLegacyUsers("all"))
+	})
+
+	// Without the legacy table, the lookups only check whether it exists.
+	require.NotEmpty(t, statements)
+
+	for _, s := range statements {
+		assert.NotRegexp(t, "(?i)FROM [`\"]?users[`\"]?", s)
+	}
+}
