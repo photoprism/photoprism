@@ -2370,6 +2370,7 @@ func TestUser_Create_ValidHandle(t *testing.T) {
 	})
 	t.Run("InitialAdmin", func(t *testing.T) {
 		u := &User{ID: 1, UserName: ".admin", UserRole: acl.RoleAdmin.String()}
+		log.Info("Expect SQLSTATE or unique violation for auth_user")
 		err := u.Create()
 		if err != nil {
 			assert.NotContains(t, err.Error(), "not supported")

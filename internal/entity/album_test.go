@@ -803,7 +803,7 @@ func TestFindAlbum(t *testing.T) {
 		assert.Equal(t, "April 1990", result.AlbumTitle)
 	})
 	t.Run("AlbumTitleNoSlug", func(t *testing.T) {
-		album := Album{AlbumSlug: UnknownSlug, AlbumType: AlbumManual, AlbumTitle: `route%`}
+		album := Album{AlbumSlug: UnknownSlug, AlbumType: AlbumManual, AlbumTitle: `route 66`}
 		result := FindAlbum(album)
 
 		if result == nil {

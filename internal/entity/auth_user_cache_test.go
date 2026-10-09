@@ -71,6 +71,7 @@ func TestUser_SaveFailureKeepsCache(t *testing.T) {
 	fresh := FindUserByUID(user.UserUID)
 	require.NotNil(t, fresh)
 	fresh.UserUID = other.UserUID
+	log.Info("Expect duplicate key violation Error or SQLSTATE from auth_user")
 	require.Error(t, fresh.Save())
 	cached, found := sessionCache.Get(sess.ID)
 	require.True(t, found)
