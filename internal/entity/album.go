@@ -997,6 +997,11 @@ func (m *Album) DeletePermanently() error {
 		return err
 	}
 
+	// Remove the photo links only once the album row is gone, so a failed delete keeps them.
+	if err := UnscopedDb().Where("album_uid = ?", m.AlbumUID).Delete(&PhotoAlbum{}).Error; err != nil {
+		log.Warnf("album: %s (remove photo links of %s)", err, clean.Log(m.AlbumUID))
+	}
+
 	if !wasDeleted {
 		m.PublishCountChange(-1)
 		event.EntitiesDeleted("albums", []string{m.AlbumUID})

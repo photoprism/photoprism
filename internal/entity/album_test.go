@@ -1493,6 +1493,29 @@ func TestAlbum_DeletePermanently(t *testing.T) {
 			t.Fatal("should not find album")
 		}
 	})
+	t.Run("PhotoLinks", func(t *testing.T) {
+		album := NewAlbum("Delete Permanently Links", AlbumManual)
+		require.NoError(t, album.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(album).Error })
+
+		other := NewAlbum("Delete Permanently Other", AlbumManual)
+		require.NoError(t, other.Save())
+		t.Cleanup(func() { _ = other.DeletePermanently() })
+
+		photoUID := PhotoFixtures.Get("Photo01").PhotoUID
+		require.NoError(t, UnscopedDb().Create(&PhotoAlbum{PhotoUID: photoUID, AlbumUID: album.AlbumUID}).Error)
+		require.NoError(t, UnscopedDb().Create(&PhotoAlbum{PhotoUID: photoUID, AlbumUID: other.AlbumUID}).Error)
+
+		require.NoError(t, album.DeletePermanently())
+
+		var links int64
+		require.NoError(t, UnscopedDb().Model(&PhotoAlbum{}).Where("album_uid = ?", album.AlbumUID).Count(&links).Error)
+		assert.Equal(t, int64(0), links)
+
+		// The links of other albums remain.
+		require.NoError(t, UnscopedDb().Model(&PhotoAlbum{}).Where("album_uid = ?", other.AlbumUID).Count(&links).Error)
+		assert.Equal(t, int64(1), links)
+	})
 	t.Run("NoUID", func(t *testing.T) {
 		album := Album{}
 

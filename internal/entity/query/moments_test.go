@@ -478,6 +478,64 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		}
 		assert.Equal(t, 1, remaining, "exactly one of the same-filter folder albums should remain")
 	})
+	t.Run("SharesAndPhotoLinks", func(t *testing.T) {
+		slug := "duplicate-links-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		filter := "label:" + slug
+
+		kept := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		kept.SetTitle("Duplicate Links")
+		if err := kept.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = kept.DeletePermanently() })
+
+		duplicate := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		duplicate.SetTitle("Duplicate Links")
+		if err := duplicate.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = duplicate.DeletePermanently() })
+
+		photoUID := entity.PhotoFixtures.Get("Photo01").PhotoUID
+
+		for _, a := range []*entity.Album{kept, duplicate} {
+			if err := UnscopedDb().Create(&entity.PhotoAlbum{PhotoUID: photoUID, AlbumUID: a.AlbumUID}).Error; err != nil {
+				t.Fatal(err)
+			}
+
+			link := entity.NewLink(a.AlbumUID, false, false)
+			if err := UnscopedDb().Create(&link).Error; err != nil {
+				t.Fatal(err)
+			}
+
+			if err := entity.NewUserShare(entity.Admin.UserUID, a.AlbumUID, entity.PermView, nil).Create(); err != nil {
+				t.Fatal(err)
+			}
+		}
+
+		if _, err := RemoveDuplicateMoments(); err != nil {
+			t.Fatal(err)
+		}
+
+		links := func(albumUID string) (n int64) {
+			UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", albumUID).Count(&n)
+			return n
+		}
+
+		shares := func(albumUID string) (n int64) {
+			var links, users int64
+			UnscopedDb().Model(&entity.Link{}).Where("share_uid = ?", albumUID).Count(&links)
+			UnscopedDb().Model(&entity.UserShare{}).Where("share_uid = ?", albumUID).Count(&users)
+			return links + users
+		}
+
+		assert.False(t, albumRowExists(duplicate.AlbumUID), "the newer duplicate is removed")
+		assert.Equal(t, int64(0), links(duplicate.AlbumUID), "with its photo links")
+		assert.Equal(t, int64(0), shares(duplicate.AlbumUID), "and shares")
+		assert.True(t, albumRowExists(kept.AlbumUID), "the older album is kept")
+		assert.Equal(t, int64(1), links(kept.AlbumUID), "with its photo links")
+		assert.Equal(t, int64(2), shares(kept.AlbumUID), "and shares")
+	})
 }
 
 // TestMomentsLabels_Threshold pins that the threshold applies to the photos counted by the query, not to

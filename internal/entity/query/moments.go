@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/maps"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -321,20 +323,54 @@ const duplicateMomentsFrom = `albums a JOIN albums b ON a.album_type <> ?
 		GROUP BY a.album_uid`
 
 // RemoveDuplicateMoments deletes generated albums with a duplicate filter, or a
-// duplicate slug for non-folder album types.
+// duplicate slug for non-folder album types, along with their shares and photo links.
 func RemoveDuplicateMoments() (removed int, err error) {
-	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid IN (
-		SELECT a.album_uid FROM `+duplicateMomentsFrom+`)`,
-		entity.AlbumManual, entity.AlbumFolder, entity.AlbumFolder); res.Error != nil {
-		return removed, res.Error
-	}
+	batch := BatchSize()
 
-	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id IN (
-		SELECT a.id FROM `+duplicateMomentsFrom+`)`,
-		entity.AlbumManual, entity.AlbumFolder, entity.AlbumFolder); res.Error != nil {
-		return removed, res.Error
-	} else if res.RowsAffected > 0 {
-		removed = int(res.RowsAffected)
+	// Selects the duplicates once inside the transaction, so every statement acts on the same albums
+	// and a failure rolls back the album and its references together.
+	err = UnscopedDb().Transaction(func(tx *gorm.DB) error {
+		var duplicates []struct {
+			ID       uint
+			AlbumUID string
+		}
+
+		if err := tx.Raw(`SELECT a.id, a.album_uid FROM `+duplicateMomentsFrom,
+			entity.AlbumManual, entity.AlbumFolder, entity.AlbumFolder).Scan(&duplicates).Error; err != nil {
+			return err
+		}
+
+		for i := 0; i < len(duplicates); i += batch {
+			chunk := duplicates[i:min(i+batch, len(duplicates))]
+			ids := make([]uint, len(chunk))
+			uids := make([]string, len(chunk))
+
+			for k := range chunk {
+				ids[k], uids[k] = chunk[k].ID, chunk[k].AlbumUID
+			}
+
+			if res := tx.Exec(`DELETE FROM albums WHERE id IN (?)`, ids); res.Error != nil {
+				return res.Error
+			} else {
+				removed += int(res.RowsAffected)
+			}
+
+			for _, table := range []string{entity.Link{}.TableName(), entity.UserShare{}.TableName()} {
+				if res := tx.Exec(fmt.Sprintf(`DELETE FROM %s WHERE share_uid IN (?)`, table), uids); res.Error != nil {
+					return res.Error
+				}
+			}
+
+			if res := tx.Exec(`DELETE FROM photos_albums WHERE album_uid IN (?)`, uids); res.Error != nil {
+				return res.Error
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return 0, err
 	}
 
 	return removed, nil
