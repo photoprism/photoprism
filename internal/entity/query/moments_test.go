@@ -479,3 +479,58 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		assert.Equal(t, 1, remaining, "exactly one of the same-filter folder albums should remain")
 	})
 }
+
+// TestMomentsLabels_Threshold pins that the threshold applies to the photos counted by the query, not to
+// the stored label count. Only SQLite resolved the old HAVING alias to the stored count, so the test cannot
+// fail on MariaDB.
+func TestMomentsLabels_Threshold(t *testing.T) {
+	const threshold = 500
+	const slug = "botanical-garden"
+
+	photo := entity.Photo{}
+	if err := UnscopedDb().Where("photo_quality >= 3 AND photo_private = FALSE AND deleted_at IS NULL").
+		Order("id").First(&photo).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	existing := entity.Label{}
+	existed := UnscopedDb().Where("label_slug = ?", slug).First(&existing).Error == nil
+
+	label := entity.FirstOrCreateLabel(entity.NewLabel("Botanical Garden", 0))
+	if label == nil {
+		t.Fatal("label must not be nil")
+	}
+
+	t.Cleanup(func() {
+		_ = UnscopedDb().Where("photo_id = ? AND label_id = ?", photo.ID, label.ID).Delete(&entity.PhotoLabel{}).Error
+
+		if existed {
+			_ = UnscopedDb().Model(&entity.Label{}).Where("id = ?", label.ID).UpdateColumn("photo_count", existing.PhotoCount).Error
+		} else {
+			_ = UnscopedDb().Unscoped().Where("id = ?", label.ID).Delete(&entity.Label{}).Error
+		}
+
+		entity.FlushLabelCache()
+	})
+
+	if err := UnscopedDb().Model(&entity.Label{}).Where("id = ?", label.ID).
+		UpdateColumn("photo_count", threshold*2).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	link := entity.NewPhotoLabel(photo.ID, label.ID, 10, entity.SrcManual)
+	if err := UnscopedDb().Create(link).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	results, err := MomentsLabels(threshold, false)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, m := range results {
+		assert.GreaterOrEqual(t, m.PhotoCount, threshold, m.Label)
+		assert.NotEqual(t, MomentLabelsFilter(slug), m.Label)
+	}
+}
