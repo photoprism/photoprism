@@ -79,6 +79,8 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 		Group("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month").
 		Having("COUNT(photos.id) >= ?", threshold)
 
+	folders = make(entity.Folders, 0)
+
 	if err = db.Scan(&folders).Error; err != nil {
 		return folders, err
 	}

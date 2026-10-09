@@ -141,6 +141,8 @@ func searchFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResult
 	if frm.UID != "" {
 		s = s.Where(fmt.Sprintf("%s.id IN (?)", facesTable), strings.Split(strings.ToUpper(frm.UID), txt.Or))
 
+		results = make(FaceResults, 0)
+
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		}
@@ -161,6 +163,8 @@ func searchFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResult
 	}
 
 	// Perform query.
+	results = make(FaceResults, 0)
+
 	if res := s.Scan(&results); res.Error != nil {
 		return results, res.Error
 	}

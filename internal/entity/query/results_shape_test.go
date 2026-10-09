@@ -25,6 +25,25 @@ func TestEmptyResults_Json(t *testing.T) {
 		results, err := MomentsTime(1000000, false)
 		assertEmptyJsonList(t, results, err)
 	})
+	t.Run("MomentsCountries", func(t *testing.T) {
+		results, err := MomentsCountries(1000000, false)
+		assertEmptyJsonList(t, results, err)
+	})
+	t.Run("MomentsStates", func(t *testing.T) {
+		results, err := MomentsStates(1000000, false)
+		assertEmptyJsonList(t, results, err)
+	})
+	t.Run("AlbumFolders", func(t *testing.T) {
+		results, err := AlbumFolders(1000000)
+		assertEmptyJsonList(t, results, err)
+	})
+	t.Run("CategoryLabels", func(t *testing.T) {
+		assertEmptyJsonList(t, CategoryLabels(10, 1000000), nil)
+	})
+	t.Run("Errors", func(t *testing.T) {
+		results, err := Errors(10, 0, "shapenomatchxyz")
+		assertEmptyJsonList(t, results, err)
+	})
 	t.Run("FoldersByRoot", func(t *testing.T) {
 		results, err := FoldersByRoot("shapenomatchxyz", true)
 		assertEmptyJsonList(t, results, err)

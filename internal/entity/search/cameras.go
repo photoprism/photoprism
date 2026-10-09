@@ -37,6 +37,8 @@ func Cameras(frm form.SearchCameras) (results []Camera, err error) {
 	if frm.ID != "" {
 		s = s.Where("cameras.id IN (?)", strings.Split(frm.ID, txt.Or))
 
+		results = make([]Camera, 0)
+
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		}
@@ -48,6 +50,8 @@ func Cameras(frm form.SearchCameras) (results []Camera, err error) {
 		likeString := SqlParam(frm.Query, "%", "%")
 		s = s.Where(likeCond("cameras.camera_name")+" OR "+likeCond("cameras.camera_make")+" OR "+likeCond("cameras.camera_model"), likeString, likeString, likeString)
 	}
+
+	results = make([]Camera, 0)
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

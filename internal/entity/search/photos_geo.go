@@ -214,6 +214,8 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		// Find UIDs only to improve performance.
 		if sess == nil && frm.FindUidOnly() {
 			// Fetch results.
+			results = make(GeoResults, 0)
+
 			if result := s.Scan(&results); result.Error != nil {
 				return results, result.Error
 			}
@@ -729,6 +731,8 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	}
 
 	// Fetch results.
+	results = make(GeoResults, 0)
+
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}

@@ -101,6 +101,8 @@ func selectedPhotos(frm form.Selection, sess *entity.Session) (results entity.Ph
 		s = search.ScopeVisibleSelection(s, sess, frm.Photos)
 	}
 
+	results = make(entity.Photos, 0)
+
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}

@@ -104,6 +104,8 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	if frm.UID != "" {
 		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(strings.ToLower(frm.UID), txt.Or))
 
+		results = make(SubjectResults, 0)
+
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		}
@@ -129,6 +131,8 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	if frm.Type != "" {
 		s = s.Where("subj_type IN (?)", strings.Split(frm.Type, txt.Or))
 	}
+
+	results = make(SubjectResults, 0)
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

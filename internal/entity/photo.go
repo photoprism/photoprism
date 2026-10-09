@@ -756,6 +756,7 @@ func (m *Photo) PreloadFiles() *Photo {
 		Where("files.photo_id = ? AND files.deleted_at IS NULL", m.ID).
 		Order("files.file_name DESC")
 
+	m.Files = make([]File, 0)
 	Log("photo", "preload files", q.Scan(&m.Files).Error)
 
 	return m
@@ -769,6 +770,7 @@ func (m *Photo) PreloadKeywords() *Photo {
 		Joins("JOIN photos_keywords pk ON pk.keyword_id = keywords.id AND pk.photo_id = ?", m.ID).
 		Order("keywords.keyword ASC")
 
+	m.Keywords = make([]Keyword, 0)
 	Log("photo", "preload files", q.Scan(&m.Keywords).Error)
 
 	return m
@@ -783,6 +785,7 @@ func (m *Photo) PreloadAlbums() *Photo {
 		Where("albums.deleted_at IS NULL").
 		Order("albums.album_title ASC")
 
+	m.Albums = make([]Album, 0)
 	Log("photo", "preload albums", q.Scan(&m.Albums).Error)
 
 	return m

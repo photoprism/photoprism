@@ -234,6 +234,8 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 	}
 
 	// Find and return.
+	results = make(entity.Files, 0)
+
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}

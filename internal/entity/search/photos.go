@@ -292,6 +292,8 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 		// Find UIDs only to improve performance.
 		if sess == nil && frm.FindUidOnly() {
+			results = make(PhotoResults, 0)
+
 			if result := s.Scan(&results); result.Error != nil {
 				return results, 0, result.Error
 			}
@@ -871,6 +873,8 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	s = s.Limit(frm.Count).Offset(frm.Offset)
 
 	// Query database.
+	results = make(PhotoResults, 0)
+
 	if err = s.Scan(&results).Error; err != nil {
 		return results, 0, err
 	}

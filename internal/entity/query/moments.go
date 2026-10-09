@@ -212,6 +212,8 @@ func MomentsTime(threshold int, public bool) (results Moments, err error) {
 		Order("photos.photo_year DESC, photos.photo_month DESC").
 		Having("COUNT(*) >= ?", threshold)
 
+	results = make(Moments, 0)
+
 	if err = stmt.Scan(&results).Error; err != nil {
 		return results, err
 	}
@@ -232,6 +234,8 @@ func MomentsCountries(threshold int, public bool) (results Moments, err error) {
 
 	stmt = stmt.Group("photo_year, photo_country").
 		Having("COUNT(*) >= ?", threshold)
+
+	results = make(Moments, 0)
 
 	if err = stmt.Scan(&results).Error; err != nil {
 		return results, err
@@ -254,6 +258,8 @@ func MomentsStates(threshold int, public bool) (results Moments, err error) {
 
 	stmt = stmt.Group("p.place_country, p.place_state").
 		Having("COUNT(*) >= ?", threshold)
+
+	results = make(Moments, 0)
 
 	if err = stmt.Scan(&results).Error; err != nil {
 		return results, err

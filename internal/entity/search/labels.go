@@ -53,6 +53,8 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	if frm.UID != "" {
 		s = s.Where("labels.label_uid IN (?)", strings.Split(strings.ToLower(frm.UID), txt.Or))
 
+		results = make([]Label, 0)
+
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		}
@@ -81,6 +83,8 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	if frm.Query == "" && !frm.All {
 		s = s.Where("labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = TRUE")
 	}
+
+	results = make([]Label, 0)
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

@@ -18,6 +18,8 @@ func CategoryLabels(limit, offset int) (results []CategoryLabel) {
 		Group("label_name").
 		Limit(limit).Offset(offset)
 
+	results = make([]CategoryLabel, 0)
+
 	if err := s.Scan(&results).Error; err != nil {
 		log.Errorf("categories: %s", err.Error())
 		return results
