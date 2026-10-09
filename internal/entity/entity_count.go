@@ -1,10 +1,13 @@
 package entity
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 )
 
-// Count returns the number of records for a given a model and key values.
+// Count returns the number of records of the model that match all keys, given as Go field names
+// in the order ModelValues returns their values.
 func Count(m any, keys []string, values []any) int {
 	if m == nil || len(keys) != len(values) {
 		log.Debugf("entity: invalid parameters (count records)")
@@ -17,7 +20,7 @@ func Count(m any, keys []string, values []any) int {
 
 	// Compose where condition.
 	for k := range keys {
-		stmt.Where("? = ?", gorm.Expr(keys[k]), values[k])
+		stmt = stmt.Where(fmt.Sprintf("%s = ?", gorm.ToColumnName(keys[k])), values[k])
 	}
 
 	// Fetch count from database.
