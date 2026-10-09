@@ -113,8 +113,8 @@ func TestCounter(t *testing.T) {
 		_, err := db.Exec("INSERT INTO missing (name) VALUES (?)", "a")
 		assert.Error(t, err)
 
-		// A statement that cannot be prepared never reaches the database as an execution.
-		assert.Equal(t, 0, c.Count())
+		// A statement the database rejects is counted once.
+		assert.Equal(t, []string{"INSERT INTO missing (name) VALUES (?)"}, c.Statements())
 	})
 }
 
@@ -213,6 +213,19 @@ func TestCountingStmt(t *testing.T) {
 		s, _, _ := newStmt()
 		_, err := s.ExecContext(context.Background(), []driver.NamedValue{{Name: "a", Ordinal: 1, Value: "a"}})
 		assert.Error(t, err)
+	})
+	t.Run("BadConnNotCounted", func(t *testing.T) {
+		c := &Counter{}
+		c.Start()
+		s := &countingStmt{Stmt: &fakeStmt{err: driver.ErrBadConn}, conn: &fakeConn{}, query: "q", counter: c}
+
+		_, err := s.ExecContext(context.Background(), nil)
+		assert.ErrorIs(t, err, driver.ErrBadConn)
+		_, err = s.QueryContext(context.Background(), nil)
+		assert.ErrorIs(t, err, driver.ErrBadConn)
+
+		// The driver did not send the statement, and database/sql retries it on another connection.
+		assert.Equal(t, 0, c.Count())
 	})
 	t.Run("CheckNamedValueSkip", func(t *testing.T) {
 		s, _, _ := newStmt()

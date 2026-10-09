@@ -66,7 +66,9 @@ func (c *countingConn) PrepareContext(ctx context.Context, query string) (driver
 		stmt, err = c.Conn.Prepare(query)
 	}
 
+	// A statement the database rejects when preparing it is counted here, as it never executes.
 	if err != nil {
+		c.counter.recordResult(query, err)
 		return nil, err
 	}
 
@@ -128,19 +130,21 @@ type countingStmt struct {
 
 // Exec executes the statement and records it.
 func (s *countingStmt) Exec(args []driver.Value) (driver.Result, error) {
-	s.counter.record(s.query)
-	return s.Stmt.Exec(args) //nolint:staticcheck // Required by the driver.Stmt interface.
+	res, err := s.Stmt.Exec(args) //nolint:staticcheck // Required by the driver.Stmt interface.
+	s.counter.recordResult(s.query, err)
+	return res, err
 }
 
 // Query executes the statement and records it.
 func (s *countingStmt) Query(args []driver.Value) (driver.Rows, error) {
-	s.counter.record(s.query)
-	return s.Stmt.Query(args) //nolint:staticcheck // Required by the driver.Stmt interface.
+	rows, err := s.Stmt.Query(args) //nolint:staticcheck // Required by the driver.Stmt interface.
+	s.counter.recordResult(s.query, err)
+	return rows, err
 }
 
 // ExecContext executes the statement and records it.
-func (s *countingStmt) ExecContext(ctx context.Context, args []driver.NamedValue) (driver.Result, error) {
-	s.counter.record(s.query)
+func (s *countingStmt) ExecContext(ctx context.Context, args []driver.NamedValue) (res driver.Result, err error) {
+	defer func() { s.counter.recordResult(s.query, err) }()
 
 	if ec, ok := s.Stmt.(driver.StmtExecContext); ok {
 		return ec.ExecContext(ctx, args)
@@ -156,8 +160,8 @@ func (s *countingStmt) ExecContext(ctx context.Context, args []driver.NamedValue
 }
 
 // QueryContext executes the statement and records it.
-func (s *countingStmt) QueryContext(ctx context.Context, args []driver.NamedValue) (driver.Rows, error) {
-	s.counter.record(s.query)
+func (s *countingStmt) QueryContext(ctx context.Context, args []driver.NamedValue) (rows driver.Rows, err error) {
+	defer func() { s.counter.recordResult(s.query, err) }()
 
 	if qc, ok := s.Stmt.(driver.StmtQueryContext); ok {
 		return qc.QueryContext(ctx, args)

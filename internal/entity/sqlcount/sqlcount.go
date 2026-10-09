@@ -28,11 +28,13 @@ package sqlcount
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"errors"
 	"sync"
 )
 
-// Counter records the statements executed through the connections of one pool.
+// Counter records the statements executed through the connections of one pool, including those the
+// database rejects when they are prepared.
 type Counter struct {
 	mu         sync.Mutex
 	enabled    bool
@@ -97,6 +99,14 @@ func (c *Counter) Count() int {
 	defer c.mu.Unlock()
 
 	return len(c.statements)
+}
+
+// recordResult records a statement unless the driver reports that it was not sent, in which case
+// database/sql retries it on another connection.
+func (c *Counter) recordResult(query string, err error) {
+	if !errors.Is(err, driver.ErrBadConn) {
+		c.record(query)
+	}
 }
 
 // record adds a statement if recording is enabled.

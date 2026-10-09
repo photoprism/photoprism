@@ -39,8 +39,11 @@ func (c *fakeConnFull) IsValid() bool { return c.valid }
 // Ping records the ping.
 func (c *fakeConnFull) Ping(context.Context) error { c.pings++; return nil }
 
-// fakeStmt implements only the plain driver.Stmt methods.
-type fakeStmt struct{ args []driver.Value }
+// fakeStmt implements only the plain driver.Stmt methods and fails with err if it is set.
+type fakeStmt struct {
+	args []driver.Value
+	err  error
+}
 
 // Close does nothing.
 func (s *fakeStmt) Close() error { return nil }
@@ -51,13 +54,13 @@ func (s *fakeStmt) NumInput() int { return -1 }
 // Exec records the arguments.
 func (s *fakeStmt) Exec(args []driver.Value) (driver.Result, error) {
 	s.args = args
-	return driver.RowsAffected(1), nil
+	return driver.RowsAffected(1), s.err
 }
 
 // Query records the arguments and returns no rows.
 func (s *fakeStmt) Query(args []driver.Value) (driver.Rows, error) {
 	s.args = args
-	return &fakeRows{}, nil
+	return &fakeRows{}, s.err
 }
 
 // fakeRows is an empty result set.
