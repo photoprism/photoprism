@@ -136,3 +136,36 @@ func TestTables_Truncate(t *testing.T) {
 		assert.Equal(t, 1, id)
 	})
 }
+
+// migrateFailTest is a model whose table cannot be created, to test how migration failures are reported.
+type migrateFailTest struct {
+	ID   uint   `gorm:"primary_key"`
+	Name string `gorm:"type:BROKEN((("`
+}
+
+// TableName returns the entity table name.
+func (migrateFailTest) TableName() string {
+	return "migrate_fail_test"
+}
+
+func TestTables_Migrate(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, Tables{"photos": &Photo{}}.Migrate(Db(), migrate.Opt(true, false, nil)))
+	})
+	t.Run("AutoMigrateFails", func(t *testing.T) {
+		err := Tables{"migrate_fail_test": &migrateFailTest{}}.Migrate(Db(), migrate.Opt(true, false, nil))
+		assert.Error(t, err)
+	})
+}
+
+func TestInitDb_MissingTables(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// A registered table that does not exist after migrating fails the initialization.
+	Entities["migrate_missing_test"] = &migrateFailTest{}
+	t.Cleanup(func() { delete(Entities, "migrate_missing_test") })
+
+	assert.Error(t, InitDb(migrate.Opt(false, false, nil)))
+}

@@ -536,15 +536,32 @@ func (c *Config) InitDb() {
 	c.MigrateDb(false, nil)
 }
 
-// MigrateDb will initialize the database and migrate the schema if necessary.
-func (c *Config) MigrateDb(runFailed bool, ids []string) {
+// MigrateDb will initialize the database and migrate the schema if necessary, and returns an error if
+// the schema could not be migrated.
+func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
 	entity.Admin.UserName = c.AdminUser()
 
 	// Automatically migrate database schema only once per release to reduce startup time.
 	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
-	entity.InitDb(migrate.Opt(version.NeedsMigration(), runFailed, ids))
-	if err := version.Migrated(c.Db()); err != nil {
-		log.Warnf("config: %s (migrate)", err)
+	opt := migrate.Opt(version.NeedsMigration(), runFailed, ids)
+
+	// Record the version as migrated only once its schema was, so the next start migrates it again.
+	if err = entity.InitDb(opt); err != nil {
+		log.Errorf("config: %s (migrate)", err)
+
+		if !version.Unknown() {
+			version.MigratedAt = nil
+			version.Error = clean.ErrorBytes(err, 255)
+
+			if saveErr := version.Save(c.Db()); saveErr != nil {
+				log.Warnf("config: %s (save version)", saveErr)
+			}
+		}
+	} else if opt.AutoMigrate {
+		// Running selected migrations only does not migrate the schema, so it records nothing.
+		if migratedErr := version.Migrated(c.Db()); migratedErr != nil {
+			log.Warnf("config: %s (migrate)", migratedErr)
+		}
 	}
 
 	// Set the password for the initial Super Admin account, if specified.
@@ -556,6 +573,8 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 
 	// Start recording warnings and errors after the required database table has been created.
 	entity.LogWarningsAndErrors()
+
+	return err
 }
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.

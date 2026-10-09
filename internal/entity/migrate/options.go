@@ -41,6 +41,11 @@ func (opt Options) Pre() Options {
 	return opt.Stage(StagePre)
 }
 
+// Post returns options for the post-migration stage, which runs after the main stage.
+func (opt Options) Post() Options {
+	return opt.Stage(StagePost)
+}
+
 // StageName returns the stage name.
 func (opt Options) StageName() string {
 	if opt.RunStage == "" {

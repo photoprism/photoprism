@@ -178,14 +178,16 @@ func autoIncrementTables(db *gorm.DB) map[string]bool {
 	return result
 }
 
-// Migrate migrates all database tables of registered entities.
-func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
+// Migrate migrates all database tables of registered entities, and returns an error if the schema
+// of a table could not be migrated, so the version is not recorded as migrated.
+func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) (err error) {
 	var name string
 	var entity any
 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("migrate: %s in %s (panic)", r, name)
+			err = fmt.Errorf("migrate: %s in %s", r, name)
 		}
 	}()
 
@@ -235,6 +237,13 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 	if err := migrate.Run(db, opt); err != nil {
 		log.Error(err)
 	}
+
+	// Run post migrations, if any.
+	if err := migrate.Run(db, opt.Post()); err != nil {
+		log.Error(err)
+	}
+
+	return nil
 }
 
 // Drop drops all database tables of registered entities.

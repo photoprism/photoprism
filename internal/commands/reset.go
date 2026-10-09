@@ -126,7 +126,9 @@ func resetIndexDb(c *config.Config) {
 	tables.Drop(c.Db())
 
 	log.Infoln("restoring default schema")
-	entity.InitDb(migrate.Opt(true, false, nil))
+	if err := entity.InitDb(migrate.Opt(true, false, nil)); err != nil {
+		log.Errorf("reset: %s", err)
+	}
 
 	// A pinned face model only exists to keep new vectors comparable with the ones the library
 	// already holds, and it now holds none, so the pin would outlive its reason.

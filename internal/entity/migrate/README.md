@@ -1,10 +1,10 @@
 # Database Migrations
 
-**Last Updated:** June 1, 2026
+**Last Updated:** October 9, 2026
 
 This package contains the dialect-specific SQL migrations that complement GORM's schema auto-migration during database initialization. The SQL source files live in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/), and [`generate.go`](generate.go) embeds them into the generated [`dialect_mysql.go`](dialect_mysql.go) and [`dialect_sqlite3.go`](dialect_sqlite3.go) files.
 
-Files ending in `.pre.sql` run in the `pre` stage before ORM auto-migration. All other migration files run in the `main` stage afterward.
+Files ending in `.pre.sql` run in the `pre` stage before ORM auto-migration, files ending in `.post.sql` run in the `post` stage after all others, and all other migration files run in the `main` stage after auto-migration. Other stage names, and an ID used by more than one file, are rejected when the sources are read.
 
 ## Index Prefix Limits (VARBINARY Columns)
 
@@ -25,8 +25,8 @@ The migration flow is:
    - drop deprecated tables when enabled
    - run GORM `AutoMigrate(...)` for all registered entities
    - apply one-off compatibility fixes that are also tracked through `versions`
-5. Run `main` SQL migrations from this package.
-6. Mark the current release as migrated by setting `versions.migrated_at`.
+5. Run `main`, then `post` SQL migrations from this package.
+6. Mark the current release as migrated by setting `versions.migrated_at`. If auto-migration failed or tables are missing afterward, `MigrateDb()` stores the error in `versions.error` instead and returns it, so the next start runs auto-migration again; the `main` and `post` stages are skipped until it succeeds. Running selected migrations by ID records nothing.
 
 The important distinction is that the `versions` table gates the expensive release-level schema initialization, while the `migrations` table tracks each named SQL migration in this package.
 

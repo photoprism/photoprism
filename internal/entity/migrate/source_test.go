@@ -53,11 +53,13 @@ func TestDialectSource(t *testing.T) {
 		dir := t.TempDir()
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "20260101-000001.sql"), []byte("UPDATE a SET b = 1;\nUPDATE c SET d = 2\n"), 0o600))
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "20260101-000002.pre.sql"), []byte("ALTER TABLE a RENAME COLUMN b TO c;\n"), 0o600))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "20260101-000003.post.sql"), []byte("CREATE INDEX x ON a (c);\n"), 0o600))
 		require.NoError(t, os.Mkdir(filepath.Join(dir, "skipped"), 0o700))
 
 		migrations, err := DialectSource(dir, "mysql")
 		require.NoError(t, err)
-		require.Len(t, migrations, 2)
+		require.Len(t, migrations, 3)
+		assert.Equal(t, StagePost, migrations[2].Stage)
 		assert.Equal(t, Migration{ID: "20260101-000001", Dialect: "mysql", Stage: StageMain, Statements: []string{"UPDATE a SET b = 1;", "UPDATE c SET d = 2;"}}, migrations[0])
 		assert.Equal(t, Migration{ID: "20260101-000002", Dialect: "mysql", Stage: "pre", Statements: []string{"ALTER TABLE a RENAME COLUMN b TO c;"}}, migrations[1])
 	})
@@ -69,13 +71,21 @@ func TestDialectSource(t *testing.T) {
 		require.EqualError(t, err, "invalid migration filename 20260101-000001.txt")
 	})
 	t.Run("InvalidNames", func(t *testing.T) {
-		for _, name := range []string{"20260101-000001.pre.txt", "20260101-000001.pre.x.sql", "20260101-000001..sql", ".sql", "20260101-000001.sql~"} {
+		for _, name := range []string{"20260101-000001.pre.txt", "20260101-000001.pre.x.sql", "20260101-000001..sql", ".sql", "20260101-000001.sql~", "20260101-000001.prost.sql", "20260101-000001.main.sql"} {
 			dir := t.TempDir()
 			require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte("UPDATE a SET b = 1;"), 0o600))
 
 			_, err := DialectSource(dir, "mysql")
 			require.EqualError(t, err, "invalid migration filename "+name, name)
 		}
+	})
+	t.Run("DuplicateID", func(t *testing.T) {
+		dir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "20260101-000001.sql"), []byte("UPDATE a SET b = 1;"), 0o600))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "20260101-000001.post.sql"), []byte("UPDATE a SET b = 2;"), 0o600))
+
+		_, err := DialectSource(dir, "mysql")
+		require.EqualError(t, err, "migration id 20260101-000001 is used by 20260101-000001.post.sql and 20260101-000001.sql")
 	})
 	t.Run("Empty", func(t *testing.T) {
 		dir := t.TempDir()

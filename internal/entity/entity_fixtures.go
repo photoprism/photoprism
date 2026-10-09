@@ -28,7 +28,9 @@ func ResetTestFixtures() {
 		Db().AutoMigrate(&migrate.Version{})
 	}
 
-	Entities.Migrate(Db(), migrate.Opt(true, false, nil))
+	if err := Entities.Migrate(Db(), migrate.Opt(true, false, nil)); err != nil {
+		log.Errorf("migrate: %s [%s]", err, time.Since(start))
+	}
 
 	if err := Entities.WaitForMigration(Db()); err != nil {
 		log.Errorf("migrate: %s [%s]", err, time.Since(start))
