@@ -39,11 +39,8 @@ func markerStampScope(db *gorm.DB) bool {
 	if db.Statement.Table != (entity.Marker{}).TableName() {
 		return false
 	}
-	attrs, ok := db.InstanceGet("gorm:update_attrs")
-	if !ok {
-		return false
-	}
-	values, ok := attrs.(map[string]interface{})
+
+	values, ok := db.Statement.Dest.(map[string]interface{})
 	if !ok || len(values) != 1 {
 		return false
 	}
@@ -180,12 +177,17 @@ func TestFaces_MatchFacesKeepsFaceOutsideCandidates(t *testing.T) {
 // TestFaces_MatchFacesStampCancellation checks that an interrupted page persists its collected stamps.
 func TestFaces_MatchFacesStampCancellation(t *testing.T) {
 	w, f, uids := stampTestPage(t, "facesstampcancel", 4)
+	log.Debugf("marker_uid = %s", uids[1])
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", uids[1]).UpdateColumn("face_id", "").Error)
 	require.NoError(t, mutex.FacesWorker.Start())
 	t.Cleanup(mutex.FacesWorker.Stop)
 	canceled := false
-	entity.Db().Callback().Update().After("gorm:commit_or_rollback_transaction").Register("test:stamp-cancel", func(db *gorm.DB) {
-		if m, ok := db.Statement.Dest.(*entity.Marker); ok && m.MarkerUID == uids[1] && !canceled {
+	entity.Db().Callback().Update().After("gorm:update").Register("test:stamp-cancel", func(db *gorm.DB) {
+		log.Debugf("callback table = %s, Dest = %T, Model %T, Statement = %+v", db.Statement.Table, db.Statement.Dest, db.Statement.Model, db.Statement)
+		if db.Statement.Table != (entity.Marker{}).TableName() {
+			return
+		}
+		if m, ok := db.Statement.Model.(*entity.Marker); ok && m.MarkerUID == uids[1] && !canceled {
 			canceled = true
 			w.Cancel()
 		}
