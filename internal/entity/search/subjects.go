@@ -125,14 +125,7 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	}
 
 	if frm.Query != "" {
-		var wheres []string
-		var values [][]any
-		switch entity.DbDialect() {
-		case dsn.DialectPostgreSQL:
-			wheres, values = LikeAllNames(Cols{"lower(subj_name)", "lower(subj_alias)"}, strings.ToLower(frm.Query))
-		default:
-			wheres, values = LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query)
-		}
+		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query, false)
 		for i, where := range wheres {
 			s = s.Where("?", gorm.Expr(where, values[i]...))
 		}
@@ -170,20 +163,7 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 	}
 
 	var matches []Matches
-	whereString1 := ""
-	whereString2 := ""
-	valueString := ""
-	switch entity.DbDialect() {
-	case dsn.DialectPostgreSQL:
-		whereString1 = "lower(subj_name)"
-		whereString2 = "lower(subj_alias)"
-		valueString = strings.ToLower(s)
-	default:
-		whereString1 = "subj_name"
-		whereString2 = "subj_alias"
-		valueString = s
-	}
-	wheres, values := LikeAllNames(Cols{whereString1, whereString2}, valueString)
+	wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, s, false)
 
 	if len(wheres) == 0 {
 		return result, names, s

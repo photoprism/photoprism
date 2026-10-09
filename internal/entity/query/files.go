@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -51,7 +52,7 @@ func Files(limit, offset int, dir string, includeMissing bool) (files entity.Fil
 	}
 
 	if dir != "" {
-		stmt = stmt.Where(clean.SqlPrefixCond("files.file_name"), clean.SqlPrefixArgs(dir+"/")...)
+		stmt = stmt.Where(clean.SqlPrefixCond(DbDialect() == dsn.DialectPostgreSQL, true, "files.file_name"), clean.SqlPrefixArgs(dir+"/")...)
 	}
 
 	err = stmt.Order("id").Limit(limit).Offset(offset).Find(&files).Error
@@ -110,7 +111,7 @@ func OriginalsByPhotoID(photoID uint) (files entity.Files, err error) {
 		return files, nil
 	}
 
-	err = Db().Where("photo_id = ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0", photoID, entity.RootOriginals).
+	err = Db().Where("photo_id = ? AND file_root = ? AND file_sidecar = FALSE AND file_missing = FALSE", photoID, entity.RootOriginals).
 		Find(&files).Error
 
 	return files, err

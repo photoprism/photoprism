@@ -3,9 +3,7 @@ package search
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -49,13 +47,7 @@ func Cameras(frm form.SearchCameras) (results []Camera, err error) {
 
 	if frm.Query != "" {
 		likeString := SqlParam(frm.Query, "%", "%")
-		switch entity.DbDialect() {
-		case dsn.DialectPostgreSQL:
-			where, values := OrLikeCols([]string{"lower(cameras.camera_name)", "lower(cameras.camera_make)", "lower(cameras.camera_model)"}, strings.ToLower(likeString))
-			s = s.Where(where, values...)
-		default:
-			s = s.Where(likeCond("cameras.camera_name")+" OR "+likeCond("cameras.camera_make")+" OR "+likeCond("cameras.camera_model"), likeString, likeString, likeString)
-		}
+		s = s.Where(likeCond("cameras.camera_name", false)+" OR "+likeCond("cameras.camera_make", false)+" OR "+likeCond("cameras.camera_model", false), likeString, likeString, likeString)
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

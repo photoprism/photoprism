@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/legacy"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -57,7 +58,7 @@ func FindLegacyUsers(search string) legacy.Users {
 			stmt = stmt.Where("user_uid = ?", search)
 		} else if search != "" {
 			like := clean.SqlLike(search) + "%"
-			stmt = stmt.Where(clean.SqlLikeAny("user_name", "primary_email", "full_name"), like, like, like)
+			stmt = stmt.Where(clean.SqlLikeAny(DbDialect() == dsn.DialectPostgreSQL, false, "user_name", "primary_email", "full_name"), like, like, like)
 		} else {
 			stmt = stmt.Where("id > 0")
 		}

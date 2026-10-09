@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/dsoprea/go-logging"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -53,7 +52,7 @@ func LikeCond(col string, isByte bool) string {
 	if isByte && DbDialect() == dsn.DialectPostgreSQL {
 		return fmt.Sprintf("%s LIKE convert_to(?, 'UTF8') ESCAPE '%s'", col, LikeEscape)
 	} else {
-		return clean.SqlLikeCond(col)
+		return clean.SqlLikeCond(DbDialect() == dsn.DialectPostgreSQL, isByte, col)
 	}
 }
 

@@ -29,13 +29,8 @@ func Clients(limit, offset int, sortOrder, search string, deleted bool) (result 
 	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
-		switch entity.DbDialect() {
-		case dsn.DialectPostgreSQL: // ToDo: use new clean functions, or update clean functions to support Postgres.
-			stmt = stmt.Where("lower(client_name) LIKE ? OR lower(user_name) LIKE ?", strings.ToLower(search+"%"), strings.ToLower(search+"%"))
-		default:
-			like := clean.SqlLike(search) + "%"
-			stmt = stmt.Where(clean.SqlLikeAny("client_name", "user_name"), like, like)
-		}
+		like := clean.SqlLike(search) + "%"
+		stmt = stmt.Where(clean.SqlLikeAny(DbDialect() == dsn.DialectPostgreSQL, false, "client_name", "user_name"), like, like)
 	}
 
 	if sortOrder == "" {

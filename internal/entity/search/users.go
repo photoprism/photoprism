@@ -49,7 +49,7 @@ func Users(frm form.SearchUsers) (result entity.Users, err error) {
 		stmt = stmt.Where("user_uid = ?", search)
 	} else if search != "" {
 		like := clean.SqlLike(search) + "%"
-		stmt = stmt.Where(clean.SqlLikeAny("user_name", "user_email", "display_name"), like, like, like)
+		stmt = stmt.Where(clean.SqlLikeAny(Db().Dialector.Name() == dsn.DialectPostgreSQL, false, "user_name", "user_email", "display_name"), like, like, like)
 	} else {
 		stmt = stmt.Where("id > 0")
 	}

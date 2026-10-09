@@ -48,13 +48,9 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "": // ToDo: Fix postgres path
 		like := clean.SqlLike(search) + "%"
-		switch DbDialect() {
-		case dsn.DialectPostgreSQL:
-			stmt = stmt.Where("user_name ILIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
-		default:
-			stmt = stmt.Where(clean.SqlLikeAny("user_name", "auth_provider"), like, like)
-		}
-
+		stmt = stmt. // You can not use clean.SqlLikeAny because the fields are of different types.
+				Where(clean.SqlLikeCond(DbDialect() == dsn.DialectPostgreSQL, false, "user_name"), like).
+				Or(clean.SqlLikeCond(DbDialect() == dsn.DialectPostgreSQL, true, "auth_provider"), like)
 	}
 
 	if sortOrder == "" {

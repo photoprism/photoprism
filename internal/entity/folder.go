@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -194,7 +195,7 @@ func ReconcileOriginalsFolderAlbums(rootPath string) (reconciled int, err error)
 	stmt := Db().Where("root = ? AND path <> ''", RootOriginals)
 
 	if rootPath != "" {
-		stmt = stmt.Where("path = ? OR "+clean.SqlPrefixCond("path"), append([]any{rootPath}, clean.SqlPrefixArgs(rootPath+"/")...)...)
+		stmt = stmt.Where("path = ? OR "+clean.SqlPrefixCond(DbDialect() == dsn.DialectPostgreSQL, true, "path"), append([]any{rootPath}, clean.SqlPrefixArgs(rootPath+"/")...)...)
 	}
 
 	if err = stmt.Order("path ASC").Find(&folders).Error; err != nil {

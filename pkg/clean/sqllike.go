@@ -21,36 +21,47 @@ func SqlLike(s string) string {
 
 // sqlNoMatch returns a condition that is never true and has n placeholders, so the arguments a caller
 // passes still bind when a column is rejected.
-func sqlNoMatch(n int) string {
+func sqlNoMatch(postgres bool, n int) string {
+	if postgres {
+		return "(1 = 0" + strings.Repeat(" AND CAST(? AS VARCHAR) IS NULL", n) + ")"
+	}
 	return "(1 = 0" + strings.Repeat(" AND ? IS NULL", n) + ")"
 }
 
-// SqlLikeCond returns "col LIKE ? ESCAPE '!'", or a condition that matches nothing if col is not a
+// SqlLikeCond returns "col LIKE ? ESCAPE '!'" (or postgres equivalents), or a condition that matches nothing if col is not a
 // plain column name. The drivers disagree on the default escape character, so a SqlLike value needs
 // this ESCAPE clause.
-func SqlLikeCond(col string) string {
+func SqlLikeCond(postgres bool, binary bool, col string) string {
 	if SqlColumn(col) == "" {
-		return sqlNoMatch(1)
+		return sqlNoMatch(postgres, 1)
 	}
 
-	return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, SqlLikeEscape)
+	switch {
+	case postgres && binary:
+		return fmt.Sprintf("convert_from(%s, 'UTF8') ILIKE ? ESCAPE '%s'", col, SqlLikeEscape)
+	case postgres:
+		return fmt.Sprintf("%s ILIKE ? ESCAPE '%s'", col, SqlLikeEscape)
+	default:
+		return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, SqlLikeEscape)
+	}
 }
 
 // SqlLikeAny returns a condition that matches if any of the columns is LIKE the bound value, with one
 // placeholder per column, or a condition that matches nothing if a column is not a plain column name.
-func SqlLikeAny(cols ...string) string {
+// DO NOT USE A MIX OF BINARY AND STRING COLUMNS!!!
+func SqlLikeAny(postgres bool, binary bool, cols ...string) string {
 	conds := make([]string, len(cols))
 
 	for i, col := range cols {
 		if SqlColumn(col) == "" {
-			return sqlNoMatch(len(cols))
+			return sqlNoMatch(postgres, len(cols))
 		}
 
-		conds[i] = SqlLikeCond(col)
+		conds[i] = SqlLikeCond(postgres, binary, col)
 	}
 
 	if len(conds) == 0 {
-		return sqlNoMatch(0)
+		return sqlNoMatch(postgres, 0)
 	}
 
 	return "(" + strings.Join(conds, " OR ") + ")"
@@ -59,12 +70,16 @@ func SqlLikeAny(cols ...string) string {
 // SqlLikeExpr returns an SQL expression that escapes the LIKE wildcards in the value of col, like
 // SqlLike does for a bound value, or NULL, which matches nothing, if col is not a plain column name.
 // The escape character is replaced innermost, so the ones the outer calls add are not escaped again.
-func SqlLikeExpr(col string) string {
+func SqlLikeExpr(postgres bool, binary bool, col string) string {
 	if SqlColumn(col) == "" {
 		return "NULL"
 	}
 
 	e := SqlLikeEscape
+
+	if postgres && binary {
+		return fmt.Sprintf("REPLACE(REPLACE(REPLACE(convert_from(%s, 'UTF8'), '%s', '%s'), '%%', '%s%%'), '_', '%s_')", col, e, e+e, e, e)
+	}
 
 	return fmt.Sprintf("REPLACE(REPLACE(REPLACE(%s, '%s', '%s'), '%%', '%s%%'), '_', '%s_')", col, e, e+e, e, e)
 }
@@ -72,12 +87,12 @@ func SqlLikeExpr(col string) string {
 // SqlPrefixCond returns a condition matching the values of col that start with a prefix, compared
 // case-sensitively on every driver, or a condition that matches nothing if col is not a plain column
 // name. Bind the arguments SqlPrefixArgs returns; the LIKE clause keeps an index usable for the lookup.
-func SqlPrefixCond(col string) string {
+func SqlPrefixCond(postgres bool, binary bool, col string) string {
 	if SqlColumn(col) == "" {
-		return sqlNoMatch(3)
+		return sqlNoMatch(postgres, 3)
 	}
 
-	return fmt.Sprintf("(%s AND SUBSTR(%s, 1, LENGTH(?)) = ?)", SqlLikeCond(col), col)
+	return fmt.Sprintf("(%s AND SUBSTR(%s, 1, LENGTH(?)) = ?)", SqlLikeCond(postgres, binary, col), col)
 }
 
 // SqlPrefixArgs returns the arguments of a SqlPrefixCond condition for the given prefix.

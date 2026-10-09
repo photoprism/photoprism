@@ -67,13 +67,7 @@ func Users(limit, offset int, sortOrder, search string, deleted bool) (result en
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "": // ToDo: fix postgres path
 		like := clean.SqlLike(search) + "%"
-		switch entity.DbDialect() {
-		case dsn.DialectPostgreSQL:
-			lowerSearch := strings.ToLower(search + "%")
-			stmt = stmt.Where("lower(user_name) LIKE ? OR lower(user_email) LIKE ? OR lower(display_name) LIKE ?", lowerSearch, lowerSearch, lowerSearch)
-		default:
-			stmt = stmt.Where(clean.SqlLikeAny("user_name", "user_email", "display_name"), like, like, like)
-		}
+		stmt = stmt.Where(clean.SqlLikeAny(DbDialect() == dsn.DialectPostgreSQL, false, "user_name", "user_email", "display_name"), like, like, like)
 
 	default:
 		stmt = stmt.Where("id > 0")

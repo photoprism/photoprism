@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Duplicates finds duplicate files in the range of limit and offset sorted by file name.
@@ -14,7 +15,7 @@ func Duplicates(limit, offset int, dir string) (files entity.Duplicates, err err
 	stmt := Db()
 
 	if dir != "" {
-		stmt = stmt.Where(clean.SqlPrefixCond("file_name"), clean.SqlPrefixArgs(dir+"/")...)
+		stmt = stmt.Where(clean.SqlPrefixCond(DbDialect() == dsn.DialectPostgreSQL, true, "file_name"), clean.SqlPrefixArgs(dir+"/")...)
 	}
 
 	err = stmt.Order("file_name").Limit(limit).Offset(offset).Find(&files).Error

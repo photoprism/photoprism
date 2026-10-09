@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // libraryAccess is the permission set that distinguishes whole-library reach from shared access, used
@@ -98,7 +99,7 @@ func scopePhotosForSession(stmt *gorm.DB, sess *entity.Session, allowUIDs []stri
 		conds = append(conds, "photos.created_by = ?", "photos.published_at > ?")
 		args = append(args, user.UserUID, entity.Now())
 	} else {
-		conds = append(conds, "photos.created_by = ?", "photos.published_at > ?", "photos.photo_path = ?", clean.SqlPrefixCond("photos.photo_path"))
+		conds = append(conds, "photos.created_by = ?", "photos.published_at > ?", "photos.photo_path = ?", clean.SqlPrefixCond(Db().Dialector.Name() == dsn.DialectPostgreSQL, true, "photos.photo_path"))
 		args = append(args, user.UserUID, entity.Now(), basePath)
 		args = append(args, clean.SqlPrefixArgs(basePath+"/")...)
 	}

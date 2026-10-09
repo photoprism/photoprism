@@ -5,13 +5,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -390,8 +391,14 @@ func TestPersonFilter(t *testing.T) {
 		assert.Equal(t, `%back\slash%`, like)
 	})
 	t.Run("LikeCond", func(t *testing.T) {
-		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name", false))
-		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name", false))
+		if DbDialect() == dsn.DialectPostgreSQL {
+			assert.Equal(t, "subj_name ILIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name", false))
+			assert.Equal(t, "s.subj_name ILIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name", false))
+		} else {
+			assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name", false))
+			assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name", false))
+		}
+
 	})
 	t.Run("UIDOfAnotherType", func(t *testing.T) {
 		// Only a subject uid selects by id; a marker uid is a name nobody has.
@@ -582,14 +589,14 @@ func TestSqlLikeHelpers_InvalidColumn(t *testing.T) {
 	// A rejected column yields a condition that binds the caller's arguments and matches no rows.
 	stmt := func() *gorm.DB { return UnscopedDb().Model(&entity.User{}) }
 
-	var count int
+	var count int64
 
-	require.NoError(t, stmt().Where(clean.SqlLikeCond("user_name) OR (1=1"), "%").Count(&count).Error)
-	assert.Equal(t, 0, count)
-	require.NoError(t, stmt().Where(clean.SqlLikeAny("user_name", "x) OR (1=1"), "%", "%").Count(&count).Error)
-	assert.Equal(t, 0, count)
-	require.NoError(t, stmt().Where(clean.SqlPrefixCond("x) OR (1=1"), clean.SqlPrefixArgs("a/")...).Count(&count).Error)
-	assert.Equal(t, 0, count)
-	require.NoError(t, stmt().Where(clean.SqlLikeCond("user_name"), "%").Count(&count).Error)
+	require.NoError(t, stmt().Where(clean.SqlLikeCond(DbDialect() == dsn.DialectPostgreSQL, false, "user_name) OR (1=1"), "%").Count(&count).Error)
+	assert.EqualValues(t, 0, count)
+	require.NoError(t, stmt().Where(clean.SqlLikeAny(DbDialect() == dsn.DialectPostgreSQL, false, "user_name", "x) OR (1=1"), "%", "%").Count(&count).Error)
+	assert.EqualValues(t, 0, count)
+	require.NoError(t, stmt().Where(clean.SqlPrefixCond(DbDialect() == dsn.DialectPostgreSQL, false, "x) OR (1=1"), clean.SqlPrefixArgs("a/")...).Count(&count).Error)
+	assert.EqualValues(t, 0, count)
+	require.NoError(t, stmt().Where(clean.SqlLikeCond(DbDialect() == dsn.DialectPostgreSQL, false, "user_name"), "%").Count(&count).Error)
 	assert.Positive(t, count)
 }

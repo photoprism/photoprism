@@ -524,11 +524,11 @@ func FindAlbum(find Album) *Album {
 	} else {
 		switch {
 		case find.AlbumTitle != "" && namedSlug:
-			stmt = stmt.Where("album_slug = ? OR "+clean.SqlLikeCond("album_title", DbDialect() == dsn.DialectPostgreSQL), find.AlbumSlug, clean.SqlLike(find.AlbumTitle))
+			stmt = stmt.Where("album_slug = ? OR "+clean.SqlLikeCond(DbDialect() == dsn.DialectPostgreSQL, false, "album_title"), find.AlbumSlug, clean.SqlLike(find.AlbumTitle))
 		case namedSlug:
 			stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
 		case find.AlbumTitle != "":
-			stmt = stmt.Where(clean.SqlLikeCond("album_title", DbDialect() == dsn.DialectPostgreSQL), clean.SqlLike(find.AlbumTitle))
+			stmt = stmt.Where(clean.SqlLikeCond(DbDialect() == dsn.DialectPostgreSQL, false, "album_title"), clean.SqlLike(find.AlbumTitle))
 		default:
 			return nil
 		}

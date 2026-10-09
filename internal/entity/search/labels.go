@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -67,7 +68,7 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 		if labelIds, findErr := entity.FindLabelIDs(frm.Query, " ", true); findErr != nil || len(labelIds) == 0 {
 			log.Infof("search: label %s not found", clean.Log(frm.Query))
 
-			s = s.Where(clean.SqlLikeCond("labels.label_name"), likeString)
+			s = s.Where(clean.SqlLikeCond(Db().Dialector.Name() == dsn.DialectPostgreSQL, false, "labels.label_name"), likeString)
 		} else {
 			log.Infof("search: label %s resolves to %d labels", clean.Log(frm.Query), len(labelIds))
 
