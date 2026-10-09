@@ -26,7 +26,7 @@ type Person struct {
 }
 
 // AfterFind is a hook that updates the name cache after querying.
-func (m *Person) AfterFind(scope *gorm.DB) (err error) {
+func (m *Person) AfterFind(db *gorm.DB) (err error) {
 	setSubjName(m.SubjUID, m.SubjName)
 	return
 }

@@ -179,7 +179,7 @@ func TestCreateMarkerSubjects_Sources(t *testing.T) {
 	require.NoError(t, UnscopedDb().Model(pet).UpdateColumn("subj_type", "pet").Error)
 
 	t.Cleanup(func() {
-		UnscopedDb().Delete(entity.Subject{}, "subj_name IN (?)", []string{"Sources Missing Carl", "Sources Manual Dana", "Sources Shared Finn"})
+		UnscopedDb().Delete(&entity.Subject{}, "subj_name IN (?)", []string{"Sources Missing Carl", "Sources Manual Dana", "Sources Shared Finn"})
 	})
 
 	// Settles what the fixtures leave, so the count below is this test's alone.
@@ -202,7 +202,7 @@ func TestCreateMarkerSubjects_Sources(t *testing.T) {
 		}
 
 		require.NoError(t, UnscopedDb().Create(&m).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 		return m.MarkerUID
 	}
@@ -297,7 +297,7 @@ func TestCreateMarkerSubjects_FormerName(t *testing.T) {
 	}
 
 	require.NoError(t, UnscopedDb().Create(&m).Error)
-	t.Cleanup(func() { UnscopedDb().Delete(entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 	_, _, err = CreateMarkerSubjects()
 	require.NoError(t, err)
@@ -310,7 +310,7 @@ func TestCreateMarkerSubjects_FormerName(t *testing.T) {
 
 // TestCreateMarkerSubjects_CaseVariants pins that case variants of one name resolve one person, counted once.
 func TestCreateMarkerSubjects_CaseVariants(t *testing.T) {
-	t.Cleanup(func() { UnscopedDb().Delete(entity.Subject{}, "subj_name = ?", "Case Variant Gina") })
+	t.Cleanup(func() { UnscopedDb().Delete(&entity.Subject{}, "subj_name = ?", "Case Variant Gina") })
 
 	// Settles what the fixtures leave, so the count below is this test's alone.
 	_, _, err := CreateMarkerSubjects()
@@ -322,7 +322,7 @@ func TestCreateMarkerSubjects_CaseVariants(t *testing.T) {
 		m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: rnd.GenerateUID(entity.FileUID), MarkerType: entity.MarkerFace,
 			MarkerName: name, SubjSrc: entity.SrcManual, W: 0.1, H: 0.1}
 		require.NoError(t, UnscopedDb().Create(&m).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
 		uids = append(uids, m.MarkerUID)
 	}
 

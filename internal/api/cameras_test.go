@@ -56,7 +56,7 @@ func TestUpdateCamera(t *testing.T) {
 	})
 	t.Run("UnknownCamera", func(t *testing.T) {
 		previous := entity.UnknownCamera
-		var count int
+		var count int64
 		assert.NoError(t, entity.UnscopedDb().Model(&entity.Camera{}).Where("camera_slug = ?", previous.CameraSlug).Count(&count).Error)
 		entity.CreateUnknownCamera()
 		createdID := entity.UnknownCamera.ID

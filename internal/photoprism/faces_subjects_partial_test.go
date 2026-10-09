@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -32,12 +32,12 @@ func TestFaces_startKeepsPartialSubjects(t *testing.T) {
 			H:          0.1,
 		}
 		require.NoError(t, entity.UnscopedDb().Create(&m).Error)
-		t.Cleanup(func() { entity.UnscopedDb().Delete(entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
 		return m.MarkerUID
 	}
 
 	t.Cleanup(func() {
-		entity.UnscopedDb().Delete(entity.Subject{}, "subj_name IN (?)", []string{"Partial Subjects Ada", "Partial Subjects Bea"})
+		entity.UnscopedDb().Delete(&entity.Subject{}, "subj_name IN (?)", []string{"Partial Subjects Ada", "Partial Subjects Bea"})
 	})
 
 	// Both people exist and keep a linked marker, so the run removes no orphan person that would
@@ -58,9 +58,9 @@ func TestFaces_startKeepsPartialSubjects(t *testing.T) {
 	first := newMarker("Partial Subjects Ada")
 	second := newMarker("Partial Subjects Bea")
 
-	entity.Db().Callback().Update().After("gorm:update").Register("test:subjects-partial", func(scope *gorm.Scope) {
-		if m, ok := scope.Value.(*entity.Marker); ok && m.MarkerUID == second {
-			_ = scope.Err(errors.New("update refused"))
+	entity.Db().Callback().Update().After("gorm:update").Register("test:subjects-partial", func(db *gorm.DB) {
+		if m, ok := db.Statement.Dest.(*entity.Marker); ok && m.MarkerUID == second {
+			_ = db.AddError(errors.New("update refused"))
 		}
 	})
 	t.Cleanup(func() { entity.Db().Callback().Update().Remove("test:subjects-partial") })

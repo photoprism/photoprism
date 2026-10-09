@@ -151,7 +151,7 @@ func TestLastMarkerUID(t *testing.T) {
 	require.NotEmpty(t, last)
 	_, err = MarkerByUID(last)
 	require.NoError(t, err, "the last uid belongs to a stored marker")
-	var count int
+	var count int64
 	require.NoError(t, UnscopedDb().Model(&entity.Marker{}).Where("marker_uid > ?", last).Count(&count).Error)
 	assert.Zero(t, count, "no marker sorts after the last uid")
 	t.Run("Bound", func(t *testing.T) {

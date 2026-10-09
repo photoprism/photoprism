@@ -6,15 +6,16 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
 // TestInsta360PhotoRemoved verifies that only deleted rows at quality -1 count as removed.
 func TestInsta360PhotoRemoved(t *testing.T) {
-	deletedAt := entity.Now()
-	assert.True(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: &deletedAt, PhotoQuality: -1}))
-	assert.False(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: &deletedAt, PhotoQuality: 0}))
+	deletedAt := gorm.DeletedAt{Time: entity.Now(), Valid: true}
+	assert.True(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: deletedAt, PhotoQuality: -1}))
+	assert.False(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: deletedAt, PhotoQuality: 0}))
 	assert.False(t, insta360PhotoRemoved(&entity.Photo{PhotoQuality: -1}))
 	assert.False(t, insta360PhotoRemoved(&entity.Photo{}))
 	assert.False(t, insta360PhotoRemoved(nil))
@@ -25,7 +26,12 @@ func TestInsta360CaptureState(t *testing.T) {
 	removedAt := entity.Now()
 	before, after := removedAt.Add(-time.Minute), removedAt.Add(time.Minute)
 	photo := func(id uint, deletedAt *time.Time, quality int) *entity.Photo {
-		return &entity.Photo{ID: id, CreatedAt: before, DeletedAt: deletedAt, PhotoQuality: quality}
+		realDeletedAt := gorm.DeletedAt{}
+		if deletedAt != nil {
+			realDeletedAt.Time = *deletedAt
+			realDeletedAt.Valid = true
+		}
+		return &entity.Photo{ID: id, CreatedAt: before, DeletedAt: realDeletedAt, PhotoQuality: quality}
 	}
 	created := func(p *entity.Photo, createdAt time.Time) *entity.Photo {
 		p.CreatedAt = createdAt

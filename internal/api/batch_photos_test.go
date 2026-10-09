@@ -348,11 +348,11 @@ func batchDeleteTestFolder(t *testing.T, conf *config.Config) string {
 	t.Cleanup(func() {
 		_ = os.RemoveAll(dir)
 		db := entity.UnscopedDb()
-		ids := db.Table(entity.Photo{}.TableName()).Select("id").Where("photo_path = ?", folder).QueryExpr()
-		_ = db.Where("photo_id IN (?)", ids).Delete(&entity.PhotoLabel{}).Error
-		_ = db.Where("photo_id IN (?)", ids).Delete(&entity.Details{}).Error
-		_ = db.Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error
-		_ = db.Where("photo_path = ?", folder).Delete(&entity.Photo{}).Error
+		ids := db.Table(entity.Photo{}.TableName()).Select("id").Where("photo_path = ?", folder)
+		require.NoError(t, entity.UnscopedDb().Where("photo_id IN (?)", ids).Delete(&entity.PhotoLabel{}).Error)
+		require.NoError(t, entity.UnscopedDb().Where("photo_id IN (?)", ids).Delete(&entity.Details{}).Error)
+		require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error)
+		require.NoError(t, entity.UnscopedDb().Where("photo_path = ?", folder).Delete(&entity.Photo{}).Error)
 	})
 
 	return folder
@@ -395,7 +395,7 @@ func batchDeleteTestPhoto(t *testing.T, conf *config.Config, folder, name string
 func batchDeleteTestPhotoExists(t *testing.T, photo *entity.Photo) bool {
 	t.Helper()
 
-	var count int
+	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", photo.PhotoUID).Count(&count).Error)
 
 	return count > 0
@@ -411,12 +411,12 @@ func assertBatchDeleteTestPhotoKept(t *testing.T, photo *entity.Photo, fileName 
 		return
 	}
 
-	assert.Equal(t, photo.DeletedAt == nil, result.DeletedAt == nil, photo.PhotoName)
+	assert.Equal(t, photo.DeletedAt.Valid, result.DeletedAt.Valid, photo.PhotoName)
 	assert.Equal(t, photo.PhotoQuality, result.PhotoQuality, photo.PhotoName)
 
-	var files int
+	var files int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", result.ID).Count(&files).Error)
-	assert.Equal(t, 1, files, photo.PhotoName)
+	assert.EqualValues(t, 1, files, photo.PhotoName)
 	assert.FileExists(t, fileName)
 }
 
@@ -491,7 +491,10 @@ func TestBatchPhotosDelete(t *testing.T) {
 
 		label := entity.NewLabel("Batch Delete "+rnd.Base36(8), 0)
 		require.NoError(t, label.Create())
-		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(label).Error })
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "label_id = ?", label.ID).Error)
+			require.NoError(t, entity.UnscopedDb().Delete(label).Error)
+		})
 
 		for _, p := range []*entity.Photo{labelArchived, labelVisible} {
 			require.NoError(t, entity.NewPhotoLabel(p.ID, label.ID, 0, entity.SrcManual).Create())
@@ -519,11 +522,11 @@ func TestBatchPhotosDelete(t *testing.T) {
 			assertBatchDeleteTestPhotoKept(t, p, fileName)
 		}
 
-		var labels, albums int
+		var labels, albums int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoLabel{}).Where("photo_id = ? AND label_id = ?", labelVisible.ID, label.ID).Count(&labels).Error)
-		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ? AND hidden = 0", albumVisible.PhotoUID, album.AlbumUID).Count(&albums).Error)
-		assert.Equal(t, 1, labels)
-		assert.Equal(t, 1, albums)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ? AND hidden = FALSE", albumVisible.PhotoUID, album.AlbumUID).Count(&albums).Error)
+		assert.EqualValues(t, 1, labels)
+		assert.EqualValues(t, 1, albums)
 	})
 	t.Run("Removed", func(t *testing.T) {
 		app, router, conf := NewApiTest()

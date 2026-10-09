@@ -366,17 +366,17 @@ func TestProcessUserUploadAlbums(t *testing.T) {
 	file, err := entity.FirstFileByHash(hash)
 	require.NoError(t, err)
 
-	var count int
+	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ?", file.PhotoUID, album.AlbumUID).Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", missing).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 
 	// The picture is added to a new album of the user, and only that album's backup file is written.
 	var created entity.Album
 	require.NoError(t, entity.UnscopedDb().Where("album_title = ? AND created_by = ?", title, user.UserUID).First(&created).Error)
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ?", file.PhotoUID, created.AlbumUID).Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 	createdYaml, _, err := created.YamlFileName(conf.BackupAlbumsPath())
 	require.NoError(t, err)
 	assert.FileExists(t, createdYaml)
@@ -433,13 +433,13 @@ func TestProcessUserUploadAlbumLimit(t *testing.T) {
 	file, err := entity.FirstFileByHash(hash)
 	require.NoError(t, err)
 
-	var count int
+	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title LIKE ?", prefix+"%").Count(&count).Error)
-	assert.Equal(t, MaxUploadAlbums, count)
+	assert.EqualValues(t, MaxUploadAlbums, count)
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ?", file.PhotoUID).Count(&count).Error)
-	assert.Equal(t, MaxUploadAlbums, count)
+	assert.EqualValues(t, MaxUploadAlbums, count)
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title = ?", titles[MaxUploadAlbums]).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 }
 
 func TestUploadBatchName(t *testing.T) {

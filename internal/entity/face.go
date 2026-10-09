@@ -744,7 +744,7 @@ func (m *Face) ClaimSubject(subjUID string) (carries bool, err error) {
 		Where("face_id = ?", m.ID).
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", subjUID).
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s f WHERE f.id = ? AND f.subj_uid = ?)", Face{}.TableName()), m.ID, subjUID).
 		UpdateColumns(Values{"subj_uid": subjUID, "marker_review": false}).Error; err != nil {
 		return true, err

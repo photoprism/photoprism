@@ -32,7 +32,7 @@ func srcTestMarker(t *testing.T, subjSrc, name string) *entity.Marker {
 	}
 
 	require.NoError(t, entity.UnscopedDb().Create(&m).Error)
-	t.Cleanup(func() { entity.UnscopedDb().Delete(entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 	return &m
 }
@@ -41,7 +41,7 @@ func srcTestMarker(t *testing.T, subjSrc, name string) *entity.Marker {
 func srcTestCleanup(t *testing.T, names ...string) {
 	t.Cleanup(func() {
 		for _, name := range names {
-			entity.UnscopedDb().Delete(entity.Subject{}, "subj_name = ?", name)
+			entity.UnscopedDb().Delete(&entity.Subject{}, "subj_name = ?", name)
 		}
 	})
 }
@@ -172,7 +172,7 @@ func TestCreateMarker_SubjectSrc(t *testing.T) {
 	}
 	cleanup := func(r string) {
 		if uid := gjson.Get(r, "UID").String(); uid != "" {
-			t.Cleanup(func() { entity.UnscopedDb().Delete(entity.Marker{}, "marker_uid = ?", uid) })
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", uid) })
 		}
 	}
 
@@ -196,14 +196,14 @@ func TestCreateMarker_SubjectSrc(t *testing.T) {
 		assert.Equal(t, entity.SrcAuto, stored.SubjSrc, "a blank name stores no source")
 	})
 	t.Run("Admin", func(t *testing.T) {
-		var before int
+		var before int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("file_uid = ?", fileUID).Count(&before).Error)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/markers", body(entity.SrcAdmin, name))
 		cleanup(r.Body.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
 
-		var after int
+		var after int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("file_uid = ?", fileUID).Count(&after).Error)
 		assert.Equal(t, before, after, "nothing stored")
 	})

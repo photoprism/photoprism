@@ -19,7 +19,7 @@ import (
 // Verifies redaction differences between admin and non-admin on list endpoint.
 func TestClusterListNodes_Redaction(t *testing.T) {
 	// Remove the fixture record
-	require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error)
+	require.NoError(t, entity.UnscopedDb().Delete(&entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error)
 	defer func() {
 		require.NoError(t, entity.Db().Create(entity.ClientFixtures.Pointer("node")).Error)
 	}()

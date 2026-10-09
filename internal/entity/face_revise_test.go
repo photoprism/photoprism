@@ -49,7 +49,7 @@ func reviseTestMarker(t *testing.T, f *Face, frac float64, seed uint64, fileUID,
 	}
 
 	require.NoError(t, UnscopedDb().Create(&m).Error)
-	t.Cleanup(func() { UnscopedDb().Delete(Marker{}, "marker_uid = ?", m.MarkerUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 	return m
 }
@@ -168,11 +168,11 @@ func reviseMatchesPerMarker(t *testing.T, m *Face) (revised Markers) {
 func TestFace_ReviseMatches_Batch(t *testing.T) {
 	ann := NewSubject("Revise Batch Ann", SubjPerson, SrcManual)
 	require.NoError(t, ann.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", ann.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", ann.SubjUID) })
 
 	f := NewFace(ann.SubjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(7901)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	fileUIDs := make([]string, len(reviseTestFiles))
 
@@ -240,7 +240,7 @@ func TestFace_ReviseMatches_Batch(t *testing.T) {
 func TestFace_ReviseMatches_Batches(t *testing.T) {
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7902)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	fileUID := FileFixtures.Get("bridge.jpg").FileUID
 	photos := reviseTestPhotos(t, []string{fileUID})
@@ -266,7 +266,7 @@ func TestFace_ReviseMatches_Batches(t *testing.T) {
 		require.NoError(t, UnscopedDb().Create(&markers[i]).Error)
 	}
 
-	t.Cleanup(func() { UnscopedDb().Delete(Marker{}, "face_id = ? OR marker_uid IN (?)", f.ID, markerUIDs(markers)) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "face_id = ? OR marker_uid IN (?)", f.ID, markerUIDs(markers)) })
 
 	f.CollisionRadius = 0.5 * f.AcceptDist()
 	require.NoError(t, f.Updates(Values{"collision_radius": f.CollisionRadius}))
@@ -287,24 +287,24 @@ func TestFace_ReviseMatches_Batches(t *testing.T) {
 		assert.LessOrEqual(t, vars, BatchSize()+8, "statement %d binds one batch at most", i)
 	}
 
-	var left int
+	var left int64
 	require.NoError(t, UnscopedDb().Model(&Marker{}).Where("face_id = ?", f.ID).Count(&left).Error)
 	assert.Zero(t, left, "every marker is released")
 
-	var flagged int
+	var flagged int64
 	require.NoError(t, UnscopedDb().Model(&Photo{}).Where("id IN (?) AND checked_at IS NULL", photos).Count(&flagged).Error)
-	assert.Equal(t, len(photos), flagged, "their photo is flagged")
+	assert.Equal(t, int64(len(photos)), flagged, "their photo is flagged")
 }
 
 // TestFace_releaseMarkers pins that a release writes only markers still in the cluster.
 func TestFace_releaseMarkers(t *testing.T) {
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7903)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	other := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7904)}, face.EmbeddingModelName())
 	require.NoError(t, other.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", other.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", other.ID) })
 
 	fileUID := FileFixtures.Get("bridge.jpg").FileUID
 	reviseTestPhotos(t, []string{fileUID})
@@ -336,7 +336,7 @@ func TestFace_releaseMarkers(t *testing.T) {
 func TestRefreshMarkerPhotos(t *testing.T) {
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7905)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	a, b := FileFixtures.Get("bridge.jpg").FileUID, FileFixtures.Get("reunion.jpg").FileUID
 	photos := reviseTestPhotos(t, []string{a, b})
@@ -372,9 +372,11 @@ func markerUIDs(markers []Marker) []string {
 // TestBatchSize pins the number of values a batch binds per database dialect.
 func TestBatchSize(t *testing.T) {
 	switch dialect := DbDialect(); dialect {
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		assert.Equal(t, 333, BatchSize())
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
+		assert.Equal(t, 1000, BatchSize())
+	case dsn.DialectPostgreSQL:
 		assert.Equal(t, 1000, BatchSize())
 	default:
 		t.Fatalf("unexpected dialect %s", dialect)

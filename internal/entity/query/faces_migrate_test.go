@@ -2,7 +2,6 @@ package query
 
 import (
 	"encoding/json"
-	"path/filepath"
 	"sort"
 	"testing"
 
@@ -11,7 +10,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -545,19 +543,14 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
 	})
 
-	originalDb := entity.Db()
-	require.NotNil(t, originalDb)
-
-	tempConn := &entity.DbConn{Driver: dsn.DriverSQLite3, Dsn: filepath.Join(t.TempDir(), "faces-migrate.db")}
-	tempDb := tempConn.Db()
-	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}, &entity.Marker{}))
-
-	entity.SetDbProvider(tempConn)
 	t.Cleanup(func() {
-		entity.SetDbProvider(staticDbProvider{db: originalDb})
-		tempConn.Close()
+		require.NoError(t, UnscopedDb().Where("1=1").Delete(&entity.Face{}).Error)
+		require.NoError(t, UnscopedDb().Where("1=1").Delete(&entity.Marker{}).Error)
+		entity.CreateFaceFixtures()
+		entity.CreateMarkerFixtures()
 	})
+	require.NoError(t, UnscopedDb().Where("1=1").Delete(&entity.Face{}).Error)
+	require.NoError(t, UnscopedDb().Where("1=1").Delete(&entity.Marker{}).Error)
 
 	subjectUID := rnd.GenerateUID('j')
 	manual := entity.Marker{
@@ -630,13 +623,13 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	}
 	rejectedEmbedded, rejectedFailed, rejectedSkipped := rejected(), rejected(), rejected()
 
-	require.NoError(t, tempDb.Create(&manual).Error)
-	require.NoError(t, tempDb.Create(&automatic).Error)
-	require.NoError(t, tempDb.Create(&imported).Error)
-	require.NoError(t, tempDb.Create(&invalid).Error)
-	require.NoError(t, tempDb.Create(&rejectedEmbedded).Error)
-	require.NoError(t, tempDb.Create(&rejectedFailed).Error)
-	require.NoError(t, tempDb.Create(&rejectedSkipped).Error)
+	require.NoError(t, Db().Create(&manual).Error)
+	require.NoError(t, Db().Create(&automatic).Error)
+	require.NoError(t, Db().Create(&imported).Error)
+	require.NoError(t, Db().Create(&invalid).Error)
+	require.NoError(t, Db().Create(&rejectedEmbedded).Error)
+	require.NoError(t, Db().Create(&rejectedFailed).Error)
+	require.NoError(t, Db().Create(&rejectedSkipped).Error)
 
 	// A cluster from the previous run, so the delete this function is named for has
 	// something to remove rather than passing over an empty table.
@@ -647,7 +640,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		EmbedModel:    face.ModelFaceNet,
 		EmbeddingJSON: []byte("[0.1,0.2]"),
 	}
-	require.NoError(t, tempDb.Create(&stale).Error)
+	require.NoError(t, Db().Create(&stale).Error)
 
 	identities, err := FaceMigrationIdentities()
 	require.NoError(t, err)
@@ -670,24 +663,24 @@ func TestFinalizeFaceMigration(t *testing.T) {
 
 	for uid, want := range map[string]string{rejectedEmbedded.MarkerUID: entity.SrcAuto, rejectedFailed.MarkerUID: entity.SrcManual, rejectedSkipped.MarkerUID: entity.SrcManual} {
 		var m entity.Marker
-		require.NoError(t, tempDb.First(&m, "marker_uid = ?", uid).Error)
+		require.NoError(t, Db().First(&m, "marker_uid = ?", uid).Error)
 		assert.Equal(t, want, m.SubjSrc, uid)
 		assert.Empty(t, m.SubjUID, uid)
 	}
 
 	// A manual name the run re-embedded keeps its source.
 	var storedManualSrc entity.Marker
-	require.NoError(t, tempDb.First(&storedManualSrc, "marker_uid = ?", manual.MarkerUID).Error)
+	require.NoError(t, Db().First(&storedManualSrc, "marker_uid = ?", manual.MarkerUID).Error)
 	assert.Equal(t, entity.SrcManual, storedManualSrc.SubjSrc)
 
 	var staleCount int64
-	require.NoError(t, tempDb.Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
+	require.NoError(t, Db().Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
 	assert.Zero(t, staleCount, "the previous run's clusters must be replaced")
 
 	var storedManual, storedAuto, storedImported entity.Marker
-	require.NoError(t, tempDb.First(&storedManual, "marker_uid = ?", manual.MarkerUID).Error)
-	require.NoError(t, tempDb.First(&storedAuto, "marker_uid = ?", automatic.MarkerUID).Error)
-	require.NoError(t, tempDb.First(&storedImported, "marker_uid = ?", imported.MarkerUID).Error)
+	require.NoError(t, Db().First(&storedManual, "marker_uid = ?", manual.MarkerUID).Error)
+	require.NoError(t, Db().First(&storedAuto, "marker_uid = ?", automatic.MarkerUID).Error)
+	require.NoError(t, Db().First(&storedImported, "marker_uid = ?", imported.MarkerUID).Error)
 	assert.Equal(t, "Alice", storedManual.MarkerName)
 	assert.Equal(t, subjectUID, storedManual.SubjUID)
 	assert.Equal(t, cluster.ID, storedManual.FaceID)
@@ -702,7 +695,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	assert.Equal(t, face.EngineONNX, storedImported.DetectModel, "a spared vector keeps its detector")
 
 	var storedInvalid entity.Marker
-	require.NoError(t, tempDb.First(&storedInvalid, "marker_uid = ?", invalid.MarkerUID).Error)
+	require.NoError(t, Db().First(&storedInvalid, "marker_uid = ?", invalid.MarkerUID).Error)
 	assert.Empty(t, storedInvalid.EmbeddingsJSON)
 	assert.Empty(t, storedInvalid.EmbedModel)
 	assert.Empty(t, storedInvalid.DetectModel, "the bulk stale update clears provenance too")
@@ -710,20 +703,20 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	assert.Equal(t, subjectUID, storedImported.SubjUID)
 
 	var facesBefore, facesAfter int64
-	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesBefore).Error)
-	require.NoError(t, tempDb.Model(&entity.Marker{}).Where("marker_uid = ?", rejectedEmbedded.MarkerUID).
+	require.NoError(t, Db().Model(&entity.Face{}).Count(&facesBefore).Error)
+	require.NoError(t, Db().Model(&entity.Marker{}).Where("marker_uid = ?", rejectedEmbedded.MarkerUID).
 		UpdateColumn("subj_src", entity.SrcManual).Error)
 	lifted, changedErr := FinalizeFaceMigration(face.ModelFaceNet, []FaceMigrationIdentity{{MarkerUID: "changed"}}, nil, nil, []string{rejectedEmbedded.MarkerUID})
 	require.Error(t, changedErr)
 	assert.Zero(t, lifted)
 
 	var rolledBack entity.Marker
-	require.NoError(t, tempDb.First(&rolledBack, "marker_uid = ?", rejectedEmbedded.MarkerUID).Error)
+	require.NoError(t, Db().First(&rolledBack, "marker_uid = ?", rejectedEmbedded.MarkerUID).Error)
 	assert.Equal(t, entity.SrcManual, rolledBack.SubjSrc, "a rolled-back finalize leaves the rejection")
 	// Callers distinguish this from a storage failure, because it is the one rollback an
 	// operator caused and can avoid on the next run.
 	assert.ErrorIs(t, changedErr, ErrFaceMigrationIdentitiesChanged)
-	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesAfter).Error)
+	require.NoError(t, Db().Model(&entity.Face{}).Count(&facesAfter).Error)
 	assert.Equal(t, facesBefore, facesAfter)
 
 	_, err = FinalizeFaceMigration("", nil, nil, nil, nil)

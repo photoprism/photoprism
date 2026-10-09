@@ -2,12 +2,12 @@ package entity
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -21,8 +21,10 @@ func TestUpdateLabelCounts_Retry(t *testing.T) {
 	t.Cleanup(WaitForAsyncJobs)
 	// A dedicated pool keeps the trigger's session counter stable without changing the shared pool.
 	original := dbConn
-	conn := &DbConn{Driver: dsn.DriverMySQL, Dsn: TestDbDSN(dsn.DriverMySQL, os.Getenv("PHOTOPRISM_TEST_DSN"))}
-	conn.Db().DB().SetMaxOpenConns(1)
+	conn := &DbConn{Driver: dsn.DriverMySQL, Dsn: testextras.TestDbDSN(dsn.DriverMySQL, "labels")}
+	db, err := conn.Db().DB()
+	require.NoError(t, err)
+	db.SetMaxOpenConns(1)
 	SetDbProvider(conn)
 	t.Cleanup(func() { WaitForAsyncJobs(); SetDbProvider(original); conn.Close() })
 	previousStamp := updateLabelCountsLastUpdated.Load()

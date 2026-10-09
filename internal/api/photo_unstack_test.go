@@ -33,27 +33,26 @@ func TestPhotoUnstack(t *testing.T) {
 		secondaryFolder := folder + "/London"
 		require.NoError(t, fs.MkdirAll(dir))
 		t.Cleanup(func() {
-			db := entity.UnscopedDb().Unscoped()
 			var photos []entity.Photo
-			require.NoError(t, db.Where("photo_path LIKE ?", folder+"/%").Find(&photos).Error)
+			require.NoError(t, entity.UnscopedDb().Where("photo_path LIKE ?", folder+"/%").Find(&photos).Error)
 			var files []entity.File
-			require.NoError(t, db.Where("file_name LIKE ?", folder+"/%").Find(&files).Error)
+			require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", folder+"/%").Find(&files).Error)
 			for _, file := range files {
-				require.NoError(t, db.Delete(&entity.Marker{}, "file_uid = ?", file.FileUID).Error)
-				require.NoError(t, db.Delete(&entity.FileShare{}, "file_id = ?", file.ID).Error)
-				require.NoError(t, db.Delete(&entity.FileSync{}, "file_id = ?", file.ID).Error)
+				require.NoError(t, entity.UnscopedDb().Delete(&entity.Marker{}, "file_uid = ?", file.FileUID).Error)
+				require.NoError(t, entity.UnscopedDb().Delete(&entity.FileShare{}, "file_id = ?", file.ID).Error)
+				require.NoError(t, entity.UnscopedDb().Delete(&entity.FileSync{}, "file_id = ?", file.ID).Error)
 			}
 			for _, photo := range photos {
-				require.NoError(t, db.Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
-				require.NoError(t, db.Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
-				require.NoError(t, db.Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
-				require.NoError(t, db.Delete(&entity.PhotoAlbum{}, "photo_uid = ?", photo.PhotoUID).Error)
+				require.NoError(t, entity.UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "photo_uid = ?", photo.PhotoUID).Error)
 			}
-			require.NoError(t, db.Delete(&entity.File{}, "file_name LIKE ?", folder+"/%").Error)
-			require.NoError(t, db.Delete(&entity.Photo{}, "photo_path LIKE ?", folder+"/%").Error)
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.File{}, "file_name LIKE ?", folder+"/%").Error)
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.Photo{}, "photo_path LIKE ?", folder+"/%").Error)
 			for _, photo := range photos {
-				var remaining int
-				require.NoError(t, db.Model(&entity.Details{}).Where("photo_id = ?", photo.ID).Count(&remaining).Error)
+				var remaining int64
+				require.NoError(t, entity.UnscopedDb().Model(&entity.Details{}).Where("photo_id = ?", photo.ID).Count(&remaining).Error)
 				require.Zero(t, remaining)
 			}
 			require.NoError(t, os.RemoveAll(dir))
@@ -162,8 +161,10 @@ func TestPhotoUnstack(t *testing.T) {
 			require.NoError(t, fs.MkdirAll(dir))
 			t.Cleanup(func() {
 				_ = os.RemoveAll(dir)
-				_ = entity.UnscopedDb().Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error
-				_ = entity.UnscopedDb().Where("photo_path = ?", folder).Delete(&entity.Photo{}).Error
+				require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error)
+				require.NoError(t, entity.UnscopedDb().Where("photo_id in (select id from photos where photo_path = ?)", folder).Delete(&entity.PhotoKeyword{}).Error)
+				require.NoError(t, entity.UnscopedDb().Where("photo_id in (select id from photos where photo_path = ?)", folder).Delete(&entity.Details{}).Error)
+				require.NoError(t, entity.UnscopedDb().Where("photo_path = ?", folder).Delete(&entity.Photo{}).Error)
 			})
 
 			left, right := "VID_20220625_140410_00_008.insv", "VID_20220625_140410_10_008.insv"
@@ -230,8 +231,10 @@ func TestPhotoUnstack(t *testing.T) {
 		require.NoError(t, fs.MkdirAll(dir))
 		t.Cleanup(func() {
 			_ = os.RemoveAll(dir)
-			_ = entity.UnscopedDb().Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error
-			_ = entity.UnscopedDb().Where("photo_path = ?", folder).Delete(&entity.Photo{}).Error
+			require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error)
+			require.NoError(t, entity.UnscopedDb().Where("photo_id in (select id from photos where photo_path = ?)", folder).Delete(&entity.PhotoKeyword{}).Error)
+			require.NoError(t, entity.UnscopedDb().Where("photo_id in (select id from photos where photo_path = ?)", folder).Delete(&entity.Details{}).Error)
+			require.NoError(t, entity.UnscopedDb().Where("photo_path = ?", folder).Delete(&entity.Photo{}).Error)
 		})
 		require.NoError(t, fs.Copy("./testdata/london_160x160.jpg", filepath.Join(dir, "IMG_1234.jpg"), true))
 		require.NoError(t, fs.Copy("./testdata/face_160x160.jpg", filepath.Join(dir, "IMG_E1234.jpg"), true))

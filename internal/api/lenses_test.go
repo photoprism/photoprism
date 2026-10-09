@@ -50,7 +50,7 @@ func TestUpdateLens(t *testing.T) {
 	})
 	t.Run("UnknownLens", func(t *testing.T) {
 		previous := entity.UnknownLens
-		var count int
+		var count int64
 		assert.NoError(t, entity.UnscopedDb().Model(&entity.Lens{}).Where("lens_slug = ?", previous.LensSlug).Count(&count).Error)
 		entity.CreateUnknownLens()
 		createdID := entity.UnknownLens.ID

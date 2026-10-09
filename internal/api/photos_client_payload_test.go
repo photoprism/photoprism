@@ -48,14 +48,14 @@ func clientCredentialSession(t *testing.T, conf *config.Config, role, scope stri
 	}
 
 	require.NoError(t, client.Create())
-	t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(client) })
+	t.Cleanup(func() { entity.UnscopedDb().Delete(client) })
 
 	sess := entity.NewSession(conf.SessionMaxAge(), 0)
 	sess.SetClient(client)
 	sess.SetGrantType(authn.GrantClientCredentials)
 
 	require.NoError(t, sess.Create())
-	t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(sess) })
+	t.Cleanup(func() { entity.UnscopedDb().Delete(sess) })
 
 	require.True(t, sess.IsClient())
 	require.Equal(t, user != nil, sess.IsRegistered(), "the account decides what this session is")
@@ -105,38 +105,37 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 		existingKeywordIDs[keyword.ID] = true
 	}
 	t.Cleanup(func() {
-		db := entity.UnscopedDb()
 		var current entity.Photo
-		if err := db.Where("id = ?", photo.ID).First(&current).Error; assert.NoError(t, err) {
+		if err := entity.UnscopedDb().Where("id = ?", photo.ID).First(&current).Error; assert.NoError(t, err) {
 			assert.NoError(t, current.SetFavorite(photo.PhotoFavorite))
 		}
-		assert.NoError(t, db.Model(&entity.Photo{}).Where("id = ?", photo.ID).
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).
 			UpdateColumns(entity.Values{"deleted_at": photo.DeletedAt, "photo_quality": photo.PhotoQuality,
 				"photo_private": photo.PhotoPrivate, "photo_favorite": photo.PhotoFavorite,
 				"edited_at": photo.EditedAt, "updated_at": photo.UpdatedAt}).Error)
-		assert.NoError(t, db.Model(&entity.File{}).Where("id = ?", file.ID).
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", file.ID).
 			UpdateColumns(entity.Values{"deleted_at": file.DeletedAt, "file_missing": file.FileMissing,
 				"file_primary": file.FilePrimary, "updated_at": file.UpdatedAt}).Error)
-		assert.NoError(t, db.Unscoped().Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
 		for _, relation := range priorKeywords {
-			assert.NoError(t, db.Create(&relation).Error)
+			assert.NoError(t, entity.UnscopedDb().Create(&relation).Error)
 		}
-		assert.NoError(t, db.Unscoped().Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
 		for _, relation := range priorLabels {
-			assert.NoError(t, db.Create(&relation).Error)
+			assert.NoError(t, entity.UnscopedDb().Create(&relation).Error)
 		}
 		entity.FlushPhotoKeywordCache()
 		entity.FlushPhotoLabelCache()
 		var currentKeywords []entity.Keyword
-		assert.NoError(t, db.Find(&currentKeywords).Error)
+		assert.NoError(t, entity.UnscopedDb().Find(&currentKeywords).Error)
 		for _, keyword := range currentKeywords {
 			if existingKeywordIDs[keyword.ID] {
 				continue
 			}
-			var references int
-			assert.NoError(t, db.Model(&entity.PhotoKeyword{}).Where("keyword_id = ?", keyword.ID).Count(&references).Error)
+			var references int64
+			assert.NoError(t, entity.UnscopedDb().Model(&entity.PhotoKeyword{}).Where("keyword_id = ?", keyword.ID).Count(&references).Error)
 			if references == 0 {
-				assert.NoError(t, db.Unscoped().Delete(&entity.Keyword{}, "id = ?", keyword.ID).Error)
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.Keyword{}, "id = ?", keyword.ID).Error)
 			}
 		}
 		entity.FlushKeywordCache()
@@ -149,7 +148,7 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 	entity.RegenerateIndexForPhotoIDs([]uint{photo.ID})
 	album := entity.NewAlbum("Client Payload "+rnd.Base36(6), entity.AlbumManual)
 	require.NoError(t, album.Create())
-	t.Cleanup(func() { _ = entity.UnscopedDb().Unscoped().Delete(album).Error })
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(album).Error })
 	entry := entity.NewPhotoAlbum(photoUID, album.AlbumUID)
 	require.NoError(t, entry.Save())
 	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(entry).Error })
@@ -261,23 +260,22 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&priorLabels).Error)
 
 		t.Cleanup(func() {
-			db := entity.UnscopedDb().Unscoped()
-			assert.NoError(t, db.Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
 			for _, relation := range priorLabels {
-				assert.NoError(t, db.Create(&relation).Error)
+				assert.NoError(t, entity.UnscopedDb().Create(&relation).Error)
 			}
-			assert.NoError(t, db.Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
 			for _, relation := range priorKeywords {
-				assert.NoError(t, db.Create(&relation).Error)
+				assert.NoError(t, entity.UnscopedDb().Create(&relation).Error)
 			}
-			assert.NoError(t, db.Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
 			for _, details := range priorDetails {
-				assert.NoError(t, db.Create(&details).Error)
+				assert.NoError(t, entity.UnscopedDb().Create(&details).Error)
 			}
-			assert.NoError(t, db.Model(&entity.Photo{}).Where("id = ?", photo.ID).
+			assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).
 				UpdateColumns(entity.Values{"photo_quality": photo.PhotoQuality, "updated_at": photo.UpdatedAt,
 					"edited_at": photo.EditedAt}).Error)
-			assert.NoError(t, db.Delete(&entity.Label{}, "label_name = ?", labelName).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Label{}, "label_name = ?", labelName).Error)
 			entity.FlushPhotoLabelCache()
 			entity.FlushPhotoKeywordCache()
 		})
@@ -304,8 +302,8 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 		photo := entity.NewPhoto(false)
 		require.NoError(t, photo.Save())
 		t.Cleanup(func() {
-			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-			entity.UnscopedDb().Unscoped().Delete(&photo)
+			entity.UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+			entity.UnscopedDb().Delete(&photo)
 		})
 
 		file := &entity.File{
@@ -315,7 +313,7 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 			FileType: "jpg", MediaType: entity.MediaImage, FilePrimary: true,
 		}
 		require.NoError(t, file.Create())
-		t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(file) })
+		t.Cleanup(func() { entity.UnscopedDb().Delete(file) })
 
 		markers := make([]*entity.Marker, 0, 2)
 
@@ -325,7 +323,7 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 			subj.SubjPrivate = i == 0
 			require.NoError(t, subj.Create())
 			t.Cleanup(func() {
-				entity.UnscopedDb().Unscoped().Delete(subj)
+				entity.UnscopedDb().Delete(subj)
 				entity.SubjNames.Unset(subj.SubjUID)
 			})
 
@@ -335,7 +333,7 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 				X: float32(i+1) / 3, Y: 0.4, W: 0.1, H: 0.1, Size: 200, Score: 80,
 			}
 			require.NoError(t, marker.Create())
-			t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(marker) })
+			t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
 			markers = append(markers, marker)
 		}
 
@@ -390,8 +388,8 @@ func TestClientCredential_AlbumAndFileResponses(t *testing.T) {
 		require.NoError(t, entity.NewPhotoAlbum(photoUID, owned.AlbumUID).Create())
 
 		t.Cleanup(func() {
-			entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "album_uid = ?", owned.AlbumUID)
-			entity.UnscopedDb().Unscoped().Delete(&entity.Album{}, "album_uid = ?", owned.AlbumUID)
+			entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", owned.AlbumUID)
+			entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", owned.AlbumUID)
 			entity.FlushAlbumCache()
 		})
 

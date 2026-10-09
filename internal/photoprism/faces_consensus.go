@@ -92,7 +92,7 @@ func (w *Faces) nameConsensusFaces(candidates []query.FaceConsensus) (result Fac
 // and the person still exists, so a change made to either after the counts were read is kept.
 func claimConsensusFace(faceID, subjUID string) (bool, error) {
 	res := entity.UnscopedDb().Model(&entity.Face{}).
-		Where("id = ? AND subj_uid = '' AND face_src = ? AND face_hidden = 0 AND face_kind = ?", faceID, entity.SrcAuto, int(face.RegularFace)).
+		Where("id = ? AND subj_uid = '' AND face_src = ? AND face_hidden = FALSE AND face_kind = ?", faceID, entity.SrcAuto, int(face.RegularFace)).
 		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %[1]s WHERE %[1]s.subj_uid = ? AND %[1]s.subj_type = ? AND %[1]s.deleted_at IS NULL)", entity.Subject{}.TableName()), subjUID, entity.SubjPerson).
 		UpdateColumn("subj_uid", subjUID)
 

@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -30,13 +30,13 @@ func TestPhotoLabelWriteRetry(t *testing.T) {
 				entity.UnscopedDb().Delete(label)
 			})
 			attempts := 0
-			callback := func(scope *gorm.Scope) {
-				if scope.TableName() != (entity.PhotoLabel{}).TableName() {
+			callback := func(db *gorm.DB) {
+				if db.Statement.Table != (entity.PhotoLabel{}).TableName() {
 					return
 				}
 				attempts++
 				if attempts == 1 {
-					_ = scope.Err(&mysql.MySQLError{Number: 1213, Message: "batch write control"})
+					_ = db.Statement.AddError(&mysql.MySQLError{Number: 1213, Message: "batch write control"})
 				}
 			}
 			if operation == "Update" {
@@ -49,10 +49,10 @@ func TestPhotoLabelWriteRetry(t *testing.T) {
 				assert.Zero(t, stored.Uncertainty)
 				assert.Equal(t, entity.SrcBatch, stored.LabelSrc)
 			} else {
-				entity.Db().Callback().Delete().Before("gorm:begin_transaction").Register("test:batch-retry", callback)
-				t.Cleanup(func() { entity.Db().Callback().Delete().Remove("test:batch-retry") })
+				require.NoError(t, entity.Db().Callback().Delete().Before("gorm:begin_transaction").Register("test:batch-retry", callback))
+				t.Cleanup(func() { require.NoError(t, entity.Db().Callback().Delete().Remove("test:batch-retry")) })
 				require.NoError(t, deletePhotoLabel(link))
-				var count int
+				var count int64
 				require.NoError(t, entity.Db().Model(&entity.PhotoLabel{}).Where("photo_id = ? AND label_id = ?", photo.ID, label.ID).Count(&count).Error)
 				assert.Zero(t, count)
 			}

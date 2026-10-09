@@ -98,7 +98,7 @@ func queryImportedInsta360Capture(f *MediaFile) *Insta360Capture {
 	}
 
 	var files []entity.File
-	if err := entity.UnscopedDb().Select(columns).Where("photo_id = ? AND file_root = ? AND file_missing = 0 AND deleted_at IS NULL", own.PhotoID, entity.RootOriginals).
+	if err := entity.UnscopedDb().Select(columns).Where("photo_id = ? AND file_root = ? AND file_missing = FALSE AND deleted_at IS NULL", own.PhotoID, entity.RootOriginals).
 		Order("id").Find(&files).Error; err != nil {
 		return nil
 	}

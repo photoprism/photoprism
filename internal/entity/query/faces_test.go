@@ -149,8 +149,8 @@ func TestMatchFaceMarkers_ConcurrentRename(t *testing.T) {
 	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 	armed := true
-	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:match-rename", func(scope *gorm.Scope) {
-		if armed && scope.TableName() == (entity.Marker{}).TableName() {
+	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:match-rename", func(db *gorm.DB) {
+		if armed && db.Statement.Table == (entity.Marker{}).TableName() {
 			armed = false
 			require.NoError(t, entity.UnscopedDb().Exec("UPDATE faces SET subj_uid = ? WHERE id = ?", bea, f.ID).Error)
 		}
@@ -290,7 +290,7 @@ func TestCountFaceClusterGates(t *testing.T) {
 			CreatedAt:  time.Now().Add(time.Hour),
 		}
 		require.NoError(t, Db().Create(&newest).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(entity.Face{}, "id = ?", newest.ID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&entity.Face{}, "id = ?", newest.ID) })
 
 		after := CountFaceClusterGates(model, 0, 0)
 
@@ -579,7 +579,7 @@ func TestResolveFaceCollisions_InertBand(t *testing.T) {
 	faceTwo := entity.NewFace("uqcollisionband2", entity.SrcManual, face.NewEmbeddings([][]float32{second}), face.ModelFaceNet)
 	require.NoError(t, faceTwo.Create())
 	t.Cleanup(func() {
-		entity.UnscopedDb().Delete(entity.Face{}, "id IN (?)", []string{faceOne.ID, faceTwo.ID})
+		entity.UnscopedDb().Delete(&entity.Face{}, "id IN (?)", []string{faceOne.ID, faceTwo.ID})
 	})
 
 	collisions := func(t *testing.T) int {

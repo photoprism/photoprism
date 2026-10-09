@@ -158,7 +158,7 @@ func TestClusterGetTheme(t *testing.T) {
 		assert.NoError(t, err)
 
 		name := "pp-node-theme-" + rnd.Base36(10)
-		var existing int
+		var existing int64
 		require.NoError(t, entity.Db().Model(&entity.Client{}).Where("client_name = ?", name).Count(&existing).Error)
 		require.Zero(t, existing)
 		node := &reg.Node{Node: cluster.Node{Name: name, Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
@@ -166,7 +166,7 @@ func TestClusterGetTheme(t *testing.T) {
 		require.NotEmpty(t, node.ClientID)
 		t.Cleanup(func() {
 			require.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Client{}, "client_uid = ?", node.ClientID).Error)
-			var remaining int
+			var remaining int64
 			require.NoError(t, entity.UnscopedDb().Unscoped().Model(&entity.Client{}).
 				Where("client_uid = ?", node.ClientID).Count(&remaining).Error)
 			require.Zero(t, remaining)

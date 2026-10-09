@@ -156,12 +156,12 @@ func TestAlbumCover(t *testing.T) {
 		if err := entity.Db().Exec("UPDATE albums SET thumb = NULL WHERE album_uid = ?", album.AlbumUID).Error; err != nil {
 			t.Fatal(err)
 		}
-		var count int
+		var count int64
 		if err := entity.Db().Model(&entity.Album{}).
 			Where("album_uid = ? AND thumb IS NULL", album.AlbumUID).Count(&count).Error; err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 
 		const hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		t.Run("SetAndRestore", func(t *testing.T) {
@@ -178,6 +178,6 @@ func TestAlbumCover(t *testing.T) {
 			Where("album_uid = ? AND thumb IS NULL", album.AlbumUID).Count(&count).Error; err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 	})
 }

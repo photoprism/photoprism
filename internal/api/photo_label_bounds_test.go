@@ -8,12 +8,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
@@ -137,10 +137,10 @@ func TestPhotoLabelUpdateBounds(t *testing.T) {
 			photo, label := photoLabelBoundFixture(t)
 			hook := photoLabelErrorLog(t)
 			fired := false
-			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:label-write-error", func(scope *gorm.Scope) {
-				if scope.TableName() == (entity.PhotoLabel{}).TableName() && !fired {
+			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:label-write-error", func(db *gorm.DB) {
+				if db.Statement.Table == (entity.PhotoLabel{}).TableName() && !fired {
 					fired = true
-					_ = scope.Err(errors.New("photo label write control"))
+					_ = db.Statement.AddError(errors.New("photo label write control"))
 				}
 			})
 			t.Cleanup(func() { entity.Db().Callback().Update().Remove("test:label-write-error") })
@@ -335,10 +335,10 @@ func TestPhotoLabelOperationErrors(t *testing.T) {
 			}
 			hook := photoLabelErrorLog(t)
 			fired := false
-			callback := func(scope *gorm.Scope) {
-				if operation == "Rename" && scope.TableName() == (entity.Label{}).TableName() || operation != "Rename" && scope.TableName() == (entity.PhotoLabel{}).TableName() {
+			callback := func(db *gorm.DB) {
+				if operation == "Rename" && db.Statement.Table == (entity.Label{}).TableName() || operation != "Rename" && db.Statement.Table == (entity.PhotoLabel{}).TableName() {
 					fired = true
-					_ = scope.Err(errors.New("operation write control"))
+					_ = db.Statement.AddError(errors.New("operation write control"))
 				}
 			}
 			if operation == "Rename" {

@@ -384,7 +384,7 @@ func (m *User) Delete() (err error) {
 		return fmt.Errorf("uid is required to delete user")
 	}
 
-	if err = UnscopedDb().Delete(Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
+	if err = UnscopedDb().Delete(&Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
 		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", status.Error(err)}, m.RefID)
 	}
 

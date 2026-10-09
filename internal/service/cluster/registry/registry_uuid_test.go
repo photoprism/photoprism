@@ -108,7 +108,7 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-list-only-uuid")
 
 	// Remove the fixture records
-	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
+	if !assert.Empty(t, entity.UnscopedDb().Delete(&entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
 		return
 	}
 

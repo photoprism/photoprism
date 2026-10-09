@@ -4,10 +4,10 @@ import (
 	"math"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -324,8 +324,8 @@ func TestFaces_NameByConsensusConcurrentRename(t *testing.T) {
 	unnamed := consensusTestMarkers(t, f, 1, "", entity.SrcAuto, false)
 
 	armed := true
-	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:consensus-rename", func(scope *gorm.Scope) {
-		if armed && scope.TableName() == (entity.Marker{}).TableName() {
+	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:consensus-rename", func(db *gorm.DB) {
+		if armed && db.Statement.Table == (entity.Marker{}).TableName() {
 			armed = false
 			require.NoError(t, entity.UnscopedDb().Exec("UPDATE faces SET subj_uid = ? WHERE id = ?", bob.SubjUID, f.ID).Error)
 		}

@@ -56,7 +56,7 @@ func conflictTestFace(t *testing.T, subjUID string, axis int, tilt float64) *ent
 	require.NoError(t, f.Create())
 
 	t.Cleanup(func() {
-		UnscopedDb().Delete(entity.Face{}, "id = ?", f.ID)
+		UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID)
 	})
 
 	return f

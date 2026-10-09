@@ -88,8 +88,8 @@ func TestFindLegacyUsers(t *testing.T) {
 }
 
 func TestFindLegacyUsers_Literal(t *testing.T) {
-	require.NoError(t, Db().AutoMigrate(legacy.User{}).Error)
-	t.Cleanup(func() { _ = Db().DropTable(legacy.User{}).Error })
+	require.NoError(t, Db().Migrator().AutoMigrate(legacy.User{}))
+	t.Cleanup(func() { _ = Db().Migrator().DropTable(legacy.User{}) })
 
 	base := "zzl" + rnd.Base36(5)
 

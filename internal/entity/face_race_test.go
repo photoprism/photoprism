@@ -4,9 +4,9 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 )
@@ -20,7 +20,7 @@ func raceTestPerson(t *testing.T, name string) *Subject {
 
 	s := NewSubject(name, SubjPerson, SrcManual)
 	require.NoError(t, s.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", s.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", s.SubjUID) })
 
 	return s
 }
@@ -31,7 +31,7 @@ func raceTestFace(t *testing.T, subjUID string, seed uint64) *Face {
 
 	f := NewFace(subjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(seed)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	return f
 }
@@ -42,8 +42,8 @@ func raceBeforeMarkerUpdate(t *testing.T, name string, fn func()) *atomic.Bool {
 
 	armed := &atomic.Bool{}
 
-	Db().Callback().Update().Before("gorm:begin_transaction").Register(name, func(scope *gorm.Scope) {
-		if scope.TableName() == (Marker{}).TableName() && armed.CompareAndSwap(true, false) {
+	Db().Callback().Update().Before("gorm:begin_transaction").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (Marker{}).TableName() && armed.CompareAndSwap(true, false) {
 			fn()
 		}
 	})

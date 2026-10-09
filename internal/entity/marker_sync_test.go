@@ -1,15 +1,17 @@
 package entity
 
 import (
+	"bytes"
 	"fmt"
-	"reflect"
+	golog "log"
 	"strings"
 	"testing"
-	"unsafe"
+	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -49,30 +51,60 @@ func captureStatements(t *testing.T, fn func()) *statementCounter {
 	c := &statementCounter{}
 	db := Db()
 	defer restoreDbLogger(db)()
+	var buf bytes.Buffer
 
-	db.SetLogger(c)
-	db.LogMode(true)
+	newLogger := logger.New(
+		golog.New(&buf, "", golog.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             time.Hour,   // Slow SQL threshold
+			LogLevel:                  logger.Info, // Log level
+			IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
+			ParameterizedQueries:      false,       // Include params in the SQL log
+			Colorful:                  false,       // Disable color
+		},
+	)
+	db.Logger = newLogger
 
 	fn()
 
+	output := buf.String()
+	if len(output) == 0 {
+		c.sql = nil
+	} else {
+		lines := strings.Split(strings.TrimSpace(output), "\n")
+		for _, s := range lines {
+			// This will return only log messages about sql statements.
+			// If the statement is broken over many lines, then you only get the 1st line.
+			if strings.HasPrefix(s, "[") {
+				c.sql = append(c.sql, s)
+			}
+		}
+	}
+
+	// ToDo: Add variables, how?
 	return c
 }
 
 // restoreDbLogger returns a function that restores the logger and log mode db has now. GORM keeps both
 // unexported, so they are read and written through reflection.
 func restoreDbLogger(db *gorm.DB) func() {
-	field := func(name string) reflect.Value {
-		f := reflect.ValueOf(db).Elem().FieldByName(name)
-		return reflect.NewAt(f.Type(), unsafe.Pointer(f.UnsafeAddr())).Elem() //nolint:gosec // G103: test-only access to unexported GORM fields.
-	}
+	// field := func(name string) reflect.Value {
+	// 	f := reflect.ValueOf(db).Elem().FieldByName(name)
+	// 	return reflect.NewAt(f.Type(), unsafe.Pointer(f.UnsafeAddr())).Elem() //nolint:gosec // G103: test-only access to unexported GORM fields.
+	// }
 
-	logger := reflect.New(field("logger").Type()).Elem()
-	logger.Set(field("logger"))
-	mode := field("logMode").Int()
+	// logger := reflect.New(field("logger").Type()).Elem()
+	// logger.Set(field("logger"))
+	// mode := field("logMode").Int()
 
+	// return func() {
+	// 	field("logger").Set(logger)
+	// 	field("logMode").SetInt(mode)
+	// }
+
+	logger := db.Logger
 	return func() {
-		field("logger").Set(logger)
-		field("logMode").SetInt(mode)
+		db.Logger = logger
 	}
 }
 
@@ -101,7 +133,7 @@ func syncTestMarkers(t *testing.T, f *Face, n int, subjUID, fileUID string) []st
 		}
 
 		require.NoError(t, UnscopedDb().Create(&m).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(Marker{}, "marker_uid = ?", m.MarkerUID) })
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID).Error) })
 
 		uids = append(uids, m.MarkerUID)
 	}
@@ -113,11 +145,11 @@ func syncTestMarkers(t *testing.T, f *Face, n int, subjUID, fileUID string) []st
 func TestMarker_SyncSubject_Statements(t *testing.T) {
 	erin := NewSubject("Sync Statements Erin", SubjPerson, SrcManual)
 	require.NoError(t, erin.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", erin.SubjUID) })
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_uid = ?", erin.SubjUID).Error) })
 
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7801)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error) })
 
 	uids := syncTestMarkers(t, f, 3, "", "fs6sg6bw45bn0001")
 	m := FindMarker(uids[0])
@@ -146,17 +178,19 @@ func TestMarker_SyncSubject_Statements(t *testing.T) {
 func TestMarker_SyncSubject_RefreshesPhotos(t *testing.T) {
 	fred := NewSubject("Sync Refresh Fred", SubjPerson, SrcManual)
 	require.NoError(t, fred.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", fred.SubjUID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_uid = ?", fred.SubjUID).Error) })
 
 	f := NewFace(fred.SubjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(7802)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error) })
 
 	file := FileFixtures.Get("exampleFileName.jpg")
 	photo := FindPhoto(Photo{PhotoUID: file.PhotoUID})
 	require.NotNil(t, photo)
 	checked := photo.CheckedAt
-	t.Cleanup(func() { UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("checked_at", checked) })
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("checked_at", checked).Error)
+	})
 
 	named := syncTestMarkers(t, f, 1, fred.SubjUID, "fs6sg6bw45bn0001")
 	stale := syncTestMarkers(t, f, 1, "", file.FileUID)
@@ -184,11 +218,13 @@ func TestMarker_SyncSubject_WithoutRelated(t *testing.T) {
 	require.NoError(t, gina.Create())
 	hank := NewSubject("Sync Without Hank", SubjPerson, SrcManual)
 	require.NoError(t, hank.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid IN (?)", []string{gina.SubjUID, hank.SubjUID}) })
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{gina.SubjUID, hank.SubjUID}).Error)
+	})
 
 	f := NewFace(gina.SubjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(7803)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error) })
 
 	uids := syncTestMarkers(t, f, 1, hank.SubjUID, "fs6sg6bw45bn0001")
 	require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uids[0]).UpdateColumn("subj_src", SrcManual).Error)
@@ -213,11 +249,11 @@ func TestMarker_SyncSubject_WithoutRelated(t *testing.T) {
 func TestMarker_SetFace_NamingRelinksSiblings(t *testing.T) {
 	ivy := NewSubject("Sync Review Ivy", SubjPerson, SrcManual)
 	require.NoError(t, ivy.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", ivy.SubjUID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_uid = ?", ivy.SubjUID).Error) })
 
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7811)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error) })
 
 	sibling := syncTestMarkers(t, f, 1, "", "fs6sg6bw45bn0001")
 	named := syncTestMarkers(t, f, 1, "", "fs6sg6bw45bn0001")
@@ -242,11 +278,11 @@ func TestMarker_SetFace_NamingRelinksSiblings(t *testing.T) {
 func TestMarker_SyncSubject_MatchingDoesNotRelink(t *testing.T) {
 	jo := NewSubject("Sync Review Jo", SubjPerson, SrcManual)
 	require.NoError(t, jo.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", jo.SubjUID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_uid = ?", jo.SubjUID).Error) })
 
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7812)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error) })
 
 	sibling := syncTestMarkers(t, f, 1, "", "fs6sg6bw45bn0001")
 	named := syncTestMarkers(t, f, 1, jo.SubjUID, "fs6sg6bw45bn0001")
@@ -265,11 +301,11 @@ func TestMarker_SyncSubject_MatchingDoesNotRelink(t *testing.T) {
 func TestMarker_SyncSubject_NoRefreshWithoutChange(t *testing.T) {
 	kim := NewSubject("Sync Review Kim", SubjPerson, SrcManual)
 	require.NoError(t, kim.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", kim.SubjUID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_uid = ?", kim.SubjUID).Error) })
 
 	f := NewFace(kim.SubjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(7813)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error) })
 
 	syncTestMarkers(t, f, 1, kim.SubjUID, "fs6sg6bw45bn0001")
 	named := syncTestMarkers(t, f, 1, kim.SubjUID, "fs6sg6bw45bn0001")
@@ -297,21 +333,47 @@ func TestRestoreDbLogger(t *testing.T) {
 	t.Cleanup(restoreDbLogger(db))
 
 	outer := &statementCounter{}
-	db.SetLogger(outer)
-	db.LogMode(true)
+	var buf bytes.Buffer
+
+	newLogger := logger.New(
+		golog.New(&buf, "\n", golog.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             time.Second, // Slow SQL threshold
+			LogLevel:                  logger.Info, // Log level
+			IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
+			ParameterizedQueries:      false,       // Include params in the SQL log
+			Colorful:                  false,       // Disable color
+		},
+	)
+	db.Logger = newLogger
 
 	inner := captureStatements(t, func() { FindFace("RESTOREDBLOGGER") })
 	assert.NotEmpty(t, inner.sql, "the capture sees its own statements")
 
 	FindFace("RESTOREDBLOGGERAFTER")
+	output := buf.String()
+	outer.sql = strings.Split(strings.TrimSpace(output), "\n")
+
 	require.NotEmpty(t, outer.sql, "the previous logger is active again")
 	assert.Contains(t, outer.sql[len(outer.sql)-1], "faces")
 
 	// A quiet log mode stays quiet after a capture.
+	var quietBuf bytes.Buffer
 	quiet := &statementCounter{}
-	db.SetLogger(quiet)
-	db.LogMode(false)
+	quietLogger := logger.New(
+		golog.New(&quietBuf, "\n", golog.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             time.Second,   // Slow SQL threshold
+			LogLevel:                  logger.Silent, // Log level
+			IgnoreRecordNotFoundError: true,          // Ignore ErrRecordNotFound error for logger
+			ParameterizedQueries:      false,         // Include params in the SQL log
+			Colorful:                  false,         // Disable color
+		},
+	)
+	db.Logger = quietLogger
 	captureStatements(t, func() { FindFace("RESTOREDBLOGGERQUIET") })
 	FindFace("RESTOREDBLOGGERQUIETAFTER")
-	assert.Empty(t, quiet.sql, "the previous log mode is active again")
+	quietOutput := quietBuf.String()
+	quiet.sql = strings.Split(strings.TrimSpace(quietOutput), "\n")
+	assert.Len(t, quietOutput, 0, "the previous log mode is active again")
 }

@@ -34,7 +34,7 @@ func TestMarker_SetFace_StoredAcceptance(t *testing.T) {
 			require.NotNil(t, m)
 			before := *m
 			if tc.deleted {
-				require.NoError(t, UnscopedDb().Delete(Face{}, "id = ?", f.ID).Error)
+				require.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error)
 			} else {
 				values := Values{"collision_radius": tc.radius}
 				if tc.rename {
@@ -95,6 +95,9 @@ func TestMarker_SetFace_StoredAcceptanceNaming(t *testing.T) {
 
 // TestMarker_SetFace_StoredAcceptanceRejected checks matching after a named member is rejected.
 func TestMarker_SetFace_StoredAcceptanceRejected(t *testing.T) {
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_slug = ?", "jane-doe").UpdateColumn("deleted_at", nil).Error)
+	})
 	for i, name := range []string{"NamedCluster", "RenamedCluster", "NarrowedCluster"} {
 		renamed := name == "RenamedCluster"
 		narrowed := name == "NarrowedCluster"

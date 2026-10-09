@@ -1244,7 +1244,7 @@ func (m *Photo) Archive() error {
 
 // IsArchived reports whether the photo is archived and not removed.
 func (m *Photo) IsArchived() bool {
-	return m != nil && m.DeletedAt != nil && m.PhotoQuality > -1
+	return m != nil && m.DeletedAt.Valid && m.PhotoQuality > -1
 }
 
 // Restore removes the photo from the archive (reverses soft delete).

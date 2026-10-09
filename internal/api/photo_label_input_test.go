@@ -1,13 +1,14 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -63,7 +64,7 @@ func TestPhotoLabelPartialAcceptance(t *testing.T) {
 			entity.WaitForAsyncJobs()
 			err := entity.Db().Where("photo_id = ? AND label_id = ?", photo.ID, label.ID).First(&link).Error
 			if tc.accept {
-				assert.True(t, gorm.IsRecordNotFoundError(err))
+				assert.True(t, errors.Is(err, gorm.ErrRecordNotFound))
 			} else {
 				require.NoError(t, err)
 				assert.Equal(t, 100, link.Uncertainty)
@@ -99,8 +100,8 @@ func TestPhotoLabelUncertaintyBounds(t *testing.T) {
 			var before, after entity.PhotoLabel
 			require.NoError(t, entity.Db().Where("photo_id = ? AND label_id = ?", photo.ID, label.ID).First(&before).Error)
 			writes := 0
-			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:input-writes", func(scope *gorm.Scope) {
-				switch scope.TableName() {
+			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:input-writes", func(db *gorm.DB) {
+				switch db.Statement.Table {
 				case (entity.Label{}).TableName(), (entity.PhotoLabel{}).TableName(), (entity.Photo{}).TableName():
 					writes++
 				}

@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -35,11 +35,11 @@ func stampTestPage(t *testing.T, name string, count int) (*Faces, *entity.Face, 
 }
 
 // markerStampScope reports whether an update changes only a marker match timestamp.
-func markerStampScope(scope *gorm.Scope) bool {
-	if scope.TableName() != (entity.Marker{}).TableName() {
+func markerStampScope(db *gorm.DB) bool {
+	if db.Statement.Table != (entity.Marker{}).TableName() {
 		return false
 	}
-	attrs, ok := scope.InstanceGet("gorm:update_attrs")
+	attrs, ok := db.InstanceGet("gorm:update_attrs")
 	if !ok {
 		return false
 	}
@@ -62,8 +62,8 @@ func TestFaces_MatchFacesStampPages(t *testing.T) {
 			hook := captureLog(t)
 			queries, updates := 0, 0
 			observe := true
-			entity.Db().Callback().Query().Before("gorm:query").Register("test:stamp-page-query", func(scope *gorm.Scope) {
-				if _, ok := scope.Value.(*entity.Markers); !ok || !observe {
+			entity.Db().Callback().Query().Before("gorm:query").Register("test:stamp-page-query", func(db *gorm.DB) {
+				if _, ok := db.Statement.Dest.(*entity.Markers); !ok || !observe {
 					return
 				}
 				queries++
@@ -73,17 +73,17 @@ func TestFaces_MatchFacesStampPages(t *testing.T) {
 					}
 				}
 				if mode == "QueryError" && queries == 2 {
-					_ = scope.Err(errors.New("test page query failure"))
+					_ = db.Statement.AddError(errors.New("test page query failure"))
 				}
 			})
 			t.Cleanup(func() { entity.Db().Callback().Query().Remove("test:stamp-page-query") })
-			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:stamp-page-update", func(scope *gorm.Scope) {
-				if !markerStampScope(scope) {
+			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:stamp-page-update", func(db *gorm.DB) {
+				if !markerStampScope(db) {
 					return
 				}
 				updates++
 				if mode == "StampFailure" && updates == 1 {
-					_ = scope.Err(errors.New("test page stamp failure"))
+					_ = db.Statement.AddError(errors.New("test page stamp failure"))
 				}
 			})
 			t.Cleanup(func() { entity.Db().Callback().Update().Remove("test:stamp-page-update") })
@@ -140,8 +140,8 @@ func TestFaces_MatchFacesStampFaceless(t *testing.T) {
 			faceMatchPause = func() { pauses++ }
 			t.Cleanup(func() { faceMatchBatchSize, faceMatchPause = oldLimit, oldPause })
 			updates := 0
-			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:faceless-update", func(scope *gorm.Scope) {
-				if scope.TableName() == (entity.Marker{}).TableName() {
+			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:faceless-update", func(db *gorm.DB) {
+				if db.Statement.Table == (entity.Marker{}).TableName() {
 					updates++
 				}
 			})
@@ -184,8 +184,8 @@ func TestFaces_MatchFacesStampCancellation(t *testing.T) {
 	require.NoError(t, mutex.FacesWorker.Start())
 	t.Cleanup(mutex.FacesWorker.Stop)
 	canceled := false
-	entity.Db().Callback().Update().After("gorm:commit_or_rollback_transaction").Register("test:stamp-cancel", func(scope *gorm.Scope) {
-		if m, ok := scope.Value.(*entity.Marker); ok && m.MarkerUID == uids[1] && !canceled {
+	entity.Db().Callback().Update().After("gorm:commit_or_rollback_transaction").Register("test:stamp-cancel", func(db *gorm.DB) {
+		if m, ok := db.Statement.Dest.(*entity.Marker); ok && m.MarkerUID == uids[1] && !canceled {
 			canceled = true
 			w.Cancel()
 		}
@@ -256,18 +256,18 @@ func TestFaces_MatchFacesCursor(t *testing.T) {
 			faceMatchBatchSize = 2
 			t.Cleanup(func() { faceMatchBatchSize = oldLimit })
 			counts, queries := 0, 0
-			entity.Db().Callback().RowQuery().After("gorm:row_query").Register("test:marker-count", func(scope *gorm.Scope) {
-				if scope.TableName() == (entity.Marker{}).TableName() && strings.Contains(strings.ToLower(scope.SQL), "count(") {
+			entity.Db().Callback().Query().After("gorm:query").Register("test:marker-count", func(db *gorm.DB) {
+				if db.Statement.Table == (entity.Marker{}).TableName() && strings.Contains(strings.ToLower(db.Statement.SQL.String()), "count(") {
 					counts++
 				}
 			})
-			t.Cleanup(func() { entity.Db().Callback().RowQuery().Remove("test:marker-count") })
+			t.Cleanup(func() { entity.Db().Callback().Query().Remove("test:marker-count") })
 			// Adds a marker that sorts after all others before the first page, as one detected during
 			// the walk would, and removes the first marker before the second, which shifts later rows.
 			added := "m" + strconv.FormatInt(time.Now().UTC().Unix(), 36)[0:6] + "zzzzzzzzz"
 			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", added) })
-			entity.Db().Callback().Query().Before("gorm:query").Register("test:marker-delete", func(scope *gorm.Scope) {
-				if _, ok := scope.Value.(*entity.Markers); !ok {
+			entity.Db().Callback().Query().Before("gorm:query").Register("test:marker-delete", func(db *gorm.DB) {
+				if _, ok := db.Statement.Dest.(*entity.Markers); !ok {
 					return
 				}
 				switch queries++; queries {
@@ -302,14 +302,14 @@ func TestFaces_MatchFacesCursor(t *testing.T) {
 func TestFaces_MatchFacesBoundError(t *testing.T) {
 	w, f, uids := stampTestPage(t, "facesbounderror", 2)
 	queries := 0
-	entity.Db().Callback().Query().Before("gorm:query").Register("test:bound-error", func(scope *gorm.Scope) {
-		if _, ok := scope.Value.(*entity.Marker); ok {
-			_ = scope.Err(errors.New("test bound failure"))
+	entity.Db().Callback().Query().Before("gorm:query").Register("test:bound-error", func(db *gorm.DB) {
+		if _, ok := db.Statement.Dest.(*entity.Marker); ok {
+			_ = db.Statement.AddError(errors.New("test bound failure"))
 		}
 	})
 	t.Cleanup(func() { entity.Db().Callback().Query().Remove("test:bound-error") })
-	entity.Db().Callback().Query().Before("gorm:query").Register("test:bound-pages", func(scope *gorm.Scope) {
-		if _, ok := scope.Value.(*entity.Markers); ok {
+	entity.Db().Callback().Query().Before("gorm:query").Register("test:bound-pages", func(db *gorm.DB) {
+		if _, ok := db.Statement.Dest.(*entity.Markers); ok {
 			queries++
 		}
 	})
@@ -330,8 +330,8 @@ func TestFaces_MatchFacesEmpty(t *testing.T) {
 	// On MariaDB the isolated config shares the package database, so later tests need the fixtures.
 	t.Cleanup(entity.ResetTestFixtures)
 	queries := 0
-	entity.Db().Callback().Query().Before("gorm:query").Register("test:empty-walk", func(scope *gorm.Scope) {
-		if _, ok := scope.Value.(*entity.Markers); ok {
+	entity.Db().Callback().Query().Before("gorm:query").Register("test:empty-walk", func(db *gorm.DB) {
+		if _, ok := db.Statement.Dest.(*entity.Markers); ok {
 			queries++
 		}
 	})

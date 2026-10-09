@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 // TestStampMarkerMatches checks chunk bounds, durable timestamps, and partial failure.
@@ -32,13 +32,13 @@ func TestStampMarkerMatches(t *testing.T) {
 				markers[i] = &rows[i]
 			}
 			updates := 0
-			Db().Callback().Update().Before("gorm:begin_transaction").Register("test:stamp-matches", func(scope *gorm.Scope) {
-				if scope.TableName() != (Marker{}).TableName() {
+			Db().Callback().Update().Before("gorm:begin_transaction").Register("test:stamp-matches", func(db *gorm.DB) {
+				if db.Statement.Table != (Marker{}).TableName() {
 					return
 				}
 				updates++
 				if fail && updates == 1 {
-					_ = scope.Err(errors.New("test stamp failure"))
+					_ = db.Statement.AddError(errors.New("test stamp failure"))
 				}
 			})
 			t.Cleanup(func() { Db().Callback().Update().Remove("test:stamp-matches") })

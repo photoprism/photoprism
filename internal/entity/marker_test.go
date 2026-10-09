@@ -998,7 +998,7 @@ func TestMarker_SyncSubjectRelated(t *testing.T) {
 		s := NewSubject(name, SubjPerson, SrcManual)
 		require.NotNil(t, s)
 		require.NoError(t, s.Create())
-		t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", s.SubjUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", s.SubjUID) })
 
 		return s
 	}
@@ -1009,7 +1009,7 @@ func TestMarker_SyncSubjectRelated(t *testing.T) {
 		f := NewFace(subjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(seed)}, face.EmbeddingModelName())
 		require.NotNil(t, f)
 		require.NoError(t, f.Create())
-		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 		return f
 	}
@@ -1040,7 +1040,7 @@ func TestMarker_SyncSubjectRelated(t *testing.T) {
 			}
 
 			require.NoError(t, UnscopedDb().Create(&m).Error)
-			t.Cleanup(func() { UnscopedDb().Delete(Marker{}, "marker_uid = ?", m.MarkerUID) })
+			t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 			uids = append(uids, m.MarkerUID)
 		}
@@ -1076,7 +1076,7 @@ func TestMarker_SyncSubjectRelated(t *testing.T) {
 	anchored := func(t *testing.T, m *Marker, f *Face, subjUID string) {
 		t.Helper()
 
-		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "subj_uid = ? AND id <> ?", subjUID, f.ID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "subj_uid = ? AND id <> ?", subjUID, f.ID) })
 		require.NotEmpty(t, m.FaceID, "the corrected marker gets a face of its own person")
 		assert.NotEqual(t, f.ID, m.FaceID, "and leaves the cluster")
 		assert.NotNil(t, m.MatchedAt)
@@ -1150,7 +1150,7 @@ func TestMarker_SyncSubjectRelated(t *testing.T) {
 		rejected := newMarkers(t, f, 1, "", SrcManual, 0.6)
 
 		got := setName(t, rejected[0], "Sync Related Yuri")
-		t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", got.SubjUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", got.SubjUID) })
 		require.NotEmpty(t, got.SubjUID)
 		assert.NotEqual(t, xena.SubjUID, got.SubjUID)
 		anchored(t, got, f, got.SubjUID)
@@ -1203,14 +1203,14 @@ func TestMarker_resolveSubjectCollision(t *testing.T) {
 	require.NoError(t, carol.Create())
 	dave := NewSubject("Resolve Collision Dave", SubjPerson, SrcManual)
 	require.NoError(t, dave.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid IN (?)", []string{carol.SubjUID, dave.SubjUID}) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{carol.SubjUID, dave.SubjUID}) })
 
 	newFace := func(t *testing.T, subjUID string, seed uint64) *Face {
 		t.Helper()
 
 		f := NewFace(subjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(seed)}, face.EmbeddingModelName())
 		require.NoError(t, f.Create())
-		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 		return f
 	}
@@ -1237,7 +1237,7 @@ func TestMarker_resolveSubjectCollision(t *testing.T) {
 		}
 
 		require.NoError(t, UnscopedDb().Create(m).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(Marker{}, "marker_uid = ?", m.MarkerUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 		return m
 	}
@@ -1268,7 +1268,7 @@ func TestMarker_resolveSubjectCollision(t *testing.T) {
 		f := newFace(t, carol.SubjUID, 7507)
 		m := newMarker(t, f, 0.6*f.AcceptDist())
 		require.NoError(t, m.Updates(Values{"size": face.ClusterSizeThreshold, "score": face.ClusterScore("") + 10}))
-		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "subj_uid = ?", dave.SubjUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "subj_uid = ?", dave.SubjUID) })
 
 		require.NoError(t, m.resolveSubjectCollision(FindFace(m.FaceID)))
 		assert.Equal(t, 1, FindFace(f.ID).Collisions)
@@ -1297,7 +1297,7 @@ func TestMarker_resolveSubjectCollision(t *testing.T) {
 			H:              0.1,
 		}
 		require.NoError(t, UnscopedDb().Create(m).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(Marker{}, "marker_uid = ?", m.MarkerUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 		changed, err := m.SetName(carol.SubjName, SrcManual)
 		require.NoError(t, err)
@@ -1305,7 +1305,7 @@ func TestMarker_resolveSubjectCollision(t *testing.T) {
 		require.NoError(t, m.Save())
 		seed := m.FaceID
 		require.NotEmpty(t, seed)
-		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", seed) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", seed) })
 
 		changed, err = m.SetName(dave.SubjName, SrcManual)
 		require.NoError(t, err)
@@ -1495,9 +1495,9 @@ func TestRejectedMatchCond(t *testing.T) {
 		var m Marker
 		require.NoError(t, UnscopedDb().Where("marker_uid = ?", uid).First(&m).Error)
 
-		var n int
+		var n int64
 		require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uid).Where(cond, args...).Count(&n).Error)
-		assert.Equal(t, m.RejectedMatch(), n == 1, name)
+		assert.Equal(t, m.RejectedMatch(), n == int64(1), name)
 	}
 }
 

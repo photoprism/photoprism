@@ -206,17 +206,17 @@ func insta360CaptureState(photos entity.Photos) *entity.Photo {
 		switch {
 		case photo == nil, insta360PhotoRemoved(photo):
 			continue
-		case photo.DeletedAt == nil:
+		case !photo.DeletedAt.Valid:
 			if photo.PhotoQuality >= 0 {
 				visible = append(visible, photo)
 			}
-		case archived == nil && !photo.DeletedAt.Before(*canonical.DeletedAt):
+		case archived == nil && !photo.DeletedAt.Time.Before(canonical.DeletedAt.Time):
 			archived = photo
 		}
 	}
 
 	for _, photo := range visible {
-		if archived == nil || photo.CreatedAt.Before(*archived.DeletedAt) {
+		if archived == nil || photo.CreatedAt.Before(archived.DeletedAt.Time) {
 			return photo
 		}
 	}
@@ -230,5 +230,5 @@ func insta360CaptureState(photos entity.Photos) *entity.Photo {
 
 // insta360PhotoRemoved reports whether a photo was removed automatically rather than archived.
 func insta360PhotoRemoved(photo *entity.Photo) bool {
-	return photo != nil && photo.DeletedAt != nil && photo.PhotoQuality < 0
+	return photo != nil && photo.DeletedAt.Valid && photo.PhotoQuality < 0
 }

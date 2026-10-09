@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestPhotos_Photos(t *testing.T) {
@@ -22,10 +23,10 @@ func TestPhotos_Photos(t *testing.T) {
 }
 
 func TestPhotos_Archived(t *testing.T) {
-	deletedAt := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	archived := &Photo{PhotoUID: "ps6sg6be2lvl0y01", DeletedAt: &deletedAt, PhotoQuality: 3}
+	deletedAt := gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
+	archived := &Photo{PhotoUID: "ps6sg6be2lvl0y01", DeletedAt: deletedAt, PhotoQuality: 3}
 	visible := &Photo{PhotoUID: "ps6sg6be2lvl0y02", PhotoQuality: 3}
-	removed := &Photo{PhotoUID: "ps6sg6be2lvl0y03", DeletedAt: &deletedAt, PhotoQuality: -1}
+	removed := &Photo{PhotoUID: "ps6sg6be2lvl0y03", DeletedAt: deletedAt, PhotoQuality: -1}
 
 	t.Run("Mixed", func(t *testing.T) {
 		photos := Photos{visible, archived, nil, removed}
