@@ -27,7 +27,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.4.1
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
-	github.com/mattn/go-sqlite3 v1.14.52 // indirect
+	github.com/mattn/go-sqlite3 v1.14.52
 	github.com/montanaflynn/stats v0.12.7
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
