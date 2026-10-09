@@ -161,7 +161,7 @@ func PhotoVisibleToSession(photoUID string, sess *entity.Session) (bool, error) 
 	// matching GetPhoto / searchPhotos.
 	stmt := ScopeVisiblePhotos(UnscopedDb().Table("photos").Where("photos.photo_uid = ?", photoUID), sess)
 
-	var count int
+	var count int64
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
 	} else if count > 0 {
@@ -192,7 +192,7 @@ func FileVisibleToSession(fileHash string, sess *entity.Session) (bool, error) {
 		sess,
 	)
 
-	var count int
+	var count int64
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
 	} else if count > 0 {
@@ -221,7 +221,7 @@ func FileVisibleToPublic(fileHash string) (bool, error) {
 		return false, nil
 	}
 
-	var count int
+	var count int64
 	err := UnscopedDb().Table("files").
 		Joins("JOIN photos ON photos.id = files.photo_id").
 		Where("files.file_hash = ? AND files.deleted_at IS NULL", fileHash).
@@ -239,7 +239,7 @@ func PhotoVisibleToPublic(photoUID string) (bool, error) {
 		return false, nil
 	}
 
-	var count int
+	var count int64
 	err := UnscopedDb().Table("photos").
 		Where("photo_uid = ? AND photo_private = FALSE AND deleted_at IS NULL AND photo_quality > -1", photoUID).
 		Count(&count).Error

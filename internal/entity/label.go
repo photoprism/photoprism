@@ -339,7 +339,7 @@ func (m *Label) Rename(name string) error {
 		return res.Error
 	}
 	if res.RowsAffected == 0 {
-		var count int
+		var count int64
 		if err := Db().Model(&Label{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return err
 		}

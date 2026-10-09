@@ -1110,7 +1110,7 @@ func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure,
 
 // AllFilesMissing reports whether all files for this photo are marked missing.
 func (m *Photo) AllFilesMissing() bool {
-	count := 0
+	var count int64
 
 	if err := Db().Model(&File{}).
 		Where("photo_id = ? AND file_missing = FALSE", m.ID).

@@ -319,11 +319,13 @@ func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
 		q = q.Where("created_at > ?", newest)
 	}
 
-	if err := q.Count(&n).Error; err != nil {
+	var count int64
+
+	if err := q.Count(&count).Error; err != nil {
 		log.Errorf("faces: %s (count new markers)", err)
 	}
 
-	return n
+	return int(count)
 }
 
 // whereClusterScore restricts a statement to markers that clear the clustering bar of the detector
@@ -829,7 +831,9 @@ func FacesFromOtherModels() (count int, err error) {
 		stmt = stmt.Where("embed_model <> ''")
 	}
 
-	err = stmt.Count(&count).Error
+	var n int64
 
-	return count, err
+	err = stmt.Count(&n).Error
+
+	return int(n), err
 }

@@ -263,7 +263,7 @@ func (m *Lens) markManual() error {
 		return res.Error
 	} else if res.RowsAffected == 0 {
 		// MariaDB counts only changed rows, so check whether the lens still exists.
-		var count int
+		var count int64
 
 		if err := UnscopedDb().Model(&Lens{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return err
@@ -297,9 +297,11 @@ func (m *Lens) PhotoCount() (count int, err error) {
 		return 0, fmt.Errorf("empty id")
 	}
 
-	err = UnscopedDb().Model(&Photo{}).Where("lens_id = ?", m.ID).Count(&count).Error
+	var n int64
 
-	return count, err
+	err = UnscopedDb().Model(&Photo{}).Where("lens_id = ?", m.ID).Count(&n).Error
+
+	return int(n), err
 }
 
 // Delete permanently removes the lens, and first assigns the pictures that reference it to the unknown lens if requested.
@@ -337,7 +339,7 @@ func (m *Lens) Delete(reassign bool) (reassigned int64, err error) {
 	if res.Error != nil {
 		return reassigned, res.Error
 	} else if res.RowsAffected == 0 {
-		var count int
+		var count int64
 
 		if err = UnscopedDb().Model(&Lens{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return reassigned, err

@@ -11,14 +11,16 @@ type HashMap map[string]bool
 
 // CountFileHashes counts distinct file hashes.
 func CountFileHashes() (count int) {
+	var n int64
+
 	if err := UnscopedDb().
 		Table(entity.File{}.TableName()).
 		Where("file_missing = FALSE AND deleted_at IS NULL").
-		Select("COUNT(DISTINCT(file_hash))").Count(&count).Error; err != nil {
+		Select("COUNT(DISTINCT(file_hash))").Count(&n).Error; err != nil {
 		log.Errorf("files: %s (count hashes)", err)
 	}
 
-	return count
+	return int(n)
 }
 
 // FetchHashMap populates a hash map from the database.

@@ -23,14 +23,16 @@ func People() (people entity.People, err error) {
 
 // PeopleCount returns the total number of people in the index.
 func PeopleCount() (count int, err error) {
+	var n int64
+
 	err = Db().
 		Table(entity.Subject{}.TableName()).
 		Where("deleted_at IS NULL").
 		Where("subj_hidden = FALSE").
 		Where("subj_type = ?", entity.SubjPerson).
-		Count(&count).Error
+		Count(&n).Error
 
-	return count, err
+	return int(n), err
 }
 
 // Subjects returns subjects from the index.

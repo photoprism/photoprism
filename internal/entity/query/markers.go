@@ -307,11 +307,13 @@ func CountUnmatchedFaceMarkers() (n int) {
 		Where("matched_at IS NULL AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName())
 
-	if err := q.Count(&n).Error; err != nil {
+	var count int64
+
+	if err := q.Count(&count).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
-	return n
+	return int(count)
 }
 
 // CountMarkers counts the number of face markers in the index.
@@ -322,11 +324,13 @@ func CountMarkers(markerType string) (n int) {
 		q = q.Where("marker_type = ?", markerType)
 	}
 
-	if err := q.Count(&n).Error; err != nil {
+	var count int64
+
+	if err := q.Count(&count).Error; err != nil {
 		log.Errorf("faces: %s (count markers)", err)
 	}
 
-	return n
+	return int(count)
 }
 
 // RemoveOrphanMarkers removes markers without an existing file.

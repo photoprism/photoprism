@@ -63,9 +63,13 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 	}
 
 	for _, query := range queries {
-		if err = query.stmt.Count(query.dest).Error; err != nil {
+		var count int64
+
+		if err = query.stmt.Count(&count).Error; err != nil {
 			return result, err
 		}
+
+		*query.dest = int(count)
 	}
 
 	return result, nil
@@ -273,7 +277,7 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 			Where("LENGTH(embeddings_json) > 0"), model)
 	}
 
-	var total, samples int
+	var total, samples int64
 
 	if err = assigned().Count(&total).Error; err != nil {
 		return 0, err
@@ -281,7 +285,7 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 		return 0, err
 	}
 
-	return max(total-samples, 0), nil
+	return int(max(total-samples, 0)), nil
 }
 
 // FaceMigrationCropCounts counts the markers a migration can crop at full detail, and the two
@@ -388,9 +392,11 @@ func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
 		stmt = stmt.Where("detect_model <> ? OR "+entity.ThumbSizeUnsettledCond(), detector)
 	}
 
-	err = stmt.Count(&count).Error
+	var n int64
 
-	return count, err
+	err = stmt.Count(&n).Error
+
+	return int(n), err
 }
 
 // MigrationDetection carries what the detection that produced a marker's new vector recorded about
@@ -484,7 +490,7 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 				// MariaDB reports changed rows rather than matched ones, so re-embedding a marker
 				// to a byte-identical vector updates nothing and is not a missing row. Only the
 				// zero case pays for the check, and only a row that is really gone is an error.
-				var found int
+				var found int64
 
 				if err := tx.Model(&entity.Marker{}).
 					Where("marker_uid = ? AND marker_type = ?", markerUID, entity.MarkerFace).

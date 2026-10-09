@@ -454,7 +454,7 @@ func (m *File) Found() error {
 
 // AllFilesMissing reports whether the owning photo has any remaining files that are not marked missing.
 func (m *File) AllFilesMissing() bool {
-	count := 0
+	var count int64
 
 	if err := Db().Model(&File{}).
 		Where("photo_id = ? AND file_missing = FALSE", m.PhotoID).

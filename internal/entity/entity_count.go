@@ -11,7 +11,7 @@ func Count(m any, keys []string, values []any) int {
 		return -1
 	}
 
-	db, count := UnscopedDb(), 0
+	db, count := UnscopedDb(), int64(0)
 
 	stmt := db.Model(m)
 
@@ -26,5 +26,5 @@ func Count(m any, keys []string, values []any) int {
 		return -1
 	}
 
-	return count
+	return int(count)
 }

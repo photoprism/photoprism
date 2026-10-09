@@ -268,7 +268,7 @@ func (m *Camera) markManual() error {
 		return res.Error
 	} else if res.RowsAffected == 0 {
 		// MariaDB counts only changed rows, so check whether the camera still exists.
-		var count int
+		var count int64
 
 		if err := UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return err
@@ -302,9 +302,11 @@ func (m *Camera) PhotoCount() (count int, err error) {
 		return 0, fmt.Errorf("empty id")
 	}
 
-	err = UnscopedDb().Model(&Photo{}).Where("camera_id = ?", m.ID).Count(&count).Error
+	var n int64
 
-	return count, err
+	err = UnscopedDb().Model(&Photo{}).Where("camera_id = ?", m.ID).Count(&n).Error
+
+	return int(n), err
 }
 
 // Delete permanently removes the camera, and first assigns the pictures that reference it to the unknown camera if requested.
@@ -342,7 +344,7 @@ func (m *Camera) Delete(reassign bool) (reassigned int64, err error) {
 	if res.Error != nil {
 		return reassigned, res.Error
 	} else if res.RowsAffected == 0 {
-		var count int
+		var count int64
 
 		if err = UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return reassigned, err

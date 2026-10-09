@@ -728,7 +728,7 @@ func (w *Faces) persistNormalizedFace(candidate faceNormalizationCandidate) (int
 		targetID := candidate.newID
 
 		if candidate.rekey {
-			var existing int
+			var existing int64
 
 			if err := tx.Model(&entity.Face{}).Where("id = ?", candidate.newID).Count(&existing).Error; err != nil {
 				return err

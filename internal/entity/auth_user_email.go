@@ -22,9 +22,13 @@ func (m *User) OtherEmailHolders() (count int, verified bool, err error) {
 
 	stmt := Db().Model(&User{}).Where("LOWER(user_email) = ? AND user_uid <> ?", email, m.UserUID)
 
-	if err = stmt.Count(&count).Error; err != nil || count == 0 {
+	var n int64
+
+	if err = stmt.Count(&n).Error; err != nil || n == 0 {
 		return 0, false, err
 	}
+
+	count = int(n)
 
 	var found []User
 

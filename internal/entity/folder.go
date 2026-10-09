@@ -235,7 +235,7 @@ func originalsFolderAlbumReconcileScope(rootPath string) string {
 
 // hasOriginalsFolderPath reports whether an active originals folder row exists for rootPath.
 func hasOriginalsFolderPath(rootPath string) bool {
-	var count int
+	var count int64
 
 	if err := Db().Model(&Folder{}).Where("root = ? AND path = ?", RootOriginals, rootPath).Count(&count).Error; err != nil {
 		log.Debugf("folder: %s (check folder path %s)", err, clean.LogQuote(rootPath))
