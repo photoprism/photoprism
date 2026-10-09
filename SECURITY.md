@@ -36,7 +36,7 @@ When a record is published without an attempt to contact us, we ask the assignin
 
 ## Bug Bounty Program
 
-We do not operate a bug bounty program and do not offer payment or comparable compensation for vulnerability reports. We are a small team, and the time we can spend on inbound reports is the same time we spend on fixing issues and building the product.
+We do not operate a bug bounty program and do not offer payment or comparable compensation for vulnerability reports. The time we can spend on inbound reports is the same time we spend on fixing issues and building the product.
 
 ## Reporting Issues as a Business or Organization
 
