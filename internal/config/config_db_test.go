@@ -343,7 +343,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 	c.options.DatabaseDriver = "tidb"
 	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
 	c.options.DatabaseDriver = "Postgres"
-	assert.Equal(t, "user=photoprism password= dbname=photoprism host=localhost port=5432 connect_timeout=15 sslmode=disable TimeZone=UTC", c.DatabaseDSN())
+	assert.Equal(t, "postgres://photoprism:@localhost:5432/photoprism?TimeZone=UTC&connect_timeout=15&sslmode=disable", c.DatabaseDSN())
 	c.options.DatabaseDriver = "SQLite"
 	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
 	c.options.DatabaseDriver = ""
@@ -391,7 +391,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 12
 
-		want := "user=instance password=secret dbname=instancedb host=localhost port=5432 connect_timeout=12 sslmode=disable TimeZone=UTC"
+		want := "postgres://instance:secret@localhost:5432/instancedb?TimeZone=UTC&connect_timeout=12&sslmode=disable"
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -410,13 +410,61 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 9
 
-		want := "user=instance password=secret dbname=instancedb host=postgres.internal port=5433 connect_timeout=9 sslmode=disable TimeZone=UTC"
+		want := "postgres://instance:secret@postgres.internal:5433/instancedb?TimeZone=UTC&connect_timeout=9&sslmode=disable"
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
 
 		assert.Equal(t, "postgres.internal", conf.DatabaseHost())
 		assert.Equal(t, 5433, conf.DatabasePort())
+	})
+	t.Run("PostgresIPv6Server", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgres
+		conf.options.DatabaseServer = "[::1]:5432"
+		conf.options.DatabaseName = "instancedb"
+		conf.options.DatabaseUser = "instance"
+		conf.options.DatabasePassword = "secret"
+		conf.options.DatabaseTimeout = 9
+
+		want := "postgres://instance:secret@[::1]:5432/instancedb?TimeZone=UTC&connect_timeout=9&sslmode=disable"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+	})
+	t.Run("PostgresUnixSocket", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgres
+		conf.options.DatabaseServer = "/var/run/postgresql"
+		conf.options.DatabaseName = "instancedb"
+		conf.options.DatabaseUser = "instance"
+		conf.options.DatabasePassword = "p w@d"
+		conf.options.DatabaseTimeout = 9
+
+		want := "postgres://instance:p%20w%40d@/instancedb?TimeZone=UTC&connect_timeout=9&host=%2Fvar%2Frun%2Fpostgresql&port=5432&sslmode=disable"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+	})
+	t.Run("PostgresUnixSocketPort", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgres
+		conf.options.DatabaseServer = "/var/run/postgresql:5433"
+		conf.options.DatabaseName = "instancedb"
+		conf.options.DatabaseUser = "instance"
+		conf.options.DatabasePassword = "secret"
+		conf.options.DatabaseTimeout = 9
+
+		want := "postgres://instance:secret@/instancedb?TimeZone=UTC&connect_timeout=9&host=%2Fvar%2Frun%2Fpostgresql&port=5433&sslmode=disable"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
 	})
 }
 

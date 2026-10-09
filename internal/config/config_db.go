@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -140,22 +141,31 @@ func (c *Config) DatabaseDSN() string {
 
 			return d.MySQL()
 		case dsn.DriverPostgres:
-			databaseServer := c.DatabaseServer()
 			d := dsn.DSN{
-				Driver: dsn.DriverPostgres,
-				Server: databaseServer,
+				Driver:   dsn.DriverPostgres,
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("%s connect_timeout=%d", dsn.Params[dsn.DriverPostgres], c.DatabaseTimeout()),
 			}
 
-			return fmt.Sprintf(
-				"user=%s password=%s dbname=%s host=%s port=%d connect_timeout=%d %s",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				c.DatabaseName(),
-				d.Host(),
-				d.Port(),
-				c.DatabaseTimeout(),
-				dsn.Params[dsn.DriverPostgres],
-			)
+			// Connect via Unix domain socket, or to the host and port of the server.
+			if server := c.DatabaseServer(); strings.HasPrefix(server, "/") {
+				d.Server = server
+
+				// A socket path may end with the port, e.g. "/var/run/postgresql:5433".
+				if i := strings.LastIndex(server, ":"); i > 0 {
+					if port, err := strconv.Atoi(server[i+1:]); err == nil && port > 0 && port <= 65535 {
+						d.Server = server[:i]
+						d.Params += fmt.Sprintf(" port=%d", port)
+					}
+				}
+			} else {
+				hostPort := dsn.DSN{Driver: dsn.DriverPostgres, Server: server}
+				d.Server = net.JoinHostPort(hostPort.Host(), strconv.Itoa(hostPort.Port()))
+			}
+
+			return d.PostgreSQL()
 		case dsn.DriverSQLite3:
 			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
 		default:
