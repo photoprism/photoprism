@@ -637,14 +637,26 @@ func TestRemovePeopleAndFaces(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
+	// Replace all fixtures afterwards, as this removes data other tests depend on.
+	t.Cleanup(entity.ResetTestFixtures)
+
+	// A NULL face count is reset as well.
+	if err := UnscopedDb().Exec("UPDATE photos SET photo_faces = NULL WHERE photo_uid = ?", entity.PhotoFixtures.Get("Photo01").PhotoUID).Error; err != nil {
+		t.Fatal(err)
+	}
+
 	err := RemovePeopleAndFaces()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// replace all the fixtures as the previous statement kills a lot of other tests.
-	entity.ResetTestFixtures()
+	var withFaces int64
+	if err = UnscopedDb().Model(&entity.Photo{}).Where("photo_faces <> 0 OR photo_faces IS NULL").Count(&withFaces).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, int64(0), withFaces)
 }
 
 func TestFaceEmbeddingModels(t *testing.T) {
