@@ -501,7 +501,7 @@ func TestInsta360OriginalName(t *testing.T) {
 // among the files of the same photo in the same folder.
 func TestFindImportedInsta360Capture(t *testing.T) {
 	folder := "insta360importedcapture"
-	cfg := config.NewMinimalTestConfigWithDb(folder, filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDbTTest(folder, filepath.Join(t.TempDir(), "storage"), t)
 	oldCfg := Config()
 	SetConfig(cfg)
 	t.Cleanup(func() {

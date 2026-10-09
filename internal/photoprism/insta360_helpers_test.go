@@ -25,7 +25,7 @@ const (
 func newInsta360StackConfig(t *testing.T, dbName string, stackSequences bool) *config.Config {
 	t.Helper()
 
-	cfg := config.NewMinimalTestConfigWithDb(dbName, filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDbTTest(dbName, filepath.Join(t.TempDir(), "storage"), t)
 	cfg.Settings().Stack.Name = stackSequences
 
 	if !cfg.FFmpegEnabled() {

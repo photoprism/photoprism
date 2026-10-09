@@ -279,7 +279,7 @@ func TestNextResetDbName(t *testing.T) {
 
 // TestResetConfigAndOpenDB checks that the database stays writable when other tests build minimal configs.
 func TestResetConfigAndOpenDB(t *testing.T) {
-	t.Cleanup(func() { resetConfigAndDB() })
+	t.Cleanup(func() { resetConfigAndDB(t) })
 
 	first := resetConfigAndOpenDB()
 	require.Same(t, first, get.Config())
@@ -295,13 +295,13 @@ func TestResetConfigAndOpenDB(t *testing.T) {
 	require.NoError(t, err)
 	require.Same(t, second, core)
 
-	restored := resetConfigAndDB()
+	restored := resetConfigAndDB(t)
 	require.Same(t, restored, get.Config())
 	require.Same(t, restored.Db(), entity.Db())
 	core, err = InitCoreConfig(nil, true)
 	require.NoError(t, err)
 	require.Same(t, restored, core)
-	restoredAgain := resetConfigAndDB()
+	restoredAgain := resetConfigAndDB(t)
 	require.Same(t, restoredAgain, get.Config())
 	require.Same(t, restoredAgain.Db(), entity.Db())
 	core, err = InitCoreConfig(nil, true)

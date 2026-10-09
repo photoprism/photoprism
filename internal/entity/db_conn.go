@@ -17,8 +17,6 @@ import (
 	"github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
-
-	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // dbConn is the global gorm.DB connection provider.
