@@ -12,6 +12,9 @@ var Insta360VideoPattern = regexp.MustCompile(`^((?i:VID|LRV))_(\d{8})_(\d{6})_(
 // Insta360ProxyPattern matches the proxy file of an Insta360 video that stores both lenses in one file.
 var Insta360ProxyPattern = regexp.MustCompile(`^((?i:LRV))_(\d{8})_(\d{6})_(01)_(\d{3})\.[Ll][Rr][Vv]$`)
 
+// GooglePixelPattern matches the base prefix of Google Pixel Camera multi-file captures.
+var GooglePixelPattern = regexp.MustCompile(`^((?i:PXL))_(\d{8}_\d{6}\d*)(?:\.[-\w]+)*\.(?i:[-\w]*-\d{2}|COVER|ORIGINAL|PORTRAIT|MAIN)(?:\.[-\w]+)*$`)
+
 // stackRule maps the files of a capture that is only viewable when stacked to one shared name.
 type stackRule struct {
 	pattern *regexp.Regexp
@@ -26,12 +29,15 @@ var stackRules = []stackRule{
 }
 
 // StackPrefix returns the name under which a file is stacked with the other files of a photo.
-// Files of a multi-file Insta360 capture and their sidecars share the name of the left lens file,
+// Files of a multi-file capture and their sidecars share one canonical stack name,
 // regardless of stripSequence. For all other files, it returns the same as BasePrefix.
 func StackPrefix(fileName string, stripSequence bool) string {
 	prefix := BasePrefix(fileName, false)
 
-	if name := stackRuleName(filepath.Base(fileName), prefix); name != "" {
+	// Apply camera-specific stack name mappings (Google Pixel Camera or Insta360).
+	if name := googlePixelStackName(prefix); name != "" {
+		prefix = name
+	} else if name := stackRuleName(filepath.Base(fileName), prefix); name != "" {
 		prefix = name
 	}
 
@@ -99,6 +105,14 @@ func insta360StackName(match []string) string {
 	}
 
 	return prefix + "_" + match[2] + "_" + match[3] + "_00_" + match[5]
+}
+
+// googlePixelStackName returns the canonical base timestamp prefix for Google Pixel Camera captures, preserving prefix case.
+func googlePixelStackName(prefix string) string {
+	if match := GooglePixelPattern.FindStringSubmatch(prefix); len(match) >= 3 {
+		return match[1] + "_" + match[2]
+	}
+	return ""
 }
 
 // matchCase lowercases each ASCII letter of s where ref has a lowercase letter at the same position.

@@ -63,7 +63,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			log.Warnf("import: %s", clean.Error(jsonErr))
 		}
 
-		for _, f := range insta360ImportOrder(related) {
+		for _, f := range importOrder(related) {
 			relFileName := f.RelName(src)
 
 			if destFileName, err := imp.DestinationFilename(related.Main, f, opt.DestFolder); err == nil {
@@ -232,7 +232,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// Index main MediaFile.
 				main.SetRelatedMain(main)
-				res := ind.UserMediaFile(main, o, originalName, "", opt.UID)
+				mainOriginalName := originalName
+				if name, ok := relatedOriginalNames[main.FileName()]; ok && name != "" {
+					mainOriginalName = name
+				}
+				res := ind.UserMediaFile(main, o, mainOriginalName, "", opt.UID)
 
 				// Log result.
 				log.Infof("import: %s main %s file %s", res, main.FileType(), clean.Log(main.RootRelName()))
@@ -323,4 +327,16 @@ func (imp *Import) updateInsta360Preview(main *MediaFile, o IndexOptions, photoU
 	img.SetRelatedMain(main)
 	res := imp.index.UserMediaFile(img, o, "", photoUID, userUID)
 	log.Infof("import: %s related %s file %s", res, img.FileType(), clean.Log(img.RootRelName()))
+}
+
+// importOrder returns the related files in the order they should be imported,
+// ensuring the primary original (Insta360 left lens or Google Pixel Camera primary) is imported first.
+func importOrder(related RelatedFiles) MediaFiles {
+	if capture := FindInsta360Capture(related.Main); capture.ValidPair() && capture.Left.FileName() == related.Main.FileName() {
+		return insta360ImportOrder(related)
+	}
+	if capture := FindGooglePixelCapture(related.Main); capture.ValidPair() && capture.IsPrimary(related.Main) {
+		return googlePixelImportOrder(related)
+	}
+	return related.Files
 }

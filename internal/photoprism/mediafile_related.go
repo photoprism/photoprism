@@ -80,6 +80,25 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		}
 	}
 
+	// Google Pixel Camera stores RAW+JPEG, Portrait, AI Zoom, or Video Boost captures with differing suffixes.
+	// Include the complete capture and all member sidecars so the indexer creates one photo.
+	if capture := FindGooglePixelCapture(m); capture != nil && capture.ValidPair() {
+		if primary := capture.Primary(); primary != nil {
+			captureMain = primary.FileName()
+		}
+
+		for _, captureFile := range capture.Files() {
+			capturePattern := regexp.QuoteMeta(captureFile.AbsPrefix(false)+".") + "*"
+			if captureMatches, captureErr := filepath.Glob(capturePattern); captureErr == nil {
+				matches = list.Join(matches, captureMatches)
+			}
+
+			if jpegName := fs.ImageJpeg.FindFirst(captureFile.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false); jpegName != "" {
+				matches = list.Join(matches, []string{jpegName})
+			}
+		}
+	}
+
 	// Cameras that store both lenses in one file write an LRV proxy with a different name, which is
 	// grouped with the left lens in originals, so the left lens is the main file.
 	inOriginals := m.Root() == entity.RootOriginals
@@ -176,8 +195,8 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		return result, fmt.Errorf("%s is unsupported (%s)", clean.Log(m.BaseName()), mediaType)
 	}
 
-	// The left (_00) lens is the main original of a complete Insta360 capture, so the hidden preview
-	// below is looked up for it, and its combined preview becomes the primary file during indexing.
+	// The canonical primary file of a multi-file capture (such as an Insta360 left lens or Google Pixel Camera
+	// primary) is set as Main, so hidden previews are looked up for it and it becomes primary during indexing.
 	if captureMain != "" {
 		for _, file := range result.Files {
 			if file.FileName() == captureMain {

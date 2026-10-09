@@ -46,7 +46,9 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 
 		// A complete Insta360 video capture has one canonical _00 owner. Its _10 lens and LRV proxy
 		// are preserved and indexed as related originals, but must not create duplicate sidecars.
-		if insta360SkipConvert(f) {
+		// A Google Pixel Camera image capture has one primary image. Its possible companion RAW
+		// file is preserved and indexed as a related original, but must not create duplicate sidecars.
+		if insta360SkipConvert(f) || googlePixelSkipConvert(f) {
 			continue
 		}
 

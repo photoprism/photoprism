@@ -26,6 +26,9 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		if reconcileErr := reconcileInsta360Photos(related); reconcileErr != nil {
 			log.Warnf("index: could not reconcile Insta360 capture %s (%s)", related.MainLogName(), reconcileErr)
 		}
+		if reconcileErr := reconcileGooglePixelPhotos(related); reconcileErr != nil {
+			log.Warnf("index: could not reconcile Google Pixel Camera capture %s (%s)", related.MainLogName(), reconcileErr)
+		}
 	}
 
 	done := make(map[string]bool)
@@ -82,7 +85,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		}
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
-		if o.Convert && f.IsMedia() && !f.InSidecar() && !f.HasPreviewImage() && !insta360SkipConvert(f) {
+		if o.Convert && f.IsMedia() && !f.InSidecar() && !f.HasPreviewImage() && !insta360SkipConvert(f) && !googlePixelSkipConvert(f) {
 			// Try to create a preview image; if this fails, log and continue without failing the whole group.
 			if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
 				// Stop the run instead of masking a full disk as a generic preview error.

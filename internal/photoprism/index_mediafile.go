@@ -339,13 +339,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Clear (previous) file error.
 	file.FileError = ""
 
-	// Flag first JPEG as primary file for this photo, or the combined preview of an Insta360 capture
-	// whose primary file is a preview of its right lens or proxy; saving the file unflags the others.
+	// Flag first JPEG as primary file for this photo, the combined preview of an Insta360 capture
+	// whose primary file is a preview of its right lens or proxy, or the primary image or video preview of a
+	// Google Pixel Camera capture that arrived after a related file; saving the file unflags the others.
 	if !file.FilePrimary {
 		if photoExists {
 			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
 				file.FilePrimary = m.IsPreviewImage()
 			} else if capture := insta360PairPreview(m); capture != nil && capture.MemberPreview(primaryFile.FileName) {
+				file.FilePrimary = true
+			} else if capture := googlePixelPairPreview(m); capture != nil && capture.MemberPreview(primaryFile.FileName) {
+				file.FilePrimary = true
+			} else if capture := googlePixelPrimaryCapture(m); capture != nil && capture.MemberFile(primaryFile) {
 				file.FilePrimary = true
 			}
 		} else {
