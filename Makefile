@@ -139,6 +139,7 @@ Checks (also run by lint):
   check-api-failure-codes   Check that API handlers document their 413 responses
   check-api-request-limits  Check request-body limit coverage in API handlers
   check-audit-events        Check audit-event formatting against its baseline
+  check-gorm-v1             Check GORM v1 API use against its baseline
   check-libheif-install     Check libheif installer selection and version handling
   check-cuda-install        Check CUDA installation recovery without a GPU
   check-buildignore         Check that packages bundle exactly the listed models
@@ -1336,7 +1337,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-buildignore check-make-help check-migrations check-scripts-copy-mode check-sql-dumps
+lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-gorm-v1 check-libheif-install check-cuda-install check-buildignore check-make-help check-migrations check-scripts-copy-mode check-sql-dumps
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1355,6 +1356,9 @@ check-api-failure-codes:
 check-audit-events:
 	$(info Checking how event calls build their messages...)
 	go run ./scripts/tools/check-audit-events
+check-gorm-v1:
+	$(info Checking GORM v1 API use...)
+	go run ./scripts/tools/check-gorm-v1
 check-libheif-install:
 	$(info Checking how the libheif installer selects a packaging path...)
 	bash ./scripts/lint/check-libheif-install.sh

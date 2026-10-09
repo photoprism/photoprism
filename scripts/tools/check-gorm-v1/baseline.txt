@@ -1,0 +1,205 @@
+# Code that depends on GORM v1: count, file, pattern.
+# Regenerate with: go run ./scripts/tools/check-gorm-v1 -update
+2	internal/api/albums_cover_test.go	Count into non-int64
+3	internal/api/api_test.go	DeletedAt *time.Time
+4	internal/api/batch_photos_test.go	Count into non-int64
+3	internal/api/batch_photos_test.go	DeletedAt *time.Time
+1	internal/api/batch_photos_test.go	QueryExpr
+1	internal/api/batch_photos_test.go	bool column = 0/1
+1	internal/api/cameras_test.go	Count into non-int64
+2	internal/api/cluster_theme_test.go	Count into non-int64
+2	internal/api/import_test.go	Count into non-int64
+1	internal/api/lenses_test.go	Count into non-int64
+2	internal/api/markers_src_test.go	Count into non-int64
+1	internal/api/oidc_redirect_test.go	Count into non-int64
+2	internal/api/photo_label_bounds_test.go	gorm.Scope
+1	internal/api/photo_label_input_test.go	RecordNotFound
+1	internal/api/photo_label_input_test.go	gorm.Scope
+1	internal/api/photo_unstack_test.go	Count into non-int64
+1	internal/api/photos_client_payload_test.go	Count into non-int64
+2	internal/api/photos_client_payload_test.go	DeletedAt *time.Time
+2	internal/api/services_upload_test.go	Count into non-int64
+1	internal/api/session_stored_test.go	Count into non-int64
+2	internal/api/thumbnails_test.go	DeletedAt *time.Time
+6	internal/api/users_upload_test.go	Count into non-int64
+1	internal/api/zip_test.go	Count into non-int64
+1	internal/api/zip_test.go	bool column = 0/1
+1	internal/commands/auth.go	RecordNotFound
+1	internal/commands/auth_remove_test.go	RecordNotFound
+1	internal/commands/auth_remove_test.go	gorm.Scope
+5	internal/commands/cameras_test.go	Count into non-int64
+2	internal/commands/clients_list.go	DeletedAt *time.Time
+1	internal/commands/clients_reset.go	QueryExpr
+2	internal/commands/clients_reset_test.go	Count into non-int64
+1	internal/commands/commands_test.go	Count into non-int64
+5	internal/commands/lenses_test.go	Count into non-int64
+1	internal/commands/users_list.go	DeletedAt *time.Time
+1	internal/commands/users_mod.go	DeletedAt *time.Time
+1	internal/commands/users_reset.go	QueryExpr
+1	internal/commands/users_reset_test.go	Count into non-int64
+5	internal/entity/album.go	DeletedAt *time.Time
+1	internal/entity/album.go	gorm.Scope
+1	internal/entity/album_cache.go	RecordNotFound
+36	internal/entity/album_fixtures.go	DeletedAt *time.Time
+1	internal/entity/album_test.go	Count into non-int64
+8	internal/entity/album_test.go	DeletedAt *time.Time
+1	internal/entity/auth_cache_generation_test.go	gorm.Scope
+6	internal/entity/auth_client.go	DeletedAt *time.Time
+1	internal/entity/auth_client.go	gorm.Scope
+6	internal/entity/auth_client_test.go	DeletedAt *time.Time
+1	internal/entity/auth_session.go	gorm.Scope
+1	internal/entity/auth_session_cache.go	RecordNotFound
+2	internal/entity/auth_session_client_test.go	Count into non-int64
+1	internal/entity/auth_session_context_test.go	Count into non-int64
+5	internal/entity/auth_user.go	DeletedAt *time.Time
+1	internal/entity/auth_user.go	gorm.Scope
+1	internal/entity/auth_user_cli.go	DeletedAt *time.Time
+1	internal/entity/auth_user_fixtures.go	DeletedAt *time.Time
+3	internal/entity/auth_user_rename_test.go	DeletedAt *time.Time
+1	internal/entity/auth_user_test.go	DeletedAt *time.Time
+1	internal/entity/camera.go	DeletedAt *time.Time
+6	internal/entity/camera_fixtures.go	DeletedAt *time.Time
+2	internal/entity/camera_test.go	Count into non-int64
+1	internal/entity/country.go	gorm.Scope
+1	internal/entity/db_conn.go	Dialect.GetName
+4	internal/entity/db_schema.go	Dialect.GetName
+22	internal/entity/entity_shape_test.go	DeletedAt *time.Time
+2	internal/entity/entity_tables.go	Dialect.GetName
+1	internal/entity/entity_tables_test.go	Count into non-int64
+5	internal/entity/entity_tables_test.go	Dialect.GetName
+1	internal/entity/face_race_test.go	gorm.Scope
+2	internal/entity/face_revise_test.go	Count into non-int64
+6	internal/entity/file.go	DeletedAt *time.Time
+1	internal/entity/file.go	gorm.Scope
+77	internal/entity/file_fixtures.go	DeletedAt *time.Time
+3	internal/entity/file_json.go	DeletedAt *time.Time
+7	internal/entity/file_test.go	DeletedAt *time.Time
+2	internal/entity/file_test.go	bool column = 0/1
+3	internal/entity/folder.go	DeletedAt *time.Time
+1	internal/entity/folder.go	gorm.Scope
+4	internal/entity/folder_fixtures.go	DeletedAt *time.Time
+2	internal/entity/folder_test.go	DeletedAt *time.Time
+1	internal/entity/keyword.go	gorm.Scope
+2	internal/entity/keyword_cache.go	RecordNotFound
+6	internal/entity/label.go	DeletedAt *time.Time
+2	internal/entity/label.go	gorm.Scope
+2	internal/entity/label_cache.go	RecordNotFound
+32	internal/entity/label_fixtures.go	DeletedAt *time.Time
+1	internal/entity/label_rename_test.go	Count into non-int64
+3	internal/entity/label_rename_test.go	gorm.Scope
+3	internal/entity/label_test.go	DeletedAt *time.Time
+3	internal/entity/legacy/user.go	DeletedAt *time.Time
+1	internal/entity/lens.go	DeletedAt *time.Time
+3	internal/entity/lens_fixtures.go	DeletedAt *time.Time
+2	internal/entity/lens_test.go	Count into non-int64
+1	internal/entity/link.go	gorm.Scope
+1	internal/entity/marker.go	gorm.Scope
+1	internal/entity/marker_size_test.go	Count into non-int64
+1	internal/entity/marker_test.go	Count into non-int64
+1	internal/entity/markers_matched_test.go	gorm.Scope
+1	internal/entity/migrate/dbms_authid_migration.go	Dialect.GetName
+1	internal/entity/migrate/dialect_mysql_test.go	Count into non-int64
+1	internal/entity/migrate/dialect_sqlite3_test.go	Count into non-int64
+1	internal/entity/migrate/migrations.go	Dialect.GetName
+1	internal/entity/migrate/run.go	Dialect.GetName
+1	internal/entity/migrate/status.go	Dialect.GetName
+11	internal/entity/photo.go	DeletedAt *time.Time
+4	internal/entity/photo.go	gorm.Scope
+1	internal/entity/photo_caption_test.go	DeletedAt *time.Time
+62	internal/entity/photo_fixtures.go	DeletedAt *time.Time
+1	internal/entity/photo_keyword.go	gorm.Scope
+1	internal/entity/photo_label.go	gorm.Scope
+2	internal/entity/photo_merge.go	DeletedAt *time.Time
+1	internal/entity/photo_quality.go	DeletedAt *time.Time
+2	internal/entity/photo_reset_test.go	Count into non-int64
+6	internal/entity/photo_test.go	Count into non-int64
+16	internal/entity/photo_test.go	DeletedAt *time.Time
+1	internal/entity/photo_title_test.go	DeletedAt *time.Time
+2	internal/entity/photos_test.go	DeletedAt *time.Time
+1	internal/entity/query/categories.go	gorm.Scope
+1	internal/entity/query/covers_test.go	Count into non-int64
+3	internal/entity/query/faces_migrate.go	QueryExpr
+5	internal/entity/query/faces_migrate_test.go	Count into non-int64
+3	internal/entity/query/faces_migrate_test.go	bool column = 0/1
+5	internal/entity/query/faces_report_test.go	Count into non-int64
+10	internal/entity/query/faces_test.go	Count into non-int64
+1	internal/entity/query/faces_test.go	gorm.Scope
+1	internal/entity/query/faces_thumb_size_test.go	Count into non-int64
+4	internal/entity/query/markers_test.go	Count into non-int64
+2	internal/entity/query/markers_test.go	bool column = 0/1
+1	internal/entity/query/photo.go	SubQuery
+10	internal/entity/query/photo_test.go	DeletedAt *time.Time
+4	internal/entity/query/purge_test.go	Count into non-int64
+1	internal/entity/query/subjects_test.go	Count into non-int64
+4	internal/entity/search/photos_results.go	DeletedAt *time.Time
+12	internal/entity/search/photos_results_test.go	DeletedAt *time.Time
+10	internal/entity/search/photos_scope_test.go	Count into non-int64
+1	internal/entity/search/photos_shared_test.go	DeletedAt *time.Time
+1	internal/entity/search/photos_shared_test.go	bool column = 0/1
+1	internal/entity/service.go	DeletedAt *time.Time
+2	internal/entity/service_fixtures.go	DeletedAt *time.Time
+7	internal/entity/subject.go	DeletedAt *time.Time
+1	internal/entity/subject.go	gorm.Scope
+6	internal/entity/subject_fixtures.go	DeletedAt *time.Time
+2	internal/entity/subject_test.go	Count into non-int64
+8	internal/entity/subject_test.go	DeletedAt *time.Time
+1	internal/form/user.go	DeletedAt *time.Time
+1	internal/photoprism/batch/apply_labels_retry_test.go	Count into non-int64
+1	internal/photoprism/batch/apply_labels_retry_test.go	gorm.Scope
+1	internal/photoprism/batch/save_test.go	bool column = 0/1
+1	internal/photoprism/faces_consensus_test.go	gorm.Scope
+1	internal/photoprism/faces_match_bench_test.go	gorm.Scope
+1	internal/photoprism/faces_match_library_test.go	Count into non-int64
+10	internal/photoprism/faces_match_stamps_test.go	gorm.Scope
+1	internal/photoprism/faces_match_test.go	bool column = 0/1
+1	internal/photoprism/faces_migrate_e2e_test.go	Count into non-int64
+4	internal/photoprism/faces_reset_test.go	Count into non-int64
+1	internal/photoprism/faces_subjects_partial_test.go	gorm.Scope
+3	internal/photoprism/faces_test.go	bool column = 0/1
+6	internal/photoprism/index_insta360.go	DeletedAt *time.Time
+3	internal/photoprism/index_insta360_stack_test.go	Count into non-int64
+3	internal/photoprism/index_insta360_stack_test.go	DeletedAt *time.Time
+1	internal/photoprism/index_insta360_stack_test.go	bool column = 0/1
+3	internal/photoprism/index_insta360_state_test.go	DeletedAt *time.Time
+17	internal/photoprism/index_insta360_test.go	DeletedAt *time.Time
+3	internal/photoprism/index_mediafile.go	DeletedAt *time.Time
+6	internal/photoprism/index_mediafile_test.go	Count into non-int64
+1	internal/photoprism/index_related_test.go	Count into non-int64
+1	internal/photoprism/index_sequence_test.go	bool column = 0/1
+3	internal/photoprism/moments.go	DeletedAt *time.Time
+1	internal/photoprism/moments_test.go	DeletedAt *time.Time
+1	internal/server/webdav_auth_test.go	Count into non-int64
+1	internal/service/cluster/registry/client_more_test.go	Count into non-int64
+1	internal/workers/meta.go	DeletedAt *time.Time
+2	internal/workers/meta_test.go	DeletedAt *time.Time
+1	internal/workers/sync_refresh_test.go	gorm.Scope
+1	internal/workers/sync_test.go	bool column = 0/1
+1	internal/workers/vision_reset_test.go	Count into non-int64
+1	plus/internal/api/users_add.go	DeletedAt *time.Time
+1	plus/internal/audit/login_record_test.go	Count into non-int64
+1	plus/internal/auth/fixtures.go	DeletedAt *time.Time
+1	plus/internal/cmd/users_list.go	DeletedAt *time.Time
+1	plus/internal/cmd/users_mod.go	DeletedAt *time.Time
+1	portal/internal/api/users_add.go	DeletedAt *time.Time
+1	portal/internal/audit/log_record_test.go	Count into non-int64
+1	portal/internal/audit/login_record_test.go	Count into non-int64
+1	portal/internal/auth/auth_test.go	Count into non-int64
+1	portal/internal/auth/fixtures.go	DeletedAt *time.Time
+1	portal/internal/cmd/users_list.go	DeletedAt *time.Time
+1	portal/internal/cmd/users_mod.go	DeletedAt *time.Time
+2	portal/internal/portal/access/cluster_group.go	DeletedAt *time.Time
+2	portal/internal/portal/access/cluster_group_test.go	DeletedAt *time.Time
+2	portal/internal/portal/access/cluster_user.go	DeletedAt *time.Time
+3	portal/internal/portal/access/cluster_user_test.go	DeletedAt *time.Time
+2	portal/internal/portal/access/grants.go	DeletedAt *time.Time
+2	portal/internal/portal/access/grants_test.go	DeletedAt *time.Time
+1	pro/internal/api/users_add.go	DeletedAt *time.Time
+1	pro/internal/audit/log_record_test.go	Count into non-int64
+1	pro/internal/audit/login_record_test.go	Count into non-int64
+1	pro/internal/auth/auth_test.go	Count into non-int64
+1	pro/internal/auth/fixtures.go	DeletedAt *time.Time
+1	pro/internal/cmd/users_list.go	DeletedAt *time.Time
+1	pro/internal/cmd/users_mod.go	DeletedAt *time.Time
+1	pro/internal/server/webdav_cache_generation_test.go	gorm.Scope
+2	pro/internal/server/webdav_scope_test.go	Count into non-int64
+1	pro/internal/server/webdav_scope_test.go	gorm.Scope
