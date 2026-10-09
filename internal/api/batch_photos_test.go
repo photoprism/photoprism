@@ -221,6 +221,14 @@ func TestBatchPhotosPrivate(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r3.Code)
 		val3 := gjson.Get(r3.Body.String(), "Private")
 		assert.Equal(t, "true", val3.String())
+
+		// Toggling again makes the pictures public, which also restores the fixtures.
+		r4 := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/private", `{"photos": ["ps6sg6be2lvl0yh8", "ps6sg6be2lvl0ycc"]}`)
+		assert.Equal(t, http.StatusOK, r4.Code)
+
+		r5 := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh8")
+		assert.Equal(t, http.StatusOK, r5.Code)
+		assert.Equal(t, "false", gjson.Get(r5.Body.String(), "Private").String())
 	})
 	t.Run("MissingSelection", func(t *testing.T) {
 		app, router, _ := NewApiTest()
