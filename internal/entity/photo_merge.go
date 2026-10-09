@@ -16,7 +16,7 @@ var photoMergeMutex = sync.Mutex{}
 func (m *Photo) ResolvePrimary() error {
 	var file File
 
-	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).
+	if err := Db().Where("file_primary = TRUE AND photo_id = ?", m.ID).
 		Order("file_width DESC, file_hdr DESC").
 		First(&file).Error; err == nil && file.ID > 0 {
 		return file.ResolvePrimary()
@@ -106,7 +106,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 
 		deleted := Now()
 
-		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
+		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = FALSE WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
 		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", Now(), merge.ID))
 
 		switch DbDialect() {
@@ -161,7 +161,7 @@ func (m *Photo) SyncMediaTypeFromFiles(typeSrc string) error {
 
 	if err := UnscopedDb().
 		Model(File{}).
-		Where("photo_id = ? AND file_missing = 0 AND file_sidecar = 0 AND deleted_at IS NULL", m.ID).
+		Where("photo_id = ? AND file_missing = FALSE AND file_sidecar = FALSE AND deleted_at IS NULL", m.ID).
 		Pluck("media_type", &mediaTypes).Error; err != nil {
 		return err
 	}

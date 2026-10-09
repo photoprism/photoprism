@@ -779,7 +779,7 @@ func (m *Photo) PreloadAlbums() *Photo {
 	q := Db().NewScope(nil).DB().
 		Table("albums").
 		Select(`albums.*`).
-		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = ? AND pa.hidden = 0", m.PhotoUID).
+		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = ? AND pa.hidden = FALSE", m.PhotoUID).
 		Where("albums.deleted_at IS NULL").
 		Order("albums.album_title ASC")
 
@@ -1113,7 +1113,7 @@ func (m *Photo) AllFilesMissing() bool {
 	count := 0
 
 	if err := Db().Model(&File{}).
-		Where("photo_id = ? AND file_missing = 0", m.ID).
+		Where("photo_id = ? AND file_missing = FALSE", m.ID).
 		Count(&count).Error; err != nil {
 		log.Error(err)
 	}
@@ -1354,7 +1354,7 @@ func (m *Photo) SetPrimary(fileUid string) (err error) {
 	if fileUid != "" {
 		// Do nothing.
 	} else if err = Db().Model(File{}).
-		Where("photo_uid = ? AND file_type IN (?) AND file_missing = 0 AND file_error = ''", m.PhotoUID, media.PreviewExpr).
+		Where("photo_uid = ? AND file_type IN (?) AND file_missing = FALSE AND file_error = ''", m.PhotoUID, media.PreviewExpr).
 		Order("file_width DESC, file_hdr DESC").Limit(1).
 		Pluck("file_uid", &files).Error; err != nil {
 		return err
@@ -1370,10 +1370,10 @@ func (m *Photo) SetPrimary(fileUid string) (err error) {
 
 	if err = Db().Model(File{}).
 		Where("photo_uid = ? AND file_uid <> ?", m.PhotoUID, fileUid).
-		UpdateColumn("file_primary", 0).Error; err != nil {
+		UpdateColumn("file_primary", false).Error; err != nil {
 		return err
 	} else if err = Db().Model(File{}).Where("photo_uid = ? AND file_uid = ?", m.PhotoUID, fileUid).
-		UpdateColumn("file_primary", 1).Error; err != nil {
+		UpdateColumn("file_primary", true).Error; err != nil {
 		return err
 	} else if m.PhotoQuality < 0 {
 		m.PhotoQuality = 0

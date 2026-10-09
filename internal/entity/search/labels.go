@@ -28,9 +28,9 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 
 	// Filter private labels.
 	if frm.Public {
-		s = s.Where("labels.label_nsfw = 0")
+		s = s.Where("labels.label_nsfw = FALSE")
 	} else if frm.NSFW {
-		s = s.Where("labels.label_nsfw = 1")
+		s = s.Where("labels.label_nsfw = TRUE")
 	}
 
 	// Limit result count.
@@ -75,11 +75,11 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	}
 
 	if frm.Favorite {
-		s = s.Where("labels.label_favorite = 1")
+		s = s.Where("labels.label_favorite = TRUE")
 	}
 
 	if frm.Query == "" && !frm.All {
-		s = s.Where("labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = 1")
+		s = s.Where("labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = TRUE")
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

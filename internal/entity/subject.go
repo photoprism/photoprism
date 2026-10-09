@@ -52,7 +52,7 @@ func (Subject) TableName() string {
 
 // visiblePersonCond keeps a row whose joined person is visible. A row with no person joined is
 // kept, which is what a marker carrying no subject needs.
-const visiblePersonCond = "(%[1]s.subj_uid IS NULL OR (%[1]s.subj_private = 0 AND %[1]s.subj_hidden = 0))"
+const visiblePersonCond = "(%[1]s.subj_uid IS NULL OR (%[1]s.subj_private = FALSE AND %[1]s.subj_hidden = FALSE))"
 
 // NameWithheld reports whether the person's name is withheld from sessions denied private access
 // to people, and from generated titles, captions and keywords. Marking someone private or hidden
@@ -122,7 +122,7 @@ func FindWithheldPeople() (WithheldPeople, error) {
 
 	stmt := UnscopedDb().Table(Subject{}.TableName()).
 		Select("subj_uid, subj_name").
-		Where("subj_private = 1 OR subj_hidden = 1")
+		Where("subj_private = TRUE OR subj_hidden = TRUE")
 
 	if err := stmt.Scan(&found).Error; err != nil {
 		return WithheldPeople{}, err

@@ -151,7 +151,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 		}
 
 		stmt := whereEmbeddingModel(Db().Model(&entity.Marker{}).
-			Where("marker_invalid = 0").
+			Where("marker_invalid = FALSE").
 			Where("face_id = ?", f.ID), current)
 
 		if res := stmt.
@@ -280,7 +280,7 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 func unclusteredFaceMarkers(model string) *gorm.DB {
 	return whereEmbeddingModel(Db().Model(&entity.Markers{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), model)
+		Where("face_id = '' AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0"), model)
 }
 
 // newestAutoFaceTime returns when the most recent automatic cluster the specified model produced

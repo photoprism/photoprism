@@ -346,7 +346,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// whose primary file is a preview of its right lens or proxy; saving the file unflags the others.
 	if !file.FilePrimary {
 		if photoExists {
-			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
+			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = TRUE AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
 				file.FilePrimary = m.IsPreviewImage()
 			} else if capture := insta360PairPreview(m); capture != nil && capture.MemberPreview(primaryFile.FileName) {
 				file.FilePrimary = true

@@ -155,7 +155,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 		OR photos.photo_path IN (
 			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION
 			SELECT b.path FROM folders a JOIN folders b ON %s WHERE a.folder_uid IN (?))
-		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND album_uid IN (?))
+		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = FALSE AND album_uid IN (?))
 		OR files.file_uid IN (SELECT file_uid FROM %s m WHERE m.subj_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND pl.uncertainty < 100 AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
@@ -165,7 +165,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 	s := UnscopedDb().Table("files").
 		Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id").
-		Where("files.file_missing = 0 AND files.file_name <> '' AND files.file_hash <> ''").
+		Where("files.file_missing = FALSE AND files.file_name <> '' AND files.file_hash <> ''").
 		Where(where, frm.Photos, frm.Places, frm.Files, frm.Files, frm.Files, frm.Albums, frm.Subjects, frm.Labels, frm.Labels).
 		Group("files.id")
 
@@ -196,7 +196,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 
 	// Previews files only?
 	if o.Primary {
-		s = s.Where("files.file_primary = 1")
+		s = s.Where("files.file_primary = TRUE")
 	}
 
 	// Files in originals only?
@@ -208,13 +208,13 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 	// are neither a video, a live photo part, nor a metadata sidecar. NULL columns keep the file.
 	if o.SkipVideoStills {
 		s = s.Where("COALESCE(photos.photo_type = ? AND files.file_root <> ? AND files.media_type NOT IN (?) "+
-			"AND files.file_video = 0 AND files.file_sidecar = 0, 0) = 0",
+			"AND files.file_video = FALSE AND files.file_sidecar = FALSE, 0) = 0",
 			media.Video.String(), entity.RootOriginals, []string{media.Video.String(), media.Live.String(), media.Sidecar.String()})
 	}
 
 	// Exclude private?
 	if !o.Private {
-		s = s.Where("photos.photo_private <> 1")
+		s = s.Where("photos.photo_private <> TRUE")
 	}
 
 	// Exclude hidden photos?

@@ -50,18 +50,18 @@ func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 	    	SELECT p2.album_uid, f.file_hash FROM files f, (
 	        	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
-	            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0 AND pa.missing = 0
-	        	WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-	        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+	            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
+	        	WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+	        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.album_uid = albums.album_uid
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DriverSQLite3:
 		res = Db().Table(entity.Album{}.TableName()).
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
-			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0 AND pa.missing = 0
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
+			WHERE f.deleted_at IS NULL AND f.file_missing = FALSE AND f.file_hash <> '' AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.taken_at DESC LIMIT 1
 		) WHERE ?`, media.PreviewExpr, condition))
 	default:
@@ -113,18 +113,18 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DriverSQLite3:
 		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			  GROUP BY p.photo_path
 			) b
-		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_path = albums.album_path LIMIT 1)
 		WHERE ?`, media.PreviewExpr, condition))
 	default:
@@ -176,18 +176,18 @@ func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DriverSQLite3:
 		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			  GROUP BY p.photo_year, p.photo_month
 			) b
-		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
 		WHERE ?`, media.PreviewExpr, condition))
 	default:
@@ -324,8 +324,8 @@ func refreshFolderAlbumCover(album entity.Album) error {
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
-			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
 			album.AlbumPath,
@@ -342,10 +342,10 @@ func refreshFolderAlbumCover(album entity.Album) error {
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
 			  GROUP BY p.photo_path
 			) b
-		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_path = albums.album_path LIMIT 1
 		)`, album.AlbumPath, media.PreviewExpr))
 
@@ -368,8 +368,8 @@ func refreshMonthAlbumCover(album entity.Album) error {
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
-			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
 			album.AlbumYear,
@@ -387,10 +387,10 @@ func refreshMonthAlbumCover(album entity.Album) error {
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
 			  GROUP BY p.photo_year, p.photo_month
 			) b
-		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1
 		)`, album.AlbumYear, album.AlbumMonth, media.PreviewExpr))
 
@@ -419,23 +419,23 @@ func UpdateLabelCovers() (err error) {
 		SELECT p2.label_id, f.file_hash FROM files f, (
 			SELECT pl.label_id as label_id, max(p.id) AS photo_id FROM photos p
 				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			GROUP BY pl.label_id
 			UNION
 			SELECT c.category_id as label_id, max(p.id) AS photo_id FROM photos p
 				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
 				JOIN categories c ON c.label_id = pl.label_id
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			GROUP BY c.category_id
-			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?) AND f.file_missing = 0
+			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?) AND f.file_missing = FALSE
 		) b ON b.label_id = labels.id
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DriverSQLite3:
 		res = Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
+			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
 		) WHERE ?`, media.PreviewExpr, condition))
 
@@ -444,8 +444,8 @@ func UpdateLabelCovers() (err error) {
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
+			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
 			) WHERE thumb IS NULL`, media.PreviewExpr))
 
@@ -483,7 +483,7 @@ func UpdateSubjectCovers(public bool) (err error) {
 	// see https://github.com/photoprism/photoprism/issues/4238
 	// and https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
 	if public {
-		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0")
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = FALSE")
 	} else {
 		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL")
 	}
@@ -506,7 +506,7 @@ func UpdateSubjectCovers(public bool) (err error) {
 			JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
 			JOIN photos p ON ?
 			WHERE m.subj_uid = subjects.subj_uid AND m.subj_uid <> ''
-			  AND m.marker_type = ? AND m.marker_invalid = 0 AND m.thumb <> ''
+			  AND m.marker_type = ? AND m.marker_invalid = FALSE AND m.thumb <> ''
 			ORDER BY (m.subj_src <> ?) DESC, m.size DESC, m.score DESC, m.marker_uid
 			LIMIT 1), '')
 		WHERE ?`,

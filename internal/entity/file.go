@@ -172,7 +172,7 @@ func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
 				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
 				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
@@ -184,7 +184,7 @@ func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
 				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
 				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
@@ -210,7 +210,7 @@ func FirstFileByHash(fileHash string) (File, error) {
 func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}
 
-	res := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUid)
+	res := Db().Unscoped().First(&file, "file_primary = TRUE AND photo_uid = ?", photoUid)
 
 	return &file, res.Error
 }
@@ -442,14 +442,14 @@ func (m *File) Purge() error {
 	m.FileMissing = true
 	m.FilePrimary = false
 	m.DeletedAt = &deletedAt
-	return UnscopedDb().Exec("UPDATE files SET file_missing = 1, file_primary = 0, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
+	return UnscopedDb().Exec("UPDATE files SET file_missing = TRUE, file_primary = FALSE, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
 }
 
 // Found clears the missing flag set by Purge and brings the row back into active rotation.
 func (m *File) Found() error {
 	m.FileMissing = false
 	m.DeletedAt = nil
-	return UnscopedDb().Exec("UPDATE files SET file_missing = 0, deleted_at = NULL WHERE id = ?", m.ID).Error
+	return UnscopedDb().Exec("UPDATE files SET file_missing = FALSE, deleted_at = NULL WHERE id = ?", m.ID).Error
 }
 
 // AllFilesMissing reports whether the owning photo has any remaining files that are not marked missing.
@@ -457,7 +457,7 @@ func (m *File) AllFilesMissing() bool {
 	count := 0
 
 	if err := Db().Model(&File{}).
-		Where("photo_id = ? AND file_missing = 0", m.PhotoID).
+		Where("photo_id = ? AND file_missing = FALSE", m.PhotoID).
 		Count(&count).Error; err != nil {
 		log.Errorf("file: %s", err.Error())
 	}
@@ -535,7 +535,7 @@ func (m *File) UpdateVideoInfos() error {
 
 	if err := deepcopier.Copy(&dimensions).From(m); err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1 AND file_width <= 0", m.PhotoID).Updates(dimensions).Error; err != nil {
+	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = TRUE AND file_width <= 0", m.PhotoID).Updates(dimensions).Error; err != nil {
 		return err
 	}
 
@@ -545,7 +545,7 @@ func (m *File) UpdateVideoInfos() error {
 
 	if err := deepcopier.Copy(&appearance).From(m); err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(appearance).Error; err != nil {
+	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = TRUE", m.PhotoID).Updates(appearance).Error; err != nil {
 		return err
 	}
 

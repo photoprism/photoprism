@@ -33,7 +33,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	// Base query.
 	s := UnscopedDb().Table("albums").
 		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year, CASE WHEN albums.album_location = '' THEN 1 ELSE 0 END AS no_location").
-		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
+		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = FALSE AND missing = FALSE GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL")
 
@@ -177,7 +177,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 
 	// Filter private albums.
 	if frm.Public {
-		s = s.Where("albums.album_private = 0 AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL))")
+		s = s.Where("albums.album_private = FALSE AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = FALSE AND photo_quality > -1 AND deleted_at IS NULL))")
 	} else {
 		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_quality > -1 AND deleted_at IS NULL)")
 	}
@@ -200,7 +200,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 
 	// Favorites only?
 	if frm.Favorite {
-		s = s.Where("albums.album_favorite = 1")
+		s = s.Where("albums.album_favorite = TRUE")
 	}
 
 	// Filter by year?
@@ -210,7 +210,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		w, v := AnyInt("albums.album_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax)
 		if frm.Type == entity.AlbumManual {
 			s = s.Where("? OR albums.album_uid IN (SELECT DISTINCT pay.album_uid FROM photos_albums pay "+
-				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = 0 AND pay.missing = 0)",
+				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = FALSE AND pay.missing = FALSE)",
 				gorm.Expr(w, v...), strings.Split(frm.Year, txt.Or))
 		} else {
 			s = s.Where(w, v...)

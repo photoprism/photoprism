@@ -28,7 +28,7 @@ func representativeMarkerJoin(facesTable, unknown string, omitWithheld bool) (st
 	conds := []string{
 		fmt.Sprintf("m2.face_id = %s.id", facesTable),
 		"m2.marker_type = ?",
-		"m2.marker_invalid = 0",
+		"m2.marker_invalid = FALSE",
 		"m2.thumb <> ''",
 		sizeCond,
 		scoreCond,
@@ -157,7 +157,7 @@ func searchFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResult
 
 	// Show hidden faces?
 	if !txt.Yes(frm.Hidden) {
-		s = s.Where(fmt.Sprintf("%s.face_hidden = 0", facesTable))
+		s = s.Where(fmt.Sprintf("%s.face_hidden = FALSE", facesTable))
 	}
 
 	// Perform query.

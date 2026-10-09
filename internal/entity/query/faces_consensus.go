@@ -50,10 +50,10 @@ type faceConsensusRow struct {
 
 // faceConsensusVote is the condition under which a marker votes: a valid marker the matcher named, or
 // one an XMP name links to an existing person who is marked as Verified or named by hand on a valid marker.
-var faceConsensusVote = fmt.Sprintf(`m.subj_uid <> '' AND m.marker_invalid = 0 AND (m.subj_src = '' OR (m.subj_src = '%[1]s'
+var faceConsensusVote = fmt.Sprintf(`m.subj_uid <> '' AND m.marker_invalid = FALSE AND (m.subj_src = '' OR (m.subj_src = '%[1]s'
 	AND EXISTS (SELECT 1 FROM %[2]s s WHERE s.subj_uid = m.subj_uid AND s.subj_type = '%[3]s' AND s.deleted_at IS NULL
-	AND (s.verified = 1 OR EXISTS (SELECT 1 FROM %[4]s h WHERE h.subj_uid = s.subj_uid AND h.marker_type = '%[5]s'
-	AND h.marker_invalid = 0 AND ((h.subj_src > '' AND h.subj_src < '%[1]s') OR h.subj_src > '%[1]s'))))))`,
+	AND (s.verified = TRUE OR EXISTS (SELECT 1 FROM %[4]s h WHERE h.subj_uid = s.subj_uid AND h.marker_type = '%[5]s'
+	AND h.marker_invalid = FALSE AND ((h.subj_src > '' AND h.subj_src < '%[1]s') OR h.subj_src > '%[1]s'))))))`,
 	entity.SrcXmp, entity.Subject{}.TableName(), entity.SubjPerson, entity.Marker{}.TableName(), entity.MarkerFace)
 
 // AnonymousFaceConsensus counts the named markers of every visible, regular, automatically created
@@ -65,14 +65,14 @@ func AnonymousFaceConsensus() (result []FaceConsensus, err error) {
 
 	if err = UnscopedDb().Raw(`SELECT f.id AS face_id, f.embed_model AS face_model, m.embed_model AS marker_model,
 		SUM(CASE WHEN `+vote+` THEN 1 ELSE 0 END) AS vote_count,
-		SUM(CASE WHEN m.subj_src = '' AND m.subj_uid <> '' AND m.marker_invalid = 0 THEN 1 ELSE 0 END) AS match_count,
+		SUM(CASE WHEN m.subj_src = '' AND m.subj_uid <> '' AND m.marker_invalid = FALSE THEN 1 ELSE 0 END) AS match_count,
 		COALESCE(MIN(CASE WHEN `+vote+` THEN m.subj_uid END), '') AS vote_min,
 		COALESCE(MAX(CASE WHEN `+vote+` THEN m.subj_uid END), '') AS vote_max,
-		SUM(CASE WHEN m.subj_src NOT IN ('', ?) AND m.subj_uid <> '' AND m.marker_invalid = 0 THEN 1 ELSE 0 END) AS asserted,
-		SUM(CASE WHEN m.subj_src = '' AND m.subj_uid = '' AND m.marker_invalid = 0 THEN 1 ELSE 0 END) AS unnamed,
-		SUM(CASE WHEN m.marker_invalid = 0 THEN 1 ELSE 0 END) AS valid_count
+		SUM(CASE WHEN m.subj_src NOT IN ('', ?) AND m.subj_uid <> '' AND m.marker_invalid = FALSE THEN 1 ELSE 0 END) AS asserted,
+		SUM(CASE WHEN m.subj_src = '' AND m.subj_uid = '' AND m.marker_invalid = FALSE THEN 1 ELSE 0 END) AS unnamed,
+		SUM(CASE WHEN m.marker_invalid = FALSE THEN 1 ELSE 0 END) AS valid_count
 		FROM faces f JOIN markers m ON m.face_id = f.id AND m.marker_type = ?
-		WHERE f.subj_uid = '' AND f.face_src = ? AND f.face_hidden = 0 AND f.face_kind = ?
+		WHERE f.subj_uid = '' AND f.face_src = ? AND f.face_hidden = FALSE AND f.face_kind = ?
 		GROUP BY f.id, f.embed_model, m.embed_model ORDER BY f.id, m.embed_model`,
 		entity.SrcXmp, entity.MarkerFace, entity.SrcAuto, int(face.RegularFace)).Scan(&rows).Error; err != nil {
 		return nil, err

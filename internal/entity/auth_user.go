@@ -713,7 +713,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 	// Make sure other users do not use the same identifier.
 	if m.HasUID() && m.AuthProvider != "" {
 		if err := UnscopedDb().Model(&User{}).
-			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = 0", m.UserUID, m.AuthProvider, m.AuthID).
+			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = FALSE", m.UserUID, m.AuthProvider, m.AuthID).
 			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
 			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(err)}, m.RefID)
 		}

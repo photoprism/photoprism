@@ -72,7 +72,7 @@ func (w *Sync) Start() (err error) {
 		// and the account is skipped either way, so its loaded copy is never written back.
 		if a.RetryLimit > 0 && a.AccErrors > a.RetryLimit {
 			if res := entity.Db().Model(&entity.Service{}).
-				Where("id = ? AND acc_sync = 1 AND retry_limit > 0 AND acc_errors > retry_limit", a.ID).
+				Where("id = ? AND acc_sync = TRUE AND retry_limit > 0 AND acc_errors > retry_limit", a.ID).
 				UpdateColumn("acc_sync", false); res.Error != nil {
 				w.logErr(res.Error)
 			} else if res.RowsAffected > 0 {
