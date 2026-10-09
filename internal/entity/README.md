@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** September 28, 2026
+**Last Updated:** October 9, 2026
 
 ### Overview
 
@@ -85,6 +85,16 @@ MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that 
 - `List`-style global queries (`WHERE … <> ''` with no per-test scope) see everything the package has written: rows from other tests in the same package leak in, so a `len(list) == N` assertion that holds against a per-test SQLite file can fail on MariaDB, where the whole package shares one database.
 - **Sort order is collation-dependent.** `utf8mb4_unicode_ci` sorts case-insensitively and weights punctuation by Unicode rules, while SQLite compares byte values, so `ORDER BY` on a text column yields a different sequence. Give rows a deterministic tiebreaker, or assert per dialect (`entity.Db().Dialect().GetName()`).
 - **Generated IDs restart at 1.** On MySQL/MariaDB, `Tables.Truncate` deletes the rows and then resets `AUTO_INCREMENT` on the tables that have such a column, so a default fixture without an explicit ID, such as `UnknownCamera` and `UnknownLens`, gets the same value it would in a fresh database. `TRUNCATE` would do the same, but it is a DDL statement and several times slower per reset. SQLite keeps its counters, so tests compare against `UnknownCamera.ID` and `UnknownLens.ID` rather than a literal `1`.
+
+### Shape & Statement Pins
+
+Some tests pin behavior an ORM upgrade could change without breaking anything else, and are meant to stay unchanged across one:
+
+- `entity_shape_test.go`: how each model encodes `DeletedAt` in JSON and YAML, that generated timestamps are whole seconds in memory and in the database, that cleared values persist (including fields with a `default` tag), that blank fields with a `default` tag get the default on create, and how a photo's preloaded files, albums and labels encode.
+- `results_shape_test.go` in `search` and `query`: searches without matches encode as `[]`. `client_config_shape_test.go` in `internal/config` pins the client config lists of an empty library, where album categories and years are `null`.
+- `TestPhoto_SaveStatements` and `TestIndex_UserMediaFileStatements` (in `internal/photoprism`) set an upper bound for the SQL statements an operation issues, per driver. They count through `internal/entity/sqlcount`, which wraps the `database/sql` driver, so the count does not depend on GORM callbacks or logging. Swap the counted provider in with `sqlcount.OpenGorm`, flush the entity caches, and restore the previous provider afterwards. Import `sqlcount` from tests only.
+
+Lower a ceiling when a change reduces the statements; raising one needs an explained cause.
 
 ### Collation & Emoji
 
