@@ -169,9 +169,9 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			// album_path is VARBINARY and matched case-insensitively so a lowercased query still
 			// finds uppercase folder paths; album_title and album_location are VARCHAR (already
 			// case-insensitive).
-			s = s.Where(likeCond("albums.album_title")+" OR "+likeCond("albums.album_location")+" OR "+PathLike(entity.DbDialect(), "albums.album_path"), q, q, q)
+			s = s.Where(likeCond("albums.album_title", false)+" OR "+likeCond("albums.album_location", false)+" OR "+PathLike(entity.DbDialect(), "albums.album_path"), q, q, q)
 		} else {
-			s = s.Where(likeCond("albums.album_title")+" OR "+likeCond("albums.album_location"), q, q)
+			s = s.Where(likeCond("albums.album_title", false)+" OR "+likeCond("albums.album_location", false), q, q)
 		}
 	}
 

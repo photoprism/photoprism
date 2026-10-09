@@ -37,15 +37,15 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 	return "", "%" + clean.SqlLike(s) + "%"
 }
 
-// LikeCond returns a LIKE condition for the given column that honors the escaping of clean.SqlLike.
-// A column that is not a plain identifier yields a condition that binds the argument and matches
-// nothing, so the placeholder count stays right and the mistake shows in the log.
-func LikeCond(col string) string {
+// LikeCond returns a LIKE condition for the given column that honors the escaping of clean.SqlLike;
+// set binary for VARBINARY columns. A column that is not a plain identifier yields a condition that
+// binds the argument and matches nothing, so the placeholder count stays right and the mistake shows.
+func LikeCond(col string, binary bool) string {
 	if clean.SqlColumn(col) == "" {
 		log.Errorf("query: invalid column %s in like condition", clean.Log(col))
 	}
 
-	return clean.SqlLikeCond(col)
+	return clean.SqlLikeCond(DbDialect(), binary, col)
 }
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
@@ -85,7 +85,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		where = "AND s.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "AND " + LikeCond("s.subj_name")
+		where = "AND " + LikeCond("s.subj_name", false)
 		args = append(args, nameLike)
 	}
 
@@ -176,7 +176,7 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		where = "WHERE f.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "WHERE " + LikeCond("s.subj_name")
+		where = "WHERE " + LikeCond("s.subj_name", false)
 		args = append(args, nameLike)
 	}
 
@@ -312,7 +312,7 @@ func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 		stmt = stmt.Where("subj_uid = ?", subjUID)
 	} else if nameLike != "" {
 		stmt = stmt.Where(fmt.Sprintf("subj_uid IN (SELECT subj_uid FROM %s WHERE %s)",
-			entity.Subject{}.TableName(), LikeCond("subj_name")), nameLike)
+			entity.Subject{}.TableName(), LikeCond("subj_name", false)), nameLike)
 	}
 
 	if f.FaceID != "" {

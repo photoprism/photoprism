@@ -66,7 +66,7 @@ func Users(limit, offset int, sortOrder, search string, deleted bool) (result en
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
 		like := clean.SqlLike(search) + "%"
-		stmt = stmt.Where(clean.SqlLikeAny("user_name", "user_email", "display_name"), like, like, like)
+		stmt = stmt.Where(clean.SqlLikeAny(DbDialect(), false, "user_name", "user_email", "display_name"), like, like, like)
 	default:
 		stmt = stmt.Where("id > 0")
 	}

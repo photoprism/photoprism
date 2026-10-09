@@ -435,12 +435,12 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if labelIds, labelsErr := entity.FindLabelIDs(frm.Query, " ", true); labelsErr != nil || len(labelIds) == 0 {
 			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(frm.Query))
 
-			wheres, values := LikeAnyKeyword("k.keyword", frm.Query)
+			wheres, values := LikeAnyKeyword("k.keyword", frm.Query, false)
 			for i, where := range wheres {
 				s = s.Where("files.photo_id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where, values[i]...))
 			}
 		} else {
-			if wheres, values := LikeAnyKeyword("k.keyword", frm.Query); len(wheres) > 0 {
+			if wheres, values := LikeAnyKeyword("k.keyword", frm.Query, false); len(wheres) > 0 {
 				for i, where := range wheres {
 					s = s.Where("files.photo_id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
 						"files.photo_id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where, values[i]...), labelIds)
@@ -453,7 +453,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Search for one or more keywords.
 	if txt.NotEmpty(frm.Keywords) {
-		wheres, values := LikeAnyWord("k.keyword", frm.Keywords)
+		wheres, values := LikeAnyWord("k.keyword", frm.Keywords, false)
 		for i, where := range wheres {
 			s = s.Where("files.photo_id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where, values[i]...))
 		}
@@ -508,7 +508,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			}
 		}
 	} else if txt.NotEmpty(frm.Subjects) {
-		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Subjects)
+		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Subjects, false)
 		for i, where := range wheres {
 			s = s.Where(fmt.Sprintf("files.photo_id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
 				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where, values[i]...))
@@ -544,7 +544,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		s = s.Where("photos.camera_id = ?", txt.UInt(frm.Camera))
 	} else if txt.NotEmpty(frm.Camera) {
 		v := clean.SqlLike(strings.Trim(frm.Camera, "*%")) + "%"
-		s = s.Where(likeCond("cameras.camera_name")+" OR "+likeCond("cameras.camera_model")+" OR "+likeCond("cameras.camera_slug"), v, v, v)
+		s = s.Where(likeCond("cameras.camera_name", false)+" OR "+likeCond("cameras.camera_model", false)+" OR "+likeCond("cameras.camera_slug", true), v, v, v)
 	}
 
 	// Filter by lens id or name.
@@ -552,7 +552,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		s = s.Where("photos.lens_id = ?", txt.UInt(frm.Lens))
 	} else if txt.NotEmpty(frm.Lens) {
 		v := clean.SqlLike(strings.Trim(frm.Lens, "*%")) + "%"
-		s = s.Where(likeCond("lenses.lens_name")+" OR "+likeCond("lenses.lens_model")+" OR "+likeCond("lenses.lens_slug"), v, v, v)
+		s = s.Where(likeCond("lenses.lens_name", false)+" OR "+likeCond("lenses.lens_model", false)+" OR "+likeCond("lenses.lens_slug", true), v, v, v)
 	}
 
 	// Filter by ISO Number (light sensitivity) range.
@@ -711,14 +711,14 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
 		} else {
-			where, values := OrLike("photos.photo_path", p)
+			where, values := OrLike("photos.photo_path", p, true)
 			s = s.Where(where, values...)
 		}
 	}
 
 	// Filter by primary file name without path and extension.
 	if txt.NotEmpty(frm.Name) {
-		where, names := OrLike("photos.photo_name", frm.Name)
+		where, names := OrLike("photos.photo_name", frm.Name, true)
 
 		// Omit file path and known extensions.
 		for i := range names {
@@ -730,13 +730,13 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Filter by complete file names.
 	if txt.NotEmpty(frm.Filename) {
-		where, values := OrLike("files.file_name", frm.Filename)
+		where, values := OrLike("files.file_name", frm.Filename, true)
 		s = s.Where(where, values...)
 	}
 
 	// Filter by original file name.
 	if txt.NotEmpty(frm.Original) {
-		where, values := OrLike("photos.original_name", frm.Original)
+		where, values := OrLike("photos.original_name", frm.Original, true)
 		s = s.Where(where, values...)
 	}
 
@@ -747,7 +747,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		} else if frm.Title == enum.True {
 			s = s.Where("photos.photo_title <> ''")
 		} else {
-			where, values := OrLike("photos.photo_title", frm.Title)
+			where, values := OrLike("photos.photo_title", frm.Title, false)
 			s = s.Where(where, values...)
 		}
 	}
@@ -759,7 +759,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		} else if frm.Caption == enum.True {
 			s = s.Where("photos.photo_caption <> ''")
 		} else {
-			where, values := OrLike("photos.photo_caption", frm.Caption)
+			where, values := OrLike("photos.photo_caption", frm.Caption, false)
 			s = s.Where(where, values...)
 		}
 	}
@@ -771,7 +771,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		} else if frm.Description == enum.True {
 			s = s.Where("photos.photo_title <> '' OR photos.photo_caption <> ''")
 		} else {
-			where, values := OrLikeCols([]string{"photos.photo_title", "photos.photo_caption"}, frm.Description)
+			where, values := OrLikeCols([]string{"photos.photo_title", "photos.photo_caption"}, frm.Description, false)
 			s = s.Where(where, values...)
 		}
 	}
@@ -856,9 +856,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			v := clean.SqlLike(strings.Trim(frm.Album, "*%")) + "%"
 			// Slugs are stored as lowercase binary strings, so the value must be
 			// folded to match on MySQL/MariaDB as well.
-			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE ("+likeCond("a.album_title")+" OR "+likeCond("a.album_slug")+"))", v, strings.ToLower(v))
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE ("+likeCond("a.album_title", false)+" OR "+likeCond("a.album_slug", true)+"))", v, strings.ToLower(v))
 		} else if txt.NotEmpty(frm.Albums) {
-			wheres, values := LikeAnyWord("a.album_title", frm.Albums)
+			wheres, values := LikeAnyWord("a.album_title", frm.Albums, false)
 			for i, where := range wheres {
 				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (?))", gorm.Expr(where, values[i]...))
 			}

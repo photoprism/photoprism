@@ -51,7 +51,7 @@ func Files(limit, offset int, dir string, includeMissing bool) (files entity.Fil
 	}
 
 	if dir != "" {
-		stmt = stmt.Where(clean.SqlPrefixCond("files.file_name"), clean.SqlPrefixArgs(dir+"/")...)
+		stmt = stmt.Where(clean.SqlPrefixCond(DbDialect(), true, "files.file_name"), clean.SqlPrefixArgs(dir+"/")...)
 	}
 
 	err = stmt.Order("id").Limit(limit).Offset(offset).Find(&files).Error

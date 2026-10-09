@@ -185,8 +185,14 @@ func TestSubfolderCond(t *testing.T) {
 		assert.Equal(t, "b.path LIKE REPLACE(REPLACE(REPLACE(a.path, '!', '!!'), '%', '!%'), '_', '!_') || '/%' ESCAPE '!'"+
 			" AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = a.path || '/'", cond)
 	})
+	t.Run("PostgreSQL", func(t *testing.T) {
+		cond, err := subfolderCond(dsn.DialectPostgreSQL)
+		require.NoError(t, err)
+		assert.Equal(t, "convert_from(b.path, 'UTF8') LIKE REPLACE(REPLACE(REPLACE(convert_from(a.path, 'UTF8'), '!', '!!'), '%', '!%'), '_', '!_') || '/%' ESCAPE '!'"+
+			" AND SUBSTR(convert_from(b.path, 'UTF8'), 1, LENGTH(convert_from(a.path, 'UTF8')) + 1) = convert_from(a.path, 'UTF8') || '/'", cond)
+	})
 	t.Run("UnknownDialect", func(t *testing.T) {
-		cond, err := subfolderCond("postgres")
+		cond, err := subfolderCond("oracle")
 		assert.Error(t, err)
 		assert.Empty(t, cond)
 	})

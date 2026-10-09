@@ -19,7 +19,7 @@ func Errors(limit, offset int, search string) (results entity.Errors, err error)
 	case search == "warning" || search == "warnings":
 		stmt = stmt.Where("error_level = 'warning'")
 	case len(search) >= 3:
-		stmt = stmt.Where(LikeCond("error_message"), "%"+clean.SqlLike(search)+"%")
+		stmt = stmt.Where(LikeCond("error_message", true), "%"+clean.SqlLike(search)+"%")
 	}
 
 	err = stmt.Order("error_time DESC").Limit(limit).Offset(offset).Find(&results).Error

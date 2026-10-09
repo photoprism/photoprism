@@ -114,7 +114,7 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	}
 
 	if frm.Query != "" {
-		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query)
+		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query, false)
 		for i, where := range wheres {
 			s = s.Where("?", gorm.Expr(where, values[i]...))
 		}
@@ -155,7 +155,7 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 
 	var matches []Matches
 
-	wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, s)
+	wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, s, false)
 
 	if len(wheres) == 0 {
 		return result, names, s

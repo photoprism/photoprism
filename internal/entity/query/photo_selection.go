@@ -39,10 +39,14 @@ func subfolderCond(dialect string) (string, error) {
 	switch dialect {
 	case dsn.DialectMySQL:
 		return fmt.Sprintf("b.path LIKE CONCAT(%s, '/%%') ESCAPE '%s' AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = CONCAT(a.path, '/')",
-			clean.SqlLikeExpr("a.path"), clean.SqlLikeEscape), nil
+			clean.SqlLikeExpr(dialect, true, "a.path"), clean.SqlLikeEscape), nil
 	case dsn.DialectSQLite:
 		return fmt.Sprintf("b.path LIKE %s || '/%%' ESCAPE '%s' AND SUBSTR(b.path, 1, LENGTH(a.path) + 1) = a.path || '/'",
-			clean.SqlLikeExpr("a.path"), clean.SqlLikeEscape), nil
+			clean.SqlLikeExpr(dialect, true, "a.path"), clean.SqlLikeEscape), nil
+	case dsn.DialectPostgreSQL:
+		return fmt.Sprintf("convert_from(b.path, 'UTF8') LIKE %s || '/%%' ESCAPE '%s' AND "+
+			"SUBSTR(convert_from(b.path, 'UTF8'), 1, LENGTH(convert_from(a.path, 'UTF8')) + 1) = convert_from(a.path, 'UTF8') || '/'",
+			clean.SqlLikeExpr(dialect, true, "a.path"), clean.SqlLikeEscape), nil
 	default:
 		return "", fmt.Errorf("unknown sql dialect: %s", dialect)
 	}

@@ -374,7 +374,7 @@ func FaceMarkerFiles(dir string) (result map[string]FaceMarkerFile, err error) {
 		Where("m.marker_type = ? AND f.file_primary = TRUE AND f.deleted_at IS NULL AND f.file_missing = FALSE", entity.MarkerFace)
 
 	if dir = strings.Trim(path.Clean("/"+dir), "/"); dir != "" {
-		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name"), clean.SqlLike(dir)+"/%")
+		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name", true), clean.SqlLike(dir)+"/%")
 	}
 
 	if err = stmt.Group("m.file_uid, f.photo_id, f.file_root, f.file_name").Scan(&rows).Error; err != nil {

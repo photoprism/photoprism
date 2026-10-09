@@ -29,7 +29,7 @@ func Clients(limit, offset int, sortOrder, search string, deleted bool) (result 
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
 		like := clean.SqlLike(search) + "%"
-		stmt = stmt.Where(clean.SqlLikeAny("client_name", "user_name"), like, like)
+		stmt = stmt.Where(clean.SqlLikeAny(DbDialect(), false, "client_name", "user_name"), like, like)
 	}
 
 	if sortOrder == "" {

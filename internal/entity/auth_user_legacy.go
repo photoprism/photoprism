@@ -59,7 +59,7 @@ func FindLegacyUsers(search string) legacy.Users {
 		stmt = stmt.Where("user_uid = ?", search)
 	} else if search != "" {
 		like := clean.SqlLike(search) + "%"
-		stmt = stmt.Where(clean.SqlLikeAny("user_name", "primary_email", "full_name"), like, like, like)
+		stmt = stmt.Where(clean.SqlLikeAny(DbDialect(), false, "user_name", "primary_email", "full_name"), like, like, like)
 	} else {
 		stmt = stmt.Where("id > 0")
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -15,17 +16,33 @@ import (
 // or photo_path, which MySQL compares byte-exact, so that a query in any letter case finds a path.
 // SQLite LIKE is already ASCII case-insensitive. The dialect is one of the dsn.Dialect constants.
 func PathLike(dialect, col string) string {
-	if dialect == dsn.DialectMySQL {
-		return likeCond("CONVERT(" + col + " USING utf8mb4) COLLATE utf8mb4_general_ci")
+	switch dialect {
+	case dsn.DialectMySQL:
+		return likeExpr(dialect, "CONVERT("+col+" USING utf8mb4) COLLATE utf8mb4_general_ci", false)
+	case dsn.DialectPostgreSQL:
+		return likeExpr(dialect, "convert_from("+col+", 'UTF8')", false)
+	default:
+		return likeExpr(dialect, col, true)
 	}
-
-	return likeCond(col)
 }
 
 // likeCond returns "col LIKE ? ESCAPE '!'" for a column or expression that is part of the query code,
-// so values escaped with clean.SqlLike match literally.
-func likeCond(col string) string {
-	return col + " LIKE ? ESCAPE '" + clean.SqlLikeEscape + "'"
+// so values escaped with clean.SqlLike match literally. Set binary for VARBINARY columns.
+func likeCond(col string, binary bool) string {
+	return likeExpr(entity.DbDialect(), col, binary)
+}
+
+// likeExpr returns the likeCond condition for an SQL dialect. Set binary for VARBINARY columns, which
+// PostgreSQL decodes and compares case-sensitively with LIKE, while it compares text with ILIKE.
+func likeExpr(dialect, col string, binary bool) string {
+	switch {
+	case dialect == dsn.DialectPostgreSQL && binary:
+		return "convert_from(" + col + ", 'UTF8') LIKE ? ESCAPE '" + clean.SqlLikeEscape + "'"
+	case dialect == dsn.DialectPostgreSQL:
+		return col + " ILIKE ? ESCAPE '" + clean.SqlLikeEscape + "'"
+	default:
+		return col + " LIKE ? ESCAPE '" + clean.SqlLikeEscape + "'"
+	}
 }
 
 // searchLikeEscaper escapes "_" and the escape character, and maps the search wildcard "*" to "%".
@@ -66,7 +83,7 @@ func ClipSearchTerms(s string) string {
 // normalization while exact mode disables wildcard suffixes.
 // The returned wheres and values are aligned 1:1; callers feed each pair into
 // gorm.Expr(wheres[i], values[i]...).
-func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]any) {
+func LikeAny(col, s string, keywords, exact, binary bool) (wheres []string, values [][]any) {
 	if s == "" {
 		return wheres, values
 	}
@@ -102,10 +119,10 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]a
 
 		for _, w := range words {
 			if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-				orWheres = append(orWheres, likeCond(col))
+				orWheres = append(orWheres, likeCond(col, binary))
 				orValues = append(orValues, SqlParam(w, "", "%"))
 			} else {
-				orWheres = append(orWheres, likeCond(col))
+				orWheres = append(orWheres, likeCond(col, binary))
 				orValues = append(orValues, SqlParam(w, "", ""))
 			}
 
@@ -116,7 +133,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]a
 			singular := inflection.Singular(w)
 
 			if singular != w {
-				orWheres = append(orWheres, likeCond(col))
+				orWheres = append(orWheres, likeCond(col, binary))
 				orValues = append(orValues, SqlParam(singular, "", ""))
 			}
 		}
@@ -131,14 +148,14 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]a
 }
 
 // LikeAnyKeyword is a keyword-optimized wrapper around LikeAny.
-func LikeAnyKeyword(col, s string) (wheres []string, values [][]any) {
-	return LikeAny(col, s, true, false)
+func LikeAnyKeyword(col, s string, binary bool) (wheres []string, values [][]any) {
+	return LikeAny(col, s, true, false, binary)
 }
 
 // LikeAnyWord matches whole words and keeps wildcard thresholds tuned for
 // free-form text search instead of keyword lists.
-func LikeAnyWord(col, s string) (wheres []string, values [][]any) {
-	return LikeAny(col, s, false, false)
+func LikeAnyWord(col, s string, binary bool) (wheres []string, values [][]any) {
+	return LikeAny(col, s, false, false, binary)
 }
 
 // LikeAll produces AND-chained LIKE predicates for every significant token in
@@ -146,7 +163,7 @@ func LikeAnyWord(col, s string) (wheres []string, values [][]any) {
 // wildcard to support prefix matches.
 // The returned wheres and values are aligned 1:1; callers feed each pair into
 // gorm.Expr(wheres[i], values[i]...).
-func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]any) {
+func LikeAll(col, s string, keywords, exact, binary bool) (wheres []string, values [][]any) {
 	if s == "" {
 		return wheres, values
 	}
@@ -172,10 +189,10 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]a
 
 	for _, w := range words {
 		if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-			wheres = append(wheres, likeCond(col))
+			wheres = append(wheres, likeCond(col, binary))
 			values = append(values, []any{SqlParam(w, "", "%")})
 		} else {
-			wheres = append(wheres, likeCond(col))
+			wheres = append(wheres, likeCond(col, binary))
 			values = append(values, []any{SqlParam(w, "", "")})
 		}
 	}
@@ -184,19 +201,19 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]a
 }
 
 // LikeAllKeywords is LikeAll specialized for keyword search.
-func LikeAllKeywords(col, s string) (wheres []string, values [][]any) {
-	return LikeAll(col, s, true, false)
+func LikeAllKeywords(col, s string, binary bool) (wheres []string, values [][]any) {
+	return LikeAll(col, s, true, false, binary)
 }
 
 // LikeAllWords is LikeAll specialized for general word search.
-func LikeAllWords(col, s string) (wheres []string, values [][]any) {
-	return LikeAll(col, s, false, false)
+func LikeAllWords(col, s string, binary bool) (wheres []string, values [][]any) {
+	return LikeAll(col, s, false, false, binary)
 }
 
 // LikeAllNames splits a name query into AND-separated groups and generates
 // prefix or substring matches against each provided column, keeping multi-word
 // tokens intact so "John Doe" still matches full-name columns.
-func LikeAllNames(cols Cols, s string) (wheres []string, values [][]any) {
+func LikeAllNames(cols Cols, s string, binary bool) (wheres []string, values [][]any) {
 	if len(cols) == 0 || len(s) < 1 {
 		return wheres, values
 	}
@@ -222,10 +239,10 @@ func LikeAllNames(cols Cols, s string) (wheres []string, values [][]any) {
 
 			for _, c := range cols {
 				if strings.Contains(w, txt.Space) {
-					orWheres = append(orWheres, likeCond(c))
+					orWheres = append(orWheres, likeCond(c, binary))
 					orValues = append(orValues, SqlParam(w, "", "%"))
 				} else {
-					orWheres = append(orWheres, likeCond(c))
+					orWheres = append(orWheres, likeCond(c, binary))
 					orValues = append(orValues, SqlParam(w, "%", "%"))
 				}
 			}
@@ -332,7 +349,7 @@ func AnyInt(col, numbers, sep string, low, high int) (where string, values []any
 // OrLike prepares a parameterized OR/LIKE clause for a single column. Star (* )
 // wildcards are mapped to SQL percent wildcards before returning the query and
 // bind values.
-func OrLike(col, s string) (where string, values []any) {
+func OrLike(col, s string, binary bool) (where string, values []any) {
 	if txt.Empty(col) || txt.Empty(s) {
 		return "", []any{}
 	}
@@ -352,7 +369,7 @@ func OrLike(col, s string) (where string, values []any) {
 		}
 	}
 
-	like := likeCond(col)
+	like := likeCond(col, binary)
 	where = like + strings.Repeat(" OR "+like, len(terms)-1)
 
 	return where, values
@@ -361,7 +378,7 @@ func OrLike(col, s string) (where string, values []any) {
 // OrLikeCols behaves like OrLike but fans out the same search terms across
 // multiple columns, preserving the order of values so callers can feed them to
 // database/sql.
-func OrLikeCols(cols []string, s string) (where string, values []any) {
+func OrLikeCols(cols []string, s string, binary bool) (where string, values []any) {
 	if len(cols) == 0 || txt.Empty(s) {
 		return "", []any{}
 	}
@@ -393,7 +410,7 @@ func OrLikeCols(cols []string, s string) (where string, values []any) {
 			k := len(terms) * i
 			values[j+k] = terms[j]
 		}
-		like := likeCond(col)
+		like := likeCond(col, binary)
 		wheres[i] = like + strings.Repeat(" OR "+like, len(terms)-1)
 	}
 

@@ -390,8 +390,8 @@ func TestPersonFilter(t *testing.T) {
 		assert.Equal(t, `%back\slash%`, like)
 	})
 	t.Run("LikeCond", func(t *testing.T) {
-		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name"))
-		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name"))
+		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name", false))
+		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name", false))
 	})
 	t.Run("UIDOfAnotherType", func(t *testing.T) {
 		// Only a subject uid selects by id; a marker uid is a name nobody has.
@@ -571,7 +571,7 @@ func TestLikeCond_InvalidColumn(t *testing.T) {
 	t.Run("BindsTheArgumentAndMatchesNothing", func(t *testing.T) {
 		// The caller still passes one argument, so the condition has to keep exactly one
 		// placeholder while never being true.
-		cond := LikeCond("subj_name) OR (1=1")
+		cond := LikeCond("subj_name) OR (1=1", false)
 		assert.Equal(t, 1, strings.Count(cond, "?"))
 		assert.Contains(t, cond, "1 = 0")
 		assert.NotContains(t, cond, "OR (1=1")
@@ -584,12 +584,12 @@ func TestSqlLikeHelpers_InvalidColumn(t *testing.T) {
 
 	var count int
 
-	require.NoError(t, stmt().Where(clean.SqlLikeCond("user_name) OR (1=1"), "%").Count(&count).Error)
+	require.NoError(t, stmt().Where(clean.SqlLikeCond(DbDialect(), false, "user_name) OR (1=1"), "%").Count(&count).Error)
 	assert.Equal(t, 0, count)
-	require.NoError(t, stmt().Where(clean.SqlLikeAny("user_name", "x) OR (1=1"), "%", "%").Count(&count).Error)
+	require.NoError(t, stmt().Where(clean.SqlLikeAny(DbDialect(), false, "user_name", "x) OR (1=1"), "%", "%").Count(&count).Error)
 	assert.Equal(t, 0, count)
-	require.NoError(t, stmt().Where(clean.SqlPrefixCond("x) OR (1=1"), clean.SqlPrefixArgs("a/")...).Count(&count).Error)
+	require.NoError(t, stmt().Where(clean.SqlPrefixCond(DbDialect(), false, "x) OR (1=1"), clean.SqlPrefixArgs("a/")...).Count(&count).Error)
 	assert.Equal(t, 0, count)
-	require.NoError(t, stmt().Where(clean.SqlLikeCond("user_name"), "%").Count(&count).Error)
+	require.NoError(t, stmt().Where(clean.SqlLikeCond(DbDialect(), false, "user_name"), "%").Count(&count).Error)
 	assert.Positive(t, count)
 }

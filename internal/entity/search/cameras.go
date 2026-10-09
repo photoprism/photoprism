@@ -48,7 +48,7 @@ func Cameras(frm form.SearchCameras) (results []Camera, err error) {
 
 	if frm.Query != "" {
 		likeString := SqlParam(frm.Query, "%", "%")
-		s = s.Where(likeCond("cameras.camera_name")+" OR "+likeCond("cameras.camera_make")+" OR "+likeCond("cameras.camera_model"), likeString, likeString, likeString)
+		s = s.Where(likeCond("cameras.camera_name", false)+" OR "+likeCond("cameras.camera_make", false)+" OR "+likeCond("cameras.camera_model", false), likeString, likeString, likeString)
 	}
 
 	results = make([]Camera, 0)
