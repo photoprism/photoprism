@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 5, 2026
+**Last Updated:** October 9, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -109,7 +109,7 @@ Configuration & Flags
 
 Database & Migrations
 - Driver: GORM v1 (`github.com/jinzhu/gorm`). No `WithContext`. Use `db.Raw(stmt).Scan(&nop)` for raw SQL.
-- Entities and helpers: `internal/entity/*.go` and subpackages (`query`, `search`, `sortby`).
+- Entities and helpers: `internal/entity/*.go` and subpackages (`query`, `search`, `sortby`; `sqlcount` counts statements in tests). Branch per driver on `entity.DbDialect()`, which returns a `dsn.Dialect*` constant.
 - Migrations engine: `internal/entity/migrate/*` — run via `config.MigrateDb()`; CLI: `photoprism migrate` / `photoprism migrations`.
 - DB init/migrate flow: `internal/config/config_db.go` chooses driver/DSN, sets `gorm:table_options`, then `entity.InitDb(migrate.Opt(...))`.
 
