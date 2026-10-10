@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestAlbumHasThumb(t *testing.T) {
@@ -162,6 +163,19 @@ func TestAlbumCoverByUID(t *testing.T) {
 
 		assert.EqualError(t, err, "no cover found", err)
 		assert.Equal(t, "", file.FileName)
+	})
+	t.Run("EmptyManualAlbum", func(t *testing.T) {
+		album := entity.Album{AlbumUID: rnd.GenerateUID(entity.AlbumUID), AlbumType: entity.AlbumManual,
+			AlbumTitle: "Empty Cover", AlbumSlug: "empty-cover", ThumbSrc: entity.SrcAuto}
+		require.NoError(t, entity.UnscopedDb().Create(&album).Error)
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&album).Error })
+
+		file, err := AlbumCoverByUID(album.AlbumUID, true)
+		assert.EqualError(t, err, "no cover found")
+		assert.Equal(t, "", file.FileName)
+
+		// Updating the cover of an album without pictures is not an error.
+		assert.NoError(t, UpdateAlbumCovers(album))
 	})
 }
 

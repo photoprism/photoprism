@@ -1,8 +1,11 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 	"time"
+
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -145,9 +148,11 @@ func AlbumCoverByUID(uid string, excludePrivate bool) (file entity.File, err err
 		stmt = stmt.Where("photos.photo_private = FALSE")
 	}
 
-	// Find first picture.
+	// Find first picture; an album without matching pictures has no cover.
 	if err = stmt.Order("photos.photo_quality DESC, photos.taken_at DESC").
-		First(&file).Error; err != nil {
+		First(&file).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return file, fmt.Errorf("no cover found")
+	} else if err != nil {
 		return file, err
 	}
 
