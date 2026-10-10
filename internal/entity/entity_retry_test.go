@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -113,8 +112,8 @@ func TestIsLockError(t *testing.T) {
 		{"SQLiteLocked", sqlite3.Error{Code: sqlite3.ErrLocked}, true},
 		{"WrappedSQLite", fmt.Errorf("wrapped: %w", sqlite3.Error{Code: sqlite3.ErrBusy}), true},
 		{"OtherSQLite", sqlite3.Error{Code: sqlite3.ErrConstraint}, false},
-		{"GormErrors", gorm.Errors{errors.New("write control"), sqlite3.Error{Code: sqlite3.ErrBusy}}, true},
-		{"OtherGormErrors", gorm.Errors{errors.New("write control")}, false},
+		{"JoinedErrors", fmt.Errorf("%v; %w", errors.New("write control"), sqlite3.Error{Code: sqlite3.ErrBusy}), true},
+		{"OtherJoinedErrors", fmt.Errorf("%v; %w", sqlite3.Error{Code: sqlite3.ErrBusy}, errors.New("write control")), false},
 		{"DeadlockText", errors.New("DEADLOCK found"), true},
 		{"LockText", errors.New("database is locked"), false},
 		{"OtherDriver", &mysql.MySQLError{Number: 1062, Message: "duplicate"}, false},

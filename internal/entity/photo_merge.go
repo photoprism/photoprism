@@ -3,7 +3,7 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -122,7 +122,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			log.Warnf("sql: unsupported dialect %s", DbDialect())
 		}
 
-		merge.DeletedAt = &deleted
+		merge.DeletedAt = DeletedAtTime(deleted)
 		merge.PhotoQuality = -1
 
 		merged = append(merged, merge)
@@ -134,7 +134,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 
 	if original.ID != m.ID {
 		deleted := Now()
-		m.DeletedAt = &deleted
+		m.DeletedAt = DeletedAtTime(deleted)
 		m.PhotoQuality = -1
 	} else {
 		m.PhotoType = original.PhotoType
@@ -160,7 +160,7 @@ func (m *Photo) SyncMediaTypeFromFiles(typeSrc string) error {
 	var mediaTypes []string
 
 	if err := UnscopedDb().
-		Model(File{}).
+		Model(&File{}).
 		Where("photo_id = ? AND file_missing = FALSE AND file_sidecar = FALSE AND deleted_at IS NULL", m.ID).
 		Pluck("media_type", &mediaTypes).Error; err != nil {
 		return err

@@ -3,7 +3,7 @@ package entity
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -17,13 +17,13 @@ func DbHasTable(db *gorm.DB, table string) (bool, error) {
 
 	var stmt string
 
-	switch dsn.DialectFromDriver(db.Dialect().GetName()) {
+	switch dsn.DialectFromDriver(db.Name()) {
 	case dsn.DialectMySQL:
 		stmt = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?"
 	case dsn.DialectSQLite:
 		stmt = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = ?"
 	default:
-		return false, fmt.Errorf("unsupported dialect %s", db.Dialect().GetName())
+		return false, fmt.Errorf("unsupported dialect %s", db.Name())
 	}
 
 	var n int64
@@ -44,13 +44,13 @@ func DbHasColumn(db *gorm.DB, table, column string) (bool, error) {
 
 	var stmt string
 
-	switch dsn.DialectFromDriver(db.Dialect().GetName()) {
+	switch dsn.DialectFromDriver(db.Name()) {
 	case dsn.DialectMySQL:
 		stmt = "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?"
 	case dsn.DialectSQLite:
 		stmt = "SELECT COUNT(*) FROM pragma_table_info(?) WHERE name = ?"
 	default:
-		return false, fmt.Errorf("unsupported dialect %s", db.Dialect().GetName())
+		return false, fmt.Errorf("unsupported dialect %s", db.Name())
 	}
 
 	var n int64

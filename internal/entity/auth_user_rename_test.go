@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -337,14 +337,14 @@ func TestUser_SaveRename(t *testing.T) {
 		m := newRenameTestUser(t, "rename-restored", acl.RoleAdmin)
 		require.NoError(t, Db().Delete(m).Error)
 		deleted := storedUser(t, m.UserUID)
-		require.NotNil(t, deleted.DeletedAt)
+		require.True(t, deleted.DeletedAt.Valid)
 
-		deleted.DeletedAt = nil
+		deleted.DeletedAt = DeletedAt{}
 		require.NoError(t, deleted.SetNewUsername("rename-restored-new"))
 		require.NoError(t, deleted.SaveRename("rename-restored"))
 
 		stored := storedUser(t, m.UserUID)
-		assert.Nil(t, stored.DeletedAt)
+		assert.False(t, stored.DeletedAt.Valid)
 		assert.Equal(t, "rename-restored-new", stored.UserName)
 	})
 	t.Run("Unchanged", func(t *testing.T) {

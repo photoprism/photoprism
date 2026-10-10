@@ -353,7 +353,7 @@ func TestUser_Create(t *testing.T) {
 
 		t.Cleanup(func() {
 			assert.NoError(t, m.Delete())
-			UnscopedDb().Delete(m)
+			UnscopedDb().Delete(&m)
 		})
 
 		assert.Equal(t, "examplelong", m.Username())
@@ -1260,7 +1260,7 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 	t.Run("UserDeleted", func(t *testing.T) {
 		u := NewUser()
 		var deleted = time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC)
-		u.DeletedAt = &deleted
+		u.DeletedAt = DeletedAtTime(deleted)
 		assert.Nil(t, u.UpdateLoginTime())
 	})
 	t.Run("NormalizesOutOfEditionSuperAdminRole", func(t *testing.T) {
@@ -1420,6 +1420,16 @@ func TestUser_Form(t *testing.T) {
 		t.Logf("User.UserDetails: %#v", m.UserDetails)
 		t.Logf("Form: %#v", frm)
 		t.Logf("Form.UserDetails: %#v", frm.UserDetails)
+		assert.Nil(t, frm.DeletedAt)
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		deletedAt := time.Date(2022, 10, 18, 8, 15, 21, 0, time.UTC)
+		m := &User{UserName: "form-deleted", UserDetails: &UserDetails{}, DeletedAt: DeletedAtTime(deletedAt)}
+
+		frm, err := m.Form()
+		require.NoError(t, err)
+		require.NotNil(t, frm.DeletedAt)
+		assert.True(t, deletedAt.Equal(*frm.DeletedAt))
 	})
 }
 

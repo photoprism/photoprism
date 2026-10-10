@@ -54,7 +54,7 @@ func (m *Photo) QualityScore() (score int) {
 
 // UpdateQuality recomputes the quality score and persists it unless the photo is already deleted/invalid.
 func (m *Photo) UpdateQuality() error {
-	if m.DeletedAt != nil || m.PhotoQuality < 0 {
+	if m.DeletedAt.Valid || m.PhotoQuality < 0 {
 		return nil
 	}
 

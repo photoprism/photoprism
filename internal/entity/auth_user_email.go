@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/dustin/go-humanize/english"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -20,7 +21,7 @@ func (m *User) OtherEmailHolders() (count int, verified bool, err error) {
 		return 0, false, nil
 	}
 
-	stmt := Db().Model(&User{}).Where("LOWER(user_email) = ? AND user_uid <> ?", email, m.UserUID)
+	stmt := Db().Model(&User{}).Where("LOWER(user_email) = ? AND user_uid <> ?", email, m.UserUID).Session(&gorm.Session{})
 
 	var n int64
 

@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -148,7 +148,14 @@ func warnNonInnodbTables(db *gorm.DB, name string) {
 	ctx, cancel := context.WithTimeout(context.Background(), engineCheckTimeout)
 	defer cancel()
 
-	rows, err := db.DB().QueryContext(ctx, "SELECT table_name FROM information_schema.tables WHERE table_schema = ? "+
+	sqlDb, err := db.DB()
+
+	if err != nil {
+		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))
+		return
+	}
+
+	rows, err := sqlDb.QueryContext(ctx, "SELECT table_name FROM information_schema.tables WHERE table_schema = ? "+
 		"AND table_type <> 'VIEW' AND (engine IS NULL OR engine <> 'InnoDB') ORDER BY table_name", name)
 
 	if err != nil {

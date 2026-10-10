@@ -20,8 +20,10 @@ func TestConfig_OpenTestDb(t *testing.T) {
 	}
 	db, err := conf.OpenTestDb()
 	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, db.Close()) })
-	require.NoError(t, db.DB().Ping())
+	t.Cleanup(func() { require.NoError(t, entity.CloseDb(db)) })
+	sqlDb, err := db.DB()
+	require.NoError(t, err)
+	require.NoError(t, sqlDb.Ping())
 	assert.Same(t, previous, entity.Db())
 	assert.Same(t, db, conf.Db())
 	again, err := conf.OpenTestDb()

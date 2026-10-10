@@ -34,7 +34,6 @@ var ServiceFixtures = ServiceMap{
 		SyncRaw:       true,
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
-		DeletedAt:     nil,
 	},
 	"dummy-webdav2": {
 		ID:            1000001,
@@ -63,7 +62,6 @@ var ServiceFixtures = ServiceMap{
 		SyncRaw:       true,
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
-		DeletedAt:     nil,
 	},
 }
 

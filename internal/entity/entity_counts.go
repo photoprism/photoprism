@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -118,7 +119,7 @@ func UpdatePlacesCounts() (err error) {
 	start := time.Now()
 
 	// Update places.
-	res := Db().Table("places").
+	res := Db().Table("places").Where("1 = 1").
 		UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(*) FROM photos p "+
 			"WHERE places.id = p.place_id "+
 			"AND p.photo_quality > -1 "+
@@ -145,7 +146,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 
 	subjTable := Subject{}.TableName()
 
-	var photosJoin *gorm.SqlExpr
+	var photosJoin clause.Expr
 
 	// Count people tagged on private pictures?
 	// see https://github.com/photoprism/photoprism/issues/4238
@@ -172,21 +173,21 @@ func UpdateSubjectCounts(public bool) (err error) {
 		WHERE ?`, gorm.Expr(subjTable), photosJoin, condition)
 	case dsn.DialectSQLite:
 		// Update files count.
-		res = Db().Table(subjTable).
+		res = Db().Table(subjTable).Where(condition).
 			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id)"+
 				" FROM files f JOIN photos p ON ?"+
 				" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
-				" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
+				" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL)", photosJoin))
 
 		// Update photo count.
 		if res.Error != nil {
 			return res.Error
 		}
-		photosRes := Db().Table(subjTable).
+		photosRes := Db().Table(subjTable).Where(condition).
 			UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id)"+
 				" FROM files f JOIN photos p ON ?"+
 				" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
-				" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
+				" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL)", photosJoin))
 		if photosRes.Error != nil {
 			return photosRes.Error
 		}
@@ -266,7 +267,7 @@ func UpdateLabelCounts() (err error) {
 		}
 	} else if IsDialect(dsn.DialectSQLite) {
 		res = Db().
-			Table("labels").
+			Table("labels").Where("1 = 1").
 			UpdateColumn("photo_count",
 				gorm.Expr(`(SELECT photo_count FROM (SELECT label_id, SUM(photo_count) AS photo_count FROM (
 				SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l

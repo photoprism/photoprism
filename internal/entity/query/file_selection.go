@@ -149,7 +149,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 	}
 
 	// Search condition.
-	where := fmt.Sprintf(`photos.photo_uid IN (?) 
+	where := fmt.Sprintf(`(photos.photo_uid IN (?) 
 		OR photos.place_id IN (?) 
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
 		OR photos.photo_path IN (
@@ -158,7 +158,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = FALSE AND album_uid IN (?))
 		OR files.file_uid IN (SELECT file_uid FROM %s m WHERE m.subj_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND pl.uncertainty < 100 AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
-		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
+		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?)))`,
 		subfolders, entity.Marker{}.TableName())
 
 	// Build search query.

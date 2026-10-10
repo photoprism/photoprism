@@ -12,10 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"golang.org/x/mod/semver"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
@@ -478,7 +476,7 @@ func (c *Config) CloseDb() error {
 	}
 
 	if c.db != nil {
-		if err := c.db.Close(); err == nil {
+		if err := entity.CloseDb(c.db); err == nil {
 			c.db = nil
 			entity.SetDbProvider(nil)
 		} else {
@@ -496,7 +494,10 @@ func (c *Config) IsDbOpen() bool {
 		return false
 	}
 
-	if err := c.db.DB().Ping(); err != nil {
+	if sqlDb, err := c.db.DB(); err != nil {
+		log.Debugf("config: database not available (%s)", err)
+		return false
+	} else if err = sqlDb.Ping(); err != nil {
 		log.Debugf("config: database not available (%s)", err)
 		return false
 	}
@@ -504,20 +505,7 @@ func (c *Config) IsDbOpen() bool {
 	return true
 }
 
-// SetDbOptions sets the database collation to unicode if supported.
-func (c *Config) SetDbOptions() {
-	switch c.DatabaseDriver() {
-	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
-	case dsn.DriverPostgres:
-		// Ignore for now.
-	case dsn.DriverSQLite3:
-		// Not required as Unicode is default.
-	}
-}
-
-// RegisterDb opens a database connection if needed,
-// sets the database options and connection provider.
+// RegisterDb opens a database connection if needed and sets the connection provider.
 func (c *Config) RegisterDb() {
 	if err := c.connectDb(); err != nil {
 		// Report via the system log, not the database-persisted logger, so a
@@ -526,7 +514,6 @@ func (c *Config) RegisterDb() {
 		return
 	}
 
-	c.SetDbOptions()
 	entity.SetDbProvider(c)
 }
 
@@ -594,11 +581,15 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
 	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
-	if (!c.db.HasTable(&migrate.Migration{})) {
-		c.db.AutoMigrate(&migrate.Migration{})
+	if !c.db.Migrator().HasTable(&migrate.Migration{}) {
+		if err := c.db.AutoMigrate(&migrate.Migration{}); err != nil {
+			log.Errorf("config: %s (create migrations table)", clean.Error(err))
+		}
 	}
-	if (!c.db.HasTable(&migrate.Version{})) {
-		c.db.AutoMigrate(&migrate.Version{})
+	if !c.db.Migrator().HasTable(&migrate.Version{}) {
+		if err := c.db.AutoMigrate(&migrate.Version{}); err != nil {
+			log.Errorf("config: %s (create versions table)", clean.Error(err))
+		}
 	}
 	entity.ResetTestFixtures()
 
@@ -701,13 +692,18 @@ func (c *Config) connectDb() error {
 		return errors.New("DSN not specified")
 	}
 
+	// Fail without retrying if the driver is not supported.
+	if _, err := entity.GormDialector(dbDriver, dbDsn, nil); err != nil {
+		return err
+	}
+
 	// Open database connection.
-	db, err := gorm.Open(dbDriver, dbDsn)
+	db, err := entity.OpenDb(dbDriver, dbDsn)
 	if err != nil || db == nil {
 		log.Infof("config: waiting for the database to become available")
 
 		for i := 1; i <= 12; i++ {
-			db, err = gorm.Open(dbDriver, dbDsn)
+			db, err = entity.OpenDb(dbDriver, dbDsn)
 
 			if db != nil && err == nil {
 				break
@@ -721,14 +717,14 @@ func (c *Config) connectDb() error {
 		}
 	}
 
-	// Configure database logging.
-	db.LogMode(false)
-	db.SetLogger(log)
-
 	// Set database connection parameters.
-	db.DB().SetMaxOpenConns(c.DatabaseConns())
-	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
-	db.DB().SetConnMaxLifetime(time.Hour)
+	if sqlDb, sqlErr := db.DB(); sqlErr != nil {
+		return sqlErr
+	} else {
+		sqlDb.SetMaxOpenConns(c.DatabaseConns())
+		sqlDb.SetMaxIdleConns(c.DatabaseConnsIdle())
+		sqlDb.SetConnMaxLifetime(time.Hour)
+	}
 
 	// Check database server version.
 	if err = c.checkDb(db); err != nil {
@@ -761,7 +757,7 @@ func (c *Config) ImportSQL(filename string) {
 	}
 
 	statements := strings.Split(string(contents), ";\n")
-	q := c.Db().Unscoped()
+	q := c.Db().Unscoped().Session(&gorm.Session{})
 
 	for _, stmt := range statements {
 		// Skip empty lines and comments

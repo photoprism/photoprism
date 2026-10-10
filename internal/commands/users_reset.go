@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -54,37 +54,37 @@ func usersResetAction(ctx *cli.Context) error {
 		}
 
 		// Drop existing user management tables.
-		if err := db.DropTableIfExists(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}, entity.Passcode{}, entity.Session{}).Error; err != nil {
+		if err := db.Migrator().DropTable(&entity.User{}, &entity.UserDetails{}, &entity.UserSettings{}, &entity.UserShare{}, &entity.Passcode{}, &entity.Session{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users.
-		if err := db.CreateTable(entity.User{}).Error; err != nil {
+		if err := entity.CreateTable(db, &entity.User{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_details.
-		if err := db.CreateTable(entity.UserDetails{}).Error; err != nil {
+		if err := entity.CreateTable(db, &entity.UserDetails{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_settings.
-		if err := db.CreateTable(entity.UserSettings{}).Error; err != nil {
+		if err := entity.CreateTable(db, &entity.UserSettings{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_shares.
-		if err := db.CreateTable(entity.UserShare{}).Error; err != nil {
+		if err := entity.CreateTable(db, &entity.UserShare{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
 		// Re-create passcodes.
-		if err := db.CreateTable(entity.Passcode{}).Error; err != nil {
+		if err := entity.CreateTable(db, &entity.Passcode{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_sessions.
-		if err := db.CreateTable(entity.Session{}).Error; err != nil {
+		if err := entity.CreateTable(db, &entity.Session{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
@@ -103,7 +103,7 @@ func usersResetAction(ctx *cli.Context) error {
 func DeleteUserPasswords(db *gorm.DB) (int64, error) {
 	if db == nil {
 		return 0, fmt.Errorf("database not connected")
-	} else if !db.HasTable(entity.User{}) || !db.HasTable(entity.Password{}) {
+	} else if !db.Migrator().HasTable(&entity.User{}) || !db.Migrator().HasTable(&entity.Password{}) {
 		return 0, nil
 	}
 
@@ -131,13 +131,13 @@ func LogDeleteUserPasswords(db *gorm.DB) error {
 func DeleteUserClients(db *gorm.DB) (clients, secrets int64, err error) {
 	if db == nil {
 		return 0, 0, fmt.Errorf("database not connected")
-	} else if !db.HasTable(entity.Client{}) {
+	} else if !db.Migrator().HasTable(&entity.Client{}) {
 		return 0, 0, nil
 	}
 
 	// Delete the secrets of these clients, including deleted ones, before the clients themselves.
-	if db.HasTable(entity.Password{}) {
-		uids := db.Unscoped().Model(&entity.Client{}).Select("client_uid").Where("user_uid <> ''").QueryExpr()
+	if db.Migrator().HasTable(&entity.Password{}) {
+		uids := db.Unscoped().Model(&entity.Client{}).Select("client_uid").Where("user_uid <> ''")
 		res := db.Where("uid IN (?)", uids).Delete(&entity.Password{})
 
 		if res.Error != nil {

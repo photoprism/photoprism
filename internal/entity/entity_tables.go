@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -120,7 +120,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 // is a slower DDL statement there; the restart commits implicitly, so pass db, not
 // a transaction. SQLite deletes the rows and keeps its counters; others truncate.
 func truncateTable(db *gorm.DB, name string, autoInc bool) error {
-	switch dsn.DialectFromDriver(db.Dialect().GetName()) {
+	switch dsn.DialectFromDriver(db.Dialector.Name()) {
 	case dsn.DialectSQLite:
 		return db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error
 	case dsn.DialectMySQL:
@@ -147,7 +147,7 @@ func truncateTable(db *gorm.DB, name string, autoInc bool) error {
 func autoIncrementTables(db *gorm.DB) map[string]bool {
 	result := make(map[string]bool)
 
-	if dsn.DialectFromDriver(db.Dialect().GetName()) != dsn.DialectMySQL {
+	if dsn.DialectFromDriver(db.Dialector.Name()) != dsn.DialectMySQL {
 		return result
 	}
 
@@ -200,32 +200,23 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) (err error) {
 
 	// Run ORM auto migrations.
 	if opt.AutoMigrate {
-		// Check if the DBMS AuthID fix has been applied?
-		version := migrate.FirstOrCreateVersion(db, migrate.NewVersion("DBMS AuthID Fix", "Any Editions"))
-		if version.NeedsMigration() {
-			if err := migrate.ConvertDBMSAuthIDDataTypes(db); err != nil {
-				log.Errorf("migrate: could not apply dbms auth_id fix : %v", err)
-				version.Error = err.Error()
-				if saveErr := version.Save(db); saveErr != nil {
-					log.Errorf("migrate: could not save dbms auth_id fix status: %v", saveErr)
-				}
-			} else {
-				if migratedErr := version.Migrated(db); migratedErr != nil {
-					log.Errorf("migrate: could not persist dbms auth_id fix status: %v", migratedErr)
-				}
-				log.Debug("migrate: DBMS AuthID fix migrated")
-			}
-		} else {
-			log.Debug("migrate: DBMS AuthID fix skipped")
+		// Recreate SQLite tables with legacy column types once, after the pre migrations renamed columns.
+		if err = migrate.ConvertSQLiteSchema(db, list); err != nil {
+			return err
+		}
+
+		// Link the categories table to the label categories relation before tables are created.
+		if err = db.SetupJoinTable(&Label{}, "LabelCategories", &Category{}); err != nil {
+			return err
 		}
 
 		for name, entity = range list {
-			if err := db.AutoMigrate(entity).Error; err != nil {
+			if err := autoMigrate(db, entity); err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
 
 				time.Sleep(time.Second)
 
-				if err = db.AutoMigrate(entity).Error; err != nil {
+				if err = autoMigrate(db, entity); err != nil {
 					log.Errorf("migrate: failed migrating %s", clean.Log(name))
 					panic(err)
 				}
@@ -249,8 +240,30 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) (err error) {
 // Drop drops all database tables of registered entities.
 func (list Tables) Drop(db *gorm.DB) {
 	for _, entity := range list {
-		if err := db.DropTableIfExists(entity).Error; err != nil {
+		if err := db.Migrator().DropTable(entity); err != nil {
 			panic(err)
 		}
 	}
+}
+
+// mysqlTableOptions are the table options of new MySQL/MariaDB tables.
+const mysqlTableOptions = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+
+// withTableOptions returns a session that creates MySQL/MariaDB tables with the utf8mb4 table options.
+func withTableOptions(db *gorm.DB) *gorm.DB {
+	if dsn.DialectFromDriver(db.Name()) == dsn.DialectMySQL {
+		return db.Set("gorm:table_options", mysqlTableOptions)
+	}
+
+	return db
+}
+
+// autoMigrate creates or updates the table of an entity.
+func autoMigrate(db *gorm.DB, entity any) error {
+	return withTableOptions(db).AutoMigrate(entity)
+}
+
+// CreateTable creates the table of an entity, including its indexes.
+func CreateTable(db *gorm.DB, entity any) error {
+	return withTableOptions(db).Migrator().CreateTable(entity)
 }

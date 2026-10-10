@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -645,14 +645,14 @@ func TestCamera_PhotoCount(t *testing.T) {
 		m := addCamera(t, "Zenit", "E")
 		count, err := m.PhotoCount()
 		assert.NoError(t, err)
-		assert.Equal(t, 0, count)
+		assert.EqualValues(t, 0, count)
 	})
 	t.Run("Used", func(t *testing.T) {
 		m := addCamera(t, "Zenit", "12XP")
 		useCamera(t, m)
 		count, err := m.PhotoCount()
 		assert.NoError(t, err)
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 	})
 	t.Run("EmptyID", func(t *testing.T) {
 		_, err := (&Camera{}).PhotoCount()
@@ -662,7 +662,7 @@ func TestCamera_PhotoCount(t *testing.T) {
 
 func TestCamera_Delete(t *testing.T) {
 	exists := func(t *testing.T, id uint) bool {
-		var count int
+		var count int64
 		assert.NoError(t, UnscopedDb().Model(&Camera{}).Where("id = ?", id).Count(&count).Error)
 		return count > 0
 	}
@@ -878,7 +878,7 @@ func TestFindExistingCamera(t *testing.T) {
 
 func TestCamera_DeleteEdgeCases(t *testing.T) {
 	exists := func(t *testing.T, id uint) bool {
-		var count int
+		var count int64
 		assert.NoError(t, UnscopedDb().Model(&Camera{}).Where("id = ?", id).Count(&count).Error)
 		return count > 0
 	}
@@ -908,7 +908,7 @@ func TestCamera_DeleteEdgeCases(t *testing.T) {
 
 		count, err := m.PhotoCount()
 		assert.NoError(t, err)
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 
 		_, err = m.Delete(false)
 		assert.ErrorIs(t, err, ErrInUse)

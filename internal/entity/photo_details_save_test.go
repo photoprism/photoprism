@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -20,9 +20,9 @@ func failDetailsUpdates(t *testing.T, err error, fail func() bool) {
 
 	name := "test:details-update-failure"
 
-	Db().Callback().Update().Before("gorm:begin_transaction").Register(name, func(scope *gorm.Scope) {
-		if scope.TableName() == (Details{}).TableName() && fail() {
-			_ = scope.Err(err)
+	Db().Callback().Update().Before("gorm:begin_transaction").Register(name, func(tx *gorm.DB) {
+		if tx.Statement.Table == (Details{}).TableName() && fail() {
+			_ = tx.AddError(err)
 		}
 	})
 	t.Cleanup(func() { Db().Callback().Update().Remove(name) })
@@ -34,9 +34,9 @@ func failDetailsCreates(t *testing.T, err error) {
 
 	name := "test:details-create-failure"
 
-	Db().Callback().Create().Before("gorm:begin_transaction").Register(name, func(scope *gorm.Scope) {
-		if scope.TableName() == (Details{}).TableName() {
-			_ = scope.Err(err)
+	Db().Callback().Create().Before("gorm:begin_transaction").Register(name, func(tx *gorm.DB) {
+		if tx.Statement.Table == (Details{}).TableName() {
+			_ = tx.AddError(err)
 		}
 	})
 	t.Cleanup(func() { Db().Callback().Create().Remove(name) })

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -45,11 +45,11 @@ func TestSubjectReports(t *testing.T) {
 		require.NotEmpty(t, people)
 
 		for _, p := range people {
-			var want int
+			var want int64
 			require.NoError(t, UnscopedDb().Model(&entity.Face{}).
 				Where("subj_uid = ?", p.SubjUID).Count(&want).Error)
 
-			assert.Equal(t, want, p.Clusters, "cluster count for %s", p.SubjName)
+			assert.EqualValues(t, want, p.Clusters, "cluster count for %s", p.SubjName)
 		}
 	})
 	t.Run("Stored", func(t *testing.T) {
@@ -582,14 +582,14 @@ func TestSqlLikeHelpers_InvalidColumn(t *testing.T) {
 	// A rejected column yields a condition that binds the caller's arguments and matches no rows.
 	stmt := func() *gorm.DB { return UnscopedDb().Model(&entity.User{}) }
 
-	var count int
+	var count int64
 
 	require.NoError(t, stmt().Where(clean.SqlLikeCond(DbDialect(), false, "user_name) OR (1=1"), "%").Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 	require.NoError(t, stmt().Where(clean.SqlLikeAny(DbDialect(), false, "user_name", "x) OR (1=1"), "%", "%").Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 	require.NoError(t, stmt().Where(clean.SqlPrefixCond(DbDialect(), false, "x) OR (1=1"), clean.SqlPrefixArgs("a/")...).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 	require.NoError(t, stmt().Where(clean.SqlLikeCond(DbDialect(), false, "user_name"), "%").Count(&count).Error)
 	assert.Positive(t, count)
 }

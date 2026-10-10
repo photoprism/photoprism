@@ -92,7 +92,7 @@ func TestIndex_Insta360LateCapture(t *testing.T) {
 					var result entity.Photo
 					require.NoError(t, entity.UnscopedDb().First(&result, "id = ?", photo.ID).Error)
 					assert.Equal(t, insta360StackName, result.PhotoName, stage.name)
-					assert.NotNil(t, result.DeletedAt, stage.name)
+					assert.True(t, result.DeletedAt.Valid, stage.name)
 					assert.GreaterOrEqual(t, result.PhotoQuality, 0, stage.name)
 					assert.Equal(t, 1, insta360StackPhotoCount(t, folder), stage.name)
 				}
@@ -176,7 +176,7 @@ func TestIndex_Insta360StackControls(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().First(&result, "id = ?", photo.ID).Error)
 		assert.Equal(t, "IMG_1234", result.PhotoName)
 		assert.Equal(t, entity.IsStackable, result.PhotoStack)
-		assert.NotNil(t, result.DeletedAt)
+		assert.True(t, result.DeletedAt.Valid)
 	})
 	t.Run("PartialYaml", func(t *testing.T) {
 		folder := "insta360controlpartialyaml"
@@ -657,7 +657,7 @@ func TestIndex_Insta360ReconcileSplit(t *testing.T) {
 				assert.Len(t, owners, 2)
 
 				result := owners[tc.first]
-				assert.Equal(t, tc.archived, result.DeletedAt != nil)
+				assert.Equal(t, tc.archived, result.DeletedAt.Valid)
 				assert.GreaterOrEqual(t, result.PhotoQuality, 0)
 			})
 		}
@@ -1242,10 +1242,11 @@ func insta360StackPhotoIDs(owners map[string]entity.Photo) map[uint]bool {
 }
 
 // insta360StackPhotoCount returns the number of photo rows in folder, including deleted rows.
-func insta360StackPhotoCount(t *testing.T, folder string) (count int) {
+func insta360StackPhotoCount(t *testing.T, folder string) int {
 	t.Helper()
+	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ?", folder).Count(&count).Error)
-	return count
+	return int(count)
 }
 
 // splitInsta360Capture moves a capture file and its previews to a new photo, and names both photos
@@ -1307,10 +1308,10 @@ func assertInsta360SinglePrimary(t *testing.T, folder string) {
 		Where("file_name LIKE ?", folder+"/%").Pluck("DISTINCT photo_id", &photoIDs).Error)
 	require.Len(t, photoIDs, 1)
 
-	var primaries int
+	var primaries int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
 		Where("photo_id = ? AND file_primary = 1", photoIDs[0]).Count(&primaries).Error)
-	assert.Equal(t, 1, primaries)
+	assert.Equal(t, int64(1), primaries)
 }
 
 // writeInsta360Streams writes a one-second video with one stream per size, encoded with codec.
@@ -1433,9 +1434,9 @@ func TestIndex_Insta360RightLensTypeMismatch(t *testing.T) {
 	assert.Equal(t, "", previews[insta360StackLeft+".jpg"].FileProjection)
 
 	t.Run("NoEquirectangularVideo", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_name LIKE ? AND file_projection = ?", folder+"/%", "equirectangular").Count(&count).Error)
-		assert.Equal(t, 0, count, "no file of the capture is equirectangular")
+		assert.Zero(t, count, "no file of the capture is equirectangular")
 		assert.False(t, left.DewarpableInsv())
 	})
 	t.Run("NoForcedPreviewOnSidecarChange", func(t *testing.T) {

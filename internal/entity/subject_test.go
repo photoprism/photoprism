@@ -161,11 +161,11 @@ func TestSubject_Delete(t *testing.T) {
 		assert.True(t, m.Deleted())
 
 		// The same record restores the row, and deletes it permanently after another deletion.
-		var live, stored int
+		var live, stored int64
 		require.NoError(t, m.Restore())
 		assert.False(t, m.Deleted())
 		require.NoError(t, Db().Model(&Subject{}).Where("subj_uid = ?", m.SubjUID).Count(&live).Error)
-		assert.Equal(t, 1, live)
+		assert.EqualValues(t, 1, live)
 		require.NoError(t, m.Delete())
 		require.NoError(t, m.DeletePermanently())
 		require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", m.SubjUID).Count(&stored).Error)
@@ -181,7 +181,7 @@ func TestSubject_Delete(t *testing.T) {
 		assert.False(t, m.Deleted())
 
 		time := Now()
-		m.DeletedAt = &time
+		m.DeletedAt = DeletedAtTime(time)
 
 		assert.True(t, m.Deleted())
 
@@ -193,7 +193,7 @@ func TestSubject_Restore(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
-		m := &Subject{DeletedAt: &deleteTime, SubjType: SubjPerson, SubjName: "ToBeRestored"}
+		m := &Subject{DeletedAt: DeletedAtTime(deleteTime), SubjType: SubjPerson, SubjName: "ToBeRestored"}
 		err := m.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -207,7 +207,7 @@ func TestSubject_Restore(t *testing.T) {
 		assert.False(t, m.Deleted())
 	})
 	t.Run("SubjectNotDeleted", func(t *testing.T) {
-		m := &Subject{DeletedAt: nil, SubjType: SubjPerson, SubjName: "NotDeleted1234"}
+		m := &Subject{SubjType: SubjPerson, SubjName: "NotDeleted1234"}
 		err := m.Restore()
 		if err != nil {
 			t.Fatal(err)
@@ -256,7 +256,7 @@ func TestFindSubjectByName(t *testing.T) {
 		m := NewSubject("Jim Doe", SubjPerson, SrcAuto)
 
 		time := Now()
-		m.DeletedAt = &time
+		m.DeletedAt = DeletedAtTime(time)
 
 		err := m.Save()
 		if err != nil {
@@ -664,7 +664,7 @@ func TestSubject_DeletePermanently(t *testing.T) {
 	assert.Nil(t, m.DeletePermanently())
 
 	time := Now()
-	m.DeletedAt = &time
+	m.DeletedAt = DeletedAtTime(time)
 
 	if err := m.Save(); err != nil {
 		t.Fatal(err)

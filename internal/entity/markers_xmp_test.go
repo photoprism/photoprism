@@ -256,7 +256,7 @@ func TestMarker_SetFace_XmpNotShared(t *testing.T) {
 		// pushed onto it; a unique id keeps the manual-case DB write local.
 		f := &Face{ID: "XMPSETFACE" + rnd.GenerateUID('f'), SubjUID: ""}
 		require.NoError(t, UnscopedDb().Create(f).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 		return m, f, subj.SubjUID
 	}

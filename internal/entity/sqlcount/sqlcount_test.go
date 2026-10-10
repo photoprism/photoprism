@@ -12,7 +12,14 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
+
+// openSQLite opens an ORM connection with a SQLite dialector that uses the given pool.
+func openSQLite(conn gorm.ConnPool) (*gorm.DB, error) {
+	return gorm.Open(&sqlite.Dialector{Conn: conn}, &gorm.Config{})
+}
 
 // openTestDb returns a counted SQLite database with an empty table t.
 func openTestDb(t *testing.T) (*sql.DB, *Counter) {
@@ -152,7 +159,7 @@ func TestMySQL(t *testing.T) {
 
 func TestOpenGorm(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		p, err := OpenGorm("sqlite3", filepath.Join(t.TempDir(), "gorm.db"))
+		p, err := OpenGorm("sqlite3", filepath.Join(t.TempDir(), "gorm.db"), openSQLite)
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = p.Close() })
 
@@ -167,8 +174,15 @@ func TestOpenGorm(t *testing.T) {
 		assert.Equal(t, 2, p.Counter.Count())
 	})
 	t.Run("UnknownDriver", func(t *testing.T) {
-		p, err := OpenGorm("sqlcount-unknown", "")
+		p, err := OpenGorm("sqlcount-unknown", "", openSQLite)
 		assert.Error(t, err)
+		assert.Nil(t, p)
+	})
+	t.Run("OpenError", func(t *testing.T) {
+		p, err := OpenGorm("sqlite3", filepath.Join(t.TempDir(), "gorm.db"), func(gorm.ConnPool) (*gorm.DB, error) {
+			return nil, os.ErrInvalid
+		})
+		assert.ErrorIs(t, err, os.ErrInvalid)
 		assert.Nil(t, p)
 	})
 }

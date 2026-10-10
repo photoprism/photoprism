@@ -30,7 +30,7 @@ func TestLabelCover(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Cleared so that the request reaches the cover query, since a cover file assigned by
 		// another test would answer with the generic icon before it gets there.
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
 		LabelCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -50,7 +50,7 @@ func TestLabelCover(t *testing.T) {
 	t.Run("SizeExceedsLimit", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		SetTestThumbUncached(t, true)
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
 		original := CreateTestLabelCover(t, "ls6sg6b1wowuy3c2", "2007/12/PhotoWithEditedAt.jpg")
 		LabelCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/fit_15360")
@@ -61,7 +61,7 @@ func TestLabelCover(t *testing.T) {
 	t.Run("LimitsSize", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		SetTestThumbUncached(t, true)
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
 		CreateTestLabelCover(t, "ls6sg6b1wowuy3c2", "2007/12/PhotoWithEditedAt.jpg")
 		LabelCover(router)
 		small := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/fit_720")
@@ -74,7 +74,7 @@ func TestLabelCover(t *testing.T) {
 		// Cover responses are always inline.
 		app, router, conf := NewApiTest()
 		SetTestThumbUncached(t, true)
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
 		CreateTestLabelCover(t, "ls6sg6b1wowuy3c2", "2007/12/PhotoWithEditedAt.jpg")
 		LabelCover(router)
 		// Repeated so that the cache hit is covered as well as the render path.
@@ -96,7 +96,7 @@ func TestLabelCover(t *testing.T) {
 		// The flag requires the cover file to still resolve, and another test may have flagged
 		// that fixture as missing on its way out.
 		CreateTestFileOriginal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		LabelCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)

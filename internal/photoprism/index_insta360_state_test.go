@@ -13,8 +13,8 @@ import (
 // TestInsta360PhotoRemoved verifies that only deleted rows at quality -1 count as removed.
 func TestInsta360PhotoRemoved(t *testing.T) {
 	deletedAt := entity.Now()
-	assert.True(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: &deletedAt, PhotoQuality: -1}))
-	assert.False(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: &deletedAt, PhotoQuality: 0}))
+	assert.True(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: entity.DeletedAtTime(deletedAt), PhotoQuality: -1}))
+	assert.False(t, insta360PhotoRemoved(&entity.Photo{DeletedAt: entity.DeletedAtTime(deletedAt), PhotoQuality: 0}))
 	assert.False(t, insta360PhotoRemoved(&entity.Photo{PhotoQuality: -1}))
 	assert.False(t, insta360PhotoRemoved(&entity.Photo{}))
 	assert.False(t, insta360PhotoRemoved(nil))
@@ -25,7 +25,13 @@ func TestInsta360CaptureState(t *testing.T) {
 	removedAt := entity.Now()
 	before, after := removedAt.Add(-time.Minute), removedAt.Add(time.Minute)
 	photo := func(id uint, deletedAt *time.Time, quality int) *entity.Photo {
-		return &entity.Photo{ID: id, CreatedAt: before, DeletedAt: deletedAt, PhotoQuality: quality}
+		p := &entity.Photo{ID: id, CreatedAt: before, PhotoQuality: quality}
+
+		if deletedAt != nil {
+			p.DeletedAt = entity.DeletedAtTime(*deletedAt)
+		}
+
+		return p
 	}
 	created := func(p *entity.Photo, createdAt time.Time) *entity.Photo {
 		p.CreatedAt = createdAt

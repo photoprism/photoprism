@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -56,14 +57,14 @@ func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 			) b ON b.album_uid = albums.album_uid
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DialectSQLite:
-		res = Db().Table(entity.Album{}.TableName()).
+		res = Db().Table(entity.Album{}.TableName()).Where(condition).
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_missing = FALSE AND f.file_hash <> '' AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE ?`, media.PreviewExpr, condition))
+		)`, media.PreviewExpr))
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -118,15 +119,14 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DialectSQLite:
-		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Album{}.TableName()).Where(condition).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
 			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			  GROUP BY p.photo_path
 			) b
 		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
-		AND b.photo_path = albums.album_path LIMIT 1)
-		WHERE ?`, media.PreviewExpr, condition))
+		AND b.photo_path = albums.album_path LIMIT 1)`, media.PreviewExpr))
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -181,15 +181,14 @@ func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DialectSQLite:
-		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Album{}.TableName()).Where(condition).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
 			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			  GROUP BY p.photo_year, p.photo_month
 			) b
 		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
-		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
-		WHERE ?`, media.PreviewExpr, condition))
+		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)`, media.PreviewExpr))
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -310,14 +309,14 @@ func refreshManualAlbumCover(album entity.Album) error {
 		return clearAutoAlbumCover(album.AlbumUID)
 	}
 
-	return Db().Model(entity.Album{}).
+	return Db().Model(&entity.Album{}).
 		Where("album_uid = ? AND thumb_src = ?", album.AlbumUID, entity.SrcAuto).
 		UpdateColumn("thumb", file.FileHash).Error
 }
 
 // clearAutoAlbumCover removes the automatic cover of an album without matching pictures, leaving manual covers unchanged.
 func clearAutoAlbumCover(albumUID string) error {
-	return Db().Model(entity.Album{}).
+	return Db().Model(&entity.Album{}).
 		Where("album_uid = ? AND thumb_src = ? AND thumb <> ''", albumUID, entity.SrcAuto).
 		UpdateColumn("thumb", "").Error
 }
@@ -440,23 +439,23 @@ func UpdateLabelCovers() (err error) {
 		) b ON b.label_id = labels.id
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case dsn.DialectSQLite:
-		res = Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Label{}.TableName()).Where(condition).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-		) WHERE ?`, media.PreviewExpr, condition))
+		)`, media.PreviewExpr))
 
 		if res.Error == nil {
-			catRes := Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+			catRes := Db().Table(entity.Label{}.TableName()).Where("thumb IS NULL").UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-			) WHERE thumb IS NULL`, media.PreviewExpr))
+			)`, media.PreviewExpr))
 
 			res.RowsAffected += catRes.RowsAffected
 		}
@@ -486,7 +485,7 @@ func UpdateSubjectCovers(public bool) (err error) {
 
 	start := time.Now()
 
-	var photosJoin *gorm.SqlExpr
+	var photosJoin clause.Expr
 
 	// Use faces tagged on private pictures as cover images?
 	// see https://github.com/photoprism/photoprism/issues/4238

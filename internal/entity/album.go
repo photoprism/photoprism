@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/event"
@@ -60,36 +60,36 @@ type Albums []Album
 
 // Album represents a photo album and its metadata, including filter definitions for virtual albums.
 type Album struct {
-	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
-	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
-	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
-	AlbumPath        string      `gorm:"type:VARBINARY(1024);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
-	AlbumType        string      `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
-	AlbumTitle       string      `gorm:"type:VARCHAR(160);index;" json:"Title" yaml:"Title"`
-	AlbumLocation    string      `gorm:"type:VARCHAR(160);" json:"Location" yaml:"Location,omitempty"`
-	AlbumCategory    string      `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
-	AlbumCaption     string      `gorm:"type:VARCHAR(1024);" json:"Caption" yaml:"Caption,omitempty"`
-	AlbumDescription string      `gorm:"type:VARCHAR(2048);" json:"Description" yaml:"Description,omitempty"`
-	AlbumNotes       string      `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
-	AlbumFilter      string      `gorm:"type:VARBINARY(2048);" json:"Filter" yaml:"Filter,omitempty"`
-	AlbumOrder       string      `gorm:"type:VARBINARY(32);" json:"Order" yaml:"Order,omitempty"`
-	AlbumTemplate    string      `gorm:"type:VARBINARY(255);" json:"Template" yaml:"Template,omitempty"`
-	AlbumState       string      `gorm:"type:VARCHAR(100);index;" json:"State" yaml:"State,omitempty"`
-	AlbumCountry     string      `gorm:"type:VARBINARY(2);index:idx_albums_country_year_month;default:'zz';" json:"Country" yaml:"Country,omitempty"`
-	AlbumYear        int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
-	AlbumMonth       int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
-	AlbumDay         int         `gorm:"index:idx_albums_ymd;" json:"Day" yaml:"Day,omitempty"`
+	ID               uint        `gorm:"primaryKey;size:32" json:"ID" yaml:"-"`
+	AlbumUID         string      `gorm:"type:bytes;size:42;uniqueIndex:uix_albums_album_uid;" json:"UID" yaml:"UID"`
+	ParentUID        string      `gorm:"type:bytes;size:42;default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
+	AlbumSlug        string      `gorm:"type:bytes;size:160;index;" json:"Slug" yaml:"Slug"`
+	AlbumPath        string      `gorm:"type:bytes;size:1024;index;" json:"Path,omitempty" yaml:"Path,omitempty"`
+	AlbumType        string      `gorm:"type:bytes;size:8;default:'album';" json:"Type" yaml:"Type,omitempty"`
+	AlbumTitle       string      `gorm:"size:160;index;" json:"Title" yaml:"Title"`
+	AlbumLocation    string      `gorm:"size:160;" json:"Location" yaml:"Location,omitempty"`
+	AlbumCategory    string      `gorm:"size:100;index;" json:"Category" yaml:"Category,omitempty"`
+	AlbumCaption     string      `gorm:"size:1024;" json:"Caption" yaml:"Caption,omitempty"`
+	AlbumDescription string      `gorm:"size:2048;" json:"Description" yaml:"Description,omitempty"`
+	AlbumNotes       string      `gorm:"size:1024;" json:"Notes" yaml:"Notes,omitempty"`
+	AlbumFilter      string      `gorm:"type:bytes;size:2048;default:'';" json:"Filter" yaml:"Filter,omitempty"`
+	AlbumOrder       string      `gorm:"type:bytes;size:32;" json:"Order" yaml:"Order,omitempty"`
+	AlbumTemplate    string      `gorm:"type:bytes;size:255;" json:"Template" yaml:"Template,omitempty"`
+	AlbumState       string      `gorm:"size:100;index;" json:"State" yaml:"State,omitempty"`
+	AlbumCountry     string      `gorm:"type:bytes;size:2;index:idx_albums_country_year_month;default:'zz';" json:"Country" yaml:"Country,omitempty"`
+	AlbumYear        int         `gorm:"index:idx_albums_country_year_month;size:32;" json:"Year" yaml:"Year,omitempty"`
+	AlbumMonth       int         `gorm:"index:idx_albums_country_year_month;size:32;" json:"Month" yaml:"Month,omitempty"`
+	AlbumDay         int         `gorm:"index:idx_albums_ymd;size:32;" json:"Day" yaml:"Day,omitempty"`
 	AlbumFavorite    bool        `json:"Favorite" yaml:"Favorite,omitempty"`
 	AlbumPrivate     bool        `json:"Private" yaml:"Private,omitempty"`
-	Thumb            string      `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	CreatedBy        string      `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
+	Thumb            string      `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc         string      `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	CreatedBy        string      `gorm:"type:bytes;size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time   `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
-	PublishedAt      *time.Time  `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt        *time.Time  `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
-	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID;" json:"-" yaml:"Photos,omitempty"`
+	PublishedAt      *time.Time  `gorm:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt        DeletedAt   `gorm:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
+	Photos           PhotoAlbums `gorm:"foreignKey:AlbumUID;references:AlbumUID;-:migration" json:"-" yaml:"Photos,omitempty"`
 }
 
 // AfterUpdate flushes the album cache when an album is updated.
@@ -113,7 +113,7 @@ func (Album) TableName() string {
 func UpdateAlbum(albumUID string, values any) (err error) {
 	if rnd.InvalidUID(albumUID, AlbumUID) {
 		return fmt.Errorf("album: invalid uid %s", clean.Log(albumUID))
-	} else if err = Db().Model(Album{}).Where("album_uid = ?", albumUID).UpdateColumns(values).Error; err != nil {
+	} else if err = Db().Model(&Album{}).Where("album_uid = ?", albumUID).UpdateColumns(values).Error; err != nil {
 		return err
 	}
 
@@ -566,14 +566,16 @@ func (m *Album) Find() *Album {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Album) BeforeCreate(scope *gorm.Scope) error {
+func (m *Album) BeforeCreate(tx *gorm.DB) error {
 	if rnd.IsUID(m.AlbumUID, AlbumUID) {
 		return nil
 	}
 
 	m.AlbumUID = rnd.GenerateUID(AlbumUID)
 
-	return scope.SetColumn("AlbumUID", m.AlbumUID)
+	tx.Statement.SetColumn("AlbumUID", m.AlbumUID)
+
+	return nil
 }
 
 // String returns the id or name as string.
@@ -923,7 +925,13 @@ func clearDuplicateFolderAlbumPaths(albumPath string, keepID uint) error {
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Album) Save() error {
-	if err := Db().Save(m).Error; err != nil {
+	if err := Db().Transaction(func(tx *gorm.DB) error {
+		if err := tx.Save(m).Error; err != nil {
+			return err
+		}
+
+		return m.savePhotos(tx)
+	}); err != nil {
 		return err
 	} else {
 		event.PublishUserEntities("albums", event.EntityUpdated, []string{m.AlbumUID}, m.CreatedBy)
@@ -933,12 +941,31 @@ func (m *Album) Save() error {
 
 // Create inserts a new row to the database.
 func (m *Album) Create() error {
-	if err := Db().Create(m).Error; err != nil {
+	if err := Db().Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(m).Error; err != nil {
+			return err
+		}
+
+		return m.savePhotos(tx)
+	}); err != nil {
 		return err
 	}
 
 	m.PublishCountChange(1)
 	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)
+
+	return nil
+}
+
+// savePhotos saves the picture references of the album, e.g. those restored from a backup file.
+func (m *Album) savePhotos(tx *gorm.DB) error {
+	for i := range m.Photos {
+		m.Photos[i].AlbumUID = m.AlbumUID
+
+		if err := tx.Save(&m.Photos[i]).Error; err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
@@ -975,7 +1002,7 @@ func (m *Album) Delete() error {
 		return err
 	} else {
 		m.UpdatedAt = now
-		m.DeletedAt = &now
+		m.DeletedAt = DeletedAtTime(now)
 		FlushAlbumCache()
 	}
 
@@ -1012,11 +1039,11 @@ func (m *Album) DeletePermanently() error {
 
 // Deleted tests if the entity is deleted.
 func (m *Album) Deleted() bool {
-	if m.DeletedAt == nil {
+	if !m.DeletedAt.Valid {
 		return false
 	}
 
-	return !m.DeletedAt.IsZero()
+	return !m.DeletedAt.Time.IsZero()
 }
 
 // Restore restores the entity in the database.
@@ -1033,7 +1060,7 @@ func (m *Album) Restore() error {
 		return err
 	}
 
-	m.DeletedAt = nil
+	m.DeletedAt = DeletedAt{}
 
 	m.PublishCountChange(1)
 	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)

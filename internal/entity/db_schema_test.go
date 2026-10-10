@@ -3,9 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/sqlcount"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -72,7 +72,7 @@ func closedTestDb(t *testing.T) *gorm.DB {
 	conn, ok := dbConn.(*DbConn)
 	require.True(t, ok, "test database provider")
 
-	p, err := sqlcount.OpenGorm(conn.Driver, conn.Dsn)
+	p, err := sqlcount.OpenGorm(conn.Driver, conn.Dsn, func(pool gorm.ConnPool) (*gorm.DB, error) { return OpenDbConn(conn.Driver, conn.Dsn, pool) })
 	require.NoError(t, err)
 	require.NoError(t, p.Close())
 

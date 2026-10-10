@@ -707,6 +707,8 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Order("photo_year DESC").
 		Pluck("DISTINCT photo_year", &cfg.Years)
 
+	cfg.Categories = make(CategoryLabels, 0)
+
 	c.Db().
 		Table("categories").
 		Select("l.custom_slug, l.label_name").
@@ -725,6 +727,15 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Order("album_category").
 		Limit(10000).Offset(0).
 		Pluck("album_category", &cfg.AlbumCategories)
+
+	// Lists without values are serialized as null, as the frontend expects.
+	if len(cfg.Years) == 0 {
+		cfg.Years = nil
+	}
+
+	if len(cfg.AlbumCategories) == 0 {
+		cfg.AlbumCategories = nil
+	}
 
 	// Trace log for performance measurement.
 	log.Tracef("config: updated counts [%s]", time.Since(start))

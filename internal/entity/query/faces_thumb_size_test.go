@@ -3,9 +3,9 @@ package query
 import (
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -127,10 +127,10 @@ func TestEmbedDetailGate(t *testing.T) {
 				Where("marker_uid = ?", m.MarkerUID).
 				UpdateColumn("embed_detail", gorm.Expr("NULL")).Error)
 
-			var stored int
+			var stored int64
 			require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
 				Where("marker_uid = ? AND embed_detail IS NULL", m.MarkerUID).Count(&stored).Error)
-			require.Equal(t, 1, stored, "the row has to hold a real NULL, or this case tests nothing")
+			require.EqualValues(t, 1, stored, "the row has to hold a real NULL, or this case tests nothing")
 		}
 	}
 

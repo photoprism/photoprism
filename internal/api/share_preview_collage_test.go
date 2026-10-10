@@ -42,7 +42,7 @@ func sharedPreviewAlbum(t *testing.T, title string, photoUIDs ...string) (albumU
 
 	link := entity.NewUserLink(album.AlbumUID, entity.Admin.UserUID)
 	require.NoError(t, link.Save())
-	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(link).Error })
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&link).Error })
 
 	require.Len(t, entity.FindRedeemableLinksByToken(link.LinkToken, album.AlbumUID), 1)
 

@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -116,7 +114,7 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	if frm.Query != "" {
 		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query, false)
 		for i, where := range wheres {
-			s = s.Where("?", gorm.Expr(where, values[i]...))
+			s = s.Where("("+where+")", values[i]...)
 		}
 	}
 
@@ -166,8 +164,8 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 	for i, where := range wheres {
 		var subj []string
 
-		stmt := Db().Model(entity.Subject{})
-		stmt = stmt.Where("?", gorm.Expr(where, values[i]...))
+		stmt := Db().Model(&entity.Subject{})
+		stmt = stmt.Where("("+where+")", values[i]...)
 
 		if err := stmt.Scan(&matches).Error; err != nil {
 			log.Errorf("search: %s while finding subjects", err)

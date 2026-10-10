@@ -208,7 +208,7 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 
 	if fileUID != "" {
 		// Do nothing.
-	} else if err = Db().Model(entity.File{}).
+	} else if err = Db().Model(&entity.File{}).
 		Where("photo_uid = ? AND file_missing = FALSE AND file_type IN (?)", photoUID, media.PreviewExpr).
 		Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
 		return err
@@ -222,12 +222,12 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 		return fmt.Errorf("file uid is missing")
 	}
 
-	if err = Db().Model(entity.File{}).
+	if err = Db().Model(&entity.File{}).
 		Where("photo_uid = ? AND file_uid <> ?", photoUID, fileUID).
 		UpdateColumn("file_primary", false).Error; err != nil {
 		return err
 	} else if err = Db().
-		Model(entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).
+		Model(&entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).
 		UpdateColumn("file_primary", true).Error; err != nil {
 		return err
 	} else {
@@ -239,7 +239,7 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 
 // SetFileError updates the file error column.
 func SetFileError(fileUID, errorString string) {
-	if err := Db().Model(entity.File{}).Where("file_uid = ?", fileUID).UpdateColumn("file_error", errorString).Error; err != nil {
+	if err := Db().Model(&entity.File{}).Where("file_uid = ?", fileUID).UpdateColumn("file_error", errorString).Error; err != nil {
 		log.Errorf("files: %s (set error)", err.Error())
 	}
 }

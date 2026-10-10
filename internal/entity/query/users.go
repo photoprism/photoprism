@@ -20,11 +20,11 @@ func RegisteredUsers() (result entity.Users) {
 
 // CountUsers returns the number of users based on the specified filter options.
 func CountUsers(registered, active bool, includeRoles, excludeRoles []string) (count int) {
-	if !Db().HasTable("auth_users") {
+	if !Db().Migrator().HasTable("auth_users") {
 		return 0
 	}
 
-	stmt := Db().Model(entity.Users{})
+	stmt := Db().Model(&entity.Users{})
 
 	if registered {
 		stmt = stmt.Where("id > 0")

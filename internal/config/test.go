@@ -12,12 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	gc "github.com/patrickmn/go-cache"
 	"github.com/urfave/cli/v2"
-
-	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"

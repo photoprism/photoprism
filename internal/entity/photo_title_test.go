@@ -279,7 +279,7 @@ func TestPhoto_FileTitle(t *testing.T) {
 func TestPhoto_UpdateTitleLabels(t *testing.T) {
 	FirstOrCreateLabel(NewLabel("Food", 1))
 	FirstOrCreateLabel(NewLabel("Wine", 2))
-	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
+	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: DeletedAtTime(*TimeStamp())})
 
 	t.Run("Success", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -47,7 +47,7 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 		return result, fmt.Errorf("faces: migration model is required")
 	}
 
-	base := Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
+	base := Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace).Session(&gorm.Session{})
 
 	queries := []struct {
 		stmt *gorm.DB
@@ -85,8 +85,7 @@ func whereFaceMigrationUnreadableFile(stmt *gorm.DB) *gorm.DB {
 		Where("marker_invalid = FALSE AND file_uid <> ''").
 		Where("file_uid NOT IN (?)", Db().Model(&entity.File{}).
 			Select("file_uid").
-			Where("file_uid <> '' AND file_missing = FALSE AND file_error = ''").
-			QueryExpr())
+			Where("file_uid <> '' AND file_missing = FALSE AND file_error = ''"))
 }
 
 // FaceMigrationFileUIDs returns the next batch of files that contain valid face markers.
@@ -138,7 +137,7 @@ func HiddenFaceMarkers() (result []string, err error) {
 	err = Db().Model(&entity.Marker{}).
 		Where("marker_type = ? AND face_id <> ''", entity.MarkerFace).
 		Where("face_id IN (?)", Db().Model(&entity.Face{}).Select("id").
-			Where("face_hidden = TRUE").QueryExpr()).
+			Where("face_hidden = TRUE")).
 		Order("marker_uid").Pluck("marker_uid", &result).Error
 
 	return result, err
@@ -325,8 +324,7 @@ func FaceMigrationSampleFiles(limit int) (result []FaceMigrationSampleFile, err 
 		Where("files.file_hash <> '' AND files.file_width > 0 AND files.file_height > 0 AND files.file_missing = FALSE").
 		Where("files.file_uid IN (?)", Db().Model(&entity.Marker{}).
 			Select("file_uid").
-			Where("marker_type = ? AND marker_invalid = FALSE AND file_uid <> ''", entity.MarkerFace).
-			QueryExpr()).
+			Where("marker_type = ? AND marker_invalid = FALSE AND file_uid <> ''", entity.MarkerFace)).
 		Order("files.file_uid").Limit(limit).Scan(&result).Error
 
 	return result, err
@@ -518,7 +516,7 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 		// from the old vector space is stale and the new ones are rebuilt below in the same
 		// transaction. Neither this nor the marker reset that follows is batched, because a
 		// partially replaced cluster table is not a state the library can be left in.
-		if err := tx.Delete(&entity.Face{}).Error; err != nil {
+		if err := tx.Where("1 = 1").Delete(&entity.Face{}).Error; err != nil {
 			return err
 		}
 

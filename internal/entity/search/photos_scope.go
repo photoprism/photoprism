@@ -3,7 +3,7 @@ package search
 import (
 	"strings"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -103,7 +103,8 @@ func scopePhotosForSession(stmt *gorm.DB, sess *entity.Session, allowUIDs []stri
 		args = append(args, clean.SqlPrefixArgs(basePath+"/")...)
 	}
 
-	return stmt.Where(strings.Join(conds, " OR "), args...)
+	// A new session keeps the statement passed in unchanged.
+	return stmt.Session(&gorm.Session{}).Where(strings.Join(conds, " OR "), args...)
 }
 
 // excludeRestrictedPhotos removes private and archived (soft-deleted) pictures from a photos or files

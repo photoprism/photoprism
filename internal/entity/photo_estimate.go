@@ -3,7 +3,9 @@ package entity
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm/clause"
+
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -105,14 +107,14 @@ func (m *Photo) EstimateLocation(force bool) {
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).
 			Where("taken_src <> '' AND taken_at BETWEEN CAST(? AS DATETIME) AND CAST(? AS DATETIME)", rangeMin, rangeMax).
-			Order(gorm.Expr("ABS(TIMESTAMPDIFF(SECOND, taken_at, ?))", m.TakenAt)).Limit(2).
+			Order(clause.OrderBy{Expression: gorm.Expr("ABS(TIMESTAMPDIFF(SECOND, taken_at, ?))", m.TakenAt)}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
 	case dsn.DialectSQLite:
 		err = UnscopedDb().
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).
 			Where("taken_src <> '' AND taken_at BETWEEN ? AND ?", rangeMin, rangeMax).
-			Order(gorm.Expr("ABS(JulianDay(taken_at) - JulianDay(?))", m.TakenAt)).Limit(2).
+			Order(clause.OrderBy{Expression: gorm.Expr("ABS(JulianDay(taken_at) - JulianDay(?))", m.TakenAt)}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
 	default:
 		log.Warnf("photo: unsupported sql dialect %s", clean.Log(DbDialect()))

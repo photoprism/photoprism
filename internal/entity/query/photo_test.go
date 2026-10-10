@@ -117,8 +117,8 @@ func TestMissingPhotos(t *testing.T) {
 	t.Run("ArchivedNotRemoved", func(t *testing.T) {
 		deletedAt := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 		active := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingActive", PhotoQuality: 3}
-		archived := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingArchived", PhotoQuality: 3, DeletedAt: &deletedAt}
-		removed := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingRemoved", PhotoQuality: -1, DeletedAt: &deletedAt}
+		archived := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingArchived", PhotoQuality: 3, DeletedAt: entity.DeletedAtTime(deletedAt)}
+		removed := entity.Photo{PhotoUID: rnd.GenerateUID(entity.PhotoUID), PhotoName: "MissingRemoved", PhotoQuality: -1, DeletedAt: entity.DeletedAtTime(deletedAt)}
 
 		for _, photo := range []*entity.Photo{&active, &archived, &removed} {
 			require.NoError(t, UnscopedDb().Create(photo).Error)
@@ -219,7 +219,7 @@ func TestFixPrimaries(t *testing.T) {
 			FileHash:    rnd.GenerateUID(entity.FileUID),
 			FilePrimary: true,
 			FileType:    "jpg",
-			DeletedAt:   entity.TimeStamp(),
+			DeletedAt:   entity.DeletedAtTime(*entity.TimeStamp()),
 		}
 		if err := Db().Create(&deletedPrimary).Error; err != nil {
 			t.Fatal(err)
@@ -328,7 +328,6 @@ func TestFlagHiddenPhotos(t *testing.T) {
 				UpdatedAt:        time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				EditedAt:         nil,
 				CheckedAt:        &checkedTime,
-				DeletedAt:        nil,
 				PhotoColor:       14,
 				PhotoStack:       0,
 				PhotoFaces:       0,
@@ -360,7 +359,7 @@ func TestFlagHiddenPhotos(t *testing.T) {
 			PhotoUID:     rnd.GenerateUID(entity.PhotoUID),
 			PhotoName:    "FlagHiddenArchived",
 			PhotoQuality: 3,
-			DeletedAt:    &archivedAt,
+			DeletedAt:    entity.DeletedAtTime(archivedAt),
 		}
 		active := entity.Photo{
 			PhotoUID:     rnd.GenerateUID(entity.PhotoUID),
@@ -380,7 +379,7 @@ func TestFlagHiddenPhotos(t *testing.T) {
 		var result entity.Photo
 		require.NoError(t, UnscopedDb().Where("id = ?", archived.ID).First(&result).Error)
 		assert.Equal(t, 3, result.PhotoQuality)
-		require.NotNil(t, result.DeletedAt)
+		require.True(t, result.DeletedAt.Valid)
 
 		result = entity.Photo{}
 		require.NoError(t, UnscopedDb().Where("id = ?", active.ID).First(&result).Error)
@@ -394,7 +393,7 @@ func qualifyingPhotoPaths() map[string]bool {
 	paths := make(map[string]bool)
 
 	for _, photo := range entity.PhotoFixtures {
-		if photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && !photo.TakenAtLocal.IsZero() {
+		if !photo.DeletedAt.Valid && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && !photo.TakenAtLocal.IsZero() {
 			paths[photo.PhotoPath] = true
 		}
 	}
@@ -425,7 +424,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 			assert.GreaterOrEqual(t, d.UTC().Format(time.DateOnly), minDate.UTC().Format(time.DateOnly), path)
 		}
 		for _, photo := range entity.PhotoFixtures {
-			if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+			if (!photo.DeletedAt.Valid && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
 				_, ok := p[photo.PhotoPath]
 				assert.True(t, ok, photo.PhotoPath)
 			}
@@ -437,7 +436,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 		}
 		bp := entity.PhotoFixtures.Pointer("Photo18")
 		bp.PhotoQuality = 4
-		bp.DeletedAt = nil
+		bp.DeletedAt = entity.DeletedAt{}
 		require.NoError(t, entity.UnscopedDb().Save(bp).Error)
 
 		// Saving Photo18 above adds its path to the reported set; the unreadable date below
@@ -467,7 +466,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 			assert.GreaterOrEqual(t, d.UTC().Format(time.DateOnly), minDate.UTC().Format(time.DateOnly), path)
 		}
 		for _, photo := range entity.PhotoFixtures {
-			if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+			if (!photo.DeletedAt.Valid && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
 				_, ok := p[photo.PhotoPath]
 				assert.True(t, ok, photo.PhotoPath)
 			}

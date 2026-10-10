@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"testing"
 
+	"gorm.io/gorm"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
@@ -133,7 +135,7 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 			if existingKeywordIDs[keyword.ID] {
 				continue
 			}
-			var references int
+			var references int64
 			assert.NoError(t, db.Model(&entity.PhotoKeyword{}).Where("keyword_id = ?", keyword.ID).Count(&references).Error)
 			if references == 0 {
 				assert.NoError(t, db.Unscoped().Delete(&entity.Keyword{}, "id = ?", keyword.ID).Error)
@@ -261,7 +263,7 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().Where("photo_id = ?", photo.ID).Find(&priorLabels).Error)
 
 		t.Cleanup(func() {
-			db := entity.UnscopedDb().Unscoped()
+			db := entity.UnscopedDb().Unscoped().Session(&gorm.Session{})
 			assert.NoError(t, db.Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
 			for _, relation := range priorLabels {
 				assert.NoError(t, db.Create(&relation).Error)

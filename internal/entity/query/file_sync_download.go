@@ -17,7 +17,7 @@ func SetDownloadFileID(filename string, fileId uint) error {
 
 	filename = "/" + filename
 
-	result := Db().Model(entity.FileSync{}).
+	result := Db().Model(&entity.FileSync{}).
 		Where("remote_name = ? AND status = ? AND file_id = 0", filename, entity.FileSyncDownloaded).
 		Update("file_id", fileId)
 

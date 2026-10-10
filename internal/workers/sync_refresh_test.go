@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/webdav"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -102,8 +102,8 @@ func TestSync_refreshRemoteChanges(t *testing.T) {
 
 		var mu sync.Mutex
 		updates := 0
-		entity.Db().Callback().Update().After("gorm:update").Register("test:count_file_sync_updates", func(scope *gorm.Scope) {
-			if scope.TableName() == (entity.FileSync{}).TableName() {
+		entity.Db().Callback().Update().After("gorm:update").Register("test:count_file_sync_updates", func(tx *gorm.DB) {
+			if tx.Statement.Table == (entity.FileSync{}).TableName() {
 				mu.Lock()
 				updates++
 				mu.Unlock()

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -260,7 +260,7 @@ func FlagHiddenPhotos() (err error) {
 
 	ids := Db().Select("id").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = TRUE AND file_missing = FALSE AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1 AND deleted_at IS NULL").
-		Table(entity.Photo{}.TableName()).SubQuery()
+		Table(entity.Photo{}.TableName())
 	if result := UnscopedDb().Table(entity.Photo{}.TableName()).
 		Where("id IN (?) AND photo_quality > -1", ids).
 		UpdateColumn("photo_quality", -1); result.Error != nil {

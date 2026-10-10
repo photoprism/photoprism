@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -14,8 +14,8 @@ var keywordMutex = sync.Mutex{}
 
 // Keyword represents a normalized word used for full-text search and tagging.
 type Keyword struct {
-	ID      uint   `gorm:"primary_key" json:"ID,omitempty" yaml:"ID,omitempty"`
-	Keyword string `gorm:"type:VARCHAR(64);index;" json:"Keyword" yaml:"Keyword,omitempty"`
+	ID      uint   `gorm:"primaryKey;size:32" json:"ID,omitempty" yaml:"ID,omitempty"`
+	Keyword string `gorm:"size:64;index;" json:"Keyword" yaml:"Keyword,omitempty"`
 	Skip    bool   `json:"Skip" yaml:"Skip"`
 }
 
@@ -89,7 +89,7 @@ func (m *Keyword) AfterDelete(tx *gorm.DB) (err error) {
 }
 
 // AfterCreate flushes the cache when the entity is created.
-func (m *Keyword) AfterCreate(scope *gorm.Scope) error {
+func (m *Keyword) AfterCreate(tx *gorm.DB) error {
 	FlushCachedKeyword(m)
 	return nil
 }

@@ -150,23 +150,25 @@ func TestClientsResetCommand(t *testing.T) {
 }
 
 // countSessionRows returns the number of stored sessions with the specified ID.
-func countSessionRows(t *testing.T, id string) (n int) {
+func countSessionRows(t *testing.T, id string) int {
+	var n64 int64
 	t.Helper()
 
-	if err := entity.Db().Model(&entity.Session{}).Where("id = ?", id).Count(&n).Error; err != nil {
+	if err := entity.Db().Model(&entity.Session{}).Where("id = ?", id).Count(&n64).Error; err != nil {
 		t.Fatal(err)
 	}
 
-	return n
+	return int(n64)
 }
 
 // countPasswordRows returns the number of stored passwords with the specified UID.
-func countPasswordRows(t *testing.T, uid string) (n int) {
+func countPasswordRows(t *testing.T, uid string) int {
+	var n64 int64
 	t.Helper()
 
-	if err := entity.Db().Model(&entity.Password{}).Where("uid = ?", uid).Count(&n).Error; err != nil {
+	if err := entity.Db().Model(&entity.Password{}).Where("uid = ?", uid).Count(&n64).Error; err != nil {
 		t.Fatal(err)
 	}
 
-	return n
+	return int(n64)
 }

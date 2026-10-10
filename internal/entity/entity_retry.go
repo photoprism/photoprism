@@ -2,12 +2,10 @@ package entity
 
 import (
 	"errors"
-	"slices"
 	"strings"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/mattn/go-sqlite3"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -68,11 +66,6 @@ func isLockError(err error) bool {
 		return false
 	} else if isDeadlockError(err) {
 		return true
-	}
-	// GORM collects multiple errors in a list that cannot be unwrapped.
-	var gormErrs gorm.Errors
-	if errors.As(err, &gormErrs) {
-		return slices.ContainsFunc(gormErrs, isLockError)
 	}
 	var mysqlErr *mysql.MySQLError
 	if errors.As(err, &mysqlErr) {

@@ -97,8 +97,8 @@ func clientsListAction(ctx *cli.Context) error {
 			if deleted {
 				deletedAt := ""
 
-				if client.DeletedAt != nil {
-					deletedAt = client.DeletedAt.Format("2006-01-02 15:04:05")
+				if client.DeletedAt.Valid {
+					deletedAt = client.DeletedAt.Time.Format("2006-01-02 15:04:05")
 				}
 
 				rows[i] = append(rows[i], deletedAt)

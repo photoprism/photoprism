@@ -8,11 +8,11 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -748,7 +748,7 @@ func TestIndexRelated_TypeCheck(t *testing.T) {
 
 	// notIndexed requires that no file with the given content is indexed.
 	notIndexed := func(t *testing.T, data []byte) {
-		var count int
+		var count int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_size = ?", len(data)).Count(&count).Error)
 		assert.Zero(t, count)
 	}
@@ -958,9 +958,9 @@ func TestIndexRelated_DetailsNotSaved(t *testing.T) {
 	// failDetails makes writes of photo details fail until the test or the returned function removes them.
 	failDetails := func(t *testing.T) func() {
 		name := "test:index-details-failure"
-		fail := func(scope *gorm.Scope) {
-			if scope.TableName() == (entity.Details{}).TableName() {
-				_ = scope.Err(errors.New("write control"))
+		fail := func(tx *gorm.DB) {
+			if tx.Statement.Table == (entity.Details{}).TableName() {
+				_ = tx.AddError(errors.New("write control"))
 			}
 		}
 
@@ -1024,7 +1024,7 @@ func TestIndexRelated_DetailsNotSaved(t *testing.T) {
 	file, count := findFile(t)
 	assert.True(t, file.FilePrimary)
 	assert.Equal(t, int64(-1), file.ModTime)
-	assert.Equal(t, int64(0), count, "details are not stored")
+	assert.EqualValues(t, int64(0), count, "details are not stored")
 
 	photo := entity.Photo{}
 	require.NoError(t, entity.UnscopedDb().Where("id = ?", file.PhotoID).First(&photo).Error)
@@ -1038,7 +1038,7 @@ func TestIndexRelated_DetailsNotSaved(t *testing.T) {
 
 	file, count = findFile(t)
 	assert.Equal(t, int64(-1), file.ModTime)
-	assert.Equal(t, int64(0), count, "details are not stored")
+	assert.EqualValues(t, int64(0), count, "details are not stored")
 
 	// Once the details can be stored, the next run stores them.
 	removeFailure()
@@ -1049,7 +1049,7 @@ func TestIndexRelated_DetailsNotSaved(t *testing.T) {
 
 	file, count = findFile(t)
 	assert.Greater(t, file.ModTime, int64(0))
-	assert.Equal(t, int64(1), count, "details are stored")
+	assert.EqualValues(t, int64(1), count, "details are stored")
 
 	// The file is unchanged from then on.
 	assert.Equal(t, IndexSkipped, index(t).Status)

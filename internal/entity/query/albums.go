@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -63,7 +63,7 @@ func AlbumHasThumb(albumUID string) bool {
 
 	var result []string
 
-	if err := Db().Model(entity.Album{}).
+	if err := Db().Model(&entity.Album{}).
 		Joins("JOIN files ON files.file_hash = albums.thumb AND files.file_missing = FALSE AND files.file_error = '' AND files.deleted_at IS NULL").
 		Where("albums.album_uid = ?", albumUID).
 		Limit(1).

@@ -3,7 +3,7 @@ package entity
 import (
 	"errors"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 )
@@ -14,14 +14,14 @@ type PhotoLabels []PhotoLabel
 // PhotoLabel represents the many-to-many relation between Photo and Label.
 // Labels are weighted by uncertainty (100 - confidence).
 type PhotoLabel struct {
-	PhotoID     uint   `gorm:"primary_key;auto_increment:false" json:"PhotoID,omitempty" yaml:"PhotoID"`
-	LabelID     uint   `gorm:"primary_key;auto_increment:false;index" json:"LabelID,omitempty" yaml:"LabelID"`
-	LabelSrc    string `gorm:"type:VARBINARY(8);" json:"LabelSrc,omitempty" yaml:"LabelSrc,omitempty"`
-	Uncertainty int    `gorm:"type:SMALLINT" json:"Uncertainty" yaml:"Uncertainty"`
-	Topicality  int    `gorm:"type:SMALLINT;default:0;" json:"Topicality" yaml:"Topicality,omitempty"`
-	NSFW        int    `gorm:"type:SMALLINT;column:nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
-	Photo       *Photo `gorm:"PRELOAD:false" json:"-" yaml:"-"`
-	Label       *Label `gorm:"PRELOAD:true" json:"Label,omitempty" yaml:"-"`
+	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false;size:32" json:"PhotoID,omitempty" yaml:"PhotoID"`
+	LabelID     uint   `gorm:"primaryKey;autoIncrement:false;index;size:32" json:"LabelID,omitempty" yaml:"LabelID"`
+	LabelSrc    string `gorm:"type:bytes;size:8;" json:"LabelSrc,omitempty" yaml:"LabelSrc,omitempty"`
+	Uncertainty int    `gorm:"type:int;size:16" json:"Uncertainty" yaml:"Uncertainty"`
+	Topicality  int    `gorm:"type:int;size:16;default:0;" json:"Topicality" yaml:"Topicality,omitempty"`
+	NSFW        int    `gorm:"type:int;size:16;column:nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
+	Photo       *Photo `gorm:"-:migration" json:"-" yaml:"-"`
+	Label       *Label `gorm:"-:migration" json:"Label,omitempty" yaml:"-"`
 }
 
 // TableName returns the database table name for PhotoLabel.
@@ -96,7 +96,7 @@ func (m *PhotoLabel) Create() error {
 }
 
 // AfterCreate flushes the label cache once a relation has been persisted.
-func (m *PhotoLabel) AfterCreate(scope *gorm.Scope) error {
+func (m *PhotoLabel) AfterCreate(tx *gorm.DB) error {
 	FlushCachedPhotoLabel(m)
 	return nil
 }

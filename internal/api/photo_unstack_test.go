@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"gorm.io/gorm"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -33,7 +35,7 @@ func TestPhotoUnstack(t *testing.T) {
 		secondaryFolder := folder + "/London"
 		require.NoError(t, fs.MkdirAll(dir))
 		t.Cleanup(func() {
-			db := entity.UnscopedDb().Unscoped()
+			db := entity.UnscopedDb().Unscoped().Session(&gorm.Session{})
 			var photos []entity.Photo
 			require.NoError(t, db.Where("photo_path LIKE ?", folder+"/%").Find(&photos).Error)
 			var files []entity.File
@@ -52,7 +54,7 @@ func TestPhotoUnstack(t *testing.T) {
 			require.NoError(t, db.Delete(&entity.File{}, "file_name LIKE ?", folder+"/%").Error)
 			require.NoError(t, db.Delete(&entity.Photo{}, "photo_path LIKE ?", folder+"/%").Error)
 			for _, photo := range photos {
-				var remaining int
+				var remaining int64
 				require.NoError(t, db.Model(&entity.Details{}).Where("photo_id = ?", photo.ID).Count(&remaining).Error)
 				require.Zero(t, remaining)
 			}

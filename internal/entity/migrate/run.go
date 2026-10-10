@@ -3,7 +3,9 @@ package migrate
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Run automatically migrates the schema of the database passed as argument.
@@ -13,15 +15,15 @@ func Run(db *gorm.DB, opt Options) (err error) {
 	}
 
 	// Get SQL dialect name.
-	name := db.Dialect().GetName()
+	name := dsn.ParseDriver(db.Name())
 
-	if name == "" {
+	if name == dsn.DriverNone {
 		return fmt.Errorf("migrate: failed to determine sql dialect")
 	}
 
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
-		err = db.AutoMigrate(&Migration{}).Error
+		err = db.AutoMigrate(&Migration{})
 	})
 
 	if err != nil {

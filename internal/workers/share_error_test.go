@@ -96,7 +96,7 @@ func TestShare_StartUploadError(t *testing.T) {
 		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-		entity.UnscopedDb().Unscoped().Delete(photo)
+		entity.UnscopedDb().Unscoped().Delete(&photo)
 	})
 
 	remoteName := "/" + strings.Repeat("\xff", 250) + ".jpg"

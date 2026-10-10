@@ -1291,7 +1291,7 @@ func TestConfig_libraryFaceModels(t *testing.T) {
 		t.Cleanup(func() { c.db = nil })
 
 		require.NoError(t, c.connectDb())
-		require.NoError(t, c.Db().DB().Close())
+		require.NoError(t, entity.CloseDb(c.Db()))
 
 		counts, ok := c.libraryFaceModels()
 
@@ -1771,7 +1771,7 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 		// The index has to go first: a column an index references cannot be dropped, and a
 		// schema that predates the column had neither. RemoveIndex keeps this portable
 		// across the drivers the suite runs on.
-		require.NoError(t, db.Model(&entity.Marker{}).RemoveIndex("idx_markers_embed_model").Error)
+		require.NoError(t, db.Migrator().DropIndex(&entity.Marker{}, "idx_markers_embed_model"))
 		require.NoError(t, db.Exec("ALTER TABLE "+table+" DROP COLUMN embed_model").Error)
 
 		t.Cleanup(func() {
@@ -1784,7 +1784,7 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 				Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
 				UpdateColumn("embed_model", entity.MarkerFixtures.Get("1000003-4").EmbedModel).Error)
 
-			require.NoError(t, db.Model(&entity.Marker{}).AddIndex("idx_markers_embed_model", "embed_model").Error)
+			require.NoError(t, db.Exec("CREATE INDEX idx_markers_embed_model ON "+table+" (embed_model)").Error)
 		})
 
 		assert.Equal(t, face.ModelFaceNet, c.libraryFaceModel())

@@ -3,8 +3,10 @@ package entity
 import (
 	"fmt"
 
+	"gorm.io/gorm/clause"
+
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -92,8 +94,8 @@ func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int
 		q = q.Where("auth_method = ?", authMethod.String())
 	}
 
-	q = q.Order(gorm.Expr("created_at DESC, CASE WHEN id = ? THEN 1 ELSE 0 END DESC, id DESC", keepID))
-	q = q.Limit(1000000000).Offset(limit)
+	q = q.Order(clause.OrderBy{Expression: gorm.Expr("created_at DESC, CASE WHEN id = ? THEN 1 ELSE 0 END DESC, id DESC", keepID)})
+	q = q.Limit(1000000000).Offset(int(limit))
 
 	found := Sessions{}
 

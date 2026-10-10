@@ -50,7 +50,7 @@ func LabelHasThumb(labelUID string) bool {
 
 	var result []string
 
-	if err := Db().Model(entity.Label{}).
+	if err := Db().Model(&entity.Label{}).
 		Joins("JOIN files ON files.file_hash = labels.thumb AND files.file_missing = FALSE AND files.file_error = '' AND files.deleted_at IS NULL").
 		Where("labels.label_uid = ?", labelUID).
 		Limit(1).

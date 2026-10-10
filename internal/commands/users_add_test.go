@@ -138,8 +138,8 @@ func removeTestUser(t *testing.T, uid string) {
 	t.Helper()
 
 	db := entity.UnscopedDb()
-	assert.NoError(t, db.Delete(entity.UserDetails{}, "user_uid = ?", uid).Error)
-	assert.NoError(t, db.Delete(entity.UserSettings{}, "user_uid = ?", uid).Error)
-	assert.NoError(t, db.Delete(entity.Password{}, "uid = ?", uid).Error)
-	assert.NoError(t, db.Delete(entity.User{}, "user_uid = ?", uid).Error)
+	assert.NoError(t, db.Delete(&entity.UserDetails{}, "user_uid = ?", uid).Error)
+	assert.NoError(t, db.Delete(&entity.UserSettings{}, "user_uid = ?", uid).Error)
+	assert.NoError(t, db.Delete(&entity.Password{}, "uid = ?", uid).Error)
+	assert.NoError(t, db.Delete(&entity.User{}, "user_uid = ?", uid).Error)
 }

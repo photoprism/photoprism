@@ -7,14 +7,20 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 var photoYamlMutex = sync.Mutex{}
+
+// photoSrcSize is the size of the VARBINARY(8) photo source and type columns in bytes.
+const photoSrcSize = 8
 
 // Yaml returns photo data as YAML string.
 func (m *Photo) Yaml() ([]byte, error) {
@@ -142,6 +148,38 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 	}
 
 	m.NormalizeValues()
+	m.clipYamlValues()
 
 	return nil
+}
+
+// clipYamlValues limits restored values to the size of their columns, so a backup file cannot
+// make the photo unsavable. Source names longer than their column are not known sources.
+func (m *Photo) clipYamlValues() {
+	for _, src := range []*string{&m.PhotoType, &m.TakenSrc, &m.TypeSrc, &m.TitleSrc, &m.CaptionSrc, &m.PlaceSrc} {
+		if len(*src) > photoSrcSize {
+			*src = ""
+		}
+	}
+
+	for _, col := range []struct {
+		value *string
+		size  int
+		bytes bool
+	}{
+		{&m.PhotoTitle, txt.ClipLongName, false},
+		{&m.PhotoCaption, txt.ClipLongText, false},
+		{&m.UUID, 255, true},
+		{&m.OriginalName, 755, true},
+		{&m.TimeZone, 64, true},
+		{&m.PhotoExposure, 64, true},
+		{&m.CameraSerial, 160, true},
+		{&m.CreatedBy, 42, true},
+	} {
+		if col.bytes && len(*col.value) > col.size {
+			*col.value = clip.Bytes(*col.value, col.size)
+		} else if !col.bytes && utf8.RuneCountInString(*col.value) > col.size {
+			*col.value = clip.Runes(*col.value, col.size)
+		}
+	}
 }

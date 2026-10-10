@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -21,11 +21,11 @@ var subjectMutex = sync.Mutex{}
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjUID      string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	SubjType     string     `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
-	SubjSrc      string     `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string     `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
-	SubjName     string     `gorm:"size:160;unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjUID      string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
+	SubjType     string     `gorm:"type:bytes;size:8;default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjSrc      string     `gorm:"type:bytes;size:8;default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjSlug     string     `gorm:"type:bytes;size:160;index;default:'';" json:"Slug" yaml:"-"`
+	SubjName     string     `gorm:"size:160;uniqueIndex:uix_subjects_subj_name;default:'';" json:"Name" yaml:"Name"`
 	SubjAlias    string     `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
 	SubjBirthday *time.Time `json:"Birthday" yaml:"Birthday,omitempty"`
 	SubjAbout    string     `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
@@ -35,14 +35,14 @@ type Subject struct {
 	SubjHidden   bool       `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
 	SubjPrivate  bool       `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
 	SubjExcluded bool       `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
-	FileCount    int        `gorm:"default:0;" json:"FileCount" yaml:"-"`
-	PhotoCount   int        `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
+	FileCount    int        `gorm:"default:0;size:32;" json:"FileCount" yaml:"-"`
+	PhotoCount   int        `gorm:"default:0;size:32;" json:"PhotoCount" yaml:"-"`
 	Verified     bool       `gorm:"default:false;" json:"Verified" yaml:"Verified,omitempty"`
-	Thumb        string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc     string     `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	Thumb        string     `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string     `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time  `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	DeletedAt    DeletedAt  `gorm:"index" json:"DeletedAt,omitzero" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -137,22 +137,24 @@ func FindWithheldPeople() (WithheldPeople, error) {
 }
 
 // BeforeCreate creates a random uid if needed before inserting a new row to the database.
-func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
+func (m *Subject) BeforeCreate(tx *gorm.DB) error {
 	if rnd.IsUnique(m.SubjUID, 'j') {
 		return nil
 	}
 
-	return scope.SetColumn("SubjUID", rnd.GenerateUID('j'))
+	tx.Statement.SetColumn("SubjUID", rnd.GenerateUID('j'))
+
+	return nil
 }
 
 // AfterSave is a hook that updates the name cache after saving.
-func (m *Subject) AfterSave() (err error) {
+func (m *Subject) AfterSave(tx *gorm.DB) (err error) {
 	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 
 // AfterFind is a hook that updates the name cache after querying.
-func (m *Subject) AfterFind() (err error) {
+func (m *Subject) AfterFind(tx *gorm.DB) (err error) {
 	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
@@ -227,8 +229,8 @@ func (m *Subject) Delete() error {
 
 	// Carry the mark onto the in-memory record, which the driver does not do, so that Restore
 	// and DeletePermanently see the subject as deleted without reading the row again.
-	if m.DeletedAt == nil {
-		m.DeletedAt = TimeStamp()
+	if !m.DeletedAt.Valid {
+		m.DeletedAt = DeletedAtTime(*TimeStamp())
 	}
 
 	return nil
@@ -267,17 +269,17 @@ func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
 
 // Deleted returns true if the entity is deleted.
 func (m *Subject) Deleted() bool {
-	if m.DeletedAt == nil {
+	if !m.DeletedAt.Valid {
 		return false
 	}
 
-	return !m.DeletedAt.IsZero()
+	return !m.DeletedAt.Time.IsZero()
 }
 
 // Restore restores the entity in the database.
 func (m *Subject) Restore() error {
 	if m.Deleted() {
-		m.DeletedAt = nil
+		m.DeletedAt = DeletedAt{}
 
 		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
@@ -475,7 +477,7 @@ func (m *Subject) setBirthday(born *time.Time) (changed bool) {
 
 // Visible tests if the subject is generally visible and not hidden in any way.
 func (m *Subject) Visible() bool {
-	return m.DeletedAt == nil && !m.SubjHidden && !m.SubjExcluded && !m.SubjPrivate
+	return !m.DeletedAt.Valid && !m.SubjHidden && !m.SubjExcluded && !m.SubjPrivate
 }
 
 // SaveForm updates the subject from form values.

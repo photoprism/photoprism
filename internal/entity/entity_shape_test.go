@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/legacy"
 	"github.com/photoprism/photoprism/internal/entity/sqlcount"
@@ -45,18 +46,18 @@ func TestDeletedAt_JSON(t *testing.T) {
 		omitted bool
 		hidden  bool
 	}{
-		{"Photo", &Photo{}, &Photo{DeletedAt: &deletedAt}, true, false},
-		{"File", &File{}, &File{DeletedAt: &deletedAt}, true, false},
-		{"Label", &Label{}, &Label{DeletedAt: &deletedAt}, true, false},
-		{"Subject", &Subject{}, &Subject{DeletedAt: &deletedAt}, true, false},
-		{"User", &User{}, &User{DeletedAt: &deletedAt}, true, false},
-		{"Client", &Client{}, &Client{DeletedAt: &deletedAt}, true, false},
-		{"LegacyUser", &legacy.User{}, &legacy.User{DeletedAt: &deletedAt}, true, false},
-		{"Album", &Album{}, &Album{DeletedAt: &deletedAt}, false, false},
-		{"Service", &Service{}, &Service{DeletedAt: &deletedAt}, false, false},
-		{"Folder", &Folder{}, &Folder{DeletedAt: &deletedAt}, false, true},
-		{"Camera", &Camera{}, &Camera{DeletedAt: &deletedAt}, false, true},
-		{"Lens", &Lens{}, &Lens{DeletedAt: &deletedAt}, false, true},
+		{"Photo", &Photo{}, &Photo{DeletedAt: DeletedAtTime(deletedAt)}, true, false},
+		{"File", &File{}, &File{DeletedAt: DeletedAtTime(deletedAt)}, true, false},
+		{"Label", &Label{}, &Label{DeletedAt: DeletedAtTime(deletedAt)}, true, false},
+		{"Subject", &Subject{}, &Subject{DeletedAt: DeletedAtTime(deletedAt)}, true, false},
+		{"User", &User{}, &User{DeletedAt: DeletedAtTime(deletedAt)}, true, false},
+		{"Client", &Client{}, &Client{DeletedAt: DeletedAtTime(deletedAt)}, true, false},
+		{"LegacyUser", &legacy.User{}, &legacy.User{DeletedAt: gorm.DeletedAt{Time: deletedAt, Valid: true}}, true, false},
+		{"Album", &Album{}, &Album{DeletedAt: DeletedAtTime(deletedAt)}, false, false},
+		{"Service", &Service{}, &Service{DeletedAt: DeletedAtTime(deletedAt)}, false, false},
+		{"Folder", &Folder{}, &Folder{DeletedAt: DeletedAtTime(deletedAt)}, false, true},
+		{"Camera", &Camera{}, &Camera{DeletedAt: DeletedAtTime(deletedAt)}, false, true},
+		{"Lens", &Lens{}, &Lens{DeletedAt: DeletedAtTime(deletedAt)}, false, true},
 	}
 
 	for _, tc := range cases {
@@ -89,9 +90,9 @@ func TestDeletedAt_Yaml(t *testing.T) {
 		deleted any
 		decoded func() any
 	}{
-		{"Photo", &Photo{}, &Photo{DeletedAt: &deletedAt}, func() any { return &Photo{} }},
-		{"Album", &Album{}, &Album{DeletedAt: &deletedAt}, func() any { return &Album{} }},
-		{"Folder", &Folder{}, &Folder{DeletedAt: &deletedAt}, func() any { return &Folder{} }},
+		{"Photo", &Photo{}, &Photo{DeletedAt: DeletedAtTime(deletedAt)}, func() any { return &Photo{} }},
+		{"Album", &Album{}, &Album{DeletedAt: DeletedAtTime(deletedAt)}, func() any { return &Album{} }},
+		{"Folder", &Folder{}, &Folder{DeletedAt: DeletedAtTime(deletedAt)}, func() any { return &Folder{} }},
 	}
 
 	for _, tc := range cases {
@@ -121,8 +122,8 @@ func TestDeletedAt_YamlFile(t *testing.T) {
 
 		m := &Photo{}
 		require.NoError(t, m.LoadFromYaml(fileName))
-		require.NotNil(t, m.DeletedAt)
-		assert.True(t, shapeDeletedAt.Equal(*m.DeletedAt))
+		require.True(t, m.DeletedAt.Valid)
+		assert.True(t, shapeDeletedAt.Equal(m.DeletedAt.Time))
 	})
 	t.Run("Album", func(t *testing.T) {
 		fileName := filepath.Join(dir, "album.yml")
@@ -130,13 +131,13 @@ func TestDeletedAt_YamlFile(t *testing.T) {
 
 		m := &Album{}
 		require.NoError(t, m.LoadFromYaml(fileName))
-		require.NotNil(t, m.DeletedAt)
-		assert.True(t, shapeDeletedAt.Equal(*m.DeletedAt))
+		require.True(t, m.DeletedAt.Valid)
+		assert.True(t, shapeDeletedAt.Equal(m.DeletedAt.Time))
 	})
 	t.Run("PhotoRoundTrip", func(t *testing.T) {
 		fileName := filepath.Join(dir, "roundtrip.yml")
 		deletedAt := shapeDeletedAt
-		m := &Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoTitle: "Archived", DeletedAt: &deletedAt}
+		m := &Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoTitle: "Archived", DeletedAt: DeletedAtTime(deletedAt)}
 		require.NoError(t, m.SaveAsYaml(fileName))
 
 		data, err := os.ReadFile(fileName) //nolint:gosec // Test file in a temporary directory.
@@ -145,8 +146,8 @@ func TestDeletedAt_YamlFile(t *testing.T) {
 
 		restored := &Photo{}
 		require.NoError(t, restored.LoadFromYaml(fileName))
-		require.NotNil(t, restored.DeletedAt)
-		assert.True(t, shapeDeletedAt.Equal(*restored.DeletedAt))
+		require.True(t, restored.DeletedAt.Valid)
+		assert.True(t, shapeDeletedAt.Equal(restored.DeletedAt.Time))
 	})
 }
 
@@ -337,7 +338,7 @@ func countedStatements(t *testing.T, fn func()) []string {
 	conn, ok := dbConn.(*DbConn)
 	require.True(t, ok, "test database provider")
 
-	p, err := sqlcount.OpenGorm(conn.Driver, conn.Dsn)
+	p, err := sqlcount.OpenGorm(conn.Driver, conn.Dsn, func(pool gorm.ConnPool) (*gorm.DB, error) { return OpenDbConn(conn.Driver, conn.Dsn, pool) })
 	require.NoError(t, err)
 
 	SetDbProvider(p)

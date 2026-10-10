@@ -50,7 +50,7 @@ func TestVisionReset(t *testing.T) {
 	assert.Equal(t, "", refreshed.PhotoCaption)
 	assert.Equal(t, "", refreshed.CaptionSrc)
 
-	var labelCount int
+	var labelCount int64
 	require.NoError(t, entity.Db().Model(&entity.PhotoLabel{}).Where("photo_id = ? AND label_src = ?", targetID, entity.SrcOllama).Count(&labelCount).Error)
 	assert.Zero(t, labelCount)
 }

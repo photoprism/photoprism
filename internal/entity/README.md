@@ -4,7 +4,7 @@
 
 ### Overview
 
-`internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v1 (`github.com/jinzhu/gorm`) and are shared by the API, workers, and CLI.
+`internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v2 (`gorm.io/gorm` with the `gorm.io/driver/mysql` and `gorm.io/driver/sqlite` dialectors) and are shared by the API, workers, and CLI.
 
 ### Account & Session Caches
 
@@ -23,6 +23,19 @@ Prefer these helpers over hand-written GORM calls when a model is written as a w
 - `Save(m, keys...)` tries `Update` first and falls back to GORM's `Save`, which inserts a missing row.
 
 GORM's `Updates` with a struct skips zero values, so a field reset to its zero value is not written that way; pass a `Values` map or use `Update`. `Report()` output for users, clients, and sessions is built from `ModelValues`.
+
+### ORM Configuration
+
+`OpenDb` opens connections with `GormConfig()` and `GormDialector()`, which keep the existing schema and the write semantics the code relies on:
+
+- Struct tags state the existing column types and index names (`size:32` on integers, `type:bytes;size:<n>` for `VARBINARY`, named unique indexes), and the MySQL dialector creates untagged strings as `VARCHAR(255)` and times as `DATETIME` without fractional seconds. On SQLite, strings are `varchar(n)` as before and `VARBINARY` columns are `blob(0)`: blob affinity, so numeric-looking values stay strings, and the row width estimate of the former type, as SQLite plans joins with these estimates. Entity tables are created with `ENGINE=InnoDB` and `utf8mb4_unicode_ci` on MySQL.
+- Relation fields carry `-:migration`, so migrating one table never creates another, and `DisableAssociationSaves` removes the association callbacks: related rows are saved explicitly, e.g. `Album.Create` and `Album.Save` save the album's photo links.
+- Two callbacks keep `Save` semantics: a blank `CreatedAt` and blank belongs-to keys with a default are left out of the statement, and a `Save` that changes no row creates the row with hooks unless it already exists.
+- Updates and deletes without conditions fail with `gorm.ErrMissingWhereClause`, also when a model has a zero primary key; bulk statements state `Where("1 = 1")`. A model with a composite key whose first key part is set also binds its zero key parts, in updates and queries. `UnscopedDb()` returns a new session, so its conditions do not carry over to the next statement.
+- Each condition of a `WHERE` clause is put in parentheses when there are several (`buildWhere`), so a condition with `OR` does not combine with its neighbors.
+- `DeletedAt` is a `sql.NullTime` with the soft-delete clauses of `gorm.DeletedAt`; it encodes as `null` in JSON and as a timestamp in YAML.
+
+`migrate.ConvertSQLiteSchema` rebuilds SQLite tables created with the previous column types before auto-migration, once per table: it creates the table from its model, copies the rows with numeric values in text columns converted to text, and keeps the `sqlite_sequence` counter.
 
 ### Label Count Refresh
 
@@ -45,10 +58,10 @@ than their column are cleared.
 
 ### Timestamps
 
-Created and updated timestamps are stored as SQL `DATETIME` **without fractional seconds** (`DATETIME_PRECISION = 0`). To keep in-memory and persisted values in sync, the package sets GORM's timestamp source to second precision in `db.go`:
+Created and updated timestamps are stored as SQL `DATETIME` **without fractional seconds** (`DATETIME_PRECISION = 0`). To keep in-memory and persisted values in sync, `GormConfig()` in `db.go` sets GORM's timestamp source to second precision:
 
 ```go
-gorm.NowFunc = Now // entity.Now() == UTC().Truncate(time.Second)
+NowFunc: Now, // entity.Now() == UTC().Truncate(time.Second)
 ```
 
 Time helpers in `entity_time.go`:
@@ -115,7 +128,7 @@ Lower a ceiling when a change reduces the statements; raising one needs an expla
 - `photo_color` is the ID of the main color from `pkg/media/colors`, where `Black` is 16; color hex strings such as `file_colors` still render it as `0`.
 - `file_chroma` is the rounded colorfulness from 1 to 100, so 1 means monochrome. The `mono` search filter matches 1 and also 0, which earlier versions stored for monochrome files; low-chroma filters such as `chroma:5` exclude both.
 - `file_diff` is a 10-bit perceptual hash from 512 to 1023.
-- -1 means unknown. `NewUserPhoto` and the indexer set it before the values are computed, since existing SQLite columns have no default. `entity_colors_test.go` pins the create path and the migrations that converted stored zeros.
+- -1 means unknown. `NewUserPhoto` and the indexer set it before the values are computed. `entity_colors_test.go` pins the create path and the migrations that converted stored zeros.
 
 ### Collation & Emoji
 
@@ -132,7 +145,7 @@ The durable fix for an identity/path column is to make it `VARBINARY` — `album
 
 ### Per-Dialect SQL
 
-Several helpers under `query/` write raw SQL because GORM v1 cannot express the statement. Where one has to differ per driver — MariaDB's multi-table `UPDATE … JOIN` against SQLite's correlated subquery — keep the branches to what the dialects genuinely require and every selection rule identical, ordering included. A statement that can be written once for both should be: divergence between two hand-written branches is invisible to a SQLite-only run, and only `make test-mariadb` exercises the other.
+Several helpers under `query/` write raw SQL because GORM cannot express the statement. Where one has to differ per driver — MariaDB's multi-table `UPDATE … JOIN` against SQLite's correlated subquery — keep the branches to what the dialects genuinely require and every selection rule identical, ordering included. A statement that can be written once for both should be: divergence between two hand-written branches is invisible to a SQLite-only run, and only `make test-mariadb` exercises the other.
 
 Branch on `entity.DbDialect()` (or `query.DbDialect()`), which returns one of the `dsn.Dialect*` constants (`mysql`, `sqlite`, `postgres`) whatever name the ORM reports, and compare it with those constants rather than the configured driver names such as `sqlite3`. `entity.IsDialect` accepts either.
 

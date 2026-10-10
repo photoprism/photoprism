@@ -101,7 +101,7 @@ func seedMatchLibrary(t *testing.T, clusters, perCluster uint64) (faces entity.F
 // assertMatchLibraryStamps checks that every eligible marker received this run's stamp.
 func assertMatchLibraryStamps(t *testing.T, start time.Time) {
 	t.Helper()
-	var count int
+	var count int64
 	require.NoError(t, entity.Db().Model(&entity.Marker{}).
 		Where("matched_at IS NULL OR matched_at < ?", start.UTC().Truncate(time.Second)).Count(&count).Error)
 	require.Zero(t, count, "every eligible marker must receive a fresh match stamp")

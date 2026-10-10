@@ -290,7 +290,7 @@ func TestShareSelection_Yaml(t *testing.T) {
 	t.Cleanup(func() {
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-		entity.UnscopedDb().Unscoped().Delete(photo)
+		entity.UnscopedDb().Unscoped().Delete(&photo)
 	})
 	for i, name := range []string{"share-control.jpg", "share-control.yml"} {
 		fileType, mediaType := fs.ImageJpeg, media.Image
@@ -327,7 +327,7 @@ func TestSelectedFilesForSessionYaml(t *testing.T) {
 	t.Cleanup(func() {
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-		entity.UnscopedDb().Unscoped().Delete(photo)
+		entity.UnscopedDb().Unscoped().Delete(&photo)
 	})
 	file := entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileName: "selection-control.yml", FileType: "yml", FileRoot: entity.RootOriginals, FileHash: "ce1a3d09c704ab1c7519c0edee4a835f661c3aa1"}
 	if err := file.Create(); err != nil {
@@ -390,7 +390,7 @@ func videoRuleTestPhoto(t *testing.T, photoType media.Type, files []entity.File)
 	t.Cleanup(func() {
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-		entity.UnscopedDb().Unscoped().Delete(photo)
+		entity.UnscopedDb().Unscoped().Delete(&photo)
 	})
 
 	for i := range files {

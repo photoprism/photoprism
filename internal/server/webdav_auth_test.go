@@ -428,9 +428,9 @@ func TestWebDAVAuthSession_RemovedRow(t *testing.T) {
 	assert.Nil(t, sess)
 	assert.Nil(t, user)
 
-	var n int
+	var n int64
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", s.ID).Count(&n).Error)
-	assert.Equal(t, 0, n, "the session row must stay deleted")
+	assert.EqualValues(t, 0, n, "the session row must stay deleted")
 }
 
 // TestWebDAVAuthSession_RateLimit checks that tokens without a session are counted and failed lookups are not.

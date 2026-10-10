@@ -276,16 +276,16 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 
 		// It reports the complement of what seeds a cluster, so the two have to agree on the
 		// bars: a count with its own copy of them describes a set the rebuild does not use.
-		var assigned int
+		var assigned int64
 		require.NoError(t, whereEmbeddingModel(Db().Model(&entity.Marker{}).
 			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
 			Where("subj_uid <> ''").
 			Where("LENGTH(embeddings_json) > 0"), face.ModelFaceNet).Count(&assigned).Error)
 
-		var seeds int
+		var seeds int64
 		require.NoError(t, whereFaceMigrationSamples(Db().Model(&entity.Marker{}), face.ModelFaceNet).Count(&seeds).Error)
 
-		assert.Equal(t, assigned-seeds, count)
+		assert.EqualValues(t, assigned-seeds, count)
 
 		_, countErr = FaceMigrationLowQualityMarkers("")
 		require.Error(t, countErr)
@@ -546,7 +546,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	tempConn := &entity.DbConn{Driver: dsn.DriverSQLite3, Dsn: filepath.Join(t.TempDir(), "faces-migrate.db")}
 	tempDb := tempConn.Db()
 	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}, &entity.Marker{}).Error)
+	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}, &entity.Marker{}))
 
 	entity.SetDbProvider(tempConn)
 	t.Cleanup(func() {
@@ -675,7 +675,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	require.NoError(t, tempDb.First(&storedManualSrc, "marker_uid = ?", manual.MarkerUID).Error)
 	assert.Equal(t, entity.SrcManual, storedManualSrc.SubjSrc)
 
-	var staleCount int
+	var staleCount int64
 	require.NoError(t, tempDb.Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
 	assert.Zero(t, staleCount, "the previous run's clusters must be replaced")
 
@@ -704,7 +704,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	assert.Equal(t, cluster.ID, storedImported.FaceID)
 	assert.Equal(t, subjectUID, storedImported.SubjUID)
 
-	var facesBefore, facesAfter int
+	var facesBefore, facesAfter int64
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesBefore).Error)
 	require.NoError(t, tempDb.Model(&entity.Marker{}).Where("marker_uid = ?", rejectedEmbedded.MarkerUID).
 		UpdateColumn("subj_src", entity.SrcManual).Error)
@@ -719,7 +719,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	// operator caused and can avoid on the next run.
 	assert.ErrorIs(t, changedErr, ErrFaceMigrationIdentitiesChanged)
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesAfter).Error)
-	assert.Equal(t, facesBefore, facesAfter)
+	assert.EqualValues(t, facesBefore, facesAfter)
 
 	_, err = FinalizeFaceMigration("", nil, nil, nil, nil)
 	require.Error(t, err)

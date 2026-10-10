@@ -23,8 +23,8 @@ The migration flow is:
 3. Run `pre` SQL migrations from this package.
 4. If the current release still `NeedsMigration()`, run the one-time schema work in [`entity.InitDb()`](../entity_init.go) and [`Tables.Migrate()`](../entity_tables.go):
    - drop deprecated tables when enabled
-   - run GORM `AutoMigrate(...)` for all registered entities
-   - apply one-off compatibility fixes that are also tracked through `versions`
+   - on SQLite, rebuild tables that still have the column types of earlier releases with [`ConvertSQLiteSchema()`](sqlite_schema.go), once per table and only when such a type is found; this runs after the `pre` stage, so columns renamed there keep their values
+   - run GORM `AutoMigrate(...)` for all registered entities, which also alters existing columns whose type, size or default differs from the struct tags
 5. Run `main`, then `post` SQL migrations from this package.
 6. Mark the current release as migrated by setting `versions.migrated_at`. If auto-migration failed or tables are missing afterward, `MigrateDb()` stores the error in `versions.error` instead, writes it to the system log, and returns it, so the next start runs auto-migration again. A failed auto-migration also skips the `main` and `post` stages, and `entity.InitDb()` then creates the default fixtures only if their tables exist. Running selected migrations by ID records nothing.
 

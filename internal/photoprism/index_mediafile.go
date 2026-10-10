@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -406,8 +406,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore pictures that have been purged automatically.
-		photo.DeletedAt = nil
-	} else if o.SkipArchived && photo.DeletedAt != nil && photo.HasID() {
+		photo.DeletedAt = entity.DeletedAt{}
+	} else if o.SkipArchived && photo.DeletedAt.Valid && photo.HasID() {
 		// Skip archived pictures for faster indexing, but add those restored from a backup.
 		result.Status = IndexArchived
 		result.PhotoID = photo.ID
@@ -970,7 +970,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// File obviously exists: remove deleted and missing flags.
-	file.DeletedAt = nil
+	file.DeletedAt = entity.DeletedAt{}
 	file.FileMissing = false
 
 	// Previews files are used for rendering thumbnails and image classification, plus sidecar files if they exist.

@@ -3,11 +3,12 @@ package entity
 import (
 	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/entity/sqlcount"
@@ -35,11 +36,11 @@ func createTestTable(t *testing.T, name string) *gorm.DB {
 func countTestRows(t *testing.T, db *gorm.DB, name string) int {
 	t.Helper()
 
-	var count int
+	var count int64
 
 	require.NoError(t, db.Table(name).Count(&count).Error)
 
-	return count
+	return int(count)
 }
 
 // TestTruncateTable checks that rows are removed, within the caller's transaction where no counter is restarted.
@@ -55,7 +56,7 @@ func TestTruncateTable(t *testing.T) {
 	})
 	t.Run("Transactional", func(t *testing.T) {
 		// A DELETE is rolled back with its transaction, while TRUNCATE commits implicitly on MySQL/MariaDB.
-		if name := UnscopedDb().Dialect().GetName(); name != dsn.DriverSQLite3 && name != dsn.DriverMySQL {
+		if name := UnscopedDb().Name(); name != dsn.DialectSQLite && name != dsn.DialectMySQL {
 			t.Skipf("rows are truncated on %s", name)
 		}
 
@@ -69,7 +70,7 @@ func TestTruncateTable(t *testing.T) {
 		assert.Equal(t, 2, countTestRows(t, db, "test_truncate_tx"))
 	})
 	t.Run("AutoIncrement", func(t *testing.T) {
-		if name := UnscopedDb().Dialect().GetName(); name != dsn.DriverMySQL {
+		if name := UnscopedDb().Name(); name != dsn.DialectMySQL {
 			t.Skipf("auto-increment counters are not restarted on %s", name)
 		}
 
@@ -90,7 +91,7 @@ func TestTruncateTable(t *testing.T) {
 // TestAutoIncrementTables checks that only tables with an auto-increment column are returned on MySQL/MariaDB.
 func TestAutoIncrementTables(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		if name := UnscopedDb().Dialect().GetName(); name != dsn.DriverMySQL {
+		if name := UnscopedDb().Name(); name != dsn.DialectMySQL {
 			t.Skipf("auto-increment tables are not looked up on %s", name)
 		}
 
@@ -101,7 +102,7 @@ func TestAutoIncrementTables(t *testing.T) {
 		assert.False(t, result["test_truncate_missing"])
 	})
 	t.Run("OtherDriver", func(t *testing.T) {
-		if name := UnscopedDb().Dialect().GetName(); name == dsn.DriverMySQL {
+		if name := UnscopedDb().Name(); name == dsn.DialectMySQL {
 			t.Skipf("auto-increment tables are looked up on %s", name)
 		}
 
@@ -113,6 +114,9 @@ func TestTables_Truncate(t *testing.T) {
 	t.Run("KeepsSchemaTables", func(t *testing.T) {
 		db := createTestTable(t, "test_truncate_list")
 		versions := migrate.Version{}.TableName()
+		version := migrate.NewVersion("test-truncate", "test")
+		require.NoError(t, version.Create(db))
+		t.Cleanup(func() { _ = db.Delete(version).Error })
 		before := countTestRows(t, db, versions)
 		require.NotZero(t, before, "versions must not be empty")
 
@@ -122,7 +126,7 @@ func TestTables_Truncate(t *testing.T) {
 		assert.Equal(t, before, countTestRows(t, db, versions))
 	})
 	t.Run("RestartsAutoIncrement", func(t *testing.T) {
-		if name := UnscopedDb().Dialect().GetName(); name != dsn.DriverMySQL {
+		if name := UnscopedDb().Name(); name != dsn.DialectMySQL {
 			t.Skipf("auto-increment counters are not restarted on %s", name)
 		}
 
@@ -142,7 +146,7 @@ func TestTables_Truncate(t *testing.T) {
 
 // migrateFailTest is a model whose table cannot be created, to test how migration failures are reported.
 type migrateFailTest struct {
-	ID   uint   `gorm:"primary_key"`
+	ID   uint   `gorm:"primaryKey"`
 	Name string `gorm:"type:BROKEN((("`
 }
 
@@ -206,7 +210,8 @@ func TestInitDb_MissingTables(t *testing.T) {
 		assert.Equal(t, admin.UserUID, Admin.UserUID)
 	})
 	t.Run("FixtureTablesMissing", func(t *testing.T) {
-		p, err := sqlcount.OpenGorm(dsn.DriverSQLite3, filepath.Join(t.TempDir(), "missing.db"))
+		dbName := filepath.Join(t.TempDir(), "missing.db")
+		p, err := sqlcount.OpenGorm(dsn.DriverSQLite3, dbName, func(pool gorm.ConnPool) (*gorm.DB, error) { return OpenDbConn(dsn.DriverSQLite3, dbName, pool) })
 		require.NoError(t, err)
 
 		prev := dbConn
@@ -228,17 +233,82 @@ func TestHasDefaultFixtureTables(t *testing.T) {
 		assert.True(t, hasDefaultFixtureTables(Db()))
 	})
 	t.Run("Missing", func(t *testing.T) {
-		db, err := gorm.Open(dsn.DriverSQLite3, filepath.Join(t.TempDir(), "fixtures.db"))
+		db, err := OpenDb(dsn.DriverSQLite3, filepath.Join(t.TempDir(), "fixtures.db"))
 		require.NoError(t, err)
-		t.Cleanup(func() { _ = db.Close() })
+		t.Cleanup(func() { _ = CloseDb(db) })
 
-		require.NoError(t, db.AutoMigrate(&User{}, &Place{}, &Cell{}, &Country{}, &Camera{}).Error)
+		require.NoError(t, db.AutoMigrate(&User{}, &Place{}, &Cell{}, &Country{}, &Camera{}))
 		assert.False(t, hasDefaultFixtureTables(db))
 
-		require.NoError(t, db.AutoMigrate(&Lens{}).Error)
+		require.NoError(t, db.AutoMigrate(&Lens{}))
 		assert.True(t, hasDefaultFixtureTables(db))
 	})
 	t.Run("NoDb", func(t *testing.T) {
 		assert.False(t, hasDefaultFixtureTables(nil))
+	})
+}
+
+// createTableTest is a model for testing table creation.
+type createTableTest struct {
+	ID   uint   `gorm:"primaryKey"`
+	Name string `gorm:"type:bytes;size:42;uniqueIndex:uix_create_table_test_name"`
+}
+
+// TableName returns the entity table name.
+func (createTableTest) TableName() string {
+	return "create_table_test"
+}
+
+func TestWithTableOptions(t *testing.T) {
+	t.Run("Dialect", func(t *testing.T) {
+		options, ok := withTableOptions(Db()).Get("gorm:table_options")
+
+		if DbDialect() == dsn.DialectMySQL {
+			assert.True(t, ok)
+			assert.Equal(t, mysqlTableOptions, options)
+		} else {
+			assert.False(t, ok)
+		}
+
+		_, ok = Db().Get("gorm:table_options")
+		assert.False(t, ok, "connection unchanged")
+	})
+}
+
+func TestAutoMigrate(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		require.NoError(t, autoMigrate(Db(), &createTableTest{}))
+		assert.True(t, Db().Migrator().HasIndex(&createTableTest{}, "uix_create_table_test_name"))
+		require.NoError(t, autoMigrate(Db(), &createTableTest{}))
+	})
+	t.Run("Error", func(t *testing.T) {
+		assert.Error(t, autoMigrate(Db(), &migrateFailTest{}))
+	})
+}
+
+func TestCreateTable(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		statements := countStatements(t, func() { require.NoError(t, CreateTable(Db(), &createTableTest{})) })
+		assert.True(t, Db().Migrator().HasTable(&createTableTest{}))
+		assert.True(t, Db().Migrator().HasIndex(&createTableTest{}, "uix_create_table_test_name"))
+
+		// MySQL tables get the table options, as the database default may differ.
+		created := 0
+
+		for _, stmt := range statements {
+			if strings.HasPrefix(stmt, "CREATE TABLE") {
+				created++
+				assert.Equal(t, DbDialect() == dsn.DialectMySQL, strings.HasSuffix(stmt, mysqlTableOptions), stmt)
+			}
+		}
+
+		assert.Equal(t, 1, created)
+	})
+	t.Run("Exists", func(t *testing.T) {
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		require.NoError(t, CreateTable(Db(), &createTableTest{}))
+		assert.Error(t, CreateTable(Db(), &createTableTest{}))
 	})
 }

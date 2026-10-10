@@ -11,7 +11,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -26,19 +26,19 @@ var UpdateFaces = atomic.Bool{}
 
 // Face represents the face of a Subject.
 type Face struct {
-	ID              string          `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
-	FaceKind        int             `json:"Kind" yaml:"Kind,omitempty"`
+	ID              string          `gorm:"type:bytes;size:64;primaryKey;autoIncrement:false;" json:"ID" yaml:"ID"`
+	FaceSrc         string          `gorm:"type:bytes;size:8;" json:"Src" yaml:"Src,omitempty"`
+	FaceKind        int             `gorm:"size:32" json:"Kind" yaml:"Kind,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjUID         string          `gorm:"type:VARBINARY(42);index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
-	Samples         int             `json:"Samples" yaml:"Samples,omitempty"`
+	SubjUID         string          `gorm:"type:bytes;size:42;index;default:'';" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	Samples         int             `gorm:"size:32" json:"Samples" yaml:"Samples,omitempty"`
 	SampleRadius    float64         `json:"SampleRadius" yaml:"SampleRadius,omitempty"`
-	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
+	Collisions      int             `gorm:"size:32" json:"Collisions" yaml:"Collisions,omitempty"`
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
-	MergeRetry      uint8           `gorm:"type:TINYINT(3);default:0" json:"-" yaml:"-"`
-	MergeNotes      string          `gorm:"type:VARCHAR(255);default:'';" json:"-" yaml:"-"`
-	EmbedModel      string          `gorm:"column:embed_model;type:VARBINARY(32);index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
-	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
+	MergeRetry      uint8           `gorm:"type:TINYINT(3);size:3;default:0" json:"-" yaml:"-"`
+	MergeNotes      string          `gorm:"size:255;default:'';" json:"-" yaml:"-"`
+	EmbedModel      string          `gorm:"column:embed_model;type:bytes;size:32;index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
+	EmbeddingJSON   json.RawMessage `gorm:"type:bytes;size:16777215;" json:"-" yaml:"EmbeddingJSON,omitempty"`
 	embedding       face.Embedding  `gorm:"-" yaml:"-"`
 	// reopened records that this cluster changed after a run read it, so a caller about to stamp
 	// it as matched can tell it apart from one that merely started out unmatched - which is the
@@ -895,7 +895,7 @@ func ValidFaceCount(fileUid string) (c int) {
 
 	var count int64
 
-	if err := Db().Model(Marker{}).
+	if err := Db().Model(&Marker{}).
 		Where("file_uid = ? AND marker_type = ?", fileUid, MarkerFace).
 		Where("marker_invalid = FALSE").
 		Count(&count).Error; err != nil {

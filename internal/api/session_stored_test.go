@@ -29,10 +29,11 @@ func removeStoredSession(t *testing.T, authToken string) string {
 }
 
 // storedSessionCount returns how many rows the sessions table holds for the given id.
-func storedSessionCount(t *testing.T, id string) (n int) {
+func storedSessionCount(t *testing.T, id string) int {
+	var n64 int64
 	t.Helper()
-	require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", id).Count(&n).Error)
-	return n
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", id).Count(&n64).Error)
+	return int(n64)
 }
 
 // TestCreateSession_RemovedSession checks that a session whose row was removed is not reused.

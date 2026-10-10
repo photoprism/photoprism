@@ -152,7 +152,7 @@ var DialectMySQL = Migrations{
 		ID:         "20230211-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS file_colors VARBINARY(18);", "ALTER TABLE files MODIFY IF EXISTS File_luminance VARBINARY(18);"},
+		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS file_colors VARBINARY(18);", "ALTER TABLE files MODIFY IF EXISTS file_luminance VARBINARY(18);"},
 	},
 	{
 		ID:         "20230309-000001",
@@ -176,7 +176,7 @@ var DialectMySQL = Migrations{
 		ID:         "20240701-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS refresh_token VARBINARY(2048);", "ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(2048);"},
+		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS refresh_token VARBINARY(2048) DEFAULT '';", "ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(2048) DEFAULT '';"},
 	},
 	{
 		ID:         "20240709-000001",
@@ -254,7 +254,7 @@ var DialectMySQL = Migrations{
 		ID:         "20260721-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(4096);"},
+		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(4096) DEFAULT '';"},
 	},
 	{
 		ID:         "20260721-000002",
@@ -285,5 +285,11 @@ var DialectMySQL = Migrations{
 		Dialect:    "mysql",
 		Stage:      "main",
 		Statements: []string{"UPDATE files SET file_diff = -1 WHERE file_diff = 0;"},
+	},
+	{
+		ID:         "20261010-000004",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE files RENAME COLUMN File_luminance TO file_luminance;"},
 	},
 }

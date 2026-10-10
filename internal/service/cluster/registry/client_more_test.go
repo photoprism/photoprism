@@ -130,7 +130,7 @@ func TestClientRegistry_PutNameLookup(t *testing.T) {
 	assert.NoError(t, r.Put(n))
 	assert.Equal(t, existing.ClientUID, n.ClientID)
 
-	var count int
+	var count int64
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_name = ?", "pp-node-name").Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 }

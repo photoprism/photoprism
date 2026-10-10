@@ -39,7 +39,7 @@ func consensusTestFace(t *testing.T, axis int) *entity.Face {
 	require.NoError(t, f.Create())
 
 	t.Cleanup(func() {
-		UnscopedDb().Delete(entity.Face{}, "id = ?", f.ID)
+		UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID)
 	})
 
 	return f
@@ -67,7 +67,7 @@ func consensusTestMarkers(t *testing.T, f *entity.Face, n int, subjUID, subjSrc 
 		require.NoError(t, UnscopedDb().Create(&m).Error)
 
 		t.Cleanup(func() {
-			UnscopedDb().Delete(entity.Marker{}, "marker_uid = ?", m.MarkerUID)
+			UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID)
 		})
 	}
 }

@@ -105,11 +105,11 @@ func TestPurgeUnusedCameras(t *testing.T) {
 	}
 
 	// Orphans are removed unless they have been added manually.
-	var count int
+	var count int64
 	assert.NoError(t, UnscopedDb().Model(&entity.Camera{}).Where("id = ?", added.ID).Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 	assert.NoError(t, UnscopedDb().Model(&entity.Camera{}).Where("id = ?", orphan.ID).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 }
 
 func TestPurgeUnusedLenses(t *testing.T) {
@@ -128,11 +128,11 @@ func TestPurgeUnusedLenses(t *testing.T) {
 	}
 
 	// Orphans are removed unless they have been added manually.
-	var count int
+	var count int64
 	assert.NoError(t, UnscopedDb().Model(&entity.Lens{}).Where("id = ?", added.ID).Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 	assert.NoError(t, UnscopedDb().Model(&entity.Lens{}).Where("id = ?", orphan.ID).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 }
 
 func TestResetMissingCameras(t *testing.T) {
@@ -148,7 +148,7 @@ func TestResetMissingCameras(t *testing.T) {
 
 		count, err := ResetMissingCameras()
 		assert.NoError(t, err)
-		assert.Equal(t, int64(1), count)
+		assert.EqualValues(t, int64(1), count)
 
 		found := entity.Photo{}
 		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)
@@ -157,7 +157,7 @@ func TestResetMissingCameras(t *testing.T) {
 		// Existing references are left unchanged.
 		count, err = ResetMissingCameras()
 		assert.NoError(t, err)
-		assert.Equal(t, int64(0), count)
+		assert.EqualValues(t, int64(0), count)
 	})
 	t.Run("Uninitialized", func(t *testing.T) {
 		photo := entity.Photo{}
@@ -174,7 +174,7 @@ func TestResetMissingCameras(t *testing.T) {
 		// Without the placeholder ID, the missing reference must be left as is rather than set to 0.
 		count, err := ResetMissingCameras()
 		assert.NoError(t, err)
-		assert.Equal(t, int64(0), count)
+		assert.EqualValues(t, int64(0), count)
 
 		found := entity.Photo{}
 		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)
@@ -195,7 +195,7 @@ func TestResetMissingLenses(t *testing.T) {
 
 		count, err := ResetMissingLenses()
 		assert.NoError(t, err)
-		assert.Equal(t, int64(1), count)
+		assert.EqualValues(t, int64(1), count)
 
 		found := entity.Photo{}
 		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)
@@ -204,7 +204,7 @@ func TestResetMissingLenses(t *testing.T) {
 		// Existing references are left unchanged.
 		count, err = ResetMissingLenses()
 		assert.NoError(t, err)
-		assert.Equal(t, int64(0), count)
+		assert.EqualValues(t, int64(0), count)
 	})
 	t.Run("Uninitialized", func(t *testing.T) {
 		photo := entity.Photo{}
@@ -221,7 +221,7 @@ func TestResetMissingLenses(t *testing.T) {
 		// Without the placeholder ID, the missing reference must be left as is rather than set to 0.
 		count, err := ResetMissingLenses()
 		assert.NoError(t, err)
-		assert.Equal(t, int64(0), count)
+		assert.EqualValues(t, int64(0), count)
 
 		found := entity.Photo{}
 		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)

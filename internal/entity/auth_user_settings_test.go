@@ -3,6 +3,8 @@ package entity
 import (
 	"testing"
 
+	"gorm.io/gorm"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -41,16 +43,26 @@ func TestUserSettings_HasID(t *testing.T) {
 }
 
 func TestUserSettings_Updates(t *testing.T) {
-	m := &User{
-		UserUID: "1234",
-		UserSettings: &UserSettings{
-			UITheme:    "carbon",
-			UILanguage: "de",
-		}}
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserSettings(rnd.GenerateUID(UserUID))
+		m.UITheme, m.UILanguage = "carbon", "de"
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
 
-	assert.NoError(t, m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
-	assert.Equal(t, "vanta", m.UserSettings.UITheme)
-	assert.Equal(t, "en", m.UserSettings.UILanguage)
+		assert.NoError(t, m.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
+		assert.Equal(t, "vanta", m.UITheme)
+		assert.Equal(t, "en", m.UILanguage)
+
+		found := UserSettings{}
+		require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&found).Error)
+		assert.Equal(t, "vanta", found.UITheme)
+		assert.Equal(t, "en", found.UILanguage)
+	})
+	t.Run("NoKey", func(t *testing.T) {
+		m := &UserSettings{UITheme: "carbon"}
+
+		assert.ErrorIs(t, m.Updates(UserSettings{UITheme: "vanta"}), gorm.ErrMissingWhereClause)
+	})
 }
 
 func TestUserSettings_Apply(t *testing.T) {

@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -36,11 +36,11 @@ func ResetTestFixtures() {
 	start := time.Now()
 
 	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
-	if (!Db().HasTable(&migrate.Migration{})) {
-		Db().AutoMigrate(&migrate.Migration{})
+	if !Db().Migrator().HasTable(&migrate.Migration{}) {
+		Log("migrate", "create migrations table", Db().AutoMigrate(&migrate.Migration{}))
 	}
-	if (!Db().HasTable(&migrate.Version{})) {
-		Db().AutoMigrate(&migrate.Version{})
+	if !Db().Migrator().HasTable(&migrate.Version{}) {
+		Log("migrate", "create versions table", Db().AutoMigrate(&migrate.Version{}))
 	}
 
 	if err := Entities.Migrate(Db(), migrate.Opt(true, false, nil)); err != nil {

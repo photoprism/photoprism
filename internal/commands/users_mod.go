@@ -64,7 +64,7 @@ func usersModAction(ctx *cli.Context) error {
 				return fmt.Errorf("user already exists")
 			}
 
-			m.DeletedAt = nil
+			m.DeletedAt = entity.DeletedAt{}
 			restored = true
 			log.Infof("user %s will be restored", m.String())
 		}

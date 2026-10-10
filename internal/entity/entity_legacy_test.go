@@ -13,6 +13,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/entity/sqlcount"
@@ -29,7 +30,7 @@ var legacyDDL = regexp.MustCompile(`(?is)^\s*(?:(?:(?:--|#)[^\n]*(?:\n|$)|/\*(?:
 func migrateLegacySchema(t *testing.T, driver, dataSourceName string) []string {
 	t.Helper()
 
-	p, err := sqlcount.OpenGorm(driver, dataSourceName)
+	p, err := sqlcount.OpenGorm(driver, dataSourceName, func(pool gorm.ConnPool) (*gorm.DB, error) { return OpenDbConn(driver, dataSourceName, pool) })
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = p.Close() })
 
@@ -43,10 +44,15 @@ func migrateLegacySchema(t *testing.T, driver, dataSourceName string) []string {
 	require.NoError(t, err)
 	require.False(t, found, "legacy photos table without photo_caption")
 
+	// Rows in columns that pre migrations rename must keep their values.
+	require.NoError(t, db.Exec("INSERT INTO photos (photo_uid, photo_description, description_src) VALUES (?, ?, ?)",
+		"ps6sg6be2lvl0zz1", "Legacy Caption", SrcManual).Error)
+	require.NoError(t, db.Exec("INSERT INTO files_sync (remote_name, account_id, file_id) VALUES (?, ?, ?)", "legacy.jpg", 7, 1).Error)
+
 	// start migrates the schema the way InitDb does on the first start of a new release.
 	start := func() {
 		opt := migrate.Opt(true, false, nil)
-		require.NoError(t, db.AutoMigrate(&migrate.Migration{}, &migrate.Version{}).Error)
+		require.NoError(t, db.AutoMigrate(&migrate.Migration{}, &migrate.Version{}))
 		DeprecatedTables.Drop(db)
 		require.NoError(t, Entities.Migrate(db, opt))
 	}
@@ -67,6 +73,18 @@ func migrateLegacySchema(t *testing.T, driver, dataSourceName string) []string {
 	found, err = DbHasColumn(db, "photos", "photo_caption")
 	require.NoError(t, err)
 	assert.True(t, found, "photo_caption exists after migrating")
+	found, err = DbHasColumn(db, "photos", "photo_description")
+	require.NoError(t, err)
+	assert.False(t, found, "photo_description renamed")
+
+	photo := Photo{}
+	require.NoError(t, db.Unscoped().Where("photo_uid = ?", "ps6sg6be2lvl0zz1").First(&photo).Error)
+	assert.Equal(t, "Legacy Caption", photo.PhotoCaption)
+	assert.Equal(t, SrcManual, photo.CaptionSrc)
+
+	var serviceID uint
+	require.NoError(t, db.Raw("SELECT service_id FROM files_sync WHERE remote_name = ?", "legacy.jpg").Row().Scan(&serviceID))
+	assert.Equal(t, uint(7), serviceID)
 
 	// A second run, as on the next start of a new release, finds nothing to change.
 	p.Counter.Start()

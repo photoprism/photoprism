@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"gorm.io/gorm"
+
 	"image"
 	"image/jpeg"
 	"os"
@@ -21,7 +23,9 @@ import (
 func countedIndexStatements(t *testing.T, c *config.Config, fn func()) []string {
 	t.Helper()
 
-	p, err := sqlcount.OpenGorm(c.DatabaseDriver(), c.DatabaseDSN())
+	p, err := sqlcount.OpenGorm(c.DatabaseDriver(), c.DatabaseDSN(), func(pool gorm.ConnPool) (*gorm.DB, error) {
+		return entity.OpenDbConn(c.DatabaseDriver(), c.DatabaseDSN(), pool)
+	})
 	require.NoError(t, err)
 
 	entity.SetDbProvider(p)

@@ -5,12 +5,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
@@ -566,14 +566,14 @@ func TestImportSQL(t *testing.T) {
 	log.SetOutput(os.Stdout)
 
 	assert.NotContains(t, buffer.String(), "level=error")
-	assert.True(t, c.db.HasTable("importtest"))
+	assert.True(t, c.db.Migrator().HasTable("importtest"))
 
 	log.SetOutput(&buffer)
 	c.ImportSQL("./testdata/importtest.sql")
 	// Reset logger
 	log.SetOutput(os.Stdout)
 	assert.Contains(t, buffer.String(), "level=error")
-	require.NoError(t, c.db.DropTableIfExists("importtest").Error)
+	require.NoError(t, c.db.Migrator().DropTable("importtest"))
 }
 
 func TestConfig_checkDb(t *testing.T) {
@@ -593,9 +593,9 @@ func TestConfig_DbIfConnected(t *testing.T) {
 		assert.Nil(t, NewConfig(CliTestContext()).DbIfConnected())
 	})
 	t.Run("Connected", func(t *testing.T) {
-		db, err := gorm.Open(dsn.DriverSQLite3, ":memory:")
+		db, err := entity.OpenDb(dsn.DriverSQLite3, ":memory:")
 		require.NoError(t, err)
-		t.Cleanup(func() { _ = db.Close() })
+		t.Cleanup(func() { _ = entity.CloseDb(db) })
 		c := NewConfig(CliTestContext())
 		c.db = db
 		assert.Same(t, db, c.DbIfConnected())

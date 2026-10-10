@@ -6,9 +6,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -230,7 +230,7 @@ func TestFile_Changed(t *testing.T) {
 		assert.Equal(t, false, file.Changed(500, d))
 	})
 	t.Run("Deleted", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: DeletedAtTime(deletedAt)}
 		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, false, file.Changed(500, d))
 	})
@@ -240,15 +240,15 @@ func TestFile_Missing(t *testing.T) {
 	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 
 	t.Run("Deleted", func(t *testing.T) {
-		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: DeletedAtTime(deletedAt)}
 		assert.Equal(t, true, file.Missing())
 	})
 	t.Run("Missing", func(t *testing.T) {
-		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		assert.Equal(t, true, file.Missing())
 	})
 	t.Run("NotMissing", func(t *testing.T) {
-		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		assert.Equal(t, false, file.Missing())
 	})
 }
@@ -607,7 +607,10 @@ func TestFile_DownloadName(t *testing.T) {
 
 func TestFile_Undelete(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		file := &File{PhotoID: 1000000, FileUID: rnd.GenerateUID(FileUID), FileName: "undelete/" + rnd.Base36(8) + ".jpg", FileRoot: RootOriginals, FileType: "jpg", FileSize: 500}
+		require.NoError(t, file.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(file).Error })
+
 		assert.Equal(t, nil, file.Purge())
 		assert.Equal(t, true, file.FileMissing)
 		err := file.Undelete()
@@ -616,6 +619,16 @@ func TestFile_Undelete(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, file.FileMissing)
+
+		found := File{}
+		require.NoError(t, UnscopedDb().Where("id = ?", file.ID).First(&found).Error)
+		assert.False(t, found.FileMissing)
+		assert.False(t, found.DeletedAt.Valid)
+	})
+	t.Run("NoKey", func(t *testing.T) {
+		file := &File{FileType: "jpg", FileSize: 500, FileMissing: true}
+
+		assert.ErrorIs(t, file.Undelete(), gorm.ErrMissingWhereClause)
 	})
 	t.Run("FileNotMissing", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
@@ -751,7 +764,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 
 		p := m.RelatedPhoto()
 
@@ -765,7 +778,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "x/y/newName.jpg", m.FileName)
 		assert.Equal(t, "newRoot", m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 		assert.Equal(t, "x/y", p.PhotoPath)
 		assert.Equal(t, "newBase", p.PhotoName)
 
@@ -776,7 +789,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 		assert.Equal(t, "2790/07", p.PhotoPath)
 		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
 	})

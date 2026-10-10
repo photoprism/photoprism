@@ -17,7 +17,7 @@ import (
 
 // migrateFailEntity is a model whose table cannot be created, so that a schema migration fails.
 type migrateFailEntity struct {
-	ID   uint   `gorm:"primary_key"`
+	ID   uint   `gorm:"primaryKey"`
 	Name string `gorm:"type:BROKEN((("`
 }
 

@@ -34,7 +34,6 @@ var CameraFixtures = CameraMap{
 		CameraNotes:       "",
 		CreatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"canon-eos-5d": {
 		ID:                1000001,
@@ -47,7 +46,6 @@ var CameraFixtures = CameraMap{
 		CameraNotes:       "",
 		CreatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"canon-eos-7d": {
 		ID:                1000002,
@@ -60,7 +58,6 @@ var CameraFixtures = CameraMap{
 		CameraNotes:       "",
 		CreatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"canon-eos-6d": {
 		ID:                1000003,
@@ -73,7 +70,6 @@ var CameraFixtures = CameraMap{
 		CameraNotes:       "",
 		CreatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"apple-iphone-6": {
 		ID:                1000004,
@@ -86,7 +82,6 @@ var CameraFixtures = CameraMap{
 		CameraNotes:       "",
 		CreatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:         time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"apple-iphone-7": {
 		ID:                1000005,
@@ -99,7 +94,6 @@ var CameraFixtures = CameraMap{
 		CameraNotes:       "",
 		CreatedAt:         Now(),
 		UpdatedAt:         Now(),
-		DeletedAt:         nil,
 	},
 }
 

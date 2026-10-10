@@ -433,7 +433,7 @@ func TestResetConfigAndOpenDB(t *testing.T) {
 		result := c.Db().Unscoped().Where("label_uid = ?", fixture.LabelUID).Delete(&entity.Label{})
 		require.NoError(t, result.Error)
 		require.EqualValues(t, 1, result.RowsAffected)
-		var count int
+		var count int64
 		require.NoError(t, c.Db().Unscoped().Model(&entity.Label{}).Where("label_uid = ?", fixture.LabelUID).Count(&count).Error)
 		require.Zero(t, count)
 	})

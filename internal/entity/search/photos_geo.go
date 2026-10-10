@@ -6,8 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"gorm.io/gorm/clause"
+
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -188,7 +190,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		// Sort by distance to the picture referenced by "near", placing it first. Its position
 		// is used here rather than frm.Lat/Lng (which the near lookup leaves unset) so the order
 		// reflects proximity to that picture instead of distance from the (0,0) origin.
-		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", frm.Near, nearLat, nearLng))
+		s = s.Order(clause.OrderBy{Expression: gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", frm.Near, nearLat, nearLng)})
 	}
 
 	// Find specific UIDs only.

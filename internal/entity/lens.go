@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -23,18 +23,18 @@ type Lenses []Lens
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
-	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	LensSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
-	LensName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	LensMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
-	LensModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
-	LensType        string     `gorm:"type:VARCHAR(100);" json:"Type" yaml:"Type,omitempty"`
-	LensDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	LensNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	LensSrc         string     `gorm:"type:VARBINARY(8);default:'';" json:"-" yaml:"-"`
-	CreatedAt       time.Time  `json:"-" yaml:"-"`
-	UpdatedAt       time.Time  `json:"-" yaml:"-"`
-	DeletedAt       *time.Time `sql:"index" json:"-" yaml:"-"`
+	ID              uint      `gorm:"primaryKey;size:32" json:"ID" yaml:"ID"`
+	LensSlug        string    `gorm:"type:bytes;size:160;uniqueIndex:uix_lenses_lens_slug;" json:"Slug" yaml:"Slug,omitempty"`
+	LensName        string    `gorm:"size:160;" json:"Name" yaml:"Name"`
+	LensMake        string    `gorm:"size:160;" json:"Make" yaml:"Make,omitempty"`
+	LensModel       string    `gorm:"size:160;" json:"Model" yaml:"Model,omitempty"`
+	LensType        string    `gorm:"size:100;" json:"Type" yaml:"Type,omitempty"`
+	LensDescription string    `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	LensNotes       string    `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	LensSrc         string    `gorm:"type:bytes;size:8;default:'';" json:"-" yaml:"-"`
+	CreatedAt       time.Time `json:"-" yaml:"-"`
+	UpdatedAt       time.Time `json:"-" yaml:"-"`
+	DeletedAt       DeletedAt `gorm:"index" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.

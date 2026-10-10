@@ -1,13 +1,14 @@
 package sortby
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // RandomExpr returns the random function of an SQL dialect, given as a dialect or driver name.
-func RandomExpr(dialect string) *gorm.SqlExpr {
+func RandomExpr(dialect string) clause.Expr {
 	switch dsn.DialectFromDriver(dialect) {
 	case dsn.DialectMySQL:
 		// A seed integer can be passed as an argument, e.g. "RAND(2342)", to generate

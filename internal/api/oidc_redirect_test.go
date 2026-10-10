@@ -331,9 +331,10 @@ func findOidcTestUser(subject string) *entity.User {
 }
 
 // oidcSessionCount returns the number of sessions of the specified user.
-func oidcSessionCount(t *testing.T, user *entity.User) (count int) {
-	require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("user_uid = ?", user.UserUID).Count(&count).Error)
-	return count
+func oidcSessionCount(t *testing.T, user *entity.User) int {
+	var n64 int64
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("user_uid = ?", user.UserUID).Count(&n64).Error)
+	return int(n64)
 }
 
 // newOidcTestApp returns a router with the OIDC login and redirect endpoints.

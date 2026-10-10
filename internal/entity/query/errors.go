@@ -29,5 +29,5 @@ func Errors(limit, offset int, search string) (results entity.Errors, err error)
 
 // DeleteErrors removes all entries from the errors table.
 func DeleteErrors() (err error) {
-	return UnscopedDb().Delete(entity.Error{}).Error
+	return UnscopedDb().Where("1 = 1").Delete(&entity.Error{}).Error
 }

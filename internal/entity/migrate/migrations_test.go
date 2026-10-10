@@ -5,10 +5,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/photoprism/photoprism/internal/event"
 )
@@ -30,13 +33,33 @@ func captureSystemLog(t *testing.T) *bytes.Buffer {
 	return &buf
 }
 
-func TestMigrations_Start(t *testing.T) {
-	db, err := gorm.Open("sqlite3", filepath.Join(t.TempDir(), "migrations.db"))
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = db.Close() })
-	db.LogMode(false)
+// openTestDb opens a test database with the dialector for the driver name.
+func openTestDb(driver, dataSourceName string) (*gorm.DB, error) {
+	switch driver {
+	case "mysql":
+		return gorm.Open(mysql.Open(dataSourceName), &gorm.Config{Logger: logger.Discard})
+	default:
+		return gorm.Open(sqlite.Open(dataSourceName), &gorm.Config{Logger: logger.Discard})
+	}
+}
 
-	require.NoError(t, db.AutoMigrate(&Migration{}).Error)
+// closeTestDb closes the connection pool of a test database.
+func closeTestDb(db *gorm.DB) error {
+	sqlDb, err := db.DB()
+
+	if err != nil {
+		return err
+	}
+
+	return sqlDb.Close()
+}
+
+func TestMigrations_Start(t *testing.T) {
+	db, err := openTestDb("sqlite3", filepath.Join(t.TempDir(), "migrations.db"))
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = closeTestDb(db) })
+
+	require.NoError(t, db.AutoMigrate(&Migration{}))
 	require.NoError(t, db.Exec("CREATE TABLE start_test (id INTEGER PRIMARY KEY, name VARCHAR(16))").Error)
 
 	// find returns the stored migration with the specified ID.

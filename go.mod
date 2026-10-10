@@ -16,14 +16,12 @@ require (
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
-	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
 	github.com/klauspost/cpuid/v2 v2.4.0
 	github.com/leandro-lugaresi/hub v1.1.2
 	github.com/leonelquinteros/gotext v1.7.2
-	github.com/lib/pq v1.12.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.1
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
@@ -113,7 +111,6 @@ require (
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/cloudwego/base64x v0.1.7 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
-	github.com/denisenkom/go-mssqldb v0.12.3 // indirect
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
 	github.com/fatih/color v1.19.0 // indirect
@@ -136,7 +133,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.2 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
-	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/google/jsonschema-go v0.4.3 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
@@ -175,7 +171,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.46.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/oauth2 v0.37.0
-	golang.org/x/tools v0.49.0
+	golang.org/x/tools v0.49.0 // indirect
 )
 
 require (
@@ -192,6 +188,9 @@ require (
 	github.com/emersion/go-webdav v0.7.0
 	github.com/mattn/go-runewidth v0.0.30 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
+	gorm.io/driver/mysql v1.6.0
+	gorm.io/driver/sqlite v1.6.0
+	gorm.io/gorm v1.31.2
 )
 
 go 1.26.0
