@@ -63,7 +63,7 @@ export class Photo extends RestModel {
       TakenSrc: "",
       TimeZone: "",
       Path: "",
-      Color: 0,
+      Color: -1,
       Name: "",
       OriginalName: "",
       Title: "",

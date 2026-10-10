@@ -31,6 +31,7 @@ describe("model/file", () => {
     const result = file.getDefaults();
     expect(result.UID).toBe("");
     expect(result.Size).toBe(0);
+    expect(result.Chroma).toBe(-1);
   });
 
   it("should get file base name", () => {

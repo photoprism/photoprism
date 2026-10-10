@@ -40,4 +40,13 @@ func TestColors_Hex(t *testing.T) {
 
 func TestColor_ID(t *testing.T) {
 	assert.Equal(t, int16(7), Cyan.ID())
+	assert.Equal(t, int16(1), Grey.ID())
+	assert.Equal(t, int16(15), Pink.ID())
+	assert.Equal(t, int16(16), Black.ID())
+}
+
+func TestColor_Name(t *testing.T) {
+	assert.Equal(t, "black", Black.Name())
+	assert.Equal(t, "grey", Grey.Name())
+	assert.Equal(t, "", Color(0).Name())
 }

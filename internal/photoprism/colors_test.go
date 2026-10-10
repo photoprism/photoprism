@@ -26,8 +26,8 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 	*/
 	expected := map[string]colors.ColorPerception{
 		"elephant_mono.jpg": {
-			Colors:    colors.Colors{0x0, 0x1, 0x0, 0x0, 0x1, 0x1, 0x0, 0x1, 0x1},
-			MainColor: 0,
+			Colors:    colors.Colors{colors.Black, colors.Grey, colors.Black, colors.Black, colors.Grey, colors.Grey, colors.Black, colors.Grey, colors.Grey},
+			MainColor: colors.Black,
 			Luminance: colors.LightMap{0x1, 0x8, 0x2, 0x0, 0x7, 0x4, 0x0, 0x2, 0x2},
 			Chroma:    0,
 		},
@@ -87,7 +87,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.True(t, p.Chroma.Int() >= 0)
+			assert.True(t, p.Chroma.Int() >= 1)
 			assert.True(t, p.Chroma.Int() <= 100)
 			assert.NotEmpty(t, p.MainColor.Name())
 

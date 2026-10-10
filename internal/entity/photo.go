@@ -97,7 +97,7 @@ type Photo struct {
 	PhotoFaces       int           `json:"Faces,omitempty" yaml:"Faces,omitempty"`
 	PhotoResolution  int           `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"Duration,omitempty"`
-	PhotoColor       int16         `json:"Color" yaml:"-"`
+	PhotoColor       int16         `gorm:"default:-1;" json:"Color" yaml:"-"`
 	CameraID         uint          `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
 	CameraSerial     string        `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string        `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
@@ -137,6 +137,7 @@ func NewUserPhoto(stackable bool, userUid string) Photo {
 	m := Photo{
 		PhotoTitle:   UnknownTitle,
 		PhotoType:    MediaImage,
+		PhotoColor:   -1,
 		PhotoCountry: UnknownCountry.ID,
 		CameraID:     UnknownCamera.ID,
 		LensID:       UnknownLens.ID,

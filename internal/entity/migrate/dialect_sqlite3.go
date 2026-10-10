@@ -154,4 +154,22 @@ var DialectSQLite3 = Migrations{
 		Stage:      "main",
 		Statements: []string{"UPDATE faces SET face_kind = 1 WHERE face_kind = 0 AND embedding_json IS NOT NULL AND LENGTH(embedding_json) > 0;"},
 	},
+	{
+		ID:         "20261010-000001",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"UPDATE files SET file_chroma = CASE WHEN file_colors <> '' THEN 1 ELSE -1 END WHERE file_chroma = 0;"},
+	},
+	{
+		ID:         "20261010-000002",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"UPDATE photos SET photo_color = CASE WHEN EXISTS (SELECT 1 FROM files f WHERE f.photo_id = photos.id AND f.file_primary = TRUE AND f.file_main_color = 'black') THEN 16 ELSE -1 END WHERE photo_color = 0;"},
+	},
+	{
+		ID:         "20261010-000003",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"UPDATE files SET file_diff = -1 WHERE file_diff = 0;"},
+	},
 }

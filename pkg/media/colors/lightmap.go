@@ -61,10 +61,10 @@ var diffValues = []diffValue{
 	https://jenssegers.com/perceptual-image-hashes
 */
 
-// Diff returns an integer that can be used to find similar images.
+// Diff returns an integer that can be used to find similar images, or -1 for an invalid light map.
 func (m LightMap) Diff() (result int) {
 	if len(m) != 9 {
-		return 0
+		return -1
 	}
 
 	result = 1

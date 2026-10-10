@@ -269,6 +269,51 @@ describe("component/photo/edit/files", () => {
     });
   });
 
+  describe("chroma", () => {
+    // mountWithSlots renders the default slots of stubbed components, so that the file details are rendered.
+    const mountWithSlots = (fileOverrides) => {
+      const previous = VTUConfig.global.renderStubDefaultSlot;
+      VTUConfig.global.renderStubDefaultSlot = true;
+
+      try {
+        return mountPhotoFiles({ fileOverrides }).wrapper;
+      } finally {
+        VTUConfig.global.renderStubDefaultSlot = previous;
+      }
+    };
+
+    it("shows a bar with the percentage for colored files", () => {
+      const wrapper = mountWithSlots({ Chroma: 40 });
+
+      expect(wrapper.text()).toContain("Chroma");
+      expect(wrapper.find("v-progress-linear-stub").exists()).toBe(true);
+      expect(wrapper.text()).not.toContain("Monochrome");
+    });
+
+    it("shows monochrome files as such", () => {
+      const wrapper = mountWithSlots({ Chroma: 1 });
+
+      expect(wrapper.text()).toContain("Chroma");
+      expect(wrapper.text()).toContain("Monochrome");
+      expect(wrapper.find("v-progress-linear-stub").exists()).toBe(false);
+    });
+
+    it("shows monochrome values of earlier versions as such", () => {
+      const wrapper = mountWithSlots({ Chroma: 0 });
+
+      expect(wrapper.text()).toContain("Monochrome");
+      expect(wrapper.find("v-progress-linear-stub").exists()).toBe(false);
+    });
+
+    it("is hidden when the chroma is unknown", () => {
+      const wrapper = mountWithSlots({ Chroma: -1, MainColor: "grey" });
+
+      expect(wrapper.text()).toContain("Main Color");
+      expect(wrapper.text()).not.toContain("Chroma");
+      expect(wrapper.text()).not.toContain("Monochrome");
+    });
+  });
+
   describe("openFile", () => {
     it("opens file in lightbox using Thumb.fromFile", () => {
       const thumbModel = {};

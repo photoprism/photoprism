@@ -932,6 +932,7 @@ describe("model/photo", () => {
     const photo = new Photo(values);
     const result = photo.getDefaults();
     expect(result.UID).toBe("");
+    expect(result.Color).toBe(-1);
   });
 
   it("should get photos base name", () => {

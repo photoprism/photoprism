@@ -5,12 +5,12 @@ import "fmt"
 // Chroma represents colorfulness.
 type Chroma int16
 
-// Percent returns the colorfulness in percent.
+// Percent returns the colorfulness in percent from 1 to 100, so that 1 includes images without colors.
 func (c Chroma) Percent() int16 {
 	if c > 100 {
 		return 100
-	} else if c < 0 {
-		return 0
+	} else if c < 1 {
+		return 1
 	}
 
 	return int16(c)
@@ -23,7 +23,7 @@ func (c Chroma) Hex() string {
 
 // Uint returns the colorfulness in percent as unsigned integer.
 func (c Chroma) Uint() uint {
-	return uint(c.Percent()) //nolint:gosec // Percent is bounded 0..100
+	return uint(c.Percent()) //nolint:gosec // Percent is bounded 1..100
 }
 
 // Int returns the colorfulness in percent as integer.

@@ -37,10 +37,8 @@ type Color int16
 type Colors []Color
 
 const (
-	// Black color.
-	Black Color = iota
 	// Grey color.
-	Grey
+	Grey Color = iota + 1
 	// Brown color.
 	Brown
 	// Gold color.
@@ -69,6 +67,8 @@ const (
 	Red
 	// Pink color.
 	Pink
+	// Black color, which is 16 so that 0 never stands for a measured color.
+	Black
 )
 
 // All lists all defined colors in display order.
@@ -93,7 +93,6 @@ var All = Colors{
 
 // Names maps Color to their lowercase names.
 var Names = map[Color]string{
-	Black:   "black",   // 0
 	Grey:    "grey",    // 1
 	Brown:   "brown",   // 2
 	Gold:    "gold",    // 3
@@ -109,6 +108,7 @@ var Names = map[Color]string{
 	Orange:  "orange",  // D
 	Red:     "red",     // E
 	Pink:    "pink",    // F
+	Black:   "black",   // 16, hex 0
 }
 
 // Weights assigns relative importance to colors.
@@ -141,9 +141,9 @@ func (c Color) ID() int16 {
 	return int16(c)
 }
 
-// Hex returns the hex nibble for the color or "0" if out of range.
+// Hex returns the hex nibble for the color, which is "0" for Black or a value out of range.
 func (c Color) Hex() string {
-	if c < 0 || c > 15 {
+	if c == Black || c < 0 || c > 15 {
 		return "0"
 	}
 

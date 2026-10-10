@@ -316,11 +316,14 @@
                               {{ file.MainColor }}
                             </td>
                           </tr>
-                          <tr v-if="file?.Chroma > 0">
+                          <tr v-if="file?.Chroma >= 0">
                             <td>
                               {{ $gettext(`Chroma`) }}
                             </td>
-                            <td>
+                            <td v-if="file.Chroma <= 1">
+                              {{ $gettext(`Monochrome`) }}
+                            </td>
+                            <td v-else>
                               <v-progress-linear
                                 v-tooltip="`${file.Chroma}%`"
                                 :model-value="file.Chroma"
