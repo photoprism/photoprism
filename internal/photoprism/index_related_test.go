@@ -7,6 +7,8 @@ import (
 	"testing"
 	"unicode/utf8"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -778,5 +780,84 @@ func TestIndexRelated_TypeCheck(t *testing.T) {
 		result := indexGroup(t, "index-related-type-preview", false, map[string][]byte{"a.mov": mov, "a.jpg": png}, "a.mov", "a.jpg")
 		assert.True(t, result.Failed())
 		assert.ErrorContains(t, result.Err, "a.jpg")
+	})
+}
+
+// TestIndexRelated_ArchivedBackup checks that the related files of a photo restored as archived from its
+// YAML backup are indexed with it, by the first run that includes archived photos.
+func TestIndexRelated_ArchivedBackup(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := newIndexRelatedTestConfig(t, "index-related-archived")
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	token := rnd.Base36(8)
+	dir := filepath.Join(cfg.OriginalsPath(), token)
+	photoUID := rnd.GenerateUID(entity.PhotoUID)
+
+	require.NoError(t, fs.Copy("../../assets/samples/example.mp4", filepath.Join(dir, "clip.mp4"), false))
+	require.NoError(t, fs.Copy("testdata/2018-04-12 19_24_49.jpg", filepath.Join(cfg.SidecarPath(), token, "clip.mp4.jpg"), false))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "clip.yml"), []byte("UID: "+photoUID+"\nType: video\nTitle: Archived Clip\nQuality: 3\n"+
+		"TakenAt: 2021-02-20T01:29:16Z\nDeletedAt: 2022-10-18T08:15:21Z\n"), fs.ModeFile))
+
+	// indexClip indexes the clip and its preview with the specified archive and rescan options.
+	indexClip := func(skipArchived, rescan bool) IndexResult {
+		mainFile, err := NewMediaFile(filepath.Join(dir, "clip.mp4"))
+		require.NoError(t, err)
+		related, err := mainFile.RelatedFiles(true)
+		require.NoError(t, err)
+		require.True(t, related.HasPreview(), "sidecar preview is related")
+
+		ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+		opt := NewIndexOptions("/", rescan, false, true, false, skipArchived, cfg)
+
+		return IndexRelated(related, ind, opt)
+	}
+
+	countPhotos := func() (n int64) {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ?", token).Count(&n).Error)
+		return n
+	}
+
+	t.Run("SkipArchived", func(t *testing.T) {
+		result := indexClip(true, false)
+		assert.Equal(t, IndexArchived, result.Status)
+		assert.Equal(t, int64(0), countPhotos(), "no photo before a run that includes archived photos")
+	})
+	t.Run("IncludeArchived", func(t *testing.T) {
+		result := indexClip(false, false)
+		require.True(t, result.Success(), "%s", result.Err)
+		assert.Equal(t, int64(1), countPhotos())
+
+		photo := entity.Photo{}
+		require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", photoUID).First(&photo).Error)
+		assert.NotNil(t, photo.DeletedAt, "photo stays archived")
+		assert.Greater(t, photo.PhotoQuality, -1)
+
+		var files []string
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", photo.ID).Pluck("file_name", &files).Error)
+		assert.ElementsMatch(t, []string{token + "/clip.mp4", token + "/clip.mp4.jpg", token + "/clip.yml"}, files)
+	})
+	t.Run("SavedArchived", func(t *testing.T) {
+		// Related files of an archived photo that exists are still visited, e.g. if they belong to another photo.
+		logger, hook := logtest.NewNullLogger()
+		logger.SetLevel(logrus.InfoLevel)
+		prevLog := log
+		log = logger
+		t.Cleanup(func() { log = prevLog })
+
+		result := indexClip(true, true)
+		assert.Equal(t, IndexArchived, result.Status)
+		assert.NotZero(t, result.PhotoID)
+
+		visited := false
+		for _, entry := range hook.AllEntries() {
+			visited = visited || strings.Contains(entry.Message, "related jpg file "+token+"/clip.mp4.jpg")
+		}
+		assert.True(t, visited, "related preview visited")
 	})
 }

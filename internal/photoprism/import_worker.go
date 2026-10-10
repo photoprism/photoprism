@@ -313,10 +313,14 @@ func ImportWorker(jobs <-chan ImportJob) {
 				log.Infof("import: %s main %s file %s", res, main.FileType(), clean.Log(main.RootRelName()))
 				done[main.FileName()] = true
 
-				if !res.Success() {
+				switch {
+				case !res.Success():
 					// Skip importing related files if the main file was not indexed successfully.
 					continue
-				} else if res.PhotoUID != "" {
+				case res.Archived() && res.PhotoID == 0:
+					// Related files of an archived photo restored from a backup are indexed with it later.
+					continue
+				case res.PhotoUID != "":
 					photoUID = res.PhotoUID
 
 					// Add photo to album if a list of albums was provided when importing.

@@ -397,8 +397,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Restore pictures that have been purged automatically.
 		photo.DeletedAt = nil
 	} else if o.SkipArchived && photo.DeletedAt != nil {
-		// Skip archived pictures for faster indexing.
+		// Skip archived pictures for faster indexing; the photo ID is 0 if it was restored from a backup.
 		result.Status = IndexArchived
+		result.PhotoID = photo.ID
 		return result
 	}
 

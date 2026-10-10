@@ -38,6 +38,10 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	case !result.Success():
 		// Skip related files if indexing was not completely successful.
 		return result
+	case result.Archived() && result.PhotoID == 0:
+		// Related files of an archived photo that was restored from a backup but not saved are indexed
+		// with it by the next run that includes archived photos.
+		return result
 	case result.Stacked() && related.Len() > 1:
 		// Show info if main file was stacked and has additional related files.
 		log.Infof("index: %s has %s", related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
