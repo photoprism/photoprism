@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"path/filepath"
+	"regexp"
 	"testing"
 
 	"github.com/jinzhu/gorm"
@@ -8,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/entity/sqlcount"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -158,14 +161,84 @@ func TestTables_Migrate(t *testing.T) {
 	})
 }
 
+// fixtureStatement matches the ORM statements with which the default fixtures find or create their rows.
+var fixtureStatement = regexp.MustCompile("(?i)^\\s*(SELECT \\* FROM|INSERT INTO)\\s+[`\"]?(auth_users|places|cells|cameras|lenses|countries)\\b")
+
+// fixtureStatements returns the statements with which the default fixtures access their tables.
+func fixtureStatements(statements []string) (result []string) {
+	for _, s := range statements {
+		if fixtureStatement.MatchString(s) {
+			result = append(result, s)
+		}
+	}
+
+	return result
+}
+
 func TestInitDb_MissingTables(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// A registered table that does not exist after migrating fails the initialization.
-	Entities["migrate_missing_test"] = &migrateFailTest{}
-	t.Cleanup(func() { delete(Entities, "migrate_missing_test") })
+	t.Run("Success", func(t *testing.T) {
+		FlushCaches()
+		statements := countedStatements(t, func() {
+			assert.NoError(t, InitDb(migrate.Opt(false, false, nil)))
+		})
+		assert.NotEmpty(t, fixtureStatements(statements), "default fixtures")
+	})
+	t.Run("OtherTableMissing", func(t *testing.T) {
+		// A registered table that does not exist after migrating fails the initialization.
+		Entities["migrate_missing_test"] = &migrateFailTest{}
+		t.Cleanup(func() { delete(Entities, "migrate_missing_test") })
 
-	assert.Error(t, InitDb(migrate.Opt(false, false, nil)))
+		// The default fixtures load the stored admin account.
+		admin := Admin
+		require.NotEmpty(t, admin.UserUID)
+		t.Cleanup(func() { Admin = admin })
+		Admin.UserUID = ""
+
+		FlushCaches()
+		statements := countedStatements(t, func() {
+			assert.Error(t, InitDb(migrate.Opt(false, false, nil)))
+		})
+		assert.NotEmpty(t, fixtureStatements(statements), "default fixtures")
+		assert.Equal(t, admin.UserUID, Admin.UserUID)
+	})
+	t.Run("FixtureTablesMissing", func(t *testing.T) {
+		p, err := sqlcount.OpenGorm(dsn.DriverSQLite3, filepath.Join(t.TempDir(), "missing.db"))
+		require.NoError(t, err)
+
+		prev := dbConn
+		SetDbProvider(p)
+		t.Cleanup(func() {
+			SetDbProvider(prev)
+			_ = p.Close()
+		})
+
+		FlushCaches()
+		p.Counter.Start()
+		assert.Error(t, InitDb(migrate.Opt(false, false, nil)))
+		assert.Empty(t, fixtureStatements(p.Counter.Stop()), "default fixtures")
+	})
+}
+
+func TestHasDefaultFixtureTables(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.True(t, hasDefaultFixtureTables(Db()))
+	})
+	t.Run("Missing", func(t *testing.T) {
+		db, err := gorm.Open(dsn.DriverSQLite3, filepath.Join(t.TempDir(), "fixtures.db"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = db.Close() })
+
+		require.NoError(t, db.AutoMigrate(&User{}, &Place{}, &Cell{}, &Country{}, &Camera{}).Error)
+		assert.False(t, hasDefaultFixtureTables(db))
+
+		require.NoError(t, db.AutoMigrate(&Lens{}).Error)
+		assert.True(t, hasDefaultFixtureTables(db))
+	})
+	t.Run("NoDb", func(t *testing.T) {
+		assert.False(t, hasDefaultFixtureTables(nil))
+	})
 }

@@ -561,7 +561,7 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
 
 	// Record the version as migrated only once its schema was, so the next start migrates it again.
 	if err = entity.InitDb(opt); err != nil {
-		log.Errorf("config: %s (migrate)", err)
+		event.SystemError([]string{"config", "%s (migrate)"}, clean.ErrorFull(err))
 
 		if !version.Unknown() {
 			version.MigratedAt = nil

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 
 	"github.com/dustin/go-humanize/english"
@@ -110,7 +112,7 @@ func (m *Migrations) Start(db *gorm.DB, opt Options) {
 		// Run migration.
 		if err := migration.Execute(db); err != nil {
 			migration.Fail(err, db)
-			log.Errorf("migrate: executing %s failed with %s [%s]", migration.ID, err, time.Since(start))
+			event.SystemError([]string{"migrate", "executing %s failed with %s [%s]"}, migration.ID, clean.ErrorFull(err), time.Since(start))
 		} else if err = migration.Finish(db); err != nil {
 			log.Warnf("migrate: updating %s failed with %s [%s]", migration.ID, err, time.Since(start))
 		} else {

@@ -1,13 +1,16 @@
 package config
 
 import (
+	"bytes"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -48,7 +51,18 @@ func TestConfig_MigrateDbVersion(t *testing.T) {
 
 	// Migrate the schema again, as "migrations run --failed" does, with a table that cannot be created.
 	entity.Entities["config_migrate_fail"] = &migrateFailEntity{}
-	assert.Error(t, c.MigrateDb(true, nil))
+
+	var sysBuf bytes.Buffer
+	origSys := event.SystemLog
+	t.Cleanup(func() { event.SystemLog = origSys })
+	event.SystemLog = &logrus.Logger{Out: &sysBuf, Formatter: &logrus.TextFormatter{DisableTimestamp: true}, Level: logrus.InfoLevel}
+	err := c.MigrateDb(true, nil)
+	event.SystemLog = origSys
+
+	assert.Error(t, err)
+	assert.Contains(t, sysBuf.String(), "level=error")
+	assert.Contains(t, sysBuf.String(), "config: migrate: ")
+	assert.Contains(t, sysBuf.String(), "config_migrate_fail")
 
 	version = migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
 	require.NotNil(t, version)

@@ -3,6 +3,8 @@ package entity
 import (
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 )
 
@@ -14,6 +16,18 @@ func CreateDefaultFixtures() {
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
+}
+
+// hasDefaultFixtureTables checks if the tables that CreateDefaultFixtures reads and writes exist.
+func hasDefaultFixtureTables(db *gorm.DB) bool {
+	for _, name := range []string{User{}.TableName(), Place{}.TableName(), Cell{}.TableName(),
+		Country{}.TableName(), Camera{}.TableName(), Lens{}.TableName()} {
+		if found, err := DbHasTable(db, name); err != nil || !found {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ResetTestFixtures recreates database tables and test fixtures.

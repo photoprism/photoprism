@@ -45,7 +45,10 @@ func InitDb(opt migrate.Options) (err error) {
 		}
 	}
 
-	CreateDefaultFixtures()
+	// After a failed migration, default fixtures are created only if their tables exist.
+	if err == nil || hasDefaultFixtureTables(Db()) {
+		CreateDefaultFixtures()
+	}
 
 	ready()
 
