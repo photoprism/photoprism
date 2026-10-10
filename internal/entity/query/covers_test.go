@@ -7,11 +7,120 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// coverCandidates returns the hashes of the files that may become the automatic cover of an album or label,
+// selected independently of the cover queries under test.
+func coverCandidates(t *testing.T, join string, args ...any) []string {
+	t.Helper()
+
+	var hashes []string
+
+	// Accepts every file one of the drivers' queries may choose, some of which do not check for missing files.
+	stmt := UnscopedDb().Table("files f").
+		Joins("JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0").
+		Joins(join, args...).
+		Where("f.file_primary = TRUE AND f.file_error = '' AND f.file_hash <> '' AND f.file_type IN (?)", media.PreviewExpr)
+
+	require.NoError(t, stmt.Pluck("DISTINCT f.file_hash", &hashes).Error)
+
+	return hashes
+}
+
+// albumCoverCandidates returns the cover candidates of an album based on its type.
+func albumCoverCandidates(t *testing.T, a entity.Album) []string {
+	t.Helper()
+
+	switch a.AlbumType {
+	case entity.AlbumManual:
+		return coverCandidates(t, "JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.album_uid = ? AND pa.hidden = FALSE AND pa.missing = FALSE", a.AlbumUID)
+	case entity.AlbumFolder:
+		return coverCandidates(t, "JOIN albums a ON a.album_uid = ? AND a.album_path = p.photo_path", a.AlbumUID)
+	case entity.AlbumMonth:
+		return coverCandidates(t, "JOIN albums a ON a.album_uid = ? AND a.album_year = p.photo_year AND a.album_month = p.photo_month", a.AlbumUID)
+	default:
+		t.Fatalf("unsupported album type %s", a.AlbumType)
+		return nil
+	}
+}
+
+// autoCoverAlbum returns an album of the given type with an automatic cover and at least one candidate,
+// clears its cover, and restores the cover afterwards.
+func autoCoverAlbum(t *testing.T, albumType string) entity.Album {
+	t.Helper()
+
+	var albums entity.Albums
+
+	require.NoError(t, UnscopedDb().Where("album_type = ? AND thumb_src = ? AND deleted_at IS NULL", albumType, entity.SrcAuto).
+		Order("id").Find(&albums).Error)
+
+	for _, a := range albums {
+		if len(albumCoverCandidates(t, a)) == 0 {
+			continue
+		}
+
+		origThumb := a.Thumb
+
+		t.Cleanup(func() {
+			_ = entity.UpdateAlbum(a.AlbumUID, entity.Values{"thumb": origThumb})
+			entity.FlushAlbumCache()
+		})
+
+		require.NoError(t, entity.UpdateAlbum(a.AlbumUID, entity.Values{"thumb": ""}))
+		entity.FlushAlbumCache()
+
+		return a
+	}
+
+	// The fixtures have no month album with a cover candidate, so one is created for an existing picture.
+	if albumType == entity.AlbumMonth {
+		return newMonthCoverAlbum(t)
+	}
+
+	t.Fatalf("no %s album with an automatic cover and a cover candidate", albumType)
+
+	return entity.Album{}
+}
+
+// newMonthCoverAlbum creates a month album for a picture that may become its cover and removes it afterwards.
+func newMonthCoverAlbum(t *testing.T) entity.Album {
+	t.Helper()
+
+	var photo entity.Photo
+
+	require.NoError(t, UnscopedDb().Table("photos p").Select("p.*").
+		Joins("JOIN files f ON f.photo_id = p.id AND f.file_primary = TRUE AND f.file_missing = FALSE AND f.file_error = '' AND f.file_hash <> '' AND f.deleted_at IS NULL").
+		Where("p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0 AND p.photo_year > 0 AND p.photo_month > 0").
+		Order("p.id").Limit(1).Scan(&photo).Error)
+	require.NotZero(t, photo.ID, "picture for a month cover")
+
+	uid := rnd.GenerateUID(entity.AlbumUID)
+	album := entity.Album{AlbumUID: uid, AlbumType: entity.AlbumMonth, AlbumTitle: "Month Cover", AlbumSlug: "month-cover-" + uid,
+		AlbumYear: photo.PhotoYear, AlbumMonth: photo.PhotoMonth, ThumbSrc: entity.SrcAuto}
+	require.NoError(t, entity.UnscopedDb().Create(&album).Error)
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&album).Error })
+
+	return album
+}
+
+// assertAlbumCover checks that the stored cover of an album is one of its candidates.
+func assertAlbumCover(t *testing.T, a entity.Album) {
+	t.Helper()
+
+	refreshed, err := AlbumByUID(a.AlbumUID)
+	require.NoError(t, err)
+	assert.Contains(t, albumCoverCandidates(t, a), refreshed.Thumb, "cover of %s album %s", a.AlbumType, a.AlbumUID)
+}
+
 func TestUpdateAlbumManualCovers(t *testing.T) {
-	assert.NoError(t, UpdateAlbumManualCovers())
+	album := autoCoverAlbum(t, entity.AlbumManual)
+
+	require.NoError(t, UpdateAlbumManualCovers())
+	entity.FlushAlbumCache()
+
+	assertAlbumCover(t, album)
 }
 
 func TestUpdateAlbumManualCoversFiltered(t *testing.T) {
@@ -80,7 +189,12 @@ func TestRefreshManualAlbumCoverPrivate(t *testing.T) {
 }
 
 func TestUpdateAlbumFolderCovers(t *testing.T) {
-	assert.NoError(t, UpdateAlbumFolderCovers())
+	album := autoCoverAlbum(t, entity.AlbumFolder)
+
+	require.NoError(t, UpdateAlbumFolderCovers())
+	entity.FlushAlbumCache()
+
+	assertAlbumCover(t, album)
 }
 
 func TestUpdateAlbumFolderCoversFiltered(t *testing.T) {
@@ -121,7 +235,12 @@ func TestUpdateAlbumFolderCoversFiltered(t *testing.T) {
 }
 
 func TestUpdateAlbumMonthCovers(t *testing.T) {
-	assert.NoError(t, UpdateAlbumMonthCovers())
+	album := autoCoverAlbum(t, entity.AlbumMonth)
+
+	require.NoError(t, UpdateAlbumMonthCovers())
+	entity.FlushAlbumCache()
+
+	assertAlbumCover(t, album)
 }
 
 func TestUpdateAlbumMonthCoversFiltered(t *testing.T) {
@@ -162,11 +281,154 @@ func TestUpdateAlbumMonthCoversFiltered(t *testing.T) {
 }
 
 func TestUpdateAlbumCovers(t *testing.T) {
-	assert.NoError(t, UpdateAlbumCovers())
+	albums := []entity.Album{
+		autoCoverAlbum(t, entity.AlbumManual),
+		autoCoverAlbum(t, entity.AlbumFolder),
+		autoCoverAlbum(t, entity.AlbumMonth),
+	}
+
+	require.NoError(t, UpdateAlbumCovers())
+	entity.FlushAlbumCache()
+
+	for _, a := range albums {
+		assertAlbumCover(t, a)
+	}
 }
 
 func TestUpdateLabelCovers(t *testing.T) {
-	assert.NoError(t, UpdateLabelCovers())
+	var labels entity.Labels
+	var label entity.Label
+	var candidates []string
+
+	// Category parents can also take the cover of a child label, which the candidates do not cover.
+	require.NoError(t, UnscopedDb().Where("thumb_src = ? AND deleted_at IS NULL AND id NOT IN (SELECT category_id FROM categories)", entity.SrcAuto).
+		Order("id").Find(&labels).Error)
+
+	for _, l := range labels {
+		if candidates = coverCandidates(t, "JOIN photos_labels pl ON pl.photo_id = p.id AND pl.label_id = ? AND pl.uncertainty < 100", l.ID); len(candidates) > 0 {
+			label = l
+			break
+		}
+	}
+
+	require.NotEmpty(t, candidates, "label with an automatic cover and a cover candidate")
+
+	origThumb := label.Thumb
+
+	t.Cleanup(func() {
+		_ = UnscopedDb().Model(entity.Label{}).Where("id = ?", label.ID).UpdateColumn("thumb", origThumb).Error
+		entity.FlushLabelCache()
+	})
+
+	require.NoError(t, UnscopedDb().Model(entity.Label{}).Where("id = ?", label.ID).UpdateColumn("thumb", "").Error)
+	require.NoError(t, UpdateLabelCovers())
+
+	var refreshed entity.Label
+	require.NoError(t, UnscopedDb().Where("id = ?", label.ID).First(&refreshed).Error)
+	assert.Contains(t, candidates, refreshed.Thumb, "cover of label %s", label.LabelUID)
+}
+
+func TestRefreshManualAlbumCover(t *testing.T) {
+	// newAlbum creates a manual album without pictures and removes it afterwards.
+	newAlbum := func(t *testing.T, thumbSrc string) entity.Album {
+		album := entity.Album{AlbumUID: rnd.GenerateUID(entity.AlbumUID), AlbumType: entity.AlbumManual,
+			AlbumTitle: "Emptied Cover", AlbumSlug: "emptied-cover", Thumb: "cb1ad6a8b5ad21d5a5ffbbc8b8f75d0a0b2b2a2e", ThumbSrc: thumbSrc}
+		require.NoError(t, entity.UnscopedDb().Create(&album).Error)
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&album).Error })
+		return album
+	}
+
+	t.Run("Emptied", func(t *testing.T) {
+		album := newAlbum(t, entity.SrcAuto)
+
+		require.NoError(t, UpdateAlbumCovers(album))
+
+		refreshed, err := AlbumByUID(album.AlbumUID)
+		require.NoError(t, err)
+		assert.Equal(t, "", refreshed.Thumb)
+	})
+	// addPicture adds the picture of a file to the album and removes it afterwards.
+	addPicture := func(t *testing.T, album entity.Album, fileUID string) {
+		var file entity.File
+		require.NoError(t, UnscopedDb().Where("file_uid = ?", fileUID).First(&file).Error)
+
+		entry := entity.PhotoAlbum{AlbumUID: album.AlbumUID, PhotoUID: file.PhotoUID}
+		require.NoError(t, entity.UnscopedDb().Create(&entry).Error)
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&entry).Error })
+	}
+
+	t.Run("PrivatePictures", func(t *testing.T) {
+		album := newAlbum(t, entity.SrcAuto)
+		addPicture(t, album, coverPrivateFileUID)
+
+		require.NoError(t, UpdateAlbumCovers(album))
+
+		refreshed, err := AlbumByUID(album.AlbumUID)
+		require.NoError(t, err)
+		assert.Equal(t, "", refreshed.Thumb)
+	})
+	t.Run("PublicPicture", func(t *testing.T) {
+		album := newAlbum(t, entity.SrcAuto)
+		addPicture(t, album, coverPublicFileUID)
+
+		require.NoError(t, UpdateAlbumCovers(album))
+
+		refreshed, err := AlbumByUID(album.AlbumUID)
+		require.NoError(t, err)
+		assert.NotEqual(t, album.Thumb, refreshed.Thumb)
+		assert.Contains(t, coverCandidates(t, "JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.album_uid = ?", album.AlbumUID), refreshed.Thumb)
+	})
+	t.Run("ManualCover", func(t *testing.T) {
+		album := newAlbum(t, entity.SrcManual)
+
+		require.NoError(t, refreshManualAlbumCover(album))
+		entity.FlushAlbumCache()
+
+		refreshed, err := AlbumByUID(album.AlbumUID)
+		require.NoError(t, err)
+		assert.Equal(t, album.Thumb, refreshed.Thumb)
+	})
+	t.Run("ManualCoverWithPicture", func(t *testing.T) {
+		album := newAlbum(t, entity.SrcManual)
+		addPicture(t, album, coverPublicFileUID)
+
+		require.NoError(t, refreshManualAlbumCover(album))
+		entity.FlushAlbumCache()
+
+		refreshed, err := AlbumByUID(album.AlbumUID)
+		require.NoError(t, err)
+		assert.Equal(t, album.Thumb, refreshed.Thumb)
+	})
+}
+
+func TestClearAutoAlbumCover(t *testing.T) {
+	// newAlbum creates a manual album with a cover and removes it afterwards.
+	newAlbum := func(t *testing.T, thumbSrc string) entity.Album {
+		album := entity.Album{AlbumUID: rnd.GenerateUID(entity.AlbumUID), AlbumType: entity.AlbumManual,
+			AlbumTitle: "Clear Cover", AlbumSlug: "clear-cover", Thumb: "cb1ad6a8b5ad21d5a5ffbbc8b8f75d0a0b2b2a2e", ThumbSrc: thumbSrc}
+		require.NoError(t, entity.UnscopedDb().Create(&album).Error)
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&album).Error })
+		return album
+	}
+
+	t.Run("Auto", func(t *testing.T) {
+		album := newAlbum(t, entity.SrcAuto)
+
+		require.NoError(t, clearAutoAlbumCover(album.AlbumUID))
+
+		refreshed, err := AlbumByUID(album.AlbumUID)
+		require.NoError(t, err)
+		assert.Equal(t, "", refreshed.Thumb)
+	})
+	t.Run("ManualCover", func(t *testing.T) {
+		album := newAlbum(t, entity.SrcManual)
+
+		require.NoError(t, clearAutoAlbumCover(album.AlbumUID))
+
+		refreshed, err := AlbumByUID(album.AlbumUID)
+		require.NoError(t, err)
+		assert.Equal(t, album.Thumb, refreshed.Thumb)
+	})
 }
 
 // Files the cover tests attach their markers to: bridge.jpg belongs to a public picture,

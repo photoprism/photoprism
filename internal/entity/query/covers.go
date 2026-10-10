@@ -300,17 +300,26 @@ func refreshManualAlbumCover(album entity.Album) error {
 	file, err := AlbumCoverByUID(album.AlbumUID, true)
 	if err != nil {
 		if strings.Contains(err.Error(), "no cover") {
-			return nil
+			return clearAutoAlbumCover(album.AlbumUID)
 		}
 
 		return err
 	}
 
 	if file.FileHash == "" {
-		return nil
+		return clearAutoAlbumCover(album.AlbumUID)
 	}
 
-	return entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": file.FileHash})
+	return Db().Model(entity.Album{}).
+		Where("album_uid = ? AND thumb_src = ?", album.AlbumUID, entity.SrcAuto).
+		UpdateColumn("thumb", file.FileHash).Error
+}
+
+// clearAutoAlbumCover removes the automatic cover of an album without matching pictures, leaving manual covers unchanged.
+func clearAutoAlbumCover(albumUID string) error {
+	return Db().Model(entity.Album{}).
+		Where("album_uid = ? AND thumb_src = ? AND thumb <> ''", albumUID, entity.SrcAuto).
+		UpdateColumn("thumb", "").Error
 }
 
 // refreshFolderAlbumCover updates the cover for a single folder album.
