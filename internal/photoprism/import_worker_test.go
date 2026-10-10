@@ -679,7 +679,7 @@ func TestImportWorker_ArchivedBackup(t *testing.T) {
 	require.NoError(t, entity.UnscopedDb().Where("photo_path = ?", destPath).Find(&photos).Error)
 	require.Len(t, photos, 1)
 	assert.Equal(t, photoUID, photos[0].PhotoUID)
-	assert.NotNil(t, photos[0].DeletedAt, "photo stays archived")
+	assert.True(t, photos[0].IsArchived(), "photo stays archived")
 
 	var files []string
 	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", photos[0].ID).Pluck("file_name", &files).Error)

@@ -106,6 +106,7 @@
 11	internal/entity/photo.go	DeletedAt *time.Time
 4	internal/entity/photo.go	gorm.Scope
 1	internal/entity/photo_caption_test.go	DeletedAt *time.Time
+1	internal/entity/photo_details_save_test.go	gorm.Scope
 62	internal/entity/photo_fixtures.go	DeletedAt *time.Time
 1	internal/entity/photo_keyword.go	gorm.Scope
 1	internal/entity/photo_label.go	gorm.Scope

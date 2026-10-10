@@ -831,7 +831,7 @@ func TestIndexRelated_ArchivedBackup(t *testing.T) {
 
 		photo := entity.Photo{}
 		require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", photoUID).First(&photo).Error)
-		assert.NotNil(t, photo.DeletedAt, "photo stays archived")
+		assert.True(t, photo.IsArchived(), "photo stays archived")
 		assert.Greater(t, photo.PhotoQuality, -1)
 
 		var files []string
@@ -915,7 +915,7 @@ func TestIndexRelated_BackupQuality(t *testing.T) {
 			require.True(t, result.Success(), "%s", result.Err)
 
 			photo := findPhoto(t, uid)
-			assert.NotNil(t, photo.DeletedAt, "photo stays archived")
+			assert.True(t, photo.IsArchived(), "photo stays archived")
 		}
 	})
 	t.Run("ExistingPhoto", func(t *testing.T) {
@@ -939,6 +939,6 @@ func TestIndexRelated_BackupQuality(t *testing.T) {
 		require.True(t, result.Success(), "%s", result.Err)
 
 		photo := findPhoto(t, uid)
-		assert.Nil(t, photo.DeletedAt, "photo is restored")
+		assert.False(t, photo.IsDeleted(), "photo is restored")
 	})
 }
