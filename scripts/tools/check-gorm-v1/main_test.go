@@ -160,17 +160,17 @@ func TestBaseline(t *testing.T) {
 		}
 
 		s := formatBaseline(keys)
-		assert.Contains(t, s, "# Regenerate with: go run ./scripts/tools/check-gorm-v1 -update\n")
+		assert.Contains(t, s, "# Regenerate in the CE repository with: go run ./scripts/tools/check-gorm-v1 -update\n")
 		assert.Contains(t, s, "2\tinternal/api/a_test.go\tCount into non-int64\n12\tinternal/entity/photo.go\tDeletedAt *time.Time\n")
 
-		parsed, err := parseBaseline(s)
+		parsed, err := parseBaseline(baselineFile, s)
 		require.NoError(t, err)
 		assert.Equal(t, keys, parsed)
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		_, err := parseBaseline("internal/a.go\tRecordNotFound\n")
+		_, err := parseBaseline(baselineFile, "internal/a.go\tRecordNotFound\n")
 		assert.Error(t, err)
-		_, err = parseBaseline("x\tinternal/a.go\tRecordNotFound\n")
+		_, err = parseBaseline(baselineFile, "x\tinternal/a.go\tRecordNotFound\n")
 		assert.Error(t, err)
 	})
 }
@@ -240,5 +240,132 @@ func TestBaselineSymlink(t *testing.T) {
 		b, err := os.ReadFile(target) //nolint:gosec // G304: test-owned temporary file.
 		require.NoError(t, err)
 		assert.Equal(t, "1\tinternal/a.go\tRecordNotFound\n", string(b))
+	})
+}
+
+func TestBaselinePath(t *testing.T) {
+	t.Run("Main", func(t *testing.T) {
+		assert.Equal(t, baselineFile, baselinePath("internal/api/a.go"))
+		assert.Equal(t, baselineFile, baselinePath("pkg/plus/b.go"))
+		assert.Equal(t, baselineFile, baselinePath("professional/c.go"))
+	})
+	t.Run("Edition", func(t *testing.T) {
+		assert.Equal(t, "pro/"+baselineFile, baselinePath("pro/internal/api/b.go"))
+		assert.Equal(t, "portal/"+baselineFile, baselinePath("portal/internal/c.go"))
+		assert.Equal(t, "plus/"+baselineFile, baselinePath("plus/internal/d.go"))
+	})
+}
+
+func TestBaselineEditions(t *testing.T) {
+	keys := map[string]int{
+		"internal/a.go\tRecordNotFound":  2,
+		"pro/internal/b.go\tQueryExpr":   1,
+		"portal/internal/c.go\tSubQuery": 3,
+	}
+
+	t.Run("Split", func(t *testing.T) {
+		dir := t.TempDir()
+		require.NoError(t, os.Mkdir(filepath.Join(dir, "pro"), 0o700))
+		require.NoError(t, os.Mkdir(filepath.Join(dir, "portal"), 0o700))
+		t.Chdir(dir)
+
+		require.NoError(t, writeBaseline(keys))
+
+		for name, want := range map[string]map[string]int{
+			baselineFile:             {"internal/a.go\tRecordNotFound": 2},
+			"pro/" + baselineFile:    {"pro/internal/b.go\tQueryExpr": 1},
+			"portal/" + baselineFile: {"portal/internal/c.go\tSubQuery": 3},
+		} {
+			recorded, err := readBaselineFile(name)
+			require.NoError(t, err)
+			assert.Equal(t, want, recorded, name)
+		}
+
+		_, err := os.Stat("plus")
+		assert.True(t, os.IsNotExist(err), "no directory is created for a missing edition")
+
+		recorded, err := readBaseline()
+		require.NoError(t, err)
+		assert.Equal(t, keys, recorded)
+	})
+	t.Run("EditionMissing", func(t *testing.T) {
+		dir := t.TempDir()
+		require.NoError(t, os.Mkdir(filepath.Join(dir, "pro"), 0o700))
+		t.Chdir(dir)
+
+		require.NoError(t, writeBaseline(keys))
+
+		recorded, err := readBaseline()
+		require.NoError(t, err)
+		assert.Equal(t, map[string]int{"internal/a.go\tRecordNotFound": 2, "pro/internal/b.go\tQueryExpr": 1}, recorded)
+	})
+	t.Run("Migration", func(t *testing.T) {
+		// Edition entries recorded in the main file move to the edition file, which takes precedence.
+		dir := t.TempDir()
+		require.NoError(t, os.MkdirAll(filepath.Join(dir, "pro", filepath.Dir(baselineFile)), 0o700))
+		require.NoError(t, os.MkdirAll(filepath.Join(dir, filepath.Dir(baselineFile)), 0o700))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, baselineFile), []byte("2\tinternal/a.go\tRecordNotFound\n5\tpro/internal/b.go\tQueryExpr\n"), 0o600))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "pro", baselineFile), []byte("1\tpro/internal/b.go\tQueryExpr\n"), 0o600))
+		t.Chdir(dir)
+
+		recorded, err := readBaseline()
+		require.NoError(t, err)
+		assert.Equal(t, map[string]int{"internal/a.go\tRecordNotFound": 2, "pro/internal/b.go\tQueryExpr": 1}, recorded)
+
+		require.NoError(t, writeBaseline(mergeUnscanned(map[string]int{"internal/a.go\tRecordNotFound": 2}, recorded, []string{"internal"})))
+
+		main, err := readBaselineFile(baselineFile)
+		require.NoError(t, err)
+		assert.Equal(t, map[string]int{"internal/a.go\tRecordNotFound": 2}, main)
+
+		pro, err := readBaselineFile("pro/" + baselineFile)
+		require.NoError(t, err)
+		assert.Equal(t, map[string]int{"pro/internal/b.go\tQueryExpr": 1}, pro)
+	})
+	t.Run("FailedWrite", func(t *testing.T) {
+		// An edition file that cannot be written leaves the main file unchanged.
+		dir := t.TempDir()
+		legacy := "2\tinternal/a.go\tRecordNotFound\n1\tpro/internal/b.go\tQueryExpr\n"
+		require.NoError(t, os.MkdirAll(filepath.Join(dir, filepath.Dir(baselineFile)), 0o700))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, baselineFile), []byte(legacy), 0o600))
+		require.NoError(t, os.MkdirAll(filepath.Join(dir, "pro", "scripts"), 0o700))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "pro", "scripts", "tools"), nil, 0o600))
+		t.Chdir(dir)
+
+		assert.Error(t, writeBaseline(keys))
+
+		b, err := os.ReadFile(baselineFile)
+		require.NoError(t, err)
+		assert.Equal(t, legacy, string(b))
+	})
+	t.Run("EditionSymlink", func(t *testing.T) {
+		dir := t.TempDir()
+		target := filepath.Join(dir, "target.txt")
+		require.NoError(t, os.WriteFile(target, []byte("1\tpro/internal/b.go\tQueryExpr\n"), 0o600))
+		require.NoError(t, os.MkdirAll(filepath.Join(dir, "pro", filepath.Dir(baselineFile)), 0o700))
+		require.NoError(t, os.Symlink(target, filepath.Join(dir, "pro", baselineFile)))
+		t.Chdir(dir)
+
+		_, err := readBaseline()
+		assert.Error(t, err)
+		assert.Error(t, writeBaseline(keys))
+
+		b, err := os.ReadFile(target) //nolint:gosec // G304: test-owned temporary file.
+		require.NoError(t, err)
+		assert.Equal(t, "1\tpro/internal/b.go\tQueryExpr\n", string(b))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		dir := t.TempDir()
+		require.NoError(t, os.MkdirAll(filepath.Join(dir, filepath.Dir(baselineFile)), 0o700))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, baselineFile), []byte("x\tinternal/a.go\tRecordNotFound\n"), 0o600))
+		t.Chdir(dir)
+
+		_, err := readBaselineFile(baselineFile)
+		assert.ErrorContains(t, err, baselineFile)
+	})
+	t.Run("MainOnly", func(t *testing.T) {
+		t.Chdir(t.TempDir())
+
+		assert.Equal(t, []string{baselineFile}, baselineFiles())
 	})
 }

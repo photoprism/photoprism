@@ -7,9 +7,9 @@ IsRecordNotFoundError, QueryExpr, SubQuery, Dialect.GetName, NewScope and gorm.S
 of type *time.Time, Count destinations other than *int64, and string literals that compare a boolean
 column with 0 or 1.
 The sites are held in baseline.txt as a count per file and pattern, and the check fails when a group
-holds more than it records. Run with -update after removing sites to record the lower numbers, and
--list to print every finding. An update keeps the entries of directories it did not scan, such as
-edition repositories missing from a clone.
+holds more than it records. Each edition repository keeps the entries of its files in a baseline.txt of
+its own, at the same path. Run with -update after removing sites to record the lower numbers, and
+-list to print every finding. An update keeps the entries of directories it did not scan.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 */
@@ -21,9 +21,11 @@ import (
 	"go/token"
 	"go/types"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -112,7 +114,7 @@ func main() {
 			os.Exit(2)
 		}
 
-		fmt.Printf("Recorded %d GORM v1 site(s) in %s.\n", len(findings), baselineFile)
+		fmt.Printf("Recorded %d GORM v1 site(s) in %s.\n", len(findings), strings.Join(baselineFiles(), ", "))
 
 		return
 	}
@@ -137,17 +139,43 @@ func main() {
 			fmt.Printf("\t%s\n", f.Position)
 		}
 
-		fmt.Fprintf(os.Stderr, "\ncheck-gorm-v1: %d site(s) more than %s records, in %d group(s).\n"+
+		fmt.Fprintf(os.Stderr, "\ncheck-gorm-v1: %d site(s) more than the baseline records, in %d group(s).\n"+
 			"Use an API that works with GORM v1 and v2, or run with -update if the site is meant to stay.\n",
-			extra, baselineFile, len(added))
+			extra, len(added))
 		os.Exit(1)
 	}
 
-	fmt.Printf("GORM v1 sites checked, %d recorded (no increase over %s).\n", len(findings), baselineFile)
+	fmt.Printf("GORM v1 sites checked, %d recorded (no increase over the baseline).\n", len(findings))
 }
 
 // baselineFile records how many sites each file is known to have, relative to the repository root.
 const baselineFile = "scripts/tools/check-gorm-v1/baseline.txt"
+
+// editions are the directories of separate repositories whose entries are kept in their own baseline file.
+// An edition directory may be a symbolic link to its repository.
+var editions = []string{"plus", "pro", "portal"}
+
+// baselinePath returns the baseline file that records the sites of a slash-separated file path.
+func baselinePath(file string) string {
+	if edition, _, found := strings.Cut(file, "/"); found && slices.Contains(editions, edition) {
+		return path.Join(edition, baselineFile)
+	}
+
+	return baselineFile
+}
+
+// baselineFiles returns the main baseline file and that of every edition directory that exists.
+func baselineFiles() []string {
+	files := []string{baselineFile}
+
+	for _, edition := range editions {
+		if info, err := os.Stat(edition); err == nil && info.IsDir() {
+			files = append(files, path.Join(edition, baselineFile))
+		}
+	}
+
+	return files
+}
 
 // finding is one site that depends on GORM v1.
 type finding struct {
@@ -521,13 +549,32 @@ func underRoot(file string, roots []string) bool {
 	return false
 }
 
-// readBaseline returns the recorded counts, or none if the file does not exist.
+// readBaseline returns the counts recorded in all baseline files.
 func readBaseline() (map[string]int, error) {
-	if fs.IsSymlink(baselineFile) {
-		return nil, fmt.Errorf("%s is a symbolic link", baselineFile)
+	counts := make(map[string]int)
+
+	for _, name := range baselineFiles() {
+		recorded, err := readBaselineFile(name)
+
+		if err != nil {
+			return nil, err
+		}
+
+		for key, n := range recorded {
+			counts[key] = n
+		}
 	}
 
-	b, err := os.ReadFile(baselineFile)
+	return counts, nil
+}
+
+// readBaselineFile returns the counts recorded in one baseline file, or none if it does not exist.
+func readBaselineFile(name string) (map[string]int, error) {
+	if fs.IsSymlink(name) {
+		return nil, fmt.Errorf("%s is a symbolic link", name)
+	}
+
+	b, err := os.ReadFile(name) //nolint:gosec // G304: fixed baseline paths below the working directory
 
 	if os.IsNotExist(err) {
 		return map[string]int{}, nil
@@ -535,11 +582,11 @@ func readBaseline() (map[string]int, error) {
 		return nil, err
 	}
 
-	return parseBaseline(string(b))
+	return parseBaseline(name, string(b))
 }
 
 // parseBaseline reads lines of a count followed by a tab and a key, skipping comments and blank lines.
-func parseBaseline(s string) (map[string]int, error) {
+func parseBaseline(name, s string) (map[string]int, error) {
 	counts := make(map[string]int)
 
 	for _, line := range strings.Split(s, "\n") {
@@ -550,13 +597,13 @@ func parseBaseline(s string) (map[string]int, error) {
 		n, key, found := strings.Cut(line, "\t")
 
 		if !found {
-			return nil, fmt.Errorf("%s: cannot read %q", baselineFile, line)
+			return nil, fmt.Errorf("%s: cannot read %q", name, line)
 		}
 
 		c, convErr := strconv.Atoi(n)
 
 		if convErr != nil {
-			return nil, fmt.Errorf("%s: cannot read %q", baselineFile, line)
+			return nil, fmt.Errorf("%s: cannot read %q", name, line)
 		}
 
 		counts[key] = c
@@ -565,13 +612,38 @@ func parseBaseline(s string) (map[string]int, error) {
 	return counts, nil
 }
 
-// writeBaseline writes the counts sorted by key.
+// writeBaseline writes the counts sorted by key, each to the baseline file of its repository.
+// Entries of an edition whose directory does not exist are not written. The main file is written
+// last, so a failed write does not drop the edition entries it may still hold.
 func writeBaseline(keys map[string]int) error {
-	if fs.IsSymlink(baselineFile) {
-		return fmt.Errorf("%s is a symbolic link", baselineFile)
+	files := baselineFiles()
+	parts := make(map[string]map[string]int, len(files))
+
+	for _, name := range files {
+		if fs.IsSymlink(name) {
+			return fmt.Errorf("%s is a symbolic link", name)
+		} else if err := os.MkdirAll(filepath.Dir(name), fs.ModeDir); err != nil {
+			return err
+		}
+
+		parts[name] = make(map[string]int)
 	}
 
-	return os.WriteFile(baselineFile, []byte(formatBaseline(keys)), fs.ModeFile)
+	for key, n := range keys {
+		file, _, _ := strings.Cut(key, "\t")
+
+		if part, ok := parts[baselinePath(file)]; ok {
+			part[key] = n
+		}
+	}
+
+	for _, name := range append(files[1:], files[0]) {
+		if err := os.WriteFile(name, []byte(formatBaseline(parts[name])), fs.ModeFile); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // formatBaseline renders the counts sorted by key, below a header that names the columns.
@@ -587,7 +659,7 @@ func formatBaseline(keys map[string]int) string {
 	var b strings.Builder
 
 	b.WriteString("# Code that depends on GORM v1: count, file, pattern.\n")
-	b.WriteString("# Regenerate with: go run ./scripts/tools/check-gorm-v1 -update\n")
+	b.WriteString("# Regenerate in the CE repository with: go run ./scripts/tools/check-gorm-v1 -update\n")
 
 	for _, key := range sorted {
 		fmt.Fprintf(&b, "%d\t%s\n", keys[key], key)

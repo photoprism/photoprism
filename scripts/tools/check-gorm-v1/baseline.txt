@@ -1,5 +1,5 @@
 # Code that depends on GORM v1: count, file, pattern.
-# Regenerate with: go run ./scripts/tools/check-gorm-v1 -update
+# Regenerate in the CE repository with: go run ./scripts/tools/check-gorm-v1 -update
 2	internal/api/albums_cover_test.go	Count into non-int64
 3	internal/api/api_test.go	DeletedAt *time.Time
 4	internal/api/batch_photos_test.go	Count into non-int64
@@ -177,31 +177,3 @@
 1	internal/workers/sync_refresh_test.go	gorm.Scope
 1	internal/workers/sync_test.go	bool column = 0/1
 1	internal/workers/vision_reset_test.go	Count into non-int64
-1	plus/internal/api/users_add.go	DeletedAt *time.Time
-1	plus/internal/audit/login_record_test.go	Count into non-int64
-1	plus/internal/auth/fixtures.go	DeletedAt *time.Time
-1	plus/internal/cmd/users_list.go	DeletedAt *time.Time
-1	plus/internal/cmd/users_mod.go	DeletedAt *time.Time
-1	portal/internal/api/users_add.go	DeletedAt *time.Time
-1	portal/internal/audit/log_record_test.go	Count into non-int64
-1	portal/internal/audit/login_record_test.go	Count into non-int64
-1	portal/internal/auth/auth_test.go	Count into non-int64
-1	portal/internal/auth/fixtures.go	DeletedAt *time.Time
-1	portal/internal/cmd/users_list.go	DeletedAt *time.Time
-1	portal/internal/cmd/users_mod.go	DeletedAt *time.Time
-2	portal/internal/portal/access/cluster_group.go	DeletedAt *time.Time
-2	portal/internal/portal/access/cluster_group_test.go	DeletedAt *time.Time
-2	portal/internal/portal/access/cluster_user.go	DeletedAt *time.Time
-3	portal/internal/portal/access/cluster_user_test.go	DeletedAt *time.Time
-2	portal/internal/portal/access/grants.go	DeletedAt *time.Time
-2	portal/internal/portal/access/grants_test.go	DeletedAt *time.Time
-1	pro/internal/api/users_add.go	DeletedAt *time.Time
-1	pro/internal/audit/log_record_test.go	Count into non-int64
-1	pro/internal/audit/login_record_test.go	Count into non-int64
-1	pro/internal/auth/auth_test.go	Count into non-int64
-1	pro/internal/auth/fixtures.go	DeletedAt *time.Time
-1	pro/internal/cmd/users_list.go	DeletedAt *time.Time
-1	pro/internal/cmd/users_mod.go	DeletedAt *time.Time
-1	pro/internal/server/webdav_cache_generation_test.go	gorm.Scope
-2	pro/internal/server/webdav_scope_test.go	Count into non-int64
-1	pro/internal/server/webdav_scope_test.go	gorm.Scope
