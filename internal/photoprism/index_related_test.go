@@ -1,12 +1,14 @@
 package photoprism
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"unicode/utf8"
 
+	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
@@ -941,4 +943,114 @@ func TestIndexRelated_BackupQuality(t *testing.T) {
 		photo := findPhoto(t, uid)
 		assert.False(t, photo.IsDeleted(), "photo is restored")
 	})
+}
+
+func TestIndexRelated_DetailsNotSaved(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := newIndexRelatedTestConfig(t, "index-related-details")
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	// failDetails makes writes of photo details fail until the test or the returned function removes them.
+	failDetails := func(t *testing.T) func() {
+		name := "test:index-details-failure"
+		fail := func(scope *gorm.Scope) {
+			if scope.TableName() == (entity.Details{}).TableName() {
+				_ = scope.Err(errors.New("write control"))
+			}
+		}
+
+		entity.Db().Callback().Create().Before("gorm:begin_transaction").Register(name, fail)
+		entity.Db().Callback().Update().Before("gorm:begin_transaction").Register(name, fail)
+
+		remove := func() {
+			entity.Db().Callback().Create().Remove(name)
+			entity.Db().Callback().Update().Remove(name)
+		}
+
+		t.Cleanup(remove)
+
+		return remove
+	}
+
+	token := rnd.Base36(8)
+	dir := filepath.Join(cfg.OriginalsPath(), token)
+	fileName := filepath.Join(token, "photo.jpg")
+
+	// Unique content, so that the picture is a new file rather than a duplicate.
+	jpeg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	require.NoError(t, err)
+	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "photo.jpg"), append(jpeg, []byte(token)...), fs.ModeFile)) //nolint:gosec // G703: test-owned path
+
+	// index indexes the picture like an index run that loads the indexed files first.
+	index := func(t *testing.T) IndexResult {
+		mainFile, err := NewMediaFile(filepath.Join(dir, "photo.jpg"))
+		require.NoError(t, err)
+		related, err := mainFile.RelatedFiles(true)
+		require.NoError(t, err)
+
+		files := NewFiles()
+		require.NoError(t, files.Init())
+
+		ind := NewIndex(cfg, NewConvert(cfg), files, NewPhotos())
+		opt := NewIndexOptions("/", false, false, true, false, true, cfg)
+
+		return IndexRelated(related, ind, opt)
+	}
+
+	// findFile returns the stored file and the number of stored details of its photo.
+	findFile := func(t *testing.T) (entity.File, int64) {
+		file := entity.File{}
+		require.NoError(t, entity.UnscopedDb().Where("file_name = ?", fileName).First(&file).Error)
+
+		var count int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Details{}).Where("photo_id = ?", file.PhotoID).Count(&count).Error)
+
+		return file, count
+	}
+
+	removeFailure := failDetails(t)
+
+	// A new photo whose details cannot be stored is added, and its file is indexed again in the next run.
+	result := index(t)
+	require.True(t, result.Success(), "%s", result.Err)
+	assert.Equal(t, IndexAdded, result.Status)
+
+	file, count := findFile(t)
+	assert.True(t, file.FilePrimary)
+	assert.Equal(t, int64(-1), file.ModTime)
+	assert.Equal(t, int64(0), count, "details are not stored")
+
+	photo := entity.Photo{}
+	require.NoError(t, entity.UnscopedDb().Where("id = ?", file.PhotoID).First(&photo).Error)
+	assert.False(t, photo.IsArchived())
+	assert.False(t, photo.IsDeleted())
+
+	// The existing photo is updated, but its details still cannot be stored.
+	result = index(t)
+	require.True(t, result.Success(), "%s", result.Err)
+	assert.Equal(t, IndexUpdated, result.Status)
+
+	file, count = findFile(t)
+	assert.Equal(t, int64(-1), file.ModTime)
+	assert.Equal(t, int64(0), count, "details are not stored")
+
+	// Once the details can be stored, the next run stores them.
+	removeFailure()
+
+	result = index(t)
+	require.True(t, result.Success(), "%s", result.Err)
+	assert.Equal(t, IndexUpdated, result.Status)
+
+	file, count = findFile(t)
+	assert.Greater(t, file.ModTime, int64(0))
+	assert.Equal(t, int64(1), count, "details are stored")
+
+	// The file is unchanged from then on.
+	assert.Equal(t, IndexSkipped, index(t).Status)
 }

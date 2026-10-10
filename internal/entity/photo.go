@@ -334,7 +334,12 @@ func (m *Photo) Save() error {
 		return err
 	}
 
+	// The photo row is stored, so the primary file is resolved even if the details were not.
 	if err := m.SaveDetails(); err != nil {
+		if resolveErr := m.ResolvePrimary(); resolveErr != nil {
+			log.Errorf("photo: %s (resolve primary for %d)", clean.Error(resolveErr), m.ID)
+		}
+
 		return err
 	}
 
@@ -909,6 +914,9 @@ func (m *Photo) GetDetails() *Details {
 	return m.Details
 }
 
+// ErrDetailsNotSaved is wrapped by errors that report photo details which could not be stored.
+var ErrDetailsNotSaved = errors.New("details not saved")
+
 // SaveDetails writes photo details to the database, and returns an error if the changes could not be stored.
 func (m *Photo) SaveDetails() error {
 	// Details that are not in memory yet are loaded or created, so they have no changes to save.
@@ -934,7 +942,7 @@ func (m *Photo) SaveDetails() error {
 
 	log.Errorf("photo: %s (save details for %d)", clean.Error(err), m.ID)
 
-	return err
+	return fmt.Errorf("%w: %w", ErrDetailsNotSaved, err)
 }
 
 // ShouldGenerateLabels reports whether automatic vision labels should be generated for the photo.

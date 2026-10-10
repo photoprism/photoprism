@@ -34,8 +34,10 @@ apply to the individual write, not to the entire HTTP handler or its preceding o
 ### Write Retries
 
 `Photo.SaveDetails` writes through `RetryLock`, which retries once after any lock error, including lock wait
-timeouts and a locked SQLite database. It returns an error when the details could not be stored, keeping the
-changes in memory; creating a missing row counts as stored.
+timeouts and a locked SQLite database. It returns an error wrapping `ErrDetailsNotSaved` when the details could
+not be stored; creating a missing row counts as stored. `Photo.Save` and `Photo.Create` keep the stored
+photo row in that case. The indexer then adds or updates the file with a modification time of -1, so the next
+index run indexes it again and saves the details, while edits through the API return the error.
 
 `Details` clips its text to the column sizes before every write, since MariaDB rejects longer values in strict
 mode while SQLite stores them: keywords are cut after the last whole keyword that fits, and source names longer

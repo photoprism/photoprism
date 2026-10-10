@@ -28,6 +28,20 @@ func failDetailsUpdates(t *testing.T, err error, fail func() bool) {
 	t.Cleanup(func() { Db().Callback().Update().Remove(name) })
 }
 
+// failDetailsCreates makes inserts of photo details fail with err.
+func failDetailsCreates(t *testing.T, err error) {
+	t.Helper()
+
+	name := "test:details-create-failure"
+
+	Db().Callback().Create().Before("gorm:begin_transaction").Register(name, func(scope *gorm.Scope) {
+		if scope.TableName() == (Details{}).TableName() {
+			_ = scope.Err(err)
+		}
+	})
+	t.Cleanup(func() { Db().Callback().Create().Remove(name) })
+}
+
 // storedKeywords returns the keywords stored for a photo.
 func storedKeywords(t *testing.T, photoID uint) string {
 	t.Helper()
@@ -72,7 +86,9 @@ func TestPhoto_SaveDetails(t *testing.T) {
 		attempts := 0
 		failDetailsUpdates(t, sqlite3.Error{Code: sqlite3.ErrBusy}, func() bool { attempts++; return true })
 
-		assert.EqualError(t, m.SaveDetails(), "database is locked")
+		err := m.SaveDetails()
+		assert.ErrorIs(t, err, ErrDetailsNotSaved)
+		assert.ErrorContains(t, err, "database is locked")
 		assert.Equal(t, 2, attempts)
 		assert.Equal(t, "stored", storedKeywords(t, m.ID))
 	})
@@ -83,7 +99,9 @@ func TestPhoto_SaveDetails(t *testing.T) {
 
 		failDetailsUpdates(t, errors.New("write control"), func() bool { return true })
 
-		assert.EqualError(t, m.SaveDetails(), "write control")
+		err := m.SaveDetails()
+		assert.ErrorIs(t, err, ErrDetailsNotSaved)
+		assert.EqualError(t, err, "details not saved: write control")
 		assert.Equal(t, "stored", storedKeywords(t, m.ID))
 		assert.Equal(t, "changed", m.Details.Keywords, "changes are kept in memory")
 		assert.True(t, m.Details.CreatedAt.IsZero(), "created at is not set by the failed save")
@@ -94,8 +112,29 @@ func TestPhoto_SaveDetails(t *testing.T) {
 
 		failDetailsUpdates(t, errors.New("write control"), func() bool { return true })
 
-		assert.EqualError(t, m.Save(), "write control")
+		err := m.Save()
+		assert.ErrorIs(t, err, ErrDetailsNotSaved)
+		assert.ErrorContains(t, err, "write control")
 		assert.Equal(t, "stored", storedKeywords(t, m.ID))
+	})
+	t.Run("Create", func(t *testing.T) {
+		// The photo row of a new photo is stored even if its details are not.
+		m := &Photo{PhotoUID: rnd.GenerateUID(PhotoUID), Details: &Details{Keywords: "changed"}}
+		failDetailsUpdates(t, errors.New("write control"), func() bool { return true })
+		failDetailsCreates(t, errors.New("write control"))
+		t.Cleanup(func() { _ = UnscopedDb().Unscoped().Delete(m).Error })
+
+		require.ErrorIs(t, m.Create(), ErrDetailsNotSaved)
+		require.True(t, m.HasID())
+		assert.Equal(t, "changed", m.Details.Keywords)
+
+		found, err := findShapePhoto(m.PhotoUID)
+		require.NoError(t, err)
+		assert.Equal(t, m.ID, found.ID)
+
+		var count int64
+		require.NoError(t, UnscopedDb().Model(&Details{}).Where("photo_id = ?", m.ID).Count(&count).Error)
+		assert.Equal(t, int64(0), count)
 	})
 	t.Run("LongKeywords", func(t *testing.T) {
 		m := newDetailsPhoto(t)

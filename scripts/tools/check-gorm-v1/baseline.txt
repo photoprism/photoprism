@@ -106,7 +106,7 @@
 11	internal/entity/photo.go	DeletedAt *time.Time
 4	internal/entity/photo.go	gorm.Scope
 1	internal/entity/photo_caption_test.go	DeletedAt *time.Time
-1	internal/entity/photo_details_save_test.go	gorm.Scope
+2	internal/entity/photo_details_save_test.go	gorm.Scope
 62	internal/entity/photo_fixtures.go	DeletedAt *time.Time
 1	internal/entity/photo_keyword.go	gorm.Scope
 1	internal/entity/photo_label.go	gorm.Scope
@@ -166,6 +166,7 @@
 3	internal/photoprism/index_mediafile.go	DeletedAt *time.Time
 6	internal/photoprism/index_mediafile_test.go	Count into non-int64
 1	internal/photoprism/index_related_test.go	Count into non-int64
+1	internal/photoprism/index_related_test.go	gorm.Scope
 1	internal/photoprism/index_sequence_test.go	bool column = 0/1
 3	internal/photoprism/moments.go	DeletedAt *time.Time
 1	internal/photoprism/moments_test.go	DeletedAt *time.Time

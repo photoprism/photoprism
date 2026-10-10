@@ -82,6 +82,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	fileHash := ""
 	fileChanged := true
+	detailsSaved := true
 	fileRenamed := false
 	fileExists := false
 	fileStacked := false
@@ -1068,19 +1069,26 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Update existing photo entity?
 	if photo.HasID() {
-		if err = photo.Save(); err != nil {
+		// Details that could not be stored are logged by SaveDetails and do not fail the file.
+		if err = photo.Save(); err != nil && !errors.Is(err, entity.ErrDetailsNotSaved) {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update existing photo)", err, logName)
 			return result
 		}
+
+		detailsSaved = err == nil
 	} else {
 		// Create a new photo entity or load the existing entity if it exists.
-		if p := photo.FirstOrCreate(); p == nil {
+		if err = photo.Create(); err == nil || errors.Is(err, entity.ErrDetailsNotSaved) {
+			detailsSaved = err == nil
+		} else if p := entity.FindPhoto(photo); p == nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: failed to create %s", logName)
 			return result
 		} else {
+			log.Tracef("index: %s in %s (create photo)", err, logName)
 			photo = *p
+			details = photo.GetDetails()
 		}
 
 		if photo.PhotoPrivate {
@@ -1164,11 +1172,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 		photo.PhotoQuality = photo.QualityScore()
 
-		if err = photo.Save(); err != nil {
+		if err = photo.Save(); err != nil && !errors.Is(err, entity.ErrDetailsNotSaved) {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update metadata)", err, logName)
 			return result
 		}
+
+		detailsSaved = err == nil
 
 		if err = photo.UpdateLabels(); err != nil {
 			log.Errorf("index: %s in %s (update labels)", err, logName)
@@ -1188,6 +1198,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	result.Status = IndexUpdated
+
+	// Files whose photo details could not be stored are indexed again in the next run,
+	// since -1 matches no modification time on disk.
+	if !detailsSaved {
+		file.ModTime = -1
+	}
 
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))
