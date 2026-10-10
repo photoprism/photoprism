@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -536,15 +535,18 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 			updates.SetDatabaseDriver(r.Database.Driver)
 			updates.SetDatabaseDSN(r.Database.DSN)
 		} else if r.Database.Name != "" && r.Database.User != "" && r.Database.Password != "" {
-			server := r.Database.Host
-			if r.Database.Port > 0 {
-				server = net.JoinHostPort(r.Database.Host, strconv.Itoa(r.Database.Port))
+			// The settings are ignored as a whole if the server address is unusable.
+			if server, ok := r.Database.Server(); !ok {
+				log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
+			} else {
+				updates.SetDatabaseDriver(r.Database.Driver)
+				if server != "" {
+					updates.SetDatabaseServer(server)
+				}
+				updates.SetDatabaseName(r.Database.Name)
+				updates.SetDatabaseUser(r.Database.User)
+				updates.SetDatabasePassword(r.Database.Password)
 			}
-			updates.SetDatabaseDriver(r.Database.Driver)
-			updates.SetDatabaseServer(server)
-			updates.SetDatabaseName(r.Database.Name)
-			updates.SetDatabaseUser(r.Database.User)
-			updates.SetDatabasePassword(r.Database.Password)
 		}
 	}
 

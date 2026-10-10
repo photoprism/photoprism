@@ -1,8 +1,11 @@
 package photoprism
 
 import (
+	"errors"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -11,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -118,18 +122,77 @@ func TestMediaFile_DetectNSFW(t *testing.T) {
 
 	t.Run("FlagsHighConfidence", func(t *testing.T) {
 		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
-			return []nsfw.Result{{Porn: nsfw.ThresholdHigh + 0.01}}, nil
+			return []nsfw.Result{nsfw.NewResult(0.99, nsfw.DefaultThreshold)}, nil
 		})
 		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
 
-		assert.True(t, mediaFile.DetectNSFW())
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnsafe())
+		assert.False(t, result.IsSafe())
 	})
 	t.Run("SafeContent", func(t *testing.T) {
 		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
-			return []nsfw.Result{{Neutral: 0.9}}, nil
+			return []nsfw.Result{nsfw.NewResult(0.02, nsfw.DefaultThreshold)}, nil
 		})
 		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
 
-		assert.False(t, mediaFile.DetectNSFW())
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsSafe())
+		assert.False(t, result.IsUnsafe())
 	})
+	// A detector that could not answer must not report a clearance, because every caller of
+	// this method treats "not unsafe" as permission to leave a photo public.
+	t.Run("DetectorError", func(t *testing.T) {
+		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return nil, errors.New("model is unavailable")
+		})
+		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+
+		logHook, systemHook := captureGeneralAndSystemLog(t)
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnavailable())
+		assert.False(t, result.IsSafe())
+		assert.False(t, result.IsUnsafe())
+		for _, entry := range logHook.AllEntries() {
+			assert.NotContains(t, entry.Message, "model is unavailable")
+		}
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Equal(t, "vision: model is unavailable in testdata/flash.jpg (detect nsfw)", systemHook.AllEntries()[0].Message)
+	})
+	t.Run("NoResult", func(t *testing.T) {
+		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return []nsfw.Result{}, nil
+		})
+		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnavailable())
+		assert.False(t, result.IsSafe())
+	})
+	t.Run("UndecidedResult", func(t *testing.T) {
+		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return []nsfw.Result{nsfw.Unavailable("thumbnail is missing")}, nil
+		})
+		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnavailable())
+		assert.False(t, result.IsSafe())
+	})
+}
+
+// captureGeneralAndSystemLog replaces the package and system loggers for the duration of a test.
+func captureGeneralAndSystemLog(t *testing.T) (logHook, systemHook *logtest.Hook) {
+	t.Helper()
+
+	logger, logHook := logtest.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	systemLogger, systemHook := logtest.NewNullLogger()
+	systemLogger.SetLevel(logrus.TraceLevel)
+	prevLog, prevSystem := log, event.SystemLog
+	t.Cleanup(func() { log, event.SystemLog = prevLog, prevSystem })
+	log = logger
+	event.SystemLog = systemLogger
+
+	return logHook, systemHook
 }

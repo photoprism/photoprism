@@ -1,6 +1,6 @@
 ## PhotoPrism — Event System
 
-**Last Updated:** September 12, 2026
+**Last Updated:** October 6, 2026
 
 ### Overview
 
@@ -44,17 +44,33 @@ hook := event.NewHook(event.SharedHub())
 log.AddHook(hook)
 ```
 
+The hook publishes each entry as `log.<level>` for the live log and the errors view. In the published message, every run of 32 or more hex digits is masked except for its first three digits, e.g. `2ca***` (`clean.MaskHashes`), while the console output keeps the full text. `notify.*` messages are masked the same way; `event.Audit*` is not.
+
 Entity events (content-channel payloads carry only identity strings — UIDs/slugs — never entity bodies):
 ```go
 event.EntitiesUpdated("photos", []string{photo.PhotoUID})
 event.EntitiesDeleted("labels", []string{label.LabelUID})
 ```
 
+Background workers that change many entities batch their events, so a fast run sends one event per 50 entities while a slow one still notifies about once per entity. A batch publishes when 50 identities are pending or 2 seconds have passed since its last publish:
+```go
+batch := event.NewEntityBatch("photos", event.EntityUpdated)
+defer batch.Flush()
+
+for _, photo := range photos {
+    batch.FlushDue()
+    // ... save the photo ...
+    batch.Add(photo.PhotoUID)
+}
+
+batch.Flush()
+```
+
 ### Package Layout (Code Map)
 
 - Hub aliases & helpers: `hub.go`, `format.go`, `time.go`
 - Logging hook: `log.go`
-- Publish helpers: `publish.go`, `publish_entities.go`
+- Publish helpers: `publish.go`, `publish_entities.go`, `entity_batch.go`
 - Tests: package-level tests alongside sources
 
 ### Related Packages

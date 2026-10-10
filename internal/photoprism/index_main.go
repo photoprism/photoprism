@@ -37,6 +37,8 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		return result
 	}
 
+	warnInsta360LensNotVideo("index", f)
+
 	// Create JSON sidecar file, if needed.
 	if jsonErr := f.CreateExifToolJson(ind.convert); jsonErr != nil {
 		log.Warnf("index: %s", clean.Error(jsonErr))

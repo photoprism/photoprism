@@ -78,7 +78,6 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_DISABLE_PLACES="false" \
     PHOTOPRISM_DISABLE_TENSORFLOW="false" \
     PHOTOPRISM_DISABLE_FACES="false" \
-    PHOTOPRISM_DISABLE_CLASSIFICATION="false" \
     PHOTOPRISM_RAW_PRESETS="false" \
     PHOTOPRISM_THUMB_UNCACHED="false" \
     PHOTOPRISM_AUTO_INDEX="300" \
@@ -86,7 +85,7 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_INIT="https"
 
 # Copy dist files, scripts, and debian backports sources list.
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+COPY --from=build --chown=root:root /opt/photoprism/ /opt/photoprism
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 COPY --chown=root:root --chmod=644 /docker/develop/buster/sources.list /etc/apt/sources.list.d/buster.list
 

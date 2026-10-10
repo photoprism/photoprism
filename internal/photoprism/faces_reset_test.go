@@ -146,9 +146,9 @@ func TestFaces_RegenerateRefused(t *testing.T) {
 		assert.Contains(t, err.Error(), "cannot be used")
 	})
 	t.Run("EmbeddingsDisabled", func(t *testing.T) {
-		prev := face.ConfiguredModel()
+		prev := face.EmbedderConfig()
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
-		t.Cleanup(func() { require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: prev})) })
+		t.Cleanup(func() { _ = face.ConfigureEmbedder(prev) })
 
 		err := w.regenerateRefused(ind, newOpt())
 

@@ -113,22 +113,20 @@ func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
 		return User{}
 	}
 
+	// Keep the email address only if the provider has verified it.
+	var email string
+
+	if bool(userInfo.EmailVerified) {
+		email = clean.Email(userInfo.Email)
+	}
+
 	return User{
 		UserName:     userName,
 		DisplayName:  userInfo.Name,
-		UserEmail:    clean.Email(userInfo.Email),
+		UserEmail:    email,
 		AuthProvider: authn.ProviderOIDC.String(),
 		AuthIssuer:   clean.Uri(issuer),
 		AuthID:       authId,
-	}
-}
-
-// LdapUser creates a new LDAP user entity.
-func LdapUser(username, dn string) User {
-	return User{
-		UserName:     clean.Username(username),
-		AuthID:       dn,
-		AuthProvider: authn.ProviderLDAP.String(),
 	}
 }
 
@@ -154,8 +152,6 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("auth_provider = ? AND auth_id = ? OR user_name = ?", find.AuthProvider, find.AuthID, find.UserName)
 	} else if find.UserName != "" {
 		stmt = stmt.Where("user_name = ?", find.UserName)
-	} else if find.UserEmail != "" {
-		stmt = stmt.Where("user_email = ?", find.UserEmail)
 	} else if find.AuthProvider != "" && find.AuthID != "" {
 		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
 	} else {
@@ -198,18 +194,15 @@ func FindUserByName(userName string) *User {
 	return FindUser(User{UserName: userName})
 }
 
-// UserEmailAvailable reports whether email is unused or only held by the account
-// with exceptUID. The email field is informational — not verified, and not unique
-// as an identity — so external (OIDC/LDAP) provisioning skips a colliding email
-// instead of letting Validate reject the account and block the login.
-func UserEmailAvailable(email, exceptUID string) bool {
-	if email = clean.Email(email); email == "" {
-		return false
+// SetEmail sets the email address and clears its verification if the address changes.
+func (m *User) SetEmail(email string) {
+	if email == m.UserEmail {
+		return
 	}
 
-	found := FindUser(User{UserEmail: email})
-
-	return found == nil || found.UserUID == exceptUID
+	m.UserEmail = email
+	m.VerifiedAt = nil
+	m.VerifyToken = GenerateToken()
 }
 
 // EmailVerified reports whether the account's email address has been verified,
@@ -347,6 +340,7 @@ func (m *User) Create() (err error) {
 
 	if err == nil {
 		m.SaveRelated()
+		m.WarnExistingBasePath()
 	}
 
 	return err
@@ -1112,10 +1106,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len([]rune(password)) < PasswordLength {
-		return fmt.Errorf("password must have at least %d characters", PasswordLength)
-	} else if len(password) > txt.ClipPassword {
-		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	if err := ValidatePasswordLength(password); err != nil {
+		return err
 	}
 
 	pw := NewPassword(m.UserUID, password, false)
@@ -1125,6 +1117,17 @@ func (m *User) SetPassword(password string) error {
 	}
 
 	return m.RegenerateTokens()
+}
+
+// ValidatePasswordLength returns an error if the password is too short or too long to be set.
+func ValidatePasswordLength(password string) error {
+	if len([]rune(password)) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
+	} else if len(password) > txt.ClipPassword {
+		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	}
+
+	return nil
 }
 
 // DeletePassword removes the password of the user account, if one has been set.
@@ -1259,20 +1262,14 @@ func (m *User) DeactivatePasscode() (passcode *Passcode, err error) {
 
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
-	// Validate username. A stored name the sanitizer no longer accepts as written is normalized
-	// rather than refused, so an account provisioned earlier stays editable; a new one is refused,
-	// so the caller sees what was rejected.
-	userName, nameErr := authn.Username(m.UserName)
-
-	if nameErr != nil && m.ID > 0 && userName != "" {
-		userName, nameErr = authn.Username(userName)
-	}
+	// Validate username. A stored name keeps its form if a deleted account holds the normalized one.
+	userName, nameErr := m.normalizedUsername()
 
 	if nameErr != nil {
-		return fmt.Errorf("username is %s", nameErr.Error())
+		return nameErr
+	} else if m.ID <= 0 || userName == m.UserName || !m.deletedUsernameHolder(userName) {
+		m.UserName = userName
 	}
-
-	m.UserName = userName
 
 	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
@@ -1289,19 +1286,19 @@ func (m *User) Validate() (err error) {
 		return fmt.Errorf("unsupported user role")
 	}
 
-	// Check if the username is unique.
+	// Check if the username, and the normalized form of a kept name, is unique.
 	var duplicate = User{}
 
 	if err = Db().
-		Where("user_name = ? AND id <> ?", m.UserName, m.ID).
+		Where("user_name IN (?) AND id <> ?", []string{m.UserName, userName}, m.ID).
 		First(&duplicate).Error; err == nil {
-		return fmt.Errorf("user %s already exists", clean.LogQuote(m.UserName))
+		return fmt.Errorf("user %s already exists", clean.LogQuote(userName))
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 
-	// Skip email check?
-	if m.UserEmail == "" {
+	// Check the email address only if it is new or has changed, since it does not have to be unique.
+	if m.UserEmail == "" || m.UserEmail == m.storedEmail() {
 		return nil
 	}
 
@@ -1314,16 +1311,39 @@ func (m *User) Validate() (err error) {
 		m.UserEmail = email
 	}
 
-	// Check if the email is unique.
-	if err = Db().
-		Where("user_email = ? AND id <> ?", m.UserEmail, m.ID).
-		First(&duplicate).Error; err == nil {
-		return fmt.Errorf("email %s already exists", clean.Log(m.UserEmail))
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
+	return nil
+}
+
+// normalizedUsername returns the username in the form Validate stores it. A stored name the sanitizer
+// no longer accepts as written is normalized rather than refused, so an account provisioned earlier
+// stays editable; a new one is refused, so the caller sees what was rejected.
+func (m *User) normalizedUsername() (string, error) {
+	userName, err := authn.Username(m.UserName)
+
+	if err != nil && m.ID > 0 && userName != "" {
+		userName, err = authn.Username(userName)
 	}
 
-	return nil
+	if err != nil {
+		return "", fmt.Errorf("username is %s", err.Error())
+	}
+
+	return userName, nil
+}
+
+// storedEmail returns the email address saved for the account, or an empty string if it has not been saved.
+func (m *User) storedEmail() string {
+	if m.ID <= 0 {
+		return ""
+	}
+
+	stored := User{}
+
+	if err := UnscopedDb().Select("user_email").Where("id = ?", m.ID).First(&stored).Error; err != nil {
+		return ""
+	}
+
+	return stored.UserEmail
 }
 
 // SetFormValues sets the values specified in the form.
@@ -1569,11 +1589,9 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 		m.DisplayName = m.FullName()
 	}
 
-	// Sanitize email address.
-	if email := frm.Email(); email != "" && email != m.UserEmail {
-		m.UserEmail = email
-		m.VerifiedAt = nil
-		m.VerifyToken = GenerateToken()
+	// Only admins may change the email address, since it is not verified.
+	if email := frm.Email(); email != "" && byAdmin {
+		m.SetEmail(email)
 	}
 
 	// Apply privilege-level changes only when the caller is authorized as an

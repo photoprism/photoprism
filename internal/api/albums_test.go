@@ -367,7 +367,7 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 func TestCloneAlbums(t *testing.T) {
 	app, router, _ := NewApiTest()
 	CreateAlbum(router)
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Update", "Description": "To be updated", "Notes": "", "Favorite": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Clone Source", "Description": "To be cloned", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusCreated, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 

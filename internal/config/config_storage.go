@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,6 +11,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -242,7 +244,7 @@ func (c *Config) CreateDirectories() error {
 	return nil
 }
 
-// StoragePath returns the path for generated files like cache and index.
+// StoragePath returns the absolute path for generated files like cache and index.
 func (c *Config) StoragePath() string {
 	if c.options.StoragePath == "" {
 		// Default directories.
@@ -429,13 +431,138 @@ func (c *Config) LogFilename() string {
 	return fs.Abs(c.options.LogFilename)
 }
 
-// CaseInsensitive checks if the storage path is case-insensitive.
-func (c *Config) CaseInsensitive() (result bool, err error) {
-	storagePath := c.StoragePath()
-	return fs.CaseInsensitive(storagePath)
+// storageCaseInsensitive, originalsCaseInsensitive, and originalsMounts detect the case mode of the storage
+// and originals paths, and the file systems mounted below originals.
+var (
+	storageCaseInsensitive   = fs.CaseInsensitive
+	originalsCaseInsensitive = fs.CaseInsensitiveDir
+	originalsMounts          = fs.MountPoints
+)
+
+// Case modes of the storage-case and originals-case options.
+const (
+	CaseModeAuto        = Auto
+	CaseModeSensitive   = "sensitive"
+	CaseModeInsensitive = "insensitive"
+)
+
+// StorageCase returns the configured case mode of the storage file system.
+func (c *Config) StorageCase() string {
+	c.options.StorageCase = caseMode("storage-case", c.options.StorageCase)
+	return c.options.StorageCase
 }
 
-// OriginalsPath returns the originals.
+// OriginalsCase returns the configured case mode of the originals file system.
+func (c *Config) OriginalsCase() string {
+	c.options.OriginalsCase = caseMode("originals-case", c.options.OriginalsCase)
+	return c.options.OriginalsCase
+}
+
+// caseMode normalizes the value of a case mode option and returns CaseModeAuto, with a warning, if it is invalid.
+func caseMode(name, value string) string {
+	switch mode := strings.ToLower(strings.TrimSpace(value)); mode {
+	case "", CaseModeAuto:
+		return CaseModeAuto
+	case CaseModeSensitive, CaseModeInsensitive:
+		return mode
+	default:
+		log.Warnf("config: invalid %s value %s, using %s", name, clean.LogQuote(value), CaseModeAuto)
+		return CaseModeAuto
+	}
+}
+
+// CaseInsensitive checks if the storage path is case-insensitive.
+func (c *Config) CaseInsensitive() (result bool, err error) {
+	return storageCaseInsensitive(c.StoragePath())
+}
+
+// OriginalsCaseInsensitive checks if the originals path is case-insensitive, without writing to it or opening
+// the folders in skip, and returns an error naming the reason if it cannot tell.
+func (c *Config) OriginalsCaseInsensitive(skip ...string) (insensitive bool, err error) {
+	return originalsCaseInsensitive(c.OriginalsPath(), skip...)
+}
+
+// caseLookups returns the name of the lookup mode for logs.
+func caseLookups(insensitive bool) string {
+	if insensitive {
+		return "case-insensitive"
+	}
+
+	return "case-sensitive"
+}
+
+// initCaseMode makes file lookups case-insensitive where the storage or originals path is, as configured or
+// detected. Detected originals follow the storage mode if their own is unknown, and file systems mounted below
+// them check all case variants; a configured originals mode applies to all folders below originals.
+func (c *Config) initCaseMode() error {
+	logf := log.Debugf
+
+	if c.start {
+		logf = log.Infof
+	}
+
+	var storage bool
+
+	switch c.StorageCase() {
+	case CaseModeAuto:
+		var err error
+
+		if storage, err = c.CaseInsensitive(); err != nil {
+			return err
+		}
+
+		logf("config: using %s lookups for storage (detected)", caseLookups(storage))
+	default:
+		storage = c.StorageCase() == CaseModeInsensitive
+		logf("config: using %s lookups for storage (configured)", caseLookups(storage))
+	}
+
+	fs.SetIgnoreCase(storage)
+
+	originalsPath := c.OriginalsPath()
+
+	if mode := c.OriginalsCase(); mode != CaseModeAuto {
+		originals := mode == CaseModeInsensitive
+		logf("config: using %s lookups for originals (configured)", caseLookups(originals))
+		fs.SetCaseScopes(fs.CaseScope{Dir: originalsPath, Ignore: originals})
+		return nil
+	}
+
+	mounts, mountsErr := originalsMounts(originalsPath)
+
+	switch {
+	case mountsErr == nil:
+	case !errors.Is(mountsErr, os.ErrNotExist):
+		log.Debugf("config: file systems mounted below originals not fully detected (%s)", mountsErr)
+	case runtime.GOOS == "linux":
+		log.Debugf("config: file systems mounted below originals not detected (mount table not found)")
+	}
+
+	scopes := make([]fs.CaseScope, 0, len(mounts)+1)
+
+	if originals, originalsErr := c.OriginalsCaseInsensitive(mounts...); originalsErr != nil {
+		log.Debugf("config: case sensitivity of originals not detected (%s)", originalsErr)
+		logf("config: using %s lookups for originals (storage)", caseLookups(storage))
+	} else {
+		logf("config: using %s lookups for originals (detected)", caseLookups(originals))
+		scopes = append(scopes, fs.CaseScope{Dir: originalsPath, Ignore: originals})
+	}
+
+	if len(mounts) > 0 {
+		log.Debugf("config: %s mounted below originals, checking all case variants there", english.Plural(len(mounts), "file system", "file systems"))
+	}
+
+	for _, m := range mounts {
+		scopes = append(scopes, fs.CaseScope{Dir: m, Ignore: false})
+	}
+
+	fs.SetCaseScopes(scopes...)
+
+	return nil
+}
+
+// OriginalsPath returns the absolute path of the originals, or an empty string if none is configured or
+// found. Converters receive media file names below it as arguments, so the names must not be relative.
 func (c *Config) OriginalsPath() string {
 	if c.options.OriginalsPath == "" {
 		// Try to find the right directory by iterating through a list.
@@ -450,7 +577,7 @@ func (c *Config) OriginalsDeletable() bool {
 	return !c.ReadOnly() && fs.Writable(c.OriginalsPath()) && c.Settings().Features.Delete
 }
 
-// ImportPath returns the import directory.
+// ImportPath returns the absolute path of the import directory, or an empty string, see OriginalsPath.
 func (c *Config) ImportPath() string {
 	if c.options.ImportPath == "" {
 		// Try to find the right directory by iterating through a list.
@@ -554,6 +681,18 @@ func (c *Config) UserUploadBatchPath(userUid, batch string) (string, error) {
 		return "", fmt.Errorf("invalid upload batch")
 	} else {
 		return c.UserUploadPath(userUid, name)
+	}
+}
+
+// UserUploadBatchDir returns the folder of an upload batch like UserUploadBatchPath, but creates
+// neither it nor the user's storage folder, so it can be used to look up an existing batch.
+func (c *Config) UserUploadBatchDir(userUid, batch string) (string, error) {
+	if !rnd.IsUID(userUid, 0) {
+		return "", fmt.Errorf("invalid uid")
+	} else if name := clean.Token(batch); name == "" {
+		return "", fmt.Errorf("invalid upload batch")
+	} else {
+		return filepath.Join(c.UsersStoragePath(), userUid, fs.UploadDir, name), nil
 	}
 }
 

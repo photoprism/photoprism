@@ -23,7 +23,7 @@ type SessionConfig struct {
 }
 
 // NewSessionConfig builds the session options for the requested provider, falling back to the
-// CPU with one warning when it cannot be applied.
+// CPU with one warning per process when it cannot be applied.
 func NewSessionConfig(settings SessionSettings) (*SessionConfig, error) {
 	opts, provider, err := NewSessionOptions(settings)
 

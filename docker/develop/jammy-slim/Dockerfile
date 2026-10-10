@@ -63,7 +63,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
-        xz-utils exiftool sqlite3 postgresql-client tzdata gpg make zip unzip wget curl rsync \
+        xz-utils exiftool sqlite3 postgresql-client tzdata gpg make zip unzip wget curl rsync bc \
         imagemagick rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
         libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
         va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \

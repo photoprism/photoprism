@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -73,7 +75,7 @@ func TestDetectorsComparable(t *testing.T) {
 		// A blank names no detector and "onnx" names only the runtime, so neither can be shown
 		// to agree with the crop the current detector would place.
 		assert.False(t, DetectorsComparable("", DetectorYuNet))
-		assert.False(t, DetectorsComparable(string(EngineONNX), DetectorYuNet))
+		assert.False(t, DetectorsComparable(EngineONNX, DetectorYuNet))
 	})
 	t.Run("NoCurrentDetector", func(t *testing.T) {
 		// Nothing is running to disagree with, so this must not report every stored crop as
@@ -158,17 +160,24 @@ func TestDetectorInstallers(t *testing.T) {
 		assert.Equal(t, d.Dir, fields[5])
 		assert.Equal(t, d.ONNX.File, fields[6])
 
-		assert.Contains(t, depModelsRecipe(t), " "+d.Dir, "make dep-models must install the default detector")
+		assert.Contains(t, bundledModels(t), d.Dir, "make dep-models must install the default detector")
+	})
+	t.Run("DefaultModels", func(t *testing.T) {
+		models := bundledModels(t)
+		require.NotNil(t, DefaultModel())
+		assert.Contains(t, models, DefaultModelName(), "make dep-models must install the default embedding model")
+		assert.Contains(t, models, string(classify.DefaultModelName()), "make dep-models must install the default labels model")
+		assert.Contains(t, models, string(nsfw.DefaultModelName()), "make dep-models must install the default NSFW model")
 	})
 	t.Run("GatedWeightsStayOutOfTheBuild", func(t *testing.T) {
-		recipe := depModelsRecipe(t)
+		models := bundledModels(t)
 
 		for _, d := range Detectors {
 			if !d.LicenseGated() {
 				continue
 			}
 
-			assert.NotContains(t, recipe, d.Dir, "make dep-models must not install %s", d.Name)
+			assert.NotContains(t, models, d.Dir, "make dep-models must not install %s", d.Name)
 		}
 	})
 	t.Run("SCRFD", func(t *testing.T) {
@@ -186,9 +195,9 @@ func TestDetectorInstallers(t *testing.T) {
 	})
 }
 
-// depModelsRecipe returns the "dep-models" recipe from the Makefile, which is what decides
-// which weights a development build and therefore a published image contains.
-func depModelsRecipe(t *testing.T) string {
+// bundledModels returns the BUNDLED_MODELS list from the Makefile, which decides which weights
+// "make dep-models" installs and therefore which ones a published image or package contains.
+func bundledModels(t *testing.T) []string {
 	t.Helper()
 
 	data, err := os.ReadFile(filepath.Join("..", "..", "..", "Makefile")) //nolint:gosec // G304: fixed repository path.
@@ -197,10 +206,12 @@ func depModelsRecipe(t *testing.T) string {
 		t.Skip("faces: skipping, the Makefile is not available")
 	}
 
-	recipe := regexp.MustCompile(`(?m)^dep-models:\n(?:\t.*\n)+`).FindString(string(data))
-	require.NotEmpty(t, recipe, "the Makefile must define dep-models")
+	line := regexp.MustCompile(`(?m)^BUNDLED_MODELS = ([^#\n]+)`).FindStringSubmatch(string(data))
+	require.Len(t, line, 2, "the Makefile must define BUNDLED_MODELS")
+	require.Regexp(t, `(?m)^dep-models:.*\n\tscripts/dist/download-models\.sh \$\(BUNDLED_MODELS\)\n[^\t]`, string(data),
+		"make dep-models must install BUNDLED_MODELS and nothing else")
 
-	return recipe
+	return strings.Fields(line[1])
 }
 
 func TestDetectorForFile(t *testing.T) {

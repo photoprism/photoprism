@@ -1,6 +1,6 @@
 ## PhotoPrism — Intel Quick Sync Transcoding
 
-**Last Updated:** May 30, 2026
+**Last Updated:** October 4, 2026
 
 ### Overview
 
@@ -20,7 +20,7 @@ ffmpeg -hide_banner -y -strict -2 \
   -vf "scale_qsv=w='if(gte(iw,ih), min(<size>, iw), -1)':h='if(gte(iw,ih), -1, min(<size>, ih))':format=nv12" \
   -c:v h264_qsv \
   -map 0:v:0 -map 0:a:0? -ignore_unknown \
-  -preset fast -global_quality 25 \
+  -preset fast -global_quality 28 \
   -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 \
   <dest>
 ```
@@ -31,6 +31,16 @@ ffmpeg -hide_banner -y -strict -2 \
 2. **Filter** — `scale_qsv=…:format=nv12` scales and converts on the GPU, so there is no `hwupload` step (and none of the filter-device requirement the VA-API path has under FFmpeg 8).
 3. **Encode** — `h264_qsv` encodes the QSV surfaces directly.
 
+#### Rate Control
+
+`-global_quality` without a bitrate selects intelligent constant quality (ICQ), so the size follows the content. `encode.GlobalQuality()` maps `PHOTOPRISM_FFMPEG_QUALITY` linearly to `-global_quality` as `(100 - quality) * 3 / 5 - 2`: 30 gives 40, the default 50 gives 28, and 80 gives 10. On an Intel UHD 770 with 4K HEVC, 4K AV1 and 1080p phone samples, this comes within one step of the values that match `libx264 -preset fast` in SSIM and XPSNR at `-crf 35`, `25` and `10` (about 39, 27 to 28, and 9); at the default, QSV writes 1.0 to 1.3 times the data of `-crf 25`.
+
+There is no bitrate limit: `Options.MaxBitrate` is not passed, since `h264_qsv` leaves ICQ when `-maxrate` is set: without `-b:v` it switches to constant QP, which ignores the quality setting, and with `-b:v` equal to `-maxrate` to CBR. A peak limit would need the QVBR mode (`-global_quality` with `-b:v` below `-maxrate`).
+
+#### Presets
+
+Quick Sync accepts the x264 preset names from `veryfast` to `veryslow`. `Preset()` passes those through, maps `ultrafast` and `superfast` to `veryfast`, and uses `fast` for any other value.
+
 ### Flags
 
 | Flag                     | Value                      | Purpose                                                              |
@@ -40,8 +50,8 @@ ffmpeg -hide_banner -y -strict -2 \
 | `-hwaccel_output_format` | `qsv`                      | Keeps decoded frames as on-GPU QSV surfaces.                         |
 | `-vf scale_qsv=…`        | from `encode.FormatQSV`    | On-GPU scale and NV12 conversion (computes the auto axis with `-1`). |
 | `-c:v`                   | `h264_qsv`                 | Quick Sync H.264 encoder.                                            |
-| `-preset`                | `fast`                     | Encoder speed/quality trade-off, via `Options.Preset`.               |
-| `-global_quality`        | `25` (`DefaultQuality` 50) | Quality-based rate-control target, via `Options.GlobalQuality()`.    |
+| `-preset`                | `fast`                     | Encoder speed/quality trade-off, via `Preset(Options.Preset)`.       |
+| `-global_quality`        | `28` (`DefaultQuality` 50) | Quality-based rate-control target, via `Options.GlobalQuality()`.    |
 
 ### Encoders & Decoders
 

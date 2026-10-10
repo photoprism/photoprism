@@ -74,6 +74,11 @@ func normalizeBaseURL(s string) string {
 	u.RawFragment = ""
 	u.Path = strings.TrimRight(u.Path, "/") + "/"
 
+	// Reduce leading slashes to one.
+	if strings.HasPrefix(u.Path, "//") {
+		u.Path = "/" + strings.TrimLeft(u.Path, "/")
+	}
+
 	return u.String()
 }
 

@@ -9,6 +9,8 @@ import (
 	// Registers the database drivers GORM opens connections with.
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // dbConn is the global gorm.DB connection provider.
@@ -88,6 +90,16 @@ func IsDialect(name string) bool {
 // DbDialect returns the sql dialect name.
 func DbDialect() string {
 	return Db().Dialect().GetName()
+}
+
+// BatchSize returns the maximum query parameter number based on the current sql database dialect.
+func BatchSize() int {
+	switch DbDialect() {
+	case dsn.DriverSQLite3:
+		return 333
+	default:
+		return 1000
+	}
 }
 
 // SetDbProvider sets the Gorm database connection provider.

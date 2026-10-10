@@ -1,6 +1,6 @@
 ## Frontend Tests & Linting
 
-**Last Updated:** May 3, 2026
+**Last Updated:** October 2, 2026
 
 ### Purpose
 
@@ -59,30 +59,25 @@ When evaluating frontend tooling changes, test at least one CE run plus Plus and
 
 Current frontend tool versions are defined in `frontend/package.json` unless stated otherwise.
 
-| Tool                                 | Version      |
-|:-------------------------------------|:-------------|
-| Node.js engine                       | `>= 22.15.0` |
-| npm engine                           | `>= 9.0.0`   |
-| Vitest                               | `^3.2.4`     |
-| `@vitest/ui`                         | `^3.2.4`     |
-| `@vitest/coverage-v8`                | `^3.2.4`     |
-| `@vitejs/plugin-vue`                 | `^6.0.4`     |
-| `@vue/test-utils`                    | `^2.4.6`     |
-| JSDOM                                | `^26.1.0`    |
-| Playwright (Vitest browser provider) | `^1.58.2`    |
-| ESLint                               | `^9.39.2`    |
-| `@eslint/js`                         | `^9.33.0`    |
-| `@eslint/eslintrc`                   | `^3.3.3`     |
-| `eslint-config-prettier`             | `^10.1.8`    |
-| `eslint-plugin-import`               | `^2.32.0`    |
-| `eslint-plugin-node`                 | `^11.1.0`    |
-| `eslint-plugin-vue`                  | `^10.7.0`    |
-| `eslint-plugin-vuetify`              | `^2.5.3`     |
-| `eslint-webpack-plugin`              | `^5.0.2`     |
-| Prettier                             | `^3.8.1`     |
-| TestCafe CLI (dev environment)       | `3.7.4`      |
+| Tool                     | Version                  |
+|--------------------------|--------------------------|
+| `Node.js engine`         | `^24.15.0 \|\| >=26.0.0` |
+| `npm engine`             | `>= 9.0.0`               |
+| `vitest`                 | `^5.0.3`                 |
+| `@vitest/coverage-v8`    | `^5.0.3`                 |
+| `@vitejs/plugin-vue`     | `^6.0.9`                 |
+| `@vue/test-utils`        | `^2.5.1`                 |
+| `jsdom`                  | `^30.1.1`                |
+| `playwright`             | `^1.63.0`                |
+| `eslint`                 | `^10.11.0`               |
+| `@eslint/js`             | `^10.0.1`                |
+| `@eslint/eslintrc`       | `^3.3.7`                 |
+| `eslint-config-prettier` | `^10.1.8`                |
+| `eslint-plugin-vue`      | `^10.11.1`               |
+| `eslint-plugin-vuetify`  | `^2.7.3`                 |
+| `prettier`               | `^3.9.9`                 |
 
-Note: TestCafe is available in the development environment but is currently not pinned as a direct dependency in `frontend/package.json`. Verify with `testcafe --version`.
+TestCafe 3.7.4 is installed globally by `scripts/dist/install-nodejs.sh`, not declared in the workspace. `make -C frontend install-testcafe` installs the latest release explicitly. Verify the active runner with `npm run testcafe --workspace frontend -- --version` and inspect its separate tree with `npm ls --global testcafe --all`. Its legacy runtime dependencies are still needed for acceptance tests; do not prune them based only on workspace imports.
 
 ### Upgrade Guidance
 
@@ -102,25 +97,13 @@ Note: TestCafe is available in the development environment but is currently not 
 5. If dependencies changed, regenerate notices with `make notice`.
 6. Revert the trial changes if validation fails.
 
-#### ESLint v10 Status (As of February 11, 2026)
+#### ESLint 10
 
-A trial upgrade from ESLint v9 to ESLint v10 is currently not safe for this repository.
+The workspace uses ESLint 10 with Vue and Vuetify plugins that declare compatible peers. `frontend/eslint.config.mjs` uses flat configuration with `FlatCompat` for shared presets. No import, Node, or HTML plugin is loaded, and the default formatter needs no separate package.
 
-Observed result:
+`eslint:recommended` includes `no-unassigned-vars`, `no-useless-assignment`, and `preserve-caught-error`. The project disables `no-useless-assignment` to allow explicit initial values that document intent; the other two rules and `no-unused-vars` remain enabled. Run `npm run lint --workspace frontend` from the root for a strict, non-mutating check; `make lint-js` and `make -C frontend lint` suppress the lint exit status. `make fmt-js` applies fixes. The default scope covers `src/` and top-level JS/MJS files, not the tests or edition overlays.
 
-- `npm install` fails with `ERESOLVE` unless forced because key plugins still declare ESLint `^9` (or lower) peer ranges.
-- A forced install causes runtime lint failure:
-  - `TypeError: context.getFilename is not a function`
-  - thrown by `eslint-plugin-vuetify` (`vuetify/no-deprecated-classes`).
-
-This aligns with the ESLint v10 migration changes that remove deprecated `context` APIs:
-
-- https://eslint.org/docs/latest/use/migrate-to-10.0.0
-
-Current recommendation:
-
-- stay on ESLint v9 until `eslint-plugin-vuetify` and related plugins officially support ESLint v10;
-- re-run the validation flow above before attempting another upgrade.
+Before upgrading, check plugin and parser peer ranges and the [ESLint migration guide](https://eslint.org/docs/latest/use/migrate-to-10.0.0). Do not force an incompatible dependency tree.
 
 ### See Also
 

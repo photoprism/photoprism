@@ -135,6 +135,38 @@ func TestMatchFaceMarkers(t *testing.T) {
 	}
 }
 
+// TestMatchFaceMarkers_ConcurrentRename pins that automatic markers keep the person of a cluster renamed
+// after the pass loaded it.
+func TestMatchFaceMarkers_ConcurrentRename(t *testing.T) {
+	ada, bea := rnd.GenerateUID('j'), rnd.GenerateUID('j')
+	f := entity.Face{ID: "MATCHRENAMECLUSTER", FaceSrc: entity.SrcManual, FaceKind: int(face.RegularFace),
+		SubjUID: ada, Samples: face.ManualClusterCore, EmbedModel: face.EmbeddingModelName()}
+	require.NoError(t, entity.UnscopedDb().Create(&f).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID) })
+
+	m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: "fs6sg6bw45bn0001", MarkerType: entity.MarkerFace,
+		FaceID: f.ID, EmbedModel: f.EmbedModel, W: 0.1, H: 0.1}
+	require.NoError(t, entity.UnscopedDb().Create(&m).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+
+	armed := true
+	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:match-rename", func(scope *gorm.Scope) {
+		if armed && scope.TableName() == (entity.Marker{}).TableName() {
+			armed = false
+			require.NoError(t, entity.UnscopedDb().Exec("UPDATE faces SET subj_uid = ? WHERE id = ?", bea, f.ID).Error)
+		}
+	})
+	t.Cleanup(func() { entity.Db().Callback().Update().Remove("race:match-rename") })
+
+	_, err := MatchFaceMarkers()
+	require.NoError(t, err)
+	require.False(t, armed, "the rename ran")
+
+	stored, err := MarkerByUID(m.MarkerUID)
+	require.NoError(t, err)
+	assert.NotEqual(t, ada, stored.SubjUID, "the marker does not take the person the cluster no longer carries")
+}
+
 // TestMatchableFacesClusterCore pins that a centroid built from fewer embeddings than the core is
 // not offered for matching. It is the whole point of the count: a labeled example or a pair would
 // otherwise cast a cluster-sized accept distance over the library on that evidence.
@@ -145,7 +177,7 @@ func TestMatchableFacesClusterCore(t *testing.T) {
 		t.Helper()
 		require.NoError(t, entity.UnscopedDb().Create(&entity.Face{
 			ID: id, FaceSrc: entity.SrcManual, FaceKind: int(face.RegularFace),
-			SubjUID: subj, Samples: samples, EmbedModel: string(face.EmbeddingModelName()),
+			SubjUID: subj, Samples: samples, EmbedModel: face.EmbeddingModelName(),
 		}).Error)
 		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", id) })
 	}
@@ -458,13 +490,13 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 }
 
 func TestResolveFaceCollisions(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
 		Name:  face.ModelFaceNet,
 		Model: face.FindEmbeddingModel(face.ModelFaceNet),
 	}))
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	// Two clusters of different people, close enough that one accepts the other. The test
@@ -516,6 +548,78 @@ func TestResolveFaceCollisions(t *testing.T) {
 	require.NoError(t, entity.Db().Where("id = ?", faceOne.ID).First(&resolved).Error)
 	assert.Positive(t, resolved.Collisions, "the created cluster must record the collision")
 	assert.Positive(t, resolved.CollisionRadius, "and the radius that separates the two people")
+}
+
+// TestResolveFaceCollisions_InertBand pins that a collision whose radius cannot narrow the cluster
+// is recorded once and not reported by later passes.
+func TestResolveFaceCollisions_InertBand(t *testing.T) {
+	restore := face.EmbedderConfig()
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(restore)
+	})
+
+	// Settles what the index already holds, so the counts below are this pair's alone.
+	baseline := -1
+
+	for range 5 {
+		c, _, err := ResolveFaceCollisions()
+		require.NoError(t, err)
+
+		if c == baseline {
+			break
+		}
+
+		baseline = c
+	}
+
+	dims := face.ExpectedDims()
+	dist := face.CollisionDist / 2
+	require.Greater(t, dist, face.AmbiguityDist())
+
+	theta := 2 * math.Asin(dist/2)
+	first := make([]float32, dims)
+	first[0] = 1
+	second := make([]float32, dims)
+	second[0] = float32(math.Cos(theta))
+	second[2] = float32(math.Sin(theta))
+
+	faceOne := entity.NewFace("uqcollisionband1", entity.SrcManual, face.NewEmbeddings([][]float32{first}), face.ModelFaceNet)
+	require.NoError(t, faceOne.Create())
+	faceTwo := entity.NewFace("uqcollisionband2", entity.SrcManual, face.NewEmbeddings([][]float32{second}), face.ModelFaceNet)
+	require.NoError(t, faceTwo.Create())
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(entity.Face{}, "id IN (?)", []string{faceOne.ID, faceTwo.ID})
+	})
+
+	collisions := func(t *testing.T) int {
+		t.Helper()
+
+		n := 0
+
+		for _, id := range []string{faceOne.ID, faceTwo.ID} {
+			f := entity.FindFace(id)
+			require.NotNil(t, f)
+			n += f.Collisions
+		}
+
+		return n
+	}
+
+	c, _, err := ResolveFaceCollisions()
+	require.NoError(t, err)
+	assert.Equal(t, baseline+1, c, "the pair is reported once")
+	assert.Equal(t, 1, collisions(t))
+
+	for range 2 {
+		c, _, err = ResolveFaceCollisions()
+		require.NoError(t, err)
+		assert.Equal(t, baseline, c, "and not again")
+		assert.Equal(t, 1, collisions(t))
+	}
 }
 
 func TestRemoveAutoFaceClusters(t *testing.T) {
@@ -839,10 +943,10 @@ func TestNotEmbeddingModel(t *testing.T) {
 }
 
 func TestFacesFromOtherModels(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	t.Run("NoModelConfigured", func(t *testing.T) {
@@ -893,10 +997,10 @@ func TestFacesFromOtherModels(t *testing.T) {
 }
 
 func TestMatchableFaces(t *testing.T) {
-	restore := face.ConfiguredModel()
+	restore := face.EmbedderConfig()
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		_ = face.ConfigureEmbedder(restore)
 	})
 
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{

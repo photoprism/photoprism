@@ -25,22 +25,6 @@ func loadTestResponse(t *testing.T, name string) *Response {
 	return &resp
 }
 
-func TestParseErrorMessage(t *testing.T) {
-	t.Run("MessagePresent", func(t *testing.T) {
-		raw := []byte(`{"error":{"message":"Invalid schema"}}`)
-		msg := ParseErrorMessage(raw)
-		if msg != "Invalid schema" {
-			t.Fatalf("expected message, got %q", msg)
-		}
-	})
-	t.Run("ErrorMissing", func(t *testing.T) {
-		raw := []byte(`{"output":[]}`)
-		if msg := ParseErrorMessage(raw); msg != "" {
-			t.Fatalf("expected empty message, got %q", msg)
-		}
-	})
-}
-
 func TestResponseFirstTextCaption(t *testing.T) {
 	resp := loadTestResponse(t, "caption-response.json")
 
@@ -115,6 +99,30 @@ func TestSchemaLabelsReturnsValidJSON(t *testing.T) {
 
 	if decoded["type"] != "object" {
 		t.Fatalf("expected type object, got %v", decoded["type"])
+	}
+}
+
+func TestIsCloudUrl(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		out  bool
+	}{
+		{name: "DefaultBase", in: DefaultBaseUrl, out: true},
+		{name: "Responses", in: DefaultBaseUrl + "/responses", out: true},
+		{name: "Uppercase", in: "https://API.OpenAI.com/v1/responses", out: true},
+		{name: "OtherHost", in: "https://llm.example.com/v1/responses", out: false},
+		{name: "LocalIP", in: "http://192.0.2.10:8080/v1/responses", out: false},
+		{name: "Empty", in: "", out: false},
+		{name: "NotAUrl", in: "gpt-5-mini", out: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := IsCloudUrl(tc.in); got != tc.out {
+				t.Fatalf("IsCloudUrl(%q) = %v, want %v", tc.in, got, tc.out)
+			}
+		})
 	}
 }
 

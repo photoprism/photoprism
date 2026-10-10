@@ -171,6 +171,7 @@
 </template>
 
 <script>
+import Axios from "axios";
 import PhotoSwipe from "photoswipe";
 import Lightbox from "photoswipe/lightbox";
 import Captions from "common/captions";
@@ -556,8 +557,9 @@ export default {
         getViewportSizeFn: () => this.getViewport(),
         closeTitle: this.$gettext("Close"),
         zoomTitle: this.$gettext("Zoom in/out"),
-        arrowPrevTitle: this.$gettext("Previous"),
-        arrowNextTitle: this.$gettext("Next"),
+        // Right-to-left languages reverse the slide order, so the left arrow moves to the next picture.
+        arrowPrevTitle: this.$isRtl ? this.$gettext("Next") : this.$gettext("Previous"),
+        arrowNextTitle: this.$isRtl ? this.$gettext("Previous") : this.$gettext("Next"),
         errorMsg: this.$gettext("Error"),
       };
     },
@@ -603,7 +605,7 @@ export default {
 
       return Promise.resolve();
     },
-    // Loads the pictures that belong to a component and displays them in the lightbox.
+    // showView opens the selected photo using the view context or cached results.
     showView(view, index) {
       if (this.isBusy("show context")) {
         return Promise.reject();
@@ -3304,9 +3306,25 @@ export default {
         return;
       }
 
-      this.$notify.success(this.$gettext("Downloading…"));
+      new Photo()
+        .find(this.model.UID)
+        .then((p) => {
+          const { downloaded } = p.downloadAll();
 
-      new Photo().find(this.model.UID).then((p) => p.downloadAll());
+          if (downloaded > 0) {
+            this.$notify.success(this.$gettext("Downloading…"));
+          } else {
+            this.$notify.warn(this.$gettext("No files available for download"));
+          }
+        })
+        .catch((err) => {
+          this.log("download failed", err);
+
+          // The API client already notifies the user of failed requests.
+          if (!Axios.isAxiosError(err)) {
+            this.$notify.warn(this.$gettext("No files available for download"));
+          }
+        });
     },
     onEdit() {
       this.pauseLightbox();

@@ -400,7 +400,11 @@ func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relati
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.StackPrefix(stripSequence)
+	// A file whose stack name is empty is not stacked by name, so its photo gets the unstripped name.
+	if fileBase = m.StackPrefix(stripSequence); fileBase == "" {
+		fileBase = m.StackPrefix(false)
+	}
+
 	relativePath = m.RelPath(rootPath)
 	relativeName = m.RelName(rootPath)
 
@@ -443,15 +447,7 @@ func (m *MediaFile) RelName(directory string) string {
 // RelPath returns the relative directory (without filename) by trimming the
 // provided base directory from the stored file path.
 func (m *MediaFile) RelPath(directory string) string {
-	pathname := m.fileName
-
-	if i := strings.Index(pathname, directory); i == 0 {
-		if i = strings.LastIndex(directory, string(os.PathSeparator)); i == len(directory)-1 {
-			pathname = pathname[len(directory):]
-		} else if i = strings.LastIndex(directory, string(os.PathSeparator)); i != len(directory) {
-			pathname = pathname[len(directory)+1:]
-		}
-	}
+	pathname := fs.RelName(m.fileName, directory)
 
 	if end := strings.LastIndex(pathname, string(os.PathSeparator)); end != -1 {
 		pathname = pathname[:end]
@@ -553,28 +549,28 @@ func (m *MediaFile) Root() string {
 		return m.fileRoot
 	}
 
-	if strings.HasPrefix(m.FileName(), Config().OriginalsPath()) {
+	if fs.InDir(m.FileName(), Config().OriginalsPath()) {
 		m.fileRoot = entity.RootOriginals
 		return m.fileRoot
 	}
 
 	importPath := Config().ImportPath()
 
-	if importPath != "" && strings.HasPrefix(m.FileName(), importPath) {
+	if importPath != "" && fs.InDir(m.FileName(), importPath) {
 		m.fileRoot = entity.RootImport
 		return m.fileRoot
 	}
 
 	sidecarPath := Config().SidecarPath()
 
-	if sidecarPath != "" && strings.HasPrefix(m.FileName(), sidecarPath) {
+	if sidecarPath != "" && fs.InDir(m.FileName(), sidecarPath) {
 		m.fileRoot = entity.RootSidecar
 		return m.fileRoot
 	}
 
 	samplesPath := Config().SamplesPath()
 
-	if samplesPath != "" && strings.HasPrefix(m.FileName(), samplesPath) {
+	if samplesPath != "" && fs.InDir(m.FileName(), samplesPath) {
 		m.fileRoot = entity.RootSamples
 		return m.fileRoot
 	}
@@ -1110,7 +1106,7 @@ func (m *MediaFile) IsHeic() bool {
 	}
 
 	// Check the mime type after other tests have passed to improve performance.
-	return m.HasMimeType(header.ContentTypeHeic) || m.HasMimeType(header.ContentTypeHeicS)
+	return isHeifType(m.BaseType())
 }
 
 // IsHeicS checks if the file is a HEIC image sequence with a supported file type extension.
@@ -1199,6 +1195,24 @@ func (m *MediaFile) FileType() fs.Type {
 	}
 }
 
+// isHeifType reports whether the media type is an image or sequence type of the HEIF container, which
+// the content detector reports depending on the brand of the writer, e.g. "image/heif" for "mif1".
+func isHeifType(mimeType string) bool {
+	switch mimeType {
+	case header.ContentTypeHeic, header.ContentTypeHeicS, "image/heif", "image/heif-sequence", header.ContentTypeAvif, header.ContentTypeAvifS:
+		return true
+	default:
+		return false
+	}
+}
+
+// isImageType reports whether the media type is an image format. HEIF types are excluded because
+// they share the ISO base media file format with videos, and "image/x-icon" because the detector
+// reports it for MP4 files whose first box is 256 or 512 bytes long.
+func isImageType(mimeType string) bool {
+	return mimeType != "image/x-icon" && !isHeifType(mimeType) && strings.HasPrefix(mimeType, "image/")
+}
+
 // CheckType returns an error if the file extension is missing or invalid,
 // see https://github.com/photoprism/photoprism/issues/3518 for details.
 func (m *MediaFile) CheckType() error {
@@ -1234,11 +1248,22 @@ func (m *MediaFile) CheckType() error {
 	case fs.ImagePsd:
 		valid = mimeType == header.ContentTypePsd || mimeType == header.ContentTypePsdAlt
 	case fs.ImageHeic, fs.ImageHeif:
-		valid = mimeType == header.ContentTypeHeic || mimeType == header.ContentTypeHeicS
+		valid = isHeifType(mimeType)
+	case fs.ImageBmp:
+		// Some legacy BMP header versions are not identified, so only other formats are rejected.
+		valid = mimeType == header.ContentTypeBmp || mimeType == fs.MimeTypeUnknown
+	case fs.ImageWebp:
+		valid = mimeType == header.ContentTypeWebp
+	case fs.ImageJpegXL:
+		valid = mimeType == header.ContentTypeJpegXL
+	case fs.ImageMPO, fs.ImageInsp:
+		valid = mimeType == header.ContentTypeJpeg
+	case fs.VideoMjpeg:
+		// Motion JPEG streams consist of JPEG images.
+		valid = mimeType == header.ContentTypeJpeg || !isImageType(mimeType)
 	default:
-		// Skip mime type check. Note: Checks for additional formats and/or generic
-		// checks based on the media content type can be added over time as needed.
-		return nil
+		// Video files must not contain a still image.
+		valid = !m.IsVideo() || !isImageType(mimeType)
 	}
 
 	// Ok?
@@ -1465,18 +1490,8 @@ func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 		return nil, fmt.Errorf("%s is empty", m.RootRelName())
 	}
 
-	jpegName := fs.ImageJpeg.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if jpegName != "" {
-		return NewMediaFile(jpegName)
-	}
-
-	pngName := fs.ImagePng.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if pngName != "" {
-		return NewMediaFile(pngName)
+	if preview := findPreviewImage(m.FileName(), Config().SidecarPath(), Config().OriginalsPath(), false, fs.ImageJpeg, fs.ImagePng); preview != nil {
+		return preview, nil
 	}
 
 	return nil, fmt.Errorf("no preview image found for %s", m.RootRelName())
@@ -1494,21 +1509,9 @@ func (m *MediaFile) HasPreviewImage() bool {
 		return true
 	}
 
-	jpegName := fs.ImageJpeg.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+	m.hasPreviewImage = findPreviewImage(m.FileName(), Config().SidecarPath(), Config().OriginalsPath(), false, fs.ImageJpeg, fs.ImagePng) != nil
 
-	if m.hasPreviewImage = fs.MimeType(jpegName) == header.ContentTypeJpeg; m.hasPreviewImage {
-		return true
-	}
-
-	pngName := fs.ImagePng.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-
-	if m.hasPreviewImage = fs.MimeType(pngName) == header.ContentTypePng; m.hasPreviewImage {
-		return true
-	}
-
-	return false
+	return m.hasPreviewImage
 }
 
 func (m *MediaFile) decodeDimensions() error {

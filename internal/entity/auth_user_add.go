@@ -29,7 +29,7 @@ func AddUser(frm form.User) error {
 		return err
 	}
 
-	return Db().Transaction(func(tx *gorm.DB) error {
+	err := Db().Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(user).Error; err != nil {
 			return err
 		}
@@ -46,4 +46,10 @@ func AddUser(frm form.User) error {
 
 		return nil
 	})
+
+	if err == nil {
+		user.WarnExistingBasePath()
+	}
+
+	return err
 }

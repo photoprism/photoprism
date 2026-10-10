@@ -22,7 +22,7 @@ You can open, edit, and save them with Poedit to update existing translations.
 To add a new translation, open `translations.pot`, click on "Create New Translation" at the bottom and select
 the language. Now you can start translating. 
 When done, save your translation as `*.po` file using the [locale](https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html) as name.
-In addition, the new language needs to be added to the `Languages` function in `/frontend/src/options/options.js`.
+In addition, the new language needs to be added to `Options` in `/frontend/src/locales.js`.
 
 A binary `*.mo` (machine object) file will be automatically saved along with every `*.po` file. 
 You won't be able to open those in a text editor, but please include them in git commits or when sending

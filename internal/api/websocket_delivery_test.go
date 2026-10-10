@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -197,5 +198,71 @@ func TestWsDelivery(t *testing.T) {
 			_, ok := wsDelivery(topic, sessionID, entity.UnknownUser, wsClientRole{})
 			assert.False(t, ok, "topic %s", topic)
 		}
+	})
+}
+
+func TestWsPayload(t *testing.T) {
+	fields := event.Data{"fileName": "users/other/2026/10/photo.jpg", "baseName": "photo.jpg"}
+	t.Run("AdminReceivesFields", func(t *testing.T) {
+		for _, topic := range []string{"index.indexing", "import.file", "upload.saved"} {
+			assert.Equal(t, fields, wsPayload(topic, deliveryUser(acl.RoleAdmin, "us6sg6bxpogaaba1"), fields), topic)
+		}
+	})
+	t.Run("RestrictedRoleReceivesEventOnly", func(t *testing.T) {
+		for _, topic := range []string{"index.indexing", "index.completed", "import.file", "upload.saved"} {
+			assert.Empty(t, wsPayload(topic, deliveryUser(acl.RoleGuest, "us6sg6bxpogaaba2"), fields), topic)
+		}
+	})
+	t.Run("OtherChannelsUnchanged", func(t *testing.T) {
+		for _, topic := range []string{"photos.updated", "notify.info", "config.updated", "indexed.custom"} {
+			assert.Equal(t, fields, wsPayload(topic, deliveryUser(acl.RoleGuest, "us6sg6bxpogaaba2"), fields), topic)
+		}
+	})
+	t.Run("AddressedProgressTopic", func(t *testing.T) {
+		assert.Empty(t, wsPayload("user.us6sg6bxpogaaba2.index.indexing", deliveryUser(acl.RoleGuest, "us6sg6bxpogaaba2"), fields))
+		assert.Equal(t, fields, wsPayload("user.us6sg6bxpogaaba2.albums.updated", deliveryUser(acl.RoleGuest, "us6sg6bxpogaaba2"), fields))
+	})
+	t.Run("NilFields", func(t *testing.T) {
+		assert.Nil(t, wsPayload("photos.updated", deliveryUser(acl.RoleGuest, "us6sg6bxpogaaba2"), nil))
+		assert.NotNil(t, wsPayload("index.completed", deliveryUser(acl.RoleGuest, "us6sg6bxpogaaba2"), nil))
+	})
+}
+
+func TestWsOutgoing(t *testing.T) {
+	fields := event.Data{"fileName": "users/other/2026/10/photo.jpg"}
+	admin := deliveryUser(acl.RoleAdmin, "us6sg6bxpogaaba1")
+	guest := deliveryUser(acl.RoleGuest, "us6sg6bxpogaaba2")
+	t.Run("AdminReceivesFields", func(t *testing.T) {
+		ev, data, ok := wsOutgoing("index.indexing", "sid", admin, wsClientRole{}, fields)
+
+		assert.True(t, ok)
+		assert.Equal(t, "index.indexing", ev)
+		assert.Equal(t, fields, data)
+	})
+	t.Run("AddressedEventWithoutProgressFields", func(t *testing.T) {
+		ev, data, ok := wsOutgoing("user.us6sg6bxpogaaba2.index.indexing", "sid", guest, wsClientRole{}, fields)
+
+		assert.True(t, ok)
+		assert.Equal(t, "index.indexing", ev)
+		assert.Empty(t, data)
+	})
+	t.Run("AddressedEventKeepsOtherFields", func(t *testing.T) {
+		ev, data, ok := wsOutgoing("user.us6sg6bxpogaaba2.albums.updated", "sid", guest, wsClientRole{}, fields)
+
+		assert.True(t, ok)
+		assert.Equal(t, "albums.updated", ev)
+		assert.Equal(t, fields, data)
+	})
+	t.Run("NotDelivered", func(t *testing.T) {
+		_, data, ok := wsOutgoing("log.info", "sid", guest, wsClientRole{}, fields)
+
+		assert.False(t, ok)
+		assert.Nil(t, data)
+	})
+	t.Run("ClientSession", func(t *testing.T) {
+		_, data, ok := wsOutgoing("index.indexing", "sid", admin, wsClientRole{Role: acl.RoleClient, Present: true}, fields)
+
+		assert.False(t, ok)
+		assert.Nil(t, data)
 	})
 }

@@ -125,3 +125,48 @@ func TestAuditLevels(t *testing.T) {
 		}
 	})
 }
+
+func TestSetAuditRecorder(t *testing.T) {
+	orig := auditRecorder.Load()
+	t.Cleanup(func() { auditRecorder.Store(orig) })
+
+	t.Run("RecordsAndPublishes", func(t *testing.T) {
+		var recorded []Data
+		SetAuditRecorder(func(data Data) { recorded = append(recorded, data) })
+		assert.True(t, AuditRecordedSync())
+
+		fields := receiveAudit(t, logrus.WarnLevel, []string{"203.0.113.55", "session", status.Denied})
+
+		require.Len(t, recorded, 1)
+		assert.Equal(t, fields, recorded[0])
+		assert.Equal(t, "warning", recorded[0]["level"])
+		assert.Equal(t, "203.0.113.55", recorded[0]["ip"])
+	})
+	t.Run("BelowInfo", func(t *testing.T) {
+		var recorded []Data
+		SetAuditRecorder(func(data Data) { recorded = append(recorded, data) })
+
+		AuditDebug([]string{"203.0.113.55", "session", status.Denied})
+		Audit(logrus.WarnLevel, nil)
+
+		assert.Empty(t, recorded)
+	})
+	t.Run("ReturnsPrevious", func(t *testing.T) {
+		var recorded []Data
+		SetAuditRecorder(nil)
+		assert.Nil(t, SetAuditRecorder(func(data Data) { recorded = append(recorded, data) }))
+		prev := SetAuditRecorder(nil)
+		require.NotNil(t, prev)
+		prev(Data{"message": "previous"})
+		assert.Equal(t, []Data{{"message": "previous"}}, recorded)
+	})
+	t.Run("Cleared", func(t *testing.T) {
+		var recorded []Data
+		SetAuditRecorder(func(data Data) { recorded = append(recorded, data) })
+		SetAuditRecorder(nil)
+		assert.False(t, AuditRecordedSync())
+
+		receiveAudit(t, logrus.WarnLevel, []string{"203.0.113.55", "session", status.Denied})
+		assert.Empty(t, recorded)
+	})
+}

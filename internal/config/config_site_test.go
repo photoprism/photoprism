@@ -51,6 +51,10 @@ func TestConfig_ApiUri(t *testing.T) {
 	assert.Equal(t, ApiUri, c.ApiUri())
 	c.options.SiteUrl = "http://foo:2342/foo/"
 	assert.Equal(t, "/foo"+ApiUri, c.ApiUri())
+	c.options.SiteUrl = "https://example.com//foo/"
+	assert.Equal(t, "/foo", c.BasePath())
+	assert.Equal(t, "/foo"+ApiUri, c.ApiUri())
+	assert.Equal(t, "/foo/library/login", c.LoginUri())
 }
 
 func TestConfig_FrontendUri(t *testing.T) {
@@ -134,6 +138,7 @@ func TestConfig_SiteUrl(t *testing.T) {
 		{"QueryStripped", "https://example.com:443/i/pro-1/?lang=de&page=2", "https://example.com/i/pro-1/"},
 		{"ForceQueryStripped", "https://example.com/?", "https://example.com/"},
 		{"FragmentStripped", "https://example.com/library/#photo123", "https://example.com/library/"},
+		{"LeadingSlashes", "https://example.com//library/", "https://example.com/library/"},
 		{"SurroundingWhitespace", "  https://app.example.com:443/  ", "https://app.example.com/"},
 		{"ExtraTrailingSlashes", "https://example.com:443////", "https://example.com/"},
 		{"Whitespace", "   ", "http://localhost:2342/"},
@@ -174,6 +179,12 @@ func TestConfig_SiteHost(t *testing.T) {
 	assert.Equal(t, "localhost:2342", c.SiteHost())
 	c.options.SiteUrl = "https://foo.bar.com:2342/"
 	assert.Equal(t, "foo.bar.com:2342", c.SiteHost())
+	c.options.SiteUrl = "https://[2001:db8::1]:8443/"
+	assert.Equal(t, "[2001:db8::1]:8443", c.SiteHost())
+	c.options.SiteUrl = "https://[2001:db8::1]/"
+	assert.Equal(t, "[2001:db8::1]", c.SiteHost())
+	c.options.SiteUrl = "https://192.0.2.1/"
+	assert.Equal(t, "192.0.2.1", c.SiteHost())
 	c.options.SiteUrl = ""
 	assert.Equal(t, "localhost:2342", c.SiteHost())
 }

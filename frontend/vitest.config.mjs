@@ -1,11 +1,22 @@
 import { defineConfig } from "vitest/config";
 import path from "path";
 import vue from "@vitejs/plugin-vue";
+import { overlayResolver } from "./vite.plugins.mjs";
+
+// customSrc is the edition overlay; with it, the suite runs against the edition's sources.
+const customSrc = process.env.CUSTOM_SRC ? path.resolve(import.meta.dirname, process.env.CUSTOM_SRC) : "";
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    customSrc &&
+      overlayResolver({
+        roots: [customSrc, path.resolve(import.meta.dirname, "./src")],
+        importers: [path.resolve(import.meta.dirname, "./tests")],
+      }),
+    vue(),
+  ].filter(Boolean),
   resolve: {
-    alias: {
+    alias: customSrc ? {} : {
       "app": path.resolve(import.meta.dirname, "./src/app"),
       "common": path.resolve(import.meta.dirname, "./src/common"),
       "component": path.resolve(import.meta.dirname, "./src/component"),
@@ -43,6 +54,10 @@ export default defineConfig({
       },
     },
     testTimeout: 10000,
+    // Both are set explicitly, which also skips Vitest's hints for them: fsModuleCache stays off
+    // because its key omits CUSTOM_SRC, and isolation keeps the reactive singletons per file.
+    fsModuleCache: false,
+    isolate: true,
     watch: false,
     silent: true,
 

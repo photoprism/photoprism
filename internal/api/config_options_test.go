@@ -12,6 +12,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -103,6 +104,60 @@ func TestSaveConfigOptions(t *testing.T) {
 		assert.Equal(t, "value", merged["Existing"])
 		assert.Equal(t, "https://photos.example.com/", merged["SiteUrl"])
 		assert.Equal(t, true, merged["HttpCachePublic"])
+	})
+	t.Run("OptionsFileTooLarge", func(t *testing.T) {
+		// A change that would make the options file too large to read is refused and not applied.
+		app, router, conf := NewApiTest()
+
+		SaveConfigOptions(router)
+
+		prepareConfigOptionsSuccessTest(t, conf)
+
+		authToken := AuthenticateAdmin(app, router)
+
+		tempCfg := t.TempDir()
+		conf.Options().ConfigPath = tempCfg
+		conf.Options().OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		seed, err := yaml.Marshal(map[string]any{"SiteCaption": strings.Repeat("c", (1<<20)-1000)})
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(conf.OptionsYaml(), seed, fs.ModeFile))
+
+		body := `{"SiteDescription":"` + strings.Repeat("d", 2000) + `"}`
+		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", body, authToken)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
+		assert.NotContains(t, conf.Options().SiteDescription, "ddd")
+
+		optionsData, readErr := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, readErr)
+		assert.Equal(t, seed, optionsData)
+	})
+	t.Run("OptionsFileUnreadable", func(t *testing.T) {
+		// An options file that is already too large to read is a server error, not one of the request.
+		app, router, conf := NewApiTest()
+
+		SaveConfigOptions(router)
+
+		prepareConfigOptionsSuccessTest(t, conf)
+
+		authToken := AuthenticateAdmin(app, router)
+
+		tempCfg := t.TempDir()
+		conf.Options().ConfigPath = tempCfg
+		conf.Options().OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		seed := []byte("SiteCaption: " + strings.Repeat("c", 1<<20) + "\n")
+		require.NoError(t, os.WriteFile(conf.OptionsYaml(), seed, fs.ModeFile))
+
+		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", `{"SiteDescription":"short"}`, authToken)
+
+		assert.Equal(t, http.StatusInternalServerError, r.Code)
+		assert.NotEqual(t, "short", conf.Options().SiteDescription)
+
+		optionsData, readErr := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, readErr)
+		assert.Equal(t, seed, optionsData)
 	})
 	t.Run("IgnoresOptionsTheApiDoesNotReturn", func(t *testing.T) {
 		app, router, conf := NewApiTest()

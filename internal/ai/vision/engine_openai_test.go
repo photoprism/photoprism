@@ -359,9 +359,15 @@ func TestPerformApiRequestOpenAIError(t *testing.T) {
 		Images:         []string{"data:image/jpeg;base64,AA=="},
 	}
 
+	resetServiceFailures(t)
+	logHook, systemHook := captureLogs(t)
+
 	_, err := PerformApiRequest(req, server.URL, http.MethodPost, "")
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "Invalid image payload")
+	assert.EqualError(t, err, "openai service request failed (status 400)")
+	require.Len(t, logHook.AllEntries(), 1)
+	assert.Equal(t, "vision: openai request for model gpt-5-mini failed (status 400)", logHook.LastEntry().Message)
+	require.Len(t, systemHook.AllEntries(), 1)
+	assert.Contains(t, systemHook.LastEntry().Message, "Invalid image payload")
 }
 
 func TestPopulateOpenAIJSONResult(t *testing.T) {
@@ -446,5 +452,24 @@ func TestOpenAIParserNormalizeModes(t *testing.T) {
 		resp := parse(t, nil)
 		require.Len(t, resp.Result.Labels, 1)
 		assert.Equal(t, "Ferris", resp.Result.Labels[0].Name)
+	})
+}
+
+// TestOpenAIParserErrorStatus checks that the parser returns no response text for a failed request.
+func TestOpenAIParserErrorStatus(t *testing.T) {
+	resetServiceFailures(t)
+	captureLogs(t)
+
+	req := &ApiRequest{Id: "error", Model: "gpt-5-mini", ResponseFormat: ApiFormatOpenAI}
+
+	t.Run("Message", func(t *testing.T) {
+		resp, err := openaiParser{}.Parse(context.Background(), req, []byte(`{"error":{"message":"remote-error-marker"}}`), http.StatusBadRequest)
+		assert.Nil(t, resp)
+		assert.EqualError(t, err, "openai service request failed (status 400)")
+	})
+	t.Run("NoMessage", func(t *testing.T) {
+		resp, err := openaiParser{}.Parse(context.Background(), req, []byte(`<html></html>`), http.StatusBadGateway)
+		assert.Nil(t, resp)
+		assert.EqualError(t, err, "openai service request failed (status 502)")
 	})
 }

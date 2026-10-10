@@ -139,14 +139,14 @@ func SharePreview(router *gin.RouterGroup) {
 			thumbnail, imgErr := thumb.FromFile(fileName, file.FileHash, conf.ThumbCachePath(), size.Width, size.Height, file.FileOrientation, size.Options...)
 
 			if imgErr != nil {
-				log.Warnf("share: %s (create thumbnail)", clean.Error(imgErr))
+				log.Warnf("share: %s in %s (create thumbnail)", clean.Error(imgErr), clean.Log(file.FileName))
 				continue
 			}
 
 			img, _, imgErr := fs.DecodeImageFile(thumbnail)
 
 			if imgErr != nil {
-				log.Warnf("share: %s (decode thumbnail)", clean.Error(imgErr))
+				log.Warnf("share: %s in %s (decode thumbnail)", clean.Error(imgErr), clean.Log(file.FileName))
 				continue
 			}
 

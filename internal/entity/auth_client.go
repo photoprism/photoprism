@@ -391,14 +391,19 @@ func (m *Client) Save() error {
 	return nil
 }
 
-// Delete marks the entity as deleted. The record is retained, so the identifiers it holds stay
-// reserved and remain unavailable to any other record. Use Purge to release them.
+// Delete marks the entity as deleted and removes its sessions and secret. The record is retained,
+// so the identifiers it holds stay reserved and remain unavailable to any other record. Use Purge
+// to release them.
 func (m *Client) Delete() (err error) {
 	if m.ClientUID == "" {
 		return fmt.Errorf("client uid is empty")
 	}
 
 	if _, err = m.DeleteSessions(); err != nil {
+		return err
+	}
+
+	if err = m.DeleteSecret(); err != nil {
 		return err
 	}
 
@@ -416,9 +421,9 @@ func (m *Client) Delete() (err error) {
 	return nil
 }
 
-// Restore removes the deletion mark, so the client can be used again. A deletion releases the
-// client name, so this refuses when a current record has taken an identifier since, rather than
-// leaving two live holders of it.
+// Restore removes the deletion mark, so the client can be used again once a new secret is set. A
+// deletion releases the client name, so this refuses when a current record has taken an identifier
+// since, rather than leaving two live holders of it.
 func (m *Client) Restore() error {
 	if m == nil {
 		return fmt.Errorf("client is nil")
@@ -428,6 +433,13 @@ func (m *Client) Restore() error {
 
 	if conflict := m.RestoreConflict(); conflict != "" {
 		return fmt.Errorf("%s is already in use by client %s", conflict, m.conflictingClient(conflict))
+	}
+
+	// A secret stored before the deletion is not carried over.
+	if stored := m.Stored(); stored != nil && stored.Deleted() {
+		if err := m.DeleteSecret(); err != nil {
+			return err
+		}
 	}
 
 	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
@@ -516,13 +528,24 @@ func (m *Client) Purge() (err error) {
 	}
 
 	// The client UID becomes available again, so its stored secret does not outlive it.
-	if pw := FindPassword(m.ClientUID); pw != nil {
-		if err = pw.Delete(); err != nil {
-			return err
-		}
+	if err = m.DeleteSecret(); err != nil {
+		return err
 	}
 
 	return UnscopedDb().Delete(m).Error
+}
+
+// DeleteSecret removes the stored client secret, if any.
+func (m *Client) DeleteSecret() error {
+	if !m.HasUID() {
+		return fmt.Errorf("invalid client uid")
+	}
+
+	if pw := FindPassword(m.ClientUID); pw != nil {
+		return pw.Delete()
+	}
+
+	return nil
 }
 
 // DeleteSessions deletes all sessions that belong to this client.
@@ -777,9 +800,13 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 		m.ClientUID = id
 	}
 
-	// Set values from form.
+	// Set values from form; an empty role keeps the current one.
 	m.SetName(frm.Name())
-	m.SetRole(frm.Role())
+
+	if role := frm.Role(); role != "" {
+		m.SetRole(role)
+	}
+
 	m.SetProvider(frm.Provider())
 	m.SetMethod(frm.Method())
 	m.SetScope(frm.Scope())

@@ -2,9 +2,9 @@ package vision
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -27,21 +27,21 @@ func init() {
 	})
 
 	registerOllamaEngineDefaults()
+	Config = NewConfig()
 }
 
-// registerOllamaEngineDefaults selects the default Ollama endpoint based on the
-// configured base URL and registers the engine alias accordingly. When
-// OLLAMA_BASE_URL points at the cloud host we only switch the default model to
-// the cloud preset; the actual base URL continues to come from
-// OLLAMA_BASE_URL (or falls back to the local compose default) so we don't
-// accidentally talk to the hosted service without an explicit endpoint.
+// registerOllamaEngineDefaults registers the Ollama engine alias with the default model from OLLAMA_MODEL,
+// or the cloud preset when OLLAMA_BASE_URL is the cloud host. The endpoint always comes from OLLAMA_BASE_URL,
+// so the hosted service is never used without an explicit base URL.
 func registerOllamaEngineDefaults() {
 	ensureEnv()
 
 	defaultModel := ollama.DefaultModel
 
-	// Use different default model for the Ollama cloud service.
-	if baseUrl := os.Getenv(ollama.BaseUrlEnv); baseUrl == ollama.CloudBaseUrl {
+	// Use the model set in the environment, or a different default model for the Ollama cloud service.
+	if envDefault := envModelTagged(ollama.ModelEnv); envDefault != "" {
+		defaultModel = envDefault
+	} else if baseUrl := os.Getenv(ollama.BaseUrlEnv); baseUrl == ollama.CloudBaseUrl {
 		defaultModel = ollama.CloudModel
 	}
 
@@ -152,22 +152,20 @@ func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files, media
 	return req, nil
 }
 
+// ollamaInvalidLabels holds the models whose invalid labels were logged until labels parse again.
+var ollamaInvalidLabels sync.Map
+
 // Parse processes the Ollama service response.
 func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
+	// Return an error for a failed request, as its response text is not a result.
+	if err := serviceStatusError(req.engineName(ollama.EngineName), ApiFormatOllama, req.Model, status); err != nil {
+		return nil, err
+	}
+
 	ollamaResp, err := decodeOllamaResponse(raw)
 
 	if err != nil {
 		return nil, err
-	}
-
-	// Surface upstream failures so they are diagnosable instead of silently yielding no labels or caption.
-	if status >= http.StatusBadRequest {
-		switch status {
-		case http.StatusNotFound, http.StatusGone:
-			log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(req.Model), status)
-		default:
-			log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(req.Model), status)
-		}
 	}
 
 	response := &ApiResponse{
@@ -198,7 +196,10 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 
 	if !parsedLabels && fallbackJSON != "" && (req.Format == FormatJSON || strings.HasPrefix(fallbackJSON, "{")) {
 		if labels, parseErr := parseOllamaLabels(fallbackJSON); parseErr != nil {
-			log.Warnf("vision: %s (parse ollama labels)", clean.Error(parseErr))
+			if _, warned := ollamaInvalidLabels.LoadOrStore(req.Model, struct{}{}); !warned {
+				log.Warnf("vision: ollama returned invalid labels for model %s", clean.Log(req.Model))
+			}
+			log.Debugf("vision: %q (parse ollama labels)", parseErr.Error())
 		} else if len(labels) > 0 {
 			response.Result.Labels = append(response.Result.Labels, labels...)
 			parsedLabels = true
@@ -206,6 +207,7 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	}
 
 	if parsedLabels {
+		ollamaInvalidLabels.Delete(req.Model)
 		normalize := req.GetNormalize()
 		filtered := response.Result.Labels[:0]
 		for i := range response.Result.Labels {

@@ -13,6 +13,7 @@ import PLightbox from "component/lightbox.vue";
 
 // Inputs.
 import PInputChipSelector from "component/input/chip-selector.vue";
+import PInputAction from "component/input/action.vue";
 
 // Icons.
 import IconLivePhoto from "component/icon/live-photo.vue";
@@ -96,6 +97,7 @@ export function install(app) {
   app.component("PLightbox", PLightbox);
 
   app.component("PInputChipSelector", PInputChipSelector);
+  app.component("PInputAction", PInputAction);
 
   app.component("IconLivePhoto", IconLivePhoto);
   app.component("IconSponsor", IconSponsor);

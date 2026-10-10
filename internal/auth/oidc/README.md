@@ -1,6 +1,6 @@
 ## PhotoPrism — OIDC Integration
 
-**Last Updated:** June 25, 2026
+**Last Updated:** October 8, 2026
 
 ### Overview
 
@@ -36,6 +36,7 @@
 - `redirect_url.go` — builds the redirect/callback URL from site config.
 - `register.go` — provider registration glue; tests in `register_test.go`.
 - `username.go` — derives usernames from claims; tests in `username_test.go`.
+- `email.go` — `VerifiedEmail` returns the address a login may store as verified; tests in `email_test.go`.
 - `client_test.go`, `oidc_test.go` — happy-path and error-path coverage for discovery, auth URL, and code exchange.
 
 ### Related Packages & Entry Points

@@ -86,12 +86,6 @@
                 </template>
               </v-autocomplete>
             </div>
-            <!-- div v-if="locationInfo">
-              <div class="text-subtitle-2 mb-2">{{ $gettext("Location Details") }}</div>
-              <div class="text-body-2">
-                {{ simplifiedLocationDisplay }}
-              </div>
-            </div -->
 
             <div class="text-body-2 mt-3">
               {{ $gettext("You can search for a location or move the marker on the map to change the position:") }}

@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -48,6 +49,90 @@ func runTestMain(m *testing.M) int {
 	}()
 
 	return m.Run()
+}
+
+// TestInitMemory checks memory thresholds and environment or CLI unsafe overrides.
+func TestInitMemory(t *testing.T) {
+	origTotal, origLow, origArgs := TotalMem, LowMem, os.Args
+	t.Cleanup(func() {
+		TotalMem, LowMem, os.Args = origTotal, origLow, origArgs
+	})
+
+	for _, tt := range []struct {
+		name   string
+		total  uint64
+		unsafe string
+		args   []string
+		low    bool
+	}{
+		{name: "UnknownMemory", low: true},
+		{name: "BelowMinimum", total: MinMem - 1, low: true},
+		{name: "AtMinimum", total: MinMem},
+		{name: "AboveMinimum", total: MinMem + 1},
+		{name: "UnsafeEnvironment", total: MinMem - 1, unsafe: "true"},
+		{name: "SafeEnvironment", total: MinMem - 1, unsafe: "false", low: true},
+		{name: "UnsafeFlag", total: MinMem - 1, args: []string{"--unsafe"}},
+		{name: "SafeFlagOverridesEnvironment", total: MinMem - 1, unsafe: "true", args: []string{"--unsafe=false"}, low: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv("PHOTOPRISM_UNSAFE", tt.unsafe)
+			os.Args = append([]string{origArgs[0]}, tt.args...)
+			LowMem = !tt.low
+
+			initMemory(tt.total)
+
+			assert.Equal(t, tt.total, TotalMem)
+			assert.Equal(t, tt.low, LowMem)
+
+			c := &Config{options: &Options{}}
+			assert.Equal(t, tt.low, c.DisableTensorFlow())
+			assert.Equal(t, tt.low, c.DisableFaces())
+			assert.Equal(t, tt.low, c.DisableRaw())
+		})
+	}
+}
+
+// TestInitThumbs checks public size filtering, reverse order, and repeated initialization.
+func TestInitThumbs(t *testing.T) {
+	origNames, origSizes, origThumbs := thumb.Names, thumb.Sizes, Thumbs
+	origCached, origOnDemand := thumb.SizeCached, thumb.SizeOnDemand
+	t.Cleanup(func() {
+		thumb.Names, thumb.Sizes, Thumbs = origNames, origSizes, origThumbs
+		thumb.SizeCached, thumb.SizeOnDemand = origCached, origOnDemand
+	})
+
+	thumb.Names = []thumb.Name{"small", "private", "boundary", "large"}
+	thumb.Sizes = thumb.SizeMap{
+		"small":    {Width: 100, Height: 80, Public: true, Usage: "Small"},
+		"private":  {Width: 150, Height: 150, Public: false},
+		"boundary": {Width: 200, Height: 160, Public: true, Usage: "Boundary"},
+		"large":    {Width: 300, Height: 240, Public: true, Usage: "Large"},
+	}
+	thumb.SizeCached, thumb.SizeOnDemand = 100, 200
+	want := ThumbSizes{
+		{Size: "boundary", Usage: "Boundary", Width: 200, Height: 160},
+		{Size: "small", Usage: "Small", Width: 100, Height: 80},
+	}
+
+	t.Run("PublicSizesInReverseOrder", func(t *testing.T) {
+		initThumbs()
+		assert.Equal(t, want, Thumbs)
+	})
+	t.Run("RebuildWithoutDuplicates", func(t *testing.T) {
+		initThumbs()
+		initThumbs()
+		assert.Equal(t, want, Thumbs)
+	})
+	t.Run("CachedLimit", func(t *testing.T) {
+		thumb.SizeCached, thumb.SizeOnDemand = 200, 100
+		initThumbs()
+		assert.Equal(t, want, Thumbs)
+	})
+	t.Run("EmptyPresets", func(t *testing.T) {
+		thumb.Names = nil
+		initThumbs()
+		assert.Empty(t, Thumbs)
+	})
 }
 
 func TestNewConfig(t *testing.T) {
@@ -725,4 +810,57 @@ func TestConfig_DeleteOptionsPatch(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, wrote)
 	})
+}
+
+// TestConfig_SaveOptionsPatchSizeLimit checks that a patch is not saved or applied if the options file
+// would exceed the size it can be read with.
+func TestConfig_SaveOptionsPatchSizeLimit(t *testing.T) {
+	tempCfg := t.TempDir()
+	c := NewConfig(CliTestContext())
+	c.options.ConfigPath = tempCfg
+	c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+	seed, err := yaml.Marshal(Values{"SiteCaption": strings.Repeat("c", optionsFileMaxBytes-1000)})
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(c.OptionsYaml(), seed, fs.ModeFile))
+	c.options.SiteDescription = "unchanged"
+
+	_, err = c.SaveOptionsPatch(Values{"SiteDescription": strings.Repeat("d", 2000)})
+	require.ErrorIs(t, err, ErrOptionsTooLarge)
+	assert.Equal(t, "unchanged", c.options.SiteDescription)
+
+	b, err := os.ReadFile(c.OptionsYaml())
+	require.NoError(t, err)
+	assert.Equal(t, seed, b)
+
+	wrote, err := c.SaveOptionsPatch(Values{"SiteDescription": "short"})
+	require.NoError(t, err)
+	assert.True(t, wrote)
+	assert.Equal(t, "short", c.options.SiteDescription)
+}
+
+// TestNewConfig_OptionsFileTooLarge checks that an options file that is too large to read is reported
+// as an error, since none of its values apply.
+func TestNewConfig_OptionsFileTooLarge(t *testing.T) {
+	tempCfg := t.TempDir()
+	require.NoError(t, os.WriteFile(filepath.Join(tempCfg, "options.yml"),
+		[]byte("SiteCaption: "+strings.Repeat("c", optionsFileMaxBytes)+"\n"), fs.ModeFile))
+
+	ctx := CliTestContext()
+	require.NoError(t, ctx.Set("config-path", tempCfg))
+	hook := captureLog(t)
+	c := NewConfig(ctx)
+
+	assert.NotContains(t, c.SiteCaption(), "ccc")
+
+	var logged bool
+
+	for _, entry := range hook.AllEntries() {
+		if strings.Contains(entry.Message, "file too large") {
+			logged = true
+			assert.Equal(t, logrus.ErrorLevel, entry.Level)
+		}
+	}
+
+	assert.True(t, logged, "expected the ignored options file to be logged")
 }

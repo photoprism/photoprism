@@ -50,7 +50,7 @@
 ## Project Structure & Languages
 
 - Backend: Go (`internal/`, `pkg/`, `cmd/`) + MariaDB/SQLite
-- Frontend: Vue 3 + Vuetify 3 (`frontend/`)
+- Frontend: Vue 3 + Vuetify 4 (`frontend/`)
 - Docker/compose for dev/CI; Traefik used for local TLS in dev profile when enabled.
 - A maintainer's working copy may contain private subdirectories (`plus/`, `pro/`, `portal/`, `specs/`) that are not part of this repository. Never reference their paths from public artifacts such as pull request descriptions, issue comments, or code comments — external readers only see a broken link.
 

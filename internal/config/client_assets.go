@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -36,7 +38,7 @@ func NewClientAssets(buildPath, baseUri string) *ClientAssets {
 	return &ClientAssets{BuildPath: buildPath, BaseUri: baseUri}
 }
 
-// Load loads the frontend assets from a webpack manifest file.
+// Load loads the frontend assets from the build's flat manifest file.
 func (a *ClientAssets) Load(fileName string) error {
 	jsonFile, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)) //nolint:gosec // path derived from configured assets directory
 
@@ -45,6 +47,19 @@ func (a *ClientAssets) Load(fileName string) error {
 	}
 
 	return json.Unmarshal(jsonFile, a)
+}
+
+// Missing returns the manifest keys of the entry points the web app cannot start or share without.
+func (a *ClientAssets) Missing() (keys []string) {
+	for key, value := range map[string]string{"app.css": a.AppCss, "app.js": a.AppJs, "share.js": a.ShareJs} {
+		if value == "" {
+			keys = append(keys, key)
+		}
+	}
+
+	slices.Sort(keys)
+
+	return keys
 }
 
 // AppCssUri returns the web app CSS URI.
@@ -102,7 +117,7 @@ func (a *ClientAssets) SplashCssFileContents() template.CSS {
 
 // SplashJsUri returns the splash screen JS URI.
 func (a *ClientAssets) SplashJsUri() string {
-	if a.ShareJs == "" {
+	if a.SplashJs == "" {
 		return ""
 	}
 	return fmt.Sprintf("%s/build/%s", a.BaseUri, a.SplashJs)
@@ -110,10 +125,10 @@ func (a *ClientAssets) SplashJsUri() string {
 
 // SplashJsFile returns the splash screen JS filename.
 func (a *ClientAssets) SplashJsFile() string {
-	if a.ShareJs == "" {
+	if a.SplashJs == "" {
 		return ""
 	}
-	return a.ShareJs
+	return a.SplashJs
 }
 
 // SplashJsFileContents returns the splash screen JS file contents for embedding in HTML.
@@ -142,6 +157,8 @@ func (c *Config) ClientAssets() *ClientAssets {
 	if err := result.Load(fs.AssetsJsonFile); err != nil {
 		log.Debugf("frontend: %s", err)
 		log.Errorf("frontend: cannot read %s", fs.AssetsJsonFile)
+	} else if missing := result.Missing(); len(missing) > 0 {
+		log.Errorf("frontend: %s has no entry for %s", fs.AssetsJsonFile, strings.Join(missing, ", "))
 	}
 
 	return result

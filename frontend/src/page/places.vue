@@ -936,7 +936,7 @@ export default {
     renderMap() {
       const lastProjection = this.getProjection(true);
 
-      this.map = new maplibregl.Map(this.options);
+      this.map = new maplibregl.Map({ ...this.options, locale: maps.locale() });
       this.map.setLanguage(this.$config.values.settings.ui.language.split("-")[0]);
 
       // Get informed about projection type changes.

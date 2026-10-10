@@ -8,11 +8,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -28,10 +28,10 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	return w.toAvc(f, encoder, noMutex, force, true)
 }
 
-// avcSource returns the file a transcode of f is made from, which is the left lens for every member of a
-// complete Insta360 video capture.
+// avcSource returns the file from which a transcoded version is made, which is the left lens
+// for each member of a complete Insta360 video capture.
 func avcSource(f *MediaFile) *MediaFile {
-	if capture := FindInsta360Capture(f); capture.ValidPair() {
+	if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() && capture.Left.CheckType() == nil {
 		return capture.Left
 	}
 
@@ -48,13 +48,23 @@ func avcType(f *MediaFile) fs.Type {
 }
 
 // FindAvc returns the name of an existing transcode of f in the folders the converter searches, or an
-// empty string if there is none.
+// empty string if there is none. For a transport stream, this includes the MPEG-4 container that
+// ToAvc reuses when it holds playable AVC.
 func (w *Convert) FindAvc(f *MediaFile) string {
 	if f == nil {
 		return ""
 	}
 
-	return w.findAvc(avcSource(f))
+	src := avcSource(f)
+
+	if !src.IsAnimatedImage() && src.IsM2TS() {
+		if mp4Name, err := fs.FilePath(src.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4); err == nil &&
+			fs.FileExistsNotEmpty(mp4Name) && w.avcContainer(mp4Name, clean.Log(src.RootRelName())) != nil {
+			return mp4Name
+		}
+	}
+
+	return w.findAvc(src)
 }
 
 // findAvc returns the name of an existing transcode made from src, which avcSource has already resolved.
@@ -90,11 +100,14 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	// Sanitized relative filename for use in logs.
 	logFileName := clean.Log(f.RootRelName())
 
-	// Abort if the source media file does not exist.
+	// Abort if the source media file does not exist or its content does not match its type.
 	if !f.Exists() {
 		return nil, fmt.Errorf("convert: %s not found", logFileName)
 	} else if f.Empty() {
 		return nil, fmt.Errorf("convert: %s is empty", logFileName)
+	} else if typeErr := f.CheckType(); typeErr != nil {
+		log.Warnf("convert: skipping %s because it %s", logFileName, typeErr)
+		return nil, fmt.Errorf("convert: %s %s", logFileName, typeErr)
 	}
 
 	// Skip files whose codec or container is on the FFmpeg exclude list.
@@ -154,10 +167,15 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 
 	cmd, useMutex, err := w.TranscodeToAvcCmd(f, avcName, encoder)
 
-	// Return if an error occurred.
+	// Return if an error occurred, which the caller logs.
 	if err != nil {
-		log.Errorf("convert: %s for %s (transcode command)", clean.Error(err), logFileName)
 		return nil, err
+	}
+
+	// Animated images and dewarped videos do not use a hardware encoder, so they are logged as software
+	// transcodes and are not retried with the same command if they fail.
+	if encoder != encode.SoftwareAvc && !slices.Contains(cmd.Args, encoder.String()) {
+		encoder = encode.SoftwareAvc
 	}
 
 	// Make sure only one convert command runs at a time.
@@ -189,12 +207,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()),
 	}...)
 
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": relName,
-		"baseName": filepath.Base(relName),
-		"xmpName":  "",
-	})
+	publishConverting(f, relName, "")
 
 	log.Infof("%s: transcoding %s to %s", encoder, clean.Log(relName), fs.VideoAvc)
 
@@ -217,14 +230,19 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			log.Debugf("%s: %s for %s", encoder, s, logFileName)
 		}
 
-		// Log filename and transcoding time.
-		log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		// Log filename and transcoding time. A hardware encoder that falls back to software below is
+		// logged as a warning only until it succeeds again, since an unusable GPU fails for every file.
+		if encoder != encode.SoftwareAvc && !disk.IsNoSpace(err) && !firstTranscodeFallback(encoder) {
+			log.Debugf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		} else {
+			log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
+		}
 
-		// Remove broken video file.
+		// Remove broken video file, keeping the transcoding error for the checks below.
 		if !fs.FileExists(avcName) {
 			// Do nothing.
-		} else if err = os.Remove(avcName); err != nil {
-			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), err)
+		} else if removeErr := os.Remove(avcName); removeErr != nil {
+			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), removeErr)
 		}
 
 		switch {
@@ -235,12 +253,17 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			// Retry in software within the current destination operation.
 			return w.toAvc(f, encode.SoftwareAvc, true, false, false)
 		default:
-			return nil, err
+			return nil, fmt.Errorf("convert: failed to transcode %s (%w)", logFileName, err)
 		}
 	}
 
 	// Log filename and transcoding time.
 	log.Infof("%s: created %s [%s]", encoder, filepath.Base(avcName), time.Since(start))
+
+	// Log the next fallback as a warning again, as the encoder works.
+	if encoder != encode.SoftwareAvc {
+		clearTranscodeFallback(encoder)
+	}
 
 	// Return AVC media file and keep the successful dewarp projection available to the indexer even
 	// when ExifTool is disabled. Later reindexes infer the same value from source and sidecar paths.
@@ -348,16 +371,26 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded", f.FileType(), clean.Log(f.BaseName()))
 	}
 
-	// Try to transcode animated WebP images with ImageMagick.
-	if w.conf.ImageMagickEnabled() && f.IsWebp() && w.imageMagickExclude.Allow(fileExt) {
+	// Try to transcode animated WebP images with ImageMagick if the file names are allowed.
+	if w.conf.ImageMagickEnabled() && f.IsWebp() && w.imageMagickExclude.Allow(fileExt) && magickNames(fileName, avcName) {
+		info, infoErr := f.DecodeConfig()
+		if infoErr != nil || info.Width <= 0 || info.Height <= 0 {
+			return nil, false, fmt.Errorf("convert: cannot read WebP dimensions for %s", clean.Log(f.BaseName()))
+		}
+
+		// Coalesce before flattening transparency; pad the raw canvas for H.264 4:2:0 without cropping.
+		geometry := fmt.Sprintf("%dx%d", info.Width+info.Width%2, info.Height+info.Height%2)
+		args := []string{fileName, "-coalesce", "-background", "black", "-alpha", "remove", "-alpha", "off",
+			"-gravity", "northwest", "-extent", geometry, "-define", "video:pixel-format=yuv420p", avcName}
+
 		// #nosec G204 -- arguments are built from validated config and file paths.
-		return exec.Command(w.conf.ImageMagickBin(), f.FileName(), avcName), false, nil
+		return exec.Command(w.conf.ImageMagickBin(), args...), false, nil
 	}
 
 	// Complete separate-lens captures are combined before dewarping. Single-file INSV originals are
 	// dewarped only when their decoded frame is already a side-by-side ~2:1 dual-fisheye layout.
 	capture := FindInsta360Capture(f)
-	dewarpPair := capture.ValidPair() && capture.Left.FileName() == f.FileName()
+	dewarpPair := capture != nil && capture.Left != nil && capture.Left.FileName() == f.FileName() && capture.Dewarpable()
 	dewarpStreams := !dewarpPair && f.Insta360DualStream()
 	dewarp := dewarpPair || dewarpStreams || f.IsInsv() && f.DualFisheyeLayout()
 
@@ -427,22 +460,33 @@ func (w *Convert) fisheyeRoll(f *MediaFile) int {
 	return roll
 }
 
-// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
+// AvcBitrate returns the ideal AVC encoding bitrate in megabits per second for the output resolution, capped by
+// the configured limit. Encoders that support a peak bitrate use it, so a video of unknown size gets the limit.
 func (w *Convert) AvcBitrate(f *MediaFile) string {
 	const defaultBitrate = "8M"
 
-	if f == nil {
-		return defaultBitrate
+	limit := w.conf.FFmpegBitrate()
+	quality := 12.0
+
+	var bitrate int
+
+	if f != nil {
+		if width, height := float64(f.Width()), float64(f.Height()); width > 0 && height > 0 {
+			// Transcoding scales the longer side down to the configured size limit.
+			if longest, size := math.Max(width, height), float64(w.conf.FFmpegSize()); longest > size {
+				width, height = width*size/longest, height*size/longest
+			}
+
+			bitrate = int(math.Ceil(width * height * quality / 1000000))
+		}
 	}
 
-	limit := w.conf.FFmpegBitrate()
-	quality := 12
-
-	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*quality) / 1000000))
-
-	if bitrate <= 0 {
+	switch {
+	case bitrate <= 0 && limit > 0:
+		bitrate = limit
+	case bitrate <= 0:
 		return defaultBitrate
-	} else if bitrate > limit {
+	case limit > 0 && bitrate > limit:
 		bitrate = limit
 	}
 

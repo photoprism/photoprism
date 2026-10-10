@@ -791,10 +791,10 @@ describe("PLightboxSidebar component", () => {
   it("should render the named marker combobox as readonly", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     const personRows = w.findAll(".metadata__person-row");
-    const namedInput = personRows[0].find(".meta-inline-marker--named input");
+    const namedInput = personRows[0].find('.meta-inline-marker--named input:not([type="hidden"])');
     expect(namedInput.exists()).toBe(true);
     expect(namedInput.element.readOnly).toBe(true);
-    const unnamedInput = personRows[1].find(".meta-inline-marker input");
+    const unnamedInput = personRows[1].find('.meta-inline-marker input:not([type="hidden"])');
     expect(unnamedInput.exists()).toBe(true);
     expect(unnamedInput.element.readOnly).toBe(false);
   });

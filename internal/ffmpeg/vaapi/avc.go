@@ -18,9 +18,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		initDevice = "vaapi=va:" + opt.Device
 	}
 
-	// #nosec G204 -- command arguments are built from validated options and paths.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-y",
 		"-strict", "-2",
@@ -28,17 +26,22 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		"-hwaccel", "vaapi",
 		"-hwaccel_device", "va",
 		"-filter_hw_device", "va",
-		"-i", srcName,
+	}, encode.InputArgs(srcName)...)
+
+	args = append(args,
 		"-c:a", "aac",
 		"-vf", opt.VideoFilter(encode.FormatNV12),
 		"-c:v", opt.Encoder.String(),
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
 		"-ignore_unknown",
-		"-qp", opt.QpQuality(),
+		"-qp", opt.VaapiQuality(),
 		"-f", "mp4",
 		"-movflags", opt.MovFlags,
 		"-map_metadata", opt.MapMetadata,
 		destName,
 	)
+
+	// #nosec G204 -- command arguments are built from validated options and paths.
+	return exec.Command(opt.Bin, args...)
 }

@@ -30,6 +30,8 @@ func TestConfig_CdnUrl(t *testing.T) {
 	c.options.SiteUrl = ""
 	assert.False(t, c.NoCdn())
 	assert.True(t, c.UseCdn())
+	c.options.CdnUrl = "http://foo:2342//foo/"
+	assert.Equal(t, "http://foo:2342/foo", c.CdnUrl(""))
 }
 
 func TestConfig_CdnUrl_DefaultPortEqualsSite(t *testing.T) {

@@ -240,7 +240,7 @@ func TestAcquireFileLockIsExclusive(t *testing.T) {
 func TestFileLockNotYetWrittenIsHeld(t *testing.T) {
 	fileName := filepath.Join(t.TempDir(), "faces.lock")
 
-	require.NoError(t, os.WriteFile(fileName, nil, 0o644))
+	require.NoError(t, os.WriteFile(fileName, nil, 0o600))
 
 	assert.NotEmpty(t, FileLockHeld(fileName), "an empty lock file is held, not free")
 	assert.False(t, ReadFileLock(fileName).Expired())

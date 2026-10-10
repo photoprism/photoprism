@@ -476,6 +476,11 @@ func (m *Photo) SaveLabels() error {
 
 	m.PhotoQuality = m.QualityScore()
 
+	// These assignments are already persisted; metadata maintenance must not save them again.
+	storedLabels := m.Labels
+	m.Labels = nil
+	defer func() { m.Labels = storedLabels }()
+
 	if err := m.Save(); err != nil {
 		return err
 	}

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -508,6 +509,34 @@ func TestMediaFile_RootRelPath(t *testing.T) {
 	t.Run("SamplesPath", func(t *testing.T) {
 		path := mediaFile.RootRelPath()
 		assert.Equal(t, c.SamplesPath(), path)
+	})
+}
+
+func TestMediaFile_Root(t *testing.T) {
+	c := config.TestConfig()
+
+	t.Run("Originals", func(t *testing.T) {
+		m := &MediaFile{fileName: filepath.Join(c.OriginalsPath(), "2024", "test.jpg")}
+		assert.Equal(t, entity.RootOriginals, m.Root())
+	})
+	t.Run("SiblingPrefix", func(t *testing.T) {
+		m := &MediaFile{fileName: c.OriginalsPath() + "2/2024/test.jpg"}
+		assert.Equal(t, entity.RootUnknown, m.Root())
+	})
+	t.Run("SiblingSidecarPath", func(t *testing.T) {
+		// A sidecar folder named like the originals folder plus a suffix is not part of it.
+		prev := c.Options().SidecarPath
+		c.Options().SidecarPath = c.OriginalsPath() + "-sidecar"
+		t.Cleanup(func() { c.Options().SidecarPath = prev })
+		m := &MediaFile{fileName: filepath.Join(c.OriginalsPath()+"-sidecar", "2024", "test.heic.jpg")}
+		assert.Equal(t, entity.RootSidecar, m.Root())
+		assert.Equal(t, entity.RootSidecar, Root(m.FileName()))
+	})
+	t.Run("RelPathSiblingPrefix", func(t *testing.T) {
+		m := &MediaFile{fileName: c.OriginalsPath() + "2/2024/test.jpg"}
+		assert.Equal(t, filepath.Dir(m.FileName()), m.RelPath(c.OriginalsPath()))
+		m = &MediaFile{fileName: filepath.Join(c.OriginalsPath(), "2024", "test.jpg")}
+		assert.Equal(t, "2024", m.RelPath(c.OriginalsPath()))
 	})
 }
 
@@ -1557,6 +1586,11 @@ func TestMediaFile_CheckType(t *testing.T) {
 			assert.NoError(t, f.CheckType())
 		}
 	})
+	t.Run("GIF", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
+		require.NoError(t, err)
+		assert.NoError(t, f.CheckType())
+	})
 	t.Run("PNG", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/orientation.png"); err != nil {
 			t.Fatal(err)
@@ -1641,6 +1675,133 @@ func TestMediaFile_CheckType(t *testing.T) {
 			result := f.CheckType()
 			t.Log(result)
 			assert.Error(t, result)
+		}
+	})
+	t.Run("ContentTypes", func(t *testing.T) {
+		jpegData, err := os.ReadFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		pngData, err := os.ReadFile("testdata/orientation.png")
+		require.NoError(t, err)
+
+		// copyAs writes data to a temporary file with the given name.
+		copyAs := func(t *testing.T, name string, data []byte) *MediaFile {
+			t.Helper()
+			fileName := filepath.Join(t.TempDir(), name)
+			require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+			f, newErr := NewMediaFile(fileName)
+			require.NoError(t, newErr)
+			return f
+		}
+
+		// sample returns a media file from the samples path.
+		sample := func(t *testing.T, name string) *MediaFile {
+			t.Helper()
+			f, newErr := NewMediaFile(filepath.Join(c.SamplesPath(), name))
+			require.NoError(t, newErr)
+			return f
+		}
+
+		t.Run("Bmp", func(t *testing.T) {
+			assert.NoError(t, sample(t, "example.bmp").CheckType())
+			assert.Error(t, copyAs(t, "image.bmp", jpegData).CheckType())
+			// A bitmap with a 12-byte core header is not identified and is accepted.
+			core := []byte{'B', 'M', 0x22, 0, 0, 0, 0, 0, 0, 0, 0x1A, 0, 0, 0, 0x0C, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0x18, 0, 0, 0, 0xFF, 0, 0, 0, 0, 0}
+			assert.NoError(t, copyAs(t, "core.bmp", core).CheckType())
+		})
+		t.Run("WebP", func(t *testing.T) {
+			assert.Error(t, copyAs(t, "image.webp", pngData).CheckType())
+			assert.Error(t, copyAs(t, "image.webp", jpegData).CheckType())
+		})
+		t.Run("JpegXL", func(t *testing.T) {
+			assert.NoError(t, sample(t, "dice.jxl").CheckType())
+			assert.Error(t, copyAs(t, "image.jxl", jpegData).CheckType())
+			assert.Error(t, copyAs(t, "image.jxl", pngData).CheckType())
+		})
+		t.Run("Mpo", func(t *testing.T) {
+			assert.NoError(t, copyAs(t, "image.mpo", jpegData).CheckType())
+			assert.Error(t, copyAs(t, "image.mpo", pngData).CheckType())
+		})
+		t.Run("Insp", func(t *testing.T) {
+			f, newErr := NewMediaFile("testdata/insta360.insp")
+			require.NoError(t, newErr)
+			assert.NoError(t, f.CheckType())
+			assert.Error(t, copyAs(t, "image.insp", pngData).CheckType())
+		})
+		t.Run("Video", func(t *testing.T) {
+			assert.NoError(t, sample(t, "blue-go-video.mp4").CheckType())
+			assert.NoError(t, sample(t, "earth.avi").CheckType())
+			assert.NoError(t, sample(t, "earth.mov").CheckType())
+			err := copyAs(t, "video.mp4", jpegData).CheckType()
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "image/jpeg")
+			assert.Error(t, copyAs(t, "video.avi", pngData).CheckType())
+		})
+		t.Run("VideoNotIdentified", func(t *testing.T) {
+			assert.NoError(t, copyAs(t, "video.dv", []byte("not identified video content")).CheckType())
+			// An image sequence brand is not a still image format the native decoders read.
+			sequence := []byte{0, 0, 0, 0x18, 'f', 't', 'y', 'p', 'm', 's', 'f', '1', 0, 0, 0, 0, 'm', 's', 'f', '1', 'h', 'e', 'v', 'c'}
+			assert.NoError(t, copyAs(t, "video.mp4", sequence).CheckType())
+		})
+		t.Run("MotionJpeg", func(t *testing.T) {
+			assert.NoError(t, copyAs(t, "video.mjpeg", append(append([]byte{}, jpegData...), jpegData...)).CheckType())
+			assert.Error(t, copyAs(t, "video.mjpg", pngData).CheckType())
+		})
+		t.Run("VideoWithJpeg2000", func(t *testing.T) {
+			jp2 := []byte{0, 0, 0, 0x0C, 'j', 'P', ' ', ' ', 0x0D, 0x0A, 0x87, 0x0A, 0, 0, 0, 0x14, 'f', 't', 'y', 'p', 'j', 'p', '2', ' ', 0, 0, 0, 0, 'j', 'p', '2', ' '}
+			assert.Error(t, copyAs(t, "video.mp4", jp2).CheckType())
+		})
+		t.Run("OtherFormats", func(t *testing.T) {
+			assert.NoError(t, sample(t, "fox.profile0.8bpc.yuv420.avif").CheckType())
+			f, newErr := NewMediaFile("testdata/animated-earth.thm")
+			require.NoError(t, newErr)
+			assert.NoError(t, f.CheckType())
+		})
+	})
+	t.Run("HeifBrands", func(t *testing.T) {
+		// The detected type follows the major brand of the writer, e.g. "mif1" or AV1 coding.
+		data, err := os.ReadFile(filepath.Join(c.SamplesPath(), "iphone_7.heic"))
+		require.NoError(t, err)
+		dir := t.TempDir()
+		for _, brand := range []string{"heic", "heix", "mif1", "msf1", "avif"} {
+			for _, ext := range []string{".heic", ".heif", ".hif"} {
+				fileName := filepath.Join(dir, brand+ext)
+				patched := append([]byte(nil), data...)
+				copy(patched[8:12], brand)
+				require.NoError(t, os.WriteFile(fileName, patched, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+				f, newErr := NewMediaFile(fileName)
+				require.NoError(t, newErr)
+				assert.NoError(t, f.CheckType(), brand+ext)
+				assert.True(t, f.IsHeic(), brand+ext)
+			}
+		}
+	})
+	t.Run("BigTiff", func(t *testing.T) {
+		f, err := NewMediaFile(filepath.Join(fs.Abs("../../pkg/fs/testdata"), "bigtiff.tif"))
+		require.NoError(t, err)
+		assert.NoError(t, f.CheckType())
+	})
+}
+
+// TestIsHeifType verifies which media types belong to the HEIF container.
+func TestIsHeifType(t *testing.T) {
+	for _, mimeType := range []string{header.ContentTypeHeic, header.ContentTypeHeicS, "image/heif", "image/heif-sequence", header.ContentTypeAvif, header.ContentTypeAvifS} {
+		assert.True(t, isHeifType(mimeType), mimeType)
+	}
+	for _, mimeType := range []string{"", header.ContentTypeJpeg, header.ContentTypePng, header.ContentTypeMp4, "image/x-icon"} {
+		assert.False(t, isHeifType(mimeType), mimeType)
+	}
+}
+
+// TestIsImageType verifies which media types count as images that video files must not contain.
+func TestIsImageType(t *testing.T) {
+	t.Run("Image", func(t *testing.T) {
+		for _, mimeType := range []string{header.ContentTypeJpeg, header.ContentTypePng, header.ContentTypeGif, header.ContentTypeBmp, header.ContentTypeWebp, header.ContentTypeTiff, "image/jp2", header.ContentTypeJpegXL} {
+			assert.True(t, isImageType(mimeType), mimeType)
+		}
+	})
+	t.Run("Other", func(t *testing.T) {
+		for _, mimeType := range []string{"", header.ContentTypeHeic, header.ContentTypeAvif, "image/heif-sequence", "image/x-icon", header.ContentTypeMp4} {
+			assert.False(t, isImageType(mimeType), mimeType)
 		}
 	})
 }
@@ -2772,6 +2933,20 @@ func TestMediaFile_PathNameInfo(t *testing.T) {
 		assert.Equal(t, "360", path)
 		assert.Equal(t, "360/VID_20220625_140410_10_008.insv", name)
 		assert.Equal(t, "VID_20220625_140410_10_008", mediaFile.BasePrefix(false))
+		mediaFile.SetFileName(initialName)
+	})
+	t.Run("SequenceOnly", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/beach_sand.jpg")
+		require.NoError(t, err)
+
+		initialName := mediaFile.FileName()
+		mediaFile.SetFileName(filepath.Join(c.SamplesPath(), "b2", "(1).heic"))
+
+		_, base, _, _ := mediaFile.PathNameInfo(true)
+		assert.Equal(t, "(1)", base)
+		mediaFile.SetFileName(filepath.Join(c.SamplesPath(), "b2", "IMG_1 (2).heic"))
+		_, base, _, _ = mediaFile.PathNameInfo(true)
+		assert.Equal(t, "IMG_1", base)
 		mediaFile.SetFileName(initialName)
 	})
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -70,6 +71,12 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 	defer mutex.MetaWorker.Stop()
 
+	// Notify clients about saved and merged photos, including when the run is canceled.
+	events := event.NewEntityBatch("photos", event.EntityUpdated)
+	defer events.Flush()
+	deleted := event.NewEntityBatch("photos", event.EntityDeleted)
+	defer deleted.Flush()
+
 	// Check time when worker was last executed.
 	updateIndex := force || mutex.MetaWorker.LastRun().Before(time.Now().Add(-1*entity.IndexUpdateInterval))
 
@@ -108,6 +115,9 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 			if mutex.MetaWorker.Canceled() {
 				return errors.New("index: metadata worker canceled")
 			}
+
+			events.FlushDue()
+			deleted.FlushDue()
 
 			if done[photo.PhotoUID] {
 				continue
@@ -166,11 +176,9 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 						// Generate photo labels if needed.
 						if generateLabels {
 							if labels := mediaFile.GenerateLabels(entity.SrcAuto); len(labels) > 0 {
-								if w.conf.DetectNSFW() && !photo.PhotoPrivate {
-									if labels.IsNSFW(vision.Config.Thresholds.GetNSFW()) {
-										photo.PhotoPrivate = true
-										log.Infof("vision: changed private flag of %s to %t (labels)", logName, photo.PhotoPrivate)
-									}
+								if flag, write := labelsPrivateFlag(w.conf, photo.PhotoPrivate, labels); write {
+									photo.PhotoPrivate = flag
+									log.Infof("vision: changed private flag of %s to %t (labels)", logName, photo.PhotoPrivate)
 								}
 								photo.AddLabels(labels)
 								changed = true
@@ -218,10 +226,16 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 				optimized++
 			}
 
+			// A stack merge moves files to the photo that remains, even if its own row did not change.
+			if (updated || len(merged) > 0) && photo.DeletedAt == nil {
+				events.Add(photo.PhotoUID)
+			}
+
 			for _, p := range merged {
 				if p != nil {
 					log.Infof("index: merged %s", p.String())
 					done[p.PhotoUID] = true
+					deleted.Add(p.PhotoUID)
 				}
 			}
 		}
@@ -232,6 +246,10 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 		offset += limit
 	}
+
+	// Publish the last batches before face recognition and the index updates, which can take minutes.
+	events.Flush()
+	deleted.Flush()
 
 	if optimized > 0 {
 		log.Infof("index: updated %s [%s]", english.Plural(optimized, "photo", "photos"), time.Since(start))

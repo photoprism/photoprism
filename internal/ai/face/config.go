@@ -128,8 +128,8 @@ var (
 	// MatchDist is the distance offset threshold used to match new faces with existing clusters.
 	MatchDist = MatchDistDefault
 	// CollisionDist is the floor below which a cluster's recorded CollisionRadius is discarded and
-	// the cluster keeps its full accept distance: narrowing that far would exclude its own members,
-	// so the code stops separating the two and flags the face ambiguous instead.
+	// the cluster keeps its full accept distance: narrowing that far would exclude its own members.
+	// One closer than AmbiguityDist flags the cluster ambiguous; any other is recorded at most once.
 	CollisionDist = CollisionDistDefault
 	// MatchMargin is how much closer the nearest cluster has to be than the runner-up before a
 	// marker is assigned to it. A face between two people is large, sharp and confidently scored,

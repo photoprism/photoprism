@@ -169,6 +169,7 @@
   </div>
 </template>
 <script>
+import Axios from "axios";
 import $api from "common/api";
 import $notify from "common/notify";
 import download from "common/download";
@@ -395,12 +396,30 @@ export default {
         case 1:
           new Photo()
             .find(this.selection[0])
-            .then((p) => p.downloadAll())
+            .then((p) => {
+              const { downloaded } = p.downloadAll();
+
+              if (downloaded > 0) {
+                $notify.success(this.$gettext("Downloading…"));
+              } else {
+                $notify.warn(this.$gettext("No files available for download"));
+              }
+            })
+            .catch((err) => {
+              console.warn("download failed", err);
+
+              // The API client already notifies the user of failed requests.
+              if (!Axios.isAxiosError(err)) {
+                $notify.warn(this.$gettext("No files available for download"));
+              }
+            })
             .finally(() => {
               this.busy = false;
             });
           break;
         default:
+          $notify.success(this.$gettext("Downloading…"));
+
           $api
             .post("zip", { photos: this.selection })
             .then((r) => {
@@ -410,8 +429,6 @@ export default {
               this.busy = false;
             });
       }
-
-      $notify.success(this.$gettext("Downloading…"));
 
       this.expanded = false;
     },

@@ -121,7 +121,7 @@ func GetVideo(router *gin.RouterGroup) {
 				c.DataFromReader(http.StatusOK, info.VideoSize(), info.VideoContentType(), reader, nil)
 				return
 			} else if cacheName, cacheErr := fs.CacheFileFromReader(filepath.Join(conf.MediaFileCachePath(f.FileHash), f.FileHash+info.VideoFileExt()), reader); cacheErr != nil {
-				log.Errorf("video: failed to cache %s embedded in %s (%s)", videoFileType.ToUpper(), clean.Log(f.FileName), cacheErr)
+				log.Errorf("video: failed to cache %s embedded in %s (%s)", videoFileType.ToUpper(), clean.Log(f.FileName), clean.Error(cacheErr))
 				AbortVideo(c)
 				return
 			} else {
@@ -153,17 +153,13 @@ func GetVideo(router *gin.RouterGroup) {
 			return
 		}
 
-		// Original fisheye pixels must never be sent to the sphere viewer or converted inline in an
-		// HTTP request. Index/import workers create the AVC; an older LRV derivative is a safe fallback.
-		if mediaFile.DewarpableInsv() {
-			playable := photoprism.DewarpedVideoFile(mediaFile)
-
-			if playable == nil {
-				log.Warnf("video: equirectangular derivative for %s is not ready", clean.Log(f.FileName))
-				AbortVideo(c)
-				return
-			}
-
+		// Footage that can be dewarped is never converted inline in an HTTP request: index/import workers
+		// create its AVC, and an older LRV derivative is a safe fallback. Other footage plays as it is.
+		if playable, ready := photoprism.Insta360PlaybackFile(mediaFile); !ready {
+			log.Warnf("video: equirectangular derivative for %s is not ready", clean.Log(f.FileName))
+			AbortVideo(c)
+			return
+		} else if playable != mediaFile {
 			mediaFile = playable
 			videoFileName = playable.FileName()
 			videoFileType = playable.FileType()
@@ -203,6 +199,10 @@ func GetVideo(router *gin.RouterGroup) {
 				return
 			} else {
 				// Log error and default to 404.mp4
+				if avcErr != nil {
+					log.Debugf("video: %s", clean.Error(avcErr))
+				}
+
 				log.Errorf("video: failed to transcode %s", clean.Log(f.FileName))
 				AbortVideo(c)
 				return

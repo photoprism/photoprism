@@ -35,6 +35,8 @@ func TestClientRoleFlagUsage_ExcludesNoneAlias(t *testing.T) {
 		if roleFlag == nil {
 			t.Fatal("role flag not found on ClientsModCommand")
 		}
+		// No default, so the help does not suggest that mod resets the role.
+		assert.Empty(t, roleFlag.Value)
 		assert.Contains(t, roleFlag.Usage, "client")
 		assert.Contains(t, roleFlag.Usage, "service")
 		assert.NotContains(t, roleFlag.Usage, "none")

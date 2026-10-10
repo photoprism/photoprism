@@ -113,7 +113,7 @@ func TestConfig_DisableFaces(t *testing.T) {
 	assert.True(t, c.DisableFaces())
 	c.options.DisableFaces = false
 	c.options.DisableTensorFlow = true
-	assert.True(t, c.DisableFaces())
+	assert.False(t, c.DisableFaces())
 	c.options.DisableTensorFlow = false
 	assert.False(t, c.DisableFaces())
 }

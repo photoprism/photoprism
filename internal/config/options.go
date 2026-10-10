@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -70,11 +69,13 @@ type Options struct {
 	Demo                      bool          `yaml:"-" json:"-" flag:"demo"`
 	Sponsor                   bool          `yaml:"-" json:"-" flag:"sponsor"`
 	StoragePath               string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
+	StorageCase               string        `yaml:"StorageCase" json:"-" flag:"storage-case"`
 	StorageFree               float64       `yaml:"StorageFree" json:"-" flag:"storage-free"`
 	ConfigPath                string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	OptionsYaml               string        `json:"-" yaml:"-" flag:"-"`
 	DefaultsYaml              string        `json:"-" yaml:"-" flag:"defaults-yaml"`
 	OriginalsPath             string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
+	OriginalsCase             string        `yaml:"OriginalsCase" json:"-" flag:"originals-case"`
 	OriginalsLimit            int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit           int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	UsersPath                 string        `yaml:"UsersPath" json:"-" flag:"users-path"`
@@ -85,6 +86,7 @@ type Options struct {
 	UploadAllow               string        `yaml:"UploadAllow" json:"-" flag:"upload-allow"`
 	UploadArchives            bool          `yaml:"UploadArchives" json:"-" flag:"upload-archives"`
 	UploadLimit               int           `yaml:"UploadLimit" json:"-" flag:"upload-limit"`
+	UploadMaxAge              int64         `yaml:"UploadMaxAge" json:"-" flag:"upload-maxage"`
 	CachePath                 string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	TempPath                  string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath                string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
@@ -263,6 +265,8 @@ type Options struct {
 	VisionSchedule            string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
 	OnnxProvider              string        `yaml:"OnnxProvider" json:"-" flag:"onnx-provider"`
+	LabelsModel               string        `yaml:"LabelsModel" json:"-" flag:"labels-model"`
+	NsfwModel                 string        `yaml:"NsfwModel" json:"-" flag:"nsfw-model"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	XMPFaces                  bool          `yaml:"XMPFaces" json:"XMPFaces" flag:"xmp-faces"`
 	FaceRun                   string        `yaml:"FaceRun" json:"-" flag:"face-run"`
@@ -378,7 +382,7 @@ func (o *Options) Load(fileName string) error {
 		return fmt.Errorf("%s not found", fileName)
 	}
 
-	yamlConfig, err := os.ReadFile(fileName) //nolint:gosec // configuration file path provided by user/config
+	yamlConfig, err := readOptionsFile(fileName)
 
 	if err != nil {
 		return err

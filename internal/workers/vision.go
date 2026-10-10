@@ -10,12 +10,15 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -83,6 +86,27 @@ func (w *Vision) scheduledModels() []string {
 	return models
 }
 
+// RunnableModels returns the requested model types that may run in the specified scheduling
+// context, and logs the reason for each one that may not, so a request whose models are all
+// filtered out is not mistaken for one that named none.
+func (w *Vision) RunnableModels(models []string, runType vision.RunType) []string {
+	runnable := vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
+		return w.conf.VisionModelShouldRun(mt, when)
+	})
+
+	for _, modelType := range models {
+		if modelType = strings.TrimSpace(modelType); modelType == "" || slices.Contains(runnable, modelType) {
+			continue
+		} else if modelType == string(vision.ModelTypeNsfw) {
+			event.SystemWarn([]string{"vision", "skipping %s, because %s"}, clean.Log(modelType), w.conf.VisionModelSkipReason(modelType, runType))
+		} else {
+			log.Warnf("vision: skipping %s, because %s", clean.Log(modelType), w.conf.VisionModelSkipReason(modelType, runType))
+		}
+	}
+
+	return runnable
+}
+
 // Start runs the requested vision models against photos matching the search
 // filter. `customSrc` allows the caller to override the metadata source string,
 // `force` regenerates metadata regardless of existing values, and `runType`
@@ -113,9 +137,12 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 	defer mutex.VisionWorker.Stop()
 
-	models = vision.FilterModels(models, runType, func(mt vision.ModelType, when vision.RunType) bool {
-		return w.conf.VisionModelShouldRun(mt, when)
-	})
+	// Notify clients about saved photos, including when the run is canceled.
+	events := event.NewEntityBatch("photos", event.EntityUpdated)
+	defer events.Flush()
+
+	requested := models
+	models = w.RunnableModels(models, runType)
 
 	updateLabels := slices.Contains(models, vision.ModelTypeLabels)
 	updateNsfw := slices.Contains(models, vision.ModelTypeNsfw)
@@ -123,8 +150,10 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	detectFaces := slices.Contains(models, vision.ModelTypeFace)
 
 	// Refresh index metadata.
-	if n := len(models); n == 0 {
+	if n := len(models); n == 0 && len(requested) == 0 {
 		log.Warnf("vision: no models were specified")
+		return nil
+	} else if n == 0 {
 		return nil
 	} else {
 		log.Infof("vision: running %s models", txt.JoinAnd(models))
@@ -181,6 +210,8 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 			return errors.New("vision: worker canceled")
 		}
 
+		events.FlushDue()
+
 		if done[photo.PhotoUID] {
 			continue
 		}
@@ -206,7 +237,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 		processed++
 
-		fileName := photoprism.FileName(photo.FileRoot, photo.FileName)
+		fileName := photoprism.ConfigFileName(w.conf, photo.FileRoot, photo.FileName)
 		file, fileErr := photoprism.NewMediaFile(fileName)
 
 		if fileErr != nil {
@@ -242,11 +273,9 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		// Generate labels.
 		if generateLabels {
 			if labels := file.GenerateLabels(customSrc); len(labels) > 0 {
-				if w.conf.DetectNSFW() && !m.PhotoPrivate {
-					if labels.IsNSFW(vision.Config.Thresholds.GetNSFW()) {
-						m.PhotoPrivate = true
-						log.Infof("vision: changed private flag of %s to %t (labels)", logName, m.PhotoPrivate)
-					}
+				if flag, write := labelsPrivateFlag(w.conf, m.PhotoPrivate, labels); write {
+					m.PhotoPrivate = flag
+					log.Infof("vision: changed private flag of %s to %t (labels)", logName, m.PhotoPrivate)
 				}
 				m.AddLabels(labels)
 				changed = true
@@ -255,10 +284,14 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 		// Detect NSFW content.
 		if detectNsfw {
-			if isNsfw := file.DetectNSFW(); m.PhotoPrivate != isNsfw {
-				m.PhotoPrivate = isNsfw
+			result := file.DetectNSFW()
+
+			if private, write := nsfwPrivateFlag(m.PhotoPrivate, result); write {
+				m.PhotoPrivate = private
 				changed = true
 				log.Infof("vision: changed private flag of %s to %t", logName, m.PhotoPrivate)
+			} else if result.IsUnavailable() {
+				event.SystemWarn([]string{"vision", "nsfw detection unavailable for %s (%s)"}, logName, clean.Log(result.Reason))
 			}
 		}
 
@@ -280,6 +313,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		if changed {
 			if saveErr := m.SaveVision(); saveErr == nil {
 				updated++
+				events.Add(m.PhotoUID)
 
 				// Save sidecar YAML backup if enabled. Writing it only after a successful
 				// save keeps the backup from describing metadata the database rejected.
@@ -295,6 +329,9 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 			return errors.New("vision: worker canceled")
 		}
 	}
+
+	// Publish the last batch before face recognition and the index updates, which can take minutes.
+	events.Flush()
 
 	elapsed := time.Since(start)
 
@@ -344,4 +381,25 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	}
 
 	return nil
+}
+
+// nsfwPrivateFlag returns the private flag an NSFW decision implies and whether to write it.
+// An unavailable result preserves the existing flag.
+func nsfwPrivateFlag(private bool, result nsfw.Result) (flag, write bool) {
+	if result.IsUnavailable() {
+		return private, false
+	}
+
+	return result.IsUnsafe(), private != result.IsUnsafe()
+}
+
+// labelsPrivateFlag applies label-derived NSFW flags only in the configured labels mode.
+func labelsPrivateFlag(conf *config.Config, private bool, labels classify.Labels) (bool, bool) {
+	if private || !conf.DetectNSFWLabels() || vision.Config == nil {
+		return private, false
+	}
+	if labels.IsNSFW(vision.Config.Thresholds.GetNSFW()) {
+		return true, true
+	}
+	return private, false
 }

@@ -12,8 +12,8 @@ import (
 // TypesExt maps standard formats to file extensions.
 type TypesExt map[Type][]string
 
-// FileTypes contains the default file type extensions.
-var FileTypes = Extensions.Types(ignoreCase)
+// FileTypes contains the default file type extensions, without uppercase variants once IgnoreCase is called.
+var FileTypes = ExtensionList.Types(ignoreCase)
 
 // FileTypesLower contains lowercase extensions for case-insensitive lookup.
-var FileTypesLower = Extensions.Types(true)
+var FileTypesLower = ExtensionList.Types(true)

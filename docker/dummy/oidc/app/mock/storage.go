@@ -194,8 +194,14 @@ func (a *AuthRequest) Done() bool { return a.done }
 // Health implements op.Storage.
 func (s *AuthStorage) Health(_ context.Context) error { return nil }
 
-// CreateAuthRequest stores a new request and returns it as op.AuthRequest.
+// CreateAuthRequest stores a new request for the identity selected by its login_hint.
 func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthRequest, _ string) (op.AuthRequest, error) {
+	identity, err := IdentityByHint(authReq.LoginHint)
+
+	if err != nil {
+		return nil, oidc.ErrInvalidRequest().WithDescription("%s", err)
+	}
+
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -203,7 +209,7 @@ func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthReq
 	req := &AuthRequest{
 		ID:           id,
 		ClientID:     authReq.ClientID,
-		Subject:      "sub00000001",
+		Subject:      identity.Subject,
 		Scopes:       authReq.Scopes,
 		RedirectURI:  authReq.RedirectURI,
 		ResponseType: authReq.ResponseType,
@@ -433,9 +439,9 @@ func (s *AuthStorage) AuthorizeClientIDSecret(_ context.Context, _, _ string) er
 	return nil
 }
 
-// SetUserinfoFromScopes is required by op.Storage but the dummy populates claims via SetUserinfoFromToken.
-func (s *AuthStorage) SetUserinfoFromScopes(_ context.Context, info *oidc.UserInfo, _, _ string, _ []string) error {
-	fillUserInfo(info)
+// SetUserinfoFromScopes populates the claims of the user, which the ID token includes as well.
+func (s *AuthStorage) SetUserinfoFromScopes(_ context.Context, info *oidc.UserInfo, userID, _ string, _ []string) error {
+	IdentityBySubject(userID).SetUserInfo(info)
 	return nil
 }
 
@@ -450,7 +456,7 @@ func (s *AuthStorage) SetUserinfoFromToken(_ context.Context, info *oidc.UserInf
 	if tok.expiration.Before(time.Now().UTC()) {
 		return errors.New("token expired")
 	}
-	fillUserInfo(info)
+	IdentityBySubject(tok.subject).SetUserInfo(info)
 	return nil
 }
 
@@ -471,7 +477,7 @@ func (s *AuthStorage) SetIntrospectionFromToken(_ context.Context, response *oid
 			response.Scope = tok.scopes
 			response.ClientID = tok.applicationID
 			info := new(oidc.UserInfo)
-			fillUserInfo(info)
+			IdentityBySubject(tok.subject).SetUserInfo(info)
 			response.SetUserInfo(info)
 			return nil
 		}
@@ -497,19 +503,6 @@ func (s *AuthStorage) GetKeyByIDAndClientID(_ context.Context, _, _ string) (*jo
 // ValidateJWTProfileScopes accepts the requested scopes verbatim.
 func (s *AuthStorage) ValidateJWTProfileScopes(_ context.Context, _ string, scopes []string) ([]string, error) {
 	return scopes, nil
-}
-
-// fillUserInfo populates the userinfo response with the dummy user identity.
-func fillUserInfo(info *oidc.UserInfo) {
-	info.Subject = "sub00000001"
-	info.Email = "test@example.com"
-	info.EmailVerified = oidc.Bool(true)
-	info.Name = "Test"
-	info.Nickname = "testnick"
-	info.PreferredUsername = "prefname"
-	info.PhoneNumber = "0791234567"
-	info.PhoneNumberVerified = oidc.Bool(true)
-	info.AppendClaims("private_claim", "test")
 }
 
 // refreshTokenRequest implements op.RefreshTokenRequest for the dummy.

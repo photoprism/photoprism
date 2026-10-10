@@ -74,7 +74,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			}
 
 			// Existing previews of each member are reindexed with the capture, e.g. on a forced rescan.
-			if jpegName := fs.ImageJpeg.FindFirst(captureFile.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false); jpegName != "" {
+			if jpegName := fs.ImageJpeg.FindGenerated(captureFile.FileName(), []string{sidecarPathFor(captureFile), fs.PPHiddenPathname}, Config().OriginalsPath(), false, nil); jpegName != "" {
 				matches = list.Join(matches, []string{jpegName})
 			}
 		}
@@ -131,6 +131,12 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		}
 
 		processedMatches[fileName] = true
+
+		// The pattern also matches folders whose names start with the prefix.
+		if !fs.FileExists(fileName) {
+			continue
+		}
+
 		f, fileErr := NewMediaFile(fileName)
 
 		if fileErr != nil || f.Empty() || f.IsArchive() {
@@ -155,29 +161,41 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			continue
 		}
 
-		// Set main file.
+		// Set main file. A file whose content does not match its extension is replaced as main file
+		// by an image that can be shown.
+		setMain := func() {
+			// A file that fails the type check only becomes the main file if there is no other.
+			if result.Main != nil && f.CheckType() != nil {
+				return
+			}
+
+			result.Main = f
+		}
+
 		switch {
 		case result.Main == nil && f.IsPreviewImage():
+			result.Main = f
+		case f.IsPreviewImage() && result.Main.CheckType() != nil:
 			result.Main = f
 		case f.IsRaw():
 			// A secondary RAW accompanies another RAW of the same name and never displaces it:
 			// an Olympus High Res Shot writes the composite .orf and one plain frame .ori.
 			if result.Main == nil || !result.Main.IsRaw() || !fs.IsSecondaryRaw(f.FileName()) {
-				result.Main = f
+				setMain()
 			}
 		case f.IsVector():
-			result.Main = f
+			setMain()
 		case f.IsDocument():
-			result.Main = f
+			setMain()
 		case f.IsHeic():
 			isHeic = true
-			result.Main = f
+			setMain()
 		case f.IsHeif():
-			result.Main = f
+			setMain()
 		case f.IsImage() && !f.IsPreviewImage() && !f.IsThumb():
-			result.Main = f
+			setMain()
 		case f.IsVideo() && !isHeic:
-			result.Main = f
+			setMain()
 		case result.Main != nil && f.IsPreviewImage() && result.Main.IsPreviewImage() && len(result.Main.FileName()) > len(f.FileName()):
 			result.Main = f
 		}
@@ -208,14 +226,8 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// Add hidden preview image if needed.
 	if !result.HasPreview() {
-		if jpegName := fs.ImageJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); jpegName != "" {
-			if resultFile, _ := NewMediaFile(jpegName); resultFile.Ok() {
-				result.Files = append(result.Files, resultFile)
-			}
-		} else if pngName := fs.ImagePng.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); pngName != "" {
-			if resultFile, _ := NewMediaFile(pngName); resultFile.Ok() {
-				result.Files = append(result.Files, resultFile)
-			}
+		if preview := findPreviewImage(result.Main.FileName(), sidecarPathFor(result.Main), Config().OriginalsPath(), stripSequence, fs.ImageJpeg, fs.ImagePng); preview != nil {
+			result.Files = append(result.Files, preview)
 		}
 	}
 
@@ -252,4 +264,15 @@ func (m *MediaFile) RelatedSidecarFiles(stripSequence bool) (files []string, err
 	files = append(files, matches...)
 
 	return files, nil
+}
+
+// sidecarPathFor returns the sidecar folder in which generated files of f are looked up, or an empty string
+// if f is not in originals, e.g. in the import folder, so it is only related to files in its own folder and
+// its hidden subfolder.
+func sidecarPathFor(f *MediaFile) string {
+	if f == nil || !f.InOriginals() {
+		return ""
+	}
+
+	return Config().SidecarPath()
 }

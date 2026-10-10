@@ -195,6 +195,8 @@ chmod 0700 "${work_dir}"
 extract_dir="${work_dir}/extracted"
 mkdir -p "${extract_dir}"
 
+package_names=()
+
 while read -r package sha; do
   [[ -z "${package}" ]] && continue
 
@@ -213,7 +215,17 @@ while read -r package sha; do
   verify_sha "${sha}" "${package_path}"
 
   dpkg-deb -x "${package_path}" "${extract_dir}"
+  package_names+=("${package%%_*}")
 done <<<"${CUDA_PACKAGES}"
+
+# The libraries may only be redistributed with their license, which each package carries in its
+# copyright file. Require all of them before installing anything, so that none is left out.
+for name in "${package_names[@]}"; do
+  if [[ ! -f "${extract_dir}/usr/share/doc/${name}/copyright" ]]; then
+    echo "Error: the ${name} package contains no copyright file." >&2
+    exit 1
+  fi
+done
 
 # Install the shared libraries the execution provider needs. The explicit name list is the guard:
 # it admits these five families and nothing else the packages happen to carry, such as the nvblas
@@ -251,7 +263,8 @@ mkdir -p "${transaction_dir}/new" "${transaction_dir}/previous"
 install_names=()
 
 # prepare_libraries stages the full set and preserves existing files and symlinks.
-# Snapshots share old inodes; only staged replacements receive permission changes.
+# Snapshots share old inodes; only staged replacements receive permission changes, and
+# they are owned by the installing user rather than the owner stored in the package.
 prepare_libraries() {
   local file name target staged
 
@@ -270,7 +283,7 @@ prepare_libraries() {
       return 1
     fi
 
-    cp -a -- "${file}" "${staged}" || return 1
+    cp -a --no-preserve=ownership -- "${file}" "${staged}" || return 1
 
     if [[ -f "${staged}" && ! -L "${staged}" ]]; then
       chmod 0644 "${staged}" || return 1
@@ -307,6 +320,10 @@ fi
 # The complete set is committed before refreshing the loader cache.
 install_complete=1
 installed=${#install_names[@]}
+
+for name in "${package_names[@]}"; do
+  install -D -m 0644 "${extract_dir}/usr/share/doc/${name}/copyright" "${DESTDIR}/share/doc/${name}/copyright"
+done
 
 if [[ "${DESTDIR}" == "/usr" || "${DESTDIR}" == "/usr/local" ]]; then
   ldconfig

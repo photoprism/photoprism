@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** September 26, 2026
+**Last Updated:** October 8, 2026
 
 ### Overview
 
@@ -29,6 +29,12 @@
 - Service registry: `get/` (registry lookups and helper commands).
 - Tests & fixtures: `*_test.go`, `testdata/`, uses shared test config (`config.TestConfig()`).
 
+### Label Input Preparation
+
+`MediaFile.PrepareLabelInputs` prepares the local S2 classifier's center and capped whole-photo inputs. Squares and originals with a short side below 224 pixels use one input. Source dimensions use the configured renderer when the standard header decoder does not support the format. Source selection checks decoded cached dimensions, prefers the smallest rendition with a 224 px short side, takes the largest cached one otherwise, and uses original pixels only after cached candidates are exhausted. Candidates are ranked by actual pixel area, not preset name; preparation retries another cached source if decoding or resampling fails. Cached thumbnails are already oriented; original inputs use the media orientation. Both use the configured thumbnail color handling. No additional encoded derivative is written for the capped input. Shared preparation records the actual oriented source and crop bounds alongside the inputs for diagnostics.
+
+`GenerateLabels` selects this path only for local S2 models using the default thumbnail size. Other ONNX models, custom resolutions, and remote engines retain their thumbnail branches.
+
 ### Related Packages & Docs
 
 - [`internal/entity`](../entity) — persistence models and DB helpers used by the indexer.
@@ -39,15 +45,16 @@
 
 ### Usage & Test Guidelines
 
-- Indexing: use `IndexMain` / `IndexRelated` via `IndexMediaFile` helpers; prefer `IndexOptions` factories.
+- Indexing: use `IndexMain` / `IndexRelated`; prefer `IndexOptions` factories.
 - Import: run via `ImportWorker` with `ImportOptions`; files imported together are stacked as one related set, files from separate batches only through a shared document ID or matching capture metadata.
-- Converters: use `Convert.ToImage` / `Convert.ToVideo` / `Convert.ToJson`; options come from `config.Config`.
+- Converters: use `Convert.ToImage` / `Convert.ToAvc` / `Convert.ToJson` / `Convert.TempPreview`; options come from `config.Config`.
 - Vision: thumbnails for vision models are selected in `mediafile_vision.go`; ensure models exist in `internal/ai/vision`.
-- NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when the labels-path NSFW shortcut (LLM with `DETECT_NSFW=true && EXPERIMENTAL=true`) hits or, as a fallback, when `m.DetectNSFW()` returns true and `PHOTOPRISM_DETECT_NSFW=true`. Both promotions short-circuit when `DetectNSFW()` is false. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
+- NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when `PHOTOPRISM_DETECT_NSFW=true` and the selected NSFW source reports unsafe content. `PHOTOPRISM_NSFW_MODEL=labels` uses only LLM labels; `auto` uses the dedicated detector, whose `m.DetectNSFW()` returns an `nsfw.Result`. `none` disables both sources. Label NSFW fields are ignored outside `labels` mode. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
 - Tests: targeted runs keep iteration fast, e.g.  
   - `go test ./internal/photoprism -run TestMediaFile_ -count=1`  
-  - `go test ./internal/photoprism/index_mediafile_test.go -run TestIndexMediaFile`  
+  - `go test ./internal/photoprism -run TestIndex_MediaFile -count=1`  
   Full suite: `go test ./internal/photoprism/...` (heavy; migrates fixtures).
+  `-short` skips the tests that run the indexer or importer on fixture media.
 - Fixtures live under `storage/testdata`; tests expect initialized config (`config.TestConfig()` / `config.NewMinimalTestConfigWithDb`).
 - `internal/photoprism` tests isolate package-level storage and SQLite DSN in `TestMain` using temporary per-process paths (`PHOTOPRISM_STORAGE_PATH`, `PHOTOPRISM_TEST_DSN`) to avoid flaky cross-process collisions on macOS/Linux when multiple `go test` processes run in parallel.
 - Stateful tests that import/index media files should prefer isolated helpers like `config.NewMinimalTestConfigWithDb("<name>", filepath.Join(t.TempDir(), "storage"))` instead of shared `config.TestConfig()`.
@@ -62,11 +69,26 @@ their existing scheduling. Each caller receives its own media object. Completed 
 released for later retries; overlapping compatible callers share failures.
 This is not a cross-process lock and does not alter animated-WebP or encoder mutex behavior.
 
+### Animated WebP Conversion
+
+Animated WebP uses ImageMagick to decode and coalesce frames before its FFmpeg delegate
+encodes an H.264 MP4 sidecar. Transparent pixels are composited onto black; odd raw canvas
+dimensions are padded on the right or bottom to the next even number, without resizing or
+cropping. The output pixel format is explicitly `yuv420p`. Canvas dimensions come from the
+WebP header, not orientation-adjusted metadata; unreadable dimensions stop conversion.
+ImageMagick exclusions, conversion deadlines, sidecar reuse, and force rules still apply.
+Other image and video formats do not use this normalization.
+
+ImageMagick is a fallback converter and is not run for a file whose path contains `%` or whose
+base name contains one of `*?[]{}`, since it reads such names as patterns. Other converters still
+apply where they support the format; an animated WebP with such a name gets no video.
+
 ### Operational Notes
 
 - Sub-second EXIF timestamps are preserved through metadata parsing and visible in `MediaFile.MetaData()`; database columns remain second-precision.
 - File I/O permissions must use `pkg/fs` modes; overwrite requires explicit `force` flags.
 - Exec calls to external tools are parameterized by config paths/binaries (`config.Config`).
+- A video that fails to transcode with a hardware encoder is retried with the software encoder (`libx264`), for every file unless the disk is full. Only the first such failure since the encoder last succeeded is logged as a warning and later ones at debug level, so a GPU that cannot be used does not log a warning for each video; software failures are always warnings. Animated images and dewarped Insta360 videos never use a hardware encoder, so their failures are logged as software failures and not retried.
 - Stacking: a new file joins the photo in its folder named after its stack name (`fs.StackPrefix`); `StackSequences`, `StackUUID`, and `StackMeta` add matching by sequence-stripped name, shared document ID, and exact capture time, place, and camera serial.
 - Forced rescans (`IndexOptions.Rescan=true`) run folder album reconciliation at the end of indexing via `entity.ReconcileOriginalsFolderAlbums(...)`; normal incremental runs skip this pass.
 - Updated or newly added XMP sidecars next to originals are re-read on normal incremental passes. The filesystem walk compares each sidecar's modification time with `files.mod_time`, resolves its main media file from the Files cache, and queues deduplicated main-file jobs only after a successful walk; on forced rescans this detection is skipped because every main file is reindexed and re-reads its sidecar anyway. External XMP edits merge with `SrcXmp` priority, while `SrcManual` values are preserved. A sidecar that fails to parse records the error and advances its `mod_time`, so it is retried only after another edit instead of on every pass. Incremental sidecar deletion is not supported, and automatic removal of stale XMP-derived metadata is not guaranteed by a forced rescan: fields such as `UUID`, `CameraSerial`, and primary `InstanceID` do not retain enough source information for complete reconciliation.
@@ -79,8 +101,44 @@ Output beyond that limit returns `meta.ErrJSONFileTooLarge` without publishing a
 cache file. Diagnostic output is retained up to 64 KiB, with a truncation marker on errors;
 normal conversion timeouts and process cleanup remain in effect. Cached/external sidecars
 are independently bounded by the [metadata JSON reader](../meta/README.md#json-sidecar-reader).
+A cached export is reused only when it is a regular file enclosed in `[`...`]`; an empty or truncated
+cache is exported again, output that is not a JSON array is refused and not cached, and the cache is
+written through a staged sibling.
 
 Operators can override the shared JSON byte limit with `PHOTOPRISM_JSON_LIMIT` (positive
 decimal bytes, for example `4194304` for 4 MiB). Empty, invalid, zero, negative, or
 out-of-range values retain the 1 MiB default; there is no unlimited setting. The override
 applies to both sidecar reads and ExifTool stdout capture, not the 64 KiB stderr bound.
+
+### Test Coverage
+
+The default backend targets retain fast Insta360 parsing, grouping, capture-state and media-file tests. The synthetic-media stack/import matrix and database reconciliation matrix require the `integration` build tag, including the preview-replacement regression that uses the capture fixture. Run this coverage when changing stacking, reconciliation, import naming, proxy selection, preview replacement or dewarping:
+
+```sh
+make test-integration
+make test-mariadb GOTEST_TAGS=slow,develop,integration
+```
+
+For a focused SQLite run, use `go test -count=1 -tags=slow,develop,integration -run 'Insta360|TestIndexMain_ReplacedPreview' ./internal/photoprism`. Existing short-mode guards still apply. The tag does not gate import/index integration tests outside these matrices.
+
+#### Large Face-Library Equivalence
+
+The opt-in `TestFaces_MatchLibraryEquivalence` integration test generates 60,000
+SFace markers across 600 clusters. It compares normal and forced matching from
+copies of the same correction input, including cluster assignments and subject
+links. The fixture includes 63% faceless markers, named clusters, a narrowing,
+and a new cluster built from released members. An overlapping tight cluster
+provides a marker that the narrowed cluster accepts but does not improve.
+Pure narrowing preserves markers held by other clusters; the new cluster must
+receive at least one released marker in the same run. Both runs must advance
+eligible markers' match stamps.
+
+```sh
+PHOTOPRISM_TEST_FACE_LIBRARY=1 go test -tags=integration ./internal/photoprism -run '^TestFaces_MatchLibraryEquivalence$' -count=1 -v -timeout=30m
+```
+
+Use the standard `PHOTOPRISM_TEST_DRIVER=mysql` and `PHOTOPRISM_TEST_DSN`
+test settings for MariaDB. Run serially with other database tests. Input rows
+and snapshot tables are generated at runtime, and package fixtures are restored
+afterward. Timings cover `Faces.Match`, excluding seeding and snapshot copies;
+they are diagnostic measurements, not wall-clock assertions or QA measurements.

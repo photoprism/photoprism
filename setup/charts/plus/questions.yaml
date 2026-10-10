@@ -404,7 +404,7 @@ questions:
         type: string
       - variable: cluster.integration.domain
         label: "Cluster Domain Override"
-        description: "Optional domain suffix when not using the shared secret."
+        description: "Cluster domain when not using the shared secret. Set it here or in the secret, so the Portal URL does not depend on the site URL."
         type: string
       - variable: cluster.integration.portalURL
         label: "Portal URL"

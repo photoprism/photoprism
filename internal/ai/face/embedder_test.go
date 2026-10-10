@@ -99,6 +99,48 @@ func TestConfiguredModel(t *testing.T) {
 	})
 }
 
+func TestEmbedderConfig(t *testing.T) {
+	restoreEmbedder(t)
+
+	t.Run("NotConfigured", func(t *testing.T) {
+		// Restoring an unconfigured state must keep it unconfigured rather than disable embeddings.
+		embedderMu.Lock()
+		embedderSettings = EmbedderSettings{}
+		configuredModel = ModelAuto
+		embedderMu.Unlock()
+
+		settings := EmbedderConfig()
+		assert.Equal(t, ModelAuto, settings.Name)
+
+		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelNone}))
+		require.NoError(t, ConfigureEmbedder(settings))
+		assert.Equal(t, ModelAuto, ConfiguredModel())
+		assert.False(t, EmbeddingsDisabled())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		configured := EmbedderSettings{Name: ModelFaceNet, Model: FindEmbeddingModel(ModelFaceNet), ModelPath: "/models/facenet", Threads: 3}
+		require.NoError(t, ConfigureEmbedder(configured))
+
+		settings := EmbedderConfig()
+		assert.Equal(t, configured, settings)
+
+		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelNone}))
+		require.NoError(t, ConfigureEmbedder(settings))
+		assert.Equal(t, ModelFaceNet, ConfiguredModel())
+	})
+	t.Run("FailedToLoad", func(t *testing.T) {
+		// Restoring a model that failed to load fails again and leaves the same state.
+		require.Error(t, ConfigureEmbedder(EmbedderSettings{Name: ModelSFace, Model: FindEmbeddingModel(ModelSFace)}))
+
+		settings := EmbedderConfig()
+
+		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelNone}))
+		assert.Error(t, ConfigureEmbedder(settings))
+		assert.Equal(t, ModelNone, ConfiguredModel())
+		assert.Error(t, EmbedderError())
+	})
+}
+
 func TestEmbeddingsDisabled(t *testing.T) {
 	restoreEmbedder(t)
 

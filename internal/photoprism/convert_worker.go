@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -26,7 +27,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 		}
 
 		fileName := job.file.RelName(job.convert.conf.OriginalsPath())
-		log.Errorf("convert: %s for %s", clean.Error(err), clean.Log(fileName))
+		log.Errorf("convert: %s for %s", convertErrText(err), clean.Log(fileName))
 		return false
 	}
 
@@ -54,8 +55,10 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 
 		switch {
 		case f.IsAnimated():
-			// Extract metadata.
-			_, _ = job.convert.ToJson(f, false)
+			// Extract metadata and add it to the cached metadata, which the Insta360 capture check above may already have read.
+			if jsonErr := f.CreateExifToolJson(job.convert); jsonErr != nil {
+				log.Debugf("convert: %s", clean.Error(jsonErr))
+			}
 
 			// Create cover image.
 			if _, err := job.convert.ToImage(f, job.force); err != nil {
@@ -75,10 +78,23 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 				handleErr(err, job)
 			}
 		default:
+			// Read metadata with ExifTool before creating a preview, so it gets the orientation of
+			// the file even when the native parser cannot read it.
+			if !f.IsPreviewImage() && (job.force || !f.HasPreviewImage()) {
+				if jsonErr := f.CreateExifToolJson(job.convert); jsonErr != nil {
+					log.Debugf("convert: %s", clean.Error(jsonErr))
+				}
+			}
+
 			// Create preview image.
 			if _, err := job.convert.ToImage(f, job.force); err != nil {
 				handleErr(err, job)
 			}
 		}
 	}
+}
+
+// convertErrText returns the sanitized error text without the "convert: " prefix that the log line adds.
+func convertErrText(err error) string {
+	return strings.TrimPrefix(clean.Error(err), "convert: ")
 }

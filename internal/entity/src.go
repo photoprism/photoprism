@@ -100,6 +100,17 @@ var SrcGenerated = Priorities{
 	SrcVision: SrcPriority[SrcVision],
 }
 
+// SrcSubjects contains the sources a subject assignment can have, on a marker or when a person is created.
+// The overrides SrcAdmin and SrcVision are for operator commands and are not subject sources.
+var SrcSubjects = Priorities{
+	SrcAuto:   SrcPriority[SrcAuto],
+	SrcMarker: SrcPriority[SrcMarker],
+	SrcMeta:   SrcPriority[SrcMeta],
+	SrcXmp:    SrcPriority[SrcXmp],
+	SrcBatch:  SrcPriority[SrcBatch],
+	SrcManual: SrcPriority[SrcManual],
+}
+
 // SrcVisionCommands maps source names to the sources that can be used as arguments for computer vision commands.
 var SrcVisionCommands = SrcMap{
 	SrcAuto:            SrcAuto,

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -11,6 +12,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+// SessionNotFound reports whether err means that no active session matches the id, as opposed to a
+// failed database query.
+func SessionNotFound(err error) bool {
+	return errors.Is(err, ErrSessionIdInvalid) || errors.Is(err, ErrSessionNotFound) || errors.Is(err, ErrSessionExpired)
+}
 
 // SessionCacheDuration specifies how long sessions are cached.
 var SessionCacheDuration = 15 * time.Minute
@@ -27,7 +34,7 @@ func FindSession(id string) (*Session, error) {
 	found := &Session{}
 
 	if !rnd.IsSessionID(id) {
-		return found, fmt.Errorf("invalid session id")
+		return found, ErrSessionIdInvalid
 	}
 
 	// Find the session in the cache with a fallback to the database.
@@ -40,11 +47,11 @@ func FindSession(id string) (*Session, error) {
 			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", status.Error(err)}, cached.RefID)
 		}
 	} else if res := Db().First(&found, "id = ?", id); res.RecordNotFound() {
-		return found, fmt.Errorf("invalid session")
+		return found, ErrSessionNotFound
 	} else if res.Error != nil {
 		return found, res.Error
 	} else if !rnd.IsSessionID(found.ID) {
-		return found, fmt.Errorf("invalid session id %s", clean.LogQuote(found.ID))
+		return found, fmt.Errorf("%w %s", ErrSessionIdInvalid, clean.LogQuote(found.ID))
 	} else if !found.Expired() {
 		found.cacheGeneration = &generation
 		found.stored = true
@@ -56,7 +63,7 @@ func FindSession(id string) (*Session, error) {
 		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", status.Error(err)}, found.RefID)
 	}
 
-	return found, fmt.Errorf("session expired")
+	return found, ErrSessionExpired
 }
 
 // FlushSessionCache resets session and WebDAV authentication caches.

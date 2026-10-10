@@ -26,8 +26,32 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// TestBatchPhotosArchive checks selection archiving and request validation.
 func TestBatchPhotosArchive(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		uids := []string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0ycc"}
+		var photos []entity.Photo
+		require.NoError(t, entity.UnscopedDb().Where("photo_uid IN (?)", uids).Find(&photos).Error)
+		require.NotEmpty(t, photos)
+		var links []entity.PhotoAlbum
+		require.NoError(t, entity.UnscopedDb().Where("photo_uid IN (?)", uids).Find(&links).Error)
+		require.NotEmpty(t, links)
+		t.Cleanup(func() {
+			for _, photo := range photos {
+				assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).
+					UpdateColumns(entity.Values{"deleted_at": photo.DeletedAt, "photo_quality": photo.PhotoQuality,
+						"updated_at": photo.UpdatedAt}).Error)
+			}
+			for _, link := range links {
+				assert.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).
+					Where("photo_uid = ? AND album_uid = ?", link.PhotoUID, link.AlbumUID).
+					UpdateColumn("hidden", link.Hidden).Error)
+			}
+		})
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid IN (?)", uids).
+			UpdateColumns(entity.Values{"deleted_at": nil, "photo_quality": 3}).Error)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", uids).
+			UpdateColumn("hidden", false).Error)
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7")
@@ -40,6 +64,12 @@ func TestBatchPhotosArchive(t *testing.T) {
 		val2 := gjson.Get(r2.Body.String(), "message")
 		assert.Contains(t, val2.String(), "Selection archived")
 		assert.Equal(t, http.StatusOK, r2.Code)
+		for _, link := range links {
+			var archived entity.PhotoAlbum
+			require.NoError(t, entity.Db().Where("photo_uid = ? AND album_uid = ?", link.PhotoUID, link.AlbumUID).
+				First(&archived).Error)
+			assert.True(t, archived.Hidden)
+		}
 
 		r3 := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7")
 		assert.Equal(t, http.StatusOK, r3.Code)

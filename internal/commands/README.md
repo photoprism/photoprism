@@ -1,6 +1,6 @@
 ## Commands Package Guide
 
-**Last Updated:** September 24, 2026
+**Last Updated:** September 27, 2026
 
 ### Overview
 
@@ -94,7 +94,7 @@ For long-running operations (indexing, importing, backup) that may be canceled b
 - Place tests beside their sources (`<name>_test.go`) and group related assertions using `t.Run("CaseName", ...)` subtests. Subtest names should use PascalCase for readability.
 - Execute focused suites with `go test ./internal/commands -run '<Name>' -count=1` during development. For broader coverage, `make test-go` exercises backend packages under SQLite.
 - Wrap CLI runs with `RunWithTestContext(cmd, args)` so `urfave/cli` exit codes do not call `os.Exit` during tests. If you only need to inspect the exit status, invoke `cmd.Action(ctx)` directly and assert `cli.ExitCoder`.
-- Build configurations through helpers. Use `config.NewTestConfig("commands")` when migrations and fixtures are required, `config.NewMinimalTestConfig(t.TempDir())` when the test needs only filesystem scaffolding, or `config.NewMinimalTestConfigWithDb("commands", t.TempDir())` for an isolated SQLite schema without heavy fixtures.
+- Build configurations through helpers. Use `config.NewTestConfig("commands")` when migrations and fixtures are required, `config.NewMinimalTestConfig(t.TempDir())` for filesystem scaffolding, or `config.NewMinimalTestConfigWithDb("<distinct-name>", t.TempDir())` for a DB-backed config. The package `TestMain` uses `"commands"`; give each additional open SQLite config a distinct alphabetic name. MariaDB uses one database per package.
 - Initialize test directories via `conf.InitializeTestData()` when constructing custom configs so Originals, Import, Cache, and Temp paths exist before tests interact with the filesystem.
 - Prefer deterministic fixtures: generate entity IDs via helpers such as `rnd.GenerateUID(entity.PhotoUID)` or `rnd.UUIDv7()` instead of hard-coded strings.
 

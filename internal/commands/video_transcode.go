@@ -69,12 +69,12 @@ func videoTranscodeAction(ctx *cli.Context) error {
 			}
 		}
 
-		var processed, skipped, failed int
+		var planned, processed, skipped, failed int
 
 		for _, plan := range plans {
 			if ctx.Bool("dry-run") {
 				log.Infof("transcode: would transcode %s to %s", clean.Log(plan.SrcPath), clean.Log(plan.DestPath))
-				skipped++
+				planned++
 				continue
 			}
 
@@ -94,12 +94,7 @@ func videoTranscodeAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof(
-			"transcode: processed %s, skipped %s, %s",
-			formatCount(processed, "file", "files"),
-			formatCount(skipped, "file", "files"),
-			formatFailedCount(failed, "file", "files"),
-		)
+		log.Info(formatVideoSummary("transcode", ctx.Bool("dry-run"), planned, processed, skipped, failed))
 
 		if failed > 0 {
 			return fmt.Errorf("transcode: %s", formatFailedCount(failed, "file", "files"))

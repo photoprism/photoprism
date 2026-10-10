@@ -3,7 +3,7 @@
     <v-form ref="form" validate-on="invalid-input" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-actions v-if="$config.values.restart">
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" class="pa-2 text-start">
               <v-alert color="primary" icon="mdi-information" class="pa-2" type="info" variant="outlined">
                 <a style="color: inherit" href="#restart">
@@ -19,7 +19,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.Debug"
@@ -188,7 +188,7 @@
           </v-card-title>
 
           <v-card-actions>
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.BackupDatabase"
@@ -245,10 +245,10 @@
         </v-card-title>
 
         <v-card-actions class="grid">
-          <v-row align="start">
+          <v-row class="align-start">
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: parseInt(settings.ThumbSize) }) }}
+                {{ $gettext("Static Size Limit: %{n}px", { n: parseInt(settings.ThumbSize) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.ThumbSize" :min="720" :max="15360" :step="4" :disabled="isDemo" hide-details class="ma-0" @end="onChange"></v-slider>
             </v-col>
@@ -256,7 +256,7 @@
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{
-                  $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), {
+                  $gettext("Dynamic Size Limit: %{n}px", {
                     n: parseInt(settings.ThumbSizeUncached),
                   })
                 }}
@@ -300,24 +300,24 @@
         </v-card-title>
 
         <v-card-actions class="grid">
-          <v-row align="start">
+          <v-row class="align-start">
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: parseInt(settings.JpegQuality) }) }}
+                {{ $gettext("JPEG Quality: %{n}", { n: parseInt(settings.JpegQuality) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :step="1" :disabled="isDemo" hide-details class="ma-0" @end="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: parseInt(settings.JpegSize) }) }}
+                {{ $gettext("JPEG Size Limit: %{n}px", { n: parseInt(settings.JpegSize) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="isDemo" class="ma-0" @end="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: parseInt(settings.PngSize) }) }}
+                {{ $gettext("PNG Size Limit: %{n}px", { n: parseInt(settings.PngSize) }) }}
               </v-list-subheader>
               <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="isDemo" class="ma-0" @end="onChange"></v-slider>
             </v-col>
@@ -329,7 +329,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableDarktable"

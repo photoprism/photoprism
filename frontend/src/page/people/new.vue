@@ -195,7 +195,7 @@ export default {
       return this.busy || this.loading;
     },
     confirmText: function () {
-      return this.$gettextInterpolate(this.$gettext("Add %{s}?"), { s: this.confirm.name });
+      return this.$gettext("Add %{s}?", { s: this.confirm.name });
     },
   },
   watch: {
@@ -246,7 +246,7 @@ export default {
       } else if (this.results.length === 1) {
         this.$notify.info(this.$gettext("One person found"));
       } else {
-        this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
+        this.$notify.info(this.$gettext("%{n} people found", { n: this.results.length }));
       }
     },
     // loadPeople populates the name suggestions from the shared people cache;

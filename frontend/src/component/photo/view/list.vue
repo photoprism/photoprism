@@ -22,7 +22,7 @@
     <div v-else class="search-results photo-results list-view">
       <div
         :class="$vuetify.display.smAndDown ? 'v-table--density-compact' : 'v-table--density-default'"
-        class="v-table v-table--density-default v-table v-table--hover v-datatable"
+        class="v-table v-table--density-default v-table v-table--gridlines-horizontal v-table--hover v-datatable"
       >
         <div class="v-table__wrapper">
           <table>

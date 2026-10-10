@@ -20,7 +20,7 @@ var VisionRunCommand = &cli.Command{
 		&cli.StringFlag{
 			Name:    "models",
 			Aliases: []string{"m"},
-			Usage:   "computer vision `MODELS` to run, e.g. caption, labels, or nsfw",
+			Usage:   "computer vision `MODELS` to run, e.g. caption, labels, nsfw, or face",
 			Value:   "caption",
 		},
 		PicturesCountFlag(),
@@ -49,7 +49,7 @@ func visionRunAction(ctx *cli.Context) error {
 		models := vision.ParseModelTypes(ctx.String("models"))
 
 		if ctx.Bool("dry-run") {
-			modelList := strings.Join(models, ",")
+			modelList := strings.Join(worker.RunnableModels(models, vision.RunManual), ",")
 			if modelList == "" {
 				modelList = "(none)"
 			}

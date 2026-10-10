@@ -1,69 +1,17 @@
 package vision
 
 import (
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 )
 
 // Default computer vision model configuration.
 var (
-	NasnetModel = &Model{
-		Type:       ModelTypeLabels,
-		Default:    true,
-		Name:       "nasnet",
-		Version:    VersionMobile,
-		Resolution: 224,
-		TensorFlow: &tensorflow.ModelInfo{
-			TFVersion: "1.12.0",
-			Tags:      []string{"photoprism"},
-			Input: &tensorflow.PhotoInput{
-				Name:              "input_1",
-				Height:            224,
-				Width:             224,
-				ResizeOperation:   tensorflow.CenterCrop,
-				ColorChannelOrder: tensorflow.RGB,
-				Shape:             tensorflow.DefaultPhotoInputShape(),
-				Intervals: []tensorflow.Interval{
-					{
-						Start: -1.0,
-						End:   1.0,
-					},
-				},
-				OutputIndex: 0,
-			},
-			Output: &tensorflow.ModelOutput{
-				Name:          "predictions/Softmax",
-				NumOutputs:    1000,
-				OutputIndex:   0,
-				OutputsLogits: false,
-			},
-		},
-	}
-	NsfwModel = &Model{
-		Type:       ModelTypeNsfw,
-		Default:    true,
-		Name:       "nsfw",
-		Version:    VersionLatest,
-		Resolution: 224,
-		TensorFlow: &tensorflow.ModelInfo{
-			TFVersion: "1.12.0",
-			Tags:      []string{"serve"},
-			Input: &tensorflow.PhotoInput{
-				Name:        "input_tensor",
-				Height:      224,
-				Width:       224,
-				OutputIndex: 0,
-				Shape:       tensorflow.DefaultPhotoInputShape(),
-			},
-			Output: &tensorflow.ModelOutput{
-				Name:          "nsfw_cls_model/final_prediction",
-				NumOutputs:    5,
-				OutputIndex:   0,
-				OutputsLogits: false,
-			},
-		},
-	}
-	FacenetModel = &Model{
+	DefaultLabelModel = newDefaultLabelModel()
+	NsfwModel         = NewNsfwModel(nsfw.DefaultModelName())
+	FacenetModel      = &Model{
 		Type:       ModelTypeFace,
 		Default:    true,
 		Name:       "facenet",
@@ -93,14 +41,72 @@ var (
 		Run:    RunManual,
 	}
 	DefaultModels = Models{
-		NasnetModel,
+		DefaultLabelModel,
 		NsfwModel,
 		FacenetModel,
 		CaptionModel,
 	}
 	DefaultThresholds = Thresholds{
-		Confidence: 10, // 0-100%
+		Confidence: 20, // 0-100%
 		Topicality: 0,  // 0-100%
-		NSFW:       75, // 1-100%
+		NSFW:       DefaultNSFWThreshold,
 	}
 )
+
+// DefaultNSFWThreshold is the default threshold in percent for NSFW flags from labels models, and
+// the fallback for detectors without a calibrated threshold.
+const DefaultNSFWThreshold = 75
+
+// newDefaultLabelModel returns the registered bundled ONNX classifier as a vision model.
+func newDefaultLabelModel() *Model {
+	return NewLabelModel(classify.DefaultModelName())
+}
+
+// NewLabelModel returns a vision model backed by the registered ONNX classifier.
+func NewLabelModel(name classify.ModelName) *Model {
+	description := classify.FindModel(name)
+	if description == nil {
+		return nil
+	}
+
+	return &Model{
+		Type:           ModelTypeLabels,
+		Default:        description.Name == classify.DefaultModelName(),
+		Name:           string(description.Name),
+		Version:        VersionLatest,
+		Resolution:     description.ONNX.Input.Width,
+		ONNX:           description.ONNX,
+		LabelFile:      description.LabelFile,
+		CanonicalOrder: description.CanonicalOrder,
+	}
+}
+
+// NewNsfwModel returns a vision model backed by a registered ONNX detector.
+func NewNsfwModel(name nsfw.ModelName) *Model {
+	description := nsfw.FindModel(name)
+	if description == nil {
+		return nil
+	}
+
+	model := &Model{
+		Type:             ModelTypeNsfw,
+		Default:          description.Name == nsfw.DefaultModelName(),
+		Name:             string(description.Name),
+		Version:          VersionLatest,
+		Resolution:       description.ONNX.Input.Width,
+		ONNX:             description.ONNX,
+		Reduction:        description.Reduction,
+		DefaultThreshold: description.DefaultThreshold,
+	}
+
+	if description.Reduction == nsfw.ReductionSoftmaxUnsafe {
+		index := description.UnsafeClassIndex
+		model.UnsafeClassIndex = &index
+	}
+	if description.Reduction == nsfw.ReductionNeutralComplement {
+		index := description.NeutralClassIndex
+		model.NeutralClassIndex = &index
+	}
+
+	return model
+}

@@ -74,7 +74,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
         libc6 libbsd-dev ca-certificates bash sudo nano tzdata gpg make zip unzip wget curl rsync \
-        xz-utils avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 postgresql-client \
+        xz-utils avahi-utils jq bc lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 postgresql-client \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
@@ -135,8 +135,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 
 # Download machine learning models and test data.
 RUN mkdir /tmp/photoprism && \
-    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
-    wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 

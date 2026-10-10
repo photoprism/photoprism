@@ -13,7 +13,7 @@ set -e
 # NodeJS major version to be installed (armhf still requires 22.x).
 NODE_MAJOR=24
 NPM_VERSION=latest
-TESTCAFE_VERSION=3.7.4
+TESTCAFE_VERSION=3.7.6
 MERMAID_VERSION=latest
 
 if [ "$(dpkg --print-architecture)" = "armhf" ]; then
@@ -62,10 +62,9 @@ sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier -
 echo "Installing Vitest..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier vitest @vitest/browser @vitest/coverage-v8 @vitest/ui
 echo "Installing ESLint..."
-sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint@9 prettier globals \
-  @eslint/eslintrc @eslint/js@9 eslint-config-prettier eslint-formatter-pretty \
-  eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier \
-  eslint-plugin-vue eslint-plugin-vuetify eslint-webpack-plugin
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint@10 prettier globals \
+  @eslint/eslintrc @eslint/js@10 eslint-config-prettier \
+  eslint-plugin-vue eslint-plugin-vuetify vue-eslint-parser
 echo "Installing Vue Language Server..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier @vue/language-server
 echo "Done."

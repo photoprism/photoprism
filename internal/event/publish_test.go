@@ -72,6 +72,17 @@ func TestNotifyMsg(t *testing.T) {
 		assert.Equal(t, []any{"/photos"}, msg.Fields["messageParams"])
 		assert.Empty(t, buf.String())
 	})
+	t.Run("MasksHashes", func(t *testing.T) {
+		buf := captureLog(t)
+		s := Subscribe("notify.info")
+		notifyMsg("notify.info", i18n.MsgIndexingFiles, "/cache/2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		msg := <-s.Receiver
+		Unsubscribe(s)
+
+		assert.Equal(t, "Indexing files in /cache/2ca***", msg.Fields["message"])
+		assert.Equal(t, []any{"/cache/2ca***"}, msg.Fields["messageParams"])
+		assert.Empty(t, buf.String())
+	})
 	t.Run("WithoutParams", func(t *testing.T) {
 		buf := captureLog(t)
 		s := Subscribe("notify.error")
@@ -84,6 +95,24 @@ func TestNotifyMsg(t *testing.T) {
 		assert.Equal(t, "Busy, please try again later", msg.Fields["messageId"])
 		assert.Empty(t, msg.Fields["messageParams"])
 		assert.Empty(t, buf.String())
+	})
+}
+
+func TestMaskParams(t *testing.T) {
+	const hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+
+	t.Run("Masked", func(t *testing.T) {
+		params := []any{"thumb " + hash, 42}
+
+		assert.Equal(t, []any{"thumb 2ca***", 42}, maskParams(params))
+		assert.Equal(t, "thumb "+hash, params[0], "caller slice must not change")
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		params := []any{"/photos", 7}
+		assert.Equal(t, params, maskParams(params))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, maskParams(nil))
 	})
 }
 

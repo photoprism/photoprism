@@ -3,16 +3,9 @@
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
-Pre-compresses bundled frontend assets (JS, CSS, fonts, JSON, SVG, …) into
-`.gz` and `.zst` siblings so that the Go static handler in
-`internal/server/routes_static.go` can serve them verbatim and skip the
-runtime compression middleware on the hot static-asset path.
-
-Skipped extensions are formats that are already compressed (woff2, webp, …)
-or binary blobs where compression adds CPU without meaningful savings.
-
-Run automatically as the npm `postbuild` hook for `npm run build`, so that
-`make build-js` produces precompressed siblings without a separate step.
+Pre-compresses eligible frontend assets into .gz and .zst siblings for the Go server.
+The Makefiles invoke this script explicitly because ignore-scripts skips npm hooks.
+The npm postbuild hook also invokes it when lifecycle scripts are enabled.
 
 */
 
@@ -59,7 +52,7 @@ const DEFAULT_TARGET = path.join(__dirname, "..", "..", "assets", "static", "bui
 
 // `--clean` removes any precompressed siblings under the target directory
 // without producing new ones. Used by the watch script so stale bundles
-// from a previous `make build-js` don't get served while webpack rebuilds
+// from a previous `make build-js` don't get served while the watcher rebuilds
 // identity assets in development.
 const args = process.argv.slice(2);
 let cleanOnly = false;
@@ -89,7 +82,7 @@ if (cleanOnly) {
 if (typeof zlib.zstdCompressSync !== "function") {
   console.error(
     `[precompress] error: this Node.js (${process.version}) lacks built-in zstd support. ` +
-      "Upgrade to Node 22.15+ or 24.x — see frontend/package.json engines."
+      "Upgrade to Node 24.15 or later — see frontend/package.json engines."
   );
   process.exit(1);
 }

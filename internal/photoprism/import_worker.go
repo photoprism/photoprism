@@ -1,13 +1,18 @@
 package photoprism
 
 import (
+	"errors"
+	"fmt"
 	"path/filepath"
+	"sync/atomic"
+	"syscall"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // ImportJob describes a media import task pulled from the worker queue.
@@ -17,6 +22,45 @@ type ImportJob struct {
 	IndexOpt  IndexOptions
 	ImportOpt ImportOptions
 	Imp       *Import
+	Failures  *ImportFailures // Counts files whose content did not reach the originals, if set.
+}
+
+// ImportFailures counts the files of an import run whose content could not be moved or copied to
+// the originals folder, and whether the storage was full.
+type ImportFailures struct {
+	files   atomic.Int64
+	noSpace atomic.Bool
+}
+
+// add counts a file that could not be imported because of err.
+func (f *ImportFailures) add(err error) {
+	if f == nil {
+		return
+	}
+	f.files.Add(1)
+	if errors.Is(err, syscall.ENOSPC) || errors.Is(err, syscall.EDQUOT) {
+		f.noSpace.Store(true)
+	}
+}
+
+// Err returns status.ErrInsufficientStorage if the storage was full, ErrImportIncomplete if other
+// files could not be imported, or nil.
+func (f *ImportFailures) Err() error {
+	if f == nil {
+		return nil
+	} else if n := f.files.Load(); n == 0 {
+		return nil
+	} else if f.noSpace.Load() {
+		return fmt.Errorf("%w (%d)", status.ErrInsufficientStorage, n)
+	} else {
+		return fmt.Errorf("%w (%d)", ErrImportIncomplete, n)
+	}
+}
+
+// importedContent reports whether the file at dest is a regular file with the given hash, so a failed
+// move or copy, e.g. of a source that could not be removed afterwards, still placed the content.
+func importedContent(dest, hash string) bool {
+	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
 // ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
@@ -58,9 +102,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 			"subFolder": opt.DestFolder,
 		})
 
+		// Files whose content does not match their extension are moved or copied, so that no file of
+		// a stack is left behind, but no external tool reads them.
+		mainTypeErr := related.Main.CheckType()
+
 		// Create JSON sidecar file, if needed.
-		if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
-			log.Warnf("import: %s", clean.Error(jsonErr))
+		if mainTypeErr == nil {
+			if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
+				log.Warnf("import: %s", clean.Error(jsonErr))
+			}
 		}
 
 		for _, f := range importOrder(related) {
@@ -94,16 +144,31 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				logRelName := clean.Log(fs.RelName(destFileName, imp.originalsPath()))
+				srcHash := f.Hash()
+
+				var importErr error
 
 				if opt.Move {
-					if moveErr := f.Move(destFileName, false); moveErr != nil {
-						log.Error(clean.Error(moveErr))
+					if importErr = f.Move(destFileName, false); importErr != nil {
+						log.Error(clean.Error(importErr))
 						log.Warnf("import: could not move file to %s", logRelName)
 					}
-				} else {
-					if copyErr := f.Copy(destFileName, false); copyErr != nil {
-						log.Error(clean.Error(copyErr))
-						log.Warnf("import: could not copy file to %s", logRelName)
+				} else if importErr = f.Copy(destFileName, false); importErr != nil {
+					log.Error(clean.Error(importErr))
+					log.Warnf("import: could not copy file to %s", logRelName)
+				}
+
+				// A file whose content did not reach the originals is counted and, if it is the main
+				// file, not indexed, since whatever the destination holds is not this file.
+				switch {
+				case importErr == nil:
+				case importedContent(destFileName, srcHash):
+					log.Warnf("import: %s already holds the content, the staged file remains", logRelName)
+				default:
+					job.Failures.add(importErr)
+
+					if destMainFileName == destFileName {
+						destMainFileName = ""
 					}
 				}
 			} else {
@@ -149,7 +214,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 			if err != nil {
 				log.Errorf("import: %s in %s", err.Error(), clean.Log(fs.RelName(destMainFileName, imp.originalsPath())))
 				continue
+			} else if typeErr := f.CheckType(); typeErr != nil {
+				log.Warnf("import: %s %s and was not indexed", clean.Log(f.RootRelName()), typeErr)
+				continue
 			}
+
+			warnInsta360LensNotVideo("import", f)
 
 			// Create JSON sidecar file, if needed.
 			if jsonErr := f.CreateExifToolJson(imp.convert); jsonErr != nil {
@@ -194,11 +264,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// indexed primary without a matching sidecar so its photo stays hidden until a rescan.
 			if o.Convert {
 				for _, rf := range related.Files {
-					if rf == nil || !rf.IsMedia() || rf.HasPreviewImage() {
+					if rf == nil || !rf.IsMedia() || rf.HasPreviewImage() || rf.CheckType() != nil {
 						continue
 					} else if insta360ImportedMember(originalName, relatedOriginalNames[rf.FileName()]) {
 						// The combined preview of an imported capture is made from its left lens.
 						continue
+					}
+
+					// The preview gets the file orientation, which may only be readable with ExifTool.
+					if jsonErr := rf.CreateExifToolJson(imp.convert); jsonErr != nil {
+						log.Warnf("import: %s", clean.Error(jsonErr))
 					}
 
 					if img, imgErr := imp.convert.ToImage(rf, false); imgErr != nil {
@@ -268,6 +343,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				done[file.FileName()] = true
 
+				// Skip related files whose content does not match their extension.
+				if typeErr := file.CheckType(); typeErr != nil {
+					log.Warnf("import: %s %s and was not indexed", clean.Log(file.RootRelName()), typeErr)
+					continue
+				}
+
 				// Show warning if sidecar file exceeds size or resolution limit.
 				if _, limitErr := file.ExceedsBytes(o.ByteLimit); limitErr != nil {
 					log.Warnf("import: %s", limitErr)
@@ -275,14 +356,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Warnf("import: %s", limitErr)
 				}
 
-				// Extract metadata to a JSON file with Exiftool.
-				if file.NeedsExifToolJson() {
-					if jsonName, err := imp.convert.ToJson(file, false); err != nil {
-						log.Tracef("exiftool: %s", clean.Error(err))
-						log.Debugf("exiftool: failed parsing %s", clean.Log(file.RootRelName()))
-					} else {
-						log.Debugf("import: created %s", filepath.Base(jsonName))
-					}
+				warnInsta360LensNotVideo("import", file)
+
+				// Extract metadata to a JSON file with Exiftool and add it to the cached metadata, which
+				// the resolution check above may already have read.
+				if jsonErr := file.CreateExifToolJson(imp.convert); jsonErr != nil {
+					log.Warnf("import: %s", clean.Error(jsonErr))
 				}
 
 				// Index related media file including its original filename.

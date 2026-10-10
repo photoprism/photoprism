@@ -65,6 +65,7 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	const (
 		adminMarker    = "TestBuildConfigOptionsReturnsDocumentedDefaults-admin"
 		dbMarker       = "TestBuildConfigOptionsReturnsDocumentedDefaults-db"
+		dsnMarker      = "user:TestBuildConfigOptionsReturnsDocumentedDefaults-dsn@tcp(localhost:4001)/photoprism"
 		oidcMarker     = "TestBuildConfigOptionsReturnsDocumentedDefaults-oidc"
 		joinMarker     = "TestBuildConfigOptionsReturnsDocumentedDefaults-join"
 		downloadMarker = "TestBuildConfigOptionsReturnsDocumentedDefaults-download"
@@ -78,6 +79,7 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	env := map[string]string{
 		"PHOTOPRISM_ADMIN_PASSWORD":     adminMarker,
 		"PHOTOPRISM_DATABASE_PASSWORD":  dbMarker,
+		"PHOTOPRISM_DATABASE_DSN":       dsnMarker,
 		"PHOTOPRISM_OIDC_SECRET":        oidcMarker,
 		"PHOTOPRISM_JOIN_TOKEN":         joinMarker,
 		"PHOTOPRISM_DOWNLOAD_TOKEN":     downloadMarker,
@@ -99,7 +101,7 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	items := buildConfigOptions()
 	require.NotEmpty(t, items)
 
-	markers := []string{adminMarker, dbMarker, oidcMarker, joinMarker, downloadMarker, previewMarker, visionMarker, authMarker, nodeMarker}
+	markers := []string{adminMarker, dbMarker, dsnMarker, oidcMarker, joinMarker, downloadMarker, previewMarker, visionMarker, authMarker, nodeMarker}
 
 	for _, item := range items {
 		fields := []struct {
@@ -123,6 +125,7 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	expectEmpty := map[string]struct{}{
 		"PHOTOPRISM_ADMIN_PASSWORD":     {},
 		"PHOTOPRISM_DATABASE_PASSWORD":  {},
+		"PHOTOPRISM_DATABASE_DSN":       {},
 		"PHOTOPRISM_OIDC_SECRET":        {},
 		"PHOTOPRISM_JOIN_TOKEN":         {},
 		"PHOTOPRISM_DOWNLOAD_TOKEN":     {},

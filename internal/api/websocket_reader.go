@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"net/http"
 	"sync"
 	"time"
 
@@ -10,10 +12,22 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
+// wsRateLimitedEvent is sent to a client over the authentication failure limit before the connection closes.
+const wsRateLimitedEvent = "websocket.rate-limited"
+
+// wsClose sends a close message with the specified code and reason.
+func wsClose(ws *websocket.Conn, writeMutex *sync.Mutex, code int, reason string) {
+	writeMutex.Lock()
+	defer writeMutex.Unlock()
+
+	_ = ws.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason), time.Now().Add(time.Second))
+}
+
 // wsReader initializes a WebSocket reader for receiving messages.
-func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config) {
+func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config, clientIp string) {
 	defer ws.Close()
 
 	ws.SetReadLimit(4096)
@@ -36,9 +50,16 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 		if jsonErr := json.Unmarshal(m, &info); jsonErr != nil {
 			// Do nothing.
 		} else {
-			clientIp := ws.RemoteAddr().String()
+			s, err := LookupSession(clientIp, info.AuthToken)
 
-			if s := Session(clientIp, info.AuthToken); s != nil {
+			// Tell a client over the authentication failure limit to try again later, and close.
+			if errors.Is(err, authn.ErrRateLimitExceeded) {
+				wsSendMessage(wsRateLimitedEvent, event.Data{"code": http.StatusTooManyRequests}, ws, writeMutex)
+				wsClose(ws, writeMutex, websocket.CloseTryAgainLater, authn.ErrRateLimitExceeded.Error())
+				return
+			}
+
+			if s != nil {
 				// Resolve both principals before taking the lock, since either may query the database.
 				user := *s.GetUser()
 				client := wsSessionClient(s)

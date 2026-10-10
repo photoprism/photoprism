@@ -34,6 +34,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -52,7 +53,6 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/api/download"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -101,14 +101,9 @@ type Config struct {
 // Values is a shorthand alias for map[string]interface{}.
 type Values = map[string]any
 
+// init initializes memory limits, entity caching, and public thumbnail sizes.
 func init() {
-	TotalMem = memory.TotalMemory()
-
-	// Check available memory if not running in unsafe mode.
-	if Env(EnvUnsafe) {
-		// Disable features with high memory requirements?
-		LowMem = TotalMem < MinMem
-	}
+	initMemory(memory.TotalMemory())
 
 	// Disable entity cache if requested.
 	if txt.Bool(os.Getenv(EnvVar("disable-photolabelcache"))) {
@@ -118,6 +113,13 @@ func init() {
 	initThumbs()
 }
 
+// initMemory records system memory and enables low-memory limits outside unsafe mode.
+func initMemory(total uint64) {
+	TotalMem = total
+	LowMem = !Env(EnvUnsafe) && TotalMem < MinMem
+}
+
+// initThumbs rebuilds the public thumbnail sizes in reverse preset order.
 func initThumbs() {
 	initThumbsMutex.Lock()
 	defer initThumbsMutex.Unlock()
@@ -126,8 +128,7 @@ func initThumbs() {
 	Thumbs = ThumbSizes{}
 
 	// Init public thumb sizes for use in client apps.
-	for i := len(thumb.Names) - 1; i >= 0; i-- {
-		name := thumb.Names[i]
+	for _, name := range slices.Backward(thumb.Names) {
 		t := thumb.Sizes[name]
 
 		if t.Width > maxSize {
@@ -187,12 +188,16 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
-		if err := c.options.Load(optionsYaml); err != nil {
-			event.SystemWarn([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
-		} else if c.env == EnvDevelop {
+		err := c.options.Load(optionsYaml)
+		restrictOptionsFileWithCredential(optionsYaml)
+
+		switch {
+		case err != nil:
+			event.SystemError([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
+		case c.env == EnvDevelop:
 			// Reduce the log level to minimize noise in the test logs.
 			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
-		} else {
+		default:
 			log.Debugf("config: overriding config with values from %s", clean.Log(optionsYaml))
 		}
 	}
@@ -220,11 +225,8 @@ func (c *Config) Init() error {
 	}
 
 	// Detect whether files are stored on a case-insensitive file system.
-	if insensitive, err := c.CaseInsensitive(); err != nil {
+	if err := c.initCaseMode(); err != nil {
 		return err
-	} else if insensitive {
-		log.Infof("config: case-insensitive file system detected")
-		fs.IgnoreCase()
 	}
 
 	// Detect the CPU type and available memory.
@@ -240,7 +242,7 @@ func (c *Config) Init() error {
 	// Show warning if less than 1 GB RAM was detected.
 	if LowMem {
 		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/GigaByte)
-		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
+		log.Warnf("config: face recognition as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
 	// Show swap space disclaimer.
@@ -252,6 +254,9 @@ func (c *Config) Init() error {
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
+
+	// Show warnings for a Vision API key that cannot authenticate requests as configured.
+	c.warnVisionKey()
 
 	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
@@ -348,11 +353,8 @@ func (c *Config) InitCore() error {
 	}
 
 	// Detect whether files are stored on a case-insensitive file system.
-	if insensitive, err := c.CaseInsensitive(); err != nil {
+	if err := c.initCaseMode(); err != nil {
 		return err
-	} else if insensitive {
-		log.Infof("config: case-insensitive file system detected")
-		fs.IgnoreCase()
 	}
 
 	// Detect the CPU type and available memory.
@@ -368,7 +370,7 @@ func (c *Config) InitCore() error {
 	// Show warning if less than 1 GB RAM was detected.
 	if LowMem {
 		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/GigaByte)
-		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
+		log.Warnf("config: face recognition as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
 	// Show swap space disclaimer.
@@ -435,13 +437,7 @@ func (c *Config) Propagate() {
 	dl.FFprobeBin = c.FFprobeBin()
 
 	// Configure computer vision package.
-	vision.SetCachePath(c.CachePath())
-	vision.SetModelsPath(c.ModelsPath())
-	vision.ServiceApi = c.VisionApi()
-	vision.ServiceUri = c.VisionUri()
-	vision.ServiceKey = c.VisionKey()
-	vision.DownloadUrl = c.DownloadUrl()
-	vision.DetectNSFWLabels = c.DetectNSFW() && c.Experimental()
+	c.PropagateVision()
 
 	// Set allowed path in download package.
 	download.AllowedPaths = []string{
@@ -478,6 +474,9 @@ func (c *Config) Propagate() {
 
 	// Set path for user assets.
 	entity.UsersPath = c.UsersPath()
+
+	// Set the originals folder in which the default base paths of new accounts are checked.
+	entity.OriginalsPath = c.OriginalsPath()
 
 	// Set the API preview default token (the download token is no longer stored per session). The
 	// placeholder is never registered, so a missing signing key rejects previews instead of admitting it.
@@ -653,7 +652,7 @@ func (c *Config) loadOptionsYAML() (string, Values, error) {
 		return fileName, values, nil
 	}
 
-	b, err := os.ReadFile(fileName) //nolint:gosec // path derived from config directory
+	b, err := readOptionsFile(fileName)
 	if err != nil || len(b) == 0 {
 		return fileName, values, err
 	}
@@ -700,15 +699,15 @@ func mergeOptionValues(dst Values, src Values) bool {
 	return changed
 }
 
-// writeOptionsYAML persists merged options values. It does not touch the in-memory options,
-// which the caller applies through applyOptionValues when it changed one.
+// writeOptionsYAML persists merged options values with writeOptionsFile. It does not touch the in-memory
+// options, which the caller applies through applyOptionValues when it changed one.
 func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) {
 	b, err := yaml.Marshal(values)
 	if err != nil {
 		return false, err
 	}
 
-	if err = os.WriteFile(fileName, b, fs.ModeConfigFile); err != nil {
+	if err = writeOptionsFile(fileName, b, hasCredentialOption(values)); err != nil {
 		return false, err
 	}
 

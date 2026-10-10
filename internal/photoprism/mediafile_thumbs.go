@@ -42,7 +42,7 @@ func (m *MediaFile) Thumbnail(path string, sizeName thumb.Name) (filename string
 	thumbName, err := size.FromFile(m.FileName(), m.Hash(), path, m.Orientation())
 
 	if err != nil {
-		err = fmt.Errorf("media: failed to create thumbnail for %s (%s)", clean.Log(m.BaseName()), err)
+		err = fmt.Errorf("media: failed to create thumbnail for %s (%w)", clean.Log(m.BaseName()), err)
 		log.Debug(err)
 		return "", err
 	}
@@ -137,7 +137,7 @@ func (m *MediaFile) generateThumbnails(thumbPath string, force bool, srcBounds f
 			// Exceeds the maximum size of thumbnails to be generated while indexing (--thumb-size).
 			continue
 		} else if fileName, err = size.FileName(hash, thumbPath); err != nil {
-			log.Errorf("media: failed to create %s (%s)", clean.Log(string(name)), err)
+			log.Errorf("media: failed to create %s thumbnail for %s (%s)", name, clean.Log(m.RootRelName()), clean.Error(err))
 			return err
 		} else if force || !fs.FileExists(fileName) {
 			// Use libvips to generate thumbnails?
@@ -226,7 +226,7 @@ func (m *MediaFile) generateThumbnails(thumbPath string, force bool, srcBounds f
 
 			// Failed?
 			if err != nil {
-				log.Errorf("media: failed to create %s (%s)", name.String(), err)
+				log.Errorf("media: failed to create %s thumbnail for %s (%s)", name, clean.Log(m.RootRelName()), clean.Error(err))
 				return err
 			}
 

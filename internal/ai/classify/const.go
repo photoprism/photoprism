@@ -1,5 +1,8 @@
 package classify
 
+// priorityIgnore excludes labels from classification results.
+const priorityIgnore = -3
+
 // Data sources.
 const (
 	SrcAuto     = ""

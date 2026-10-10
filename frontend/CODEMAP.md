@@ -1,9 +1,9 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** September 10, 2026
+**Last Updated:** October 8, 2026
 
 Purpose
-- Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
+- Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
 - Use Makefile targets and scripts in `frontend/package.json` as sources of truth.
 
 Quick Start
@@ -18,36 +18,39 @@ Directory Map (src)
 - `src/app.js` — app bootstrap: creates Vue app, installs Vuetify + plugins, configures router, mounts to `#app`
 - `src/app/routes.js` — all route definitions (guards, titles, meta)
 - `src/app/session.js` — `$config` and `$session` singletons wired from server-provided `window.__CONFIG__` and storage
-- `src/common/map.js`, `src/common/maplibregl.js` — shared WebGL2 capability probe, concurrent lazy loading, MapLibre 6 worker URL, and language-label adapter; worker/shared module assets are emitted together by `webpack.config.js`.
+- `src/common/map.js`, `src/common/maplibregl.js` — shared WebGL2 capability probe, concurrent lazy loading, MapLibre 6 worker URL, and language-label adapter; the worker is emitted into a versioned directory by `vite.config.mjs`.
 - `src/component/map.vue`, `src/page/places.vue` — mini-maps/location controls and Places; map-unavailable UI is confined to the map surface.
 - `src/common/*` — framework-agnostic helpers: `$api` (Axios), `$notify`, `$view`, `$event` (PubSub), i18n (`gettext`), util, fullscreen, map utils, websocket, `sphere.js` (lazy-loaded 360° viewer wrapper)
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)
 - `src/model/*` — REST models; base `Rest` class (`model/rest.js`) wraps Axios CRUD for collections and entities
 - `src/options/*` — UI/theme options, formats, auth options
-- `src/css/*` — styles loaded by Webpack
+- `src/css/*` — global styles imported by the entries and bundled by Vite
 - `src/locales/*` — gettext catalogs; extraction/compile scripts in `package.json`
 
 Startup Templates & Splash Screen
 - The HTML shell is rendered from `assets/templates/index.gohtml` (and the `pro/` / `portal/` overlays under `assets/templates/`; Plus has none and uses these templates). Each template includes `app.gohtml` for the splash markup and `app.js.gohtml` to inject the bundle.
 - The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes. Update the same files in private repos whenever the loader logic changes, and keep the script order so the check runs first.
 - Splash styles, including the `.splash-warning` fallback banner, live in `frontend/src/css/splash.css`. Keep styling changes there so public and private editions stay aligned.
-- Baseline support: defined by the `browserslist` query in `frontend/package.json` and resolved with `(cd frontend && npx browserslist)`; `.babelrc` sets no explicit `targets`, so `@babel/preset-env` compiles to exactly that set. If the support matrix changes, revise the warning text in `app.js.gohtml` and the CSS message accordingly.
+- Baseline support: Chrome and Edge 119, Firefox 128, Safari 16.4 (macOS and iOS), stated in the `browserslist` query in `frontend/package.json`, `BROWSER_TARGET` in `vite.config.mjs`, and the checks in `assets/static/js/browser-check.js`; change all three together. The pdf.js worker entry `src/common/pdf-worker.js` and `src/common/with-resolvers.js` define `Promise.withResolvers` for Safari 16.4 to 17.3.
 - Lightbox videos: `createVideoElement` wires listeners through an `AbortController` stored in `content.data.events`; `contentDestroy` aborts it so video and RemotePlayback handlers vanish with the slide.
 
 Runtime & Plugins
-- Vue 3 + Vuetify 3 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
-- **Vuetify version pin:** `vuetify` is pinned to **`3.12.2` exactly** (no caret); see [`frontend/README.md`](README.md#currently-pinned-packages) for the canonical rationale. The TL;DR is that 3.12.3+ introduced a `VAutocomplete`/`VSelect`/`VCombobox` `onFocusout` handler that closes long dropdowns on open (#5538), unfixed in 3.12.5. The sibling-menu gate in `src/common/view.js` cooperates with the pin but is not a substitute for it.
-  - **Known caveats at 3.12.2:**
-    - Vuetify upstream issue #22828 — `v-select`'s `@blur` fires when the menu opens (introduced by the 3.12.2 screenreader navigation fix). PhotoPrism is not affected because we only bind `@blur` on `v-text-field`, `v-textarea`, and `v-combobox`; if you ever attach `@blur` to a `v-select`, expect spurious calls until that upstream bug is fixed.
-    - The `.v-field--focused` CSS class can linger on a previously-focused `v-autocomplete` input after the user clicks into another autocomplete (`document.activeElement` is correct, but Vuetify's internal `isFocused` is under-aggressive about clearing in 3.12.2). This is the inverse symptom of Vuetify #22697 — fixing it overshot in 3.12.3 and caused #5538. Functionally harmless in the photo edit dialog because the affected fields are not on screen together.
+- Vue 3 + Vuetify 4 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
+- **Vuetify version pin:** `vuetify` is pinned to **`4.2.4` exactly** (no caret); see [Dependency Pinning Policy](README.md#dependency-pinning-policy) for the rationale and required autocomplete checks. The sibling-menu gate in `src/common/view.js` cooperates with the pin but is not a substitute for it.
+  - **Vuetify 3 appearance:** `vite.config.mjs` compiles Vuetify's styles with `src/css/vuetify/settings.scss` (Vuetify 3 breakpoints, Material Design 2 typography and button text), `src/css/vuetify-v3.css` restores the Vuetify 3 reset, grid (including the `v-col-N` classes used on plain elements), typography weights and line heights, navigation rail and slider layout, component shadows, and elevation classes, and `src/app.js` sets the matching display thresholds.
+  - **Cascade layers:** Vuetify 4 puts its styles in cascade layers, and a later layer wins regardless of specificity. `src/css/layers.css`, imported first, declares their order. `src/css/app.css` imports the application styles into Vuetify's component layer, where specificity decides as in Vuetify 3; new style sheets imported there need `layer(vuetify-components)`. Exceptions: rules that replace Vuetify's override layer go in `src/css/vuetify-overrides.css`; utility classes outrank the application styles unless a rule is `!important`, and the typography utilities set only size, letter spacing, and text transform, with weight, line height, and font family in `vuetify-v3.css`; theme variables such as `--v-btn-height` are set in the utility layer and outrank component-layer rules for the same custom property. Unlayered CSS outranks all layers, so component `<style src>` sheets wrap their rules in `@layer vuetify-components`, and the splash entry imports `src/css/splash-entry.css`.
+  - **Counter fields:** with the project default `hideDetails: "auto"`, Vuetify 4 renders a field's counter row only while the field has focus or shows messages, so fields with `counter` set `:hide-details="false"` to keep the row reserved as in Vuetify 3.
+  - **Raw component markup:** tables built from raw `v-table` classes add `v-table--gridlines-horizontal`, which the component sets by default and which Vuetify 4 needs for row borders.
+  - **Overlay scroll variables:** `src/css/app.css` registers `--v-body-scroll-x` and `--v-body-scroll-y` as non-inherited with `@property`, because Vuetify 4 sets them on the root and then reads a computed style, which otherwise restyles the whole page when a dialog opens. A `sticky` `v-navigation-drawer` reads them from a descendant; using one requires dropping the registration.
+  - **Known caveat at 4.2.2:** Vuetify upstream issue #22828 — `v-select`'s `@blur` fires when the menu opens. PhotoPrism is not affected because we only bind `@blur` on `v-text-field`, `v-textarea`, and `v-combobox`; if you ever attach `@blur` to a `v-select`, expect spurious calls until that upstream bug is fixed.
 - Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal` for Portal)
 - I18n: `vue3-gettext` via `common/gettext.js`; canonical extraction via root `make gettext-extract` (scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`), compile with `npm run gettext-compile`
-- HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
-- Tooltips: Vuetify `<v-tooltip>` component + `v-tooltip` directive (auto-imported per SFC by `webpack-plugin-vuetify`)
+- HTML sanitization: `$util.sanitizeHtml()` in `src/common/util.js`, which wraps `sanitize-html`
+- Tooltips: Vuetify `<v-tooltip>` component + `v-tooltip` directive (auto-imported per SFC by `vite-plugin-vuetify`)
 - Video: HLS.js assigned to `window.Hls`
-- PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/i/<name>/`. Instance clients under `/i/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
-- Service worker cleanup: `frontend/src/sw-scope-cleanup.js` provides strict same-scope precache cleanup. `cleanupOutdatedCaches` is disabled in `GenerateSW` to avoid broad cross-scope cache deletion on shared origins.
+- PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/i/<name>/`. Instance clients under `/i/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `serviceWorkerOptions` in `frontend/vite.plugins.mjs`; locale chunks, share page assets, and `.ttf`/`.woff` fonts are excluded there so we don’t force every user to download those assets on first visit.
+- Service worker cleanup: `frontend/src/sw-scope-cleanup.js` provides strict same-scope precache cleanup. `cleanupOutdatedCaches` is disabled in the Workbox options to avoid broad cross-scope cache deletion on shared origins.
 - WebSocket: `src/common/websocket.js` publishes `websocket.*` events, used by `$session` for client info
 
 Lightbox Integration
@@ -94,17 +97,17 @@ Theming & UI
 - Global components: register in `src/component/components.js` when they are broadly reused
 
 Testing
-- Vitest config: `frontend/vitest.config.mjs` (Vue plugin, alias map to `src/*`), `tests/vitest/**/*`
+- Vitest config: `frontend/vitest.config.mjs` (Vue plugin, alias map to `src/*`; with `CUSTOM_SRC`, the build's `overlayResolver` instead), `tests/vitest/**/*`
 - Run: `cd frontend && npm run test` (or `make test-js` from repo root)
 - Acceptance: TestCafe configs in `frontend/tests/acceptance`; run against a live server
 - Detailed test/lint guide (humans + agents): `frontend/tests/README.md`
 - Session/auth storage regressions: when testing `src/common/session.js`, cover both direct `config.storageNamespace` access and the real `Config` shape where the namespace is supplied via `config.values.storageNamespace`
 
 Build & Tooling
-- Webpack is used for bundling; scripts in `frontend/package.json`:
-  - `npm run build` (prod), `npm run build-dev` (dev), `npm run watch`
+- Vite bundles the frontend (`vite.config.mjs`, plugins in `vite.plugins.mjs`); scripts in `frontend/package.json`:
+  - `npm run build` (prod), `npm run build-dev` (dev), `npm run build-analyze` (bundle report), `npm run watch` (`vite build --watch`)
   - Lint/format: `npm run lint` or `make lint-js`; repo root `make lint` runs both backend (golangci-lint via `.golangci.yml`) and frontend linters
-  - Security scan: `npm run security:scan` (checks `--ignore-scripts` and forbids `v-html`)
+  - Security scan: `npm run security:scan` checks `--ignore-scripts` and runs `scripts/scan-xss.mjs` over the code files: an HTML binding (`v-html`, `:innerHTML`, `:outerHTML`, `:srcdoc`) needs an `eslint-disable-next-line vue/no-v-html -- <reason>` comment on the line directly above, and a DOM HTML sink (an `innerHTML`/`outerHTML` assignment or object property, a `srcdoc` assignment or `setAttribute("srcdoc", ...)`, `insertAdjacentHTML`, `document.write`, or an HTML parse call such as `createContextualFragment`, `setHTMLUnsafe` or `parseFromString`) needs a `security-reviewed` note unless it clears the element with `""`. Without arguments it scans `src/` and the `plus`, `pro` and `portal` frontend overlays that exist next to it, skipping `tests/` and `node_modules/`; a Vitest case runs it over the same directories
 - ESLint v10 migration status and upgrade checklist are documented in `frontend/tests/README.md`.
 - Licensing: run `make notice` from the repo root to regenerate `NOTICE` files after dependency changes—never edit them manually.
 - Make targets (from repo root): `make build-js`, `make watch-js`, `make test-js`
@@ -140,9 +143,9 @@ Common How‑Tos
   - Global shortcuts go through `onShortCut(ev)` in `common/view.js`. It only forwards Escape and `ctrl`/`meta` combinations, so do not depend on it for plain character keys.
 
 Conventions & Safety
-- Avoid `v-html`; use `v-sanitize` or `$util.sanitizeHtml()` (build enforces this)
+- Avoid `v-html`; where HTML must render, bind an encoded and `$util.sanitizeHtml()`-sanitized value and mark it with the reviewed note above
 - Keep big components lazy if needed; split views logically under `src/page`
-- Respect aliases in `vitest.config.mjs` when importing (`app`, `common`, `component`, `model`, `options`, `page`)
+- Import through the bare module roots (`app`, `common`, `component`, `model`, `options`, `page`), which both the build and Vitest resolve, so edition overlays apply
 
 Frequently Touched Files
 - Bootstrap: `src/app.js`, `src/app.vue`

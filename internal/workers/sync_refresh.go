@@ -97,6 +97,14 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 				w.logErr(f.Update("Status", entity.FileSyncNew))
 			}
 
+			// Keep the listed date and size of queued files current, since a replaced file may keep its date.
+			if f.Status == entity.FileSyncNew && (!f.RemoteDate.Equal(file.Date) || f.RemoteSize != file.Size) {
+				w.logErr(f.Updates(entity.Values{
+					"RemoteDate": file.Date,
+					"RemoteSize": file.Size,
+				}))
+			}
+
 			if f.Status == entity.FileSyncDownloaded && !f.RemoteDate.Equal(file.Date) {
 				w.logErr(f.Updates(entity.Values{
 					"Status":     entity.FileSyncNew,

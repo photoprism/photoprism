@@ -80,10 +80,12 @@ export default {
         attributionControl: false,
       },
       loaded: false,
+      markerDragged: false,
       mapError: "",
     };
   },
   watch: {
+    // latlng applies coordinate changes from the parent.
     latlng() {
       this.updatePosition();
     },
@@ -134,7 +136,7 @@ export default {
           this.options.center = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
         }
 
-        this.map = new maplibregl.Map(this.options);
+        this.map = new maplibregl.Map({ ...this.options, locale: map.locale() });
 
         // Add controls if requested
         if (this.showControls) {
@@ -176,9 +178,17 @@ export default {
 
         // Add click handler for interactive mode
         if (this.clickable) {
+          this.map.on("mousedown", this.onMapPointerStart);
+          this.map.on("touchstart", this.onMapPointerStart);
           this.map.on("click", (e) => {
+            if (this.markerDragged) {
+              return;
+            }
+
             const lat = e.lngLat.lat;
             const lng = e.lngLat.lng;
+            this.map.stop();
+            this.updatePosition([lat, lng], false);
             this.$emit("map-clicked", { lat, lng });
             this.$emit("update:latlng", [lat, lng]);
           });
@@ -188,17 +198,22 @@ export default {
         this.showMapError();
       }
     },
-    updatePosition() {
+    // onMapPointerStart allows placement clicks from a new pointer gesture.
+    onMapPointerStart() {
+      this.markerDragged = false;
+    },
+    // updatePosition places the marker and optionally recenters external coordinate changes.
+    updatePosition(latlng = this.latlng, recenter = true) {
       if (!this.map || !this.loaded) {
         return;
       }
 
-      if (this.position[0] === this.latlng[1] && this.position[1] === this.latlng[0] && this.marker) {
+      if (this.position[0] === latlng[1] && this.position[1] === latlng[0] && this.marker) {
         return;
       }
 
       // Skip invalid or empty coordinates
-      if (!(this.latlng[0] && this.latlng[1] && !(this.latlng[0] === 0 && this.latlng[1] === 0))) {
+      if (!(latlng[0] && latlng[1] && !(latlng[0] === 0 && latlng[1] === 0))) {
         if (this.marker) {
           this.marker.remove();
           this.marker = null;
@@ -206,16 +221,16 @@ export default {
         return;
       }
 
-      this.position = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
+      this.position = [latlng[1], latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
 
-      if (this.animate > 0) {
+      if (recenter && this.animate > 0) {
         this.map.flyTo({
           center: this.position,
           zoom: this.interactive ? this.zoom : undefined, // Only set zoom in interactive mode
           duration: this.animate,
           essential: true, // Respects prefers-reduced-motion
         });
-      } else {
+      } else if (recenter) {
         // Use setCenter for instant positioning (no animation)
         if (this.interactive) {
           this.map.setCenter(this.position, {
@@ -239,8 +254,14 @@ export default {
 
         // Add drag event listener for draggable markers
         if (this.draggable) {
+          this.marker.on("dragstart", () => {
+            // Camera changes can reset MapLibre's click suppression during a drag.
+            this.markerDragged = true;
+            this.map.stop();
+          });
           this.marker.on("dragend", () => {
             const lngLat = this.marker.getLngLat();
+            this.updatePosition([lngLat.lat, lngLat.lng], false);
             this.$emit("marker-moved", { lat: lngLat.lat, lng: lngLat.lng });
             this.$emit("update:latlng", [lngLat.lat, lngLat.lng]);
           });

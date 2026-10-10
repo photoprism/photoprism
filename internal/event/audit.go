@@ -3,6 +3,7 @@ package event
 import (
 	"net"
 	"strings"
+	"sync/atomic"
 
 	"github.com/sirupsen/logrus"
 
@@ -14,6 +15,37 @@ var AuditLog Logger
 
 // AuditPrefix is prepended to audit log messages.
 var AuditPrefix = "audit: "
+
+// AuditRecorder persists an audit event when it is emitted.
+type AuditRecorder func(data Data)
+
+// auditRecorder holds the recorder that persists audit events synchronously, if any.
+var auditRecorder atomic.Pointer[AuditRecorder]
+
+// SetAuditRecorder sets the recorder that persists audit events when they are emitted, so that short-lived
+// processes such as CLI commands record them before they exit, and returns the previous one. Passing nil
+// leaves recording to the subscribers of the event hub.
+func SetAuditRecorder(r AuditRecorder) (prev AuditRecorder) {
+	var old *AuditRecorder
+
+	if r == nil {
+		old = auditRecorder.Swap(nil)
+	} else {
+		old = auditRecorder.Swap(&r)
+	}
+
+	if old == nil {
+		return nil
+	}
+
+	return *old
+}
+
+// AuditRecordedSync reports whether audit events are persisted when they are emitted, so that event hub
+// subscribers must not persist them again.
+func AuditRecordedSync() bool {
+	return auditRecorder.Load() != nil
+}
 
 // Audit optionally reports security-relevant events.
 func Audit(level logrus.Level, ev []string, args ...any) {
@@ -30,17 +62,20 @@ func Audit(level logrus.Level, ev []string, args ...any) {
 		AuditLog.Log(level, AuditPrefix+message)
 	}
 
-	// Publish event if log level is info or higher.
+	// Record and publish event if log level is info or higher.
 	if level <= logrus.InfoLevel {
-		Publish(
-			string(acl.ChannelAudit)+".log."+level.String(),
-			Data{
-				"time":    TimeStamp(),
-				"level":   level.String(),
-				"ip":      AuditIP(ev),
-				"message": message,
-			},
-		)
+		data := Data{
+			"time":    TimeStamp(),
+			"level":   level.String(),
+			"ip":      AuditIP(ev),
+			"message": message,
+		}
+
+		if r := auditRecorder.Load(); r != nil {
+			(*r)(data)
+		}
+
+		Publish(string(acl.ChannelAudit)+".log."+level.String(), data)
 	}
 }
 

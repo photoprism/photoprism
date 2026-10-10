@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -25,6 +26,12 @@ func TestDetectMimeType(t *testing.T) {
 		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, "image/jpeg", mimeType)
 		assert.Equal(t, "image/jpeg", MimeType(filename))
+	})
+	t.Run("BigTIFF", func(t *testing.T) {
+		filename := Abs("./testdata/bigtiff.tif")
+		mimeType, err := DetectMimeType(filename)
+		require.NoError(t, err)
+		assert.Equal(t, "image/tiff", mimeType)
 	})
 	t.Run("InvalidFilename", func(t *testing.T) {
 		filename := Abs("./testdata/xxx.jpg")
@@ -185,4 +192,14 @@ func TestIsType(t *testing.T) {
 		assert.False(t, SameType("video/mp4", MimeTypeUnknown))
 		assert.False(t, SameType(header.ContentTypeMp4, header.ContentTypeJpeg))
 	})
+}
+
+// TestIsBigTiff verifies that BigTIFF headers are recognized in either byte order.
+func TestIsBigTiff(t *testing.T) {
+	assert.True(t, isBigTiff([]byte{'I', 'I', 0x2B, 0x00, 0x08, 0x00, 0x00, 0x00, 0x10}, 0))
+	assert.True(t, isBigTiff([]byte{'M', 'M', 0x00, 0x2B, 0x00, 0x08, 0x00, 0x00}, 0))
+	assert.False(t, isBigTiff([]byte{'I', 'I', 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00}, 0))
+	assert.False(t, isBigTiff([]byte{'I', 'I', 0x2B, 0x00, 0x04, 0x00, 0x00, 0x00}, 0))
+	assert.False(t, isBigTiff([]byte{'I', 'I', 0x2B}, 0))
+	assert.False(t, isBigTiff(nil, 0))
 }

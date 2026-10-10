@@ -134,6 +134,32 @@ func TestModClientFromCli(t *testing.T) {
 		assert.Equal(t, int64(600), client.Expires())
 		assert.Equal(t, int64(2), client.Tokens())
 	})
+	t.Run("RoleNotSet", func(t *testing.T) {
+		roleFlags := flag.NewFlagSet("test", flag.ContinueOnError)
+		roleFlags.String("role", "client", "Usage")
+		ctx := cli.NewContext(cli.NewApp(), roleFlags, nil)
+
+		client := ModClientFromCli(ctx)
+		assert.Equal(t, "", client.Role())
+	})
+	t.Run("RoleEmpty", func(t *testing.T) {
+		roleFlags := flag.NewFlagSet("test", flag.ContinueOnError)
+		roleFlags.String("role", "client", "Usage")
+		ctx := cli.NewContext(cli.NewApp(), roleFlags, nil)
+		assert.NoError(t, ctx.Set("role", ""))
+
+		client := ModClientFromCli(ctx)
+		assert.Equal(t, "none", client.Role())
+	})
+	t.Run("RoleInvalid", func(t *testing.T) {
+		roleFlags := flag.NewFlagSet("test", flag.ContinueOnError)
+		roleFlags.String("role", "client", "Usage")
+		ctx := cli.NewContext(cli.NewApp(), roleFlags, nil)
+		assert.NoError(t, ctx.Set("role", "?"))
+
+		client := ModClientFromCli(ctx)
+		assert.Equal(t, "none", client.Role())
+	})
 }
 
 func TestClient_Expires(t *testing.T) {

@@ -98,7 +98,7 @@ func TestRemuxCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -avoid_negative_ts make_zero -i SRC -map 0:v:0 -map 0:a:0? -dn -ignore_unknown -codec copy -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -avoid_negative_ts make_zero "+testInputWhitelist+" -i SRC -map 0:v:0 -map 0:a:0? -dn -ignore_unknown -codec copy -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 	})
 }
 

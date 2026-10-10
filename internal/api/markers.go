@@ -107,6 +107,17 @@ func findFileMarker(c *gin.Context) (s *entity.Session, file *entity.File, marke
 	return s, file, marker, nil
 }
 
+// markerSubjectSrcAccepted reports whether a marker request may name a face with the subject source it
+// carries. A request without a name, or with the stored name and source, chooses no new name or source,
+// and the automatic source applies no name.
+func markerSubjectSrcAccepted(name, subjSrc string, frm form.Marker) bool {
+	if n := clean.Name(frm.MarkerName); n == "" || n == clean.Name(name) && frm.SubjSrc == subjSrc || frm.SubjSrc == entity.SrcAuto {
+		return true
+	}
+
+	return entity.SrcSubjects[frm.SubjSrc] >= entity.SrcPriority[entity.SrcBatch]
+}
+
 // CreateMarker adds a new file area marker to assign faces or other subjects.
 //
 // See internal/form/marker.go for the values required to create a new marker.
@@ -155,8 +166,8 @@ func CreateMarker(router *gin.RouterGroup) {
 		// Find related file.
 		file, err := query.FileByUID(frm.FileUID)
 
-		// Abort if not found.
-		if err != nil {
+		// Require a file with a hash for the marker thumbnail.
+		if err != nil || file.FileHash == "" {
 			AbortEntityNotFound(c)
 			return
 		}
@@ -178,13 +189,25 @@ func CreateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: width and height must be greater than zero")
 			AbortBadRequest(c)
 			return
+		} else if !markerSubjectSrcAccepted("", entity.SrcAuto, frm) {
+			log.Debugf("faces: cannot name marker with subject source %s", clean.Log(entity.SrcString(frm.SubjSrc)))
+			AbortBadRequest(c)
+			return
+		}
+
+		if frm.MarkerSrc != entity.SrcManual || frm.MarkerType != entity.MarkerFace {
+			AbortBadRequest(c)
+			return
 		}
 
 		// Create new face marker area.
 		area := crop.NewArea("face", frm.X, frm.Y, frm.W, frm.H)
 
 		// Create new marker entity.
-		marker := entity.NewMarker(*file, area, "", frm.MarkerSrc, frm.MarkerType, entity.MarkerSize(area, *file), 100)
+		marker := entity.NewMarker(*file, area, "", entity.SrcManual, entity.MarkerFace, entity.MarkerSize(area, *file), 100)
+
+		// Apply the requested review state.
+		marker.MarkerReview = frm.MarkerReview
 
 		// Update marker from form values.
 		if err = marker.Create(); err != nil {
@@ -296,6 +319,10 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (validate updated marker)", err)
 			AbortBadRequest(c, err)
 			return
+		} else if !markerSubjectSrcAccepted(marker.MarkerName, marker.SubjSrc, frm) {
+			log.Debugf("faces: cannot name marker with subject source %s", clean.Log(entity.SrcString(frm.SubjSrc)))
+			AbortBadRequest(c)
+			return
 		}
 
 		// Update marker from form values.
@@ -304,7 +331,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			AbortSaveFailed(c)
 			return
 		} else if changed {
-			if marker.FaceID != "" && marker.SubjUID != "" && marker.SubjSrc == entity.SrcManual {
+			if marker.FaceID != "" && marker.SubjUID != "" && entity.SrcSubjects[marker.SubjSrc] >= entity.SrcPriority[entity.SrcBatch] {
 				if res, err := get.Faces().OptimizeFor(marker.SubjUID); err != nil {
 					log.Errorf("faces: %s (optimize)", err)
 				} else if res.Merged > 0 {

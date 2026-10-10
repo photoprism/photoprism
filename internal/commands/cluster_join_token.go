@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-var joinTokenSaveFlag = SaveFlag("write the generated join token to config/portal/secrets/join_token")
+var joinTokenSaveFlag = SaveFlag("write the generated join token to the join_token file in the secrets folder of the config path")
 
 // ClusterJoinTokenCommand generates cluster join tokens for nodes.
 var ClusterJoinTokenCommand = &cli.Command{
@@ -35,7 +35,7 @@ func clusterJoinTokenAction(ctx *cli.Context) error {
 	}
 
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		tokenFile := conf.PortalJoinTokenFile()
+		tokenFile := conf.JoinTokenFile()
 
 		if fs.FileExistsNotEmpty(tokenFile) {
 			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Replace existing join token in %s", clean.Log(tokenFile))); confirmErr != nil {

@@ -4,6 +4,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import signal
 import stat
@@ -21,6 +22,7 @@ LIBRARIES = (
     "libcudnn_engines_runtime_compiled", "libcudnn_engines_tensor_ir",
     "libcudnn_ext", "libcudnn_graph", "libcudnn_heuristic", "libcudnn_ops",
 )
+PACKAGES = tuple(re.findall(r'^([^\s_]+)_\S+\.deb [0-9a-f]{64}"?$', INSTALLER.read_text(), re.MULTILINE))
 
 STUB = r'''
 import json
@@ -86,6 +88,9 @@ else:
 
     if command == "cp":
         kind = "backup" if "--link" in args else "copy"
+        if kind == "copy" and target.parent.name == "new":
+            with (base / "copies.jsonl").open("a") as log:
+                log.write(json.dumps(args) + "\n")
         if count(kind) == 2 and mode == kind:
             sys.exit(1)
     elif command == "chmod" and target.parent.name == "new":
@@ -134,6 +139,10 @@ class CudaInstallTest(unittest.TestCase):
             library.write_text("new " + name)
             library.chmod(0o4755)
             (self.package / (name + ".so")).symlink_to(library.name)
+        for name in PACKAGES:
+            notice = self.base / "package/usr/share/doc" / name / "copyright"
+            notice.parent.mkdir(parents=True)
+            notice.write_text("license " + name)
         self.note = self.output / "operator-note"
         self.note.write_text("leave this alone")
         self.commands = self.base / "bin"
@@ -216,8 +225,17 @@ class CudaInstallTest(unittest.TestCase):
             self.assertEqual(0o644, stat.S_IMODE(path.stat().st_mode))
             self.assertEqual(path.name, os.readlink(self.output / (name + ".so")))
         self.assertEqual([], list(self.output.glob(".cuda-*")))
+        copies = [json.loads(line) for line in (self.base / "copies.jsonl").read_text().splitlines()]
+        self.assertTrue(copies)
+        for args in copies:
+            self.assertIn("--no-preserve=ownership", args)
         self.assertEqual("leave this alone", self.note.read_text())
         self.assertTrue((self.base / "ldconfig.called").exists())
+        self.assertEqual(4, len(PACKAGES))
+        for name in PACKAGES:
+            notice = self.prefix / "share/doc" / name / "copyright"
+            self.assertEqual("license " + name, notice.read_text())
+            self.assertEqual(0o644, stat.S_IMODE(notice.stat().st_mode))
 
     def test_first_install_success(self):
         """A first installation fetches only from NVIDIA and publishes the complete set."""
@@ -318,6 +336,15 @@ class CudaInstallTest(unittest.TestCase):
         before = self.snapshot()
         result = self.run_installer()
         self.assertIn("duplicate library", result.stderr)
+        self.assert_restored(before, result)
+
+    def test_missing_copyright(self):
+        """A package without its license is refused before replacing an existing library."""
+        self.populate()
+        (self.base / "package/usr/share/doc" / PACKAGES[-1] / "copyright").unlink()
+        before = self.snapshot()
+        result = self.run_installer()
+        self.assertIn("contains no copyright file", result.stderr)
         self.assert_restored(before, result)
 
 

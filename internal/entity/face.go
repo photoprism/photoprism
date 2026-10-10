@@ -5,6 +5,7 @@ import (
 	"encoding/base32"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -297,7 +298,10 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 		return false, fmt.Errorf("embedding must not be empty")
 	}
 
-	if match, dist := m.Match(embeddings, model); !match {
+	match, dist := m.Match(embeddings, model)
+	radius := dist - face.Epsilon
+
+	if !match {
 		// Embeddings don't match this face. Ignore.
 		return false, nil
 	} else if dist < 0 {
@@ -306,29 +310,72 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	} else if dist < face.AmbiguityDist() {
 		log.Warnf("faces: %s has ambiguous subject %s with a similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
+		updatedAt := Now()
+		res := UnscopedDb().Model(&Face{}).Where("id = ? AND subj_uid = ?", m.ID, m.SubjUID).
+			UpdateColumns(Values{"collisions": gorm.Expr("collisions + 1"), "collision_radius": dist,
+				"face_kind": int(face.AmbiguousFace), "updated_at": updatedAt, "matched_at": updatedAt})
+
+		if res.Error != nil {
+			return true, res.Error
+		} else if res.RowsAffected == 0 {
+			m.refreshCollision()
+			return false, nil
+		}
+
 		m.FaceKind = int(face.AmbiguousFace)
-		m.UpdatedAt = Now()
+		m.UpdatedAt = updatedAt
 		m.MatchedAt = &m.UpdatedAt
 		m.Collisions++
 		m.CollisionRadius = dist
 		UpdateFaces.Store(true)
-		return true, m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius,
-			"face_kind": m.FaceKind, "updated_at": m.UpdatedAt, "matched_at": m.MatchedAt})
-	} else {
-		// Reopened rather than merely cleared: this narrows the cluster mid-run, and the markers
-		// ReviseMatches drops below have nothing to be rematched against if the run then stamps
-		// it as matched on its way out.
-		m.reopen()
+
+		return true, nil
+	} else if radius <= face.CollisionDist {
+		// A radius at or below CollisionDist cannot narrow the cluster, so it is recorded at most
+		// once, without reopening the cluster or revising what it holds. The stored row decides, so
+		// a copy loaded before a concurrent narrowing cannot widen the cluster.
+		if m.CollisionNoted(dist) {
+			return false, nil
+		}
+
+		res := UnscopedDb().Model(&Face{}).Where("id = ? AND subj_uid = ?", m.ID, m.SubjUID).
+			Where("COALESCE(collision_radius, 0) <= ? AND (COALESCE(collision_radius, 0) <= 0 OR collision_radius > ?)", face.CollisionDist, radius).
+			UpdateColumns(Values{"collisions": gorm.Expr("collisions + 1"), "collision_radius": radius})
+
+		if res.Error != nil {
+			return false, res.Error
+		} else if res.RowsAffected == 0 {
+			m.refreshCollision()
+			return false, nil
+		}
+
 		m.Collisions++
-		m.CollisionRadius = dist - face.Epsilon
+		m.CollisionRadius = radius
 		UpdateFaces.Store(true)
+
+		return true, nil
 	}
 
-	err = m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius, "matched_at": m.MatchedAt})
+	// The stored row decides, so a copy loaded before a concurrent narrowing or a change of person
+	// cannot widen the cluster or narrow it against its own person.
+	res := UnscopedDb().Model(&Face{}).Where("id = ? AND subj_uid = ?", m.ID, m.SubjUID).
+		Where("COALESCE(collision_radius, 0) <= ? OR collision_radius > ?", face.CollisionDist, radius).
+		UpdateColumns(Values{"collisions": gorm.Expr("collisions + 1"), "collision_radius": radius, "matched_at": nil, "updated_at": Now()})
 
-	if err != nil {
-		return true, err
+	if res.Error != nil {
+		return true, res.Error
+	} else if res.RowsAffected == 0 {
+		m.refreshCollision()
+		return false, nil
 	}
+
+	// Reopened rather than merely cleared: this narrows the cluster mid-run, and the markers
+	// ReviseMatches drops below have nothing to be rematched against if the run then stamps
+	// it as matched on its way out.
+	m.reopen()
+	m.Collisions++
+	m.CollisionRadius = radius
+	UpdateFaces.Store(true)
 
 	if revised, err := m.ReviseMatches(); err != nil {
 		return true, err
@@ -337,6 +384,30 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	}
 
 	return true, nil
+}
+
+// refreshCollision reads the stored person and collision fields into this copy, so the checks that
+// follow a write conditioned on them decide on the stored row.
+func (m *Face) refreshCollision() {
+	if stored := FindFace(m.ID); stored != nil {
+		m.SubjUID = stored.SubjUID
+		m.Collisions = stored.Collisions
+		m.CollisionRadius = stored.CollisionRadius
+		m.FaceKind = stored.FaceKind
+	}
+}
+
+// CollisionNoted reports whether a collision at dist, whose radius could not narrow this cluster and
+// which is not close enough to make it ambiguous, would change nothing: a radius at or below it is
+// recorded already, or the cluster is narrowed further out, which such a radius must not widen.
+func (m *Face) CollisionNoted(dist float64) bool {
+	radius := dist - face.Epsilon
+
+	if dist < face.AmbiguityDist() || radius > face.CollisionDist {
+		return false
+	}
+
+	return m.CollisionRadius > face.CollisionDist || m.CollisionRadius > 0 && m.CollisionRadius <= radius
 }
 
 // InheritCollision narrows this cluster to the tightest collision bound its sources recorded.
@@ -420,7 +491,7 @@ func ClearSubjectCollisions(subjUID string) (cleared int, err error) {
 	return cleared, nil
 }
 
-// ReviseMatches updates marker matches after face parameters have been changed.
+// ReviseMatches releases the markers this cluster no longer matches after its parameters changed.
 func (m *Face) ReviseMatches() (revised Markers, err error) {
 	if m.ID == "" {
 		return revised, fmt.Errorf("empty face id")
@@ -428,39 +499,80 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 
 	var matches Markers
 
-	if err := Db().Where("face_id = ?", m.ID).Where("marker_type = ?", MarkerFace).
+	if err = Db().Where("face_id = ?", m.ID).Where("marker_type = ?", MarkerFace).
 		Find(&matches).Error; err != nil {
 		log.Debugf("faces: found no matching markers for conflict resolution (%s)", err)
 		return revised, err
-	} else {
-		for _, marker := range matches {
-			// A marker from another embedding space cannot be compared with this cluster,
-			// so its assignment is left alone rather than dropped on a comparison that
-			// never ran.
-			if !face.SameEmbeddingSpace(marker.EmbedModel, m.EmbedModel) {
-				continue
-			}
+	}
 
-			if ok, _ := m.Match(marker.Embeddings(), marker.EmbedModel); !ok {
-				if updated, err := marker.ClearFace(); err != nil {
-					log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
-					return revised, err
-				} else if updated {
-					// ClearFace stamps the marker as matched, which is true of the matcher but
-					// not of this: the cluster narrowed underneath it and nothing has compared
-					// it against the others. Left stamped, it is in neither pass's set and waits
-					// for "faces update --force".
-					if err = marker.Unmatched(); err != nil {
-						log.Debugf("faces: failed to flag marker for rematching (%s)", err)
-					}
+	uids := make([]string, 0, len(matches))
+	updatedAt := Now()
 
-					revised = append(revised, marker)
-				}
-			}
+	for _, marker := range matches {
+		// A marker from another embedding space cannot be compared with this cluster,
+		// so its assignment is left alone rather than dropped on a comparison that
+		// never ran.
+		if !face.SameEmbeddingSpace(marker.EmbedModel, m.EmbedModel) {
+			continue
+		} else if ok, _ := m.Match(marker.Embeddings(), marker.EmbedModel); ok {
+			continue
 		}
+
+		marker.FaceID = ""
+		marker.FaceDist = -1.0
+		marker.MatchedAt = nil
+		marker.UpdatedAt = updatedAt
+
+		if marker.SubjSrc == SrcAuto {
+			marker.SubjUID = ""
+		}
+
+		uids = append(uids, marker.MarkerUID)
+		revised = append(revised, marker)
+	}
+
+	if released, err := m.releaseMarkers(uids, updatedAt); err != nil {
+		log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
+		return nil, err
+	} else if released < len(uids) {
+		log.Debugf("faces: %d of %d markers were reassigned before release from %s", len(uids)-released, len(uids), m.ID)
 	}
 
 	return revised, nil
+}
+
+// releaseMarkers detaches the specified markers from this cluster in batches, flags their photos,
+// and returns how many it released. Their match stamp is cleared, so the next run compares them
+// against every cluster: the cluster narrowed underneath them, and nothing has compared them since.
+func (m *Face) releaseMarkers(uids []string, updatedAt time.Time) (released int, err error) {
+	if len(uids) == 0 {
+		return 0, nil
+	}
+
+	UpdateFaces.Store(true)
+
+	for batch := range slices.Chunk(uids, BatchSize()) {
+		res := UnscopedDb().Model(&Marker{}).Where("marker_uid IN (?) AND face_id = ?", batch, m.ID).
+			UpdateColumns(Values{
+				"face_id":    "",
+				"face_dist":  -1.0,
+				"subj_uid":   gorm.Expr("CASE WHEN subj_src = ? THEN ? ELSE subj_uid END", SrcAuto, ""),
+				"matched_at": nil,
+				"updated_at": updatedAt,
+			})
+
+		if res.Error != nil {
+			return released, res.Error
+		}
+
+		released += int(res.RowsAffected)
+
+		if err = refreshMarkerPhotos(batch); err != nil {
+			return released, err
+		}
+	}
+
+	return released, nil
 }
 
 // whereSameEmbeddingSpace restricts a statement to vectors from the specified model's
@@ -596,6 +708,48 @@ func (m *Face) SetSubjectUID(subjUid string) (err error) {
 	}
 
 	return m.RefreshPhotos()
+}
+
+// ClaimSubject names this cluster after subjUID while it is still unnamed, and relinks its automatic
+// markers while the stored cluster carries that person. It reports whether it does; a person named
+// on the cluster after this copy was loaded is kept, and the copy takes it over.
+func (m *Face) ClaimSubject(subjUID string) (carries bool, err error) {
+	if m.ID == "" {
+		return false, fmt.Errorf("empty face id")
+	} else if subjUID == "" {
+		return false, fmt.Errorf("empty subject uid")
+	}
+
+	if res := UnscopedDb().Model(&Face{}).Where("id = ? AND COALESCE(subj_uid, '') = ''", m.ID).
+		UpdateColumns(Values{"subj_uid": subjUID, "updated_at": Now()}); res.Error != nil {
+		return false, res.Error
+	} else if res.RowsAffected == 0 {
+		var stored []string
+
+		if err = UnscopedDb().Model(&Face{}).Where("id = ?", m.ID).Pluck("COALESCE(subj_uid, '')", &stored).Error; err != nil {
+			return false, err
+		} else if len(stored) == 0 {
+			return false, nil
+		} else if stored[0] != subjUID {
+			m.SubjUID = stored[0]
+			return false, nil
+		}
+	}
+
+	m.SubjUID = subjUID
+	UpdateFaces.Store(true)
+
+	if err = UnscopedDb().Model(&Marker{}).
+		Where("face_id = ?", m.ID).
+		Where("subj_src = ?", SrcAuto).
+		Where("subj_uid <> ?", subjUID).
+		Where("marker_invalid = 0").
+		Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s f WHERE f.id = ? AND f.subj_uid = ?)", Face{}.TableName()), m.ID, subjUID).
+		UpdateColumns(Values{"subj_uid": subjUID, "marker_review": false}).Error; err != nil {
+		return true, err
+	}
+
+	return true, m.RefreshPhotos()
 }
 
 // RefreshPhotos flags related photos for metadata maintenance.

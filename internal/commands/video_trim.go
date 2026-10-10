@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -25,6 +26,8 @@ var VideoTrimCommand = &cli.Command{
 	Name:      "trim",
 	Usage:     "Trims a duration from the start (positive) or end (negative) of matching videos",
 	ArgsUsage: "[filter]... <duration>",
+	Description: "Streams are copied without re-encoding, so the cut starts at a keyframe near the requested position " +
+		"rather than at the exact frame. This keeps video and audio starting together.",
 	Flags: []cli.Flag{
 		videoCountFlag,
 		OffsetFlag,
@@ -82,13 +85,13 @@ func videoTrimAction(ctx *cli.Context) error {
 			}
 		}
 
-		var processed, skipped, failed int
+		var planned, processed, skipped, failed int
 		convert := get.Convert()
 
 		for _, plan := range plans {
 			if ctx.Bool("dry-run") {
 				log.Infof("trim: would trim %s by %s", clean.Log(plan.IndexPath), trimDuration.String())
-				skipped++
+				planned++
 				continue
 			}
 
@@ -101,12 +104,7 @@ func videoTrimAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof(
-			"trim: processed %s, skipped %s, %s",
-			formatCount(processed, "file", "files"),
-			formatCount(skipped, "file", "files"),
-			formatFailedCount(failed, "file", "files"),
-		)
+		log.Info(formatVideoSummary("trim", ctx.Bool("dry-run"), planned, processed, skipped, failed))
 
 		if failed > 0 {
 			return fmt.Errorf("trim: %s", formatFailedCount(failed, "file", "files"))
@@ -324,8 +322,9 @@ func videoTrimCmd(ffmpegBin, srcName, destName string, start, duration time.Dura
 		args = append(args, "-ss", videoFFmpegSeconds(start))
 	}
 
+	args = append(args, encode.InputArgs(srcName)...)
+
 	args = append(args,
-		"-i", srcName,
 		"-t", videoFFmpegSeconds(duration),
 		"-map", "0",
 		"-dn",

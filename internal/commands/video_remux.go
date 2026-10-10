@@ -73,13 +73,13 @@ func videoRemuxAction(ctx *cli.Context) error {
 			}
 		}
 
-		var processed, failed int
+		var planned, processed, failed int
 		convert := get.Convert()
 
 		for _, plan := range plans {
 			if ctx.Bool("dry-run") {
 				log.Infof("remux: would remux %s to %s", clean.Log(plan.SrcPath), clean.Log(plan.DestPath))
-				skipped++
+				planned++
 				continue
 			}
 
@@ -92,12 +92,7 @@ func videoRemuxAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof(
-			"remux: processed %s, skipped %s, %s",
-			formatCount(processed, "file", "files"),
-			formatCount(skipped, "file", "files"),
-			formatFailedCount(failed, "file", "files"),
-		)
+		log.Info(formatVideoSummary("remux", ctx.Bool("dry-run"), planned, processed, skipped, failed))
 
 		if failed > 0 {
 			return fmt.Errorf("remux: %s", formatFailedCount(failed, "file", "files"))

@@ -19,3 +19,13 @@ func TestDeprecatedForceFlag(t *testing.T) {
 		assert.False(t, ForceFlag("").Hidden, "the shared --force flag stays visible")
 	})
 }
+
+func TestUserRestoreFlag(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		f := UserRestoreFlag()
+
+		assert.Equal(t, "restore", f.Name)
+		assert.Empty(t, f.Aliases)
+		assert.Equal(t, UserRestoreUsage, f.Usage)
+	})
+}

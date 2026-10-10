@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -74,14 +73,14 @@ func (c *Config) FaceEngineRunType() vision.RunType {
 }
 
 // FaceEngineShouldRun reports whether the face detection engine should execute in the
-// specified scheduling context. The decision mirrors the face model run schedule in
-// the vision subsystem, so detection stays aligned with embedding generation.
+// specified scheduling context. It never does while no embeddings can be generated,
+// since a detected face is only saved with its embedding.
 func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	if c == nil {
 		return false
 	}
 
-	if c.DisableFaces() || c.FaceEngine() == face.EngineNone {
+	if c.DisableFaces() || c.FaceEngine() == face.EngineNone || faceEmbeddingsUnavailable() != "" {
 		return false
 	}
 
@@ -113,6 +112,21 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	}
 
 	return false
+}
+
+// faceEmbeddingsUnavailable returns why this process generates no face embeddings, or "" when it
+// does. Detection is skipped then, because a detected face is only saved with its embedding.
+func faceEmbeddingsUnavailable() string {
+	switch {
+	case face.EmbedderError() != nil:
+		return "the face embedding model failed to load"
+	case face.EmbeddingsDisabled():
+		return "face embeddings are disabled"
+	case face.EmbeddingsBlocked():
+		return "face embeddings are paused"
+	}
+
+	return ""
 }
 
 // faceEngineRunsOnIndex reports whether this host is fast enough to detect faces while indexing
@@ -505,6 +519,12 @@ func (c *Config) usableFaceModel(name face.ModelName) face.ModelName {
 		return face.ModelNone
 	}
 
+	if face.FindEmbeddingModel(name).RequiresTensorFlow() && c.DisableTensorFlow() {
+		c.warnFaceConfig("face-model-tensorflow", "config: face model %s requires TensorFlow, which is disabled, so face embeddings are disabled", clean.Log(name))
+
+		return face.ModelNone
+	}
+
 	if !face.FindEmbeddingModel(name).Installed(c.ModelsPath()) {
 		// Falling forward to another model would start a second vector space the library
 		// cannot compare with, and an image upgrade removes opt-in models from assets, so
@@ -740,9 +760,14 @@ func (c *Config) installedFaceModel() face.ModelName {
 	edition := c.Edition()
 
 	for _, candidate := range face.AutoModelPreference {
-		if face.LicenseRefused(candidate, edition) != nil {
+		model := face.FindEmbeddingModel(candidate)
+
+		switch {
+		case face.LicenseRefused(candidate, edition) != nil:
 			continue
-		} else if face.FindEmbeddingModel(candidate).Installed(modelsPath) {
+		case model.RequiresTensorFlow() && c.DisableTensorFlow():
+			continue
+		case model.Installed(modelsPath):
 			return candidate
 		}
 	}
@@ -852,7 +877,7 @@ func (c *Config) SupersededFaceModel() face.ModelName {
 		return ""
 	}
 
-	b, err := os.ReadFile(fileName) //nolint:gosec // path derived from the config directory
+	b, err := readOptionsFile(fileName)
 
 	if err != nil {
 		return ""

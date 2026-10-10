@@ -147,7 +147,9 @@ func lensesUpdateAction(ctx *cli.Context) error {
 		} else if lens.Unknown() {
 			return cli.Exit("unknown lens cannot be changed", 2)
 		}
-		if err := lens.UpdateMakeModel(lensMake, lensModel); err != nil {
+		if err := lens.UpdateMakeModel(lensMake, lensModel); errors.Is(err, entity.ErrInvalidValue) {
+			return cli.Exit(err, 2)
+		} else if err != nil {
 			return cli.Exit(err, 1)
 		}
 

@@ -42,7 +42,6 @@ describe("PPageFaces suggestion-list gating", () => {
       global: {
         mocks: {
           $gettext: (msg) => msg,
-          $gettextInterpolate: (msg) => msg,
           $notify: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), blockUI: vi.fn(), unblockUI: vi.fn() },
           $config: { values: {}, get: vi.fn(() => false), feature: vi.fn(() => true) },
           $route: { query: {}, name: "people_faces" },

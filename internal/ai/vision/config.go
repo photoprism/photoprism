@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -20,6 +22,8 @@ var (
 	CachePath = ""
 	// ModelsPath stores the directory containing downloaded vision models.
 	ModelsPath = ""
+	// OnnxProvider selects the execution provider for label and NSFW models.
+	OnnxProvider = onnx.DefaultProvider
 	// DownloadUrl overrides the default model download endpoint when set.
 	DownloadUrl = ""
 	// ServiceApi enables exposing vision APIs via the service layer when true.
@@ -69,10 +73,19 @@ type ConfigValues struct {
 	Thresholds Thresholds `yaml:"Thresholds,omitempty" json:"thresholds"`
 }
 
+// SetOnnxProvider updates the execution provider used by label and NSFW models.
+func SetOnnxProvider(provider onnx.Provider) {
+	if provider == "" {
+		provider = onnx.DefaultProvider
+	}
+
+	OnnxProvider = provider
+}
+
 // NewConfig returns a new computer vision config with defaults.
 func NewConfig() *ConfigValues {
 	cfg := &ConfigValues{
-		Models:     DefaultModels,
+		Models:     DefaultModels.Clone(),
 		Thresholds: DefaultThresholds,
 	}
 
@@ -101,6 +114,9 @@ func (c *ConfigValues) Load(fileName string) error {
 		return err
 	}
 
+	// Map labels and NSFW entries for unsupported local runtimes to default placeholders.
+	c.mapLegacyModels()
+
 	// Replace default placeholders with canonical defaults while respecting
 	// explicit Run / Disabled overrides.
 	c.applyDefaultModels()
@@ -109,8 +125,31 @@ func (c *ConfigValues) Load(fileName string) error {
 	// vision.yml. Custom models continue to override defaults when present.
 	c.ensureDefaultModels()
 
+	usesBaseUrl := make(map[string]bool, len(engineBaseUrls))
+
 	for _, model := range c.Models {
+		if model.TensorFlow != nil && model.ONNX != nil {
+			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
+		}
+
+		// A service ignores TensorFlow settings; without one, the entry cannot run and is disabled.
+		if (model.Type == ModelTypeLabels || model.Type == ModelTypeNsfw) && model.TensorFlow != nil {
+			if model.hasService() {
+				model.TensorFlow = nil
+				log.Debugf("vision: ignoring TensorFlow settings of %s model %s", model.Type, clean.Log(model.Name))
+			} else {
+				model.Disabled = true
+				log.Warnf("vision: TensorFlow %s model %s is not supported (disable model)", model.Type, clean.Log(model.Name))
+			}
+		}
+
 		model.ApplyEngineDefaults()
+
+		for _, baseUrl := range engineBaseUrls {
+			if baseUrl.UsedBy(model) {
+				usesBaseUrl[baseUrl.Engine] = true
+			}
+		}
 
 		// Report a misspelled mode once instead of silently normalizing names the other way.
 		if !IsNormalizeType(model.Normalize) {
@@ -120,6 +159,14 @@ func (c *ConfigValues) Load(fileName string) error {
 		}
 	}
 
+	for _, baseUrl := range engineBaseUrls {
+		if usesBaseUrl[baseUrl.Engine] {
+			baseUrl.Log()
+		}
+	}
+
+	c.replaceUnsupportedNsfwModels()
+
 	if c.Thresholds.Confidence <= 0 || c.Thresholds.Confidence > 100 {
 		c.Thresholds.Confidence = DefaultThresholds.Confidence
 	}
@@ -128,11 +175,92 @@ func (c *ConfigValues) Load(fileName string) error {
 		c.Thresholds.Topicality = DefaultThresholds.Topicality
 	}
 
-	if c.Thresholds.NSFW <= 0 || c.Thresholds.NSFW > 100 {
-		c.Thresholds.NSFW = DefaultThresholds.NSFW
+	if c.Thresholds.NSFW <= 0 {
+		c.Thresholds.NSFW = DefaultNSFWThreshold
+	} else if c.Thresholds.NSFW > 100 {
+		c.Thresholds.NSFW = 100
+	}
+
+	for _, threshold := range []*int{c.Thresholds.NSFWUpload, c.Thresholds.NSFWIndex} {
+		switch {
+		case threshold == nil:
+			continue
+		case *threshold <= 0:
+			*threshold = NSFWThresholdAuto
+		case *threshold > 100:
+			*threshold = 100
+		}
 	}
 
 	return nil
+}
+
+// SetModel replaces the configured model of the same type or appends it when missing.
+func (c *ConfigValues) SetModel(model *Model) {
+	if c == nil || model == nil {
+		return
+	}
+
+	for i := len(c.Models) - 1; i >= 0; i-- {
+		if c.Models[i] != nil && c.Models[i].Type == model.Type {
+			c.Models[i] = model
+			return
+		}
+	}
+
+	c.Models = append(c.Models, model)
+}
+
+// legacyModelNames maps model types to the names of the retired built-in TensorFlow models.
+var legacyModelNames = map[ModelType]string{
+	ModelTypeLabels: "nasnet",
+	ModelTypeNsfw:   "nsfw",
+}
+
+// mapLegacyModels turns legacy labels and NSFW entries into default placeholders that keep their
+// position and their Run / Disabled settings, so the installed default model is used instead.
+func (c *ConfigValues) mapLegacyModels() {
+	for _, model := range c.Models {
+		if !model.IsLegacy() {
+			continue
+		}
+
+		if strings.EqualFold(strings.TrimSpace(model.Name), legacyModelNames[model.Type]) {
+			log.Infof("vision: using the default %s model in place of %s, run \"photoprism vision save --force\" to update the config file",
+				model.Type, clean.Log(model.Name))
+		} else {
+			log.Warnf("vision: TensorFlow %s model %s is not supported, using the default model instead",
+				model.Type, clean.Log(model.Name))
+		}
+
+		model.Default = true
+	}
+}
+
+// replaceUnsupportedNsfwModels replaces NSFW entries that use the Ollama or OpenAI request format, which
+// return no NSFW results, with the built-in detector while keeping their Run override.
+func (c *ConfigValues) replaceUnsupportedNsfwModels() {
+	for i, model := range c.Models {
+		if model == nil || model.Type != ModelTypeNsfw || model.Disabled {
+			continue
+		}
+
+		format := model.EndpointRequestFormat()
+
+		if format != ApiFormatOllama && format != ApiFormatOpenAI {
+			continue
+		}
+
+		name, _, _ := model.GetModel()
+		warnModel("nsfw model %s cannot use the %s request format, so the built-in detector is used", clean.Log(name), format)
+
+		runType := model.Run
+		c.Models[i] = NsfwModel.Clone()
+
+		if runType != RunAuto {
+			c.Models[i].Run = runType
+		}
+	}
 }
 
 // applyDefaultModels swaps entries marked as Default with the built-in
@@ -148,7 +276,7 @@ func (c *ConfigValues) applyDefaultModels() {
 
 		switch model.Type {
 		case ModelTypeLabels:
-			c.Models[i] = NasnetModel.Clone()
+			c.Models[i] = DefaultLabelModel.Clone()
 		case ModelTypeNsfw:
 			c.Models[i] = NsfwModel.Clone()
 		case ModelTypeFace:
@@ -218,13 +346,13 @@ func (c *ConfigValues) Save(fileName string) error {
 	return os.WriteFile(fileName, data, fs.ModeConfigFile)
 }
 
-// Model returns the first enabled model with the matching type.
+// Model returns the last enabled model with the matching type.
 // It returns nil if no matching model is available or every model of that
 // type is disabled, allowing callers to chain nil-safe Model methods.
 func (c *ConfigValues) Model(t ModelType) *Model {
 	for i := len(c.Models) - 1; i >= 0; i-- {
 		m := c.Models[i]
-		if m.Type == t && !m.Disabled {
+		if m.Type == t && !m.Disabled && !m.DisabledByMode {
 			return m
 		}
 	}
@@ -335,9 +463,9 @@ func GetModelPath(name string) string {
 	return filepath.Join(GetModelsPath(), clean.Path(clean.TypeLowerUnderscore(name)))
 }
 
-// GetNasnetModelPath returns the absolute path of the default Nasnet model.
+// GetNasnetModelPath returns the absolute path of the default labels model.
 func GetNasnetModelPath() string {
-	return GetModelPath(NasnetModel.Name)
+	return GetModelPath(DefaultLabelModel.Name)
 }
 
 // GetFacenetModelPath returns the absolute path of the default Facenet model.

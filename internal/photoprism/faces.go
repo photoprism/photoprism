@@ -131,7 +131,7 @@ type facesRunResult struct {
 	// Retried counts the clusters the second pass at face-cluster-core-retry added, apart from
 	// Added, since an operator reading one combined number cannot tell whether it did anything.
 	Retried int
-	// Named counts the clusters named after the person their matched markers agree on.
+	// Named counts the clusters named after the person their recognized faces agree on.
 	Named      int
 	Updated    int
 	Assigned   int
@@ -202,13 +202,25 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 
 	// Create known marker subjects if needed.
 	start = time.Now()
-	if affected, err := query.CreateMarkerSubjects(); err != nil {
-		log.Errorf("markers: %s (create subjects)", err)
-	} else if affected > 0 {
+	// Counts reached before an error are kept, so what was linked still refreshes counts and covers.
+	subjects, linked, subjErr := query.CreateMarkerSubjects()
+
+	if subjErr != nil {
+		log.Errorf("markers: %s (create subjects)", subjErr)
+	}
+
+	if subjects+linked > 0 {
 		changed = true
-		result.Subjects = int(affected)
-		log.Infof("markers: added %d known subjects [%s]", affected, time.Since(start))
-	} else {
+		result.Subjects = int(subjects + linked)
+
+		if subjects > 0 {
+			log.Infof("markers: resolved %s [%s]", english.Plural(int(subjects), "name to a person", "names to people"), time.Since(start))
+		}
+
+		if linked > 0 {
+			log.Infof("markers: linked %s to existing people [%s]", english.Plural(int(linked), "marker", "markers"), time.Since(start))
+		}
+	} else if subjErr == nil {
 		log.Debugf("markers: found no missing subjects [%s]", time.Since(start))
 	}
 
@@ -327,7 +339,7 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 		}
 	}
 
-	// Name the clusters whose matched markers agree on one person. Gated on matching like the retry
+	// Name the clusters whose recognized faces agree on one person. Gated on matching like the retry
 	// pass, since a run that stopped early leaves markers where it would not have left them.
 	if named := w.nameByConsensus(matched); named > 0 {
 		changed = true

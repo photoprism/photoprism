@@ -18,17 +18,18 @@ const MiB = 1024 * 1024
 
 // FileSelection represents a selection filter to include/exclude certain files.
 type FileSelection struct {
-	Download  bool
-	MaxSize   int
-	Media     []string
-	OmitMedia []string
-	Types     []string
-	OmitTypes []string
-	Primary   bool
-	Originals bool
-	Hidden    bool
-	Private   bool
-	Archived  bool
+	Download        bool
+	MaxSize         int
+	Media           []string
+	OmitMedia       []string
+	Types           []string
+	OmitTypes       []string
+	Primary         bool
+	Originals       bool
+	SkipVideoStills bool
+	Hidden          bool
+	Private         bool
+	Archived        bool
 }
 
 // DownloadSelection selects files to download.
@@ -44,12 +45,13 @@ func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
 	}
 
 	return FileSelection{
-		Download:  true,
-		OmitMedia: omitMedia,
-		Originals: originals,
-		Private:   true,
-		Archived:  true,
-		Hidden:    true,
+		Download:        true,
+		OmitMedia:       omitMedia,
+		Originals:       originals,
+		SkipVideoStills: true,
+		Private:         true,
+		Archived:        true,
+		Hidden:          true,
 	}
 }
 
@@ -200,6 +202,14 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 	// Files in originals only?
 	if o.Originals {
 		s = s.Where("files.file_root = '/'")
+	}
+
+	// Skip generated still images of videos, i.e. files outside the originals folder that
+	// are neither a video, a live photo part, nor a metadata sidecar. NULL columns keep the file.
+	if o.SkipVideoStills {
+		s = s.Where("COALESCE(photos.photo_type = ? AND files.file_root <> ? AND files.media_type NOT IN (?) "+
+			"AND files.file_video = 0 AND files.file_sidecar = 0, 0) = 0",
+			media.Video.String(), entity.RootOriginals, []string{media.Video.String(), media.Live.String(), media.Sidecar.String()})
 	}
 
 	// Exclude private?

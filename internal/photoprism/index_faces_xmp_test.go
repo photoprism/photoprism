@@ -835,6 +835,10 @@ func hasFaceName(faces []meta.Face, name string) bool {
 
 // TestIndexRelated_XmpFacesFromLogicalSource verifies source-to-primary reconciliation.
 func TestIndexRelated_XmpFacesFromLogicalSource(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	t.Run("HeicEmbedded", func(t *testing.T) {
 		c := newXmpIndexConfig(t, "index-related-heic-xmp")
 		if c.ExifToolBin() == "" {
@@ -1478,5 +1482,119 @@ func TestRestoreMarkerName(t *testing.T) {
 		second, err := restoreMarkerName(m)
 		require.NoError(t, err)
 		assert.False(t, second, "restoring an already restored marker must report no change")
+	})
+}
+
+// TestApplyXmpName pins which person an imported name links to and that a renamed marker without a
+// cluster is matched again.
+func TestApplyXmpName(t *testing.T) {
+	config.TestConfig()
+
+	t.Run("DeletedPerson", func(t *testing.T) {
+		file := newXmpFile(t)
+		gone := newXmpSubject(t, "Xmp Apply Gone", entity.SrcManual)
+		require.NoError(t, gone.Delete())
+		require.True(t, entity.FindSubject(gone.SubjUID).Deleted())
+
+		m := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcAuto, "", "", false)
+
+		changed, err := applyXmpName(m, "Xmp Apply Gone")
+		require.NoError(t, err)
+		assert.True(t, changed)
+		require.NotEmpty(t, m.SubjUID)
+
+		linked := entity.FindSubject(m.SubjUID)
+		require.NotNil(t, linked)
+		assert.False(t, linked.Deleted(), "the marker is not linked to a deleted person")
+		assert.Equal(t, m.SubjUID, entity.FindMarker(m.MarkerUID).SubjUID)
+	})
+	t.Run("DeletedPersonLinked", func(t *testing.T) {
+		file := newXmpFile(t)
+		gone := newXmpSubject(t, "Xmp Apply Same", entity.SrcManual)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, gone.SubjUID, "Xmp Apply Same", false)
+		require.NoError(t, gone.Delete())
+
+		_, err := applyXmpName(m, "Xmp Apply Same")
+		require.NoError(t, err)
+		assert.Equal(t, gone.SubjUID, m.SubjUID)
+		assert.False(t, entity.FindSubject(gone.SubjUID).Deleted(), "the person is restored, as for a name typed by hand")
+	})
+	t.Run("DeletedPersonCaseVariant", func(t *testing.T) {
+		file := newXmpFile(t)
+		gone := newXmpSubject(t, "Xmp Apply Case", entity.SrcManual)
+		require.NoError(t, gone.Delete())
+		m := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcAuto, "", "", false)
+
+		_, err := applyXmpName(m, "xmp apply case")
+		require.NoError(t, err)
+		assert.Equal(t, gone.SubjUID, m.SubjUID)
+		assert.Equal(t, "Xmp Apply Case", m.MarkerName, "the canonical name is adopted")
+		assert.False(t, entity.FindSubject(gone.SubjUID).Deleted())
+
+		changed, err := applyXmpName(entity.FindMarker(m.MarkerUID), "xmp apply case")
+		require.NoError(t, err)
+		assert.False(t, changed, "a re-index with the same sidecar changes nothing")
+	})
+	t.Run("PrivatePersonStaysWithheld", func(t *testing.T) {
+		file := newXmpFile(t)
+		priv := newXmpSubject(t, "Xmp Apply Private", entity.SrcManual)
+		require.NoError(t, priv.Updates(entity.Values{"SubjPrivate": true}))
+		require.NoError(t, entity.FindSubject(priv.SubjUID).Delete())
+		m := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcAuto, "", "", false)
+
+		_, err := applyXmpName(m, "Xmp Apply Private")
+		require.NoError(t, err)
+
+		restored := entity.FindSubject(m.SubjUID)
+		require.NotNil(t, restored)
+		assert.Equal(t, priv.SubjUID, restored.SubjUID)
+		assert.True(t, restored.SubjPrivate, "the private flag is kept")
+
+		withheld, err := entity.FindWithheldPeople()
+		require.NoError(t, err)
+		assert.True(t, withheld.Withholds(restored.SubjUID, ""))
+	})
+	t.Run("RenamedWithoutCluster", func(t *testing.T) {
+		file := newXmpFile(t)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, "", "Xmp Apply Old", false)
+		require.NoError(t, entity.UnscopedDb().Model(m).UpdateColumn("matched_at", entity.Now()).Error)
+		m = entity.FindMarker(m.MarkerUID)
+		require.NotNil(t, m.MatchedAt)
+		require.Empty(t, m.FaceID)
+
+		changed, err := applyXmpName(m, "Xmp Apply New")
+		require.NoError(t, err)
+		assert.True(t, changed)
+
+		stored := entity.FindMarker(m.MarkerUID)
+		require.NotNil(t, stored)
+		assert.Equal(t, "Xmp Apply New", stored.MarkerName)
+		assert.Nil(t, stored.MatchedAt, "matched again on the next run")
+	})
+	t.Run("RenamedInCluster", func(t *testing.T) {
+		file := newXmpFile(t)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, "", "Xmp Apply Kept", false)
+		require.NoError(t, entity.UnscopedDb().Model(m).UpdateColumns(entity.Values{"matched_at": entity.Now(), "face_id": "XMPAPPLYCLUSTER"}).Error)
+		m = entity.FindMarker(m.MarkerUID)
+		require.NotNil(t, m.MatchedAt)
+
+		_, err := applyXmpName(m, "Xmp Apply Renamed")
+		require.NoError(t, err)
+		assert.NotNil(t, entity.FindMarker(m.MarkerUID).MatchedAt, "a marker in a cluster keeps its stamp")
+	})
+	t.Run("ClearedMeanwhile", func(t *testing.T) {
+		file := newXmpFile(t)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, "", "Xmp Apply Before", false)
+		require.NoError(t, entity.UnscopedDb().Model(m).UpdateColumns(entity.Values{"matched_at": entity.Now(), "face_id": "XMPAPPLYCLUSTER"}).Error)
+		m = entity.FindMarker(m.MarkerUID)
+
+		// Another process detaches the marker after it was loaded.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"matched_at": nil, "face_id": ""}).Error)
+		require.NotNil(t, m.MatchedAt, "the loaded copy keeps its stamp")
+
+		_, err := applyXmpName(m, "Xmp Apply After")
+		require.NoError(t, err)
+		assert.Nil(t, entity.FindMarker(m.MarkerUID).MatchedAt, "a stamp loaded earlier is not written back")
 	})
 }

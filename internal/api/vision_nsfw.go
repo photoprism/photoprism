@@ -7,7 +7,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -34,6 +33,11 @@ func PostVisionNsfw(router *gin.RouterGroup) {
 			return
 		}
 
+		// Abort if the Computer Vision API is disabled.
+		if abortVisionApiDisabled(c) {
+			return
+		}
+
 		var request vision.ApiRequest
 
 		// File uploads are not currently supported for this API endpoint.
@@ -55,26 +59,28 @@ func PostVisionNsfw(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the Computer Vision API is enabled, otherwise abort with an error.
-		if !get.Config().VisionApi() {
-			c.AbortWithStatusJSON(http.StatusForbidden, vision.NewApiError(request.GetId(), http.StatusForbidden))
-			return
-		}
-
 		// Run inference to check the specified images for inappropriate content.
 		results, err := vision.DetectNSFW(request.Images, media.SrcRemote)
 
 		if err != nil {
-			log.Errorf("vision: %s (run nsfw)", err)
+			logVisionErr("nsfw", err)
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 			return
+		}
+
+		// Name the detector that produced the scores, since a client cannot otherwise tell
+		// which taxonomy the class probabilities belong to, or whether they exist at all.
+		model := vision.Config.Model(vision.ModelTypeNsfw)
+
+		if model == nil {
+			model = vision.NsfwModel
 		}
 
 		// Generate Vision API service response.
 		response := vision.ApiResponse{
 			Id:     request.GetId(),
 			Code:   http.StatusOK,
-			Model:  &vision.Model{Type: vision.ModelTypeNsfw},
+			Model:  &vision.Model{Type: vision.ModelTypeNsfw, Name: model.Name, Version: model.Version},
 			Result: vision.ApiResult{Nsfw: results},
 		}
 

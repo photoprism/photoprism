@@ -15,7 +15,8 @@ type Options struct {
 	SizeLimit   int           // Maximum width and height of the output video file in pixels.
 	Quality     int           // See https://ffmpeg.org/ffmpeg-codecs.html
 	Preset      string        // See https://trac.ffmpeg.org/wiki/Encode/H.264#Preset
-	Device      string        // See https://trac.ffmpeg.org/wiki/Limiting%20the%20output%20bitrate
+	MaxBitrate  int           // Peak video bitrate in Mbit/s for encoders that support a limit, 0 for no limit.
+	Device      string        // Hardware device path or index, see https://trac.ffmpeg.org/wiki/HWAccelIntro
 	MapVideo    string        // See https://trac.ffmpeg.org/wiki/Map#Videostreamsonly
 	MapAudio    string        // See https://trac.ffmpeg.org/wiki/Map#Audiostreamsonly
 	MapMetadata string        // See https://ffmpeg.org/ffmpeg.html
@@ -140,12 +141,12 @@ func (o *Options) VideoFilter(format PixelFormat) string {
 	return prefix + fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s", o.SizeLimit, o.SizeLimit, format)
 }
 
-// QvQuality  returns the video encoding quality as "-q:v" parameter string.
+// QvQuality returns the video encoding quality as "-q:v" parameter string.
 func (o *Options) QvQuality() string {
 	return QvQuality(o.Quality)
 }
 
-// GlobalQuality returns the video encoding quality as "-global_quality" parameter string.
+// GlobalQuality returns the video encoding quality as Intel QSV "-global_quality" parameter string.
 func (o *Options) GlobalQuality() string {
 	return GlobalQuality(o.Quality)
 }
@@ -160,7 +161,21 @@ func (o *Options) QpQuality() string {
 	return QpQuality(o.Quality)
 }
 
-// CqQuality returns the video encoding quality as "-cq" parameter string.
+// VaapiQuality returns the video encoding quality as VA-API "-qp" parameter string.
+func (o *Options) VaapiQuality() string {
+	return VaapiQuality(o.Quality)
+}
+
+// CqQuality returns the video encoding quality as NVENC "-cq" parameter string.
 func (o *Options) CqQuality() string {
 	return CqQuality(o.Quality)
+}
+
+// MaxRate returns the peak video bitrate as "-maxrate" parameter string, or an empty string for no limit.
+func (o *Options) MaxRate() string {
+	if o.MaxBitrate <= 0 {
+		return ""
+	}
+
+	return fmt.Sprintf("%dM", o.MaxBitrate)
 }

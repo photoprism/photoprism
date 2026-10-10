@@ -27,7 +27,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 
 	// Separate square lens videos are combined in canonical _00/_10 order before v360 dewarping.
 	// Only the _00 file owns generated sidecars; the _10 lens and LRV proxy remain related originals.
-	if capture := FindInsta360Capture(f); capture.ValidPair() && capture.Left.FileName() == f.FileName() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+	if capture := FindInsta360Capture(f); capture != nil && capture.Left != nil && capture.Left.FileName() == f.FileName() && capture.Dewarpable() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		result = append(result, NewConvertCmd(
 			ffmpeg.DewarpDualFisheyePairToJpegCmd(capture.Left.FileName(), capture.Right.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
 			WithImageVerification().
@@ -122,8 +122,15 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		// and the only option when RAW rendering is disabled. Colors stay correct for sensors they
 		// cannot identify (recent Canon CR3 bodies otherwise come out magenta). Skipped if unusable.
 		if w.conf.ExifToolEnabled() && raw.PreviewExtAllowed(fileExt) {
-			result = append(result, NewConvertCmd(raw.ExifToolJpgFromRawCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification())
-			result = append(result, NewConvertCmd(raw.ExifToolPreviewImageCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification())
+			// Fisheye DNGs get no source orientation, since their preview may be dewarped afterwards.
+			sourceOrientation := 0
+
+			if !f.FisheyeDng() {
+				sourceOrientation = f.Orientation()
+			}
+
+			result = append(result, NewConvertCmd(raw.ExifToolJpgFromRawCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification().WithSourceOrientation(sourceOrientation))
+			result = append(result, NewConvertCmd(raw.ExifToolPreviewImageCmd(w.conf.ExifToolBin(), f.FileName())).WithImageVerification().WithSourceOrientation(sourceOrientation))
 		}
 	}
 
@@ -135,8 +142,8 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		)
 	}
 
-	// Use ImageMagick for other media file formats if the type and extension are allowed.
-	if w.conf.ImageMagickEnabled() && w.imageMagickExclude.Allow(fileExt) {
+	// Use ImageMagick for other media file formats if the type, extension, and file names are allowed.
+	if w.conf.ImageMagickEnabled() && w.imageMagickExclude.Allow(fileExt) && magickNames(f.FileName(), jpegName) {
 		resize := fmt.Sprintf("%dx%d>", w.conf.JpegSize(), w.conf.JpegSize())
 		quality := fmt.Sprintf("%d", w.conf.JpegQuality())
 

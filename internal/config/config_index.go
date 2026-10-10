@@ -155,10 +155,13 @@ func (c *Config) AutoImport() time.Duration {
 	return time.Duration(c.options.AutoImport) * time.Second
 }
 
-// OriginalsLimit returns the maximum size of originals in MB.
+// OriginalsLimit returns the maximum size of originals in MB, or -1 if there is none. A larger value
+// is clamped to MaxSizeLimit.
 func (c *Config) OriginalsLimit() int {
-	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
+	if c.options.OriginalsLimit <= 0 {
 		return -1
+	} else if c.options.OriginalsLimit > MaxSizeLimit {
+		return MaxSizeLimit
 	}
 
 	return c.options.OriginalsLimit

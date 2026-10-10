@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
@@ -30,15 +29,38 @@ func init() {
 		Defaults: openaiDefaults{},
 	})
 
+	registerOpenAIEngineDefaults()
+}
+
+// registerOpenAIEngineDefaults registers the OpenAI engine alias with the base URL and default model
+// from OPENAI_BASE_URL and OPENAI_MODEL, if set.
+func registerOpenAIEngineDefaults() {
+	ensureEnv()
+
+	defaultModel := openai.DefaultModel
+
+	if envDefault := envModel(openai.ModelEnv); envDefault != "" {
+		defaultModel = envDefault
+	}
+
 	RegisterEngineAlias(openai.EngineName, EngineInfo{
-		Uri:               "https://api.openai.com/v1/responses",
+		Uri:               openai.DefaultUri,
 		RequestFormat:     ApiFormatOpenAI,
 		ResponseFormat:    ApiFormatOpenAI,
 		FileScheme:        scheme.Data,
-		DefaultModel:      openai.DefaultModel,
+		DefaultModel:      defaultModel,
 		DefaultResolution: openai.DefaultResolution,
 		DefaultKey:        openai.APIKeyPlaceholder,
 	})
+}
+
+// openaiDefaultModel returns the registered default model of the OpenAI engine.
+func openaiDefaultModel() string {
+	if info, ok := EngineInfoFor(openai.EngineName); ok && info.DefaultModel != "" {
+		return info.DefaultModel
+	}
+
+	return openai.DefaultModel
 }
 
 // SystemPrompt returns the default OpenAI system prompt for the specified model type.
@@ -165,11 +187,9 @@ func (openaiBuilder) Build(ctx context.Context, model *Model, files Files, media
 
 // Parse converts an OpenAI Responses API payload into the internal ApiResponse representation.
 func (openaiParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
-	if status >= 300 {
-		if msg := openai.ParseErrorMessage(raw); msg != "" {
-			return nil, fmt.Errorf("openai: %s", msg)
-		}
-		return nil, fmt.Errorf("openai: status %d", status)
+	// Return an error for a failed request, as its response text is not a result.
+	if err := serviceStatusError(req.engineName(openai.EngineName), ApiFormatOpenAI, openaiRequestModel(req), status); err != nil {
+		return nil, err
 	}
 
 	var resp openai.Response
@@ -333,4 +353,15 @@ func populateOpenAIJSONResult(result *ApiResult, payload json.RawMessage, normal
 	}
 
 	return nil
+}
+
+// openaiRequestModel returns the model a request was sent for, which is the default model if none is set.
+func openaiRequestModel(req *ApiRequest) string {
+	if req != nil {
+		if model := strings.TrimSpace(req.Model); model != "" {
+			return model
+		}
+	}
+
+	return openaiDefaultModel()
 }

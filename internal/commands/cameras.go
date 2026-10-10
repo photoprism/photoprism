@@ -141,7 +141,9 @@ func camerasUpdateAction(ctx *cli.Context) error {
 		} else if camera.Unknown() {
 			return cli.Exit("unknown camera cannot be changed", 2)
 		}
-		if err := camera.UpdateMakeModel(cameraMake, cameraModel); err != nil {
+		if err := camera.UpdateMakeModel(cameraMake, cameraModel); errors.Is(err, entity.ErrInvalidValue) {
+			return cli.Exit(err, 2)
+		} else if err != nil {
 			return cli.Exit(err, 1)
 		}
 

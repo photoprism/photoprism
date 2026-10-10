@@ -8,6 +8,17 @@ import (
 
 // TestStackPrefix verifies the stack names of capture files, their sidecars, and other files.
 func TestStackPrefix(t *testing.T) {
+	t.Run("DotName", func(t *testing.T) {
+		assert.Equal(t, "", StackPrefix("/originals/2024/ ..jpg", true))
+		assert.Equal(t, "", StackPrefix("/originals/2024/ ...jpg", true))
+		assert.Equal(t, " .", StackPrefix("/originals/2024/ ..jpg", false))
+		assert.Equal(t, "..jpg", StackPrefix("/originals/2024/..jpg", false))
+		assert.Equal(t, "..jpg", StackPrefix("/originals/2024/..jpg", true))
+	})
+	t.Run("SequenceForm", func(t *testing.T) {
+		assert.Equal(t, "", StackPrefix("/originals/2024/(1).jpg", true))
+		assert.Equal(t, "IMG_1", StackPrefix("/originals/2024/IMG_1 (2).jpg", true))
+	})
 	t.Run("Insta360Video", func(t *testing.T) {
 		left := "VID_20220625_140410_00_008"
 

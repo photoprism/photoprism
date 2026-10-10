@@ -115,3 +115,22 @@ func TestClientRegistry_FindByName_NormalizesLegacyAliasAppToInstance(t *testing
 		assert.Equal(t, cluster.RoleInstance, n.Role)
 	}
 }
+
+// TestClientRegistry_PutNameLookup checks that a name resolves the record stored under its DNS label.
+func TestClientRegistry_PutNameLookup(t *testing.T) {
+	c := newRegistryTestConfig(t, "cluster-registry-name-lookup")
+
+	existing := entity.NewClient().SetName("pp-node-name").SetRole(cluster.RoleInstance)
+	assert.NoError(t, existing.Create())
+
+	r, err := NewClientRegistryWithConfig(c)
+	assert.NoError(t, err)
+
+	n := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "PP-Node-Name", Role: cluster.RoleInstance}}
+	assert.NoError(t, r.Put(n))
+	assert.Equal(t, existing.ClientUID, n.ClientID)
+
+	var count int
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_name = ?", "pp-node-name").Count(&count).Error)
+	assert.Equal(t, 1, count)
+}

@@ -11,6 +11,9 @@ import (
 var (
 	ErrUnauthorized           = errors.New("unauthorized")
 	ErrAccountAlreadyExists   = errors.New("account already exists")
+	ErrUsernameAlreadyExists  = errors.New("username already exists")
+	ErrInvalidUsername        = errors.New("invalid username")
+	ErrEmailAlreadyExists     = errors.New("email already exists")
 	ErrAccountNotFound        = errors.New("account not found")
 	ErrAccountDisabled        = errors.New("account disabled")
 	ErrAccountCreateFailed    = errors.New("failed to create account")

@@ -232,6 +232,10 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 		rotateDatabase := ctx.Bool("database") || (!ctx.IsSet("database") && !ctx.IsSet("secret"))
 		rotateSecret := ctx.Bool("secret")
 
+		if !rotateDatabase && !rotateSecret {
+			return cli.Exit(fmt.Errorf("nothing to rotate (use --database or --secret)"), 2)
+		}
+
 		if ctx.Bool("dry-run") {
 			target := clean.LogQuote(name)
 			if target == "" {
@@ -243,9 +247,6 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			}
 			if rotateSecret {
 				what = append(what, "node secret")
-			}
-			if len(what) == 0 {
-				what = append(what, "no resources (no rotation flags set)")
 			}
 			switch {
 			case conf.Portal():

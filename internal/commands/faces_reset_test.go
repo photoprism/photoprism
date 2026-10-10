@@ -165,6 +165,55 @@ func TestFacesResetDescription(t *testing.T) {
 	}
 }
 
+// TestConfirmRestore covers the restore offer, which the environment variable alone does not accept and
+// which fails with exit code 1 rather than as a usage error when it cannot be asked.
+func TestConfirmRestore(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("ConfirmedSkipsThePrompt", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+
+		proceed, err := ConfirmRestore(true, "Restore user alice", "--restore")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+	t.Run("NonInteractiveEnvIsAnError", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+
+		proceed, err := ConfirmRestore(false, "Restore client cs7pvt5h8rw9aaqj?", "--restore")
+
+		assert.False(t, proceed)
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Equal(t, "Restore client cs7pvt5h8rw9aaqj requires confirmation, pass --restore", err.Error())
+	})
+	t.Run("NoTerminalIsAnError", func(t *testing.T) {
+		proceed, err := ConfirmRestore(false, "Restore user alice", "--restore")
+
+		assert.False(t, proceed)
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.EqualError(t, err, "could not ask for confirmation (no terminal), pass --restore")
+	})
+	t.Run("AnsweredYes", func(t *testing.T) {
+		pipeResetAnswers(t, "y\n")
+
+		proceed, err := ConfirmRestore(false, "Restore user alice", "--restore")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		proceed, err := ConfirmRestore(false, "Restore user alice", "--restore")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
+}
+
 // TestConfirmAction covers the confirmation helper, and in particular that a prompt which cannot
 // be shown is reported as an error rather than as a declined action.
 func TestConfirmAction(t *testing.T) {

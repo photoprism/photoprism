@@ -49,7 +49,7 @@ const (
 	// resolved name is written to "options.yml" so it stays the same afterwards. That write is what
 	// tells it apart from the detector's DetectorAuto, which is derived again on every start.
 	ModelAuto ModelName = "auto"
-	// ModelNone disables embedding generation so only face regions are detected.
+	// ModelNone disables embedding generation, and with it face detection.
 	ModelNone ModelName = "none"
 	// ModelFaceNet is the TensorFlow FaceNet model PhotoPrism has shipped since 2021.
 	ModelFaceNet ModelName = "facenet"
@@ -413,6 +413,11 @@ func (m *EmbeddingModel) InputSize() (width, height int) {
 // Aligned reports whether the model requires landmark-aligned crops.
 func (m *EmbeddingModel) Aligned() bool {
 	return m != nil && m.Alignment == AlignArcFace5
+}
+
+// RequiresTensorFlow reports whether the model generates embeddings through TensorFlow.
+func (m *EmbeddingModel) RequiresTensorFlow() bool {
+	return m != nil && m.Runtime == RuntimeTensorFlow
 }
 
 // String returns the model name, or "none" for nil receivers.

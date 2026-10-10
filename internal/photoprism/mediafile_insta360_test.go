@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -211,10 +212,16 @@ func newInsta360PreviewFixture(t *testing.T, dir string) (*MediaFile, string) {
 		_ = os.RemoveAll(sidecars)
 	})
 
-	left, err := NewMediaFile(writeInsta360CaptureFile(t, originals, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg"))
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	// The lens files are square videos, as the content of both lenses must match their type.
+	writeInsta360StackMedia(t, conf, originals, "VID_20220625_140410_00_008.insv")
+	writeInsta360StackMedia(t, conf, originals, "VID_20220625_140410_10_008.insv")
+	writeInsta360StackMedia(t, conf, originals, "LRV_20220625_140410_11_008.insv")
+	left, err := NewMediaFile(filepath.Join(originals, "VID_20220625_140410_00_008.insv"))
 	require.NoError(t, err)
-	writeInsta360CaptureFile(t, originals, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
-	writeInsta360CaptureFile(t, originals, "LRV_20220625_140410_11_008.insv", "testdata/flash.jpg")
 
 	return left, sidecars
 }
@@ -288,6 +295,18 @@ func TestInsta360StalePreview(t *testing.T) {
 		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
 		assert.True(t, insta360StalePreview(left, rightLens(t, "stale-preview-square")))
 	})
+	t.Run("SidecarVariant", func(t *testing.T) {
+		// Only the names PhotoPrism generates are previews in the sidecar folder.
+		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-variant")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.JPG", "testdata/flash.jpg")
+		assert.False(t, insta360StalePreview(left, rightLens(t, "stale-preview-variant")))
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-mismatch")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
+		writeInsta360Photo(t, Config(), filepath.Join(Config().OriginalsPath(), "stale-preview-mismatch", "VID_20220625_140410_10_008.insv"), "320x320")
+		assert.False(t, insta360StalePreview(left, rightLens(t, "stale-preview-mismatch")))
+	})
 	t.Run("RightLensIndexed", func(t *testing.T) {
 		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-indexed")
 		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
@@ -315,6 +334,24 @@ func TestInsta360StalePreview(t *testing.T) {
 		assert.False(t, insta360StalePreview(ordinary, MediaFiles{ordinary}))
 		assert.False(t, insta360StalePreview(nil, nil))
 	})
+}
+
+// TestInsta360RelatedPreviews verifies that the existing previews of capture files are grouped by their generated names.
+func TestInsta360RelatedPreviews(t *testing.T) {
+	left, sidecars := newInsta360PreviewFixture(t, "related-previews")
+	generated := writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_10_008.insv.jpg", "testdata/flash.jpg")
+	variant := writeInsta360CaptureFile(t, sidecars, "LRV_20220625_140410_11_008.insv.JPG", "testdata/flash.jpg")
+
+	related, err := left.RelatedFiles(false)
+	require.NoError(t, err)
+
+	var names []string
+	for _, f := range related.Files {
+		names = append(names, f.FileName())
+	}
+
+	assert.Contains(t, names, generated)
+	assert.NotContains(t, names, variant)
 }
 
 // TestInsta360Capture_MemberPreview verifies that only previews of the right lens and proxy match.
@@ -369,6 +406,135 @@ func TestDewarpedVideoFile(t *testing.T) {
 	assert.Nil(t, DewarpedVideoFile(nil))
 }
 
+func TestInsta360PlaybackFile(t *testing.T) {
+	conf := config.TestConfig()
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	// newCapture returns the left lens of a square capture, with a right lens that holds JPEG bytes
+	// unless dewarpable is set.
+	newCapture := func(t *testing.T, dewarpable bool) *MediaFile {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		if dewarpable {
+			writeInsta360StackMedia(t, conf, dir, insta360StackRight)
+		} else {
+			writeInsta360Photo(t, conf, filepath.Join(dir, insta360StackRight), "320x320")
+		}
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		return left
+	}
+
+	// addAvc copies a video fixture to the AVC sidecar name of m.
+	addAvc := func(t *testing.T, m *MediaFile) string {
+		avcName, err := fs.FileName(m.FileName(), conf.SidecarPath(), conf.OriginalsPath(), fs.ExtAvc)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.Remove(avcName) })
+		require.NoError(t, fs.Copy(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"), avcName, false))
+		return avcName
+	}
+
+	t.Run("NotReady", func(t *testing.T) {
+		left := newCapture(t, true)
+		playable, ready := Insta360PlaybackFile(left)
+		assert.False(t, ready)
+		assert.Nil(t, playable)
+	})
+	t.Run("Dewarped", func(t *testing.T) {
+		left := newCapture(t, true)
+		avcName := addAvc(t, left)
+		playable, ready := Insta360PlaybackFile(left)
+		require.True(t, ready)
+		assert.Equal(t, avcName, playable.FileName())
+	})
+	t.Run("NotDewarpable", func(t *testing.T) {
+		left := newCapture(t, false)
+		assert.True(t, left.Insta360Fisheye())
+		assert.False(t, left.DewarpableInsv())
+		playable, ready := Insta360PlaybackFile(left)
+		require.True(t, ready)
+		assert.Same(t, left, playable, "the lens is played as it is")
+	})
+	t.Run("NotMp4Lens", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360LensContent(t, conf, filepath.Join(dir, insta360StackRight), "matroska")
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		playable, ready := Insta360PlaybackFile(left)
+		require.True(t, ready)
+		assert.Same(t, left, playable, "the lens is played as it is")
+	})
+	t.Run("NotDewarpableWithDerivative", func(t *testing.T) {
+		left := newCapture(t, false)
+		avcName := addAvc(t, left)
+		playable, ready := Insta360PlaybackFile(left)
+		require.True(t, ready)
+		assert.Equal(t, avcName, playable.FileName(), "an existing derivative is played")
+	})
+	t.Run("Ordinary", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"))
+		require.NoError(t, err)
+		playable, ready := Insta360PlaybackFile(mf)
+		require.True(t, ready)
+		assert.Same(t, mf, playable)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		playable, ready := Insta360PlaybackFile(nil)
+		assert.False(t, ready)
+		assert.Nil(t, playable)
+	})
+}
+
+func TestMediaFile_Insta360Fisheye(t *testing.T) {
+	conf := config.TestConfig()
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	t.Run("Pair", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, conf, dir, insta360StackRight)
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		assert.True(t, left.Insta360Fisheye())
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360Photo(t, conf, filepath.Join(dir, insta360StackRight), "320x320")
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		assert.True(t, left.Insta360Fisheye())
+	})
+	t.Run("LoneLens", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		assert.False(t, left.Insta360Fisheye())
+	})
+	t.Run("DualFisheyeFrame", func(t *testing.T) {
+		mf, err := NewMediaFile("testdata/insta360.insv")
+		require.NoError(t, err)
+		assert.True(t, mf.Insta360Fisheye())
+	})
+	t.Run("DualStream", func(t *testing.T) {
+		mf := newInsta360StreamFile(t, t.TempDir(), "dual.insv")
+		mf.width, mf.height = 64, 64
+		assert.True(t, mf.Insta360Fisheye())
+	})
+	t.Run("Ordinary", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "blue-go-video.mp4"))
+		require.NoError(t, err)
+		assert.False(t, mf.Insta360Fisheye())
+		assert.False(t, (*MediaFile)(nil).Insta360Fisheye())
+	})
+}
+
 // TestInsta360Capture_ValidPair verifies geometry and timing safeguards.
 func TestInsta360Capture_ValidPair(t *testing.T) {
 	dir := t.TempDir()
@@ -392,6 +558,96 @@ func TestInsta360Capture_ValidPair(t *testing.T) {
 	require.NoError(t, err)
 	photo.width, photo.height = 3072, 3072
 	assert.False(t, (&Insta360Capture{Left: left, Right: photo}).ValidPair())
+}
+
+func TestInsta360LensContainer(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	dir := t.TempDir()
+
+	t.Run("Mp4", func(t *testing.T) {
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		assert.True(t, insta360LensContainer(filepath.Join(dir, insta360StackLeft)))
+		assert.True(t, insta360LensContainer("testdata/insta360.insv"))
+	})
+	t.Run("QuickTime", func(t *testing.T) {
+		fileName := filepath.Join(dir, "quicktime.insv")
+		writeInsta360LensContent(t, cnf, fileName, "mov")
+		assert.True(t, insta360LensContainer(fileName))
+	})
+	t.Run("Matroska", func(t *testing.T) {
+		fileName := filepath.Join(dir, "matroska.insv")
+		writeInsta360LensContent(t, cnf, fileName, "matroska")
+		assert.False(t, insta360LensContainer(fileName))
+	})
+	t.Run("Text", func(t *testing.T) {
+		fileName := filepath.Join(dir, "text.insv")
+		writeInsta360LensContent(t, cnf, fileName, "text")
+		assert.False(t, insta360LensContainer(fileName))
+	})
+	t.Run("Other", func(t *testing.T) {
+		assert.False(t, insta360LensContainer("testdata/flash.jpg"))
+		assert.False(t, insta360LensContainer(filepath.Join(dir, "missing.insv")))
+	})
+}
+
+func TestInsta360Capture_Dewarpable(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	t.Run("Pair", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, cnf, dir, insta360StackRight)
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		capture := FindInsta360Capture(left)
+		assert.True(t, capture.Dewarpable())
+		assert.True(t, left.DewarpableInsv())
+	})
+	t.Run("RightLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+		writeInsta360Photo(t, cnf, filepath.Join(dir, insta360StackRight), "320x320")
+		left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+		require.NoError(t, err)
+		capture := FindInsta360Capture(left)
+		assert.True(t, capture.ValidPair(), "the capture stays grouped")
+		assert.False(t, capture.Dewarpable())
+		assert.False(t, left.DewarpableInsv())
+	})
+	t.Run("RightLensNotMp4", func(t *testing.T) {
+		for _, content := range []string{"matroska", "text"} {
+			dir := t.TempDir()
+			writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+			writeInsta360LensContent(t, cnf, filepath.Join(dir, insta360StackRight), content)
+			left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+			require.NoError(t, err)
+			capture := FindInsta360Capture(left)
+			require.NoError(t, capture.Right.CheckType(), content)
+			assert.True(t, capture.ValidPair(), content)
+			assert.False(t, capture.Dewarpable(), content)
+			assert.False(t, left.DewarpableInsv(), content)
+		}
+	})
+	t.Run("LeftLensTypeMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360Photo(t, cnf, filepath.Join(dir, insta360StackLeft), "320x320")
+		writeInsta360StackMedia(t, cnf, dir, insta360StackRight)
+		right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+		require.NoError(t, err)
+		capture := FindInsta360Capture(right)
+		assert.True(t, capture.ValidPair(), "the capture stays grouped")
+		assert.False(t, capture.Dewarpable())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, (*Insta360Capture)(nil).Dewarpable())
+	})
 }
 
 // TestAbsDuration verifies duration normalization.
@@ -601,4 +857,148 @@ func TestInsta360ImportOrder(t *testing.T) {
 	files := MediaFiles{proxy, ordinary}
 	assert.Equal(t, files, insta360ImportOrder(RelatedFiles{Main: ordinary, Files: files}))
 	assert.Equal(t, MediaFiles{proxy, right}, insta360ImportOrder(RelatedFiles{Main: right, Files: MediaFiles{proxy, right}}))
+}
+
+// TestMediaFile_RelatedFiles_Insta360Proxy verifies that LRV proxies are grouped by partner only in
+// originals, while files to be imported are grouped by name as before.
+func TestMediaFile_RelatedFiles_Insta360Proxy(t *testing.T) {
+	const (
+		left  = "VID_20240415_213145_00_035.insv"
+		proxy = "LRV_20240415_213145_01_035.lrv"
+	)
+
+	cfg := newInsta360StackConfig(t, "insta360proxyrelated", false)
+
+	names := func(related RelatedFiles) (result []string) {
+		for _, f := range related.Files {
+			result = append(result, f.BaseName())
+		}
+		return result
+	}
+
+	for _, root := range []struct {
+		name       string
+		dir        string
+		proxyInSet bool
+		goProInSet bool
+	}{
+		{"Originals", filepath.Join(cfg.OriginalsPath(), "insta360proxyrelated"), true, false},
+		{"Import", filepath.Join(cfg.ImportPath(), "insta360proxyrelated"), false, true},
+	} {
+		t.Run(root.name, func(t *testing.T) {
+			for _, name := range []string{left, proxy, "GOPR0124.MP4", "GOPR0124.LRV"} {
+				writeInsta360StackMedia(t, cfg, root.dir, name)
+			}
+
+			main, err := NewMediaFile(filepath.Join(root.dir, left))
+			require.NoError(t, err)
+			related, err := main.RelatedFiles(false)
+			require.NoError(t, err)
+			assert.Equal(t, root.proxyInSet, slices.Contains(names(related), proxy))
+			assert.Equal(t, left, related.Main.BaseName())
+
+			goPro, err := NewMediaFile(filepath.Join(root.dir, "GOPR0124.MP4"))
+			require.NoError(t, err)
+			related, err = goPro.RelatedFiles(false)
+			require.NoError(t, err)
+			assert.Equal(t, root.goProInSet, slices.Contains(names(related), "GOPR0124.LRV"))
+			assert.Equal(t, "GOPR0124.MP4", related.Main.BaseName())
+		})
+	}
+}
+
+// TestInsta360LensNotVideo verifies which files are reported as .insv files that are not a video.
+func TestInsta360LensNotVideo(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	dir := t.TempDir()
+	newFile := func(t *testing.T, name, content string) *MediaFile {
+		t.Helper()
+		if content == "mp4" {
+			writeInsta360StackMedia(t, cnf, dir, name)
+		} else {
+			writeInsta360LensContent(t, cnf, filepath.Join(dir, name), content)
+		}
+		f, err := NewMediaFile(filepath.Join(dir, name))
+		require.NoError(t, err)
+		return f
+	}
+
+	t.Run("Mp4Lens", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(newFile(t, insta360StackLeft, "mp4")))
+	})
+	t.Run("QuickTimeLens", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(newFile(t, "VID_20220625_140410_10_009.insv", "mov")))
+	})
+	t.Run("TextLens", func(t *testing.T) {
+		assert.True(t, insta360LensNotVideo(newFile(t, insta360StackRight, "text")))
+		assert.True(t, insta360LensNotVideo(newFile(t, insta360StackProxy, "text")))
+	})
+	t.Run("MatroskaLens", func(t *testing.T) {
+		assert.True(t, insta360LensNotVideo(newFile(t, "VID_20220625_140410_00_010.insv", "matroska")))
+	})
+	t.Run("OtherName", func(t *testing.T) {
+		assert.True(t, insta360LensNotVideo(newFile(t, "clip.insv", "text")))
+	})
+	t.Run("LrvProxy", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(newFile(t, "LRV_20240415_213145_01_035.lrv", "text")))
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		f := newFile(t, "VID_20220625_140410_10_011.insv", "text")
+		require.NoError(t, os.Chmod(f.FileName(), 0))
+		t.Cleanup(func() { _ = os.Chmod(f.FileName(), fs.ModeFile) })
+		if _, err := os.ReadFile(f.FileName()); err == nil {
+			t.Skip("file permissions are not enforced for this user")
+		}
+		assert.False(t, insta360LensNotVideo(f))
+	})
+	t.Run("CameraBrands", func(t *testing.T) {
+		for _, brand := range []string{"isom", "avc1", "iso4", "qt  "} {
+			fileName := filepath.Join(dir, "VID_20220625_140410_00_012.insv")
+			data := append([]byte{0, 0, 0, 24, 'f', 't', 'y', 'p'}, brand...)
+			data = append(data, 0, 0, 0, 0)
+			data = append(data, brand...)
+			data = append(data, "mp41"...)
+			require.NoError(t, os.WriteFile(fileName, data, fs.ModeFile))
+			f, err := NewMediaFile(fileName)
+			require.NoError(t, err)
+			assert.False(t, insta360LensNotVideo(f), brand)
+		}
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, insta360LensNotVideo(nil))
+	})
+}
+
+// TestWarnInsta360LensNotVideo verifies that only .insv files that are not a video are reported.
+func TestWarnInsta360LensNotVideo(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to create synthetic capture files")
+	}
+
+	hook := newSequenceLogHook(t)
+	dir := t.TempDir()
+	writeInsta360StackMedia(t, cnf, dir, insta360StackLeft)
+	writeInsta360LensContent(t, cnf, filepath.Join(dir, insta360StackRight), "text")
+	left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+	require.NoError(t, err)
+	right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+	require.NoError(t, err)
+
+	t.Run("Video", func(t *testing.T) {
+		hook.Reset()
+		warnInsta360LensNotVideo("index", left)
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("Text", func(t *testing.T) {
+		hook.Reset()
+		warnInsta360LensNotVideo("index", right)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Contains(t, hook.LastEntry().Message, "index: ")
+		assert.Contains(t, hook.LastEntry().Message, insta360StackRight)
+	})
 }

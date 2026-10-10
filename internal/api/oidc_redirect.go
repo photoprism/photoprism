@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -52,6 +53,16 @@ func oidcReconcileHint(userName, provider, subject string) string {
 
 	return fmt.Sprintf("account %s uses %s authentication and must be linked before it can sign in via oidc; adopt it with 'photoprism users mod %s --auth oidc --auth-id %s' or sign in locally",
 		clean.LogQuote(userName), clean.LogQuote(provider), userName, clean.Log(subject))
+}
+
+// oidcEmailUsername reports whether the username of a new account is its verified email address, as with the
+// email username claim, and whether the address is a valid username as it is.
+func oidcEmailUsername(claim, name, verifiedEmail string) (fromEmail, valid bool) {
+	if claim != authn.OidcClaimEmail || verifiedEmail == "" || name != verifiedEmail {
+		return false, false
+	}
+
+	return true, clean.Username(name) == name
 }
 
 // OIDCRedirect completes the OIDC flow, creates a session, and renders a page that stores the token client-side.
@@ -264,6 +275,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			// Update user profile information.
 			details := user.Details()
+			emailChanged := false
 
 			// Update user display name.
 			if entity.SrcPriority[details.NameSrc] <= entity.SrcPriority[entity.SrcOIDC] {
@@ -310,12 +322,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Update email only when the IdP marks it verified and no other account
-			// holds it. The email is informational, so a clash never blocks login; the
-			// Portal OP forwards real verification state, so unverified cluster emails
-			// are simply not stored.
-			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
-				user.UserEmail = clean.Email(userInfo.Email)
+			// Update email only when the IdP marks it verified; the Portal OP forwards
+			// real verification state, so unverified cluster emails are not stored.
+			if email := oidc.VerifiedEmail(userInfo); email != "" {
+				emailChanged = email != user.UserEmail
+				user.UserEmail = email
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
@@ -342,6 +353,8 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
+			} else if emailChanged {
+				user.ReportSharedEmail()
 			}
 
 			// Set user avatar image?
@@ -362,9 +375,39 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			userName = oidcUser.Username()
 
-			// Resolve potential naming conflict by adding a random number to the username.
-			if found := entity.FindUserByName(userName); found != nil {
+			// A username taken from the email address must match it, so it is never changed to resolve a conflict.
+			emailUsername, validEmailUsername := oidcEmailUsername(conf.OIDCUsername(), oidcUser.UserName, oidc.VerifiedEmail(userInfo))
+
+			if emailUsername && !validEmailUsername {
+				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrInvalidUsername.Error()}, clean.LogQuote(userName))
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidUsername.Error())
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+				return
+			} else if entity.FindUserByName(userName) == nil {
+				// The username is available.
+			} else if emailUsername {
+				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrUsernameAlreadyExists.Error()}, clean.LogQuote(userName))
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrUsernameAlreadyExists.Error())
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+				return
+			} else {
+				// Resolve the naming conflict by adding a random number to the username.
 				userName += rnd.Base10(6)
+			}
+
+			// An email address used as username must not be assigned to another account.
+			if emailUsername {
+				if count, _, err := oidcUser.OtherEmailHolders(); err != nil {
+					event.AuditErr([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrAccountCreateFailed.Error(), status.Error(err)}, clean.LogQuote(userName))
+					event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error())
+					c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+					return
+				} else if count > 0 {
+					event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrEmailAlreadyExists.Error()}, clean.LogQuote(userName))
+					event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrEmailAlreadyExists.Error())
+					c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+					return
+				}
 			}
 
 			event.AuditInfo([]string{clientIp, "create session", "oidc", "create user", clean.LogQuote(userName)})
@@ -404,12 +447,9 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Set email only when the IdP marks it verified and no other account
-			// holds it. The email is informational (not an auth identifier), so a
-			// clash never blocks provisioning; the Portal OP forwards real
-			// verification state, so unverified cluster emails are simply not stored.
-			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
-				user.UserEmail = clean.Email(userInfo.Email)
+			// Mark the email verified, which it only holds if the IdP has verified it.
+			if email := oidc.VerifiedEmail(userInfo); email != "" {
+				user.UserEmail = email
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
@@ -438,6 +478,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
+			}
+
+			// Report an email address that other accounts also hold.
+			if count, _ := user.ReportSharedEmail(); count > 0 {
+				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", "email is also assigned to %s"}, clean.LogQuote(userName), english.Plural(count, "other account", "other accounts"))
 			}
 
 			// Set user avatar image.

@@ -1,12 +1,14 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -74,7 +76,11 @@ func UpdateLens(router *gin.RouterGroup) {
 		}
 
 		// Save lens and return new model values if successful.
-		if err := m.SaveForm(frm); err != nil {
+		if err := m.SaveForm(frm); errors.Is(err, entity.ErrInvalidValue) {
+			log.Warnf("lens: %s", clean.Error(err))
+			AbortInvalidName(c)
+			return
+		} else if err != nil {
 			log.Errorf("lens: %s", clean.Error(err))
 			AbortSaveFailed(c)
 			return

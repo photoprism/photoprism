@@ -1,7 +1,9 @@
 package backup
 
 import (
+	"bufio"
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -9,10 +11,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -98,7 +102,8 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		conn := newMariadbConn(c, c.MariadbDumpBin())
 		logDatabaseSsl(conn, "backup")
-		password, cmd = conn.Password, conn.Cmd()
+		warnNonInnodbTables(c.DbIfConnected(), conn.Name)
+		password, cmd = conn.Password, conn.Cmd(mariadbDumpArgs()...)
 	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
@@ -121,6 +126,60 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
 
 	return writeDump(cmd, backupPath, fileName, password, force, retain)
+}
+
+// mariadbDumpArgs returns the flags a MariaDB or MySQL dump is created with: from a consistent snapshot
+// without table locks, and with each INSERT statement committed on its own when restored.
+func mariadbDumpArgs() []string {
+	return []string{"--single-transaction", "--skip-add-locks", "--skip-no-autocommit"}
+}
+
+// engineCheckTimeout bounds the query that checks the storage engine of the tables before a dump.
+var engineCheckTimeout = 5 * time.Second
+
+// warnNonInnodbTables logs a warning naming the tables of the database that do not use InnoDB, as the
+// snapshot a dump is created from does not cover them. The dump does not depend on the check.
+func warnNonInnodbTables(db *gorm.DB, name string) {
+	if db == nil {
+		log.Debugf("backup: skipped checking the storage engine of the database tables, as the database is not connected")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), engineCheckTimeout)
+	defer cancel()
+
+	rows, err := db.DB().QueryContext(ctx, "SELECT table_name FROM information_schema.tables WHERE table_schema = ? "+
+		"AND table_type <> 'VIEW' AND (engine IS NULL OR engine <> 'InnoDB') ORDER BY table_name", name)
+
+	if err != nil {
+		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))
+		return
+	}
+
+	defer rows.Close()
+
+	var tables []string
+
+	for rows.Next() {
+		var table string
+
+		if err = rows.Scan(&table); err != nil {
+			break
+		}
+
+		tables = append(tables, table)
+	}
+
+	if err == nil {
+		err = rows.Err()
+	}
+
+	if err != nil {
+		log.Warnf("backup: failed to check the storage engine of the database tables (%s)", clean.Error(err))
+	} else if len(tables) > 0 {
+		log.Warnf("backup: found %s without InnoDB, which the consistent snapshot does not cover (%s)",
+			english.Plural(len(tables), "table", "tables"), clean.LogNames(tables))
+	}
 }
 
 // staleStageAge is the age after which a staged dump left by an interrupted run is removed.
@@ -411,74 +470,144 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	}
 
 	// The command is prepared before any table is dropped.
-	cmd, password, err := restoreCmd(c)
+	restore, err := prepareRestore(c)
 
 	if err != nil {
 		return err
 	}
+
+	// Read from stdin or file.
+	var in io.Reader
+	inputName := "stdin"
+
+	if fromStdIn {
+		in = os.Stdin
+		// #nosec G304 backup path validated by configuration
+	} else if f, openErr := os.OpenFile(fileName, os.O_RDONLY, 0); openErr != nil {
+		return fmt.Errorf("failed to open %s: %s", clean.Log(fileName), openErr)
+	} else {
+		inputName = filepath.Base(fileName)
+		defer f.Close()
+		in = f
+	}
+
+	// The backup is read before any table is dropped, so one that cannot be read or is empty leaves the
+	// index as it is.
+	input := bufio.NewReader(in)
+
+	if _, err = input.Peek(1); errors.Is(err, io.EOF) {
+		return fmt.Errorf("backup %s is empty, index cannot be restored", clean.Log(inputName))
+	} else if err != nil {
+		return fmt.Errorf("failed to read %s: %s", clean.Log(inputName), err)
+	}
+
+	log.Infof("restore: restoring database backup from %s", clean.Log(inputName))
 
 	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		log.Infoln("restore: dropping existing sqlite database tables")
 		entity.Entities.Drop(c.Db())
 	}
 
-	// Read from stdin or file.
-	var f *os.File
-	if fromStdIn {
-		log.Infof("restore: restoring database backup from stdin")
-		f = os.Stdin
-		// #nosec G304 backup path validated by configuration
-	} else if f, err = os.OpenFile(fileName, os.O_RDONLY, 0); err != nil {
-		return fmt.Errorf("failed to open %s: %s", clean.Log(fileName), err)
-	} else {
-		log.Infof("restore: restoring database backup from %s", clean.Log(filepath.Base(fileName)))
-		defer f.Close()
-	}
-
-	if err = runRestore(cmd, f, password); err != nil {
-		log.Errorf("restore: failed to restore index database")
-		return err
-	}
-
-	log.Infof("restore: index database successfully restored")
-
-	return nil
+	return restore.run(input)
 }
 
-// runRestore runs the restore command with its input read from r, returning stderr as the error if it fails.
-// The input is copied through a pipe, so the client runs in batch mode even if r is a terminal, and the
-// copy does not delay the result of a client that exits before reading all of it.
-func runRestore(cmd *exec.Cmd, r io.Reader, password string) error {
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
+// logRestoreResult logs the outcome of a restore that completed, with a warning if statements failed.
+func logRestoreResult(failed restoreFailures) {
+	if failed.Count == 0 {
+		log.Infof("restore: index database successfully restored")
+		return
+	}
+
+	log.Warnf("restore: index database restored, but %s, so some rows may be missing (%s)", failed.Summary(),
+		strings.Join(failed.Errors, ", "))
+}
+
+// restoreInput reads a backup and records a read error, so it is told apart from a client that stopped
+// reading its input.
+type restoreInput struct {
+	r   io.Reader
+	err error
+}
+
+// Read reads from the backup and records any error other than the end of input.
+func (i *restoreInput) Read(p []byte) (int, error) {
+	n, err := i.r.Read(p)
+
+	if err != nil && !errors.Is(err, io.EOF) {
+		i.err = err
+	}
+
+	return n, err
+}
+
+// restoreFailures describes the statements that failed while a restore continued: their number, and the
+// first ones as error code and line number.
+type restoreFailures struct {
+	Count  int
+	Errors []string
+}
+
+// Summary describes the failed statements, e.g. "2 statements failed".
+func (f restoreFailures) Summary() string {
+	return fmt.Sprintf("%s failed", english.Plural(f.Count, "statement", "statements"))
+}
+
+// runRestore runs the restore command with its input read from r, returning the first lines of stderr as
+// the error if it fails, and the statements that failed while it continued. Otherwise, it logs only the
+// warnings the client wrote before any other output. The input is copied through a pipe, so the client runs
+// in batch mode even if r is a terminal, and the copy does not delay the result of a client that exits early.
+func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFailures, err error) {
+	stderr := &restoreOutput{}
+	cmd.Stderr = stderr
 	cmd.Stdout = os.Stdout
 
 	stdin, err := cmd.StdinPipe()
 
 	if err != nil {
-		return fmt.Errorf("failed to create stdin pipe: %w", err)
+		return failed, fmt.Errorf("failed to create stdin pipe: %w", err)
 	}
+
+	// The client reads end of input if the copy fails, so a failed copy is returned once it exits.
+	copied := make(chan error, 1)
 
 	go func() {
 		defer stdin.Close()
 
-		if _, copyErr := io.Copy(stdin, r); copyErr != nil && !errors.Is(copyErr, syscall.EPIPE) {
-			log.Errorf("restore: %s", clean.Error(copyErr))
-		}
+		in := &restoreInput{r: r}
+		_, _ = io.Copy(stdin, in)
+		copied <- in.err
 	}()
 
 	// Log the command for debugging in trace mode.
 	log.Trace(clean.Cmd(cmd, password))
 
-	if cmdErr := cmd.Run(); cmdErr != nil {
-		if err := clientError(stderr.String(), password, "restore"); err != nil {
-			return err
-		}
+	cmdErr := cmd.Run()
+	stderr.Close()
+	failed = stderr.Failures()
 
-		return cmdErr
+	// The result of the copy is sent before the client can read end of input, so it is available if the
+	// client read all of it; a client that exits early is not held up by input that never ends.
+	select {
+	case copyErr := <-copied:
+		if copyErr != nil {
+			return failed, fmt.Errorf("failed to read backup: %s", clean.Error(copyErr))
+		}
+	default:
 	}
 
-	clientDiagnostics(stderr.String(), password, "restore")
+	if cmdErr != nil {
+		if err = clientError(stderr.String(), password, "restore"); err == nil {
+			err = cmdErr
+		}
 
-	return nil
+		if failed.Count > 0 {
+			err = fmt.Errorf("%w; %s (%s)", err, failed.Summary(), strings.Join(failed.Errors, ", "))
+		}
+
+		return failed, err
+	}
+
+	clientDiagnostics(stderr.Warnings(), password, "restore")
+
+	return failed, nil
 }

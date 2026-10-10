@@ -1,18 +1,83 @@
 package photoprism
 
 import (
+	"errors"
+	"fmt"
+	iofs "io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
+	"syscall"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
+// TestImportFailures verifies how failures of an import run are counted and reported.
+func TestImportFailures(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.NoError(t, (&ImportFailures{}).Err())
+		var nilFailures *ImportFailures
+		assert.NotPanics(t, func() { nilFailures.add(errors.New("failed")) })
+		assert.NoError(t, nilFailures.Err())
+	})
+	t.Run("Incomplete", func(t *testing.T) {
+		f := &ImportFailures{}
+		f.add(errors.New("failed"))
+		f.add(os.ErrPermission)
+		assert.ErrorIs(t, f.Err(), ErrImportIncomplete)
+		assert.Contains(t, f.Err().Error(), "(2)")
+	})
+	t.Run("NoSpace", func(t *testing.T) {
+		f := &ImportFailures{}
+		f.add(errors.New("failed"))
+		f.add(&os.PathError{Op: "write", Path: "/originals/photo.jpg", Err: syscall.ENOSPC})
+		assert.ErrorIs(t, f.Err(), status.ErrInsufficientStorage)
+		assert.NotContains(t, f.Err().Error(), "/originals")
+		quota := &ImportFailures{}
+		quota.add(&os.PathError{Op: "write", Path: "photo.jpg", Err: syscall.EDQUOT})
+		assert.ErrorIs(t, quota.Err(), status.ErrInsufficientStorage)
+	})
+	t.Run("NoSpaceText", func(t *testing.T) {
+		f := &ImportFailures{}
+		f.add(errors.New("no space left on device.jpg cannot be opened"))
+		assert.ErrorIs(t, f.Err(), ErrImportIncomplete)
+	})
+}
+
+// TestImportedContent verifies that only a regular file with the same content counts as imported.
+func TestImportedContent(t *testing.T) {
+	dir := t.TempDir()
+	file := filepath.Join(dir, "photo.jpg")
+	require.NoError(t, os.WriteFile(file, []byte("content"), fs.ModeFile))
+	hash := fs.Hash(file)
+	link := filepath.Join(dir, "link.jpg")
+	require.NoError(t, os.Symlink(file, link))
+	other := filepath.Join(dir, "other.jpg")
+	require.NoError(t, os.WriteFile(other, []byte("other"), fs.ModeFile))
+	assert.True(t, importedContent(file, hash))
+	assert.False(t, importedContent(file, ""))
+	assert.False(t, importedContent(link, hash))
+	assert.False(t, importedContent(other, hash))
+	assert.False(t, importedContent(filepath.Join(dir, "missing.jpg"), hash))
+	assert.False(t, importedContent(dir, hash))
+}
+
 func TestImportWorker_OriginalFileNames(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Use the package-level config set in TestMain to avoid diverging
 	// settings/paths from the code under test.
 	cfg := Config()
@@ -185,4 +250,379 @@ func TestImportWorker_StackedVectorPreviews(t *testing.T) {
 	}
 
 	assert.GreaterOrEqual(t, photo.PhotoQuality, 0, "stacked vector photo must not be hidden")
+}
+
+// TestImportWorker_StackedRawOrientation verifies that a stacked file converted on import gets its
+// orientation from ExifTool when the native parser cannot read it.
+func TestImportWorker_StackedRawOrientation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	useTestDb(t, "import-stacked-raw")
+
+	cfg := config.NewMinimalTestConfigWithDb("import-stacked-raw", filepath.Join(t.TempDir(), "storage"))
+
+	if !cfg.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+	}
+
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	// Embedded previews are the only RAW converter, and the native parser refuses every file.
+	cfg.Options().DisableDarktable = true
+	cfg.Options().DisableRawTherapee = true
+	cfg.Options().DisableSips = true
+	cfg.Settings().Stack.Name = true
+	maxBytes := meta.ExifMaxFileBytes
+	meta.ExifMaxFileBytes = 1024
+	t.Cleanup(func() { meta.ExifMaxFileBytes = maxBytes })
+
+	// Two byte-unique RAW copies tagged 8 that stack by their shared name prefix.
+	importDir := filepath.Join(t.TempDir(), "import")
+	require.NoError(t, os.MkdirAll(importDir, fs.ModeDir))
+	mainName := filepath.Join(importDir, "shot.dng")
+	altName := filepath.Join(importDir, "shot.alt.dng")
+
+	for i, fileName := range []string{mainName, altName} {
+		require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "canon_eos_6d.dng"), fileName, true))
+		// #nosec G204 -- arguments are the configured ExifTool binary, fixed values, and a test file path.
+		require.NoError(t, exec.Command(cfg.ExifToolBin(), "-q", "-overwrite_original", "-n", "-Orientation=8", fmt.Sprintf("-Artist=Copy %d", i), fileName).Run())
+	}
+
+	mainFile, err := NewMediaFile(mainName)
+	require.NoError(t, err)
+	related, err := mainFile.RelatedFiles(cfg.Settings().StackSequences())
+	require.NoError(t, err)
+	require.Len(t, related.Files, 2)
+
+	for _, f := range related.Files {
+		jsonName, jsonErr := f.ExifToolJsonName()
+		require.NoError(t, jsonErr)
+		require.NoError(t, os.RemoveAll(jsonName))
+	}
+
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+	imp := NewImport(cfg, ind, convert)
+
+	jobs := make(chan ImportJob)
+	done := make(chan bool)
+	go func() {
+		ImportWorker(jobs)
+		done <- true
+	}()
+	jobs <- ImportJob{
+		FileName:  mainName,
+		Related:   related,
+		IndexOpt:  IndexOptionsAll(cfg),
+		ImportOpt: ImportOptionsMove(importDir, ""),
+		Imp:       imp,
+	}
+	close(jobs)
+	<-done
+
+	var rawFiles entity.Files
+	require.NoError(t, entity.UnscopedDb().Where("original_name IN (?)", []string{"shot.dng", "shot.alt.dng"}).Find(&rawFiles).Error)
+	require.Len(t, rawFiles, 2)
+
+	for _, file := range rawFiles {
+		rawName := FileName(file.FileRoot, file.FileName)
+		jpegName := fs.ImageJpeg.FindFirst(rawName, []string{cfg.SidecarPath(), fs.PPHiddenPathname}, cfg.OriginalsPath(), false)
+		require.NotEmpty(t, jpegName, "%s has no preview", file.FileName)
+		assert.Equal(t, "8", exifOrientationTag(t, cfg, jpegName), "preview of %s", file.FileName)
+	}
+}
+
+// TestImportWorker_TypeCheck verifies that files whose content does not match their extension are
+// moved to the originals folder, so that no file of a stack is lost, but are not processed or indexed.
+func TestImportWorker_TypeCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	jpg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	require.NoError(t, err)
+
+	// importFiles writes the files to a new import folder and imports them as one group.
+	importFiles := func(t *testing.T, name string, files map[string][]byte, main string) *config.Config {
+		useTestDb(t, name)
+		cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+		oldCfg := Config()
+		SetConfig(cfg)
+		t.Cleanup(func() {
+			SetConfig(oldCfg)
+			oldCfg.RegisterDb()
+		})
+
+		importDir := filepath.Join(t.TempDir(), "import")
+		require.NoError(t, fs.MkdirAll(importDir))
+
+		for fileName, data := range files {
+			require.NoError(t, os.WriteFile(filepath.Join(importDir, fileName), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		}
+
+		mainFile, newErr := NewMediaFile(filepath.Join(importDir, main))
+		require.NoError(t, newErr)
+		related, relErr := mainFile.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.Len(t, related.Files, len(files))
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+
+		jobs := make(chan ImportJob)
+		done := make(chan bool)
+		go func() {
+			ImportWorker(jobs)
+			done <- true
+		}()
+		jobs <- ImportJob{
+			FileName:  mainFile.FileName(),
+			Related:   related,
+			IndexOpt:  IndexOptionsAll(cfg),
+			ImportOpt: ImportOptionsMove(importDir, ""),
+			Imp:       NewImport(cfg, ind, convert),
+		}
+		close(jobs)
+		<-done
+
+		return cfg
+	}
+
+	// findFiles returns the names of the files with the given extension below the directory.
+	findFiles := func(t *testing.T, dir, ext string) (names []string) {
+		require.NoError(t, filepath.Walk(dir, func(fileName string, info os.FileInfo, walkErr error) error {
+			if walkErr == nil && !info.IsDir() && strings.HasSuffix(fileName, ext) {
+				names = append(names, fileName)
+			}
+			return nil
+		}))
+		return names
+	}
+
+	t.Run("RelatedFile", func(t *testing.T) {
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+		hooks := logger.ReplaceHooks(make(logrus.LevelHooks))
+		t.Cleanup(func() { logger.ReplaceHooks(hooks) })
+		hook := test.NewLocal(logger)
+
+		cfg := importFiles(t, "import-type-related", map[string][]byte{
+			"photo.jpg":       jpg,
+			"photo.edit.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		}, "photo.jpg")
+
+		jpgFiles := findFiles(t, cfg.OriginalsPath(), ".jpg")
+		require.Len(t, jpgFiles, 1)
+		webpFiles := findFiles(t, cfg.OriginalsPath(), ".webp")
+		require.Len(t, webpFiles, 1, "the related file is moved to originals")
+		assert.Empty(t, findFiles(t, cfg.SidecarPath(), ".edit.webp.jpg"), "no preview is created for it")
+
+		_, findErr := entity.FirstFileByHash(fs.Hash(jpgFiles[0]))
+		assert.NoError(t, findErr, "the main file is indexed")
+		_, findErr = entity.FirstFileByHash(fs.Hash(webpFiles[0]))
+		assert.Error(t, findErr, "the related file is not indexed")
+
+		// The related file is only moved and reported, so no converter or other tool reads it.
+		destName := filepath.Base(webpFiles[0])
+		reported := false
+		for _, entry := range hook.AllEntries() {
+			switch {
+			case !strings.Contains(entry.Message, destName):
+				continue
+			case strings.Contains(entry.Message, "was not indexed"):
+				reported = true
+			default:
+				assert.Contains(t, entry.Message, "moving related")
+			}
+		}
+		assert.True(t, reported)
+	})
+	t.Run("RelatedFileOfVideo", func(t *testing.T) {
+		// The preview of a video has its own name, so the related file is not covered by it.
+		mov, readErr := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "earth.mov"))
+		require.NoError(t, readErr)
+
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+		hooks := logger.ReplaceHooks(make(logrus.LevelHooks))
+		t.Cleanup(func() { logger.ReplaceHooks(hooks) })
+		hook := test.NewLocal(logger)
+
+		cfg := importFiles(t, "import-type-video", map[string][]byte{
+			"clip.mov":       mov,
+			"clip.edit.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		}, "clip.mov")
+
+		webpFiles := findFiles(t, cfg.OriginalsPath(), ".webp")
+		require.Len(t, webpFiles, 1, "the related file is moved to originals")
+		_, findErr := entity.FirstFileByHash(fs.Hash(webpFiles[0]))
+		assert.Error(t, findErr, "the related file is not indexed")
+
+		destName := filepath.Base(webpFiles[0])
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, destName) && !strings.Contains(entry.Message, "was not indexed") {
+				assert.Contains(t, entry.Message, "moving related")
+			}
+		}
+	})
+	t.Run("RelatedVideoMetadata", func(t *testing.T) {
+		// Checking the type of a related video must not keep its ExifTool metadata from the index.
+		heic, readErr := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "iphone_7.heic"))
+		require.NoError(t, readErr)
+		mp4, readErr := os.ReadFile(filepath.Join(fs.Abs("../../assets/samples"), "gopher-video.mp4"))
+		require.NoError(t, readErr)
+
+		cfg := importFiles(t, "import-type-video-meta", map[string][]byte{"live.heic": heic, "live.mp4": mp4}, "live.heic")
+		mp4Files := findFiles(t, cfg.OriginalsPath(), ".mp4")
+		require.Len(t, mp4Files, 1)
+
+		file, findErr := entity.FirstFileByHash(fs.Hash(mp4Files[0]))
+		require.NoError(t, findErr)
+		assert.Equal(t, "avc1", file.FileCodec)
+		assert.Positive(t, file.FileDuration)
+	})
+	t.Run("MainFile", func(t *testing.T) {
+		cfg := importFiles(t, "import-type-main", map[string][]byte{
+			"photo.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		}, "photo.webp")
+
+		webpFiles := findFiles(t, cfg.OriginalsPath(), ".webp")
+		require.Len(t, webpFiles, 1, "the main file is moved to originals")
+		assert.Empty(t, findFiles(t, cfg.SidecarPath(), ".webp.jpg"), "no preview is created for it")
+		assert.Empty(t, findFiles(t, cfg.CachePath(), ".json"), "no metadata is extracted from it")
+
+		_, findErr := entity.FirstFileByHash(fs.Hash(webpFiles[0]))
+		assert.Error(t, findErr, "the main file is not indexed")
+	})
+}
+
+// TestImport_TypeCheck verifies that the import walk moves files whose content does not match their
+// extension with their stack, without extracting their metadata.
+func TestImport_TypeCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	jpg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	require.NoError(t, err)
+
+	// startImport writes the files to a new import folder and imports it with Import.Start.
+	startImport := func(t *testing.T, name string, files map[string][]byte) *config.Config {
+		useTestDb(t, name)
+		cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+		oldCfg := Config()
+		SetConfig(cfg)
+		t.Cleanup(func() {
+			SetConfig(oldCfg)
+			oldCfg.RegisterDb()
+		})
+
+		importDir := filepath.Join(cfg.ImportPath(), name)
+		require.NoError(t, fs.MkdirAll(importDir))
+
+		for fileName, data := range files {
+			require.NoError(t, os.WriteFile(filepath.Join(importDir, fileName), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		}
+
+		convert := NewConvert(cfg)
+		NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert).Start(ImportOptionsMove(importDir, ""))
+
+		return cfg
+	}
+
+	// assertMovedNotRead requires a single moved file with the extension, without ExifTool metadata or index entry.
+	assertMovedNotRead := func(t *testing.T, cfg *config.Config, ext string) {
+		var moved []string
+		require.NoError(t, filepath.Walk(cfg.OriginalsPath(), func(fileName string, info os.FileInfo, walkErr error) error {
+			if walkErr == nil && !info.IsDir() && strings.HasSuffix(fileName, ext) {
+				moved = append(moved, fileName)
+			}
+			return nil
+		}))
+		require.Len(t, moved, 1)
+		hash := fs.Hash(moved[0])
+		jsonName, jsonErr := ExifToolCacheName(hash)
+		require.NoError(t, jsonErr)
+		assert.NoFileExists(t, jsonName)
+		_, findErr := entity.FirstFileByHash(hash)
+		assert.Error(t, findErr)
+	}
+
+	t.Run("MainFile", func(t *testing.T) {
+		cfg := startImport(t, "import-start-type-main", map[string][]byte{
+			"photo.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+		})
+		assertMovedNotRead(t, cfg, ".webp")
+	})
+	t.Run("RelatedFileFirst", func(t *testing.T) {
+		cfg := startImport(t, "import-start-type-related", map[string][]byte{
+			"photo.edit.webp": append(append([]byte(nil), jpg...), []byte(t.Name())...),
+			"photo.jpg":       jpg,
+		})
+		assertMovedNotRead(t, cfg, ".webp")
+	})
+}
+
+// TestImportWorker_SidecarPreview verifies that a preview in the sidecar folder is not imported with a file from the
+// import folder.
+func TestImportWorker_SidecarPreview(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	useTestDb(t, "import-sidecar-preview")
+
+	cfg := config.NewMinimalTestConfigWithDb("import-sidecar-preview", filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	// A HEIC without a JPEG of its own, and an unrelated JPEG at the sidecar name of its absolute path.
+	importDir := filepath.Join(cfg.ImportPath(), "trip")
+	heicName := filepath.Join(importDir, "IMG_0001.heic")
+	foreignName := filepath.Join(cfg.SidecarPath(), importDir, "IMG_0001.heic.jpg")
+	require.NoError(t, os.MkdirAll(importDir, fs.ModeDir))
+	require.NoError(t, os.MkdirAll(filepath.Dir(foreignName), fs.ModeDir))
+	require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "iphone_7.heic"), heicName, false))
+	require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "beach_sand.jpg"), foreignName, false))
+
+	mainFile, err := NewMediaFile(heicName)
+	require.NoError(t, err)
+	related, err := mainFile.RelatedFiles(false)
+	require.NoError(t, err)
+
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+	jobs := make(chan ImportJob, 1)
+	jobs <- ImportJob{FileName: heicName, Related: related, IndexOpt: IndexOptionsAll(cfg), ImportOpt: ImportOptionsMove(cfg.ImportPath(), ""), Imp: imp}
+	close(jobs)
+	ImportWorker(jobs)
+
+	// The unrelated preview stays where it is, no copy of it reaches originals, and the HEIC is imported.
+	assert.FileExists(t, foreignName)
+	foreignHash := fs.Hash(foreignName)
+	heicImported := false
+	err = filepath.WalkDir(cfg.OriginalsPath(), func(name string, d iofs.DirEntry, walkErr error) error {
+		if walkErr == nil && !d.IsDir() {
+			assert.NotEqual(t, foreignHash, fs.Hash(name), name)
+			heicImported = heicImported || strings.EqualFold(filepath.Ext(name), ".heic")
+		}
+		return nil
+	})
+	require.NoError(t, err)
+	assert.True(t, heicImported)
+
+	var files entity.Files
+	require.NoError(t, entity.UnscopedDb().Where("file_hash = ?", foreignHash).Find(&files).Error)
+	assert.Empty(t, files)
 }

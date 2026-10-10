@@ -1,6 +1,7 @@
 package query
 
 import (
+	"database/sql"
 	"fmt"
 	"path"
 	"strings"
@@ -78,14 +79,36 @@ func UnmatchedFaceMarkers(limit int, after string, matchedBefore *time.Time) (re
 	return result, err
 }
 
-// FaceMarkers returns all face markers sorted by id.
-func FaceMarkers(limit, offset int) (result entity.Markers, err error) {
-	err = whereEmbeddingModel(Db().
-		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName()).
-		Order("marker_uid").Limit(limit).Offset(offset).
-		Find(&result).Error
+// FaceMarkers returns the next page of face markers of the configured embedding model after the given
+// uid, sorted by uid, up to and including the last uid if one is given.
+func FaceMarkers(limit int, after, last string) (result entity.Markers, err error) {
+	db := whereEmbeddingModel(Db().
+		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName())
+
+	if after != "" {
+		db = db.Where("marker_uid > ?", after)
+	}
+
+	if last != "" {
+		db = db.Where("marker_uid <= ?", last)
+	}
+
+	err = db.Order("marker_uid").Limit(limit).Find(&result).Error
 
 	return result, err
+}
+
+// LastMarkerUID returns the highest marker uid, or an empty string if there are no markers.
+func LastMarkerUID() (uid string, err error) {
+	var result struct {
+		UID sql.NullString `gorm:"column:uid"`
+	}
+
+	if err = UnscopedDb().Model(&entity.Marker{}).Select("MAX(marker_uid) AS uid").Scan(&result).Error; err != nil {
+		return "", err
+	}
+
+	return result.UID.String, nil
 }
 
 // Embeddings returns existing face embeddings.

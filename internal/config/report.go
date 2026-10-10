@@ -55,6 +55,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Storage.
 		{"storage-path", c.StoragePath()},
+		{"storage-case", c.StorageCase()},
 		{"storage-free", fmt.Sprintf("%.0f", c.StorageFree())},
 
 		// Config.
@@ -74,6 +75,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Originals.
 		{"originals-path", c.OriginalsPath()},
+		{"originals-case", c.OriginalsCase()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
 
@@ -88,6 +90,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"upload-allow", c.UploadAllow().String()},
 		{"upload-archives", fmt.Sprintf("%t", c.UploadArchives())},
 		{"upload-limit", fmt.Sprintf("%d", c.UploadLimit())},
+		{"upload-maxage", fmt.Sprintf("%d", c.UploadMaxAge())},
 		{"cache-path", c.CachePath()},
 		{"cmd-cache-path", c.CmdCachePath()},
 		{"media-cache-path", c.MediaCachePath()},
@@ -138,7 +141,14 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
-		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},
+	}...)
+
+	// The deprecated option is reported only while it is set, like face-engine.
+	if value := c.disableClassificationReport(); value != "" {
+		rows = append(rows, []string{"disable-classification", value})
+	}
+
+	rows = append(rows, [][]string{
 		{"disable-ffmpeg", fmt.Sprintf("%t", c.DisableFFmpeg())},
 		{"disable-exiftool", fmt.Sprintf("%t", c.DisableExifTool())},
 		{"disable-sips", fmt.Sprintf("%t", c.DisableSips())},
@@ -319,9 +329,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},
 		{"darktable-bin", c.DarktableBin()},
+		{"darktable-exclude", c.DarktableExclude()},
 		{"darktable-cache-path", c.DarktableCachePath()},
 		{"darktable-config-path", c.DarktableConfigPath()},
-		{"darktable-exclude", c.DarktableExclude()},
 		{"rawtherapee-bin", c.RawTherapeeBin()},
 		{"rawtherapee-exclude", c.RawTherapeeExclude()},
 		{"imagemagick-bin", c.ImageMagickBin()},
@@ -350,9 +360,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-schedule", c.VisionSchedule()},
 		{"vision-filter", c.VisionFilter()},
 		{"onnx-provider", c.OnnxProvider().String()},
-		{"nasnet-model-path", c.NasnetModelPath()},
-		{"facenet-model-path", c.FacenetModelPath()},
-		{"nsfw-model-path", c.NsfwModelPath()},
+		{"labels-model", string(c.LabelModelSetting())},
+		{"nsfw-model", string(c.NSFWModelSetting())},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 	}...)
 
@@ -565,7 +574,16 @@ func (c *Config) faceModelReport() string {
 	case inForce != face.ModelNone:
 		break
 	case setting == face.ModelAuto:
+		// Checked first, so the library is only queried when TensorFlow can be the reason.
+		if c.DisableTensorFlow() {
+			if name := c.tensorFlowFaceModel(c.libraryFaceModel()); name != "" {
+				return faceReportValue(resolved, faceTensorFlowReason(name))
+			}
+		}
+
 		return faceReportValue(resolved, "no embedding model is installed")
+	case c.faceModelNeedsTensorFlow(setting):
+		return faceReportValue(resolved, faceTensorFlowReason(setting))
 	default:
 		return faceReportValue(resolved, fmt.Sprintf("%s is not available", clean.Log(setting)))
 	}
@@ -586,6 +604,66 @@ func (c *Config) faceModelReport() string {
 	return faceReportValue(resolved, notes...)
 }
 
+// faceModelNeedsTensorFlow reports whether disabled TensorFlow is what keeps the specified model
+// from being used, which usableFaceModel checks after the license.
+func (c *Config) faceModelNeedsTensorFlow(name face.ModelName) bool {
+	return c.DisableTensorFlow() && face.FindEmbeddingModel(name).RequiresTensorFlow() &&
+		face.LicenseRefused(name, c.Edition()) == nil
+}
+
+// tensorFlowFaceModel returns the model the library holds, or the first installed one when it holds
+// none, if disabled TensorFlow is what keeps that model from being used, and an empty name otherwise.
+func (c *Config) tensorFlowFaceModel(library face.ModelName) face.ModelName {
+	if !c.DisableTensorFlow() {
+		return ""
+	} else if library != "" {
+		if c.faceModelNeedsTensorFlow(library) {
+			return library
+		}
+
+		return ""
+	}
+
+	for _, candidate := range face.AutoModelPreference {
+		if c.faceModelNeedsTensorFlow(candidate) && face.FindEmbeddingModel(candidate).Installed(c.ModelsPath()) {
+			return candidate
+		}
+	}
+
+	return ""
+}
+
+// faceTensorFlowReason states that the specified model requires TensorFlow, which is disabled.
+func faceTensorFlowReason(name face.ModelName) string {
+	return fmt.Sprintf("%s requires TensorFlow, which is disabled", clean.Log(name))
+}
+
+// faceTensorFlowStatus states that the model the library holds requires TensorFlow, which is
+// disabled, as a sentence for the status report, or "" when that is not what pauses embeddings.
+func (c *Config) faceTensorFlowStatus(library face.ModelName) string {
+	// With a model in force, the pause is a mismatch that a migration resolves, not TensorFlow.
+	if !face.EmbeddingsBlocked() || c.FaceModel() != face.ModelNone || !c.faceModelNeedsTensorFlow(library) {
+		return ""
+	}
+
+	return fmt.Sprintf("Face model %s.", faceTensorFlowReason(library))
+}
+
+// disableClassificationReport renders the deprecated disable-classification option while it is set,
+// noting when labels-model is set to a supported mode and overrides it, and returns "" otherwise.
+func (c *Config) disableClassificationReport() string {
+	if !c.options.DisableClassification {
+		return ""
+	}
+
+	switch strings.ToLower(strings.TrimSpace(c.options.LabelsModel)) {
+	case "auto", "none":
+		return "true (deprecated, ignored)"
+	default:
+		return "true (deprecated)"
+	}
+}
+
 // faceReportValue appends the qualifiers a report shows in parentheses after a resolved value.
 func faceReportValue(value string, notes ...string) string {
 	if len(notes) == 0 {
@@ -595,9 +673,9 @@ func faceReportValue(value string, notes ...string) string {
 	return fmt.Sprintf("%s (%s)", value, strings.Join(notes, ", "))
 }
 
-// FaceReportSection is one titled table of the `photoprism faces status` report, with the note
-// that states what its values cannot.
-type FaceReportSection struct {
+// StatusSection is one titled table of a status report such as `photoprism faces status`, with
+// the note that states what its values cannot.
+type StatusSection struct {
 	Title string
 	Cols  []string
 	Rows  [][]string
@@ -607,18 +685,18 @@ type FaceReportSection struct {
 // FaceReportSections returns the face configuration grouped for `photoprism faces status`. It
 // covers the same options as Report() in the same order, so the two can be read against each
 // other, and its notes add what only a database connection reveals.
-func (c *Config) FaceReportSections() []FaceReportSection {
+func (c *Config) FaceReportSections() []StatusSection {
 	cols := []string{"Name", "Value"}
 	notes := map[faceConfigSection]string{
 		faceSectionDetection:   c.faceDetectionNote(),
 		faceSectionRecognition: c.faceRecognitionNote(),
 	}
 
-	var sections []FaceReportSection
+	var sections []StatusSection
 
 	for _, row := range c.faceConfigRows() {
 		if n := len(sections); n == 0 || sections[n-1].Title != string(row.Section) {
-			sections = append(sections, FaceReportSection{
+			sections = append(sections, StatusSection{
 				Title: string(row.Section),
 				Cols:  cols,
 				Note:  notes[row.Section],
@@ -654,8 +732,12 @@ func (c *Config) FaceStatus() []string {
 		lines = append(lines, "Face detection and recognition are disabled, because neither a detector nor an embedding model is in force.")
 	case detector == face.DetectorNone:
 		lines = append(lines, "Face detection is disabled, so no new faces are found.")
+	case face.EmbedderError() != nil:
+		lines = append(lines, "The face embedding model failed to load, so face detection is skipped.")
 	case model == face.ModelNone:
-		lines = append(lines, "Face embeddings are disabled, so the faces that are found are not recognized.")
+		lines = append(lines, "Face embeddings are disabled, so face detection is skipped.")
+	case face.EmbeddingsBlocked():
+		lines = append(lines, "Face detection and recognition are paused.")
 	case c.FaceEngineRunType() == vision.RunNever:
 		lines = append(lines, "Face detection and recognition are configured, but never scheduled to run.")
 	default:
@@ -664,6 +746,13 @@ func (c *Config) FaceStatus() []string {
 
 	if status := c.faceEmbedderStatus(); status != "" {
 		lines = append(lines, status)
+	}
+
+	// The pause names the model the library holds, but not why this instance cannot load it.
+	if face.EmbeddingsBlocked() && c.DisableTensorFlow() {
+		if status := c.faceTensorFlowStatus(c.libraryFaceModel()); status != "" {
+			lines = append(lines, status)
+		}
 	}
 
 	if status := c.faceClusterStatus(); status != "" {

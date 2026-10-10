@@ -10,11 +10,13 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	visionschema "github.com/photoprism/photoprism/internal/ai/vision/schema"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
@@ -34,34 +36,54 @@ var (
 
 // Model represents a computer vision model configuration.
 type Model struct {
-	Type          ModelType             `yaml:"Type,omitempty" json:"type,omitempty"`
-	Default       bool                  `yaml:"Default,omitempty" json:"default,omitempty"`
-	Model         string                `yaml:"Model,omitempty" json:"model,omitempty"`
-	Name          string                `yaml:"Name,omitempty" json:"name,omitempty"`
-	Version       string                `yaml:"Version,omitempty" json:"version,omitempty"`
-	Engine        ModelEngine           `yaml:"Engine,omitempty" json:"engine,omitempty"`
-	Run           RunType               `yaml:"Run,omitempty" json:"Run,omitempty"` // "auto", "never", "manual", "always", "newly-indexed", "on-schedule"
-	System        string                `yaml:"System,omitempty" json:"system,omitempty"`
-	Prompt        string                `yaml:"Prompt,omitempty" json:"prompt,omitempty"`
-	Format        string                `yaml:"Format,omitempty" json:"format,omitempty"`
-	Normalize     NormalizeType         `yaml:"Normalize,omitempty" json:"normalize,omitempty"` // "single-word", "phrase", or "false"
-	Schema        string                `yaml:"Schema,omitempty" json:"schema,omitempty"`
-	SchemaFile    string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
-	Resolution    int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
-	TensorFlow    *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
-	Options       *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
-	Service       Service               `yaml:"Service,omitempty" json:"service"`
-	Path          string                `yaml:"Path,omitempty" json:"-"`
-	Disabled      bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
-	classifyModel *classify.Model
-	faceModel     face.Embedder
-	nsfwModel     *nsfw.Model
-	schemaOnce    sync.Once
-	schema        string
+	Type              ModelType             `yaml:"Type,omitempty" json:"type,omitempty"`
+	Default           bool                  `yaml:"Default,omitempty" json:"default,omitempty"`
+	Model             string                `yaml:"Model,omitempty" json:"model,omitempty"`
+	Name              string                `yaml:"Name,omitempty" json:"name,omitempty"`
+	Version           string                `yaml:"Version,omitempty" json:"version,omitempty"`
+	Engine            ModelEngine           `yaml:"Engine,omitempty" json:"engine,omitempty"`
+	Run               RunType               `yaml:"Run,omitempty" json:"Run,omitempty"` // "auto", "never", "manual", "always", "newly-indexed", "on-schedule"
+	System            string                `yaml:"System,omitempty" json:"system,omitempty"`
+	Prompt            string                `yaml:"Prompt,omitempty" json:"prompt,omitempty"`
+	Format            string                `yaml:"Format,omitempty" json:"format,omitempty"`
+	Normalize         NormalizeType         `yaml:"Normalize,omitempty" json:"normalize,omitempty"` // "single-word", "phrase", or "false"
+	Schema            string                `yaml:"Schema,omitempty" json:"schema,omitempty"`
+	SchemaFile        string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
+	Resolution        int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
+	TensorFlow        *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
+	ONNX              *onnx.ModelInfo       `yaml:"ONNX,omitempty" json:"onnx,omitempty"`
+	LabelFile         string                `yaml:"LabelFile,omitempty" json:"labelFile,omitempty"`
+	CanonicalOrder    bool                  `yaml:"CanonicalOrder,omitempty" json:"canonicalOrder,omitempty"`
+	Reduction         nsfw.Reduction        `yaml:"Reduction,omitempty" json:"reduction,omitempty"`
+	UnsafeClassIndex  *int                  `yaml:"UnsafeClassIndex,omitempty" json:"unsafeClassIndex,omitempty"`
+	NeutralClassIndex *int                  `yaml:"NeutralClassIndex,omitempty" json:"neutralClassIndex,omitempty"`
+	DefaultThreshold  float32               `yaml:"DefaultThreshold,omitempty" json:"defaultThreshold,omitempty"`
+	Options           *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
+	Service           Service               `yaml:"Service,omitempty" json:"service"`
+	Path              string                `yaml:"Path,omitempty" json:"-"`
+	Disabled          bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
+	DisabledByMode    bool                  `yaml:"-" json:"-"` // DisabledByMode applies an option override excluded from saved configuration.
+	classifyErr       error
+	classifyModel     *classify.Model
+	faceModel         face.Embedder
+	nsfwModel         *nsfw.Model
+	nsfwErr           error
+	schemaOnce        sync.Once
+	schema            string
 }
 
 // Models represents a set of computer vision models.
 type Models []*Model
+
+// Clone returns model copies with independent lazy state.
+func (m Models) Clone() Models {
+	result := make(Models, len(m))
+	for i, model := range m {
+		result[i] = model.Clone()
+	}
+
+	return result
+}
 
 // GetModel returns the normalized model identifier, name, and version strings
 // used in service requests. Callers can always destructure the tuple because
@@ -74,19 +96,21 @@ func (m *Model) GetModel() (model, name, version string) {
 	// Sanitize the configured values without lowercasing: upstream catalogs
 	// (Ollama tags, Hugging Face IDs served by OpenAI-compatible endpoints)
 	// match identifiers verbatim, so case must round-trip from vision.yml.
-	name = clean.Type(m.Name)
 	version = clean.Type(m.Version)
 
 	// Build a base name from the highest-priority override:
 	// 1) Service-specific override (expanded for env vars)
 	// 2) Model-specific override
 	// 3) Declarative model name
+	// The name is shortened only once the version is split off, so a tag is not cut.
 	serviceModel := m.Service.GetModel()
 	switch {
 	case serviceModel != "":
 		name = serviceModel
 	case strings.TrimSpace(m.Model) != "":
-		name = clean.Type(m.Model)
+		name = modelIdText(m.Model)
+	default:
+		name = modelIdText(m.Name)
 	}
 
 	// Return if no model is configured.
@@ -94,25 +118,54 @@ func (m *Model) GetModel() (model, name, version string) {
 		return "", "", ""
 	}
 
+	engine := m.requestEngine()
+
+	// OpenAI-compatible servers match identifiers verbatim, colons included.
+	if engine == openai.EngineName {
+		name = cleanModelId(name)
+		return name, name, ""
+	}
+
 	// Split "name:version" strings so callers can access versioned models
 	// without repeating parsing logic at each call site.
 	if parts := strings.SplitN(name, ":", 2); len(parts) == 2 && parts[0] != "" && parts[1] != "" {
 		name = parts[0]
-		version = parts[1]
+		version = cleanModelId(parts[1])
 	}
 
-	// Default to "latest" for non-OpenAI engines when no version was set.
+	// Default to "latest" when no version was set.
 	if version == "" {
 		version = VersionLatest
 	}
 
-	switch m.Engine {
-	case openai.EngineName:
-		return name, name, ""
+	name = cleanModelId(name)
+
+	switch engine {
 	case ollama.EngineName:
 		return strings.Join([]string{name, version}, ":"), name, version
 	default:
 		return name, name, version
+	}
+}
+
+// requestEngine returns the configured engine, or the engine implied by the service request
+// format if none is set. Unlike EngineName, it does not resolve the endpoint.
+func (m *Model) requestEngine() string {
+	if m == nil {
+		return ""
+	}
+
+	if engine := strings.TrimSpace(strings.ToLower(m.Engine)); engine != "" {
+		return engine
+	}
+
+	switch m.Service.EndpointRequestFormat() {
+	case ApiFormatOpenAI:
+		return openai.EngineName
+	case ApiFormatOllama:
+		return ollama.EngineName
+	default:
+		return ""
 	}
 }
 
@@ -152,20 +205,68 @@ func (m *Model) IsDefault() bool {
 		return true
 	}
 
-	if m.TensorFlow == nil {
-		return false
-	}
-
 	switch m.Type {
 	case ModelTypeLabels:
-		return m.Name == NasnetModel.Name
+		return m.ONNX != nil && m.Name == DefaultLabelModel.Name
 	case ModelTypeNsfw:
-		return m.Name == NsfwModel.Name
+		return m.ONNX != nil && m.Name == NsfwModel.Name
 	case ModelTypeFace:
-		return m.Name == FacenetModel.Name
+		return m.TensorFlow != nil && m.Name == FacenetModel.Name
 	}
 
 	return false
+}
+
+// IsLegacy reports whether the model is a local labels or NSFW model for the TensorFlow runtime,
+// either declared with a TensorFlow block or named after a retired built-in TensorFlow model
+// without settings that only apply to ONNX models. Nil receivers return false.
+func (m *Model) IsLegacy() bool {
+	if m == nil || m.ONNX != nil {
+		return false
+	}
+
+	legacyName, ok := legacyModelNames[m.Type]
+
+	// A legacy entry without a Uri is mapped regardless of its request format, so it keeps a local model.
+	if !ok || m.Service.UriUnresolved() && !m.Service.UriMissing() {
+		return false
+	} else if uri, _ := m.Service.Endpoint(); uri != "" {
+		return false
+	}
+
+	// Engines such as Ollama or OpenAI provide their own endpoint and are never mapped.
+	engine := strings.ToLower(strings.TrimSpace(m.Engine))
+
+	switch {
+	case m.TensorFlow != nil:
+		return engine == "" || engine == EngineTensorFlow || engine == EngineONNX || engine == EngineLocal
+	case !strings.EqualFold(strings.TrimSpace(m.Name), legacyName):
+		return false
+	default:
+		return (engine == "" || engine == EngineTensorFlow || engine == EngineLocal) && !m.hasOnnxSettings()
+	}
+}
+
+// hasService reports whether the model is meant to use a service, either through an endpoint, an
+// unresolved service URI, or an engine that provides a default endpoint.
+func (m *Model) hasService() bool {
+	if m == nil {
+		return false
+	} else if m.Service.UriUnresolved() {
+		return true
+	} else if uri, _ := m.Endpoint(); uri != "" {
+		return true
+	}
+
+	info, ok := EngineInfoFor(m.Engine)
+
+	return ok && info.Uri != ""
+}
+
+// hasOnnxSettings reports whether the model sets options that only apply to ONNX models.
+func (m *Model) hasOnnxSettings() bool {
+	return m.Reduction != "" || m.UnsafeClassIndex != nil || m.NeutralClassIndex != nil ||
+		m.DefaultThreshold != 0 || m.LabelFile != "" || m.CanonicalOrder
 }
 
 // Endpoint returns the remote service request method and endpoint URL. Nil
@@ -177,6 +278,9 @@ func (m *Model) Endpoint() (uri, method string) {
 
 	if uri, method = m.Service.Endpoint(); uri != "" && method != "" {
 		return uri, method
+	} else if m.Service.UriUnresolved() {
+		m.warnUnresolvedUri()
+		return "", ""
 	} else if ServiceUri == "" {
 		return "", ""
 	} else if serviceType := clean.TypeLowerUnderscore(m.Type); serviceType == "" {
@@ -186,6 +290,87 @@ func (m *Model) Endpoint() (uri, method string) {
 	}
 }
 
+// unresolvedUriWarned holds the models whose unresolved service URI was logged.
+var unresolvedUriWarned sync.Map
+
+// firstRunWarned holds the models whose configuration warnings were logged again when they first ran.
+var firstRunWarned sync.Map
+
+// firstRunMutex makes concurrent first runs wait until the warnings of the model were cleared.
+var firstRunMutex sync.Mutex
+
+// warnKey returns the key under which the configuration warnings of the model are logged once.
+func (m *Model) warnKey() string {
+	return m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
+}
+
+// warnModel records a model configuration warning in the system log.
+func warnModel(format string, args ...any) {
+	event.SystemWarn([]string{"vision", "%s"}, fmt.Sprintf(format, args...))
+}
+
+// warnUnresolvedUri reports once per model that its service URI does not resolve.
+func (m *Model) warnUnresolvedUri() {
+	if _, warned := unresolvedUriWarned.LoadOrStore(m.warnKey(), struct{}{}); !warned {
+		warnModel("%s, so no service is used", m.unresolvedUriErrText())
+	}
+}
+
+// warnOnFirstRun lets the configuration warnings of the model be recorded once more when it first runs,
+// so they are recorded again once the server is running.
+func (m *Model) warnOnFirstRun() {
+	key := m.warnKey()
+
+	if _, done := firstRunWarned.Load(key); done {
+		return
+	}
+
+	firstRunMutex.Lock()
+	defer firstRunMutex.Unlock()
+
+	if _, done := firstRunWarned.Load(key); done {
+		return
+	}
+
+	unresolvedUriWarned.Delete(key)
+	forgetRefusedEnv("Service.Uri", m.Service.Uri)
+	forgetRefusedEnv("Service.Model", m.Service.Model)
+	firstRunWarned.Store(key, struct{}{})
+}
+
+// unresolvedUriErr returns an error, and logs a warning once, if the model's service URI does not
+// resolve after expanding environment variables.
+func (m *Model) unresolvedUriErr() error {
+	if m == nil {
+		return nil
+	}
+
+	m.warnOnFirstRun()
+
+	if !m.Service.UriUnresolved() {
+		return nil
+	}
+
+	m.warnUnresolvedUri()
+
+	return m.unresolvedUriErrText()
+}
+
+// unresolvedUriErrText returns the error for a model whose service URI does not resolve or is missing.
+func (m *Model) unresolvedUriErrText() error {
+	name, _, _ := m.GetModel()
+
+	if m.Service.UriMissing() && strings.TrimSpace(m.Engine) != "" {
+		return fmt.Errorf("%s model %s needs a service uri for the %s request format",
+			clean.Log(m.Type), clean.Log(name), clean.Log(m.Service.RequestFormat))
+	} else if m.Service.UriMissing() {
+		return fmt.Errorf("%s model %s needs a service uri or an engine for the %s request format",
+			clean.Log(m.Type), clean.Log(name), clean.Log(m.Service.RequestFormat))
+	}
+
+	return fmt.Errorf("service uri of %s model %s does not resolve", clean.Log(m.Type), clean.Log(name))
+}
+
 // ApplyService updates the ApiRequest with service-specific
 // values when configured.
 func (m *Model) ApplyService(apiRequest *ApiRequest) {
@@ -193,7 +378,9 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 		return
 	}
 
-	if m.Engine == openai.EngineName {
+	apiRequest.Engine = m.EngineName()
+
+	if m.requestEngine() == openai.EngineName {
 		apiRequest.Org = m.Service.EndpointOrg()
 		apiRequest.Project = m.Service.EndpointProject()
 		apiRequest.Tier = m.Service.EndpointTier()
@@ -204,20 +391,27 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 	}
 }
 
-// EndpointKey returns the access token belonging to the remote service
-// endpoint, or an empty string for nil receivers.
+// EndpointKey returns the access token for the endpoint that Endpoint resolves
+// to. A model's own key is sent to its own endpoint, or to the shared service if
+// the model has no Uri; the shared service key is only sent to the shared service.
 func (m *Model) EndpointKey() (key string) {
 	if m == nil {
 		return ""
 	}
 
-	if key = m.Service.EndpointKey(); key != "" {
-		return key
+	if uri, method := m.Service.Endpoint(); uri != "" && method != "" {
+		return m.Service.EndpointKey()
+	} else if uri, _ = m.Endpoint(); uri == "" {
+		return ""
+	} else if strings.TrimSpace(m.Service.Uri) == "" {
+		if key = m.Service.EndpointKey(); key != "" {
+			return key
+		}
 	}
 
 	ensureEnv()
 
-	return strings.TrimSpace(os.ExpandEnv(ServiceKey))
+	return strings.TrimSpace(expandEnv(ServiceKey))
 }
 
 // EndpointFileScheme returns the endpoint API request file scheme type. Nil
@@ -489,6 +683,10 @@ func (m *Model) EngineName() string {
 		return EngineTensorFlow
 	}
 
+	if m.ONNX != nil {
+		return EngineONNX
+	}
+
 	return EngineLocal
 }
 
@@ -555,7 +753,7 @@ func (m *Model) SchemaTemplate() string {
 		if m.Type == ModelTypeLabels {
 			if envFile := strings.TrimSpace(os.Getenv(labelSchemaEnvVar)); envFile != "" {
 				if schemaFromFile, err := readSchemaFile(envFile); err != nil {
-					log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(envFile), err)
+					warnSchemaFile(m.Type, envFile, err)
 				} else {
 					schemaText = schemaFromFile
 				}
@@ -568,7 +766,7 @@ func (m *Model) SchemaTemplate() string {
 
 		if schemaText == "" && strings.TrimSpace(m.SchemaFile) != "" {
 			if schemaFromFile, err := readSchemaFile(m.SchemaFile); err != nil {
-				log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(m.SchemaFile), err)
+				warnSchemaFile(m.Type, m.SchemaFile, err)
 			} else {
 				schemaText = schemaFromFile
 			}
@@ -588,6 +786,12 @@ func (m *Model) SchemaTemplate() string {
 	})
 
 	return m.schema
+}
+
+// warnSchemaFile logs that a schema file could not be read, with its name and the error only in the system log.
+func warnSchemaFile(modelType ModelType, fileName string, err error) {
+	log.Warnf("vision: failed to read the schema file of the %s model (details in system log)", clean.Log(modelType))
+	event.SystemWarn([]string{"vision", "failed to read schema file %s", "%s"}, clean.Log(fileName), clean.Error(err))
 }
 
 // readSchemaFile resolves and reads a schema file path from config or env.
@@ -663,17 +867,21 @@ func (m *Model) ClassifyModel() *classify.Model {
 	if m.classifyModel != nil {
 		return m.classifyModel
 	}
+	if m.classifyErr != nil {
+		return nil
+	}
 
-	switch m.Name {
-	case "":
+	switch {
+	case m.Name == "":
 		log.Warnf("vision: missing name, model instance cannot be created")
 		return nil
-	case NasnetModel.Name, "nasnet":
-		// Load and initialize the Nasnet image classification model.
-		if model := classify.NewNasnet(GetModelsPath(), m.Disabled); model == nil {
+	case classify.FindModel(classify.ModelName(m.Name)) != nil:
+		// Load and initialize a registered ONNX image classification model.
+		if model := classify.NewRegisteredModel(GetModelsPath(), classify.ModelName(m.Name), OnnxProvider, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init nasnet model)", err)
+			m.classifyErr = err
+			log.Warnf("vision: %s (init %s model; fix or install it, then restart PhotoPrism)", err, clean.Log(m.Name))
 			return nil
 		} else {
 			m.classifyModel = model
@@ -684,26 +892,55 @@ func (m *Model) ClassifyModel() *classify.Model {
 			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
 		}
 
-		if m.TensorFlow == nil {
-			m.TensorFlow = &tensorflow.ModelInfo{}
+		if m.ONNX == nil {
+			m.ONNX = &onnx.ModelInfo{}
 		}
 
-		// Set default thumbnail resolution if no tags are configured.
-		if m.Resolution <= 0 {
-			m.Resolution = DefaultResolution
+		if m.ONNX.Input == nil && m.Resolution > 0 {
+			m.ONNX.Input = &onnx.Input{Width: m.Resolution, Height: m.Resolution}
+		} else if m.ONNX.Input != nil && m.Resolution > 0 {
+			if m.ONNX.Input.Width <= 0 {
+				m.ONNX.Input.Width = m.Resolution
+			}
+			if m.ONNX.Input.Height <= 0 {
+				m.ONNX.Input.Height = m.Resolution
+			}
 		}
 
-		if m.TensorFlow.Input == nil {
-			m.TensorFlow.Input = new(tensorflow.PhotoInput)
+		modelPath := filepath.Join(GetModelsPath(), clean.Path(m.Path))
+		modelDir := modelPath
+		if !strings.EqualFold(filepath.Ext(modelPath), ".onnx") {
+			modelDir = modelPath
+			if m.ONNX.File == "" {
+				m.ONNX.File = filepath.Base(m.Path) + ".onnx"
+			}
+			modelPath = m.ONNX.FilePath(modelDir)
+		} else {
+			modelDir = filepath.Dir(modelPath)
 		}
 
-		m.TensorFlow.Input.SetResolution(m.Resolution)
+		labelFile := m.LabelFile
+		if labelFile == "" {
+			labelFile = "labels.txt"
+		}
+		if !filepath.IsAbs(labelFile) {
+			labelFile = filepath.Join(modelDir, labelFile)
+		}
 
-		// Try to load custom model based on the configuration values.
-		if model := classify.NewModel(GetModelsPath(), m.Path, GetNasnetModelPath(), m.TensorFlow, m.Disabled); model == nil {
+		// Try to load a custom ONNX model based on the configuration values.
+		if model := classify.NewModel(classify.Settings{
+			Name:           classify.ModelName(m.Name),
+			ModelPath:      modelPath,
+			LabelPath:      labelFile,
+			Info:           m.ONNX,
+			CanonicalOrder: m.CanonicalOrder,
+			Provider:       OnnxProvider,
+			Disabled:       m.Disabled,
+		}); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init %s)", err, m.Path)
+			m.classifyErr = err
+			log.Warnf("vision: %s (init %s; fix or install it, then restart PhotoPrism)", err, m.Path)
 			return nil
 		} else {
 			m.classifyModel = model
@@ -720,15 +957,14 @@ func (m *Model) FaceModel() face.Embedder {
 		return nil
 	}
 
-	// FACE_MODEL=none turns embedding generation off, so no model may be loaded even
-	// when vision.yml still schedules face processing to detect regions.
+	// FACE_MODEL=none turns embedding generation off, so no model may be loaded.
 	if face.EmbeddingsDisabled() {
 		return nil
 	}
 
 	// A library whose stored vectors were produced by another model has to be migrated
-	// rather than added to, so nothing is embedded until it is. Detection keeps running,
-	// because DetectFaces returns its markers instead of failing when this hands out none.
+	// rather than added to, so nothing is embedded until it is. DetectFaces then returns
+	// its faces without embeddings instead of failing.
 	if face.EmbeddingsBlocked() {
 		return nil
 	}
@@ -770,7 +1006,7 @@ func (m *Model) faceEmbedder() face.Embedder {
 		log.Warnf("vision: missing name, model instance cannot be created")
 		return nil
 	case FacenetModel.Name, "facenet":
-		// Load and initialize the Nasnet image classification model.
+		// Load and initialize the FaceNet embedding model.
 		if model := face.NewModel(face.ModelFaceNet, GetFacenetModelPath(), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
@@ -833,53 +1069,102 @@ func (m *Model) NsfwModel() *nsfw.Model {
 		return m.nsfwModel
 	}
 
-	switch m.Name {
-	case "":
-		log.Warnf("vision: missing name, model instance cannot be created")
+	// Cache initialization failure separately from the operator-controlled Disabled setting.
+	if m.nsfwErr != nil {
 		return nil
-	case NsfwModel.Name, "nsfw":
-		// Load and initialize the Nasnet image classification model.
-		if model := nsfw.NewModel(GetNsfwModelPath(), NsfwModel.TensorFlow, m.Disabled); model == nil {
+	}
+
+	switch {
+	case m.Name == "":
+		warnModel("missing name, model instance cannot be created")
+		return nil
+	case nsfw.FindModel(nsfw.ModelName(m.Name)) != nil:
+		// Load and initialize a registered ONNX detector.
+		model := nsfw.NewRegisteredModel(GetModelsPath(), nsfw.ModelName(m.Name), OnnxProvider, m.Disabled)
+
+		if err := model.Init(); err != nil {
+			m.nsfwErr = err
+			warnModel("%s (init %s model; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Name))
 			return nil
-		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init %s)", err, m.Path)
-			return nil
-		} else {
-			m.nsfwModel = model
 		}
+
+		log.Infof("vision: initialized %s nsfw model at index threshold %.4f and upload threshold %.4f",
+			clean.Log(m.Name), resolvedNSFWThreshold(model), resolvedNSFWUploadThreshold(model))
+		m.nsfwModel = model
 	default:
 		// Set model path from model name if no path is configured.
 		if m.Path == "" {
 			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
 		}
 
-		// Set default thumbnail resolution if no tags are configured.
-		if m.Resolution <= 0 {
-			m.Resolution = DefaultResolution
+		if m.ONNX == nil {
+			m.ONNX = &onnx.ModelInfo{}
+		}
+		if m.ONNX.Input == nil && m.Resolution > 0 {
+			m.ONNX.Input = &onnx.Input{Width: m.Resolution, Height: m.Resolution}
+		}
+		modelPath := filepath.Join(GetModelsPath(), clean.Path(m.Path))
+		if !strings.EqualFold(filepath.Ext(modelPath), ".onnx") {
+			if m.ONNX.File == "" {
+				m.ONNX.File = filepath.Base(m.Path) + ".onnx"
+			}
+			modelPath = m.ONNX.FilePath(modelPath)
 		}
 
-		if m.TensorFlow.Input == nil {
-			m.TensorFlow.Input = new(tensorflow.PhotoInput)
-		}
-
-		m.TensorFlow.Input.SetResolution(m.Resolution)
-
-		if m.TensorFlow == nil {
-			m.TensorFlow = &tensorflow.ModelInfo{}
-		}
-
-		// Try to load custom model based on the configuration values.
-		if model := nsfw.NewModel(GetModelPath(m.Path), m.TensorFlow, m.Disabled); model == nil {
+		unsafeClassIndex := 0
+		neutralClassIndex := 0
+		if m.UnsafeClassIndex != nil {
+			unsafeClassIndex = *m.UnsafeClassIndex
+		} else if m.Reduction == nsfw.ReductionSoftmaxUnsafe {
+			m.nsfwErr = fmt.Errorf("nsfw: unsafe class index is required for %s", m.Reduction)
+			warnModel("%s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
 			return nil
-		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init %s)", err, m.Path)
-			return nil
-		} else {
-			m.nsfwModel = model
 		}
+		if m.NeutralClassIndex != nil {
+			neutralClassIndex = *m.NeutralClassIndex
+		} else if m.Reduction == nsfw.ReductionNeutralComplement {
+			m.nsfwErr = fmt.Errorf("nsfw: neutral class index is required for %s", m.Reduction)
+			warnModel("%s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
+			return nil
+		}
+
+		// Try to load a custom ONNX model based on the configuration values.
+		model := nsfw.NewModel(nsfw.Settings{Name: nsfw.ModelName(m.Name), ModelPath: modelPath,
+			Info: m.ONNX, Reduction: m.Reduction, UnsafeClassIndex: unsafeClassIndex,
+			NeutralClassIndex: neutralClassIndex, DefaultThreshold: m.DefaultThreshold,
+			Provider: OnnxProvider, Disabled: m.Disabled})
+
+		if err := model.Init(); err != nil {
+			m.nsfwErr = err
+			warnModel("%s (init %s; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Path))
+			return nil
+		}
+
+		log.Infof("vision: initialized %s nsfw model at index threshold %.4f and upload threshold %.4f",
+			clean.Log(m.Name), resolvedNSFWThreshold(model), resolvedNSFWUploadThreshold(model))
+		m.nsfwModel = model
 	}
 
 	return m.nsfwModel
+}
+
+// resolvedNSFWThreshold returns the indexing operating point or the model fallback.
+func resolvedNSFWThreshold(model *nsfw.Model) float32 {
+	return resolvedNSFWThresholdFor(model, nsfwThresholdIndex)
+}
+
+// resolvedNSFWUploadThreshold returns the upload operating point or the model fallback.
+func resolvedNSFWUploadThreshold(model *nsfw.Model) float32 {
+	return resolvedNSFWThresholdFor(model, nsfwThresholdUpload)
+}
+
+// resolvedNSFWThresholdFor resolves a caller-specific override or the model fallback.
+func resolvedNSFWThresholdFor(model *nsfw.Model, context nsfwThresholdContext) float32 {
+	if threshold, configured := nsfwThreshold(context); configured {
+		return threshold
+	}
+
+	return model.DefaultThreshold()
 }
 
 // Clone returns a copy of the model with its own lazily derived state. Nil receivers return nil.
@@ -891,11 +1176,81 @@ func (m *Model) Clone() *Model {
 		return nil
 	}
 
-	//nolint:govet // Copying the guard is safe because the copy is reset before it is used.
-	c := *m
-
-	c.schemaOnce = sync.Once{}
-	c.schema = ""
+	c := Model{
+		Type:             m.Type,
+		Default:          m.Default,
+		Model:            m.Model,
+		Name:             m.Name,
+		Version:          m.Version,
+		Engine:           m.Engine,
+		Run:              m.Run,
+		System:           m.System,
+		Prompt:           m.Prompt,
+		Format:           m.Format,
+		Normalize:        m.Normalize,
+		Schema:           m.Schema,
+		SchemaFile:       m.SchemaFile,
+		Resolution:       m.Resolution,
+		TensorFlow:       m.TensorFlow,
+		ONNX:             m.ONNX,
+		LabelFile:        m.LabelFile,
+		CanonicalOrder:   m.CanonicalOrder,
+		Reduction:        m.Reduction,
+		DefaultThreshold: m.DefaultThreshold,
+		Options:          cloneOptions(m.Options),
+		Service:          m.Service,
+		Path:             m.Path,
+		Disabled:         m.Disabled,
+	}
+	if m.UnsafeClassIndex != nil {
+		index := *m.UnsafeClassIndex
+		c.UnsafeClassIndex = &index
+	}
+	if m.NeutralClassIndex != nil {
+		index := *m.NeutralClassIndex
+		c.NeutralClassIndex = &index
+	}
+	if m.TensorFlow != nil {
+		tensorFlowInfo := *m.TensorFlow
+		tensorFlowInfo.Tags = append([]string(nil), m.TensorFlow.Tags...)
+		if m.TensorFlow.Input != nil {
+			input := *m.TensorFlow.Input
+			input.Intervals = append([]tensorflow.Interval(nil), m.TensorFlow.Input.Intervals...)
+			for i := range input.Intervals {
+				if input.Intervals[i].Mean != nil {
+					mean := *input.Intervals[i].Mean
+					input.Intervals[i].Mean = &mean
+				}
+				if input.Intervals[i].StdDev != nil {
+					stdDev := *input.Intervals[i].StdDev
+					input.Intervals[i].StdDev = &stdDev
+				}
+			}
+			input.Shape = append([]tensorflow.ShapeComponent(nil), m.TensorFlow.Input.Shape...)
+			tensorFlowInfo.Input = &input
+		}
+		if m.TensorFlow.Output != nil {
+			output := *m.TensorFlow.Output
+			tensorFlowInfo.Output = &output
+		}
+		c.TensorFlow = &tensorFlowInfo
+	}
+	if m.ONNX != nil {
+		onnxInfo := *m.ONNX
+		if m.ONNX.Input != nil {
+			input := *m.ONNX.Input
+			onnxInfo.Input = &input
+		}
+		if m.ONNX.Output != nil {
+			output := *m.ONNX.Output
+			if m.ONNX.Output.Logits != nil {
+				logits := *m.ONNX.Output.Logits
+				output.Logits = &logits
+			}
+			onnxInfo.Output = &output
+		}
+		c.ONNX = &onnxInfo
+	}
 
 	return &c
 }

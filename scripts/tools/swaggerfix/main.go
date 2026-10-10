@@ -12,7 +12,7 @@ func main() {
 		os.Exit(2)
 	}
 	path := os.Args[1]
-	b, err := os.ReadFile(path)
+	b, err := os.ReadFile(path) //nolint:gosec // G304: path comes from the command line
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "read:", err)
 		os.Exit(1)
@@ -43,7 +43,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "marshal:", err)
 		os.Exit(1)
 	}
-	if err := os.WriteFile(path, out, 0644); err != nil {
+	if err := os.WriteFile(path, out, 0644); err != nil { //nolint:gosec // G306: generated file checked into the repository
 		fmt.Fprintln(os.Stderr, "write:", err)
 		os.Exit(1)
 	}

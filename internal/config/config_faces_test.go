@@ -121,7 +121,91 @@ func TestConfig_FaceEngine(t *testing.T) {
 	})
 }
 
+// setTestEmbedder configures the process-wide face embedder with the specified settings until
+// the test ends. A snapshot of a model that failed to load fails again on restore, so the
+// cleanup compares the configured model rather than the error.
+func setTestEmbedder(t *testing.T, settings face.EmbedderSettings) {
+	t.Helper()
+
+	restore, name := face.EmbedderConfig(), face.ConfiguredModel()
+	_ = face.ConfigureEmbedder(settings)
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(restore)
+		assert.Equal(t, name, face.ConfiguredModel())
+	})
+}
+
+// disableTestEmbeddings turns face embeddings off in this process until the test ends.
+func disableTestEmbeddings(t *testing.T) {
+	t.Helper()
+	setTestEmbedder(t, face.EmbedderSettings{Name: face.ModelNone})
+}
+
+// useUnconfiguredTestEmbedder resets the process-wide embedder to its unconfigured state until
+// the test ends, so tests of the detection schedule do not depend on what earlier tests left.
+func useUnconfiguredTestEmbedder(t *testing.T) {
+	t.Helper()
+	setTestEmbedder(t, face.EmbedderSettings{Name: face.ModelAuto})
+
+	if reason := face.EmbeddingsBlockedReason(); reason != "" {
+		face.UnblockEmbeddings()
+		t.Cleanup(func() { face.BlockEmbeddings(reason) })
+	}
+}
+
+func TestFaceEmbeddingsUnavailable(t *testing.T) {
+	useUnconfiguredTestEmbedder(t)
+
+	t.Run("Available", func(t *testing.T) {
+		assert.Empty(t, faceEmbeddingsUnavailable())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		disableTestEmbeddings(t)
+
+		assert.Equal(t, "face embeddings are disabled", faceEmbeddingsUnavailable())
+	})
+	t.Run("Paused", func(t *testing.T) {
+		t.Cleanup(face.UnblockEmbeddings)
+		face.BlockEmbeddings("12 marker(s) use facenet")
+
+		assert.Equal(t, "face embeddings are paused", faceEmbeddingsUnavailable())
+	})
+	t.Run("FailedToLoad", func(t *testing.T) {
+		// Loading reports ModelNone as well, so the error is checked before the setting.
+		setTestEmbedder(t, face.EmbedderSettings{Name: face.ModelSFace, Model: face.FindEmbeddingModel(face.ModelSFace)})
+		require.Error(t, face.EmbedderError())
+
+		assert.Equal(t, "the face embedding model failed to load", faceEmbeddingsUnavailable())
+	})
+}
+
 func TestConfig_FaceEngineShouldRun(t *testing.T) {
+	useUnconfiguredTestEmbedder(t)
+
+	t.Run("EmbeddingsDisabled", func(t *testing.T) {
+		// A detected face is only saved with its embedding, so no run type detects without one.
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = vision.RunAlways
+		require.True(t, c.FaceEngineShouldRun(vision.RunManual))
+
+		disableTestEmbeddings(t)
+
+		for _, run := range []vision.RunType{vision.RunManual, vision.RunOnIndex, vision.RunNewlyIndexed, vision.RunOnSchedule} {
+			assert.False(t, c.FaceEngineShouldRun(run), run)
+		}
+	})
+	t.Run("EmbeddingsPaused", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = vision.RunAlways
+		require.True(t, c.FaceEngineShouldRun(vision.RunManual))
+
+		t.Cleanup(face.UnblockEmbeddings)
+		face.BlockEmbeddings("12 marker(s) use facenet")
+
+		assert.False(t, c.FaceEngineShouldRun(vision.RunManual))
+		face.UnblockEmbeddings()
+		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
+	})
 	t.Run("AutoHighThreads", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModelThreads = 4
@@ -2092,6 +2176,9 @@ func TestConfig_ClearFaceModel(t *testing.T) {
 	t.Run("UnwritableFile", func(t *testing.T) {
 		// The pin has to stay in memory when it could not be removed from the file, or the run
 		// resolves a detected model while a restart pins the old one again.
+		if os.Geteuid() == 0 {
+			t.Skip("root can write read-only files")
+		}
 		c := NewConfig(CliTestContext())
 		c.options.ConfigPath = t.TempDir()
 		require.NoError(t, c.SetFaceModel(face.ModelFaceNet))
@@ -2948,5 +3035,58 @@ func TestConfig_faceAcceptThresholds(t *testing.T) {
 			}
 		}
 		assert.Equal(t, 1, warnings)
+	})
+}
+
+// TestConfig_FaceModelTensorFlow checks that disabling TensorFlow refuses only face models that run on it.
+func TestConfig_FaceModelTensorFlow(t *testing.T) {
+	t.Run("ConfiguredFaceNet", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = face.ModelFaceNet
+
+		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
+
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelNone, c.FaceModel())
+		assert.False(t, c.DisableFaces())
+	})
+	t.Run("AutoSkipsFaceNet", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+
+		assert.Equal(t, face.ModelFaceNet, c.installedFaceModel())
+
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelNone, c.installedFaceModel())
+	})
+	t.Run("SFaceNotAffected", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace, face.ModelFaceNet)
+		c.options.DisableTensorFlow = true
+
+		assert.Equal(t, face.ModelSFace, c.installedFaceModel())
+
+		c.options.FaceModel = face.ModelSFace
+
+		assert.Equal(t, face.ModelSFace, c.FaceModel())
+		assert.False(t, c.DisableFaces())
+	})
+	t.Run("FaceNetLibraryPaused", func(t *testing.T) {
+		// The library keeps its vector space, so an installed SFace is not used in its place.
+		t.Cleanup(face.UnblockEmbeddings)
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace, face.ModelFaceNet)
+		c.options.DisableTensorFlow = true
+		counts := []query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelFaceNet, Markers: 9}}
+
+		c.faceModel = c.detectFaceModel(counts)
+		c.checkFaceModelMismatch(counts)
+
+		assert.Equal(t, face.ModelNone, c.FaceModel())
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, face.EmbeddingsBlockedReason(), "9 marker(s) use facenet")
 	})
 }

@@ -406,6 +406,43 @@ func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
 	})
 }
 
+// TestIndex_MediaFile_FacesOnlyNothingToUpdate verifies that a faces-only run skips an indexed
+// file when neither face detection nor XMP import may run.
+func TestIndex_MediaFile_FacesOnlyNothingToUpdate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	useTestDb(t, "faces-only-nothing")
+	cfg := config.NewMinimalTestConfigWithDb("faces-only-nothing", filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	jpg := filepath.Join(cfg.OriginalsPath(), "faces-only", "sidecar.jpg")
+	src, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
+	require.NoError(t, err)
+	require.NoError(t, src.Copy(jpg, false))
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+
+	mf, err := NewMediaFile(jpg)
+	require.NoError(t, err)
+	result := ind.MediaFile(mf, IndexOptionsSingle(cfg), "", "")
+	require.True(t, result.Success(), "initial index must succeed: %v", result.Err)
+
+	opt := IndexOptionsFacesOnly(cfg)
+	opt.DetectFaces = false
+	opt.ImportFaceTags = false
+
+	mf, err = NewMediaFile(jpg)
+	require.NoError(t, err)
+	assert.Equal(t, IndexSkipped, ind.MediaFile(mf, opt, "", "").Status)
+}
+
 // TestIndex_MediaFile_FacesOnlyRecountsAfterDelete verifies that a faces-only
 // re-index recomputes and persists the photo face count when a removed XMP
 // region deletes its marker, even though the deletion leaves no unsaved marker.

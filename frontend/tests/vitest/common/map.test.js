@@ -1,5 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { groupGeoFeatures } from "common/map";
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { groupGeoFeatures, locale } from "common/map";
+
+// maplibreLocaleKeys returns the UI string keys that the installed MapLibre version defines.
+const maplibreLocaleKeys = () => {
+  const dir = path.dirname(createRequire(import.meta.url).resolve("maplibre-gl/package.json"));
+  const src = fs.readFileSync(path.join(dir, "src/ui/default_locale.ts"), "utf8");
+  return [...src.matchAll(/^\s*'([\w.]+)':/gm)].map((m) => m[1]);
+};
 
 const feature = (uid, lng, lat, id) => ({
   id: id ?? uid,
@@ -96,5 +106,20 @@ describe("common/map.groupGeoFeatures", () => {
     const groups = groupGeoFeatures([feature("p3", 16.5, 47.5), feature("p1", 16.5, 47.5), feature("p2", 16.5, 47.5)], identity, 0.5);
     expect(groups.length).toBe(1);
     expect(groups[0].key).toBe("p1");
+  });
+});
+
+describe("common/map.locale", () => {
+  it("only uses keys that MapLibre defines", () => {
+    const keys = maplibreLocaleKeys();
+    expect(keys).toContain("NavigationControl.ZoomIn");
+    expect(Object.keys(locale()).filter((k) => !keys.includes(k))).toEqual([]);
+  });
+  it("labels the zoom and location controls", () => {
+    expect(locale()).toMatchObject({
+      "NavigationControl.ZoomIn": "Zoom In",
+      "NavigationControl.ZoomOut": "Zoom Out",
+      "GeolocateControl.FindMyLocation": "Find My Location",
+    });
   });
 });

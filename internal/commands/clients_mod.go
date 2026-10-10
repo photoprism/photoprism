@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -52,17 +51,10 @@ func clientsModAction(ctx *cli.Context) error {
 
 		// Check if the client exists but has been deleted.
 		if client.Deleted() {
-			if !ctx.Bool("restore") && !RunNonInteractively(false) {
-				prompt := promptui.Prompt{
-					Label:     fmt.Sprintf("Restore client %s", client.String()),
-					IsConfirm: true,
-				}
-
-				if _, err := prompt.Run(); err != nil {
-					return fmt.Errorf("client %s has been deleted", clean.Log(id))
-				}
-			} else if !ctx.Bool("restore") {
-				return fmt.Errorf("client %s has been deleted, pass --restore to bring it back", clean.Log(id))
+			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore client %s", client.String()), "--restore"); err != nil {
+				return err
+			} else if !restore {
+				return fmt.Errorf("client %s has been deleted", clean.Log(id))
 			}
 
 			if err := client.Restore(); err != nil {
@@ -70,6 +62,10 @@ func clientsModAction(ctx *cli.Context) error {
 			}
 
 			log.Infof("client %s has been restored", client.String())
+
+			if !ctx.Bool("regenerate") && frm.Secret() == "" {
+				log.Warnf("client %s has no secret, use --regenerate to create one", client.String())
+			}
 		}
 
 		// Update client from form values.

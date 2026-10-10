@@ -115,7 +115,7 @@ func Start(conf *config.Config) {
 					RunMeta(conf)
 					RunShare(conf)
 					RunSync(conf)
-					RunPurgeArchives(conf)
+					RunPurgeExpired(conf)
 				})
 			}
 		}

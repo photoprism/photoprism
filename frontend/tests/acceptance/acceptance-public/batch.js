@@ -130,13 +130,13 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
   await t.click(photoedit.locationConfirm);
   await t.expect(photoedit.country.hasAttribute("readonly")).ok();
   await t.expect(photoedit.countryValue.innerText).eql("Germany");
-  await t.click(Selector(".input-labels input"));
+  await t.click(Selector(".input-labels input:not([type='hidden'])"));
 
   // The dropdown hides labels already assigned to any selected photo:
   // "Cat" is a chip on photo 1, "Animal" is unassigned across all 4.
   await t.expect(page.selectOption.withText("Cat").exists).notOk().expect(page.selectOption.withText("Animal").visible).ok();
 
-  await t.typeText(Selector(".input-labels input"), "P", { replace: true });
+  await t.typeText(Selector(".input-labels input:not([type='hidden'])"), "P", { replace: true });
 
   await t
     .expect(page.selectOption.withText("Portrait").visible)
@@ -150,12 +150,12 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
     .pressKey("ctrl+a delete")
     .pressKey("enter");
 
-  await t.click(Selector(".input-albums input"));
+  await t.click(Selector(".input-albums input:not([type='hidden'])"));
 
   // "Holiday" is on photo 3, "Christmas" is unassigned.
   await t.expect(page.selectOption.withText("Holiday").exists).notOk().expect(page.selectOption.withText("Christmas").visible).ok();
 
-  await t.typeText(Selector(".input-albums input"), "C", { replace: true });
+  await t.typeText(Selector(".input-albums input:not([type='hidden'])"), "C", { replace: true });
 
   await t
     .expect(page.selectOption.withText("Christmas").visible)

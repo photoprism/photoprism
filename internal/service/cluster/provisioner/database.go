@@ -120,10 +120,13 @@ func quoteIdent(s string) (string, error) {
 	return "`" + strings.ReplaceAll(s, "`", "``") + "`", nil
 }
 
-// quoteString escapes and quotes a string literal for SQL statements.
+// quoteString escapes and quotes a string literal for SQL statements. Backslashes and control characters
+// are refused, since only single quotes are escaped.
 func quoteString(s string) (string, error) {
 	if strings.ContainsRune(s, '\x00') {
 		return "", errors.New("string contains NUL")
+	} else if strings.ContainsFunc(s, func(r rune) bool { return r == '\\' || r < 0x20 || r == 0x7f }) {
+		return "", errors.New("string contains unsupported characters")
 	}
 	// SQL-92 string literal quoting: single quotes doubled.
 	return "'" + strings.ReplaceAll(s, "'", "''") + "'", nil

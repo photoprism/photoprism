@@ -10,12 +10,23 @@ const (
 	XFrameOptions           = "X-Frame-Options"            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
 	XForwardedProto         = "X-Forwarded-Proto"          // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto
 	XForwardedFor           = "X-Forwarded-For"            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
+	XForwardedHost          = "X-Forwarded-Host"           // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host
 	Forwarded               = "Forwarded"                  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Forwarded
 	XClientIP               = "X-Client-IP"
 	XRealIP                 = "X-Real-IP"
 	XAppengineRemoteAddr    = "X-Appengine-Remote-Addr"
 	CFConnectingIP          = "CF-Connecting-IP"
 	FlyClientIP             = "Fly-Client-IP"
+	XForwardedPort          = "X-Forwarded-Port"
+	XForwardedPrefix        = "X-Forwarded-Prefix"
+	XForwardedServer        = "X-Forwarded-Server"
+	XForwardedSsl           = "X-Forwarded-Ssl"
+	XOriginalForwardedFor   = "X-Original-Forwarded-For"
+	XUrlScheme              = "X-Url-Scheme"
+	FrontEndHttps           = "Front-End-Https"
+	TrueClientIP            = "True-Client-IP"
+	XClusterClientIP        = "X-Cluster-Client-IP"
+	FastlyClientIP          = "Fastly-Client-IP"
 )
 
 // Standard security policies.

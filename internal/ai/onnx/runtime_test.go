@@ -49,6 +49,10 @@ func TestEnsureRuntime(t *testing.T) {
 	t.Run("Idempotent", func(t *testing.T) {
 		// The result is cached, so a second call must report exactly what the first did
 		// rather than retrying the candidate list.
-		require.Equal(t, EnsureRuntime(""), EnsureRuntime(""))
+		first := EnsureRuntime("")
+		require.Equal(t, first, EnsureRuntime(""))
+		if first == nil {
+			require.NotEmpty(t, RuntimeLibraryPath())
+		}
 	})
 }

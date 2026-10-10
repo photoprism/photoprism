@@ -26,11 +26,33 @@ Additional information can be found in our Developer Guide:
 package openai
 
 import (
+	"net/url"
 	"strings"
 )
 
 // CloudModelFamilies lists the identifier families OpenAI uses for the models it hosts itself.
 var CloudModelFamilies = []string{"gpt", "chatgpt", "o1", "o3", "o4"}
+
+// IsCloudUrl reports whether the URL points at the OpenAI API host.
+func IsCloudUrl(rawUrl string) bool {
+	if rawUrl = strings.TrimSpace(rawUrl); rawUrl == "" {
+		return false
+	}
+
+	u, err := url.Parse(rawUrl)
+
+	if err != nil || u.Host == "" {
+		return false
+	}
+
+	cloud, err := url.Parse(DefaultBaseUrl)
+
+	if err != nil {
+		return false
+	}
+
+	return strings.EqualFold(u.Hostname(), cloud.Hostname())
+}
 
 // IsCloudModel reports whether the model identifier belongs to OpenAI's own catalog.
 // OpenAI-compatible servers such as vLLM, llama.cpp, and LM Studio serve open-weight models

@@ -153,6 +153,24 @@ func TestSubject_Delete(t *testing.T) {
 
 		assert.Len(t, subj, 0)
 	})
+	t.Run("MarksRecord", func(t *testing.T) {
+		m := NewSubject("Delete Marks Gus", SubjPerson, SrcManual)
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { UnscopedDb().Delete(m) })
+		require.NoError(t, m.Delete())
+		assert.True(t, m.Deleted())
+
+		// The same record restores the row, and deletes it permanently after another deletion.
+		var live, stored int
+		require.NoError(t, m.Restore())
+		assert.False(t, m.Deleted())
+		require.NoError(t, Db().Model(&Subject{}).Where("subj_uid = ?", m.SubjUID).Count(&live).Error)
+		assert.Equal(t, 1, live)
+		require.NoError(t, m.Delete())
+		require.NoError(t, m.DeletePermanently())
+		require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", m.SubjUID).Count(&stored).Error)
+		assert.Zero(t, stored)
+	})
 	t.Run("AlreadyDeleted", func(t *testing.T) {
 		m := NewSubject("Jens Doe", SubjPerson, SrcAuto)
 
@@ -591,6 +609,45 @@ func TestSubject_RefreshPhotos(t *testing.T) {
 	if err := subj.RefreshPhotos(); err != nil {
 		t.Fatal(err)
 	}
+}
+
+// TestSubject_AfterDelete verifies that deleting a subject leaves the counters of other subjects
+// unchanged, including a delete by condition through an empty model.
+func TestSubject_AfterDelete(t *testing.T) {
+	// newCountedSubject creates a person with the specified counters and removes it afterwards.
+	newCountedSubject := func(t *testing.T, name string, files, photos int) *Subject {
+		m := NewSubject(name, SubjPerson, SrcManual)
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { UnscopedDb().Delete(m) })
+		require.NoError(t, UnscopedDb().Model(m).UpdateColumns(Values{"file_count": files, "photo_count": photos}).Error)
+		return m
+	}
+
+	// counts returns the stored counters of the specified subject, including a deleted one.
+	counts := func(t *testing.T, uid string) []int {
+		var m Subject
+		require.NoError(t, UnscopedDb().Where("subj_uid = ?", uid).First(&m).Error)
+		return []int{m.FileCount, m.PhotoCount}
+	}
+
+	t.Run("Delete", func(t *testing.T) {
+		kept := newCountedSubject(t, "AfterDelete Kept Ada", 5, 4)
+		deleted := newCountedSubject(t, "AfterDelete Deleted Ben", 3, 2)
+		require.NoError(t, deleted.Delete())
+		assert.Equal(t, []int{5, 4}, counts(t, kept.SubjUID))
+	})
+	t.Run("DeletePermanently", func(t *testing.T) {
+		kept := newCountedSubject(t, "AfterDelete Kept Eve", 5, 4)
+		deleted := newCountedSubject(t, "AfterDelete Deleted Finn", 3, 2)
+		require.NoError(t, UnscopedDb().Delete(deleted).Error)
+		assert.Equal(t, []int{5, 4}, counts(t, kept.SubjUID))
+	})
+	t.Run("DeleteByCondition", func(t *testing.T) {
+		kept := newCountedSubject(t, "AfterDelete Kept Cleo", 5, 4)
+		deleted := newCountedSubject(t, "AfterDelete Deleted Dan", 3, 2)
+		require.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_uid = ?", deleted.SubjUID).Error)
+		assert.Equal(t, []int{5, 4}, counts(t, kept.SubjUID))
+	})
 }
 
 func TestSubject_DeletePermanently(t *testing.T) {

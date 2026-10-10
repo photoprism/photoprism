@@ -16,7 +16,6 @@ DisableWebDAV: false
 DisableSettings: false
 DisableTensorFlow: false
 DisableFaces: false
-DisableClassification: false
 DisableVectors: false
 DisableRaw: false
 RawPresets: false

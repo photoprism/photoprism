@@ -16,10 +16,11 @@ func TestNewOptions(t *testing.T) {
 		assert.Equal(t, 1920, opt.SizeLimit)
 		assert.Equal(t, DefaultQuality, opt.Quality)
 		assert.Equal(t, "50", opt.QvQuality())
-		assert.Equal(t, "25", opt.GlobalQuality())
+		assert.Equal(t, "28", opt.GlobalQuality())
 		assert.Equal(t, "25", opt.CrfQuality())
 		assert.Equal(t, "25", opt.QpQuality())
-		assert.Equal(t, "25", opt.CqQuality())
+		assert.Equal(t, "29", opt.VaapiQuality())
+		assert.Equal(t, "31", opt.CqQuality())
 		assert.Equal(t, PresetFast, opt.Preset)
 		assert.Equal(t, "", opt.Device)
 		assert.Equal(t, "0:v:0", opt.MapVideo)
@@ -58,5 +59,18 @@ func TestOptions_VideoFilter(t *testing.T) {
 	t.Run("NoV360", func(t *testing.T) {
 		r := opt.VideoFilter("")
 		assert.NotContains(t, r, "v360")
+	})
+}
+
+func TestOptions_MaxRate(t *testing.T) {
+	t.Run("Limit", func(t *testing.T) {
+		opt := &Options{MaxBitrate: 25}
+		assert.Equal(t, "25M", opt.MaxRate())
+	})
+	t.Run("NoLimit", func(t *testing.T) {
+		opt := &Options{}
+		assert.Equal(t, "", opt.MaxRate())
+		opt.MaxBitrate = -1
+		assert.Equal(t, "", opt.MaxRate())
 	})
 }

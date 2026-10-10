@@ -45,17 +45,21 @@ func DewarpFisheyeToJpegCmd(inputName, jpegName, filter string, opt *encode.Opti
 		filter = scaled.VideoFilter("")
 	}
 
-	// #nosec G204 -- paths and flags are created by the application, not user input.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-loglevel", "error",
 		"-y",
-		"-i", inputName, // input dual-fisheye image
+	}, encode.InputArgs(inputName)...)
+
+	args = append(args,
 		"-vf", filter, // dewarp to equirectangular
 		"-frames:v", "1", // write a single frame
+		"-update", "1", // write a single image, not a numbered sequence
 		jpegName, // output equirectangular JPEG
 	)
+
+	// #nosec G204 -- paths and flags are created by the application, not user input.
+	return exec.Command(opt.Bin, args...)
 }
 
 // DewarpDualFisheyePairToJpegCmd combines separate left and right lens frames and dewarps them to JPEG.
@@ -69,6 +73,18 @@ func DewarpDualStreamToJpegCmd(inputName, jpegName string, fov, roll int, opt *e
 	return dewarpLensesToJpegCmd([]string{inputName}, "[0:v:1][0:v:0]", jpegName, fov, roll, opt)
 }
 
+// lensInputArgs returns the input arguments for Insta360 lens videos, which are read with the MOV/MP4
+// demuxer only, as their container format.
+func lensInputArgs(inputNames []string) []string {
+	args := make([]string, 0, 4*len(inputNames))
+
+	for _, inputName := range inputNames {
+		args = append(args, "-f", "mov", "-i", inputName)
+	}
+
+	return args
+}
+
 // dewarpLensesToJpegCmd stacks the specified lens streams side by side and dewarps one frame.
 func dewarpLensesToJpegCmd(inputNames []string, lenses, jpegName string, fov, roll int, opt *encode.Options) *exec.Cmd {
 	v360Filter := V360DualFisheyeToEquirect(fov, roll)
@@ -78,15 +94,13 @@ func dewarpLensesToJpegCmd(inputNames []string, lenses, jpegName string, fov, ro
 		v360Filter = scaled.VideoFilter("")
 	}
 
-	args := []string{"-hide_banner", "-loglevel", "error", "-y"}
-	for _, inputName := range inputNames {
-		args = append(args, "-i", inputName)
-	}
+	args := append([]string{"-hide_banner", "-loglevel", "error", "-y"}, lensInputArgs(inputNames)...)
 
 	args = append(args,
 		"-filter_complex", fmt.Sprintf("%shstack=inputs=2:shortest=1,%s[v]", lenses, v360Filter),
 		"-map", "[v]",
 		"-frames:v", "1",
+		"-update", "1",
 		jpegName,
 	)
 
@@ -104,18 +118,22 @@ func DewarpStackedDualFisheyeToJpegCmd(inputName, jpegName string, fov, roll int
 	}
 	filter := fmt.Sprintf("[0:v:0]crop=iw:ih/2:0:0[top];[0:v:0]crop=iw:ih/2:0:ih/2[bottom];[top][bottom]hstack=inputs=2:shortest=1,%s[v]", v360Filter)
 
-	// #nosec G204 -- paths and flags are created by the application, not user input.
-	return exec.Command(
-		opt.Bin,
+	args := append([]string{
 		"-hide_banner",
 		"-loglevel", "error",
 		"-y",
-		"-i", inputName,
+	}, encode.InputArgs(inputName)...)
+
+	args = append(args,
 		"-filter_complex", filter,
 		"-map", "[v]",
 		"-frames:v", "1",
+		"-update", "1",
 		jpegName,
 	)
+
+	// #nosec G204 -- paths and flags are created by the application, not user input.
+	return exec.Command(opt.Bin, args...)
 }
 
 // DewarpDualFisheyePairToAvcCmd combines separate lens videos and encodes an equirectangular AVC derivative.
@@ -130,10 +148,7 @@ func DewarpDualStreamToAvcCmd(inputName, avcName string, opt encode.Options) *ex
 
 // dewarpLensesToAvcCmd stacks the specified lens streams side by side and encodes the dewarped video.
 func dewarpLensesToAvcCmd(inputNames []string, lenses, avcName string, opt encode.Options) *exec.Cmd {
-	args := []string{"-hide_banner", "-y", "-strict", "-2"}
-	for _, inputName := range inputNames {
-		args = append(args, "-i", inputName)
-	}
+	args := append([]string{"-hide_banner", "-y", "-strict", "-2"}, lensInputArgs(inputNames)...)
 
 	args = append(args,
 		"-filter_complex", fmt.Sprintf("%shstack=inputs=2:shortest=1,%s[v]", lenses, opt.VideoFilter(encode.FormatYUV420P)),

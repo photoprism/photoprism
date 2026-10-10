@@ -12,7 +12,6 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -45,22 +44,17 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		return f, nil
 	}
 
-	imageName := fs.ImagePng.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-
-	if imageName == "" {
-		imageName = fs.ImageJpeg.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-	}
-
-	mediaFile, err := NewMediaFile(imageName)
+	var imageName string
 
 	// Replace existing sidecar if "force" is true.
-	if err == nil && mediaFile.IsPreviewImage() {
+	if mediaFile := findPreviewImage(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), false, fs.ImagePng, fs.ImageJpeg); mediaFile != nil {
 		if force && mediaFile.InSidecar() {
 			if removeErr := mediaFile.Remove(); removeErr != nil {
 				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(mediaFile.RootRelName()), removeErr)
 			}
 
 			log.Infof("convert: replacing %s", clean.Log(mediaFile.RootRelName()))
+			imageName = mediaFile.FileName()
 		} else {
 			return mediaFile, nil
 		}
@@ -89,12 +83,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
 	// Publish file conversion event.
-	event.Publish("index.converting", event.Data{
-		"fileType": f.FileType(),
-		"fileName": fileName,
-		"baseName": filepath.Base(fileName),
-		"xmpName":  filepath.Base(xmpName),
-	})
+	publishConverting(f, fileName, filepath.Base(xmpName))
 
 	start := time.Now()
 
@@ -165,7 +154,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	budget := NewConvertBudget(w.conf.ConvertTimeout())
 
 	// Try compatible converters.
-	for _, c := range cmds {
+	for i, c := range cmds {
 		// Fetch command output.
 		var out bytes.Buffer
 		var stderr bytes.Buffer
@@ -178,7 +167,12 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 			fmt.Sprintf("LD_LIBRARY_PATH=%s", w.conf.CmdLibPath()),
 		}...)
 
-		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
+		// Further candidates, e.g. a second ExifTool extraction, are logged at debug level.
+		if i == 0 {
+			log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
+		} else {
+			log.Debugf("convert: trying %s for %s", filepath.Base(cmd.Path), clean.Log(filepath.Base(imageName)))
+		}
 
 		// Log exact command in debug mode.
 		log.Debug(clean.Cmd(cmd))
@@ -193,12 +187,13 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 			RemoveConvertOutput(imageName, cmd)
 
 			continue
-		} else if fs.FileExistsNotEmpty(imageName) {
-			// The command wrote the target file directly (e.g. Darktable, RawTherapee).
-		} else if res := out.Bytes(); len(res) < 512 || !mimetype.Detect(res).Is(expectedMime) {
-			continue
-		} else if err = os.WriteFile(imageName, res, fs.ModeFile); err != nil {
-			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
+		}
+
+		// Most converters write the target file themselves; the ExifTool extractions write to stdout.
+		direct := fs.FileExistsNotEmpty(imageName)
+		res := out.Bytes()
+
+		if !direct && (len(res) < 512 || !mimetype.Detect(res).Is(expectedMime)) {
 			continue
 		}
 
@@ -206,21 +201,23 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		// unsupported sensor) so the loop falls back to the next converter.
 		if c.StderrRejected(stderr.String()) {
 			log.Debugf("convert: discarding %s from %s (untrustworthy output)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
-			if removeErr := os.Remove(imageName); removeErr != nil && !os.IsNotExist(removeErr) {
-				log.Tracef("convert: %s (%s)", removeErr, filepath.Base(cmd.Path))
+			if direct {
+				RemoveConvertOutput(imageName, cmd)
 			}
 			continue
 		}
 
-		// Reject undecodable output (e.g. a truncated/bogus embedded RAW preview that passed
-		// the MIME sniff) so the loop tries the next converter instead of indexing a file
-		// whose thumbnails will fail.
-		if c.VerifyImage {
+		if !direct {
+			if err = w.publishImageOutput(c, res, imageName, budget); err != nil {
+				log.Debugf("convert: discarding %s from %s (%s)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path), clean.Error(err))
+				continue
+			}
+		} else if c.VerifyImage {
+			// Reject undecodable output so the loop tries the next converter instead of indexing a
+			// file whose thumbnails will fail.
 			if err = thumb.Verify(imageName); err != nil {
 				log.Debugf("convert: discarding undecodable %s from %s (%s)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path), clean.Error(err))
-				if removeErr := os.Remove(imageName); removeErr != nil && !os.IsNotExist(removeErr) {
-					log.Tracef("convert: %s (%s)", removeErr, filepath.Base(cmd.Path))
-				}
+				RemoveConvertOutput(imageName, cmd)
 				continue
 			}
 		}
@@ -325,18 +322,28 @@ func (w *Convert) writeEquirectangularProjection(fileName string) error {
 }
 
 // dewarpFileInPlace dewarps a fisheye image to equirectangular with the FFmpeg v360 filter, writing
-// to a temporary file and renaming it over the original because FFmpeg cannot read and write the
+// to a staged sibling and publishing it over the original because FFmpeg cannot read and write the
 // same path in one pass. Stacked inputs are rearranged before applying the spherical profile.
 func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.Type, stacked bool, fov, roll int) error {
 	if !w.conf.FFmpegEnabled() {
 		return errors.New("ffmpeg is disabled")
+	} else if fs.IsSymlink(fileName) {
+		return errors.New("refusing to replace a symbolic link")
 	}
 
-	tmpName := fileName + ".dewarp.jpg"
+	tmpName, err := fs.CreateStageFile(fileName)
 
-	// Always clean up the temp file: it is renamed over fileName on success (making this a no-op),
-	// and removed on any error path so no stray "<name>.dewarp.jpg" is left to be indexed.
-	defer func() { _ = os.Remove(tmpName) }()
+	if err != nil {
+		return err
+	}
+
+	published := false
+
+	defer func() {
+		if !published {
+			_ = os.Remove(tmpName)
+		}
+	}()
 
 	filter := ffmpeg.V360DualFisheyeToEquirect(fov, roll)
 	if inputProjection.Equal(projection.Fisheye.String()) {
@@ -364,5 +371,71 @@ func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.
 		return errors.New("no output produced")
 	}
 
-	return os.Rename(tmpName, fileName)
+	if err = fs.PublishFile(tmpName, fileName, true); err != nil {
+		return err
+	}
+
+	published = true
+
+	return nil
+}
+
+// publishImageOutput writes converter output to a staged sibling of the image file, verifies it and
+// writes a missing source orientation within the budget as the command requires, and then publishes it.
+func (w *Convert) publishImageOutput(c *ConvertCmd, data []byte, imageName string, budget *ConvertBudget) (err error) {
+	staged, err := fs.OpenStageFile(imageName)
+
+	if err != nil {
+		return err
+	}
+
+	stagedName := staged.Name()
+	published := false
+
+	// Remove only the files this call created, on every way out including a panic.
+	defer func() {
+		names := []string{stagedName + exifToolTmpSuffix}
+
+		if !published {
+			names = append(names, stagedName)
+		}
+
+		for _, name := range names {
+			if removeErr := os.Remove(name); removeErr != nil && !os.IsNotExist(removeErr) {
+				log.Tracef("convert: %s", clean.Error(removeErr))
+			}
+		}
+	}()
+
+	if _, err = staged.Write(data); err != nil {
+		_ = staged.Close()
+		return err
+	} else if err = staged.Close(); err != nil {
+		return err
+	}
+
+	if c.VerifyImage {
+		if err = thumb.Verify(stagedName); err != nil {
+			return fmt.Errorf("undecodable (%w)", err)
+		}
+	}
+
+	// The preview is published either way, untagged if the orientation cannot be written.
+	if c.SourceOrientation != 0 {
+		if written, tagErr := w.writeMissingOrientation(stagedName, c.SourceOrientation, budget); tagErr != nil {
+			log.Warnf("convert: %s in %s (write orientation)", clean.Error(tagErr), clean.Log(filepath.Base(imageName)))
+		} else if !written {
+			log.Debugf("convert: orientation of %s left unchanged", clean.Log(filepath.Base(imageName)))
+		}
+	}
+
+	// A link fails when the name is taken, so a non-empty regular file that appeared meanwhile is used
+	// rather than replaced, while a symlink or directory at that name fails the candidate.
+	if err = fs.PublishFile(stagedName, imageName, false); err == nil {
+		published = true
+	} else if errors.Is(err, os.ErrExist) && fs.FileExistsNotEmpty(imageName) && !fs.IsSymlink(imageName) {
+		return nil
+	}
+
+	return err
 }

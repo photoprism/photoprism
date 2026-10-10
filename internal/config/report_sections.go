@@ -11,7 +11,7 @@ type ReportSection struct {
 var faceFlagsInfo = `!!! info ""
     Changing the face model requires running ` + "`photoprism faces migrate`" + `. Leaving the distance thresholds unset is recommended since they are calibrated for the configured face model. A range that fits one embedding model does not transfer to another. Higher values cluster more aggressively and produce more false positives. After changing any of the clustering parameters or after migration, run ` + "`photoprism faces update --force`" + `: it clusters what is unassigned and matches every face against the clusters again, so an automatically matched face may end up in a different cluster while a face that you assigned manually keeps its assignment.
 
-We recommend that only advanced users change these parameters:`
+We recommend that only advanced users change the detector, model, or clustering parameters:`
 
 // OptionsReportSections is used to generate config options reports in ../commands/show_config_options.go.
 var OptionsReportSections = []ReportSection{
@@ -33,7 +33,7 @@ var OptionsReportSections = []ReportSection{
 	{Start: "PHOTOPRISM_THUMB_LIBRARY", Title: "Preview Images"},
 	{Start: "PHOTOPRISM_JPEG_QUALITY", Title: "Image Quality"},
 	{Start: "PHOTOPRISM_VISION_YAML", Title: "Computer Vision"},
-	{Start: "PHOTOPRISM_FACE_DETECTOR", Title: "Face Recognition",
+	{Start: "PHOTOPRISM_XMP_FACES", Title: "Face Recognition",
 		Info: faceFlagsInfo},
 	{Start: "PHOTOPRISM_PID_FILENAME", Title: "Daemon Mode",
 		Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
@@ -59,7 +59,7 @@ var YamlReportSections = []ReportSection{
 	{Start: "ThumbLibrary", Title: "Preview Images"},
 	{Start: "JpegQuality", Title: "Image Quality"},
 	{Start: "VisionYaml", Title: "Computer Vision"},
-	{Start: "FaceDetector", Title: "Face Recognition"},
+	{Start: "XMPFaces", Title: "Face Recognition"},
 	{Start: "PIDFilename", Title: "Daemon Mode",
 		Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
 }

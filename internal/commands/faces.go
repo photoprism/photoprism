@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -282,6 +283,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if result.Retained > 0 {
 			log.Infof("faces: %d markers kept the vector another detector's crop produced", result.Retained)
 		}
+		// A person removed these names under the previous model, which the new one may recognize.
+		if result.LiftedRejections > 0 {
+			log.Infof("faces: %d re-embedded marker(s) whose name a person had removed can be recognized again",
+				result.LiftedRejections)
+		}
 		// Excluded assignments keep their person but seed no cluster, so the count is what
 		// tells an operator how much of a curated library did not shape its own centroids.
 		if result.ExcludedMarkers > 0 || result.LowQualityMarkers > 0 {
@@ -520,7 +526,7 @@ func facesResetDetector(ctx *cli.Context) string {
 // is the configured one when auto is requested.
 func facesResetDetectorName(conf *config.Config, detector string) string {
 	if conf != nil && detector != "" && face.ParseDetectorName(detector) == face.DetectorAuto {
-		return string(conf.FaceDetector())
+		return conf.FaceDetector()
 	}
 
 	return detector
@@ -584,11 +590,10 @@ func facesResetAllAction(ctx *cli.Context) error {
 
 	if err := query.RemovePeopleAndFaces(); err != nil {
 		return err
-	} else {
-		elapsed := time.Since(start)
-
-		log.Infof("completed in %s", elapsed)
 	}
+
+	log.Infof("faces: removed all faces, people, and face markers; run \"photoprism faces index\" to detect faces again")
+	log.Infof("completed in %s", time.Since(start))
 
 	return nil
 }
@@ -636,6 +641,10 @@ func facesIndexAction(ctx *cli.Context) error {
 		_, lastFound = w.LastRun()
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, true, convert, true, true, true, conf)
+
+		if !opt.DetectFaces {
+			log.Warnf("faces: skipping detection, because %s", conf.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
+		}
 
 		found, indexed = w.Start(opt)
 

@@ -160,7 +160,11 @@ func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err 
 		"-strict", "-2",
 		// The "-avoid_negative_ts" flag is commonly used for remuxing, but may cause desync (please report any issues):
 		"-avoid_negative_ts", "make_zero",
-		"-i", srcName,
+	}
+
+	flags = append(flags, encode.InputArgs(srcName)...)
+
+	flags = append(flags,
 		"-map", opt.MapVideo,
 		"-map", opt.MapAudio,
 		// The "-dn" flag removes data streams, such as subtitles, timecode tracks, and camera motion data:
@@ -168,7 +172,7 @@ func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err 
 		"-ignore_unknown",
 		"-codec", "copy",
 		"-f", opt.Container.String(),
-	}
+	)
 
 	// Override the output video sample-entry tag when requested (e.g. "hvc1" for
 	// HEVC in MP4/MOV containers). Applied before the container-specific block

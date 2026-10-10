@@ -106,7 +106,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 		w.WriteHeader(http.StatusCreated)
 		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
 			UUID:        clusterUUID,
-			ClusterCIDR: "192.0.2.0/24",
+			ClusterCIDR: "192.0.2.0/24, 2001:db8::/64",
 			JWKSUrl:     jwksURL,
 			Node: cluster.Node{
 				UUID:     nodeUUID,
@@ -119,7 +119,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 			},
 			Database: cluster.RegisterDatabase{
 				Driver:   dsn.DriverMySQL,
-				Host:     "database",
+				Host:     "fd00::10",
 				Port:     3306,
 				Name:     "pp_db",
 				User:     "pp_user",
@@ -152,11 +152,12 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 	assert.NoError(t, yaml.Unmarshal(optionsContent, &persisted))
 
 	assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
-	assert.Equal(t, "192.0.2.0/24", persisted["ClusterCIDR"])
+	assert.Equal(t, "192.0.2.0/24, 2001:db8::/64", persisted["ClusterCIDR"])
 	assert.Equal(t, nodeUUID, persisted["NodeUUID"])
 	assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
 	assert.Equal(t, jwksURL, persisted["JWKSUrl"])
 	assert.Equal(t, "pp_db", persisted["DatabaseName"])
+	assert.Equal(t, "[fd00::10]:3306", persisted["DatabaseServer"])
 	assert.Equal(t, "pp_user", persisted["DatabaseUser"])
 	assert.Equal(t, "pwd", persisted["DatabasePassword"])
 	_, hasInlineSecret := persisted["NodeClientSecret"]
@@ -825,4 +826,19 @@ func TestClusterNodesRotate_Confirm(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, 0, calls)
 	})
+}
+
+func TestWarnInsecurePublicURL(t *testing.T) {
+	for u, want := range map[string]bool{
+		"https://photos.example.com":    false,
+		"http://photos.example.com":     true,
+		"http://localhost:2342":         false,
+		"http://127.0.0.2:2342":         false,
+		"http://[::1]:2342":             false,
+		"http://[0:0:0:0:0:0:0:1]:2342": false,
+		"http://[2001:db8::1]:2342":     true,
+		"://bad":                        false,
+	} {
+		assert.Equal(t, want, warnInsecurePublicURL(u), u)
+	}
 }

@@ -11,12 +11,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestUsersResetCommand(t *testing.T) {
-	c := resetConfigAndOpenDB()
-	// reset as this test removes all users
-	defer resetConfigAndDB()
+	c := resetConfigAndOpenDB(t)
 
 	t.Run("NotConfirmed", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", "")
@@ -45,7 +44,6 @@ func TestUsersResetCommand(t *testing.T) {
 		assert.Contains(t, output1, "bob")
 	})
 	t.Run("Reset", func(t *testing.T) {
-		// c := resetConfigAndDB()
 		count := int64(0)
 		if err := c.Db().Model(&entity.User{}).Count(&count).Error; err != nil {
 			assert.NoError(t, err)
@@ -124,8 +122,7 @@ func countResetTestPasswords(t *testing.T, db *gorm.DB) (users, clients int64) {
 
 func TestDeleteUserPasswords(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		// Rolled back, so the fixtures stay in place for the tests that follow.
 		tx := c.Db().Begin()
@@ -155,8 +152,7 @@ func TestDeleteUserPasswords(t *testing.T) {
 
 func TestLogDeleteUserPasswords(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		tx := c.Db().Begin()
 		require.NoError(t, tx.Error)
@@ -176,8 +172,7 @@ func TestLogDeleteUserPasswords(t *testing.T) {
 
 func TestLogDeleteUserClients(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		tx := c.Db().Begin()
 		require.NoError(t, tx.Error)
@@ -188,7 +183,7 @@ func TestLogDeleteUserClients(t *testing.T) {
 		defer log.SetOutput(os.Stdout)
 
 		require.NoError(t, LogDeleteUserClients(tx))
-		assert.Contains(t, buffer.String(), "deleted 2 client applications")
+		assert.Contains(t, buffer.String(), "deleted 2 client applications and 0 client secrets")
 	})
 	t.Run("NoDatabase", func(t *testing.T) {
 		assert.Error(t, LogDeleteUserClients(nil))
@@ -197,21 +192,43 @@ func TestLogDeleteUserClients(t *testing.T) {
 
 func TestDeleteUserClients(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		// Rolled back, so the client fixtures stay in place for the tests that follow.
 		tx := c.Db().Begin()
 		require.NoError(t, tx.Error)
 		defer tx.Rollback()
 
-		// A soft-deleted client registered to a user is deleted as well.
-		require.NoError(t, tx.Where("client_uid = ?", entity.ClientFixtures.Get("alice").ClientUID).Delete(&entity.Client{}).Error)
+		// Clients registered to users are deleted with their secrets, including soft-deleted ones.
+		aliceClientUID := entity.ClientFixtures.Get("alice").ClientUID
+		bobClientUID := entity.ClientFixtures.Get("bob").ClientUID
+		metricsUID := entity.ClientFixtures.Get("metrics").ClientUID
+		aliceUID := entity.UserFixtures.Get("alice").UserUID
+		for _, uid := range []string{aliceClientUID, bobClientUID} {
+			pw := entity.NewPassword(uid, rnd.ClientSecret(), false)
+			require.NoError(t, tx.Create(&pw).Error)
+		}
+		require.NoError(t, tx.Where("client_uid = ?", aliceClientUID).Delete(&entity.Client{}).Error)
 
-		deleted, err := DeleteUserClients(tx)
+		countPasswords := func(uid string) (n int) {
+			require.NoError(t, tx.Model(&entity.Password{}).Where("uid = ?", uid).Count(&n).Error)
+			return n
+		}
+
+		require.Equal(t, 1, countPasswords(aliceClientUID))
+		require.Equal(t, 1, countPasswords(bobClientUID))
+		require.Equal(t, 1, countPasswords(metricsUID))
+		require.Equal(t, 1, countPasswords(aliceUID))
+
+		deleted, secrets, err := DeleteUserClients(tx)
 
 		require.NoError(t, err)
 		assert.Equal(t, int64(2), deleted)
+		assert.Equal(t, int64(2), secrets)
+		assert.Equal(t, 0, countPasswords(aliceClientUID))
+		assert.Equal(t, 0, countPasswords(bobClientUID))
+		assert.Equal(t, 1, countPasswords(metricsUID))
+		assert.Equal(t, 1, countPasswords(aliceUID))
 
 		remaining, others := int64(1), int64(0)
 		require.NoError(t, tx.Unscoped().Model(&entity.Client{}).Where("user_uid <> ''").Count(&remaining).Error)
@@ -220,9 +237,10 @@ func TestDeleteUserClients(t *testing.T) {
 		assert.Greater(t, others, int64(0))
 	})
 	t.Run("NoDatabase", func(t *testing.T) {
-		deleted, err := DeleteUserClients(nil)
+		deleted, secrets, err := DeleteUserClients(nil)
 
 		assert.Error(t, err)
 		assert.Equal(t, int64(0), deleted)
+		assert.Equal(t, int64(0), secrets)
 	})
 }

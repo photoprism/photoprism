@@ -1,14 +1,18 @@
 package commands
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -128,5 +132,136 @@ func TestRotateNodeInRegistry(t *testing.T) {
 
 		// The operator view reports the client identifier so the table can print it.
 		assert.NotEmpty(t, resp.Node.ClientID)
+	})
+}
+
+// TestClusterNodesRotate_NothingSelected verifies that disabling both rotation flags is a usage error.
+func TestClusterNodesRotate_NothingSelected(t *testing.T) {
+	_, err := RunWithTestContext(ClusterNodesRotateCommand, []string{
+		"rotate", "--portal-url=http://127.0.0.1:9", "--db=false", "--secret=false", "--yes", "pp-node-07",
+	})
+
+	var exit cli.ExitCoder
+	require.ErrorAs(t, err, &exit)
+	assert.Equal(t, 2, exit.ExitCode())
+	assert.Contains(t, err.Error(), "nothing to rotate")
+
+	_, err = RunWithTestContext(ClusterNodesRotateCommand, []string{
+		"rotate", "--dry-run", "--db=false", "--secret=false", "pp-node-07",
+	})
+
+	require.ErrorAs(t, err, &exit)
+	assert.Equal(t, 2, exit.ExitCode())
+}
+
+// TestClusterNodesRotate_ConfirmLocalRegistry covers the Portal's own local-registry rotation path,
+// which TestClusterNodesRotate_Confirm in cluster_register_http_test.go does not reach; it also proves
+// the positive case, that a confirmed rotation actually replaces the secret.
+func TestClusterNodesRotate_ConfirmLocalRegistry(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	c := get.Config()
+	prevEdition := c.Options().Edition
+	prevRole := c.Options().NodeRole
+	c.Options().Edition = config.Portal
+	c.Options().NodeRole = cluster.RolePortal
+	t.Cleanup(func() {
+		c.Options().Edition = prevEdition
+		c.Options().NodeRole = prevRole
+	})
+
+	regy, err := reg.NewClientRegistryWithConfig(c)
+	require.NoError(t, err)
+
+	n := createTestNode(t, regy, "pp-rotate-confirm", cluster.RoleInstance)
+	before, err := regy.RotateSecret(n.UUID)
+	require.NoError(t, err)
+
+	secretUnchanged := func() bool {
+		client := entity.FindClientByUID(before.ClientID)
+		return client != nil && client.VerifySecret(before.ClientSecret)
+	}
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, runErr, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Contains(t, runErr.Error(), "--yes")
+		assert.True(t, secretUnchanged())
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.True(t, secretUnchanged())
+	})
+	t.Run("AnsweredYes", func(t *testing.T) {
+		pipeResetAnswers(t, "y\n")
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.False(t, secretUnchanged())
+	})
+	t.Run("YesFlag", func(t *testing.T) {
+		before2, rotErr := regy.RotateSecret(n.UUID)
+		require.NoError(t, rotErr)
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "--yes", "pp-rotate-confirm"})
+		require.NoError(t, runErr)
+
+		client := entity.FindClientByUID(before2.ClientID)
+		if assert.NotNil(t, client) {
+			assert.False(t, client.VerifySecret(before2.ClientSecret))
+		}
+	})
+}
+
+// TestRotateNodeInRegistry_DatabaseErrors checks the exit codes of a failed database credential rotation.
+func TestRotateNodeInRegistry_DatabaseErrors(t *testing.T) {
+	conf := get.Config()
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	// restoreProvisioner restores the provisioner settings a test case changes.
+	restoreProvisioner := func(t *testing.T) {
+		driver, dsn := provisioner.DatabaseDriver, provisioner.ProvisionDSN
+		t.Cleanup(func() { provisioner.DatabaseDriver, provisioner.ProvisionDSN = driver, dsn })
+	}
+
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "sqlite3"
+
+		n := createTestNode(t, regy, "pp-rotate-driver", cluster.RoleInstance)
+
+		_, err := rotateNodeInRegistry(conf, n.Name, true, false)
+
+		require.Error(t, err)
+		assert.ErrorIs(t, err, provisioner.ErrUnsupportedDriver)
+		assert.Equal(t, 2, ExitCode(err))
+	})
+	t.Run("ProvisioningFailed", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "mysql"
+		provisioner.ProvisionDSN = "root:photoprism@tcp(127.0.0.1:1)/photoprism?timeout=2s"
+
+		n := createTestNode(t, regy, "pp-rotate-failed", cluster.RoleInstance)
+
+		resp, err := rotateNodeInRegistry(conf, n.Name, true, false)
+
+		// Remove the credentials if an open admin connection let the rotation succeed.
+		if err == nil {
+			t.Cleanup(func() { _ = provisioner.DropCredentials(context.Background(), resp.Database.Name, resp.Database.User) })
+		}
+
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, provisioner.ErrUnsupportedDriver)
+		assert.Equal(t, 1, ExitCode(err))
 	})
 }

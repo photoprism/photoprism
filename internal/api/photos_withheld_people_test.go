@@ -93,6 +93,15 @@ func TestGetPhoto_OmitsWithheldPeople(t *testing.T) {
 	// This picture names two people and also carries markers with no subject at all.
 	private := entity.SubjectFixtures.Pointer("actress-1")
 	public := entity.SubjectFixtures.Pointer("actor-1")
+	markerUID := entity.MarkerFixtures.Get("actress-a-3").MarkerUID
+	var marker entity.Marker
+	require.NoError(t, entity.UnscopedDb().Where("marker_uid = ?", markerUID).First(&marker).Error)
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", markerUID).
+			UpdateColumn("subj_uid", marker.SubjUID).Error)
+	})
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", markerUID).
+		UpdateColumn("subj_uid", private.SubjUID).Error)
 
 	// subjects returns the subject uid of every marker the response carries for the picture.
 	subjects := func(t *testing.T) []string {

@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/proxy"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -252,4 +254,40 @@ func TestConfig_HttpVideoMaxAge(t *testing.T) {
 	assert.Equal(t, ttl.CacheMaxAge, c.HttpVideoMaxAge())
 	c.Options().HttpVideoMaxAge = 0
 	assert.Equal(t, ttl.CacheVideo, c.HttpVideoMaxAge())
+}
+
+func TestConfig_TrustedProxies(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		var defaults []string
+
+		for _, f := range Flags {
+			if ssf, ok := f.Flag.(*cli.StringSliceFlag); ok && ssf.Name == "trusted-proxy" {
+				defaults = ssf.Value.Value()
+			}
+		}
+
+		assert.Equal(t, []string{"172.16.0.0/12", "127.0.0.0/8", "::1"}, defaults)
+
+		// The documented default is a list that can be copied into PHOTOPRISM_TRUSTED_PROXY as it is.
+		for _, f := range Flags {
+			if f.Name() == "trusted-proxy" {
+				assert.Equal(t, "172.16.0.0/12, 127.0.0.0/8, ::1", f.Default())
+			}
+		}
+
+		c := NewConfig(CliTestContext())
+		c.options.TrustedProxies = defaults
+		assert.Equal(t, "172.16.0.0/12, 127.0.0.0/8, ::1", c.TrustedProxy())
+
+		trusted := proxy.ParseTrustedProxies(c.TrustedProxies())
+		assert.Len(t, trusted, 3)
+
+		for _, ip := range []string{"127.0.0.1", "127.0.0.2", "::1", "::ffff:127.0.0.1", "172.18.0.2", "172.31.255.254"} {
+			assert.True(t, proxy.TrustedIP(ip, trusted), ip)
+		}
+
+		for _, ip := range []string{"203.0.113.5", "10.0.0.1", "192.168.1.1", "fd00::1", "2001:db8::1", "::"} {
+			assert.False(t, proxy.TrustedIP(ip, trusted), ip)
+		}
+	})
 }

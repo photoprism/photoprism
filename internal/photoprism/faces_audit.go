@@ -181,6 +181,12 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 					continue
 				}
 
+				// A collision whose radius cannot narrow f1 is recorded at most once and not reported again.
+				if f1.CollisionNoted(dist) {
+					done[matchId] = true
+					continue
+				}
+
 				conflicts++
 
 				conflictClusters[f1.ID] = true
@@ -259,6 +265,8 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 		logErr("faces", "find marker conflicts", err)
 	} else {
 		anonymous := 0
+		rejected := 0
+		xmp := 0
 
 		for _, m := range markers {
 			if m.FaceID == "" {
@@ -289,6 +297,19 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 				} else {
 					log.Warnf("%s", msg)
 				}
+				continue
+			}
+
+			// A marker whose name a person removed belongs to its cluster without taking its subject.
+			if m.RejectedMatch() {
+				rejected++
+				log.Debugf("faces: marker %s has no name in cluster %s after a person removed it", clean.Log(m.MarkerUID), clean.Log(m.FaceID))
+				continue
+			}
+
+			// An XMP name labels only its own marker, so it may differ from the cluster's person.
+			if m.SubjSrc == entity.SrcXmp && faceEntry.SubjUID != "" {
+				xmp++
 				continue
 			}
 
@@ -335,7 +356,7 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 				case !fix:
 					log.Warnf("%s", msg)
 					continue
-				case m.SubjSrc == entity.SrcManual:
+				case entity.SrcSubjects[m.SubjSrc] >= entity.SrcPriority[entity.SrcBatch]:
 					updates := entity.Values{"face_id": "", "face_dist": -1.0, "matched_at": nil, "marker_review": true}
 
 					if err := entity.Db().Model(&entity.Marker{}).
@@ -377,6 +398,16 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 			log.Infof("faces: %s carry a subject the matcher assigned, whose cluster is unnamed as a result",
 				english.Plural(anonymous, "marker", "markers"))
 		}
+
+		if xmp > 0 {
+			log.Infof("faces: found %s with an XMP name in a cluster named after someone else",
+				english.Plural(xmp, "marker", "markers"))
+		}
+
+		if rejected > 0 {
+			log.Infof("faces: found %s whose name a person removed, left unnamed in a named cluster",
+				english.Plural(rejected, "marker", "markers"))
+		}
 	}
 
 	// Reported rather than fixed: naming them is what a completed recognition run does.
@@ -414,7 +445,7 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 }
 
 // auditConsensus reports the unnamed clusters a completed recognition run names after the person
-// their matched markers agree on, optionally only those of one subject, and returns how many there are.
+// their votes agree on, optionally only those of one subject, and returns how many there are.
 func (w *Faces) auditConsensus(subjUID string) (int, error) {
 	candidates, err := query.ConsensusFaces(w.conf.FaceClusterCore())
 
@@ -431,17 +462,17 @@ func (w *Faces) auditConsensus(subjUID string) (int, error) {
 
 		n++
 
-		log.Debugf("faces: cluster %s qualifies to be named after %s, %d of %d markers agree", clean.Log(c.FaceID), entity.SubjNames.Log(c.SubjUID), c.Auto, c.Valid)
+		log.Debugf("faces: cluster %s qualifies to be named after %s, %d of %d markers agree, %d matched", clean.Log(c.FaceID), entity.SubjNames.Log(c.SubjUID), c.Votes, c.Valid, c.Matched)
 	}
 
 	switch {
 	case n > 0:
-		log.Infof("faces: found %s whose matched markers agree on one person, which a completed recognition run names",
+		log.Infof("faces: found %s whose recognized faces agree on one person, which a completed recognition run names",
 			english.Plural(n, "unnamed cluster", "unnamed clusters"))
 	case subjUID != "":
-		log.Infof("faces: found no unnamed clusters whose matched markers agree on %s", entity.SubjNames.Log(subjUID))
+		log.Infof("faces: found no unnamed clusters whose recognized faces agree on %s", entity.SubjNames.Log(subjUID))
 	default:
-		log.Infof("faces: found no unnamed clusters whose matched markers agree on one person")
+		log.Infof("faces: found no unnamed clusters whose recognized faces agree on one person")
 	}
 
 	return n, nil

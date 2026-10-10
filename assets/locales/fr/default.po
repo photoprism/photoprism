@@ -104,7 +104,6 @@ msgid "Person not found"
 msgstr "Personne non trouvée"
 
 #: messages.go:136
-#, fuzzy
 msgid "Face not found"
 msgstr "Visage non trouvé"
 
@@ -229,7 +228,6 @@ msgid "Quota exceeded"
 msgstr "Quota dépassé"
 
 #: messages.go:166
-#, fuzzy
 msgid "Registration disabled"
 msgstr "Inscription désactivée"
 

@@ -74,7 +74,7 @@ If you have used a *.deb* package for installation, you may need to remove the c
 
 ### Dependencies
 
-PhotoPrism packages bundle TensorFlow and ONNX Runtime; the versions are pinned by `scripts/dist/install-tensorflow.sh` and `scripts/dist/install-onnx.sh`. The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to run the ONNX face detector and embedding models. The binaries still rely on glibc — 2.35 or newer for current builds — and on the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
+PhotoPrism packages bundle TensorFlow and ONNX Runtime; the versions are pinned by `scripts/dist/install-tensorflow.sh` and `scripts/dist/install-onnx.sh`. The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to run the ONNX face detector, embedding models, image classifiers, and NSFW detectors. The binaries still rely on glibc — 2.35 or newer for current builds — and on the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
 
 That glibc floor comes from the bundled **TensorFlow** build, which we compile on Ubuntu 22.04: it is the component referencing the newest symbols, so it sets the minimum for the package as a whole. The ONNX Runtime we ship needs considerably less, so raising or lowering the floor follows from changing the TensorFlow build base rather than from anything configured here. Verify it for a given release with:
 

@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -9,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestMediaFile_RelatedFiles(t *testing.T) {
@@ -394,6 +396,281 @@ func TestMediaFile_RelatedFiles_HighResRawPair(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, related.Main)
 		assert.True(t, related.Main.IsRaw())
+	})
+}
+
+// TestMediaFile_RelatedFiles_Folder verifies that folders matching the related file pattern are skipped.
+func TestMediaFile_RelatedFiles_Folder(t *testing.T) {
+	c := config.TestConfig()
+	dir := t.TempDir()
+	require.NoError(t, fs.Copy(filepath.Join(c.SamplesPath(), "beach_sand.jpg"), filepath.Join(dir, "b2.jpg"), false))
+	require.NoError(t, fs.MkdirAll(filepath.Join(dir, "b2")))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "b2", "x.txt"), []byte("x"), fs.ModeFile))
+	require.NoError(t, fs.MkdirAll(filepath.Join(dir, "b2 (2)")))
+	require.NoError(t, os.Symlink(filepath.Join(dir, "b2"), filepath.Join(dir, "b2 (3)")))
+	require.NoError(t, os.Symlink(filepath.Join(dir, "b2.jpg"), filepath.Join(dir, "b2 (4).jpg")))
+
+	mediaFile, err := NewMediaFile(filepath.Join(dir, "b2.jpg"))
+	require.NoError(t, err)
+
+	related, err := mediaFile.RelatedFiles(true)
+	require.NoError(t, err)
+	require.Len(t, related.Files, 2)
+	assert.Equal(t, "b2 (4).jpg", filepath.Base(related.Files[1].FileName()))
+}
+
+// TestMediaFile_RelatedFiles_MislabeledPreview verifies that a file whose content does not match its
+// extension does not become the main file of a group that has another one.
+func TestMediaFile_RelatedFiles_MislabeledPreview(t *testing.T) {
+	png, err := os.ReadFile("testdata/photoprism.png")
+	require.NoError(t, err)
+
+	// writeGroup copies the source files and the mislabeled JPEG into a new folder.
+	writeGroup := func(t *testing.T, sources map[string]string) string {
+		dir := t.TempDir()
+
+		for name, src := range sources {
+			data, readErr := os.ReadFile(src) //nolint:gosec // G304: test fixture path
+			require.NoError(t, readErr)
+			require.NoError(t, os.WriteFile(filepath.Join(dir, name), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		}
+
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.jpg"), png, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+
+		return dir
+	}
+
+	samples := fs.Abs("../../assets/samples")
+
+	for name, src := range map[string]string{
+		"IMG_1.dng":  filepath.Join(samples, "canon_eos_6d.dng"),
+		"IMG_1.heic": filepath.Join(samples, "iphone_7.heic"),
+	} {
+		t.Run(filepath.Ext(name), func(t *testing.T) {
+			dir := writeGroup(t, map[string]string{name: src})
+			f, newErr := NewMediaFile(filepath.Join(dir, name))
+			require.NoError(t, newErr)
+			related, relErr := f.RelatedFiles(false)
+			require.NoError(t, relErr)
+			require.NotNil(t, related.Main)
+			assert.Equal(t, name, related.Main.BaseName())
+		})
+	}
+	t.Run(".png", func(t *testing.T) {
+		// The JPEG name sorts first and is replaced by the PNG that can be shown.
+		src, readErr := os.ReadFile("testdata/photoprism.png")
+		require.NoError(t, readErr)
+		dir := writeGroup(t, nil)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.png"), src, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.jpg"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_1.png", related.Main.BaseName())
+	})
+	t.Run(".webp", func(t *testing.T) {
+		// Another image name with JPEG content does not displace the JPEG that sorts before it.
+		jpg, readErr := os.ReadFile("testdata/flash.jpg")
+		require.NoError(t, readErr)
+		dir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_2.jpg"), jpg, fs.ModeFile))                //nolint:gosec // G703: test-owned path
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_2.webp"), append(jpg, 0x00), fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_2.jpg"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_2.jpg", related.Main.BaseName())
+		assert.Len(t, related.Files, 2)
+	})
+	t.Run("Alone", func(t *testing.T) {
+		dir := writeGroup(t, nil)
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.jpg"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_1.jpg", related.Main.BaseName())
+	})
+	t.Run("SidecarPreview", func(t *testing.T) {
+		// The preview in the sidecar folder is found although the mislabeled JPEG has a matching name.
+		folder := "related-mislabeled-sidecar-" + rnd.Base36(8)
+		dir := filepath.Join(Config().OriginalsPath(), folder)
+		sidecarDir := filepath.Join(Config().SidecarPath(), folder)
+		t.Cleanup(func() {
+			_ = os.RemoveAll(dir)
+			_ = os.RemoveAll(sidecarDir)
+		})
+		require.NoError(t, fs.MkdirAll(dir))
+		require.NoError(t, fs.MkdirAll(sidecarDir))
+		require.NoError(t, fs.Copy(filepath.Join(samples, "iphone_7.heic"), filepath.Join(dir, "IMG_1.heic"), false))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_1.jpg"), png, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		require.NoError(t, fs.Copy("testdata/flash.jpg", filepath.Join(sidecarDir, "IMG_1.heic.jpg"), false))
+
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.heic"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "IMG_1.heic", related.Main.BaseName())
+		assert.True(t, related.HasPreview())
+
+		names := make([]string, 0, len(related.Files))
+		for _, file := range related.Files {
+			names = append(names, file.FileName())
+		}
+		assert.ElementsMatch(t, []string{filepath.Join(dir, "IMG_1.heic"), filepath.Join(dir, "IMG_1.jpg"), filepath.Join(sidecarDir, "IMG_1.heic.jpg")}, names)
+	})
+	t.Run("MislabeledSidecarPreview", func(t *testing.T) {
+		// A sidecar JPEG whose content is not a JPEG is skipped in favor of a valid PNG preview.
+		folder := "related-mislabeled-sidecar-png-" + rnd.Base36(8)
+		dir := filepath.Join(Config().OriginalsPath(), folder)
+		sidecarDir := filepath.Join(Config().SidecarPath(), folder)
+		t.Cleanup(func() {
+			_ = os.RemoveAll(dir)
+			_ = os.RemoveAll(sidecarDir)
+		})
+		require.NoError(t, fs.MkdirAll(dir))
+		require.NoError(t, fs.MkdirAll(sidecarDir))
+		require.NoError(t, fs.Copy(filepath.Join(samples, "iphone_7.heic"), filepath.Join(dir, "IMG_1.heic"), false))
+		require.NoError(t, os.WriteFile(filepath.Join(sidecarDir, "IMG_1.heic.jpg"), png, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		require.NoError(t, fs.Copy("testdata/photoprism.png", filepath.Join(sidecarDir, "IMG_1.heic.png"), false))
+
+		f, newErr := NewMediaFile(filepath.Join(dir, "IMG_1.heic"))
+		require.NoError(t, newErr)
+		related, relErr := f.RelatedFiles(false)
+		require.NoError(t, relErr)
+		assert.True(t, related.HasPreview())
+
+		names := make([]string, 0, len(related.Files))
+		for _, file := range related.Files {
+			names = append(names, file.FileName())
+		}
+		assert.ElementsMatch(t, []string{filepath.Join(dir, "IMG_1.heic"), filepath.Join(sidecarDir, "IMG_1.heic.png")}, names)
+	})
+}
+
+// TestMediaFile_RelatedFiles_Insta360InvalidLeft verifies that the left lens stays the main file of an
+// Insta360 capture even if its content does not match its extension, so that the capture is not
+// indexed with the right lens alone.
+func TestMediaFile_RelatedFiles_Insta360InvalidLeft(t *testing.T) {
+	dir := filepath.Join(Config().OriginalsPath(), "insta360-invalid-left-"+rnd.Base36(8))
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+
+	left := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+	right := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/insta360.insv")
+
+	f, err := NewMediaFile(right)
+	require.NoError(t, err)
+	related, err := f.RelatedFiles(false)
+	require.NoError(t, err)
+	require.NotNil(t, related.Main)
+	assert.Equal(t, left, related.Main.FileName())
+	assert.Error(t, related.Main.CheckType())
+}
+
+// TestMediaFile_RelatedFiles_RawAfterJpeg verifies that a RAW file becomes the main file, even if it
+// sorts after the JPEG of the same name.
+func TestMediaFile_RelatedFiles_RawAfterJpeg(t *testing.T) {
+	dir := t.TempDir()
+	samples := fs.Abs("../../assets/samples")
+
+	for name, src := range map[string]string{
+		"IMG_3.jpg": "testdata/flash.jpg",
+		"IMG_3.nef": filepath.Join(samples, "canon_eos_6d.dng"),
+	} {
+		data, err := os.ReadFile(src) //nolint:gosec // G304: test fixture path
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, name), data, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+	}
+
+	f, err := NewMediaFile(filepath.Join(dir, "IMG_3.jpg"))
+	require.NoError(t, err)
+	related, err := f.RelatedFiles(false)
+	require.NoError(t, err)
+	require.NotNil(t, related.Main)
+	assert.Equal(t, "IMG_3.nef", related.Main.BaseName())
+}
+
+// TestMediaFile_RelatedFiles_SidecarPreviewByRoot verifies that only files in originals are related to previews in
+// the sidecar folder, including a group resolved from a sidecar file.
+func TestMediaFile_RelatedFiles_SidecarPreviewByRoot(t *testing.T) {
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	other := t.TempDir()
+
+	cases := []struct {
+		name      string
+		heic      string
+		preview   string
+		fromCover bool
+		want      bool
+	}{
+		{"Originals", filepath.Join(cfg.OriginalsPath(), "a", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), "a", "IMG_0001.heic.jpg"), false, true},
+		{"SidecarPrimary", filepath.Join(cfg.OriginalsPath(), "b", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), "b", "IMG_0001.heic.jpg"), true, true},
+		{"Import", filepath.Join(cfg.ImportPath(), "c", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), cfg.ImportPath(), "c", "IMG_0001.heic.jpg"), false, false},
+		{"Unknown", filepath.Join(other, "d", "IMG_0001.heic"), filepath.Join(cfg.SidecarPath(), other, "d", "IMG_0001.heic.jpg"), false, false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "iphone_7.heic"), tc.heic, false))
+			require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "beach_sand.jpg"), tc.preview, false))
+
+			lookup := tc.heic
+			if tc.fromCover {
+				lookup = tc.preview
+			}
+
+			mediaFile, err := NewMediaFile(lookup)
+			require.NoError(t, err)
+			related, err := mediaFile.RelatedFiles(false)
+			require.NoError(t, err)
+			require.NotNil(t, related.Main)
+			assert.Equal(t, tc.heic, related.Main.FileName())
+
+			found := false
+			for _, f := range related.Files {
+				if f.FileName() == tc.preview {
+					found = true
+				}
+			}
+
+			assert.Equal(t, tc.want, found)
+		})
+	}
+}
+
+// TestSidecarPathFor verifies the sidecar folder used for the generated files of a file.
+func TestSidecarPathFor(t *testing.T) {
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	originalsName := filepath.Join(cfg.OriginalsPath(), "x.jpg")
+	importName := filepath.Join(cfg.ImportPath(), "x.jpg")
+
+	for _, name := range []string{originalsName, importName} {
+		require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "beach_sand.jpg"), name, false))
+	}
+
+	t.Run("Originals", func(t *testing.T) {
+		f, err := NewMediaFile(originalsName)
+		require.NoError(t, err)
+		assert.Equal(t, cfg.SidecarPath(), sidecarPathFor(f))
+	})
+	t.Run("Import", func(t *testing.T) {
+		f, err := NewMediaFile(importName)
+		require.NoError(t, err)
+		assert.Equal(t, "", sidecarPathFor(f))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", sidecarPathFor(nil))
 	})
 }
 

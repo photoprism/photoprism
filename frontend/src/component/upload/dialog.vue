@@ -84,7 +84,7 @@
                       class="text-truncate"
                       @click:close="removeSelection(chip.index)"
                     >
-                      {{ chip.item.title ? chip.item.title : chip.item }}
+                      {{ chip.internalItem.title }}
                     </v-chip>
                   </template>
                 </v-combobox>
@@ -118,7 +118,11 @@
           <v-btn :disabled="busy" variant="flat" color="button" class="action-close" @click.stop="onClose">
             {{ $gettext(`Close`) }}
           </v-btn>
+          <v-btn v-if="retryable" :disabled="busy" variant="flat" color="highlight" class="action-retry" @click.stop="onRetry()">
+            {{ $gettext(`Retry`) }}
+          </v-btn>
           <v-btn
+            v-else
             :disabled="busy || insufficientStorage || !hasFiles"
             variant="flat"
             color="highlight"
@@ -178,6 +182,8 @@ export default {
       remainingTime: -1,
       eta: "",
       token: "",
+      retryable: false,
+      processAlbums: [],
       isDemo: isDemo,
       fileLimit: isDemo ? 3 : 0,
       rejectNSFW: !this.$config.get("uploadNSFW"),
@@ -292,6 +298,12 @@ export default {
       this.busy = false;
       this.selected = [];
       this.uploads = [];
+      this.clearProgress();
+      this.albumsMenu = false;
+      this.suppressAlbumsMenuOpen = false;
+    },
+    // clearProgress ends the current upload, including a retry it offered, but keeps the selected files and albums.
+    clearProgress() {
       this.indexing = false;
       this.failed = false;
       this.current = 0;
@@ -304,11 +316,17 @@ export default {
       this.remainingTime = -1;
       this.eta = "";
       this.token = "";
-      this.albumsMenu = false;
-      this.suppressAlbumsMenuOpen = false;
+      this.retryable = false;
+      this.processAlbums = [];
     },
     onFilesSelected(newFiles) {
       const newArr = Array.isArray(newFiles) ? newFiles : newFiles ? [newFiles] : [];
+
+      // Changing the selection after a failed upload starts over with a new upload.
+      if (this.retryable) {
+        this.clearProgress();
+      }
+
       const existing = Array.isArray(this.selected) ? this.selected : [];
 
       // Clear: empty array from the clearable button or a reset.
@@ -393,6 +411,7 @@ export default {
 
       this.uploads = [];
       this.token = this.$util.generateToken();
+      this.retryable = false;
       this.busy = true;
       this.indexing = false;
       this.failed = false;
@@ -466,24 +485,59 @@ export default {
           return;
         }
 
-        this.indexing = true;
         this.eta = "";
-
-        const ctx = this;
-        $api
-          .put(`users/${userUid}/upload/${ctx.token}`, {
-            albums: addToAlbums,
-          })
-          .then(() => {
-            ctx.reset();
-            $notify.success($gettext("Upload complete"));
-            ctx.$emit("confirm");
-          })
-          .catch(() => {
-            ctx.reset();
-            $notify.error($gettext("Upload failed"));
-          });
+        this.processAlbums = addToAlbums;
+        this.processUpload();
       });
+    },
+    // processUpload asks the server to import the files uploaded with the current token. If the import
+    // did not run or complete, the files stay staged, so the token is kept and the user can retry.
+    processUpload() {
+      const userUid = this.$session.getUserUID();
+      const token = this.token;
+
+      this.busy = true;
+      this.indexing = true;
+      this.failed = false;
+      this.retryable = false;
+
+      return $api
+        .put(`users/${userUid}/upload/${token}`, {
+          albums: this.processAlbums,
+        })
+        .then(() => {
+          if (token !== this.token) {
+            return;
+          }
+
+          this.reset();
+          $notify.success($gettext("Upload complete"));
+          this.$emit("confirm");
+        })
+        .catch((err) => {
+          const status = err?.response?.status;
+
+          if (token !== this.token) {
+            return;
+          } else if ([500, 503, 507].includes(status)) {
+            this.busy = false;
+            this.indexing = false;
+            this.failed = true;
+            this.retryable = true;
+          } else {
+            this.reset();
+          }
+
+          $notify.error($gettext("Upload failed"));
+        });
+    },
+    // onRetry sends the processing request again for the files that are still staged.
+    onRetry() {
+      if (this.busy || !this.retryable || !this.token) {
+        return;
+      }
+
+      this.processUpload();
     },
   },
 };

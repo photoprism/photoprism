@@ -92,6 +92,22 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			c.Writer.Header().Add(header.Vary, header.XSessionID)
 		}
 
+		// Get the client IP address from the request headers
+		// for use in logs and to enforce request rate limits.
+		clientIp := header.ClientIP(c)
+
+		// Get access token, if any.
+		authToken := header.AuthToken(c)
+
+		// Answer a client over the authentication failure limit that presents credentials with 429, without a
+		// credential prompt, before any of them is accepted, including cached basic auth credentials.
+		if limiter.Auth.Reject(clientIp) {
+			if _, _, key := header.BasicAuth(c); key != "" || authToken != "" && rnd.IsAuthAny(authToken) {
+				limiter.Abort(c)
+				return
+			}
+		}
+
 		// Get basic authentication credentials, if any.
 		username, password, cacheKey, authorized := basicAuth(c)
 
@@ -100,14 +116,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Get the client IP address from the request headers
-		// for use in logs and to enforce request rate limits.
-		clientIp := header.ClientIP(c)
-
-		// Get access token, if any.
-		authToken := header.AuthToken(c)
-
-		// Use the value provided in the password field as auth token if no username was provided
+		// Use the value provided in the password field as auth token if no token was provided
 		// and the format matches an app password e.g. "OXiV72-wTtiL9-d04jO7-X7XP4p".
 		if username != "" && authToken == "" && rnd.IsAppPassword(password, true) {
 			authToken = password
@@ -195,7 +204,6 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 
 		// Abort if request rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
-			c.Header("WWW-Authenticate", BasicAuthRealm)
 			limiter.Abort(c)
 			return
 		}

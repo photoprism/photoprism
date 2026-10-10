@@ -7,15 +7,23 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
+	"sync"
 
+	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/internal/ai/vision/openai"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	httpclient "github.com/photoprism/photoprism/pkg/http/client"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/safe"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // PerformApiRequest performs a Vision API request and returns the result.
@@ -23,7 +31,9 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	if apiRequest == nil {
 		return apiResponse, errors.New("api request is nil")
 	} else if err = validateApiRequestURL(uri); err != nil {
-		return apiResponse, err
+		return apiResponse, invalidUriError(apiRequest.GetResponseFormat(), err)
+	} else if key == "" && requiresApiKey(uri) {
+		return apiResponse, missingKeyError(apiRequest)
 	}
 
 	data, jsonErr := apiRequest.JSON()
@@ -38,7 +48,7 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 
 	// Create HTTP client and a factory that builds a fresh authenticated request
 	// per attempt, so a buffered payload is replayed safely when retrying a 429.
-	client := http.Client{Timeout: ServiceTimeout}
+	client := http.Client{Timeout: ServiceTimeout, CheckRedirect: noRedirect}
 	newReq := func() (*http.Request, error) {
 		req, reqErr := http.NewRequestWithContext(ctx, method, uri, bytes.NewReader(data))
 		if reqErr != nil {
@@ -74,34 +84,38 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	})
 
 	if clientErr != nil {
-		return apiResponse, clientErr
+		return apiResponse, transportError(apiRequest.GetResponseFormat(), clientErr)
 	}
 
 	defer func() {
 		_ = clientResp.Body.Close()
 	}()
 
+	if location := clientResp.Header.Get(header.Location); location != "" && clientResp.StatusCode >= 300 && clientResp.StatusCode < 400 {
+		return nil, redirectError(apiRequest.GetResponseFormat(), clientResp.StatusCode, location)
+	}
+
 	body, apiErr := io.ReadAll(io.LimitReader(clientResp.Body, MaxResponseBytes+1))
 	if apiErr != nil {
-		return nil, apiErr
+		return nil, transportError(apiRequest.GetResponseFormat(), apiErr)
 	} else if int64(len(body)) > MaxResponseBytes {
 		return nil, fmt.Errorf("vision: response exceeds the maximum size of %d bytes", MaxResponseBytes)
 	}
 
 	format := apiRequest.GetResponseFormat()
 
-	if engine, ok := EngineFor(format); ok && engine.Parser != nil {
-		if clientResp.StatusCode >= 300 {
-			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
-		}
+	if clientResp.StatusCode >= 300 {
+		logServiceResponse(serviceError(format, clientResp.StatusCode), body)
+	}
 
+	if engine, ok := EngineFor(format); ok && engine.Parser != nil {
 		parsed, parseErr := engine.Parser.Parse(context.Background(), apiRequest, body, clientResp.StatusCode)
 		if parseErr != nil {
-			return nil, parseErr
+			return nil, responseError(format, clientResp.StatusCode, parseErr)
 		}
 
-		if log.IsLevelEnabled(logrus.TraceLevel) {
-			log.Tracef("vision: response %s", string(body))
+		if clientResp.StatusCode < 300 && log.IsLevelEnabled(logrus.TraceLevel) {
+			log.Tracef("vision: response %q", body)
 		}
 
 		return parsed, nil
@@ -112,16 +126,8 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	// Parse and return response, or an error if the request failed.
 	switch format {
 	case ApiFormatVision:
-		if apiErr = json.Unmarshal(body, apiResponse); apiErr != nil {
-			return apiResponse, apiErr
-		} else if clientResp.StatusCode >= 300 {
-			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
-
-			if apiResponse.Error != "" {
-				return apiResponse, fmt.Errorf("%s (status code %d)", clean.Log(apiResponse.Error), clientResp.StatusCode)
-			}
-
-			return apiResponse, fmt.Errorf("status code %d", clientResp.StatusCode)
+		if apiErr = json.Unmarshal(body, apiResponse); apiErr != nil || clientResp.StatusCode >= 300 {
+			return apiResponse, responseError(format, clientResp.StatusCode, apiErr)
 		}
 	default:
 		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.ResponseFormat))
@@ -130,7 +136,126 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	return apiResponse, nil
 }
 
+// serviceName returns the sanitized service name for the specified response format.
+func serviceName(format ApiFormat) string {
+	if name := clean.TypeLowerUnderscore(format); name != "" {
+		return name
+	}
+
+	return "remote"
+}
+
+// serviceError returns the error for a failed service request, which names the service and status only.
+func serviceError(format ApiFormat, code int) error {
+	return fmt.Errorf("%s service request failed (status %d)", serviceName(format), code)
+}
+
+// redirectError returns the error for a service redirect, and writes its target to the system log
+// with the userinfo and query redacted.
+func redirectError(format ApiFormat, code int, location string) error {
+	err := fmt.Errorf("%s service request failed (status %d, redirect not followed)", serviceName(format), code)
+	logServiceResponse(err, []byte("location "+redirectTarget(location)))
+
+	return err
+}
+
+// redirectTarget returns the redirect location without its userinfo, query, and fragment.
+func redirectTarget(location string) string {
+	u, err := url.Parse(location)
+
+	if err != nil {
+		return clean.UriQueriesRedacted(clean.UriRedactedText(location))
+	}
+
+	u.User = nil
+	u.Fragment, u.RawFragment = "", ""
+
+	if u.RawQuery != "" || u.ForceQuery {
+		u.RawQuery, u.ForceQuery = clean.UriRedactedValue, false
+	}
+
+	return u.String()
+}
+
+// invalidUriError returns the error for a service URI that is not a valid request URL, and writes
+// the cause to the system log with the userinfo and queries redacted.
+func invalidUriError(format ApiFormat, cause error) error {
+	err := fmt.Errorf("%s service request failed (invalid service uri)", serviceName(format))
+	logServiceResponse(err, []byte(clean.UriQueriesRedacted(clean.UriRedactedText(cause.Error()))))
+
+	return err
+}
+
+// noRedirect returns the redirect response to the caller instead of following it.
+func noRedirect(*http.Request, []*http.Request) error {
+	return http.ErrUseLastResponse
+}
+
+// transportError returns the error for a request that received no response, and writes its cause
+// to the system log with the userinfo and queries in any URI it holds redacted.
+func transportError(format ApiFormat, cause error) error {
+	reason := "connection error"
+
+	if netErr := net.Error(nil); errors.As(cause, &netErr) && netErr.Timeout() {
+		reason = "timeout"
+	}
+
+	err := fmt.Errorf("%s service request failed (%s)", serviceName(format), reason)
+	logServiceResponse(err, []byte(clean.UriQueriesRedacted(clean.UriRedactedText(cause.Error()))))
+
+	return err
+}
+
+// responseError returns the error for a response that failed or could not be parsed. Below status 300,
+// it writes the parse error to the system log, as its text may quote the response.
+func responseError(format ApiFormat, code int, parseErr error) error {
+	if code >= 300 {
+		return serviceError(format, code)
+	}
+
+	err := fmt.Errorf("%s service returned an invalid response (status %d)", serviceName(format), code)
+
+	if parseErr != nil {
+		logServiceResponse(err, []byte(parseErr.Error()))
+	}
+
+	return err
+}
+
+// logServiceResponse writes the text of a failed service response to the system log, clipped and quoted.
+func logServiceResponse(err error, text []byte) {
+	var truncated string
+
+	clipped := clip.Bytes(string(text), txt.ClipLongText)
+
+	if len(clipped) < len(bytes.TrimSpace(text)) {
+		truncated = fmt.Sprintf(" (truncated from %s)", humanize.Bytes(uint64(len(text))))
+	}
+
+	event.SystemError([]string{"vision", "%s", "%q%s"}, err, clipped, truncated)
+}
+
 // validateApiRequestURL checks that outbound API requests only use HTTP(S) URLs with a host.
+// missingKeyWarned holds the services and models whose missing API key was logged.
+var missingKeyWarned sync.Map
+
+// requiresApiKey reports whether the URI belongs to the OpenAI API or Ollama Cloud, which need an API key.
+func requiresApiKey(uri string) bool {
+	return openai.IsCloudUrl(uri) || ollama.IsCloudUrl(uri)
+}
+
+// missingKeyError returns the error for a request that is not sent because the service needs an API key,
+// and writes a model configuration warning once per service and model.
+func missingKeyError(apiRequest *ApiRequest) error {
+	service := serviceName(apiRequest.GetResponseFormat())
+
+	if _, warned := missingKeyWarned.LoadOrStore(serviceFailureKey(service, apiRequest.Model), struct{}{}); !warned {
+		warnModel("%s model %s has no api key, so no request is sent", service, clean.Log(apiRequest.Model))
+	}
+
+	return fmt.Errorf("%s service request failed (missing api key)", service)
+}
+
 func validateApiRequestURL(rawURL string) error {
 	_, err := safe.URL(rawURL)
 	return err

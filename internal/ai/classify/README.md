@@ -1,46 +1,120 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** April 1, 2026
+**Last Updated:** October 5, 2026
 
 ### Overview
 
-`internal/ai/classify` wraps PhotoPrism’s TensorFlow-based image classification (labels). It loads SavedModel classifiers (Nasnet by default), prepares inputs, runs inference, and maps output probabilities to label rules.
+`internal/ai/classify` runs fixed-taxonomy image classification through ONNX Runtime. It decodes an image, applies the preprocessing declared for the selected model, executes one output tensor, converts raw logits with stable softmax, and maps the resulting probabilities through the existing label rules.
 
-### How It Works
+The default and optional ImageNet-1k candidates share the 1000-entry vocabulary embedded from `internal/ai/classify/labels.txt`. It remains readable and diffable in the repository and does not depend on a model directory at runtime. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
 
-- **Model Loading** — The classifier loads a SavedModel under `assets/models/<name>` and resolves model tags and input/output ops (see `vision.yml` overrides for custom models).
-- **Input Preparation** — Input images are decoded through PhotoPrism’s bounded image helpers and resized/cropped to the model’s expected input resolution.
-- **Inference** — The model outputs probabilities; `Rules` apply thresholds and priority to produce final labels.
+### Photo Inputs
 
-### Memory & Performance
+The bundled S2 classifier uses a `tile_224` center input and a whole-photo input with distortion capped at 4:3. Both become 224×224 pixels. Beyond 4:3, the whole-photo input crops the excess from both ends before resampling; within 4:3, it retains the whole photo. Its source is the smallest cached whole-photo rendition with at least 224 pixels on the short side, otherwise the largest cached rendition; the original is opened only after usable cached candidates are exhausted. Renditions are ranked by decoded pixel area, and a failed cached source does not prevent trying another one.
 
-TensorFlow tensors allocate C memory and are freed by Go GC finalizers. To keep RSS bounded during long runs, PhotoPrism periodically triggers garbage collection to return freed tensor memory to the OS. Tune with:
+Exact square images use one whole-square input. Images with either decoded dimension below 224 pixels also use one aspect-ratio-preserving center input. Both prefer cached pixels and only use the original when no cached source can be used. Rotation preserves the square and short-side decisions. Prepared inputs explicitly bypass S2's native resize/crop while retaining RGB/NCHW ImageNet normalization. Other models and remote services keep their own preprocessing.
 
-- `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables).  
-  Lower values reduce peak RSS but increase GC overhead and can slow indexing.
+The global confidence floor defaults to 20%; an explicit `Thresholds.Confidence` in `vision.yml` takes precedence. Each input retains at most five qualifying labels, then the existing merge combines them using maximum confidence without an additional per-photo cap.
 
-### Go 1.26 JPEG Decoder Impact
+### Label Rules
 
-After the base image and toolchain upgrade on February 20, 2026, we observed measurable drift in TensorFlow label uncertainty values caused by changes in Go's `image/jpeg` implementation:
+`rules.yml` defines how raw model classes map to visible labels, class-specific confidence minimums, categories, and priorities. The classifier applies the global floor to rounded confidence percentages and class-specific minimums to raw probabilities. Excluded rules do not produce labels. Changes to these rules affect subsequent classification; they do not rewrite labels already stored in a library.
 
-- **Direct Evidence** — The `ChameleonLimeJpg` fixture shifted from uncertainty `7` with Go `1.25.4` to `8` with Go `1.26.0` for the same model and inputs.
-- **Pipeline Relevance** — Classification input decoding now goes through `pkg/fs` direct dispatch helpers, while in-memory resize/pad work uses PhotoPrism's stdlib/x-image thumbnail helpers. JPEG and PNG continue to use direct Go decoders, while TIFF goes through an explicit header/IFD validation path before `tiff.Decode`.
-- **Fixture Scan Result** — 55/55 JPEG fixtures in `assets/samples` decoded successfully on both versions (no compatibility failures), but all produced different decoded pixel hashes between Go `1.25.4` and `1.26.0`.
-- **Output Stability** — In sampled tests, top labels remained stable (`chameleon`, `cat`, etc.), while confidence and uncertainty values moved slightly.
+Regenerate `rules.go` with `go generate ./internal/ai/classify`. Generation rejects duplicate keys, unknown fields, uppercase names, missing alias targets and aliases that do not reference a direct rule. The package tests verify that the generated map matches the complete YAML source. The generator and its rejection tests are a normally compiled package; run them with `go test ./internal/ai/classify/gen`.
 
-Operational notes:
+### Registered Models
 
-- Prefer tolerance-based assertions (`assert.InDelta`) for JPEG-derived uncertainty/confidence tests instead of exact integer equality.
-- Avoid bit-for-bit JPEG expectations in tests unless the codec/toolchain is pinned and intentionally version-locked.
-- Classification no longer relies on generic Go image decoder registration for TIFF input handling.
+`models.go` is the classifier-specific registry. Every entry supplies a checksum-pinned `onnx.ModelInfo`, label filename, and canonical-order flag. The shared ONNX description records:
 
-### Troubleshooting Tips
+- artifact filename, SHA-256, license, and quantization;
+- input/output tensor names, shape, count, and whether output values are logits;
+- NCHW/NHWC layout, RGB/BGR order, per-channel mean and standard deviation;
+- resize mode, short edge, crop ratio, and interpolation.
 
-- **Labels are empty:** Verify the model labels file and that `Rules` thresholds are not too strict.
-- **Model load failures:** Ensure `saved_model.pb` and `variables/` exist under the configured model path.
-- **Unexpected outputs:** Check `TensorFlow.Input/Output` settings in `vision.yml` for custom models.
+The graph is inspected at initialization and must agree with all recorded structural fields. A registered checksum mismatch, multiple outputs, a dynamic output width, a 1001-class background offset, non-finite output, or a label-count mismatch prevents inference instead of substituting another model. Initialization errors are cached separately from operator disablement; restart PhotoPrism after installing or repairing an artifact.
+
+### Configuration
+
+`PHOTOPRISM_LABELS_MODEL` accepts `auto` and `none`. In `auto` mode, `vision.yml` chooses the registered, custom, or remote labels model. A `Default: true` entry, or no labels entry, selects the first installed registered model in preference order, starting with `efficientformerv2_s2`. If no artifact is installed, the entry stays enabled and a startup warning provides the download command; installing it requires a restart.
+
+`download-models.sh <name>` installs a registered model and verifies its checksum; `--list` shows all models it can install. The script is in `PATH` in the development environment and the production images. It installs into `${PHOTOPRISM_ASSETS_PATH:-assets}/models` and does not read `PHOTOPRISM_MODELS_PATH`, so pass a custom models path as `MODELS_PATH`. In Docker, mount a host directory at `/opt/photoprism/assets/models/<name>` to keep a downloaded model when the container is recreated; mounting over the whole models path hides the bundled models. `none` disables labels regardless of `vision.yml` without persisting that override. The deprecated `PHOTOPRISM_DISABLE_CLASSIFICATION` applies unless `PHOTOPRISM_LABELS_MODEL` is set to `auto` or `none`; explicit `auto` overrides it, while an unsupported value does not.
+
+Select a registered alternative in `vision.yml`:
+
+```yaml
+Models:
+  - Type: labels
+    Name: repvit_m1_0
+```
+
+The default model `efficientformerv2_s2` runs during indexing, whether it is selected automatically or named in `vision.yml`. Alternative label models run after indexing by default; set `Run: on-index` on the entry to run inline. `photoprism vision ls` reports the selected models, effective enabled status, and whether their artifacts are installed; remote models show installation status `n/a`.
+
+A custom model is resolved under `PHOTOPRISM_MODELS_PATH` as:
+
+```text
+<models path>/<name>/<name>.onnx
+<models path>/<name>/labels.txt
+```
+
+Use `vision.yml` to override `Path`, `LabelFile`, `Resolution`, or `ONNX` fields. Output width is read from the graph and must exactly equal the selected label file, so ImageNet-21k and other vocabularies are supported without a hard-coded class count. Embedded `photoprism.*` metadata can carry the preprocessing contract; missing semantic fields use logged ImageNet defaults.
+
+### Inference Safety
+
+- Raw logits use maximum-subtracted softmax before exponentiation.
+- Probabilities must be finite, in range, and sum to 1 within `1e-4`.
+- Tensor input follows the model-specific channel order and memory layout.
+- Inference is serialized on a model session so parallel indexing is deterministic.
+- Session and tensor resources are destroyed explicitly.
+
+### Exporting Candidates
+
+The offline exporter downloads an immutable Apache-2.0 publisher checkpoint, records the source and artifact SHA-256 values, exports a fixed `[1, 3, 224, 224]` FP32 graph at opset 17, embeds preprocessing/provenance metadata, runs the ONNX checker and shape inference, and compares a normalized fixture through PyTorch and ONNX Runtime:
+
+```bash
+scripts/ai/export-label-models.py --model all \
+  --license Apache-2.0 \
+  --exported-at 2026-09-02T04:30:00Z
+```
+
+Its manifest records the command, fixed metadata timestamp, and Python, PyTorch, timm, ONNX, ONNX Runtime, and NumPy versions. Supplying the same timestamp prevents wall-clock metadata from changing an otherwise identical graph checksum. RepViT is reparameterized before export, and distilled models must return one final combined logits tensor in eval mode. Pass the reviewed license with `--license Apache-2.0` so newly exported metadata records the same publisher terms as the registry.
+
+### Benchmarking & Calibration
+
+Before TensorFlow is removed from an environment, capture the incumbent NASNet output for a corpus with the opt-in build tag. The baseline loads the TensorFlow model from `assets/models/nasnet`, which no install target provides, so extract `https://dl.photoprism.app/tensorflow/nasnet.zip` there first:
+
+```bash
+PHOTOPRISM_TEST_LABEL_BASELINE_DIR=/photos/corpus \
+PHOTOPRISM_TEST_LABEL_BASELINE_REPORT=/reports/nasnet.json \
+go test -tags labelbaseline ./internal/ai/classify \
+  -run TestGenerateTensorFlowLabelBaseline -count=1
+```
+
+Compare installed ONNX candidates on each target architecture:
+
+```bash
+PHOTOPRISM_TEST_LABEL_CORPUS=/reports/nasnet.json \
+PHOTOPRISM_TEST_LABEL_REPORT=/reports/onnx-arm64.json \
+go test ./internal/ai/classify -run TestExternalLabelBenchmark -count=1
+```
+
+The report includes top-5 overlap, visible-label agreement, rule-activation drift, threshold crossings and calibration points, p50/p95 latency, model load time, Linux peak RSS, artifact size, and optional correct/false-positive counts when the manifest contains human annotations. The harness runs each candidate in a separate process so peak RSS is model-specific. Repeat the comparison on x86-64 and ARM64 with a representative photo corpus.
+
+EfficientFormerV2 S2 is the default because the reviewed 402-image Wikimedia corpus reached 81.8% visible-label coverage, compared with 73.4% for S1, leaving 73 rather than 107 images unlabeled. Its higher ARM64 latency (80 ms p50 and 121 ms p95, versus 52 ms and 75 ms) and peak RSS (350 MB versus 319 MB) are accepted for the materially better indexing coverage and mean top-1 quality.
+
+### Corpus Calibration
+
+Raw-vector capture and crop/rule experiments are developer tooling, not ordinary package tests.
+Calibration runs require an explicitly selected corpus; their images and reports stay outside the repository.
+The regular suite uses repository fixtures and synthetic data, without private calibration inputs.
+
+### Troubleshooting
+
+- **The selected model cannot initialize:** Check the reported model path, file SHA-256, ONNX Runtime installation, and warning log. A named selection never falls back to different weights.
+- **The model output does not match labels:** Provide the exact `LabelFile`; shifted indices are rejected rather than accepted silently.
+- **Confidence behavior changed:** Use the benchmark’s threshold maps and rule-activation drift. Do not reuse the NASNet threshold without corpus calibration.
+- **A custom model produces poor labels:** Declare its color order, normalization, resize/crop convention, output type, and label file in `vision.yml` or embedded metadata.
 
 ### Related Docs
 
-- [`internal/ai/vision/README.md`](../vision/README.md) — model registry and `vision.yml` configuration
-- [`internal/ai/tensorflow/README.md`](../tensorflow/README.md) — TensorFlow helpers, GC behavior, and model loading
+- [`internal/ai/onnx/README.md`](../onnx/README.md) — shared ONNX model descriptions and runtime setup
+- [`internal/ai/vision/README.md`](../vision/README.md) — `vision.yml` model configuration

@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -81,35 +82,45 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 		labelSrc = model.GetSource()
 	}
 
-	size := vision.Thumb(vision.ModelTypeLabels)
-
-	// The thumbnail size may need to be adjusted to use other models.
-	switch {
-	case size.Name != "" && size.Name != thumb.Tile224:
-		sizes = []thumb.Name{size.Name}
-		thumbnails = make([]string, 0, 1)
-	case m.Square():
-		// Only one thumbnail is required for square images.
-		sizes = []thumb.Name{thumb.Tile224}
-		thumbnails = make([]string, 0, 1)
-	default:
-		// Use three thumbnails otherwise (center, left, right).
-		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
-		thumbnails = make([]string, 0, 3)
-	}
-
-	// Get thumbnail filenames for the selected sizes.
-	for _, s := range sizes {
-		if thumbnail, fileErr := m.Thumbnail(Config().ThumbCachePath(), s); fileErr != nil {
-			log.Debugf("%s in %s", fileErr, clean.Log(m.RootRelName()))
-			continue
-		} else {
-			thumbnails = append(thumbnails, thumbnail)
+	if model.UsesPreparedLabels() {
+		inputs, inputErr := m.PrepareLabelInputs()
+		if inputErr != nil {
+			log.Debugf("labels: %s in %s", inputErr, clean.Log(m.RootRelName()))
+			return labels
 		}
-	}
+		labels, err = vision.GeneratePreparedLabels(inputs, labelSrc)
+	} else {
+		size := vision.Thumb(vision.ModelTypeLabels)
 
-	// Run the configured vision model to obtain labels for the generated thumbnails.
-	if labels, err = vision.GenerateLabels(thumbnails, media.SrcLocal, labelSrc); err != nil {
+		// The thumbnail size may need to be adjusted to use other models.
+		switch {
+		case size.Name != "" && size.Name != thumb.Tile224:
+			sizes = []thumb.Name{size.Name}
+			thumbnails = make([]string, 0, 1)
+		case m.Square():
+			// Only one thumbnail is required for square images.
+			sizes = []thumb.Name{thumb.Tile224}
+			thumbnails = make([]string, 0, 1)
+		default:
+			// Use three thumbnails otherwise (center, left, right).
+			sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
+			thumbnails = make([]string, 0, 3)
+		}
+
+		// Get thumbnail filenames for the selected sizes.
+		for _, s := range sizes {
+			if thumbnail, fileErr := m.Thumbnail(Config().ThumbCachePath(), s); fileErr != nil {
+				log.Debugf("%s in %s", fileErr, clean.Log(m.RootRelName()))
+				continue
+			} else {
+				thumbnails = append(thumbnails, thumbnail)
+			}
+		}
+
+		// Run the configured vision model to obtain labels for the generated thumbnails.
+		labels, err = vision.GenerateLabels(thumbnails, media.SrcLocal, labelSrc)
+	}
+	if err != nil {
 		log.Debugf("labels: %s in %s", err, clean.Log(m.RootRelName()))
 		return labels
 	}
@@ -123,25 +134,29 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 	return labels
 }
 
-// DetectNSFW returns true if media file might be offensive and detection is enabled.
-func (m *MediaFile) DetectNSFW() bool {
+// DetectNSFW returns an explicit safe, unsafe, or unavailable decision for the media file.
+func (m *MediaFile) DetectNSFW() nsfw.Result {
 	filename, err := m.Thumbnail(Config().ThumbCachePath(), thumb.Fit720)
 
 	if err != nil {
-		log.Error(err)
-		return false
+		event.SystemError([]string{"vision", "%s in %s (detect nsfw)"}, clean.Error(err), clean.Log(m.RootRelName()))
+		return nsfw.Unavailable(clean.Error(err))
 	}
 
-	if results, modelErr := vision.DetectNSFW([]string{filename}, media.SrcLocal); modelErr != nil {
-		log.Errorf("vision: %s in %s (detect nsfw)", modelErr, clean.Log(m.RootRelName()))
-		return false
-	} else if len(results) < 1 {
-		log.Errorf("vision: nsfw model returned no result for %s", clean.Log(m.RootRelName()))
-		return false
-	} else if results[0].IsNsfw(nsfw.ThresholdHigh) {
+	results, modelErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
+
+	switch {
+	case modelErr != nil:
+		event.SystemError([]string{"vision", "%s in %s (detect nsfw)"}, clean.Error(modelErr), clean.Log(m.RootRelName()))
+		return nsfw.Unavailable(clean.Error(modelErr))
+	case len(results) < 1:
+		event.SystemError([]string{"vision", "nsfw model returned no result for %s"}, clean.Log(m.RootRelName()))
+		return nsfw.Unavailable("no result")
+	}
+
+	if results[0].IsUnsafe() {
 		log.Warnf("vision: detected offensive content in %s", clean.Log(m.RootRelName()))
-		return true
 	}
 
-	return false
+	return results[0]
 }

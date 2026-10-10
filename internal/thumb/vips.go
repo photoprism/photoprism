@@ -150,14 +150,14 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 
 	// Check if export failed.
 	if err != nil {
-		err = wrapVipsExportErr(format, thumbName, width, height, err)
+		err = wrapVipsExportErr(format, width, height, err)
 		log.Debugf("%s (export thumbnail)", err)
 		return "", thumbBuffer, err
 	}
 
 	// Write thumbnail to file.
 	if err = os.WriteFile(thumbName, thumbBuffer, fs.ModeFile); err != nil {
-		err = wrapVipsWriteErr(thumbName, err)
+		err = wrapVipsWriteErr(err)
 		log.Debugf("%s (write thumbnail to file)", err)
 		return "", thumbBuffer, err
 	}
@@ -165,15 +165,16 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 	return thumbName, thumbBuffer, nil
 }
 
-// wrapVipsExportErr annotates a libvips export error with the target format, filename, and dimensions.
-func wrapVipsExportErr(format, thumbName string, width, height int, err error) error {
-	return fmt.Errorf("vips: %s export failed for %s at %dx%d (%w)",
-		format, clean.Log(filepath.Base(thumbName)), width, height, vipsErr(err))
+// wrapVipsExportErr annotates a libvips export error with the target format and dimensions. The target
+// is not named, so the text carries no file hash; callers name the original.
+func wrapVipsExportErr(format string, width, height int, err error) error {
+	return fmt.Errorf("vips: %s export failed at %dx%d (%w)", format, width, height, vipsErr(err))
 }
 
-// wrapVipsWriteErr annotates a thumbnail file-write error with the destination filename.
-func wrapVipsWriteErr(thumbName string, err error) error {
-	return fmt.Errorf("vips: failed to write thumbnail %s (%w)", clean.Log(filepath.Base(thumbName)), vipsErr(err))
+// wrapVipsWriteErr annotates a thumbnail file-write error. The destination stays in the wrapped
+// *fs.PathError, which clean.Error masks, so callers that log with it show no file hash.
+func wrapVipsWriteErr(err error) error {
+	return fmt.Errorf("vips: failed to write thumbnail (%w)", vipsErr(err))
 }
 
 // vipsErr reduces a libvips error to the message govips collected for it, joining the

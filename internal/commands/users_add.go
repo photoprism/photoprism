@@ -19,7 +19,7 @@ var UsersAddCommand = &cli.Command{
 	Name:      "add",
 	Usage:     "Creates a new user account",
 	ArgsUsage: "[username]",
-	Flags:     UserFlags,
+	Flags:     append(UserFlags, UserRestoreFlag()),
 	Action:    usersAddAction,
 }
 
@@ -65,12 +65,9 @@ func usersAddAction(ctx *cli.Context) error {
 				return authn.ErrAccountAlreadyExists
 			}
 
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Restore user %s", m.String()),
-				IsConfirm: true,
-			}
-
-			if _, err := prompt.Run(); err != nil {
+			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
+				return err
+			} else if !restore {
 				return authn.ErrAccountAlreadyExists
 			}
 
@@ -79,6 +76,7 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 
 			log.Infof("user %s has been restored", m.String())
+			AuditSharedEmail(m, true)
 
 			return nil
 		}
@@ -140,6 +138,12 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 		}
 
-		return entity.AddUser(frm)
+		if err := entity.AddUser(frm); err != nil {
+			return err
+		}
+
+		AuditSharedEmail(entity.FindUserByName(frm.UserName), true)
+
+		return nil
 	})
 }

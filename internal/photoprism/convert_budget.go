@@ -17,7 +17,8 @@ import (
 
 // ConvertBudget is the time available for converting one file, shared by the commands tried
 // for it. Each run is charged against the remainder, so a chain of candidates cannot occupy
-// the converter for the configured time once per candidate.
+// the converter for the configured time once per candidate. A nil budget does not limit commands,
+// so the Convert methods that run commands with a budget replace nil with one for their configured time.
 type ConvertBudget struct {
 	remaining time.Duration
 	limited   bool
