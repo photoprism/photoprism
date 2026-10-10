@@ -47,7 +47,7 @@ func retryWrite(action, reason string, attempts int, retryable func(error) bool,
 	return err
 }
 
-// isDeadlockError identifies retryable database lock errors.
+// isDeadlockError identifies deadlock errors, which can be retried.
 func isDeadlockError(err error) bool {
 	if err == nil {
 		return false

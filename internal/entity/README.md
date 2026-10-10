@@ -28,8 +28,10 @@ GORM's `Updates` with a struct skips zero values, so a field reset to its zero v
 
 `UpdateLabelCounts` keeps each driver's counting query and updates the refresh timestamp only after
 success. Its MySQL write uses `RetryDeadlock`, shared with batch label edits: at most three attempts
-with bounded backoff for recognized database lock errors. Other errors return immediately. Retries
+with bounded backoff for recognized deadlock errors. Other errors return immediately. Retries
 apply to the individual write, not to the entire HTTP handler or its preceding operations.
+
+### Write Retries
 
 `Photo.SaveDetails` writes through `RetryLock`, which retries once after any lock error, including lock wait
 timeouts and a locked SQLite database. It returns an error when the details could not be stored, keeping the

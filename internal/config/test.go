@@ -362,7 +362,7 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 }
 
 // NewTestConfig initializes test data in an isolated storage folder, so packages tested at the same
-// time do not clash. Call CleanupTestFolder to remove it; see AGENTS.md (Test Data & Fixtures).
+// time do not clash. Call CleanupTestFolder to remove it; see internal/AGENTS.md (Internal Tests & Fixtures).
 func NewTestConfig(dbName string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
@@ -600,7 +600,7 @@ func (c *Config) UnzipTestData() error {
 //
 // The function removes prior artifacts, downloads fixtures when missing,
 // unzips them, and then calls CreateDirectories so required directories exist.
-// See AGENTS.md (Test Data & Fixtures) for details.
+// See internal/AGENTS.md (Internal Tests & Fixtures) for details.
 func (c *Config) InitializeTestData() (err error) {
 	testDataMutex.Lock()
 	defer testDataMutex.Unlock()
