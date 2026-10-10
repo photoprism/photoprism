@@ -665,7 +665,8 @@ func TestImportWorker_ArchivedBackup(t *testing.T) {
 	require.NoError(t, err)
 	destPath := filepath.Dir(fs.RelName(destName, cfg.OriginalsPath()))
 	require.NoError(t, os.MkdirAll(filepath.Dir(destName), fs.ModeDir))
-	require.NoError(t, os.WriteFile(fs.StripExt(destName)+fs.ExtYml, []byte("UID: "+rnd.GenerateUID(entity.PhotoUID)+
+	photoUID := rnd.GenerateUID(entity.PhotoUID)
+	require.NoError(t, os.WriteFile(fs.StripExt(destName)+fs.ExtYml, []byte("UID: "+photoUID+
 		"\nType: video\nQuality: 3\nDeletedAt: 2022-10-18T08:15:21Z\n"), fs.ModeFile))
 
 	jobs := make(chan ImportJob, 1)
@@ -673,7 +674,15 @@ func TestImportWorker_ArchivedBackup(t *testing.T) {
 	close(jobs)
 	ImportWorker(jobs)
 
-	var n int64
-	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ?", destPath).Count(&n).Error)
-	assert.Equal(t, int64(0), n, "no photo before a run that includes archived photos")
+	// The photo is restored from its backup, even though the import skips archived photos, and stays archived.
+	var photos entity.Photos
+	require.NoError(t, entity.UnscopedDb().Where("photo_path = ?", destPath).Find(&photos).Error)
+	require.Len(t, photos, 1)
+	assert.Equal(t, photoUID, photos[0].PhotoUID)
+	assert.NotNil(t, photos[0].DeletedAt, "photo stays archived")
+
+	var files []string
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", photos[0].ID).Pluck("file_name", &files).Error)
+	mainName := fs.RelName(destName, cfg.OriginalsPath())
+	assert.ElementsMatch(t, []string{mainName, fs.StripExt(mainName) + fs.ExtYml, mainName + fs.ExtJpeg}, files)
 }

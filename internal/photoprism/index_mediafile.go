@@ -307,6 +307,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			candidate, candidateDetails := photo, *details
 			candidate.Details = &candidateDetails
 
+			// Backups omit a quality of 0, so a backup without one restores 0 rather than the initial -1.
+			candidate.PhotoQuality = 0
+
 			if err = candidate.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else if candidate.HasUID() {
@@ -320,7 +323,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		if restored != nil {
+		if restored == nil {
+			// Nothing to restore.
+		} else if existing := entity.FindPhoto(entity.Photo{PhotoUID: restored.PhotoUID}); restored.HasUID() && existing != nil {
+			// A backup of a photo that is in the database restores nothing, so the photo's state applies.
+			photo = *existing
+			details = photo.GetDetails()
+			ownBackup = false
+		} else {
 			*details = *restored.Details
 			restored.Details = details
 			photo = *restored
@@ -396,10 +406,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore pictures that have been purged automatically.
 		photo.DeletedAt = nil
-	} else if o.SkipArchived && photo.DeletedAt != nil {
-		// Skip archived pictures for faster indexing; the photo ID is 0 if it was restored from a backup.
+	} else if o.SkipArchived && photo.DeletedAt != nil && photo.HasID() {
+		// Skip archived pictures for faster indexing, but add those restored from a backup.
 		result.Status = IndexArchived
 		result.PhotoID = photo.ID
+		result.PhotoUID = photo.PhotoUID
 		return result
 	}
 

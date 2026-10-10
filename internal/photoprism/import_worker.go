@@ -292,6 +292,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			done := make(map[string]bool)
 			ind := imp.index
 			photoUID := ""
+			archived := false
 
 			if related.Main != nil {
 				main := related.Main
@@ -313,13 +314,19 @@ func ImportWorker(jobs <-chan ImportJob) {
 				log.Infof("import: %s main %s file %s", res, main.FileType(), clean.Log(main.RootRelName()))
 				done[main.FileName()] = true
 
+				// Related files of a new main file are added even if its photo is archived, as it was restored from a backup.
+				if res.Status == IndexAdded {
+					o.SkipArchived = false
+				}
+
 				switch {
 				case !res.Success():
 					// Skip importing related files if the main file was not indexed successfully.
 					continue
-				case res.Archived() && res.PhotoID == 0:
-					// Related files of an archived photo restored from a backup are indexed with it later.
-					continue
+				case res.Archived():
+					// Related files of an archived photo are found by its UID, and skipped like the main file.
+					photoUID = res.PhotoUID
+					archived = true
 				case res.PhotoUID != "":
 					photoUID = res.PhotoUID
 
@@ -379,7 +386,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Renamed capture files are only recognized by their original names once they are indexed, so the
 			// preview of the left lens is then made again from both lenses.
-			if o.Convert && photoUID != "" && related.Main != nil {
+			if o.Convert && photoUID != "" && !archived && related.Main != nil {
 				imp.updateInsta360Preview(related.Main, o, photoUID, opt.UID)
 			}
 		}

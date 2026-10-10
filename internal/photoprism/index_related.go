@@ -38,13 +38,14 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	case !result.Success():
 		// Skip related files if indexing was not completely successful.
 		return result
-	case result.Archived() && result.PhotoID == 0:
-		// Related files of an archived photo that was restored from a backup but not saved are indexed
-		// with it by the next run that includes archived photos.
-		return result
 	case result.Stacked() && related.Len() > 1:
 		// Show info if main file was stacked and has additional related files.
 		log.Infof("index: %s has %s", related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
+	}
+
+	// Related files of a new main file are added even if its photo is archived, as it was restored from a backup.
+	if result.Status == IndexAdded {
+		o.SkipArchived = false
 	}
 
 	done[related.Main.FileName()] = true
@@ -157,7 +158,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	// covered the primary preview and a distinct RAW/HEIC source's sidecars while
 	// indexing it, so this pass only serves incremental sidecar-only updates
 	// where the unchanged preview was filtered out of the list.
-	if o.ImportFaceTags && photoUID != "" && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
+	if o.ImportFaceTags && photoUID != "" && !result.Archived() && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
 		// Collect first so a source that declares no region container skips both
 		// the primary-file and marker queries. A declared but empty set still
 		// proceeds: that is what removes markers whose regions the user deleted.

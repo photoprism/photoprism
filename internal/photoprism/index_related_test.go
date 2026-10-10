@@ -783,8 +783,8 @@ func TestIndexRelated_TypeCheck(t *testing.T) {
 	})
 }
 
-// TestIndexRelated_ArchivedBackup checks that the related files of a photo restored as archived from its
-// YAML backup are indexed with it, by the first run that includes archived photos.
+// TestIndexRelated_ArchivedBackup checks that a photo restored as archived from its YAML backup is indexed
+// with its related files, also by a run that skips archived photos.
 func TestIndexRelated_ArchivedBackup(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
@@ -824,12 +824,8 @@ func TestIndexRelated_ArchivedBackup(t *testing.T) {
 	}
 
 	t.Run("SkipArchived", func(t *testing.T) {
+		// A photo restored from a backup is added, even though archived photos are skipped.
 		result := indexClip(true, false)
-		assert.Equal(t, IndexArchived, result.Status)
-		assert.Equal(t, int64(0), countPhotos(), "no photo before a run that includes archived photos")
-	})
-	t.Run("IncludeArchived", func(t *testing.T) {
-		result := indexClip(false, false)
 		require.True(t, result.Success(), "%s", result.Err)
 		assert.Equal(t, int64(1), countPhotos())
 
@@ -841,6 +837,11 @@ func TestIndexRelated_ArchivedBackup(t *testing.T) {
 		var files []string
 		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", photo.ID).Pluck("file_name", &files).Error)
 		assert.ElementsMatch(t, []string{token + "/clip.mp4", token + "/clip.mp4.jpg", token + "/clip.yml"}, files)
+	})
+	t.Run("IncludeArchived", func(t *testing.T) {
+		result := indexClip(false, false)
+		require.True(t, result.Success(), "%s", result.Err)
+		assert.Equal(t, int64(1), countPhotos())
 	})
 	t.Run("SavedArchived", func(t *testing.T) {
 		// Related files of an archived photo that exists are still visited, e.g. if they belong to another photo.
@@ -859,5 +860,85 @@ func TestIndexRelated_ArchivedBackup(t *testing.T) {
 			visited = visited || strings.Contains(entry.Message, "related jpg file "+token+"/clip.mp4.jpg")
 		}
 		assert.True(t, visited, "related preview visited")
+	})
+}
+
+func TestIndexRelated_BackupQuality(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := newIndexRelatedTestConfig(t, "index-related-quality")
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	// indexBackup indexes a picture whose backup has the given photo UID, quality line and archive date.
+	indexBackup := func(t *testing.T, photoUID, quality string, skipArchived bool) (IndexResult, string, string) {
+		token := rnd.Base36(8)
+		dir := filepath.Join(cfg.OriginalsPath(), token)
+
+		if photoUID == "" {
+			photoUID = rnd.GenerateUID(entity.PhotoUID)
+		}
+
+		// Unique content, so that each picture is a new file rather than a duplicate of the previous one.
+		jpeg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+		require.NoError(t, err)
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "photo.jpg"), append(jpeg, []byte(token)...), fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "photo.yml"), []byte("UID: "+photoUID+"\nType: image\nTitle: Backup Quality\n"+quality+
+			"TakenAt: 2021-02-20T01:29:16Z\nDeletedAt: 2022-10-18T08:15:21Z\n"), fs.ModeFile))
+
+		mainFile, err := NewMediaFile(filepath.Join(dir, "photo.jpg"))
+		require.NoError(t, err)
+		related, err := mainFile.RelatedFiles(true)
+		require.NoError(t, err)
+
+		ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+		opt := NewIndexOptions("/", false, false, true, false, skipArchived, cfg)
+
+		return IndexRelated(related, ind, opt), token, photoUID
+	}
+
+	// findPhoto returns the stored photo with the given UID.
+	findPhoto := func(t *testing.T, uid string) entity.Photo {
+		photo := entity.Photo{}
+		require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", uid).First(&photo).Error)
+		return photo
+	}
+
+	t.Run("NoQuality", func(t *testing.T) {
+		// A backup written with a quality of 0 has no quality, so the photo stays archived rather than removed.
+		for _, skipArchived := range []bool{true, false} {
+			result, _, uid := indexBackup(t, "", "", skipArchived)
+			require.True(t, result.Success(), "%s", result.Err)
+
+			photo := findPhoto(t, uid)
+			assert.NotNil(t, photo.DeletedAt, "photo stays archived")
+		}
+	})
+	t.Run("ExistingPhoto", func(t *testing.T) {
+		// A backup of an archived photo in the database restores nothing, so the photo is skipped.
+		result, _, uid := indexBackup(t, "", "", false)
+		require.True(t, result.Success(), "%s", result.Err)
+		photo := findPhoto(t, uid)
+
+		result, token, _ := indexBackup(t, uid, "", true)
+		assert.Equal(t, IndexArchived, result.Status)
+		assert.Equal(t, photo.ID, result.PhotoID)
+		assert.Equal(t, uid, result.PhotoUID, "related files find the photo by its UID")
+
+		var files int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND file_name LIKE ?", photo.ID, token+"/%").Count(&files).Error)
+		assert.Zero(t, files)
+	})
+	t.Run("Removed", func(t *testing.T) {
+		// A backup with a quality of -1 belongs to a photo that was removed automatically, so it is restored.
+		result, _, uid := indexBackup(t, "", "Quality: -1\n", true)
+		require.True(t, result.Success(), "%s", result.Err)
+
+		photo := findPhoto(t, uid)
+		assert.Nil(t, photo.DeletedAt, "photo is restored")
 	})
 }
