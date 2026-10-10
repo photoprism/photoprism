@@ -128,6 +128,10 @@ func googlePixelStackPreviews(t *testing.T, folder string) map[string]entity.Fil
 // TestIndex_GooglePixel_Simultaneous verifies that simultaneous indexing of a Google Pixel Camera capture with zero GPS metadata
 // creates exactly one photo with Cover as primary.
 func TestIndex_GooglePixel_Simultaneous(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Standard Photo RAW+JPEG: verifies that modern capture (without .COVER) stacks into 1 photo with Cover as primary.
 	t.Run("Modern", func(t *testing.T) {
 		folder := "pixel_simultaneous_modern"
@@ -215,6 +219,10 @@ func TestIndex_GooglePixel_Simultaneous(t *testing.T) {
 
 // TestIndex_GooglePixel_Portrait_Simultaneous verifies stacking for Google Pixel Camera Portrait mode pairs.
 func TestIndex_GooglePixel_Portrait_Simultaneous(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Portrait Photo JPEG: verifies that modern blurred portrait photo is primary over the unblurred original.
 	t.Run("Modern", func(t *testing.T) {
 		folder := "pixel_portrait_modern"
@@ -301,6 +309,10 @@ func TestIndex_GooglePixel_Portrait_Simultaneous(t *testing.T) {
 // TestIndex_GooglePixel_Sequential_LateCover verifies that when the Google Pixel Camera RAW file is indexed first,
 // a late-arriving Cover image stacks into the existing photo and is promoted to FilePrimary.
 func TestIndex_GooglePixel_Sequential_LateCover(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Standard Photo RAW+JPEG: verifies that late-arriving modern Cover JPEG is promoted to FilePrimary.
 	t.Run("Modern", func(t *testing.T) {
 		folder := "pixel_sequential_modern"
@@ -387,6 +399,10 @@ func TestIndex_GooglePixel_Sequential_LateCover(t *testing.T) {
 // TestIndex_GooglePixel_Sequential_Portrait_LateCover verifies that when a Google Pixel Camera Portrait Original JPEG is indexed first,
 // a late-arriving Portrait Cover image stacks into the existing photo and is promoted to FilePrimary.
 func TestIndex_GooglePixel_Sequential_Portrait_LateCover(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Portrait Photo JPEG: verifies that late-arriving modern blurred Cover is promoted over original JPEG.
 	t.Run("Modern", func(t *testing.T) {
 		folder := "pixel_portrait_sequential_modern"
@@ -481,6 +497,10 @@ func TestIndex_GooglePixel_Sequential_Portrait_LateCover(t *testing.T) {
 // TestIndex_GooglePixel_Rescan_Reconciliation verifies that forced reindexing reconciles duplicate photos
 // created prior to Google Pixel Camera stacking support, migrating albums, labels, and keywords.
 func TestIndex_GooglePixel_Rescan_Reconciliation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "pixel_reconcile"
 	cfg := newGooglePixelStackConfig(t, folder)
 	dir := filepath.Join(cfg.OriginalsPath(), folder)
@@ -569,6 +589,10 @@ func TestIndex_GooglePixel_Rescan_Reconciliation(t *testing.T) {
 // TestIndex_GooglePixel_AIProZoom_ThreeFiles verifies that a 3-file AI Pro Zoom capture (Cover JPEG, base JPEG, and RAW DNG)
 // indexes as a single photo entity with the AI Pro Zoom Cover as FilePrimary.
 func TestIndex_GooglePixel_AIProZoom_ThreeFiles(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "pixel_aiprozoom"
 	cfg := newGooglePixelStackConfig(t, folder)
 	dir := filepath.Join(cfg.OriginalsPath(), folder)
@@ -614,6 +638,10 @@ func TestIndex_GooglePixel_AIProZoom_ThreeFiles(t *testing.T) {
 // TestIndex_GooglePixel_VideoBoost_Pair verifies that Video Boost and Night Sight Video clips
 // (draft preview COVER and boosted MAIN) index as a single video entity with the boosted MAIN file as FilePrimary.
 func TestIndex_GooglePixel_VideoBoost_Pair(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Video Boost MP4: verifies that the boosted MAIN video is primary over the draft COVER preview.
 	t.Run("VideoBoost", func(t *testing.T) {
 		folder := "pixel_videoboost"
@@ -709,6 +737,10 @@ func TestIndex_GooglePixel_VideoBoost_Pair(t *testing.T) {
 // is indexed first, a late-arriving boosted MAIN video stacks into the existing photo, is promoted to
 // FilePrimary = true, and demotes the COVER video.
 func TestIndex_GooglePixel_Sequential_VideoBoost_LateMain(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "pixel_sequential_videoboost_latemain"
 	cfg := newGooglePixelStackConfig(t, folder)
 	dir := filepath.Join(cfg.OriginalsPath(), folder)
@@ -764,6 +796,10 @@ func TestIndex_GooglePixel_Sequential_VideoBoost_LateMain(t *testing.T) {
 // TestImport_GooglePixelCapture verifies that importing a Google Pixel Camera capture moves and stacks
 // the files into a single photo entity with the primary JPEG marked as FilePrimary.
 func TestImport_GooglePixelCapture(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "pixelimport"
 	cfg := newGooglePixelStackConfig(t, folder)
 	importDir := filepath.Join(cfg.ImportPath(), folder)

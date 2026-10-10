@@ -269,6 +269,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 					} else if insta360ImportedMember(originalName, relatedOriginalNames[rf.FileName()]) {
 						// The combined preview of an imported capture is made from its left lens.
 						continue
+					} else if googlePixelSkipConvert(rf) {
+						// A Google Pixel Camera image capture has one primary image. Its companion RAW
+						// file is preserved and indexed as a related original, but must not create duplicate sidecars.
+						continue
 					}
 
 					// The preview gets the file orientation, which may only be readable with ExifTool.
