@@ -96,6 +96,7 @@ type Config struct {
 	start         bool
 	ready         atomic.Bool
 	cache         *gc.Cache
+	testFolder    string
 }
 
 // Values is a shorthand alias for map[string]interface{}.

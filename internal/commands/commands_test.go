@@ -82,7 +82,6 @@ func runTestMain(m *testing.M) int {
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
 	initialTestDbDSN = c.DatabaseDSN()
-	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
 			log.Warnf("close db: %v", err)

@@ -140,6 +140,8 @@ func uploadUnavailableScreening(t *testing.T) (logged, audited string) {
 	event.AuditLog = auditLogger
 
 	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
 	conf.Options().StoragePath = t.TempDir()
 	conf.Options().UploadAllow = "jpg"
 	conf.Options().UploadNSFW = false

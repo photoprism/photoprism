@@ -2,11 +2,14 @@ package config
 
 import (
 	"bytes"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -102,5 +105,26 @@ func TestCleanupTestFolder(t *testing.T) {
 		out := captureSystemLog(t, c.CleanupTestFolder)
 		assert.Contains(t, out, "cleanup /tmp/photoprism/my-test-photoprism-x/testdata")
 		assert.Contains(t, out, "failed")
+	})
+	t.Run("RecordedFolder", func(t *testing.T) {
+		// A test that points StoragePath elsewhere must not change which folder is removed.
+		dir := t.TempDir()
+		folder := filepath.Join(dir, "test-photoprism-123", "testdata")
+		other := filepath.Join(dir, "other")
+		require.NoError(t, os.MkdirAll(folder, 0o700))
+		require.NoError(t, os.MkdirAll(other, 0o700))
+
+		c := Config{options: &Options{StoragePath: other}, testFolder: filepath.Dir(folder)}
+		out := captureSystemLog(t, c.CleanupTestFolder)
+		assert.Contains(t, out, "succeeded")
+		assert.NoDirExists(t, filepath.Dir(folder))
+		assert.DirExists(t, other)
+	})
+	t.Run("RecordedFolderNotIsolated", func(t *testing.T) {
+		dir := t.TempDir()
+		c := Config{testFolder: dir}
+		out := captureSystemLog(t, c.CleanupTestFolder)
+		assert.Contains(t, out, "failed")
+		assert.DirExists(t, dir)
 	})
 }
