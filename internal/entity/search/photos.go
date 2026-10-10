@@ -623,12 +623,13 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	}
 
 	// Filter by chroma, where 1 is monochrome, 0 a monochrome value written by earlier versions, and -1 unknown.
+	// Low chroma values exclude monochrome files.
 	if frm.Mono {
 		s = s.Where("files.file_chroma >= 0 AND files.file_chroma <= 1")
 	} else if frm.Chroma > 9 {
 		s = s.Where("files.file_chroma > ?", frm.Chroma)
 	} else if frm.Chroma > 0 {
-		s = s.Where("files.file_chroma >= 0 AND files.file_chroma <= ?", frm.Chroma)
+		s = s.Where("files.file_chroma > 1 AND files.file_chroma <= ?", frm.Chroma)
 	}
 
 	if frm.Diff != 0 {

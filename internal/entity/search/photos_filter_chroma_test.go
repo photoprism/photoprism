@@ -45,7 +45,7 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 	})
 	t.Run("LowChroma", func(t *testing.T) {
 		uids := find(t, "chroma:4")
-		assert.Contains(t, uids, mono)
+		assert.NotContains(t, uids, mono)
 		assert.Contains(t, uids, low)
 	})
 	t.Run("EarlierMono", func(t *testing.T) {
@@ -57,7 +57,7 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 		})
 
 		assert.Contains(t, find(t, "mono:true"), earlier)
-		assert.Contains(t, find(t, "chroma:4"), earlier)
+		assert.NotContains(t, find(t, "chroma:4"), earlier)
 		assert.NotContains(t, find(t, "chroma:20"), earlier)
 	})
 	t.Run("Geo", func(t *testing.T) {
@@ -93,6 +93,21 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 		}
 
 		assert.Contains(t, uids, earlier)
+
+		// Low chroma values exclude monochrome files.
+		lowChroma := form.SearchPhotosGeo{Query: "chroma:4", Count: 1000}
+		require.NoError(t, lowChroma.ParseQueryString())
+
+		results, err = PhotosGeo(lowChroma)
+		require.NoError(t, err)
+
+		for _, r := range results {
+			var chroma []int16
+			require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", r.PhotoUID).Pluck("file_chroma", &chroma).Error)
+			require.NotEmpty(t, chroma)
+			assert.Greater(t, chroma[0], int16(1), "chroma of %s", r.PhotoUID)
+			assert.NotEqual(t, earlier, r.PhotoUID)
+		}
 	})
 	t.Run("HighChroma", func(t *testing.T) {
 		uids := find(t, "chroma:20")

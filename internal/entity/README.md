@@ -111,7 +111,7 @@ Lower a ceiling when a change reduces the statements; raising one needs an expla
 `photos.photo_color`, `files.file_chroma` and `files.file_diff` store measured values that are never 0, so their `default:-1` tags cannot turn a measurement into "unknown" when a row is created: GORM leaves a blank field with a `default` tag out of the `INSERT`.
 
 - `photo_color` is the ID of the main color from `pkg/media/colors`, where `Black` is 16; color hex strings such as `file_colors` still render it as `0`.
-- `file_chroma` is the rounded colorfulness from 1 to 100, so 1 means monochrome. The `mono` search filter matches 1, and the low-chroma filter includes it; both also accept 0, which earlier versions stored for monochrome files.
+- `file_chroma` is the rounded colorfulness from 1 to 100, so 1 means monochrome. The `mono` search filter matches 1 and also 0, which earlier versions stored for monochrome files; low-chroma filters such as `chroma:5` exclude both.
 - `file_diff` is a 10-bit perceptual hash from 512 to 1023.
 - -1 means unknown. `NewUserPhoto` and the indexer set it before the values are computed, since existing SQLite columns have no default. `entity_colors_test.go` pins the create path and the migrations that converted stored zeros.
 
