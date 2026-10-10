@@ -1,10 +1,31 @@
 package duf
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+// storageMountPath returns a temporary folder on the /photoprism storage mount of the development
+// environment, or the mount point if it is not writable, and skips the test without the mount.
+func storageMountPath(t *testing.T) string {
+	t.Helper()
+
+	if _, err := os.Stat("/photoprism"); err != nil {
+		t.Skip("requires the /photoprism storage mount")
+	}
+
+	dir, err := os.MkdirTemp("/photoprism", "duf-test-")
+
+	if err != nil {
+		return "/photoprism"
+	}
+
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+
+	return dir
+}
 
 func TestMounts(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
@@ -42,7 +63,7 @@ func TestMounts(t *testing.T) {
 func TestPathInfo(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		// Get slice of mounted file systems.
-		result, err := PathInfo("/photoprism/originals")
+		result, err := PathInfo(storageMountPath(t))
 
 		// No warnings or errors are expected.
 		assert.NoError(t, err)
@@ -98,7 +119,7 @@ func TestPathInfo(t *testing.T) {
 func TestFindByPath(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		// Get slice of mounted file systems.
-		results, warnings, err := FindByPath("/photoprism/originals")
+		results, warnings, err := FindByPath(storageMountPath(t))
 
 		// No warnings or errors are expected.
 		assert.NoError(t, err)
