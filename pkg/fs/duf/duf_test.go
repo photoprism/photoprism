@@ -5,10 +5,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// storageMountPath returns a temporary folder on the /photoprism storage mount of the development
-// environment, or the mount point if it is not writable, and skips the test without the mount.
+// storageMountPath returns the standard storage folder on the /photoprism mount of the development
+// environment, creating it if needed, or the mount point if that fails. It skips without the mount.
 func storageMountPath(t *testing.T) string {
 	t.Helper()
 
@@ -16,13 +18,11 @@ func storageMountPath(t *testing.T) string {
 		t.Skip("requires the /photoprism storage mount")
 	}
 
-	dir, err := os.MkdirTemp("/photoprism", "duf-test-")
+	const dir = "/photoprism/storage"
 
-	if err != nil {
+	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 		return "/photoprism"
 	}
-
-	t.Cleanup(func() { _ = os.RemoveAll(dir) })
 
 	return dir
 }
