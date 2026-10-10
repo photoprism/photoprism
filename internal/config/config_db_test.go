@@ -391,7 +391,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 12
 
-		want := "postgres://instance:secret@localhost:5432/instancedb?TimeZone=UTC&connect_timeout=12&sslmode=disable"
+		want := "postgres://instance:secret@localhost:5432/instancedb?TimeZone=UTC&connect_timeout=12&sslmode=disable" //nolint:gosec // G101: test fixture, not a credential.
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -410,7 +410,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 9
 
-		want := "postgres://instance:secret@postgres.internal:5433/instancedb?TimeZone=UTC&connect_timeout=9&sslmode=disable"
+		want := "postgres://instance:secret@postgres.internal:5433/instancedb?TimeZone=UTC&connect_timeout=9&sslmode=disable" //nolint:gosec // G101: test fixture, not a credential.
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}

@@ -18,7 +18,7 @@ func TestDSN_PostgreSQL(t *testing.T) {
 		assert.Equal(t, "postgres://photoprism:secret@db:5433/photoprism?connect_timeout=5&sslmode=require", d.PostgreSQL())
 	})
 	t.Run("SpecialCharacters", func(t *testing.T) {
-		d := DSN{User: "photo prism", Password: "p@ss:w/rd?#& '", Server: "localhost:5432", Name: "my db"}
+		d := DSN{User: "photo prism", Password: "p@ss:w/rd?#& '", Server: "localhost:5432", Name: "my db"} //nolint:gosec // G101: test fixture, not a credential.
 		u, err := url.Parse(d.PostgreSQL())
 		require.NoError(t, err)
 

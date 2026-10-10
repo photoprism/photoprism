@@ -533,7 +533,9 @@ func (c *Config) RegisterDb() {
 // InitDb initializes the database without running previously failed migrations.
 func (c *Config) InitDb() {
 	c.RegisterDb()
-	c.MigrateDb(false, nil)
+
+	// MigrateDb logs the error and records it on a known version.
+	_ = c.MigrateDb(false, nil)
 }
 
 // MigrateDb will initialize the database and migrate the schema if necessary, and returns an error if

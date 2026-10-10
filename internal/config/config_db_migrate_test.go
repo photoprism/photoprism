@@ -39,7 +39,7 @@ func TestConfig_MigrateDbVersion(t *testing.T) {
 
 	// An unknown version is never recorded, so give the build one.
 	c.options.Version = "261009-test"
-	c.MigrateDb(false, nil)
+	require.NoError(t, c.MigrateDb(false, nil))
 
 	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
 	require.NotNil(t, version)
