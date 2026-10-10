@@ -127,7 +127,7 @@ func resetIndexDb(c *config.Config) {
 
 	log.Infoln("restoring default schema")
 	if err := entity.InitDb(migrate.Opt(true, false, nil)); err != nil {
-		log.Errorf("reset: %s", err)
+		log.Errorf("reset: %s", clean.ErrorFull(err))
 	}
 
 	// A pinned face model only exists to keep new vectors comparable with the ones the library

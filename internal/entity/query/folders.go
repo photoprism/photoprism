@@ -36,7 +36,7 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 		if folder, _, createErr := entity.FirstOrCreateFolder(&newFolder); createErr == nil && folder != nil {
 			folders[i] = *folder
 		} else {
-			log.Errorf("folders: %s (create folder)", createErr)
+			log.Errorf("folders: %s (create %s)", clean.Error(createErr), clean.Log(newFolder.Path))
 		}
 	}
 

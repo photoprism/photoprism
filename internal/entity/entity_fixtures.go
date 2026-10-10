@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // CreateDefaultFixtures inserts default fixtures for test and production.
@@ -43,11 +44,11 @@ func ResetTestFixtures() {
 	}
 
 	if err := Entities.Migrate(Db(), migrate.Opt(true, false, nil)); err != nil {
-		log.Errorf("migrate: %s [%s]", err, time.Since(start))
+		log.Errorf("migrate: %s [%s]", clean.Error(err), time.Since(start))
 	}
 
 	if err := Entities.WaitForMigration(Db()); err != nil {
-		log.Errorf("migrate: %s [%s]", err, time.Since(start))
+		log.Errorf("migrate: %s [%s]", clean.Error(err), time.Since(start))
 	}
 
 	Entities.Truncate(Db())

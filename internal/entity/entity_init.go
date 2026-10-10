@@ -37,9 +37,8 @@ func InitDb(opt migrate.Options) (err error) {
 
 	err = Entities.Migrate(Db(), opt)
 
+	// The error is returned, so the caller reports it.
 	if waitErr := Entities.WaitForMigration(Db()); waitErr != nil {
-		log.Errorf("migrate: %s", waitErr)
-
 		if err == nil {
 			err = waitErr
 		}

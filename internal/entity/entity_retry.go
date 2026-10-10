@@ -9,6 +9,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"github.com/mattn/go-sqlite3"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 const (
@@ -41,7 +43,7 @@ func retryWrite(action, reason string, attempts int, retryable func(error) bool,
 			break
 		}
 		wait := deadlockRetryDelay * time.Duration(attempt+1)
-		log.Warnf("sql: %s %s (attempt %d/%d): %s", action, reason, attempt+1, attempts, err)
+		log.Warnf("sql: %s %s (attempt %d/%d): %s", action, reason, attempt+1, attempts, clean.Error(err))
 		time.Sleep(wait)
 	}
 	return err

@@ -999,7 +999,7 @@ func (m *Album) DeletePermanently() error {
 
 	// Remove the photo links only once the album row is gone, so a failed delete keeps them.
 	if err := UnscopedDb().Where("album_uid = ?", m.AlbumUID).Delete(&PhotoAlbum{}).Error; err != nil {
-		log.Warnf("album: %s (remove photo links of %s)", err, clean.Log(m.AlbumUID))
+		log.Warnf("album: %s (remove photo links of %s)", clean.Error(err), clean.Log(m.AlbumUID))
 	}
 
 	if !wasDeleted {

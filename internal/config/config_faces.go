@@ -949,7 +949,7 @@ func (c *Config) libraryFaceModels() (counts []query.MarkerEmbeddingModelCount, 
 	}
 
 	if found, tableErr := entity.DbHasTable(c.db, entity.Marker{}.TableName()); tableErr != nil {
-		log.Debugf("config: %s (find markers table)", tableErr)
+		log.Debugf("config: %s (find markers table)", clean.Error(tableErr))
 		return nil, false
 	} else if !found {
 		log.Debugf("config: no markers table (find face embedding models)")
@@ -959,7 +959,7 @@ func (c *Config) libraryFaceModels() (counts []query.MarkerEmbeddingModelCount, 
 	var err error
 
 	if found, columnErr := entity.DbHasColumn(c.db, entity.Marker{}.TableName(), "embed_model"); columnErr != nil {
-		log.Debugf("config: %s (find embed_model column)", columnErr)
+		log.Debugf("config: %s (find embed_model column)", clean.Error(columnErr))
 		return nil, false
 	} else if found {
 		counts, err = query.RecordedMarkerEmbeddingModels()

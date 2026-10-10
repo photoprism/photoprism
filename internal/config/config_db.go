@@ -568,13 +568,13 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
 			version.Error = clean.ErrorBytes(err, 255)
 
 			if saveErr := version.Save(c.Db()); saveErr != nil {
-				log.Warnf("config: %s (save version)", saveErr)
+				event.SystemWarn([]string{"config", "%s (save version)"}, clean.ErrorFull(saveErr))
 			}
 		}
 	} else if opt.AutoMigrate {
 		// Running selected migrations only does not migrate the schema, so it records nothing.
 		if migratedErr := version.Migrated(c.Db()); migratedErr != nil {
-			log.Warnf("config: %s (migrate)", migratedErr)
+			event.SystemWarn([]string{"config", "%s (save version)"}, clean.ErrorFull(migratedErr))
 		}
 	}
 

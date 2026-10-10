@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -98,7 +99,7 @@ func FirstOrCreateDetails(m *Details) *Details {
 	} else if err = Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
 		return &result
 	} else {
-		log.Errorf("details: %s (find or create %d)", createErr, m.PhotoID)
+		log.Errorf("details: %s (find or create %d)", clean.Error(createErr), m.PhotoID)
 	}
 
 	return nil
