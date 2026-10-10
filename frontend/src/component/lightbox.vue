@@ -275,6 +275,7 @@ export default {
       wasFullscreen: $fullscreen.isEnabled(),
       isZoomable: true,
       mobileBreakpoint: 600, // Minimum viewport width for large screens.
+      sidebarButtonRegistered: false, // True when the dedicated Information toolbar button is available.
       featExperimental: this.$config.featExperimental(), // Enables features that may be incomplete or unstable.
       featDevelop: this.$config.featDevelop(), // Enables new features that are still under development.
       selection: this.$clipboard.selection,
@@ -1545,6 +1546,9 @@ export default {
     // Adds PhotoSwipe lightbox controls, see https://photoswipe.com/adding-ui-elements/.
     addLightboxControls() {
       const lightbox = this.lightbox;
+      // Track whether the dedicated Information button is available so the
+      // action menu only needs to provide it as a fallback.
+      this.sidebarButtonRegistered = false;
 
       // Add a sidebar toggle button only if the window is large enough.
       // TODO: Proof-of-concept only, the sidebar needs to be fully implemented before removing the featDevelop check.
@@ -1578,6 +1582,7 @@ export default {
 
         // Add sidebar toggle control.
         if (window.innerWidth > this.mobileBreakpoint) {
+          this.sidebarButtonRegistered = true;
           lightbox.pswp.ui.registerElement({
             name: "sidebar-button",
             className: "pswp__button--info-button pswp__button--mdi", // Sets the icon style/size in lightbox.css.
@@ -1789,6 +1794,16 @@ export default {
           visible: this.canDownload,
           click: () => {
             this.onDownload();
+          },
+        },
+        {
+          name: "information",
+          icon: "mdi-information-outline",
+          text: this.$gettext("Information"),
+          visible: !this.sidebarButtonRegistered,
+          click: () => {
+            this.toggleSidebar();
+            this.$refs.menu?.hide();
           },
         },
         {
