@@ -92,10 +92,6 @@ func FirstOrCreateDetails(m *Details) *Details {
 	result := Details{}
 
 	if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
-		if m.CreatedAt.IsZero() {
-			m.CreatedAt = Now()
-		}
-
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		return m

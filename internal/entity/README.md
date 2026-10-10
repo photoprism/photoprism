@@ -31,6 +31,10 @@ success. Its MySQL write uses `RetryDeadlock`, shared with batch label edits: at
 with bounded backoff for recognized database lock errors. Other errors return immediately. Retries
 apply to the individual write, not to the entire HTTP handler or its preceding operations.
 
+`Photo.SaveDetails` writes through `RetryLock`, which retries once after any lock error, including lock wait
+timeouts and a locked SQLite database. It returns an error when the details could not be stored, keeping the
+changes in memory; creating a missing row counts as stored.
+
 ### Timestamps
 
 Created and updated timestamps are stored as SQL `DATETIME` **without fractional seconds** (`DATETIME_PRECISION = 0`). To keep in-memory and persisted values in sync, the package sets GORM's timestamp source to second precision in `db.go`:

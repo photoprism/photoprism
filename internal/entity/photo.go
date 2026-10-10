@@ -909,17 +909,32 @@ func (m *Photo) GetDetails() *Details {
 	return m.Details
 }
 
-// SaveDetails writes photo details to the database.
+// SaveDetails writes photo details to the database, and returns an error if the changes could not be stored.
 func (m *Photo) SaveDetails() error {
-	if err := m.GetDetails().Save(); err == nil {
-		return nil
-	} else if details := FirstOrCreateDetails(m.GetDetails()); details != nil {
-		m.Details = details
-		return nil
-	} else {
-		log.Errorf("photo: %s (save details for %d)", err, m.ID)
-		return err
+	// Details that are not in memory yet are loaded or created, so they have no changes to save.
+	if m.Details == nil && m.HasID() {
+		if stored := FirstOrCreateDetails(&Details{PhotoID: m.ID}); stored != nil {
+			m.Details = stored
+			return nil
+		}
 	}
+
+	details := m.GetDetails()
+
+	err := RetryLock("save details", details.Save)
+
+	if err == nil {
+		return nil
+	}
+
+	// Creating a missing row also stores the changes, while returning an existing row does not.
+	if FirstOrCreateDetails(details) == details {
+		return nil
+	}
+
+	log.Errorf("photo: %s (save details for %d)", err, m.ID)
+
+	return err
 }
 
 // ShouldGenerateLabels reports whether automatic vision labels should be generated for the photo.
