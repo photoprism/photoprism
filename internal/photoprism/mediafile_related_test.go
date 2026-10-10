@@ -725,7 +725,7 @@ func TestMediaFile_RelatedFiles_Pixel(t *testing.T) {
 		assert.Len(t, relatedFromRaw.Files, 2)
 	})
 
-	// Motion Photo RAW+JPEG: verifies that the Motion Photo Cover JPEG is primary over the RAW original.
+	// Motion Photo RAW+JPEG: verifies that the Motion Photo JPEG is primary over the RAW original.
 	t.Run("MotionPhotoRaw", func(t *testing.T) {
 		dir := t.TempDir()
 		coverName := filepath.Join(dir, "PXL_20230805_123456789.RAW-01.MP.jpg")
@@ -742,7 +742,7 @@ func TestMediaFile_RelatedFiles_Pixel(t *testing.T) {
 		assert.Len(t, related.Files, 2)
 	})
 
-	// Night Sight Photo RAW+JPEG: verifies that the Night Sight Cover JPEG is primary over the RAW original.
+	// Night Sight Photo RAW+JPEG: verifies that the Night Sight JPEG is primary over the RAW original.
 	t.Run("NightSightPhotoRaw", func(t *testing.T) {
 		dir := t.TempDir()
 		coverName := filepath.Join(dir, "PXL_20260930_143000123.NIGHT.RAW-01.jpg")
@@ -776,7 +776,7 @@ func TestMediaFile_RelatedFiles_Pixel(t *testing.T) {
 		assert.Len(t, related.Files, 2)
 	})
 
-	// Portrait Photo JPEG (legacy -01/-02): verifies that the blurred cover photo is primary over the unblurred original.
+	// Portrait Photo JPEG (legacy -01/-02): verifies that the blurred portrait photo is primary over the unblurred original.
 	t.Run("PortraitPhotoLegacy", func(t *testing.T) {
 		dir := t.TempDir()
 		coverName := filepath.Join(dir, "PXL_20230805_150000123.PORTRAIT-01.COVER.jpg")
@@ -861,7 +861,7 @@ func TestMediaFile_RelatedFiles_Pixel(t *testing.T) {
 		assert.Len(t, related.Files, 2)
 	})
 
-	// AI Pro Zoom Photo RAW+JPEG: verifies that a 3-file capture groups under the AI Zoom cover photo.
+	// AI Pro Zoom Photo RAW+JPEG: verifies that a 3-file capture groups under the AI Zoom primary photo.
 	t.Run("AIProZoomPhoto", func(t *testing.T) {
 		dir := t.TempDir()
 		coverName := filepath.Join(dir, "PXL_20240930_123456789.BURST-01.jpg")

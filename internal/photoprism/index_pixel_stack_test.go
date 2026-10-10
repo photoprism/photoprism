@@ -132,7 +132,7 @@ func TestIndex_GooglePixel_Simultaneous(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// Standard Photo RAW+JPEG: verifies that modern capture (without .COVER) stacks into 1 photo with Cover as primary.
+	// Standard Photo RAW+JPEG: verifies that modern capture (without .COVER) stacks into 1 photo with processed JPEG as primary.
 	t.Run("Modern", func(t *testing.T) {
 		folder := "pixel_simultaneous_modern"
 		cfg := newGooglePixelStackConfig(t, folder)
@@ -174,7 +174,7 @@ func TestIndex_GooglePixel_Simultaneous(t *testing.T) {
 		}
 	})
 
-	// Standard Photo RAW+JPEG (Legacy .COVER): verifies that legacy capture with .COVER stacks into 1 photo with Cover as primary.
+	// Standard Photo RAW+JPEG (Legacy .COVER): verifies that legacy capture with .COVER stacks into 1 photo with processed JPEG as primary.
 	t.Run("Legacy", func(t *testing.T) {
 		folder := "pixel_simultaneous_legacy"
 		cfg := newGooglePixelStackConfig(t, folder)
@@ -307,13 +307,13 @@ func TestIndex_GooglePixel_Portrait_Simultaneous(t *testing.T) {
 }
 
 // TestIndex_GooglePixel_Sequential_LateCover verifies that when the Google Pixel Camera RAW file is indexed first,
-// a late-arriving Cover image stacks into the existing photo and is promoted to FilePrimary.
+// a late-arriving processed JPEG stacks into the existing photo and is promoted to FilePrimary.
 func TestIndex_GooglePixel_Sequential_LateCover(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// Standard Photo RAW+JPEG: verifies that late-arriving modern Cover JPEG is promoted to FilePrimary.
+	// Standard Photo RAW+JPEG: verifies that late-arriving modern processed JPEG is promoted to FilePrimary.
 	t.Run("Modern", func(t *testing.T) {
 		folder := "pixel_sequential_modern"
 		cfg := newGooglePixelStackConfig(t, folder)
@@ -354,7 +354,7 @@ func TestIndex_GooglePixel_Sequential_LateCover(t *testing.T) {
 		assert.True(t, coverFile.FilePrimary, "late Cover file must be promoted to FilePrimary")
 	})
 
-	// Standard Photo RAW+JPEG (Legacy .COVER): verifies that late-arriving legacy Cover JPEG is promoted to FilePrimary.
+	// Standard Photo RAW+JPEG (Legacy .COVER): verifies that late-arriving legacy processed JPEG is promoted to FilePrimary.
 	t.Run("Legacy", func(t *testing.T) {
 		folder := "pixel_sequential_legacy"
 		cfg := newGooglePixelStackConfig(t, folder)
@@ -397,13 +397,13 @@ func TestIndex_GooglePixel_Sequential_LateCover(t *testing.T) {
 }
 
 // TestIndex_GooglePixel_Sequential_Portrait_LateCover verifies that when a Google Pixel Camera Portrait Original JPEG is indexed first,
-// a late-arriving Portrait Cover image stacks into the existing photo and is promoted to FilePrimary.
+// a late-arriving Portrait image stacks into the existing photo and is promoted to FilePrimary.
 func TestIndex_GooglePixel_Sequential_Portrait_LateCover(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// Portrait Photo JPEG: verifies that late-arriving modern blurred Cover is promoted over original JPEG.
+	// Portrait Photo JPEG: verifies that late-arriving modern blurred portrait photo is promoted over original JPEG.
 	t.Run("Modern", func(t *testing.T) {
 		folder := "pixel_portrait_sequential_modern"
 		cfg := newGooglePixelStackConfig(t, folder)
@@ -448,7 +448,7 @@ func TestIndex_GooglePixel_Sequential_Portrait_LateCover(t *testing.T) {
 		assert.False(t, origFile.FilePrimary, "original file must be demoted from FilePrimary")
 	})
 
-	// Portrait Photo JPEG (legacy -01/-02): verifies that late-arriving legacy blurred Cover is promoted over original JPEG.
+	// Portrait Photo JPEG (legacy -01/-02): verifies that late-arriving legacy blurred portrait photo is promoted over original JPEG.
 	t.Run("Legacy", func(t *testing.T) {
 		folder := "pixel_portrait_sequential_legacy"
 		cfg := newGooglePixelStackConfig(t, folder)
@@ -586,8 +586,8 @@ func TestIndex_GooglePixel_Rescan_Reconciliation(t *testing.T) {
 	indexGooglePixelFolder(cfg, folder, true)
 }
 
-// TestIndex_GooglePixel_AIProZoom_ThreeFiles verifies that a 3-file AI Pro Zoom capture (Cover JPEG, base JPEG, and RAW DNG)
-// indexes as a single photo entity with the AI Pro Zoom Cover as FilePrimary.
+// TestIndex_GooglePixel_AIProZoom_ThreeFiles verifies that a 3-file AI Pro Zoom capture (processed JPEG, base JPEG, and RAW DNG)
+// indexes as a single photo entity with the processed JPEG as FilePrimary.
 func TestIndex_GooglePixel_AIProZoom_ThreeFiles(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
@@ -823,6 +823,6 @@ func TestImport_GooglePixelCapture(t *testing.T) {
 	rawFile := stored(rawName)
 
 	assert.Equal(t, coverFile.PhotoID, rawFile.PhotoID, "both files must belong to the same photo")
-	assert.True(t, coverFile.FilePrimary, "imported cover JPEG must be FilePrimary")
+	assert.True(t, coverFile.FilePrimary, "imported processed JPEG must be FilePrimary")
 	assert.False(t, rawFile.FilePrimary, "imported companion RAW must not be FilePrimary")
 }

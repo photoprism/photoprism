@@ -10,9 +10,9 @@ import (
 
 // GooglePixelCapture contains the files belonging to a Google Pixel Camera multi-file capture.
 type GooglePixelCapture struct {
-	MainPhoto *MediaFile // Primary photo (e.g. -01 / .COVER / .PORTRAIT)
-	MainVideo *MediaFile // Primary boosted video (e.g. VB-03.MAIN / VB-02.MAIN)
-	Originals MediaFiles // Related originals (DNG, unenhanced base JPEGs, draft video preview)
+	MainPhoto *MediaFile // Primary photo (processed JPEG or composite)
+	MainVideo *MediaFile // Primary boosted video
+	Originals MediaFiles // Stacked originals (companion RAW files, unenhanced JPEGs, draft videos)
 }
 
 // FindGooglePixelCapture resolves the files belonging to the same Google Pixel Camera capture as f.
@@ -77,8 +77,8 @@ func FindGooglePixelCapture(f *MediaFile) *GooglePixelCapture {
 			}
 		} else {
 			// Photo capture: classify into MainPhoto (primary) vs Originals (stacked related files).
-			// The primary photo is the enhanced composite/cover (-01, .COVER, or .PORTRAIT).
-			// Sensor RAWs, .ORIGINAL unenhanced shots, and secondary burst frames (-02, -03, etc.) are stacked originals.
+			// The primary photo is the processed JPEG (-01, .COVER, or .PORTRAIT).
+			// Companion RAW files, .ORIGINAL unenhanced shots, and secondary frames (-02, -03, etc.) are stacked originals.
 			isMain := !mf.IsRaw() && !strings.Contains(upper, ".ORIGINAL") && (strings.Contains(upper, "-01") || strings.Contains(upper, ".COVER") || strings.HasSuffix(upper, ".PORTRAIT"))
 
 			if isMain {
@@ -193,7 +193,7 @@ func (c *GooglePixelCapture) MemberFile(file entity.File) bool {
 	return file.FileSidecar || file.FileRoot == entity.RootSidecar || c.IsMember(file.FileName)
 }
 
-// MemberPreview reports whether fileName is a generated preview of a secondary member of this capture (e.g. draft cover preview).
+// MemberPreview reports whether fileName is a generated preview of a secondary member of this capture (e.g. draft video preview).
 func (c *GooglePixelCapture) MemberPreview(fileName string) bool {
 	if c == nil || fileName == "" {
 		return false
@@ -210,7 +210,7 @@ func (c *GooglePixelCapture) MemberPreview(fileName string) bool {
 	return false
 }
 
-// googlePixelSkipConvert reports whether f is a related RAW file belonging to a valid Google Pixel Camera
+// googlePixelSkipConvert reports whether f is a companion RAW file belonging to a valid Google Pixel Camera
 // capture whose primary image already exists, avoiding duplicate sidecars.
 func googlePixelSkipConvert(f *MediaFile) bool {
 	if f == nil || !f.IsRaw() {
@@ -243,7 +243,7 @@ func googlePixelImportOrder(related RelatedFiles) MediaFiles {
 	return result
 }
 
-// googlePixelPrimaryCapture returns the capture if m is its canonical primary file of a valid multi-file capture.
+// googlePixelPrimaryCapture returns the capture if m is the canonical primary file of a valid multi-file capture.
 func googlePixelPrimaryCapture(m *MediaFile) *GooglePixelCapture {
 	if capture := FindGooglePixelCapture(m); capture != nil && capture.ValidPair() && capture.IsPrimary(m) {
 		return capture
@@ -251,7 +251,7 @@ func googlePixelPrimaryCapture(m *MediaFile) *GooglePixelCapture {
 	return nil
 }
 
-// googlePixelPairPreview returns the complete capture whose boosted primary video m is the generated preview of.
+// googlePixelPairPreview returns the complete capture whose boosted video m is the generated preview of.
 func googlePixelPairPreview(m *MediaFile) *GooglePixelCapture {
 	if m == nil || !m.IsPreviewImage() {
 		return nil

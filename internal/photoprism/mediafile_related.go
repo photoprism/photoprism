@@ -80,7 +80,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		}
 	}
 
-	// Google Pixel Camera stores RAW+JPEG, Portrait, AI Zoom, or Video Boost captures with differing suffixes.
+	// Google Pixel Camera stores multi-file photo and video captures with differing suffixes.
 	// Include the complete capture and all member sidecars so the indexer creates one photo.
 	if capture := FindGooglePixelCapture(m); capture != nil && capture.ValidPair() {
 		if primary := capture.Primary(); primary != nil {
