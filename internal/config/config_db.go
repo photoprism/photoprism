@@ -530,6 +530,18 @@ func (c *Config) RegisterDb() {
 	entity.SetDbProvider(c)
 }
 
+// versionEdition returns the edition stored with the schema version. Portal builds get rows of their own,
+// as they register tables that other editions of the same release sharing a database do not.
+func (c *Config) versionEdition() string {
+	edition := c.Edition()
+
+	if c.Portal() && edition != Portal {
+		return Portal + "-" + edition
+	}
+
+	return edition
+}
+
 // InitDb initializes the database without running previously failed migrations.
 func (c *Config) InitDb() {
 	c.RegisterDb()
@@ -544,7 +556,7 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
 	entity.Admin.UserName = c.AdminUser()
 
 	// Automatically migrate database schema only once per release to reduce startup time.
-	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
+	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.versionEdition()))
 	opt := migrate.Opt(version.NeedsMigration(), runFailed, ids)
 
 	// Record the version as migrated only once its schema was, so the next start migrates it again.

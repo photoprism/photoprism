@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -75,4 +76,33 @@ func TestConfig_MigrateDbVersion(t *testing.T) {
 	assert.Error(t, c.MigrateDb(true, nil))
 	assert.Empty(t, migrate.UnknownVersion.Error)
 	assert.Nil(t, migrate.UnknownVersion.Find(c.Db()))
+}
+
+// TestConfig_versionEdition checks that Portal builds record schema versions under an edition of their own.
+func TestConfig_versionEdition(t *testing.T) {
+	prevRole := DefaultNodeRole
+	t.Cleanup(func() { DefaultNodeRole = prevRole })
+
+	c := NewMinimalTestConfig(t.TempDir())
+
+	t.Run("Community", func(t *testing.T) {
+		DefaultNodeRole = cluster.RoleInstance
+		c.options.Edition = ""
+		assert.Equal(t, "ce", c.versionEdition())
+	})
+	t.Run("Instance", func(t *testing.T) {
+		DefaultNodeRole = cluster.RoleInstance
+		c.options.Edition = "ultimate"
+		assert.Equal(t, "ultimate", c.versionEdition())
+	})
+	t.Run("Portal", func(t *testing.T) {
+		DefaultNodeRole = cluster.RolePortal
+		c.options.Edition = "ultimate"
+		assert.Equal(t, "portal-ultimate", c.versionEdition())
+	})
+	t.Run("PortalEdition", func(t *testing.T) {
+		DefaultNodeRole = cluster.RoleInstance
+		c.options.Edition = Portal
+		assert.Equal(t, Portal, c.versionEdition())
+	})
 }
