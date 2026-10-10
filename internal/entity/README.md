@@ -37,6 +37,10 @@ apply to the individual write, not to the entire HTTP handler or its preceding o
 timeouts and a locked SQLite database. It returns an error when the details could not be stored, keeping the
 changes in memory; creating a missing row counts as stored.
 
+`Details` clips its text to the column sizes before every write, since MariaDB rejects longer values in strict
+mode while SQLite stores them: keywords are cut after the last whole keyword that fits, and source names longer
+than their column are cleared.
+
 ### Timestamps
 
 Created and updated timestamps are stored as SQL `DATETIME` **without fractional seconds** (`DATETIME_PRECISION = 0`). To keep in-memory and persisted values in sync, the package sets GORM's timestamp source to second precision in `db.go`:

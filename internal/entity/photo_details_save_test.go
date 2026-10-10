@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -95,6 +96,13 @@ func TestPhoto_SaveDetails(t *testing.T) {
 
 		assert.EqualError(t, m.Save(), "write control")
 		assert.Equal(t, "stored", storedKeywords(t, m.ID))
+	})
+	t.Run("LongKeywords", func(t *testing.T) {
+		m := newDetailsPhoto(t)
+		m.Details.Keywords = longKeywords(320)
+
+		require.NoError(t, m.Save())
+		assert.True(t, strings.HasPrefix(longKeywords(320), storedKeywords(t, m.ID)+", "))
 	})
 	t.Run("NotLoaded", func(t *testing.T) {
 		// Details that were not loaded have no changes, so failing updates do not matter.

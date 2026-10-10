@@ -3,14 +3,19 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 var photoDetailsMutex = sync.Mutex{}
+
+// detailsSrcSize is the size of the VARBINARY(8) source columns in bytes.
+const detailsSrcSize = 8
 
 // Details stores denormalized photo metadata to speed up search and filtering.
 type Details struct {
@@ -52,6 +57,8 @@ func (m *Details) Create() error {
 		return fmt.Errorf("details: photo id must not be empty (create)")
 	}
 
+	m.clipText()
+
 	return UnscopedDb().Create(m).Error
 }
 
@@ -60,6 +67,8 @@ func (m *Details) Save() error {
 	if m.PhotoID == 0 {
 		return fmt.Errorf("details: photo id must not be empty (save)")
 	}
+
+	m.clipText()
 
 	return UnscopedDb().Save(m).Error
 }
@@ -70,6 +79,10 @@ func (m *Details) Update(attr string, value any) error {
 		return errors.New("photo details must not be nil - you may have found a bug")
 	} else if m.PhotoID < 1 {
 		return errors.New("photo ID in details must not be empty - you may have found a bug")
+	}
+
+	if s, ok := value.(string); ok {
+		value = clipDetailsText(attr, s)
 	}
 
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
@@ -85,7 +98,70 @@ func (m *Details) Updates(values any) error {
 		return errors.New("photo ID in details must not be empty - you may have found a bug")
 	}
 
+	if v, ok := values.(Values); ok {
+		for col, val := range v {
+			if s, isStr := val.(string); isStr {
+				v[col] = clipDetailsText(col, s)
+			}
+		}
+	}
+
 	return UnscopedDb().Model(m).Updates(values).Error
+}
+
+// clipText limits the text fields to their column sizes.
+func (m *Details) clipText() {
+	m.Keywords = clipDetailsText("keywords", m.Keywords)
+	m.Notes = clipDetailsText("notes", m.Notes)
+	m.Subject = clipDetailsText("subject", m.Subject)
+	m.Artist = clipDetailsText("artist", m.Artist)
+	m.Copyright = clipDetailsText("copyright", m.Copyright)
+	m.License = clipDetailsText("license", m.License)
+	m.Software = clipDetailsText("software", m.Software)
+	m.KeywordsSrc = clipDetailsText("keywords_src", m.KeywordsSrc)
+	m.NotesSrc = clipDetailsText("notes_src", m.NotesSrc)
+	m.SubjectSrc = clipDetailsText("subject_src", m.SubjectSrc)
+	m.ArtistSrc = clipDetailsText("artist_src", m.ArtistSrc)
+	m.CopyrightSrc = clipDetailsText("copyright_src", m.CopyrightSrc)
+	m.LicenseSrc = clipDetailsText("license_src", m.LicenseSrc)
+	m.SoftwareSrc = clipDetailsText("software_src", m.SoftwareSrc)
+}
+
+// clipDetailsText limits a text value to the size of its details column, keeping whole keywords.
+// Source names longer than their column are not known sources, so they are cleared.
+func clipDetailsText(column, s string) string {
+	var size int
+
+	// Column and field names match alike, e.g. keywords_src and KeywordsSrc.
+	switch strings.ToLower(strings.ReplaceAll(column, "_", "")) {
+	case "keywordssrc", "notessrc", "subjectsrc", "artistsrc", "copyrightsrc", "licensesrc", "softwaresrc":
+		if len(s) > detailsSrcSize {
+			return ""
+		}
+
+		return s
+	case "keywords", "notes":
+		size = txt.ClipText
+	case "subject", "artist", "copyright", "license", "software":
+		size = txt.ClipShortText
+	default:
+		return s
+	}
+
+	if utf8.RuneCountInString(s) <= size {
+		return s
+	}
+
+	if size == txt.ClipText && strings.EqualFold(column, "keywords") {
+		// Cuts before the last separator within the limit, so the last keyword stays whole.
+		clipped := string([]rune(s)[:size+1])
+
+		if i := strings.LastIndex(clipped, ","); i > 0 {
+			return strings.TrimSpace(clipped[:i])
+		}
+	}
+
+	return txt.Clip(s, size)
 }
 
 // FirstOrCreateDetails returns the existing row, inserts a new row or nil in case of errors.
