@@ -135,6 +135,39 @@ func TestDisableAssociationSaves(t *testing.T) {
 		require.NoError(t, UnscopedDb().Model(&PhotoLabel{}).Where("photo_id = ?", photo.ID).Count(&count).Error)
 		assert.Zero(t, count)
 	})
+	t.Run("AssociationAppendNotSaved", func(t *testing.T) {
+		label := LabelFixtures.Get("cake")
+		category := LabelFixtures.Get("cow")
+		cond := "label_id = ? AND category_id = ?"
+		t.Cleanup(func() { _ = Db().Where(cond, label.ID, category.ID).Delete(&Category{}).Error })
+
+		// The Association API saves through the removed callbacks, so Append reports no error and writes no row.
+		require.NoError(t, Db().Model(&label).Association("LabelCategories").Append(&category))
+
+		var count int64
+		require.NoError(t, Db().Model(&Category{}).Where(cond, label.ID, category.ID).Count(&count).Error)
+		assert.Zero(t, count)
+	})
+	t.Run("AssociationReplaceRemovesLinks", func(t *testing.T) {
+		label := NewLabel("Association Replace", 0)
+		linked := NewLabel("Association Linked", 0)
+		replacement := NewLabel("Association Replacement", 0)
+
+		for _, m := range []*Label{label, linked, replacement} {
+			require.NoError(t, m.Create())
+			t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+		}
+
+		t.Cleanup(func() { _ = Db().Where("label_id = ?", label.ID).Delete(&Category{}).Error })
+		require.NoError(t, Db().Create(&Category{LabelID: label.ID, CategoryID: linked.ID}).Error)
+
+		// Replace deletes the links it does not keep, but saves the new ones through the removed callbacks.
+		require.NoError(t, Db().Model(label).Association("LabelCategories").Replace(replacement))
+
+		var count int64
+		require.NoError(t, Db().Model(&Category{}).Where("label_id = ?", label.ID).Count(&count).Error)
+		assert.Zero(t, count)
+	})
 }
 
 func TestIsSave(t *testing.T) {
