@@ -629,7 +629,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	if frm.Mono {
 		s = s.Where("files.file_chroma = 1")
 	} else if frm.Chroma > 9 {
-		s = s.Where("files.file_chroma > ?", frm.Chroma+1)
+		s = s.Where("files.file_chroma > ?", int(frm.Chroma)+1)
 	} else if frm.Chroma > 0 {
 		s = s.Where("files.file_chroma > 1 AND files.file_chroma <= ?", frm.Chroma+1)
 	}

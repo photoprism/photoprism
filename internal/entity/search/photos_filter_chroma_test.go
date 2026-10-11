@@ -102,5 +102,16 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 		assert.NotContains(t, find(t, "chroma:20"), boundary, "20%")
 		set(22)
 		assert.Contains(t, find(t, "chroma:20"), boundary, "21%")
+		set(100)
+		assert.Contains(t, find(t, "chroma:98"), boundary, "99%")
+		assert.NotContains(t, find(t, "chroma:99"), boundary, "99%")
+		assert.Empty(t, find(t, "chroma:100"))
+		assert.Empty(t, find(t, "chroma:32767"))
+
+		geo := form.SearchPhotosGeo{Query: "chroma:32767", Count: 1000}
+		require.NoError(t, geo.ParseQueryString())
+		results, err := PhotosGeo(geo)
+		require.NoError(t, err)
+		assert.Empty(t, results)
 	})
 }
