@@ -1,13 +1,15 @@
 package query
 
 import (
+	"errors"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -535,6 +537,49 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		assert.True(t, albumRowExists(kept.AlbumUID), "the older album is kept")
 		assert.Equal(t, int64(1), links(kept.AlbumUID), "with its photo links")
 		assert.Equal(t, int64(2), shares(kept.AlbumUID), "and shares")
+	})
+	t.Run("RollsBack", func(t *testing.T) {
+		slug := "duplicate-rollback-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		filter := "label:" + slug
+
+		kept := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		kept.SetTitle("Duplicate Rollback")
+		require.NoError(t, kept.Create())
+		t.Cleanup(func() { _ = kept.DeletePermanently() })
+
+		duplicate := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		duplicate.SetTitle("Duplicate Rollback")
+		require.NoError(t, duplicate.Create())
+		t.Cleanup(func() { _ = duplicate.DeletePermanently() })
+
+		photoUID := entity.PhotoFixtures.Get("Photo01").PhotoUID
+		require.NoError(t, UnscopedDb().Create(&entity.PhotoAlbum{PhotoUID: photoUID, AlbumUID: duplicate.AlbumUID}).Error)
+		t.Cleanup(func() { UnscopedDb().Where("album_uid = ?", duplicate.AlbumUID).Delete(&entity.PhotoAlbum{}) })
+		link := entity.NewLink(duplicate.AlbumUID, false, false)
+		require.NoError(t, UnscopedDb().Create(&link).Error)
+		t.Cleanup(func() { UnscopedDb().Where("share_uid = ?", duplicate.AlbumUID).Delete(&entity.Link{}) })
+		require.NoError(t, entity.NewUserShare(entity.Admin.UserUID, duplicate.AlbumUID, entity.PermView, nil).Create())
+		t.Cleanup(func() { UnscopedDb().Where("share_uid = ?", duplicate.AlbumUID).Delete(&entity.UserShare{}) })
+
+		// The last statement fails, so the statements before it must be rolled back.
+		require.NoError(t, entity.Db().Callback().Raw().Before("gorm:raw").Register("test:moments-rollback", func(tx *gorm.DB) {
+			if strings.HasPrefix(tx.Statement.SQL.String(), "DELETE FROM photos_albums") {
+				_ = tx.AddError(errors.New("test photo link failure"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Raw().Remove("test:moments-rollback") })
+
+		_, err := RemoveDuplicateMoments()
+		require.ErrorContains(t, err, "test photo link failure")
+		_ = entity.Db().Callback().Raw().Remove("test:moments-rollback")
+
+		// The album, link and user share deletes ran before the failure.
+		assert.True(t, albumRowExists(duplicate.AlbumUID), "the duplicate is kept")
+		var n int64
+		require.NoError(t, UnscopedDb().Model(&entity.Link{}).Where("share_uid = ?", duplicate.AlbumUID).Count(&n).Error)
+		assert.Equal(t, int64(1), n, "with its link")
+		require.NoError(t, UnscopedDb().Model(&entity.UserShare{}).Where("share_uid = ?", duplicate.AlbumUID).Count(&n).Error)
+		assert.Equal(t, int64(1), n, "and its user share")
 	})
 }
 
