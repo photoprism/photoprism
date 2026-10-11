@@ -504,7 +504,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileColors = color.Colors.Hex()
 			file.FileLuminance = color.Luminance.Hex()
 			file.FileDiff = color.Luminance.Diff()
-			file.FileChroma = color.Chroma.Percent()
+			file.FileChroma = color.Chroma.Value()
 
 			if file.FilePrimary {
 				photo.PhotoColor = color.MainColor.ID()

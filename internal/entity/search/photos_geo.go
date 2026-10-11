@@ -511,14 +511,14 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Where("files.file_codec IN (?)", SplitOr(strings.ToLower(frm.Codec)))
 	}
 
-	// Filter by chroma, where 1 is monochrome, 0 a monochrome value written by earlier versions, and -1 unknown.
-	// Low chroma values exclude monochrome files.
+	// Filter by chroma, which is stored as percent plus one, so that 1 is monochrome and -1 unknown.
+	// Chroma values in queries are percentages, and low values exclude monochrome files.
 	if frm.Mono {
-		s = s.Where("files.file_chroma >= 0 AND files.file_chroma <= 1")
+		s = s.Where("files.file_chroma = 1")
 	} else if frm.Chroma > 9 {
-		s = s.Where("files.file_chroma > ?", frm.Chroma)
+		s = s.Where("files.file_chroma > ?", frm.Chroma+1)
 	} else if frm.Chroma > 0 {
-		s = s.Where("files.file_chroma > 1 AND files.file_chroma <= ?", frm.Chroma)
+		s = s.Where("files.file_chroma > 1 AND files.file_chroma <= ?", frm.Chroma+1)
 	}
 
 	// Filter by favorite flag.

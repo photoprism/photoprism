@@ -325,8 +325,8 @@
                             </td>
                             <td v-else>
                               <v-progress-linear
-                                v-tooltip="`${file.Chroma}%`"
-                                :model-value="file.Chroma"
+                                v-tooltip="`${file.Chroma - 1}%`"
+                                :model-value="file.Chroma - 1"
                                 color="surface-variant"
                                 style="max-width: 300px"
                               ></v-progress-linear>

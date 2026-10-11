@@ -1,0 +1,1 @@
+UPDATE files SET file_chroma = CASE WHEN file_chroma = 0 AND (file_colors IS NULL OR file_colors = '') THEN -1 WHEN file_chroma >= 99 THEN 100 WHEN file_chroma = 1 AND EXISTS (SELECT 1 FROM migrations WHERE id = '20261010-000001') THEN 1 ELSE file_chroma + 1 END WHERE file_chroma >= 0;

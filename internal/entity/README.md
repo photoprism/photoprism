@@ -129,9 +129,9 @@ Lower a ceiling when a change reduces the statements; raising one needs an expla
 `photos.photo_color`, `files.file_chroma` and `files.file_diff` store measured values that are never 0, so their `default:-1` tags cannot turn a measurement into "unknown" when a row is created: GORM leaves a blank field with a `default` tag out of the `INSERT`.
 
 - `photo_color` is the ID of the main color from `pkg/media/colors`, where `Black` is 16; color hex strings such as `file_colors` still render it as `0`.
-- `file_chroma` is the rounded colorfulness from 1 to 100, so 1 means monochrome. The `mono` search filter matches 1 and also 0, which earlier versions stored for monochrome files; low-chroma filters such as `chroma:5` exclude both.
+- `file_chroma` is the rounded colorfulness in percent plus one, clamped to 100, so 1 means monochrome and 2 nearly gray. The `mono` search filter matches 1; `chroma:N` takes a percentage, so `chroma:5` matches 2 to 6. Migration `20261011-000001` shifts the percentages stored by earlier versions and maps 0 to 1, or to -1 without colors; libraries that ran an earlier preview keep 1 for both 0 and 1 percent until their files are indexed again.
 - `file_diff` is a 10-bit perceptual hash from 512 to 1023.
-- -1 means unknown. `NewUserPhoto` and the indexer set it before the values are computed. `entity_colors_test.go` pins the create path and the migrations that converted stored zeros.
+- -1 means unknown. `NewUserPhoto` and the indexer set it before the values are computed. `entity_colors_test.go` pins the create path and the migrations that converted stored values.
 
 ### Collation & Emoji
 

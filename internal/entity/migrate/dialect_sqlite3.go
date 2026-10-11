@@ -155,12 +155,6 @@ var DialectSQLite3 = Migrations{
 		Statements: []string{"UPDATE faces SET face_kind = 1 WHERE face_kind = 0 AND embedding_json IS NOT NULL AND LENGTH(embedding_json) > 0;"},
 	},
 	{
-		ID:         "20261010-000001",
-		Dialect:    "sqlite3",
-		Stage:      "main",
-		Statements: []string{"UPDATE files SET file_chroma = CASE WHEN file_colors <> '' THEN 1 ELSE -1 END WHERE file_chroma = 0;"},
-	},
-	{
 		ID:         "20261010-000002",
 		Dialect:    "sqlite3",
 		Stage:      "main",
@@ -171,5 +165,11 @@ var DialectSQLite3 = Migrations{
 		Dialect:    "sqlite3",
 		Stage:      "main",
 		Statements: []string{"UPDATE files SET file_diff = -1 WHERE file_diff = 0;"},
+	},
+	{
+		ID:         "20261011-000001",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"UPDATE files SET file_chroma = CASE WHEN file_chroma = 0 AND (file_colors IS NULL OR file_colors = '') THEN -1 WHEN file_chroma >= 99 THEN 100 WHEN file_chroma = 1 AND EXISTS (SELECT 1 FROM migrations WHERE id = '20261010-000001') THEN 1 ELSE file_chroma + 1 END WHERE file_chroma >= 0;"},
 	},
 }

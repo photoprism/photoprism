@@ -287,6 +287,9 @@ describe("component/photo/edit/files", () => {
 
       expect(wrapper.text()).toContain("Chroma");
       expect(wrapper.find("v-progress-linear-stub").exists()).toBe(true);
+      // Chroma is stored as percent plus one.
+      expect(wrapper.find("v-progress-linear-stub").attributes("modelvalue")).toBe("39");
+      expect(wrapper.find("v-progress-linear-stub").attributes("data-tooltip")).toBe("39%");
       expect(wrapper.text()).not.toContain("Monochrome");
     });
 
