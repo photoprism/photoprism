@@ -145,7 +145,7 @@ func prepareRestore(c *config.Config) (restore preparedRestore, err error) {
 		if ok, versionErr := postgresRestrictSupported(c.PsqlBin()); versionErr != nil {
 			return restore, versionErr
 		} else if !ok {
-			return restore, errors.New("psql client cannot restrict commands, version 17.6, 16.10, 15.14, 14.19 or later required")
+			return restore, errors.New("psql client cannot restrict commands, version 17.6, 16.10, 15.14, 14.19, 13.22 or later required")
 		}
 
 		conn := newPostgresConn(c, c.PsqlBin())

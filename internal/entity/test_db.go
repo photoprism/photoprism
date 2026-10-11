@@ -33,12 +33,10 @@ var testDbNameRegexp = regexp.MustCompile(`[^a-z0-9_]+`)
 var testDbDsn = map[string]string{}
 var testDbDsnMutex sync.Mutex
 
-// TestDbDSN returns a data source name that gives the package running the tests
-// a database of its own, and creates that database if it does not exist yet.
-//
-// SQLite resolves the DSN to a file in the package directory and is returned
-// unchanged. On MySQL and PostgreSQL, all packages would otherwise share a single
-// database and truncate each other's fixtures as soon as they run in parallel.
+// TestDbDSN returns a data source name that gives the package running the tests a database of its own,
+// and creates that database if it does not exist yet. SQLite DSNs resolve to a file in the package
+// directory and are returned unchanged; on MySQL and PostgreSQL, packages running in parallel would
+// otherwise truncate each other's fixtures.
 func TestDbDSN(driver, dbDsn string) string {
 	if dbDsn == "" {
 		return dbDsn
@@ -174,10 +172,9 @@ func createTestDb(conf *mysql.Config, name string) error {
 }
 
 // createPostgresTestDb creates the PostgreSQL database with the specified name if it does not exist,
-// connecting to the database of the DSN to do so, or to the "postgres" database if that does not exist.
-//
-// The name must have been built by testDbName, which restricts it to the
-// characters a database identifier may contain, as it cannot be parameterized.
+// connecting to the database of the DSN, or to the "postgres" database if that does not exist.
+// The name must come from testDbName, which restricts it to identifier characters, as it cannot be
+// parameterized.
 func createPostgresTestDb(serverDsn, name string) error {
 	if name != cleanTestDbName(name) {
 		return fmt.Errorf("invalid database name %s", clean.Log(name))

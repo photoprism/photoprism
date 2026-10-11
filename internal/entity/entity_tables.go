@@ -116,13 +116,10 @@ func (list Tables) Truncate(db *gorm.DB) {
 	}
 }
 
-// truncateTable removes all rows from the table with the specified name, so that
-// generated IDs match those in a newly created database.
-//
-// MySQL/MariaDB delete the rows and restart an auto-increment counter, as TRUNCATE
-// is a slower DDL statement there; the restart commits implicitly, so pass db, not
-// a transaction. SQLite deletes the rows and keeps its counters; PostgreSQL truncates
-// and restarts the sequences of the table; others truncate.
+// truncateTable removes all rows from the table with the specified name, so that generated IDs match
+// those in a newly created database. MySQL/MariaDB delete the rows, as TRUNCATE is slower DDL there, and
+// restart the counter, which commits implicitly, so pass db, not a transaction. SQLite keeps its counters,
+// PostgreSQL restarts the table's sequences, and others truncate.
 func truncateTable(db *gorm.DB, name string, autoInc bool) error {
 	switch dsn.DialectFromDriver(db.Dialector.Name()) {
 	case dsn.DialectSQLite:

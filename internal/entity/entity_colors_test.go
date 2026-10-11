@@ -184,6 +184,10 @@ func TestColors_ChromaMigration(t *testing.T) {
 	conn, ok := dbConn.(*DbConn)
 	require.True(t, ok, "test database provider")
 
+	if conn.Driver == dsn.DriverPostgres {
+		t.Skip("no stored values of earlier releases on PostgreSQL")
+	}
+
 	var statements []string
 
 	for _, m := range migrate.Dialects[conn.Driver] {
