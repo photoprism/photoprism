@@ -545,6 +545,6 @@ var LabelFixtures = LabelMap{
 // CreateLabelFixtures inserts known entities into the database for testing.
 func CreateLabelFixtures() {
 	for _, entity := range LabelFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

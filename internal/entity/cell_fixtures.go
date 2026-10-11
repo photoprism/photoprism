@@ -131,6 +131,6 @@ func CreateCellFixtures() {
 			fixtureDb().Where("id = ?", p.ID).FirstOrCreate(p)
 		}
 
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

@@ -138,7 +138,7 @@ func TestLegacySchema_MariaDB(t *testing.T) {
 
 	// Use a database of its own, so the legacy schema does not replace the fixtures; its name starts
 	// with "acceptance_", so resetting the test databases also drops it.
-	name := testDbName("acceptance_legacy")
+	name := testDbName("acceptance_legacy", testDbNameLen)
 	require.NotEqual(t, conf.DBName, name)
 
 	serverConf := conf.Clone()

@@ -2,8 +2,10 @@ package entity
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"hash/fnv"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -11,13 +13,18 @@ import (
 	"sync"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
-// testDbNameLen is the maximum length of a MySQL database name.
-const testDbNameLen = 64
+// Maximum database name lengths of MySQL and PostgreSQL.
+const (
+	testDbNameLen         = 64
+	testPostgresDbNameLen = 63
+)
 
 // testDbNameRegexp matches characters that must not appear in a database name.
 var testDbNameRegexp = regexp.MustCompile(`[^a-z0-9_]+`)
@@ -30,10 +37,16 @@ var testDbDsnMutex sync.Mutex
 // a database of its own, and creates that database if it does not exist yet.
 //
 // SQLite resolves the DSN to a file in the package directory and is returned
-// unchanged. On MySQL, all packages would otherwise share a single schema and
-// truncate each other's fixtures as soon as they run in parallel.
+// unchanged. On MySQL and PostgreSQL, all packages would otherwise share a single
+// database and truncate each other's fixtures as soon as they run in parallel.
 func TestDbDSN(driver, dbDsn string) string {
-	if driver != dsn.DriverMySQL || dbDsn == "" {
+	if dbDsn == "" {
+		return dbDsn
+	}
+
+	switch dsn.ParseDriver(driver) {
+	case dsn.DriverMySQL, dsn.DriverPostgres:
+	default:
 		return dbDsn
 	}
 
@@ -44,32 +57,71 @@ func TestDbDSN(driver, dbDsn string) string {
 		return cached
 	}
 
+	var isolated string
+	var err error
+
+	if dsn.ParseDriver(driver) == dsn.DriverPostgres {
+		isolated, err = testPostgresDbDSN(dbDsn)
+	} else {
+		isolated, err = testMySQLDbDSN(dbDsn)
+	}
+
+	if err != nil {
+		log.Warnf("%s: %s (create test database)", dsn.ParseDriver(driver), err)
+		return dbDsn
+	}
+
+	testDbDsn[dbDsn] = isolated
+
+	return isolated
+}
+
+// testMySQLDbDSN creates the MySQL test database of the package and returns its DSN.
+func testMySQLDbDSN(dbDsn string) (string, error) {
 	conf, err := mysql.ParseDSN(dbDsn)
 
 	if err != nil {
 		// A test that isolates its database with PHOTOPRISM_TEST_DSN alone leaves
 		// the driver pointing at MySQL, so its file path lands here and the config
 		// error that follows terminates the test binary.
-		log.Warnf("mysql: %s is not a mysql dsn, set PHOTOPRISM_TEST_DRIVER to match it (%s)", clean.Log(dsn.Mask(dbDsn)), err)
-		return dbDsn
+		return "", fmt.Errorf("%s is not a mysql dsn, set PHOTOPRISM_TEST_DRIVER to match it (%s)", clean.Log(dsn.Mask(dbDsn)), err)
 	}
 
-	name := testDbName(conf.DBName)
+	name := testDbName(conf.DBName, testDbNameLen)
 
 	if err = createTestDb(conf, name); err != nil {
-		log.Warnf("mysql: %s (create test database %s)", err, clean.Log(name))
-		return dbDsn
+		return "", fmt.Errorf("%s (%s)", err, clean.Log(name))
 	}
 
 	conf.DBName = name
-	testDbDsn[dbDsn] = conf.FormatDSN()
 
-	return testDbDsn[dbDsn]
+	return conf.FormatDSN(), nil
+}
+
+// testPostgresDbDSN creates the PostgreSQL test database of the package and returns its DSN, which
+// must be a connection URI whose user may create databases.
+func testPostgresDbDSN(dbDsn string) (string, error) {
+	u, err := url.Parse(dbDsn)
+
+	if err != nil || u.Scheme == "" {
+		return "", fmt.Errorf("%s is not a postgres connection uri", clean.Log(dsn.Mask(dbDsn)))
+	}
+
+	name := testDbName(strings.TrimPrefix(u.Path, "/"), testPostgresDbNameLen)
+
+	if err = createPostgresTestDb(dbDsn, name); err != nil {
+		return "", fmt.Errorf("%s (%s)", err, clean.Log(name))
+	}
+
+	u.Path = "/" + name
+	u.RawPath = ""
+
+	return u.String(), nil
 }
 
 // testDbName returns a database name for the current working directory, which is
 // the source directory of the package whose tests are running.
-func testDbName(baseName string) string {
+func testDbName(baseName string, maxNameLen int) string {
 	wd, err := os.Getwd()
 
 	if err != nil {
@@ -83,7 +135,7 @@ func testDbName(baseName string) string {
 	suffix := fmt.Sprintf("_%s_%08x", cleanTestDbName(filepath.Base(wd)), hash.Sum32())
 	baseName = cleanTestDbName(baseName)
 
-	if maxLen := testDbNameLen - len(suffix); len(baseName) > maxLen {
+	if maxLen := maxNameLen - len(suffix); len(baseName) > maxLen {
 		baseName = baseName[:maxLen]
 	}
 
@@ -117,6 +169,38 @@ func createTestDb(conf *mysql.Config, name string) error {
 
 	//nolint:gosec // G701: the name is checked against cleanTestDbName above.
 	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", name))
+
+	return err
+}
+
+// createPostgresTestDb creates the PostgreSQL database with the specified name if it does not exist,
+// connecting to the database of the DSN to do so.
+//
+// The name must have been built by testDbName, which restricts it to the
+// characters a database identifier may contain, as it cannot be parameterized.
+func createPostgresTestDb(serverDsn, name string) error {
+	if name != cleanTestDbName(name) {
+		return fmt.Errorf("invalid database name %s", clean.Log(name))
+	}
+
+	config, err := pgx.ParseConfig(serverDsn)
+
+	// The parse error is not returned, as it may quote parts of the password.
+	if err != nil {
+		return errors.New("invalid postgres connection string")
+	}
+
+	db := stdlib.OpenDB(*config)
+	defer db.Close()
+
+	var exists bool
+
+	if err = db.QueryRow("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = $1)", name).Scan(&exists); err != nil || exists {
+		return err
+	}
+
+	//nolint:gosec // G701: the name is checked against cleanTestDbName above.
+	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s ENCODING 'UTF8'", name))
 
 	return err
 }

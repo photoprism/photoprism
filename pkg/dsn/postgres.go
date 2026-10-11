@@ -3,6 +3,8 @@ package dsn
 import (
 	"net/url"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // PostgreSQL returns the DSN as a PostgreSQL connection URI, so that drivers read user names, passwords
@@ -44,4 +46,123 @@ func (d *DSN) PostgreSQL() string {
 	u.RawQuery = strings.ReplaceAll(query.Encode(), "+", "%20")
 
 	return u.String()
+}
+
+// isPostgresURI reports whether a DSN is a PostgreSQL connection URI.
+func isPostgresURI(s string) bool {
+	lower := strings.ToLower(s)
+	return strings.HasPrefix(lower, DriverPostgres+"://") || strings.HasPrefix(lower, "postgresql://")
+}
+
+// parsePostgresURI extracts the connection settings from a PostgreSQL connection URI, with percent-encoded
+// values decoded, and returns true on success. User and password parameters override the user information,
+// as they do for the drivers. A host parameter with a socket directory sets the server, followed by the port
+// parameter if there is one, e.g. "/var/run/postgresql:5433".
+func (d *DSN) parsePostgresURI() bool {
+	if !isPostgresURI(d.DSN) {
+		return false
+	}
+
+	u, err := url.Parse(d.DSN)
+
+	if err != nil {
+		return false
+	}
+
+	query := u.Query()
+
+	d.Driver = DriverPostgres
+	d.User = u.User.Username()
+	d.Password, _ = u.User.Password()
+	d.Name = strings.TrimPrefix(u.Path, "/")
+	d.Server = u.Host
+
+	if user := query.Get("user"); user != "" {
+		d.User = user
+	}
+
+	if password := query.Get("password"); password != "" {
+		d.Password = password
+	}
+
+	if host := query.Get("host"); strings.HasPrefix(host, "/") {
+		d.Server = host
+
+		if port := query.Get("port"); port != "" {
+			d.Server += ":" + port
+		}
+
+		query.Del("host")
+		query.Del("port")
+	}
+
+	query.Del("user")
+	query.Del("password")
+	d.Params = query.Encode()
+
+	return true
+}
+
+// maskPostgresURI masks the password in the user information and the password parameters of a PostgreSQL
+// connection URI as written, so that percent-encoded and malformed values are masked as well. Rather than
+// leave part of a password readable, it masks up to the last "@" if the host part does not contain one.
+func maskPostgresURI(s string) string {
+	_, rest, _ := strings.Cut(s, "://")
+	start := len(s) - len(rest)
+	host := rest
+
+	if i := strings.Index(rest, "/"); i >= 0 {
+		host = rest[:i]
+	}
+
+	at := strings.LastIndex(host, "@")
+
+	if at < 0 {
+		at = strings.LastIndex(rest, "@")
+	}
+
+	if at >= 0 {
+		if colon := strings.Index(rest[:at], ":"); colon >= 0 {
+			s = s[:start+colon+1] + txt.Masked + s[start+at:]
+		}
+	}
+
+	// Parameters are separated by "&" only, and their names may be encoded or surrounded by spaces.
+	base, query, found := strings.Cut(s, "?")
+
+	if !found {
+		return s
+	}
+
+	params := strings.Split(query, "&")
+
+	for i, param := range params {
+		key, _, hasValue := strings.Cut(param, "=")
+
+		if name, err := url.QueryUnescape(key); err != nil {
+			name = key
+		} else if name = strings.ToLower(strings.TrimSpace(name)); hasValue && (name == "password" || name == "sslpassword") {
+			params[i] = key + "=" + txt.Masked
+		}
+	}
+
+	return base + "?" + strings.Join(params, "&")
+}
+
+// maskKeyValuePassword masks the value of a password match in a key/value DSN, keeping its quotes.
+func maskKeyValuePassword(segment string) string {
+	m := dsnKeyValuePasswordPattern.FindStringSubmatch(segment)
+
+	if len(m) != 4 {
+		return segment
+	}
+
+	switch value := m[3]; {
+	case strings.HasPrefix(value, `"`):
+		return m[1] + m[2] + `"` + txt.Masked + `"`
+	case strings.HasPrefix(value, `'`):
+		return m[1] + m[2] + `'` + txt.Masked + `'`
+	default:
+		return m[1] + m[2] + txt.Masked
+	}
 }

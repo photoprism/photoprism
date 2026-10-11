@@ -52,8 +52,17 @@ func TestGormDialector(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "sqlite", d.Name())
 	})
+	t.Run("PostgreSQL", func(t *testing.T) {
+		d, err := GormDialector("postgresql", "postgres://u:p@localhost/db", nil)
+		require.NoError(t, err)
+		assert.Equal(t, "postgres", d.Name())
+		p, ok := d.(postgresDialector)
+		require.True(t, ok)
+		assert.Equal(t, "postgres://u:p@localhost/db", p.DSN)
+		assert.Nil(t, p.Conn)
+	})
 	t.Run("Unsupported", func(t *testing.T) {
-		d, err := GormDialector("postgres", "host=localhost", nil)
+		d, err := GormDialector("oracle", "host=localhost", nil)
 		assert.Error(t, err)
 		assert.Nil(t, d)
 		d, err = GormDialector("", "", nil)
@@ -69,7 +78,7 @@ func TestOpenDb(t *testing.T) {
 		require.NoError(t, db.Exec("SELECT 1").Error)
 	})
 	t.Run("Unsupported", func(t *testing.T) {
-		db, err := OpenDb("postgres", "host=localhost")
+		db, err := OpenDb("oracle", "host=localhost")
 		assert.Error(t, err)
 		assert.Nil(t, db)
 	})
@@ -87,7 +96,7 @@ func TestOpenDbConn(t *testing.T) {
 		assert.True(t, db.Migrator().HasTable("shared_pool"))
 	})
 	t.Run("Unsupported", func(t *testing.T) {
-		db, err := OpenDbConn("postgres", "", nil)
+		db, err := OpenDbConn("oracle", "", nil)
 		assert.Error(t, err)
 		assert.Nil(t, db)
 	})
@@ -259,8 +268,17 @@ func TestSaveFallback(t *testing.T) {
 	})
 }
 
+// dryRunTestDb returns a SQLite connection that builds statements without running them, so that their SQL
+// does not depend on the database the tests run on.
+func dryRunTestDb(t *testing.T) func() *gorm.DB {
+	t.Helper()
+
+	db := openTestDb(t)
+	return func() *gorm.DB { return db.Session(&gorm.Session{DryRun: true}) }
+}
+
 func TestBuildWhere(t *testing.T) {
-	dryRun := func() *gorm.DB { return Db().Session(&gorm.Session{DryRun: true}) }
+	dryRun := dryRunTestDb(t)
 
 	t.Run("Conditions", func(t *testing.T) {
 		stmt := dryRun().Model(&Photo{}).Where("photo_title = ?\n\tOR photo_title = ?", "a", "b").Where("photo_quality > ?", 2).Find(&Photos{}).Statement
@@ -289,7 +307,7 @@ func TestBuildWhere(t *testing.T) {
 }
 
 func TestBindPrimaryKeys(t *testing.T) {
-	dryRun := func() *gorm.DB { return Db().Session(&gorm.Session{DryRun: true}) }
+	dryRun := dryRunTestDb(t)
 
 	t.Run("Update", func(t *testing.T) {
 		stmt := dryRun().Model(&PhotoLabel{PhotoID: 1}).UpdateColumn("uncertainty", 10).Statement

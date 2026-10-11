@@ -79,3 +79,101 @@ func TestDSN_PostgreSQL(t *testing.T) {
 		assert.Equal(t, 5432, parsed.Port())
 	})
 }
+
+func TestDSN_ParsePostgresURI(t *testing.T) {
+	t.Run("Encoded", func(t *testing.T) {
+		d := Parse("postgres://photo%20prism:p%40ss%3Aw%2Frd@db.local:5433/my%20db?sslmode=disable&TimeZone=UTC")
+		assert.Equal(t, DriverPostgres, d.Driver)
+		assert.Equal(t, "photo prism", d.User)
+		assert.Equal(t, "p@ss:w/rd", d.Password)
+		assert.Equal(t, "my db", d.Name)
+		assert.Equal(t, "db.local:5433", d.Server)
+		assert.Equal(t, "TimeZone=UTC&sslmode=disable", d.Params)
+		assert.Equal(t, "db.local", d.Host())
+		assert.Equal(t, 5433, d.Port())
+	})
+	t.Run("UnixSocket", func(t *testing.T) {
+		d := Parse("postgresql://photoprism:secret@/photoprism?host=%2Fvar%2Frun%2Fpostgresql&port=5433&sslmode=disable")
+		assert.Equal(t, DriverPostgres, d.Driver)
+		assert.Equal(t, "/var/run/postgresql:5433", d.Server)
+		assert.Equal(t, "sslmode=disable", d.Params)
+		assert.Equal(t, "/var/run/postgresql", d.Host())
+		assert.Equal(t, 5433, d.Port())
+	})
+	t.Run("RemoteHostParam", func(t *testing.T) {
+		d := Parse("postgres://u:p@/db?host=db.local")
+		assert.Equal(t, "", d.Server)
+		assert.Equal(t, "host=db.local", d.Params)
+	})
+	t.Run("BuiltSocketRoundTrip", func(t *testing.T) {
+		built := DSN{User: "u", Password: "p w", Server: "/run/my pg", Name: "x", Params: "port=5433"}
+		d := Parse(built.PostgreSQL())
+		assert.Equal(t, "p w", d.Password)
+		assert.Equal(t, "/run/my pg:5433", d.Server)
+	})
+	t.Run("QueryCredentials", func(t *testing.T) {
+		d := Parse("postgres://u:userinfo@h/db?user=q&password=param&sslmode=disable")
+		assert.Equal(t, "q", d.User)
+		assert.Equal(t, "param", d.Password)
+		assert.Equal(t, "sslmode=disable", d.Params)
+	})
+	t.Run("NotURI", func(t *testing.T) {
+		d := DSN{DSN: "user:secret@tcp(localhost:3306)/db"}
+		assert.False(t, d.parsePostgresURI())
+		d = DSN{DSN: "postgres://u:p@h:bad port/db"}
+		assert.False(t, d.parsePostgresURI())
+	})
+}
+
+func TestIsPostgresURI(t *testing.T) {
+	assert.True(t, isPostgresURI("postgres://u:p@h/db"))
+	assert.True(t, isPostgresURI("PostgreSQL://u:p@h/db"))
+	assert.False(t, isPostgresURI("mysql://u:p@h/db"))
+	assert.False(t, isPostgresURI("host=h options=postgres://x"))
+}
+
+//nolint:gosec // G101: masking tests use inline credential samples.
+func TestMaskPostgresURI(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		out  string
+	}{
+		{name: "Encoded", in: "postgres://u:p%2Fw@h/db", out: "postgres://u:***@h/db"},
+		{name: "RawAt", in: "postgres://u:p@w@h/db", out: "postgres://u:***@h/db"},
+		{name: "RawSlash", in: "postgres://u:p/w@h/db", out: "postgres://u:***@h/db"},
+		{name: "QueryPassword", in: "postgres://u@h/db?password=secret&sslmode=disable", out: "postgres://u@h/db?password=***&sslmode=disable"},
+		{name: "Both", in: "postgresql://u:secret@h/db?password=other", out: "postgresql://u:***@h/db?password=***"},
+		{name: "SslPassword", in: "postgres://u@h/db?sslpassword=key", out: "postgres://u@h/db?sslpassword=***"},
+		{name: "Uppercase", in: "POSTGRES://u:SEC@RET3@h/db", out: "POSTGRES://u:***@h/db"},
+		{name: "NoPassword", in: "postgres://u@h:5432/db?application_name=a", out: "postgres://u@h:5432/db?application_name=a"},
+		{name: "NoPasswordAtInQuery", in: "postgres://u@h:5432/db?application_name=a@b", out: "postgres://u@h:5432/db?application_name=a@b"},
+		{name: "NumericHash", in: "postgres://u:2024#TAIL9@h/db", out: "postgres://u:***@h/db"},
+		{name: "NumericQuestion", in: "postgres://u:2024?TAIL10@h/db", out: "postgres://u:***@h/db"},
+		{name: "HashInQueryPassword", in: "postgres://u@h/db?password=S8#TAIL8", out: "postgres://u@h/db?password=***"},
+		{name: "EncodedKey", in: "postgres://u@h/db?pass%77ord=S5&x=1", out: "postgres://u@h/db?pass%77ord=***&x=1"},
+		{name: "SpacedKey", in: "postgres://u@h/db?x=1& password =S6", out: "postgres://u@h/db?x=1& password =***"},
+		{name: "SlashInPassword", in: "postgres://u:pa/SE%ZZ26@h/db", out: "postgres://u:***@h/db"},
+		{name: "NoUserInfo", in: "postgres://h:5432/db", out: "postgres://h:5432/db"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, maskPostgresURI(tt.in))
+		})
+	}
+}
+
+//nolint:gosec // G101: masking tests use inline credential samples.
+func TestMaskKeyValuePassword(t *testing.T) {
+	mask := func(s string) string { return dsnKeyValuePasswordPattern.ReplaceAllStringFunc(s, maskKeyValuePassword) }
+
+	assert.Equal(t, "host=h password=*** dbname=x", mask("host=h password=S5 dbname=x"))
+	assert.Equal(t, "password='***' user=u", mask(`password='s\'e c' user=u`))
+	assert.Equal(t, `password="***" user=u`, mask(`password="s e c" user=u`))
+	assert.Equal(t, "user=u password=*** sslpassword=***", mask("user=u password=a://b:c@d sslpassword=k"))
+	assert.Equal(t, "user=u options=x=password", mask("user=u options=x=password"))
+	assert.Equal(t, "user=u password=***", mask(`user=u password=SEC\ RET16`))
+	assert.Equal(t, "host=h\vpassword=***", mask("host=h\vpassword=S18"))
+	assert.Equal(t, "nomatch", maskKeyValuePassword("nomatch"))
+}

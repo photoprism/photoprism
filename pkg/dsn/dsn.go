@@ -44,6 +44,12 @@ var dsnPattern = regexp.MustCompile(
 		`\/(?P<name>.*?)` +
 		`(?:\?(?P<params>[^\?]*))?$`)
 
+// dsnKeyValuePattern matches a DSN in the key/value form of PostgreSQL, which starts with a key.
+var dsnKeyValuePattern = regexp.MustCompile(`^[\s\v]*[A-Za-z_]+[\s\v]*=`)
+
+// dsnKeyValuePasswordPattern matches the password and sslpassword values of a key/value DSN.
+var dsnKeyValuePasswordPattern = regexp.MustCompile(`(?i)(^|[\s\v']|")((?:ssl)?password[\s\v]*=[\s\v]*)('(?:[^'\\]|\\.)*'|"[^"]*"|(?:\\.|[^\s\v\\])*)`)
+
 // dsnPostgresPasswordPattern is a regular expression matching a password in a PostgreSQL-style database DSN string.
 var dsnPostgresPasswordPattern = regexp.MustCompile(`(?i)(password\s*=\s*)("[^"]*"|'[^']*'|\S+)`)
 
@@ -84,11 +90,22 @@ func (d *DSN) MySQL() string {
 
 // MaskPassword hides the password portion of a DSN while leaving the rest untouched for logging/reporting.
 func (d *DSN) MaskPassword() (s string) {
-	if d.DSN == "" || d.Password == "" {
-		return d.DSN
+	s = d.DSN
+
+	// PostgreSQL connection strings can also pass the password as a parameter, so every password value
+	// is masked whether or not it was parsed.
+	switch {
+	case s == "":
+		return s
+	case isPostgresURI(s):
+		return maskPostgresURI(s)
+	case dsnKeyValuePattern.MatchString(s):
+		s = dsnKeyValuePasswordPattern.ReplaceAllStringFunc(s, maskKeyValuePassword)
 	}
 
-	s = d.DSN
+	if d.Password == "" {
+		return s
+	}
 
 	// Mask password in regular DSN.
 	needle := ":" + d.Password + "@"
@@ -191,7 +208,7 @@ func (d *DSN) splitHostPort() (host, port string) {
 
 // parse parses a data source name string.
 func (d *DSN) parse() {
-	if d.parsePostgres() {
+	if d.parsePostgresURI() || d.parsePostgres() {
 		return
 	}
 

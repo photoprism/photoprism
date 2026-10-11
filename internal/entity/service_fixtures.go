@@ -71,6 +71,6 @@ var ServiceFixtureWebdavDummy2 = ServiceFixtures["dummy-webdav2"]
 // CreateServiceFixtures inserts known entities into the database for testing.
 func CreateServiceFixtures() {
 	for _, entity := range ServiceFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

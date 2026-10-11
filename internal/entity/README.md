@@ -4,7 +4,7 @@
 
 ### Overview
 
-`internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v2 (`gorm.io/gorm` with the `gorm.io/driver/mysql` and `gorm.io/driver/sqlite` dialectors) and are shared by the API, workers, and CLI.
+`internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v2 (`gorm.io/gorm` with the `gorm.io/driver/mysql`, `gorm.io/driver/sqlite` and `gorm.io/driver/postgres` dialectors) and are shared by the API, workers, and CLI. PostgreSQL support is experimental and tested with PostgreSQL 18; startup refuses versions older than 16.
 
 ### Account & Session Caches
 
@@ -102,6 +102,8 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 ```
 
 `make test-mariadb` runs the whole backend suite this way. Each package gets a **database of its own**, named after its source directory (`acceptance_query_…`) and created on demand by `entity.TestDbDSN`, which mirrors the file-per-package isolation SQLite gets for free. Without it the packages would share one schema, and since every `TestMain` truncates the tables and re-seeds the fixtures, they would pull the database out from under each other as soon as `go test` runs them in parallel. `make reset-acceptance` drops these databases along with `acceptance` itself. The configured account needs `CREATE` privileges for this; without them the packages fall back to sharing `acceptance` (logged as a warning) and must not run in parallel. A test that needs a database of its own **within** a package must set `PHOTOPRISM_TEST_DRIVER` as well as `PHOTOPRISM_TEST_DSN`, as a SQLite path alone is parsed as a MySQL DSN and aborts the package.
+
+`make test-postgres` runs the suite against the PostgreSQL service of the development environment (`docker compose --profile postgres up -d`) in the same way, with `PHOTOPRISM_TEST_DRIVER="postgres"` and a `postgres://` connection URI whose user may create databases; `make reset-postgres-acceptance` drops the per-package databases.
 
 MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that only ran on SQLite can fail here:
 

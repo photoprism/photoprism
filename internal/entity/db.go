@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -58,6 +59,11 @@ func GormDialector(driver, dataSourceName string, conn gorm.ConnPool) (gorm.Dial
 			DefaultStringSize:        255,
 			DisableDatetimePrecision: true,
 		}).(*mysql.Dialector)}, nil
+	case dsn.DriverPostgres:
+		return postgresDialector{Dialector: postgres.New(postgres.Config{
+			DSN:  dataSourceName,
+			Conn: conn,
+		}).(*postgres.Dialector)}, nil
 	case dsn.DriverSQLite3:
 		return sqliteDialector{Dialector: &sqlite.Dialector{DSN: dataSourceName, Conn: conn}}, nil
 	default:
@@ -80,7 +86,12 @@ func OpenDbConn(driver, dataSourceName string, conn gorm.ConnPool) (*gorm.DB, er
 
 	db, err := gorm.Open(dialector, GormConfig())
 
+	// Close a connection pool opened for the connection, e.g. when the database cannot be reached.
 	if err != nil {
+		if db != nil && conn == nil {
+			_ = CloseDb(db)
+		}
+
 		return nil, err
 	}
 

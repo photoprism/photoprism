@@ -32,6 +32,6 @@ var (
 // CreatePasscodeFixtures inserts known entities into the database for testing.
 func CreatePasscodeFixtures() {
 	for _, entity := range PasscodeFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

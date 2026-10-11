@@ -34,6 +34,7 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 - `make test-integration` — the same run plus the `integration` matrices (Insta360 stacking, import and
   reconciliation); run it when changing those areas
 - `make test-mariadb` — the same Go suite against MariaDB (~5-20 min)
+- `make test-postgres` — the same Go suite against the optional PostgreSQL service (experimental)
 - `make test-js` — frontend unit tests (Vitest)
 - `make test-short` — short Go tests in parallel (~3-5 min); skips tests that run the indexer or
   importer on fixture media. Its `-timeout 5m` applies per package, and under full-suite load

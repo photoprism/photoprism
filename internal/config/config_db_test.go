@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/mod/semver"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 
@@ -583,6 +584,17 @@ func TestConfig_checkDb(t *testing.T) {
 	assert.NoError(t, c.checkDb(nil))
 	t.Setenv("PHOTOPRISM_DATABASE_SKIP_VERSION_CHECK", "")
 	assert.Error(t, c.checkDb(nil))
+}
+
+func TestPostgresVersion(t *testing.T) {
+	assert.Equal(t, "v18.6", postgresVersion(180006))
+	assert.Equal(t, "v16.0", postgresVersion(160000))
+	assert.Equal(t, "v10.23", postgresVersion(100023))
+	assert.Equal(t, "v9.6", postgresVersion(90624))
+	assert.Equal(t, "", postgresVersion(0))
+	assert.Equal(t, "", postgresVersion(-1))
+	assert.False(t, semver.Compare(postgresVersion(150014), PostgresMinVersion) >= 0)
+	assert.True(t, semver.Compare(postgresVersion(160000), PostgresMinVersion) >= 0)
 }
 
 func TestConfig_DbIfConnected(t *testing.T) {

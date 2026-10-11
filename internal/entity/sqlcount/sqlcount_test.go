@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -155,6 +156,32 @@ func TestMySQL(t *testing.T) {
 	require.NoError(t, db.QueryRow("SELECT ?", uint64(1)<<63).Scan(&v))
 	assert.Equal(t, uint64(1)<<63, v)
 	assert.Equal(t, 1, c.Count())
+}
+
+func TestPostgreSQL(t *testing.T) {
+	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+
+	if os.Getenv("PHOTOPRISM_TEST_DRIVER") != "postgres" || dsn == "" {
+		t.Skip("PHOTOPRISM_TEST_DRIVER is not postgres")
+	}
+
+	db, c, err := Open("postgres", dsn)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	c.Start()
+
+	var v int
+	require.NoError(t, db.QueryRow("SELECT $1::integer", 42).Scan(&v))
+	assert.Equal(t, 42, v)
+	assert.Equal(t, 1, c.Count())
+}
+
+func TestSqlDriverName(t *testing.T) {
+	assert.Equal(t, "pgx", sqlDriverName("postgres"))
+	assert.Equal(t, "pgx", sqlDriverName("postgresql"))
+	assert.Equal(t, "mysql", sqlDriverName("mysql"))
+	assert.Equal(t, "sqlite3", sqlDriverName("sqlite3"))
 }
 
 func TestOpenGorm(t *testing.T) {

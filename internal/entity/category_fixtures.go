@@ -12,6 +12,6 @@ var CategoryFixtures = map[string]Category{
 // CreateCategoryFixtures inserts known entities into the database for testing.
 func CreateCategoryFixtures() {
 	for _, entity := range CategoryFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

@@ -70,6 +70,6 @@ var FileSyncFixtures = FileSyncMap{
 // CreateFileSyncFixtures inserts known entities into the database for testing.
 func CreateFileSyncFixtures() {
 	for _, entity := range FileSyncFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

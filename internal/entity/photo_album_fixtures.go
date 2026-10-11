@@ -400,6 +400,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 // CreatePhotoAlbumFixtures inserts known entities into the database for testing.
 func CreatePhotoAlbumFixtures() {
 	for _, entity := range PhotoAlbumFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

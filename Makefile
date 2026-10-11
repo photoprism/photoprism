@@ -57,6 +57,11 @@ HASRICHGO := $(shell which richgo)
 # Client for the development database, which runs MariaDB.
 MARIADB ?= mariadb
 
+# Client and URIs for the optional PostgreSQL service ("docker compose --profile postgres up -d").
+PSQL ?= psql
+POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/postgres
+POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/acceptance?sslmode=disable&TimeZone=UTC
+
 ifdef HASRICHGO
     GOTEST=richgo test
 else
@@ -123,6 +128,7 @@ Test:
   test-js                  Run the frontend unit tests with Vitest
   test-mariadb             Run the default Go suite against MariaDB
                            Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
+  test-postgres            Run the default Go suite against PostgreSQL (experimental)
   reset-testdb             Reset the SQLite and MariaDB test databases
   acceptance-run-chromium  Run the TestCafe acceptance tests in Chrome
   Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai
@@ -183,6 +189,8 @@ test-short:
 	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-short
 test-mariadb:
 	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-acceptance run-test-mariadb
+test-postgres:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-postgres-acceptance run-test-postgres
 acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
 acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth acceptance-auth-sqlite-stop
@@ -354,6 +362,8 @@ mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
 mariadb-init:
 	$(MARIADB) < scripts/sql/mariadb-init.sql
+postgres:
+	$(DOCKER_COMPOSE) exec postgres psql -U photoprism photoprism
 root: root-terminal
 root-terminal:
 	$(DOCKER_COMPOSE) exec -u root photoprism bash
@@ -756,6 +766,10 @@ reset-mariadb-acceptance:
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
+reset-postgres-acceptance:
+	$(info Resetting PostgreSQL acceptance databases...)
+	@stmts="$$($(PSQL) "$(POSTGRES_ADMIN_URI)" -v ON_ERROR_STOP=1 -At -c "SELECT format('DROP DATABASE %I WITH (FORCE);', datname) FROM pg_database WHERE datname LIKE 'acceptance\_%'")" && \
+	printf '%s\n' "$$stmts" | $(PSQL) "$(POSTGRES_ADMIN_URI)" -v ON_ERROR_STOP=1 -q
 reset-sqlite:
 	$(info Removing test database files...)
 	find ./internal -type f \( \
@@ -777,6 +791,9 @@ run-test-hub:
 run-test-mariadb:
 	$(info Running Go tests on MariaDB with tags "$(GOTEST_TAGS)"...)
 	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
+run-test-postgres:
+	$(info Running Go tests on PostgreSQL with tags "$(GOTEST_TAGS)"...)
+	PHOTOPRISM_TEST_DRIVER="postgres" PHOTOPRISM_TEST_DSN="$(POSTGRES_TEST_DSN)" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/...

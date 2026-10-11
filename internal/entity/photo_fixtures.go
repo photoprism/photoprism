@@ -3815,12 +3815,12 @@ var PhotoFixtures = PhotoMap{
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
 	for _, entity := range PhotoFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 
 		// Adds the label assignments of the fixture, as related records are saved explicitly.
 		for _, pl := range entity.Labels {
 			pl.PhotoID, pl.Photo, pl.Label = entity.ID, nil, nil
-			fixtureDb().Create(&pl)
+			createFixture(&pl)
 		}
 	}
 }

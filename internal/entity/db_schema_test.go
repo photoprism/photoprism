@@ -94,6 +94,9 @@ func TestIsDialect(t *testing.T) {
 		case dsn.DialectMySQL:
 			assert.True(t, IsDialect(dsn.DriverMariaDB))
 			assert.False(t, IsDialect(dsn.DriverSQLite3))
+		case dsn.DialectPostgreSQL:
+			assert.True(t, IsDialect("postgresql"))
+			assert.False(t, IsDialect(dsn.DriverMySQL))
 		default:
 			t.Fatalf("unexpected dialect %s", dialect)
 		}

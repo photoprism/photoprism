@@ -357,6 +357,6 @@ func CreateMarkerFixtures() {
 	GenerateFaceFixtureVectors()
 
 	for _, entity := range MarkerFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

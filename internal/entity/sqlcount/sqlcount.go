@@ -31,6 +31,8 @@ import (
 	"database/sql/driver"
 	"errors"
 	"sync"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Counter records the statements executed through the connections of one pool, including those the
@@ -49,7 +51,7 @@ func Open(driverName, dataSourceName string) (*sql.DB, *Counter, error) {
 	}
 
 	// sql.Open validates the driver name without connecting to the database.
-	db, err := sql.Open(driverName, dataSourceName)
+	db, err := sql.Open(sqlDriverName(driverName), dataSourceName)
 
 	if err != nil {
 		return nil, nil, err
@@ -64,6 +66,16 @@ func Open(driverName, dataSourceName string) (*sql.DB, *Counter, error) {
 	c := &Counter{}
 
 	return sql.OpenDB(&connector{driver: drv, dsn: dataSourceName, counter: c}), c, nil
+}
+
+// sqlDriverName returns the database/sql name of a driver, which is "pgx" for PostgreSQL. The pgx driver
+// registers itself when a package that opens PostgreSQL connections is imported.
+func sqlDriverName(name string) string {
+	if dsn.ParseDriver(name) == dsn.DriverPostgres {
+		return "pgx"
+	}
+
+	return name
 }
 
 // Start discards the statements recorded so far and starts recording.

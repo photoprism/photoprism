@@ -25,6 +25,10 @@ func Status(db *gorm.DB, ids []string) (result Migrations, err error) {
 		return result, fmt.Errorf("migrate: failed to determine sql dialect")
 	}
 
+	if once[name] == nil {
+		return result, fmt.Errorf("migrate: unsupported sql dialect %s", name)
+	}
+
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
 		err = db.AutoMigrate(&Migration{})
@@ -36,7 +40,7 @@ func Status(db *gorm.DB, ids []string) (result Migrations, err error) {
 
 	migrations, ok := Dialects[name]
 
-	if !ok && len(migrations) == 0 {
+	if !ok {
 		return result, fmt.Errorf("migrate: no migrations found for %s", name)
 	}
 

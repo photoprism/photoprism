@@ -20,6 +20,8 @@ func DbHasTable(db *gorm.DB, table string) (bool, error) {
 	switch dsn.DialectFromDriver(db.Name()) {
 	case dsn.DialectMySQL:
 		stmt = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?"
+	case dsn.DialectPostgreSQL:
+		stmt = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = ?"
 	case dsn.DialectSQLite:
 		stmt = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = ?"
 	default:
@@ -47,6 +49,8 @@ func DbHasColumn(db *gorm.DB, table, column string) (bool, error) {
 	switch dsn.DialectFromDriver(db.Name()) {
 	case dsn.DialectMySQL:
 		stmt = "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?"
+	case dsn.DialectPostgreSQL:
+		stmt = "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = ? AND column_name = ?"
 	case dsn.DialectSQLite:
 		stmt = "SELECT COUNT(*) FROM pragma_table_info(?) WHERE name = ?"
 	default:

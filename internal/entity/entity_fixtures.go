@@ -17,6 +17,11 @@ func CreateDefaultFixtures() {
 	CreateUnknownCountry()
 	CreateUnknownCamera()
 	CreateUnknownLens()
+
+	// Default fixtures have fixed IDs.
+	if err := SyncSequences(Db()); err != nil {
+		log.Warnf("migrate: %s", clean.Error(err))
+	}
 }
 
 // hasDefaultFixtureTables checks if the tables that CreateDefaultFixtures reads and writes exist.
@@ -56,6 +61,10 @@ func ResetTestFixtures() {
 	CreateDefaultFixtures()
 
 	CreateTestFixtures()
+
+	if err := SyncSequences(Db()); err != nil {
+		log.Errorf("migrate: %s [%s]", clean.Error(err), time.Since(start))
+	}
 
 	FlushCaches()
 

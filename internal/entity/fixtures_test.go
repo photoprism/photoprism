@@ -70,3 +70,27 @@ func TestBeginFixtureTx(t *testing.T) {
 		done()
 	})
 }
+
+func TestCreateFixture(t *testing.T) {
+	t.Run("Duplicate", func(t *testing.T) {
+		existing := CameraFixtures.Get("canon-eos-6d")
+		duplicate := existing
+		duplicate.CameraModel = "Duplicate Fixture"
+
+		// A fixture whose key exists is skipped without an error, also inside the fixture transaction.
+		done := beginFixtureTx()
+		res := createFixture(&duplicate)
+		done()
+		require.NoError(t, res.Error)
+
+		var stored Camera
+		require.NoError(t, Db().First(&stored, existing.ID).Error)
+		assert.Equal(t, existing.CameraModel, stored.CameraModel)
+	})
+	t.Run("New", func(t *testing.T) {
+		camera := &Camera{CameraSlug: "create-fixture-test", CameraName: "Create Fixture Test", CameraMake: "Test", CameraModel: "Fixture"}
+		require.NoError(t, createFixture(camera).Error)
+		t.Cleanup(func() { _ = UnscopedDb().Delete(camera).Error })
+		assert.NotZero(t, camera.ID)
+	})
+}

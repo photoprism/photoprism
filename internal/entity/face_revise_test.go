@@ -374,7 +374,7 @@ func TestBatchSize(t *testing.T) {
 	switch dialect := DbDialect(); dialect {
 	case dsn.DialectSQLite:
 		assert.Equal(t, 333, BatchSize())
-	case dsn.DialectMySQL:
+	case dsn.DialectMySQL, dsn.DialectPostgreSQL:
 		assert.Equal(t, 1000, BatchSize())
 	default:
 		t.Fatalf("unexpected dialect %s", dialect)

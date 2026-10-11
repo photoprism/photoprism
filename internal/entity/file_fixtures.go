@@ -3209,6 +3209,6 @@ func CreateFileFixtures() {
 			fixtureDb().Save(entity.Photo)
 		}
 
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

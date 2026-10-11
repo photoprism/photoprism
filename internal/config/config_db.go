@@ -25,7 +25,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var postgresSupportWarnOnce sync.Once
+// postgresExperimentalOnce reports the experimental status of PostgreSQL support once.
+var postgresExperimentalOnce sync.Once
 
 // Auto requests automatic detection of an implementation-defined default
 // (e.g. the database driver). The canonical SQL driver identifiers live in
@@ -40,9 +41,8 @@ func (c *Config) DatabaseDriver() string {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		c.options.DatabaseDriver = dsn.DriverMySQL
 	case dsn.DriverPostgres:
-		// See issue #47 and <https://github.com/photoprism/photoprism/pull/4831>.
-		postgresSupportWarnOnce.Do(func() {
-			log.Warnf("config: support for PostgreSQL is not yet available in this version")
+		postgresExperimentalOnce.Do(func() {
+			log.Infof("config: support for PostgreSQL is experimental")
 		})
 		c.options.DatabaseDriver = dsn.DriverPostgres
 	case dsn.DriverSQLite3, dsn.DriverNone, dsn.DriverAuto:
@@ -644,6 +644,23 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		case !c.IsDatabaseVersion("v10.5.12"):
 			return fmt.Errorf("MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		}
+	case dsn.DriverPostgres:
+		var versionNum int
+
+		// Version query not supported.
+		if err := db.Raw("SELECT current_setting('server_version_num')::integer").Row().Scan(&versionNum); err != nil {
+			log.Warnf("config: failed to detect database version (%s)", err)
+			return nil
+		}
+
+		c.dbVersion = postgresVersion(versionNum)
+
+		switch {
+		case c.dbVersion == "":
+			log.Warnf("config: unknown database server version")
+		case !c.IsDatabaseVersion(PostgresMinVersion):
+			return fmt.Errorf("PostgreSQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
+		}
 	case dsn.DriverSQLite3:
 		type Res struct {
 			Value string `gorm:"column:Value;"`
@@ -667,6 +684,22 @@ func (c *Config) checkDb(db *gorm.DB) error {
 	}
 
 	return nil
+}
+
+// PostgresMinVersion is the oldest PostgreSQL release that is supported.
+const PostgresMinVersion = "v16"
+
+// postgresVersion returns the semantic version of a PostgreSQL server_version_num, e.g. v18.6 for 180006
+// and v9.6 for 90624, or an empty string if the number is not a version.
+func postgresVersion(num int) string {
+	switch {
+	case num >= 100000:
+		return fmt.Sprintf("v%d.%d", num/10000, num%10000)
+	case num >= 10000:
+		return fmt.Sprintf("v%d.%d", num/10000, num/100%100)
+	default:
+		return ""
+	}
 }
 
 // connectDb establishes a database connection.
