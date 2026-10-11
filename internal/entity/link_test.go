@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -235,6 +236,45 @@ func TestFindLinks(t *testing.T) {
 	t.Run("FindBySlug", func(t *testing.T) {
 		r := FindLinks("", "holiday-2030")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
+	})
+	t.Run("NumericToken", func(t *testing.T) {
+		link := NewLink("as6sg6bxpogaaba8", false, false)
+		require.NoError(t, link.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(&link).Error })
+		require.NoError(t, UnscopedDb().Model(&link).UpdateColumn("link_token", "12345").Error)
+
+		assert.Len(t, FindLinks("12345", ""), 1)
+
+		// SQLite schemas of earlier releases stored the token 012345 as the number 12345.
+		if DbDialect() == dsn.DialectSQLite {
+			assert.Len(t, FindLinks("012345", ""), 1)
+		} else {
+			assert.Empty(t, FindLinks("012345", ""))
+		}
+
+		assert.Empty(t, FindLinks("012346", ""))
+	})
+}
+
+func TestSqliteNumericToken(t *testing.T) {
+	if DbDialect() != dsn.DialectSQLite {
+		t.Run("OtherDialect", func(t *testing.T) {
+			assert.Equal(t, "012345", sqliteNumericToken("012345"))
+		})
+		return
+	}
+
+	t.Run("LeadingZeros", func(t *testing.T) {
+		assert.Equal(t, "12345", sqliteNumericToken("0012345"))
+	})
+	t.Run("Zero", func(t *testing.T) {
+		assert.Equal(t, "0", sqliteNumericToken("000"))
+	})
+	t.Run("NotNumeric", func(t *testing.T) {
+		assert.Equal(t, "01a", sqliteNumericToken("01a"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", sqliteNumericToken(""))
 	})
 }
 

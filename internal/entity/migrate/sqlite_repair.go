@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // sqliteNumber is a value that a legacy binary column stored as a number, e.g. 1 for "0001".
@@ -36,9 +37,14 @@ const (
 // sqliteRepairs restore the strings of path and name columns that were stored as numbers, using the
 // file and folder names they were derived from; other numbers keep their converted text.
 var sqliteRepairs = map[string]func(tx *gorm.DB, old string) error{
-	"photos":  repairSQLitePhotos,
-	"folders": repairSQLiteFolders,
-	"albums":  repairSQLiteAlbums,
+	"photos":   repairSQLitePhotos,
+	"folders":  repairSQLiteFolders,
+	"albums":   repairSQLiteAlbums,
+	"labels":   sqliteSlugRepair("labels", "label_uid", "label_name", "label_slug", "custom_slug"),
+	"subjects": sqliteSlugRepair("subjects", "subj_uid", "subj_name", "subj_slug"),
+	"cameras":  sqliteSlugRepair("cameras", "id", "camera_name", "camera_slug"),
+	"lenses":   sqliteSlugRepair("lenses", "id", "lens_name", "lens_slug"),
+	"links":    repairSQLiteLinks,
 }
 
 // sqliteNumbers returns the values of the columns that the old table stored as numbers.
@@ -207,8 +213,13 @@ func repairSQLiteFolders(tx *gorm.DB, old string) error {
 	return nil
 }
 
-// repairSQLiteAlbums restores the paths of folder albums from the file and folder paths of the originals.
+// repairSQLiteAlbums restores the paths of folder albums from the file and folder paths of the originals,
+// and album slugs from the album titles.
 func repairSQLiteAlbums(tx *gorm.DB, old string) error {
+	if err := sqliteSlugRepair("albums", "album_uid", "album_title", "album_slug")(tx, old); err != nil {
+		return err
+	}
+
 	numbers, err := sqliteNumbers(tx, old, "album_uid", "''", " AND album_type = 'folder'", "album_path")
 
 	if err != nil || len(numbers) == 0 {
@@ -230,6 +241,90 @@ func repairSQLiteAlbums(tx *gorm.DB, old string) error {
 	}
 
 	logRestored("albums", restored, len(numbers))
+
+	return nil
+}
+
+// sqliteSlugRepair returns a repair that restores the slug columns of a table from the slug of its name column.
+func sqliteSlugRepair(table, key, name string, slugs ...string) func(tx *gorm.DB, old string) error {
+	return func(tx *gorm.DB, old string) error {
+		numbers, err := sqliteNumbers(tx, old, key, "''", "", slugs...)
+
+		if err != nil || len(numbers) == 0 {
+			return err
+		}
+
+		restored := 0
+
+		for _, n := range numbers {
+			var names []string
+
+			if err = tx.Raw(fmt.Sprintf("SELECT %s FROM %s WHERE %s = ? AND typeof(%[1]s) = 'text'",
+				sqliteIdent(name), sqliteIdent(old), sqliteIdent(key)), n.Key).Scan(&names).Error; err != nil {
+				return err
+			}
+
+			for i := range names {
+				names[i] = txt.Slug(names[i])
+			}
+
+			if value, ok := sqliteMatch(n, names); ok && sqliteRestore(tx, table, key, n, value) {
+				restored++
+			}
+		}
+
+		logRestored(table, restored, len(numbers))
+
+		return nil
+	}
+}
+
+// repairSQLiteLinks restores share slugs from the titles of what is shared, and logs the links whose
+// token was stored as a number, as it cannot be restored.
+func repairSQLiteLinks(tx *gorm.DB, old string) error {
+	tokens, err := sqliteNumbers(tx, old, "link_uid", "''", "", "link_token")
+
+	if err != nil {
+		return err
+	}
+
+	for _, n := range tokens {
+		log.Warnf("migrate: share link %s has a token stored as a number, which may need to be renewed unless it has only digits (convert schema)", clean.Log(n.Key))
+	}
+
+	numbers, err := sqliteNumbers(tx, old, "link_uid", "''", "", "share_slug")
+
+	if err != nil || len(numbers) == 0 {
+		return err
+	}
+
+	restored := 0
+
+	for _, n := range numbers {
+		var names []string
+
+		// Shares point to albums, labels or subjects; a missing table has nothing to contribute.
+		for _, shared := range [][3]string{{"albums", "album_uid", "album_title"}, {"labels", "label_uid", "label_name"},
+			{"subjects", "subj_uid", "subj_name"}} {
+			var found []string
+
+			if tx.Raw(fmt.Sprintf("SELECT s.%s FROM %s s JOIN %s l ON l.share_uid = s.%s WHERE l.link_uid = ?",
+				sqliteIdent(shared[2]), sqliteIdent(shared[0]), sqliteIdent(old), sqliteIdent(shared[1])), n.Key).
+				Scan(&found).Error == nil {
+				names = append(names, found...)
+			}
+		}
+
+		for i := range names {
+			names[i] = txt.Slug(names[i])
+		}
+
+		if value, ok := sqliteMatch(n, names); ok && sqliteRestore(tx, "links", "link_uid", n, value) {
+			restored++
+		}
+	}
+
+	logRestored("links", restored, len(numbers))
 
 	return nil
 }

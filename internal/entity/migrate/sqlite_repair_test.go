@@ -52,10 +52,12 @@ func (repairFolder) TableName() string {
 
 // repairAlbum is an album model with the columns that the conversion repairs.
 type repairAlbum struct {
-	ID        uint   `gorm:"primaryKey"`
-	AlbumUID  string `gorm:"type:bytes;size:42"`
-	AlbumPath string `gorm:"type:bytes;size:1024"`
-	AlbumType string `gorm:"type:bytes;size:8"`
+	ID         uint   `gorm:"primaryKey"`
+	AlbumUID   string `gorm:"type:bytes;size:42"`
+	AlbumTitle string `gorm:"size:160"`
+	AlbumSlug  string `gorm:"type:bytes;size:160"`
+	AlbumPath  string `gorm:"type:bytes;size:1024"`
+	AlbumType  string `gorm:"type:bytes;size:8"`
 }
 
 // TableName returns the entity table name.
@@ -75,7 +77,8 @@ func legacyRepairDb(t *testing.T) *gorm.DB {
 		"CREATE TABLE photos (id integer primary key autoincrement, photo_path VARBINARY(1024), photo_name VARBINARY(255))",
 		"CREATE TABLE files (id integer primary key autoincrement, photo_id integer, file_root VARBINARY(16), file_name VARBINARY(1024), file_primary bool)",
 		"CREATE TABLE folders (path VARBINARY(1024), root VARBINARY(16), folder_uid VARBINARY(42), PRIMARY KEY (folder_uid))",
-		"CREATE TABLE albums (id integer primary key autoincrement, album_uid VARBINARY(42), album_path VARBINARY(1024), album_type VARBINARY(8))",
+		"CREATE TABLE albums (id integer primary key autoincrement, album_uid VARBINARY(42), album_title VARCHAR(160), " +
+			"album_slug VARBINARY(160), album_path VARBINARY(1024), album_type VARBINARY(8))",
 		"INSERT INTO photos (id, photo_path, photo_name) VALUES (1, '', '0001'), (2, '01', '0002'), (3, 'scans', '1e5'), " +
 			"(4, 'scans', 'abc'), (5, 'scans', '0009'), (6, '2020', '0006')",
 		"INSERT INTO files (id, photo_id, file_root, file_name, file_primary) VALUES " +
@@ -84,8 +87,8 @@ func legacyRepairDb(t *testing.T) *gorm.DB {
 			"(7, 0, 'sidecar', '02/a.jpg', 0), (8, 0, 'sidecar', '2/b.jpg', 0)",
 		"INSERT INTO folders (path, root, folder_uid) VALUES ('01', '/', 'd1'), ('01/sub', '/', 'd2'), ('2020', '/', 'd3'), " +
 			"('007', '/', 'd4'), ('02', 'sidecar', 'd5'), ('', '/', 'd6')",
-		"INSERT INTO albums (id, album_uid, album_path, album_type) VALUES (1, 'a1', '01', 'folder'), (2, 'a2', '05', 'album'), " +
-			"(3, 'a3', '2020', 'folder')",
+		"INSERT INTO albums (id, album_uid, album_title, album_slug, album_path, album_type) VALUES " +
+			"(1, 'a1', '01', '01', '01', 'folder'), (2, 'a2', '007', '007', '05', 'album'), (3, 'a3', '2020', '2020', '2020', 'folder')",
 	} {
 		require.NoError(t, db.Exec(stmt).Error, stmt)
 	}
@@ -344,5 +347,125 @@ func TestLogRestored(t *testing.T) {
 		t.Cleanup(hook.Reset)
 		logRestored("photos", 0, 0)
 		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+// repairLabel is a label model with the slug columns that the conversion repairs.
+type repairLabel struct {
+	ID         uint   `gorm:"primaryKey"`
+	LabelUID   string `gorm:"type:bytes;size:42"`
+	LabelName  string `gorm:"size:160"`
+	LabelSlug  string `gorm:"type:bytes;size:160"`
+	CustomSlug string `gorm:"type:bytes;size:160"`
+}
+
+// TableName returns the entity table name.
+func (repairLabel) TableName() string {
+	return "labels"
+}
+
+// repairCamera is a camera model with the slug column that the conversion repairs.
+type repairCamera struct {
+	ID         uint   `gorm:"primaryKey"`
+	CameraName string `gorm:"size:160"`
+	CameraSlug string `gorm:"type:bytes;size:160"`
+}
+
+// TableName returns the entity table name.
+func (repairCamera) TableName() string {
+	return "cameras"
+}
+
+// repairSubject is a subject model with the slug column that the conversion repairs.
+type repairSubject struct {
+	SubjUID  string `gorm:"type:bytes;size:42;primaryKey"`
+	SubjName string `gorm:"size:160"`
+	SubjSlug string `gorm:"type:bytes;size:160"`
+}
+
+// TableName returns the entity table name.
+func (repairSubject) TableName() string {
+	return "subjects"
+}
+
+// repairLink is a link model with the slug and token columns that the conversion checks.
+type repairLink struct {
+	LinkUID   string `gorm:"type:bytes;size:42;primaryKey"`
+	ShareUID  string `gorm:"type:bytes;size:42"`
+	ShareSlug string `gorm:"type:bytes;size:160"`
+	LinkToken string `gorm:"type:bytes;size:160"`
+}
+
+// TableName returns the entity table name.
+func (repairLink) TableName() string {
+	return "links"
+}
+
+func TestConvertSQLiteSchema_RepairSlugs(t *testing.T) {
+	db := legacyRepairDb(t)
+
+	for _, stmt := range []string{
+		"CREATE TABLE labels (id integer primary key autoincrement, label_uid VARBINARY(42), label_name VARCHAR(160), " +
+			"label_slug VARBINARY(160), custom_slug VARBINARY(160))",
+		"CREATE TABLE links (link_uid VARBINARY(42), share_uid VARBINARY(42), share_slug VARBINARY(160), " +
+			"link_token VARBINARY(160), PRIMARY KEY (link_uid))",
+		"INSERT INTO labels (id, label_uid, label_name, label_slug, custom_slug) VALUES (1, 'l1', '007', '007', '007'), (2, 'l2', 'Cat', 'cat', 'cat')",
+		"CREATE TABLE cameras (id integer primary key autoincrement, camera_name VARCHAR(160), camera_slug VARBINARY(160))",
+		"INSERT INTO cameras (id, camera_name, camera_slug) VALUES (5, '0815', '0815')",
+		"CREATE TABLE subjects (subj_uid VARBINARY(42), subj_name VARCHAR(160), subj_slug VARBINARY(160), PRIMARY KEY (subj_uid))",
+		"INSERT INTO subjects (subj_uid, subj_name, subj_slug) VALUES ('j1', '0042', '0042')",
+		"INSERT INTO links (link_uid, share_uid, share_slug, link_token) VALUES ('s3', 'j1', '0042', 'def')",
+		"INSERT INTO links (link_uid, share_uid, share_slug, link_token) VALUES ('s1', 'a2', '007', '012345'), ('s2', 'l1', '007', 'abc')",
+	} {
+		require.NoError(t, db.Exec(stmt).Error, stmt)
+	}
+
+	models := map[string]any{"labels": &repairLabel{}, "links": &repairLink{}, "albums": &repairAlbum{},
+		"cameras": &repairCamera{}, "subjects": &repairSubject{}}
+	require.NoError(t, ConvertSQLiteSchema(db, models))
+
+	var labels []repairLabel
+	require.NoError(t, db.Order("id").Find(&labels).Error)
+	require.Len(t, labels, 2)
+	assert.Equal(t, "007", labels[0].LabelSlug)
+	assert.Equal(t, "007", labels[0].CustomSlug)
+	assert.Equal(t, "cat", labels[1].LabelSlug)
+
+	var albums []repairAlbum
+	require.NoError(t, db.Order("id").Find(&albums).Error)
+	require.Len(t, albums, 3)
+	assert.Equal(t, "01", albums[0].AlbumSlug)
+	assert.Equal(t, "007", albums[1].AlbumSlug)
+	assert.Equal(t, "2020", albums[2].AlbumSlug)
+
+	var links []repairLink
+	require.NoError(t, db.Order("link_uid").Find(&links).Error)
+	require.Len(t, links, 3)
+	assert.Equal(t, "007", links[0].ShareSlug, "album title")
+	assert.Equal(t, "007", links[1].ShareSlug, "label name")
+	assert.Equal(t, "0042", links[2].ShareSlug, "subject name")
+
+	var camera repairCamera
+	require.NoError(t, db.First(&camera, 5).Error)
+	assert.Equal(t, "0815", camera.CameraSlug)
+
+	var subject repairSubject
+	require.NoError(t, db.First(&subject, "subj_uid = ?", "j1").Error)
+	assert.Equal(t, "0042", subject.SubjSlug)
+	assert.Equal(t, "12345", links[0].LinkToken, "found by numeric value")
+	assert.Equal(t, "abc", links[1].LinkToken)
+}
+
+func TestSqliteSlugRepair(t *testing.T) {
+	t.Run("NoTable", func(t *testing.T) {
+		db := legacyRepairDb(t)
+		assert.Error(t, sqliteSlugRepair("labels", "label_uid", "label_name", "label_slug")(db, "missing"))
+	})
+}
+
+func TestRepairSQLiteLinks(t *testing.T) {
+	t.Run("NoTable", func(t *testing.T) {
+		db := legacyRepairDb(t)
+		assert.Error(t, repairSQLiteLinks(db, "missing"))
 	})
 }

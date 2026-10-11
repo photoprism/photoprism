@@ -2,12 +2,14 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -264,9 +266,26 @@ func FindLinks(token, shared string) (found Links) {
 
 	if err := q.Order("modified_at DESC").Find(&found).Error; err != nil {
 		event.AuditErr([]string{"share token lookup failed", status.Error(err)})
+	} else if len(found) == 0 {
+		// SQLite schemas of earlier releases stored numeric tokens as numbers, without leading zeros.
+		if numeric := sqliteNumericToken(token); numeric != token {
+			return FindLinks(numeric, shared)
+		}
 	}
 
 	return found
+}
+
+// sqliteNumericToken returns a numeric token without leading zeros if the database is SQLite, and the
+// token unchanged otherwise.
+func sqliteNumericToken(token string) string {
+	if token == "" || DbDialect() != dsn.DialectSQLite || strings.Trim(token, "0123456789") != "" {
+		return token
+	} else if numeric := strings.TrimLeft(token, "0"); numeric != "" {
+		return numeric
+	}
+
+	return "0"
 }
 
 // FindRedeemableLinks returns the links for a token and share UID that admit a new redemption
