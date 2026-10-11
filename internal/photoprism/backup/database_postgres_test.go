@@ -5,16 +5,20 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -364,5 +368,86 @@ func TestPostgresRoundTrip(t *testing.T) {
 		err := restore(strings.NewReader("INSERT INTO no_such_table VALUES ('secret value');\n"))
 		require.Error(t, err)
 		assert.NotContains(t, err.Error(), "secret value")
+	})
+}
+
+func TestWarnPostgresServerPrivileges(t *testing.T) {
+	t.Run("NotConnected", func(t *testing.T) {
+		hook := captureLog(t)
+		warnPostgresServerPrivileges(nil)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.DebugLevel, hook.LastEntry().Level)
+		assert.Contains(t, hook.LastEntry().Message, "as the database is not connected")
+	})
+	t.Run("QueryFailed", func(t *testing.T) {
+		// A database without pg_roles cannot be checked.
+		db, err := entity.OpenDb(dsn.DriverSQLite3, ":memory:")
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = entity.CloseDb(db) })
+		hook := captureLog(t)
+		warnPostgresServerPrivileges(db)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+		assert.Contains(t, hook.LastEntry().Message, "restore: failed to check the role of the database user")
+	})
+	t.Run("PostgreSQL", func(t *testing.T) {
+		c := get.Config()
+
+		if c.DatabaseDriver() != dsn.DriverPostgres {
+			t.Skip("requires the PostgreSQL test database")
+		}
+
+		admin := c.Db()
+		var superuser bool
+		require.NoError(t, admin.Raw("SELECT rolsuper FROM pg_roles WHERE rolname = current_user").Row().Scan(&superuser))
+
+		if !superuser {
+			t.Skip("requires a superuser to connect to the PostgreSQL test database")
+		}
+
+		hook := captureLog(t)
+		warnPostgresServerPrivileges(admin)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+		assert.Contains(t, hook.LastEntry().Message, "has server-side privileges")
+
+		// A role that only owns objects is not reported, one with access to server files is.
+		role, password := "zz_restore_"+strings.ToLower(rnd.Base36(8)), rnd.Base62(16)
+		require.NoError(t, admin.Exec(fmt.Sprintf("CREATE ROLE %s LOGIN PASSWORD '%s'", role, password)).Error)
+		t.Cleanup(func() { _ = admin.Exec(fmt.Sprintf("DROP ROLE IF EXISTS %s", role)).Error })
+
+		u, err := url.Parse(c.DatabaseDSN())
+		require.NoError(t, err)
+		u.User = url.UserPassword(role, password)
+
+		db, err := entity.OpenDb(dsn.DriverPostgres, u.String())
+		require.NoError(t, err)
+
+		t.Cleanup(func() { _ = entity.CloseDb(db) })
+
+		warnPostgresServerPrivileges(db)
+		assert.Len(t, hook.AllEntries(), 1)
+
+		require.NoError(t, admin.Exec(fmt.Sprintf("ALTER ROLE %s CREATEROLE", role)).Error)
+		warnPostgresServerPrivileges(db)
+		require.Len(t, hook.AllEntries(), 2)
+		assert.Equal(t, fmt.Sprintf("restore: database user %s has server-side privileges, restoring with a role "+
+			"that only owns the database is recommended", role), hook.LastEntry().Message)
+
+		// A membership counts even if it neither inherits privileges nor allows SET ROLE.
+		require.NoError(t, admin.Exec(fmt.Sprintf("ALTER ROLE %s NOCREATEROLE", role)).Error)
+		warnPostgresServerPrivileges(db)
+		require.Len(t, hook.AllEntries(), 2)
+		require.NoError(t, admin.Exec(fmt.Sprintf("GRANT pg_read_server_files TO %s WITH INHERIT FALSE, SET FALSE", role)).Error)
+		warnPostgresServerPrivileges(db)
+		require.Len(t, hook.AllEntries(), 3)
+		assert.Contains(t, hook.LastEntry().Message, "has server-side privileges")
+
+		// A check that does not finish in time is reported and skipped.
+		timeout := privilegeCheckTimeout
+		privilegeCheckTimeout = time.Nanosecond
+		t.Cleanup(func() { privilegeCheckTimeout = timeout })
+		warnPostgresServerPrivileges(admin)
+		assert.Equal(t, "restore: failed to check the role of the database user (context deadline exceeded)", hook.LastEntry().Message)
 	})
 }

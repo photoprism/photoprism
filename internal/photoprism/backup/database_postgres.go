@@ -10,8 +10,12 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
+
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -233,6 +237,45 @@ func (conn postgresConn) env() []string {
 	}
 
 	return env
+}
+
+// privilegeCheckTimeout bounds the query that checks the privileges of the user a restore connects as.
+var privilegeCheckTimeout = 5 * time.Second
+
+// postgresServerPrivileges selects the session user, and whether it may create roles or is a member of a
+// superuser role or of a predefined role that grants access to server programs or files.
+const postgresServerPrivileges = "SELECT session_user, COALESCE((SELECT rolcreaterole FROM pg_roles " +
+	"WHERE rolname = session_user), FALSE) OR EXISTS (SELECT 1 FROM pg_roles r WHERE (r.rolsuper OR " +
+	"r.rolname IN ('pg_execute_server_program', 'pg_read_server_files', 'pg_write_server_files')) " +
+	"AND pg_has_role(session_user, r.oid, 'MEMBER'))"
+
+// warnPostgresServerPrivileges logs a warning if the database user has privileges beyond the database, as
+// restoring with a role that only owns the database is recommended. The restore does not depend on the check.
+func warnPostgresServerPrivileges(db *gorm.DB) {
+	if db == nil {
+		log.Debugf("restore: skipped checking the role of the database user, as the database is not connected")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), privilegeCheckTimeout)
+	defer cancel()
+
+	sqlDb, err := db.DB()
+
+	if err != nil {
+		log.Warnf("restore: failed to check the role of the database user (%s)", clean.Error(err))
+		return
+	}
+
+	var user string
+	var privileged bool
+
+	if err = sqlDb.QueryRowContext(ctx, postgresServerPrivileges).Scan(&user, &privileged); err != nil {
+		log.Warnf("restore: failed to check the role of the database user (%s)", clean.Error(err))
+	} else if privileged {
+		log.Warnf("restore: database user %s has server-side privileges, restoring with a role that only owns "+
+			"the database is recommended", clean.Log(user))
+	}
 }
 
 // postgresDumpArgs returns the flags a PostgreSQL dump is created with: a plain SQL script that drops the

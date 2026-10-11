@@ -149,6 +149,7 @@ func prepareRestore(c *config.Config) (restore preparedRestore, err error) {
 		}
 
 		conn := newPostgresConn(c, c.PsqlBin())
+		warnPostgresServerPrivileges(c.DbIfConnected())
 		cmd, password = conn.Cmd(postgresRestoreArgs()...), conn.Password
 	case dsn.DriverSQLite3:
 		if c.SqliteBin() == "" {
