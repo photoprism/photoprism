@@ -150,6 +150,13 @@ func convertSQLiteTable(db *gorm.DB, name string, model any) error {
 			return err
 		}
 
+		// Restores the strings of path and name columns that the legacy type stored as numbers.
+		if repair := sqliteRepairs[name]; repair != nil {
+			if err := repair(tx, old); err != nil {
+				log.Warnf("migrate: %s while restoring numeric values in %s (convert schema)", err, clean.Log(name))
+			}
+		}
+
 		// Keeps the counter of an AUTOINCREMENT key, so IDs of deleted rows are not used again.
 		if err := tx.Exec(`DELETE FROM sqlite_sequence WHERE name = ? AND EXISTS (SELECT 1 FROM sqlite_sequence WHERE name = ?)`, name, old).Error; err != nil {
 			return err

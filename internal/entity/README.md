@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** October 10, 2026
+**Last Updated:** October 11, 2026
 
 ### Overview
 
@@ -35,7 +35,7 @@ GORM's `Updates` with a struct skips zero values, so a field reset to its zero v
 - Each condition of a `WHERE` clause is put in parentheses when there are several (`buildWhere`), so a condition with `OR` does not combine with its neighbors.
 - `DeletedAt` is a `sql.NullTime` with the soft-delete clauses of `gorm.DeletedAt`; it encodes as `null` in JSON and as a timestamp in YAML.
 
-`migrate.ConvertSQLiteSchema` rebuilds SQLite tables created with the previous column types before auto-migration, once per table: it creates the table from its model, copies the rows with numeric values in text columns converted to text, and keeps the `sqlite_sequence` counter.
+`migrate.ConvertSQLiteSchema` rebuilds SQLite tables created with the previous column types before auto-migration, once per table: it creates the table from its model, copies the rows with numeric values in text columns converted to text, and keeps the `sqlite_sequence` counter. The previous types stored numeric-looking strings as numbers (`0001` as `1`), so photo paths and names, top-level folder paths, and folder album paths are restored from the file and folder names they were derived from, when exactly one of those names has the same numeric value.
 
 ### Label Count Refresh
 

@@ -1,6 +1,6 @@
 # Database Migrations
 
-**Last Updated:** October 10, 2026
+**Last Updated:** October 11, 2026
 
 This package contains the dialect-specific SQL migrations that complement GORM's schema auto-migration during database initialization. The SQL source files live in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/), and [`generate.go`](generate.go) embeds them into the generated [`dialect_mysql.go`](dialect_mysql.go) and [`dialect_sqlite3.go`](dialect_sqlite3.go) files.
 
@@ -23,7 +23,7 @@ The migration flow is:
 3. Run `pre` SQL migrations from this package.
 4. If the current release still `NeedsMigration()`, run the one-time schema work in [`entity.InitDb()`](../entity_init.go) and [`Tables.Migrate()`](../entity_tables.go):
    - drop deprecated tables when enabled
-   - on SQLite, rebuild tables that still have the column types of earlier releases with [`ConvertSQLiteSchema()`](sqlite_schema.go), once per table and only when such a type is found; this runs after the `pre` stage, so columns renamed there keep their values
+   - on SQLite, rebuild tables that still have the column types of earlier releases with [`ConvertSQLiteSchema()`](sqlite_schema.go), once per table and only when such a type is found; this runs after the `pre` stage, so columns renamed there keep their values, and [`sqlite_repair.go`](sqlite_repair.go) restores photo, folder and folder album paths and names that the earlier types stored as numbers
    - run GORM `AutoMigrate(...)` for all registered entities, which also alters existing columns whose type, size or default differs from the struct tags
 5. Run `main`, then `post` SQL migrations from this package.
 6. Mark the current release as migrated by setting `versions.migrated_at`. If auto-migration failed or tables are missing afterward, `MigrateDb()` stores the error in `versions.error` instead, writes it to the system log, and returns it, so the next start runs auto-migration again. A failed auto-migration also skips the `main` and `post` stages, and `entity.InitDb()` then creates the default fixtures only if their tables exist. Running selected migrations by ID records nothing.
