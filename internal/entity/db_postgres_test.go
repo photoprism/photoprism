@@ -2,6 +2,7 @@ package entity
 
 import (
 	"encoding/json"
+	"errors"
 	"net/url"
 	"sync"
 	"testing"
@@ -256,5 +257,54 @@ func TestSyncSequence(t *testing.T) {
 		}
 
 		assert.NoError(t, syncSequence(Db(), postgresSequence{Table: Photo{}.TableName(), Column: "photo_uid"}))
+	})
+}
+
+func TestCheckPostgresSchema(t *testing.T) {
+	t.Run("NilDb", func(t *testing.T) {
+		assert.NoError(t, CheckPostgresSchema(nil))
+	})
+	t.Run("OtherDialect", func(t *testing.T) {
+		assert.NoError(t, CheckPostgresSchema(openTestDb(t)))
+	})
+	t.Run("PostgreSQL", func(t *testing.T) {
+		if DbDialect() != dsn.DialectPostgreSQL {
+			t.Skip("requires the PostgreSQL test database")
+		}
+
+		errRollback := errors.New("rollback")
+
+		// check runs CheckPostgresSchema with the specified schema as the current one.
+		check := func(t *testing.T, schema string) (result error) {
+			t.Helper()
+
+			err := Db().Transaction(func(tx *gorm.DB) error {
+				require.NoError(t, tx.Exec("SET LOCAL search_path TO "+schema).Error)
+				result = CheckPostgresSchema(tx)
+				return errRollback
+			})
+
+			require.ErrorIs(t, err, errRollback)
+
+			return result
+		}
+
+		// The current schema of the test database is supported.
+		assert.NoError(t, CheckPostgresSchema(Db()))
+
+		schema := "zz_schema_check"
+		require.NoError(t, Db().Exec("DROP SCHEMA IF EXISTS "+schema+" CASCADE").Error)
+		require.NoError(t, Db().Exec("CREATE SCHEMA "+schema).Error)
+		t.Cleanup(func() { _ = Db().Exec("DROP SCHEMA IF EXISTS " + schema + " CASCADE").Error })
+
+		// A database without a photos table is new, and no current schema has none.
+		assert.NoError(t, check(t, schema))
+		assert.NoError(t, check(t, "''"))
+
+		require.NoError(t, Db().Exec("CREATE TABLE "+schema+".photos (id SERIAL, photo_uid varchar(42) COLLATE \"C\")").Error)
+		assert.NoError(t, check(t, schema))
+
+		require.NoError(t, Db().Exec("ALTER TABLE "+schema+".photos ALTER COLUMN photo_uid TYPE bytea USING photo_uid::bytea").Error)
+		assert.ErrorIs(t, check(t, schema), ErrPostgresSchemaUnsupported)
 	})
 }

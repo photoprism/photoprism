@@ -2,11 +2,13 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -90,7 +92,12 @@ func restoreAction(ctx *cli.Context) error {
 
 	log.Infoln("restore: migrating index database schema")
 
-	conf.InitDb()
+	conf.RegisterDb()
+
+	// A restored schema that cannot be migrated stops the command; other migration errors are logged.
+	if err = conf.MigrateDb(false, nil); errors.Is(err, entity.ErrPostgresSchemaUnsupported) {
+		return cli.Exit(err, 1)
+	}
 
 	// Restore albums from YAML backup files?
 	if restoreAlbums {

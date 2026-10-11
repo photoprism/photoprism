@@ -2,14 +2,20 @@ package config
 
 import (
 	"bytes"
+	"database/sql"
+	"fmt"
+	"net/url"
 	"os"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/mod/semver"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -611,5 +617,55 @@ func TestConfig_DbIfConnected(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.db = db
 		assert.Same(t, db, c.DbIfConnected())
+	})
+}
+
+func TestConfig_PostgresSchemaUnsupported(t *testing.T) {
+	t.Run("Refused", func(t *testing.T) {
+		if TestConfig().DatabaseDriver() != dsn.DriverPostgres {
+			t.Skip("requires the PostgreSQL test database")
+		}
+
+		server, err := sql.Open("pgx", TestConfig().DatabaseDSN())
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = server.Close() })
+
+		name := "acceptance_config_schema_" + strings.ToLower(rnd.Base36(8))
+		_, err = server.Exec(fmt.Sprintf("CREATE DATABASE %s", name)) //nolint:gosec // generated test database name
+		require.NoError(t, err)
+		t.Cleanup(func() { _, _ = server.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS %s WITH (FORCE)", name)) })
+
+		u, err := url.Parse(TestConfig().DatabaseDSN())
+		require.NoError(t, err)
+		u.Path, u.RawPath = "/"+name, ""
+
+		c := NewConfig(CliTestContext())
+		c.options.DatabaseDriver = dsn.DriverPostgres
+		c.options.DatabaseDSN = u.String()
+		t.Cleanup(func() {
+			if c.db != nil {
+				_ = entity.CloseDb(c.db)
+			}
+		})
+
+		// A schema created after connecting, e.g. by a restore, is refused before migrations.
+		require.NoError(t, c.connectDb())
+		require.NoError(t, c.Db().Exec("CREATE TABLE photos (id SERIAL, photo_uid bytea)").Error)
+		assert.ErrorIs(t, c.MigrateDb(false, nil), entity.ErrPostgresSchemaUnsupported)
+		assert.False(t, c.Db().Migrator().HasTable("versions"))
+		require.NoError(t, entity.CloseDb(c.db))
+		c.db = nil
+
+		// A new connection is refused, and its connections are closed.
+		c = NewConfig(CliTestContext())
+		c.options.DatabaseDriver = dsn.DriverPostgres
+		c.options.DatabaseDSN = u.String()
+		assert.ErrorIs(t, c.connectDb(), entity.ErrPostgresSchemaUnsupported)
+		assert.Nil(t, c.DbIfConnected())
+
+		assert.Eventually(t, func() bool {
+			var conns int
+			return server.QueryRow("SELECT COUNT(*) FROM pg_stat_activity WHERE datname = $1", name).Scan(&conns) == nil && conns == 0
+		}, 5*time.Second, 50*time.Millisecond)
 	})
 }

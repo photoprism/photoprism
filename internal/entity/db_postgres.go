@@ -17,6 +17,7 @@ import (
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -202,4 +203,32 @@ func syncSequence(db *gorm.DB, s postgresSequence) error {
 
 	// Taking the next value keeps a sequence that is ahead, also when it was set without being used.
 	return db.Exec("SELECT setval(?::regclass, GREATEST(?, nextval(?::regclass)), false)", seq.String, maxID+1, seq.String).Error
+}
+
+// ErrPostgresSchemaUnsupported is returned for a PostgreSQL database whose schema cannot be migrated.
+var ErrPostgresSchemaUnsupported = errors.New("database was created by an unsupported development version of " +
+	"PostgreSQL support, please create a new database and index your originals again")
+
+// CheckPostgresSchema returns ErrPostgresSchemaUnsupported if a PostgreSQL database stores binary strings as
+// bytea, as databases created by development versions do, since migrating them would alter the stored values.
+func CheckPostgresSchema(db *gorm.DB) error {
+	if db == nil || dsn.DialectFromDriver(db.Dialector.Name()) != dsn.DialectPostgreSQL {
+		return nil
+	}
+
+	var dataType string
+
+	err := db.Raw("SELECT data_type FROM information_schema.columns WHERE table_schema = current_schema() " +
+		"AND table_name = 'photos' AND column_name = 'photo_uid'").Row().Scan(&dataType)
+
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		return nil
+	case err != nil:
+		return fmt.Errorf("failed to check the database schema (%s)", clean.Error(err))
+	case dataType == "bytea":
+		return ErrPostgresSchemaUnsupported
+	}
+
+	return nil
 }

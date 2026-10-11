@@ -540,6 +540,12 @@ func (c *Config) InitDb() {
 // MigrateDb will initialize the database and migrate the schema if necessary, and returns an error if
 // the schema could not be migrated.
 func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
+	// A schema that migrations would alter is refused before anything writes, also after a restore.
+	if err = entity.CheckPostgresSchema(c.Db()); err != nil {
+		log.Errorf("config: %s", clean.Error(err))
+		return err
+	}
+
 	entity.Admin.UserName = c.AdminUser()
 
 	// Automatically migrate database schema only once per release to reduce startup time.
@@ -752,6 +758,7 @@ func (c *Config) connectDb() error {
 
 	// Set database connection parameters.
 	if sqlDb, sqlErr := db.DB(); sqlErr != nil {
+		_ = entity.CloseDb(db)
 		return sqlErr
 	} else {
 		sqlDb.SetMaxOpenConns(c.DatabaseConns())
@@ -766,8 +773,15 @@ func (c *Config) connectDb() error {
 			// the database-persisted error log.
 			event.SystemError([]string{"config", "database", "check", "%s"}, clean.ErrorFull(err))
 		} else {
+			_ = entity.CloseDb(db)
 			return err
 		}
+	}
+
+	// A schema that migrations would alter is refused regardless of the checks above.
+	if err = entity.CheckPostgresSchema(db); err != nil {
+		_ = entity.CloseDb(db)
+		return err
 	}
 
 	if dbVersion := c.DatabaseVersion(); dbVersion != "" {
