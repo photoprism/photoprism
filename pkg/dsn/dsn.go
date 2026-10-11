@@ -246,7 +246,7 @@ func (d *DSN) parse() {
 // parsePostgres extracts connection settings from PostgreSQL key/value style DSNs and
 // returns true on success.
 func (d *DSN) parsePostgres() bool {
-	if !strings.Contains(d.DSN, "password=") || !strings.Contains(d.DSN, "user=") {
+	if strings.Contains(d.DSN, "://") || !strings.Contains(d.DSN, "dbname=") && !strings.Contains(d.DSN, "database=") {
 		return false
 	}
 

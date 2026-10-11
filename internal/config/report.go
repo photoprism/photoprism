@@ -310,7 +310,16 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"database-conns-idle", fmt.Sprintf("%d", c.DatabaseConnsIdle())},
 		{"mariadb-bin", c.MariadbBin()},
 		{"mariadb-dump-bin", c.MariadbDumpBin()},
+	}...)
 
+	if c.DatabaseDriver() == dsn.DriverPostgres {
+		rows = append(rows, [][]string{
+			{"psql-bin", c.PsqlBin()},
+			{"pg-dump-bin", c.PgDumpBin()},
+		}...)
+	}
+
+	rows = append(rows, [][]string{
 		// File Converters.
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},

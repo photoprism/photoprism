@@ -5,8 +5,10 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"regexp"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var (
@@ -24,11 +26,14 @@ const (
 )
 
 // restoreReader returns the input a dump is restored from with the specified driver. A MariaDB or MySQL
-// dump is read through uniqueChecksReader; other dumps are returned as they are.
+// dump is read through uniqueChecksReader, a PostgreSQL dump through postgresRestrictedReader, and other
+// dumps are returned as they are.
 func restoreReader(driver string, r io.Reader) io.Reader {
 	switch driver {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		return &uniqueChecksReader{r: bufio.NewReaderSize(r, uniqueChecksLineBytes)}
+	case dsn.DriverPostgres:
+		return newPostgresRestrictedReader(r)
 	default:
 		return r
 	}
@@ -89,4 +94,89 @@ func (u *uniqueChecksReader) Read(p []byte) (int, error) {
 func isUniqueChecksOff(line []byte) bool {
 	rest, ok := bytes.CutPrefix(line, uniqueChecksOff)
 	return ok && (bytes.Equal(rest, []byte("\n")) || bytes.Equal(rest, []byte("\r\n")))
+}
+
+// postgresHeldBytes bounds the blank lines held back after an "\\unrestrict" line; beyond it, they are passed on.
+const postgresHeldBytes = 64 << 10
+
+// postgresRestrictLine matches the "\restrict" and "\unrestrict" lines pg_dump writes, with an alphanumeric key.
+var postgresRestrictLine = regexp.MustCompile(`^\\(un)?restrict [0-9A-Za-z]+\r?\n?$`)
+
+// postgresRestrictedReader passes a PostgreSQL dump to psql in restricted mode: it starts with a "\restrict"
+// line holding a random key, so psql rejects every other backslash command, and drops the "\restrict" line in
+// the header of the dump and the "\unrestrict" line at its end, which would otherwise fail or lift the
+// restriction. Other lines are passed on unchanged, as they may be part of COPY data or quoted text.
+type postgresRestrictedReader struct {
+	r       *bufio.Reader
+	pending []byte
+	held    []byte
+	err     error
+	header  bool
+	copying bool
+	partial bool
+}
+
+// newPostgresRestrictedReader returns a postgresRestrictedReader for a dump, restricted with a new random key.
+func newPostgresRestrictedReader(r io.Reader) *postgresRestrictedReader {
+	return &postgresRestrictedReader{
+		r:       bufio.NewReaderSize(r, uniqueChecksLineBytes),
+		pending: []byte(`\restrict ` + rnd.Base62(32) + "\n"),
+		header:  true,
+	}
+}
+
+// Read reads from the dump line by line. An "\unrestrict" line is held back with the blank lines after it
+// until a line that is not blank, and dropped with them if the dump ends before it.
+func (p *postgresRestrictedReader) Read(b []byte) (int, error) {
+	for len(p.pending) == 0 {
+		if p.err != nil {
+			return 0, p.err
+		}
+
+		// The line stays valid until the next read, which happens only once it has been passed on.
+		line, err := p.r.ReadSlice('\n')
+		start := !p.partial
+		p.partial = errors.Is(err, bufio.ErrBufferFull)
+
+		if err != nil && !p.partial {
+			p.err = err
+		}
+
+		trimmed := bytes.TrimRight(line, "\r\n")
+		blank := len(bytes.TrimSpace(trimmed)) == 0
+
+		switch {
+		case !start:
+			// The rest of a long line.
+		case p.copying:
+			p.copying = !bytes.Equal(trimmed, []byte(`\.`))
+		case p.header && postgresRestrictLine.Match(line) && bytes.HasPrefix(line, []byte(`\restrict`)):
+			p.header, line = false, nil
+			continue
+		case postgresRestrictLine.Match(line) && bytes.HasPrefix(line, []byte(`\unrestrict`)):
+			p.pending, p.held = p.held, append([]byte{}, line...)
+			continue
+		case bytes.HasPrefix(trimmed, []byte("COPY ")) && bytes.HasSuffix(trimmed, []byte(" FROM stdin;")):
+			p.copying = true
+		}
+
+		if start && !blank && !bytes.HasPrefix(trimmed, []byte("--")) {
+			p.header = false
+		}
+
+		switch {
+		case p.held != nil && start && blank && len(p.held) < postgresHeldBytes:
+			p.held = append(p.held, line...)
+		case p.held != nil:
+			p.held = append(p.held, line...)
+			p.pending, p.held = p.held, nil
+		default:
+			p.pending = line
+		}
+	}
+
+	n := copy(b, p.pending)
+	p.pending = p.pending[n:]
+
+	return n, nil
 }

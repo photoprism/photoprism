@@ -104,6 +104,13 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 		logDatabaseSsl(conn, "backup")
 		warnNonInnodbTables(c.DbIfConnected(), conn.Name)
 		password, cmd = conn.Password, conn.Cmd(mariadbDumpArgs()...)
+	case dsn.DriverPostgres:
+		if c.PgDumpBin() == "" {
+			return errors.New("pg_dump not found")
+		}
+
+		conn := newPostgresConn(c, c.PgDumpBin())
+		password, cmd = conn.Password, conn.Cmd(postgresDumpArgs()...)
 	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))

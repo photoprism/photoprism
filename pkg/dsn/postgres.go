@@ -1,6 +1,7 @@
 package dsn
 
 import (
+	"net"
 	"net/url"
 	"strings"
 
@@ -56,8 +57,8 @@ func isPostgresURI(s string) bool {
 
 // parsePostgresURI extracts the connection settings from a PostgreSQL connection URI, with percent-encoded
 // values decoded, and returns true on success. User and password parameters override the user information,
-// as they do for the drivers. A host parameter with a socket directory sets the server, followed by the port
-// parameter if there is one, e.g. "/var/run/postgresql:5433".
+// as they do for the drivers. Host and port parameters set the server, a socket directory followed by the port
+// if there is one, e.g. "/var/run/postgresql:5433".
 func (d *DSN) parsePostgresURI() bool {
 	if !isPostgresURI(d.DSN) {
 		return false
@@ -85,16 +86,28 @@ func (d *DSN) parsePostgresURI() bool {
 		d.Password = password
 	}
 
-	if host := query.Get("host"); strings.HasPrefix(host, "/") {
-		d.Server = host
+	// Host and port parameters take precedence, as they do for the drivers.
+	host, port := query.Get("host"), query.Get("port")
 
-		if port := query.Get("port"); port != "" {
-			d.Server += ":" + port
-		}
-
-		query.Del("host")
-		query.Del("port")
+	if port == "" {
+		port = u.Port()
 	}
+
+	switch {
+	case strings.HasPrefix(host, "/") && port != "":
+		d.Server = host + ":" + port
+	case strings.HasPrefix(host, "/"):
+		d.Server = host
+	case host != "" && port != "":
+		d.Server = net.JoinHostPort(host, port)
+	case host != "":
+		d.Server = host
+	case query.Get("port") != "":
+		d.Server = net.JoinHostPort(u.Hostname(), port)
+	}
+
+	query.Del("host")
+	query.Del("port")
 
 	query.Del("user")
 	query.Del("password")

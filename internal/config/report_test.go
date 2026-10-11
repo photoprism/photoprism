@@ -237,6 +237,23 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		assert.False(t, hasName)
 		_, hasPassword := values["database-password"]
 		assert.False(t, hasPassword)
+		_, hasPsql := values["psql-bin"]
+		assert.False(t, hasPsql)
+	})
+	t.Run("PostgreSQLReportsClients", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgres
+		conf.options.DatabaseDSN = "postgres://app:p%40ss@db.internal:5432/photoprism?password=other"
+
+		rows, _ := conf.Report()
+		values := collect(rows)
+
+		assert.Equal(t, dsn.DriverPostgres, values["database-driver"])
+		assert.Equal(t, "postgres://app:***@db.internal:5432/photoprism?password=***", values["database-dsn"])
+		assert.Equal(t, conf.PsqlBin(), values["psql-bin"])
+		assert.Equal(t, conf.PgDumpBin(), values["pg-dump-bin"])
 	})
 }
 

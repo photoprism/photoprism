@@ -136,6 +136,20 @@ func prepareRestore(c *config.Config) (restore preparedRestore, err error) {
 		conn := newMariadbConn(c, c.MariadbBin())
 		logDatabaseSsl(conn, "restore")
 		cmd, password = conn.Cmd(mariadbRestoreArgs(conn.Bin)...), conn.Password
+	case dsn.DriverPostgres:
+		if c.PsqlBin() == "" {
+			return restore, errors.New("psql client not found")
+		}
+
+		// psql restores a dump in restricted mode, which requires a client that supports it.
+		if ok, versionErr := postgresRestrictSupported(c.PsqlBin()); versionErr != nil {
+			return restore, versionErr
+		} else if !ok {
+			return restore, errors.New("psql client cannot restrict commands, version 17.6, 16.10, 15.14, 14.19 or later required")
+		}
+
+		conn := newPostgresConn(c, c.PsqlBin())
+		cmd, password = conn.Cmd(postgresRestoreArgs()...), conn.Password
 	case dsn.DriverSQLite3:
 		if c.SqliteBin() == "" {
 			return restore, errors.New("sqlite3 client not found")

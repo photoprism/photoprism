@@ -101,9 +101,20 @@ func TestDSN_ParsePostgresURI(t *testing.T) {
 		assert.Equal(t, 5433, d.Port())
 	})
 	t.Run("RemoteHostParam", func(t *testing.T) {
-		d := Parse("postgres://u:p@/db?host=db.local")
-		assert.Equal(t, "", d.Server)
-		assert.Equal(t, "host=db.local", d.Params)
+		d := Parse("postgres://u:p@/db?host=db.local&sslmode=require")
+		assert.Equal(t, "db.local", d.Server)
+		assert.Equal(t, "sslmode=require", d.Params)
+	})
+	t.Run("HostAndPortParams", func(t *testing.T) {
+		d := Parse("postgres://u:p@other/db?host=db.local&port=5433")
+		assert.Equal(t, "db.local:5433", d.Server)
+		assert.Equal(t, 5433, d.Port())
+	})
+	t.Run("PortParam", func(t *testing.T) {
+		d := Parse("postgres://u:p@db.local/db?port=5433")
+		assert.Equal(t, "db.local:5433", d.Server)
+		assert.Equal(t, "db.local", d.Host())
+		assert.Equal(t, 5433, d.Port())
 	})
 	t.Run("BuiltSocketRoundTrip", func(t *testing.T) {
 		built := DSN{User: "u", Password: "p w", Server: "/run/my pg", Name: "x", Params: "port=5433"}
@@ -176,4 +187,23 @@ func TestMaskKeyValuePassword(t *testing.T) {
 	assert.Equal(t, "user=u password=***", mask(`user=u password=SEC\ RET16`))
 	assert.Equal(t, "host=h\vpassword=***", mask("host=h\vpassword=S18"))
 	assert.Equal(t, "nomatch", maskKeyValuePassword("nomatch"))
+}
+
+//nolint:gosec // G101: parser tests use inline credential samples.
+func TestDSN_ParsePostgresKeyValue(t *testing.T) {
+	t.Run("WithoutPassword", func(t *testing.T) {
+		d := Parse("host=db.local port=5433 user=app dbname=photos sslmode=require")
+		assert.Equal(t, DriverPostgres, d.Driver)
+		assert.Equal(t, "app", d.User)
+		assert.Equal(t, "", d.Password)
+		assert.Equal(t, "photos", d.Name)
+		assert.Equal(t, "db.local:5433", d.Server)
+		assert.Equal(t, "sslmode=require", d.Params)
+	})
+	t.Run("NotKeyValue", func(t *testing.T) {
+		d := DSN{DSN: "user:pass@tcp(localhost:3306)/db?charset=utf8mb4&parseTime=true"}
+		assert.False(t, d.parsePostgres())
+		d = DSN{DSN: "postgres://u:p@h/db?dbname=x"}
+		assert.False(t, d.parsePostgres())
+	})
 }
