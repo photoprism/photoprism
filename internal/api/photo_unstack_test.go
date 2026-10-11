@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -84,6 +85,85 @@ func TestPhotoUnstack(t *testing.T) {
 		assert.NotEqual(t, filepath.Dir(primary.FileName), filepath.Dir(secondary.FileName))
 
 		r := PerformRequest(app, "POST", "/api/v1/photos/"+photo.PhotoUID+"/files/"+secondary.FileUID+"/unstack")
+		assert.Equal(t, http.StatusOK, r.Code)
+		var moved, kept entity.File
+		require.NoError(t, entity.UnscopedDb().First(&moved, "file_uid = ?", secondary.FileUID).Error)
+		require.NoError(t, entity.UnscopedDb().First(&kept, "file_uid = ?", primary.FileUID).Error)
+		assert.NotEqual(t, photo.ID, moved.PhotoID)
+		assert.Equal(t, photo.ID, kept.PhotoID)
+	})
+	t.Run("DetailsNotSaved", func(t *testing.T) {
+		app, router, c := NewApiTest()
+		PhotoUnstack(router)
+		folder := "unstackdetails" + rnd.Base36(10)
+		dir := filepath.Join(c.OriginalsPath(), folder)
+		primaryFolder := folder + "/1990/04"
+		secondaryFolder := folder + "/London"
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() {
+			db := entity.UnscopedDb().Unscoped().Session(&gorm.Session{})
+			var photos []entity.Photo
+			require.NoError(t, db.Where("photo_path LIKE ?", folder+"/%").Find(&photos).Error)
+			var files []entity.File
+			require.NoError(t, db.Where("file_name LIKE ?", folder+"/%").Find(&files).Error)
+			for _, file := range files {
+				require.NoError(t, db.Delete(&entity.Marker{}, "file_uid = ?", file.FileUID).Error)
+				require.NoError(t, db.Delete(&entity.FileShare{}, "file_id = ?", file.ID).Error)
+				require.NoError(t, db.Delete(&entity.FileSync{}, "file_id = ?", file.ID).Error)
+			}
+			for _, photo := range photos {
+				require.NoError(t, db.Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, db.Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, db.Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, db.Delete(&entity.PhotoAlbum{}, "photo_uid = ?", photo.PhotoUID).Error)
+			}
+			require.NoError(t, db.Delete(&entity.File{}, "file_name LIKE ?", folder+"/%").Error)
+			require.NoError(t, db.Delete(&entity.Photo{}, "photo_path LIKE ?", folder+"/%").Error)
+			for _, photo := range photos {
+				var remaining int64
+				require.NoError(t, db.Model(&entity.Details{}).Where("photo_id = ?", photo.ID).Count(&remaining).Error)
+				require.Zero(t, remaining)
+			}
+			require.NoError(t, os.RemoveAll(dir))
+		})
+		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "1990", "04")))
+		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "London")))
+		require.NoError(t, fs.Copy("./testdata/face_160x160.jpg", filepath.Join(dir, "1990", "04", "bridge2.jpg"), true))
+		require.NoError(t, fs.Copy("./testdata/london_160x160.jpg", filepath.Join(dir, "London", "bridge3.jpg"), true))
+
+		photo := entity.NewUserPhoto(true, "")
+		photo.PhotoPath = primaryFolder
+		photo.PhotoName = "bridge2"
+		require.NoError(t, photo.Create())
+		primary := &entity.File{
+			FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
+			FileName: primaryFolder + "/bridge2.jpg", FileRoot: entity.RootOriginals,
+			FilePrimary: true, FileHash: rnd.GenerateUID(entity.FileUID),
+		}
+		require.NoError(t, primary.Create())
+		secondary := &entity.File{
+			FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
+			FileName: secondaryFolder + "/bridge3.jpg", FileRoot: entity.RootOriginals,
+			FileHash: rnd.GenerateUID(entity.FileUID),
+		}
+		require.NoError(t, secondary.Create())
+		assert.NotEqual(t, filepath.Dir(primary.FileName), filepath.Dir(secondary.FileName))
+
+		// Photo details cannot be written, which the unstack tolerates like the indexer does.
+		failed := 0
+		failDetails := func(tx *gorm.DB) {
+			if tx.Statement.Table == (entity.Details{}).TableName() {
+				failed++
+				_ = tx.AddError(errors.New("details write control"))
+			}
+		}
+		require.NoError(t, entity.Db().Callback().Create().Before("gorm:begin_transaction").Register("test:unstack-details", failDetails))
+		t.Cleanup(func() { _ = entity.Db().Callback().Create().Remove("test:unstack-details") })
+		require.NoError(t, entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:unstack-details", failDetails))
+		t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("test:unstack-details") })
+
+		r := PerformRequest(app, "POST", "/api/v1/photos/"+photo.PhotoUID+"/files/"+secondary.FileUID+"/unstack")
+		assert.Positive(t, failed)
 		assert.Equal(t, http.StatusOK, r.Code)
 		var moved, kept entity.File
 		require.NoError(t, entity.UnscopedDb().First(&moved, "file_uid = ?", secondary.FileUID).Error)

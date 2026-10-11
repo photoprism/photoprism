@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -180,7 +181,8 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		newPhoto.PhotoPath = unstackFile.RootRelPath()
 		newPhoto.PhotoName = unstackFile.BasePrefix(false)
 
-		if createErr := newPhoto.Create(); createErr != nil {
+		// The photo row is created even if its details could not be saved; indexing the files saves them again.
+		if createErr := newPhoto.Create(); createErr != nil && !errors.Is(createErr, entity.ErrDetailsNotSaved) {
 			log.Errorf("photo: %s (unstack %s)", createErr.Error(), clean.Log(baseName))
 			AbortSaveFailed(c)
 			return
