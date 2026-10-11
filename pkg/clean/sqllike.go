@@ -31,19 +31,10 @@ func sqlNoMatch(dialect string, n int) string {
 	return "(1 = 0" + strings.Repeat(" AND ? IS NULL", n) + ")"
 }
 
-// sqlText returns col as text: binary columns are decoded on PostgreSQL, so that the text functions
-// and patterns of the other conditions apply to them.
-func sqlText(dialect string, binary bool, col string) string {
-	if binary && dialect == dsn.DialectPostgreSQL {
-		return fmt.Sprintf("convert_from(%s, 'UTF8')", col)
-	}
-
-	return col
-}
-
 // SqlLikeCond returns "col LIKE ? ESCAPE '!'" for the SQL dialect, or a condition that matches nothing
 // if col is not a plain column name. Set binary for VARBINARY columns. PostgreSQL compares text columns
-// with ILIKE and decoded binary columns with LIKE, so letter case matters as it does on MariaDB.
+// with ILIKE and binary columns, text compared byte by byte there, with LIKE, so letter case matters as it
+// does on MariaDB.
 func SqlLikeCond(dialect string, binary bool, col string) string {
 	if SqlColumn(col) == "" {
 		return sqlNoMatch(dialect, 1)
@@ -55,7 +46,7 @@ func SqlLikeCond(dialect string, binary bool, col string) string {
 		op = "ILIKE"
 	}
 
-	return fmt.Sprintf("%s %s ? ESCAPE '%s'", sqlText(dialect, binary, col), op, SqlLikeEscape)
+	return fmt.Sprintf("%s %s ? ESCAPE '%s'", col, op, SqlLikeEscape)
 }
 
 // SqlLikeAny returns a condition that matches if any of the columns is LIKE the bound value, with one
@@ -89,7 +80,7 @@ func SqlLikeExpr(dialect string, binary bool, col string) string {
 
 	e := SqlLikeEscape
 
-	return fmt.Sprintf("REPLACE(REPLACE(REPLACE(%s, '%s', '%s'), '%%', '%s%%'), '_', '%s_')", sqlText(dialect, binary, col), e, e+e, e, e)
+	return fmt.Sprintf("REPLACE(REPLACE(REPLACE(%s, '%s', '%s'), '%%', '%s%%'), '_', '%s_')", col, e, e+e, e, e)
 }
 
 // SqlPrefixCond returns a condition matching the values of col that start with a prefix, compared
@@ -100,9 +91,7 @@ func SqlPrefixCond(dialect string, binary bool, col string) string {
 		return sqlNoMatch(dialect, 3)
 	}
 
-	text := sqlText(dialect, binary, col)
-
-	return fmt.Sprintf("(%s LIKE ? ESCAPE '%s' AND SUBSTR(%s, 1, LENGTH(?)) = ?)", text, SqlLikeEscape, text)
+	return fmt.Sprintf("(%s LIKE ? ESCAPE '%s' AND SUBSTR(%s, 1, LENGTH(?)) = ?)", col, SqlLikeEscape, col)
 }
 
 // SqlPrefixArgs returns the arguments of a SqlPrefixCond condition for the given prefix.

@@ -40,7 +40,7 @@ func TestSqlLikeCond(t *testing.T) {
 	})
 	t.Run("PostgreSQL", func(t *testing.T) {
 		assert.Equal(t, "user_name ILIKE ? ESCAPE '!'", SqlLikeCond(dsn.DialectPostgreSQL, false, "user_name"))
-		assert.Equal(t, "convert_from(photos.photo_path, 'UTF8') LIKE ? ESCAPE '!'", SqlLikeCond(dsn.DialectPostgreSQL, true, "photos.photo_path"))
+		assert.Equal(t, "photos.photo_path LIKE ? ESCAPE '!'", SqlLikeCond(dsn.DialectPostgreSQL, true, "photos.photo_path"))
 	})
 	t.Run("InvalidColumn", func(t *testing.T) {
 		for _, d := range sqlDialects {
@@ -60,7 +60,7 @@ func TestSqlLikeExpr(t *testing.T) {
 		}
 	})
 	t.Run("PostgreSQL", func(t *testing.T) {
-		assert.Equal(t, "REPLACE(REPLACE(REPLACE(convert_from(a.path, 'UTF8'), '!', '!!'), '%', '!%'), '_', '!_')", SqlLikeExpr(dsn.DialectPostgreSQL, true, "a.path"))
+		assert.Equal(t, "REPLACE(REPLACE(REPLACE(a.path, '!', '!!'), '%', '!%'), '_', '!_')", SqlLikeExpr(dsn.DialectPostgreSQL, true, "a.path"))
 		assert.Equal(t, "REPLACE(REPLACE(REPLACE(a.title, '!', '!!'), '%', '!%'), '_', '!_')", SqlLikeExpr(dsn.DialectPostgreSQL, false, "a.title"))
 	})
 	t.Run("InvalidColumn", func(t *testing.T) {
@@ -79,7 +79,7 @@ func TestSqlPrefixCond(t *testing.T) {
 	})
 	t.Run("PostgreSQL", func(t *testing.T) {
 		// The prefix is compared case-sensitively, so a binary column is decoded and matched with LIKE.
-		assert.Equal(t, "(convert_from(photos.photo_path, 'UTF8') LIKE ? ESCAPE '!' AND SUBSTR(convert_from(photos.photo_path, 'UTF8'), 1, LENGTH(?)) = ?)",
+		assert.Equal(t, "(photos.photo_path LIKE ? ESCAPE '!' AND SUBSTR(photos.photo_path, 1, LENGTH(?)) = ?)",
 			SqlPrefixCond(dsn.DialectPostgreSQL, true, "photos.photo_path"))
 		assert.Equal(t, "(user_name LIKE ? ESCAPE '!' AND SUBSTR(user_name, 1, LENGTH(?)) = ?)", SqlPrefixCond(dsn.DialectPostgreSQL, false, "user_name"))
 	})
@@ -109,7 +109,7 @@ func TestSqlLikeAny(t *testing.T) {
 	})
 	t.Run("PostgreSQL", func(t *testing.T) {
 		assert.Equal(t, "(user_name ILIKE ? ESCAPE '!' OR user_email ILIKE ? ESCAPE '!')", SqlLikeAny(dsn.DialectPostgreSQL, false, "user_name", "user_email"))
-		assert.Equal(t, "(convert_from(auth_id, 'UTF8') LIKE ? ESCAPE '!')", SqlLikeAny(dsn.DialectPostgreSQL, true, "auth_id"))
+		assert.Equal(t, "(auth_id LIKE ? ESCAPE '!')", SqlLikeAny(dsn.DialectPostgreSQL, true, "auth_id"))
 	})
 	t.Run("InvalidColumn", func(t *testing.T) {
 		for _, d := range sqlDialects {
@@ -128,11 +128,4 @@ func TestSqlNoMatch(t *testing.T) {
 
 	assert.Equal(t, "(1 = 0 AND CAST(? AS VARCHAR) IS NULL)", sqlNoMatch(dsn.DialectPostgreSQL, 1))
 	assert.Equal(t, 3, strings.Count(sqlNoMatch(dsn.DialectPostgreSQL, 3), "?"))
-}
-
-func TestSqlText(t *testing.T) {
-	assert.Equal(t, "convert_from(path, 'UTF8')", sqlText(dsn.DialectPostgreSQL, true, "path"))
-	assert.Equal(t, "title", sqlText(dsn.DialectPostgreSQL, false, "title"))
-	assert.Equal(t, "path", sqlText(dsn.DialectMySQL, true, "path"))
-	assert.Equal(t, "path", sqlText(dsn.DialectSQLite, true, "path"))
 }

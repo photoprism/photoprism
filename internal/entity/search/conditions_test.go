@@ -24,9 +24,9 @@ func TestPathLike(t *testing.T) {
 		// SQLite LIKE is already ASCII case-insensitive, so a plain LIKE suffices.
 		assert.Equal(t, "albums.album_path LIKE ? ESCAPE '!'", PathLike(dsn.DialectSQLite, "albums.album_path"))
 	})
-	t.Run("PostgreSQLDecodedILike", func(t *testing.T) {
-		// PostgreSQL stores the path as bytes, so it is decoded and compared with ILIKE.
-		assert.Equal(t, "convert_from(albums.album_path, 'UTF8') ILIKE ? ESCAPE '!'", PathLike(dsn.DialectPostgreSQL, "albums.album_path"))
+	t.Run("PostgreSQLDefaultCollation", func(t *testing.T) {
+		// PostgreSQL compares the path byte by byte, so it is compared with ILIKE in the default collation.
+		assert.Equal(t, `albums.album_path COLLATE "default" ILIKE ? ESCAPE '!'`, PathLike(dsn.DialectPostgreSQL, "albums.album_path"))
 	})
 	t.Run("UnknownDialectFallsBackToPlainLike", func(t *testing.T) {
 		// A future or unknown dialect must not error; it falls back to a plain LIKE.
@@ -43,7 +43,7 @@ func TestLikeExpr(t *testing.T) {
 	})
 	t.Run("PostgreSQL", func(t *testing.T) {
 		assert.Equal(t, "k.keyword ILIKE ? ESCAPE '!'", likeExpr(dsn.DialectPostgreSQL, "k.keyword", false))
-		assert.Equal(t, "convert_from(photos.photo_path, 'UTF8') LIKE ? ESCAPE '!'", likeExpr(dsn.DialectPostgreSQL, "photos.photo_path", true))
+		assert.Equal(t, "photos.photo_path LIKE ? ESCAPE '!'", likeExpr(dsn.DialectPostgreSQL, "photos.photo_path", true))
 	})
 }
 

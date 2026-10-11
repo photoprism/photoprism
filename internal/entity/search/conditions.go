@@ -13,14 +13,14 @@ import (
 )
 
 // PathLike returns a case-insensitive likeCond condition for a VARBINARY path column such as album_path
-// or photo_path, which MySQL compares byte-exact, so that a query in any letter case finds a path.
-// SQLite LIKE is already ASCII case-insensitive. The dialect is one of the dsn.Dialect constants.
+// or photo_path, which MySQL and PostgreSQL compare byte by byte, so that a query in any letter case finds
+// a path. SQLite LIKE is already ASCII case-insensitive. The dialect is one of the dsn.Dialect constants.
 func PathLike(dialect, col string) string {
 	switch dialect {
 	case dsn.DialectMySQL:
 		return likeExpr(dialect, "CONVERT("+col+" USING utf8mb4) COLLATE utf8mb4_general_ci", false)
 	case dsn.DialectPostgreSQL:
-		return likeExpr(dialect, "convert_from("+col+", 'UTF8')", false)
+		return likeExpr(dialect, col+` COLLATE "default"`, false)
 	default:
 		return likeExpr(dialect, col, true)
 	}
@@ -33,12 +33,10 @@ func likeCond(col string, binary bool) string {
 }
 
 // likeExpr returns the likeCond condition for an SQL dialect. Set binary for VARBINARY columns, which
-// PostgreSQL decodes and compares case-sensitively with LIKE, while it compares text with ILIKE.
+// PostgreSQL compares case-sensitively with LIKE, while it compares text with ILIKE.
 func likeExpr(dialect, col string, binary bool) string {
 	switch {
-	case dialect == dsn.DialectPostgreSQL && binary:
-		return "convert_from(" + col + ", 'UTF8') LIKE ? ESCAPE '" + clean.SqlLikeEscape + "'"
-	case dialect == dsn.DialectPostgreSQL:
+	case dialect == dsn.DialectPostgreSQL && !binary:
 		return col + " ILIKE ? ESCAPE '" + clean.SqlLikeEscape + "'"
 	default:
 		return col + " LIKE ? ESCAPE '" + clean.SqlLikeEscape + "'"
