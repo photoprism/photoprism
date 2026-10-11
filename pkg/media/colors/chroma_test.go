@@ -18,10 +18,24 @@ func TestChroma_Percent(t *testing.T) {
 		perception := ColorPerception{Colors: Colors{Orange, Lime, Cyan}, MainColor: Cyan, Luminance: lMap, Chroma: 127}
 		assert.Equal(t, int16(100), perception.Chroma.Percent())
 	})
+}
+
+func TestChroma_Value(t *testing.T) {
 	t.Run("Monochrome", func(t *testing.T) {
-		assert.Equal(t, int16(1), Chroma(0).Percent())
-		assert.Equal(t, int16(1), Chroma(1).Percent())
-		assert.Equal(t, int16(1), Chroma(-1).Percent())
+		assert.Equal(t, int16(1), Chroma(0).Value())
+		assert.Equal(t, int16(1), Chroma(-1).Value())
+	})
+	t.Run("NearlyGray", func(t *testing.T) {
+		assert.Equal(t, int16(2), Chroma(1).Value())
+	})
+	t.Run("Fifteen", func(t *testing.T) {
+		assert.Equal(t, int16(16), Chroma(15).Value())
+	})
+	t.Run("Maximum", func(t *testing.T) {
+		assert.Equal(t, int16(99), Chroma(98).Value())
+		assert.Equal(t, int16(100), Chroma(99).Value())
+		assert.Equal(t, int16(100), Chroma(100).Value())
+		assert.Equal(t, int16(100), Chroma(127).Value())
 	})
 }
 
@@ -49,11 +63,11 @@ func TestChroma_Int(t *testing.T) {
 	})
 	t.Run("ChromaOne", func(t *testing.T) {
 		perception := ColorPerception{Colors: Colors{Orange, Lime, Cyan}, MainColor: Cyan, Luminance: lMap, Chroma: -1}
-		assert.Equal(t, 1, perception.Chroma.Int())
+		assert.Equal(t, 0, perception.Chroma.Int())
 	})
 	t.Run("ChromaNum127", func(t *testing.T) {
 		perception := ColorPerception{Colors: Colors{Orange, Lime, Cyan}, MainColor: Cyan, Luminance: lMap, Chroma: -127}
-		assert.Equal(t, 1, perception.Chroma.Int())
+		assert.Equal(t, 0, perception.Chroma.Int())
 	})
 	t.Run("ChromaNum100", func(t *testing.T) {
 		perception := ColorPerception{Colors: Colors{Orange, Lime, Cyan}, MainColor: Cyan, Luminance: lMap, Chroma: 100}

@@ -1,10 +1,12 @@
 package entity
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -79,7 +81,7 @@ func TestColors_Create(t *testing.T) {
 	})
 }
 
-// TestColors_Migrations checks that the migrations of stored colors, chroma and diff values map 0 to the
+// TestColors_Migrations checks that the migrations of stored colors and diff values map 0 to the
 // current values, leave other values unchanged, and change nothing when they run again.
 func TestColors_Migrations(t *testing.T) {
 	conn, ok := dbConn.(*DbConn)
@@ -90,7 +92,7 @@ func TestColors_Migrations(t *testing.T) {
 		t.Skip("no stored values of earlier releases on PostgreSQL")
 	}
 
-	ids := []string{"20261010-000001", "20261010-000002", "20261010-000003"}
+	ids := []string{"20261010-000002", "20261010-000003"}
 	statements := make(map[string][]string)
 
 	for _, m := range migrate.Dialects[conn.Driver] {
@@ -151,9 +153,9 @@ func TestColors_Migrations(t *testing.T) {
 			chroma []int16
 			diff   []int
 		}{
-			{"Black", black, 16, blackFiles, []int16{1}, []int{-1}},
-			{"Grey", grey, -1, greyFiles, []int16{1, 1}, []int{700, -1}},
-			{"Unknown", unknown, -1, unknownFiles, []int16{-1}, []int{-1}},
+			{"Black", black, 16, blackFiles, []int16{0}, []int{-1}},
+			{"Grey", grey, -1, greyFiles, []int16{0, 0}, []int{700, -1}},
+			{"Unknown", unknown, -1, unknownFiles, []int16{0}, []int{-1}},
 			{"NoFiles", noFiles, -1, nil, nil, nil},
 			{"Measured", measured, 9, measuredFiles, []int16{32}, []int{512}},
 		} {
@@ -175,3 +177,88 @@ func TestColors_Migrations(t *testing.T) {
 	run()
 	check()
 }
+
+// TestColors_ChromaMigration checks that the chroma migration stores percent plus one, and keeps 1 in
+// libraries where an earlier version of it already stored 1 for both 0 and 1 percent.
+func TestColors_ChromaMigration(t *testing.T) {
+	conn, ok := dbConn.(*DbConn)
+	require.True(t, ok, "test database provider")
+
+	var statements []string
+
+	for _, m := range migrate.Dialects[conn.Driver] {
+		if m.ID == "20261011-000001" {
+			statements = m.Statements
+		}
+	}
+
+	require.NotEmpty(t, statements)
+
+	photo := NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID(PhotoUID)
+	createShapePhoto(t, &photo)
+
+	cases := []struct {
+		name    string
+		colors  string
+		stored  int16
+		stable  int16
+		upgrade int16
+	}{
+		{"Monochrome", "111111111", 0, 1, 1},
+		{"NoColors", "", 0, -1, -1},
+		{"Unknown", "", -1, -1, -1},
+		{"NearlyGray", "111111111", 1, 2, 1},
+		{"Low", "123456789", 4, 5, 5},
+		{"High", "123456789", 98, 99, 99},
+		{"Clamped", "123456789", 99, 100, 100},
+		{"Maximum", "123456789", 100, 100, 100},
+	}
+
+	files := make([]*File, len(cases))
+
+	for i, c := range cases {
+		files[i] = newColorFile(t, &photo, File{FileColors: c.colors})
+		require.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", files[i].ID).UpdateColumn("file_chroma", c.stored).Error)
+	}
+
+	// run executes the migration in a transaction that is rolled back, as it changes every file.
+	run := func(t *testing.T, upgraded bool) {
+		err := UnscopedDb().Transaction(func(tx *gorm.DB) error {
+			require.NoError(t, tx.Where("id = ?", "20261010-000001").Delete(&migrate.Migration{}).Error)
+
+			if upgraded {
+				require.NoError(t, tx.Create(&migrate.Migration{ID: "20261010-000001", Dialect: conn.Driver, Stage: "main", StartedAt: Now()}).Error)
+			}
+
+			for _, s := range statements {
+				require.NoError(t, tx.Exec(s).Error)
+			}
+
+			for i, c := range cases {
+				var found File
+				require.NoError(t, tx.Where("id = ?", files[i].ID).First(&found).Error)
+
+				if upgraded {
+					assert.Equal(t, c.upgrade, found.FileChroma, c.name)
+				} else {
+					assert.Equal(t, c.stable, found.FileChroma, c.name)
+				}
+			}
+
+			return errRollbackColors
+		})
+
+		require.ErrorIs(t, err, errRollbackColors)
+	}
+
+	t.Run("Stable", func(t *testing.T) {
+		run(t, false)
+	})
+	t.Run("Upgraded", func(t *testing.T) {
+		run(t, true)
+	})
+}
+
+// errRollbackColors rolls back the transaction of a migration test.
+var errRollbackColors = errors.New("rollback")

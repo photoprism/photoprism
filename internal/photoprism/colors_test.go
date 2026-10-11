@@ -87,7 +87,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 			t.Log(p, err)
 
 			assert.Nil(t, err)
-			assert.True(t, p.Chroma.Int() >= 1)
+			assert.True(t, p.Chroma.Int() >= 0)
 			assert.True(t, p.Chroma.Int() <= 100)
 			assert.NotEmpty(t, p.MainColor.Name())
 

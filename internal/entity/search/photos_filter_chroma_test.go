@@ -48,18 +48,6 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 		assert.NotContains(t, uids, mono)
 		assert.Contains(t, uids, low)
 	})
-	t.Run("EarlierMono", func(t *testing.T) {
-		// Earlier versions stored 0 for monochrome files.
-		earlier := entity.PhotoFixtures.Get("Photo12").PhotoUID
-		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", earlier).UpdateColumn("file_chroma", 0).Error)
-		t.Cleanup(func() {
-			_ = entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", earlier).UpdateColumn("file_chroma", 1).Error
-		})
-
-		assert.Contains(t, find(t, "mono:true"), earlier)
-		assert.NotContains(t, find(t, "chroma:4"), earlier)
-		assert.NotContains(t, find(t, "chroma:20"), earlier)
-	})
 	t.Run("Geo", func(t *testing.T) {
 		f := form.SearchPhotosGeo{Query: "mono:true", Count: 1000}
 		require.NoError(t, f.ParseQueryString())
@@ -72,27 +60,8 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 			var chroma []int16
 			require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", r.PhotoUID).Pluck("file_chroma", &chroma).Error)
 			require.NotEmpty(t, chroma)
-			assert.LessOrEqual(t, chroma[0], int16(1), "chroma of %s", r.PhotoUID)
-			assert.GreaterOrEqual(t, chroma[0], int16(0), "chroma of %s", r.PhotoUID)
+			assert.Equal(t, int16(1), chroma[0], "chroma of %s", r.PhotoUID)
 		}
-
-		// A monochrome value stored by earlier versions is found too.
-		earlier := results[0].PhotoUID
-		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", earlier).UpdateColumn("file_chroma", 0).Error)
-		t.Cleanup(func() {
-			_ = entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", earlier).UpdateColumn("file_chroma", 1).Error
-		})
-
-		results, err = PhotosGeo(f)
-		require.NoError(t, err)
-
-		uids := make([]string, 0, len(results))
-
-		for _, r := range results {
-			uids = append(uids, r.PhotoUID)
-		}
-
-		assert.Contains(t, uids, earlier)
 
 		// Low chroma values exclude monochrome files.
 		lowChroma := form.SearchPhotosGeo{Query: "chroma:4", Count: 1000}
@@ -106,7 +75,6 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 			require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", r.PhotoUID).Pluck("file_chroma", &chroma).Error)
 			require.NotEmpty(t, chroma)
 			assert.Greater(t, chroma[0], int16(1), "chroma of %s", r.PhotoUID)
-			assert.NotEqual(t, earlier, r.PhotoUID)
 		}
 	})
 	t.Run("HighChroma", func(t *testing.T) {
@@ -114,5 +82,25 @@ func TestPhotos_ChromaFilters(t *testing.T) {
 		assert.NotContains(t, uids, mono)
 		assert.NotContains(t, uids, low)
 		assert.NotEmpty(t, uids)
+	})
+	t.Run("Percent", func(t *testing.T) {
+		// Values are stored as percent plus one, and the filters refer to the percentage.
+		boundary := entity.PhotoFixtures.Get("Photo12").PhotoUID
+		set := func(chroma int16) {
+			require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", boundary).UpdateColumn("file_chroma", chroma).Error)
+		}
+		t.Cleanup(func() { set(1) })
+
+		set(2)
+		assert.NotContains(t, find(t, "mono:true"), boundary, "1%")
+		assert.Contains(t, find(t, "chroma:4"), boundary, "1%")
+		set(5)
+		assert.Contains(t, find(t, "chroma:4"), boundary, "4%")
+		set(6)
+		assert.NotContains(t, find(t, "chroma:4"), boundary, "5%")
+		set(21)
+		assert.NotContains(t, find(t, "chroma:20"), boundary, "20%")
+		set(22)
+		assert.Contains(t, find(t, "chroma:20"), boundary, "21%")
 	})
 }
