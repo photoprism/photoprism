@@ -19,7 +19,7 @@ var mysqlHexDefault = regexp.MustCompile(`^(?i)x'([0-9a-f]*)'$`)
 // mysqlDataType matches the base name and length of a column type, e.g. varchar(160).
 var mysqlDataType = regexp.MustCompile(`^([a-z]+)(?:\((\d+)[^)]*\))?`)
 
-// mysqlDialector is the MySQL/MariaDB dialector with a migrator that reads binary defaults as text.
+// mysqlDialector is the MySQL/MariaDB dialector with a migrator that keeps existing columns compatible.
 type mysqlDialector struct {
 	*mysql.Dialector
 }
@@ -29,8 +29,8 @@ func (d mysqlDialector) Migrator(db *gorm.DB) gorm.Migrator {
 	return mysqlMigrator{Migrator: d.Dialector.Migrator(db).(mysql.Migrator)}
 }
 
-// mysqlMigrator compares column defaults of VARBINARY columns with their text value, as MariaDB
-// reports them as hexadecimal literals and AutoMigrate would otherwise alter them on every start.
+// mysqlMigrator reads binary defaults as text, as MariaDB reports them as hexadecimal literals, and
+// alters existing columns only in ways that cannot truncate or convert their values.
 type mysqlMigrator struct {
 	mysql.Migrator
 }

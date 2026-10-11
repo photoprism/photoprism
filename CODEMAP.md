@@ -178,7 +178,7 @@ Common How‑Tos
   - Tests: cover CLI/env/file precedence (see `internal/config/test.go` helpers)
 
 - Touch the DB schema
-  - Use GORM auto-migration, or add a custom migration in `internal/entity/migrate/<dialect>/...` and run `go generate` or `make generate` (runs `go generate` for all packages) 
+  - Use GORM auto-migration (on MariaDB it does not shrink columns or change their type), or add a custom migration in `internal/entity/migrate/<dialect>/...` and run `go generate` or `make generate` (runs `go generate` for all packages) 
   - Bump/review version gates in `migrate.Version` usage via `config_db.go`
   - Tests: run against SQLite by default; for MySQL cases, gate appropriately
 
