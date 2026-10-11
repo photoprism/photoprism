@@ -859,10 +859,35 @@ func TestIndexRelated_ArchivedBackup(t *testing.T) {
 
 		visited := false
 		for _, entry := range hook.AllEntries() {
-			visited = visited || strings.Contains(entry.Message, "related jpg file "+token+"/clip.mp4.jpg")
+			visited = visited || strings.Contains(entry.Message, string(IndexArchived)+" related jpg file "+token+"/clip.mp4.jpg")
 		}
-		assert.True(t, visited, "related preview visited")
+		assert.True(t, visited, "related preview skipped with the archived photo")
+		assert.Equal(t, int64(1), countPhotos())
 	})
+	for _, rescan := range []bool{true, false} {
+		name := "NewRelatedFile"
+		if rescan {
+			name += "Rescan"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			// A new picture whose name does not match the photo or its backup is linked only by the photo UID,
+			// so it is skipped together with the archived photo rather than added as another photo.
+			jpeg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+			require.NoError(t, err)
+			editName := filepath.Join(dir, "clip_edit.jpg")
+			require.NoError(t, os.WriteFile(editName, append(jpeg, []byte(token+name)...), fs.ModeFile)) //nolint:gosec // G703: test-owned path
+			t.Cleanup(func() { _ = os.Remove(editName) })
+
+			result := indexClip(true, rescan)
+			require.True(t, result.Success(), "%s", result.Err)
+			assert.Equal(t, int64(1), countPhotos())
+
+			var files int64
+			require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_name = ?", token+"/clip_edit.jpg").Count(&files).Error)
+			assert.Zero(t, files)
+		})
+	}
 }
 
 func TestIndexRelated_BackupQuality(t *testing.T) {
@@ -875,8 +900,9 @@ func TestIndexRelated_BackupQuality(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() { SetConfig(oldCfg) })
 
-	// indexBackup indexes a picture whose backup has the given photo UID, quality line and archive date.
-	indexBackup := func(t *testing.T, photoUID, quality string, skipArchived bool) (IndexResult, string, string) {
+	// indexBackup indexes a picture whose backup has the given photo UID, quality line and archive date,
+	// together with the related pictures named in extra.
+	indexBackup := func(t *testing.T, photoUID, quality string, skipArchived bool, extra ...string) (IndexResult, string, string) {
 		token := rnd.Base36(8)
 		dir := filepath.Join(cfg.OriginalsPath(), token)
 
@@ -892,10 +918,16 @@ func TestIndexRelated_BackupQuality(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "photo.yml"), []byte("UID: "+photoUID+"\nType: image\nTitle: Backup Quality\n"+quality+
 			"TakenAt: 2021-02-20T01:29:16Z\nDeletedAt: 2022-10-18T08:15:21Z\n"), fs.ModeFile))
 
+		for _, name := range extra {
+			require.NoError(t, os.WriteFile(filepath.Join(dir, name), append(jpeg, []byte(token+name)...), fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		}
+
 		mainFile, err := NewMediaFile(filepath.Join(dir, "photo.jpg"))
 		require.NoError(t, err)
 		related, err := mainFile.RelatedFiles(true)
 		require.NoError(t, err)
+		require.Equal(t, mainFile.FileName(), related.Main.FileName())
+		require.Equal(t, 2+len(extra), related.Len(), "related files")
 
 		ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
 		opt := NewIndexOptions("/", false, false, true, false, skipArchived, cfg)
@@ -926,14 +958,20 @@ func TestIndexRelated_BackupQuality(t *testing.T) {
 		require.True(t, result.Success(), "%s", result.Err)
 		photo := findPhoto(t, uid)
 
-		result, token, _ := indexBackup(t, uid, "", true)
+		// The related picture does not match the photo or its backup, so only the photo UID links it.
+		result, token, _ := indexBackup(t, uid, "", true, "photo_edit.jpg")
 		assert.Equal(t, IndexArchived, result.Status)
 		assert.Equal(t, photo.ID, result.PhotoID)
 		assert.Equal(t, uid, result.PhotoUID, "related files find the photo by its UID")
 
-		var files int64
-		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND file_name LIKE ?", photo.ID, token+"/%").Count(&files).Error)
+		// The related picture is skipped together with the archived photo, so no file or photo is added.
+		var files, photos int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_name LIKE ?", token+"/%").Count(&files).Error)
 		assert.Zero(t, files)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ?", token).Count(&photos).Error)
+		assert.Zero(t, photos)
+		stored := findPhoto(t, uid)
+		assert.True(t, stored.IsArchived(), "photo stays archived")
 	})
 	t.Run("Removed", func(t *testing.T) {
 		// A backup with a quality of -1 belongs to a photo that was removed automatically, so it is restored.
@@ -943,6 +981,92 @@ func TestIndexRelated_BackupQuality(t *testing.T) {
 		photo := findPhoto(t, uid)
 		assert.False(t, photo.IsDeleted(), "photo is restored")
 	})
+}
+
+// TestIndexRelated_BackupUID checks that a new file whose backup names a photo in the database is added to it,
+// and becomes its primary file, so that the photo path follows it, only if the photo has no valid preview.
+func TestIndexRelated_BackupUID(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := newIndexRelatedTestConfig(t, "index-related-backup-uid")
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	jpeg, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	require.NoError(t, err)
+
+	// indexPicture indexes a picture with unique content in a new folder, with a backup that has the photo UID.
+	indexPicture := func(t *testing.T, name, photoUID string) (IndexResult, string) {
+		token := rnd.Base36(8)
+		dir := filepath.Join(cfg.OriginalsPath(), token)
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, name+".jpg"), append(jpeg, []byte(token)...), fs.ModeFile)) //nolint:gosec // G703: test-owned path
+		require.NoError(t, os.WriteFile(filepath.Join(dir, name+".yml"), []byte("UID: "+photoUID+"\nType: image\nTitle: Backup UID\n"+
+			"TakenAt: 2021-02-20T01:29:16Z\n"), fs.ModeFile))
+
+		mainFile, err := NewMediaFile(filepath.Join(dir, name+".jpg"))
+		require.NoError(t, err)
+		related, err := mainFile.RelatedFiles(true)
+		require.NoError(t, err)
+
+		ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+		opt := NewIndexOptions("/", false, false, true, false, false, cfg)
+
+		return IndexRelated(related, ind, opt), token
+	}
+
+	// findFile returns the stored file with the given name.
+	findFile := func(t *testing.T, fileName string) entity.File {
+		file := entity.File{}
+		require.NoError(t, entity.UnscopedDb().Where("file_name = ?", fileName).First(&file).Error)
+		return file
+	}
+
+	for _, validPreview := range []bool{true, false} {
+		name := "ValidPreview"
+		if !validPreview {
+			name = "NoValidPreview"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			photoUID := rnd.GenerateUID(entity.PhotoUID)
+			result, firstToken := indexPicture(t, "photo", photoUID)
+			require.True(t, result.Success(), "%s", result.Err)
+
+			first := findFile(t, firstToken+"/photo.jpg")
+			require.True(t, first.FilePrimary)
+
+			if !validPreview {
+				require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", first.ID).UpdateColumn("file_error", "broken").Error)
+			}
+
+			// A new file in another folder, whose backup has the same photo UID, is added to the photo.
+			result, token := indexPicture(t, "other", photoUID)
+			require.True(t, result.Success(), "%s", result.Err)
+
+			photo := entity.Photo{}
+			require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", photoUID).First(&photo).Error)
+
+			var photos int64
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ? OR photo_path = ?", firstToken, token).Count(&photos).Error)
+			assert.Equal(t, int64(1), photos, "no other photo")
+
+			other := findFile(t, token+"/other.jpg")
+			assert.Equal(t, photo.ID, other.PhotoID)
+			assert.Equal(t, !validPreview, other.FilePrimary)
+
+			if validPreview {
+				assert.Equal(t, firstToken, photo.PhotoPath, "path stays with the valid primary")
+				assert.Equal(t, "photo", photo.PhotoName)
+			} else {
+				assert.Equal(t, token, photo.PhotoPath, "path follows the new primary")
+				assert.Equal(t, "other", photo.PhotoName)
+			}
+		})
+	}
 }
 
 func TestIndexRelated_DetailsNotSaved(t *testing.T) {

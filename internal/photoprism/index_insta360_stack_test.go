@@ -1162,6 +1162,78 @@ func TestImport_Insta360Capture(t *testing.T) {
 	assert.Equal(t, 640, preview().FileWidth)
 }
 
+// TestImportWorker_Insta360ArchivedCapture verifies that importing the files of a capture whose photo is
+// archived, when archived photos are skipped, leaves its combined preview as it is.
+func TestImportWorker_Insta360ArchivedCapture(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	folder := "insta360archived"
+	cfg := newInsta360StackConfig(t, folder, false)
+	importDir := filepath.Join(cfg.ImportPath(), folder)
+	names := []string{insta360StackLeft, insta360StackRight, insta360StackProxy}
+
+	for _, name := range names {
+		writeInsta360StackMedia(t, cfg, importDir, name)
+	}
+
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+	imp.Start(ImportOptionsMove(importDir, folder))
+
+	stored := func(originalName string) (result entity.File) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().First(&result, "file_root = ? AND original_name = ?", entity.RootOriginals, originalName).Error)
+		return result
+	}
+
+	left := stored(insta360StackLeft)
+	previewName := filepath.Join(cfg.SidecarPath(), left.FileName+".jpg")
+	previewWidth := func() int {
+		t.Helper()
+		preview, err := NewMediaFile(previewName)
+		require.NoError(t, err)
+		return preview.Width()
+	}
+	require.Equal(t, 640, previewWidth(), "combined preview")
+
+	photo := entity.FindPhoto(entity.Photo{ID: left.PhotoID})
+	require.NotNil(t, photo)
+	require.NoError(t, photo.Archive())
+
+	// The files are imported again from their original names, e.g. after the originals were removed, and
+	// restored to their recorded names. A preview made from the left lens only marks a forced replacement.
+	reimportDir := filepath.Join(cfg.ImportPath(), folder+"-again")
+	require.NoError(t, fs.MkdirAll(reimportDir))
+
+	for _, name := range names {
+		require.NoError(t, os.Rename(filepath.Join(cfg.OriginalsPath(), stored(name).FileName), filepath.Join(reimportDir, name)))
+	}
+
+	writeInsta360Photo(t, cfg, previewName, "320x320")
+
+	mainFile, err := NewMediaFile(filepath.Join(reimportDir, insta360StackLeft))
+	require.NoError(t, err)
+	related, err := mainFile.RelatedFiles(false)
+	require.NoError(t, err)
+	require.Equal(t, mainFile.FileName(), related.Main.FileName())
+
+	jobs := make(chan ImportJob, 1)
+	jobs <- ImportJob{FileName: mainFile.FileName(), Related: related, IndexOpt: IndexOptionsAll(cfg),
+		ImportOpt: ImportOptionsMove(reimportDir, folder), Imp: imp}
+	close(jobs)
+	ImportWorker(jobs)
+
+	// The files are back at their recorded names, and the photo stays archived with its preview unchanged.
+	assert.FileExists(t, filepath.Join(cfg.OriginalsPath(), left.FileName))
+	assert.Equal(t, 320, previewWidth(), "preview of an archived capture is not replaced")
+
+	archived := entity.FindPhoto(entity.Photo{ID: left.PhotoID})
+	require.NotNil(t, archived)
+	assert.True(t, archived.IsArchived(), "photo stays archived")
+}
+
 // TestIndex_Insta360FirstIndexMetadata verifies that a capture and its proxy video get their own dimensions,
 // duration and codec when they are indexed for the first time.
 func TestIndex_Insta360FirstIndexMetadata(t *testing.T) {
