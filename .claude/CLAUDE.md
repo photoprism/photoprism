@@ -61,6 +61,8 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
   `make -C plus test-mariadb`, `make -C pro test-mariadb`, `make -C portal test-mariadb`.
 - For a targeted run, export the same `PHOTOPRISM_TEST_DRIVER` and `PHOTOPRISM_TEST_DSN` that
   `run-test-mariadb` sets in the `Makefile`, then call `go test` on the packages you want.
+- PostgreSQL (experimental) works the same way: `make test-postgres` and `make -C <edition> test-postgres`
+  run against the optional `postgres` compose service, and `make reset-postgres-acceptance` drops their databases.
 
 **Reset test databases:**
 - `make reset-testdb` — the one to reach for: deletes the SQLite test database files, including
@@ -99,7 +101,7 @@ Migration files live in `internal/entity/migrate/`.
 
 ## Architecture Overview
 
-PhotoPrism is a self-hosted photo management app. The backend is Go, the frontend is Vue 3 + Vuetify 4, and the database is MariaDB or SQLite (via GORM).
+PhotoPrism is a self-hosted photo management app. The backend is Go, the frontend is Vue 3 + Vuetify 4, and the database is MariaDB or SQLite (via GORM), with experimental PostgreSQL support.
 
 ### Backend (`internal/`, `pkg/`, `cmd/`)
 

@@ -2,7 +2,7 @@
 
 **Last Updated:** October 11, 2026
 
-This package contains the dialect-specific SQL migrations that complement GORM's schema auto-migration during database initialization. The SQL source files live in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/), and [`generate.go`](generate.go) embeds them into the generated [`dialect_mysql.go`](dialect_mysql.go) and [`dialect_sqlite3.go`](dialect_sqlite3.go) files.
+This package contains the dialect-specific SQL migrations that complement GORM's schema auto-migration during database initialization. The SQL source files live in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/), and [`generate.go`](generate.go) embeds them into the generated [`dialect_mysql.go`](dialect_mysql.go) and [`dialect_sqlite3.go`](dialect_sqlite3.go) files. PostgreSQL (experimental) has a registered, empty migration list (`DialectPostgreSQL` in [`dialects.go`](dialects.go)); its schema is created by auto-migration alone.
 
 Files ending in `.pre.sql` run in the `pre` stage before ORM auto-migration, files ending in `.post.sql` run in the `post` stage after all others, and all other migration files run in the `main` stage after auto-migration. Other stage names, and an ID used by more than one file, are rejected when the sources are read.
 

@@ -108,7 +108,7 @@ Configuration & Flags
   - Overage: if `_claim_names.groups` is present and no groups are returned, login fails when required groups are configured; Graph fetch is not implemented yet.
 
 Database & Migrations
-- Driver: GORM v2 (`gorm.io/gorm`, MySQL and SQLite dialectors) opened by `entity.OpenDb` with `entity.GormConfig()`. No `WithContext`. Use `db.Exec(stmt)` for raw SQL. Usage rules: `.claude/rules/go-code-style.md` ("GORM v2 Usage").
+- Driver: GORM v2 (`gorm.io/gorm`, MySQL and SQLite dialectors, plus experimental PostgreSQL through `gorm.io/driver/postgres` with pgx) opened by `entity.OpenDb` with `entity.GormConfig()`. No `WithContext`. Use `db.Exec(stmt)` for raw SQL. Usage rules: `.claude/rules/go-code-style.md` ("GORM v2 Usage").
 - Entities and helpers: `internal/entity/*.go` and subpackages (`query`, `search`, `sortby`; `sqlcount` counts statements in tests). Branch per driver on `entity.DbDialect()`, which returns a `dsn.Dialect*` constant.
 - Migrations engine: `internal/entity/migrate/*` — run via `config.MigrateDb()`; CLI: `photoprism migrate` / `photoprism migrations`.
 - DB init/migrate flow: `internal/config/config_db.go` chooses driver/DSN and opens the connection, then `entity.InitDb(migrate.Opt(...))`; MySQL table options are set on the migration session.

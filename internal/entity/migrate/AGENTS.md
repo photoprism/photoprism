@@ -6,7 +6,7 @@ This file applies to `internal/entity/migrate/`. Read [`README.md`](README.md) h
 
 ## Editing Migrations
 
-- Add or change SQL in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/); never hand-edit the generated [`dialect_mysql.go`](dialect_mysql.go) or [`dialect_sqlite3.go`](dialect_sqlite3.go) files, not even to add a comment. `TestGeneratedDialects` (also `make check-migrations`, part of `make lint`) fails when they differ from what the SQL files generate. Put the reasoning for a migration in the commit message or the specs, since generated files cannot carry it.
+- Add or change SQL in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/); never hand-edit the generated [`dialect_mysql.go`](dialect_mysql.go) or [`dialect_sqlite3.go`](dialect_sqlite3.go) files, not even to add a comment. `TestGeneratedDialects` (also `make check-migrations`, part of `make lint`) fails when they differ from what the SQL files generate. Put the reasoning for a migration in the commit message or the specs, since generated files cannot carry it. PostgreSQL (experimental) has a registered, empty migration list in [`dialects.go`](dialects.go); its schema comes from auto-migration alone.
 - Reuse the same timestamp-based migration ID across dialects for the same logical change.
 - Use `.pre.sql` only when the SQL must run before GORM `AutoMigrate(...)`, typically for renames or shape changes that the ORM must see afterward.
 - Use `.post.sql` for SQL that must run after all `main` migrations. A file name with any other stage, or an ID used twice within a dialect, fails generation.
