@@ -3,11 +3,13 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -198,10 +200,17 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) (err error) {
 		log.Error(err)
 	}
 
+	// New MySQL/MariaDB tables get the options of the existing tables, which are checked on every start.
+	tableDb := withTableOptions(db, list, true)
+
 	// Run ORM auto migrations.
 	if opt.AutoMigrate {
 		// Recreate SQLite tables with legacy column types once, after the pre migrations renamed columns.
 		if err = migrate.ConvertSQLiteSchema(db, list); err != nil {
+			for _, entity = range list {
+				logDuplicateKeys(db, entity)
+			}
+
 			return err
 		}
 
@@ -211,13 +220,14 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) (err error) {
 		}
 
 		for name, entity = range list {
-			if err := autoMigrate(db, entity); err != nil {
+			if err := tableDb.AutoMigrate(entity); err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
 
 				time.Sleep(time.Second)
 
-				if err = autoMigrate(db, entity); err != nil {
+				if err = tableDb.AutoMigrate(entity); err != nil {
 					log.Errorf("migrate: failed migrating %s", clean.Log(name))
+					logDuplicateKeys(db, entity)
 					panic(err)
 				}
 			}
@@ -237,6 +247,43 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) (err error) {
 	return nil
 }
 
+// logDuplicateKeys logs the unique indexes of an entity whose columns hold duplicate values, as the
+// index cannot be created until they are removed, with the query that lists them.
+func logDuplicateKeys(db *gorm.DB, entity any) {
+	stmt := &gorm.Statement{DB: db}
+
+	if err := stmt.Parse(entity); err != nil || !db.Migrator().HasTable(entity) {
+		return
+	}
+
+	for _, idx := range stmt.Schema.ParseIndexes() {
+		if idx.Class != "UNIQUE" || len(idx.Fields) == 0 {
+			continue
+		}
+
+		cols := make([]string, len(idx.Fields))
+		cond := make([]string, len(idx.Fields))
+
+		for i, f := range idx.Fields {
+			cols[i] = stmt.Quote(f.DBName)
+			cond[i] = cols[i] + " IS NOT NULL"
+		}
+
+		list := strings.Join(cols, ", ")
+		query := fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s HAVING COUNT(*) > 1",
+			list, stmt.Quote(stmt.Table), strings.Join(cond, " AND "), list)
+
+		var count int64
+
+		if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) FROM (%s) d", query)).Scan(&count).Error; err != nil || count == 0 {
+			continue
+		}
+
+		event.SystemError([]string{"migrate", "cannot create unique index %s on %s with duplicate values (%d), " +
+			"run \"%s;\" to list them"}, idx.Name, stmt.Table, count, query)
+	}
+}
+
 // Drop drops all database tables of registered entities.
 func (list Tables) Drop(db *gorm.DB) {
 	for _, entity := range list {
@@ -246,24 +293,27 @@ func (list Tables) Drop(db *gorm.DB) {
 	}
 }
 
-// mysqlTableOptions are the table options of new MySQL/MariaDB tables.
-const mysqlTableOptions = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
-
-// withTableOptions returns a session that creates MySQL/MariaDB tables with the utf8mb4 table options.
-func withTableOptions(db *gorm.DB) *gorm.DB {
-	if dsn.DialectFromDriver(db.Name()) == dsn.DialectMySQL {
-		return db.Set("gorm:table_options", mysqlTableOptions)
+// withTableOptions returns a session that creates MySQL/MariaDB tables with InnoDB, utf8mb4 and the collation
+// of the existing tables in the list, and logs a warning for mismatched table options if warn is true.
+func withTableOptions(db *gorm.DB, list Tables, warn bool) *gorm.DB {
+	if dsn.DialectFromDriver(db.Name()) != dsn.DialectMySQL {
+		return db
 	}
 
-	return db
-}
+	tables, err := mysqlTables(db, list)
 
-// autoMigrate creates or updates the table of an entity.
-func autoMigrate(db *gorm.DB, entity any) error {
-	return withTableOptions(db).AutoMigrate(entity)
+	if err != nil {
+		log.Debugf("migrate: %s (find table options)", err)
+	} else if warn {
+		warnMysqlTables(tables)
+	}
+
+	options := mysqlTableOptions(mysqlTableCollation(tables))
+
+	return db.Session(&gorm.Session{}).Set("gorm:table_options", options).Session(&gorm.Session{})
 }
 
 // CreateTable creates the table of an entity, including its indexes.
 func CreateTable(db *gorm.DB, entity any) error {
-	return withTableOptions(db).Migrator().CreateTable(entity)
+	return withTableOptions(db, Entities, false).Migrator().CreateTable(entity)
 }

@@ -6,12 +6,15 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/entity/sqlcount"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -163,6 +166,66 @@ func TestTables_Migrate(t *testing.T) {
 		err := Tables{"migrate_fail_test": &migrateFailTest{}}.Migrate(Db(), migrate.Opt(true, false, nil))
 		assert.Error(t, err)
 	})
+	t.Run("DuplicateKeys", func(t *testing.T) {
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		require.NoError(t, CreateTable(Db(), &createTableTest{}))
+		require.NoError(t, Db().Migrator().DropIndex(&createTableTest{}, "uix_create_table_test_name"))
+		require.NoError(t, Db().Exec("INSERT INTO create_table_test (name) VALUES ('a'), ('a'), ('b')").Error)
+
+		system := captureSystemErrors(t)
+		err := Tables{"create_table_test": &createTableTest{}}.Migrate(Db(), migrate.Opt(true, false, nil))
+		assert.Error(t, err)
+		require.Len(t, system.AllEntries(), 1)
+		assert.Contains(t, system.LastEntry().Message, "unique index uix_create_table_test_name on create_table_test")
+		assert.Contains(t, system.LastEntry().Message, "duplicate values (1)")
+		assert.Contains(t, system.LastEntry().Message, "HAVING COUNT(*) > 1")
+	})
+	t.Run("ConvertDuplicateKeys", func(t *testing.T) {
+		if DbDialect() != dsn.DialectSQLite {
+			t.Skip("SQLite only")
+		}
+
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		require.NoError(t, Db().Exec("CREATE TABLE create_table_test (id integer PRIMARY KEY AUTOINCREMENT, name varbinary(42))").Error)
+		require.NoError(t, Db().Exec("INSERT INTO create_table_test (name) VALUES ('a'), ('a')").Error)
+
+		system := captureSystemErrors(t)
+		err := Tables{"create_table_test": &createTableTest{}}.Migrate(Db(), migrate.Opt(true, false, nil))
+		assert.Error(t, err)
+		require.Len(t, system.AllEntries(), 1)
+		assert.Contains(t, system.LastEntry().Message, "unique index uix_create_table_test_name on create_table_test")
+	})
+}
+
+// captureSystemErrors replaces the system logger with one that captures its error entries.
+func captureSystemErrors(t *testing.T) *logtest.Hook {
+	t.Helper()
+
+	logger, hook := logtest.NewNullLogger()
+	logger.SetLevel(logrus.ErrorLevel)
+	previous := event.SystemLog
+	event.SystemLog = logger
+	t.Cleanup(func() { event.SystemLog = previous })
+
+	return hook
+}
+
+func TestLogDuplicateKeys(t *testing.T) {
+	t.Run("NoTable", func(t *testing.T) {
+		system := captureSystemErrors(t)
+		logDuplicateKeys(Db(), &createTableTest{})
+		assert.Empty(t, system.AllEntries())
+	})
+	t.Run("NullValues", func(t *testing.T) {
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		require.NoError(t, CreateTable(Db(), &createTableTest{}))
+		require.NoError(t, Db().Migrator().DropIndex(&createTableTest{}, "uix_create_table_test_name"))
+		require.NoError(t, Db().Exec("INSERT INTO create_table_test (name) VALUES (NULL), (NULL), ('a')").Error)
+
+		system := captureSystemErrors(t)
+		logDuplicateKeys(Db(), &createTableTest{})
+		assert.Empty(t, system.AllEntries())
+	})
 }
 
 // fixtureStatement matches the ORM statements with which the default fixtures find or create their rows.
@@ -261,29 +324,49 @@ func (createTableTest) TableName() string {
 
 func TestWithTableOptions(t *testing.T) {
 	t.Run("Dialect", func(t *testing.T) {
-		options, ok := withTableOptions(Db()).Get("gorm:table_options")
+		options, ok := withTableOptions(Db(), Entities, false).Get("gorm:table_options")
 
 		if DbDialect() == dsn.DialectMySQL {
 			assert.True(t, ok)
-			assert.Equal(t, mysqlTableOptions, options)
+			assert.Equal(t, mysqlTableOptions(mysqlDefaultCollation), options)
 		} else {
 			assert.False(t, ok)
 		}
 
 		_, ok = Db().Get("gorm:table_options")
 		assert.False(t, ok, "connection unchanged")
-	})
-}
 
-func TestAutoMigrate(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
-		require.NoError(t, autoMigrate(Db(), &createTableTest{}))
-		assert.True(t, Db().Migrator().HasIndex(&createTableTest{}, "uix_create_table_test_name"))
-		require.NoError(t, autoMigrate(Db(), &createTableTest{}))
+		// A chain that is not wrapped in a session must not be changed either.
+		chain := Db().Model(&Photo{})
+		_ = withTableOptions(chain, Entities, false)
+		_, ok = chain.Get("gorm:table_options")
+		assert.False(t, ok, "chain unchanged")
 	})
-	t.Run("Error", func(t *testing.T) {
-		assert.Error(t, autoMigrate(Db(), &migrateFailTest{}))
+	t.Run("SharedCollation", func(t *testing.T) {
+		if DbDialect() != dsn.DialectMySQL {
+			t.Skip("MySQL/MariaDB only")
+		}
+
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		require.NoError(t, Db().Exec("CREATE TABLE create_table_test (id INT) ENGINE=InnoDB "+
+			"DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci").Error)
+
+		list := Tables{createTableTest{}.TableName(): &createTableTest{}}
+		options, ok := withTableOptions(Db(), list, false).Get("gorm:table_options")
+		assert.True(t, ok)
+		assert.Equal(t, mysqlTableOptions("utf8mb4_general_ci"), options)
+
+		// The collation is adopted only if all tables in the list share it.
+		list[Photo{}.TableName()] = &Photo{}
+		options, _ = withTableOptions(Db(), list, false).Get("gorm:table_options")
+		assert.Equal(t, mysqlTableOptions(mysqlDefaultCollation), options)
+	})
+	t.Run("AutoMigrate", func(t *testing.T) {
+		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
+		require.NoError(t, withTableOptions(Db(), Entities, false).AutoMigrate(&createTableTest{}))
+		assert.True(t, Db().Migrator().HasIndex(&createTableTest{}, "uix_create_table_test_name"))
+		require.NoError(t, withTableOptions(Db(), Entities, false).AutoMigrate(&createTableTest{}))
+		assert.Error(t, withTableOptions(Db(), Entities, false).AutoMigrate(&migrateFailTest{}))
 	})
 }
 
@@ -300,7 +383,7 @@ func TestCreateTable(t *testing.T) {
 		for _, stmt := range statements {
 			if strings.HasPrefix(stmt, "CREATE TABLE") {
 				created++
-				assert.Equal(t, DbDialect() == dsn.DialectMySQL, strings.HasSuffix(stmt, mysqlTableOptions), stmt)
+				assert.Equal(t, DbDialect() == dsn.DialectMySQL, strings.HasSuffix(stmt, mysqlTableOptions(mysqlDefaultCollation)), stmt)
 			}
 		}
 
