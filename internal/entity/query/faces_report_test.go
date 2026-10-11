@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -390,8 +391,15 @@ func TestPersonFilter(t *testing.T) {
 		assert.Equal(t, `%back\slash%`, like)
 	})
 	t.Run("LikeCond", func(t *testing.T) {
-		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name", false))
-		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name", false))
+		// PostgreSQL compares text columns case-insensitively, as MariaDB does with LIKE.
+		op := "LIKE"
+
+		if DbDialect() == dsn.DialectPostgreSQL {
+			op = "ILIKE"
+		}
+
+		assert.Equal(t, "subj_name "+op+" ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name", false))
+		assert.Equal(t, "s.subj_name "+op+" ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name", false))
 	})
 	t.Run("UIDOfAnotherType", func(t *testing.T) {
 		// Only a subject uid selects by id; a marker uid is a name nobody has.

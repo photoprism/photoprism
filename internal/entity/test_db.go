@@ -174,7 +174,7 @@ func createTestDb(conf *mysql.Config, name string) error {
 }
 
 // createPostgresTestDb creates the PostgreSQL database with the specified name if it does not exist,
-// connecting to the database of the DSN to do so.
+// connecting to the database of the DSN to do so, or to the "postgres" database if that does not exist.
 //
 // The name must have been built by testDbName, which restricts it to the
 // characters a database identifier may contain, as it cannot be parameterized.
@@ -195,8 +195,21 @@ func createPostgresTestDb(serverDsn, name string) error {
 
 	var exists bool
 
-	if err = db.QueryRow("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = $1)", name).Scan(&exists); err != nil || exists {
+	if err = db.QueryRow("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = $1)", name).Scan(&exists); err != nil && config.Database != "postgres" {
+		config.Database = "postgres"
+		db = stdlib.OpenDB(*config)
+		defer db.Close()
+		err = db.QueryRow("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = $1)", name).Scan(&exists)
+	}
+
+	if err != nil || exists {
 		return err
+	}
+
+	// Text sorts by Unicode rules, case-insensitively first, as on MariaDB, if the server supports ICU.
+	//nolint:gosec // G701: the name is checked against cleanTestDbName above.
+	if _, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s ENCODING 'UTF8' LOCALE_PROVIDER icu ICU_LOCALE 'und' TEMPLATE template0", name)); err == nil {
+		return nil
 	}
 
 	//nolint:gosec // G701: the name is checked against cleanTestDbName above.

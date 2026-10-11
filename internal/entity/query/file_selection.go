@@ -208,7 +208,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 	// are neither a video, a live photo part, nor a metadata sidecar. NULL columns keep the file.
 	if o.SkipVideoStills {
 		s = s.Where("COALESCE(photos.photo_type = ? AND files.file_root <> ? AND files.media_type NOT IN (?) "+
-			"AND files.file_video = FALSE AND files.file_sidecar = FALSE, 0) = 0",
+			"AND files.file_video = FALSE AND files.file_sidecar = FALSE, FALSE) = FALSE",
 			media.Video.String(), entity.RootOriginals, []string{media.Video.String(), media.Live.String(), media.Sidecar.String()})
 	}
 

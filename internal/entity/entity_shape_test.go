@@ -355,7 +355,8 @@ func countedStatements(t *testing.T, fn func()) []string {
 }
 
 // statementCeiling returns the statement limit for the test database driver, which differ because
-// MariaDB reports no affected rows for an update that changes nothing.
+// MariaDB reports no affected rows for an update that changes nothing; PostgreSQL reports matched rows
+// like SQLite.
 func statementCeiling(t *testing.T, sqlite, mysql int) int {
 	t.Helper()
 
@@ -363,7 +364,7 @@ func statementCeiling(t *testing.T, sqlite, mysql int) int {
 	require.True(t, ok, "test database provider")
 
 	switch conn.Driver {
-	case "sqlite3":
+	case "sqlite3", "postgres":
 		return sqlite
 	case "mysql":
 		return mysql

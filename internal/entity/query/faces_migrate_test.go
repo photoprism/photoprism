@@ -38,8 +38,8 @@ func TestFaceMigrationUnreadableFileCount(t *testing.T) {
 	var want int
 	row := Db().Raw("SELECT COUNT(*) FROM markers m LEFT JOIN files f"+
 		" ON f.file_uid = m.file_uid AND f.deleted_at IS NULL"+
-		" WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.file_uid <> ''"+
-		" AND (f.file_uid IS NULL OR f.file_missing = 1 OR f.file_error <> '')", entity.MarkerFace).Row()
+		" WHERE m.marker_type = ? AND m.marker_invalid = FALSE AND m.file_uid <> ''"+
+		" AND (f.file_uid IS NULL OR f.file_missing = TRUE OR f.file_error <> '')", entity.MarkerFace).Row()
 	require.NoError(t, row.Scan(&want))
 
 	require.Positive(t, want, "fixtures must include a face marker whose file cannot be read")
@@ -278,7 +278,7 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 		// bars: a count with its own copy of them describes a set the rebuild does not use.
 		var assigned int64
 		require.NoError(t, whereEmbeddingModel(Db().Model(&entity.Marker{}).
-			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 			Where("subj_uid <> ''").
 			Where("LENGTH(embeddings_json) > 0"), face.ModelFaceNet).Count(&assigned).Error)
 

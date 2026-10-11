@@ -1382,7 +1382,7 @@ func assertInsta360SinglePrimary(t *testing.T, folder string) {
 
 	var primaries int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
-		Where("photo_id = ? AND file_primary = 1", photoIDs[0]).Count(&primaries).Error)
+		Where("photo_id = ? AND file_primary = TRUE", photoIDs[0]).Count(&primaries).Error)
 	assert.Equal(t, int64(1), primaries)
 }
 

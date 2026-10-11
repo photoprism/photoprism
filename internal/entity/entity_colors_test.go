@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/media/colors"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -83,6 +84,11 @@ func TestColors_Create(t *testing.T) {
 func TestColors_Migrations(t *testing.T) {
 	conn, ok := dbConn.(*DbConn)
 	require.True(t, ok, "test database provider")
+
+	// PostgreSQL databases are created with the current values, so they have no such migrations.
+	if conn.Driver == dsn.DriverPostgres {
+		t.Skip("no stored values of earlier releases on PostgreSQL")
+	}
 
 	ids := []string{"20261010-000001", "20261010-000002", "20261010-000003"}
 	statements := make(map[string][]string)

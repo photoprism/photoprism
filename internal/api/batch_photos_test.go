@@ -531,7 +531,7 @@ func TestBatchPhotosDelete(t *testing.T) {
 
 		var labels, albums int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoLabel{}).Where("photo_id = ? AND label_id = ?", labelVisible.ID, label.ID).Count(&labels).Error)
-		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ? AND hidden = 0", albumVisible.PhotoUID, album.AlbumUID).Count(&albums).Error)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ? AND hidden = FALSE", albumVisible.PhotoUID, album.AlbumUID).Count(&albums).Error)
 		assert.EqualValues(t, 1, labels)
 		assert.EqualValues(t, 1, albums)
 	})

@@ -369,6 +369,8 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.Contains(t, result, "/zz-order")
 	})
 	t.Run("LongNameFailed", func(t *testing.T) {
+		skipInvalidUTF8(t)
+
 		// A failed request names the file, and replacing invalid UTF-8 can make that longer than the column holds.
 		a := newAccount(t, -1)
 		name := "/" + strings.Repeat("\xff", 250) + ".png"
@@ -423,6 +425,8 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 			assert.Equal(t, 2, stored(t, a, "/huge.jpg").Errors)
 		})
 		t.Run("LongName", func(t *testing.T) {
+			skipInvalidUTF8(t)
+
 			// The error names the file, and replacing invalid UTF-8 can make it longer than the column holds.
 			a := newAccount(t, -1)
 			name := "/" + strings.Repeat("\xff", 250) + ".jpg"

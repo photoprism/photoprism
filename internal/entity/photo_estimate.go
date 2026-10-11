@@ -116,6 +116,13 @@ func (m *Photo) EstimateLocation(force bool) {
 			Where("taken_src <> '' AND taken_at BETWEEN ? AND ?", rangeMin, rangeMax).
 			Order(clause.OrderBy{Expression: gorm.Expr("ABS(JulianDay(taken_at) - JulianDay(?))", m.TakenAt)}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
+	case dsn.DialectPostgreSQL:
+		err = UnscopedDb().
+			Where("photo_lat <> 0 AND photo_lng <> 0").
+			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).
+			Where("taken_src <> '' AND taken_at BETWEEN ? AND ?", rangeMin, rangeMax).
+			Order(clause.OrderBy{Expression: gorm.Expr("ABS(EXTRACT(EPOCH FROM (taken_at - CAST(? AS timestamptz))))", m.TakenAt)}).Limit(2).
+			Preload("Place").Find(&mostRecent).Error
 	default:
 		log.Warnf("photo: unsupported sql dialect %s", clean.Log(DbDialect()))
 		return

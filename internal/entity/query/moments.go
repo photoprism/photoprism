@@ -326,7 +326,7 @@ const duplicateMomentsFrom = `albums a JOIN albums b ON a.album_type <> ?
 		AND a.album_type = b.album_type AND a.id > b.id
 		WHERE ((a.album_type = ? AND a.album_filter = b.album_filter)
 			OR (a.album_type <> ? AND (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)))
-		GROUP BY a.album_uid`
+		GROUP BY a.id, a.album_uid`
 
 // RemoveDuplicateMoments deletes generated albums with a duplicate filter, or a
 // duplicate slug for non-folder album types, along with their shares and photo links.

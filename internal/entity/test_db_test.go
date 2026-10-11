@@ -171,6 +171,21 @@ func TestCreatePostgresTestDb(t *testing.T) {
 		// Creating it a second time must not fail.
 		assert.NoError(t, createPostgresTestDb(base, name))
 
+		var provider string
+		require.NoError(t, server.QueryRow("SELECT datlocprovider FROM pg_database WHERE datname = $1", name).Scan(&provider))
+		assert.Equal(t, "i", provider)
+	})
+	t.Run("MissingDatabase", func(t *testing.T) {
+		base, err := url.Parse(testPostgresDSN(t))
+		require.NoError(t, err)
+		name := testDbName("createtestdbmissing", testPostgresDbNameLen)
+		server := openPostgresServer(t, base.String())
+		t.Cleanup(func() { _, _ = server.Exec("DROP DATABASE IF EXISTS " + name) })
+
+		// The database of the DSN does not exist yet, as when a test names a new one.
+		base.Path = "/" + name
+		assert.NoError(t, createPostgresTestDb(base.String(), name))
+
 		var exists bool
 		require.NoError(t, server.QueryRow("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = $1)", name).Scan(&exists))
 		assert.True(t, exists)

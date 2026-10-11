@@ -118,6 +118,14 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
+		case dsn.DialectPostgreSQL:
+			// Like the statements above, rows that would duplicate one of the original are left unchanged.
+			logResult(UnscopedDb().Exec("UPDATE photos_keywords SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS "+
+				"(SELECT 1 FROM photos_keywords k WHERE k.photo_id = ? AND k.keyword_id = photos_keywords.keyword_id)", original.ID, merge.ID, original.ID))
+			logResult(UnscopedDb().Exec("UPDATE photos_labels SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS "+
+				"(SELECT 1 FROM photos_labels l WHERE l.photo_id = ? AND l.label_id = photos_labels.label_id)", original.ID, merge.ID, original.ID))
+			logResult(UnscopedDb().Exec("UPDATE photos_albums SET photo_uid = ? WHERE photo_uid = ? AND NOT EXISTS "+
+				"(SELECT 1 FROM photos_albums a WHERE a.photo_uid = ? AND a.album_uid = photos_albums.album_uid)", original.PhotoUID, merge.PhotoUID, original.PhotoUID))
 		default:
 			log.Warnf("sql: unsupported dialect %s", DbDialect())
 		}

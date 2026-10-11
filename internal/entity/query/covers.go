@@ -65,6 +65,16 @@ func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 			WHERE f.deleted_at IS NULL AND f.file_missing = FALSE AND f.file_hash <> '' AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.taken_at DESC LIMIT 1
 		)`, media.PreviewExpr))
+	case dsn.DialectPostgreSQL:
+		res = Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.album_uid, f.file_hash FROM files f, (
+			SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
+				JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.album_uid = a.album_uid
+		WHERE a.id = albums.id AND albums.album_type = ? AND albums.thumb_src = ? AND albums.thumb IS DISTINCT FROM b.file_hash`,
+			media.PreviewExpr, entity.AlbumManual, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -127,6 +137,15 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 			) b
 		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_path = albums.album_path LIMIT 1)`, media.PreviewExpr))
+	case dsn.DialectPostgreSQL:
+		res = Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_path, f.file_hash FROM files f, (
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_path = a.album_path
+		WHERE a.id = albums.id AND albums.album_type = ? AND albums.thumb_src = ? AND albums.thumb IS DISTINCT FROM b.file_hash`,
+			media.PreviewExpr, entity.AlbumFolder, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -189,6 +208,15 @@ func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 			) b
 		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)`, media.PreviewExpr))
+	case dsn.DialectPostgreSQL:
+		res = Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_year = a.album_year AND b.photo_month = a.album_month
+		WHERE a.id = albums.id AND albums.album_type = ? AND albums.thumb_src = ? AND albums.thumb IS DISTINCT FROM b.file_hash`,
+			media.PreviewExpr, entity.AlbumMonth, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -358,6 +386,22 @@ func refreshFolderAlbumCover(album entity.Album) error {
 		)`, album.AlbumPath, media.PreviewExpr))
 
 		return res.Error
+	case dsn.DialectPostgreSQL:
+		res := Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_path, f.file_hash FROM files f, (
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_path = a.album_path
+		WHERE a.id = albums.id AND albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumPath,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumFolder,
+			entity.SrcAuto,
+		)
+
+		return res.Error
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 	}
@@ -401,6 +445,23 @@ func refreshMonthAlbumCover(album entity.Album) error {
 		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1
 		)`, album.AlbumYear, album.AlbumMonth, media.PreviewExpr))
+
+		return res.Error
+	case dsn.DialectPostgreSQL:
+		res := Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_year = a.album_year AND b.photo_month = a.album_month
+		WHERE a.id = albums.id AND albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumYear,
+			album.AlbumMonth,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumMonth,
+			entity.SrcAuto,
+		)
 
 		return res.Error
 	default:
@@ -459,6 +520,24 @@ func UpdateLabelCovers() (err error) {
 
 			res.RowsAffected += catRes.RowsAffected
 		}
+	case dsn.DialectPostgreSQL:
+		// A label that is also a category has a row for each, so the latest one with a usable file is used.
+		res = Db().Exec(`UPDATE labels SET thumb = b.file_hash FROM labels l LEFT JOIN (
+		SELECT DISTINCT ON (p2.label_id) p2.label_id, f.file_hash FROM files f, (
+			SELECT pl.label_id as label_id, max(p.id) AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY pl.label_id
+			UNION
+			SELECT c.category_id as label_id, max(p.id) AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+				JOIN categories c ON c.label_id = pl.label_id
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY c.category_id
+			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?) AND f.file_missing = FALSE
+			ORDER BY p2.label_id, p2.photo_id DESC, f.id
+		) b ON b.label_id = l.id
+		WHERE l.id = labels.id AND labels.thumb_src = ? AND labels.thumb IS DISTINCT FROM b.file_hash`, media.PreviewExpr, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -498,12 +577,12 @@ func UpdateSubjectCovers(public bool) (err error) {
 
 	condition := gorm.Expr("subjects.subj_type = ? AND thumb_src = ?", entity.SubjPerson, entity.SrcAuto)
 
-	if dialect := DbDialect(); dialect != dsn.DialectMySQL && dialect != dsn.DialectSQLite {
+	if dialect := DbDialect(); dialect != dsn.DialectMySQL && dialect != dsn.DialectSQLite && dialect != dsn.DialectPostgreSQL {
 		log.Warnf("sql: unsupported dialect %s", dialect)
 		return nil
 	}
 
-	// One statement for both dialects, so a library cannot get a different cover per backend.
+	// One statement for all dialects, so a library cannot get a different cover per backend.
 	// The uid guard keeps an empty subject uid from correlating against every unassigned marker,
 	// and a person left without an eligible marker gets no cover rather than a null one.
 	//

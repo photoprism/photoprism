@@ -1775,7 +1775,7 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 		require.NoError(t, db.Exec("ALTER TABLE "+table+" DROP COLUMN embed_model").Error)
 
 		t.Cleanup(func() {
-			require.NoError(t, db.Exec("ALTER TABLE "+table+" ADD COLUMN embed_model VARBINARY(32) DEFAULT ''").Error)
+			require.NoError(t, db.Migrator().AddColumn(&entity.Marker{}, "EmbedModel"))
 
 			// The column comes back empty, so what the fixtures recorded has to be written
 			// again: a later test that asks the library which model it holds would otherwise
@@ -1784,7 +1784,7 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 				Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
 				UpdateColumn("embed_model", entity.MarkerFixtures.Get("1000003-4").EmbedModel).Error)
 
-			require.NoError(t, db.Exec("CREATE INDEX idx_markers_embed_model ON "+table+" (embed_model)").Error)
+			require.NoError(t, db.Migrator().CreateIndex(&entity.Marker{}, "idx_markers_embed_model"))
 		})
 
 		assert.Equal(t, face.ModelFaceNet, c.libraryFaceModel())

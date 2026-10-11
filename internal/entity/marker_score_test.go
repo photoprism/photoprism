@@ -30,7 +30,7 @@ func TestClusterScoreCond(t *testing.T) {
 		cond, args := ClusterScoreCond("", face.ClusterScoreAuto)
 
 		assert.Contains(t, cond, "score >= CASE detect_model")
-		assert.Contains(t, cond, "ELSE ? END")
+		assert.Contains(t, cond, "ELSE CAST(? AS INTEGER) END")
 		assert.NotEmpty(t, args)
 		assert.Equal(t, strings.Count(cond, "?"), len(args), "every placeholder needs an argument")
 		// A detector the registry does not name, and a row with none recorded, take the shared

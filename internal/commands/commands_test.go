@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -260,6 +261,18 @@ func commandTestProcess(t *testing.T) bool {
 		"PHOTOPRISM_TEST_IMAGE_FILE="+fixture, "PHOTOPRISM_ASSETS_PATH="+get.Config().AssetsPath())
 	if get.Config().DatabaseDriver() == dsn.DriverSQLite3 {
 		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DRIVER=sqlite", "PHOTOPRISM_TEST_DSN=")
+	} else if get.Config().DatabaseDriver() == dsn.DriverPostgres {
+		server, parseErr := url.Parse(get.Config().DatabaseDSN())
+
+		// The parse error is not shown, as it would quote the password.
+		if parseErr != nil {
+			t.Fatal("invalid postgres test dsn")
+		}
+		prefix := "acceptance_cli_" + rnd.Base36(12)
+		child := *server
+		child.Path, child.RawPath = "/"+prefix, ""
+		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DSN="+child.String())
+		t.Cleanup(func() { dropPostgresTestDbs(t, server.String(), prefix+"_") })
 	} else {
 		child, parseErr := mysql.ParseDSN(get.Config().DatabaseDSN())
 		require.NoError(t, parseErr)
@@ -298,6 +311,40 @@ func commandTestProcess(t *testing.T) bool {
 	return true
 }
 
+// dropPostgresTestDbs drops the PostgreSQL databases whose names start with prefix.
+func dropPostgresTestDbs(t *testing.T, serverDsn, prefix string) {
+	t.Helper()
+
+	// Dropping a database waits for databases that other test packages create at the same time.
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
+	db, err := sql.Open("pgx", serverDsn)
+	require.NoError(t, err)
+	defer db.Close()
+
+	rows, err := db.QueryContext(ctx, "SELECT datname FROM pg_database WHERE LEFT(datname, $1) = $2", len(prefix), prefix)
+	require.NoError(t, err)
+	defer rows.Close()
+
+	var names []string
+
+	for rows.Next() {
+		var name string
+		require.NoError(t, rows.Scan(&name))
+		require.Regexp(t, "^"+regexp.QuoteMeta(prefix)+"[a-z0-9_]+$", name)
+		names = append(names, name)
+	}
+
+	require.NoError(t, rows.Err())
+	require.NoError(t, rows.Close())
+
+	for _, name := range names {
+		_, dropErr := db.ExecContext(ctx, fmt.Sprintf("DROP DATABASE %s WITH (FORCE)", name)) //nolint:gosec // The child owns this validated test database.
+		require.NoError(t, dropErr)
+	}
+}
+
 // resetConfigCleanup captures the active config and registers cleanup for its replacement.
 func resetConfigCleanup(t *testing.T) func(*config.Config) {
 	t.Helper()
@@ -307,8 +354,8 @@ func resetConfigCleanup(t *testing.T) func(*config.Config) {
 			assert.NoError(t, current.CloseDb())
 			get.SetConfig(previous)
 			previous.RegisterDb()
-			// MariaDB configs share the package schema, including destructive fixture resets.
-			if previous.DatabaseDriver() == dsn.DriverMySQL {
+			// MariaDB and PostgreSQL configs share the package database, including destructive fixture resets.
+			if previous.DatabaseDriver() != dsn.DriverSQLite3 {
 				previous.InitTestDb()
 			}
 			InitConfig = previousInit

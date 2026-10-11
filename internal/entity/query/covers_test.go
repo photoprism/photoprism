@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -326,6 +327,68 @@ func TestUpdateLabelCovers(t *testing.T) {
 	var refreshed entity.Label
 	require.NoError(t, UnscopedDb().Where("id = ?", label.ID).First(&refreshed).Error)
 	assert.Contains(t, candidates, refreshed.Thumb, "cover of label %s", label.LabelUID)
+}
+
+func TestUpdateLabelCovers_CategoryParent(t *testing.T) {
+	// Two pictures that can be covers, the second with the higher photo id.
+	var photos []struct {
+		ID       uint
+		FileHash string
+	}
+
+	require.NoError(t, UnscopedDb().Table("files f").Select("p.id, f.file_hash").
+		Joins("JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0").
+		Where("f.file_primary = TRUE AND f.file_error = '' AND f.file_missing = FALSE AND f.file_hash <> '' AND f.file_type IN (?)", media.PreviewExpr).
+		Order("p.id").Limit(2).Scan(&photos).Error)
+	require.Len(t, photos, 2)
+	require.Less(t, photos[0].ID, photos[1].ID)
+
+	// The parent label has the first picture, and is the category of a child label with the second.
+	parent := entity.NewLabel("Cover Parent Category", 0)
+	child := entity.NewLabel("Cover Child Category", 0)
+	require.NoError(t, parent.Create())
+	require.NoError(t, child.Create())
+
+	t.Cleanup(func() {
+		_ = UnscopedDb().Where("label_id IN (?)", []uint{parent.ID, child.ID}).Delete(&entity.PhotoLabel{}).Error
+		_ = UnscopedDb().Where("label_id = ?", child.ID).Delete(&entity.Category{}).Error
+		_ = UnscopedDb().Delete(parent).Error
+		_ = UnscopedDb().Delete(child).Error
+		entity.FlushLabelCache()
+	})
+
+	require.NoError(t, UnscopedDb().Create(&entity.Category{LabelID: child.ID, CategoryID: parent.ID}).Error)
+	require.NoError(t, UnscopedDb().Create(&entity.PhotoLabel{PhotoID: photos[0].ID, LabelID: parent.ID, LabelSrc: entity.SrcManual}).Error)
+	require.NoError(t, UnscopedDb().Create(&entity.PhotoLabel{PhotoID: photos[1].ID, LabelID: child.ID, LabelSrc: entity.SrcManual}).Error)
+
+	// cover returns the cover of the parent label after a refresh.
+	cover := func() string {
+		require.NoError(t, UpdateLabelCovers())
+
+		var thumb string
+		require.NoError(t, UnscopedDb().Model(&entity.Label{}).Where("id = ?", parent.ID).Pluck("thumb", &thumb).Error)
+
+		return thumb
+	}
+
+	// The cover is one of the two pictures and stays the same on the following runs.
+	first := cover()
+	assert.Contains(t, []string{photos[0].FileHash, photos[1].FileHash}, first)
+	assert.Equal(t, first, cover())
+	assert.Equal(t, first, cover())
+
+	if DbDialect() == dsn.DialectPostgreSQL {
+		assert.Equal(t, photos[1].FileHash, first, "latest picture of the label and its children")
+	}
+
+	// A picture without a usable file leaves the other one as the cover.
+	require.NoError(t, UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND file_primary = TRUE", photos[1].ID).
+		UpdateColumn("file_error", "cover test").Error)
+	t.Cleanup(func() {
+		_ = UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND file_primary = TRUE", photos[1].ID).UpdateColumn("file_error", "").Error
+	})
+
+	assert.Equal(t, photos[0].FileHash, cover())
 }
 
 func TestRefreshManualAlbumCover(t *testing.T) {

@@ -34,10 +34,9 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 		return "1 = 1", nil
 	}
 
-	// One bar per detector, as a CASE over the column rather than a disjunction that would have to
-	// name every detector twice - once to claim its rows and once to exclude them from the default.
-	// A detector the registry does not name falls to ELSE, and so does a row with no recorded one,
-	// which is every row written before the provenance column existed.
+	// One bar per detector, as a CASE over the column rather than a disjunction naming every detector
+	// twice. A detector the registry does not name falls to ELSE, and so does a row with no recorded one,
+	// e.g. written before the provenance column existed. Bars are cast, as PostgreSQL reads them as text.
 	var bars strings.Builder
 
 	args := make([]any, 0, 2*len(face.Detectors)+1)
@@ -47,7 +46,7 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 			continue
 		}
 
-		bars.WriteString(" WHEN ? THEN ?")
+		bars.WriteString(" WHEN ? THEN CAST(? AS INTEGER)")
 		args = append(args, d.Name, d.ClusterScore)
 	}
 
@@ -58,7 +57,7 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 
 	args = append(args, face.ClusterScoreThresholdDefault)
 
-	return score + " >= CASE " + detector + bars.String() + " ELSE ? END", args
+	return score + " >= CASE " + detector + bars.String() + " ELSE CAST(? AS INTEGER) END", args
 }
 
 // FaceMemberCond returns the restriction identifying the markers a cluster is measured over: valid

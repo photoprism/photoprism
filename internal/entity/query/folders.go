@@ -165,6 +165,19 @@ func UpdateFolderDates() (updated int, err error) {
 			}
 		}
 		return updated, tx.Commit().Error
+	case dsn.DialectPostgreSQL:
+		// Dates are compared by their parts in UTC, so an invalid stored date is replaced as on MariaDB.
+		result := UnscopedDb().Exec(`UPDATE folders
+		SET folder_year = EXTRACT(YEAR FROM p.taken_max), folder_month = EXTRACT(MONTH FROM p.taken_max), folder_day = EXTRACT(DAY FROM p.taken_max)
+		FROM (SELECT photo_path, MAX(taken_at_local) AT TIME ZONE 'UTC' AS taken_max
+			FROM photos WHERE taken_src IN ('meta', 'modified') AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+			GROUP BY photo_path) AS p
+		WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL AND folders.root = ?
+		AND (folder_year = 0 OR folder_month = 0 OR folder_day = 0
+			OR folder_year IS DISTINCT FROM EXTRACT(YEAR FROM p.taken_max) OR folder_month IS DISTINCT FROM EXTRACT(MONTH FROM p.taken_max)
+			OR folder_day IS DISTINCT FROM EXTRACT(DAY FROM p.taken_max)
+		)`, entity.RootOriginals)
+		return int(result.RowsAffected), result.Error
 	default:
 		return updated, err
 	}

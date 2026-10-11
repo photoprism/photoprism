@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
@@ -332,7 +333,11 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		// available for the "relevance" sort order; subsequent positive
 		// groups compose as AND via IN subqueries.
 		for i, ids := range include {
-			if i == 0 {
+			if i == 0 && entity.DbDialect() == dsn.DialectPostgreSQL {
+				// PostgreSQL cannot group rows whose other columns differ, so the photo's best match is joined.
+				s = s.Joins("JOIN (SELECT photo_id, MIN(uncertainty) AS uncertainty FROM photos_labels "+
+					"WHERE uncertainty < 100 AND label_id IN (?) GROUP BY photo_id) photos_labels ON photos_labels.photo_id = files.photo_id", ids)
+			} else if i == 0 {
 				s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", ids).
 					Group("photos.id, files.id")
 			} else {

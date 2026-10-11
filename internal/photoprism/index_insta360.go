@@ -116,6 +116,8 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		}
 
 		var statements []string
+		args := [][]any{{canonical.ID, duplicate.ID}, {canonical.ID, duplicate.ID}, {canonical.PhotoUID, duplicate.PhotoUID}}
+
 		switch entity.DbDialect() {
 		case dsn.DialectMySQL:
 			statements = []string{
@@ -129,15 +131,29 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 				"UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?",
 			}
+		case dsn.DialectPostgreSQL:
+			// Like the statements above, rows that would duplicate one of the canonical photo are left unchanged.
+			statements = []string{
+				"UPDATE photos_keywords SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS " +
+					"(SELECT 1 FROM photos_keywords k WHERE k.photo_id = ? AND k.keyword_id = photos_keywords.keyword_id)",
+				"UPDATE photos_labels SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS " +
+					"(SELECT 1 FROM photos_labels l WHERE l.photo_id = ? AND l.label_id = photos_labels.label_id)",
+				"UPDATE photos_albums SET photo_uid = ? WHERE photo_uid = ? AND NOT EXISTS " +
+					"(SELECT 1 FROM photos_albums a WHERE a.photo_uid = ? AND a.album_uid = photos_albums.album_uid)",
+			}
+
+			for i := range args {
+				args[i] = append(args[i], args[i][0])
+			}
 		default:
 			return rollback(errors.New("unsupported database dialect"))
 		}
 
-		if err := tx.Exec(statements[0], canonical.ID, duplicate.ID).Error; err != nil {
+		if err := tx.Exec(statements[0], args[0]...).Error; err != nil {
 			return rollback(err)
-		} else if err = tx.Exec(statements[1], canonical.ID, duplicate.ID).Error; err != nil {
+		} else if err = tx.Exec(statements[1], args[1]...).Error; err != nil {
 			return rollback(err)
-		} else if err = tx.Exec(statements[2], canonical.PhotoUID, duplicate.PhotoUID).Error; err != nil {
+		} else if err = tx.Exec(statements[2], args[2]...).Error; err != nil {
 			return rollback(err)
 		}
 

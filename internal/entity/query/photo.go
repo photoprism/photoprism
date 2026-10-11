@@ -305,7 +305,7 @@ func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
 			switch entity.DbDialect() {
 			case dsn.DialectSQLite:
 				parseFormat = "2006-01-02"
-			case dsn.DialectMySQL:
+			case dsn.DialectMySQL, dsn.DialectPostgreSQL:
 				parseFormat = time.RFC3339
 			default:
 				log.Errorf("photo: dialect %s is not supported", entity.DbDialect())

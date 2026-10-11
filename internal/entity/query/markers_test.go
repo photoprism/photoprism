@@ -265,7 +265,7 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 	t.Run("CountUnmatchedFaceMarkers", func(t *testing.T) {
 		var expected int64
 		require.NoError(t, entity.Db().Model(&entity.Markers{}).
-			Where("matched_at IS NULL AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
+			Where("matched_at IS NULL AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 			Where("marker_type = ?", entity.MarkerFace).
 			Count(&expected).Error)
 		assert.EqualValues(t, expected, CountUnmatchedFaceMarkers())
@@ -274,7 +274,7 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 		var expected int64
 		require.NoError(t, entity.Db().Model(&entity.Markers{}).
 			Where("marker_type = ?", entity.MarkerFace).
-			Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
+			Where("face_id = '' AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 			Count(&expected).Error)
 		assert.EqualValues(t, expected, CountNewFaceMarkers(0, 0))
 	})

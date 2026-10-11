@@ -100,7 +100,7 @@ func TestSharedPhotos(t *testing.T) {
 	})
 	t.Run("PublicContentIsStillSelected", func(t *testing.T) {
 		var public entity.Photo
-		require.NoError(t, entity.Db().Where("photo_private = 0 AND photo_quality >= 3 AND deleted_at IS NULL").
+		require.NoError(t, entity.Db().Where("photo_private = FALSE AND photo_quality >= 3 AND deleted_at IS NULL").
 			First(&public).Error)
 
 		album := sharedFilterAlbum(t, "uid:"+public.PhotoUID)

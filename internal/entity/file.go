@@ -191,6 +191,24 @@ func regenerateFileIndex(updateWhere clause.Expr, scope string) {
 		Log("files", "regenerate time_index",
 			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE ?",
 				updateWhere).Error)
+	case dsn.DialectPostgreSQL:
+		// Rows whose values do not change are not written, as on MariaDB, and times are formatted in UTC
+		// whatever the session time zone.
+		Log("files", "regenerate photo_taken_at",
+			Db().Exec("UPDATE files SET photo_taken_at = p.taken_at_local FROM ? p WHERE p.id = files.photo_id AND (?) "+
+				"AND files.photo_taken_at IS DISTINCT FROM p.taken_at_local", gorm.Expr(photosTable), updateWhere).Error)
+
+		mediaID := "CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN (10000000000 - photo_id) || '-' || " +
+			"(1 + file_sidecar::int - file_primary::int) || '-' || file_uid ELSE NULL END"
+
+		Log("files", "regenerate media_id",
+			Db().Exec("UPDATE files SET media_id = "+mediaID+" WHERE (?) AND media_id IS DISTINCT FROM "+mediaID, updateWhere).Error)
+
+		timeIndex := "CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN (100000000000000 - " +
+			"to_char(photo_taken_at AT TIME ZONE 'UTC', 'YYYYMMDDHH24MISS')::bigint) || '-' || media_id ELSE NULL END"
+
+		Log("files", "regenerate time_index",
+			Db().Exec("UPDATE files SET time_index = "+timeIndex+" WHERE (?) AND time_index IS DISTINCT FROM "+timeIndex, updateWhere).Error)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 	}

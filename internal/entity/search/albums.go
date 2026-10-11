@@ -100,7 +100,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	// Set sort order.
 	switch frm.Order {
 	case sortby.Count:
-		s = s.Order(OrderExpr("photo_count DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
+		s = s.Order(OrderExprNulls("photo_count DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
 	case sortby.Moment, sortby.Newest:
 		switch frm.Type {
 		case entity.AlbumManual, entity.AlbumState:
