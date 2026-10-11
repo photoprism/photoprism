@@ -967,6 +967,241 @@ func TestIndexRelated_XmpFacesFromLogicalSource(t *testing.T) {
 	}
 }
 
+// TestIndexRelated_XmpFacesArchived checks that an index run that skips archived photos does not import
+// the XMP face regions of a sidecar-only update into an archived photo, while a run that includes them does.
+func TestIndexRelated_XmpFacesArchived(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	c := newXmpIndexConfig(t, "index-related-xmp-archived")
+	dir := filepath.Join(c.OriginalsPath(), "archived")
+	rawName := filepath.Join(dir, "face.dng")
+	xmpName := filepath.Join(dir, "face.dng.xmp")
+
+	raw, err := NewMediaFile(filepath.Join(c.SamplesPath(), "canon_eos_6d.dng"))
+	require.NoError(t, err)
+	require.NoError(t, raw.Copy(rawName, false))
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", filepath.Join(dir, "face.jpg"), false))
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", xmpName, false))
+
+	main, err := NewMediaFile(rawName)
+	require.NoError(t, err)
+	related, err := main.RelatedFiles(false)
+	require.NoError(t, err)
+
+	opt := IndexOptionsSingle(c)
+	opt.Convert = false
+	opt.DetectFaces = false
+	opt.DetectNsfw = false
+	opt.GenerateLabels = false
+	opt.ImportFaceTags = true
+
+	ind := NewIndex(c, NewConvert(c), NewFiles(), NewPhotos())
+	result := IndexRelated(related, ind, opt)
+	require.True(t, result.Success(), "RAW indexing failed: %v", result.Err)
+
+	primary, err := entity.PrimaryFile(result.PhotoUID)
+	require.NoError(t, err)
+	markers, err := entity.FindMarkers(primary.FileUID)
+	require.NoError(t, err)
+	require.True(t, hasXmpMarkerName(markers, "Cara"), "RAW sidecar face not imported: %+v", markers)
+
+	photo := entity.FindPhoto(entity.Photo{PhotoUID: result.PhotoUID})
+	require.NotNil(t, photo)
+	require.NoError(t, photo.Archive())
+
+	// indexSidecar renames the person in the sidecar and indexes it as a sidecar-only update.
+	// Each call moves the modification time further ahead, so the sidecar is always seen as changed.
+	updates := 0
+	indexSidecar := func(t *testing.T, name string, skipArchived, rescan bool) IndexResult {
+		writeNamedXmp(t, xmpName, name)
+		updates++
+		stamp := time.Now().Add(time.Duration(updates) * time.Minute)
+		require.NoError(t, os.Chtimes(xmpName, stamp, stamp))
+
+		xmp, err := NewMediaFile(xmpName)
+		require.NoError(t, err)
+
+		o := opt
+		o.SkipArchived = skipArchived
+		o.Rescan = rescan
+
+		return IndexRelated(RelatedFiles{Main: main, Files: MediaFiles{xmp}}, ind, o)
+	}
+
+	t.Run("SkipArchived", func(t *testing.T) {
+		result := indexSidecar(t, "Dana", true, true)
+		require.True(t, result.Success(), "%v", result.Err)
+		assert.True(t, result.Archived())
+
+		markers, err := entity.FindMarkers(primary.FileUID)
+		require.NoError(t, err)
+		assert.True(t, hasXmpMarkerName(markers, "Cara"), "archived photo keeps its markers: %+v", markers)
+		assert.False(t, hasXmpMarkerName(markers, "Dana"), "archived photo must not import regions: %+v", markers)
+	})
+	t.Run("SkipArchivedNormalRun", func(t *testing.T) {
+		// The unchanged main file is skipped before its archive state is checked, and the sidecar reports it.
+		result := indexSidecar(t, "Fiona", true, false)
+		require.True(t, result.Success(), "%v", result.Err)
+		assert.False(t, result.Archived())
+
+		markers, err := entity.FindMarkers(primary.FileUID)
+		require.NoError(t, err)
+		assert.False(t, hasXmpMarkerName(markers, "Fiona"), "archived photo must not import regions: %+v", markers)
+	})
+	t.Run("SkipArchivedMainOnly", func(t *testing.T) {
+		// No related file reports the archived photo, so its archive state is looked up.
+		uid, archived := indexedPhoto(main)
+		assert.Equal(t, photo.PhotoUID, uid)
+		assert.True(t, archived)
+
+		writeNamedXmp(t, xmpName, "Ivy")
+		o := opt
+		o.SkipArchived = true
+		o.Rescan = false
+		result := IndexRelated(RelatedFiles{Main: main}, ind, o)
+		require.True(t, result.Success(), "%v", result.Err)
+		require.True(t, result.Skipped())
+
+		markers, err := entity.FindMarkers(primary.FileUID)
+		require.NoError(t, err)
+		assert.False(t, hasXmpMarkerName(markers, "Ivy"), "archived photo must not import regions: %+v", markers)
+	})
+	t.Run("IncludeArchived", func(t *testing.T) {
+		result := indexSidecar(t, "Erin", false, true)
+		require.True(t, result.Success(), "%v", result.Err)
+		assert.False(t, result.Archived())
+
+		markers, err := entity.FindMarkers(primary.FileUID)
+		require.NoError(t, err)
+		assert.True(t, hasXmpMarkerName(markers, "Erin"), "regions imported when archived photos are included: %+v", markers)
+	})
+	t.Run("IncludeArchivedNormalRun", func(t *testing.T) {
+		result := indexSidecar(t, "Jade", false, false)
+		require.True(t, result.Success(), "%v", result.Err)
+		require.True(t, result.Skipped())
+
+		markers, err := entity.FindMarkers(primary.FileUID)
+		require.NoError(t, err)
+		assert.True(t, hasXmpMarkerName(markers, "Jade"), "regions imported when archived photos are included: %+v", markers)
+	})
+}
+
+func TestIndexRelated_XmpFacesOtherArchived(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	c := newXmpIndexConfig(t, "index-related-xmp-other-archived")
+	dir := filepath.Join(c.OriginalsPath(), "other")
+	rawName := filepath.Join(dir, "face.dng")
+	xmpName := filepath.Join(dir, "face.dng.xmp")
+	otherName := filepath.Join(dir, "other.heic")
+
+	raw, err := NewMediaFile(filepath.Join(c.SamplesPath(), "canon_eos_6d.dng"))
+	require.NoError(t, err)
+	require.NoError(t, raw.Copy(rawName, false))
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", filepath.Join(dir, "face.jpg"), false))
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", xmpName, false))
+	require.NoError(t, fs.Copy(filepath.Join(c.SamplesPath(), "iphone_7.heic"), otherName, false))
+	require.NoError(t, fs.Copy(filepath.Join(c.SamplesPath(), "beach_wood.jpg"), filepath.Join(dir, "other.jpg"), false))
+
+	opt := IndexOptionsSingle(c)
+	opt.Convert = false
+	opt.DetectFaces = false
+	opt.DetectNsfw = false
+	opt.GenerateLabels = false
+	opt.ImportFaceTags = true
+
+	ind := NewIndex(c, NewConvert(c), NewFiles(), NewPhotos())
+
+	main, err := NewMediaFile(rawName)
+	require.NoError(t, err)
+	related, err := main.RelatedFiles(false)
+	require.NoError(t, err)
+	result := IndexRelated(related, ind, opt)
+	require.True(t, result.Success(), "RAW indexing failed: %v", result.Err)
+	uid, archived := indexedPhoto(main)
+	assert.Equal(t, result.PhotoUID, uid)
+	assert.False(t, archived)
+
+	// A file of another, archived photo is indexed in the same group as the sidecar; it is no preview image,
+	// so the group is a sidecar-only update of the face photo.
+	other, err := NewMediaFile(otherName)
+	require.NoError(t, err)
+	otherRelated, err := other.RelatedFiles(false)
+	require.NoError(t, err)
+	otherResult := IndexRelated(otherRelated, ind, opt)
+	require.True(t, otherResult.Success(), "%v", otherResult.Err)
+	require.NotEqual(t, result.PhotoUID, otherResult.PhotoUID)
+	otherPhoto := entity.FindPhoto(entity.Photo{PhotoUID: otherResult.PhotoUID})
+	require.NotNil(t, otherPhoto)
+	require.NoError(t, otherPhoto.Archive())
+
+	writeNamedXmp(t, xmpName, "Gina")
+	stamp := time.Now().Add(time.Minute)
+	require.NoError(t, os.Chtimes(xmpName, stamp, stamp))
+	require.NoError(t, os.Chtimes(otherName, stamp, stamp))
+
+	xmp, err := NewMediaFile(xmpName)
+	require.NoError(t, err)
+	other, err = NewMediaFile(otherName)
+	require.NoError(t, err)
+
+	o := opt
+	o.SkipArchived = true
+	o.Rescan = false
+	res := IndexRelated(RelatedFiles{Main: main, Files: MediaFiles{xmp, other}}, ind, o)
+	require.True(t, res.Success(), "%v", res.Err)
+	require.True(t, res.Skipped(), "main file must be skipped")
+
+	primary, err := entity.PrimaryFile(result.PhotoUID)
+	require.NoError(t, err)
+	markers, err := entity.FindMarkers(primary.FileUID)
+	require.NoError(t, err)
+	assert.True(t, hasXmpMarkerName(markers, "Gina"), "regions of a visible photo are imported: %+v", markers)
+
+	// Regions are imported for the photo of the main file, even if a file of another photo is indexed first.
+	require.NoError(t, otherPhoto.Restore())
+	writeNamedXmp(t, xmpName, "Hana")
+	stamp = stamp.Add(time.Minute)
+	require.NoError(t, os.Chtimes(xmpName, stamp, stamp))
+	require.NoError(t, os.Chtimes(otherName, stamp, stamp))
+
+	xmp, err = NewMediaFile(xmpName)
+	require.NoError(t, err)
+	other, err = NewMediaFile(otherName)
+	require.NoError(t, err)
+	res = IndexRelated(RelatedFiles{Main: main, Files: MediaFiles{other, xmp}}, ind, o)
+	require.True(t, res.Success(), "%v", res.Err)
+	require.True(t, res.Skipped(), "main file must be skipped")
+
+	markers, err = entity.FindMarkers(primary.FileUID)
+	require.NoError(t, err)
+	assert.True(t, hasXmpMarkerName(markers, "Hana"), "regions imported for the main photo: %+v", markers)
+	otherPrimary, err := entity.PrimaryFile(otherResult.PhotoUID)
+	require.NoError(t, err)
+	otherMarkers, err := entity.FindMarkers(otherPrimary.FileUID)
+	require.NoError(t, err)
+	assert.False(t, hasXmpMarkerName(otherMarkers, "Hana"), "regions not imported for the other photo: %+v", otherMarkers)
+}
+
+func TestIndexedPhoto(t *testing.T) {
+	t.Run("NotIndexed", func(t *testing.T) {
+		m, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
+		require.NoError(t, err)
+		uid, archived := indexedPhoto(m)
+		assert.Equal(t, "", uid)
+		assert.False(t, archived)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		uid, archived := indexedPhoto(nil)
+		assert.Equal(t, "", uid)
+		assert.False(t, archived)
+	})
+}
+
 // TestApplyDetectedFaces covers the deferred vision/metadata worker path: when
 // XMP face-tag import is enabled it reconciles XMP regions onto the primary
 // file's markers even without AI detection, and it stays a no-op when the

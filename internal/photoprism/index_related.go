@@ -50,6 +50,14 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 	done[related.Main.FileName()] = true
 	photoUID := result.PhotoUID
+	archived := result.Archived()
+
+	// A skipped main file has no result UID, so its photo and archive state are looked up through its file.
+	if photoUID == "" {
+		var mainArchived bool
+		photoUID, mainArchived = indexedPhoto(related.Main)
+		archived = mainArchived && o.SkipArchived
+	}
 
 	i := 0
 
@@ -145,6 +153,10 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 			photoUID = res.PhotoUID
 		}
 
+		if res.Archived() && res.PhotoUID == photoUID {
+			archived = true
+		}
+
 		// Save file error.
 		if fileUid, err := res.FileError(); err != nil {
 			query.SetFileError(fileUid, clean.Error(err))
@@ -158,7 +170,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	// covered the primary preview and a distinct RAW/HEIC source's sidecars while
 	// indexing it, so this pass only serves incremental sidecar-only updates
 	// where the unchanged preview was filtered out of the list.
-	if o.ImportFaceTags && photoUID != "" && !result.Archived() && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
+	if o.ImportFaceTags && photoUID != "" && !archived && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
 		// Collect first so a source that declares no region container skips both
 		// the primary-file and marker queries. A declared but empty set still
 		// proceeds: that is what removes markers whose regions the user deleted.
@@ -176,4 +188,28 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	}
 
 	return result
+}
+
+// indexedPhoto returns the UID of the photo an indexed file belongs to and whether the photo is archived,
+// or an empty UID if the file is not indexed or has no photo.
+func indexedPhoto(m *MediaFile) (photoUID string, archived bool) {
+	if m == nil {
+		return "", false
+	}
+
+	var row struct {
+		PhotoUID string
+		Archived bool
+	}
+
+	if res := entity.UnscopedDb().Table(entity.File{}.TableName()).
+		Select("photos.photo_uid, photos.deleted_at IS NOT NULL AS archived").
+		Joins("JOIN photos ON photos.id = files.photo_id").
+		Where("files.file_root = ? AND files.file_name = ? AND files.file_missing = ? AND files.deleted_at IS NULL",
+			m.Root(), m.RootRelName(), false).
+		Limit(1).Scan(&row); res.Error != nil || res.RowsAffected == 0 {
+		return "", false
+	}
+
+	return row.PhotoUID, row.Archived
 }
