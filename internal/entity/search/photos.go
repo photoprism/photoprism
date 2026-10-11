@@ -630,11 +630,12 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	}
 
 	// Filter by chroma, which is stored as percent plus one, so that 1 is monochrome and -1 unknown.
-	// Chroma values in queries are percentages, and low values exclude monochrome files.
+	// Chroma values in queries are percentages, and low values exclude monochrome files. Stored values do not
+	// exceed 100, so a larger threshold is clamped to it, which also keeps it within the column type.
 	if frm.Mono {
 		s = s.Where("files.file_chroma = 1")
 	} else if frm.Chroma > 9 {
-		s = s.Where("files.file_chroma > ?", int(frm.Chroma)+1)
+		s = s.Where("files.file_chroma > ?", min(int(frm.Chroma)+1, 100))
 	} else if frm.Chroma > 0 {
 		s = s.Where("files.file_chroma > 1 AND files.file_chroma <= ?", frm.Chroma+1)
 	}
