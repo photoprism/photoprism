@@ -1115,6 +1115,20 @@ func TestUser_Validate(t *testing.T) {
 }
 
 func TestAddUser(t *testing.T) {
+	t.Run("SettingsAndDetails", func(t *testing.T) {
+		t.Cleanup(func() { deleteTestUser(t, FindUserByName("adduser-related")) })
+		require.NoError(t, AddUser(form.User{UserName: "adduser-related", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: "none"}))
+		// Rows are counted before the user is loaded, as loading creates missing ones.
+		var uid string
+		require.NoError(t, UnscopedDb().Raw("SELECT user_uid FROM auth_users WHERE user_name = ?", "adduser-related").Row().Scan(&uid))
+
+		var settings, details int64
+		require.NoError(t, UnscopedDb().Model(&UserSettings{}).Where("user_uid = ?", uid).Count(&settings).Error)
+		require.NoError(t, UnscopedDb().Model(&UserDetails{}).Where("user_uid = ?", uid).Count(&details).Error)
+		assert.Equal(t, int64(1), settings)
+		assert.Equal(t, int64(1), details)
+	})
 	t.Run("TooShort", func(t *testing.T) {
 		u := form.User{
 			UserName:  "thomas1",

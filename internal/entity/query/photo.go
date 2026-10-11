@@ -19,9 +19,9 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
@@ -39,9 +39,9 @@ func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
@@ -92,14 +92,15 @@ func PhotoPreloadByUIDs(photoUIDs []string) (entity.Photos, error) {
 }
 
 // preloadPhotoAssociations applies the eager-load scope that keeps PhotoPreload helpers consistent.
+// Preloads of an unscoped query are unscoped too, so they exclude soft-deleted rows themselves.
 func preloadPhotoAssociations(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
@@ -175,9 +176,9 @@ func PhotosMetadataUpdate(limit, offset int, delay, interval time.Duration) (pho
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").

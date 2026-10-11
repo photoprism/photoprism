@@ -238,7 +238,7 @@ func TestPhoto_ClipYamlValues(t *testing.T) {
 			UUID:          strings.Repeat("d", 300),
 		}
 		m.clipYamlValues()
-		assert.Equal(t, "", m.PhotoType)
+		assert.Equal(t, MediaImage, m.PhotoType)
 		assert.Equal(t, "", m.TakenSrc)
 		assert.Equal(t, 4096, len(m.PhotoCaption))
 		assert.Equal(t, 64, len(m.TimeZone))

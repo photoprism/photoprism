@@ -60,9 +60,9 @@ func Db() *gorm.DB {
 	return entity.Db()
 }
 
-// UnscopedDb returns an unscoped database connection instance.
+// UnscopedDb returns an unscoped database session.
 func UnscopedDb() *gorm.DB {
-	return entity.Db().Unscoped()
+	return entity.UnscopedDb()
 }
 
 // DbDialect returns the SQL dialect of the database as one of the dsn.Dialect constants.

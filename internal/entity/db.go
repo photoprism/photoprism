@@ -228,6 +228,7 @@ func bindPrimaryKeys(db *gorm.DB) {
 
 // saveFallback completes a Save whose update matched no changed row: it reports an existing row as
 // one affected row, and creates a missing one with its hooks, so the ORM does not insert it again.
+// Rows are matched by primary key only; conditions added to a Save are not applied.
 func saveFallback(db *gorm.DB) {
 	stmt := db.Statement
 

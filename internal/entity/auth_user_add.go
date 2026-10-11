@@ -34,6 +34,13 @@ func AddUser(frm form.User) error {
 			return err
 		}
 
+		// Associations are not saved with the user, so its settings and details are saved here.
+		if err := tx.Save(user.Settings()).Error; err != nil {
+			return err
+		} else if err = tx.Save(user.Details()).Error; err != nil {
+			return err
+		}
+
 		if frm.Password != "" {
 			pw := NewPassword(user.UserUID, frm.Password, false)
 

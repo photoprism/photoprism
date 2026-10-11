@@ -87,7 +87,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			return PhotoResults{}, 0, ErrNotFound
 		}
 
-		// Find a nearby picture using the UID or return an empty result otherwise.
+		// Find the picture whose visibility was checked above; the result type has no soft-delete scope.
 		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
 			log.Debugf("search: %s (find nearby)", err)
 			return PhotoResults{}, 0, ErrNotFound

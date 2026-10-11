@@ -169,12 +169,6 @@ func (m *Label) Delete() error {
 		return err
 	}
 
-	// Carry the mark onto the in-memory record, which the driver does not do, so that Deleted,
-	// Skip and Restore agree with the row. The cache is flushed, so no lookup returns it.
-	if !m.DeletedAt.Valid {
-		m.DeletedAt = DeletedAtTime(*TimeStamp())
-	}
-
 	return nil
 }
 

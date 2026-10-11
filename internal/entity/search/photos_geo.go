@@ -66,7 +66,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			return GeoResults{}, ErrNotFound
 		}
 
-		// Find a nearby picture using the UID or return an empty result otherwise.
+		// Find the picture whose visibility was checked above; the result type has no soft-delete scope.
 		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
 			log.Debugf("search: %s (find nearby)", err)
 			return GeoResults{}, ErrNotFound

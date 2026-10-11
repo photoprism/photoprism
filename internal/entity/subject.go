@@ -227,12 +227,6 @@ func (m *Subject) Delete() error {
 		return err
 	}
 
-	// Carry the mark onto the in-memory record, which the driver does not do, so that Restore
-	// and DeletePermanently see the subject as deleted without reading the row again.
-	if !m.DeletedAt.Valid {
-		m.DeletedAt = DeletedAtTime(*TimeStamp())
-	}
-
 	return nil
 }
 
@@ -251,7 +245,7 @@ func (m *Subject) DeletePermanently() error {
 }
 
 // AfterDelete resets file and photo counters when the entity was deleted. A delete by condition
-// through an empty model names no row, and the update would then reset every subject.
+// runs it on an empty model, which names no subject to update.
 func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
 	if m.SubjUID == "" {
 		return nil

@@ -413,13 +413,6 @@ func (m *Client) Delete() (err error) {
 		return err
 	}
 
-	// Carry the mark onto the in-memory record, which the driver does not do, so a caller
-	// that keeps using it sees the same state as one that reads the row again.
-	if !m.DeletedAt.Valid {
-		deletedAt := UTC()
-		m.DeletedAt = DeletedAtTime(deletedAt)
-	}
-
 	return nil
 }
 

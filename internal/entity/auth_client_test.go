@@ -309,6 +309,7 @@ func TestClient_Delete(t *testing.T) {
 		err := m.Delete()
 
 		assert.NoError(t, err)
+		assert.True(t, m.Deleted(), "in-memory record is marked as deleted")
 	})
 	t.Run("RemovesSecret", func(t *testing.T) {
 		m := NewClient().SetName("pp-delete-secret")

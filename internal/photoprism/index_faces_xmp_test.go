@@ -1068,6 +1068,14 @@ func TestIndexRelated_XmpFacesArchived(t *testing.T) {
 		require.NoError(t, err)
 		assert.False(t, hasXmpMarkerName(markers, "Ivy"), "archived photo must not import regions: %+v", markers)
 	})
+	t.Run("RemovedPhoto", func(t *testing.T) {
+		// Removed photos are restored when their files change, so they do not count as archived.
+		require.NoError(t, entity.UnscopedDb().Model(photo).UpdateColumn("photo_quality", -1).Error)
+		t.Cleanup(func() { _ = entity.UnscopedDb().Model(photo).UpdateColumn("photo_quality", photo.PhotoQuality).Error })
+		uid, archived := indexedPhoto(main)
+		assert.Equal(t, photo.PhotoUID, uid)
+		assert.False(t, archived)
+	})
 	t.Run("IncludeArchived", func(t *testing.T) {
 		result := indexSidecar(t, "Erin", false, true)
 		require.True(t, result.Success(), "%v", result.Err)

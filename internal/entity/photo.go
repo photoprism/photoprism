@@ -247,14 +247,14 @@ func FindPhoto(find Photo) *Photo {
 
 	m := Photo{}
 
-	// Preload related entities if a matching record is found.
+	// Preload related entities if a matching record is found; unscoped preloads also need the soft-delete condition.
 	stmt := UnscopedDb().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").

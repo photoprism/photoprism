@@ -81,7 +81,7 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	}
 
 	if frm.Query == "" && !frm.All {
-		s = s.Where("labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = TRUE")
+		s = s.Where("(labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = TRUE)")
 	}
 
 	results = make([]Label, 0)

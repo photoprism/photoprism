@@ -982,6 +982,26 @@ func TestFindPhoto(t *testing.T) {
 		assert.NotNil(t, photo.Find())
 		assert.NotNil(t, FindPhoto(photo))
 	})
+	t.Run("DeletedLabel", func(t *testing.T) {
+		photo := NewPhoto(false)
+		require.NoError(t, photo.Save())
+		label := NewLabel("Deleted Preload "+rnd.GenerateUID('l'), 0)
+		require.NoError(t, label.Create())
+		require.NoError(t, NewPhotoLabel(photo.ID, label.ID, 10, SrcManual).Create())
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID)
+			UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID)
+			UnscopedDb().Delete(&photo)
+			UnscopedDb().Delete(label)
+		})
+		require.NoError(t, UnscopedDb().Model(label).UpdateColumn("deleted_at", Now()).Error)
+
+		found := FindPhoto(photo)
+		require.NotNil(t, found)
+		require.Len(t, found.Labels, 1)
+		assert.Nil(t, found.Labels[0].Label, "soft-deleted labels are not loaded")
+		assert.NotContains(t, found.LabelKeywords(), "preload")
+	})
 	t.Run("EmptyStruct", func(t *testing.T) {
 		photo := Photo{}
 		assert.Nil(t, FindPhoto(photo))

@@ -60,6 +60,54 @@ func TestPreloadPhotoByUID(t *testing.T) {
 	})
 }
 
+func TestPhotoPreloads_DeletedAssociations(t *testing.T) {
+	photo := entity.NewPhoto(false)
+	require.NoError(t, photo.Save())
+	label := entity.NewLabel("Deleted Query Preload "+rnd.GenerateUID('l'), 0)
+	require.NoError(t, label.Create())
+	require.NoError(t, entity.NewPhotoLabel(photo.ID, label.ID, 10, entity.SrcManual).Create())
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Delete(&photo)
+		entity.UnscopedDb().Delete(label)
+	})
+	require.NoError(t, entity.UnscopedDb().Model(label).UpdateColumn("deleted_at", entity.Now()).Error)
+
+	camera := entity.NewCamera("Deleted Preload", "Camera "+rnd.GenerateUID('c'))
+	require.NoError(t, entity.UnscopedDb().Create(camera).Error)
+	lens := entity.NewLens("Deleted Preload", "Lens "+rnd.GenerateUID('l'))
+	require.NoError(t, entity.UnscopedDb().Create(lens).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(camera)
+		entity.UnscopedDb().Delete(lens)
+	})
+	require.NoError(t, entity.UnscopedDb().Model(&photo).UpdateColumns(entity.Values{"camera_id": camera.ID, "lens_id": lens.ID}).Error)
+	require.NoError(t, entity.UnscopedDb().Model(camera).UpdateColumn("deleted_at", entity.Now()).Error)
+	require.NoError(t, entity.UnscopedDb().Model(lens).UpdateColumn("deleted_at", entity.Now()).Error)
+
+	t.Run("PhotoByID", func(t *testing.T) {
+		found, err := PhotoByID(uint64(photo.ID))
+		require.NoError(t, err)
+		require.Len(t, found.Labels, 1)
+		assert.Nil(t, found.Labels[0].Label)
+		assert.Nil(t, found.Camera)
+		assert.Nil(t, found.Lens)
+	})
+	t.Run("PhotoByUID", func(t *testing.T) {
+		found, err := PhotoByUID(photo.PhotoUID)
+		require.NoError(t, err)
+		require.Len(t, found.Labels, 1)
+		assert.Nil(t, found.Labels[0].Label)
+	})
+	t.Run("PhotoPreloadByUID", func(t *testing.T) {
+		found, err := PhotoPreloadByUID(photo.PhotoUID)
+		require.NoError(t, err)
+		require.Len(t, found.Labels, 1)
+		assert.Nil(t, found.Labels[0].Label)
+	})
+}
+
 // TestPhotoPreloadByUIDs validates photo query behavior.
 func TestPhotoPreloadByUIDs(t *testing.T) {
 	t.Run("Multiple", func(t *testing.T) {

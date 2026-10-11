@@ -147,6 +147,8 @@ func TestSubject_Delete(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.True(t, m.Deleted(), "in-memory record is marked as deleted")
+
 		if err := Db().Where("subj_name = ?", m.SubjName).Find(&subj).Error; err != nil {
 			t.Fatal(err)
 		}

@@ -154,9 +154,13 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 }
 
 // clipYamlValues limits restored values to the size of their columns, so a backup file cannot
-// make the photo unsavable. Source names longer than their column are not known sources.
+// make the photo unsavable. Types and sources longer than their column are not known ones.
 func (m *Photo) clipYamlValues() {
-	for _, src := range []*string{&m.PhotoType, &m.TakenSrc, &m.TypeSrc, &m.TitleSrc, &m.CaptionSrc, &m.PlaceSrc} {
+	if len(m.PhotoType) > photoSrcSize {
+		m.PhotoType = MediaImage
+	}
+
+	for _, src := range []*string{&m.TakenSrc, &m.TypeSrc, &m.TitleSrc, &m.CaptionSrc, &m.PlaceSrc} {
 		if len(*src) > photoSrcSize {
 			*src = ""
 		}
