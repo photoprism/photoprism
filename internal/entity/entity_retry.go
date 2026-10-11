@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/mattn/go-sqlite3"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -17,7 +18,8 @@ const (
 	lockRetryAttempts     = 2
 )
 
-// RetryDeadlock retries transactional writes with bounded backoff.
+// RetryDeadlock retries transactional writes with bounded backoff. Inside a transaction, retry the whole
+// transaction instead, as PostgreSQL aborts it after an error.
 func RetryDeadlock(action string, fn func() error) error {
 	return retryWrite(action, "deadlock", deadlockRetryAttempts, isDeadlockError, fn)
 }
@@ -47,7 +49,7 @@ func retryWrite(action, reason string, attempts int, retryable func(error) bool,
 	return err
 }
 
-// isDeadlockError identifies deadlock errors, which can be retried.
+// isDeadlockError identifies deadlock errors, which can be retried, including PostgreSQL serialization failures.
 func isDeadlockError(err error) bool {
 	if err == nil {
 		return false
@@ -56,11 +58,15 @@ func isDeadlockError(err error) bool {
 	if errors.As(err, &mysqlErr) && mysqlErr.Number == 1213 {
 		return true
 	}
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && (pgErr.Code == "40P01" || pgErr.Code == "40001") {
+		return true
+	}
 	return strings.Contains(strings.ToLower(err.Error()), "deadlock")
 }
 
 // isLockError identifies writes that failed because a lock could not be acquired, based on the driver error:
-// a deadlock or lock wait timeout on MariaDB, or a busy or locked SQLite database.
+// a deadlock or lock wait timeout on MariaDB or PostgreSQL, or a busy or locked SQLite database.
 func isLockError(err error) bool {
 	if err == nil {
 		return false
@@ -70,6 +76,10 @@ func isLockError(err error) bool {
 	var mysqlErr *mysql.MySQLError
 	if errors.As(err, &mysqlErr) {
 		return mysqlErr.Number == 1205
+	}
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		return pgErr.Code == "55P03"
 	}
 	var sqliteErr sqlite3.Error
 	if errors.As(err, &sqliteErr) {

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -56,6 +57,9 @@ func TestIsDeadlockError(t *testing.T) {
 		{"Driver", &mysql.MySQLError{Number: 1213, Message: "retry control"}, true},
 		{"Wrapped", fmt.Errorf("wrapped: %w", &mysql.MySQLError{Number: 1213, Message: "retry control"}), true},
 		{"Text", errors.New("DEADLOCK found"), true},
+		{"PostgresDeadlock", &pgconn.PgError{Code: "40P01", Message: "retry control"}, true},
+		{"PostgresSerialization", fmt.Errorf("wrapped: %w", &pgconn.PgError{Code: "40001", Message: "retry control"}), true},
+		{"PostgresOther", &pgconn.PgError{Code: "23505", Message: "duplicate"}, false},
 		{"OtherDriver", &mysql.MySQLError{Number: 1062, Message: "duplicate"}, false},
 		{"Other", errors.New("write control"), false},
 	} {
@@ -108,6 +112,9 @@ func TestIsLockError(t *testing.T) {
 		{"Deadlock", &mysql.MySQLError{Number: 1213, Message: "retry control"}, true},
 		{"LockWaitTimeout", &mysql.MySQLError{Number: 1205, Message: "retry control"}, true},
 		{"Wrapped", fmt.Errorf("wrapped: %w", &mysql.MySQLError{Number: 1205, Message: "retry control"}), true},
+		{"PostgresLockNotAvailable", &pgconn.PgError{Code: "55P03", Message: "retry control"}, true},
+		{"PostgresDeadlock", &pgconn.PgError{Code: "40P01", Message: "retry control"}, true},
+		{"PostgresOther", &pgconn.PgError{Code: "23505", Message: "duplicate"}, false},
 		{"SQLiteBusy", sqlite3.Error{Code: sqlite3.ErrBusy}, true},
 		{"SQLiteLocked", sqlite3.Error{Code: sqlite3.ErrLocked}, true},
 		{"WrappedSQLite", fmt.Errorf("wrapped: %w", sqlite3.Error{Code: sqlite3.ErrBusy}), true},
