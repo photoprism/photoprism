@@ -62,12 +62,33 @@ func TestMysqlTableCollation(t *testing.T) {
 		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: "utf8mb4_uca1400_ai_ci"}}
 		assert.Equal(t, "utf8mb4_uca1400_ai_ci", mysqlTableCollation(tables))
 	})
-	t.Run("Mixed", func(t *testing.T) {
-		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: "utf8mb4_general_ci"}}
-		assert.Equal(t, mysqlDefaultCollation, mysqlTableCollation(tables))
+	t.Run("MostCommon", func(t *testing.T) {
+		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "c", Collation: mysqlDefaultCollation}}
+		assert.Equal(t, "utf8mb4_uca1400_ai_ci", mysqlTableCollation(tables))
 	})
-	t.Run("NotUtf8mb4", func(t *testing.T) {
-		tables := []mysqlTable{{Name: "a", Collation: "latin1_swedish_ci"}}
+	// Ties are checked repeatedly, as the counts are visited in random order.
+	t.Run("TiePrefersDefault", func(t *testing.T) {
+		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: mysqlDefaultCollation}}
+		for i := 0; i < 100; i++ {
+			require.Equal(t, mysqlDefaultCollation, mysqlTableCollation(tables))
+		}
+	})
+	t.Run("TieWithoutDefault", func(t *testing.T) {
+		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: "utf8mb4_general_ci"},
+			{Name: "c", Collation: "utf8mb4_bin"}}
+		for i := 0; i < 100; i++ {
+			require.Equal(t, "utf8mb4_bin", mysqlTableCollation(tables))
+		}
+	})
+	t.Run("TiePrefersUtf8mb4", func(t *testing.T) {
+		tables := []mysqlTable{{Name: "a", Collation: "latin1_swedish_ci"}, {Name: "b", Collation: "latin1_swedish_ci"},
+			{Name: "c", Collation: "utf8mb4_general_ci"}, {Name: "d", Collation: "utf8mb4_general_ci"}}
+		for i := 0; i < 100; i++ {
+			require.Equal(t, "utf8mb4_general_ci", mysqlTableCollation(tables))
+		}
+	})
+	t.Run("MostCommonNotUtf8mb4", func(t *testing.T) {
+		tables := []mysqlTable{{Name: "a", Collation: "latin1_swedish_ci"}, {Name: "b", Collation: "latin1_swedish_ci"}, {Name: "c", Collation: "utf8mb4_general_ci"}}
 		assert.Equal(t, mysqlDefaultCollation, mysqlTableCollation(tables))
 	})
 	t.Run("InvalidName", func(t *testing.T) {
@@ -76,31 +97,26 @@ func TestMysqlTableCollation(t *testing.T) {
 	})
 }
 
-func TestMysqlTableOptions(t *testing.T) {
+func TestMysqlPreferCollation(t *testing.T) {
+	t.Run("TargetIsDefault", func(t *testing.T) {
+		assert.False(t, mysqlPreferCollation("utf8mb4_bin", mysqlDefaultCollation))
+	})
 	t.Run("Default", func(t *testing.T) {
-		assert.Equal(t, "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", mysqlTableOptions(mysqlDefaultCollation))
+		assert.True(t, mysqlPreferCollation(mysqlDefaultCollation, "utf8mb4_bin"))
+	})
+	t.Run("Utf8mb4", func(t *testing.T) {
+		assert.True(t, mysqlPreferCollation("utf8mb4_general_ci", "latin1_swedish_ci"))
+		assert.False(t, mysqlPreferCollation("latin1_swedish_ci", "utf8mb4_general_ci"))
+	})
+	t.Run("Name", func(t *testing.T) {
+		assert.True(t, mysqlPreferCollation("utf8mb4_bin", "utf8mb4_general_ci"))
+		assert.False(t, mysqlPreferCollation("utf8mb4_general_ci", "utf8mb4_bin"))
 	})
 }
 
-func TestMysqlTargetCollation(t *testing.T) {
-	t.Run("MostCommon", func(t *testing.T) {
-		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "c", Collation: mysqlDefaultCollation}}
-		assert.Equal(t, "utf8mb4_uca1400_ai_ci", mysqlTargetCollation(tables))
-	})
-	t.Run("TiePrefersDefault", func(t *testing.T) {
-		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: mysqlDefaultCollation}}
-		assert.Equal(t, mysqlDefaultCollation, mysqlTargetCollation(tables))
-	})
-	t.Run("TieWithoutDefault", func(t *testing.T) {
-		tables := []mysqlTable{{Name: "a", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "b", Collation: "utf8mb4_general_ci"}}
-		assert.Equal(t, "utf8mb4_general_ci", mysqlTargetCollation(tables))
-	})
-	t.Run("NotUtf8mb4", func(t *testing.T) {
-		tables := []mysqlTable{{Name: "a", Collation: "latin1_swedish_ci"}, {Name: "b", Collation: "latin1_swedish_ci"}}
-		assert.Equal(t, mysqlDefaultCollation, mysqlTargetCollation(tables))
-	})
-	t.Run("NoTables", func(t *testing.T) {
-		assert.Equal(t, mysqlDefaultCollation, mysqlTargetCollation(nil))
+func TestMysqlTableOptions(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", mysqlTableOptions(mysqlDefaultCollation))
 	})
 }
 
@@ -154,6 +170,28 @@ func TestWarnMysqlTables(t *testing.T) {
 		require.Len(t, warnings, 1)
 		assert.Contains(t, warnings[0], "without a shared utf8mb4 collation (a)")
 		assert.Contains(t, warnings[0], "COLLATE utf8mb4_uca1400_ai_ci;")
+	})
+	t.Run("FollowWarning", func(t *testing.T) {
+		tables := []mysqlTable{{Name: "a", Engine: "InnoDB", Collation: "latin1_swedish_ci"}, {Name: "b", Engine: "InnoDB", Collation: "utf8mb4_general_ci"},
+			{Name: "c", Engine: "InnoDB", Collation: "utf8mb4_uca1400_ai_ci"}, {Name: "d", Engine: "InnoDB", Collation: "utf8mb4_uca1400_ai_ci"}}
+		warnings := captureWarnings(t, func() { warnMysqlTables(tables) })
+		require.Len(t, warnings, 1)
+
+		// Converting the tables the warning names to the collation it names leaves nothing to report.
+		_, list, found := strings.Cut(warnings[0], "collation (")
+		require.True(t, found)
+		list, _, _ = strings.Cut(list, ")")
+		_, target, found := strings.Cut(warnings[0], "COLLATE ")
+		require.True(t, found)
+		target, _, _ = strings.Cut(target, ";")
+		assert.Equal(t, "a, b", list)
+		assert.Equal(t, "utf8mb4_uca1400_ai_ci", target)
+		for i := range tables {
+			if strings.Contains(", "+list+", ", ", "+tables[i].Name+", ") {
+				tables[i].Collation = target
+			}
+		}
+		assert.Empty(t, captureWarnings(t, func() { warnMysqlTables(tables) }))
 	})
 	t.Run("Charset", func(t *testing.T) {
 		tables := []mysqlTable{{Name: "a", Engine: "InnoDB", Collation: "utf8mb3_general_ci"}, {Name: "b", Engine: "InnoDB", Collation: "utf8mb3_general_ci"}}

@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	// mysqlDefaultCollation is the collation of new tables unless the existing tables share another one.
+	// mysqlDefaultCollation is the collation of new tables in a new database.
 	mysqlDefaultCollation = "utf8mb4_unicode_ci"
 	// mysqlEngine is the storage engine of new tables.
 	mysqlEngine = "InnoDB"
@@ -53,53 +53,49 @@ func mysqlTables(db *gorm.DB, list Tables) (result []mysqlTable, err error) {
 	return result, nil
 }
 
-// mysqlTableCollation returns the collation of new tables: the utf8mb4 collation that all existing
-// tables share, or the default collation for a new database and for tables with mixed collations.
-func mysqlTableCollation(tables []mysqlTable) string {
-	if len(tables) == 0 {
-		return mysqlDefaultCollation
-	}
-
-	collation := tables[0].Collation
-
-	for _, t := range tables[1:] {
-		if t.Collation != collation {
-			return mysqlDefaultCollation
-		}
-	}
-
-	if mysqlCollationName.MatchString(collation) {
-		return collation
-	}
-
-	return mysqlDefaultCollation
-}
-
 // mysqlTableOptions returns the options of new tables with the specified collation.
 func mysqlTableOptions(collation string) string {
 	return fmt.Sprintf("ENGINE=%s DEFAULT CHARSET=utf8mb4 COLLATE=%s", mysqlEngine, collation)
 }
 
-// mysqlTargetCollation returns the most common utf8mb4 collation of the tables, preferring the
-// default collation on a tie, or the default collation if the most common one is not utf8mb4.
-func mysqlTargetCollation(tables []mysqlTable) string {
+// mysqlTableCollation returns the collation of new tables, which the warning also names as conversion
+// target: the most common collation of the tables, preferring the default and then utf8mb4 collations on
+// a tie, or the default collation for a new database and if the result is not utf8mb4.
+func mysqlTableCollation(tables []mysqlTable) string {
 	counts := make(map[string]int)
 
 	for _, t := range tables {
 		counts[t.Collation]++
 	}
 
-	target := mysqlDefaultCollation
+	target, best := mysqlDefaultCollation, counts[mysqlDefaultCollation]
 
 	for collation, n := range counts {
-		if !mysqlCollationName.MatchString(collation) {
-			continue
-		} else if best := counts[target]; n > best || n == best && target != mysqlDefaultCollation && collation < target {
-			target = collation
+		if n > best || n == best && mysqlPreferCollation(collation, target) {
+			target, best = collation, n
 		}
 	}
 
+	if !mysqlCollationName.MatchString(target) {
+		return mysqlDefaultCollation
+	}
+
 	return target
+}
+
+// mysqlPreferCollation reports whether a collation is preferred over the current target on a tie,
+// so that the result does not depend on the order of the tables.
+func mysqlPreferCollation(collation, target string) bool {
+	switch {
+	case target == mysqlDefaultCollation:
+		return false
+	case collation == mysqlDefaultCollation:
+		return true
+	case mysqlCollationName.MatchString(collation) != mysqlCollationName.MatchString(target):
+		return mysqlCollationName.MatchString(collation)
+	default:
+		return collation < target
+	}
 }
 
 // warnMysqlTables logs a warning naming the tables that do not use InnoDB, and the tables to convert
@@ -131,7 +127,7 @@ func warnMysqlTables(tables []mysqlTable) {
 		return
 	}
 
-	target := mysqlTargetCollation(tables)
+	target := mysqlTableCollation(tables)
 
 	for _, t := range tables {
 		if t.Collation != target {

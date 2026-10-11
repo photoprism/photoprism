@@ -356,10 +356,17 @@ func TestWithTableOptions(t *testing.T) {
 		assert.True(t, ok)
 		assert.Equal(t, mysqlTableOptions("utf8mb4_general_ci"), options)
 
-		// The collation is adopted only if all tables in the list share it.
+		// With mixed collations, the most common one is used, and the default on a tie.
 		list[Photo{}.TableName()] = &Photo{}
 		options, _ = withTableOptions(Db(), list, false).Get("gorm:table_options")
 		assert.Equal(t, mysqlTableOptions(mysqlDefaultCollation), options)
+
+		t.Cleanup(func() { _ = Db().Exec("DROP TABLE IF EXISTS create_table_test_2").Error })
+		require.NoError(t, Db().Exec("CREATE TABLE create_table_test_2 (id INT) ENGINE=InnoDB "+
+			"DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci").Error)
+		list["create_table_test_2"] = &createTableTest{}
+		options, _ = withTableOptions(Db(), list, false).Get("gorm:table_options")
+		assert.Equal(t, mysqlTableOptions("utf8mb4_general_ci"), options)
 	})
 	t.Run("AutoMigrate", func(t *testing.T) {
 		t.Cleanup(func() { _ = Db().Migrator().DropTable(&createTableTest{}) })
