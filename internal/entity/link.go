@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -19,6 +20,12 @@ import (
 const (
 	LinkUID    = byte('s')
 	LinkPrefix = "link"
+)
+
+// Conditions that select the links and user shares deleted by deleteLinks.
+const (
+	linkUidCond  = "link_uid IN (?)"
+	shareUidCond = "share_uid IN (?)"
 )
 
 // Links represents a list of share links.
@@ -145,7 +152,7 @@ func (m *Link) Save() error {
 	return Db().Save(m).Error
 }
 
-// Delete permanently deletes the link and the password stored for its UID, if any.
+// Delete permanently deletes the link with its user shares and the password stored for its UID, if any.
 func (m *Link) Delete() error {
 	if m.LinkToken == "" {
 		return fmt.Errorf("empty link token")
@@ -153,44 +160,55 @@ func (m *Link) Delete() error {
 		return fmt.Errorf("empty link uid")
 	}
 
-	// Remove related user shares.
-	if err := UnscopedDb().Delete(&UserShare{}, "link_uid = ?", m.LinkUID).Error; err != nil {
-		event.AuditErr([]string{"link %s", "failed to remove related user shares", status.Error(err)}, clean.Log(m.RefID))
+	if err := Db().Transaction(func(tx *gorm.DB) error { return deleteLinks(tx, linkUidCond, []string{m.LinkUID}) }); err != nil {
+		event.AuditErr([]string{"link %s", "failed to remove", status.Error(err)}, clean.Log(m.RefID))
+		return err
 	}
 
-	// One transaction removes the password and the link, so a failed delete keeps both.
-	return Db().Transaction(func(tx *gorm.DB) error {
-		if err := tx.Delete(&Password{}, "uid = ?", m.LinkUID).Error; err != nil {
-			event.AuditErr([]string{"link %s", "failed to remove password", status.Error(err)}, clean.Log(m.RefID))
-			return err
-		}
-
-		return tx.Delete(m).Error
-	})
+	return nil
 }
 
-// DeleteShareLinks removes all links that match the shared UID, and the passwords stored for their UIDs.
+// DeleteShareLinks removes all links that match the shared UID, with their user shares and passwords.
 func DeleteShareLinks(shareUid string) error {
 	if shareUid == "" {
 		return fmt.Errorf("empty share uid")
 	}
 
-	// Remove related user shares.
-	if err := UnscopedDb().Delete(&UserShare{}, "share_uid = ?", shareUid).Error; err != nil {
-		event.AuditErr([]string{"share %s", "failed to remove related user shares", status.Error(err)}, clean.Log(shareUid))
+	if err := Db().Transaction(func(tx *gorm.DB) error { return DeleteShareLinksTx(tx, []string{shareUid}) }); err != nil {
+		event.AuditErr([]string{"share %s", "failed to remove links", status.Error(err)}, clean.Log(shareUid))
+		return err
 	}
 
-	// One transaction removes the passwords and the links, so a failed delete keeps both.
-	return Db().Transaction(func(tx *gorm.DB) error {
-		linkUids := tx.Model(&Link{}).Select("link_uid").Where("share_uid = ?", shareUid)
+	return nil
+}
 
-		if err := tx.Delete(&Password{}, "uid IN (?)", linkUids).Error; err != nil {
-			event.AuditErr([]string{"share %s", "failed to remove link passwords", status.Error(err)}, clean.Log(shareUid))
-			return err
-		}
+// DeleteShareLinksTx removes the links of the share UIDs, with their user shares and passwords,
+// within the transaction tx.
+func DeleteShareLinksTx(tx *gorm.DB, shareUids []string) error {
+	return deleteLinks(tx, shareUidCond, shareUids)
+}
 
-		return tx.Delete(&Link{}, "share_uid = ?", shareUid).Error
-	})
+// deleteLinks removes the links and user shares matching cond, which must be linkUidCond or
+// shareUidCond, and the passwords stored for the link UIDs. The passwords go
+// first, so the links still identify them; run it in a transaction, so a failure keeps all three.
+func deleteLinks(tx *gorm.DB, cond string, values []string) error {
+	if len(values) == 0 {
+		return nil
+	} else if slices.Contains(values, "") {
+		return fmt.Errorf("empty link or share uid")
+	}
+
+	if err := tx.Delete(&UserShare{}, cond, values).Error; err != nil {
+		return err
+	}
+
+	linkUids := tx.Model(&Link{}).Select("link_uid").Where(cond, values)
+
+	if err := tx.Delete(&Password{}, "uid IN (?)", linkUids).Error; err != nil {
+		return err
+	}
+
+	return tx.Delete(&Link{}, cond, values).Error
 }
 
 // FindLink finds the link with the specified UID or nil if it is not found.

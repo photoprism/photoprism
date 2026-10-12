@@ -361,10 +361,8 @@ func RemoveDuplicateMoments() (removed int, err error) {
 				removed += int(res.RowsAffected)
 			}
 
-			for _, table := range []string{entity.Link{}.TableName(), entity.UserShare{}.TableName()} {
-				if res := tx.Exec(fmt.Sprintf(`DELETE FROM %s WHERE share_uid IN (?)`, table), uids); res.Error != nil {
-					return res.Error
-				}
+			if err := entity.DeleteShareLinksTx(tx, uids); err != nil {
+				return err
 			}
 
 			if res := tx.Exec(`DELETE FROM photos_albums WHERE album_uid IN (?)`, uids); res.Error != nil {

@@ -151,12 +151,19 @@ func TestLink_Delete(t *testing.T) {
 	})
 	t.Run("RemovesPassword", func(t *testing.T) {
 		link := newTestLink(t, 0)
-		other := newTestLink(t, 0)
+		other := NewLink(link.ShareUID, false, false)
+		require.NoError(t, other.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(&other).Error })
 		saveTestLinkPassword(t, link.LinkUID)
 		saveTestLinkPassword(t, other.LinkUID)
+		require.NoError(t, NewUserShare(Admin.UserUID, link.ShareUID, PermView, nil).Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(&UserShare{}, "share_uid = ?", link.ShareUID).Error })
 
 		require.NoError(t, link.Delete())
 
+		var shares int64
+		require.NoError(t, Db().Model(&UserShare{}).Where("share_uid = ?", link.ShareUID).Count(&shares).Error)
+		assert.Equal(t, int64(1), shares, "a share not made through the link is kept")
 		assert.Nil(t, FindLink(link.LinkUID))
 		assert.Nil(t, FindPassword(link.LinkUID))
 		assert.NotNil(t, FindLink(other.LinkUID))
@@ -292,6 +299,106 @@ func TestDeleteShareLinks(t *testing.T) {
 	})
 	t.Run("EmptyShareUid", func(t *testing.T) {
 		assert.Error(t, DeleteShareLinks(""))
+	})
+}
+
+func TestDeleteShareLinksTx(t *testing.T) {
+	t.Run("RemovesLinksAndPasswords", func(t *testing.T) {
+		first := newTestLink(t, 0)
+		second := newTestLink(t, 0)
+		other := newTestLink(t, 0)
+		saveTestLinkPassword(t, first.LinkUID)
+		saveTestLinkPassword(t, second.LinkUID)
+		saveTestLinkPassword(t, other.LinkUID)
+
+		require.NoError(t, Db().Transaction(func(tx *gorm.DB) error {
+			return DeleteShareLinksTx(tx, []string{first.ShareUID, second.ShareUID})
+		}))
+
+		assert.Nil(t, FindLink(first.LinkUID))
+		assert.Nil(t, FindLink(second.LinkUID))
+		assert.Nil(t, FindPassword(first.LinkUID))
+		assert.Nil(t, FindPassword(second.LinkUID))
+		assert.NotNil(t, FindLink(other.LinkUID))
+		assert.NotNil(t, FindPassword(other.LinkUID))
+		assert.NotNil(t, FindPassword(UserFixtures.Pointer("alice").UserUID))
+	})
+	t.Run("NoShareUids", func(t *testing.T) {
+		assert.NoError(t, DeleteShareLinksTx(Db(), nil))
+	})
+	t.Run("RollsBack", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		failTestDeletes(t, Link{}.TableName())
+
+		assert.Error(t, Db().Transaction(func(tx *gorm.DB) error {
+			return DeleteShareLinksTx(tx, []string{link.ShareUID})
+		}))
+
+		assert.NotNil(t, FindLink(link.LinkUID))
+		assert.NotNil(t, FindPassword(link.LinkUID))
+	})
+}
+
+func TestDeleteLinks(t *testing.T) {
+	t.Run("ByLinkUid", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		other := NewLink(link.ShareUID, false, false)
+		require.NoError(t, other.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(&other).Error })
+		saveTestLinkPassword(t, link.LinkUID)
+		saveTestLinkPassword(t, other.LinkUID)
+		share := NewUserShare(Admin.UserUID, link.ShareUID, PermView, nil)
+		share.LinkUID = link.LinkUID
+		require.NoError(t, share.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(&UserShare{}, "share_uid = ?", link.ShareUID).Error })
+
+		require.NoError(t, Db().Transaction(func(tx *gorm.DB) error {
+			return deleteLinks(tx, linkUidCond, []string{link.LinkUID})
+		}))
+
+		var shares int64
+		require.NoError(t, Db().Model(&UserShare{}).Where("link_uid = ?", link.LinkUID).Count(&shares).Error)
+		assert.Zero(t, shares)
+		assert.Nil(t, FindLink(link.LinkUID))
+		assert.Nil(t, FindPassword(link.LinkUID))
+		assert.NotNil(t, FindLink(other.LinkUID))
+		assert.NotNil(t, FindPassword(other.LinkUID))
+		assert.NotNil(t, FindPassword(UserFixtures.Pointer("alice").UserUID))
+	})
+	t.Run("ByShareUid", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		require.NoError(t, NewUserShare(Admin.UserUID, link.ShareUID, PermView, nil).Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(&UserShare{}, "share_uid = ?", link.ShareUID).Error })
+
+		require.NoError(t, Db().Transaction(func(tx *gorm.DB) error {
+			return deleteLinks(tx, shareUidCond, []string{link.ShareUID})
+		}))
+
+		var shares int64
+		require.NoError(t, Db().Model(&UserShare{}).Where("share_uid = ?", link.ShareUID).Count(&shares).Error)
+		assert.Zero(t, shares)
+		assert.Nil(t, FindLink(link.LinkUID))
+		assert.Nil(t, FindPassword(link.LinkUID))
+	})
+	t.Run("EmptyValue", func(t *testing.T) {
+		link := newTestLink(t, 0)
+
+		assert.Error(t, deleteLinks(Db(), linkUidCond, []string{link.LinkUID, ""}))
+		assert.NotNil(t, FindLink(link.LinkUID))
+	})
+	t.Run("UserShareDeleteFails", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		failTestDeletes(t, UserShare{}.TableName())
+
+		assert.Error(t, Db().Transaction(func(tx *gorm.DB) error {
+			return deleteLinks(tx, linkUidCond, []string{link.LinkUID})
+		}))
+
+		assert.NotNil(t, FindLink(link.LinkUID))
+		assert.NotNil(t, FindPassword(link.LinkUID))
 	})
 }
 

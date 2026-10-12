@@ -499,6 +499,7 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		t.Cleanup(func() { _ = duplicate.DeletePermanently() })
 
 		photoUID := entity.PhotoFixtures.Get("Photo01").PhotoUID
+		linkUIDs := make(map[string]string, 2)
 
 		for _, a := range []*entity.Album{kept, duplicate} {
 			if err := UnscopedDb().Create(&entity.PhotoAlbum{PhotoUID: photoUID, AlbumUID: a.AlbumUID}).Error; err != nil {
@@ -509,6 +510,11 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 			if err := UnscopedDb().Create(&link).Error; err != nil {
 				t.Fatal(err)
 			}
+
+			pw := entity.NewPassword(link.LinkUID, "LinkPassword123!", false)
+			require.NoError(t, pw.Save())
+			t.Cleanup(func() { UnscopedDb().Delete(&entity.Password{}, "uid = ?", link.LinkUID) })
+			linkUIDs[a.AlbumUID] = link.LinkUID
 
 			if err := entity.NewUserShare(entity.Admin.UserUID, a.AlbumUID, entity.PermView, nil).Create(); err != nil {
 				t.Fatal(err)
@@ -537,6 +543,9 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		assert.True(t, albumRowExists(kept.AlbumUID), "the older album is kept")
 		assert.Equal(t, int64(1), links(kept.AlbumUID), "with its photo links")
 		assert.Equal(t, int64(2), shares(kept.AlbumUID), "and shares")
+		assert.Nil(t, entity.FindPassword(linkUIDs[duplicate.AlbumUID]), "the removed link's password is removed")
+		assert.NotNil(t, entity.FindPassword(linkUIDs[kept.AlbumUID]), "the kept link's password is kept")
+		assert.NotNil(t, entity.FindPassword(entity.UserFixtures.Pointer("alice").UserUID), "user passwords are kept")
 	})
 	t.Run("RollsBack", func(t *testing.T) {
 		slug := "duplicate-rollback-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
@@ -558,6 +567,9 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		link := entity.NewLink(duplicate.AlbumUID, false, false)
 		require.NoError(t, UnscopedDb().Create(&link).Error)
 		t.Cleanup(func() { UnscopedDb().Where("share_uid = ?", duplicate.AlbumUID).Delete(&entity.Link{}) })
+		pw := entity.NewPassword(link.LinkUID, "LinkPassword123!", false)
+		require.NoError(t, pw.Save())
+		t.Cleanup(func() { UnscopedDb().Delete(&entity.Password{}, "uid = ?", link.LinkUID) })
 		require.NoError(t, entity.NewUserShare(entity.Admin.UserUID, duplicate.AlbumUID, entity.PermView, nil).Create())
 		t.Cleanup(func() { UnscopedDb().Where("share_uid = ?", duplicate.AlbumUID).Delete(&entity.UserShare{}) })
 
@@ -580,6 +592,7 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		assert.Equal(t, int64(1), n, "with its link")
 		require.NoError(t, UnscopedDb().Model(&entity.UserShare{}).Where("share_uid = ?", duplicate.AlbumUID).Count(&n).Error)
 		assert.Equal(t, int64(1), n, "and its user share")
+		assert.NotNil(t, entity.FindPassword(link.LinkUID), "and its link's password")
 	})
 }
 
