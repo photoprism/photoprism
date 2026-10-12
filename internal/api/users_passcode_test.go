@@ -3,16 +3,20 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/pquerna/otp/totp"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 func TestCreateUserPasscode(t *testing.T) {
@@ -318,4 +322,56 @@ func TestUserPasscode(t *testing.T) {
 
 	r = AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/deactivate", string(pcStr), sessId)
 	assert.Equal(t, http.StatusOK, r.Code)
+}
+
+func TestCheckUserPasscodePassword(t *testing.T) {
+	user := &entity.User{UserUID: "uqxc08w3d0ej2283", UserName: "jane", AuthProvider: authn.ProviderLDAP.String()}
+	other := &entity.User{UserUID: "uqxqg7i1kperxvu7", UserName: "jane", AuthProvider: authn.ProviderLDAP.String()}
+
+	stubAuth := func(t *testing.T, found *entity.User, method authn.MethodType, err error) {
+		auth := entity.Auth
+		t.Cleanup(func() { entity.Auth = auth })
+		entity.Auth = func(frm form.Login, s *entity.Session, c *gin.Context) (*entity.User, authn.ProviderType, authn.MethodType, error) {
+			return found, authn.ProviderLDAP, method, err
+		}
+	}
+
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+
+	t.Run("PasscodeRequired", func(t *testing.T) {
+		stubAuth(t, user, authn.Method2FA, authn.ErrPasscodeRequired)
+		code, _, err := checkUserPasscodePassword(c, user, "photoprism")
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, code)
+	})
+	t.Run("PasscodeRequiredOtherAccount", func(t *testing.T) {
+		stubAuth(t, other, authn.Method2FA, authn.ErrPasscodeRequired)
+		code, _, err := checkUserPasscodePassword(c, user, "photoprism")
+		assert.ErrorIs(t, err, authn.ErrUserDoesNotMatch)
+		assert.Equal(t, http.StatusForbidden, code)
+	})
+	t.Run("PasscodeRequiredNoAccount", func(t *testing.T) {
+		stubAuth(t, nil, authn.Method2FA, authn.ErrPasscodeRequired)
+		code, _, err := checkUserPasscodePassword(c, user, "photoprism")
+		assert.ErrorIs(t, err, authn.ErrAccountNotFound)
+		assert.Equal(t, http.StatusForbidden, code)
+	})
+	t.Run("OtherAccount", func(t *testing.T) {
+		stubAuth(t, other, authn.MethodDefault, nil)
+		code, _, err := checkUserPasscodePassword(c, user, "photoprism")
+		assert.ErrorIs(t, err, authn.ErrUserDoesNotMatch)
+		assert.Equal(t, http.StatusForbidden, code)
+	})
+	t.Run("InvalidPassword", func(t *testing.T) {
+		stubAuth(t, user, authn.MethodDefault, authn.ErrInvalidPassword)
+		code, _, err := checkUserPasscodePassword(c, user, "wrong")
+		assert.ErrorIs(t, err, authn.ErrInvalidPassword)
+		assert.Equal(t, http.StatusForbidden, code)
+	})
+	t.Run("Verified", func(t *testing.T) {
+		stubAuth(t, user, authn.MethodDefault, nil)
+		code, _, err := checkUserPasscodePassword(c, user, "photoprism")
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, code)
+	})
 }
