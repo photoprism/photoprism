@@ -245,6 +245,27 @@ describe("common/form", () => {
       expect(optionalUrl[0]("")).toBe(true);
     });
 
+    it("validates ASCII strings", () => {
+      expect(rules.isASCII("j.doe_1-x@example.com")).toBe(true);
+      expect(rules.isASCII("")).toBe(true);
+      expect(rules.isASCII(null)).toBe(true);
+      expect(rules.isASCII("josé")).toBe(false);
+      expect(rules.isASCII("jose\u0301")).toBe(false);
+      expect(rules.isASCII("\u212Aate")).toBe(false);
+      expect(rules.isASCII("jos\u200be")).toBe(false);
+      expect(rules.isASCII("山田")).toBe(false);
+    });
+
+    it("validates new usernames", () => {
+      const username = rules.username(true, 2, 10);
+      expect(username).toHaveLength(4);
+      expect(username[0]("")).toBe("This field is required");
+      expect(username[1]("a")).toBe("Username is too short");
+      expect(username[2]("abcdefghijk")).toBe("Username is too long");
+      expect(username[3]("jose")).toBe(true);
+      expect(username[3]("josé")).toBe("Username may only contain ASCII characters");
+    });
+
     it("validates text length with labels", () => {
       const requiredText = rules.text(true, 2, 4, "Name");
       expect(requiredText[0]("")).toBe("This field is required");
