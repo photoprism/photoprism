@@ -99,7 +99,7 @@ func databaseTransferFlags() []cli.Flag {
 		&cli.IntFlag{
 			Name:    "batch",
 			Aliases: []string{"b"},
-			Usage:   "maximum `NUMBER` of rows copied per statement",
+			Usage:   "maximum `NUMBER` of rows copied per statement, lower if the target server limits the packet size",
 			Value:   entity.TransferBatchSize,
 		},
 	}

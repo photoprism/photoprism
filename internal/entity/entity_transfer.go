@@ -19,7 +19,7 @@ import (
 )
 
 // TransferBatchSize is the default number of rows that Tables.Transfer copies per statement.
-const TransferBatchSize = 100
+const TransferBatchSize = 1000
 
 // transferMaxVars limits the values bound per insert statement, below the limits of SQLite, MariaDB and PostgreSQL.
 const transferMaxVars = 30000
