@@ -172,7 +172,7 @@ func TestUser_CheckRename(t *testing.T) {
 		require.EqualError(t, err, "username is invalid")
 	})
 	t.Run("Reserved", func(t *testing.T) {
-		_, err := m.CheckRename("visitor")
+		_, err := m.CheckRename("cs5cpu17n6gj2qo5")
 		require.EqualError(t, err, "username is reserved")
 	})
 	t.Run("TooLongBytes", func(t *testing.T) {

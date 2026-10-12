@@ -37,7 +37,7 @@ func Username(name string) (sanitized string, err error) {
 	switch {
 	case s == "" || !strings.EqualFold(s, name):
 		return s, ErrInvalid
-	case rnd.IsUID(s, 'c'), s == "visitor":
+	case rnd.IsUID(s, 'c'):
 		return s, ErrReserved
 	}
 

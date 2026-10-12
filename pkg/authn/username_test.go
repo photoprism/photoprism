@@ -44,13 +44,9 @@ func TestUsername(t *testing.T) {
 		}
 	})
 	t.Run("Visitor", func(t *testing.T) {
-		name := "Visitor"
-		if s, err := Username(name); err != nil {
-			assert.ErrorIs(t, err, ErrReserved)
-			assert.Equal(t, "visitor", s)
-		} else {
-			assert.Equal(t, "visitor", s)
-		}
+		s, err := Username("Visitor")
+		assert.NoError(t, err)
+		assert.Equal(t, "visitor", s)
 	})
 	t.Run("Asterisk", func(t *testing.T) {
 		name := "*"
@@ -125,7 +121,7 @@ func TestNewUsername(t *testing.T) {
 		assert.ErrorIs(t, err, ErrEmpty)
 	})
 	t.Run("Reserved", func(t *testing.T) {
-		_, err := NewUsername("visitor")
+		_, err := NewUsername("cs5cpu17n6gj2qo5")
 		assert.ErrorIs(t, err, ErrReserved)
 	})
 }
@@ -159,7 +155,7 @@ func TestFoldUsername(t *testing.T) {
 		assert.Equal(t, "", FoldUsername(strings.Repeat("é", 200)))
 	})
 	t.Run("Reserved", func(t *testing.T) {
-		assert.Equal(t, "", FoldUsername("vïsitor"))
+		assert.Equal(t, "", FoldUsername("cs5cpu17n6gj2q\u00f65"))
 	})
 	t.Run("NothingLeft", func(t *testing.T) {
 		assert.Equal(t, "", FoldUsername("\u0301"))

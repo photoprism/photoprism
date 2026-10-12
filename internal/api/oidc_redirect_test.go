@@ -1196,7 +1196,7 @@ func oidcAuditContains(hook *logtest.Hook, text string) bool {
 func TestOidcUsernameAvailable(t *testing.T) {
 	assert.True(t, oidcUsernameAvailable("oidc-available-name"))
 	assert.False(t, oidcUsernameAvailable("alice"))
-	assert.False(t, oidcUsernameAvailable("visitor"))
+	assert.True(t, oidcUsernameAvailable("visitor"))
 	assert.False(t, oidcUsernameAvailable(rnd.GenerateUID('c')))
 }
 

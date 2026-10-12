@@ -166,7 +166,7 @@ func TestUsersModCommand_Username(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
 		m, _ := newRenameTestUser(t, "modrename-invalid")
 
-		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--username=visitor", "modrename-invalid"})
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--username=cs5cpu17n6gj2qo5", "modrename-invalid"})
 		require.EqualError(t, err, "username is reserved")
 		assert.Equal(t, "modrename-invalid", entity.FindUserByUID(m.UserUID).UserName)
 	})
