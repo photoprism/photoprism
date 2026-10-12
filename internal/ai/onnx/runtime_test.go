@@ -1,10 +1,14 @@
 package onnx
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
 
+	onnxruntime "github.com/yalue/onnxruntime_go"
+
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -54,5 +58,76 @@ func TestEnsureRuntime(t *testing.T) {
 		if first == nil {
 			require.NotEmpty(t, RuntimeLibraryPath())
 		}
+	})
+}
+
+// stubRuntime replaces the native runtime calls loadRuntime makes and records the ones it receives.
+func stubRuntime(t *testing.T, loadable string, disableErr error) *[]string {
+	t.Helper()
+
+	setPath, initEnv, disable, destroy := setLibraryPathVar, initEnvironmentVar, disableTelemetryVar, destroyEnvironmentVar
+	t.Cleanup(func() {
+		setLibraryPathVar, initEnvironmentVar, disableTelemetryVar, destroyEnvironmentVar = setPath, initEnv, disable, destroy
+	})
+
+	calls := &[]string{}
+	current := ""
+
+	setLibraryPathVar = func(path string) { current = path }
+	initEnvironmentVar = func(...onnxruntime.EnvironmentOption) error {
+		*calls = append(*calls, "init:"+current)
+		if current != loadable {
+			return errors.New("not found")
+		}
+		return nil
+	}
+	disableTelemetryVar = func() error {
+		*calls = append(*calls, "disable")
+		return disableErr
+	}
+	destroyEnvironmentVar = func() error {
+		*calls = append(*calls, "destroy")
+		return nil
+	}
+
+	return calls
+}
+
+func TestLoadRuntime(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		t.Setenv(TelemetryEnv, "0")
+		calls := stubRuntime(t, "b.so", nil)
+
+		path, err := loadRuntime([]string{"a.so", "b.so", "c.so"})
+		require.NoError(t, err)
+		assert.Equal(t, "b.so", path)
+		assert.Equal(t, []string{"init:a.so", "init:b.so", "disable"}, *calls)
+		assert.Equal(t, "1", os.Getenv(TelemetryEnv))
+	})
+	t.Run("DisableFailed", func(t *testing.T) {
+		calls := stubRuntime(t, "a.so", errors.New("unsupported"))
+
+		path, err := loadRuntime([]string{"a.so", "b.so"})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "telemetry")
+		assert.Empty(t, path)
+		assert.Equal(t, []string{"init:a.so", "disable", "destroy"}, *calls)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		calls := stubRuntime(t, "", nil)
+
+		path, err := loadRuntime([]string{"a.so", "b.so"})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "a.so (not found); b.so (not found)")
+		assert.Empty(t, path)
+		assert.Equal(t, []string{"init:a.so", "init:b.so"}, *calls)
+	})
+	t.Run("NoCandidates", func(t *testing.T) {
+		calls := stubRuntime(t, "", nil)
+
+		path, err := loadRuntime(nil)
+		require.EqualError(t, err, "no ONNX runtime library candidates")
+		assert.Empty(t, path)
+		assert.Empty(t, *calls)
 	})
 }

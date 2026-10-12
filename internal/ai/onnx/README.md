@@ -1,6 +1,6 @@
 ## ONNX Model Description
 
-**Last Updated:** October 3, 2026
+**Last Updated:** October 12, 2026
 
 ### Overview
 
@@ -45,6 +45,15 @@ Metadata inside the artifact survives mirroring, renaming, and being copied into
 ### Runtime
 
 `EnsureRuntime` loads the ONNX Runtime shared library and initializes the global environment; it must succeed before any model is inspected or loaded. `SharedLibraryCandidates` lists the paths it tries, starting with an explicitly configured one.
+
+#### Telemetry
+
+Official ONNX Runtime builds for Linux and macOS include Microsoft's telemetry client, which creates a persistent device identifier and uploads usage events unless it is disabled. PhotoPrism always disables it, with or without its Docker images:
+
+- The package's `init` function sets `ORT_DISABLE_TELEMETRY=1`, replacing any other value. The runtime reads the variable only once, when it creates its environment, and then never starts its uploader or writes a device identifier, so the variable must be in place before the library is loaded. Setting it during package initialization also updates the C environment before any native threads can read it.
+- `EnsureRuntime` asserts the variable again before loading the library, and calls `DisableTelemetry` once the environment exists. That API call alone is not sufficient: it suppresses events, but leaves the uploader running. If it fails, the environment is destroyed and `EnsureRuntime` returns an error rather than running with telemetry enabled.
+
+`TestTelemetryDisabled` runs the test binary again with `ORT_DISABLE_TELEMETRY=0` and a temporary `XDG_CACHE_HOME`, loads a model, and checks that the variable was replaced and that the runtime wrote nothing to that directory. A runtime built without telemetry writes nothing there either, so only the first check is meaningful with such a build.
 
 The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`.
 
