@@ -89,9 +89,15 @@ func TestRotateNodeInRegistry(t *testing.T) {
 		n.Database = &cluster.NodeDatabase{Name: "cluster_dtest", User: "cluster_utest", Driver: "mysql", RotatedAt: "2026-09-10T00:00:00Z"}
 		assert.NoError(t, regy.Put(n))
 
+		origHost, origPort := provisioner.DatabaseHost, provisioner.DatabasePort
+		t.Cleanup(func() { provisioner.DatabaseHost, provisioner.DatabasePort = origHost, origPort })
+		provisioner.DatabaseHost, provisioner.DatabasePort = "provision-db", 3307
+
 		// Rotating only the secret still reports what the record holds, as the HTTP path does.
 		resp, err := rotateNodeInRegistry(conf, "pp-rotate-db", false, true)
 		assert.NoError(t, err)
+		assert.Equal(t, "provision-db", resp.Database.Host)
+		assert.Equal(t, 3307, resp.Database.Port)
 		assert.Equal(t, "cluster_dtest", resp.Database.Name)
 		assert.Equal(t, "cluster_utest", resp.Database.User)
 		assert.Equal(t, "mysql", resp.Database.Driver)

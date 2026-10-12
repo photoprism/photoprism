@@ -119,7 +119,7 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 			driver = provisioner.DatabaseDriver
 		}
 
-		resp.Database.Driver, resp.Database.Host, resp.Database.Port = driver, conf.DatabaseHost(), conf.DatabasePort()
+		resp.Database.Driver, resp.Database.Host, resp.Database.Port = driver, provisioner.DatabaseHost, provisioner.DatabasePort
 		resp.Database.Name, resp.Database.User = n.Database.Name, n.Database.User
 
 		if resp.Database.RotatedAt == "" {

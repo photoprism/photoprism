@@ -168,11 +168,19 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
+		// The reported server is the one databases are provisioned on, not the Portal's own.
+		origHost, origPort := provisioner.DatabaseHost, provisioner.DatabasePort
+		t.Cleanup(func() { provisioner.DatabaseHost, provisioner.DatabasePort = origHost, origPort })
+		provisioner.DatabaseHost, provisioner.DatabasePort = "provision-db", 3307
+
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate","RotateDatabase":true}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
 		body := r.Body.String()
 		assert.NotEqual(t, "", gjson.Get(body, "Database.Name").String())
 		assert.NotEqual(t, "", gjson.Get(body, "Database.Password").String())
+		assert.Equal(t, "provision-db", gjson.Get(body, "Database.Host").String())
+		assert.Equal(t, int64(3307), gjson.Get(body, "Database.Port").Int())
+		assert.Contains(t, gjson.Get(body, "Database.DSN").String(), "@tcp(provision-db:3307)/")
 		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
 		cleanupRegisterProvisioning(t, conf, r)
 	})
@@ -637,6 +645,36 @@ func TestClusterNodesRegister(t *testing.T) {
 		n2, err := regy.FindByName("pp-node-02")
 		assert.NoError(t, err)
 		assert.Equal(t, "https://photos.example.com", n2.SiteUrl)
+	})
+	t.Run("ExistingNodeReportsProvisioningServer", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		origHost, origPort := provisioner.DatabaseHost, provisioner.DatabasePort
+		t.Cleanup(func() { provisioner.DatabaseHost, provisioner.DatabasePort = origHost, origPort })
+		provisioner.DatabaseHost, provisioner.DatabasePort = "provision-db", 3307
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-db-host", Role: cluster.RoleInstance}}
+		n.Database = &cluster.NodeDatabase{Name: "cluster_dhost", User: "cluster_uhost", Driver: "mysql"}
+		assert.NoError(t, regy.Put(n))
+		n, err = regy.RotateSecret(n.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
+			return
+		}
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-db-host"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code)
+		body := r.Body.String()
+		assert.Equal(t, "cluster_dhost", gjson.Get(body, "Database.Name").String())
+		assert.Equal(t, "provision-db", gjson.Get(body, "Database.Host").String())
+		assert.Equal(t, int64(3307), gjson.Get(body, "Database.Port").Int())
+		assert.Equal(t, "", gjson.Get(body, "Database.Password").String())
 	})
 	t.Run("ExistingNodeWithoutRotateDoesNotProvisionDatabase", func(t *testing.T) {
 		app, router, conf := NewApiTest()

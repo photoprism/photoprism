@@ -39,6 +39,9 @@ var DatabasePort = devDatabasePort()
 // DatabaseDriver indicates the SQL driver used for provisioning (independent from the app DB driver).
 var DatabaseDriver = "mysql"
 
+// ErrNotConfigured is returned by GetDB if no provisioning DSN is set.
+var ErrNotConfigured = errors.New("auto-provisioning database is not configured")
+
 // -----------------------------------------------------------------------------
 // Persistent auto-provisioning *sql.DB connection with liveness checks
 // -----------------------------------------------------------------------------
@@ -63,6 +66,10 @@ func GetDB(ctx context.Context) (*sql.DB, error) {
 		// Ping failed -> close & rebuild.
 		_ = db.Close()
 		setDB(nil)
+	}
+
+	if ProvisionDSN == "" {
+		return nil, ErrNotConfigured
 	}
 
 	var err error

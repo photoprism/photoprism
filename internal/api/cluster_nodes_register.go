@@ -392,7 +392,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				if driver == "" {
 					driver = provisioner.DatabaseDriver
 				}
-				resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: node.Database.Name, User: node.Database.User, Driver: driver, RotatedAt: node.Database.RotatedAt}
+				resp.Database = cluster.RegisterDatabase{Host: provisioner.DatabaseHost, Port: provisioner.DatabasePort, Name: node.Database.Name, User: node.Database.User, Driver: driver, RotatedAt: node.Database.RotatedAt}
 			}
 
 			if req.RotateDatabase && haveCreds {
@@ -524,7 +524,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		// If DB provisioning is skipped, leave Database fields zero-value.
 		if shouldProvisionDB {
-			resp.Database = cluster.RegisterDatabase{Host: conf.DatabaseHost(), Port: conf.DatabasePort(), Name: creds.Name, User: creds.User, Driver: creds.Driver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt}
+			resp.Database = cluster.RegisterDatabase{Host: provisioner.DatabaseHost, Port: provisioner.DatabasePort, Name: creds.Name, User: creds.User, Driver: creds.Driver, Password: creds.Password, DSN: creds.DSN, RotatedAt: creds.RotatedAt}
 		}
 
 		event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", status.Joined}, clean.Log(name))

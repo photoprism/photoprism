@@ -34,6 +34,28 @@ func TestDevDatabasePort(t *testing.T) {
 	})
 }
 
+// --- GetDB -------------------------------------------------------------------
+
+func TestGetDB(t *testing.T) {
+	t.Run("NotConfigured", func(t *testing.T) {
+		dbMutex.RLock()
+		origDSN, origDB := ProvisionDSN, dbConn
+		dbMutex.RUnlock()
+
+		t.Cleanup(func() {
+			ProvisionDSN = origDSN
+			setDB(origDB)
+		})
+
+		ProvisionDSN = ""
+		setDB(nil)
+
+		db, err := GetDB(context.Background())
+		assert.Nil(t, db)
+		assert.ErrorIs(t, err, ErrNotConfigured)
+	})
+}
+
 // --- Quoting helpers ---------------------------------------------------------
 
 func TestQuoteIdent_Valid(t *testing.T) {
