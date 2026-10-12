@@ -41,6 +41,13 @@ func TestUsersAddCommand(t *testing.T) {
 		assert.Error(t, err)
 		assert.Empty(t, output)
 	})
+	t.Run("NotASCII", func(t *testing.T) {
+		for name, sanitized := range map[string]string{"cli-josé": "cli-josé", "\u212Aate-cli": "kate-cli"} {
+			_, err := RunWithTestContext(UsersAddCommand, []string{"add", "--password=test1234", name})
+			require.ErrorIs(t, err, authn.ErrNotASCII, name)
+			assert.Nil(t, entity.FindUserByName(sanitized), name)
+		}
+	})
 }
 
 // newDeletedTestUser creates and deletes a user account, and removes it for good when the test ends.

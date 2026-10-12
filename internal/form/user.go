@@ -1,6 +1,7 @@
 package form
 
 import (
+	"strings"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -31,10 +32,11 @@ type User struct {
 	UserDetails  *UserDetails `json:"Details,omitempty"`
 }
 
-// NewUserFromCli creates a new form with values from a CLI context.
+// NewUserFromCli creates a new form with values from a CLI context. The username is only trimmed, so
+// that the rules for new usernames see the input; Username returns its sanitized form.
 func NewUserFromCli(ctx *cli.Context) User {
 	return User{
-		UserName:     clean.Username(ctx.Args().First()),
+		UserName:     strings.TrimSpace(ctx.Args().First()),
 		AuthProvider: clean.TypeLower(ctx.String("auth")),
 		AuthID:       clean.Auth(ctx.String("auth-id")),
 		AuthIssuer:   clean.Uri(ctx.String("auth-issuer")),

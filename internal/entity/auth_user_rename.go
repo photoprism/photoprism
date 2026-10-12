@@ -32,11 +32,13 @@ func (m *User) CheckRename(newName string) (string, error) {
 		return "", fmt.Errorf("system users cannot be modified")
 	}
 
-	name, err := authn.Username(newName)
+	name, err := authn.NewUsername(newName)
 
 	switch {
 	case name != "" && name == clean.Username(m.UserName):
 		return "", nil
+	case errors.Is(err, authn.ErrNotASCII):
+		return "", m.usernameASCIIError(newName)
 	case err != nil:
 		return "", fmt.Errorf("username is %s", err.Error())
 	case len(name) > txt.ClipUsername:

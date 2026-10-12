@@ -16,6 +16,8 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -227,6 +229,24 @@ func TestFindLocalUser(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
+	t.Run("NotASCII", func(t *testing.T) {
+		existing := newExistingTestUser(t, "local-josé", acl.RoleGuest)
+
+		found := FindLocalUser("Local-José")
+		require.NotNil(t, found)
+		assert.Equal(t, existing.UserUID, found.UserUID)
+		assert.Equal(t, "local-josé", found.UserName)
+
+		// MariaDB compares names that differ only by accents as equal.
+		if IsDialect(dsn.DriverMySQL) {
+			return
+		}
+
+		assert.Nil(t, FindLocalUser("local-jose"))
+		other := newExistingTestUser(t, "local-jose", acl.RoleGuest)
+		assert.Equal(t, other.UserUID, FindLocalUser("local-jose").UserUID)
+		assert.Equal(t, existing.UserUID, FindLocalUser("local-josé").UserUID)
+	})
 }
 
 func TestFindUserByName(t *testing.T) {
@@ -306,6 +326,24 @@ func TestFindUserByName(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
+	t.Run("NotASCII", func(t *testing.T) {
+		existing := newExistingTestUser(t, "find-josé", acl.RoleGuest)
+
+		found := FindUserByName("Find-José")
+		require.NotNil(t, found)
+		assert.Equal(t, existing.UserUID, found.UserUID)
+		assert.Equal(t, "find-josé", found.UserName)
+
+		// MariaDB compares names that differ only by accents as equal.
+		if IsDialect(dsn.DriverMySQL) {
+			return
+		}
+
+		assert.Nil(t, FindUserByName("find-jose"))
+		other := newRenameTestUser(t, "find-jose", acl.RoleGuest)
+		assert.Equal(t, other.UserUID, FindUserByName("find-jose").UserUID)
+		assert.Equal(t, existing.UserUID, FindUserByName("find-josé").UserUID)
+	})
 }
 
 func TestUser_Create(t *testing.T) {
@@ -359,6 +397,20 @@ func TestUser_Create(t *testing.T) {
 		assert.Equal(t, "examplelong", m.Username())
 		assert.Equal(t, "examplelong", m.UserName)
 		assert.Equal(t, "012345678901234567890", m.AuthID)
+	})
+	t.Run("NotASCII", func(t *testing.T) {
+		m := NewUser()
+		m.UserName = "create-josé"
+		m.UserRole = acl.RoleGuest.String()
+
+		require.ErrorIs(t, m.Create(), authn.ErrNotASCII)
+		assert.Nil(t, FindUserByName("create-josé"))
+	})
+	t.Run("AdminNotASCII", func(t *testing.T) {
+		m := &User{ID: 1, UserName: "adminé", UserRole: acl.RoleAdmin.String()}
+
+		require.ErrorIs(t, m.Create(), authn.ErrNotASCII)
+		assert.Equal(t, "", m.UserUID)
 	})
 }
 
@@ -434,6 +486,13 @@ func TestUser_SetUsername(t *testing.T) {
 	})
 	t.Run("SameName", func(t *testing.T) {
 		assert.Nil(t, Admin.SetUsername("admin"))
+	})
+	t.Run("NotASCII", func(t *testing.T) {
+		m := &User{ID: 999902, UserUID: rnd.GenerateUID(UserUID), UserName: ""}
+
+		require.ErrorIs(t, m.SetUsername("Josè"), authn.ErrNotASCII)
+		require.ErrorIs(t, m.SetUsername("\u212Aate"), authn.ErrNotASCII)
+		assert.Equal(t, "", m.UserName)
 	})
 }
 
@@ -930,6 +989,24 @@ func TestUser_InitAccount(t *testing.T) {
 			t.Fatal("expected password to be created")
 		}
 	})
+	t.Run("NotASCIIName", func(t *testing.T) {
+		// Only the initial admin account is renamed.
+		m := &User{ID: 1, UserUID: rnd.GenerateUID(UserUID), UserName: "init-admin", UserRole: acl.RoleAdmin.String(), AuthProvider: authn.ProviderLocal.String(), CanLogin: true}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Password{}, "uid = ?", m.UserUID).Error) })
+
+		assert.True(t, m.InitAccount("init-ädmin", "insecure", ""))
+		assert.Equal(t, "init-admin", m.UserName)
+		assert.NotNil(t, FindPassword(m.UserUID))
+		assert.Equal(t, "admin", FindUser(User{ID: 1}).UserName)
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		m := &User{ID: 1, UserUID: rnd.GenerateUID(UserUID), UserName: "init-jürgen", UserRole: acl.RoleAdmin.String(), AuthProvider: authn.ProviderLocal.String(), CanLogin: true}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Password{}, "uid = ?", m.UserUID).Error) })
+
+		assert.True(t, m.InitAccount("", "insecure", ""))
+		assert.Equal(t, "init-jürgen", m.UserName)
+		assert.Equal(t, "admin", FindUser(User{ID: 1}).UserName)
+	})
 }
 
 func TestUser_AclRole(t *testing.T) {
@@ -1112,6 +1189,36 @@ func TestUser_Validate(t *testing.T) {
 
 		assert.Error(t, u.Validate())
 	})
+	t.Run("NewNotASCII", func(t *testing.T) {
+		u := &User{UserName: "Validate-José", DisplayName: "José", UserRole: acl.RoleAdmin.String()}
+
+		err := u.Validate()
+		require.ErrorIs(t, err, authn.ErrNotASCII)
+		assert.EqualError(t, err, "username may only contain ASCII characters, e.g. 'validate-jose'")
+		assert.Equal(t, "Validate-José", u.UserName)
+	})
+	t.Run("ExistingNotASCII", func(t *testing.T) {
+		m := newExistingTestUser(t, "validate-zoë", acl.RoleAdmin)
+
+		require.NoError(t, m.Validate())
+		assert.Equal(t, "validate-zoë", m.UserName)
+
+		m.DisplayName = "Zoë Example"
+		require.NoError(t, m.Save())
+		assert.Equal(t, "validate-zoë", storedUser(t, m.UserUID).UserName)
+	})
+	t.Run("NewNotASCIIHeld", func(t *testing.T) {
+		newExistingTestUser(t, "validate-held-josé", acl.RoleAdmin)
+		u := &User{UserName: "validate-held-josé", DisplayName: "José", UserRole: acl.RoleAdmin.String()}
+
+		assert.EqualError(t, u.Validate(), "user 'validate-held-josé' already exists")
+	})
+	t.Run("ExistingNotASCIIUppercase", func(t *testing.T) {
+		m := newExistingTestUser(t, "Validate-Zoë-Upper", acl.RoleAdmin)
+
+		require.NoError(t, m.Validate())
+		assert.Equal(t, "validate-zoë-upper", m.UserName)
+	})
 }
 
 func TestAddUser(t *testing.T) {
@@ -1128,6 +1235,13 @@ func TestAddUser(t *testing.T) {
 		require.NoError(t, UnscopedDb().Model(&UserDetails{}).Where("user_uid = ?", uid).Count(&details).Error)
 		assert.Equal(t, int64(1), settings)
 		assert.Equal(t, int64(1), details)
+	})
+	t.Run("NotASCII", func(t *testing.T) {
+		for _, name := range []string{"adduser-josé", "\u212Aate-adduser", "adduser-jo\u200bse"} {
+			err := AddUser(form.User{UserName: name, UserRole: acl.RoleAdmin.String(), AuthProvider: "none"})
+			assert.ErrorIs(t, err, authn.ErrNotASCII, name)
+			assert.Nil(t, FindUserByName(clean.Username(name)), name)
+		}
 	})
 	t.Run("TooShort", func(t *testing.T) {
 		u := form.User{
@@ -3301,5 +3415,64 @@ func TestValidatePasswordLength(t *testing.T) {
 	})
 	t.Run("TooLong", func(t *testing.T) {
 		assert.ErrorContains(t, ValidatePasswordLength(strings.Repeat("a", txt.ClipPassword+1)), "less than")
+	})
+}
+
+func TestUser_UsernameASCIIError(t *testing.T) {
+	m := &User{ID: 999903, UserUID: rnd.GenerateUID(UserUID), UserName: "ascii-error"}
+
+	t.Run("Suggestion", func(t *testing.T) {
+		err := m.usernameASCIIError("Zoë")
+		require.ErrorIs(t, err, authn.ErrNotASCII)
+		assert.EqualError(t, err, "username may only contain ASCII characters, e.g. 'zoe'")
+	})
+	t.Run("SuggestionHeld", func(t *testing.T) {
+		assert.EqualError(t, m.usernameASCIIError("alicé"), "username may only contain ASCII characters")
+	})
+	t.Run("SuggestionTooShort", func(t *testing.T) {
+		orig := UsernameLength
+		UsernameLength = 4
+		t.Cleanup(func() { UsernameLength = orig })
+
+		assert.EqualError(t, m.usernameASCIIError("zoë"), "username may only contain ASCII characters")
+	})
+	t.Run("SuggestionWithoutHandle", func(t *testing.T) {
+		assert.EqualError(t, m.usernameASCIIError(".zoë"), "username may only contain ASCII characters")
+	})
+	t.Run("NoSuggestion", func(t *testing.T) {
+		assert.EqualError(t, m.usernameASCIIError("\u0301"), "username may only contain ASCII characters")
+	})
+	t.Run("SuggestionHeldDeleted", func(t *testing.T) {
+		holder := newRenameTestUser(t, "ascii-error-deleted", acl.RoleGuest)
+		require.NoError(t, Db().Delete(holder).Error)
+
+		assert.EqualError(t, m.usernameASCIIError("ascii-error-delëted"), "username may only contain ASCII characters")
+	})
+	t.Run("NameHeld", func(t *testing.T) {
+		newExistingTestUser(t, "ascii-error-josé", acl.RoleGuest)
+
+		err := m.usernameASCIIError("Ascii-Error-José")
+		require.NotErrorIs(t, err, authn.ErrNotASCII)
+		assert.EqualError(t, err, "user 'ascii-error-josé' already exists")
+	})
+}
+
+func TestUser_create(t *testing.T) {
+	t.Run("NotASCII", func(t *testing.T) {
+		m := NewUser()
+		m.UserName = "create-keep-josé"
+		m.UserRole = acl.RoleGuest.String()
+
+		require.ErrorIs(t, m.create(false), authn.ErrNotASCII)
+		assert.Nil(t, FindUserByName("create-keep-josé"))
+	})
+	t.Run("KeepName", func(t *testing.T) {
+		m := NewUser()
+		m.UserName = "create-keep-zoë"
+		m.UserRole = acl.RoleGuest.String()
+
+		require.NoError(t, m.create(true))
+		t.Cleanup(func() { deleteTestUser(t, m) })
+		assert.Equal(t, "create-keep-zoë", storedUser(t, m.UserUID).UserName)
 	})
 }

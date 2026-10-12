@@ -331,8 +331,17 @@ func (m *User) InitAccount(initName, initPasswd, scope string) (updated bool) {
 
 // Create new entity in the database.
 func (m *User) Create() (err error) {
-	// The initial admin account is exempt, so that it can always be created from the config.
-	if m.ID != 1 && m.UserName != "" && !m.ValidHandle() {
+	return m.create(false)
+}
+
+// create inserts the account; keepName exempts an existing name, e.g. one migrated from a legacy
+// table, from the ASCII rule for new usernames.
+func (m *User) create(keepName bool) (err error) {
+	// The initial admin account is exempt from the handle check, so that it can always be created from
+	// the config.
+	if !keepName && m.UserName != "" && !authn.IsASCIIUsername(m.UserName) {
+		return m.usernameASCIIError(m.UserName)
+	} else if m.ID != 1 && m.UserName != "" && !m.ValidHandle() {
 		return fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))
 	}
 
@@ -771,6 +780,7 @@ func (m *User) SetUsername(login string) (err error) {
 		return fmt.Errorf("system users cannot be modified")
 	}
 
+	raw := login
 	login = clean.Username(login)
 
 	// Empty?
@@ -778,6 +788,8 @@ func (m *User) SetUsername(login string) (err error) {
 		return fmt.Errorf("username is empty")
 	} else if m.UserName == login {
 		return nil
+	} else if !authn.IsASCIIUsername(raw) {
+		return m.usernameASCIIError(raw)
 	} else if m.UserName != "" && m.ID != 1 {
 		// An account whose stored name the sanitizer no longer accepts may be renamed, since
 		// that is the only way to repair it.
@@ -1318,11 +1330,24 @@ func (m *User) Validate() (err error) {
 
 // normalizedUsername returns the username in the form Validate stores it. A stored name the sanitizer
 // no longer accepts as written is normalized rather than refused, so an account provisioned earlier
-// stays editable; a new one is refused, so the caller sees what was rejected.
+// stays editable; a new one is refused, so the caller sees what was rejected. Only a new account
+// must have an ASCII name, so existing names are never transliterated.
 func (m *User) normalizedUsername() (string, error) {
+	if m.ID <= 0 {
+		userName, err := authn.NewUsername(m.UserName)
+
+		if errors.Is(err, authn.ErrNotASCII) {
+			return "", m.usernameASCIIError(m.UserName)
+		} else if err != nil {
+			return "", fmt.Errorf("username is %s", err.Error())
+		}
+
+		return userName, nil
+	}
+
 	userName, err := authn.Username(m.UserName)
 
-	if err != nil && m.ID > 0 && userName != "" {
+	if err != nil && userName != "" {
 		userName, err = authn.Username(userName)
 	}
 
@@ -1331,6 +1356,23 @@ func (m *User) normalizedUsername() (string, error) {
 	}
 
 	return userName, nil
+}
+
+// usernameASCIIError returns authn.ErrNotASCII, naming the ASCII form of name as an example if
+// it is a username that no other account holds. If another account holds name itself, it reports that.
+func (m *User) usernameASCIIError(name string) error {
+	if s := clean.Username(name); s != "" {
+		if err := m.checkUsernameHolder(s); err != nil {
+			return err
+		}
+	}
+
+	if s := authn.FoldUsername(name); len(s) >= UsernameLength && len(s) <= txt.ClipUsername &&
+		clean.Handle(s) != "" && m.checkUsernameHolder(s) == nil {
+		return fmt.Errorf("%w, e.g. %s", authn.ErrNotASCII, clean.LogQuote(s))
+	}
+
+	return authn.ErrNotASCII
 }
 
 // storedEmail returns the email address saved for the account, or an empty string if it has not been saved.

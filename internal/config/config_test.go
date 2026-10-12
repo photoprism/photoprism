@@ -324,6 +324,44 @@ func TestConfig_AdminUser(t *testing.T) {
 	assert.Equal(t, "foo", c.AdminUser())
 	c.options.AdminUser = "  Admin"
 	assert.Equal(t, "admin", c.AdminUser())
+
+	t.Run("NotASCII", func(t *testing.T) {
+		hook := captureVisionSystemLog(t)
+		c.options.AdminUser = "Adminé"
+
+		assert.Equal(t, "admin", c.AdminUser())
+		require.NotNil(t, hook.LastEntry())
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+		assert.Equal(t, "config: admin user › username may only contain ASCII characters, value ignored", hook.LastEntry().Message)
+
+		hook.Reset()
+		assert.Equal(t, "admin", c.AdminUser())
+		assert.Nil(t, hook.LastEntry())
+
+		c.options.AdminUser = "\u212Aate"
+		assert.Equal(t, "admin", c.AdminUser())
+		require.NotNil(t, hook.LastEntry())
+	})
+}
+
+func TestConfig_AdminInitName(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Configured", func(t *testing.T) {
+		c.options.AdminUser = " Jane "
+		assert.Equal(t, "jane", c.AdminInitName())
+	})
+	t.Run("Unset", func(t *testing.T) {
+		c.options.AdminUser = ""
+		assert.Equal(t, "admin", c.AdminInitName())
+	})
+	t.Run("NotASCII", func(t *testing.T) {
+		captureVisionSystemLog(t)
+		c.options.AdminUser = "Jürgen"
+		assert.Equal(t, "", c.AdminInitName())
+		assert.Equal(t, "admin", c.AdminUser())
+		assert.Equal(t, "", c.AdminInitName())
+	})
 }
 
 func TestConfig_SamplesPath(t *testing.T) {

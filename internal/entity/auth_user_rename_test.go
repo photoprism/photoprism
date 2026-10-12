@@ -36,6 +36,26 @@ func newRenameTestUser(t *testing.T, name string, role acl.Role) *User {
 	return m
 }
 
+// newExistingTestUser inserts an account without the checks of Create, as one stored before a
+// username rule applied, and removes it and its sessions and clients after the test.
+func newExistingTestUser(t *testing.T, name string, role acl.Role) *User {
+	t.Helper()
+
+	m := NewUser()
+	m.UserName = name
+	m.UserRole = role.String()
+	m.AuthProvider = authn.ProviderLocal.String()
+
+	require.NoError(t, Db().Create(m).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&Session{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, UnscopedDb().Delete(&Client{}, "user_uid = ?", m.UserUID).Error)
+		deleteTestUser(t, m)
+	})
+
+	return m
+}
+
 // newRenameTestSession stores a session of the account.
 func newRenameTestSession(t *testing.T, m *User) *Session {
 	t.Helper()
@@ -163,14 +183,33 @@ func TestUser_CheckRename(t *testing.T) {
 		_, err := m.CheckRename(strings.Repeat("a", 30) + "@" + strings.Repeat("b", 30) + ".com")
 		require.EqualError(t, err, "username is too long")
 	})
-	t.Run("MultibyteMaxLength", func(t *testing.T) {
-		name, err := m.CheckRename("j@" + strings.Repeat("é", 31))
-		require.NoError(t, err)
-		assert.Len(t, name, txt.ClipUsername)
+	t.Run("NotASCII", func(t *testing.T) {
+		_, err := m.CheckRename("Check-Josè")
+		require.ErrorIs(t, err, authn.ErrNotASCII)
+		require.EqualError(t, err, "username may only contain ASCII characters, e.g. 'check-jose'")
+		assert.Equal(t, "check-rename", m.UserName)
 	})
-	t.Run("MultibyteTooLong", func(t *testing.T) {
-		_, err := m.CheckRename("j@" + strings.Repeat("é", 31) + "x")
-		require.EqualError(t, err, "username is too long")
+	t.Run("NotASCIISuggestionTooLong", func(t *testing.T) {
+		_, err := m.CheckRename("j@" + strings.Repeat("é", 63))
+		require.EqualError(t, err, "username may only contain ASCII characters")
+	})
+	t.Run("NotASCIISuggestionHeld", func(t *testing.T) {
+		_, err := m.CheckRename("alicé")
+		require.EqualError(t, err, "username may only contain ASCII characters")
+	})
+	t.Run("NotASCIISameName", func(t *testing.T) {
+		existing := newExistingTestUser(t, "check-rename-josé", acl.RoleAdmin)
+
+		name, err := existing.CheckRename("Check-Rename-José")
+		require.NoError(t, err)
+		assert.Equal(t, "", name)
+	})
+	t.Run("NotASCIIStoredName", func(t *testing.T) {
+		existing := newExistingTestUser(t, "check-rename-zoë", acl.RoleAdmin)
+
+		name, err := existing.CheckRename("check-rename-zoe2")
+		require.NoError(t, err)
+		assert.Equal(t, "check-rename-zoe2", name)
 	})
 	t.Run("TooShort", func(t *testing.T) {
 		orig := UsernameLength
@@ -200,7 +239,7 @@ func TestUser_CheckRename(t *testing.T) {
 		require.EqualError(t, err, "user 'check-rename-deleted' already exists")
 	})
 	t.Run("ExistsCollation", func(t *testing.T) {
-		newRenameTestUser(t, "check-josé", acl.RoleAdmin)
+		newExistingTestUser(t, "check-josé", acl.RoleAdmin)
 
 		_, err := m.CheckRename("check-jose")
 
@@ -250,12 +289,21 @@ func TestUser_Rename(t *testing.T) {
 		assert.Equal(t, "rename-refused", storedUser(t, m.UserUID).UserName)
 	})
 	t.Run("Collation", func(t *testing.T) {
-		m := newRenameTestUser(t, "rename-jose", acl.RoleAdmin)
+		m := newExistingTestUser(t, "rename-josé", acl.RoleAdmin)
 		sess := newRenameTestSession(t, m)
 
-		require.NoError(t, m.Rename("rename-josé"))
-		assert.Equal(t, "rename-josé", storedUser(t, m.UserUID).UserName)
-		assert.Equal(t, "rename-josé", storedSessionUserName(t, sess.ID))
+		require.NoError(t, m.Rename("rename-jose"))
+		assert.Equal(t, "rename-jose", storedUser(t, m.UserUID).UserName)
+		assert.Equal(t, "rename-jose", storedSessionUserName(t, sess.ID))
+	})
+	t.Run("NotASCII", func(t *testing.T) {
+		m := newRenameTestUser(t, "rename-ascii", acl.RoleAdmin)
+		sess := newRenameTestSession(t, m)
+
+		require.ErrorIs(t, m.Rename("rename-äscii"), authn.ErrNotASCII)
+		assert.Equal(t, "rename-ascii", m.UserName)
+		assert.Equal(t, "rename-ascii", storedUser(t, m.UserUID).UserName)
+		assert.Equal(t, "rename-ascii", storedSessionUserName(t, sess.ID))
 	})
 	t.Run("DisplayName", func(t *testing.T) {
 		m := newRenameTestUser(t, "rename-display", acl.RoleAdmin)
@@ -513,6 +561,15 @@ func TestUser_NormalizedUsername(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		_, err := (&User{ID: 1000}).normalizedUsername()
 		require.EqualError(t, err, "username is empty")
+	})
+	t.Run("NewNotASCII", func(t *testing.T) {
+		_, err := (&User{UserName: "josé"}).normalizedUsername()
+		require.ErrorIs(t, err, authn.ErrNotASCII)
+	})
+	t.Run("ExistingNotASCII", func(t *testing.T) {
+		name, err := (&User{ID: 1000, UserName: "José"}).normalizedUsername()
+		require.NoError(t, err)
+		assert.Equal(t, "josé", name)
 	})
 }
 

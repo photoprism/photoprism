@@ -16,6 +16,7 @@ require (
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
+	github.com/gosimple/unidecode v1.0.1
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
@@ -140,7 +141,6 @@ require (
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/google/jsonschema-go v0.4.3 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

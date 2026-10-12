@@ -1,6 +1,7 @@
 package authn
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -76,4 +77,91 @@ func TestUsernameRejectsFieldSeparator(t *testing.T) {
 
 	assert.Equal(t, ErrInvalid, err)
 	assert.NotContains(t, s, string(clean.FieldSep))
+}
+
+func TestIsASCIIUsername(t *testing.T) {
+	t.Run("ASCII", func(t *testing.T) {
+		assert.True(t, IsASCIIUsername("j.doe_1-x@example.com"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, IsASCIIUsername(""))
+	})
+	t.Run("Accent", func(t *testing.T) {
+		assert.False(t, IsASCIIUsername("josé"))
+	})
+}
+
+func TestNewUsername(t *testing.T) {
+	t.Run("Accepted", func(t *testing.T) {
+		for _, name := range []string{"jose", "Jose", "j.doe", "j_doe-1", "name@example.com", "a!b%c^d[e]f\\g"} {
+			s, err := NewUsername(name)
+			assert.NoError(t, err, name)
+			assert.Equal(t, clean.Username(name), s, name)
+		}
+	})
+	t.Run("NotASCII", func(t *testing.T) {
+		for name, sanitized := range map[string]string{
+			"josé":         "josé",         // Precomposed accent.
+			"jose\u0301":   "jose\u0301",   // Combining accent in NFD form.
+			"straße":       "straße",       // Sharp s.
+			"јоѕе":         "јоѕе",         // Cyrillic letters.
+			"ЈОЅЕ":         "јоѕе",         // Cyrillic letters, uppercase.
+			"山田":           "山田",           // CJK.
+			"ｊｏｓｅ":         "ｊｏｓｅ",         // Full-width Latin.
+			"\u212Aate":    "kate",         // Kelvin sign (U+212A).
+			"zoë@test.com": "zoë@test.com", // Email with an accent.
+		} {
+			s, err := NewUsername(name)
+			assert.ErrorIs(t, err, ErrNotASCII, name)
+			assert.Equal(t, sanitized, s, name)
+		}
+	})
+	t.Run("InvalidBeforeNotASCII", func(t *testing.T) {
+		_, err := NewUsername("jos\u00e9\u200b")
+		assert.ErrorIs(t, err, ErrInvalid)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		_, err := NewUsername("")
+		assert.ErrorIs(t, err, ErrEmpty)
+	})
+	t.Run("Reserved", func(t *testing.T) {
+		_, err := NewUsername("visitor")
+		assert.ErrorIs(t, err, ErrReserved)
+	})
+}
+
+func TestFoldUsername(t *testing.T) {
+	t.Run("Accent", func(t *testing.T) {
+		assert.Equal(t, "jose", FoldUsername("José"))
+	})
+	t.Run("CombiningAccent", func(t *testing.T) {
+		assert.Equal(t, "jose", FoldUsername("jose\u0301"))
+	})
+	t.Run("SharpS", func(t *testing.T) {
+		assert.Equal(t, "strasse", FoldUsername("straße"))
+	})
+	t.Run("Cyrillic", func(t *testing.T) {
+		assert.Equal(t, "ivan", FoldUsername("Иван"))
+	})
+	t.Run("FullWidth", func(t *testing.T) {
+		assert.Equal(t, "jose", FoldUsername("ｊｏｓｅ"))
+	})
+	t.Run("ZeroWidthSpace", func(t *testing.T) {
+		assert.Equal(t, "jose", FoldUsername("jos\u200be"))
+	})
+	t.Run("ASCII", func(t *testing.T) {
+		assert.Equal(t, "j.doe", FoldUsername("J.Doe"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", FoldUsername(""))
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		assert.Equal(t, "", FoldUsername(strings.Repeat("é", 200)))
+	})
+	t.Run("Reserved", func(t *testing.T) {
+		assert.Equal(t, "", FoldUsername("vïsitor"))
+	})
+	t.Run("NothingLeft", func(t *testing.T) {
+		assert.Equal(t, "", FoldUsername("\u0301"))
+	})
 }

@@ -482,3 +482,56 @@ func TestWebDAVAbortServerError(t *testing.T) {
 		assert.Equal(t, BasicAuthRealm, w.Header().Get("WWW-Authenticate"))
 	})
 }
+
+// TestWebDAVAuth_NotASCIIUsername checks that an account stored with a non-ASCII name authenticates
+// with its password and an app password, and keeps its name.
+func TestWebDAVAuth_NotASCIIUsername(t *testing.T) {
+	conf := config.TestConfig()
+	webdavHandler := WebDAVAuth(conf)
+
+	const password = "Webdav-Josè-123"
+
+	m := entity.NewUser()
+	m.UserName = "webdav-josé"
+	m.UserRole = acl.RoleAdmin.String()
+	m.AuthProvider = authn.ProviderLocal.String()
+	m.CanLogin = true
+	m.WebDAV = true
+
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Session{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+	})
+	require.NoError(t, m.SetPassword(password))
+
+	appSess, err := entity.AddClientSession("webdav-not-ascii", 3600, "*", authn.GrantPassword, m)
+	require.NoError(t, err)
+	require.True(t, appSess.IsApplication())
+
+	request := func(name, secret string) int {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{Header: make(http.Header)}
+		c.Request.SetBasicAuth(name, secret)
+
+		entity.FlushSessionCache()
+		webdavHandler(c)
+
+		return c.Writer.Status()
+	}
+
+	assert.Equal(t, http.StatusOK, request("webdav-josé", password))
+	assert.Equal(t, http.StatusOK, request("Webdav-José", appSess.AuthToken()))
+	assert.Equal(t, http.StatusUnauthorized, request("webdav-jose", appSess.AuthToken()))
+
+	// MariaDB compares names that differ only by accents as equal.
+	if !entity.IsDialect(dsn.DriverMySQL) {
+		assert.Equal(t, http.StatusUnauthorized, request("webdav-jose", password))
+	}
+
+	assert.Equal(t, "webdav-josé", entity.FindUserByUID(m.UserUID).UserName)
+}

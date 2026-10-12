@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
@@ -54,7 +55,7 @@ func usersAddAction(ctx *cli.Context) error {
 				return err
 			}
 
-			frm.UserName = clean.Username(res)
+			frm.UserName = strings.TrimSpace(res)
 		}
 
 		// Check if account exists but is deleted.

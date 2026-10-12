@@ -584,3 +584,49 @@ func TestDeleteSession(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }
+
+// TestCreateSession_NotASCIIUsername checks that an account stored with a non-ASCII name signs in under
+// that name and keeps it.
+func TestCreateSession_NotASCIIUsername(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+	const password = "Session-Josè-123"
+
+	m := entity.NewUser()
+	m.UserName = "session-josé"
+	m.UserRole = "admin"
+	m.AuthProvider = authn.ProviderLocal.String()
+	m.CanLogin = true
+
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Session{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+	})
+	require.NoError(t, m.SetPassword(password))
+
+	CreateSession(router)
+
+	login := func(name string) int {
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{Username: name, Password: password}))
+
+		if r.Code == http.StatusOK {
+			assert.Equal(t, "session-josé", gjson.Get(r.Body.String(), "user.Name").String())
+		}
+
+		return r.Code
+	}
+
+	assert.Equal(t, http.StatusOK, login("Session-José"))
+	assert.Equal(t, "session-josé", entity.FindUserByUID(m.UserUID).UserName)
+
+	// MariaDB compares names that differ only by accents as equal.
+	if !entity.IsDialect(dsn.DriverMySQL) {
+		assert.Equal(t, http.StatusUnauthorized, login("session-jose"))
+	}
+}

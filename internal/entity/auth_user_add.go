@@ -24,8 +24,10 @@ func AddUser(frm form.User) error {
 		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
-	// Check username, role and email.
-	if err := user.Validate(); err != nil {
+	// Check the username as entered, since the form value is sanitized, and then role and email.
+	if !authn.IsASCIIUsername(frm.UserName) {
+		return user.usernameASCIIError(frm.UserName)
+	} else if err := user.Validate(); err != nil {
 		return err
 	}
 

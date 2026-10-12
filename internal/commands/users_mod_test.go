@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 func TestUsersModCommand(t *testing.T) {
@@ -95,6 +96,39 @@ func TestUsersModCommand(t *testing.T) {
 			assert.Equal(t, "Alice", alice.DisplayName)
 			assert.Equal(t, "admin", alice.UserRole)
 		}
+	})
+	t.Run("ExistingNotASCII", func(t *testing.T) {
+		m := entity.NewUser()
+		m.UserName = "mod-josé"
+		m.UserRole = "guest"
+		m.AuthProvider = authn.ProviderLocal.String()
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+		})
+
+		// Other values change without changing the stored name.
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--name=José Example", "--role=admin", "--email=jose@example.com", "mod-josé"})
+		require.NoError(t, err)
+
+		stored := entity.FindUserByUID(m.UserUID)
+		require.NotNil(t, stored)
+		assert.Equal(t, "mod-josé", stored.UserName)
+		assert.Equal(t, "José Example", stored.DisplayName)
+		assert.Equal(t, "admin", stored.UserRole)
+		assert.Equal(t, "jose@example.com", stored.UserEmail)
+
+		// A new name must be ASCII.
+		_, err = RunWithTestContext(UsersModCommand, []string{"mod", "--username=mod-josé2", "mod-josé"})
+		require.ErrorIs(t, err, authn.ErrNotASCII)
+		assert.Equal(t, "mod-josé", entity.FindUserByUID(m.UserUID).UserName)
+
+		_, err = RunWithTestContext(UsersModCommand, []string{"mod", "--username=mod-jose2", "mod-josé"})
+		require.NoError(t, err)
+		assert.Equal(t, "mod-jose2", entity.FindUserByUID(m.UserUID).UserName)
 	})
 }
 
