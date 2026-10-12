@@ -87,23 +87,16 @@ func LabelCounts() LabelPhotoCounts {
 	result := LabelPhotoCounts{}
 
 	if err := UnscopedDb().Raw(`
-		SELECT label_id, SUM(photo_count) AS photo_count FROM (
-			SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
-		JOIN photos_labels pl ON pl.label_id = l.id
-		JOIN photos ph ON pl.photo_id = ph.id
-		WHERE pl.uncertainty < 100
-		AND ph.photo_quality > -1
-		AND ph.photo_private = FALSE
-		AND ph.deleted_at IS NULL GROUP BY l.id
-		UNION ALL
-		SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
-		JOIN categories c ON c.category_id = l.id
-		JOIN photos_labels pl ON pl.label_id = c.label_id
-		JOIN photos ph ON pl.photo_id = ph.id
-		WHERE pl.uncertainty < 100
-		AND ph.photo_quality > -1
-		AND ph.photo_private = FALSE
-		AND ph.deleted_at IS NULL GROUP BY l.id) counts GROUP BY label_id
+		SELECT p2.label_id, COUNT(DISTINCT p2.photo_id) AS photo_count FROM (
+			SELECT pl.label_id AS label_id, ph.id AS photo_id FROM photos ph
+				JOIN photos_labels pl ON pl.photo_id = ph.id AND pl.uncertainty < 100
+			WHERE ph.photo_quality > -1 AND ph.photo_private = FALSE AND ph.deleted_at IS NULL
+			UNION
+			SELECT c.category_id AS label_id, ph.id AS photo_id FROM photos ph
+				JOIN photos_labels pl ON pl.photo_id = ph.id AND pl.uncertainty < 100
+				JOIN categories c ON c.label_id = pl.label_id
+			WHERE ph.photo_quality > -1 AND ph.photo_private = FALSE AND ph.deleted_at IS NULL
+		) p2 GROUP BY p2.label_id
 		`).Scan(&result).Error; err != nil {
 		log.Errorf("label-count: %s", err.Error())
 	}
@@ -278,26 +271,18 @@ func UpdateLabelCounts() (err error) {
 			return err
 		}
 	} else if IsDialect(dsn.DialectSQLite) {
-		res = Db().
-			Table("labels").Where("1 = 1").
-			UpdateColumn("photo_count",
-				gorm.Expr(`(SELECT photo_count FROM (SELECT label_id, SUM(photo_count) AS photo_count FROM (
-				SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
-					JOIN photos_labels pl ON pl.label_id = l.id
-					JOIN photos ph ON pl.photo_id = ph.id
-					WHERE pl.uncertainty < 100
-					AND ph.photo_quality > -1
-					AND ph.photo_private = FALSE
-					AND ph.deleted_at IS NULL GROUP BY l.id
-					UNION ALL
-					SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
-					JOIN categories c ON c.category_id = l.id
-					JOIN photos_labels pl ON pl.label_id = c.label_id
-					JOIN photos ph ON pl.photo_id = ph.id
-					WHERE pl.uncertainty < 100
-					AND ph.photo_quality > -1
-					AND ph.photo_private = FALSE
-					AND ph.deleted_at IS NULL GROUP BY l.id) counts GROUP BY label_id) label_counts WHERE label_id = labels.id)`))
+		res = Db().Exec(`UPDATE labels SET photo_count = COALESCE((SELECT b.label_photos FROM (
+		SELECT p2.label_id, COUNT(DISTINCT p2.photo_id) AS label_photos FROM (
+			SELECT pl.label_id AS label_id, p.id AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+			WHERE p.photo_quality > -1 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			UNION
+			SELECT c.category_id AS label_id, p.id AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+				JOIN categories c ON c.label_id = pl.label_id
+			WHERE p.photo_quality > -1 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			) p2 GROUP BY p2.label_id
+		) b WHERE b.label_id = labels.id), 0)`)
 	} else if IsDialect(dsn.DialectPostgreSQL) {
 		if err = RetryDeadlock("update label counts", func() error {
 			res = Db().Exec(`UPDATE labels SET photo_count = COALESCE(b.label_photos, 0)

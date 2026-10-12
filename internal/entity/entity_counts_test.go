@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
@@ -185,4 +186,70 @@ func TestUpdateSubjectCounts(t *testing.T) {
 		require.NoError(t, UpdateSubjectCounts(true))
 		require.NoError(t, UpdateSubjectCounts(false))
 	})
+}
+
+// TestUpdateLabelCounts_Categories checks that a photo counts once for a label, however many of its labels
+// belong to that label's category.
+func TestUpdateLabelCounts_Categories(t *testing.T) {
+	suffix := rnd.Base36(8)
+	parent := NewLabel("Counts Parent "+suffix, 0)
+	childA := NewLabel("Counts Child A "+suffix, 0)
+	childB := NewLabel("Counts Child B "+suffix, 0)
+
+	for _, l := range []*Label{parent, childA, childB} {
+		require.NoError(t, l.Create())
+	}
+
+	newPhoto := func(private bool) *Photo {
+		m := NewPhoto(false)
+		m.PhotoQuality = 3
+		m.PhotoPrivate = private
+		require.NoError(t, m.Create())
+		return &m
+	}
+
+	// p1 has the parent label and one child, p2 has both children, p3 is private.
+	p1, p2, p3 := newPhoto(false), newPhoto(false), newPhoto(true)
+
+	rows := []any{
+		&Category{LabelID: childA.ID, CategoryID: parent.ID},
+		&Category{LabelID: childB.ID, CategoryID: parent.ID},
+		NewPhotoLabel(p1.ID, parent.ID, 10, SrcManual),
+		NewPhotoLabel(p1.ID, childA.ID, 10, SrcManual),
+		NewPhotoLabel(p2.ID, childA.ID, 10, SrcManual),
+		NewPhotoLabel(p2.ID, childB.ID, 10, SrcManual),
+		NewPhotoLabel(p3.ID, childA.ID, 10, SrcManual),
+	}
+
+	for _, r := range rows {
+		require.NoError(t, UnscopedDb().Create(r).Error)
+	}
+
+	t.Cleanup(func() {
+		ids := []uint{p1.ID, p2.ID, p3.ID}
+		UnscopedDb().Where("photo_id IN (?)", ids).Delete(&PhotoLabel{})
+		UnscopedDb().Where("category_id = ?", parent.ID).Delete(&Category{})
+		UnscopedDb().Where("id IN (?)", ids).Delete(&Photo{})
+		UnscopedDb().Where("id IN (?)", []uint{parent.ID, childA.ID, childB.ID}).Delete(&Label{})
+	})
+
+	expected := map[uint]int{parent.ID: 2, childA.ID: 2, childB.ID: 1}
+
+	require.NoError(t, UpdateLabelCounts())
+
+	for id, count := range expected {
+		var m Label
+		require.NoError(t, UnscopedDb().First(&m, id).Error)
+		assert.Equal(t, count, m.PhotoCount, m.LabelName)
+	}
+
+	counts := make(map[uint]int)
+
+	for _, c := range LabelCounts() {
+		counts[uint(c.LabelID)] = c.PhotoCount //nolint:gosec // label IDs are positive
+	}
+
+	for id, count := range expected {
+		assert.Equal(t, count, counts[id], "LabelCounts %d", id)
+	}
 }
