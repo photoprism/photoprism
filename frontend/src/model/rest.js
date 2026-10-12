@@ -147,14 +147,11 @@ export class Rest extends Model {
     return this.constructor.getModelName() + " " + this.getId();
   }
 
-  // Creates a share-link for this entity. `password` and `expires` are
-  // optional; both default to "no protection / no expiry" so the
-  // template forms can pass empty values directly. Resolves to a fresh
-  // Link instance hydrated from the server response.
-  createLink(password, expires) {
+  // Creates a share-link for this entity that expires after `expires` seconds, or never if omitted.
+  // Resolves to a fresh Link instance hydrated from the server response.
+  createLink(expires) {
     return $api
       .post(this.getEntityResource() + "/links", {
-        Password: password ? password : "",
         Expires: expires ? expires : 0,
         Slug: this.getSlug(),
         Comment: "",
@@ -163,20 +160,13 @@ export class Rest extends Model {
       .then((resp) => Promise.resolve(new Link(resp.data)));
   }
 
-  // Persists changes to an existing share-link. Token and Password are
-  // pulled from the link and forwarded explicitly because getValues(false)
-  // returns all fields (including unchanged ones) but the backend treats
-  // an empty Token as "do not rotate" and a missing Password as "leave
-  // unchanged" — so the caller's intent has to be reconstructed here.
+  // Persists changes to an existing share-link. A set Token is forwarded normalized,
+  // since the backend treats an empty Token as "do not rotate".
   updateLink(link) {
     let values = link.getValues(false);
 
     if (link.Token) {
       values["Token"] = link.getToken();
-    }
-
-    if (link.Password) {
-      values["Password"] = link.Password;
     }
 
     return $api.put(this.getEntityResource() + "/links/" + link.getId(), values).then((resp) => Promise.resolve(link.setValues(resp.data)));

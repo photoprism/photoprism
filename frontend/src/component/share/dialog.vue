@@ -77,25 +77,6 @@
                         class="input-secret"
                       ></v-text-field>
                     </v-col>
-                    <!-- <v-col cols="12" sm="6" class="pa-2">
-                      <v-text-field
-                        v-model="link.Password"
-                        hide-details
-                        autocomplete="off"
-                        :label="label.pass"
-                        :placeholder="link.HasPassword ? '••••••••' : 'optional'"
-                        color="surface-variant"
-                        :type="showPassword ? 'text' : 'password'"
-                      >
-                        <template #append-inner>
-                          <p-input-action
-                            :icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                            :label="showPassword ? $gettext('Hide Password') : $gettext('Show Password')"
-                            @click="showPassword = !showPassword"
-                          ></p-input-action>
-                        </template>
-                      </v-text-field>
-                    </v-col> -->
                     <v-col cols="12" class="d-flex justify-space-between align-center ga-3">
                       <v-btn
                         variant="text"
@@ -157,7 +138,6 @@ export default {
     return {
       expanded: [0],
       host: window.location.host,
-      showPassword: false,
       loading: false,
       search: null,
       links: [],
@@ -166,7 +146,6 @@ export default {
       label: {
         url: this.$gettext("Service URL"),
         user: this.$gettext("Username"),
-        pass: this.$gettext("Password"),
         cancel: this.$gettext("Cancel"),
         confirm: this.$gettext("Done"),
       },

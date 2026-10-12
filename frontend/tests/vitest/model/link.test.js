@@ -11,6 +11,8 @@ describe("model/link", () => {
     expect(result.Perm).toBe(0);
     expect(result.Comment).toBe("");
     expect(result.ShareUID).toBe("");
+    expect(result).not.toHaveProperty("Password");
+    expect(result).not.toHaveProperty("HasPassword");
   });
 
   it("should get link url", () => {

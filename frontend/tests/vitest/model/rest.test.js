@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import "../fixtures";
+import { Mock } from "../fixtures";
 import Rest from "model/rest";
 import Album from "model/album";
 import Label from "model/label";
@@ -172,30 +172,52 @@ describe("model/abstract", () => {
   it("should create link", async () => {
     const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
-    const response = await album.createLink("passwd", 8000);
+    Mock.resetHistory();
+    const response = await album.createLink(8000);
     expect(response.Slug).toBe("christmas-2019");
+    const calls = Mock.history.post.filter((r) => r.url === "albums/66/links");
+    expect(calls.length).toBe(1);
+    const body = JSON.parse(calls[0].data);
+    expect(body.Expires).toBe(8000);
+    expect(body.Slug).toBe("christmas-2019");
+    expect(body.Comment).toBe("");
+    expect(body.Perm).toBe(0);
+    expect(body).not.toHaveProperty("Password");
+  });
+
+  it("should create link without expiry", async () => {
+    const album = new Album({ ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 });
+    Mock.resetHistory();
+    await album.createLink();
+    const calls = Mock.history.post.filter((r) => r.url === "albums/66/links");
+    expect(calls.length).toBe(1);
+    expect(JSON.parse(calls[0].data).Expires).toBe(0);
   });
 
   it("should update link", async () => {
     const values = {
       UID: 5,
-      Password: "passwd",
       Slug: "friends",
       Expires: 80000,
       UpdatedAt: "2012-07-08T14:45:39Z",
-      Token: "abchhgftryue2345",
+      Token: " AbchhgftRyue2345 ",
     };
     const link = new Link(values);
     const values2 = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values2);
+    Mock.resetHistory();
     const response = await album.updateLink(link);
     expect(response.Slug).toBe("friends");
+    const calls = Mock.history.put.filter((r) => r.url === "albums/66/links/5");
+    expect(calls.length).toBe(1);
+    const body = JSON.parse(calls[0].data);
+    expect(body.Token).toBe("abchhgftryue2345");
+    expect(body).not.toHaveProperty("Password");
   });
 
   it("should remove link", async () => {
     const values = {
       UID: 5,
-      Password: "passwd",
       Slug: "friends",
       Expires: 80000,
       UpdatedAt: "2012-07-08T14:45:39Z",

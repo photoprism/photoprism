@@ -237,7 +237,6 @@ Mock.onGet("api/v1/albums/66").reply(200, { Success: "ok" }, mockHeaders);
 Mock.onPost("api/v1/albums/66/links").reply(
   200,
   {
-    Password: "passwd",
     Expires: 8000,
     Slug: "christmas-2019",
     Comment: "",
