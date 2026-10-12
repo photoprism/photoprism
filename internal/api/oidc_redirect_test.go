@@ -221,7 +221,7 @@ const (
 
 // oidcTestSubjects lists the subjects of the dummy-oidc test identities, so cleanup finds the
 // accounts they create even when registration renamed them.
-var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009"}
+var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009", "sub00000010", "sub00000011"}
 
 // oidcUnreachableUri is an https provider address that refuses connections, so discovery fails.
 const oidcUnreachableUri = "https://127.0.0.1:1"
@@ -402,6 +402,21 @@ func oidcLogin(t *testing.T, app *gin.Engine, loginHint string) *httptest.Respon
 	return w
 }
 
+// skipUnlessOidcHint skips a test if the running dummy-oidc image does not know the login_hint yet.
+func skipUnlessOidcHint(t *testing.T, hint string) {
+	t.Helper()
+
+	q := url.Values{"client_id": {"test"}, "redirect_uri": {oidcTestRedirectUri}, "response_type": {"code"}, "scope": {"openid"}, "state": {"probe"}, "login_hint": {hint}}
+	client := &http.Client{Timeout: 5 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	resp, err := client.Get(oidcTestIssuer + "/authorize?" + q.Encode())
+	require.NoError(t, err)
+	_ = resp.Body.Close()
+
+	if strings.Contains(resp.Header.Get("Location"), "unknown+login_hint") {
+		t.Skipf("oidc: dummy-oidc does not know the login_hint %q, rebuild it with make docker-dummy-oidc", hint)
+	}
+}
+
 // assertOidcLoginRefused checks that the redirect endpoint rendered the error page with the message.
 func assertOidcLoginRefused(t *testing.T, r *httptest.ResponseRecorder, message i18n.Message) {
 	t.Helper()
@@ -414,6 +429,7 @@ func TestOIDCRedirect_Flow(t *testing.T) {
 	t.Run("Register", func(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		app := newOidcTestApp(conf)
+		audit := captureAuditLog(t)
 
 		r := oidcLogin(t, app, "")
 
@@ -423,6 +439,7 @@ func TestOIDCRedirect_Flow(t *testing.T) {
 		user := findOidcTestUser("sub00000001")
 		require.NotNil(t, user)
 		assert.Equal(t, "prefname", user.UserName)
+		assert.False(t, oidcAuditContains(audit, "username claim"))
 		assert.Equal(t, authn.ProviderOIDC.String(), user.AuthProvider)
 		assert.Equal(t, oidcTestIssuer, user.AuthIssuer)
 		assert.Equal(t, "guest", user.UserRole)
@@ -774,6 +791,88 @@ func TestOIDCRedirect_Username(t *testing.T) {
 		require.NotNil(t, alice)
 		assert.Equal(t, local.AuthProvider, alice.AuthProvider)
 		assert.Equal(t, local.AuthID, alice.AuthID)
+	})
+}
+
+func TestOIDCRedirect_NotASCII(t *testing.T) {
+	t.Run("SkipsClaims", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "jose")
+		app := newOidcTestApp(conf)
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "jose")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000010")
+		require.NotNil(t, user)
+		assert.Equal(t, "jose@example.com", user.UserName)
+		assert.Equal(t, "José García", user.DisplayName)
+		assert.True(t, oidcAuditContains(audit, "create user › username claim › username may only contain ASCII characters › skipped"))
+	})
+	t.Run("NoASCIIClaim", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "josefa")
+		app := newOidcTestApp(conf)
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "josefa")
+
+		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
+		assert.Nil(t, findOidcTestUser("sub00000011"))
+		assert.True(t, oidcAuditContains(audit, "create user › username claim › username may only contain ASCII characters › skipped"))
+	})
+	t.Run("RegistrationDisabled", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "josefa")
+		conf.Options().OIDCRegister = false
+		app := newOidcTestApp(conf)
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "josefa")
+
+		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
+		assert.Nil(t, findOidcTestUser("sub00000011"))
+		assert.False(t, oidcAuditContains(audit, "username claim"))
+	})
+	t.Run("ExistingAccount", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "josefa")
+		app := newOidcTestApp(conf)
+
+		m := entity.NewUser()
+		m.UserName = "josefa.núñez"
+		m.UserRole = "guest"
+		m.AuthProvider = authn.ProviderOIDC.String()
+		m.AuthIssuer = oidcTestIssuer
+		m.AuthID = "sub00000011"
+		m.CanLogin = true
+		require.NoError(t, entity.Db().Create(m).Error)
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "josefa")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000011")
+		require.NotNil(t, user)
+		assert.Equal(t, m.UserUID, user.UserUID)
+		assert.Equal(t, "josefa.núñez", user.UserName)
+		assert.False(t, oidcAuditContains(audit, "username claim"))
+	})
+}
+
+func TestAuditOidcSkippedClaim(t *testing.T) {
+	t.Run("Skipped", func(t *testing.T) {
+		audit := captureAuditLog(t)
+		auditOidcSkippedClaim("192.0.2.1", true)
+		require.NotNil(t, audit.LastEntry())
+		assert.Equal(t, logrus.WarnLevel, audit.LastEntry().Level)
+		assert.Contains(t, audit.LastEntry().Message, "192.0.2.1 › create session › oidc › create user › username claim › username may only contain ASCII characters › skipped")
+	})
+	t.Run("NotSkipped", func(t *testing.T) {
+		audit := captureAuditLog(t)
+		auditOidcSkippedClaim("192.0.2.1", false)
+		assert.Nil(t, audit.LastEntry())
 	})
 }
 

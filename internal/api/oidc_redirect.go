@@ -55,6 +55,14 @@ func oidcReconcileHint(userName, provider, subject string) string {
 		clean.LogQuote(userName), clean.LogQuote(provider), userName, clean.Log(subject))
 }
 
+// auditOidcSkippedClaim records that a username claim with characters other than ASCII was skipped when
+// registering an account.
+func auditOidcSkippedClaim(clientIp string, skipped bool) {
+	if skipped {
+		event.AuditWarn([]string{clientIp, "create session", "oidc", "create user", "username claim", authn.ErrNotASCII.Error(), status.Skipped})
+	}
+}
+
 // oidcEmailUsername reports whether the username of a new account is its verified email address, as with the
 // email username claim, and whether the address is a valid username as it is.
 func oidcEmailUsername(claim, name, verifiedEmail string) (fromEmail, valid bool) {
@@ -233,6 +241,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		} else if oidcUser.UserName == "" && entity.FindUser(oidcUser) == nil {
+			auditOidcSkippedClaim(clientIp, conf.OIDCRegister() && oidc.SkipsClaim(userInfo, conf.OIDCUsername()))
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrUsernameRequiredToRegister.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequiredToRegister.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
@@ -374,6 +383,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user = &oidcUser
 
 			userName = oidcUser.Username()
+			auditOidcSkippedClaim(clientIp, oidc.SkipsClaim(userInfo, conf.OIDCUsername()))
 
 			// A username taken from the email address must match it, so it is never changed to resolve a conflict.
 			emailUsername, validEmailUsername := oidcEmailUsername(conf.OIDCUsername(), oidcUser.UserName, oidc.VerifiedEmail(userInfo))

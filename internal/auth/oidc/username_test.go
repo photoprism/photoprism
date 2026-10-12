@@ -210,4 +210,79 @@ func TestUsername(t *testing.T) {
 		info.Email = "bob@example.com"
 		assert.Equal(t, "bob@example.com", Username(info, authn.OidcClaimEmail))
 	})
+	t.Run("NotASCII", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
+		info.PreferredUsername = "José"
+		info.Name = "José García"
+		info.Nickname = "Pepe"
+		info.Email = "jose@example.com"
+		assert.Equal(t, "pepe", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "pepe", Username(info, authn.OidcClaimName))
+		assert.Equal(t, "pepe", Username(info, authn.OidcClaimNickname))
+		assert.Equal(t, "pepe", Username(info, authn.OidcClaimEmail))
+		info.Nickname = "Pépé"
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		info.EmailVerified = true
+		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimName))
+		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimNickname))
+	})
+	t.Run("NotASCIIBeforeSanitizing", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "\u212Aate"
+		info.Name = "Kate Doe"
+		assert.Equal(t, "kate.doe", Username(info, authn.OidcClaimPreferredUsername))
+		info.PreferredUsername = "kate@exämple.com"
+		assert.Equal(t, "kate.doe", Username(info, authn.OidcClaimPreferredUsername))
+	})
+	t.Run("NotASCIIEmail", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "josé"
+		info.Email = "\u212Aate@example.com"
+		info.EmailVerified = true
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
+		info.Nickname = "kate"
+		assert.Equal(t, "kate", Username(info, authn.OidcClaimEmail))
+	})
+}
+
+func TestSkipsClaim(t *testing.T) {
+	t.Run("Skipped", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "José"
+		info.Name = "Jose Garcia"
+		assert.True(t, SkipsClaim(info, authn.OidcClaimPreferredUsername))
+		assert.False(t, SkipsClaim(info, authn.OidcClaimName))
+	})
+	t.Run("NothingLeft", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "José"
+		assert.True(t, SkipsClaim(info, authn.OidcClaimName))
+	})
+	t.Run("ASCII", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "jane"
+		info.Name = "José García"
+		assert.False(t, SkipsClaim(info, authn.OidcClaimPreferredUsername))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, SkipsClaim(&oidc.UserInfo{}, authn.OidcClaimPreferredUsername))
+	})
+}
+
+func TestAsciiHandle(t *testing.T) {
+	assert.Equal(t, "jane.doe", asciiHandle("Jane Doe"))
+	assert.Equal(t, "jane", asciiHandle("jane@example.com"))
+	assert.Equal(t, "", asciiHandle("José"))
+	assert.Equal(t, "", asciiHandle("\u212Aate"))
+	assert.Equal(t, "", asciiHandle(""))
+}
+
+func TestAsciiEmail(t *testing.T) {
+	assert.Equal(t, "jane@example.com", asciiEmail("Jane@Example.com"))
+	assert.Equal(t, "", asciiEmail("\u212Aate@example.com"))
+	assert.Equal(t, "", asciiEmail("jose@exämple.com"))
+	assert.Equal(t, "", asciiEmail(""))
 }
