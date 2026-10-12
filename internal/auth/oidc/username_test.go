@@ -214,37 +214,51 @@ func TestUsername(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
 		info.PreferredUsername = "José"
-		info.Name = "José García"
+		info.Name = "Jose Garcia"
 		info.Nickname = "Pepe"
 		info.Email = "jose@example.com"
-		assert.Equal(t, "pepe", Username(info, authn.OidcClaimPreferredUsername))
-		assert.Equal(t, "pepe", Username(info, authn.OidcClaimName))
-		assert.Equal(t, "pepe", Username(info, authn.OidcClaimNickname))
-		assert.Equal(t, "pepe", Username(info, authn.OidcClaimEmail))
-		info.Nickname = "Pépé"
 		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimName))
+		assert.Equal(t, "pepe", Username(info, authn.OidcClaimNickname))
 		info.EmailVerified = true
 		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimPreferredUsername))
-		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimName))
-		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimNickname))
+		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimName))
+		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimEmail))
+	})
+	t.Run("NotASCIILaterClaim", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "José García"
+		info.Nickname = "Pepe"
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		info.Email = "jose@example.com"
+		info.EmailVerified = true
+		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimPreferredUsername))
 	})
 	t.Run("NotASCIIBeforeSanitizing", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.PreferredUsername = "\u212Aate"
 		info.Name = "Kate Doe"
-		assert.Equal(t, "kate.doe", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
 		info.PreferredUsername = "kate@exämple.com"
-		assert.Equal(t, "kate.doe", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		info.PreferredUsername = "jane\u200b"
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
 	})
 	t.Run("NotASCIIEmail", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.PreferredUsername = "josé"
+		info.Nickname = "kate"
 		info.Email = "\u212Aate@example.com"
 		info.EmailVerified = true
 		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
 		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
-		info.Nickname = "kate"
+		info.EmailVerified = false
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
+		info.PreferredUsername = ""
 		assert.Equal(t, "kate", Username(info, authn.OidcClaimEmail))
+		info.EmailVerified = true
+		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
 	})
 }
 
@@ -272,17 +286,22 @@ func TestSkipsClaim(t *testing.T) {
 	})
 }
 
-func TestAsciiHandle(t *testing.T) {
-	assert.Equal(t, "jane.doe", asciiHandle("Jane Doe"))
-	assert.Equal(t, "jane", asciiHandle("jane@example.com"))
-	assert.Equal(t, "", asciiHandle("José"))
-	assert.Equal(t, "", asciiHandle("\u212Aate"))
-	assert.Equal(t, "", asciiHandle(""))
+func TestClaimOrder(t *testing.T) {
+	assert.Equal(t, []string{"preferred_username", "name", "nickname", "email"}, claimOrder(""))
+	assert.Equal(t, []string{"preferred_username", "name", "nickname", "email"}, claimOrder(authn.OidcClaimPreferredUsername))
+	assert.Equal(t, []string{"name", "preferred_username", "nickname", "email"}, claimOrder(authn.OidcClaimName))
+	assert.Equal(t, []string{"nickname", "preferred_username", "name", "email"}, claimOrder(authn.OidcClaimNickname))
+	assert.Equal(t, []string{"email", "preferred_username", "name", "nickname"}, claimOrder(authn.OidcClaimEmail))
 }
 
-func TestAsciiEmail(t *testing.T) {
-	assert.Equal(t, "jane@example.com", asciiEmail("Jane@Example.com"))
-	assert.Equal(t, "", asciiEmail("\u212Aate@example.com"))
-	assert.Equal(t, "", asciiEmail("jose@exämple.com"))
-	assert.Equal(t, "", asciiEmail(""))
+func TestVerifiedEmailUsername(t *testing.T) {
+	info := &oidc.UserInfo{}
+	info.Email = "Jane@Example.com"
+	assert.Equal(t, "", verifiedEmailUsername(info))
+	info.EmailVerified = true
+	assert.Equal(t, "jane@example.com", verifiedEmailUsername(info))
+	info.Email = ".jane@example.com"
+	assert.Equal(t, "", verifiedEmailUsername(info))
+	info.Email = "a@b"
+	assert.Equal(t, "", verifiedEmailUsername(info))
 }

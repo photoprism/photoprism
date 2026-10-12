@@ -114,12 +114,12 @@ var identities = map[string]Identity{
 		Email:             "jose@example.com",
 		EmailVerified:     true,
 	},
-	// josefa has only non-ASCII name claims and an unverified email address.
+	// josefa has a non-ASCII preferred username, ASCII name claims and an unverified email address.
 	"josefa": {
 		Subject:           "sub00000011",
-		Name:              "Josefa Núñez",
+		Name:              "Josefa Nunez",
 		PreferredUsername: "josefa.núñez",
-		Nickname:          "Pepa Núñez",
+		Nickname:          "Pepa",
 		Email:             "josefa@example.com",
 		EmailVerified:     false,
 	},
