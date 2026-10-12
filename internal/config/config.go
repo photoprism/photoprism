@@ -80,6 +80,7 @@ type Config struct {
 	settings      *customize.Settings
 	db            *gorm.DB
 	dbVersion     string
+	dbNoPassFile  bool
 	hub           *hub.Config
 	hubCancel     context.CancelFunc
 	hubLock       sync.Mutex

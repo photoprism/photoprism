@@ -150,6 +150,7 @@ func TestInitConfigErrors(t *testing.T) {
 		{name: "Copy", cmd: CopyCommand, action: "copyAction"},
 		{name: "DatabaseBackup", cmd: DatabaseBackupCommand, action: "databaseBackupAction"},
 		{name: "DatabaseRestore", cmd: DatabaseRestoreCommand, action: "databaseRestoreAction"},
+		{name: "DatabaseTransfer", cmd: DatabaseTransferCommand, args: []string{"--target-driver", "sqlite"}, action: "databaseTransferAction"},
 		{name: "Download", cmd: DownloadCommand, action: "downloadAction"},
 		{name: "FacesAudit", cmd: findSubcommand(t, FacesCommands, "audit"), action: "facesAuditAction"},
 		{name: "FacesIndex", cmd: findSubcommand(t, FacesCommands, "index"), action: "facesIndexAction"},

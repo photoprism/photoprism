@@ -53,6 +53,7 @@ var MigrationsCommands = &cli.Command{
 	Subcommands: []*cli.Command{
 		MigrationsStatusCommand,
 		MigrationsRunCommand,
+		MigrationsTransferCommand,
 	},
 }
 

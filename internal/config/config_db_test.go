@@ -669,3 +669,98 @@ func TestConfig_PostgresSchemaUnsupported(t *testing.T) {
 		}, 5*time.Second, 50*time.Millisecond)
 	})
 }
+
+func TestConfig_WithDatabase(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	resetDatabaseOptions(c)
+	c.options.DatabaseDriver = dsn.DriverMySQL
+	c.options.DatabaseServer = "mariadb:4001"
+	c.options.DatabaseName = "source"
+	c.options.DatabaseUser = "source"
+	c.options.DatabasePassword = "source"
+
+	t.Run("Defaults", func(t *testing.T) {
+		target := c.WithDatabase(DatabaseOptions{Driver: dsn.DriverPostgres})
+
+		assert.Equal(t, dsn.DriverPostgres, target.DatabaseDriver())
+		assert.Equal(t, "photoprism", target.DatabaseName())
+		assert.Equal(t, "photoprism", target.DatabaseUser())
+		assert.Equal(t, localhost, target.DatabaseServer())
+		assert.Nil(t, target.DbIfConnected())
+		assert.Equal(t, c.Version(), target.Version())
+		assert.Equal(t, c.Edition(), target.Edition())
+	})
+	t.Run("Specified", func(t *testing.T) {
+		target := c.WithDatabase(DatabaseOptions{Driver: dsn.DriverMySQL, Server: "db:3306", Name: "target", User: "user", Password: "secret"})
+
+		assert.Equal(t, "user:secret@tcp(db:3306)/target", strings.SplitN(target.DatabaseDSN(), "?", 2)[0])
+	})
+	t.Run("NoPasswordFile", func(t *testing.T) {
+		fileName := t.TempDir() + "/password"
+		require.NoError(t, os.WriteFile(fileName, []byte("source-file"), 0o600))
+		t.Setenv(FlagFileVar("DATABASE_PASSWORD"), fileName)
+		source := NewConfig(CliTestContext())
+		resetDatabaseOptions(source)
+		source.options.DatabaseDriver = dsn.DriverMySQL
+
+		assert.Equal(t, "source-file", source.DatabasePassword())
+		assert.Equal(t, "", source.WithDatabase(DatabaseOptions{Driver: dsn.DriverPostgres}).DatabasePassword())
+		assert.Equal(t, "target", source.WithDatabase(DatabaseOptions{Driver: dsn.DriverPostgres, Password: "target"}).DatabasePassword())
+	})
+	t.Run("SourceUnchanged", func(t *testing.T) {
+		_ = c.WithDatabase(DatabaseOptions{Driver: dsn.DriverSQLite3, DSN: "target.db"})
+
+		assert.Equal(t, dsn.DriverMySQL, c.DatabaseDriver())
+		assert.Equal(t, "source", c.DatabaseName())
+	})
+}
+
+func TestConfig_ConnectDb(t *testing.T) {
+	t.Run("SQLite", func(t *testing.T) {
+		require.True(t, entity.HasDbProvider())
+		before := entity.Db()
+		c := NewConfig(CliTestContext()).WithDatabase(DatabaseOptions{Driver: dsn.DriverSQLite3, DSN: t.TempDir() + "/target.db"})
+
+		require.NoError(t, c.ConnectDb())
+		t.Cleanup(func() { _ = entity.CloseDb(c.DbIfConnected()) })
+
+		assert.NotNil(t, c.DbIfConnected())
+		assert.Same(t, before, entity.Db())
+		assert.NotSame(t, c.Db(), entity.Db())
+	})
+	t.Run("AlreadyConnected", func(t *testing.T) {
+		c := NewConfig(CliTestContext()).WithDatabase(DatabaseOptions{Driver: dsn.DriverSQLite3, DSN: t.TempDir() + "/target.db"})
+		require.NoError(t, c.ConnectDb())
+		t.Cleanup(func() { _ = entity.CloseDb(c.DbIfConnected()) })
+		db := c.Db()
+
+		require.NoError(t, c.ConnectDb())
+		assert.Same(t, db, c.Db())
+	})
+}
+
+func TestConfig_MigrateDbSchema(t *testing.T) {
+	c := NewConfig(CliTestContext()).WithDatabase(DatabaseOptions{Driver: dsn.DriverSQLite3, DSN: t.TempDir() + "/target.db"})
+	require.NoError(t, c.ConnectDb())
+	t.Cleanup(func() { _ = entity.CloseDb(c.DbIfConnected()) })
+
+	require.NoError(t, c.MigrateDbSchema())
+	// Running it again on a migrated schema succeeds.
+	require.NoError(t, c.MigrateDbSchema())
+
+	assert.True(t, c.Db().Migrator().HasTable(&entity.Photo{}))
+
+	var versions int64
+	require.NoError(t, c.Db().Table("versions").Where("version = ? AND edition = ?", c.Version(), c.versionEdition()).Count(&versions).Error)
+	assert.Equal(t, int64(1), versions)
+
+	// No migration fails on a new schema.
+	var failed int64
+	require.NoError(t, c.Db().Table("migrations").Where("error <> ''").Count(&failed).Error)
+	assert.Zero(t, failed)
+
+	// No default records are created.
+	var users int64
+	require.NoError(t, c.Db().Model(&entity.User{}).Count(&users).Error)
+	assert.Zero(t, users)
+}

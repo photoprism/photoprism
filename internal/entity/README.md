@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** October 11, 2026
+**Last Updated:** October 12, 2026
 
 ### Overview
 
@@ -170,6 +170,12 @@ files. Share-link visitors and unidentified downloads do not export YAML. Regist
 Contributors, and files-only readers keep their existing eligible downloads. Other file
 formats are unchanged. `SelectedFilesForSession` uses the same decision for download selections as direct downloads;
 `SelectedFiles` remains unrestricted for internal workflows.
+
+### Copying Between Databases
+
+`Tables.Transfer` (used by `photoprism database transfer`) replaces the rows of every registered table except `migrations` and `versions` in one database with those of another, which may be of a different kind. Both schemas must be migrated by the same version; `Config.MigrateDbSchema` does that for a target without creating default records. Rows are read from one snapshot of the source, per table in batches ordered by primary key, and written with a plain `INSERT ... VALUES` built from the struct fields, not with `Create`: GORM would run hooks and replace zero values of fields with a `default` tag, e.g. store `zz` for an empty `album_country`. Afterwards PostgreSQL sequences are synced and the row counts are compared with the source, in the snapshot and after it; if the transfer does not complete, the target's tables are cleared again. `SameDatabase` tells whether two connections reach the same database, so a copy onto the source can be refused.
+
+`TestTables_Transfer` copies the package test database into a SQLite file and, when their services are reachable, into MariaDB and PostgreSQL databases (`PHOTOPRISM_TEST_DSN_MARIADB` and `PHOTOPRISM_TEST_DSN_POSTGRES` override the development environment's), and compares every table row by row, so the three test drivers together cover each pair.
 
 ### Ignored Transfers
 

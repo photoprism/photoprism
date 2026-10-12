@@ -39,7 +39,7 @@ func TestDatabaseCommands(t *testing.T) {
 			names = append(names, cmd.Name)
 		}
 
-		assert.Equal(t, []string{"backup", "restore"}, names)
+		assert.Equal(t, []string{"backup", "restore", "transfer"}, names)
 	})
 	t.Run("HiddenPathAlias", func(t *testing.T) {
 		for _, cmd := range []*cli.Command{DatabaseBackupCommand, DatabaseRestoreCommand} {

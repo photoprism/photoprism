@@ -11,14 +11,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// DatabaseCommands configures the index database backup and restore subcommands.
+// DatabaseCommands configures the index database backup, restore, and transfer subcommands.
 var DatabaseCommands = &cli.Command{
 	Name:    "database",
 	Aliases: []string{"db"},
-	Usage:   "Index database backup and restore subcommands",
+	Usage:   "Index database backup, restore, and transfer subcommands",
 	Subcommands: []*cli.Command{
 		DatabaseBackupCommand,
 		DatabaseRestoreCommand,
+		DatabaseTransferCommand,
 	},
 }
 

@@ -323,6 +323,8 @@ func (c *Config) DatabasePassword() string {
 	// Try to read password from file if c.options.DatabasePassword is not set.
 	if c.options.DatabasePassword != "" {
 		return clean.Password(c.options.DatabasePassword)
+	} else if c.dbNoPassFile {
+		return ""
 	} else if fileName := FlagFilePath("DATABASE_PASSWORD"); fileName == "" {
 		// No password set, this is not an error.
 		return ""
@@ -584,6 +586,35 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
 	return err
 }
 
+// MigrateDbSchema migrates the database schema like MigrateDb, without creating default records or using the
+// database of the entity package, e.g. for the target of a transfer.
+func (c *Config) MigrateDbSchema() error {
+	db := c.Db()
+
+	if err := entity.CheckPostgresSchema(db); err != nil {
+		return err
+	}
+
+	// The migration and version helpers create their tables only once per process, so they are created here.
+	for _, table := range []any{&migrate.Migration{}, &migrate.Version{}} {
+		if db.Migrator().HasTable(table) {
+			continue
+		} else if err := db.AutoMigrate(table); err != nil {
+			return err
+		}
+	}
+
+	version := migrate.FirstOrCreateVersion(db, migrate.NewVersion(c.Version(), c.versionEdition()))
+
+	if err := entity.Entities.Migrate(db, migrate.Opt(true, false, nil)); err != nil {
+		return err
+	} else if err = entity.Entities.WaitForMigration(db); err != nil {
+		return err
+	}
+
+	return version.Migrated(db)
+}
+
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
 	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
@@ -706,6 +737,38 @@ func postgresVersion(num int) string {
 	default:
 		return ""
 	}
+}
+
+// DatabaseOptions holds the connection settings of a database other than the configured one.
+type DatabaseOptions struct {
+	Driver   string
+	DSN      string
+	Server   string
+	Name     string
+	User     string
+	Password string //nolint:gosec // G117: connection settings intentionally include the password.
+}
+
+// WithDatabase returns a copy of the config that connects to the specified database instead, e.g. as the
+// target of a transfer. Settings that are not specified get their defaults rather than the configured values,
+// and the configured password file does not apply.
+func (c *Config) WithDatabase(db DatabaseOptions) *Config {
+	opt := *c.Options()
+	opt.DatabaseDriver = db.Driver
+	opt.DatabaseDSN = db.DSN
+	opt.DatabaseServer = db.Server
+	opt.DatabaseName = db.Name
+	opt.DatabaseUser = db.User
+	opt.DatabasePassword = db.Password
+	opt.Deprecated.DatabaseDsn = ""
+
+	return &Config{cliCtx: c.cliCtx, options: &opt, settings: c.settings, env: c.env, dbNoPassFile: true}
+}
+
+// ConnectDb opens the database connection like RegisterDb, but returns an error if that fails and does not
+// make it the connection of the entity package.
+func (c *Config) ConnectDb() error {
+	return c.connectDb()
 }
 
 // connectDb establishes a database connection.
