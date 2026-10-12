@@ -172,4 +172,10 @@ var DialectSQLite3 = Migrations{
 		Stage:      "main",
 		Statements: []string{"UPDATE files SET file_chroma = CASE WHEN file_chroma = 0 AND (file_colors IS NULL OR file_colors = '') THEN -1 WHEN file_chroma >= 99 THEN 100 WHEN file_chroma = 1 AND EXISTS (SELECT 1 FROM migrations WHERE id = '20261010-000001') THEN 1 ELSE file_chroma + 1 END WHERE file_chroma >= 0;"},
 	},
+	{
+		ID:         "20261012-000001",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"DELETE FROM auth_users_settings WHERE user_uid IS NULL OR LENGTH(CAST(user_uid AS BLOB)) = 0 OR (NOT EXISTS (SELECT 1 FROM auth_users u WHERE u.user_uid = auth_users_settings.user_uid) AND NOT EXISTS (SELECT 1 FROM auth_users u WHERE CAST(u.user_uid AS BLOB) = CAST(auth_users_settings.user_uid AS BLOB)));"},
+	},
 }

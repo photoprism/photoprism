@@ -1,0 +1,1 @@
+DELETE FROM auth_users_settings WHERE user_uid IS NULL OR LENGTH(CAST(user_uid AS BLOB)) = 0 OR (NOT EXISTS (SELECT 1 FROM auth_users u WHERE u.user_uid = auth_users_settings.user_uid) AND NOT EXISTS (SELECT 1 FROM auth_users u WHERE CAST(u.user_uid AS BLOB) = CAST(auth_users_settings.user_uid AS BLOB)));
