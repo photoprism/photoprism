@@ -9,6 +9,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -20,7 +21,9 @@ will be automatically determined based on the current configuration.
 
 Backups to stdout (-) bypass the insufficient storage check, so dumps can be streamed even when the local storage is full.
 A backup file is replaced only once the new dump is complete. The filename must not be a symbolic link, even with --force,
-so use - rather than /dev/stdout to send the backup to stdout.`
+so use - rather than /dev/stdout to send the backup to stdout.
+
+A database backup can only be restored into the same kind of database it was created from.`
 
 // BackupCommand configures the command name, flags, and action.
 var BackupCommand = &cli.Command{
@@ -108,24 +111,8 @@ func backupAction(ctx *cli.Context) error {
 	retain := backupRetain(ctx, conf.BackupRetain())
 
 	if backupDatabase {
-		// Use default if no explicit filename was provided.
-		if fileName == "" {
-			if !fs.PathWritable(databasePath) {
-				if databasePath != "" {
-					log.Warnf("backup: specified database backup path is not writable, using default directory instead")
-				}
-
-				databasePath = conf.BackupDatabasePath()
-			}
-
-			backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
-			fileName = filepath.Join(databasePath, backupFile)
-		} else {
-			retain = 0
-		}
-
-		if err = backup.Database(databasePath, fileName, fileName == "-", force, retain); err != nil {
-			return cli.Exit(fmt.Errorf("failed to create database backup: %w", err), 1)
+		if err = backupIndex(conf, databasePath, fileName, force, retain); err != nil {
+			return err
 		}
 	}
 
@@ -148,6 +135,31 @@ func backupAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("completed in %s", elapsed)
+
+	return nil
+}
+
+// backupIndex creates an index database backup in fileName, or in the backup path with the date as
+// filename if fileName is empty, and sends it to stdout if fileName is -.
+func backupIndex(conf *config.Config, databasePath, fileName string, force bool, retain int) error {
+	if fileName == "" {
+		if !fs.PathWritable(databasePath) {
+			if databasePath != "" {
+				log.Warnf("backup: specified database backup path is not writable, using default directory instead")
+			}
+
+			databasePath = conf.BackupDatabasePath()
+		}
+
+		backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
+		fileName = filepath.Join(databasePath, backupFile)
+	} else {
+		retain = 0
+	}
+
+	if err := backup.Database(databasePath, fileName, fileName == "-", force, retain); err != nil {
+		return cli.Exit(fmt.Errorf("failed to create database backup: %w", err), 1)
+	}
 
 	return nil
 }

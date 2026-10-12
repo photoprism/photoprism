@@ -165,6 +165,7 @@ var PhotoPrism = []*cli.Command{
 	VideosCommands,
 	MigrateCommand,
 	MigrationsCommands,
+	DatabaseCommands,
 	BackupCommand,
 	RestoreCommand,
 	ResetCommand,

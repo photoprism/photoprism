@@ -148,6 +148,8 @@ func TestInitConfigErrors(t *testing.T) {
 		{name: "CleanUp", cmd: CleanUpCommand, action: "cleanUpAction"},
 		{name: "Convert", cmd: ConvertCommand, action: "convertAction"},
 		{name: "Copy", cmd: CopyCommand, action: "copyAction"},
+		{name: "DatabaseBackup", cmd: DatabaseBackupCommand, action: "databaseBackupAction"},
+		{name: "DatabaseRestore", cmd: DatabaseRestoreCommand, action: "databaseRestoreAction"},
 		{name: "Download", cmd: DownloadCommand, action: "downloadAction"},
 		{name: "FacesAudit", cmd: findSubcommand(t, FacesCommands, "audit"), action: "facesAuditAction"},
 		{name: "FacesIndex", cmd: findSubcommand(t, FacesCommands, "index"), action: "facesIndexAction"},
