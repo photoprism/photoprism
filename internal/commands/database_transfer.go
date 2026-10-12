@@ -310,6 +310,14 @@ func databaseTransferAction(ctx *cli.Context) error {
 
 	completed = true
 
+	// Names that differ only by accents or case may compare as equal on the target, e.g. on MariaDB.
+	if collisions, collisionsErr := entity.UserNameCollisions(target.Db()); collisionsErr != nil {
+		log.Debugf("transfer: %s (check user names)", clean.Error(collisionsErr))
+	} else if collisions > 0 {
+		log.Warnf("transfer: %s share a user name with another account in the target database, "+
+			"check them with \"photoprism users ls\"", english.Plural(int(collisions), "account", "accounts"))
+	}
+
 	var total int64
 
 	for _, rows := range result {

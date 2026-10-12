@@ -497,3 +497,18 @@ func OtherConnections(db *gorm.DB) (int64, error) {
 
 	return max(count, 0), nil
 }
+
+// UserNameCollisions returns the number of accounts whose user name equals that of another account under the
+// comparison rules of the database, e.g. names that differ only by accents on MariaDB.
+func UserNameCollisions(db *gorm.DB) (count int64, err error) {
+	if db == nil {
+		return 0, errors.New("database not connected")
+	}
+
+	groups := db.Table(User{}.TableName()).Select("COUNT(*) AS n").
+		Where("user_name <> ''").Group("user_name").Having("COUNT(*) > 1")
+
+	err = db.Table("(?) AS collisions", groups).Select("COALESCE(SUM(n), 0)").Row().Scan(&count)
+
+	return count, err
+}

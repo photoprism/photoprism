@@ -772,6 +772,40 @@ func TestOtherConnections(t *testing.T) {
 	})
 }
 
+func TestUserNameCollisions(t *testing.T) {
+	for _, driver := range []string{dsn.DriverSQLite3, dsn.DriverMySQL, dsn.DriverPostgres} {
+		t.Run(driver, func(t *testing.T) {
+			db := transferTestTarget(t, driver)
+
+			count, err := UserNameCollisions(db)
+			require.NoError(t, err)
+			assert.Zero(t, count)
+
+			// Accounts with the same name, names that differ only by case and accents, and accounts without a name.
+			for i, name := range []string{"same", "same", "rene", "Ren\u00e9", "", ""} {
+				require.NoError(t, db.Exec("INSERT INTO auth_users (id, user_uid, user_name) VALUES (?, ?, ?)", 100+i, rnd.GenerateUID(UserUID), name).Error)
+			}
+
+			// Deleted accounts are included, as name lookups for sign-in are unscoped.
+			require.NoError(t, db.Exec("UPDATE auth_users SET deleted_at = ? WHERE id = 101", time.Now().UTC()).Error)
+
+			count, err = UserNameCollisions(db)
+			require.NoError(t, err)
+
+			if driver == dsn.DriverMySQL {
+				assert.Equal(t, int64(4), count)
+			} else {
+				assert.Equal(t, int64(2), count)
+			}
+		})
+	}
+	t.Run("NotConnected", func(t *testing.T) {
+		_, err := UserNameCollisions(nil)
+
+		assert.Error(t, err)
+	})
+}
+
 func TestTransferTxOptions(t *testing.T) {
 	sqlite, err := OpenDb(dsn.DriverSQLite3, ":memory:")
 	require.NoError(t, err)
