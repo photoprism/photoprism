@@ -1,9 +1,11 @@
 package entity
 
 import (
+	"context"
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/url"
@@ -16,7 +18,9 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -490,6 +494,58 @@ func TestTables_Transfer(t *testing.T) {
 		require.NoError(t, err)
 		assert.Zero(t, result[Error{}.TableName()])
 	})
+	t.Run("SkipDuplicates", func(t *testing.T) {
+		for _, driver := range []string{dsn.DriverSQLite3, dsn.DriverMySQL, dsn.DriverPostgres} {
+			t.Run(driver, func(t *testing.T) {
+				src, err := OpenDb(dsn.DriverSQLite3, filepath.Join(t.TempDir(), "source.db"))
+				require.NoError(t, err)
+				t.Cleanup(func() { _ = CloseDb(src) })
+				dst := transferTestTarget(t, driver)
+
+				// The target compares names case-insensitively, the source byte by byte.
+				require.NoError(t, src.Exec("CREATE TABLE transfer_logins (id INTEGER PRIMARY KEY, name VARCHAR(64))").Error)
+				require.NoError(t, src.Exec("INSERT INTO transfer_logins (id, name) VALUES (1, 'admin'), (2, 'other'), (3, 'Other'), (4, 'more'), (5, 'ADMIN'), (6, 'last')").Error)
+
+				switch driver {
+				case dsn.DriverMySQL:
+					require.NoError(t, dst.Exec("CREATE TABLE transfer_logins (id INTEGER PRIMARY KEY, name VARCHAR(64) NOT NULL COLLATE utf8mb4_unicode_ci UNIQUE)").Error)
+				case dsn.DriverPostgres:
+					require.NoError(t, dst.Exec("CREATE TABLE transfer_logins (id INTEGER PRIMARY KEY, name VARCHAR(64) NOT NULL)").Error)
+					require.NoError(t, dst.Exec("CREATE UNIQUE INDEX uix_transfer_logins_name ON transfer_logins (lower(name))").Error)
+				default:
+					require.NoError(t, dst.Exec("CREATE TABLE transfer_logins (id INTEGER PRIMARY KEY, name VARCHAR(64) NOT NULL COLLATE NOCASE UNIQUE)").Error)
+				}
+
+				t.Cleanup(func() { _ = dst.Exec("DROP TABLE transfer_logins").Error })
+
+				list := Tables{"transfer_logins": &transferTestLogin{}}
+
+				// Without registration, a duplicate key stops the transfer.
+				_, err = list.Transfer(src, dst, TransferOptions{BatchSize: 2})
+				require.Error(t, err)
+				assert.Contains(t, err.Error(), "copy transfer_logins")
+
+				TransferSkipDuplicates["transfer_logins"] = true
+				t.Cleanup(func() { delete(TransferSkipDuplicates, "transfer_logins") })
+
+				// Duplicates are skipped in every batch, and the paging continues after them.
+				result, err := list.Transfer(src, dst, TransferOptions{BatchSize: 2})
+				require.NoError(t, err)
+				assert.Equal(t, int64(4), result["transfer_logins"])
+
+				var names []string
+				require.NoError(t, dst.Table("transfer_logins").Order("id").Pluck("name", &names).Error)
+				assert.Equal(t, []string{"admin", "other", "more", "last"}, names)
+
+				// Other errors still stop it, naming the rows read so far, skipped ones included.
+				require.NoError(t, src.Exec("DELETE FROM transfer_logins WHERE id = 5").Error)
+				require.NoError(t, src.Exec("UPDATE transfer_logins SET name = NULL WHERE id = 6").Error)
+				_, err = list.Transfer(src, dst, TransferOptions{BatchSize: 2})
+				require.Error(t, err)
+				assert.Contains(t, err.Error(), "(rows 5 to 5)")
+			})
+		}
+	})
 	t.Run("Panic", func(t *testing.T) {
 		dst := transferTestTarget(t, dsn.DriverSQLite3)
 		list := Tables{Camera{}.TableName(): &Camera{}, Lens{}.TableName(): &Lens{}}
@@ -534,6 +590,17 @@ type transferTestBytes []byte
 // Value returns the database value of transferTestBytes.
 func (b transferTestBytes) Value() (driver.Value, error) {
 	return string(b), nil
+}
+
+// transferTestLogin is a row of a log table whose names are unique.
+type transferTestLogin struct {
+	ID   uint `gorm:"primaryKey"`
+	Name *string
+}
+
+// TableName returns the table name of transferTestLogin.
+func (transferTestLogin) TableName() string {
+	return "transfer_logins"
 }
 
 // transferTestNoKey is a row without a primary key.
@@ -636,6 +703,70 @@ func TestTransferStateOf(t *testing.T) {
 	})
 	t.Run("MissingTable", func(t *testing.T) {
 		_, err := transferStateOf(db, Camera{}.TableName(), &Camera{})
+
+		assert.Error(t, err)
+	})
+}
+
+func TestIsDuplicateKeyError(t *testing.T) {
+	assert.True(t, isDuplicateKeyError(&mysql.MySQLError{Number: 1062}))
+	assert.False(t, isDuplicateKeyError(&mysql.MySQLError{Number: 1213}))
+	assert.True(t, isDuplicateKeyError(fmt.Errorf("insert: %w", &pgconn.PgError{Code: "23505"})))
+	assert.False(t, isDuplicateKeyError(&pgconn.PgError{Code: "23502"}))
+	assert.True(t, isDuplicateKeyError(sqlite3.Error{Code: sqlite3.ErrConstraint, ExtendedCode: sqlite3.ErrConstraintUnique}))
+	assert.True(t, isDuplicateKeyError(sqlite3.Error{Code: sqlite3.ErrConstraint, ExtendedCode: sqlite3.ErrConstraintPrimaryKey}))
+	assert.False(t, isDuplicateKeyError(sqlite3.Error{Code: sqlite3.ErrConstraint, ExtendedCode: sqlite3.ErrConstraintNotNull}))
+	assert.False(t, isDuplicateKeyError(errors.New("duplicate")))
+	assert.False(t, isDuplicateKeyError(nil))
+}
+
+func TestOtherConnections(t *testing.T) {
+	t.Run("SQLite", func(t *testing.T) {
+		db, err := OpenDb(dsn.DriverSQLite3, filepath.Join(t.TempDir(), "other.db"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = CloseDb(db) })
+
+		count, err := OtherConnections(db)
+
+		require.NoError(t, err)
+		assert.Zero(t, count)
+	})
+	t.Run("TestDatabase", func(t *testing.T) {
+		driver := dsn.ParseDriver(Db().Name())
+
+		if driver == dsn.DriverSQLite3 {
+			t.Skip("requires a MariaDB or PostgreSQL test database")
+		}
+
+		before, err := OtherConnections(Db())
+		require.NoError(t, err)
+
+		// Connections of the same pool are not counted.
+		sqlDb, err := Db().DB()
+		require.NoError(t, err)
+
+		for i := 0; i < 3; i++ {
+			conn, connErr := sqlDb.Conn(context.Background())
+			require.NoError(t, connErr)
+			t.Cleanup(func() { _ = conn.Close() })
+		}
+
+		same, err := OtherConnections(Db())
+		require.NoError(t, err)
+		assert.Less(t, same, before+3)
+
+		// A connection of another pool to the same database is counted.
+		other, err := OpenDb(driver, TestDbDSN(os.Getenv("PHOTOPRISM_TEST_DRIVER"), os.Getenv("PHOTOPRISM_TEST_DSN")))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = CloseDb(other) })
+		require.NoError(t, other.Exec("SELECT 1").Error)
+
+		after, err := OtherConnections(Db())
+		require.NoError(t, err)
+		assert.GreaterOrEqual(t, after, same+1)
+	})
+	t.Run("NotConnected", func(t *testing.T) {
+		_, err := OtherConnections(nil)
 
 		assert.Error(t, err)
 	})

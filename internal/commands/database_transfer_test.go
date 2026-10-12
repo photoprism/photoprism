@@ -160,6 +160,7 @@ func TestDatabaseTransferCommand(t *testing.T) {
 		require.Error(t, err)
 		assert.Equal(t, 2, ExitCode(err))
 		assert.Contains(t, err.Error(), "not empty")
+		assert.Contains(t, err.Error(), "already been started")
 	})
 	t.Run("Force", func(t *testing.T) {
 		_, err := RunWithTestContext(DatabaseTransferCommand, append(args, "--force"))

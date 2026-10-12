@@ -27,10 +27,11 @@ their defaults, not the values of the configured database. A SQLite target is sp
 
 Stop PhotoPrism before running a transfer, as changes made while it runs are missing in the target and are not
 always detected. The configured database is migrated first, then the schema of the target. Every table is copied
-as stored from one snapshot, including users, sessions, and settings. A target that holds data or other tables
-is refused unless --force is passed, in which case its data is replaced and other tables are left as they are.
-If the transfer fails, the target is emptied again, and a SQLite file it created is removed. Once it is complete,
-change the database options to the target and start PhotoPrism.
+as stored from one snapshot, including users, sessions, and settings. A target that holds data or other tables,
+e.g. because PhotoPrism has already been started with it, is refused unless --force is passed, in which case its
+data is replaced and other tables are left as they are. If the transfer fails, the target is emptied again, and a
+SQLite file it created is removed. Once it is complete, change the database options to the target and start
+PhotoPrism.
 
 A database backup can only be restored into the same kind of database, so use this command to change the kind.`
 
@@ -219,6 +220,14 @@ func databaseTransferAction(ctx *cli.Context) error {
 		log.Warnf("transfer: the target database records migrations %s as successful", strings.Join(failed, ", "))
 	}
 
+	// Other connections may belong to an instance that still runs, but also to other applications.
+	if others, othersErr := entity.OtherConnections(conf.Db()); othersErr != nil {
+		log.Debugf("transfer: %s (count other connections)", clean.Error(othersErr))
+	} else if others > 0 {
+		log.Warnf("transfer: the index database has %s, changes made during the transfer may be missed",
+			english.Plural(int(others), "other connection", "other connections"))
+	}
+
 	// Tables of other editions or applications are not copied.
 	if unknown, unknownErr := entity.Entities.Unknown(conf.Db()); unknownErr != nil {
 		return cli.Exit(fmt.Errorf("failed to list the index database tables: %w", unknownErr), 1)
@@ -273,7 +282,8 @@ func databaseTransferAction(ctx *cli.Context) error {
 		slices.Sort(tables)
 
 		if !ctx.Bool("force") {
-			return cli.Exit(fmt.Errorf("the target database is not empty (%s), use --force to replace its data", strings.Join(tables, ", ")), 2)
+			return cli.Exit(fmt.Errorf("the target database is not empty (%s), use --force to replace its data, "+
+				"e.g. if PhotoPrism has already been started with it", strings.Join(tables, ", ")), 2)
 		}
 
 		log.Infof("transfer: replacing the data in the target database")

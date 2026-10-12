@@ -9,6 +9,10 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
+	"github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/mattn/go-sqlite3"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
@@ -118,14 +122,16 @@ func (list Tables) Transfer(src, dst *gorm.DB, opt TransferOptions) (result map[
 	snapshot := make(map[string]transferState, len(names))
 
 	for _, name := range names {
-		var rows int64
+		var rows, skipped int64
 
-		if rows, err = transferTable(tx, dst, name, list[name], opt.BatchSize); err != nil {
+		if rows, skipped, err = transferTable(tx, dst, name, list[name], opt.BatchSize); err != nil {
 			return result, fmt.Errorf("%s (copy %s)", err, name)
 		} else if snapshot[name], err = transferStateOf(tx, name, list[name]); err != nil {
 			return result, err
-		} else if snapshot[name].Rows != rows {
-			return result, fmt.Errorf("%d of %d rows copied from %s", rows, snapshot[name].Rows, name)
+		} else if snapshot[name].Rows != rows+skipped {
+			return result, fmt.Errorf("%d of %d rows copied from %s", rows+skipped, snapshot[name].Rows, name)
+		} else if skipped > 0 {
+			log.Warnf("transfer: skipped %s of %s whose keys the target treats as already present, without merging them", english.Plural(int(skipped), "row", "rows"), name)
 		}
 
 		result[name] = rows
@@ -174,6 +180,37 @@ func (list Tables) Transfer(src, dst *gorm.DB, opt TransferOptions) (result map[
 // as the transfer itself may log to them.
 var TransferLogTables = map[string]bool{
 	Error{}.TableName(): true,
+}
+
+// TransferSkipDuplicates contains the log tables whose rows Tables.Transfer skips with a warning if their key is
+// already in the target, e.g. because the target compares keys that differ only by case or accents as equal.
+var TransferSkipDuplicates = map[string]bool{}
+
+// isDuplicateKeyError reports whether a write failed because a row with the same unique key exists.
+func isDuplicateKeyError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	var mysqlErr *mysql.MySQLError
+
+	if errors.As(err, &mysqlErr) {
+		return mysqlErr.Number == 1062
+	}
+
+	var pgErr *pgconn.PgError
+
+	if errors.As(err, &pgErr) {
+		return pgErr.Code == "23505"
+	}
+
+	var sqliteErr sqlite3.Error
+
+	if errors.As(err, &sqliteErr) {
+		return sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique || sqliteErr.ExtendedCode == sqlite3.ErrConstraintPrimaryKey
+	}
+
+	return false
 }
 
 // transferState holds the number of rows in a table and the latest update time, if it has an updated_at column.
@@ -242,18 +279,19 @@ func (list Tables) Unknown(db *gorm.DB) ([]string, error) {
 	return result, nil
 }
 
-// transferTable copies the rows of a table from src to dst in batches, ordered by primary key, and returns their number.
-func transferTable(src, dst *gorm.DB, name string, model any, batchSize int) (total int64, err error) {
+// transferTable copies the rows of a table from src to dst in batches, ordered by primary key, and returns the number
+// of rows copied and of rows skipped, as rows of TransferSkipDuplicates tables whose key is already in dst are skipped.
+func transferTable(src, dst *gorm.DB, name string, model any, batchSize int) (total, skipped int64, err error) {
 	stmt := &gorm.Statement{DB: src}
 
 	if err = stmt.Parse(model); err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	s := stmt.Schema
 
 	if len(s.PrimaryFields) == 0 {
-		return 0, errors.New("no primary key")
+		return 0, 0, errors.New("no primary key")
 	}
 
 	fields := make([]*schema.Field, 0, len(s.DBNames))
@@ -290,14 +328,14 @@ func transferTable(src, dst *gorm.DB, name string, model any, batchSize int) (to
 		}
 
 		if err = query.Find(batch.Interface()).Error; err != nil {
-			return total, err
+			return total, skipped, err
 		}
 
 		rows := batch.Elem()
 		n := rows.Len()
 
 		if n == 0 {
-			return total, nil
+			return total, skipped, nil
 		}
 
 		values := make([][]any, n)
@@ -312,14 +350,29 @@ func transferTable(src, dst *gorm.DB, name string, model any, batchSize int) (to
 			}
 		}
 
-		if err = write.Exec("INSERT INTO ? ?", clause.Table{Name: name}, clause.Values{Columns: columns, Values: values}).Error; err != nil {
-			return total, fmt.Errorf("%s (rows %d to %d)", err, total+1, total+int64(n))
+		first := total + skipped + 1
+
+		if err = write.Exec("INSERT INTO ? ?", clause.Table{Name: name}, clause.Values{Columns: columns, Values: values}).Error; err == nil {
+			total += int64(n)
+		} else if !TransferSkipDuplicates[name] || !isDuplicateKeyError(err) {
+			return total, skipped, fmt.Errorf("%s (rows %d to %d)", err, first, first+int64(n)-1)
+		} else {
+			// Inserts the rows one by one, skipping those whose key is already in the target.
+			for i := range values {
+				if rowErr := write.Exec("INSERT INTO ? ?", clause.Table{Name: name}, clause.Values{Columns: columns, Values: values[i : i+1]}).Error; rowErr == nil {
+					total++
+				} else if isDuplicateKeyError(rowErr) {
+					skipped++
+				} else {
+					return total, skipped, fmt.Errorf("%s (row %d)", rowErr, first+int64(i))
+				}
+			}
+
+			err = nil
 		}
 
-		total += int64(n)
-
 		if n < batchSize {
-			return total, nil
+			return total, skipped, nil
 		}
 
 		lastRow := rows.Index(n - 1).Elem()
@@ -405,4 +458,42 @@ func SameDatabase(a, b *gorm.DB) (bool, error) {
 	}
 
 	return same, nil
+}
+
+// OtherConnections returns the number of connections to the database of db that do not belong to its own pool,
+// e.g. of a PhotoPrism instance that still runs. It returns 0 for SQLite, which keeps no list of connections.
+func OtherConnections(db *gorm.DB) (int64, error) {
+	if db == nil {
+		return 0, errors.New("database not connected")
+	}
+
+	var query string
+
+	switch dsn.DialectFromDriver(db.Name()) {
+	case dsn.DialectMySQL:
+		query = "SELECT COUNT(*) FROM information_schema.PROCESSLIST WHERE DB = DATABASE() AND ID <> CONNECTION_ID()"
+	case dsn.DialectPostgreSQL:
+		query = "SELECT COUNT(*) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid() AND backend_type = 'client backend'"
+	default:
+		return 0, nil
+	}
+
+	sqlDb, err := db.DB()
+
+	if err != nil {
+		return 0, err
+	}
+
+	var count int64
+
+	if err = db.Raw(query).Row().Scan(&count); err != nil {
+		return 0, err
+	}
+
+	// The connection that runs the query is excluded above, the other open connections of the pool here.
+	if own := int64(sqlDb.Stats().OpenConnections - 1); own > 0 {
+		count -= own
+	}
+
+	return max(count, 0), nil
 }
