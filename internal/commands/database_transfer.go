@@ -26,10 +26,11 @@ which can also be set with the PHOTOPRISM_TRANSFER_* environment variables. Sett
 their defaults, not the values of the configured database. A SQLite target is specified with --target-dsn only.
 
 Stop PhotoPrism before running a transfer, as changes made while it runs are missing in the target and are not
-always detected. The configured database is migrated first, then the schema of the target. Every table is copied as stored from one snapshot, including users, sessions, and settings. A target
-that holds data or other tables is refused unless --force is passed, in which case its data is replaced and
-other tables are left as they are. If the transfer fails, the target is emptied again, and a SQLite file it
-created is removed. Once it is complete, change the database options to the target and start PhotoPrism.
+always detected. The configured database is migrated first, then the schema of the target. Every table is copied
+as stored from one snapshot, including users, sessions, and settings. A target that holds data or other tables
+is refused unless --force is passed, in which case its data is replaced and other tables are left as they are.
+If the transfer fails, the target is emptied again, and a SQLite file it created is removed. Once it is complete,
+change the database options to the target and start PhotoPrism.
 
 A database backup can only be restored into the same kind of database, so use this command to change the kind.`
 

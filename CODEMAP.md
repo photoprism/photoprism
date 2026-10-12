@@ -111,6 +111,7 @@ Database & Migrations
 - Driver: GORM v2 (`gorm.io/gorm`, MySQL and SQLite dialectors, plus experimental PostgreSQL through `gorm.io/driver/postgres` with pgx) opened by `entity.OpenDb` with `entity.GormConfig()`. No `WithContext`. Use `db.Exec(stmt)` for raw SQL. Usage rules: `.claude/rules/go-code-style.md` ("GORM v2 Usage").
 - Entities and helpers: `internal/entity/*.go` and subpackages (`query`, `search`, `sortby`; `sqlcount` counts statements in tests). Branch per driver on `entity.DbDialect()`, which returns a `dsn.Dialect*` constant.
 - Migrations engine: `internal/entity/migrate/*` — run via `config.MigrateDb()`; CLI: `photoprism migrate` / `photoprism migrations`.
+- Backups, restores and transfers: `internal/photoprism/backup/*` (dumps), `entity.Tables.Transfer` (`internal/entity/entity_transfer.go`, copies the index between databases); CLI: `photoprism database backup|restore|transfer`.
 - DB init/migrate flow: `internal/config/config_db.go` chooses driver/DSN and opens the connection, then `entity.InitDb(migrate.Opt(...))`; MySQL table options are set on the migration session.
 
 AuthN/Z & Sessions
