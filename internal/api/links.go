@@ -100,13 +100,6 @@ func UpdateLink(c *gin.Context) {
 	link.MaxViews = frm.MaxViews
 	link.LinkExpires = frm.LinkExpires
 
-	if frm.Password != "" {
-		if err := link.SetPassword(frm.Password); err != nil {
-			Abort(c, http.StatusConflict, i18n.ErrSaveFailed)
-			return
-		}
-	}
-
 	if err := link.Save(); err != nil {
 		Abort(c, http.StatusConflict, i18n.ErrSaveFailed)
 		return
@@ -191,13 +184,6 @@ func CreateLink(c *gin.Context) {
 	link.SetSlug(frm.ShareSlug)
 	link.MaxViews = frm.MaxViews
 	link.LinkExpires = frm.LinkExpires
-
-	if frm.Password != "" {
-		if err := link.SetPassword(frm.Password); err != nil {
-			Abort(c, http.StatusConflict, i18n.ErrSaveFailed)
-			return
-		}
-	}
 
 	if err := link.Save(); err != nil {
 		Abort(c, http.StatusConflict, i18n.ErrSaveFailed)

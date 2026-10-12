@@ -23,7 +23,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`)
 
 		if resp.Code != http.StatusOK {
 			t.Fatal(resp.Body.String())
@@ -38,6 +38,25 @@ func TestCreateAlbumLink(t *testing.T) {
 		assert.NotEmpty(t, link.LinkToken)
 		assert.Equal(t, 0, link.LinkExpires)
 	})
+	t.Run("IgnoresPassword", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		CreateAlbumLink(router)
+
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Slug": "Stray Key", "Expires": 3600}`)
+
+		if resp.Code != http.StatusOK {
+			t.Fatal(resp.Body.String())
+		}
+
+		uid := gjson.Get(resp.Body.String(), "UID").String()
+		assert.NotEmpty(t, uid)
+		assert.Equal(t, "stray-key", gjson.Get(resp.Body.String(), "Slug").String())
+		assert.Equal(t, int64(3600), gjson.Get(resp.Body.String(), "Expires").Int())
+		assert.False(t, gjson.Get(resp.Body.String(), "VerifyPassword").Exists())
+		assert.NotNil(t, entity.FindLink(uid))
+		assert.Nil(t, entity.FindPassword(uid))
+	})
 	t.Run("UserPasswordAdmin", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
@@ -49,7 +68,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`, sessId)
+		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`, sessId)
 
 		if resp.Code != http.StatusOK {
 			t.Fatal(resp.Body.String())
@@ -73,7 +92,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`, sessId)
+		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`, sessId)
 
 		if resp.Code != http.StatusForbidden {
 			t.Fatal(resp.Body.String())
@@ -91,7 +110,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`, "X3B6IU-hfeLG5-HpVxkT-ctCY3M")
+		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`, "X3B6IU-hfeLG5-HpVxkT-ctCY3M")
 
 		if resp.Code != http.StatusOK {
 			t.Fatal(resp.Body.String())
@@ -115,7 +134,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`, "zlbkWC-vL4ORw-MvpDD7-mHrPW6")
+		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`, "zlbkWC-vL4ORw-MvpDD7-mHrPW6")
 
 		if resp.Code != http.StatusOK {
 			t.Fatal(resp.Body.String())
@@ -137,7 +156,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`, "v2wS72-OkqEzm-MQ63Z2-TEhU0w")
+		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`, "v2wS72-OkqEzm-MQ63Z2-TEhU0w")
 
 		if resp.Code != http.StatusForbidden {
 			t.Fatal(resp.Body.String())
@@ -153,7 +172,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`, "5hKyGD-FZUP9p-z8dYit-SYhkGI")
+		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`, "5hKyGD-FZUP9p-z8dYit-SYhkGI")
 
 		if resp.Code != http.StatusForbidden {
 			t.Fatal(resp.Body.String())
@@ -171,7 +190,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`, "8e154d323800393faf5177ce7392116feebbf674e6c2d39e")
+		resp := AuthenticatedRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`, "8e154d323800393faf5177ce7392116feebbf674e6c2d39e")
 
 		if resp.Code != http.StatusOK {
 			t.Fatal(resp.Body.String())
@@ -189,7 +208,7 @@ func TestCreateAlbumLink(t *testing.T) {
 	t.Run("AlbumDoesNotExist", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateAlbumLink(router)
-		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/links", `{"Expires": 0, "CanEdit": true}`)
 
 		if resp.Code != http.StatusNotFound {
 			t.Fatal(resp.Body.String())
@@ -203,7 +222,7 @@ func TestCreateAlbumLink(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": "abc", "CanEdit": true}`)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": "abc", "CanEdit": true}`)
 
 		if resp.Code != http.StatusBadRequest {
 			t.Fatal(resp.Body.String())
@@ -216,7 +235,7 @@ func TestUpdateAlbumLink(t *testing.T) {
 
 	CreateAlbumLink(router)
 
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`)
 
 	if r.Code != http.StatusOK {
 		t.Fatal(r.Body.String())
@@ -228,12 +247,23 @@ func TestUpdateAlbumLink(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateAlbumLink(router)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba7/links/"+uid, `{"Token": "newToken", "Expires": 8000, "Password": "1234nhfhfd"}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba7/links/"+uid, `{"Token": "newToken", "Expires": 8000}`)
 		val := gjson.Get(r.Body.String(), "Token")
 		assert.Equal(t, "newtoken", val.String())
 		val2 := gjson.Get(r.Body.String(), "Expires")
 		assert.Equal(t, "8000", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("IgnoresPassword", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbumLink(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/as6sg6bxpogaaba7/links/"+uid, `{"Token": "strayKey", "Slug": "Stray Key", "Expires": 7200, "Password": "1234nhfhfd"}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "straykey", gjson.Get(r.Body.String(), "Token").String())
+		assert.Equal(t, "stray-key", gjson.Get(r.Body.String(), "Slug").String())
+		assert.Equal(t, int64(7200), gjson.Get(r.Body.String(), "Expires").Int())
+		assert.False(t, gjson.Get(r.Body.String(), "VerifyPassword").Exists())
+		assert.Nil(t, entity.FindPassword(uid))
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -272,7 +302,7 @@ func TestDeleteAlbumLink(t *testing.T) {
 
 	CreateAlbumLink(router)
 
-	r := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`)
 
 	if r.Code != http.StatusOK {
 		t.Fatal(r.Body.String())
@@ -313,7 +343,7 @@ func TestGetAlbumLinks(t *testing.T) {
 
 		CreateAlbumLink(router)
 
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/links", `{"Expires": 0, "CanEdit": true}`)
 
 		if r.Code != http.StatusOK {
 			t.Fatal(r.Body.String())
@@ -341,7 +371,7 @@ func TestCreatePhotoLink(t *testing.T) {
 
 		CreatePhotoLink(router)
 
-		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Password":"foobar","Expires":0,"CanEdit":true}`)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Expires":0,"CanEdit":true}`)
 		log.Debugf("BODY: %s", resp.Body.String())
 		assert.Equal(t, http.StatusOK, resp.Code)
 
@@ -361,7 +391,7 @@ func TestCreatePhotoLink(t *testing.T) {
 
 		CreatePhotoLink(router)
 
-		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/xxx/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/photos/xxx/links", `{"Expires": 0, "CanEdit": true}`)
 
 		if resp.Code != http.StatusNotFound {
 			t.Fatal(resp.Body.String())
@@ -380,7 +410,7 @@ func TestUpdatePhotoLink(t *testing.T) {
 
 	CreatePhotoLink(router)
 
-	r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Expires": 0, "CanEdit": true}`)
 
 	if r.Code != http.StatusOK {
 		t.Fatal(r.Body.String())
@@ -392,7 +422,7 @@ func TestUpdatePhotoLink(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhotoLink(router)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0yh7/links/"+uid, `{"Token": "newToken", "Expires": 8000, "Password": "1234nhfhfd"}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0yh7/links/"+uid, `{"Token": "newToken", "Expires": 8000}`)
 		val := gjson.Get(r.Body.String(), "Token")
 		assert.Equal(t, "newtoken", val.String())
 		val2 := gjson.Get(r.Body.String(), "Expires")
@@ -413,7 +443,7 @@ func TestDeletePhotoLink(t *testing.T) {
 
 	CreatePhotoLink(router)
 
-	r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Expires": 0, "CanEdit": true}`)
 
 	if r.Code != http.StatusOK {
 		t.Fatal(r.Body.String())
@@ -443,7 +473,7 @@ func TestGetPhotoLinks(t *testing.T) {
 
 		CreatePhotoLink(router)
 
-		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/links", `{"Expires": 0, "CanEdit": true}`)
 		if r.Code != http.StatusOK {
 			t.Fatal(r.Body.String())
 		}
@@ -469,7 +499,7 @@ func TestCreateLabelLink(t *testing.T) {
 
 		CreateLabelLink(router)
 
-		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Expires": 0, "CanEdit": true}`)
 		assert.Equal(t, http.StatusOK, resp.Code)
 
 		if err := json.Unmarshal(resp.Body.Bytes(), &link); err != nil {
@@ -486,7 +516,7 @@ func TestCreateLabelLink(t *testing.T) {
 	t.Run("LabelNotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateLabelLink(router)
-		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/labels/xxx/links", `{"Expires": 0, "CanEdit": true}`)
 
 		if resp.Code != http.StatusNotFound {
 			t.Fatal(resp.Body.String())
@@ -505,7 +535,7 @@ func TestUpdateLabelLink(t *testing.T) {
 
 	CreateLabelLink(router)
 
-	r := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Expires": 0, "CanEdit": true}`)
 
 	if r.Code != http.StatusOK {
 		t.Fatal(r.Body.String())
@@ -517,7 +547,7 @@ func TestUpdateLabelLink(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateLabelLink(router)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/ls6sg6b1wowuy3c2/links/"+uid, `{"Token": "newToken", "Expires": 8000, "Password": "1234nhfhfd"}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/labels/ls6sg6b1wowuy3c2/links/"+uid, `{"Token": "newToken", "Expires": 8000}`)
 		val := gjson.Get(r.Body.String(), "Token")
 		assert.Equal(t, "newtoken", val.String())
 		val2 := gjson.Get(r.Body.String(), "Expires")
@@ -537,7 +567,7 @@ func TestDeleteLabelLink(t *testing.T) {
 
 	CreateLabelLink(router)
 
-	r := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Expires": 0, "CanEdit": true}`)
 
 	if r.Code != http.StatusOK {
 		t.Fatal(r.Body.String())
@@ -566,7 +596,7 @@ func TestGetLabelLinks(t *testing.T) {
 
 		CreateLabelLink(router)
 
-		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Password": "foobar", "Expires": 0, "CanEdit": true}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/labels/ls6sg6b1wowuy3c2/links", `{"Expires": 0, "CanEdit": true}`)
 
 		if r.Code != http.StatusOK {
 			t.Fatal(r.Body.String())

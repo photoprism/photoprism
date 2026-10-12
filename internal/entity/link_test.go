@@ -1,11 +1,13 @@
 package entity
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -114,41 +116,6 @@ func TestLink_SetSlug(t *testing.T) {
 	assert.Equal(t, "test-slug", link.ShareSlug)
 }
 
-func TestLink_SetPassword(t *testing.T) {
-	link := Link{LinkUID: "dftjdfkvh"}
-	assert.Equal(t, false, link.HasPassword)
-	err := link.SetPassword("123")
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert.Equal(t, true, link.HasPassword)
-}
-
-func TestLink_InvalidPassword(t *testing.T) {
-	t.Run("NoPassword", func(t *testing.T) {
-		link := Link{LinkUID: "dftjdfkvhjh", HasPassword: false}
-		assert.False(t, link.InvalidPassword("123"))
-	})
-	t.Run("InvalidPassword", func(t *testing.T) {
-		link := NewLink("dhfjf", false, false)
-
-		err := link.SetPassword("123")
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.False(t, link.InvalidPassword("123"))
-	})
-	t.Run("ValidPassword", func(t *testing.T) {
-		link := NewLink("dhfjfk", false, false)
-
-		err := link.SetPassword("123kkljgfuA")
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.True(t, link.InvalidPassword("123"))
-	})
-}
-
 func TestLink_Save(t *testing.T) {
 	t.Run("InvalidShareUid", func(t *testing.T) {
 		link := NewLink("dhfjfjh", false, false)
@@ -182,6 +149,47 @@ func TestLink_Delete(t *testing.T) {
 		}
 
 	})
+	t.Run("RemovesPassword", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		other := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		saveTestLinkPassword(t, other.LinkUID)
+
+		require.NoError(t, link.Delete())
+
+		assert.Nil(t, FindLink(link.LinkUID))
+		assert.Nil(t, FindPassword(link.LinkUID))
+		assert.NotNil(t, FindLink(other.LinkUID))
+		assert.NotNil(t, FindPassword(other.LinkUID))
+		assert.NotNil(t, FindPassword(UserFixtures.Pointer("alice").UserUID))
+	})
+	t.Run("NoPassword", func(t *testing.T) {
+		link := newTestLink(t, 0)
+
+		require.NoError(t, link.Delete())
+
+		assert.Nil(t, FindLink(link.LinkUID))
+	})
+	t.Run("PasswordDeleteFails", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		failTestDeletes(t, Password{}.TableName())
+
+		assert.Error(t, link.Delete())
+
+		assert.NotNil(t, FindLink(link.LinkUID))
+		assert.NotNil(t, FindPassword(link.LinkUID))
+	})
+	t.Run("LinkDeleteFails", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		failTestDeletes(t, Link{}.TableName())
+
+		assert.Error(t, link.Delete())
+
+		assert.NotNil(t, FindLink(link.LinkUID))
+		assert.NotNil(t, FindPassword(link.LinkUID))
+	})
 	t.Run("EmptyToken", func(t *testing.T) {
 		link := Link{ShareUID: "ls6sg6bffgtredft", LinkToken: ""}
 		assert.Error(t, link.Delete())
@@ -190,6 +198,29 @@ func TestLink_Delete(t *testing.T) {
 		link := Link{LinkUID: "", ShareUID: "", LinkToken: "abc"}
 		assert.Error(t, link.Delete())
 	})
+}
+
+// saveTestLinkPassword stores a password for a link UID and removes it when the test ends.
+func saveTestLinkPassword(t *testing.T, linkUid string) {
+	t.Helper()
+
+	pw := NewPassword(linkUid, "LinkPassword123!", false)
+	require.NoError(t, pw.Save())
+	t.Cleanup(func() { _ = UnscopedDb().Delete(&Password{}, "uid = ?", linkUid).Error })
+}
+
+// failTestDeletes makes every delete from the named table fail until the test ends.
+func failTestDeletes(t *testing.T, table string) {
+	t.Helper()
+
+	fail := func(tx *gorm.DB) {
+		if tx.Statement.Table == table {
+			_ = tx.AddError(errors.New("delete control"))
+		}
+	}
+
+	require.NoError(t, Db().Callback().Delete().Before("gorm:begin_transaction").Register("test:link-delete", fail))
+	t.Cleanup(func() { _ = Db().Callback().Delete().Remove("test:link-delete") })
 }
 
 func TestFindLink(t *testing.T) {
@@ -215,6 +246,50 @@ func TestFindLink(t *testing.T) {
 }
 
 func TestDeleteShareLinks(t *testing.T) {
+	t.Run("RemovesPasswords", func(t *testing.T) {
+		shareUid := rnd.GenerateUID(AlbumUID)
+		first := NewLink(shareUid, false, false)
+		require.NoError(t, first.Save())
+		second := NewLink(shareUid, false, false)
+		require.NoError(t, second.Save())
+		saveTestLinkPassword(t, first.LinkUID)
+		saveTestLinkPassword(t, second.LinkUID)
+		other := newTestLink(t, 0)
+		saveTestLinkPassword(t, other.LinkUID)
+
+		require.NoError(t, DeleteShareLinks(shareUid))
+
+		assert.Nil(t, FindLink(first.LinkUID))
+		assert.Nil(t, FindLink(second.LinkUID))
+		assert.Nil(t, FindPassword(first.LinkUID))
+		assert.Nil(t, FindPassword(second.LinkUID))
+		assert.NotNil(t, FindLink(other.LinkUID))
+		assert.NotNil(t, FindPassword(other.LinkUID))
+		assert.NotNil(t, FindPassword(UserFixtures.Pointer("alice").UserUID))
+	})
+	t.Run("NoLinks", func(t *testing.T) {
+		assert.NoError(t, DeleteShareLinks(rnd.GenerateUID(AlbumUID)))
+	})
+	t.Run("PasswordDeleteFails", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		failTestDeletes(t, Password{}.TableName())
+
+		assert.Error(t, DeleteShareLinks(link.ShareUID))
+
+		assert.NotNil(t, FindLink(link.LinkUID))
+		assert.NotNil(t, FindPassword(link.LinkUID))
+	})
+	t.Run("LinkDeleteFails", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		saveTestLinkPassword(t, link.LinkUID)
+		failTestDeletes(t, Link{}.TableName())
+
+		assert.Error(t, DeleteShareLinks(link.ShareUID))
+
+		assert.NotNil(t, FindLink(link.LinkUID))
+		assert.NotNil(t, FindPassword(link.LinkUID))
+	})
 	t.Run("EmptyShareUid", func(t *testing.T) {
 		assert.Error(t, DeleteShareLinks(""))
 	})

@@ -33,7 +33,6 @@ type Link struct {
 	LinkExpires int       `gorm:"size:32" json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `gorm:"size:32" json:"Views" yaml:"-"`
 	MaxViews    uint      `gorm:"size:32" json:"MaxViews" yaml:"-"`
-	HasPassword bool      `json:"VerifyPassword" yaml:"VerifyPassword,omitempty"`
 	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm        uint      `gorm:"size:32" json:"Perm,omitempty" yaml:"Perm,omitempty"`
 	RefID       string    `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
@@ -131,34 +130,6 @@ func (m *Link) SetSlug(s string) {
 	m.ShareSlug = txt.Slug(s)
 }
 
-// SetPassword sets the password required to use the share link.
-func (m *Link) SetPassword(password string) error {
-	pw := NewPassword(m.LinkUID, password, false)
-
-	if err := pw.Save(); err != nil {
-		return err
-	}
-
-	m.HasPassword = true
-
-	return nil
-}
-
-// InvalidPassword checks if the password provided to use the share link is invalid.
-func (m *Link) InvalidPassword(password string) bool {
-	if !m.HasPassword {
-		return false
-	}
-
-	pw := FindPassword(m.LinkUID)
-
-	if pw == nil {
-		return password != ""
-	}
-
-	return pw.Invalid(password)
-}
-
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Link) Save() error {
 	if !rnd.IsUID(m.ShareUID, 0) {
@@ -174,7 +145,7 @@ func (m *Link) Save() error {
 	return Db().Save(m).Error
 }
 
-// Delete permanently deletes the link.
+// Delete permanently deletes the link and the password stored for its UID, if any.
 func (m *Link) Delete() error {
 	if m.LinkToken == "" {
 		return fmt.Errorf("empty link token")
@@ -187,10 +158,18 @@ func (m *Link) Delete() error {
 		event.AuditErr([]string{"link %s", "failed to remove related user shares", status.Error(err)}, clean.Log(m.RefID))
 	}
 
-	return Db().Delete(m).Error
+	// One transaction removes the password and the link, so a failed delete keeps both.
+	return Db().Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(&Password{}, "uid = ?", m.LinkUID).Error; err != nil {
+			event.AuditErr([]string{"link %s", "failed to remove password", status.Error(err)}, clean.Log(m.RefID))
+			return err
+		}
+
+		return tx.Delete(m).Error
+	})
 }
 
-// DeleteShareLinks removes all links that match the shared UID.
+// DeleteShareLinks removes all links that match the shared UID, and the passwords stored for their UIDs.
 func DeleteShareLinks(shareUid string) error {
 	if shareUid == "" {
 		return fmt.Errorf("empty share uid")
@@ -201,7 +180,17 @@ func DeleteShareLinks(shareUid string) error {
 		event.AuditErr([]string{"share %s", "failed to remove related user shares", status.Error(err)}, clean.Log(shareUid))
 	}
 
-	return Db().Delete(&Link{}, "share_uid = ?", shareUid).Error
+	// One transaction removes the passwords and the links, so a failed delete keeps both.
+	return Db().Transaction(func(tx *gorm.DB) error {
+		linkUids := tx.Model(&Link{}).Select("link_uid").Where("share_uid = ?", shareUid)
+
+		if err := tx.Delete(&Password{}, "uid IN (?)", linkUids).Error; err != nil {
+			event.AuditErr([]string{"share %s", "failed to remove link passwords", status.Error(err)}, clean.Log(shareUid))
+			return err
+		}
+
+		return tx.Delete(&Link{}, "share_uid = ?", shareUid).Error
+	})
 }
 
 // FindLink finds the link with the specified UID or nil if it is not found.

@@ -1764,9 +1764,6 @@
                 "UID": {
                     "type": "string"
                 },
-                "VerifyPassword": {
-                    "type": "boolean"
-                },
                 "Views": {
                     "type": "integer"
                 }
@@ -2876,9 +2873,6 @@
                 },
                 "MaxViews": {
                     "type": "integer"
-                },
-                "Password": {
-                    "type": "string"
                 },
                 "Slug": {
                     "type": "string"
