@@ -225,6 +225,26 @@ func FindRestorableUser(userName string) (m *User, held bool) {
 	return m.LoadRelated(), true
 }
 
+// CountNonASCIIUsernames returns the number of active accounts whose usernames contain characters other than ASCII.
+func CountNonASCIIUsernames() int {
+	var names []string
+
+	if err := Db().Model(&User{}).Where("id > 0 AND user_name <> ''").Pluck("user_name", &names).Error; err != nil {
+		log.Debugf("users: %s", clean.Error(err))
+		return 0
+	}
+
+	count := 0
+
+	for _, name := range names {
+		if !authn.IsASCIIUsername(name) {
+			count++
+		}
+	}
+
+	return count
+}
+
 // FindUserByExactName returns the account whose sanitized username equals the sanitized name, or nil if there
 // is none. It prefers an active account to a deleted one and, among either, a stored name identical to the
 // sanitized one. The usernames are compared byte for byte.

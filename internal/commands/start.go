@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
@@ -133,6 +134,8 @@ func startAction(ctx *cli.Context) error {
 		log.Infof("config: enabled read-only mode")
 	}
 
+	warnNonASCIIUsernames()
+
 	// Start built-in web server.
 	go server.Start(cctx, conf)
 
@@ -183,4 +186,16 @@ func startAction(ctx *cli.Context) error {
 	}
 
 	return nil
+}
+
+// warnNonASCIIUsernames logs a system warning with the number of accounts whose usernames contain characters
+// other than ASCII, which new and renamed accounts cannot have, and returns it.
+func warnNonASCIIUsernames() int {
+	count := entity.CountNonASCIIUsernames()
+
+	if count > 0 {
+		event.SystemWarn([]string{"users", "%s with characters other than ASCII in the username", "rename with photoprism users mod --username"}, english.Plural(count, "account", "accounts"))
+	}
+
+	return count
 }

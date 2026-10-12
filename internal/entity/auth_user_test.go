@@ -3750,3 +3750,17 @@ func TestUser_ExactUsernameHolder(t *testing.T) {
 		assert.False(t, m.exactUsernameHolder("exact-holder-none"))
 	})
 }
+
+func TestCountNonASCIIUsernames(t *testing.T) {
+	base := CountNonASCIIUsernames()
+
+	newExistingTestUser(t, "count-josé", acl.RoleGuest)
+	assert.Equal(t, base+1, CountNonASCIIUsernames())
+
+	deleted := newExistingTestUser(t, "count-zoë", acl.RoleGuest)
+	require.NoError(t, Db().Delete(deleted).Error)
+	assert.Equal(t, base+1, CountNonASCIIUsernames())
+
+	newRenameTestUser(t, "count-ascii", acl.RoleGuest)
+	assert.Equal(t, base+1, CountNonASCIIUsernames())
+}
