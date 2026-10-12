@@ -143,12 +143,6 @@ export default {
       links: [],
       options: options,
       tokenRules: [Link.validateToken],
-      label: {
-        url: this.$gettext("Service URL"),
-        user: this.$gettext("Username"),
-        cancel: this.$gettext("Cancel"),
-        confirm: this.$gettext("Done"),
-      },
       rtl: this.$isRtl,
     };
   },
