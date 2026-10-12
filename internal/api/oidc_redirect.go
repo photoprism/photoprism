@@ -244,7 +244,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// Optionally check if the email domain matches.
 		if domain := conf.OIDCDomain(); domain == "" {
 			// Do nothing.
-		} else if _, emailDomain, _ := strings.Cut(userEmail, "@"); emailDomain == "" || !userInfo.EmailVerified {
+		} else if _, emailDomain, _ := strings.Cut(oidc.VerifiedEmail(userInfo), "@"); emailDomain == "" {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrVerifiedEmailRequired.Error()})
 			event.LoginError(clientIp, "oidc", userEmail, userAgent, authn.ErrVerifiedEmailRequired.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrVerifiedEmailRequired))

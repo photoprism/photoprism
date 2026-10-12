@@ -68,6 +68,17 @@ func TestOidcUser(t *testing.T) {
 		assert.Equal(t, "", m.UserEmail)
 		assert.Equal(t, "jane.doe", m.UserName)
 	})
+	t.Run("VerifiedEmailNotASCII", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Email = "\u212Aate@doe.com"
+		info.EmailVerified = true
+		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
+
+		m := OidcUser(info, "", "kate")
+
+		assert.Equal(t, "", m.UserEmail)
+		assert.Equal(t, "kate", m.UserName)
+	})
 	t.Run("Success", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"

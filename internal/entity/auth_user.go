@@ -113,17 +113,10 @@ func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
 		return User{}
 	}
 
-	// Keep the email address only if the provider has verified it.
-	var email string
-
-	if bool(userInfo.EmailVerified) {
-		email = clean.Email(userInfo.Email)
-	}
-
 	return User{
 		UserName:     userName,
 		DisplayName:  userInfo.Name,
-		UserEmail:    email,
+		UserEmail:    authn.VerifiedEmail(userInfo.Email, bool(userInfo.EmailVerified)),
 		AuthProvider: authn.ProviderOIDC.String(),
 		AuthIssuer:   clean.Uri(issuer),
 		AuthID:       authId,

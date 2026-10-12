@@ -131,6 +131,13 @@ var identities = map[string]Identity{
 		Email:             "jesus@example.com",
 		EmailVerified:     false,
 	},
+	// kate has an ASCII username and a verified email address with a non-ASCII character.
+	"kate": {
+		Subject:           "sub00000013",
+		PreferredUsername: "kate",
+		Email:             "\u212Aate@example.com",
+		EmailVerified:     true,
+	},
 }
 
 // IdentityByHint returns the identity selected by a login_hint, or an error if the hint is unknown.

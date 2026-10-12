@@ -223,7 +223,7 @@ const (
 
 // oidcTestSubjects lists the subjects of the dummy-oidc test identities, so cleanup finds the
 // accounts they create even when registration renamed them.
-var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009", "sub00000010", "sub00000011", "sub00000012"}
+var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009", "sub00000010", "sub00000011", "sub00000012", "sub00000013"}
 
 // oidcUnreachableUri is an https provider address that refuses connections, so discovery fails.
 const oidcUnreachableUri = "https://127.0.0.1:1"
@@ -674,6 +674,56 @@ func TestOIDCRedirect_Email(t *testing.T) {
 
 		assertOidcLoginRefused(t, r, i18n.ErrVerifiedEmailRequired)
 		assert.Nil(t, findOidcTestUser("sub00000004"))
+	})
+	t.Run("DomainNotASCII", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "kate")
+		conf.Options().OIDCDomain = "example.com"
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "kate")
+
+		assertOidcLoginRefused(t, r, i18n.ErrVerifiedEmailRequired)
+		assert.Nil(t, findOidcTestUser("sub00000013"))
+	})
+	t.Run("NotASCII", func(t *testing.T) {
+		// A verified address with characters other than ASCII is not stored.
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "kate")
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "kate")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000013")
+		require.NotNil(t, user)
+		assert.Equal(t, "kate", user.UserName)
+		assert.Equal(t, "", user.UserEmail)
+		assert.False(t, user.EmailVerified())
+	})
+	t.Run("NotASCIIExistingAccount", func(t *testing.T) {
+		// An existing account keeps its stored email address.
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "kate")
+		app := newOidcTestApp(conf)
+
+		m := entity.NewUser()
+		m.UserName = "kate"
+		m.UserEmail = "kate.smith@example.com"
+		m.UserRole = "guest"
+		m.AuthProvider = authn.ProviderOIDC.String()
+		m.AuthIssuer = oidcTestIssuer
+		m.AuthID = "sub00000013"
+		m.CanLogin = true
+		require.NoError(t, entity.Db().Create(m).Error)
+
+		r := oidcLogin(t, app, "kate")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000013")
+		require.NotNil(t, user)
+		assert.Equal(t, m.UserUID, user.UserUID)
+		assert.Equal(t, "kate.smith@example.com", user.UserEmail)
 	})
 	t.Run("Unverified", func(t *testing.T) {
 		// Without a domain requirement the account is created, and an unverified email is not stored.

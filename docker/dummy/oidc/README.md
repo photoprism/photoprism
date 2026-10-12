@@ -27,6 +27,7 @@ An authorization request selects a test user with its `login_hint` parameter. Wi
 | `jose`       | `sub00000010` | `josé`         | `jose@example.com`       | yes      | non-ASCII name claims (`name`: `José García`)     |
 | `josefa`     | `sub00000011` | `josefa.núñez` | `josefa@example.com`     | no       | non-ASCII username, ASCII `name` (`Josefa Nunez`) |
 | `jesus`      | `sub00000012` | `jesús`        | `jesus@example.com`      | no       | only non-ASCII name claims                        |
+| `kate`       | `sub00000013` | `kate`         | `\u212Aate@example.com`  | yes      | verified email address with a non-ASCII character |
 
 The claims are included in the ID token and returned by the userinfo endpoint. Identities are defined in `app/mock/identities.go`.
 
