@@ -7,9 +7,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// Username returns the preferred username based on the userinfo and the preferred username OIDC claim.
-// Once a claim with characters other than ASCII is skipped, only the verified email address may follow,
-// since new usernames must be ASCII and must not come from a claim the user can freely edit.
+// Username returns the username for a new account based on the userinfo and the preferred username claim.
+// Claims with characters other than ASCII are skipped, since new usernames must be ASCII.
 func Username(userInfo *oidc.UserInfo, preferredClaim string) string {
 	return username(userInfo, preferredClaim, true)
 }
@@ -19,17 +18,27 @@ func SkipsClaim(userInfo *oidc.UserInfo, preferredClaim string) bool {
 	return username(userInfo, preferredClaim, false) != Username(userInfo, preferredClaim)
 }
 
-// claimOrder returns the claims in the order the preferred claim selects.
+// claimOrder returns the name claims in the order the preferred claim selects.
 func claimOrder(preferredClaim string) []string {
 	switch preferredClaim {
 	case authn.OidcClaimName:
-		return []string{authn.OidcClaimName, authn.OidcClaimPreferredUsername, authn.OidcClaimNickname, authn.OidcClaimEmail}
+		return []string{authn.OidcClaimName, authn.OidcClaimPreferredUsername, authn.OidcClaimNickname}
 	case authn.OidcClaimNickname:
-		return []string{authn.OidcClaimNickname, authn.OidcClaimPreferredUsername, authn.OidcClaimName, authn.OidcClaimEmail}
-	case authn.OidcClaimEmail:
-		return []string{authn.OidcClaimEmail, authn.OidcClaimPreferredUsername, authn.OidcClaimName, authn.OidcClaimNickname}
+		return []string{authn.OidcClaimNickname, authn.OidcClaimPreferredUsername, authn.OidcClaimName}
 	default:
-		return []string{authn.OidcClaimPreferredUsername, authn.OidcClaimName, authn.OidcClaimNickname, authn.OidcClaimEmail}
+		return []string{authn.OidcClaimPreferredUsername, authn.OidcClaimName, authn.OidcClaimNickname}
+	}
+}
+
+// claimValue returns the value of a name claim.
+func claimValue(userInfo *oidc.UserInfo, claim string) string {
+	switch claim {
+	case authn.OidcClaimName:
+		return userInfo.Name
+	case authn.OidcClaimNickname:
+		return userInfo.Nickname
+	default:
+		return userInfo.PreferredUsername
 	}
 }
 
@@ -43,40 +52,36 @@ func verifiedEmailUsername(userInfo *oidc.UserInfo) string {
 	return ""
 }
 
-// username returns the first usable claim in the order the preferred claim selects. If ascii is true,
-// a claim with characters other than ASCII, other than an unverified email address, ends the search,
-// and only an ASCII verified email address may be used instead.
+// username returns the username for the preferred claim: with the email claim, the verified address, else the
+// first name claim that yields a handle, and with the other claims the handle of the verified address as the
+// last resort. If ascii is true, values with characters other than ASCII are skipped.
 func username(userInfo *oidc.UserInfo, preferredClaim string, ascii bool) string {
-	for _, claim := range claimOrder(preferredClaim) {
-		var value string
+	usable := func(value string) bool {
+		return !ascii || authn.IsASCIIUsername(value)
+	}
 
-		switch claim {
-		case authn.OidcClaimEmail:
-			if !userInfo.EmailVerified {
-				continue
-			}
+	emailClaim := preferredClaim == authn.OidcClaimEmail
 
-			value = userInfo.Email
-		case authn.OidcClaimName:
-			value = userInfo.Name
-		case authn.OidcClaimNickname:
-			value = userInfo.Nickname
-		default:
-			value = userInfo.PreferredUsername
-		}
-
-		if ascii && !authn.IsASCIIUsername(value) {
-			if claim != authn.OidcClaimEmail && authn.IsASCIIUsername(userInfo.Email) {
-				return verifiedEmailUsername(userInfo)
-			}
-
+	// With the email claim, a verified address is the username, and one with other characters is refused.
+	if emailClaim && bool(userInfo.EmailVerified) {
+		if !usable(userInfo.Email) {
 			return ""
-		} else if claim == authn.OidcClaimEmail {
-			if name := verifiedEmailUsername(userInfo); name != "" {
-				return name
-			}
+		} else if name := verifiedEmailUsername(userInfo); name != "" {
+			return name
+		}
+	}
+
+	for _, claim := range claimOrder(preferredClaim) {
+		if value := claimValue(userInfo, claim); !usable(value) {
+			continue
 		} else if name := clean.Handle(value); name != "" {
 			return name
+		}
+	}
+
+	if !emailClaim && usable(userInfo.Email) {
+		if name := verifiedEmailUsername(userInfo); name != "" {
+			return clean.Handle(name)
 		}
 	}
 

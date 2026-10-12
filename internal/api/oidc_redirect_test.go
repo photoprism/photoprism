@@ -26,6 +26,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestOidcReconcileHint(t *testing.T) {
@@ -221,7 +223,7 @@ const (
 
 // oidcTestSubjects lists the subjects of the dummy-oidc test identities, so cleanup finds the
 // accounts they create even when registration renamed them.
-var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009", "sub00000010", "sub00000011"}
+var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009", "sub00000010", "sub00000011", "sub00000012"}
 
 // oidcUnreachableUri is an https provider address that refuses connections, so discovery fails.
 const oidcUnreachableUri = "https://127.0.0.1:1"
@@ -795,7 +797,7 @@ func TestOIDCRedirect_Username(t *testing.T) {
 }
 
 func TestOIDCRedirect_NotASCII(t *testing.T) {
-	t.Run("SkipsClaims", func(t *testing.T) {
+	t.Run("EmailHandle", func(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		skipUnlessOidcHint(t, "jose")
 		app := newOidcTestApp(conf)
@@ -806,48 +808,66 @@ func TestOIDCRedirect_NotASCII(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		user := findOidcTestUser("sub00000010")
 		require.NotNil(t, user)
-		assert.Equal(t, "jose@example.com", user.UserName)
+		assert.Equal(t, "jose", user.UserName)
 		assert.Equal(t, "José García", user.DisplayName)
+		assert.Equal(t, "jose@example.com", user.UserEmail)
 		assert.True(t, oidcAuditContains(audit, "create user › username claim › username may only contain ASCII characters › skipped"))
 	})
-	t.Run("NoASCIIClaim", func(t *testing.T) {
+	t.Run("EmailHandleTaken", func(t *testing.T) {
 		conf := useOidcTestConfig(t)
-		skipUnlessOidcHint(t, "josefa")
+		skipUnlessOidcHint(t, "jose")
 		app := newOidcTestApp(conf)
-		audit := captureAuditLog(t)
 
-		r := oidcLogin(t, app, "josefa")
+		holder := entity.NewUser()
+		holder.UserName = "jose"
+		holder.UserRole = "guest"
+		require.NoError(t, holder.Create())
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", holder.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", holder.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", holder.UserUID).Error)
+		})
 
-		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
-		assert.Nil(t, findOidcTestUser("sub00000011"))
-		assert.True(t, oidcAuditContains(audit, "create user › username claim › username may only contain ASCII characters › skipped"))
+		r := oidcLogin(t, app, "jose")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000010")
+		require.NotNil(t, user)
+		assert.Regexp(t, `^jose[0-9]{6}$`, user.UserName)
+		assert.NotEqual(t, "jose", user.Handle())
 	})
-	t.Run("RegistrationDisabled", func(t *testing.T) {
+	t.Run("EmailHandleHeldDeleted", func(t *testing.T) {
 		conf := useOidcTestConfig(t)
-		skipUnlessOidcHint(t, "josefa")
-		conf.Options().OIDCRegister = false
+		skipUnlessOidcHint(t, "jose")
 		app := newOidcTestApp(conf)
-		audit := captureAuditLog(t)
 
-		r := oidcLogin(t, app, "josefa")
+		holder := entity.NewUser()
+		holder.UserName = "jose"
+		holder.UserRole = "guest"
+		require.NoError(t, holder.Create())
+		require.NoError(t, holder.Delete())
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", holder.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", holder.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", holder.UserUID).Error)
+		})
 
-		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
-		assert.Nil(t, findOidcTestUser("sub00000011"))
-		assert.False(t, oidcAuditContains(audit, "username claim"))
+		r := oidcLogin(t, app, "jose")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000010")
+		require.NotNil(t, user)
+		assert.Regexp(t, `^jose[0-9]{6}$`, user.UserName)
+
+		stored := entity.FindUser(entity.User{UserUID: holder.UserUID})
+		require.NotNil(t, stored)
+		assert.True(t, stored.IsDeleted())
+		assert.Equal(t, "", stored.AuthID)
 	})
-	t.Run("ExistingAccount", func(t *testing.T) {
+	t.Run("NextClaim", func(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		skipUnlessOidcHint(t, "josefa")
 		app := newOidcTestApp(conf)
-
-		m := entity.NewUser()
-		m.UserName = "josefa.núñez"
-		m.UserRole = "guest"
-		m.AuthProvider = authn.ProviderOIDC.String()
-		m.AuthIssuer = oidcTestIssuer
-		m.AuthID = "sub00000011"
-		m.CanLogin = true
-		require.NoError(t, entity.Db().Create(m).Error)
 		audit := captureAuditLog(t)
 
 		r := oidcLogin(t, app, "josefa")
@@ -855,8 +875,56 @@ func TestOIDCRedirect_NotASCII(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		user := findOidcTestUser("sub00000011")
 		require.NotNil(t, user)
+		assert.Equal(t, "josefa.nunez", user.UserName)
+		assert.True(t, oidcAuditContains(audit, "create user › username claim › username may only contain ASCII characters › skipped"))
+	})
+	t.Run("NoASCIIClaim", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "jesus")
+		app := newOidcTestApp(conf)
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "jesus")
+
+		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
+		assert.Nil(t, findOidcTestUser("sub00000012"))
+		assert.True(t, oidcAuditContains(audit, "create user › username claim › username may only contain ASCII characters › skipped"))
+	})
+	t.Run("RegistrationDisabled", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "jesus")
+		conf.Options().OIDCRegister = false
+		app := newOidcTestApp(conf)
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "jesus")
+
+		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
+		assert.Nil(t, findOidcTestUser("sub00000012"))
+		assert.False(t, oidcAuditContains(audit, "username claim"))
+	})
+	t.Run("ExistingAccount", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "jesus")
+		app := newOidcTestApp(conf)
+
+		m := entity.NewUser()
+		m.UserName = "jesús"
+		m.UserRole = "guest"
+		m.AuthProvider = authn.ProviderOIDC.String()
+		m.AuthIssuer = oidcTestIssuer
+		m.AuthID = "sub00000012"
+		m.CanLogin = true
+		require.NoError(t, entity.Db().Create(m).Error)
+		audit := captureAuditLog(t)
+
+		r := oidcLogin(t, app, "jesus")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000012")
+		require.NotNil(t, user)
 		assert.Equal(t, m.UserUID, user.UserUID)
-		assert.Equal(t, "josefa.núñez", user.UserName)
+		assert.Equal(t, "jesús", user.UserName)
 		assert.False(t, oidcAuditContains(audit, "username claim"))
 	})
 }
@@ -1123,4 +1191,20 @@ func oidcAuditContains(hook *logtest.Hook, text string) bool {
 	}
 
 	return false
+}
+
+func TestOidcUsernameAvailable(t *testing.T) {
+	assert.True(t, oidcUsernameAvailable("oidc-available-name"))
+	assert.False(t, oidcUsernameAvailable("alice"))
+	assert.False(t, oidcUsernameAvailable("visitor"))
+	assert.False(t, oidcUsernameAvailable(rnd.GenerateUID('c')))
+}
+
+func TestOidcSuffixedUsername(t *testing.T) {
+	assert.Regexp(t, `^jose[0-9]{6}$`, oidcSuffixedUsername("jose"))
+
+	long := strings.Repeat("a", txt.ClipUsername)
+	name := oidcSuffixedUsername(long)
+	assert.Len(t, name, txt.ClipUsername)
+	assert.Regexp(t, `^a{58}[0-9]{6}$`, name)
 }

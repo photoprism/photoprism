@@ -46,7 +46,7 @@ func TestUsername(t *testing.T) {
 		info.Email = "jane@doe.com"
 		info.EmailVerified = true
 		result := Username(info, authn.OidcClaimPreferredUsername)
-		assert.Equal(t, "jane@doe.com", result)
+		assert.Equal(t, "jane", result)
 	})
 	t.Run("Name", func(t *testing.T) {
 		info := &oidc.UserInfo{}
@@ -94,7 +94,7 @@ func TestUsername(t *testing.T) {
 		info.EmailVerified = true
 		info.Subject = "abcd123"
 		result := Username(info, authn.OidcClaimName)
-		assert.Equal(t, "jane@doe.com", result)
+		assert.Equal(t, "jane", result)
 	})
 	t.Run("Nickname", func(t *testing.T) {
 		info := &oidc.UserInfo{}
@@ -145,7 +145,7 @@ func TestUsername(t *testing.T) {
 		info.EmailVerified = true
 		info.Subject = "abcd123"
 		result := Username(info, authn.OidcClaimNickname)
-		assert.Equal(t, "jane@doe.com", result)
+		assert.Equal(t, "jane", result)
 	})
 	t.Run("Email", func(t *testing.T) {
 		info := &oidc.UserInfo{}
@@ -217,48 +217,55 @@ func TestUsername(t *testing.T) {
 		info.Name = "Jose Garcia"
 		info.Nickname = "Pepe"
 		info.Email = "jose@example.com"
-		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		info.EmailVerified = true
+		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimPreferredUsername))
 		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimName))
 		assert.Equal(t, "pepe", Username(info, authn.OidcClaimNickname))
-		info.EmailVerified = true
-		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimPreferredUsername))
-		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimName))
 		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimEmail))
 	})
-	t.Run("NotASCIILaterClaim", func(t *testing.T) {
+	t.Run("NotASCIIEmailHandle", func(t *testing.T) {
 		info := &oidc.UserInfo{}
+		info.PreferredUsername = "josé"
 		info.Name = "José García"
-		info.Nickname = "Pepe"
+		info.Email = "Jose.Garcia@example.com"
 		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
-		info.Email = "jose@example.com"
 		info.EmailVerified = true
-		assert.Equal(t, "jose@example.com", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimName))
+		assert.Equal(t, "jose.garcia", Username(info, authn.OidcClaimNickname))
+		assert.Equal(t, "jose.garcia@example.com", Username(info, authn.OidcClaimEmail))
+	})
+	t.Run("NotASCIIEmailWithoutHandle", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "josé"
+		info.Email = ".jose@example.com"
+		info.EmailVerified = true
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
 	})
 	t.Run("NotASCIIBeforeSanitizing", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.PreferredUsername = "\u212Aate"
 		info.Name = "Kate Doe"
-		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "kate.doe", Username(info, authn.OidcClaimPreferredUsername))
 		info.PreferredUsername = "kate@exämple.com"
-		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "kate.doe", Username(info, authn.OidcClaimPreferredUsername))
 		info.PreferredUsername = "jane\u200b"
+		assert.Equal(t, "kate.doe", Username(info, authn.OidcClaimPreferredUsername))
+		info.Name = "Kåte"
 		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
 	})
 	t.Run("NotASCIIEmail", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.PreferredUsername = "josé"
-		info.Nickname = "kate"
 		info.Email = "\u212Aate@example.com"
 		info.EmailVerified = true
 		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
 		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
+		info.Nickname = "kate"
+		assert.Equal(t, "kate", Username(info, authn.OidcClaimPreferredUsername))
+		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
 		info.EmailVerified = false
-		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
-		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
-		info.PreferredUsername = ""
 		assert.Equal(t, "kate", Username(info, authn.OidcClaimEmail))
-		info.EmailVerified = true
-		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
 	})
 }
 
@@ -284,14 +291,43 @@ func TestSkipsClaim(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.False(t, SkipsClaim(&oidc.UserInfo{}, authn.OidcClaimPreferredUsername))
 	})
+	t.Run("EmailClaim", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Email = "\u212Aate@example.com"
+		info.EmailVerified = true
+		info.Nickname = "kate"
+		assert.True(t, SkipsClaim(info, authn.OidcClaimEmail))
+		info.Nickname = ""
+		assert.True(t, SkipsClaim(info, authn.OidcClaimEmail))
+		info.Email = "kate@example.com"
+		assert.False(t, SkipsClaim(info, authn.OidcClaimEmail))
+	})
+	t.Run("EmailHandle", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "josé"
+		info.Email = "jose@example.com"
+		info.EmailVerified = true
+		assert.True(t, SkipsClaim(info, authn.OidcClaimPreferredUsername))
+	})
 }
 
 func TestClaimOrder(t *testing.T) {
-	assert.Equal(t, []string{"preferred_username", "name", "nickname", "email"}, claimOrder(""))
-	assert.Equal(t, []string{"preferred_username", "name", "nickname", "email"}, claimOrder(authn.OidcClaimPreferredUsername))
-	assert.Equal(t, []string{"name", "preferred_username", "nickname", "email"}, claimOrder(authn.OidcClaimName))
-	assert.Equal(t, []string{"nickname", "preferred_username", "name", "email"}, claimOrder(authn.OidcClaimNickname))
-	assert.Equal(t, []string{"email", "preferred_username", "name", "nickname"}, claimOrder(authn.OidcClaimEmail))
+	assert.Equal(t, []string{"preferred_username", "name", "nickname"}, claimOrder(""))
+	assert.Equal(t, []string{"preferred_username", "name", "nickname"}, claimOrder(authn.OidcClaimPreferredUsername))
+	assert.Equal(t, []string{"name", "preferred_username", "nickname"}, claimOrder(authn.OidcClaimName))
+	assert.Equal(t, []string{"nickname", "preferred_username", "name"}, claimOrder(authn.OidcClaimNickname))
+	assert.Equal(t, []string{"preferred_username", "name", "nickname"}, claimOrder(authn.OidcClaimEmail))
+}
+
+func TestClaimValue(t *testing.T) {
+	info := &oidc.UserInfo{}
+	info.PreferredUsername = "pref"
+	info.Name = "Name"
+	info.Nickname = "nick"
+	assert.Equal(t, "pref", claimValue(info, authn.OidcClaimPreferredUsername))
+	assert.Equal(t, "Name", claimValue(info, authn.OidcClaimName))
+	assert.Equal(t, "nick", claimValue(info, authn.OidcClaimNickname))
+	assert.Equal(t, "pref", claimValue(info, ""))
 }
 
 func TestVerifiedEmailUsername(t *testing.T) {

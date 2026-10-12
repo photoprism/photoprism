@@ -13,19 +13,20 @@ A minimal OpenID Connect provider for local development and tests, built on `zit
 
 An authorization request selects a test user with its `login_hint` parameter. Without one, the default identity is used; an unknown hint is refused with `invalid_request`.
 
-| `login_hint` | Subject       | Username       | Email                    | Verified | Other Claims                                     |
-|--------------|---------------|----------------|--------------------------|----------|--------------------------------------------------|
-| *(none)*     | `sub00000001` | `prefname`     | `test@example.com`       | yes      | -                                                |
-| `olivia`     | `sub00000002` | `olivia`       | `olivia@example.com`     | yes      | `groups`: `photoprism-admin`, `staff`            |
-| `oscar`      | `sub00000003` | `oscar`        | `oscar@example.com`      | yes      | `groups`: `photoprism-user`                      |
-| `otto`       | `sub00000004` | `otto`         | `otto@example.com`       | no       | -                                                |
-| `ola`        | `sub00000005` | `ola`          | `ola@example.org`        | yes      | -                                                |
-| `odette`     | `sub00000006` | `odette`       | `odette@example.com`     | yes      | group overage (`_claim_names`/`_claim_sources`)  |
-| `petra`      | `sub00000007` | `petra`        | `petra@example.com`      | yes      | `pp_issuer_kind`: `portal`, `pp_role`: `manager` |
-| `alice`      | `sub00000008` | `alice`        | `alice.oidc@example.com` | yes      | name of a local account in the test fixtures     |
-| `nobody`     | `sub00000009` | -              | `nobody@example.com`     | no       | no claim to derive a username from               |
-| `jose`       | `sub00000010` | `josé`         | `jose@example.com`       | yes      | non-ASCII name claims (`name`: `José García`)    |
-| `josefa`     | `sub00000011` | `josefa.núñez` | `josefa@example.com`     | no       | ASCII `name` (`Josefa Nunez`) and `nickname`     |
+| `login_hint` | Subject       | Username       | Email                    | Verified | Other Claims                                      |
+|--------------|---------------|----------------|--------------------------|----------|---------------------------------------------------|
+| *(none)*     | `sub00000001` | `prefname`     | `test@example.com`       | yes      | -                                                 |
+| `olivia`     | `sub00000002` | `olivia`       | `olivia@example.com`     | yes      | `groups`: `photoprism-admin`, `staff`             |
+| `oscar`      | `sub00000003` | `oscar`        | `oscar@example.com`      | yes      | `groups`: `photoprism-user`                       |
+| `otto`       | `sub00000004` | `otto`         | `otto@example.com`       | no       | -                                                 |
+| `ola`        | `sub00000005` | `ola`          | `ola@example.org`        | yes      | -                                                 |
+| `odette`     | `sub00000006` | `odette`       | `odette@example.com`     | yes      | group overage (`_claim_names`/`_claim_sources`)   |
+| `petra`      | `sub00000007` | `petra`        | `petra@example.com`      | yes      | `pp_issuer_kind`: `portal`, `pp_role`: `manager`  |
+| `alice`      | `sub00000008` | `alice`        | `alice.oidc@example.com` | yes      | name of a local account in the test fixtures      |
+| `nobody`     | `sub00000009` | -              | `nobody@example.com`     | no       | no claim to derive a username from                |
+| `jose`       | `sub00000010` | `josé`         | `jose@example.com`       | yes      | non-ASCII name claims (`name`: `José García`)     |
+| `josefa`     | `sub00000011` | `josefa.núñez` | `josefa@example.com`     | no       | non-ASCII username, ASCII `name` (`Josefa Nunez`) |
+| `jesus`      | `sub00000012` | `jesús`        | `jesus@example.com`      | no       | only non-ASCII name claims                        |
 
 The claims are included in the ID token and returned by the userinfo endpoint. Identities are defined in `app/mock/identities.go`.
 

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -61,6 +62,28 @@ func auditOidcSkippedClaim(clientIp string, skipped bool) {
 	if skipped {
 		event.AuditWarn([]string{clientIp, "create session", "oidc", "create user", "username claim", authn.ErrNotASCII.Error(), status.Skipped})
 	}
+}
+
+// oidcUsernameAvailable reports whether a new account can take the username, i.e. it is not reserved and no
+// account, as the database compares names, has it.
+func oidcUsernameAvailable(userName string) bool {
+	if _, err := authn.Username(userName); errors.Is(err, authn.ErrReserved) {
+		return false
+	}
+
+	return entity.FindUserByName(userName) == nil
+}
+
+// oidcSuffixedUsername appends a random six-digit number to the username, shortening it first so that the
+// result fits the length a login accepts.
+func oidcSuffixedUsername(userName string) string {
+	const suffixLength = 6
+
+	if maxLength := txt.ClipUsername - suffixLength; len(userName) > maxLength {
+		userName = userName[:maxLength]
+	}
+
+	return userName + rnd.Base10(suffixLength)
 }
 
 // oidcEmailUsername reports whether the username of a new account is its verified email address, as with the
@@ -393,7 +416,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidUsername.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
-			} else if entity.FindUserByName(userName) == nil {
+			} else if oidcUsernameAvailable(userName) {
 				// The username is available.
 			} else if emailUsername {
 				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrUsernameAlreadyExists.Error()}, clean.LogQuote(userName))
@@ -402,7 +425,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				return
 			} else {
 				// Resolve the naming conflict by adding a random number to the username.
-				userName += rnd.Base10(6)
+				userName = oidcSuffixedUsername(userName)
 			}
 
 			// An email address used as username must not be assigned to another account.
