@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestUsersModCommand(t *testing.T) {
@@ -196,5 +197,64 @@ func TestUsersModCommand_Restore(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.False(t, entity.FindUserByName("restoremodflag").IsDeleted())
+	})
+	t.Run("RestoreOtherName", func(t *testing.T) {
+		m := entity.NewUser()
+		m.UserName = "restoremod-josé"
+		m.UserRole = "admin"
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() {
+			reopenConnection()
+			removeTestUser(t, m.UserUID)
+		})
+		require.NoError(t, m.Delete())
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--restore", "--name=Changed", "restoremod-jose"})
+		require.EqualError(t, err, "user 'restoremod-jose' not found")
+		assert.True(t, entity.FindUser(entity.User{UserUID: m.UserUID}).IsDeleted())
+
+		_, err = RunWithTestContext(UsersModCommand, []string{"mod", "--restore", "--name=Changed", m.UserUID})
+		require.NoError(t, err)
+		restored := entity.FindUser(entity.User{UserUID: m.UserUID})
+		assert.False(t, restored.IsDeleted())
+		assert.Equal(t, "restoremod-josé", restored.UserName)
+	})
+	t.Run("RestoreLegacyName", func(t *testing.T) {
+		m := entity.NewUser()
+		m.UserName = "Restoremod-Legacy"
+		m.UserRole = "admin"
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() {
+			reopenConnection()
+			removeTestUser(t, m.UserUID)
+		})
+		require.NoError(t, m.Delete())
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--restore", "restoremod-legacy"})
+
+		// Only MariaDB finds the stored name by its sanitized form.
+		if entity.IsDialect(dsn.DriverMySQL) {
+			require.NoError(t, err)
+			restored := entity.FindUser(entity.User{UserUID: m.UserUID})
+			assert.False(t, restored.IsDeleted())
+			assert.Equal(t, "restoremod-legacy", restored.UserName)
+		} else {
+			require.EqualError(t, err, "user 'restoremod-legacy' not found")
+		}
+	})
+	t.Run("RestoreHeld", func(t *testing.T) {
+		newDeletedTestUser(t, "restoremodheld")
+		deleted := entity.FindUserByName("restoremodheld")
+		require.NotNil(t, deleted)
+		active := &entity.User{UserName: "restoremodheld", UserRole: "admin", CanLogin: true}
+		require.NoError(t, active.Create())
+		t.Cleanup(func() {
+			reopenConnection()
+			removeTestUser(t, active.UserUID)
+		})
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--restore", deleted.UserUID})
+		require.EqualError(t, err, "user 'restoremodheld' already exists")
+		assert.True(t, entity.FindUser(entity.User{UserUID: deleted.UserUID}).IsDeleted())
 	})
 }

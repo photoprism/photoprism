@@ -58,6 +58,11 @@ func usersModAction(ctx *cli.Context) error {
 		restored := false
 
 		if m.IsDeleted() {
+			// A deleted account is restored by its own name or UID only.
+			if !rnd.IsUID(id, entity.UserUID) && clean.Username(m.UserName) != id {
+				return fmt.Errorf("user %s not found", clean.LogQuote(id))
+			}
+
 			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
 				return err
 			} else if !restore {

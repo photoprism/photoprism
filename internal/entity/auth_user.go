@@ -194,6 +194,57 @@ func FindUserByName(userName string) *User {
 	return FindUser(User{UserName: userName})
 }
 
+// FindRestorableUser returns the deleted account whose stored username is identical to the sanitized
+// name, unless an active account has that name, and reports whether any account has it; held is false
+// if the lookup fails. The username is compared byte for byte.
+func FindRestorableUser(userName string) (m *User, held bool) {
+	name := clean.Username(userName)
+
+	if name == "" {
+		return nil, false
+	}
+
+	var found []User
+
+	if err := UnscopedDb().Where("user_name = ?", name).Order("id").Find(&found).Error; err != nil || len(found) == 0 {
+		return nil, false
+	}
+
+	for i := range found {
+		if !found[i].IsDeleted() {
+			return nil, true
+		} else if m == nil && found[i].UserName == name {
+			m = &found[i]
+		}
+	}
+
+	if m == nil {
+		return nil, true
+	}
+
+	return m.LoadRelated(), true
+}
+
+// CheckRestore returns an error if another active account has the account's username, as stored or
+// sanitized.
+func (m *User) CheckRestore() error {
+	var holder User
+
+	names := []string{m.UserName}
+
+	if s := clean.Username(m.UserName); s != "" && s != m.UserName {
+		names = append(names, s)
+	}
+
+	if err := Db().Where("user_name IN (?) AND id <> ?", names, m.ID).First(&holder).Error; err == nil {
+		return fmt.Errorf("user %s already exists", clean.LogQuote(m.UserName))
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
+	return nil
+}
+
 // SetEmail sets the email address and clears its verification if the address changes.
 func (m *User) SetEmail(email string) {
 	if email == m.UserEmail {
@@ -1647,7 +1698,11 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 	// which a user-less token can never satisfy.
 	if u != nil && byAdmin {
 		// Restore account.
-		if frm.DeletedAt == nil {
+		if frm.DeletedAt == nil && m.IsDeleted() {
+			if err := m.CheckRestore(); err != nil {
+				return err
+			}
+
 			m.DeletedAt = DeletedAt{}
 		}
 

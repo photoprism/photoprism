@@ -2121,6 +2121,33 @@ func TestUser_SaveForm(t *testing.T) {
 		m := FindUserByUID(u.UserUID)
 		assert.True(t, m.Method().Is(authn.Method2FA))
 	})
+	t.Run("RestoreHeld", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "saveform-restore-held", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		newRenameTestUser(t, "saveform-restore-held", acl.RoleGuest)
+
+		m := FindUser(User{UserUID: deleted.UserUID})
+		require.NotNil(t, m)
+		frm, err := m.Form()
+		require.NoError(t, err)
+		frm.DeletedAt = nil
+
+		require.EqualError(t, m.SaveForm(frm, FindUserByName("admin"), true, true), "user 'saveform-restore-held' already exists")
+		assert.True(t, FindUser(User{UserUID: deleted.UserUID}).IsDeleted())
+	})
+	t.Run("Restore", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "saveform-restore-free", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+
+		m := FindUser(User{UserUID: deleted.UserUID})
+		require.NotNil(t, m)
+		frm, err := m.Form()
+		require.NoError(t, err)
+		frm.DeletedAt = nil
+
+		require.NoError(t, m.SaveForm(frm, FindUserByName("admin"), true, true))
+		assert.False(t, FindUser(User{UserUID: deleted.UserUID}).IsDeleted())
+	})
 }
 
 func TestUser_SetDisplayName(t *testing.T) {
@@ -3474,5 +3501,127 @@ func TestUser_create(t *testing.T) {
 		require.NoError(t, m.create(true))
 		t.Cleanup(func() { deleteTestUser(t, m) })
 		assert.Equal(t, "create-keep-zoë", storedUser(t, m.UserUID).UserName)
+	})
+}
+
+func TestFindRestorableUser(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		m, held := FindRestorableUser("")
+		assert.Nil(t, m)
+		assert.False(t, held)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		m, held := FindRestorableUser("restorable-missing")
+		assert.Nil(t, m)
+		assert.False(t, held)
+	})
+	t.Run("Active", func(t *testing.T) {
+		m, held := FindRestorableUser("Alice")
+		assert.Nil(t, m)
+		assert.True(t, held)
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "restorable-deleted", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+
+		m, held := FindRestorableUser("Restorable-Deleted")
+		require.NotNil(t, m)
+		assert.True(t, held)
+		assert.Equal(t, deleted.UserUID, m.UserUID)
+	})
+	t.Run("DeletedOtherName", func(t *testing.T) {
+		deleted := newExistingTestUser(t, "restorable-josé", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+
+		m, held := FindRestorableUser("restorable-jose")
+		assert.Nil(t, m)
+
+		// MariaDB compares names that differ only by accents as equal.
+		assert.Equal(t, IsDialect(dsn.DriverMySQL), held)
+	})
+	t.Run("DeletedBesideOtherName", func(t *testing.T) {
+		other := newExistingTestUser(t, "restorable-twin-josé", acl.RoleGuest)
+		require.NoError(t, Db().Delete(other).Error)
+		deleted := newRenameTestUser(t, "restorable-twin-jose", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+
+		m, held := FindRestorableUser("restorable-twin-jose")
+		require.NotNil(t, m)
+		assert.True(t, held)
+		assert.Equal(t, deleted.UserUID, m.UserUID)
+	})
+	t.Run("DeletedBesideActiveSameName", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "restorable-active-same", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		newRenameTestUser(t, "restorable-active-same", acl.RoleGuest)
+
+		m, held := FindRestorableUser("restorable-active-same")
+		assert.Nil(t, m)
+		assert.True(t, held)
+	})
+	t.Run("DeletedBesideActiveOtherName", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "restorable-active-jose", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		newExistingTestUser(t, "restorable-active-josé", acl.RoleGuest)
+
+		m, held := FindRestorableUser("restorable-active-jose")
+		assert.True(t, held)
+
+		// MariaDB compares names that differ only by accents as equal.
+		if IsDialect(dsn.DriverMySQL) {
+			assert.Nil(t, m)
+		} else {
+			require.NotNil(t, m)
+			assert.Equal(t, deleted.UserUID, m.UserUID)
+		}
+	})
+}
+
+func TestUser_CheckRestore(t *testing.T) {
+	t.Run("NotHeld", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "check-restore-free", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+
+		assert.NoError(t, deleted.CheckRestore())
+	})
+	t.Run("HeldSameName", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "check-restore-same", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		newRenameTestUser(t, "check-restore-same", acl.RoleGuest)
+
+		assert.EqualError(t, deleted.CheckRestore(), "user 'check-restore-same' already exists")
+	})
+	t.Run("HeldDeleted", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "check-restore-twice", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		other := newRenameTestUser(t, "check-restore-twice", acl.RoleGuest)
+		require.NoError(t, Db().Delete(other).Error)
+
+		assert.NoError(t, deleted.CheckRestore())
+	})
+	t.Run("HeldNormalized", func(t *testing.T) {
+		deleted := newExistingTestUser(t, "Check-Restore-Upper", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		newRenameTestUser(t, "check-restore-upper", acl.RoleGuest)
+
+		assert.EqualError(t, deleted.CheckRestore(), "user 'Check-Restore-Upper' already exists")
+	})
+	t.Run("SanitizedEmpty", func(t *testing.T) {
+		deleted := newExistingTestUser(t, "***", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+
+		assert.NoError(t, deleted.CheckRestore())
+	})
+	t.Run("HeldOtherName", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "check-restore-jose", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		newExistingTestUser(t, "check-restore-josé", acl.RoleGuest)
+
+		// MariaDB compares names that differ only by accents as equal.
+		if IsDialect(dsn.DriverMySQL) {
+			assert.Error(t, deleted.CheckRestore())
+		} else {
+			assert.NoError(t, deleted.CheckRestore())
+		}
 	})
 }
