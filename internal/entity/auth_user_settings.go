@@ -67,13 +67,21 @@ func (m *UserSettings) HasID() bool {
 	return rnd.IsUID(m.UserUID, UserUID)
 }
 
-// Create new entity in the database.
+// Create inserts the settings, which requires a valid user UID.
 func (m *UserSettings) Create() error {
+	if !m.HasID() {
+		return ErrInvalidUserUID
+	}
+
 	return Db().Create(m).Error
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save updates the settings or inserts them if they do not exist yet, which requires a valid user UID.
 func (m *UserSettings) Save() error {
+	if !m.HasID() {
+		return ErrInvalidUserUID
+	}
+
 	return Db().Save(m).Error
 }
 

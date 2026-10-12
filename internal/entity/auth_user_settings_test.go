@@ -18,6 +18,11 @@ func TestCreateUserSettings(t *testing.T) {
 		assert.Error(t, CreateUserSettings(m))
 		assert.Nil(t, m.UserSettings)
 	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		m := &User{UserUID: "pqxetse3cy5eo9z2"}
+		assert.ErrorIs(t, CreateUserSettings(m), ErrInvalidUserUID)
+		assert.Equal(t, int64(0), countUserSettings(t, m.UserUID))
+	})
 	t.Run("Success", func(t *testing.T) {
 		m := &User{UserUID: "usg73p55zwgr1gbq"}
 		err := CreateUserSettings(m)
@@ -40,6 +45,56 @@ func TestCreateUserSettings(t *testing.T) {
 func TestUserSettings_HasID(t *testing.T) {
 	u := FindUserByName("alice")
 	assert.True(t, u.UserSettings.HasID())
+}
+
+// invalidUserUIDs lists values that settings and details must not be written for.
+var invalidUserUIDs = []string{"", "\x01", "1234", "usg73p55zwgr1gb", "usg73p55zwgr1gb-", "pqxetse3cy5eo9z2"}
+
+// countUserSettings returns the number of settings rows with the given user UID.
+func countUserSettings(t *testing.T, uid string) (n int64) {
+	t.Helper()
+	require.NoError(t, UnscopedDb().Model(&UserSettings{}).Where("user_uid = ?", uid).Count(&n).Error)
+	return n
+}
+
+func TestUserSettings_Create(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserSettings(rnd.GenerateUID(UserUID))
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+		assert.Equal(t, int64(1), countUserSettings(t, m.UserUID))
+	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		for _, uid := range invalidUserUIDs {
+			before := countUserSettings(t, uid)
+			assert.ErrorIs(t, NewUserSettings(uid).Create(), ErrInvalidUserUID, "uid %q", uid)
+			assert.Equal(t, before, countUserSettings(t, uid), "uid %q", uid)
+		}
+	})
+}
+
+func TestUserSettings_Save(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserSettings(rnd.GenerateUID(UserUID))
+		m.UILanguage = "de"
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+
+		m.UILanguage = "nl"
+		require.NoError(t, m.Save())
+		assert.Equal(t, int64(1), countUserSettings(t, m.UserUID))
+
+		found := UserSettings{}
+		require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&found).Error)
+		assert.Equal(t, "nl", found.UILanguage)
+	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		for _, uid := range invalidUserUIDs {
+			before := countUserSettings(t, uid)
+			assert.ErrorIs(t, NewUserSettings(uid).Save(), ErrInvalidUserUID, "uid %q", uid)
+			assert.Equal(t, before, countUserSettings(t, uid), "uid %q", uid)
+		}
+	})
 }
 
 func TestUserSettings_Updates(t *testing.T) {

@@ -88,13 +88,21 @@ func (m *UserDetails) HasID() bool {
 	return rnd.IsUID(m.UserUID, UserUID)
 }
 
-// Create new entity in the database.
+// Create inserts the details, which requires a valid user UID.
 func (m *UserDetails) Create() error {
+	if !m.HasID() {
+		return ErrInvalidUserUID
+	}
+
 	return Db().Create(m).Error
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save updates the details or inserts them if they do not exist yet, which requires a valid user UID.
 func (m *UserDetails) Save() error {
+	if !m.HasID() {
+		return ErrInvalidUserUID
+	}
+
 	return Db().Save(m).Error
 }
 

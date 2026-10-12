@@ -3775,3 +3775,33 @@ func TestCountNonASCIIUsernames(t *testing.T) {
 	newRenameTestUser(t, "count-ascii", acl.RoleGuest)
 	assert.Equal(t, base+1, CountNonASCIIUsernames())
 }
+
+func TestUser_SaveRelated(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := &User{UserUID: rnd.GenerateUID(UserUID)}
+		m.Settings().UILanguage = "de"
+		m.Details().GivenName = "Jane"
+		m.SaveRelated()
+		t.Cleanup(func() {
+			_ = UnscopedDb().Delete(m.UserSettings).Error
+			_ = UnscopedDb().Delete(m.UserDetails).Error
+		})
+		assert.Equal(t, int64(1), countUserSettings(t, m.UserUID))
+		assert.Equal(t, int64(1), countUserDetails(t, m.UserUID))
+
+		settings, details := UserSettings{}, UserDetails{}
+		require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&settings).Error)
+		require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&details).Error)
+		assert.Equal(t, "de", settings.UILanguage)
+		assert.Equal(t, "Jane", details.GivenName)
+	})
+	t.Run("NoUid", func(t *testing.T) {
+		settings, details := countUserSettings(t, ""), countUserDetails(t, "")
+		m := &User{UserName: "related-without-uid"}
+		m.Settings().UILanguage = "de"
+		m.Details().GivenName = "Jane"
+		m.SaveRelated()
+		assert.Equal(t, settings, countUserSettings(t, ""))
+		assert.Equal(t, details, countUserDetails(t, ""))
+	})
+}

@@ -11,6 +11,9 @@ var (
 	// value: fmt.Errorf("%w: birthday must not be in the future", ErrInvalidValue).
 	ErrInvalidValue = fmt.Errorf("invalid value")
 
+	// ErrInvalidUserUID is returned when settings or details are written without a valid user UID.
+	ErrInvalidUserUID = fmt.Errorf("invalid user uid")
+
 	// ErrInUse is returned when a record cannot be deleted because other records still reference it.
 	ErrInUse = fmt.Errorf("in use")
 

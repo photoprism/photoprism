@@ -6,7 +6,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 func TestGetSettings(t *testing.T) {
@@ -59,5 +64,33 @@ func TestSaveSettings(t *testing.T) {
 		body := `{"ui":{"language":"` + strings.Repeat("a", 300*1024) + `"}}`
 		r := PerformRequestWithBody(app, "POST", "/api/v1/settings", body)
 		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
+	})
+	// ClientWithoutUser pins that a session without a user gets its settings back without storing them.
+	t.Run("ClientWithoutUser", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+		SaveSettings(router)
+
+		sess, err := entity.AddClientSession("settings-client", conf.SessionMaxAge(), "settings", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		countOwnerless := func() (n int64) {
+			require.NoError(t, entity.UnscopedDb().Model(&entity.UserSettings{}).
+				Where("user_uid IS NULL OR user_uid = ''").Count(&n).Error)
+			return n
+		}
+
+		before := countOwnerless()
+
+		for range 2 {
+			r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/settings", `{"ui":{"language":"de"}}`, sess.AuthToken())
+			assert.Equal(t, http.StatusOK, r.Code)
+			assert.Equal(t, "de", gjson.Get(r.Body.String(), "ui.language").String())
+		}
+
+		assert.Equal(t, before, countOwnerless())
 	})
 }

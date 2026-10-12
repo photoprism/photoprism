@@ -17,8 +17,13 @@ func TestCreateUserDetails(t *testing.T) {
 		assert.Error(t, CreateUserDetails(m))
 		assert.Nil(t, m.UserDetails)
 	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		m := &User{UserUID: "pqxetse3cy5eo9z2"}
+		assert.ErrorIs(t, CreateUserDetails(m), ErrInvalidUserUID)
+		assert.Equal(t, int64(0), countUserDetails(t, m.UserUID))
+	})
 	t.Run("Success", func(t *testing.T) {
-		m := &User{UserUID: "1234"}
+		m := &User{UserUID: "usg73p55zwgr1gbq"}
 		err := CreateUserDetails(m)
 
 		if err != nil {
@@ -32,6 +37,53 @@ func TestCreateUserDetails(t *testing.T) {
 func TestUserDetails_HasID(t *testing.T) {
 	u := FindUserByName("alice")
 	assert.True(t, u.UserDetails.HasID())
+}
+
+// countUserDetails returns the number of details rows with the given user UID.
+func countUserDetails(t *testing.T, uid string) (n int64) {
+	t.Helper()
+	require.NoError(t, UnscopedDb().Model(&UserDetails{}).Where("user_uid = ?", uid).Count(&n).Error)
+	return n
+}
+
+func TestUserDetails_Create(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserDetails(rnd.GenerateUID(UserUID))
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+		assert.Equal(t, int64(1), countUserDetails(t, m.UserUID))
+	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		for _, uid := range invalidUserUIDs {
+			before := countUserDetails(t, uid)
+			assert.ErrorIs(t, NewUserDetails(uid).Create(), ErrInvalidUserUID, "uid %q", uid)
+			assert.Equal(t, before, countUserDetails(t, uid), "uid %q", uid)
+		}
+	})
+}
+
+func TestUserDetails_Save(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserDetails(rnd.GenerateUID(UserUID))
+		m.GivenName = "John"
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+
+		m.GivenName = "Jane"
+		require.NoError(t, m.Save())
+		assert.Equal(t, int64(1), countUserDetails(t, m.UserUID))
+
+		found := UserDetails{}
+		require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&found).Error)
+		assert.Equal(t, "Jane", found.GivenName)
+	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		for _, uid := range invalidUserUIDs {
+			before := countUserDetails(t, uid)
+			assert.ErrorIs(t, NewUserDetails(uid).Save(), ErrInvalidUserUID, "uid %q", uid)
+			assert.Equal(t, before, countUserDetails(t, uid), "uid %q", uid)
+		}
+	})
 }
 
 func TestUserDetails_Updates(t *testing.T) {
