@@ -225,6 +225,57 @@ func FindRestorableUser(userName string) (m *User, held bool) {
 	return m.LoadRelated(), true
 }
 
+// FindUserByExactName returns the account whose sanitized username equals the sanitized name, or nil if there
+// is none. It prefers an active account to a deleted one and, among either, a stored name identical to the
+// sanitized one. The usernames are compared byte for byte.
+func FindUserByExactName(userName string) *User {
+	name := clean.Username(userName)
+
+	if name == "" {
+		return nil
+	}
+
+	var found []User
+
+	if err := UnscopedDb().Where("user_name = ?", name).Order("id").Find(&found).Error; err != nil {
+		return nil
+	}
+
+	return exactUserMatch(found, name)
+}
+
+// exactUserMatch returns the account whose sanitized username equals name, ranking an active account before a
+// deleted one and, among either, a stored name identical to name first; found must be ordered by id.
+func exactUserMatch(found []User, name string) *User {
+	best, bestRank := -1, 4
+
+	for i := range found {
+		if clean.Username(found[i].UserName) != name {
+			continue
+		}
+
+		rank := 0
+
+		if found[i].IsDeleted() {
+			rank += 2
+		}
+
+		if found[i].UserName != name {
+			rank++
+		}
+
+		if rank < bestRank {
+			best, bestRank = i, rank
+		}
+	}
+
+	if best < 0 {
+		return nil
+	}
+
+	return found[best].LoadRelated()
+}
+
 // CheckRestore returns an error if another active account has the account's username, as stored or
 // sanitized.
 func (m *User) CheckRestore() error {
@@ -264,7 +315,8 @@ func (m *User) EmailVerified() bool {
 	return clean.TimeSet(m.VerifiedAt)
 }
 
-// FindLocalUser returns the matching local user or nil if it was not found.
+// FindLocalUser returns the local account with exactly the sanitized name, as FindUserByExactName does, or nil
+// if there is none.
 func FindLocalUser(userName string) *User {
 	name := clean.Username(userName)
 
@@ -272,18 +324,15 @@ func FindLocalUser(userName string) *User {
 		return nil
 	}
 
-	m := &User{}
-	providers := authn.LocalProviders
+	var found []User
 
-	// Build query.
 	if err := UnscopedDb().
-		Where("user_name = ? AND auth_provider IN (?)", name, providers).
-		First(m).Error; err != nil {
+		Where("user_name = ? AND auth_provider IN (?)", name, authn.LocalProviders).
+		Order("id").Find(&found).Error; err != nil {
 		return nil
 	}
 
-	// Return with related records.
-	return m.LoadRelated()
+	return exactUserMatch(found, name)
 }
 
 // FindUserByUID returns the matching user or nil if it was not found.
@@ -1327,12 +1376,13 @@ func (m *User) DeactivatePasscode() (passcode *Passcode, err error) {
 
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
-	// Validate username. A stored name keeps its form if a deleted account holds the normalized one.
+	// Validate username. A stored name keeps its form if another account holds the normalized one, as with
+	// SetNormalizedUsername.
 	userName, nameErr := m.normalizedUsername()
 
 	if nameErr != nil {
 		return nameErr
-	} else if m.ID <= 0 || userName == m.UserName || !m.deletedUsernameHolder(userName) {
+	} else if m.ID <= 0 || userName == m.UserName || m.checkUsernameHolder(userName) == nil {
 		m.UserName = userName
 	}
 
@@ -1351,15 +1401,20 @@ func (m *User) Validate() (err error) {
 		return fmt.Errorf("unsupported user role")
 	}
 
-	// Check if the username, and the normalized form of a kept name, is unique.
-	var duplicate = User{}
+	// Check if the username, and the normalized form of a kept name, is unique. An existing account is
+	// compared byte for byte, so it stays editable beside an account the database compares as equal.
+	var duplicates []User
 
 	if err = Db().
 		Where("user_name IN (?) AND id <> ?", []string{m.UserName, userName}, m.ID).
-		First(&duplicate).Error; err == nil {
-		return fmt.Errorf("user %s already exists", clean.LogQuote(userName))
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		Find(&duplicates).Error; err != nil {
 		return err
+	}
+
+	for i := range duplicates {
+		if m.ID <= 0 || duplicates[i].UserName == m.UserName || duplicates[i].UserName == userName {
+			return fmt.Errorf("user %s already exists", clean.LogQuote(userName))
+		}
 	}
 
 	// Check the email address only if it is new or has changed, since it does not have to be unique.
@@ -1412,10 +1467,8 @@ func (m *User) normalizedUsername() (string, error) {
 // usernameASCIIError returns authn.ErrNotASCII, naming the ASCII form of name as an example if
 // it is a username that no other account holds. If another account holds name itself, it reports that.
 func (m *User) usernameASCIIError(name string) error {
-	if s := clean.Username(name); s != "" {
-		if err := m.checkUsernameHolder(s); err != nil {
-			return err
-		}
+	if s := clean.Username(name); s != "" && m.exactUsernameHolder(s) {
+		return fmt.Errorf("user %s already exists", clean.LogQuote(s))
 	}
 
 	if s := authn.FoldUsername(name); len(s) >= UsernameLength && len(s) <= txt.ClipUsername &&
@@ -1424,6 +1477,23 @@ func (m *User) usernameASCIIError(name string) error {
 	}
 
 	return authn.ErrNotASCII
+}
+
+// exactUsernameHolder reports whether another account, including a deleted one, has exactly the name.
+func (m *User) exactUsernameHolder(name string) bool {
+	var found []User
+
+	if err := UnscopedDb().Where("user_name = ? AND id <> ?", name, m.ID).Find(&found).Error; err != nil {
+		return false
+	}
+
+	for i := range found {
+		if found[i].UserName == name {
+			return true
+		}
+	}
+
+	return false
 }
 
 // storedEmail returns the email address saved for the account, or an empty string if it has not been saved.

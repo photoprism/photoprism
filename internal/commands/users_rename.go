@@ -60,7 +60,7 @@ func SaveUserRename(ctx *cli.Context, conf *config.Config, m *entity.User, oldNa
 	}
 
 	if !ctx.IsSet("username") || UserFlagsSet(ctx, "username", "force") {
-		log.Infof("user %s has been updated", m.String())
+		log.Infof("user %s (%s) has been updated", m.String(), clean.Log(m.UserUID))
 	}
 
 	return nil

@@ -624,38 +624,3 @@ func TestRenameClientUser(t *testing.T) {
 	assert.Equal(t, "rename-clients-new", storedClientUserName(t, client.ClientUID))
 	assert.Equal(t, "rename-clients-new", storedClientUserName(t, deleted.ClientUID))
 }
-
-func TestUser_DeletedUsernameHolder(t *testing.T) {
-	holder := newRenameTestUser(t, "rename-deleted-holder", acl.RoleAdmin)
-	m := newRenameTestUser(t, "rename-deleted-holder-legacy", acl.RoleAdmin)
-
-	t.Run("Active", func(t *testing.T) {
-		assert.False(t, m.deletedUsernameHolder("rename-deleted-holder"))
-	})
-	t.Run("Deleted", func(t *testing.T) {
-		require.NoError(t, Db().Delete(holder).Error)
-		assert.True(t, m.deletedUsernameHolder("rename-deleted-holder"))
-		assert.False(t, holder.deletedUsernameHolder("rename-deleted-holder"))
-	})
-	t.Run("ValidateKeepsStoredName", func(t *testing.T) {
-		setStoredUserName(t, m, "Rename-Deleted-Holder")
-		require.NoError(t, m.Validate())
-		assert.Equal(t, "Rename-Deleted-Holder", m.UserName)
-	})
-	t.Run("ValidateActiveAndDeleted", func(t *testing.T) {
-		deleted := newRenameTestUser(t, "rename-both-holders", acl.RoleAdmin)
-		require.NoError(t, Db().Delete(deleted).Error)
-		active := newRenameTestUser(t, "rename-both-holders-active", acl.RoleAdmin)
-		setStoredUserName(t, active, "rename-both-holders")
-		legacy := newRenameTestUser(t, "rename-both-holders-legacy", acl.RoleAdmin)
-		setStoredUserName(t, legacy, "Rename-Both-Holders")
-
-		require.EqualError(t, legacy.Validate(), "user 'rename-both-holders' already exists")
-	})
-	t.Run("ValidateNormalizes", func(t *testing.T) {
-		other := newRenameTestUser(t, "rename-validate-normal", acl.RoleAdmin)
-		setStoredUserName(t, other, "Rename-Validate-Normal")
-		require.NoError(t, other.Validate())
-		assert.Equal(t, "rename-validate-normal", other.UserName)
-	})
-}

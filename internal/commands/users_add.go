@@ -141,7 +141,7 @@ func usersAddAction(ctx *cli.Context) error {
 			return err
 		}
 
-		AuditSharedEmail(entity.FindUserByName(frm.UserName), true)
+		AuditSharedEmail(entity.FindUserByExactName(frm.UserName), true)
 
 		return nil
 	})

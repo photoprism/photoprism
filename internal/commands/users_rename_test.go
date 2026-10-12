@@ -257,7 +257,7 @@ func TestUsersModCommand_Username(t *testing.T) {
 		assert.Equal(t, "Plain Change", stored.DisplayName)
 		assert.Equal(t, "modrename-plain", renameSessionUserName(t, sess.ID))
 		assert.Nil(t, renameAuditEntry(audit))
-		assert.Contains(t, logMessages(logs, logrus.InfoLevel), "user 'modrename-plain' has been updated")
+		assert.Contains(t, logMessages(logs, logrus.InfoLevel), "user 'modrename-plain' ("+m.UserUID+") has been updated")
 	})
 }
 

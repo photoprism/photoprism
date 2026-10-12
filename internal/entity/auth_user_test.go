@@ -237,11 +237,6 @@ func TestFindLocalUser(t *testing.T) {
 		assert.Equal(t, existing.UserUID, found.UserUID)
 		assert.Equal(t, "local-josé", found.UserName)
 
-		// MariaDB compares names that differ only by accents as equal.
-		if IsDialect(dsn.DriverMySQL) {
-			return
-		}
-
 		assert.Nil(t, FindLocalUser("local-jose"))
 		other := newExistingTestUser(t, "local-jose", acl.RoleGuest)
 		assert.Equal(t, other.UserUID, FindLocalUser("local-jose").UserUID)
@@ -1206,6 +1201,42 @@ func TestUser_Validate(t *testing.T) {
 		m.DisplayName = "Zoë Example"
 		require.NoError(t, m.Save())
 		assert.Equal(t, "validate-zoë", storedUser(t, m.UserUID).UserName)
+	})
+	t.Run("ExistingBesideOtherName", func(t *testing.T) {
+		newExistingTestUser(t, "validate-twin-josé", acl.RoleAdmin)
+		m := newExistingTestUser(t, "validate-twin-jose", acl.RoleAdmin)
+
+		assert.NoError(t, m.Validate())
+	})
+	t.Run("ExistingLegacyBesideOtherName", func(t *testing.T) {
+		newExistingTestUser(t, "validate-keep-josé", acl.RoleAdmin)
+		m := newExistingTestUser(t, "Validate-Keep-Jose", acl.RoleAdmin)
+
+		require.NoError(t, m.Validate())
+
+		// MariaDB finds the normalized name held by the other account, so the stored form is kept.
+		if IsDialect(dsn.DriverMySQL) {
+			assert.Equal(t, "Validate-Keep-Jose", m.UserName)
+		} else {
+			assert.Equal(t, "validate-keep-jose", m.UserName)
+		}
+	})
+	t.Run("ExistingSameName", func(t *testing.T) {
+		newExistingTestUser(t, "validate-same-twice", acl.RoleAdmin)
+		m := newExistingTestUser(t, "validate-same-twice", acl.RoleAdmin)
+
+		assert.EqualError(t, m.Validate(), "user 'validate-same-twice' already exists")
+	})
+	t.Run("NewBesideOtherName", func(t *testing.T) {
+		newExistingTestUser(t, "validate-new-josé", acl.RoleAdmin)
+		u := &User{UserName: "validate-new-jose", UserRole: acl.RoleAdmin.String()}
+
+		// MariaDB compares names that differ only by accents as equal.
+		if IsDialect(dsn.DriverMySQL) {
+			assert.EqualError(t, u.Validate(), "user 'validate-new-jose' already exists")
+		} else {
+			assert.NoError(t, u.Validate())
+		}
 	})
 	t.Run("NewNotASCIIHeld", func(t *testing.T) {
 		newExistingTestUser(t, "validate-held-josé", acl.RoleAdmin)
@@ -3623,5 +3654,99 @@ func TestUser_CheckRestore(t *testing.T) {
 		} else {
 			assert.NoError(t, deleted.CheckRestore())
 		}
+	})
+}
+
+func TestFindUserByExactName(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Nil(t, FindUserByExactName(""))
+	})
+	t.Run("Active", func(t *testing.T) {
+		m := FindUserByExactName("Alice")
+		require.NotNil(t, m)
+		assert.Equal(t, "alice", m.UserName)
+	})
+	t.Run("ActiveBesideDeletedLowerID", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "exact-entity-dup", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+		active := newRenameTestUser(t, "exact-entity-dup", acl.RoleGuest)
+
+		m := FindUserByExactName("exact-entity-dup")
+		require.NotNil(t, m)
+		assert.Equal(t, active.UserUID, m.UserUID)
+	})
+	t.Run("DeletedOnly", func(t *testing.T) {
+		deleted := newRenameTestUser(t, "exact-entity-deleted", acl.RoleGuest)
+		require.NoError(t, Db().Delete(deleted).Error)
+
+		m := FindUserByExactName("exact-entity-deleted")
+		require.NotNil(t, m)
+		assert.Equal(t, deleted.UserUID, m.UserUID)
+	})
+	t.Run("OtherName", func(t *testing.T) {
+		newExistingTestUser(t, "exact-entity-josé", acl.RoleGuest)
+
+		assert.Nil(t, FindUserByExactName("exact-entity-jose"))
+	})
+	t.Run("OtherNameBeside", func(t *testing.T) {
+		newExistingTestUser(t, "exact-entity-twin-josé", acl.RoleGuest)
+		m := newRenameTestUser(t, "exact-entity-twin-jose", acl.RoleGuest)
+
+		found := FindUserByExactName("exact-entity-twin-jose")
+		require.NotNil(t, found)
+		assert.Equal(t, m.UserUID, found.UserUID)
+	})
+	t.Run("DeletedTwice", func(t *testing.T) {
+		first := newRenameTestUser(t, "exact-entity-twice", acl.RoleGuest)
+		require.NoError(t, Db().Delete(first).Error)
+		second := newRenameTestUser(t, "exact-entity-twice", acl.RoleGuest)
+		require.NoError(t, Db().Delete(second).Error)
+
+		m := FindUserByExactName("exact-entity-twice")
+		require.NotNil(t, m)
+		assert.Equal(t, first.UserUID, m.UserUID)
+	})
+	t.Run("IdenticalBeforeLegacy", func(t *testing.T) {
+		newExistingTestUser(t, "Exact-Entity-Rank", acl.RoleGuest)
+		m := newExistingTestUser(t, "exact-entity-rank", acl.RoleGuest)
+
+		found := FindUserByExactName("exact-entity-rank")
+		require.NotNil(t, found)
+		assert.Equal(t, m.UserUID, found.UserUID)
+	})
+	t.Run("LegacyName", func(t *testing.T) {
+		m := newExistingTestUser(t, "Exact-Entity-Legacy", acl.RoleGuest)
+
+		// Only MariaDB finds the stored name by its sanitized form.
+		if found := FindUserByExactName("exact-entity-legacy"); IsDialect(dsn.DriverMySQL) {
+			require.NotNil(t, found)
+			assert.Equal(t, m.UserUID, found.UserUID)
+		} else {
+			assert.Nil(t, found)
+		}
+	})
+}
+
+func TestUser_ExactUsernameHolder(t *testing.T) {
+	m := &User{ID: 999904, UserUID: rnd.GenerateUID(UserUID), UserName: "exact-holder"}
+
+	t.Run("Active", func(t *testing.T) {
+		assert.True(t, m.exactUsernameHolder("alice"))
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		holder := newRenameTestUser(t, "exact-holder-deleted", acl.RoleGuest)
+		require.NoError(t, Db().Delete(holder).Error)
+		assert.True(t, m.exactUsernameHolder("exact-holder-deleted"))
+	})
+	t.Run("OtherName", func(t *testing.T) {
+		newExistingTestUser(t, "exact-holder-josé", acl.RoleGuest)
+		assert.False(t, m.exactUsernameHolder("exact-holder-jose"))
+	})
+	t.Run("Own", func(t *testing.T) {
+		own := newRenameTestUser(t, "exact-holder-own", acl.RoleGuest)
+		assert.False(t, own.exactUsernameHolder("exact-holder-own"))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, m.exactUsernameHolder("exact-holder-none"))
 	})
 }

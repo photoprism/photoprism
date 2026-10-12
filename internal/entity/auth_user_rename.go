@@ -69,13 +69,6 @@ func (m *User) checkUsernameHolder(name string) error {
 	return nil
 }
 
-// deletedUsernameHolder reports whether a deleted account other than this one holds the name.
-func (m *User) deletedUsernameHolder(name string) bool {
-	var holder User
-
-	return UnscopedDb().Where("user_name = ? AND id <> ? AND deleted_at IS NOT NULL", name, m.ID).First(&holder).Error == nil
-}
-
 // SetNewUsername checks newName with CheckRename and sets it, keeping the folders that derive from
 // the current name, and sets an empty display name. If the name does not change, it sets the
 // normalized form of a stored name instead. SaveRename writes the change.

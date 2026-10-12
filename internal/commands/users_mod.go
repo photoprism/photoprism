@@ -47,7 +47,7 @@ func usersModAction(ctx *cli.Context) error {
 		if rnd.IsUID(id, entity.UserUID) {
 			m = entity.FindUserByUID(id)
 		} else {
-			m = entity.FindUserByName(id)
+			m = entity.FindUserByExactName(id)
 		}
 
 		if m == nil {
@@ -58,12 +58,9 @@ func usersModAction(ctx *cli.Context) error {
 		restored := false
 
 		if m.IsDeleted() {
-			// A deleted account is restored by its own name or UID only.
-			if !rnd.IsUID(id, entity.UserUID) && clean.Username(m.UserName) != id {
-				return fmt.Errorf("user %s not found", clean.LogQuote(id))
-			}
-
-			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
+			if err := m.CheckRestore(); err != nil {
+				return err
+			} else if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
 				return err
 			} else if !restore {
 				return fmt.Errorf("user already exists")
@@ -72,6 +69,8 @@ func usersModAction(ctx *cli.Context) error {
 			m.DeletedAt = entity.DeletedAt{}
 			restored = true
 			log.Infof("user %s will be restored", m.String())
+		} else if ctx.Bool("restore") {
+			log.Infof("user %s is not deleted, nothing to restore", m.String())
 		}
 
 		// Set the new username before the other values, so that a refused name changes nothing.

@@ -25,7 +25,7 @@ var Auth = func(frm form.Login, s *Session, c *gin.Context) (user *User, provide
 	nameName := frm.CleanUsername()
 
 	// Find registered user account.
-	user = FindUserByName(nameName)
+	user = FindUserByExactName(nameName)
 
 	// Try local authentication.
 	provider, method, err = AuthLocal(user, frm, s, c)
