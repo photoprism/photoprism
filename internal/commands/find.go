@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -64,7 +65,7 @@ func findAction(ctx *cli.Context) error {
 	// Display just the filename?
 	if format == report.Default {
 		for _, found := range results {
-			fmt.Println(found.FileName)
+			fmt.Println(clean.Display(found.FileName))
 		}
 
 		return nil

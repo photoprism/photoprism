@@ -3,6 +3,8 @@ package report
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // RowsToObjects converts a table (rows + column names) into a slice of
@@ -12,7 +14,7 @@ func RowsToObjects(rows [][]string, cols []string) []map[string]string {
 }
 
 // RowsToObjectsKeys converts a table into objects under the given field names, falling back to the
-// canonicalized column names for any the caller left out.
+// canonicalized column names for any the caller left out. Values are passed through clean.Display.
 func RowsToObjectsKeys(rows [][]string, cols []string, keys []string) []map[string]string {
 	out := make([]map[string]string, 0, len(rows))
 
@@ -26,7 +28,7 @@ func RowsToObjectsKeys(rows [][]string, cols []string, keys []string) []map[stri
 		for i := range keys {
 			val := ""
 			if i < len(r) {
-				val = r[i]
+				val = clean.Display(r[i])
 			}
 			obj[keys[i]] = val
 		}

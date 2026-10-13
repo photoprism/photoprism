@@ -20,6 +20,17 @@ var sanitizers = map[string]func(string) string{
 	"ErrorFull": func(s string) string { return ErrorFull(errors.New(s)) },
 }
 
+// renderers are the sanitizers plus Display, which keeps spaces and may return an empty string.
+var renderers = func() map[string]func(string) string {
+	m := map[string]func(string) string{"Display": Display}
+
+	for name, fn := range sanitizers {
+		m[name] = fn
+	}
+
+	return m
+}()
+
 // endsLine reports whether a rune terminates a line for a pager, an editor or CSS white-space.
 // The assertions hold to this property; the enumeration in unsafe.go is one way of satisfying it.
 func endsLine(r rune) bool {
@@ -67,7 +78,7 @@ func eachInput(r rune) []string {
 }
 
 func TestSanitizersEmitNoLineTerminator(t *testing.T) {
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				for _, in := range eachInput(r) {
@@ -83,7 +94,7 @@ func TestSanitizersEmitNoLineTerminator(t *testing.T) {
 }
 
 func TestSanitizersEmitNoTerminalControl(t *testing.T) {
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				for _, in := range eachInput(r) {
@@ -99,7 +110,7 @@ func TestSanitizersEmitNoTerminalControl(t *testing.T) {
 }
 
 func TestSanitizersEmitNoBidiControl(t *testing.T) {
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				for _, in := range eachInput(r) {
@@ -119,7 +130,7 @@ func TestSanitizersKeepLetterFormingJoiners(t *testing.T) {
 	// letters in Persian and several Indic scripts, the second joins an emoji sequence.
 	keep := map[string]rune{"ZWNJ": 0x200C, "ZWJ": 0x200D}
 
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		for label, r := range keep {
 			t.Run(name+"/"+label, func(t *testing.T) {
 				assert.Contains(t, sanitize("a"+string(r)+"b"), string(r))
@@ -139,7 +150,7 @@ func TestSanitizersKeepOrdinaryText(t *testing.T) {
 		"family-2019.mp4",
 	}
 
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		for _, s := range keep {
 			t.Run(name+"/"+s, func(t *testing.T) {
 				assert.Contains(t, sanitize(s), s)
@@ -191,7 +202,7 @@ func hidesText(r rune) bool {
 func TestSanitizersRemoveEveryHiddenRune(t *testing.T) {
 	// The three properties above do not cover the invisible characters, which end no line,
 	// drive no terminal and reorder nothing.
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				if !hidesText(r) {

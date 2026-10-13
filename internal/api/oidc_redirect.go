@@ -178,7 +178,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// branded page that returns the user to login instead of leaving them on a
 			// raw, dead-end error with no way forward.
 			event.AuditErr([]string{clientIp, "create session", "oidc", status.Error(claimErr)})
-			event.LoginError(clientIp, "oidc", userName, userAgent, claimErr.Error())
+			event.LoginError(clientIp, "oidc", userName, userAgent, clean.Error(claimErr))
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrUnexpected))
 			return
 		}
@@ -382,7 +382,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Update existing user account.
 			if err = user.Save(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountUpdateFailed.Error(), status.Error(err)})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+clean.Error(err)+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			} else if emailChanged {
@@ -503,12 +503,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Create new user account, and then update the Subject ID to make sure it is unique.
 			if err = user.Create(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountCreateFailed.Error(), status.Error(err)})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+" ("+err.Error()+")")
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+" ("+clean.Error(err)+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			} else if err = user.UpdateAuthID(userInfo.Subject, provider.Issuer()); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountUpdateFailed.Error(), status.Error(err)})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+clean.Error(err)+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}

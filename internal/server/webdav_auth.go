@@ -217,21 +217,24 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			Password: password,
 		}
 
+		// Name recorded in login events, sanitized as for API logins.
+		loginName := f.CleanUsername()
+
 		// Check credentials and authorization.
 		if user, provider, _, err := entity.Auth(f, nil, c); err != nil {
 			// Abort if authentication has failed.
 			message := authn.ErrInvalidCredentials.Error()
 			event.AuditErr([]string{clientIp, "webdav", "login as %s", message}, clean.LogQuote(username))
-			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
+			event.LoginError(clientIp, "webdav", loginName, api.UserAgent(c), message)
 		} else if provider.IsApplication() {
 			// App passwords are authenticated as auth tokens above.
 			event.AuditWarn([]string{clientIp, "webdav", "login as %s", "app password", status.Denied}, clean.LogQuote(username))
-			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), authn.ErrInvalidCredentials.Error())
+			event.LoginError(clientIp, "webdav", loginName, api.UserAgent(c), authn.ErrInvalidCredentials.Error())
 		} else if user == nil {
 			// Abort if account was not found.
 			message := authn.ErrAccountNotFound.Error()
 			event.AuditErr([]string{clientIp, "webdav", "login as %s", message}, clean.LogQuote(username))
-			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
+			event.LoginError(clientIp, "webdav", loginName, api.UserAgent(c), message)
 		} else if !user.CanUseWebDAV() {
 			// Return the reserved request rate limit tokens, even if account isn't allowed to use WebDAV.
 			r.Success()
@@ -239,7 +242,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			// Abort if WebDAV is disabled for this account.
 			message := authn.ErrWebDAVAccessDisabled.Error()
 			event.AuditWarn([]string{clientIp, "webdav", "login as %s", message}, clean.LogQuote(username))
-			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
+			event.LoginError(clientIp, "webdav", loginName, api.UserAgent(c), message)
 		} else if err = fs.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath())); err != nil {
 			// Return the reserved request rate limit tokens, even if path could not be created.
 			r.Success()
@@ -247,7 +250,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			// Abort if upload path could not be created.
 			message := authn.ErrFailedToCreateUploadPath.Error()
 			event.AuditWarn([]string{clientIp, "webdav", "login as %s", message}, clean.LogQuote(username))
-			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
+			event.LoginError(clientIp, "webdav", loginName, api.UserAgent(c), message)
 			WebDAVAbortServerError(c)
 			return
 		} else {
@@ -256,7 +259,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 
 			// Log successful authentication.
 			event.AuditInfo([]string{clientIp, "webdav", "login as %s", status.Succeeded}, clean.LogQuote(username))
-			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
+			event.LoginInfo(clientIp, "webdav", loginName, api.UserAgent(c))
 
 			// Cache authentication to improve performance.
 			entity.CacheWebDAVUser(cacheKey, user, generation)

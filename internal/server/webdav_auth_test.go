@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -534,4 +535,49 @@ func TestWebDAVAuth_NotASCIIUsername(t *testing.T) {
 	}
 
 	assert.Equal(t, "webdav-josé", entity.FindUserByUID(m.UserUID).UserName)
+}
+
+// TestWebDAVAuth_LoginEventName checks that the name a Basic auth login event records is sanitized.
+func TestWebDAVAuth_LoginEventName(t *testing.T) {
+	conf := config.TestConfig()
+	webdavHandler := WebDAVAuth(conf)
+
+	origLogin, origAuth := limiter.Login, limiter.Auth
+	t.Cleanup(func() { limiter.Login, limiter.Auth = origLogin, origAuth })
+	limiter.Login = limiter.NewLimit(rate.Every(time.Millisecond), 100)
+	limiter.Auth = limiter.NewLimit(rate.Every(time.Millisecond), 100)
+
+	login := func(name string) string {
+		sub := event.Subscribe("login.error")
+		defer event.Unsubscribe(sub)
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{Header: make(http.Header), RemoteAddr: "198.51.100.90:1234"}
+		c.Request.SetBasicAuth(name, "wrong-password")
+
+		entity.FlushSessionCache()
+		webdavHandler(c)
+		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+
+		select {
+		case msg := <-sub.Receiver:
+			name, _ := msg.Fields["name"].(string)
+			return name
+		case <-time.After(5 * time.Second):
+			t.Fatal("no login event")
+			return ""
+		}
+	}
+
+	t.Run("ControlCharacters", func(t *testing.T) {
+		name := login("Ab\x00c\x01d\x1b[31me\x07f\r")
+		assert.NotRegexp(t, "[\x00-\x1f\x7f]", name)
+		assert.Equal(t, "abcd[31mef", name)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.Equal(t, "alice", login("alice"))
+		assert.Equal(t, "alice", login("Alice"))
+		assert.Equal(t, "webdav-josé", login("webdav-josé"))
+	})
 }
