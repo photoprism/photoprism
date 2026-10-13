@@ -71,6 +71,20 @@ func TestSync_refreshRemoteChanges(t *testing.T) {
 		assert.Equal(t, int64(50), f.RemoteSize)
 		assert.Equal(t, listed.Unix(), f.RemoteDate.Unix())
 	})
+	t.Run("ControlCharactersSkipped", func(t *testing.T) {
+		for _, name := range []string{"ctl\x01name.jpg", "line\nbreak.jpg", "del\x7f.jpg"} {
+			write(t, name, 100, listed)
+		}
+		write(t, "Älter 日本 صور.jpg", 100, listed)
+		refresh(t)
+
+		var count int64
+		require.NoError(t, entity.Db().Model(&entity.FileSync{}).
+			Where("service_id = ? AND remote_name IN (?)", a.ID, []string{"/ctl\x01name.jpg", "/line\nbreak.jpg", "/del\x7f.jpg"}).
+			Count(&count).Error)
+		assert.Zero(t, count)
+		assert.Equal(t, entity.FileSyncNew, stored(t, "/Älter 日本 صور.jpg").Status)
+	})
 	t.Run("NewDateChanged", func(t *testing.T) {
 		// The size stays the same, so only the date change can trigger the update.
 		write(t, "date.jpg", 100, listed)

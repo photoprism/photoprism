@@ -48,8 +48,20 @@ func UnsafeSyncPath(name string) bool {
 	return isUnsafePath(name)
 }
 
-// SkipSyncPath reports whether a logical transfer path is excluded from WebDAV sync.
-// Unsafe paths remain subject to traversal validation instead of being skipped as benign.
+// hasControl reports whether a path contains a C0 control character or DEL.
+func hasControl(name string) bool {
+	for i := 0; i < len(name); i++ {
+		if b := name[i]; b < 0x20 || b == 0x7F {
+			return true
+		}
+	}
+
+	return false
+}
+
+// SkipSyncPath reports whether a logical transfer path is excluded from WebDAV sync, which includes
+// paths with control characters. Unsafe paths remain subject to traversal validation instead of being
+// skipped as benign.
 func SkipSyncPath(name string) bool {
 	if fs.HasReservedComponent(name) {
 		return true
@@ -59,5 +71,5 @@ func SkipSyncPath(name string) bool {
 		return false
 	}
 
-	return isHiddenPath(strings.ReplaceAll(name, "\\", "/"))
+	return hasControl(name) || isHiddenPath(strings.ReplaceAll(name, "\\", "/"))
 }
