@@ -161,6 +161,7 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	restoreCalibration := snapshotFaceCalibration()
 	t.Cleanup(func() {
 		SetConfig(oldConfig)
+		_ = c.CloseDb()
 		oldConfig.RegisterDb()
 		restoreCalibration()
 

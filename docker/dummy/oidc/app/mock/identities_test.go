@@ -87,6 +87,21 @@ func TestIdentity_SetUserInfo(t *testing.T) {
 			t.Errorf("groups = %v", info.Claims["groups"])
 		}
 	})
+	t.Run("Zoneinfo", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		identities["zora"].SetUserInfo(info)
+
+		if info.Zoneinfo != "Europe/Berlin" {
+			t.Errorf("zoneinfo = %q", info.Zoneinfo)
+		}
+
+		info = &oidc.UserInfo{}
+		identities["otto"].SetUserInfo(info)
+
+		if info.Zoneinfo != "" {
+			t.Errorf("unexpected zoneinfo %q", info.Zoneinfo)
+		}
+	})
 	t.Run("UnverifiedWithoutGroups", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		identities["otto"].SetUserInfo(info)

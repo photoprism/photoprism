@@ -761,6 +761,7 @@ func TestFindImportedInsta360Capture(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 

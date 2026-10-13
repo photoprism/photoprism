@@ -72,6 +72,10 @@ Makefile recipes talk to the development database through `$(MARIADB)`, which de
   gets a name of its own via `NewIsolatedTestConfig("<name>", path, false)`, as `resetConfigAndOpenDB` does.
 - With an implicit SQLite DSN, use a distinct database name for each replacement of an open test config. Test
   database names retain letters, hyphens, and underscores but strip digits, so numeric suffixes are not distinct.
+- Close every `NewMinimalTestConfigWithDb` config in the cleanup that restores the package database: call
+  `CloseDb()` first, as it clears the entity provider, then restore the previous one (`RegisterDb()` or
+  `entity.SetDbProvider`). An unclosed config keeps its pool open for the rest of the package run, and a suite
+  that builds them per test exceeds PostgreSQL's 100-connection limit (`too many clients already`).
 
 ### Environment Traps in `internal/config` and Nested Packages
 

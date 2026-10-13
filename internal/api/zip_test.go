@@ -18,6 +18,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -283,5 +284,46 @@ func TestZipCreate_VideoStills(t *testing.T) {
 	t.Run("SidecarsOff", func(t *testing.T) {
 		conf.Settings().Download.MediaSidecar = false
 		assert.ElementsMatch(t, []string{"clip.mp4", "clip.jpg"}, archive(t))
+	})
+}
+
+func TestNewZipAliases(t *testing.T) {
+	n := newZipAliases()
+	assert.Empty(t, n.used)
+	assert.Empty(t, n.next)
+}
+
+func TestZipAliases_Name(t *testing.T) {
+	t.Run("Unique", func(t *testing.T) {
+		n := newZipAliases()
+		names := []string{"2019/x.jpg", "2020/x.jpg", "2021/x (1).jpg", "2022/X.JPG", "2023/a\tb.jpg", "2024/a b.jpg"}
+		expected := []string{"x.jpg", "x (1).jpg", "x (1) (1).jpg", "X (2).JPG", "a b.jpg", "a b (1).jpg"}
+
+		for i, name := range names {
+			f := entity.File{FileName: name, FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", FileType: "jpg"}
+			assert.Equal(t, expected[i], n.Name(&f, customize.DownloadNameFile), name)
+		}
+
+		assert.Len(t, n.used, len(names))
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		f := entity.File{FileName: "2019/صورة 日本.jpg", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", FileType: "jpg"}
+		assert.Equal(t, "صورة 日本.jpg", newZipAliases().Name(&f, customize.DownloadNameFile))
+	})
+	t.Run("Many", func(t *testing.T) {
+		n := newZipAliases()
+		f := entity.File{FileName: "2019/x.jpg", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", FileType: "jpg"}
+
+		for i := range 100 {
+			alias := n.Name(&f, customize.DownloadNameFile)
+
+			if i == 0 {
+				assert.Equal(t, "x.jpg", alias)
+			} else {
+				assert.Equal(t, fmt.Sprintf("x (%d).jpg", i), alias)
+			}
+		}
+
+		assert.Equal(t, 99, n.next["x.jpg"])
 	})
 }

@@ -41,7 +41,7 @@ func TestSanitizersControlTable(t *testing.T) {
 		{"Type", Type, "Abcd e fghi"},
 		{"TypeLower", TypeLower, "abcd e fghi"},
 		{"ShortType", ShortType, "Abcd e f"},
-		{"TypeUnicode", TypeUnicode, "Abcd e fg\x7fh�i"},
+		{"TypeUnicode", TypeUnicode, "Abcd e fgh�i"},
 		{"Path", Path, "Abcdefgh�i"},
 		{"UserPath", UserPath, "Abcdefgh�i"},
 		{"FileName", FileName, "Abcdefgh�i"},

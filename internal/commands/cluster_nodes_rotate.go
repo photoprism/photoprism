@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -327,7 +326,7 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 		event.AuditInfo(append(who, segments...), args...)
 
 		if ctx.Bool("json") {
-			jb, _ := json.Marshal(resp)
+			jb, _ := report.MarshalJSON(resp)
 			fmt.Println(string(jb))
 			return nil
 		}
@@ -348,7 +347,7 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 				fmt.Printf("\n%s\n", report.Credentials("DB User", resp.Database.User, "DB Password", resp.Database.Password))
 			}
 			if resp.Database.DSN != "" {
-				fmt.Printf("DSN: %s\n", resp.Database.DSN)
+				fmt.Printf("DSN: %s\n", clean.Display(resp.Database.DSN))
 			}
 		}
 

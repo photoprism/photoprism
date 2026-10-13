@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -34,7 +33,7 @@ func clusterHealthAction(ctx *cli.Context) error {
 		resp := healthResponse{Status: "ok", Time: time.Now().UTC().Format(time.RFC3339)}
 
 		if ctx.Bool("json") {
-			b, _ := json.Marshal(resp)
+			b, _ := report.MarshalJSON(resp)
 			fmt.Println(string(b))
 			return nil
 		}

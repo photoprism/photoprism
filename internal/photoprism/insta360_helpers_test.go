@@ -25,19 +25,21 @@ const (
 func newInsta360StackConfig(t *testing.T, dbName string, stackSequences bool) *config.Config {
 	t.Helper()
 
+	oldCfg := Config()
 	cfg := config.NewMinimalTestConfigWithDb(dbName, filepath.Join(t.TempDir(), "storage"))
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
+		oldCfg.RegisterDb()
+	})
+
 	cfg.Settings().Stack.Name = stackSequences
 
 	if !cfg.FFmpegEnabled() {
 		t.Skip("FFmpeg must be available to create synthetic capture files")
 	}
 
-	oldCfg := Config()
 	SetConfig(cfg)
-	t.Cleanup(func() {
-		SetConfig(oldCfg)
-		oldCfg.RegisterDb()
-	})
 
 	return cfg
 }

@@ -31,6 +31,7 @@ func newInsta360ReconcileFixture(t *testing.T, name string) (RelatedFiles, []ent
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -390,6 +391,7 @@ func TestReconcileInsta360Photos_LensCodedPhotos(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 

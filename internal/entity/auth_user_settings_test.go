@@ -246,7 +246,7 @@ func TestUserSettings_ApplyBounds(t *testing.T) {
 	assert.Len(t, m.UITheme, userSettingsTypeBytes)
 	assert.Len(t, m.UILanguage, userSettingsTypeBytes)
 	assert.Len(t, m.MapsStyle, userSettingsTypeBytes)
-	assert.LessOrEqual(t, len(m.UITimeZone), 64)
+	assert.Equal(t, "", m.UITimeZone)
 	assert.LessOrEqual(t, len(m.UIStartPage), 64)
 	assert.Equal(t, math.MaxInt32, m.MapsAnimate)
 	assert.LessOrEqual(t, len(m.IndexPath), PathBytes)
@@ -272,9 +272,12 @@ func TestUserSettings_ApplyBounds(t *testing.T) {
 			Import: customize.ImportSettings{Path: "/" + nul},
 		})
 
-		for _, v := range []string{c.UITheme, c.UILanguage, c.UITimeZone, c.UIStartPage, c.MapsStyle} {
+		for _, v := range []string{c.UITheme, c.UILanguage, c.UIStartPage, c.MapsStyle} {
 			assert.Equal(t, "ab", v)
 		}
+
+		// A time zone with control characters is not a valid name, so none is stored.
+		assert.Equal(t, "", c.UITimeZone)
 
 		assert.Equal(t, "/ab", c.IndexPath)
 		assert.Equal(t, "/ab", c.ImportPath)
@@ -391,4 +394,24 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, true, r.Search.ListView)
 	assert.Equal(t, false, r.Search.ShowTitles)
 	assert.Equal(t, true, r.Search.ShowCaptions)
+}
+
+func TestUserSettings_ApplyTimeZone(t *testing.T) {
+	apply := func(stored, zone string) string {
+		m := &UserSettings{UITimeZone: stored}
+		m.Apply(&customize.Settings{UI: customize.UISettings{TimeZone: zone}})
+		return m.UITimeZone
+	}
+
+	t.Run("Stored", func(t *testing.T) {
+		for _, zone := range []string{"Local", "UTC", "GMT", "UTC+1", "UTC-12", "Europe/Berlin", "America/Port-au-Prince"} {
+			assert.Equal(t, zone, apply("", zone), zone)
+		}
+		assert.Equal(t, "UTC+2", apply("", "+02:00"))
+	})
+	t.Run("Dropped", func(t *testing.T) {
+		for _, zone := range []string{"Europe/Berlin\x00", "Europe/\x1bBerlin", "UTC+99", "Europe//Berlin", strings.Repeat("A", 65)} {
+			assert.Equal(t, "Asia/Tokyo", apply("Asia/Tokyo", zone), "%q", zone)
+		}
+	})
 }

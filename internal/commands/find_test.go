@@ -40,4 +40,14 @@ func TestFindCommand_FileNameControlCharacters(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Contains(t, output, "1990/Abcd[31me f.jpg")
 	assert.NotContains(t, output, "\x1b")
+
+	t.Run("JSON", func(t *testing.T) {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_uid = ?", f.FileUID).
+			UpdateColumn("file_name", "1990/a\u202Eb\x7fc.jpg").Error)
+
+		jsonOutput, jsonErr := RunWithTestContext(FindCommand, []string{"find", "--json", "uid:" + f.PhotoUID})
+		require.NoError(t, jsonErr)
+		assert.Contains(t, jsonOutput, `1990/a\u202eb\u007fc.jpg`)
+		assert.NotContains(t, jsonOutput, "\u202E")
+	})
 }

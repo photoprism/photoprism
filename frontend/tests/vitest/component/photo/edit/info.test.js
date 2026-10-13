@@ -2,10 +2,14 @@ import { describe, it, expect, vi } from "vitest";
 import { shallowMount } from "@vue/test-utils";
 import PTabPhotoInfo from "component/photo/edit/info.vue";
 
+// copyText records the values the tab copies to the clipboard.
+const copyText = vi.fn();
+
 // makeWrapper mounts the info tab with a photo whose time has the given source.
-const makeWrapper = (takenSrc) => {
+const makeWrapper = (takenSrc, name = "") => {
   const model = {
     UID: "ps6sg6be2lvl0yh7",
+    Name: name,
     Title: "Example",
     TitleSrc: "",
     TakenSrc: takenSrc,
@@ -20,7 +24,7 @@ const makeWrapper = (takenSrc) => {
     global: {
       mocks: {
         $gettext: (s) => s,
-        $util: { sourceName: (s, d) => s || d, copyText: vi.fn() },
+        $util: { sourceName: (s, d) => s || d, copyText },
         $config: {
           values: {},
           getTimeZone: () => "UTC",
@@ -42,6 +46,18 @@ const makeWrapper = (takenSrc) => {
 const takenIcons = (wrapper) => wrapper.findAll("v-icon-stub.src").map((icon) => icon.attributes("icon"));
 
 describe("component/photo/edit/info", () => {
+  it("removes bidi controls from displayed names", async () => {
+    const wrapper = makeWrapper("meta", "2026/photo\u202Eabc.jpg");
+    expect(wrapper.vm.visibleName("صورة.jpg")).toBe("صورة.jpg");
+
+    const name = wrapper.findAll("span.cursor-copy").find((s) => s.text().includes("abc"));
+    expect(name.text()).toBe("2026/photoabc.jpg");
+    expect(name.attributes("dir")).toBe("ltr");
+
+    await name.trigger("click");
+    expect(copyText).toHaveBeenCalledWith("2026/photo\u202Eabc.jpg");
+  });
+
   it("shows an icon for a time taken from the modify time", () => {
     expect(takenIcons(makeWrapper("modified"))).toEqual(["mdi-clock-edit-outline"]);
   });

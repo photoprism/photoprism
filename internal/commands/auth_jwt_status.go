@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // AuthJWTStatusCommand reports verifier cache diagnostics.
@@ -39,13 +40,13 @@ func authJWTStatusAction(ctx *cli.Context) error {
 		}
 
 		fmt.Println()
-		fmt.Printf("JWKS URL: %s\n", s.JWKSURL)
-		fmt.Printf("Cache Path: %s\n", s.CachePath)
-		fmt.Printf("Cache URL: %s\n", s.CacheURL)
-		fmt.Printf("Cache ETag: %s\n", s.CacheETag)
+		fmt.Printf("JWKS URL: %s\n", clean.Display(s.JWKSURL))
+		fmt.Printf("Cache Path: %s\n", clean.Display(s.CachePath))
+		fmt.Printf("Cache URL: %s\n", clean.Display(s.CacheURL))
+		fmt.Printf("Cache ETag: %s\n", clean.Display(s.CacheETag))
 		fmt.Printf("Cached Keys: %d\n", s.KeyCount)
 		if len(s.KeyIDs) > 0 {
-			fmt.Printf("Key IDs: %s\n", strings.Join(s.KeyIDs, ", "))
+			fmt.Printf("Key IDs: %s\n", clean.Display(strings.Join(s.KeyIDs, ", ")))
 		}
 		if !s.CacheFetchedAt.IsZero() {
 			fmt.Printf("Last Fetch: %s\n", s.CacheFetchedAt.Format(time.RFC3339))

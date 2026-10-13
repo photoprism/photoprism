@@ -61,8 +61,8 @@ func typeString(s string, maxLen int) (result string, changed, clipped bool) {
 	return s, changed, clipped
 }
 
-// TypeUnicode removes unsafe runes, collapses whitespace, and enforces the
-// maximum type length while preserving non-ASCII characters when possible.
+// TypeUnicode collapses whitespace, removes control, non-printable and other unsafe characters
+// except U+200C and U+200D, and limits the result to 64 characters while keeping non-ASCII letters.
 func TypeUnicode(s string) string {
 	if s == "" {
 		return s
@@ -85,7 +85,7 @@ func TypeUnicode(s string) string {
 			continue
 		}
 
-		if r <= 31 {
+		if unsafeDropRune(r) || unsafeRune(r) {
 			continue
 		}
 

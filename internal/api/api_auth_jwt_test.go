@@ -481,7 +481,7 @@ func TestVerifyTokenFromPortal(t *testing.T) {
 		assert.True(t, unverified)
 	})
 	t.Run("UnknownKey", func(t *testing.T) {
-		otherConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-other-key", t.TempDir())
+		otherConf := config.NewMinimalTestConfig(t.TempDir())
 		enablePortalAPIs(t, otherConf)
 		otherConf.Options().ClusterUUID = fx.clusterUUID
 		mgr, err := clusterjwt.NewManager(otherConf)

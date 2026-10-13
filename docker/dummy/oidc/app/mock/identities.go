@@ -18,6 +18,7 @@ type Identity struct {
 	Email             string
 	EmailVerified     bool
 	PhoneNumber       string
+	Zoneinfo          string
 	Groups            []string
 	Claims            map[string]any
 }
@@ -138,6 +139,22 @@ var identities = map[string]Identity{
 		Email:             "\u212Aate@example.com",
 		EmailVerified:     true,
 	},
+	// zora has a valid zoneinfo claim.
+	"zora": {
+		Subject:           "sub00000014",
+		PreferredUsername: "zora",
+		Email:             "zora@example.com",
+		EmailVerified:     true,
+		Zoneinfo:          "Europe/Berlin",
+	},
+	// zeno has a zoneinfo claim that is not a valid time zone name.
+	"zeno": {
+		Subject:           "sub00000015",
+		PreferredUsername: "zeno",
+		Email:             "zeno@example.com",
+		EmailVerified:     true,
+		Zoneinfo:          "Europe/Ber\u0000lin",
+	},
 }
 
 // IdentityByHint returns the identity selected by a login_hint, or an error if the hint is unknown.
@@ -187,6 +204,10 @@ func (id Identity) SetUserInfo(info *oidc.UserInfo) {
 	if id.PhoneNumber != "" {
 		info.PhoneNumber = id.PhoneNumber
 		info.PhoneNumberVerified = oidc.Bool(true)
+	}
+
+	if id.Zoneinfo != "" {
+		info.Zoneinfo = id.Zoneinfo
 	}
 
 	if len(id.Groups) > 0 {

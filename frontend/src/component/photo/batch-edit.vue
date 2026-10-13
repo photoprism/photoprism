@@ -73,8 +73,8 @@
               </template>
 
               <template #item.name="{ item, index }">
-                <span class="meta-data meta-title col-auto break-word text-start clickable" :title="item.FileName" @click.exact="openPhoto(index)">
-                  {{ item.getOriginalName() }}
+                <span class="meta-data meta-title col-auto break-word text-start clickable" :title="$util.stripBidiControls(item.FileName)" @click.exact="openPhoto(index)">
+                  <bdi dir="ltr">{{ item.getOriginalName() }}</bdi>
                 </span>
               </template>
             </v-data-table>
@@ -134,10 +134,10 @@
                     <template #item.name="{ item, index }">
                       <span
                         class="meta-data meta-title col-auto text-start clickable edit-batch__file-name"
-                        :title="item.FileName"
+                        :title="$util.stripBidiControls(item.FileName)"
                         @click.exact="openPhoto(index)"
                       >
-                        {{ item.getOriginalName() }}
+                        <bdi dir="ltr">{{ item.getOriginalName() }}</bdi>
                       </span>
                     </template>
                   </v-data-table>

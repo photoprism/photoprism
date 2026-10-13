@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ClusterThemePullCommand downloads the Portal theme and installs it.
@@ -210,7 +211,13 @@ func clusterThemePullAction(ctx *cli.Context) error {
 		}
 
 		if ctx.Bool("json") {
-			fmt.Printf("{\"installed\":\"%s\"}\n", clean.Log(dest))
+			b, jsonErr := report.MarshalJSON(map[string]string{"installed": dest})
+
+			if jsonErr != nil {
+				return jsonErr
+			}
+
+			fmt.Println(string(b))
 		} else {
 			log.Infof("installed theme files to %s", clean.Log(dest))
 			fmt.Println(dest)

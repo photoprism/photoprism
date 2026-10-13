@@ -63,7 +63,8 @@ already waited for the configured timeout, so a retry would double how long the 
 written by `Photo.SaveLabels` goes through `Save`, which replays a failed update as an upsert, and once more
 after a lock error.
 
-`Details` clips its text to the column sizes before every write, since MariaDB rejects longer values in strict
+`Details` removes control characters from its text (keeping line breaks in notes, copyright and license) and
+clips it to the column sizes before every write, since MariaDB rejects longer values in strict
 mode while SQLite stores them: keywords are cut after the last whole keyword that fits, and source names longer
 than their column are cleared.
 

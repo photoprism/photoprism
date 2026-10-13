@@ -93,14 +93,14 @@ func authJWTInspectAction(ctx *cli.Context) error {
 		fmt.Println()
 		fmt.Println("JWT header:")
 		for k, v := range header {
-			fmt.Printf("  %s: %v\n", k, v)
+			fmt.Printf("  %s: %s\n", clean.Display(k), clean.Display(fmt.Sprint(v)))
 		}
 
 		fmt.Println("\nJWT claims:")
-		fmt.Printf("  issuer: %s\n", claims.Issuer)
-		fmt.Printf("  subject: %s\n", claims.Subject)
-		fmt.Printf("  audience: %s\n", strings.Join(claims.Audience, " "))
-		fmt.Printf("  scope: %s\n", strings.Join(tokenScopes, " "))
+		fmt.Printf("  issuer: %s\n", clean.Display(claims.Issuer))
+		fmt.Printf("  subject: %s\n", clean.Display(claims.Subject))
+		fmt.Printf("  audience: %s\n", clean.Display(strings.Join(claims.Audience, " ")))
+		fmt.Printf("  scope: %s\n", clean.Display(strings.Join(tokenScopes, " ")))
 		if claims.IssuedAt != nil {
 			fmt.Printf("  issuedAt: %s\n", claims.IssuedAt.Time.UTC().Format(time.RFC3339))
 		}
@@ -111,7 +111,7 @@ func authJWTInspectAction(ctx *cli.Context) error {
 			fmt.Printf("  notBefore: %s\n", claims.NotBefore.Time.UTC().Format(time.RFC3339))
 		}
 		if claims.ID != "" {
-			fmt.Printf("  jti: %s\n", claims.ID)
+			fmt.Printf("  jti: %s\n", clean.Display(claims.ID))
 		}
 
 		if verified {
@@ -120,7 +120,7 @@ func authJWTInspectAction(ctx *cli.Context) error {
 			fmt.Println("\nSignature: not verified (skipped)")
 		}
 
-		fmt.Printf("\nToken:\n%s\n\n", token)
+		fmt.Printf("\nToken:\n%s\n\n", clean.Display(token))
 		return nil
 	})
 }

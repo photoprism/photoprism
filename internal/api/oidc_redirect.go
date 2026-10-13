@@ -336,7 +336,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user.Settings().UILanguage = clean.Locale(userInfo.Locale.String(), user.Settings().UILanguage)
 
 			// Update UI timezone.
-			if zone := userInfo.Zoneinfo; zone != "" && zone != tz.UTC {
+			if zone := oidcTimeZone(userInfo.Zoneinfo); zone != "" && zone != tz.UTC {
 				user.Settings().UITimeZone = zone
 			}
 
@@ -347,7 +347,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 
 			// Update birthday, if available.
-			if birthDate := txt.ParseTime(userInfo.Birthdate, userInfo.Zoneinfo); !birthDate.IsZero() {
+			if birthDate := txt.ParseTime(userInfo.Birthdate, oidcTimeZone(userInfo.Zoneinfo)); !birthDate.IsZero() {
 				user.BornAt = &birthDate
 				user.Details().BirthDay = birthDate.Day()
 				user.Details().BirthMonth = int(birthDate.Month())
@@ -464,7 +464,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user.Settings().UILanguage = clean.Locale(userInfo.Locale.String(), "")
 
 			// Set UI timezone.
-			user.Settings().UITimeZone = userInfo.Zoneinfo
+			user.Settings().UITimeZone = oidcTimeZone(userInfo.Zoneinfo)
 
 			// Set user location, if available.
 			if addr := userInfo.GetAddress(); addr != nil {
@@ -473,7 +473,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 
 			// Set birthday, if available.
-			if birthDate := txt.ParseTime(userInfo.Birthdate, userInfo.Zoneinfo); !birthDate.IsZero() {
+			if birthDate := txt.ParseTime(userInfo.Birthdate, oidcTimeZone(userInfo.Zoneinfo)); !birthDate.IsZero() {
 				user.BornAt = &birthDate
 				user.Details().BirthDay = birthDate.Day()
 				user.Details().BirthMonth = int(birthDate.Month())
@@ -604,4 +604,9 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// Step 3: Render HTML template to set the access token in localStorage.
 		c.HTML(http.StatusOK, "auth.gohtml", response)
 	})
+}
+
+// oidcTimeZone returns the normalized time zone of a zoneinfo claim, or an empty string if it is not a valid name.
+func oidcTimeZone(zoneinfo string) string {
+	return tz.Sanitize(zoneinfo)
 }

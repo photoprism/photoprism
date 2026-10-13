@@ -169,6 +169,7 @@ func TestImportWorker_StackedVectorPreviews(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -272,6 +273,7 @@ func TestImportWorker_StackedRawOrientation(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -358,6 +360,7 @@ func TestImportWorker_TypeCheck(t *testing.T) {
 		SetConfig(cfg)
 		t.Cleanup(func() {
 			SetConfig(oldCfg)
+			_ = cfg.CloseDb()
 			oldCfg.RegisterDb()
 		})
 
@@ -522,6 +525,7 @@ func TestImport_TypeCheck(t *testing.T) {
 		SetConfig(cfg)
 		t.Cleanup(func() {
 			SetConfig(oldCfg)
+			_ = cfg.CloseDb()
 			oldCfg.RegisterDb()
 		})
 
@@ -585,6 +589,7 @@ func TestImportWorker_SidecarPreview(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -642,6 +647,7 @@ func TestImportWorker_ArchivedBackup(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 

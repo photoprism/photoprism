@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 var allowedJWTScope = func() map[string]struct{} {
@@ -164,7 +165,7 @@ func normalizeScopes(values []string, defaults ...string) ([]string, error) {
 
 // printJSON pretty-prints the payload as JSON.
 func printJSON(payload any) error {
-	data, err := json.MarshalIndent(payload, "", "  ")
+	data, err := report.MarshalJSONIndent(payload, "", "  ")
 	if err != nil {
 		return cli.Exit(err, 1)
 	}

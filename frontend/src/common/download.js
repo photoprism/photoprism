@@ -24,6 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import saveAs from "file-saver";
+import $util from "common/util";
 
 // Detect Safari browser.
 const isSafari = navigator.appVersion.indexOf("Safari/") !== -1 && navigator.appVersion.indexOf("Chrome") === -1;
@@ -38,6 +39,8 @@ export default function download(url, name) {
     console.warn("can't download: empty url");
     return;
   }
+
+  name = $util.stripBidiControls(name);
 
   if (isSafari) {
     const xhr = new XMLHttpRequest();
