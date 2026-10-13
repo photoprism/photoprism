@@ -109,7 +109,7 @@ func ApplyLabels(photo *entity.Photo, labels Items) (errs []error) {
 			if pl.Uncertainty != 0 || pl.LabelSrc != entity.SrcBatch {
 				pl.Uncertainty = 0
 				pl.LabelSrc = entity.SrcBatch
-				if err = updatePhotoLabel(pl, "update label confidence"); err != nil {
+				if err = updatePhotoLabel(pl); err != nil {
 					errs = append(errs, fmt.Errorf("update label to 100%% confidence failed: %s", err))
 				} else {
 					changed = true
@@ -150,7 +150,7 @@ func ApplyLabels(photo *entity.Photo, labels Items) (errs []error) {
 				}
 			case labelRemovalBlock:
 				if markLabelBlocked(pl) {
-					if err = updatePhotoLabel(pl, "block label"); err != nil {
+					if err = updatePhotoLabel(pl); err != nil {
 						errs = append(errs, fmt.Errorf("block label failed: %s", err))
 					} else {
 						log.Debugf("batch: blocked label: photo=%s label_id=%d", photo.PhotoUID, labelEntity.ID)
@@ -341,25 +341,20 @@ func loadPhotoLabelAssociation(photoID, labelID uint) *entity.PhotoLabel {
 	return nil
 }
 
-// updatePhotoLabel persists the PhotoLabel source and uncertainty with deadlock retry
-// so batch edits survive temporary lock conflicts when many updates run in parallel.
-func updatePhotoLabel(pl *entity.PhotoLabel, action string) error {
+// updatePhotoLabel persists the PhotoLabel source and uncertainty; the entity write retries after a deadlock.
+func updatePhotoLabel(pl *entity.PhotoLabel) error {
 	if pl == nil {
 		return fmt.Errorf("photo label is nil")
 	}
 
-	return entity.RetryDeadlock(action, func() error {
-		return pl.Updates(entity.Values{"label_src": pl.LabelSrc, "uncertainty": pl.Uncertainty})
-	})
+	return pl.Updates(entity.Values{"label_src": pl.LabelSrc, "uncertainty": pl.Uncertainty})
 }
 
-// deletePhotoLabel removes a PhotoLabel while retrying on transient deadlocks.
+// deletePhotoLabel removes a PhotoLabel; the entity write retries after a deadlock.
 func deletePhotoLabel(pl *entity.PhotoLabel) error {
 	if pl == nil {
 		return fmt.Errorf("photo label is nil")
 	}
 
-	return entity.RetryDeadlock("delete label", func() error {
-		return pl.Delete()
-	})
+	return pl.Delete()
 }

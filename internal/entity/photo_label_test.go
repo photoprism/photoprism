@@ -114,6 +114,15 @@ func TestPhotoLabel_Update(t *testing.T) {
 		_, found := photoLabelCache.Get(relation.CacheKey())
 		assert.False(t, found)
 	})
+	t.Run("RetryDeadlock", func(t *testing.T) {
+		relation := createTestPhotoLabel(t)
+		attempts := failFirstWrite(t, "update", relation.TableName())
+		require.NoError(t, relation.Update("uncertainty", 37))
+		assert.Equal(t, 2, *attempts)
+		var stored PhotoLabel
+		require.NoError(t, Db().Where("photo_id = ? AND label_id = ?", relation.PhotoID, relation.LabelID).First(&stored).Error)
+		assert.Equal(t, 37, stored.Uncertainty)
+	})
 	t.Run("NilPhotoLabel", func(t *testing.T) {
 		var label *PhotoLabel
 		err := label.Update("uncertainty", 0)
@@ -138,6 +147,16 @@ func TestPhotoLabel_Updates(t *testing.T) {
 		_, found := photoLabelCache.Get(relation.CacheKey())
 		assert.False(t, found)
 	})
+	t.Run("RetryDeadlock", func(t *testing.T) {
+		relation := createTestPhotoLabel(t)
+		attempts := failFirstWrite(t, "update", relation.TableName())
+		require.NoError(t, relation.Updates(Values{"uncertainty": 38, "label_src": SrcBatch}))
+		assert.Equal(t, 2, *attempts)
+		var stored PhotoLabel
+		require.NoError(t, Db().Where("photo_id = ? AND label_id = ?", relation.PhotoID, relation.LabelID).First(&stored).Error)
+		assert.Equal(t, 38, stored.Uncertainty)
+		assert.Equal(t, SrcBatch, stored.LabelSrc)
+	})
 	t.Run("NilPhotoLabel", func(t *testing.T) {
 		var label *PhotoLabel
 		err := label.Updates(&PhotoLabel{Uncertainty: 0})
@@ -151,14 +170,25 @@ func TestPhotoLabel_Updates(t *testing.T) {
 }
 
 func TestPhotoLabel_Delete(t *testing.T) {
-	FlushPhotoLabelCache()
-	relation := createTestPhotoLabel(t)
-	photoLabelCache.SetDefault(relation.CacheKey(), *relation)
+	t.Run("FlushesCache", func(t *testing.T) {
+		FlushPhotoLabelCache()
+		relation := createTestPhotoLabel(t)
+		photoLabelCache.SetDefault(relation.CacheKey(), *relation)
 
-	require.NoError(t, relation.Delete())
+		require.NoError(t, relation.Delete())
 
-	_, found := photoLabelCache.Get(relation.CacheKey())
-	assert.False(t, found)
+		_, found := photoLabelCache.Get(relation.CacheKey())
+		assert.False(t, found)
+	})
+	t.Run("RetryDeadlock", func(t *testing.T) {
+		relation := createTestPhotoLabel(t)
+		attempts := failFirstWrite(t, "delete", relation.TableName())
+		require.NoError(t, relation.Delete())
+		assert.Equal(t, 2, *attempts)
+		var count int64
+		require.NoError(t, Db().Model(&PhotoLabel{}).Where("photo_id = ? AND label_id = ?", relation.PhotoID, relation.LabelID).Count(&count).Error)
+		assert.Zero(t, count)
+	})
 }
 
 func TestPhotoLabel_HasID(t *testing.T) {

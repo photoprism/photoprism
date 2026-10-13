@@ -331,9 +331,12 @@ func (m *Label) Rename(name string) error {
 	} else {
 		renamed.LabelSlug = m.LabelSlug
 	}
-	res := Db().Model(&Label{}).Where("id = ?", m.ID).UpdateColumns(values)
-	if res.Error != nil {
+	var res *gorm.DB
+	if err := RetryDeadlock("rename label", func() error {
+		res = Db().Model(&Label{}).Where("id = ?", m.ID).UpdateColumns(values)
 		return res.Error
+	}); err != nil {
+		return err
 	}
 	if res.RowsAffected == 0 {
 		var count int64

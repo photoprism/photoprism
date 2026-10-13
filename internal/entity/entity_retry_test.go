@@ -10,7 +10,32 @@ import (
 	"github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
+
+// failFirstWrite makes the first update or delete of a table return a deadlock and counts the attempts.
+func failFirstWrite(t *testing.T, operation, table string) *int {
+	t.Helper()
+	attempts, name := new(int), "test:deadlock:"+operation+":"+table
+	callback := func(tx *gorm.DB) {
+		if tx.Statement.Table != table {
+			return
+		} else if *attempts++; *attempts == 1 {
+			_ = tx.AddError(&mysql.MySQLError{Number: 1213, Message: "deadlock control"})
+		}
+	}
+	switch operation {
+	case "update":
+		require.NoError(t, Db().Callback().Update().Before("gorm:begin_transaction").Register(name, callback))
+		t.Cleanup(func() { _ = Db().Callback().Update().Remove(name) })
+	case "delete":
+		require.NoError(t, Db().Callback().Delete().Before("gorm:begin_transaction").Register(name, callback))
+		t.Cleanup(func() { _ = Db().Callback().Delete().Remove(name) })
+	default:
+		t.Fatalf("unsupported operation %q", operation)
+	}
+	return attempts
+}
 
 // TestRetryDeadlock checks bounded recovery and preservation of non-retryable errors.
 func TestRetryDeadlock(t *testing.T) {

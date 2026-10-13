@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** October 12, 2026
+**Last Updated:** October 13, 2026
 
 ### Overview
 
@@ -43,9 +43,9 @@ If auto-migration fails because a unique index cannot be created over duplicate 
 ### Label Count Refresh
 
 `UpdateLabelCounts` keeps each driver's counting query and updates the refresh timestamp only after
-success. Its MySQL write uses `RetryDeadlock`, shared with batch label edits: at most three attempts
-with bounded backoff for recognized deadlock errors. Other errors return immediately. Retries
-apply to the individual write, not to the entire HTTP handler or its preceding operations.
+success. Its MySQL and PostgreSQL writes use `RetryDeadlock`, shared with the label writes described
+below: at most three attempts with bounded backoff for recognized deadlock errors. Other errors return
+immediately. Retries apply to the individual write, not to the entire HTTP handler or its preceding operations.
 
 ### Write Retries
 
@@ -54,6 +54,14 @@ timeouts and a locked SQLite database. It returns an error wrapping `ErrDetailsN
 not be stored; creating a missing row counts as stored. `Photo.Save` and `Photo.Create` keep the stored
 photo row in that case. The indexer then adds or updates the file with a modification time of -1, so the next
 index run indexes it again and saves the details, while edits through the API return the error, except unstacking, which keeps the new photo and saves its details when it reindexes the moved files.
+
+`PhotoLabel.Update`, `PhotoLabel.Updates`, `PhotoLabel.Delete` and `Label.Rename` write through `RetryDeadlock`,
+since a label count refresh started by an earlier edit can hold locks on `labels` and `photos_labels` that a
+concurrent label edit needs in the opposite order. Batch edits and the photo label API call these methods
+directly, so they must not wrap them in another retry. Lock wait timeouts are not retried there: the statement has
+already waited for the configured timeout, so a retry would double how long the request takes. The photo row
+written by `Photo.SaveLabels` goes through `Save`, which replays a failed update as an upsert, and once more
+after a lock error.
 
 `Details` clips its text to the column sizes before every write, since MariaDB rejects longer values in strict
 mode while SQLite stores them: keywords are cut after the last whole keyword that fits, and source names longer

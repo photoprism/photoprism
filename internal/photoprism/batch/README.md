@@ -1,6 +1,6 @@
 ## PhotoPrism — Batch Edit Package
 
-**Last Updated:** September 27, 2026
+**Last Updated:** October 13, 2026
 
 ### Overview
 
@@ -207,7 +207,7 @@ Based on the above examples, the following rules apply in the given order when p
 
 #### Database Locking
 
-Batch label updates and deletes use `entity.RetryDeadlock`, shared with the MySQL label-count refresh. It makes at most three attempts for recognized database deadlock errors, with a 25 ms base delay multiplied by the attempt number. Other errors return immediately. Each retry repeats only the individual assignment write or delete.
+Batch label updates and deletes write through `PhotoLabel.Updates` and `PhotoLabel.Delete`, which retry with `entity.RetryDeadlock`, shared with single-photo label edits and the label-count refresh. It makes at most three attempts for recognized database deadlock errors, with a 25 ms base delay multiplied by the attempt number. Other errors return immediately. Each retry repeats only the individual assignment write or delete.
 
 ### Known Issues & Limitations
 

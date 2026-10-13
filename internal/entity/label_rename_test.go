@@ -84,6 +84,15 @@ func TestLabel_Rename(t *testing.T) {
 		assert.Equal(t, "empty-slug-control", stored.LabelSlug)
 		assert.Equal(t, stored.LabelSlug, label.LabelSlug)
 	})
+	t.Run("RetryDeadlock", func(t *testing.T) {
+		label := renameTestLabel(t, "Retry "+rnd.GenerateUID('l'))
+		attempts := failFirstWrite(t, "update", label.TableName())
+		require.NoError(t, label.Rename("Retry Rename Control"))
+		assert.Equal(t, 2, *attempts)
+		var stored Label
+		require.NoError(t, Db().First(&stored, label.ID).Error)
+		assert.Equal(t, "Retry Rename Control", stored.LabelName)
+	})
 	t.Run("WriteFailure", func(t *testing.T) {
 		label := renameTestLabel(t, "Failed "+rnd.GenerateUID('l'))
 		before := *label

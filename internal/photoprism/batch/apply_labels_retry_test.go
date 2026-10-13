@@ -43,7 +43,7 @@ func TestPhotoLabelWriteRetry(t *testing.T) {
 				_ = entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:batch-retry", callback)
 				t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("test:batch-retry") })
 				link.LabelSrc, link.Uncertainty = entity.SrcBatch, 0
-				require.NoError(t, updatePhotoLabel(link, "test update"))
+				require.NoError(t, updatePhotoLabel(link))
 				var stored entity.PhotoLabel
 				require.NoError(t, entity.Db().Where("photo_id = ? AND label_id = ?", photo.ID, label.ID).First(&stored).Error)
 				assert.Zero(t, stored.Uncertainty)
@@ -60,7 +60,7 @@ func TestPhotoLabelWriteRetry(t *testing.T) {
 		})
 	}
 	t.Run("Nil", func(t *testing.T) {
-		require.Error(t, updatePhotoLabel(nil, "test"))
+		require.Error(t, updatePhotoLabel(nil))
 		require.Error(t, deletePhotoLabel(nil))
 	})
 }
