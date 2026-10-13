@@ -5,7 +5,7 @@
 
 # Database of the TestCafe acceptance targets, set on the command line, e.g. "make acceptance-run-chromium DB=sqlite".
 # DB is validated before any shell runs and replaced with the supported value, or with nothing if it is not supported.
-override TESTCAFE_DBS := sqlite
+override TESTCAFE_DBS := sqlite mariadb postgres
 override TESTCAFE_DB := $(if $(filter command line,$(origin DB)),$(value DB),sqlite)
 override TESTCAFE_DB := $(if $(filter 1,$(words $(TESTCAFE_DB))),$(filter $(TESTCAFE_DBS),$(TESTCAFE_DB)))
 override DB := $(TESTCAFE_DB)
@@ -80,6 +80,15 @@ ifneq ($(filter-out 0 false no off,$(value TC_USE_VIDEO)),)
 TESTCAFE_VIDEO = --video tests/acceptance/videos/ --video-options singleFile=false,failedOnly=true
 endif
 
+# acceptance-env sets the database, folder and port options of a TestCafe server to the fixture in the given folder,
+# so that they also apply if the server cannot load its options file, and removes other paths and cluster options.
+acceptance-env = env -u PHOTOPRISM_DATABASE_SERVER -u PHOTOPRISM_DATABASE_NAME -u PHOTOPRISM_DATABASE_USER \
+	-u PHOTOPRISM_DATABASE_PASSWORD -u PHOTOPRISM_SIDECAR_PATH -u PHOTOPRISM_CACHE_PATH -u PHOTOPRISM_USERS_PATH \
+	-u PHOTOPRISM_TEMP_PATH -u PHOTOPRISM_BACKUP_PATH -u PHOTOPRISM_PID_FILENAME -u PHOTOPRISM_LOG_FILENAME \
+	-u PHOTOPRISM_DEFAULTS_YAML -u PHOTOPRISM_PORTAL_URL -u PHOTOPRISM_JOIN_TOKEN -u PHOTOPRISM_NODE_CLIENT_ID \
+	-u PHOTOPRISM_NODE_CLIENT_SECRET PHOTOPRISM_DATABASE_DRIVER=sqlite PHOTOPRISM_DATABASE_DSN="$(1)/index.db" \
+	PHOTOPRISM_STORAGE_PATH="$(1)" PHOTOPRISM_ORIGINALS_PATH="$(1)/originals" PHOTOPRISM_IMPORT_PATH="$(1)/import" \
+	PHOTOPRISM_HTTP_PORT=2343
 # acceptance-stage runs the given TestCafe targets in order, then the stop target, also if one of them fails,
 # and exits with the first failure.
 acceptance-stage = $(MAKE) -j1 -S $(1); status=$$?; $(MAKE) -j1 $(2) || [ $$status -ne 0 ] || status=1; exit $$status
@@ -371,7 +380,7 @@ else
 	@echo "TestCafe database: $(TESTCAFE_DB)"
 endif
 acceptance-restart-%: acceptance-check-db
-	bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	rm -rf storage/acceptance/sidecar/2020
@@ -381,18 +390,20 @@ acceptance-restart-%: acceptance-check-db
 	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
-	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" start -d
-	bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-sqlite"
+	@$(call acceptance-env,./storage/acceptance) MARIADB="$(MARIADB)" PSQL="$(PSQL)" POSTGRES_ADMIN_URI="$(POSTGRES_ADMIN_URI)" bash scripts/test/acceptance-db.sh $(TESTCAFE_DB) ./photoprism "./storage/acceptance/config-sqlite"
+	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="public" -c "./storage/acceptance/config-$(TESTCAFE_DB)" start -d
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-$(TESTCAFE_DB)"
 acceptance-stop-%:
-	bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 acceptance-auth-restart: acceptance-check-db
-	bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
-	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" start -d
-	bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-sqlite"
+	@$(call acceptance-env,./storage/acceptance) MARIADB="$(MARIADB)" PSQL="$(PSQL)" POSTGRES_ADMIN_URI="$(POSTGRES_ADMIN_URI)" bash scripts/test/acceptance-db.sh $(TESTCAFE_DB) ./photoprism "./storage/acceptance/config-sqlite"
+	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="password" -c "./storage/acceptance/config-$(TESTCAFE_DB)" start -d
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-$(TESTCAFE_DB)"
 acceptance-auth-stop:
-	bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
 acceptance-sqlite-restart-%:
 	$(MAKE) acceptance-restart-$* DB=sqlite
 acceptance-sqlite-stop-%:
@@ -768,6 +779,7 @@ watch-js:
 test-sh:
 	$(info Running shell script tests...)
 	bash scripts/test/acceptance-server-test.sh
+	bash scripts/test/acceptance-db-test.sh
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)
