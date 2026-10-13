@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -155,7 +156,7 @@ func ZipCreate(router *gin.RouterGroup) {
 		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
 
-		var aliases = make(map[string]int)
+		aliases := newZipAliases()
 
 		// Add files to zip.
 		for _, file := range files {
@@ -168,14 +169,7 @@ func ZipCreate(router *gin.RouterGroup) {
 			}
 
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
-			alias := file.DownloadName(dlName, 0)
-			key := strings.ToLower(alias)
-
-			if seq := aliases[key]; seq > 0 {
-				alias = file.DownloadName(dlName, seq)
-			}
-
-			aliases[key]++
+			alias := aliases.Name(&file, dlName)
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
@@ -272,4 +266,34 @@ func ZipDownload(router *gin.RouterGroup) {
 
 		auditArchiveAccess(c, sess, "download %s", status.Succeeded, zipBaseName)
 	})
+}
+
+// zipEntrySeqMax limits the number of sequence numbers tried for a free ZIP entry name.
+const zipEntrySeqMax = 10000
+
+// zipAliases records the ZIP entry names assigned so far, ignoring case, and the next sequence number per name.
+type zipAliases struct {
+	used map[string]bool
+	next map[string]int
+}
+
+// newZipAliases returns an empty set of ZIP entry names.
+func newZipAliases() *zipAliases {
+	return &zipAliases{used: make(map[string]bool), next: make(map[string]int)}
+}
+
+// Name returns the download name of a file, numbered so that no earlier entry has it.
+func (n *zipAliases) Name(file *entity.File, dlName customize.DownloadName) string {
+	alias := file.DownloadName(dlName, 0)
+	key := strings.ToLower(alias)
+
+	for seq := n.next[key]; n.used[strings.ToLower(alias)] && seq < zipEntrySeqMax; {
+		seq++
+		n.next[key] = seq
+		alias = file.DownloadName(dlName, seq)
+	}
+
+	n.used[strings.ToLower(alias)] = true
+
+	return alias
 }

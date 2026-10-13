@@ -3,7 +3,6 @@ package api
 import (
 	"archive/zip"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -111,7 +110,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			systemErr("zip", w.Close())
 		}(zipWriter)
 
-		var aliases = make(map[string]int)
+		aliases := newZipAliases()
 
 		for _, file := range files {
 			if file.FileName == "" {
@@ -123,14 +122,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			}
 
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
-			alias := file.DownloadName(dlName, 0)
-			key := strings.ToLower(alias)
-
-			if seq := aliases[key]; seq > 0 {
-				alias = file.DownloadName(dlName, seq)
-			}
-
-			aliases[key]++
+			alias := aliases.Name(&file, dlName)
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {

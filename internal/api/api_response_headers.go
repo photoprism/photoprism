@@ -28,6 +28,7 @@ func AddOffsetHeader(c *gin.Context, offset int) {
 }
 
 // AddDownloadHeader adds a header indicating the response is expected to be downloaded.
+// The name is written unquoted, so it must be a server-generated ASCII name.
 func AddDownloadHeader(c *gin.Context, fileName string) {
 	c.Header(header.ContentDisposition, fmt.Sprintf("attachment; filename=%s", fileName))
 }

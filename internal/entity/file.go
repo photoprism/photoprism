@@ -256,15 +256,16 @@ func (m *File) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-// DownloadName selects a download filename according to the configured naming policy.
+// DownloadName selects a download filename according to the configured naming policy,
+// sanitized with clean.AttachmentName for use in a response header or archive entry.
 func (m *File) DownloadName(n customize.DownloadName, seq int) string {
 	switch n {
 	case customize.DownloadNameFile:
-		return m.Base(seq)
+		return clean.AttachmentName(m.Base(seq))
 	case customize.DownloadNameOriginal:
-		return m.OriginalBase(seq)
+		return clean.AttachmentName(m.OriginalBase(seq))
 	default:
-		return m.ShareBase(seq)
+		return clean.AttachmentName(m.ShareBase(seq))
 	}
 }
 
