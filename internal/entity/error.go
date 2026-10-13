@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -8,13 +9,13 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/pkg/txt/clip"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ErrorMessageBytes is the storage limit of the error_message column in bytes,
 // matching its VARBINARY(2048) definition. Messages may contain multi-byte text
-// (e.g. file paths or recovered-panic stack traces), so writes are clipped by
-// bytes on a rune boundary to avoid write errors and invalid UTF-8.
+// (e.g. file paths or recovered-panic stack traces), so writes are clipped in the
+// middle by bytes, without splitting a character, so the cause at the end stays.
 const ErrorMessageBytes = 2048
 
 // logEvents is true when events are being recorded in the "errors" database table.
@@ -78,7 +79,7 @@ func (Error) LogEvents(minLevel logrus.Level) {
 			errLog := Error{ErrorLevel: level.String()}
 
 			if val, ok := msg.Fields["message"]; ok {
-				errLog.ErrorMessage = clip.Bytes(val.(string), ErrorMessageBytes)
+				errLog.ErrorMessage = clean.ClipMiddle(strings.TrimSpace(val.(string)), ErrorMessageBytes)
 			}
 
 			if val, ok := msg.Fields["time"]; ok {

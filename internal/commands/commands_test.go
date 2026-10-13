@@ -560,7 +560,7 @@ func TestHandleExitErr(t *testing.T) {
 	t.Run("CleansMessage", func(t *testing.T) {
 		buf, code := redirectExit(t)
 		HandleExitErr(nil, cli.Exit("portal: status 503\r\nname: a\x07b\u200Bc", 3))
-		assert.Equal(t, "portal: status 503\nname: ab?c\n", buf.String())
+		assert.Equal(t, "portal: status 503\nname: a[U+0007]b[U+200B]c\n", buf.String())
 		assert.Equal(t, 3, *code)
 	})
 	t.Run("KeepsText", func(t *testing.T) {
@@ -578,13 +578,13 @@ func TestHandleExitErr(t *testing.T) {
 	t.Run("Formatter", func(t *testing.T) {
 		buf, code := redirectExit(t)
 		HandleExitErr(nil, formattedExitErr{msg: "failed"})
-		assert.Equal(t, "failed: details a?b\n", buf.String())
+		assert.Equal(t, "failed: details a[U+200B]b\n", buf.String())
 		assert.Equal(t, 7, *code)
 	})
 	t.Run("MultiError", func(t *testing.T) {
 		buf, code := redirectExit(t)
 		HandleExitErr(nil, multiExitErr{errors.New("first\x07"), nil, multiExitErr{cli.Exit("second\u200B", 5)}})
-		assert.Equal(t, "first\nsecond?\n", buf.String())
+		assert.Equal(t, "first[U+0007]\nsecond[U+200B]\n", buf.String())
 		assert.Equal(t, 5, *code)
 	})
 	t.Run("PlainError", func(t *testing.T) {

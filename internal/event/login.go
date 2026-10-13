@@ -12,11 +12,11 @@ func LoginData(level logrus.Level, ip, realm, name, browser, message string) Dat
 	return Data{
 		"time":    TimeStamp(),
 		"level":   level.String(),
-		"ip":      txt.Clip(clean.Display(ip), txt.ClipIP),
-		"realm":   txt.Clip(clean.Display(realm), txt.ClipRealm),
-		"name":    txt.Clip(clean.Display(name), txt.ClipUsername),
-		"browser": txt.Clip(clean.Display(browser), txt.ClipLog),
-		"message": txt.Clip(clean.Display(message), txt.ClipLog),
+		"ip":      clean.DisplayRunes(ip, txt.ClipIP),
+		"realm":   clean.DisplayRunes(realm, txt.ClipRealm),
+		"name":    clean.DisplayRunes(name, txt.ClipUsername),
+		"browser": clean.DisplayRunes(browser, txt.ClipLog),
+		"message": clean.DisplayRunes(message, txt.ClipLog),
 	}
 }
 

@@ -5,28 +5,37 @@ import (
 	"unicode"
 )
 
-// Display replaces whitespace controls with a space, removes other control characters, and marks
-// the remaining non-printable characters with a question mark, for text shown in a terminal or table.
-// Unlike Log, it neither quotes nor replaces punctuation, and it keeps the spaces it is given.
+// Display replaces line breaks and tabs with a space and writes other control and non-printable characters
+// as a "[U+XXXX]" marker, and a byte that is not valid UTF-8 as "[0xXX]", for text shown in a terminal or
+// table. Unlike Log, it neither quotes nor replaces punctuation, and it keeps the spaces it is given.
 func Display(s string) string {
-	if s == "" {
-		return s
+	return markText(s, displayRune)
+}
+
+// DisplayRunes renders s like Display, shortened to at most size characters like ClipRunes. It reads at most
+// 4*size bytes of s after leading spaces, since each character of s shows as at least one character.
+func DisplayRunes(s string, size int) string {
+	if size <= 0 {
+		return ""
 	}
 
-	return strings.Map(func(r rune) rune {
-		switch {
-		case r == '\t', r == '\n', r == '\v', r == '\f', r == '\r':
-			return unsafeSpace
-		case unsafeDropRune(r):
-			return -1
-		case unicode.Is(unicode.Zs, r):
-			return r
-		case unsafeRune(r):
-			return unsafeMarker
-		default:
-			return r
-		}
-	}, s)
+	return ClipRunes(Display(shortenBytes(strings.TrimLeftFunc(s, unicode.IsSpace), 4*size, "")), size)
+}
+
+// displayRune returns what Display writes for a rune.
+func displayRune(r rune) rune {
+	switch {
+	case r >= ' ' && r < 0x7F:
+		return r
+	case unsafeBreakRune(r):
+		return unsafeSpace
+	case unicode.Is(unicode.Zs, r):
+		return r
+	case unsafeRune(r):
+		return markRune
+	default:
+		return r
+	}
 }
 
 // DisplayLines applies Display to each line of s, so that multi-line text such as an error message keeps its

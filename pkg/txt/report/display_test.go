@@ -25,16 +25,16 @@ var formats = map[string]Format{"Default": Default, "Markdown": Markdown, "CSV":
 
 func TestDisplayRow(t *testing.T) {
 	row := []string{"a\x00b", "c\nd", "日本"}
-	assert.Equal(t, []string{"ab", "c d", "日本"}, displayRow(row))
+	assert.Equal(t, []string{"a[U+0000]b", "c d", "日本"}, displayRow(row))
 	assert.Equal(t, "a\x00b", row[0])
 }
 
 func TestDisplayRows(t *testing.T) {
 	t.Run("Copy", func(t *testing.T) {
-		rows := [][]string{{"a\x1b[31mb", "c|d"}}
+		rows := [][]string{{"a\x07b", "c|d"}}
 		out := displayRows(rows)
-		assert.Equal(t, [][]string{{"a[31mb", "c|d"}}, out)
-		assert.Equal(t, "a\x1b[31mb", rows[0][0])
+		assert.Equal(t, [][]string{{"a[U+0007]b", "c|d"}}, out)
+		assert.Equal(t, "a\x07b", rows[0][0])
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Empty(t, displayRows(nil))
@@ -64,15 +64,14 @@ func TestRenderControlCharacters(t *testing.T) {
 				require.Len(t, decoded, 1)
 				assert.Equal(t, unsafe, decoded[0]["name"])
 			} else {
-				assert.Contains(t, result, "Abcd ef")
-				assert.Contains(t, result, "h x?y")
+				assert.Contains(t, result, "Ab[U+0000]c[U+0001]d e[U+001B]f[U+0007]g h[U+007F] x[U+202E]y")
 			}
 		})
 	}
 	t.Run("Caption", func(t *testing.T) {
-		result := MarkdownTable([][]string{{"a", "b"}}, []string{"A", "B"}, Options{Caption: "Cap\x1btion\x00"})
+		result := MarkdownTable([][]string{{"abcdefghijklmnopqrstuvwxyz", "b"}}, []string{"A", "B"}, Options{Caption: "Cap\x1btion\x00"})
 		assert.False(t, hasControl(result, "\n"), "%q", result)
-		assert.Contains(t, result, "Capti")
+		assert.Contains(t, result, "Cap[U+001B]tion[U+0000]")
 	})
 }
 
