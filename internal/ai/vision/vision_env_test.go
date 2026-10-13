@@ -32,6 +32,13 @@ func TestInitEnvUrl(t *testing.T) {
 		t.Fatalf("space: expected https://llm.example.com/v1, got %s", got)
 	}
 
+	// Case: removes surrounding quotes.
+	t.Setenv(envName, `"http://ollama:11434/"`)
+	initEnvUrl(envName, "http://default.local")
+	if got := os.Getenv(envName); got != "http://ollama:11434" {
+		t.Fatalf("quotes: expected http://ollama:11434, got %s", got)
+	}
+
 	// Case: sets default when only slashes remain.
 	t.Setenv(envName, "///")
 	initEnvUrl(envName, "http://default.local")

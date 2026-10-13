@@ -19,6 +19,11 @@ func TestNormalizeBaseURL(t *testing.T) {
 		{"Spaces", "             ", ""},
 		{"Tabs", "\t\t\t\t ", ""},
 
+		// Surrounding quotes.
+		{"DoubleQuoted", `"https://example.com"`, "https://example.com/"},
+		{"SingleQuoted", ` 'https://example.com/photos' `, "https://example.com/photos/"},
+		{"UnmatchedQuote", `"https://example.com`, `"https://example.com/`},
+
 		// Trailing-slash policy.
 		{"AlreadyNormalized", "https://example.com/", "https://example.com/"},
 		{"NoTrailingSlash", "https://example.com", "https://example.com/"},
@@ -107,6 +112,36 @@ func BenchmarkNormalizeBaseURL_Uncached(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		normalizeBaseURL(in)
 	}
+}
+
+func TestTrimBaseURL(t *testing.T) {
+	cases := []struct {
+		in   string
+		want string
+	}{
+		{"", ""},
+		{"http://ollama:11434", "http://ollama:11434"},
+		{"http://ollama:11434/", "http://ollama:11434"},
+		{"\t\"http://ollama:11434\"\n", "http://ollama:11434"},
+		{"'https://llm.example.com/v1/'", "https://llm.example.com/v1"},
+		{`"https://gw.example.com/v1/?api-version=1"`, "https://gw.example.com/v1?api-version=1"},
+		{"https://example.com/a#frag", "https://example.com/a#frag"},
+		{`"`, `"`},
+		{`""`, ""},
+		{`"https://example.com'`, `"https://example.com'`},
+		{"///", ""},
+	}
+
+	for _, c := range cases {
+		assert.Equal(t, c.want, TrimBaseURL(c.in), c.in)
+	}
+}
+
+func TestTrimURL(t *testing.T) {
+	assert.Equal(t, "https://example.com/", trimURL(" \"https://example.com/\"\n"))
+	assert.Equal(t, "a b", trimURL("' a b '"))
+	assert.Equal(t, `"a'`, trimURL(`"a'`))
+	assert.Equal(t, "", trimURL("  "))
 }
 
 func TestResolveAdvertiseURL(t *testing.T) {
