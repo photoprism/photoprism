@@ -82,7 +82,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     && \
     apt-get -qq install \
         build-essential software-properties-common pkg-config apt-utils htop \
-        gcc g++ git autoconf automake cmake gettext apache2-utils davfs2 \
+        gcc g++ git autoconf automake cmake gettext apache2-utils davfs2 ldap-utils \
         chrpath tree ripgrep fd-find bat eza git-delta shellcheck shfmt fzf xxd \
         libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
