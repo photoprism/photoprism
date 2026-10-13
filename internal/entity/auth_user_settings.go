@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
 // UserSettings stores per-user UI, indexing, and workflow preferences.
@@ -109,8 +110,8 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 		m.UILanguage = Clip(clean.Type(s.UI.Language), userSettingsTypeBytes)
 	}
 
-	if s.UI.TimeZone != "" {
-		m.UITimeZone = clean.Type(s.UI.TimeZone)
+	if zone := tz.Sanitize(s.UI.TimeZone); zone != "" {
+		m.UITimeZone = zone
 	}
 
 	// Maps preferences.

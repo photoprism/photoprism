@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
 // GetSettings returns the user app settings as JSON.
@@ -85,6 +86,7 @@ func SaveSettings(router *gin.RouterGroup) {
 		if user.IsSuperAdmin() && s.NoScope() {
 			// Update global defaults and user preferences.
 			settings = conf.Settings()
+			timeZone := settings.UI.TimeZone
 
 			// Set values from request.
 			LimitRequestBodyBytes(c, MaxSettingsRequestBytes)
@@ -97,6 +99,13 @@ func SaveSettings(router *gin.RouterGroup) {
 
 				AbortBadRequest(c, err)
 				return
+			}
+
+			// Keep the previous default time zone if the new one is not a valid name.
+			if zone := tz.Sanitize(settings.UI.TimeZone); zone != "" {
+				settings.UI.TimeZone = zone
+			} else {
+				settings.UI.TimeZone = timeZone
 			}
 
 			// Update global defaults.

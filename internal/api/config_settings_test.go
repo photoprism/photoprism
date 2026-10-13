@@ -52,6 +52,26 @@ func TestSaveSettings(t *testing.T) {
 		r3 := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"ui":{"language": "en"}}`)
 		assert.Equal(t, http.StatusOK, r3.Code)
 	})
+	t.Run("TimeZone", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		GetSettings(router)
+		SaveSettings(router)
+
+		zone := conf.Settings().UI.TimeZone
+		t.Cleanup(func() {
+			r := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"ui":{"timeZone":"`+zone+`"}}`)
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"ui":{"timeZone":"Europe/Berlin"}}`)
+		require.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "Europe/Berlin", gjson.Get(PerformRequest(app, "GET", "/api/v1/settings").Body.String(), "ui.timeZone").String())
+
+		r = PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"ui":{"timeZone":"UTC+99"}}`)
+		require.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "Europe/Berlin", conf.Settings().UI.TimeZone)
+		assert.Equal(t, "Europe/Berlin", gjson.Get(PerformRequest(app, "GET", "/api/v1/settings").Body.String(), "ui.timeZone").String())
+	})
 	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 

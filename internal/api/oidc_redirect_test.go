@@ -30,6 +30,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+func TestOidcTimeZone(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		assert.Equal(t, "Europe/Berlin", oidcTimeZone("Europe/Berlin"))
+		assert.Equal(t, "UTC", oidcTimeZone("Etc/UTC"))
+		assert.Equal(t, "UTC+2", oidcTimeZone("+02:00"))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, zone := range []string{"", "Europe/Berlin\x00", "Europe/\x1bBerlin", "UTC+99", "Europe//Berlin"} {
+			assert.Equal(t, "", oidcTimeZone(zone), "%q", zone)
+		}
+	})
+}
+
 func TestOidcReconcileHint(t *testing.T) {
 	t.Run("LocalProvider", func(t *testing.T) {
 		hint := oidcReconcileHint("alice", "local", "us12345")
