@@ -19,7 +19,6 @@ export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' .telemetry)
 endif
 
 -include .semver
--include .env
 
 # Binary file names.
 BINARY_NAME=photoprism
