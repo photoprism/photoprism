@@ -12342,6 +12342,7 @@
                         "description": "session id or ref id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -12391,6 +12392,7 @@
                         "description": "session id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -12499,6 +12501,7 @@
                         "description": "session id or ref id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -12548,6 +12551,7 @@
                         "description": "session id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],

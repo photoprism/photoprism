@@ -17,7 +17,7 @@ import (
 //	@Summary	get the current session or a session by id
 //	@Tags		Authentication
 //	@Produce	json
-//	@Param		id				path		string	false	"session id"
+//	@Param		id				path		string	true	"session id"
 //	@Success	200				{object}	gin.H
 //	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/session [get]
