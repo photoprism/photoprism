@@ -72,7 +72,7 @@ const sanitizeHtmlOptions = Object.freeze({
     "ul",
   ],
   allowedAttributes: {
-    a: ["href", "target", "rel"],
+    a: ["href", "target", "rel", "dir"],
     span: ["dir"],
   },
   allowedSchemes: ["http", "https", "mailto"],
@@ -339,6 +339,17 @@ export default class $util {
     return roman;
   }
 
+  // stripBidiControls removes C0 and C1 controls, DEL, line and paragraph separators, and explicit bidi
+  // controls from a name before it is displayed, since isolating an element does not neutralize them.
+  static stripBidiControls(s) {
+    if (typeof s !== "string" || s === "") {
+      return s;
+    }
+
+    // eslint-disable-next-line no-control-regex
+    return s.replace(/[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u2028-\u202e\u2066-\u2069]/g, "");
+  }
+
   // truncate shortens a string and appends an ellipsis when it exceeds length.
   static truncate(str, length, ending) {
     if (length == null) {
@@ -404,13 +415,13 @@ export default class $util {
       // Ampersand characters (&) should generally be ok in the link URL (though it should already be stripped as it may only be part of the query).
       let url = matched.replace(/&amp;/g, "&");
 
-      // Make sure the URL starts with "http://" or "https://".
-      if (!url.startsWith("https")) {
-        url = "https://" + matched;
+      // Make sure the URL uses "https://".
+      if (url.startsWith("http://")) {
+        url = "https://" + url.substring(7);
       }
 
       // Return HTML link markup.
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${matched}</a>`;
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" dir="ltr">${matched}</a>`;
     }
 
     // Escape HTML control characters.

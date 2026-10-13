@@ -256,9 +256,9 @@
               </div>
 
               <div class="meta-details">
-                <button v-if="album.Type === 'folder'" :title="'/' + album.Path" class="meta-path" @click.exact="edit(album)">
+                <button v-if="album.Type === 'folder'" :title="'/' + $util.stripBidiControls(album.Path)" class="meta-path" @click.exact="edit(album)">
                   <i class="mdi mdi-folder" />
-                  /{{ album.Path }}
+                  <bdi dir="ltr">/{{ $util.stripBidiControls(album.Path) }}</bdi>
                 </button>
                 <button v-if="album.Category !== ''" :title="album.Category" class="meta-category" @click.exact="edit(album)">
                   <i class="mdi mdi-tag" />

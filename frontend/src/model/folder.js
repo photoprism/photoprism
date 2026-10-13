@@ -51,6 +51,8 @@ export class Folder extends RestModel {
     return classes;
   }
 
+  // baseName returns the folder name without its path and without bidi and other control characters,
+  // shortened to the optional length.
   baseName(truncate) {
     let result = this.Path;
     const slash = result.lastIndexOf("/");
@@ -58,6 +60,8 @@ export class Folder extends RestModel {
     if (slash >= 0) {
       result = this.Path.substring(slash + 1);
     }
+
+    result = $util.stripBidiControls(result);
 
     if (truncate) {
       result = $util.truncate(result, truncate, "…");

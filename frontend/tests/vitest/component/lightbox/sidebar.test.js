@@ -279,6 +279,15 @@ describe("PLightboxSidebar component", () => {
     expect(fileRow.text()).toContain(mockPhoto.FileName);
   });
 
+  it("should show the file name without bidi controls", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: { ...mockPhoto, FileName: "photos/2023/IMG\u202E001.jpg" }, context: contexts.Photos },
+    });
+    expect(w.vm.visibleFileName).toBe("photos/2023/IMG001.jpg");
+    expect(w.find(".meta-file").text()).toContain("photos/2023/IMG001.jpg");
+    expect(w.find(".meta-file").text()).not.toContain("\u202E");
+  });
+
   it("should render file info row with the file metadata text", () => {
     const html = wrapper.html();
     expect(html).toContain("JPEG, 1920 × 1080, 4.2 MB");

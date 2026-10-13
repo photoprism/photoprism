@@ -347,6 +347,7 @@ export class Photo extends RestModel {
     return result;
   }
 
+  // fileBase returns the last element of a file path, without bidi and other control characters.
   fileBase(name) {
     let result = name;
     const slash = result.lastIndexOf("/");
@@ -355,7 +356,7 @@ export class Photo extends RestModel {
       result = name.substring(slash + 1);
     }
 
-    return result;
+    return $util.stripBidiControls(result);
   }
 
   getEntityName() {

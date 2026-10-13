@@ -9,7 +9,7 @@
 
           <router-link v-for="dir in breadcrumbs" :key="dir.key" :to="dir.uri">
             <v-icon>{{ navIcon }}</v-icon>
-            {{ dir.name }}
+            <bdi dir="ltr">{{ $util.stripBidiControls(dir.name) }}</bdi>
           </router-link>
         </v-toolbar-title>
 
@@ -62,16 +62,16 @@
               </div>
 
               <div v-if="m.isFile()" class="meta">
-                <button :title="m.Name" class="meta-title" @click.exact="openFile(index)">
-                  {{ m.baseName() }}
+                <button :title="$util.stripBidiControls(m.Name)" class="meta-title" @click.exact="openFile(index)">
+                  <bdi dir="ltr">{{ m.baseName() }}</bdi>
                 </button>
                 <div class="meta-description">
                   {{ m.getInfo() }}
                 </div>
               </div>
               <div v-else class="meta">
-                <button :title="m.Title" class="meta-title" @click.exact="openFile(index)">
-                  {{ m.baseName() }}
+                <button :title="$util.stripBidiControls(m.Title)" class="meta-title" @click.exact="openFile(index)">
+                  <bdi dir="ltr">{{ m.baseName() }}</bdi>
                 </button>
                 <div class="meta-description">
                   {{ $gettext(`Folder`) }}

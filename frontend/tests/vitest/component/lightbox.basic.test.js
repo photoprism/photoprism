@@ -840,7 +840,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     });
 
     expect(caption).toContain('<h4>Title &lt;img src=x onerror="alert(1)"&gt;</h4>');
-    expect(caption).toContain(`<p>Visit <a href="https://example.com/" target="_blank" rel="noopener noreferrer">https://example.com/</a></p>`);
+    expect(caption).toContain(`<p>Visit <a href="https://example.com/" target="_blank" rel="noopener noreferrer" dir="ltr">https://example.com/</a></p>`);
     expect(caption).not.toContain("<img");
   });
 

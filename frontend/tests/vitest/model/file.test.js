@@ -3,6 +3,12 @@ import "../fixtures";
 import File from "model/file";
 
 describe("model/file", () => {
+  it("should remove bidi controls from the base name", () => {
+    const file = new File({ UID: "fbidi1", Name: "2026/photo\u202Eabc.jpg" });
+    expect(file.baseName()).toBe("photoabc.jpg");
+    expect(new File({ UID: "fbidi2", Name: "2026/صورة 日本.jpg" }).baseName()).toBe("صورة 日本.jpg");
+  });
+
   it("should return classes", () => {
     const values = {
       InstanceID: 5,

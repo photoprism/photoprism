@@ -82,6 +82,8 @@ export class File extends RestModel {
     return classes;
   }
 
+  // baseName returns the file name without its path and without bidi and other control characters,
+  // shortened to the optional length.
   baseName(truncate) {
     let result = this.Name;
     const slash = result.lastIndexOf("/");
@@ -89,6 +91,8 @@ export class File extends RestModel {
     if (slash >= 0) {
       result = this.Name.substring(slash + 1);
     }
+
+    result = $util.stripBidiControls(result);
 
     if (truncate) {
       result = $util.truncate(result, truncate, "…");

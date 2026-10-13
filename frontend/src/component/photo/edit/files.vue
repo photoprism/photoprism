@@ -10,7 +10,7 @@
       >
         <v-expansion-panel-title>
           <div class="text-caption font-weight-bold filename">
-            {{ file.baseName(70) }}
+            <bdi dir="ltr">{{ file.baseName(70) }}</bdi>
           </div>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
@@ -144,7 +144,7 @@
                               {{ $gettext(`Filename`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.Name)">{{ file.Name }}</span>
+                              <span class="cursor-copy" dir="ltr" @click.stop.prevent="$util.copyText(file.Name)">{{ visibleName(file.Name) }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.Root">
@@ -158,7 +158,7 @@
                               {{ $gettext(`Original Name`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.OriginalName)">{{ file.OriginalName }}</span>
+                              <span class="cursor-copy" dir="ltr" @click.stop.prevent="$util.copyText(file.OriginalName)">{{ visibleName(file.OriginalName) }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.FileType">
@@ -381,6 +381,7 @@ import { DateTime } from "luxon";
 import $notify from "common/notify";
 import * as options from "options/options";
 import * as formats from "options/formats";
+import $util from "common/util";
 
 export default {
   name: "PTabPhotoFiles",
@@ -454,6 +455,10 @@ export default {
     };
   },
   methods: {
+    // visibleName returns a name without bidi and other control characters for display.
+    visibleName(name) {
+      return $util.stripBidiControls(name);
+    },
     // keepStacked reports whether the file must stay with the originals of its capture.
     keepStacked(file) {
       if (!file) {
