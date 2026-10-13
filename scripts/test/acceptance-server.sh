@@ -52,7 +52,7 @@ alive() {
   local name
 
   [[ -n "$1" ]] && kill -0 "$1" 2>/dev/null || return 1
-  name=$(tr '\0' '\n' < "/proc/$1/cmdline" 2>/dev/null | head -n 1)
+  name=$(tr '\0' '\n' 2>/dev/null < "/proc/$1/cmdline" | head -n 1)
   [[ "${name##*/}" == photoprism* ]]
 }
 
