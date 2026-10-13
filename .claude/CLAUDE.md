@@ -27,7 +27,7 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 ## Testing
 
 **Run all tests:**
-- `make test` — runs the JS and Go tests on SQLite; it does not cover MariaDB. Its Go half sweeps
+- `make test` — runs the JS and Go tests on SQLite and the shell script tests (`make test-sh`); it does not cover MariaDB. Its Go half sweeps
   `./pkg/... ./internal/... ./.../internal/...`, so the editions' `internal/` packages **are** included;
   what it leaves out is MariaDB and each edition's own `make -C <edition> test` extras
 - `make test-go` — the Go tests on SQLite (~3-15 min), without the opt-in `integration` build tag
@@ -77,7 +77,7 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 
 Available targets: `make fmt` (everything), `make fmt-go`, `make fmt-js`, `make fmt-swag` / `make swag` (Swagger), `make lint-go`, `make lint-js`, `make lint-sh`. Detailed conventions live in `.claude/rules/go-code-style.md` and `.claude/rules/frontend-rules.md`.
 
-When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings. `make lint-sh` runs it over every script under `scripts/dist/`, which ship in the container images, so those are gated rather than left to the habit. When editing Markdown files that contain tables, format them with `npx --yes markdown-table-formatter <filename>`.
+When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings. `make lint-sh` runs it over every script under `scripts/dist/`, which ship in the container images, and `scripts/test/`, so those are gated rather than left to the habit. When editing Markdown files that contain tables, format them with `npx --yes markdown-table-formatter <filename>`.
 
 The curated `make help` overviews are maintained by hand in a `HELP_TEXT` block per Makefile. After renaming or removing a target, run `make check-make-help` (also part of `make lint`) to confirm that no overview still advertises it.
 

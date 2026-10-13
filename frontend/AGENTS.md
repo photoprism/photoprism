@@ -19,8 +19,8 @@
 - New JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.
 - New Vue components should have component-test coverage, and existing component tests should be updated as needed when component behavior changes.
 - Acceptance tests use the `acceptance-*` targets in the root `Makefile`.
-- For one-off TestCafe checks, keep startup and cleanup in the repository root: `make storage/acceptance`, `make acceptance-sqlite-restart`, `make wait-2`, then `(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --config-file ./testcaferc.json --test-meta mode=public,type=short,testID=components-001 "tests/acceptance")`, then `make acceptance-sqlite-stop`.
-- If a command temporarily changes into `frontend/`, return to the repository root before running `make acceptance-sqlite-stop`.
+- For one-off TestCafe checks, keep startup and cleanup in the repository root: `make storage/acceptance`, `make acceptance-sqlite-restart-1`, `make wait-1`, then `(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --config-file ./.testcaferc.cjs --test-meta mode=public,type=short,testID=components-001 "tests/acceptance")`, then `make acceptance-sqlite-stop-1`.
+- If a command temporarily changes into `frontend/`, return to the repository root before running `make acceptance-sqlite-stop-1`.
 
 ## Templates, Session Bootstrap & Browser Baseline
 
