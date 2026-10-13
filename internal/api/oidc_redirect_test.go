@@ -236,7 +236,7 @@ const (
 
 // oidcTestSubjects lists the subjects of the dummy-oidc test identities, so cleanup finds the
 // accounts they create even when registration renamed them.
-var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009", "sub00000010", "sub00000011", "sub00000012", "sub00000013"}
+var oidcTestSubjects = []string{"sub00000001", "sub00000002", "sub00000003", "sub00000004", "sub00000005", "sub00000006", "sub00000007", "sub00000008", "sub00000009", "sub00000010", "sub00000011", "sub00000012", "sub00000013", "sub00000014", "sub00000015"}
 
 // oidcUnreachableUri is an https provider address that refuses connections, so discovery fails.
 const oidcUnreachableUri = "https://127.0.0.1:1"
@@ -550,6 +550,38 @@ func TestOIDCRedirect_Flow(t *testing.T) {
 		r := PerformRequest(app, http.MethodGet, "/api/v1/oidc/redirect?state=s1&code=c1")
 
 		assertOidcLoginRefused(t, r, i18n.ErrUnexpected)
+	})
+}
+
+func TestOIDCRedirect_TimeZone(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "zora")
+		app := newOidcTestApp(conf)
+
+		require.Equal(t, http.StatusOK, oidcLogin(t, app, "zora").Code)
+		user := findOidcTestUser("sub00000014")
+		require.NotNil(t, user)
+		assert.Equal(t, "Europe/Berlin", user.Settings().UITimeZone)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		skipUnlessOidcHint(t, "zeno")
+		app := newOidcTestApp(conf)
+
+		// A new account stores no time zone.
+		require.Equal(t, http.StatusOK, oidcLogin(t, app, "zeno").Code)
+		user := findOidcTestUser("sub00000015")
+		require.NotNil(t, user)
+		assert.Equal(t, "", user.Settings().UITimeZone)
+
+		// An existing account keeps its time zone.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.UserSettings{}).Where("user_uid = ?", user.UserUID).
+			UpdateColumn("ui_time_zone", "Asia/Tokyo").Error)
+		entity.FlushUserSessionCache(user.UserUID)
+
+		require.Equal(t, http.StatusOK, oidcLogin(t, app, "zeno").Code)
+		assert.Equal(t, "Asia/Tokyo", findOidcTestUser("sub00000015").Settings().UITimeZone)
 	})
 }
 

@@ -1,6 +1,6 @@
 ## Dummy OIDC Identity Provider
 
-**Last Updated:** September 30, 2026
+**Last Updated:** October 13, 2026
 
 A minimal OpenID Connect provider for local development and tests, built on `zitadel/oidc/v3`. It accepts any client ID and secret and authenticates without user interaction. The `dummy-oidc` service in `compose.yaml` runs the published image, which `make docker-dummy-oidc` builds from this directory.
 
@@ -28,6 +28,8 @@ An authorization request selects a test user with its `login_hint` parameter. Wi
 | `josefa`     | `sub00000011` | `josefa.núñez` | `josefa@example.com`     | no       | non-ASCII username, ASCII `name` (`Josefa Nunez`) |
 | `jesus`      | `sub00000012` | `jesús`        | `jesus@example.com`      | no       | only non-ASCII name claims                        |
 | `kate`       | `sub00000013` | `kate`         | `\u212Aate@example.com`  | yes      | verified email address with a non-ASCII character |
+| `zora`       | `sub00000014` | `zora`         | `zora@example.com`       | yes      | `zoneinfo`: `Europe/Berlin`                       |
+| `zeno`       | `sub00000015` | `zeno`         | `zeno@example.com`       | yes      | `zoneinfo` that is not a valid time zone name     |
 
 The claims are included in the ID token and returned by the userinfo endpoint. Identities are defined in `app/mock/identities.go`.
 
