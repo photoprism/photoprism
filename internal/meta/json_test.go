@@ -1,6 +1,8 @@
 package meta
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -8,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/time/tz"
@@ -960,7 +963,7 @@ func TestJSON(t *testing.T) {
 
 		// t.Logf("all: %+v", data.json)
 
-		assert.Equal(t, "Jens\r\tMander", data.Artist)
+		assert.Equal(t, "Jens\n\tMander", data.Artist)
 		assert.Equal(t, "UTC+2", data.TimeZone)
 		assert.Equal(t, "2004-10-07 20:49:16 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "2004-10-07 22:49:16 +0000 UTC", data.TakenAtLocal.String())
@@ -1458,4 +1461,70 @@ func TestData_Exiftool_ModifiedAt(t *testing.T) {
 			assert.Equal(t, tc.modifiedAt, data.ModifiedAt.Format(time.DateTime))
 		})
 	}
+}
+
+func TestJSON_ControlCharacters(t *testing.T) {
+	t.Run("ExifTool", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "control.json")
+		require.NoError(t, os.WriteFile(fileName, []byte(`[{
+  "SourceFile": "control.jpg",
+  "ExifToolVersion": 12.76,
+  "FileName": "control.jpg",
+  "MIMEType": "image/jpeg",
+  "Title": "Sea\u0000side \u001bSunset",
+  "ImageDescription": "First line\u0000\r\nSecond line",
+  "Artist": "Jane\u0007 Doe",
+  "Copyright": "© 2026\u007f Jane Doe",
+  "Make": "Canon\u0000",
+  "Model": "Canon EOS 5D\u0001",
+  "LensModel": "EF50mm\u0000 f/1.8",
+  "Software": "Soft\u0000ware",
+  "Subject": ["beach\u0000", "sun"],
+  "Keywords": ["sea\u0000", "sand"]
+}]`), fs.ModeFile))
+
+		data, err := JSON(fileName, "control.jpg")
+		require.NoError(t, err)
+		assert.Equal(t, "Seaside Sunset", data.Title)
+		assert.Equal(t, "First line\nSecond line", data.Caption)
+		assert.Equal(t, "Jane Doe", data.Artist)
+		assert.Equal(t, "© 2026 Jane Doe", data.Copyright)
+		assert.Equal(t, "Canon", data.CameraMake)
+		assert.Equal(t, "Canon EOS 5D", data.CameraModel)
+		assert.Equal(t, "EF50mm f/1.8", data.LensModel)
+		assert.Equal(t, "Software", data.Software)
+		assert.Equal(t, "beach, sun", data.Subject)
+		assert.NotContains(t, data.Keywords.String(), "\x00")
+	})
+	t.Run("GooglePhotos", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "control.jpg.json")
+		require.NoError(t, os.WriteFile(fileName, []byte(`{
+  "title": "Sea\u0000side \u001bSunset",
+  "description": "First line\u0000\r\nSecond line",
+  "photoTakenTime": {"timestamp": "1449418710"}
+}`), fs.ModeFile))
+
+		data, err := JSON(fileName, "")
+		require.NoError(t, err)
+		assert.Equal(t, "Seaside Sunset", data.Title)
+		assert.Equal(t, "First line\nSecond line", data.Caption)
+	})
+	t.Run("TextKept", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "kept.json")
+		require.NoError(t, os.WriteFile(fileName, []byte(`[{
+  "SourceFile": "kept.jpg",
+  "ExifToolVersion": 12.76,
+  "FileName": "kept.jpg",
+  "MIMEType": "image/jpeg",
+  "Title": "شاطئ البحر",
+  "ImageDescription": "日本語の説明\nשורה שנייה 👩\u200D👩\u200D👧",
+  "Artist": "می\u200Cخواهم"
+}]`), fs.ModeFile))
+
+		data, err := JSON(fileName, "kept.jpg")
+		require.NoError(t, err)
+		assert.Equal(t, "شاطئ البحر", data.Title)
+		assert.Equal(t, "日本語の説明\nשורה שנייה 👩\u200D👩\u200D👧", data.Caption)
+		assert.Equal(t, "می\u200Cخواهم", data.Artist)
+	})
 }

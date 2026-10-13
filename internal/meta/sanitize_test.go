@@ -163,11 +163,11 @@ func TestSanitizeControlTable(t *testing.T) {
 		sanitize func(string) string
 		expected string
 	}{
-		{"SanitizeUnicode", SanitizeUnicode, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
-		{"SanitizeString", SanitizeString, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
-		{"SanitizeTitle", SanitizeTitle, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
-		{"SanitizeCaption", SanitizeCaption, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
-		{"SanitizeMeta", SanitizeMeta, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+		{"SanitizeUnicode", SanitizeUnicode, "Abcd\te\nfghi"},
+		{"SanitizeString", SanitizeString, "Abcd\te\nfghi"},
+		{"SanitizeTitle", SanitizeTitle, "Abcd\te\nfghi"},
+		{"SanitizeCaption", SanitizeCaption, "Abcd\te\nfghi"},
+		{"SanitizeMeta", SanitizeMeta, "Abcd\te\nfghi"},
 	}
 
 	for _, tt := range tests {
@@ -175,4 +175,11 @@ func TestSanitizeControlTable(t *testing.T) {
 			assert.Equal(t, tt.expected, tt.sanitize(sample))
 		})
 	}
+}
+
+func TestSanitizeMeta_ControlCharacters(t *testing.T) {
+	assert.Equal(t, "beach, sun", SanitizeMeta(`["beach\u0000", "sun"]`))
+	assert.Equal(t, "[beach\nsun", SanitizeMeta("[beach\x00\r\nsun"))
+	assert.Equal(t, `["beach", sun]`, SanitizeMeta("[\"beach\", sun\x01]"))
+	assert.Equal(t, "Strand, 日本", SanitizeMeta(`["Strand", "日本"]`))
 }

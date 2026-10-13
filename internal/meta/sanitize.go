@@ -64,13 +64,14 @@ var UnwantedStrings = map[string]bool{
 // LowerCaseRegexp matches lower-case tokens in generated filenames.
 var LowerCaseRegexp = regexp.MustCompile(`[a-z\d_\-]+`)
 
-// SanitizeUnicode returns the string as valid Unicode with whitespace trimmed.
+// SanitizeUnicode returns the string as valid Unicode with whitespace trimmed, and removes control
+// characters other than tabs and line breaks, which are normalized to "\n".
 func SanitizeUnicode(s string) string {
 	if s == "" {
 		return ""
 	}
 
-	return clean.Unicode(strings.TrimSpace(s))
+	return clean.Unicode(strings.TrimSpace(clean.Text(s)))
 }
 
 // SanitizeString removes unwanted character from an exif value string.
@@ -159,10 +160,10 @@ func SanitizeMeta(s string) string {
 		var words []string
 
 		if err := json.Unmarshal([]byte(s), &words); err != nil {
-			return s
+			return SanitizeUnicode(s)
 		}
 
-		s = strings.Join(words, ", ")
+		s = SanitizeUnicode(strings.Join(words, ", "))
 	} else {
 		s = SanitizeString(s)
 	}
