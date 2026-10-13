@@ -55,13 +55,16 @@ export function getHtmlElement() {
   return document.documentElement;
 }
 
-// Initializes the <html> element by removing the "class" attribute.
+// Initializes the <html> element by replacing its classes, keeping reduce-motion.
 export function initHtmlElement() {
   const htmlElement = document.documentElement;
 
   if (htmlElement && htmlElement.hasAttribute("class")) {
+    // Keep the reduce-motion class, which only the settings may change.
+    const reduceMotion = htmlElement.classList.contains("reduce-motion");
+
     if (debug) {
-      console.log(`html: removed class="${htmlElement.getAttribute("class")}"`);
+      console.log(`html: removed class="${htmlElement.getAttribute("class")}"${reduceMotion ? ', kept "reduce-motion"' : ""}`);
     }
 
     // Remove the class="loading" attribute from <html> when the application has loaded.
@@ -75,6 +78,10 @@ export function initHtmlElement() {
       if (debug) {
         console.log('html: added class="hide-scrollbar" to permanently hide the scrollbar');
       }
+    }
+
+    if (reduceMotion) {
+      htmlElement.classList.add("reduce-motion");
     }
   }
 }
