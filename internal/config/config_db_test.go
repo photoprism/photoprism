@@ -630,7 +630,7 @@ func TestConfig_PostgresSchemaUnsupported(t *testing.T) {
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = server.Close() })
 
-		name := "acceptance_config_schema_" + strings.ToLower(rnd.Base36(8))
+		name := "testdb_config_schema_" + strings.ToLower(rnd.Base36(8))
 		_, err = server.Exec(fmt.Sprintf("CREATE DATABASE %s", name)) //nolint:gosec // generated test database name
 		require.NoError(t, err)
 		t.Cleanup(func() { _, _ = server.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS %s WITH (FORCE)", name)) })

@@ -73,7 +73,7 @@ MARIADB ?= mariadb
 # Client and URIs for the optional PostgreSQL service ("docker compose --profile postgres up -d").
 PSQL ?= psql
 POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/postgres
-POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/acceptance?sslmode=disable&TimeZone=UTC
+POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/testdb?sslmode=disable&TimeZone=UTC
 
 # Records a video of each failed TestCafe test in "frontend/tests/acceptance/videos/" if TC_USE_VIDEO is set.
 ifneq ($(filter-out 0 false no off,$(value TC_USE_VIDEO)),)
@@ -211,9 +211,9 @@ test-photoprism: run-test-photoprism
 test-short:
 	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-short
 test-mariadb:
-	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-acceptance run-test-mariadb
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-mariadb-testdb run-test-mariadb
 test-postgres:
-	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-postgres-acceptance run-test-postgres
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-postgres-testdb run-test-postgres
 acceptance-run-chromium: acceptance-check-db storage/acceptance
 	+$(call acceptance-stage,acceptance-restart-1 wait-1 acceptance-api,acceptance-stop-1)
 	+$(call acceptance-stage,acceptance-auth-restart wait-2 acceptance-auth,acceptance-auth-stop)
@@ -802,25 +802,25 @@ vitest-component:
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	$(MARIADB) < scripts/sql/reset-photoprism.sql
-# Interim: the Go unit test databases still carry the acceptance_ prefix, so this drops
-# them alongside testdb until they are renamed (see PR #4831).
+# Drops the Go test databases (testdb_<pkg>_<hash>) and acceptance_<pkg>_<hash> databases left by older checkouts.
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
 	$(MARIADB) < scripts/sql/reset-testdb.sql
-	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE \`', schema_name, '\`;') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | $(MARIADB)
+	$(MARIADB) -N -B -r -e "SELECT CONCAT('DROP DATABASE \`', REPLACE(schema_name, '\`', '\`\`'), '\`;') FROM information_schema.schemata WHERE schema_name LIKE 'testdb\_%' OR schema_name LIKE 'acceptance\_%'" | $(MARIADB)
 reset-mariadb-local:
 	$(info Resetting local database...)
 	$(MARIADB) < scripts/sql/reset-local.sql
 reset-mariadb-acceptance:
-	$(info Resetting acceptance databases...)
-	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE \`', schema_name, '\`;') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | $(MARIADB)
+	$(info Resetting acceptance database...)
 	$(MARIADB) < scripts/sql/reset-acceptance.sql
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb
-reset-acceptance: reset-mariadb-acceptance
-reset-postgres-acceptance:
-	$(info Resetting PostgreSQL acceptance databases...)
-	@stmts="$$($(PSQL) "$(POSTGRES_ADMIN_URI)" -v ON_ERROR_STOP=1 -At -c "SELECT format('DROP DATABASE %I WITH (FORCE);', datname) FROM pg_database WHERE datname LIKE 'acceptance\_%'")" && \
+reset-acceptance: reset-mariadb-testdb
+reset-postgres-acceptance: reset-postgres-testdb
+# Drops the Go test databases (testdb_<pkg>_<hash>) and acceptance_<pkg>_<hash> databases left by older checkouts.
+reset-postgres-testdb:
+	$(info Resetting PostgreSQL test databases...)
+	@stmts="$$($(PSQL) "$(POSTGRES_ADMIN_URI)" -v ON_ERROR_STOP=1 -At -c "SELECT format('DROP DATABASE %I WITH (FORCE);', datname) FROM pg_database WHERE datname LIKE 'testdb\_%' OR datname LIKE 'acceptance\_%'")" && \
 	printf '%s\n' "$$stmts" | $(PSQL) "$(POSTGRES_ADMIN_URI)" -v ON_ERROR_STOP=1 -q
 reset-sqlite:
 	$(info Removing test database files...)
@@ -842,7 +842,7 @@ run-test-hub:
 	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS),debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
 	$(info Running Go tests on MariaDB with tags "$(GOTEST_TAGS)"...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-postgres:
 	$(info Running Go tests on PostgreSQL with tags "$(GOTEST_TAGS)"...)
 	PHOTOPRISM_TEST_DRIVER="postgres" PHOTOPRISM_TEST_DSN="$(POSTGRES_TEST_DSN)" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...

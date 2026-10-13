@@ -103,15 +103,15 @@ When a test needs to prove a write advanced a timestamp, prefer one of:
 Tests default to SQLite. To exercise the models against MariaDB (which is stricter and is the production database for some subsystems such as the cluster registry):
 
 ```bash
-mariadb < scripts/sql/reset-acceptance.sql
+mariadb < scripts/sql/reset-testdb.sql
 PHOTOPRISM_TEST_DRIVER="mysql" \
-PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" \
+PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" \
 go test ./internal/entity/... -count=1 -tags="slow,develop"
 ```
 
-`make test-mariadb` runs the whole backend suite this way. Each package gets a **database of its own**, named after its source directory (`acceptance_query_…`) and created on demand by `entity.TestDbDSN`, which mirrors the file-per-package isolation SQLite gets for free. Without it the packages would share one schema, and since every `TestMain` truncates the tables and re-seeds the fixtures, they would pull the database out from under each other as soon as `go test` runs them in parallel. `make reset-acceptance` drops these databases along with `acceptance` itself. The configured account needs `CREATE` privileges for this; without them the packages fall back to sharing `acceptance` (logged as a warning) and must not run in parallel. A test that needs a database of its own **within** a package must set `PHOTOPRISM_TEST_DRIVER` as well as `PHOTOPRISM_TEST_DSN`, as a SQLite path alone is parsed as a MySQL DSN and aborts the package.
+`make test-mariadb` runs the whole backend suite this way. Each package gets a **database of its own**, named after its source directory (`testdb_query_…`) and created on demand by `entity.TestDbDSN`, which mirrors the file-per-package isolation SQLite gets for free. Without it the packages would share one schema, and since every `TestMain` truncates the tables and re-seeds the fixtures, they would pull the database out from under each other as soon as `go test` runs them in parallel. `make reset-mariadb-testdb` drops these databases and recreates `testdb` itself. The configured account needs `CREATE` privileges for this; without them the packages fall back to sharing `testdb` (logged as a warning) and must not run in parallel. A test that needs a database of its own **within** a package must set `PHOTOPRISM_TEST_DRIVER` as well as `PHOTOPRISM_TEST_DSN`, as a SQLite path alone is parsed as a MySQL DSN and aborts the package.
 
-`make test-postgres` runs the suite against the PostgreSQL service of the development environment (`docker compose --profile postgres up -d`) in the same way, with `PHOTOPRISM_TEST_DRIVER="postgres"` and a `postgres://` connection URI whose user may create databases; `make reset-postgres-acceptance` drops the per-package databases.
+`make test-postgres` runs the suite against the PostgreSQL service of the development environment (`docker compose --profile postgres up -d`) in the same way, with `PHOTOPRISM_TEST_DRIVER="postgres"` and a `postgres://` connection URI whose user may create databases; `make reset-postgres-testdb` drops the per-package databases.
 
 MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that only ran on SQLite can fail here:
 

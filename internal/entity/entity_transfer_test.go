@@ -34,8 +34,8 @@ import (
 
 // Servers of the development environment that transfer tests use as targets, unless the environment names others.
 const (
-	transferTestMariaDbDSN  = "root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
-	transferTestPostgresDSN = "postgres://photoprism:photoprism@postgres:4002/acceptance?sslmode=disable&TimeZone=UTC" //nolint:gosec // development environment
+	transferTestMariaDbDSN  = "root:photoprism@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
+	transferTestPostgresDSN = "postgres://photoprism:photoprism@postgres:4002/testdb?sslmode=disable&TimeZone=UTC" //nolint:gosec // development environment
 )
 
 // transferTestServerDSN returns the DSN of the server that a transfer test may create a target database on: the test
@@ -77,7 +77,7 @@ func transferTestTarget(t *testing.T, driver string) *gorm.DB {
 		conf, err := mysql.ParseDSN(transferTestServerDSN(driver))
 		require.NoError(t, err)
 		skipUnlessReachable(t, conf.Addr, "mariadb")
-		name := testDbName("acceptance_transfer", testDbNameLen)
+		name := testDbName("testdb_transfer", testDbNameLen)
 		require.NoError(t, createTestDb(conf, name))
 		t.Cleanup(func() { dropTransferTestDb(t, driver, conf.FormatDSN(), name) })
 		conf.DBName = name
@@ -87,7 +87,7 @@ func transferTestTarget(t *testing.T, driver string) *gorm.DB {
 		u, err := url.Parse(serverDsn)
 		require.NoError(t, err)
 		skipUnlessReachable(t, u.Host, "postgres")
-		name := testDbName("acceptance_transfer", testPostgresDbNameLen)
+		name := testDbName("testdb_transfer", testPostgresDbNameLen)
 		dropTransferTestDb(t, driver, serverDsn, name)
 		require.NoError(t, createPostgresTestDb(serverDsn, name))
 		t.Cleanup(func() { dropTransferTestDb(t, driver, serverDsn, name) })

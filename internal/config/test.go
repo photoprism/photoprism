@@ -123,7 +123,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	//
 	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL (the port matches the dev
 	// MariaDB service, which defaults to 4001 unless MARIADB_PORT overrides it):
-	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
+	// - "root:photoprism@tcp(mariadb:4001)/testdb?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
 	testDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
 	testDsn := os.Getenv("PHOTOPRISM_TEST_DSN")

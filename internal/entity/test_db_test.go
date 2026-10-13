@@ -99,9 +99,9 @@ func TestTestDbDSN(t *testing.T) {
 
 func TestTestDbName(t *testing.T) {
 	t.Run("PackageSuffix", func(t *testing.T) {
-		name := testDbName("acceptance", testDbNameLen)
-		assert.True(t, strings.HasPrefix(name, "acceptance_entity_"), name)
-		assert.Equal(t, name, testDbName("acceptance", testDbNameLen))
+		name := testDbName("testdb", testDbNameLen)
+		assert.True(t, strings.HasPrefix(name, "testdb_entity_"), name)
+		assert.Equal(t, name, testDbName("testdb", testDbNameLen))
 	})
 	t.Run("MaxLen", func(t *testing.T) {
 		name := testDbName(strings.Repeat("x", 100), testDbNameLen)

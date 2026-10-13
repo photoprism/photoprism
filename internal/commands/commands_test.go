@@ -268,7 +268,7 @@ func commandTestProcess(t *testing.T) bool {
 		if parseErr != nil {
 			t.Fatal("invalid postgres test dsn")
 		}
-		prefix := "acceptance_cli_" + rnd.Base36(12)
+		prefix := "testdb_cli_" + rnd.Base36(12)
 		child := *server
 		child.Path, child.RawPath = "/"+prefix, ""
 		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DSN="+child.String())
@@ -278,7 +278,7 @@ func commandTestProcess(t *testing.T) bool {
 		require.NoError(t, parseErr)
 		server := child.Clone()
 		server.DBName = ""
-		prefix := "acceptance_cli_" + rnd.Base36(12)
+		prefix := "testdb_cli_" + rnd.Base36(12)
 		child.DBName = prefix
 		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DSN="+child.FormatDSN())
 		t.Cleanup(func() {

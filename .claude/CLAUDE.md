@@ -56,19 +56,20 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 
 **Run the Go tests against MariaDB:**
 - `make test-mariadb` runs the suite against MariaDB instead of SQLite. Each package gets its
-  own database, and the target resets them via `reset-acceptance` before it starts.
+  own database (`testdb_<pkg>_<hash>`), and the target resets them via `reset-mariadb-testdb` before it starts.
 - The editions are not covered by the root target and each need their own run:
   `make -C plus test-mariadb`, `make -C pro test-mariadb`, `make -C portal test-mariadb`.
 - For a targeted run, export the same `PHOTOPRISM_TEST_DRIVER` and `PHOTOPRISM_TEST_DSN` that
   `run-test-mariadb` sets in the `Makefile`, then call `go test` on the packages you want.
 - PostgreSQL (experimental) works the same way: `make test-postgres` and `make -C <edition> test-postgres`
-  run against the optional `postgres` compose service, and `make reset-postgres-acceptance` drops their databases.
+  run against the optional `postgres` compose service, and `make reset-postgres-testdb` drops their databases.
 
 **Reset test databases:**
 - `make reset-testdb` — the one to reach for: deletes the SQLite test database files, including
   the `-journal`, `-wal` and `-shm` sidecars, and drops the MariaDB databases the Go tests use.
-- `make reset-acceptance` — drops the MariaDB test databases only. `make test-mariadb` runs it
-  automatically; call it by hand after a targeted or interrupted MariaDB run.
+- `make reset-mariadb-testdb` — drops the MariaDB test databases only. `make test-mariadb` runs it
+  automatically; call it by hand after a targeted or interrupted MariaDB run. `reset-acceptance` and
+  `reset-postgres-acceptance` remain as aliases of the MariaDB and PostgreSQL test database resets.
 - `make reset-sqlite` — removes the SQLite test files only.
 
 **Subset targets:** `make test-pkg`, `make test-api`, `make test-entity`, `make test-commands`, `make test-photoprism`, `make test-ai`
