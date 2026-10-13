@@ -3,6 +3,7 @@ package tz
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -73,6 +74,8 @@ func NormalizeUtcOffset(s string) string {
 
 	if s == "" {
 		return ""
+	} else if offset := etcGmtOffset(s); offset != "" {
+		return offset
 	}
 
 	switch s {
@@ -100,17 +103,17 @@ func NormalizeUtcOffset(s string) string {
 		return "UTC+8"
 	case "Etc/GMT+09:00", "Etc/GMT+09", "GMT+9", "09:00", "+9", "+09", "+09:00", "UTC+9", "UTC+09:00":
 		return "UTC+9"
-	case "Etc/GMT+10:00", "Etc/GMT+10", "GMT+10", "10:00", "+10", "+10:00", "UTC+10", "UTC+10:00":
+	case "Etc/GMT+10:00", "GMT+10", "10:00", "+10", "+10:00", "UTC+10", "UTC+10:00":
 		return "UTC+10"
-	case "Etc/GMT+11:00", "Etc/GMT+11", "GMT+11", "11:00", "+11", "+11:00", "UTC+11", "UTC+11:00":
+	case "Etc/GMT+11:00", "GMT+11", "11:00", "+11", "+11:00", "UTC+11", "UTC+11:00":
 		return "UTC+11"
-	case "Etc/GMT+12:00", "Etc/GMT+12", "GMT+12", "12:00", "+12", "+12:00", "UTC+12", "UTC+12:00":
+	case "Etc/GMT+12:00", "GMT+12", "12:00", "+12", "+12:00", "UTC+12", "UTC+12:00":
 		return "UTC+12"
-	case "Etc/GMT-12:00", "Etc/GMT-12", "GMT-12", "-12", "-12:00", "UTC-12", "UTC-12:00":
+	case "Etc/GMT-12:00", "GMT-12", "-12", "-12:00", "UTC-12", "UTC-12:00":
 		return "UTC-12"
-	case "Etc/GMT-11:00", "Etc/GMT-11", "GMT-11", "-11", "-11:00", "UTC-11", "UTC-11:00":
+	case "Etc/GMT-11:00", "GMT-11", "-11", "-11:00", "UTC-11", "UTC-11:00":
 		return "UTC-11"
-	case "Etc/GMT-10:00", "Etc/GMT-10", "GMT-10", "-10", "-10:00", "UTC-10", "UTC-10:00":
+	case "Etc/GMT-10:00", "GMT-10", "-10", "-10:00", "UTC-10", "UTC-10:00":
 		return "UTC-10"
 	case "Etc/GMT-09:00", "Etc/GMT-09", "GMT-9", "-9", "-09", "-09:00", "UTC-9", "UTC-09:00":
 		return "UTC-9"
@@ -133,6 +136,26 @@ func NormalizeUtcOffset(s string) string {
 	}
 
 	return ""
+}
+
+// etcGmtOffset returns the UTC offset of an IANA Etc/GMT zone name such as Etc/GMT+10, or an empty string.
+// IANA inverts the sign of these names, so Etc/GMT+10 is ten hours behind UTC.
+func etcGmtOffset(s string) string {
+	n, ok := strings.CutPrefix(s, "Etc/GMT")
+
+	if !ok || len(n) < 2 || len(n) > 3 || (n[0] != '+' && n[0] != '-') || n[1] < '1' || n[1] > '9' {
+		return ""
+	}
+
+	h, err := strconv.Atoi(n[1:])
+
+	if err != nil || h > 12 {
+		return ""
+	} else if n[0] == '+' {
+		return fmt.Sprintf("UTC-%d", h)
+	}
+
+	return fmt.Sprintf("UTC+%d", h)
 }
 
 // UtcOffset returns the time difference as UTC offset string.
