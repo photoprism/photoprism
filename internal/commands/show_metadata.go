@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"sort"
 
@@ -52,7 +51,7 @@ func showMetadataAction(ctx *cli.Context) error {
 		if !ctx.Bool("short") {
 			resp.Docs = report.RowsToObjects(meta.Docs, []string{"Namespace", "Documentation"})
 		}
-		b, err := json.Marshal(resp)
+		b, err := report.MarshalJSON(resp)
 		if err != nil {
 			return err
 		}

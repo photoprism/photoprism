@@ -159,7 +159,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 					PortalURL string                  `json:"PortalUrl"`
 					Payload   cluster.RegisterRequest `json:"Payload"`
 				}{PortalURL: portalURL, Payload: payload}
-				jb, _ := json.Marshal(out)
+				jb, _ := report.MarshalJSON(out)
 				fmt.Println(string(jb))
 			} else {
 				fmt.Printf("Portal URL: %s\n", portalURL)
@@ -238,7 +238,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 
 		// Output
 		if ctx.Bool("json") {
-			jb, _ := json.Marshal(resp)
+			jb, _ := report.MarshalJSON(resp)
 			fmt.Println(string(jb))
 		} else {
 			// Human-readable: node row and credentials if present (UUID first as primary identifier)
@@ -283,7 +283,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 					fmt.Printf("\n%s\n", dbTable)
 				}
 				if resp.Database.DSN != "" {
-					fmt.Printf("DSN: %s\n", resp.Database.DSN)
+					fmt.Printf("DSN: %s\n", clean.Display(resp.Database.DSN))
 				}
 			}
 		}

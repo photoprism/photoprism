@@ -69,7 +69,7 @@ func showConfigOptionsAction(ctx *cli.Context) error {
 				break
 			}
 		}
-		b, _ := json.Marshal(map[string]interface{}{"sections": agg})
+		b, _ := report.MarshalJSON(map[string]interface{}{"sections": agg})
 		fmt.Println(string(b))
 		return nil
 	} */

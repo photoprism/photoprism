@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -60,7 +59,7 @@ func printStatusJSON(status []string, sections []config.StatusSection) error {
 		})
 	}
 
-	b, err := json.Marshal(map[string]any{"status": status, "sections": out})
+	b, err := report.MarshalJSON(map[string]any{"status": status, "sections": out})
 
 	if err != nil {
 		return err

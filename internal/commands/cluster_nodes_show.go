@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/urfave/cli/v2"
@@ -68,7 +67,7 @@ func clusterNodesShowAction(ctx *cli.Context) error {
 		), clean.Log(dto.UUID))
 
 		if ctx.Bool("json") {
-			b, _ := json.Marshal(dto)
+			b, _ := report.MarshalJSON(dto)
 			fmt.Println(string(b))
 			return nil
 		}

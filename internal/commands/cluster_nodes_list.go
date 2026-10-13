@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -82,7 +81,7 @@ func clusterNodesListAction(ctx *cli.Context) error {
 		), len(out))
 
 		if ctx.Bool("json") {
-			b, _ := json.Marshal(out)
+			b, _ := report.MarshalJSON(out)
 			fmt.Println(string(b))
 			return nil
 		}

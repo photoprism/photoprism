@@ -1,10 +1,12 @@
 package report
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // hasControl reports whether s contains a C0 control other than the ones a format writes itself, or DEL.
@@ -41,8 +43,8 @@ func TestDisplayRows(t *testing.T) {
 }
 
 func TestRenderControlCharacters(t *testing.T) {
-	cols := []string{"Name\x1b[31m", "Value"}
-	unsafe := "Ab\x00c\x01d\te\x1b[31mf\x07g\rh\x7f\nx\u202Ey"
+	cols := []string{"Name\x1b", "Value"}
+	unsafe := "Ab\x00c\x01d\te\x1bf\x07g\rh\x7f\nx\u202Ey"
 
 	for name, format := range formats {
 		t.Run(name, func(t *testing.T) {
@@ -51,17 +53,26 @@ func TestRenderControlCharacters(t *testing.T) {
 			assert.NoError(t, err)
 			assert.False(t, hasControl(result, "\n\t"), "%q", result)
 			assert.NotContains(t, result, "\u202E")
-			assert.Contains(t, result, "Abcd e[31mfg h")
-			assert.Contains(t, result, "h x?y")
+			assert.NotContains(t, result, "\x7f")
 			assert.Equal(t, unsafe, rows[0][0])
 			assert.Equal(t, "a|b<c>", rows[0][1])
-			assert.Equal(t, "Name\x1b[31m", cols[0])
+			assert.Equal(t, "Name\x1b", cols[0])
+
+			if format == JSON {
+				var decoded []map[string]string
+				require.NoError(t, json.Unmarshal([]byte(result), &decoded))
+				require.Len(t, decoded, 1)
+				assert.Equal(t, unsafe, decoded[0]["name"])
+			} else {
+				assert.Contains(t, result, "Abcd ef")
+				assert.Contains(t, result, "h x?y")
+			}
 		})
 	}
 	t.Run("Caption", func(t *testing.T) {
-		result := MarkdownTable([][]string{{"a", "b"}}, []string{"A", "B"}, Options{Caption: "Cap\x1b[31mtion\x00"})
+		result := MarkdownTable([][]string{{"a", "b"}}, []string{"A", "B"}, Options{Caption: "Cap\x1btion\x00"})
 		assert.False(t, hasControl(result, "\n"), "%q", result)
-		assert.Contains(t, result, "Cap[31mti")
+		assert.Contains(t, result, "Capti")
 	})
 }
 

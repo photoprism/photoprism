@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -52,7 +51,7 @@ func showConfigAction(ctx *cli.Context) error {
 			rows, cols := rep.Report(conf)
 			sections = append(sections, section{Title: rep.Title, Items: report.RowsToObjects(rows, cols)})
 		}
-		b, _ := json.Marshal(map[string]any{"sections": sections})
+		b, _ := report.MarshalJSON(map[string]any{"sections": sections})
 		fmt.Println(string(b))
 		return nil
 	}
