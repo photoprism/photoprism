@@ -50,6 +50,12 @@ INSTALL_USER ?= $(DESTUID):$(DESTGID)
 INSTALL_MODE ?= u+rwX,a+rX,go-w
 INSTALL_MODE_BIN ?= 755
 
+# Evaluates the defaults above once, since $(shell) passes the exported variables to its command and would
+# otherwise expand them again, with their own $(shell) calls, every time it runs. Values from the environment
+# or the command line are left as they are.
+$(foreach v,BUILD_VERSION SEMVER_MINOR SEMVER_PATCH BUILD_PATH BUILD_DATE REPORT_DATE BUILD_OS \
+	BUILD_ARCH JS_BUILD_PATH SEMVER_VERSION BUILD_TAG INSTALL_PATH DESTDIR INSTALL_USER,$(if $(filter file,$(origin $(v))),$(eval $(v) := $$($(v)))))
+
 UID := $(shell id -u)
 GID := $(shell id -g)
 HASRICHGO := $(shell which richgo)
