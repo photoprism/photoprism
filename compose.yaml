@@ -454,6 +454,26 @@ services:
     volumes:
       - "./.ldap.cfg:/app/config/config.cfg"
 
+  ## lldap (second LDAP implementation for tests, see docker/dummy/lldap/README.md)
+  dummy-lldap:
+    image: lldap/lldap:v0.6.3-alpine-rootless
+    stop_grace_period: 5s
+    entrypoint: ["tini", "--", "/bin/sh", "/seed/start.sh"]
+    environment:
+      LLDAP_JWT_SECRET: "dummy-lldap-jwt-secret-for-tests-only"
+      LLDAP_KEY_SEED: "dummy-lldap-key-seed-for-tests-only"
+      LLDAP_LDAP_USER_PASS: "photoprism"
+      LLDAP_LDAP_BASE_DN: "dc=localssl,dc=dev"
+    tmpfs:
+      - "/data:uid=1000,gid=1000"
+    volumes:
+      - "./docker/dummy/lldap:/seed:ro"
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/seeded"]
+      interval: 2s
+      timeout: 2s
+      retries: 60
+
   ## Keycloak (OIDC Identity Provider)
   ## Docs: https://www.keycloak.org/docs/latest/server_admin/
   ## Login with "user / photoprism" and "admin / photoprism".
