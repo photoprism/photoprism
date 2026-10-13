@@ -155,6 +155,8 @@ func TestErrorNotASingleEntry(t *testing.T) {
 		DownloadThumbnail: false,
 	})
 
+	skipIfRefused(t, ydlResultErr)
+
 	if ydlResultErr != ErrNotASingleEntry {
 		t.Fatalf("expected is single entry error, got %s", ydlResultErr)
 	}
@@ -174,11 +176,11 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 		t.Skip("skipped download test in short mode")
 	}
 
-	// Download file by specifying the playlist index
-	stderrBuf := &bytes.Buffer{}
+	// Load the playlist and the direct link of the same track first, since their format lists may differ.
+	playlistStderr := &bytes.Buffer{}
 	r, err := NewMetadata(context.Background(), playlistRawURL, Options{
 		StderrFn: func(cmd *exec.Cmd) io.Writer {
-			return stderrBuf
+			return playlistStderr
 		},
 	})
 
@@ -186,6 +188,7 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 		if errors.Is(err, ErrPlaylistEmpty) {
 			t.Skipf("playlist unavailable: %v", err)
 		}
+		skipIfRefused(t, err)
 		t.Fatal(err)
 	}
 
@@ -202,20 +205,54 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 
 	expectedTitleOne := "B1 Mattheis - Ben M"
 	playlistIndex := 2
+	entry := r.Info.Entries[playlistIndex]
 
-	if r.Info.Entries[playlistIndex].Title != expectedTitleOne {
-		t.Errorf("expected title %q got %q", expectedTitleOne, r.Info.Entries[playlistIndex].Title)
+	if entry.Title != expectedTitleOne {
+		t.Errorf("expected title %q got %q", expectedTitleOne, entry.Title)
 	}
-	if len(r.Info.Entries[playlistIndex].Formats) == 0 {
+	if len(entry.Formats) == 0 {
 		t.Fatalf("entry %d has no downloadable formats", playlistIndex)
 	}
 
-	dr, err := r.DownloadWithOptions(context.Background(), DownloadOptions{
-		PlaylistIndex: int(r.Info.Entries[playlistIndex].PlaylistIndex),
-		Filter:        r.Info.Entries[playlistIndex].Formats[0].FormatID,
+	dlUrl := "https://soundcloud.com/mattheis/b1-mattheis-ben-m"
+	directStderr := &bytes.Buffer{}
+	direct, err := NewMetadata(context.Background(), dlUrl, Options{
+		StderrFn: func(cmd *exec.Cmd) io.Writer {
+			return directStderr
+		},
 	})
 
 	if err != nil {
+		skipIfRefused(t, err)
+		t.Fatal(err)
+	}
+
+	if direct.Info.Title != expectedTitleOne {
+		t.Errorf("expected title %q got %q", expectedTitleOne, direct.Info.Title)
+	}
+
+	if len(direct.Info.Entries) != 0 {
+		t.Errorf("expected %d entries got %d", 0, len(direct.Info.Entries))
+	}
+
+	if len(direct.Info.Formats) == 0 {
+		t.Fatalf("direct link has no downloadable formats")
+	}
+
+	formatID := commonFormatID(entry.Formats, direct.Info.Formats)
+
+	if formatID == "" {
+		t.Skipf("playlist entry and direct link share no format: %v, %v", entry.Formats, direct.Info.Formats)
+	}
+
+	// Download the file by specifying the playlist index.
+	dr, err := r.DownloadWithOptions(context.Background(), DownloadOptions{
+		PlaylistIndex: int(entry.PlaylistIndex),
+		Filter:        formatID,
+	})
+
+	if err != nil {
+		skipIfRefused(t, err)
 		t.Fatal(err)
 	}
 
@@ -236,42 +273,15 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 		t.Errorf("should have copied at least 10000 bytes: %d", n)
 	}
 
-	if !strings.Contains(stderrBuf.String(), "Destination") {
-		t.Errorf("did not find expected log message on stderr: %q", stderrBuf.String())
+	if !strings.Contains(playlistStderr.String(), "Destination") {
+		t.Errorf("did not find expected log message on stderr: %q", playlistStderr.String())
 	}
 
-	// Download the same file but with the direct link
-	dlUrl := "https://soundcloud.com/mattheis/b1-mattheis-ben-m"
-
-	stderrBuf = &bytes.Buffer{}
-
-	r, err = NewMetadata(context.Background(), dlUrl, Options{
-		StderrFn: func(cmd *exec.Cmd) io.Writer {
-			return stderrBuf
-		},
-	})
+	// Download the same file in the same format with the direct link.
+	dr, err = direct.Download(context.Background(), formatID)
 
 	if err != nil {
-		t.Fatal(err)
-	}
-
-	if r.Info.Title != expectedTitleOne {
-		t.Errorf("expected title %q got %q", expectedTitleOne, r.Info.Title)
-	}
-
-	expectedEntries = 0
-
-	if len(r.Info.Entries) != expectedEntries {
-		t.Errorf("expected %d entries got %d", expectedEntries, len(r.Info.Entries))
-	}
-
-	if len(r.Info.Formats) == 0 {
-		t.Fatalf("direct link has no downloadable formats")
-	}
-
-	dr, err = r.Download(context.Background(), r.Info.Formats[0].FormatID)
-
-	if err != nil {
+		skipIfRefused(t, err)
 		t.Fatal(err)
 	}
 
@@ -292,8 +302,8 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 		t.Errorf("should have copied at least 10000 bytes: %d", n)
 	}
 
-	if !strings.Contains(stderrBuf.String(), "Destination") {
-		t.Errorf("did not find expected log message on stderr: %q", stderrBuf.String())
+	if !strings.Contains(directStderr.String(), "Destination") {
+		t.Errorf("did not find expected log message on stderr: %q", directStderr.String())
 	}
 
 	if directLinkBuf.Len() != playlistBuf.Len() {
@@ -303,6 +313,65 @@ func TestDownloadPlaylistEntry(t *testing.T) {
 	if !bytes.Equal(directLinkBuf.Bytes(), playlistBuf.Bytes()) {
 		t.Error("not the same content between the playlist index entry and the direct link entry")
 	}
+}
+
+// skipIfRefused skips the test if the download service refused the request, e.g. because it rate limits the host.
+func skipIfRefused(t *testing.T, err error) {
+	t.Helper()
+
+	if err != nil && (strings.Contains(err.Error(), "HTTP Error 403") || strings.Contains(err.Error(), "HTTP Error 429")) {
+		t.Skipf("service refused the request: %v", err)
+	}
+}
+
+func TestSkipIfRefused(t *testing.T) {
+	t.Run("Refused", func(t *testing.T) {
+		var skipped bool
+		t.Run("Inner", func(t *testing.T) {
+			defer func() { skipped = t.Skipped() }()
+			skipIfRefused(t, errors.New("Unable to download JSON metadata: HTTP Error 403: Forbidden"))
+		})
+		if !skipped {
+			t.Error("expected the test to be skipped")
+		}
+	})
+	t.Run("OtherError", func(t *testing.T) {
+		skipIfRefused(t, errors.New("Unable to download JSON metadata: HTTP Error 404: Not Found"))
+		skipIfRefused(t, nil)
+	})
+}
+
+// commonFormatID returns the ID of the first format in a that b also offers, or an empty string if there is none.
+func commonFormatID(a, b []Format) string {
+	for _, fa := range a {
+		for _, fb := range b {
+			if fa.FormatID != "" && fa.FormatID == fb.FormatID {
+				return fa.FormatID
+			}
+		}
+	}
+
+	return ""
+}
+
+func TestCommonFormatID(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		a := []Format{{FormatID: "hls_mp3_0_0"}, {FormatID: "hls_aac_96k"}, {FormatID: "hls_aac_160k"}}
+		b := []Format{{FormatID: "hls_aac_160k"}, {FormatID: "hls_aac_96k"}}
+		if id := commonFormatID(a, b); id != "hls_aac_96k" {
+			t.Errorf("expected %q got %q", "hls_aac_96k", id)
+		}
+	})
+	t.Run("NoCommonFormat", func(t *testing.T) {
+		if id := commonFormatID([]Format{{FormatID: "hls_mp3_0_0"}}, []Format{{FormatID: "hls_aac_96k"}}); id != "" {
+			t.Errorf("expected no format got %q", id)
+		}
+	})
+	t.Run("EmptyID", func(t *testing.T) {
+		if id := commonFormatID([]Format{{}}, []Format{{}}); id != "" {
+			t.Errorf("expected no format got %q", id)
+		}
+	})
 }
 
 func TestFormatDownloadError(t *testing.T) {
