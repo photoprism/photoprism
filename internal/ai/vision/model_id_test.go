@@ -56,6 +56,7 @@ func TestCleanModelId(t *testing.T) {
 		assert.Equal(t, maxId, cleanModelId(maxId))
 		assert.Equal(t, maxId, cleanModelId(maxId+"  "))
 		assert.Equal(t, maxId, cleanModelId(maxId+"ä"))
+		assert.Equal(t, maxId, cleanModelId(maxId+"\x00\x7f"))
 		assert.Empty(t, clipWarnings(hook))
 	})
 	t.Run("ClippedWarnsOnce", func(t *testing.T) {
@@ -215,4 +216,5 @@ func TestModelIdText(t *testing.T) {
 	assert.Equal(t, "gemma3:4b", modelIdText(" gemma3:4b "))
 	assert.Len(t, modelIdText(strings.Repeat("m", 70)), 70)
 	assert.Equal(t, "", modelIdText(""))
+	assert.Equal(t, "gemma3:4b q8", modelIdText("gemma3:4b\x00\tq8\n"))
 }

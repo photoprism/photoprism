@@ -51,6 +51,15 @@ func TestType(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Type(""))
 	})
+	t.Run("ControlChars", func(t *testing.T) {
+		assert.Equal(t, "ab c", Type("\x00a\x1fb\tc\x7f"))
+		assert.Equal(t, "", Type("\x00\x01"))
+		assert.Equal(t, "abcd", Type("a\u0085b\u2028c\u202ed"))
+	})
+	t.Run("FilterBeforeClip", func(t *testing.T) {
+		assert.Equal(t, "a", Type("a \x00"))
+		assert.Equal(t, "abc", Type(strings.Repeat("\x00", 64)+"abc"))
+	})
 }
 
 func TestTypeUnicode(t *testing.T) {
@@ -220,6 +229,12 @@ func TestShortType(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", ShortType(""))
+	})
+	t.Run("ControlChars", func(t *testing.T) {
+		assert.Equal(t, "ab c", ShortType("\x00a\x1fb\tc\x7f"))
+	})
+	t.Run("FilterBeforeClip", func(t *testing.T) {
+		assert.Equal(t, "image", ShortType(strings.Repeat("\x00", 8)+"image"))
 	})
 }
 

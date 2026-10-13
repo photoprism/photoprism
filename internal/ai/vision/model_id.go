@@ -17,7 +17,7 @@ var clippedModelIdWarned sync.Map
 func cleanModelId(s string) string {
 	id := clean.Type(s)
 
-	if id == "" || len(strings.TrimSpace(clean.ASCII(s))) <= clean.LengthType {
+	if id == "" || len(modelIdText(s)) <= clean.LengthType {
 		return id
 	}
 
@@ -30,5 +30,5 @@ func cleanModelId(s string) string {
 
 // modelIdText sanitizes a model identifier like cleanModelId, without shortening it.
 func modelIdText(s string) string {
-	return strings.TrimSpace(clean.ASCII(s))
+	return strings.TrimSpace(clean.StripControl(clean.ASCII(s)))
 }

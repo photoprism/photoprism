@@ -7,13 +7,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
-// Type omits invalid runes, ensures a maximum length of 64 characters, and returns the result.
+// Type replaces whitespace controls with a space, omits other control and non-ASCII characters,
+// and ensures a maximum length of 64 characters.
 func Type(s string) string {
 	if s == "" {
 		return s
 	}
 
-	return clip.Chars(ASCII(s), LengthType)
+	return clip.Chars(StripControl(ASCII(s)), LengthType)
 }
 
 // TypeUnicode removes unsafe runes, collapses whitespace, and enforces the
@@ -131,13 +132,14 @@ func TypeLowerDash(s string) string {
 	return TypeDash(TypeLower(s))
 }
 
-// ShortType omits invalid runes, ensures a maximum length of 8 characters, and returns the result.
+// ShortType replaces whitespace controls with a space, omits other control and non-ASCII characters,
+// and ensures a maximum length of 8 characters.
 func ShortType(s string) string {
 	if s == "" {
 		return s
 	}
 
-	return clip.Chars(ASCII(s), LengthShortType)
+	return clip.Chars(StripControl(ASCII(s)), LengthShortType)
 }
 
 // ShortTypeLower converts a short type string to lowercase, omits invalid runes, and shortens it if needed.
