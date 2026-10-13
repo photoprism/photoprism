@@ -313,6 +313,12 @@ func clusterRegisterAction(ctx *cli.Context) error {
 
 // HTTP helpers and backoff
 
+// registerErrorBodyMax and registerResponseMax bound how much of a register response is read.
+const (
+	registerErrorBodyMax = 4096
+	registerResponseMax  = 1 << 20
+)
+
 type httpError struct {
 	Status int
 	Body   string
@@ -349,11 +355,11 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 			}
 
 			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-				b, _ := io.ReadAll(resp.Body)
+				b, _ := io.ReadAll(io.LimitReader(resp.Body, registerErrorBodyMax))
 				return false, &httpError{Status: resp.StatusCode, Body: string(b)}
 			}
 
-			dec := json.NewDecoder(resp.Body)
+			dec := json.NewDecoder(io.LimitReader(resp.Body, registerResponseMax))
 			return false, dec.Decode(out)
 		}()
 

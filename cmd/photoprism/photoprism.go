@@ -34,6 +34,7 @@ import (
 	"github.com/photoprism/photoprism/internal/commands"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 var version = "development"
@@ -72,11 +73,12 @@ func main() {
 	app.Flags = config.Flags.Cli()
 	app.Commands = commands.PhotoPrism
 	app.Metadata = Metadata
+	app.ExitErrHandler = commands.HandleExitErr
 
-	// urfave/cli prints and exits with the code of any cli.Exit(...) error
-	// before returning here, so only plain errors reach this point.
+	// HandleExitErr prints and exits with the code of a cli.Exit(...) error before
+	// app.Run returns, so other errors, including wrapped ones, reach this point.
 	if err := app.Run(os.Args); err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		_, _ = fmt.Fprintln(os.Stderr, clean.DisplayLines(fmt.Sprint(err)))
 		os.Exit(commands.ExitCode(err)) //nolint:gocritic // the deferred recover only handles panics
 	}
 }

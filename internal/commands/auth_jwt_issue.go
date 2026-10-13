@@ -10,6 +10,7 @@ import (
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // AuthJWTIssueCommand issues portal-signed JWTs for cluster nodes.
@@ -115,7 +116,7 @@ func authJWTIssueAction(ctx *cli.Context) error {
 			audience = "(none)"
 		}
 
-		fmt.Printf("\nIssued JWT for node %s (%s)\n", node.Name, node.UUID)
+		fmt.Printf("\nIssued JWT for node %s (%s)\n", clean.Display(node.Name), node.UUID)
 		fmt.Printf("Scopes: %s\n", strings.Join(scopes, " "))
 		fmt.Printf("Expires: %s\n", expires)
 		fmt.Printf("Audience: %s\n", audience)

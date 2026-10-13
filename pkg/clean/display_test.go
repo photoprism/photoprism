@@ -52,3 +52,19 @@ func TestDisplay(t *testing.T) {
 		})
 	})
 }
+
+func TestDisplayLines(t *testing.T) {
+	t.Run("SingleLine", func(t *testing.T) {
+		assert.Equal(t, "", DisplayLines(""))
+		assert.Equal(t, "status 503: service unavailable", DisplayLines("status 503: service unavailable"))
+		assert.Equal(t, "a b?c", DisplayLines("a\tb\u200Bc"))
+	})
+	t.Run("KeepsLineBreaks", func(t *testing.T) {
+		assert.Equal(t, "first line\nsecond line", DisplayLines("first line\r\nsecond line"))
+		assert.Equal(t, "a\n\nb?\n", DisplayLines("a\n\nb\u2069\n"))
+		assert.Equal(t, "name: ab\nnext", DisplayLines("name: a\x07b\nnext"))
+	})
+	t.Run("KeepsText", func(t *testing.T) {
+		assert.Equal(t, "رحلة 2026\n日本語 👩\u200D👩\u200D👧", DisplayLines("رحلة 2026\n日本語 👩\u200D👩\u200D👧"))
+	})
+}

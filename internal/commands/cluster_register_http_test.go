@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -465,6 +466,43 @@ func TestClusterNodesRotate_SecretOnly_JSON(t *testing.T) {
 	assert.Equal(t, "pp-node-06", gjson.Get(out, "Node.Name").String())
 	assert.Equal(t, secret, gjson.Get(out, "Secrets.ClientSecret").String())
 	assert.Equal(t, "", gjson.Get(out, "Database.Password").String())
+}
+
+func TestPostWithBackoff(t *testing.T) {
+	t.Run("ErrorBodyLimit", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"error":"invalid node name"}` + strings.Repeat(" ", 2*registerErrorBodyMax)))
+		}))
+		defer ts.Close()
+
+		err := postWithBackoff(ts.URL, "", []byte("{}"), nil)
+
+		var httpErr *httpError
+		require.ErrorAs(t, err, &httpErr)
+		assert.Equal(t, http.StatusBadRequest, httpErr.Status)
+		assert.Len(t, httpErr.Body, registerErrorBodyMax)
+		assert.True(t, strings.HasPrefix(httpErr.Body, `{"error":"invalid node name"}`))
+	})
+	t.Run("ResponseLimit", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte(`{"name":"` + strings.Repeat("a", registerResponseMax) + `"}`))
+		}))
+		defer ts.Close()
+
+		var out map[string]string
+		assert.Error(t, postWithBackoff(ts.URL, "", []byte("{}"), &out))
+	})
+	t.Run("Success", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte(`{"name":"pp-node-01"}`))
+		}))
+		defer ts.Close()
+
+		var out map[string]string
+		require.NoError(t, postWithBackoff(ts.URL, "", []byte("{}"), &out))
+		assert.Equal(t, "pp-node-01", out["name"])
+	})
 }
 
 func TestClusterRegister_HTTPUnauthorized(t *testing.T) {

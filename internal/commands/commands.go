@@ -41,6 +41,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
@@ -245,6 +246,47 @@ func ExitCode(err error) int {
 	default:
 		return 1
 	}
+}
+
+// HandleExitErr prints the message of a cli.Exit error like cli.HandleExitCoder, with the message passed
+// through clean.DisplayLines, and exits with its code. A cli.MultiError is handled the same way.
+func HandleExitErr(_ *cli.Context, err error) {
+	switch e := err.(type) { //nolint:errorlint // matches cli.HandleExitCoder
+	case cli.ExitCoder:
+		if err.Error() != "" {
+			msg := err.Error()
+
+			if _, ok := e.(cli.ErrorFormatter); ok {
+				msg = fmt.Sprintf("%+v", err)
+			}
+
+			_, _ = fmt.Fprintln(cli.ErrWriter, clean.DisplayLines(msg))
+		}
+
+		cli.OsExiter(e.ExitCode())
+	case cli.MultiError:
+		cli.OsExiter(printMultiError(e))
+	}
+}
+
+// printMultiError prints the errors of a cli.MultiError like cli.HandleExitCoder and returns the exit code
+// of the last cli.ExitCoder, or 1.
+func printMultiError(multiErr cli.MultiError) int {
+	code := 1
+
+	for _, err := range multiErr.Errors() {
+		if nested, ok := err.(cli.MultiError); ok { //nolint:errorlint // matches cli.HandleExitCoder
+			code = printMultiError(nested)
+		} else if err != nil {
+			_, _ = fmt.Fprintln(cli.ErrWriter, clean.DisplayLines(err.Error()))
+
+			if exitErr, ok := err.(cli.ExitCoder); ok { //nolint:errorlint // matches cli.HandleExitCoder
+				code = exitErr.ExitCode()
+			}
+		}
+	}
+
+	return code
 }
 
 // ShowUsageError prints the command help and returns a usage error, e.g. for a missing argument.

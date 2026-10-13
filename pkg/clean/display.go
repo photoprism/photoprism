@@ -28,3 +28,19 @@ func Display(s string) string {
 		}
 	}, s)
 }
+
+// DisplayLines applies Display to each line of s, so that multi-line text such as an error message keeps its
+// line breaks.
+func DisplayLines(s string) string {
+	if !strings.Contains(s, "\n") {
+		return Display(s)
+	}
+
+	lines := strings.Split(s, "\n")
+
+	for i, line := range lines {
+		lines[i] = Display(strings.TrimSuffix(line, "\r"))
+	}
+
+	return strings.Join(lines, "\n")
+}
