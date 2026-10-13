@@ -145,6 +145,23 @@
     border-right-width: thin;
 }
 
+/* On compact viewports, show the information sidebar as a full-screen
+   overlay instead of reducing the media area by the desktop sidebar width. */
+@media (max-width: 600px) {
+    .p-lightbox__container > .p-lightbox__sidebar {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        z-index: 100001;
+    }
+
+    .is-ltr .p-lightbox__container > .p-lightbox__sidebar,
+    .is-rtl .p-lightbox__container > .p-lightbox__sidebar {
+        border-left: 0;
+        border-right: 0;
+    }
+}
+
 .p-lightbox__container > .p-lightbox__sidebar .v-toolbar {
     padding: 2px 0 2px 0;
 }
