@@ -395,7 +395,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file.FileSize = fileSize
 
 	// Set file original name if available.
-	if originalName != "" {
+	if originalName = clean.StripControl(originalName); originalName != "" {
 		file.OriginalName = originalName
 	}
 

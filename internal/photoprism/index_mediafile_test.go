@@ -513,3 +513,29 @@ func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
 	require.NoError(t, entity.Db().Where("photo_uid = ?", result.PhotoUID).First(&after).Error)
 	assert.Equal(t, 0, after.PhotoFaces, "photo face count must be recomputed after a delete-only faces run")
 }
+
+func TestIndex_MediaFile_OriginalNameControlCharacters(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	folder := "originalnamecontrol"
+	cfg := newInsta360StackConfig(t, folder, false)
+	fileName := filepath.Join(cfg.OriginalsPath(), folder, "20260925_135937_07784010.jpg")
+	writeTakenFile(t, cfg, fileName)
+
+	mediaFile, err := NewMediaFile(fileName)
+	require.NoError(t, err)
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	result := ind.UserMediaFile(mediaFile, NewIndexOptions(folder, false, true, true, false, true, cfg), "card/IMG\x1b_1234.jpg", "", entity.OwnerUnknown)
+	require.True(t, result.Success(), result.Err)
+
+	var file entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file, "file_uid = ?", result.FileUID).Error)
+	assert.Equal(t, "card/IMG_1234.jpg", file.OriginalName)
+
+	var photo entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&photo, "photo_uid = ?", result.PhotoUID).Error)
+	assert.Equal(t, "card/IMG_1234", photo.OriginalName)
+}
