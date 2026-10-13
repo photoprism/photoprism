@@ -27,7 +27,7 @@ require (
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v1.14.52
-	github.com/montanaflynn/stats v0.12.7
+	github.com/montanaflynn/stats v0.13.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
@@ -37,15 +37,15 @@ require (
 	github.com/tidwall/gjson v1.20.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
-	golang.org/x/crypto v0.57.0
-	golang.org/x/net v0.59.0
+	golang.org/x/crypto v0.58.0
+	golang.org/x/net v0.61.0
 	gonum.org/v1/gonum v0.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.46.0
+	golang.org/x/image v0.47.0
 )
 
 require github.com/olekukonko/tablewriter v1.1.5
@@ -63,20 +63,20 @@ require (
 require github.com/gabriel-vasile/mimetype v1.4.15
 
 require (
-	golang.org/x/sync v0.23.0
+	golang.org/x/sync v0.24.0
 	golang.org/x/time v0.16.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.14
+require github.com/go-ldap/ldap/v3 v3.4.15
 
 require (
-	github.com/prometheus/client_golang v1.24.1
-	github.com/prometheus/common v0.72.0
+	github.com/prometheus/client_golang v1.25.0
+	github.com/prometheus/common v0.72.1
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260929120758-6e3915f1a6a8
 
-require golang.org/x/text v0.42.0
+require golang.org/x/text v0.43.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
@@ -87,7 +87,7 @@ require (
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/jackc/pgx/v5 v5.11.0
-	github.com/klauspost/compress v1.20.1
+	github.com/klauspost/compress v1.20.3
 	github.com/pquerna/otp v1.5.0
 	github.com/prometheus/client_model v0.6.3
 	github.com/robfig/cron/v3 v3.0.1
@@ -97,9 +97,9 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.36.0
-	github.com/zitadel/oidc/v3 v3.51.13
-	golang.org/x/mod v0.41.0
-	golang.org/x/sys v0.48.0
+	github.com/zitadel/oidc/v3 v3.51.14
+	golang.org/x/mod v0.42.0
+	golang.org/x/sys v0.49.0
 	google.golang.org/protobuf v1.36.12
 	gorm.io/driver/postgres v1.6.3
 )
@@ -176,7 +176,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.46.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/oauth2 v0.37.0
-	golang.org/x/tools v0.49.0 // indirect
+	golang.org/x/tools v0.51.0 // indirect
 )
 
 require (
