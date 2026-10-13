@@ -43,6 +43,7 @@
 ## Frontend Test Gotchas
 
 - Hidden-route UI checks under `/library/hidden` or `/portal/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.
+- Clear the request log of the shared `Mock` in `tests/vitest/fixtures.js` with `Mock.resetHistory()`. `Mock.history.post` and the other verb properties are getters that return a filtered copy, so `Mock.history.post.length = 0` clears nothing and a request from an earlier test still counts.
 
 ## Playwright MCP Usage
 
