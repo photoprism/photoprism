@@ -214,23 +214,47 @@ ln -s "$tmp/created-by-link" "$dangling/config-sqlite/.testcafe-generated"
 expect "DanglingLink" 1 "" mariadb "$tmp/photoprism" "$dangling/config-sqlite"
 check "DanglingLinkNoTarget" test ! -e "$tmp/created-by-link" -a ! -e "$dangling/config-mariadb"
 
-# The restart rules run every command with the fixture's database, folders and port in the environment.
-if [[ -f "$root/Makefile" ]] && command -v make >/dev/null; then
-  rules=$(make -s -n -C "$root" acceptance-restart-1 acceptance-stop-1 DB=mariadb 2>/dev/null)
-  fixture=./storage/acceptance
-  check "MakefileRules" test "$(grep -cE 'photoprism|acceptance-(server|db)\.sh' <<< "$rules")" -eq 5
+# rules checks that the restart and stop rules in a Makefile run every command that starts the binary or the scripts
+# with the database, folders and port of the fixture in the environment, and whether it unsets the given variables.
+rules() {
+  local name=$1 dir=$2 fixture=$3 bin=$4 unset=$5 out v
+  out=$(make -s -n -C "$dir" acceptance-restart-1 acceptance-stop-1 acceptance-auth-restart acceptance-auth-stop \
+    DB=mariadb 2>/dev/null)
+  check "$name Rules" test "$(grep -cE "${bin//./\\.}|acceptance-(server|db)\\.sh" <<< "$out")" -eq 10
 
-  for v in DATABASE_SERVER DATABASE_NAME DATABASE_USER DATABASE_PASSWORD SIDECAR_PATH CACHE_PATH USERS_PATH TEMP_PATH \
-    BACKUP_PATH PID_FILENAME LOG_FILENAME DEFAULTS_YAML PORTAL_URL JOIN_TOKEN NODE_CLIENT_ID NODE_CLIENT_SECRET; do
-    check "MakefileUnset ($v)" test "$(grep -cF -- " -u PHOTOPRISM_$v " <<< "$rules")" -eq 5
+  for v in $unset; do
+    check "$name Unset ($v)" test "$(grep -cF -- " -u PHOTOPRISM_$v " <<< "$out")" -eq 10
   done
 
   for v in DATABASE_DRIVER=sqlite "DATABASE_DSN=\"$fixture/index.db\"" "STORAGE_PATH=\"$fixture\"" \
     "ORIGINALS_PATH=\"$fixture/originals\"" "IMPORT_PATH=\"$fixture/import\"" HTTP_PORT=2343; do
-    check "MakefileSet ($v)" test "$(grep -cF -- " PHOTOPRISM_$v " <<< "$rules")" -eq 5
+    check "$name Set ($v)" test "$(grep -cF -- " PHOTOPRISM_$v " <<< "$out")" -eq 10
   done
 
-  check "MakefileStart" grep -qE '^env .* \./photoprism --auth-mode="public" -c "\./storage/acceptance/config-mariadb" start -d$' <<< "$rules"
+  check "$name Start" test "$(grep -cF -- " $bin --" <<< "$out")" -ge 4
+  check "$name StartConfig" test "$(grep -cF -- "-c \"$fixture/config-mariadb\" start -d" <<< "$out")" -eq 2
+}
+
+common="DATABASE_SERVER DATABASE_NAME DATABASE_USER DATABASE_PASSWORD SIDECAR_PATH CACHE_PATH USERS_PATH TEMP_PATH"
+common+=" BACKUP_PATH PID_FILENAME LOG_FILENAME DEFAULTS_YAML PORTAL_URL JOIN_TOKEN NODE_CLIENT_ID NODE_CLIENT_SECRET"
+
+# hubfirst checks that a restart rule restores the hub registration before it runs the binary or the scripts.
+hubfirst() {
+  local name=$1 dir=$2 target=$3 bin=$4 out hub run
+  out=$(make -s -n -C "$dir" "$target" DB=postgres 2>/dev/null)
+  hub=$(grep -n -m 1 '^hub=' <<< "$out" | cut -d: -f1)
+  run=$(grep -nE -m 1 "$bin|acceptance-(server|db)\\.sh" <<< "$out" | cut -d: -f1)
+  check "$name HubFirst ($target)" test -n "$hub" -a -n "$run" -a "${hub:-0}" -lt "${run:-0}"
+}
+
+if command -v make >/dev/null; then
+  [[ ! -f "$root/Makefile" ]] || rules Makefile "$root" ./storage/acceptance ./photoprism "$common CONNECT"
+  if [[ -f "$root/plus/Makefile" ]]; then
+    rules PlusMakefile "$root/plus" ./plus/storage/acceptance-plus ./photoprism-plus "$common"
+    check "PlusMakefile KeepsConnect" lacks "-u PHOTOPRISM_CONNECT" "$root/plus/Makefile"
+    hubfirst PlusMakefile "$root/plus" acceptance-restart-1 ./photoprism-plus
+    hubfirst PlusMakefile "$root/plus" acceptance-auth-restart ./photoprism-plus
+  fi
 fi
 
 exit "$failed"

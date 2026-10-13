@@ -86,9 +86,9 @@ acceptance-env = env -u PHOTOPRISM_DATABASE_SERVER -u PHOTOPRISM_DATABASE_NAME -
 	-u PHOTOPRISM_DATABASE_PASSWORD -u PHOTOPRISM_SIDECAR_PATH -u PHOTOPRISM_CACHE_PATH -u PHOTOPRISM_USERS_PATH \
 	-u PHOTOPRISM_TEMP_PATH -u PHOTOPRISM_BACKUP_PATH -u PHOTOPRISM_PID_FILENAME -u PHOTOPRISM_LOG_FILENAME \
 	-u PHOTOPRISM_DEFAULTS_YAML -u PHOTOPRISM_PORTAL_URL -u PHOTOPRISM_JOIN_TOKEN -u PHOTOPRISM_NODE_CLIENT_ID \
-	-u PHOTOPRISM_NODE_CLIENT_SECRET PHOTOPRISM_DATABASE_DRIVER=sqlite PHOTOPRISM_DATABASE_DSN="$(1)/index.db" \
-	PHOTOPRISM_STORAGE_PATH="$(1)" PHOTOPRISM_ORIGINALS_PATH="$(1)/originals" PHOTOPRISM_IMPORT_PATH="$(1)/import" \
-	PHOTOPRISM_HTTP_PORT=2343
+	-u PHOTOPRISM_NODE_CLIENT_SECRET -u PHOTOPRISM_CONNECT PHOTOPRISM_DATABASE_DRIVER=sqlite \
+	PHOTOPRISM_DATABASE_DSN="$(1)/index.db" PHOTOPRISM_STORAGE_PATH="$(1)" PHOTOPRISM_ORIGINALS_PATH="$(1)/originals" \
+	PHOTOPRISM_IMPORT_PATH="$(1)/import" PHOTOPRISM_HTTP_PORT=2343
 # acceptance-stage runs the given TestCafe targets in order, then the stop target, also if one of them fails,
 # and exits with the first failure.
 acceptance-stage = $(MAKE) -j1 -S $(1); status=$$?; $(MAKE) -j1 $(2) || [ $$status -ne 0 ] || status=1; exit $$status
@@ -162,6 +162,7 @@ Test:
   test-postgres            Run the default Go suite against PostgreSQL (experimental)
   reset-testdb             Reset the SQLite and MariaDB test databases
   acceptance-run-chromium  Run the TestCafe acceptance tests in Chrome
+                           Add DB=mariadb or DB=postgres to run them on that database
                            Add TC_USE_VIDEO=1 to record videos of failed tests
   Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai
 
