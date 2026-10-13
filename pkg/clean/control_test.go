@@ -25,3 +25,58 @@ func TestStripControl(t *testing.T) {
 		assert.Equal(t, "a\xffb", StripControl("a\xff\x00b"))
 	})
 }
+
+// controlSample holds NUL, other C0 controls, whitespace controls, ESC, DEL and an invalid byte.
+const controlSample = "Ab\x00c\x01d\te\nf\x1bg\x7fh\xffi"
+
+func TestSanitizersControlTable(t *testing.T) {
+	tests := []struct {
+		name     string
+		sanitize func(string) string
+		expected string
+	}{
+		{"Name", Name, "Abcdefgh�i"},
+		{"NameCapitalized", NameCapitalized, "Abcdefgh�i"},
+		{"DlName", DlName, "Abcdefgh�i"},
+		{"Type", Type, "Abcd e fghi"},
+		{"TypeLower", TypeLower, "abcd e fghi"},
+		{"ShortType", ShortType, "Abcd e f"},
+		{"TypeUnicode", TypeUnicode, "Abcd e fg\x7fh�i"},
+		{"Path", Path, "Abcdefgh�i"},
+		{"UserPath", UserPath, "Abcdefgh�i"},
+		{"FileName", FileName, "Abcdefgh�i"},
+		{"Handle", Handle, "abcdefgh�i"},
+		{"Username", Username, "abcdefgh�i"},
+		{"Email", Email, ""},
+		{"Role", Role, "abcdefgh�i"},
+		{"Attr", Attr, "Abcd e fghi"},
+		{"Auth", Auth, "Abcdefgh�i"},
+		{"Passcode", Passcode, "abcdefghi"},
+		{"Codec", Codec, "Abcdefghi"},
+		{"ContentType", ContentType, "Abcd e fghi"},
+		{"Header", Header, "Abcdefghi"},
+		{"ID", func(s string) string { return string(ID(s)) }, "Abcdefghi"},
+		{"UID", UID, "abcdefghi"},
+		{"Token", Token, "Abcdefghi"},
+		{"ShareToken", ShareToken, "Abcdefghi"},
+		{"Scope", Scope, "abcd e fghi"},
+		{"Log", Log, "Abcdefgh�i"},
+		{"DNSLabel", DNSLabel, "abc-d-e-f-g-h-i"},
+		{"FieldName", FieldName, "Abcdefghi"},
+		{"State", func(s string) string { return State(s, "de") }, "Abcdefgh�i"},
+		{"StripControl", StripControl, "Abcd e fgh\xffi"},
+		{"Unicode", Unicode, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+		{"ASCII", ASCII, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+		{"SlashPath", SlashPath, controlSample},
+		{"SearchString", SearchString, controlSample},
+		{"SearchQuery", SearchQuery, controlSample},
+		{"SearchTerms", SearchTerms, controlSample},
+		{"JSON", JSON, controlSample},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, tt.sanitize(controlSample))
+		})
+	}
+}

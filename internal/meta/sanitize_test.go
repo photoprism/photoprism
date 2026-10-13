@@ -154,3 +154,25 @@ func TestSanitizeUID(t *testing.T) {
 	})
 
 }
+
+func TestSanitizeControlTable(t *testing.T) {
+	const sample = "Ab\x00c\x01d\te\nf\x1bg\x7fh\xffi"
+
+	tests := []struct {
+		name     string
+		sanitize func(string) string
+		expected string
+	}{
+		{"SanitizeUnicode", SanitizeUnicode, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+		{"SanitizeString", SanitizeString, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+		{"SanitizeTitle", SanitizeTitle, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+		{"SanitizeCaption", SanitizeCaption, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+		{"SanitizeMeta", SanitizeMeta, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, tt.sanitize(sample))
+		})
+	}
+}
