@@ -68,9 +68,9 @@ func TestSanitizersControlTable(t *testing.T) {
 		{"Unicode", Unicode, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
 		{"ASCII", ASCII, "Ab\x00c\x01d\te\nf\x1bg\x7fhi"},
 		{"SlashPath", SlashPath, controlSample},
-		{"SearchString", SearchString, controlSample},
-		{"SearchQuery", SearchQuery, controlSample},
-		{"SearchTerms", SearchTerms, controlSample},
+		{"SearchString", SearchString, "Abc\x01d\te\nf\x1bg\x7fhi"},
+		{"SearchQuery", SearchQuery, "Abc\x01d\te\nf\x1bg\x7fhi"},
+		{"SearchTerms", SearchTerms, "Abc\x01d\te\nf\x1bg\x7fhi"},
 		{"JSON", JSON, controlSample},
 	}
 

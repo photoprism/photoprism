@@ -98,3 +98,29 @@ func TestSearchTerms(t *testing.T) {
 		assert.Equal(t, "", SearchTerms(""))
 	})
 }
+
+func TestSearchBindable(t *testing.T) {
+	t.Run("Unchanged", func(t *testing.T) {
+		for _, s := range []string{"", "cat", "Grüße 日本 👩\u200D👩\u200D👧", "a\tb\x01c"} {
+			assert.Equal(t, s, SearchBindable(s))
+		}
+		assert.Zero(t, testing.AllocsPerRun(10, func() { _ = SearchBindable("cat dog") }))
+	})
+	t.Run("Removed", func(t *testing.T) {
+		assert.Equal(t, "", SearchBindable("\x00"))
+		assert.Equal(t, "catdog", SearchBindable("cat\x00dog"))
+		assert.Equal(t, "catdog", SearchBindable("cat\xffdog"))
+		assert.Equal(t, "ab", SearchBindable("a\x00\xc3b"))
+	})
+}
+
+func TestSearchNul(t *testing.T) {
+	for name, fn := range map[string]func(string) string{"SearchString": SearchString, "SearchQuery": SearchQuery, "SearchTerms": SearchTerms} {
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, "", fn("\x00"))
+			assert.Equal(t, "catdog", fn("cat\x00dog"))
+			assert.Equal(t, "catdog", fn("cat\xffdog"))
+			assert.Equal(t, "cat dog", fn("cat dog"))
+		})
+	}
+}

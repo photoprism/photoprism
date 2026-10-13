@@ -155,3 +155,28 @@ func TestSessions_Literal(t *testing.T) {
 		assert.Equal(t, base+"_a", result[0].UserName)
 	}
 }
+
+func TestSessions_Bindable(t *testing.T) {
+	base := "zzb" + rnd.Base36(5)
+
+	s := entity.NewSession(3600, 0)
+	s.UserName = base + "name"
+	require.NoError(t, s.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(s).Error })
+
+	result, err := Sessions(form.SearchSessions{Query: base + "\x00na\xffme", Count: 100})
+	require.NoError(t, err)
+
+	if assert.Len(t, result, 1) {
+		assert.Equal(t, base+"name", result[0].UserName)
+	}
+
+	uid := entity.UserFixtures.Get("alice").UserUID
+	expected, err := Sessions(form.SearchSessions{UID: uid, Count: 100})
+	require.NoError(t, err)
+	require.NotEmpty(t, expected)
+
+	result, err = Sessions(form.SearchSessions{UID: uid[:4] + "\x00" + uid[4:] + "\xff", Count: 100})
+	require.NoError(t, err)
+	assert.Len(t, result, len(expected))
+}

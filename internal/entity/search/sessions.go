@@ -15,8 +15,8 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 	result = entity.Sessions{}
 	stmt := Db()
 
-	userUid := strings.TrimSpace(frm.UID)
-	search := strings.TrimSpace(frm.Query)
+	userUid := strings.TrimSpace(clean.SearchBindable(frm.UID))
+	search := strings.TrimSpace(clean.SearchBindable(frm.Query))
 
 	order := frm.Order
 	limit := frm.Count
