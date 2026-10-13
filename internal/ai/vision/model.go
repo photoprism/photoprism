@@ -107,14 +107,14 @@ func (m *Model) GetModel() (model, name, version string) {
 	switch {
 	case serviceModel != "":
 		name = serviceModel
-	case strings.TrimSpace(m.Model) != "":
-		name = modelIdText(m.Model)
+	case hasModelId(m.Model):
+		name = m.Model
 	default:
-		name = modelIdText(m.Name)
+		name = m.Name
 	}
 
 	// Return if no model is configured.
-	if name == "" {
+	if !hasModelId(name) {
 		return "", "", ""
 	}
 
@@ -128,9 +128,9 @@ func (m *Model) GetModel() (model, name, version string) {
 
 	// Split "name:version" strings so callers can access versioned models
 	// without repeating parsing logic at each call site.
-	if parts := strings.SplitN(name, ":", 2); len(parts) == 2 && parts[0] != "" && parts[1] != "" {
-		name = parts[0]
-		version = cleanModelId(parts[1])
+	if before, after, found := strings.Cut(name, ":"); found && hasModelId(before) && hasModelId(after) {
+		name = before
+		version = cleanModelId(after)
 	}
 
 	// Default to "latest" when no version was set.
@@ -704,7 +704,7 @@ func (m *Model) ApplyEngineDefaults() {
 	}
 
 	if info, ok := EngineInfoFor(engine); ok {
-		if strings.TrimSpace(m.Model) == "" && strings.TrimSpace(m.Name) == "" {
+		if !hasModelId(m.Model) && !hasModelId(m.Name) {
 			m.Model = info.DefaultModel
 		}
 

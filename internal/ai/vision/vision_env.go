@@ -111,8 +111,12 @@ func envModel(name string) string {
 	return cleanModelId(strings.TrimSpace(os.Getenv(name)))
 }
 
-// envModelTagged returns the model identifier set in the environment variable without shortening it, so
-// Model.GetModel can keep its tag, or an empty string.
+// envModelTagged returns the model identifier set in the environment variable as written, so Model.GetModel
+// can keep its tag when it sanitizes it, or an empty string.
 func envModelTagged(name string) string {
-	return modelIdText(os.Getenv(name))
+	if s := os.Getenv(name); hasModelId(s) {
+		return strings.TrimSpace(s)
+	}
+
+	return ""
 }

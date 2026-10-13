@@ -3,8 +3,6 @@ package clean
 import (
 	"strings"
 	"unicode"
-
-	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // Type replaces whitespace controls with a space, omits other control and non-ASCII characters,
@@ -14,7 +12,53 @@ func Type(s string) string {
 		return s
 	}
 
-	return clip.Chars(StripControl(ASCII(s)), LengthType)
+	result, _, _ := typeString(s, LengthType)
+
+	return result
+}
+
+// typeString keeps printable ASCII, replaces whitespace controls with a space, drops other bytes, and limits
+// the trimmed result to maxLen bytes. It reports whether a character inside the trimmed input was removed or
+// replaced, and whether the result was shortened.
+func typeString(s string, maxLen int) (result string, changed, clipped bool) {
+	s = strings.TrimSpace(s)
+
+	var dst []byte
+
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+
+		if b >= 0x20 && b < 0x7F {
+			if dst != nil {
+				dst = append(dst, b)
+			}
+
+			continue
+		}
+
+		if dst == nil {
+			dst = make([]byte, i, len(s))
+			copy(dst, s[:i])
+		}
+
+		switch b {
+		case '\t', '\n', '\v', '\f', '\r':
+			dst = append(dst, ' ')
+		}
+
+		changed = true
+	}
+
+	if dst != nil {
+		s = strings.TrimSpace(string(dst))
+	}
+
+	if len(s) > maxLen {
+		s = strings.TrimSpace(s[:maxLen])
+		clipped = true
+	}
+
+	return s, changed, clipped
 }
 
 // TypeUnicode removes unsafe runes, collapses whitespace, and enforces the
@@ -139,7 +183,9 @@ func ShortType(s string) string {
 		return s
 	}
 
-	return clip.Chars(StripControl(ASCII(s)), LengthShortType)
+	result, _, _ := typeString(s, LengthShortType)
+
+	return result
 }
 
 // ShortTypeLower converts a short type string to lowercase, omits invalid runes, and shortens it if needed.
