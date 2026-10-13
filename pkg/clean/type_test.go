@@ -103,6 +103,19 @@ func TestTypeString(t *testing.T) {
 }
 
 func TestTypeUnicode(t *testing.T) {
+	t.Run("UnsafeRunes", func(t *testing.T) {
+		assert.Equal(t, "ab", TypeUnicode("a\x7fb"))
+		assert.Equal(t, "ab", TypeUnicode("a\u009bb"))
+		assert.Equal(t, "ab", TypeUnicode("a\u202Eb"))
+		assert.Equal(t, "ab", TypeUnicode("a\u200Bb"))
+		assert.Equal(t, "ab", TypeUnicode("a\uFEFFb"))
+		assert.Equal(t, "a b", TypeUnicode("a\u2028b"))
+	})
+	t.Run("JoinersKept", func(t *testing.T) {
+		assert.Equal(t, "👩\u200D👩\u200D👧", TypeUnicode("👩\u200D👩\u200D👧"))
+		assert.Equal(t, "می\u200Cخواهم", TypeUnicode("می\u200Cخواهم"))
+		assert.Equal(t, "Büro 東京 Node", TypeUnicode("Büro 東京 Node"))
+	})
 	tests := []struct {
 		name       string
 		input      string
