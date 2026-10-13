@@ -3,6 +3,7 @@ package entity
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
@@ -43,9 +44,10 @@ func ClipPath(p string) string {
 	return clip.Bytes(p, PathBytes)
 }
 
-// ClipType normalizes identifier-like strings by stripping non-ASCII runes and clipping to 32 characters.
+// ClipType normalizes identifier-like strings by stripping non-ASCII runes and control characters,
+// and clipping to 32 characters.
 func ClipType(s string) string {
-	return Clip(ToASCII(s), TypeBytes)
+	return Clip(clean.StripControl(ToASCII(s)), TypeBytes)
 }
 
 // ClipTypeLower lowercases the string before applying ClipType.

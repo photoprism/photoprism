@@ -883,12 +883,37 @@ func (m *Photo) NormalizeValues() (normalized bool) {
 		normalized = true
 	}
 
+	if m.normalizeText() {
+		normalized = true
+	}
+
 	if timeZone := tz.Name(m.TimeZone); timeZone != m.TimeZone {
 		m.TimeZone = timeZone
 		normalized = true
 	}
 
 	return normalized
+}
+
+// normalizeText removes control characters from the values that forms and backup files set,
+// keeping line breaks in the caption and description, and reports whether a value changed.
+// File and folder names are kept as they are on disk.
+func (m *Photo) normalizeText() (changed bool) {
+	for _, s := range []*string{&m.PhotoCaption, &m.PhotoDescription} {
+		if v := clean.Text(*s); v != *s {
+			*s, changed = v, true
+		}
+	}
+
+	for _, s := range []*string{&m.UUID, &m.TakenSrc, &m.PhotoType, &m.TypeSrc, &m.PhotoTitle, &m.TitleSrc,
+		&m.CaptionSrc, &m.DescriptionSrc, &m.OriginalName, &m.TimeZone, &m.PlaceID, &m.PlaceSrc, &m.CellID,
+		&m.PhotoCountry, &m.PhotoExposure, &m.CameraSerial, &m.CameraSrc, &m.CreatedBy} {
+		if v := clean.StripControl(*s); v != *s {
+			*s, changed = v, true
+		}
+	}
+
+	return changed
 }
 
 // NoCameraSerial reports whether the photo has no camera serial assigned.
@@ -1141,7 +1166,7 @@ func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure,
 	}
 
 	// Set exposure time.
-	if exposure != "" && (hasPriority || m.PhotoExposure == "") {
+	if exposure = clean.StripControl(exposure); exposure != "" && (hasPriority || m.PhotoExposure == "") {
 		m.PhotoExposure = exposure
 	}
 }
@@ -1436,7 +1461,7 @@ func (m *Photo) MapKey() string {
 // SetCameraSerial updates the camera serial number.
 func (m *Photo) SetCameraSerial(s string) {
 	// camera_serial is VARBINARY(160), so clip by bytes on a rune boundary.
-	if s = clip.Bytes(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
+	if s = clip.Bytes(clean.StripControl(s), txt.ClipDefault); m.NoCameraSerial() && s != "" {
 		m.CameraSerial = s
 	}
 }
@@ -1447,7 +1472,7 @@ func (m *Photo) SetCameraSerial(s string) {
 // keeps a long "adobe:docid:photoshop:..." value from overflowing the column. Empty is
 // ignored so it never clears an existing UUID.
 func (m *Photo) SetDocumentID(id string) {
-	if id = clip.Bytes(id, UUIDBytes); id != "" {
+	if id = clip.Bytes(clean.StripControl(id), UUIDBytes); id != "" {
 		m.UUID = id
 	}
 }

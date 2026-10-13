@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"flag"
 	"path"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -3803,5 +3805,86 @@ func TestUser_SaveRelated(t *testing.T) {
 		m.SaveRelated()
 		assert.Equal(t, settings, countUserSettings(t, ""))
 		assert.Equal(t, details, countUserDetails(t, ""))
+	})
+}
+
+// failUserDetailsWrites makes every write to the user details table fail until the test ends.
+func failUserDetailsWrites(t *testing.T) {
+	t.Helper()
+
+	name := "test:fail_" + strings.ReplaceAll(t.Name(), "/", "_")
+	fail := func(db *gorm.DB) {
+		if db.Statement.Table == (UserDetails{}).TableName() {
+			_ = db.AddError(errors.New("details write failed"))
+		}
+	}
+
+	require.NoError(t, Db().Callback().Create().Before("gorm:create").Register(name, fail))
+	require.NoError(t, Db().Callback().Update().Before("gorm:update").Register(name, fail))
+	t.Cleanup(func() {
+		_ = Db().Callback().Create().Remove(name)
+		_ = Db().Callback().Update().Remove(name)
+	})
+}
+
+func TestUser_SaveForm_RelatedError(t *testing.T) {
+	m := FirstOrCreateUser(&User{
+		UserName:    "saveformrelated",
+		DisplayName: "Save Form Related",
+		UserRole:    acl.RoleGuest.String(),
+	})
+	require.NotNil(t, m)
+	t.Cleanup(func() { deleteTestUser(t, m) })
+
+	t.Run("Success", func(t *testing.T) {
+		frm, err := m.Form()
+		require.NoError(t, err)
+		frm.UserDetails.UserLocation = "Berlin"
+		require.NoError(t, m.SaveForm(frm, UserFixtures.Pointer("alice"), true, false))
+		assert.Equal(t, "Berlin", FindUserByUID(m.UserUID).Details().UserLocation)
+	})
+	t.Run("DetailsFailed", func(t *testing.T) {
+		failUserDetailsWrites(t)
+
+		frm, err := m.Form()
+		require.NoError(t, err)
+		frm.UserDetails.UserLocation = "Hamburg"
+		frm.UserRole = acl.RoleAdmin.String()
+		frm.CanLogin = !m.CanLogin
+		assert.Error(t, m.SaveForm(frm, UserFixtures.Pointer("alice"), true, false))
+
+		stored := FindUserByUID(m.UserUID)
+		require.NotNil(t, stored)
+		assert.Equal(t, acl.RoleGuest.String(), stored.UserRole)
+		assert.Equal(t, !frm.CanLogin, stored.CanLogin)
+		assert.Equal(t, "Berlin", stored.Details().UserLocation)
+	})
+	t.Run("SaveIgnoresDetails", func(t *testing.T) {
+		failUserDetailsWrites(t)
+
+		assert.NoError(t, m.Save())
+	})
+}
+
+func TestUser_saveRelated(t *testing.T) {
+	m := FirstOrCreateUser(&User{
+		UserName:    "saverelatedhelper",
+		DisplayName: "Save Related Helper",
+		UserRole:    acl.RoleGuest.String(),
+	})
+	require.NotNil(t, m)
+	t.Cleanup(func() { deleteTestUser(t, m) })
+
+	t.Run("Success", func(t *testing.T) {
+		m.Details().UserLocation = "Paris"
+		require.NoError(t, m.saveRelated())
+		assert.Equal(t, "Paris", FindUserByUID(m.UserUID).Details().UserLocation)
+	})
+	t.Run("DetailsFailed", func(t *testing.T) {
+		failUserDetailsWrites(t)
+
+		m.Details().UserLocation = "Rome"
+		assert.Error(t, m.saveRelated())
+		assert.Same(t, m, m.SaveRelated())
 	})
 }

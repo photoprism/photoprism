@@ -523,14 +523,23 @@ func (m *User) LoadRelated() *User {
 
 // SaveRelated saves related settings and details.
 func (m *User) SaveRelated() *User {
-	if err := m.Settings().Save(); err != nil {
-		event.AuditErr([]string{"user %s", "failed to save settings", status.Error(err)}, m.RefID)
-	}
-	if err := m.Details().Save(); err != nil {
-		event.AuditErr([]string{"user %s", "failed to save details", status.Error(err)}, m.RefID)
-	}
+	_ = m.saveRelated()
 
 	return m
+}
+
+// saveRelated saves related settings and details, and returns the errors it audit-logged.
+func (m *User) saveRelated() error {
+	var settingsErr, detailsErr error
+
+	if settingsErr = m.Settings().Save(); settingsErr != nil {
+		event.AuditErr([]string{"user %s", "failed to save settings", status.Error(settingsErr)}, m.RefID)
+	}
+	if detailsErr = m.Details().Save(); detailsErr != nil {
+		event.AuditErr([]string{"user %s", "failed to save details", status.Error(detailsErr)}, m.RefID)
+	}
+
+	return errors.Join(settingsErr, detailsErr)
 }
 
 // Updates multiple properties in the database.
@@ -1826,7 +1835,20 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 	// actually registers; see NormalizeAdminRole.
 	m.NormalizeAdminRole()
 
-	return m.Save()
+	// Settings and details are saved first, so that the account row is not changed when they fail.
+	if err := m.saveRelated(); err != nil {
+		return err
+	}
+
+	m.GenerateTokens(false)
+
+	if err := UnscopedDb().Save(m).Error; err != nil {
+		return err
+	}
+
+	FlushUserSessionCache(m.UserUID)
+
+	return nil
 }
 
 // SetDisplayName sets a new display name and, if possible, splits it into its components.

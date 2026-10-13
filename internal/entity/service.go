@@ -151,6 +151,12 @@ func (m *Service) SaveForm(form form.Service) error {
 		return err
 	}
 
+	// Remove control characters, except from the password, whose bytes are the credential.
+	for _, s := range []*string{&m.AccName, &m.AccOwner, &m.AccURL, &m.AccType, &m.AccKey, &m.AccUser,
+		&m.AccTimeout, &m.SharePath, &m.ShareSize, &m.SyncPath} {
+		*s = clean.StripControl(*s)
+	}
+
 	// TODO: Support for other remote services in addition to WebDAV.
 	if m.AccType != service.WebDAV {
 		m.AccShare = false // Disable manual upload.

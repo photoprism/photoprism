@@ -82,3 +82,29 @@ func TestSavePhoto(t *testing.T) {
 		require.False(t, saved)
 	})
 }
+
+func TestSavePhoto_ControlCharacters(t *testing.T) {
+	m := entity.NewPhoto(false)
+	require.NoError(t, m.Create())
+	t.Cleanup(func() { _, _ = m.DeletePermanently() })
+
+	photo := entity.FindPhoto(m)
+	require.NotNil(t, photo)
+
+	values := &PhotosForm{
+		PhotoTitle:   String{Value: "Batch\x00 Title", Action: ActionUpdate},
+		PhotoCountry: String{Value: "d\x00e", Action: ActionUpdate},
+	}
+
+	req, err := NewPhotoSaveRequest(photo, values)
+	require.NoError(t, err)
+
+	saved, err := savePhoto(req)
+	require.NoError(t, err)
+	require.True(t, saved)
+
+	updated := entity.FindPhoto(m)
+	require.NotNil(t, updated)
+	require.Equal(t, "Batch Title", updated.PhotoTitle)
+	require.Equal(t, "de", updated.PhotoCountry)
+}

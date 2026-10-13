@@ -815,7 +815,7 @@ func (m *File) SetSoftware(name string) {
 // budget on a rune boundary so an oversized XMP xmpMM:InstanceID cannot overflow the
 // instance_id column. An empty value leaves the current identifier unchanged.
 func (m *File) SetInstanceID(id string) {
-	if id = Clip(id, InstanceIDBytes); id != "" {
+	if id = Clip(clean.StripControl(id), InstanceIDBytes); id != "" {
 		m.InstanceID = id
 	}
 }

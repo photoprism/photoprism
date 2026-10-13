@@ -401,7 +401,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Set photo original name based on file original name.
 	if file.OriginalName != "" {
-		photo.OriginalName = fs.StripKnownExt(file.OriginalName)
+		photo.OriginalName = clean.StripControl(fs.StripKnownExt(file.OriginalName))
 	}
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {

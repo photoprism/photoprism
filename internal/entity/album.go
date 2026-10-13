@@ -616,7 +616,7 @@ func (m *Album) IsDefault() bool {
 
 // SetTitle changes the album name.
 func (m *Album) SetTitle(title string) *Album {
-	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
+	title = strings.Trim(clean.StripControl(title), "_&|{}<>: \n\r\t\\")
 	title = strings.ReplaceAll(title, "\"", "“")
 	title = txt.Shorten(title, txt.ClipDefault, txt.Ellipsis)
 
@@ -643,7 +643,7 @@ func (m *Album) SetTitle(title string) *Album {
 
 // SetLocation sets a new album location.
 func (m *Album) SetLocation(location, state, country string) *Album {
-	if location != "" {
+	if location = clean.StripControl(location); location != "" {
 		m.AlbumLocation = txt.Shorten(location, txt.ClipDefault, txt.Ellipsis)
 	}
 
@@ -757,8 +757,10 @@ func (m *Album) SaveForm(f *form.Album) error {
 		return err
 	}
 
-	if f.AlbumCategory != "" {
-		m.AlbumCategory = txt.Clip(txt.Title(f.AlbumCategory), txt.ClipCategory)
+	m.normalizeText()
+
+	if m.AlbumCategory != "" {
+		m.AlbumCategory = txt.Clip(txt.Title(m.AlbumCategory), txt.ClipCategory)
 	}
 
 	if f.AlbumTitle != "" {
@@ -766,6 +768,20 @@ func (m *Album) SaveForm(f *form.Album) error {
 	}
 
 	return m.Save()
+}
+
+// normalizeText removes control characters from the text values a form or backup file sets directly,
+// keeping line breaks in the caption, description and notes.
+func (m *Album) normalizeText() {
+	for _, s := range []*string{&m.ParentUID, &m.AlbumSlug, &m.AlbumType, &m.AlbumTitle, &m.AlbumLocation,
+		&m.AlbumCategory, &m.AlbumFilter, &m.AlbumOrder, &m.AlbumTemplate, &m.AlbumState, &m.AlbumCountry,
+		&m.Thumb, &m.ThumbSrc, &m.CreatedBy} {
+		*s = clean.StripControl(*s)
+	}
+
+	for _, s := range []*string{&m.AlbumCaption, &m.AlbumDescription, &m.AlbumNotes} {
+		*s = clean.Text(*s)
+	}
 }
 
 // Update sets a new value for a database column.

@@ -57,8 +57,8 @@ func CreateUnknownLens() {
 
 // NewLens creates a new camera lens entity from make and model names.
 func NewLens(makeName string, modelName string) *Lens {
-	makeName = strings.TrimSpace(makeName)
-	modelName = strings.TrimSpace(modelName)
+	makeName = strings.TrimSpace(clean.StripControl(makeName))
+	modelName = strings.TrimSpace(clean.StripControl(modelName))
 
 	if modelName == "" && makeName == "" {
 		return &UnknownLens

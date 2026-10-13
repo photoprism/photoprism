@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -960,7 +961,7 @@ the further from the equator you get. The precision of the latitude part does no
 more strictly however, a meridian arc length per 1 second depends on the latitude at the point in question. 
 The discrepancy of 1 second meridian arc length between equator and pole is about 0.3 metres because the earth 
 is an oblate spheroid.`
-		expected := txt.Shorten(longName, txt.ClipDefault, txt.Ellipsis)
+		expected := txt.Shorten(clean.StripControl(longName), txt.ClipDefault, txt.Ellipsis)
 		slugExpected := txt.Clip(longName, txt.ClipSlug)
 		album := NewAlbum(longName, AlbumManual)
 		assert.Equal(t, expected, album.AlbumTitle)

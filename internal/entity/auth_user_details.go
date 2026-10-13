@@ -94,6 +94,8 @@ func (m *UserDetails) Create() error {
 		return ErrInvalidUserUID
 	}
 
+	m.normalizeText()
+
 	return Db().Create(m).Error
 }
 
@@ -103,7 +105,22 @@ func (m *UserDetails) Save() error {
 		return ErrInvalidUserUID
 	}
 
+	m.normalizeText()
+
 	return Db().Save(m).Error
+}
+
+// normalizeText removes control characters from the text values, keeping line breaks in about and bio.
+func (m *UserDetails) normalizeText() {
+	for _, s := range []*string{&m.SubjUID, &m.SubjSrc, &m.PlaceID, &m.PlaceSrc, &m.CellID, &m.NameTitle,
+		&m.GivenName, &m.MiddleName, &m.FamilyName, &m.NameSuffix, &m.NickName, &m.NameSrc, &m.UserGender,
+		&m.UserLocation, &m.UserCountry, &m.UserPhone, &m.SiteURL, &m.ProfileURL, &m.FeedURL, &m.AvatarURL,
+		&m.OrgTitle, &m.OrgName, &m.OrgEmail, &m.OrgPhone, &m.OrgURL, &m.IdURL} {
+		*s = clean.StripControl(*s)
+	}
+
+	m.UserAbout = clean.Text(m.UserAbout)
+	m.UserBio = clean.Text(m.UserBio)
 }
 
 // Updates multiple properties in the database.

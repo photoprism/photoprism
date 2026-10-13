@@ -32,7 +32,7 @@ func (m *Photo) GetTitle() string {
 // SetTitle updates the photo title when the supplied source outranks the current one.
 // The title is normalized, quotes are unified, and the final value is clipped to 300 characters.
 func (m *Photo) SetTitle(title, source string) {
-	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
+	title = strings.Trim(clean.StripControl(title), "_&|{}<>: \n\r\t\\")
 	title = strings.ReplaceAll(title, "\"", "'")
 	title = txt.Shorten(title, txt.ClipLongName, txt.Ellipsis)
 

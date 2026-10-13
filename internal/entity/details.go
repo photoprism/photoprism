@@ -127,7 +127,8 @@ func (m *Details) clipText() {
 	m.SoftwareSrc = clipDetailsText("software_src", m.SoftwareSrc)
 }
 
-// clipDetailsText limits a text value to the size of its details column, keeping whole keywords.
+// clipDetailsText removes control characters from a text value, keeping line breaks where text may wrap,
+// and limits it to the size of its details column, keeping whole keywords.
 // Source names longer than their column are not known sources, so they are cleared.
 func clipDetailsText(column, s string) string {
 	var size int
@@ -135,15 +136,19 @@ func clipDetailsText(column, s string) string {
 	// Column and field names match alike, e.g. keywords_src and KeywordsSrc.
 	switch strings.ToLower(strings.ReplaceAll(column, "_", "")) {
 	case "keywordssrc", "notessrc", "subjectsrc", "artistsrc", "copyrightsrc", "licensesrc", "softwaresrc":
-		if len(s) > detailsSrcSize {
+		if s = clean.StripControl(s); len(s) > detailsSrcSize {
 			return ""
 		}
 
 		return s
-	case "keywords", "notes":
-		size = txt.ClipText
-	case "subject", "artist", "copyright", "license", "software":
-		size = txt.ClipShortText
+	case "keywords":
+		s, size = clean.StripControl(s), txt.ClipText
+	case "notes":
+		s, size = clean.Text(s), txt.ClipText
+	case "subject", "artist", "software":
+		s, size = clean.StripControl(s), txt.ClipShortText
+	case "copyright", "license":
+		s, size = clean.Text(s), txt.ClipShortText
 	default:
 		return s
 	}

@@ -136,6 +136,11 @@ func (m *Label) SaveForm(f *form.Label) error {
 		return err
 	}
 
+	m.LabelDescription = clean.Text(m.LabelDescription)
+	m.LabelNotes = clean.Text(m.LabelNotes)
+	m.Thumb = clean.StripControl(m.Thumb)
+	m.ThumbSrc = clean.StripControl(m.ThumbSrc)
+
 	if m.SetName(f.LabelName) {
 		if err := ensureUniqueLabelSlugs(m); err != nil {
 			return err
