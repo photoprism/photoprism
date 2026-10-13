@@ -37,7 +37,7 @@
   make acceptance-sqlite-stop-1
   ```
   Always return to repo root before `make acceptance-sqlite-stop-1`.
-  `acceptance-sqlite-restart-%`, `wait-%`, and `acceptance-sqlite-stop-%` are pattern rules, so the numeric suffix is required — a suffix-less `make acceptance-sqlite-restart` fails with "No rule to make target". The runner config is `frontend/.testcaferc.cjs`; there is no `testcaferc.json` in this repo (that file belongs to the separate `photoprism-tests` suite).
+  `acceptance-sqlite-restart-%`, `wait-%`, and `acceptance-sqlite-stop-%` are pattern rules, so the numeric suffix is required — a suffix-less `make acceptance-sqlite-restart` fails with "No rule to make target". The runner config is `frontend/.testcaferc.cjs`; there is no `testcaferc.json` in this repo (that file belongs to the separate `photoprism-tests` suite). The `sqlite` names always use SQLite. The composite targets use `acceptance-restart-%`, `acceptance-auth-restart` and the matching stop targets, which take `DB` on the make command line (default `sqlite`; the environment is ignored), stop their server also when a test fails, and check that the server they start is the one listening on port 2343. A restart fails while another server holds the port, e.g. another edition's acceptance server or one started in the foreground, and names it. `TC_USE_VIDEO=1` records videos of failed tests in `frontend/tests/acceptance/videos/`.
   `--test-meta` keys are ANDed and must all be present on the test, so copying `type=short` selects nothing when the target case only declares `mode: "public"` (e.g. `moments-003`). Check the `test.meta(...)` call before filtering.
 
 ## Frontend Test Gotchas

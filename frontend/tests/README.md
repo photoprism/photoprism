@@ -40,7 +40,7 @@ From `frontend/`:
 - Vitest config: `frontend/vitest.config.mjs`
 - Acceptance tests (TestCafe): `frontend/tests/acceptance/**/*`
 - Acceptance page models: `frontend/tests/acceptance/page-model/**/*`
-- Acceptance config: `frontend/testcaferc.json` and `frontend/tests/testcafeconfig.json`
+- Acceptance config: `frontend/.testcaferc.cjs` (runner) and `frontend/tests/testcafeconfig.json` (URLs)
 - Upload fixtures: `frontend/tests/upload-files/**/*`
 
 ### Overlay Test Notes (Plus, Pro, & Portal)
