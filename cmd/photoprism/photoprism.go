@@ -26,6 +26,9 @@ import (
 	"fmt"
 	"os"
 
+	// Embeds the IANA time zone database, which Go uses only for zones the system does not provide.
+	_ "time/tzdata"
+
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/commands"
