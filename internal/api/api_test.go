@@ -75,6 +75,17 @@ func (r *CloseableResponseRecorder) CloseNotify() <-chan bool {
 	return r.closeCh
 }
 
+// closeConfigDb closes the database of a temporary test config when the test ends. Register it after the
+// cleanup that restores the shared providers, so that cleanup runs last, as CloseDb clears the entity provider.
+func closeConfigDb(t testing.TB, conf *config.Config) {
+	t.Helper()
+	t.Cleanup(func() {
+		if err := conf.CloseDb(); err != nil {
+			t.Errorf("close db: %v", err)
+		}
+	})
+}
+
 // NewApiTest returns new API test helper.
 func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config) {
 	gin.SetMode(gin.TestMode)

@@ -21,15 +21,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// newIndexRelatedTestConfig returns an isolated test config for IndexRelated tests, and registers
-// the package database again when the test ends.
+// newIndexRelatedTestConfig returns an isolated test config for IndexRelated tests, and closes its
+// database and registers the package database again when the test ends.
 func newIndexRelatedTestConfig(t *testing.T, dbName string) *config.Config {
 	t.Helper()
 
 	oldConfig := Config()
-	t.Cleanup(func() { oldConfig.RegisterDb() })
+	cfg := config.NewMinimalTestConfigWithDb(dbName, filepath.Join(t.TempDir(), "storage"))
+	t.Cleanup(func() {
+		_ = cfg.CloseDb()
+		oldConfig.RegisterDb()
+	})
 
-	return config.NewMinimalTestConfigWithDb(dbName, filepath.Join(t.TempDir(), "storage"))
+	return cfg
 }
 
 func TestIndexRelated(t *testing.T) {

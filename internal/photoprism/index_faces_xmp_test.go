@@ -122,6 +122,7 @@ func newXmpIndexConfig(t *testing.T, name string) *config.Config {
 	SetConfig(c)
 	t.Cleanup(func() {
 		SetConfig(oldConfig)
+		_ = c.CloseDb()
 		oldConfig.RegisterDb()
 	})
 

@@ -272,6 +272,7 @@ func TestLoadOrCreateOIDCSessionKey(t *testing.T) {
 			get.SetConfig(orig)
 			entity.SetDbProvider(orig)
 		})
+		closeConfigDb(t, conf)
 		return conf
 	}
 	t.Run("PersistsAndReloads", func(t *testing.T) {

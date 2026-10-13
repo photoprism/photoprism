@@ -112,6 +112,7 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -240,6 +241,7 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -304,6 +306,7 @@ func TestIndex_MediaFile_DualFisheye(t *testing.T) {
 
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -358,6 +361,7 @@ func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
 		SetConfig(cfg)
 		t.Cleanup(func() {
 			SetConfig(oldCfg)
+			_ = cfg.CloseDb()
 			oldCfg.RegisterDb()
 		})
 
@@ -419,6 +423,7 @@ func TestIndex_MediaFile_FacesOnlyNothingToUpdate(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -457,6 +462,7 @@ func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
