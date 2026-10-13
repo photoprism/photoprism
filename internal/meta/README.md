@@ -1,6 +1,6 @@
 ## PhotoPrism — Metadata Pipeline
 
-**Last Updated:** September 25, 2026
+**Last Updated:** October 13, 2026
 
 ### Overview
 
@@ -66,7 +66,7 @@ The `.xmp` sidecar reader (`xmp.go` + `xmp_document.go`) is XPath-based on `antc
 
 ### Sanitization
 
-- `SanitizeString`, `SanitizeUnicode`, and related helpers strip binary markers, quotes, and invalid Unicode; filenames and keywords use lower-case, dash/underscore-safe regexes.
+- `SanitizeString`, `SanitizeUnicode`, and related helpers strip binary markers, quotes, invalid Unicode, and C0 controls and DEL other than tabs and line breaks (line breaks become `\n`); filenames and keywords use lower-case, dash/underscore-safe regexes.
 - Lower-case regex and quote removal now use `ReplaceAll` and raw strings to avoid double escaping.
 - Google Photos JSON coordinates are clamped to hard latitude/longitude bounds with `geo.ClampCoordinateBounds` before assigning `meta.Data.Lat` and `meta.Data.Lng`.
 

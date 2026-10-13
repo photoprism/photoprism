@@ -1,6 +1,6 @@
 ## PhotoPrism — WebDAV Service Client
 
-**Last Updated:** September 25, 2026
+**Last Updated:** October 13, 2026
 
 ### Overview
 
@@ -33,7 +33,8 @@ Directory discovery retains its existing hidden-name and traversal exclusions. L
 transfer paths are also checked before listing, upload, download, directory creation, or
 deletion: `SkipSyncPath` reports an excluded name and `UnsafeSyncPath` reports one carrying a
 parent-directory segment. Reserved names use the shared `pkg/fs` set; other hidden components
-are omitted from sync as well. Endpoint prefixes and absolute local storage roots are not
+are omitted from sync as well, as are names containing a C0 control character or DEL. These are
+checked after the parent-directory segment, so such a path still reports as unsafe. Endpoint prefixes and absolute local storage roots are not
 passed as logical transfer paths.
 
 Excluded entries are normal skips, not remote failures: they return `ErrSkipPath`, and sync
