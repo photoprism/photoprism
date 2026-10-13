@@ -6,7 +6,8 @@
 
 - [`frontend/README.md`](README.md) is the canonical doc for dependency pin rationale, the `overrides` layer, ESM-only upgrade blockers, and the orphan-audit pattern.
 - **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.20.0"`, `"vuetify": "4.2.4"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
-- npm is a workspace; run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates.
+- To add or change a dependency: npm is a workspace, so run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates.
+- `node_modules` is mounted from the host along with the repo, and nothing reinstalls it when `package-lock.json` changes, e.g. after a pull. Sync it with `make -C frontend install` (`npm install`), which only updates what changed and rewrites the lockfile only if it is out of sync with `package.json`, a change to commit. `make -C frontend ci` (`npm ci`) reinstalls everything and fails on such a lockfile. When a Vitest or build failure appears in code the change did not touch, run `npm ls --depth=0` first: `invalid` or `missing` means the install is stale, not the code.
 - After dep changes run `make audit`, `make build-js`, `make test-js`, and `make notice`.
 - Before adding a new dep — and especially before declaring an existing one "unused" — verify with `rg -nF "<pkg>" frontend …` plus `npm ls <pkg> --all` that no consumer or peer-dep needs it.
 
