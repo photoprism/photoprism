@@ -19,7 +19,6 @@ export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' .telemetry)
 endif
 
 -include .semver
--include .env
 
 # Binary file names.
 BINARY_NAME=photoprism
@@ -1470,11 +1469,15 @@ tidy:
 users:
 	./photoprism users add -p photoprism -r admin -s -a test:true -n "Alice Austen" superadmin
 	./photoprism users ls
-ldap: dummy-ldap
+ldap: dummy-ldap dummy-lldap
 dummy-ldap:
 	$(info Restarting dummy-ldap service...)
 	$(DOCKER_COMPOSE) stop dummy-ldap
 	$(DOCKER_COMPOSE) up -d -V --force-recreate dummy-ldap
+dummy-lldap:
+	$(info Restarting dummy-lldap service...)
+	$(DOCKER_COMPOSE) stop dummy-lldap
+	$(DOCKER_COMPOSE) up -d -V --force-recreate dummy-lldap
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make

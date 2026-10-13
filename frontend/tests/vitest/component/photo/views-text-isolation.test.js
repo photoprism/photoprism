@@ -5,7 +5,7 @@ import PPhotoViewList from "component/photo/view/list.vue";
 import * as contexts from "options/contexts";
 import "../../fixtures";
 
-function createPhotoStub(reason = "") {
+function createPhotoStub(reason = "", overrides = {}) {
   return {
     ID: 1,
     UID: "ps123",
@@ -34,6 +34,7 @@ function createPhotoStub(reason = "") {
     getVectorInfo: () => "PDF",
     locationInfo: () => "Unknown",
     getHiddenReason: () => reason,
+    ...overrides,
   };
 }
 
@@ -63,10 +64,10 @@ function createConfigMock(showTitles = true) {
   };
 }
 
-function mountCards(context, showTitles = true) {
+function mountCards(context, showTitles = true, photo = createPhotoStub()) {
   return shallowMount(PPhotoViewCards, {
     props: {
-      photos: [createPhotoStub()],
+      photos: [photo],
       context,
       filter: { order: "newest" },
       selectMode: false,
@@ -87,10 +88,10 @@ function mountCards(context, showTitles = true) {
   });
 }
 
-function mountList(context, showTitles = true) {
+function mountList(context, showTitles = true, photo = createPhotoStub()) {
   return shallowMount(PPhotoViewList, {
     props: {
-      photos: [createPhotoStub()],
+      photos: [photo],
       context,
       filter: { order: "newest" },
       selectMode: false,
@@ -138,6 +139,14 @@ describe("component/photo/view text isolation", () => {
   it("isolates the title in list view", () => {
     const wrapper = mountList(contexts.Photos);
     expect(wrapper.find(".text-truncate bdi").text()).toBe("صورة من العائلة");
+  });
+
+  it("balances isolates in titles and captions", () => {
+    const photo = createPhotoStub("", { Title: "رحلة\u2069\u200F 2026", Caption: "a\u2029b\u2067c" });
+    const cards = mountCards(contexts.Photos, true, photo);
+    expect(cards.find(".result:not(.placeholder) .meta-title bdi").text()).toBe("رحلة\u200F 2026");
+    expect(cards.find(".result:not(.placeholder) .meta-caption bdi").text()).toBe("a b\u2067c\u2069");
+    expect(mountList(contexts.Photos, true, photo).find(".text-truncate bdi").text()).toBe("رحلة\u200F 2026");
   });
 
   it("shows file names left to right when titles are hidden", () => {

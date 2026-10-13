@@ -180,7 +180,7 @@ describe("component/photo/edit/labels", () => {
       await Promise.resolve();
 
       expect(removeSpy).toHaveBeenCalledWith(5);
-      expect(notifySuccessSpy).toHaveBeenCalledWith("Removed Cat");
+      expect(notifySuccessSpy).toHaveBeenCalledWith("Removed \u2068Cat\u2069");
     });
   });
 
@@ -226,7 +226,7 @@ describe("component/photo/edit/labels", () => {
       await wrapper.vm.$nextTick();
 
       expect(addSpy).toHaveBeenCalledWith("Dog");
-      expect(notifySuccessSpy).toHaveBeenCalledWith("Added Dog");
+      expect(notifySuccessSpy).toHaveBeenCalledWith("Added \u2068Dog\u2069");
       expect(wrapper.vm.newLabel).toBe("");
     });
 

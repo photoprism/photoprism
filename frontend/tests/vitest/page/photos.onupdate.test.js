@@ -11,6 +11,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import PPagePhotos from "page/photos.vue";
 import PAlbumPhotos from "page/album/photos.vue";
 import { Photo } from "model/photo";
+import $util from "common/util";
 
 // Captures the surface of `this` that onUpdate touches. Lets us
 // assert dirty/complete transitions without instantiating Vue.
@@ -288,6 +289,7 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
       model: { UID: "album-1", Title: "Album", Order: "oldest", load: vi.fn(() => Promise.resolve()) },
       $config: { get: () => "PhotoPrism" },
       $router: { push: vi.fn() },
+      $util,
       updateQuery: vi.fn(),
       loadMore: vi.fn(),
     };
@@ -302,6 +304,7 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
     expect(stub.model.load).toHaveBeenCalledTimes(1);
     expect(stub.dirty).toBe(true);
     expect(stub.complete).toBe(false);
+    expect(window.document.title).toBe("PhotoPrism: \u2068Album\u2069");
     expect(stub.updateQuery).not.toHaveBeenCalled();
     expect(stub.loadMore).toHaveBeenCalledWith(true);
   });

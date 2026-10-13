@@ -608,7 +608,7 @@ export default {
         .then((m) => {
           this.model = m;
 
-          window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`;
+          window.document.title = `${this.$config.get("siteTitle")}: ${this.$util.isolate(this.model.Title)}`;
 
           return Promise.resolve(this.model);
         })
@@ -638,7 +638,7 @@ export default {
       this.model
         .load()
         .then(() => {
-          window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`;
+          window.document.title = `${this.$config.get("siteTitle")}: ${this.$util.isolate(this.model.Title)}`;
 
           this.dirty = true;
           this.complete = false;

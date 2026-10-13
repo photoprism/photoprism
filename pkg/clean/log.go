@@ -30,7 +30,7 @@ func LogNames(names []string) string {
 	out := make([]string, 0, kept)
 
 	for _, name := range names[:kept] {
-		out = append(out, LogBytes(name, LogNamesBytes))
+		out = append(out, logName(name))
 	}
 
 	if omitted := len(names) - kept; omitted > 0 {
@@ -38,6 +38,72 @@ func LogNames(names []string) string {
 	}
 
 	return strings.Join(out, ", ")
+}
+
+// logName sanitizes a name like LogBytes with LogNamesBytes, shortening a long one in the middle so that
+// its end, such as a file extension, stays visible.
+func logName(s string) string {
+	// The whole name is checked, since only its ends are mapped. They render far more than the result
+	// shows, so the cut between them is never visible.
+	if reject(s, 0) {
+		return "?"
+	}
+
+	s, quote := logMap(clip.Ends(s, 16*LogNamesBytes))
+
+	if !quote {
+		return ClipMiddle(s, LogNamesBytes)
+	}
+
+	// Shortened before the apostrophes are doubled, so a cut cannot split a doubled one, with the largest
+	// budget whose doubled result fits.
+	budget := LogNamesBytes - 2
+
+	if text := strings.ReplaceAll(s, "'", "''"); len(text) <= budget {
+		return "'" + text + "'"
+	}
+
+	for maxBytes := budget; maxBytes > 0; maxBytes-- {
+		if text := strings.ReplaceAll(ClipMiddle(s, maxBytes), "'", "''"); len(text) <= budget {
+			return "'" + text + "'"
+		}
+	}
+
+	return "''"
+}
+
+// ClipMiddle shortens sanitized text to at most maxBytes like clip.Middle, without splitting a marker, so
+// that the end of a stored message, such as its outcome, stays visible.
+func ClipMiddle(s string, maxBytes int) string {
+	return clip.MiddleFunc(s, maxBytes, 0, markedUnitLen)
+}
+
+// ClipRunes shortens sanitized text to at most size characters like txt.Clip, without splitting a marker,
+// for a column whose limit is measured in characters. Leading and trailing spaces are removed.
+func ClipRunes(s string, size int) string {
+	s = strings.TrimSpace(s)
+	cut, runes := 0, 0
+
+	for cut < len(s) {
+		// A marker is ASCII, so its length in bytes is its length in characters.
+		n, chars := markerLen(s[cut:]), 0
+
+		if n > 0 {
+			chars = n
+		} else {
+			_, n = utf8.DecodeRuneInString(s[cut:])
+			chars = 1
+		}
+
+		if runes+chars > size {
+			break
+		}
+
+		runes += chars
+		cut += n
+	}
+
+	return strings.TrimSpace(s[:cut])
 }
 
 // logQuoted wraps a value in the quotes that show where it begins and ends, doubling any it
@@ -78,10 +144,10 @@ func logQuotedBytes(s string, maxBytes int) string {
 	used, cut := 0, 0
 
 	for cut < len(s) {
-		r, w := utf8.DecodeRuneInString(s[cut:])
+		w := markedUnitLen(s[cut:])
 		n := w
 
-		if r == '\'' {
+		if s[cut] == '\'' {
 			n = 2
 		}
 
@@ -96,7 +162,8 @@ func logQuotedBytes(s string, maxBytes int) string {
 	return logQuoted(s[:cut] + clip.Ellipsis)
 }
 
-// shortenBytes shortens s to at most maxBytes without splitting a character, ending it with suffix if it cuts.
+// shortenBytes shortens s to at most maxBytes without splitting a character or marker, ending it with suffix
+// if it cuts.
 func shortenBytes(s string, maxBytes int, suffix string) string {
 	if len(s) <= maxBytes {
 		return s
@@ -110,72 +177,68 @@ func shortenBytes(s string, maxBytes int, suffix string) string {
 
 	cut := 0
 
-	for i := range s {
-		if i > limit {
+	for cut < len(s) {
+		n := markedUnitLen(s[cut:])
+
+		if cut+n > limit {
 			break
 		}
 
-		cut = i
+		cut += n
 	}
 
 	return s[:cut] + suffix
 }
 
 // logText sanitizes a value and reports whether it has to be quoted for its extent to be clear.
-// The result has at most maxBytes, since replacing an invalid byte can triple its size.
+// The result has at most maxBytes, since a marker is longer than the character it replaces.
 func logText(s string, maxBytes int) (string, bool) {
 	if s == "" {
 		return "", true
 	}
 
-	s = shortenBytes(s, maxBytes, clip.Ellipsis)
-
-	if reject(s, LengthLimit) {
+	if s = shortenBytes(s, maxBytes, clip.Ellipsis); reject(s, LengthLimit) {
 		return "?", false
 	}
 
-	quote := false
-	dropped := false
+	s, quote := logMap(s)
 
-	// Remove non-printable and other potentially problematic characters.
-	s = strings.Map(func(r rune) rune {
+	return shortenBytes(s, maxBytes, clip.Ellipsis), quote
+}
+
+// logMap replaces the characters of a value like logText and reports whether it has to be quoted, without
+// shortening or checking it.
+func logMap(s string) (string, bool) {
+	if s == "" {
+		return "", true
+	}
+
+	quote := false
+
+	// Replace non-printable and other potentially problematic characters.
+	s = markText(s, func(r rune) rune {
 		switch {
-		case r == ' ' || unsafeSpaceRune(r):
+		case r == ' ' || unsafeSpaceRune(r) || unsafeBreakRune(r):
 			quote = true
 			return unsafeSpace
 		case r == FieldSep:
 			quote = true
 			return r
-		case unsafeDropRune(r):
-			dropped = true
-			return -1
 		case unsafeRune(r):
-			return unsafeMarker
+			return markRune
 		}
 
 		switch r {
 		case '`':
 			return '\''
-		case '"':
-			return '"'
 		case '\\', '$', '<', '>', '{', '}':
 			return '?'
 		default:
 			return r
 		}
-	}, s)
+	})
 
-	// A value of only dropped characters empties here, and both callers render the pair.
-	if s == "" {
-		return "", true
-	}
-
-	// Dropping a character joins what it separated, so re-check what the guard refused.
-	if dropped && reject(s, LengthLimit) {
-		return "?", false
-	}
-
-	return shortenBytes(s, maxBytes, clip.Ellipsis), quote
+	return s, quote
 }
 
 // LogQuote sanitizes a string and puts it in single quotes for logging. It quotes whether or not

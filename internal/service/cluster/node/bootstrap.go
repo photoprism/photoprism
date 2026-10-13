@@ -304,7 +304,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 				return false, nil, registerError(resp)
 			default:
 				if attempt < maxAttempts {
-					log.Debugf("cluster: join attempt %d/%d failed with status %s", attempt, maxAttempts, resp.Status)
+					log.Debugf("cluster: join attempt %d/%d failed with status %s", attempt, maxAttempts, clean.Log(resp.Status))
 					// TODO: Consider exponential backoff with jitter instead of constant delay.
 					return true, nil, nil
 				}

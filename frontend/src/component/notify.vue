@@ -63,7 +63,7 @@ export default {
 
       // Render in the current UI language when the backend sent a message id (the English source
       // string); otherwise fall back to the pre-rendered message string as-is.
-      let m = data.messageId ? Tp(data.messageId, data.messageParams) : data.message;
+      let m = data.messageId ? Tp(data.messageId, this.isolateParams(data.messageParams)) : data.message;
 
       // Skip empty messages.
       if (!m || !m.length) {
@@ -77,8 +77,8 @@ export default {
         return;
       }
 
-      // First letter of the message should be uppercase.
-      m = m.replace(/^./, m[0].toUpperCase());
+      // First letter of the message should be uppercase, also when it starts with an isolated name.
+      m = m.replace(/^([\u2066-\u2068]*)(.)/, (_, isolates, c) => isolates + c.toUpperCase());
 
       switch (type) {
         case "warning":
@@ -96,6 +96,11 @@ export default {
         default:
           alert(m);
       }
+    },
+
+    // isolateParams isolates string parameters, such as album titles, from the message around them.
+    isolateParams(params) {
+      return Array.isArray(params) ? params.map((p) => (typeof p === "string" ? this.$util.isolate(p) : p)) : params;
     },
 
     addSuccessMessage(message) {

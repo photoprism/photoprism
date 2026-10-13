@@ -28,6 +28,8 @@ const validationConfig = {
 // Other $util methods needed at render time are stubbed inline.
 const validationUtil = {
   normalizeTitle: (s) => $util.normalizeTitle(s),
+  balanceBidi: (s) => $util.balanceBidi(s),
+  isolate: (s) => $util.isolate(s),
   formatCamera: (camera, id, make, model, long) => $util.formatCamera(camera, id, make, model, long),
   typeName: (type, defaultValue) => $util.typeName(type, defaultValue),
   encodeHTML: (s) => s,
@@ -277,6 +279,23 @@ describe("PLightboxSidebar component", () => {
     // is intentional and decorative.
     expect(fileRow.find(".meta-inline-pencil").exists()).toBe(false);
     expect(fileRow.text()).toContain(mockPhoto.FileName);
+  });
+
+  it("should isolate album titles, label names and people names", () => {
+    const w = mountSidebar({
+      props: {
+        modelValue: mockModel,
+        photo: {
+          ...mockPhoto,
+          Albums: [{ UID: "alb1", Title: "رحلة\u2069\u200F 2026", Slug: "trip" }],
+          Labels: [{ Uncertainty: 0, Label: { ID: 1, UID: "lbl1", Name: "قطة\u2029Cat", Slug: "cat", CustomSlug: "" } }],
+        },
+        context: contexts.Photos,
+      },
+    });
+    expect(w.find(".meta-albums .meta-chip__label bdi").text()).toBe("رحلة\u200F 2026");
+    expect(w.findAll(".meta-chip__label bdi").map((b) => b.text())).toContain("قطة Cat");
+    expect(w.find(".meta-person__name bdi").text()).toBe("Jane Doe");
   });
 
   it("should show the file name without bidi controls", () => {

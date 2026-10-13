@@ -521,6 +521,105 @@ func reopenConnection() *config.Config {
 	}
 }
 
+// formattedExitErr is a cli.ExitCoder that also implements cli.ErrorFormatter.
+type formattedExitErr struct{ msg string }
+
+// Error returns the message.
+func (e formattedExitErr) Error() string { return e.msg }
+
+// ExitCode returns 7.
+func (e formattedExitErr) ExitCode() int { return 7 }
+
+// Format writes the message with details.
+func (e formattedExitErr) Format(s fmt.State, verb rune) {
+	_, _ = fmt.Fprint(s, e.msg+": details a\u200Bb")
+}
+
+// multiExitErr is a cli.MultiError holding the given errors.
+type multiExitErr []error
+
+// Error returns a summary.
+func (e multiExitErr) Error() string { return "multiple errors" }
+
+// Errors returns the errors.
+func (e multiExitErr) Errors() []error { return e }
+
+// TestHandleExitErr covers how the message of a cli.Exit error is printed and which code it exits with.
+func TestHandleExitErr(t *testing.T) {
+	// redirectExit redirects the urfave/cli error writer and exit function for one test.
+	redirectExit := func(t *testing.T) (*bytes.Buffer, *int) {
+		var buf bytes.Buffer
+		code := -1
+		w, exit := cli.ErrWriter, cli.OsExiter
+		cli.ErrWriter = &buf
+		cli.OsExiter = func(c int) { code = c }
+		t.Cleanup(func() { cli.ErrWriter, cli.OsExiter = w, exit })
+		return &buf, &code
+	}
+
+	t.Run("CleansMessage", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, cli.Exit("portal: status 503\r\nname: a\x07b\u200Bc", 3))
+		assert.Equal(t, "portal: status 503\nname: a[U+0007]b[U+200B]c\n", buf.String())
+		assert.Equal(t, 3, *code)
+	})
+	t.Run("KeepsText", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, cli.Exit("رحلة 2026: not found", 4))
+		assert.Equal(t, "رحلة 2026: not found\n", buf.String())
+		assert.Equal(t, 4, *code)
+	})
+	t.Run("EmptyMessage", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, cli.Exit("", 2))
+		assert.Empty(t, buf.String())
+		assert.Equal(t, 2, *code)
+	})
+	t.Run("Formatter", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, formattedExitErr{msg: "failed"})
+		assert.Equal(t, "failed: details a[U+200B]b\n", buf.String())
+		assert.Equal(t, 7, *code)
+	})
+	t.Run("MultiError", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, multiExitErr{errors.New("first\x07"), nil, multiExitErr{cli.Exit("second\u200B", 5)}})
+		assert.Equal(t, "first[U+0007]\nsecond[U+200B]\n", buf.String())
+		assert.Equal(t, 5, *code)
+	})
+	t.Run("PlainError", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, errors.New("failed"))
+		HandleExitErr(nil, nil)
+		assert.Empty(t, buf.String())
+		assert.Equal(t, -1, *code)
+	})
+}
+
+// TestPrintMultiError covers the output and exit code for the errors of a cli.MultiError.
+func TestPrintMultiError(t *testing.T) {
+	var buf bytes.Buffer
+	w := cli.ErrWriter
+	cli.ErrWriter = &buf
+	t.Cleanup(func() { cli.ErrWriter = w })
+
+	t.Run("PlainErrors", func(t *testing.T) {
+		buf.Reset()
+		assert.Equal(t, 1, printMultiError(multiExitErr{errors.New("a\tb"), nil}))
+		assert.Equal(t, "a b\n", buf.String())
+	})
+	t.Run("LastExitCode", func(t *testing.T) {
+		buf.Reset()
+		assert.Equal(t, 6, printMultiError(multiExitErr{cli.Exit("x", 4), multiExitErr{cli.Exit("y", 6)}, errors.New("z")}))
+		assert.Equal(t, "x\ny\nz\n", buf.String())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		buf.Reset()
+		assert.Equal(t, 1, printMultiError(multiExitErr{}))
+		assert.Empty(t, buf.String())
+	})
+}
+
 // TestExitCode covers the status main exits with for an error that app.Run returns.
 func TestExitCode(t *testing.T) {
 	// runApp returns the error urfave/cli reports for a command with a required flag.

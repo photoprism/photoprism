@@ -275,7 +275,7 @@
                 ></v-btn>
               </template>
             </v-combobox>
-            <v-list-item-title v-else-if="m.Name" class="meta-person__name">{{ m.Name }}</v-list-item-title>
+            <v-list-item-title v-else-if="m.Name" class="meta-person__name"><bdi>{{ $util.balanceBidi(m.Name) }}</bdi></v-list-item-title>
             <v-list-item-title v-else class="meta-person__name meta-person__unnamed">{{ $gettext("Unknown") }}</v-list-item-title>
           </v-list-item>
         </template>
@@ -300,7 +300,7 @@
                 @keydown.enter.stop.prevent="onChipActivate('albums', a)"
                 @keydown.delete.stop.prevent="onChipDelete('albums', a)"
               >
-                <span class="meta-chip__label text-truncate">{{ a.Title }}</span>
+                <span class="meta-chip__label text-truncate"><bdi>{{ $util.balanceBidi(a.Title) }}</bdi></span>
                 <button
                   v-if="isEditable"
                   type="button"
@@ -365,7 +365,7 @@
                 @keydown.enter.stop.prevent="onChipActivate('labels', l)"
                 @keydown.delete.stop.prevent="onChipDelete('labels', l)"
               >
-                <span class="meta-chip__label text-truncate">{{ l.Label.Name }}</span>
+                <span class="meta-chip__label text-truncate"><bdi>{{ $util.balanceBidi(l.Label.Name) }}</bdi></span>
                 <button
                   v-if="isEditable"
                   type="button"
@@ -477,7 +477,7 @@
       :visible="addNameDialog.visible"
       icon="mdi-account-plus"
       :icon-size="42"
-      :text="addNameDialog.name ? $gettext('Add %{s}?', { s: addNameDialog.name }) : $gettext('Add person?')"
+      :text="addNameDialog.name ? $gettext('Add %{s}?', { s: $util.isolate(addNameDialog.name) }) : $gettext('Add person?')"
       @close="onAddNameCancel"
       @confirm="onAddNameConfirm"
     ></p-confirm-dialog>

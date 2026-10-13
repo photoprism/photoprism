@@ -121,7 +121,7 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 		labels, err = vision.GenerateLabels(thumbnails, media.SrcLocal, labelSrc)
 	}
 	if err != nil {
-		log.Debugf("labels: %s in %s", err, clean.Log(m.RootRelName()))
+		log.Debugf("labels: %s in %s", clean.ErrorFull(err), clean.Log(m.RootRelName()))
 		return labels
 	}
 

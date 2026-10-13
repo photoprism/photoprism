@@ -193,6 +193,28 @@ describe("common/util", () => {
     expect($util.stripBidiControls("")).toBe("");
     expect($util.stripBidiControls(undefined)).toBe(undefined);
   });
+  it("should balance isolates and keep bidi marks", () => {
+    expect($util.balanceBidi("رحلة PhotoPrism \u200F2026")).toBe("رحلة PhotoPrism \u200F2026");
+    expect($util.balanceBidi("a\u2067b\u2069c")).toBe("a\u2067b\u2069c");
+    expect($util.balanceBidi("a\u2069b\u200Fc")).toBe("ab\u200Fc");
+    expect($util.balanceBidi("a\u2068b\u2066c\u2069")).toBe("a\u2068b\u2066c\u2069\u2069");
+    expect($util.balanceBidi("a\u2066b\u2069\u2069c")).toBe("a\u2066b\u2069c");
+    expect($util.balanceBidi("a\u2029b\u0085c\u001cd\u001de\u001ef")).toBe("a b c d e f");
+    expect($util.balanceBidi("a\nb\u2028c")).toBe("a\nb\u2028c");
+    expect($util.balanceBidi("a\r\nb\rc")).toBe("a\nb c");
+    expect($util.balanceBidi("a\u2066b\nc\u2069d")).toBe("a\u2066b\u2069\ncd");
+    expect($util.balanceBidi("a\u2067b\u2069\nc")).toBe("a\u2067b\u2069\nc");
+    expect($util.balanceBidi("")).toBe("");
+    expect($util.balanceBidi(undefined)).toBe(undefined);
+  });
+  it("should isolate text for strings", () => {
+    expect($util.isolate("رحلة 2026")).toBe("\u2068رحلة 2026\u2069");
+    expect($util.isolate("a\u2069\u200Fb")).toBe("\u2068a\u200Fb\u2069");
+    expect($util.isolate("a\u2029b")).toBe("\u2068a b\u2069");
+    expect($util.isolate("a\u2066b\r\nc")).toBe("\u2068a\u2066b\u2069 c\u2069");
+    expect($util.isolate("")).toBe("");
+    expect($util.isolate(null)).toBe(null);
+  });
   it("should link http URLs with https", () => {
     expect($util.encodeHTML("see http://example.com/a")).toBe(
       `see <a href="https://example.com/a" target="_blank" rel="noopener noreferrer" dir="ltr">http://example.com/a</a>`

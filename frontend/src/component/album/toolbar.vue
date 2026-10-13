@@ -14,7 +14,7 @@
           <v-icon>{{ navIcon }}</v-icon>
         </router-link>
         <router-link :to="{ name: collectionRoute }">
-          {{ album.Title }}
+          <bdi>{{ $util.balanceBidi(album.Title) }}</bdi>
         </router-link>
       </v-toolbar-title>
 

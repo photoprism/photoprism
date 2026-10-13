@@ -54,7 +54,7 @@
                 class="text-truncate"
                 @click:close="removeSelection(chip.index)"
               >
-                {{ chip.internalItem.title }}
+                <bdi>{{ $util.balanceBidi(chip.internalItem.title) }}</bdi>
               </v-chip>
             </template>
           </v-combobox>

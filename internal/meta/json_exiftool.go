@@ -422,10 +422,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 				}
 			case []string:
 				existing := fieldValue.Interface().([]string)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonText(jsonValue)))))
 			case Keywords:
 				existing := fieldValue.Interface().(Keywords)
-				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonValue.String()))))
+				fieldValue.Set(reflect.ValueOf(txt.AddToWords(existing, SanitizeUnicode(jsonText(jsonValue)))))
 			case projection.Type:
 				if !fieldValue.IsZero() {
 					continue
@@ -605,4 +605,23 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	return nil
+}
+
+// jsonText returns the text of a JSON value, with the decoded elements of an array joined by a comma,
+// since the text of an array is its JSON source.
+func jsonText(v gjson.Result) string {
+	if !v.IsArray() {
+		return v.String()
+	}
+
+	values := v.Array()
+	parts := make([]string, 0, len(values))
+
+	for _, e := range values {
+		if s := e.String(); s != "" {
+			parts = append(parts, s)
+		}
+	}
+
+	return strings.Join(parts, ", ")
 }

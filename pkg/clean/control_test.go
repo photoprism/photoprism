@@ -60,7 +60,7 @@ func TestSanitizersControlTable(t *testing.T) {
 		{"Token", Token, "Abcdefghi"},
 		{"ShareToken", ShareToken, "Abcdefghi"},
 		{"Scope", Scope, "abcd e fghi"},
-		{"Log", Log, "Abcdefgh�i"},
+		{"Log", Log, "'Ab[U+0000]c[U+0001]d e f[U+001B]g[U+007F]h[0xFF]i'"},
 		{"DNSLabel", DNSLabel, "abc-d-e-f-g-h-i"},
 		{"FieldName", FieldName, "Abcdefghi"},
 		{"State", func(s string) string { return State(s, "de") }, "Abcdefgh�i"},

@@ -78,7 +78,7 @@ func TestAuthSessionLabel(t *testing.T) {
 	t.Run("QuotedNames", func(t *testing.T) {
 		m := &entity.Session{RefID: "sess6ey1ykya", ClientName: "x', user 'admin\u009b", AuthProvider: authn.ProviderApplication.String(),
 			UserName: "alice"}
-		assert.Equal(t, "session sess6ey1ykya (app 'x'', user ''admin?', user 'alice')", authSessionLabel(m))
+		assert.Equal(t, "session sess6ey1ykya (app 'x'', user ''admin[U+009B]', user 'alice')", authSessionLabel(m))
 	})
 	t.Run("NoSecrets", func(t *testing.T) {
 		m := &entity.Session{RefID: "sessxkkcabcd", UserName: "alice"}
