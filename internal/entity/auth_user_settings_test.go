@@ -1,7 +1,10 @@
 package entity
 
 import (
+	"math"
+	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"gorm.io/gorm"
 
@@ -227,6 +230,58 @@ func TestUserSettings_Apply(t *testing.T) {
 	assert.Equal(t, -1, r.SearchListView)
 	assert.Equal(t, 1, r.SearchShowTitles)
 	assert.Equal(t, -1, r.SearchShowCaptions)
+}
+
+func TestUserSettings_ApplyBounds(t *testing.T) {
+	long := strings.Repeat("a", 200)
+	path := "/" + strings.Repeat("ä", 1000)
+
+	m := NewUserSettings(rnd.GenerateUID(UserUID)).Apply(&customize.Settings{
+		UI:     customize.UISettings{Theme: long, Language: long, TimeZone: long, StartPage: long},
+		Maps:   customize.MapsSettings{Style: long, Animate: math.MaxInt},
+		Index:  customize.IndexSettings{Path: path},
+		Import: customize.ImportSettings{Path: path},
+	})
+
+	assert.Len(t, m.UITheme, userSettingsTypeBytes)
+	assert.Len(t, m.UILanguage, userSettingsTypeBytes)
+	assert.Len(t, m.MapsStyle, userSettingsTypeBytes)
+	assert.LessOrEqual(t, len(m.UITimeZone), 64)
+	assert.LessOrEqual(t, len(m.UIStartPage), 64)
+	assert.Equal(t, math.MaxInt32, m.MapsAnimate)
+	assert.LessOrEqual(t, len(m.IndexPath), PathBytes)
+	assert.LessOrEqual(t, len(m.ImportPath), PathBytes)
+	assert.True(t, utf8.ValidString(m.IndexPath))
+	assert.True(t, utf8.ValidString(m.ImportPath))
+
+	require.NoError(t, m.Save())
+	t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+
+	found := UserSettings{}
+	require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&found).Error)
+	assert.Equal(t, m.UITheme, found.UITheme)
+	assert.Equal(t, m.MapsAnimate, found.MapsAnimate)
+	assert.Equal(t, m.IndexPath, found.IndexPath)
+
+	t.Run("ControlChars", func(t *testing.T) {
+		nul := "a\x00b\x1f"
+		c := NewUserSettings(rnd.GenerateUID(UserUID)).Apply(&customize.Settings{
+			UI:     customize.UISettings{Theme: nul, Language: nul, TimeZone: nul, StartPage: nul},
+			Maps:   customize.MapsSettings{Style: nul},
+			Index:  customize.IndexSettings{Path: "/" + nul},
+			Import: customize.ImportSettings{Path: "/" + nul},
+		})
+
+		for _, v := range []string{c.UITheme, c.UILanguage, c.UITimeZone, c.UIStartPage, c.MapsStyle} {
+			assert.Equal(t, "ab", v)
+		}
+
+		assert.Equal(t, "/ab", c.IndexPath)
+		assert.Equal(t, "/ab", c.ImportPath)
+
+		require.NoError(t, c.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(c).Error })
+	})
 }
 
 func TestUserSettings_ApplyTo(t *testing.T) {

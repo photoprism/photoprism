@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -32,6 +33,9 @@ type UserSettings struct {
 	CreatedAt            time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt            time.Time `json:"UpdatedAt" yaml:"-"`
 }
+
+// userSettingsTypeBytes is the byte budget of the theme, language, and maps style columns.
+const userSettingsTypeBytes = 32
 
 // TableName returns the entity table name.
 func (UserSettings) TableName() string {
@@ -94,7 +98,7 @@ func (m *UserSettings) Updates(values any) error {
 func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 	// UI preferences.
 	if s.UI.Theme != "" {
-		m.UITheme = clean.Type(s.UI.Theme)
+		m.UITheme = Clip(clean.Type(s.UI.Theme), userSettingsTypeBytes)
 	}
 
 	if s.UI.StartPage != "" {
@@ -102,7 +106,7 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 	}
 
 	if s.UI.Language != "" {
-		m.UILanguage = clean.Type(s.UI.Language)
+		m.UILanguage = Clip(clean.Type(s.UI.Language), userSettingsTypeBytes)
 	}
 
 	if s.UI.TimeZone != "" {
@@ -111,10 +115,10 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 
 	// Maps preferences.
 	if s.Maps.Style != "" {
-		m.MapsStyle = clean.Type(s.Maps.Style)
+		m.MapsStyle = Clip(clean.Type(s.Maps.Style), userSettingsTypeBytes)
 
 		if s.Maps.Animate > 0 {
-			m.MapsAnimate = s.Maps.Animate
+			m.MapsAnimate = min(s.Maps.Animate, math.MaxInt32)
 		} else {
 			m.MapsAnimate = -1
 		}
@@ -122,7 +126,7 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 
 	// Index preferences.
 	if s.Index.Path != "" {
-		m.IndexPath = s.Index.Path
+		m.IndexPath = ClipPath(clean.StripControl(s.Index.Path))
 
 		if s.Index.Rescan {
 			m.IndexRescan = 1
@@ -133,7 +137,7 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 
 	// Import preferences.
 	if s.Import.Path != "" {
-		m.ImportPath = s.Import.Path
+		m.ImportPath = ClipPath(clean.StripControl(s.Import.Path))
 
 		if s.Import.Move {
 			m.ImportMove = 1

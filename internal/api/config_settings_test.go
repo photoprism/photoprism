@@ -1,16 +1,20 @@
 package api
 
 import (
+	iofs "io/fs"
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 )
 
@@ -92,5 +96,48 @@ func TestSaveSettings(t *testing.T) {
 		}
 
 		assert.Equal(t, before, countOwnerless())
+	})
+}
+
+func TestSettingsErr(t *testing.T) {
+	t.Run("NoError", func(t *testing.T) {
+		hook, console := captureLog(t), captureSystemLog(t)
+		settingsErr(&entity.Session{RefID: "sessxyz123"}, "user", nil)
+		assert.Empty(t, hook.AllEntries())
+		assert.Empty(t, console.AllEntries())
+	})
+	t.Run("ReachesTheConsoleAndNotTheBrowser", func(t *testing.T) {
+		hook, console := captureLog(t), captureSystemLog(t)
+
+		sub := event.Subscribe("system.log.error")
+		defer event.Unsubscribe(sub)
+
+		settingsErr(&entity.Session{RefID: "sessxyz123"}, "user", entity.ErrInvalidUserUID)
+
+		assert.Empty(t, hook.AllEntries())
+
+		entries := console.AllEntries()
+		require.Len(t, entries, 1)
+		assert.Equal(t, "settings: session sessxyz123 › failed to save user settings › invalid user uid", entries[0].Message)
+
+		select {
+		case msg := <-sub.Receiver:
+			assert.Contains(t, msg.Fields["message"], "sessxyz123")
+			assert.Contains(t, msg.Fields["message"], "invalid user uid")
+		case <-time.After(time.Second):
+			t.Fatal("timeout waiting for the system event")
+		}
+	})
+	t.Run("AppSettings", func(t *testing.T) {
+		hook, console := captureLog(t), captureSystemLog(t)
+
+		settingsErr(&entity.Session{RefID: "sessxyz123"}, "app", &iofs.PathError{Op: "open", Path: "/photoprism/storage/config/settings.yml", Err: iofs.ErrPermission})
+
+		assert.Empty(t, hook.AllEntries())
+
+		entries := console.AllEntries()
+		require.Len(t, entries, 1)
+		assert.Equal(t, logrus.ErrorLevel, entries[0].Level)
+		assert.Equal(t, "settings: session sessxyz123 › failed to save app settings › open /photoprism/storage/config/settings.yml: permission denied", entries[0].Message)
 	})
 }
