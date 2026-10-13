@@ -350,6 +350,49 @@ export default class $util {
     return s.replace(/[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u2028-\u202e\u2066-\u2069]/g, "");
   }
 
+  // balanceBidi prepares a title or name for an isolated element while keeping its bidi marks: CRLF becomes
+  // LF, other paragraph separators a space, unmatched isolate terminators are removed, and isolates are closed
+  // before each line break, which ends a paragraph where white space is preserved.
+  static balanceBidi(s) {
+    // eslint-disable-next-line no-control-regex
+    if (typeof s !== "string" || !/[\r\u001c-\u001e\u0085\u2029\u2066-\u2069]/.test(s)) {
+      return s;
+    }
+
+    let open = 0;
+    let result = "";
+
+    // eslint-disable-next-line no-control-regex
+    for (const c of s.replace(/\r\n/g, "\n").replace(/[\r\u001c-\u001e\u0085\u2029]/g, " ")) {
+      if (c === "\n") {
+        result += "\u2069".repeat(open);
+        open = 0;
+      } else if (c === "\u2069") {
+        if (open === 0) {
+          continue;
+        }
+
+        open--;
+      } else if (c >= "\u2066" && c <= "\u2068") {
+        open++;
+      }
+
+      result += c;
+    }
+
+    return result + "\u2069".repeat(open);
+  }
+
+  // isolate wraps a title or name in first-strong isolate characters for single-line strings that cannot
+  // contain an isolating element, such as messages and the document title.
+  static isolate(s) {
+    if (typeof s !== "string" || s === "") {
+      return s;
+    }
+
+    return "\u2068" + $util.balanceBidi(s).replace(/\n/g, " ") + "\u2069";
+  }
+
   // truncate shortens a string and appends an ellipsis when it exceeds length.
   static truncate(str, length, ending) {
     if (length == null) {

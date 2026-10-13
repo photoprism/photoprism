@@ -667,7 +667,7 @@
               </div>
               <template v-if="!isMini">
                 <div class="nav-user-text text-start mt-1 flex-grow-1">
-                  <p class="text-body-2">{{ displayName }}</p>
+                  <p class="text-body-2"><bdi>{{ $util.balanceBidi(displayName) }}</bdi></p>
                   <p class="text-caption opacity-70">{{ accountInfo }}</p>
                 </div>
                 <div class="text-center">

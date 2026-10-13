@@ -26,10 +26,10 @@
           <div v-if="!isSharedView && m.Quality < 3 && context === contexts.Review" class="review" />
           <div class="meta">
             <button v-if="!showTitles || m.Title" class="action-title-edit meta-title text-truncate">
-              <bdi :dir="showTitles ? 'auto' : 'ltr'">{{ showTitles ? m.Title : m.getOriginalName() }}</bdi>
+              <bdi :dir="showTitles ? 'auto' : 'ltr'">{{ showTitles ? $util.balanceBidi(m.Title) : m.getOriginalName() }}</bdi>
             </button>
             <button v-if="showCaptions && m.Caption" class="meta-caption">
-              <bdi>{{ m.Caption }}</bdi>
+              <bdi>{{ $util.balanceBidi(m.Caption) }}</bdi>
             </button>
             <div class="meta-details">
               <button v-if="m.Year > 0" class="action-open-date meta-date text-truncate">
@@ -189,10 +189,10 @@
               class="action-title-edit meta-title text-truncate"
               @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)"
             >
-              <bdi :dir="showTitles ? 'auto' : 'ltr'">{{ showTitles ? m.Title : m.getOriginalName() }}</bdi>
+              <bdi :dir="showTitles ? 'auto' : 'ltr'">{{ showTitles ? $util.balanceBidi(m.Title) : m.getOriginalName() }}</bdi>
             </button>
             <button v-if="showCaptions && m.Caption" :title="$gettext('Caption')" class="meta-caption" @click.exact="editPhoto(index)">
-              <bdi>{{ m.Caption }}</bdi>
+              <bdi>{{ $util.balanceBidi(m.Caption) }}</bdi>
             </button>
             <div class="meta-details">
               <button v-if="m.Year > 0" class="action-open-date meta-date text-truncate" @click.exact="openDate(index)">

@@ -13,6 +13,7 @@ import "vuetify/styles";
 
 import clientConfig from "./config";
 import { $config } from "app/session";
+import Util from "common/util";
 import { mockGettext, mockPgettext } from "./helpers/gettext";
 
 $config.setValues(clientConfig);
@@ -108,6 +109,9 @@ config.global.mocks = {
     formatRemainingSeconds: () => "0",
     formatCamera: (camera, id, make, model) => [make, model].filter(Boolean).join(" "),
     normalizeTitle: (s) => (s || "").toLowerCase().trim(),
+    stripBidiControls: (s) => Util.stripBidiControls(s),
+    balanceBidi: (s) => Util.balanceBidi(s),
+    isolate: (s) => Util.isolate(s),
     typeName: (type, defaultValue) => (type ? String(type) : defaultValue !== undefined ? defaultValue : ""),
     videoFormat: () => "avc",
     videoFormatUrl: () => "/v.mp4",

@@ -89,7 +89,7 @@
                   :title="m.Title"
                   @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)"
                 >
-                  <div class="text-truncate"><bdi :dir="showTitles && m.Title ? 'auto' : 'ltr'">{{ showTitles && m.Title ? m.Title : m.getOriginalName() }}</bdi></div>
+                  <div class="text-truncate"><bdi :dir="showTitles && m.Title ? 'auto' : 'ltr'">{{ showTitles && m.Title ? $util.balanceBidi(m.Title) : m.getOriginalName() }}</bdi></div>
                   <div v-if="context === contexts.Hidden && hiddenReason(m)" :title="hiddenReason(m)" class="meta-error text-truncate">
                     {{ hiddenReason(m) }}
                   </div>

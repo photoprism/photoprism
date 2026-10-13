@@ -80,7 +80,7 @@
               </td>
               <td>
                 <div v-tooltip="sourceName(view.model?.TitleSrc, $gettext('Generated'))" class="text-flex text-break">
-                  <span class="cursor-copy text-break" dir="auto" @click.stop.prevent="$util.copyText(view.model.Title)">{{ view.model.Title }}</span>
+                  <span class="cursor-copy text-break" dir="auto" @click.stop.prevent="$util.copyText(view.model.Title)">{{ $util.balanceBidi(view.model.Title) }}</span>
                   <v-icon v-if="view.model.TitleSrc === 'name'" icon="mdi-file" class="src"></v-icon>
                   <v-icon v-else-if="view.model.TitleSrc === 'manual'" icon="mdi-check" class="src"></v-icon>
                 </div>
@@ -108,7 +108,7 @@
               </td>
               <td class="text-break">
                 <a v-for="(a, i) in albums" :key="i" :href="a.url" class="text-primary text-link" target="_blank" rel="noopener"
-                  ><span v-if="i > 0">, </span>{{ a.title }}</a
+                  ><span v-if="i > 0">, </span><bdi>{{ $util.balanceBidi(a.title) }}</bdi></a
                 >
               </td>
             </tr>

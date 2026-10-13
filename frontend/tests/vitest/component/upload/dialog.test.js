@@ -7,6 +7,7 @@ import * as directives from "vuetify/directives";
 import PUploadDialog from "component/upload/dialog.vue";
 import $api from "common/api";
 import $notify from "common/notify";
+import Util from "common/util";
 
 // VFileUploadItem calls URL.createObjectURL to build preview src URLs; jsdom does not implement it.
 if (typeof URL.createObjectURL === "undefined") {
@@ -75,7 +76,7 @@ function mountDialog({ visible = true, data = {}, configOverrides = {} } = {}) {
       mocks: {
         $config: buildConfigMock(configOverrides),
         $session: { getUserUID: vi.fn(() => "uid123") },
-        $util: { generateToken: vi.fn(() => "tok-abc") },
+        $util: { generateToken: vi.fn(() => "tok-abc"), balanceBidi: (s) => Util.balanceBidi(s) },
         $view: { enter: vi.fn(), leave: vi.fn() },
         $notify: { info: vi.fn(), success: vi.fn(), error: vi.fn() },
         $gettext: (msg, params = {}) => msg.replace(/%\{(\w+)\}/g, (_, k) => (params[k] !== undefined ? String(params[k]) : "")),
@@ -397,7 +398,7 @@ describe("component/upload/dialog", () => {
           mocks: {
             $config: buildConfigMock(),
             $session: { getUserUID: vi.fn(() => "uid123") },
-            $util: { generateToken: vi.fn(() => "tok-abc") },
+            $util: { generateToken: vi.fn(() => "tok-abc"), balanceBidi: (s) => Util.balanceBidi(s) },
             $view: { enter: vi.fn(), leave: vi.fn() },
             $notify: { info: vi.fn(), success: vi.fn(), error: vi.fn() },
             $gettext: (msg, params = {}) => msg.replace(/%\{(\w+)\}/g, (_, k) => (params[k] !== undefined ? String(params[k]) : "")),
@@ -422,7 +423,7 @@ describe("component/upload/dialog", () => {
           mocks: {
             $config: buildConfigMock(),
             $session: { getUserUID: vi.fn(() => "uid123") },
-            $util: { generateToken: vi.fn(() => "tok-abc") },
+            $util: { generateToken: vi.fn(() => "tok-abc"), balanceBidi: (s) => Util.balanceBidi(s) },
             $view: { enter: vi.fn(), leave: vi.fn() },
             $notify: { info: vi.fn(), success: vi.fn(), error: vi.fn() },
             $gettext: (msg, params = {}) => msg.replace(/%\{(\w+)\}/g, (_, k) => (params[k] !== undefined ? String(params[k]) : "")),

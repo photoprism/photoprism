@@ -195,7 +195,7 @@ export default {
       return this.busy || this.loading;
     },
     confirmText: function () {
-      return this.$gettext("Add %{s}?", { s: this.confirm.name });
+      return this.$gettext("Add %{s}?", { s: this.$util.isolate(this.confirm.name) });
     },
   },
   watch: {

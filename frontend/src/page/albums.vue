@@ -238,7 +238,7 @@
                 {{ album.getDateString() }}
               </button>
               <button v-else-if="album.Title" :title="album.Title" class="action-title-edit meta-title" :data-uid="album.UID" @click.stop.prevent="edit(album)">
-                {{ album.Title }}
+                <bdi>{{ $util.balanceBidi(album.Title) }}</bdi>
               </button>
 
               <button v-if="album.Description" :title="$gettext('Description')" class="meta-description" @click.exact="edit(album)">
