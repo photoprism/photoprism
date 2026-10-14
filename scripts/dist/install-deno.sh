@@ -67,10 +67,10 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
-    ASSET="deno-x86_64-unknown-linux-gnu.zip"
+    DESTARCH=x86_64
     ;;
   arm64 | ARM64 | aarch64)
-    ASSET="deno-aarch64-unknown-linux-gnu.zip"
+    DESTARCH=aarch64
     ;;
   *)
     echo "Unsupported Machine Architecture: \"$DESTARCH\"" 1>&2
@@ -78,11 +78,15 @@ case $DESTARCH in
     ;;
 esac
 
+ASSET="deno-${DESTARCH}-unknown-linux-gnu.zip"
+
 # Abort if not executed as root when installing into a system directory.
 if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
   echo "Error: Run ${0##*/} as root to install in a system directory!" 1>&2
   exit 1
 fi
+
+echo "Installing Deno for ${DESTARCH^^}..."
 
 if [[ $VERSION == "latest" ]]; then
   RELEASE_URL="https://api.github.com/repos/${REPO}/releases/latest"

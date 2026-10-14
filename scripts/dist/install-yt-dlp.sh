@@ -261,6 +261,8 @@ fi
 echo "Installing yt-dlp to \"${DESTBIN}\" with permissions 755..."
 install -m 755 "${tmp_bin}" "${DESTBIN}"
 
+echo "Done."
+
 # Install Deno as a dependency, since yt-dlp uses it by default to extract YouTube video formats.
 # When this script runs from a URL, e.g. with bash <(curl ...), install-deno.sh is fetched from the develop branch.
 if [[ ${INSTALL_DENO} == "true" ]]; then
@@ -275,5 +277,3 @@ if [[ ${INSTALL_DENO} == "true" ]]; then
   fi
   bash "${DENO_SCRIPT}" "${DESTDIR}"
 fi
-
-echo "Done."
