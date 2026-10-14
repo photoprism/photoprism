@@ -74,15 +74,97 @@ Completed exports and Retry use the always-visible title Close control and verif
 return to Lightbox. Preparation cancellation uses desktop Cancel or mobile title
 Close and verifies that late responses do not hand off downloads.
 
-Provide an isolated library with the same access/UI requirements as the image
-runner and a manifest via `PHOTOPRISM_EXPORT_BACKEND_MANIFEST` (default
-`.local/export-backend/cases.json`). Entries have `label`, a real indexed photo
-`uid`, and file descriptions. Required labels are `HEVC`, `AVC`, `AppleJPEG`,
-`AppleHEIC`, `Motion`, `Animationgif`, `Animationpng`, `Animationwebp`, and `Mixed`.
-The fixture library contains `originals/backend-hevc.mov`, the exact native video
-embedded in the Motion fixture. `PHOTOPRISM_EXPORT_BACKEND_PATH` selects the saved
-download directory. Other library/URL/browser environment variables match the
-image runner. The runner does not create or modify database records.
+Create disposable fixtures from the repository root, with the server stopped:
+
+```sh
+python3 frontend/tests/playwright/export-fixtures.py --root .local/export-backend
+```
+
+Requires a development `photoprism` binary, Go, FFmpeg with `libx264`/`libx265`,
+`ffprobe`, Python Pillow, and the tracked DNG/HEIC samples. Use `--binary` for a
+side-by-side edition build and `--edition ce|plus|pro` for its real role set.
+Paid role setup requires a registered edition; unsupported roles fail setup.
+The script confines all generated media/config/SQLite data to a marked directory
+under `.local/`, indexes a seed, and installs file/stack fixture rows in that
+isolated database. Repeating it replaces owned rows, preserving photo UIDs and
+file counts. It creates real password accounts and stores the generated test
+password only in local `password.env` (mode 0600). Outputs are never committed.
+
+`environment.json` supplies the isolated paths and public-auth environment for
+the media server. Apply its values to the server process, set a free loopback
+`PHOTOPRISM_HTTP_PORT` and matching `PHOTOPRISM_SITE_URL`, and start `photoprism`.
+For example, start the disposable media server in a separate terminal:
+
+```sh
+python3 - <<'PYTHON'
+import json, os, subprocess
+env = os.environ.copy()
+env.update(json.load(open(".local/export-backend/environment.json")))
+env.update(PHOTOPRISM_HTTP_PORT="2344", PHOTOPRISM_SITE_URL="http://localhost:2344/")
+subprocess.run(["./photoprism", "start"], env=env, check=True)
+PYTHON
+```
+
+Wait for `/readyz`, then run the backend check with `PHOTOPRISM_TEST_URL` set to that URL. The backend
+runner defaults to `.local/export-backend` for both library and `cases.json`;
+override them with `PHOTOPRISM_EXPORT_FIXTURE_PATH` and
+`PHOTOPRISM_EXPORT_BACKEND_MANIFEST`. `PHOTOPRISM_EXPORT_BACKEND_PATH` selects the
+saved-download directory. Use English UI, Export enabled, and uncached thumbnails.
+The runner itself creates no database records.
+
+Every required label is checked before opening Chromium: `HEVC`, `AVC`,
+`AppleJPEG`, `AppleHEIC`, `Motion`, `Animationgif`, `Animationpng`, `Animationwebp`,
+`Mixed`, `TwoImage`, `TwoRAW`, `TwoSVG`, `TwoPDF`, `TwoGIF`, `TwoAPNG`, `TwoWebP`,
+`TwoVideo`, `TwoMotion`, `TwoApple`, and `RAWPlusJPEG`. Setup also creates a
+single-image `RoleJPEG` fixture for role downloads. `TwoApple` contains two
+image/MOV pairs (four originals); the other two-source stacks contain two
+originals. Each manifest entry supplies `label`, a real photo `uid`, and `files`
+with source name/root/format/SHA1. Motion entries also map original names to their
+exact native movie filenames in `native`. Fixtures include both JPG and PNG
+previews to exercise format preference. Missing fixtures, incomplete original
+stacks, or absent expected choices fail rather than skip.
+
+Every selected browser attachment must have a unique final name, the expected
+real format, and original/preview SHA1 or decoded JPEG dimensions, video codec,
+and container. Native motion bytes must match the independent movie source.
+Retry also verifies the real AVC attachment. Both viewports run every case and
+return to Lightbox after closure.
+
+## Real Session & Role Checks
+
+`node frontend/tests/playwright/export-roles.mjs` authenticates real accounts;
+it does not replace ACLs or photo API responses. Run it separately, after stopping
+the media server: retain the isolated paths from `environment.json`, override
+`PHOTOPRISM_AUTH_MODE=password` after loading the environment file (add it to
+the example's `env.update(...)` call), enable both Export and Download in the fixture
+`config/settings.yml`, and restart. Load the local password environment without
+printing it:
+
+```sh
+set -a
+. .local/export-backend/password.env
+set +a
+node frontend/tests/playwright/export-roles.mjs
+```
+
+Supply the same URL/library/browser variables as the backend runner;
+`PHOTOPRISM_EXPORT_ROLE_MANIFEST` overrides the default library `roles.json`.
+CE requires admin, guest, and share-link sessions. Plus requires admin, user,
+viewer, guest, and share-link. Pro requires admin, manager, user, viewer,
+contributor, guest, and share-link. Accounts retain their requested role after
+login. Only admin (CE), admin/user (Plus), and admin/manager/user (Pro) can Export.
+Viewer/contributor/guest/share-link checks verify the missing menu action and
+blocked shortcut, while existing Download menu and Ctrl+D still deliver the
+expected source bytes. Each allowed role performs a real original Export too.
+All cases run at both viewports. Download expectations are explicit in the
+manifest and checked against the real session.
+
+The runner creates a temporary share album/link through the authenticated admin
+API and removes them in `finally`; run it only against the disposable fixture
+instance. Passwords are read from named environment variables, and session tokens
+are never printed. A missing account, role case, password, photo, or registered
+Plus/Pro feature set fails explicitly. An unregistered instance cannot verify the
+paid-edition matrix. Treat such a run as blocked verification, never as a pass.
 
 ## Export Layout & Themes
 
