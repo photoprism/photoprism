@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,10 +11,14 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -700,6 +705,119 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, wrote)
 	})
+	t.Run("SaveClusterOptionsUpdateReplacesDSN", func(t *testing.T) {
+		newConfig := func(t *testing.T) *Config {
+			t.Helper()
+			c := NewConfig(CliTestContext())
+			c.options.ConfigPath = t.TempDir()
+			c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+			c.options.DatabaseDriver = dsn.DriverMySQL
+			c.options.DatabaseDSN = "pp_user:old_pw@tcp(db.local:3306)/pp_db?parseTime=true"
+
+			b, err := yaml.Marshal(map[string]any{"DatabaseDSN": c.options.DatabaseDSN, "DatabaseDsn": "legacy"})
+			require.NoError(t, err)
+			require.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+			return c
+		}
+
+		readOptions := func(t *testing.T, c *Config) map[string]any {
+			t.Helper()
+			content, err := os.ReadFile(c.OptionsYaml())
+			require.NoError(t, err)
+
+			var merged map[string]any
+			require.NoError(t, yaml.Unmarshal(content, &merged))
+
+			return merged
+		}
+
+		// Separate settings remove a stored DSN, which would otherwise take precedence over them.
+		c := newConfig(t)
+		update := cluster.OptionsUpdate{}
+		update.SetDatabaseName("pp_db")
+		update.SetDatabaseUser("pp_user")
+		update.SetDatabasePassword("new_pw")
+
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.True(t, wrote)
+
+		merged := readOptions(t, c)
+		assert.NotContains(t, merged, "DatabaseDSN")
+		assert.NotContains(t, merged, "DatabaseDsn")
+		assert.Equal(t, "new_pw", merged["DatabasePassword"])
+		assert.Equal(t, "", c.options.DatabaseDSN)
+		assert.Equal(t, "new_pw", c.DatabasePassword())
+
+		// An update without database settings, and a DSN update, keep a DSN.
+		c = newConfig(t)
+		update = cluster.OptionsUpdate{}
+		update.SetNodeClientID(cluster.ExampleClientID)
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.Contains(t, readOptions(t, c), "DatabaseDSN")
+		assert.NotEmpty(t, c.options.DatabaseDSN)
+
+		// A failed write keeps the DSN in memory.
+		c = newConfig(t)
+		require.NoError(t, os.Chmod(c.OptionsYaml(), 0o400))
+		require.NoError(t, os.Chmod(c.options.ConfigPath, 0o500))       //nolint:gosec // a directory needs the execute bit
+		t.Cleanup(func() { _ = os.Chmod(c.options.ConfigPath, 0o700) }) //nolint:gosec // a directory needs the execute bit
+
+		if f, openErr := os.OpenFile(c.OptionsYaml(), os.O_WRONLY, 0); openErr == nil {
+			_ = f.Close()
+			t.Log("skipping the failed write, since the directory is still writable (root)")
+		} else {
+			update = cluster.OptionsUpdate{}
+			update.SetDatabasePassword("new_pw")
+			_, err = c.SaveClusterOptionsUpdate(update)
+			require.Error(t, err)
+			assert.NotEmpty(t, c.options.DatabaseDSN)
+		}
+
+		require.NoError(t, os.Chmod(c.options.ConfigPath, 0o700)) //nolint:gosec // a directory needs the execute bit
+
+		// A DSN that is not in the file, e.g. from an environment variable, still applies.
+		hook := hookSystemLog(t)
+		c = newConfig(t)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("SiteTitle: Example\n"), fs.ModeFile))
+		update = cluster.OptionsUpdate{}
+		update.SetDatabasePassword("new_pw")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.NotEmpty(t, c.options.DatabaseDSN)
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "takes precedence over the saved database settings")
+
+		// A DSN flag still applies on the next start, even though the saved DSN was removed.
+		hook.Reset()
+		c = newConfig(t)
+		c.cliCtx = dsnFlagContext(t, c.options.DatabaseDSN)
+		update = cluster.OptionsUpdate{}
+		update.SetDatabasePassword("new_pw")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.NotContains(t, readOptions(t, c), "DatabaseDSN")
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "takes precedence over the saved database settings")
+
+		// Without one, removing the saved DSN logs nothing.
+		hook.Reset()
+		c = newConfig(t)
+		update = cluster.OptionsUpdate{}
+		update.SetDatabasePassword("new_pw")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.Nil(t, hook.LastEntry())
+
+		c = newConfig(t)
+		update = cluster.OptionsUpdate{}
+		update.SetDatabaseDSN("pp_user:new_pw@tcp(db.local:3306)/pp_db?parseTime=true")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.Contains(t, readOptions(t, c)["DatabaseDSN"], "pp_user:new_pw@tcp(db.local:3306)/pp_db")
+	})
 	t.Run("SaveClusterOptionsUpdateInvalidUUID", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ConfigPath = t.TempDir()
@@ -1336,4 +1454,45 @@ func TestConfig_DatabaseServerDSN(t *testing.T) {
 		assert.Equal(t, "db.example.com", c.DatabaseHost())
 		assert.Equal(t, 3307, c.DatabasePort())
 	})
+}
+
+// hookSystemLog replaces the console-only system logger with a test hook for the duration of a test.
+func hookSystemLog(t *testing.T) *test.Hook {
+	t.Helper()
+
+	orig := event.SystemLog
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	event.SystemLog = logger
+	t.Cleanup(func() { event.SystemLog = orig })
+
+	return hook
+}
+
+func TestConfig_databaseDsnFromCli(t *testing.T) {
+	t.Run("NoContext", func(t *testing.T) {
+		assert.False(t, (&Config{}).databaseDsnFromCli())
+	})
+	t.Run("NotSet", func(t *testing.T) {
+		assert.False(t, (&Config{cliCtx: dsnFlagContext(t, "")}).databaseDsnFromCli())
+		assert.False(t, NewConfig(CliTestContext()).databaseDsnFromCli())
+	})
+	t.Run("Flag", func(t *testing.T) {
+		assert.True(t, (&Config{cliCtx: dsnFlagContext(t, "pp_user:pp_pw@tcp(db.local:3306)/pp_db")}).databaseDsnFromCli())
+	})
+}
+
+// dsnFlagContext returns a CLI context with the database-dsn flag, set to dsnValue unless it is empty.
+func dsnFlagContext(t *testing.T, dsnValue string) *cli.Context {
+	t.Helper()
+
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
+	flags.String("database-dsn", "", "doc")
+	ctx := cli.NewContext(cli.NewApp(), flags, nil)
+
+	if dsnValue != "" {
+		require.NoError(t, ctx.Set("database-dsn", dsnValue))
+	}
+
+	return ctx
 }

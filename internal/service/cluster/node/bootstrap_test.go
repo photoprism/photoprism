@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -31,10 +32,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// newBootstrapTestConfig creates a minimal test config and closes its database on test cleanup.
+// newBootstrapTestConfig creates a minimal test config for the start command and closes its database on test cleanup.
 func newBootstrapTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
 	c := config.NewMinimalTestConfigWithDb(name, t.TempDir())
+	c.SetStarting(true)
 	t.Cleanup(func() {
 		assert.NoError(t, c.CloseDb())
 	})
@@ -859,6 +861,73 @@ func captureBootstrapLog(t *testing.T) *bytes.Buffer {
 	t.Cleanup(func() { l.SetOutput(prev) })
 
 	return &out
+}
+
+func TestInitConfig_NotStarting(t *testing.T) {
+	// Only the start command joins the cluster, so other commands send no request to the Portal.
+	var requests atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	t.Run("NotJoined", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-not-starting")
+		c.SetStarting(false)
+		c.Options().PortalUrl = srv.URL
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		out := captureBootstrapLog(t)
+
+		require.NoError(t, InitConfig(c))
+		assert.Zero(t, requests.Load())
+		assert.Contains(t, out.String(), "this node has not joined the cluster yet")
+	})
+	t.Run("Joined", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-not-starting-joined")
+		c.SetStarting(false)
+		c.Options().PortalUrl = srv.URL
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		c.Options().NodeClientID = cluster.ExampleClientID
+		c.Options().NodeClientSecret = cluster.ExampleClientSecret
+		out := captureBootstrapLog(t)
+
+		require.NoError(t, InitConfig(c))
+		assert.Zero(t, requests.Load())
+		assert.NotContains(t, out.String(), "has not joined")
+	})
+}
+
+func TestWarnNotJoined(t *testing.T) {
+	t.Run("NotJoined", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-warn")
+		c.Options().PortalUrl = "https://portal.example.com"
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		out := captureBootstrapLog(t)
+
+		warnNotJoined(c)
+		assert.Contains(t, out.String(), "this node has not joined the cluster yet, start the server first")
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-warn-none")
+		c.Options().PortalUrl = "https://portal.example.com"
+		c.Options().JoinToken = ""
+		out := captureBootstrapLog(t)
+
+		warnNotJoined(c)
+		assert.NotContains(t, out.String(), "has not joined")
+	})
+	t.Run("Joined", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-warn-joined")
+		c.Options().PortalUrl = "https://portal.example.com"
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		c.Options().NodeClientID = cluster.ExampleClientID
+		c.Options().NodeClientSecret = cluster.ExampleClientSecret
+		out := captureBootstrapLog(t)
+
+		warnNotJoined(c)
+		assert.NotContains(t, out.String(), "has not joined")
+	})
 }
 
 func TestBootstrapLogging(t *testing.T) {

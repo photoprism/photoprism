@@ -257,7 +257,12 @@ func DescribeFlag(f cli.Flag) Flag {
 	}
 }
 
+// flagTypeString returns the value type of a flag, looking through a flag that wraps another.
 func flagTypeString(f cli.Flag) string {
+	if w, ok := f.(interface{ Unwrap() cli.Flag }); ok {
+		f = w.Unwrap()
+	}
+
 	switch f.(type) {
 	case *cli.BoolFlag:
 		return "bool"

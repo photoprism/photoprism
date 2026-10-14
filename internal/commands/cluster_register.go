@@ -34,7 +34,7 @@ var (
 	regRoleFlag       = &cli.StringFlag{Name: "role", Usage: "node `ROLE` (instance, service)", Value: "instance"}
 	regIntUrlFlag     = &cli.StringFlag{Name: "advertise-url", Usage: "internal service `URL`"}
 	regSiteUrlFlag    = &cli.StringFlag{Name: "site-url", Usage: "public site `URL` (https://...)"}
-	regAppNameFlag    = &cli.StringFlag{Name: "app-name", Usage: "override app `NAME` reported to the portal"}
+	regAppNameFlag    = &LocalStringFlag{&cli.StringFlag{Name: "app-name", Usage: "override app `NAME` reported to the portal"}}
 	regAppVersionFlag = &cli.StringFlag{Name: "app-version", Usage: "override app `VERSION` reported to the portal"}
 	regLabelFlag      = &cli.StringSliceFlag{Name: "label", Usage: "`k=v` label (repeatable)"}
 	regRotateDatabase = &cli.BoolFlag{Name: "rotate", Usage: "rotates the node's database password"}
@@ -73,7 +73,7 @@ var ClusterRegisterCommand = &cli.Command{
 // clusterRegisterAction resolves CLI flags, builds the registration payload,
 // and calls the Portal's register endpoint with retry/backoff handling.
 func clusterRegisterAction(ctx *cli.Context) error {
-	return CallWithDependencies(ctx, func(conf *config.Config) error {
+	return CallWithCoreDependencies(ctx, func(conf *config.Config) error {
 		// Resolve inputs
 		name := clean.DNSLabel(ctx.String("name"))
 		derivedName := false
@@ -473,7 +473,8 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		}
 	}
 
-	// DB settings (MySQL/MariaDB only), which are ignored as a whole if the server address is unusable.
+	// DB settings (MySQL/MariaDB only), which replace a stored DSN and are ignored as a whole if the
+	// server address is unusable.
 	if resp.Database.Name != "" && resp.Database.User != "" && resp.Database.Password != "" && !resp.Database.Incomplete {
 		driver := strings.TrimSpace(resp.Database.Driver)
 		if driver == "" {
@@ -481,7 +482,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		}
 
 		if server, ok := resp.Database.Server(); !ok {
-			log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
+			event.SystemWarn([]string{"cluster", "ignored database settings with unusable server address %s"}, clean.Log(server))
 		} else {
 			updates.SetDatabaseDriver(driver)
 			updates.SetDatabaseName(resp.Database.Name)

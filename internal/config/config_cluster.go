@@ -77,7 +77,36 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 	setOptionString(patch, "DatabaseUser", update.DatabaseUser)
 	setOptionString(patch, "DatabasePassword", update.DatabasePassword)
 
-	return c.SaveOptionsPatch(patch)
+	// Separate database settings replace a stored DSN, which would otherwise take precedence over them.
+	if update.DatabaseDSN != nil || update.DatabaseName == nil && update.DatabaseUser == nil && update.DatabasePassword == nil {
+		changed, _, err := c.saveOptionsPatch(patch)
+		return changed, err
+	}
+
+	changed, removed, err := c.saveOptionsPatch(patch, "DatabaseDSN", "DatabaseDsn")
+
+	if err != nil {
+		return changed, err
+	} else if len(removed) > 0 {
+		c.options.DatabaseDSN = ""
+		c.options.Deprecated.DatabaseDsn = ""
+	}
+
+	// A DSN set by an environment variable or flag applies again on the next start.
+	if c.databaseDsnFromCli() || len(removed) == 0 && (c.options.DatabaseDSN != "" || c.options.Deprecated.DatabaseDsn != "") {
+		event.SystemWarn([]string{"config", "cluster", "database dsn from an environment variable or flag takes precedence over the saved database settings"})
+	}
+
+	return changed, nil
+}
+
+// databaseDsnFromCli reports whether an environment variable or flag sets the database DSN.
+func (c *Config) databaseDsnFromCli() bool {
+	if c.cliCtx == nil {
+		return false
+	}
+
+	return flagContext(c.cliCtx, "database-dsn").IsSet("database-dsn")
 }
 
 // validateClusterOptionsUpdate validates cluster-managed option updates.

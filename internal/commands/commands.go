@@ -298,6 +298,27 @@ func ShowUsageError(ctx *cli.Context) error {
 	return cli.Exit("", 2)
 }
 
+// CallWithCoreDependencies calls a command action with a config that is initialized without the node
+// bootstrap and a database connection, for commands that only read options and call other services.
+func CallWithCoreDependencies(ctx *cli.Context, action func(conf *config.Config) error) error {
+	conf, err := InitCoreConfig(ctx, false)
+
+	if err != nil {
+		var exit cli.ExitCoder
+
+		if errors.As(err, &exit) {
+			return err
+		}
+
+		return cli.Exit(err, 1)
+	}
+
+	// Apply the configured log level, as Config.Propagate does after a database connection.
+	config.SetAppLogLevel(conf.LogLevel())
+
+	return action(conf)
+}
+
 // CallWithDependencies calls a command action with initialized dependencies.
 func CallWithDependencies(ctx *cli.Context, action func(conf *config.Config) error) (err error) {
 	conf, err := InitConfig(ctx)

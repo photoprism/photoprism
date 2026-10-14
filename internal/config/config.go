@@ -259,13 +259,7 @@ func (c *Config) Init() error {
 	c.warnVisionKey()
 
 	// Configure HTTPS proxy for outgoing connections.
-	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
-			InsecureSkipVerify: c.HttpsProxyInsecure(), //nolint:gosec // proxy settings are user-configurable and opt-in
-		}
-
-		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
-	}
+	c.initHttpsProxy()
 
 	// Load settings from the "settings.yml" config file.
 	c.initSettings()
@@ -383,6 +377,9 @@ func (c *Config) InitCore() error {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
 
+	// Configure HTTPS proxy for outgoing connections.
+	c.initHttpsProxy()
+
 	// Load settings from the "settings.yml" config file.
 	c.initSettings()
 
@@ -394,6 +391,17 @@ func (c *Config) InitCore() error {
 	c.ready.Store(true)
 
 	return nil
+}
+
+// initHttpsProxy configures the HTTPS proxy for outgoing connections, if one is set.
+func (c *Config) initHttpsProxy() {
+	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: c.HttpsProxyInsecure(), //nolint:gosec // proxy settings are user-configurable and opt-in
+		}
+
+		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
+	}
 }
 
 // IsReady checks if the application has been successfully initialized.
@@ -552,30 +560,47 @@ func (c *Config) Options() *Options {
 // SaveOptionsPatch merges a patch into options.yml, reloads in-memory options,
 // and returns true when persisted values changed.
 func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
-	if c == nil || c.options == nil || len(patch) == 0 {
-		return false, nil
+	changed, _, err := c.saveOptionsPatch(patch)
+	return changed, err
+}
+
+// saveOptionsPatch is SaveOptionsPatch that also removes the given keys from options.yml in the same write
+// and returns those it removed. The caller clears the in-memory fields of removed keys.
+func (c *Config) saveOptionsPatch(patch Values, remove ...string) (changed bool, removed []string, err error) {
+	if c == nil || c.options == nil || len(patch) == 0 && len(remove) == 0 {
+		return false, nil, nil
 	}
 
 	// Values are typed against the options they set before anything is written, so that the file
 	// and the running configuration cannot end up holding different numbers.
-	if err := CoerceOptionValues(patch); err != nil {
-		return false, err
+	if err = CoerceOptionValues(patch); err != nil {
+		return false, nil, err
 	}
 
 	fileName, values, err := c.loadOptionsYAML()
 	if err != nil {
-		return false, err
+		return false, nil, err
 	}
 
-	if !mergeOptionValues(values, patch) {
-		return false, nil
+	changed = mergeOptionValues(values, patch)
+
+	for _, key := range remove {
+		if _, ok := values[key]; ok {
+			delete(values, key)
+			removed = append(removed, key)
+			changed = true
+		}
+	}
+
+	if !changed {
+		return false, nil, nil
 	}
 
 	if _, err = c.writeOptionsYAML(fileName, values); err != nil {
-		return true, err
+		return true, nil, err
 	}
 
-	return true, c.applyOptionValues(patch)
+	return true, removed, c.applyOptionValues(patch)
 }
 
 // DeleteOptionsPatch removes the specified keys from "options.yml" and reports whether the file
@@ -724,6 +749,18 @@ func (c *Config) Restart() bool {
 	return mutex.Restart.Load()
 }
 
+// Starting reports whether the config belongs to the start command, which runs the server.
+func (c *Config) Starting() bool {
+	return c != nil && c.start
+}
+
+// SetStarting marks the config as belonging to the start command, e.g. in tests of the server bootstrap.
+func (c *Config) SetStarting(start bool) {
+	if c != nil {
+		c.start = start
+	}
+}
+
 // CliContext returns the cli context if set.
 func (c *Config) CliContext() *cli.Context {
 	if c.cliCtx == nil {
@@ -739,7 +776,7 @@ func (c *Config) CliContextString(name string) string {
 		return ""
 	}
 
-	return c.cliCtx.String(name)
+	return flagContext(c.cliCtx, name).String(name)
 }
 
 // serialFiles returns the storage serial copies in lookup order, each with the mode to create it with.

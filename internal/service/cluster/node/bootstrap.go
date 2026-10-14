@@ -42,8 +42,8 @@ func init() {
 	config.Register(config.StageBoot, "cluster-node", InitConfig, nil)
 }
 
-// InitConfig performs node bootstrap: optional registration with the Portal
-// and theme installation. Runs early during config.Init().
+// InitConfig performs node bootstrap during config.Init(): when the server starts, optional registration
+// with the Portal and theme installation; for other commands, a warning if the node has not joined yet.
 func InitConfig(c *config.Config) error {
 	role := c.NodeRole()
 
@@ -53,8 +53,10 @@ func InitConfig(c *config.Config) error {
 		return nil
 	}
 
-	// Auto-join the cluster and sync the theme when enabled and configured.
-	if cluster.BootstrapAutoJoinEnabled || cluster.BootstrapAutoThemeEnabled {
+	// Auto-join the cluster and sync the theme when the server starts, if enabled and configured.
+	if !c.Starting() {
+		warnNotJoined(c)
+	} else if cluster.BootstrapAutoJoinEnabled || cluster.BootstrapAutoThemeEnabled {
 		bootstrapClusterNode(c)
 	}
 
@@ -69,6 +71,18 @@ func InitConfig(c *config.Config) error {
 	}
 
 	return nil
+}
+
+// warnNotJoined warns that a command runs without the cluster settings when the node is configured to
+// join a cluster but has not joined yet, since only the start command joins it.
+func warnNotJoined(c *config.Config) {
+	if !cluster.BootstrapAutoJoinEnabled || strings.TrimSpace(c.PortalUrl()) == "" || strings.TrimSpace(c.JoinToken()) == "" {
+		return
+	} else if strings.TrimSpace(c.NodeClientID()) != "" && strings.TrimSpace(c.NodeClientSecret()) != "" {
+		return
+	}
+
+	log.Warnf("cluster: this node has not joined the cluster yet, start the server first")
 }
 
 // bootstrapClusterNode registers the node with the configured Portal and installs

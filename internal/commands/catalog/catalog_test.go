@@ -168,3 +168,33 @@ func TestRenderMarkdown_ShortOmitsFlags(t *testing.T) {
 		t.Fatalf("did not expect flags table when Short=true:\n%s", out)
 	}
 }
+
+// wrappedFlag wraps a string flag like commands.LocalStringFlag.
+type wrappedFlag struct {
+	*cli.StringFlag
+}
+
+// Unwrap returns the wrapped string flag.
+func (f *wrappedFlag) Unwrap() cli.Flag {
+	return f.StringFlag
+}
+
+func TestFlagTypeString(t *testing.T) {
+	t.Run("Plain", func(t *testing.T) {
+		if got := flagTypeString(&cli.StringFlag{Name: "site-url"}); got != "string" {
+			t.Fatalf("expected string, got %q", got)
+		}
+		if got := flagTypeString(&cli.BoolFlag{Name: "trace"}); got != "bool" {
+			t.Fatalf("expected bool, got %q", got)
+		}
+	})
+	t.Run("Wrapped", func(t *testing.T) {
+		f := &wrappedFlag{&cli.StringFlag{Name: "advertise-url", Aliases: []string{"i"}, Usage: "internal service `URL`"}}
+		if got := flagTypeString(f); got != "string" {
+			t.Fatalf("expected string, got %q", got)
+		}
+		if d := DescribeFlag(f); d.Type != "string" || d.Name != "--advertise-url" || d.Usage == "" {
+			t.Fatalf("unexpected description %+v", d)
+		}
+	})
+}

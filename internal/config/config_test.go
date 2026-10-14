@@ -11,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -774,6 +775,82 @@ func TestConfig_SaveOptionsPatchTypesValues(t *testing.T) {
 		assert.False(t, wrote)
 		assert.NoFileExists(t, c.OptionsYaml(), "a rejected patch must not write the file")
 	})
+}
+
+func TestConfig_saveOptionsPatch(t *testing.T) {
+	newTestOptions := func(t *testing.T) *Config {
+		t.Helper()
+
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		b, err := yaml.Marshal(Values{"FaceModel": "facenet", "SiteUrl": "https://photos.example.com/"})
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+		return c
+	}
+
+	readOptions := func(t *testing.T, c *Config) map[string]any {
+		t.Helper()
+		content, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+
+		var merged map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &merged))
+
+		return merged
+	}
+
+	t.Run("PatchAndRemove", func(t *testing.T) {
+		c := newTestOptions(t)
+		wrote, removed, err := c.saveOptionsPatch(Values{"SiteTitle": "Example"}, "FaceModel", "DatabaseDSN")
+		require.NoError(t, err)
+		assert.True(t, wrote)
+		assert.Equal(t, []string{"FaceModel"}, removed)
+
+		merged := readOptions(t, c)
+		assert.NotContains(t, merged, "FaceModel")
+		assert.Equal(t, "Example", merged["SiteTitle"])
+		assert.Equal(t, "Example", c.options.SiteTitle)
+	})
+	t.Run("RemoveOnly", func(t *testing.T) {
+		c := newTestOptions(t)
+		wrote, removed, err := c.saveOptionsPatch(nil, "FaceModel")
+		require.NoError(t, err)
+		assert.True(t, wrote)
+		assert.Equal(t, []string{"FaceModel"}, removed)
+		assert.NotContains(t, readOptions(t, c), "FaceModel")
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		c := newTestOptions(t)
+		wrote, removed, err := c.saveOptionsPatch(Values{"SiteUrl": "https://photos.example.com/"}, "DatabaseDSN")
+		require.NoError(t, err)
+		assert.False(t, wrote)
+		assert.Empty(t, removed)
+		wrote, removed, err = c.saveOptionsPatch(nil)
+		require.NoError(t, err)
+		assert.False(t, wrote)
+		assert.Empty(t, removed)
+	})
+}
+
+func TestConfig_Starting(t *testing.T) {
+	ctx := CliTestContext()
+	ctx.Command = &cli.Command{Name: "start"}
+	assert.True(t, NewConfig(ctx).Starting())
+
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.Starting())
+	c.SetStarting(true)
+	assert.True(t, c.Starting())
+	c.SetStarting(false)
+	assert.False(t, c.Starting())
+
+	var nilConfig *Config
+	nilConfig.SetStarting(true)
+	assert.False(t, nilConfig.Starting())
 }
 
 func TestConfig_DeleteOptionsPatch(t *testing.T) {

@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -370,6 +371,16 @@ func setClusterOptionsForTest(t *testing.T, portalUrl, clusterDomain string) {
 }
 
 func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
+	// An instance rotates through the Portal, so it must not wait for a database it may not reach.
+	initCoreConfig := InitCoreConfig
+	t.Cleanup(func() { InitCoreConfig = initCoreConfig })
+	var core atomic.Bool
+	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*cfg.Config, error) {
+		core.Store(true)
+		return initCoreConfig(ctx, quiet)
+	}
+	t.Cleanup(func() { assert.True(t, core.Load()) })
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/api/v1/cluster/nodes/register" {
 			http.NotFound(w, r)
@@ -558,6 +569,24 @@ func TestClusterRegister_HTTPConflict(t *testing.T) {
 	} else {
 		t.Fatalf("expected ExitCoder, got %T", err)
 	}
+}
+
+func TestClusterRegister_NoDatabase(t *testing.T) {
+	// Register runs on a node that has not joined yet, so it must not need the database the Portal provides.
+	// The harness reassigns InitConfig for each run, so the test checks that the core loader was used.
+	initCoreConfig := InitCoreConfig
+	t.Cleanup(func() { InitCoreConfig = initCoreConfig })
+	var core atomic.Bool
+	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*cfg.Config, error) {
+		core.Store(true)
+		return initCoreConfig(ctx, quiet)
+	}
+
+	setClusterOptionsForTest(t, cfg.DefaultPortalUrl, "cluster.dev")
+	out, err := RunWithTestContext(ClusterRegisterCommand, []string{"register", "--dry-run", "--json"})
+	require.NoError(t, err)
+	assert.True(t, core.Load())
+	assert.NotEmpty(t, gjson.Get(out, "Payload.NodeName").String())
 }
 
 func TestClusterRegister_DryRun_JSON(t *testing.T) {
