@@ -5,10 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestManagerLoadKeysUnreadableFile(t *testing.T) {
