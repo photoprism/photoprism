@@ -2,12 +2,14 @@ package workers
 
 import (
 	"path"
+	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -53,6 +55,13 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	defer skipped.Warn("sync: skipped %s in %s whose names are too long (%s)", "remote file", a.AccName)
 
+	// PostgreSQL cannot store names that are not valid UTF-8, so those files are skipped with one warning as well.
+	var invalid skippedNames
+
+	defer invalid.Warn("sync: skipped %s in %s whose names are not valid UTF-8 (%s)", "remote file", a.AccName)
+
+	validNames := entity.DbDialect() == dsn.DialectPostgreSQL
+
 	for _, dir := range dirs {
 		if key := path.Clean("/" + dir); listed[key] {
 			continue
@@ -85,6 +94,9 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			}
 			if syncNameTooLong(file.Abs) {
 				skipped.Add(file.Abs)
+				continue
+			} else if validNames && !utf8.ValidString(file.Abs) {
+				invalid.Add(file.Abs)
 				continue
 			}
 

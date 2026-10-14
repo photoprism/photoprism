@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -254,4 +255,39 @@ func TestSync_refreshLogs(t *testing.T) {
 		require.Error(t, err)
 		assert.Len(t, errorsContaining(hook, "(list remote files of "+clean.Log(a.AccName)+")"), 1)
 	})
+}
+
+func TestSync_refreshInvalidNames(t *testing.T) {
+	if entity.DbDialect() != dsn.DialectPostgreSQL {
+		t.Skip("only PostgreSQL cannot store names that are not valid UTF-8")
+	}
+
+	worker := NewSync(config.TestConfig())
+	remote := t.TempDir()
+	for _, name := range []string{"valid.jpg", "invalid-\xff.jpg", "invalid-\xfe.jpg"} {
+		require.NoError(t, os.WriteFile(filepath.Join(remote, name), []byte("jpg"), fs.ModeFile))
+	}
+
+	server := httptest.NewServer(&webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()})
+	t.Cleanup(server.Close)
+
+	a := entity.Service{AccName: "Sync Invalid " + rnd.Base36(8), AccURL: server.URL + "/", AccType: "webdav", AccSync: true,
+		SyncDownload: true, SyncPath: "/", AccTimeout: "low", RetryLimit: -1}
+	require.NoError(t, entity.Db().Create(&a).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "service_id = ?", a.ID).Error)
+		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
+	})
+
+	hook := captureSyncLog(t)
+	complete, err := worker.refresh(a)
+	require.NoError(t, err)
+	assert.True(t, complete)
+
+	var names []string
+	require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ?", a.ID).Pluck("remote_name", &names).Error)
+	assert.Equal(t, []string{"/valid.jpg"}, names)
+	assert.Zero(t, countLogged(hook, logrus.ErrorLevel, ""))
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped 2 remote files in"))
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "not valid UTF-8"))
 }
