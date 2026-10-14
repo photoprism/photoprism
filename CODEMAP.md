@@ -139,7 +139,7 @@ Background Workers
 Cluster / Portal
 - Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
-  - Only `start` joins the cluster and syncs the theme (`Config.Starting()`); other commands on a node that has not joined yet log a warning instead.
+  - Only `start` joins the cluster and syncs the theme (`Config.Starting()`), but not `start --config` (`Config.StartReport()`); other commands on a node that has not joined yet log a warning instead.
   - Bootstrap treats 400, 401, 403, 404 and 409 as final and retries 429, 5xx and network errors (6 attempts, 15 s apart), then reports the Portal's reason; `cluster register` retries only 429, with backoff.
   - Theme sync logs at info level when it downloads, updates, or skips a bundle, so operators can trace it in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.

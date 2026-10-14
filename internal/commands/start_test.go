@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 )
@@ -23,6 +24,18 @@ func TestStartCommand(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, output, "http-port")
 		assert.False(t, event.AuditRecordedSync())
+	})
+	t.Run("StartReport", func(t *testing.T) {
+		// The config tells the cluster bootstrap that this flag only shows the report.
+		for _, args := range [][]string{{"--config"}, {"-c"}} {
+			ctx := newCommandContext(t, StartCommand, args...)
+			ctx.Command = StartCommand
+			assert.True(t, config.NewConfig(ctx).StartReport(), args)
+		}
+
+		ctx := newCommandContext(t, StartCommand)
+		ctx.Command = StartCommand
+		assert.False(t, config.NewConfig(ctx).StartReport())
 	})
 }
 

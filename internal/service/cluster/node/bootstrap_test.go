@@ -896,6 +896,18 @@ func TestInitConfig_NotStarting(t *testing.T) {
 		assert.Zero(t, requests.Load())
 		assert.NotContains(t, out.String(), "has not joined")
 	})
+	t.Run("StartReport", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-start-report")
+		c.SetStarting(true)
+		c.SetStartReport(true)
+		c.Options().PortalUrl = srv.URL
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		out := captureBootstrapLog(t)
+
+		require.NoError(t, InitConfig(c))
+		assert.Zero(t, requests.Load())
+		assert.Contains(t, out.String(), "this node has not joined the cluster yet")
+	})
 }
 
 func TestWarnNotJoined(t *testing.T) {

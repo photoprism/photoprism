@@ -853,6 +853,56 @@ func TestConfig_Starting(t *testing.T) {
 	assert.False(t, nilConfig.Starting())
 }
 
+func TestConfig_StartReport(t *testing.T) {
+	// startReport runs a start command whose -c/--config flag shares its names with the global config path.
+	startReport := func(t *testing.T, args ...string) (report bool) {
+		t.Helper()
+
+		app := cli.NewApp()
+		app.Flags = []cli.Flag{&cli.StringFlag{Name: "config-path", Aliases: []string{"config", "c"}}}
+		action := func(ctx *cli.Context) error {
+			report = NewConfig(ctx).StartReport()
+			return nil
+		}
+		app.Commands = []*cli.Command{
+			{Name: "start", Aliases: []string{"up"}, Flags: []cli.Flag{&cli.BoolFlag{Name: "config", Aliases: []string{"c"}}}, Action: action},
+			{Name: "index", Action: action},
+		}
+
+		require.NoError(t, app.Run(append([]string{"photoprism"}, args...)))
+
+		return report
+	}
+
+	configPath := t.TempDir()
+
+	t.Run("Report", func(t *testing.T) {
+		assert.True(t, startReport(t, "start", "--config"))
+		assert.True(t, startReport(t, "up", "-c"))
+		assert.True(t, startReport(t, "--config-path", configPath, "start", "-c"))
+	})
+	t.Run("Server", func(t *testing.T) {
+		assert.False(t, startReport(t, "start"))
+		assert.False(t, startReport(t, "--config", configPath, "start"))
+		assert.False(t, startReport(t, "-c", configPath, "up"))
+	})
+	t.Run("OtherCommand", func(t *testing.T) {
+		assert.False(t, startReport(t, "-c", configPath, "index"))
+	})
+	t.Run("Setter", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.False(t, c.StartReport())
+		c.SetStartReport(true)
+		assert.True(t, c.StartReport())
+		c.SetStartReport(false)
+		assert.False(t, c.StartReport())
+
+		var nilConfig *Config
+		nilConfig.SetStartReport(true)
+		assert.False(t, nilConfig.StartReport())
+	})
+}
+
 func TestConfig_DeleteOptionsPatch(t *testing.T) {
 	newTestOptions := func(t *testing.T, values Values) *Config {
 		t.Helper()

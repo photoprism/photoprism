@@ -43,7 +43,8 @@ func init() {
 }
 
 // InitConfig performs node bootstrap during config.Init(): when the server starts, optional registration
-// with the Portal and theme installation; for other commands, a warning if the node has not joined yet.
+// with the Portal and theme installation; for other commands and the start command's config report,
+// a warning if the node has not joined yet.
 func InitConfig(c *config.Config) error {
 	role := c.NodeRole()
 
@@ -54,7 +55,7 @@ func InitConfig(c *config.Config) error {
 	}
 
 	// Auto-join the cluster and sync the theme when the server starts, if enabled and configured.
-	if !c.Starting() {
+	if !c.Starting() || c.StartReport() {
 		warnNotJoined(c)
 	} else if cluster.BootstrapAutoJoinEnabled || cluster.BootstrapAutoThemeEnabled {
 		bootstrapClusterNode(c)

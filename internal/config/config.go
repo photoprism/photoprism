@@ -93,6 +93,7 @@ type Config struct {
 	tokenKeyOnce  sync.Once
 	env           string
 	start         bool
+	startReport   bool
 	ready         atomic.Bool
 	cache         *gc.Cache
 	testFolder    string
@@ -163,10 +164,11 @@ func initLogger() {
 
 // NewConfig builds a Config from CLI context defaults and loads options.yml overrides if present.
 func NewConfig(ctx *cli.Context) *Config {
-	start := false
+	start, startReport := false, false
 
 	if ctx != nil {
 		start = ctx.Command.Name == "start"
+		startReport = start && ctx.Bool("config")
 	}
 
 	// Initialize logger.
@@ -174,12 +176,13 @@ func NewConfig(ctx *cli.Context) *Config {
 
 	// Initialize options from the "defaults.yml" file and CLI context.
 	c := &Config{
-		cliCtx:  ctx,
-		options: NewOptions(ctx),
-		token:   rnd.Base36(8),
-		env:     os.Getenv("DOCKER_ENV"),
-		start:   start,
-		cache:   gc.New(time.Minute, 10*time.Minute),
+		cliCtx:      ctx,
+		options:     NewOptions(ctx),
+		token:       rnd.Base36(8),
+		env:         os.Getenv("DOCKER_ENV"),
+		start:       start,
+		startReport: startReport,
+		cache:       gc.New(time.Minute, 10*time.Minute),
 	}
 
 	// Keep what the environment or the command line asked for, since "options.yml" is loaded
@@ -758,6 +761,18 @@ func (c *Config) Starting() bool {
 func (c *Config) SetStarting(start bool) {
 	if c != nil {
 		c.start = start
+	}
+}
+
+// StartReport reports whether the start command only shows its config report, without running the server.
+func (c *Config) StartReport() bool {
+	return c != nil && c.startReport
+}
+
+// SetStartReport marks the config as belonging to a start command that only shows its config report.
+func (c *Config) SetStartReport(report bool) {
+	if c != nil {
+		c.startReport = report
 	}
 }
 
