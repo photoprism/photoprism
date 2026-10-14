@@ -11,7 +11,7 @@
 
 - ESLint + Prettier own formatting. After edits run `make fmt-js` (or `npm run fmt` inside `frontend/`) and `make lint-js` to verify; `frontend/eslint.config.mjs` is the flat-config source of truth.
 - The dev container preinstalls `eslint` and `prettier` on the global `PATH` at the same version `frontend/package.json` pins (`eslint --version` should match the `eslint` entry in `frontend/package.json`). Invoke them directly (e.g. `eslint --fix tests/`) from `frontend/` — no need for `npx`, which adds a spawn step and an extra resolution layer.
-- Prettier reflow is **not** part of `make fmt-js` / `eslint --fix` — the `prettier/prettier` rule is set to `"off"` so intentional newlines (multi-line method chains, vertical predicate lists) are preserved. Run `prettier --write <file>` explicitly when a full reflow is wanted; do not run it blanket across `src/` or `tests/`.
+- Prettier reflow is **not** part of `make fmt-js` / `eslint --fix`, so intentional newlines (multi-line method chains, vertical predicate lists) are preserved. Run `prettier --write <file>` explicitly when a full reflow is wanted; do not run it blanket across `src/` or `tests/`.
 - Prettier uses `printWidth: 160`, double quotes, semicolons, `trailingComma: "es5"`, and `proseWrap: "never"` (see `frontend/.prettierrc.json`). Do not hand-wrap long lines — let Prettier decide. CSS/SCSS use `tabWidth: 4`.
 - The repo-root `.editorconfig` covers indentation and newline style; don't override it locally.
 - Vue SFC block order is `<template>` → `<script>` → `<style>`; keep it consistent with existing components.
