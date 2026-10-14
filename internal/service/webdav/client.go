@@ -319,7 +319,9 @@ func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err err
 
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("webdav: %s (panic while listing files)\nstack: %s", r, debug.Stack())
+			log.Errorf("webdav: %s (panic while listing files in %s)", clean.Log(fmt.Sprint(r)), clean.Log(dir))
+			log.Debugf("webdav: stack of the panic while listing files in %s: %s", clean.Log(dir), debug.Stack())
+			err = fmt.Errorf("webdav: failed to list files in %s (unexpected error)", clean.LogBytes(dir, clean.LogNamesBytes))
 		}
 	}()
 

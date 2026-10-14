@@ -337,6 +337,15 @@ func TestClient_RecoveredPanic(t *testing.T) {
 		assert.Equal(t, "webdav: failed to upload panic.jpg (unexpected error)", err.Error())
 		assert.True(t, stackLogged("uploading"))
 	})
+	t.Run("Files", func(t *testing.T) {
+		// Without a context, the request context cannot be created.
+		_, err := (&Client{endpoint: endpoint}).Files("/panic", false)
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "\n")
+		assert.Contains(t, err.Error(), "failed to list files in")
+		assert.Contains(t, err.Error(), "(unexpected error)")
+		assert.True(t, stackLogged("listing files"))
+	})
 	t.Run("Download", func(t *testing.T) {
 		err := c.Download("/panic.jpg", filepath.Join(t.TempDir(), "panic.jpg"), false)
 		require.Error(t, err)
