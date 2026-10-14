@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"mime"
 	"net/http"
 	"net/url"
@@ -25,6 +26,9 @@ func TestDownloadFileName(t *testing.T) {
 	}{
 		{"Absent", "", ".jpg", "fallback.jpg"},
 		{"Unicode", "旅行_preview.png", ".jpg", "旅行_preview.jpg"},
+		{"NonBreakingSpace", "my\u00a0photo.png", ".jpg", "myphoto.jpg"},
+		{"UnicodeSpaces", "my\u1680\u2007\u202f\u205f\u3000photo.png", ".jpg", "myphoto.jpg"},
+		{"AsciiSpace", "my photo.png", ".jpg", "my photo.jpg"},
 		{"Trim", "  photo  .png ", ".jpg", "photo.jpg"},
 		{"Controls", "photo\r\n\x00.png", ".jpg", "photo.jpg"},
 		{"InvalidCharacters", "ph:o?to*.png", ".jpg", "photo.jpg"},
@@ -46,6 +50,17 @@ func TestDownloadFileName(t *testing.T) {
 	}
 }
 
+// TestDownloadExportNames checks that collision-resolved client filenames survive server cleaning.
+func TestDownloadExportNames(t *testing.T) {
+	for index, name := range []string{"myphoto.jpg", "myphoto_2.jpg", "MYPHOTO_3.JPG", "myphoto_fit_720.jpg", "MYPHOTO_fit_720_2.jpg", "myphoto_fit_720_3.jpg", "my photo.jpg", "my photo_preview.png", "旅行_video.mov"} {
+		t.Run(fmt.Sprintf("Filename%d", index+1), func(t *testing.T) {
+			req, err := http.NewRequest(http.MethodGet, "/?filename="+url.QueryEscape(name), nil)
+			require.NoError(t, err)
+			assert.Equal(t, name, DownloadFileName(&gin.Context{Request: req}, "fallback.jpg", filepath.Ext(name)))
+		})
+	}
+}
+
 // TestGetDownloadFilename checks custom hash-download names while preserving content and legacy naming.
 func TestGetDownloadFilename(t *testing.T) {
 	app, router, conf := NewApiTest()
@@ -62,6 +77,17 @@ func TestGetDownloadFilename(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "旅行"+filepath.Ext(f.FileName), params["filename"])
 		assert.Equal(t, original, r.Body.Bytes())
+	})
+	t.Run("StableExportNames", func(t *testing.T) {
+		for _, base := range []string{"myphoto", "MYPHOTO_2", "myphoto_fit_720", "myphoto_fit_720_2", "myphoto_fit_720_3", "my photo"} {
+			name := base + filepath.Ext(f.FileName)
+			r := PerformRequest(app, http.MethodGet, "/api/v1/dl/"+hash+"?t="+conf.DownloadToken()+"&filename="+url.QueryEscape(name))
+			require.Equal(t, http.StatusOK, r.Code)
+			_, params, err := mime.ParseMediaType(r.Header().Get("Content-Disposition"))
+			require.NoError(t, err)
+			assert.Equal(t, name, params["filename"])
+			assert.Equal(t, original, r.Body.Bytes())
+		}
 	})
 	t.Run("Legacy", func(t *testing.T) {
 		for _, name := range []customize.DownloadName{customize.DownloadNameFile, customize.DownloadNameOriginal, customize.DownloadNameShare} {

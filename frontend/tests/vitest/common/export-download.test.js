@@ -69,6 +69,28 @@ describe("image export choices and filenames", () => {
     expect(exportBaseName({ name: "...", originalName: "" })).toBe("photo");
     expect(exportBaseName({ name: "dir/a.jpg", originalName: "<>:*?" })).toBe("photo");
   });
+  it.each(["\u00a0", "\u1680", "\u2000", "\u2001", "\u2002", "\u2003", "\u2004", "\u2005", "\u2006", "\u2007", "\u2008", "\u2009", "\u200a", "\u202f", "\u205f", "\u3000", "\u2028", "\u2029"])(
+    "removes Unicode whitespace %j before checking all output collisions", (space) => {
+      const groups = buildMediaExportGroups([
+        file("a", { Name: `one/my${space}photo.jpg` }),
+        file("b", { Name: "two/MYPHOTO.jpg" }),
+        file("c", { Name: `three/myphoto_fit_720.j${space}pg`, FileType: "jpg" }),
+      ], thumbs);
+      const items = buildExportDownloads(groups, [groups[0].options[0].id, groups[0].options[1].id, groups[1].options[0].id, groups[1].options[1].id, groups[2].options[0].id]);
+      expect(items.map((item) => item.filename)).toEqual(["myphoto.jpg", "myphoto_fit_720.jpg", "MYPHOTO_2.jpg", "MYPHOTO_fit_720_2.jpg", "myphoto_fit_720_3.jpg"]);
+    }
+  );
+  it("preserves normal internal spaces in originals and derivatives", () => {
+    const items = allDownloads([file("a", { Name: "my photo.jpg" })]);
+    expect(items.map((item) => item.filename)).toEqual(["my photo.jpg", "my photo_fit_720.jpg", "my photo_fit_1920.jpg"]);
+  });
+  it("sanitizes appended extensions on originals and derivatives", () => {
+    const groups = buildMediaExportGroups([file("r", { Name: "photo.heic", FileType: "heic" }), file("p", { Root: "sidecar", Name: "photo.heic.png", FileType: "png" })], thumbs);
+    groups[0].options[0].source.name = "photo.h:eic";
+    groups[0].options[1].format = "p\u00a0ng";
+    const items = buildExportDownloads(groups, groups[0].options.slice(0, 2).map((option) => option.id));
+    expect(items.map((item) => item.filename)).toEqual(["photo.heic", "photo_preview.png"]);
+  });
   it("freezes a stable group and option order independently of click order", () => {
     const groups = buildMediaExportGroups([file("a"), file("b")], thumbs);
     const ids = groups.flatMap((group) => group.options.map((option) => option.id)).reverse();

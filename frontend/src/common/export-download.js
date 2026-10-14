@@ -4,7 +4,7 @@ import { exportMediaUrl, prepareExportMedia } from "common/export-media";
 export function exportBaseName(source) {
   const name = (source.originalName || source.name).split(/[\\/]/).pop();
   const cleaned = name
-    .replace(/[^\p{L}\p{M}\p{N}\p{P}\p{S}\p{Zs}]/gu, "")
+    .replace(/[^\p{L}\p{M}\p{N}\p{P}\p{S} ]/gu, "")
     .replace(/[~\\:|"?*<>{}]/g, "")
     .replace(/\.{2,}/g, ".")
     .trim();
@@ -36,7 +36,7 @@ export function buildExportDownloads(groups, selectedIds) {
       const sourceExtension = splitExtension(source.name.split(/[\\/]/).pop())[1] || `.${source.format}`;
       const outputStem = option.kind === "original" ? splitExtension(exportBaseName(source))[0].trim() : stem;
       const outputSuffix = { preview: "preview", avc: "avc", "video-part": "video" }[option.kind] || option.size;
-      const name = option.kind === "original" ? `${outputStem}${sourceExtension}` : `${outputStem}_${outputSuffix}.${option.format}`;
+      const name = exportBaseName({ name: option.kind === "original" ? `${outputStem}${sourceExtension}` : `${outputStem}_${outputSuffix}.${option.format}` });
       const [base, extension] = splitExtension(name);
       let filename = name;
       let suffix = 2;

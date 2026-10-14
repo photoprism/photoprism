@@ -72,8 +72,10 @@ the dialog omits that size until a positive byte count is available.
 
 `export-download.js` freezes selected sources, names, and group order. It orders
 Originals, Preview, thumbnails from smallest to largest, then video derivatives.
-Case-insensitive collisions after sanitization receive `_2`, `_3`, and subsequent
-suffixes. Original names use their own last `OriginalName`/`Name` component and
+Final names are sanitized after appending the output extension. Unicode
+whitespace is removed to match server cleaning; normal internal ASCII spaces
+are preserved. Case-insensitive collisions across originals and derivatives
+receive `_2`, `_3`, and subsequent suffixes. Original names use their own last `OriginalName`/`Name` component and
 actual extension. Other outputs use the still/group basename with `_preview`,
 `_fit_*`, `_avc.mp4`, or `_video` and the native container extension.
 
