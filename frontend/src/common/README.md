@@ -27,7 +27,9 @@ Consumers must load full photo details; search-result file summaries are insuffi
   owned existing still previews; matching occurs before any grouping or filtering.
 - JPEG/PNG originals supply their own thumbnails. Other still formats use an
   available JPEG/PNG matched by directory and full name (`photo.heic.jpg`), then
-  by a stem owned by exactly one original (`photo.jpg`). Multiple matches or a
+  by a stem owned by exactly one original (`photo.jpg`). Within each match level,
+  vectors prefer PNG and other media prefer JPG, falling back to the other format.
+  Multiple candidates at the chosen format priority or a
   candidate belonging to another original leave only Original and set
   `previewMissing`. Unavailable named originals still count toward ambiguity.
 - Preview uses the existing file's format and dimensions. Thumbnail dimensions

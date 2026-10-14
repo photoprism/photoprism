@@ -66,11 +66,19 @@ function nameStem(name) {
   return dot > name.lastIndexOf("/") ? name.substring(0, dot) : name;
 }
 
+// preferredPreview chooses a unique candidate in the preferred available raster format.
+function preferredPreview(original, candidates) {
+  const preferred = original.MediaType === media.Vector ? media.FormatPng : media.FormatJpeg;
+  const matches = candidates.filter((file) => fileFormat(file) === preferred);
+  const available = matches.length ? matches : candidates;
+  return available.length === 1 ? available[0] : null;
+}
+
 // findPreview resolves an image by full original name or an unambiguous stem.
 function findPreview(original, originals, rasters) {
   const exact = rasters.filter((file) => nameStem(file.Name) === original.Name);
   if (exact.length > 0) {
-    return exact.length === 1 ? exact[0] : null;
+    return preferredPreview(original, exact);
   }
 
   const stem = nameStem(original.Name);
@@ -79,7 +87,7 @@ function findPreview(original, originals, rasters) {
   }
 
   const matches = rasters.filter((file) => nameStem(file.Name) === stem && !originals.some((owner) => owner.Name === stem));
-  return matches.length === 1 ? matches[0] : null;
+  return preferredPreview(original, matches);
 }
 
 // fileOption describes an existing original or preview without generating files.

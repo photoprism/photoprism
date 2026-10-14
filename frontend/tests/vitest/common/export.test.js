@@ -169,6 +169,43 @@ describe("common/export preview matching", () => {
     expect(hashes(buildExportGroups([bare, raw, exact], thumbs)[0])).toEqual([raw.Hash, exact.Hash]);
   });
 
+  it.each([["svg", "vector", "png"], ["cr2", "raw", "jpg"], ["heic", "image", "jpg"], ["pdf", "document", "jpg"], ["mov", "video", "jpg"]])(
+    "selects %s previews by format independently of file order", (format, mediaType, preferred) => {
+      const original = makeFile({ Name: `dir/photo.${format}`, FileType: format, MediaType: mediaType, Width: 8000, Height: 6000 });
+      const jpg = makeFile({ Name: `${original.Name}.jpg`, Root: "sidecar", Width: 2000, Height: 1000 });
+      const png = makeFile({ Name: `${original.Name}.png`, FileType: "png", Root: "sidecar", Width: 600, Height: 300 });
+      const chosen = preferred === "png" ? png : jpg;
+      for (const files of [[original, jpg, png], [png, original, jpg], [jpg, png, original]]) {
+        const [group] = buildExportGroups(files, thumbs);
+        expect(group.previewMissing).toBe(false);
+        expect(group.options[1]).toMatchObject({ kind: "preview", format: preferred, width: chosen.Width, height: chosen.Height, source: { hash: chosen.Hash } });
+        expect(thumbnails(group).map(({ width, height }) => [width, height])).toEqual(preferred === "png" ? [[600, 300]] : [[720, 360], [1280, 640], [1920, 960]]);
+      }
+      const other = preferred === "png" ? jpg : png;
+      expect(buildExportGroups([original, other], thumbs)[0].thumbnailSource.hash).toBe(other.Hash);
+    }
+  );
+
+  it("prefers an exact JPG over a bare PNG for a vector", () => {
+    const original = makeFile({ Name: "dir/logo.svg", FileType: "svg", MediaType: "vector" });
+    const exact = makeFile({ Name: "dir/logo.svg.jpg", Root: "sidecar" });
+    const bare = makeFile({ Name: "dir/logo.png", FileType: "png", Root: "sidecar" });
+    expect(hashes(buildExportGroups([original, bare, exact], thumbs)[0])).toEqual([original.Hash, exact.Hash]);
+  });
+
+  it("ranks bare formats but rejects multiple candidates at the preferred priority", () => {
+    const original = makeFile({ Name: "dir/photo.cr2", FileType: "cr2", MediaType: "raw" });
+    const jpg = makeFile({ Name: "dir/photo.jpg", Root: "sidecar" });
+    const png = makeFile({ Name: "dir/photo.png", FileType: "png", Root: "sidecar" });
+    const duplicate = makeFile({ Name: "dir/photo.JPG", Root: "sidecar" });
+    expect(hashes(buildExportGroups([png, original, jpg], thumbs)[0])).toEqual([original.Hash, jpg.Hash]);
+    expect(buildExportGroups([original, jpg, duplicate, png], thumbs)[0].previewMissing).toBe(true);
+    jpg.Name = `${original.Name}.jpg`;
+    duplicate.Name = `${original.Name}.JPG`;
+    png.Name = `${original.Name}.png`;
+    expect(buildExportGroups([original, jpg, duplicate, png], thumbs)[0].previewMissing).toBe(true);
+  });
+
   it("uses a bare preview when only one original owns its directory and stem", () => {
     const raw = makeFile({ Name: "dir/photo.cr2", FileType: "cr2", MediaType: "raw" });
     const preview = makeFile({ Name: "dir/photo.jpg", Root: "sidecar" });
@@ -227,7 +264,7 @@ describe("common/export preview matching", () => {
   it("rejects multiple exact previews without falling back to a bare one", () => {
     const original = makeFile({ Name: "photo.heic", FileType: "heic" });
     const first = makeFile({ Name: "photo.heic.jpg", Root: "sidecar" });
-    const second = makeFile({ Name: "photo.heic.png", Root: "sidecar", FileType: "png" });
+    const second = makeFile({ Name: "photo.heic.JPG", Root: "sidecar", FileType: "jpg" });
     const bare = makeFile({ Name: "photo.jpg", Root: "sidecar" });
     expect(hashes(buildExportGroups([original, first, second, bare], thumbs)[0])).toEqual([original.Hash]);
   });
@@ -235,7 +272,7 @@ describe("common/export preview matching", () => {
   it("rejects multiple bare previews", () => {
     const original = makeFile({ Name: "photo.heic", FileType: "heic" });
     const first = makeFile({ Name: "photo.jpg", Root: "sidecar" });
-    const second = makeFile({ Name: "photo.png", Root: "sidecar", FileType: "png" });
+    const second = makeFile({ Name: "photo.JPG", Root: "sidecar", FileType: "jpg" });
     expect(buildExportGroups([original, first, second], thumbs)[0].previewMissing).toBe(true);
   });
 
