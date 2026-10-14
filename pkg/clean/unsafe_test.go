@@ -3,6 +3,7 @@ package clean
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"strings"
 	"testing"
 	"unicode"
@@ -140,6 +141,41 @@ func TestSanitizersKeepLetterFormingJoiners(t *testing.T) {
 	}
 }
 
+func TestSanitizersKeepEmojiSequences(t *testing.T) {
+	// Escaped where invisible: variation selectors, modifiers and joiners must pass every helper.
+	emoji := map[string]string{
+		"EmojiPresentation": "❤\uFE0F",
+		"TextPresentation":  "☺\uFE0E",
+		"SkinTone":          "👍\U0001F3FD",
+		"Keycap":            "1\uFE0F\u20E3",
+		"CountryFlag":       "\U0001F1E9\U0001F1EA",
+		"Astronaut":         "🧑\u200D🚀",
+		"AstronautSkinTone": "🧑\U0001F3FD\u200D🚀",
+		"RainbowFlag":       "🏳\uFE0F\u200D🌈",
+		"Kiss":              "👩\u200D❤\uFE0F\u200D💋\u200D👨",
+	}
+
+	helpers := map[string]func(string) string{
+		"AttachmentName": AttachmentName,
+		"DisplayLines":   DisplayLines,
+		"Name":           Name,
+		"SearchBindable": SearchBindable,
+		"StripControl":   StripControl,
+		"Text":           Text,
+		"TypeUnicode":    TypeUnicode,
+	}
+
+	maps.Copy(helpers, renderers)
+
+	for name, sanitize := range helpers {
+		for label, s := range emoji {
+			t.Run(name+"/"+label, func(t *testing.T) {
+				assert.Contains(t, sanitize("a "+s+" b"), s)
+			})
+		}
+	}
+}
+
 func TestSanitizersKeepOrdinaryText(t *testing.T) {
 	// Nothing outside the enumerated set may be dropped, or ordinary names become unreadable.
 	// Lowercase throughout, because LogLower converts case by design.
@@ -258,7 +294,8 @@ func TestUnsafeRune(t *testing.T) {
 	})
 	t.Run("Safe", func(t *testing.T) {
 		for _, r := range []rune{' ', 'a', '~', 0x200C, 0x200D, 0x00E4, 0x4E2D,
-			0x0301, 0x2800, 0x1F1E6, 0x1F3F4, 0x1F600} {
+			0x0301, 0x2800, 0x1F1E6, 0x1F3F4, 0x1F600, 0xFE0E, 0xFE0F, 0x20E3, 0x1F3FB,
+			0x1F3FF, 0xE0100, 0xE01EF} {
 			assert.False(t, unsafeRune(r), "U+%04X", r)
 		}
 	})
