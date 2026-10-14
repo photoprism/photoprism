@@ -314,23 +314,6 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 			var respSecret *cluster.RegisterSecrets
 
-			if req.RotateSecret {
-				if node, err = regy.RotateSecretByClientID(node.ClientID); err != nil {
-					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate secret", status.Error(err)}, clean.Log(name))
-					AbortUnexpectedError(c)
-					return
-				}
-
-				respSecret = &cluster.RegisterSecrets{ClientSecret: node.ClientSecret, RotatedAt: node.RotatedAt}
-				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate secret", status.Succeeded}, clean.Log(name))
-
-				if putErr := regy.Put(node); putErr != nil {
-					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "persist rotated secret", status.Error(putErr)}, clean.Log(name))
-					AbortUnexpectedError(c)
-					return
-				}
-			}
-
 			var creds provisioner.Credentials
 			haveCreds := false
 			shouldProvisionDB := req.RotateDatabase
@@ -370,6 +353,18 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				if req.RotateDatabase {
 					event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate database", status.Succeeded}, clean.Log(name))
 				}
+			}
+
+			// The secret is rotated last, so a failed database step leaves the current one valid.
+			if req.RotateSecret {
+				if node, err = regy.RotateSecretByClientID(node.ClientID); err != nil {
+					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate secret", status.Error(err)}, clean.Log(name))
+					AbortUnexpectedError(c)
+					return
+				}
+
+				respSecret = &cluster.RegisterSecrets{ClientSecret: node.ClientSecret, RotatedAt: node.RotatedAt}
+				event.AuditInfo([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate secret", status.Succeeded}, clean.Log(name))
 			}
 
 			resp := cluster.RegisterResponse{

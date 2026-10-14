@@ -44,12 +44,19 @@ func setDB(db *sql.DB, connDSN string) {
 	dbConn, dbDSN = db, connDSN
 }
 
-// registerGetDBDriver registers the fake driver TestGetDB uses, once per process.
-var registerGetDBDriver = sync.OnceFunc(func() { sql.Register("pingy_getdb", pingyDriver{wait: false}) })
+// testDrivers holds the names of the fake drivers registered by registerTestDriver.
+var testDrivers sync.Map
+
+// registerTestDriver registers a fake SQL driver once per process, so tests can run with -count > 1.
+func registerTestDriver(name string, drv driver.Driver) {
+	if _, loaded := testDrivers.LoadOrStore(name, true); !loaded {
+		sql.Register(name, drv)
+	}
+}
 
 func TestGetDB(t *testing.T) {
 	drv := "pingy_getdb"
-	registerGetDBDriver()
+	registerTestDriver(drv, pingyDriver{wait: false})
 
 	// restoreDB restores the provisioning DSN and the cached connection a test case replaces.
 	restoreDB := func(t *testing.T) {
@@ -128,7 +135,7 @@ func TestGetDB(t *testing.T) {
 
 func TestStoreDB(t *testing.T) {
 	drv := "pingy_getdb"
-	registerGetDBDriver()
+	registerTestDriver(drv, pingyDriver{wait: false})
 
 	// openDB opens a fake pool that is closed when the test ends.
 	openDB := func(t *testing.T) *sql.DB {
@@ -179,7 +186,7 @@ func TestStoreDB(t *testing.T) {
 
 func TestClearDB(t *testing.T) {
 	drv := "pingy_getdb"
-	registerGetDBDriver()
+	registerTestDriver(drv, pingyDriver{wait: false})
 
 	dbMutex.RLock()
 	origDB, origDSN := dbConn, dbDSN
@@ -302,7 +309,7 @@ func (sleepyConn) ExecContext(ctx context.Context, query string, args []driver.N
 
 func TestExecTimeout_DeadlineExceeded(t *testing.T) {
 	drv := "sleepy_exec_deadline"
-	sql.Register(drv, sleepyDriver{})
+	registerTestDriver(drv, sleepyDriver{})
 	db, err := sql.Open(drv, "")
 	if err != nil {
 		t.Fatalf("open: %v", err)
@@ -342,10 +349,13 @@ func (c fastConn) ExecContext(ctx context.Context, query string, args []driver.N
 	return driver.RowsAffected(1), nil
 }
 
+// fastExecLast receives the statements of the driver TestExecTimeout_ForwardsStatement registers.
+var fastExecLast string
+
 func TestExecTimeout_ForwardsStatement(t *testing.T) {
-	var last string
 	drv := "fast_exec"
-	sql.Register(drv, fastDriver{last: &last})
+	registerTestDriver(drv, fastDriver{last: &fastExecLast})
+	fastExecLast = ""
 	db, err := sql.Open(drv, "")
 	if err != nil {
 		t.Fatalf("open: %v", err)
@@ -360,7 +370,7 @@ func TestExecTimeout_ForwardsStatement(t *testing.T) {
 	stmt := "DO 1"
 	err = execTimeout(ctx, db, 200*time.Millisecond, stmt)
 	assert.NoError(t, err)
-	assert.Equal(t, stmt, last)
+	assert.Equal(t, stmt, fastExecLast)
 }
 
 // pingyDriver implements driver.Pinger so PingContext respects context; one
@@ -387,7 +397,7 @@ func (c pingyConn) Ping(ctx context.Context) error {
 
 func TestPingWithTimeout_DeadlineExceeded(t *testing.T) {
 	drv := "pingy_wait"
-	sql.Register(drv, pingyDriver{wait: true})
+	registerTestDriver(drv, pingyDriver{wait: true})
 	db, err := sql.Open(drv, "")
 	if err != nil {
 		t.Fatalf("open: %v", err)
@@ -408,7 +418,7 @@ func TestPingWithTimeout_DeadlineExceeded(t *testing.T) {
 
 func TestPingWithTimeout_Succeeds(t *testing.T) {
 	drv := "pingy_fast"
-	sql.Register(drv, pingyDriver{wait: false})
+	registerTestDriver(drv, pingyDriver{wait: false})
 	db, err := sql.Open(drv, "")
 	if err != nil {
 		t.Fatalf("open: %v", err)

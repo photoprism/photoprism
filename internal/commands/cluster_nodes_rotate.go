@@ -75,17 +75,6 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 		return resp, cli.Exit(fmt.Errorf("%s is not a cluster node", clean.LogQuote(name)), 3)
 	}
 
-	if rotateSecret {
-		rotated, rotateErr := regy.RotateSecretByClientID(n.ClientID)
-
-		if rotateErr != nil {
-			return resp, cli.Exit(fmt.Errorf("failed to rotate the secret of node %s: %w", clean.LogQuote(name), rotateErr), 1)
-		}
-
-		resp.Secrets = &cluster.RegisterSecrets{ClientSecret: rotated.ClientSecret, RotatedAt: rotated.RotatedAt}
-		n = rotated
-	}
-
 	if rotateDatabase {
 		ctx, cancel := context.WithTimeout(context.Background(), provisionerTimeout)
 		defer cancel()
@@ -109,6 +98,18 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 		}
 
 		resp.Database.Password, resp.Database.DSN, resp.Database.RotatedAt = creds.Password, creds.DSN, creds.RotatedAt
+	}
+
+	// The secret is rotated last, so a failed database step leaves the current one valid.
+	if rotateSecret {
+		rotated, rotateErr := regy.RotateSecretByClientID(n.ClientID)
+
+		if rotateErr != nil {
+			return resp, cli.Exit(fmt.Errorf("failed to rotate the secret of node %s: %w", clean.LogQuote(name), rotateErr), 1)
+		}
+
+		resp.Secrets = &cluster.RegisterSecrets{ClientSecret: rotated.ClientSecret, RotatedAt: rotated.RotatedAt}
+		n = rotated
 	}
 
 	if n.Database != nil {

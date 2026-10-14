@@ -270,4 +270,28 @@ func TestRotateNodeInRegistry_DatabaseErrors(t *testing.T) {
 		assert.NotErrorIs(t, err, provisioner.ErrUnsupportedDriver)
 		assert.Equal(t, 1, ExitCode(err))
 	})
+	t.Run("ProvisioningFailedKeepsSecret", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "mysql"
+		provisioner.ProvisionDSN = "root:photoprism@tcp(127.0.0.1:1)/photoprism?timeout=2s"
+
+		n := createTestNode(t, regy, "pp-rotate-keep", cluster.RoleInstance)
+		before, err := regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		resp, err := rotateNodeInRegistry(conf, n.Name, true, true)
+
+		// Remove the credentials if an open admin connection let the rotation succeed.
+		if err == nil {
+			t.Cleanup(func() { _ = provisioner.DropCredentials(context.Background(), resp.Database.Name, resp.Database.User) })
+		}
+
+		require.Error(t, err)
+		assert.Nil(t, resp.Secrets)
+
+		client := entity.FindClientByUID(before.ClientID)
+		if assert.NotNil(t, client) {
+			assert.True(t, client.VerifySecret(before.ClientSecret), "the current secret must stay valid")
+		}
+	})
 }

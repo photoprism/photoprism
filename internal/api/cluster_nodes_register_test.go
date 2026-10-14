@@ -188,6 +188,46 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
 		cleanupRegisterProvisioning(t, conf, r)
 	})
+	t.Run("ExistingNodeRotateSecretAndDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-rotate-both", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate-both","RotateSecret":true,"RotateDatabase":true}`, token)
+		cleanupRegisterProvisioning(t, conf, r)
+		require.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+
+		body := r.Body.String()
+		secret := gjson.Get(body, "Secrets.ClientSecret").String()
+		assert.NotEmpty(t, secret)
+		assert.NotEmpty(t, gjson.Get(body, "Database.Password").String())
+		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
+
+		stored, err := regy.FindByName("pp-node-rotate-both")
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, stored.Database.Name, gjson.Get(body, "Database.Name").String())
+			assert.Equal(t, stored.Database.User, gjson.Get(body, "Database.User").String())
+			assert.Equal(t, stored.Database.Driver, gjson.Get(body, "Database.Driver").String())
+		}
+
+		client := entity.FindClientByUID(n.ClientID)
+		if assert.NotNil(t, client) {
+			assert.True(t, client.VerifySecret(secret))
+			assert.False(t, client.VerifySecret(n.ClientSecret))
+		}
+	})
 	t.Run("UUIDChangeWithJoinTokenReturnsConflict", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)
@@ -1064,6 +1104,32 @@ func TestClusterNodesRegister_ProvisionErrors(t *testing.T) {
 		stored, err := regy.FindByName("pp-provision-rotate")
 		require.NoError(t, err)
 		assert.True(t, stored.Database == nil || stored.Database.Name == "", "database fields must stay unset")
+	})
+	t.Run("RotateSecretAndDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-provision-secret", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		failProvisioning(t)
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-provision-secret","RotateSecret":true,"RotateDatabase":true}`, token)
+		assertUnavailable(t, r)
+
+		client := entity.FindClientByUID(n.ClientID)
+		if assert.NotNil(t, client) {
+			assert.True(t, client.VerifySecret(n.ClientSecret), "the current secret must stay valid")
+		}
 	})
 	t.Run("UnsupportedDriver", func(t *testing.T) {
 		app, router, conf := NewApiTest()
