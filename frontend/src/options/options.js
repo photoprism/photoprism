@@ -262,6 +262,7 @@ export const StartPages = (features, isPortal) => {
     { value: "favorites", text: $gettext("Favorites"), props: { disabled: !features?.favorites } },
     { value: "places", text: $gettext("Places"), props: { disabled: !features?.places } },
     { value: "calendar", text: $gettext("Calendar"), props: { disabled: !features?.calendar } },
+    { value: "discover", text: $gettext("Discover"), props: { disabled: !features?.discover } },
     { value: "moments", text: $gettext("Moments"), props: { disabled: !features?.moments } },
     { value: "labels", text: $gettext("Labels"), props: { disabled: !features?.labels } },
     { value: "folders", text: $gettext("Folders"), props: { disabled: !features?.folders } },

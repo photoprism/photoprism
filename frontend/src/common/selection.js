@@ -101,4 +101,21 @@ class Selection {
   }
 }
 
+// selectionRange maps a grid index onto selectionPhotos when a wider list is provided.
+// A rendered section can be a slice, while shift-click must span the full result order.
+export function selectionRange(localPhotos, localIndex, selectionPhotos) {
+  if (!Array.isArray(selectionPhotos) || selectionPhotos.length === 0) {
+    return { index: localIndex, photos: localPhotos };
+  }
+
+  const photo = localPhotos?.[localIndex];
+  const index = selectionPhotos.findIndex((item) => item?.UID && item.UID === photo?.UID);
+
+  if (index < 0) {
+    return null;
+  }
+
+  return { index, photos: selectionPhotos };
+}
+
 export default Selection;
