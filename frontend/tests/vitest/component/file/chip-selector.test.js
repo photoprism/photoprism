@@ -67,6 +67,13 @@ describe("component/file/chip-selector", () => {
     });
   });
 
+  describe("Chip Text", () => {
+    it("should isolate titles and balance their isolates", async () => {
+      await wrapper.setProps({ items: [{ value: "album5", title: "رحلة\u2069\u200F 2026", mixed: false, action: "none" }] });
+      expect(wrapper.find(".chip__text bdi").text()).toBe("رحلة\u200F 2026");
+    });
+  });
+
   describe("Chip Icons", () => {
     it.each([
       { idx: 0, expectedClass: "chip--default", expectedIcon: null },

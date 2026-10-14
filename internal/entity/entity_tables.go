@@ -3,11 +3,14 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -113,17 +116,17 @@ func (list Tables) Truncate(db *gorm.DB) {
 	}
 }
 
-// truncateTable removes all rows from the table with the specified name, so that
-// generated IDs match those in a newly created database.
-//
-// MySQL/MariaDB delete the rows and restart an auto-increment counter, as TRUNCATE
-// is a slower DDL statement there; the restart commits implicitly, so pass db, not
-// a transaction. SQLite deletes the rows and keeps its counters; others truncate.
+// truncateTable removes all rows from the table with the specified name, so that generated IDs match
+// those in a newly created database. MySQL/MariaDB delete the rows, as TRUNCATE is slower DDL there, and
+// restart the counter, which commits implicitly, so pass db, not a transaction. SQLite keeps its counters,
+// PostgreSQL restarts the table's sequences, and others truncate.
 func truncateTable(db *gorm.DB, name string, autoInc bool) error {
-	switch db.Dialect().GetName() {
-	case dsn.DriverSQLite3:
+	switch dsn.DialectFromDriver(db.Dialector.Name()) {
+	case dsn.DialectSQLite:
 		return db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error
-	case dsn.DriverMySQL:
+	case dsn.DialectPostgreSQL:
+		return db.Exec("TRUNCATE TABLE ? RESTART IDENTITY", clause.Table{Name: name}).Error
+	case dsn.DialectMySQL:
 		if err := RetryDeadlock("truncate "+name, func() error {
 			return db.Exec(fmt.Sprintf("DELETE FROM `%s`", name)).Error
 		}); err != nil {
@@ -147,7 +150,7 @@ func truncateTable(db *gorm.DB, name string, autoInc bool) error {
 func autoIncrementTables(db *gorm.DB) map[string]bool {
 	result := make(map[string]bool)
 
-	if db.Dialect().GetName() != dsn.DriverMySQL {
+	if dsn.DialectFromDriver(db.Dialector.Name()) != dsn.DialectMySQL {
 		return result
 	}
 
@@ -178,14 +181,16 @@ func autoIncrementTables(db *gorm.DB) map[string]bool {
 	return result
 }
 
-// Migrate migrates all database tables of registered entities.
-func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
+// Migrate migrates all database tables of registered entities, and returns an error if the schema
+// of a table could not be migrated, so the version is not recorded as migrated.
+func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) (err error) {
 	var name string
 	var entity any
 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("migrate: %s in %s (panic)", r, name)
+			err = fmt.Errorf("migrate: %s in %s", r, name)
 		}
 	}()
 
@@ -196,35 +201,34 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 		log.Error(err)
 	}
 
+	// New MySQL/MariaDB tables get the options of the existing tables, which are checked on every start.
+	tableDb := withTableOptions(db, list, true)
+
 	// Run ORM auto migrations.
 	if opt.AutoMigrate {
-		// Check if the DBMS AuthID fix has been applied?
-		version := migrate.FirstOrCreateVersion(db, migrate.NewVersion("DBMS AuthID Fix", "Any Editions"))
-		if version.NeedsMigration() {
-			if err := migrate.ConvertDBMSAuthIDDataTypes(db); err != nil {
-				log.Errorf("migrate: could not apply dbms auth_id fix : %v", err)
-				version.Error = err.Error()
-				if saveErr := version.Save(db); saveErr != nil {
-					log.Errorf("migrate: could not save dbms auth_id fix status: %v", saveErr)
-				}
-			} else {
-				if migratedErr := version.Migrated(db); migratedErr != nil {
-					log.Errorf("migrate: could not persist dbms auth_id fix status: %v", migratedErr)
-				}
-				log.Debug("migrate: DBMS AuthID fix migrated")
+		// Recreate SQLite tables with legacy column types once, after the pre migrations renamed columns.
+		if err = migrate.ConvertSQLiteSchema(db, list); err != nil {
+			for _, entity = range list {
+				logDuplicateKeys(db, entity)
 			}
-		} else {
-			log.Debug("migrate: DBMS AuthID fix skipped")
+
+			return err
+		}
+
+		// Link the categories table to the label categories relation before tables are created.
+		if err = db.SetupJoinTable(&Label{}, "LabelCategories", &Category{}); err != nil {
+			return err
 		}
 
 		for name, entity = range list {
-			if err := db.AutoMigrate(entity).Error; err != nil {
+			if err := tableDb.AutoMigrate(entity); err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
 
 				time.Sleep(time.Second)
 
-				if err = db.AutoMigrate(entity).Error; err != nil {
+				if err = tableDb.AutoMigrate(entity); err != nil {
 					log.Errorf("migrate: failed migrating %s", clean.Log(name))
+					logDuplicateKeys(db, entity)
 					panic(err)
 				}
 			}
@@ -235,13 +239,82 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 	if err := migrate.Run(db, opt); err != nil {
 		log.Error(err)
 	}
+
+	// Run post migrations, if any.
+	if err := migrate.Run(db, opt.Post()); err != nil {
+		log.Error(err)
+	}
+
+	return nil
+}
+
+// logDuplicateKeys logs the unique indexes of an entity whose columns hold duplicate values, as the
+// index cannot be created until they are removed, with the query that lists them.
+func logDuplicateKeys(db *gorm.DB, entity any) {
+	stmt := &gorm.Statement{DB: db}
+
+	if err := stmt.Parse(entity); err != nil || !db.Migrator().HasTable(entity) {
+		return
+	}
+
+	for _, idx := range stmt.Schema.ParseIndexes() {
+		if idx.Class != "UNIQUE" || len(idx.Fields) == 0 {
+			continue
+		}
+
+		cols := make([]string, len(idx.Fields))
+		cond := make([]string, len(idx.Fields))
+
+		for i, f := range idx.Fields {
+			cols[i] = stmt.Quote(f.DBName)
+			cond[i] = cols[i] + " IS NOT NULL"
+		}
+
+		list := strings.Join(cols, ", ")
+		query := fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s HAVING COUNT(*) > 1",
+			list, stmt.Quote(stmt.Table), strings.Join(cond, " AND "), list)
+
+		var count int64
+
+		if err := db.Raw(fmt.Sprintf("SELECT COUNT(*) FROM (%s) d", query)).Scan(&count).Error; err != nil || count == 0 {
+			continue
+		}
+
+		event.SystemError([]string{"migrate", "cannot create unique index %s on %s with duplicate values (%d), " +
+			"run \"%s;\" to list them"}, idx.Name, stmt.Table, count, query)
+	}
 }
 
 // Drop drops all database tables of registered entities.
 func (list Tables) Drop(db *gorm.DB) {
 	for _, entity := range list {
-		if err := db.DropTableIfExists(entity).Error; err != nil {
+		if err := db.Migrator().DropTable(entity); err != nil {
 			panic(err)
 		}
 	}
+}
+
+// withTableOptions returns a session that creates MySQL/MariaDB tables with InnoDB, utf8mb4 and the collation
+// of the existing tables in the list, and logs a warning for mismatched table options if warn is true.
+func withTableOptions(db *gorm.DB, list Tables, warn bool) *gorm.DB {
+	if dsn.DialectFromDriver(db.Name()) != dsn.DialectMySQL {
+		return db
+	}
+
+	tables, err := mysqlTables(db, list)
+
+	if err != nil {
+		log.Debugf("migrate: %s (find table options)", err)
+	} else if warn {
+		warnMysqlTables(tables)
+	}
+
+	options := mysqlTableOptions(mysqlTableCollation(tables))
+
+	return db.Session(&gorm.Session{}).Set("gorm:table_options", options).Session(&gorm.Session{})
+}
+
+// CreateTable creates the table of an entity, including its indexes.
+func CreateTable(db *gorm.DB, entity any) error {
+	return withTableOptions(db, Entities, false).Migrator().CreateTable(entity)
 }

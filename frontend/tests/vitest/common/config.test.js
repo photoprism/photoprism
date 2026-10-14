@@ -387,6 +387,26 @@ describe("common/config", () => {
     expect(cfg.getTimeZone()).toBe("Local");
   });
 
+  it("should return supported user time zones and fall back to Local otherwise", () => {
+    const cfg = new Config(new StorageShim(), Object.assign({}, window.__CONFIG__));
+    const ui = cfg.values.settings.ui;
+    const saved = ui.timeZone;
+
+    try {
+      for (const zone of ["Europe/Berlin", "America/New_York", "UTC", "GMT", "UTC+1", "UTC-12"]) {
+        ui.timeZone = zone;
+        expect(cfg.getTimeZone()).toBe(zone);
+      }
+
+      for (const zone of ["Nowhere/Zone", "Europe/Berlin\u0000", "", null, 42]) {
+        ui.timeZone = zone;
+        expect(cfg.getTimeZone()).toBe("Local");
+      }
+    } finally {
+      ui.timeZone = saved;
+    }
+  });
+
   it("should return if language is rtl", () => {
     const cfg = new Config(new StorageShim(), Object.assign({}, window.__CONFIG__));
     const result = cfg.isRtl();

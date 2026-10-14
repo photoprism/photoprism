@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -20,11 +21,12 @@ func ready() {
 	}
 }
 
-// InitDb creates database tables and inserts default fixtures as needed.
-func InitDb(opt migrate.Options) {
+// InitDb creates database tables and inserts default fixtures as needed, and returns an error if the
+// schema could not be migrated.
+func InitDb(opt migrate.Options) (err error) {
 	if !HasDbProvider() {
 		log.Error("migrate: no database provider")
-		return
+		return fmt.Errorf("migrate: no database provider")
 	}
 
 	start := time.Now()
@@ -33,17 +35,25 @@ func InitDb(opt migrate.Options) {
 		DeprecatedTables.Drop(Db())
 	}
 
-	Entities.Migrate(Db(), opt)
+	err = Entities.Migrate(Db(), opt)
 
-	if err := Entities.WaitForMigration(Db()); err != nil {
-		log.Errorf("migrate: %s", err)
+	// The error is returned, so the caller reports it.
+	if waitErr := Entities.WaitForMigration(Db()); waitErr != nil {
+		if err == nil {
+			err = waitErr
+		}
 	}
 
-	CreateDefaultFixtures()
+	// After a failed migration, default fixtures are created only if their tables exist.
+	if err == nil || hasDefaultFixtureTables(Db()) {
+		CreateDefaultFixtures()
+	}
 
 	ready()
 
 	log.Debugf("migrate: completed in %s", time.Since(start))
+
+	return err
 }
 
 // InitTestDb connects to and completely initializes the test database incl fixtures.

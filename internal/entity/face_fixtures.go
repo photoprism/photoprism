@@ -124,7 +124,7 @@ func CreateFaceFixtures() {
 	GenerateFaceFixtureVectors()
 
 	for _, entity := range FaceFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }
 

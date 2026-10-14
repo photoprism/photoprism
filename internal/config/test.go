@@ -12,12 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	gc "github.com/patrickmn/go-cache"
 	"github.com/urfave/cli/v2"
-
-	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -126,7 +123,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	//
 	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL (the port matches the dev
 	// MariaDB service, which defaults to 4001 unless MARIADB_PORT overrides it):
-	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
+	// - "root:photoprism@tcp(mariadb:4001)/testdb?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
 	testDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
 	testDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
@@ -361,10 +358,8 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 	return c
 }
 
-// NewTestConfig initializes test data so required directories exist before tests run.
-// See AGENTS.md (Test Data & Fixtures) for guidance.
-// This now creates an isolated set of folders to ensure that cross package testing does not clash.
-// You should use os.RemoveAll(c.StoragePath()) to remove the isolated folder created (assuming c := NewTestConfig("test")).
+// NewTestConfig initializes test data in an isolated storage folder, so packages tested at the same
+// time do not clash. Call CleanupTestFolder to remove it; see internal/AGENTS.md (Internal Tests & Fixtures).
 func NewTestConfig(dbName string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
@@ -383,13 +378,15 @@ func NewTestConfig(dbName string) *Config {
 		log.Panicf("config: %s", clean.Error(err))
 	}
 
+	testFolder := tp
 	tp = filepath.Join(tp, fs.TestdataDir)
 
 	c := &Config{
-		cliCtx:  CliTestContext(),
-		options: NewTestOptionsForPath(dbName, tp),
-		token:   rnd.Base36(8),
-		cache:   gc.New(time.Second, time.Minute),
+		cliCtx:     CliTestContext(),
+		options:    NewTestOptionsForPath(dbName, tp),
+		token:      rnd.Base36(8),
+		cache:      gc.New(time.Second, time.Minute),
+		testFolder: testFolder,
 	}
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale(), c.DefaultTimezone().String())
@@ -600,7 +597,7 @@ func (c *Config) UnzipTestData() error {
 //
 // The function removes prior artifacts, downloads fixtures when missing,
 // unzips them, and then calls CreateDirectories so required directories exist.
-// See AGENTS.md (Test Data & Fixtures) for details.
+// See internal/AGENTS.md (Internal Tests & Fixtures) for details.
 func (c *Config) InitializeTestData() (err error) {
 	testDataMutex.Lock()
 	defer testDataMutex.Unlock()
@@ -683,22 +680,26 @@ func (c *Config) AssertTestData(t *testing.T) {
 	}
 }
 
-// CleanupTestFolder removes the isolated storage directory created by NewTestConfig.
-//
-// It only deletes paths matching the isolated layout "test-photoprism-*/testdata" so a
-// misconfigured StoragePath can never remove a real storage directory. A failed removal
-// is logged as a warning rather than aborting, so a teardown hiccup does not turn a
-// passing test run into a hard exit.
+// CleanupTestFolder removes the isolated storage directory created by NewTestConfig, or else the one
+// StoragePath points to. Only "test-photoprism-*" directories are removed, and a test that changes
+// StoragePath does not change which one. A failed removal is logged rather than aborting the run.
 func (c *Config) CleanupTestFolder() {
-	if c.options == nil {
+	if c.options == nil && c.testFolder == "" {
 		event.SystemWarn([]string{"config", "test", "c.options is nil in CleanupTestFolder"})
 		return
 	}
 
-	td := c.StoragePath()
-	parent := filepath.Dir(td)
+	var td, parent string
 
-	if filepath.Base(td) == fs.TestdataDir && strings.HasPrefix(filepath.Base(parent), "test-photoprism") {
+	if c.testFolder != "" {
+		parent = c.testFolder
+		td = filepath.Join(parent, fs.TestdataDir)
+	} else {
+		td = c.StoragePath()
+		parent = filepath.Dir(td)
+	}
+
+	if filepath.Base(td) == fs.TestdataDir && strings.HasPrefix(filepath.Base(parent), "test-photoprism-") {
 		if err := os.RemoveAll(parent); err != nil {
 			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.ErrorFull(err))
 			return

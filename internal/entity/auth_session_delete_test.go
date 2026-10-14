@@ -323,3 +323,35 @@ func TestSessionSaveTokenLimit(t *testing.T) {
 
 	assertSessions(t, []string{saved.ID}, highIDs)
 }
+
+func TestClient_RevokeSessions(t *testing.T) {
+	createdAt := time.Date(2026, 9, 11, 10, 0, 0, 0, time.UTC)
+	t.Run("All", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00020"
+		ids := newClientSessions(t, client, 3, createdAt)
+
+		assert.Equal(t, 3, client.RevokeSessions(nil))
+		assertSessions(t, nil, ids)
+	})
+	t.Run("Omit", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00021"
+		ids := newClientSessions(t, client, 3, createdAt)
+
+		assert.Equal(t, 2, client.RevokeSessions([]string{ids[1]}))
+		assertSessions(t, []string{ids[1]}, []string{ids[0], ids[2]})
+	})
+	t.Run("OtherClient", func(t *testing.T) {
+		client, other := NewClient(), NewClient()
+		client.ClientUID, other.ClientUID = "cs5gfen1bgx00022", "cs5gfen1bgx00023"
+		otherIDs := newClientSessions(t, other, 2, createdAt)
+
+		assert.Equal(t, 0, client.RevokeSessions(nil))
+		assertSessions(t, otherIDs, nil)
+	})
+	t.Run("InvalidClient", func(t *testing.T) {
+		assert.Equal(t, 0, (&Client{}).RevokeSessions(nil))
+		assert.Equal(t, 0, (*Client)(nil).RevokeSessions(nil))
+	})
+}

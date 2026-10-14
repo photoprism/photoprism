@@ -154,3 +154,32 @@ func TestSanitizeUID(t *testing.T) {
 	})
 
 }
+
+func TestSanitizeControlTable(t *testing.T) {
+	const sample = "Ab\x00c\x01d\te\nf\x1bg\x7fh\xffi"
+
+	tests := []struct {
+		name     string
+		sanitize func(string) string
+		expected string
+	}{
+		{"SanitizeUnicode", SanitizeUnicode, "Abcd\te\nfghi"},
+		{"SanitizeString", SanitizeString, "Abcd\te\nfghi"},
+		{"SanitizeTitle", SanitizeTitle, "Abcd\te\nfghi"},
+		{"SanitizeCaption", SanitizeCaption, "Abcd\te\nfghi"},
+		{"SanitizeMeta", SanitizeMeta, "Abcd\te\nfghi"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, tt.sanitize(sample))
+		})
+	}
+}
+
+func TestSanitizeMeta_ControlCharacters(t *testing.T) {
+	assert.Equal(t, "beach, sun", SanitizeMeta(`["beach\u0000", "sun"]`))
+	assert.Equal(t, "[beach\nsun", SanitizeMeta("[beach\x00\r\nsun"))
+	assert.Equal(t, `["beach", sun]`, SanitizeMeta("[\"beach\", sun\x01]"))
+	assert.Equal(t, "Strand, 日本", SanitizeMeta(`["Strand", "日本"]`))
+}

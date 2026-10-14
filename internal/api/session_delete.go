@@ -27,7 +27,7 @@ import (
 //	@Summary	delete a session (logout)
 //	@Tags		Authentication
 //	@Produce	json
-//	@Param		id				path		string	false	"session id or ref id"
+//	@Param		id				path		string	true	"session id or ref id"
 //	@Success	200				{object}	gin.H
 //	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/session [delete]

@@ -325,7 +325,7 @@ func TestAlbums(t *testing.T) {
 		}
 
 		// MySQL/MariaDB sort case-insensitively, SQLite compares byte values.
-		if testDialect() == dsn.DriverSQLite3 {
+		if testDialect() == dsn.DialectSQLite {
 			assert.Equal(t, "sale%", result[0].AlbumTitle)
 			assert.Equal(t, "Yoga***", result[1].AlbumTitle)
 		} else {
@@ -348,7 +348,7 @@ func TestAlbums(t *testing.T) {
 		}
 
 		// MySQL/MariaDB sort case-insensitively, SQLite compares byte values.
-		if testDialect() == dsn.DriverSQLite3 {
+		if testDialect() == dsn.DialectSQLite {
 			assert.Equal(t, "%gold", result[0].AlbumTitle)
 			assert.Equal(t, "'Family", result[1].AlbumTitle)
 		} else {

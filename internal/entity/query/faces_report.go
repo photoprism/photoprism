@@ -37,15 +37,15 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 	return "", "%" + clean.SqlLike(s) + "%"
 }
 
-// LikeCond returns a LIKE condition for the given column that honors the escaping of clean.SqlLike.
-// A column that is not a plain identifier yields a condition that binds the argument and matches
-// nothing, so the placeholder count stays right and the mistake shows in the log.
-func LikeCond(col string) string {
+// LikeCond returns a LIKE condition for the given column that honors the escaping of clean.SqlLike;
+// set binary for VARBINARY columns. A column that is not a plain identifier yields a condition that
+// binds the argument and matches nothing, so the placeholder count stays right and the mistake shows.
+func LikeCond(col string, binary bool) string {
 	if clean.SqlColumn(col) == "" {
 		log.Errorf("query: invalid column %s in like condition", clean.Log(col))
 	}
 
-	return clean.SqlLikeCond(col)
+	return clean.SqlLikeCond(DbDialect(), binary, col)
 }
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
@@ -85,7 +85,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		where = "AND s.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "AND " + LikeCond("s.subj_name")
+		where = "AND " + LikeCond("s.subj_name", false)
 		args = append(args, nameLike)
 	}
 
@@ -94,9 +94,9 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		joins = fmt.Sprintf(`LEFT JOIN (
 			SELECT m.subj_uid, COUNT(DISTINCT f.id) AS live_files, COUNT(DISTINCT f.photo_id) AS live_photos
 			FROM %s f
-			JOIN %s p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0
+			JOIN %s p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = FALSE
 			JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid <> ''
-			WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL
+			WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL
 			GROUP BY m.subj_uid
 		) c ON c.subj_uid = s.subj_uid`,
 			entity.File{}.TableName(), entity.Photo{}.TableName(), entity.Marker{}.TableName())
@@ -109,7 +109,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		%s
 		LEFT JOIN (
 			SELECT subj_uid, COUNT(*) AS markers FROM %s
-			WHERE marker_type = ? AND marker_invalid = 0 AND subj_uid <> ''
+			WHERE marker_type = ? AND marker_invalid = FALSE AND subj_uid <> ''
 			GROUP BY subj_uid
 		) n ON n.subj_uid = s.subj_uid
 		LEFT JOIN (
@@ -176,7 +176,7 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		where = "WHERE f.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "WHERE " + LikeCond("s.subj_name")
+		where = "WHERE " + LikeCond("s.subj_name", false)
 		args = append(args, nameLike)
 	}
 
@@ -312,7 +312,7 @@ func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 		stmt = stmt.Where("subj_uid = ?", subjUID)
 	} else if nameLike != "" {
 		stmt = stmt.Where(fmt.Sprintf("subj_uid IN (SELECT subj_uid FROM %s WHERE %s)",
-			entity.Subject{}.TableName(), LikeCond("subj_name")), nameLike)
+			entity.Subject{}.TableName(), LikeCond("subj_name", false)), nameLike)
 	}
 
 	if f.FaceID != "" {

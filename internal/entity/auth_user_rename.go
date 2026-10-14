@@ -7,7 +7,7 @@ import (
 	"slices"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -32,11 +32,13 @@ func (m *User) CheckRename(newName string) (string, error) {
 		return "", fmt.Errorf("system users cannot be modified")
 	}
 
-	name, err := authn.Username(newName)
+	name, err := authn.NewUsername(newName)
 
 	switch {
 	case name != "" && name == clean.Username(m.UserName):
 		return "", nil
+	case errors.Is(err, authn.ErrNotASCII):
+		return "", m.usernameASCIIError(newName)
 	case err != nil:
 		return "", fmt.Errorf("username is %s", err.Error())
 	case len(name) > txt.ClipUsername:
@@ -65,13 +67,6 @@ func (m *User) checkUsernameHolder(name string) error {
 	}
 
 	return nil
-}
-
-// deletedUsernameHolder reports whether a deleted account other than this one holds the name.
-func (m *User) deletedUsernameHolder(name string) bool {
-	var holder User
-
-	return UnscopedDb().Where("user_name = ? AND id <> ? AND deleted_at IS NOT NULL", name, m.ID).First(&holder).Error == nil
 }
 
 // SetNewUsername checks newName with CheckRename and sets it, keeping the folders that derive from

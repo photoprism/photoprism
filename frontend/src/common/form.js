@@ -212,6 +212,21 @@ export class rules {
     return /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/.test(v);
   }
 
+  // isASCII reports whether a string contains only ASCII characters, as new usernames require.
+  static isASCII(v) {
+    if (typeof v !== "string") {
+      return true;
+    }
+
+    for (let i = 0; i < v.length; i++) {
+      if (v.charCodeAt(i) > 0x7f) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   // isUrl validates strings by length and URL parsing.
   static isUrl(v) {
     if (typeof v !== "string" || v === "") {
@@ -271,6 +286,11 @@ export class rules {
     } else {
       return [(v) => !v || this.isUrl(v) || $gettext("Invalid URL")];
     }
+  }
+
+  // username returns the text validators for a new username plus the ASCII rule.
+  static username(required, min, max) {
+    return [...this.text(required, min, max, $gettext("Username")), (v) => this.isASCII(v) || $gettext("Username may only contain ASCII characters")];
   }
 
   // text returns string length validators with optional localization label.

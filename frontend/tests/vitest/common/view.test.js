@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { $view, preventNavigationTouchEvent } from "common/view";
+import { $view, initHtmlElement, preventNavigationTouchEvent } from "common/view";
 import { buildNamespace } from "common/storage";
 
 // jsdom does not implement TouchEvent (PointerEvent is the modern path),
@@ -37,6 +37,64 @@ function makeTouchEvent({ type = "touchmove", cancelable = true, clientX = 0, cl
 }
 
 describe("common/view", () => {
+  describe("initHtmlElement", () => {
+    let htmlClass, htmlStyle, bodyClass;
+
+    beforeEach(() => {
+      htmlClass = document.documentElement.getAttribute("class");
+      htmlStyle = document.documentElement.getAttribute("style");
+      bodyClass = document.body.getAttribute("class");
+    });
+
+    afterEach(() => {
+      const restore = (el, name, value) => (value === null ? el.removeAttribute(name) : el.setAttribute(name, value));
+      restore(document.documentElement, "class", htmlClass);
+      restore(document.documentElement, "style", htmlStyle);
+      restore(document.body, "class", bodyClass);
+    });
+
+    it("removes the loading class and the inline style", () => {
+      document.documentElement.setAttribute("class", "loading");
+      document.documentElement.setAttribute("style", "overflow: hidden;");
+      document.body.removeAttribute("class");
+      initHtmlElement();
+      expect(document.documentElement.hasAttribute("class")).toBe(false);
+      expect(document.documentElement.getAttribute("style")).toBe("");
+    });
+    it("keeps the reduce-motion class", () => {
+      document.documentElement.setAttribute("class", "loading reduce-motion");
+      document.body.removeAttribute("class");
+      initHtmlElement();
+      expect(document.documentElement.getAttribute("class")).toBe("reduce-motion");
+      initHtmlElement();
+      expect(document.documentElement.getAttribute("class")).toBe("reduce-motion");
+    });
+    it("does not add reduce-motion once the settings have removed it", () => {
+      document.documentElement.setAttribute("class", "loading reduce-motion");
+      document.body.removeAttribute("class");
+      initHtmlElement();
+      document.documentElement.classList.remove("reduce-motion");
+      document.documentElement.setAttribute("class", "loading");
+      initHtmlElement();
+      expect(document.documentElement.hasAttribute("class")).toBe(false);
+    });
+    it("adds hide-scrollbar if the body requests it and keeps reduce-motion", () => {
+      document.documentElement.setAttribute("class", "loading reduce-motion");
+      document.body.setAttribute("class", "hide-scrollbar");
+      initHtmlElement();
+      expect(document.documentElement.classList.contains("hide-scrollbar")).toBe(true);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+      expect(document.documentElement.classList.contains("loading")).toBe(false);
+    });
+    it("leaves an element without a class unchanged", () => {
+      document.documentElement.removeAttribute("class");
+      document.documentElement.setAttribute("style", "overflow: hidden;");
+      initHtmlElement();
+      expect(document.documentElement.hasAttribute("class")).toBe(false);
+      expect(document.documentElement.getAttribute("style")).toBe("overflow: hidden;");
+    });
+  });
+
   it("should return parent", () => {
     expect($view.getParent()).toBe(null);
   });

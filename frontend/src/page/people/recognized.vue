@@ -123,10 +123,10 @@
 
             <div class="meta" @click.stop.prevent="">
               <div v-if="canManage" class="meta-title inline-edit clickable" @click.stop.prevent="edit(m)">
-                {{ m.Name }}
+                <bdi>{{ $util.balanceBidi(m.Name) }}</bdi>
               </div>
               <div v-else class="meta-title">
-                {{ m.Name }}
+                <bdi>{{ $util.balanceBidi(m.Name) }}</bdi>
               </div>
 
               <div v-if="m.About" class="meta-about text-truncate" :title="$gettext('About')">

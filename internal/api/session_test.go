@@ -584,3 +584,120 @@ func TestDeleteSession(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }
+
+// TestCreateSession_NotASCIIUsername checks that an account stored with a non-ASCII name signs in under
+// that name and keeps it.
+func TestCreateSession_NotASCIIUsername(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+	const password = "Session-Josè-123"
+
+	m := entity.NewUser()
+	m.UserName = "session-josé"
+	m.UserRole = "admin"
+	m.AuthProvider = authn.ProviderLocal.String()
+	m.CanLogin = true
+
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Session{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+	})
+	require.NoError(t, m.SetPassword(password))
+
+	CreateSession(router)
+
+	login := func(name string) int {
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{Username: name, Password: password}))
+
+		if r.Code == http.StatusOK {
+			assert.Equal(t, "session-josé", gjson.Get(r.Body.String(), "user.Name").String())
+		}
+
+		return r.Code
+	}
+
+	assert.Equal(t, http.StatusOK, login("Session-José"))
+	assert.Equal(t, "session-josé", entity.FindUserByUID(m.UserUID).UserName)
+
+	// MariaDB compares names that differ only by accents as equal.
+	if !entity.IsDialect(dsn.DriverMySQL) {
+		assert.Equal(t, http.StatusUnauthorized, login("session-jose"))
+	}
+}
+
+// TestCreateSession_ExactName checks that each account signs in under its own name with its own password,
+// beside an account whose name the database compares as equal and beside a deleted account of the same name.
+func TestCreateSession_ExactName(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+	newUser := func(t *testing.T, name, password string, deleted bool) *entity.User {
+		t.Helper()
+
+		m := entity.NewUser()
+		m.UserName = name
+		m.UserRole = "admin"
+		m.AuthProvider = authn.ProviderLocal.String()
+		m.CanLogin = true
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Session{}, "user_uid = ?", m.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", m.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+		})
+		require.NoError(t, m.SetPassword(password))
+
+		if deleted {
+			require.NoError(t, m.Delete())
+		}
+
+		return m
+	}
+
+	CreateSession(router)
+
+	login := func(name, password string) (int, string) {
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{Username: name, Password: password}))
+		return r.Code, gjson.Get(r.Body.String(), "user.UID").String()
+	}
+
+	t.Run("OtherName", func(t *testing.T) {
+		other := newUser(t, "signin-josé", "Other-Password-1", false)
+		m := newUser(t, "signin-jose", "Exact-Password-1", false)
+
+		code, uid := login("signin-jose", "Exact-Password-1")
+		assert.Equal(t, http.StatusOK, code)
+		assert.Equal(t, m.UserUID, uid)
+
+		code, uid = login("signin-josé", "Other-Password-1")
+		assert.Equal(t, http.StatusOK, code)
+		assert.Equal(t, other.UserUID, uid)
+
+		code, _ = login("signin-jose", "Other-Password-1")
+		assert.Equal(t, http.StatusUnauthorized, code)
+
+		code, _ = login("signin-josé", "Exact-Password-1")
+		assert.Equal(t, http.StatusUnauthorized, code)
+	})
+	t.Run("DeletedLowerID", func(t *testing.T) {
+		newUser(t, "signin-dup", "Deleted-Password-1", true)
+		m := newUser(t, "signin-dup", "Active-Password-1", false)
+
+		code, uid := login("signin-dup", "Active-Password-1")
+		assert.Equal(t, http.StatusOK, code)
+		assert.Equal(t, m.UserUID, uid)
+
+		code, _ = login("signin-dup", "Deleted-Password-1")
+		assert.Equal(t, http.StatusUnauthorized, code)
+	})
+}

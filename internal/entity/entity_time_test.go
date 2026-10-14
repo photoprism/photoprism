@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/time/tz"
@@ -22,11 +21,11 @@ func TestUTC(t *testing.T) {
 	})
 	t.Run("RunGorm", func(t *testing.T) {
 		utc := UTC()
-		utcGorm := gorm.NowFunc()
+		utcGorm := GormConfig().NowFunc()
 
 		t.Logf("NOW: %s, %s", utc.String(), utcGorm.String())
 
-		// gorm.NowFunc truncates to whole seconds, so it can trail the sub-second
+		// GormConfig().NowFunc truncates to whole seconds, so it can trail the sub-second
 		// UTC() reading by up to a second; assert they stay within a sane window.
 		delta := utcGorm.Sub(utc)
 		assert.Greater(t, delta, -time.Second)

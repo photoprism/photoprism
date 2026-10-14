@@ -30,7 +30,7 @@ func TestClusterScoreCond(t *testing.T) {
 		cond, args := ClusterScoreCond("", face.ClusterScoreAuto)
 
 		assert.Contains(t, cond, "score >= CASE detect_model")
-		assert.Contains(t, cond, "ELSE ? END")
+		assert.Contains(t, cond, "ELSE CAST(? AS INTEGER) END")
 		assert.NotEmpty(t, args)
 		assert.Equal(t, strings.Count(cond, "?"), len(args), "every placeholder needs an argument")
 		// A detector the registry does not name, and a row with none recorded, take the shared
@@ -87,7 +87,7 @@ func TestEmbeddingModelCond(t *testing.T) {
 func TestFaceMemberCond(t *testing.T) {
 	cond, args := FaceMemberCond()
 
-	assert.Contains(t, cond, "marker_invalid = 0")
+	assert.Contains(t, cond, "marker_invalid = FALSE")
 	assert.Contains(t, cond, "face_id <> ''")
 	assert.Contains(t, cond, "LENGTH(embeddings_json) > 0")
 	assert.Equal(t, []any{MarkerFace}, args)

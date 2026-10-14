@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/list"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Migrations represents a sorted list of migrations.
@@ -25,15 +28,15 @@ func Existing(db *gorm.DB, stage string) MigrationMap {
 	}
 
 	// Get SQL dialect name.
-	name := db.Dialect().GetName()
+	name := dsn.ParseDriver(db.Name())
 
-	if name == "" {
+	if name == dsn.DriverNone {
 		return make(MigrationMap)
 	}
 
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
-		err = db.AutoMigrate(&Migration{}).Error
+		err = db.AutoMigrate(&Migration{})
 	})
 
 	if err != nil {
@@ -101,7 +104,7 @@ func (m *Migrations) Start(db *gorm.DB, opt Options) {
 				log.Debugf("migrate: %s skipped", migration.ID)
 				continue
 			}
-		} else if err := db.Create(migration).Error; err != nil {
+		} else if err := db.Create(&migration).Error; err != nil {
 			// Should not happen.
 			log.Warnf("migrate: creating %s failed with %s [%s]", migration.ID, err, time.Since(start))
 			continue
@@ -110,7 +113,7 @@ func (m *Migrations) Start(db *gorm.DB, opt Options) {
 		// Run migration.
 		if err := migration.Execute(db); err != nil {
 			migration.Fail(err, db)
-			log.Errorf("migrate: executing %s failed with %s [%s]", migration.ID, err, time.Since(start))
+			event.SystemError([]string{"migrate", "executing %s failed with %s [%s]"}, migration.ID, clean.ErrorFull(err), time.Since(start))
 		} else if err = migration.Finish(db); err != nil {
 			log.Warnf("migrate: updating %s failed with %s [%s]", migration.ID, err, time.Since(start))
 		} else {

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -44,7 +44,7 @@ func authFindSession(id string) (*entity.Session, error) {
 		return &m, nil
 	case errors.Is(err, query.ErrInvalidSessionID):
 		return nil, cli.Exit(err, 2)
-	case gorm.IsRecordNotFoundError(err):
+	case errors.Is(err, gorm.ErrRecordNotFound):
 		return nil, cli.Exit(errors.New("session not found"), 3)
 	default:
 		return nil, cli.Exit(err, 1)

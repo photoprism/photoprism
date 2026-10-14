@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -46,24 +47,34 @@ func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto)
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 	    	SELECT p2.album_uid, f.file_hash FROM files f, (
 	        	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
-	            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = 0 AND pa.missing = 0
-	        	WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-	        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+	            JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
+	        	WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+	        	GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.album_uid = albums.album_uid
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
-	case dsn.DriverSQLite3:
-		res = Db().Table(entity.Album{}.TableName()).
+	case dsn.DialectSQLite:
+		res = Db().Table(entity.Album{}.TableName()).Where(condition).
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
-			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0 AND pa.missing = 0
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
+			WHERE f.deleted_at IS NULL AND f.file_missing = FALSE AND f.file_hash <> '' AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE ?`, media.PreviewExpr, condition))
+		)`, media.PreviewExpr))
+	case dsn.DialectPostgreSQL:
+		res = Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.album_uid, f.file_hash FROM files f, (
+			SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
+				JOIN photos_albums pa ON pa.photo_uid = p.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY pa.album_uid) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.album_uid = a.album_uid
+		WHERE a.id = albums.id AND albums.album_type = ? AND albums.thumb_src = ? AND albums.thumb IS DISTINCT FROM b.file_hash`,
+			media.PreviewExpr, entity.AlbumManual, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -109,24 +120,32 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumFolder, entity.SrcAuto)
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
-	case dsn.DriverSQLite3:
-		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+	case dsn.DialectSQLite:
+		res = Db().Table(entity.Album{}.TableName()).Where(condition).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			  GROUP BY p.photo_path
 			) b
-		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
-		AND b.photo_path = albums.album_path LIMIT 1)
-		WHERE ?`, media.PreviewExpr, condition))
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+		AND b.photo_path = albums.album_path LIMIT 1)`, media.PreviewExpr))
+	case dsn.DialectPostgreSQL:
+		res = Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_path, f.file_hash FROM files f, (
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_path = a.album_path
+		WHERE a.id = albums.id AND albums.album_type = ? AND albums.thumb_src = ? AND albums.thumb IS DISTINCT FROM b.file_hash`,
+			media.PreviewExpr, entity.AlbumFolder, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -172,24 +191,32 @@ func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumMonth, entity.SrcAuto)
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
-			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
-	case dsn.DriverSQLite3:
-		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+	case dsn.DialectSQLite:
+		res = Db().Table(entity.Album{}.TableName()).Where(condition).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			  GROUP BY p.photo_year, p.photo_month
 			) b
-		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
-		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
-		WHERE ?`, media.PreviewExpr, condition))
+		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)`, media.PreviewExpr))
+	case dsn.DialectPostgreSQL:
+		res = Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_year = a.album_year AND b.photo_month = a.album_month
+		WHERE a.id = albums.id AND albums.album_type = ? AND albums.thumb_src = ? AND albums.thumb IS DISTINCT FROM b.file_hash`,
+			media.PreviewExpr, entity.AlbumMonth, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -300,17 +327,26 @@ func refreshManualAlbumCover(album entity.Album) error {
 	file, err := AlbumCoverByUID(album.AlbumUID, true)
 	if err != nil {
 		if strings.Contains(err.Error(), "no cover") {
-			return nil
+			return clearAutoAlbumCover(album.AlbumUID)
 		}
 
 		return err
 	}
 
 	if file.FileHash == "" {
-		return nil
+		return clearAutoAlbumCover(album.AlbumUID)
 	}
 
-	return entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": file.FileHash})
+	return Db().Model(&entity.Album{}).
+		Where("album_uid = ? AND thumb_src = ?", album.AlbumUID, entity.SrcAuto).
+		UpdateColumn("thumb", file.FileHash).Error
+}
+
+// clearAutoAlbumCover removes the automatic cover of an album without matching pictures, leaving manual covers unchanged.
+func clearAutoAlbumCover(albumUID string) error {
+	return Db().Model(&entity.Album{}).
+		Where("album_uid = ? AND thumb_src = ? AND thumb <> ''", albumUID, entity.SrcAuto).
+		UpdateColumn("thumb", "").Error
 }
 
 // refreshFolderAlbumCover updates the cover for a single folder album.
@@ -320,12 +356,12 @@ func refreshFolderAlbumCover(album entity.Album) error {
 	}
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
-			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
 			album.AlbumPath,
@@ -336,18 +372,34 @@ func refreshFolderAlbumCover(album entity.Album) error {
 		)
 
 		return res.Error
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		res := Db().Table(entity.Album{}.TableName()).
 			Where("album_uid = ? AND album_type = ? AND thumb_src = ?", album.AlbumUID, entity.AlbumFolder, entity.SrcAuto).
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_path = ?
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
 			  GROUP BY p.photo_path
 			) b
-		WHERE f.photo_id = b.photo_id  AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_path = albums.album_path LIMIT 1
 		)`, album.AlbumPath, media.PreviewExpr))
+
+		return res.Error
+	case dsn.DialectPostgreSQL:
+		res := Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_path, f.file_hash FROM files f, (
+			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_path = ?
+			GROUP BY p.photo_path) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_path = a.album_path
+		WHERE a.id = albums.id AND albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumPath,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumFolder,
+			entity.SrcAuto,
+		)
 
 		return res.Error
 	default:
@@ -364,12 +416,12 @@ func refreshMonthAlbumCover(album entity.Album) error {
 	}
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res := Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
-			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
 			album.AlbumYear,
@@ -381,18 +433,35 @@ func refreshMonthAlbumCover(album entity.Album) error {
 		)
 
 		return res.Error
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		res := Db().Table(entity.Album{}.TableName()).
 			Where("album_uid = ? AND album_type = ? AND thumb_src = ?", album.AlbumUID, entity.AlbumMonth, entity.SrcAuto).
 			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
-			  WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
 			  GROUP BY p.photo_year, p.photo_month
 			) b
-		WHERE f.photo_id = b.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1
 		)`, album.AlbumYear, album.AlbumMonth, media.PreviewExpr))
+
+		return res.Error
+	case dsn.DialectPostgreSQL:
+		res := Db().Exec(`UPDATE albums SET thumb = b.file_hash FROM albums a LEFT JOIN (
+		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
+			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_year = ? AND p.photo_month = ?
+			GROUP BY p.photo_year, p.photo_month) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
+			) b ON b.photo_year = a.album_year AND b.photo_month = a.album_month
+		WHERE a.id = albums.id AND albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
+			album.AlbumYear,
+			album.AlbumMonth,
+			media.PreviewExpr,
+			album.AlbumUID,
+			entity.AlbumMonth,
+			entity.SrcAuto,
+		)
 
 		return res.Error
 	default:
@@ -414,43 +483,61 @@ func UpdateLabelCovers() (err error) {
 	condition := gorm.Expr("thumb_src = ?", entity.SrcAuto)
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res = Db().Exec(`UPDATE labels LEFT JOIN (
 		SELECT p2.label_id, f.file_hash FROM files f, (
 			SELECT pl.label_id as label_id, max(p.id) AS photo_id FROM photos p
 				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			GROUP BY pl.label_id
 			UNION
 			SELECT c.category_id as label_id, max(p.id) AS photo_id FROM photos p
 				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
 				JOIN categories c ON c.label_id = pl.label_id
-			WHERE p.photo_quality > 0 AND p.photo_private = 0 AND p.deleted_at IS NULL
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
 			GROUP BY c.category_id
-			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?) AND f.file_missing = 0
+			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?) AND f.file_missing = FALSE
 		) b ON b.label_id = labels.id
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
-	case dsn.DriverSQLite3:
-		res = Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+	case dsn.DialectSQLite:
+		res = Db().Table(entity.Label{}.TableName()).Where(condition).UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
+			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-		) WHERE ?`, media.PreviewExpr, condition))
+		)`, media.PreviewExpr))
 
 		if res.Error == nil {
-			catRes := Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+			catRes := Db().Table(entity.Label{}.TableName()).Where("thumb IS NULL").UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = 0 AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
+			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-			) WHERE thumb IS NULL`, media.PreviewExpr))
+			)`, media.PreviewExpr))
 
 			res.RowsAffected += catRes.RowsAffected
 		}
+	case dsn.DialectPostgreSQL:
+		// A label that is also a category has a row for each, so the latest one with a usable file is used.
+		res = Db().Exec(`UPDATE labels SET thumb = b.file_hash FROM labels l LEFT JOIN (
+		SELECT DISTINCT ON (p2.label_id) p2.label_id, f.file_hash FROM files f, (
+			SELECT pl.label_id as label_id, max(p.id) AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY pl.label_id
+			UNION
+			SELECT c.category_id as label_id, max(p.id) AS photo_id FROM photos p
+				JOIN photos_labels pl ON pl.photo_id = p.id AND pl.uncertainty < 100
+				JOIN categories c ON c.label_id = pl.label_id
+			WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
+			GROUP BY c.category_id
+			) p2 WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?) AND f.file_missing = FALSE
+			ORDER BY p2.label_id, p2.photo_id DESC, f.id
+		) b ON b.label_id = l.id
+		WHERE l.id = labels.id AND labels.thumb_src = ? AND labels.thumb IS DISTINCT FROM b.file_hash`, media.PreviewExpr, entity.SrcAuto)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -477,25 +564,25 @@ func UpdateSubjectCovers(public bool) (err error) {
 
 	start := time.Now()
 
-	var photosJoin *gorm.SqlExpr
+	var photosJoin clause.Expr
 
 	// Use faces tagged on private pictures as cover images?
 	// see https://github.com/photoprism/photoprism/issues/4238
 	// and https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
 	if public {
-		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0")
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = FALSE")
 	} else {
 		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL")
 	}
 
 	condition := gorm.Expr("subjects.subj_type = ? AND thumb_src = ?", entity.SubjPerson, entity.SrcAuto)
 
-	if dialect := DbDialect(); dialect != dsn.DriverMySQL && dialect != dsn.DriverSQLite3 {
+	if dialect := DbDialect(); dialect != dsn.DialectMySQL && dialect != dsn.DialectSQLite && dialect != dsn.DialectPostgreSQL {
 		log.Warnf("sql: unsupported dialect %s", dialect)
 		return nil
 	}
 
-	// One statement for both dialects, so a library cannot get a different cover per backend.
+	// One statement for all dialects, so a library cannot get a different cover per backend.
 	// The uid guard keeps an empty subject uid from correlating against every unassigned marker,
 	// and a person left without an eligible marker gets no cover rather than a null one.
 	//
@@ -506,7 +593,7 @@ func UpdateSubjectCovers(public bool) (err error) {
 			JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
 			JOIN photos p ON ?
 			WHERE m.subj_uid = subjects.subj_uid AND m.subj_uid <> ''
-			  AND m.marker_type = ? AND m.marker_invalid = 0 AND m.thumb <> ''
+			  AND m.marker_type = ? AND m.marker_invalid = FALSE AND m.thumb <> ''
 			ORDER BY (m.subj_src <> ?) DESC, m.size DESC, m.score DESC, m.marker_uid
 			LIMIT 1), '')
 		WHERE ?`,

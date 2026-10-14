@@ -65,7 +65,8 @@ func ModelValues(m any, omit ...string) (result Values, omitted []any, err error
 		case reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
 			continue
 		case reflect.Struct:
-			if v.IsZero() {
+			// A soft delete timestamp is kept when it is not set, so that it is cleared.
+			if v.IsZero() && v.Type() != deletedAtType {
 				continue
 			}
 		}
@@ -94,12 +95,17 @@ func ModelValues(m any, omit ...string) (result Values, omitted []any, err error
 	return result, omitted, nil
 }
 
+// deletedAtType is the type of soft delete timestamps.
+var deletedAtType = reflect.TypeOf(DeletedAt{})
+
 // reportValue formats a model value for a report, showing byte slices such as JSON columns as text.
 func reportValue(v any) string {
 	if b, ok := v.([]byte); ok {
 		return string(b)
 	} else if b, ok := v.(json.RawMessage); ok {
 		return string(b)
+	} else if d, ok := v.(DeletedAt); ok {
+		return fmt.Sprintf("%#v", d.Ptr())
 	}
 
 	return fmt.Sprintf("%#v", v)

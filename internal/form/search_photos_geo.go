@@ -68,7 +68,7 @@ type SearchPhotosGeo struct {
 	F           string    `form:"f" example:"f:2.8-4.5" notes:"Aperture (F-Number)"`
 	Color       string    `form:"color"`
 	Codec       string    `form:"codec" example:"codec:avc1" notes:"Media codec types separated by |, e.g. jpeg, avc1, or hvc1"`
-	Chroma      int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
+	Chroma      int16     `form:"chroma" example:"chroma:70" notes:"Chroma (1-100)"`
 	Mono        bool      `form:"mono" notes:"Finds pictures with few or no colors"`
 	Person      string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject names, will be matched exactly and can be combined using & or |"` // Alias for Subject
 	Subject     string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`

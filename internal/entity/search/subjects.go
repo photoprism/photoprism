@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -79,30 +77,32 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 
 	if !frm.All {
 		if txt.Yes(frm.Favorite) {
-			s = s.Where("subj_favorite = 1")
+			s = s.Where("subj_favorite = TRUE")
 		} else if txt.No(frm.Favorite) {
-			s = s.Where("subj_favorite = 0")
+			s = s.Where("subj_favorite = FALSE")
 		}
 
 		if !txt.Yes(frm.Hidden) {
-			s = s.Where("subj_hidden = 0")
+			s = s.Where("subj_hidden = FALSE")
 		}
 
 		if txt.Yes(frm.Private) {
-			s = s.Where("subj_private = 1")
+			s = s.Where("subj_private = TRUE")
 		} else if txt.No(frm.Private) {
-			s = s.Where("subj_private = 0")
+			s = s.Where("subj_private = FALSE")
 		}
 
 		if txt.Yes(frm.Excluded) {
-			s = s.Where("subj_excluded = 1")
+			s = s.Where("subj_excluded = TRUE")
 		} else if txt.No(frm.Excluded) {
-			s = s.Where("subj_excluded = 0")
+			s = s.Where("subj_excluded = FALSE")
 		}
 	}
 
 	if frm.UID != "" {
 		s = s.Where(fmt.Sprintf("%s.subj_uid IN (?)", subjTable), strings.Split(strings.ToLower(frm.UID), txt.Or))
+
+		results = make(SubjectResults, 0)
 
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
@@ -112,9 +112,9 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	}
 
 	if frm.Query != "" {
-		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query)
+		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query, false)
 		for i, where := range wheres {
-			s = s.Where("?", gorm.Expr(where, values[i]...))
+			s = s.Where("("+where+")", values[i]...)
 		}
 	}
 
@@ -129,6 +129,8 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	if frm.Type != "" {
 		s = s.Where("subj_type IN (?)", strings.Split(frm.Type, txt.Or))
 	}
+
+	results = make(SubjectResults, 0)
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
@@ -151,7 +153,7 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 
 	var matches []Matches
 
-	wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, s)
+	wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, s, false)
 
 	if len(wheres) == 0 {
 		return result, names, s
@@ -162,8 +164,8 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 	for i, where := range wheres {
 		var subj []string
 
-		stmt := Db().Model(entity.Subject{})
-		stmt = stmt.Where("?", gorm.Expr(where, values[i]...))
+		stmt := Db().Model(&entity.Subject{})
+		stmt = stmt.Where("("+where+")", values[i]...)
 
 		if err := stmt.Scan(&matches).Error; err != nil {
 			log.Errorf("search: %s while finding subjects", err)

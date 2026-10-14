@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -233,11 +234,11 @@ func TestAddPhotoToUserAlbumsConcurrentCreate(t *testing.T) {
 		t.Fatalf("expected a single album, got %d", len(albums))
 	}
 
-	var relationCount int
+	var relationCount int64
 	if err := Db().Table(PhotoAlbum{}.TableName()).Where("album_uid = ?", albums[0].AlbumUID).Count(&relationCount).Error; err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(photos), relationCount)
+	assert.EqualValues(t, len(photos), relationCount)
 }
 
 // TestNewAlbum exercises the related album behavior.
@@ -960,7 +961,7 @@ the further from the equator you get. The precision of the latitude part does no
 more strictly however, a meridian arc length per 1 second depends on the latitude at the point in question. 
 The discrepancy of 1 second meridian arc length between equator and pole is about 0.3 metres because the earth 
 is an oblate spheroid.`
-		expected := txt.Shorten(longName, txt.ClipDefault, txt.Ellipsis)
+		expected := txt.Shorten(clean.StripControl(longName), txt.ClipDefault, txt.Ellipsis)
 		slugExpected := txt.Clip(longName, txt.ClipSlug)
 		album := NewAlbum(longName, AlbumManual)
 		assert.Equal(t, expected, album.AlbumTitle)
@@ -1492,6 +1493,29 @@ func TestAlbum_DeletePermanently(t *testing.T) {
 		if found := album.Find(); found != nil {
 			t.Fatal("should not find album")
 		}
+	})
+	t.Run("PhotoLinks", func(t *testing.T) {
+		album := NewAlbum("Delete Permanently Links", AlbumManual)
+		require.NoError(t, album.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(album).Error })
+
+		other := NewAlbum("Delete Permanently Other", AlbumManual)
+		require.NoError(t, other.Save())
+		t.Cleanup(func() { _ = other.DeletePermanently() })
+
+		photoUID := PhotoFixtures.Get("Photo01").PhotoUID
+		require.NoError(t, UnscopedDb().Create(&PhotoAlbum{PhotoUID: photoUID, AlbumUID: album.AlbumUID}).Error)
+		require.NoError(t, UnscopedDb().Create(&PhotoAlbum{PhotoUID: photoUID, AlbumUID: other.AlbumUID}).Error)
+
+		require.NoError(t, album.DeletePermanently())
+
+		var links int64
+		require.NoError(t, UnscopedDb().Model(&PhotoAlbum{}).Where("album_uid = ?", album.AlbumUID).Count(&links).Error)
+		assert.Equal(t, int64(0), links)
+
+		// The links of other albums remain.
+		require.NoError(t, UnscopedDb().Model(&PhotoAlbum{}).Where("album_uid = ?", other.AlbumUID).Count(&links).Error)
+		assert.Equal(t, int64(1), links)
 	})
 	t.Run("NoUID", func(t *testing.T) {
 		album := Album{}

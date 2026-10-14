@@ -73,7 +73,7 @@ func InitConfig(c *config.Config) error {
 
 // bootstrapClusterNode registers the node with the configured Portal and installs
 // its theme, honoring the auto-join/theme toggles. All failures are non-fatal so
-// the node still boots; it is a no-op when no Portal URL or join token is set.
+// the node still boots; it is a no-op without a Portal URL, or without a join token and node credentials.
 func bootstrapClusterNode(c *config.Config) {
 	portalURL := strings.TrimSpace(c.PortalUrl())
 	joinToken := strings.TrimSpace(c.JoinToken())
@@ -304,11 +304,11 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 				return false, nil, registerError(resp)
 			default:
 				if attempt < maxAttempts {
-					log.Debugf("cluster: join attempt %d/%d failed with status %s", attempt, maxAttempts, resp.Status)
+					log.Debugf("cluster: join attempt %d/%d failed with status %s", attempt, maxAttempts, clean.Log(resp.Status))
 					// TODO: Consider exponential backoff with jitter instead of constant delay.
 					return true, nil, nil
 				}
-				return false, nil, errors.New(resp.Status)
+				return false, nil, registerError(resp)
 			}
 		}()
 
@@ -531,6 +531,10 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 	// Persist DB settings only if rotation was requested and driver is MySQL/MariaDB
 	// and local DB not configured (as checked before calling).
 	if wantRotateDatabase {
+		if r.Database.Incomplete {
+			log.Warnf("cluster: the portal could not complete database provisioning, retrying on the next start")
+		}
+
 		if r.Database.DSN != "" {
 			updates.SetDatabaseDriver(r.Database.Driver)
 			updates.SetDatabaseDSN(r.Database.DSN)

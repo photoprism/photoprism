@@ -1240,6 +1240,64 @@ func TestConfig_libraryFaceModels(t *testing.T) {
 		assert.Equal(t, len(uids), legacy)
 		assert.Equal(t, face.ModelFaceNet, dominantFaceModel(counts))
 	})
+	t.Run("WithoutProvenanceColumn", func(t *testing.T) {
+		// A schema from before the provenance column is answered from the vectors it holds.
+		c := NewIsolatedTestConfig("face-models-schema", t.TempDir(), true)
+
+		if c.DatabaseDriver() != dsn.DriverSQLite3 {
+			t.Skip("requires a SQLite database of its own")
+		}
+
+		t.Cleanup(func() {
+			_ = c.CloseDb()
+			entity.SetDbProvider(TestConfig())
+			TestConfig().Propagate()
+		})
+
+		require.NoError(t, c.connectDb())
+		c.RegisterDb()
+
+		require.NoError(t, c.Db().Exec("CREATE TABLE markers (marker_uid TEXT, marker_type TEXT, embeddings_json BLOB)").Error)
+		require.NoError(t, c.Db().Exec("INSERT INTO markers VALUES ('m1', ?, '[[0.1]]')", entity.MarkerFace).Error)
+
+		counts, ok := c.libraryFaceModels()
+
+		assert.True(t, ok)
+		assert.Equal(t, []query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 1}}, counts)
+	})
+	t.Run("WithoutMarkersTable", func(t *testing.T) {
+		c := NewIsolatedTestConfig("face-models-empty", t.TempDir(), true)
+
+		if c.DatabaseDriver() != dsn.DriverSQLite3 {
+			t.Skip("requires a SQLite database of its own")
+		}
+
+		t.Cleanup(func() {
+			_ = c.CloseDb()
+			entity.SetDbProvider(TestConfig())
+			TestConfig().Propagate()
+		})
+
+		require.NoError(t, c.connectDb())
+		c.RegisterDb()
+
+		counts, ok := c.libraryFaceModels()
+
+		assert.Nil(t, counts)
+		assert.False(t, ok)
+	})
+	t.Run("UnreadableDatabase", func(t *testing.T) {
+		c := NewIsolatedTestConfig("face-models-closed", t.TempDir(), true)
+		t.Cleanup(func() { c.db = nil })
+
+		require.NoError(t, c.connectDb())
+		require.NoError(t, entity.CloseDb(c.Db()))
+
+		counts, ok := c.libraryFaceModels()
+
+		assert.Nil(t, counts)
+		assert.False(t, ok)
+	})
 	t.Run("WithoutDatabase", func(t *testing.T) {
 		// Not being able to ask is not the same answer as an empty library.
 		counts, ok := NewConfig(CliTestContext()).libraryFaceModels()
@@ -1713,11 +1771,11 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 		// The index has to go first: a column an index references cannot be dropped, and a
 		// schema that predates the column had neither. RemoveIndex keeps this portable
 		// across the drivers the suite runs on.
-		require.NoError(t, db.Model(&entity.Marker{}).RemoveIndex("idx_markers_embed_model").Error)
+		require.NoError(t, db.Migrator().DropIndex(&entity.Marker{}, "idx_markers_embed_model"))
 		require.NoError(t, db.Exec("ALTER TABLE "+table+" DROP COLUMN embed_model").Error)
 
 		t.Cleanup(func() {
-			require.NoError(t, db.Exec("ALTER TABLE "+table+" ADD COLUMN embed_model VARBINARY(32) DEFAULT ''").Error)
+			require.NoError(t, db.Migrator().AddColumn(&entity.Marker{}, "EmbedModel"))
 
 			// The column comes back empty, so what the fixtures recorded has to be written
 			// again: a later test that asks the library which model it holds would otherwise
@@ -1726,7 +1784,7 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 				Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
 				UpdateColumn("embed_model", entity.MarkerFixtures.Get("1000003-4").EmbedModel).Error)
 
-			require.NoError(t, db.Model(&entity.Marker{}).AddIndex("idx_markers_embed_model", "embed_model").Error)
+			require.NoError(t, db.Migrator().CreateIndex(&entity.Marker{}, "idx_markers_embed_model"))
 		})
 
 		assert.Equal(t, face.ModelFaceNet, c.libraryFaceModel())

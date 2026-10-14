@@ -6,8 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"gorm.io/gorm/clause"
+
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -64,7 +66,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			return GeoResults{}, ErrNotFound
 		}
 
-		// Find a nearby picture using the UID or return an empty result otherwise.
+		// Find the picture whose visibility was checked above; the result type has no soft-delete scope.
 		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
 			log.Debugf("search: %s (find nearby)", err)
 			return GeoResults{}, ErrNotFound
@@ -91,7 +93,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Specify table names and joins.
 	s := UnscopedDb().Table(entity.Photo{}.TableName()).Select(GeoCols).
-		Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = 1 AND files.media_id IS NOT NULL`).
+		Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = TRUE AND files.media_id IS NOT NULL`).
 		Joins("LEFT JOIN places ON photos.place_id = places.id").
 		Where("photos.deleted_at IS NULL").
 		Where("photos.photo_lat <> 0")
@@ -118,7 +120,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			return GeoResults{}, ErrInvalidId
 		} else if album.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
-				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", album.AlbumUID)
+				Where("photos_albums.hidden = FALSE AND photos_albums.album_uid = ?", album.AlbumUID)
 		} else if formErr := form.Unserialize(&frm, album.AlbumFilter); formErr != nil {
 			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(album.AlbumFilter))
 			return GeoResults{}, ErrBadFilter
@@ -129,7 +131,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			if p := folderAlbumPath(album); p != "" {
 				frm.Path = p
 			}
-			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", album.AlbumUID)
+			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
 		}
 
 		// Enforce search distance range (km).
@@ -168,7 +170,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 		// Limit results for external users.
 		if frm.Scope == "" && sess.DeniesAll(acl.ResourcePlaces, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?)) OR "
+			sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = FALSE AND missing = FALSE AND album_uid IN (?)) OR "
 
 			if sess.IsVisitor() || sess.NotRegistered() {
 				s = s.Where(sharedAlbums+"photos.published_at > ?", sess.SharedUIDs(), entity.Now())
@@ -176,7 +178,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
 			} else {
 				args := append([]any{sess.SharedUIDs(), user.UserUID, entity.Now(), basePath}, clean.SqlPrefixArgs(basePath+"/")...)
-				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR "+clean.SqlPrefixCond("photos.photo_path"), args...)
+				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR "+clean.SqlPrefixCond(entity.DbDialect(), true, "photos.photo_path"), args...)
 			}
 		}
 	}
@@ -188,7 +190,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		// Sort by distance to the picture referenced by "near", placing it first. Its position
 		// is used here rather than frm.Lat/Lng (which the near lookup leaves unset) so the order
 		// reflects proximity to that picture instead of distance from the (0,0) origin.
-		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", frm.Near, nearLat, nearLng))
+		s = s.Order(clause.OrderBy{Expression: gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", frm.Near, nearLat, nearLng)})
 	}
 
 	// Find specific UIDs only.
@@ -214,6 +216,8 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		// Find UIDs only to improve performance.
 		if sess == nil && frm.FindUidOnly() {
 			// Fetch results.
+			results = make(GeoResults, 0)
+
 			if result := s.Scan(&results); result.Error != nil {
 				return results, result.Error
 			}
@@ -333,12 +337,12 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		if labelIds, labelsErr := entity.FindLabelIDs(frm.Query, " ", true); labelsErr != nil || len(labelIds) == 0 {
 			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(frm.Query))
 
-			wheres, values := LikeAnyKeyword("k.keyword", frm.Query)
+			wheres, values := LikeAnyKeyword("k.keyword", frm.Query, false)
 			for i, where := range wheres {
 				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where, values[i]...))
 			}
 		} else {
-			if wheres, values := LikeAnyKeyword("k.keyword", frm.Query); len(wheres) > 0 {
+			if wheres, values := LikeAnyKeyword("k.keyword", frm.Query, false); len(wheres) > 0 {
 				for i, where := range wheres {
 					s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
 						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where, values[i]...), labelIds)
@@ -351,7 +355,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Search for one or more keywords.
 	if frm.Keywords != "" {
-		wheres, values := LikeAnyWord("k.keyword", frm.Keywords)
+		wheres, values := LikeAnyWord("k.keyword", frm.Keywords, false)
 		for i, where := range wheres {
 			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where, values[i]...))
 		}
@@ -376,20 +380,20 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		// Do nothing.
 	} else if len(frm.Face) >= 32 {
 		for _, f := range SplitAnd(strings.ToUpper(frm.Face)) {
-			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE face_id IN (?))",
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE WHERE face_id IN (?))",
 				entity.Marker{}.TableName()), SplitOr(f))
 		}
 	} else if txt.New(frm.Face) {
-		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE subj_uid IS NULL OR subj_uid = '')",
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE AND m.marker_type = ? WHERE subj_uid IS NULL OR subj_uid = '')",
 			entity.Marker{}.TableName()), entity.MarkerFace)
 	} else if txt.No(frm.Face) {
-		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NULL OR face_id = '')",
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE AND m.marker_type = ? WHERE face_id IS NULL OR face_id = '')",
 			entity.Marker{}.TableName()), entity.MarkerFace)
 	} else if txt.Yes(frm.Face) {
-		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? WHERE face_id IS NOT NULL AND face_id <> '')",
+		s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE AND m.marker_type = ? WHERE face_id IS NOT NULL AND face_id <> '')",
 			entity.Marker{}.TableName()), entity.MarkerFace)
 	} else if txt.IsUInt(frm.Face) {
-		s = s.Where("files.photo_id IN (SELECT photo_id FROM files f JOIN markers m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 AND m.marker_type = ? JOIN faces ON faces.id = m.face_id WHERE m.face_id IS NOT NULL AND m.face_id <> '' AND faces.face_kind = ?)",
+		s = s.Where("files.photo_id IN (SELECT photo_id FROM files f JOIN markers m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE AND m.marker_type = ? JOIN faces ON faces.id = m.face_id WHERE m.face_id IS NOT NULL AND m.face_id <> '' AND faces.face_kind = ?)",
 			entity.MarkerFace, txt.Int(frm.Face))
 	}
 
@@ -397,18 +401,18 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	if frm.Subject != "" {
 		for _, subj := range SplitAnd(strings.ToLower(frm.Subject)) {
 			if subjects := SplitOr(subj); rnd.ContainsUID(subjects, 'j') {
-				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 WHERE subj_uid IN (?))",
+				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE WHERE subj_uid IN (?))",
 					entity.Marker{}.TableName()), subjects)
 			} else {
 				w, v := AnySlug("s.subj_slug", subj, txt.Or)
-				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
+				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
 					entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(w, v...))
 			}
 		}
 	} else if frm.Subjects != "" {
-		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Subjects)
+		wheres, values := LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Subjects, false)
 		for i, where := range wheres {
-			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = 0 JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
+			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
 				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where, values[i]...))
 		}
 	}
@@ -416,16 +420,16 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	// Find photos in albums or not in an album, unless search results are limited to a scope.
 	if frm.Scope == "" {
 		if frm.Unsorted {
-			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = 0 AND a.deleted_at IS NULL)")
+			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = FALSE AND a.deleted_at IS NULL)")
 		} else if txt.NotEmpty(frm.Album) {
 			v := clean.SqlLike(strings.Trim(frm.Album, "*%")) + "%"
 			// Slugs are stored as lowercase binary strings, so the value must be
 			// folded to match on MySQL/MariaDB as well.
-			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE ("+likeCond("a.album_title")+" OR "+likeCond("a.album_slug")+"))", v, strings.ToLower(v))
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE ("+likeCond("a.album_title", false)+" OR "+likeCond("a.album_slug", true)+"))", v, strings.ToLower(v))
 		} else if txt.NotEmpty(frm.Albums) {
-			wheres, values := LikeAnyWord("a.album_title", frm.Albums)
+			wheres, values := LikeAnyWord("a.album_title", frm.Albums, false)
 			for i, where := range wheres {
-				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where, values[i]...))
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (?))", gorm.Expr(where, values[i]...))
 			}
 		}
 	}
@@ -480,7 +484,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Find panoramic pictures only.
 	if frm.Panorama {
-		s = s.Where("photos.photo_panorama = 1")
+		s = s.Where("photos.photo_panorama = TRUE")
 	}
 
 	// Find fisheye 360° originals only.
@@ -490,7 +494,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Find portrait/landscape/square pictures only.
 	if frm.Portrait {
-		s = s.Where("files.file_portrait = 1")
+		s = s.Where("files.file_portrait = TRUE")
 	} else if frm.Landscape {
 		s = s.Where("files.file_aspect_ratio > 1.25")
 	} else if frm.Square {
@@ -507,27 +511,29 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Where("files.file_codec IN (?)", SplitOr(strings.ToLower(frm.Codec)))
 	}
 
-	// Filter by chroma.
+	// Filter by chroma, which is stored as percent plus one, so that 1 is monochrome and -1 unknown.
+	// Chroma values in queries are percentages, and low values exclude monochrome files. Stored values do not
+	// exceed 100, so a larger threshold is clamped to it, which also keeps it within the column type.
 	if frm.Mono {
-		s = s.Where("files.file_chroma = 0")
+		s = s.Where("files.file_chroma = 1")
 	} else if frm.Chroma > 9 {
-		s = s.Where("files.file_chroma > ?", frm.Chroma)
+		s = s.Where("files.file_chroma > ?", min(int(frm.Chroma)+1, 100))
 	} else if frm.Chroma > 0 {
-		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", frm.Chroma)
+		s = s.Where("files.file_chroma > 1 AND files.file_chroma <= ?", frm.Chroma+1)
 	}
 
 	// Filter by favorite flag.
 	if txt.No(frm.Favorite) {
-		s = s.Where("photos.photo_favorite = 0")
+		s = s.Where("photos.photo_favorite = FALSE")
 	} else if txt.NotEmpty(frm.Favorite) {
-		s = s.Where("photos.photo_favorite = 1")
+		s = s.Where("photos.photo_favorite = TRUE")
 	}
 
 	// Filter by scan flag.
 	if txt.No(frm.Scan) {
-		s = s.Where("photos.photo_scan = 0")
+		s = s.Where("photos.photo_scan = FALSE")
 	} else if txt.NotEmpty(frm.Scan) {
-		s = s.Where("photos.photo_scan = 1")
+		s = s.Where("photos.photo_scan = TRUE")
 	}
 
 	// Filter by location country.
@@ -585,14 +591,14 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
 		} else {
-			where, values := OrLike("photos.photo_path", p)
+			where, values := OrLike("photos.photo_path", p, true)
 			s = s.Where(where, values...)
 		}
 	}
 
 	// Filter by primary file name without path and extension.
 	if frm.Name != "" {
-		where, names := OrLike("photos.photo_name", frm.Name)
+		where, names := OrLike("photos.photo_name", frm.Name, true)
 
 		// Omit file path and known extensions.
 		for i := range names {
@@ -609,7 +615,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		} else if frm.Title == enum.True {
 			s = s.Where("photos.photo_title <> ''")
 		} else {
-			where, values := OrLike("photos.photo_title", frm.Title)
+			where, values := OrLike("photos.photo_title", frm.Title, false)
 			s = s.Where(where, values...)
 		}
 	}
@@ -621,7 +627,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		} else if frm.Caption == enum.True {
 			s = s.Where("photos.photo_caption <> ''")
 		} else {
-			where, values := OrLike("photos.photo_caption", frm.Caption)
+			where, values := OrLike("photos.photo_caption", frm.Caption, false)
 			s = s.Where(where, values...)
 		}
 	}
@@ -633,7 +639,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		} else if frm.Description == enum.True {
 			s = s.Where("photos.photo_title <> '' OR photos.photo_caption <> ''")
 		} else {
-			where, values := OrLikeCols([]string{"photos.photo_title", "photos.photo_caption"}, frm.Description)
+			where, values := OrLikeCols([]string{"photos.photo_title", "photos.photo_caption"}, frm.Description, false)
 			s = s.Where(where, values...)
 		}
 	}
@@ -654,9 +660,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Filter private pictures.
 	if frm.Public {
-		s = s.Where("photos.photo_private = 0")
+		s = s.Where("photos.photo_private = FALSE")
 	} else if frm.Private {
-		s = s.Where("photos.photo_private = 1")
+		s = s.Where("photos.photo_private = TRUE")
 	}
 
 	// Filter by location code.
@@ -729,6 +735,8 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	}
 
 	// Fetch results.
+	results = make(GeoResults, 0)
+
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error
 	}

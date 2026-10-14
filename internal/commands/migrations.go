@@ -53,6 +53,7 @@ var MigrationsCommands = &cli.Command{
 	Subcommands: []*cli.Command{
 		MigrationsStatusCommand,
 		MigrationsRunCommand,
+		MigrationsTransferCommand,
 	},
 }
 
@@ -179,7 +180,9 @@ func migrationsRunAction(ctx *cli.Context) error {
 	log.Infoln("migrating database schema...")
 
 	// Run migrations.
-	conf.MigrateDb(runFailed, ids)
+	if err := conf.MigrateDb(runFailed, ids); err != nil {
+		return err
+	}
 
 	elapsed := time.Since(start)
 

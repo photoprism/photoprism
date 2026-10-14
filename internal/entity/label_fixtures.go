@@ -42,7 +42,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"flower": {
@@ -59,7 +58,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"cake": {
@@ -76,7 +74,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"cow": {
@@ -93,7 +90,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"batchdelete": {
@@ -110,7 +106,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"updateLabel": {
@@ -127,7 +122,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"updatePhotoLabel": {
@@ -144,7 +138,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"likeLabel": {
@@ -161,7 +154,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"no-jpeg": {
@@ -178,7 +170,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"apilikeLabel": {
@@ -195,7 +186,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"apidislikeLabel": {
@@ -212,7 +202,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"%tennis": {
@@ -229,7 +218,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"chem%stry": {
@@ -246,7 +234,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"cell%": {
@@ -263,7 +250,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"&friendship": {
@@ -280,7 +266,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"construction&failure": {
@@ -297,7 +282,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"goal&": {
@@ -314,7 +298,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"'activity": {
@@ -331,7 +314,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"funera'l": {
@@ -348,7 +330,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"technology'": {
@@ -365,7 +346,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"*tea": {
@@ -382,7 +362,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"soup*menu": {
@@ -399,7 +378,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"proposal*": {
@@ -416,7 +394,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"|college": {
@@ -433,7 +410,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"potato|couch": {
@@ -450,7 +426,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"mall|": {
@@ -467,7 +442,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"2020-world": {
@@ -484,7 +458,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"sport-2021-event": {
@@ -501,7 +474,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"oven-3000": {
@@ -518,7 +490,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"\"king": {
@@ -535,7 +506,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"town\"ship": {
@@ -552,7 +522,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 	"ladder\"": {
@@ -569,7 +538,6 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
 		New:              false,
 	},
 }
@@ -577,6 +545,6 @@ var LabelFixtures = LabelMap{
 // CreateLabelFixtures inserts known entities into the database for testing.
 func CreateLabelFixtures() {
 	for _, entity := range LabelFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

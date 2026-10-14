@@ -88,7 +88,7 @@ func TestSyncYaml(t *testing.T) {
 	t.Cleanup(func() {
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-		entity.UnscopedDb().Unscoped().Delete(photo)
+		entity.UnscopedDb().Unscoped().Delete(&photo)
 	})
 
 	for i, name := range []string{"a.jpg", "a.yml", "b.yml", "c.jpg"} {
@@ -253,7 +253,7 @@ func TestShareYaml(t *testing.T) {
 	t.Cleanup(func() {
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-		entity.UnscopedDb().Unscoped().Delete(photo)
+		entity.UnscopedDb().Unscoped().Delete(&photo)
 	})
 
 	files := make(map[string]*entity.File)

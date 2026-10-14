@@ -622,6 +622,16 @@ func TestConfig_MariadbDumpBin(t *testing.T) {
 	assert.Contains(t, c.MariadbDumpBin(), "mariadb-dump")
 }
 
+func TestConfig_PsqlBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.PsqlBin(), "psql")
+}
+
+func TestConfig_PgDumpBin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.PgDumpBin(), "pg_dump")
+}
+
 func TestConfig_SqliteBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.SqliteBin(), "sqlite")

@@ -210,7 +210,7 @@ func TestFace_ResolveCollision_InertBand(t *testing.T) {
 		require.NotNil(t, f)
 		require.NoError(t, f.Create())
 		require.NoError(t, f.Matched())
-		t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 		return f
 	}

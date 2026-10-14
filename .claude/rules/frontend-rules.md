@@ -20,7 +20,8 @@
 
 - `frontend/README.md` is the canonical doc for pin rationale, the `overrides` layer, ESM-only upgrade blockers, and the orphan-audit pattern — read it before bumping any non-caret pin or adding/removing a top-level dep.
 - **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.20.0"`, `"vuetify": "4.2.4"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
-- npm is a workspace; run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates. After dep changes also run `make audit`, `make build-js`, `make test-js`, and `make notice`.
+- To add or change a dependency: npm is a workspace, so run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates. After dep changes also run `make audit`, `make build-js`, `make test-js`, and `make notice`.
+- `node_modules` is mounted from the host along with the repo, and nothing reinstalls it when `package-lock.json` changes, e.g. after a pull. Sync it with `make -C frontend install` (`npm install`), which only updates what changed and rewrites the lockfile only if it is out of sync with `package.json`, a change to commit. `make -C frontend ci` (`npm ci`) reinstalls everything and fails on such a lockfile. When a Vitest or build failure appears in code the change did not touch, run `npm ls --depth=0` first: `invalid` or `missing` means the install is stale, not the code.
 - Before adding a new dep or removing one as "unused", run `rg -nF "<pkg>" frontend ...` plus `npm ls <pkg> --all` to confirm there's no transitive consumer or peer-dep. Recent precedents: `postcss-url`, `@vitejs/plugin-react`, `cheerio`, `@testing-library/react`, `vite-tsconfig-paths` (all true orphans removed once consumer left).
 
 ## Frontend Linting & Test Entry Points
@@ -37,12 +38,13 @@
   make acceptance-sqlite-stop-1
   ```
   Always return to repo root before `make acceptance-sqlite-stop-1`.
-  `acceptance-sqlite-restart-%`, `wait-%`, and `acceptance-sqlite-stop-%` are pattern rules, so the numeric suffix is required — a suffix-less `make acceptance-sqlite-restart` fails with "No rule to make target". The runner config is `frontend/.testcaferc.cjs`; there is no `testcaferc.json` in this repo (that file belongs to the separate `photoprism-tests` suite).
+  `acceptance-sqlite-restart-%`, `wait-%`, and `acceptance-sqlite-stop-%` are pattern rules, so the numeric suffix is required — a suffix-less `make acceptance-sqlite-restart` fails with "No rule to make target". The runner config is `frontend/.testcaferc.cjs`; there is no `testcaferc.json` in this repo (that file belongs to the separate `photoprism-tests` suite). The `sqlite` names always use SQLite. The composite targets use `acceptance-restart-%`, `acceptance-auth-restart` and the matching stop targets, which take `DB` on the make command line (`sqlite` by default, `mariadb`, or `postgres`; the environment is ignored), stop their server also when a test fails, and check that the server they start is the one listening on port 2343. With `mariadb` or `postgres`, a restart copies the fixture index into the `testcafe` database and starts the server with the generated `storage/acceptance/config-<db>` folder. A restart fails while another server holds the port, e.g. another edition's acceptance server or one started in the foreground, and names it. `TC_USE_VIDEO=1` records videos of failed tests in `frontend/tests/acceptance/videos/`.
   `--test-meta` keys are ANDed and must all be present on the test, so copying `type=short` selects nothing when the target case only declares `mode: "public"` (e.g. `moments-003`). Check the `test.meta(...)` call before filtering.
 
 ## Frontend Test Gotchas
 
 - Hidden-route UI checks under `/library/hidden` or `/portal/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.
+- Clear the request log of the shared `Mock` in `tests/vitest/fixtures.js` with `Mock.resetHistory()`. `Mock.history.post` and the other verb properties are getters that return a filtered copy, so `Mock.history.post.length = 0` clears nothing and a request from an earlier test still counts.
 
 ## Playwright MCP Usage
 

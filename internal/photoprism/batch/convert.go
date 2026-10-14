@@ -5,10 +5,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// ConvertToPhotoForm converts PhotosForm into a regular form.Photo while
-// preserving unchanged fields and marking source fields with SrcBatch where applicable.
+// ConvertToPhotoForm converts PhotosForm into a regular form.Photo while preserving unchanged fields,
+// removing control characters from changed text, and marking source fields with SrcBatch where applicable.
 // Note: ISO / focal length / f-number / exposure / camera / lens / details keywords
 // are present on PhotosForm for future batch UI work. Once inputs exist, extend this
 // function to copy those fields (and set Details.KeywordsSrc) before removing this note.
@@ -25,7 +26,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 
 	switch v.PhotoTitle.Action {
 	case ActionUpdate:
-		photoForm.PhotoTitle = v.PhotoTitle.Value
+		photoForm.PhotoTitle = clean.StripControl(v.PhotoTitle.Value)
 		photoForm.TitleSrc = entity.SrcBatch
 	case ActionRemove:
 		photoForm.PhotoTitle = ""
@@ -34,7 +35,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 
 	switch v.PhotoCaption.Action {
 	case ActionUpdate:
-		photoForm.PhotoCaption = v.PhotoCaption.Value
+		photoForm.PhotoCaption = clean.Text(v.PhotoCaption.Value)
 		photoForm.CaptionSrc = entity.SrcBatch
 	case ActionRemove:
 		photoForm.PhotoCaption = ""
@@ -42,7 +43,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 	}
 
 	if v.PhotoType.Action == ActionUpdate {
-		photoForm.PhotoType = v.PhotoType.Value
+		photoForm.PhotoType = clean.StripControl(v.PhotoType.Value)
 		photoForm.TypeSrc = entity.SrcBatch
 	}
 
@@ -59,7 +60,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 		photoForm.PhotoYear = v.PhotoYear.Value
 	}
 	if v.TimeZone.Action == ActionUpdate {
-		photoForm.TimeZone = v.TimeZone.Value
+		photoForm.TimeZone = clean.StripControl(v.TimeZone.Value)
 	}
 	if batchChangesTime(v) {
 		photoForm.TakenSrc = entity.SrcBatch
@@ -101,7 +102,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 		locationChanged = true
 	}
 	if v.PhotoCountry.Action == ActionUpdate {
-		photoForm.PhotoCountry = v.PhotoCountry.Value
+		photoForm.PhotoCountry = clean.StripControl(v.PhotoCountry.Value)
 		locationChanged = true
 	}
 	if v.PhotoAltitude.Action == ActionUpdate {
@@ -146,7 +147,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 
 	switch v.DetailsSubject.Action {
 	case ActionUpdate:
-		photoForm.Details.Subject = v.DetailsSubject.Value
+		photoForm.Details.Subject = clean.StripControl(v.DetailsSubject.Value)
 		photoForm.Details.SubjectSrc = entity.SrcBatch
 	case ActionRemove:
 		photoForm.Details.Subject = ""
@@ -155,7 +156,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 
 	switch v.DetailsArtist.Action {
 	case ActionUpdate:
-		photoForm.Details.Artist = v.DetailsArtist.Value
+		photoForm.Details.Artist = clean.StripControl(v.DetailsArtist.Value)
 		photoForm.Details.ArtistSrc = entity.SrcBatch
 	case ActionRemove:
 		photoForm.Details.Artist = ""
@@ -164,7 +165,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 
 	switch v.DetailsCopyright.Action {
 	case ActionUpdate:
-		photoForm.Details.Copyright = v.DetailsCopyright.Value
+		photoForm.Details.Copyright = clean.Text(v.DetailsCopyright.Value)
 		photoForm.Details.CopyrightSrc = entity.SrcBatch
 	case ActionRemove:
 		photoForm.Details.Copyright = ""
@@ -173,7 +174,7 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 
 	switch v.DetailsLicense.Action {
 	case ActionUpdate:
-		photoForm.Details.License = v.DetailsLicense.Value
+		photoForm.Details.License = clean.Text(v.DetailsLicense.Value)
 		photoForm.Details.LicenseSrc = entity.SrcBatch
 	case ActionRemove:
 		photoForm.Details.License = ""

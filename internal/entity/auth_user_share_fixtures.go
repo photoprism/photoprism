@@ -41,6 +41,6 @@ var UserShareFixtures = UserShareMap{
 // CreateUserShareFixtures creates the fixtures specified above.
 func CreateUserShareFixtures() {
 	for _, entity := range UserShareFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

@@ -55,11 +55,13 @@ func authAddAction(ctx *cli.Context) error {
 		}
 
 		// Find user account.
-		user := entity.FindUserByName(userName)
+		user := entity.FindUserByExactName(userName)
 
 		// Reject creating an app password if the user is unknown or the feature is disabled.
 		if user == nil && userName != "" {
 			return cli.Exit(fmt.Errorf("user %s not found", clean.LogQuote(userName)), 3)
+		} else if user != nil && user.IsDeleted() {
+			return cli.Exit(fmt.Errorf("user %s has been deleted", clean.LogQuote(user.UserName)), 3)
 		} else if user != nil && conf.DisableAppPasswords() {
 			return cli.Exit(fmt.Errorf("app passwords are disabled"), 1)
 		}

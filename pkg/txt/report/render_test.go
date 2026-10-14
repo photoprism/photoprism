@@ -38,7 +38,7 @@ func TestTable(t *testing.T) {
 		expected := "Col1;Col2\nfoo;bar, abc, abc, abc, abc, abc, abc," +
 			" abc, abc, abc, abc, abc, abc, abc, abc, abc," +
 			" abc, abc, abc, abc, abc, abc, abc, abc, abc," +
-			" abc, abc, abc, abc, abc, abc\nbar;b & a \\| z\n"
+			" abc, abc, abc, abc, abc, abc\nbar;b & a | z\n"
 
 		assert.Equal(t, expected, result)
 	})

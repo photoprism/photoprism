@@ -39,6 +39,22 @@ func clientsAddAction(ctx *cli.Context) error {
 
 		frm := form.AddClientFromCli(ctx)
 
+		// A client added for a user belongs to the active account with that UID or exactly that name; a client
+		// without a user is added by omitting the argument.
+		if frm.UserUID != "" {
+			if u := entity.FindUserByUID(frm.UserUID); u == nil || u.IsDeleted() {
+				return fmt.Errorf("user %s not found", clean.Log(frm.UserUID))
+			} else {
+				frm.UserName = u.UserName
+			}
+		} else if frm.UserName != "" {
+			if u := entity.FindUserByExactName(frm.UserName); u == nil || u.IsDeleted() {
+				return fmt.Errorf("user %s not found", clean.LogQuote(frm.UserName))
+			} else {
+				frm.UserUID, frm.UserName = u.UserUID, u.UserName
+			}
+		}
+
 		interactive := true
 
 		if frm.ClientName != "" && frm.AuthScope != "" {

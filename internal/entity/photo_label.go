@@ -3,7 +3,7 @@ package entity
 import (
 	"errors"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 )
@@ -14,14 +14,14 @@ type PhotoLabels []PhotoLabel
 // PhotoLabel represents the many-to-many relation between Photo and Label.
 // Labels are weighted by uncertainty (100 - confidence).
 type PhotoLabel struct {
-	PhotoID     uint   `gorm:"primary_key;auto_increment:false" json:"PhotoID,omitempty" yaml:"PhotoID"`
-	LabelID     uint   `gorm:"primary_key;auto_increment:false;index" json:"LabelID,omitempty" yaml:"LabelID"`
-	LabelSrc    string `gorm:"type:VARBINARY(8);" json:"LabelSrc,omitempty" yaml:"LabelSrc,omitempty"`
-	Uncertainty int    `gorm:"type:SMALLINT" json:"Uncertainty" yaml:"Uncertainty"`
-	Topicality  int    `gorm:"type:SMALLINT;default:0;" json:"Topicality" yaml:"Topicality,omitempty"`
-	NSFW        int    `gorm:"type:SMALLINT;column:nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
-	Photo       *Photo `gorm:"PRELOAD:false" json:"-" yaml:"-"`
-	Label       *Label `gorm:"PRELOAD:true" json:"Label,omitempty" yaml:"-"`
+	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false;size:32" json:"PhotoID,omitempty" yaml:"PhotoID"`
+	LabelID     uint   `gorm:"primaryKey;autoIncrement:false;index;size:32" json:"LabelID,omitempty" yaml:"LabelID"`
+	LabelSrc    string `gorm:"type:bytes;size:8;" json:"LabelSrc,omitempty" yaml:"LabelSrc,omitempty"`
+	Uncertainty int    `gorm:"type:int;size:16" json:"Uncertainty" yaml:"Uncertainty"`
+	Topicality  int    `gorm:"type:int;size:16;default:0;" json:"Topicality" yaml:"Topicality,omitempty"`
+	NSFW        int    `gorm:"type:int;size:16;column:nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
+	Photo       *Photo `gorm:"-:migration" json:"-" yaml:"-"`
+	Label       *Label `gorm:"-:migration" json:"Label,omitempty" yaml:"-"`
 }
 
 // TableName returns the database table name for PhotoLabel.
@@ -41,7 +41,7 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 	return result
 }
 
-// Updates mutates multiple columns in the database and clears cached copies.
+// Updates mutates multiple columns in the database and clears cached copies, retrying after a deadlock.
 func (m *PhotoLabel) Updates(values any) error {
 	if m == nil {
 		return errors.New("photo label must not be nil - you may have found a bug")
@@ -49,7 +49,9 @@ func (m *PhotoLabel) Updates(values any) error {
 		return errors.New("photo label ID must not be empty - you may have found a bug")
 	}
 
-	if err := UnscopedDb().Model(m).UpdateColumns(values).Error; err != nil {
+	if err := RetryDeadlock("update photo label", func() error {
+		return UnscopedDb().Model(m).UpdateColumns(values).Error
+	}); err != nil {
 		return err
 	}
 
@@ -57,7 +59,7 @@ func (m *PhotoLabel) Updates(values any) error {
 	return nil
 }
 
-// Update mutates a single column in the database and clears cached copies.
+// Update mutates a single column in the database and clears cached copies, retrying after a deadlock.
 func (m *PhotoLabel) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("photo label must not be nil - you may have found a bug")
@@ -65,7 +67,9 @@ func (m *PhotoLabel) Update(attr string, value any) error {
 		return errors.New("photo label ID must not be empty - you may have found a bug")
 	}
 
-	if err := UnscopedDb().Model(m).UpdateColumn(attr, value).Error; err != nil {
+	if err := RetryDeadlock("update photo label", func() error {
+		return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	}); err != nil {
 		return err
 	}
 
@@ -96,7 +100,7 @@ func (m *PhotoLabel) Create() error {
 }
 
 // AfterCreate flushes the label cache once a relation has been persisted.
-func (m *PhotoLabel) AfterCreate(scope *gorm.Scope) error {
+func (m *PhotoLabel) AfterCreate(tx *gorm.DB) error {
 	FlushCachedPhotoLabel(m)
 	return nil
 }
@@ -107,10 +111,12 @@ func (m *PhotoLabel) AfterUpdate(tx *gorm.DB) (err error) {
 	return
 }
 
-// Delete removes the label reference and clears the cache.
+// Delete removes the label reference and clears the cache, retrying after a deadlock.
 func (m *PhotoLabel) Delete() error {
 	FlushCachedPhotoLabel(m)
-	return Db().Delete(m).Error
+	return RetryDeadlock("delete photo label", func() error {
+		return Db().Delete(m).Error
+	})
 }
 
 // AfterDelete flushes the label cache when a label is deleted.

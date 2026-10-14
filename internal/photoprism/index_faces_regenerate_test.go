@@ -597,6 +597,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 		_ = oldCfg.ConfigureFaceDetector(0)
 	})

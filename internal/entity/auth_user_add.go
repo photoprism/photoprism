@@ -3,7 +3,7 @@ package entity
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -24,13 +24,22 @@ func AddUser(frm form.User) error {
 		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
-	// Check username, role and email.
-	if err := user.Validate(); err != nil {
+	// Check the username as entered, since the form value is sanitized, and then role and email.
+	if !authn.IsASCIIUsername(frm.UserName) {
+		return user.usernameASCIIError(frm.UserName)
+	} else if err := user.Validate(); err != nil {
 		return err
 	}
 
 	err := Db().Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(user).Error; err != nil {
+			return err
+		}
+
+		// Associations are not saved with the user, so its settings and details are saved here.
+		if err := tx.Save(user.Settings()).Error; err != nil {
+			return err
+		} else if err = tx.Save(user.Details()).Error; err != nil {
 			return err
 		}
 

@@ -10,6 +10,8 @@ import (
 
 // People returns the sorted names of the first 2000 people.
 func People() (people entity.People, err error) {
+	people = make(entity.People, 0)
+
 	err = UnscopedDb().
 		Table(entity.Subject{}.TableName()).
 		Select("subj_uid, subj_name, subj_alias, subj_favorite, subj_hidden").
@@ -23,14 +25,16 @@ func People() (people entity.People, err error) {
 
 // PeopleCount returns the total number of people in the index.
 func PeopleCount() (count int, err error) {
+	var n int64
+
 	err = Db().
 		Table(entity.Subject{}.TableName()).
 		Where("deleted_at IS NULL").
-		Where("subj_hidden = 0").
+		Where("subj_hidden = FALSE").
 		Where("subj_type = ?", entity.SubjPerson).
-		Count(&count).Error
+		Count(&n).Error
 
-	return count, err
+	return int(n), err
 }
 
 // Subjects returns subjects from the index.
@@ -84,7 +88,7 @@ func CreateMarkerSubjects() (subjects, linked int64, err error) {
 
 	if err = Db().
 		Where("subj_uid = '' AND marker_name <> '' AND subj_src <> ?", entity.SrcAuto).
-		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
+		Where("marker_invalid = FALSE AND marker_type = ?", entity.MarkerFace).
 		// Sorted by source within a name, so a person another source creates exists before an XMP
 		// marker of the same name looks for it.
 		Order("LOWER(marker_name), subj_src").

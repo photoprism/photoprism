@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
@@ -54,17 +55,15 @@ func usersAddAction(ctx *cli.Context) error {
 				return err
 			}
 
-			frm.UserName = clean.Username(res)
+			frm.UserName = strings.TrimSpace(res)
 		}
 
 		// Check if account exists but is deleted.
 		if frm.UserName == "" {
 			return authn.ErrUsernameRequired
-		} else if m := entity.FindUserByName(frm.UserName); m != nil {
-			if !m.IsDeleted() {
-				return authn.ErrAccountAlreadyExists
-			}
-
+		} else if m, held := entity.FindRestorableUser(frm.UserName); held && m == nil {
+			return authn.ErrAccountAlreadyExists
+		} else if m != nil {
 			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
 				return err
 			} else if !restore {
@@ -142,7 +141,7 @@ func usersAddAction(ctx *cli.Context) error {
 			return err
 		}
 
-		AuditSharedEmail(entity.FindUserByName(frm.UserName), true)
+		AuditSharedEmail(entity.FindUserByExactName(frm.UserName), true)
 
 		return nil
 	})

@@ -1,6 +1,7 @@
 package clean
 
 import (
+	"math/rand/v2"
 	"strings"
 	"testing"
 
@@ -51,9 +52,70 @@ func TestType(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Type(""))
 	})
+	t.Run("ControlChars", func(t *testing.T) {
+		assert.Equal(t, "ab c", Type("\x00a\x1fb\tc\x7f"))
+		assert.Equal(t, "", Type("\x00\x01"))
+		assert.Equal(t, "abcd", Type("a\u0085b\u2028c\u202ed"))
+	})
+	t.Run("FilterBeforeClip", func(t *testing.T) {
+		assert.Equal(t, "a", Type("a \x00"))
+		assert.Equal(t, "abc", Type(strings.Repeat("\x00", 64)+"abc"))
+	})
+}
+
+func TestTypeString(t *testing.T) {
+	t.Run("Unchanged", func(t *testing.T) {
+		result, changed, clipped := typeString(" image/jpeg ", LengthType)
+		assert.Equal(t, "image/jpeg", result)
+		assert.False(t, changed)
+		assert.False(t, clipped)
+		assert.Zero(t, testing.AllocsPerRun(10, func() { _, _, _ = typeString("Europe/Berlin", LengthType) }))
+	})
+	t.Run("Changed", func(t *testing.T) {
+		result, changed, clipped := typeString("a\tb\x00c\xffd", LengthType)
+		assert.Equal(t, "a bcd", result)
+		assert.True(t, changed)
+		assert.False(t, clipped)
+	})
+	t.Run("Clipped", func(t *testing.T) {
+		result, changed, clipped := typeString("abc def", 4)
+		assert.Equal(t, "abc", result)
+		assert.False(t, changed)
+		assert.True(t, clipped)
+	})
+	t.Run("SameAsComposition", func(t *testing.T) {
+		// The loop must give the same result as filtering with ASCII and StripControl, then clipping.
+		alphabet := []string{"a", "Z", "0", " ", "\t", "\n", "\r", "\x00", "\x01", "\x1b", "\x7f", "ä", "幸", "\u0085", "\u00a0", "\u202e", "\xff", ":", "/", "~", "\v", "\f", "\x1f", "\x80"}
+		rng := rand.New(rand.NewPCG(1, 2)) //nolint:gosec // a fixed seed keeps a failing input reproducible.
+
+		for range 20000 {
+			var sb strings.Builder
+
+			for range rng.IntN(80) {
+				sb.WriteString(alphabet[rng.IntN(len(alphabet))])
+			}
+
+			in := sb.String()
+			assert.Equal(t, clip.Chars(StripControl(ASCII(in)), LengthType), Type(in), "%q", in)
+			assert.Equal(t, clip.Chars(StripControl(ASCII(in)), LengthShortType), ShortType(in), "%q", in)
+		}
+	})
 }
 
 func TestTypeUnicode(t *testing.T) {
+	t.Run("UnsafeRunes", func(t *testing.T) {
+		assert.Equal(t, "ab", TypeUnicode("a\x7fb"))
+		assert.Equal(t, "ab", TypeUnicode("a\u009bb"))
+		assert.Equal(t, "ab", TypeUnicode("a\u202Eb"))
+		assert.Equal(t, "ab", TypeUnicode("a\u200Bb"))
+		assert.Equal(t, "ab", TypeUnicode("a\uFEFFb"))
+		assert.Equal(t, "a b", TypeUnicode("a\u2028b"))
+	})
+	t.Run("JoinersKept", func(t *testing.T) {
+		assert.Equal(t, "👩\u200D👩\u200D👧", TypeUnicode("👩\u200D👩\u200D👧"))
+		assert.Equal(t, "می\u200Cخواهم", TypeUnicode("می\u200Cخواهم"))
+		assert.Equal(t, "Büro 東京 Node", TypeUnicode("Büro 東京 Node"))
+	})
 	tests := []struct {
 		name       string
 		input      string
@@ -220,6 +282,12 @@ func TestShortType(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", ShortType(""))
+	})
+	t.Run("ControlChars", func(t *testing.T) {
+		assert.Equal(t, "ab c", ShortType("\x00a\x1fb\tc\x7f"))
+	})
+	t.Run("FilterBeforeClip", func(t *testing.T) {
+		assert.Equal(t, "image", ShortType(strings.Repeat("\x00", 8)+"image"))
 	})
 }
 

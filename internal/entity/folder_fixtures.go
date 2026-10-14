@@ -49,7 +49,6 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"1990/04": {
 		FolderUID:         "dqo63pn2f87f02xj",
@@ -71,7 +70,6 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"2007/12": {
 		FolderUID:         "dqo63pn2f87f02oi",
@@ -93,7 +91,6 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2007, 12, 25, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 30, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
 	},
 	"2156/12": {
 		FolderUID:         "dtjzq269o56db218",
@@ -115,13 +112,13 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2026, 8, 19, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2026, 8, 19, 2, 6, 59, 0, time.UTC),
 		ModifiedAt:        time.Date(2026, 8, 19, 2, 16, 12, 0, time.UTC),
-		DeletedAt:         &deletedAt,
+		DeletedAt:         DeletedAtTime(deletedAt),
 	},
 }
 
 // CreateFolderFixtures inserts known entities into the database for testing.
 func CreateFolderFixtures() {
 	for _, entity := range FolderFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

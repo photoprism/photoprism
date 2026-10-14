@@ -8,9 +8,11 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
 // GetSettings returns the user app settings as JSON.
@@ -84,6 +86,7 @@ func SaveSettings(router *gin.RouterGroup) {
 		if user.IsSuperAdmin() && s.NoScope() {
 			// Update global defaults and user preferences.
 			settings = conf.Settings()
+			timeZone := settings.UI.TimeZone
 
 			// Set values from request.
 			LimitRequestBodyBytes(c, MaxSettingsRequestBytes)
@@ -98,16 +101,23 @@ func SaveSettings(router *gin.RouterGroup) {
 				return
 			}
 
+			// Keep the previous default time zone if the new one is not a valid name.
+			if zone := tz.Sanitize(settings.UI.TimeZone); zone != "" {
+				settings.UI.TimeZone = zone
+			} else {
+				settings.UI.TimeZone = timeZone
+			}
+
 			// Update global defaults.
 			if err := settings.Save(conf.SettingsYaml()); err != nil {
-				log.Debugf("config: %s (save app settings)", clean.Error(err))
+				settingsErr(s, "app", err)
 				AbortSaveFailed(c)
 				return
 			}
 
 			// Update user preferences.
 			if err := user.Settings().Apply(settings).Save(); err != nil {
-				log.Debugf("config: %s (save user settings)", clean.Error(err))
+				settingsErr(s, "user", err)
 				AbortSaveFailed(c)
 				return
 			}
@@ -137,7 +147,7 @@ func SaveSettings(router *gin.RouterGroup) {
 				c.JSON(http.StatusOK, user.Settings().Apply(settings).ApplyTo(conf.Settings().ApplyACL(acl.Rules, user.AclRole())))
 				return
 			} else if err := user.Settings().Apply(settings).Save(); err != nil {
-				log.Debugf("config: %s (save user settings)", err)
+				settingsErr(s, "user", err)
 				AbortSaveFailed(c)
 				return
 			}
@@ -146,4 +156,11 @@ func SaveSettings(router *gin.RouterGroup) {
 		// Return updated user settings.
 		c.JSON(http.StatusOK, get.Config().SessionSettings(s))
 	})
+}
+
+// settingsErr reports a failed save of the app or user settings on the console channel if err is not nil.
+func settingsErr(s *entity.Session, kind string, err error) {
+	if err != nil {
+		event.SystemError([]string{"settings", "session %s", "failed to save %s settings", "%s"}, s.RefID, kind, clean.ErrorFull(err))
+	}
 }

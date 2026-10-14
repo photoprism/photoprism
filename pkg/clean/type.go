@@ -3,21 +3,66 @@ package clean
 import (
 	"strings"
 	"unicode"
-
-	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
-// Type omits invalid runes, ensures a maximum length of 64 characters, and returns the result.
+// Type replaces whitespace controls with a space, omits other control and non-ASCII characters,
+// and ensures a maximum length of 64 characters.
 func Type(s string) string {
 	if s == "" {
 		return s
 	}
 
-	return clip.Chars(ASCII(s), LengthType)
+	result, _, _ := typeString(s, LengthType)
+
+	return result
 }
 
-// TypeUnicode removes unsafe runes, collapses whitespace, and enforces the
-// maximum type length while preserving non-ASCII characters when possible.
+// typeString keeps printable ASCII, replaces whitespace controls with a space, drops other bytes, and limits
+// the trimmed result to maxLen bytes. It reports whether a character inside the trimmed input was removed or
+// replaced, and whether the result was shortened.
+func typeString(s string, maxLen int) (result string, changed, clipped bool) {
+	s = strings.TrimSpace(s)
+
+	var dst []byte
+
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+
+		if b >= 0x20 && b < 0x7F {
+			if dst != nil {
+				dst = append(dst, b)
+			}
+
+			continue
+		}
+
+		if dst == nil {
+			dst = make([]byte, i, len(s))
+			copy(dst, s[:i])
+		}
+
+		switch b {
+		case '\t', '\n', '\v', '\f', '\r':
+			dst = append(dst, ' ')
+		}
+
+		changed = true
+	}
+
+	if dst != nil {
+		s = strings.TrimSpace(string(dst))
+	}
+
+	if len(s) > maxLen {
+		s = strings.TrimSpace(s[:maxLen])
+		clipped = true
+	}
+
+	return s, changed, clipped
+}
+
+// TypeUnicode collapses whitespace, removes control, non-printable and other unsafe characters
+// except U+200C and U+200D, and limits the result to 64 characters while keeping non-ASCII letters.
 func TypeUnicode(s string) string {
 	if s == "" {
 		return s
@@ -40,7 +85,7 @@ func TypeUnicode(s string) string {
 			continue
 		}
 
-		if r <= 31 {
+		if unsafeDropRune(r) || unsafeRune(r) {
 			continue
 		}
 
@@ -131,13 +176,16 @@ func TypeLowerDash(s string) string {
 	return TypeDash(TypeLower(s))
 }
 
-// ShortType omits invalid runes, ensures a maximum length of 8 characters, and returns the result.
+// ShortType replaces whitespace controls with a space, omits other control and non-ASCII characters,
+// and ensures a maximum length of 8 characters.
 func ShortType(s string) string {
 	if s == "" {
 		return s
 	}
 
-	return clip.Chars(ASCII(s), LengthShortType)
+	result, _, _ := typeString(s, LengthShortType)
+
+	return result
 }
 
 // ShortTypeLower converts a short type string to lowercase, omits invalid runes, and shortens it if needed.

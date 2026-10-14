@@ -1,6 +1,7 @@
 package config
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -433,6 +434,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 
 func TestConfig_ClientSessionConfig(t *testing.T) {
 	c := NewTestConfig("config")
+	assert.Equal(t, filepath.Dir(c.StoragePath()), c.testFolder, "test folder")
 	c.SetAuthMode(AuthModePasswd)
 
 	// Propagate configures the download signer; without it no session gets a signed token and the

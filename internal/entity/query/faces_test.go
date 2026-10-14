@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -150,13 +150,13 @@ func TestMatchFaceMarkers_ConcurrentRename(t *testing.T) {
 	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 	armed := true
-	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:match-rename", func(scope *gorm.Scope) {
-		if armed && scope.TableName() == (entity.Marker{}).TableName() {
+	_ = entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:match-rename", func(tx *gorm.DB) {
+		if armed && tx.Statement.Table == (entity.Marker{}).TableName() {
 			armed = false
 			require.NoError(t, entity.UnscopedDb().Exec("UPDATE faces SET subj_uid = ? WHERE id = ?", bea, f.ID).Error)
 		}
 	})
-	t.Cleanup(func() { entity.Db().Callback().Update().Remove("race:match-rename") })
+	t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("race:match-rename") })
 
 	_, err := MatchFaceMarkers()
 	require.NoError(t, err)
@@ -206,7 +206,7 @@ func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 
 	tempDb := tempConn.Db()
 	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}).Error)
+	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}))
 	require.NoError(t, tempDb.Create(&entity.Face{
 		ID:         "FACE-MATCH-ERR-1",
 		FaceSrc:    entity.SrcManual,
@@ -303,7 +303,7 @@ func TestCountFaceClusterGates(t *testing.T) {
 			CreatedAt:  time.Now().Add(time.Hour),
 		}
 		require.NoError(t, Db().Create(&newest).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(entity.Face{}, "id = ?", newest.ID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&entity.Face{}, "id = ?", newest.ID) })
 
 		after := CountFaceClusterGates(model, 0, 0)
 
@@ -592,7 +592,7 @@ func TestResolveFaceCollisions_InertBand(t *testing.T) {
 	faceTwo := entity.NewFace("uqcollisionband2", entity.SrcManual, face.NewEmbeddings([][]float32{second}), face.ModelFaceNet)
 	require.NoError(t, faceTwo.Create())
 	t.Cleanup(func() {
-		entity.UnscopedDb().Delete(entity.Face{}, "id IN (?)", []string{faceOne.ID, faceTwo.ID})
+		entity.UnscopedDb().Delete(&entity.Face{}, "id IN (?)", []string{faceOne.ID, faceTwo.ID})
 	})
 
 	collisions := func(t *testing.T) int {
@@ -637,14 +637,26 @@ func TestRemovePeopleAndFaces(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
+	// Replace all fixtures afterwards, as this removes data other tests depend on.
+	t.Cleanup(entity.ResetTestFixtures)
+
+	// A NULL face count is reset as well.
+	if err := UnscopedDb().Exec("UPDATE photos SET photo_faces = NULL WHERE photo_uid = ?", entity.PhotoFixtures.Get("Photo01").PhotoUID).Error; err != nil {
+		t.Fatal(err)
+	}
+
 	err := RemovePeopleAndFaces()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// replace all the fixtures as the previous statement kills a lot of other tests.
-	entity.ResetTestFixtures()
+	var withFaces int64
+	if err = UnscopedDb().Model(&entity.Photo{}).Where("photo_faces <> 0 OR photo_faces IS NULL").Count(&withFaces).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, int64(0), withFaces)
 }
 
 func TestFaceEmbeddingModels(t *testing.T) {
@@ -707,7 +719,7 @@ func TestMarkerDetectModels(t *testing.T) {
 		// the bucket that reports rows written before the column existed.
 		before := detectorCounts(t)[""]
 		newFaceMarker(t, "", nil)
-		assert.Equal(t, before, detectorCounts(t)[""])
+		assert.EqualValues(t, before, detectorCounts(t)[""])
 	})
 }
 
@@ -755,7 +767,7 @@ func TestMarkerEmbeddingModels(t *testing.T) {
 		// inflate the bucket that reports libraries predating provenance tracking.
 		before := modelCounts(t)[""]
 		newFaceMarker(t, "", nil)
-		assert.Equal(t, before, modelCounts(t)[""])
+		assert.EqualValues(t, before, modelCounts(t)[""])
 	})
 	t.Run("RecordedOnly", func(t *testing.T) {
 		// The cheap variant answers from the index, so it cannot see rows whose model
@@ -802,7 +814,7 @@ func TestLegacyFaceMarkersWithVectors(t *testing.T) {
 
 		count, err := LegacyFaceMarkersWithVectors()
 		require.NoError(t, err)
-		assert.Equal(t, before+1, count)
+		assert.EqualValues(t, before+1, count)
 	})
 	t.Run("SkipsRecordedModels", func(t *testing.T) {
 		before, err := LegacyFaceMarkersWithVectors()
@@ -812,7 +824,7 @@ func TestLegacyFaceMarkersWithVectors(t *testing.T) {
 
 		count, err := LegacyFaceMarkersWithVectors()
 		require.NoError(t, err)
-		assert.Equal(t, before, count)
+		assert.EqualValues(t, before, count)
 	})
 	t.Run("SkipsMarkersWithoutEmbeddings", func(t *testing.T) {
 		// A marker that was detected but never embedded records no model either, and
@@ -824,7 +836,7 @@ func TestLegacyFaceMarkersWithVectors(t *testing.T) {
 
 		count, err := LegacyFaceMarkersWithVectors()
 		require.NoError(t, err)
-		assert.Equal(t, before, count)
+		assert.EqualValues(t, before, count)
 	})
 	t.Run("CompletesTheRecordedCounts", func(t *testing.T) {
 		// The two together have to add up to every vector the library holds, or the
@@ -872,7 +884,7 @@ func TestFaceMarkersWithVectors(t *testing.T) {
 
 		count, err := FaceMarkersWithVectors()
 		require.NoError(t, err)
-		assert.Equal(t, total, count)
+		assert.EqualValues(t, total, count)
 	})
 }
 
@@ -881,16 +893,16 @@ func TestWhereEmbeddingModel(t *testing.T) {
 		return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
 	}
 
-	var total int
+	var total int64
 	require.NoError(t, base().Count(&total).Error)
 
 	t.Run("EmptyModelAppliesNoFilter", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, whereEmbeddingModel(base(), "").Count(&count).Error)
-		assert.Equal(t, total, count)
+		assert.EqualValues(t, total, count)
 	})
 	t.Run("NamedModelFilters", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, whereEmbeddingModel(base(), face.ModelSFace).Count(&count).Error)
 		assert.LessOrEqual(t, count, total)
 	})
@@ -918,13 +930,13 @@ func TestNotEmbeddingModel(t *testing.T) {
 		})
 	}
 
-	var total int
+	var total int64
 	require.NoError(t, base().Count(&total).Error)
 
 	t.Run("EmptyModelMatchesNothing", func(t *testing.T) {
 		cond, args := notEmbeddingModel("")
 
-		var count int
+		var count int64
 		require.NoError(t, base().Where(cond, args...).Count(&count).Error)
 		assert.Zero(t, count)
 	})
@@ -934,10 +946,10 @@ func TestNotEmbeddingModel(t *testing.T) {
 		t.Run("Partitions"+target, func(t *testing.T) {
 			cond, args := notEmbeddingModel(target)
 
-			var kept, cleared int
+			var kept, cleared int64
 			require.NoError(t, whereEmbeddingModel(base(), target).Count(&kept).Error)
 			require.NoError(t, base().Where(cond, args...).Count(&cleared).Error)
-			assert.Equal(t, total, kept+cleared)
+			assert.EqualValues(t, total, kept+cleared)
 		})
 	}
 }
@@ -953,7 +965,7 @@ func TestFacesFromOtherModels(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
 		count, err := FacesFromOtherModels()
 		require.NoError(t, err)
-		assert.Equal(t, 0, count)
+		assert.EqualValues(t, 0, count)
 	})
 	t.Run("CountsOtherModels", func(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
@@ -973,7 +985,7 @@ func TestFacesFromOtherModels(t *testing.T) {
 
 		after, err := FacesFromOtherModels()
 		require.NoError(t, err)
-		assert.Equal(t, before+1, after)
+		assert.EqualValues(t, before+1, after)
 	})
 	t.Run("CountsLegacyForNewModel", func(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
@@ -992,7 +1004,7 @@ func TestFacesFromOtherModels(t *testing.T) {
 
 		after, err := FacesFromOtherModels()
 		require.NoError(t, err)
-		assert.Equal(t, before+1, after)
+		assert.EqualValues(t, before+1, after)
 	})
 }
 
@@ -1076,7 +1088,7 @@ func TestRemoveAllFaceClusters(t *testing.T) {
 
 	t.Cleanup(entity.ResetTestFixtures)
 
-	var manual int
+	var manual int64
 
 	require.NoError(t, entity.Db().Model(&entity.Face{}).
 		Where("face_src = ?", entity.SrcManual).Count(&manual).Error)
@@ -1086,15 +1098,15 @@ func TestRemoveAllFaceClusters(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var before int
+	var before int64
 	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&before).Error)
-	assert.Equal(t, manual, before, "the automatic scope must leave the hand-created clusters")
+	assert.EqualValues(t, manual, before, "the automatic scope must leave the hand-created clusters")
 
 	removed, err := RemoveAllFaceClusters()
 	require.NoError(t, err)
-	assert.Equal(t, manual, removed)
+	assert.EqualValues(t, manual, removed)
 
-	var after int
+	var after int64
 	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&after).Error)
 	assert.Zero(t, after)
 }

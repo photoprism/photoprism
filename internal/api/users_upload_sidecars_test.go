@@ -191,7 +191,7 @@ func TestProcessUserUploadSidecarPolicy(t *testing.T) {
 	t.Cleanup(func() {
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", existing.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", existing.ID)
-		entity.UnscopedDb().Unscoped().Delete(existing)
+		entity.UnscopedDb().Unscoped().Delete(&existing)
 	})
 	token := rnd.Base36(10)
 	dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)

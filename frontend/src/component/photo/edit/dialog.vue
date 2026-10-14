@@ -21,7 +21,7 @@
         </v-btn>
 
         <v-toolbar-title
-          >{{ title }}
+          ><bdi>{{ $util.balanceBidi(title) }}</bdi>
           <v-icon v-if="isPrivate" title="Private">mdi-lock</v-icon>
         </v-toolbar-title>
 

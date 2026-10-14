@@ -9,11 +9,6 @@ func Mask(dsn string) string {
 	// Parse database DSN.
 	d := Parse(dsn)
 
-	// Return original DSN if no password was found.
-	if d.Password == "" {
-		return dsn
-	}
-
 	// Return DSN with masked password.
 	return d.MaskPassword()
 }

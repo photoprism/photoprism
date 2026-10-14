@@ -46,7 +46,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"holiday-2030": {
 		ID:               1000001,
@@ -71,7 +70,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"berlin-2019": {
 		ID:               1000002,
@@ -96,7 +94,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"april-1990": {
 		ID:               1000003,
@@ -121,7 +118,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"import": {
 		ID:               1000004,
@@ -146,7 +142,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"emptyMoment": {
 		ID:               1000005,
@@ -171,7 +166,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"2016-04": {
 		ID:               1000006,
@@ -195,7 +189,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"september-2021": {
 		ID:               1000007,
@@ -219,7 +212,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"california-usa": {
 		ID:               1000008,
@@ -243,7 +235,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"california-duplicate-1": {
 		ID:               1000009,
@@ -267,7 +258,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"california-duplicate-2": {
 		ID:               1000010,
@@ -291,7 +281,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumFavorite:    false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"&ilikefood": {
 		ID:               1000011,
@@ -316,7 +305,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"i-love-%-dog": {
 		ID:               1000012,
@@ -341,7 +329,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"%gold": {
 		ID:               1000013,
@@ -366,7 +353,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"sale%": {
 		ID:               1000014,
@@ -391,7 +377,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"pets&dogs": {
 		ID:               1000015,
@@ -416,7 +401,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"light&": {
 		ID:               1000016,
@@ -441,7 +425,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"'family": {
 		ID:               1000017,
@@ -466,7 +449,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"father's-day": {
 		ID:               1000018,
@@ -491,7 +473,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"ice-cream'": {
 		ID:               1000019,
@@ -516,7 +497,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"*forrest": {
 		ID:               1000020,
@@ -541,7 +521,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"my*kids": {
 		ID:               1000021,
@@ -566,7 +545,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"yoga***": {
 		ID:               1000022,
@@ -591,7 +569,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"|banana": {
 		ID:               1000023,
@@ -616,7 +593,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"blue|": {
 		ID:               1000024,
@@ -641,7 +617,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"345-shirt": {
 		ID:               1000025,
@@ -666,7 +641,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"color-555-blue": {
 		ID:               1000026,
@@ -691,7 +665,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"route-66": {
 		ID:               1000027,
@@ -716,7 +689,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2024, 3, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"red|green": {
 		ID:               1000028,
@@ -741,7 +713,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"germany": {
 		ID:               1000029,
@@ -766,7 +737,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"mexico": {
 		ID:               1000030,
@@ -791,7 +761,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"november-2015": {
 		ID:               1000031,
@@ -816,7 +785,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"holiday": {
 		ID:               1000032,
@@ -841,7 +809,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2019, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"france-2020": {
 		ID:               1000033,
@@ -866,7 +833,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2018, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"greece-2024": {
 		ID:               1000034,
@@ -891,7 +857,6 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2024, 7, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 	"cows": {
 		ID:               1000035,
@@ -916,13 +881,12 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
 	},
 }
 
 // CreateAlbumFixtures inserts known entities into the database for testing.
 func CreateAlbumFixtures() {
 	for _, entity := range AlbumFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

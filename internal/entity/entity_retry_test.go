@@ -6,9 +6,36 @@ import (
 	"testing"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
+
+// failFirstWrite makes the first update or delete of a table return a deadlock and counts the attempts.
+func failFirstWrite(t *testing.T, operation, table string) *int {
+	t.Helper()
+	attempts, name := new(int), "test:deadlock:"+operation+":"+table
+	callback := func(tx *gorm.DB) {
+		if tx.Statement.Table != table {
+			return
+		} else if *attempts++; *attempts == 1 {
+			_ = tx.AddError(&mysql.MySQLError{Number: 1213, Message: "deadlock control"})
+		}
+	}
+	switch operation {
+	case "update":
+		require.NoError(t, Db().Callback().Update().Before("gorm:begin_transaction").Register(name, callback))
+		t.Cleanup(func() { _ = Db().Callback().Update().Remove(name) })
+	case "delete":
+		require.NoError(t, Db().Callback().Delete().Before("gorm:begin_transaction").Register(name, callback))
+		t.Cleanup(func() { _ = Db().Callback().Delete().Remove(name) })
+	default:
+		t.Fatalf("unsupported operation %q", operation)
+	}
+	return attempts
+}
 
 // TestRetryDeadlock checks bounded recovery and preservation of non-retryable errors.
 func TestRetryDeadlock(t *testing.T) {
@@ -55,9 +82,104 @@ func TestIsDeadlockError(t *testing.T) {
 		{"Driver", &mysql.MySQLError{Number: 1213, Message: "retry control"}, true},
 		{"Wrapped", fmt.Errorf("wrapped: %w", &mysql.MySQLError{Number: 1213, Message: "retry control"}), true},
 		{"Text", errors.New("DEADLOCK found"), true},
+		{"PostgresDeadlock", &pgconn.PgError{Code: "40P01", Message: "retry control"}, true},
+		{"PostgresSerialization", fmt.Errorf("wrapped: %w", &pgconn.PgError{Code: "40001", Message: "retry control"}), true},
+		{"PostgresOther", &pgconn.PgError{Code: "23505", Message: "duplicate"}, false},
 		{"OtherDriver", &mysql.MySQLError{Number: 1062, Message: "duplicate"}, false},
 		{"Other", errors.New("write control"), false},
 	} {
 		t.Run(tc.name, func(t *testing.T) { assert.Equal(t, tc.retry, isDeadlockError(tc.err)) })
 	}
+}
+
+// TestRetryLock checks that writes are retried after lock errors only.
+func TestRetryLock(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		attempts := 0
+		require.NoError(t, RetryLock("test", func() error { attempts++; return nil }))
+		assert.Equal(t, 1, attempts)
+	})
+	t.Run("Transient", func(t *testing.T) {
+		attempts := 0
+		require.NoError(t, RetryLock("test", func() error {
+			attempts++
+			if attempts < 2 {
+				return sqlite3.Error{Code: sqlite3.ErrBusy}
+			}
+			return nil
+		}))
+		assert.Equal(t, 2, attempts)
+	})
+	t.Run("Exhausted", func(t *testing.T) {
+		attempts := 0
+		expected := &mysql.MySQLError{Number: 1205, Message: "Lock wait timeout exceeded"}
+		err := RetryLock("test", func() error { attempts++; return expected })
+		assert.Same(t, expected, err)
+		assert.Equal(t, 2, attempts)
+	})
+	t.Run("OtherError", func(t *testing.T) {
+		attempts := 0
+		expected := errors.New("write control")
+		err := RetryLock("test", func() error { attempts++; return expected })
+		assert.Same(t, expected, err)
+		assert.Equal(t, 1, attempts)
+	})
+}
+
+// TestIsLockError checks driver, wrapped, and textual lock errors.
+func TestIsLockError(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		err   error
+		retry bool
+	}{
+		{"Nil", nil, false},
+		{"Deadlock", &mysql.MySQLError{Number: 1213, Message: "retry control"}, true},
+		{"LockWaitTimeout", &mysql.MySQLError{Number: 1205, Message: "retry control"}, true},
+		{"Wrapped", fmt.Errorf("wrapped: %w", &mysql.MySQLError{Number: 1205, Message: "retry control"}), true},
+		{"PostgresLockNotAvailable", &pgconn.PgError{Code: "55P03", Message: "retry control"}, true},
+		{"PostgresDeadlock", &pgconn.PgError{Code: "40P01", Message: "retry control"}, true},
+		{"PostgresOther", &pgconn.PgError{Code: "23505", Message: "duplicate"}, false},
+		{"SQLiteBusy", sqlite3.Error{Code: sqlite3.ErrBusy}, true},
+		{"SQLiteLocked", sqlite3.Error{Code: sqlite3.ErrLocked}, true},
+		{"WrappedSQLite", fmt.Errorf("wrapped: %w", sqlite3.Error{Code: sqlite3.ErrBusy}), true},
+		{"OtherSQLite", sqlite3.Error{Code: sqlite3.ErrConstraint}, false},
+		{"JoinedErrors", fmt.Errorf("%v; %w", errors.New("write control"), sqlite3.Error{Code: sqlite3.ErrBusy}), true},
+		{"OtherJoinedErrors", fmt.Errorf("%v; %w", sqlite3.Error{Code: sqlite3.ErrBusy}, errors.New("write control")), false},
+		{"DeadlockText", errors.New("DEADLOCK found"), true},
+		{"LockText", errors.New("database is locked"), false},
+		{"OtherDriver", &mysql.MySQLError{Number: 1062, Message: "duplicate"}, false},
+		{"Other", errors.New("write control"), false},
+	} {
+		t.Run(tc.name, func(t *testing.T) { assert.Equal(t, tc.retry, isLockError(tc.err)) })
+	}
+}
+
+// TestRetryWrite checks the attempt limit and which errors are retried.
+func TestRetryWrite(t *testing.T) {
+	retryable := func(err error) bool { return err.Error() == "retry control" }
+
+	t.Run("Success", func(t *testing.T) {
+		attempts := 0
+		require.NoError(t, retryWrite("test", "control", 4, retryable, func() error { attempts++; return nil }))
+		assert.Equal(t, 1, attempts)
+	})
+	t.Run("Exhausted", func(t *testing.T) {
+		attempts := 0
+		err := retryWrite("test", "control", 4, retryable, func() error { attempts++; return errors.New("retry control") })
+		assert.EqualError(t, err, "retry control")
+		assert.Equal(t, 4, attempts)
+	})
+	t.Run("OtherError", func(t *testing.T) {
+		attempts := 0
+		err := retryWrite("test", "control", 4, retryable, func() error { attempts++; return errors.New("write control") })
+		assert.EqualError(t, err, "write control")
+		assert.Equal(t, 1, attempts)
+	})
+	t.Run("NoAttempts", func(t *testing.T) {
+		attempts := 0
+		err := retryWrite("test", "control", 0, retryable, func() error { attempts++; return errors.New("retry control") })
+		assert.EqualError(t, err, "retry control")
+		assert.Equal(t, 1, attempts)
+	})
 }

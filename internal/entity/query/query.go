@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 package query
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -60,14 +60,14 @@ func Db() *gorm.DB {
 	return entity.Db()
 }
 
-// UnscopedDb returns an unscoped database connection instance.
+// UnscopedDb returns an unscoped database session.
 func UnscopedDb() *gorm.DB {
-	return entity.Db().Unscoped()
+	return entity.UnscopedDb()
 }
 
-// DbDialect returns the sql database dialect name.
+// DbDialect returns the SQL dialect of the database as one of the dsn.Dialect constants.
 func DbDialect() string {
-	return Db().Dialect().GetName()
+	return entity.DbDialect()
 }
 
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.

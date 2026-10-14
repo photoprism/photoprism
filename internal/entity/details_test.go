@@ -1,11 +1,43 @@
 package entity
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// longKeywords returns n distinct keywords joined like stored keywords.
+func longKeywords(n int) string {
+	w := make([]string, n)
+
+	for i := range w {
+		w[i] = fmt.Sprintf("schl\u00fcsselwort%03d", i)
+	}
+
+	return strings.Join(w, ", ")
+}
+
+// findDetails returns the stored details of a photo.
+func findDetails(t *testing.T, photoID uint) Details {
+	t.Helper()
+
+	var found Details
+	require.NoError(t, UnscopedDb().Where("photo_id = ?", photoID).First(&found).Error)
+
+	return found
+}
+
+// deleteDetails removes the details of a photo after the test.
+func deleteDetails(t *testing.T, photoID uint) {
+	t.Cleanup(func() { _ = UnscopedDb().Where("photo_id = ?", photoID).Delete(&Details{}).Error })
+}
 
 func TestFirstOrCreateDetails(t *testing.T) {
 	t.Run("NotExistingDetails", func(t *testing.T) {
@@ -150,6 +182,16 @@ func TestDetails_Create(t *testing.T) {
 
 		assert.Error(t, details.Create())
 	})
+	t.Run("LongText", func(t *testing.T) {
+		details := Details{PhotoID: 900000007, Keywords: longKeywords(320), Notes: strings.Repeat("\u00e4", txt.ClipText+1)}
+		deleteDetails(t, details.PhotoID)
+
+		require.NoError(t, details.Create())
+
+		found := findDetails(t, details.PhotoID)
+		assert.True(t, strings.HasPrefix(longKeywords(320), found.Keywords+", "))
+		assert.Equal(t, txt.ClipText, utf8.RuneCountInString(found.Notes))
+	})
 	t.Run("Success", func(t *testing.T) {
 		details := Details{PhotoID: 900000001}
 
@@ -179,6 +221,118 @@ func TestDetails_Save(t *testing.T) {
 		details := Details{PhotoID: 0}
 
 		assert.Error(t, details.Save())
+	})
+	t.Run("LongText", func(t *testing.T) {
+		long := strings.Repeat("\u00e4", txt.ClipText+10)
+		details := Details{
+			PhotoID:   900000004,
+			Keywords:  longKeywords(320),
+			Notes:     long,
+			Subject:   long,
+			Artist:    long,
+			Copyright: long,
+			License:   long,
+			Software:  long,
+			ArtistSrc: "manualxyz",
+			NotesSrc:  SrcManual,
+		}
+		deleteDetails(t, details.PhotoID)
+
+		require.NoError(t, details.Save())
+
+		found := findDetails(t, details.PhotoID)
+		assert.Equal(t, details.Keywords, found.Keywords)
+		assert.LessOrEqual(t, utf8.RuneCountInString(found.Keywords), txt.ClipText)
+		assert.True(t, strings.HasPrefix(longKeywords(320), found.Keywords+", "))
+		assert.Equal(t, txt.ClipText, utf8.RuneCountInString(found.Notes))
+		assert.Equal(t, txt.ClipShortText, utf8.RuneCountInString(found.Subject))
+		assert.Equal(t, txt.ClipShortText, utf8.RuneCountInString(found.Artist))
+		assert.Equal(t, txt.ClipShortText, utf8.RuneCountInString(found.Copyright))
+		assert.Equal(t, txt.ClipShortText, utf8.RuneCountInString(found.License))
+		assert.Equal(t, txt.ClipShortText, utf8.RuneCountInString(found.Software))
+		assert.Equal(t, "", found.ArtistSrc)
+		assert.Equal(t, SrcManual, found.NotesSrc)
+	})
+}
+
+func TestDetails_Updates(t *testing.T) {
+	t.Run("LongText", func(t *testing.T) {
+		details := Details{PhotoID: 900000005, Keywords: "cat"}
+		deleteDetails(t, details.PhotoID)
+		require.NoError(t, details.Create())
+
+		values := Values{"keywords": longKeywords(320), "subject": strings.Repeat("a", txt.ClipShortText+1), "keywords_src": SrcBatch}
+		require.NoError(t, details.Updates(values))
+
+		found := findDetails(t, details.PhotoID)
+		assert.Equal(t, values["keywords"], found.Keywords)
+		assert.LessOrEqual(t, utf8.RuneCountInString(found.Keywords), txt.ClipText)
+		assert.Equal(t, txt.ClipShortText, len(found.Subject))
+		assert.Equal(t, SrcBatch, found.KeywordsSrc)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		details := Details{PhotoID: 900000005}
+		assert.NoError(t, details.Updates(nil))
+	})
+}
+
+func TestDetails_Update(t *testing.T) {
+	t.Run("LongText", func(t *testing.T) {
+		details := Details{PhotoID: 900000006}
+		deleteDetails(t, details.PhotoID)
+		require.NoError(t, details.Create())
+
+		require.NoError(t, details.Update("notes", strings.Repeat("a", txt.ClipText+1)))
+		assert.Equal(t, txt.ClipText, len(findDetails(t, details.PhotoID).Notes))
+	})
+	t.Run("InvalidID", func(t *testing.T) {
+		details := Details{}
+		assert.Error(t, details.Update("notes", "a"))
+	})
+}
+
+func TestClipDetailsText(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		assert.Equal(t, " cat, dog ", clipDetailsText("keywords", " cat, dog "))
+		assert.Equal(t, " note ", clipDetailsText("notes", " note "))
+	})
+	t.Run("Keywords", func(t *testing.T) {
+		s := longKeywords(320)
+		result := clipDetailsText("keywords", s)
+
+		assert.LessOrEqual(t, utf8.RuneCountInString(result), txt.ClipText)
+		assert.True(t, strings.HasPrefix(s, result+", "))
+	})
+	t.Run("KeywordEndsAtLimit", func(t *testing.T) {
+		s := strings.Repeat("a", txt.ClipText-5) + ", dog, cat"
+		assert.Equal(t, strings.Repeat("a", txt.ClipText-5)+", dog", clipDetailsText("keywords", s))
+	})
+	t.Run("MultibyteKeywordEndsAtLimit", func(t *testing.T) {
+		s := strings.Repeat("\u00fc", txt.ClipText-5) + ", d\u00f6g, cat"
+		assert.Equal(t, strings.Repeat("\u00fc", txt.ClipText-5)+", d\u00f6g", clipDetailsText("keywords", s))
+	})
+	t.Run("FieldName", func(t *testing.T) {
+		assert.Equal(t, txt.ClipShortText, len(clipDetailsText("Artist", strings.Repeat("a", txt.ClipShortText+1))))
+		assert.Equal(t, "aa, bb", clipDetailsText("Keywords", "aa, bb, "+strings.Repeat("c", txt.ClipText)))
+	})
+	t.Run("SingleKeyword", func(t *testing.T) {
+		assert.Equal(t, strings.Repeat("a", txt.ClipText), clipDetailsText("keywords", strings.Repeat("a", txt.ClipText+1)))
+	})
+	t.Run("ShortText", func(t *testing.T) {
+		for _, col := range []string{"subject", "artist", "copyright", "license", "software"} {
+			assert.Equal(t, strings.Repeat("\u00e4", txt.ClipShortText), clipDetailsText(col, strings.Repeat("\u00e4", txt.ClipShortText+1)), col)
+		}
+	})
+	t.Run("Source", func(t *testing.T) {
+		assert.Equal(t, SrcManual, clipDetailsText("keywords_src", SrcManual))
+		assert.Equal(t, "estimate", clipDetailsText("NotesSrc", "estimate"))
+		assert.Equal(t, "", clipDetailsText("artist_src", "manualxyz"))
+		assert.Equal(t, "", clipDetailsText("KeywordsSrc", "manualxyz"))
+		assert.Equal(t, "", clipDetailsText("software_src", "\u00e4\u00e4\u00e4\u00e4\u00e4"))
+	})
+	t.Run("OtherColumn", func(t *testing.T) {
+		s := strings.Repeat("a", txt.ClipText+1)
+		assert.Equal(t, s, clipDetailsText("photo_id", s))
 	})
 }
 

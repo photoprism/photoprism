@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -19,9 +19,9 @@ func PhotoByID(photoID uint64) (photo entity.Photo, err error) {
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
@@ -39,9 +39,9 @@ func PhotoByUID(photoUID string) (photo entity.Photo, err error) {
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
@@ -92,14 +92,15 @@ func PhotoPreloadByUIDs(photoUIDs []string) (entity.Photos, error) {
 }
 
 // preloadPhotoAssociations applies the eager-load scope that keeps PhotoPreload helpers consistent.
+// Preloads of an unscoped query are unscoped too, so they exclude soft-deleted rows themselves.
 func preloadPhotoAssociations(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
@@ -133,7 +134,7 @@ func uniqueUIDs(uids []string) []string {
 func MissingPhotos(limit int, offset int) (entities entity.Photos, err error) {
 	err = UnscopedDb().
 		Select("photos.*").
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = FALSE AND file_root = '/' AND deleted_at IS NULL)").
 		Where("deleted_at IS NULL OR photo_quality > -1").
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
@@ -175,9 +176,9 @@ func PhotosMetadataUpdate(limit, offset int, delay, interval time.Duration) (pho
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
 		}).
-		Preload("Labels.Label").
-		Preload("Camera").
-		Preload("Lens").
+		Preload("Labels.Label", "deleted_at IS NULL").
+		Preload("Camera", "deleted_at IS NULL").
+		Preload("Lens", "deleted_at IS NULL").
 		Preload("Details").
 		Preload("Place").
 		Preload("Cell").
@@ -213,8 +214,8 @@ func FixPrimaries() error {
 	// Remove primary file flag from broken, missing, or deleted files so a photo whose primary is no
 	// longer valid is treated as having none and gets a present file promoted below.
 	if err := UnscopedDb().Table(entity.File{}.TableName()).
-		Where("(file_error <> '' OR file_missing = 1 OR deleted_at IS NOT NULL) AND file_primary <> 0").
-		UpdateColumn("file_primary", 0).Error; err != nil {
+		Where("(file_error <> '' OR file_missing = TRUE OR deleted_at IS NOT NULL) AND file_primary <> FALSE").
+		UpdateColumn("file_primary", false).Error; err != nil {
 		return err
 	}
 
@@ -222,7 +223,7 @@ func FixPrimaries() error {
 	if err := UnscopedDb().
 		Raw(`SELECT * FROM photos 
 			WHERE deleted_at IS NULL 
-			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1)`).
+			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = TRUE)`).
 		Find(&photos).Error; err != nil {
 		return err
 	}
@@ -259,8 +260,8 @@ func FlagHiddenPhotos() (err error) {
 	affected := 0
 
 	ids := Db().Select("id").
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1 AND deleted_at IS NULL").
-		Table(entity.Photo{}.TableName()).SubQuery()
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = TRUE AND file_missing = FALSE AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1 AND deleted_at IS NULL").
+		Table(entity.Photo{}.TableName())
 	if result := UnscopedDb().Table(entity.Photo{}.TableName()).
 		Where("id IN (?) AND photo_quality > -1", ids).
 		UpdateColumn("photo_quality", -1); result.Error != nil {
@@ -302,9 +303,9 @@ func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
 		if photoPath.TakenMax != nil {
 			var parseFormat string
 			switch entity.DbDialect() {
-			case dsn.DriverSQLite3:
+			case dsn.DialectSQLite:
 				parseFormat = "2006-01-02"
-			case dsn.DriverMySQL:
+			case dsn.DialectMySQL, dsn.DialectPostgreSQL:
 				parseFormat = time.RFC3339
 			default:
 				log.Errorf("photo: dialect %s is not supported", entity.DbDialect())

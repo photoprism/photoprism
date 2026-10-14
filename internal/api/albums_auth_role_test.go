@@ -157,11 +157,11 @@ func TestSearchQuality_EffectiveRole(t *testing.T) {
 	var targetPhoto entity.Photo
 	require.NoError(t, entity.Db().Where("photo_uid = ?", target).First(&targetPhoto).Error)
 
-	require.NoError(t, entity.UnscopedDb().Model(entity.Photo{}).
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).
 		Where("photo_uid = ?", target).Update("photo_quality", 1).Error)
 
 	t.Cleanup(func() {
-		_ = entity.UnscopedDb().Model(entity.Photo{}).
+		_ = entity.UnscopedDb().Model(&entity.Photo{}).
 			Where("photo_uid = ?", target).Update("photo_quality", targetPhoto.PhotoQuality).Error
 	})
 

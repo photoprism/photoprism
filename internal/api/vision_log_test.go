@@ -26,7 +26,7 @@ func TestLogVisionErr(t *testing.T) {
 		assert.Equal(t, "vision: labels request failed (details in system log)", hook.LastEntry().Message)
 
 		require.Len(t, systemHook.AllEntries(), 1)
-		assert.Equal(t, "vision: labels request failed › Get 'https://user:***@example.com/cat.jpg?***': 403 Forbidden", systemHook.LastEntry().Message)
+		assert.Equal(t, "vision: labels request failed › Get 'https://user:***@example.com/cat.jpg?***': 403 Forbidden[U+0007]", systemHook.LastEntry().Message)
 	})
 	// shrinking returns text of about n bytes that redaction shortens to less than a tenth of that.
 	shrinking := func(n int) string {

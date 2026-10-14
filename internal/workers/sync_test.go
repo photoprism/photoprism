@@ -88,7 +88,7 @@ func isolateSyncAccounts(t *testing.T) {
 
 	var ids, disabled []uint
 
-	require.NoError(t, entity.Db().Model(&entity.Service{}).Where("acc_sync = 1").Pluck("id", &ids).Error)
+	require.NoError(t, entity.Db().Model(&entity.Service{}).Where("acc_sync = TRUE").Pluck("id", &ids).Error)
 
 	t.Cleanup(func() {
 		for _, id := range disabled {

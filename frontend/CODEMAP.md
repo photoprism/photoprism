@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 12, 2026
+**Last Updated:** October 14, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -51,6 +51,7 @@ Runtime & Plugins
 - Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal` for Portal)
 - I18n: `vue3-gettext` via `common/gettext.js`; canonical extraction via root `make gettext-extract` (scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`), compile with `npm run gettext-compile`
 - HTML sanitization: `$util.sanitizeHtml()` in `src/common/util.js`, which wraps `sanitize-html`
+- Displayed names: `$util.stripBidiControls()` in `src/common/util.js` for file names, which render in a `dir="ltr"` element; titles, captions and names that share a line with other content pass `$util.balanceBidi()` and render in an inline `<bdi>` or `dir="auto"` element, and `$util.isolate()` wraps them where they are interpolated into a string
 - Tooltips: Vuetify `<v-tooltip>` component + `v-tooltip` directive (auto-imported per SFC by `vite-plugin-vuetify`)
 - Video: HLS.js assigned to `window.Hls`
 - PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/i/<name>/`. Instance clients under `/i/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `serviceWorkerOptions` in `frontend/vite.plugins.mjs`; locale chunks, share page assets, and `.ttf`/`.woff` fonts are excluded there so we don’t force every user to download those assets on first visit.

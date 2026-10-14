@@ -58,20 +58,26 @@ func (l *Location) QueryPlaces() error {
 		return err
 	}
 
-	l.placeID = s.PlaceID()
-	l.LocSource = s.Source()
-	l.LocName = s.Name()
-	l.LocStreet = s.Street()
-	l.LocPostcode = s.Postcode()
-	l.LocCategory = s.Category()
-	l.LocLabel = s.Label()
-	l.LocDistrict = s.District()
-	l.LocCity = s.City()
-	l.LocState = s.State()
-	l.LocCountry = s.CountryCode()
-	l.LocKeywords = s.Keywords()
+	l.setPlace(s)
 
 	return nil
+}
+
+// setPlace copies the values of a place from the remote service, which are single-line text.
+func (l *Location) setPlace(s places.Location) {
+	l.placeID = clean.StripControl(s.PlaceID())
+	l.LocSource = clean.StripControl(s.Source())
+	l.LocName = clean.StripControl(s.Name())
+	l.LocStreet = clean.StripControl(s.Street())
+	l.LocPostcode = clean.StripControl(s.Postcode())
+	l.LocCategory = clean.StripControl(s.Category())
+	l.LocLabel = clean.StripControl(s.Label())
+	l.LocDistrict = clean.StripControl(s.District())
+	l.LocCity = clean.StripControl(s.City())
+	l.LocState = clean.StripControl(s.State())
+	l.LocCountry = clean.StripControl(s.CountryCode())
+	s.Place.LocKeywords = clean.StripControl(s.Place.LocKeywords)
+	l.LocKeywords = s.Keywords()
 }
 
 func (l *Location) Unknown() bool {

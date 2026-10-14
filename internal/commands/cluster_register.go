@@ -38,7 +38,7 @@ var (
 	regAppVersionFlag = &cli.StringFlag{Name: "app-version", Usage: "override app `VERSION` reported to the portal"}
 	regLabelFlag      = &cli.StringSliceFlag{Name: "label", Usage: "`k=v` label (repeatable)"}
 	regRotateDatabase = &cli.BoolFlag{Name: "rotate", Usage: "rotates the node's database password"}
-	regRotateSec      = &cli.BoolFlag{Name: "rotate-secret", Usage: "rotates the node's secret used for JWT"}
+	regRotateSec      = &cli.BoolFlag{Name: "rotate-secret", Usage: "rotates the node's client secret and revokes its other access tokens"}
 	regPortalURL      = &cli.StringFlag{Name: "portal-url", Usage: "Portal base `URL` (defaults to config)"}
 	regPortalTok      = &cli.StringFlag{Name: "join-token", Usage: "Portal access `TOKEN` (defaults to config)"}
 	regWriteConf      = &cli.BoolFlag{Name: "write-config", Usage: "persists returned secrets and DB settings to local config"}
@@ -159,7 +159,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 					PortalURL string                  `json:"PortalUrl"`
 					Payload   cluster.RegisterRequest `json:"Payload"`
 				}{PortalURL: portalURL, Payload: payload}
-				jb, _ := json.Marshal(out)
+				jb, _ := report.MarshalJSON(out)
 				fmt.Println(string(jb))
 			} else {
 				fmt.Printf("Portal URL: %s\n", portalURL)
@@ -238,7 +238,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 
 		// Output
 		if ctx.Bool("json") {
-			jb, _ := json.Marshal(resp)
+			jb, _ := report.MarshalJSON(resp)
 			fmt.Println(string(jb))
 		} else {
 			// Human-readable: node row and credentials if present (UUID first as primary identifier)
@@ -283,7 +283,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 					fmt.Printf("\n%s\n", dbTable)
 				}
 				if resp.Database.DSN != "" {
-					fmt.Printf("DSN: %s\n", resp.Database.DSN)
+					fmt.Printf("DSN: %s\n", clean.Display(resp.Database.DSN))
 				}
 			}
 		}
@@ -307,11 +307,23 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			}
 		}
 
+		if resp.Database.Incomplete && ctx.Bool("write-config") {
+			return cli.Exit(errors.New("the portal could not complete database provisioning; rotate the database credentials once this has been resolved"), 1)
+		} else if resp.Database.Incomplete {
+			return cli.Exit(errors.New("the portal could not complete database provisioning; save the node credentials shown above, then rotate the database credentials once this has been resolved"), 1)
+		}
+
 		return nil
 	})
 }
 
 // HTTP helpers and backoff
+
+// registerErrorBodyMax and registerResponseMax bound how much of a register response is read.
+const (
+	registerErrorBodyMax = 4096
+	registerResponseMax  = 1 << 20
+)
 
 type httpError struct {
 	Status int
@@ -349,11 +361,11 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 			}
 
 			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-				b, _ := io.ReadAll(resp.Body)
+				b, _ := io.ReadAll(io.LimitReader(resp.Body, registerErrorBodyMax))
 				return false, &httpError{Status: resp.StatusCode, Body: string(b)}
 			}
 
-			dec := json.NewDecoder(resp.Body)
+			dec := json.NewDecoder(io.LimitReader(resp.Body, registerResponseMax))
 			return false, dec.Decode(out)
 		}()
 
@@ -462,7 +474,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 	}
 
 	// DB settings (MySQL/MariaDB only), which are ignored as a whole if the server address is unusable.
-	if resp.Database.Name != "" && resp.Database.User != "" {
+	if resp.Database.Name != "" && resp.Database.User != "" && resp.Database.Password != "" && !resp.Database.Incomplete {
 		driver := strings.TrimSpace(resp.Database.Driver)
 		if driver == "" {
 			driver = dsn.DriverMySQL

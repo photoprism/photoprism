@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -23,18 +23,18 @@ type Cameras []Camera
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
-	ID                uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	CameraSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
-	CameraName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	CameraMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
-	CameraModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
-	CameraType        string     `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
-	CameraDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CameraNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	CameraSrc         string     `gorm:"type:VARBINARY(8);default:'';" json:"-" yaml:"-"`
-	CreatedAt         time.Time  `json:"-" yaml:"-"`
-	UpdatedAt         time.Time  `json:"-" yaml:"-"`
-	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`
+	ID                uint      `gorm:"primaryKey;size:32" json:"ID" yaml:"ID"`
+	CameraSlug        string    `gorm:"type:bytes;size:160;uniqueIndex:uix_cameras_camera_slug;" json:"Slug" yaml:"-"`
+	CameraName        string    `gorm:"size:160;" json:"Name" yaml:"Name"`
+	CameraMake        string    `gorm:"size:160;" json:"Make" yaml:"Make,omitempty"`
+	CameraModel       string    `gorm:"size:160;" json:"Model" yaml:"Model,omitempty"`
+	CameraType        string    `gorm:"size:100;" json:"Type,omitempty" yaml:"Type,omitempty"`
+	CameraDescription string    `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CameraNotes       string    `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CameraSrc         string    `gorm:"type:bytes;size:8;default:'';" json:"-" yaml:"-"`
+	CreatedAt         time.Time `json:"-" yaml:"-"`
+	UpdatedAt         time.Time `json:"-" yaml:"-"`
+	DeletedAt         DeletedAt `gorm:"index" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -57,8 +57,8 @@ func CreateUnknownCamera() {
 
 // NewCamera creates a new camera entity from make and model names.
 func NewCamera(makeName string, modelName string) *Camera {
-	makeName = strings.TrimSpace(makeName)
-	modelName = strings.Trim(modelName, " \t\r\n-_")
+	makeName = strings.TrimSpace(clean.StripControl(makeName))
+	modelName = strings.Trim(clean.StripControl(modelName), " -_")
 
 	if modelName == "" && makeName == "" {
 		return &UnknownCamera
@@ -268,7 +268,7 @@ func (m *Camera) markManual() error {
 		return res.Error
 	} else if res.RowsAffected == 0 {
 		// MariaDB counts only changed rows, so check whether the camera still exists.
-		var count int
+		var count int64
 
 		if err := UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return err
@@ -302,9 +302,11 @@ func (m *Camera) PhotoCount() (count int, err error) {
 		return 0, fmt.Errorf("empty id")
 	}
 
-	err = UnscopedDb().Model(&Photo{}).Where("camera_id = ?", m.ID).Count(&count).Error
+	var n int64
 
-	return count, err
+	err = UnscopedDb().Model(&Photo{}).Where("camera_id = ?", m.ID).Count(&n).Error
+
+	return int(n), err
 }
 
 // Delete permanently removes the camera, and first assigns the pictures that reference it to the unknown camera if requested.
@@ -342,7 +344,7 @@ func (m *Camera) Delete(reassign bool) (reassigned int64, err error) {
 	if res.Error != nil {
 		return reassigned, res.Error
 	} else if res.RowsAffected == 0 {
-		var count int
+		var count int64
 
 		if err = UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return reassigned, err

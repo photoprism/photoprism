@@ -3,6 +3,8 @@ package maps
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/service/hub/places"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/geo/s2"
@@ -191,4 +193,40 @@ func TestLocation_QueryApi(t *testing.T) {
 		assert.Error(t, api)
 	})
 
+}
+
+func TestLocation_setPlace(t *testing.T) {
+	t.Run("ControlCharacters", func(t *testing.T) {
+		l := Location{}
+		l.setPlace(places.Location{
+			LocName:     "Fern\x00seh\x1bturm",
+			LocStreet:   "Panorama\nstraße",
+			LocPostcode: "10178\x7f",
+			LocCategory: "tower\x01",
+			LocCountry:  "de",
+			Place: places.Place{PlaceID: "de:\x00abc", LocLabel: "Mitte,\x00 Berlin", LocDistrict: "Mit\x00te",
+				LocCity: "Ber\x1blin", LocState: "Ber\x00lin", LocCountry: "de", LocKeywords: "tow\x00er, ber\x1blin"},
+		})
+		assert.Equal(t, "Fernsehturm", l.LocName)
+		assert.Equal(t, "Panorama straße", l.LocStreet)
+		assert.Equal(t, "10178", l.LocPostcode)
+		assert.Equal(t, "tower", l.LocCategory)
+		assert.Equal(t, "de:abc", l.PlaceID())
+		assert.Equal(t, "Mitte, Berlin", l.LocLabel)
+		assert.Equal(t, "Mitte", l.LocDistrict)
+		assert.Equal(t, "Berlin", l.LocCity)
+		assert.Equal(t, "Berlin", l.LocState)
+		assert.Equal(t, "de", l.LocCountry)
+		assert.Equal(t, "places", l.LocSource)
+		assert.Equal(t, []string{"berlin", "tower"}, l.LocKeywords)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		l := Location{}
+		l.setPlace(places.Location{LocName: "東京タワー", LocCountry: "jp",
+			Place: places.Place{PlaceID: "jp:abc", LocLabel: "港区, 東京都, 日本", LocCity: "港区", LocCountry: "jp", LocKeywords: "tower"}})
+		assert.Equal(t, "東京タワー", l.LocName)
+		assert.Equal(t, "港区, 東京都, 日本", l.LocLabel)
+		assert.Equal(t, "港区", l.LocCity)
+		assert.Equal(t, []string{"tower"}, l.LocKeywords)
+	})
 }

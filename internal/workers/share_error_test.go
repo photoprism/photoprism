@@ -16,6 +16,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -63,6 +64,8 @@ func TestShare_StartStoredError(t *testing.T) {
 }
 
 func TestShare_StartUploadError(t *testing.T) {
+	skipInvalidUTF8(t)
+
 	conf := config.TestConfig()
 	options := *conf.Options()
 	t.Cleanup(func() { *conf.Options() = options })
@@ -96,7 +99,7 @@ func TestShare_StartUploadError(t *testing.T) {
 		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
-		entity.UnscopedDb().Unscoped().Delete(photo)
+		entity.UnscopedDb().Unscoped().Delete(&photo)
 	})
 
 	remoteName := "/" + strings.Repeat("\xff", 250) + ".jpg"
@@ -109,4 +112,13 @@ func TestShare_StartUploadError(t *testing.T) {
 	assert.Equal(t, 1, stored.Errors)
 	assert.LessOrEqual(t, len(stored.Error), txt.ClipError)
 	assert.True(t, strings.HasPrefix(stored.Error, "webdav: failed to upload "))
+}
+
+// skipInvalidUTF8 skips a test that stores names that are not valid UTF-8, which PostgreSQL text cannot hold.
+func skipInvalidUTF8(t *testing.T) {
+	t.Helper()
+
+	if entity.DbDialect() == dsn.DialectPostgreSQL {
+		t.Skip("PostgreSQL cannot store names that are not valid UTF-8")
+	}
 }

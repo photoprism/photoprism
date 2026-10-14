@@ -3,7 +3,7 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -16,7 +16,7 @@ var photoMergeMutex = sync.Mutex{}
 func (m *Photo) ResolvePrimary() error {
 	var file File
 
-	if err := Db().Where("file_primary = 1 AND photo_id = ?", m.ID).
+	if err := Db().Where("file_primary = TRUE AND photo_id = ?", m.ID).
 		Order("file_width DESC, file_hdr DESC").
 		First(&file).Error; err == nil && file.ID > 0 {
 		return file.ResolvePrimary()
@@ -106,23 +106,31 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 
 		deleted := Now()
 
-		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
+		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = FALSE WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
 		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", Now(), merge.ID))
 
 		switch DbDialect() {
-		case dsn.DriverMySQL:
+		case dsn.DialectMySQL:
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
-		case dsn.DriverSQLite3:
+		case dsn.DialectSQLite:
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, merge.ID))
 			logResult(UnscopedDb().Exec("UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, merge.PhotoUID))
+		case dsn.DialectPostgreSQL:
+			// Like the statements above, rows that would duplicate one of the original are left unchanged.
+			logResult(UnscopedDb().Exec("UPDATE photos_keywords SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS "+
+				"(SELECT 1 FROM photos_keywords k WHERE k.photo_id = ? AND k.keyword_id = photos_keywords.keyword_id)", original.ID, merge.ID, original.ID))
+			logResult(UnscopedDb().Exec("UPDATE photos_labels SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS "+
+				"(SELECT 1 FROM photos_labels l WHERE l.photo_id = ? AND l.label_id = photos_labels.label_id)", original.ID, merge.ID, original.ID))
+			logResult(UnscopedDb().Exec("UPDATE photos_albums SET photo_uid = ? WHERE photo_uid = ? AND NOT EXISTS "+
+				"(SELECT 1 FROM photos_albums a WHERE a.photo_uid = ? AND a.album_uid = photos_albums.album_uid)", original.PhotoUID, merge.PhotoUID, original.PhotoUID))
 		default:
 			log.Warnf("sql: unsupported dialect %s", DbDialect())
 		}
 
-		merge.DeletedAt = &deleted
+		merge.DeletedAt = DeletedAtTime(deleted)
 		merge.PhotoQuality = -1
 
 		merged = append(merged, merge)
@@ -134,7 +142,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 
 	if original.ID != m.ID {
 		deleted := Now()
-		m.DeletedAt = &deleted
+		m.DeletedAt = DeletedAtTime(deleted)
 		m.PhotoQuality = -1
 	} else {
 		m.PhotoType = original.PhotoType
@@ -160,8 +168,8 @@ func (m *Photo) SyncMediaTypeFromFiles(typeSrc string) error {
 	var mediaTypes []string
 
 	if err := UnscopedDb().
-		Model(File{}).
-		Where("photo_id = ? AND file_missing = 0 AND file_sidecar = 0 AND deleted_at IS NULL", m.ID).
+		Model(&File{}).
+		Where("photo_id = ? AND file_missing = FALSE AND file_sidecar = FALSE AND deleted_at IS NULL", m.ID).
 		Pluck("media_type", &mediaTypes).Error; err != nil {
 		return err
 	}

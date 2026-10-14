@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/maps"
@@ -23,13 +23,13 @@ type Countries []Country
 
 // Country represents a country entry used for labeling photos and locations.
 type Country struct {
-	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
-	CountrySlug        string `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
-	CountryName        string `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
-	CountryDescription string `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CountryNotes       string `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	CountryPhoto       *Photo `json:"-" yaml:"-"`
-	CountryPhotoID     uint   `json:"-" yaml:"-"`
+	ID                 string `gorm:"type:bytes;size:2;primaryKey" json:"ID" yaml:"ID"`
+	CountrySlug        string `gorm:"type:bytes;size:160;uniqueIndex:uix_countries_country_slug;" json:"Slug" yaml:"-"`
+	CountryName        string `gorm:"size:160;" json:"Name" yaml:"Name,omitempty"`
+	CountryDescription string `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CountryNotes       string `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CountryPhoto       *Photo `gorm:"-:migration" json:"-" yaml:"-"`
+	CountryPhotoID     uint   `gorm:"size:32" json:"-" yaml:"-"`
 	New                bool   `gorm:"-" json:"-" yaml:"-"`
 }
 
@@ -109,7 +109,7 @@ func FirstOrCreateCountry(m *Country) *Country {
 }
 
 // AfterCreate sets the New column used for database callback
-func (m *Country) AfterCreate(scope *gorm.Scope) error {
+func (m *Country) AfterCreate(tx *gorm.DB) error {
 	m.New = true
 	return nil
 }

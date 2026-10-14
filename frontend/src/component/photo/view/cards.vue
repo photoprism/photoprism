@@ -26,10 +26,10 @@
           <div v-if="!isSharedView && m.Quality < 3 && context === contexts.Review" class="review" />
           <div class="meta">
             <button v-if="!showTitles || m.Title" class="action-title-edit meta-title text-truncate">
-              {{ showTitles ? m.Title : m.getOriginalName() }}
+              <bdi :dir="showTitles ? 'auto' : 'ltr'">{{ showTitles ? $util.balanceBidi(m.Title) : m.getOriginalName() }}</bdi>
             </button>
             <button v-if="showCaptions && m.Caption" class="meta-caption">
-              {{ m.Caption }}
+              <bdi>{{ $util.balanceBidi(m.Caption) }}</bdi>
             </button>
             <div class="meta-details">
               <button v-if="m.Year > 0" class="action-open-date meta-date text-truncate">
@@ -66,7 +66,7 @@
               </button>
               <button v-if="showTitles" class="meta-filename text-truncate">
                 <i class="mdi" :class="m.Type === 'video' || m.Type === 'live' ? 'mdi-filmstrip' : 'mdi-film'" />
-                {{ m.getOriginalName() }}
+                <bdi dir="ltr">{{ m.getOriginalName() }}</bdi>
               </button>
               <template v-if="featPlaces && m.Country !== 'zz'">
                 <button class="meta-location action-location">
@@ -189,10 +189,10 @@
               class="action-title-edit meta-title text-truncate"
               @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)"
             >
-              {{ showTitles ? m.Title : m.getOriginalName() }}
+              <bdi :dir="showTitles ? 'auto' : 'ltr'">{{ showTitles ? $util.balanceBidi(m.Title) : m.getOriginalName() }}</bdi>
             </button>
             <button v-if="showCaptions && m.Caption" :title="$gettext('Caption')" class="meta-caption" @click.exact="editPhoto(index)">
-              {{ m.Caption }}
+              <bdi>{{ $util.balanceBidi(m.Caption) }}</bdi>
             </button>
             <div class="meta-details">
               <button v-if="m.Year > 0" class="action-open-date meta-date text-truncate" @click.exact="openDate(index)">
@@ -249,7 +249,7 @@
               </button>
               <button v-if="showTitles" :title="m.getOriginalName()" class="meta-filename text-truncate" @click.exact="editPhoto(index, 'files')">
                 <i class="mdi" :class="m.Type === 'video' || m.Type === 'live' ? 'mdi-filmstrip' : 'mdi-film'" />
-                {{ m.getOriginalName() }}
+                <bdi dir="ltr">{{ m.getOriginalName() }}</bdi>
               </button>
               <template v-if="featPlaces && m.Country !== 'zz'">
                 <button :title="$gettext('Location')" class="meta-location action-location" @click.exact="openLocation(index)">

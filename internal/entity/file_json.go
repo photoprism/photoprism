@@ -105,7 +105,7 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		CreatedIn:      m.CreatedIn,
 		UpdatedAt:      m.UpdatedAt,
 		UpdatedIn:      m.UpdatedIn,
-		DeletedAt:      m.DeletedAt,
+		DeletedAt:      m.DeletedAt.Ptr(),
 		Markers:        m.MarkersForJSON(),
 	})
 }

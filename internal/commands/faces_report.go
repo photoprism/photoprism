@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -474,7 +473,7 @@ func faceConflictNoteWriter(format report.Format) io.Writer {
 // printFaceConflictsJSON writes the report as a single object, so a saved report carries the notes
 // instead of losing everything the table could not show.
 func printFaceConflictsJSON(rows [][]string, cols []string, scan query.FaceConflictScan, notes []string) error {
-	b, err := json.Marshal(map[string]any{
+	b, err := report.MarshalJSON(map[string]any{
 		"conflicts": report.RowsToObjects(rows, cols),
 		"scan":      map[string]int{"clusters": scan.Clusters, "compared": scan.Compared},
 		"notes":     notes,

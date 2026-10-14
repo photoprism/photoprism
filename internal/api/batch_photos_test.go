@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 
+	"gorm.io/gorm"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
@@ -221,6 +223,14 @@ func TestBatchPhotosPrivate(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r3.Code)
 		val3 := gjson.Get(r3.Body.String(), "Private")
 		assert.Equal(t, "true", val3.String())
+
+		// Toggling again makes the pictures public, which also restores the fixtures.
+		r4 := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/private", `{"photos": ["ps6sg6be2lvl0yh8", "ps6sg6be2lvl0ycc"]}`)
+		assert.Equal(t, http.StatusOK, r4.Code)
+
+		r5 := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh8")
+		assert.Equal(t, http.StatusOK, r5.Code)
+		assert.Equal(t, "false", gjson.Get(r5.Body.String(), "Private").String())
 	})
 	t.Run("MissingSelection", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -348,7 +358,7 @@ func batchDeleteTestFolder(t *testing.T, conf *config.Config) string {
 	t.Cleanup(func() {
 		_ = os.RemoveAll(dir)
 		db := entity.UnscopedDb()
-		ids := db.Table(entity.Photo{}.TableName()).Select("id").Where("photo_path = ?", folder).QueryExpr()
+		ids := db.Table(entity.Photo{}.TableName()).Select("id").Where("photo_path = ?", folder).Session(&gorm.Session{})
 		_ = db.Where("photo_id IN (?)", ids).Delete(&entity.PhotoLabel{}).Error
 		_ = db.Where("photo_id IN (?)", ids).Delete(&entity.Details{}).Error
 		_ = db.Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error
@@ -395,7 +405,7 @@ func batchDeleteTestPhoto(t *testing.T, conf *config.Config, folder, name string
 func batchDeleteTestPhotoExists(t *testing.T, photo *entity.Photo) bool {
 	t.Helper()
 
-	var count int
+	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", photo.PhotoUID).Count(&count).Error)
 
 	return count > 0
@@ -411,12 +421,12 @@ func assertBatchDeleteTestPhotoKept(t *testing.T, photo *entity.Photo, fileName 
 		return
 	}
 
-	assert.Equal(t, photo.DeletedAt == nil, result.DeletedAt == nil, photo.PhotoName)
+	assert.Equal(t, !photo.DeletedAt.Valid, !result.DeletedAt.Valid, photo.PhotoName)
 	assert.Equal(t, photo.PhotoQuality, result.PhotoQuality, photo.PhotoName)
 
-	var files int
+	var files int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", result.ID).Count(&files).Error)
-	assert.Equal(t, 1, files, photo.PhotoName)
+	assert.EqualValues(t, 1, files, photo.PhotoName)
 	assert.FileExists(t, fileName)
 }
 
@@ -519,11 +529,11 @@ func TestBatchPhotosDelete(t *testing.T) {
 			assertBatchDeleteTestPhotoKept(t, p, fileName)
 		}
 
-		var labels, albums int
+		var labels, albums int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoLabel{}).Where("photo_id = ? AND label_id = ?", labelVisible.ID, label.ID).Count(&labels).Error)
-		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ? AND hidden = 0", albumVisible.PhotoUID, album.AlbumUID).Count(&albums).Error)
-		assert.Equal(t, 1, labels)
-		assert.Equal(t, 1, albums)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ? AND hidden = FALSE", albumVisible.PhotoUID, album.AlbumUID).Count(&albums).Error)
+		assert.EqualValues(t, 1, labels)
+		assert.EqualValues(t, 1, albums)
 	})
 	t.Run("Removed", func(t *testing.T) {
 		app, router, conf := NewApiTest()

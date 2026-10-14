@@ -1,0 +1,2 @@
+// Swag overrides: DeletedAt is serialized as an RFC 3339 timestamp or null, like *time.Time.
+replace github.com/photoprism/photoprism/internal/entity.DeletedAt string

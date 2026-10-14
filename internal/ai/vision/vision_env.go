@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 var ensureEnvOnce sync.Once
@@ -27,17 +28,11 @@ func ensureEnv() {
 	})
 }
 
-// initEnvUrl removes surrounding whitespace and the trailing slashes of the path from the variable, and
-// sets the default value if nothing is left.
+// initEnvUrl normalizes the base URL in the variable with scheme.TrimBaseURL, and sets the default value if
+// nothing is left.
 func initEnvUrl(envName, defaultUrl string) {
 	raw := os.Getenv(envName)
-	normalized := strings.TrimSpace(raw)
-
-	if i := strings.IndexAny(normalized, "?#"); i >= 0 {
-		normalized = strings.TrimRight(normalized[:i], "/") + normalized[i:]
-	} else {
-		normalized = strings.TrimRight(normalized, "/")
-	}
+	normalized := scheme.TrimBaseURL(raw)
 
 	if normalized != "" {
 		if normalized != raw {
@@ -111,8 +106,12 @@ func envModel(name string) string {
 	return cleanModelId(strings.TrimSpace(os.Getenv(name)))
 }
 
-// envModelTagged returns the model identifier set in the environment variable without shortening it, so
-// Model.GetModel can keep its tag, or an empty string.
+// envModelTagged returns the model identifier set in the environment variable as written, so Model.GetModel
+// can keep its tag when it sanitizes it, or an empty string.
 func envModelTagged(name string) string {
-	return modelIdText(os.Getenv(name))
+	if s := os.Getenv(name); hasModelId(s) {
+		return strings.TrimSpace(s)
+	}
+
+	return ""
 }

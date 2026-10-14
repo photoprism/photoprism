@@ -15,8 +15,6 @@ export default class Link extends Model {
       Expires: 0,
       Views: 0,
       MaxViews: 0,
-      Password: "",
-      HasPassword: false,
       Comment: "",
       Perm: 0,
       CreatedAt: "",

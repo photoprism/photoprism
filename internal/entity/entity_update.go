@@ -2,6 +2,9 @@ package entity
 
 import (
 	"fmt"
+	"reflect"
+
+	"gorm.io/gorm"
 )
 
 // Update updates the values of an existing database record.
@@ -11,7 +14,7 @@ func Update(m any, keyNames ...string) (err error) {
 	db := UnscopedDb()
 
 	// Return if the record has not been created yet.
-	if db.NewRecord(m) {
+	if isNewRecord(db, m) {
 		return fmt.Errorf("new record")
 	}
 
@@ -26,7 +29,7 @@ func Update(m any, keyNames ...string) (err error) {
 	}
 
 	// Execute update statement.
-	result := db.Model(m).Updates(values)
+	result := db.Model(m).Updates(columnValues(db, m, values))
 
 	// Return an error if the update has failed.
 	if err = result.Error; err != nil {
@@ -44,4 +47,44 @@ func Update(m any, keyNames ...string) (err error) {
 	}
 
 	return nil
+}
+
+// isNewRecord reports whether the primary key of a model is zero, so it has not been created yet.
+// Composite keys are checked by their first field.
+func isNewRecord(db *gorm.DB, m any) bool {
+	stmt := &gorm.Statement{DB: db}
+
+	if err := stmt.Parse(m); err != nil || stmt.Schema == nil || len(stmt.Schema.PrimaryFields) == 0 {
+		return true
+	}
+
+	field := stmt.Schema.PrioritizedPrimaryField
+
+	if field == nil {
+		field = stmt.Schema.PrimaryFields[0]
+	}
+
+	_, isZero := field.ValueOf(db.Statement.Context, reflect.Indirect(reflect.ValueOf(m)))
+
+	return isZero
+}
+
+// columnValues returns the values whose field names map to table columns of the model,
+// as the ORM would otherwise also update fields without a column.
+func columnValues(db *gorm.DB, m any, values Values) Values {
+	stmt := &gorm.Statement{DB: db}
+
+	if err := stmt.Parse(m); err != nil || stmt.Schema == nil {
+		return values
+	}
+
+	result := make(Values, len(values))
+
+	for name, value := range values {
+		if field := stmt.Schema.LookUpField(name); field != nil && field.DBName != "" {
+			result[field.DBName] = value
+		}
+	}
+
+	return result
 }

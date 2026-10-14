@@ -25,6 +25,9 @@ func DialectSource(dir, dialect string) (result Migrations, err error) {
 		return nil, err
 	}
 
+	// Migrations are recorded by ID alone, so an ID may only be used once across all stages.
+	ids := make(map[string]string, len(files))
+
 	for _, file := range files {
 		if file.IsDir() {
 			continue
@@ -35,11 +38,17 @@ func DialectSource(dir, dialect string) (result Migrations, err error) {
 
 		switch {
 		case len(parts) == 2 && parts[0] != "" && parts[1] == "sql":
-		case len(parts) == 3 && parts[0] != "" && parts[1] != "" && parts[2] == "sql":
+		case len(parts) == 3 && parts[0] != "" && (parts[1] == StagePre || parts[1] == StagePost) && parts[2] == "sql":
 			stage = parts[1]
 		default:
 			return nil, fmt.Errorf("invalid migration filename %s", file.Name())
 		}
+
+		if other, found := ids[parts[0]]; found {
+			return nil, fmt.Errorf("migration id %s is used by %s and %s", parts[0], other, file.Name())
+		}
+
+		ids[parts[0]] = file.Name()
 
 		s, readErr := os.ReadFile(filepath.Join(dir, file.Name())) //nolint:gosec // G304: names come from listing the source directory
 

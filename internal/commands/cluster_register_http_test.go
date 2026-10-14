@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -76,6 +77,29 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 	assert.Equal(t, "tcp", parsed.Net)
 	assert.Equal(t, "db:3306", parsed.Server)
 	assert.Equal(t, "pp_db", parsed.Name)
+}
+
+func TestClusterRegister_HTTPIncompleteDatabase(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			Node:     cluster.Node{UUID: "n1", Name: "pp-node-03", Role: cluster.RoleInstance},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "database", Port: 3306, Name: "pp_db", User: "pp_user", Incomplete: true},
+			Secrets:  &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+		})
+	}))
+	defer ts.Close()
+
+	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
+		"register", "--name", "pp-node-03", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
+	})
+
+	require.Error(t, err)
+	assert.Equal(t, 1, ExitCode(err))
+	assert.Contains(t, err.Error(), "could not complete database provisioning")
+	assert.Equal(t, cluster.ExampleClientSecret, gjson.Get(out, "Secrets.ClientSecret").String())
+	assert.True(t, gjson.Get(out, "Database.Incomplete").Bool())
 }
 
 func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
@@ -465,6 +489,43 @@ func TestClusterNodesRotate_SecretOnly_JSON(t *testing.T) {
 	assert.Equal(t, "pp-node-06", gjson.Get(out, "Node.Name").String())
 	assert.Equal(t, secret, gjson.Get(out, "Secrets.ClientSecret").String())
 	assert.Equal(t, "", gjson.Get(out, "Database.Password").String())
+}
+
+func TestPostWithBackoff(t *testing.T) {
+	t.Run("ErrorBodyLimit", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"error":"invalid node name"}` + strings.Repeat(" ", 2*registerErrorBodyMax)))
+		}))
+		defer ts.Close()
+
+		err := postWithBackoff(ts.URL, "", []byte("{}"), nil)
+
+		var httpErr *httpError
+		require.ErrorAs(t, err, &httpErr)
+		assert.Equal(t, http.StatusBadRequest, httpErr.Status)
+		assert.Len(t, httpErr.Body, registerErrorBodyMax)
+		assert.True(t, strings.HasPrefix(httpErr.Body, `{"error":"invalid node name"}`))
+	})
+	t.Run("ResponseLimit", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte(`{"name":"` + strings.Repeat("a", registerResponseMax) + `"}`))
+		}))
+		defer ts.Close()
+
+		var out map[string]string
+		assert.Error(t, postWithBackoff(ts.URL, "", []byte("{}"), &out))
+	})
+	t.Run("Success", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte(`{"name":"pp-node-01"}`))
+		}))
+		defer ts.Close()
+
+		var out map[string]string
+		require.NoError(t, postWithBackoff(ts.URL, "", []byte("{}"), &out))
+		assert.Equal(t, "pp-node-01", out["name"])
+	})
 }
 
 func TestClusterRegister_HTTPUnauthorized(t *testing.T) {

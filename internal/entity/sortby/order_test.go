@@ -40,3 +40,24 @@ func TestOrderDesc(t *testing.T) {
 		assert.Equal(t, DirAsc, OrderDesc(true))
 	})
 }
+
+func TestNullsOrder(t *testing.T) {
+	t.Run("Directions", func(t *testing.T) {
+		assert.Equal(t, "a NULLS FIRST", NullsOrder("a"))
+		assert.Equal(t, "a ASC NULLS FIRST", NullsOrder("a ASC"))
+		assert.Equal(t, "a DESC NULLS LAST, b NULLS FIRST", NullsOrder("a DESC, b"))
+		assert.Equal(t, "a desc NULLS LAST", NullsOrder("a desc"))
+	})
+	t.Run("Expressions", func(t *testing.T) {
+		assert.Equal(t, "COALESCE(a, b) DESC NULLS LAST, c NULLS FIRST", NullsOrder("COALESCE(a, b) DESC, c"))
+		assert.Equal(t, "a NULLS LAST, b DESC NULLS LAST", NullsOrder("a NULLS LAST, b DESC"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", NullsOrder(""))
+	})
+}
+
+func TestSplitOrderTerms(t *testing.T) {
+	assert.Equal(t, []string{"a", " f(b, c) DESC", " d"}, splitOrderTerms("a, f(b, c) DESC, d"))
+	assert.Equal(t, []string{""}, splitOrderTerms(""))
+}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -36,7 +37,7 @@ func (m *Photo) GetCaptionSrc() string {
 
 // SetCaption stores the supplied caption when it is non-empty and the source priority is sufficient.
 func (m *Photo) SetCaption(caption, source string) {
-	newCaption := txt.Clip(caption, txt.ClipLongText)
+	newCaption := txt.Clip(clean.Text(caption), txt.ClipLongText)
 
 	if newCaption == "" {
 		return

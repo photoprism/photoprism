@@ -20,6 +20,7 @@ import (
 	"golang.org/x/sync/singleflight"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -583,7 +584,7 @@ func (v *Verifier) refreshKeys(ctx context.Context, url string, ttl time.Duratio
 			}
 
 			delay := backoffDuration(attempts)
-			log.Debugf("jwt: jwks fetch retry %d for %s in %s (%s)", attempts, url, delay, err)
+			log.Debugf("jwt: jwks fetch retry %d for %s in %s (%s)", attempts, clean.Log(url), delay, clean.ErrorFull(err))
 
 			select {
 			case <-time.After(delay):

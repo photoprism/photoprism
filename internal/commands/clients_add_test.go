@@ -9,7 +9,7 @@ import (
 func TestClientsAddCommand(t *testing.T) {
 	t.Run("AddClient", func(t *testing.T) {
 		// Run command with test context.
-		output, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Clara Client", "--scope=photos albums", "--expires=5000", "--tokens=2", "clara"})
+		output, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Clara Client", "--scope=photos albums", "--expires=5000", "--tokens=2"})
 
 		// Check command output for plausibility.
 		// t.Logf(output)

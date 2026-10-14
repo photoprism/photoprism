@@ -181,6 +181,50 @@ describe("common/util", () => {
     const result = $util.truncate("teststring for vitest", 5, "ng");
     expect(result).toBe("tesng");
   });
+  it("should remove bidi and other control characters from names", () => {
+    expect($util.stripBidiControls("photo\u202Eabc.jpg")).toBe("photoabc.jpg");
+    expect($util.stripBidiControls("a\u2066b\u2069c\u200Fd\u061Ce")).toBe("abcde");
+    expect($util.stripBidiControls("file\u0000\u001b\u007f.jpg")).toBe("file.jpg");
+    expect($util.stripBidiControls("صورة 日本 👩\u200D👩\u200D👧.jpg")).toBe("صورة 日本 👩\u200D👩\u200D👧.jpg");
+    for (const c of ["\u202A", "\u202B", "\u202C", "\u202D", "\u2066", "\u2067", "\u2068", "\u0085", "\u009B", "\u2028", "\u2029"]) {
+      expect($util.stripBidiControls("a" + c + "b")).toBe("ab");
+    }
+    expect($util.stripBidiControls("می\u200Cخواهم")).toBe("می\u200Cخواهم");
+    expect($util.stripBidiControls("")).toBe("");
+    expect($util.stripBidiControls(undefined)).toBe(undefined);
+  });
+  it("should balance isolates and keep bidi marks", () => {
+    expect($util.balanceBidi("رحلة PhotoPrism \u200F2026")).toBe("رحلة PhotoPrism \u200F2026");
+    expect($util.balanceBidi("a\u2067b\u2069c")).toBe("a\u2067b\u2069c");
+    expect($util.balanceBidi("a\u2069b\u200Fc")).toBe("ab\u200Fc");
+    expect($util.balanceBidi("a\u2068b\u2066c\u2069")).toBe("a\u2068b\u2066c\u2069\u2069");
+    expect($util.balanceBidi("a\u2066b\u2069\u2069c")).toBe("a\u2066b\u2069c");
+    expect($util.balanceBidi("a\u2029b\u0085c\u001cd\u001de\u001ef")).toBe("a b c d e f");
+    expect($util.balanceBidi("a\nb\u2028c")).toBe("a\nb\u2028c");
+    expect($util.balanceBidi("a\r\nb\rc")).toBe("a\nb c");
+    expect($util.balanceBidi("a\u2066b\nc\u2069d")).toBe("a\u2066b\u2069\ncd");
+    expect($util.balanceBidi("a\u2067b\u2069\nc")).toBe("a\u2067b\u2069\nc");
+    expect($util.balanceBidi("")).toBe("");
+    expect($util.balanceBidi(undefined)).toBe(undefined);
+  });
+  it("should isolate text for strings", () => {
+    expect($util.isolate("رحلة 2026")).toBe("\u2068رحلة 2026\u2069");
+    expect($util.isolate("a\u2069\u200Fb")).toBe("\u2068a\u200Fb\u2069");
+    expect($util.isolate("a\u2029b")).toBe("\u2068a b\u2069");
+    expect($util.isolate("a\u2066b\r\nc")).toBe("\u2068a\u2066b\u2069 c\u2069");
+    expect($util.isolate("")).toBe("");
+    expect($util.isolate(null)).toBe(null);
+  });
+  it("should link http URLs with https", () => {
+    expect($util.encodeHTML("see http://example.com/a")).toBe(
+      `see <a href="https://example.com/a" target="_blank" rel="noopener noreferrer" dir="ltr">http://example.com/a</a>`
+    );
+  });
+  it("should isolate linked URLs", () => {
+    expect($util.encodeHTML("\u202Esee https://example.com/a")).toBe(
+      `\u202Esee <a href="https://example.com/a" target="_blank" rel="noopener noreferrer" dir="ltr">https://example.com/a</a>`
+    );
+  });
   it("should encode html", () => {
     const result = $util.encodeHTML("Alice & Bob > < 'Carol'");
     expect(result).toBe("Alice &amp; Bob &gt; &lt; &apos;Carol&apos;");
@@ -188,7 +232,7 @@ describe("common/util", () => {
   it("should encode link", () => {
     const result = $util.encodeHTML("Try this: https://photoswipe.com/options/?foo=bar&bar=baz. It's a link!");
     expect(result).toBe(
-      `Try this: <a href="https://photoswipe.com/options/" target="_blank" rel="noopener noreferrer">https://photoswipe.com/options/</a> It&apos;s a link!`
+      `Try this: <a href="https://photoswipe.com/options/" target="_blank" rel="noopener noreferrer" dir="ltr">https://photoswipe.com/options/</a> It&apos;s a link!`
     );
   });
   it("should sanitize html using the shared allowlist", () => {

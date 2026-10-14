@@ -23,8 +23,8 @@ var (
 )
 
 // NormalizeBaseURL returns a base URL with a trailing slash if s is not empty
-// or does not contain only whitespace. The default port, query strings,
-// and fragments are omitted, but Userinfo is preserved.
+// or does not contain only whitespace. Surrounding whitespace and quotes, the
+// default port, query strings, and fragments are omitted, but Userinfo is preserved.
 // If parsing fails, NormalizeBaseURL returns s with a trailing slash appended.
 //
 // Results are cached by raw input string. The output is a pure function of the
@@ -55,7 +55,7 @@ func NormalizeBaseURL(s string) string {
 
 // normalizeBaseURL implements the uncached normalization used by NormalizeBaseURL.
 func normalizeBaseURL(s string) string {
-	s = strings.TrimSpace(s)
+	s = trimURL(s)
 
 	if s == "" {
 		return ""
@@ -80,6 +80,30 @@ func normalizeBaseURL(s string) string {
 	}
 
 	return u.String()
+}
+
+// TrimBaseURL returns a base URL without surrounding whitespace and quotes and without the trailing slashes
+// of its path, keeping the query and fragment, e.g. for a URL read from an environment variable.
+func TrimBaseURL(s string) string {
+	s = trimURL(s)
+
+	if i := strings.IndexAny(s, "?#"); i >= 0 {
+		return strings.TrimRight(s[:i], "/") + s[i:]
+	}
+
+	return strings.TrimRight(s, "/")
+}
+
+// trimURL removes surrounding whitespace and one pair of matching quotes, which a URL cannot begin and end
+// with, as an env file read by a tool that keeps them would leave them in the value.
+func trimURL(s string) string {
+	s = strings.TrimSpace(s)
+
+	if n := len(s); n >= 2 && (s[0] == '"' || s[0] == '\'') && s[n-1] == s[0] {
+		s = strings.TrimSpace(s[1 : n-1])
+	}
+
+	return s
 }
 
 // OriginURL returns the scheme://host/ origin of s (trailing slash; no path,

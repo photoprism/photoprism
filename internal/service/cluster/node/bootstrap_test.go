@@ -1030,6 +1030,41 @@ func TestRegisterWithPortal_DropsConfiguredQuery(t *testing.T) {
 	assert.Empty(t, rawQuery, "the configured query reached the endpoint")
 }
 
+func TestRegisterWithPortal_ServiceUnavailable(t *testing.T) {
+	var hits int
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusServiceUnavailable)
+		_, _ = w.Write([]byte(`{"error":"database provisioning failed; check the portal logs"}`))
+	}))
+	defer srv.Close()
+
+	prevAttempts, prevDelay := cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay
+	cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay = 2, time.Millisecond
+	t.Cleanup(func() {
+		cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay = prevAttempts, prevDelay
+	})
+
+	c := newBootstrapTestConfig(t, "bootstrap-reg-unavailable")
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().NodeRole = cluster.RoleInstance
+
+	portal, err := url.Parse(srv.URL)
+	require.NoError(t, err)
+
+	resp, err := registerWithPortal(c, portal, cluster.ExampleJoinToken)
+
+	assert.Nil(t, resp)
+	assert.Equal(t, 2, hits, "a 503 must be retried")
+
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "database provisioning failed")
+		assert.Contains(t, err.Error(), "503")
+	}
+}
+
 func TestRegisterError(t *testing.T) {
 	newResp := func(status int, body string) *http.Response {
 		return &http.Response{
@@ -1161,5 +1196,28 @@ func TestPersistRegistration(t *testing.T) {
 		var persisted map[string]any
 		require.NoError(t, yaml.Unmarshal(content, &persisted))
 		assert.Equal(t, "db.local:3306", persisted["DatabaseServer"])
+	})
+	t.Run("IncompleteDatabase", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-persist-incomplete")
+		c.Options().DatabaseDriver = dsn.DriverMySQL
+		clusterUUID := rnd.UUID()
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID:     clusterUUID,
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Incomplete: true},
+		}, true))
+
+		content, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+		assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+
+		assert.True(t, c.ShouldAutoRotateDatabase(), "the next start must request the database again")
 	})
 }

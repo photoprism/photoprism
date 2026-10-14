@@ -345,10 +345,11 @@ func checkUserPasscodePassword(c *gin.Context, user *entity.User, password strin
 		// Check whether user login credentials are valid.
 		authUser, provider, method, authErr := entity.Auth(f, nil, c)
 
+		// A passcode-required result counts as verified only for the session user's own account.
+		passcodeRequired := method == authn.Method2FA && errors.Is(authErr, authn.ErrPasscodeRequired)
+
 		switch {
-		case method == authn.Method2FA && errors.Is(authErr, authn.ErrPasscodeRequired):
-			return http.StatusOK, i18n.MsgVerified, nil
-		case authErr != nil:
+		case authErr != nil && !passcodeRequired:
 			// Abort if authentication has failed otherwise.
 			return code, msg, authErr
 		case authUser == nil:
@@ -357,6 +358,8 @@ func checkUserPasscodePassword(c *gin.Context, user *entity.User, password strin
 		case !authUser.Equal(user):
 			// Abort if user accounts do not match.
 			return code, msg, authn.ErrUserDoesNotMatch
+		case passcodeRequired:
+			return http.StatusOK, i18n.MsgVerified, nil
 		case !provider.SupportsPasscodeAuthentication() || method != authn.MethodDefault:
 			// Abort if e.g. an app password was provided.
 			return code, msg, authn.ErrInvalidCredentials

@@ -5,9 +5,9 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -54,9 +54,9 @@ func TestLabel_Rename(t *testing.T) {
 		assert.Equal(t, uid, source.LabelUID)
 		assert.Equal(t, slug, source.LabelSlug)
 		assert.NotEqual(t, target.ID, source.ID)
-		var n int
+		var n int64
 		require.NoError(t, Db().Model(&Label{}).Where("id IN (?)", []uint{target.ID, source.ID, control.ID}).Count(&n).Error)
-		assert.Equal(t, 3, n)
+		assert.EqualValues(t, 3, n)
 	})
 	t.Run("DistinctNamesShareSlugBase", func(t *testing.T) {
 		suffix := rnd.GenerateUID('l')
@@ -84,12 +84,21 @@ func TestLabel_Rename(t *testing.T) {
 		assert.Equal(t, "empty-slug-control", stored.LabelSlug)
 		assert.Equal(t, stored.LabelSlug, label.LabelSlug)
 	})
+	t.Run("RetryDeadlock", func(t *testing.T) {
+		label := renameTestLabel(t, "Retry "+rnd.GenerateUID('l'))
+		attempts := failFirstWrite(t, "update", label.TableName())
+		require.NoError(t, label.Rename("Retry Rename Control"))
+		assert.Equal(t, 2, *attempts)
+		var stored Label
+		require.NoError(t, Db().First(&stored, label.ID).Error)
+		assert.Equal(t, "Retry Rename Control", stored.LabelName)
+	})
 	t.Run("WriteFailure", func(t *testing.T) {
 		label := renameTestLabel(t, "Failed "+rnd.GenerateUID('l'))
 		before := *label
-		Db().Callback().Update().Before("gorm:begin_transaction").Register("test:rename-failure", func(scope *gorm.Scope) {
-			if scope.TableName() == (Label{}).TableName() {
-				_ = scope.Err(errors.New("rename write control"))
+		Db().Callback().Update().Before("gorm:begin_transaction").Register("test:rename-failure", func(tx *gorm.DB) {
+			if tx.Statement.Table == (Label{}).TableName() {
+				_ = tx.AddError(errors.New("rename write control"))
 			}
 		})
 		t.Cleanup(func() { Db().Callback().Update().Remove("test:rename-failure") })
@@ -128,13 +137,12 @@ func TestPhoto_SaveLabels_AssignmentWrites(t *testing.T) {
 	photo.PreloadLabels()
 	require.Len(t, photo.Labels, 1)
 	var writes atomic.Int64
-	Db().Callback().Update().Before("gorm:begin_transaction").Register("test:metadata-label-writes", func(scope *gorm.Scope) {
-		switch scope.TableName() {
+	Db().Callback().Update().Before("gorm:begin_transaction").Register("test:metadata-label-writes", func(tx *gorm.DB) {
+		switch tx.Statement.Table {
 		case (PhotoLabel{}).TableName():
 			writes.Add(1)
 		case (Label{}).TableName():
-			if attrs, ok := scope.InstanceGet("gorm:update_attrs"); ok {
-				values := attrs.(map[string]interface{})
+			if values, ok := tx.Statement.Dest.(map[string]interface{}); ok {
 				if len(values) == 1 {
 					if _, counts := values["photo_count"]; counts {
 						return
@@ -172,9 +180,9 @@ func TestPhoto_SaveLabels_RestoreOnError(t *testing.T) {
 	})
 	photo.PreloadLabels()
 	before := photo.Labels
-	Db().Callback().Update().Before("gorm:begin_transaction").Register("test:metadata-save-error", func(scope *gorm.Scope) {
-		if scope.TableName() == (Photo{}).TableName() {
-			_ = scope.Err(errors.New("metadata write control"))
+	Db().Callback().Update().Before("gorm:begin_transaction").Register("test:metadata-save-error", func(tx *gorm.DB) {
+		if tx.Statement.Table == (Photo{}).TableName() {
+			_ = tx.AddError(errors.New("metadata write control"))
 		}
 	})
 	t.Cleanup(func() { Db().Callback().Update().Remove("test:metadata-save-error") })

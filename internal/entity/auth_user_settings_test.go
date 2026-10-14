@@ -1,7 +1,12 @@
 package entity
 
 import (
+	"math"
+	"strings"
 	"testing"
+	"unicode/utf8"
+
+	"gorm.io/gorm"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -15,6 +20,11 @@ func TestCreateUserSettings(t *testing.T) {
 		m := &User{UserUID: ""}
 		assert.Error(t, CreateUserSettings(m))
 		assert.Nil(t, m.UserSettings)
+	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		m := &User{UserUID: "pqxetse3cy5eo9z2"}
+		assert.ErrorIs(t, CreateUserSettings(m), ErrInvalidUserUID)
+		assert.Equal(t, int64(0), countUserSettings(t, m.UserUID))
 	})
 	t.Run("Success", func(t *testing.T) {
 		m := &User{UserUID: "usg73p55zwgr1gbq"}
@@ -40,17 +50,77 @@ func TestUserSettings_HasID(t *testing.T) {
 	assert.True(t, u.UserSettings.HasID())
 }
 
-func TestUserSettings_Updates(t *testing.T) {
-	m := &User{
-		UserUID: "1234",
-		UserSettings: &UserSettings{
-			UITheme:    "carbon",
-			UILanguage: "de",
-		}}
+// invalidUserUIDs lists values that settings and details must not be written for.
+var invalidUserUIDs = []string{"", "\x01", "1234", "usg73p55zwgr1gb", "usg73p55zwgr1gb-", "pqxetse3cy5eo9z2"}
 
-	assert.NoError(t, m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
-	assert.Equal(t, "vanta", m.UserSettings.UITheme)
-	assert.Equal(t, "en", m.UserSettings.UILanguage)
+// countUserSettings returns the number of settings rows with the given user UID.
+func countUserSettings(t *testing.T, uid string) (n int64) {
+	t.Helper()
+	require.NoError(t, UnscopedDb().Model(&UserSettings{}).Where("user_uid = ?", uid).Count(&n).Error)
+	return n
+}
+
+func TestUserSettings_Create(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserSettings(rnd.GenerateUID(UserUID))
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+		assert.Equal(t, int64(1), countUserSettings(t, m.UserUID))
+	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		for _, uid := range invalidUserUIDs {
+			before := countUserSettings(t, uid)
+			assert.ErrorIs(t, NewUserSettings(uid).Create(), ErrInvalidUserUID, "uid %q", uid)
+			assert.Equal(t, before, countUserSettings(t, uid), "uid %q", uid)
+		}
+	})
+}
+
+func TestUserSettings_Save(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserSettings(rnd.GenerateUID(UserUID))
+		m.UILanguage = "de"
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+
+		m.UILanguage = "nl"
+		require.NoError(t, m.Save())
+		assert.Equal(t, int64(1), countUserSettings(t, m.UserUID))
+
+		found := UserSettings{}
+		require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&found).Error)
+		assert.Equal(t, "nl", found.UILanguage)
+	})
+	t.Run("InvalidUid", func(t *testing.T) {
+		for _, uid := range invalidUserUIDs {
+			before := countUserSettings(t, uid)
+			assert.ErrorIs(t, NewUserSettings(uid).Save(), ErrInvalidUserUID, "uid %q", uid)
+			assert.Equal(t, before, countUserSettings(t, uid), "uid %q", uid)
+		}
+	})
+}
+
+func TestUserSettings_Updates(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewUserSettings(rnd.GenerateUID(UserUID))
+		m.UITheme, m.UILanguage = "carbon", "de"
+		require.NoError(t, m.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+
+		assert.NoError(t, m.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
+		assert.Equal(t, "vanta", m.UITheme)
+		assert.Equal(t, "en", m.UILanguage)
+
+		found := UserSettings{}
+		require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&found).Error)
+		assert.Equal(t, "vanta", found.UITheme)
+		assert.Equal(t, "en", found.UILanguage)
+	})
+	t.Run("NoKey", func(t *testing.T) {
+		m := &UserSettings{UITheme: "carbon"}
+
+		assert.ErrorIs(t, m.Updates(UserSettings{UITheme: "vanta"}), gorm.ErrMissingWhereClause)
+	})
 }
 
 func TestUserSettings_Apply(t *testing.T) {
@@ -162,6 +232,61 @@ func TestUserSettings_Apply(t *testing.T) {
 	assert.Equal(t, -1, r.SearchShowCaptions)
 }
 
+func TestUserSettings_ApplyBounds(t *testing.T) {
+	long := strings.Repeat("a", 200)
+	path := "/" + strings.Repeat("ä", 1000)
+
+	m := NewUserSettings(rnd.GenerateUID(UserUID)).Apply(&customize.Settings{
+		UI:     customize.UISettings{Theme: long, Language: long, TimeZone: long, StartPage: long},
+		Maps:   customize.MapsSettings{Style: long, Animate: math.MaxInt},
+		Index:  customize.IndexSettings{Path: path},
+		Import: customize.ImportSettings{Path: path},
+	})
+
+	assert.Len(t, m.UITheme, userSettingsTypeBytes)
+	assert.Len(t, m.UILanguage, userSettingsTypeBytes)
+	assert.Len(t, m.MapsStyle, userSettingsTypeBytes)
+	assert.Equal(t, "", m.UITimeZone)
+	assert.LessOrEqual(t, len(m.UIStartPage), 64)
+	assert.Equal(t, math.MaxInt32, m.MapsAnimate)
+	assert.LessOrEqual(t, len(m.IndexPath), PathBytes)
+	assert.LessOrEqual(t, len(m.ImportPath), PathBytes)
+	assert.True(t, utf8.ValidString(m.IndexPath))
+	assert.True(t, utf8.ValidString(m.ImportPath))
+
+	require.NoError(t, m.Save())
+	t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+
+	found := UserSettings{}
+	require.NoError(t, UnscopedDb().Where("user_uid = ?", m.UserUID).First(&found).Error)
+	assert.Equal(t, m.UITheme, found.UITheme)
+	assert.Equal(t, m.MapsAnimate, found.MapsAnimate)
+	assert.Equal(t, m.IndexPath, found.IndexPath)
+
+	t.Run("ControlChars", func(t *testing.T) {
+		nul := "a\x00b\x1f"
+		c := NewUserSettings(rnd.GenerateUID(UserUID)).Apply(&customize.Settings{
+			UI:     customize.UISettings{Theme: nul, Language: nul, TimeZone: nul, StartPage: nul},
+			Maps:   customize.MapsSettings{Style: nul},
+			Index:  customize.IndexSettings{Path: "/" + nul},
+			Import: customize.ImportSettings{Path: "/" + nul},
+		})
+
+		for _, v := range []string{c.UITheme, c.UILanguage, c.UIStartPage, c.MapsStyle} {
+			assert.Equal(t, "ab", v)
+		}
+
+		// A time zone with control characters is not a valid name, so none is stored.
+		assert.Equal(t, "", c.UITimeZone)
+
+		assert.Equal(t, "/ab", c.IndexPath)
+		assert.Equal(t, "/ab", c.ImportPath)
+
+		require.NoError(t, c.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(c).Error })
+	})
+}
+
 func TestUserSettings_ApplyTo(t *testing.T) {
 	m := &UserSettings{
 		UITheme:              "lavender",
@@ -269,4 +394,24 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, true, r.Search.ListView)
 	assert.Equal(t, false, r.Search.ShowTitles)
 	assert.Equal(t, true, r.Search.ShowCaptions)
+}
+
+func TestUserSettings_ApplyTimeZone(t *testing.T) {
+	apply := func(stored, zone string) string {
+		m := &UserSettings{UITimeZone: stored}
+		m.Apply(&customize.Settings{UI: customize.UISettings{TimeZone: zone}})
+		return m.UITimeZone
+	}
+
+	t.Run("Stored", func(t *testing.T) {
+		for _, zone := range []string{"Local", "UTC", "GMT", "UTC+1", "UTC-12", "Europe/Berlin", "America/Port-au-Prince"} {
+			assert.Equal(t, zone, apply("", zone), zone)
+		}
+		assert.Equal(t, "UTC+2", apply("", "+02:00"))
+	})
+	t.Run("Dropped", func(t *testing.T) {
+		for _, zone := range []string{"Europe/Berlin\x00", "Europe/\x1bBerlin", "UTC+99", "Europe//Berlin", strings.Repeat("A", 65)} {
+			assert.Equal(t, "Asia/Tokyo", apply("Asia/Tokyo", zone), "%q", zone)
+		}
+	})
 }

@@ -152,7 +152,7 @@ var DialectMySQL = Migrations{
 		ID:         "20230211-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS file_colors VARBINARY(18);", "ALTER TABLE files MODIFY IF EXISTS File_luminance VARBINARY(18);"},
+		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS file_colors VARBINARY(18);", "ALTER TABLE files MODIFY IF EXISTS file_luminance VARBINARY(18);"},
 	},
 	{
 		ID:         "20230309-000001",
@@ -176,7 +176,7 @@ var DialectMySQL = Migrations{
 		ID:         "20240701-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS refresh_token VARBINARY(2048);", "ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(2048);"},
+		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS refresh_token VARBINARY(2048) DEFAULT '';", "ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(2048) DEFAULT '';"},
 	},
 	{
 		ID:         "20240709-000001",
@@ -254,7 +254,7 @@ var DialectMySQL = Migrations{
 		ID:         "20260721-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(4096);"},
+		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(4096) DEFAULT '';"},
 	},
 	{
 		ID:         "20260721-000002",
@@ -267,5 +267,29 @@ var DialectMySQL = Migrations{
 		Dialect:    "mysql",
 		Stage:      "main",
 		Statements: []string{"UPDATE faces SET face_kind = 1 WHERE face_kind = 0 AND embedding_json IS NOT NULL AND LENGTH(embedding_json) > 0;"},
+	},
+	{
+		ID:         "20261010-000002",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"UPDATE photos SET photo_color = CASE WHEN EXISTS (SELECT 1 FROM files f WHERE f.photo_id = photos.id AND f.file_primary = TRUE AND f.file_main_color = 'black') THEN 16 ELSE -1 END WHERE photo_color = 0;"},
+	},
+	{
+		ID:         "20261010-000003",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"UPDATE files SET file_diff = -1 WHERE file_diff = 0;"},
+	},
+	{
+		ID:         "20261010-000004",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE files RENAME COLUMN File_luminance TO file_luminance;"},
+	},
+	{
+		ID:         "20261011-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"UPDATE files SET file_chroma = CASE WHEN file_chroma = 0 AND (file_colors IS NULL OR file_colors = '') THEN -1 WHEN file_chroma >= 99 THEN 100 WHEN file_chroma = 1 AND EXISTS (SELECT 1 FROM migrations WHERE id = '20261010-000001') THEN 1 ELSE file_chroma + 1 END WHERE file_chroma >= 0;"},
 	},
 }

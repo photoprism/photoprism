@@ -58,7 +58,7 @@ func TestAlbumCover(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Cleared so that the request reaches the cover query, since a cover file assigned by
 		// another test would answer with the generic icon before it gets there.
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba9", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba9", "")
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba9/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -78,7 +78,7 @@ func TestAlbumCover(t *testing.T) {
 	t.Run("SizeExceedsLimit", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		SetTestThumbUncached(t, true)
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		original := CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/fit_15360")
@@ -90,7 +90,7 @@ func TestAlbumCover(t *testing.T) {
 		// Matches a stock install, where on-demand rendering is disabled and the cover is
 		// therefore served from the thumbnail that indexing pre-generated.
 		app, router, conf := NewApiTest()
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		original := CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		f, err := query.AlbumCoverByUID("as6sg6bxpogaaba8", conf.Settings().Features.Private)
 		if err != nil {
@@ -106,7 +106,7 @@ func TestAlbumCover(t *testing.T) {
 	t.Run("LimitsSize", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		SetTestThumbUncached(t, true)
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
 		small := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/fit_720")
@@ -119,7 +119,7 @@ func TestAlbumCover(t *testing.T) {
 		// Cover responses are always inline.
 		app, router, conf := NewApiTest()
 		SetTestThumbUncached(t, true)
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
 		// Repeated so that the cache hit is covered as well as the render path.
@@ -137,7 +137,7 @@ func TestAlbumCover(t *testing.T) {
 		// The flag requires the cover file to still resolve, and another test may have flagged
 		// that fixture as missing on its way out.
 		CreateTestFileOriginal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -156,16 +156,16 @@ func TestAlbumCover(t *testing.T) {
 		if err := entity.Db().Exec("UPDATE albums SET thumb = NULL WHERE album_uid = ?", album.AlbumUID).Error; err != nil {
 			t.Fatal(err)
 		}
-		var count int
+		var count int64
 		if err := entity.Db().Model(&entity.Album{}).
 			Where("album_uid = ? AND thumb IS NULL", album.AlbumUID).Count(&count).Error; err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 
 		const hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 		t.Run("SetAndRestore", func(t *testing.T) {
-			SetTestCoverFile(t, entity.Album{}, "album_uid = ?", album.AlbumUID, hash)
+			SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", album.AlbumUID, hash)
 			var updated entity.Album
 			if err := entity.Db().Where("album_uid = ?", album.AlbumUID).First(&updated).Error; err != nil {
 				t.Fatal(err)
@@ -178,6 +178,6 @@ func TestAlbumCover(t *testing.T) {
 			Where("album_uid = ? AND thumb IS NULL", album.AlbumUID).Count(&count).Error; err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 	})
 }

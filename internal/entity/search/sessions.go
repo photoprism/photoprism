@@ -15,8 +15,8 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 	result = entity.Sessions{}
 	stmt := Db()
 
-	userUid := strings.TrimSpace(frm.UID)
-	search := strings.TrimSpace(frm.Query)
+	userUid := strings.TrimSpace(clean.SearchBindable(frm.UID))
+	search := strings.TrimSpace(clean.SearchBindable(frm.Query))
 
 	order := frm.Order
 	limit := frm.Count
@@ -42,7 +42,7 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 	// Filter by username and/or auth provider name?
 	if search != "" && search != "all" {
 		like := clean.SqlLike(search) + "%"
-		stmt = stmt.Where(clean.SqlLikeAny("user_name", "client_name"), like, like)
+		stmt = stmt.Where(clean.SqlLikeAny(entity.DbDialect(), false, "user_name", "client_name"), like, like)
 	}
 
 	// Filter by authentication providers?
@@ -58,19 +58,19 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 	// Sort results?
 	switch order {
 	case sortby.LastActive:
-		stmt = stmt.Order(OrderExpr("last_active DESC, user_name, client_name, id", frm.Reverse))
+		stmt = stmt.Order(OrderExprNulls("last_active DESC, user_name, client_name, id", frm.Reverse))
 	case sortby.SessExpires:
-		stmt = stmt.Order(OrderExpr("sess_expires DESC, user_name, client_name, id", frm.Reverse))
+		stmt = stmt.Order(OrderExprNulls("sess_expires DESC, user_name, client_name, id", frm.Reverse))
 	case sortby.ClientName:
 		stmt = stmt.
 			Where("client_name <> '' AND client_name IS NOT NULL").
 			Order(OrderExpr("client_name, created_at, id", frm.Reverse))
 	case sortby.Login, sortby.LoginAt:
-		stmt = stmt.Order(OrderExpr("login_at DESC, user_name, client_name, id", frm.Reverse))
+		stmt = stmt.Order(OrderExprNulls("login_at DESC, user_name, client_name, id", frm.Reverse))
 	case sortby.Created, sortby.CreatedAt:
-		stmt = stmt.Order(OrderExpr("created_at ASC, user_name, client_name, id", frm.Reverse))
+		stmt = stmt.Order(OrderExprNulls("created_at ASC, user_name, client_name, id", frm.Reverse))
 	case sortby.Updated, sortby.UpdatedAt:
-		stmt = stmt.Order(OrderExpr("updated_at DESC, user_name, client_name, id", frm.Reverse))
+		stmt = stmt.Order(OrderExprNulls("updated_at DESC, user_name, client_name, id", frm.Reverse))
 	default:
 		return result, fmt.Errorf("invalid sort order %s", order)
 	}

@@ -3,6 +3,8 @@ package report
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // RowsToObjects converts a table (rows + column names) into a slice of
@@ -12,7 +14,8 @@ func RowsToObjects(rows [][]string, cols []string) []map[string]string {
 }
 
 // RowsToObjectsKeys converts a table into objects under the given field names, falling back to the
-// canonicalized column names for any the caller left out.
+// canonicalized column names for any the caller left out. Values are copied as they are, so marshal
+// the result with MarshalJSON, which escapes the characters that do not print.
 func RowsToObjectsKeys(rows [][]string, cols []string, keys []string) []map[string]string {
 	out := make([]map[string]string, 0, len(rows))
 
@@ -67,9 +70,32 @@ func JSONExport(rows [][]string, cols []string) (string, error) {
 // JSONExportKeys returns a JSON string keyed by the given field names.
 func JSONExportKeys(rows [][]string, cols []string, keys []string) (string, error) {
 	data := RowsToObjectsKeys(rows, cols, keys)
-	b, err := json.Marshal(data)
+	b, err := MarshalJSON(data)
 	if err != nil {
 		return "", err
 	}
 	return string(b), nil
+}
+
+// MarshalJSON returns the JSON encoding of v for command output, with the characters that do not
+// print written as escapes, so that values stay exact and display safely.
+func MarshalJSON(v any) ([]byte, error) {
+	b, err := json.Marshal(v)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return clean.JSONEscape(b), nil
+}
+
+// MarshalJSONIndent is MarshalJSON with indented output.
+func MarshalJSONIndent(v any, prefix, indent string) ([]byte, error) {
+	b, err := json.MarshalIndent(v, prefix, indent)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return clean.JSONEscape(b), nil
 }

@@ -163,7 +163,7 @@ func AddService(router *gin.RouterGroup) {
 		}
 
 		if err := frm.Discovery(conf.ServicesCIDR()); err != nil {
-			log.Error(err)
+			log.Errorf("service: %s (discovery)", clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
 		}
@@ -221,7 +221,7 @@ func UpdateService(router *gin.RouterGroup) {
 		frm, err := form.NewService(m)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("service: %s (init form)", clean.Error(err))
 			AbortSaveFailed(c)
 			return
 		}
@@ -241,7 +241,7 @@ func UpdateService(router *gin.RouterGroup) {
 
 		// 3) Save model with values from form
 		if err = m.SaveForm(frm); err != nil {
-			log.Error(err)
+			log.Errorf("service: %s (save form)", clean.Error(err))
 			AbortSaveFailed(c)
 			return
 		}

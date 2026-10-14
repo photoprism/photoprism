@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestEnsureCredentials_ProxySQLIntegration(t *testing.T) {
@@ -59,7 +60,7 @@ func TestEnsureCredentials_ProxySQLIntegration(t *testing.T) {
 	})
 
 	conf := config.NewConfig(config.CliTestContext())
-	conf.Options().ClusterUUID = time.Now().UTC().Format("20060102-150405.000000000")
+	conf.Options().ClusterUUID = rnd.UUID()
 
 	nodeUUID := "11111111-1111-4111-8111-333333333333"
 	nodeName := "pp-proxy-itest"

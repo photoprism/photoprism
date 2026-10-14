@@ -378,6 +378,6 @@ var SessionFixtures = SessionMap{
 // CreateSessionFixtures inserts known entities into the database for testing.
 func CreateSessionFixtures() {
 	for _, entity := range SessionFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

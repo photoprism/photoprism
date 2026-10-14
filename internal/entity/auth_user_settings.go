@@ -2,36 +2,41 @@ package entity
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
 // UserSettings stores per-user UI, indexing, and workflow preferences.
 type UserSettings struct {
-	UserUID              string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
-	UITheme              string    `gorm:"type:VARBINARY(32);column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
+	UserUID              string    `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"UserUID"`
+	UITheme              string    `gorm:"type:bytes;size:32;column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
 	UIStartPage          string    `gorm:"size:64;column:ui_start_page;default:'default';" json:"UIStartPage,omitempty" yaml:"UIStartPage,omitempty"`
-	UILanguage           string    `gorm:"type:VARBINARY(32);column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
-	UITimeZone           string    `gorm:"type:VARBINARY(64);column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`
-	MapsStyle            string    `gorm:"type:VARBINARY(32);" json:"MapsStyle,omitempty" yaml:"MapsStyle,omitempty"`
-	MapsAnimate          int       `gorm:"default:0;" json:"MapsAnimate,omitempty" yaml:"MapsAnimate,omitempty"`
-	IndexPath            string    `gorm:"type:VARBINARY(1024);" json:"IndexPath,omitempty" yaml:"IndexPath,omitempty"`
-	IndexRescan          int       `gorm:"default:0;" json:"IndexRescan,omitempty" yaml:"IndexRescan,omitempty"`
-	ImportPath           string    `gorm:"type:VARBINARY(1024);" json:"ImportPath,omitempty" yaml:"ImportPath,omitempty"`
-	ImportMove           int       `gorm:"default:0;" json:"ImportMove,omitempty" yaml:"ImportMove,omitempty"`
-	DownloadOriginals    int       `gorm:"default:0;" json:"DownloadOriginals,omitempty" yaml:"DownloadOriginals,omitempty"`
-	DownloadMediaRaw     int       `gorm:"default:0;" json:"DownloadMediaRaw,omitempty" yaml:"DownloadMediaRaw,omitempty"`
-	DownloadMediaSidecar int       `gorm:"default:0;" json:"DownloadMediaSidecar,omitempty" yaml:"DownloadMediaSidecar,omitempty"`
-	SearchListView       int       `gorm:"default:0;" json:"SearchListView,omitempty" yaml:"SearchListView,omitempty"`
-	SearchShowTitles     int       `gorm:"default:0;" json:"SearchShowTitles,omitempty" yaml:"SearchShowTitles,omitempty"`
-	SearchShowCaptions   int       `gorm:"default:0;" json:"SearchShowCaptions,omitempty" yaml:"SearchShowCaptions,omitempty"`
-	UploadPath           string    `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
+	UILanguage           string    `gorm:"type:bytes;size:32;column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
+	UITimeZone           string    `gorm:"type:bytes;size:64;column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`
+	MapsStyle            string    `gorm:"type:bytes;size:32;" json:"MapsStyle,omitempty" yaml:"MapsStyle,omitempty"`
+	MapsAnimate          int       `gorm:"default:0;size:32;" json:"MapsAnimate,omitempty" yaml:"MapsAnimate,omitempty"`
+	IndexPath            string    `gorm:"type:bytes;size:1024;" json:"IndexPath,omitempty" yaml:"IndexPath,omitempty"`
+	IndexRescan          int       `gorm:"default:0;size:32;" json:"IndexRescan,omitempty" yaml:"IndexRescan,omitempty"`
+	ImportPath           string    `gorm:"type:bytes;size:1024;" json:"ImportPath,omitempty" yaml:"ImportPath,omitempty"`
+	ImportMove           int       `gorm:"default:0;size:32;" json:"ImportMove,omitempty" yaml:"ImportMove,omitempty"`
+	DownloadOriginals    int       `gorm:"default:0;size:32;" json:"DownloadOriginals,omitempty" yaml:"DownloadOriginals,omitempty"`
+	DownloadMediaRaw     int       `gorm:"default:0;size:32;" json:"DownloadMediaRaw,omitempty" yaml:"DownloadMediaRaw,omitempty"`
+	DownloadMediaSidecar int       `gorm:"default:0;size:32;" json:"DownloadMediaSidecar,omitempty" yaml:"DownloadMediaSidecar,omitempty"`
+	SearchListView       int       `gorm:"default:0;size:32;" json:"SearchListView,omitempty" yaml:"SearchListView,omitempty"`
+	SearchShowTitles     int       `gorm:"default:0;size:32;" json:"SearchShowTitles,omitempty" yaml:"SearchShowTitles,omitempty"`
+	SearchShowCaptions   int       `gorm:"default:0;size:32;" json:"SearchShowCaptions,omitempty" yaml:"SearchShowCaptions,omitempty"`
+	UploadPath           string    `gorm:"type:bytes;size:1024;" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
 	CreatedAt            time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt            time.Time `json:"UpdatedAt" yaml:"-"`
 }
+
+// userSettingsTypeBytes is the byte budget of the theme, language, and maps style columns.
+const userSettingsTypeBytes = 32
 
 // TableName returns the entity table name.
 func (UserSettings) TableName() string {
@@ -67,13 +72,21 @@ func (m *UserSettings) HasID() bool {
 	return rnd.IsUID(m.UserUID, UserUID)
 }
 
-// Create new entity in the database.
+// Create inserts the settings, which requires a valid user UID.
 func (m *UserSettings) Create() error {
+	if !m.HasID() {
+		return ErrInvalidUserUID
+	}
+
 	return Db().Create(m).Error
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save updates the settings or inserts them if they do not exist yet, which requires a valid user UID.
 func (m *UserSettings) Save() error {
+	if !m.HasID() {
+		return ErrInvalidUserUID
+	}
+
 	return Db().Save(m).Error
 }
 
@@ -86,7 +99,7 @@ func (m *UserSettings) Updates(values any) error {
 func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 	// UI preferences.
 	if s.UI.Theme != "" {
-		m.UITheme = clean.Type(s.UI.Theme)
+		m.UITheme = Clip(clean.Type(s.UI.Theme), userSettingsTypeBytes)
 	}
 
 	if s.UI.StartPage != "" {
@@ -94,19 +107,19 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 	}
 
 	if s.UI.Language != "" {
-		m.UILanguage = clean.Type(s.UI.Language)
+		m.UILanguage = Clip(clean.Type(s.UI.Language), userSettingsTypeBytes)
 	}
 
-	if s.UI.TimeZone != "" {
-		m.UITimeZone = clean.Type(s.UI.TimeZone)
+	if zone := tz.Sanitize(s.UI.TimeZone); zone != "" {
+		m.UITimeZone = zone
 	}
 
 	// Maps preferences.
 	if s.Maps.Style != "" {
-		m.MapsStyle = clean.Type(s.Maps.Style)
+		m.MapsStyle = Clip(clean.Type(s.Maps.Style), userSettingsTypeBytes)
 
 		if s.Maps.Animate > 0 {
-			m.MapsAnimate = s.Maps.Animate
+			m.MapsAnimate = min(s.Maps.Animate, math.MaxInt32)
 		} else {
 			m.MapsAnimate = -1
 		}
@@ -114,7 +127,7 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 
 	// Index preferences.
 	if s.Index.Path != "" {
-		m.IndexPath = s.Index.Path
+		m.IndexPath = ClipPath(clean.StripControl(s.Index.Path))
 
 		if s.Index.Rescan {
 			m.IndexRescan = 1
@@ -125,7 +138,7 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 
 	// Import preferences.
 	if s.Import.Path != "" {
-		m.ImportPath = s.Import.Path
+		m.ImportPath = ClipPath(clean.StripControl(s.Import.Path))
 
 		if s.Import.Move {
 			m.ImportMove = 1

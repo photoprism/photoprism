@@ -8,7 +8,7 @@ const (
 	DriverAuto     = "auto"     // Automatic database driver selection.
 	DriverMySQL    = "mysql"    // GORM dialect for MySQL/MariaDB; the canonical driver name PhotoPrism stores.
 	DriverMariaDB  = "mariadb"  // Accepted as user input; ParseDriver collapses it to DriverMySQL since the dialect is shared.
-	DriverPostgres = "postgres" // Reserved identifier; PostgreSQL is not a supported runtime target yet (requires a GORM upgrade).
+	DriverPostgres = "postgres" // GORM dialect for PostgreSQL; ParseDriver also accepts "postgresql".
 	DriverSQLite3  = "sqlite3"  // GORM dialect for SQLite; the default when no driver is configured.
 	DriverTiDB     = "tidb"     // Deprecated; recognized so callers can warn and fall back to SQLite.
 )

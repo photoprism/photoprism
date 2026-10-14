@@ -39,6 +39,11 @@ WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'acceptance')\gexec
 SELECT 'CREATE DATABASE acceptance OWNER acceptance;'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'acceptance')\gexec
 
+SELECT 'CREATE USER testcafe PASSWORD ''testcafe'''
+WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'testcafe')\gexec
+SELECT 'CREATE DATABASE testcafe OWNER testcafe ENCODING ''UTF8'' TEMPLATE template0 LOCALE_PROVIDER icu ICU_LOCALE ''und'''
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'testcafe')\gexec
+
 SELECT 'CREATE USER photoprism_01 PASSWORD ''photoprism_01'''
 WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'photoprism_01')\gexec
 SELECT 'CREATE DATABASE photoprism_01 OWNER photoprism_01'

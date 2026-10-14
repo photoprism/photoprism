@@ -99,15 +99,13 @@ func errorText(s string) string {
 	// Limit error message length without splitting a character.
 	s = shortenBytes(s, LengthLimit, "")
 
-	// Remove non-printable and other potentially problematic characters.
-	s = strings.Map(func(r rune) rune {
+	// Replace non-printable and other potentially problematic characters.
+	s = markText(s, func(r rune) rune {
 		switch {
-		case unsafeSpaceRune(r):
+		case unsafeSpaceRune(r) || unsafeBreakRune(r):
 			return unsafeSpace
-		case unsafeDropRune(r):
-			return -1
 		case unsafeRune(r):
-			return unsafeMarker
+			return markRune
 		}
 
 		switch r {
@@ -118,14 +116,9 @@ func errorText(s string) string {
 		default:
 			return r
 		}
-	}, s)
+	})
 
-	// A message of only dropped characters empties here, leaving a failure with no cause.
-	if strings.TrimSpace(s) == "" {
-		return "unknown error"
-	}
-
-	// Replacing an invalid byte can triple its size.
+	// A marker is longer than the character it replaces.
 	return shortenBytes(s, LengthLimit, "")
 }
 

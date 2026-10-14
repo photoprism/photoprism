@@ -75,6 +75,17 @@ func (r *CloseableResponseRecorder) CloseNotify() <-chan bool {
 	return r.closeCh
 }
 
+// closeConfigDb closes the database of a temporary test config when the test ends. Register it after the
+// cleanup that restores the shared providers, so that cleanup runs last, as CloseDb clears the entity provider.
+func closeConfigDb(t testing.TB, conf *config.Config) {
+	t.Helper()
+	t.Cleanup(func() {
+		if err := conf.CloseDb(); err != nil {
+			t.Errorf("close db: %v", err)
+		}
+	})
+}
+
 // NewApiTest returns new API test helper.
 func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config) {
 	gin.SetMode(gin.TestMode)
@@ -173,19 +184,19 @@ func CreateTestOriginal(t *testing.T, f *entity.File) []byte {
 
 	// Tests that ran before may have flagged the fixture as missing or removed the photo it
 	// belongs to, because its original is not part of the test data.
-	if err := entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+	if err := entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).
 		Updates(entity.Values{"file_missing": false, "deleted_at": nil}).Error; err != nil {
 		t.Fatal(err)
-	} else if err = entity.UnscopedDb().Model(entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
+	} else if err = entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
 		Update("deleted_at", nil).Error; err != nil {
 		t.Fatal(err)
 	}
 	entity.RegenerateIndexForPhotoIDs([]uint{p.ID})
 
 	t.Cleanup(func() {
-		_ = entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+		_ = entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).
 			Updates(entity.Values{"file_missing": f.FileMissing, "deleted_at": f.DeletedAt}).Error
-		_ = entity.UnscopedDb().Model(entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
+		_ = entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
 			Update("deleted_at", p.DeletedAt).Error
 		entity.RegenerateIndexForPhotoIDs([]uint{p.ID})
 	})
@@ -421,7 +432,7 @@ func SetTestFileBounds(t *testing.T, fileHash string, w, h int) {
 	}
 
 	setBounds := func(w, h int) error {
-		return entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+		return entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).
 			Updates(entity.Values{"file_width": w, "file_height": h}).Error
 	}
 

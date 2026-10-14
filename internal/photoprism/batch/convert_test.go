@@ -14,6 +14,61 @@ func TestConvertToPhotoForm(t *testing.T) {
 		assert.Nil(t, form)
 		assert.Error(t, err)
 	})
+	t.Run("ControlCharacters", func(t *testing.T) {
+		photo := &entity.Photo{PhotoTitle: "Old Title", PhotoCaption: "Old Caption"}
+
+		v := &PhotosForm{}
+		v.PhotoTitle.Action = ActionUpdate
+		v.PhotoTitle.Value = "New\x00 Title\x1b"
+		v.PhotoCaption.Action = ActionUpdate
+		v.PhotoCaption.Value = "Line one\x00\r\nLine two"
+		v.DetailsSubject.Action = ActionUpdate
+		v.DetailsSubject.Value = "Sub\x00ject"
+		v.DetailsArtist.Action = ActionUpdate
+		v.DetailsArtist.Value = "Art\x7fist"
+		v.DetailsCopyright.Action = ActionUpdate
+		v.DetailsCopyright.Value = "(c)\x01 2026\nAll rights reserved"
+		v.DetailsLicense.Action = ActionUpdate
+		v.DetailsLicense.Value = "CC\x00 BY"
+
+		form, err := ConvertToPhotoForm(photo, v)
+		assert.NoError(t, err)
+		assert.Equal(t, "New Title", form.PhotoTitle)
+		assert.Equal(t, "Line one\nLine two", form.PhotoCaption)
+		assert.Equal(t, "Subject", form.Details.Subject)
+		assert.Equal(t, "Artist", form.Details.Artist)
+		assert.Equal(t, "(c) 2026\nAll rights reserved", form.Details.Copyright)
+		assert.Equal(t, "CC BY", form.Details.License)
+	})
+	t.Run("ControlCharactersTypeZoneCountry", func(t *testing.T) {
+		v := &PhotosForm{}
+		v.PhotoType.Action = ActionUpdate
+		v.PhotoType.Value = "live\x00"
+		v.TimeZone.Action = ActionUpdate
+		v.TimeZone.Value = "Europe/Berlin\x00"
+		v.PhotoCountry.Action = ActionUpdate
+		v.PhotoCountry.Value = "d\x00e"
+
+		form, err := ConvertToPhotoForm(&entity.Photo{}, v)
+		assert.NoError(t, err)
+		assert.Equal(t, "live", form.PhotoType)
+		assert.Equal(t, "Europe/Berlin", form.TimeZone)
+		assert.Equal(t, "de", form.PhotoCountry)
+	})
+	t.Run("TextKept", func(t *testing.T) {
+		for _, s := range []string{"شاطئ البحر", "日本語", "👩\u200D👩\u200D👧", "First\nSecond"} {
+			v := &PhotosForm{}
+			v.PhotoCaption.Action = ActionUpdate
+			v.PhotoCaption.Value = s
+			v.DetailsCopyright.Action = ActionUpdate
+			v.DetailsCopyright.Value = s
+
+			form, err := ConvertToPhotoForm(&entity.Photo{}, v)
+			assert.NoError(t, err)
+			assert.Equal(t, s, form.PhotoCaption)
+			assert.Equal(t, s, form.Details.Copyright)
+		}
+	})
 	t.Run("UpdateTitleCaptionTypeAndBooleans", func(t *testing.T) {
 		photo := &entity.Photo{
 			PhotoTitle:   "Old Title",

@@ -74,7 +74,7 @@ func TestErrorText(t *testing.T) {
 		}
 	})
 	t.Run("KeepsInnerSpaces", func(t *testing.T) {
-		assert.Equal(t, "abc ", errorText("abc \x01"))
+		assert.Equal(t, "abc [U+0001]", errorText("abc \x01"))
 	})
 	t.Run("TrimmedBeforeTruncated", func(t *testing.T) {
 		// Trimming after truncation would return a message two characters short.
@@ -84,7 +84,8 @@ func TestErrorText(t *testing.T) {
 		assert.Equal(t, "?a?b?c?d?e?f?'g'h", errorText("%a\\b$c<d>e{f}`g\"h"))
 	})
 	t.Run("NonPrintable", func(t *testing.T) {
-		assert.Equal(t, "ab", errorText("a\x00\x7fb"))
+		assert.Equal(t, "a[U+0000][U+007F]b", errorText("a\x00\x7fb"))
+		assert.Equal(t, "a b c", errorText("a\nb\tc"))
 	})
 }
 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
@@ -441,4 +443,54 @@ func TestUpdateUserSharedEmail(t *testing.T) {
 	r = AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+alice.UserUID, string(body), sessId)
 	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 	assert.False(t, reported(), "an unchanged address is not reported again")
+}
+
+// TestUpdateUser_DetailsSaveFailed checks that a details change that was not stored is reported as a failure.
+func TestUpdateUser_DetailsSaveFailed(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	UpdateUser(router)
+	sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
+	const aliceUid = "uqxetse3cy5eo9z2"
+	reqUrl := "/api/v1/users/" + aliceUid
+	location := entity.FindUserByUID(aliceUid).Details().UserLocation
+	displayName := entity.FindUserByUID(aliceUid).DisplayName
+
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.UserDetails{}).Where("user_uid = ?", aliceUid).
+			UpdateColumn("user_location", location).Error)
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.User{}).Where("user_uid = ?", aliceUid).
+			UpdateColumn("display_name", displayName).Error)
+		entity.FlushUserSessionCache(aliceUid)
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		r := AuthenticatedRequestWithBody(app, "PUT", reqUrl, `{"Details":{"Location":"Berlin\u0000"}}`, sessId)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "Berlin", entity.FindUserByUID(aliceUid).Details().UserLocation)
+	})
+	t.Run("Failed", func(t *testing.T) {
+		name := "test:fail_update_user_details"
+		fail := func(db *gorm.DB) {
+			if db.Statement.Table == (entity.UserDetails{}).TableName() {
+				_ = db.AddError(errors.New("details write failed"))
+			}
+		}
+
+		require.NoError(t, entity.Db().Callback().Create().Before("gorm:create").Register(name, fail))
+		require.NoError(t, entity.Db().Callback().Update().Before("gorm:update").Register(name, fail))
+		t.Cleanup(func() {
+			_ = entity.Db().Callback().Create().Remove(name)
+			_ = entity.Db().Callback().Update().Remove(name)
+		})
+
+		before := entity.FindUserByUID(aliceUid)
+		r := AuthenticatedRequestWithBody(app, "PUT", reqUrl, `{"DisplayName":"Not Stored","Details":{"Location":"Hamburg"}}`, sessId)
+		assert.Equal(t, http.StatusInternalServerError, r.Code)
+		after := entity.FindUserByUID(aliceUid)
+		assert.Equal(t, before.Details().UserLocation, after.Details().UserLocation)
+		assert.Equal(t, before.DisplayName, after.DisplayName)
+	})
 }

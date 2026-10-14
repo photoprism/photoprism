@@ -1,7 +1,10 @@
 package form
 
 import (
+	"flag"
 	"testing"
+
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/authn"
 
@@ -98,5 +101,34 @@ func TestUser_Scope(t *testing.T) {
 	t.Run("Sanitized", func(t *testing.T) {
 		form := &User{UserScope: " Photos:VIEW   "}
 		assert.Equal(t, "photos:view", form.Scope())
+	})
+}
+
+func TestNewUserFromCli(t *testing.T) {
+	newContext := func(t *testing.T, args ...string) *cli.Context {
+		flags := flag.NewFlagSet("test", flag.ContinueOnError)
+		flags.String("email", "", "Usage")
+		flags.String("role", "", "Usage")
+		if err := flags.Parse(args); err != nil {
+			t.Fatal(err)
+		}
+		return cli.NewContext(cli.NewApp(), flags, nil)
+	}
+
+	t.Run("TrimsUsername", func(t *testing.T) {
+		frm := NewUserFromCli(newContext(t, "--email=Jane@Example.com", "--role=admin", "  Jane.Doe  "))
+		assert.Equal(t, "Jane.Doe", frm.UserName)
+		assert.Equal(t, "jane.doe", frm.Username())
+		assert.Equal(t, "jane@example.com", frm.UserEmail)
+		assert.Equal(t, "admin", frm.UserRole)
+	})
+	t.Run("KeepsInput", func(t *testing.T) {
+		frm := NewUserFromCli(newContext(t, "\u212Aate"))
+		assert.Equal(t, "\u212Aate", frm.UserName)
+		assert.Equal(t, "kate", frm.Username())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		frm := NewUserFromCli(newContext(t))
+		assert.Equal(t, "", frm.UserName)
 	})
 }

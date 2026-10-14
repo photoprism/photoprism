@@ -68,7 +68,7 @@ type SearchPhotos struct {
 	F           string    `form:"f" example:"f:2.8-4.5" notes:"Aperture (F-Number)"`
 	Color       string    `form:"color" example:"color:\"red|blue\"" notes:"Color name separated by |, e.g. purple, magenta, pink, red, orange, gold, yellow, lime, green, teal, cyan, blue, brown, white, grey, or black"` // Main color
 	Codec       string    `form:"codec" example:"codec:avc1" notes:"Media codec types separated by |, e.g. jpeg, avc1, or hvc1"`
-	Chroma      int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
+	Chroma      int16     `form:"chroma" example:"chroma:70" notes:"Chroma (1-100)"`
 	Mono        bool      `form:"mono" notes:"Pictures with few or no colors"`
 	Diff        uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Geo         string    `form:"geo" example:"geo:yes" notes:"Finds content with or without latitude and longitude"`

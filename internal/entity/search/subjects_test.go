@@ -157,6 +157,7 @@ func TestUserSubjects(t *testing.T) {
 	m := entity.NewSubject("Private Search Subject", entity.SubjPerson, entity.SrcManual)
 	require.NotNil(t, m)
 	m.SubjPrivate = true
+	m.SubjAlias = "Private Search Alias"
 	require.NoError(t, m.Create())
 
 	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", m.SubjUID) })
@@ -178,6 +179,8 @@ func TestUserSubjects(t *testing.T) {
 		"All":     {Type: entity.SubjPerson, Count: 1000, All: true},
 		"Private": {Type: entity.SubjPerson, Count: 1000, Private: "yes"},
 		"UID":     {UID: m.SubjUID, Count: 1000},
+		"Name":    {Query: "nomatch|Private Search Subject", Count: 1000},
+		"Alias":   {Query: "nomatch|Private Search Alias", Count: 1000},
 	}
 
 	t.Run("DeniedRole", func(t *testing.T) {
@@ -254,4 +257,36 @@ func TestSubjects_OmitsDeleted(t *testing.T) {
 	results, err = Subjects(form.SearchSubjects{UID: m.SubjUID, Count: 1000})
 	require.NoError(t, err)
 	assert.Empty(t, results)
+}
+
+// TestSubjects_QueryKeepsFilters checks that a name query with alternatives keeps the other conditions.
+func TestSubjects_QueryKeepsFilters(t *testing.T) {
+	name := "Query Filter Subject " + time.Now().UTC().Format("150405.000000")
+
+	hidden := entity.NewSubject(name+" Hidden", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, hidden)
+	hidden.SubjHidden = true
+	require.NoError(t, hidden.Create())
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", hidden.SubjUID) })
+
+	deleted := entity.NewSubject(name+" Deleted", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, deleted)
+	require.NoError(t, deleted.Create())
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", deleted.SubjUID) })
+	require.NoError(t, deleted.Delete())
+
+	t.Run("Subjects", func(t *testing.T) {
+		results, err := Subjects(form.SearchSubjects{Query: "nomatch|" + name, Count: 1000})
+		require.NoError(t, err)
+		assert.Empty(t, results)
+
+		results, err = Subjects(form.SearchSubjects{Query: "nomatch|" + name, Hidden: "yes", Count: 1000})
+		require.NoError(t, err)
+		require.Len(t, results, 1)
+		assert.Equal(t, hidden.SubjUID, results[0].SubjUID)
+	})
+	t.Run("SubjectUIDs", func(t *testing.T) {
+		uids, _, _ := SubjectUIDs("nomatch|" + name + " Deleted")
+		assert.Empty(t, uids)
+	})
 }

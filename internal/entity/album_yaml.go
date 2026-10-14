@@ -21,7 +21,7 @@ func (m *Album) Yaml() (out []byte, err error) {
 	m.CreatedAt = m.CreatedAt.UTC().Truncate(time.Second)
 	m.UpdatedAt = m.UpdatedAt.UTC().Truncate(time.Second)
 
-	if err = Db().Model(m).Association("Photos").Find(&m.Photos).Error; err != nil {
+	if err = Db().Model(m).Association("Photos").Find(&m.Photos); err != nil {
 		log.Errorf("album: %s (yaml)", err)
 		return out, err
 	}
@@ -147,6 +147,7 @@ func (m *Album) LoadFromYaml(fileName string) error {
 	// Clip the restored path to the album_path column's byte budget so a backup
 	// with a long multi-byte path cannot overflow the column on save.
 	m.AlbumPath = ClipPath(m.AlbumPath)
+	m.normalizeText()
 
 	return nil
 }

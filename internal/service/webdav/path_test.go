@@ -31,6 +31,19 @@ func TestIsUnsafePath(t *testing.T) {
 	})
 }
 
+func TestHasControl(t *testing.T) {
+	t.Run("Control", func(t *testing.T) {
+		for _, name := range []string{"\x00", "a\x01b", "a\nb", "a\rb", "a\tb", "a\x1fb", "a\x7fb"} {
+			assert.True(t, hasControl(name), "%q", name)
+		}
+	})
+	t.Run("None", func(t *testing.T) {
+		for _, name := range []string{"", "/Photos/cover.jpg", "/Fotos/Älter 2024 幸福.jpg", "/صور/a\u200Db.jpg", "a\u0085b", "a\xffb"} {
+			assert.False(t, hasControl(name), "%q", name)
+		}
+	})
+}
+
 func TestIsHiddenPath(t *testing.T) {
 	assert.True(t, isHiddenPath("/.locks/upload.tmp"))
 	assert.True(t, isHiddenPath("/Photos/.staging/incomplete.jpg"))

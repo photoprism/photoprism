@@ -99,10 +99,10 @@
 
             <div class="meta" @click.stop.prevent="">
               <div v-if="canManage" class="meta-title inline-edit clickable" @click.stop.prevent="edit(label)">
-                {{ label.Name }}
+                <bdi>{{ $util.balanceBidi(label.Name) }}</bdi>
               </div>
               <div v-else class="meta-title">
-                {{ label.Name }}
+                <bdi>{{ $util.balanceBidi(label.Name) }}</bdi>
               </div>
 
               <div v-if="label.PhotoCount === 1" class="meta-count" @click.stop.prevent="">

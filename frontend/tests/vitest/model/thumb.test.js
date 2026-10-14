@@ -396,7 +396,7 @@ describe("model/thumb", () => {
   // failure for an endpoint that has a global success mock.
   describe("archive", () => {
     beforeEach(() => {
-      Mock.history.post.length = 0;
+      Mock.resetHistory();
     });
 
     it("flips Archived to true, posts to batch/photos/archive, and resolves on success", async () => {
@@ -442,7 +442,7 @@ describe("model/thumb", () => {
 
   describe("restore", () => {
     beforeEach(() => {
-      Mock.history.post.length = 0;
+      Mock.resetHistory();
     });
 
     it("flips Archived to false, posts to batch/photos/restore, and resolves on success", async () => {
@@ -480,7 +480,7 @@ describe("model/thumb", () => {
 
   describe("removeFromAlbum", () => {
     beforeEach(() => {
-      Mock.history.delete.length = 0;
+      Mock.resetHistory();
     });
 
     it("flips Removed to true, DELETEs albums/:albumUID/photos, and resolves on success", async () => {

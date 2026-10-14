@@ -232,6 +232,9 @@ func TestPrepareRestore(t *testing.T) {
 		assert.Subset(t, restore.cmd.Args, mariadbRestoreArgs(c.MariadbBin()))
 		assert.Equal(t, "--no-defaults", restore.cmd.Args[1])
 		assert.Equal(t, c.DatabaseName(), restore.cmd.Args[len(restore.cmd.Args)-1])
+	case dsn.DriverPostgres:
+		assert.Equal(t, append([]string{c.PsqlBin()}, postgresRestoreArgs()...), restore.cmd.Args)
+		assert.Equal(t, c.DatabasePassword(), restore.password)
 	default:
 		t.Skipf("unsupported test driver %s", c.DatabaseDriver())
 	}

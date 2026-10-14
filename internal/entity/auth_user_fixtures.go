@@ -120,7 +120,7 @@ var UserFixtures = UserMap{
 		CanLogin:     false,
 		WebDAV:       true,
 		CanInvite:    false,
-		DeletedAt:    TimeStamp(),
+		DeletedAt:    DeletedAtTime(*TimeStamp()),
 		UserSettings: &UserSettings{
 			UITheme:     "",
 			MapsStyle:   "",
@@ -300,6 +300,17 @@ var UserFixtures = UserMap{
 // CreateUserFixtures creates the user fixtures specified above
 func CreateUserFixtures() {
 	for _, entity := range UserFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
+
+		// Adds the settings and details of the fixture, as related records are saved explicitly.
+		if entity.UserSettings != nil {
+			entity.UserSettings.UserUID = entity.UserUID
+			createFixture(entity.UserSettings)
+		}
+
+		if entity.UserDetails != nil {
+			entity.UserDetails.UserUID = entity.UserUID
+			createFixture(entity.UserDetails)
+		}
 	}
 }

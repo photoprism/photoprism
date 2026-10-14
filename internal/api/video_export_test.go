@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"mime"
 	"net/http"
 	"net/http/httptest"
@@ -18,6 +19,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
@@ -123,9 +125,11 @@ func TestGetVideoExport(t *testing.T) {
 		admin := entity.SessionFixtures.Get("alice_app_password_full_access")
 		relation := entity.NewPhotoAlbum(f.PhotoUID, "as6sg6bxpogaaba8")
 		var existing entity.PhotoAlbum
-		if entity.Db().Where("photo_uid = ? AND album_uid = ?", relation.PhotoUID, relation.AlbumUID).First(&existing).RecordNotFound() {
+		if err := entity.Db().Where("photo_uid = ? AND album_uid = ?", relation.PhotoUID, relation.AlbumUID).First(&existing).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 			require.NoError(t, relation.Create())
 			defer entity.Db().Delete(relation)
+		} else {
+			require.NoError(t, err)
 		}
 		for _, tc := range []struct{ name, token, key string }{
 			{"FullDetail", tokens.SignDownload(admin.ID), "export-pair"},

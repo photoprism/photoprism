@@ -54,7 +54,9 @@ resolves its config through `get.Config()` behind a `sync.Once`, so a test needs
 
 ### MariaDB Runs
 
-`make test-mariadb` runs the backend suite against MariaDB instead of SQLite, and each edition has the same target (`make -C pro test-mariadb`, likewise `plus` and `portal`). Each package gets its own `acceptance_<pkg>_<hash>` database via `entity.TestDbDSN`, mirroring the file-per-package isolation SQLite provides; `make reset-acceptance` drops them. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
+`make test-mariadb` runs the backend suite against MariaDB instead of SQLite, and each edition has the same target (`make -C pro test-mariadb`, likewise `plus` and `portal`). Each package gets its own `testdb_<pkg>_<hash>` database via `entity.TestDbDSN`, mirroring the file-per-package isolation SQLite provides; `make reset-mariadb-testdb` drops them. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
+
+`make test-postgres` does the same against the optional PostgreSQL service (`docker compose --profile postgres up -d`), and `make reset-postgres-testdb` drops its per-package databases. PostgreSQL is experimental; a failed statement aborts the rest of its transaction there, so a test or fixture loader must not rely on an ignored insert error inside a transaction.
 
 Makefile recipes talk to the development database through `$(MARIADB)`, which defaults to the `mariadb` client and can be overridden. The `mysql` string stays where it names the SQL driver (`PHOTOPRISM_TEST_DRIVER`, `dsn.DriverMySQL`) and in the MySQL 8 compatibility tooling (`compose.mysql.yaml`, `PHOTOPRISM_TEST_DSN_MYSQL8`).
 
@@ -70,6 +72,10 @@ Makefile recipes talk to the development database through `$(MARIADB)`, which de
   gets a name of its own via `NewIsolatedTestConfig("<name>", path, false)`, as `resetConfigAndOpenDB` does.
 - With an implicit SQLite DSN, use a distinct database name for each replacement of an open test config. Test
   database names retain letters, hyphens, and underscores but strip digits, so numeric suffixes are not distinct.
+- Close every `NewMinimalTestConfigWithDb` config in the cleanup that restores the package database: call
+  `CloseDb()` first, as it clears the entity provider, then restore the previous one (`RegisterDb()` or
+  `entity.SetDbProvider`). An unclosed config keeps its pool open for the rest of the package run, and a suite
+  that builds them per test exceeds PostgreSQL's 100-connection limit (`too many clients already`).
 
 ### Environment Traps in `internal/config` and Nested Packages
 

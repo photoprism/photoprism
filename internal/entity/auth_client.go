@@ -8,7 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -31,34 +31,34 @@ type Clients []Client
 
 // Client represents an OAuth/OpenID client registered with PhotoPrism.
 type Client struct {
-	ClientUID    string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
-	NodeUUID     string          `gorm:"type:VARBINARY(64);index;default:'';" json:"NodeUUID,omitempty" yaml:"NodeUUID,omitempty"`
-	UserUID      string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	ClientUID    string          `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"ClientUID"`
+	NodeUUID     string          `gorm:"type:bytes;size:64;index;default:'';" json:"NodeUUID,omitempty" yaml:"NodeUUID,omitempty"`
+	UserUID      string          `gorm:"type:bytes;size:42;index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user         *User           `gorm:"-" yaml:"-"`
 	AppName      string          `gorm:"size:64;" json:"AppName" yaml:"AppName,omitempty"`
 	AppVersion   string          `gorm:"size:64;" json:"AppVersion" yaml:"AppVersion,omitempty"`
 	ClientName   string          `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
 	DisplayName  string          `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
-	NameSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"NameSrc,omitempty" yaml:"NameSrc,omitempty"`
+	NameSrc      string          `gorm:"type:bytes;size:8;default:'';" json:"NameSrc,omitempty" yaml:"NameSrc,omitempty"`
 	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
-	ClientType   string          `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
-	ClientURL    string          `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
-	CallbackURL  string          `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
-	AuthProvider string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod   string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	ClientType   string          `gorm:"type:bytes;size:16" json:"ClientType" yaml:"ClientType,omitempty"`
+	ClientURL    string          `gorm:"type:bytes;size:255;default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
+	CallbackURL  string          `gorm:"type:bytes;size:255;default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
+	AuthProvider string          `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string          `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthScope    string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	AuthExpires  int64           `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
 	AuthTokens   int64           `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
 	AuthEnabled  bool            `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
-	RefreshToken string          `gorm:"type:VARBINARY(2048);column:refresh_token;default:'';" json:"-" yaml:"-"`
-	IdToken      string          `gorm:"type:VARBINARY(2048);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
-	DataJSON     json.RawMessage `gorm:"type:VARBINARY(4096);" json:"-" yaml:"Data,omitempty"`
+	RefreshToken string          `gorm:"type:bytes;size:2048;column:refresh_token;default:'';" json:"-" yaml:"-"`
+	IdToken      string          `gorm:"type:bytes;size:2048;column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	DataJSON     json.RawMessage `gorm:"type:bytes;size:4096;" json:"-" yaml:"Data,omitempty"`
 	data         *ClientData     `gorm:"-" yaml:"-"`
 	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	DeletedAt    DeletedAt       `gorm:"index" json:"DeletedAt,omitzero" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -86,14 +86,16 @@ func NewClient() *Client {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Client) BeforeCreate(scope *gorm.Scope) error {
+func (m *Client) BeforeCreate(tx *gorm.DB) error {
 	if rnd.IsUID(m.ClientUID, ClientUID) {
 		return nil
 	}
 
 	m.ClientUID = rnd.GenerateUID(ClientUID)
 
-	return scope.SetColumn("ClientUID", m.ClientUID)
+	tx.Statement.SetColumn("ClientUID", m.ClientUID)
+
+	return nil
 }
 
 // FindClientByUID returns the matching client or nil if it was not found. The lookup reads
@@ -411,13 +413,6 @@ func (m *Client) Delete() (err error) {
 		return err
 	}
 
-	// Carry the mark onto the in-memory record, which the driver does not do, so a caller
-	// that keeps using it sees the same state as one that reads the row again.
-	if m.DeletedAt == nil {
-		deletedAt := UTC()
-		m.DeletedAt = &deletedAt
-	}
-
 	return nil
 }
 
@@ -446,7 +441,7 @@ func (m *Client) Restore() error {
 		return err
 	}
 
-	m.DeletedAt = nil
+	m.DeletedAt = DeletedAt{}
 
 	return nil
 }
@@ -561,16 +556,50 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 	return deleted, nil
 }
 
+// RevokeSessions deletes the sessions of this client, except for the ones specified to omit.
+func (m *Client) RevokeSessions(omit []string) (deleted int) {
+	if m == nil || m.ClientUID == "" {
+		return 0
+	}
+
+	stmt := Db().Where("client_uid = ?", m.ClientUID)
+
+	if len(omit) > 0 {
+		stmt = stmt.Where("id NOT IN (?)", omit)
+	}
+
+	found := Sessions{}
+
+	if err := stmt.Find(&found).Error; err != nil {
+		event.AuditErr([]string{"client %s", "revoke sessions", status.Error(err)}, m.String())
+		return 0
+	}
+
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditWarn([]string{"client %s", "revoke session %s", status.Error(err)}, m.String(), clean.Log(sess.RefID))
+		} else {
+			deleted++
+		}
+	}
+
+	if deleted > 0 {
+		event.AuditInfo([]string{"client %s", "revoke %s", status.Deleted}, m.String(), english.Plural(deleted, "session", "sessions"))
+	}
+
+	return deleted
+}
+
 // Deleted checks if the client has been deleted. A missing client reads as deleted,
 // so a failed lookup and a retired record reach the same decision.
 func (m *Client) Deleted() bool {
 	if m == nil {
 		return true
-	} else if m.DeletedAt == nil {
+	} else if !m.DeletedAt.Valid {
 		return false
 	}
 
-	return !m.DeletedAt.IsZero()
+	return !m.DeletedAt.Time.IsZero()
 }
 
 // Disabled checks if the client has been deleted or its authentication is turned off.

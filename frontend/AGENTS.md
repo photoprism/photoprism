@@ -1,12 +1,13 @@
 # Frontend Guidelines
 
-**Last Updated:** October 6, 2026
+**Last Updated:** October 13, 2026
 
 ## Dependencies & Pins
 
 - [`frontend/README.md`](README.md) is the canonical doc for dependency pin rationale, the `overrides` layer, ESM-only upgrade blockers, and the orphan-audit pattern.
 - **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.20.0"`, `"vuetify": "4.2.4"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
-- npm is a workspace; run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates.
+- To add or change a dependency: npm is a workspace, so run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates.
+- `node_modules` is mounted from the host along with the repo, and nothing reinstalls it when `package-lock.json` changes, e.g. after a pull. Sync it with `make -C frontend install` (`npm install`), which only updates what changed and rewrites the lockfile only if it is out of sync with `package.json`, a change to commit. `make -C frontend ci` (`npm ci`) reinstalls everything and fails on such a lockfile. When a Vitest or build failure appears in code the change did not touch, run `npm ls --depth=0` first: `invalid` or `missing` means the install is stale, not the code.
 - After dep changes run `make audit`, `make build-js`, `make test-js`, and `make notice`.
 - Before adding a new dep — and especially before declaring an existing one "unused" — verify with `rg -nF "<pkg>" frontend …` plus `npm ls <pkg> --all` that no consumer or peer-dep needs it.
 
@@ -19,8 +20,8 @@
 - New JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.
 - New Vue components should have component-test coverage, and existing component tests should be updated as needed when component behavior changes.
 - Acceptance tests use the `acceptance-*` targets in the root `Makefile`.
-- For one-off TestCafe checks, keep startup and cleanup in the repository root: `make storage/acceptance`, `make acceptance-sqlite-restart`, `make wait-2`, then `(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --config-file ./testcaferc.json --test-meta mode=public,type=short,testID=components-001 "tests/acceptance")`, then `make acceptance-sqlite-stop`.
-- If a command temporarily changes into `frontend/`, return to the repository root before running `make acceptance-sqlite-stop`.
+- For one-off TestCafe checks, keep startup and cleanup in the repository root: `make storage/acceptance`, `make acceptance-sqlite-restart-1`, `make wait-1`, then `(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --config-file ./.testcaferc.cjs --test-meta mode=public,type=short,testID=components-001 "tests/acceptance")`, then `make acceptance-sqlite-stop-1`.
+- If a command temporarily changes into `frontend/`, return to the repository root before running `make acceptance-sqlite-stop-1`.
 
 ## Templates, Session Bootstrap & Browser Baseline
 
@@ -67,3 +68,4 @@
 ## Frontend Test Gotchas
 
 - Hidden-route UI checks under `/library/hidden` or `/portal/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.
+- Clear the request log of the shared `Mock` in `tests/vitest/fixtures.js` with `Mock.resetHistory()`. `Mock.history.post` and the other verb properties are getters that return a filtered copy, so `Mock.history.post.length = 0` clears nothing and a request from an earlier test still counts.

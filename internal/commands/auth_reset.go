@@ -46,12 +46,12 @@ func authResetAction(ctx *cli.Context) error {
 		db := conf.Db()
 
 		// Drop existing sessions table.
-		if err := db.DropTableIfExists(entity.Session{}).Error; err != nil {
+		if err := db.Migrator().DropTable(&entity.Session{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_sessions.
-		if err := db.CreateTable(entity.Session{}).Error; err != nil {
+		if err := entity.CreateTable(db, &entity.Session{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 

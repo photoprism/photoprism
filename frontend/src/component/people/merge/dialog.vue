@@ -55,8 +55,8 @@ export default {
       }
 
       return this.$gettext("Merge %{a} with %{b}?", {
-        a: this.subj1.originalValue("Name"),
-        b: this.subj2.Name,
+        a: this.$util.isolate(this.subj1.originalValue("Name")),
+        b: this.$util.isolate(this.subj2.Name),
       });
     },
   },

@@ -20,7 +20,7 @@ const (
 	ClientAuthMethod       = "client authentication `METHOD`"
 	ClientAuthExpires      = "access token `LIFETIME` in seconds, after which a new token must be requested"
 	ClientAuthTokens       = "maximum `NUMBER` of access tokens that the client can request (-1 to disable the limit)"
-	ClientRegenerateSecret = "set a new randomly generated client secret"
+	ClientRegenerateSecret = "set a new randomly generated client secret and revoke existing access tokens"
 	ClientEnable           = "enable client authentication if disabled"
 	ClientDisable          = "disable client authentication"
 	ClientRestore          = "bring back a deleted client without asking for confirmation; it needs a new secret"

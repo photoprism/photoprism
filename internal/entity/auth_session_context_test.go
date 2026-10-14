@@ -24,10 +24,11 @@ func newContextRequest(t *testing.T, remoteAddr, userAgent string) *gin.Context 
 }
 
 // countSessions returns how many rows the sessions table holds for the given id.
-func countSessions(t *testing.T, id string) (n int) {
+func countSessions(t *testing.T, id string) int {
+	var n64 int64
 	t.Helper()
-	require.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", id).Count(&n).Error)
-	return n
+	require.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", id).Count(&n64).Error)
+	return int(n64)
 }
 
 // removeSessionRow removes a session row directly, leaving the session cache as it is.

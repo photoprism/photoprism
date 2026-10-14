@@ -34,7 +34,6 @@ var ServiceFixtures = ServiceMap{
 		SyncRaw:       true,
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
-		DeletedAt:     nil,
 	},
 	"dummy-webdav2": {
 		ID:            1000001,
@@ -63,7 +62,6 @@ var ServiceFixtures = ServiceMap{
 		SyncRaw:       true,
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
-		DeletedAt:     nil,
 	},
 }
 
@@ -73,6 +71,6 @@ var ServiceFixtureWebdavDummy2 = ServiceFixtures["dummy-webdav2"]
 // CreateServiceFixtures inserts known entities into the database for testing.
 func CreateServiceFixtures() {
 	for _, entity := range ServiceFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

@@ -44,6 +44,18 @@ describe("options/options", () => {
     expect(timezones[1].Name).toBe("UTC");
   });
 
+  it("should label UTC offsets with their own sign", () => {
+    const offsets = options.GmtOffsets.filter((o) => o.ID !== "GMT");
+    expect(offsets).toHaveLength(24);
+
+    for (const o of offsets) {
+      const [, sign, hours] = o.ID.match(/^UTC([+-])(\d+)$/);
+      expect(o.Name).toBe(`UTC${sign}${hours.padStart(2, "0")}:00`);
+    }
+
+    expect(options.TimeZones().slice(-24)).toEqual(offsets);
+  });
+
   it("should get days", () => {
     const Days = options.Days();
     expect(Days[0].text).toBe("01");

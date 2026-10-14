@@ -116,28 +116,44 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		}
 
 		var statements []string
+		args := [][]any{{canonical.ID, duplicate.ID}, {canonical.ID, duplicate.ID}, {canonical.PhotoUID, duplicate.PhotoUID}}
+
 		switch entity.DbDialect() {
-		case dsn.DriverMySQL:
+		case dsn.DialectMySQL:
 			statements = []string{
 				"UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?",
 			}
-		case dsn.DriverSQLite3:
+		case dsn.DialectSQLite:
 			statements = []string{
 				"UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?",
 				"UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?",
 			}
+		case dsn.DialectPostgreSQL:
+			// Like the statements above, rows that would duplicate one of the canonical photo are left unchanged.
+			statements = []string{
+				"UPDATE photos_keywords SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS " +
+					"(SELECT 1 FROM photos_keywords k WHERE k.photo_id = ? AND k.keyword_id = photos_keywords.keyword_id)",
+				"UPDATE photos_labels SET photo_id = ? WHERE photo_id = ? AND NOT EXISTS " +
+					"(SELECT 1 FROM photos_labels l WHERE l.photo_id = ? AND l.label_id = photos_labels.label_id)",
+				"UPDATE photos_albums SET photo_uid = ? WHERE photo_uid = ? AND NOT EXISTS " +
+					"(SELECT 1 FROM photos_albums a WHERE a.photo_uid = ? AND a.album_uid = photos_albums.album_uid)",
+			}
+
+			for i := range args {
+				args[i] = append(args[i], args[i][0])
+			}
 		default:
 			return rollback(errors.New("unsupported database dialect"))
 		}
 
-		if err := tx.Exec(statements[0], canonical.ID, duplicate.ID).Error; err != nil {
+		if err := tx.Exec(statements[0], args[0]...).Error; err != nil {
 			return rollback(err)
-		} else if err = tx.Exec(statements[1], canonical.ID, duplicate.ID).Error; err != nil {
+		} else if err = tx.Exec(statements[1], args[1]...).Error; err != nil {
 			return rollback(err)
-		} else if err = tx.Exec(statements[2], canonical.PhotoUID, duplicate.PhotoUID).Error; err != nil {
+		} else if err = tx.Exec(statements[2], args[2]...).Error; err != nil {
 			return rollback(err)
 		}
 
@@ -192,17 +208,17 @@ func insta360CaptureState(photos entity.Photos) *entity.Photo {
 		switch {
 		case photo == nil, insta360PhotoRemoved(photo):
 			continue
-		case photo.DeletedAt == nil:
+		case !photo.DeletedAt.Valid:
 			if photo.PhotoQuality >= 0 {
 				visible = append(visible, photo)
 			}
-		case archived == nil && !photo.DeletedAt.Before(*canonical.DeletedAt):
+		case archived == nil && !photo.DeletedAt.Time.Before(canonical.DeletedAt.Time):
 			archived = photo
 		}
 	}
 
 	for _, photo := range visible {
-		if archived == nil || photo.CreatedAt.Before(*archived.DeletedAt) {
+		if archived == nil || photo.CreatedAt.Before(archived.DeletedAt.Time) {
 			return photo
 		}
 	}
@@ -216,5 +232,5 @@ func insta360CaptureState(photos entity.Photos) *entity.Photo {
 
 // insta360PhotoRemoved reports whether a photo was removed automatically rather than archived.
 func insta360PhotoRemoved(photo *entity.Photo) bool {
-	return photo != nil && photo.DeletedAt != nil && photo.PhotoQuality < 0
+	return photo != nil && photo.DeletedAt.Valid && photo.PhotoQuality < 0
 }

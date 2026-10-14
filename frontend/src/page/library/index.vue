@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-index">
     <v-form ref="form" class="p-form p-photo-index" validate-on="invalid-input" @submit.prevent="submit">
       <div class="form-header">
-        <span v-if="fileName" class="text-break">{{ action }} {{ fileName }}…</span>
+        <span v-if="fileName" class="text-break">{{ action }} <bdi dir="ltr">{{ $util.stripBidiControls(fileName) }}</bdi>…</span>
         <span v-else-if="action">{{ action }}…</span>
         <span v-else-if="busy">{{ $gettext(`Indexing media and sidecar files…`) }}</span>
         <span v-else-if="completed">{{ $gettext(`Done.`) }}</span>

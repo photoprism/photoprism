@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -53,6 +54,36 @@ func oidcReconcileHint(userName, provider, subject string) string {
 
 	return fmt.Sprintf("account %s uses %s authentication and must be linked before it can sign in via oidc; adopt it with 'photoprism users mod %s --auth oidc --auth-id %s' or sign in locally",
 		clean.LogQuote(userName), clean.LogQuote(provider), userName, clean.Log(subject))
+}
+
+// auditOidcSkippedClaim records that a username claim with characters other than ASCII was skipped when
+// registering an account.
+func auditOidcSkippedClaim(clientIp string, skipped bool) {
+	if skipped {
+		event.AuditWarn([]string{clientIp, "create session", "oidc", "create user", "username claim", authn.ErrNotASCII.Error(), status.Skipped})
+	}
+}
+
+// oidcUsernameAvailable reports whether a new account can take the username, i.e. it is not reserved and no
+// account, as the database compares names, has it.
+func oidcUsernameAvailable(userName string) bool {
+	if _, err := authn.Username(userName); errors.Is(err, authn.ErrReserved) {
+		return false
+	}
+
+	return entity.FindUserByName(userName) == nil
+}
+
+// oidcSuffixedUsername appends a random six-digit number to the username, shortening it first so that the
+// result fits the length a login accepts.
+func oidcSuffixedUsername(userName string) string {
+	const suffixLength = 6
+
+	if maxLength := txt.ClipUsername - suffixLength; len(userName) > maxLength {
+		userName = userName[:maxLength]
+	}
+
+	return userName + rnd.Base10(suffixLength)
 }
 
 // oidcEmailUsername reports whether the username of a new account is its verified email address, as with the
@@ -147,7 +178,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// branded page that returns the user to login instead of leaving them on a
 			// raw, dead-end error with no way forward.
 			event.AuditErr([]string{clientIp, "create session", "oidc", status.Error(claimErr)})
-			event.LoginError(clientIp, "oidc", userName, userAgent, claimErr.Error())
+			event.LoginError(clientIp, "oidc", userName, userAgent, clean.Error(claimErr))
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrUnexpected))
 			return
 		}
@@ -213,7 +244,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// Optionally check if the email domain matches.
 		if domain := conf.OIDCDomain(); domain == "" {
 			// Do nothing.
-		} else if _, emailDomain, _ := strings.Cut(userEmail, "@"); emailDomain == "" || !userInfo.EmailVerified {
+		} else if _, emailDomain, _ := strings.Cut(oidc.VerifiedEmail(userInfo), "@"); emailDomain == "" {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrVerifiedEmailRequired.Error()})
 			event.LoginError(clientIp, "oidc", userEmail, userAgent, authn.ErrVerifiedEmailRequired.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrVerifiedEmailRequired))
@@ -233,6 +264,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		} else if oidcUser.UserName == "" && entity.FindUser(oidcUser) == nil {
+			auditOidcSkippedClaim(clientIp, conf.OIDCRegister() && oidc.SkipsClaim(userInfo, conf.OIDCUsername()))
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrUsernameRequiredToRegister.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequiredToRegister.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
@@ -304,7 +336,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user.Settings().UILanguage = clean.Locale(userInfo.Locale.String(), user.Settings().UILanguage)
 
 			// Update UI timezone.
-			if zone := userInfo.Zoneinfo; zone != "" && zone != tz.UTC {
+			if zone := oidcTimeZone(userInfo.Zoneinfo); zone != "" && zone != tz.UTC {
 				user.Settings().UITimeZone = zone
 			}
 
@@ -315,7 +347,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 
 			// Update birthday, if available.
-			if birthDate := txt.ParseTime(userInfo.Birthdate, userInfo.Zoneinfo); !birthDate.IsZero() {
+			if birthDate := txt.ParseTime(userInfo.Birthdate, oidcTimeZone(userInfo.Zoneinfo)); !birthDate.IsZero() {
 				user.BornAt = &birthDate
 				user.Details().BirthDay = birthDate.Day()
 				user.Details().BirthMonth = int(birthDate.Month())
@@ -350,7 +382,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Update existing user account.
 			if err = user.Save(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountUpdateFailed.Error(), status.Error(err)})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+clean.Error(err)+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			} else if emailChanged {
@@ -374,6 +406,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user = &oidcUser
 
 			userName = oidcUser.Username()
+			auditOidcSkippedClaim(clientIp, oidc.SkipsClaim(userInfo, conf.OIDCUsername()))
 
 			// A username taken from the email address must match it, so it is never changed to resolve a conflict.
 			emailUsername, validEmailUsername := oidcEmailUsername(conf.OIDCUsername(), oidcUser.UserName, oidc.VerifiedEmail(userInfo))
@@ -383,7 +416,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidUsername.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
-			} else if entity.FindUserByName(userName) == nil {
+			} else if oidcUsernameAvailable(userName) {
 				// The username is available.
 			} else if emailUsername {
 				event.AuditWarn([]string{clientIp, "create session", "oidc", "create user %s", authn.ErrUsernameAlreadyExists.Error()}, clean.LogQuote(userName))
@@ -392,7 +425,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				return
 			} else {
 				// Resolve the naming conflict by adding a random number to the username.
-				userName += rnd.Base10(6)
+				userName = oidcSuffixedUsername(userName)
 			}
 
 			// An email address used as username must not be assigned to another account.
@@ -431,7 +464,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user.Settings().UILanguage = clean.Locale(userInfo.Locale.String(), "")
 
 			// Set UI timezone.
-			user.Settings().UITimeZone = userInfo.Zoneinfo
+			user.Settings().UITimeZone = oidcTimeZone(userInfo.Zoneinfo)
 
 			// Set user location, if available.
 			if addr := userInfo.GetAddress(); addr != nil {
@@ -440,7 +473,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 
 			// Set birthday, if available.
-			if birthDate := txt.ParseTime(userInfo.Birthdate, userInfo.Zoneinfo); !birthDate.IsZero() {
+			if birthDate := txt.ParseTime(userInfo.Birthdate, oidcTimeZone(userInfo.Zoneinfo)); !birthDate.IsZero() {
 				user.BornAt = &birthDate
 				user.Details().BirthDay = birthDate.Day()
 				user.Details().BirthMonth = int(birthDate.Month())
@@ -470,12 +503,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Create new user account, and then update the Subject ID to make sure it is unique.
 			if err = user.Create(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountCreateFailed.Error(), status.Error(err)})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+" ("+err.Error()+")")
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+" ("+clean.Error(err)+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			} else if err = user.UpdateAuthID(userInfo.Subject, provider.Issuer()); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountUpdateFailed.Error(), status.Error(err)})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+clean.Error(err)+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}
@@ -571,4 +604,9 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// Step 3: Render HTML template to set the access token in localStorage.
 		c.HTML(http.StatusOK, "auth.gohtml", response)
 	})
+}
+
+// oidcTimeZone returns the normalized time zone of a zoneinfo claim, or an empty string if it is not a valid name.
+func oidcTimeZone(zoneinfo string) string {
+	return tz.Sanitize(zoneinfo)
 }

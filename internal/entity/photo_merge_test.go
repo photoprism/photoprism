@@ -146,9 +146,9 @@ func TestPhoto_Merge(t *testing.T) {
 		t.Cleanup(func() {
 			photoIDs := []uint{imagePhoto.ID, videoPhoto.ID}
 
-			_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(File{}).Error
-			_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(Details{}).Error
-			_ = UnscopedDb().Where("id IN (?)", photoIDs).Delete(Photo{}).Error
+			_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(&File{}).Error
+			_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(&Details{}).Error
+			_ = UnscopedDb().Where("id IN (?)", photoIDs).Delete(&Photo{}).Error
 		})
 
 		imageFile := File{
@@ -224,9 +224,9 @@ func TestPhoto_SyncMediaTypeFromFiles(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(File{}).Error
-			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(Details{}).Error
-			_ = UnscopedDb().Where("id = ?", photo.ID).Delete(Photo{}).Error
+			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&File{}).Error
+			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&Details{}).Error
+			_ = UnscopedDb().Where("id = ?", photo.ID).Delete(&Photo{}).Error
 		})
 
 		sidecar := File{
@@ -273,9 +273,9 @@ func TestPhoto_SyncMediaTypeFromFiles(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(File{}).Error
-			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(Details{}).Error
-			_ = UnscopedDb().Where("id = ?", photo.ID).Delete(Photo{}).Error
+			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&File{}).Error
+			_ = UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&Details{}).Error
+			_ = UnscopedDb().Where("id = ?", photo.ID).Delete(&Photo{}).Error
 		})
 
 		video := File{

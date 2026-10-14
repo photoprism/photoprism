@@ -17,7 +17,7 @@ func TestSubject_UpdateName_FormerName(t *testing.T) {
 
 	m := NewSubject(former, SubjPerson, SrcManual)
 	require.NoError(t, m.Save())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", m.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
 	require.NotNil(t, FindSubjectByName(former, false))
 
 	_, err := m.UpdateName(current)
@@ -35,7 +35,7 @@ func TestSubject_UpdateName_FormerName(t *testing.T) {
 	t.Run("RenameOtherIntoFormerName", func(t *testing.T) {
 		other := NewSubject("Former Bella "+suffix, SubjPerson, SrcManual)
 		require.NoError(t, other.Save())
-		t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", other.SubjUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", other.SubjUID) })
 
 		assert.Nil(t, ReassignSubject(other, former))
 
@@ -51,7 +51,7 @@ func TestSubject_UpdateName_FormerName(t *testing.T) {
 	t.Run("OtherPersonWithFormerName", func(t *testing.T) {
 		other := NewSubject(former, SubjPerson, SrcManual)
 		require.NoError(t, other.Save())
-		t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", other.SubjUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", other.SubjUID) })
 
 		if found := FindSubjectByName(former, false); assert.NotNil(t, found) {
 			assert.Equal(t, other.SubjUID, found.SubjUID)
@@ -119,7 +119,7 @@ func TestSubject_AfterFind_FormerName(t *testing.T) {
 	m := NewSubject("Stale Anne "+suffix, SubjPerson, SrcManual)
 	require.NoError(t, m.Save())
 	t.Cleanup(func() {
-		UnscopedDb().Delete(Subject{}, "subj_uid = ?", m.SubjUID)
+		UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID)
 		SubjNames.Unset(m.SubjUID)
 	})
 
@@ -140,7 +140,7 @@ func TestSubject_AfterFind_FormerName(t *testing.T) {
 	t.Run("Person", func(t *testing.T) {
 		SubjNames.Set(m.SubjUID, former)
 		p := Person{SubjUID: m.SubjUID, SubjName: m.SubjName}
-		require.NoError(t, p.AfterFind())
+		require.NoError(t, p.AfterFind(Db()))
 		assert.Empty(t, SubjNames.Key(former))
 	})
 }

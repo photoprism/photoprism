@@ -21,7 +21,6 @@ func runTestMain(m *testing.M) (code int) {
 	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("test", tempDir)
-	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
 			log.Warnf("close db: %v", err)

@@ -1,13 +1,15 @@
 package query
 
 import (
+	"errors"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -478,4 +480,173 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		}
 		assert.Equal(t, 1, remaining, "exactly one of the same-filter folder albums should remain")
 	})
+	t.Run("SharesAndPhotoLinks", func(t *testing.T) {
+		slug := "duplicate-links-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		filter := "label:" + slug
+
+		kept := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		kept.SetTitle("Duplicate Links")
+		if err := kept.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = kept.DeletePermanently() })
+
+		duplicate := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		duplicate.SetTitle("Duplicate Links")
+		if err := duplicate.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = duplicate.DeletePermanently() })
+
+		photoUID := entity.PhotoFixtures.Get("Photo01").PhotoUID
+		linkUIDs := make(map[string]string, 2)
+
+		for _, a := range []*entity.Album{kept, duplicate} {
+			if err := UnscopedDb().Create(&entity.PhotoAlbum{PhotoUID: photoUID, AlbumUID: a.AlbumUID}).Error; err != nil {
+				t.Fatal(err)
+			}
+
+			link := entity.NewLink(a.AlbumUID, false, false)
+			if err := UnscopedDb().Create(&link).Error; err != nil {
+				t.Fatal(err)
+			}
+
+			pw := entity.NewPassword(link.LinkUID, "LinkPassword123!", false)
+			require.NoError(t, pw.Save())
+			t.Cleanup(func() { UnscopedDb().Delete(&entity.Password{}, "uid = ?", link.LinkUID) })
+			linkUIDs[a.AlbumUID] = link.LinkUID
+
+			if err := entity.NewUserShare(entity.Admin.UserUID, a.AlbumUID, entity.PermView, nil).Create(); err != nil {
+				t.Fatal(err)
+			}
+		}
+
+		if _, err := RemoveDuplicateMoments(); err != nil {
+			t.Fatal(err)
+		}
+
+		links := func(albumUID string) (n int64) {
+			UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", albumUID).Count(&n)
+			return n
+		}
+
+		shares := func(albumUID string) (n int64) {
+			var links, users int64
+			UnscopedDb().Model(&entity.Link{}).Where("share_uid = ?", albumUID).Count(&links)
+			UnscopedDb().Model(&entity.UserShare{}).Where("share_uid = ?", albumUID).Count(&users)
+			return links + users
+		}
+
+		assert.False(t, albumRowExists(duplicate.AlbumUID), "the newer duplicate is removed")
+		assert.Equal(t, int64(0), links(duplicate.AlbumUID), "with its photo links")
+		assert.Equal(t, int64(0), shares(duplicate.AlbumUID), "and shares")
+		assert.True(t, albumRowExists(kept.AlbumUID), "the older album is kept")
+		assert.Equal(t, int64(1), links(kept.AlbumUID), "with its photo links")
+		assert.Equal(t, int64(2), shares(kept.AlbumUID), "and shares")
+		assert.Nil(t, entity.FindPassword(linkUIDs[duplicate.AlbumUID]), "the removed link's password is removed")
+		assert.NotNil(t, entity.FindPassword(linkUIDs[kept.AlbumUID]), "the kept link's password is kept")
+		assert.NotNil(t, entity.FindPassword(entity.UserFixtures.Pointer("alice").UserUID), "user passwords are kept")
+	})
+	t.Run("RollsBack", func(t *testing.T) {
+		slug := "duplicate-rollback-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		filter := "label:" + slug
+
+		kept := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		kept.SetTitle("Duplicate Rollback")
+		require.NoError(t, kept.Create())
+		t.Cleanup(func() { _ = kept.DeletePermanently() })
+
+		duplicate := &entity.Album{AlbumType: entity.AlbumMoment, AlbumSlug: slug, AlbumFilter: filter}
+		duplicate.SetTitle("Duplicate Rollback")
+		require.NoError(t, duplicate.Create())
+		t.Cleanup(func() { _ = duplicate.DeletePermanently() })
+
+		photoUID := entity.PhotoFixtures.Get("Photo01").PhotoUID
+		require.NoError(t, UnscopedDb().Create(&entity.PhotoAlbum{PhotoUID: photoUID, AlbumUID: duplicate.AlbumUID}).Error)
+		t.Cleanup(func() { UnscopedDb().Where("album_uid = ?", duplicate.AlbumUID).Delete(&entity.PhotoAlbum{}) })
+		link := entity.NewLink(duplicate.AlbumUID, false, false)
+		require.NoError(t, UnscopedDb().Create(&link).Error)
+		t.Cleanup(func() { UnscopedDb().Where("share_uid = ?", duplicate.AlbumUID).Delete(&entity.Link{}) })
+		pw := entity.NewPassword(link.LinkUID, "LinkPassword123!", false)
+		require.NoError(t, pw.Save())
+		t.Cleanup(func() { UnscopedDb().Delete(&entity.Password{}, "uid = ?", link.LinkUID) })
+		require.NoError(t, entity.NewUserShare(entity.Admin.UserUID, duplicate.AlbumUID, entity.PermView, nil).Create())
+		t.Cleanup(func() { UnscopedDb().Where("share_uid = ?", duplicate.AlbumUID).Delete(&entity.UserShare{}) })
+
+		// The last statement fails, so the statements before it must be rolled back.
+		require.NoError(t, entity.Db().Callback().Raw().Before("gorm:raw").Register("test:moments-rollback", func(tx *gorm.DB) {
+			if strings.HasPrefix(tx.Statement.SQL.String(), "DELETE FROM photos_albums") {
+				_ = tx.AddError(errors.New("test photo link failure"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Raw().Remove("test:moments-rollback") })
+
+		_, err := RemoveDuplicateMoments()
+		require.ErrorContains(t, err, "test photo link failure")
+		_ = entity.Db().Callback().Raw().Remove("test:moments-rollback")
+
+		// The album, link and user share deletes ran before the failure.
+		assert.True(t, albumRowExists(duplicate.AlbumUID), "the duplicate is kept")
+		var n int64
+		require.NoError(t, UnscopedDb().Model(&entity.Link{}).Where("share_uid = ?", duplicate.AlbumUID).Count(&n).Error)
+		assert.Equal(t, int64(1), n, "with its link")
+		require.NoError(t, UnscopedDb().Model(&entity.UserShare{}).Where("share_uid = ?", duplicate.AlbumUID).Count(&n).Error)
+		assert.Equal(t, int64(1), n, "and its user share")
+		assert.NotNil(t, entity.FindPassword(link.LinkUID), "and its link's password")
+	})
+}
+
+// TestMomentsLabels_Threshold pins that the threshold applies to the photos counted by the query, not to
+// the stored label count. Only SQLite resolved the old HAVING alias to the stored count, so the test cannot
+// fail on MariaDB.
+func TestMomentsLabels_Threshold(t *testing.T) {
+	const threshold = 500
+	const slug = "botanical-garden"
+
+	photo := entity.Photo{}
+	if err := UnscopedDb().Where("photo_quality >= 3 AND photo_private = FALSE AND deleted_at IS NULL").
+		Order("id").First(&photo).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	existing := entity.Label{}
+	existed := UnscopedDb().Where("label_slug = ?", slug).First(&existing).Error == nil
+
+	label := entity.FirstOrCreateLabel(entity.NewLabel("Botanical Garden", 0))
+	if label == nil {
+		t.Fatal("label must not be nil")
+	}
+
+	t.Cleanup(func() {
+		_ = UnscopedDb().Where("photo_id = ? AND label_id = ?", photo.ID, label.ID).Delete(&entity.PhotoLabel{}).Error
+
+		if existed {
+			_ = UnscopedDb().Model(&entity.Label{}).Where("id = ?", label.ID).UpdateColumn("photo_count", existing.PhotoCount).Error
+		} else {
+			_ = UnscopedDb().Unscoped().Where("id = ?", label.ID).Delete(&entity.Label{}).Error
+		}
+
+		entity.FlushLabelCache()
+	})
+
+	if err := UnscopedDb().Model(&entity.Label{}).Where("id = ?", label.ID).
+		UpdateColumn("photo_count", threshold*2).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	link := entity.NewPhotoLabel(photo.ID, label.ID, 10, entity.SrcManual)
+	if err := UnscopedDb().Create(link).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	results, err := MomentsLabels(threshold, false)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, m := range results {
+		assert.GreaterOrEqual(t, m.PhotoCount, threshold, m.Label)
+		assert.NotEqual(t, MomentLabelsFilter(slug), m.Label)
+	}
 }

@@ -17,25 +17,26 @@ func TestFindLegacyUser(t *testing.T) {
 
 	// t.Logf("Legacy Admin: %#v", notFound)
 
-	if err := Db().AutoMigrate(legacy.User{}).Error; err != nil {
+	if err := Db().AutoMigrate(&legacy.User{}); err != nil {
 		log.Debugf("TestFindLegacyUser: %s (waiting 1s)", err.Error())
 
 		time.Sleep(time.Second)
 
-		if err = Db().AutoMigrate(legacy.User{}).Error; err != nil {
+		if err = Db().AutoMigrate(&legacy.User{}); err != nil {
 			log.Errorf("TestFindLegacyUser: failed migrating legacy.User")
 			t.Error(err)
 		}
 	}
 
-	Db().Save(legacy.Admin)
+	legacyAdmin := legacy.Admin
+	Db().Save(&legacyAdmin)
 
 	found := FindLegacyUser(Admin)
 	assert.NotNil(t, found)
 
 	// t.Logf("Legacy Admin: %#v", found)
 
-	if err := Db().DropTable(legacy.User{}).Error; err != nil {
+	if err := Db().Migrator().DropTable(&legacy.User{}); err != nil {
 		log.Errorf("TestFindLegacyUser: failed dropping legacy.User")
 		t.Error(err)
 	}
@@ -47,18 +48,19 @@ func TestFindLegacyUsers(t *testing.T) {
 
 	// t.Logf("Legacy Users: %#v", notFound)
 
-	if err := Db().AutoMigrate(legacy.User{}).Error; err != nil {
+	if err := Db().AutoMigrate(&legacy.User{}); err != nil {
 		log.Debugf("TestFindLegacyUser: %s (waiting 1s)", err.Error())
 
 		time.Sleep(time.Second)
 
-		if err = Db().AutoMigrate(legacy.User{}).Error; err != nil {
+		if err = Db().AutoMigrate(&legacy.User{}); err != nil {
 			log.Errorf("TestFindLegacyUser: failed migrating legacy.User")
 			t.Error(err)
 		}
 	}
 
-	Db().Save(legacy.Admin)
+	legacyAdmin := legacy.Admin
+	Db().Save(&legacyAdmin)
 
 	found := FindLegacyUsers("all")
 
@@ -67,15 +69,15 @@ func TestFindLegacyUsers(t *testing.T) {
 
 	// t.Logf("Legacy Users: %#v", found)
 
-	if err := Db().DropTable(legacy.User{}).Error; err != nil {
+	if err := Db().Migrator().DropTable(&legacy.User{}); err != nil {
 		log.Errorf("TestFindLegacyUser: failed dropping legacy.User")
 		t.Error(err)
 	}
 }
 
 func TestFindLegacyUsers_Literal(t *testing.T) {
-	require.NoError(t, Db().AutoMigrate(legacy.User{}).Error)
-	t.Cleanup(func() { _ = Db().DropTable(legacy.User{}).Error })
+	require.NoError(t, Db().AutoMigrate(&legacy.User{}))
+	t.Cleanup(func() { _ = Db().Migrator().DropTable(&legacy.User{}) })
 
 	base := "zzl" + rnd.Base36(5)
 
@@ -87,5 +89,21 @@ func TestFindLegacyUsers_Literal(t *testing.T) {
 
 	if assert.Len(t, found, 1) {
 		assert.Equal(t, base+"_a", found[0].UserName)
+	}
+}
+
+func TestFindLegacyUser_NoTable(t *testing.T) {
+	require.NoError(t, Db().Migrator().DropTable(&legacy.User{}))
+
+	statements := countedStatements(t, func() {
+		assert.Nil(t, FindLegacyUser(Admin))
+		assert.Empty(t, FindLegacyUsers("all"))
+	})
+
+	// Without the legacy table, the lookups only check whether it exists.
+	require.NotEmpty(t, statements)
+
+	for _, s := range statements {
+		assert.NotRegexp(t, "(?i)FROM [`\"]?users[`\"]?", s)
 	}
 }

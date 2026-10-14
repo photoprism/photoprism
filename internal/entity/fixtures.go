@@ -3,7 +3,8 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 var (
@@ -23,6 +24,12 @@ func fixtureDb() *gorm.DB {
 	}
 
 	return Db()
+}
+
+// createFixture inserts a fixture unless a row with the same key exists. Fixtures that share a key
+// are skipped without an error, which would abort the fixture transaction on PostgreSQL.
+func createFixture(value any) *gorm.DB {
+	return fixtureDb().Clauses(clause.OnConflict{DoNothing: true}).Create(value)
 }
 
 // CreateTestFixtures inserts all known entities into the database for testing.

@@ -94,7 +94,7 @@
       :visible="confirm.visible"
       icon="mdi-account-plus"
       :icon-size="42"
-      :text="confirm?.model?.Name ? $gettext('Add %{s}?', { s: confirm.model.Name }) : $gettext('Add person?')"
+      :text="confirm?.model?.Name ? $gettext('Add %{s}?', { s: $util.isolate(confirm.model.Name) }) : $gettext('Add person?')"
       @close="onCancelSetName"
       @confirm="onConfirmSetName"
     ></p-confirm-dialog>

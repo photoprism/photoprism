@@ -3,6 +3,7 @@ package clean
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 	"unicode"
 	"unicode/utf8"
@@ -19,6 +20,17 @@ var sanitizers = map[string]func(string) string{
 	"Error":     func(s string) string { return Error(errors.New(s)) },
 	"ErrorFull": func(s string) string { return ErrorFull(errors.New(s)) },
 }
+
+// renderers are the sanitizers plus Display, which keeps spaces and may return an empty string.
+var renderers = func() map[string]func(string) string {
+	m := map[string]func(string) string{"Display": Display}
+
+	for name, fn := range sanitizers {
+		m[name] = fn
+	}
+
+	return m
+}()
 
 // endsLine reports whether a rune terminates a line for a pager, an editor or CSS white-space.
 // The assertions hold to this property; the enumeration in unsafe.go is one way of satisfying it.
@@ -67,7 +79,7 @@ func eachInput(r rune) []string {
 }
 
 func TestSanitizersEmitNoLineTerminator(t *testing.T) {
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				for _, in := range eachInput(r) {
@@ -83,7 +95,7 @@ func TestSanitizersEmitNoLineTerminator(t *testing.T) {
 }
 
 func TestSanitizersEmitNoTerminalControl(t *testing.T) {
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				for _, in := range eachInput(r) {
@@ -99,7 +111,7 @@ func TestSanitizersEmitNoTerminalControl(t *testing.T) {
 }
 
 func TestSanitizersEmitNoBidiControl(t *testing.T) {
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				for _, in := range eachInput(r) {
@@ -119,7 +131,7 @@ func TestSanitizersKeepLetterFormingJoiners(t *testing.T) {
 	// letters in Persian and several Indic scripts, the second joins an emoji sequence.
 	keep := map[string]rune{"ZWNJ": 0x200C, "ZWJ": 0x200D}
 
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		for label, r := range keep {
 			t.Run(name+"/"+label, func(t *testing.T) {
 				assert.Contains(t, sanitize("a"+string(r)+"b"), string(r))
@@ -139,7 +151,7 @@ func TestSanitizersKeepOrdinaryText(t *testing.T) {
 		"family-2019.mp4",
 	}
 
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		for _, s := range keep {
 			t.Run(name+"/"+s, func(t *testing.T) {
 				assert.Contains(t, sanitize(s), s)
@@ -191,7 +203,7 @@ func hidesText(r rune) bool {
 func TestSanitizersRemoveEveryHiddenRune(t *testing.T) {
 	// The three properties above do not cover the invisible characters, which end no line,
 	// drive no terminal and reorder nothing.
-	for name, sanitize := range sanitizers {
+	for name, sanitize := range renderers {
 		t.Run(name, func(t *testing.T) {
 			eachRune(func(r rune) {
 				if !hidesText(r) {
@@ -207,9 +219,9 @@ func TestSanitizersRemoveEveryHiddenRune(t *testing.T) {
 
 func TestLogDoesNotReassembleRefusedTokens(t *testing.T) {
 	assert.Equal(t, "?", Log("ldap://evil/a"))
-	// A dropped character joins what it separated, which is why the guard runs again.
+	// A marked character cannot join what it separated.
+	assert.NotContains(t, Log("l\x00dap://evil/a"), "ldap://")
 	assert.NotContains(t, Log("l\x01dap://evil/a"), "ldap://")
-	// A marked one cannot join anything, so it never reaches that second guard.
 	assert.NotContains(t, Log("l\u200bdap://evil/a"), "ldap://")
 	assert.NotContains(t, Log("$\u200b{jndi:x}"), "${")
 }
@@ -219,8 +231,7 @@ func TestLogMarksRemovedCharacters(t *testing.T) {
 	// a reader cannot tell the two apart and acts on the wrong file.
 	for _, r := range []rune{0x00AD, 0x200B, 0x202E, 0x2060, 0xFEFF, 0xE0041} {
 		got := Log("rep" + string(r) + "ort.jpg")
-		assert.NotEqual(t, "report.jpg", got, "U+%04X", r)
-		assert.Contains(t, got, string(unsafeMarker), "U+%04X", r)
+		assert.Equal(t, fmt.Sprintf("rep[U+%04X]ort.jpg", r), got, "U+%04X", r)
 	}
 }
 
@@ -300,4 +311,78 @@ func TestErrorSanitizesWrappedCause(t *testing.T) {
 		assert.False(t, endsLine(out) || reordersText(out) || drivesTerminal(out),
 			"U+%04X survived the chain", out)
 	}
+}
+
+func TestUnsafeBreakRune(t *testing.T) {
+	for _, r := range []rune{'\t', '\n', '\v', '\f', '\r', 0x85, 0x2028, 0x2029} {
+		assert.True(t, unsafeBreakRune(r), "U+%04X", r)
+	}
+	for _, r := range []rune{' ', 'a', 0x00, 0x1B, 0x7F, 0x9B, 0x202E} {
+		assert.False(t, unsafeBreakRune(r), "U+%04X", r)
+	}
+}
+
+func TestMarkText(t *testing.T) {
+	// upper marks lowercase letters and replaces digits with a hash.
+	upper := func(r rune) rune {
+		switch {
+		case r >= 'a' && r <= 'z':
+			return markRune
+		case r >= '0' && r <= '9':
+			return '#'
+		}
+		return r
+	}
+
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.Equal(t, "", markText("", upper))
+		assert.Equal(t, "ABC DEF", markText("ABC DEF", upper))
+		assert.Equal(t, "رحلة", markText("رحلة", upper))
+	})
+	t.Run("Mapped", func(t *testing.T) {
+		assert.Equal(t, "A[U+0062]C#", markText("AbC7", upper))
+	})
+	t.Run("InvalidBytes", func(t *testing.T) {
+		assert.Equal(t, "A[0xFF]B[0xC3]", markText("A\xffB\xc3", upper))
+		assert.Equal(t, "\uFFFD", markText("\uFFFD", upper))
+	})
+}
+
+func TestWriteMarker(t *testing.T) {
+	for r, expected := range map[rune]string{
+		0x00:     "[U+0000]",
+		0x7F:     "[U+007F]",
+		0x202E:   "[U+202E]",
+		0xFFFF:   "[U+FFFF]",
+		0x1F600:  "[U+1F600]",
+		0xE0041:  "[U+E0041]",
+		0x10FFFD: "[U+10FFFD]",
+	} {
+		var b strings.Builder
+		writeMarker(&b, r)
+		assert.Equal(t, expected, b.String())
+		assert.Equal(t, len(expected), markerLen(expected+"x"))
+	}
+}
+
+func TestMarkerLen(t *testing.T) {
+	t.Run("Markers", func(t *testing.T) {
+		assert.Equal(t, 8, markerLen("[U+202E]abc"))
+		assert.Equal(t, 9, markerLen("[U+1F600]"))
+		assert.Equal(t, 10, markerLen("[U+10FFFD]"))
+		assert.Equal(t, 6, markerLen("[0x9B]"))
+	})
+	t.Run("NoMarker", func(t *testing.T) {
+		for _, s := range []string{"", "abc", "[U+20]", "[U+202]", "[U+202e]", "[U+1234567]", "[U+202E", "[0x9]", "[0x9b]", "[::1]", "U+202E"} {
+			assert.Equal(t, 0, markerLen(s), s)
+		}
+	})
+}
+
+func TestMarkedUnitLen(t *testing.T) {
+	assert.Equal(t, 8, markedUnitLen("[U+202E]b"))
+	assert.Equal(t, 1, markedUnitLen("[::1]"))
+	assert.Equal(t, 2, markedUnitLen("رحلة"))
+	assert.Equal(t, 1, markedUnitLen("\xff"))
+	assert.Equal(t, 0, markedUnitLen(""))
 }

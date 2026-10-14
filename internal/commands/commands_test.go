@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -82,7 +83,6 @@ func runTestMain(m *testing.M) int {
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
 	initialTestDbDSN = c.DatabaseDSN()
-	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
 			log.Warnf("close db: %v", err)
@@ -261,12 +261,24 @@ func commandTestProcess(t *testing.T) bool {
 		"PHOTOPRISM_TEST_IMAGE_FILE="+fixture, "PHOTOPRISM_ASSETS_PATH="+get.Config().AssetsPath())
 	if get.Config().DatabaseDriver() == dsn.DriverSQLite3 {
 		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DRIVER=sqlite", "PHOTOPRISM_TEST_DSN=")
+	} else if get.Config().DatabaseDriver() == dsn.DriverPostgres {
+		server, parseErr := url.Parse(get.Config().DatabaseDSN())
+
+		// The parse error is not shown, as it would quote the password.
+		if parseErr != nil {
+			t.Fatal("invalid postgres test dsn")
+		}
+		prefix := "testdb_cli_" + rnd.Base36(12)
+		child := *server
+		child.Path, child.RawPath = "/"+prefix, ""
+		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DSN="+child.String())
+		t.Cleanup(func() { dropPostgresTestDbs(t, server.String(), prefix+"_") })
 	} else {
 		child, parseErr := mysql.ParseDSN(get.Config().DatabaseDSN())
 		require.NoError(t, parseErr)
 		server := child.Clone()
 		server.DBName = ""
-		prefix := "acceptance_cli_" + rnd.Base36(12)
+		prefix := "testdb_cli_" + rnd.Base36(12)
 		child.DBName = prefix
 		cmd.Env = append(cmd.Env, "PHOTOPRISM_TEST_DSN="+child.FormatDSN())
 		t.Cleanup(func() {
@@ -299,6 +311,40 @@ func commandTestProcess(t *testing.T) bool {
 	return true
 }
 
+// dropPostgresTestDbs drops the PostgreSQL databases whose names start with prefix.
+func dropPostgresTestDbs(t *testing.T, serverDsn, prefix string) {
+	t.Helper()
+
+	// Dropping a database waits for databases that other test packages create at the same time.
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
+	db, err := sql.Open("pgx", serverDsn)
+	require.NoError(t, err)
+	defer db.Close()
+
+	rows, err := db.QueryContext(ctx, "SELECT datname FROM pg_database WHERE LEFT(datname, $1) = $2", len(prefix), prefix)
+	require.NoError(t, err)
+	defer rows.Close()
+
+	var names []string
+
+	for rows.Next() {
+		var name string
+		require.NoError(t, rows.Scan(&name))
+		require.Regexp(t, "^"+regexp.QuoteMeta(prefix)+"[a-z0-9_]+$", name)
+		names = append(names, name)
+	}
+
+	require.NoError(t, rows.Err())
+	require.NoError(t, rows.Close())
+
+	for _, name := range names {
+		_, dropErr := db.ExecContext(ctx, fmt.Sprintf("DROP DATABASE %s WITH (FORCE)", name)) //nolint:gosec // The child owns this validated test database.
+		require.NoError(t, dropErr)
+	}
+}
+
 // resetConfigCleanup captures the active config and registers cleanup for its replacement.
 func resetConfigCleanup(t *testing.T) func(*config.Config) {
 	t.Helper()
@@ -308,8 +354,8 @@ func resetConfigCleanup(t *testing.T) func(*config.Config) {
 			assert.NoError(t, current.CloseDb())
 			get.SetConfig(previous)
 			previous.RegisterDb()
-			// MariaDB configs share the package schema, including destructive fixture resets.
-			if previous.DatabaseDriver() == dsn.DriverMySQL {
+			// MariaDB and PostgreSQL configs share the package database, including destructive fixture resets.
+			if previous.DatabaseDriver() != dsn.DriverSQLite3 {
 				previous.InitTestDb()
 			}
 			InitConfig = previousInit
@@ -434,7 +480,7 @@ func TestResetConfigAndOpenDB(t *testing.T) {
 		result := c.Db().Unscoped().Where("label_uid = ?", fixture.LabelUID).Delete(&entity.Label{})
 		require.NoError(t, result.Error)
 		require.EqualValues(t, 1, result.RowsAffected)
-		var count int
+		var count int64
 		require.NoError(t, c.Db().Unscoped().Model(&entity.Label{}).Where("label_uid = ?", fixture.LabelUID).Count(&count).Error)
 		require.Zero(t, count)
 	})
@@ -473,6 +519,105 @@ func reopenConnection() *config.Config {
 		log.Warn("reopenConnection: config is nil")
 		return nil
 	}
+}
+
+// formattedExitErr is a cli.ExitCoder that also implements cli.ErrorFormatter.
+type formattedExitErr struct{ msg string }
+
+// Error returns the message.
+func (e formattedExitErr) Error() string { return e.msg }
+
+// ExitCode returns 7.
+func (e formattedExitErr) ExitCode() int { return 7 }
+
+// Format writes the message with details.
+func (e formattedExitErr) Format(s fmt.State, verb rune) {
+	_, _ = fmt.Fprint(s, e.msg+": details a\u200Bb")
+}
+
+// multiExitErr is a cli.MultiError holding the given errors.
+type multiExitErr []error
+
+// Error returns a summary.
+func (e multiExitErr) Error() string { return "multiple errors" }
+
+// Errors returns the errors.
+func (e multiExitErr) Errors() []error { return e }
+
+// TestHandleExitErr covers how the message of a cli.Exit error is printed and which code it exits with.
+func TestHandleExitErr(t *testing.T) {
+	// redirectExit redirects the urfave/cli error writer and exit function for one test.
+	redirectExit := func(t *testing.T) (*bytes.Buffer, *int) {
+		var buf bytes.Buffer
+		code := -1
+		w, exit := cli.ErrWriter, cli.OsExiter
+		cli.ErrWriter = &buf
+		cli.OsExiter = func(c int) { code = c }
+		t.Cleanup(func() { cli.ErrWriter, cli.OsExiter = w, exit })
+		return &buf, &code
+	}
+
+	t.Run("CleansMessage", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, cli.Exit("portal: status 503\r\nname: a\x07b\u200Bc", 3))
+		assert.Equal(t, "portal: status 503\nname: a[U+0007]b[U+200B]c\n", buf.String())
+		assert.Equal(t, 3, *code)
+	})
+	t.Run("KeepsText", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, cli.Exit("رحلة 2026: not found", 4))
+		assert.Equal(t, "رحلة 2026: not found\n", buf.String())
+		assert.Equal(t, 4, *code)
+	})
+	t.Run("EmptyMessage", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, cli.Exit("", 2))
+		assert.Empty(t, buf.String())
+		assert.Equal(t, 2, *code)
+	})
+	t.Run("Formatter", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, formattedExitErr{msg: "failed"})
+		assert.Equal(t, "failed: details a[U+200B]b\n", buf.String())
+		assert.Equal(t, 7, *code)
+	})
+	t.Run("MultiError", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, multiExitErr{errors.New("first\x07"), nil, multiExitErr{cli.Exit("second\u200B", 5)}})
+		assert.Equal(t, "first[U+0007]\nsecond[U+200B]\n", buf.String())
+		assert.Equal(t, 5, *code)
+	})
+	t.Run("PlainError", func(t *testing.T) {
+		buf, code := redirectExit(t)
+		HandleExitErr(nil, errors.New("failed"))
+		HandleExitErr(nil, nil)
+		assert.Empty(t, buf.String())
+		assert.Equal(t, -1, *code)
+	})
+}
+
+// TestPrintMultiError covers the output and exit code for the errors of a cli.MultiError.
+func TestPrintMultiError(t *testing.T) {
+	var buf bytes.Buffer
+	w := cli.ErrWriter
+	cli.ErrWriter = &buf
+	t.Cleanup(func() { cli.ErrWriter = w })
+
+	t.Run("PlainErrors", func(t *testing.T) {
+		buf.Reset()
+		assert.Equal(t, 1, printMultiError(multiExitErr{errors.New("a\tb"), nil}))
+		assert.Equal(t, "a b\n", buf.String())
+	})
+	t.Run("LastExitCode", func(t *testing.T) {
+		buf.Reset()
+		assert.Equal(t, 6, printMultiError(multiExitErr{cli.Exit("x", 4), multiExitErr{cli.Exit("y", 6)}, errors.New("z")}))
+		assert.Equal(t, "x\ny\nz\n", buf.String())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		buf.Reset()
+		assert.Equal(t, 1, printMultiError(multiExitErr{}))
+		assert.Empty(t, buf.String())
+	})
 }
 
 // TestExitCode covers the status main exits with for an error that app.Run returns.

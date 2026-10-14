@@ -18,6 +18,7 @@ type Identity struct {
 	Email             string
 	EmailVerified     bool
 	PhoneNumber       string
+	Zoneinfo          string
 	Groups            []string
 	Claims            map[string]any
 }
@@ -106,6 +107,54 @@ var identities = map[string]Identity{
 		Email:         "nobody@example.com",
 		EmailVerified: false,
 	},
+	// jose has non-ASCII name claims and a verified ASCII email address.
+	"jose": {
+		Subject:           "sub00000010",
+		Name:              "José García",
+		PreferredUsername: "josé",
+		Email:             "jose@example.com",
+		EmailVerified:     true,
+	},
+	// josefa has a non-ASCII preferred username, ASCII name claims and an unverified email address.
+	"josefa": {
+		Subject:           "sub00000011",
+		Name:              "Josefa Nunez",
+		PreferredUsername: "josefa.núñez",
+		Nickname:          "Pepa",
+		Email:             "josefa@example.com",
+		EmailVerified:     false,
+	},
+	// jesus has only non-ASCII name claims and an unverified email address.
+	"jesus": {
+		Subject:           "sub00000012",
+		Name:              "Jesús",
+		PreferredUsername: "jesús",
+		Email:             "jesus@example.com",
+		EmailVerified:     false,
+	},
+	// kate has an ASCII username and a verified email address with a non-ASCII character.
+	"kate": {
+		Subject:           "sub00000013",
+		PreferredUsername: "kate",
+		Email:             "\u212Aate@example.com",
+		EmailVerified:     true,
+	},
+	// zora has a valid zoneinfo claim.
+	"zora": {
+		Subject:           "sub00000014",
+		PreferredUsername: "zora",
+		Email:             "zora@example.com",
+		EmailVerified:     true,
+		Zoneinfo:          "Europe/Berlin",
+	},
+	// zeno has a zoneinfo claim that is not a valid time zone name.
+	"zeno": {
+		Subject:           "sub00000015",
+		PreferredUsername: "zeno",
+		Email:             "zeno@example.com",
+		EmailVerified:     true,
+		Zoneinfo:          "Europe/Ber\u0000lin",
+	},
 }
 
 // IdentityByHint returns the identity selected by a login_hint, or an error if the hint is unknown.
@@ -155,6 +204,10 @@ func (id Identity) SetUserInfo(info *oidc.UserInfo) {
 	if id.PhoneNumber != "" {
 		info.PhoneNumber = id.PhoneNumber
 		info.PhoneNumberVerified = oidc.Bool(true)
+	}
+
+	if id.Zoneinfo != "" {
+		info.Zoneinfo = id.Zoneinfo
 	}
 
 	if len(id.Groups) > 0 {

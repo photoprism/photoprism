@@ -452,6 +452,10 @@
                 "Host": {
                     "type": "string"
                 },
+                "Incomplete": {
+                    "description": "Incomplete reports a database that exists but could not be fully provisioned yet; a later rotation completes it.",
+                    "type": "boolean"
+                },
                 "Name": {
                     "type": "string"
                 },
@@ -1767,9 +1771,6 @@
                 "UID": {
                     "type": "string"
                 },
-                "VerifyPassword": {
-                    "type": "boolean"
-                },
                 "Views": {
                     "type": "integer"
                 }
@@ -2879,9 +2880,6 @@
                 },
                 "MaxViews": {
                     "type": "integer"
-                },
-                "Password": {
-                    "type": "string"
                 },
                 "Slug": {
                     "type": "string"
@@ -6258,7 +6256,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "link properties (currently supported: slug, expires)",
+                        "description": "link settings: slug, expires (seconds, 0 = never), and max views (0 = unlimited)",
                         "in": "body",
                         "name": "link",
                         "required": true,
@@ -6320,7 +6318,7 @@
                         }
                     }
                 },
-                "summary": "adds a new album share link and return it as JSON",
+                "summary": "adds a new album share link and returns it as JSON",
                 "tags": [
                     "Links",
                     "Albums"
@@ -6335,7 +6333,7 @@
                 "operationId": "DeleteAlbumLink",
                 "parameters": [
                     {
-                        "description": "album",
+                        "description": "album uid",
                         "in": "path",
                         "name": "uid",
                         "required": true,
@@ -6367,6 +6365,12 @@
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -6411,7 +6415,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to be updated (currently supported: slug, expires, token)",
+                        "description": "link settings: slug, expires, and max views are replaced as sent, an empty token keeps the current one",
                         "in": "body",
                         "name": "link",
                         "required": true,
@@ -6448,6 +6452,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "409": {
                         "description": "Conflict",
                         "schema": {
@@ -6465,15 +6475,9 @@
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
                     }
                 },
-                "summary": "updates an album share link and return it as JSON",
+                "summary": "updates an album share link and returns it as JSON",
                 "tags": [
                     "Links",
                     "Albums"
@@ -7663,6 +7667,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "409": {
                         "description": "Conflict",
                         "schema": {
@@ -7677,6 +7687,18 @@
                     },
                     "429": {
                         "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -12414,6 +12436,7 @@
                         "description": "session id or ref id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -12463,6 +12486,7 @@
                         "description": "session id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -12571,6 +12595,7 @@
                         "description": "session id or ref id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -12620,6 +12645,7 @@
                         "description": "session id",
                         "in": "path",
                         "name": "id",
+                        "required": true,
                         "type": "string"
                     }
                 ],

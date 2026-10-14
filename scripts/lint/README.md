@@ -1,6 +1,6 @@
 # Repository Checks
 
-**Last Updated:** October 8, 2026
+**Last Updated:** October 10, 2026
 
 Standalone repository checks live here. Run them through the root Makefile so callers do not depend on script paths:
 

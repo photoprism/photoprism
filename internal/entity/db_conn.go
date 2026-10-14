@@ -5,10 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
-	// Registers the database drivers GORM opens connections with.
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -43,12 +40,12 @@ func (g *DbConn) Db() *gorm.DB {
 
 // Open creates a new gorm db connection.
 func (g *DbConn) Open() {
-	db, err := gorm.Open(g.Driver, g.Dsn)
+	db, err := OpenDb(g.Driver, g.Dsn)
 
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
 			fmt.Printf("gorm.Open(%s, %s) %d\n", g.Driver, g.Dsn, i)
-			db, err = gorm.Open(g.Driver, g.Dsn)
+			db, err = OpenDb(g.Driver, g.Dsn)
 
 			if db != nil && err == nil {
 				break
@@ -63,10 +60,12 @@ func (g *DbConn) Open() {
 		}
 	}
 
-	db.LogMode(false)
-	db.SetLogger(log)
-	db.DB().SetMaxIdleConns(4)
-	db.DB().SetMaxOpenConns(256)
+	if sqlDb, sqlErr := db.DB(); sqlErr != nil {
+		log.Fatal(sqlErr)
+	} else {
+		sqlDb.SetMaxIdleConns(4)
+		sqlDb.SetMaxOpenConns(256)
+	}
 
 	g.db = db
 }
@@ -74,7 +73,7 @@ func (g *DbConn) Open() {
 // Close closes the gorm db connection.
 func (g *DbConn) Close() {
 	if g.db != nil {
-		if err := g.db.Close(); err != nil {
+		if err := CloseDb(g.db); err != nil {
 			log.Fatal(err)
 		}
 
@@ -82,20 +81,29 @@ func (g *DbConn) Close() {
 	}
 }
 
-// IsDialect returns true if the given sql dialect is used.
+// IsDialect returns true if the database uses the SQL dialect of the given dialect or driver name.
 func IsDialect(name string) bool {
-	return name == Db().Dialect().GetName()
+	dialect := dsn.DialectFromDriver(name)
+
+	return dialect != "" && dialect == DbDialect()
 }
 
-// DbDialect returns the sql dialect name.
+// DbDialect returns the SQL dialect of the database as one of the dsn.Dialect constants, or the name
+// the ORM reports if the dialect is not supported.
 func DbDialect() string {
-	return Db().Dialect().GetName()
+	name := Db().Name()
+
+	if dialect := dsn.DialectFromDriver(name); dialect != "" {
+		return dialect
+	}
+
+	return name
 }
 
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
 	switch DbDialect() {
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		return 333
 	default:
 		return 1000

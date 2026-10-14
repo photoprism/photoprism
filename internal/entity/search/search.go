@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 package search
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -49,9 +49,9 @@ func Db() *gorm.DB {
 	return entity.Db()
 }
 
-// UnscopedDb returns an unscoped database connection instance.
+// UnscopedDb returns an unscoped database session.
 func UnscopedDb() *gorm.DB {
-	return entity.Db().Unscoped()
+	return entity.UnscopedDb()
 }
 
 // Log logs the error if any and keeps quiet otherwise.

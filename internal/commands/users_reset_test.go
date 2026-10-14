@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -210,9 +210,10 @@ func TestDeleteUserClients(t *testing.T) {
 		}
 		require.NoError(t, tx.Where("client_uid = ?", aliceClientUID).Delete(&entity.Client{}).Error)
 
-		countPasswords := func(uid string) (n int) {
+		countPasswords := func(uid string) int {
+			var n int64
 			require.NoError(t, tx.Model(&entity.Password{}).Where("uid = ?", uid).Count(&n).Error)
-			return n
+			return int(n)
 		}
 
 		require.Equal(t, 1, countPasswords(aliceClientUID))

@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -51,7 +50,7 @@ func clusterSummaryAction(ctx *cli.Context) error {
 		}
 
 		if ctx.Bool("json") {
-			b, _ := json.Marshal(resp)
+			b, _ := report.MarshalJSON(resp)
 			fmt.Println(string(b))
 			return nil
 		}

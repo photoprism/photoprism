@@ -126,7 +126,9 @@ func resetIndexDb(c *config.Config) {
 	tables.Drop(c.Db())
 
 	log.Infoln("restoring default schema")
-	entity.InitDb(migrate.Opt(true, false, nil))
+	if err := entity.InitDb(migrate.Opt(true, false, nil)); err != nil {
+		log.Errorf("reset: %s", clean.ErrorFull(err))
+	}
 
 	// A pinned face model only exists to keep new vectors comparable with the ones the library
 	// already holds, and it now holds none, so the pin would outlive its reason.
@@ -138,7 +140,7 @@ func resetIndexDb(c *config.Config) {
 	if c.AdminPassword() == "" {
 		log.Warnf("password required to reset admin account")
 	} else {
-		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword(), c.AdminScope())
+		entity.Admin.InitAccount(c.AdminInitName(), c.AdminPassword(), c.AdminScope())
 	}
 
 	log.Infof("completed in %s", time.Since(start))

@@ -20,18 +20,18 @@ func RegisteredUsers() (result entity.Users) {
 
 // CountUsers returns the number of users based on the specified filter options.
 func CountUsers(registered, active bool, includeRoles, excludeRoles []string) (count int) {
-	if !Db().HasTable("auth_users") {
+	if !Db().Migrator().HasTable("auth_users") {
 		return 0
 	}
 
-	stmt := Db().Model(entity.Users{})
+	stmt := Db().Model(&entity.Users{})
 
 	if registered {
 		stmt = stmt.Where("id > 0")
 	}
 
 	if active {
-		stmt = stmt.Where("(can_login > 0 OR webdav > 0) AND user_name <> ''")
+		stmt = stmt.Where("(can_login = TRUE OR webdav = TRUE) AND user_name <> ''")
 	}
 
 	if len(includeRoles) > 0 {
@@ -40,11 +40,13 @@ func CountUsers(registered, active bool, includeRoles, excludeRoles []string) (c
 		stmt = stmt.Where("user_role NOT IN (?)", excludeRoles)
 	}
 
-	if err := stmt.Count(&count).Error; err != nil {
+	var n int64
+
+	if err := stmt.Count(&n).Error; err != nil {
 		log.Errorf("users: %s (count)", err)
 	}
 
-	return count
+	return int(n)
 }
 
 // Users finds user accounts based on the specified parameters.
@@ -64,7 +66,7 @@ func Users(limit, offset int, sortOrder, search string, deleted bool) (result en
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
 		like := clean.SqlLike(search) + "%"
-		stmt = stmt.Where(clean.SqlLikeAny("user_name", "user_email", "display_name"), like, like, like)
+		stmt = stmt.Where(clean.SqlLikeAny(DbDialect(), false, "user_name", "user_email", "display_name"), like, like, like)
 	default:
 		stmt = stmt.Where("id > 0")
 	}

@@ -35,8 +35,8 @@ func TestName(t *testing.T) {
 		assert.Equal(t, "UTC+1", Name("Etc/GMT+01:00"))
 		assert.Equal(t, "UTC+1", Name("GMT+1"))
 		assert.Equal(t, "UTC+2", Name("GMT+2"))
-		assert.Equal(t, "UTC+10", Name("Etc/GMT+10"))
+		assert.Equal(t, "UTC-10", Name("Etc/GMT+10"))
 		assert.Equal(t, "UTC-3", Name("GMT-3"))
-		assert.Equal(t, "UTC-12", Name("Etc/GMT-12"))
+		assert.Equal(t, "UTC+12", Name("Etc/GMT-12"))
 	})
 }

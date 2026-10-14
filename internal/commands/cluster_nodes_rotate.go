@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -30,7 +29,7 @@ const provisionerTimeout = 90 * time.Second
 
 var (
 	rotateDatabaseFlag = &cli.BoolFlag{Name: "database", Aliases: []string{"db"}, Usage: "rotate DB credentials"}
-	rotateSecretFlag   = &cli.BoolFlag{Name: "secret", Usage: "rotate node secret"}
+	rotateSecretFlag   = &cli.BoolFlag{Name: "secret", Usage: "rotate node secret and revoke its access tokens"}
 	rotatePortalURL    = &cli.StringFlag{Name: "portal-url", Usage: "Portal base `URL` (defaults to config)"}
 	rotatePortalTok    = &cli.StringFlag{Name: "join-token", Usage: "Portal access `TOKEN` (defaults to config)"}
 )
@@ -76,6 +75,7 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 		return resp, cli.Exit(fmt.Errorf("%s is not a cluster node", clean.LogQuote(name)), 3)
 	}
 
+	// The secret is rotated first, so it is replaced even if the database step fails.
 	if rotateSecret {
 		rotated, rotateErr := regy.RotateSecretByClientID(n.ClientID)
 
@@ -85,7 +85,10 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 
 		resp.Secrets = &cluster.RegisterSecrets{ClientSecret: rotated.ClientSecret, RotatedAt: rotated.RotatedAt}
 		n = rotated
+		n.ClientSecret = ""
 	}
+
+	var dbErr, saveErr error
 
 	if rotateDatabase {
 		ctx, cancel := context.WithTimeout(context.Background(), provisionerTimeout)
@@ -93,23 +96,26 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 
 		creds, _, credsErr := provisioner.EnsureCredentials(ctx, conf, n.UUID, n.Name, true)
 
-		if errors.Is(credsErr, provisioner.ErrUnsupportedDriver) {
-			return resp, cli.Exit(credsErr, 2)
-		} else if credsErr != nil {
-			return resp, cli.Exit(credsErr, 1)
+		if credsErr != nil {
+			dbErr = credsErr
+
+			// A database that exists is recorded, so removing the node also removes it.
+			if errors.Is(credsErr, provisioner.ErrIncomplete) {
+				if _, recordErr := regy.RecordDatabase(n, cluster.NodeDatabase{Name: creds.Name, User: creds.User, Driver: creds.Driver}); recordErr != nil {
+					log.Warnf("cluster: failed to record database %s of node %s (%s)", clean.Log(creds.Name), clean.LogQuote(name), clean.Error(recordErr))
+				}
+			}
+		} else {
+			if n.Database == nil {
+				n.Database = &cluster.NodeDatabase{}
+			}
+
+			n.Database.Name, n.Database.User, n.Database.Driver, n.Database.RotatedAt = creds.Name, creds.User, creds.Driver, creds.RotatedAt
+
+			// The new password is already in effect, so it is reported even if the registry update fails.
+			resp.Database.Password, resp.Database.DSN, resp.Database.RotatedAt = creds.Password, creds.DSN, creds.RotatedAt
+			saveErr = regy.Put(n)
 		}
-
-		if n.Database == nil {
-			n.Database = &cluster.NodeDatabase{}
-		}
-
-		n.Database.Name, n.Database.User, n.Database.Driver, n.Database.RotatedAt = creds.Name, creds.User, creds.Driver, creds.RotatedAt
-
-		if err = regy.Put(n); err != nil {
-			return resp, cli.Exit(err, 1)
-		}
-
-		resp.Database.Password, resp.Database.DSN, resp.Database.RotatedAt = creds.Password, creds.DSN, creds.RotatedAt
 	}
 
 	if n.Database != nil {
@@ -119,7 +125,7 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 			driver = provisioner.DatabaseDriver
 		}
 
-		resp.Database.Driver, resp.Database.Host, resp.Database.Port = driver, conf.DatabaseHost(), conf.DatabasePort()
+		resp.Database.Driver, resp.Database.Host, resp.Database.Port = driver, provisioner.DatabaseHost, provisioner.DatabasePort
 		resp.Database.Name, resp.Database.User = n.Database.Name, n.Database.User
 
 		if resp.Database.RotatedAt == "" {
@@ -131,7 +137,24 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 	resp.AlreadyRegistered = true
 	resp.AlreadyProvisioned = n.Database != nil && n.Database.Name != ""
 
-	return resp, nil
+	switch {
+	case saveErr != nil:
+		return resp, cli.Exit(fmt.Errorf("rotated the database credentials of node %s, but failed to save them in the registry: %w", clean.LogQuote(name), saveErr), 1)
+	case dbErr == nil:
+		return resp, nil
+	}
+
+	code := 1
+
+	if errors.Is(dbErr, provisioner.ErrUnsupportedDriver) {
+		code = 2
+	}
+
+	if resp.Secrets != nil {
+		return resp, cli.Exit(fmt.Errorf("rotated the secret of node %s, but failed to rotate its database credentials: %w", clean.LogQuote(name), dbErr), code)
+	}
+
+	return resp, cli.Exit(dbErr, code)
 }
 
 // rotateNodeViaPortal asks the Portal to rotate the local node's credentials, authorized by
@@ -293,65 +316,79 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			resp, err = rotateNodeViaPortal(conf, portalURL, token, name, rotateDatabase, rotateSecret)
 		}
 
-		if err != nil {
-			return err
-		}
-
-		nodeID := resp.Node.UUID
-		if nodeID == "" {
-			nodeID = resp.Node.Name
-		}
-
-		rotatedParts := make([]string, 0, 2)
-		if rotateDatabase {
-			rotatedParts = append(rotatedParts, "database")
-		}
-		if rotateSecret {
-			rotatedParts = append(rotatedParts, "secret")
-		}
-
-		detail := strings.Join(rotatedParts, ", ")
-
-		who := clusterAuditWho(ctx, conf)
-		segments := []string{
-			string(acl.ResourceCluster),
-			"rotate node", "%s",
-		}
-		args := []any{clean.Log(nodeID)}
-		if detail != "" {
-			segments = append(segments, "%s")
-			args = append(args, clean.Log(detail))
-		}
-		segments = append(segments, status.Succeeded)
-
-		event.AuditInfo(append(who, segments...), args...)
-
-		if ctx.Bool("json") {
-			jb, _ := json.Marshal(resp)
-			fmt.Println(string(jb))
-			return nil
-		}
-
-		cols := []string{"UUID", "ClientID", "Name", "Role", "DB Driver", "DB Name", "DB User", "Host", "Port"}
-		rows := [][]string{{resp.Node.UUID, resp.Node.ClientID, resp.Node.Name, resp.Node.Role, resp.Database.Driver, resp.Database.Name, resp.Database.User, resp.Database.Host, fmt.Sprintf("%d", resp.Database.Port)}}
-		out, _ := report.RenderFormat(rows, cols, report.CliFormat(ctx))
-		fmt.Printf("\n%s\n", out)
-
-		if (resp.Secrets != nil && resp.Secrets.ClientSecret != "") || resp.Database.Password != "" {
-			fmt.Println("PLEASE WRITE DOWN THE FOLLOWING CREDENTIALS; THEY WILL NOT BE SHOWN AGAIN:")
-			switch {
-			case resp.Secrets != nil && resp.Secrets.ClientSecret != "" && resp.Database.Password != "":
-				fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "DB Password", resp.Database.Password))
-			case resp.Secrets != nil && resp.Secrets.ClientSecret != "":
-				fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "", ""))
-			case resp.Database.Password != "":
-				fmt.Printf("\n%s\n", report.Credentials("DB User", resp.Database.User, "DB Password", resp.Database.Password))
-			}
-			if resp.Database.DSN != "" {
-				fmt.Printf("DSN: %s\n", resp.Database.DSN)
-			}
-		}
-
-		return nil
+		return finishNodeRotation(ctx, conf, resp, err, rotateDatabase)
 	})
+}
+
+// finishNodeRotation audits and prints the credentials a rotation issued, and returns err.
+// Issued credentials are reported even if a later step failed, since the previous ones are no longer valid.
+func finishNodeRotation(ctx *cli.Context, conf *config.Config, resp cluster.RegisterResponse, err error, rotateDatabase bool) error {
+	secretRotated := resp.Secrets != nil && resp.Secrets.ClientSecret != ""
+	dbRotated := rotateDatabase && (err == nil || resp.Database.Password != "")
+
+	if err != nil && !secretRotated && !dbRotated {
+		return err
+	}
+
+	nodeID := resp.Node.UUID
+	if nodeID == "" {
+		nodeID = resp.Node.Name
+	}
+
+	rotatedParts := make([]string, 0, 2)
+	if dbRotated {
+		rotatedParts = append(rotatedParts, "database")
+	}
+	if secretRotated {
+		rotatedParts = append(rotatedParts, "secret")
+	}
+
+	detail := strings.Join(rotatedParts, ", ")
+
+	who := clusterAuditWho(ctx, conf)
+	segments := []string{
+		string(acl.ResourceCluster),
+		"rotate node", "%s",
+	}
+	args := []any{clean.Log(nodeID)}
+	if detail != "" {
+		segments = append(segments, "%s")
+		args = append(args, clean.Log(detail))
+	}
+	segments = append(segments, status.Succeeded)
+
+	event.AuditInfo(append(who, segments...), args...)
+
+	printRotateResult(ctx, resp)
+
+	return err
+}
+
+// printRotateResult prints the rotated node and any credentials that will not be shown again.
+func printRotateResult(ctx *cli.Context, resp cluster.RegisterResponse) {
+	if ctx.Bool("json") {
+		jb, _ := report.MarshalJSON(resp)
+		fmt.Println(string(jb))
+		return
+	}
+
+	cols := []string{"UUID", "ClientID", "Name", "Role", "DB Driver", "DB Name", "DB User", "Host", "Port"}
+	rows := [][]string{{resp.Node.UUID, resp.Node.ClientID, resp.Node.Name, resp.Node.Role, resp.Database.Driver, resp.Database.Name, resp.Database.User, resp.Database.Host, fmt.Sprintf("%d", resp.Database.Port)}}
+	out, _ := report.RenderFormat(rows, cols, report.CliFormat(ctx))
+	fmt.Printf("\n%s\n", out)
+
+	if (resp.Secrets != nil && resp.Secrets.ClientSecret != "") || resp.Database.Password != "" {
+		fmt.Println("PLEASE WRITE DOWN THE FOLLOWING CREDENTIALS; THEY WILL NOT BE SHOWN AGAIN:")
+		switch {
+		case resp.Secrets != nil && resp.Secrets.ClientSecret != "" && resp.Database.Password != "":
+			fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "DB Password", resp.Database.Password))
+		case resp.Secrets != nil && resp.Secrets.ClientSecret != "":
+			fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "", ""))
+		case resp.Database.Password != "":
+			fmt.Printf("\n%s\n", report.Credentials("DB User", resp.Database.User, "DB Password", resp.Database.Password))
+		}
+		if resp.Database.DSN != "" {
+			fmt.Printf("DSN: %s\n", clean.Display(resp.Database.DSN))
+		}
+	}
 }

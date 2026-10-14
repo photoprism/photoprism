@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -82,6 +82,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	fileHash := ""
 	fileChanged := true
+	detailsSaved := true
 	fileRenamed := false
 	fileExists := false
 	fileStacked := false
@@ -307,6 +308,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			candidate, candidateDetails := photo, *details
 			candidate.Details = &candidateDetails
 
+			// Backups omit a quality of 0, so a backup without one restores 0 rather than the initial -1.
+			candidate.PhotoQuality = 0
+
 			if err = candidate.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else if candidate.HasUID() {
@@ -320,7 +324,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		if restored != nil {
+		if restored == nil {
+			// Nothing to restore.
+		} else if existing := entity.FindPhoto(entity.Photo{PhotoUID: restored.PhotoUID}); restored.HasUID() && existing != nil {
+			// A backup of a photo that is in the database restores nothing, so the photo's state applies.
+			photo = *existing
+			details = photo.GetDetails()
+			ownBackup = false
+		} else {
 			*details = *restored.Details
 			restored.Details = details
 			photo = *restored
@@ -346,7 +357,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// whose primary file is a preview of its right lens or proxy; saving the file unflags the others.
 	if !file.FilePrimary {
 		if photoExists {
-			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
+			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = TRUE AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
 				file.FilePrimary = m.IsPreviewImage()
 			} else if capture := insta360PairPreview(m); capture != nil && capture.MemberPreview(primaryFile.FileName) {
 				file.FilePrimary = true
@@ -384,21 +395,23 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file.FileSize = fileSize
 
 	// Set file original name if available.
-	if originalName != "" {
+	if originalName = clean.StripControl(originalName); originalName != "" {
 		file.OriginalName = originalName
 	}
 
 	// Set photo original name based on file original name.
 	if file.OriginalName != "" {
-		photo.OriginalName = fs.StripKnownExt(file.OriginalName)
+		photo.OriginalName = clean.StripControl(fs.StripKnownExt(file.OriginalName))
 	}
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore pictures that have been purged automatically.
-		photo.DeletedAt = nil
-	} else if o.SkipArchived && photo.DeletedAt != nil {
-		// Skip archived pictures for faster indexing.
+		photo.DeletedAt = entity.DeletedAt{}
+	} else if o.SkipArchived && photo.DeletedAt.Valid && photo.HasID() {
+		// Skip archived pictures for faster indexing, but add those restored from a backup.
 		result.Status = IndexArchived
+		result.PhotoID = photo.ID
+		result.PhotoUID = photo.PhotoUID
 		return result
 	}
 
@@ -491,7 +504,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileColors = color.Colors.Hex()
 			file.FileLuminance = color.Luminance.Hex()
 			file.FileDiff = color.Luminance.Diff()
-			file.FileChroma = color.Chroma.Percent()
+			file.FileChroma = color.Chroma.Value()
 
 			if file.FilePrimary {
 				photo.PhotoColor = color.MainColor.ID()
@@ -957,7 +970,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// File obviously exists: remove deleted and missing flags.
-	file.DeletedAt = nil
+	file.DeletedAt = entity.DeletedAt{}
 	file.FileMissing = false
 
 	// Previews files are used for rendering thumbnails and image classification, plus sidecar files if they exist.
@@ -1056,19 +1069,26 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Update existing photo entity?
 	if photo.HasID() {
-		if err = photo.Save(); err != nil {
+		// Details that could not be stored are logged by SaveDetails and do not fail the file.
+		if err = photo.Save(); err != nil && !errors.Is(err, entity.ErrDetailsNotSaved) {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update existing photo)", err, logName)
 			return result
 		}
+
+		detailsSaved = err == nil
 	} else {
 		// Create a new photo entity or load the existing entity if it exists.
-		if p := photo.FirstOrCreate(); p == nil {
+		if err = photo.Create(); err == nil || errors.Is(err, entity.ErrDetailsNotSaved) {
+			detailsSaved = err == nil
+		} else if p := entity.FindPhoto(photo); p == nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: failed to create %s", logName)
 			return result
 		} else {
+			log.Tracef("index: %s in %s (create photo)", err, logName)
 			photo = *p
+			details = photo.GetDetails()
 		}
 
 		if photo.PhotoPrivate {
@@ -1152,11 +1172,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 		photo.PhotoQuality = photo.QualityScore()
 
-		if err = photo.Save(); err != nil {
+		if err = photo.Save(); err != nil && !errors.Is(err, entity.ErrDetailsNotSaved) {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update metadata)", err, logName)
 			return result
 		}
+
+		detailsSaved = err == nil
 
 		if err = photo.UpdateLabels(); err != nil {
 			log.Errorf("index: %s in %s (update labels)", err, logName)
@@ -1176,6 +1198,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	result.Status = IndexUpdated
+
+	// Files whose photo details could not be stored are indexed again in the next run,
+	// since -1 matches no modification time on disk.
+	if !detailsSaved {
+		file.ModTime = -1
+	}
 
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))

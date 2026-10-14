@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -11,10 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"golang.org/x/mod/semver"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
@@ -26,7 +25,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var postgresSupportWarnOnce sync.Once
+// postgresExperimentalOnce reports the experimental status of PostgreSQL support once.
+var postgresExperimentalOnce sync.Once
 
 // Auto requests automatic detection of an implementation-defined default
 // (e.g. the database driver). The canonical SQL driver identifiers live in
@@ -41,9 +41,8 @@ func (c *Config) DatabaseDriver() string {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		c.options.DatabaseDriver = dsn.DriverMySQL
 	case dsn.DriverPostgres:
-		// See issue #47 and <https://github.com/photoprism/photoprism/pull/4831>.
-		postgresSupportWarnOnce.Do(func() {
-			log.Warnf("config: support for PostgreSQL is not yet available in this version")
+		postgresExperimentalOnce.Do(func() {
+			log.Infof("config: support for PostgreSQL is experimental")
 		})
 		c.options.DatabaseDriver = dsn.DriverPostgres
 	case dsn.DriverSQLite3, dsn.DriverNone, dsn.DriverAuto:
@@ -140,22 +139,31 @@ func (c *Config) DatabaseDSN() string {
 
 			return d.MySQL()
 		case dsn.DriverPostgres:
-			databaseServer := c.DatabaseServer()
 			d := dsn.DSN{
-				Driver: dsn.DriverPostgres,
-				Server: databaseServer,
+				Driver:   dsn.DriverPostgres,
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("%s connect_timeout=%d", dsn.Params[dsn.DriverPostgres], c.DatabaseTimeout()),
 			}
 
-			return fmt.Sprintf(
-				"user=%s password=%s dbname=%s host=%s port=%d connect_timeout=%d %s",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				c.DatabaseName(),
-				d.Host(),
-				d.Port(),
-				c.DatabaseTimeout(),
-				dsn.Params[dsn.DriverPostgres],
-			)
+			// Connect via Unix domain socket, or to the host and port of the server.
+			if server := c.DatabaseServer(); strings.HasPrefix(server, "/") {
+				d.Server = server
+
+				// A socket path may end with the port, e.g. "/var/run/postgresql:5433".
+				if i := strings.LastIndex(server, ":"); i > 0 {
+					if port, err := strconv.Atoi(server[i+1:]); err == nil && port > 0 && port <= 65535 {
+						d.Server = server[:i]
+						d.Params += fmt.Sprintf(" port=%d", port)
+					}
+				}
+			} else {
+				hostPort := dsn.DSN{Driver: dsn.DriverPostgres, Server: server}
+				d.Server = net.JoinHostPort(hostPort.Host(), strconv.Itoa(hostPort.Port()))
+			}
+
+			return d.PostgreSQL()
 		case dsn.DriverSQLite3:
 			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
 		default:
@@ -315,6 +323,8 @@ func (c *Config) DatabasePassword() string {
 	// Try to read password from file if c.options.DatabasePassword is not set.
 	if c.options.DatabasePassword != "" {
 		return clean.Password(c.options.DatabasePassword)
+	} else if c.dbNoPassFile {
+		return ""
 	} else if fileName := FlagFilePath("DATABASE_PASSWORD"); fileName == "" {
 		// No password set, this is not an error.
 		return ""
@@ -468,7 +478,7 @@ func (c *Config) CloseDb() error {
 	}
 
 	if c.db != nil {
-		if err := c.db.Close(); err == nil {
+		if err := entity.CloseDb(c.db); err == nil {
 			c.db = nil
 			entity.SetDbProvider(nil)
 		} else {
@@ -486,7 +496,10 @@ func (c *Config) IsDbOpen() bool {
 		return false
 	}
 
-	if err := c.db.DB().Ping(); err != nil {
+	if sqlDb, err := c.db.DB(); err != nil {
+		log.Debugf("config: database not available (%s)", err)
+		return false
+	} else if err = sqlDb.Ping(); err != nil {
 		log.Debugf("config: database not available (%s)", err)
 		return false
 	}
@@ -494,20 +507,7 @@ func (c *Config) IsDbOpen() bool {
 	return true
 }
 
-// SetDbOptions sets the database collation to unicode if supported.
-func (c *Config) SetDbOptions() {
-	switch c.DatabaseDriver() {
-	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
-	case dsn.DriverPostgres:
-		// Ignore for now.
-	case dsn.DriverSQLite3:
-		// Not required as Unicode is default.
-	}
-}
-
-// RegisterDb opens a database connection if needed,
-// sets the database options and connection provider.
+// RegisterDb opens a database connection if needed and sets the connection provider.
 func (c *Config) RegisterDb() {
 	if err := c.connectDb(); err != nil {
 		// Report via the system log, not the database-persisted logger, so a
@@ -516,53 +516,124 @@ func (c *Config) RegisterDb() {
 		return
 	}
 
-	c.SetDbOptions()
 	entity.SetDbProvider(c)
+}
+
+// versionEdition returns the edition stored with the schema version. Portal builds get rows of their own,
+// as they register tables that other editions of the same release sharing a database do not.
+func (c *Config) versionEdition() string {
+	edition := c.Edition()
+
+	if c.Portal() && edition != Portal {
+		return Portal + "-" + edition
+	}
+
+	return edition
 }
 
 // InitDb initializes the database without running previously failed migrations.
 func (c *Config) InitDb() {
 	c.RegisterDb()
-	c.MigrateDb(false, nil)
+
+	// MigrateDb logs the error and records it on a known version.
+	_ = c.MigrateDb(false, nil)
 }
 
-// MigrateDb will initialize the database and migrate the schema if necessary.
-func (c *Config) MigrateDb(runFailed bool, ids []string) {
+// MigrateDb will initialize the database and migrate the schema if necessary, and returns an error if
+// the schema could not be migrated.
+func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
+	// A schema that migrations would alter is refused before anything writes, also after a restore.
+	if err = entity.CheckPostgresSchema(c.Db()); err != nil {
+		log.Errorf("config: %s", clean.Error(err))
+		return err
+	}
+
 	entity.Admin.UserName = c.AdminUser()
 
 	// Automatically migrate database schema only once per release to reduce startup time.
-	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
-	entity.InitDb(migrate.Opt(version.NeedsMigration(), runFailed, ids))
-	if err := version.Migrated(c.Db()); err != nil {
-		log.Warnf("config: %s (migrate)", err)
+	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.versionEdition()))
+	opt := migrate.Opt(version.NeedsMigration(), runFailed, ids)
+
+	// Record the version as migrated only once its schema was, so the next start migrates it again.
+	if err = entity.InitDb(opt); err != nil {
+		event.SystemError([]string{"config", "%s (migrate)"}, clean.ErrorFull(err))
+
+		if !version.Unknown() {
+			version.MigratedAt = nil
+			version.Error = clean.ErrorBytes(err, 255)
+
+			if saveErr := version.Save(c.Db()); saveErr != nil {
+				event.SystemWarn([]string{"config", "%s (save version)"}, clean.ErrorFull(saveErr))
+			}
+		}
+	} else if opt.AutoMigrate {
+		// Running selected migrations only does not migrate the schema, so it records nothing.
+		if migratedErr := version.Migrated(c.Db()); migratedErr != nil {
+			event.SystemWarn([]string{"config", "%s (save version)"}, clean.ErrorFull(migratedErr))
+		}
 	}
 
 	// Set the password for the initial Super Admin account, if specified.
 	if c.AdminPassword() == "" {
 		log.Warnf("config: %s account cannot be initialized due to missing or invalid password", clean.LogQuote(c.AdminUser()))
 	} else {
-		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword(), c.AdminScope())
+		entity.Admin.InitAccount(c.AdminInitName(), c.AdminPassword(), c.AdminScope())
 	}
 
 	// Start recording warnings and errors after the required database table has been created.
 	entity.LogWarningsAndErrors()
+
+	return err
+}
+
+// MigrateDbSchema migrates the database schema like MigrateDb, without creating default records or using the
+// database of the entity package, e.g. for the target of a transfer.
+func (c *Config) MigrateDbSchema() error {
+	db := c.Db()
+
+	if err := entity.CheckPostgresSchema(db); err != nil {
+		return err
+	}
+
+	// The migration and version helpers create their tables only once per process, so they are created here.
+	for _, table := range []any{&migrate.Migration{}, &migrate.Version{}} {
+		if db.Migrator().HasTable(table) {
+			continue
+		} else if err := db.AutoMigrate(table); err != nil {
+			return err
+		}
+	}
+
+	version := migrate.FirstOrCreateVersion(db, migrate.NewVersion(c.Version(), c.versionEdition()))
+
+	if err := entity.Entities.Migrate(db, migrate.Opt(true, false, nil)); err != nil {
+		return err
+	} else if err = entity.Entities.WaitForMigration(db); err != nil {
+		return err
+	}
+
+	return version.Migrated(db)
 }
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
 	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
-	if (!c.db.HasTable(&migrate.Migration{})) {
-		c.db.AutoMigrate(&migrate.Migration{})
+	if !c.db.Migrator().HasTable(&migrate.Migration{}) {
+		if err := c.db.AutoMigrate(&migrate.Migration{}); err != nil {
+			log.Errorf("config: %s (create migrations table)", clean.Error(err))
+		}
 	}
-	if (!c.db.HasTable(&migrate.Version{})) {
-		c.db.AutoMigrate(&migrate.Version{})
+	if !c.db.Migrator().HasTable(&migrate.Version{}) {
+		if err := c.db.AutoMigrate(&migrate.Version{}); err != nil {
+			log.Errorf("config: %s (create versions table)", clean.Error(err))
+		}
 	}
 	entity.ResetTestFixtures()
 
 	if c.AdminPassword() == "" {
 		// Do nothing.
 	} else {
-		entity.Admin.InitAccount(c.AdminUser(), c.AdminPassword(), c.AdminScope())
+		entity.Admin.InitAccount(c.AdminInitName(), c.AdminPassword(), c.AdminScope())
 	}
 
 	// Start recording warnings and errors after the required table has have been created.
@@ -610,6 +681,23 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		case !c.IsDatabaseVersion("v10.5.12"):
 			return fmt.Errorf("MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		}
+	case dsn.DriverPostgres:
+		var versionNum int
+
+		// Version query not supported.
+		if err := db.Raw("SELECT current_setting('server_version_num')::integer").Row().Scan(&versionNum); err != nil {
+			log.Warnf("config: failed to detect database version (%s)", err)
+			return nil
+		}
+
+		c.dbVersion = postgresVersion(versionNum)
+
+		switch {
+		case c.dbVersion == "":
+			log.Warnf("config: unknown database server version")
+		case !c.IsDatabaseVersion(PostgresMinVersion):
+			return fmt.Errorf("PostgreSQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
+		}
 	case dsn.DriverSQLite3:
 		type Res struct {
 			Value string `gorm:"column:Value;"`
@@ -635,6 +723,54 @@ func (c *Config) checkDb(db *gorm.DB) error {
 	return nil
 }
 
+// PostgresMinVersion is the oldest PostgreSQL release that is supported.
+const PostgresMinVersion = "v16"
+
+// postgresVersion returns the semantic version of a PostgreSQL server_version_num, e.g. v18.6 for 180006
+// and v9.6 for 90624, or an empty string if the number is not a version.
+func postgresVersion(num int) string {
+	switch {
+	case num >= 100000:
+		return fmt.Sprintf("v%d.%d", num/10000, num%10000)
+	case num >= 10000:
+		return fmt.Sprintf("v%d.%d", num/10000, num/100%100)
+	default:
+		return ""
+	}
+}
+
+// DatabaseOptions holds the connection settings of a database other than the configured one.
+type DatabaseOptions struct {
+	Driver   string
+	DSN      string
+	Server   string
+	Name     string
+	User     string
+	Password string //nolint:gosec // G117: connection settings intentionally include the password.
+}
+
+// WithDatabase returns a copy of the config that connects to the specified database instead, e.g. as the
+// target of a transfer. Settings that are not specified get their defaults rather than the configured values,
+// and the configured password file does not apply.
+func (c *Config) WithDatabase(db DatabaseOptions) *Config {
+	opt := *c.Options()
+	opt.DatabaseDriver = db.Driver
+	opt.DatabaseDSN = db.DSN
+	opt.DatabaseServer = db.Server
+	opt.DatabaseName = db.Name
+	opt.DatabaseUser = db.User
+	opt.DatabasePassword = db.Password
+	opt.Deprecated.DatabaseDsn = ""
+
+	return &Config{cliCtx: c.cliCtx, options: &opt, settings: c.settings, env: c.env, dbNoPassFile: true}
+}
+
+// ConnectDb opens the database connection like RegisterDb, but returns an error if that fails and does not
+// make it the connection of the entity package.
+func (c *Config) ConnectDb() error {
+	return c.connectDb()
+}
+
 // connectDb establishes a database connection.
 func (c *Config) connectDb() error {
 	// Make sure this is not running twice.
@@ -658,13 +794,18 @@ func (c *Config) connectDb() error {
 		return errors.New("DSN not specified")
 	}
 
+	// Fail without retrying if the driver is not supported.
+	if _, err := entity.GormDialector(dbDriver, dbDsn, nil); err != nil {
+		return err
+	}
+
 	// Open database connection.
-	db, err := gorm.Open(dbDriver, dbDsn)
+	db, err := entity.OpenDb(dbDriver, dbDsn)
 	if err != nil || db == nil {
 		log.Infof("config: waiting for the database to become available")
 
 		for i := 1; i <= 12; i++ {
-			db, err = gorm.Open(dbDriver, dbDsn)
+			db, err = entity.OpenDb(dbDriver, dbDsn)
 
 			if db != nil && err == nil {
 				break
@@ -678,14 +819,15 @@ func (c *Config) connectDb() error {
 		}
 	}
 
-	// Configure database logging.
-	db.LogMode(false)
-	db.SetLogger(log)
-
 	// Set database connection parameters.
-	db.DB().SetMaxOpenConns(c.DatabaseConns())
-	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
-	db.DB().SetConnMaxLifetime(time.Hour)
+	if sqlDb, sqlErr := db.DB(); sqlErr != nil {
+		_ = entity.CloseDb(db)
+		return sqlErr
+	} else {
+		sqlDb.SetMaxOpenConns(c.DatabaseConns())
+		sqlDb.SetMaxIdleConns(c.DatabaseConnsIdle())
+		sqlDb.SetConnMaxLifetime(time.Hour)
+	}
 
 	// Check database server version.
 	if err = c.checkDb(db); err != nil {
@@ -694,8 +836,15 @@ func (c *Config) connectDb() error {
 			// the database-persisted error log.
 			event.SystemError([]string{"config", "database", "check", "%s"}, clean.ErrorFull(err))
 		} else {
+			_ = entity.CloseDb(db)
 			return err
 		}
+	}
+
+	// A schema that migrations would alter is refused regardless of the checks above.
+	if err = entity.CheckPostgresSchema(db); err != nil {
+		_ = entity.CloseDb(db)
+		return err
 	}
 
 	if dbVersion := c.DatabaseVersion(); dbVersion != "" {
@@ -718,7 +867,7 @@ func (c *Config) ImportSQL(filename string) {
 	}
 
 	statements := strings.Split(string(contents), ";\n")
-	q := c.Db().Unscoped()
+	q := c.Db().Unscoped().Session(&gorm.Session{})
 
 	for _, stmt := range statements {
 		// Skip empty lines and comments

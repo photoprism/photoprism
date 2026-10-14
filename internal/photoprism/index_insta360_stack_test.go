@@ -92,7 +92,7 @@ func TestIndex_Insta360LateCapture(t *testing.T) {
 					var result entity.Photo
 					require.NoError(t, entity.UnscopedDb().First(&result, "id = ?", photo.ID).Error)
 					assert.Equal(t, insta360StackName, result.PhotoName, stage.name)
-					assert.NotNil(t, result.DeletedAt, stage.name)
+					assert.True(t, result.DeletedAt.Valid, stage.name)
 					assert.GreaterOrEqual(t, result.PhotoQuality, 0, stage.name)
 					assert.Equal(t, 1, insta360StackPhotoCount(t, folder), stage.name)
 				}
@@ -176,7 +176,7 @@ func TestIndex_Insta360StackControls(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().First(&result, "id = ?", photo.ID).Error)
 		assert.Equal(t, "IMG_1234", result.PhotoName)
 		assert.Equal(t, entity.IsStackable, result.PhotoStack)
-		assert.NotNil(t, result.DeletedAt)
+		assert.True(t, result.DeletedAt.Valid)
 	})
 	t.Run("PartialYaml", func(t *testing.T) {
 		folder := "insta360controlpartialyaml"
@@ -657,7 +657,7 @@ func TestIndex_Insta360ReconcileSplit(t *testing.T) {
 				assert.Len(t, owners, 2)
 
 				result := owners[tc.first]
-				assert.Equal(t, tc.archived, result.DeletedAt != nil)
+				assert.Equal(t, tc.archived, result.DeletedAt.Valid)
 				assert.GreaterOrEqual(t, result.PhotoQuality, 0)
 			})
 		}
@@ -1162,6 +1162,78 @@ func TestImport_Insta360Capture(t *testing.T) {
 	assert.Equal(t, 640, preview().FileWidth)
 }
 
+// TestImportWorker_Insta360ArchivedCapture verifies that importing the files of a capture whose photo is
+// archived, when archived photos are skipped, leaves its combined preview as it is.
+func TestImportWorker_Insta360ArchivedCapture(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	folder := "insta360archived"
+	cfg := newInsta360StackConfig(t, folder, false)
+	importDir := filepath.Join(cfg.ImportPath(), folder)
+	names := []string{insta360StackLeft, insta360StackRight, insta360StackProxy}
+
+	for _, name := range names {
+		writeInsta360StackMedia(t, cfg, importDir, name)
+	}
+
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+	imp.Start(ImportOptionsMove(importDir, folder))
+
+	stored := func(originalName string) (result entity.File) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().First(&result, "file_root = ? AND original_name = ?", entity.RootOriginals, originalName).Error)
+		return result
+	}
+
+	left := stored(insta360StackLeft)
+	previewName := filepath.Join(cfg.SidecarPath(), left.FileName+".jpg")
+	previewWidth := func() int {
+		t.Helper()
+		preview, err := NewMediaFile(previewName)
+		require.NoError(t, err)
+		return preview.Width()
+	}
+	require.Equal(t, 640, previewWidth(), "combined preview")
+
+	photo := entity.FindPhoto(entity.Photo{ID: left.PhotoID})
+	require.NotNil(t, photo)
+	require.NoError(t, photo.Archive())
+
+	// The files are imported again from their original names, e.g. after the originals were removed, and
+	// restored to their recorded names. A preview made from the left lens only marks a forced replacement.
+	reimportDir := filepath.Join(cfg.ImportPath(), folder+"-again")
+	require.NoError(t, fs.MkdirAll(reimportDir))
+
+	for _, name := range names {
+		require.NoError(t, os.Rename(filepath.Join(cfg.OriginalsPath(), stored(name).FileName), filepath.Join(reimportDir, name)))
+	}
+
+	writeInsta360Photo(t, cfg, previewName, "320x320")
+
+	mainFile, err := NewMediaFile(filepath.Join(reimportDir, insta360StackLeft))
+	require.NoError(t, err)
+	related, err := mainFile.RelatedFiles(false)
+	require.NoError(t, err)
+	require.Equal(t, mainFile.FileName(), related.Main.FileName())
+
+	jobs := make(chan ImportJob, 1)
+	jobs <- ImportJob{FileName: mainFile.FileName(), Related: related, IndexOpt: IndexOptionsAll(cfg),
+		ImportOpt: ImportOptionsMove(reimportDir, folder), Imp: imp}
+	close(jobs)
+	ImportWorker(jobs)
+
+	// The files are back at their recorded names, and the photo stays archived with its preview unchanged.
+	assert.FileExists(t, filepath.Join(cfg.OriginalsPath(), left.FileName))
+	assert.Equal(t, 320, previewWidth(), "preview of an archived capture is not replaced")
+
+	archived := entity.FindPhoto(entity.Photo{ID: left.PhotoID})
+	require.NotNil(t, archived)
+	assert.True(t, archived.IsArchived(), "photo stays archived")
+}
+
 // TestIndex_Insta360FirstIndexMetadata verifies that a capture and its proxy video get their own dimensions,
 // duration and codec when they are indexed for the first time.
 func TestIndex_Insta360FirstIndexMetadata(t *testing.T) {
@@ -1242,10 +1314,11 @@ func insta360StackPhotoIDs(owners map[string]entity.Photo) map[uint]bool {
 }
 
 // insta360StackPhotoCount returns the number of photo rows in folder, including deleted rows.
-func insta360StackPhotoCount(t *testing.T, folder string) (count int) {
+func insta360StackPhotoCount(t *testing.T, folder string) int {
 	t.Helper()
+	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ?", folder).Count(&count).Error)
-	return count
+	return int(count)
 }
 
 // splitInsta360Capture moves a capture file and its previews to a new photo, and names both photos
@@ -1307,10 +1380,10 @@ func assertInsta360SinglePrimary(t *testing.T, folder string) {
 		Where("file_name LIKE ?", folder+"/%").Pluck("DISTINCT photo_id", &photoIDs).Error)
 	require.Len(t, photoIDs, 1)
 
-	var primaries int
+	var primaries int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
-		Where("photo_id = ? AND file_primary = 1", photoIDs[0]).Count(&primaries).Error)
-	assert.Equal(t, 1, primaries)
+		Where("photo_id = ? AND file_primary = TRUE", photoIDs[0]).Count(&primaries).Error)
+	assert.Equal(t, int64(1), primaries)
 }
 
 // writeInsta360Streams writes a one-second video with one stream per size, encoded with codec.
@@ -1433,9 +1506,9 @@ func TestIndex_Insta360RightLensTypeMismatch(t *testing.T) {
 	assert.Equal(t, "", previews[insta360StackLeft+".jpg"].FileProjection)
 
 	t.Run("NoEquirectangularVideo", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_name LIKE ? AND file_projection = ?", folder+"/%", "equirectangular").Count(&count).Error)
-		assert.Equal(t, 0, count, "no file of the capture is equirectangular")
+		assert.Zero(t, count, "no file of the capture is equirectangular")
 		assert.False(t, left.DewarpableInsv())
 	})
 	t.Run("NoForcedPreviewOnSidecarChange", func(t *testing.T) {

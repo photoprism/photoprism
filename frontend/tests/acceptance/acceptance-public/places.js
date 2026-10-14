@@ -42,7 +42,13 @@ test.meta("testID", "places-001").meta({ mode: "public" })("Multi-Window: Test p
 
   await places.search("canada");
 
-  await t.click(places.zoomOut).click(places.zoomOut).click(places.zoomOut).click(places.zoomOut);
+  // Waits until the map shows the two photos found, since fitting the map to the results resets the zoom.
+  await t.expect(Selector("div.marker:not(.cluster-marker)").count).eql(2, { timeout: 15000 });
+  await t.expect(Selector("div.cluster-marker").count).eql(0);
+
+  for (let i = 0; i < 6 && !(await Selector("div.cluster-marker").exists); i++) {
+    await t.click(places.zoomOut).wait(500);
+  }
 
   const clusterCountCanada = await Selector("div.cluster-marker").count;
 

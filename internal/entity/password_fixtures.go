@@ -35,6 +35,6 @@ var PasswordFixtures = PasswordMap{
 // CreatePasswordFixtures inserts known entities into the database for testing.
 func CreatePasswordFixtures() {
 	for _, entity := range PasswordFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

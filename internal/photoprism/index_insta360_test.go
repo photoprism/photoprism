@@ -31,6 +31,7 @@ func newInsta360ReconcileFixture(t *testing.T, name string) (RelatedFiles, []ent
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -129,7 +130,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		related, photos, relNames := newInsta360ReconcileFixture(t, "insta360reconcile")
 
 		archivedAt := entity.Now()
-		photos[1].DeletedAt = &archivedAt
+		photos[1].DeletedAt = entity.DeletedAtTime(archivedAt)
 		photos[1].PhotoFavorite = true
 		photos[1].PhotoTitle = "Manual Title"
 		photos[1].TitleSrc = entity.SrcManual
@@ -178,7 +179,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		assert.True(t, canonical.PhotoFavorite)
 		assert.True(t, canonical.PhotoPrivate)
 		assert.True(t, canonical.PhotoPanorama)
-		assert.Nil(t, canonical.DeletedAt)
+		assert.False(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, "Manual Title", canonical.PhotoTitle)
 		assert.Equal(t, entity.SrcManual, canonical.TitleSrc)
 		assert.Equal(t, "preserved manual caption", canonical.PhotoCaption)
@@ -216,7 +217,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 
 		archivedAt := entity.Now()
 		for i := range photos {
-			photos[i].DeletedAt = &archivedAt
+			photos[i].DeletedAt = entity.DeletedAtTime(archivedAt)
 			require.NoError(t, photos[i].Save())
 		}
 
@@ -224,11 +225,11 @@ func TestReconcileInsta360Photos(t *testing.T) {
 
 		var canonical entity.Photo
 		require.NoError(t, entity.UnscopedDb().First(&canonical, "id = ?", photos[0].ID).Error)
-		assert.NotNil(t, canonical.DeletedAt)
+		assert.True(t, canonical.DeletedAt.Valid)
 		for _, duplicate := range photos[1:] {
 			var merged entity.Photo
 			require.NoError(t, entity.UnscopedDb().First(&merged, "id = ?", duplicate.ID).Error)
-			assert.NotNil(t, merged.DeletedAt)
+			assert.True(t, merged.DeletedAt.Valid)
 			assert.Equal(t, -1, merged.PhotoQuality)
 		}
 	})
@@ -240,7 +241,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		require.NoError(t, reconcileInsta360Photos(related))
 
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.NotNil(t, canonical.DeletedAt)
+		assert.True(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, 3, canonical.PhotoQuality)
 	})
 	t.Run("MemberArchived", func(t *testing.T) {
@@ -252,7 +253,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		require.NoError(t, reconcileInsta360Photos(related))
 
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.Nil(t, canonical.DeletedAt)
+		assert.False(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, 3, canonical.PhotoQuality)
 	})
 	t.Run("MemberRemoved", func(t *testing.T) {
@@ -264,7 +265,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		require.NoError(t, reconcileInsta360Photos(related))
 
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.Nil(t, canonical.DeletedAt)
+		assert.False(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, 3, canonical.PhotoQuality)
 	})
 	t.Run("CanonicalRemoved", func(t *testing.T) {
@@ -276,7 +277,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		require.NoError(t, reconcileInsta360Photos(related))
 
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.Nil(t, canonical.DeletedAt)
+		assert.False(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, 3, canonical.PhotoQuality)
 	})
 	t.Run("CanonicalRemovedMemberArchived", func(t *testing.T) {
@@ -289,7 +290,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		require.NoError(t, reconcileInsta360Photos(related))
 
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.NotNil(t, canonical.DeletedAt)
+		assert.True(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, 4, canonical.PhotoQuality)
 	})
 	t.Run("MemberArchivedBeforeRemoval", func(t *testing.T) {
@@ -304,7 +305,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 
 		// The indexer restores the photo when it indexes the capture again.
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.NotNil(t, canonical.DeletedAt)
+		assert.True(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, -1, canonical.PhotoQuality)
 	})
 	t.Run("AllRemoved", func(t *testing.T) {
@@ -318,7 +319,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 
 		// The indexer restores the photo when it indexes the capture again.
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.NotNil(t, canonical.DeletedAt)
+		assert.True(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, -1, canonical.PhotoQuality)
 	})
 	t.Run("AllRemovedRestored", func(t *testing.T) {
@@ -340,7 +341,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		for _, relName := range relNames {
 			owner := owners[filepath.Base(relName)]
 			assert.Equal(t, photos[0].ID, owner.ID, relName)
-			assert.Nil(t, owner.DeletedAt, relName)
+			assert.False(t, owner.DeletedAt.Valid, relName)
 			assert.GreaterOrEqual(t, owner.PhotoQuality, 0, relName)
 		}
 	})
@@ -354,11 +355,11 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		require.NoError(t, reconcileInsta360Photos(related))
 
 		canonical := findInsta360Photo(t, photos[0].ID)
-		assert.NotNil(t, canonical.DeletedAt)
+		assert.True(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, 3, canonical.PhotoQuality)
 		for _, duplicate := range photos[1:] {
 			merged := findInsta360Photo(t, duplicate.ID)
-			assert.NotNil(t, merged.DeletedAt)
+			assert.True(t, merged.DeletedAt.Valid)
 			assert.Equal(t, -1, merged.PhotoQuality)
 		}
 	})
@@ -376,7 +377,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		for _, photo := range photos {
 			var unchanged entity.Photo
 			require.NoError(t, entity.UnscopedDb().First(&unchanged, "id = ?", photo.ID).Error)
-			assert.Nil(t, unchanged.DeletedAt)
+			assert.False(t, unchanged.DeletedAt.Valid)
 			assert.NotEqual(t, -1, unchanged.PhotoQuality)
 		}
 	})
@@ -390,6 +391,7 @@ func TestReconcileInsta360Photos_LensCodedPhotos(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -436,5 +438,5 @@ func TestReconcileInsta360Photos_LensCodedPhotos(t *testing.T) {
 
 	var other entity.Photo
 	require.NoError(t, entity.UnscopedDb().First(&other, "id = ?", photos[1].ID).Error)
-	assert.Nil(t, other.DeletedAt)
+	assert.False(t, other.DeletedAt.Valid)
 }

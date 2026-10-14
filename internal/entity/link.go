@@ -2,12 +2,15 @@ package entity
 
 import (
 	"fmt"
+	"slices"
+	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -19,23 +22,28 @@ const (
 	LinkPrefix = "link"
 )
 
+// Conditions that select the links and user shares deleted by deleteLinks.
+const (
+	linkUidCond  = "link_uid IN (?)"
+	shareUidCond = "share_uid IN (?)"
+)
+
 // Links represents a list of share links.
 type Links []Link
 
 // Link represents a link to share content.
 type Link struct {
-	LinkUID     string    `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	ShareUID    string    `gorm:"type:VARBINARY(42);unique_index:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
-	ShareSlug   string    `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
-	LinkToken   string    `gorm:"type:VARBINARY(160);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
-	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
-	LinkViews   uint      `json:"Views" yaml:"-"`
-	MaxViews    uint      `json:"MaxViews" yaml:"-"`
-	HasPassword bool      `json:"VerifyPassword" yaml:"VerifyPassword,omitempty"`
+	LinkUID     string    `gorm:"type:bytes;size:42;primaryKey;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	ShareUID    string    `gorm:"type:bytes;size:42;uniqueIndex:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
+	ShareSlug   string    `gorm:"type:bytes;size:160;index;" json:"Slug" yaml:"Slug,omitempty"`
+	LinkToken   string    `gorm:"type:bytes;size:160;uniqueIndex:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
+	LinkExpires int       `gorm:"size:32" json:"Expires" yaml:"Expires,omitempty"`
+	LinkViews   uint      `gorm:"size:32" json:"Views" yaml:"-"`
+	MaxViews    uint      `gorm:"size:32" json:"MaxViews" yaml:"-"`
 	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
-	Perm        uint      `json:"Perm,omitempty" yaml:"Perm,omitempty"`
-	RefID       string    `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
-	CreatedBy   string    `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
+	Perm        uint      `gorm:"size:32" json:"Perm,omitempty" yaml:"Perm,omitempty"`
+	RefID       string    `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
+	CreatedBy   string    `gorm:"type:bytes;size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }
@@ -46,17 +54,19 @@ func (Link) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Link) BeforeCreate(scope *gorm.Scope) error {
+func (m *Link) BeforeCreate(tx *gorm.DB) error {
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(LinkPrefix)
-		Log("link", "set ref id", scope.SetColumn("RefID", m.RefID))
+		tx.Statement.SetColumn("RefID", m.RefID)
 	}
 
 	if rnd.IsUnique(m.LinkUID, LinkUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
+	tx.Statement.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
+
+	return nil
 }
 
 // NewLink creates a sharing link.
@@ -127,34 +137,6 @@ func (m *Link) SetSlug(s string) {
 	m.ShareSlug = txt.Slug(s)
 }
 
-// SetPassword sets the password required to use the share link.
-func (m *Link) SetPassword(password string) error {
-	pw := NewPassword(m.LinkUID, password, false)
-
-	if err := pw.Save(); err != nil {
-		return err
-	}
-
-	m.HasPassword = true
-
-	return nil
-}
-
-// InvalidPassword checks if the password provided to use the share link is invalid.
-func (m *Link) InvalidPassword(password string) bool {
-	if !m.HasPassword {
-		return false
-	}
-
-	pw := FindPassword(m.LinkUID)
-
-	if pw == nil {
-		return password != ""
-	}
-
-	return pw.Invalid(password)
-}
-
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Link) Save() error {
 	if !rnd.IsUID(m.ShareUID, 0) {
@@ -170,7 +152,7 @@ func (m *Link) Save() error {
 	return Db().Save(m).Error
 }
 
-// Delete permanently deletes the link.
+// Delete permanently deletes the link with its user shares and the password stored for its UID, if any.
 func (m *Link) Delete() error {
 	if m.LinkToken == "" {
 		return fmt.Errorf("empty link token")
@@ -178,26 +160,55 @@ func (m *Link) Delete() error {
 		return fmt.Errorf("empty link uid")
 	}
 
-	// Remove related user shares.
-	if err := UnscopedDb().Delete(UserShare{}, "link_uid = ?", m.LinkUID).Error; err != nil {
-		event.AuditErr([]string{"link %s", "failed to remove related user shares", status.Error(err)}, clean.Log(m.RefID))
+	if err := Db().Transaction(func(tx *gorm.DB) error { return deleteLinks(tx, linkUidCond, []string{m.LinkUID}) }); err != nil {
+		event.AuditErr([]string{"link %s", "failed to remove", status.Error(err)}, clean.Log(m.RefID))
+		return err
 	}
 
-	return Db().Delete(m).Error
+	return nil
 }
 
-// DeleteShareLinks removes all links that match the shared UID.
+// DeleteShareLinks removes all links that match the shared UID, with their user shares and passwords.
 func DeleteShareLinks(shareUid string) error {
 	if shareUid == "" {
 		return fmt.Errorf("empty share uid")
 	}
 
-	// Remove related user shares.
-	if err := UnscopedDb().Delete(UserShare{}, "share_uid = ?", shareUid).Error; err != nil {
-		event.AuditErr([]string{"share %s", "failed to remove related user shares", status.Error(err)}, clean.Log(shareUid))
+	if err := Db().Transaction(func(tx *gorm.DB) error { return DeleteShareLinksTx(tx, []string{shareUid}) }); err != nil {
+		event.AuditErr([]string{"share %s", "failed to remove links", status.Error(err)}, clean.Log(shareUid))
+		return err
 	}
 
-	return Db().Delete(&Link{}, "share_uid = ?", shareUid).Error
+	return nil
+}
+
+// DeleteShareLinksTx removes the links of the share UIDs, with their user shares and passwords,
+// within the transaction tx.
+func DeleteShareLinksTx(tx *gorm.DB, shareUids []string) error {
+	return deleteLinks(tx, shareUidCond, shareUids)
+}
+
+// deleteLinks removes the links and user shares matching cond, which must be linkUidCond or
+// shareUidCond, and the passwords stored for the link UIDs. The passwords go
+// first, so the links still identify them; run it in a transaction, so a failure keeps all three.
+func deleteLinks(tx *gorm.DB, cond string, values []string) error {
+	if len(values) == 0 {
+		return nil
+	} else if slices.Contains(values, "") {
+		return fmt.Errorf("empty link or share uid")
+	}
+
+	if err := tx.Delete(&UserShare{}, cond, values).Error; err != nil {
+		return err
+	}
+
+	linkUids := tx.Model(&Link{}).Select("link_uid").Where(cond, values)
+
+	if err := tx.Delete(&Password{}, "uid IN (?)", linkUids).Error; err != nil {
+		return err
+	}
+
+	return tx.Delete(&Link{}, cond, values).Error
 }
 
 // FindLink finds the link with the specified UID or nil if it is not found.
@@ -262,9 +273,26 @@ func FindLinks(token, shared string) (found Links) {
 
 	if err := q.Order("modified_at DESC").Find(&found).Error; err != nil {
 		event.AuditErr([]string{"share token lookup failed", status.Error(err)})
+	} else if len(found) == 0 {
+		// SQLite schemas of earlier releases stored numeric tokens as numbers, without leading zeros.
+		if numeric := sqliteNumericToken(token); numeric != token {
+			return FindLinks(numeric, shared)
+		}
 	}
 
 	return found
+}
+
+// sqliteNumericToken returns a numeric token without leading zeros if the database is SQLite, and the
+// token unchanged otherwise.
+func sqliteNumericToken(token string) string {
+	if token == "" || DbDialect() != dsn.DialectSQLite || strings.Trim(token, "0123456789") != "" {
+		return token
+	} else if numeric := strings.TrimLeft(token, "0"); numeric != "" {
+		return numeric
+	}
+
+	return "0"
 }
 
 // FindRedeemableLinks returns the links for a token and share UID that admit a new redemption

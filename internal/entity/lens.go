@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -23,18 +23,18 @@ type Lenses []Lens
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
-	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	LensSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
-	LensName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	LensMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
-	LensModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
-	LensType        string     `gorm:"type:VARCHAR(100);" json:"Type" yaml:"Type,omitempty"`
-	LensDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	LensNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	LensSrc         string     `gorm:"type:VARBINARY(8);default:'';" json:"-" yaml:"-"`
-	CreatedAt       time.Time  `json:"-" yaml:"-"`
-	UpdatedAt       time.Time  `json:"-" yaml:"-"`
-	DeletedAt       *time.Time `sql:"index" json:"-" yaml:"-"`
+	ID              uint      `gorm:"primaryKey;size:32" json:"ID" yaml:"ID"`
+	LensSlug        string    `gorm:"type:bytes;size:160;uniqueIndex:uix_lenses_lens_slug;" json:"Slug" yaml:"Slug,omitempty"`
+	LensName        string    `gorm:"size:160;" json:"Name" yaml:"Name"`
+	LensMake        string    `gorm:"size:160;" json:"Make" yaml:"Make,omitempty"`
+	LensModel       string    `gorm:"size:160;" json:"Model" yaml:"Model,omitempty"`
+	LensType        string    `gorm:"size:100;" json:"Type" yaml:"Type,omitempty"`
+	LensDescription string    `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	LensNotes       string    `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	LensSrc         string    `gorm:"type:bytes;size:8;default:'';" json:"-" yaml:"-"`
+	CreatedAt       time.Time `json:"-" yaml:"-"`
+	UpdatedAt       time.Time `json:"-" yaml:"-"`
+	DeletedAt       DeletedAt `gorm:"index" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -57,8 +57,8 @@ func CreateUnknownLens() {
 
 // NewLens creates a new camera lens entity from make and model names.
 func NewLens(makeName string, modelName string) *Lens {
-	makeName = strings.TrimSpace(makeName)
-	modelName = strings.TrimSpace(modelName)
+	makeName = strings.TrimSpace(clean.StripControl(makeName))
+	modelName = strings.TrimSpace(clean.StripControl(modelName))
 
 	if modelName == "" && makeName == "" {
 		return &UnknownLens
@@ -263,7 +263,7 @@ func (m *Lens) markManual() error {
 		return res.Error
 	} else if res.RowsAffected == 0 {
 		// MariaDB counts only changed rows, so check whether the lens still exists.
-		var count int
+		var count int64
 
 		if err := UnscopedDb().Model(&Lens{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return err
@@ -297,9 +297,11 @@ func (m *Lens) PhotoCount() (count int, err error) {
 		return 0, fmt.Errorf("empty id")
 	}
 
-	err = UnscopedDb().Model(&Photo{}).Where("lens_id = ?", m.ID).Count(&count).Error
+	var n int64
 
-	return count, err
+	err = UnscopedDb().Model(&Photo{}).Where("lens_id = ?", m.ID).Count(&n).Error
+
+	return int(n), err
 }
 
 // Delete permanently removes the lens, and first assigns the pictures that reference it to the unknown lens if requested.
@@ -337,7 +339,7 @@ func (m *Lens) Delete(reassign bool) (reassigned int64, err error) {
 	if res.Error != nil {
 		return reassigned, res.Error
 	} else if res.RowsAffected == 0 {
-		var count int
+		var count int64
 
 		if err = UnscopedDb().Model(&Lens{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return reassigned, err

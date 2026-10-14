@@ -932,6 +932,7 @@ describe("model/photo", () => {
     const photo = new Photo(values);
     const result = photo.getDefaults();
     expect(result.UID).toBe("");
+    expect(result.Color).toBe(-1);
   });
 
   it("should get photos base name", () => {
@@ -957,6 +958,13 @@ describe("model/photo", () => {
     expect(result).toBe("superCuteKitten.jpg");
     const result2 = photo.baseName(5);
     expect(result2).toBe("supe…");
+  });
+
+  it("should remove bidi controls from displayed file names", () => {
+    const photo = new Photo({ UID: "bidi1", FileName: "2026/photo\u202Eabc.jpg", OriginalName: "orig\u2066inal\u0000.jpg" });
+    expect(photo.baseName()).toBe("photoabc.jpg");
+    expect(photo.getOriginalName()).toBe("original.jpg");
+    expect(photo.fileBase("a/صورة 日本.jpg")).toBe("صورة 日本.jpg");
   });
 
   it("should refresh file attributes", () => {

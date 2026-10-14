@@ -143,7 +143,7 @@ func TestLabel_Skip(t *testing.T) {
 	t.Run("Deleted", func(t *testing.T) {
 		label := createTestLabel(t, "skip-deleted")
 		now := time.Now()
-		label.DeletedAt = &now
+		label.DeletedAt = DeletedAtTime(now)
 		assert.True(t, label.Skip())
 	})
 	t.Run("Active", func(t *testing.T) {
@@ -472,7 +472,7 @@ func TestLabel_Delete(t *testing.T) {
 func TestLabel_Restore(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		var deletedAt = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		label := &Label{DeletedAt: &deletedAt, LabelName: "ToBeRestored"}
+		label := &Label{DeletedAt: DeletedAtTime(deletedAt), LabelName: "ToBeRestored"}
 
 		if err := label.Save(); err != nil {
 			t.Fatal(err)
@@ -487,7 +487,7 @@ func TestLabel_Restore(t *testing.T) {
 		assert.False(t, label.Deleted())
 	})
 	t.Run("LabelNotDeleted", func(t *testing.T) {
-		label := &Label{DeletedAt: nil, LabelName: "NotDeleted1234"}
+		label := &Label{LabelName: "NotDeleted1234"}
 
 		if err := label.Restore(); err != nil {
 			t.Fatal(err)

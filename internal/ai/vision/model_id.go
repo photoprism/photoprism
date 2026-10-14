@@ -1,34 +1,43 @@
 package vision
 
 import (
-	"strings"
+	"errors"
 	"sync"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// clippedModelIdWarned holds the shortened model identifiers that were logged.
-var clippedModelIdWarned sync.Map
+// modelIdWarned holds the reported sanitized model identifiers, keyed by the kind of issue.
+var modelIdWarned sync.Map
 
-// cleanModelId sanitizes a model identifier with clean.Type and logs a warning once per
-// identifier that had to be shortened to clean.LengthType characters. It writes to the
-// system log, as a shortened identifier is a configuration issue for the operator.
+// cleanModelId sanitizes a model identifier with clean.ModelId and logs a warning once per identifier and
+// issue, if it had to be shortened or had characters removed. It writes to the system log, as both are
+// configuration issues for the operator.
 func cleanModelId(s string) string {
-	id := clean.Type(s)
+	id, err := clean.ModelId(s)
 
-	if id == "" || len(strings.TrimSpace(clean.ASCII(s))) <= clean.LengthType {
+	if err == nil || id == "" {
 		return id
 	}
 
-	if _, warned := clippedModelIdWarned.LoadOrStore(id, struct{}{}); !warned {
-		event.SystemWarn([]string{"vision", "model identifier exceeds %d characters, using %s"}, clean.LengthType, clean.Log(id))
+	if errors.Is(err, clean.ErrTooLong) {
+		if _, warned := modelIdWarned.LoadOrStore("length:"+id, struct{}{}); !warned {
+			event.SystemWarn([]string{"vision", "model identifier exceeds %d characters, using %s"}, clean.LengthType, clean.Log(id))
+		}
+	}
+
+	if errors.Is(err, clean.ErrInvalidChars) {
+		if _, warned := modelIdWarned.LoadOrStore("chars:"+id, struct{}{}); !warned {
+			event.SystemWarn([]string{"vision", "model identifier contains unsupported characters, using %s"}, clean.Log(id))
+		}
 	}
 
 	return id
 }
 
-// modelIdText sanitizes a model identifier like cleanModelId, without shortening it.
-func modelIdText(s string) string {
-	return strings.TrimSpace(clean.ASCII(s))
+// hasModelId reports whether s holds a model identifier once sanitized.
+func hasModelId(s string) bool {
+	id, _ := clean.ModelId(s)
+	return id != ""
 }

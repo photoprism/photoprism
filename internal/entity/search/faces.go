@@ -28,7 +28,7 @@ func representativeMarkerJoin(facesTable, unknown string, omitWithheld bool) (st
 	conds := []string{
 		fmt.Sprintf("m2.face_id = %s.id", facesTable),
 		"m2.marker_type = ?",
-		"m2.marker_invalid = 0",
+		"m2.marker_invalid = FALSE",
 		"m2.thumb <> ''",
 		sizeCond,
 		scoreCond,
@@ -141,6 +141,8 @@ func searchFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResult
 	if frm.UID != "" {
 		s = s.Where(fmt.Sprintf("%s.id IN (?)", facesTable), strings.Split(strings.ToUpper(frm.UID), txt.Or))
 
+		results = make(FaceResults, 0)
+
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		}
@@ -157,10 +159,12 @@ func searchFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResult
 
 	// Show hidden faces?
 	if !txt.Yes(frm.Hidden) {
-		s = s.Where(fmt.Sprintf("%s.face_hidden = 0", facesTable))
+		s = s.Where(fmt.Sprintf("%s.face_hidden = FALSE", facesTable))
 	}
 
 	// Perform query.
+	results = make(FaceResults, 0)
+
 	if res := s.Scan(&results); res.Error != nil {
 		return results, res.Error
 	}

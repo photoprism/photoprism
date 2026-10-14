@@ -19,6 +19,7 @@
 /photoprism
 /photoprism-*
 /frontend/tests/acceptance/screenshots/
+/frontend/tests/acceptance/videos/
 /frontend/tests/screenshots/
 /frontend/tests/*.html
 /frontend/tests/*.log

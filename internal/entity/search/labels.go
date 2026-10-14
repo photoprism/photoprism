@@ -28,9 +28,9 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 
 	// Filter private labels.
 	if frm.Public {
-		s = s.Where("labels.label_nsfw = 0")
+		s = s.Where("labels.label_nsfw = FALSE")
 	} else if frm.NSFW {
-		s = s.Where("labels.label_nsfw = 1")
+		s = s.Where("labels.label_nsfw = TRUE")
 	}
 
 	// Limit result count.
@@ -53,6 +53,8 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	if frm.UID != "" {
 		s = s.Where("labels.label_uid IN (?)", strings.Split(strings.ToLower(frm.UID), txt.Or))
 
+		results = make([]Label, 0)
+
 		if result := s.Scan(&results); result.Error != nil {
 			return results, result.Error
 		}
@@ -66,7 +68,7 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 		if labelIds, findErr := entity.FindLabelIDs(frm.Query, " ", true); findErr != nil || len(labelIds) == 0 {
 			log.Infof("search: label %s not found", clean.Log(frm.Query))
 
-			s = s.Where(clean.SqlLikeCond("labels.label_name"), likeString)
+			s = s.Where(clean.SqlLikeCond(entity.DbDialect(), false, "labels.label_name"), likeString)
 		} else {
 			log.Infof("search: label %s resolves to %d labels", clean.Log(frm.Query), len(labelIds))
 
@@ -75,12 +77,14 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	}
 
 	if frm.Favorite {
-		s = s.Where("labels.label_favorite = 1")
+		s = s.Where("labels.label_favorite = TRUE")
 	}
 
 	if frm.Query == "" && !frm.All {
-		s = s.Where("labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = 1")
+		s = s.Where("(labels.label_priority >= 0 AND labels.photo_count > 1 OR labels.label_favorite = TRUE)")
 	}
+
+	results = make([]Label, 0)
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

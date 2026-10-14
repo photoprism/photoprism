@@ -16,16 +16,16 @@ const (
 
 // FileSync tracks the synchronization status for a file on an external service.
 type FileSync struct {
-	RemoteName string    `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)" json:"RemoteName" yaml:"RemoteName,omitempty"`
-	ServiceID  uint      `gorm:"primary_key;auto_increment:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
-	FileID     uint      `gorm:"index;" json:"FileID" yaml:"FileID,omitempty"`
+	RemoteName string    `gorm:"primaryKey;autoIncrement:false;type:bytes;size:255" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	ServiceID  uint      `gorm:"primaryKey;autoIncrement:false;size:32" json:"ServiceID" yaml:"ServiceID,omitempty"`
+	FileID     uint      `gorm:"index;size:32;" json:"FileID" yaml:"FileID,omitempty"`
 	RemoteDate time.Time `json:"RemoteDate" yaml:"RemoteDate,omitempty"`
 	RemoteSize int64     `json:"RemoteSize,omitempty" yaml:"RemoteSize,omitempty"`
-	Status     string    `gorm:"type:VARBINARY(16);" json:"Status" yaml:"Status,omitempty"`
-	Error      string    `gorm:"type:VARBINARY(512);" json:"Error,omitempty" yaml:"Error,omitempty"`
-	Errors     int       `json:"Errors,omitempty" yaml:"Errors,omitempty"`
-	File       *File     `json:"File,omitempty" yaml:"-"`
-	Account    *Service  `json:"Account,omitempty" yaml:"-"`
+	Status     string    `gorm:"type:bytes;size:16;" json:"Status" yaml:"Status,omitempty"`
+	Error      string    `gorm:"type:bytes;size:512;" json:"Error,omitempty" yaml:"Error,omitempty"`
+	Errors     int       `gorm:"size:32" json:"Errors,omitempty" yaml:"Errors,omitempty"`
+	File       *File     `gorm:"-:migration" json:"File,omitempty" yaml:"-"`
+	Account    *Service  `gorm:"foreignKey:ServiceID;-:migration" json:"Account,omitempty" yaml:"-"`
 	CreatedAt  time.Time `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt  time.Time `json:"UpdatedAt" yaml:"UpdatedAt"`
 }

@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/log/status"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestImportFailures verifies how failures of an import run are counted and reported.
@@ -168,6 +169,7 @@ func TestImportWorker_StackedVectorPreviews(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -271,6 +273,7 @@ func TestImportWorker_StackedRawOrientation(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -357,6 +360,7 @@ func TestImportWorker_TypeCheck(t *testing.T) {
 		SetConfig(cfg)
 		t.Cleanup(func() {
 			SetConfig(oldCfg)
+			_ = cfg.CloseDb()
 			oldCfg.RegisterDb()
 		})
 
@@ -521,6 +525,7 @@ func TestImport_TypeCheck(t *testing.T) {
 		SetConfig(cfg)
 		t.Cleanup(func() {
 			SetConfig(oldCfg)
+			_ = cfg.CloseDb()
 			oldCfg.RegisterDb()
 		})
 
@@ -584,6 +589,7 @@ func TestImportWorker_SidecarPreview(t *testing.T) {
 	SetConfig(cfg)
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
 		oldCfg.RegisterDb()
 	})
 
@@ -625,4 +631,64 @@ func TestImportWorker_SidecarPreview(t *testing.T) {
 	var files entity.Files
 	require.NoError(t, entity.UnscopedDb().Where("file_hash = ?", foreignHash).Find(&files).Error)
 	assert.Empty(t, files)
+}
+
+// TestImportWorker_ArchivedBackup checks that the related files of a file restored as archived from a backup
+// at its destination are not indexed as a photo of their own when archived photos are skipped.
+func TestImportWorker_ArchivedBackup(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	useTestDb(t, "import-archived-backup")
+
+	cfg := config.NewMinimalTestConfigWithDb("import-archived-backup", filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		_ = cfg.CloseDb()
+		oldCfg.RegisterDb()
+	})
+
+	importDir := filepath.Join(cfg.ImportPath(), "clips")
+	clipName := filepath.Join(importDir, "clip.mp4")
+	require.NoError(t, os.MkdirAll(importDir, fs.ModeDir))
+	require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "example.mp4"), clipName, false))
+
+	mainFile, err := NewMediaFile(clipName)
+	require.NoError(t, err)
+	related, err := mainFile.RelatedFiles(false)
+	require.NoError(t, err)
+
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+	// Place a backup of an archived photo at the destination, as after restoring the originals only. The
+	// destination depends on the capture time, which the import reads with ExifTool.
+	require.NoError(t, mainFile.CreateExifToolJson(convert))
+	destName, err := imp.DestinationFilename(mainFile, mainFile, "")
+	require.NoError(t, err)
+	destPath := filepath.Dir(fs.RelName(destName, cfg.OriginalsPath()))
+	require.NoError(t, os.MkdirAll(filepath.Dir(destName), fs.ModeDir))
+	photoUID := rnd.GenerateUID(entity.PhotoUID)
+	require.NoError(t, os.WriteFile(fs.StripExt(destName)+fs.ExtYml, []byte("UID: "+photoUID+
+		"\nType: video\nQuality: 3\nDeletedAt: 2022-10-18T08:15:21Z\n"), fs.ModeFile))
+
+	jobs := make(chan ImportJob, 1)
+	jobs <- ImportJob{FileName: clipName, Related: related, IndexOpt: IndexOptionsAll(cfg), ImportOpt: ImportOptionsMove(cfg.ImportPath(), ""), Imp: imp}
+	close(jobs)
+	ImportWorker(jobs)
+
+	// The photo is restored from its backup, even though the import skips archived photos, and stays archived.
+	var photos entity.Photos
+	require.NoError(t, entity.UnscopedDb().Where("photo_path = ?", destPath).Find(&photos).Error)
+	require.Len(t, photos, 1)
+	assert.Equal(t, photoUID, photos[0].PhotoUID)
+	assert.True(t, photos[0].IsArchived(), "photo stays archived")
+
+	var files []string
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", photos[0].ID).Pluck("file_name", &files).Error)
+	mainName := fs.RelName(destName, cfg.OriginalsPath())
+	assert.ElementsMatch(t, []string{mainName, fs.StripExt(mainName) + fs.ExtYml, mainName + fs.ExtJpeg}, files)
 }

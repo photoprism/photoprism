@@ -31,6 +31,7 @@ import { Photo } from "model/photo";
 import { onInit, onSetTheme } from "common/hooks";
 import { ref, reactive } from "vue";
 import memoizeOne from "memoize-one";
+import { Info } from "luxon";
 
 onInit();
 
@@ -499,10 +500,12 @@ export default class Config {
     return this.getLanguageLocale().substring(0, 2);
   }
 
-  // getTimeZone returns user time zone.
+  // getTimeZone returns the user time zone, or "Local" if none is set or the browser cannot resolve it.
   getTimeZone() {
-    if (this.values?.settings?.ui?.timeZone) {
-      return this.values?.settings?.ui?.timeZone;
+    const zone = this.values?.settings?.ui?.timeZone;
+
+    if (typeof zone === "string" && zone !== "" && Info.normalizeZone(zone)?.isValid) {
+      return zone;
     }
 
     return "Local";

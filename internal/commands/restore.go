@@ -2,11 +2,14 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -15,7 +18,9 @@ import (
 
 const restoreDescription = `A custom filename for the database backup (or - to read the backup from stdin) can optionally be passed as argument.
 The --database flag can be omitted in this case. If nothing else is specified, the database and album backup paths
-will be automatically determined based on the current configuration.`
+will be automatically determined based on the current configuration.
+
+A database backup can only be restored into the same kind of database it was created from.`
 
 // RestoreCommand configures the command name, flags, and action.
 var RestoreCommand = &cli.Command{
@@ -88,9 +93,9 @@ func restoreAction(ctx *cli.Context) error {
 		return cli.Exit(err, 1)
 	}
 
-	log.Infoln("restore: migrating index database schema")
-
-	conf.InitDb()
+	if err = migrateRestoredIndex(conf); err != nil {
+		return err
+	}
 
 	// Restore albums from YAML backup files?
 	if restoreAlbums {
@@ -116,6 +121,20 @@ func restoreAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	log.Infof("completed in %s", elapsed)
+
+	return nil
+}
+
+// migrateRestoredIndex migrates the schema of the index database after a restore. A restored schema that
+// cannot be migrated stops the command; other migration errors are logged.
+func migrateRestoredIndex(conf *config.Config) error {
+	log.Infoln("restore: migrating index database schema")
+
+	conf.RegisterDb()
+
+	if err := conf.MigrateDb(false, nil); errors.Is(err, entity.ErrPostgresSchemaUnsupported) {
+		return cli.Exit(err, 1)
+	}
 
 	return nil
 }

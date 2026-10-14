@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -8,13 +9,13 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/pkg/txt/clip"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ErrorMessageBytes is the storage limit of the error_message column in bytes,
 // matching its VARBINARY(2048) definition. Messages may contain multi-byte text
-// (e.g. file paths or recovered-panic stack traces), so writes are clipped by
-// bytes on a rune boundary to avoid write errors and invalid UTF-8.
+// (e.g. file paths or recovered-panic stack traces), so writes are clipped in the
+// middle by bytes, without splitting a character, so the cause at the end stays.
 const ErrorMessageBytes = 2048
 
 // logEvents is true when events are being recorded in the "errors" database table.
@@ -38,10 +39,10 @@ func LogWarningsAndErrors() {
 
 // Error represents an error message log.
 type Error struct {
-	ID           uint      `gorm:"primary_key" json:"ID" yaml:"ID"`
-	ErrorTime    time.Time `sql:"index" json:"Time" yaml:"Time"`
-	ErrorLevel   string    `gorm:"type:VARBINARY(32)" json:"Level" yaml:"Level"`
-	ErrorMessage string    `gorm:"type:VARBINARY(2048)" json:"Message" yaml:"Message"`
+	ID           uint      `gorm:"primaryKey;size:32" json:"ID" yaml:"ID"`
+	ErrorTime    time.Time `gorm:"index" json:"Time" yaml:"Time"`
+	ErrorLevel   string    `gorm:"type:bytes;size:32" json:"Level" yaml:"Level"`
+	ErrorMessage string    `gorm:"type:bytes;size:2048" json:"Message" yaml:"Message"`
 }
 
 // Errors represents a list of error log messages.
@@ -78,7 +79,7 @@ func (Error) LogEvents(minLevel logrus.Level) {
 			errLog := Error{ErrorLevel: level.String()}
 
 			if val, ok := msg.Fields["message"]; ok {
-				errLog.ErrorMessage = clip.Bytes(val.(string), ErrorMessageBytes)
+				errLog.ErrorMessage = clean.ClipMiddle(strings.TrimSpace(val.(string)), ErrorMessageBytes)
 			}
 
 			if val, ok := msg.Fields["time"]; ok {

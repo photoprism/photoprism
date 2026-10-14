@@ -76,9 +76,9 @@ func TestLabelHasThumb(t *testing.T) {
 	setLabelThumb := func(t *testing.T, uid, hash string) {
 		var current []string
 
-		if err := Db().Model(entity.Label{}).Where("label_uid = ?", uid).Limit(1).Pluck("thumb", &current).Error; err != nil {
+		if err := Db().Model(&entity.Label{}).Where("label_uid = ?", uid).Limit(1).Pluck("thumb", &current).Error; err != nil {
 			t.Fatal(err)
-		} else if err = Db().Model(entity.Label{}).Where("label_uid = ?", uid).Update("thumb", hash).Error; err != nil {
+		} else if err = Db().Model(&entity.Label{}).Where("label_uid = ?", uid).Update("thumb", hash).Error; err != nil {
 			t.Fatal(err)
 		}
 
@@ -89,7 +89,7 @@ func TestLabelHasThumb(t *testing.T) {
 				restore = current[0]
 			}
 
-			_ = Db().Model(entity.Label{}).Where("label_uid = ?", uid).Update("thumb", restore).Error
+			_ = Db().Model(&entity.Label{}).Where("label_uid = ?", uid).Update("thumb", restore).Error
 		})
 	}
 

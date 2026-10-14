@@ -47,7 +47,7 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
 		like := clean.SqlLike(search) + "%"
-		stmt = stmt.Where(clean.SqlLikeAny("user_name", "auth_provider"), like, like)
+		stmt = stmt.Where("("+clean.SqlLikeCond(DbDialect(), false, "user_name")+" OR "+clean.SqlLikeCond(DbDialect(), true, "auth_provider")+")", like, like)
 	}
 
 	if sortOrder == "" {

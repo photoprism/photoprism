@@ -34,7 +34,7 @@ func TestMarker_SetFace_StoredAcceptance(t *testing.T) {
 			require.NotNil(t, m)
 			before := *m
 			if tc.deleted {
-				require.NoError(t, UnscopedDb().Delete(Face{}, "id = ?", f.ID).Error)
+				require.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", f.ID).Error)
 			} else {
 				values := Values{"collision_radius": tc.radius}
 				if tc.rename {

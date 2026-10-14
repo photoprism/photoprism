@@ -20,6 +20,25 @@ func TestChroma_Percent(t *testing.T) {
 	})
 }
 
+func TestChroma_Value(t *testing.T) {
+	t.Run("Monochrome", func(t *testing.T) {
+		assert.Equal(t, int16(1), Chroma(0).Value())
+		assert.Equal(t, int16(1), Chroma(-1).Value())
+	})
+	t.Run("NearlyGray", func(t *testing.T) {
+		assert.Equal(t, int16(2), Chroma(1).Value())
+	})
+	t.Run("Fifteen", func(t *testing.T) {
+		assert.Equal(t, int16(16), Chroma(15).Value())
+	})
+	t.Run("Maximum", func(t *testing.T) {
+		assert.Equal(t, int16(99), Chroma(98).Value())
+		assert.Equal(t, int16(100), Chroma(99).Value())
+		assert.Equal(t, int16(100), Chroma(100).Value())
+		assert.Equal(t, int16(100), Chroma(127).Value())
+	})
+}
+
 func TestChroma_Uint(t *testing.T) {
 	lum := []Luminance{1, 16, 2, 4, 15, 16, 1, 0, 8}
 	lMap := LightMap(lum)

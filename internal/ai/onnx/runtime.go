@@ -16,42 +16,57 @@ var (
 	runtimeInitErr error
 	runtimePath    string
 	executableVar  = os.Executable
+
+	setLibraryPathVar     = onnxruntime.SetSharedLibraryPath
+	initEnvironmentVar    = onnxruntime.InitializeEnvironment
+	disableTelemetryVar   = onnxruntime.DisableTelemetry
+	destroyEnvironmentVar = onnxruntime.DestroyEnvironment
 )
 
-// EnsureRuntime loads the ONNX Runtime shared library and initializes the global environment,
-// and must succeed before any model is inspected or loaded.
+// EnsureRuntime loads the ONNX Runtime shared library and initializes the global environment with
+// telemetry disabled, and must succeed before any model is inspected or loaded.
 //
 // The binding requests the exact C API version of its vendored headers, so it fails against an
 // older library; the candidate errors are kept in the message to tell missing from mismatched.
 func EnsureRuntime(libraryPath string) error {
 	runtimeOnce.Do(func() {
-		candidates := SharedLibraryCandidates(libraryPath)
-		var errs []string
-
-		for _, candidate := range candidates {
-			onnxruntime.SetSharedLibraryPath(candidate)
-
-			if err := onnxruntime.InitializeEnvironment(); err != nil {
-				// Collect errors so we can surface meaningful diagnostics when all options fail.
-				errs = append(errs, fmt.Sprintf("%s (%v)", candidate, err))
-				continue
-			}
-
-			// Successfully initialized; stop retrying.
-			runtimeInitErr = nil
-			runtimePath = candidate
-			return
-		}
-
-		if len(errs) == 0 {
-			runtimeInitErr = errors.New("no ONNX runtime library candidates")
-			return
-		}
-
-		runtimeInitErr = fmt.Errorf("failed to load ONNX runtime: %s", strings.Join(errs, "; "))
+		runtimePath, runtimeInitErr = loadRuntime(SharedLibraryCandidates(libraryPath))
 	})
 
 	return runtimeInitErr
+}
+
+// loadRuntime initializes the environment from the first loadable candidate with telemetry disabled,
+// and fails closed if it cannot be: the variable must be set before loading, as it is read only once.
+func loadRuntime(candidates []string) (string, error) {
+	if err := disableTelemetryEnv(); err != nil {
+		return "", fmt.Errorf("failed to disable ONNX runtime telemetry: %w", err)
+	}
+
+	var errs []string
+
+	for _, candidate := range candidates {
+		setLibraryPathVar(candidate)
+
+		if err := initEnvironmentVar(); err != nil {
+			// Collect errors so we can surface meaningful diagnostics when all options fail.
+			errs = append(errs, fmt.Sprintf("%s (%v)", candidate, err))
+			continue
+		}
+
+		if err := disableTelemetryVar(); err != nil {
+			_ = destroyEnvironmentVar()
+			return "", fmt.Errorf("failed to disable ONNX runtime telemetry: %w", err)
+		}
+
+		return candidate, nil
+	}
+
+	if len(errs) == 0 {
+		return "", errors.New("no ONNX runtime library candidates")
+	}
+
+	return "", fmt.Errorf("failed to load ONNX runtime: %s", strings.Join(errs, "; "))
 }
 
 // RuntimeLibraryPath returns the shared-library candidate used to initialize ONNX Runtime.

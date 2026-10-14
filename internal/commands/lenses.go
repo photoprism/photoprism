@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"

@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -166,7 +166,7 @@ func TestUsersModCommand_Username(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
 		m, _ := newRenameTestUser(t, "modrename-invalid")
 
-		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--username=visitor", "modrename-invalid"})
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--username=cs5cpu17n6gj2qo5", "modrename-invalid"})
 		require.EqualError(t, err, "username is reserved")
 		assert.Equal(t, "modrename-invalid", entity.FindUserByUID(m.UserUID).UserName)
 	})
@@ -257,7 +257,7 @@ func TestUsersModCommand_Username(t *testing.T) {
 		assert.Equal(t, "Plain Change", stored.DisplayName)
 		assert.Equal(t, "modrename-plain", renameSessionUserName(t, sess.ID))
 		assert.Nil(t, renameAuditEntry(audit))
-		assert.Contains(t, logMessages(logs, logrus.InfoLevel), "user 'modrename-plain' has been updated")
+		assert.Contains(t, logMessages(logs, logrus.InfoLevel), "user 'modrename-plain' ("+m.UserUID+") has been updated")
 	})
 }
 

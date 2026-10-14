@@ -276,6 +276,10 @@ services:
     extends:
       file: ./compose.yaml
       service: dummy-ldap
+  dummy-lldap:
+    extends:
+      file: ./compose.yaml
+      service: dummy-lldap
   keycloak:
     extends:
       file: ./compose.yaml

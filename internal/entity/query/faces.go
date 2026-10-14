@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -151,7 +151,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 		}
 
 		stmt := whereEmbeddingModel(Db().Model(&entity.Marker{}).
-			Where("marker_invalid = 0").
+			Where("marker_invalid = FALSE").
 			Where("face_id = ?", f.ID), current)
 
 		if res := stmt.
@@ -171,7 +171,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 // RemoveAnonymousFaceClusters removes anonymous faces from the index.
 func RemoveAnonymousFaceClusters() (removed int, err error) {
 	res := UnscopedDb().
-		Delete(entity.Face{}, "subj_uid = '' AND face_src = ?", entity.SrcAuto)
+		Delete(&entity.Face{}, "subj_uid = '' AND face_src = ?", entity.SrcAuto)
 
 	return int(res.RowsAffected), res.Error
 }
@@ -179,7 +179,7 @@ func RemoveAnonymousFaceClusters() (removed int, err error) {
 // RemoveAutoFaceClusters removes automatically added face clusters from the index.
 func RemoveAutoFaceClusters() (removed int, err error) {
 	res := UnscopedDb().
-		Delete(entity.Face{}, "face_src = ?", entity.SrcAuto)
+		Delete(&entity.Face{}, "face_src = ?", entity.SrcAuto)
 
 	return int(res.RowsAffected), res.Error
 }
@@ -188,7 +188,7 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 // rather than a list of known sources, because a cluster inherits the source of the marker that
 // created it, so the column holds whatever sources the markers table does.
 func RemoveAllFaceClusters() (removed int, err error) {
-	res := UnscopedDb().Delete(entity.Face{})
+	res := UnscopedDb().Where("1 = 1").Delete(&entity.Face{})
 
 	return int(res.RowsAffected), res.Error
 }
@@ -280,7 +280,7 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 func unclusteredFaceMarkers(model string) *gorm.DB {
 	return whereEmbeddingModel(Db().Model(&entity.Markers{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), model)
+		Where("face_id = '' AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0"), model)
 }
 
 // newestAutoFaceTime returns when the most recent automatic cluster the specified model produced
@@ -319,11 +319,13 @@ func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
 		q = q.Where("created_at > ?", newest)
 	}
 
-	if err := q.Count(&n).Error; err != nil {
+	var count int64
+
+	if err := q.Count(&count).Error; err != nil {
 		log.Errorf("faces: %s (count new markers)", err)
 	}
 
-	return n
+	return int(count)
 }
 
 // whereClusterScore restricts a statement to markers that clear the clustering bar of the detector
@@ -628,22 +630,22 @@ func RemovePeopleAndFaces() (err error) {
 	defer mutex.Index.Unlock()
 
 	// Delete people.
-	if err = UnscopedDb().Delete(entity.Subject{}, "subj_type = ?", entity.SubjPerson).Error; err != nil {
+	if err = UnscopedDb().Delete(&entity.Subject{}, "subj_type = ?", entity.SubjPerson).Error; err != nil {
 		return err
 	}
 
 	// Delete all faces.
-	if err = UnscopedDb().Delete(entity.Face{}).Error; err != nil {
+	if err = UnscopedDb().Where("1 = 1").Delete(&entity.Face{}).Error; err != nil {
 		return err
 	}
 
 	// Delete face markers.
-	if err = UnscopedDb().Delete(entity.Marker{}, "marker_type = ?", entity.MarkerFace).Error; err != nil {
+	if err = UnscopedDb().Delete(&entity.Marker{}, "marker_type = ?", entity.MarkerFace).Error; err != nil {
 		return err
 	}
 
 	// Reset face counters.
-	if err = UnscopedDb().Model(entity.Photo{}).
+	if err = UnscopedDb().Model(&entity.Photo{}).Where("photo_faces <> 0 OR photo_faces IS NULL").
 		UpdateColumn("photo_faces", 0).Error; err != nil {
 		return err
 	}
@@ -654,7 +656,7 @@ func RemovePeopleAndFaces() (err error) {
 			return labelErr
 		}
 	} else if labelErr = UnscopedDb().
-		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
+		Delete(&entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
 		return labelErr
 	} else if labelErr = label.Update("PhotoCount", 0); labelErr != nil {
 		return labelErr
@@ -666,7 +668,7 @@ func RemovePeopleAndFaces() (err error) {
 			return labelErr
 		}
 	} else if labelErr = UnscopedDb().
-		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
+		Delete(&entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
 		return labelErr
 	} else if labelErr = label.Update("PhotoCount", 0); labelErr != nil {
 		return labelErr
@@ -829,7 +831,9 @@ func FacesFromOtherModels() (count int, err error) {
 		stmt = stmt.Where("embed_model <> ''")
 	}
 
-	err = stmt.Count(&count).Error
+	var n int64
 
-	return count, err
+	err = stmt.Count(&n).Error
+
+	return int(n), err
 }

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/clean"
+
 	"github.com/olekukonko/tablewriter"
 	"github.com/olekukonko/tablewriter/renderer"
 	"github.com/olekukonko/tablewriter/tw"
@@ -66,8 +68,11 @@ func rowAlignment(cols []string, align []Align) []tw.Align {
 }
 
 // MarkdownTable returns a text-formatted table with caption, optionally as valid Markdown,
-// so the output can be pasted into the docs.
+// so the output can be pasted into the docs. Each cell is passed through clean.Display.
 func MarkdownTable(rows [][]string, cols []string, opt Options) string {
+	rows, cols = displayRows(rows), displayRow(cols)
+	opt.Caption = clean.Display(opt.Caption)
+
 	// Escape Markdown.
 	if opt.Valid {
 		for i := range cols {

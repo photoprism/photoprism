@@ -105,11 +105,11 @@ func TestStartImportAlbums(t *testing.T) {
 	file, err := entity.FirstFileByHash(hash)
 	require.NoError(t, err)
 
-	var count int
+	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ?", file.PhotoUID, album.AlbumUID).Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", missing).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 }
 
 func TestStartImportUploadFolder(t *testing.T) {

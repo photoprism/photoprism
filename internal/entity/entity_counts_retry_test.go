@@ -22,7 +22,9 @@ func TestUpdateLabelCounts_Retry(t *testing.T) {
 	// A dedicated pool keeps the trigger's session counter stable without changing the shared pool.
 	original := dbConn
 	conn := &DbConn{Driver: dsn.DriverMySQL, Dsn: TestDbDSN(dsn.DriverMySQL, os.Getenv("PHOTOPRISM_TEST_DSN"))}
-	conn.Db().DB().SetMaxOpenConns(1)
+	sqlDb, err := conn.Db().DB()
+	require.NoError(t, err)
+	sqlDb.SetMaxOpenConns(1)
 	SetDbProvider(conn)
 	t.Cleanup(func() { WaitForAsyncJobs(); SetDbProvider(original); conn.Close() })
 	previousStamp := updateLabelCountsLastUpdated.Load()

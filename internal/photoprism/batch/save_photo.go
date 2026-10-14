@@ -102,7 +102,7 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 	}
 
 	if formValues.PhotoCountry.Action == ActionUpdate {
-		p.PhotoCountry = formValues.PhotoCountry.Value
+		p.PhotoCountry = formData.PhotoCountry
 	}
 
 	if locationChanged {

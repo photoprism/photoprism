@@ -227,7 +227,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 			}
 
 			// A stack merge moves files to the photo that remains, even if its own row did not change.
-			if (updated || len(merged) > 0) && photo.DeletedAt == nil {
+			if (updated || len(merged) > 0) && !photo.DeletedAt.Valid {
 				events.Add(photo.PhotoUID)
 			}
 

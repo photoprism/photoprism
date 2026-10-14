@@ -156,8 +156,11 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
 
     // Keyboard nav is more stable than click on autocomplete options
     // (the list re-mounts between visibility and click on fast systems).
+    // Waits for the filtered list, since the keys would otherwise pick its unfiltered first entry.
     const pickAutocomplete = async (input, value) => {
-      await t.typeText(input, value, { replace: true }).pressKey("down enter");
+      await t.typeText(input, value, { replace: true });
+      await t.expect(Selector('div[role="option"]').filterVisible().nth(0).innerText).contains(value, { timeout: 5000 });
+      await t.pressKey("down enter");
     };
     const pickFromSelect = async (field, value) => {
       await t.click(field).click(optionWith(value));

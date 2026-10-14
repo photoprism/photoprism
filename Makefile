@@ -3,6 +3,13 @@
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
 
+# Database of the TestCafe acceptance targets, set on the command line, e.g. "make acceptance-run-chromium DB=sqlite".
+# DB is validated before any shell runs and replaced with the supported value, or with nothing if it is not supported.
+override TESTCAFE_DBS := sqlite mariadb postgres
+override TESTCAFE_DB := $(if $(filter command line,$(origin DB)),$(value DB),sqlite)
+override TESTCAFE_DB := $(if $(filter 1,$(words $(TESTCAFE_DB))),$(filter $(TESTCAFE_DBS),$(TESTCAFE_DB)))
+override DB := $(TESTCAFE_DB)
+
 export GO111MODULE=on
 export NPM_CONFIG_IGNORE_SCRIPTS ?= true
 
@@ -12,7 +19,6 @@ export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' .telemetry)
 endif
 
 -include .semver
--include .env
 
 # Binary file names.
 BINARY_NAME=photoprism
@@ -50,12 +56,41 @@ INSTALL_USER ?= $(DESTUID):$(DESTGID)
 INSTALL_MODE ?= u+rwX,a+rX,go-w
 INSTALL_MODE_BIN ?= 755
 
+# Evaluates the defaults above once, since $(shell) passes the exported variables to its command and would
+# otherwise expand them again, with their own $(shell) calls, every time it runs. Values from the environment
+# or the command line are left as they are.
+$(foreach v,BUILD_VERSION SEMVER_MINOR SEMVER_PATCH BUILD_PATH BUILD_DATE REPORT_DATE BUILD_OS \
+	BUILD_ARCH JS_BUILD_PATH SEMVER_VERSION BUILD_TAG INSTALL_PATH DESTDIR INSTALL_USER,$(if $(filter file,$(origin $(v))),$(eval $(v) := $$($(v)))))
+
 UID := $(shell id -u)
 GID := $(shell id -g)
 HASRICHGO := $(shell which richgo)
 
 # Client for the development database, which runs MariaDB.
 MARIADB ?= mariadb
+
+# Client and URIs for the optional PostgreSQL service ("docker compose --profile postgres up -d").
+PSQL ?= psql
+POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/postgres
+POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/testdb?sslmode=disable&TimeZone=UTC
+
+# Records a video of each failed TestCafe test in "frontend/tests/acceptance/videos/" if TC_USE_VIDEO is set.
+ifneq ($(filter-out 0 false no off,$(value TC_USE_VIDEO)),)
+TESTCAFE_VIDEO = --video tests/acceptance/videos/ --video-options singleFile=false,failedOnly=true
+endif
+
+# acceptance-env sets the database, folder and port options of a TestCafe server to the fixture in the given folder,
+# so that they also apply if the server cannot load its options file, and removes other paths and cluster options.
+acceptance-env = env -u PHOTOPRISM_DATABASE_SERVER -u PHOTOPRISM_DATABASE_NAME -u PHOTOPRISM_DATABASE_USER \
+	-u PHOTOPRISM_DATABASE_PASSWORD -u PHOTOPRISM_SIDECAR_PATH -u PHOTOPRISM_CACHE_PATH -u PHOTOPRISM_USERS_PATH \
+	-u PHOTOPRISM_TEMP_PATH -u PHOTOPRISM_BACKUP_PATH -u PHOTOPRISM_PID_FILENAME -u PHOTOPRISM_LOG_FILENAME \
+	-u PHOTOPRISM_DEFAULTS_YAML -u PHOTOPRISM_PORTAL_URL -u PHOTOPRISM_JOIN_TOKEN -u PHOTOPRISM_NODE_CLIENT_ID \
+	-u PHOTOPRISM_NODE_CLIENT_SECRET -u PHOTOPRISM_CONNECT PHOTOPRISM_DATABASE_DRIVER=sqlite \
+	PHOTOPRISM_DATABASE_DSN="$(1)/index.db" PHOTOPRISM_STORAGE_PATH="$(1)" PHOTOPRISM_ORIGINALS_PATH="$(1)/originals" \
+	PHOTOPRISM_IMPORT_PATH="$(1)/import" PHOTOPRISM_HTTP_PORT=2343
+# acceptance-stage runs the given TestCafe targets in order, then the stop target, also if one of them fails,
+# and exits with the first failure.
+acceptance-stage = $(MAKE) -j1 -S $(1); status=$$?; $(MAKE) -j1 $(2) || [ $$status -ne 0 ] || status=1; exit $$status
 
 ifdef HASRICHGO
     GOTEST=richgo test
@@ -116,15 +151,18 @@ Run:
   users                    Create a test user and list all user accounts
 
 Test:
-  test                     Run the JS and Go tests
+  test                     Run the JS, Go, and shell script tests
   test-short               Run the short Go tests in parallel
   test-go                  Run the default Go suite, including slow tests
   test-integration         Run the Go suite with the optional integration matrices
   test-js                  Run the frontend unit tests with Vitest
   test-mariadb             Run the default Go suite against MariaDB
                            Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
+  test-postgres            Run the default Go suite against PostgreSQL (experimental)
   reset-testdb             Reset the SQLite and MariaDB test databases
   acceptance-run-chromium  Run the TestCafe acceptance tests in Chrome
+                           Add DB=mariadb or DB=postgres to run them on that database
+                           Add TC_USE_VIDEO=1 to record videos of failed tests
   Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai
 
 Format, Lint & Docs:
@@ -166,7 +204,7 @@ build: build-go
 watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
-test: test-js test-go
+test: test-js test-go test-sh
 test-go:
 	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-go
 test-integration:
@@ -182,12 +220,22 @@ test-photoprism: run-test-photoprism
 test-short:
 	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-short
 test-mariadb:
-	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-acceptance run-test-mariadb
-acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
-acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
-acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth acceptance-auth-sqlite-stop
-acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance acceptance-sqlite-stop-1
-acceptance-api-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-mariadb-testdb run-test-mariadb
+test-postgres:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-postgres-testdb run-test-postgres
+acceptance-run-chromium: acceptance-check-db storage/acceptance
+	+$(call acceptance-stage,acceptance-restart-1 wait-1 acceptance-api,acceptance-stop-1)
+	+$(call acceptance-stage,acceptance-auth-restart wait-2 acceptance-auth,acceptance-auth-stop)
+	+$(call acceptance-stage,acceptance-restart-3 wait-3 acceptance,acceptance-stop-3)
+acceptance-run-chromium-short: acceptance-check-db storage/acceptance
+	+$(call acceptance-stage,acceptance-auth-restart wait-1 acceptance-auth-short,acceptance-auth-stop)
+	+$(call acceptance-stage,acceptance-restart-2 wait-2 acceptance-short,acceptance-stop-2)
+acceptance-auth-run-chromium: acceptance-check-db storage/acceptance
+	+$(call acceptance-stage,acceptance-auth-restart wait-1 acceptance-auth,acceptance-auth-stop)
+acceptance-public-run-chromium: acceptance-check-db storage/acceptance
+	+$(call acceptance-stage,acceptance-restart-1 wait-1 acceptance,acceptance-stop-1)
+acceptance-api-run-chromium: acceptance-check-db storage/acceptance
+	+$(call acceptance-stage,acceptance-restart-1 wait-1 acceptance-api,acceptance-stop-1)
 help:
 	@printf '%s\n' "$$HELP_TEXT"
 list:
@@ -325,7 +373,14 @@ install-cuda:
 	sudo scripts/dist/install-cuda.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
-acceptance-sqlite-restart-%: acceptance-sqlite-stop-%
+acceptance-check-db:
+ifeq ($(TESTCAFE_DB),)
+	@echo "Unsupported DB, use one of: $(TESTCAFE_DBS)" >&2; exit 2
+else
+	@echo "TestCafe database: $(TESTCAFE_DB)"
+endif
+acceptance-restart-%: acceptance-check-db
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	rm -rf storage/acceptance/sidecar/2020
@@ -335,15 +390,28 @@ acceptance-sqlite-restart-%: acceptance-sqlite-stop-%
 	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
-	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" start -d
-acceptance-sqlite-stop-%:
-	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
-acceptance-auth-sqlite-restart: acceptance-auth-sqlite-stop
+	@$(call acceptance-env,./storage/acceptance) MARIADB="$(MARIADB)" PSQL="$(PSQL)" POSTGRES_ADMIN_URI="$(POSTGRES_ADMIN_URI)" bash scripts/test/acceptance-db.sh $(TESTCAFE_DB) ./photoprism "./storage/acceptance/config-sqlite"
+	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="public" -c "./storage/acceptance/config-$(TESTCAFE_DB)" start -d
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-$(TESTCAFE_DB)"
+acceptance-stop-%:
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
+acceptance-auth-restart: acceptance-check-db
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
-	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" start -d
+	@$(call acceptance-env,./storage/acceptance) MARIADB="$(MARIADB)" PSQL="$(PSQL)" POSTGRES_ADMIN_URI="$(POSTGRES_ADMIN_URI)" bash scripts/test/acceptance-db.sh $(TESTCAFE_DB) ./photoprism "./storage/acceptance/config-sqlite"
+	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="password" -c "./storage/acceptance/config-$(TESTCAFE_DB)" start -d
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-$(TESTCAFE_DB)"
+acceptance-auth-stop:
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
+acceptance-sqlite-restart-%:
+	$(MAKE) acceptance-restart-$* DB=sqlite
+acceptance-sqlite-stop-%:
+	$(MAKE) acceptance-stop-$* DB=sqlite
+acceptance-auth-sqlite-restart:
+	$(MAKE) acceptance-auth-restart DB=sqlite
 acceptance-auth-sqlite-stop:
-	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
+	$(MAKE) acceptance-auth-stop DB=sqlite
 start:
 	./photoprism start -d
 stop:
@@ -354,6 +422,8 @@ mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
 mariadb-init:
 	$(MARIADB) < scripts/sql/mariadb-init.sql
+postgres:
+	$(DOCKER_COMPOSE) exec postgres psql -U photoprism photoprism
 root: root-terminal
 root-terminal:
 	$(DOCKER_COMPOSE) exec -u root photoprism bash
@@ -706,28 +776,32 @@ build-setup-nas-raspberry-pi:
 	./scripts/setup/nas/raspberry-pi/build.sh
 watch-js:
 	$(MAKE) -C frontend watch
+test-sh:
+	$(info Running shell script tests...)
+	bash scripts/test/acceptance-server-test.sh
+	bash scripts/test/acceptance-db-test.sh
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)
 acceptance:
 	$(info Running public-mode tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./.testcaferc.cjs "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) "tests/acceptance")
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./.testcaferc.cjs "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./.testcaferc.cjs "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) "tests/acceptance")
 acceptance-api:
 	$(info Running JS acceptance-api tests in Chrome...)
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-meta mode=api --config-file ./.testcaferc.cjs "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-meta mode=api --config-file ./.testcaferc.cjs $(TESTCAFE_VIDEO) "tests/acceptance")
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
 	(cd frontend && npm run test-watch)
@@ -740,22 +814,26 @@ vitest-component:
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	$(MARIADB) < scripts/sql/reset-photoprism.sql
-# Interim: the Go unit test databases still carry the acceptance_ prefix, so this drops
-# them alongside testdb until they are renamed (see PR #4831).
+# Drops the Go test databases (testdb_<pkg>_<hash>) and acceptance_<pkg>_<hash> databases left by older checkouts.
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
 	$(MARIADB) < scripts/sql/reset-testdb.sql
-	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE \`', schema_name, '\`;') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | $(MARIADB)
+	$(MARIADB) -N -B -r -e "SELECT CONCAT('DROP DATABASE \`', REPLACE(schema_name, '\`', '\`\`'), '\`;') FROM information_schema.schemata WHERE schema_name LIKE 'testdb\_%' OR schema_name LIKE 'acceptance\_%'" | $(MARIADB)
 reset-mariadb-local:
 	$(info Resetting local database...)
 	$(MARIADB) < scripts/sql/reset-local.sql
 reset-mariadb-acceptance:
-	$(info Resetting acceptance databases...)
-	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE \`', schema_name, '\`;') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | $(MARIADB)
+	$(info Resetting acceptance database...)
 	$(MARIADB) < scripts/sql/reset-acceptance.sql
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb
-reset-acceptance: reset-mariadb-acceptance
+reset-acceptance: reset-mariadb-testdb
+reset-postgres-acceptance: reset-postgres-testdb
+# Drops the Go test databases (testdb_<pkg>_<hash>) and acceptance_<pkg>_<hash> databases left by older checkouts.
+reset-postgres-testdb:
+	$(info Resetting PostgreSQL test databases...)
+	@stmts="$$($(PSQL) "$(POSTGRES_ADMIN_URI)" -v ON_ERROR_STOP=1 -At -c "SELECT format('DROP DATABASE %I WITH (FORCE);', datname) FROM pg_database WHERE datname LIKE 'testdb\_%' OR datname LIKE 'acceptance\_%'")" && \
+	printf '%s\n' "$$stmts" | $(PSQL) "$(POSTGRES_ADMIN_URI)" -v ON_ERROR_STOP=1 -q
 reset-sqlite:
 	$(info Removing test database files...)
 	find ./internal -type f \( \
@@ -776,7 +854,10 @@ run-test-hub:
 	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS),debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
 	$(info Running Go tests on MariaDB with tags "$(GOTEST_TAGS)"...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
+run-test-postgres:
+	$(info Running Go tests on PostgreSQL with tags "$(GOTEST_TAGS)"...)
+	PHOTOPRISM_TEST_DRIVER="postgres" PHOTOPRISM_TEST_DSN="$(POSTGRES_TEST_DSN)" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/...
@@ -1344,8 +1425,8 @@ lint-go:
 	$(info Linting Go code...)
 	golangci-lint run --issues-exit-code 0 ./pkg/... ./internal/... ./.../internal/...
 lint-sh:
-	$(info Checking the shell scripts that ship in the container images...)
-	shellcheck scripts/dist/*.sh
+	$(info Checking the shell scripts that ship in the container images and the test scripts...)
+	shellcheck scripts/dist/*.sh scripts/test/*.sh
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/lint/check-api-request-limits.sh
@@ -1388,11 +1469,15 @@ tidy:
 users:
 	./photoprism users add -p photoprism -r admin -s -a test:true -n "Alice Austen" superadmin
 	./photoprism users ls
-ldap: dummy-ldap
+ldap: dummy-ldap dummy-lldap
 dummy-ldap:
 	$(info Restarting dummy-ldap service...)
 	$(DOCKER_COMPOSE) stop dummy-ldap
 	$(DOCKER_COMPOSE) up -d -V --force-recreate dummy-ldap
+dummy-lldap:
+	$(info Restarting dummy-lldap service...)
+	$(DOCKER_COMPOSE) stop dummy-lldap
+	$(DOCKER_COMPOSE) up -d -V --force-recreate dummy-lldap
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make

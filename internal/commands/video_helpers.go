@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -268,7 +267,7 @@ func videoListJSON(rows []map[string]any, cols []string) (string, error) {
 		payload = append(payload, item)
 	}
 
-	data, err := json.Marshal(payload)
+	data, err := report.MarshalJSON(payload)
 	if err != nil {
 		return "", err
 	}

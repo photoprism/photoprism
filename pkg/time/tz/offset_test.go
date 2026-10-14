@@ -1,10 +1,12 @@
 package tz
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestOffset(t *testing.T) {
@@ -331,4 +333,34 @@ func TestUtcOffset(t *testing.T) {
 		assert.Equal(t, "UTC+2", result)
 	})
 
+}
+
+func TestEtcGmtOffset(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "UTC-1", etcGmtOffset("Etc/GMT+1"))
+		assert.Equal(t, "UTC-10", etcGmtOffset("Etc/GMT+10"))
+		assert.Equal(t, "UTC-12", etcGmtOffset("Etc/GMT+12"))
+		assert.Equal(t, "UTC+5", etcGmtOffset("Etc/GMT-5"))
+		assert.Equal(t, "UTC+12", etcGmtOffset("Etc/GMT-12"))
+	})
+	t.Run("NotIana", func(t *testing.T) {
+		for _, s := range []string{"", "Etc/GMT", "Etc/GMT+0", "Etc/GMT-0", "Etc/GMT+02", "Etc/GMT+02:00", "Etc/GMT+05:45",
+			"Etc/GMT-13", "Etc/GMT-14", "Etc/GMT+1x", "Etc/GMT++1", "Etc/GMT-+1", "Etc/GMT+-1", "GMT+1", "UTC+1", "+01:00"} {
+			assert.Equal(t, "", etcGmtOffset(s), s)
+		}
+	})
+	t.Run("SameAsSystem", func(t *testing.T) {
+		at := time.Date(2026, 1, 15, 12, 0, 0, 0, time.UTC)
+
+		for h := 1; h <= 12; h++ {
+			for _, sign := range []string{"+", "-"} {
+				name := fmt.Sprintf("Etc/GMT%s%d", sign, h)
+				loc, err := time.LoadLocation(name)
+				require.NoError(t, err, name)
+				_, want := at.In(loc).Zone()
+				_, got := at.In(Find(name)).Zone()
+				assert.Equal(t, want, got, name)
+			}
+		}
+	})
 }

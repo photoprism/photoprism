@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -128,4 +129,23 @@ func TestAccounts(t *testing.T) {
 
 		assert.Empty(t, r)
 	})
+}
+
+func TestAccounts_Bindable(t *testing.T) {
+	expected, err := Accounts(form.SearchServices{Query: "Test", Count: 10})
+	require.NoError(t, err)
+	require.NotEmpty(t, expected)
+
+	result, err := Accounts(form.SearchServices{Query: "Te\x00st\xff", Count: 10})
+	require.NoError(t, err)
+	assert.Len(t, result, len(expected))
+
+	for _, status := range []string{entity.SyncStatusRefresh, entity.SyncStatusSynced} {
+		expected, err = Accounts(form.SearchServices{Status: status, Count: 10})
+		require.NoError(t, err)
+
+		result, err = Accounts(form.SearchServices{Status: status + "\x00", Count: 10})
+		require.NoError(t, err)
+		assert.Len(t, result, len(expected), status)
+	}
 }

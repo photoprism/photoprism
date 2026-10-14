@@ -7,10 +7,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -198,18 +198,18 @@ func TestAuthRemoveCommandDatabaseErrors(t *testing.T) {
 			callback := "test:auth-rm:" + name
 			injected := errors.New("test session database error")
 			calls := 0
-			processor.Before(before).Register(callback, func(scope *gorm.Scope) {
-				if scope.TableName() != (entity.Session{}).TableName() {
+			processor.Before(before).Register(callback, func(tx *gorm.DB) {
+				if tx.Statement.Table != (entity.Session{}).TableName() {
 					return
 				}
 				if name == "Delete" {
-					value, ok := scope.Value.(*entity.Session)
+					value, ok := tx.Statement.Model.(*entity.Session)
 					if !ok || value.ID != session.ID {
 						return
 					}
 				}
 				calls++
-				_ = scope.Err(injected)
+				_ = tx.AddError(injected)
 			})
 			runErr := func() error {
 				defer processor.Remove(callback)
@@ -223,7 +223,7 @@ func TestAuthRemoveCommandDatabaseErrors(t *testing.T) {
 			require.NoError(t, conf.Db().Where("id = ?", session.ID).First(&stored).Error)
 			require.NoError(t, AuthRemoveCommand.Action(ctx))
 			conf.RegisterDb()
-			assert.True(t, gorm.IsRecordNotFoundError(conf.Db().Where("id = ?", session.ID).First(&stored).Error))
+			assert.ErrorIs(t, conf.Db().Where("id = ?", session.ID).First(&stored).Error, gorm.ErrRecordNotFound)
 		})
 	}
 }

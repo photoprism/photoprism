@@ -62,7 +62,7 @@ func sequencePhotoNames(t *testing.T, folder string) map[string]int {
 	t.Helper()
 
 	var files entity.Files
-	require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ? AND file_root = ? AND file_sidecar = 0",
+	require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ? AND file_root = ? AND file_sidecar = FALSE",
 		folder+"/%", entity.RootOriginals).Find(&files).Error)
 
 	result := make(map[string]int)

@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -13,12 +15,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
@@ -168,13 +173,136 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
+		// The reported server is the one databases are provisioned on, not the Portal's own.
+		origHost, origPort := provisioner.DatabaseHost, provisioner.DatabasePort
+		t.Cleanup(func() { provisioner.DatabaseHost, provisioner.DatabasePort = origHost, origPort })
+		provisioner.DatabaseHost, provisioner.DatabasePort = "provision-db", 3307
+
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate","RotateDatabase":true}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, r.Code)
 		body := r.Body.String()
 		assert.NotEqual(t, "", gjson.Get(body, "Database.Name").String())
 		assert.NotEqual(t, "", gjson.Get(body, "Database.Password").String())
+		assert.Equal(t, "provision-db", gjson.Get(body, "Database.Host").String())
+		assert.Equal(t, int64(3307), gjson.Get(body, "Database.Port").Int())
+		assert.Contains(t, gjson.Get(body, "Database.DSN").String(), "@tcp(provision-db:3307)/")
 		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
 		cleanupRegisterProvisioning(t, conf, r)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+		stored, err := regy.FindByName("pp-node-rotate")
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, gjson.Get(body, "Database.Name").String(), stored.Database.Name)
+			assert.Equal(t, gjson.Get(body, "Database.RotatedAt").String(), stored.Database.RotatedAt)
+		}
+	})
+	t.Run("ExistingNodeRotateSecretKeepsRequestToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-rotate-keep", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+
+		client := entity.FindClientByUID(n.ClientID)
+		require.NotNil(t, client)
+		other := entity.NewSession(3600, 0)
+		other.SetClient(client)
+		require.NoError(t, other.Save())
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate-keep","RotateSecret":true}`, token)
+		require.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		assert.NotEmpty(t, gjson.Get(r.Body.String(), "Secrets.ClientSecret").String())
+
+		_, otherErr := entity.FindSession(other.ID)
+		assert.Error(t, otherErr, "other access tokens must be revoked")
+
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate-keep"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code, "the request token must stay valid")
+	})
+	t.Run("RenameRotateSecretKeepsRequestToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-rename-from", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+
+		client := entity.FindClientByUID(n.ClientID)
+		require.NotNil(t, client)
+		other := entity.NewSession(3600, 0)
+		other.SetClient(client)
+		require.NoError(t, other.Save())
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rename-to","RotateSecret":true}`, token)
+		require.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		assert.Equal(t, "pp-node-rename-to", gjson.Get(r.Body.String(), "Node.Name").String())
+
+		_, otherErr := entity.FindSession(other.ID)
+		assert.Error(t, otherErr, "other access tokens must be revoked")
+
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rename-to"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code, "the request token must stay valid")
+	})
+	t.Run("ExistingNodeRotateSecretAndDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-rotate-both", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate-both","RotateSecret":true,"RotateDatabase":true}`, token)
+		cleanupRegisterProvisioning(t, conf, r)
+		require.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+
+		body := r.Body.String()
+		secret := gjson.Get(body, "Secrets.ClientSecret").String()
+		assert.NotEmpty(t, secret)
+		assert.NotEmpty(t, gjson.Get(body, "Database.Password").String())
+		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
+
+		stored, err := regy.FindByName("pp-node-rotate-both")
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, stored.Database.Name, gjson.Get(body, "Database.Name").String())
+			assert.Equal(t, stored.Database.User, gjson.Get(body, "Database.User").String())
+			assert.Equal(t, stored.Database.Driver, gjson.Get(body, "Database.Driver").String())
+		}
+
+		client := entity.FindClientByUID(n.ClientID)
+		if assert.NotNil(t, client) {
+			assert.True(t, client.VerifySecret(secret))
+			assert.False(t, client.VerifySecret(n.ClientSecret))
+		}
 	})
 	t.Run("UUIDChangeWithJoinTokenReturnsConflict", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -638,6 +766,36 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "https://photos.example.com", n2.SiteUrl)
 	})
+	t.Run("ExistingNodeReportsProvisioningServer", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		origHost, origPort := provisioner.DatabaseHost, provisioner.DatabasePort
+		t.Cleanup(func() { provisioner.DatabaseHost, provisioner.DatabasePort = origHost, origPort })
+		provisioner.DatabaseHost, provisioner.DatabasePort = "provision-db", 3307
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-db-host", Role: cluster.RoleInstance}}
+		n.Database = &cluster.NodeDatabase{Name: "cluster_dhost", User: "cluster_uhost", Driver: "mysql"}
+		assert.NoError(t, regy.Put(n))
+		n, err = regy.RotateSecret(n.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
+			return
+		}
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-db-host"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code)
+		body := r.Body.String()
+		assert.Equal(t, "cluster_dhost", gjson.Get(body, "Database.Name").String())
+		assert.Equal(t, "provision-db", gjson.Get(body, "Database.Host").String())
+		assert.Equal(t, int64(3307), gjson.Get(body, "Database.Port").Int())
+		assert.Equal(t, "", gjson.Get(body, "Database.Password").String())
+	})
 	t.Run("ExistingNodeWithoutRotateDoesNotProvisionDatabase", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)
@@ -942,6 +1100,398 @@ func TestRegisterUUIDConflictError(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Contains(t, registerUUIDConflictError(""), "already registered")
+	})
+}
+
+func TestRegisterProvisionError(t *testing.T) {
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		code, reason := registerProvisionError(fmt.Errorf("%w: sqlite3", provisioner.ErrUnsupportedDriver))
+		assert.Equal(t, http.StatusConflict, code)
+		assert.Equal(t, "database auto-provisioning is not supported by the portal database configuration", reason)
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		code, reason := registerProvisionError(provisioner.ErrNotConfigured)
+		assert.Equal(t, http.StatusConflict, code)
+		assert.Equal(t, "database auto-provisioning is not configured on the portal", reason)
+	})
+	t.Run("Failed", func(t *testing.T) {
+		code, reason := registerProvisionError(errors.New("connection failed"))
+		assert.Equal(t, http.StatusServiceUnavailable, code)
+		assert.Equal(t, "database provisioning failed; check the portal logs", reason)
+	})
+}
+
+// TestClusterNodesRegister_ProvisionErrors checks the status and reason returned when database provisioning fails.
+func TestClusterNodesRegister_ProvisionErrors(t *testing.T) {
+	// failProvisioning points the provisioner at an account that cannot log in.
+	failProvisioning := func(t *testing.T) {
+		driver, dsnValue := provisioner.DatabaseDriver, provisioner.ProvisionDSN
+		t.Cleanup(func() { provisioner.DatabaseDriver, provisioner.ProvisionDSN = driver, dsnValue })
+
+		cfg, err := mysql.ParseDSN(dsnValue)
+		require.NoError(t, err)
+
+		cfg.User, cfg.Passwd, cfg.Timeout = "pp-provision-test", "not-the-password", 2*time.Second
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "mysql", cfg.FormatDSN()
+	}
+
+	// assertUnavailable checks the status and body of a failed provisioning.
+	assertUnavailable := func(t *testing.T, r *httptest.ResponseRecorder) {
+		assert.Equal(t, http.StatusServiceUnavailable, r.Code, "body=%s", r.Body.String())
+		assert.JSONEq(t, `{"error":"database provisioning failed; check the portal logs"}`, r.Body.String())
+	}
+
+	t.Run("FirstJoin", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+		failProvisioning(t)
+
+		nodeUUID := rnd.UUIDv7()
+		body := `{"NodeName":"pp-provision-join","NodeUUID":"` + nodeUUID + `","RotateDatabase":true}`
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		assertUnavailable(t, r)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+		_, err = regy.FindByName("pp-provision-join")
+		assert.Error(t, err, "a failed provisioning must not register the node")
+		assert.Empty(t, entity.FindClientsByNodeUUID(nodeUUID), "the node uuid must remain free")
+
+		// A retry with the same identifiers reaches provisioning again.
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		assertUnavailable(t, r)
+	})
+	t.Run("RotateDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-provision-rotate", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		failProvisioning(t)
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-provision-rotate","RotateDatabase":true}`, token)
+		assertUnavailable(t, r)
+
+		stored, err := regy.FindByName("pp-provision-rotate")
+		require.NoError(t, err)
+		assert.True(t, stored.Database == nil || stored.Database.Name == "", "database fields must stay unset")
+	})
+	t.Run("RotateSecretAndDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-provision-secret", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		failProvisioning(t)
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-provision-secret","RotateSecret":true,"RotateDatabase":true}`, token)
+		assertUnavailable(t, r)
+
+		client := entity.FindClientByUID(n.ClientID)
+		if assert.NotNil(t, client) {
+			assert.True(t, client.VerifySecret(n.ClientSecret), "the current secret must stay valid")
+		}
+	})
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		driver := provisioner.DatabaseDriver
+		t.Cleanup(func() { provisioner.DatabaseDriver = driver })
+		provisioner.DatabaseDriver = "sqlite3"
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-provision-driver","RotateDatabase":true}`, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusConflict, r.Code)
+		assert.JSONEq(t, `{"error":"database auto-provisioning is not supported by the portal database configuration"}`, r.Body.String())
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+		_, err = regy.FindByName("pp-provision-driver")
+		assert.Error(t, err, "the node must not be registered")
+	})
+}
+
+// TestClusterNodesRegister_IncompleteDatabase checks that a node whose database could not be fully provisioned
+// is registered with it, and completes it with a later rotation.
+func TestClusterNodesRegister_IncompleteDatabase(t *testing.T) {
+	// failAfterCreate makes provisioning fail after the database was created, and returns a func that undoes it.
+	failAfterCreate := func(t *testing.T) func() {
+		orig := provisioner.ProvisionProxyDSN
+		t.Cleanup(func() { provisioner.ProvisionProxyDSN = orig })
+		provisioner.ProvisionProxyDSN = "admin:pa?ss=word@tcp(127.0.0.1:6032)"
+
+		return func() { provisioner.ProvisionProxyDSN = orig }
+	}
+
+	// dropDatabase removes the provisioned database of a node once the test ends.
+	dropDatabase := func(t *testing.T, conf *config.Config, nodeUUID, nodeName string) {
+		dbName, dbUser, _ := provisioner.GenerateCredentials(conf, nodeUUID, nodeName)
+		t.Cleanup(func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			_ = provisioner.DropCredentials(ctx, dbName, dbUser)
+		})
+	}
+
+	t.Run("FirstJoin", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		if _, err := provisioner.GetDB(context.Background()); err != nil {
+			t.Skip("provisioning database is unavailable")
+		}
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		nodeUUID := rnd.UUIDv7()
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(nodeUUID) })
+		dropDatabase(t, conf, nodeUUID, "pp-incomplete-join")
+		restore := failAfterCreate(t)
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-incomplete-join","NodeUUID":"`+nodeUUID+`","RotateDatabase":true}`, cluster.ExampleJoinToken)
+		require.Equal(t, http.StatusCreated, r.Code, "body=%s", r.Body.String())
+
+		body := r.Body.String()
+		secret := gjson.Get(body, "Secrets.ClientSecret").String()
+		assert.NotEmpty(t, secret)
+		assert.True(t, gjson.Get(body, "Database.Incomplete").Bool())
+		assert.Empty(t, gjson.Get(body, "Database.Name").String())
+		assert.Empty(t, gjson.Get(body, "Database.User").String())
+		assert.Empty(t, gjson.Get(body, "Database.Password").String())
+		assert.Empty(t, gjson.Get(body, "Database.DSN").String())
+		assert.False(t, gjson.Get(body, "AlreadyProvisioned").Bool())
+
+		n, err := regy.FindByName("pp-incomplete-join")
+		require.NoError(t, err)
+
+		dbName, dbUser, _ := provisioner.GenerateCredentials(conf, nodeUUID, "pp-incomplete-join")
+		if assert.NotNil(t, n.Database) {
+			assert.Equal(t, dbName, n.Database.Name)
+			assert.Equal(t, dbUser, n.Database.User)
+			assert.Empty(t, n.Database.RotatedAt)
+		}
+
+		// Once the cause is resolved, the node completes the database with its own credentials.
+		restore()
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, secret)
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-incomplete-join","RotateDatabase":true}`, token)
+		require.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+
+		body = r.Body.String()
+		assert.False(t, gjson.Get(body, "Database.Incomplete").Bool())
+		assert.Equal(t, dbName, gjson.Get(body, "Database.Name").String())
+		assert.NotEmpty(t, gjson.Get(body, "Database.Password").String())
+		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
+
+		rotatedAt := gjson.Get(body, "Database.RotatedAt").String()
+		assert.NotEmpty(t, rotatedAt)
+
+		stored, err := regy.FindByName("pp-incomplete-join")
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, rotatedAt, stored.Database.RotatedAt)
+		}
+	})
+	t.Run("ExistingNode", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		if _, err := provisioner.GetDB(context.Background()); err != nil {
+			t.Skip("provisioning database is unavailable")
+		}
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-incomplete-node", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		dropDatabase(t, conf, n.UUID, n.Name)
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		failAfterCreate(t)
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-incomplete-node","RotateDatabase":true}`, token)
+		assert.Equal(t, http.StatusServiceUnavailable, r.Code, "body=%s", r.Body.String())
+
+		stored, err := regy.FindByName("pp-incomplete-node")
+		require.NoError(t, err)
+
+		dbName, dbUser, _ := provisioner.GenerateCredentials(conf, n.UUID, n.Name)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, dbName, stored.Database.Name)
+			assert.Equal(t, dbUser, stored.Database.User)
+		}
+	})
+}
+
+func TestPersistJoinedDatabase(t *testing.T) {
+	conf := get.Config()
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	t.Run("Success", func(t *testing.T) {
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-persist-joined", Role: cluster.RoleInstance}}
+		n.ClientSecret = rnd.ClientSecret()
+		n.Database = &cluster.NodeDatabase{Name: "cluster_djoined", User: "cluster_ujoined", Driver: "mysql"}
+		require.NoError(t, regy.Create(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+
+		secret := n.ClientSecret
+		n.Database.RotatedAt = nowRFC3339()
+		persistJoinedDatabase("127.0.0.1", regy, n)
+
+		assert.Equal(t, secret, n.ClientSecret)
+
+		stored, err := regy.FindByName(n.Name)
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, n.Database.RotatedAt, stored.Database.RotatedAt)
+		}
+
+		client := entity.FindClientByUID(n.ClientID)
+		if assert.NotNil(t, client) {
+			assert.True(t, client.VerifySecret(secret))
+		}
+	})
+	t.Run("Error", func(t *testing.T) {
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-persist-joined-a", Role: cluster.RoleInstance}}
+		other := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-persist-joined-b", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Create(n))
+		require.NoError(t, regy.Create(other))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID); _ = regy.DeleteAllByUUID(other.UUID) })
+
+		// A client ID of another record makes the update fail, and neither record changes.
+		n.ClientID = other.ClientID
+		n.Database = &cluster.NodeDatabase{Name: "cluster_dmismatch", User: "cluster_umismatch", RotatedAt: nowRFC3339()}
+		persistJoinedDatabase("127.0.0.1", regy, n)
+
+		for _, uuid := range []string{n.UUID, other.UUID} {
+			stored, err := regy.FindByNodeUUID(uuid)
+			require.NoError(t, err)
+			assert.True(t, stored.Database == nil || stored.Database.Name == "", uuid)
+		}
+	})
+}
+
+func TestPurgeJoinedNode(t *testing.T) {
+	conf := get.Config()
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	t.Run("Success", func(t *testing.T) {
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-purge-joined", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Create(n))
+
+		client := entity.FindClientByUID(n.ClientID)
+		require.NotNil(t, client)
+		_, err := client.NewSecret()
+		require.NoError(t, err)
+		sess := entity.NewSession(3600, 0)
+		sess.SetClient(client)
+		require.NoError(t, sess.Save())
+
+		purgeJoinedNode("127.0.0.1", n)
+
+		assert.Empty(t, entity.FindClientsByNodeUUID(n.UUID))
+		assert.Nil(t, entity.FindPassword(n.ClientID))
+		_, sessErr := entity.FindSession(sess.ID)
+		assert.Error(t, sessErr)
+		_, err = regy.FindByName(n.Name)
+		assert.Error(t, err)
+	})
+	t.Run("UnknownClient", func(t *testing.T) {
+		assert.NotPanics(t, func() {
+			purgeJoinedNode("127.0.0.1", &reg.Node{Node: cluster.Node{Name: "pp-purge-unknown", ClientID: "cs5gfen1bgxz0000"}})
+		})
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.NotPanics(t, func() { purgeJoinedNode("127.0.0.1", nil) })
+	})
+}
+
+func TestRecordIncompleteDatabase(t *testing.T) {
+	conf := get.Config()
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	creds := provisioner.Credentials{Name: "cluster_dincomplete", User: "cluster_uincomplete", Driver: "mysql"}
+	incomplete := fmt.Errorf("%w: grant failed", provisioner.ErrIncomplete)
+
+	// newNode registers a node without a database.
+	newNode := func(t *testing.T, name string) *reg.Node {
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: name, Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		return n
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		n := newNode(t, "pp-record-incomplete")
+		recordIncompleteDatabase("127.0.0.1", regy, n, creds, incomplete)
+
+		stored, err := regy.FindByName(n.Name)
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, creds.Name, stored.Database.Name)
+			assert.Equal(t, creds.User, stored.Database.User)
+		}
+	})
+	t.Run("OtherError", func(t *testing.T) {
+		n := newNode(t, "pp-record-other")
+		recordIncompleteDatabase("127.0.0.1", regy, n, creds, errors.New("connection failed"))
+
+		stored, err := regy.FindByName(n.Name)
+		require.NoError(t, err)
+		assert.True(t, stored.Database == nil || stored.Database.Name == "")
+	})
+	t.Run("KeepsRecorded", func(t *testing.T) {
+		n := newNode(t, "pp-record-keep")
+		n.Database = &cluster.NodeDatabase{Name: "cluster_dexisting", User: "cluster_uexisting"}
+		require.NoError(t, regy.Put(n))
+
+		recordIncompleteDatabase("127.0.0.1", regy, n, creds, incomplete)
+
+		stored, err := regy.FindByName(n.Name)
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, "cluster_dexisting", stored.Database.Name)
+		}
+	})
+	t.Run("NilNode", func(t *testing.T) {
+		assert.NotPanics(t, func() { recordIncompleteDatabase("127.0.0.1", regy, nil, creds, incomplete) })
 	})
 }
 

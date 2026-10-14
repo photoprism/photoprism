@@ -65,11 +65,14 @@ func CreateDefaultUsers() {
 	if admin := FindUser(Admin); admin != nil {
 		Admin = *admin
 	} else {
+		legacyName := false
+
 		// Set legacy values.
 		if leg := FindLegacyUser(Admin); leg != nil {
 			Admin.UserUID = leg.UserUID
 			if leg.UserName != "" {
 				Admin.UserName = leg.UserName
+				legacyName = true
 			}
 			if leg.PrimaryEmail != "" {
 				Admin.UserEmail = leg.PrimaryEmail
@@ -93,8 +96,8 @@ func CreateDefaultUsers() {
 			Admin.UserName = "admin"
 		}
 
-		// Add initial admin account.
-		if err := Admin.Create(); err != nil {
+		// Add initial admin account; a name migrated from the legacy table is existing data and is kept.
+		if err := Admin.create(legacyName); err != nil {
 			event.AuditErr([]string{"user", "failed to create", status.Error(err)})
 		}
 	}

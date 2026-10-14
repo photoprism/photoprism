@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -44,4 +45,48 @@ func TestClientRegistry_RotateSecretByUUID_LatestRow(t *testing.T) {
 	if assert.NotNil(t, got) {
 		assert.NotEmpty(t, got.RotatedAt)
 	}
+}
+
+func TestClientRegistry_RotateSecretByClientID_RevokesSessions(t *testing.T) {
+	c := newRegistryTestConfig(t, "cluster-registry-rotate-sessions")
+
+	r, err := NewClientRegistryWithConfig(c)
+	require.NoError(t, err)
+
+	n := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-rot-sessions", Role: cluster.RoleInstance}}
+	require.NoError(t, r.Put(n))
+
+	client := entity.FindClientByUID(n.ClientID)
+	require.NotNil(t, client)
+
+	// newSession creates an access token session for the node client.
+	newSession := func() string {
+		sess := entity.NewSession(3600, 0)
+		sess.SetClient(client)
+		require.NoError(t, sess.Save())
+		return sess.ID
+	}
+
+	t.Run("Omit", func(t *testing.T) {
+		keep, other := newSession(), newSession()
+
+		_, err := r.RotateSecretByClientID(n.ClientID, keep)
+		require.NoError(t, err)
+
+		_, keepErr := entity.FindSession(keep)
+		assert.NoError(t, keepErr)
+		_, otherErr := entity.FindSession(other)
+		assert.Error(t, otherErr)
+	})
+	t.Run("All", func(t *testing.T) {
+		ids := []string{newSession(), newSession()}
+
+		_, err := r.RotateSecretByClientID(n.ClientID)
+		require.NoError(t, err)
+
+		for _, id := range ids {
+			_, findErr := entity.FindSession(id)
+			assert.Error(t, findErr)
+		}
+	})
 }

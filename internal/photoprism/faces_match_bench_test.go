@@ -5,9 +5,9 @@ import (
 	"math/rand/v2"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
@@ -210,8 +210,8 @@ func BenchmarkFacesMatchStamps(b *testing.B) {
 		require.NoError(b, entity.UnscopedDb().Create(&m).Error)
 	}
 	updates, iterations := 0, 0
-	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("bench:match-stamps", func(scope *gorm.Scope) {
-		if scope.TableName() == (entity.Marker{}).TableName() {
+	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("bench:match-stamps", func(tx *gorm.DB) {
+		if tx.Statement.Table == (entity.Marker{}).TableName() {
 			updates++
 		}
 	})

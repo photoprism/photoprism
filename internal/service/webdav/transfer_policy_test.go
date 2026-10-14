@@ -17,12 +17,19 @@ import (
 
 // TestSkipSyncPath retains traversal handling while excluding hidden transfer paths.
 func TestSkipSyncPath(t *testing.T) {
-	for _, name := range append(fs.ReservedPathNames(), ".git/photo.jpg", ".config/photo.jpg", "folder/.photoprism/photo.jpg", ".ssh/../photo.jpg", "a/../.env.txt", ".hidden/photo.jpg", "photo.jpg.rclonelink", "nested/LINK.RCLONELINK/photo.jpg", `a\.HG\photo.jpg`) {
+	for _, name := range append(fs.ReservedPathNames(), ".git/photo.jpg", ".config/photo.jpg", "folder/.photoprism/photo.jpg", ".ssh/../photo.jpg", "a/../.env.txt", ".hidden/photo.jpg", "photo.jpg.rclonelink", "nested/LINK.RCLONELINK/photo.jpg", `a\.HG\photo.jpg`, "photo\x00.jpg", "a\nb/photo.jpg", "photo\x7f.jpg", "photo\t.jpg", "/sync/a\x1bb.jpg") {
 		assert.True(t, SkipSyncPath(name), name)
 	}
-	for _, name := range []string{"", "/", "photo.jpg", "photos/photo.jpg", "photo.rclonelink.jpg", "../outside.jpg", "/sub/../../outside.jpg", "%2egit/photo.jpg"} {
+	for _, name := range []string{"", "/", "photo.jpg", "photos/photo.jpg", "photo.rclonelink.jpg", "../outside.jpg", "/sub/../../outside.jpg", "%2egit/photo.jpg", "/Fotos/Älter 2024 幸福.jpg", "/صور/👩\u200D👩\u200D👧.jpg", "photo%00.jpg"} {
 		assert.False(t, SkipSyncPath(name), name)
 	}
+}
+
+// TestSkipSyncPath_Precedence checks that a path with a parent segment stays unsafe, even with control characters.
+func TestSkipSyncPath_Precedence(t *testing.T) {
+	assert.False(t, SkipSyncPath("a\x01/../b.jpg"))
+	assert.True(t, UnsafeSyncPath("a\x01/../b.jpg"))
+	assert.True(t, SkipSyncPath(".git\x01/photo.jpg"))
 }
 
 // TestClient_TransferPolicy checks final transfer guards without contacting excluded paths.

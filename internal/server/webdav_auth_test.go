@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -428,9 +429,9 @@ func TestWebDAVAuthSession_RemovedRow(t *testing.T) {
 	assert.Nil(t, sess)
 	assert.Nil(t, user)
 
-	var n int
+	var n int64
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", s.ID).Count(&n).Error)
-	assert.Equal(t, 0, n, "the session row must stay deleted")
+	assert.EqualValues(t, 0, n, "the session row must stay deleted")
 }
 
 // TestWebDAVAuthSession_RateLimit checks that tokens without a session are counted and failed lookups are not.
@@ -480,5 +481,103 @@ func TestWebDAVAbortServerError(t *testing.T) {
 		assert.True(t, c.IsAborted())
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 		assert.Equal(t, BasicAuthRealm, w.Header().Get("WWW-Authenticate"))
+	})
+}
+
+// TestWebDAVAuth_NotASCIIUsername checks that an account stored with a non-ASCII name authenticates
+// with its password and an app password, and keeps its name.
+func TestWebDAVAuth_NotASCIIUsername(t *testing.T) {
+	conf := config.TestConfig()
+	webdavHandler := WebDAVAuth(conf)
+
+	const password = "Webdav-Josè-123"
+
+	m := entity.NewUser()
+	m.UserName = "webdav-josé"
+	m.UserRole = acl.RoleAdmin.String()
+	m.AuthProvider = authn.ProviderLocal.String()
+	m.CanLogin = true
+	m.WebDAV = true
+
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Session{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+		assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+	})
+	require.NoError(t, m.SetPassword(password))
+
+	appSess, err := entity.AddClientSession("webdav-not-ascii", 3600, "*", authn.GrantPassword, m)
+	require.NoError(t, err)
+	require.True(t, appSess.IsApplication())
+
+	request := func(name, secret string) int {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{Header: make(http.Header)}
+		c.Request.SetBasicAuth(name, secret)
+
+		entity.FlushSessionCache()
+		webdavHandler(c)
+
+		return c.Writer.Status()
+	}
+
+	assert.Equal(t, http.StatusOK, request("webdav-josé", password))
+	assert.Equal(t, http.StatusOK, request("Webdav-José", appSess.AuthToken()))
+	assert.Equal(t, http.StatusUnauthorized, request("webdav-jose", appSess.AuthToken()))
+
+	// MariaDB compares names that differ only by accents as equal.
+	if !entity.IsDialect(dsn.DriverMySQL) {
+		assert.Equal(t, http.StatusUnauthorized, request("webdav-jose", password))
+	}
+
+	assert.Equal(t, "webdav-josé", entity.FindUserByUID(m.UserUID).UserName)
+}
+
+// TestWebDAVAuth_LoginEventName checks that the name a Basic auth login event records is sanitized.
+func TestWebDAVAuth_LoginEventName(t *testing.T) {
+	conf := config.TestConfig()
+	webdavHandler := WebDAVAuth(conf)
+
+	origLogin, origAuth := limiter.Login, limiter.Auth
+	t.Cleanup(func() { limiter.Login, limiter.Auth = origLogin, origAuth })
+	limiter.Login = limiter.NewLimit(rate.Every(time.Millisecond), 100)
+	limiter.Auth = limiter.NewLimit(rate.Every(time.Millisecond), 100)
+
+	login := func(name string) string {
+		sub := event.Subscribe("login.error")
+		defer event.Unsubscribe(sub)
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{Header: make(http.Header), RemoteAddr: "198.51.100.90:1234"}
+		c.Request.SetBasicAuth(name, "wrong-password")
+
+		entity.FlushSessionCache()
+		webdavHandler(c)
+		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+
+		select {
+		case msg := <-sub.Receiver:
+			name, _ := msg.Fields["name"].(string)
+			return name
+		case <-time.After(5 * time.Second):
+			t.Fatal("no login event")
+			return ""
+		}
+	}
+
+	t.Run("ControlCharacters", func(t *testing.T) {
+		name := login("Ab\x00c\x01d\x1b[31me\x07f\r")
+		assert.NotRegexp(t, "[\x00-\x1f\x7f]", name)
+		assert.Equal(t, "abcd[31mef", name)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.Equal(t, "alice", login("alice"))
+		assert.Equal(t, "alice", login("Alice"))
+		assert.Equal(t, "webdav-josé", login("webdav-josé"))
 	})
 }

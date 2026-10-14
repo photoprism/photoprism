@@ -26,7 +26,7 @@ func sharedFilterAlbum(t *testing.T, filter string) *entity.Album {
 
 	link := entity.NewUserLink(album.AlbumUID, entity.UserFixtures.Pointer("alice").UserUID)
 	require.NoError(t, link.Save())
-	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(link).Error })
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&link).Error })
 
 	require.Len(t, entity.FindRedeemableLinksByToken(link.LinkToken, album.AlbumUID), 1)
 
@@ -100,7 +100,7 @@ func TestSharedPhotos(t *testing.T) {
 	})
 	t.Run("PublicContentIsStillSelected", func(t *testing.T) {
 		var public entity.Photo
-		require.NoError(t, entity.Db().Where("photo_private = 0 AND photo_quality >= 3 AND deleted_at IS NULL").
+		require.NoError(t, entity.Db().Where("photo_private = FALSE AND photo_quality >= 3 AND deleted_at IS NULL").
 			First(&public).Error)
 
 		album := sharedFilterAlbum(t, "uid:"+public.PhotoUID)

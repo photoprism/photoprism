@@ -82,7 +82,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		f, err := m.Form()
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("user: %s (init form)", clean.Error(err))
 			AbortSaveFailed(c)
 			return
 		}

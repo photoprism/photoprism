@@ -3,22 +3,26 @@ package search
 import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Accounts returns a list of accounts.
 func Accounts(frm form.SearchServices) (result entity.Services, err error) {
 	s := Db().Where(&entity.Service{})
 
+	frm.Query = clean.SearchBindable(frm.Query)
+	frm.Status = clean.SearchBindable(frm.Status)
+
 	if frm.Query != "" {
-		s = s.Where(likeCond("acc_name"), SqlParam(frm.Query, "%", "%"))
+		s = s.Where(likeCond("acc_name", false), SqlParam(frm.Query, "%", "%"))
 	}
 
 	if frm.Share {
-		s = s.Where("acc_share = 1")
+		s = s.Where("acc_share = TRUE")
 	}
 
 	if frm.Sync {
-		s = s.Where("acc_sync = 1")
+		s = s.Where("acc_sync = TRUE")
 	}
 
 	if frm.Status != "" {

@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -66,9 +66,9 @@ func TestWarnNonInnodbTables(t *testing.T) {
 	})
 	t.Run("QueryFailed", func(t *testing.T) {
 		// A database without information_schema cannot be checked.
-		db, err := gorm.Open(dsn.DriverSQLite3, ":memory:")
+		db, err := entity.OpenDb(dsn.DriverSQLite3, ":memory:")
 		require.NoError(t, err)
-		t.Cleanup(func() { _ = db.Close() })
+		t.Cleanup(func() { _ = entity.CloseDb(db) })
 		hook := captureLog(t)
 		warnNonInnodbTables(db, "photoprism")
 		require.Len(t, hook.AllEntries(), 1)

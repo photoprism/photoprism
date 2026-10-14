@@ -234,7 +234,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		frm, err := form.NewAlbum(album)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("album: %s (init form)", clean.Error(err))
 			AbortSaveFailed(c)
 			return
 		}
@@ -256,7 +256,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		defer albumMutex.Unlock()
 
 		if err = album.SaveForm(frm); err != nil {
-			log.Error(err)
+			log.Errorf("album: %s (save form)", clean.Error(err))
 			AbortSaveFailed(c)
 			return
 		}

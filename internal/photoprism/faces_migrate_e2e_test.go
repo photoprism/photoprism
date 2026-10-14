@@ -161,6 +161,7 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	restoreCalibration := snapshotFaceCalibration()
 	t.Cleanup(func() {
 		SetConfig(oldConfig)
+		_ = c.CloseDb()
 		oldConfig.RegisterDb()
 		restoreCalibration()
 
@@ -172,7 +173,7 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	// The isolated database is seeded from the cached test database, so migration would
 	// otherwise walk the shared fixtures instead of the rows this test creates.
 	for _, model := range []any{&entity.Marker{}, &entity.Face{}, &entity.Subject{}, &entity.File{}} {
-		require.NoError(t, entity.UnscopedDb().Unscoped().Delete(model).Error)
+		require.NoError(t, entity.UnscopedDb().Unscoped().Where("1 = 1").Delete(model).Error)
 	}
 
 	return c
@@ -257,10 +258,10 @@ func addMigrateTestSubjectMarker(t *testing.T, fileUID, subjUID string, name str
 func countFaceRows(t *testing.T) int {
 	t.Helper()
 
-	var n int
+	var n int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Face{}).Count(&n).Error)
 
-	return n
+	return int(n)
 }
 
 func TestFinalizeRefused(t *testing.T) {

@@ -64,3 +64,21 @@ func TestSearchPhotosView(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, result.Code)
 	})
 }
+
+func TestSearchPhotos_NulValues(t *testing.T) {
+	app, router, _ := NewApiTest()
+	SearchPhotos(router)
+
+	// Values with a NUL byte or invalid UTF-8 are searched without them.
+	for _, param := range []string{"q", "path", "folder", "name", "filename", "original", "title", "caption",
+		"description", "hash", "keywords", "label", "category", "country", "state", "city", "face", "person",
+		"subject", "people", "subjects", "album", "albums", "camera", "lens", "codec", "color", "id",
+		"type", "s2", "olc", "mm", "iso", "f", "year"} {
+		t.Run(param, func(t *testing.T) {
+			r := PerformRequest(app, "GET", "/api/v1/photos?count=10&"+param+"=%00")
+			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+			r = PerformRequest(app, "GET", "/api/v1/photos?count=10&"+param+"=a%00b%FF")
+			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		})
+	}
+}

@@ -1,38 +1,50 @@
 package entity
 
 import (
-	"fmt"
-	"reflect"
+	"context"
 	"strings"
 	"testing"
-	"unsafe"
+	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// statementCounter counts the SQL statements the database logger reports.
+// statementCounter counts the SQL statements the database logger reports, with the values bound to each.
 type statementCounter struct {
 	sql  []string
 	vars []int
 }
 
-// Print counts one statement per SQL log entry, with the number of values bound to it.
-func (c *statementCounter) Print(values ...any) {
-	if len(values) > 3 && values[0] == "sql" {
-		c.sql = append(c.sql, fmt.Sprint(values[3]))
+// LogMode returns the counter, which reports statements regardless of the level.
+func (c *statementCounter) LogMode(logger.LogLevel) logger.Interface {
+	return c
+}
 
-		if len(values) > 4 {
-			vars, _ := values[4].([]any)
-			c.vars = append(c.vars, len(vars))
-		} else {
-			c.vars = append(c.vars, 0)
-		}
-	}
+// Info ignores informational messages.
+func (c *statementCounter) Info(context.Context, string, ...any) {}
+
+// Warn ignores warnings.
+func (c *statementCounter) Warn(context.Context, string, ...any) {}
+
+// Error ignores error messages.
+func (c *statementCounter) Error(context.Context, string, ...any) {}
+
+// Trace counts one statement per executed SQL query.
+func (c *statementCounter) Trace(_ context.Context, _ time.Time, fc func() (string, int64), _ error) {
+	sql, _ := fc()
+	c.sql = append(c.sql, sql)
+}
+
+// ParamsFilter records the number of values bound to a statement and keeps its placeholders.
+func (c *statementCounter) ParamsFilter(_ context.Context, sql string, params ...any) (string, []any) {
+	c.vars = append(c.vars, len(params))
+	return sql, nil
 }
 
 // countStatements returns the SQL statements fn issues.
@@ -50,29 +62,19 @@ func captureStatements(t *testing.T, fn func()) *statementCounter {
 	db := Db()
 	defer restoreDbLogger(db)()
 
-	db.SetLogger(c)
-	db.LogMode(true)
+	db.Logger = c
 
 	fn()
 
 	return c
 }
 
-// restoreDbLogger returns a function that restores the logger and log mode db has now. GORM keeps both
-// unexported, so they are read and written through reflection.
+// restoreDbLogger returns a function that restores the logger db has now, which its sessions share.
 func restoreDbLogger(db *gorm.DB) func() {
-	field := func(name string) reflect.Value {
-		f := reflect.ValueOf(db).Elem().FieldByName(name)
-		return reflect.NewAt(f.Type(), unsafe.Pointer(f.UnsafeAddr())).Elem() //nolint:gosec // G103: test-only access to unexported GORM fields.
-	}
-
-	logger := reflect.New(field("logger").Type()).Elem()
-	logger.Set(field("logger"))
-	mode := field("logMode").Int()
+	previous := db.Logger
 
 	return func() {
-		field("logger").Set(logger)
-		field("logMode").SetInt(mode)
+		db.Logger = previous
 	}
 }
 
@@ -101,7 +103,7 @@ func syncTestMarkers(t *testing.T, f *Face, n int, subjUID, fileUID string) []st
 		}
 
 		require.NoError(t, UnscopedDb().Create(&m).Error)
-		t.Cleanup(func() { UnscopedDb().Delete(Marker{}, "marker_uid = ?", m.MarkerUID) })
+		t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 		uids = append(uids, m.MarkerUID)
 	}
@@ -113,11 +115,11 @@ func syncTestMarkers(t *testing.T, f *Face, n int, subjUID, fileUID string) []st
 func TestMarker_SyncSubject_Statements(t *testing.T) {
 	erin := NewSubject("Sync Statements Erin", SubjPerson, SrcManual)
 	require.NoError(t, erin.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", erin.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", erin.SubjUID) })
 
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7801)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	uids := syncTestMarkers(t, f, 3, "", "fs6sg6bw45bn0001")
 	m := FindMarker(uids[0])
@@ -146,11 +148,11 @@ func TestMarker_SyncSubject_Statements(t *testing.T) {
 func TestMarker_SyncSubject_RefreshesPhotos(t *testing.T) {
 	fred := NewSubject("Sync Refresh Fred", SubjPerson, SrcManual)
 	require.NoError(t, fred.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", fred.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", fred.SubjUID) })
 
 	f := NewFace(fred.SubjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(7802)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	file := FileFixtures.Get("exampleFileName.jpg")
 	photo := FindPhoto(Photo{PhotoUID: file.PhotoUID})
@@ -184,11 +186,11 @@ func TestMarker_SyncSubject_WithoutRelated(t *testing.T) {
 	require.NoError(t, gina.Create())
 	hank := NewSubject("Sync Without Hank", SubjPerson, SrcManual)
 	require.NoError(t, hank.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid IN (?)", []string{gina.SubjUID, hank.SubjUID}) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{gina.SubjUID, hank.SubjUID}) })
 
 	f := NewFace(gina.SubjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(7803)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	uids := syncTestMarkers(t, f, 1, hank.SubjUID, "fs6sg6bw45bn0001")
 	require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uids[0]).UpdateColumn("subj_src", SrcManual).Error)
@@ -213,11 +215,11 @@ func TestMarker_SyncSubject_WithoutRelated(t *testing.T) {
 func TestMarker_SetFace_NamingRelinksSiblings(t *testing.T) {
 	ivy := NewSubject("Sync Review Ivy", SubjPerson, SrcManual)
 	require.NoError(t, ivy.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", ivy.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", ivy.SubjUID) })
 
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7811)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	sibling := syncTestMarkers(t, f, 1, "", "fs6sg6bw45bn0001")
 	named := syncTestMarkers(t, f, 1, "", "fs6sg6bw45bn0001")
@@ -242,11 +244,11 @@ func TestMarker_SetFace_NamingRelinksSiblings(t *testing.T) {
 func TestMarker_SyncSubject_MatchingDoesNotRelink(t *testing.T) {
 	jo := NewSubject("Sync Review Jo", SubjPerson, SrcManual)
 	require.NoError(t, jo.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", jo.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", jo.SubjUID) })
 
 	f := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7812)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	sibling := syncTestMarkers(t, f, 1, "", "fs6sg6bw45bn0001")
 	named := syncTestMarkers(t, f, 1, jo.SubjUID, "fs6sg6bw45bn0001")
@@ -265,11 +267,11 @@ func TestMarker_SyncSubject_MatchingDoesNotRelink(t *testing.T) {
 func TestMarker_SyncSubject_NoRefreshWithoutChange(t *testing.T) {
 	kim := NewSubject("Sync Review Kim", SubjPerson, SrcManual)
 	require.NoError(t, kim.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Subject{}, "subj_uid = ?", kim.SubjUID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", kim.SubjUID) })
 
 	f := NewFace(kim.SubjUID, SrcAuto, face.Embeddings{face.FixtureEmbedding(7813)}, face.EmbeddingModelName())
 	require.NoError(t, f.Create())
-	t.Cleanup(func() { UnscopedDb().Delete(Face{}, "id = ?", f.ID) })
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", f.ID) })
 
 	syncTestMarkers(t, f, 1, kim.SubjUID, "fs6sg6bw45bn0001")
 	named := syncTestMarkers(t, f, 1, kim.SubjUID, "fs6sg6bw45bn0001")
@@ -297,8 +299,7 @@ func TestRestoreDbLogger(t *testing.T) {
 	t.Cleanup(restoreDbLogger(db))
 
 	outer := &statementCounter{}
-	db.SetLogger(outer)
-	db.LogMode(true)
+	db.Logger = outer
 
 	inner := captureStatements(t, func() { FindFace("RESTOREDBLOGGER") })
 	assert.NotEmpty(t, inner.sql, "the capture sees its own statements")
@@ -307,11 +308,8 @@ func TestRestoreDbLogger(t *testing.T) {
 	require.NotEmpty(t, outer.sql, "the previous logger is active again")
 	assert.Contains(t, outer.sql[len(outer.sql)-1], "faces")
 
-	// A quiet log mode stays quiet after a capture.
-	quiet := &statementCounter{}
-	db.SetLogger(quiet)
-	db.LogMode(false)
+	// A silent logger stays in place after a capture.
+	db.Logger = logger.Discard
 	captureStatements(t, func() { FindFace("RESTOREDBLOGGERQUIET") })
-	FindFace("RESTOREDBLOGGERQUIETAFTER")
-	assert.Empty(t, quiet.sql, "the previous log mode is active again")
+	assert.Equal(t, logger.Discard, db.Logger, "the previous logger is active again")
 }

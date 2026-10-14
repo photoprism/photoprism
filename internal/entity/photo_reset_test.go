@@ -38,7 +38,7 @@ func TestPhotoResetCaption(t *testing.T) {
 	assert.Empty(t, refreshed.PhotoCaption)
 	assert.Empty(t, refreshed.CaptionSrc)
 
-	var count int
+	var count int64
 	require.NoError(t, Db().Model(&PhotoLabel{}).Where("photo_id = ? AND label_src = ?", photo.ID, SrcCaption).Count(&count).Error)
 	assert.Zero(t, count)
 
@@ -64,7 +64,7 @@ func TestPhotoResetLabels(t *testing.T) {
 	require.NoError(t, err)
 	assert.EqualValues(t, 1, removed)
 
-	var count int
+	var count int64
 	require.NoError(t, Db().Model(&PhotoLabel{}).Where("photo_id = ? AND label_src = ?", photo.ID, SrcOllama).Count(&count).Error)
 	assert.Zero(t, count)
 

@@ -162,7 +162,7 @@ func TestMeta_Start_PublishesMergedPhotos(t *testing.T) {
 
 		merged := entity.FindPhoto(*duplicate)
 		require.NotNil(t, merged)
-		assert.NotNil(t, merged.DeletedAt)
+		assert.True(t, merged.DeletedAt.Valid)
 	})
 	t.Run("ProcessedPhotoMergedAway", func(t *testing.T) {
 		conf := config.NewMinimalTestConfigWithDb("workers-meta-merge-away", t.TempDir())
@@ -184,7 +184,7 @@ func TestMeta_Start_PublishesMergedPhotos(t *testing.T) {
 
 		merged := entity.FindPhoto(*duplicate)
 		require.NotNil(t, merged)
-		assert.NotNil(t, merged.DeletedAt)
+		assert.True(t, merged.DeletedAt.Valid)
 	})
 }
 

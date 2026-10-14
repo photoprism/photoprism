@@ -1,6 +1,6 @@
 # PhotoPrism® Security Policy
 
-**Please contact us at [security@photoprism.app](mailto:security@photoprism.app) when you have discovered a potential security issue.** You are welcome to also report vulnerabilities in third-party applications that we may not be able to fix directly.
+If you discover a potential security issue, please contact us at [security@photoprism.app](mailto:security@photoprism.app). Alternatively, for vulnerabilities in this repository, you may use GitHub's [private vulnerability reporting](https://github.com/photoprism/photoprism/security/advisories/new). Please do not submit the same report through multiple channels.
 
 At a minimum, your report should include the following:
 
@@ -13,7 +13,7 @@ When we receive a meaningful and verifiable vulnerability report from you, we wi
 
 We kindly ask you not to send HTML emails for this purpose, but only plain text. Confirmed vulnerabilities will be fixed within 90 days, depending on the severity and, where a third-party component is affected, on when its maintainers publish a fix we can ship.
 
-*This Security Policy was last updated on September 11, 2026.*
+*This Security Policy was last updated on October 10, 2026.*
 
 ## Responsible Disclosure
 
@@ -40,7 +40,7 @@ We do not operate a bug bounty program and do not offer payment or comparable co
 
 ## Reporting Issues as a Business or Organization
 
-(a) If an email we receive [appears to be auto-generated](https://docs.photoprism.app/developer-guide/security/policy/#auto-generated-reports) — for example unreviewed output from an automated scanner or a language model — and does not look like a legitimate report that has been manually reviewed in accordance with the requirements of this policy, we may ignore it and you should not expect a response in order to protect our ability to respond to actual issues.
+(a) If a report we receive [appears to be auto-generated](https://docs.photoprism.app/developer-guide/security/policy/#auto-generated-reports) — for example unreviewed output from an automated scanner or a language model — and does not look like one that has been manually reviewed in accordance with the requirements of this policy, we may ignore it and you should not expect a response in order to protect our ability to respond to actual issues.
 
 (b) Unless absolutely necessary, for example to report a major issue that has just been discovered, please send requests or reports during regular business hours and never at night or on weekends, especially if they are sent asynchronously.
 

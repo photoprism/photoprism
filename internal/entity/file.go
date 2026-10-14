@@ -11,8 +11,9 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gosimple/slug"
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -47,25 +48,25 @@ var filePrimaryMutex = sync.Mutex{}
 
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
-	ID                 uint          `gorm:"primary_key" json:"-" yaml:"-"`
-	Photo              *Photo        `json:"-" yaml:"-"`
-	PhotoID            uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
-	PhotoUID           string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
-	PhotoTakenAt       time.Time     `gorm:"type:DATETIME;index;" json:"TakenAt" yaml:"TakenAt"`
-	TimeIndex          *string       `gorm:"type:VARBINARY(64);" json:"TimeIndex" yaml:"TimeIndex"`
-	MediaID            *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
-	MediaUTC           int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
-	InstanceID         string        `gorm:"type:VARBINARY(255);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
-	FileUID            string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName           string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
-	OriginalName       string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
-	FileHash           string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
+	ID                 uint          `gorm:"primaryKey;size:32" json:"-" yaml:"-"`
+	Photo              *Photo        `gorm:"-:migration" json:"-" yaml:"-"`
+	PhotoID            uint          `gorm:"index:idx_files_photo_id;size:32;" json:"-" yaml:"-"`
+	PhotoUID           string        `gorm:"type:bytes;size:42;index;" json:"PhotoUID" yaml:"PhotoUID"`
+	PhotoTakenAt       time.Time     `gorm:"index;" json:"TakenAt" yaml:"TakenAt"`
+	TimeIndex          *string       `gorm:"type:bytes;size:64;uniqueIndex:idx_files_search_timeline;" json:"TimeIndex" yaml:"TimeIndex"`
+	MediaID            *string       `gorm:"type:bytes;size:32;uniqueIndex:idx_files_search_media;" json:"MediaID" yaml:"MediaID"`
+	MediaUTC           int64         `gorm:"column:media_utc;index;" json:"MediaUTC" yaml:"MediaUTC,omitempty"`
+	InstanceID         string        `gorm:"type:bytes;size:255;index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	FileUID            string        `gorm:"type:bytes;size:42;uniqueIndex:uix_files_file_uid;" json:"UID" yaml:"UID"`
+	FileName           string        `gorm:"type:bytes;size:1024;uniqueIndex:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileRoot           string        `gorm:"type:bytes;size:16;default:'/';uniqueIndex:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	OriginalName       string        `gorm:"type:bytes;size:755;" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	FileHash           string        `gorm:"type:bytes;size:128;index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize           int64         `json:"Size" yaml:"Size,omitempty"`
-	FileCodec          string        `gorm:"type:VARBINARY(32)" json:"Codec" yaml:"Codec,omitempty"`
-	FileType           string        `gorm:"type:VARBINARY(16)" json:"FileType" yaml:"FileType,omitempty"`
-	MediaType          string        `gorm:"type:VARBINARY(16)" json:"MediaType" yaml:"MediaType,omitempty"`
-	FileMime           string        `gorm:"type:VARBINARY(64)" json:"Mime" yaml:"Mime,omitempty"`
+	FileCodec          string        `gorm:"type:bytes;size:32" json:"Codec" yaml:"Codec,omitempty"`
+	FileType           string        `gorm:"type:bytes;size:16" json:"FileType" yaml:"FileType,omitempty"`
+	MediaType          string        `gorm:"type:bytes;size:16" json:"MediaType" yaml:"MediaType,omitempty"`
+	FileMime           string        `gorm:"type:bytes;size:64" json:"Mime" yaml:"Mime,omitempty"`
 	FilePrimary        bool          `gorm:"index:idx_files_photo_id;" json:"Primary" yaml:"Primary,omitempty"`
 	FileSidecar        bool          `json:"Sidecar" yaml:"Sidecar,omitempty"`
 	FileMissing        bool          `json:"Missing" yaml:"Missing,omitempty"`
@@ -73,35 +74,35 @@ type File struct {
 	FileVideo          bool          `json:"Video" yaml:"Video,omitempty"`
 	FileDuration       time.Duration `json:"Duration" yaml:"Duration,omitempty"`
 	FileFPS            float64       `gorm:"column:file_fps;" json:"FPS" yaml:"FPS,omitempty"`
-	FileFrames         int           `gorm:"column:file_frames;" json:"Frames" yaml:"Frames,omitempty"`
-	FilePages          int           `gorm:"column:file_pages;default:0;" json:"Pages" yaml:"Pages,omitempty"`
-	FileWidth          int           `gorm:"column:file_width;" json:"Width" yaml:"Width,omitempty"`
-	FileHeight         int           `gorm:"column:file_height;" json:"Height" yaml:"Height,omitempty"`
-	FileOrientation    int           `gorm:"column:file_orientation;" json:"Orientation" yaml:"Orientation,omitempty"`
-	FileOrientationSrc string        `gorm:"column:file_orientation_src;type:VARBINARY(8);default:'';" json:"OrientationSrc" yaml:"OrientationSrc,omitempty"`
-	FileProjection     string        `gorm:"column:file_projection;type:VARBINARY(64);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
-	FileAspectRatio    float32       `gorm:"column:file_aspect_ratio;type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
-	FileHDR            bool          `gorm:"column:file_hdr;"  json:"HDR" yaml:"HDR,omitempty"`
-	FileWatermark      bool          `gorm:"column:file_watermark;"  json:"Watermark" yaml:"Watermark,omitempty"`
-	FileColorProfile   string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
-	FileMainColor      string        `gorm:"type:VARBINARY(16);" json:"MainColor" yaml:"MainColor,omitempty"`
-	FileColors         string        `gorm:"type:VARBINARY(18);" json:"Colors" yaml:"Colors,omitempty"`
-	FileLuminance      string        `gorm:"type:VARBINARY(18);" json:"Luminance" yaml:"Luminance,omitempty"`
-	FileDiff           int           `json:"Diff" yaml:"Diff,omitempty"`
-	FileChroma         int16         `json:"Chroma" yaml:"Chroma,omitempty"`
-	FileSoftware       string        `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
-	FileError          string        `gorm:"type:VARBINARY(512);index;" json:"Error" yaml:"Error,omitempty"`
+	FileFrames         int           `gorm:"column:file_frames;size:32;" json:"Frames" yaml:"Frames,omitempty"`
+	FilePages          int           `gorm:"column:file_pages;default:0;size:32;" json:"Pages" yaml:"Pages,omitempty"`
+	FileWidth          int           `gorm:"column:file_width;size:32;" json:"Width" yaml:"Width,omitempty"`
+	FileHeight         int           `gorm:"column:file_height;size:32;" json:"Height" yaml:"Height,omitempty"`
+	FileOrientation    int           `gorm:"column:file_orientation;size:32;" json:"Orientation" yaml:"Orientation,omitempty"`
+	FileOrientationSrc string        `gorm:"column:file_orientation_src;type:bytes;size:8;default:'';" json:"OrientationSrc" yaml:"OrientationSrc,omitempty"`
+	FileProjection     string        `gorm:"column:file_projection;type:bytes;size:64;" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileAspectRatio    float32       `gorm:"column:file_aspect_ratio;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
+	FileHDR            bool          `gorm:"column:file_hdr;" json:"HDR" yaml:"HDR,omitempty"`
+	FileWatermark      bool          `gorm:"column:file_watermark;" json:"Watermark" yaml:"Watermark,omitempty"`
+	FileColorProfile   string        `gorm:"type:bytes;size:64;" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
+	FileMainColor      string        `gorm:"type:bytes;size:16;" json:"MainColor" yaml:"MainColor,omitempty"`
+	FileColors         string        `gorm:"type:bytes;size:18;" json:"Colors" yaml:"Colors,omitempty"`
+	FileLuminance      string        `gorm:"type:bytes;size:18;" json:"Luminance" yaml:"Luminance,omitempty"`
+	FileDiff           int           `gorm:"default:-1;size:32;" json:"Diff" yaml:"Diff,omitempty"`
+	FileChroma         int16         `gorm:"default:-1;" json:"Chroma" yaml:"Chroma,omitempty"`
+	FileSoftware       string        `gorm:"size:64" json:"Software" yaml:"Software,omitempty"`
+	FileError          string        `gorm:"type:bytes;size:512;index;" json:"Error" yaml:"Error,omitempty"`
 	ModTime            int64         `json:"ModTime" yaml:"-"`
 	CreatedAt          time.Time     `json:"CreatedAt" yaml:"-"`
 	CreatedIn          int64         `json:"CreatedIn" yaml:"-"`
 	UpdatedAt          time.Time     `json:"UpdatedAt" yaml:"-"`
 	UpdatedIn          int64         `json:"UpdatedIn" yaml:"-"`
-	PublishedAt        *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt          *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-	Share              []FileShare   `json:"-" yaml:"-"`
-	Sync               []FileSync    `json:"-" yaml:"-"`
-	OmitMarkers        bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
-	OmitWithheldPeople bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
+	PublishedAt        *time.Time    `gorm:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt          DeletedAt     `gorm:"index" json:"DeletedAt,omitzero" yaml:"-"`
+	Share              []FileShare   `gorm:"-:migration" json:"-" yaml:"-"`
+	Sync               []FileSync    `gorm:"-:migration" json:"-" yaml:"-"`
+	OmitMarkers        bool          `gorm:"-" json:"-" yaml:"-"`
+	OmitWithheldPeople bool          `gorm:"-" json:"-" yaml:"-"`
 	markers            *Markers
 	visibleMarkers     *Markers
 }
@@ -114,7 +115,7 @@ func (File) TableName() string {
 // RegenerateIndex recalculates the denormalized search index columns for the matching files.
 // Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
 func (m File) RegenerateIndex() {
-	var updateWhere *gorm.SqlExpr
+	var updateWhere clause.Expr
 	var scope string
 
 	if m.PhotoID > 0 {
@@ -157,7 +158,7 @@ func RegenerateIndexForPhotoIDs(photoIDs []uint) {
 
 // regenerateFileIndex runs the denormalized index UPDATEs for the files matched by updateWhere.
 // Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
-func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
+func regenerateFileIndex(updateWhere clause.Expr, scope string) {
 	fileIndexMutex.Lock()
 	defer fileIndexMutex.Unlock()
 
@@ -166,30 +167,48 @@ func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
 	photosTable := Photo{}.TableName()
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files JOIN ? p ON p.id = files.photo_id SET files.photo_taken_at = p.taken_at_local WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
 				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
 			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) ELSE NULL END WHERE ?",
 				updateWhere).Error)
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files SET photo_taken_at = (SELECT p.taken_at_local FROM ? p WHERE p.id = photo_id) WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
 				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
 			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN ((100000000000000 - strftime('%Y%m%d%H%M%S', photo_taken_at)) || '-' || media_id) ELSE NULL END WHERE ?",
 				updateWhere).Error)
+	case dsn.DialectPostgreSQL:
+		// Rows whose values do not change are not written, as on MariaDB, and times are formatted in UTC
+		// whatever the session time zone.
+		Log("files", "regenerate photo_taken_at",
+			Db().Exec("UPDATE files SET photo_taken_at = p.taken_at_local FROM ? p WHERE p.id = files.photo_id AND (?) "+
+				"AND files.photo_taken_at IS DISTINCT FROM p.taken_at_local", gorm.Expr(photosTable), updateWhere).Error)
+
+		mediaID := "CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN (10000000000 - photo_id) || '-' || " +
+			"(1 + file_sidecar::int - file_primary::int) || '-' || file_uid ELSE NULL END"
+
+		Log("files", "regenerate media_id",
+			Db().Exec("UPDATE files SET media_id = "+mediaID+" WHERE (?) AND media_id IS DISTINCT FROM "+mediaID, updateWhere).Error)
+
+		timeIndex := "CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN (100000000000000 - " +
+			"to_char(photo_taken_at AT TIME ZONE 'UTC', 'YYYYMMDDHH24MISS')::bigint) || '-' || media_id ELSE NULL END"
+
+		Log("files", "regenerate time_index",
+			Db().Exec("UPDATE files SET time_index = "+timeIndex+" WHERE (?) AND time_index IS DISTINCT FROM "+timeIndex, updateWhere).Error)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 	}
@@ -210,13 +229,13 @@ func FirstFileByHash(fileHash string) (File, error) {
 func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}
 
-	res := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUid)
+	res := Db().Unscoped().First(&file, "file_primary = TRUE AND photo_uid = ?", photoUid)
 
 	return &file, res.Error
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *File) BeforeCreate(scope *gorm.Scope) error {
+func (m *File) BeforeCreate(tx *gorm.DB) error {
 	// Set MediaType based on FileName if empty.
 	if m.MediaType == "" && m.FileName != "" {
 		m.MediaType = media.FromName(m.FileName).String()
@@ -232,18 +251,21 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 		return nil
 	}
 
-	return scope.SetColumn("FileUID", rnd.GenerateUID(FileUID))
+	tx.Statement.SetColumn("FileUID", rnd.GenerateUID(FileUID))
+
+	return nil
 }
 
-// DownloadName selects a download filename according to the configured naming policy.
+// DownloadName selects a download filename according to the configured naming policy,
+// sanitized with clean.AttachmentName for use in a response header or archive entry.
 func (m *File) DownloadName(n customize.DownloadName, seq int) string {
 	switch n {
 	case customize.DownloadNameFile:
-		return m.Base(seq)
+		return clean.AttachmentName(m.Base(seq))
 	case customize.DownloadNameOriginal:
-		return m.OriginalBase(seq)
+		return clean.AttachmentName(m.OriginalBase(seq))
 	default:
-		return m.ShareBase(seq)
+		return clean.AttachmentName(m.ShareBase(seq))
 	}
 }
 
@@ -351,7 +373,7 @@ func (m File) Changed(fileSize int64, modTime time.Time) bool {
 
 // Missing reports whether the file is flagged missing or has been soft-deleted.
 func (m File) Missing() bool {
-	return m.FileMissing || m.DeletedAt != nil
+	return m.FileMissing || m.DeletedAt.Valid
 }
 
 // DeletePermanently removes the file and its ancillary rows (markers, shares, sync jobs) from the database.
@@ -360,15 +382,15 @@ func (m *File) DeletePermanently() error {
 		return fmt.Errorf("invalid file id %d / uid %s", m.ID, clean.Log(m.FileUID))
 	}
 
-	if err := UnscopedDb().Delete(Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
+	if err := UnscopedDb().Delete(&Marker{}, "file_uid = ?", m.FileUID).Error; err != nil {
 		log.Errorf("file %s: %s while removing markers", clean.Log(m.FileUID), err)
 	}
 
-	if err := UnscopedDb().Delete(FileShare{}, "file_id = ?", m.ID).Error; err != nil {
+	if err := UnscopedDb().Delete(&FileShare{}, "file_id = ?", m.ID).Error; err != nil {
 		log.Errorf("file %s: %s while removing share info", clean.Log(m.FileUID), err)
 	}
 
-	if err := UnscopedDb().Delete(FileSync{}, "file_id = ?", m.ID).Error; err != nil {
+	if err := UnscopedDb().Delete(&FileSync{}, "file_id = ?", m.ID).Error; err != nil {
 		log.Errorf("file %s: %s while removing remote sync info", clean.Log(m.FileUID), err)
 	}
 
@@ -441,23 +463,23 @@ func (m *File) Purge() error {
 	deletedAt := Now()
 	m.FileMissing = true
 	m.FilePrimary = false
-	m.DeletedAt = &deletedAt
-	return UnscopedDb().Exec("UPDATE files SET file_missing = 1, file_primary = 0, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
+	m.DeletedAt = DeletedAtTime(deletedAt)
+	return UnscopedDb().Exec("UPDATE files SET file_missing = TRUE, file_primary = FALSE, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
 }
 
 // Found clears the missing flag set by Purge and brings the row back into active rotation.
 func (m *File) Found() error {
 	m.FileMissing = false
-	m.DeletedAt = nil
-	return UnscopedDb().Exec("UPDATE files SET file_missing = 0, deleted_at = NULL WHERE id = ?", m.ID).Error
+	m.DeletedAt = DeletedAt{}
+	return UnscopedDb().Exec("UPDATE files SET file_missing = FALSE, deleted_at = NULL WHERE id = ?", m.ID).Error
 }
 
 // AllFilesMissing reports whether the owning photo has any remaining files that are not marked missing.
 func (m *File) AllFilesMissing() bool {
-	count := 0
+	var count int64
 
 	if err := Db().Model(&File{}).
-		Where("photo_id = ? AND file_missing = 0", m.PhotoID).
+		Where("photo_id = ? AND file_missing = FALSE", m.PhotoID).
 		Count(&count).Error; err != nil {
 		log.Errorf("file: %s", err.Error())
 	}
@@ -535,7 +557,7 @@ func (m *File) UpdateVideoInfos() error {
 
 	if err := deepcopier.Copy(&dimensions).From(m); err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1 AND file_width <= 0", m.PhotoID).Updates(dimensions).Error; err != nil {
+	} else if err = Db().Model(&File{}).Where("photo_id = ? AND file_video = TRUE AND file_width <= 0", m.PhotoID).Updates(dimensions).Error; err != nil {
 		return err
 	}
 
@@ -545,7 +567,7 @@ func (m *File) UpdateVideoInfos() error {
 
 	if err := deepcopier.Copy(&appearance).From(m); err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(appearance).Error; err != nil {
+	} else if err = Db().Model(&File{}).Where("photo_id = ? AND file_video = TRUE", m.PhotoID).Updates(appearance).Error; err != nil {
 		return err
 	}
 
@@ -579,7 +601,7 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	m.FileName = fileName
 	m.FileRoot = rootName
 	m.FileMissing = false
-	m.DeletedAt = nil
+	m.DeletedAt = DeletedAt{}
 
 	// Update photo path and name if possible.
 	if p := m.RelatedPhoto(); p != nil {
@@ -661,7 +683,7 @@ func (m *File) Undelete() error {
 	log.Debugf("file %s: removed missing flag from %s", clean.Log(m.FileUID), clean.Log(m.FileName))
 
 	m.FileMissing = false
-	m.DeletedAt = nil
+	m.DeletedAt = DeletedAt{}
 
 	return nil
 }
@@ -674,7 +696,9 @@ func (m *File) RelatedPhoto() *Photo {
 
 	photo := Photo{}
 
-	UnscopedDb().Model(m).Related(&photo)
+	if m.PhotoID > 0 {
+		UnscopedDb().Where("id = ?", m.PhotoID).Take(&photo)
+	}
 
 	return &photo
 }
@@ -792,7 +816,7 @@ func (m *File) SetSoftware(name string) {
 // budget on a rune boundary so an oversized XMP xmpMM:InstanceID cannot overflow the
 // instance_id column. An empty value leaves the current identifier unchanged.
 func (m *File) SetInstanceID(id string) {
-	if id = Clip(id, InstanceIDBytes); id != "" {
+	if id = Clip(clean.StripControl(id), InstanceIDBytes); id != "" {
 		m.InstanceID = id
 	}
 }
@@ -1020,7 +1044,7 @@ func (m *File) UpdatePhotoFaceCount() (c int, err error) {
 
 	c = m.ValidFaceCount()
 
-	err = UnscopedDb().Model(Photo{}).
+	err = UnscopedDb().Model(&Photo{}).
 		Where("id = ?", m.PhotoID).
 		UpdateColumn("photo_faces", c).Error
 

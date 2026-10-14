@@ -4,8 +4,9 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/list"
 )
 
@@ -18,15 +19,19 @@ func Status(db *gorm.DB, ids []string) (result Migrations, err error) {
 	}
 
 	// Get SQL dialect name.
-	name := db.Dialect().GetName()
+	name := dsn.ParseDriver(db.Name())
 
-	if name == "" {
+	if name == dsn.DriverNone {
 		return result, fmt.Errorf("migrate: failed to determine sql dialect")
+	}
+
+	if once[name] == nil {
+		return result, fmt.Errorf("migrate: unsupported sql dialect %s", name)
 	}
 
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
-		err = db.AutoMigrate(&Migration{}).Error
+		err = db.AutoMigrate(&Migration{})
 	})
 
 	if err != nil {
@@ -35,7 +40,7 @@ func Status(db *gorm.DB, ids []string) (result Migrations, err error) {
 
 	migrations, ok := Dialects[name]
 
-	if !ok && len(migrations) == 0 {
+	if !ok {
 		return result, fmt.Errorf("migrate: no migrations found for %s", name)
 	}
 

@@ -31,15 +31,15 @@ func TestLog(t *testing.T) {
 	t.Run("SpecialChars", func(t *testing.T) {
 		// The quotes delimit the value, so any it already holds are doubled: the two here
 		// render as four, and the value cannot close the pair and continue outside it.
-		assert.Equal(t, "'  The ?quick? ''''brown \"fox.   '", Log("  The <quick>\n\r ''brown \"fox. \t  "))
+		assert.Equal(t, "'  The ?quick?   ''''brown \"fox.    '", Log("  The <quick>\n\r ''brown \"fox. \t  "))
 	})
 	t.Run("LoremIpsum", func(t *testing.T) {
 		assert.Equal(t, "'It is a long established fact that a reader will be distracted by the readable "+
-			"content of a pagewhen looking at its layout. The point of using Lorem Ipsum is that it has a "+
-			"more-or-less normal distribution of letters,as opposed to using ''Content here, content here'', making it "+
-			"look like readable English.Many desktop publishing packages and web page editors now use Lorem Ipsum as "+
-			"their default model text, and a search for''lorem ipsum'' will uncover many web sites still in their "+
-			"infancy. Various version…'", Log(clip.LoremIpsum))
+			"content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a "+
+			"more-or-less normal distribution of letters, as opposed to using ''Content here, content here'', making it "+
+			"look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as "+
+			"their default model text, and a search for ''lorem ipsum'' will uncover many web sites still in their "+
+			"infancy. Various ver…'", Log(clip.LoremIpsum))
 	})
 }
 
@@ -274,7 +274,8 @@ func TestLogLongerThanLimit(t *testing.T) {
 	// A value longer than the guard's limit is shortened rather than refused.
 	value := strings.Repeat("a", LengthLimit+1)
 	assert.Equal(t, strings.Repeat("a", LengthLog-len(clip.Ellipsis))+clip.Ellipsis, Log(value))
-	assert.Equal(t, strings.Repeat("a", LogNamesBytes-len(clip.Ellipsis))+clip.Ellipsis, LogNames([]string{value}))
+	budget := LogNamesBytes - len(clip.Ellipsis)
+	assert.Equal(t, strings.Repeat("a", budget-budget/3)+clip.Ellipsis+strings.Repeat("a", budget/3), LogNames([]string{value}))
 }
 
 func TestLogText(t *testing.T) {
@@ -304,5 +305,135 @@ func TestLogText(t *testing.T) {
 		s, quote := logText("ldap://evil/a", LengthLog)
 		assert.Equal(t, "?", s)
 		assert.False(t, quote)
+	})
+}
+
+func TestLogMarkerBudget(t *testing.T) {
+	// incomplete reports whether a value holds a part of a marker, since the values here contain no "[".
+	incomplete := func(s string) bool {
+		for i := range s {
+			if s[i] == '[' && markerLen(s[i:]) == 0 {
+				return true
+			}
+		}
+		return false
+	}
+
+	for _, value := range []string{
+		strings.Repeat("\u200B", 300),
+		strings.Repeat("a\x07", 300),
+		strings.Repeat("\xff", 600),
+		strings.Repeat("a b\u2060", 200),
+		" " + strings.Repeat("a", 501) + "\u200Bb",
+		strings.Repeat("ab", 100) + strings.Repeat("\x01", 200) + ".jpg",
+		strings.Repeat("ab", 100) + strings.Repeat("\x00", 200) + ".jpg",
+	} {
+		for s, bound := range map[string]int{
+			Log(value):                 LengthLog,
+			LogQuote(value):            LengthLog,
+			LogBytes(value, 100):       100,
+			LogNames([]string{value}):  LogNamesBytes,
+			ClipMiddle(Log(value), 64): 64,
+		} {
+			assert.LessOrEqual(t, len(s), bound, "%q", s)
+			assert.False(t, incomplete(s), "%q", s)
+			assert.NotContains(t, s, clip.Ellipsis+clip.Ellipsis, "%q", s)
+		}
+	}
+}
+
+func TestLogName(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		assert.Equal(t, "IMG_1234.jpg", logName("IMG_1234.jpg"))
+		assert.Equal(t, "'Summer 2026.jpg'", logName("Summer 2026.jpg"))
+		assert.Equal(t, "''", logName(""))
+	})
+	t.Run("KeepsEnd", func(t *testing.T) {
+		name := logName(strings.Repeat("vacation-", 20) + "IMG_1234.jpg")
+		assert.LessOrEqual(t, len(name), LogNamesBytes)
+		assert.True(t, strings.HasPrefix(name, "vacation-"))
+		assert.True(t, strings.HasSuffix(name, "IMG_1234.jpg"))
+		assert.Contains(t, name, clip.Ellipsis)
+	})
+	t.Run("Quoted", func(t *testing.T) {
+		name := logName(strings.Repeat("it's ", 40) + "end.jpg")
+		assert.LessOrEqual(t, len(name), LogNamesBytes)
+		assert.True(t, strings.HasSuffix(name, "end.jpg'"))
+	})
+	t.Run("Apostrophes", func(t *testing.T) {
+		name := logName(strings.Repeat("'", 130) + " x.jpg")
+		assert.LessOrEqual(t, len(name), LogNamesBytes)
+		assert.True(t, strings.HasSuffix(name, "x.jpg'"), name)
+		// A doubled apostrophe is kept in one piece, so the quotes still pair up on both sides of the cut.
+		for _, value := range []string{strings.Repeat("'", 130) + " x.jpg", "a b" + strings.Repeat("'", 300) + ".jpg", "a b" + strings.Repeat("'", 301)} {
+			quoted := logName(value)
+			assert.LessOrEqual(t, len(quoted), LogNamesBytes, quoted)
+			for _, part := range strings.Split(quoted[1:len(quoted)-1], clip.Ellipsis) {
+				assert.Equal(t, 0, strings.Count(part, "'")%2, quoted)
+			}
+		}
+		assert.True(t, strings.HasSuffix(logName(strings.Repeat("'", 125)+" x"), " x'"))
+	})
+	t.Run("MarkedEnd", func(t *testing.T) {
+		name := logName(strings.Repeat("ab", 100) + strings.Repeat("\x01", 20) + ".jpg")
+		assert.LessOrEqual(t, len(name), LogNamesBytes)
+		assert.True(t, strings.HasSuffix(name, "[U+0001].jpg"), name)
+		assert.Equal(t, 1, strings.Count(name, clip.Ellipsis), name)
+	})
+	t.Run("WholeNameChecked", func(t *testing.T) {
+		assert.Equal(t, "?", logName(strings.Repeat("a", 3000)+"${x}"+strings.Repeat("b", 3000)))
+		name := logName(strings.Repeat("a", 1023) + "$" + strings.Repeat("b", 3000) + "{" + strings.Repeat("c", 1019) + ".jpg")
+		assert.True(t, strings.HasSuffix(name, "c.jpg"), name)
+	})
+	t.Run("MarksNul", func(t *testing.T) {
+		name := logName(strings.Repeat("\x00", 5000) + "IMG_1234.jpg")
+		assert.LessOrEqual(t, len(name), LogNamesBytes)
+		assert.True(t, strings.HasPrefix(name, "[U+0000]"), name)
+		assert.True(t, strings.HasSuffix(name, "IMG_1234.jpg"), name)
+		assert.Equal(t, "ld[U+0000]ap://host", logName("ld\x00ap://host"))
+	})
+	t.Run("Marked", func(t *testing.T) {
+		assert.Equal(t, "rep[U+202E]ort.jpg", logName("rep\u202Eort.jpg"))
+	})
+}
+
+func TestClipMiddle(t *testing.T) {
+	assert.Equal(t, "short", ClipMiddle("short", 64))
+	assert.Equal(t, "ab[U+202E]c…gh", ClipMiddle("ab[U+202E]cdef[U+200B]gh", 16))
+	clipped := ClipMiddle("user admin › "+strings.Repeat("[U+200B]", 40)+" › failed", 64)
+	assert.LessOrEqual(t, len(clipped), 64)
+	assert.True(t, strings.HasPrefix(clipped, "user admin › "))
+	assert.True(t, strings.HasSuffix(clipped, "› failed"))
+}
+
+func TestClipRunes(t *testing.T) {
+	assert.Equal(t, "", ClipRunes("", 8))
+	assert.Equal(t, "", ClipRunes("abc", 0))
+	assert.Equal(t, "abc", ClipRunes("  abc  ", 8))
+	assert.Equal(t, "رحلة", ClipRunes("رحلة 2026", 5))
+	assert.Equal(t, "ab", ClipRunes("ab[U+200B]cd", 9))
+	assert.Equal(t, "ab[U+200B]c", ClipRunes("ab[U+200B]cd", 11))
+	assert.Equal(t, "[0xFF][0xFF]", ClipRunes("[0xFF][0xFF][0xFF]", 17))
+}
+
+func TestLogMap(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		s, quote := logMap("")
+		assert.Equal(t, "", s)
+		assert.True(t, quote)
+	})
+	t.Run("Plain", func(t *testing.T) {
+		s, quote := logMap("IMG_1234.jpg")
+		assert.Equal(t, "IMG_1234.jpg", s)
+		assert.False(t, quote)
+	})
+	t.Run("Mapped", func(t *testing.T) {
+		s, quote := logMap("a\tb`c<d>\x00e\u202E")
+		assert.Equal(t, "a b'c?d?[U+0000]e[U+202E]", s)
+		assert.True(t, quote)
+	})
+	t.Run("NotChecked", func(t *testing.T) {
+		s, _ := logMap("ldap://host")
+		assert.Equal(t, "ldap://host", s)
 	})
 }

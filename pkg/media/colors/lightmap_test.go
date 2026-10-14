@@ -29,8 +29,8 @@ func TestLightMap_Diff(t *testing.T) {
 		lMap := LightMap(lum)
 		result := lMap.Diff()
 
-		if result != 0 {
-			t.Errorf("result should be 0: %d", result)
+		if result != -1 {
+			t.Errorf("result should be -1: %d", result)
 		}
 	})
 	t.Run("One", func(t *testing.T) {
@@ -38,8 +38,8 @@ func TestLightMap_Diff(t *testing.T) {
 		lMap := LightMap(lum)
 		result := lMap.Diff()
 
-		if result != 0 {
-			t.Errorf("result should be 0: %d", result)
+		if result != -1 {
+			t.Errorf("result should be -1: %d", result)
 		}
 	})
 	t.Run("Same", func(t *testing.T) {

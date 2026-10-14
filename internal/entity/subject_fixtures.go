@@ -35,7 +35,6 @@ var SubjectFixtures = SubjectMap{
 		Thumb:        "",
 		CreatedAt:    Now(),
 		UpdatedAt:    Now(),
-		DeletedAt:    nil,
 	},
 	"joe-biden": Subject{
 		SubjUID:      "js6sg6b2h8njw0sx",
@@ -53,7 +52,6 @@ var SubjectFixtures = SubjectMap{
 		Thumb:        "",
 		CreatedAt:    Now(),
 		UpdatedAt:    Now(),
-		DeletedAt:    nil,
 	},
 	"dangling": Subject{
 		SubjUID:      "js6sg6b1h1njaaaa",
@@ -73,7 +71,6 @@ var SubjectFixtures = SubjectMap{
 		PhotoCount:   0,
 		CreatedAt:    Now(),
 		UpdatedAt:    Now(),
-		DeletedAt:    nil,
 	},
 	"jane-doe": Subject{
 		SubjUID:      "js6sg6b1h1njaaab",
@@ -91,7 +88,6 @@ var SubjectFixtures = SubjectMap{
 		Thumb:        "",
 		CreatedAt:    Now().AddDate(0, 0, 1),
 		UpdatedAt:    Now(),
-		DeletedAt:    nil,
 	},
 	"actress-1": Subject{
 		SubjUID:      "js6sg6b1h1njaaac",
@@ -105,7 +101,6 @@ var SubjectFixtures = SubjectMap{
 		Thumb:        "",
 		CreatedAt:    Now(),
 		UpdatedAt:    Now(),
-		DeletedAt:    nil,
 	},
 	"actor-1": Subject{
 		SubjUID:      "js6sg6b1h1njaaad",
@@ -119,13 +114,12 @@ var SubjectFixtures = SubjectMap{
 		Thumb:        "",
 		CreatedAt:    Now(),
 		UpdatedAt:    Now(),
-		DeletedAt:    nil,
 	},
 }
 
 // CreateSubjectFixtures inserts known entities into the database for testing.
 func CreateSubjectFixtures() {
 	for _, entity := range SubjectFixtures {
-		fixtureDb().Create(&entity)
+		createFixture(&entity)
 	}
 }

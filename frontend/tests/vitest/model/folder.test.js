@@ -3,6 +3,10 @@ import "../fixtures";
 import Folder from "model/folder";
 
 describe("model/folder", () => {
+  it("should remove bidi controls from the base name", () => {
+    expect(new Folder({ Path: "2026/album\u202Eabc", Root: "originals" }).baseName()).toBe("albumabc");
+    expect(new Folder({ Path: "2026/صور 日本", Root: "originals" }).baseName()).toBe("صور 日本");
+  });
   it("should return classes", () => {
     const values = {
       Folder: true,

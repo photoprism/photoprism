@@ -33,6 +33,14 @@ func TestVerifiedEmail(t *testing.T) {
 			assert.Equal(t, "", VerifiedEmail(info), email)
 		}
 	})
+	t.Run("VerifiedNotASCII", func(t *testing.T) {
+		for _, email := range []string{"\u212Aate@example.com", "jos\u00e9@example.com"} {
+			info := &oidc.UserInfo{}
+			info.Email = email
+			info.EmailVerified = true
+			assert.Equal(t, "", VerifiedEmail(info), email)
+		}
+	})
 	t.Run("Nil", func(t *testing.T) {
 		assert.Equal(t, "", VerifiedEmail(nil))
 	})

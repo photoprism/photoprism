@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -161,6 +162,23 @@ func TestRemoveFromAlbumCoverCacheInvalidUID(t *testing.T) {
 
 	_, ok := cache.Get(key)
 	assert.True(t, ok)
+}
+
+func TestRemoveFromAlbumCoverCacheUnknownAlbum(t *testing.T) {
+	hook := photoLabelErrorLog(t)
+	uid := rnd.GenerateUID(entity.AlbumUID)
+
+	RemoveFromAlbumCoverCache(uid)
+
+	var errs []string
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level <= logrus.ErrorLevel {
+			errs = append(errs, entry.Message)
+		}
+	}
+
+	assert.Equal(t, []string{"covers: album not found (find album " + uid + ")"}, errs)
 }
 
 func TestRemoveFromLabelCoverCache(t *testing.T) {

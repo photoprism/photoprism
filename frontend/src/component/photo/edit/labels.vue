@@ -43,7 +43,7 @@
                     <tbody>
                       <tr v-for="label in view.model.Labels" :key="label.LabelID" class="label result">
                         <td class="text-start">
-                          {{ label.Label.Name }}
+                          <bdi>{{ $util.balanceBidi(label.Label.Name) }}</bdi>
                           <!--                  TODO: add this dialog later-->
                           <!--                  <v-dialog class="p-inline-edit" @save="renameLabel(props.item.Label)">-->
                           <!--                    {{ props.item.Label.Name }}-->
@@ -283,7 +283,7 @@ export default {
       const name = label.Name;
 
       this.view.model.removeLabel(label.ID).then(() => {
-        this.$notify.success($gettext("Removed %{name}", { name }));
+        this.$notify.success($gettext("Removed %{name}", { name: this.$util.isolate(name) }));
       });
     },
     addLabel() {
@@ -331,7 +331,7 @@ export default {
       }
 
       this.view.model.addLabel(finalName).then(() => {
-        this.$notify.success($gettext("Added %{name}", { name: finalName }));
+        this.$notify.success($gettext("Added %{name}", { name: this.$util.isolate(finalName) }));
         this.resetInput();
       });
     },

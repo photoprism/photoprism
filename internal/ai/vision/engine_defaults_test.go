@@ -231,15 +231,20 @@ func TestEnvModelTagged(t *testing.T) {
 		t.Setenv("VISION_TEST_MODEL", strings.Repeat("m", 100))
 		assert.Len(t, envModelTagged("VISION_TEST_MODEL"), 100)
 	})
+	t.Run("ControlOnly", func(t *testing.T) {
+		t.Setenv("VISION_TEST_MODEL", "\x01\x7f")
+		assert.Equal(t, "", envModelTagged("VISION_TEST_MODEL"))
+	})
 }
 
 // TestOllamaEnvModelTag checks that a long OLLAMA_MODEL keeps its tag when it is sent.
 func TestOllamaEnvModelTag(t *testing.T) {
-	resetClippedModelIdWarnings(t)
+	resetModelIdWarnings(t)
 	_, _ = captureLogs(t)
+	// Registered before Setenv, so it runs after the variable is restored.
+	t.Cleanup(registerOllamaEngineDefaults)
 	t.Setenv(ollama.ModelEnv, "hf.co/some-org/"+strings.Repeat("x", 43)+":Q4_K_M-instr")
 	registerOllamaEngineDefaults()
-	t.Cleanup(registerOllamaEngineDefaults)
 
 	model := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName}
 	model.ApplyEngineDefaults()

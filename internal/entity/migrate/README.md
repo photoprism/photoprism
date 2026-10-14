@@ -1,10 +1,10 @@
 # Database Migrations
 
-**Last Updated:** June 1, 2026
+**Last Updated:** October 11, 2026
 
-This package contains the dialect-specific SQL migrations that complement GORM's schema auto-migration during database initialization. The SQL source files live in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/), and [`generate.go`](generate.go) embeds them into the generated [`dialect_mysql.go`](dialect_mysql.go) and [`dialect_sqlite3.go`](dialect_sqlite3.go) files.
+This package contains the dialect-specific SQL migrations that complement GORM's schema auto-migration during database initialization. The SQL source files live in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/), and [`generate.go`](generate.go) embeds them into the generated [`dialect_mysql.go`](dialect_mysql.go) and [`dialect_sqlite3.go`](dialect_sqlite3.go) files. PostgreSQL (experimental) has a registered, empty migration list (`DialectPostgreSQL` in [`dialects.go`](dialects.go)); its schema is created by auto-migration alone.
 
-Files ending in `.pre.sql` run in the `pre` stage before ORM auto-migration. All other migration files run in the `main` stage afterward.
+Files ending in `.pre.sql` run in the `pre` stage before ORM auto-migration, files ending in `.post.sql` run in the `post` stage after all others, and all other migration files run in the `main` stage after auto-migration. Other stage names, and an ID used by more than one file, are rejected when the sources are read.
 
 ## Index Prefix Limits (VARBINARY Columns)
 
@@ -23,10 +23,10 @@ The migration flow is:
 3. Run `pre` SQL migrations from this package.
 4. If the current release still `NeedsMigration()`, run the one-time schema work in [`entity.InitDb()`](../entity_init.go) and [`Tables.Migrate()`](../entity_tables.go):
    - drop deprecated tables when enabled
-   - run GORM `AutoMigrate(...)` for all registered entities
-   - apply one-off compatibility fixes that are also tracked through `versions`
-5. Run `main` SQL migrations from this package.
-6. Mark the current release as migrated by setting `versions.migrated_at`.
+   - on SQLite, rebuild tables that still have the column types of earlier releases with [`ConvertSQLiteSchema()`](sqlite_schema.go), once per table and only when such a type is found; this runs after the `pre` stage, so columns renamed there keep their values, and [`sqlite_repair.go`](sqlite_repair.go) restores the paths, names and slugs that the earlier types stored as numbers where they can be derived
+   - run GORM `AutoMigrate(...)` for all registered entities, which also alters existing columns that differ from the struct tags; on MariaDB it only lengthens shorter columns of the same base type, sets differing defaults in place and lets `NOT NULL` columns accept `NULL`, while longer columns or another base type are kept and logged, so any other change needs a SQL migration
+5. Run `main`, then `post` SQL migrations from this package.
+6. Mark the current release as migrated by setting `versions.migrated_at`. If auto-migration failed or tables are missing afterward, `MigrateDb()` stores the error in `versions.error` instead, writes it to the system log, and returns it, so the next start runs auto-migration again. A failed auto-migration also skips the `main` and `post` stages, and `entity.InitDb()` then creates the default fixtures only if their tables exist. Running selected migrations by ID records nothing.
 
 The important distinction is that the `versions` table gates the expensive release-level schema initialization, while the `migrations` table tracks each named SQL migration in this package.
 
@@ -36,7 +36,7 @@ PhotoPrism uses two persistence layers to avoid rerunning the same startup work 
 
 ### `versions`: Once Per Release
 
-The `versions` table stores one row per PhotoPrism `Version` and `Edition`. After a successful release-level initialization, `MigrateDb()` sets `migrated_at`. On later startups of the same release, `NeedsMigration()` returns `false`, so the full ORM auto-migration path is skipped. This reduces startup time and avoids repeating the same broad schema work over and over again.
+The `versions` table stores one row per PhotoPrism `Version` and `Edition`; Portal builds record their edition as `portal-<edition>`, since they register tables of their own. After a successful release-level initialization, `MigrateDb()` sets `migrated_at`. On later startups of the same release, `NeedsMigration()` returns `false`, so the full ORM auto-migration path is skipped. This reduces startup time and avoids repeating the same broad schema work over and over again.
 
 ### `migrations`: Once Per Migration ID
 
@@ -47,7 +47,7 @@ Each SQL migration in this package has a stable timestamp-based `ID`, for exampl
 - If the migration was started but not finished and has been "running" for less than 60 minutes, it is treated as still in progress and is skipped.
 - If the migration was started but not finished and has been "running" for 60 minutes or more, it is treated as stale and may be repeated automatically.
 
-This is the reason broken migrations do not spam the logs on every startup: the failure is recorded once in `migrations.error`, and future runs see that row and skip it unless you explicitly ask to retry it.
+This is the reason broken migrations do not spam the logs on every startup: the failure is recorded once in `migrations.error` and written to the system log, and future runs see that row and skip it unless you explicitly ask to retry it. Errors that only mean the change is already in place, such as an existing column, match `IgnoreErr` in [`errors.go`](errors.go) and count as success.
 
 ## Troubleshooting & Testing
 

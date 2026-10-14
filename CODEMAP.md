@@ -34,7 +34,7 @@ High-Level Package Map (Go)
 - `internal/commands` — CLI command definitions and orchestration (`start`, `index`, `import`, `migrate`, etc.); `commands.go` wires them into the app and subpackages like `catalog` emit CLI documentation.
 - `internal/server` — HTTP server, middleware, routing, static/ui/webdav
 - `internal/config` — configuration, flags/env/options, client config, DB init/migrate
-- `internal/entity` — GORM v1 models, queries, search helpers, migrations
+- `internal/entity` — GORM v2 models, queries, search helpers, migrations
   - Label lookup helpers now live in `internal/entity/label*.go`; reuse `FindLabels(...)`, `FindLabelIDs(...)`, and `LabelSlugs(...)` for homophone-aware exact-name/slug resolution instead of duplicating slug SQL in callers.
 - `internal/photoprism` — core domain logic (indexing, import, faces, thumbnails, cleanup)
 - `internal/ai/vision` — multi-engine computer vision pipeline (models, adapters, schema). Adapter docs: [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md) and [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md).
@@ -72,6 +72,7 @@ HTTP API
   - Use full `/api/v1/...` in every `@Router` annotation (match the group prefix).
   - Annotate only public handlers; skip internal helpers to avoid stray generic paths.
   - `make swag-json` runs a stabilization step (`swaggerfix`) removing duplicated enums for `time.Duration`; API uses integer nanoseconds for durations.
+  - `.swaggo` in the repo root maps types whose JSON differs from their Go fields, such as `entity.DeletedAt` (a timestamp or null), to the type clients see; the edition Makefiles pass it with `--overridesFile ../.swaggo`.
 - `/api/v1/metrics` (see `internal/api/metrics.go`) exposes Prometheus metrics, including cached filesystem/account usage derived from `config.Usage()`, registered user/guest totals, and portal cluster node counts when `NodeRole=portal`; the handler returns the standard Prometheus exposition content type (`text/plain; version=0.0.4`).
 - Common groups in `routes.go`: sessions, OAuth/OIDC, config, users, services, thumbnails, video, downloads/zip, index/import, photos/files/labels/subjects/faces, batch ops, cluster, technical (metrics, status, echo).
 - Hidden search behavior (used by the hidden route under the configured frontend URI, default `/library/hidden` for CE/Plus/Pro and `/portal/hidden` for Portal) is implemented in `internal/entity/search/photos.go`:
@@ -108,10 +109,11 @@ Configuration & Flags
   - Overage: if `_claim_names.groups` is present and no groups are returned, login fails when required groups are configured; Graph fetch is not implemented yet.
 
 Database & Migrations
-- Driver: GORM v1 (`github.com/jinzhu/gorm`). No `WithContext`. Use `db.Raw(stmt).Scan(&nop)` for raw SQL.
-- Entities and helpers: `internal/entity/*.go` and subpackages (`query`, `search`, `sortby`).
+- Driver: GORM v2 (`gorm.io/gorm`, MySQL and SQLite dialectors, plus experimental PostgreSQL through `gorm.io/driver/postgres` with pgx) opened by `entity.OpenDb` with `entity.GormConfig()`. No `WithContext`. Use `db.Exec(stmt)` for raw SQL. Usage rules: `.claude/rules/go-code-style.md` ("GORM v2 Usage").
+- Entities and helpers: `internal/entity/*.go` and subpackages (`query`, `search`, `sortby`; `sqlcount` counts statements in tests). Branch per driver on `entity.DbDialect()`, which returns a `dsn.Dialect*` constant.
 - Migrations engine: `internal/entity/migrate/*` — run via `config.MigrateDb()`; CLI: `photoprism migrate` / `photoprism migrations`.
-- DB init/migrate flow: `internal/config/config_db.go` chooses driver/DSN, sets `gorm:table_options`, then `entity.InitDb(migrate.Opt(...))`.
+- Backups, restores and transfers: `internal/photoprism/backup/*` (dumps), `entity.Tables.Transfer` (`internal/entity/entity_transfer.go`, copies the index between databases); CLI: `photoprism database backup|restore|transfer`.
+- DB init/migrate flow: `internal/config/config_db.go` chooses driver/DSN and opens the connection, then `entity.InitDb(migrate.Opt(...))`; MySQL table options are set on the migration session.
 
 AuthN/Z & Sessions
 - Session model and cache: `internal/entity/auth_session*` and `internal/auth/session/*` (cleanup worker).
@@ -138,7 +140,7 @@ Background Workers
 Cluster / Portal
 - Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
-  - Registration treats 401, 403 and 404 as final and does not rotate credentials; only 429 is retried with bounded backoff.
+  - Bootstrap treats 400, 401, 403, 404 and 409 as final and retries 429, 5xx and network errors (6 attempts, 15 s apart), then reports the Portal's reason; `cluster register` retries only 429, with backoff.
   - Theme sync logs at info level when it downloads, updates, or skips a bundle, so operators can trace it in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
@@ -179,7 +181,7 @@ Common How‑Tos
   - Tests: cover CLI/env/file precedence (see `internal/config/test.go` helpers)
 
 - Touch the DB schema
-  - Use GORM auto-migration, or add a custom migration in `internal/entity/migrate/<dialect>/...` and run `go generate` or `make generate` (runs `go generate` for all packages) 
+  - Use GORM auto-migration (on MariaDB it does not shrink columns or change their type), or add a custom migration in `internal/entity/migrate/<dialect>/...` and run `go generate` or `make generate` (runs `go generate` for all packages) 
   - Bump/review version gates in `migrate.Version` usage via `config_db.go`
   - Tests: run against SQLite by default; for MySQL cases, gate appropriately
 
@@ -237,7 +239,7 @@ Filesystem Permissions & io/fs Aliasing
 
 Cluster Registry & Provisioner Cheatsheet
 - UUID‑first everywhere: API paths `{uuid}`, Registry `Get/Delete/RotateSecret` by UUID; explicit `FindByClientID` exists for OAuth.
-- Node/DTO fields: `uuid` required; `clientId` optional; database metadata includes `driver`.
+- Node/DTO fields: `UUID` required; `ClientID` optional; database metadata includes `Driver`.
 - Provisioner naming (no slugs):
   - database: `cluster_d<hmac11>`
   - username: `cluster_u<hmac11>`
@@ -263,7 +265,7 @@ Frequently Touched Files (by topic)
 - Workers: `internal/workers/*`
 - Cluster: `internal/service/cluster/*`
   - Theme support: `internal/service/cluster/theme/version.go` exposes `DetectVersion`, used by bootstrap, CLI, and API handlers to compare portal vs node theme revisions (prefers `fs.VersionTxtFile`, falls back to `app.js` mtime).
-  - Registration sanitizes `AppName`, `AppVersion`, and `Theme` with `clean.TypeUnicode`; defaults for app metadata come from `config.About()` / `config.Version()`. `cluster.RegisterResponse` now includes a `Theme` hint when the portal has a newer bundle so nodes can decide whether to download immediately.
+  - Registration sanitizes `AppName`, `AppVersion`, and `Theme` with `clean.TypeUnicode`; defaults for app metadata come from `config.About()` / `config.Version()`. `cluster.RegisterResponse` includes a `Theme` hint when the portal has a newer bundle so nodes can decide whether to download immediately.
 - Headers: `pkg/http/header/*`
 
 Downloads (CLI) & yt-dlp helpers

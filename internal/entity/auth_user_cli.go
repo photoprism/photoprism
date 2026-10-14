@@ -126,7 +126,7 @@ func (m *User) RestoreFromCli(ctx *cli.Context, newPassword string) (err error) 
 		}
 	}
 
-	m.DeletedAt = nil
+	m.DeletedAt = DeletedAt{}
 
 	// Set values.
 	if err = m.SetValuesFromCli(ctx); err != nil {

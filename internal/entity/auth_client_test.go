@@ -309,6 +309,7 @@ func TestClient_Delete(t *testing.T) {
 		err := m.Delete()
 
 		assert.NoError(t, err)
+		assert.True(t, m.Deleted(), "in-memory record is marked as deleted")
 	})
 	t.Run("RemovesSecret", func(t *testing.T) {
 		m := NewClient().SetName("pp-delete-secret")
@@ -338,8 +339,8 @@ func TestClient_Deleted(t *testing.T) {
 	deletedAt := time.Now().UTC()
 	zero := time.Time{}
 	assert.False(t, ClientFixtures.Pointer("alice").Deleted())
-	assert.False(t, (&Client{DeletedAt: &zero}).Deleted())
-	assert.True(t, (&Client{DeletedAt: &deletedAt}).Deleted())
+	assert.False(t, (&Client{DeletedAt: DeletedAtTime(zero)}).Deleted())
+	assert.True(t, (&Client{DeletedAt: DeletedAtTime(deletedAt)}).Deleted())
 	assert.True(t, ptr.Deleted())
 }
 
@@ -348,7 +349,7 @@ func TestClient_Disabled(t *testing.T) {
 	deletedAt := time.Now().UTC()
 	assert.False(t, ClientFixtures.Pointer("alice").Disabled())
 	assert.True(t, (&Client{AuthEnabled: false}).Disabled())
-	assert.True(t, (&Client{AuthEnabled: true, DeletedAt: &deletedAt}).Disabled())
+	assert.True(t, (&Client{AuthEnabled: true, DeletedAt: DeletedAtTime(deletedAt)}).Disabled())
 	assert.True(t, ptr.Disabled())
 }
 
@@ -886,7 +887,7 @@ func TestClient_AclRole_Resolution(t *testing.T) {
 	})
 	t.Run("DeletedIsNone", func(t *testing.T) {
 		deletedAt := time.Now().UTC()
-		m := &Client{ClientRole: "client", DeletedAt: &deletedAt}
+		m := &Client{ClientRole: "client", DeletedAt: DeletedAtTime(deletedAt)}
 		assert.Equal(t, acl.RoleNone, m.AclRole())
 		assert.False(t, m.HasRole(acl.RoleClient))
 	})
@@ -999,7 +1000,7 @@ func TestClient_Validate(t *testing.T) {
 			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   "basic",
 			AuthScope:    "all",
-			DeletedAt:    &deletedAt,
+			DeletedAt:    DeletedAtTime(deletedAt),
 		}
 
 		err := m.Validate()
@@ -1417,7 +1418,7 @@ func TestClient_HasInactiveUser(t *testing.T) {
 	t.Run("DeletedUser", func(t *testing.T) {
 		deletedAt := time.Now().Add(-time.Minute)
 		u := *UserFixtures.Pointer("bob")
-		u.DeletedAt = &deletedAt
+		u.DeletedAt = DeletedAtTime(deletedAt)
 		m := NewClient().SetUser(&u)
 		assert.True(t, m.HasInactiveUser())
 	})

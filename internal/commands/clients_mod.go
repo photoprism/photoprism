@@ -111,6 +111,7 @@ func clientsModAction(ctx *cli.Context) error {
 
 		// Show new client secret.
 		if secret != "" && err == nil {
+			client.RevokeSessions(nil)
 			fmt.Println(message)
 			result := report.Credentials("Client ID", client.ClientUID, "Client Secret", secret)
 			fmt.Printf("\n%s\n", result)
