@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -162,6 +163,45 @@ func TestService_SaveForm(t *testing.T) {
 			assert.Equal(t, c.updated, stored(t, model.ID))
 		}
 	})
+}
+
+func TestService_SaveFormFolderTooLong(t *testing.T) {
+	limit := strings.Repeat("/"+strings.Repeat("f", 200), 5) + "/" + strings.Repeat("g", 18)
+	require.Len(t, limit, RemoteNameMaxLen)
+	longName := "/photos/" + strings.Repeat("n", fs.NameMaxLen+1)
+
+	for _, c := range []struct {
+		name string
+		form form.Service
+		err  bool
+	}{
+		{"SyncPathAtLimit", form.Service{SyncPath: limit, SyncDownload: true}, true},
+		{"SyncPathBelowLimit", form.Service{SyncPath: limit[:len(limit)-1], SyncDownload: true}, false},
+		{"SharePathAtLimit", form.Service{SharePath: limit}, true},
+		{"SharePathBelowLimit", form.Service{SharePath: limit[:len(limit)-1]}, false},
+		{"DownloadFolderNameTooLong", form.Service{SyncPath: longName, SyncDownload: true}, true},
+		// The remote decides which folder names it accepts for uploads.
+		{"UploadFolderNameTooLong", form.Service{SyncPath: longName, SyncUpload: true}, false},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			c.form.AccName, c.form.AccURL, c.form.AccType = "Folder "+c.name, "test.com", "webdav"
+			model, err := AddService(c.form)
+			t.Cleanup(func() {
+				if model != nil && model.ID > 0 {
+					UnscopedDb().Unscoped().Delete(model)
+				}
+			})
+
+			if c.err {
+				assert.ErrorIs(t, err, ErrServiceFolderTooLong)
+				var count int64
+				require.NoError(t, Db().Model(&Service{}).Where("acc_name = ?", c.form.AccName).Count(&count).Error)
+				assert.Zero(t, count)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
 
 func TestService_SyncYamlEnabled(t *testing.T) {

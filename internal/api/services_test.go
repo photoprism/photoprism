@@ -3,11 +3,16 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -111,6 +116,19 @@ func TestUpdateService(t *testing.T) {
 		val3 := gjson.Get(r.Body.String(), "AccName")
 		assert.Equal(t, "CreateTestUpdated", val3.String())
 		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("FolderTooLong", func(t *testing.T) {
+		// A sync folder that leaves no room for file names is rejected, and the account is not changed.
+		app, router, _ := NewApiTest()
+		UpdateService(router)
+		folder := strings.Repeat("/"+strings.Repeat("f", 200), 5) + "/" + strings.Repeat("g", 18)
+		require.Len(t, folder, entity.RemoteNameMaxLen)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/services/"+id, fmt.Sprintf(`{"SyncPath": %q}`, folder))
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, i18n.Msg(i18n.ErrFolderTooLong), gjson.Get(r.Body.String(), "error").String())
+		m, err := query.AccountByID(clean.IdUint(id))
+		require.NoError(t, err)
+		assert.NotEqual(t, folder, m.SyncPath)
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()

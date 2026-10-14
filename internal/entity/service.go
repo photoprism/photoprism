@@ -2,6 +2,7 @@ package entity
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"sort"
 	"time"
@@ -72,6 +73,10 @@ type Service struct {
 func (Service) TableName() string {
 	return "services"
 }
+
+// ErrServiceFolderTooLong is returned when a sync or share folder leaves no room for the names of files below it,
+// or a folder name in the sync path is longer than local file systems accept.
+var ErrServiceFolderTooLong = errors.New("folder name is too long")
 
 // AddService adds a new service account to the database.
 func AddService(form form.Service) (model *Service, err error) {
@@ -157,6 +162,13 @@ func (m *Service) SaveForm(form form.Service) error {
 	// Set default background sync folder if empty.
 	if m.SyncPath == "" {
 		m.SyncPath = "/"
+	}
+
+	// Remote names of files below the folders must fit their records, and downloaded file and folder names local
+	// file systems.
+	if len(m.SharePath) >= RemoteNameMaxLen || len(m.SyncPath) >= RemoteNameMaxLen ||
+		m.SyncDownload && fs.NameTooLong(m.SyncPath) {
+		return ErrServiceFolderTooLong
 	}
 
 	// Number of remote request retry attempts.

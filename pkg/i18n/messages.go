@@ -59,6 +59,7 @@ const (
 	ErrRegistrationDisabled
 	ErrVerifiedEmailRequired
 	ErrMigrationInProgress
+	ErrFolderTooLong
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -166,6 +167,7 @@ var Messages = MessageMap{
 	ErrRegistrationDisabled:  gettext("Registration disabled"),
 	ErrVerifiedEmailRequired: gettext("Verified email required"),
 	ErrMigrationInProgress:   gettext("A migration is in progress"),
+	ErrFolderTooLong:         gettext("Folder name is too long"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),
