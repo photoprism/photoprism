@@ -66,6 +66,18 @@ afterEach(() => {
 });
 
 describe("photo export dialog", () => {
+  it.each([720, 1920, 7680])("uses the server's thumbnail limit %s when loading export choices", async (limit) => {
+    await open([file("p", { Name: "large.png", FileType: "png" })]);
+    config.values.thumbLimit = limit;
+    config.values.thumbs = [...thumbs, { size: "fit_4096", usage: "DCI 4K", w: 4096, h: 4096 }];
+    await wrapper.vm.loadFiles();
+    await flushPromises();
+    const options = wrapper.vm.groups[0].options;
+    expect(options.at(-1)).toMatchObject(limit === 7680
+      ? { label: "Full Size", size: "fit_4096", width: 4000, height: 3000 }
+      : limit === 1920 ? { size: "fit_1920", width: 1600, height: 1200 } : { size: "fit_720", width: 720, height: 540 });
+    expect(wrapper.text().includes("Full Size")).toBe(limit === 7680);
+  });
   it.each([customDark, customLight])("explicitly binds the custom application theme $name", async (theme) => {
     await open();
     config.themeName = theme.name;

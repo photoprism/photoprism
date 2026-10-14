@@ -296,6 +296,33 @@ describe("common/export preview matching", () => {
 });
 
 describe("common/export sizes and selection", () => {
+  it.each([
+    [undefined, ["fit_720", "fit_1280", "fit_1920"]],
+    [720, ["fit_720"]],
+    [1920, ["fit_720", "fit_1280", "fit_1920"]],
+    [2500, ["fit_720", "fit_1280", "fit_1920"]],
+  ])("restricts large PNG exports to the serving limit %s", (limit, expected) => {
+    const original = makeFile({ FileType: "png", Name: "large.png" });
+    const sizes = [...thumbs, { size: "fit_7680", usage: "8K", w: 7680, h: 4320 }];
+    const [group] = buildExportGroups([original], sizes, limit);
+    expect(thumbnails(group).map((option) => option.size)).toEqual(expected);
+    expect(thumbnails(group).some((option) => option.label === "Full Size")).toBe(false);
+    expect(thumbnails(group).at(-1)).toMatchObject(limit === 720 ? { width: 720, height: 540 } : { width: 1600, height: 1200 });
+  });
+
+  it("retains genuine Full Size JPEG conversion when on-demand rendering allows it", () => {
+    const [group] = buildExportGroups([makeFile({ FileType: "png", Name: "large.png" })], thumbs, 7680);
+    expect(thumbnails(group).at(-1)).toMatchObject({ size: "fit_4096", label: "Full Size", width: 4000, height: 3000 });
+    expect(group.selected).toBe(group.options.find((option) => option.size === "fit_1920").id);
+  });
+
+  it("checks both box dimensions against the serving limit before fitting small PNGs", () => {
+    const sizes = [{ size: "fit_tall", w: 720, h: 4096 }, thumbs[0]];
+    const [group] = buildExportGroups([makeFile({ FileType: "png", Width: 500, Height: 400 })], sizes, 1920);
+    expect(thumbnails(group)).toHaveLength(1);
+    expect(thumbnails(group)[0]).toMatchObject({ size: "fit_720", label: "Full Size", width: 500, height: 400 });
+  });
+
   it("uses only advertised fit sizes", () => {
     const sizes = [{ size: "tile_500", w: 500, h: 500 }, thumbs[2], null, { size: "fit_bad", w: 0, h: 720 }];
     const [group] = buildExportGroups([makeFile()], sizes);

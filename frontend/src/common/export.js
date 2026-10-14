@@ -108,14 +108,14 @@ function compareBoxes(a, b) {
   return a.w * a.h - b.w * b.h || (a.size < b.size ? -1 : a.size > b.size ? 1 : 0);
 }
 
-// thumbnailOptions fits advertised sizes to the oriented source and merges duplicates.
-function thumbnailOptions(source, thumbs, options) {
+// thumbnailOptions fits deliverable sizes to the oriented source and merges duplicates.
+function thumbnailOptions(source, thumbs, options, thumbLimit) {
   if (!source.width || !source.height) {
     return [];
   }
 
   const sizes = thumbs
-    .filter((thumb) => typeof thumb?.size === "string" && thumb.size.startsWith("fit_") && knownDimension(thumb.w) && knownDimension(thumb.h))
+    .filter((thumb) => typeof thumb?.size === "string" && thumb.size.startsWith("fit_") && knownDimension(thumb.w) && knownDimension(thumb.h) && thumb.w <= thumbLimit && thumb.h <= thumbLimit)
     .sort(compareBoxes);
   const outputs = new Map();
 
@@ -145,8 +145,8 @@ function thumbnailOptions(source, thumbs, options) {
   return Array.from(outputs.values()).sort((a, b) => a.width * a.height - b.width * b.height || (a.size < b.size ? -1 : a.size > b.size ? 1 : 0));
 }
 
-// buildExportGroups builds ordered export choices from full photo Files and config thumbs.
-export function buildExportGroups(files, thumbs = []) {
+// buildExportGroups builds ordered export choices within the thumbnail serving limit.
+export function buildExportGroups(files, thumbs = [], thumbLimit = 1920) {
   if (!Array.isArray(files)) {
     return [];
   }
@@ -167,7 +167,7 @@ export function buildExportGroups(files, thumbs = []) {
       options.push(fileOption("preview", thumbnailSource));
     }
     if (thumbnailSource && still) {
-      options.push(...thumbnailOptions(thumbnailSource, Array.isArray(thumbs) ? thumbs : [], options));
+      options.push(...thumbnailOptions(thumbnailSource, Array.isArray(thumbs) ? thumbs : [], options, thumbLimit));
     }
 
     groups.push({

@@ -21,6 +21,16 @@ const avc = { ready: false, preparable: true, format: "mp4", codec: "avc1" };
 afterEach(() => vi.restoreAllMocks());
 
 describe("export media choices", () => {
+  it("applies the serving limit to video still previews before deduplicating JPEG outputs", () => {
+    const original = file(1, "movie.mov", "video");
+    const preview = file(2, "movie.mov.png", "image", { Root: "sidecar" });
+    const sizes = [...thumbs, { size: "fit_4096", w: 4096, h: 4096 }];
+    const [cached] = buildMediaExportGroups([original, preview], sizes, {}, 1920);
+    expect(cached.options.map((option) => option.kind)).toEqual(["original", "preview", "thumbnail"]);
+    expect(cached.options.at(-1)).toMatchObject({ size: "fit_1920", width: 1600, height: 1200 });
+    const [onDemand] = buildMediaExportGroups([original, preview], sizes, {}, 7680);
+    expect(onDemand.options.at(-1)).toMatchObject({ label: "Full Size", width: 4000, height: 3000 });
+  });
   it.each(["webp", "avif", "tiff", "jxl"])("includes static %s with a unique existing preview", (format) => {
     const original = file(1, `still.${format}`);
     const preview = file(2, `still.${format}.jpg`, "image", { Root: "sidecar" });

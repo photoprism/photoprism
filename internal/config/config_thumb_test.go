@@ -50,6 +50,32 @@ func TestConfig_ThumbSizeUncached(t *testing.T) {
 	assert.False(t, c.ThumbUncached())
 }
 
+// TestConfig_ThumbSizeLimit covers cached and on-demand delivery limits.
+func TestConfig_ThumbSizeLimit(t *testing.T) {
+	c := NewMinimalTestConfig(t.TempDir())
+	for _, tc := range []struct {
+		name     string
+		cached   int
+		onDemand int
+		uncached bool
+		want     int
+	}{
+		{"CachedOnly", 1920, 7680, false, 1920},
+		{"OnDemand", 1920, 7680, true, 7680},
+		{"LargerCache", 4096, 1920, true, 4096},
+		{"CustomCached", 2500, 7680, false, 2500},
+		{"Minimum", 1, 1, false, 720},
+		{"Maximum", 30000, 30000, true, 15360},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c.options.ThumbSize = tc.cached
+			c.options.ThumbSizeUncached = tc.onDemand
+			c.options.ThumbUncached = tc.uncached
+			assert.Equal(t, tc.want, c.ThumbSizeLimit())
+		})
+	}
+}
+
 func TestConfig_ThumbSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

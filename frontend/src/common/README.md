@@ -5,8 +5,9 @@
 ### Export Helpers
 
 `export.js` exposes `canExport(config)` for a client `Config` instance and
-`buildExportGroups(files, thumbs)` for the full photo-detail `Files` array and client
-config's `thumbs` list. It performs no requests and does not modify its inputs.
+`buildExportGroups(files, thumbs, thumbLimit)` for the full photo-detail `Files`
+array and client config's `thumbs` list and effective `thumbLimit` in pixels.
+It performs no requests and does not modify its inputs.
 Consumers must load full photo details; search-result file summaries are insufficient.
 
 - Export requires `settings.features.export === true` and `files.access_all` or
@@ -34,8 +35,11 @@ Consumers must load full photo details; search-result file summaries are insuffi
   `previewMissing`. Unavailable named originals still count toward ambiguity.
 - Preview uses the existing file's format and dimensions. Thumbnail dimensions
   use that source's already oriented dimensions, nearest-pixel rounding, a
-  one-pixel minimum, and no enlargement. Only advertised `fit_*` sizes are used;
-  server limits are not separately inferred.
+  one-pixel minimum, and no enlargement. Only advertised `fit_*` sizes whose box
+  width and height are within `thumbLimit` are used, before fitting or merging
+  outputs. The server reports the pre-generated limit when on-demand rendering
+  is disabled and the larger of its cached and on-demand limits otherwise.
+  Callers without a limit default to 1920 pixels.
 - Equal output dimensions merge using the smallest box area, then size code.
   Thumbnail options sort by output area. A JPEG at source dimensions is labeled
   Full Size and omitted when Original JPEG or Preview JPEG already supplies it.
@@ -44,7 +48,8 @@ Consumers must load full photo details; search-result file summaries are insuffi
   Full Size, a merged-away Full HD size, or missing Full HD leaves it empty.
 
 `export-media.js` adds video, animated-image, motion-photo, and Apple Live Photo
-choices to the same groups. Static WebP, AVIF, TIFF, and JPEG XL originals are
+choices to the same groups; `buildMediaExportGroups(files, thumbs, probes, thumbLimit)`
+applies the same serving limit to their still previews. Static WebP, AVIF, TIFF, and JPEG XL originals are
 eligible with any uniquely owned existing JPG/PNG preview. Audio is omitted.
 Indexed images with multiple `Frames` or a positive `Duration` normalize to
 animated sources. Animated WebP and APNG require a separate still preview. Motion JPEG/PNG originals can supply their own thumbnails.

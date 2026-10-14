@@ -86,6 +86,7 @@ type ClientConfig struct {
 	Lenses           entity.Lenses       `json:"lenses"`
 	Countries        entity.Countries    `json:"countries"`
 	Thumbs           ThumbSizes          `json:"thumbs"`
+	ThumbLimit       int                 `json:"thumbLimit"`
 	Tier             int                 `json:"tier"`
 	Membership       string              `json:"membership"`
 	Customer         string              `json:"customer"`
@@ -346,6 +347,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Customer:         "",
 		MapKey:           "",
 		Thumbs:           Thumbs,
+		ThumbLimit:       c.ThumbSizeLimit(),
 		Colors:           colors.All.List(),
 		ManifestUri:      c.ClientManifestUri(),
 		Clip:             txt.ClipDefault,
@@ -442,6 +444,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		Countries:        entity.Countries{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
+		ThumbLimit:       c.ThumbSizeLimit(),
 		Tier:             c.Hub().Tier(),
 		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),
@@ -548,6 +551,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Countries:        entity.Countries{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
+		ThumbLimit:       c.ThumbSizeLimit(),
 		Tier:             c.Hub().Tier(),
 		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),

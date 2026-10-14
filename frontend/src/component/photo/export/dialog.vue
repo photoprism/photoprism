@@ -256,7 +256,7 @@ export default {
         if (generation !== this.generation || !this.visible || !this.permitted) {
           return;
         }
-        this.groups = buildMediaExportGroups(photo.Files, this.$config.values.thumbs, probes);
+        this.groups = buildMediaExportGroups(photo.Files, this.$config.values.thumbs, probes, this.$config.values.thumbLimit);
         this.expanded = this.groups.length ? [this.groups[0].id] : [];
         this.selected = this.groups.map((group) => group.selected).filter(Boolean);
       } catch {

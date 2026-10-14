@@ -14,8 +14,8 @@ function file(id, values = {}) {
 }
 
 // allDownloads selects each output from the given stack.
-function allDownloads(files) {
-  const groups = buildMediaExportGroups(files, thumbs);
+function allDownloads(files, thumbLimit = 1920) {
+  const groups = buildMediaExportGroups(files, thumbs, {}, thumbLimit);
   return buildExportDownloads(groups, groups.flatMap((group) => group.options.map((option) => option.id)));
 }
 
@@ -50,7 +50,7 @@ describe("image export choices and filenames", () => {
     const items = allDownloads([
       file("r", { Name: "folder/internal.heic", OriginalName: "camera/旅行.heic", FileType: "heic" }),
       file("p", { Root: "sidecar", Name: "folder/internal.heic.png", FileType: "png" }),
-    ]);
+    ], 7680);
     expect(items.map((item) => item.filename)).toEqual(["旅行.heic", "旅行_preview.png", "旅行_fit_720.jpg", "旅行_fit_1920.jpg", "旅行_fit_4096.jpg"]);
     expect(items.map((item) => item.source.hash)).toEqual([file("r").Hash, ...Array(4).fill(file("p").Hash)]);
     expect(exportBaseName({ name: "dir\\folder\\a.jpg", originalName: "" })).toBe("a.jpg");

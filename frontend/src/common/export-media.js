@@ -63,8 +63,8 @@ function derivativeOption(kind, source, capability) {
 }
 
 // buildMediaExportGroups matches previews and orders unique Apple pairs as separate file groups.
-export function buildMediaExportGroups(files, thumbs, probes = {}) {
-  const groups = buildExportGroups(files, thumbs).filter((group) => group.original.mediaType !== media.Audio);
+export function buildMediaExportGroups(files, thumbs, probes = {}, thumbLimit = 1920) {
+  const groups = buildExportGroups(files, thumbs, thumbLimit).filter((group) => group.original.mediaType !== media.Audio);
   for (const group of groups) {
     const source = group.original;
     const probe = probes[source.hash];
