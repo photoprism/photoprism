@@ -1,6 +1,6 @@
 ## PhotoPrism — pkg/fs
 
-**Last Updated:** October 4, 2026
+**Last Updated:** October 14, 2026
 
 ### Overview
 
@@ -35,6 +35,7 @@
 ### Usage & Test Guidelines
 
 - Overwrite semantics: pass `force=true` only when the caller explicitly confirmed replacement; empty files may be replaced without `force`.
+- Name length: `NameMaxLen` (255 bytes) is the longest file or folder name common file systems accept; `NameTooLong` reports a slash-separated path that contains a longer one, and the staging helpers clamp names to it.
 - Permissions: use provided mode constants; do not mix with stdlib `io/fs` bits. `ModeFile` (`0666`) and `ModeDir` (`0777`) are creation defaults filtered by the process umask, not final modes for `Chmod`. Explicit permission changes use the intended final mode.
 - Staging: `OpenStageFile` returns an exclusively created temporary file beside its destination, with `ModeFile` filtered by the process umask. `OpenStageFileMode` does the same with a caller-supplied mode, such as `ModeBackupFile` for a file holding secrets. The caller closes the handle and removes or publishes its pathname. `CreateStageFile` closes the reservation and returns its path for subprocess writers. All three preserve the destination extension and require an existing parent directory; none uses a global temporary directory or copies data across mounts.
 - Reserved names: `ReservedPathNames` returns a sorted copy of the exact administrative-name set, including PhotoPrism storage markers/credential files and `.gitconfig`. `ReservedPathPatterns` returns the additional component patterns: `.env.*`, `.*ignore`, `.*_history`, `.bash_history-*.tmp`, and `.*.cnf`. `ReservedPathSuffixes` returns the reserved component suffixes, currently `.rclonelink`, a storage-driver link representation. The default transfer policy excludes every matching ignore name. Local DAV uses `ReservedPathPolicy{AllowIgnoreNames: true}` for visibility and separately requires managed-file write authority. Use `HasReservedComponent` for policy decisions, not the catalogs alone.

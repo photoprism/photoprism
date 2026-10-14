@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** October 13, 2026
+**Last Updated:** October 14, 2026
 
 ### Overview
 
@@ -34,7 +34,7 @@ GORM's `Updates` with a struct skips zero values, so a field reset to its zero v
 - Updates and deletes without conditions fail with `gorm.ErrMissingWhereClause`, also when a model has a zero primary key; bulk statements state `Where("1 = 1")`. A model with a composite key whose first key part is set also binds its zero key parts, in updates and queries. `UnscopedDb()` returns a new session, so its conditions do not carry over to the next statement.
 - Each condition of a `WHERE` clause is put in parentheses when there are several (`buildWhere`), so a condition with `OR` does not combine with its neighbors.
 - `DeletedAt` is a `sql.NullTime` with the soft-delete clauses of `gorm.DeletedAt`; it encodes as `null` in JSON and as a timestamp in YAML.
-- On MariaDB, auto-migration only lengthens a shorter column of the same base type (keeping its character set and collation), sets differing defaults in place (not a negative default on an unsigned column), and lets a `NOT NULL` column accept `NULL` (`mysqlMigrator.AlterColumn`). A longer column or another base type is kept and logged, as databases created by older releases may hold values that would be truncated or converted; any other change, such as `NOT NULL` or `UNSIGNED`, needs a SQL migration. Preloads of an unscoped query are unscoped too, so they add `deleted_at IS NULL` for soft-deleted models.
+- On MariaDB, auto-migration only lengthens a shorter column of the same base type (keeping its character set and collation), sets differing defaults in place (not a negative default on an unsigned column), and lets a `NOT NULL` column accept `NULL` (`mysqlMigrator.AlterColumn`). A longer column or another base type is kept and logged, as databases created by older releases may hold values that would be truncated or converted; any other change, such as `NOT NULL` or `UNSIGNED`, needs a SQL migration. On PostgreSQL, whose driver does not migrate primary key columns, `postgresMigrator.MigrateColumn` lengthens a `varchar` primary key column to its field size and never shortens one. Preloads of an unscoped query are unscoped too, so they add `deleted_at IS NULL` for soft-deleted models.
 
 `migrate.ConvertSQLiteSchema` rebuilds SQLite tables created with the previous column types before auto-migration, once per table: it creates the table from its model, copies the rows with numeric values in text columns converted to text, and keeps the `sqlite_sequence` counter. The previous types stored numeric-looking strings as numbers (`0001` as `1`), so photo paths and names, top-level folder paths, folder album paths, and the slugs of albums, labels, subjects, cameras, lenses and share links are restored from the file, folder and display names they were derived from, when exactly one of those names has the same numeric value. Share link tokens cannot be restored; on SQLite, an all-digit token is also found without its leading zeros (`FindLinks`).
 
@@ -191,6 +191,8 @@ formats are unchanged. `SelectedFilesForSession` uses the same decision for down
 
 Excluded queued service shares use `FileShareIgnore`, with no retry error. Automatic sync
 uses `FileSyncIgnore`; upload dispositions have a per-FileID internal key under the reserved
-`.photoprism/sync` namespace so matching filenames in different roots cannot collide. These
-keys are state identifiers, never remote transfer destinations. Existing deduplication rules
+`.photoprism/sync` namespace so matching filenames in different roots cannot collide. Files whose
+remote name exceeds `RemoteNameMaxLen` are recorded under `.photoprism/sync/long/<crc32 of the sync
+path>/`, and `ResetFileSyncLongNames` removes those of other sync paths, so the files are checked
+again after the sync path changes. These keys are state identifiers, never remote transfer destinations. Existing deduplication rules
 and retry handling for genuine transfer failures remain unchanged.
