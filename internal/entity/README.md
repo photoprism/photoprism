@@ -194,5 +194,6 @@ uses `FileSyncIgnore`; upload dispositions have a per-FileID internal key under 
 `.photoprism/sync` namespace so matching filenames in different roots cannot collide. Files whose
 remote name exceeds `RemoteNameMaxLen` are recorded under `.photoprism/sync/long/<crc32 of the sync
 path>/`, and `ResetFileSyncLongNames` removes those of other sync paths, so the files are checked
-again after the sync path changes. These keys are state identifiers, never remote transfer destinations. Existing deduplication rules
-and retry handling for genuine transfer failures remain unchanged.
+again after the sync path changes. Uploads that stalled are recorded under `.photoprism/sync/stalled/` (`FileSyncStalledPrefix`), and
+refresh removes them (`ResetFileSyncStalled`), so the files are tried again in the next sync cycle. These keys are state identifiers,
+never remote transfer destinations. Deduplication and retry handling of other transfer failures are not affected.
