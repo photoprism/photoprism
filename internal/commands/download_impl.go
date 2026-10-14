@@ -36,8 +36,7 @@ type DownloadOpts struct {
 	FormatSort         string
 }
 
-// runDownload executes the download/import flow for the given inputs and options.
-// It is the testable core used by the CLI action.
+// runDownload executes the download/import flow for the given inputs and options; downloadAction calls it.
 func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) error {
 	start := time.Now()
 	if conf == nil {
@@ -94,7 +93,7 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	switch fileRemux {
 	case "always", "auto", "skip":
 	default:
-		return fmt.Errorf("invalid file remux policy: %s", fileRemux)
+		return fmt.Errorf("invalid --remux: %s (expected 'always', 'auto', or 'skip')", fileRemux)
 	}
 
 	impersonate := strings.TrimSpace(opts.Impersonate)
@@ -186,41 +185,19 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 			downloadFilePath := filepath.Join(downloadPath, downloadFile)
 
 			if method == "pipe" {
-				downloadResult, err := dl.Download(context.Background(), u.String(), opt, "best")
+				downloadResult, err := dl.Download(context.Background(), u.String(), opt, dl.FormatBest)
 				if err != nil {
+					if downloadResult != nil {
+						_ = downloadResult.Close()
+					}
 					log.Errorf("download failed: %s", clean.ErrorFull(err))
 					failures++
 					continue
 				}
-				func() {
-					f, ferr := os.Create(downloadFilePath) //nolint:gosec // download target path chosen by user
-					if ferr != nil {
-						if closeErr := downloadResult.Close(); closeErr != nil {
-							log.Debugf("download: %s (close stream after create failure)", clean.ErrorFull(closeErr))
-						}
-						log.Errorf("create file failed: %s", clean.ErrorFull(ferr))
-						failures++
-						return
-					}
-					_, copyErr := io.Copy(f, downloadResult)
-					closeFileErr := f.Close()
-					closeDownloadErr := downloadResult.Close()
-					if copyErr != nil {
-						log.Errorf("write file failed: %s", clean.ErrorFull(copyErr))
-						failures++
-						return
-					}
-					if closeFileErr != nil {
-						log.Errorf("close file failed: %s", clean.ErrorFull(closeFileErr))
-						failures++
-						return
-					}
-					if closeDownloadErr != nil {
-						log.Errorf("close download stream failed: %s", clean.ErrorFull(closeDownloadErr))
-						failures++
-						return
-					}
-				}()
+				if !savePipeDownload(downloadResult, downloadFilePath) {
+					failures++
+					continue
+				}
 
 				remuxOpt := dl.RemuxOptionsFromInfo(conf.FFmpegBin(), fs.VideoMp4, result.Info, u.String())
 				if remuxErr := ffmpeg.RemuxFile(downloadFilePath, "", remuxOpt); remuxErr != nil {
@@ -231,7 +208,7 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 			} else {
 				outTpl := filepath.Join(downloadPath, "ppdl_%(id)s.%(ext)s")
 				files, err := result.DownloadToFileWithOptions(context.Background(), dl.DownloadOptions{
-					Filter:            "best",
+					Filter:            dl.FormatBest,
 					DownloadAudioOnly: false,
 					EmbedMetadata:     true,
 					EmbedSubs:         false,
@@ -278,6 +255,41 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	return nil
 }
 
+// savePipeDownload writes a pipe download to the file path and removes the file if the stream
+// failed, so an incomplete download is neither remuxed nor imported.
+func savePipeDownload(stream io.ReadCloser, filePath string) bool {
+	f, err := os.Create(filePath) //nolint:gosec // download target path chosen by user
+	if err != nil {
+		if closeErr := stream.Close(); closeErr != nil {
+			log.Debugf("download: %s (close stream after create failure)", clean.ErrorFull(closeErr))
+		}
+		log.Errorf("create file failed: %s", clean.ErrorFull(err))
+		return false
+	}
+
+	_, copyErr := io.Copy(f, stream)
+	closeFileErr := f.Close()
+	closeStreamErr := stream.Close()
+
+	switch {
+	case copyErr != nil:
+		log.Errorf("write file failed: %s", clean.ErrorFull(copyErr))
+	case closeFileErr != nil:
+		log.Errorf("close file failed: %s", clean.ErrorFull(closeFileErr))
+	case closeStreamErr != nil:
+		log.Errorf("download failed: %s", clean.ErrorFull(closeStreamErr))
+	default:
+		return true
+	}
+
+	if rmErr := os.Remove(filePath); rmErr != nil {
+		log.Debugf("download: %s (remove incomplete file)", clean.ErrorFull(rmErr))
+	}
+
+	return false
+}
+
+// missingFormatsHint returns a hint for yt-dlp errors that indicate missing formats.
 func missingFormatsHint(err error) (string, bool) {
 	if err == nil {
 		return "", false

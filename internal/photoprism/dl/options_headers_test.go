@@ -3,9 +3,11 @@ package dl
 import (
 	"bytes"
 	"context"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -31,6 +33,7 @@ func createFakeYtDlp(t *testing.T) string {
 		script.WriteString("ARGS_LOG=\"${YTDLP_ARGS_LOG:-}\"\n")
 		script.WriteString("OUT_FILE=\"${YTDLP_OUTPUT_FILE:-}\"\n")
 		script.WriteString("if [[ -n \"$ARGS_LOG\" ]]; then echo \"$*\" >> \"$ARGS_LOG\"; fi\n")
+		script.WriteString("if [[ -n \"${YTDLP_ARGV_LOG:-}\" ]]; then printf '%s\\n' \"$@\" >> \"$YTDLP_ARGV_LOG\"; fi\n")
 		// If metadata mode, print minimal JSON to stdout
 		script.WriteString("for a in \"$@\"; do if [[ \"$a\" == \"--dump-single-json\" ]]; then echo '{\"id\":\"abc\",\"title\":\"Test\",\"url\":\"http://example.com\",\"_type\":\"video\"}'; exit 0; fi; done\n")
 		// If print mode (file download), create file and print path(s)
@@ -115,6 +118,107 @@ func TestDownloadWithOptions_IncludesHeadersAndCookies_Pipe(t *testing.T) {
 	}
 }
 
+func TestDownloadWithOptions_FormatArgs(t *testing.T) {
+	fake := createFakeYtDlp(t)
+	orig := YtDlpBin
+	YtDlpBin = fake
+	defer func() { YtDlpBin = orig }()
+
+	// downloadArgv runs a download with the given output and returns the yt-dlp argv, one element per entry.
+	downloadArgv := func(t *testing.T, output string) []string {
+		argvLog := filepath.Join(t.TempDir(), "argv.log")
+		t.Setenv("YTDLP_ARGV_LOG", argvLog)
+		r := Metadata{RawURL: "https://example.com/v", Options: Options{noInfoDownload: true}}
+		dr, err := r.DownloadWithOptions(context.Background(), DownloadOptions{Filter: FormatBest, Output: output})
+		if err != nil {
+			t.Fatalf("DownloadWithOptions error: %v", err)
+		}
+		_, _ = io.Copy(io.Discard, dr)
+		_ = dr.Close()
+		data, err := os.ReadFile(filepath.Clean(argvLog))
+		if err != nil {
+			t.Fatalf("reading argv log failed: %v", err)
+		}
+		return strings.Split(strings.TrimSuffix(string(data), "\n"), "\n")
+	}
+
+	t.Run("Stdout", func(t *testing.T) {
+		argv := downloadArgv(t, "")
+		i := slices.Index(argv, "--downloader-args")
+		if i < 0 || i+1 >= len(argv) || argv[i+1] != "ffmpeg_i:"+ffmpegReconnectArgs {
+			t.Fatalf("expected --downloader-args with FFmpeg reconnect args as one element; argv: %q", argv)
+		}
+	})
+	t.Run("OutputFile", func(t *testing.T) {
+		argv := downloadArgv(t, filepath.Join(t.TempDir(), "out.mp4"))
+		if slices.Contains(argv, "--downloader-args") {
+			t.Fatalf("expected no downloader args for file output; argv: %q", argv)
+		}
+	})
+}
+
+// writeFakeYtDlp writes an executable yt-dlp stub with the given bash body and returns its path.
+func writeFakeYtDlp(t *testing.T, body string) string {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "yt-dlp")
+	// #nosec G306 executable test helper script needs exec permissions
+	if err := os.WriteFile(path, []byte("#!/usr/bin/env bash\n"+body), 0o755); err != nil {
+		t.Fatalf("failed to write fake yt-dlp: %v", err)
+	}
+	return path
+}
+
+func TestDownloadResult_Close(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("requires bash")
+	}
+
+	orig := YtDlpBin
+	defer func() { YtDlpBin = orig }()
+
+	// download streams a pipe download with the given yt-dlp stub and returns the data and Close error.
+	download := func(t *testing.T, body string) (string, error) {
+		YtDlpBin = writeFakeYtDlp(t, body)
+		r := Metadata{RawURL: "https://example.com/v", Options: Options{noInfoDownload: true}}
+		dr, err := r.DownloadWithOptions(context.Background(), DownloadOptions{Filter: FormatBest})
+		if err != nil {
+			t.Fatalf("DownloadWithOptions error: %v", err)
+		}
+		data, _ := io.ReadAll(dr)
+		return string(data), dr.Close()
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		data, err := download(t, "echo '[download]' 1>&2\necho DATA\n")
+		if err != nil || data != "DATA\n" {
+			t.Fatalf("expected complete stream without error; data %q, err %v", data, err)
+		}
+	})
+	t.Run("StreamError", func(t *testing.T) {
+		_, err := download(t, "echo '[download] Destination: -' 1>&2\necho DATA\necho 'ERROR: ffmpeg exited with code 251' 1>&2\nexit 1\n")
+		if err == nil || err.Error() != "ffmpeg exited with code 251" {
+			t.Fatalf("expected yt-dlp error message, got %v", err)
+		}
+	})
+	t.Run("ExitWithoutMessage", func(t *testing.T) {
+		_, err := download(t, "echo '[download]' 1>&2\necho DATA\nexit 3\n")
+		if err == nil || !strings.Contains(err.Error(), "yt-dlp failed") {
+			t.Fatalf("expected yt-dlp exit error, got %v", err)
+		}
+	})
+	t.Run("ErrorBeforeDownload", func(t *testing.T) {
+		YtDlpBin = writeFakeYtDlp(t, "echo 'ERROR: Requested format is not available' 1>&2\nexit 1\n")
+		r := Metadata{RawURL: "https://example.com/v", Options: Options{noInfoDownload: true}}
+		dr, err := r.DownloadWithOptions(context.Background(), DownloadOptions{Filter: FormatBest})
+		if err == nil || err.Error() != "Requested format is not available" {
+			t.Fatalf("expected yt-dlp error message, got %v", err)
+		}
+		if closeErr := dr.Close(); closeErr == nil {
+			t.Fatalf("expected Close to report the failed run")
+		}
+	})
+}
+
 func TestDownloadWithOptions_OmitsFilterWhenDirect(t *testing.T) {
 	fake := createFakeYtDlp(t)
 	orig := YtDlpBin
@@ -129,7 +233,7 @@ func TestDownloadWithOptions_OmitsFilterWhenDirect(t *testing.T) {
 		Info:    Info{Direct: true},
 		Options: Options{noInfoDownload: true},
 	}
-	_, err := r.DownloadWithOptions(context.Background(), DownloadOptions{Filter: "best"})
+	_, err := r.DownloadWithOptions(context.Background(), DownloadOptions{Filter: FormatBest})
 	if err != nil {
 		t.Fatalf("DownloadWithOptions error: %v", err)
 	}
@@ -138,7 +242,7 @@ func TestDownloadWithOptions_OmitsFilterWhenDirect(t *testing.T) {
 		t.Fatalf("reading args log failed: %v", err)
 	}
 	s := string(data)
-	if strings.Contains(s, "-f best") {
+	if strings.Contains(s, "-f "+FormatBest) {
 		t.Fatalf("expected -f not to be present for direct downloads; args: %s", s)
 	}
 }

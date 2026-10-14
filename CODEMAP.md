@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 13, 2026
+**Last Updated:** October 14, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -273,6 +273,7 @@ Downloads (CLI) & yt-dlp helpers
   - `internal/commands/download_impl.go` (testable implementation used by CLI)
 - yt-dlp wrappers:
   - `internal/photoprism/dl/options.go` (arg wiring; `FFmpegPostArgs` hook for `--postprocessor-args`)
+  - `internal/photoprism/dl/format.go` (`FormatBest` selector; FFmpeg reconnect args for stdout merges)
   - `internal/photoprism/dl/info.go` (metadata discovery)
   - `internal/photoprism/dl/file.go` (file method with `--output`/`--print`)
   - `internal/photoprism/dl/meta.go` (`CreatedFromInfo` fallback; `RemuxOptionsFromInfo`)

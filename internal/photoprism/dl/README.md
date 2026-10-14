@@ -1,6 +1,6 @@
 ## PhotoPrism — Download Helpers
 
-**Last Updated:** January 28, 2026
+**Last Updated:** October 14, 2026
 
 ### Overview
 
@@ -19,20 +19,20 @@ It currently supports two invocation methods:
 ### Key APIs
 
 - `NewMetadata(ctx, url, Options)` → discovers formats and info (via `--dump-single-json`).
-- `Metadata.DownloadWithOptions(ctx, DownloadOptions)` → pipe method (`stdout`).
+- `Metadata.DownloadWithOptions(ctx, DownloadOptions)` → pipe method (`stdout`); `DownloadResult.Close()` returns the yt-dlp error if the stream ended early.
 - `Metadata.DownloadToFileWithOptions(ctx, DownloadOptions)` → file method (`--output` + `--print`).
 - `RemuxOptionsFromInfo(ffmpegBin, fs.VideoMp4, Info, sourceURL)` → builds ffmpeg options to embed title/description/author/comment/created.
 
 ### yt-dlp CLI
 
 - **Format selection**
-  - Default behavior is `bestvideo*+bestaudio/best`, which already prefers the highest quality muxable streams.
+  - Both CLI methods request `dl.FormatBest` (`bv*+ba/b`): the best video and audio streams merged by yt-dlp, or the best single file when nothing can be merged. YouTube rarely offers pre-merged formats, so a plain `best` (`b`) selection fails there.
   - Force a specific selection with `--format <expr>`; filter examples:
     - `bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]` – prefer MP4-compatible DASH.
     - `bv*[height<=1080]+ba/best[height<=1080]` – cap resolution.
 - **Sorting**
   - `--format-sort <keys>` reorders candidates before the selection step. Keys can include `res`, `fps`, `size`, `br`, `vcodec`, etc.
-  - Our CLI exposes this as `photoprism dl --format-sort` (alias `-s`). When omitted, pipe mode uses `lang,quality,res,fps,codec:avc:m4a,channels,size,br,asr,proto,ext,hasaud,source,id`; file mode leaves sorting to yt-dlp defaults.
+  - Our CLI exposes this as `photoprism dl --sort` (alias `-s`). When omitted, pipe mode uses `lang,quality,res,fps,codec:avc:m4a,channels,size,br,asr,proto,ext,hasaud,source,id`; file mode leaves sorting to yt-dlp defaults.
 - **Metadata & Post-processing**
   - `--embed-metadata` writes tags (title, artist, comment) via ffmpeg/mutagen.
   - `--postprocessor-args "ffmpeg:-metadata creation_time=<RFC3339>"` lets us inject timestamps when skipping local remux; PhotoPrism sets this when `CreatedFromInfo` yields a value.
@@ -47,8 +47,8 @@ It currently supports two invocation methods:
 
 ### Notes
 
-- Prefer the file method for sources with separate audio/video streams; the pipe method cannot always merge in that case.
-- When the CLI’s `--file-remux=auto` is used, the final ffmpeg remux is skipped for MP4 outputs that already include metadata.
+- When the pipe method has to merge separate audio/video streams, yt-dlp hands the source URLs to FFmpeg, which writes MPEG-TS (MP4 streams), WebM, or Matroska to stdout; `DownloadWithOptions` passes FFmpeg reconnect options (`--downloader-args ffmpeg_i:...`) so a dropped connection does not truncate a stream. FFmpeg rejects these options for non-HTTP sources such as RTMP or RTSP, so use the file method for those. The CLI removes a pipe download that ended with an error instead of importing it. The file method uses yt-dlp's own downloader and is the more robust choice for such sources.
+- When the CLI’s `--remux auto` (default) is used with `--method file`, the final ffmpeg remux is skipped for MP4 outputs that already include metadata.
 - Keep `yt-dlp` updated. Releases older than `2025.09.23` are known to miss YouTube video formats (SABR gating); the CLI now logs a warning when it detects an outdated build.
 - If a YouTube change breaks stable releases, you can install the latest nightly build using `scripts/dist/install-yt-dlp.sh --nightly` (or set `PHOTOPRISM_YTDLP_CHANNEL=nightly` before running the script).
 - If you need the master build, use `scripts/dist/install-yt-dlp.sh --master` (or set `PHOTOPRISM_YTDLP_CHANNEL=master` before running the script).
