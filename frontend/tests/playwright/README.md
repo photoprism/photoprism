@@ -70,6 +70,9 @@ viewports. Original/preview hashes, actual AVC codecs, and native MOV bytes are
 verified after saving downloads. Browser contexts close in `finally` blocks.
 Retry and cancellation checks abort one network request or delay a real server
 response; capability JSON and prepared bytes still come from the application.
+Completed exports and Retry use the always-visible title Close control and verify
+return to Lightbox. Preparation cancellation uses desktop Cancel or mobile title
+Close and verifies that late responses do not hand off downloads.
 
 Provide an isolated library with the same access/UI requirements as the image
 runner and a manifest via `PHOTOPRISM_EXPORT_BACKEND_MANIFEST` (default

@@ -40,6 +40,15 @@ async function waitForDownloads(page, count) {
   }, count);
 }
 
+// closeExport dismisses the dialog through its always-visible title control and restores Lightbox.
+async function closeExport(page) {
+  const close = page.locator(".p-photo-export-dialog .action-dismiss");
+  assert.ok(await close.isVisible(), "title Close must remain available");
+  await close.click();
+  await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PLightbox");
+  await page.locator(".p-photo-export-dialog").waitFor({ state: "hidden" });
+}
+
 try {
   for (const viewport of [{ width: 1280, height: 900 }, { width: 375, height: 667 }]) {
     const context = await browser.newContext({ viewport, isMobile: viewport.width === 375, hasTouch: viewport.width === 375, acceptDownloads: true });
@@ -104,8 +113,7 @@ try {
             assert.ok(dimensions.startsWith("JPEG "));
           }
         }
-        await page.locator(".p-photo-export-dialog .action-cancel").click();
-        await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PLightbox");
+        await closeExport(page);
         await page.keyboard.press("Escape");
         await page.waitForFunction(() => !document.querySelector("#app").__vue_app__.config.globalProperties.$view.current?.model);
         passed++;
@@ -134,8 +142,7 @@ try {
       await page.locator(".p-photo-export-dialog .action-retry-output").click();
       await waitForDownloads(page, 1);
       await page.unroute(/\/export\?export=prepare/);
-      await page.locator(".p-photo-export-dialog .action-cancel").click();
-      await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PLightbox");
+      await closeExport(page);
       await page.keyboard.press("Escape");
       await page.waitForFunction(() => !document.querySelector("#app").__vue_app__.config.globalProperties.$view.current?.model);
 
@@ -163,7 +170,7 @@ try {
       });
       await page.locator(".p-photo-export-dialog .action-export").click();
       await preparationReached;
-      await page.locator(".p-photo-export-dialog .action-cancel").click();
+      await page.locator(viewport.width === 375 ? ".p-photo-export-dialog .action-dismiss" : ".p-photo-export-dialog .action-cancel").click();
       release();
       await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PLightbox");
       await page.unrouteAll({ behavior: "wait" });
@@ -172,7 +179,7 @@ try {
       await page.waitForFunction(() => !document.querySelector("#app").__vue_app__.config.globalProperties.$view.current?.model);
       await openExport(page, fixture.uid);
       assert.ok(await page.evaluate(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.groups.flatMap((group) => group.options).find((option) => option.kind === "avc").ready));
-      await page.locator(".p-photo-export-dialog .action-cancel").click();
+      await closeExport(page);
       passed += 2;
       process.stdout.write(`${JSON.stringify({ viewport: viewport.width, controls: "retry,cancel,cache-rediscovery", backend: "real", faults: "network abort and delayed real response" })}\n`);
       assert.deepEqual(errors, []);
