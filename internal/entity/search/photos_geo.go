@@ -242,7 +242,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		include, exclude, sawPositive, labelErr := entity.ParseLabelFilter(frm.Label)
 
 		if labelErr != nil || (sawPositive && len(include) == 0) {
-			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
+			log.Debugf("search: label %s not found", clean.LogLower(frm.Label))
 			return GeoResults{}, nil
 		}
 
@@ -335,7 +335,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	// Filter by label, label category, and keywords.
 	if frm.Query != "" {
 		if labelIds, labelsErr := entity.FindLabelIDs(frm.Query, " ", true); labelsErr != nil || len(labelIds) == 0 {
-			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(frm.Query))
+			log.Tracef("search: label %s not found, using fuzzy search", clean.LogLower(frm.Query))
 
 			wheres, values := LikeAnyKeyword("k.keyword", frm.Query, false)
 			for i, where := range wheres {
