@@ -84,10 +84,10 @@ func GetDB(ctx context.Context) (*sql.DB, error) {
 		return nil, err
 	}
 
-	// Reasonable pool settings; adjust for your environment.
-	db.SetConnMaxLifetime(30 * time.Minute)
+	// No connection is kept idle, so each statement uses the account's current privileges, which the
+	// server applies to new connections only, and a connection is closed once it has been used.
 	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(5)
+	db.SetMaxIdleConns(0)
 
 	// Verify connection.
 	if pingErr := pingWithTimeout(ctx, db, 5*time.Second); pingErr != nil {

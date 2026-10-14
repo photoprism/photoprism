@@ -93,8 +93,13 @@ func TestEnsureCredentials_MariaDB(t *testing.T) {
 func limitedAdminDSN(t *testing.T, ctx context.Context, grants ...string) string {
 	t.Helper()
 
-	db, err := GetDB(ctx)
-	if err != nil {
+	// The account is managed through a root connection of its own, which the provisioner never replaces.
+	rootDSN := ProvisionDSN
+	root, err := sql.Open("mysql", rootDSN)
+	require.NoError(t, err)
+
+	if err = root.PingContext(ctx); err != nil {
+		_ = root.Close()
 		t.Skipf("provisioning database is unavailable: %v", err)
 	}
 
@@ -108,18 +113,20 @@ func limitedAdminDSN(t *testing.T, ctx context.Context, grants ...string) string
 		stmts = append(stmts, fmt.Sprintf(grant, account))
 	}
 
+	t.Cleanup(func() {
+		if _, dropErr := root.ExecContext(context.Background(), "DROP USER IF EXISTS "+account); dropErr != nil {
+			t.Errorf("cleanup: %v", dropErr)
+		}
+
+		_ = root.Close()
+	})
+
 	for _, stmt := range stmts {
-		_, execErr := db.ExecContext(ctx, stmt)
+		_, execErr := root.ExecContext(ctx, stmt)
 		require.NoError(t, execErr, stmt)
 	}
 
-	t.Cleanup(func() {
-		if root, rootErr := GetDB(context.Background()); rootErr == nil {
-			_, _ = root.ExecContext(context.Background(), "DROP USER IF EXISTS '"+user+"'@'%'")
-		}
-	})
-
-	cfg, err := mysql.ParseDSN(ProvisionDSN)
+	cfg, err := mysql.ParseDSN(rootDSN)
 	require.NoError(t, err)
 	cfg.User, cfg.Passwd, cfg.DBName = user, pass, ""
 
@@ -212,6 +219,48 @@ func TestEnsureCredentials_CreateDatabaseFailed(t *testing.T) {
 	assert.Equal(t, dbName, creds.Name)
 	assert.Equal(t, dbUser, creds.User)
 	assert.Empty(t, creds.Password)
+}
+
+// TestEnsureCredentials_PrivilegeChange checks that privileges granted to the provisioning account
+// after a failed attempt apply to the next one without reopening the pool.
+func TestEnsureCredentials_PrivilegeChange(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	rootDSN := ProvisionDSN
+	t.Cleanup(func() { ProvisionDSN = rootDSN })
+	limitedDSN := limitedAdminDSN(t, ctx, "GRANT CREATE, CREATE USER ON *.* TO %s WITH GRANT OPTION")
+
+	root, err := sql.Open("mysql", rootDSN)
+	require.NoError(t, err)
+	defer root.Close()
+
+	c := config.NewConfig(config.CliTestContext())
+	c.Options().ClusterUUID = rnd.UUID()
+	nodeUUID, nodeName := rnd.UUIDv7(), "pp-privilege-change"
+	dbName, dbUser, _ := GenerateCredentials(c, nodeUUID, nodeName)
+
+	t.Cleanup(func() {
+		ProvisionDSN = rootDSN
+		if dropErr := DropCredentials(context.Background(), dbName, dbUser); dropErr != nil {
+			t.Errorf("cleanup: %v", dropErr)
+		}
+	})
+
+	ProvisionDSN = limitedDSN
+	_, _, err = EnsureCredentials(ctx, c, nodeUUID, nodeName, true)
+	require.ErrorIs(t, err, ErrIncomplete)
+
+	_, err = root.ExecContext(ctx, "GRANT ALL PRIVILEGES ON *.* TO 'pp_provision_limited'@'%' WITH GRANT OPTION")
+	require.NoError(t, err)
+
+	creds, _, err := EnsureCredentials(ctx, c, nodeUUID, nodeName, true)
+	require.NoError(t, err)
+	assert.NotEmpty(t, creds.Password)
+
+	db, err := GetDB(ctx)
+	require.NoError(t, err)
+	assert.Zero(t, db.Stats().Idle, "no connection may stay open")
 }
 
 // TestEnsureCredentials_DriverNormalization verifies driver normalization and rejections.
