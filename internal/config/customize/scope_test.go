@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
+// TestSettings_ApplyScope checks feature settings across session grants.
 func TestSettings_ApplyScope(t *testing.T) {
 	original := NewDefaultSettings().Features
 	admin := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleAdmin)
@@ -23,6 +24,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      true,
 			Delete:       true,
 			Download:     true,
+			Export:       true,
 			Edit:         true,
 			BatchEdit:    true,
 			Estimates:    true,
@@ -67,6 +69,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      true,
 			Delete:       true,
 			Download:     true,
+			Export:       true,
 			Edit:         true,
 			BatchEdit:    true,
 			Estimates:    true,
@@ -111,6 +114,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
+			Export:       true,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,
@@ -154,6 +158,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
+			Export:       true,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,
@@ -197,6 +202,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     false,
+			Export:       true,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,

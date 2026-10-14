@@ -31,11 +31,8 @@ func InvalidPreviewToken(c *gin.Context) bool {
 	return entity.InvalidPreviewToken(token) && !tokens.IsCoarseDownload(token)
 }
 
-// AuthDownload authorizes a download request for any of the specified resources and returns the session
-// it is scoped to together with whether the request is authorized. The session is nil for a coarse
-// capability, a configured static token, in which case the handler applies the by-design broad
-// (public, non-private) access. It merges the token gate and the session lookup, so a caller need not
-// call InvalidDownloadToken and DownloadSession separately.
+// AuthDownload authorizes downloads for the resources and returns their bound session.
+// A coarse capability has no session and must be limited to public files by the caller.
 func AuthDownload(c *gin.Context, resources acl.Resources) (sess *entity.Session, valid bool) {
 	if sess = DownloadSession(c); sess != nil {
 		if downloadNotAdmitted(c, sess) {
@@ -54,7 +51,7 @@ func AuthDownload(c *gin.Context, resources acl.Resources) (sess *entity.Session
 
 	// No bound session: a coarse (configured static or auto-generated instance) token still authorizes
 	// an unscoped download.
-	if tokens.IsCoarseDownload(clean.UrlToken(c.Query("t"))) {
+	if token, _ := downloadRequestToken(c); tokens.IsCoarseDownload(clean.UrlToken(token)) {
 		return nil, true
 	}
 
@@ -114,6 +111,9 @@ func InvalidDownloadToken(c *gin.Context, resources acl.Resources) bool {
 
 // downloadSessionKey is the gin context key under which the resolved download session is memoized.
 const downloadSessionKey = "download_session"
+
+// downloadPathTokenKey identifies a routed download credential that query values cannot replace.
+const downloadPathTokenKey = "download_path_token"
 
 // downloadHeaderAuthKey is the gin context key marking a session that a request header authorized.
 const downloadHeaderAuthKey = "download_header_auth"
@@ -188,18 +188,20 @@ func resolveDownloadSession(c *gin.Context) *entity.Session {
 	return nil
 }
 
-// signedDownloadSession verifies a signed download token in the request and returns the bound session
-// ID. It accepts the compact origin form (`?t=<expires>.<sid>.<token>`) used by download URLs and the
-// verbose bunny.net edge form (`?token=…&expires=…&sid=…`), returning ok=false when neither is a valid
-// signed token. The compact form is tried first and falls through to the verbose form on any failure.
+// signedDownloadSession verifies a compact query/path or verbose edge download token.
+// An authoritative path credential disables query fallback.
 func signedDownloadSession(c *gin.Context) (sessionID string, ok bool) {
 	// Compact origin form: t=<expires>.<sid>.<token>.
-	if t := c.Query("t"); strings.Count(t, ".") == 2 {
+	t, pathToken := downloadRequestToken(c)
+	if strings.Count(t, ".") == 2 {
 		parts := strings.SplitN(t, ".", 3)
 
 		if id, valid := verifyDownloadParams(parts[0], parts[1], parts[2]); valid {
 			return id, true
 		}
+	}
+	if pathToken {
+		return "", false
 	}
 
 	// bunny.net edge form: token=…&expires=…&sid=….
@@ -208,6 +210,15 @@ func signedDownloadSession(c *gin.Context) (sessionID string, ok bool) {
 	}
 
 	return "", false
+}
+
+// downloadRequestToken reads a routed credential before the ordinary cached query value.
+func downloadRequestToken(c *gin.Context) (string, bool) {
+	if value, ok := c.Get(downloadPathTokenKey); ok {
+		token, _ := value.(string)
+		return token, true
+	}
+	return c.Query("t"), false
 }
 
 // verifyDownloadParams parses the string expiry and verifies the signed download token, returning the

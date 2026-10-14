@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 8, 2026
+**Last Updated:** October 12, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -21,6 +21,10 @@ Directory Map (src)
 - `src/common/map.js`, `src/common/maplibregl.js` — shared WebGL2 capability probe, concurrent lazy loading, MapLibre 6 worker URL, and language-label adapter; the worker is emitted into a versioned directory by `vite.config.mjs`.
 - `src/component/map.vue`, `src/page/places.vue` — mini-maps/location controls and Places; map-unavailable UI is confined to the map surface.
 - `src/common/*` — framework-agnostic helpers: `$api` (Axios), `$notify`, `$view`, `$event` (PubSub), i18n (`gettext`), util, fullscreen, map utils, websocket, `sphere.js` (lazy-loaded 360° viewer wrapper)
+- `src/common/export.js` — independent Export capability check and pure file-group/size choices from full photo details.
+- `src/common/export-media.js` — media classification, unique Apple pairing with separate photo/MOV groups, and the source-specific video capability/preparation API.
+- `src/common/export-download.js` — immutable attachment names/URLs, serial preparation, Retry, and independent ready browser handoffs.
+- `src/component/photo/export/dialog.vue` — application-themed Lightbox stack Export, matched thumbnails, output-row status/Retry/download links, and shared dialog focus.
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)
 - `src/model/*` — REST models; base `Rest` class (`model/rest.js`) wraps Axios CRUD for collections and entities

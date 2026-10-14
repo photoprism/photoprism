@@ -20,6 +20,7 @@ Features:
   Archive: true
   Delete: true
   Download: true
+  Export: true
   Edit: true
   BatchEdit: true
   Estimates: true

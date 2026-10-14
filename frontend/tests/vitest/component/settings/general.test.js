@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { shallowMount, flushPromises } from "@vue/test-utils";
 import PSettingsGeneral from "page/settings/general.vue";
+import MockAdapter from "axios-mock-adapter";
+import $api from "common/api";
 
+// makeSettings creates the nested settings tree used by the General page.
 function makeSettings() {
   return {
     ui: {
@@ -15,18 +18,20 @@ function makeSettings() {
       reduceMotion: false,
     },
     maps: { style: "", animate: 0 },
-    features: { places: false, download: true },
+    features: { places: false, download: true, export: true },
     search: { batchSize: -1 },
   };
 }
 
-function mountGeneral() {
+// mountGeneral mounts the page with configurable settings and session capabilities.
+function mountGeneral({ settings = makeSettings(), session = {}, config = {} } = {}) {
   return shallowMount(PSettingsGeneral, {
     global: {
+      renderStubDefaultSlot: true,
       mocks: {
         $config: {
           values: { experimental: false, disable: {}, readonly: false },
-          getSettings: () => makeSettings(),
+          getSettings: () => settings,
           get: () => false,
           isDemo: () => false,
           isPortal: () => false,
@@ -35,8 +40,9 @@ function mountGeneral() {
           themeName: "default",
           load: () => Promise.resolve(),
           setSettings: vi.fn(),
+          ...config,
         },
-        $session: { isAdmin: () => true, isSuperAdmin: () => true, hasScope: () => false },
+        $session: { isAdmin: () => true, isSuperAdmin: () => true, hasScope: () => false, ...session },
         $event: { subscribe: vi.fn(() => 1), unsubscribe: vi.fn() },
         $notify: { info: vi.fn(), success: vi.fn(), blockUI: vi.fn() },
         $gettext: (s) => s,
@@ -87,5 +93,75 @@ describe("page/settings/general accessibility handlers", () => {
     expect(wrapper.vm.$config.setSettings).toHaveBeenCalledTimes(1);
     expect(wrapper.vm.$notify.info).toHaveBeenCalled();
     expect(wrapper.vm.$notify.blockUI).toHaveBeenCalled();
+  });
+});
+
+describe("page/settings/general Export", () => {
+  let wrapper;
+  let apiMock;
+
+  beforeEach(() => {
+    apiMock = new MockAdapter($api);
+  });
+  afterEach(() => {
+    wrapper?.unmount();
+    apiMock.restore();
+  });
+
+  it.each([true, false])("saves and reloads Export without changing Download=%s", async (download) => {
+    const settings = makeSettings();
+    settings.features.download = download;
+    wrapper = mountGeneral({ settings });
+    await flushPromises();
+
+    let saved = structuredClone(settings);
+    apiMock.onPost("settings").reply((request) => {
+      const patch = JSON.parse(request.data);
+      expect(patch.features.download).toBe(download);
+      saved = { ...saved, ...patch };
+      return [200, saved];
+    });
+    apiMock.onGet("settings").reply(() => [200, saved]);
+
+    for (const enabled of [false, true]) {
+      const checkbox = wrapper.findComponent(".input-export");
+      expect(checkbox.exists()).toBe(true);
+      expect(checkbox.props("modelValue")).toBe(!enabled);
+      checkbox.vm.$emit("update:modelValue", enabled);
+      await flushPromises();
+
+      expect(apiMock.history.post).toHaveLength(enabled ? 2 : 1);
+      expect(saved.features.export).toBe(enabled);
+      expect(wrapper.vm.$config.setSettings).toHaveBeenCalledWith(wrapper.vm.settings);
+      expect(wrapper.vm.$notify.success).toHaveBeenCalledWith("Changes successfully saved");
+
+      await wrapper.vm.settings.load();
+      await flushPromises();
+      expect(wrapper.findComponent(".input-export").props("modelValue")).toBe(enabled);
+      expect(wrapper.vm.settings.features.download).toBe(download);
+    }
+  });
+
+  it.each([
+    { session: { isSuperAdmin: () => false } },
+    { session: { hasScope: () => true } },
+    { config: { isPortal: () => true } },
+  ])("uses the existing administrator controls %#", async (options) => {
+    wrapper = mountGeneral(options);
+    await flushPromises();
+    expect(wrapper.findComponent(".input-export").exists()).toBe(false);
+  });
+
+  it("disables Export while busy or in demo mode", async () => {
+    wrapper = mountGeneral();
+    await flushPromises();
+    expect(wrapper.findComponent(".input-export").props("disabled")).toBe(false);
+    wrapper.vm.busy = true;
+    await wrapper.vm.$nextTick();
+    expect(wrapper.findComponent(".input-export").props("disabled")).toBe(true);
+    wrapper.vm.busy = false;
+    wrapper.vm.isDemo = true;
+    await wrapper.vm.$nextTick();
+    expect(wrapper.findComponent(".input-export").props("disabled")).toBe(true);
   });
 });

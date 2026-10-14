@@ -995,3 +995,23 @@ test.meta("testID", "settings-general-015").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-open-on-hover input").checked).ok();
   }
 );
+
+test.meta("testID", "settings-general-016").meta({ type: "short", mode: "auth" })(
+  "Common: Save Export independently of Download and verify persistence",
+  async (t) => {
+    await menu.openPage("settings");
+    const exportInput = Selector(".input-export input[type='checkbox']");
+    const downloadInput = Selector(".input-download input[type='checkbox']");
+    const initialExport = await exportInput.checked;
+    const initialDownload = await downloadInput.checked;
+
+    for (const enabled of [!initialExport, initialExport]) {
+      await t.click(settings.exportCheckbox);
+      await t.expect(exportInput.checked).eql(enabled);
+      await t.expect(Selector(".p-notify__text").withText("Changes successfully saved").visible).ok();
+      await t.eval(() => location.reload());
+      await t.expect(exportInput.checked).eql(enabled);
+      await t.expect(downloadInput.checked).eql(initialDownload);
+    }
+  }
+);

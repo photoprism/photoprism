@@ -217,6 +217,7 @@ const clientConfig = {
     features: {
       upload: true,
       download: true,
+      export: true,
       private: true,
       review: false,
       files: true,

@@ -254,6 +254,7 @@ func TestConfig_ClientUser(t *testing.T) {
 	})
 }
 
+// TestConfig_ClientRoleConfig checks feature settings across session grants.
 func TestConfig_ClientRoleConfig(t *testing.T) {
 	c := NewMinimalTestConfigWithDb("client-role", t.TempDir())
 	c.SetAuthMode(AuthModePasswd)
@@ -276,6 +277,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Archive:      true,
 			Delete:       true,
 			Download:     true,
+			Export:       true,
 			Edit:         true,
 			BatchEdit:    true,
 			Estimates:    true,
@@ -319,6 +321,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
+			Export:       true,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,
@@ -362,6 +365,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
+			Export:       true,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,

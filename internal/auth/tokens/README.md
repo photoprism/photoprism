@@ -1,13 +1,13 @@
 ## PhotoPrism — URL Tokens
 
-**Last Updated:** July 25, 2026
+**Last Updated:** October 12, 2026
 
 ### Overview
 
 `internal/auth/tokens` mints and validates the URL tokens PhotoPrism embeds in its header-less media
-URLs, so endpoints loaded through `<img src>` / `<a href download>` contexts — which carry only a `?t=`
-query parameter and no `Authorization` header, possibly through a CDN — can be authorized and scoped
-without a server-side lookup.
+URLs. Downloads normally carry a `?t=` query parameter; media export carries the
+same compact download token in `/videos/:hash/:token/export` and disables HTTP
+caching. Header-less downloads resolve admission and scope without per-token storage.
 
 The cryptography itself lives in `pkg/authn/authtoken`, a dependency-free leaf that implements the
 bunny.net-compatible Advanced (HMAC-SHA256) token format (see its `README.md` for the wire format and
@@ -58,11 +58,11 @@ minutes, overridable via `PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE`).
 
 #### Delivery
 
-`tokens.DownloadToken(sessionID)` returns the value clients pass as `?t=`:
+`tokens.DownloadToken(sessionID)` returns the value clients pass as `?t=` or the media export path token:
 
 - public mode → the `public` placeholder, which is never verified;
 - a session → always a signed `<expires>.<sid>.<token>`, even when a static token is configured, because
-  the token is a query parameter on a one-shot transfer rather than part of the URL path, so a per-session
+  downloads are one-shot transfers and media export uses `no-store`, so a per-session
   value costs no cache sharing;
 - no session to sign for → the coarse token (`PHOTOPRISM_DOWNLOAD_TOKEN`), which is empty unless an
   operator configured one, so a default instance neither hands out nor accepts an unscoped capability.
@@ -97,7 +97,8 @@ reserved for the CDN-fronted preview endpoints.
 
 Scoped consumers: `DownloadAlbum` (`internal/api/download_album.go`), `GetDownload`
 (`internal/api/download.go`), `GetPhotoDownload` (`internal/api/photos.go`), and `ZipDownload`
-(`internal/api/zip.go`).
+(`internal/api/zip.go`), plus `GetVideoExport` (`internal/api/video_export.go`), which
+adapts the authoritative path token to the same download admission and visibility checks.
 
 ### Preview Tokens
 

@@ -238,6 +238,21 @@
 
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
+                v-model="settings.features.export"
+                :disabled="busy || isDemo"
+                class="ma-0 pa-0 input-export"
+                density="compact"
+                :label="$gettext('Export')"
+                :hint="$gettext('Allow exporting photos in different formats and sizes.')"
+                prepend-icon="mdi-file-export"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
                 v-model="settings.features.import"
                 :disabled="busy || config.readonly || isDemo"
                 class="ma-0 pa-0 input-import"
@@ -627,6 +642,7 @@ export default {
           }
         });
     },
+    // onChange saves settings and refreshes the client config or UI language.
     onChange() {
       const locale = this.settings.changed("ui", "language");
 

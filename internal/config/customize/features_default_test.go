@@ -92,3 +92,25 @@ func TestNewSettingsCopiesDefaultFeatures(t *testing.T) {
 	assert.True(t, DefaultFeatures.Upload, "DefaultFeatures should remain unchanged after mutation")
 	assert.True(t, DefaultFeatures.Download, "DefaultFeatures should remain unchanged after mutation")
 }
+
+// TestInitDefaultFeatures_Export checks the independent startup default and disable list.
+func TestInitDefaultFeatures_Export(t *testing.T) {
+	t.Run("EnabledByDefault", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_DISABLE_FEATURES", "")
+		features := initDefaultFeatures()
+		assert.True(t, features.Export)
+		assert.True(t, features.Download)
+	})
+	t.Run("DisabledViaEnvironment", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_DISABLE_FEATURES", "Export")
+		features := initDefaultFeatures()
+		assert.False(t, features.Export)
+		assert.True(t, features.Download)
+	})
+	t.Run("IndependentOfDownload", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_DISABLE_FEATURES", "download")
+		features := initDefaultFeatures()
+		assert.True(t, features.Export)
+		assert.False(t, features.Download)
+	})
+}

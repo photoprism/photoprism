@@ -139,7 +139,7 @@ func fakeFFmpeg(t *testing.T, conf *config.Config, pattern string) {
 	script := fmt.Sprintf("#!/bin/sh\ncase \"$*\" in\n  *%s*) for last; do :; done; printf partial > \"$last\"; exit 1;;\nesac\nexec %s \"$@\"\n", pattern, transportShellQuote(realBin))
 
 	// #nosec G306 -- the script must be executable.
-	if err := os.WriteFile(fakeBin, []byte(script), 0o700); err != nil {
+	if err := os.WriteFile(fakeBin, []byte(script), fs.ModeSecretFile|0100); err != nil {
 		t.Fatal(err)
 	}
 
@@ -294,13 +294,13 @@ func TestConvert_ToAvc_FallbackWarning(t *testing.T) {
 		resetTranscodeFallbacks()
 		hook.Reset()
 
-		// The script fails while the marker file exists and otherwise writes a result.
+		// The script fails while the marker exists and otherwise copies a valid AVC fixture.
 		marker := filepath.Join(t.TempDir(), "fail")
 		fakeBin := filepath.Join(t.TempDir(), "ffmpeg")
-		script := fmt.Sprintf("#!/bin/sh\ncase \"$*\" in\n  *h264_nvenc*) for last; do :; done; if [ -e %s ]; then exit 1; fi; printf ok > \"$last\"; exit 0;;\nesac\nexec %s \"$@\"\n", transportShellQuote(marker), transportShellQuote(conf.FFmpegBin()))
+		script := fmt.Sprintf("#!/bin/sh\ncase \"$*\" in\n  *h264_nvenc*) for last; do :; done; if [ -e %s ]; then exit 1; fi; cp %s \"$last\"; exit 0;;\nesac\nexec %s \"$@\"\n", transportShellQuote(marker), transportShellQuote(mf.FileName()), transportShellQuote(conf.FFmpegBin()))
 
 		// #nosec G306 -- the script must be executable.
-		require.NoError(t, os.WriteFile(fakeBin, []byte(script), 0o700))
+		require.NoError(t, os.WriteFile(fakeBin, []byte(script), fs.ModeSecretFile|0100))
 		require.NoError(t, os.WriteFile(marker, nil, fs.ModeFile))
 
 		orig := conf.Options().FFmpegBin
@@ -370,7 +370,7 @@ func TestConvert_ToAvc_FallbackPreset(t *testing.T) {
 	script := fmt.Sprintf("#!/bin/sh\nprintf '%%s\\n' \"$*\" >> %s\ncase \"$*\" in\n  *h264_nvenc*) exit 1;;\nesac\nexec %s \"$@\"\n", transportShellQuote(argsLog), transportShellQuote(conf.FFmpegBin()))
 
 	// #nosec G306 -- the script must be executable.
-	if err := os.WriteFile(fakeBin, []byte(script), 0o700); err != nil {
+	if err := os.WriteFile(fakeBin, []byte(script), fs.ModeSecretFile|0100); err != nil {
 		t.Fatal(err)
 	}
 
@@ -692,6 +692,19 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		assert.Contains(t, args, "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 		assert.Contains(t, args, "-map [v] -map 0:a:0?")
 		assert.Contains(t, args, "libx264")
+	})
+	t.Run("ExactInsta360SelectedInput", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := filepath.Join(dir, insta360StackLeft)
+		rightName := filepath.Join(dir, insta360StackRight)
+		writeInsta360StackMedia(t, conf, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, conf, dir, insta360StackRight)
+		mf, err := NewMediaFile(leftName)
+		require.NoError(t, err)
+		r, _, err := convert.transcodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc, true)
+		require.NoError(t, err)
+		assert.Contains(t, r.Args, leftName)
+		assert.NotContains(t, r.Args, rightName)
 	})
 	t.Run("Insta360RightLensTypeMismatch", func(t *testing.T) {
 		dir := t.TempDir()
@@ -1108,7 +1121,9 @@ func TestConvert_avcFromM2TS(t *testing.T) {
 
 		t.Cleanup(func() { _ = os.Remove(mp4Name) })
 
-		result, err := convert.avcFromM2TS(f, "AVCHD003.m2ts")
+		version, err := newAvcSourceVersion(f.FileName())
+		require.NoError(t, err)
+		result, err := convert.avcFromM2TS(f, "AVCHD003.m2ts", version)
 		require.NoError(t, err)
 		require.NotNil(t, result)
 		assert.Equal(t, mp4Name, result.FileName())
@@ -1127,7 +1142,9 @@ func TestConvert_avcFromM2TS(t *testing.T) {
 		mp4Name, err := fs.FileName(srcName, c.SidecarPath(), c.OriginalsPath(), fs.ExtMp4)
 		require.NoError(t, err)
 
-		result, err := convert.avcFromM2TS(f, "MOV005.tod")
+		version, err := newAvcSourceVersion(f.FileName())
+		require.NoError(t, err)
+		result, err := convert.avcFromM2TS(f, "MOV005.tod", version)
 		require.NoError(t, err)
 		assert.Nil(t, result, "a container without AVC must send the caller on to the transcoder")
 		assert.NoFileExists(t, mp4Name, "a container that is not kept must never reach the shared name")
@@ -1144,7 +1161,9 @@ func TestConvert_avcFromM2TS(t *testing.T) {
 		mp4Name, err := fs.FileName(srcName, c.SidecarPath(), c.OriginalsPath(), fs.ExtMp4)
 		require.NoError(t, err)
 
-		result, err := convert.avcFromM2TS(f, "MOV006.tod")
+		version, err := newAvcSourceVersion(f.FileName())
+		require.NoError(t, err)
+		result, err := convert.avcFromM2TS(f, "MOV006.tod", version)
 		assert.Error(t, err)
 		assert.Nil(t, result)
 		assert.NoFileExists(t, mp4Name)

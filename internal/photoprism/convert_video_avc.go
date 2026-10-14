@@ -25,7 +25,7 @@ import (
 
 // ToAvc converts a single video file to MPEG-4 AVC.
 func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force bool) (file *MediaFile, err error) {
-	return w.toAvc(f, encoder, noMutex, force, true)
+	return w.coordinatedAvc(f, encoder, noMutex, force, false, nil)
 }
 
 // avcSource returns the file from which a transcoded version is made, which is the left lens
@@ -87,15 +87,15 @@ func (w *Convert) avcName(src *MediaFile) (string, error) {
 }
 
 // toAvc validates and converts media, optionally coordinating transport-stream requests.
-func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, coordinate bool) (file *MediaFile, err error) {
+func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, coordinate, exact bool, version *avcSourceVersion) (file *MediaFile, err error) {
 	// Abort if the source media file is nil.
 	if f == nil {
 		return nil, fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
 	}
 
-	// Normalize every member of a complete Insta360 video capture to its canonical left lens so manual
-	// conversion, background conversion, and playback all reuse one equirectangular AVC sidecar.
-	f = avcSource(f)
+	if err = version.check(f.FileName()); err != nil {
+		return nil, err
+	}
 
 	// Sanitized relative filename for use in logs.
 	logFileName := clean.Log(f.RootRelName())
@@ -117,15 +117,15 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		return nil, fmt.Errorf("convert: format %s is excluded from FFmpeg processing", format)
 	}
 
-	if coordinate && f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
-		return w.coordinatedTransport(f, encoder, noMutex, force)
+	if coordinate && !exact && f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
+		return w.coordinatedTransport(f, encoder, noMutex, force, version)
 	}
 
 	// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers. Neither ExifTool nor the
 	// video probe reports a codec for a transport stream, so whether one carries AVC is only known
 	// after the conversion and cannot be decided from the source up front.
-	if !f.IsAnimatedImage() && f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
-		mp4File, mp4Err := w.avcFromM2TS(f, logFileName)
+	if !exact && !f.IsAnimatedImage() && f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
+		mp4File, mp4Err := w.avcFromM2TS(f, logFileName, version)
 
 		if mp4Err != nil {
 			return nil, mp4Err
@@ -136,13 +136,31 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 
 	// Find an existing transcode. Animated images are converted into an MPEG-4 container, videos into AVC.
 	avcName := w.findAvc(f)
+	if exact {
+		avcName, err = w.avcName(f)
+		if err != nil {
+			return nil, err
+		}
+		if stat, statErr := os.Lstat(avcName); statErr == nil {
+			if !stat.Mode().IsRegular() {
+				return nil, ErrExportUnavailable
+			}
+			if stat.Size() > 0 {
+				if _, verifyErr := exportVerifiedOutput(avcName, "avc"); verifyErr != nil {
+					return nil, ErrExportUnavailable
+				}
+			}
+		} else if !errors.Is(statErr, os.ErrNotExist) {
+			return nil, statErr
+		}
+	}
 
 	mediaFile, err := NewMediaFile(avcName)
 
 	// Return the AVC-encoded video file if it already exists.
 	if mediaFile == nil || err != nil {
 		// Do nothing.
-	} else if mediaFile.IsVideo() && (!force || !mediaFile.InSidecar()) {
+	} else if mediaFile.IsVideo() && !mediaFile.Empty() && (!force || !mediaFile.InSidecar()) {
 		// Return existing AVC file.
 		log.Debugf("convert: %s has already been transcoded to MPEG-4 AVC", logFileName)
 		return mediaFile, nil
@@ -165,7 +183,18 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		return nil, err
 	}
 
-	cmd, useMutex, err := w.TranscodeToAvcCmd(f, avcName, encoder)
+	stat, err := os.Lstat(avcName)
+	if err == nil && (!stat.Mode().IsRegular() || stat.Size() > 0 && !force) {
+		return nil, fmt.Errorf("convert: destination is not replaceable: %w", os.ErrExist)
+	} else if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
+	stage, err := fs.CreateStageFile(avcName)
+	if err != nil {
+		return nil, err
+	}
+	defer os.Remove(stage)
+	cmd, useMutex, err := w.transcodeToAvcCmd(f, stage, encoder, exact)
 
 	// Return if an error occurred, which the caller logs.
 	if err != nil {
@@ -182,20 +211,6 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	if useMutex && !noMutex {
 		w.cmdMutex.Lock()
 		defer w.cmdMutex.Unlock()
-	}
-
-	// Check if target file already exists.
-	if fs.FileExists(avcName) {
-		avcFile, avcErr := NewMediaFile(avcName)
-		if avcErr != nil {
-			return avcFile, avcErr
-		} else if !force || !avcFile.InSidecar() {
-			return avcFile, nil
-		} else if err = avcFile.Remove(); err != nil {
-			return avcFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(avcFile.RootRelName()), err)
-		} else {
-			log.Infof("convert: replacing %s", clean.Log(avcFile.RootRelName()))
-		}
 	}
 
 	// Fetch command output.
@@ -238,23 +253,30 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
 		}
 
-		// Remove broken video file, keeping the transcoding error for the checks below.
-		if !fs.FileExists(avcName) {
-			// Do nothing.
-		} else if removeErr := os.Remove(avcName); removeErr != nil {
-			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), removeErr)
-		}
-
 		switch {
 		case disk.IsNoSpace(err):
 			// Do not retry on a full disk; surface the cause so the worker can abort the run.
 			return nil, disk.AsInsufficientStorage(err)
 		case encoder != encode.SoftwareAvc:
 			// Retry in software within the current destination operation.
-			return w.toAvc(f, encode.SoftwareAvc, true, false, false)
+			return w.toAvc(f, encode.SoftwareAvc, true, force, false, exact, version)
 		default:
 			return nil, fmt.Errorf("convert: failed to transcode %s (%w)", logFileName, err)
 		}
+	}
+
+	if _, err = exportVerifiedOutput(stage, "avc"); err != nil {
+		return nil, fmt.Errorf("convert: output verification: %w", err)
+	}
+	if err = version.check(f.FileName()); err != nil {
+		return nil, err
+	}
+	if err = fs.PublishFile(stage, avcName, force); errors.Is(err, os.ErrExist) {
+		if _, verifyErr := exportVerifiedOutput(avcName, "avc"); verifyErr != nil {
+			return nil, err
+		}
+	} else if err != nil {
+		return nil, err
 	}
 
 	// Log filename and transcoding time.
@@ -268,7 +290,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	// Return AVC media file and keep the successful dewarp projection available to the indexer even
 	// when ExifTool is disabled. Later reindexes infer the same value from source and sidecar paths.
 	avcFile, avcErr := NewMediaFile(avcName)
-	if avcErr == nil && f.DewarpableInsv() {
+	if avcErr == nil && f.IsInsv() && (f.Insta360DualStream() || f.DualFisheyeLayout() || !exact && f.DewarpableInsv()) {
 		avcFile.SetVisualProjection(projection.Equirectangular)
 	}
 
@@ -278,7 +300,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 // avcFromM2TS returns the MPEG-4 container of a transport stream that carries AVC, and nil when the
 // source has to be transcoded instead. The container is written under a name this call reserved and
 // published only when it is kept, so one already in place is never rewritten or removed.
-func (w *Convert) avcFromM2TS(f *MediaFile, logFileName string) (*MediaFile, error) {
+func (w *Convert) avcFromM2TS(f *MediaFile, logFileName string, version *avcSourceVersion) (*MediaFile, error) {
 	mp4Name, err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4)
 
 	if err != nil {
@@ -324,6 +346,10 @@ func (w *Convert) avcFromM2TS(f *MediaFile, logFileName string) (*MediaFile, err
 		return nil, nil
 	}
 
+	if err = version.check(f.FileName()); err != nil {
+		return nil, err
+	}
+
 	// A link fails when the name is taken, so a container that appeared while this one was written
 	// is used rather than replaced.
 	if err = fs.PublishFile(stagedName, mp4Name, false); errors.Is(err, os.ErrExist) {
@@ -361,6 +387,11 @@ func (w *Convert) avcContainer(fileName, logFileName string) *MediaFile {
 
 // TranscodeToAvcCmd returns the command for converting video files to MPEG-4 AVC.
 func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode.Encoder) (result *exec.Cmd, useMutex bool, err error) {
+	return w.transcodeToAvcCmd(f, avcName, encoder, false)
+}
+
+// transcodeToAvcCmd builds conversion commands, keeping exact requests confined to the selected input.
+func (w *Convert) transcodeToAvcCmd(f *MediaFile, avcName string, encoder encode.Encoder, exact bool) (result *exec.Cmd, useMutex bool, err error) {
 	fileExt := f.Extension()
 	fileName := f.FileName()
 
@@ -389,7 +420,10 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 
 	// Complete separate-lens captures are combined before dewarping. Single-file INSV originals are
 	// dewarped only when their decoded frame is already a side-by-side ~2:1 dual-fisheye layout.
-	capture := FindInsta360Capture(f)
+	var capture *Insta360Capture
+	if !exact {
+		capture = FindInsta360Capture(f)
+	}
 	dewarpPair := capture != nil && capture.Left != nil && capture.Left.FileName() == f.FileName() && capture.Dewarpable()
 	dewarpStreams := !dewarpPair && f.Insta360DualStream()
 	dewarp := dewarpPair || dewarpStreams || f.IsInsv() && f.DualFisheyeLayout()

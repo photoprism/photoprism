@@ -6,6 +6,7 @@ type FeatureSettings struct {
 	Archive      bool `json:"archive" yaml:"Archive"`
 	Delete       bool `json:"delete" yaml:"Delete"`
 	Download     bool `json:"download" yaml:"Download"`
+	Export       bool `json:"export" yaml:"Export"`
 	Edit         bool `json:"edit" yaml:"Edit"`
 	BatchEdit    bool `json:"batchEdit" yaml:"BatchEdit"`
 	Estimates    bool `json:"estimates" yaml:"Estimates"`

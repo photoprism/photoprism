@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
+// TestSettings_ApplyACL checks feature settings across session grants.
 func TestSettings_ApplyACL(t *testing.T) {
 	original := NewDefaultSettings().Features
 
@@ -19,6 +20,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Archive:      true,
 			Delete:       true,
 			Download:     true,
+			Export:       true,
 			Edit:         true,
 			BatchEdit:    true,
 			Estimates:    true,
@@ -63,6 +65,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
+			Export:       true,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,

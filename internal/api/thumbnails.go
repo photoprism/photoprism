@@ -25,12 +25,15 @@ import (
 //	@Id				GetThumb
 //	@Produce		image/jpeg, image/svg+xml
 //	@Tags			Images, Files
-//	@Failure		403		{file}	image/svg+xml
-//	@Success		200		{file}	image/svg+xml
-//	@Success		200		{file}	image/jpg
-//	@Param			thumb	path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
-//	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param			size	path	string	true	"thumbnail size; sizes above the server limit are reduced"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
+//	@Failure		403			{file}	image/svg+xml
+//	@Success		200			{file}	image/svg+xml
+//	@Success		200			{file}	image/jpg
+//	@Param			thumb		path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
+//	@Param			token		path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param			size		path	string	true	"thumbnail size; sizes above the server limit are reduced"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
+//	@Param			download	query	string	false	"return the thumbnail as an attachment when nonempty"
+//	@Param			name		query	string	false	"download naming convention"	Enums(file, share, original)
+//	@Param			filename	query	string	false	"attachment filename; sanitized and forced to .jpg without changing the thumbnail cache"
 //	@Router			/api/v1/t/{thumb}/{token}/{size} [get]
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
@@ -74,7 +77,7 @@ func GetThumb(router *gin.RouterGroup) {
 			AddImmutableCacheHeader(c)
 
 			if attachment {
-				c.FileAttachment(fileName, cropName.Jpeg())
+				c.FileAttachment(fileName, DownloadFileName(c, cropName.Jpeg(), fs.ExtJpeg))
 			} else {
 				c.File(fileName)
 			}
@@ -132,7 +135,7 @@ func GetThumb(router *gin.RouterGroup) {
 			AddImmutableCacheHeader(c)
 
 			if attachment {
-				c.FileAttachment(cached.FileName, cached.ShareName)
+				c.FileAttachment(cached.FileName, DownloadFileName(c, cached.ShareName, fs.ExtJpeg))
 			} else {
 				c.File(cached.FileName)
 			}
@@ -231,7 +234,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Return requested content.
 		if attachment {
-			c.FileAttachment(thumbName, f.DownloadName(DownloadName(c), 0))
+			c.FileAttachment(thumbName, DownloadFileName(c, f.DownloadName(DownloadName(c), 0), fs.ExtJpeg))
 		} else {
 			c.File(thumbName)
 		}
