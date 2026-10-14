@@ -1,9 +1,15 @@
 package entity
 
 import (
+	"strings"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm/schema"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestFileSync_TableName(t *testing.T) {
@@ -52,6 +58,102 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 			t.Errorf("ServiceID should be the same: %d %d", result.ServiceID, fileSync.ServiceID)
 		}
 	})
+	t.Run("LongName", func(t *testing.T) {
+		name := "/" + strings.Repeat("n", RemoteNameMaxLen-5) + ".jpg"
+		require.Len(t, name, RemoteNameMaxLen)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id = ? AND remote_name = ?", 779, name).Error)
+		})
+
+		created := FirstOrCreateFileSync(NewFileSync(779, name))
+		require.NotNil(t, created)
+
+		found := FirstOrCreateFileSync(NewFileSync(779, name))
+		require.NotNil(t, found)
+		assert.Equal(t, name, found.RemoteName)
+
+		var count int64
+		require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", 779).Count(&count).Error)
+		assert.EqualValues(t, 1, count)
+	})
+}
+
+// fileSyncWidthTable is the table that TestFileSync_RemoteNameMigration creates and drops.
+const fileSyncWidthTable = "files_sync_width_test"
+
+// fileSyncWidthLegacy has the remote name column of earlier releases.
+type fileSyncWidthLegacy struct {
+	RemoteName string `gorm:"primaryKey;autoIncrement:false;type:bytes;size:255"`
+	ServiceID  uint   `gorm:"primaryKey;autoIncrement:false;size:32"`
+	Status     string `gorm:"type:bytes;size:16;"`
+}
+
+// TableName returns the name of the test table.
+func (fileSyncWidthLegacy) TableName() string { return fileSyncWidthTable }
+
+// fileSyncWidthCurrent has the remote name column of FileSync and FileShare, without their indexes.
+type fileSyncWidthCurrent struct {
+	RemoteName string `gorm:"primaryKey;autoIncrement:false;type:bytes;size:1024"`
+	ServiceID  uint   `gorm:"primaryKey;autoIncrement:false;size:32"`
+	Status     string `gorm:"type:bytes;size:16;"`
+}
+
+// TableName returns the name of the test table.
+func (fileSyncWidthCurrent) TableName() string { return fileSyncWidthTable }
+
+func TestFileSync_RemoteNameMigration(t *testing.T) {
+	// The test tables mirror the remote name column, so it must match the entities.
+	for _, model := range []any{&FileSync{}, &FileShare{}, &fileSyncWidthCurrent{}} {
+		s, err := schema.Parse(model, &sync.Map{}, schema.NamingStrategy{})
+		require.NoError(t, err)
+		field := s.LookUpField("RemoteName")
+		require.NotNil(t, field)
+		assert.Equal(t, RemoteNameMaxLen, field.Size, s.Name)
+		assert.True(t, field.PrimaryKey, s.Name)
+	}
+
+	db := Db()
+	m := db.Migrator()
+
+	require.NoError(t, m.DropTable(fileSyncWidthTable))
+	require.NoError(t, m.CreateTable(&fileSyncWidthLegacy{}))
+	t.Cleanup(func() { assert.NoError(t, db.Migrator().DropTable(fileSyncWidthTable)) })
+
+	short := fileSyncWidthLegacy{RemoteName: "/legacy/short.jpg", ServiceID: 7, Status: FileSyncNew}
+	require.NoError(t, db.Create(&short).Error)
+
+	// Auto migration widens the column in place.
+	require.NoError(t, db.AutoMigrate(&fileSyncWidthCurrent{}))
+
+	if !IsDialect(dsn.DialectSQLite) {
+		columns, err := m.ColumnTypes(&fileSyncWidthCurrent{})
+		require.NoError(t, err)
+
+		var length int64
+
+		for _, c := range columns {
+			if strings.EqualFold(c.Name(), "remote_name") {
+				length, _ = c.Length()
+			}
+		}
+
+		assert.EqualValues(t, RemoteNameMaxLen, length)
+	}
+
+	// Existing rows are still matched, and the primary key still refuses a duplicate.
+	var found fileSyncWidthCurrent
+	require.NoError(t, db.Where("service_id = ? AND remote_name = ?", 7, short.RemoteName).First(&found).Error)
+	assert.Equal(t, FileSyncNew, found.Status)
+	assert.Error(t, db.Create(&fileSyncWidthCurrent{RemoteName: short.RemoteName, ServiceID: 7}).Error)
+
+	long := fileSyncWidthCurrent{RemoteName: "/" + strings.Repeat("l", RemoteNameMaxLen-1), ServiceID: 7, Status: FileSyncNew}
+	require.NoError(t, db.Create(&long).Error)
+	var foundLong fileSyncWidthCurrent
+	require.NoError(t, db.Where("service_id = ? AND remote_name = ?", 7, long.RemoteName).First(&foundLong).Error)
+
+	var count int64
+	require.NoError(t, db.Model(&fileSyncWidthCurrent{}).Count(&count).Error)
+	assert.EqualValues(t, 2, count)
 }
 
 func TestFileSync_Updates(t *testing.T) {
@@ -102,4 +204,60 @@ func TestFileSync_Save(t *testing.T) {
 
 		assert.True(t, afterDate.After(initialDate))
 	})
+}
+
+func TestRemoteNameTooLong(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, RemoteNameTooLong(""))
+	})
+	t.Run("AtLimit", func(t *testing.T) {
+		name := strings.Repeat("/"+strings.Repeat("p", 199), 5) + "/" + strings.Repeat("q", 23)
+		require.Len(t, name, RemoteNameMaxLen)
+		assert.False(t, RemoteNameTooLong(name))
+		assert.True(t, RemoteNameTooLong(name+"q"))
+	})
+	t.Run("LongFileName", func(t *testing.T) {
+		// Local file and folder name limits are not part of this check.
+		assert.False(t, RemoteNameTooLong("/"+strings.Repeat("s", 300)))
+	})
+}
+
+func TestFileSyncLongNamePrefix(t *testing.T) {
+	prefix := FileSyncLongNamePrefix("/photos")
+	assert.True(t, strings.HasPrefix(prefix, ".photoprism/sync/long/"), prefix)
+	assert.True(t, strings.HasSuffix(prefix, "/"), prefix)
+	assert.Len(t, prefix, len(".photoprism/sync/long/")+9)
+	assert.Equal(t, prefix, FileSyncLongNamePrefix("/photos"))
+	assert.NotEqual(t, prefix, FileSyncLongNamePrefix("/photos/2026"))
+	assert.NotEqual(t, prefix, FileSyncLongNamePrefix("/Photos"))
+}
+
+func TestResetFileSyncLongNames(t *testing.T) {
+	const serviceID, otherID = 4711, 4712
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id IN (?)", []uint{serviceID, otherID}).Error)
+	})
+
+	current, previous := FileSyncLongNamePrefix("/current"), FileSyncLongNamePrefix("/previous")
+	kept := []string{"/current/file.jpg", ".photoprism/sync/12", current + "13"}
+
+	for _, name := range append([]string{previous + "14", previous + "15"}, kept...) {
+		require.NoError(t, NewFileSync(serviceID, name).Create())
+	}
+
+	require.NoError(t, NewFileSync(otherID, previous+"16").Create())
+
+	// names returns the remote names stored for an account.
+	names := func(t *testing.T, id uint) (result []string) {
+		require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", id).Pluck("remote_name", &result).Error)
+		return result
+	}
+
+	require.NoError(t, ResetFileSyncLongNames(serviceID, "/current"))
+	assert.ElementsMatch(t, kept, names(t, serviceID))
+	assert.ElementsMatch(t, []string{previous + "16"}, names(t, otherID))
+
+	// A second reset finds nothing to remove.
+	require.NoError(t, ResetFileSyncLongNames(serviceID, "/current"))
+	assert.ElementsMatch(t, kept, names(t, serviceID))
 }

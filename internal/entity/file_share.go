@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Status values a file share moves through.
@@ -17,7 +19,7 @@ const (
 type FileShare struct {
 	FileID     uint      `gorm:"primaryKey;autoIncrement:false;size:32" json:"FileID" yaml:"FileID,omitempty"`
 	ServiceID  uint      `gorm:"primaryKey;autoIncrement:false;size:32" json:"ServiceID" yaml:"ServiceID,omitempty"`
-	RemoteName string    `gorm:"primaryKey;autoIncrement:false;type:bytes;size:255" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	RemoteName string    `gorm:"primaryKey;autoIncrement:false;type:bytes;size:1024" json:"RemoteName" yaml:"RemoteName,omitempty"`
 	Status     string    `gorm:"type:bytes;size:16;" json:"Status" yaml:"Status,omitempty"`
 	Error      string    `gorm:"type:bytes;size:512;" json:"Error,omitempty" yaml:"Error,omitempty"`
 	Errors     int       `gorm:"size:32" json:"Errors,omitempty" yaml:"Errors,omitempty"`
@@ -73,7 +75,7 @@ func FirstOrCreateFileShare(m *FileShare) *FileShare {
 	if err := Db().Where("file_id = ? AND service_id = ? AND remote_name = ?", m.FileID, m.ServiceID, m.RemoteName).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
-		log.Errorf("file-share: %s", err)
+		log.Errorf("file-share: %s", clean.Error(err))
 		return nil
 	}
 

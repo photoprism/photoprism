@@ -135,6 +135,14 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
+			if syncNameTooLong(file.RemoteName) {
+				log.Debugf("sync: skipping %s from %s because its name is too long", clean.Log(file.RemoteName), clean.Log(a.AccName))
+				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
+				w.logErr(entity.Db().Save(&file).Error)
+				files[i] = file
+				continue
+			}
+
 			if !a.SyncYamlEnabled() && fs.FileType(file.RemoteName) == fs.SidecarYaml {
 				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
 				w.logErr(entity.Db().Save(&file).Error)

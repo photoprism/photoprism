@@ -7,6 +7,19 @@ import (
 	"strings"
 )
 
+// NameTooLong reports whether a slash-separated path contains a file or folder name longer than NameMaxLen.
+func NameTooLong(p string) bool {
+	for p != "" {
+		var name string
+
+		if name, p, _ = strings.Cut(p, "/"); len(name) > NameMaxLen {
+			return true
+		}
+	}
+
+	return false
+}
+
 // FileName returns the file path for a sidecar file with the specified extension and creates its folder.
 func FileName(fileName, dirName, baseDir, fileExt string) (string, error) {
 	result, err := FilePath(fileName, dirName, baseDir, fileExt)

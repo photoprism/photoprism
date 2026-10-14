@@ -5,6 +5,8 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -13,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -160,6 +163,43 @@ func (w *Sync) Start() (err error) {
 	}
 
 	return err
+}
+
+// syncNameTooLong reports whether a remote file cannot be downloaded because its name is longer than a file sync
+// record holds, or contains a file or folder name longer than local file systems accept.
+func syncNameTooLong(name string) bool {
+	return entity.RemoteNameTooLong(name) || fs.NameTooLong(name)
+}
+
+// skippedNames collects the names a sync run skips, so they are reported in one warning.
+type skippedNames struct {
+	count int
+	names []string
+}
+
+// Add counts a skipped name and keeps it for the warning, up to the number of names a log line shows.
+func (s *skippedNames) Add(name string) {
+	s.count++
+
+	if len(s.names) < clean.LogNamesLimit {
+		s.names = append(s.names, name)
+	}
+}
+
+// Warn logs one warning if names were skipped, with the plural of noun for their number, the account name,
+// and the names that were kept, in this order.
+func (s *skippedNames) Warn(format, noun, account string) {
+	if s.count == 0 {
+		return
+	}
+
+	names := clean.LogNames(s.names)
+
+	if more := s.count - len(s.names); more > 0 {
+		names = fmt.Sprintf("%s and %d more", names, more)
+	}
+
+	log.Warnf(format, english.Plural(s.count, noun, noun+"s"), clean.Log(account), names)
 }
 
 // syncDue reports whether a synced account is due for a refresh, comparing whole seconds so no stored interval overflows.

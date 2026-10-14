@@ -25,6 +25,9 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 	maxResults := 250
 
+	// Files skipped for the length of their remote name below another sync path are checked again.
+	w.logErr(entity.ResetFileSyncLongNames(a.ID, a.SyncPath))
+
 	// Get upload file list from database
 	files, err := query.AccountUploads(a, maxResults)
 
@@ -47,6 +50,11 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
 	var yamlRefused, otherRefused bool
 
+	// Files whose remote names are too long are reported in one warning per run.
+	var skipped skippedNames
+
+	defer skipped.Warn("sync: skipped upload of %s to %s because their remote names are too long (%s)", "file", a.AccName)
+
 	for _, file := range files {
 		if mutex.SyncWorker.Canceled() {
 			return false, nil
@@ -54,9 +62,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 		if webdav.SkipSyncPath(file.FileName) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(file.FileName))
-			ignored := entity.NewFileSync(a.ID, path.Join(fs.PPHiddenPathname, "sync", strconv.FormatUint(uint64(file.ID), 10)))
-			ignored.FileID, ignored.Status = file.ID, entity.FileSyncIgnore
-			w.logErr(entity.Db().Save(ignored).Error)
+			w.ignoreUpload(a, path.Join(fs.PPHiddenPathname, "sync"), file.ID)
 			continue
 		}
 
@@ -69,6 +75,13 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		fileName := photoprism.FileName(file.FileRoot, file.FileName)
 		remoteName := path.Join(a.SyncPath, file.FileName)
 		remoteDir := path.Dir(remoteName)
+
+		// A remote name that is too long is recorded for the sync path, so the file is not selected again.
+		if entity.RemoteNameTooLong(remoteName) {
+			skipped.Add(file.FileName)
+			w.ignoreUpload(a, entity.FileSyncLongNamePrefix(a.SyncPath), file.ID)
+			continue
+		}
 
 		// Ensure remote folder exists.
 		if err = client.MkdirAll(remoteDir); err != nil {
@@ -107,4 +120,12 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	}
 
 	return false, nil
+}
+
+// ignoreUpload records a local file as ignored for an account under a placeholder name in dir, so it is not
+// selected for upload again.
+func (w *Sync) ignoreUpload(a entity.Service, dir string, fileID uint) {
+	ignored := entity.NewFileSync(a.ID, path.Join(dir, strconv.FormatUint(uint64(fileID), 10)))
+	ignored.FileID, ignored.Status = fileID, entity.FileSyncIgnore
+	w.logErr(entity.Db().Save(ignored).Error)
 }

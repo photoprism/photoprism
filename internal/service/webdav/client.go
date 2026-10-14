@@ -725,13 +725,11 @@ func (c *Client) Delete(dir string) error {
 // tempSink returns a unique sibling path for staging a replacement, shortened when the added suffix
 // would push the name past the length a file name may have.
 func tempSink(dest string) string {
-	const maxNameLen = 255
-
 	dir, base := filepath.Split(dest)
 	suffix := "." + rnd.Base36(8) + ".tmp"
 
-	if len(base)+len(suffix) > maxNameLen {
-		base = base[:maxNameLen-len(suffix)]
+	if len(base)+len(suffix) > fs.NameMaxLen {
+		base = base[:fs.NameMaxLen-len(suffix)]
 	}
 
 	return dir + base + suffix

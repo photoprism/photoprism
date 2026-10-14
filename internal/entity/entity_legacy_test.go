@@ -86,6 +86,11 @@ func migrateLegacySchema(t *testing.T, driver, dataSourceName string) []string {
 	require.NoError(t, db.Raw("SELECT service_id FROM files_sync WHERE remote_name = ?", "legacy.jpg").Row().Scan(&serviceID))
 	assert.Equal(t, uint(7), serviceID)
 
+	// The remote name column holds names up to its maximum length.
+	long := "/" + strings.Repeat("l", RemoteNameMaxLen-1)
+	require.NoError(t, db.Exec("INSERT INTO files_sync (remote_name, service_id, file_id) VALUES (?, ?, ?)", long, 7, 2).Error)
+	require.NoError(t, db.Raw("SELECT service_id FROM files_sync WHERE remote_name = ?", long).Row().Scan(&serviceID))
+
 	// A second run, as on the next start of a new release, finds nothing to change.
 	p.Counter.Start()
 	start()

@@ -98,6 +98,26 @@ func (m postgresMigrator) ColumnTypes(value any) ([]gorm.ColumnType, error) {
 	return inner.ColumnTypes(value)
 }
 
+// MigrateColumn migrates a column like the driver, which skips primary keys, and also lengthens a varchar
+// primary key column to the size of its field, which keeps the key and its values.
+func (m postgresMigrator) MigrateColumn(value any, field *schema.Field, columnType gorm.ColumnType) error {
+	if err := m.Migrator.MigrateColumn(value, field, columnType); err != nil || !field.PrimaryKey {
+		return err
+	}
+
+	want := m.DataTypeOf(field)
+	have, ok := columnType.Length()
+
+	if !ok || have <= 0 || int64(field.Size) <= have ||
+		!strings.EqualFold(columnType.DatabaseTypeName(), "varchar") || !strings.HasPrefix(want, "varchar(") {
+		return nil
+	}
+
+	return m.RunWithValue(value, func(stmt *gorm.Statement) error {
+		return m.DB.Exec("ALTER TABLE ? ALTER COLUMN ? TYPE "+want, m.CurrentTable(stmt), clause.Column{Name: field.DBName}).Error
+	})
+}
+
 // postgresAfterConnect reads timestamps of new connections in UTC, as the other databases return them.
 func postgresAfterConnect(_ context.Context, conn *pgx.Conn) error {
 	conn.TypeMap().RegisterType(&pgtype.Type{

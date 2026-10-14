@@ -41,6 +41,11 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	dirs := append(subDirs.Abs(), a.SyncPath)
 
+	// Remote files whose names are too long are skipped with one warning per refresh.
+	var skipped skippedNames
+
+	defer skipped.Warn("sync: skipped %s in %s whose names are too long (%s)", "remote file", a.AccName)
+
 	for _, dir := range dirs {
 		if webdav.SkipSyncPath(dir) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(dir))
@@ -64,6 +69,10 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			}
 			if mutex.SyncWorker.Canceled() {
 				return false, nil
+			}
+			if syncNameTooLong(file.Abs) {
+				skipped.Add(file.Abs)
+				continue
 			}
 
 			f := entity.NewFileSync(a.ID, file.Abs)

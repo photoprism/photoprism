@@ -3,6 +3,7 @@ package fs
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -182,5 +183,23 @@ func TestFilePath_InSearchDir(t *testing.T) {
 		result, err := FilePath("/originals/.photoprism/sidecar/2024/x.mp4", "/originals/.photoprism/sidecar", "/originals", ".jpg")
 		assert.NoError(t, err)
 		assert.Equal(t, "/originals/.photoprism/sidecar/.photoprism/sidecar/2024/x.mp4.jpg", result)
+	})
+}
+
+func TestNameTooLong(t *testing.T) {
+	name := strings.Repeat("n", NameMaxLen)
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, NameTooLong(""))
+		assert.False(t, NameTooLong("/"))
+		assert.False(t, NameTooLong("//a//"))
+	})
+	t.Run("AtLimit", func(t *testing.T) {
+		assert.False(t, NameTooLong(name))
+		assert.False(t, NameTooLong("/"+name+"/"+name+"/"))
+	})
+	t.Run("OverLimit", func(t *testing.T) {
+		assert.True(t, NameTooLong(name+"n"))
+		assert.True(t, NameTooLong("/"+name+"n/file.jpg"))
+		assert.True(t, NameTooLong("/folder/"+name+"n"))
 	})
 }

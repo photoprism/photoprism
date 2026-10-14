@@ -1,7 +1,12 @@
 package entity
 
 import (
+	"fmt"
+	"hash/crc32"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Status values a file sync moves through.
@@ -14,9 +19,15 @@ const (
 	FileSyncUploaded   = "uploaded"
 )
 
+// RemoteNameMaxLen is the length in bytes of the longest remote name a file sync or share record holds.
+const RemoteNameMaxLen = 1024
+
+// fileSyncLongNames is the folder of the placeholder names that record local files whose remote name is too long.
+const fileSyncLongNames = fs.PPHiddenPathname + "/sync/long/"
+
 // FileSync tracks the synchronization status for a file on an external service.
 type FileSync struct {
-	RemoteName string    `gorm:"primaryKey;autoIncrement:false;type:bytes;size:255" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	RemoteName string    `gorm:"primaryKey;autoIncrement:false;type:bytes;size:1024" json:"RemoteName" yaml:"RemoteName,omitempty"`
 	ServiceID  uint      `gorm:"primaryKey;autoIncrement:false;size:32" json:"ServiceID" yaml:"ServiceID,omitempty"`
 	FileID     uint      `gorm:"index;size:32;" json:"FileID" yaml:"FileID,omitempty"`
 	RemoteDate time.Time `json:"RemoteDate" yaml:"RemoteDate,omitempty"`
@@ -73,9 +84,27 @@ func FirstOrCreateFileSync(m *FileSync) *FileSync {
 	if err := Db().Where("service_id = ? AND remote_name = ?", m.ServiceID, m.RemoteName).First(&result).Error; err == nil {
 		return &result
 	} else if err := m.Create(); err != nil {
-		log.Errorf("file-sync: %s", err)
+		log.Errorf("file-sync: %s", clean.Error(err))
 		return nil
 	}
 
 	return m
+}
+
+// RemoteNameTooLong reports whether a remote name is longer than a file sync or share record holds.
+func RemoteNameTooLong(name string) bool {
+	return len(name) > RemoteNameMaxLen
+}
+
+// FileSyncLongNamePrefix returns the prefix of the placeholder names that record local files whose remote name
+// below syncPath is too long. It includes a checksum of syncPath, so the records of other paths can be told apart.
+func FileSyncLongNamePrefix(syncPath string) string {
+	return fmt.Sprintf("%s%08x/", fileSyncLongNames, crc32.ChecksumIEEE([]byte(syncPath)))
+}
+
+// ResetFileSyncLongNames removes the placeholders an account recorded for a sync path other than syncPath,
+// so that the files are checked again.
+func ResetFileSyncLongNames(serviceID uint, syncPath string) error {
+	return Db().Where("service_id = ? AND remote_name LIKE ? AND remote_name NOT LIKE ?", serviceID,
+		fileSyncLongNames+"%", FileSyncLongNamePrefix(syncPath)+"%").Delete(&FileSync{}).Error
 }
