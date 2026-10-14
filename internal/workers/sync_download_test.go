@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -15,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -303,6 +305,78 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.Equal(t, 1, attempts("/ok-progress.txt"))
 		assert.Equal(t, 2, attempts("/stuck.jpg"))
 		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/stuck.jpg").Status)
+	})
+	t.Run("NoLimitWindow", func(t *testing.T) {
+		// With more failing files than one run reads, the stage stays open until every file was tried once.
+		limit := downloadLimit
+		downloadLimit = 55
+		t.Cleanup(func() { downloadLimit = limit })
+
+		// Two runs read 7 files each, so the third finds the one file left.
+		a := newAccount(t, -1)
+		for i := 0; i < 15; i++ {
+			newFile(t, a, fmt.Sprintf("/window-%02d.jpg", i), 0)
+		}
+
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+
+		var runs []bool
+		for run := 0; run < 3; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+		assert.Equal(t, []bool{false, false, true}, runs)
+
+		for i := 0; i < 15; i++ {
+			name := fmt.Sprintf("/window-%02d.jpg", i)
+			assert.GreaterOrEqual(t, attempts(name), 1, name)
+			assert.Equal(t, entity.FileSyncNew, stored(t, a, name).Status)
+		}
+
+		var warnings []string
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel {
+				warnings = append(warnings, e.Message)
+			}
+		}
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0], "failed to download 15 files from")
+	})
+	t.Run("NoLimitSaveFails", func(t *testing.T) {
+		// Files whose outcome cannot be saved stay untried, so the stage stays open only while others make progress.
+		a := newAccount(t, -1)
+		require.NoError(t, a.Update("sync_yaml", -1))
+		failing := map[string]bool{"/save-fails.jpg": true, "/save-fails.yml": true}
+		newFile(t, a, "/save-fails.jpg", 0)
+		newFile(t, a, "/save-fails.yml", 0)
+		newFile(t, a, "/save-works.jpg", 0)
+		newFile(t, a, "/ok-save.txt", 0)
+
+		require.NoError(t, entity.Db().Callback().Update().Before("gorm:update").Register("test:fail_file_sync_save", func(tx *gorm.DB) {
+			if f, ok := tx.Statement.Dest.(*entity.FileSync); ok && f.ServiceID == a.ID && failing[f.RemoteName] {
+				_ = tx.AddError(errors.New("save failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("test:fail_file_sync_save") })
+
+		var runs []bool
+		for run := 0; run < 2; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+
+		assert.Equal(t, []bool{false, true}, runs)
+		assert.Equal(t, 2, attempts("/save-fails.jpg"))
+		assert.Equal(t, 0, attempts("/save-fails.yml"))
+		assert.Equal(t, 0, stored(t, a, "/save-fails.jpg").Errors)
+		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/save-fails.yml").Status)
+		assert.Equal(t, 2, stored(t, a, "/save-works.jpg").Errors)
+		assert.Equal(t, entity.FileSyncDownloaded, stored(t, a, "/ok-save.txt").Status)
 	})
 	t.Run("LowestLimitOpen", func(t *testing.T) {
 		a := newAccount(t, 1)

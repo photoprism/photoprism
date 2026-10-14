@@ -20,6 +20,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// downloadLimit is the number of queued files a download run reads, of which the last 48 are left to the next
+// run, so that related files are not split. Tests may lower it to no less than 51.
+var downloadLimit = 1000
+
 // Downloads groups files to sync by their directory/prefix.
 type Downloads map[string][]entity.FileSync
 
@@ -31,7 +35,7 @@ func (w *Sync) downloadPath() string {
 // relatedDownloads returns files to be downloaded grouped by prefix.
 func (w *Sync) relatedDownloads(a entity.Service) (result Downloads, err error) {
 	result = make(Downloads)
-	maxResults := 1000
+	maxResults := downloadLimit
 
 	// Get list of remote files from database.
 	files, err := query.FileSyncs(a.ID, entity.FileSyncNew, maxResults)
@@ -91,6 +95,15 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		log.Errorf("sync: %s", err)
 		event.Publish("sync.downloaded", event.Data{"account": a, "error": err.Error()})
 		return true, nil
+	}
+
+	// Without a retry limit, the stage completes once a run makes no progress, see below.
+	var queued, untried int64
+
+	if a.RetryLimit <= 0 {
+		if queued, untried, _, err = query.CountQueuedFileSyncs(a.ID); err != nil {
+			return false, err
+		}
 	}
 
 	// Display log message.
@@ -285,21 +298,19 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		w.logWarn(query.UpdateCovers())
 	}
 
-	// Without a retry limit, failed files stay new, so the stage completes once a run leaves every file new.
+	// Without a retry limit, failed files stay new. The stage stays open while a run changes the status of a
+	// queued file, or tries files that were not tried yet while some remain, which the next run reads first.
+	// A file whose outcome cannot be saved therefore keeps it open only as long as others make progress.
 	if a.RetryLimit <= 0 {
-		failed := 0
+		queuedAfter, untriedAfter, failed, countErr := query.CountQueuedFileSyncs(a.ID)
 
-		for _, files := range relatedFiles {
-			for _, file := range files {
-				if file.Status != entity.FileSyncNew {
-					return false, nil
-				}
-
-				failed++
-			}
+		if countErr != nil {
+			return false, countErr
+		} else if queuedAfter < queued || untriedAfter > 0 && untriedAfter < untried {
+			return false, nil
 		}
 
-		log.Warnf("sync: failed to download %s from %s, retrying in the next sync", english.Plural(failed, "file", "files"), clean.Log(a.AccName))
+		log.Warnf("sync: failed to download %s from %s, retrying in the next sync", english.Plural(int(failed), "file", "files"), clean.Log(a.AccName))
 
 		return true, nil
 	}
