@@ -35,14 +35,28 @@ func NewSync(conf *config.Config) *Sync {
 // logErr logs an error message if err is not nil.
 func (w *Sync) logErr(err error) {
 	if err != nil {
-		log.Errorf("sync: %s", err.Error())
+		log.Errorf("sync: %s", clean.Error(err))
+	}
+}
+
+// logAccountErr logs an error message that names the account if err is not nil.
+func (w *Sync) logAccountErr(err error, a entity.Service) {
+	if err != nil {
+		log.Errorf("sync: %s (%s)", clean.Error(err), clean.Log(a.AccName))
+	}
+}
+
+// logFileErr logs an error message that names a file and its account if err is not nil.
+func (w *Sync) logFileErr(err error, name string, a entity.Service) {
+	if err != nil {
+		log.Errorf("sync: %s (%s from %s)", clean.Error(err), clean.Log(name), clean.Log(a.AccName))
 	}
 }
 
 // logWarn logs a warning message if err is not nil.
 func (w *Sync) logWarn(err error) {
 	if err != nil {
-		log.Warnf("sync: %s", err.Error())
+		log.Warnf("sync: %s", clean.Error(err))
 	}
 }
 
@@ -78,9 +92,9 @@ func (w *Sync) Start() (err error) {
 			if res := entity.Db().Model(&entity.Service{}).
 				Where("id = ? AND acc_sync = TRUE AND retry_limit > 0 AND acc_errors > retry_limit", a.ID).
 				UpdateColumn("acc_sync", false); res.Error != nil {
-				w.logErr(res.Error)
+				w.logAccountErr(res.Error, a)
 			} else if res.RowsAffected > 0 {
-				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
+				log.Warnf("sync: disabled sync, %s failed more than %d times", clean.Log(a.AccName), a.RetryLimit)
 			}
 
 			continue
@@ -154,11 +168,11 @@ func (w *Sync) Start() (err error) {
 
 		// Errors are counted on the stored value, so a reset or a count saved during the run is kept.
 		if accErrors > a.AccErrors {
-			w.logErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).UpdateColumns(entity.Values{
-				"acc_errors": gorm.Expr("COALESCE(acc_errors, 0) + 1"), "acc_error": accError}).Error)
+			w.logAccountErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).UpdateColumns(entity.Values{
+				"acc_errors": gorm.Expr("COALESCE(acc_errors, 0) + 1"), "acc_error": accError}).Error, a)
 		} else if reset {
-			w.logErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).UpdateColumns(entity.Values{
-				"acc_errors": accErrors, "acc_error": accError}).Error)
+			w.logAccountErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).UpdateColumns(entity.Values{
+				"acc_errors": accErrors, "acc_error": accError}).Error, a)
 		}
 
 		if syncStatus == a.SyncStatus && syncDate.Valid == a.SyncDate.Valid && syncDate.Time.Equal(a.SyncDate.Time) {
@@ -170,7 +184,7 @@ func (w *Sync) Start() (err error) {
 		if res := entity.Db().Model(&entity.Service{}).
 			Where("id = ? AND COALESCE(sync_status, '') = ?", a.ID, a.SyncStatus).
 			UpdateColumns(entity.Values{"sync_status": syncStatus, "sync_date": syncDate}); res.Error != nil {
-			w.logErr(res.Error)
+			w.logAccountErr(res.Error, a)
 		} else if res.RowsAffected == 0 {
 			log.Debugf("sync: kept the status saved to %s during the sync", clean.Log(a.AccName))
 		} else if synced {

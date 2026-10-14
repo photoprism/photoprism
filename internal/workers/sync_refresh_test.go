@@ -1,13 +1,19 @@
 package workers
 
 import (
+	"errors"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/webdav"
@@ -15,6 +21,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -168,5 +175,83 @@ func TestSync_refreshRemoteChanges(t *testing.T) {
 		f = stored(t, "/kept.jpg")
 		assert.Equal(t, entity.FileSyncDownloaded, f.Status)
 		assert.Equal(t, int64(100), f.RemoteSize)
+	})
+}
+
+func TestSync_refreshLogs(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	remote := t.TempDir()
+	require.NoError(t, os.MkdirAll(filepath.Join(remote, "sub"), fs.ModeDir))
+	require.NoError(t, os.WriteFile(filepath.Join(remote, "sub", "photo.jpg"), []byte("jpg"), fs.ModeFile))
+	require.NoError(t, os.WriteFile(filepath.Join(remote, "root.jpg"), []byte("jpg"), fs.ModeFile))
+
+	// The remote lists its folders, but fails to list the files of the subfolder when failSub is set.
+	var failSub atomic.Bool
+	handler := &webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if failSub.Load() && r.Method == "PROPFIND" && r.Header.Get("Depth") == "1" && strings.HasPrefix(r.URL.Path, "/sub") {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		handler.ServeHTTP(w, r)
+	}))
+	t.Cleanup(server.Close)
+
+	a := entity.Service{AccName: "Sync Logs " + rnd.Base36(8), AccURL: server.URL + "/", AccType: "webdav", AccSync: true,
+		SyncDownload: true, SyncPath: "/", AccTimeout: "low", RetryLimit: -1}
+	require.NoError(t, entity.Db().Create(&a).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "service_id = ?", a.ID).Error)
+		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
+	})
+
+	// errorsContaining returns the error messages logged that contain text.
+	errorsContaining := func(hook *test.Hook, text string) (result []string) {
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.ErrorLevel && strings.Contains(e.Message, text) {
+				result = append(result, e.Message)
+			}
+		}
+		return result
+	}
+
+	// The sync folder is listed once, although the folder listing includes it.
+	t.Run("RecordFailed", func(t *testing.T) {
+		require.NoError(t, entity.Db().Callback().Create().Before("gorm:create").Register("test:fail_file_sync_create", func(tx *gorm.DB) {
+			if f, ok := tx.Statement.Dest.(*entity.FileSync); ok && f.ServiceID == a.ID && f.RemoteName == "/root.jpg" {
+				_ = tx.AddError(errors.New("create failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Create().Remove("test:fail_file_sync_create") })
+		hook := captureSyncLog(t)
+		complete, err := worker.refresh(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.Len(t, errorsContaining(hook, "failed to record "+clean.Log("/root.jpg")+" from "+clean.Log(a.AccName)), 1)
+	})
+	t.Run("SyncPathSpelling", func(t *testing.T) {
+		// A sync path spelled differently from the folder listing is still listed once.
+		b := a
+		b.SyncPath = "sub/"
+		require.NoError(t, os.WriteFile(filepath.Join(remote, "sub", "spelling.jpg"), []byte("jpg"), fs.ModeFile))
+		require.NoError(t, entity.Db().Callback().Create().Before("gorm:create").Register("test:fail_file_sync_create", func(tx *gorm.DB) {
+			if f, ok := tx.Statement.Dest.(*entity.FileSync); ok && f.ServiceID == b.ID && f.RemoteName == "/sub/spelling.jpg" {
+				_ = tx.AddError(errors.New("create failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Create().Remove("test:fail_file_sync_create") })
+		hook := captureSyncLog(t)
+		complete, err := worker.refresh(b)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.Len(t, errorsContaining(hook, "failed to record "+clean.Log("/sub/spelling.jpg")+" from "+clean.Log(b.AccName)), 1)
+	})
+	t.Run("ListFilesFailed", func(t *testing.T) {
+		failSub.Store(true)
+		t.Cleanup(func() { failSub.Store(false) })
+		hook := captureSyncLog(t)
+		_, err := worker.refresh(a)
+		require.Error(t, err)
+		assert.Len(t, errorsContaining(hook, "(list remote files of "+clean.Log(a.AccName)+")"), 1)
 	})
 }

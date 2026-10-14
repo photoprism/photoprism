@@ -278,7 +278,21 @@ func TestSync_StartStoredError(t *testing.T) {
 		a.SyncStatus = entity.SyncStatusRefresh
 	})
 
+	logger, hook := test.NewNullLogger()
+	prev := log
+	log = logger
+	t.Cleanup(func() { log = prev })
+
 	require.NoError(t, worker.Start())
+
+	// The failure names the account.
+	var named int
+	for _, e := range hook.AllEntries() {
+		if e.Level == logrus.ErrorLevel && strings.Contains(e.Message, "(list remote folders of "+clean.Log(a.AccName)+")") {
+			named++
+		}
+	}
+	assert.Equal(t, 1, named)
 
 	stored := storedSyncAccount(t, a.ID)
 	assert.Equal(t, 1, stored.AccErrors)
@@ -650,4 +664,78 @@ func TestSync_StartKeepsChanges(t *testing.T) {
 		assert.Equal(t, 1, stored.AccErrors)
 		assert.NotEmpty(t, stored.AccError)
 	})
+}
+
+func TestSync_logAccountErr(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	a := entity.Service{AccName: "Account\nName"}
+	t.Run("Error", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logAccountErr(errors.New("upload failed"), a)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.ErrorLevel, hook.LastEntry().Level)
+		assert.Equal(t, "sync: upload failed ("+clean.Log(a.AccName)+")", hook.LastEntry().Message)
+		assert.NotContains(t, hook.LastEntry().Message, "\n")
+	})
+	t.Run("NoError", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logAccountErr(nil, a)
+		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+func TestSync_logFileErr(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	a := entity.Service{AccName: "Account"}
+	t.Run("Error", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logFileErr(errors.New("save failed"), "/photos/a\nb.jpg", a)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.ErrorLevel, hook.LastEntry().Level)
+		assert.Equal(t, "sync: save failed ("+clean.Log("/photos/a\nb.jpg")+" from "+clean.Log("Account")+")", hook.LastEntry().Message)
+		assert.NotContains(t, hook.LastEntry().Message, "\n")
+	})
+	t.Run("NoError", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logFileErr(nil, "/photos/a.jpg", a)
+		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+func TestSync_logErr(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	for _, c := range []struct {
+		name  string
+		log   func(err error)
+		level logrus.Level
+	}{
+		{"Error", worker.logErr, logrus.ErrorLevel},
+		{"Warning", worker.logWarn, logrus.WarnLevel},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			logger, hook := test.NewNullLogger()
+			prev := log
+			log = logger
+			t.Cleanup(func() { log = prev })
+			c.log(nil)
+			assert.Empty(t, hook.AllEntries())
+			c.log(errors.New("failed\nsync: forged"))
+			require.Len(t, hook.AllEntries(), 1)
+			assert.Equal(t, c.level, hook.LastEntry().Level)
+			assert.NotContains(t, hook.LastEntry().Message, "\n")
+			assert.True(t, strings.HasPrefix(hook.LastEntry().Message, "sync: failed"), hook.LastEntry().Message)
+		})
+	}
 }

@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -268,9 +269,10 @@ func TestSync_longRemoteNames(t *testing.T) {
 			FileName: "long/" + strings.Repeat("l", 256) + ".jpg", FileType: "jpg", MediaType: entity.MediaImage, FileHash: fmt.Sprintf("%040d", 790)}
 		require.NoError(t, file.Create())
 
-		captureSyncLog(t)
+		hook := captureSyncLog(t)
 		_, err := worker.upload(a)
 		require.NoError(t, err)
+		assert.Equal(t, 1, countLogged(hook, logrus.ErrorLevel, "("+clean.Log(a.AccName)+")"))
 
 		var count int64
 		require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ? AND file_id = ?", a.ID, file.ID).Count(&count).Error)

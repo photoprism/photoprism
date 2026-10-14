@@ -26,7 +26,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	maxResults := 250
 
 	// Files skipped for the length of their remote name below another sync path are checked again.
-	w.logErr(entity.ResetFileSyncLongNames(a.ID, a.SyncPath))
+	w.logAccountErr(entity.ResetFileSyncLongNames(a.ID, a.SyncPath), a)
 
 	// Get upload file list from database
 	files, err := query.AccountUploads(a, maxResults)
@@ -36,7 +36,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	}
 
 	if len(files) == 0 {
-		log.Infof("sync: upload complete for %s", a.AccName)
+		log.Infof("sync: upload complete for %s", clean.Log(a.AccName))
 		event.Publish("sync.uploaded", event.Data{"account": a})
 		return true, nil
 	}
@@ -85,19 +85,19 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 		// Ensure remote folder exists.
 		if err = client.MkdirAll(remoteDir); err != nil {
-			log.Debugf("sync: %s", err)
+			log.Debugf("sync: %s (create remote folder for %s)", clean.Error(err), clean.Log(a.AccName))
 		}
 
 		if err = client.Upload(fileName, remoteName); errors.Is(err, webdav.ErrForbidden) {
 			yamlRefused, otherRefused = yamlRefused || yamlFile, otherRefused || !yamlFile
-			w.logErr(err)
+			w.logAccountErr(err, a)
 			continue
 		} else if err != nil {
-			w.logErr(err)
+			w.logAccountErr(err, a)
 			continue // try again next time
 		}
 
-		log.Infof("sync: uploaded %s to %s (%s)", clean.Log(file.FileName), clean.Log(remoteName), a.AccName)
+		log.Infof("sync: uploaded %s to %s (%s)", clean.Log(file.FileName), clean.Log(remoteName), clean.Log(a.AccName))
 
 		fileSync := entity.NewFileSync(a.ID, remoteName)
 		fileSync.Status = entity.FileSyncUploaded
@@ -111,12 +111,12 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			return false, nil
 		}
 
-		w.logErr(entity.Db().Save(&fileSync).Error)
+		w.logFileErr(entity.Db().Save(&fileSync).Error, remoteName, a)
 	}
 
 	if yamlRefused && !otherRefused {
 		log.Warnf("sync: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
-		w.logErr(a.Update("SyncYaml", -1))
+		w.logAccountErr(a.Update("SyncYaml", -1), a)
 	}
 
 	return false, nil
@@ -127,5 +127,5 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 func (w *Sync) ignoreUpload(a entity.Service, dir string, fileID uint) {
 	ignored := entity.NewFileSync(a.ID, path.Join(dir, strconv.FormatUint(uint64(fileID), 10)))
 	ignored.FileID, ignored.Status = fileID, entity.FileSyncIgnore
-	w.logErr(entity.Db().Save(ignored).Error)
+	w.logAccountErr(entity.Db().Save(ignored).Error, a)
 }

@@ -1,6 +1,8 @@
 package workers
 
 import (
+	"path"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service"
@@ -29,17 +31,19 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	// Ensure remote folder exists.
 	if err = client.MkdirAll(a.SyncPath); err != nil {
-		log.Debugf("sync: %s (create remote folder)", clean.Error(err))
+		log.Debugf("sync: %s (create remote folder for %s)", clean.Error(err), clean.Log(a.AccName))
 	}
 
 	subDirs, err := client.Directories(a.SyncPath, true, webdav.MaxRequestDuration)
 
 	if err != nil {
-		log.Errorf("sync: %s (list remote folders)", clean.Error(err))
+		log.Errorf("sync: %s (list remote folders of %s)", clean.Error(err), clean.Log(a.AccName))
 		return false, err
 	}
 
+	// The folder listing may include the sync folder itself, which is listed once.
 	dirs := append(subDirs.Abs(), a.SyncPath)
+	listed := make(map[string]bool, len(dirs))
 
 	// Remote files whose names are too long are skipped with one warning per refresh.
 	var skipped skippedNames
@@ -47,6 +51,12 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	defer skipped.Warn("sync: skipped %s in %s whose names are too long (%s)", "remote file", a.AccName)
 
 	for _, dir := range dirs {
+		if key := path.Clean("/" + dir); listed[key] {
+			continue
+		} else {
+			listed[key] = true
+		}
+
 		if webdav.SkipSyncPath(dir) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(dir))
 			continue
@@ -58,7 +68,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		files, err := client.Files(dir, false)
 
 		if err != nil {
-			log.Errorf("sync: %s (list remote files)", clean.Error(err))
+			log.Errorf("sync: %s (list remote files of %s)", clean.Error(err), clean.Log(a.AccName))
 			return false, err
 		}
 
@@ -98,28 +108,28 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			f = entity.FirstOrCreateFileSync(f)
 
 			if f == nil {
-				log.Errorf("sync: file sync entity must not be nil - you may have found a bug")
+				log.Errorf("sync: failed to record %s from %s", clean.Log(file.Abs), clean.Log(a.AccName))
 				continue
 			}
 
 			if f.Status == entity.FileSyncIgnore && (a.SyncRaw && (content == media.Raw || content == media.Video) || a.SyncYamlEnabled() && yamlFile) {
-				w.logErr(f.Update("Status", entity.FileSyncNew))
+				w.logFileErr(f.Update("Status", entity.FileSyncNew), file.Abs, a)
 			}
 
 			// Keep the listed date and size of queued files current, since a replaced file may keep its date.
 			if f.Status == entity.FileSyncNew && (!f.RemoteDate.Equal(file.Date) || f.RemoteSize != file.Size) {
-				w.logErr(f.Updates(entity.Values{
+				w.logFileErr(f.Updates(entity.Values{
 					"RemoteDate": file.Date,
 					"RemoteSize": file.Size,
-				}))
+				}), file.Abs, a)
 			}
 
 			if f.Status == entity.FileSyncDownloaded && !f.RemoteDate.Equal(file.Date) {
-				w.logErr(f.Updates(entity.Values{
+				w.logFileErr(f.Updates(entity.Values{
 					"Status":     entity.FileSyncNew,
 					"RemoteDate": file.Date,
 					"RemoteSize": file.Size,
-				}))
+				}), file.Abs, a)
 			}
 		}
 	}

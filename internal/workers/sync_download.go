@@ -79,7 +79,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	relatedFiles, err := w.relatedDownloads(a)
 
 	if err != nil {
-		w.logErr(err)
+		w.logAccountErr(err, a)
 		return false, err
 	}
 
@@ -143,7 +143,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 			if webdav.SkipSyncPath(file.RemoteName) {
 				log.Debugf("sync: skipping excluded path %s", clean.Log(file.RemoteName))
 				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
-				w.logErr(entity.Db().Save(&file).Error)
+				w.logFileErr(entity.Db().Save(&file).Error, file.RemoteName, a)
 				files[i] = file
 				continue
 			}
@@ -151,14 +151,14 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 			if syncNameTooLong(file.RemoteName) {
 				log.Debugf("sync: skipping %s from %s because its name is too long", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
-				w.logErr(entity.Db().Save(&file).Error)
+				w.logFileErr(entity.Db().Save(&file).Error, file.RemoteName, a)
 				files[i] = file
 				continue
 			}
 
 			if !a.SyncYamlEnabled() && fs.FileType(file.RemoteName) == fs.SidecarYaml {
 				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
-				w.logErr(entity.Db().Save(&file).Error)
+				w.logFileErr(entity.Db().Save(&file).Error, file.RemoteName, a)
 				files[i] = file
 				continue
 			}
@@ -180,7 +180,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				file.Errors++
 
 				if err = entity.Db().Save(&file).Error; err != nil {
-					w.logErr(err)
+					w.logFileErr(err, file.RemoteName, a)
 				} else {
 					files[i] = file
 				}
@@ -224,7 +224,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 			}
 
 			if err = entity.Db().Save(&file).Error; err != nil {
-				w.logErr(err)
+				w.logFileErr(err, file.RemoteName, a)
 			} else {
 				files[i] = file
 			}
@@ -250,7 +250,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 			related, err := mf.RelatedFiles(w.conf.Settings().StackSequences())
 
 			if err != nil {
-				w.logWarn(err)
+				log.Warnf("sync: %s (%s from %s)", clean.Error(err), clean.Log(file.RemoteName), clean.Log(a.AccName))
 				continue
 			}
 
