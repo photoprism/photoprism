@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -13,7 +15,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"golang.org/x/time/rate"
 
@@ -980,6 +984,100 @@ func TestRegisterUUIDConflictError(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Contains(t, registerUUIDConflictError(""), "already registered")
+	})
+}
+
+func TestRegisterProvisionError(t *testing.T) {
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		code, reason := registerProvisionError(fmt.Errorf("%w: sqlite3", provisioner.ErrUnsupportedDriver))
+		assert.Equal(t, http.StatusConflict, code)
+		assert.Equal(t, "database auto-provisioning is not supported by the portal database configuration", reason)
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		code, reason := registerProvisionError(provisioner.ErrNotConfigured)
+		assert.Equal(t, http.StatusConflict, code)
+		assert.Equal(t, "database auto-provisioning is not configured on the portal", reason)
+	})
+	t.Run("Failed", func(t *testing.T) {
+		code, reason := registerProvisionError(errors.New("connection failed"))
+		assert.Equal(t, http.StatusServiceUnavailable, code)
+		assert.Equal(t, "database provisioning failed; check the portal logs", reason)
+	})
+}
+
+// TestClusterNodesRegister_ProvisionErrors checks the status and reason returned when database provisioning fails.
+func TestClusterNodesRegister_ProvisionErrors(t *testing.T) {
+	// failProvisioning points the provisioner at an account that cannot log in.
+	failProvisioning := func(t *testing.T) {
+		driver, dsnValue := provisioner.DatabaseDriver, provisioner.ProvisionDSN
+		t.Cleanup(func() { provisioner.DatabaseDriver, provisioner.ProvisionDSN = driver, dsnValue })
+
+		cfg, err := mysql.ParseDSN(dsnValue)
+		require.NoError(t, err)
+
+		cfg.User, cfg.Passwd, cfg.Timeout = "pp-provision-test", "not-the-password", 2*time.Second
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "mysql", cfg.FormatDSN()
+	}
+
+	// assertUnavailable checks the status and body of a failed provisioning.
+	assertUnavailable := func(t *testing.T, r *httptest.ResponseRecorder) {
+		assert.Equal(t, http.StatusServiceUnavailable, r.Code, "body=%s", r.Body.String())
+		assert.JSONEq(t, `{"error":"database provisioning failed; check the portal logs"}`, r.Body.String())
+	}
+
+	t.Run("FirstJoin", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+		failProvisioning(t)
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-provision-join","RotateDatabase":true}`, cluster.ExampleJoinToken)
+		assertUnavailable(t, r)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+		_, err = regy.FindByName("pp-provision-join")
+		assert.Error(t, err, "a failed provisioning must not register the node")
+	})
+	t.Run("RotateDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-provision-rotate", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		failProvisioning(t)
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-provision-rotate","RotateDatabase":true}`, token)
+		assertUnavailable(t, r)
+
+		stored, err := regy.FindByName("pp-provision-rotate")
+		require.NoError(t, err)
+		assert.True(t, stored.Database == nil || stored.Database.Name == "", "database fields must stay unset")
+	})
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		driver := provisioner.DatabaseDriver
+		t.Cleanup(func() { provisioner.DatabaseDriver = driver })
+		provisioner.DatabaseDriver = "sqlite3"
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-provision-driver","RotateDatabase":true}`, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusConflict, r.Code)
+		assert.JSONEq(t, `{"error":"database auto-provisioning is not supported by the portal database configuration"}`, r.Body.String())
 	})
 }
 

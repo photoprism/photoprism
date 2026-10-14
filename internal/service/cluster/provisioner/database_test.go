@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"errors"
+	"sync"
 	"testing"
 	"time"
 
@@ -36,23 +37,178 @@ func TestDevDatabasePort(t *testing.T) {
 
 // --- GetDB -------------------------------------------------------------------
 
+// setDB replaces the cached pool and its DSN without closing the previous pool.
+func setDB(db *sql.DB, connDSN string) {
+	dbMutex.Lock()
+	defer dbMutex.Unlock()
+	dbConn, dbDSN = db, connDSN
+}
+
+// registerGetDBDriver registers the fake driver TestGetDB uses, once per process.
+var registerGetDBDriver = sync.OnceFunc(func() { sql.Register("pingy_getdb", pingyDriver{wait: false}) })
+
 func TestGetDB(t *testing.T) {
-	t.Run("NotConfigured", func(t *testing.T) {
+	drv := "pingy_getdb"
+	registerGetDBDriver()
+
+	// restoreDB restores the provisioning DSN and the cached connection a test case replaces.
+	restoreDB := func(t *testing.T) {
 		dbMutex.RLock()
-		origDSN, origDB := ProvisionDSN, dbConn
+		origDSN, origDB, origConnDSN := ProvisionDSN, dbConn, dbDSN
 		dbMutex.RUnlock()
 
 		t.Cleanup(func() {
 			ProvisionDSN = origDSN
-			setDB(origDB)
+			setDB(origDB, origConnDSN)
 		})
+	}
 
+	// cacheDB stores a fake live connection opened with connDSN.
+	cacheDB := func(t *testing.T, connDSN string) *sql.DB {
+		db, err := sql.Open(drv, "")
+		if err != nil {
+			t.Fatalf("open: %v", err)
+		}
+		setDB(db, connDSN)
+		return db
+	}
+
+	t.Run("NotConfigured", func(t *testing.T) {
+		restoreDB(t)
 		ProvisionDSN = ""
-		setDB(nil)
+		setDB(nil, "")
 
 		db, err := GetDB(context.Background())
 		assert.Nil(t, db)
 		assert.ErrorIs(t, err, ErrNotConfigured)
+	})
+	t.Run("ReusesConnection", func(t *testing.T) {
+		restoreDB(t)
+		ProvisionDSN = "cached-dsn"
+		cached := cacheDB(t, "cached-dsn")
+		t.Cleanup(func() { _ = cached.Close() })
+
+		db, err := GetDB(context.Background())
+		assert.NoError(t, err)
+		assert.Same(t, cached, db)
+	})
+	t.Run("DSNChanged", func(t *testing.T) {
+		restoreDB(t)
+		ProvisionDSN = ""
+		cached := cacheDB(t, "cached-dsn")
+
+		db, err := GetDB(context.Background())
+		assert.Nil(t, db)
+		assert.ErrorIs(t, err, ErrNotConfigured)
+
+		dbMutex.RLock()
+		assert.Nil(t, dbConn)
+		assert.Equal(t, "", dbDSN)
+		dbMutex.RUnlock()
+
+		assert.Error(t, cached.PingContext(context.Background()), "cached connection must be closed")
+	})
+	t.Run("DSNReplaced", func(t *testing.T) {
+		restoreDB(t)
+		ProvisionDSN = "root:photoprism@tcp(127.0.0.1:1)/photoprism?timeout=100ms"
+		cached := cacheDB(t, "cached-dsn")
+
+		db, err := GetDB(context.Background())
+		assert.Nil(t, db)
+		assert.Error(t, err)
+		assert.NotErrorIs(t, err, ErrNotConfigured)
+
+		dbMutex.RLock()
+		assert.Nil(t, dbConn)
+		dbMutex.RUnlock()
+
+		assert.Error(t, cached.PingContext(context.Background()), "cached connection must be closed")
+	})
+}
+
+func TestStoreDB(t *testing.T) {
+	drv := "pingy_getdb"
+	registerGetDBDriver()
+
+	// openDB opens a fake pool that is closed when the test ends.
+	openDB := func(t *testing.T) *sql.DB {
+		db, err := sql.Open(drv, "")
+		if err != nil {
+			t.Fatalf("open: %v", err)
+		}
+		t.Cleanup(func() { _ = db.Close() })
+		return db
+	}
+
+	// restore restores the cached pool a test case replaces.
+	restore := func(t *testing.T) {
+		dbMutex.RLock()
+		origDB, origDSN := dbConn, dbDSN
+		dbMutex.RUnlock()
+		t.Cleanup(func() { setDB(origDB, origDSN) })
+	}
+
+	t.Run("Empty", func(t *testing.T) {
+		restore(t)
+		setDB(nil, "")
+		db := openDB(t)
+
+		assert.Same(t, db, storeDB(db, "dsn-a"))
+		assert.Same(t, db, dbConn)
+		assert.Equal(t, "dsn-a", dbDSN)
+	})
+	t.Run("KeepsStoredPool", func(t *testing.T) {
+		restore(t)
+		stored, opened := openDB(t), openDB(t)
+		setDB(stored, "dsn-a")
+
+		assert.Same(t, stored, storeDB(opened, "dsn-a"))
+		assert.NoError(t, stored.PingContext(context.Background()))
+		assert.Error(t, opened.PingContext(context.Background()), "the pool opened second must be closed")
+	})
+	t.Run("ReplacesOtherDSN", func(t *testing.T) {
+		restore(t)
+		stored, opened := openDB(t), openDB(t)
+		setDB(stored, "dsn-a")
+
+		assert.Same(t, opened, storeDB(opened, "dsn-b"))
+		assert.Equal(t, "dsn-b", dbDSN)
+		assert.Error(t, stored.PingContext(context.Background()), "the replaced pool must be closed")
+	})
+}
+
+func TestClearDB(t *testing.T) {
+	drv := "pingy_getdb"
+	registerGetDBDriver()
+
+	dbMutex.RLock()
+	origDB, origDSN := dbConn, dbDSN
+	dbMutex.RUnlock()
+	t.Cleanup(func() { setDB(origDB, origDSN) })
+
+	stored, err := sql.Open(drv, "")
+	if err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	t.Cleanup(func() { _ = stored.Close() })
+
+	other, err := sql.Open(drv, "")
+	if err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	t.Cleanup(func() { _ = other.Close() })
+
+	t.Run("OtherPool", func(t *testing.T) {
+		setDB(stored, "dsn-a")
+		clearDB(other)
+		assert.Same(t, stored, dbConn)
+		assert.Equal(t, "dsn-a", dbDSN)
+	})
+	t.Run("StoredPool", func(t *testing.T) {
+		setDB(stored, "dsn-a")
+		clearDB(stored)
+		assert.Nil(t, dbConn)
+		assert.Equal(t, "", dbDSN)
 	})
 }
 

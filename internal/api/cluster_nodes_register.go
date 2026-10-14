@@ -37,9 +37,9 @@ import (
 //	@Tags		Cluster
 //	@Accept		json
 //	@Produce	json
-//	@Param		request					body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client."
-//	@Success	200,201					{object}	cluster.RegisterResponse
-//	@Failure	400,401,403,409,413,429	{object}	i18n.Response
+//	@Param		request						body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client."
+//	@Success	200,201						{object}	cluster.RegisterResponse
+//	@Failure	400,401,403,409,413,429,503	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/register [post]
 func ClusterNodesRegister(router *gin.RouterGroup) {
 	router.POST("/cluster/nodes/register", func(c *gin.Context) {
@@ -342,7 +342,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 				if credsErr != nil {
 					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "ensure database", status.Error(credsErr)}, clean.Log(name))
-					c.JSON(http.StatusConflict, gin.H{"error": credsErr.Error()})
+					code, reason := registerProvisionError(credsErr)
+					c.JSON(code, gin.H{"error": reason})
 					return
 				}
 
@@ -481,8 +482,9 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		if shouldProvisionDB {
 			if creds, _, err = provisioner.EnsureCredentials(c, conf, n.UUID, name, true); err != nil {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "ensure database", status.Error(err)})
-				c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "ensure database", "node %s", status.Error(err)}, clean.Log(name))
+				code, reason := registerProvisionError(err)
+				c.JSON(code, gin.H{"error": reason})
 				return
 			}
 
@@ -805,6 +807,19 @@ func registerUUIDConflictError(uuid string) string {
 		"node uuid %q is already registered; delete the stale registration before retrying",
 		clean.Log(uuid),
 	)
+}
+
+// registerProvisionError returns the status and generic reason reported for a failed database provisioning.
+// Configuration errors are a conflict, while other failures may be retried.
+func registerProvisionError(err error) (int, string) {
+	switch {
+	case errors.Is(err, provisioner.ErrUnsupportedDriver):
+		return http.StatusConflict, "database auto-provisioning is not supported by the portal database configuration"
+	case errors.Is(err, provisioner.ErrNotConfigured):
+		return http.StatusConflict, "database auto-provisioning is not configured on the portal"
+	default:
+		return http.StatusServiceUnavailable, "database provisioning failed; check the portal logs"
+	}
 }
 
 // nodeUUIDClaimedBy reports whether a node UUID is registered to a different client.

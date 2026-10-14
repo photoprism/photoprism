@@ -48,33 +48,38 @@ var ErrNotConfigured = errors.New("auto-provisioning database is not configured"
 
 var (
 	dbConn  *sql.DB
+	dbDSN   string
 	dbMutex sync.RWMutex
 )
 
 // GetDB returns a pooled auto-provisioning connection, opening (or reopening) if needed.
-// It pings with a short timeout before returning to ensure liveness.
+// It pings with a short timeout before returning, and reopens the pool when ProvisionDSN has changed.
 func GetDB(ctx context.Context) (*sql.DB, error) {
 	// Fast path with read lock.
 	dbMutex.RLock()
-	db := dbConn
+	db, connDSN := dbConn, dbDSN
 	dbMutex.RUnlock()
 
 	if db != nil {
-		if err := pingWithTimeout(ctx, db, 3*time.Second); err == nil {
-			return db, nil
+		if connDSN == ProvisionDSN {
+			if err := pingWithTimeout(ctx, db, 3*time.Second); err == nil {
+				return db, nil
+			}
 		}
-		// Ping failed -> close & rebuild.
+		// Ping failed or DSN changed -> close & rebuild.
 		_ = db.Close()
-		setDB(nil)
+		clearDB(db)
 	}
 
-	if ProvisionDSN == "" {
+	connDSN = ProvisionDSN
+
+	if connDSN == "" {
 		return nil, ErrNotConfigured
 	}
 
 	var err error
 
-	db, err = sql.Open("mysql", ProvisionDSN)
+	db, err = sql.Open("mysql", connDSN)
 	if err != nil {
 		return nil, err
 	}
@@ -90,15 +95,34 @@ func GetDB(ctx context.Context) (*sql.DB, error) {
 		return nil, pingErr
 	}
 
-	setDB(db)
-	return db, nil
+	return storeDB(db, connDSN), nil
 }
 
-// setDB stores the shared provisioning connection under write lock.
-func setDB(db *sql.DB) {
+// storeDB stores a newly opened pool unless another caller stored one for the same DSN first,
+// in which case it closes db and returns the stored pool.
+func storeDB(db *sql.DB, connDSN string) *sql.DB {
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
-	dbConn = db
+
+	if dbConn != nil && dbDSN == connDSN {
+		_ = db.Close()
+		return dbConn
+	} else if dbConn != nil {
+		_ = dbConn.Close()
+	}
+
+	dbConn, dbDSN = db, connDSN
+	return db
+}
+
+// clearDB removes the cached pool if it is still db.
+func clearDB(db *sql.DB) {
+	dbMutex.Lock()
+	defer dbMutex.Unlock()
+
+	if dbConn == db {
+		dbConn, dbDSN = nil, ""
+	}
 }
 
 // pingWithTimeout validates liveness by issuing a ping bounded by d.

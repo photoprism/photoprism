@@ -1030,6 +1030,41 @@ func TestRegisterWithPortal_DropsConfiguredQuery(t *testing.T) {
 	assert.Empty(t, rawQuery, "the configured query reached the endpoint")
 }
 
+func TestRegisterWithPortal_ServiceUnavailable(t *testing.T) {
+	var hits int
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusServiceUnavailable)
+		_, _ = w.Write([]byte(`{"error":"database provisioning failed; check the portal logs"}`))
+	}))
+	defer srv.Close()
+
+	prevAttempts, prevDelay := cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay
+	cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay = 2, time.Millisecond
+	t.Cleanup(func() {
+		cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay = prevAttempts, prevDelay
+	})
+
+	c := newBootstrapTestConfig(t, "bootstrap-reg-unavailable")
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().NodeRole = cluster.RoleInstance
+
+	portal, err := url.Parse(srv.URL)
+	require.NoError(t, err)
+
+	resp, err := registerWithPortal(c, portal, cluster.ExampleJoinToken)
+
+	assert.Nil(t, resp)
+	assert.Equal(t, 2, hits, "a 503 must be retried")
+
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "database provisioning failed")
+		assert.Contains(t, err.Error(), "503")
+	}
+}
+
 func TestRegisterError(t *testing.T) {
 	newResp := func(status int, body string) *http.Response {
 		return &http.Response{

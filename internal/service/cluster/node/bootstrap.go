@@ -308,7 +308,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 					// TODO: Consider exponential backoff with jitter instead of constant delay.
 					return true, nil, nil
 				}
-				return false, nil, errors.New(resp.Status)
+				return false, nil, registerError(resp)
 			}
 		}()
 
