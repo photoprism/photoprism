@@ -284,3 +284,20 @@ func TestResetFileSyncStalled(t *testing.T) {
 	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", otherID).Count(&other).Error)
 	assert.EqualValues(t, 1, other)
 }
+
+func TestFileSync_ServiceStatusIndex(t *testing.T) {
+	// The queries of an account's queued files and shares filter by service and status.
+	for _, c := range []struct {
+		model any
+		name  string
+	}{{&FileSync{}, "idx_files_sync_service_status"}, {&FileShare{}, "idx_files_share_service_status"}} {
+		s, err := schema.Parse(c.model, &sync.Map{}, schema.NamingStrategy{})
+		require.NoError(t, err)
+		idx := s.LookIndex(c.name)
+		require.NotNil(t, idx, c.name)
+		require.Len(t, idx.Fields, 2)
+		assert.Equal(t, "service_id", idx.Fields[0].DBName)
+		assert.Equal(t, "status", idx.Fields[1].DBName)
+		assert.True(t, Db().Migrator().HasIndex(c.model, c.name), c.name)
+	}
+}
