@@ -462,7 +462,9 @@ func (c *Client) Upload(src, dest string) (err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("webdav: %s (panic while uploading)\nstack: %s", r, debug.Stack())
+			log.Errorf("webdav: %s (panic while uploading %s)", clean.Log(fmt.Sprint(r)), clean.Log(dest))
+			log.Debugf("webdav: stack of the panic while uploading %s: %s", clean.Log(dest), debug.Stack())
+			err = fmt.Errorf("webdav: failed to upload %s (unexpected error)", clean.LogBytes(dest, clean.LogNamesBytes))
 		}
 	}()
 
@@ -552,7 +554,8 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			log.Errorf("webdav: %s (panic)\nstack: %s", r, clean.Log(src))
+			log.Errorf("webdav: %s (panic while downloading %s)", clean.Log(fmt.Sprint(r)), clean.Log(src))
+			log.Debugf("webdav: stack of the panic while downloading %s: %s", clean.Log(src), debug.Stack())
 			err = fmt.Errorf("webdav: unexpected error while downloading %s", clean.Log(src))
 		}
 	}()

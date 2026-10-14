@@ -6,12 +6,15 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -298,4 +301,47 @@ func TestClient_timeoutContext(t *testing.T) {
 			assert.WithinDuration(t, time.Now().Add(c.deadline), deadline, 5*time.Second)
 		})
 	}
+}
+
+func TestClient_RecoveredPanic(t *testing.T) {
+	// A client without its HTTP clients panics on a transfer, which is reported briefly, with the stack in the debug log.
+	endpoint, err := url.Parse("http://127.0.0.1:1/")
+	require.NoError(t, err)
+	c := &Client{ctx: context.Background(), endpoint: endpoint}
+
+	logger, hook := logtest.NewNullLogger()
+	logger.SetLevel(logrus.DebugLevel)
+	prev := log
+	log = logger
+	t.Cleanup(func() { log = prev })
+
+	// stackLogged reports whether the panic was logged as an error without its stack, and its stack at debug level.
+	stackLogged := func(kind string) bool {
+		var logged, stack bool
+		for _, e := range hook.AllEntries() {
+			switch {
+			case e.Level == logrus.ErrorLevel && strings.Contains(e.Message, "panic while "+kind):
+				logged = !strings.Contains(e.Message, "goroutine")
+			case e.Level == logrus.DebugLevel && strings.Contains(e.Message, "panic while "+kind) && strings.Contains(e.Message, "goroutine"):
+				stack = true
+			}
+		}
+		return logged && stack
+	}
+
+	t.Run("Upload", func(t *testing.T) {
+		src := filepath.Join(t.TempDir(), "panic.jpg")
+		require.NoError(t, os.WriteFile(src, []byte("panic"), 0o600))
+		err := c.Upload(src, "/panic.jpg")
+		require.Error(t, err)
+		assert.Equal(t, "webdav: failed to upload panic.jpg (unexpected error)", err.Error())
+		assert.True(t, stackLogged("uploading"))
+	})
+	t.Run("Download", func(t *testing.T) {
+		err := c.Download("/panic.jpg", filepath.Join(t.TempDir(), "panic.jpg"), false)
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "\n")
+		assert.Contains(t, err.Error(), "unexpected error while downloading")
+		assert.True(t, stackLogged("downloading"))
+	})
 }
