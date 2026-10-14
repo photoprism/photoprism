@@ -76,7 +76,7 @@ test.meta("testID", "people-001").meta({ type: "short", mode: "public" })(
     await menu.openPage("people");
     await subject.renameSubject(JaneUID, "Otto Visible");
     await t
-      .expect(Selector("p").withText("Merge Jane Doe with Otto Visible").visible)
+      .expect(Selector("p").withText(/Merge \u2068?Jane Doe\u2069? with \u2068?Otto Visible\u2069?\?/).visible)
       .ok()
       .click(Selector("div.dialog-merge button.action-cancel"));
     await subject.renameSubject(JaneUID, "Max Mu");
