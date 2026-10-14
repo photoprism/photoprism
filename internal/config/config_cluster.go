@@ -693,7 +693,7 @@ func (c *Config) NodeUUID() string {
 	c.options.NodeUUID = uuid
 
 	if err := c.SaveNodeUUID(uuid); err != nil {
-		log.Warnf("config: could not save node UUID (%s)", clean.Error(err))
+		event.SystemWarn([]string{"config", "cluster", "could not save node UUID", "%s"}, clean.Error(err))
 	}
 
 	return uuid
@@ -815,7 +815,7 @@ func (c *Config) SetJWKSUrl(url string) {
 
 	trimmed, ok := validClusterURL(url)
 	if !ok {
-		log.Warnf("config: rejecting JWKS URL %s (must be https, or http on loopback)", clean.Log(trimmed))
+		event.SystemWarn([]string{"config", "cluster", "rejecting JWKS URL %s (must be https, or http on loopback)"}, clean.Log(trimmed))
 		return
 	}
 
@@ -846,7 +846,7 @@ func (c *Config) SetPortalLoginUrl(url string) {
 
 	trimmed, ok := validClusterURL(url)
 	if !ok {
-		log.Warnf("config: rejecting portal login URL %s (must be https, or http on loopback)", clean.Log(trimmed))
+		event.SystemWarn([]string{"config", "cluster", "rejecting portal login URL %s (must be https, or http on loopback)"}, clean.Log(trimmed))
 		return
 	}
 

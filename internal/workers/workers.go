@@ -35,6 +35,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -61,7 +62,7 @@ func Start(conf *config.Config) {
 		// otherwise never reach a tick.
 		if conf.Portal() {
 			if err = NewJob("jwt-keys", JWTKeySchedule, func() { RunJWTKeyRotation(conf) }); err != nil {
-				log.Errorf("scheduler: %s (jwt keys)", err)
+				event.SystemError([]string{"scheduler", "jwt keys", "%s"}, clean.Error(err))
 			}
 
 			go event.Safe(func() { RunJWTKeyRotation(conf) })

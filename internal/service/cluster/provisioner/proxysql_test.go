@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -174,10 +175,11 @@ func TestNormalizeProxyDSN(t *testing.T) {
 		}
 	})
 	t.Run("DroppedLogged", func(t *testing.T) {
+		// Operator-only detail goes to the system log.
 		logger, hook := logtest.NewNullLogger()
-		prev := log
-		log = logger
-		t.Cleanup(func() { log = prev })
+		prev := event.SystemLog
+		event.SystemLog = logger
+		t.Cleanup(func() { event.SystemLog = prev })
 		_, err := normalizeProxyDSN("admin:admin@tcp(127.0.0.1:6032)/?wait_timeout=28800,sql_mode=ANSI&x%20y=secret&stray")
 		require.NoError(t, err)
 		require.Len(t, hook.AllEntries(), 1)
