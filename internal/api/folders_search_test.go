@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -104,6 +105,55 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, false, folder.FolderFavorite)
 			assert.Equal(t, false, folder.FolderIgnore)
 			assert.Equal(t, false, folder.FolderWatch)
+		}
+	})
+}
+
+func TestSearchFolders_RealNames(t *testing.T) {
+	app, router, conf := NewApiTest()
+	_ = conf.CreateDirectories()
+	SearchFoldersOriginals(router)
+
+	const parent = "api-folder-names"
+	family := "Family \U0001F469\u200D\U0001F469\u200D\U0001F467"
+	names := []string{family, "Screenshots 10.00\u202FAM", "mi\u200Cxwaham"}
+
+	for _, name := range names {
+		assert.NoError(t, os.MkdirAll(filepath.Join(conf.OriginalsPath(), parent, name, "2026"), fs.ModeDir))
+	}
+
+	t.Cleanup(func() {
+		assert.NoError(t, os.RemoveAll(filepath.Join(conf.OriginalsPath(), parent)))
+		assert.NoError(t, entity.UnscopedDb().Where("root = ? AND (path = ? OR path LIKE ?)",
+			entity.RootOriginals, parent, parent+"/%").Delete(&entity.Folder{}).Error)
+	})
+
+	listFolders := func(t *testing.T, folderPath string) []string {
+		t.Helper()
+		r := PerformRequest(app, "GET", "/api/v1/folders/originals/"+url.PathEscape(parent)+folderPath+"?uncached=true")
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		var resp FoldersResponse
+		assert.NoError(t, json.Unmarshal(r.Body.Bytes(), &resp))
+
+		paths := make([]string, 0, len(resp.Folders))
+
+		for _, folder := range resp.Folders {
+			paths = append(paths, folder.Path)
+		}
+
+		return paths
+	}
+
+	t.Run("Parent", func(t *testing.T) {
+		paths := listFolders(t, "")
+		for _, name := range names {
+			assert.Contains(t, paths, parent+"/"+name)
+		}
+	})
+	t.Run("Child", func(t *testing.T) {
+		for _, name := range names {
+			assert.Equal(t, []string{parent + "/" + name + "/2026"}, listFolders(t, "/"+url.PathEscape(name)), "%+q", name)
 		}
 	})
 }
