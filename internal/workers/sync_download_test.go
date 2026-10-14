@@ -346,6 +346,24 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		require.Len(t, warnings, 1)
 		assert.Contains(t, warnings[0], "failed to download 15 files from")
 	})
+	t.Run("NoLimitAllFail", func(t *testing.T) {
+		// When every file was tried and failed, the stage closes after one run.
+		a := newAccount(t, -1)
+		for i := 0; i < 3; i++ {
+			newFile(t, a, fmt.Sprintf("/all-fail-%d.jpg", i), 0)
+		}
+
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+
+		complete, err := worker.download(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "failed to download 3 files from")
+	})
 	t.Run("NoLimitSaveFails", func(t *testing.T) {
 		// Files whose outcome cannot be saved stay untried, so the stage stays open only while others make progress.
 		a := newAccount(t, -1)
