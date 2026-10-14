@@ -103,13 +103,11 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		return true, nil
 	}
 
-	// Without a retry limit, the stage completes once a run makes no progress, see below.
-	var queued, untried int64
+	// The stage completes once a run makes no progress, see below.
+	before, err := query.CountQueuedFileSyncs(a.ID, a.RetryLimit)
 
-	if a.RetryLimit <= 0 {
-		if queued, untried, _, err = query.CountQueuedFileSyncs(a.ID); err != nil {
-			return false, err
-		}
+	if err != nil {
+		return false, err
 	}
 
 	// Display log message.
@@ -322,22 +320,29 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		w.logWarn(query.UpdateCovers())
 	}
 
-	// Without a retry limit, failed files stay new. The stage stays open while a run changes the status of a
-	// queued file, or tries files that were not tried yet while some remain, which the next run reads first.
-	// A file whose outcome cannot be saved therefore keeps it open only as long as others make progress.
-	if a.RetryLimit <= 0 {
-		queuedAfter, untriedAfter, failed, countErr := query.CountQueuedFileSyncs(a.ID)
+	after, err := query.CountQueuedFileSyncs(a.ID, a.RetryLimit)
 
-		if countErr != nil {
-			return false, countErr
-		} else if queuedAfter < queued || untriedAfter > 0 && untriedAfter < untried {
+	if err != nil {
+		return false, err
+	}
+
+	// The stage stays open while a run changes the status of a queued file, or tries files that may be tried again:
+	// without a retry limit, failed files stay new and are tried again in the next sync, so only files not tried yet
+	// count, which the next run reads first; with one, files are tried in each run until they exceed it. A file
+	// whose outcome cannot be saved therefore keeps the stage open only as long as others make progress.
+	if a.RetryLimit <= 0 {
+		if after.Queued < before.Queued || after.Untried > 0 && after.Untried < before.Untried {
 			return false, nil
 		}
 
-		log.Warnf("sync: failed to download %s from %s, retrying in the next sync", english.Plural(int(failed), "file", "files"), clean.Log(a.AccName))
+		log.Warnf("sync: failed to download %s from %s, retrying in the next sync", english.Plural(int(after.Failed), "file", "files"), clean.Log(a.AccName))
 
 		return true, nil
+	} else if after.Retryable > 0 && (after.Queued < before.Queued || after.Errors > before.Errors) {
+		return false, nil
+	} else if after.Retryable > 0 {
+		log.Warnf("sync: %s from %s still queued, retrying in the next sync", english.Plural(int(after.Retryable), "file", "files"), clean.Log(a.AccName))
 	}
 
-	return false, nil
+	return true, nil
 }

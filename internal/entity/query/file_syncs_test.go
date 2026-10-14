@@ -107,14 +107,20 @@ func TestCountQueuedFileSyncs(t *testing.T) {
 			}
 		}
 
-		queued, untried, failed, err := CountQueuedFileSyncs(serviceID)
+		counts, err := CountQueuedFileSyncs(serviceID, -1)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.EqualValues(t, 5, queued)
-		assert.EqualValues(t, 2, untried)
-		assert.EqualValues(t, 3, failed)
+		assert.Equal(t, QueuedFileSyncCounts{Queued: 5, Untried: 2, Failed: 3, Retryable: 5, Errors: 10}, counts)
+
+		// With a retry limit, only files at or below it may be tried again.
+		counts, err = CountQueuedFileSyncs(serviceID, 2)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.EqualValues(t, 4, counts.Retryable)
 	})
 	t.Run("NullErrors", func(t *testing.T) {
 		// Rows written by earlier releases may hold no error count, which counts as not tried.
@@ -130,20 +136,16 @@ func TestCountQueuedFileSyncs(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		queued, untried, failed, err := CountQueuedFileSyncs(serviceID)
+		counts, err := CountQueuedFileSyncs(serviceID, 3)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.EqualValues(t, 1, queued)
-		assert.EqualValues(t, 1, untried)
-		assert.EqualValues(t, 0, failed)
+		assert.Equal(t, QueuedFileSyncCounts{Queued: 1, Untried: 1, Retryable: 1}, counts)
 	})
 	t.Run("None", func(t *testing.T) {
-		queued, untried, failed, err := CountQueuedFileSyncs(uint(1999995))
+		counts, err := CountQueuedFileSyncs(uint(1999995), -1)
 		assert.NoError(t, err)
-		assert.Zero(t, queued)
-		assert.Zero(t, untried)
-		assert.Zero(t, failed)
+		assert.Equal(t, QueuedFileSyncCounts{}, counts)
 	})
 }

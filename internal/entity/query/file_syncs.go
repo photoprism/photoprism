@@ -1,6 +1,8 @@
 package query
 
 import (
+	"fmt"
+
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -32,21 +34,32 @@ func FileSyncs(accountId uint, status string, limit int) (result []entity.FileSy
 	return result, nil
 }
 
-// CountQueuedFileSyncs returns the number of files of an account that are queued for download, of those that
-// were not tried yet, and of those that failed.
-func CountQueuedFileSyncs(accountId uint) (queued, untried, failed int64, err error) {
-	var counts struct {
-		Queued  int64
-		Untried int64
-		Failed  int64
+// QueuedFileSyncCounts counts the files of an account that are queued for download.
+type QueuedFileSyncCounts struct {
+	Queued    int64 // Files queued for download.
+	Untried   int64 // Queued files that were not tried yet.
+	Failed    int64 // Queued files that failed at least once.
+	Retryable int64 // Queued files that may still be tried with the retry limit.
+	Errors    int64 // Errors of the queued files in total.
+}
+
+// CountQueuedFileSyncs counts the files of an account that are queued for download, where a positive retry limit
+// decides which of them may still be tried.
+func CountQueuedFileSyncs(accountId uint, retryLimit int) (counts QueuedFileSyncCounts, err error) {
+	retryable := "1"
+
+	if retryLimit > 0 {
+		retryable = fmt.Sprintf("CASE WHEN COALESCE(errors, 0) <= %d THEN 1 ELSE 0 END", retryLimit)
 	}
 
 	err = Db().Model(&entity.FileSync{}).
 		Select("COUNT(*) AS queued, "+
 			"COALESCE(SUM(CASE WHEN COALESCE(errors, 0) = 0 THEN 1 ELSE 0 END), 0) AS untried, "+
-			"COALESCE(SUM(CASE WHEN errors > 0 THEN 1 ELSE 0 END), 0) AS failed").
+			"COALESCE(SUM(CASE WHEN errors > 0 THEN 1 ELSE 0 END), 0) AS failed, "+
+			"COALESCE(SUM("+retryable+"), 0) AS retryable, "+
+			"COALESCE(SUM(COALESCE(errors, 0)), 0) AS errors").
 		Where("service_id = ? AND status = ?", accountId, entity.FileSyncNew).
 		Scan(&counts).Error
 
-	return counts.Queued, counts.Untried, counts.Failed, err
+	return counts, err
 }

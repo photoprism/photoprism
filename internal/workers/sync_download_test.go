@@ -396,6 +396,56 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.Equal(t, 2, stored(t, a, "/save-works.jpg").Errors)
 		assert.Equal(t, entity.FileSyncDownloaded, stored(t, a, "/ok-save.txt").Status)
 	})
+	t.Run("LimitCloses", func(t *testing.T) {
+		// With a positive limit, a failing file is tried in each run until it exceeds the limit.
+		a := newAccount(t, 2)
+		newFile(t, a, "/limit-closes.jpg", 0)
+
+		var runs []bool
+		for run := 0; run < 3; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+
+		assert.Equal(t, []bool{false, false, true}, runs)
+		assert.Equal(t, entity.FileSyncFailed, stored(t, a, "/limit-closes.jpg").Status)
+	})
+	t.Run("LimitLowered", func(t *testing.T) {
+		// A file left over a limit that was lowered is not tried and does not keep the stage open.
+		a := newAccount(t, 1)
+		newFile(t, a, "/limit-lowered.jpg", 5)
+
+		complete, err := worker.download(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.Equal(t, 0, attempts("/limit-lowered.jpg"))
+	})
+	t.Run("LimitSaveFails", func(t *testing.T) {
+		// With a positive limit, a file whose outcome cannot be saved keeps the stage open only while others make progress.
+		a := newAccount(t, 3)
+		newFile(t, a, "/limit-save-fails.jpg", 0)
+		newFile(t, a, "/limit-save-works.jpg", 2)
+
+		require.NoError(t, entity.Db().Callback().Update().Before("gorm:update").Register("test:fail_limit_save", func(tx *gorm.DB) {
+			if f, ok := tx.Statement.Dest.(*entity.FileSync); ok && f.ServiceID == a.ID && f.RemoteName == "/limit-save-fails.jpg" {
+				_ = tx.AddError(errors.New("save failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("test:fail_limit_save") })
+
+		var runs []bool
+		for run := 0; run < 3; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+
+		// The second file fails twice more and so exceeds the limit, and the next run, which makes no progress, closes the stage.
+		assert.Equal(t, []bool{false, false, true}, runs)
+		assert.Equal(t, entity.FileSyncFailed, stored(t, a, "/limit-save-works.jpg").Status)
+		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/limit-save-fails.jpg").Status)
+	})
 	t.Run("LowestLimitOpen", func(t *testing.T) {
 		a := newAccount(t, 1)
 		newFile(t, a, "/lowest-open.jpg", 0)
