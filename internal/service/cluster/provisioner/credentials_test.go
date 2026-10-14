@@ -3,6 +3,7 @@ package provisioner
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -87,9 +88,9 @@ func TestEnsureCredentials_MariaDB(t *testing.T) {
 	}
 }
 
-// limitedAdminDSN creates an admin account that may create databases and users but lacks DROP,
+// limitedAdminDSN creates an admin account with the given grants, where %s stands for the account,
 // and returns a DSN for it. The account is removed when the test ends.
-func limitedAdminDSN(t *testing.T, ctx context.Context) string {
+func limitedAdminDSN(t *testing.T, ctx context.Context, grants ...string) string {
 	t.Helper()
 
 	db, err := GetDB(ctx)
@@ -100,11 +101,14 @@ func limitedAdminDSN(t *testing.T, ctx context.Context) string {
 	const user = "pp_provision_limited"
 	pass := rnd.Base62(24)
 
-	for _, stmt := range []string{
-		"DROP USER IF EXISTS '" + user + "'@'%'",
-		"CREATE USER '" + user + "'@'%' IDENTIFIED BY '" + pass + "'",
-		"GRANT CREATE, CREATE USER ON *.* TO '" + user + "'@'%' WITH GRANT OPTION",
-	} {
+	account := "'" + user + "'@'%'"
+	stmts := []string{"DROP USER IF EXISTS " + account, "CREATE USER " + account + " IDENTIFIED BY '" + pass + "'"}
+
+	for _, grant := range grants {
+		stmts = append(stmts, fmt.Sprintf(grant, account))
+	}
+
+	for _, stmt := range stmts {
 		_, execErr := db.ExecContext(ctx, stmt)
 		require.NoError(t, execErr, stmt)
 	}
@@ -117,7 +121,7 @@ func limitedAdminDSN(t *testing.T, ctx context.Context) string {
 
 	cfg, err := mysql.ParseDSN(ProvisionDSN)
 	require.NoError(t, err)
-	cfg.User, cfg.Passwd = user, pass
+	cfg.User, cfg.Passwd, cfg.DBName = user, pass, ""
 
 	return cfg.FormatDSN()
 }
@@ -130,7 +134,7 @@ func TestEnsureCredentials_Incomplete(t *testing.T) {
 
 	rootDSN := ProvisionDSN
 	t.Cleanup(func() { ProvisionDSN = rootDSN })
-	limitedDSN := limitedAdminDSN(t, ctx)
+	limitedDSN := limitedAdminDSN(t, ctx, "GRANT CREATE, CREATE USER ON *.* TO %s WITH GRANT OPTION")
 
 	c := config.NewConfig(config.CliTestContext())
 	c.Options().ClusterUUID = rnd.UUID()
@@ -167,6 +171,47 @@ func TestEnsureCredentials_Incomplete(t *testing.T) {
 	require.NoError(t, err)
 	defer udb.Close()
 	assert.NoError(t, udb.PingContext(ctx))
+}
+
+// TestEnsureCredentials_CreateDatabaseFailed checks that a failed CREATE DATABASE whose database exists is
+// reported as incomplete.
+func TestEnsureCredentials_CreateDatabaseFailed(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	db, err := GetDB(ctx)
+	if err != nil {
+		t.Skipf("provisioning database is unavailable: %v", err)
+	}
+
+	rootDSN := ProvisionDSN
+	t.Cleanup(func() { ProvisionDSN = rootDSN })
+
+	c := config.NewConfig(config.CliTestContext())
+	c.Options().ClusterUUID = rnd.UUID()
+	nodeUUID, nodeName := rnd.UUIDv7(), "pp-create-failed"
+	dbName, dbUser, _ := GenerateCredentials(c, nodeUUID, nodeName)
+
+	t.Cleanup(func() {
+		ProvisionDSN = rootDSN
+		if dropErr := DropCredentials(context.Background(), dbName, dbUser); dropErr != nil {
+			t.Errorf("cleanup: %v", dropErr)
+		}
+	})
+
+	// The account sees the existing database but may not create one, so CREATE DATABASE fails.
+	_, err = db.ExecContext(ctx, "CREATE DATABASE `"+dbName+"`")
+	require.NoError(t, err)
+	ProvisionDSN = limitedAdminDSN(t, ctx, "GRANT SELECT ON `"+dbName+"`.* TO %s")
+
+	creds, created, err := EnsureCredentials(ctx, c, nodeUUID, nodeName, true)
+
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrIncomplete)
+	assert.False(t, created)
+	assert.Equal(t, dbName, creds.Name)
+	assert.Equal(t, dbUser, creds.User)
+	assert.Empty(t, creds.Password)
 }
 
 // TestEnsureCredentials_DriverNormalization verifies driver normalization and rejections.

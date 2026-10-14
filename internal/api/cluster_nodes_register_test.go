@@ -1357,6 +1357,72 @@ func TestClusterNodesRegister_IncompleteDatabase(t *testing.T) {
 	})
 }
 
+func TestCreateJoiningNode(t *testing.T) {
+	conf := get.Config()
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	driver, dsnValue := provisioner.DatabaseDriver, provisioner.ProvisionDSN
+	t.Cleanup(func() { provisioner.DatabaseDriver, provisioner.ProvisionDSN = driver, dsnValue })
+
+	// newNode returns a joining node that is removed when the test ends.
+	newNode := func(t *testing.T, name string) *reg.Node {
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: name, Role: cluster.RoleInstance}}
+		n.ClientSecret = rnd.ClientSecret()
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		return n
+	}
+
+	t.Run("WithDatabase", func(t *testing.T) {
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "MariaDB", "root:secret@tcp(127.0.0.1:1)/photoprism"
+		n := newNode(t, "pp-joining-db")
+
+		require.NoError(t, createJoiningNode(conf, regy, n, true))
+
+		dbName, dbUser, _ := provisioner.GenerateCredentials(conf, n.UUID, n.Name)
+		stored, err := regy.FindByNodeUUID(n.UUID)
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, dbName, stored.Database.Name)
+			assert.Equal(t, dbUser, stored.Database.User)
+			assert.Equal(t, "mariadb", stored.Database.Driver)
+			assert.Empty(t, stored.Database.RotatedAt)
+		}
+	})
+	t.Run("WithoutDatabase", func(t *testing.T) {
+		n := newNode(t, "pp-joining-nodb")
+
+		require.NoError(t, createJoiningNode(conf, regy, n, false))
+
+		stored, err := regy.FindByNodeUUID(n.UUID)
+		require.NoError(t, err)
+		assert.True(t, stored.Database == nil || stored.Database.Name == "")
+	})
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "sqlite3", "root:secret@tcp(127.0.0.1:1)/photoprism"
+		n := newNode(t, "pp-joining-driver")
+
+		assert.ErrorIs(t, createJoiningNode(conf, regy, n, true), provisioner.ErrUnsupportedDriver)
+		assert.Empty(t, entity.FindClientsByNodeUUID(n.UUID), "no record may be created")
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "mysql", ""
+		n := newNode(t, "pp-joining-dsn")
+
+		assert.ErrorIs(t, createJoiningNode(conf, regy, n, true), provisioner.ErrNotConfigured)
+		assert.Empty(t, entity.FindClientsByNodeUUID(n.UUID), "no record may be created")
+	})
+	t.Run("ExistingUUID", func(t *testing.T) {
+		first := newNode(t, "pp-joining-first")
+		require.NoError(t, createJoiningNode(conf, regy, first, false))
+
+		second := newNode(t, "pp-joining-second")
+		second.UUID = first.UUID
+
+		assert.ErrorIs(t, createJoiningNode(conf, regy, second, false), reg.ErrIdentifierMismatch)
+	})
+}
+
 func TestPersistJoinedDatabase(t *testing.T) {
 	conf := get.Config()
 	regy, err := reg.NewClientRegistryWithConfig(conf)

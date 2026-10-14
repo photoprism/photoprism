@@ -486,21 +486,13 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		var creds provisioner.Credentials
 		dbIncomplete := false
 
-		if shouldProvisionDB {
-			// A configuration that cannot provision is refused before the node is registered.
-			if err = provisioner.CheckConfig(); err != nil {
+		if err = createJoiningNode(conf, regy, n, shouldProvisionDB); err != nil {
+			if errors.Is(err, provisioner.ErrUnsupportedDriver) || errors.Is(err, provisioner.ErrNotConfigured) {
 				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "ensure database", "node %s", status.Error(err)}, clean.Log(name))
 				code, reason := registerProvisionError(err)
 				c.JSON(code, gin.H{"error": reason})
 				return
-			}
-
-			dbName, dbUser, _ := provisioner.GenerateCredentials(conf, n.UUID, name)
-			n.Database = &cluster.NodeDatabase{Name: dbName, User: dbUser, Driver: strings.ToLower(provisioner.DatabaseDriver)}
-		}
-
-		if err = regy.Create(n); err != nil {
-			if errors.Is(err, reg.ErrIdentifierMismatch) {
+			} else if errors.Is(err, reg.ErrIdentifierMismatch) {
 				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "%s", "uuid %s already registered", status.Denied}, clean.Log(name), clean.Log(n.UUID))
 				c.JSON(http.StatusConflict, gin.H{"error": registerUUIDConflictError(n.UUID)})
 				return
@@ -845,6 +837,21 @@ func registerProvisionError(err error) (int, string) {
 	default:
 		return http.StatusServiceUnavailable, "database provisioning failed; check the portal logs"
 	}
+}
+
+// createJoiningNode registers a joining node, with the database it will be provisioned before any statement
+// runs, so the registry names every database that may exist. A configuration that cannot provision is refused first.
+func createJoiningNode(conf *config.Config, regy *reg.ClientRegistry, n *reg.Node, provisionDB bool) error {
+	if provisionDB {
+		if err := provisioner.CheckConfig(); err != nil {
+			return err
+		}
+
+		dbName, dbUser, _ := provisioner.GenerateCredentials(conf, n.UUID, n.Name)
+		n.Database = &cluster.NodeDatabase{Name: dbName, User: dbUser, Driver: strings.ToLower(provisioner.DatabaseDriver)}
+	}
+
+	return regy.Create(n)
 }
 
 // persistJoinedDatabase saves the rotation time of a newly provisioned database. The registry already
