@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copies the index of a TestCafe fixture into the "testcafe" database on MariaDB or PostgreSQL, and writes a
-# "config-<db>" folder next to the fixture's "config-sqlite" folder that uses it. With sqlite, it does nothing.
+# "config-<db>-generated" folder next to the fixture's "config-sqlite" folder that uses it. With sqlite, it does nothing.
 set -euo pipefail
 
 if (( $# != 3 )); then
@@ -41,7 +41,7 @@ fi
 
 dir=$(dirname "$src")
 root=$(realpath -- "$dir")
-dst=$dir/config-$db
+dst=$dir/config-$db-generated
 marker=.testcafe-generated
 
 if [[ "$(basename "$src")" != "config-sqlite" || ! -f "$src/options.yml" ]]; then
@@ -108,7 +108,7 @@ PHOTOPRISM_TRANSFER_PASSWORD=$pass "$bin" -c "$src" database transfer --force \
   --target-driver "$db" --target-server "$server" --target-name "$name" --target-user "$user"
 
 # Builds the folder under a temporary name, so that an interrupted run leaves no partial config behind.
-tmp=$(mktemp -d "$dir/.config-$db.XXXXXX")
+tmp=$(mktemp -d "$dir/.config-$db-generated.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT
 touch "$tmp/$marker"
 cp -RLp "$src/." "$tmp/"

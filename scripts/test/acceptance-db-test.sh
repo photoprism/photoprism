@@ -89,14 +89,17 @@ check "SQLiteNoChanges" test "$(ls "$fx")" == config-sqlite -a ! -s "$LOG"
 mkdir -p "$fx/other"
 cp "$fx/config-sqlite/options.yml" "$fx/other/"
 expect "SourceName" 1 "config-sqlite" mariadb "$tmp/photoprism" "$fx/other"
-check "SourceNameNoTarget" test ! -e "$fx/config-mariadb"
+check "SourceNameNoTarget" test ! -e "$fx/config-mariadb-generated"
 expect "SourceMissing" 1 "not found" mariadb "$tmp/photoprism" "$tmp/missing/config-sqlite"
 
 cp "$fx/config-sqlite/options.yml" "$tmp/fx-options.yml"
-expect "MariaDB" 0 "Created $fx/config-mariadb" mariadb "$tmp/photoprism" "$fx/config-sqlite/"
+mkdir "$fx/config-mariadb"
+touch "$fx/config-mariadb/keep"
+expect "MariaDB" 0 "Created $fx/config-mariadb-generated" mariadb "$tmp/photoprism" "$fx/config-sqlite/"
+check "MariaDBFixtureFolderKept" test -f "$fx/config-mariadb/keep"
 check "MariaDBSourceIdentical" cmp -s "$tmp/fx-options.yml" "$fx/config-sqlite/options.yml"
-opt=$fx/config-mariadb/options.yml
-check "MariaDBMarker" test -f "$fx/config-mariadb/.testcafe-generated"
+opt=$fx/config-mariadb-generated/options.yml
+check "MariaDBMarker" test -f "$fx/config-mariadb-generated/.testcafe-generated"
 check "MariaDBDriver" grep -qx 'DatabaseDriver: mysql' "$opt"
 check "MariaDBServer" grep -qx 'DatabaseServer: "mariadb:4001"' "$opt"
 check "MariaDBName" grep -qx 'DatabaseName: "testcafe"' "$opt"
@@ -105,11 +108,11 @@ check "MariaDBUser" grep -qx 'DatabaseUser: "testcafe"' "$opt"
 check "MariaDBPassword" grep -qx 'DatabasePassword: "testcafe"' "$opt"
 check "MariaDBDatabaseKeys" test "$(grep -c '^Database' "$opt")" -eq 6
 check "MariaDBPrivate" test "$(stat -c %a "$opt")" == 600
-check "MariaDBSettings" grep -qx settings "$fx/config-mariadb/settings.yml"
-check "MariaDBKeys" grep -qx key "$fx/config-mariadb/keys/key.pem"
+check "MariaDBSettings" grep -qx settings "$fx/config-mariadb-generated/settings.yml"
+check "MariaDBKeys" grep -qx key "$fx/config-mariadb-generated/keys/key.pem"
 check "MariaDBNoTempFolder" test -z "$(find "$fx" -maxdepth 1 -name '.config-*')"
 check "MariaDBOtherOptions" grep -qx 'HttpPort: 2343' "$opt"
-check "MariaDBHubLinked" test "$fx/config-mariadb/hub.yml" -ef "$fx/config-sqlite/hub.yml"
+check "MariaDBHubLinked" test "$fx/config-mariadb-generated/hub.yml" -ef "$fx/config-sqlite/hub.yml"
 check "MariaDBSourceUnchanged" grep -qx 'DatabaseDriver: sqlite' "$fx/config-sqlite/options.yml"
 check "MariaDBClient" grep -qx "args: --defaults" "$LOG"
 check "MariaDBCreatesDatabase" grep -q "CREATE DATABASE IF NOT EXISTS \`testcafe\`" "$LOG"
@@ -119,18 +122,18 @@ check "MariaDBTransfer" grep -q -- "-c $fx/config-sqlite database transfer --for
 check "MariaDBNoPasswordFlag" lacks "--target-password" "$LOG"
 
 # A folder created by the script is replaced, including files added to it.
-touch "$fx/config-mariadb/stale"
+touch "$fx/config-mariadb-generated/stale"
 MARIADB_PORT=3306 expect "Replace" 0 "mariadb:3306" mariadb "$tmp/photoprism" "$fx/config-sqlite"
-check "ReplaceRemovesFiles" test ! -e "$fx/config-mariadb/stale"
+check "ReplaceRemovesFiles" test ! -e "$fx/config-mariadb-generated/stale"
 check "ReplacePort" grep -qx 'DatabaseServer: "mariadb:3306"' "$opt"
 
 # A failed transfer leaves no config folder behind.
 FAIL=1 expect "TransferFails" 1 "" mariadb "$tmp/photoprism" "$fx/config-sqlite"
-check "TransferFailsNoTarget" test ! -e "$fx/config-mariadb"
+check "TransferFailsNoTarget" test ! -e "$fx/config-mariadb-generated"
 
-expect "PostgreSQL" 0 "Created $fx/config-postgres" postgres "$tmp/photoprism" "$fx/config-sqlite"
-check "PostgreSQLDriver" grep -qx 'DatabaseDriver: postgres' "$fx/config-postgres/options.yml"
-check "PostgreSQLServer" grep -qx 'DatabaseServer: "postgres:4002"' "$fx/config-postgres/options.yml"
+expect "PostgreSQL" 0 "Created $fx/config-postgres-generated" postgres "$tmp/photoprism" "$fx/config-sqlite"
+check "PostgreSQLDriver" grep -qx 'DatabaseDriver: postgres' "$fx/config-postgres-generated/options.yml"
+check "PostgreSQLServer" grep -qx 'DatabaseServer: "postgres:4002"' "$fx/config-postgres-generated/options.yml"
 check "PostgreSQLLocale" grep -q "ENCODING ''UTF8'' TEMPLATE template0 LOCALE_PROVIDER icu ICU_LOCALE ''und''" "$LOG"
 check "PostgreSQLClient" grep -qx "args: --pg postgres://photoprism:photoprism@postgres:4002/postgres -v ON_ERROR_STOP=1 -q" "$LOG"
 check "PostgreSQLUserPassword" grep -q "ALTER USER testcafe LOGIN PASSWORD 'testcafe';" "$LOG"
@@ -142,7 +145,7 @@ check "PostgreSQLEnvClient" grep -qx "args: --pg postgres://admin@db/postgres -v
 nohub=$(fixture nohub)
 rm "$nohub/config-sqlite/hub.yml"
 expect "NoHub" 0 "Created" mariadb "$tmp/photoprism" "$nohub/config-sqlite"
-check "NoHubFile" test ! -e "$nohub/config-mariadb/hub.yml"
+check "NoHubFile" test ! -e "$nohub/config-mariadb-generated/hub.yml"
 
 # A failed database client stops the script before the transfer.
 FAIL_CLIENT=1 expect "ClientFails" 1 "" postgres "$tmp/photoprism" "$fx/config-sqlite"
@@ -150,16 +153,16 @@ check "ClientFailsNoTransfer" lacks "database transfer" "$LOG"
 
 # Folders the script did not create are left alone.
 other=$(fixture other)
-mkdir "$other/config-mariadb"
-touch "$other/config-mariadb/keep"
+mkdir "$other/config-mariadb-generated"
+touch "$other/config-mariadb-generated/keep"
 expect "Foreign" 1 "not created by this script" mariadb "$tmp/photoprism" "$other/config-sqlite"
-check "ForeignKept" test -f "$other/config-mariadb/keep"
+check "ForeignKept" test -f "$other/config-mariadb-generated/keep"
 check "ForeignNoClient" test ! -s "$LOG"
 mkdir "$tmp/target"
 touch "$tmp/target/.testcafe-generated" "$tmp/target/keep"
-ln -s "$tmp/target" "$other/config-postgres"
+ln -s "$tmp/target" "$other/config-postgres-generated"
 expect "Symlink" 1 "not created by this script" postgres "$tmp/photoprism" "$other/config-sqlite"
-check "SymlinkKept" test -f "$tmp/target/keep" -a -L "$other/config-postgres"
+check "SymlinkKept" test -f "$tmp/target/keep" -a -L "$other/config-postgres-generated"
 
 # A symlinked fixture config, or options file in it, is neither written nor replaced.
 real=$(fixture real)
@@ -167,13 +170,13 @@ linked=$(fixture linked)
 rm -rf "$linked/config-sqlite"
 ln -s "$real/config-sqlite" "$linked/config-sqlite"
 expect "SourceSymlink" 1 "not a symbolic link" mariadb "$tmp/photoprism" "$linked/config-sqlite"
-check "SourceSymlinkKept" test ! -e "$linked/config-mariadb" -a ! -e "$real/config-sqlite/.testcafe-generated"
+check "SourceSymlinkKept" test ! -e "$linked/config-mariadb-generated" -a ! -e "$real/config-sqlite/.testcafe-generated"
 shared=$(fixture shared)
 mv "$shared/config-sqlite/options.yml" "$tmp/shared-options.yml"
 ln -s "$tmp/shared-options.yml" "$shared/config-sqlite/options.yml"
 expect "OptionsSymlink" 0 "Created" mariadb "$tmp/photoprism" "$shared/config-sqlite"
 check "OptionsSymlinkKept" grep -qx 'DatabaseDriver: sqlite' "$tmp/shared-options.yml"
-check "OptionsSymlinkCopied" test ! -L "$shared/config-mariadb/options.yml"
+check "OptionsSymlinkCopied" test ! -L "$shared/config-mariadb-generated/options.yml"
 
 # Database options that would not take effect fail the script and leave no config folder behind.
 ended=$(fixture ended)
@@ -182,8 +185,8 @@ expect "SecondDocument" 1 "would not take effect" mariadb "$tmp/photoprism" "$en
 started=$(fixture started)
 echo "---" >> "$started/config-sqlite/options.yml"
 expect "NewDocument" 1 "would not take effect" postgres "$tmp/photoprism" "$started/config-sqlite"
-check "NewDocumentNoTarget" test ! -e "$started/config-postgres" -a -z "$(find "$started" -maxdepth 1 -name '.config-*')"
-check "SecondDocumentNoTarget" test ! -e "$ended/config-mariadb" -a -z "$(find "$ended" -maxdepth 1 -name '.config-*')"
+check "NewDocumentNoTarget" test ! -e "$started/config-postgres-generated" -a -z "$(find "$started" -maxdepth 1 -name '.config-*')"
+check "SecondDocumentNoTarget" test ! -e "$ended/config-mariadb-generated" -a -z "$(find "$ended" -maxdepth 1 -name '.config-*')"
 unloaded=$(fixture unloaded)
 sed -i '1i ...' "$unloaded/config-sqlite/options.yml"
 expect "SourceNotLoaded" 1 "does not use SQLite" mariadb "$tmp/photoprism" "$unloaded/config-sqlite"
@@ -212,14 +215,14 @@ done
 dangling=$(fixture dangling)
 ln -s "$tmp/created-by-link" "$dangling/config-sqlite/.testcafe-generated"
 expect "DanglingLink" 1 "" mariadb "$tmp/photoprism" "$dangling/config-sqlite"
-check "DanglingLinkNoTarget" test ! -e "$tmp/created-by-link" -a ! -e "$dangling/config-mariadb"
+check "DanglingLinkNoTarget" test ! -e "$tmp/created-by-link" -a ! -e "$dangling/config-mariadb-generated"
 
 # rules checks that the restart and stop rules in a Makefile run every command that starts the binary or the scripts
 # with the database, folders and port of the fixture in the environment, and whether it unsets the given variables.
+# The public restart and stop targets are given, followed by the auth targets they are checked with.
 rules() {
-  local name=$1 dir=$2 fixture=$3 bin=$4 unset=$5 out v
-  out=$(make -s -n -C "$dir" acceptance-restart-1 acceptance-stop-1 acceptance-auth-restart acceptance-auth-stop \
-    DB=mariadb 2>/dev/null)
+  local name=$1 dir=$2 fixture=$3 bin=$4 unset=$5 restart=$6 stop=$7 out v
+  out=$(make -s -n -C "$dir" "$restart" "$stop" acceptance-auth-restart acceptance-auth-stop DB=mariadb 2>/dev/null)
   check "$name Rules" test "$(grep -cE "${bin//./\\.}|acceptance-(server|db)\\.sh" <<< "$out")" -eq 10
 
   for v in $unset; do
@@ -231,12 +234,22 @@ rules() {
     check "$name Set ($v)" test "$(grep -cF -- " PHOTOPRISM_$v " <<< "$out")" -eq 10
   done
 
-  check "$name Start" test "$(grep -cF -- " $bin --" <<< "$out")" -ge 4
-  check "$name StartConfig" test "$(grep -cF -- "-c \"$fixture/config-mariadb\" start -d" <<< "$out")" -eq 2
+  check "$name Start" test "$(grep -cE -- " ${bin//./\\.} -.* start -d\$" <<< "$out")" -eq 2
+  check "$name StartConfig" test "$(grep -cF -- "-c \"$fixture/config-mariadb-generated\" start -d" <<< "$out")" -eq 2
 }
 
 common="DATABASE_SERVER DATABASE_NAME DATABASE_USER DATABASE_PASSWORD SIDECAR_PATH CACHE_PATH USERS_PATH TEMP_PATH"
 common+=" BACKUP_PATH PID_FILENAME LOG_FILENAME DEFAULTS_YAML PORTAL_URL JOIN_TOKEN NODE_CLIENT_ID NODE_CLIENT_SECRET"
+
+# pinned checks that a restart rule runs the binary and the scripts with the fixture environment, and starts the
+# server with the given flag.
+pinned() {
+  local name=$1 dir=$2 target=$3 bin=$4 flag=$5 out runs
+  out=$(make -s -n -C "$dir" "$target" DB=postgres 2>/dev/null)
+  runs=$(grep -E "${bin//./\\.}|acceptance-(server|db)\\.sh" <<< "$out")
+  check "$name Pinned ($target)" test -n "$runs" -a "$(grep -cv '^cd \.\. && env -u PHOTOPRISM_DATABASE_SERVER ' <<< "$runs")" -eq 0
+  check "$name Flag ($target)" grep -qE -- " ${bin//./\\.} .*$flag.* start -d\$" <<< "$out"
+}
 
 # hubfirst checks that a restart rule restores the hub registration before it runs the binary or the scripts.
 hubfirst() {
@@ -248,12 +261,26 @@ hubfirst() {
 }
 
 if command -v make >/dev/null; then
-  [[ ! -f "$root/Makefile" ]] || rules Makefile "$root" ./storage/acceptance ./photoprism "$common CONNECT"
+  [[ ! -f "$root/Makefile" ]] || rules Makefile "$root" ./storage/acceptance ./photoprism "$common CONNECT" \
+    acceptance-restart-1 acceptance-stop-1
   if [[ -f "$root/plus/Makefile" ]]; then
-    rules PlusMakefile "$root/plus" ./plus/storage/acceptance-plus ./photoprism-plus "$common"
+    rules PlusMakefile "$root/plus" ./plus/storage/acceptance-plus ./photoprism-plus "$common" \
+      acceptance-restart-1 acceptance-stop-1
     check "PlusMakefile KeepsConnect" lacks "-u PHOTOPRISM_CONNECT" "$root/plus/Makefile"
     hubfirst PlusMakefile "$root/plus" acceptance-restart-1 ./photoprism-plus
     hubfirst PlusMakefile "$root/plus" acceptance-auth-restart ./photoprism-plus
+  fi
+
+  if [[ -f "$root/pro/Makefile" ]]; then
+    rules ProMakefile "$root/pro" ./pro/storage/acceptance-pro ./photoprism-pro "$common" acceptance-restart acceptance-stop
+    check "ProMakefile KeepsConnect" lacks "-u PHOTOPRISM_CONNECT" "$root/pro/Makefile"
+
+    for t in acceptance-restart acceptance-auth-restart acceptance-auth-sync-restart acceptance-auth-ldap-restart; do
+      hubfirst ProMakefile "$root/pro" "$t" ./photoprism-pro
+    done
+
+    pinned ProMakefile "$root/pro" acceptance-auth-sync-restart ./photoprism-pro "--ldap-sync --auth-mode"
+    pinned ProMakefile "$root/pro" acceptance-auth-ldap-restart ./photoprism-pro '--ldap-uri "ldap://dummy-ldap:389"'
   fi
 fi
 
