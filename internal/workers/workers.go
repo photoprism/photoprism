@@ -62,7 +62,7 @@ func Start(conf *config.Config) {
 		// otherwise never reach a tick.
 		if conf.Portal() {
 			if err = NewJob("jwt-keys", JWTKeySchedule, func() { RunJWTKeyRotation(conf) }); err != nil {
-				event.SystemError([]string{"scheduler", "jwt keys", "%s"}, clean.Error(err))
+				event.SystemError([]string{"scheduler", "jwt keys", "%s"}, clean.ErrorFull(err))
 			}
 
 			go event.Safe(func() { RunJWTKeyRotation(conf) })

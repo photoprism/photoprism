@@ -23,6 +23,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -548,10 +549,22 @@ func TestClusterNodesRegister(t *testing.T) {
 		token := oauthNodeAccessToken(t, app, router, conf, nr.ClientID, nr.ClientSecret)
 		newUUID := rnd.UUIDv7()
 		body := `{"NodeName":"pp-uuid-repin","NodeUUID":"` + newUUID + `"}`
+		hook := captureAuditLog(t)
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
 		assert.Equal(t, http.StatusOK, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
 		assert.Equal(t, newUUID, gjson.Get(r.Body.String(), "Node.UUID").String())
+
+		// The change is audited with the node's address, e.g. for a node that cannot keep its UUID.
+		var audited bool
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "pp-uuid-repin › change uuid old "+n.UUID+" new "+newUUID) {
+				audited = true
+				msg := strings.TrimPrefix(entry.Message, event.AuditPrefix)
+				assert.NotEmpty(t, event.AuditIP(strings.Split(msg, event.MessageSep)), entry.Message)
+			}
+		}
+		assert.True(t, audited, "expected an audit entry for the UUID change")
 
 		got, err := regy.FindByNodeUUID(newUUID)
 		assert.NoError(t, err)

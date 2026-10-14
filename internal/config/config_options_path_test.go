@@ -76,7 +76,7 @@ func TestNodeUUIDSaveFailure(t *testing.T) {
 	c, optionsPath := unwritableOptionsConfig(t)
 	c.Options().NodeUUID = ""
 
-	hook := captureLog(t)
+	hook := systemLogHook(t)
 
 	uuid := c.NodeUUID()
 	assert.True(t, rnd.IsUUID(uuid))
@@ -88,8 +88,9 @@ func TestNodeUUIDSaveFailure(t *testing.T) {
 			continue
 		}
 		warned = true
-		assert.NotContains(t, entry.Message, optionsPath)
-		assert.NotContains(t, entry.Message, filepath.Dir(optionsPath))
+		// The system log is console-only and keeps the location, so an operator can tell which file failed.
+		assert.Contains(t, entry.Message, "could not save node UUID")
+		assert.Contains(t, entry.Message, optionsPath)
 	}
 
 	assert.True(t, warned, "expected a warning for the failed node UUID write")

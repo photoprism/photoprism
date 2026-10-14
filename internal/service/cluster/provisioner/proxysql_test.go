@@ -186,10 +186,11 @@ func TestNormalizeProxyDSN(t *testing.T) {
 		assert.Equal(t, "proxysql: ignored 3 unsupported admin dsn parameters wait_timeout", hook.LastEntry().Message)
 	})
 	t.Run("InvalidDSN", func(t *testing.T) {
+		// Neither logger may receive the rejected DSN, which holds a password.
 		logger, hook := logtest.NewNullLogger()
-		prev := log
-		log = logger
-		t.Cleanup(func() { log = prev })
+		prevLog, prevSystemLog := log, event.SystemLog
+		log, event.SystemLog = logger, logger
+		t.Cleanup(func() { log, event.SystemLog = prevLog, prevSystemLog })
 		for _, in := range []string{"admin:pa?ss=word@tcp(127.0.0.1:6032)", "admin:p/a?ss=word@tcp(127.0.0.1:6032)",
 			"admin:admin@tcp(127.0.0.1:6032)/?tls=custom", "admin:admin@tcp(127.0.0.1:6032)/?strict=1",
 			"admin:admin@tcp(127.0.0.1:6032)/?allowNativePasswords=no"} {

@@ -102,7 +102,7 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 			// A database that exists is recorded, so removing the node also removes it.
 			if errors.Is(credsErr, provisioner.ErrIncomplete) {
 				if _, recordErr := regy.RecordDatabase(n, cluster.NodeDatabase{Name: creds.Name, User: creds.User, Driver: creds.Driver}); recordErr != nil {
-					event.SystemWarn([]string{"cluster", "failed to record database %s of node %s", "%s"}, clean.Log(creds.Name), clean.LogQuote(name), clean.Error(recordErr))
+					event.SystemWarn([]string{"cluster", "failed to record database %s of node %s", "%s"}, clean.Log(creds.Name), clean.LogQuote(name), clean.ErrorFull(recordErr))
 				}
 			}
 		} else {

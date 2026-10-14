@@ -11,14 +11,11 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -779,7 +776,7 @@ func TestConfig_Cluster(t *testing.T) {
 		require.NoError(t, os.Chmod(c.options.ConfigPath, 0o700)) //nolint:gosec // a directory needs the execute bit
 
 		// A DSN that is not in the file, e.g. from an environment variable, still applies.
-		hook := hookSystemLog(t)
+		hook := systemLogHook(t)
 		c = newConfig(t)
 		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("SiteTitle: Example\n"), fs.ModeFile))
 		update = cluster.OptionsUpdate{}
@@ -1454,19 +1451,6 @@ func TestConfig_DatabaseServerDSN(t *testing.T) {
 		assert.Equal(t, "db.example.com", c.DatabaseHost())
 		assert.Equal(t, 3307, c.DatabasePort())
 	})
-}
-
-// hookSystemLog replaces the console-only system logger with a test hook for the duration of a test.
-func hookSystemLog(t *testing.T) *test.Hook {
-	t.Helper()
-
-	orig := event.SystemLog
-	logger, hook := test.NewNullLogger()
-	logger.SetLevel(logrus.TraceLevel)
-	event.SystemLog = logger
-	t.Cleanup(func() { event.SystemLog = orig })
-
-	return hook
 }
 
 func TestConfig_databaseDsnFromCli(t *testing.T) {

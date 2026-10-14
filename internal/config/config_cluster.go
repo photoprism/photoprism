@@ -693,7 +693,7 @@ func (c *Config) NodeUUID() string {
 	c.options.NodeUUID = uuid
 
 	if err := c.SaveNodeUUID(uuid); err != nil {
-		event.SystemWarn([]string{"config", "cluster", "could not save node UUID", "%s"}, clean.Error(err))
+		event.SystemWarn([]string{"config", "cluster", "could not save node UUID", "%s"}, clean.ErrorFull(err))
 	}
 
 	return uuid

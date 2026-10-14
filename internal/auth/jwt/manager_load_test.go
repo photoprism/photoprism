@@ -42,10 +42,9 @@ func TestManagerLoadKeysUnreadableFile(t *testing.T) {
 			continue
 		}
 		warned = true
-		require.NotContains(t, msg, keyDir)
-		require.NotContains(t, msg, c.PortalConfigPath())
 		require.Contains(t, msg, "read signing key")
-		// The file name stays, so an operator can still tell which entry was skipped.
+		// The console keeps the location, so an operator can tell which entry was skipped and where.
+		require.Contains(t, msg, keyDir)
 		require.Contains(t, msg, "broken")
 	}
 
