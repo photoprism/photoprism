@@ -85,6 +85,8 @@ type RegisterDatabase struct {
 	Password  string `json:"Password,omitempty"` //nolint:gosec // G117: Provisioned database password payload.
 	DSN       string `json:"DSN,omitempty"`
 	RotatedAt string `json:"RotatedAt,omitempty"`
+	// Incomplete reports a database that exists but could not be fully provisioned yet; a later rotation completes it.
+	Incomplete bool `json:"Incomplete,omitempty"`
 }
 
 // RegisterResponse is the response body for POST /api/v1/cluster/nodes/register.

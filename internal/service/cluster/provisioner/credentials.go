@@ -2,6 +2,7 @@ package provisioner
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"strings"
@@ -27,25 +28,20 @@ type Credentials struct {
 // ErrUnsupportedDriver is wrapped by the error EnsureCredentials returns for a driver it cannot provision.
 var ErrUnsupportedDriver = errors.New("unsupported auto-provisioning database driver")
 
-// EnsureCredentials ensures a per-node database and user exist with minimal grants.
-// - Requires a MySQL/MariaDB admin connection (this package maintains it).
-// - Returns created=true if the database schema did not exist before.
-// - If rotate is true or created, rotates the user password and includes it (and DSN) in the result.
+// ErrIncomplete is wrapped by the error EnsureCredentials returns when a step fails after the database exists.
+var ErrIncomplete = errors.New("database provisioning incomplete")
+
+// EnsureCredentials ensures a per-node database and user exist with minimal grants, and returns created=true
+// if the database did not exist before. If rotate is true or created, the result includes a new password and DSN.
+// A failure after the database exists wraps ErrIncomplete and returns its name and user without a password,
+// since every statement can run again to complete it.
 func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeName string, rotate bool) (Credentials, bool, error) {
 	out := Credentials{}
 
-	// Normalize the configured admin driver locally so we accept variants like "MySQL"/"MariaDB"
-	// without mutating the global setting (keeps config reporting consistent).
-	driver := strings.ToLower(DatabaseDriver)
+	driver, err := provisionDriver()
 
-	switch driver {
-	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		// ok
-	case dsn.DriverSQLite3, dsn.DriverPostgres:
-		return out, false, fmt.Errorf("%w: %s, database must be MySQL/MariaDB", ErrUnsupportedDriver, driver)
-	default:
-		// Driver is configured externally for the provisioner (decoupled from app config).
-		return out, false, fmt.Errorf("%w: %s", ErrUnsupportedDriver, driver)
+	if err != nil {
+		return out, false, err
 	}
 
 	// Compute deterministic names and a candidate password.
@@ -83,30 +79,40 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 		return out, created, err
 	}
 	createDB := "CREATE DATABASE IF NOT EXISTS " + qDB + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+	// incomplete reports a failed step after the database exists, with the identifiers to record.
+	incomplete := func(err error) (Credentials, bool, error) {
+		return Credentials{Driver: driver, Host: DatabaseHost, Port: DatabasePort, Name: dbName, User: dbUser}, created, fmt.Errorf("%w: %w", ErrIncomplete, err)
+	}
+
 	if err = execTimeout(ctx, db, 15*time.Second, createDB); err != nil {
+		// The statement may have completed on the server although the call failed.
+		if schemaExists(db, dbName) {
+			return incomplete(err)
+		}
+
 		return out, created, err
 	}
 
 	// 3) Ensure user exists.
 	acc, err := quoteAccount("%", dbUser) // user@'%'
 	if err != nil {
-		return out, created, err
+		return incomplete(err)
 	}
 	pass, err := quoteString(dbPass)
 	if err != nil {
-		return out, created, err
+		return incomplete(err)
 	}
 
 	createUser := "CREATE USER IF NOT EXISTS " + acc + " IDENTIFIED BY " + pass
 	if err = execTimeout(ctx, db, 10*time.Second, createUser); err != nil {
-		return out, created, err
+		return incomplete(err)
 	}
 
 	// 4) Rotate or set password explicitly on first creation.
 	if rotate || created {
 		alterUser := "ALTER USER " + acc + " IDENTIFIED BY " + pass
 		if err = execTimeout(ctx, db, 10*time.Second, alterUser); err != nil {
-			return out, created, err
+			return incomplete(err)
 		}
 		out.Password = dbPass
 		out.RotatedAt = time.Now().UTC().Format(time.RFC3339)
@@ -115,12 +121,12 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 	// 5) Grant privileges on schema.
 	grant := "GRANT ALL PRIVILEGES ON " + qDB + ".* TO " + acc
 	if err = execTimeout(ctx, db, 10*time.Second, grant); err != nil {
-		return out, created, err
+		return incomplete(err)
 	}
 
 	// 6) Optional on modern MariaDB/MySQL; harmless if included.
 	if err = execTimeout(ctx, db, 5*time.Second, "FLUSH PRIVILEGES"); err != nil {
-		return out, created, err
+		return incomplete(err)
 	}
 
 	// 7) Provision ProxySQL user account if ProvisionProxyDSN is set.
@@ -131,7 +137,7 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 		}
 
 		if err = SyncProxyUser(ctx, ProvisionProxyDSN, dbName, dbUser, proxyPass, ProvisionProxyOptions); err != nil {
-			return out, created, fmt.Errorf("proxysql: %w", err)
+			return incomplete(fmt.Errorf("proxysql: %w", err))
 		}
 	}
 
@@ -147,6 +153,46 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 	}
 
 	return out, created, nil
+}
+
+// CheckConfig reports whether databases can be provisioned with the current settings, without connecting.
+func CheckConfig() error {
+	if _, err := provisionDriver(); err != nil {
+		return err
+	} else if ProvisionDSN == "" {
+		return ErrNotConfigured
+	}
+
+	return nil
+}
+
+// provisionDriver returns the configured provisioning driver in lowercase, so variants like "MariaDB"
+// are accepted without changing the setting, or an error wrapping ErrUnsupportedDriver.
+func provisionDriver() (string, error) {
+	driver := strings.ToLower(DatabaseDriver)
+
+	switch driver {
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
+		return driver, nil
+	case dsn.DriverSQLite3, dsn.DriverPostgres:
+		return driver, fmt.Errorf("%w: %s, database must be MySQL/MariaDB", ErrUnsupportedDriver, driver)
+	default:
+		return driver, fmt.Errorf("%w: %s", ErrUnsupportedDriver, driver)
+	}
+}
+
+// schemaExists reports whether a database with the given name exists, using a context of its own.
+func schemaExists(db *sql.DB, name string) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var count int
+
+	if err := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", name).Scan(&count); err != nil {
+		return false
+	}
+
+	return count > 0
 }
 
 // DropCredentials removes the database and user created for a node. It is safe to call

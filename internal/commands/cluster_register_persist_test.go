@@ -53,4 +53,41 @@ func TestPersistRegisterResponse(t *testing.T) {
 			}
 		}
 	})
+	t.Run("NoPassword", func(t *testing.T) {
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, persistRegisterResponse(conf, &cluster.RegisterResponse{
+			UUID:     "4a47c940-d5de-41b3-88a2-eb816cc659ca",
+			Node:     cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user"},
+		}))
+
+		content, err := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, err)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+	})
+	t.Run("IncompleteDatabase", func(t *testing.T) {
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, persistRegisterResponse(conf, &cluster.RegisterResponse{
+			UUID:     "4a47c940-d5de-41b3-88a2-eb816cc659ca",
+			Node:     cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Incomplete: true},
+		}))
+
+		content, err := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, err)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+	})
 }

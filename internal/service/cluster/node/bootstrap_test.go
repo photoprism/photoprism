@@ -1197,4 +1197,27 @@ func TestPersistRegistration(t *testing.T) {
 		require.NoError(t, yaml.Unmarshal(content, &persisted))
 		assert.Equal(t, "db.local:3306", persisted["DatabaseServer"])
 	})
+	t.Run("IncompleteDatabase", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-persist-incomplete")
+		c.Options().DatabaseDriver = dsn.DriverMySQL
+		clusterUUID := rnd.UUID()
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID:     clusterUUID,
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Incomplete: true},
+		}, true))
+
+		content, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+		assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+
+		assert.True(t, c.ShouldAutoRotateDatabase(), "the next start must request the database again")
+	})
 }

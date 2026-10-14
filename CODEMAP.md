@@ -139,7 +139,7 @@ Background Workers
 Cluster / Portal
 - Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
-  - Registration treats 401, 403 and 404 as final and does not rotate credentials; only 429 is retried with bounded backoff.
+  - Bootstrap treats 400, 401, 403, 404 and 409 as final and retries 429, 5xx and network errors (6 attempts, 15 s apart), then reports the Portal's reason; `cluster register` retries only 429, with backoff.
   - Theme sync logs at info level when it downloads, updates, or skips a bundle, so operators can trace it in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
@@ -238,7 +238,7 @@ Filesystem Permissions & io/fs Aliasing
 
 Cluster Registry & Provisioner Cheatsheet
 - UUID‑first everywhere: API paths `{uuid}`, Registry `Get/Delete/RotateSecret` by UUID; explicit `FindByClientID` exists for OAuth.
-- Node/DTO fields: `uuid` required; `clientId` optional; database metadata includes `driver`.
+- Node/DTO fields: `UUID` required; `ClientID` optional; database metadata includes `Driver`.
 - Provisioner naming (no slugs):
   - database: `cluster_d<hmac11>`
   - username: `cluster_u<hmac11>`
@@ -264,7 +264,7 @@ Frequently Touched Files (by topic)
 - Workers: `internal/workers/*`
 - Cluster: `internal/service/cluster/*`
   - Theme support: `internal/service/cluster/theme/version.go` exposes `DetectVersion`, used by bootstrap, CLI, and API handlers to compare portal vs node theme revisions (prefers `fs.VersionTxtFile`, falls back to `app.js` mtime).
-  - Registration sanitizes `AppName`, `AppVersion`, and `Theme` with `clean.TypeUnicode`; defaults for app metadata come from `config.About()` / `config.Version()`. `cluster.RegisterResponse` now includes a `Theme` hint when the portal has a newer bundle so nodes can decide whether to download immediately.
+  - Registration sanitizes `AppName`, `AppVersion`, and `Theme` with `clean.TypeUnicode`; defaults for app metadata come from `config.About()` / `config.Version()`. `cluster.RegisterResponse` includes a `Theme` hint when the portal has a newer bundle so nodes can decide whether to download immediately.
 - Headers: `pkg/http/header/*`
 
 Downloads (CLI) & yt-dlp helpers

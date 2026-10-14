@@ -301,6 +301,37 @@ func TestRotateNodeInRegistry_DatabaseErrors(t *testing.T) {
 			}
 		}
 	})
+	t.Run("IncompleteRecordsDatabase", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "mysql"
+
+		if _, err := provisioner.GetDB(context.Background()); err != nil {
+			t.Skip("provisioning database is unavailable")
+		}
+
+		proxyDSN := provisioner.ProvisionProxyDSN
+		t.Cleanup(func() { provisioner.ProvisionProxyDSN = proxyDSN })
+
+		n := createTestNode(t, regy, "pp-rotate-incomplete", cluster.RoleInstance)
+		dbName, dbUser, _ := provisioner.GenerateCredentials(conf, n.UUID, n.Name)
+		t.Cleanup(func() {
+			provisioner.ProvisionProxyDSN = proxyDSN
+			_ = provisioner.DropCredentials(context.Background(), dbName, dbUser)
+		})
+
+		provisioner.ProvisionProxyDSN = "admin:pa?ss=word@tcp(127.0.0.1:6032)"
+		_, err := rotateNodeInRegistry(conf, n.Name, true, false)
+
+		require.Error(t, err)
+		assert.ErrorIs(t, err, provisioner.ErrIncomplete)
+
+		stored, err := regy.FindByNodeUUID(n.UUID)
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, dbName, stored.Database.Name)
+			assert.Equal(t, dbUser, stored.Database.User)
+		}
+	})
 	t.Run("UnsupportedDriverRotatesSecret", func(t *testing.T) {
 		restoreProvisioner(t)
 		provisioner.DatabaseDriver = "sqlite3"

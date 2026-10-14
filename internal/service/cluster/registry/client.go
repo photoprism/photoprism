@@ -152,17 +152,29 @@ func applyGroupConfig(data *entity.ClientData, n *Node) {
 	}
 }
 
-// Create adds a node record, and refuses a NodeUUID that already belongs to one.
-// A caller with no client identifier cannot show which record is its own, so it may not
-// reach an existing one through the UUID; use Put to update a resolved record.
-func (r *ClientRegistry) Create(n *Node) error {
-	if n.UUID != "" {
-		if existing := entity.FindClientByNodeUUID(n.UUID); existing != nil && existing.ClientUID != "" {
-			return ErrIdentifierMismatch
-		}
+// RecordDatabase stores db with a node that records no database yet, and reports whether it did.
+// A recorded database is kept, since removing the node drops the database its record names.
+func (r *ClientRegistry) RecordDatabase(n *Node, db cluster.NodeDatabase) (bool, error) {
+	if n == nil || db.Name == "" {
+		return false, nil
+	} else if n.Database != nil && n.Database.Name != "" {
+		return false, nil
 	}
 
-	return r.Put(n)
+	n.Database = &db
+
+	if err := r.Put(n); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// Create adds a node record, and refuses identifiers that resolve to an existing one.
+// A caller with no client identifier cannot show which record is its own, so it may not
+// reach an existing one; use Put to update a resolved record.
+func (r *ClientRegistry) Create(n *Node) error {
+	return r.put(n, true)
 }
 
 // Put creates or updates a node record, resolving it by NodeUUID, then ClientID, then Name,
@@ -170,6 +182,12 @@ func (r *ClientRegistry) Create(n *Node) error {
 // A UUID and a client ID must resolve to the same record; a pair naming two records is
 // rejected, so a write always applies to a single registration.
 func (r *ClientRegistry) Put(n *Node) error {
+	return r.put(n, false)
+}
+
+// put creates or updates a node record; with insertOnly, an identifier that resolves to an
+// existing record is refused, so a create never writes into one.
+func (r *ClientRegistry) put(n *Node, insertOnly bool) error {
 	// Upsert client preferring NodeUUID (primary), then ClientID, then Name.
 	var m *entity.Client
 
@@ -222,6 +240,8 @@ func (r *ClientRegistry) Put(n *Node) error {
 
 	if m == nil {
 		m = entity.NewClient()
+	} else if insertOnly {
+		return ErrIdentifierMismatch
 	}
 
 	// Apply fields.

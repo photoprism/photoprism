@@ -79,6 +79,29 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 	assert.Equal(t, "pp_db", parsed.Name)
 }
 
+func TestClusterRegister_HTTPIncompleteDatabase(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			Node:     cluster.Node{UUID: "n1", Name: "pp-node-03", Role: cluster.RoleInstance},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "database", Port: 3306, Name: "pp_db", User: "pp_user", Incomplete: true},
+			Secrets:  &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+		})
+	}))
+	defer ts.Close()
+
+	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
+		"register", "--name", "pp-node-03", "--role", "instance", "--portal-url", ts.URL, "--join-token", cluster.ExampleJoinToken, "--json",
+	})
+
+	require.Error(t, err)
+	assert.Equal(t, 1, ExitCode(err))
+	assert.Contains(t, err.Error(), "could not complete database provisioning")
+	assert.Equal(t, cluster.ExampleClientSecret, gjson.Get(out, "Secrets.ClientSecret").String())
+	assert.True(t, gjson.Get(out, "Database.Incomplete").Bool())
+}
+
 func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 	tempCfg := t.TempDir()
 	SetEnvForTest(t, "PHOTOPRISM_CONFIG_PATH", tempCfg)

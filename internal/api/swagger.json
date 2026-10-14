@@ -452,6 +452,10 @@
                 "Host": {
                     "type": "string"
                 },
+                "Incomplete": {
+                    "description": "Incomplete reports a database that exists but could not be fully provisioned yet; a later rotation completes it.",
+                    "type": "boolean"
+                },
                 "Name": {
                     "type": "string"
                 },
@@ -7614,6 +7618,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "409": {
                         "description": "Conflict",
                         "schema": {
@@ -7628,6 +7638,12 @@
                     },
                     "429": {
                         "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }

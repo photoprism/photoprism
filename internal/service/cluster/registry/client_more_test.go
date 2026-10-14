@@ -134,3 +134,75 @@ func TestClientRegistry_PutNameLookup(t *testing.T) {
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_name = ?", "pp-node-name").Count(&count).Error)
 	assert.EqualValues(t, 1, count)
 }
+
+func TestClientRegistry_CreateInsertOnly(t *testing.T) {
+	c := newRegistryTestConfig(t, "cluster-registry-create-insert")
+	r, _ := NewClientRegistryWithConfig(c)
+
+	n := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-create-once", Role: cluster.RoleInstance}}
+	assert.NoError(t, r.Create(n))
+	t.Cleanup(func() { _ = r.DeleteAllByUUID(n.UUID) })
+
+	t.Run("SameUUID", func(t *testing.T) {
+		assert.ErrorIs(t, r.Create(&Node{Node: cluster.Node{UUID: n.UUID, Name: "pp-create-other", Role: cluster.RoleInstance}}), ErrIdentifierMismatch)
+	})
+	t.Run("SameName", func(t *testing.T) {
+		assert.ErrorIs(t, r.Create(&Node{Node: cluster.Node{Name: "pp-create-once", Role: cluster.RoleService}}), ErrIdentifierMismatch)
+
+		stored, err := r.FindByName("pp-create-once")
+		if assert.NoError(t, err) {
+			assert.Equal(t, n.ClientID, stored.ClientID)
+			assert.Equal(t, cluster.RoleInstance, stored.Role)
+		}
+	})
+	t.Run("SameClientID", func(t *testing.T) {
+		assert.ErrorIs(t, r.Create(&Node{Node: cluster.Node{Name: "pp-create-client", ClientID: n.ClientID, Role: cluster.RoleInstance}}), ErrIdentifierMismatch)
+	})
+}
+
+func TestClientRegistry_RecordDatabase(t *testing.T) {
+	c := newRegistryTestConfig(t, "cluster-registry-record-db")
+	r, _ := NewClientRegistryWithConfig(c)
+
+	db := cluster.NodeDatabase{Name: "cluster_drecord", User: "cluster_urecord", Driver: "mysql"}
+
+	t.Run("Recorded", func(t *testing.T) {
+		n := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-record-db", Role: cluster.RoleInstance}}
+		assert.NoError(t, r.Create(n))
+		t.Cleanup(func() { _ = r.DeleteAllByUUID(n.UUID) })
+
+		recorded, err := r.RecordDatabase(n, db)
+		assert.NoError(t, err)
+		assert.True(t, recorded)
+
+		stored, err := r.FindByNodeUUID(n.UUID)
+		if assert.NoError(t, err) && assert.NotNil(t, stored.Database) {
+			assert.Equal(t, db.Name, stored.Database.Name)
+			assert.Equal(t, db.User, stored.Database.User)
+		}
+	})
+	t.Run("KeepsExisting", func(t *testing.T) {
+		n := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-record-keep", Role: cluster.RoleInstance}}
+		n.Database = &cluster.NodeDatabase{Name: "cluster_dexisting", User: "cluster_uexisting"}
+		assert.NoError(t, r.Create(n))
+		t.Cleanup(func() { _ = r.DeleteAllByUUID(n.UUID) })
+
+		recorded, err := r.RecordDatabase(n, db)
+		assert.NoError(t, err)
+		assert.False(t, recorded)
+
+		stored, err := r.FindByNodeUUID(n.UUID)
+		if assert.NoError(t, err) && assert.NotNil(t, stored.Database) {
+			assert.Equal(t, "cluster_dexisting", stored.Database.Name)
+		}
+	})
+	t.Run("Empty", func(t *testing.T) {
+		recorded, err := r.RecordDatabase(nil, db)
+		assert.NoError(t, err)
+		assert.False(t, recorded)
+
+		recorded, err = r.RecordDatabase(&Node{}, cluster.NodeDatabase{})
+		assert.NoError(t, err)
+		assert.False(t, recorded)
+	})
+}
