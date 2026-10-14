@@ -189,6 +189,45 @@ func TestUploadToServiceAliases(t *testing.T) {
 			assert.Equal(t, folder, path.Dir(name))
 		}
 	})
+	// Long titles are shortened, and names that are equal after that still get names of their own.
+	t.Run("LongTitles", func(t *testing.T) {
+		var uids []string
+		for i, suffix := range []string{"A", "B"} {
+			p := entity.NewPhoto(false)
+			p.PhotoTitle = strings.Repeat("東京タワー", 39) + suffix
+			p.TakenAt = time.Date(2026, 9, 17, 10, 30, 0, 0, time.UTC)
+			p.TakenAtLocal = p.TakenAt
+			p.PhotoQuality = 3
+			require.NoError(t, p.Save())
+			t.Cleanup(func() {
+				entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", p.ID)
+				entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", p.ID)
+				entity.UnscopedDb().Unscoped().Delete(&p)
+			})
+			f := &entity.File{PhotoID: p.ID, PhotoUID: p.PhotoUID, FileRoot: entity.RootOriginals, FileName: fmt.Sprintf("long-title-%d.jpg", i),
+				FileType: "jpg", MediaType: entity.MediaImage, FileHash: fmt.Sprintf("deadbeef%032d", 950+i), FilePrimary: true}
+			require.NoError(t, f.Create())
+			uids = append(uids, p.PhotoUID)
+		}
+		account := entity.Service{AccName: "Alias Control Long Titles", AccURL: "http://127.0.0.1/", AccType: "webdav", AccShare: true}
+		require.NoError(t, entity.Db().Create(&account).Error)
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.FileShare{}, "service_id = ?", account.ID)
+			entity.UnscopedDb().Unscoped().Delete(&account)
+		})
+		uri := fmt.Sprintf("/api/v1/services/%d/upload", account.ID)
+		body := fmt.Sprintf(`{"selection":{"photos":[%q,%q]},"folder":"Uploads"}`, uids[0], uids[1])
+		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+		var names []string
+		require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Pluck("remote_name", &names).Error)
+		require.Len(t, names, 2)
+		assert.NotEqual(t, names[0], names[1])
+		for _, name := range names {
+			assert.LessOrEqual(t, len(path.Base(name)), fs.NameMaxLen, name)
+			assert.Equal(t, ".jpg", path.Ext(name))
+		}
+	})
 	// Names up to the limit are queued, longer ones are skipped with one warning.
 	t.Run("AliasAtLimit", func(t *testing.T) {
 		base := files[3].ShareBase(0)

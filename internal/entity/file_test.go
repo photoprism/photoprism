@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -171,6 +172,24 @@ func TestFile_ShareFileName(t *testing.T) {
 		assert.Contains(t, filename, "20190115-000000-Berlin-Morning-Mood")
 		assert.Equal(t, "20190115-000000-Berlin-Morning-Mood (2).jpg", filename)
 		assert.Contains(t, filename, fs.ExtJpeg)
+	})
+	t.Run("LongPhotoTitle", func(t *testing.T) {
+		// A title that transliterates to a long slug is shortened, so the name fits a file system.
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: strings.Repeat("東京タワー", 40)}
+		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
+
+		for _, seq := range []int{0, 2, 9999} {
+			filename := file.ShareBase(seq)
+			assert.LessOrEqual(t, len(filename), fs.NameMaxLen, filename)
+			assert.Greater(t, len(filename), fs.NameMaxLen-10, filename)
+			assert.True(t, strings.HasPrefix(filename, "20190115-000000-Dong"), filename)
+			assert.True(t, strings.HasSuffix(filename, ".jpg"), filename)
+			if seq > 0 {
+				assert.True(t, strings.HasSuffix(filename, fmt.Sprintf(" (%d).jpg", seq)), filename)
+			}
+			assert.NotContains(t, filename, "-.", filename)
+			assert.NotContains(t, filename, "- (", filename)
+		}
 	})
 	t.Run("EmptyPhotoTitle", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: ""}
@@ -1231,5 +1250,32 @@ func TestFile_KeepStackedWith(t *testing.T) {
 	})
 	t.Run("Nil", func(t *testing.T) {
 		assert.False(t, (*File)(nil).KeepStackedWith(Files{right}))
+	})
+}
+
+func TestShareName(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		assert.Equal(t, "20190115-000000-Berlin.jpg", ShareName("20190115-000000", "Berlin", 0, "jpg"))
+		assert.Equal(t, "20190115-000000-Berlin (3).jpg", ShareName("20190115-000000", "Berlin", 3, "jpg"))
+	})
+	t.Run("AtLimit", func(t *testing.T) {
+		title := strings.Repeat("a", fs.NameMaxLen-len("20190115-000000-.jpg"))
+		name := ShareName("20190115-000000", title, 0, "jpg")
+		assert.Len(t, name, fs.NameMaxLen)
+		assert.Contains(t, name, title)
+	})
+	t.Run("Shortened", func(t *testing.T) {
+		// The cut falls right after a dash, which is removed.
+		room := fs.NameMaxLen - len("20190115-000000-") - len(" (12).mp4")
+		title := strings.Repeat("A", room-1) + "-" + strings.Repeat("B", 100)
+		name := ShareName("20190115-000000", title, 12, "mp4")
+		assert.Len(t, name, fs.NameMaxLen-1)
+		assert.True(t, strings.HasSuffix(name, "A (12).mp4"), name)
+	})
+	t.Run("MultiByte", func(t *testing.T) {
+		// A cut never splits a character.
+		name := ShareName("20190115-000000", strings.Repeat("é", 200), 0, "jpg")
+		assert.LessOrEqual(t, len(name), fs.NameMaxLen)
+		assert.True(t, utf8.ValidString(name))
 	})
 }

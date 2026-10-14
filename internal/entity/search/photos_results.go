@@ -353,13 +353,7 @@ func (m *Photo) ShareBase(seq int) string {
 		name = m.PhotoUID
 	}
 
-	taken := m.TakenAtLocal.Format("20060102-150405")
-
-	if seq > 0 {
-		return fmt.Sprintf("%s-%s (%d).%s", taken, name, seq, m.FileType)
-	}
-
-	return fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
+	return entity.ShareName(m.TakenAtLocal.Format("20060102-150405"), name, seq, m.FileType)
 }
 
 // PhotoResults represents a list of photo search results that can be post

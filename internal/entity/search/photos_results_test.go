@@ -3,12 +3,14 @@ package search
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/projection"
@@ -1067,6 +1069,14 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 
 		r := result1.ShareBase(3)
 		assert.Contains(t, r, "20221111-090718-Phototitle123 (3)")
+	})
+	t.Run("LongTitle", func(t *testing.T) {
+		// A title that transliterates to a long slug is shortened, so the name fits a file system.
+		result := Photo{PhotoTitle: strings.Repeat("東京タワー", 40), FileType: "jpg", TakenAtLocal: time.Date(2022, 11, 11, 9, 7, 18, 0, time.UTC)}
+		r := result.ShareBase(2)
+		assert.LessOrEqual(t, len(r), fs.NameMaxLen)
+		assert.True(t, strings.HasPrefix(r, "20221111-090718-Dong"), r)
+		assert.True(t, strings.HasSuffix(r, " (2).jpg"), r)
 	})
 }
 
