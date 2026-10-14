@@ -593,11 +593,10 @@ func (r *ClientRegistry) RotateSecret(uuid string) (*Node, error) {
 	return r.RotateSecretByClientID(n.ClientID)
 }
 
-// RotateSecretByClientID issues a new secret for the given OAuth client and returns the
-// updated node with the plaintext secret populated for the caller to deliver.
-// Callers that have already resolved a record use this, so the client identifier rather
-// than the UUID selects whose secret is replaced.
-func (r *ClientRegistry) RotateSecretByClientID(clientID string) (*Node, error) {
+// RotateSecretByClientID issues a new secret for the given OAuth client, revokes its sessions
+// except those in omitSessions, and returns the node with the plaintext secret to deliver.
+// The client identifier rather than the UUID selects whose secret is replaced.
+func (r *ClientRegistry) RotateSecretByClientID(clientID string, omitSessions ...string) (*Node, error) {
 	if clientID == "" {
 		return nil, ErrNotFound
 	}
@@ -623,6 +622,10 @@ func (r *ClientRegistry) RotateSecretByClientID(clientID string) (*Node, error) 
 	if err := c.Save(); err != nil {
 		return nil, err
 	}
+
+	// Access tokens issued with the previous secret stay valid until revoked.
+	c.RevokeSessions(omitSessions)
+
 	n := toNode(c)
 	n.ClientSecret = secret // plaintext only in-memory for response composition
 

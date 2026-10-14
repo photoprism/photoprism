@@ -173,6 +173,9 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		existingNode, _ := regy.FindByName(name)
 		node := existingNode
 
+		// authSessionID is the access token of an existing-node request, which a secret rotation keeps.
+		var authSessionID string
+
 		// Existing-name requests are mutation paths and require node OAuth ownership.
 		if existingNode != nil {
 			// A valid join token must never mutate an existing node registration.
@@ -183,7 +186,9 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				return
 			}
 
-			if s := Auth(c, acl.ResourceCluster, acl.ActionUpdateOwn); s.Abort(c) {
+			s := Auth(c, acl.ResourceCluster, acl.ActionUpdateOwn)
+
+			if s.Abort(c) {
 				return
 			} else if !s.IsClient() || s.ClientUID == "" {
 				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "register mutation requires client token", status.Denied}, clean.Log(name))
@@ -194,6 +199,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				c.JSON(http.StatusConflict, gin.H{"error": registerNameConflictError(name)})
 				return
 			}
+
+			authSessionID = s.ID
 
 			// Only a node client registers a node, and the registry shares its name space
 			// with ordinary OAuth clients.
@@ -235,6 +242,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			}
 
 			node = owner
+			authSessionID = s.ID
 		}
 
 		// Existing-node mutation path (including node-owned rename to an unused name).
@@ -357,7 +365,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 			// The secret is rotated last, so a failed database step leaves the current one valid.
 			if req.RotateSecret {
-				if node, err = regy.RotateSecretByClientID(node.ClientID); err != nil {
+				if node, err = regy.RotateSecretByClientID(node.ClientID, authSessionID); err != nil {
 					event.AuditErr([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "rotate secret", status.Error(err)}, clean.Log(name))
 					AbortUnexpectedError(c)
 					return

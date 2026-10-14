@@ -2,10 +2,12 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -270,12 +272,12 @@ func TestRotateNodeInRegistry_DatabaseErrors(t *testing.T) {
 		assert.NotErrorIs(t, err, provisioner.ErrUnsupportedDriver)
 		assert.Equal(t, 1, ExitCode(err))
 	})
-	t.Run("ProvisioningFailedKeepsSecret", func(t *testing.T) {
+	t.Run("ProvisioningFailedRotatesSecret", func(t *testing.T) {
 		restoreProvisioner(t)
 		provisioner.DatabaseDriver = "mysql"
 		provisioner.ProvisionDSN = "root:photoprism@tcp(127.0.0.1:1)/photoprism?timeout=2s"
 
-		n := createTestNode(t, regy, "pp-rotate-keep", cluster.RoleInstance)
+		n := createTestNode(t, regy, "pp-rotate-partial", cluster.RoleInstance)
 		before, err := regy.RotateSecret(n.UUID)
 		require.NoError(t, err)
 
@@ -287,11 +289,106 @@ func TestRotateNodeInRegistry_DatabaseErrors(t *testing.T) {
 		}
 
 		require.Error(t, err)
-		assert.Nil(t, resp.Secrets)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "rotated the secret")
+		assert.Empty(t, resp.Database.Password)
 
-		client := entity.FindClientByUID(before.ClientID)
-		if assert.NotNil(t, client) {
-			assert.True(t, client.VerifySecret(before.ClientSecret), "the current secret must stay valid")
+		if assert.NotNil(t, resp.Secrets) {
+			client := entity.FindClientByUID(before.ClientID)
+			if assert.NotNil(t, client) {
+				assert.True(t, client.VerifySecret(resp.Secrets.ClientSecret))
+				assert.False(t, client.VerifySecret(before.ClientSecret))
+			}
 		}
+	})
+	t.Run("UnsupportedDriverRotatesSecret", func(t *testing.T) {
+		restoreProvisioner(t)
+		provisioner.DatabaseDriver = "sqlite3"
+
+		n := createTestNode(t, regy, "pp-rotate-partial-driver", cluster.RoleInstance)
+
+		resp, err := rotateNodeInRegistry(conf, n.Name, true, true)
+
+		require.Error(t, err)
+		assert.ErrorIs(t, err, provisioner.ErrUnsupportedDriver)
+		assert.Equal(t, 2, ExitCode(err))
+		assert.Equal(t, n.UUID, resp.Node.UUID)
+
+		if assert.NotNil(t, resp.Secrets) {
+			assert.NotEmpty(t, resp.Secrets.ClientSecret)
+		}
+	})
+}
+
+func TestPrintRotateResult(t *testing.T) {
+	resp := cluster.RegisterResponse{
+		Node:    cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-print", Role: cluster.RoleInstance},
+		Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+	}
+
+	t.Run("Secret", func(t *testing.T) {
+		stdout, _ := captureStdio(t)
+		printRotateResult(newCommandContext(t, ClusterNodesRotateCommand), resp)
+		out := stdout()
+
+		assert.Contains(t, out, "pp-print")
+		assert.Contains(t, out, "WILL NOT BE SHOWN AGAIN")
+		assert.Contains(t, out, cluster.ExampleClientSecret)
+	})
+	t.Run("Json", func(t *testing.T) {
+		stdout, _ := captureStdio(t)
+		printRotateResult(newCommandContext(t, ClusterNodesRotateCommand, "--json"), resp)
+		out := stdout()
+
+		assert.Equal(t, cluster.ExampleClientSecret, gjson.Get(out, "Secrets.ClientSecret").String())
+		assert.NotContains(t, out, "WILL NOT BE SHOWN AGAIN")
+	})
+	t.Run("NoCredentials", func(t *testing.T) {
+		stdout, _ := captureStdio(t)
+		printRotateResult(newCommandContext(t, ClusterNodesRotateCommand), cluster.RegisterResponse{Node: resp.Node})
+		out := stdout()
+
+		assert.Contains(t, out, "pp-print")
+		assert.NotContains(t, out, "WILL NOT BE SHOWN AGAIN")
+	})
+}
+
+func TestFinishNodeRotation(t *testing.T) {
+	conf := get.Config()
+	node := cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-finish", Role: cluster.RoleInstance}
+	failed := cli.Exit(errors.New("database step failed"), 1)
+
+	t.Run("SecretRotatedDatabaseFailed", func(t *testing.T) {
+		stdout, _ := captureStdio(t)
+		resp := cluster.RegisterResponse{Node: node, Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret}}
+
+		err := finishNodeRotation(newCommandContext(t, ClusterNodesRotateCommand), conf, resp, failed, true)
+
+		assert.Same(t, failed, err)
+		assert.Contains(t, stdout(), cluster.ExampleClientSecret)
+	})
+	t.Run("DatabaseRotatedNotSaved", func(t *testing.T) {
+		stdout, _ := captureStdio(t)
+		resp := cluster.RegisterResponse{Node: node, Database: cluster.RegisterDatabase{User: "cluster_utest", Password: "db-password-example"}}
+
+		err := finishNodeRotation(newCommandContext(t, ClusterNodesRotateCommand), conf, resp, failed, true)
+
+		assert.Same(t, failed, err)
+		assert.Contains(t, stdout(), "db-password-example")
+	})
+	t.Run("NothingIssued", func(t *testing.T) {
+		stdout, _ := captureStdio(t)
+
+		err := finishNodeRotation(newCommandContext(t, ClusterNodesRotateCommand), conf, cluster.RegisterResponse{Node: node}, failed, true)
+
+		assert.Same(t, failed, err)
+		assert.Empty(t, stdout())
+	})
+	t.Run("Success", func(t *testing.T) {
+		stdout, _ := captureStdio(t)
+		resp := cluster.RegisterResponse{Node: node, Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret}}
+
+		assert.NoError(t, finishNodeRotation(newCommandContext(t, ClusterNodesRotateCommand), conf, resp, nil, false))
+		assert.Contains(t, stdout(), "pp-finish")
 	})
 }

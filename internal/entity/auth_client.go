@@ -556,6 +556,40 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 	return deleted, nil
 }
 
+// RevokeSessions deletes the sessions of this client, except for the ones specified to omit.
+func (m *Client) RevokeSessions(omit []string) (deleted int) {
+	if m == nil || m.ClientUID == "" {
+		return 0
+	}
+
+	stmt := Db().Where("client_uid = ?", m.ClientUID)
+
+	if len(omit) > 0 {
+		stmt = stmt.Where("id NOT IN (?)", omit)
+	}
+
+	found := Sessions{}
+
+	if err := stmt.Find(&found).Error; err != nil {
+		event.AuditErr([]string{"client %s", "revoke sessions", status.Error(err)}, m.String())
+		return 0
+	}
+
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditWarn([]string{"client %s", "revoke session %s", status.Error(err)}, m.String(), clean.Log(sess.RefID))
+		} else {
+			deleted++
+		}
+	}
+
+	if deleted > 0 {
+		event.AuditInfo([]string{"client %s", "revoke %s", status.Deleted}, m.String(), english.Plural(deleted, "session", "sessions"))
+	}
+
+	return deleted
+}
+
 // Deleted checks if the client has been deleted. A missing client reads as deleted,
 // so a failed lookup and a retired record reach the same decision.
 func (m *Client) Deleted() bool {

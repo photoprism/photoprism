@@ -188,6 +188,72 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
 		cleanupRegisterProvisioning(t, conf, r)
 	})
+	t.Run("ExistingNodeRotateSecretKeepsRequestToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-rotate-keep", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+
+		client := entity.FindClientByUID(n.ClientID)
+		require.NotNil(t, client)
+		other := entity.NewSession(3600, 0)
+		other.SetClient(client)
+		require.NoError(t, other.Save())
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate-keep","RotateSecret":true}`, token)
+		require.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		assert.NotEmpty(t, gjson.Get(r.Body.String(), "Secrets.ClientSecret").String())
+
+		_, otherErr := entity.FindSession(other.ID)
+		assert.Error(t, otherErr, "other access tokens must be revoked")
+
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rotate-keep"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code, "the request token must stay valid")
+	})
+	t.Run("RenameRotateSecretKeepsRequestToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		require.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-rename-from", Role: cluster.RoleInstance}}
+		require.NoError(t, regy.Put(n))
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		n, err = regy.RotateSecret(n.UUID)
+		require.NoError(t, err)
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+
+		client := entity.FindClientByUID(n.ClientID)
+		require.NotNil(t, client)
+		other := entity.NewSession(3600, 0)
+		other.SetClient(client)
+		require.NoError(t, other.Save())
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rename-to","RotateSecret":true}`, token)
+		require.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		assert.Equal(t, "pp-node-rename-to", gjson.Get(r.Body.String(), "Node.Name").String())
+
+		_, otherErr := entity.FindSession(other.ID)
+		assert.Error(t, otherErr, "other access tokens must be revoked")
+
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-rename-to"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code, "the request token must stay valid")
+	})
 	t.Run("ExistingNodeRotateSecretAndDatabase", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)

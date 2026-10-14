@@ -67,6 +67,13 @@ func TestClientsModCommand(t *testing.T) {
 		assert.Contains(t, output3, "│ AuthEnabled  │ true ")
 	})
 	t.Run("RegenerateSecret", func(t *testing.T) {
+		client := entity.FindClientByUID("cs7pvt5h8rw9aaqj")
+		require.NotNil(t, client)
+
+		sess := entity.NewSession(3600, 0)
+		sess.SetClient(client)
+		require.NoError(t, sess.Save())
+
 		// Run command with test context.
 		output, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--regenerate", "cs7pvt5h8rw9aaqj"})
 
@@ -74,6 +81,9 @@ func TestClientsModCommand(t *testing.T) {
 		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Client Secret")
+
+		_, findErr := entity.FindSession(sess.ID)
+		assert.Error(t, findErr, "sessions must be revoked with the secret")
 	})
 }
 
