@@ -1200,6 +1200,10 @@ func TestPersistRegistration(t *testing.T) {
 	t.Run("IncompleteDatabase", func(t *testing.T) {
 		c := newBootstrapTestConfig(t, "bootstrap-persist-incomplete")
 		c.Options().DatabaseDriver = dsn.DriverMySQL
+		c.Options().DatabaseDSN = ""
+		c.Options().DatabaseName = ""
+		c.Options().DatabaseUser = ""
+		c.Options().DatabasePassword = ""
 		clusterUUID := rnd.UUID()
 
 		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
