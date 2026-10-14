@@ -33,6 +33,22 @@ func unsafeRune(r rune) bool {
 	return !unicode.IsPrint(r)
 }
 
+// unsafePathRune reports whether a rune is removed from file and path names: C0 and C1 controls, DEL,
+// line and paragraph separators, and bidi embeddings, overrides and isolates. Every other character may
+// occur in a real name and is kept, so that a cleaned name still matches the file system.
+func unsafePathRune(r rune) bool {
+	switch {
+	case r < 0x20, r >= 0x7F && r <= 0x9F:
+		return true
+	case r == 0x2028, r == 0x2029:
+		return true
+	case r >= 0x202A && r <= 0x202E, r >= 0x2066 && r <= 0x2069:
+		return true
+	}
+
+	return false
+}
+
 // unsafeSpaceRune reports whether a rune renders as a space without being one, so that two
 // different names cannot render identically. It is checked before unsafeRune, which would
 // otherwise mark these: Go considers no space printable except the ASCII one.
