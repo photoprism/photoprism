@@ -1,16 +1,19 @@
 package entity
 
 import (
-	"errors"
-	"strings"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
-	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"golang.org/x/net/webdav"
 
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestCreateService(t *testing.T) {
@@ -250,6 +253,59 @@ func TestService_Directories(t *testing.T) {
 
 		assert.Empty(t, result.Abs())
 	})
+	// Listing the folders of an account changes neither its error count nor its sharing, nor the errors of its files.
+	for _, c := range []struct {
+		name string
+		fail bool
+	}{{"FailureKeepsAccount", true}, {"SuccessKeepsAccount", false}} {
+		t.Run(c.name, func(t *testing.T) {
+			remote := t.TempDir()
+			require.NoError(t, os.MkdirAll(filepath.Join(remote, "Photos"), fs.ModeDir))
+			handler := &webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()}
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if c.fail {
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+				handler.ServeHTTP(w, r)
+			}))
+			t.Cleanup(server.Close)
+
+			m := &Service{AccName: "Directories " + c.name, AccURL: server.URL + "/", AccType: "webdav", AccTimeout: "low",
+				AccShare: true, AccSync: true, RetryLimit: 1, AccErrors: 2, AccError: "previous error"}
+			require.NoError(t, Db().Create(m).Error)
+			fileSync, fileShare := NewFileSync(m.ID, "/listing.jpg"), NewFileShare(1, m.ID, "listing.jpg")
+			fileSync.Errors, fileShare.Errors = 4, 5
+			require.NoError(t, fileSync.Create())
+			require.NoError(t, fileShare.Create())
+			t.Cleanup(func() {
+				UnscopedDb().Delete(&FileSync{}, "service_id = ?", m.ID)
+				UnscopedDb().Delete(&FileShare{}, "service_id = ?", m.ID)
+				UnscopedDb().Unscoped().Delete(m)
+			})
+
+			result, err := m.Directories("")
+			if c.fail {
+				assert.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				assert.Contains(t, result.Abs(), "/Photos")
+			}
+
+			var stored Service
+			require.NoError(t, Db().First(&stored, m.ID).Error)
+			assert.Equal(t, 2, stored.AccErrors)
+			assert.Equal(t, "previous error", stored.AccError)
+			assert.True(t, stored.AccShare)
+
+			var storedSync FileSync
+			require.NoError(t, Db().Where("service_id = ?", m.ID).First(&storedSync).Error)
+			assert.Equal(t, 4, storedSync.Errors)
+			var storedShare FileShare
+			require.NoError(t, Db().Where("service_id = ?", m.ID).First(&storedShare).Error)
+			assert.Equal(t, 5, storedShare.Errors)
+		})
+	}
 }
 
 func TestService_Updates(t *testing.T) {
@@ -342,144 +398,6 @@ func TestService_Save(t *testing.T) {
 	})
 }
 
-func TestService_LogErr(t *testing.T) {
-	t.Run("ClipsMultiByteErrorMessage", func(t *testing.T) {
-		// acc_error is a bounded VARBINARY column and LogErr budgets messages to
-		// txt.ClipError (255) bytes; a long multi-byte error must be clipped on a rune
-		// boundary so the stored value stays within budget and valid UTF-8.
-		account := Service{AccName: "LogErrAccount", AccOwner: "LogErr", AccURL: "test.com", AccType: "test",
-			AccKey: "123", AccUser: "testuser", AccPass: "testpass", RetryLimit: 4}
-
-		accountForm, err := form.NewService(account)
-		if err != nil {
-			t.Fatal(err)
-		}
-		model, err := AddService(accountForm)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		longErr := errors.New(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
-
-		if err = model.LogErr(longErr); err != nil {
-			t.Fatal(err)
-		}
-
-		assert.NotEmpty(t, model.AccError)
-		assert.LessOrEqual(t, len(model.AccError), txt.ClipError)
-		assert.True(t, utf8.ValidString(model.AccError))
-		assert.Equal(t, 1, model.AccErrors)
-
-		// The clipped message is also what gets persisted.
-		var reloaded Service
-		if err = Db().Where("id = ?", model.ID).First(&reloaded).Error; err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, model.AccError, reloaded.AccError)
-		assert.LessOrEqual(t, len(reloaded.AccError), txt.ClipError)
-	})
-	t.Run("SanitizesStoredError", func(t *testing.T) {
-		model, err := AddService(form.Service{AccName: "LogErrSanitized", AccURL: "test.com", AccType: "webdav"})
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
-		//nolint:gosec // G101: Example credential in a fixture URL, which is the subject of the test.
-		if err = model.LogErr(errors.New("PROPFIND https://sync-user:notreal@dav.example.com/photos:\nsync \u203a failed")); err != nil {
-			t.Fatal(err)
-		}
-		var m Service
-		if err = Db().First(&m, model.ID).Error; err != nil {
-			t.Fatal(err)
-		}
-		assert.NotContains(t, m.AccError, "notreal")
-		assert.NotContains(t, m.AccError, "\n")
-		assert.NotContains(t, m.AccError, "\u203a")
-	})
-	t.Run("NilErrorResetsErrors", func(t *testing.T) {
-		// A nil error clears the recorded message and counter via ResetErrors.
-		account := Service{AccName: "LogErrReset", AccOwner: "LogErr", AccURL: "test.com", AccType: "test",
-			AccKey: "123", AccUser: "testuser", AccPass: "testpass", RetryLimit: 4}
-
-		accountForm, err := form.NewService(account)
-		if err != nil {
-			t.Fatal(err)
-		}
-		model, err := AddService(accountForm)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = model.LogErr(errors.New("boom")); err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, 1, model.AccErrors)
-
-		if err = model.LogErr(nil); err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, 0, model.AccErrors)
-		assert.Equal(t, "", model.AccError)
-	})
-	t.Run("RetryLimit", func(t *testing.T) {
-		stored := func(t *testing.T, id uint) Service {
-			var m Service
-			if err := Db().First(&m, id).Error; err != nil {
-				t.Fatal(err)
-			}
-			return m
-		}
-		for _, c := range []struct {
-			name        string
-			limit, errs int
-			share       bool
-		}{
-			{"AtLimit", 2, 2, true},
-			{"AboveLimit", 2, 3, false},
-			{"ZeroLimit", 0, 5, true},
-			{"NoLimit", -1, 5, true},
-		} {
-			t.Run(c.name, func(t *testing.T) {
-				model, err := AddService(form.Service{AccName: "LogErrLimit", AccURL: "test.com", AccType: "webdav", AccShare: true, RetryLimit: c.limit})
-				if err != nil {
-					t.Fatal(err)
-				}
-				t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
-				// SaveForm stores 0 as -1, so the limit is set directly.
-				if err = model.Update("retry_limit", c.limit); err != nil {
-					t.Fatal(err)
-				}
-				assert.Equal(t, c.limit, model.RetryLimit)
-				// Changed in the database only, so a full-row save would revert it.
-				if err = Db().Model(&Service{ID: model.ID}).UpdateColumn("acc_name", "LogErrChanged").Error; err != nil {
-					t.Fatal(err)
-				}
-				for i := 0; i < c.errs; i++ {
-					if err = model.LogErr(errors.New("boom")); err != nil {
-						t.Fatal(err)
-					}
-				}
-				m := stored(t, model.ID)
-				assert.Equal(t, "LogErrChanged", m.AccName)
-				assert.Equal(t, c.errs, m.AccErrors)
-				assert.Equal(t, "boom", m.AccError)
-				assert.Equal(t, c.share, m.AccShare)
-				// A success resets the counters and leaves the stored share flag alone.
-				if err = Db().Model(&Service{ID: model.ID}).UpdateColumn("acc_share", !c.share).Error; err != nil {
-					t.Fatal(err)
-				}
-				if err = model.LogErr(nil); err != nil {
-					t.Fatal(err)
-				}
-				m = stored(t, model.ID)
-				assert.Equal(t, 0, m.AccErrors)
-				assert.Equal(t, "", m.AccError)
-				assert.Equal(t, !c.share, m.AccShare)
-			})
-		}
-	})
-}
-
 func TestService_ResetErrors(t *testing.T) {
 	// newAccount creates a WebDAV account with sync and sharing on, one failed download, and one failed share.
 	newAccount := func(t *testing.T, limit int) *Service {
@@ -553,9 +471,9 @@ func TestService_ResetErrors(t *testing.T) {
 		assert.Equal(t, 0, fileShare.Errors)
 		assert.Equal(t, "", fileShare.Error)
 	})
-	t.Run("FolderListing", func(t *testing.T) {
+	t.Run("Direct", func(t *testing.T) {
 		m := newAccount(t, -1)
-		if err := m.LogErr(nil); err != nil {
+		if err := m.ResetErrors(true, true); err != nil {
 			t.Fatal(err)
 		}
 		fileSync, fileShare := stored(t, m)

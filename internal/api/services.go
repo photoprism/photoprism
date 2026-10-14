@@ -109,7 +109,7 @@ func GetServiceFolders(router *gin.RouterGroup) {
 		list, err := m.Directories(conf.ServicesCIDR())
 
 		if err != nil {
-			log.Errorf("%s: %s", serviceFolder, err.Error())
+			log.Errorf("%s: %s", serviceFolder, clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
 		}

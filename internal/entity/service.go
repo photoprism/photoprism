@@ -88,25 +88,6 @@ func AddService(form form.Service) (model *Service, err error) {
 	return model, err
 }
 
-// LogErr updates the service error count and message.
-func (m *Service) LogErr(err error) error {
-	if err == nil {
-		return m.ResetErrors(true, true)
-	}
-
-	// Update error message and increase count.
-	m.AccError = clean.ErrorBytes(err, txt.ClipError)
-	m.AccErrors++
-
-	// Disable sharing when the retry limit is exceeded.
-	if m.RetryLimit > 0 && m.AccErrors > m.RetryLimit {
-		m.AccShare = false
-	}
-
-	// Update fields in database.
-	return m.Updates(Values{"acc_error": m.AccError, "acc_errors": m.AccErrors, "acc_share": m.AccShare})
-}
-
 // ResetErrors resets the service and related file error messages and counters, keeping per-file download error counts without a retry limit.
 func (m *Service) ResetErrors(share, sync bool) error {
 	if !share && !sync || isNewRecord(Db(), m) {
@@ -240,11 +221,6 @@ func (m *Service) Directories(servicesCIDR string) (result fs.FileInfos, err err
 
 	// Sort directory list.
 	sort.Sort(result)
-
-	// Update error count and message.
-	if logErr := m.LogErr(err); logErr != nil {
-		log.Warnf("service: %s", logErr)
-	}
 
 	return result, err
 }

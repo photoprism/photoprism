@@ -264,11 +264,12 @@ func TestSync_StartStoredError(t *testing.T) {
 
 	worker := NewSync(config.TestConfig())
 
-	// The remote answers the listing with an error whose text holds a new line, a field separator and more.
+	// The remote answers the listing with an error whose text holds a URL with credentials, a new line, a field
+	// separator and more.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("listing failed\nsync \u203a admin " + strings.Repeat("x", 800)))
+		_, _ = w.Write([]byte("listing failed https://sync-user:notreal@dav.example.com/photos\nsync \u203a admin " + strings.Repeat("x", 800)))
 	}))
 	t.Cleanup(server.Close)
 
@@ -300,6 +301,7 @@ func TestSync_StartStoredError(t *testing.T) {
 	assert.LessOrEqual(t, len(stored.AccError), txt.ClipError)
 	assert.NotContains(t, stored.AccError, "\n")
 	assert.NotContains(t, stored.AccError, "\u203a")
+	assert.NotContains(t, stored.AccError, "notreal")
 }
 
 func TestSync_StartRetryLimit(t *testing.T) {
