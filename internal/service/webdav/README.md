@@ -1,6 +1,6 @@
 ## PhotoPrism — WebDAV Service Client
 
-**Last Updated:** October 13, 2026
+**Last Updated:** October 14, 2026
 
 ### Overview
 
@@ -54,18 +54,18 @@ and service network restrictions remain in force.
 
 Available timeout settings for `Service.AccTimeout` and `webdav.Timeout`:
 
-| Setting | Value      | Effective Timeout |
-|:--------|:-----------|:------------------|
-| Default | `""`       | `60s`             |
-| Medium  | `"medium"` | `60s`             |
-| Low     | `"low"`    | `30s`             |
-| High    | `"high"`   | `120s`            |
-| None    | `"none"`   | no timeout        |
+| Setting | Value      | Effective Timeout                 |
+|:--------|:-----------|:----------------------------------|
+| Default | `""`       | `60s`                             |
+| Medium  | `"medium"` | `60s`                             |
+| Low     | `"low"`    | `30s`                             |
+| High    | `"high"`   | `120s`                            |
+| None    | `"none"`   | 30 minutes (`MaxRequestDuration`) |
 
 - `Timeout` values map to total HTTP request timeouts for non-transfer WebDAV calls such as directory discovery, file listing, directory creation, and delete operations.
-- `Upload()` and `Download()` intentionally bypass the service timeout so long-running file transfers are not aborted by a total request deadline.
+- `Upload()` and `Download()` intentionally bypass the service timeout so long-running file transfers are not aborted by a total request deadline. Instead, a transfer ends when less than `transferStallBytes` (1 MiB) moves within `transferStallTimeout` (5 minutes), about 3.5 KB/s, so a remote that stops or nearly stops sending or reading cannot hold the sync and share workers; the error says the transfer stalled. A download's wait for the response counts as part of that. An upload moves only while the socket send buffer drains, and once its body is sent, the wait for the response is 5 minutes plus one second per MiB of the file (`responseWait`), as servers may scan or move a large file before they answer.
 - Transfer requests still apply connection-level safeguards such as connect, TLS handshake, and pooled idle connection limits to avoid hanging before a transfer is established.
-- In timeout-aware helper calls, `timeout=0` means "use the client's configured default timeout" (`c.timeout`), not "disable timeouts".
+- In timeout-aware helper calls, `timeout=0` means "use the client's configured default timeout" (`c.timeout`), not "disable timeouts". With the setting "None", these calls are bounded by `MaxRequestDuration` (30 minutes).
 - A negative helper timeout means "do not override the current client/request timeout behavior"; this is used internally for legacy no-override call paths.
 - Recursive directory discovery also applies the effective timeout as an overall traversal deadline, so iterative fallback walks do not run indefinitely.
 - `MaxRequestDuration` is used for long-running recursive directory discovery, including the `Depth: 1` fallback.

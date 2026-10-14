@@ -202,10 +202,14 @@ func (c *Client) effectiveTimeout(timeout time.Duration) time.Duration {
 	return timeout
 }
 
-// timeoutContext returns a request context bounded by the configured timeout when applicable.
+// timeoutContext returns a request context bounded by the configured timeout when applicable, and by
+// MaxRequestDuration when the configured timeout is none.
 func (c *Client) timeoutContext(timeout time.Duration) (context.Context, context.CancelFunc) {
-	if timeout = c.effectiveTimeout(timeout); timeout > 0 {
+	switch timeout = c.effectiveTimeout(timeout); {
+	case timeout > 0:
 		return context.WithTimeout(c.ctx, timeout)
+	case timeout == 0:
+		return context.WithTimeout(c.ctx, MaxRequestDuration)
 	}
 
 	return c.ctx, func() {}
@@ -478,21 +482,34 @@ func (c *Client) Upload(src, dest string) (err error) {
 		}
 	}()
 
+	// The request ends when too little data moves, and the wait for the response grows with the file size.
+	var size int64
+
+	if info, statErr := f.Stat(); statErr == nil {
+		size = info.Size()
+	}
+
+	watch := newStallWatch(c.ctx, transferStallTimeout)
+	defer watch.Stop()
+
 	// The deferred Close owns the file, as the client would otherwise close the request body.
-	req, err := http.NewRequestWithContext(c.ctx, http.MethodPut, c.resolveHref(dest).String(), io.NopCloser(f))
+	body := watch.Reader(f, func() time.Duration { return responseWait(size) })
+	req, err := http.NewRequestWithContext(watch.Context(), http.MethodPut, c.resolveHref(dest).String(), io.NopCloser(body))
 
 	if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to write %s", clean.Log(dest))
 	}
 
-	if info, statErr := f.Stat(); statErr == nil {
-		req.ContentLength = info.Size()
+	if size > 0 {
+		req.ContentLength = size
 	}
 
 	resp, err := c.http.Do(req)
 
-	if err != nil {
+	if err != nil && watch.Stalled() {
+		return fmt.Errorf("webdav: failed to upload %s (stalled)", clean.LogBytes(dest, clean.LogNamesBytes))
+	} else if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to upload %s", clean.Log(dest))
 	}
@@ -556,12 +573,18 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 		return fmt.Errorf("webdav: %s is not a folder", clean.LogBytes(dir, clean.LogNamesBytes))
 	}
 
+	// The download ends when too little data moves, including the wait for the response.
+	watch := newStallWatch(c.ctx, transferStallTimeout)
+	defer watch.Stop()
+
 	var reader io.ReadCloser
 	// Start download.
-	reader, err = c.client.Open(c.ctx, src)
+	reader, err = c.client.Open(watch.Context(), src)
 
 	// Error?
-	if err != nil {
+	if err != nil && watch.Stalled() {
+		return fmt.Errorf("webdav: failed to download %s (stalled)", clean.LogBytes(src, clean.LogNamesBytes))
+	} else if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to download %s", clean.Log(src))
 	}
@@ -604,16 +627,18 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	if c.downloadLimit > 0 {
 		// Read one byte past the limit so an exact-size overflow is detected
 		// instead of being silently truncated into a corrupt local file.
-		if n, copyErr := io.Copy(f, io.LimitReader(reader, c.downloadLimit+1)); copyErr != nil {
+		if n, copyErr := io.Copy(f, io.LimitReader(watch.Reader(reader, nil), c.downloadLimit+1)); copyErr != nil {
 			err = copyErr
 		} else if sizeErr := c.CheckDownloadSize(dest, n); sizeErr != nil {
 			return sizeErr
 		}
 	} else {
-		_, err = f.ReadFrom(reader)
+		_, err = f.ReadFrom(watch.Reader(reader, nil))
 	}
 
-	if err != nil {
+	if err != nil && watch.Stalled() {
+		return fmt.Errorf("webdav: failed to download %s (stalled)", clean.LogBytes(src, clean.LogNamesBytes))
+	} else if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed writing to %s", clean.Log(path.Base(dest)))
 	}
