@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -90,7 +91,7 @@ func (w *Sync) Start() (err error) {
 		accErrors := a.AccErrors
 		syncStatus := a.SyncStatus
 		syncDate := a.SyncDate
-		synced := false
+		synced, reset := false, false
 
 		switch a.SyncStatus {
 		case entity.SyncStatusRefresh:
@@ -98,6 +99,7 @@ func (w *Sync) Start() (err error) {
 				accErrors++
 				accError = clean.ErrorBytes(err, txt.ClipError)
 			} else if complete {
+				reset = true
 				accErrors = 0
 				accError = ""
 
@@ -150,13 +152,27 @@ func (w *Sync) Start() (err error) {
 			return nil
 		}
 
-		// Only update the following fields to avoid overwriting other settings
-		if updateErr := a.Updates(entity.Values{
-			"AccError":   accError,
-			"AccErrors":  accErrors,
-			"SyncStatus": syncStatus,
-			"SyncDate":   syncDate}); updateErr != nil {
-			w.logErr(updateErr)
+		// Errors are counted on the stored value, so a reset or a count saved during the run is kept.
+		if accErrors > a.AccErrors {
+			w.logErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).UpdateColumns(entity.Values{
+				"acc_errors": gorm.Expr("COALESCE(acc_errors, 0) + 1"), "acc_error": accError}).Error)
+		} else if reset {
+			w.logErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).UpdateColumns(entity.Values{
+				"acc_errors": accErrors, "acc_error": accError}).Error)
+		}
+
+		if syncStatus == a.SyncStatus && syncDate.Valid == a.SyncDate.Valid && syncDate.Time.Equal(a.SyncDate.Time) {
+			continue
+		}
+
+		// The status is written only while the stored one is that loaded, so a status saved during the run is
+		// kept and read by the next run. Rows of earlier releases may hold NULL instead.
+		if res := entity.Db().Model(&entity.Service{}).
+			Where("id = ? AND COALESCE(sync_status, '') = ?", a.ID, a.SyncStatus).
+			UpdateColumns(entity.Values{"sync_status": syncStatus, "sync_date": syncDate}); res.Error != nil {
+			w.logErr(res.Error)
+		} else if res.RowsAffected == 0 {
+			log.Debugf("sync: kept the status saved to %s during the sync", clean.Log(a.AccName))
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})
 		}
