@@ -23,6 +23,9 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		return true, nil
 	}
 
+	// Uploads that stalled in the previous sync cycle are tried again.
+	w.logAccountErr(entity.ResetFileSyncStalled(a.ID), a)
+
 	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
 
 	if err != nil {

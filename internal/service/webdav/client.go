@@ -30,6 +30,9 @@ var ErrSkipPath = errors.New("webdav: transfer path skipped")
 // ErrForbidden identifies a transfer the remote server refused with 403 Forbidden.
 var ErrForbidden = errors.New("forbidden")
 
+// ErrStalled identifies a transfer that ended because too little data moved.
+var ErrStalled = errors.New("stalled")
+
 // ErrUnsafePath identifies a path with a parent-directory segment. It is reported as a failure
 // rather than a skip, so a queued transfer is not recorded as benignly ignored.
 var ErrUnsafePath = errors.New("webdav: transfer path contains a parent directory")
@@ -508,7 +511,7 @@ func (c *Client) Upload(src, dest string) (err error) {
 	resp, err := c.http.Do(req)
 
 	if err != nil && watch.Stalled() {
-		return fmt.Errorf("webdav: failed to upload %s (stalled)", clean.LogBytes(dest, clean.LogNamesBytes))
+		return fmt.Errorf("webdav: failed to upload %s (%w)", clean.LogBytes(dest, clean.LogNamesBytes), ErrStalled)
 	} else if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to upload %s", clean.Log(dest))
@@ -583,7 +586,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 
 	// Error?
 	if err != nil && watch.Stalled() {
-		return fmt.Errorf("webdav: failed to download %s (stalled)", clean.LogBytes(src, clean.LogNamesBytes))
+		return fmt.Errorf("webdav: failed to download %s (%w)", clean.LogBytes(src, clean.LogNamesBytes), ErrStalled)
 	} else if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to download %s", clean.Log(src))
@@ -637,7 +640,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	}
 
 	if err != nil && watch.Stalled() {
-		return fmt.Errorf("webdav: failed to download %s (stalled)", clean.LogBytes(src, clean.LogNamesBytes))
+		return fmt.Errorf("webdav: failed to download %s (%w)", clean.LogBytes(src, clean.LogNamesBytes), ErrStalled)
 	} else if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed writing to %s", clean.Log(path.Base(dest)))

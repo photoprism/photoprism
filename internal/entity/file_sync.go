@@ -22,6 +22,10 @@ const (
 // RemoteNameMaxLen is the length in bytes of the longest remote name a file sync or share record holds.
 const RemoteNameMaxLen = 1024
 
+// FileSyncStalledPrefix starts the placeholder names that record local files whose upload stalled, so that the
+// next runs upload other files first; refresh removes them, so they are uploaded again in the next sync cycle.
+const FileSyncStalledPrefix = fs.PPHiddenPathname + "/sync/stalled/"
+
 // fileSyncLongNames is the folder of the placeholder names that record local files whose remote name is too long.
 const fileSyncLongNames = fs.PPHiddenPathname + "/sync/long/"
 
@@ -107,4 +111,9 @@ func FileSyncLongNamePrefix(syncPath string) string {
 func ResetFileSyncLongNames(serviceID uint, syncPath string) error {
 	return Db().Where("service_id = ? AND remote_name LIKE ? AND remote_name NOT LIKE ?", serviceID,
 		fileSyncLongNames+"%", FileSyncLongNamePrefix(syncPath)+"%").Delete(&FileSync{}).Error
+}
+
+// ResetFileSyncStalled removes the placeholders of uploads that stalled for an account, so they are tried again.
+func ResetFileSyncStalled(serviceID uint) error {
+	return Db().Where("service_id = ? AND remote_name LIKE ?", serviceID, FileSyncStalledPrefix+"%").Delete(&FileSync{}).Error
 }

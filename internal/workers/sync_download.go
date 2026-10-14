@@ -24,6 +24,12 @@ import (
 // run, so that related files are not split. Tests may lower it to no less than 51.
 var downloadLimit = 1000
 
+// syncIndexWorker and syncImportWorker process the downloaded files; tests replace them to observe the jobs.
+var (
+	syncIndexWorker  = photoprism.IndexWorker
+	syncImportWorker = photoprism.ImportWorker
+)
+
 // Downloads groups files to sync by their directory/prefix.
 type Downloads map[string][]entity.FileSync
 
@@ -68,12 +74,12 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	// Set up index worker
 	indexJobs := make(chan photoprism.IndexJob)
 
-	go photoprism.IndexWorker(indexJobs)
+	go syncIndexWorker(indexJobs)
 	defer close(indexJobs)
 
 	// Set up import worker
 	importJobs := make(chan photoprism.ImportJob)
-	go photoprism.ImportWorker(importJobs)
+	go syncImportWorker(importJobs)
 	defer close(importJobs)
 
 	relatedFiles, err := w.relatedDownloads(a)
@@ -128,6 +134,10 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	}
 
 	done := make(map[string]bool)
+
+	var stalls stallBudget
+
+	stopped := false
 
 	for _, files := range relatedFiles {
 		if w.conf.InsufficientStorage() {
@@ -188,6 +198,8 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
+			stalled := false
+
 			if _, err = os.Stat(localName); err == nil {
 				log.Warnf("sync: skipped download of %s from %s because local file %s already exists", clean.Log(file.RemoteName), clean.Log(a.AccName), clean.Log(localName))
 				file.Status = entity.FileSyncExists
@@ -205,6 +217,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 					file.Error = ""
 					file.Errors = 0
 				} else if err != nil {
+					stalled = errors.Is(err, webdav.ErrStalled)
 					file.Errors++
 					file.Error = clean.ErrorBytes(err, txt.ClipError)
 
@@ -227,6 +240,13 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				w.logFileErr(err, file.RemoteName, a)
 			} else {
 				files[i] = file
+			}
+
+			// Transfers stop after too many stalled, while the files of this group already downloaded are still imported.
+			if stalls.Add(stalled) {
+				stalls.Warn("sync", a.AccName)
+				stopped = true
+				break
 			}
 		}
 
@@ -286,6 +306,10 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 					Imp:       get.Import(),
 				}
 			}
+		}
+
+		if stopped {
+			break
 		}
 	}
 

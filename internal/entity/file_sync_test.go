@@ -261,3 +261,26 @@ func TestResetFileSyncLongNames(t *testing.T) {
 	require.NoError(t, ResetFileSyncLongNames(serviceID, "/current"))
 	assert.ElementsMatch(t, kept, names(t, serviceID))
 }
+
+func TestResetFileSyncStalled(t *testing.T) {
+	const serviceID, otherID = 4721, 4722
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id IN (?)", []uint{serviceID, otherID}).Error)
+	})
+
+	kept := []string{"/photos/file.jpg", ".photoprism/sync/12", FileSyncLongNamePrefix("/") + "13"}
+	for _, name := range append([]string{FileSyncStalledPrefix + "14", FileSyncStalledPrefix + "15"}, kept...) {
+		require.NoError(t, NewFileSync(serviceID, name).Create())
+	}
+	require.NoError(t, NewFileSync(otherID, FileSyncStalledPrefix+"16").Create())
+
+	require.NoError(t, ResetFileSyncStalled(serviceID))
+
+	var names []string
+	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", serviceID).Pluck("remote_name", &names).Error)
+	assert.ElementsMatch(t, kept, names)
+
+	var other int64
+	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", otherID).Count(&other).Error)
+	assert.EqualValues(t, 1, other)
+}

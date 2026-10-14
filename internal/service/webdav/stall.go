@@ -20,6 +20,15 @@ var (
 	transferResponseRate int64 = 1 << 20
 )
 
+// SetTransferStallTimeout sets the stall timeout of uploads and downloads and returns a function that restores the
+// previous one, so that tests in other packages can shorten it. It must not be called while a transfer runs.
+func SetTransferStallTimeout(timeout time.Duration) (restore func()) {
+	prev := transferStallTimeout
+	transferStallTimeout = timeout
+
+	return func() { transferStallTimeout = prev }
+}
+
 // responseWait returns how long to wait for the response once an upload body of the specified size was sent.
 func responseWait(size int64) time.Duration {
 	if size <= 0 || transferResponseRate <= 0 {

@@ -195,6 +195,28 @@ func (w *Sync) Start() (err error) {
 	return err
 }
 
+// transferStallLimit is the number of transfers of one account that may stall in a run before the worker stops
+// transferring its files until the next run, so that a remote cannot hold the worker, and with it every other
+// account, for a whole batch.
+const transferStallLimit = 3
+
+// stallBudget counts the transfers of one account that stalled in a run.
+type stallBudget int
+
+// Add counts a transfer if it stalled, and reports whether the limit of stalled transfers was reached.
+func (s *stallBudget) Add(stalled bool) bool {
+	if stalled {
+		*s++
+	}
+
+	return int(*s) >= transferStallLimit
+}
+
+// Warn logs that the worker stopped transferring files of an account in this run because transfers stalled.
+func (s *stallBudget) Warn(worker, account string) {
+	log.Warnf("%s: stopped transferring files of %s in this run because %d transfers stalled", worker, clean.Log(account), int(*s))
+}
+
 // syncNameTooLong reports whether a remote file cannot be downloaded because its name is longer than a file sync
 // record holds, or contains a file or folder name longer than local file systems accept.
 func syncNameTooLong(name string) bool {

@@ -49,6 +49,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 	// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
 	var yamlRefused, otherRefused bool
+	var stalls stallBudget
 
 	// Files whose remote names are too long are reported in one warning per run.
 	var skipped skippedNames
@@ -88,7 +89,18 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			log.Debugf("sync: %s (create remote folder for %s)", clean.Error(err), clean.Log(a.AccName))
 		}
 
-		if err = client.Upload(fileName, remoteName); errors.Is(err, webdav.ErrForbidden) {
+		// A stalled upload is recorded until the next refresh, so the next runs upload other files first.
+		if err = client.Upload(fileName, remoteName); errors.Is(err, webdav.ErrStalled) {
+			w.logAccountErr(err, a)
+			w.ignoreUpload(a, entity.FileSyncStalledPrefix, file.ID)
+
+			if stalls.Add(true) {
+				stalls.Warn("sync", a.AccName)
+				return false, nil
+			}
+
+			continue
+		} else if errors.Is(err, webdav.ErrForbidden) {
 			yamlRefused, otherRefused = yamlRefused || yamlFile, otherRefused || !yamlFile
 			w.logAccountErr(err, a)
 			continue
