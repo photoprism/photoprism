@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestFindCommand(t *testing.T) {
@@ -42,6 +43,19 @@ func TestFindCommand_FileNameControlCharacters(t *testing.T) {
 	assert.NotContains(t, output, "\x07")
 	assert.NotContains(t, output, "\x1b")
 
+	t.Run("NUL", func(t *testing.T) {
+		if entity.DbDialect() == dsn.DialectPostgreSQL {
+			t.Skip("PostgreSQL cannot store NUL in text")
+		}
+
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_uid = ?", f.FileUID).
+			UpdateColumn("file_name", "1990/a\x00b.jpg").Error)
+
+		nulOutput, nulErr := RunWithTestContext(FindCommand, []string{"find", "uid:" + f.PhotoUID})
+		require.NoError(t, nulErr)
+		assert.Contains(t, nulOutput, "1990/a[U+0000]b.jpg")
+		assert.NotContains(t, nulOutput, "\x00")
+	})
 	t.Run("JSON", func(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_uid = ?", f.FileUID).
 			UpdateColumn("file_name", "1990/a\u202Eb\x7fc.jpg").Error)
