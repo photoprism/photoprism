@@ -64,8 +64,9 @@ func (w *Sync) logWarn(err error) {
 func (w *Sync) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("sync: %s (worker panic)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("sync: %s (worker panic)", clean.Log(fmt.Sprint(r)))
 			log.Error(err)
+			log.Debugf("sync: stack of the worker panic: %s", debug.Stack())
 		}
 	}()
 
