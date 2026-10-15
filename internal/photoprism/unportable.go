@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // unportableLimit is the number of skipped paths that are remembered, so each is reported once per process.
@@ -93,6 +94,22 @@ func unportablePath(rel string) string {
 		}
 
 		i += j + 1
+	}
+
+	return ""
+}
+
+// unsupportedPath returns a slash-separated relative path up to and including its first name that is not
+// portable or hidden, or an empty string if all of its names are portable and visible.
+func unsupportedPath(rel string) string {
+	if p := unportablePath(rel); p != "" {
+		return p
+	}
+
+	for i, part := range strings.Split(rel, "/") {
+		if fs.FileNameHidden(part) {
+			return strings.Join(strings.Split(rel, "/")[:i+1], "/")
+		}
 	}
 
 	return ""

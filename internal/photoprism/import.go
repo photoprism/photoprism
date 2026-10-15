@@ -4,12 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/karrick/godirwalk"
 
@@ -68,6 +70,10 @@ func (imp *Import) insufficientStorage() bool {
 
 // ErrImportBusy is returned by Import.Run when the import has to wait for another task to complete.
 var ErrImportBusy = errors.New("waiting for another task to complete")
+
+// ErrImportDest is returned by Import.Run when the destination folder or the Import.Dest pattern gives names that
+// are not supported.
+var ErrImportDest = errors.New("destination is not supported")
 
 // ErrImportIncomplete is returned by Import.Run when files could not be moved or copied to the originals.
 var ErrImportIncomplete = errors.New("some files could not be imported")
@@ -130,6 +136,14 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: directory %s not found", clean.Log(displayFolder(importPath, folderBase))))
 		return done, errors.New("directory not found")
+	}
+
+	// Imported files must get names that the index accepts. The details name folders, so only the system log has
+	// them, and callers get ErrImportDest alone.
+	if err := imp.CheckDest(opt.DestFolder); err != nil {
+		event.SystemError([]string{"import", "%s"}, err.Error())
+		event.Error("import: destination is not supported")
+		return done, ErrImportDest
 	}
 
 	// Reset the cached disk usage so a freshly freed disk is detected immediately.
@@ -450,6 +464,25 @@ func StoredCopyOf(mediaFile *MediaFile) *entity.File {
 	}
 
 	return &stored
+}
+
+// CheckDest returns ErrImportDest if the destination folder or the Import.Dest pattern gives names that are not
+// portable or hidden, which the index would skip.
+func (imp *Import) CheckDest(folder string) error {
+	// Checked as cleaned, since the destination is joined below the originals folder; ".." is refused as hidden.
+	if rel := path.Clean(clean.SlashPath(folder)); rel != "." && unsupportedPath(rel) != "" {
+		return fmt.Errorf("%w: folder %s, check the upload path of the user, the import-dest option, or --dest", ErrImportDest, clean.Log(folder))
+	}
+
+	// Literal characters of the pattern appear in every name, so one sample time shows them.
+	pathPattern, namePattern := imp.conf.Settings().Import.GetDestName()
+	sample := time.Date(2026, time.October, 15, 13, 4, 5, 0, time.UTC)
+
+	if unsupportedPath(path.Join(sample.Format(pathPattern), fs.CanonicalName(sample, "", namePattern)+".jpg")) != "" {
+		return fmt.Errorf("%w: Import.Dest pattern %s", ErrImportDest, clean.Log(imp.conf.Settings().Import.GetDest()))
+	}
+
+	return nil
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.

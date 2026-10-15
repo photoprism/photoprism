@@ -247,6 +247,21 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 
 		assert.Equal(t, 1, attempts("/portable.jpg"))
 	})
+	t.Run("UnsupportedDest", func(t *testing.T) {
+		// Downloads that are imported are not requested if the import destination gives names the index skips.
+		dest := worker.conf.Options().ImportDest
+		t.Cleanup(func() { worker.conf.Options().ImportDest = dest })
+		worker.conf.Options().ImportDest = "a:b"
+
+		a := newAccount(t, 3)
+		newFile(t, a, "/dest-refused.jpg", 0)
+
+		complete, err := worker.download(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.Equal(t, 0, attempts("/dest-refused.jpg"))
+		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/dest-refused.jpg").Status)
+	})
 	t.Run("UnportableSyncFolder", func(t *testing.T) {
 		// The name of the sync folder itself is not checked when files are imported.
 		a := newAccount(t, 3)

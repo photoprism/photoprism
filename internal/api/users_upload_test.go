@@ -655,6 +655,16 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrInsufficientStorage))
 		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
 	})
+	t.Run("UnsupportedDest", func(t *testing.T) {
+		dest := conf.Options().ImportDest
+		t.Cleanup(func() { conf.Options().ImportDest = dest })
+		conf.Options().ImportDest = "a:b"
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
 	t.Run("Canceled", func(t *testing.T) {
 		require.NoError(t, mutex.IndexWorker.Start())
 		t.Cleanup(mutex.IndexWorker.Stop)

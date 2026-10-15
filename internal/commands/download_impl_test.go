@@ -9,8 +9,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMissingFormatsHint(t *testing.T) {
@@ -95,6 +98,16 @@ func TestRunDownload_InvalidURLsReportPluralFailures(t *testing.T) {
 	if !strings.Contains(logOutput.String(), "completed with 2 errors in") {
 		t.Fatalf("expected pluralized summary log, got: %q", logOutput.String())
 	}
+}
+
+// TestRunDownload_UnsupportedDest checks that downloads are not started for a destination the index would skip.
+func TestRunDownload_UnsupportedDest(t *testing.T) {
+	conf := get.Config()
+	require.NotNil(t, conf)
+	conf.RegisterDb()
+
+	err := runDownload(conf, DownloadOpts{Dest: "a:b"}, []string{"https://example.com/video.mp4"})
+	assert.ErrorIs(t, err, photoprism.ErrImportDest)
 }
 
 // testStream is an io.ReadCloser that returns data and a fixed Close error.

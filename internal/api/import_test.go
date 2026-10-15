@@ -58,6 +58,16 @@ func TestStartImport(t *testing.T) {
 		assert.Equal(t, http.StatusInsufficientStorage, r.Code)
 		config.Options().FilesQuota = 0
 	})
+	t.Run("UnsupportedDest", func(t *testing.T) {
+		app, router, config := NewApiTest()
+		dest := config.Options().ImportDest
+		t.Cleanup(func() { config.Options().ImportDest = dest })
+		config.Options().ImportDest = "a:b"
+		StartImport(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/import/", `{"move":false}`)
+
+		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+	})
 }
 
 func TestStartImportAlbums(t *testing.T) {

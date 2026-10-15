@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"path"
@@ -134,7 +135,12 @@ func StartImport(router *gin.RouterGroup) {
 		}
 
 		// Start import.
-		imported := imp.Start(opt)
+		imported, importErr := imp.Run(opt)
+
+		if errors.Is(importErr, photoprism.ErrImportDest) {
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
+			return
+		}
 
 		// Delete empty import directory.
 		if srcFolder != "" && importPath != conf.ImportPath() && fs.DirIsEmpty(importPath) {

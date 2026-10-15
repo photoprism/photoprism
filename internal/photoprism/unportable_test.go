@@ -227,3 +227,17 @@ func TestPortableSiblings(t *testing.T) {
 		assert.Equal(t, other, related.Main)
 	})
 }
+
+func TestUnsupportedPath(t *testing.T) {
+	t.Run("Supported", func(t *testing.T) {
+		for _, rel := range []string{"", "2019/10", "users/jane.doe", "a_b/c"} {
+			assert.Equal(t, "", unsupportedPath(rel), rel)
+		}
+	})
+	t.Run("NotSupported", func(t *testing.T) {
+		assert.Equal(t, "2019/a:b", unsupportedPath("2019/a:b/c"))
+		assert.Equal(t, "users/__bob", unsupportedPath("users/__bob/x"))
+		assert.Equal(t, "@eaDir", unsupportedPath("@eaDir"))
+		assert.Equal(t, "a/$x", unsupportedPath("a/$x/b"))
+	})
+}

@@ -72,6 +72,15 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		log.Tracef("sync: skipping excluded path %s for service %s (download)", clean.Log(a.SyncPath), clean.Log(a.AccName))
 		return true, nil
 	}
+
+	// Downloads that are imported need a destination that gives names the index accepts.
+	if !a.SyncFilenames {
+		if destErr := get.Import().CheckDest(w.conf.ImportDest()); destErr != nil {
+			event.SystemWarn([]string{"sync", "%s"}, destErr.Error())
+			log.Warnf("sync: skipped downloads from %s because the import destination is not supported", clean.Log(a.AccName))
+			return true, nil
+		}
+	}
 	// Set up index worker
 	indexJobs := make(chan photoprism.IndexJob)
 

@@ -61,6 +61,11 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 		destFolder = clean.UserPath(destFolder)
 	}
 
+	// Downloads are imported, so the destination must give names that the index accepts.
+	if err := get.Import().CheckDest(destFolder); err != nil {
+		return err
+	}
+
 	// Create session download directory
 	downloadPath := filepath.Join(conf.TempPath(), fs.DownloadDir+"_"+rnd.Base36(12))
 	if err := fs.MkdirAll(downloadPath); err != nil {

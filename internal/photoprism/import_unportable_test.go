@@ -244,11 +244,85 @@ func TestImport_StartUnportableDest(t *testing.T) {
 
 	convert := NewConvert(cfg)
 	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+	// An import run refuses the pattern and leaves the file where it is.
 	imp.Start(ImportOptionsMove(src, ""))
+	require.True(t, fs.FileExists(filepath.Join(src, "colon.jpg")), "colon.jpg was imported")
+
+	// A job sent to the import worker directly, as sync does, still imports the file under the name the
+	// pattern gives it.
+	mf, err := NewMediaFile(filepath.Join(src, "colon.jpg"))
+	require.NoError(t, err)
+	related, err := mf.RelatedFiles(false)
+	require.NoError(t, err)
+
+	jobs := make(chan ImportJob)
+	finished := make(chan struct{})
+
+	go func() {
+		ImportWorker(jobs)
+		close(finished)
+	}()
+
+	jobs <- ImportJob{FileName: mf.FileName(), Related: related, IndexOpt: IndexOptionsAll(cfg),
+		ImportOpt: ImportOptionsMove(src, ""), Imp: imp}
+	close(jobs)
+	<-finished
 
 	require.False(t, fs.FileExists(filepath.Join(src, "colon.jpg")), "colon.jpg was not imported")
 
 	var count int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_root = ? AND file_name LIKE ?", entity.RootOriginals, "%T%:%").Count(&count).Error)
 	assert.Positive(t, count)
+}
+
+// TestImport_checkDest checks that destination folders and patterns giving names the index skips are refused.
+func TestImport_CheckDest(t *testing.T) {
+	cfg := config.TestConfig()
+	imp := NewImport(cfg, nil, nil)
+	saved := cfg.Settings().Import.Dest
+	t.Cleanup(func() { cfg.Settings().Import.Dest = saved })
+
+	t.Run("Supported", func(t *testing.T) {
+		cfg.Settings().Import.Dest = ""
+		for _, folder := range []string{"", ".", "./x", "x/./y", "/x/", "2019", "users/jane.doe", "import/sub"} {
+			assert.NoError(t, imp.CheckDest(folder), folder)
+		}
+	})
+	t.Run("Folder", func(t *testing.T) {
+		cfg.Settings().Import.Dest = ""
+		for _, folder := range []string{"a:b", "users/50%off", "users/__bob", "@eaDir/x", "~home", "..", "../x", "x/../../y"} {
+			err := imp.CheckDest(folder)
+			assert.ErrorIs(t, err, ErrImportDest, folder)
+			assert.ErrorContains(t, err, "folder", folder)
+		}
+	})
+	t.Run("Pattern", func(t *testing.T) {
+		cfg.Settings().Import.Dest = "2006/01/2006-01-02T15:04:05_82F63B78.jpg"
+		assert.ErrorIs(t, imp.CheckDest(""), ErrImportDest)
+		cfg.Settings().Import.Dest = "2006/~01/20060102_150405_82F63B78.jpg"
+		assert.ErrorIs(t, imp.CheckDest(""), ErrImportDest)
+		cfg.Settings().Import.Dest = "2006/01/02/20060102-150405-82F63B78.jpg"
+		assert.NoError(t, imp.CheckDest(""))
+	})
+}
+
+// TestImport_StartUnsupportedDest checks that an import with an unsupported destination leaves the files in place.
+func TestImport_StartUnsupportedDest(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := config.TestConfig()
+	src := t.TempDir()
+	writeTestJpeg(t, filepath.Join(src, "ok.jpg"), 270)
+
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+	// Callers get the error without the details, which name folders.
+	_, err := imp.Run(ImportOptionsMove(src, "a:b"))
+	assert.Equal(t, ErrImportDest, err)
+	assert.FileExists(t, filepath.Join(src, "ok.jpg"))
+	assert.NoDirExists(t, filepath.Join(cfg.OriginalsPath(), "a:b"))
 }

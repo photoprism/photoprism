@@ -605,6 +605,8 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 				Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			case errors.Is(importErr, photoprism.ErrImportBusy), errors.Is(importErr, status.ErrCanceled):
 				Abort(c, http.StatusServiceUnavailable, i18n.ErrBusy)
+			case errors.Is(importErr, photoprism.ErrImportDest):
+				Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			default:
 				Abort(c, http.StatusInternalServerError, i18n.ErrUploadFailed)
 			}
