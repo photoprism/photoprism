@@ -63,7 +63,7 @@ var StopCommand = &cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},
 	Usage:   "Stops the Web server running in daemon mode",
-	Description: "Sends the server that holds the PID file a termination signal and waits up to one minute until it has exited. " +
+	Description: "Sends the server that holds the PID file a termination signal, waits up to one minute until it has exited, and empties the PID file. " +
 		"A PID file that no running server holds is out of date and is emptied instead, and an empty PID file means that no server is running.",
 	Action: stopAction,
 }
