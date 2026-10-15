@@ -103,6 +103,13 @@ func TestDaemonRunning(t *testing.T) {
 		require.Error(t, err)
 		assert.False(t, running)
 	})
+	t.Run("TooLarge", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.WriteFile(pidFile, []byte(strings.Repeat("1", pidFileMaxSize+1)), 0o600))
+		_, running, err := daemonRunning(pidFile)
+		require.ErrorIs(t, err, errPidFileTooLarge)
+		assert.False(t, running)
+	})
 	t.Run("DanglingSymlink", func(t *testing.T) {
 		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing.pid"), pidFile))

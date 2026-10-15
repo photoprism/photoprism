@@ -197,7 +197,7 @@ func LogErr(err error) {
 
 // childAlreadyRunning reports whether a running daemon holds the pid file at filePath, and returns the pid in the file.
 // A missing or empty pid file means that no daemon is running, as does invalid content no other process holds
-// locked, which the next daemon overwrites. A pid file that cannot be read is an error.
+// locked, which the next daemon overwrites. A pid file that cannot be read or is too large is an error.
 func childAlreadyRunning(filePath string) (pid int, running bool, err error) {
 	pid, info, err := readPidFile(filePath)
 

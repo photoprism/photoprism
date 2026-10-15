@@ -77,6 +77,9 @@ var errPidFileEmpty = errors.New("pid file is empty")
 // errPidFileInvalid indicates a pid file whose content is not a valid process ID.
 var errPidFileInvalid = errors.New("does not contain a valid process ID")
 
+// errPidFileTooLarge indicates a pid file larger than pidFileMaxSize, which is not overwritten.
+var errPidFileTooLarge = errors.New("is larger than 32 bytes")
+
 // errPidFileLinked indicates a pid file with more than one name, which stop keeps and the daemon does not write.
 var errPidFileLinked = errors.New("pid file has more than one link")
 
@@ -227,7 +230,7 @@ func openSamePidFile(pidFile string, flag int, info os.FileInfo) (*os.File, erro
 }
 
 // readPidFile returns the process ID in the pid file and the file it was read from. An empty file returns
-// errPidFileEmpty, and invalid content errPidFileInvalid, along with the file.
+// errPidFileEmpty, a larger file errPidFileTooLarge, and invalid content errPidFileInvalid, along with the file.
 func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 	f, info, err := openPidFile(pidFile, os.O_RDONLY)
 
@@ -238,7 +241,7 @@ func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 	defer func() { _ = f.Close() }()
 
 	if info.Size() > pidFileMaxSize {
-		return 0, info, fmt.Errorf("pid file %s %w", clean.Log(pidFile), errPidFileInvalid)
+		return 0, info, fmt.Errorf("pid file %s %w", clean.Log(pidFile), errPidFileTooLarge)
 	}
 
 	b, err := io.ReadAll(io.LimitReader(f, pidFileMaxSize))

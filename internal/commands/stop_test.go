@@ -405,10 +405,11 @@ func TestReadPidFile(t *testing.T) {
 		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 		require.NoError(t, os.WriteFile(pidFile, []byte(strings.Repeat(" ", pidFileMaxSize)+"1234"), fs.ModeFile))
 		_, info, err := readPidFile(pidFile)
-		assert.ErrorIs(t, err, errPidFileInvalid)
+		assert.ErrorIs(t, err, errPidFileTooLarge)
+		assert.NotErrorIs(t, err, errPidFileInvalid)
 		assert.NotErrorIs(t, err, errPidFileEmpty)
 		assert.NotNil(t, info)
-		assert.Contains(t, err.Error(), "does not contain a valid process ID")
+		assert.Contains(t, err.Error(), "is larger than 32 bytes")
 	})
 	t.Run("Empty", func(t *testing.T) {
 		for _, content := range []string{"", "\n", " \t\n"} {
@@ -1104,13 +1105,22 @@ func TestChildAlreadyRunning(t *testing.T) {
 		}
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		for _, content := range []string{"not a pid", "\x00\x00\x00\x00", strings.Repeat("1", pidFileMaxSize+1)} {
+		for _, content := range []string{"not a pid", "\x00\x00\x00\x00", strings.Repeat("x", pidFileMaxSize)} {
 			pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 			require.NoError(t, fs.WriteString(pidFile, content))
 			_, running, err := childAlreadyRunning(pidFile)
 			require.NoError(t, err, content)
 			assert.False(t, running)
 		}
+	})
+	t.Run("TooLarge", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		content := strings.Repeat("1", pidFileMaxSize+1)
+		require.NoError(t, fs.WriteString(pidFile, content))
+		_, running, err := childAlreadyRunning(pidFile)
+		require.ErrorIs(t, err, errPidFileTooLarge)
+		assert.False(t, running)
+		assertPidFileContent(t, pidFile, content)
 	})
 	t.Run("InvalidLocked", func(t *testing.T) {
 		pidFile, f := lockedPidFile(t)
