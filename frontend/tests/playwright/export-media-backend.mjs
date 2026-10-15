@@ -31,14 +31,17 @@ async function openExport(page, uid) {
     const view = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
     return view.$options.name === "PPhotoExportDialog" && !view.loading && view.groups.length;
   });
+  await page.evaluate(() => {
+    window.__exportDialog = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
+  });
 }
 
 // waitForDownloads waits for complete queue handoffs without assuming disk-save completion.
 async function waitForDownloads(page, count) {
   await page.waitForFunction((count) => {
-    const view = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
-    return view.$options.name === "PPhotoExportDialog" && view.handed === count;
+    return window.__exportDialog.handed === count && window.__exportDialog.complete;
   }, count);
+  await page.locator(".p-photo-export-dialog").waitFor({ state: "hidden" });
 }
 
 // verifyFormat checks file signatures and real animation/container metadata.
@@ -74,11 +77,12 @@ function verifyFormat(filename, format, bytes, animated = false) {
   }
 }
 
-// closeExport dismisses the dialog through its always-visible title control and restores Lightbox.
+// closeExport returns to Lightbox after automatic completion or explicit dismissal.
 async function closeExport(page) {
   const close = page.locator(".p-photo-export-dialog .action-dismiss");
-  assert.ok(await close.isVisible(), "title Close must remain available");
-  await close.click();
+  if (await close.isVisible()) {
+    await close.click();
+  }
   await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PLightbox");
   await page.locator(".p-photo-export-dialog").waitFor({ state: "hidden" });
 }
@@ -146,7 +150,7 @@ try {
         }
         assert.equal(downloads.length, options.length, fixture.label);
         const states = await page.evaluate(() => {
-          const view = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
+          const view = window.__exportDialog;
           return view.downloads.map((item) => ({ id: item.id, kind: item.kind, filename: item.filename, format: item.format, width: item.width, height: item.height, source: item.source }));
         });
         assert.equal(states.length, options.length);

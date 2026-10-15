@@ -1,13 +1,14 @@
 # PhotoPrism Export Browser Checks
 
-**Last Updated:** October 14, 2026
+**Last Updated:** October 15, 2026
 
 Run `node frontend/tests/playwright/export-images.mjs` and then
 `node frontend/tests/playwright/export-controls.mjs` from the repository root
 against an isolated development library. The runner uses Playwright, Chromium,
 and Python Pillow to verify real downloaded bytes, filenames, and JPEG dimensions
-at 1280×900 and 375×667. The image matrix exercises multiple outputs per original, manual links, single
-Escape closure, and focus return. The controls runner checks Tab, Shift+Tab,
+at 1280×900 and 375×667. The image matrix exercises multiple outputs per original,
+automatic closure after all selected files are handed to the browser, and focus
+return. The controls runner checks Tab, Shift+Tab,
 Space, and Enter, cancellation, permission loss, photo changes, Lightbox closure,
 and the existing Download menu, Ctrl/Command+D, and RAW file filter. It changes
 client settings only within its disposable browser contexts. The instance must
@@ -70,9 +71,9 @@ viewports. Original/preview hashes, actual AVC codecs, and native MOV bytes are
 verified after saving downloads. Browser contexts close in `finally` blocks.
 Retry and cancellation checks abort one network request or delay a real server
 response; capability JSON and prepared bytes still come from the application.
-Completed exports and Retry use the always-visible title Close control and verify
-return to Lightbox. Preparation cancellation uses desktop Cancel or mobile title
-Close and verifies that late responses do not hand off downloads.
+Completed exports and successful Retry close automatically and verify return to
+Lightbox. Preparation cancellation uses Cancel or the title Close control and
+verifies that late responses do not hand off downloads.
 
 Create disposable fixtures from the repository root, with the server stopped:
 

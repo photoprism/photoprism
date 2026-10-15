@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 14, 2026
+**Last Updated:** October 15, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -24,7 +24,7 @@ Directory Map (src)
 - `src/common/export.js` — independent Export capability check and pure file-group/size choices from full photo details.
 - `src/common/export-media.js` — media classification, unique Apple pairing with separate photo/MOV groups, and the source-specific video capability/preparation API.
 - `src/common/export-download.js` — immutable attachment names/URLs, serial preparation, Retry, and independent ready browser handoffs.
-- `src/component/photo/export/dialog.vue` — application-themed Lightbox stack Export, matched thumbnails, output-row status/Retry/download links, and shared dialog focus.
+- `src/component/photo/export/dialog.vue` — application-themed Lightbox stack Export, matched thumbnails, unfinished-output progress/Retry, automatic completion closure, and shared dialog focus.
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)
 - `src/model/*` — REST models; base `Rest` class (`model/rest.js`) wraps Axios CRUD for collections and entities

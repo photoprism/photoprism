@@ -150,6 +150,9 @@ async function openExport(page) {
     const view = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
     return view.$options.name === "PPhotoExportDialog" && !view.loading && view.groups.length;
   });
+  await page.evaluate(() => {
+    window.__exportDialog = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
+  });
 }
 
 // waitFor waits for Node-side download and intercepted-request events.
@@ -220,16 +223,25 @@ try {
         await page.locator(".p-photo-export-dialog .action-export").click();
         const derived = options.some((item) => ["avc", "video-part"].includes(item.kind));
         if (derived) {
-          await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.handed > 0);
+          await page.waitForFunction(() => window.__exportDialog.handed > 0);
           assert.ok(await page.locator(".p-photo-export-dialog").getByText("Preparing", { exact: true }).count());
+          assert.equal(await page.locator(".p-photo-export-dialog input").count(), 0, "preparation replaces the selection list");
+          assert.equal(await page.locator(".p-photo-export-dialog .export-download").count(), 0);
+          assert.ok(await page.locator(".p-photo-export-dialog .action-cancel").isVisible());
+          await page.waitForFunction(() => document.querySelector(".export-card")?.contains(document.activeElement));
+          if (fixture.label === "HEVCMOV") {
+            await page.screenshot({ path: path.join(root, `preparing__${viewport.width}x${viewport.height}.jpg`), type: "jpeg", quality: 75 });
+          }
         }
         if (failFirst) {
+          await page.locator(".action-retry-output").waitFor();
+          await page.screenshot({ path: path.join(root, `retry__${viewport.width}x${viewport.height}.jpg`), type: "jpeg", quality: 75 });
           await page.locator(".action-retry-output").click();
         }
-        await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.complete);
-        await page.waitForFunction((count) => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.handed === count, options.length);
+        await page.waitForFunction(() => window.__exportDialog.complete);
+        await page.waitForFunction((count) => window.__exportDialog.handed === count, options.length);
         await waitFor(() => downloads.length === options.length);
-        const fixed = await page.evaluate(() => JSON.parse(JSON.stringify(document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.downloads)));
+        const fixed = await page.evaluate(() => JSON.parse(JSON.stringify(window.__exportDialog.downloads)));
         for (const item of fixed) {
           const download = downloads.find((entry) => entry.suggestedFilename() === item.filename);
           assert.ok(download, `missing ${fixture.label} attachment ${item.filename}`);
@@ -254,7 +266,7 @@ try {
         }
         assert.equal(downloads.length, fixed.length);
         await page.screenshot({ path: path.join(root, `${fixture.label}__${viewport.width}x${viewport.height}.jpg`), type: "jpeg", quality: 70 });
-        await page.locator(".p-photo-export-dialog .action-dismiss").click();
+        await page.locator(".p-photo-export-dialog").waitFor({ state: "hidden" });
         await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PLightbox");
         await page.keyboard.press("Escape");
         await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PPagePhotos");

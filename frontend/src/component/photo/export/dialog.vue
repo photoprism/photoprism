@@ -28,6 +28,20 @@
           {{ $gettext("Failed to load files. Please try again.") }}
           <v-btn class="action-retry mt-2" @click="loadFiles">{{ $gettext("Retry") }}</v-btn>
         </v-alert>
+        <div v-else-if="started" class="export-progress">
+          <div v-for="item in activeOutputs" :key="item.id" class="export-output" :data-option-id="item.id">
+            <div class="export-output-heading">
+              <v-icon v-if="states[item.id]?.state === 'error'" icon="mdi-alert-circle-outline" color="error" size="24" aria-hidden="true"></v-icon>
+              <v-progress-circular v-else indeterminate size="24" width="2" color="primary" aria-hidden="true"></v-progress-circular>
+              <span class="export-file">
+                <span class="export-filename text-body-2 font-weight-medium">{{ item.filename }}</span>
+                <span class="text-caption text-medium-emphasis">{{ optionMetadata(item) }}</span>
+                <span class="text-caption" :class="{ 'text-error': states[item.id]?.state === 'error' }" role="status">{{ stateLabel(item) }}</span>
+              </span>
+              <v-btn v-if="states[item.id]?.state === 'error'" class="action-retry-output" variant="text" color="primary" size="small" :aria-label="$gettext('Retry') + ' ' + item.filename" @click="retry(item)">{{ $gettext("Retry") }}</v-btn>
+            </div>
+          </div>
+        </div>
         <p v-else-if="!groups.length" class="export-empty">{{ $gettext("No supported files available for export.") }}</p>
         <template v-else>
           <v-expansion-panels v-model="expanded" multiple variant="accordion">
@@ -62,20 +76,12 @@
                         </span>
                       </template>
                     </v-checkbox>
-                    <div v-if="outputs[option.id]" class="export-output text-caption" role="status">
-                      <div class="export-output-status">
-                        <span v-if="stateLabel(option)" :class="{ 'text-error': states[option.id]?.state === 'error' }">{{ stateLabel(option) }}</span>
-                        <a v-if="['ready', 'handed'].includes(states[option.id]?.state)" :href="downloadUrl(outputs[option.id])" :download="outputs[option.id].filename" :aria-label="$gettext('Download') + ' ' + outputs[option.id].filename" class="export-download" @click.prevent="downloadOne(outputs[option.id])">{{ $gettext("Download") }}</a>
-                        <v-btn v-if="states[option.id]?.state === 'error'" class="action-retry-output" variant="text" color="primary" size="small" :aria-label="$gettext('Retry') + ' ' + outputs[option.id].filename" @click="retry(outputs[option.id])">{{ $gettext("Retry") }}</v-btn>
-                      </div>
-                      <v-progress-linear v-if="states[option.id]?.state === 'preparing'" indeterminate color="primary" height="3" aria-hidden="true" class="mt-2"></v-progress-linear>
-                    </div>
                   </div>
                 </div>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
-          <p class="export-hint text-caption">{{ $gettext("Your browser may ask you to allow multiple downloads.") }}</p>
+          <p v-if="selected.length > 1" class="export-hint text-caption">{{ $gettext("Your browser may ask you to allow multiple downloads.") }}</p>
         </template>
       </v-card-text>
       <v-divider></v-divider>
@@ -83,9 +89,8 @@
         {{ $gettext("Export stopped. Please try again.") }}
       </div>
       <v-card-actions class="action-buttons export-actions">
-        <v-btn v-if="!complete && !$vuetify.display.smAndDown" variant="flat" color="button" height="44" class="action-close action-cancel" @click.stop="close">{{ $gettext("Cancel") }}</v-btn>
-        <v-btn v-if="complete" variant="flat" color="highlight" height="44" :block="$vuetify.display.smAndDown" class="action-close action-confirm" @click.stop="close">{{ $gettext("Close") }}</v-btn>
-        <v-btn v-else variant="flat" color="highlight" height="44" :block="$vuetify.display.smAndDown" class="action-export action-confirm" :disabled="loading || !selected.length || started || !permitted" @click.stop="confirm">{{ exportLabel }}</v-btn>
+        <v-btn v-if="started || !$vuetify.display.smAndDown" variant="flat" color="button" height="44" :block="started && $vuetify.display.smAndDown" class="action-close action-cancel" @click.stop="close">{{ started && errors && !pending && !preparing ? $gettext("Close") : $gettext("Cancel") }}</v-btn>
+        <v-btn v-if="!started" variant="flat" color="highlight" height="44" :block="$vuetify.display.smAndDown" class="action-export action-confirm" :disabled="loading || !selected.length || !permitted" @click.stop="confirm">{{ exportLabel }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -96,7 +101,7 @@ import Photo from "model/photo";
 import File from "model/file";
 import { canExport, buildExportGroups } from "common/export";
 import { buildMediaExportGroups, probeExportMedia } from "common/export-media";
-import { buildExportDownloads, exportBaseName, exportDownloadUrl, ExportQueue } from "common/export-download";
+import { buildExportDownloads, exportBaseName, ExportQueue } from "common/export-download";
 
 export default {
   name: "PPhotoExportDialog",
@@ -129,9 +134,9 @@ export default {
     exportLabel() {
       return this.selected.length === 1 ? this.$gettext("Export 1 File") : this.$gettext("Export %{n} Files", { n: this.selected.length });
     },
-    // outputs indexes the frozen downloads for their option rows.
-    outputs() {
-      return Object.fromEntries(this.downloads.map((item) => [item.id, item]));
+    // activeOutputs lists unfinished files while successful handoffs leave the progress view.
+    activeOutputs() {
+      return this.downloads.filter((item) => this.states[item.id]?.state !== "handed");
     },
     // pending counts outputs waiting for preparation or browser handoff.
     pending() {
@@ -338,24 +343,6 @@ export default {
         await this.queue?.retry(item);
       }
     },
-    // downloadUrl supplies a user-clickable attachment URL with current tokens.
-    downloadUrl(item) {
-      return exportDownloadUrl(item, this.$config);
-    },
-    // downloadOne refreshes authorization before a user-requested browser handoff.
-    async downloadOne(item) {
-      if (!["ready", "handed"].includes(this.states[item.id]?.state)) {
-        return;
-      }
-      const generation = this.generation;
-      try {
-        await this.queue?.manual(item);
-      } catch {
-        if (generation === this.generation && this.visible) {
-          this.transferError = true;
-        }
-      }
-    },
     // confirm freezes the selected output list and starts a single cancelable queue.
     async confirm() {
       if (this.started || this.loading || !this.selected.length || !this.permitted || !this.visible) {
@@ -363,8 +350,12 @@ export default {
       }
       const generation = this.generation;
       this.downloads = buildExportDownloads(this.groups, this.selected);
-      this.expanded = this.groups.filter((group) => this.selectedCount(group)).map((group) => group.id);
       this.started = true;
+      this.$nextTick(() => {
+        if (generation === this.generation && this.visible) {
+          this.$view.focus(this.$refs.content, ".action-cancel");
+        }
+      });
       this.queue = markRaw(new ExportQueue(this.downloads, {
         refresh: () => this.$session.refresh(),
         allowed: () => generation === this.generation && this.visible && this.permitted,
@@ -372,6 +363,9 @@ export default {
         progress: (count) => {
           this.handed = count;
           this.complete = count === this.downloads.length;
+          if (this.complete) {
+            this.close();
+          }
         },
         change: (states) => {
           this.states = states;
@@ -487,19 +481,13 @@ export default {
 }
 
 .export-output {
-  margin-inline-start: 56px;
-  padding-bottom: 12px;
+  padding-block: 12px;
 }
 
-.export-output-status {
+.export-output-heading {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-}
-
-.export-download {
-  margin-inline-start: auto;
 }
 
 .export-hint {

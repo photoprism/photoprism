@@ -123,8 +123,7 @@ try {
           });
           const [exported] = await Promise.all([page.waitForEvent("download"), page.locator(".p-photo-export-dialog .action-export").click()]);
           await verifyDownload(exported, session, `export-${viewport.width}`);
-          await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.complete);
-          await page.locator(".p-photo-export-dialog .action-dismiss").click();
+          await page.locator(".p-photo-export-dialog").waitFor({ state: "hidden" });
           await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name === "PLightbox");
         } else {
           await page.waitForTimeout(350);

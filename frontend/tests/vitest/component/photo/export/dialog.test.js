@@ -35,7 +35,7 @@ async function open(files = [file("a"), file("b")], options = {}) {
   session = { refresh: vi.fn(async () => {
     config.downloadToken = "fresh";
   }) };
-  view = { enter: vi.fn(), leave: vi.fn() };
+  view = { enter: vi.fn(), leave: vi.fn(), focus: vi.fn() };
   vi.spyOn(Photo.prototype, "find").mockResolvedValue({ Files: files });
   Photo.prototype.find.mockClear();
   wrapper = mount(Dialog, {
@@ -101,6 +101,7 @@ describe("photo export dialog", () => {
     await open();
     expect(wrapper.findComponent({ name: "ExportDialogStub" }).props()).toMatchObject({ theme: "light", maxWidth: "560" });
     expect(wrapper.find(".action-export").text()).toBe("Export 1 File");
+    expect(wrapper.find(".export-hint").exists()).toBe(false);
     await wrapper.find(".action-dismiss").trigger("click");
     expect(wrapper.emitted("close")).toHaveLength(1);
   });
@@ -159,6 +160,7 @@ describe("photo export dialog", () => {
     await sections[0].find(`input[value="thumbnail:${preview.UID}:fit_720"]`).setValue(true);
     expect(wrapper.vm.selected).toContain(`thumbnail:${preview.UID}:fit_720`);
     expect(wrapper.find(".action-export").text()).toBe("Export 2 Files");
+    expect(wrapper.find(".export-hint").exists()).toBe(true);
   });
   it("loads full Files with Download disabled and preselects only first displayed Full HD", async () => {
     await open([file("v", { MediaType: "video", Video: true }), file("a"), file("b")]);
@@ -254,46 +256,51 @@ describe("photo export dialog", () => {
     expect(Photo.prototype.find).not.toHaveBeenCalled();
     expect(wrapper.emitted("close")).toHaveLength(1);
   });
-  it("freezes selections, keeps completion quiet, supplies manual links, and stays open", async () => {
+  it("closes only after all frozen selections are handed off without showing download links", async () => {
     await open();
     vi.useFakeTimers();
     await wrapper.setData({ selected: ["original:fs6sg6bqhhin0098", "thumbnail:fs6sg6bqhhin0097:fit_720", "original:fs6sg6bqhhin0097"] });
     const running = wrapper.vm.confirm();
-    await Promise.resolve();
+    await flushPromises();
     expect(wrapper.vm.handed).toBe(1);
+    expect(wrapper.emitted("close")).toBeUndefined();
+    expect(wrapper.vm.activeOutputs).toHaveLength(2);
+    expect(wrapper.findAll("input")).toHaveLength(0);
+    expect(wrapper.find(".action-export").exists()).toBe(false);
+    expect(wrapper.findAll(".export-output")).toHaveLength(2);
+    expect(view.focus).toHaveBeenCalledWith(wrapper.vm.$refs.content, ".action-cancel");
+    expect(wrapper.findAll(".export-output a")).toHaveLength(0);
     expect(wrapper.vm.downloads.map((item) => item.id)).toEqual(["original:fs6sg6bqhhin0097", "thumbnail:fs6sg6bqhhin0097:fit_720", "original:fs6sg6bqhhin0098"]);
     await wrapper.vm.confirm();
     expect(session.refresh).toHaveBeenCalledOnce();
     await vi.advanceTimersByTimeAsync(500);
     await running;
     expect(wrapper.vm.complete).toBe(true);
-    expect(wrapper.emitted("close")).toBeUndefined();
+    expect(wrapper.emitted("close")).toHaveLength(1);
+    expect(wrapper.vm.activeOutputs).toHaveLength(0);
     expect(wrapper.text()).not.toContain("Sent to Browser");
     expect(wrapper.text()).not.toContain("Files have been sent to your browser.");
-    expect(wrapper.findAll(".export-output-status > span")).toHaveLength(0);
     expect(wrapper.find(".export-error").exists()).toBe(false);
-    expect(wrapper.find(".action-export").exists()).toBe(false);
-    expect(wrapper.find(".action-close").text()).toBe("Close");
-    expect(wrapper.findAll(".export-output a")).toHaveLength(3);
-    expect(wrapper.find(".export-output a").attributes("href")).toContain("t=fresh");
-    expect(wrapper.findAll("input").every((input) => input.attributes("disabled") !== undefined)).toBe(true);
-    await wrapper.find(".export-output a").trigger("click");
-    await Promise.resolve();
-    expect(session.refresh).toHaveBeenCalledTimes(2);
-    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(4);
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(3);
   });
-  it("reports a manual download refresh failure after completion", async () => {
+  it("keeps a failed export open and closes after retrying it successfully", async () => {
     await open();
     await wrapper.setData({ selected: [`original:${file("a").UID}`] });
-    await wrapper.vm.confirm();
-    expect(wrapper.vm.complete).toBe(true);
     session.refresh.mockRejectedValueOnce(new Error("expired"));
-    await wrapper.find(".export-output a").trigger("click");
-    await flushPromises();
+    await wrapper.vm.confirm();
+    expect(wrapper.vm.complete).toBe(false);
     expect(wrapper.vm.transferError).toBe(true);
+    expect(wrapper.emitted("close")).toBeUndefined();
     expect(wrapper.find('.export-error[role="alert"]').text()).toBe("Export stopped. Please try again.");
-    expect(wrapper.vm.handed).toBe(1);
     expect(wrapper.find(".action-close").text()).toBe("Close");
+    expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+    await wrapper.find(".action-retry-output").trigger("click");
+    await flushPromises();
+    expect(wrapper.vm.handed).toBe(1);
+    expect(wrapper.vm.complete).toBe(true);
+    expect(wrapper.vm.transferError).toBe(false);
+    expect(wrapper.emitted("close")).toHaveLength(1);
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
   });
   it.each(["cancel", "escape", "close", "uid", "revoke"])("stops pending handoffs on %s", async (action) => {
     await open();
@@ -402,8 +409,10 @@ describe("video export dialog", () => {
     expect(wrapper.vm.preparing).toBe(1);
     expect(wrapper.text()).toContain("Preparing");
     expect(wrapper.find('.export-option[data-option-id^="avc"] .export-option-size').exists()).toBe(false);
-    expect(wrapper.find(".export-option[data-option-id^=avc] .v-progress-linear").exists()).toBe(true);
-    expect(wrapper.findAll(".export-output a")).toHaveLength(1);
+    expect(wrapper.find(".export-output[data-option-id^=avc] .v-progress-circular").exists()).toBe(true);
+    expect(wrapper.findAll(".export-output a")).toHaveLength(0);
+    expect(wrapper.findAll(".export-output")).toHaveLength(1);
+    expect(wrapper.emitted("close")).toBeUndefined();
     expect(wrapper.vm.downloads.map((item) => item.filename)).toEqual(["movie.mov", "movie_avc.mp4"]);
     finish(new Error("encoder failed"));
     await running;
@@ -411,7 +420,7 @@ describe("video export dialog", () => {
     expect(wrapper.vm.errors).toBe(1);
     expect(wrapper.vm.transferError).toBe(true);
     expect(wrapper.findAll(".action-retry-output")).toHaveLength(1);
-    expect(wrapper.find('.export-option[data-option-id^="avc"]').text()).toContain("Failed");
+    expect(wrapper.find('.export-output[data-option-id^="avc"]').text()).toContain("Failed");
     session.refresh.mockImplementation(async () => {
       config.downloadToken = "rotated";
     });
@@ -423,12 +432,14 @@ describe("video export dialog", () => {
     expect(wrapper.vm.complete).toBe(true);
     expect(wrapper.vm.transferError).toBe(false);
     expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(2);
-    expect(wrapper.findAll(".export-output a")).toHaveLength(2);
-    expect(wrapper.find('.export-option[data-option-id^="avc"]').text()).toContain("1280 × 720 · MP4 · avc1");
-    expect(wrapper.find('.export-option[data-option-id^="avc"] .export-option-size').text()).toBe("1 KB");
-    expect(wrapper.find('.export-option[data-option-id^="avc"] .export-conversion-note').exists()).toBe(false);
+    expect(wrapper.emitted("close")).toHaveLength(1);
+    expect(wrapper.findAll(".export-output a")).toHaveLength(0);
+    const avc = wrapper.vm.downloads.find((item) => item.kind === "avc");
+    expect(wrapper.vm.optionMetadata(avc)).toBe("1280 × 720 · MP4 · avc1");
+    expect(wrapper.vm.optionBytes(avc)).toBe("1 KB");
+    expect(wrapper.vm.needsConversion(avc)).toBe(false);
   });
-  it.each(["cancel", "escape", "photo", "lightbox", "revoke"])("ignores a late preparation after %s", async (action) => {
+  it.each(["cancel", "escape", "photo", "lightbox", "revoke", "unmount"])("ignores a late preparation after %s", async (action) => {
     let finish;
     const movie = file("v", { Name: "movie.mov", FileType: "mov", MediaType: "video", Video: true });
     Axios.get.mockImplementation(async (url) => {
@@ -440,6 +451,7 @@ describe("video export dialog", () => {
       });
     });
     await open([movie]);
+    const dialog = wrapper.vm;
     await wrapper.setData({ selected: [`avc:${movie.UID}`] });
     const running = wrapper.vm.confirm();
     await flushPromises();
@@ -452,6 +464,9 @@ describe("video export dialog", () => {
       await wrapper.setProps({ uid: "ps6sg6be2lvl0yh8" });
     } else if (action === "lightbox") {
       await wrapper.setProps({ visible: false });
+    } else if (action === "unmount") {
+      wrapper.unmount();
+      wrapper = null;
     } else {
       config.values.acl.files.access_all = false;
       await flushPromises();
@@ -459,8 +474,8 @@ describe("video export dialog", () => {
     await running;
     finish({ data: { ready: true, format: "mp4", codec: "avc1" } });
     await flushPromises();
-    expect(wrapper.vm.handed).toBe(0);
-    expect(wrapper.vm.states[`avc:${movie.UID}`].state).toBe("preparing");
+    expect(dialog.handed).toBe(0);
+    expect(dialog.states[`avc:${movie.UID}`].state).toBe("preparing");
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
   });
   it("rediscovers ready cache on reopening and drops a late probe from the old opening", async () => {

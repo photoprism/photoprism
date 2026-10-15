@@ -47,6 +47,9 @@ async function openExport(page, uid) {
     const view = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
     return view.$options.name === "PPhotoExportDialog" && !view.loading && view.groups.length > 0;
   });
+  await page.evaluate(() => {
+    window.__exportDialog = document.querySelector("#app").__vue_app__.config.globalProperties.$view.current;
+  });
 }
 
 // readGroups snapshots advertised choices for comparison with actual downloaded content.
@@ -137,18 +140,14 @@ try {
       }
       assert.equal(await page.evaluate(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.selected.length), expected.length);
       await dialog.locator(".action-export").click();
-      await page.waitForFunction(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.complete);
+      await page.waitForFunction(() => window.__exportDialog.complete);
       await waitForCount(downloads, expected.length);
       for (let index = 0; index < expected.length; index++) {
         await verifyFile(downloads[index], expected[index], `${viewport.width}_${fixture.label}`);
       }
-      assert.equal(await dialog.locator(".export-output a").count(), expected.length);
-      await dialog.locator(".export-output a").first().click();
-      await waitForCount(downloads, expected.length + 1);
-      await verifyFile(downloads.at(-1), expected[0], `${viewport.width}_${fixture.label}_manual`);
-      await page.screenshot({ path: path.join(output, `${fixture.label}__${viewport.width}x${viewport.height}.jpg`), type: "jpeg", quality: 65 });
-      await page.keyboard.press("Escape");
       await dialog.waitFor({ state: "hidden" });
+      assert.equal(await dialog.locator(".export-download").count(), 0);
+      await page.screenshot({ path: path.join(output, `${fixture.label}__${viewport.width}x${viewport.height}.jpg`), type: "jpeg", quality: 65 });
       assert.equal(await page.evaluate(() => document.querySelector("#app").__vue_app__.config.globalProperties.$view.current.$options.name), "PLightbox");
       assert.equal(await page.evaluate(() => document.activeElement?.classList.contains("p-lightbox__content")), true);
       await page.keyboard.press("Escape");
