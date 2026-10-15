@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
@@ -550,22 +551,22 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 			log.Warnf("cluster: the portal could not complete database provisioning, retrying on the next start")
 		}
 
-		if r.Database.DSN != "" {
-			updates.SetDatabaseDriver(r.Database.Driver)
-			updates.SetDatabaseDSN(r.Database.DSN)
-		} else if r.Database.Name != "" && r.Database.User != "" && r.Database.Password != "" {
-			// The settings are ignored as a whole if the server address is unusable.
-			if server, ok := r.Database.Server(); !ok {
-				log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
-			} else {
-				updates.SetDatabaseDriver(r.Database.Driver)
-				if server != "" {
-					updates.SetDatabaseServer(server)
-				}
-				updates.SetDatabaseName(r.Database.Name)
-				updates.SetDatabaseUser(r.Database.User)
-				updates.SetDatabasePassword(r.Database.Password)
+		if server, ok := updates.SetDatabase(r.Database); !ok {
+			log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
+		} else if !updates.HasDatabaseUpdate() && r.Database.DSN != "" && !r.Database.Incomplete {
+			// A response without separate settings may still carry a DSN.
+			driver := strings.TrimSpace(r.Database.Driver)
+			if driver == "" {
+				driver = dsn.DriverMySQL
 			}
+			updates.SetDatabaseDriver(driver)
+			updates.SetDatabaseDSN(r.Database.DSN)
+		}
+
+		// Database settings the config refuses are skipped as a whole, and the rest is saved.
+		if err := config.ValidateClusterDatabaseUpdate(updates); err != nil {
+			log.Warnf("cluster: ignored database settings (%s)", clean.Error(err))
+			updates.ClearDatabase()
 		}
 	}
 

@@ -29,6 +29,75 @@ func TestOptionsUpdate_HasDatabaseUpdate(t *testing.T) {
 	assert.True(t, u.HasDatabaseUpdate())
 }
 
+func TestOptionsUpdate_ClearDatabase(t *testing.T) {
+	var u cluster.OptionsUpdate
+	u.SetNodeClientID(cluster.ExampleClientID)
+	u.SetDatabaseDriver("mysql")
+	u.SetDatabaseDSN("user:pw@tcp(db:3306)/photoprism")
+	u.SetDatabaseServer("db:3306")
+	u.SetDatabaseName("photoprism")
+	u.SetDatabaseUser("user")
+	u.SetDatabasePassword("pw")
+	u.ClearDatabase()
+	assert.False(t, u.HasDatabaseUpdate())
+	assert.False(t, u.IsZero())
+	require.NotNil(t, u.NodeClientID)
+}
+
+func TestOptionsUpdate_SetDatabase(t *testing.T) {
+	complete := cluster.RegisterDatabase{Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Password: "pp_pw"}
+	t.Run("Success", func(t *testing.T) {
+		var u cluster.OptionsUpdate
+		server, ok := u.SetDatabase(complete)
+		assert.True(t, ok)
+		assert.Equal(t, "db.local:3306", server)
+		require.NotNil(t, u.DatabaseDriver)
+		assert.Equal(t, "mysql", *u.DatabaseDriver)
+		assert.Equal(t, "db.local:3306", *u.DatabaseServer)
+		assert.Equal(t, "pp_db", *u.DatabaseName)
+		assert.Equal(t, "pp_user", *u.DatabaseUser)
+		assert.Equal(t, "pp_pw", *u.DatabasePassword)
+		assert.Nil(t, u.DatabaseDSN)
+	})
+	t.Run("NoServer", func(t *testing.T) {
+		var u cluster.OptionsUpdate
+		d := complete
+		d.Host, d.Port, d.Driver = "", 0, "mariadb"
+		server, ok := u.SetDatabase(d)
+		assert.True(t, ok)
+		assert.Equal(t, "", server)
+		assert.Nil(t, u.DatabaseServer)
+		assert.Equal(t, "mariadb", *u.DatabaseDriver)
+		assert.Equal(t, "pp_pw", *u.DatabasePassword)
+	})
+	t.Run("UnusableServer", func(t *testing.T) {
+		var u cluster.OptionsUpdate
+		d := complete
+		d.Host = "/run/mysqld/mysqld.sock"
+		server, ok := u.SetDatabase(d)
+		assert.False(t, ok)
+		assert.Equal(t, "/run/mysqld/mysqld.sock:3306", server)
+		assert.True(t, u.IsZero())
+	})
+	t.Run("NotComplete", func(t *testing.T) {
+		for name, change := range map[string]func(*cluster.RegisterDatabase){
+			"Name":       func(d *cluster.RegisterDatabase) { d.Name = "" },
+			"User":       func(d *cluster.RegisterDatabase) { d.User = "" },
+			"Password":   func(d *cluster.RegisterDatabase) { d.Password = "" },
+			"Incomplete": func(d *cluster.RegisterDatabase) { d.Incomplete = true },
+		} {
+			var u cluster.OptionsUpdate
+			d := complete
+			d.Host = "/run/mysqld/mysqld.sock"
+			d.DSN = "pp_user:pp_pw@tcp(db.local:3306)/pp_db"
+			change(&d)
+			_, ok := u.SetDatabase(d)
+			assert.True(t, ok, name)
+			assert.True(t, u.IsZero(), name)
+		}
+	})
+}
+
 func TestOptionsUpdate_Apply(t *testing.T) {
 	conf := config.NewMinimalTestConfig(t.TempDir())
 	conf.Options().OptionsYaml = filepath.Join(conf.ConfigPath(), "options.yml")

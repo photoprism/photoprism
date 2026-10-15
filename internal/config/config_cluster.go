@@ -48,6 +48,16 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 		return false, err
 	}
 
+	// Database settings are saved as a whole or not at all, and refused ones do not prevent saving the rest.
+	if err := ValidateClusterDatabaseUpdate(update); err != nil {
+		event.SystemWarn([]string{"config", "cluster", "ignored database settings (%s)"}, clean.Error(err))
+		update.ClearDatabase()
+
+		if update.IsZero() {
+			return false, nil
+		}
+	}
+
 	// Store a DSN rebuilt from its validated parts and accepted parameters.
 	if update.DatabaseDSN != nil {
 		dsnValue, dropped, err := clusterDatabaseDSN(*update.DatabaseDSN, c.DatabaseTimeout())
@@ -109,7 +119,7 @@ func (c *Config) databaseDsnFromCli() bool {
 	return flagContext(c.cliCtx, "database-dsn").IsSet("database-dsn")
 }
 
-// validateClusterOptionsUpdate validates cluster-managed option updates.
+// validateClusterOptionsUpdate validates the cluster-managed options of an update other than the database settings.
 func validateClusterOptionsUpdate(update cluster.OptionsUpdate) error {
 	if update.ClusterUUID != nil && !rnd.IsUUID(*update.ClusterUUID) {
 		return fmt.Errorf("invalid cluster UUID")
@@ -119,6 +129,11 @@ func validateClusterOptionsUpdate(update cluster.OptionsUpdate) error {
 		return fmt.Errorf("invalid node UUID")
 	}
 
+	return nil
+}
+
+// ValidateClusterDatabaseUpdate validates the database settings of a cluster options update.
+func ValidateClusterDatabaseUpdate(update cluster.OptionsUpdate) error {
 	if update.DatabaseDriver != nil && dsn.ParseDriver(*update.DatabaseDriver) != dsn.DriverMySQL {
 		return fmt.Errorf("invalid database driver")
 	}

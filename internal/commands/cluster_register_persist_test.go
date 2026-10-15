@@ -4,11 +4,14 @@ import (
 	"os"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -20,7 +23,18 @@ func TestPersistRegisterResponse(t *testing.T) {
 		// cluster settings are still saved.
 		clusterUUID := "4a47c940-d5de-41b3-88a2-eb816cc659ca"
 
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+		hook := test.NewLocal(logger)
+		system := event.SystemLog
+		event.SystemLog = logger
+		t.Cleanup(func() {
+			event.SystemLog = system
+			hook.Reset()
+		})
+
 		for _, host := range []string{"/run/mysqld/mysqld.sock", ""} {
+			hook.Reset()
 			conf := config.NewMinimalTestConfig(t.TempDir())
 			require.NoError(t, persistRegisterResponse(conf, &cluster.RegisterResponse{
 				UUID: clusterUUID,
@@ -47,6 +61,11 @@ func TestPersistRegisterResponse(t *testing.T) {
 				assert.Equal(t, "pp_db", persisted["DatabaseName"])
 				assert.Equal(t, ":3306", persisted["DatabaseServer"])
 			} else {
+				var messages []string
+				for _, entry := range hook.AllEntries() {
+					messages = append(messages, entry.Message)
+				}
+				assert.Contains(t, messages, "cluster: ignored database settings with unusable server address /run/mysqld/mysqld.sock:3306")
 				for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
 					assert.NotContains(t, persisted, key)
 				}
@@ -77,7 +96,7 @@ func TestPersistRegisterResponse(t *testing.T) {
 			UUID: "4a47c940-d5de-41b3-88a2-eb816cc659ca",
 			Node: cluster.Node{ClientID: cluster.ExampleClientID},
 			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user",
-				DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?parseTime=true", Incomplete: true},
+				Password: "pp_pw", DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?parseTime=true", Incomplete: true},
 		}))
 
 		content, err := os.ReadFile(conf.OptionsYaml())
@@ -117,6 +136,27 @@ func TestPersistRegisterResponse(t *testing.T) {
 			} else {
 				assert.NotContains(t, persisted, "DatabasePassword", host)
 			}
+		}
+	})
+	t.Run("RefusedDatabase", func(t *testing.T) {
+		// Database settings the config refuses are skipped as a whole, and the registration is saved.
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, persistRegisterResponse(conf, &cluster.RegisterResponse{
+			UUID: "4a47c940-d5de-41b3-88a2-eb816cc659ca",
+			Node: cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "db?x", User: "pp_user",
+				Password: "pp_pw"},
+		}))
+
+		content, err := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, err)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
 		}
 	})
 	t.Run("ReplacesStoredDSN", func(t *testing.T) {

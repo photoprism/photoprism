@@ -167,8 +167,10 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 
 	// Options should be reloaded; check values.
 	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
-	// DSN branch should be preferred and persisted.
-	assert.Contains(t, c.Options().DatabaseDSN, "@tcp(db.local:3306)/pp_db")
+	// The separate settings are saved instead of the DSN sent with them.
+	assert.Equal(t, "", c.Options().DatabaseDSN)
+	assert.Equal(t, "db.local:3306", c.Options().DatabaseServer)
+	assert.Contains(t, c.DatabaseDSN(), "pp_user:pp_pw@tcp(db.local:3306)/pp_db")
 	assert.Equal(t, dsn.DriverMySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, srv.URL+"/portal/login", c.PortalLoginUrl())
@@ -1225,6 +1227,76 @@ func TestRegister_PersistDBFieldsIPv6(t *testing.T) {
 	assert.Equal(t, "fd00::10", c.DatabaseHost())
 }
 
+// socketPortalResponse returns a registration response of a Portal whose database is reached over a socket.
+func socketPortalResponse(clusterUUID, nodeUUID string) *cluster.RegisterResponse {
+	return &cluster.RegisterResponse{
+		UUID:    clusterUUID,
+		Node:    cluster.Node{Name: "pp-node-01", ClientID: cluster.ExampleClientID, UUID: nodeUUID},
+		JWKSUrl: "https://portal.example.test/.well-known/jwks.json",
+		Database: cluster.RegisterDatabase{
+			Driver:   dsn.DriverMySQL,
+			Host:     "/run/mysqld/mysqld.sock",
+			Port:     3306,
+			Name:     "pp_db",
+			User:     "pp_user",
+			Password: "pp_pw",
+			DSN:      "pp_user:pp_pw@tcp(/run/mysqld/mysqld.sock:3306)/pp_db?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		},
+	}
+}
+
+// readBootstrapOptions returns the values saved in the options.yml file of a test config.
+func readBootstrapOptions(t *testing.T, c *config.Config) map[string]any {
+	t.Helper()
+
+	content, err := os.ReadFile(c.OptionsYaml())
+	require.NoError(t, err)
+
+	var persisted map[string]any
+	require.NoError(t, yaml.Unmarshal(content, &persisted))
+
+	return persisted
+}
+
+// TestRegister_SocketPortal checks that joining a Portal whose database is reached over a socket saves
+// the registration, so the instance can authenticate on the next start.
+func TestRegister_SocketPortal(t *testing.T) {
+	clusterUUID, nodeUUID := rnd.UUID(), rnd.UUIDv7()
+	out := captureBootstrapLog(t)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/v1/cluster/nodes/register":
+			resp := socketPortalResponse(clusterUUID, nodeUUID)
+			resp.Secrets = &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusCreated)
+			_ = json.NewEncoder(w).Encode(resp)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-reg-socket")
+	c.Options().PortalUrl = srv.URL
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().SiteUrl = "https://public.example.test/"
+	c.Options().AdvertiseUrl = "https://public.example.test/"
+	c.Options().DatabaseDriver = dsn.DriverMySQL
+	c.Options().DatabaseDSN = ""
+	c.Options().DatabaseName = ""
+	c.Options().DatabaseUser = ""
+	c.Options().DatabasePassword = ""
+
+	require.NoError(t, InitConfig(c))
+	assert.Equal(t, cluster.ExampleClientID, c.NodeClientID())
+	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	assert.Equal(t, clusterUUID, c.ClusterUUID())
+	assert.Equal(t, "", c.Options().DatabaseName)
+	assert.Equal(t, "", c.Options().DatabaseDSN)
+	assert.Contains(t, out.String(), "successfully joined cluster")
+}
+
 // TestPersistRegistration checks which database settings bootstrap saves from a registration response.
 func TestPersistRegistration(t *testing.T) {
 	t.Run("UnusableServer", func(t *testing.T) {
@@ -1253,6 +1325,176 @@ func TestPersistRegistration(t *testing.T) {
 		require.NoError(t, yaml.Unmarshal(content, &persisted))
 		assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
 		for _, key := range []string{"DatabaseDriver", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+	})
+	t.Run("SocketPortal", func(t *testing.T) {
+		// A Portal reached over a socket sends an unusable address in the DSN and the separate settings;
+		// the registration is saved without database settings and requires no restart.
+		out := captureBootstrapLog(t)
+		c := newBootstrapTestConfig(t, "bootstrap-persist-socket")
+		clusterUUID, nodeUUID := rnd.UUID(), rnd.UUIDv7()
+
+		require.NoError(t, persistRegistration(c, socketPortalResponse(clusterUUID, nodeUUID), true))
+
+		persisted := readBootstrapOptions(t, c)
+		assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+		assert.NotEmpty(t, persisted["NodeUUID"])
+		assert.Equal(t, "https://portal.example.test/.well-known/jwks.json", persisted["JWKSUrl"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseDSN", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+
+		assert.Contains(t, out.String(), "ignored database settings with unusable server address /run/mysqld/mysqld.sock:3306")
+		assert.NotContains(t, out.String(), "restart required")
+	})
+	t.Run("SocketPortalLocalDatabase", func(t *testing.T) {
+		// Skipped database settings leave the stored ones untouched.
+		c := newBootstrapTestConfig(t, "bootstrap-persist-socket-local")
+		local := config.Values{
+			"DatabaseDriver":   dsn.DriverMySQL,
+			"DatabaseServer":   "db.local:3306",
+			"DatabaseName":     "local_db",
+			"DatabaseUser":     "local_user",
+			"DatabasePassword": "local_pw",
+		}
+		_, err := c.SaveOptionsPatch(local)
+		require.NoError(t, err)
+
+		require.NoError(t, persistRegistration(c, socketPortalResponse(rnd.UUID(), rnd.UUIDv7()), true))
+
+		persisted := readBootstrapOptions(t, c)
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+
+		for key, value := range local {
+			assert.Equal(t, value, persisted[key], key)
+		}
+
+		assert.NotContains(t, persisted, "DatabaseDSN")
+	})
+	t.Run("TCPPortal", func(t *testing.T) {
+		// The separate settings are saved instead of the DSN the Portal sends with them.
+		out := captureBootstrapLog(t)
+		c := newBootstrapTestConfig(t, "bootstrap-persist-tcp")
+		c.Options().DatabaseDriver = dsn.DriverMySQL
+		c.Options().DatabaseDSN = ""
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID: rnd.UUID(),
+			Node: cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user",
+				Password: "pp_pw", DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?parseTime=true"},
+		}, true))
+
+		persisted := readBootstrapOptions(t, c)
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+		assert.Equal(t, dsn.DriverMySQL, persisted["DatabaseDriver"])
+		assert.Equal(t, "db.local:3306", persisted["DatabaseServer"])
+		assert.Equal(t, "pp_db", persisted["DatabaseName"])
+		assert.Equal(t, "pp_user", persisted["DatabaseUser"])
+		assert.Equal(t, "pp_pw", persisted["DatabasePassword"])
+		assert.NotContains(t, persisted, "DatabaseDSN")
+		assert.Contains(t, c.DatabaseDSN(), "pp_user:pp_pw@tcp(db.local:3306)/pp_db")
+		assert.Contains(t, out.String(), "restart required")
+	})
+	t.Run("RefusedDatabase", func(t *testing.T) {
+		// Database settings the config refuses for any reason are skipped as a whole.
+		for _, tc := range []struct {
+			name, reason string
+			db           cluster.RegisterDatabase
+		}{
+			{"Name", "invalid database name", cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "db?x", User: "pp_user", Password: "pp_pw"}},
+			{"User", "invalid database user", cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "-x", Password: "pp_pw"}},
+			{"Driver", "invalid database driver", cluster.RegisterDatabase{Driver: dsn.DriverSQLite3, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Password: "pp_pw"}},
+			{"DSN", "invalid database dsn", cluster.RegisterDatabase{Driver: dsn.DriverMySQL, DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?tls=custom"}},
+		} {
+			t.Run(tc.name, func(t *testing.T) {
+				out := captureBootstrapLog(t)
+				c := newBootstrapTestConfig(t, "bootstrap-persist-refused-"+strings.ToLower(tc.name))
+				clusterUUID := rnd.UUID()
+
+				require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+					UUID:     clusterUUID,
+					Node:     cluster.Node{ClientID: cluster.ExampleClientID, UUID: rnd.UUIDv7()},
+					Database: tc.db,
+				}, true))
+
+				persisted := readBootstrapOptions(t, c)
+				assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+				assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
+
+				for _, key := range []string{"DatabaseDriver", "DatabaseDSN", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+					assert.NotContains(t, persisted, key)
+				}
+
+				// Bootstrap checks the settings itself, so the config does not need to skip them.
+				assert.Contains(t, out.String(), `msg="cluster: ignored database settings (`+tc.reason+`)"`)
+				assert.NotContains(t, out.String(), "config: cluster: ignored database settings")
+				assert.NotContains(t, out.String(), "restart required")
+			})
+		}
+	})
+	t.Run("DSNOnly", func(t *testing.T) {
+		// A response without separate settings may carry a DSN, which is saved if it is usable.
+		c := newBootstrapTestConfig(t, "bootstrap-persist-dsn")
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID:     rnd.UUID(),
+			Node:     cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?parseTime=true"},
+		}, true))
+
+		persisted := readBootstrapOptions(t, c)
+		assert.Equal(t, dsn.DriverMySQL, persisted["DatabaseDriver"])
+		assert.Contains(t, persisted["DatabaseDSN"], "pp_user:pp_pw@tcp(db.local:3306)/pp_db?")
+
+		out := captureBootstrapLog(t)
+		c = newBootstrapTestConfig(t, "bootstrap-persist-dsn-socket")
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID:     rnd.UUID(),
+			Node:     cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, DSN: "pp_user:pp_pw@tcp(/run/mysqld/mysqld.sock:3306)/pp_db"},
+		}, true))
+
+		persisted = readBootstrapOptions(t, c)
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+		assert.NotContains(t, persisted, "DatabaseDSN")
+		assert.NotContains(t, persisted, "DatabaseDriver")
+		assert.Contains(t, out.String(), `msg="cluster: ignored database settings (invalid database server)"`)
+
+		// The DSN of a database that is not fully provisioned is not saved.
+		c = newBootstrapTestConfig(t, "bootstrap-persist-dsn-incomplete")
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID: rnd.UUID(),
+			Node: cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?parseTime=true",
+				Incomplete: true},
+		}, true))
+
+		persisted = readBootstrapOptions(t, c)
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+		assert.NotContains(t, persisted, "DatabaseDSN")
+		assert.NotContains(t, persisted, "DatabaseDriver")
+	})
+	t.Run("NoRotation", func(t *testing.T) {
+		// Without a database request, the response's database settings are not saved.
+		c := newBootstrapTestConfig(t, "bootstrap-persist-norotate")
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID: rnd.UUID(),
+			Node: cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user",
+				Password: "pp_pw"},
+		}, false))
+
+		persisted := readBootstrapOptions(t, c)
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseDSN", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
 			assert.NotContains(t, persisted, key)
 		}
 	})
@@ -1288,8 +1530,9 @@ func TestPersistRegistration(t *testing.T) {
 		clusterUUID := rnd.UUID()
 
 		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
-			UUID:     clusterUUID,
-			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Incomplete: true},
+			UUID: clusterUUID,
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user",
+				Password: "pp_pw", Incomplete: true},
 		}, true))
 
 		content, err := os.ReadFile(c.OptionsYaml())

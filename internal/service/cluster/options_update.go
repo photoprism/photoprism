@@ -1,5 +1,11 @@
 package cluster
 
+import (
+	"strings"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
+)
+
 // OptionsUpdate represents a set of configuration values that should be
 // persisted to options.yml after a Portal cluster operation.
 type OptionsUpdate struct {
@@ -41,6 +47,46 @@ func (u OptionsUpdate) HasDatabaseUpdate() bool {
 		u.DatabaseName != nil ||
 		u.DatabaseUser != nil ||
 		u.DatabasePassword != nil
+}
+
+// ClearDatabase removes all database-related fields from the update.
+func (u *OptionsUpdate) ClearDatabase() {
+	u.DatabaseDriver = nil
+	u.DatabaseDSN = nil
+	u.DatabaseServer = nil
+	u.DatabaseName = nil
+	u.DatabaseUser = nil
+	u.DatabasePassword = nil
+}
+
+// SetDatabase adds the separate database settings of a registration response, which are complete only
+// with a password, and returns their server address. They are left out as a whole if it is unusable.
+func (u *OptionsUpdate) SetDatabase(d RegisterDatabase) (server string, ok bool) {
+	if d.Incomplete || d.Name == "" || d.User == "" || d.Password == "" {
+		return "", true
+	}
+
+	if server, ok = d.Server(); !ok {
+		return server, false
+	}
+
+	driver := strings.TrimSpace(d.Driver)
+
+	if driver == "" {
+		driver = dsn.DriverMySQL
+	}
+
+	u.SetDatabaseDriver(driver)
+	u.SetDatabaseName(d.Name)
+
+	if server != "" {
+		u.SetDatabaseServer(server)
+	}
+
+	u.SetDatabaseUser(d.User)
+	u.SetDatabasePassword(d.Password)
+
+	return server, true
 }
 
 // Setter helpers ----------------------------------------------------------------
