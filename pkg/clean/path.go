@@ -6,6 +6,13 @@ import (
 	"unicode/utf8"
 )
 
+// pathReserved lists the characters Path removes from a path, in addition to the unsafe ones.
+const pathReserved = `\|"?*%<>{}`
+
+// portableReserved lists the characters a portable file or folder name must not contain: those Path removes,
+// ":", which several file systems and command-line tools reserve, and "~", which stands for a home directory.
+const portableReserved = pathReserved + ":~"
+
 // Path removes reserved and unsafe characters from a path string and trims ASCII spaces, keeping the
 // other characters as they are. It returns an empty string if the result contains ".." or "//".
 func Path(s string) string {
@@ -13,7 +20,7 @@ func Path(s string) string {
 		return ""
 	}
 
-	s = strings.Trim(pathString(s, `\|"?*%<>{}`), " ")
+	s = strings.Trim(pathString(s, pathReserved), " ")
 
 	if reject(s, 0) || strings.Contains(s, "..") || strings.Contains(s, "//") {
 		return ""
@@ -72,4 +79,14 @@ func UserPath(dir string) string {
 func SlashPath(dir string) string {
 	dir = strings.TrimSpace(strings.ReplaceAll(dir, "\\", "/"))
 	return strings.Trim(dir, "/")
+}
+
+// PortableName reports whether a single file or folder name is valid UTF-8 and contains none of the characters
+// PhotoPrism reserves in file and folder names. It does not check for "/", ".", "..", or an empty name.
+func PortableName(name string) bool {
+	if !utf8.ValidString(name) || strings.ContainsAny(name, portableReserved) {
+		return false
+	}
+
+	return !strings.ContainsFunc(name, unsafePathRune)
 }

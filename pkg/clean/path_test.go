@@ -10,6 +10,9 @@ func TestPath(t *testing.T) {
 	t.Run("ValidPath", func(t *testing.T) {
 		assert.Equal(t, ProjectRoot, Path(ProjectRoot))
 	})
+	t.Run("ColonTilde", func(t *testing.T) {
+		assert.Equal(t, "~/a:b c", Path("~/a:b c"))
+	})
 	t.Run("ValidFile", func(t *testing.T) {
 		assert.Equal(t, "filename.TXT", Path("filename.TXT"))
 	})
@@ -191,5 +194,40 @@ func TestSlashPath(t *testing.T) {
 	})
 	t.Run("RootOnly", func(t *testing.T) {
 		assert.Equal(t, "", SlashPath("/"))
+	})
+}
+
+func TestPortableName(t *testing.T) {
+	t.Run("Portable", func(t *testing.T) {
+		for _, name := range []string{"03 - Março", "#1 & Friends", "[2020] (copy)", "Ünïcödé 日本 😀", "Tom's Party",
+			"a+b,c;d=e@f", "IMG_1234.JPG", "2020", "file.tar.gz", "\U0001F469\u200d\U0001F469\u200d\U0001F467", "a b", "", ".hidden", "@eaDir",
+			"a!b$c^d`e", "a\u00a0b", "\u65e5\u672c\u3000\u65c5\u884c", "a\u200bb", "\ufeffa", "Screenshot 2026-10-14 at 10.00.00\u202fAM.png",
+			"a\u200eb", "\ufffd"} {
+			assert.True(t, PortableName(name), "%q", name)
+		}
+	})
+	t.Run("ReservedSet", func(t *testing.T) {
+		assert.Equal(t, `\|"?*%<>{}:~`, portableReserved)
+	})
+	t.Run("Reserved", func(t *testing.T) {
+		for _, c := range portableReserved {
+			for _, name := range []string{string(c), string(c) + "name", "na" + string(c) + "me", "name" + string(c)} {
+				assert.False(t, PortableName(name), "%q", name)
+			}
+		}
+		for _, name := range []string{`a\b`, "a|b", `a"b`, "a?b", "a*b", "a%b", "a<b", "a>b", "a{b", "a}b", "x:y.jpg", "~home", "a~b"} {
+			assert.False(t, PortableName(name), "%q", name)
+		}
+	})
+	t.Run("Unsafe", func(t *testing.T) {
+		for _, name := range []string{"a\x00b", "a\tb", "a\nb", "a\x7fb", "a\u0085b", "a\u2028b", "a\u2029b", "a\u202eb", "a\u2066b", "\x1b[31m",
+			"name\x00", "name\u202e", "name\u2069"} {
+			assert.False(t, PortableName(name), "%q", name)
+		}
+	})
+	t.Run("InvalidUTF8", func(t *testing.T) {
+		for _, name := range []string{"\xff", "a\xc4\xd6b", "caf\xe9", "a\xed\xa0\x80b"} {
+			assert.False(t, PortableName(name), "%q", name)
+		}
 	})
 }
