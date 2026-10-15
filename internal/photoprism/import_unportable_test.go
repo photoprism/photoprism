@@ -27,7 +27,7 @@ func TestImport_StartUnportableNames(t *testing.T) {
 	src := t.TempDir()
 
 	portable := []string{"ok.jpg", "03 - Março/#1 & Friends [2020] (copy) Tom's.jpg", "pair.jpg", "stack.jpg", "日本\u3000旅行/😀.jpg"}
-	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "~home.jpg", "a$b.jpg", "pair.x|y.xmp", "stack.x|y.gif"}
+	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "a~b.jpg", "a$b.jpg", "pair.x|y.xmp", "stack.x|y.gif"}
 
 	for i, name := range portable {
 		writeTestJpeg(t, filepath.Join(src, name), 200+i)
@@ -44,6 +44,11 @@ func TestImport_StartUnportableNames(t *testing.T) {
 		}
 	}
 
+	// Hidden files are not imported or reported, and a move removes them.
+	writeTestJpeg(t, filepath.Join(src, "~$draft.jpg"), 240)
+	writeTestJpeg(t, filepath.Join(src, "$keep.jpg"), 241)
+	require.NoError(t, os.WriteFile(filepath.Join(src, ".DS_Store"), []byte("x"), fs.ModeFile))
+
 	// An empty folder whose name is not portable stays as well.
 	require.NoError(t, os.MkdirAll(filepath.Join(src, "x:y"), fs.ModeDir))
 
@@ -54,7 +59,7 @@ func TestImport_StartUnportableNames(t *testing.T) {
 	imp.Start(ImportOptionsMove(src, ""))
 	done := imp.Start(ImportOptionsMove(src, ""))
 
-	for _, name := range []string{"a|b.jpg", "x:y.jpg", "caf\xe9.jpg", "~home.jpg"} {
+	for _, name := range []string{"a|b.jpg", "x:y.jpg", "caf\xe9.jpg", "a~b.jpg"} {
 		assert.False(t, done[filepath.Join(src, name)].Exists(), "%q", name)
 	}
 
@@ -67,10 +72,13 @@ func TestImport_StartUnportableNames(t *testing.T) {
 	}
 
 	assert.DirExists(t, filepath.Join(src, "x:y"))
+	assert.NoFileExists(t, filepath.Join(src, "~$draft.jpg"))
+	assert.NoFileExists(t, filepath.Join(src, "$keep.jpg"))
+	assert.NoFileExists(t, filepath.Join(src, ".DS_Store"))
 
 	warnings := loggedMessages(hook, logrus.WarnLevel)
 
-	for _, rel := range []string{"a|b.jpg", "x:y.jpg", "dir*", "caf\xe9.jpg", "~home.jpg", "a$b.jpg", "pair.x|y.xmp", "stack.x|y.gif"} {
+	for _, rel := range []string{"a|b.jpg", "x:y.jpg", "dir*", "caf\xe9.jpg", "a~b.jpg", "a$b.jpg", "pair.x|y.xmp", "stack.x|y.gif"} {
 		count := 0
 
 		for _, msg := range warnings {
@@ -80,6 +88,10 @@ func TestImport_StartUnportableNames(t *testing.T) {
 		}
 
 		assert.Equal(t, 1, count, "%q in %v", rel, warnings)
+	}
+
+	for _, msg := range warnings {
+		assert.NotContains(t, msg, "draft")
 	}
 }
 

@@ -120,9 +120,10 @@ func FileNameHidden(name string) bool {
 
 	name = filepath.Base(name)
 
-	// Hidden files and folders starting with "." or "@" should be ignored.
+	// Hidden, system, and temporary files and folders starting with ".", "@", "$" or "~", such as "$RECYCLE.BIN"
+	// and "~$report.docx", should be ignored.
 	switch name[0:1] {
-	case ".", "@":
+	case ".", "@", "$", "~":
 		return true
 	}
 

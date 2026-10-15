@@ -185,6 +185,15 @@ func TestFileNameHidden(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/@path/ea@Dir"))
 		assert.False(t, FileNameHidden("@/eaDir"))
 	})
+	t.Run("DollarTilde", func(t *testing.T) {
+		assert.True(t, FileNameHidden("/media/$RECYCLE.BIN"))
+		assert.True(t, FileNameHidden("$"))
+		assert.True(t, FileNameHidden("/some/~$report.docx"))
+		assert.True(t, FileNameHidden("~"))
+		assert.False(t, FileNameHidden("/some/price$5.jpg"))
+		assert.False(t, FileNameHidden("/some/a~b.jpg"))
+		assert.False(t, FileNameHidden("/~home/a.jpg"))
+	})
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/path/folder"))
 	})

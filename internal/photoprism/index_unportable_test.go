@@ -97,7 +97,7 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 	cleanupIndexed(t, dir)
 
 	portable := []string{"ok.jpg", "03 - Março/#1 & Friends [2020] (copy) Tom's 😀.jpg", "日本\u3000旅行/Screenshot 10.00.00\u202fAM.jpg"}
-	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "~home.jpg", "$HOME.jpg"}
+	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "a~b.jpg", "price$5.jpg"}
 
 	for i, name := range append(append([]string{}, portable...), skipped...) {
 		writeTestJpeg(t, filepath.Join(root, name), i+1)
@@ -117,6 +117,8 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 
 	// Hidden and ignored names keep their handling and are not reported.
 	writeTestJpeg(t, filepath.Join(root, ".x|y", "hidden.jpg"), 70)
+	writeTestJpeg(t, filepath.Join(root, "$RECYCLE.BIN", "deleted.jpg"), 72)
+	writeTestJpeg(t, filepath.Join(root, "~$draft.jpg"), 73)
 	writeTestJpeg(t, filepath.Join(root, "skip|me.jpg"), 71)
 	require.NoError(t, os.WriteFile(filepath.Join(root, fs.PPIgnoreFilename), []byte("skip|me.jpg\n"), fs.ModeFile))
 
@@ -135,9 +137,14 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 
 	assert.False(t, opt.FaceRegeneration.Skipped(filepath.Join(root, "ok.jpg")))
 
-	for _, name := range []string{"a|b.jpg", "x:y.jpg", "caf\xe9.jpg", "~home.jpg"} {
+	for _, name := range []string{"a|b.jpg", "x:y.jpg", "caf\xe9.jpg", "a~b.jpg"} {
 		assert.False(t, found[filepath.Join(root, name)].Exists(), "%q", name)
 	}
+
+	// Hidden files are recorded as found, so a purge does not flag earlier index entries as missing.
+	assert.True(t, found[filepath.Join(root, "~$draft.jpg")].Exists())
+	assert.False(t, indexedFile(t, dir+"/~$draft.jpg"))
+	assert.False(t, indexedFile(t, dir+"/$RECYCLE.BIN/deleted.jpg"))
 
 	for _, name := range portable {
 		assert.True(t, indexedFile(t, dir+"/"+name), name)
@@ -161,7 +168,7 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 	// Each skipped path is reported once, a folder for its whole contents.
 	warnings := loggedMessages(hook, logrus.WarnLevel)
 
-	for _, rel := range []string{dir + "/a|b.jpg", dir + "/x:y.jpg", dir + "/dir*", dir + "/caf\xe9.jpg", dir + "/~home.jpg", dir + "/pair.x|y.xmp", dir + "/stack.x|y.gif"} {
+	for _, rel := range []string{dir + "/a|b.jpg", dir + "/x:y.jpg", dir + "/dir*", dir + "/caf\xe9.jpg", dir + "/a~b.jpg", dir + "/price$5.jpg", dir + "/pair.x|y.xmp", dir + "/stack.x|y.gif"} {
 		count := 0
 
 		for _, msg := range warnings {
@@ -176,6 +183,8 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 	for _, msg := range warnings {
 		assert.NotContains(t, msg, "skipped "+clean.Log(dir+"/.x|y")+" ")
 		assert.NotContains(t, msg, "skip|me")
+		assert.NotContains(t, msg, "RECYCLE")
+		assert.NotContains(t, msg, "draft")
 	}
 
 	var folders int64
