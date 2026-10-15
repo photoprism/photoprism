@@ -170,20 +170,16 @@ func runStopHelper(mode string) int {
 func runRebornHelper(pidFile, logFile string) int {
 	if !daemon.WasReborn() {
 		dctx := &daemon.Context{PidFileName: pidFile, LogFileName: logFile, Args: []string{"photoprism-test", "-test.run=^$"}}
-		child, err := dctx.Reborn()
+
+		// Starts the daemon and waits for its process ID, like the start command.
+		pid, _, err := detachDaemon(dctx)
 
 		if err != nil {
 			fmt.Println(err)
 			return 1
 		}
 
-		// Waits for the daemon to write its process ID, like the start command.
-		if err = waitForDaemonPid(pidFile, child, 30*time.Second); err != nil {
-			fmt.Println(err)
-			return 1
-		}
-
-		fmt.Println(child.Pid)
+		fmt.Println(pid)
 		return 0
 	}
 

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 
@@ -279,22 +280,247 @@ func TestWaitForDaemonPid(t *testing.T) {
 		cmd := startProcess(t, "photoprism-test", "30")
 		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 		require.NoError(t, os.WriteFile(pidFile, nil, 0o600))
+		before := fileInfo(t, pidFile)
 		time.AfterFunc(200*time.Millisecond, func() { _ = os.WriteFile(pidFile, []byte(strconv.Itoa(cmd.Process.Pid)), 0o600) })
-		require.NoError(t, waitForDaemonPid(pidFile, cmd.Process, 10*time.Second))
+		require.NoError(t, waitForDaemonPid(pidFile, before, cmd.Process, 10*time.Second))
+	})
+	t.Run("Created", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		time.AfterFunc(200*time.Millisecond, func() { _ = os.WriteFile(pidFile, []byte(strconv.Itoa(cmd.Process.Pid)), 0o600) })
+		require.NoError(t, waitForDaemonPid(pidFile, nil, cmd.Process, 10*time.Second))
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		// The pid file already names the process, as after process ID reuse.
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile := unlockedPidFile(t, cmd.Process.Pid)
+		err := waitForDaemonPid(pidFile, fileInfo(t, pidFile), cmd.Process, 300*time.Millisecond)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "has not written its process id")
+	})
+	t.Run("RewrittenSame", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile := unlockedPidFile(t, cmd.Process.Pid)
+		before := fileInfo(t, pidFile)
+		time.AfterFunc(200*time.Millisecond, func() { _ = os.WriteFile(pidFile, []byte(strconv.Itoa(cmd.Process.Pid)), 0o600) })
+		require.NoError(t, waitForDaemonPid(pidFile, before, cmd.Process, 10*time.Second))
 	})
 	t.Run("Exited", func(t *testing.T) {
 		cmd := startProcess(t, "photoprism-test", "0.2")
 		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
-		err := waitForDaemonPid(pidFile, cmd.Process, 10*time.Second)
+		err := waitForDaemonPid(pidFile, nil, cmd.Process, 10*time.Second)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "exited before writing its process id")
 	})
 	t.Run("OtherPid", func(t *testing.T) {
 		cmd := startProcess(t, "photoprism-test", "30")
 		pidFile := unlockedPidFile(t, cmd.Process.Pid+1)
-		err := waitForDaemonPid(pidFile, cmd.Process, 300*time.Millisecond)
+		err := waitForDaemonPid(pidFile, nil, cmd.Process, 300*time.Millisecond)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "has not written its process id")
+	})
+}
+
+// TestPidFileChanged covers telling whether a pid file was written since it was last seen.
+func TestPidFileChanged(t *testing.T) {
+	t.Run("Created", func(t *testing.T) {
+		assert.True(t, pidFileChanged(nil, fileInfo(t, unlockedPidFile(t, 1234))))
+	})
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, pidFileChanged(nil, nil))
+		assert.False(t, pidFileChanged(fileInfo(t, unlockedPidFile(t, 1234)), nil))
+	})
+	t.Run("Same", func(t *testing.T) {
+		info := fileInfo(t, unlockedPidFile(t, 1234))
+		assert.False(t, pidFileChanged(info, info))
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		before := keepFile(t, pidFile)
+		replacePidFile(t, pidFile, "1234")
+		assert.True(t, pidFileChanged(before, fileInfo(t, pidFile)))
+	})
+	t.Run("Resized", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		before := fileInfo(t, pidFile)
+		require.NoError(t, os.Chtimes(pidFile, before.ModTime(), before.ModTime()))
+		require.NoError(t, os.Truncate(pidFile, 2))
+		require.NoError(t, os.Chtimes(pidFile, before.ModTime(), before.ModTime()))
+		assert.True(t, pidFileChanged(before, fileInfo(t, pidFile)))
+	})
+	t.Run("Modified", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		before := fileInfo(t, pidFile)
+		later := before.ModTime().Add(time.Second)
+		require.NoError(t, os.Chtimes(pidFile, later, later))
+		assert.True(t, pidFileChanged(before, fileInfo(t, pidFile)))
+	})
+}
+
+// TestDetachRequested covers deciding whether to start the daemon, and removing the daemon marker otherwise.
+func TestDetachRequested(t *testing.T) {
+	t.Run("Parent", func(t *testing.T) {
+		t.Setenv(daemon.MARK_NAME, "")
+		require.NoError(t, os.Unsetenv(daemon.MARK_NAME))
+		assert.True(t, detachRequested(true))
+	})
+	t.Run("Daemon", func(t *testing.T) {
+		t.Setenv(daemon.MARK_NAME, daemon.MARK_VALUE)
+		assert.False(t, detachRequested(true))
+		assert.False(t, daemon.WasReborn())
+	})
+	t.Run("Foreground", func(t *testing.T) {
+		t.Setenv(daemon.MARK_NAME, daemon.MARK_VALUE)
+		assert.False(t, detachRequested(false))
+		assert.False(t, daemon.WasReborn())
+	})
+}
+
+// TestDetachDaemon covers starting the daemon with go-daemon and waiting until it has written its process ID.
+func TestDetachDaemon(t *testing.T) {
+	// rebornContext returns a context that starts this test binary as a daemon in the reborn helper mode.
+	rebornContext := func(t *testing.T) *daemon.Context {
+		dir := t.TempDir()
+		pidFile := filepath.Join(dir, "photoprism.pid")
+		logFile := filepath.Join(dir, "photoprism.log")
+
+		return &daemon.Context{
+			PidFileName: pidFile,
+			LogFileName: logFile,
+			Args:        []string{"photoprism-test", "-test.run=^$"},
+			Env:         append(os.Environ(), stopHelperEnv+"=reborn", stopHelperPidEnv+"="+pidFile, stopHelperLogEnv+"="+logFile),
+		}
+	}
+
+	t.Run("Started", func(t *testing.T) {
+		requireProc(t)
+		dctx := rebornContext(t)
+		pid, status, err := detachDaemon(dctx)
+		require.NoError(t, err)
+
+		child, findErr := os.FindProcess(pid)
+		require.NoError(t, findErr)
+		t.Cleanup(func() { _ = child.Kill(); _, _ = child.Wait() })
+
+		assert.Equal(t, daemonStarted, status)
+		// The daemon has written its process ID when detachDaemon returns.
+		assertPidFileContent(t, dctx.PidFileName, strconv.Itoa(pid))
+	})
+	t.Run("Starting", func(t *testing.T) {
+		// A stand-in daemon that is starting holds the lock and writes its process ID later.
+		dctx := rebornContext(t)
+		lock, err := daemon.OpenLockFile(dctx.PidFileName, daemon.FILE_PERM)
+		require.NoError(t, err)
+		require.NoError(t, lock.Lock())
+		cmd := startProcess(t, "photoprism-test", "30", lock.File)
+		require.NoError(t, lock.Close())
+		time.AfterFunc(300*time.Millisecond, func() {
+			_ = os.WriteFile(dctx.PidFileName, []byte(strconv.Itoa(cmd.Process.Pid)), daemon.FILE_PERM)
+		})
+
+		pid, status, err := detachDaemon(dctx)
+		require.NoError(t, err)
+		assert.Equal(t, daemonAlreadyRunning, status)
+		assert.Equal(t, cmd.Process.Pid, pid)
+	})
+	t.Run("LockedWithoutDaemon", func(t *testing.T) {
+		defaultTimeout := daemonPidTimeout
+		daemonPidTimeout = 300 * time.Millisecond
+		t.Cleanup(func() { daemonPidTimeout = defaultTimeout })
+
+		// Another process holds the lock, but no daemon starts.
+		dctx := rebornContext(t)
+		lock, err := daemon.OpenLockFile(dctx.PidFileName, daemon.FILE_PERM)
+		require.NoError(t, err)
+		require.NoError(t, lock.Lock())
+		t.Cleanup(func() { _ = lock.Close() })
+
+		_, _, err = detachDaemon(dctx)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is locked by another process, but no daemon holds it after 300ms")
+		assert.Contains(t, err.Error(), "fuser -v")
+		assertPidFileContent(t, dctx.PidFileName, "")
+	})
+	t.Run("Released", func(t *testing.T) {
+		requireProc(t)
+		// Another process holds the lock briefly and releases it without starting a daemon.
+		dctx := rebornContext(t)
+		lock, err := daemon.OpenLockFile(dctx.PidFileName, daemon.FILE_PERM)
+		require.NoError(t, err)
+		require.NoError(t, lock.Lock())
+		time.AfterFunc(200*time.Millisecond, func() { _ = lock.Close() })
+
+		pid, status, err := detachDaemon(dctx)
+		require.NoError(t, err)
+
+		child, findErr := os.FindProcess(pid)
+		require.NoError(t, findErr)
+		t.Cleanup(func() { _ = child.Kill(); _, _ = child.Wait() })
+
+		assert.Equal(t, daemonStarted, status)
+		assertPidFileContent(t, dctx.PidFileName, strconv.Itoa(pid))
+	})
+	t.Run("Flapping", func(t *testing.T) {
+		defaultTimeout := daemonPidTimeout
+		daemonPidTimeout = 500 * time.Millisecond
+		t.Cleanup(func() { daemonPidTimeout = defaultTimeout })
+
+		// The lock is released for every probe and held again for every start, so no daemon can start.
+		dctx := rebornContext(t)
+		lock, err := daemon.OpenLockFile(dctx.PidFileName, daemon.FILE_PERM)
+		require.NoError(t, err)
+		require.NoError(t, lock.Lock())
+		t.Cleanup(func() { _ = lock.Close() })
+
+		defaultProbe := probePidFileLock
+		probes := 0
+		probePidFileLock = func(*os.File) error { probes++; return nil }
+		t.Cleanup(func() { probePidFileLock = defaultProbe })
+
+		start := time.Now()
+		_, _, err = detachDaemon(dctx)
+		require.Error(t, err)
+		assert.Less(t, time.Since(start), 5*time.Second)
+		// Every retry follows a pause, so the number of attempts is bounded by the timeout.
+		assert.LessOrEqual(t, probes, 10)
+	})
+	t.Run("StartingUnconfirmed", func(t *testing.T) {
+		defaultTimeout, defaultHoldsFile, defaultProbe := daemonPidTimeout, holdsFile, probePidFileLock
+		daemonPidTimeout = 300 * time.Millisecond
+		holdsFile = func(int, string, os.FileInfo) (bool, bool) { return false, false }
+		probePidFileLock = func(*os.File) error { return syscall.ENOLCK }
+		t.Cleanup(func() { daemonPidTimeout, holdsFile, probePidFileLock = defaultTimeout, defaultHoldsFile, defaultProbe })
+
+		// The starting stand-in holds the lock and writes its process ID later, but it cannot be confirmed.
+		dctx := rebornContext(t)
+		lock, err := daemon.OpenLockFile(dctx.PidFileName, daemon.FILE_PERM)
+		require.NoError(t, err)
+		require.NoError(t, lock.Lock())
+		cmd := startProcess(t, "photoprism-test", "30", lock.File)
+		require.NoError(t, lock.Close())
+		time.AfterFunc(50*time.Millisecond, func() {
+			_ = os.WriteFile(dctx.PidFileName, []byte(strconv.Itoa(cmd.Process.Pid)), daemon.FILE_PERM)
+		})
+
+		start := time.Now()
+		_, _, err = detachDaemon(dctx)
+		assert.ErrorIs(t, err, errDaemonUnconfirmed)
+		assert.GreaterOrEqual(t, time.Since(start), 300*time.Millisecond)
+	})
+	t.Run("AlreadyRunning", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		dctx := rebornContext(t)
+		dctx.PidFileName = pidFile
+		pid, status, err := detachDaemon(dctx)
+		require.NoError(t, err)
+		assert.Equal(t, daemonAlreadyRunning, status)
+		assert.Equal(t, cmd.Process.Pid, pid)
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		dctx := rebornContext(t)
+		require.NoError(t, os.Mkdir(dctx.PidFileName, 0o700))
+		_, _, err := detachDaemon(dctx)
+		assert.Error(t, err)
 	})
 }
 

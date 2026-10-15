@@ -55,11 +55,21 @@ var startFlags = []cli.Flag{
 	},
 }
 
-// daemonPidTimeout limits how long the start command waits for the daemon to write its process ID.
-const daemonPidTimeout = time.Minute
+// daemonPidTimeout limits how long the start command waits for a daemon to write its process ID.
+var daemonPidTimeout = time.Minute
 
 // writePidFd writes the process ID to the pid file the daemon inherited.
 var writePidFd = syscall.Write
+
+// daemonStatus describes the outcome of starting the daemon.
+type daemonStatus int
+
+const (
+	// daemonStarted means that a new daemon was started.
+	daemonStarted daemonStatus = iota
+	// daemonAlreadyRunning means that a daemon runs and holds the pid file.
+	daemonAlreadyRunning
+)
 
 // daemonContextMaxSize limits how much of the context go-daemon passes on its standard input is read.
 const daemonContextMaxSize = 4 << 20
@@ -166,13 +176,117 @@ func writeDaemonPid(pidFile string) error {
 	return syscall.Fsync(daemonPidFileFd)
 }
 
-// waitForDaemonPid waits until the daemon has written its process ID to the pid file, and fails if it exits first
-// or the timeout passes.
-func waitForDaemonPid(pidFile string, child *os.Process, timeout time.Duration) error {
+// detachRequested reports whether this process should start the daemon and exit. Otherwise it runs the server, and
+// the daemon marker is removed, so that the programs the server runs do not inherit it.
+func detachRequested(detach bool) bool {
+	if detach && !daemon.WasReborn() {
+		return true
+	}
+
+	clearDaemonMark()
+
+	return false
+}
+
+// detachDaemon starts the daemon unless one runs or is starting, and waits until it has written its process ID.
+// While another process holds the pid file lock, it waits for that daemon, and tries again if the lock is released.
+func detachDaemon(dctx *daemon.Context) (pid int, status daemonStatus, err error) {
+	deadline := time.Now().Add(daemonPidTimeout)
+	starting := false
+
+	for {
+		if pid, running, runningErr := daemonRunning(dctx.PidFileName); runningErr != nil {
+			return 0, daemonStarted, runningErr
+		} else if running {
+			return pid, daemonAlreadyRunning, nil
+		}
+
+		// The pid file as it was before, so that the process ID written by the new daemon can be told apart.
+		before, _ := os.Lstat(dctx.PidFileName)
+
+		child, rebornErr := dctx.Reborn()
+
+		switch {
+		case errors.Is(rebornErr, daemon.ErrWouldBlock):
+			if !starting {
+				log.Info("daemon is starting")
+				starting = true
+			}
+
+			pid, status, released, waitErr := waitForStartingDaemon(dctx.PidFileName, deadline)
+
+			if released {
+				continue
+			}
+
+			return pid, status, waitErr
+		case rebornErr != nil:
+			return 0, daemonStarted, fmt.Errorf("daemon context error: %w", rebornErr)
+		case child == nil:
+			return 0, daemonStarted, errors.New("daemon context error: no daemon process")
+		}
+
+		if err = waitForDaemonPid(dctx.PidFileName, before, child, daemonPidTimeout); err != nil {
+			return child.Pid, daemonStarted, fmt.Errorf("%w, see %s", err, clean.Log(dctx.LogFileName))
+		}
+
+		return child.Pid, daemonStarted, nil
+	}
+}
+
+// waitForStartingDaemon waits until a daemon that another process is starting holds the pid file. released reports
+// that the lock was released without a daemon. After the deadline, it fails with a hint naming the processes that
+// have the file open.
+func waitForStartingDaemon(pidFile string, deadline time.Time) (pid int, status daemonStatus, released bool, err error) {
+	for {
+		// Errors are expected while the daemon has not written its process ID yet.
+		pid, running, runningErr := daemonRunning(pidFile)
+
+		if runningErr == nil && running {
+			return pid, daemonAlreadyRunning, false, nil
+		} else if !time.Now().After(deadline) {
+			time.Sleep(100 * time.Millisecond)
+
+			// Lets the caller try again once the lock is released, but not before the pause above.
+			if held, known := pidFileLocked(pidFile, nil); runningErr == nil && known && !held {
+				return 0, daemonStarted, true, nil
+			}
+
+			continue
+		} else if errors.Is(runningErr, errDaemonUnconfirmed) {
+			return 0, daemonStarted, false, runningErr
+		}
+
+		var hint string
+
+		if _, info, readErr := readPidFile(pidFile); info != nil || readErr == nil {
+			hint = pidFileHolderHint(pidFile, info)
+		}
+
+		return 0, daemonStarted, false, fmt.Errorf("pid file %s is locked by another process, but no daemon holds it after %s%s",
+			clean.Log(pidFile), daemonPidTimeout, hint)
+	}
+}
+
+// pidFileChanged reports whether the pid file described by after was created, replaced, or written since before.
+func pidFileChanged(before, after os.FileInfo) bool {
+	switch {
+	case after == nil:
+		return false
+	case before == nil:
+		return true
+	}
+
+	return !os.SameFile(before, after) || before.Size() != after.Size() || !before.ModTime().Equal(after.ModTime())
+}
+
+// waitForDaemonPid waits until the daemon has written its process ID to the pid file, which must have changed since
+// before, and fails if the daemon exits first or the timeout passes.
+func waitForDaemonPid(pidFile string, before os.FileInfo, child *os.Process, timeout time.Duration) error {
 	deadline := time.Now().Add(timeout)
 
 	for {
-		if pid, _, err := readPidFile(pidFile); err == nil && pid == child.Pid {
+		if pid, info, err := readPidFile(pidFile); err == nil && pid == child.Pid && pidFileChanged(before, info) {
 			return nil
 		} else if !processRunning(child) {
 			return fmt.Errorf("daemon %d exited before writing its process id to %s", child.Pid, clean.Log(pidFile))
@@ -245,35 +359,23 @@ func startAction(ctx *cli.Context) error {
 	dctx.PidFileName = conf.PIDFilename()
 	dctx.Args = ctx.Args().Slice()
 
-	if !daemon.WasReborn() && conf.DetachServer() {
+	if detachRequested(conf.DetachServer()) {
 		conf.Shutdown()
 		cancel()
 
-		if pid, running, runningErr := daemonRunning(conf.PIDFilename()); runningErr != nil {
-			return runningErr
-		} else if running {
+		pid, status, detachErr := detachDaemon(dctx)
+
+		switch {
+		case detachErr != nil:
+			return detachErr
+		case status == daemonAlreadyRunning:
 			log.Infof("daemon already running with process id %v\n", pid)
-			return nil
+		default:
+			log.Infof("daemon started with process id %v\n", pid)
 		}
 
-		child, contextErr := dctx.Reborn()
-
-		if contextErr != nil {
-			return fmt.Errorf("daemon context error: %w", contextErr)
-		}
-
-		if child != nil {
-			// The daemon writes its process ID through the pid file it inherited.
-			if waitErr := waitForDaemonPid(conf.PIDFilename(), child, daemonPidTimeout); waitErr != nil {
-				return fmt.Errorf("%w, see %s", waitErr, clean.Log(conf.LogFilename()))
-			}
-
-			log.Infof("daemon started with process id %v\n", child.Pid)
-			return nil
-		}
+		return nil
 	}
-
-	clearDaemonMark()
 
 	// Show info if read-only mode is enabled.
 	if conf.ReadOnly() {
