@@ -249,7 +249,7 @@ func (w *Share) Start() (err error) {
 				return nil
 			}
 
-			if webdav.SkipSyncPath(file.RemoteName) || webdav.UnsafeSyncPath(file.RemoteName) {
+			if webdav.SkipRemovePath(file.RemoteName) || webdav.UnsafeSyncPath(file.RemoteName) {
 				file.Status = entity.FileShareError
 				file.Error = "remote copy retained: removal blocked by path policy"
 				file.Errors++

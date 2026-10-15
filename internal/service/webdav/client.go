@@ -762,8 +762,10 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 
 // Delete deletes a single file or directory on a remote server.
 func (c *Client) Delete(dir string) error {
-	if err := checkTransferPath(dir); err != nil {
-		return err
+	if SkipRemovePath(dir) {
+		return ErrSkipPath
+	} else if isUnsafePath(dir) {
+		return ErrUnsafePath
 	}
 
 	dir = trimPath(dir)

@@ -7,10 +7,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// isHiddenPath reports whether any segment of a WebDAV path starts with a dot.
+// isHiddenPath reports whether any segment of a WebDAV path is hidden, as fs.FileNameHidden defines it for local
+// names, e.g. ".locks", "@eaDir", "$RECYCLE.BIN" or "~$report.docx".
 func isHiddenPath(dir string) bool {
 	for segment := range strings.SplitSeq(trimPath(dir), "/") {
-		if strings.HasPrefix(segment, ".") {
+		if fs.FileNameHidden(segment) {
 			return true
 		}
 	}
@@ -72,4 +73,27 @@ func SkipSyncPath(name string) bool {
 	}
 
 	return hasControl(name) || isHiddenPath(strings.ReplaceAll(name, "\\", "/"))
+}
+
+// HiddenSyncPath reports whether a logical transfer path contains a hidden name, as fs.FileNameHidden defines it.
+func HiddenSyncPath(name string) bool {
+	return isHiddenPath(strings.ReplaceAll(name, "\\", "/"))
+}
+
+// SkipRemovePath reports whether a logical path is excluded from removal. Unlike SkipSyncPath, it only refuses
+// hidden names that start with a dot, since copies uploaded earlier may be in folders that now count as hidden.
+func SkipRemovePath(name string) bool {
+	if fs.HasReservedComponent(name) {
+		return true
+	} else if isUnsafePath(name) {
+		return false
+	}
+
+	for segment := range strings.SplitSeq(trimPath(strings.ReplaceAll(name, "\\", "/")), "/") {
+		if strings.HasPrefix(segment, ".") {
+			return true
+		}
+	}
+
+	return hasControl(name)
 }

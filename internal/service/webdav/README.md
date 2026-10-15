@@ -12,7 +12,7 @@
 - Normalize remote paths and expose them as `pkg/fs.FileInfo` values.
 - Support uploads, downloads, deletes, and remote directory creation.
 - Enumerate remote directories for service folder browsing and sync refresh jobs.
-- Exclude hidden dotfiles and entries inside hidden dot-directories because these are often lock files, partial uploads, or provider-managed metadata.
+- Exclude hidden names and entries inside hidden folders, as `fs.FileNameHidden` defines them for local names (starting with `.`, `@`, `$`, `~`, `_.` or `__`), because these are often lock files, partial uploads, trash folders, or provider-managed metadata. Paths are checked relative to the account URL, so its own path may contain such names, e.g. `/~user/`.
 
 ### Recursive Directory Discovery
 

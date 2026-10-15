@@ -269,7 +269,7 @@ func TestResetFileSyncUnportable(t *testing.T) {
 
 	var files []*File
 
-	for _, name := range []string{"2019/renamed.jpg", "2019/a:b.jpg", "dir*/x.jpg"} {
+	for _, name := range []string{"2019/renamed.jpg", "2019/a:b.jpg", "dir*/x.jpg", "@eaDir/x.jpg"} {
 		f := &File{FileUID: rnd.GenerateUID(FileUID), FileRoot: RootOriginals, FileName: name, FileHash: rnd.GenerateUID('h')}
 		require.NoError(t, UnscopedDb().Create(f).Error)
 		files = append(files, f)
@@ -292,7 +292,7 @@ func TestResetFileSyncUnportable(t *testing.T) {
 	}
 
 	renamed := placeholder(t, serviceID, files[0])
-	kept := []string{placeholder(t, serviceID, files[1]), placeholder(t, serviceID, files[2])}
+	kept := []string{placeholder(t, serviceID, files[1]), placeholder(t, serviceID, files[2]), placeholder(t, serviceID, files[3])}
 
 	// Other placeholders of a file with a portable name are not removed.
 	excluded := NewFileSync(serviceID, ".photoprism/sync/"+strconv.FormatUint(uint64(files[0].ID), 10))
@@ -326,6 +326,8 @@ func TestPortablePath(t *testing.T) {
 		assert.False(t, portablePath("2019/a:b.jpg"))
 		assert.False(t, portablePath("dir*/x.jpg"))
 		assert.False(t, portablePath("caf\xe9/x.jpg"))
+		assert.False(t, portablePath("@eaDir/x.jpg"))
+		assert.False(t, portablePath("2019/~IMG.jpg"))
 	})
 }
 

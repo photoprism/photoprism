@@ -261,7 +261,7 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 	worker := NewSync(config.TestConfig())
 	remote := t.TempDir()
 	for _, name := range []string{"valid.jpg", "03 - Março.jpg", "sub/ok.jpg", "invalid-\xff.jpg", "a|b.jpg", "x:y.jpg",
-		"~home.jpg", "dir*/inner.jpg"} {
+		"a~b.jpg", "dir*/inner.jpg", "$RECYCLE.BIN/deleted.jpg", "~$draft.jpg"} {
 		require.NoError(t, os.MkdirAll(filepath.Dir(filepath.Join(remote, name)), fs.ModeDir))
 		require.NoError(t, os.WriteFile(filepath.Join(remote, name), []byte("jpg"), fs.ModeFile))
 	}
@@ -298,6 +298,10 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 	// A folder whose name is not portable is skipped without listing its files.
 	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "/dir*"))
 	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "inner.jpg"))
+
+	// Hidden names are excluded without a warning.
+	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "RECYCLE"))
+	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "draft"))
 
 	// The name of the sync folder itself is checked only when files keep their remote paths in originals.
 	for _, filenames := range []bool{false, true} {
@@ -361,4 +365,21 @@ func TestSyncNameRoot(t *testing.T) {
 	t.Run("Filenames", func(t *testing.T) {
 		assert.Equal(t, "/", syncNameRoot(entity.Service{SyncPath: "/A|B", SyncFilenames: true}))
 	})
+}
+
+// TestSync_refreshExcludedSyncFolder checks that an account whose sync folder is excluded is reported once per refresh.
+func TestSync_refreshExcludedSyncFolder(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	a := entity.Service{AccName: "Sync Excluded " + rnd.Base36(8), AccURL: "http://127.0.0.1:1/", AccType: "webdav", AccSync: true,
+		SyncDownload: true, SyncPath: "/@Photos", AccTimeout: "low", RetryLimit: -1}
+	require.NoError(t, entity.Db().Create(&a).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
+	})
+
+	hook := captureSyncLog(t)
+	complete, err := worker.refresh(a)
+	require.NoError(t, err)
+	assert.True(t, complete)
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "is excluded"))
 }

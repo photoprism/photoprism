@@ -14,6 +14,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/emersion/go-webdav"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -921,4 +922,38 @@ func TestTempSink(t *testing.T) {
 		assert.True(t, strings.HasSuffix(name, ".tmp"), name)
 		assert.Equal(t, strings.Repeat("あ", 80), strings.SplitN(filepath.Base(name), ".", 2)[0])
 	})
+}
+
+func TestClient_DeleteHidden(t *testing.T) {
+	var deleted []string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodDelete {
+			deleted = append(deleted, r.URL.Path)
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	t.Cleanup(server.Close)
+
+	client, err := NewClient(server.URL+"/", "", "", TimeoutLow, "")
+	require.NoError(t, err)
+
+	// Copies in folders that count as hidden can be removed, reserved and unsafe paths cannot.
+	require.NoError(t, client.Delete("/@Family/x.jpg"))
+	assert.ErrorIs(t, client.Delete("/.git/config"), ErrSkipPath)
+	assert.ErrorIs(t, client.Delete("/Photos/../x.jpg"), ErrUnsafePath)
+	assert.Equal(t, []string{"/@Family/x.jpg"}, deleted)
+}
+
+func TestAppendTraversalDirs(t *testing.T) {
+	found := []webdav.FileInfo{
+		{Path: "/dav/", IsDir: true},
+		{Path: "/dav/Photos/", IsDir: true},
+		{Path: "/dav/@eaDir/", IsDir: true},
+		{Path: "/dav/a\\..\\..\\bob/", IsDir: true},
+		{Path: "/dav/Photos/x.jpg"},
+	}
+
+	queue := appendTraversalDirs(nil, "", "/dav/", found, map[string]bool{"": true})
+	assert.Equal(t, []string{"Photos"}, queue)
 }

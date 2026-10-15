@@ -20,7 +20,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	}
 
 	if webdav.SkipSyncPath(a.SyncPath) {
-		log.Tracef("sync: skipping excluded path %s for service %s (refresh)", clean.Log(a.SyncPath), clean.Log(a.AccName))
+		log.Warnf("sync: skipped %s because its sync folder %s is excluded", clean.Log(a.AccName), clean.Log(a.SyncPath))
 		return true, nil
 	}
 
