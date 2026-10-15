@@ -170,7 +170,7 @@ func TestSyncPathPolicy(t *testing.T) {
 	a.SyncPath = ".config"
 	complete, err = worker.refresh(a)
 
-	require.NoError(t, err)
+	assert.Equal(t, syncNotice("sync folder is not supported"), err)
 	assert.True(t, complete)
 
 	beforeUnsafe := requests.Load()

@@ -5,7 +5,9 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -21,7 +23,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	if webdav.SkipSyncPath(a.SyncPath) {
 		log.Warnf("sync: skipped %s because its sync folder %s is excluded", clean.Log(a.AccName), clean.Log(a.SyncPath))
-		return true, nil
+		return true, syncNotice("sync folder is not supported")
 	}
 
 	// Uploads that failed in the previous sync cycle are tried again, within the retry limit.
@@ -43,9 +45,20 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 		if err = dropQueuedFileSyncs(a.ID, queued); err != nil {
 			return false, err
+		} else if a.SyncDownload {
+			return true, syncNotice("sync folder is not supported for downloads")
 		}
 
 		return true, nil
+	}
+
+	// Downloads that are imported need a destination that gives names the index accepts.
+	if a.SyncDownload && !a.SyncFilenames {
+		if destErr := get.Import().CheckDest(w.conf.ImportDest()); destErr != nil {
+			event.SystemWarn([]string{"sync", "%s"}, destErr.Error())
+			log.Warnf("sync: skipped downloads from %s because the import destination is not supported", clean.Log(a.AccName))
+			return true, syncNotice("import destination is not supported")
+		}
 	}
 
 	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())

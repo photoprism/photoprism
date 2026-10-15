@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	"runtime/debug"
 	"time"
@@ -19,6 +20,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// syncNotice is an account error that a stage reports without failing, e.g. for an unsupported sync folder. It
+// does not count toward the retry limit, so the account is not turned off.
+type syncNotice string
+
+// Error returns the notice as account error text.
+func (n syncNotice) Error() string {
+	return string(n)
+}
 
 // Sync represents a sync worker.
 type Sync struct {
@@ -110,7 +120,15 @@ func (w *Sync) Start() (err error) {
 
 		switch a.SyncStatus {
 		case entity.SyncStatusRefresh:
-			if complete, err := w.refresh(a); err != nil {
+			var notice syncNotice
+
+			complete, err := w.refresh(a)
+
+			if errors.As(err, &notice) {
+				err = nil
+			}
+
+			if err != nil {
 				accErrors++
 				accError = clean.ErrorBytes(err, txt.ClipError)
 			} else if complete {
@@ -122,6 +140,11 @@ func (w *Sync) Start() (err error) {
 					reset = true
 					accErrors = 0
 					accError = ""
+				}
+
+				// A notice replaces the account error until a refresh no longer reports it.
+				if notice != "" {
+					accError = notice.Error()
 				}
 
 				switch {

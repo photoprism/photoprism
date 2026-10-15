@@ -320,8 +320,13 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 
 		hook.Reset()
 		complete, err = worker.refresh(b)
-		require.NoError(t, err)
 		assert.True(t, complete)
+
+		if filenames {
+			assert.Equal(t, syncNotice("sync folder is not supported for downloads"), err)
+		} else {
+			require.NoError(t, err)
+		}
 
 		names = nil
 		require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ?", b.ID).Pluck("remote_name", &names).Error)
@@ -379,7 +384,73 @@ func TestSync_refreshExcludedSyncFolder(t *testing.T) {
 
 	hook := captureSyncLog(t)
 	complete, err := worker.refresh(a)
-	require.NoError(t, err)
+	assert.Equal(t, syncNotice("sync folder is not supported"), err)
 	assert.True(t, complete)
 	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "is excluded"))
+}
+
+// TestSync_refreshUnsupportedDest checks that refresh reports an import destination that gives unsupported names.
+func TestSync_refreshUnsupportedDest(t *testing.T) {
+	conf := config.TestConfig()
+	worker := NewSync(conf)
+	dest := conf.Options().ImportDest
+	t.Cleanup(func() { conf.Options().ImportDest = dest })
+	conf.Options().ImportDest = "a:b"
+
+	for _, filenames := range []bool{false, true} {
+		a := entity.Service{AccName: "Sync Dest " + rnd.Base36(8), AccURL: "http://127.0.0.1:1/", AccType: "webdav", AccSync: true,
+			SyncDownload: true, SyncFilenames: filenames, SyncPath: "/", AccTimeout: "low", RetryLimit: -1}
+
+		complete, err := worker.refresh(a)
+
+		if filenames {
+			// Files that keep their remote paths are not imported, so the account is listed as usual.
+			assert.NotEqual(t, syncNotice("import destination is not supported"), err)
+		} else {
+			assert.True(t, complete)
+			assert.Equal(t, syncNotice("import destination is not supported"), err)
+		}
+	}
+}
+
+// TestSync_StartNotice checks that a notice is stored as account error without counting toward the retry limit,
+// and cleared once the sync folder is supported.
+func TestSync_StartNotice(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	remote := t.TempDir()
+	server := httptest.NewServer(&webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()})
+	t.Cleanup(server.Close)
+
+	a := entity.Service{AccName: "Sync Notice " + rnd.Base36(8), AccURL: server.URL + "/", AccType: "webdav", AccSync: true,
+		SyncDownload: true, SyncPath: "/@Photos", SyncStatus: entity.SyncStatusRefresh, AccTimeout: "low", RetryLimit: 1}
+	require.NoError(t, entity.Db().Create(&a).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "service_id = ?", a.ID).Error)
+		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
+	})
+
+	// stored returns the stored account.
+	stored := func() (m entity.Service) {
+		require.NoError(t, entity.UnscopedDb().First(&m, a.ID).Error)
+		return m
+	}
+
+	// Several cycles keep the notice without counting it, so the retry limit never turns sync off.
+	for i := 0; i < 3; i++ {
+		require.NoError(t, entity.Db().Model(&a).UpdateColumn("sync_status", entity.SyncStatusRefresh).Error)
+		require.NoError(t, worker.Start())
+
+		m := stored()
+		assert.Equal(t, "sync folder is not supported", m.AccError, i)
+		assert.Equal(t, 0, m.AccErrors, i)
+		assert.True(t, m.AccSync, i)
+	}
+
+	// A supported sync folder clears it.
+	require.NoError(t, entity.Db().Model(&a).UpdateColumns(entity.Values{"sync_path": "/", "sync_status": entity.SyncStatusRefresh}).Error)
+	require.NoError(t, worker.Start())
+
+	m := stored()
+	assert.Equal(t, "", m.AccError)
+	assert.Equal(t, 0, m.AccErrors)
 }
