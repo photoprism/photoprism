@@ -257,6 +257,7 @@ func TestSync_refreshLogs(t *testing.T) {
 	})
 }
 
+// TestSync_refreshInvalidNames runs only on PostgreSQL (make test-postgres), the one driver that skips such names.
 func TestSync_refreshInvalidNames(t *testing.T) {
 	if entity.DbDialect() != dsn.DialectPostgreSQL {
 		t.Skip("only PostgreSQL cannot store names that are not valid UTF-8")

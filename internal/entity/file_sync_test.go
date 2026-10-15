@@ -372,7 +372,8 @@ func TestRetryFileSyncUploads(t *testing.T) {
 }
 
 func TestFileSync_ServiceStatusIndex(t *testing.T) {
-	// The queries of an account's queued files and shares filter by service and status.
+	// The queries of an account's queued files and shares filter by service and status. The index is checked in the
+	// database of the test driver, so each driver needs its own run, e.g. make test-mariadb and make test-postgres.
 	for _, c := range []struct {
 		model any
 		name  string
