@@ -3204,6 +3204,7 @@
         "form.Service": {
             "properties": {
                 "AccError": {
+                    "description": "Read only, except that an empty value clears it.",
                     "type": "string"
                 },
                 "AccKey": {
