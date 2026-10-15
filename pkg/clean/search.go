@@ -83,6 +83,18 @@ func SearchBindable(s string) string {
 	return s
 }
 
+// SearchFilter removes NUL bytes and invalid UTF-8 from a search filter value, and reports false if nothing
+// else was left of a value that was not empty, since such a filter can match nothing.
+func SearchFilter(s string) (string, bool) {
+	if s == "" {
+		return s, true
+	}
+
+	s = SearchBindable(s)
+
+	return s, s != ""
+}
+
 // SearchString replaces search operator with default symbols.
 func SearchString(s string) string {
 	if s = SearchBindable(s); s == "" || reject(s, LengthLimit) {

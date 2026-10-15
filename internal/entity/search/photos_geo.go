@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"fmt"
 	"path"
 	"strings"
@@ -40,7 +41,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	start := time.Now()
 
 	// Parse query string and filter.
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return GeoResults{}, nil
+	} else if err != nil {
 		log.Debugf("search: %s", err)
 		return GeoResults{}, ErrBadRequest
 	}

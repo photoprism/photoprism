@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -9,7 +10,9 @@ import (
 
 // Lenses searches lenses based on their name.
 func Lenses(frm form.SearchLenses) (results []Lens, err error) {
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return []Lens{}, nil
+	} else if err != nil {
 		return results, err
 	}
 

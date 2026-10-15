@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParseQueryString_Bindable(t *testing.T) {
@@ -24,13 +25,96 @@ func TestParseQueryString_Bindable(t *testing.T) {
 	})
 }
 
+func TestParseQueryString_NoMatch(t *testing.T) {
+	t.Run("NothingLeft", func(t *testing.T) {
+		for name, f := range map[string]SearchForm{
+			"Path":           &SearchPhotos{Path: "\xff"},
+			"Name":           &SearchPhotos{Name: "\xff"},
+			"Filename":       &SearchPhotos{Filename: "\x00\xfe"},
+			"Scope":          &SearchPhotos{Scope: "\xff"},
+			"Query":          &SearchPhotos{Query: "\x00"},
+			"QueryValue":     &SearchPhotos{Query: "path:\xff label:cat"},
+			"QuotedValue":    &SearchPhotos{Query: "path:\"\xff\x00\""},
+			"TrimmedValue":   &SearchPhotos{Query: "path:\xff|"},
+			"GeoPath":        &SearchPhotosGeo{Path: "\xff"},
+			"GeoQueryValue":  &SearchPhotosGeo{Query: "name:\xff"},
+			"AlbumsCategory": &SearchAlbums{Category: "\x00"},
+			"LabelsQuery":    &SearchLabels{Query: "\xff"},
+			"SubjectsName":   &SearchSubjects{Name: "\xff"},
+			"FacesSubject":   &SearchFaces{Subject: "\xff"},
+			"UsersName":      &SearchUsers{Name: "\xff"},
+			"CamerasQuery":   &SearchCameras{Query: "\xff"},
+		} {
+			assert.ErrorIs(t, ParseQueryString(f), ErrNoMatch, name)
+		}
+	})
+	t.Run("StoredFilter", func(t *testing.T) {
+		// A stored folder album filter may name a folder that is not valid UTF-8, and its value is dropped.
+		f := &SearchPhotos{Album: "as6sg6bxpogaaba8", Filter: "path:\xc4\xd6\xdc public:true"}
+		require.NoError(t, f.ParseQueryString())
+		assert.Equal(t, "", f.Path)
+		assert.True(t, f.Public)
+		g := &SearchPhotosGeo{Filter: "name:\"\x00\" public:true"}
+		require.NoError(t, g.ParseQueryString())
+		assert.True(t, g.Public)
+	})
+	t.Run("Methods", func(t *testing.T) {
+		f := &SearchPhotos{Path: "\xff"}
+		assert.ErrorIs(t, f.ParseQueryString(), ErrNoMatch)
+		g := &SearchPhotosGeo{Name: "\xff"}
+		assert.ErrorIs(t, g.ParseQueryString(), ErrNoMatch)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		for _, f := range []*SearchPhotos{
+			{}, {Query: "path:"}, {Path: "2020/Holiday"}, {Path: "2020/"}, {Path: "20*"}, {Path: "2020|2021"},
+			{Order: "\xff"}, {Filter: "path:2020"}, {Query: "label:c\xff path:"}, {Query: "label:\"a\xff b\" path:"},
+			{Query: "pa\xffth:"}, {Query: "\x00path:"}, {Query: "path:|"},
+		} {
+			p := *f
+			require.NoError(t, f.ParseQueryString(), "%+v", p)
+		}
+	})
+	t.Run("ValidCharactersLeft", func(t *testing.T) {
+		f := &SearchPhotos{Query: "cat\xff"}
+		require.NoError(t, f.ParseQueryString())
+		assert.Equal(t, "cat", f.Query)
+		f = &SearchPhotos{Query: "cat \xff"}
+		require.NoError(t, f.ParseQueryString())
+		assert.Equal(t, "cat", f.Query)
+		f = &SearchPhotos{Query: "path:20\xff20"}
+		require.NoError(t, f.ParseQueryString())
+		assert.Equal(t, "2020", f.Path)
+		f = &SearchPhotos{Path: "a|\x00"}
+		require.NoError(t, f.ParseQueryString())
+		assert.Equal(t, "a|", f.Path)
+	})
+	t.Run("ReplacementCharacter", func(t *testing.T) {
+		// A valid U+FFFD in a value is searched as it is.
+		f := &SearchPhotos{Query: "path:\"\uFFFD\""}
+		require.NoError(t, f.ParseQueryString())
+		assert.Equal(t, "\uFFFD", f.Path)
+	})
+	t.Run("Unserialize", func(t *testing.T) {
+		// Stored album filters keep dropping such values.
+		f := &SearchPhotos{}
+		require.NoError(t, Unserialize(f, "path:\xff label:cat"))
+		assert.Equal(t, "", f.Path)
+		assert.Equal(t, "cat", f.Label)
+	})
+}
+
 func TestBindableStrings(t *testing.T) {
 	t.Run("Struct", func(t *testing.T) {
 		f := &SearchAlbums{Query: "a\x00b", Category: "\x00", Location: "Berlin"}
-		bindableStrings(f)
+		assert.False(t, bindableStrings(f))
 		assert.Equal(t, "ab", f.Query)
 		assert.Equal(t, "", f.Category)
 		assert.Equal(t, "Berlin", f.Location)
+	})
+	t.Run("Order", func(t *testing.T) {
+		f := &SearchAlbums{Query: "a\x00b", Order: "\xff"}
+		assert.True(t, bindableStrings(f))
+		assert.Equal(t, "", f.Order)
 	})
 	t.Run("NotPointer", func(t *testing.T) {
 		f := SearchAlbums{Query: "a\x00b"}

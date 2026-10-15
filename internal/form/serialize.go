@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -78,8 +79,15 @@ func Serialize(f any, all bool) string {
 
 // Unserialize parses a query string into the provided SearchForm implementation.
 func Unserialize(f SearchForm, q string) (result error) {
+	_, result = unserialize(f, q)
+	return result
+}
+
+// unserialize parses a query string into the provided SearchForm, skipping NUL bytes and invalid UTF-8, and
+// reports whether the value of a string filter consisted only of those, so it can match nothing.
+func unserialize(f SearchForm, q string) (noMatch bool, result error) {
 	var key, value []rune
-	var escaped, isKeyValue bool
+	var escaped, isKeyValue, dropped bool
 
 	v := reflect.ValueOf(f)
 
@@ -110,7 +118,13 @@ func Unserialize(f SearchForm, q string) (result error) {
 
 	var queryStrings []string
 
-	for _, char := range q {
+	for i, char := range q {
+		// NUL bytes and invalid UTF-8 are skipped, and an invalid byte decodes as a one-byte RuneError.
+		if char == 0 || char == utf8.RuneError && !strings.HasPrefix(q[i:], string(utf8.RuneError)) {
+			dropped = dropped || isKeyValue
+			continue
+		}
+
 		switch {
 		case unicode.IsSpace(char) && !escaped:
 			if isKeyValue {
@@ -151,7 +165,9 @@ func Unserialize(f SearchForm, q string) (result error) {
 							field.SetUint(uintValue)
 						}
 					case string:
-						field.SetString(clean.SearchString(stringValue))
+						searchValue := clean.SearchString(stringValue)
+						noMatch = noMatch || dropped && searchValue == ""
+						field.SetString(searchValue)
 					case bool:
 						field.SetBool(txt.Bool(stringValue))
 					default:
@@ -166,6 +182,7 @@ func Unserialize(f SearchForm, q string) (result error) {
 
 			escaped = false
 			isKeyValue = false
+			dropped = false
 			key = key[:0]
 			value = value[:0]
 		case char == ':' && !escaped:
@@ -187,5 +204,5 @@ func Unserialize(f SearchForm, q string) (result error) {
 		log.Warnf("form: failed parsing search query")
 	}
 
-	return result
+	return noMatch, result
 }

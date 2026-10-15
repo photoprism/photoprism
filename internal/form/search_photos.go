@@ -141,6 +141,7 @@ func (f *SearchPhotos) ParseQueryString() error {
 		f.People = ""
 	}
 
+	// Stored album filters may hold folder names that are not valid UTF-8, whose values are dropped.
 	if f.Filter != "" {
 		if err := Unserialize(f, f.Filter); err != nil {
 			return err

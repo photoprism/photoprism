@@ -7,6 +7,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSearchPhotos(t *testing.T) {
@@ -69,7 +70,7 @@ func TestSearchPhotos_NulValues(t *testing.T) {
 	app, router, _ := NewApiTest()
 	SearchPhotos(router)
 
-	// Values with a NUL byte or invalid UTF-8 are searched without them.
+	// Values with a NUL byte or invalid UTF-8 are searched without them, and a value of only those matches nothing.
 	for _, param := range []string{"q", "path", "folder", "name", "filename", "original", "title", "caption",
 		"description", "hash", "keywords", "label", "category", "country", "state", "city", "face", "person",
 		"subject", "people", "subjects", "album", "albums", "camera", "lens", "codec", "color", "id",
@@ -77,8 +78,28 @@ func TestSearchPhotos_NulValues(t *testing.T) {
 		t.Run(param, func(t *testing.T) {
 			r := PerformRequest(app, "GET", "/api/v1/photos?count=10&"+param+"=%00")
 			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+			assert.Equal(t, "[]", r.Body.String())
+			r = PerformRequest(app, "GET", "/api/v1/photos?count=10&"+param+"=%FF%FE")
+			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+			assert.Equal(t, "[]", r.Body.String())
 			r = PerformRequest(app, "GET", "/api/v1/photos?count=10&"+param+"=a%00b%FF")
 			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		})
 	}
+
+	t.Run("Unfiltered", func(t *testing.T) {
+		for _, query := range []string{"", "&q=", "&path=", "&q=path:"} {
+			r := PerformRequest(app, "GET", "/api/v1/photos?count=10"+query)
+			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+			assert.Equal(t, "10", r.Header().Get("X-Count"), query)
+		}
+	})
+	t.Run("ValidCharactersLeft", func(t *testing.T) {
+		expected := PerformRequest(app, "GET", "/api/v1/photos?count=10&path=2790%2F07")
+		require.Equal(t, http.StatusOK, expected.Code)
+		require.NotEqual(t, "[]", expected.Body.String())
+		r := PerformRequest(app, "GET", "/api/v1/photos?count=10&path=2790%2F07%FF")
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, expected.Header().Get("X-Count"), r.Header().Get("X-Count"))
+	})
 }

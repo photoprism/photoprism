@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -12,7 +13,9 @@ import (
 
 // Labels searches labels based on their name.
 func Labels(frm form.SearchLabels) (results []Label, err error) {
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return []Label{}, nil
+	} else if err != nil {
 		return results, err
 	}
 

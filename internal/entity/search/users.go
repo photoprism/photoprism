@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -16,7 +17,9 @@ func Users(frm form.SearchUsers) (result entity.Users, err error) {
 	result = entity.Users{}
 
 	// Parse query string and filter.
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return result, nil
+	} else if err != nil {
 		log.Debugf("users: %s", err)
 		return result, ErrBadRequest
 	}

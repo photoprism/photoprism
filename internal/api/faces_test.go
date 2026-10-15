@@ -23,6 +23,13 @@ func TestGetFace(t *testing.T) {
 		assert.LessOrEqual(t, int64(4), val2.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("InvalidBytes", func(t *testing.T) {
+		// An ID of only bytes that are not valid UTF-8 names no face.
+		app, router, _ := NewApiTest()
+		GetFace(router)
+		r := PerformRequest(app, "GET", "/api/v1/faces/%FF%FE")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
 	t.Run("Lowercase", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetFace(router)

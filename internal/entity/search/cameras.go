@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -9,7 +10,9 @@ import (
 
 // Cameras searches cameras based on their name.
 func Cameras(frm form.SearchCameras) (results []Camera, err error) {
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return []Camera{}, nil
+	} else if err != nil {
 		return results, err
 	}
 

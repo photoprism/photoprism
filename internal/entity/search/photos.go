@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"fmt"
 	"path"
 	"strings"
@@ -67,7 +68,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	start := time.Now()
 
 	// Parse query string and filter.
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return PhotoResults{}, 0, nil
+	} else if err != nil {
 		log.Debugf("search: %s", err)
 		return PhotoResults{}, 0, ErrBadRequest
 	}

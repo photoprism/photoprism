@@ -99,6 +99,28 @@ func TestSearchTerms(t *testing.T) {
 	})
 }
 
+func TestSearchFilter(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, s := range []string{"", "cat", "2020/Holiday", "20*", "a|b", "Grüße 日本"} {
+			value, ok := SearchFilter(s)
+			assert.True(t, ok, s)
+			assert.Equal(t, s, value)
+		}
+	})
+	t.Run("Cleaned", func(t *testing.T) {
+		value, ok := SearchFilter("cat\xff\x00")
+		assert.True(t, ok)
+		assert.Equal(t, "cat", value)
+	})
+	t.Run("NothingLeft", func(t *testing.T) {
+		for _, s := range []string{"\xff", "\x00", "\x00\xfe\xff", "\xc3"} {
+			value, ok := SearchFilter(s)
+			assert.False(t, ok, "%q", s)
+			assert.Equal(t, "", value)
+		}
+	})
+}
+
 func TestSearchBindable(t *testing.T) {
 	t.Run("Unchanged", func(t *testing.T) {
 		for _, s := range []string{"", "cat", "Grüße 日本 👩\u200D👩\u200D👧", "a\tb\x01c"} {

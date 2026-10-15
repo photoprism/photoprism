@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -80,7 +81,9 @@ func UserFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResults,
 // searchFaces searches faces and returns them, leaving out the clusters of people whose name is
 // withheld from the given session.
 func searchFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResults, err error) {
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return FaceResults{}, nil
+	} else if err != nil {
 		return results, err
 	}
 
