@@ -112,6 +112,11 @@ func daemonPidFileName(stdin *os.File) (string, error) {
 	return dctx.PidFileName, nil
 }
 
+// clearDaemonMark removes the variable that marks the daemon, so that the programs the server runs do not inherit it.
+func clearDaemonMark() {
+	_ = os.Unsetenv(daemon.MARK_NAME)
+}
+
 // writeDaemonPid writes the process ID to the pid file the daemon inherited and syncs it. The inherited file must
 // be the regular file at pidFile, which must not be a symbolic link, and have a single name.
 func writeDaemonPid(pidFile string) error {
@@ -258,6 +263,8 @@ func startAction(ctx *cli.Context) error {
 			return nil
 		}
 	}
+
+	clearDaemonMark()
 
 	// Show info if read-only mode is enabled.
 	if conf.ReadOnly() {

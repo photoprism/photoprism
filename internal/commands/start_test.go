@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+	"github.com/sevlyar/go-daemon"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
@@ -270,5 +272,26 @@ func TestWaitForDaemonPid(t *testing.T) {
 		err := waitForDaemonPid(pidFile, cmd.Process, 300*time.Millisecond)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "has not written its process id")
+	})
+}
+
+// TestClearDaemonMark covers keeping the daemon marker out of the programs the server runs.
+func TestClearDaemonMark(t *testing.T) {
+	t.Run("Reborn", func(t *testing.T) {
+		t.Setenv(daemon.MARK_NAME, daemon.MARK_VALUE)
+		require.True(t, daemon.WasReborn())
+		clearDaemonMark()
+		assert.False(t, daemon.WasReborn())
+
+		out, err := exec.Command("env").Output() //nolint:gosec // Runs env from PATH.
+		require.NoError(t, err)
+		assert.NotContains(t, string(out), daemon.MARK_NAME+"=")
+	})
+	t.Run("NotSet", func(t *testing.T) {
+		t.Setenv(daemon.MARK_NAME, "")
+		require.NoError(t, os.Unsetenv(daemon.MARK_NAME))
+		clearDaemonMark()
+		_, set := os.LookupEnv(daemon.MARK_NAME)
+		assert.False(t, set)
 	})
 }
