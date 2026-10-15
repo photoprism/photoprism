@@ -138,6 +138,11 @@ func (m *Service) SaveForm(form form.Service) error {
 		return err
 	}
 
+	// The account error is written by the sync worker, so a request may only clear it.
+	if form.AccError != "" {
+		m.AccError = stored.AccError
+	}
+
 	// Remove control characters, except from the password, whose bytes are the credential.
 	for _, s := range []*string{&m.AccName, &m.AccOwner, &m.AccURL, &m.AccType, &m.AccKey, &m.AccUser,
 		&m.AccTimeout, &m.SharePath, &m.ShareSize, &m.SyncPath} {

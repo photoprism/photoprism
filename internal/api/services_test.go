@@ -130,6 +130,25 @@ func TestUpdateService(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEqual(t, folder, m.SyncPath)
 	})
+	t.Run("AccError", func(t *testing.T) {
+		// The account error cannot be set through the API, only cleared.
+		app, router, _ := NewApiTest()
+		UpdateService(router)
+		m, err := query.AccountByID(clean.IdUint(id))
+		require.NoError(t, err)
+		require.NoError(t, m.Updates(entity.Values{"acc_error": "worker error"}))
+		t.Cleanup(func() { _ = m.Updates(entity.Values{"acc_error": ""}) })
+
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/services/"+id, `{"AccError": "client value"}`)
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, "worker error", gjson.Get(r.Body.String(), "AccError").String())
+
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/services/"+id, `{"AccError": ""}`)
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		m, err = query.AccountByID(clean.IdUint(id))
+		require.NoError(t, err)
+		assert.Empty(t, m.AccError)
+	})
 	t.Run("StoredFolderTooLong", func(t *testing.T) {
 		// A save that leaves a stored folder unchanged is not refused because of it.
 		app, router, _ := NewApiTest()

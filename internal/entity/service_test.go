@@ -165,6 +165,55 @@ func TestService_SaveForm(t *testing.T) {
 	})
 }
 
+func TestService_SaveFormAccError(t *testing.T) {
+	t.Run("NewAccount", func(t *testing.T) {
+		model, err := AddService(form.Service{AccName: "Error New", AccURL: "test.com", AccType: "webdav", AccError: "client value"})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		assert.Empty(t, storedService(t, model.ID).AccError)
+	})
+	t.Run("Kept", func(t *testing.T) {
+		model, err := AddService(form.Service{AccName: "Error Kept", AccURL: "test.com", AccType: "webdav"})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		require.NoError(t, model.Updates(Values{"acc_error": "worker error"}))
+
+		stored := storedService(t, model.ID)
+		frm, err := form.NewService(stored)
+		require.NoError(t, err)
+		frm.AccError = "client value"
+		require.NoError(t, stored.SaveForm(frm))
+		assert.Equal(t, "worker error", storedService(t, model.ID).AccError)
+	})
+	t.Run("ResetOnSave", func(t *testing.T) {
+		// Saving an account with sync on still resets its errors, including the message.
+		model, err := AddService(form.Service{AccName: "Error Reset", AccURL: "test.com", AccType: "webdav", AccSync: true})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		require.NoError(t, model.Updates(Values{"acc_error": "worker error", "acc_errors": 2}))
+
+		stored := storedService(t, model.ID)
+		frm, err := form.NewService(stored)
+		require.NoError(t, err)
+		require.NoError(t, stored.SaveForm(frm))
+		assert.Empty(t, storedService(t, model.ID).AccError)
+		assert.Zero(t, storedService(t, model.ID).AccErrors)
+	})
+	t.Run("Cleared", func(t *testing.T) {
+		model, err := AddService(form.Service{AccName: "Error Cleared", AccURL: "test.com", AccType: "webdav"})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		require.NoError(t, model.Updates(Values{"acc_error": "worker error"}))
+
+		stored := storedService(t, model.ID)
+		frm, err := form.NewService(stored)
+		require.NoError(t, err)
+		frm.AccError = ""
+		require.NoError(t, stored.SaveForm(frm))
+		assert.Empty(t, storedService(t, model.ID).AccError)
+	})
+}
+
 // storedService returns a service as currently stored in the database.
 func storedService(t *testing.T, id uint) *Service {
 	t.Helper()
