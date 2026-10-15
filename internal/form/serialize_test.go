@@ -155,3 +155,40 @@ func TestUnserializeFilter(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestFilterValue(t *testing.T) {
+	t.Run("AsWritten", func(t *testing.T) {
+		assert.Equal(t, "2020*", FilterValue("path:2020* public:true", "path"))
+		assert.Equal(t, "20%20", FilterValue("public:true path:20%20", "path"))
+		assert.Equal(t, "a|b", FilterValue("path:a|b", "path"))
+		assert.Equal(t, "2020/My Trip", FilterValue("path:\"2020/My Trip\" public:true", "Path"))
+		assert.Equal(t, "true", FilterValue("path:a public:true", "public"))
+	})
+	t.Run("LastValue", func(t *testing.T) {
+		assert.Equal(t, "b", FilterValue("path:a path:b", "path"))
+	})
+	t.Run("OpenQuote", func(t *testing.T) {
+		assert.Equal(t, "", FilterValue("path:\"My Trip", "path"))
+		assert.Equal(t, "a", FilterValue("path:a public:\"tr", "path"))
+	})
+	t.Run("OtherWhitespace", func(t *testing.T) {
+		// A value that ends at other whitespace may be part of a longer value.
+		assert.Equal(t, "", FilterValue("path:x\u3000 public:true", "path"))
+		assert.Equal(t, "", FilterValue("path:x\u00a0| public:true", "path"))
+		assert.Equal(t, "", FilterValue("path:x\t${y}", "path"))
+		assert.Equal(t, "", FilterValue("path:x\u3000", "path"))
+		assert.Equal(t, "x", FilterValue("path:x  public:true", "path"))
+		assert.Equal(t, "x", FilterValue("public:true\tpath:x", "path"))
+	})
+	t.Run("SerializedPath", func(t *testing.T) {
+		// A path written by Serialize is read back as it was.
+		for _, p := range []string{"2020/04", "2020/My Trip", "a|b*", "20%20", "x:y", "a\\b", "Tokyo\u3000Trip", "a\u00a0b", "a\tb", "Grüße/日本", "(a)[b]-c+'d'"} {
+			assert.Equal(t, p, FilterValue(Serialize(SearchPhotos{Path: p, Public: true}, false), "path"), "%q", p)
+		}
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.Equal(t, "", FilterValue("", "path"))
+		assert.Equal(t, "", FilterValue("public:true path", "path"))
+		assert.Equal(t, "", FilterValue("folder:a", "path"))
+	})
+}

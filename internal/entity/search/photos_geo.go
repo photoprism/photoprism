@@ -132,12 +132,11 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		} else {
 			frm.Filter = album.AlbumFilter
 
-			// Folder albums show the pictures in their folder, compared by exact path. Other albums whose
-			// stored filter can match nothing, and folder albums without a path whose filter names a folder
-			// that is not valid UTF-8, show no pictures.
+			// Folder albums show the pictures in their folder, compared by exact path. Folder albums whose
+			// folder is unknown, and other albums whose stored filter can match nothing, show no pictures.
 			if p := folderAlbumPath(album); p != "" {
 				frm.Path = p
-			} else if filterNoMatch || album.AlbumType == entity.AlbumFolder && clean.SearchBindable(album.AlbumFilter) != album.AlbumFilter {
+			} else if filterNoMatch || album.AlbumType == entity.AlbumFolder {
 				noMatch = true
 			}
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)

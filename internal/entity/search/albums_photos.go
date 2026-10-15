@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // AlbumPhotos returns up to count photos from an album. When shared is set, the selection is
@@ -35,11 +36,23 @@ func AlbumPhotos(a entity.Album, count int, shared bool) (results PhotoResults, 
 }
 
 // folderAlbumPath returns the path filter of a folder album, which the path filter compares exactly
-// because of its trailing slash, or an empty string for other albums.
+// because of its trailing slash, or an empty string for other albums. A folder album without a path uses
+// the path of its stored filter if that is the filter the folder sync writes, quoted or not, so a filter
+// that was cut off, edited, or had NUL bytes or invalid UTF-8 names no folder.
 func folderAlbumPath(a entity.Album) string {
 	if a.AlbumType != entity.AlbumFolder {
 		return ""
-	} else if p := strings.Trim(a.AlbumPath, "/"); p != "" {
+	}
+
+	p := strings.Trim(a.AlbumPath, "/")
+
+	if f := a.AlbumFilter; p == "" && clean.SearchBindable(f) == f {
+		if v := form.FilterValue(f, "path"); f == "path:"+v+" public:true" || f == "path:\""+v+"\" public:true" {
+			p = strings.Trim(v, "/")
+		}
+	}
+
+	if p != "" {
 		return p + "/"
 	}
 

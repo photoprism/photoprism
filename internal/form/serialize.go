@@ -58,7 +58,7 @@ func Serialize(f any, all bool) string {
 				}
 			case string:
 				if val := strings.ReplaceAll(fieldValue.String(), "\"", ""); val != "" {
-					if strings.ContainsAny(val, " :'()[]-+`") {
+					if strings.ContainsAny(val, " :'()[]-+`") || strings.ContainsFunc(val, unicode.IsSpace) {
 						q = append(q, fmt.Sprintf("%s:\"%s\"", fieldName, val))
 					} else {
 						q = append(q, fmt.Sprintf("%s:%s", fieldName, val))
@@ -81,6 +81,48 @@ func Serialize(f any, all bool) string {
 func Unserialize(f SearchForm, q string) (result error) {
 	_, result = unserialize(f, q)
 	return result
+}
+
+// FilterValue returns the value of a key in a serialized filter as written, with its quotes removed but without
+// the cleaning applied when the filter is parsed into a search form. A value whose quote is not closed, as in a
+// filter that was cut off, or that ends at whitespace other than the space Serialize separates values with, is
+// not returned, since it may be part of a longer value.
+func FilterValue(q, key string) (value string) {
+	var k, v []rune
+	var escaped, isKeyValue bool
+
+	// flush keeps the value of the current token if it has the key and ends at sep.
+	flush := func(sep rune) {
+		if isKeyValue && strings.EqualFold(string(k), key) {
+			if escaped || sep != ' ' && sep != 0 {
+				value = ""
+			} else {
+				value = string(v)
+			}
+		}
+
+		k, v = k[:0], v[:0]
+		escaped, isKeyValue = false, false
+	}
+
+	for _, char := range strings.TrimFunc(q, func(r rune) bool { return r == ' ' }) {
+		switch {
+		case unicode.IsSpace(char) && !escaped:
+			flush(char)
+		case char == ':' && !escaped:
+			isKeyValue = true
+		case char == '"':
+			escaped = !escaped
+		case isKeyValue:
+			v = append(v, char)
+		default:
+			k = append(k, char)
+		}
+	}
+
+	flush(0)
+
+	return value
 }
 
 // UnserializeFilter parses a stored filter like Unserialize, and reports whether removing NUL bytes and invalid
