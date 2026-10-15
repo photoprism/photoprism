@@ -52,8 +52,8 @@ var startFlags = []cli.Flag{
 	},
 }
 
-// startAction starts the Web server and initializes the daemon.
-func startAction(ctx *cli.Context) error {
+// startPrologue prepares the process before the start command loads its config.
+func startPrologue() {
 	// Programs the daemon runs do not inherit its pid file.
 	if daemon.WasReborn() {
 		closePidFileOnExec()
@@ -61,6 +61,22 @@ func startAction(ctx *cli.Context) error {
 
 	// Leave audit persistence to the event hub, so that requests do not wait for audit writes.
 	event.SetAuditRecorder(nil)
+}
+
+// daemonRunning reports whether a daemon holds the pid file, and refuses a pid file that is a symbolic link.
+func daemonRunning(pidFile string) (pid int, running bool, err error) {
+	if fs.IsSymlink(pidFile) {
+		return 0, false, fmt.Errorf("pid file %s must not be a symbolic link", clean.Log(pidFile))
+	}
+
+	pid, running = childAlreadyRunning(pidFile)
+
+	return pid, running, nil
+}
+
+// startAction starts the Web server and initializes the daemon.
+func startAction(ctx *cli.Context) error {
+	startPrologue()
 
 	conf, err := InitConfig(ctx)
 
@@ -112,11 +128,9 @@ func startAction(ctx *cli.Context) error {
 		conf.Shutdown()
 		cancel()
 
-		if fs.IsSymlink(conf.PIDFilename()) {
-			return fmt.Errorf("pid file %s must not be a symbolic link", clean.Log(conf.PIDFilename()))
-		}
-
-		if pid, ok := childAlreadyRunning(conf.PIDFilename()); ok {
+		if pid, running, runningErr := daemonRunning(conf.PIDFilename()); runningErr != nil {
+			return runningErr
+		} else if running {
 			log.Infof("daemon already running with process id %v\n", pid)
 			return nil
 		}

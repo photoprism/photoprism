@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/dustin/go-humanize/english"
@@ -61,4 +63,36 @@ func TestWarnNonASCIIUsernames(t *testing.T) {
 	require.NotNil(t, hook.LastEntry())
 	assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
 	assert.Equal(t, "users: "+english.Plural(base+1, "account", "accounts")+" with characters other than ASCII in the username › rename with photoprism users mod --username", hook.LastEntry().Message)
+}
+
+// TestDaemonRunning covers checking the pid file before the start command starts a daemon.
+func TestDaemonRunning(t *testing.T) {
+	t.Run("Running", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		pid, running, err := daemonRunning(pidFile)
+		require.NoError(t, err)
+		assert.True(t, running)
+		assert.Equal(t, cmd.Process.Pid, pid)
+	})
+	t.Run("NoPidFile", func(t *testing.T) {
+		_, running, err := daemonRunning(filepath.Join(t.TempDir(), "photoprism.pid"))
+		require.NoError(t, err)
+		assert.False(t, running)
+	})
+	t.Run("Symlink", func(t *testing.T) {
+		_, target := startDaemon(t, "30")
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Symlink(target, pidFile))
+		_, running, err := daemonRunning(pidFile)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "must not be a symbolic link")
+		assert.False(t, running)
+	})
+	t.Run("DanglingSymlink", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing.pid"), pidFile))
+		_, _, err := daemonRunning(pidFile)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "must not be a symbolic link")
+	})
 }
