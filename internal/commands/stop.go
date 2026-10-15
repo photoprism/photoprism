@@ -38,6 +38,14 @@ var statFd = os.Stat
 // processUid returns the effective user ID of a process, see procUid.
 var processUid = procUid
 
+// processStart returns the session ID and start time of a process, see procStart.
+var processStart = procStart
+
+// probePidFileLock tests for a shared lock on an open pid file without waiting.
+var probePidFileLock = func(f *os.File) error {
+	return syscall.Flock(int(f.Fd()), syscall.LOCK_SH|syscall.LOCK_NB) //nolint:gosec // File descriptors fit into an int.
+}
+
 // lockStalePidFile takes the lock on a pid file before clearStalePidFile empties it.
 var lockStalePidFile = func(lock *daemon.LockFile) error { return lock.Lock() }
 
@@ -46,6 +54,15 @@ const daemonPidFileFd = 4
 
 // pidFileMaxSize is the maximum size of a valid pid file in bytes.
 const pidFileMaxSize = 32
+
+// procClockTicks is the number of clock ticks per second in which /proc reports start times (USER_HZ).
+const procClockTicks = 100
+
+// startTimeTolerance allows for file systems that store modification times in steps of up to two seconds.
+const startTimeTolerance = 2 * time.Second
+
+// errDaemonUnconfirmed indicates that it cannot be confirmed whether a process holds the pid file.
+var errDaemonUnconfirmed = errors.New("its lock cannot be tested")
 
 // errPidFileEmpty indicates a pid file without a process ID, as stop leaves it.
 var errPidFileEmpty = errors.New("pid file is empty")
@@ -111,7 +128,11 @@ func stopDaemon(pidFile string, timeout time.Duration) error {
 		return err
 	}
 
-	if daemonHoldsPidFile(p, pidFile, info) {
+	held, err := daemonHoldsPidFile(p, pidFile, info)
+
+	if err != nil {
+		return err
+	} else if held {
 		if err = p.Signal(syscall.SIGTERM); err != nil {
 			return err
 		}
@@ -226,22 +247,27 @@ func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 
 // daemonHoldsPidFile reports whether the process holds the pid file open, or the file it replaced, as the daemon
 // does, and is named photoprism*. Where its open files cannot be listed or read, the pid file must be locked
-// instead, by any process, and the process must run as the owner of the file.
-func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) bool {
+// instead, by any process, and the process must match it (daemonCandidate). If the lock cannot be tested, the
+// result cannot be confirmed and errDaemonUnconfirmed is returned.
+func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) (bool, error) {
 	if p == nil || p.Pid <= 0 || p.Pid == os.Getpid() || !daemonProcess(p) {
-		return false
+		return false, nil
 	}
 
 	if open, known := holdsFile(p.Pid, pidFile, info); known {
-		return open
-	} else if !processOwnsFile(p.Pid, info) {
-		log.Debugf("cannot confirm that process %d holds pid file %s", p.Pid, clean.Log(pidFile))
-		return false
+		return open, nil
+	} else if !daemonCandidate(p.Pid, info) {
+		log.Debugf("process %d does not match pid file %s", p.Pid, clean.Log(pidFile))
+		return false, nil
 	}
 
 	held, known := pidFileLocked(pidFile, info)
 
-	return held || !known
+	if !known {
+		return false, fmt.Errorf("cannot confirm that process %d holds pid file %s, as %w", p.Pid, clean.Log(pidFile), errDaemonUnconfirmed)
+	}
+
+	return held, nil
 }
 
 // processHasFile reports whether the process has the pid file described by info open under its name, or has the file
@@ -326,8 +352,9 @@ func fileReplaced(open, info os.FileInfo) bool {
 	return ok && currentOk && st.Nlink == 0 && st.Dev == current.Dev
 }
 
-// pidFileLocked reports whether another process holds the lock on the pid file described by info, as a running
-// daemon does. known is false if the lock cannot be tested, e.g. on platforms without file locks.
+// pidFileLocked reports whether another process holds the exclusive lock on the pid file described by info, as a
+// running daemon does. It tests for a shared lock, which a file opened read-only allows also on NFS. known is false
+// if the lock cannot be tested, e.g. on platforms without file locks.
 func pidFileLocked(pidFile string, info os.FileInfo) (held, known bool) {
 	f, err := openSamePidFile(pidFile, os.O_RDONLY, info)
 
@@ -335,14 +362,13 @@ func pidFileLocked(pidFile string, info os.FileInfo) (held, known bool) {
 		return false, false
 	}
 
-	lock := daemon.NewLockFile(f)
+	defer func() { _ = f.Close() }()
 
-	defer func() { _ = lock.Close() }()
-
-	if err = lock.Lock(); err == nil {
-		_ = lock.Unlock()
+	switch err = probePidFileLock(f); {
+	case err == nil:
+		_ = syscall.Flock(int(f.Fd()), syscall.LOCK_UN) //nolint:gosec // File descriptors fit into an int.
 		return false, true
-	} else if errors.Is(err, daemon.ErrWouldBlock) {
+	case errors.Is(err, syscall.EWOULDBLOCK):
 		return true, true
 	}
 
@@ -434,9 +460,10 @@ func processRunning(p *os.Process) bool {
 	return len(cmdline) > 0
 }
 
-// processOwnsFile reports whether the process runs as the owner of the file, which must have a single name and must
-// not be writable by its group or others. Without /proc, the user cannot be read, so any process is accepted.
-func processOwnsFile(pid int, info os.FileInfo) bool {
+// daemonCandidate reports whether the process matches the pid file as the daemon would: it runs as the owner of the
+// file, which has a single name and is not writable by its group or others, leads its own session, and started
+// before the file was last written. Without /proc, these cannot be read, so any process is accepted.
+func daemonCandidate(pid int, info os.FileInfo) bool {
 	if info == nil {
 		return false
 	}
@@ -449,13 +476,99 @@ func processOwnsFile(pid int, info os.FileInfo) bool {
 		return false
 	}
 
-	uid, err := processUid(pid)
-
-	if err != nil {
+	if uid, err := processUid(pid); err != nil {
 		return !fs.FileExists("/proc/self/status")
+	} else if uid != st.Uid {
+		return false
 	}
 
-	return uid == st.Uid
+	session, started, err := processStart(pid)
+
+	if err != nil {
+		return !fs.FileExists("/proc/self/stat")
+	}
+
+	return session == pid && !started.After(info.ModTime().Add(startTimeTolerance))
+}
+
+// procStart returns the session ID and start time of the process from /proc, which can be read without the right
+// to inspect the process.
+func procStart(pid int) (session int, started time.Time, err error) {
+	stat, err := os.ReadFile(filepath.Join("/proc", strconv.Itoa(pid), "stat")) //nolint:gosec // Reads /proc by process ID.
+
+	if err != nil {
+		return 0, time.Time{}, err
+	}
+
+	session, ticks, err := parseProcStat(stat)
+
+	if err != nil {
+		return 0, time.Time{}, err
+	}
+
+	system, err := os.ReadFile("/proc/stat")
+
+	if err != nil {
+		return 0, time.Time{}, err
+	}
+
+	boot, err := parseBootTime(system)
+
+	if err != nil {
+		return 0, time.Time{}, err
+	}
+
+	return session, boot.Add(ticksDuration(ticks)), nil
+}
+
+// ticksDuration converts clock ticks as reported by /proc into a duration.
+func ticksDuration(ticks uint64) time.Duration {
+	seconds, rest := ticks/procClockTicks, ticks%procClockTicks
+
+	if seconds > math.MaxInt64/uint64(time.Second) {
+		return time.Duration(math.MaxInt64)
+	}
+
+	return time.Duration(seconds)*time.Second + time.Duration(rest)*time.Second/procClockTicks //nolint:gosec // Bounded above.
+}
+
+// parseProcStat returns the session ID and the start time in clock ticks after boot from a /proc/<pid>/stat file,
+// whose second field, the program name in parentheses, may contain spaces and parentheses.
+func parseProcStat(stat []byte) (session int, startTicks uint64, err error) {
+	end := bytes.LastIndexByte(stat, ')')
+
+	if end < 0 {
+		return 0, 0, errors.New("stat has no program name")
+	}
+
+	// The fields after the name start with the state (field 3); the session is field 6 and the start time field 22.
+	fields := strings.Fields(string(stat[end+1:]))
+
+	if len(fields) < 20 {
+		return 0, 0, errors.New("stat has too few fields")
+	}
+
+	if session, err = strconv.Atoi(fields[3]); err != nil {
+		return 0, 0, err
+	}
+
+	if startTicks, err = strconv.ParseUint(fields[19], 10, 64); err != nil {
+		return 0, 0, err
+	}
+
+	return session, startTicks, nil
+}
+
+// parseBootTime returns the boot time from the btime line of /proc/stat.
+func parseBootTime(stat []byte) (time.Time, error) {
+	for _, line := range strings.Split(string(stat), "\n") {
+		if fields := strings.Fields(line); len(fields) == 2 && fields[0] == "btime" {
+			seconds, err := strconv.ParseInt(fields[1], 10, 64)
+			return time.Unix(seconds, 0), err
+		}
+	}
+
+	return time.Time{}, errors.New("stat has no boot time")
 }
 
 // procUid returns the effective user ID of the process from /proc, which can be read without the right to

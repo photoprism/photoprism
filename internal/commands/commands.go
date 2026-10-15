@@ -222,7 +222,9 @@ func childAlreadyRunning(filePath string) (pid int, running bool, err error) {
 		return pid, false, err
 	}
 
-	return pid, daemonHoldsPidFile(process, filePath, info), nil
+	running, err = daemonHoldsPidFile(process, filePath, info)
+
+	return pid, running, err
 }
 
 // ExitCode returns the process exit status for an error that app.Run returned without exiting.

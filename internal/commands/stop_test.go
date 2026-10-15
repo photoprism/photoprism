@@ -199,6 +199,18 @@ func lockedPidFile(t *testing.T) (string, *os.File) {
 	return pidFile, lock.File
 }
 
+// sharedLock takes a shared lock on the file, as a process that reads it may, and returns the open file.
+func sharedLock(t *testing.T, fileName string) *os.File {
+	t.Helper()
+
+	f, err := os.Open(fileName) //nolint:gosec // Opens a test file.
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = f.Close() })
+	require.NoError(t, syscall.Flock(int(f.Fd()), syscall.LOCK_SH|syscall.LOCK_NB)) //nolint:gosec // File descriptors fit into an int.
+
+	return f
+}
+
 // unlockedPidFile writes a pid file for the process that no process holds.
 func unlockedPidFile(t *testing.T, pid int) string {
 	t.Helper()
@@ -221,6 +233,8 @@ func startProcess(t *testing.T, name, seconds string, files ...*os.File) *exec.C
 	cmd := exec.Command(sleep, seconds) //nolint:gosec // Runs sleep from PATH with a fixed duration.
 	cmd.Args[0] = name
 	cmd.ExtraFiles = files
+	// Leads its own session, like a daemon.
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	require.NoError(t, cmd.Start())
 
 	done := make(chan struct{})
@@ -263,6 +277,7 @@ func startHelper(t *testing.T, mode string, env []string, files ...*os.File) (*e
 	cmd.Args[0] = "photoprism-test"
 	cmd.Env = append(append(os.Environ(), stopHelperEnv+"="+mode), env...)
 	cmd.ExtraFiles = files
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	stdout, err := cmd.StdoutPipe()
 	require.NoError(t, err)
 	require.NoError(t, cmd.Start())
@@ -528,7 +543,7 @@ func TestProcessHasFile(t *testing.T) {
 		assert.False(t, known)
 		assert.False(t, open)
 		// Falls back to the lock, which the stand-in holds.
-		assert.True(t, daemonHoldsPidFile(cmd.Process, pidFile, fileInfo(t, pidFile)))
+		assert.True(t, daemonHolds(t, cmd.Process, pidFile, fileInfo(t, pidFile)))
 	})
 	t.Run("StatPermissionDenied", func(t *testing.T) {
 		cmd, pidFile := startDaemon(t, "30")
@@ -731,6 +746,29 @@ func TestPidFileLocked(t *testing.T) {
 		held, known := pidFileLocked(pidFile, fileInfo(t, pidFile))
 		assert.True(t, known)
 		assert.False(t, held)
+	})
+	t.Run("Untestable", func(t *testing.T) {
+		defaultProbe := probePidFileLock
+		probePidFileLock = func(*os.File) error { return syscall.ENOLCK }
+		t.Cleanup(func() { probePidFileLock = defaultProbe })
+		pidFile := unlockedPidFile(t, os.Getpid())
+		held, known := pidFileLocked(pidFile, fileInfo(t, pidFile))
+		assert.False(t, known)
+		assert.False(t, held)
+	})
+	t.Run("Shared", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, os.Getpid())
+		sharedLock(t, pidFile)
+		held, known := pidFileLocked(pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.False(t, held)
+	})
+	t.Run("ReadOnly", func(t *testing.T) {
+		pidFile, _ := lockedPidFile(t)
+		require.NoError(t, os.Chmod(pidFile, 0o400))
+		held, known := pidFileLocked(pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.True(t, held)
 	})
 	t.Run("Missing", func(t *testing.T) {
 		held, known := pidFileLocked(filepath.Join(t.TempDir(), "photoprism.pid"), nil)
@@ -1055,6 +1093,24 @@ func TestStopDaemon(t *testing.T) {
 		require.NoError(t, stopDaemon(pidFile, time.Second))
 		assertEmptyPidFile(t, pidFile)
 	})
+	t.Run("Unconfirmed", func(t *testing.T) {
+		defaultHoldsFile, defaultProbe := holdsFile, probePidFileLock
+		holdsFile = func(int, string, os.FileInfo) (bool, bool) { return false, false }
+		probePidFileLock = func(*os.File) error { return syscall.ENOLCK }
+		t.Cleanup(func() { holdsFile, probePidFileLock = defaultHoldsFile, defaultProbe })
+
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile := unlockedPidFile(t, cmd.Process.Pid)
+		err := stopDaemon(pidFile, time.Second)
+		require.ErrorIs(t, err, errDaemonUnconfirmed)
+		assert.Contains(t, err.Error(), "cannot confirm that process")
+		assertPidFileContent(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		assert.True(t, processRunning(cmd.Process))
+
+		_, running, err := childAlreadyRunning(pidFile)
+		assert.ErrorIs(t, err, errDaemonUnconfirmed)
+		assert.False(t, running)
+	})
 	t.Run("StaleHardLink", func(t *testing.T) {
 		pidFile := unlockedPidFile(t, deadPid)
 		other := filepath.Join(t.TempDir(), "other.pid")
@@ -1110,70 +1166,229 @@ func fileOwner(t *testing.T, info os.FileInfo) uint32 {
 // sysFileInfo describes a file with the given system information.
 type sysFileInfo struct {
 	os.FileInfo
-	sys any
+	sys     any
+	modTime time.Time
 }
 
 // Sys returns the system information.
 func (i sysFileInfo) Sys() any { return i.sys }
 
-// TestProcessOwnsFile covers checking that a process runs as the owner of a file.
-func TestProcessOwnsFile(t *testing.T) {
-	// withUid stubs the user ID that the process runs as.
+// ModTime returns the modification time.
+func (i sysFileInfo) ModTime() time.Time { return i.modTime }
+
+// daemonHolds returns whether the process holds the pid file as the daemon does, and requires that it can be confirmed.
+func daemonHolds(t *testing.T, p *os.Process, pidFile string, info os.FileInfo) bool {
+	t.Helper()
+
+	held, err := daemonHoldsPidFile(p, pidFile, info)
+	require.NoError(t, err)
+
+	return held
+}
+
+// TestDaemonCandidate covers checking that a process matches a pid file as the daemon would.
+func TestDaemonCandidate(t *testing.T) {
+	// withUid stubs the user ID that the process runs as, and makes it lead its session from the Unix epoch.
 	withUid := func(t *testing.T, uid uint32) {
-		defaultProcessUid := processUid
+		defaultProcessUid, defaultProcessStart := processUid, processStart
 		processUid = func(int) (uint32, error) { return uid, nil }
-		t.Cleanup(func() { processUid = defaultProcessUid })
+		processStart = func(pid int) (int, time.Time, error) { return pid, time.Unix(0, 0), nil }
+		t.Cleanup(func() { processUid, processStart = defaultProcessUid, defaultProcessStart })
 	}
+
+	// withStart stubs the session ID and start time of the process.
+	withStart := func(t *testing.T, session int, started time.Time) {
+		defaultProcessStart := processStart
+		processStart = func(int) (int, time.Time, error) { return session, started, nil }
+		t.Cleanup(func() { processStart = defaultProcessStart })
+	}
+
+	written := time.Unix(1700000000, 0)
 
 	t.Run("OwnerNotGroup", func(t *testing.T) {
 		withUid(t, 5)
-		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7}}
-		assert.True(t, processOwnsFile(os.Getpid(), info))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7}, modTime: written}
+		assert.True(t, daemonCandidate(os.Getpid(), info))
 	})
 	t.Run("GroupNotOwner", func(t *testing.T) {
 		withUid(t, 7)
-		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7}}
-		assert.False(t, processOwnsFile(os.Getpid(), info))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7}, modTime: written}
+		assert.False(t, daemonCandidate(os.Getpid(), info))
 	})
 	t.Run("GroupWritable", func(t *testing.T) {
 		withUid(t, 5)
-		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o660}}
-		assert.False(t, processOwnsFile(os.Getpid(), info))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o660}, modTime: written}
+		assert.False(t, daemonCandidate(os.Getpid(), info))
 	})
 	t.Run("OthersWritable", func(t *testing.T) {
 		withUid(t, 5)
-		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o602}}
-		assert.False(t, processOwnsFile(os.Getpid(), info))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o602}, modTime: written}
+		assert.False(t, daemonCandidate(os.Getpid(), info))
 	})
 	t.Run("OwnerOnlyWritable", func(t *testing.T) {
 		withUid(t, 5)
-		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o644, Nlink: 1}}
-		assert.True(t, processOwnsFile(os.Getpid(), info))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o644, Nlink: 1}, modTime: written}
+		assert.True(t, daemonCandidate(os.Getpid(), info))
 	})
 	t.Run("HardLink", func(t *testing.T) {
 		withUid(t, 5)
-		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o640, Nlink: 2}}
-		assert.False(t, processOwnsFile(os.Getpid(), info))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o640, Nlink: 2}, modTime: written}
+		assert.False(t, daemonCandidate(os.Getpid(), info))
+	})
+	t.Run("NotSessionLeader", func(t *testing.T) {
+		withUid(t, 5)
+		withStart(t, os.Getpid()+1, time.Unix(0, 0))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Nlink: 1}, modTime: written}
+		assert.False(t, daemonCandidate(os.Getpid(), info))
+	})
+	t.Run("StartedAfterWrite", func(t *testing.T) {
+		withUid(t, 5)
+		withStart(t, os.Getpid(), written.Add(startTimeTolerance+time.Millisecond))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Nlink: 1}, modTime: written}
+		assert.False(t, daemonCandidate(os.Getpid(), info))
+	})
+	t.Run("StartedWithinTolerance", func(t *testing.T) {
+		withUid(t, 5)
+		withStart(t, os.Getpid(), written.Add(startTimeTolerance))
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Nlink: 1}, modTime: written}
+		assert.True(t, daemonCandidate(os.Getpid(), info))
+	})
+	t.Run("StartUnreadable", func(t *testing.T) {
+		requireProc(t)
+		withUid(t, 5)
+		defaultProcessStart := processStart
+		processStart = func(int) (int, time.Time, error) { return 0, time.Time{}, os.ErrPermission }
+		t.Cleanup(func() { processStart = defaultProcessStart })
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Nlink: 1}, modTime: written}
+		assert.False(t, daemonCandidate(os.Getpid(), info))
 	})
 	t.Run("NoStat", func(t *testing.T) {
 		withUid(t, 7)
-		assert.True(t, processOwnsFile(os.Getpid(), sysFileInfo{}))
+		assert.True(t, daemonCandidate(os.Getpid(), sysFileInfo{}))
 	})
 	t.Run("NoInfo", func(t *testing.T) {
-		assert.False(t, processOwnsFile(os.Getpid(), nil))
+		assert.False(t, daemonCandidate(os.Getpid(), nil))
 	})
-	t.Run("Owner", func(t *testing.T) {
+	t.Run("Daemon", func(t *testing.T) {
 		cmd := startProcess(t, "sleep", "30")
-		assert.True(t, processOwnsFile(cmd.Process.Pid, fileInfo(t, unlockedPidFile(t, 1234))))
+		assert.True(t, daemonCandidate(cmd.Process.Pid, fileInfo(t, unlockedPidFile(t, cmd.Process.Pid))))
+	})
+	t.Run("WrittenBeforeStart", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		past := time.Now().Add(-time.Hour)
+		require.NoError(t, os.Chtimes(pidFile, past, past))
+		cmd := startProcess(t, "sleep", "30")
+		assert.False(t, daemonCandidate(cmd.Process.Pid, fileInfo(t, pidFile)))
 	})
 	t.Run("OtherUser", func(t *testing.T) {
 		info := fileInfo(t, unlockedPidFile(t, 1234))
 		withUid(t, fileOwner(t, info)+1)
-		assert.False(t, processOwnsFile(os.Getpid(), info))
+		assert.False(t, daemonCandidate(os.Getpid(), info))
 	})
 	t.Run("NotRunning", func(t *testing.T) {
 		requireProc(t)
-		assert.False(t, processOwnsFile(deadPid, fileInfo(t, unlockedPidFile(t, 1234))))
+		assert.False(t, daemonCandidate(deadPid, fileInfo(t, unlockedPidFile(t, 1234))))
+	})
+}
+
+// TestProcStart covers reading the session ID and start time of a process from /proc.
+func TestProcStart(t *testing.T) {
+	t.Run("SessionLeader", func(t *testing.T) {
+		before := time.Now().Add(-startTimeTolerance)
+		cmd := startProcess(t, "sleep", "30")
+		session, started, err := procStart(cmd.Process.Pid)
+		require.NoError(t, err)
+		assert.Equal(t, cmd.Process.Pid, session)
+		assert.False(t, started.Before(before.Add(-time.Second)), started)
+		assert.False(t, started.After(time.Now().Add(startTimeTolerance)), started)
+	})
+	t.Run("Self", func(t *testing.T) {
+		requireProc(t)
+		session, _, err := procStart(os.Getpid())
+		require.NoError(t, err)
+		sid, err := unix.Getsid(0)
+		require.NoError(t, err)
+		assert.Equal(t, sid, session)
+	})
+	t.Run("NotRunning", func(t *testing.T) {
+		requireProc(t)
+		_, _, err := procStart(deadPid)
+		assert.Error(t, err)
+	})
+}
+
+// TestParseProcStat covers reading the session ID and start time from a /proc/<pid>/stat file.
+func TestParseProcStat(t *testing.T) {
+	fields := "S 1 4242 4243 0 -1 4194560 511 0 0 0 0 0 0 0 20 0 1 0 53834208 18079744 1895"
+
+	t.Run("Success", func(t *testing.T) {
+		session, ticks, err := parseProcStat([]byte("4242 (photoprism) " + fields + "\n"))
+		require.NoError(t, err)
+		assert.Equal(t, 4243, session)
+		assert.Equal(t, uint64(53834208), ticks)
+	})
+	t.Run("NameWithParentheses", func(t *testing.T) {
+		session, ticks, err := parseProcStat([]byte("4242 (a) 1 2 3 (b) " + fields))
+		require.NoError(t, err)
+		assert.Equal(t, 4243, session)
+		assert.Equal(t, uint64(53834208), ticks)
+	})
+	t.Run("NoName", func(t *testing.T) {
+		_, _, err := parseProcStat([]byte("4242 photoprism " + fields))
+		assert.Error(t, err)
+	})
+	t.Run("TooFewFields", func(t *testing.T) {
+		_, _, err := parseProcStat([]byte("4242 (photoprism) S 1 4242 4243"))
+		assert.Error(t, err)
+	})
+	t.Run("InvalidSession", func(t *testing.T) {
+		_, _, err := parseProcStat([]byte("4242 (photoprism) S 1 4242 x 0 -1 4194560 511 0 0 0 0 0 0 0 20 0 1 0 53834208"))
+		assert.Error(t, err)
+	})
+	t.Run("InvalidStart", func(t *testing.T) {
+		_, _, err := parseProcStat([]byte("4242 (photoprism) S 1 4242 4243 0 -1 4194560 511 0 0 0 0 0 0 0 20 0 1 0 -5"))
+		assert.Error(t, err)
+	})
+}
+
+// TestParseBootTime covers reading the boot time from /proc/stat.
+func TestParseBootTime(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		boot, err := parseBootTime([]byte("cpu  1 2 3\nintr 5\nbtime 1791528824\nprocesses 10\n"))
+		require.NoError(t, err)
+		assert.Equal(t, time.Unix(1791528824, 0), boot)
+	})
+	t.Run("Missing", func(t *testing.T) {
+		_, err := parseBootTime([]byte("cpu  1 2 3\n"))
+		assert.Error(t, err)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		_, err := parseBootTime([]byte("btime abc\n"))
+		assert.Error(t, err)
+	})
+	t.Run("System", func(t *testing.T) {
+		requireProc(t)
+		b, err := os.ReadFile("/proc/stat")
+		require.NoError(t, err)
+		boot, err := parseBootTime(b)
+		require.NoError(t, err)
+		assert.True(t, boot.Before(time.Now()))
+	})
+}
+
+// TestTicksDuration covers converting clock ticks from /proc into a duration.
+func TestTicksDuration(t *testing.T) {
+	t.Run("Ticks", func(t *testing.T) {
+		assert.Equal(t, 1230*time.Millisecond, ticksDuration(123))
+		assert.Equal(t, time.Duration(0), ticksDuration(0))
+	})
+	t.Run("LongUptime", func(t *testing.T) {
+		// Ten years of uptime, which overflows when multiplied in nanoseconds first.
+		ticks := uint64(10 * 365 * 24 * 3600 * procClockTicks)
+		assert.Equal(t, 10*365*24*time.Hour, ticksDuration(ticks))
+	})
+	t.Run("Overflow", func(t *testing.T) {
+		assert.Equal(t, time.Duration(math.MaxInt64), ticksDuration(math.MaxUint64))
 	})
 }
 
@@ -1234,15 +1449,15 @@ func TestProcCmdline(t *testing.T) {
 func TestDaemonHoldsPidFile(t *testing.T) {
 	t.Run("OpenFile", func(t *testing.T) {
 		cmd, pidFile := startDaemon(t, "30")
-		assert.True(t, daemonHoldsPidFile(cmd.Process, pidFile, fileInfo(t, pidFile)))
+		assert.True(t, daemonHolds(t, cmd.Process, pidFile, fileInfo(t, pidFile)))
 	})
 	t.Run("OpenFileOtherProgram", func(t *testing.T) {
 		pidFile, f := lockedPidFile(t)
 		cmd := startProcess(t, "sleep", "30", f)
-		assert.False(t, daemonHoldsPidFile(cmd.Process, pidFile, fileInfo(t, pidFile)))
+		assert.False(t, daemonHolds(t, cmd.Process, pidFile, fileInfo(t, pidFile)))
 	})
 	t.Run("Nil", func(t *testing.T) {
-		assert.False(t, daemonHoldsPidFile(nil, filepath.Join(t.TempDir(), "photoprism.pid"), nil))
+		assert.False(t, daemonHolds(t, nil, filepath.Join(t.TempDir(), "photoprism.pid"), nil))
 	})
 	t.Run("FallbackOtherUser", func(t *testing.T) {
 		defaultHoldsFile, defaultProcessUid := holdsFile, processUid
@@ -1253,7 +1468,7 @@ func TestDaemonHoldsPidFile(t *testing.T) {
 		t.Cleanup(func() { holdsFile, processUid = defaultHoldsFile, defaultProcessUid })
 
 		daemonCmd := startProcess(t, "photoprism-test", "30")
-		assert.False(t, daemonHoldsPidFile(daemonCmd.Process, lockedFile, fileInfo(t, lockedFile)))
+		assert.False(t, daemonHolds(t, daemonCmd.Process, lockedFile, fileInfo(t, lockedFile)))
 	})
 	t.Run("FallbackLockUntestable", func(t *testing.T) {
 		defaultHoldsFile := holdsFile
@@ -1267,7 +1482,30 @@ func TestDaemonHoldsPidFile(t *testing.T) {
 		replacePidFile(t, pidFile, strconv.Itoa(daemonCmd.Process.Pid))
 		_, known := pidFileLocked(pidFile, info)
 		require.False(t, known)
-		assert.True(t, daemonHoldsPidFile(daemonCmd.Process, pidFile, info))
+		held, err := daemonHoldsPidFile(daemonCmd.Process, pidFile, info)
+		assert.ErrorIs(t, err, errDaemonUnconfirmed)
+		assert.False(t, held)
+	})
+	t.Run("FallbackNotSessionLeader", func(t *testing.T) {
+		defaultHoldsFile, defaultProcessStart := holdsFile, processStart
+		holdsFile = func(int, string, os.FileInfo) (bool, bool) { return false, false }
+		processStart = func(pid int) (int, time.Time, error) { return pid + 1, time.Unix(0, 0), nil }
+		t.Cleanup(func() { holdsFile, processStart = defaultHoldsFile, defaultProcessStart })
+
+		daemonCmd := startProcess(t, "photoprism-test", "30")
+		lockedFile, _ := lockedPidFile(t)
+		assert.False(t, daemonHolds(t, daemonCmd.Process, lockedFile, fileInfo(t, lockedFile)))
+	})
+	t.Run("FallbackSharedLock", func(t *testing.T) {
+		defaultHoldsFile := holdsFile
+		holdsFile = func(int, string, os.FileInfo) (bool, bool) { return false, false }
+		t.Cleanup(func() { holdsFile = defaultHoldsFile })
+
+		daemonCmd := startProcess(t, "photoprism-test", "30")
+		pidFile := unlockedPidFile(t, daemonCmd.Process.Pid)
+		reader := sharedLock(t, pidFile)
+		require.NotNil(t, reader)
+		assert.False(t, daemonHolds(t, daemonCmd.Process, pidFile, fileInfo(t, pidFile)))
 	})
 	t.Run("Fallback", func(t *testing.T) {
 		defaultHoldsFile := holdsFile
@@ -1279,9 +1517,9 @@ func TestDaemonHoldsPidFile(t *testing.T) {
 		lockedFile, _ := lockedPidFile(t)
 		freeFile := unlockedPidFile(t, daemonCmd.Process.Pid)
 
-		assert.True(t, daemonHoldsPidFile(daemonCmd.Process, lockedFile, fileInfo(t, lockedFile)))
-		assert.False(t, daemonHoldsPidFile(otherCmd.Process, lockedFile, fileInfo(t, lockedFile)))
-		assert.False(t, daemonHoldsPidFile(daemonCmd.Process, freeFile, fileInfo(t, freeFile)))
+		assert.True(t, daemonHolds(t, daemonCmd.Process, lockedFile, fileInfo(t, lockedFile)))
+		assert.False(t, daemonHolds(t, otherCmd.Process, lockedFile, fileInfo(t, lockedFile)))
+		assert.False(t, daemonHolds(t, daemonCmd.Process, freeFile, fileInfo(t, freeFile)))
 	})
 }
 
