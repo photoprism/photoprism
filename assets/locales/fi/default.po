@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"POT-Creation-Date: 2026-09-01 06:26+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-15 05:43+0000\n"
 "PO-Revision-Date: 2026-09-25 23:16+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
@@ -13,425 +13,429 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2026.9.1\n"
 
-#: messages.go:114
+#: messages.go:115
 msgid "Something went wrong, try again"
 msgstr "Jokin meni pieleen, yritä uudelleen"
 
-#: messages.go:115
+#: messages.go:116
 msgid "Unable to do that"
 msgstr "Se ei onnistu"
 
-#: messages.go:116
+#: messages.go:117
 msgid "Changes could not be saved"
 msgstr "Muutoksia ei voitu tallentaa"
 
-#: messages.go:117
+#: messages.go:118
 msgid "Could not be deleted"
 msgstr "Ei voitu poistaa"
 
-#: messages.go:118
+#: messages.go:119
 #, c-format
 msgid "%s already exists"
 msgstr "%s on jo olemassa"
 
-#: messages.go:119
+#: messages.go:120
 msgid "Not found"
 msgstr "Ei löytynyt"
 
-#: messages.go:120
+#: messages.go:121
 msgid "File not found"
 msgstr "Tiedostoa ei löydy"
 
-#: messages.go:121
+#: messages.go:122
 msgid "File too large"
 msgstr "Tiedosto liian suuri"
 
-#: messages.go:122
+#: messages.go:123
 msgid "Unsupported"
 msgstr "Ei tuettu"
 
-#: messages.go:123
+#: messages.go:124
 msgid "Unsupported type"
 msgstr "Tyyppiä ei tueta"
 
-#: messages.go:124
+#: messages.go:125
 msgid "Unsupported format"
 msgstr "Ei tuettu muoto"
 
-#: messages.go:125
+#: messages.go:126
 msgid "Originals folder is empty"
 msgstr "Originaalit-kansio on tyhjä"
 
-#: messages.go:126
+#: messages.go:127
 msgid "Selection not found"
 msgstr "Valintaa ei löydy"
 
-#: messages.go:127
+#: messages.go:128
 msgid "Entity not found"
 msgstr "Entiteettiä ei löydy"
 
-#: messages.go:128
+#: messages.go:129
 msgid "Account not found"
 msgstr "Tiliä ei löydy"
 
-#: messages.go:129
+#: messages.go:130
 msgid "User not found"
 msgstr "Käyttäjää ei löydy"
 
-#: messages.go:130
+#: messages.go:131
 msgid "Label not found"
 msgstr "Tarraa ei löydy"
 
-#: messages.go:131
+#: messages.go:132
 msgid "Camera not found"
 msgstr "Kameraa ei löydy"
 
-#: messages.go:132
+#: messages.go:133
 msgid "Lens not found"
 msgstr "Objektiivia ei löydy"
 
-#: messages.go:133
+#: messages.go:134
 msgid "Album not found"
 msgstr "Albumia ei löydy"
 
-#: messages.go:134
+#: messages.go:135
 msgid "Subject not found"
 msgstr "Aihetta ei löydy"
 
-#: messages.go:135
+#: messages.go:136
 msgid "Person not found"
 msgstr "Henkilöä ei löydy"
 
-#: messages.go:136
+#: messages.go:137
 msgid "Face not found"
 msgstr "Kasvoja ei löydy"
 
-#: messages.go:137
+#: messages.go:138
 msgid "Not available in public mode"
 msgstr "Ei käytettävissä julkisessa tilassa"
 
-#: messages.go:138
+#: messages.go:139
 msgid "Not available in read-only mode"
 msgstr "Ei käytettävissä vain luku-tilassa"
 
-#: messages.go:139
+#: messages.go:140
 msgid "Please log in to your account"
 msgstr "Kirjaudu sisään tilillesi"
 
-#: messages.go:140
+#: messages.go:141
 msgid "Permission denied"
 msgstr "Lupa evätty"
 
-#: messages.go:141
+#: messages.go:142
 msgid "Payment required"
 msgstr "Vaadittu maksu"
 
-#: messages.go:142
+#: messages.go:143
 msgid "Upload might be offensive"
 msgstr "Upload saattaa olla loukkaava"
 
-#: messages.go:143
+#: messages.go:144
 msgid "Upload failed"
 msgstr "Lataus epäonnistui"
 
-#: messages.go:144
+#: messages.go:145
 #, c-format
 msgid "Upload to %s failed"
 msgstr "Lataaminen osoitteeseen %s epäonnistui"
 
-#: messages.go:145
+#: messages.go:146
 msgid "No items selected"
 msgstr "Kohdetta ei ole valittu"
 
-#: messages.go:146
+#: messages.go:147
 msgid "Failed creating file, please check permissions"
 msgstr "Tiedoston luominen epäonnistui, tarkista käyttöoikeudet"
 
-#: messages.go:147
+#: messages.go:148
 msgid "Failed creating folder, please check permissions"
 msgstr "Kansion luominen epäonnistui, tarkista käyttöoikeudet"
 
-#: messages.go:148
+#: messages.go:149
 msgid "Could not connect, please try again"
 msgstr "Yhteyttä ei saatu muodostettua, yritä uudelleen"
 
-#: messages.go:149
+#: messages.go:150
 msgid "Enter verification code"
 msgstr "syötä vahvistus koodi"
 
-#: messages.go:150
+#: messages.go:151
 msgid "Invalid verification code, please try again"
 msgstr "Virheellinen vahvistuskoodi, yritä uudelleen"
 
-#: messages.go:151
+#: messages.go:152
 msgid "Invalid password, please try again"
 msgstr "Väärä salasana, yritä uudelleen"
 
-#: messages.go:152
+#: messages.go:153
 msgid "Feature disabled"
 msgstr "Ominaisuus poistettu käytöstä"
 
-#: messages.go:153
+#: messages.go:154
 msgid "No labels selected"
 msgstr "Ei valittuja tarroja"
 
-#: messages.go:154
+#: messages.go:155
 msgid "No albums selected"
 msgstr "Ei valittuja albumeita"
 
-#: messages.go:155
+#: messages.go:156
 msgid "No files available for download"
 msgstr "Tiedostoja ei ole ladattavissa"
 
-#: messages.go:156
+#: messages.go:157
 msgid "Failed to create zip file"
 msgstr "Zip-tiedoston luominen epäonnistui"
 
-#: messages.go:157
+#: messages.go:158
 msgid "Invalid credentials"
 msgstr "Virheelliset valtakirjat"
 
-#: messages.go:158
+#: messages.go:159
 msgid "Invalid link"
 msgstr "Virheellinen linkki"
 
-#: messages.go:159
+#: messages.go:160
 msgid "Invalid name"
 msgstr "Virheellinen nimi"
 
-#: messages.go:160
+#: messages.go:161
 msgid "Busy, please try again later"
 msgstr "Varattu, yritä myöhemmin uudelleen"
 
-#: messages.go:161
+#: messages.go:162
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Heräämisväli on %s, mutta sen on oltava enintään 1h"
 
-#: messages.go:162
+#: messages.go:163
 msgid "Your account could not be connected"
 msgstr "Tiliäsi ei voitu yhdistää"
 
-#: messages.go:163
+#: messages.go:164
 msgid "Too many requests"
 msgstr "Liian monta pyyntöä"
 
-#: messages.go:164
+#: messages.go:165
 msgid "Insufficient storage"
 msgstr "Riittämätön varastointi"
 
-#: messages.go:165
+#: messages.go:166
 msgid "Quota exceeded"
 msgstr "Kiintiö ylitetty"
 
-#: messages.go:166
+#: messages.go:167
 msgid "Registration disabled"
 msgstr "Rekisteröityminen on poistettu käytöstä"
 
-#: messages.go:167
+#: messages.go:168
 msgid "Verified email required"
 msgstr "Vaaditaan vahvistettu sähköpostiosoite"
 
-#: messages.go:168
+#: messages.go:169
 msgid "A migration is in progress"
 msgstr "Siirto on käynnissä"
 
-#: messages.go:171
+#: messages.go:170
+msgid "Folder name is too long"
+msgstr ""
+
+#: messages.go:173
 msgid "Changes successfully saved"
 msgstr "Muutokset tallennettu onnistuneesti"
 
-#: messages.go:172
+#: messages.go:174
 msgid "Album created"
 msgstr "Albumi luotu"
 
-#: messages.go:173
+#: messages.go:175
 msgid "Album saved"
 msgstr "Albumi tallennettu"
 
-#: messages.go:174
+#: messages.go:176
 #, c-format
 msgid "Album %s deleted"
 msgstr "Albumi %s poistettu"
 
-#: messages.go:175
+#: messages.go:177
 msgid "Album contents cloned"
 msgstr "Albumin sisältö kloonattu"
 
-#: messages.go:176
+#: messages.go:178
 msgid "File removed from stack"
 msgstr "Tiedosto poistettu pinosta"
 
-#: messages.go:177
+#: messages.go:179
 msgid "File deleted"
 msgstr "Tiedosto poistettu"
 
-#: messages.go:178
+#: messages.go:180
 #, c-format
 msgid "Selection added to %s"
 msgstr "Valinta lisätty %s"
 
-#: messages.go:179
+#: messages.go:181
 #, c-format
 msgid "One entry added to %s"
 msgstr "Yksi merkintä lisätty kohtaan %s"
 
-#: messages.go:180
+#: messages.go:182
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d merkintöjä lisätty %s"
 
-#: messages.go:181
+#: messages.go:183
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Yksi merkintä poistettu kohdasta %s"
 
-#: messages.go:182
+#: messages.go:184
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d merkinnät poistettu %s"
 
-#: messages.go:183
+#: messages.go:185
 msgid "Account created"
 msgstr "Tili luotu"
 
-#: messages.go:184
+#: messages.go:186
 msgid "Account saved"
 msgstr "Tallennettu tili"
 
-#: messages.go:185
+#: messages.go:187
 msgid "Account deleted"
 msgstr "Tili poistettu"
 
-#: messages.go:186
+#: messages.go:188
 msgid "Settings saved"
 msgstr "Asetukset tallennettu"
 
-#: messages.go:187
+#: messages.go:189
 msgid "Password changed"
 msgstr "Salasana vaihdettu"
 
-#: messages.go:188
+#: messages.go:190
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Tuonti valmis %d s"
 
-#: messages.go:189
+#: messages.go:191
 msgid "Import canceled"
 msgstr "Tuonti peruutettu"
 
-#: messages.go:190
+#: messages.go:192
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indeksointi valmis %d s"
 
-#: messages.go:191
+#: messages.go:193
 msgid "Indexing originals..."
 msgstr "Alkuperäiskappaleiden indeksointi..."
 
-#: messages.go:192
+#: messages.go:194
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Tiedostojen indeksointi osoitteessa %s"
 
-#: messages.go:193
+#: messages.go:195
 msgid "Indexing canceled"
 msgstr "Indeksointi peruutettu"
 
-#: messages.go:194
+#: messages.go:196
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Poistettiin %d tiedostoa ja %d valokuvaa"
 
-#: messages.go:195
+#: messages.go:197
 #, c-format
 msgid "Moving files from %s"
 msgstr "Tiedostojen siirtäminen %s"
 
-#: messages.go:196
+#: messages.go:198
 #, c-format
 msgid "Copying files from %s"
 msgstr "Tiedostojen kopiointi %s"
 
-#: messages.go:197
+#: messages.go:199
 msgid "Labels deleted"
 msgstr "Tunnisteet poistettu"
 
-#: messages.go:198
+#: messages.go:200
 msgid "Label saved"
 msgstr "Tarra tallennettu"
 
-#: messages.go:199
+#: messages.go:201
 msgid "Subject saved"
 msgstr "Aihe tallennettu"
 
-#: messages.go:200
+#: messages.go:202
 msgid "Subject deleted"
 msgstr "Aihe poistettu"
 
-#: messages.go:201
+#: messages.go:203
 msgid "Person saved"
 msgstr "Tallennettu henkilö"
 
-#: messages.go:202
+#: messages.go:204
 msgid "Person deleted"
 msgstr "Henkilö poistettu"
 
-#: messages.go:203
+#: messages.go:205
 msgid "File uploaded"
 msgstr "Ladattu tiedosto"
 
-#: messages.go:204
+#: messages.go:206
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d tiedostoa ladattu %d s aikana"
 
-#: messages.go:205
+#: messages.go:207
 msgid "Processing upload..."
 msgstr "Käsittelen latausta..."
 
-#: messages.go:206
+#: messages.go:208
 msgid "Upload has been processed"
 msgstr "Lataus on käsitelty"
 
-#: messages.go:207
+#: messages.go:209
 msgid "Selection approved"
 msgstr "Valinta hyväksytty"
 
-#: messages.go:208
+#: messages.go:210
 msgid "Selection archived"
 msgstr "Valinta arkistoitu"
 
-#: messages.go:209
+#: messages.go:211
 msgid "Selection restored"
 msgstr "Valinta palautettu"
 
-#: messages.go:210
+#: messages.go:212
 msgid "Selection marked as private"
 msgstr "Valinta merkitty yksityiseksi"
 
-#: messages.go:211
+#: messages.go:213
 msgid "Albums deleted"
 msgstr "Albumit poistettu"
 
-#: messages.go:212
+#: messages.go:214
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip luotu %d s"
 
-#: messages.go:213
+#: messages.go:215
 msgid "Permanently deleted"
 msgstr "Poistettu pysyvästi"
 
-#: messages.go:214
+#: messages.go:216
 #, c-format
 msgid "%s has been restored"
 msgstr "%s on palautettu"
 
-#: messages.go:215
+#: messages.go:217
 msgid "Successfully verified"
 msgstr "Vahvistettu onnistuneesti"
 
-#: messages.go:216
+#: messages.go:218
 msgid "Successfully activated"
 msgstr "Aktivointi onnistui"
 
