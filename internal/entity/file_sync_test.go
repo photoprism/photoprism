@@ -262,27 +262,113 @@ func TestResetFileSyncLongNames(t *testing.T) {
 	assert.ElementsMatch(t, kept, names(t, serviceID))
 }
 
-func TestResetFileSyncStalled(t *testing.T) {
+func TestFileSyncUploadName(t *testing.T) {
+	assert.Equal(t, ".photoprism/sync/upload/42", FileSyncUploadName(42))
+	assert.True(t, strings.HasPrefix(FileSyncUploadName(0), FileSyncUploadPrefix))
+}
+
+func TestFailFileSyncUpload(t *testing.T) {
+	const serviceID = 4723
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id = ?", serviceID).Error) })
+
+	// The first failure creates the placeholder, and later ones count the errors on it.
+	require.NoError(t, FailFileSyncUpload(serviceID, 7, "first"))
+	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ? AND remote_name = ?", serviceID,
+		FileSyncUploadName(7)).UpdateColumn("status", FileSyncRetry).Error)
+	require.NoError(t, FailFileSyncUpload(serviceID, 7, "second"))
+
+	var m FileSync
+	require.NoError(t, Db().Where("service_id = ? AND remote_name = ?", serviceID, FileSyncUploadName(7)).First(&m).Error)
+	assert.Equal(t, uint(7), m.FileID)
+	assert.Equal(t, FileSyncFailed, m.Status)
+	assert.Equal(t, "second", m.Error)
+	assert.Equal(t, 2, m.Errors)
+
+	count, err := CountFailedFileSyncUploads(serviceID)
+	require.NoError(t, err)
+	assert.EqualValues(t, 1, count)
+
+	require.NoError(t, ClearFileSyncUpload(serviceID, 7))
+	count, err = CountFailedFileSyncUploads(serviceID)
+	require.NoError(t, err)
+	assert.Zero(t, count)
+	require.NoError(t, ClearFileSyncUpload(serviceID, 7))
+}
+
+func TestClearFileSyncUpload(t *testing.T) {
+	const serviceID = 4724
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id = ?", serviceID).Error) })
+
+	require.NoError(t, FailFileSyncUpload(serviceID, 8, "failed"))
+	require.NoError(t, FailFileSyncUpload(serviceID, 9, "failed"))
+	require.NoError(t, ClearFileSyncUpload(serviceID, 8))
+
+	var names []string
+	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", serviceID).Pluck("remote_name", &names).Error)
+	assert.Equal(t, []string{FileSyncUploadName(9)}, names)
+}
+
+func TestCountFailedFileSyncUploads(t *testing.T) {
+	const serviceID = 4725
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id = ?", serviceID).Error) })
+
+	count, err := CountFailedFileSyncUploads(serviceID)
+	require.NoError(t, err)
+	assert.Zero(t, count)
+
+	// Placeholders marked for retry and other records are not counted.
+	require.NoError(t, FailFileSyncUpload(serviceID, 10, "failed"))
+	require.NoError(t, FailFileSyncUpload(serviceID, 11, "failed"))
+	require.NoError(t, NewFileSync(serviceID, "/photos/failed.jpg").Create())
+	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ? AND remote_name = ?", serviceID,
+		FileSyncUploadName(11)).UpdateColumn("status", FileSyncRetry).Error)
+	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ? AND remote_name = ?", serviceID,
+		"/photos/failed.jpg").UpdateColumn("status", FileSyncFailed).Error)
+
+	count, err = CountFailedFileSyncUploads(serviceID)
+	require.NoError(t, err)
+	assert.EqualValues(t, 1, count)
+}
+
+func TestRetryFileSyncUploads(t *testing.T) {
 	const serviceID, otherID = 4721, 4722
 	t.Cleanup(func() {
 		assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id IN (?)", []uint{serviceID, otherID}).Error)
 	})
 
+	status := func(t *testing.T, serviceID uint, name string) string {
+		var m FileSync
+		require.NoError(t, Db().Where("service_id = ? AND remote_name = ?", serviceID, name).First(&m).Error)
+		return m.Status
+	}
+
+	// Other records keep their status, and placeholders of stalled uploads are removed.
 	kept := []string{"/photos/file.jpg", ".photoprism/sync/12", FileSyncLongNamePrefix("/") + "13"}
-	for _, name := range append([]string{FileSyncStalledPrefix + "14", FileSyncStalledPrefix + "15"}, kept...) {
+	for _, name := range append([]string{fileSyncStalled + "14"}, kept...) {
 		require.NoError(t, NewFileSync(serviceID, name).Create())
 	}
-	require.NoError(t, NewFileSync(otherID, FileSyncStalledPrefix+"16").Create())
+	for id, errs := range map[uint]int{21: 1, 22: 3, 23: 4} {
+		for range errs {
+			require.NoError(t, FailFileSyncUpload(serviceID, id, "failed"))
+		}
+	}
+	require.NoError(t, FailFileSyncUpload(otherID, 24, "failed"))
 
-	require.NoError(t, ResetFileSyncStalled(serviceID))
+	require.NoError(t, RetryFileSyncUploads(serviceID, 3))
 
 	var names []string
-	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", serviceID).Pluck("remote_name", &names).Error)
+	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ? AND remote_name NOT LIKE ?", serviceID,
+		FileSyncUploadPrefix+"%").Pluck("remote_name", &names).Error)
 	assert.ElementsMatch(t, kept, names)
+	assert.Equal(t, FileSyncNew, status(t, serviceID, kept[0]))
+	assert.Equal(t, FileSyncRetry, status(t, serviceID, FileSyncUploadName(21)))
+	assert.Equal(t, FileSyncRetry, status(t, serviceID, FileSyncUploadName(22)))
+	assert.Equal(t, FileSyncFailed, status(t, serviceID, FileSyncUploadName(23)))
+	assert.Equal(t, FileSyncFailed, status(t, otherID, FileSyncUploadName(24)))
 
-	var other int64
-	require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", otherID).Count(&other).Error)
-	assert.EqualValues(t, 1, other)
+	// Without a retry limit, every failed upload is tried again.
+	require.NoError(t, RetryFileSyncUploads(serviceID, -1))
+	assert.Equal(t, FileSyncRetry, status(t, serviceID, FileSyncUploadName(23)))
 }
 
 func TestFileSync_ServiceStatusIndex(t *testing.T) {

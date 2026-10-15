@@ -3,7 +3,10 @@ package entity
 import (
 	"fmt"
 	"hash/crc32"
+	"strconv"
 	"time"
+
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -17,14 +20,18 @@ const (
 	FileSyncFailed     = "failed"
 	FileSyncDownloaded = "downloaded"
 	FileSyncUploaded   = "uploaded"
+	FileSyncRetry      = "retry"
 )
 
 // RemoteNameMaxLen is the length in bytes of the longest remote name a file sync or share record holds.
 const RemoteNameMaxLen = 1024
 
-// FileSyncStalledPrefix starts the placeholder names that record local files whose upload stalled, so that the
-// next runs upload other files first; refresh removes them, so they are uploaded again in the next sync cycle.
-const FileSyncStalledPrefix = fs.PPHiddenPathname + "/sync/stalled/"
+// FileSyncUploadPrefix starts the placeholder names that record local files whose upload failed or stalled, with
+// their error count, so a sync cycle tries each file once; refresh marks them for the next cycle.
+const FileSyncUploadPrefix = fs.PPHiddenPathname + "/sync/upload/"
+
+// fileSyncStalled is the folder of placeholders of stalled uploads without an error count, which refresh removes.
+const fileSyncStalled = fs.PPHiddenPathname + "/sync/stalled/"
 
 // fileSyncLongNames is the folder of the placeholder names that record local files whose remote name is too long.
 const fileSyncLongNames = fs.PPHiddenPathname + "/sync/long/"
@@ -113,7 +120,63 @@ func ResetFileSyncLongNames(serviceID uint, syncPath string) error {
 		fileSyncLongNames+"%", FileSyncLongNamePrefix(syncPath)+"%").Delete(&FileSync{}).Error
 }
 
-// ResetFileSyncStalled removes the placeholders of uploads that stalled for an account, so they are tried again.
-func ResetFileSyncStalled(serviceID uint) error {
-	return Db().Where("service_id = ? AND remote_name LIKE ?", serviceID, FileSyncStalledPrefix+"%").Delete(&FileSync{}).Error
+// FileSyncUploadName returns the placeholder name that records a failed upload of a local file.
+func FileSyncUploadName(fileID uint) string {
+	return FileSyncUploadPrefix + strconv.FormatUint(uint64(fileID), 10)
+}
+
+// RetryFileSyncUploads marks the failed uploads of an account to be tried again in its next sync cycle, except
+// those that failed more often than a positive retry limit allows.
+func RetryFileSyncUploads(serviceID uint, retryLimit int) error {
+	if err := Db().Where("service_id = ? AND remote_name LIKE ?", serviceID, fileSyncStalled+"%").
+		Delete(&FileSync{}).Error; err != nil {
+		return err
+	}
+
+	// Most refreshes find nothing to retry, so nothing is written then.
+	if count, err := CountFailedFileSyncUploads(serviceID); err != nil || count == 0 {
+		return err
+	}
+
+	stmt := Db().Model(&FileSync{}).Where("service_id = ? AND remote_name LIKE ? AND status = ?",
+		serviceID, FileSyncUploadPrefix+"%", FileSyncFailed)
+
+	if retryLimit > 0 {
+		stmt = stmt.Where("COALESCE(errors, 0) <= ?", retryLimit)
+	}
+
+	return stmt.UpdateColumn("status", FileSyncRetry).Error
+}
+
+// FailFileSyncUpload records that uploading a local file failed, so it is not selected again in this sync cycle,
+// and counts the error.
+func FailFileSyncUpload(serviceID, fileID uint, errMsg string) error {
+	name := FileSyncUploadName(fileID)
+
+	if res := Db().Model(&FileSync{}).Where("service_id = ? AND remote_name = ?", serviceID, name).
+		UpdateColumns(Values{"file_id": fileID, "status": FileSyncFailed, "error": errMsg,
+			"errors": gorm.Expr("COALESCE(errors, 0) + 1")}); res.Error != nil {
+		return res.Error
+	} else if res.RowsAffected > 0 {
+		return nil
+	}
+
+	m := NewFileSync(serviceID, name)
+	m.FileID, m.Status, m.Error, m.Errors = fileID, FileSyncFailed, errMsg, 1
+
+	return m.Create()
+}
+
+// ClearFileSyncUpload removes the placeholder of a failed upload once the file was uploaded.
+func ClearFileSyncUpload(serviceID, fileID uint) error {
+	return Db().Where("service_id = ? AND remote_name = ?", serviceID, FileSyncUploadName(fileID)).
+		Delete(&FileSync{}).Error
+}
+
+// CountFailedFileSyncUploads returns the number of local files of an account whose last upload failed.
+func CountFailedFileSyncUploads(serviceID uint) (count int64, err error) {
+	err = Db().Model(&FileSync{}).Where("service_id = ? AND remote_name LIKE ? AND status = ?",
+		serviceID, FileSyncUploadPrefix+"%", FileSyncFailed).Count(&count).Error
+
+	return count, err
 }

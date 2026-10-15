@@ -113,9 +113,15 @@ func (w *Sync) Start() (err error) {
 				accErrors++
 				accError = clean.ErrorBytes(err, txt.ClipError)
 			} else if complete {
-				reset = true
-				accErrors = 0
-				accError = ""
+				uploadStages.Start(a.ID)
+
+				// Uploads set aside in the previous cycle keep their count, so a remote that refuses
+				// every upload reaches the retry limit.
+				if !isUploadSetAsideError(a.AccError) {
+					reset = true
+					accErrors = 0
+					accError = ""
+				}
 
 				switch {
 				case a.SyncDownload:
@@ -149,10 +155,33 @@ func (w *Sync) Start() (err error) {
 				accError = clean.ErrorBytes(uploadErr, txt.ClipError)
 				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
-				synced = true
 				syncStatus = entity.SyncStatusSynced
 				syncDate.Time = time.Now()
 				syncDate.Valid = true
+
+				// Uploads set aside are reported as an account error rather than as synced, and a stage that
+				// uploaded nothing because of the remote counts as failed. A stage that uploaded or tried no file
+				// resets the count, and others, such as one started before a restart, keep it.
+				stage, known := uploadStages.End(a.ID)
+
+				if setAside, countErr := entity.CountFailedFileSyncUploads(a.ID); countErr != nil {
+					w.logAccountErr(countErr, a)
+				} else if setAside > 0 {
+					accError = uploadSetAsideError(setAside)
+
+					switch {
+					case known && (stage.uploaded || !stage.tried):
+						reset, accErrors = true, 0
+					case known && stage.failed:
+						accErrors++
+					}
+				} else {
+					synced = true
+
+					if isUploadSetAsideError(a.AccError) {
+						reset, accErrors, accError = true, 0, ""
+					}
+				}
 			}
 		case entity.SyncStatusSynced:
 			if syncDue(a, time.Now()) {
@@ -173,6 +202,9 @@ func (w *Sync) Start() (err error) {
 		} else if reset {
 			w.logAccountErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).UpdateColumns(entity.Values{
 				"acc_errors": accErrors, "acc_error": accError}).Error, a)
+		} else if accError != a.AccError {
+			w.logAccountErr(entity.Db().Model(&entity.Service{}).Where("id = ?", a.ID).
+				UpdateColumn("acc_error", accError).Error, a)
 		}
 
 		if syncStatus == a.SyncStatus && syncDate.Valid == a.SyncDate.Valid && syncDate.Time.Equal(a.SyncDate.Time) {

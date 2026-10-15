@@ -1,6 +1,7 @@
 package webdav
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -706,6 +707,21 @@ func TestClient_Upload(t *testing.T) {
 			w.WriteHeader(http.StatusForbidden)
 		case "failed.jpg":
 			w.WriteHeader(http.StatusInternalServerError)
+		case "toolarge.mp4":
+			w.WriteHeader(http.StatusRequestEntityTooLarge)
+		case "unsupported.heic":
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+		case "conflict.jpg":
+			w.WriteHeader(http.StatusConflict)
+		case "unauthorized.jpg":
+			w.WriteHeader(http.StatusUnauthorized)
+		case "busy.jpg":
+			w.WriteHeader(http.StatusTooManyRequests)
+		case "full.jpg":
+			w.WriteHeader(http.StatusInsufficientStorage)
+		case "moved.jpg":
+			w.Header().Set("Location", "/dav/elsewhere.jpg")
+			w.WriteHeader(http.StatusPermanentRedirect)
 		case "redirect.jpg":
 			http.Redirect(w, r, "/dav/elsewhere.jpg", http.StatusFound)
 		case "elsewhere.jpg":
@@ -744,6 +760,26 @@ func TestClient_Upload(t *testing.T) {
 		require.Error(t, err)
 		assert.NotErrorIs(t, err, ErrForbidden)
 		assert.Contains(t, err.Error(), "500 Internal Server Error")
+	})
+	t.Run("Unavailable", func(t *testing.T) {
+		// Failures caused by the remote rather than the file are reported as unavailable.
+		for name, unavailable := range map[string]bool{"failed.jpg": true, "unauthorized.jpg": true, "busy.jpg": true,
+			"full.jpg": true, "redirect.jpg": true, "moved.jpg": true, "toolarge.mp4": false, "unsupported.heic": false, "conflict.jpg": false,
+			"forbidden.yml": false} {
+			err := client.Upload(src, "folder/"+name)
+			require.Error(t, err, name)
+			assert.Equal(t, unavailable, errors.Is(err, ErrUnavailable), name)
+		}
+		err := client.Upload(src+".missing", "folder/missing.jpg")
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrUnavailable)
+
+		// A connection that fails is unavailable as well.
+		closed := httptest.NewServer(http.NotFoundHandler())
+		closed.Close()
+		offline, err := NewClient(closed.URL+"/dav/", testUser, testPass, TimeoutLow, "")
+		require.NoError(t, err)
+		assert.ErrorIs(t, offline.Upload(src, "folder/offline.jpg"), ErrUnavailable)
 	})
 	t.Run("LongNameKeepsStatus", func(t *testing.T) {
 		// The name is bounded, so the reason after it survives a stored error of txt.ClipError bytes.

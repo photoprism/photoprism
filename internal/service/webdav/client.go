@@ -30,6 +30,10 @@ var ErrSkipPath = errors.New("webdav: transfer path skipped")
 // ErrForbidden identifies a transfer the remote server refused with 403 Forbidden.
 var ErrForbidden = errors.New("forbidden")
 
+// ErrUnavailable identifies an upload that failed because of the remote server rather than the file: a failed
+// connection, a redirect, a server error, or a response such as 401, 407, 408 or 429.
+var ErrUnavailable = errors.New("unavailable")
+
 // ErrStalled identifies a transfer that ended because too little data moved.
 var ErrStalled = errors.New("stalled")
 
@@ -518,7 +522,7 @@ func (c *Client) Upload(src, dest string) (err error) {
 		return fmt.Errorf("webdav: failed to upload %s (%w)", clean.LogBytes(dest, clean.LogNamesBytes), ErrStalled)
 	} else if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
-		return fmt.Errorf("webdav: failed to upload %s", clean.Log(dest))
+		return fmt.Errorf("webdav: failed to upload %s (%w)", clean.Log(dest), ErrUnavailable)
 	}
 
 	_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 4096))
@@ -527,14 +531,28 @@ func (c *Client) Upload(src, dest string) (err error) {
 	switch {
 	case resp.Request != nil && resp.Request.Method != http.MethodPut:
 		// The client follows 301, 302, and 303 with a GET, whose status does not report the upload.
-		return fmt.Errorf("webdav: failed to upload %s (redirected)", clean.LogBytes(dest, clean.LogNamesBytes))
+		return fmt.Errorf("webdav: failed to upload %s (redirected, %w)", clean.LogBytes(dest, clean.LogNamesBytes), ErrUnavailable)
 	case resp.StatusCode == http.StatusForbidden:
 		return fmt.Errorf("webdav: failed to upload %s (%w)", clean.LogBytes(dest, clean.LogNamesBytes), ErrForbidden)
+	case resp.StatusCode/100 != 2 && uploadUnavailable(resp.StatusCode):
+		return fmt.Errorf("webdav: failed to upload %s (%d %s, %w)", clean.LogBytes(dest, clean.LogNamesBytes),
+			resp.StatusCode, http.StatusText(resp.StatusCode), ErrUnavailable)
 	case resp.StatusCode/100 != 2:
 		return fmt.Errorf("webdav: failed to upload %s (%d %s)", clean.LogBytes(dest, clean.LogNamesBytes), resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 
 	return nil
+}
+
+// uploadUnavailable reports whether an upload response status says the remote server cannot take uploads at all,
+// rather than that it refused the file.
+func uploadUnavailable(status int) bool {
+	switch status {
+	case http.StatusUnauthorized, http.StatusProxyAuthRequired, http.StatusRequestTimeout, http.StatusTooManyRequests:
+		return true
+	default:
+		return status/100 == 3 || status >= 500
+	}
 }
 
 // resolveHref returns the absolute URL of a path relative to the endpoint, including its credentials.

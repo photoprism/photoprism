@@ -4,7 +4,11 @@ import (
 	"errors"
 	"path"
 	"strconv"
+	"strings"
+	"sync"
 	"time"
+
+	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -14,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // upload transfers eligible local files to a remote account.
@@ -47,14 +52,19 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		return false, err
 	}
 
-	// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
-	var yamlRefused, otherRefused bool
+	// A YAML file refused with 403 disables YAML sync unless the remote also refused another file in this stage.
+	stage := uploadStages.Get(a.ID)
 	var stalls stallBudget
 
 	// Files whose remote names are too long are reported in one warning per run.
 	var skipped skippedNames
 
 	defer skipped.Warn("sync: skipped upload of %s to %s because their remote names are too long (%s)", "file", a.AccName)
+
+	// Files whose upload failed are set aside until the next sync cycle and reported in one warning per run.
+	var failed skippedNames
+
+	defer failed.Warn("sync: failed to upload %s to %s, retrying in the next sync (%s)", "file", a.AccName)
 
 	for _, file := range files {
 		if mutex.SyncWorker.Canceled() {
@@ -69,7 +79,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 		yamlFile := fs.Type(file.FileType) == fs.SidecarYaml
 
-		if yamlFile && (!a.SyncYamlEnabled() || yamlRefused) {
+		if yamlFile && (!a.SyncYamlEnabled() || stage.yamlRefused && !stage.otherRefused) {
 			continue
 		}
 
@@ -89,27 +99,31 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			log.Debugf("sync: %s (create remote folder for %s)", clean.Error(err), clean.Log(a.AccName))
 		}
 
-		// A stalled upload is recorded until the next refresh, so the next runs upload other files first.
-		if err = client.Upload(fileName, remoteName); errors.Is(err, webdav.ErrStalled) {
-			w.logAccountErr(err, a)
-			w.ignoreUpload(a, entity.FileSyncStalledPrefix, file.ID)
+		// A failed upload is set aside until the next sync cycle, so each run moves on to other files.
+		if err = client.Upload(fileName, remoteName); err != nil {
+			log.Debugf("sync: %s (%s)", clean.Error(err), clean.Log(a.AccName))
+			failed.Add(file.FileName)
+			w.logAccountErr(entity.FailFileSyncUpload(a.ID, file.ID, clean.ErrorBytes(err, txt.ClipError)), a)
 
-			if stalls.Add(true) {
+			// Only failures caused by the remote count towards the account's retry limit.
+			stage.tried = true
+			stalled, forbidden := errors.Is(err, webdav.ErrStalled), errors.Is(err, webdav.ErrForbidden)
+			stage.failed = stage.failed || stalled || errors.Is(err, webdav.ErrUnavailable)
+			stage.yamlRefused = stage.yamlRefused || forbidden && yamlFile
+			stage.otherRefused = stage.otherRefused || forbidden && !yamlFile
+			uploadStages.Set(a.ID, stage)
+
+			if stalled && stalls.Add(true) {
 				stalls.Warn("sync", a.AccName)
 				return false, nil
 			}
 
 			continue
-		} else if errors.Is(err, webdav.ErrForbidden) {
-			yamlRefused, otherRefused = yamlRefused || yamlFile, otherRefused || !yamlFile
-			w.logAccountErr(err, a)
-			continue
-		} else if err != nil {
-			w.logAccountErr(err, a)
-			continue // try again next time
 		}
 
 		log.Infof("sync: uploaded %s to %s (%s)", clean.Log(file.FileName), clean.Log(remoteName), clean.Log(a.AccName))
+		stage.tried, stage.uploaded = true, true
+		uploadStages.Set(a.ID, stage)
 
 		fileSync := entity.NewFileSync(a.ID, remoteName)
 		fileSync.Status = entity.FileSyncUploaded
@@ -123,12 +137,19 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			return false, nil
 		}
 
-		w.logFileErr(entity.Db().Save(&fileSync).Error, remoteName, a)
+		if err = entity.Db().Save(&fileSync).Error; err != nil {
+			w.logFileErr(err, remoteName, a)
+		} else {
+			w.logAccountErr(entity.ClearFileSyncUpload(a.ID, file.ID), a)
+		}
 	}
 
-	if yamlRefused && !otherRefused {
+	// The refusal is cleared once acted on, so YAML files are tried again if an admin turns the option back on.
+	if stage.yamlRefused && !stage.otherRefused {
 		log.Warnf("sync: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
 		w.logAccountErr(a.Update("SyncYaml", -1), a)
+		stage.yamlRefused = false
+		uploadStages.Set(a.ID, stage)
 	}
 
 	return false, nil
@@ -140,4 +161,74 @@ func (w *Sync) ignoreUpload(a entity.Service, dir string, fileID uint) {
 	ignored := entity.NewFileSync(a.ID, path.Join(dir, strconv.FormatUint(uint64(fileID), 10)))
 	ignored.FileID, ignored.Status = fileID, entity.FileSyncIgnore
 	w.logAccountErr(entity.Db().Save(ignored).Error, a)
+}
+
+// uploadSetAsideSuffix ends the account error that reports uploads set aside until the next sync cycle.
+const uploadSetAsideSuffix = " could not be uploaded"
+
+// uploadSetAsideError returns the account error that reports the number of uploads set aside.
+func uploadSetAsideError(count int64) string {
+	return english.Plural(int(count), "file", "files") + uploadSetAsideSuffix
+}
+
+// isUploadSetAsideError reports whether an account error reports uploads set aside.
+func isUploadSetAsideError(accError string) bool {
+	return strings.HasSuffix(accError, uploadSetAsideSuffix)
+}
+
+// uploadStage records what happened in the current upload stage of an account.
+type uploadStage struct {
+	tried        bool // A file was sent or failed to be sent.
+	uploaded     bool // A file was uploaded.
+	failed       bool // An upload failed because of the remote rather than the file.
+	yamlRefused  bool // A YAML file was refused with 403.
+	otherRefused bool // Another file was refused with 403.
+	unknown      bool // The stage was started before a restart.
+}
+
+// uploadStageMap holds the upload stages of the accounts in this process.
+type uploadStageMap struct {
+	mu     sync.Mutex
+	stages map[uint]uploadStage
+}
+
+// uploadStages tracks the upload stages started in this process, from the completed refresh to the end of the stage.
+var uploadStages = uploadStageMap{stages: make(map[uint]uploadStage)}
+
+// Start begins a new upload stage for an account.
+func (m *uploadStageMap) Start(id uint) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.stages[id] = uploadStage{}
+}
+
+// Get returns the current upload stage of an account. A stage started before a restart is unknown, and is
+// returned as one in which another file was refused, so that it never turns off YAML sync.
+func (m *uploadStageMap) Get(id uint) uploadStage {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if stage, ok := m.stages[id]; ok {
+		return stage
+	}
+
+	return uploadStage{otherRefused: true, unknown: true}
+}
+
+// Set stores the current upload stage of an account.
+func (m *uploadStageMap) Set(id uint, stage uploadStage) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.stages[id] = stage
+}
+
+// End ends the upload stage of an account and returns it, and whether it was started in this process.
+func (m *uploadStageMap) End(id uint) (stage uploadStage, known bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	stage, known = m.stages[id]
+	delete(m.stages, id)
+
+	return stage, known && !stage.unknown
 }

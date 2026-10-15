@@ -111,18 +111,30 @@ func TestSyncYaml(t *testing.T) {
 	}
 
 	worker := NewSync(conf)
+	t.Cleanup(func() { uploadStages.End(a.ID) })
 
 	t.Run("RemoteRefusesAll", func(t *testing.T) {
 		refuseAll.Store(true)
 		defer refuseAll.Store(false)
+		uploadStages.Start(a.ID)
 		yamlPuts.Store(0)
 		_, err := worker.upload(a)
 		require.NoError(t, err)
-		assert.EqualValues(t, 1, yamlPuts.Load(), "a YAML file must not be sent after one was refused")
+		assert.EqualValues(t, 2, yamlPuts.Load(), "YAML files must be sent once another file was refused as well")
 		assert.NoFileExists(t, filepath.Join(remote, "a.jpg"))
 		assert.NotEqual(t, -1, stored(t).SyncYaml, "YAML sync must stay on when other files are refused as well")
+
+		// A later run of the same stage remembers that other files were refused.
+		complete, err := worker.upload(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.EqualValues(t, 2, yamlPuts.Load())
+		assert.NotEqual(t, -1, stored(t).SyncYaml)
 	})
 	t.Run("UploadDisablesYaml", func(t *testing.T) {
+		// Failed uploads are tried again in the next sync cycle.
+		require.NoError(t, entity.RetryFileSyncUploads(a.ID, a.RetryLimit))
+		uploadStages.Start(a.ID)
 		yamlPuts.Store(0)
 		complete, err := worker.upload(a)
 		require.NoError(t, err)
@@ -130,6 +142,17 @@ func TestSyncYaml(t *testing.T) {
 		assert.EqualValues(t, 1, yamlPuts.Load(), "a YAML file must not be sent after one was refused")
 		assert.FileExists(t, filepath.Join(remote, "a.jpg"))
 		assert.FileExists(t, filepath.Join(remote, "c.jpg"))
+		a = stored(t)
+		assert.Equal(t, -1, a.SyncYaml)
+
+		// Turned back on during the same stage, YAML files are tried again and need a new refusal.
+		require.NoError(t, a.Update("SyncYaml", 0))
+		a.SyncYaml = 0
+		require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ? AND remote_name LIKE ?",
+			a.ID, entity.FileSyncUploadPrefix+"%").UpdateColumn("status", entity.FileSyncRetry).Error)
+		_, err = worker.upload(a)
+		require.NoError(t, err)
+		assert.EqualValues(t, 2, yamlPuts.Load())
 		a = stored(t)
 		assert.Equal(t, -1, a.SyncYaml)
 	})
@@ -140,7 +163,7 @@ func TestSyncYaml(t *testing.T) {
 		complete, err := worker.upload(a)
 		require.NoError(t, err)
 		assert.True(t, complete)
-		assert.EqualValues(t, 1, yamlPuts.Load())
+		assert.EqualValues(t, 2, yamlPuts.Load())
 	})
 	t.Run("RemoteFailsYaml", func(t *testing.T) {
 		failYaml.Store(true)
@@ -151,6 +174,8 @@ func TestSyncYaml(t *testing.T) {
 			a.SyncYaml = -1
 			require.NoError(t, a.Update("SyncYaml", -1))
 		}()
+		require.NoError(t, entity.RetryFileSyncUploads(a.ID, a.RetryLimit))
+		uploadStages.Start(a.ID)
 		yamlPuts.Store(0)
 		_, err := worker.upload(a)
 		require.NoError(t, err)

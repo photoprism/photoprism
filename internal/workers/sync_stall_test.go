@@ -236,10 +236,10 @@ func TestSync_uploadStalls(t *testing.T) {
 
 	// A refresh at the start of the next sync cycle selects them again.
 	_, _ = worker.refresh(a)
-	var stalled int64
-	require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ? AND remote_name LIKE ?",
-		a.ID, entity.FileSyncStalledPrefix+"%").Count(&stalled).Error)
-	assert.Zero(t, stalled)
+	var retry int64
+	require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ? AND remote_name LIKE ? AND status = ?",
+		a.ID, entity.FileSyncUploadPrefix+"%", entity.FileSyncRetry).Count(&retry).Error)
+	assert.EqualValues(t, 4, retry)
 
 	_, err = worker.upload(a)
 	require.NoError(t, err)

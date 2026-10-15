@@ -272,11 +272,13 @@ func TestSync_longRemoteNames(t *testing.T) {
 		hook := captureSyncLog(t)
 		_, err := worker.upload(a)
 		require.NoError(t, err)
-		assert.Equal(t, 1, countLogged(hook, logrus.ErrorLevel, "("+clean.Log(a.AccName)+")"))
+		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "failed to upload 1 file to "+clean.Log(a.AccName)))
 
-		var count int64
-		require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ? AND file_id = ?", a.ID, file.ID).Count(&count).Error)
-		assert.Zero(t, count)
+		// The failed upload is set aside until the next sync cycle.
+		var m entity.FileSync
+		require.NoError(t, entity.Db().Where("service_id = ? AND file_id = ?", a.ID, file.ID).First(&m).Error)
+		assert.Equal(t, entity.FileSyncUploadName(file.ID), m.RemoteName)
+		assert.Equal(t, entity.FileSyncFailed, m.Status)
 	})
 	t.Run("Upload", func(t *testing.T) {
 		options := *conf.Options()
