@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -487,6 +488,11 @@ func TestAlbumsByType(t *testing.T) {
 
 // TestAlbums_NoMatchFilter checks that a stored filter with nothing usable left gives an empty album.
 func TestAlbums_NoMatchFilter(t *testing.T) {
+	// PostgreSQL text columns cannot store invalid UTF-8, so such a filter only exists in MariaDB and SQLite.
+	if DbDialect() == dsn.DialectPostgreSQL {
+		t.Skip("PostgreSQL cannot store a filter with invalid UTF-8")
+	}
+
 	a := entity.NewMonthAlbum("No Match Filter", "no-match-filter", 2020, 1)
 	a.AlbumFilter = "\xff"
 	require.NoError(t, a.Create())
