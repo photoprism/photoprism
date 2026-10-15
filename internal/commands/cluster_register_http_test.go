@@ -2,6 +2,7 @@ package commands
 
 import (
 	"encoding/json"
+	"flag"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -21,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestClusterRegister_HTTPHappyPath(t *testing.T) {
@@ -869,7 +871,7 @@ func TestClusterRegister_WriteConfigRefusedDatabase(t *testing.T) {
 		out, err := RunWithTestContext(ClusterRegisterCommand, append(args, "--rotate", "--json"))
 		require.Error(t, err)
 		assert.Equal(t, 1, ExitCode(err))
-		assert.Contains(t, err.Error(), "save the node credentials shown above")
+		assert.Contains(t, err.Error(), "the portal changed the database password, but the new credentials could not be saved; save the node credentials shown above")
 		assert.Equal(t, "pwd10", gjson.Get(out, "Database.Password").String())
 
 		content, readErr := os.ReadFile(conf.OptionsYaml())
@@ -891,6 +893,120 @@ func TestClusterRegister_WriteConfigRefusedDatabase(t *testing.T) {
 		_, err := RunWithTestContext(ClusterRegisterCommand, args)
 		assert.NoError(t, err)
 		assert.True(t, rotateRequested.Load())
+	})
+}
+
+// TestClusterRegister_WriteConfigRotated checks the exit code when explicitly rotated credentials are saved.
+func TestClusterRegister_WriteConfigRotated(t *testing.T) {
+	tempCfg := t.TempDir()
+	SetEnvForTest(t, "PHOTOPRISM_CONFIG_PATH", tempCfg)
+
+	conf := get.Config()
+	previousOptions := *conf.Options()
+	t.Cleanup(func() {
+		*conf.Options() = previousOptions
+	})
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			UUID: "4a47c940-d5de-41b3-88a2-eb816cc659ca",
+			Node: cluster.Node{UUID: "01987f09-193d-7d01-9f18-d8d189f0fe88", Name: "pp-node-11", Role: cluster.RoleInstance,
+				ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "db.local", Port: 3306, Name: "pp_db",
+				User: "pp_user", Password: "pwd11"},
+		})
+	}))
+	defer ts.Close()
+
+	args := []string{"register", "--name", "pp-node-11", "--role", "instance", "--portal-url", ts.URL,
+		"--join-token", cluster.ExampleJoinToken, "--write-config", "--rotate"}
+
+	// reset restores the options and uses a new options file.
+	reset := func(name string) {
+		*conf.Options() = previousOptions
+		conf.Options().DatabaseDSN = ""
+		conf.Options().Deprecated.DatabaseDsn = ""
+		conf.Options().OptionsYaml = filepath.Join(tempCfg, name)
+	}
+
+	t.Run("Saved", func(t *testing.T) {
+		reset("saved.yml")
+		_, err := RunWithTestContext(ClusterRegisterCommand, args)
+		require.NoError(t, err)
+
+		content, readErr := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, readErr)
+		assert.Contains(t, string(content), "pwd11")
+	})
+	t.Run("OptionsFileDSN", func(t *testing.T) {
+		// A DSN in the options file is replaced by the saved credentials.
+		reset("options-dsn.yml")
+		dsnValue := "pp_user:old_pw@tcp(db.local:3306)/pp_db?parseTime=true"
+		require.NoError(t, os.WriteFile(conf.OptionsYaml(), []byte("DatabaseDSN: "+dsnValue+"\n"), fs.ModeSecretFile))
+		conf.Options().DatabaseDSN = dsnValue
+
+		_, err := RunWithTestContext(ClusterRegisterCommand, args)
+		require.NoError(t, err)
+
+		content, readErr := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, readErr)
+		assert.NotContains(t, string(content), "DatabaseDSN")
+		assert.Contains(t, string(content), "pwd11")
+	})
+	t.Run("DSNOverride", func(t *testing.T) {
+		// A DSN from an environment variable applies again on the next start.
+		reset("override.yml")
+		t.Setenv("PHOTOPRISM_DATABASE_DSN", "pp_user:old_pw@tcp(db.local:3306)/pp_db?parseTime=true")
+
+		// The test context applies no environment variables, so the configuration gets a context that does,
+		// with its folders in the test folder.
+		dsnDir := t.TempDir()
+		dsnFlags := flag.NewFlagSet("test", flag.ContinueOnError)
+		dsnValues := map[string]string{
+			"database-dsn":   os.Getenv("PHOTOPRISM_DATABASE_DSN"),
+			"originals-path": filepath.Join(dsnDir, "originals"),
+			"storage-path":   filepath.Join(dsnDir, "storage"),
+			"config-path":    filepath.Join(dsnDir, "config"),
+			"import-path":    filepath.Join(dsnDir, "import"),
+			"cache-path":     filepath.Join(dsnDir, "cache"),
+			"assets-path":    conf.AssetsPath(),
+		}
+
+		for name := range dsnValues {
+			dsnFlags.String(name, "", "doc")
+		}
+
+		dsnCtx := cli.NewContext(cli.NewApp(), dsnFlags, nil)
+
+		for name, value := range dsnValues {
+			require.NoError(t, dsnCtx.Set(name, value))
+		}
+
+		previousInit := InitCoreConfig
+		t.Cleanup(func() { InitCoreConfig = previousInit })
+		InitCoreConfig = func(*cli.Context, bool) (*cfg.Config, error) {
+			c := cfg.NewConfig(dsnCtx)
+			c.Options().OptionsYaml = filepath.Join(tempCfg, "override.yml")
+			return c, c.InitCore()
+		}
+
+		_, err := RunWithTestContext(ClusterRegisterCommand, args)
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "the portal changed the database password, but PHOTOPRISM_DATABASE_DSN sets a database dsn")
+		assert.Contains(t, err.Error(), "set the node credentials shown above there")
+	})
+	t.Run("SaveError", func(t *testing.T) {
+		// The options file cannot be written, since its name is a folder.
+		reset("folder.yml")
+		require.NoError(t, os.Mkdir(conf.OptionsYaml(), 0o700))
+
+		_, err := RunWithTestContext(ClusterRegisterCommand, args)
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "the portal changed the database password, but the new credentials could not be saved (")
 	})
 }
 

@@ -116,7 +116,34 @@ func (c *Config) databaseDsnFromCli() bool {
 		return false
 	}
 
-	return flagContext(c.cliCtx, "database-dsn").IsSet("database-dsn")
+	ctx := flagContext(c.cliCtx, "database-dsn")
+
+	return ctx.IsSet("database-dsn") && ctx.String("database-dsn") != ""
+}
+
+// DatabaseDSNOverride returns the environment variable or flag that sets a database DSN, which takes precedence
+// over database settings saved separately in the options file, or an empty string if neither does.
+func (c *Config) DatabaseDSNOverride() string {
+	if !c.databaseDsnFromCli() {
+		return ""
+	} else if envVar := EnvVar("DATABASE_DSN"); os.Getenv(envVar) != "" && !databaseDsnInArgs(os.Args) {
+		return envVar
+	}
+
+	return "--database-dsn"
+}
+
+// databaseDsnInArgs reports whether command-line arguments set the database DSN flag or its alias.
+func databaseDsnInArgs(args []string) bool {
+	for _, arg := range args {
+		name, _, _ := strings.Cut(strings.TrimLeft(arg, "-"), "=")
+
+		if strings.HasPrefix(arg, "-") && (name == "database-dsn" || name == "dsn") {
+			return true
+		}
+	}
+
+	return false
 }
 
 // validateClusterOptionsUpdate validates the cluster-managed options of an update other than the database settings.

@@ -299,13 +299,23 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			status.Succeeded,
 		), clean.Log(nodeID))
 
-		// Optional persistence
+		// Optional persistence. Explicitly rotated credentials replace the password the node uses, so the
+		// command fails when the node will not use the new ones.
 		if ctx.Bool("write-config") {
-			if refused, err := persistRegisterResponse(conf, &resp); err != nil {
+			refused, err := persistRegisterResponse(conf, &resp)
+			rotated := ctx.Bool("rotate") && !resp.Database.Incomplete && (resp.Database.Password != "" || resp.Database.DSN != "")
+
+			switch {
+			case err != nil && rotated:
+				return cli.Exit(fmt.Errorf("the portal changed the database password, but the new credentials could not be saved (%s); save the node credentials shown above", clean.Error(err)), 1)
+			case err != nil:
 				return err
-			} else if refused && ctx.Bool("rotate") {
-				// Explicitly rotated credentials replace the password the node uses.
-				return cli.Exit(errors.New("the rotated database credentials could not be saved; save the node credentials shown above"), 1)
+			case rotated && refused:
+				return cli.Exit(errors.New("the portal changed the database password, but the new credentials could not be saved; save the node credentials shown above"), 1)
+			case rotated:
+				if override := conf.DatabaseDSNOverride(); override != "" {
+					return cli.Exit(fmt.Errorf("the portal changed the database password, but %s sets a database dsn that takes precedence over the saved credentials; set the node credentials shown above there", clean.Log(override)), 1)
+				}
 			}
 		}
 

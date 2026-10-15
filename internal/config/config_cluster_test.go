@@ -1566,3 +1566,38 @@ func dsnFlagContext(t *testing.T, dsnValue string) *cli.Context {
 
 	return ctx
 }
+
+func TestConfig_DatabaseDSNOverride(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "", (&Config{options: &Options{}}).DatabaseDSNOverride())
+	})
+	t.Run("Flag", func(t *testing.T) {
+		c := &Config{options: &Options{}, cliCtx: dsnFlagContext(t, "pp_user:pp_pw@tcp(db.local:3306)/pp_db")}
+		t.Setenv("PHOTOPRISM_DATABASE_DSN", "")
+		assert.Equal(t, "--database-dsn", c.DatabaseDSNOverride())
+	})
+	t.Run("EnvVar", func(t *testing.T) {
+		c := &Config{options: &Options{}, cliCtx: dsnFlagContext(t, "pp_user:pp_pw@tcp(db.local:3306)/pp_db")}
+		t.Setenv("PHOTOPRISM_DATABASE_DSN", "pp_user:pp_pw@tcp(db.local:3306)/pp_db")
+		assert.Equal(t, "PHOTOPRISM_DATABASE_DSN", c.DatabaseDSNOverride())
+	})
+	t.Run("EmptyValue", func(t *testing.T) {
+		// An empty DSN selects the separate settings, so it overrides nothing.
+		flags := flag.NewFlagSet("test", flag.ContinueOnError)
+		flags.String("database-dsn", "", "doc")
+		ctx := cli.NewContext(cli.NewApp(), flags, nil)
+		require.NoError(t, ctx.Set("database-dsn", ""))
+		require.True(t, ctx.IsSet("database-dsn"))
+		t.Setenv("PHOTOPRISM_DATABASE_DSN", "")
+		assert.Equal(t, "", (&Config{options: &Options{}, cliCtx: ctx}).DatabaseDSNOverride())
+	})
+}
+
+func TestDatabaseDsnInArgs(t *testing.T) {
+	for _, args := range [][]string{{"photoprism", "--database-dsn", "x"}, {"photoprism", "--dsn=x"}, {"photoprism", "-dsn", "x"}} {
+		assert.True(t, databaseDsnInArgs(args), "%v", args)
+	}
+	for _, args := range [][]string{{"photoprism"}, {"photoprism", "--database-name", "dsn"}, {"photoprism", "dsn"}, {"photoprism", "--dsn-file"}} {
+		assert.False(t, databaseDsnInArgs(args), "%v", args)
+	}
+}
