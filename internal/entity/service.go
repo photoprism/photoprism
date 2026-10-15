@@ -131,6 +131,7 @@ func (m *Service) ResetErrors(share, sync bool) error {
 // SaveForm saves the entity using form data and stores it in the database.
 func (m *Service) SaveForm(form form.Service) error {
 	db := Db()
+	stored, isNew := *m, isNewRecord(db, m)
 
 	// Copy model values from form.
 	if err := deepcopier.Copy(m).From(form); err != nil {
@@ -165,9 +166,14 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Remote names of files below the folders must fit their records, and downloaded file and folder names local
-	// file systems.
-	if len(m.SharePath) >= RemoteNameMaxLen || len(m.SyncPath) >= RemoteNameMaxLen ||
-		m.SyncDownload && fs.NameTooLong(m.SyncPath) {
+	// file systems. A stored folder is checked only when a save changes it or turns on what it is used for.
+	storedShare, storedSync := serviceFolder(stored.SharePath), serviceFolder(stored.SyncPath)
+	shareChanged := isNew || m.SharePath != storedShare || m.AccShare && !stored.AccShare
+	syncChanged := isNew || m.SyncPath != storedSync || m.AccSync && !stored.AccSync
+	downloadChanged := syncChanged || m.SyncDownload && !stored.SyncDownload
+
+	if shareChanged && len(m.SharePath) >= RemoteNameMaxLen || syncChanged && len(m.SyncPath) >= RemoteNameMaxLen ||
+		downloadChanged && m.SyncDownload && fs.NameTooLong(m.SyncPath) {
 		return ErrServiceFolderTooLong
 	}
 
@@ -191,7 +197,7 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Reset error counters if account already exists.
-	if !isNewRecord(Db(), m) {
+	if !isNew {
 		Log("service", "reset errors", m.ResetErrors(m.AccShare, m.AccSync))
 	}
 
@@ -208,6 +214,15 @@ func (m *Service) SaveForm(form form.Service) error {
 
 	// Save changes.
 	return db.Save(m).Error
+}
+
+// serviceFolder returns a stored share or sync folder as a save normalizes it, so an unchanged folder compares equal.
+func serviceFolder(s string) string {
+	if s = clean.StripControl(s); s == "" {
+		return "/"
+	}
+
+	return s
 }
 
 // SyncYamlEnabled reports whether YAML sidecar files are transferred, which is the default.

@@ -165,6 +165,16 @@ func TestService_SaveForm(t *testing.T) {
 	})
 }
 
+// storedService returns a service as currently stored in the database.
+func storedService(t *testing.T, id uint) *Service {
+	t.Helper()
+
+	m := &Service{}
+	require.NoError(t, Db().First(m, id).Error)
+
+	return m
+}
+
 func TestService_SaveFormFolderTooLong(t *testing.T) {
 	limit := strings.Repeat("/"+strings.Repeat("f", 200), 5) + "/" + strings.Repeat("g", 18)
 	require.Len(t, limit, RemoteNameMaxLen)
@@ -202,6 +212,94 @@ func TestService_SaveFormFolderTooLong(t *testing.T) {
 			}
 		})
 	}
+
+	// A stored folder that the rules refuse is checked only when a save changes it or turns on its use.
+	t.Run("StoredFolder", func(t *testing.T) {
+		newStored := func(t *testing.T) *Service {
+			model, err := AddService(form.Service{AccName: "Folder Stored " + t.Name(), AccURL: "test.com", AccType: "webdav",
+				AccShare: true, AccSync: true, SyncDownload: true})
+			require.NoError(t, err)
+			t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+			require.NoError(t, model.Updates(Values{"sync_path": longName, "share_path": limit}))
+			return storedService(t, model.ID)
+		}
+
+		for _, c := range []struct {
+			name   string
+			update func(f *form.Service)
+			err    bool
+		}{
+			{"SyncOff", func(f *form.Service) { f.AccSync = false }, false},
+			{"ShareOff", func(f *form.Service) { f.AccShare = false }, false},
+			{"Password", func(f *form.Service) { f.AccPass = "changed" }, false},
+			{"Name", func(f *form.Service) { f.AccName += " Renamed" }, false},
+			{"RetryLimit", func(f *form.Service) { f.RetryLimit = 5 }, false},
+			{"SyncPathChanged", func(f *form.Service) { f.SyncPath = longName + "x" }, true},
+			{"SharePathChanged", func(f *form.Service) { f.SharePath = limit + "x" }, true},
+			{"SharePathShortened", func(f *form.Service) { f.SharePath = "/share" }, false},
+		} {
+			t.Run(c.name, func(t *testing.T) {
+				stored := newStored(t)
+				frm, err := form.NewService(stored)
+				require.NoError(t, err)
+				c.update(&frm)
+
+				if err = stored.SaveForm(frm); c.err {
+					assert.ErrorIs(t, err, ErrServiceFolderTooLong)
+				} else {
+					assert.NoError(t, err)
+				}
+			})
+		}
+
+		// Turning on what a stored folder is used for checks it.
+		t.Run("DownloadOn", func(t *testing.T) {
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"sync_download": false, "share_path": "/"}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.SyncDownload = true
+			assert.ErrorIs(t, stored.SaveForm(frm), ErrServiceFolderTooLong)
+		})
+		t.Run("SyncOn", func(t *testing.T) {
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"acc_sync": false, "sync_download": false, "share_path": "/"}))
+			stored = storedService(t, stored.ID)
+			require.NoError(t, stored.Updates(Values{"sync_path": limit}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.AccSync = true
+			assert.ErrorIs(t, stored.SaveForm(frm), ErrServiceFolderTooLong)
+		})
+		t.Run("ControlCharacter", func(t *testing.T) {
+			// A folder stored with a control character compares equal to its cleaned form.
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"sync_path": longName + "\x01"}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.AccSync = false
+			assert.NoError(t, stored.SaveForm(frm))
+		})
+		t.Run("ShareOn", func(t *testing.T) {
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"acc_share": false}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.AccShare = true
+			assert.ErrorIs(t, stored.SaveForm(frm), ErrServiceFolderTooLong)
+		})
+	})
+}
+
+func TestServiceFolder(t *testing.T) {
+	assert.Equal(t, "/", serviceFolder(""))
+	assert.Equal(t, "/", serviceFolder("\x01"))
+	assert.Equal(t, "/photos", serviceFolder("/photos"))
+	assert.Equal(t, "/photos", serviceFolder("/pho\x00tos"))
 }
 
 func TestService_SyncYamlEnabled(t *testing.T) {

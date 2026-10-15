@@ -130,6 +130,27 @@ func TestUpdateService(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEqual(t, folder, m.SyncPath)
 	})
+	t.Run("StoredFolderTooLong", func(t *testing.T) {
+		// A save that leaves a stored folder unchanged is not refused because of it.
+		app, router, _ := NewApiTest()
+		UpdateService(router)
+		folder := strings.Repeat("/"+strings.Repeat("f", 200), 5) + "/" + strings.Repeat("g", 18)
+		m, err := query.AccountByID(clean.IdUint(id))
+		require.NoError(t, err)
+		prev := m.SyncPath
+		require.NoError(t, m.Updates(entity.Values{"sync_path": folder, "acc_sync": true}))
+		t.Cleanup(func() { _ = m.Updates(entity.Values{"sync_path": prev, "acc_sync": false}) })
+
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/services/"+id, `{"AccSync": false, "AccPass": "changed"}`)
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		m, err = query.AccountByID(clean.IdUint(id))
+		require.NoError(t, err)
+		assert.False(t, m.AccSync)
+		assert.Equal(t, folder, m.SyncPath)
+
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/services/"+id, fmt.Sprintf(`{"SyncPath": %q}`, folder+"x"))
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateService(router)
