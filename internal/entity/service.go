@@ -196,9 +196,10 @@ func (m *Service) SaveForm(form form.Service) error {
 		m.SyncInterval = 31536000 // One year max.
 	}
 
-	// Refresh after performing changes, and in any stage when the folder or a direction changed, also while sync is off.
+	// Refresh after performing changes, and in any stage when the folder or a direction changed, or raw and video
+	// files were turned on, also while sync is off.
 	if m.AccSync && m.SyncStatus == SyncStatusSynced || !isNew && (m.SyncPath != storedSync ||
-		m.SyncDownload != stored.SyncDownload || m.SyncUpload != stored.SyncUpload) {
+		m.SyncDownload != stored.SyncDownload || m.SyncUpload != stored.SyncUpload || m.SyncRaw && !stored.SyncRaw) {
 		m.SyncStatus = SyncStatusRefresh
 	}
 

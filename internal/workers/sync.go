@@ -221,12 +221,13 @@ func (w *Sync) Start() (err error) {
 			continue
 		}
 
-		// The status is written only while the stored status, folder and directions are those loaded, so a run
-		// never advances with settings saved meanwhile. Rows of earlier releases may hold NULL instead.
+		// The status is written only while the stored status, folder, directions and raw option are those loaded, so
+		// a run never advances with settings saved meanwhile. Rows of earlier releases may hold NULL instead.
 		if res := entity.Db().Model(&entity.Service{}).
 			Where("id = ? AND COALESCE(sync_status, '') = ?", a.ID, a.SyncStatus).
 			Where("(sync_path = ? OR sync_path IS NULL AND ? = '') AND COALESCE(sync_download, FALSE) = ? AND COALESCE(sync_upload, FALSE) = ?",
 				a.SyncPath, a.SyncPath, a.SyncDownload, a.SyncUpload).
+			Where("COALESCE(sync_raw, FALSE) = ?", a.SyncRaw).
 			UpdateColumns(entity.Values{"sync_status": syncStatus, "sync_date": syncDate}); res.Error != nil {
 			w.logAccountErr(res.Error, a)
 		} else if res.RowsAffected == 0 {

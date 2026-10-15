@@ -69,6 +69,14 @@ func TestSync_StartSettingsChanged(t *testing.T) {
 	download := func(m *entity.Service) { m.SyncDownload = true }
 	upload := func(m *entity.Service) { m.SyncUpload = true }
 
+	t.Run("RawOnDuringRefresh", func(t *testing.T) {
+		// Raw and video files turned on during a refresh are listed by the next refresh.
+		a, _ := newSavingAccount(t, entity.SyncStatusRefresh, download, func(f *form.Service) { f.SyncRaw = true })
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.True(t, stored.SyncRaw)
+		assert.Equal(t, entity.SyncStatusRefresh, stored.SyncStatus)
+	})
 	t.Run("PathChangedDuringRefresh", func(t *testing.T) {
 		a, _ := newSavingAccount(t, entity.SyncStatusRefresh, download, func(f *form.Service) { f.SyncPath = "/new" })
 		require.NoError(t, worker.Start())

@@ -225,7 +225,8 @@ func storedService(t *testing.T, id uint) *Service {
 }
 
 func TestService_SaveFormRefresh(t *testing.T) {
-	// A save that changes the folder or a direction refreshes the account in any stage; other changes keep it.
+	// A save that changes the folder or a direction, or turns on raw and video files, refreshes the account in any
+	// stage; other changes keep it.
 	for _, c := range []struct {
 		name    string
 		status  string
@@ -238,6 +239,7 @@ func TestService_SaveFormRefresh(t *testing.T) {
 		{"UploadOn", SyncStatusDownload, func(f *form.Service) { f.SyncDownload, f.SyncUpload = false, true }, true},
 		{"DownloadInterval", SyncStatusDownload, func(f *form.Service) { f.SyncInterval = 60 }, false},
 		{"UploadPassword", SyncStatusUpload, func(f *form.Service) { f.AccPass = "changed" }, false},
+		{"RawOn", SyncStatusDownload, func(f *form.Service) { f.SyncRaw = true }, true},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			model, err := AddService(form.Service{AccName: "Refresh " + c.name, AccURL: "test.com", AccType: "webdav",
@@ -258,6 +260,23 @@ func TestService_SaveFormRefresh(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestService_SaveFormRefreshRawKept(t *testing.T) {
+	// An account with raw and video files already on keeps its stage when other settings change.
+	model, err := AddService(form.Service{AccName: "Refresh Raw Kept", AccURL: "test.com", AccType: "webdav",
+		AccSync: true, SyncDownload: true, SyncRaw: true, SyncPath: "/old"})
+	require.NoError(t, err)
+	t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+
+	stored := storedService(t, model.ID)
+	require.True(t, stored.SyncRaw)
+	frm, err := form.NewService(stored)
+	require.NoError(t, err)
+	frm.SyncInterval = 60
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusDownload, storedService(t, model.ID).SyncStatus)
 }
 
 func TestService_SaveFormRefreshSyncOff(t *testing.T) {
@@ -283,6 +302,23 @@ func TestService_SaveFormRefreshSyncOff(t *testing.T) {
 	frm.AccSync, frm.SyncUpload = true, true
 	require.NoError(t, stored.SaveForm(frm))
 	assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+
+	// Turning raw and video files on while sync is off refreshes as well, and turning them off does not.
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload, "acc_sync": false}))
+	stored = storedService(t, model.ID)
+	frm, err = form.NewService(stored)
+	require.NoError(t, err)
+	frm.SyncRaw = true
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+	stored = storedService(t, model.ID)
+	frm, err = form.NewService(stored)
+	require.NoError(t, err)
+	frm.SyncRaw = false
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusDownload, storedService(t, model.ID).SyncStatus)
 }
 
 func TestService_SaveFormFolderTooLong(t *testing.T) {
