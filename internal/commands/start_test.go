@@ -1,9 +1,14 @@
 package commands
 
 import (
+	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/sirupsen/logrus"
@@ -102,5 +107,168 @@ func TestDaemonRunning(t *testing.T) {
 		_, _, err := daemonRunning(pidFile)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "must not be a symbolic link")
+	})
+}
+
+// TestWriteDaemonPid covers the daemon writing its process ID through the pid file it inherited as fd 4.
+func TestWriteDaemonPid(t *testing.T) {
+	// writePid runs the prologue as a daemon with the file as fd 4 and the context naming pidFile on its standard
+	// input, and returns its process ID and error.
+	writePid := func(t *testing.T, f *os.File, pidFile string) (int, string) {
+		null, err := os.Open(os.DevNull)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = null.Close() })
+
+		context, err := json.Marshal(daemonContext{PidFileName: pidFile})
+		require.NoError(t, err)
+
+		cmd, stdout := startHelperInput(t, "write-pid", []string{"_GO_DAEMON=1"}, bytes.NewReader(context), null, f)
+		line, err := stdout.ReadString('\n')
+		require.NoError(t, err)
+		require.NoError(t, cmd.Wait())
+
+		pidText, result, found := strings.Cut(strings.TrimPrefix(strings.TrimSpace(line), "pid="), " err=")
+		require.True(t, found, line)
+		pid, err := strconv.Atoi(pidText)
+		require.NoError(t, err, line)
+
+		return pid, result
+	}
+
+	t.Run("Overwrites", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		_, err := f.WriteString("123456789012")
+		require.NoError(t, err)
+		pid, result := writePid(t, f, pidFile)
+		assert.Equal(t, "<nil>", result)
+		assertPidFileContent(t, pidFile, strconv.Itoa(pid))
+	})
+	t.Run("OtherFile", func(t *testing.T) {
+		held := unlockedPidFile(t, 1234)
+		f, err := os.OpenFile(held, os.O_RDWR, 0) //nolint:gosec // Opens a test file.
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = f.Close() })
+		_, result := writePid(t, f, unlockedPidFile(t, 5678))
+		assert.Contains(t, result, "is not the file the daemon inherited")
+		assertPidFileContent(t, held, "1234")
+	})
+	t.Run("Symlink", func(t *testing.T) {
+		target, f := lockedPidFile(t)
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Symlink(target, pidFile))
+		_, result := writePid(t, f, pidFile)
+		assert.Contains(t, result, "must not be a symbolic link")
+		assertPidFileContent(t, target, "")
+	})
+	t.Run("NotRegular", func(t *testing.T) {
+		null, err := os.OpenFile(os.DevNull, os.O_RDWR, 0)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = null.Close() })
+		_, result := writePid(t, null, os.DevNull)
+		assert.Contains(t, result, "not a regular file")
+	})
+	t.Run("HardLink", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		other := filepath.Join(t.TempDir(), "other.pid")
+		require.NoError(t, os.WriteFile(pidFile, []byte("1234"), 0o600))
+		require.NoError(t, os.Link(pidFile, other))
+		_, result := writePid(t, f, pidFile)
+		assert.Contains(t, result, "more than one link")
+		assertPidFileContent(t, other, "1234")
+	})
+	t.Run("ReadOnly", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		f, err := os.Open(pidFile) //nolint:gosec // Opens a test file.
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = f.Close() })
+		_, result := writePid(t, f, pidFile)
+		assert.Contains(t, result, "failed to write process id")
+		assertPidFileContent(t, pidFile, "1234")
+	})
+	t.Run("NoContext", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		null, err := os.Open(os.DevNull)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = null.Close() })
+		cmd, stdout := startHelperInput(t, "write-pid", []string{"_GO_DAEMON=1"}, null, null, f)
+		line, err := stdout.ReadString('\n')
+		require.NoError(t, err)
+		require.NoError(t, cmd.Wait())
+		assert.Contains(t, line, "standard input is not a pipe")
+		assertPidFileContent(t, pidFile, "")
+	})
+}
+
+// TestDaemonPidFileName covers reading the pid file name from the context go-daemon passes on standard input.
+func TestDaemonPidFileName(t *testing.T) {
+	// pipe returns the read end of a pipe that delivers the content.
+	pipe := func(t *testing.T, content string) *os.File {
+		r, w, err := os.Pipe()
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = r.Close() })
+		_, err = w.WriteString(content)
+		require.NoError(t, err)
+		require.NoError(t, w.Close())
+		return r
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		name, err := daemonPidFileName(pipe(t, `{"PidFileName":"/photoprism/storage/photoprism.pid","Env":["A=1"]}`+"\n"))
+		require.NoError(t, err)
+		assert.Equal(t, "/photoprism/storage/photoprism.pid", name)
+	})
+	t.Run("NoName", func(t *testing.T) {
+		_, err := daemonPidFileName(pipe(t, `{"LogFileName":"photoprism.log"}`))
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "no pid file name")
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		_, err := daemonPidFileName(pipe(t, "not json"))
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid daemon context")
+	})
+	t.Run("Oversized", func(t *testing.T) {
+		r, w, err := os.Pipe()
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = r.Close() })
+		go func() {
+			_, _ = w.WriteString(`{"Env":["` + strings.Repeat("x", daemonContextMaxSize) + `"],"PidFileName":"/tmp/x.pid"}`)
+			_ = w.Close()
+		}()
+		_, err = daemonPidFileName(r)
+		assert.Error(t, err)
+	})
+	t.Run("NotPipe", func(t *testing.T) {
+		f, err := os.Open(unlockedPidFile(t, 1234))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = f.Close() })
+		_, err = daemonPidFileName(f)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "not a pipe")
+	})
+}
+
+// TestWaitForDaemonPid covers waiting for a daemon to write its process ID to the pid file.
+func TestWaitForDaemonPid(t *testing.T) {
+	t.Run("Written", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.WriteFile(pidFile, nil, 0o600))
+		time.AfterFunc(200*time.Millisecond, func() { _ = os.WriteFile(pidFile, []byte(strconv.Itoa(cmd.Process.Pid)), 0o600) })
+		require.NoError(t, waitForDaemonPid(pidFile, cmd.Process, 10*time.Second))
+	})
+	t.Run("Exited", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "0.2")
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		err := waitForDaemonPid(pidFile, cmd.Process, 10*time.Second)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "exited before writing its process id")
+	})
+	t.Run("OtherPid", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile := unlockedPidFile(t, cmd.Process.Pid+1)
+		err := waitForDaemonPid(pidFile, cmd.Process, 300*time.Millisecond)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "has not written its process id")
 	})
 }

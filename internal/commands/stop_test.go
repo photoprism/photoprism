@@ -122,9 +122,12 @@ func runStopHelper(mode string) int {
 	case "prologue":
 		// Holds a file as fd 4 without having been started by go-daemon.
 		before, _ := unix.FcntlInt(daemonPidFileFd, unix.F_GETFD, 0)
-		startPrologue()
+		err := startPrologue()
 		after, _ := unix.FcntlInt(daemonPidFileFd, unix.F_GETFD, 0)
-		fmt.Printf("cloexec-before=%t cloexec-after=%t\n", before&unix.FD_CLOEXEC != 0, after&unix.FD_CLOEXEC != 0)
+		fmt.Printf("cloexec-before=%t cloexec-after=%t err=%v\n", before&unix.FD_CLOEXEC != 0, after&unix.FD_CLOEXEC != 0, err)
+	case "write-pid":
+		// Runs the prologue as a daemon that inherited fd 4, see TestWriteDaemonPid.
+		fmt.Printf("pid=%d err=%v\n", os.Getpid(), startPrologue())
 	case "reborn":
 		return runRebornHelper(os.Getenv(stopHelperPidEnv), os.Getenv(stopHelperLogEnv))
 	case "stop-self":
@@ -158,21 +161,27 @@ func runRebornHelper(pidFile, logFile string) int {
 			return 1
 		}
 
+		// Waits for the daemon to write its process ID, like the start command.
+		if err = waitForDaemonPid(pidFile, child, 30*time.Second); err != nil {
+			fmt.Println(err)
+			return 1
+		}
+
 		fmt.Println(child.Pid)
 		return 0
 	}
 
-	// Reads what go-daemon writes to stdin, so that its parent does not fail writing to a closed pipe.
-	_, _ = io.Copy(io.Discard, os.Stdin)
-
 	fdInfo, fdErr := os.Stat(fmt.Sprintf("/proc/self/fd/%d", daemonPidFileFd))
 	pidInfo, pidErr := os.Stat(pidFile) //nolint:gosec // Path from the test.
 	before, _ := unix.FcntlInt(daemonPidFileFd, unix.F_GETFD, 0)
-	startPrologue()
+	prologueErr := startPrologue()
 	after, _ := unix.FcntlInt(daemonPidFileFd, unix.F_GETFD, 0)
 
-	fmt.Printf("pid-file=%t cloexec-before=%t cloexec-after=%t\n", fdErr == nil && pidErr == nil && os.SameFile(fdInfo, pidInfo),
-		before&unix.FD_CLOEXEC != 0, after&unix.FD_CLOEXEC != 0)
+	fmt.Printf("pid-file=%t cloexec-before=%t cloexec-after=%t err=%v\n", fdErr == nil && pidErr == nil && os.SameFile(fdInfo, pidInfo),
+		before&unix.FD_CLOEXEC != 0, after&unix.FD_CLOEXEC != 0, prologueErr)
+
+	// Keeps running like a daemon until the test stops it.
+	time.Sleep(time.Minute)
 
 	return 0
 }
@@ -271,10 +280,18 @@ func startDaemon(t *testing.T, seconds string) (*exec.Cmd, string) {
 // with the additional environment variables and the files to hold open.
 func startHelper(t *testing.T, mode string, env []string, files ...*os.File) (*exec.Cmd, *bufio.Reader) {
 	t.Helper()
+
+	return startHelperInput(t, mode, env, nil, files...)
+}
+
+// startHelperInput runs the test binary as a stand-in like startHelper and passes it stdin as its standard input.
+func startHelperInput(t *testing.T, mode string, env []string, stdin io.Reader, files ...*os.File) (*exec.Cmd, *bufio.Reader) {
+	t.Helper()
 	requireProc(t)
 
 	cmd := exec.Command(os.Args[0], "-test.run=^$") //nolint:gosec // Runs this test binary as a stand-in.
 	cmd.Args[0] = "photoprism-test"
+	cmd.Stdin = stdin
 	cmd.Env = append(append(os.Environ(), stopHelperEnv+"="+mode), env...)
 	cmd.ExtraFiles = files
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
@@ -709,7 +726,9 @@ func TestStartPrologue(t *testing.T) {
 			return readErr == nil && strings.Contains(report, "pid-file=") && strings.HasSuffix(report, "\n")
 		}, 10*time.Second, 20*time.Millisecond)
 
-		assert.Contains(t, report, "pid-file=true cloexec-before=false cloexec-after=true")
+		assert.Contains(t, report, "pid-file=true cloexec-before=false cloexec-after=true err=<nil>")
+		// The daemon wrote its own process ID, which the parent waited for.
+		assertPidFileContent(t, pidFile, strconv.Itoa(pid))
 	})
 	t.Run("NotRebornFd", func(t *testing.T) {
 		pidFile, f := lockedPidFile(t)
@@ -722,13 +741,14 @@ func TestStartPrologue(t *testing.T) {
 		line, err := stdout.ReadString('\n')
 		require.NoError(t, err)
 		require.NoError(t, cmd.Wait())
-		assert.Equal(t, "cloexec-before=false cloexec-after=false\n", line, pidFile)
+		assert.Equal(t, "cloexec-before=false cloexec-after=false err=<nil>\n", line, pidFile)
+		assertPidFileContent(t, pidFile, "")
 	})
 	t.Run("NotReborn", func(t *testing.T) {
 		require.False(t, daemon.WasReborn())
 		prev := event.SetAuditRecorder(func(event.Data) {})
 		t.Cleanup(func() { event.SetAuditRecorder(prev) })
-		startPrologue()
+		require.NoError(t, startPrologue())
 		assert.False(t, event.AuditRecordedSync())
 	})
 }

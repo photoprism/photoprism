@@ -2,7 +2,10 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"strconv"
@@ -52,15 +55,119 @@ var startFlags = []cli.Flag{
 	},
 }
 
-// startPrologue prepares the process before the start command loads its config.
-func startPrologue() {
-	// Programs the daemon runs do not inherit its pid file.
+// daemonPidTimeout limits how long the start command waits for the daemon to write its process ID.
+const daemonPidTimeout = time.Minute
+
+// daemonContextMaxSize limits how much of the context go-daemon passes on its standard input is read.
+const daemonContextMaxSize = 4 << 20
+
+// daemonContext holds the part of the context that go-daemon passes to the daemon on its standard input.
+type daemonContext struct {
+	PidFileName string
+}
+
+// startPrologue prepares the process before the start command loads its config. A daemon that cannot write its
+// process ID to the pid file returns an error, so that it exits.
+func startPrologue() error {
 	if daemon.WasReborn() {
+		// Programs the daemon runs do not inherit its pid file.
 		closePidFileOnExec()
+
+		pidFile, err := daemonPidFileName(os.Stdin)
+
+		if err == nil {
+			err = writeDaemonPid(pidFile)
+		}
+
+		if err != nil {
+			return fmt.Errorf("daemon: failed to write process id to pid file (%w)", err)
+		}
 	}
 
 	// Leave audit persistence to the event hub, so that requests do not wait for audit writes.
 	event.SetAuditRecorder(nil)
+
+	return nil
+}
+
+// daemonPidFileName returns the pid file name from the context that go-daemon passes to the daemon through its
+// standard input, which must be a pipe.
+func daemonPidFileName(stdin *os.File) (string, error) {
+	var st syscall.Stat_t
+
+	if err := syscall.Fstat(int(stdin.Fd()), &st); err != nil { //nolint:gosec // File descriptors fit into an int.
+		return "", err
+	} else if st.Mode&syscall.S_IFMT != syscall.S_IFIFO {
+		return "", errors.New("standard input is not a pipe")
+	}
+
+	var dctx daemonContext
+
+	if err := json.NewDecoder(io.LimitReader(stdin, daemonContextMaxSize)).Decode(&dctx); err != nil {
+		return "", fmt.Errorf("invalid daemon context (%w)", err)
+	} else if dctx.PidFileName == "" {
+		return "", errors.New("daemon context has no pid file name")
+	}
+
+	return dctx.PidFileName, nil
+}
+
+// writeDaemonPid writes the process ID to the pid file the daemon inherited and syncs it. The inherited file must
+// be the regular file at pidFile, which must not be a symbolic link, and have a single name.
+func writeDaemonPid(pidFile string) error {
+	var st syscall.Stat_t
+
+	if err := syscall.Fstat(daemonPidFileFd, &st); err != nil {
+		return err
+	} else if st.Mode&syscall.S_IFMT != syscall.S_IFREG {
+		return errors.New("pid file is not a regular file")
+	} else if st.Nlink > 1 {
+		return errPidFileLinked
+	}
+
+	if link, err := os.Lstat(pidFile); err != nil { //nolint:gosec // Path from the daemon context.
+		return err
+	} else if link.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("pid file %s must not be a symbolic link", clean.Log(pidFile))
+	} else if current, ok := link.Sys().(*syscall.Stat_t); !ok || current.Dev != st.Dev || current.Ino != st.Ino {
+		return fmt.Errorf("pid file %s is not the file the daemon inherited", clean.Log(pidFile))
+	}
+
+	pid := []byte(strconv.Itoa(os.Getpid()))
+
+	if _, err := syscall.Seek(daemonPidFileFd, 0, io.SeekStart); err != nil {
+		return err
+	}
+
+	if n, err := syscall.Write(daemonPidFileFd, pid); err != nil {
+		return err
+	} else if n < len(pid) {
+		return io.ErrShortWrite
+	}
+
+	if err := syscall.Ftruncate(daemonPidFileFd, int64(len(pid))); err != nil {
+		return err
+	}
+
+	return syscall.Fsync(daemonPidFileFd)
+}
+
+// waitForDaemonPid waits until the daemon has written its process ID to the pid file, and fails if it exits first
+// or the timeout passes.
+func waitForDaemonPid(pidFile string, child *os.Process, timeout time.Duration) error {
+	deadline := time.Now().Add(timeout)
+
+	for {
+		if pid, _, err := readPidFile(pidFile); err == nil && pid == child.Pid {
+			return nil
+		} else if !processRunning(child) {
+			return fmt.Errorf("daemon %d exited before writing its process id to %s", child.Pid, clean.Log(pidFile))
+		} else if time.Now().After(deadline) {
+			return fmt.Errorf("daemon %d has not written its process id to %s within %s and may still be starting", child.Pid, clean.Log(pidFile), timeout)
+		}
+
+		time.Sleep(20 * time.Millisecond)
+	}
 }
 
 // daemonRunning reports whether a daemon holds the pid file, and refuses a pid file that is a symbolic link.
@@ -74,7 +181,9 @@ func daemonRunning(pidFile string) (pid int, running bool, err error) {
 
 // startAction starts the Web server and initializes the daemon.
 func startAction(ctx *cli.Context) error {
-	startPrologue()
+	if err := startPrologue(); err != nil {
+		return err
+	}
 
 	conf, err := InitConfig(ctx)
 
@@ -140,9 +249,9 @@ func startAction(ctx *cli.Context) error {
 		}
 
 		if child != nil {
-			if writeErr := fs.WriteString(conf.PIDFilename(), strconv.Itoa(child.Pid)); writeErr != nil {
-				log.Error(writeErr)
-				return fmt.Errorf("failed writing process id to %s", clean.Log(conf.PIDFilename()))
+			// The daemon writes its process ID through the pid file it inherited.
+			if waitErr := waitForDaemonPid(conf.PIDFilename(), child, daemonPidTimeout); waitErr != nil {
+				return fmt.Errorf("%w, see %s", waitErr, clean.Log(conf.LogFilename()))
 			}
 
 			log.Infof("daemon started with process id %v\n", child.Pid)
