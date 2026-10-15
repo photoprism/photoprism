@@ -733,6 +733,137 @@ func TestStartPrologue(t *testing.T) {
 	})
 }
 
+// TestPidFileHolders covers listing the processes that have a pid file open.
+func TestPidFileHolders(t *testing.T) {
+	t.Run("Holder", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "/opt/photoprism/bin/photoprism-test", "30", f)
+		require.NoError(t, f.Close())
+		holders, _ := pidFileHolders(fileInfo(t, pidFile))
+		assert.Equal(t, []string{fmt.Sprintf("process %d (photoprism-test)", cmd.Process.Pid)}, holders)
+		assert.True(t, strings.HasPrefix(pidFileHolderHint(pidFile, fileInfo(t, pidFile)), ", and is open in "+holders[0]))
+	})
+	t.Run("Self", func(t *testing.T) {
+		requireProc(t)
+		pidFile, _ := lockedPidFile(t)
+		holders, _ := pidFileHolders(fileInfo(t, pidFile))
+		assert.Empty(t, holders)
+	})
+	t.Run("ReplacedFile", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		replacePidFile(t, pidFile, "")
+		holders, _ := pidFileHolders(fileInfo(t, pidFile))
+		assert.NotContains(t, strings.Join(holders, ","), strconv.Itoa(cmd.Process.Pid))
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		requireProc(t)
+		defaultReadFdLink := readFdLink
+		readFdLink = func(name string) (string, error) {
+			return "", &os.PathError{Op: "readlink", Path: name, Err: syscall.EACCES}
+		}
+		t.Cleanup(func() { readFdLink = defaultReadFdLink })
+		pidFile, f := lockedPidFile(t)
+		startProcess(t, "photoprism-test", "30", f)
+		holders, complete := pidFileHolders(fileInfo(t, pidFile))
+		assert.Empty(t, holders)
+		assert.False(t, complete)
+		assert.Equal(t, "; run fuser -v "+pidFile+" or lsof "+pidFile+" to find the process that holds it", pidFileHolderHint(pidFile, fileInfo(t, pidFile)))
+	})
+	t.Run("PartlyReadable", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "photoprism-test", "30", f)
+		other := startProcess(t, "sleep", "30")
+		require.NoError(t, f.Close())
+
+		// The open files of one other process cannot be read.
+		defaultReadFdLink := readFdLink
+		otherFd := filepath.Join("/proc", strconv.Itoa(other.Process.Pid), "fd")
+		readFdLink = func(name string) (string, error) {
+			if strings.HasPrefix(name, otherFd+"/") {
+				return "", &os.PathError{Op: "readlink", Path: name, Err: syscall.EACCES}
+			}
+			return defaultReadFdLink(name)
+		}
+		t.Cleanup(func() { readFdLink = defaultReadFdLink })
+
+		hint := pidFileHolderHint(pidFile, fileInfo(t, pidFile))
+		assert.Contains(t, hint, fmt.Sprintf("is open in process %d (photoprism-test)", cmd.Process.Pid))
+		assert.Contains(t, hint, "; run fuser -v "+pidFile)
+	})
+	t.Run("NameSanitized", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "photoprism-test\x1b[31m", "30", f)
+		require.NoError(t, f.Close())
+		hint := pidFileHolderHint(pidFile, fileInfo(t, pidFile))
+		assert.Contains(t, hint, strconv.Itoa(cmd.Process.Pid))
+		assert.NotContains(t, hint, "\x1b")
+	})
+}
+
+// TestPidFileHolderHint covers naming the processes that have a pid file open within the time limit.
+func TestPidFileHolderHint(t *testing.T) {
+	t.Run("Timeout", func(t *testing.T) {
+		defaultScan, defaultTimeout := scanHolders, holderScanTimeout
+		release, done := make(chan struct{}), make(chan struct{})
+		scanHolders = func(os.FileInfo) ([]string, bool) {
+			defer close(done)
+			<-release
+			return []string{"process 1 (late)"}, true
+		}
+		holderScanTimeout = 100 * time.Millisecond
+		t.Cleanup(func() {
+			close(release)
+			<-done
+			scanHolders, holderScanTimeout = defaultScan, defaultTimeout
+		})
+
+		pidFile, _ := lockedPidFile(t)
+		start := time.Now()
+		assert.Equal(t, "; run fuser -v "+pidFile+" or lsof "+pidFile+" to find the process that holds it", pidFileHolderHint(pidFile, fileInfo(t, pidFile)))
+		assert.Less(t, time.Since(start), 5*time.Second)
+	})
+}
+
+// TestFuserHint covers suggesting fuser with a pid file name only where it is safe to paste in a shell.
+func TestFuserHint(t *testing.T) {
+	t.Run("SafePath", func(t *testing.T) {
+		assert.Equal(t, "run fuser -v /photoprism/storage/photoprism-1.pid or lsof /photoprism/storage/photoprism-1.pid to find the process that holds it", fuserHint("/photoprism/storage/photoprism-1.pid"))
+	})
+	t.Run("UnsafePath", func(t *testing.T) {
+		for _, pidFile := range []string{"/tmp/a b.pid", "/tmp/$(id).pid", "/tmp/a;b.pid", "/tmp/a'b.pid", "-rf.pid", "/tmp/ä.pid", "/tmp/a*b", ""} {
+			assert.Equal(t, "run fuser -v or lsof on the pid file to find the process that holds it", fuserHint(pidFile), pidFile)
+		}
+	})
+}
+
+// TestProcessOpenFile covers detecting an open file, optionally including the file it replaced.
+func TestProcessOpenFile(t *testing.T) {
+	t.Run("Current", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		open, known := processOpenFile(cmd.Process.Pid, fileInfo(t, pidFile), "")
+		assert.True(t, known)
+		assert.True(t, open)
+	})
+	t.Run("ReplacedNotMatched", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		open, known := processOpenFile(cmd.Process.Pid, fileInfo(t, pidFile), "")
+		assert.True(t, known)
+		assert.False(t, open)
+	})
+	t.Run("ReplacedMatched", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		open, known := processOpenFile(cmd.Process.Pid, fileInfo(t, pidFile), replacedFileName(pidFile))
+		assert.True(t, known)
+		assert.True(t, open)
+	})
+	t.Run("NoInfo", func(t *testing.T) {
+		_, known := processOpenFile(os.Getpid(), nil, "")
+		assert.False(t, known)
+	})
+}
+
 // TestPidFileLocked covers detecting whether another process holds the lock on a pid file.
 func TestPidFileLocked(t *testing.T) {
 	t.Run("Held", func(t *testing.T) {
@@ -1133,11 +1264,24 @@ func TestStopDaemon(t *testing.T) {
 		assert.True(t, os.SameFile(info, fileInfo(t, pidFile)))
 	})
 	t.Run("EmptyLocked", func(t *testing.T) {
+		// The test process holds the lock, which is not listed as another process.
 		pidFile, _ := lockedPidFile(t)
 		err := stopDaemon(pidFile, time.Second)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "contains no process ID")
+		assert.Contains(t, err.Error(), "run fuser -v "+pidFile)
 		assertEmptyPidFile(t, pidFile)
+	})
+	t.Run("EmptyLockedHolder", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "photoprism-test", "30", f)
+		require.NoError(t, f.Close())
+		err := stopDaemon(pidFile, time.Second)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "contains no process ID")
+		assert.Contains(t, err.Error(), fmt.Sprintf("is open in process %d (photoprism-test)", cmd.Process.Pid))
+		assertEmptyPidFile(t, pidFile)
+		assert.True(t, processRunning(cmd.Process))
 	})
 	t.Run("Timeout", func(t *testing.T) {
 		pidFile, f := lockedPidFile(t)

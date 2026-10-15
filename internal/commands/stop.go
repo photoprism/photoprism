@@ -46,6 +46,12 @@ var probePidFileLock = func(f *os.File) error {
 	return syscall.Flock(int(f.Fd()), syscall.LOCK_SH|syscall.LOCK_NB) //nolint:gosec // File descriptors fit into an int.
 }
 
+// holderScanTimeout limits how long the stop command looks for the processes that have a pid file open.
+var holderScanTimeout = 2 * time.Second
+
+// scanHolders lists the processes that have a pid file open, see pidFileHolders.
+var scanHolders = pidFileHolders
+
 // lockStalePidFile takes the lock on a pid file before clearStalePidFile empties it.
 var lockStalePidFile = func(lock *daemon.LockFile) error { return lock.Lock() }
 
@@ -110,7 +116,7 @@ func stopDaemon(pidFile string, timeout time.Duration) error {
 	case errors.Is(err, errPidFileEmpty):
 		// A daemon that is starting holds the file before its process ID is written.
 		if held, _ := pidFileLocked(pidFile, info); held {
-			return fmt.Errorf("pid file %s is locked, but contains no process ID", clean.Log(pidFile))
+			return fmt.Errorf("pid file %s is locked, but contains no process ID%s", clean.Log(pidFile), pidFileHolderHint(pidFile, info))
 		}
 
 		log.Info("daemon is not running")
@@ -274,11 +280,15 @@ func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) (bool, 
 // open that the pid file replaced. known is false if its open files cannot be listed or read, e.g. by root without the
 // capability to inspect processes of other users.
 func processHasFile(pid int, pidFile string, info os.FileInfo) (open, known bool) {
+	return processOpenFile(pid, info, replacedFileName(pidFile))
+}
+
+// processOpenFile reports whether the process has the file described by info open under its name, or, unless
+// replaced is empty, the file that /proc lists as replaced. known is false if its open files cannot be read.
+func processOpenFile(pid int, info os.FileInfo, replaced string) (open, known bool) {
 	if info == nil {
 		return false, false
 	}
-
-	replaced := replacedFileName(pidFile)
 
 	dir := filepath.Join("/proc", strconv.Itoa(pid), "fd")
 	entries, err := os.ReadDir(dir)
@@ -350,6 +360,95 @@ func fileReplaced(open, info os.FileInfo) bool {
 	current, currentOk := info.Sys().(*syscall.Stat_t)
 
 	return ok && currentOk && st.Nlink == 0 && st.Dev == current.Dev
+}
+
+// pidFileHolders returns the other processes that have the pid file described by info open, as "process <pid>
+// (<name>)", and whether the open files of all processes could be read.
+func pidFileHolders(info os.FileInfo) (holders []string, complete bool) {
+	entries, err := os.ReadDir("/proc")
+
+	if err != nil {
+		return nil, false
+	}
+
+	complete = true
+
+	for _, entry := range entries {
+		pid, convErr := strconv.Atoi(entry.Name())
+
+		if convErr != nil || pid <= 0 || pid == os.Getpid() {
+			continue
+		}
+
+		// Only the current file can hold the lock, so a file it replaced is not matched.
+		open, known := processOpenFile(pid, info, "")
+
+		if !known {
+			complete = false
+			continue
+		} else if !open {
+			continue
+		}
+
+		cmdline, _ := procCmdline(pid)
+
+		if name, _, _ := bytes.Cut(cmdline, []byte{0}); len(name) > 0 {
+			holders = append(holders, fmt.Sprintf("process %d (%s)", pid, clean.Log(filepath.Base(string(name)))))
+		} else {
+			holders = append(holders, fmt.Sprintf("process %d", pid))
+		}
+	}
+
+	return holders, complete
+}
+
+// pidFileHolderHint names the processes that have the pid file open, and how to find the process that holds it
+// where not all of them can be listed within holderScanTimeout.
+func pidFileHolderHint(pidFile string, info os.FileInfo) string {
+	type scan struct {
+		holders  []string
+		complete bool
+	}
+
+	result := make(chan scan, 1)
+	scanFunc := scanHolders
+
+	go func() {
+		holders, complete := scanFunc(info)
+		result <- scan{holders, complete}
+	}()
+
+	var found scan
+
+	select {
+	case found = <-result:
+	case <-time.After(holderScanTimeout):
+	}
+
+	hint := ""
+
+	if len(found.holders) > 0 {
+		hint = ", and is open in " + strings.Join(found.holders, ", ")
+	}
+
+	if !found.complete || len(found.holders) == 0 {
+		hint += "; " + fuserHint(pidFile)
+	}
+
+	return hint
+}
+
+// fuserHint suggests running fuser or lsof on the pid file, naming it only if it is safe to paste in a shell.
+func fuserHint(pidFile string) string {
+	safe := func(r rune) bool {
+		return r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' || r >= '0' && r <= '9' || strings.ContainsRune("._/-", r)
+	}
+
+	if pidFile != "" && !strings.HasPrefix(pidFile, "-") && strings.IndexFunc(pidFile, func(r rune) bool { return !safe(r) }) < 0 {
+		return fmt.Sprintf("run fuser -v %[1]s or lsof %[1]s to find the process that holds it", pidFile)
+	}
+
+	return "run fuser -v or lsof on the pid file to find the process that holds it"
 }
 
 // pidFileLocked reports whether another process holds the exclusive lock on the pid file described by info, as a
