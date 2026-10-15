@@ -205,6 +205,12 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			return
 		}
 
+		// Related files whose names are not portable are not indexed.
+		related = portableRelated(related, mf, func(f *MediaFile) {
+			o.FaceRegeneration.addSkipped(f.FileName())
+			warnUnportable("index", entity.RootOriginals, f.RootRelName(), "index it")
+		})
+
 		// Main media file is required to proceed.
 		if related.Main == nil {
 			return
@@ -306,6 +312,25 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 					return result
 				}
 
+				// A folder whose name is not portable is skipped with its contents, and not recorded as walked,
+				// so the folder a symbolic link points to is still indexed under its own name.
+				if p := unportablePath(relName); p != "" && !errors.Is(result, filepath.SkipDir) {
+					delete(found, fileName)
+
+					if isSymlink {
+						if resolved, evalErr := filepath.EvalSymlinks(fileName); evalErr == nil {
+							delete(found, resolved)
+						}
+					}
+
+					if !wasFound {
+						o.FaceRegeneration.addSkippedDir(fileName)
+					}
+
+					warnUnportable("index", entity.RootOriginals, p, "index it")
+					return filepath.SkipDir
+				}
+
 				if !errors.Is(result, filepath.SkipDir) {
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.ModTime(fileName))
 
@@ -320,6 +345,16 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				})
 
 				return result
+			}
+
+			// A file whose name is not portable is skipped.
+			if !clean.PortableName(filepath.Base(fileName)) {
+				if !wasFound {
+					o.FaceRegeneration.addSkipped(fileName)
+				}
+
+				warnUnportable("index", entity.RootOriginals, relName, "index it")
+				return nil
 			}
 
 			found[fileName] = fs.Found

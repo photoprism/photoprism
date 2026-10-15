@@ -186,7 +186,7 @@ func (w *Faces) resetAndReindex(detector string, index *Index, all bool, path st
 	}
 
 	if unreached.SkippedFiles > 0 {
-		log.Warnf("faces: skipped %s in %s the index is set to skip, such as ignored or hidden files and disabled RAW files",
+		log.Warnf("faces: skipped %s in %s the index is set to skip, such as ignored or hidden files, disabled RAW files and unsupported names",
 			english.Plural(unreached.SkippedMarkers, "marker", "markers"), english.Plural(unreached.SkippedFiles, "file", "files"))
 	}
 
