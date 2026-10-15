@@ -67,9 +67,11 @@ func PhotoIds(frm form.SearchPhotos) (files PhotoResults, count int, err error) 
 func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string, shared bool) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
-	// Parse query string and filter.
+	// Parse query string and filter. A search that can match nothing still runs the scope check below.
+	noMatch := false
+
 	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
-		return PhotoResults{}, 0, nil
+		noMatch = true
 	} else if err != nil {
 		log.Debugf("search: %s", err)
 		return PhotoResults{}, 0, ErrBadRequest
@@ -144,15 +146,19 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		} else if album.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = FALSE AND photos_albums.album_uid = ?", album.AlbumUID)
-		} else if formErr := form.Unserialize(&frm, album.AlbumFilter); formErr != nil {
+		} else if filterNoMatch, formErr := form.UnserializeFilter(&frm, album.AlbumFilter); formErr != nil {
 			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(album.AlbumFilter))
 			return PhotoResults{}, 0, ErrBadFilter
 		} else {
 			frm.Filter = album.AlbumFilter
 
-			// Folder albums show the pictures in their folder, compared by exact path.
+			// Folder albums show the pictures in their folder, compared by exact path. Other albums whose
+			// stored filter can match nothing, and folder albums without a path whose filter names a folder
+			// that is not valid UTF-8, show no pictures.
 			if p := folderAlbumPath(album); p != "" {
 				frm.Path = p
+			} else if filterNoMatch || album.AlbumType == entity.AlbumFolder && clean.SearchBindable(album.AlbumFilter) != album.AlbumFilter {
+				noMatch = true
 			}
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
 		}
@@ -213,6 +219,10 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if frm.Scope == "" {
 			s = ScopePhotosForSession(s, sess)
 		}
+	}
+
+	if noMatch {
+		return PhotoResults{}, 0, nil
 	}
 
 	// Set sort order.

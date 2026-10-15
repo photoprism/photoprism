@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type TestForm struct {
@@ -130,5 +131,27 @@ func TestUnserializeUnsignedValidation(t *testing.T) {
 		if err := Unserialize(form, "diff:4294967296"); err == nil {
 			t.Fatal("expected overflow error for uint32 field")
 		}
+	})
+}
+
+func TestUnserializeFilter(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		f := &SearchPhotos{}
+		noMatch, err := UnserializeFilter(f, "label:cat public:true")
+		require.NoError(t, err)
+		assert.False(t, noMatch)
+		assert.Equal(t, "cat", f.Label)
+		assert.True(t, f.Public)
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		for _, q := range []string{"\xff", "\x00 ", "label:\xff", "public:true path:\"\xc4\xd6\"", "before:\xff"} {
+			noMatch, err := UnserializeFilter(&SearchPhotos{}, q)
+			require.NoError(t, err, "%q", q)
+			assert.True(t, noMatch, "%q", q)
+		}
+	})
+	t.Run("InvalidFilter", func(t *testing.T) {
+		_, err := UnserializeFilter(&SearchPhotos{}, "foo:bar")
+		assert.Error(t, err)
 	})
 }

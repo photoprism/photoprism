@@ -203,6 +203,24 @@ func TestUserPhotos_ScopeAuthorization(t *testing.T) {
 		_, _, err := UserPhotos(form.SearchPhotos{Scope: album}, scopeSession("guest"))
 		assert.Equal(t, ErrForbidden, err)
 	})
+	t.Run("GuestNonSharedScopeNoMatchForbidden", func(t *testing.T) {
+		// A value that can match nothing does not skip the check.
+		for _, f := range []form.SearchPhotos{{Scope: album, Query: "\xff "}, {Scope: album, Path: "\xff*"}, {Scope: album, Query: "before:\xff"}} {
+			_, _, err := UserPhotos(f, scopeSession("guest"))
+			assert.Equal(t, ErrForbidden, err, "%+v", f)
+		}
+
+		_, err := UserPhotosGeo(form.SearchPhotosGeo{Scope: album, Query: "\xff "}, scopeSession("guest"))
+		assert.Equal(t, ErrForbidden, err)
+	})
+	t.Run("VisitorSharedScopeNoMatch", func(t *testing.T) {
+		visitor := &entity.Session{}
+		visitor.SetData(&entity.SessionData{Shares: entity.UIDs{album}})
+		photos, _, err := UserPhotos(form.SearchPhotos{Scope: album, Query: "\xff "}, visitor)
+		assert.NoError(t, err)
+		assert.NotNil(t, photos)
+		assert.Empty(t, photos)
+	})
 	t.Run("VisitorSharedScopeAllowed", func(t *testing.T) {
 		// Unregistered visitor whose session carries a share for the scoped album.
 		visitor := &entity.Session{}

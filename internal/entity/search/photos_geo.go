@@ -40,9 +40,11 @@ func PhotosGeo(frm form.SearchPhotosGeo) (results GeoResults, err error) {
 func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoResults, err error) {
 	start := time.Now()
 
-	// Parse query string and filter.
+	// Parse query string and filter. A search that can match nothing still runs the scope check below.
+	noMatch := false
+
 	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
-		return GeoResults{}, nil
+		noMatch = true
 	} else if err != nil {
 		log.Debugf("search: %s", err)
 		return GeoResults{}, ErrBadRequest
@@ -124,15 +126,19 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		} else if album.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = FALSE AND photos_albums.album_uid = ?", album.AlbumUID)
-		} else if formErr := form.Unserialize(&frm, album.AlbumFilter); formErr != nil {
+		} else if filterNoMatch, formErr := form.UnserializeFilter(&frm, album.AlbumFilter); formErr != nil {
 			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(album.AlbumFilter))
 			return GeoResults{}, ErrBadFilter
 		} else {
 			frm.Filter = album.AlbumFilter
 
-			// Folder albums show the pictures in their folder, compared by exact path.
+			// Folder albums show the pictures in their folder, compared by exact path. Other albums whose
+			// stored filter can match nothing, and folder albums without a path whose filter names a folder
+			// that is not valid UTF-8, show no pictures.
 			if p := folderAlbumPath(album); p != "" {
 				frm.Path = p
+			} else if filterNoMatch || album.AlbumType == entity.AlbumFolder && clean.SearchBindable(album.AlbumFilter) != album.AlbumFilter {
+				noMatch = true
 			}
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
 		}
@@ -184,6 +190,10 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR "+clean.SqlPrefixCond(entity.DbDialect(), true, "photos.photo_path"), args...)
 			}
 		}
+	}
+
+	if noMatch {
+		return GeoResults{}, nil
 	}
 
 	// Sort results by time, unless the "Near" filter is used together with "nearLat" and "nearLng".

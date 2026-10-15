@@ -83,6 +83,15 @@ func Unserialize(f SearchForm, q string) (result error) {
 	return result
 }
 
+// UnserializeFilter parses a stored filter like Unserialize, and reports whether removing NUL bytes and invalid
+// UTF-8 left nothing usable of the filter or of one of its values, so it can match nothing.
+func UnserializeFilter(f SearchForm, q string) (noMatch bool, err error) {
+	_, usable := clean.SearchFilter(q)
+	noMatch, err = unserialize(f, q)
+
+	return noMatch || !usable, err
+}
+
 // unserialize parses a query string into the provided SearchForm, skipping NUL bytes and invalid UTF-8, and
 // reports whether the value of a string filter consisted only of those, so it can match nothing.
 func unserialize(f SearchForm, q string) (noMatch bool, result error) {
