@@ -372,7 +372,8 @@ func ShareName(taken, title string, seq int, fileType string) string {
 		title = strings.TrimRight(title[:cut], "-")
 	}
 
-	return taken + "-" + title + suffix
+	// A file type that leaves no room for a title is cut as well, so the name always fits.
+	return fs.ClipName(taken+"-"+title+suffix, fs.NameMaxLen)
 }
 
 // Changed reports whether the given size or modification time differs from the stored metadata.

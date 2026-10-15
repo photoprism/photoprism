@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -143,6 +144,10 @@ func TestResponseWait(t *testing.T) {
 	assert.Equal(t, 5*time.Minute, responseWait(1000))
 	assert.Equal(t, 5*time.Minute+4*time.Second, responseWait(4<<20))
 	assert.Equal(t, 5*time.Minute+4096*time.Second, responseWait(4<<30))
+
+	// A size whose wait would overflow a duration gets the longest one.
+	stallSettings(t, 5*time.Minute, 1<<20, 1)
+	assert.Greater(t, responseWait(math.MaxInt64), time.Duration(math.MaxInt64)-time.Second)
 }
 
 func TestClient_DownloadStall(t *testing.T) {

@@ -1278,4 +1278,10 @@ func TestShareName(t *testing.T) {
 		assert.LessOrEqual(t, len(name), fs.NameMaxLen)
 		assert.True(t, utf8.ValidString(name))
 	})
+	t.Run("LongFileType", func(t *testing.T) {
+		// A file type that leaves no room for a title is cut as well.
+		name := ShareName("20190115-000000", "Berlin", 3, strings.Repeat("x", fs.NameMaxLen))
+		assert.Len(t, name, fs.NameMaxLen)
+		assert.True(t, strings.HasPrefix(name, "20190115-000000- (3)."), name)
+	})
 }

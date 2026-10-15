@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"math"
 	"sync/atomic"
 	"time"
 )
@@ -35,7 +36,10 @@ func responseWait(size int64) time.Duration {
 		return transferStallTimeout
 	}
 
-	return transferStallTimeout + time.Duration(size/transferResponseRate)*time.Second
+	// The wait is bounded so that the duration cannot overflow.
+	secs := min(size/transferResponseRate, int64((math.MaxInt64-transferStallTimeout)/time.Second))
+
+	return transferStallTimeout + time.Duration(secs)*time.Second
 }
 
 // stallWatch cancels its context when too little data moves within its timeout.
