@@ -254,7 +254,7 @@ describe("photo export dialog", () => {
     expect(Photo.prototype.find).not.toHaveBeenCalled();
     expect(wrapper.emitted("close")).toHaveLength(1);
   });
-  it("freezes selections, reports handoffs, supplies manual links, and stays open after completion", async () => {
+  it("freezes selections, keeps completion quiet, supplies manual links, and stays open", async () => {
     await open();
     vi.useFakeTimers();
     await wrapper.setData({ selected: ["original:fs6sg6bqhhin0098", "thumbnail:fs6sg6bqhhin0097:fit_720", "original:fs6sg6bqhhin0097"] });
@@ -268,7 +268,10 @@ describe("photo export dialog", () => {
     await running;
     expect(wrapper.vm.complete).toBe(true);
     expect(wrapper.emitted("close")).toBeUndefined();
-    expect(wrapper.text()).toContain("3 / 3 Sent to Browser");
+    expect(wrapper.text()).not.toContain("Sent to Browser");
+    expect(wrapper.text()).not.toContain("Files have been sent to your browser.");
+    expect(wrapper.findAll(".export-output-status > span")).toHaveLength(0);
+    expect(wrapper.find(".export-error").exists()).toBe(false);
     expect(wrapper.find(".action-export").exists()).toBe(false);
     expect(wrapper.find(".action-close").text()).toBe("Close");
     expect(wrapper.findAll(".export-output a")).toHaveLength(3);
@@ -288,7 +291,7 @@ describe("photo export dialog", () => {
     await wrapper.find(".export-output a").trigger("click");
     await flushPromises();
     expect(wrapper.vm.transferError).toBe(true);
-    expect(wrapper.text()).toContain("Export stopped. Please try again.");
+    expect(wrapper.find('.export-error[role="alert"]').text()).toBe("Export stopped. Please try again.");
     expect(wrapper.vm.handed).toBe(1);
     expect(wrapper.find(".action-close").text()).toBe("Close");
   });

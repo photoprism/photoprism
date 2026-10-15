@@ -1,6 +1,6 @@
 ## View Helper Guidelines
 
-**Last Updated:** October 14, 2026
+**Last Updated:** October 15, 2026
 
 ### Export Helpers
 
@@ -110,9 +110,10 @@ JPEG sizes share one labeled Resized JPEGs section under each original. Compatib
 Video choices show a small Needs Conversion note until their output is prepared.
 This does not change queue order. Selection counts appear in chips and the Export
 button; no selection disables Export. Confirmation opens all selected groups.
-Output rows show status, indeterminate preparation, individual Retry, and manual
-links only for ready/handed files. A short footer reports browser handoffs and
-changes the primary action to Close after completion. The browser's
+Output rows show Pending, Preparing, Ready, or Failed status, indeterminate
+preparation, individual Retry, and manual links for ready/handed files. The footer
+reports errors; the primary action changes to Close after all selected files are
+handed to the browser. The browser's
 actual disk-save completion is not observable. Cancel, Escape, a changed photo,
 Lightbox closure, and permission loss invalidate client work and late replies.
 Started server work may finish publishing its sidecar. Reopening restores initial

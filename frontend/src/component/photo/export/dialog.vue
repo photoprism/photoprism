@@ -64,7 +64,7 @@
                     </v-checkbox>
                     <div v-if="outputs[option.id]" class="export-output text-caption" role="status">
                       <div class="export-output-status">
-                        <span :class="{ 'text-error': states[option.id]?.state === 'error' }">{{ stateLabel(option) }}</span>
+                        <span v-if="stateLabel(option)" :class="{ 'text-error': states[option.id]?.state === 'error' }">{{ stateLabel(option) }}</span>
                         <a v-if="['ready', 'handed'].includes(states[option.id]?.state)" :href="downloadUrl(outputs[option.id])" :download="outputs[option.id].filename" :aria-label="$gettext('Download') + ' ' + outputs[option.id].filename" class="export-download" @click.prevent="downloadOne(outputs[option.id])">{{ $gettext("Download") }}</a>
                         <v-btn v-if="states[option.id]?.state === 'error'" class="action-retry-output" variant="text" color="primary" size="small" :aria-label="$gettext('Retry') + ' ' + outputs[option.id].filename" @click="retry(outputs[option.id])">{{ $gettext("Retry") }}</v-btn>
                       </div>
@@ -79,10 +79,8 @@
         </template>
       </v-card-text>
       <v-divider></v-divider>
-      <div v-if="started" class="export-summary text-body-2" role="status" aria-live="polite">
-        {{ $gettext("%{n} / %{total} Sent to Browser", { n: handed, total: downloads.length }) }}
-        <p v-if="complete" class="text-caption mt-1">{{ $gettext("Files have been sent to your browser. Check its downloads for progress.") }}</p>
-        <p v-if="transferError" class="text-error text-caption mt-1">{{ $gettext("Export stopped. Please try again.") }}</p>
+      <div v-if="transferError" class="export-error text-body-2 text-error" role="alert">
+        {{ $gettext("Export stopped. Please try again.") }}
       </div>
       <v-card-actions class="action-buttons export-actions">
         <v-btn v-if="!complete && !$vuetify.display.smAndDown" variant="flat" color="button" height="44" class="action-close action-cancel" @click.stop="close">{{ $gettext("Cancel") }}</v-btn>
@@ -331,7 +329,7 @@ export default {
     },
     // stateLabel translates the current output state.
     stateLabel(item) {
-      const labels = { waiting: this.$gettext("Pending"), preparing: this.$gettext("Preparing"), ready: this.$gettext("Ready"), handed: this.$gettext("Sent to Browser"), error: this.$gettext("Failed") };
+      const labels = { waiting: this.$gettext("Pending"), preparing: this.$gettext("Preparing"), ready: this.$gettext("Ready"), error: this.$gettext("Failed") };
       return labels[this.states[item.id]?.state] || "";
     },
     // retry restarts one failed output with current authorization and tokens.
@@ -401,7 +399,7 @@ export default {
 }
 
 .export-title,
-.export-summary,
+.export-error,
 .export-actions {
   flex-shrink: 0;
 }
@@ -500,11 +498,15 @@ export default {
   gap: 12px;
 }
 
+.export-download {
+  margin-inline-start: auto;
+}
+
 .export-hint {
   margin: 16px 0 0;
 }
 
-.export-summary {
+.export-error {
   padding: 16px 24px 0;
 }
 
@@ -532,7 +534,7 @@ export default {
     padding: 0 12px 12px;
   }
 
-  .export-summary {
+  .export-error {
     padding: 16px 16px 0;
   }
 }
