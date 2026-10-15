@@ -158,6 +158,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	defer mutex.IndexWorker.Stop()
+	defer flushUnportable("index")
 
 	jobs := make(chan IndexJob)
 
@@ -541,6 +542,18 @@ func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult)
 
 	if err != nil {
 		result.Err = err
+		result.Status = IndexFailed
+
+		return result
+	}
+
+	// Related files whose names are not portable are not indexed with the file.
+	if related = PortableSiblings(related, file, func(f *MediaFile) {
+		if p := unportablePath(filepath.ToSlash(f.RootRelName())); p != "" {
+			warnUnportable("index", entity.RootOriginals, p, "index it")
+		}
+	}); related.Main == nil {
+		result.Err = fmt.Errorf("index: found no supported main file for %s", clean.Log(file.RootRelName()))
 		result.Status = IndexFailed
 
 		return result

@@ -149,6 +149,10 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 		defer mutex.IndexWorker.Stop()
 	}
 
+	// The import workers check related files at their destination in originals as the index does.
+	defer flushUnportable("index")
+	defer flushUnportable("import")
+
 	jobs := make(chan ImportJob)
 
 	// Start a fixed number of goroutines to import files.

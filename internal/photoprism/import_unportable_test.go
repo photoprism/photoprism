@@ -27,7 +27,7 @@ func TestImport_StartUnportableNames(t *testing.T) {
 	src := t.TempDir()
 
 	portable := []string{"ok.jpg", "03 - Março/#1 & Friends [2020] (copy) Tom's.jpg", "pair.jpg", "stack.jpg", "日本\u3000旅行/😀.jpg"}
-	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "~home.jpg", "pair.x|y.xmp", "stack.x|y.gif"}
+	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "~home.jpg", "a$b.jpg", "pair.x|y.xmp", "stack.x|y.gif"}
 
 	for i, name := range portable {
 		writeTestJpeg(t, filepath.Join(src, name), 200+i)
@@ -70,7 +70,7 @@ func TestImport_StartUnportableNames(t *testing.T) {
 
 	warnings := loggedMessages(hook, logrus.WarnLevel)
 
-	for _, rel := range []string{"a|b.jpg", "x:y.jpg", "dir*", "caf\xe9.jpg", "~home.jpg", "pair.x|y.xmp", "stack.x|y.gif"} {
+	for _, rel := range []string{"a|b.jpg", "x:y.jpg", "dir*", "caf\xe9.jpg", "~home.jpg", "a$b.jpg", "pair.x|y.xmp", "stack.x|y.gif"} {
 		count := 0
 
 		for _, msg := range warnings {
@@ -81,6 +81,60 @@ func TestImport_StartUnportableNames(t *testing.T) {
 
 		assert.Equal(t, 1, count, "%q in %v", rel, warnings)
 	}
+}
+
+// TestImport_StartUnportableLimit checks that names above the warning limit are counted in one warning per run.
+func TestImport_StartUnportableLimit(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	saved := unportablePaths
+	t.Cleanup(func() { unportablePaths = saved })
+	unportablePaths = &warnedPaths{limit: 1}
+
+	cfg := config.TestConfig()
+	src := t.TempDir()
+
+	for i, name := range []string{"a|b.jpg", "c|d.jpg", "e$f.jpg"} {
+		writeTestJpeg(t, filepath.Join(src, name), 260+i)
+	}
+
+	hook := captureLog(t)
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+	imp.Start(ImportOptionsMove(src, ""))
+	imp.Start(ImportOptionsMove(src, ""))
+
+	listed, counted := 0, 0
+
+	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
+		switch {
+		case strings.HasPrefix(msg, "import: skipped") && strings.HasSuffix(msg, "rename it to import it"):
+			listed++
+		case strings.HasPrefix(msg, "import: skipped 2 more names"):
+			counted++
+		}
+	}
+
+	assert.Equal(t, 1, listed)
+	assert.Equal(t, 2, counted)
+
+	// Names the import workers count for the index are reported by the same run.
+	warnUnportable("index", entity.RootOriginals, "import-limit/x|y.jpg", "index it")
+	hook.Reset()
+	imp.Start(ImportOptionsMove(t.TempDir(), ""))
+
+	indexed := 0
+
+	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
+		if strings.HasPrefix(msg, "index: skipped 1 more name ") {
+			indexed++
+		}
+	}
+
+	assert.Equal(t, 1, indexed)
 }
 
 // TestImport_StartUnportableFolder checks the names of folders below the import folder and of folders symbolic links point to.

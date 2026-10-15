@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -200,4 +201,64 @@ func TestConvert_StartAvcMetadata(t *testing.T) {
 		return nil
 	})
 	assert.Empty(t, transcoded)
+}
+
+// TestConvert_StartUnportable checks that files and folders whose names are not portable are not converted.
+func TestConvert_StartUnportable(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	c := config.NewMinimalTestConfig(t.TempDir())
+	oldCfg := Config()
+	SetConfig(c)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	webp, err := os.ReadFile("testdata/norway-kjetil-moe.webp")
+	require.NoError(t, err)
+
+	names := []string{"ok.webp", "real/in.webp", "x:y.webp", "a$b.webp", "dir$/in.webp"}
+
+	for _, name := range names {
+		fileName := filepath.Join(c.OriginalsPath(), filepath.FromSlash(name))
+		require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+		require.NoError(t, os.WriteFile(fileName, webp, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+	}
+
+	// A symbolic link whose name is not portable does not keep its target from being converted.
+	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "real"), filepath.Join(c.OriginalsPath(), "link$")))
+
+	// Two of the four skipped names are reported on their own, the others in one warning.
+	saved := unportablePaths
+	t.Cleanup(func() { unportablePaths = saved })
+	unportablePaths = &warnedPaths{limit: 2}
+
+	hook := captureLog(t)
+	require.NoError(t, NewConvert(c).Start(c.OriginalsPath(), nil, false))
+
+	// converted reports whether a preview of an original exists.
+	converted := func(name string) bool {
+		return fs.FileExists(filepath.Join(c.SidecarPath(), filepath.FromSlash(name)+".jpg"))
+	}
+
+	assert.True(t, converted("ok.webp"))
+	assert.True(t, converted("real/in.webp"))
+
+	for _, name := range []string{"x:y.webp", "a$b.webp", "dir$/in.webp"} {
+		assert.False(t, converted(name), name)
+	}
+
+	listed, counted := 0, 0
+
+	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
+		switch {
+		case strings.HasPrefix(msg, "convert: skipped") && strings.HasSuffix(msg, "rename it to convert it"):
+			listed++
+		case strings.HasPrefix(msg, "convert: skipped 2 more names"):
+			counted++
+		}
+	}
+
+	assert.Equal(t, 2, listed)
+	assert.Equal(t, 1, counted)
 }

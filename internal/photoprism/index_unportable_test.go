@@ -97,7 +97,7 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 	cleanupIndexed(t, dir)
 
 	portable := []string{"ok.jpg", "03 - Março/#1 & Friends [2020] (copy) Tom's 😀.jpg", "日本\u3000旅行/Screenshot 10.00.00\u202fAM.jpg"}
-	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "~home.jpg"}
+	skipped := []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "caf\xe9.jpg", "~home.jpg", "$HOME.jpg"}
 
 	for i, name := range append(append([]string{}, portable...), skipped...) {
 		writeTestJpeg(t, filepath.Join(root, name), i+1)
@@ -297,4 +297,98 @@ func TestIndex_StartUnportablePath(t *testing.T) {
 	}
 
 	assert.Equal(t, 1, count)
+}
+
+// TestIndex_StartUnportableLimit checks that names above the warning limit are counted in one warning per run.
+func TestIndex_StartUnportableLimit(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	saved := unportablePaths
+	t.Cleanup(func() { unportablePaths = saved })
+	unportablePaths = &warnedPaths{limit: 1}
+
+	cfg := config.TestConfig()
+	dir := "unportable-limit-" + rnd.Base36(8)
+	root := filepath.Join(cfg.OriginalsPath(), dir)
+	t.Cleanup(func() { _ = os.RemoveAll(root) })
+	cleanupIndexed(t, dir)
+
+	for i, name := range []string{"a|b.jpg", "c|d.jpg", "e$f.jpg"} {
+		writeTestJpeg(t, filepath.Join(root, name), i+80)
+	}
+
+	hook := captureLog(t)
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	opt := NewIndexOptions(dir, false, false, false, false, true, cfg)
+
+	ind.Start(opt)
+	ind.Start(opt)
+
+	listed, counted := 0, 0
+
+	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
+		switch {
+		case strings.HasPrefix(msg, "index: skipped") && strings.HasSuffix(msg, "rename it to index it"):
+			listed++
+		case strings.HasPrefix(msg, "index: skipped 2 more names"):
+			counted++
+		}
+	}
+
+	assert.Equal(t, 1, listed)
+	assert.Equal(t, 2, counted)
+}
+
+// TestIndex_FileNameUnportable checks that reindexing a single file leaves related files whose names are not
+// portable out, but not the file itself.
+func TestIndex_FileNameUnportable(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := config.TestConfig()
+	dir := "unportable-single-" + rnd.Base36(8)
+	root := filepath.Join(cfg.OriginalsPath(), dir)
+	t.Cleanup(func() { _ = os.RemoveAll(root) })
+	cleanupIndexed(t, dir)
+
+	writeTestJpeg(t, filepath.Join(root, "IMG.jpg"), 90)
+	writeTestGif(t, filepath.Join(root, "IMG.x|y.gif"))
+	writeTestJpeg(t, filepath.Join(root, "c$d.jpg"), 91)
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+
+	result := ind.FileName(filepath.Join(root, "IMG.jpg"), IndexOptionsSingle(cfg))
+	require.NoError(t, result.Err)
+	assert.True(t, indexedFile(t, dir+"/IMG.jpg"))
+	assert.False(t, indexedFile(t, dir+"/IMG.x|y.gif"))
+
+	// A file that is reindexed on its own is indexed whatever its name.
+	result = ind.FileName(filepath.Join(root, "c$d.jpg"), IndexOptionsSingle(cfg))
+	require.NoError(t, result.Err)
+	assert.True(t, indexedFile(t, dir+"/c$d.jpg"))
+
+	// So is a file in a folder whose name is not portable, but not the other files in that folder.
+	writeTestJpeg(t, filepath.Join(root, "f$g", "L.jpg"), 92)
+	writeTestJpeg(t, filepath.Join(root, "f$g", "L.b.jpg"), 93)
+
+	result = ind.FileName(filepath.Join(root, "f$g", "L.jpg"), IndexOptionsSingle(cfg))
+	require.NoError(t, result.Err)
+	assert.True(t, indexedFile(t, dir+"/f$g/L.jpg"))
+	assert.False(t, indexedFile(t, dir+"/f$g/L.b.jpg"))
+
+	// Reindexing fails if no file is left that can be the main file.
+	disableRaw := cfg.Options().DisableRaw
+	t.Cleanup(func() { cfg.Options().DisableRaw = disableRaw })
+	cfg.Options().DisableRaw = true
+
+	require.NoError(t, os.WriteFile(filepath.Join(root, "R.cr2"), []byte("raw"), fs.ModeFile))
+	writeTestJpeg(t, filepath.Join(root, "R.x|y.jpg"), 94)
+
+	result = ind.FileName(filepath.Join(root, "R.cr2"), IndexOptionsSingle(cfg))
+	assert.Error(t, result.Err)
+	assert.Equal(t, IndexFailed, result.Status)
+	assert.False(t, indexedFile(t, dir+"/R.x|y.jpg"))
 }
