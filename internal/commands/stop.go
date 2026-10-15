@@ -76,7 +76,7 @@ var errPidFileEmpty = errors.New("pid file is empty")
 // errPidFileInvalid indicates a pid file whose content is not a valid process ID.
 var errPidFileInvalid = errors.New("does not contain a valid process ID")
 
-// errPidFileLinked indicates a pid file with more than one name, which stop keeps.
+// errPidFileLinked indicates a pid file with more than one name, which stop keeps and the daemon does not write.
 var errPidFileLinked = errors.New("pid file has more than one link")
 
 // closePidFileOnExec marks the pid file the daemon inherited as close-on-exec, so that programs it runs do not inherit it.
@@ -106,7 +106,8 @@ func stopAction(ctx *cli.Context) error {
 }
 
 // stopDaemon sends the daemon that holds the pid file a SIGTERM, waits until it has exited, and empties the file.
-// A pid file that no running daemon holds is out of date and emptied instead.
+// A pid file that no running daemon holds is out of date and emptied instead. If the process that holds it cannot
+// be confirmed, it returns an error and keeps the file.
 func stopDaemon(pidFile string, timeout time.Duration) error {
 	log.Infof("looking for pid in %s", clean.Log(pidFile))
 
@@ -403,7 +404,7 @@ func pidFileHolders(info os.FileInfo) (holders []string, complete bool) {
 }
 
 // pidFileHolderHint names the processes that have the pid file open, and how to find the process that holds it
-// where not all of them can be listed within holderScanTimeout.
+// where none was found or not all could be listed within holderScanTimeout.
 func pidFileHolderHint(pidFile string, info os.FileInfo) string {
 	type scan struct {
 		holders  []string
@@ -560,8 +561,8 @@ func processRunning(p *os.Process) bool {
 }
 
 // daemonCandidate reports whether the process matches the pid file as the daemon would: it runs as the owner of the
-// file, which has a single name and is not writable by its group or others, leads its own session, and started
-// before the file was last written. Without /proc, these cannot be read, so any process is accepted.
+// file, which has a single name and is not writable by its group or others, leads its own session, and started no
+// later than the file was last written (startTimeTolerance). Without /proc, any process is accepted.
 func daemonCandidate(pid int, info os.FileInfo) bool {
 	if info == nil {
 		return false
