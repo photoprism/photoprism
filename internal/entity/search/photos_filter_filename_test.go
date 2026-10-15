@@ -869,6 +869,10 @@ func TestPhotosQueryFilename(t *testing.T) {
 			t.Fatal(err)
 		}
 		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "2000/02/photo46.jpg", parsed.Filename)
+
 		expected, _, err := Photos(form.SearchPhotos{Query: "filename:2000/02/photo46.jpg", Merged: true})
 		require.NoError(t, err)
 		assert.Equal(t, len(expected), len(photos))
@@ -885,6 +889,10 @@ func TestPhotosQueryFilename(t *testing.T) {
 			t.Fatal(err)
 		}
 		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "2000/02/photo47.jpg", parsed.Filename)
+
 		expected, _, err := Photos(form.SearchPhotos{Query: "filename:2000/02/photo47.jpg", Merged: true})
 		require.NoError(t, err)
 		assert.Equal(t, len(expected), len(photos))
@@ -901,6 +909,10 @@ func TestPhotosQueryFilename(t *testing.T) {
 			t.Fatal(err)
 		}
 		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "2000/02/photo48.jpg", parsed.Filename)
+
 		expected, _, err := Photos(form.SearchPhotos{Query: "filename:2000/02/photo48.jpg", Merged: true})
 		require.NoError(t, err)
 		assert.Equal(t, len(expected), len(photos))

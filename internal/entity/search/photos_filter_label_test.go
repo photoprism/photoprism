@@ -575,6 +575,10 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		require.NoError(t, err)
 		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "king", parsed.Label)
+
 		expected, _, err := Photos(form.SearchPhotos{Query: "label:king", Merged: true})
 		require.NoError(t, err)
 		assert.Equal(t, len(expected), len(photos))
@@ -589,6 +593,10 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		require.NoError(t, err)
 		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "salmon", parsed.Label)
+
 		expected, _, err := Photos(form.SearchPhotos{Query: "label:salmon", Merged: true})
 		require.NoError(t, err)
 		assert.Equal(t, len(expected), len(photos))
@@ -603,6 +611,10 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		require.NoError(t, err)
 		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "ladder", parsed.Label)
+
 		expected, _, err := Photos(form.SearchPhotos{Query: "label:ladder", Merged: true})
 		require.NoError(t, err)
 		assert.Equal(t, len(expected), len(photos))
