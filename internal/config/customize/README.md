@@ -1,6 +1,6 @@
 ## PhotoPrism — Customize Package
 
-**Last Updated:** June 9, 2026
+**Last Updated:** October 9, 2026
 
 ### Overview
 
@@ -8,7 +8,8 @@ The `customize` package defines user-facing configuration defaults for PhotoPris
 
 ### Feature Defaults
 
-- Feature flags live in `FeatureSettings` and are initialized via the new `DefaultFeatures` variable.  
+- Feature flags live in `FeatureSettings` and are initialized via `DefaultFeatures`.
+- `Export` is enabled by default and can be disabled with `PHOTOPRISM_DISABLE_FEATURES=export`. Missing YAML fields retain that startup default; explicit `Export: false` and `Export: true` values survive save/load. Export is independent of Download and its content filters.
 - `NewFeatures()` returns a copy of `DefaultFeatures`, letting callers mutate per-request or per-user state without modifying the shared defaults.
 
 ### Environment Overrides
@@ -19,7 +20,7 @@ The `customize` package defines user-facing configuration defaults for PhotoPris
 
 ### Per-Role & Per-Scope Gating
 
-- `Settings.ApplyACL(rules, role)` and `Settings.ApplyScope(scope)` return a per-session copy of the feature flags, switching off features the session may not use. A flag is enabled only when both the global default and the relevant permission/scope allow it.
+- `Settings.ApplyACL(rules, role)` and `Settings.ApplyScope(scope)` filter selected feature flags for each session. Export retains its configured value; the frontend's `canExport(config)` additionally requires `files.access_all` or `files.full_access`. Existing API authorization is unchanged.
 - The `Account` and `AppPasswords` flags require permission (and scope) to update the password (`ResourcePassword`/`ActionUpdate`), so a share-token visitor without an account does not see the account or app-password affordances.
 - This per-session gating shapes only the client config the Web UI reads; server-side enforcement of disabled app passwords uses the global `AppPasswords` flag via `Config.DisableAppPasswords()`.
 

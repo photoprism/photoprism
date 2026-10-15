@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 // transportRelease supplies a barrier that is also released if a test assertion stops the caller.
@@ -200,6 +201,7 @@ func TestTransportRequest_Matches(t *testing.T) {
 	a := transportRequest{source: path, info: first}
 	assert.True(t, a.matches(transportRequest{source: path, info: again}))
 	assert.False(t, a.matches(transportRequest{source: path}))
+	assert.False(t, a.matches(transportRequest{source: path, info: again, exact: true}))
 	require.NoError(t, os.WriteFile(path, []byte("different size"), fs.ModeFile))
 	changed, err := os.Stat(path)
 	require.NoError(t, err)
@@ -216,4 +218,24 @@ func TestTransportRequest_Matches(t *testing.T) {
 	changed, err = os.Stat(path)
 	require.NoError(t, err)
 	assert.False(t, a.matches(transportRequest{source: path, info: changed}))
+}
+
+// TestTransportGroup_StartProjected retains explicit metadata for all callers sharing completion.
+func TestTransportGroup_StartProjected(t *testing.T) {
+	var group transportGroup
+	release := transportRelease(t)
+	run := func() (string, projection.Type, error) {
+		<-release
+		return "capture.avc", projection.Equirectangular, nil
+	}
+	first := group.startProjected("target", transportRequest{}, run)
+	second := group.startProjected("target", transportRequest{}, run)
+	require.Same(t, first, second)
+	close(release)
+	for _, call := range []*transportCall{first, second} {
+		name, err := awaitTransport(t, call)
+		require.NoError(t, err)
+		assert.Equal(t, "capture.avc", name)
+		assert.Equal(t, projection.Equirectangular, call.projection)
+	}
 }

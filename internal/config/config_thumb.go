@@ -75,6 +75,15 @@ func (c *Config) ThumbUncached() bool {
 	return c.options.ThumbUncached
 }
 
+// ThumbSizeLimit returns the effective thumbnail serving limit in pixels.
+func (c *Config) ThumbSizeLimit() int {
+	if c.ThumbUncached() {
+		return c.ThumbSizeUncached()
+	}
+
+	return c.ThumbSizePrecached()
+}
+
 // ThumbSizePrecached returns the pre-cached thumbnail size limit in pixels (720-15360).
 func (c *Config) ThumbSizePrecached() int {
 	size := c.options.ThumbSize

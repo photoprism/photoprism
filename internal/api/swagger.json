@@ -951,6 +951,9 @@
                 "estimates": {
                     "type": "boolean"
                 },
+                "export": {
+                    "type": "boolean"
+                },
                 "favorites": {
                     "type": "boolean"
                 },
@@ -4000,6 +4003,52 @@
                 "ResizeCenterCrop",
                 "ResizePad"
             ]
+        },
+        "photoprism.ExportOutput": {
+            "properties": {
+                "bytes": {
+                    "type": "integer"
+                },
+                "codec": {
+                    "type": "string"
+                },
+                "format": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "preparable": {
+                    "type": "boolean"
+                },
+                "ready": {
+                    "type": "boolean"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "photoprism.ExportProbe": {
+            "properties": {
+                "appleKey": {
+                    "type": "string"
+                },
+                "avc": {
+                    "$ref": "#/definitions/photoprism.ExportOutput"
+                },
+                "codec": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "number"
+                },
+                "videoPart": {
+                    "$ref": "#/definitions/photoprism.ExportOutput"
+                }
+            },
+            "type": "object"
         },
         "places.Location": {
             "properties": {
@@ -8092,6 +8141,23 @@
                         "in": "path",
                         "name": "file",
                         "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "download naming convention",
+                        "enum": [
+                            "file",
+                            "share",
+                            "original"
+                        ],
+                        "in": "query",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "description": "attachment filename for hash downloads; sanitized and forced to the source extension",
+                        "in": "query",
+                        "name": "filename",
                         "type": "string"
                     }
                 ],
@@ -13209,6 +13275,29 @@
                         "name": "size",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "description": "return the thumbnail as an attachment when nonempty",
+                        "in": "query",
+                        "name": "download",
+                        "type": "string"
+                    },
+                    {
+                        "description": "download naming convention",
+                        "enum": [
+                            "file",
+                            "share",
+                            "original"
+                        ],
+                        "in": "query",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "description": "attachment filename; sanitized and forced to .jpg without changing the thumbnail cache",
+                        "in": "query",
+                        "name": "filename",
+                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -14011,6 +14100,145 @@
                 "tags": [
                     "Users",
                     "Files"
+                ]
+            }
+        },
+        "/api/v1/videos/{hash}/{token}/export": {
+            "get": {
+                "operationId": "GetVideoExport",
+                "parameters": [
+                    {
+                        "description": "SHA1 source file hash",
+                        "in": "path",
+                        "name": "hash",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "session-bound download token",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "export operation",
+                        "enum": [
+                            "probe",
+                            "prepare",
+                            "download"
+                        ],
+                        "in": "query",
+                        "name": "export",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "rendition for prepare and download",
+                        "enum": [
+                            "avc",
+                            "video-part"
+                        ],
+                        "in": "query",
+                        "name": "kind",
+                        "type": "string"
+                    },
+                    {
+                        "description": "sanitized attachment filename with the real output extension",
+                        "in": "query",
+                        "name": "filename",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json",
+                    " video/mp4",
+                    " video/quicktime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/photoprism.ExportProbe"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "504": {
+                        "description": "Gateway Timeout",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "507": {
+                        "description": "Insufficient Storage",
+                        "schema": {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "summary": "probes, prepares, or downloads a source-specific media export",
+                "tags": [
+                    "Files",
+                    "Videos"
                 ]
             }
         },

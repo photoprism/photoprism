@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -37,16 +38,37 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 	}
 }
 
+// DownloadFileName sanitizes an optional attachment name and enforces the output extension.
+func DownloadFileName(c *gin.Context, fallback, extension string) string {
+	name := strings.TrimSpace(clean.FileName(c.Query("filename")))
+	if name == "" {
+		return fallback
+	}
+
+	base := strings.TrimSpace(strings.TrimSuffix(name, filepath.Ext(name)))
+	if base == "" {
+		return fallback
+	}
+
+	if name = clean.FileName(base + extension); name != "" {
+		return name
+	}
+
+	return fallback
+}
+
 // GetDownload returns the raw file data.
 //
 //	@Summary	returns the raw file data
 //	@Id			GetDownload
 //	@Tags		Images, Files
 //	@Produce	application/octet-stream
-//	@Failure	403,404	{file}		image/svg+xml
-//	@Failure	429		{object}	i18n.Response
-//	@Success	200		{file}		application/octet-stream
-//	@Param		file	path		string	true	"file hash or unique download id"
+//	@Failure	403,404		{file}		image/svg+xml
+//	@Failure	429			{object}	i18n.Response
+//	@Success	200			{file}		application/octet-stream
+//	@Param		file		path		string	true	"file hash or unique download id"
+//	@Param		name		query		string	false	"download naming convention"	Enums(file, share, original)
+//	@Param		filename	query		string	false	"attachment filename for hash downloads; sanitized and forced to the source extension"
 //	@Router		/api/v1/dl/{file} [get]
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:file", func(c *gin.Context) {
@@ -110,6 +132,6 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
+		c.FileAttachment(fileName, DownloadFileName(c, f.DownloadName(DownloadName(c), 0), filepath.Ext(fileName)))
 	})
 }

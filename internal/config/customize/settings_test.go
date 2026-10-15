@@ -1,10 +1,16 @@
 package customize
 
 import (
+	"encoding/json"
 	"os"
+	"path/filepath"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestNewSettings(t *testing.T) {
@@ -129,4 +135,67 @@ func TestSettings_Stacks(t *testing.T) {
 	assert.False(t, s.StackSequences())
 	assert.True(t, s.StackUUID())
 	assert.True(t, s.StackMeta())
+}
+
+// TestSettings_Export checks defaults, legacy YAML, and explicit choices on disk.
+func TestSettings_Export(t *testing.T) {
+	original := DefaultFeatures
+	t.Cleanup(func() { DefaultFeatures = original })
+	t.Setenv("PHOTOPRISM_DISABLE_FEATURES", "")
+	DefaultFeatures = initDefaultFeatures()
+
+	t.Run("DefaultAndCopy", func(t *testing.T) {
+		settings := NewDefaultSettings()
+		assert.True(t, settings.Features.Export)
+		settings.Features.Export = false
+		assert.True(t, DefaultFeatures.Export)
+	})
+	t.Run("LegacyYaml", func(t *testing.T) {
+		name := filepath.Join(t.TempDir(), "settings.yml")
+		require.NoError(t, os.WriteFile(name, []byte("Features:\n  Download: false\n"), fs.ModeConfigFile))
+		settings := NewDefaultSettings()
+		require.NoError(t, settings.Load(name))
+		assert.True(t, settings.Features.Export)
+		assert.False(t, settings.Features.Download)
+	})
+	t.Run("LegacyYamlDisabledDefault", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_DISABLE_FEATURES", "export")
+		DefaultFeatures = initDefaultFeatures()
+		t.Cleanup(func() { DefaultFeatures = original })
+		name := filepath.Join(t.TempDir(), "settings.yml")
+		require.NoError(t, os.WriteFile(name, []byte("Features:\n  Download: true\n"), fs.ModeConfigFile))
+		settings := NewDefaultSettings()
+		require.NoError(t, settings.Load(name))
+		assert.False(t, settings.Features.Export)
+		assert.True(t, settings.Features.Download)
+	})
+
+	for _, test := range []struct {
+		name    string
+		enabled bool
+	}{
+		{"Enabled", true},
+		{"Disabled", false},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			name := filepath.Join(t.TempDir(), "settings.yml")
+			settings := NewDefaultSettings()
+			settings.Features.Export = test.enabled
+			settings.Features.Download = !test.enabled
+			require.NoError(t, settings.Save(name))
+
+			yamlData, err := os.ReadFile(name) // #nosec G304 -- path is confined to t.TempDir()
+			require.NoError(t, err)
+			assert.Contains(t, string(yamlData), "Export: "+strconv.FormatBool(test.enabled))
+			jsonData, err := json.Marshal(settings.Features)
+			require.NoError(t, err)
+			assert.Contains(t, string(jsonData), "\"export\":"+strconv.FormatBool(test.enabled))
+
+			reloaded := NewDefaultSettings()
+			reloaded.Features.Export = !test.enabled
+			require.NoError(t, reloaded.Load(name))
+			assert.Equal(t, test.enabled, reloaded.Features.Export)
+			assert.Equal(t, !test.enabled, reloaded.Features.Download)
+		})
+	}
 }

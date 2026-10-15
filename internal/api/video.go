@@ -36,6 +36,10 @@ import (
 //	@Router			/api/v1/videos/{hash}/{token}/{format} [get]
 func GetVideo(router *gin.RouterGroup) {
 	router.GET("/videos/:hash/:token/:format", func(c *gin.Context) {
+		if c.Param("format") == "export" {
+			GetVideoExport(c)
+			return
+		}
 		fileHash := clean.Token(c.Param("hash"))
 
 		// Check if a valid security token was provided.

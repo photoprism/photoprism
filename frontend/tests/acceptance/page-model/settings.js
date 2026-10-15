@@ -8,6 +8,7 @@ export default class Page {
     this.startpageOpenSelection = Selector(".input-startpage div.v-input__control");
     this.uploadCheckbox = Selector(".input-upload div.v-selection-control__input");
     this.downloadCheckbox = Selector(".input-download div.v-selection-control__input");
+    this.exportCheckbox = Selector(".input-export div.v-selection-control__input");
     this.importCheckbox = Selector(".input-import div.v-selection-control__input");
     this.archiveCheckbox = Selector(".input-archive div.v-selection-control__input");
     this.editCheckbox = Selector(".input-edit div.v-selection-control__input");
