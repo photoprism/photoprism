@@ -162,7 +162,7 @@ func validateClusterDatabase(name, user, server *string) error {
 		return fmt.Errorf("invalid database user")
 	}
 
-	if server != nil && *server != "" && !dsn.ValidServer(*server) {
+	if server != nil && *server != "" && (!dsn.ValidServer(*server) || (&dsn.DSN{Server: *server}).Host() == "") {
 		return fmt.Errorf("invalid database server")
 	}
 
@@ -194,7 +194,7 @@ func clusterDatabaseDSN(s string, timeout int) (result string, dropped []string,
 
 	d := dsn.Parse(s)
 
-	if d.Driver != dsn.DriverMySQL || d.Net != "tcp" || d.Name == "" || d.User == "" {
+	if d.Driver != dsn.DriverMySQL || d.Net != "tcp" || d.Name == "" || d.User == "" || d.Host() == "" {
 		return "", nil, fmt.Errorf("invalid database dsn")
 	}
 

@@ -78,11 +78,7 @@ func (u *OptionsUpdate) SetDatabase(d RegisterDatabase) (server string, ok bool)
 
 	u.SetDatabaseDriver(driver)
 	u.SetDatabaseName(d.Name)
-
-	if server != "" {
-		u.SetDatabaseServer(server)
-	}
-
+	u.SetDatabaseServer(server)
 	u.SetDatabaseUser(d.User)
 	u.SetDatabasePassword(d.Password)
 

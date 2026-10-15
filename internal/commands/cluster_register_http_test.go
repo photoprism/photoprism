@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -831,6 +832,66 @@ func TestClusterRegister_RotateDatabase_JSON(t *testing.T) {
 	assert.Equal(t, "tcp", parsed.Net)
 	assert.Equal(t, "db:3306", parsed.Server)
 	assert.Equal(t, "pp_db", parsed.Name)
+}
+
+// TestClusterRegister_WriteConfigRefusedDatabase checks the exit code when database credentials cannot be saved.
+func TestClusterRegister_WriteConfigRefusedDatabase(t *testing.T) {
+	tempCfg := t.TempDir()
+	SetEnvForTest(t, "PHOTOPRISM_CONFIG_PATH", tempCfg)
+
+	conf := get.Config()
+	previousOptions := *conf.Options()
+	t.Cleanup(func() {
+		*conf.Options() = previousOptions
+	})
+	conf.Options().OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+	var rotateRequested atomic.Bool
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		rotateRequested.Store(gjson.GetBytes(b, "RotateDatabase").Bool())
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			UUID: "4a47c940-d5de-41b3-88a2-eb816cc659ca",
+			Node: cluster.Node{UUID: "01987f09-193d-7d01-9f18-d8d189f0fe88", Name: "pp-node-10", Role: cluster.RoleInstance,
+				ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, Host: "/run/mysqld/mysqld.sock", Port: 3306, Name: "pp_db",
+				User: "pp_user", Password: "pwd10"},
+		})
+	}))
+	defer ts.Close()
+
+	args := []string{"register", "--name", "pp-node-10", "--role", "instance", "--portal-url", ts.URL,
+		"--join-token", cluster.ExampleJoinToken, "--write-config"}
+
+	t.Run("Rotate", func(t *testing.T) {
+		out, err := RunWithTestContext(ClusterRegisterCommand, append(args, "--rotate", "--json"))
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Contains(t, err.Error(), "save the node credentials shown above")
+		assert.Equal(t, "pwd10", gjson.Get(out, "Database.Password").String())
+
+		content, readErr := os.ReadFile(conf.OptionsYaml())
+		require.NoError(t, readErr)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+		assert.Equal(t, "4a47c940-d5de-41b3-88a2-eb816cc659ca", persisted["ClusterUUID"])
+		assert.NotContains(t, persisted, "DatabasePassword")
+	})
+	t.Run("AutoRotate", func(t *testing.T) {
+		// A rotation the command requests because the node has no credentials keeps exit code 0.
+		conf.Options().DatabaseDriver = dsn.DriverMySQL
+		conf.Options().DatabaseDSN = ""
+		conf.Options().DatabaseName, conf.Options().DatabaseUser, conf.Options().DatabasePassword = "", "", ""
+		require.True(t, conf.ShouldAutoRotateDatabase())
+
+		_, err := RunWithTestContext(ClusterRegisterCommand, args)
+		assert.NoError(t, err)
+		assert.True(t, rotateRequested.Load())
+	})
 }
 
 func TestClusterRegister_RotateSecret_JSON(t *testing.T) {

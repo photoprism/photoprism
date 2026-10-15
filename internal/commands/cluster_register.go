@@ -301,8 +301,11 @@ func clusterRegisterAction(ctx *cli.Context) error {
 
 		// Optional persistence
 		if ctx.Bool("write-config") {
-			if err := persistRegisterResponse(conf, &resp); err != nil {
+			if refused, err := persistRegisterResponse(conf, &resp); err != nil {
 				return err
+			} else if refused && ctx.Bool("rotate") {
+				// Explicitly rotated credentials replace the password the node uses.
+				return cli.Exit(errors.New("the rotated database credentials could not be saved; save the node credentials shown above"), 1)
 			}
 		}
 
@@ -439,8 +442,9 @@ func parseLabelSlice(labels []string) map[string]string {
 	return m
 }
 
-// persistRegisterResponse writes returned secrets/DB details into local config when requested.
-func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse) error {
+// persistRegisterResponse writes returned secrets/DB details into local config when requested, and reports
+// whether database credentials of the response were refused.
+func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse) (refused bool, err error) {
 	updates := cluster.OptionsUpdate{}
 
 	if rnd.IsUUID(resp.UUID) {
@@ -465,24 +469,32 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 
 	// Node client secret is persisted only via config helper.
 	if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
-		if fileName, err := conf.SaveNodeClientSecret(resp.Secrets.ClientSecret); err != nil {
-			return err
+		if fileName, saveErr := conf.SaveNodeClientSecret(resp.Secrets.ClientSecret); saveErr != nil {
+			return false, saveErr
 		} else if fileName != "" {
 			log.Infof("wrote node client secret to %s", clean.Log(fileName))
 		}
 	}
 
 	// DB settings (MySQL/MariaDB only), which replace a stored DSN and are ignored as a whole if the
-	// server address is unusable.
+	// server address is unusable. Credentials of a complete response that are not saved count as refused.
+	credentials := !resp.Database.Incomplete && (resp.Database.Password != "" || resp.Database.DSN != "")
+
 	if server, ok := updates.SetDatabase(resp.Database); !ok {
 		event.SystemWarn([]string{"cluster", "ignored database settings with unusable server address %s"}, clean.Log(server))
+	} else if credentials && !updates.HasDatabaseUpdate() {
+		event.SystemWarn([]string{"cluster", "ignored database settings without name, user, or password"})
 	}
 
+	// SaveClusterOptionsUpdate skips settings it refuses with a warning.
+	refused = credentials && (!updates.HasDatabaseUpdate() || config.ValidateClusterDatabaseUpdate(updates) != nil)
+
 	if !updates.IsZero() {
-		if _, err := conf.SaveClusterOptionsUpdate(updates); err != nil {
-			return err
+		if _, err = conf.SaveClusterOptionsUpdate(updates); err != nil {
+			return refused, err
 		}
 		log.Infof("updated options.yml with cluster registration settings for node %s", clean.LogQuote(resp.Node.Name))
 	}
-	return nil
+
+	return refused, nil
 }

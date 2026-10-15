@@ -59,16 +59,26 @@ func TestOptionsUpdate_SetDatabase(t *testing.T) {
 		assert.Equal(t, "pp_pw", *u.DatabasePassword)
 		assert.Nil(t, u.DatabaseDSN)
 	})
-	t.Run("NoServer", func(t *testing.T) {
+	t.Run("Driver", func(t *testing.T) {
 		var u cluster.OptionsUpdate
 		d := complete
-		d.Host, d.Port, d.Driver = "", 0, "mariadb"
+		d.Port, d.Driver = 0, "mariadb"
 		server, ok := u.SetDatabase(d)
 		assert.True(t, ok)
-		assert.Equal(t, "", server)
-		assert.Nil(t, u.DatabaseServer)
+		assert.Equal(t, "db.local", server)
+		assert.Equal(t, "db.local", *u.DatabaseServer)
 		assert.Equal(t, "mariadb", *u.DatabaseDriver)
 		assert.Equal(t, "pp_pw", *u.DatabasePassword)
+	})
+	t.Run("NoHost", func(t *testing.T) {
+		for _, port := range []int{3306, 0} {
+			var u cluster.OptionsUpdate
+			d := complete
+			d.Host, d.Port = "", port
+			_, ok := u.SetDatabase(d)
+			assert.False(t, ok, port)
+			assert.True(t, u.IsZero(), port)
+		}
 	})
 	t.Run("UnusableServer", func(t *testing.T) {
 		var u cluster.OptionsUpdate

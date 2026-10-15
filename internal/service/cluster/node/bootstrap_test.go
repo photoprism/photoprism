@@ -1374,6 +1374,46 @@ func TestPersistRegistration(t *testing.T) {
 
 		assert.NotContains(t, persisted, "DatabaseDSN")
 	})
+	t.Run("NoHost", func(t *testing.T) {
+		// Database settings without a host are skipped, also when the DSN names one.
+		out := captureBootstrapLog(t)
+		c := newBootstrapTestConfig(t, "bootstrap-persist-nohost")
+		r := socketPortalResponse(rnd.UUID(), rnd.UUIDv7())
+		r.Database.Host = ""
+		r.Database.DSN = "pp_user:pp_pw@tcp(db.local:3306)/pp_db?parseTime=true"
+
+		require.NoError(t, persistRegistration(c, r, true))
+
+		persisted := readBootstrapOptions(t, c)
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseDSN", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+
+		assert.Contains(t, out.String(), "ignored database settings with unusable server address :3306")
+		assert.NotContains(t, out.String(), "restart required")
+	})
+	t.Run("NoHostDSN", func(t *testing.T) {
+		// A DSN without a host is skipped like separate settings without one.
+		out := captureBootstrapLog(t)
+		c := newBootstrapTestConfig(t, "bootstrap-persist-nohost-dsn")
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID:     rnd.UUID(),
+			Node:     cluster.Node{ClientID: cluster.ExampleClientID},
+			Database: cluster.RegisterDatabase{Driver: dsn.DriverMySQL, DSN: "pp_user:pp_pw@tcp(:3306)/pp_db?parseTime=true"},
+		}, true))
+
+		persisted := readBootstrapOptions(t, c)
+		assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+
+		for _, key := range []string{"DatabaseDriver", "DatabaseDSN", "DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+			assert.NotContains(t, persisted, key)
+		}
+
+		assert.Contains(t, out.String(), "ignored database settings (invalid database dsn)")
+	})
 	t.Run("TCPPortal", func(t *testing.T) {
 		// The separate settings are saved instead of the DSN the Portal sends with them.
 		out := captureBootstrapLog(t)

@@ -17,8 +17,6 @@ func TestRegisterDatabase_Server(t *testing.T) {
 			{"mariadb", 4001, "mariadb:4001"},
 			{"mariadb", 0, "mariadb"},
 			{"::1", 3306, "[::1]:3306"},
-			{"", 3306, ":3306"},
-			{"", 0, ""},
 		} {
 			server, ok := RegisterDatabase{Host: tc.host, Port: tc.port}.Server()
 			assert.True(t, ok, "%s:%d", tc.host, tc.port)
@@ -29,6 +27,14 @@ func TestRegisterDatabase_Server(t *testing.T) {
 		for _, host := range []string{"/run/mysqld/mysqld.sock", "-x", "db/x"} {
 			_, ok := RegisterDatabase{Host: host, Port: 3306}.Server()
 			assert.False(t, ok, host)
+		}
+	})
+	t.Run("NoHost", func(t *testing.T) {
+		for _, host := range []string{"", "[]", ":3306", "[]:3306", "[[]]"} {
+			for _, port := range []int{3306, 0} {
+				_, ok := RegisterDatabase{Host: host, Port: port}.Server()
+				assert.False(t, ok, "%q:%d", host, port)
+			}
 		}
 	})
 }

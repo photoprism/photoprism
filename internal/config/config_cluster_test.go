@@ -1370,6 +1370,8 @@ func TestValidateClusterDatabaseUpdate(t *testing.T) {
 			"user:secret@unix(/run/mysqld/mysqld.sock)/photoprism":        "invalid database dsn",
 			"/srv/photoprism/index.db":                                    "invalid database dsn",
 			"-x":                                                          "invalid database dsn",
+			"user:secret@tcp(:3306)/photoprism":                           "invalid database dsn",
+			"user:secret@tcp([]:3306)/photoprism":                         "invalid database dsn",
 		} {
 			update := cluster.OptionsUpdate{}
 			update.SetDatabaseDSN(dsnValue)
@@ -1395,6 +1397,8 @@ func TestValidateClusterDatabase(t *testing.T) {
 	})
 	t.Run("InvalidServer", func(t *testing.T) {
 		assert.EqualError(t, validateClusterDatabase(nil, nil, str("mariadb:4001)/x")), "invalid database server")
+		assert.EqualError(t, validateClusterDatabase(nil, nil, str(":3306")), "invalid database server")
+		assert.EqualError(t, validateClusterDatabase(nil, nil, str("[]:3306")), "invalid database server")
 	})
 }
 
