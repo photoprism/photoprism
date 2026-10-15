@@ -1,11 +1,17 @@
 package commands
 
 import (
-	"errors"
+	"bufio"
+	"fmt"
 	"os"
+	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strconv"
+	"strings"
+	"syscall"
 	"testing"
+	"time"
 
 	"github.com/sevlyar/go-daemon"
 	"github.com/stretchr/testify/assert"
@@ -14,25 +20,552 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// TestDaemonNotRunning covers which pid file search failures mean that no daemon is running.
+// TestDaemonNotRunning covers which pid file read failures mean that no daemon is running.
 func TestDaemonNotRunning(t *testing.T) {
+	readErr := func(t *testing.T, pidFile string) error {
+		_, _, err := readPidFile(pidFile)
+		require.Error(t, err)
+		return err
+	}
+
 	t.Run("NoPidFile", func(t *testing.T) {
-		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
-		_, err := (&daemon.Context{PidFileName: pidFile}).Search()
-		require.Error(t, err)
-		assert.True(t, daemonNotRunning(err, pidFile))
+		assert.True(t, daemonNotRunning(readErr(t, filepath.Join(t.TempDir(), "photoprism.pid"))))
 	})
-	t.Run("StalePidFile", func(t *testing.T) {
-		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
-		require.NoError(t, fs.WriteString(pidFile, strconv.Itoa(3999999)))
-		_, err := (&daemon.Context{PidFileName: pidFile}).Search()
-		require.Error(t, err)
-		assert.NoFileExists(t, pidFile)
-		assert.True(t, daemonNotRunning(err, pidFile))
-	})
-	t.Run("UnreadablePidFile", func(t *testing.T) {
+	t.Run("InvalidPidFile", func(t *testing.T) {
 		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 		require.NoError(t, os.WriteFile(pidFile, []byte("not a pid"), fs.ModeFile))
-		assert.False(t, daemonNotRunning(errors.New("daemon: invalid pid file"), pidFile))
+		assert.False(t, daemonNotRunning(readErr(t, pidFile)))
+	})
+	t.Run("DanglingSymlink", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing.pid"), pidFile))
+		assert.False(t, daemonNotRunning(readErr(t, pidFile)))
+	})
+	t.Run("Directory", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Mkdir(pidFile, fs.ModeDir))
+		assert.False(t, daemonNotRunning(readErr(t, pidFile)))
+	})
+}
+
+// stopHelperEnv selects the stand-in process the test binary runs as for the stop tests.
+const stopHelperEnv = "PHOTOPRISM_TEST_STOP_HELPER"
+
+// stopHelperPidEnv names the pid file of the stop-self stand-in.
+const stopHelperPidEnv = "PHOTOPRISM_TEST_STOP_PID_FILE"
+
+// runStopHelper runs the test binary as a stand-in process for the stop tests and returns its exit code.
+func runStopHelper(mode string) int {
+	switch mode {
+	case "ignore-term":
+		signal.Ignore(syscall.SIGTERM)
+		fmt.Println("ready")
+		time.Sleep(time.Minute)
+	case "stop-self":
+		pidFile := os.Getenv(stopHelperPidEnv)
+		lock, err := daemon.CreatePidFile(pidFile, fs.ModeFile)
+
+		if err != nil {
+			fmt.Println(err)
+			return 1
+		}
+
+		defer func() { _ = lock.Close() }()
+
+		fmt.Println(stopDaemon(pidFile, time.Second))
+	default:
+		return 2
+	}
+
+	return 0
+}
+
+// requireProc skips the test where /proc, which identifies the stand-in processes, is not available.
+func requireProc(t *testing.T) {
+	t.Helper()
+
+	if !fs.PathExists("/proc/self/fd") {
+		t.Skip("requires /proc")
+	}
+}
+
+// lockedPidFile creates a locked, empty pid file and returns its name and the open file a daemon would hold.
+func lockedPidFile(t *testing.T) (string, *os.File) {
+	t.Helper()
+
+	pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+	lock, err := daemon.OpenLockFile(pidFile, fs.ModeFile)
+	require.NoError(t, err)
+	require.NoError(t, lock.Lock())
+	t.Cleanup(func() { _ = lock.Close() })
+
+	return pidFile, lock.File
+}
+
+// unlockedPidFile writes a pid file for the process that no process holds.
+func unlockedPidFile(t *testing.T, pid int) string {
+	t.Helper()
+
+	pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+	require.NoError(t, fs.WriteString(pidFile, strconv.Itoa(pid)))
+
+	return pidFile
+}
+
+// startProcess runs sleep with the given program name in argv[0], passes it the files to hold open,
+// and stops it when the test ends.
+func startProcess(t *testing.T, name, seconds string, files ...*os.File) *exec.Cmd {
+	t.Helper()
+	requireProc(t)
+
+	sleep, err := exec.LookPath("sleep")
+	require.NoError(t, err)
+
+	cmd := exec.Command(sleep, seconds) //nolint:gosec // Runs sleep from PATH with a fixed duration.
+	cmd.Args[0] = name
+	cmd.ExtraFiles = files
+	require.NoError(t, cmd.Start())
+
+	done := make(chan struct{})
+
+	go func() {
+		_ = cmd.Wait()
+		close(done)
+	}()
+
+	t.Cleanup(func() {
+		_ = cmd.Process.Kill()
+		<-done
+	})
+
+	waitForName(t, cmd.Process.Pid, name)
+
+	return cmd
+}
+
+// startDaemon runs a stand-in daemon named photoprism-test that holds a locked pid file naming it.
+func startDaemon(t *testing.T, seconds string) (*exec.Cmd, string) {
+	t.Helper()
+
+	pidFile, f := lockedPidFile(t)
+	cmd := startProcess(t, "photoprism-test", seconds, f)
+	require.NoError(t, fs.WriteString(pidFile, strconv.Itoa(cmd.Process.Pid)))
+
+	return cmd, pidFile
+}
+
+// startHelper runs the test binary as a stand-in process named photoprism-test in the given helper mode,
+// with the additional environment variables and the files to hold open.
+func startHelper(t *testing.T, mode string, env []string, files ...*os.File) (*exec.Cmd, *bufio.Reader) {
+	t.Helper()
+	requireProc(t)
+
+	cmd := exec.Command(os.Args[0], "-test.run=^$") //nolint:gosec // Runs this test binary as a stand-in.
+	cmd.Args[0] = "photoprism-test"
+	cmd.Env = append(append(os.Environ(), stopHelperEnv+"="+mode), env...)
+	cmd.ExtraFiles = files
+	stdout, err := cmd.StdoutPipe()
+	require.NoError(t, err)
+	require.NoError(t, cmd.Start())
+
+	t.Cleanup(func() {
+		_ = cmd.Process.Kill()
+		_ = cmd.Wait()
+	})
+
+	return cmd, bufio.NewReader(stdout)
+}
+
+// waitForName waits until the process runs the program with the given name in argv[0].
+func waitForName(t *testing.T, pid int, name string) {
+	t.Helper()
+
+	cmdline := filepath.Join("/proc", strconv.Itoa(pid), "cmdline")
+
+	require.Eventually(t, func() bool {
+		b, err := os.ReadFile(cmdline) //nolint:gosec // Reads the stand-in process command line.
+		return err == nil && strings.HasPrefix(string(b), name+"\x00")
+	}, 5*time.Second, 10*time.Millisecond)
+}
+
+// fileInfo returns the information of an existing file.
+func fileInfo(t *testing.T, fileName string) os.FileInfo {
+	t.Helper()
+
+	info, err := os.Stat(fileName)
+	require.NoError(t, err)
+
+	return info
+}
+
+// TestReadPidFile covers reading the process ID from a pid file.
+func TestReadPidFile(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		pid, info, err := readPidFile(pidFile)
+		require.NoError(t, err)
+		assert.Equal(t, 1234, pid)
+		assert.True(t, os.SameFile(fileInfo(t, pidFile), info))
+	})
+	t.Run("Symlink", func(t *testing.T) {
+		target := unlockedPidFile(t, 1234)
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Symlink(target, pidFile))
+		_, _, err := readPidFile(pidFile)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "must not be a symbolic link")
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, content := range []string{"", "abc", "0", "-1", "-1234", "4294967297"} {
+			pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+			require.NoError(t, os.WriteFile(pidFile, []byte(content), fs.ModeFile))
+			_, _, err := readPidFile(pidFile)
+			assert.Error(t, err, content)
+		}
+	})
+	t.Run("Missing", func(t *testing.T) {
+		_, _, err := readPidFile(filepath.Join(t.TempDir(), "photoprism.pid"))
+		assert.ErrorIs(t, err, os.ErrNotExist)
+	})
+	t.Run("Fifo", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, syscall.Mkfifo(pidFile, 0o600))
+		done := make(chan error, 1)
+
+		go func() {
+			_, _, err := readPidFile(pidFile)
+			done <- err
+		}()
+
+		select {
+		case err := <-done:
+			require.Error(t, err)
+			assert.Contains(t, err.Error(), "is not a regular file")
+		case <-time.After(5 * time.Second):
+			t.Fatal("reading a FIFO blocked")
+		}
+	})
+}
+
+// TestDaemonProcess covers which processes are recognized by their program name.
+func TestDaemonProcess(t *testing.T) {
+	t.Run("PhotoPrism", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		assert.True(t, daemonProcess(cmd.Process))
+	})
+	t.Run("FullPath", func(t *testing.T) {
+		cmd := startProcess(t, "/opt/photoprism/bin/photoprism", "30")
+		assert.True(t, daemonProcess(cmd.Process))
+	})
+	t.Run("OtherProgram", func(t *testing.T) {
+		cmd := startProcess(t, "/usr/bin/sleep", "30")
+		assert.False(t, daemonProcess(cmd.Process))
+	})
+	t.Run("NotRunning", func(t *testing.T) {
+		requireProc(t)
+		p, err := os.FindProcess(3999999)
+		require.NoError(t, err)
+		assert.False(t, daemonProcess(p))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, daemonProcess(nil))
+	})
+}
+
+// TestProcessHasFile covers detecting whether a process holds a file open.
+func TestProcessHasFile(t *testing.T) {
+	t.Run("Held", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.True(t, open)
+	})
+	t.Run("NotHeld", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, unlockedPidFile(t, cmd.Process.Pid)))
+		assert.True(t, known)
+		assert.False(t, open)
+	})
+	t.Run("NotRunning", func(t *testing.T) {
+		requireProc(t)
+		open, known := processHasFile(3999999, fileInfo(t, unlockedPidFile(t, 3999999)))
+		assert.True(t, known)
+		assert.False(t, open)
+	})
+	t.Run("NoFile", func(t *testing.T) {
+		_, known := processHasFile(os.Getpid(), nil)
+		assert.False(t, known)
+	})
+}
+
+// TestPidFileLocked covers detecting whether another process holds the lock on a pid file.
+func TestPidFileLocked(t *testing.T) {
+	t.Run("Held", func(t *testing.T) {
+		pidFile, _ := lockedPidFile(t)
+		held, known := pidFileLocked(pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.True(t, held)
+	})
+	t.Run("Free", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, os.Getpid())
+		held, known := pidFileLocked(pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.False(t, held)
+	})
+	t.Run("Missing", func(t *testing.T) {
+		held, known := pidFileLocked(filepath.Join(t.TempDir(), "photoprism.pid"), nil)
+		assert.False(t, known)
+		assert.False(t, held)
+	})
+}
+
+// TestRemoveStalePidFile covers removing a pid file only while no other process holds its lock.
+func TestRemoveStalePidFile(t *testing.T) {
+	t.Run("Free", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 3999999)
+		require.NoError(t, removeStalePidFile(pidFile, fileInfo(t, pidFile)))
+		assert.NoFileExists(t, pidFile)
+	})
+	t.Run("Locked", func(t *testing.T) {
+		pidFile, _ := lockedPidFile(t)
+		assert.ErrorIs(t, removeStalePidFile(pidFile, fileInfo(t, pidFile)), daemon.ErrWouldBlock)
+		assert.FileExists(t, pidFile)
+	})
+	t.Run("Missing", func(t *testing.T) {
+		assert.NoError(t, removeStalePidFile(filepath.Join(t.TempDir(), "photoprism.pid"), nil))
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 3999999)
+		info := fileInfo(t, pidFile)
+		require.NoError(t, os.Remove(pidFile))
+		require.NoError(t, fs.WriteString(pidFile, "3999999"))
+		err := removeStalePidFile(pidFile, info)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "was replaced")
+		assert.FileExists(t, pidFile)
+	})
+}
+
+// TestChildAlreadyRunning covers detecting a running daemon before starting another one.
+func TestChildAlreadyRunning(t *testing.T) {
+	t.Run("Running", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		pid, running := childAlreadyRunning(pidFile)
+		assert.Equal(t, cmd.Process.Pid, pid)
+		assert.True(t, running)
+	})
+	t.Run("Stale", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		_, running := childAlreadyRunning(unlockedPidFile(t, cmd.Process.Pid))
+		assert.False(t, running)
+	})
+	t.Run("NoPidFile", func(t *testing.T) {
+		_, running := childAlreadyRunning(filepath.Join(t.TempDir(), "photoprism.pid"))
+		assert.False(t, running)
+	})
+}
+
+// TestWaitForExit covers waiting for a daemon to exit.
+func TestWaitForExit(t *testing.T) {
+	t.Run("Exits", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "0.3")
+		start := time.Now()
+		require.NoError(t, waitForExit(cmd.Process, 10*time.Second))
+		assert.GreaterOrEqual(t, time.Since(start), 100*time.Millisecond)
+	})
+	t.Run("OtherName", func(t *testing.T) {
+		cmd := startProcess(t, "sleep", "0.3")
+		start := time.Now()
+		require.NoError(t, waitForExit(cmd.Process, 10*time.Second))
+		assert.GreaterOrEqual(t, time.Since(start), 100*time.Millisecond)
+	})
+	t.Run("Timeout", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		err := waitForExit(cmd.Process, 300*time.Millisecond)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "has not exited")
+	})
+}
+
+// TestStopDaemon covers stopping the daemon that holds a pid file.
+func TestStopDaemon(t *testing.T) {
+	t.Run("Stops", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		require.NoError(t, stopDaemon(pidFile, 10*time.Second))
+		assert.False(t, processRunning(cmd.Process))
+	})
+	t.Run("StalePhotoPrism", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile := unlockedPidFile(t, cmd.Process.Pid)
+		require.NoError(t, stopDaemon(pidFile, 10*time.Second))
+		assert.NoFileExists(t, pidFile)
+		assert.True(t, processRunning(cmd.Process))
+	})
+	t.Run("LockedByOther", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		pidFile, _ := lockedPidFile(t)
+		require.NoError(t, fs.WriteString(pidFile, strconv.Itoa(cmd.Process.Pid)))
+		err := stopDaemon(pidFile, 10*time.Second)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is not a PhotoPrism daemon holding it")
+		assert.FileExists(t, pidFile)
+		assert.True(t, processRunning(cmd.Process))
+	})
+	t.Run("Self", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		cmd, stdout := startHelper(t, "stop-self", []string{stopHelperPidEnv + "=" + pidFile})
+		line, err := stdout.ReadString('\n')
+		require.NoError(t, err)
+		assert.Contains(t, line, "is not a PhotoPrism daemon holding it")
+		require.NoError(t, cmd.Wait())
+	})
+	t.Run("HeldByOtherProgram", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "sleep", "30", f)
+		require.NoError(t, fs.WriteString(pidFile, strconv.Itoa(cmd.Process.Pid)))
+		require.Error(t, stopDaemon(pidFile, 10*time.Second))
+		assert.FileExists(t, pidFile)
+		assert.True(t, processRunning(cmd.Process))
+	})
+	t.Run("Symlink", func(t *testing.T) {
+		cmd, target := startDaemon(t, "30")
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Symlink(target, pidFile))
+		err := stopDaemon(pidFile, 10*time.Second)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "must not be a symbolic link")
+		assert.True(t, processRunning(cmd.Process))
+	})
+	t.Run("DeadPid", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 3999999)
+		require.NoError(t, stopDaemon(pidFile, time.Second))
+		assert.NoFileExists(t, pidFile)
+	})
+	t.Run("NoPidFile", func(t *testing.T) {
+		require.NoError(t, stopDaemon(filepath.Join(t.TempDir(), "photoprism.pid"), time.Second))
+	})
+	t.Run("Timeout", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd, stdout := startHelper(t, "ignore-term", nil, f)
+		line, err := stdout.ReadString('\n')
+		require.NoError(t, err)
+		require.Equal(t, "ready\n", line)
+		require.NoError(t, fs.WriteString(pidFile, strconv.Itoa(cmd.Process.Pid)))
+		err = stopDaemon(pidFile, 500*time.Millisecond)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "has not exited")
+		assert.True(t, processRunning(cmd.Process))
+	})
+}
+
+// TestProcCmdline covers reading the command line of a process from /proc.
+func TestProcCmdline(t *testing.T) {
+	t.Run("Running", func(t *testing.T) {
+		cmd := startProcess(t, "photoprism-test", "30")
+		cmdline, err := procCmdline(cmd.Process.Pid)
+		require.NoError(t, err)
+		assert.Equal(t, "photoprism-test\x0030\x00", string(cmdline))
+	})
+	t.Run("NotRunning", func(t *testing.T) {
+		requireProc(t)
+		_, err := procCmdline(3999999)
+		assert.Error(t, err)
+	})
+}
+
+// TestDaemonHoldsPidFile covers identifying the daemon, also where its open files cannot be listed.
+func TestDaemonHoldsPidFile(t *testing.T) {
+	t.Run("OpenFile", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		assert.True(t, daemonHoldsPidFile(cmd.Process, pidFile, fileInfo(t, pidFile)))
+	})
+	t.Run("OpenFileOtherProgram", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "sleep", "30", f)
+		assert.False(t, daemonHoldsPidFile(cmd.Process, pidFile, fileInfo(t, pidFile)))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, daemonHoldsPidFile(nil, filepath.Join(t.TempDir(), "photoprism.pid"), nil))
+	})
+	t.Run("Fallback", func(t *testing.T) {
+		defaultHoldsFile := holdsFile
+		holdsFile = func(int, os.FileInfo) (bool, bool) { return false, false }
+		t.Cleanup(func() { holdsFile = defaultHoldsFile })
+
+		daemonCmd := startProcess(t, "photoprism-test", "30")
+		otherCmd := startProcess(t, "sleep", "30")
+		lockedFile, _ := lockedPidFile(t)
+		freeFile := unlockedPidFile(t, daemonCmd.Process.Pid)
+
+		assert.True(t, daemonHoldsPidFile(daemonCmd.Process, lockedFile, fileInfo(t, lockedFile)))
+		assert.False(t, daemonHoldsPidFile(otherCmd.Process, lockedFile, fileInfo(t, lockedFile)))
+		assert.False(t, daemonHoldsPidFile(daemonCmd.Process, freeFile, fileInfo(t, freeFile)))
+	})
+}
+
+// TestOpenPidFile covers opening a pid file without following a symbolic link or blocking.
+func TestOpenPidFile(t *testing.T) {
+	t.Run("Regular", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		f, info, err := openPidFile(pidFile)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = f.Close() })
+		assert.True(t, info.Mode().IsRegular())
+		assert.True(t, os.SameFile(fileInfo(t, pidFile), info))
+	})
+	t.Run("Symlink", func(t *testing.T) {
+		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+		require.NoError(t, os.Symlink(unlockedPidFile(t, 1234), pidFile))
+		_, _, err := openPidFile(pidFile)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "must not be a symbolic link")
+	})
+	t.Run("Directory", func(t *testing.T) {
+		_, _, err := openPidFile(t.TempDir())
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is not a regular file")
+	})
+	t.Run("Missing", func(t *testing.T) {
+		_, _, err := openPidFile(filepath.Join(t.TempDir(), "photoprism.pid"))
+		assert.ErrorIs(t, err, os.ErrNotExist)
+	})
+}
+
+// TestOpenSamePidFile covers opening a pid file only if it is still the expected file.
+func TestOpenSamePidFile(t *testing.T) {
+	t.Run("Same", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		f, err := openSamePidFile(pidFile, fileInfo(t, pidFile))
+		require.NoError(t, err)
+		_ = f.Close()
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		pidFile := unlockedPidFile(t, 1234)
+		info := fileInfo(t, pidFile)
+		require.NoError(t, os.Remove(pidFile))
+		require.NoError(t, fs.WriteString(pidFile, "1234"))
+		_, err := openSamePidFile(pidFile, info)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "was replaced")
+	})
+	t.Run("NoInfo", func(t *testing.T) {
+		f, err := openSamePidFile(unlockedPidFile(t, 1234), nil)
+		require.NoError(t, err)
+		_ = f.Close()
+	})
+}
+
+// TestProcessRunning covers detecting whether a process still runs.
+func TestProcessRunning(t *testing.T) {
+	t.Run("Running", func(t *testing.T) {
+		cmd := startProcess(t, "sleep", "30")
+		assert.True(t, processRunning(cmd.Process))
+	})
+	t.Run("Exited", func(t *testing.T) {
+		cmd := startProcess(t, "sleep", "0.1")
+		require.Eventually(t, func() bool { return !processRunning(cmd.Process) }, 5*time.Second, 10*time.Millisecond)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, processRunning(nil))
 	})
 }

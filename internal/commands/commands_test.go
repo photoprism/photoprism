@@ -65,6 +65,11 @@ func TestMain(m *testing.M) {
 
 // runTestMain initializes shared command fixtures and executes the package tests.
 func runTestMain(m *testing.M) int {
+	// Runs as a stand-in process for the stop tests, without the shared fixtures.
+	if mode := os.Getenv(stopHelperEnv); mode != "" {
+		return runStopHelper(mode)
+	}
+
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	log = logrus.StandardLogger()

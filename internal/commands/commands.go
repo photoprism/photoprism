@@ -32,17 +32,14 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"syscall"
 
 	"github.com/manifoldco/promptui"
 	"github.com/mattn/go-isatty"
-	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
@@ -198,28 +195,22 @@ func LogErr(err error) {
 	}
 }
 
-// childAlreadyRunning tests if a .pid file at filePath is a running process.
-// it returns the pid value and the running status (true or false).
+// childAlreadyRunning reports whether the pid file at filePath belongs to a running daemon.
+// It also returns the pid in the file.
 func childAlreadyRunning(filePath string) (pid int, running bool) {
-	if !fs.FileExists(filePath) {
-		return pid, false
-	}
+	pid, info, err := readPidFile(filePath)
 
-	pid, err := daemon.ReadPidFile(filePath)
-
-	// Failed?
 	if err != nil {
 		return pid, false
 	}
 
 	process, err := os.FindProcess(pid)
 
-	// Failed?
 	if err != nil {
 		return pid, false
 	}
 
-	return pid, process.Signal(syscall.Signal(0)) == nil
+	return pid, daemonHoldsPidFile(process, filePath, info)
 }
 
 // ExitCode returns the process exit status for an error that app.Run returned without exiting.

@@ -107,6 +107,10 @@ func startAction(ctx *cli.Context) error {
 		conf.Shutdown()
 		cancel()
 
+		if fs.IsSymlink(conf.PIDFilename()) {
+			return fmt.Errorf("pid file %s must not be a symbolic link", clean.Log(conf.PIDFilename()))
+		}
+
 		if pid, ok := childAlreadyRunning(conf.PIDFilename()); ok {
 			log.Infof("daemon already running with process id %v\n", pid)
 			return nil
