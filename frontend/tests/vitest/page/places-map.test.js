@@ -109,4 +109,72 @@ describe("Places map compatibility", () => {
     expect(context.updateMarkers).toHaveBeenCalledOnce();
     expect(context.loading).toBe(false);
   });
+
+  // mapLoadContext returns a page context whose map adds the photo source only when onMapLoad runs.
+  function mapLoadContext(q) {
+    const source = { setData: vi.fn(() => Promise.resolve()) };
+    let added = false;
+    const map = {
+      getSource: () => (added ? source : undefined), addSource: vi.fn(() => {
+        added = true;
+      }), addLayer: vi.fn(), on: vi.fn(), off: vi.fn(), fitBounds: vi.fn(),
+    };
+    const context = {
+      loading: false, initialized: false, loaded: false, filter: { q }, lastFilter: {}, map, animate: 0,
+      closeCluster: vi.fn(), updateQuery: vi.fn(), searchParams: () => ({}), updateMarkers: vi.fn(), reset: vi.fn(),
+      minimizeAttribCtrl: vi.fn(), getProjection: vi.fn(),
+    };
+    context.search = (force) => Places.methods.search.call(context, force);
+    return { context, source, map };
+  }
+
+  it.each(["penta", ""])("shows and fits the results of a search that finished before the map loaded (q=%j)", async (q) => {
+    const { context, source, map } = mapLoadContext(q);
+    api.get.mockResolvedValue({ data: { features: [{}], bbox: [9, 42, 10, 43] } });
+    await context.search();
+    expect(source.setData).not.toHaveBeenCalled();
+    expect(context.initialized).toBe(false);
+    Places.methods.onMapLoad.call(context);
+    expect(context.loaded).toBe(false);
+    await flushPromises();
+    expect(api.get).toHaveBeenCalledTimes(2);
+    expect(source.setData).toHaveBeenCalledOnce();
+    expect(map.fitBounds).toHaveBeenCalledOnce();
+    expect(context.loaded).toBe(true);
+  });
+
+  it("waits for a search started before the map loaded instead of starting another one", async () => {
+    const { context, source, map } = mapLoadContext("");
+    let respond;
+    api.get.mockReturnValue(new Promise((resolve) => {
+      respond = resolve;
+    }));
+    const done = context.search();
+    expect(() => Places.methods.onMapLoad.call(context)).not.toThrow();
+    await flushPromises();
+    expect(context.loaded).toBe(false);
+    respond({ data: { features: [{}], bbox: [9, 42, 10, 43] } });
+    await done;
+    await flushPromises();
+    expect(api.get).toHaveBeenCalledOnce();
+    expect(source.setData).toHaveBeenCalledOnce();
+    expect(map.fitBounds).toHaveBeenCalledOnce();
+    expect(context.loaded).toBe(true);
+  });
+
+  it("sets the loaded state after the first search when the map loads", async () => {
+    const { context, source } = mapLoadContext("");
+    let respond;
+    api.get.mockReturnValue(new Promise((resolve) => {
+      respond = resolve;
+    }));
+    Places.methods.onMapLoad.call(context);
+    await flushPromises();
+    expect(context.loaded).toBe(false);
+    respond({ data: { features: [{}], bbox: [9, 42, 10, 43] } });
+    await flushPromises();
+    expect(api.get).toHaveBeenCalledOnce();
+    expect(source.setData).toHaveBeenCalledOnce();
+    expect(context.loaded).toBe(true);
+  });
 });
