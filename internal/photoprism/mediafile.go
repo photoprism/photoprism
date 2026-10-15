@@ -41,39 +41,41 @@ import (
 
 // MediaFile represents a single photo, video, sidecar, or other supported media file.
 type MediaFile struct {
-	fileName         string
-	fileNameResolved string
-	fileRoot         string
-	statErr          error
-	mimeErr          error
-	modTime          time.Time
-	fileSize         int64
-	fileType         fs.Type
-	mimeType         string
-	contentType      string
-	takenAt          time.Time
-	takenAtLocal     time.Time
-	takenAtSrc       string
-	hash             string
-	checksum         string
-	hasPreviewImage  bool
-	noColorProfile   bool
-	colorProfile     string
-	width            int
-	height           int
-	metaData         meta.Data
-	metaOnce         sync.Once
-	videoInfo        video.Info
-	videoOnce        sync.Once
-	insta360Model    string
-	insta360Once     sync.Once
-	importedCapture  *Insta360Capture
-	importedOnce     sync.Once
-	visualProjection projection.Type
-	fileMutex        sync.Mutex
-	location         *entity.Cell
-	imageConfig      *image.Config
-	relatedMain      *MediaFile
+	fileName              string
+	fileNameResolved      string
+	fileRoot              string
+	statErr               error
+	mimeErr               error
+	modTime               time.Time
+	fileSize              int64
+	fileType              fs.Type
+	mimeType              string
+	contentType           string
+	takenAt               time.Time
+	takenAtLocal          time.Time
+	takenAtSrc            string
+	hash                  string
+	checksum              string
+	hasPreviewImage       bool
+	noColorProfile        bool
+	colorProfile          string
+	width                 int
+	height                int
+	metaData              meta.Data
+	metaOnce              sync.Once
+	videoInfo             video.Info
+	videoOnce             sync.Once
+	insta360Model         string
+	insta360Once          sync.Once
+	exportCapture         *Insta360Capture
+	exportCaptureResolved bool
+	importedCapture       *Insta360Capture
+	importedOnce          sync.Once
+	visualProjection      projection.Type
+	fileMutex             sync.Mutex
+	location              *entity.Cell
+	imageConfig           *image.Config
+	relatedMain           *MediaFile
 }
 
 // SetRelatedMain caches the main file of the group this file belongs to, so

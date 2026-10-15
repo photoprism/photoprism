@@ -102,6 +102,13 @@ func TestExportProbe(t *testing.T) {
 		assert.True(t, exportAvc(probe.Codec))
 		assert.Nil(t, probe.Avc)
 	})
+	t.Run("NonAvcMkvOffersConversion", func(t *testing.T) {
+		f := exportTestVideo(t, w, "hevc.mkv", "libx265")
+		probe, err := w.ProbeExport(f)
+		require.NoError(t, err)
+		require.NotNil(t, probe.Avc)
+		assert.True(t, probe.Avc.Preparable)
+	})
 }
 
 // TestExportAppleKey rejects generic metadata IDs while accepting explicit Apple identifiers.

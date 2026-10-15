@@ -82,7 +82,11 @@ function findPreview(original, originals, rasters) {
   }
 
   const stem = nameStem(original.Name);
-  if (originals.filter((file) => nameStem(file.Name) === stem).length !== 1) {
+  const owned = rasters.filter((file) => file.Root === "/" && nameStem(file.Name) === stem);
+  if (owned.length) {
+    return preferredPreview(original, owned);
+  }
+  if (originals.filter((file) => !isRaster(file) && nameStem(file.Name) === stem).length !== 1) {
     return null;
   }
 
@@ -163,10 +167,11 @@ export function buildExportGroups(files, thumbs = [], thumbLimit = 1920) {
     const preview = still && !nativeStill ? findPreview(original, originals, rasters) : null;
     const thumbnailSource = nativeStill ? source : preview ? sourceInfo(preview) : null;
 
-    if (preview) {
-      options.push(fileOption("preview", thumbnailSource));
+    const previewOwned = preview?.Root === "/";
+    if (preview && !previewOwned) {
+      options.push({ ...fileOption("preview", thumbnailSource), label: source.format === "pdf" ? "Full Size Preview (First Page)" : "Full-Size Preview" });
     }
-    if (thumbnailSource && still) {
+    if (thumbnailSource && still && !previewOwned) {
       options.push(...thumbnailOptions(thumbnailSource, Array.isArray(thumbs) ? thumbs : [], options, thumbLimit));
     }
 
@@ -176,7 +181,7 @@ export function buildExportGroups(files, thumbs = [], thumbLimit = 1920) {
       previewMissing: still && !thumbnailSource,
       thumbnailSource,
       options,
-      selected: groups.length === 0 ? options.find((option) => option.size === "fit_1920" && option.label !== "Full Size")?.id || "" : "",
+      selected: "",
     });
   }
 

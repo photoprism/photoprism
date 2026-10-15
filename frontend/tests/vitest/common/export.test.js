@@ -78,7 +78,7 @@ describe("common/export groups", () => {
     expect(group.options.map((option) => option.kind)).toEqual(["original", "thumbnail", "thumbnail", "thumbnail"]);
     expect(thumbnails(group).map(({ width, height }) => [width, height])).toEqual([[720, 540], [1280, 960], [1600, 1200]]);
     expect(hashes(group)).toEqual([original.Hash]);
-    expect(group.selected).toBe(`thumbnail:${original.UID}:fit_1920`);
+    expect(group.selected).toBe("");
   });
 
   it("preserves Full Size JPEG as a distinct PNG export", () => {
@@ -124,7 +124,7 @@ describe("common/export groups", () => {
     const [group] = buildExportGroups([original, preview], thumbs);
     expect(group.options.map((option) => option.kind)).toEqual(["original", "preview", "thumbnail", "thumbnail", "thumbnail"]);
     expect(hashes(group)).toEqual([original.Hash, preview.Hash]);
-    expect(group.selected).toBe(`thumbnail:${preview.UID}:fit_1920`);
+    expect(group.selected).toBe("");
   });
 
   it.each([
@@ -220,12 +220,12 @@ describe("common/export preview matching", () => {
     expect(groups.map(hashes)).toEqual([[raw.Hash, preview.Hash], [jpeg.Hash]]);
   });
 
-  it("does not lend an original JPEG to an ambiguous RAW sibling", () => {
+  it("leaves derivatives with the JPEG original without a misleading RAW error", () => {
     const raw = makeFile({ Name: "dir/photo.cr2", FileType: "cr2", MediaType: "raw" });
     const jpeg = makeFile({ Name: "dir/photo.jpg", Primary: true });
     const groups = buildExportGroups([raw, jpeg], thumbs);
     expect(groups.map(hashes)).toEqual([[raw.Hash], [jpeg.Hash]]);
-    expect(groups[0].previewMissing).toBe(true);
+    expect(groups[0].previewMissing).toBe(false);
   });
 
   it("pairs two different RAW originals with their own previews", () => {
@@ -313,7 +313,7 @@ describe("common/export sizes and selection", () => {
   it("retains genuine Full Size JPEG conversion when on-demand rendering allows it", () => {
     const [group] = buildExportGroups([makeFile({ FileType: "png", Name: "large.png" })], thumbs, 7680);
     expect(thumbnails(group).at(-1)).toMatchObject({ size: "fit_4096", label: "Full Size", width: 4000, height: 3000 });
-    expect(group.selected).toBe(group.options.find((option) => option.size === "fit_1920").id);
+    expect(group.selected).toBe("");
   });
 
   it("checks both box dimensions against the serving limit before fitting small PNGs", () => {
@@ -327,7 +327,7 @@ describe("common/export sizes and selection", () => {
     const sizes = [{ size: "tile_500", w: 500, h: 500 }, thumbs[2], null, { size: "fit_bad", w: 0, h: 720 }];
     const [group] = buildExportGroups([makeFile()], sizes);
     expect(thumbnails(group).map((option) => option.size)).toEqual(["fit_1920"]);
-    expect(group.selected).toBe(group.options[1].id);
+    expect(group.selected).toBe("");
   });
 
   it("does not upscale small JPEGs or keep duplicate full-size thumbnails", () => {
@@ -381,9 +381,9 @@ describe("common/export sizes and selection", () => {
     expect(group.selected).toBe("");
   });
 
-  it("selects Full HD only in the first group", () => {
+  it("leaves all groups unselected even when Full HD is available", () => {
     const groups = buildExportGroups([makeFile(), makeFile()], thumbs);
-    expect(groups[0].selected).toBe(groups[0].options.find((option) => option.size === "fit_1920").id);
+    expect(groups[0].selected).toBe("");
     expect(groups[1].selected).toBe("");
   });
 

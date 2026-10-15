@@ -78,13 +78,13 @@ describe("photo export dialog", () => {
       : limit === 1920 ? { size: "fit_1920", width: 1600, height: 1200 } : { size: "fit_720", width: 720, height: 540 });
     expect(wrapper.text().includes("Full Size")).toBe(limit === 7680);
   });
-  it.each([customDark, customLight])("explicitly binds the custom application theme $name", async (theme) => {
+  it.each([customDark, customLight])("uses the lightbox theme with custom application theme $name", async (theme) => {
     await open();
     config.themeName = theme.name;
     wrapper.vm.$vuetify.theme.themes[theme.name] = theme;
     wrapper.vm.$vuetify.theme.global.name = theme.name;
     await flushPromises();
-    expect(wrapper.findComponent({ name: "ExportDialogStub" }).props("theme")).toBe(theme.name);
+    expect(wrapper.findComponent({ name: "ExportDialogStub" }).props("theme")).toBe("lightbox");
   });
   it("keeps mobile fullscreen with a top close control and full-width primary action", async () => {
     await open();
@@ -97,10 +97,10 @@ describe("photo export dialog", () => {
     await wrapper.find(".action-dismiss").trigger("click");
     expect(wrapper.emitted("close")).toHaveLength(1);
   });
-  it("binds the selected application theme and desktop width", async () => {
+  it("binds the lightbox theme and desktop width", async () => {
     await open();
-    expect(wrapper.findComponent({ name: "ExportDialogStub" }).props()).toMatchObject({ theme: "light", maxWidth: "560" });
-    expect(wrapper.find(".action-export").text()).toBe("Export 1 File");
+    expect(wrapper.findComponent({ name: "ExportDialogStub" }).props()).toMatchObject({ theme: "lightbox", maxWidth: "560" });
+    expect(wrapper.find(".action-export").text()).toBe("Export 0 Files");
     expect(wrapper.find(".export-hint").exists()).toBe(false);
     await wrapper.find(".action-dismiss").trigger("click");
     expect(wrapper.emitted("close")).toHaveLength(1);
@@ -157,12 +157,13 @@ describe("photo export dialog", () => {
       expect(section.findAll(".v-divider")).toHaveLength(1);
     }
     expect(wrapper.findAll(".export-options-section:not(.export-resized-jpegs) .export-option").map((row) => row.attributes("data-option-id").split(":")[0])).toEqual(["original", "preview", "original"]);
+    await sections[0].find(`input[value="thumbnail:${preview.UID}:fit_1920"]`).setValue(true);
     await sections[0].find(`input[value="thumbnail:${preview.UID}:fit_720"]`).setValue(true);
     expect(wrapper.vm.selected).toContain(`thumbnail:${preview.UID}:fit_720`);
     expect(wrapper.find(".action-export").text()).toBe("Export 2 Files");
     expect(wrapper.find(".export-hint").exists()).toBe(true);
   });
-  it("loads full Files with Download disabled and preselects only first displayed Full HD", async () => {
+  it("loads full Files with Download disabled and leaves every option unselected", async () => {
     await open([file("v", { MediaType: "video", Video: true }), file("a"), file("b")]);
     expect(Photo.prototype.find).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
     expect(wrapper.vm.groups.map((group) => group.id)).toEqual([file("v").UID, file("a").UID, file("b").UID]);
@@ -181,10 +182,11 @@ describe("photo export dialog", () => {
     await wrapper.findAll(".v-expansion-panel-title")[1].trigger("click");
     expect(wrapper.vm.expanded).toEqual([file("a").UID, file("b").UID]);
     const original = wrapper.find('input[value="original:fs6sg6bqhhin0097"]');
+    await wrapper.find('input[value="thumbnail:fs6sg6bqhhin0097:fit_1920"]').setValue(true);
     await original.setValue(true);
     expect(wrapper.vm.selected).toEqual(["thumbnail:fs6sg6bqhhin0097:fit_1920", "original:fs6sg6bqhhin0097"]);
     expect(wrapper.find(".action-export").text()).toBe("Export 2 Files");
-    expect(wrapper.find(".export-selected").text()).toBe("2");
+    expect(wrapper.find(".export-selected").text()).toBe("2 Selected");
     expect(wrapper.vm.selectedCount(wrapper.vm.groups[0])).toBe(2);
     await wrapper.setData({ selected: [] });
     expect(wrapper.find(".action-export").attributes("disabled")).toBeDefined();
@@ -230,7 +232,7 @@ describe("photo export dialog", () => {
     await wrapper.setProps({ visible: false });
     await wrapper.setProps({ visible: true });
     await flushPromises();
-    expect(wrapper.vm.selected).toEqual(["thumbnail:fs6sg6bqhhin0097:fit_1920"]);
+    expect(wrapper.vm.selected).toEqual([]);
     expect(wrapper.vm.expanded).toEqual([file("a").UID]);
   });
   it("rechecks settings and ACL and closes when either is lost", async () => {
@@ -286,6 +288,7 @@ describe("photo export dialog", () => {
   it("keeps a failed export open and closes after retrying it successfully", async () => {
     await open();
     await wrapper.setData({ selected: [`original:${file("a").UID}`] });
+    await wrapper.setData({ selected: [`original:${file("a").UID}`] });
     session.refresh.mockRejectedValueOnce(new Error("expired"));
     await wrapper.vm.confirm();
     expect(wrapper.vm.complete).toBe(false);
@@ -333,6 +336,7 @@ describe("photo export dialog", () => {
   });
   it("reports session refresh failures without handing a file to the browser", async () => {
     await open();
+    await wrapper.setData({ selected: [`original:${file("a").UID}`] });
     session.refresh.mockRejectedValueOnce(new Error("expired"));
     await wrapper.vm.confirm();
     expect(wrapper.vm.transferError).toBe(true);
@@ -510,5 +514,66 @@ describe("indexed animated-image probing", () => {
     expect(Axios.get).toHaveBeenCalledTimes(2);
     expect(wrapper.vm.groups.map((group) => group.original.mediaType)).toEqual(["animated", "animated"]);
     expect(wrapper.vm.groups.every((group) => group.options.map((option) => option.kind).join() === "original,avc")).toBe(true);
+  });
+});
+
+
+describe("export feedback regressions", () => {
+  it("keeps counts local to JPEG original groups and suppresses misleading RAW errors", async () => {
+    const raw = file("r", { Name: "capture.cr2", MediaType: "raw", FileType: "cr2" });
+    const jpeg = file("j", { Name: "capture.jpg" });
+    await open([raw, jpeg]);
+    await wrapper.setData({ expanded: [raw.UID, jpeg.UID] });
+    expect(wrapper.text()).not.toContain("unique still preview");
+    expect(wrapper.vm.groups[0].options).toHaveLength(1);
+    await wrapper.find(`input[value="original:${jpeg.UID}"]`).setValue(true);
+    expect(wrapper.vm.selectedCount(wrapper.vm.groups[0])).toBe(0);
+    expect(wrapper.vm.selectedCount(wrapper.vm.groups[1])).toBe(1);
+    expect(wrapper.findAll(".export-selected").map((chip) => chip.text())).toEqual(["1 Selected"]);
+    expect(wrapper.find(".action-export").text()).toBe("Export 1 File");
+  });
+  it("renders real preview errors in the error color and labels the PDF first page", async () => {
+    const pdf = file("d", { Name: "document.pdf", MediaType: "document", FileType: "pdf" });
+    await open([pdf]);
+    expect(wrapper.find(".text-error").text()).toContain("unique still preview");
+    Photo.prototype.find.mockResolvedValue({ Files: [pdf, file("p", { Name: "document.pdf.jpg", Root: "sidecar" })] });
+    await wrapper.vm.loadFiles();
+    await flushPromises();
+    expect(wrapper.text()).toContain("Full Size Preview (First Page)");
+    expect(wrapper.text()).not.toContain("unique still preview");
+  });
+  it("surfaces failed probes and retries one group without losing another group's selection", async () => {
+    const movie = file("m", { Name: "movie.mov", FileType: "mov", MediaType: "video" });
+    const still = file("s");
+    Axios.get.mockImplementation((url) => url.includes(movie.Hash) ? Promise.reject({ response: { status: 503 } }) : Promise.resolve({ data: {} }));
+    await open([movie, still]);
+    expect(wrapper.find(".export-probe-error").text()).toContain("Failed to check video options");
+    expect(wrapper.vm.groups[0].options.map((option) => option.kind)).toEqual(["original"]);
+    await wrapper.setData({ selected: [`original:${still.UID}`] });
+    Axios.get.mockResolvedValue({ data: { codec: "hevc", avc: { format: "mp4", codec: "avc1", preparable: true } } });
+    await wrapper.find(".action-retry-probe").trigger("click");
+    await flushPromises();
+    expect(wrapper.find(".export-probe-error").exists()).toBe(false);
+    expect(wrapper.vm.groups[0].options.some((option) => option.kind === "avc")).toBe(true);
+    expect(wrapper.vm.selected).toEqual([`original:${still.UID}`]);
+  });
+  it("ignores a manual probe retry that completes after reopening", async () => {
+    const movie = file("m", { Name: "movie.mov", FileType: "mov", MediaType: "video" });
+    Axios.get.mockRejectedValue({ response: { status: 503 } });
+    await open([movie]);
+    let resolve;
+    Axios.get.mockImplementationOnce(() => new Promise((done) => {
+      resolve = done;
+    }));
+    const pending = wrapper.vm.retryProbe(wrapper.vm.groups[0]);
+    await Promise.resolve();
+    await wrapper.setProps({ visible: false });
+    Axios.get.mockResolvedValue({ data: {} });
+    await wrapper.setProps({ visible: true });
+    await flushPromises();
+    resolve({ data: { avc: { format: "mp4", preparable: true } } });
+    await pending;
+    expect(wrapper.vm.groups[0].options.map((option) => option.kind)).toEqual(["original"]);
+    expect(wrapper.vm.selected).toEqual([]);
   });
 });

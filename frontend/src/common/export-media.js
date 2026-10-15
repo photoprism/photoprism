@@ -12,13 +12,45 @@ export function exportMediaUrl(source, config, mode, kind = "") {
   return `${config.apiUri}/videos/${encodeURIComponent(source.hash)}/${encodeURIComponent(config.downloadToken)}/export?export=${mode}${kind ? `&kind=${kind}` : ""}`;
 }
 
-// probeExportMedia reads export capabilities without requesting a conversion.
-export async function probeExportMedia(source, config) {
-  const response = await Axios.get(exportMediaUrl(source, config, "probe"));
+// probeExportMedia retries one busy response before surfacing a retryable failure.
+export async function probeExportMedia(source, config, signal) {
+  const url = exportMediaUrl(source, config, "probe");
+  let response;
+  try {
+    response = await Axios.get(url, { signal });
+  } catch (error) {
+    if (error.response?.status !== 429 || signal?.aborted) {
+      throw error;
+    }
+    const retryAfter = error.response.headers?.["retry-after"];
+    const seconds = Number(retryAfter);
+    const delay = retryAfter && !Number.isFinite(seconds) ? Date.parse(retryAfter) - Date.now() : (Number.isFinite(seconds) ? seconds * 1000 : 1000);
+    await waitForProbe(Math.min(5000, Math.max(0, Number.isFinite(delay) ? delay : 1000)), signal);
+    response = await Axios.get(url, { signal });
+  }
   if (!response.data || typeof response.data !== "object" || Array.isArray(response.data)) {
     throw new Error("Invalid export probe");
   }
   return response.data;
+}
+
+// waitForProbe cancels a busy retry when the dialog closes.
+function waitForProbe(delay, signal) {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new Error("Export probe canceled"));
+      return;
+    }
+    const abort = () => {
+      clearTimeout(timer);
+      reject(new Error("Export probe canceled"));
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", abort);
+      resolve();
+    }, delay);
+    signal?.addEventListener("abort", abort, { once: true });
+  });
 }
 
 // prepareExportMedia requests a verified output without tying server work to dialog cancellation.
@@ -75,8 +107,13 @@ export function buildMediaExportGroups(files, thumbs, probes = {}, thumbLimit = 
     const animated = source.mediaType === media.Animated;
     if (source.mediaType === media.Live && (probe?.videoPart?.preparable || probe?.videoPart?.ready) && probe.videoPart.format) {
       group.options.push(derivativeOption("video-part", source, probe.videoPart));
-    } else if ((source.mediaType === media.Video || animated) && !isAvc(probe?.codec) && probe?.avc?.format === "mp4" && (probe.avc.ready || probe.avc.preparable)) {
+    } else if ((source.mediaType === media.Video || animated) && (!isAvc(probe?.codec) || probe?.captureRole === "main") && probe?.avc?.format === "mp4" && (probe.avc.ready || probe.avc.preparable)) {
       group.options.push(derivativeOption("avc", source, probe.avc));
+    }
+    group.captureRole = probe?.captureRole || "";
+    if (group.captureRole === "secondary") {
+      group.options = group.options.filter((option) => option.kind === "original");
+      group.previewMissing = false;
     }
     group.originals = [source];
     group.apple = false;
@@ -130,8 +167,5 @@ export function buildMediaExportGroups(files, thumbs, probes = {}, thumbLimit = 
       result.push(group);
     }
   }
-  return result.map((group, index) => ({
-    ...group,
-    selected: index === 0 ? group.options.find((option) => option.size === "fit_1920" && option.label !== "Full Size")?.id || "" : "",
-  }));
+  return result;
 }

@@ -76,19 +76,34 @@ func exportVerifiedFile(file *os.File, kind string) (ExportOutput, error) {
 
 // validate checks the selected open source against its indexed hash and captured version.
 func (source *exportSource) validate(file *os.File) error {
-	select {
-	case exportProbeSlots <- struct{}{}:
-		defer func() { <-exportProbeSlots }()
-	default:
-		return ErrExportBusy
-	}
 	stat, err := file.Stat()
 	if err != nil || !os.SameFile(stat, source.stat) || stat.Size() != source.stat.Size() || !stat.ModTime().Equal(source.stat.ModTime()) {
 		return ErrExportSourceChanged
 	}
-	hash := sha1.New() //nolint:gosec // indexed media hashes use SHA1
-	if _, err = io.Copy(hash, io.NewSectionReader(file, 0, stat.Size())); err != nil || hex.EncodeToString(hash.Sum(nil)) != source.file.FileHash {
-		return ErrExportSourceChanged
+	verify := func() error {
+		hash := sha1.New() //nolint:gosec // indexed media hashes use SHA1
+		if _, err = io.Copy(hash, io.NewSectionReader(file, 0, stat.Size())); err != nil || hex.EncodeToString(hash.Sum(nil)) != source.file.FileHash {
+			return ErrExportSourceChanged
+		}
+		current, statErr := file.Stat()
+		if statErr != nil || exportFileVersion(current) != exportFileVersion(stat) {
+			return ErrExportSourceChanged
+		}
+		return source.version.check(source.media.FileName())
+	}
+	if key := exportFileVersion(stat); key != "" {
+		err = exportValidation.verify(source.version.name+"\x00"+source.file.FileHash+"\x00"+key, verify)
+	} else {
+		select {
+		case exportValidationSlots <- struct{}{}:
+			defer func() { <-exportValidationSlots }()
+		default:
+			return ErrExportBusy
+		}
+		err = verify()
+	}
+	if err != nil {
+		return err
 	}
 	return source.version.check(source.media.FileName())
 }
@@ -98,6 +113,9 @@ func (w *Convert) ExportFile(f *entity.File, kind string) (*os.File, int64, Expo
 	source, err := w.exportSource(f)
 	if err != nil {
 		return nil, 0, ExportOutput{}, err
+	}
+	if source.captureRole == "secondary" {
+		return nil, 0, ExportOutput{}, ErrExportUnavailable
 	}
 	sourceFile, err := exportOpenFile(source.media.FileName(), false)
 	if err != nil {
@@ -176,6 +194,17 @@ func (w *Convert) PrepareExport(f *entity.File, kind string) (ExportOutput, erro
 	_ = file.Close()
 	if err != nil {
 		return ExportOutput{}, err
+	}
+	if source.companion != nil {
+		companionFile, openErr := exportOpenFile(source.companion.media.FileName(), false)
+		if openErr != nil {
+			return ExportOutput{}, ErrExportSourceChanged
+		}
+		err = source.companion.validate(companionFile)
+		_ = companionFile.Close()
+		if err != nil {
+			return ExportOutput{}, err
+		}
 	}
 	if _, output, readyErr := w.exportSidecar(source.media); readyErr == nil {
 		return output, nil

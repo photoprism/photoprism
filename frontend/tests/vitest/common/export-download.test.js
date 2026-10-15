@@ -26,11 +26,11 @@ afterEach(() => {
 });
 
 describe("image export choices and filenames", () => {
-  it("filters unsupported audio groups after matching and preselects the first displayed Full HD", () => {
+  it("filters unsupported audio groups after matching and leaves every output unselected", () => {
     const files = [file("v", { Name: "v.mp3", MediaType: "audio", FileType: "mp3" }), file("a")];
     const groups = buildMediaExportGroups(files, thumbs);
     expect(groups).toHaveLength(1);
-    expect(groups[0].selected).toBe("thumbnail:fs6sg6bqhhin0097:fit_1920");
+    expect(groups.every((group) => group.selected === "")).toBe(true);
   });
   it("keeps mixed-stack preview ambiguity when a video original shares the stem", () => {
     const groups = buildMediaExportGroups([

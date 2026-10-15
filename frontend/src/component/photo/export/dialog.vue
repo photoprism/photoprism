@@ -2,7 +2,7 @@
   <v-dialog
     ref="dialog"
     :model-value="visible"
-    :theme="$vuetify.theme.global.name"
+    theme="lightbox"
     :fullscreen="$vuetify.display.smAndDown"
     max-width="560"
     scrollable
@@ -32,20 +32,20 @@
           <div v-for="item in activeOutputs" :key="item.id" class="export-output" :data-option-id="item.id">
             <div class="export-output-heading">
               <v-icon v-if="states[item.id]?.state === 'error'" icon="mdi-alert-circle-outline" color="error" size="24" aria-hidden="true"></v-icon>
-              <v-progress-circular v-else indeterminate size="24" width="2" color="primary" aria-hidden="true"></v-progress-circular>
+              <v-progress-circular v-else indeterminate size="24" width="2" color="on-surface" aria-hidden="true"></v-progress-circular>
               <span class="export-file">
                 <span class="export-filename text-body-2 font-weight-medium">{{ item.filename }}</span>
                 <span class="text-caption text-medium-emphasis">{{ optionMetadata(item) }}</span>
                 <span class="text-caption" :class="{ 'text-error': states[item.id]?.state === 'error' }" role="status">{{ stateLabel(item) }}</span>
               </span>
-              <v-btn v-if="states[item.id]?.state === 'error'" class="action-retry-output" variant="text" color="primary" size="small" :aria-label="$gettext('Retry') + ' ' + item.filename" @click="retry(item)">{{ $gettext("Retry") }}</v-btn>
+              <v-btn v-if="states[item.id]?.state === 'error'" class="action-retry-output" variant="text" color="on-surface" size="small" :aria-label="$gettext('Retry') + ' ' + item.filename" @click="retry(item)">{{ $gettext("Retry") }}</v-btn>
             </div>
           </div>
         </div>
         <p v-else-if="!groups.length" class="export-empty">{{ $gettext("No supported files available for export.") }}</p>
         <template v-else>
-          <v-expansion-panels v-model="expanded" multiple variant="accordion">
-            <v-expansion-panel v-for="group in groups" :key="group.id" :value="group.id">
+          <v-expansion-panels v-model="expanded" multiple variant="accordion" class="export-groups">
+            <v-expansion-panel v-for="group in groups" :key="group.id" :value="group.id" class="export-group rounded-lg">
               <v-expansion-panel-title class="export-group-title">
                 <v-img v-if="group.thumbnailSource" :src="thumbnailUrl(group)" width="44" height="44" cover alt="" class="export-thumbnail rounded">
                   <template #error><v-icon :icon="mediaIcon(group)" size="28"></v-icon></template>
@@ -56,15 +56,19 @@
                   <span class="export-file-type text-caption">{{ mediaLabel(group) }}</span>
                   <span v-if="fileMetadata(group.original)" class="export-file-metadata text-caption">{{ fileMetadata(group.original) }}</span>
                 </span>
-                <v-chip v-if="selectedCount(group)" :closable="false" variant="tonal" size="x-small" color="primary" :title="$gettext('Selected')" class="export-selected ms-2 me-2">{{ selectedCount(group) }}</v-chip>
+                <v-chip v-if="selectedCount(group)" :closable="false" variant="tonal" size="x-small" color="on-surface" :title="$gettext('Selected')" class="export-selected ms-2 me-2">{{ $gettext("%{n} Selected", { n: selectedCount(group) }) }}</v-chip>
               </v-expansion-panel-title>
               <v-expansion-panel-text class="export-group-options">
-                <p v-if="group.previewMissing" class="text-body-2 mb-3">{{ $gettext("A unique still preview could not be found.") }}</p>
+                <p v-if="group.previewMissing" class="text-body-2 text-error mb-3">{{ $gettext("A unique still preview could not be found.") }}</p>
+                <div v-if="probeErrors[group.original.hash]" class="export-probe-error text-body-2 text-error mb-3" role="alert">
+                  {{ $gettext("Failed to check video options. Please try again.") }}
+                  <v-btn class="action-retry-probe" variant="text" :disabled="probing[group.original.hash]" @click="retryProbe(group)">{{ $gettext("Retry") }}</v-btn>
+                </div>
                 <div v-for="section in optionSections(group)" :key="section.id" class="export-options-section" :class="{ 'export-resized-jpegs': section.id === 'resized' }" :role="section.label ? 'group' : undefined" :aria-label="section.label || undefined">
                   <v-divider v-if="section.label"></v-divider>
                   <p v-if="section.label" class="export-section-title text-caption text-medium-emphasis">{{ section.label }}</p>
                   <div v-for="option in section.options" :key="option.id" class="export-option" :data-option-id="option.id">
-                    <v-checkbox v-model="selected" :value="option.id" :disabled="started" hide-details density="compact" color="primary">
+                    <v-checkbox v-model="selected" :value="option.id" :disabled="started" hide-details density="compact" color="on-surface">
                       <template #label>
                         <span class="export-option-label">
                           <span class="export-option-description">
@@ -118,6 +122,11 @@ export default {
       loadError: false,
       transferError: false,
       groups: [],
+      files: [],
+      probes: {},
+      probeErrors: {},
+      probing: {},
+      probeController: null,
       expanded: [],
       selected: [],
       downloads: [],
@@ -199,6 +208,7 @@ export default {
     stop() {
       this.generation++;
       this.queue?.cancel();
+      this.probeController?.abort();
     },
     // reset restores the initial selection state for each opening.
     reset() {
@@ -208,6 +218,10 @@ export default {
       this.loadError = false;
       this.transferError = false;
       this.groups = [];
+      this.files = [];
+      this.probes = {};
+      this.probeErrors = {};
+      this.probing = {};
       this.expanded = [];
       this.selected = [];
       this.downloads = [];
@@ -232,6 +246,9 @@ export default {
         this.close();
         return;
       }
+      this.probeController?.abort();
+      const controller = markRaw(new AbortController());
+      this.probeController = controller;
       const generation = ++this.generation;
       const uid = this.uid;
       this.loading = true;
@@ -242,6 +259,7 @@ export default {
           return;
         }
         const probes = {};
+        const probeErrors = {};
         const candidates = buildExportGroups(photo.Files).filter((group) => ["video", "animated", "live"].includes(group.original.mediaType) || ["jpg", "heic"].includes(group.original.format));
         if (candidates.length) {
           await this.$session.refresh();
@@ -251,17 +269,20 @@ export default {
             return;
           }
           try {
-            probes[group.original.hash] = await probeExportMedia(group.original, this.$config);
+            probes[group.original.hash] = await probeExportMedia(group.original, this.$config, controller.signal);
           } catch {
-            // Originals and still previews remain available when probing fails.
+            probeErrors[group.original.hash] = true;
           }
         }
         if (generation !== this.generation || !this.visible || !this.permitted) {
           return;
         }
+        this.files = photo.Files;
+        this.probes = probes;
+        this.probeErrors = probeErrors;
         this.groups = buildMediaExportGroups(photo.Files, this.$config.values.thumbs, probes, this.$config.values.thumbLimit);
         this.expanded = this.groups.length ? [this.groups[0].id] : [];
-        this.selected = this.groups.map((group) => group.selected).filter(Boolean);
+        this.selected = [];
       } catch {
         if (generation === this.generation && this.visible) {
           this.loadError = true;
@@ -269,6 +290,35 @@ export default {
       } finally {
         if (generation === this.generation) {
           this.loading = false;
+        }
+      }
+    },
+    // retryProbe refreshes one failed capability without discarding other selections.
+    async retryProbe(group) {
+      const source = group.original;
+      if (this.probing[source.hash] || this.started || !this.visible || !this.permitted) {
+        return;
+      }
+      const generation = this.generation;
+      this.probing[source.hash] = true;
+      try {
+        await this.$session.refresh();
+        const probe = await probeExportMedia(source, this.$config, this.probeController?.signal);
+        if (generation !== this.generation || !this.visible || !this.permitted) {
+          return;
+        }
+        this.probes[source.hash] = probe;
+        delete this.probeErrors[source.hash];
+        this.groups = buildMediaExportGroups(this.files, this.$config.values.thumbs, this.probes, this.$config.values.thumbLimit);
+        const available = new Set(this.groups.flatMap((item) => item.options.map((option) => option.id)));
+        this.selected = this.selected.filter((id) => available.has(id));
+      } catch {
+        if (generation === this.generation) {
+          this.probeErrors[source.hash] = true;
+        }
+      } finally {
+        if (generation === this.generation) {
+          delete this.probing[source.hash];
         }
       }
     },
@@ -316,7 +366,7 @@ export default {
     },
     // optionLabel translates the output choice independently of its metadata.
     optionLabel(option) {
-      const labels = { Original: this.$gettext("Original"), "Full-Size Preview": this.$gettext("Full-Size Preview"), "Full Size": this.$gettext("Full Size"), "Full HD": this.$gettext("Full HD"), "MP4 AVC": this.$gettext("Compatible Video"), "Video Part": this.$gettext("Video Part") };
+      const labels = { Original: this.$gettext("Original"), "Full-Size Preview": this.$gettext("Full-Size Preview"), "Full Size Preview (First Page)": this.$gettext("Full Size Preview (First Page)"), "Full Size": this.$gettext("Full Size"), "Full HD": this.$gettext("Full HD"), "MP4 AVC": this.$gettext("Compatible Video"), "Video Part": this.$gettext("Video Part") };
       return labels[option.label] || option.label;
     },
     // optionMetadata includes verified output dimensions and codec when preparation completes.
@@ -408,6 +458,14 @@ export default {
   overflow-y: auto;
   padding: 16px 24px 20px;
   margin: 0;
+}
+
+.export-groups {
+  gap: 12px;
+}
+
+.export-group {
+  overflow: hidden;
 }
 
 .export-group-title {
@@ -514,7 +572,15 @@ export default {
     padding: 16px;
   }
 
-  .export-group-title {
+  .export-groups {
+  gap: 12px;
+}
+
+.export-group {
+  overflow: hidden;
+}
+
+.export-group-title {
     padding: 12px;
   }
 

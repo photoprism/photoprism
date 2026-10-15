@@ -194,7 +194,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		return nil, err
 	}
 	defer os.Remove(stage)
-	cmd, useMutex, err := w.transcodeToAvcCmd(f, stage, encoder, exact)
+	cmd, useMutex, err := w.transcodeToAvcCmd(f, stage, encoder, version.capture)
 
 	// Return if an error occurred, which the caller logs.
 	if err != nil {
@@ -290,7 +290,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	// Return AVC media file and keep the successful dewarp projection available to the indexer even
 	// when ExifTool is disabled. Later reindexes infer the same value from source and sidecar paths.
 	avcFile, avcErr := NewMediaFile(avcName)
-	if avcErr == nil && f.IsInsv() && (f.Insta360DualStream() || f.DualFisheyeLayout() || !exact && f.DewarpableInsv()) {
+	if avcErr == nil && f.IsInsv() && (f.Insta360DualStream() || f.DualFisheyeLayout() || f.DewarpableInsv()) {
 		avcFile.SetVisualProjection(projection.Equirectangular)
 	}
 
@@ -387,11 +387,11 @@ func (w *Convert) avcContainer(fileName, logFileName string) *MediaFile {
 
 // TranscodeToAvcCmd returns the command for converting video files to MPEG-4 AVC.
 func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode.Encoder) (result *exec.Cmd, useMutex bool, err error) {
-	return w.transcodeToAvcCmd(f, avcName, encoder, false)
+	return w.transcodeToAvcCmd(f, avcName, encoder)
 }
 
-// transcodeToAvcCmd builds conversion commands, keeping exact requests confined to the selected input.
-func (w *Convert) transcodeToAvcCmd(f *MediaFile, avcName string, encoder encode.Encoder, exact bool) (result *exec.Cmd, useMutex bool, err error) {
+// transcodeToAvcCmd builds conversion commands with optional captured lens inputs.
+func (w *Convert) transcodeToAvcCmd(f *MediaFile, avcName string, encoder encode.Encoder, captures ...*Insta360Capture) (result *exec.Cmd, useMutex bool, err error) {
 	fileExt := f.Extension()
 	fileName := f.FileName()
 
@@ -418,10 +418,11 @@ func (w *Convert) transcodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 		return exec.Command(w.conf.ImageMagickBin(), args...), false, nil
 	}
 
-	// Complete separate-lens captures are combined before dewarping. Single-file INSV originals are
-	// dewarped only when their decoded frame is already a side-by-side ~2:1 dual-fisheye layout.
+	// Separate lenses share the stitched playback destination, including exact export requests.
 	var capture *Insta360Capture
-	if !exact {
+	if len(captures) > 0 {
+		capture = captures[0]
+	} else {
 		capture = FindInsta360Capture(f)
 	}
 	dewarpPair := capture != nil && capture.Left != nil && capture.Left.FileName() == f.FileName() && capture.Dewarpable()

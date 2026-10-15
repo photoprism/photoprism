@@ -24,7 +24,7 @@ Directory Map (src)
 - `src/common/export.js` — independent Export capability check and pure file-group/size choices from full photo details.
 - `src/common/export-media.js` — media classification, unique Apple pairing with separate photo/MOV groups, and the source-specific video capability/preparation API.
 - `src/common/export-download.js` — immutable attachment names/URLs, serial preparation, Retry, and independent ready browser handoffs.
-- `src/component/photo/export/dialog.vue` — application-themed Lightbox stack Export, matched thumbnails, unfinished-output progress/Retry, automatic completion closure, and shared dialog focus.
+- `src/component/photo/export/dialog.vue` — Lightbox stack Export, matched thumbnails, probe/output Retry, automatic completion closure, and shared dialog focus.
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)
 - `src/model/*` — REST models; base `Rest` class (`model/rest.js`) wraps Axios CRUD for collections and entities

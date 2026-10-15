@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/proc"
 )
@@ -28,7 +29,7 @@ var (
 	ErrExportNotReady = errors.New("media export not ready")
 	// ErrExportSourceChanged reports a source that no longer matches its indexed identity.
 	ErrExportSourceChanged = errors.New("media export source changed")
-	// ErrExportBusy reports that the bounded preparation capacity is occupied.
+	// ErrExportBusy reports that the bounded export capacity is occupied.
 	ErrExportBusy    = errors.New("media export preparation busy")
 	exportSlots      = make(chan struct{}, 4)
 	exportProbeSlots = make(chan struct{}, 4)
@@ -47,23 +48,26 @@ type ExportOutput struct {
 
 // ExportProbe describes source metadata and available video renditions.
 type ExportProbe struct {
-	Codec     string        `json:"codec"`
-	Duration  float64       `json:"duration"`
-	AppleKey  string        `json:"appleKey"`
-	Avc       *ExportOutput `json:"avc,omitempty"`
-	VideoPart *ExportOutput `json:"videoPart,omitempty"`
+	Codec       string        `json:"codec"`
+	Duration    float64       `json:"duration"`
+	CaptureRole string        `json:"captureRole,omitempty"`
+	AppleKey    string        `json:"appleKey"`
+	Avc         *ExportOutput `json:"avc,omitempty"`
+	VideoPart   *ExportOutput `json:"videoPart,omitempty"`
 }
 
 // exportSource retains the indexed identity and observed source version.
 type exportSource struct {
-	file    *entity.File
-	media   *MediaFile
-	stat    os.FileInfo
-	version *avcSourceVersion
-	info    video.Info
+	file        *entity.File
+	media       *MediaFile
+	stat        os.FileInfo
+	version     *avcSourceVersion
+	info        video.Info
+	captureRole string
+	companion   *exportSource
 }
 
-// exportSource resolves only the selected file without searching its stack.
+// exportSource resolves a selected file and admits only same-photo capture companions.
 func (w *Convert) exportSource(f *entity.File) (*exportSource, error) {
 	if f == nil || !fs.IsHash(f.FileHash) || f.FileMissing || f.FileError != "" || f.FileName == "" {
 		return nil, ErrExportUnavailable
@@ -92,7 +96,60 @@ func (w *Convert) exportSource(f *entity.File) (*exportSource, error) {
 	if err = version.check(name); err != nil {
 		return nil, err
 	}
-	return &exportSource{file: f, media: m, stat: version.info, version: version, info: info}, nil
+	m.hash = f.FileHash
+	capture := FindInsta360Capture(m)
+	m.exportCaptureResolved = true
+	m.exportCapture = capture
+	version.capture = capture
+	var mate *entity.File
+	if capture != nil {
+		for _, member := range (MediaFiles{capture.Left, capture.Right}) {
+			if member == nil {
+				continue
+			}
+			if f.PhotoID != 0 && member.FileName() != m.FileName() {
+				mate = &entity.File{}
+				if err = entity.Db().Where("photo_id = ? AND file_root = ? AND file_name = ? AND file_missing = FALSE AND file_error = ?", f.PhotoID, f.FileRoot, member.RootRelName(), "").First(mate).Error; err != nil {
+					return nil, ErrExportUnavailable
+				}
+				member.hash = mate.FileHash
+			}
+			member.metaOnce.Do(func() {})
+			memberInfo, memberErr := w.exportVideoInfo(member.FileName())
+			if memberErr != nil {
+				return nil, memberErr
+			}
+			member.videoOnce.Do(func() { member.videoInfo = memberInfo })
+			member.width, member.height = memberInfo.VideoWidth, memberInfo.VideoHeight
+			member.metaData.Codec = string(memberInfo.VideoCodec)
+		}
+		if capture.Right == nil {
+			version.missing = append(version.missing, capture.Name.FileName(media.Insta360VideoRight))
+		}
+		if capture.Left == nil {
+			version.missing = append(version.missing, capture.Name.FileName(media.Insta360VideoLeft))
+		}
+	}
+	var companion *exportSource
+	role := ""
+	if capture.ValidPair() {
+		role = "secondary"
+		if capture.Left.FileName() == m.FileName() {
+			role = "main"
+			if !capture.Dewarpable() {
+				return nil, ErrExportUnavailable
+			}
+			right, versionErr := newAvcSourceVersion(capture.Right.FileName())
+			if versionErr != nil {
+				return nil, ErrExportSourceChanged
+			}
+			version.related = append(version.related, right)
+			if mate != nil {
+				companion = &exportSource{file: mate, media: capture.Right, stat: right.info, version: right}
+			}
+		}
+	}
+	return &exportSource{file: f, media: m, stat: version.info, version: version, info: info, captureRole: role, companion: companion}, nil
 }
 
 // exportVideoInfo probes containers directly, using a bounded FFprobe fallback for other videos.
@@ -174,13 +231,16 @@ func (w *Convert) ProbeExport(f *entity.File) (ExportProbe, error) {
 	if err != nil {
 		return ExportProbe{}, err
 	}
-	result := ExportProbe{Codec: string(source.info.VideoCodec), Duration: source.info.Duration.Seconds(), AppleKey: w.exportAppleKey(f)}
+	result := ExportProbe{CaptureRole: source.captureRole, Codec: string(source.info.VideoCodec), Duration: source.info.Duration.Seconds(), AppleKey: w.exportAppleKey(f)}
+	if source.captureRole == "secondary" {
+		return result, nil
+	}
 	if f.MediaType == entity.MediaLive {
 		if source.info.Compatible && !source.info.Encrypted && source.info.VideoOffset > 0 && source.info.VideoSize() > 0 && source.info.VideoWidth > 0 && source.info.VideoHeight > 0 {
 			output := ExportOutput{Ready: true, Preparable: true, Format: strings.TrimPrefix(source.info.VideoFileExt(), "."), Codec: string(source.info.VideoCodec), Width: source.info.VideoWidth, Height: source.info.VideoHeight, Bytes: source.info.VideoSize()}
 			result.VideoPart = &output
 		}
-	} else if (f.FileVideo || f.MediaType == entity.MediaVideo || f.MediaType == entity.MediaAnimated || f.IsAnimated()) && !exportAvc(result.Codec) {
+	} else if (f.FileVideo || f.MediaType == entity.MediaVideo || f.MediaType == entity.MediaAnimated || f.IsAnimated()) && (!exportAvc(result.Codec) || source.captureRole == "main") {
 		output := ExportOutput{Format: "mp4", Codec: string(video.CodecAvc1)}
 		output.Preparable = w.conf.FFmpegEnabled() && w.conf.FFmpegBin() != "" && w.conf.SidecarWritable() && w.FFmpegAllowed(source.media) && source.media.CheckType() == nil
 		if name, nameErr := w.avcName(source.media); nameErr != nil {

@@ -4038,6 +4038,9 @@
                 "avc": {
                     "$ref": "#/definitions/photoprism.ExportOutput"
                 },
+                "captureRole": {
+                    "type": "string"
+                },
                 "codec": {
                     "type": "string"
                 },

@@ -1,12 +1,14 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
@@ -31,8 +33,12 @@ func avcDestinationKey(name string) string {
 
 // avcSourceVersion retains the resolved target and its version across all conversion attempts.
 type avcSourceVersion struct {
-	name string
-	info os.FileInfo
+	name    string
+	path    string
+	info    os.FileInfo
+	related []*avcSourceVersion
+	missing []string
+	capture *Insta360Capture
 }
 
 // newAvcSourceVersion snapshots a named source without adopting subsequent link changes.
@@ -45,7 +51,7 @@ func newAvcSourceVersion(name string) (*avcSourceVersion, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &avcSourceVersion{name: resolved, info: info}, nil
+	return &avcSourceVersion{name: resolved, path: name, info: info}, nil
 }
 
 // check rejects replacement, modification, or retargeting of the named source.
@@ -55,8 +61,18 @@ func (v *avcSourceVersion) check(name string) error {
 		return ErrExportSourceChanged
 	}
 	current, err := os.Stat(resolved)
-	if err != nil || !os.SameFile(v.info, current) || v.info.Size() != current.Size() || !v.info.ModTime().Equal(current.ModTime()) {
+	if err != nil || !os.SameFile(v.info, current) || v.info.Size() != current.Size() || !v.info.ModTime().Equal(current.ModTime()) || exportFileVersion(v.info) != exportFileVersion(current) {
 		return ErrExportSourceChanged
+	}
+	for _, name := range v.missing {
+		if _, err := os.Lstat(name); !errors.Is(err, os.ErrNotExist) {
+			return ErrExportSourceChanged
+		}
+	}
+	for _, related := range v.related {
+		if err := related.check(related.path); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -77,6 +93,18 @@ func (w *Convert) coordinatedAvc(f *MediaFile, encoder encode.Encoder, noMutex, 
 		version, err = newAvcSourceVersion(f.FileName())
 		if err != nil {
 			return nil, err
+		}
+		version.capture = FindInsta360Capture(f)
+		if capture := version.capture; capture != nil {
+			if capture.Right != nil && capture.Right.FileName() != f.FileName() {
+				right, rightErr := newAvcSourceVersion(capture.Right.FileName())
+				if rightErr != nil {
+					return nil, rightErr
+				}
+				version.related = append(version.related, right)
+			} else if capture.Right == nil {
+				version.missing = append(version.missing, capture.Name.FileName(media.Insta360VideoRight))
+			}
 		}
 	}
 	if err = version.check(f.FileName()); err != nil {

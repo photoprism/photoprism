@@ -3,7 +3,9 @@ package api
 import (
 	"bytes"
 	"image/jpeg"
+	"math"
 	"net/http"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -18,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // TestGetThumb checks thumbnail responses and missing-original handling.
@@ -220,6 +223,64 @@ func TestGetThumbLabelSizes(t *testing.T) {
 			cached := PerformRequest(app, "GET", "/api/v1/t/"+hash+"/"+conf.PreviewToken()+"/"+string(name))
 			require.Equal(t, http.StatusOK, cached.Code)
 			assert.Equal(t, response.Body.Bytes(), cached.Body.Bytes())
+		})
+	}
+}
+
+// TestExportThumbnailDimensions checks rendered attachments against the dimensions advertised by Export.
+func TestExportThumbnailDimensions(t *testing.T) {
+	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options; conf.Propagate() })
+	conf.Options().OriginalsPath = t.TempDir()
+	conf.Options().CachePath = t.TempDir()
+	conf.Options().SidecarPath = t.TempDir()
+	data := NewTestJpeg(t, 2400, 1600)
+	name := "export-dimensions.jpg"
+	require.NoError(t, os.WriteFile(filepath.Join(conf.OriginalsPath(), name), data, fs.ModeFile))
+	fixture, err := query.FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+	require.NoError(t, err)
+	f := &entity.File{PhotoID: fixture.PhotoID, PhotoUID: fixture.PhotoUID, FileRoot: entity.RootOriginals, FileName: name, FileHash: fs.Hash(filepath.Join(conf.OriginalsPath(), name)), FileType: "jpg", MediaType: entity.MediaImage, FileWidth: 2400, FileHeight: 1600}
+	require.NoError(t, f.Create())
+	t.Cleanup(func() { entity.UnscopedDb().Delete(f) })
+	GetThumb(router)
+	for _, tc := range []struct {
+		name          string
+		dynamic       bool
+		cached, limit int
+		size          thumb.Name
+	}{
+		{"Static720", false, 720, 7680, thumb.Fit720},
+		{"Static1920", false, 1920, 7680, thumb.Fit1920},
+		{"Dynamic1920", true, 720, 1920, thumb.Fit1920},
+		{"Dynamic7680", true, 1920, 7680, thumb.Fit4096},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			originalCache := conf.Options().CachePath
+			conf.Options().CachePath = t.TempDir()
+			key := CacheKey("thumbs", f.FileHash, string(tc.size))
+			get.ThumbCache().Delete(key)
+			t.Cleanup(func() { conf.Options().CachePath = originalCache; get.ThumbCache().Delete(key) })
+
+			SetTestThumbUncached(t, tc.dynamic)
+			SetTestThumbSizes(t, tc.cached, tc.limit)
+			size, ok := thumb.Sizes[tc.size]
+			require.True(t, ok)
+			require.LessOrEqual(t, size.Width, conf.ThumbSizeLimit())
+			require.LessOrEqual(t, size.Height, conf.ThumbSizeLimit())
+			if !tc.dynamic {
+				_, err := size.FromFile(filepath.Join(conf.OriginalsPath(), name), f.FileHash, conf.ThumbCachePath(), 1)
+				require.NoError(t, err)
+			}
+			response := PerformRequest(app, http.MethodGet, "/api/v1/t/"+f.FileHash+"/"+conf.PreviewToken()+"/"+string(tc.size)+"?download=1&filename=preview.jpg")
+			require.Equal(t, http.StatusOK, response.Code)
+			require.Equal(t, "image/jpeg", response.Header().Get("Content-Type"))
+			rendered, err := jpeg.DecodeConfig(bytes.NewReader(response.Body.Bytes()))
+			require.NoError(t, err)
+			scale := math.Min(1, math.Min(float64(size.Width)/2400, float64(size.Height)/1600))
+			assert.Equal(t, int(math.Round(2400*scale)), rendered.Width)
+			assert.Equal(t, int(math.Round(1600*scale)), rendered.Height)
+			assert.Contains(t, response.Header().Get("Content-Disposition"), "preview.jpg")
 		})
 	}
 }

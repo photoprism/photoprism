@@ -693,7 +693,7 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		assert.Contains(t, args, "-map [v] -map 0:a:0?")
 		assert.Contains(t, args, "libx264")
 	})
-	t.Run("ExactInsta360SelectedInput", func(t *testing.T) {
+	t.Run("CapturedInsta360Inputs", func(t *testing.T) {
 		dir := t.TempDir()
 		leftName := filepath.Join(dir, insta360StackLeft)
 		rightName := filepath.Join(dir, insta360StackRight)
@@ -701,7 +701,11 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		writeInsta360StackMedia(t, conf, dir, insta360StackRight)
 		mf, err := NewMediaFile(leftName)
 		require.NoError(t, err)
-		r, _, err := convert.transcodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc, true)
+		r, _, err := convert.transcodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc, FindInsta360Capture(mf))
+		require.NoError(t, err)
+		assert.Contains(t, r.Args, leftName)
+		assert.Contains(t, r.Args, rightName)
+		r, _, err = convert.transcodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc, nil)
 		require.NoError(t, err)
 		assert.Contains(t, r.Args, leftName)
 		assert.NotContains(t, r.Args, rightName)

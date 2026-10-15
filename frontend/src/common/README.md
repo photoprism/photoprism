@@ -28,11 +28,14 @@ Consumers must load full photo details; search-result file summaries are insuffi
   owned existing still previews; matching occurs before any grouping or filtering.
 - JPEG/PNG originals supply their own thumbnails. Other still formats use an
   available JPEG/PNG matched by directory and full name (`photo.heic.jpg`), then
-  by a stem owned by exactly one original (`photo.jpg`). Within each match level,
+  by a matching raster original or a stem owned by exactly one non-raster
+  original (`photo.jpg`). Within each match level,
   vectors prefer PNG and other media prefer JPG, falling back to the other format.
-  Multiple candidates at the chosen format priority or a
-  candidate belonging to another original leave only Original and set
-  `previewMissing`. Unavailable named originals still count toward ambiguity.
+  Multiple candidates at the chosen format priority leave only Original and set
+  `previewMissing`. A matched JPEG/PNG in Originals owns its own resized choices;
+  the RAW/HEIC group offers only Original without a missing-preview error and may
+  use the raster in its header. Unavailable named originals still count toward ambiguity.
+  PDF sidecar previews are labeled Full Size Preview (First Page).
 - Preview uses the existing file's format and dimensions. Thumbnail dimensions
   use that source's already oriented dimensions, nearest-pixel rounding, a
   one-pixel minimum, and no enlargement. Only advertised `fit_*` sizes whose box
@@ -44,8 +47,7 @@ Consumers must load full photo details; search-result file summaries are insuffi
   Thumbnail options sort by output area. A JPEG at source dimensions is labeled
   Full Size and omitted when Original JPEG or Preview JPEG already supplies it.
   A PNG source keeps that JPEG conversion.
-- Only the first group can preselect a surviving `fit_1920` Full HD thumbnail.
-  Full Size, a merged-away Full HD size, or missing Full HD leaves it empty.
+- Every group starts with no selected outputs; reopening resets selection.
 
 `export-media.js` adds video, animated-image, motion-photo, and Apple Live Photo
 choices to the same groups; `buildMediaExportGroups(files, thumbs, probes, thumbLimit)`
@@ -64,11 +66,13 @@ still first and MOV immediately afterward; other groups retain their relative or
 The still retains its Original, preview, and JPEG choices. The MOV offers only its
 Original and may use the still's matched raster for its header thumbnail. Unpaired
 or ambiguous MOVs retain normal video choices. Preview ownership is resolved
-across the entire stack before pairing. Only the first displayed group preselects
-a surviving Full HD thumbnail.
+across the entire stack before pairing. No output is preselected.
 
 Video and animation groups offer MP4 AVC when probe capabilities identify a ready
-or preparable output and the source codec is not AVC/H.264. Container extensions
+or preparable output and the source codec is not AVC/H.264, except that the
+main lens of a verified Insta360 pair offers the stitched Compatible Video even
+when its source codec is AVC. Probe returns `captureRole: main|secondary`; the
+secondary lens offers only Original without a missing-preview error. Container extensions
 alone do not identify codecs. Motion photos offer only a verified native Video
 Part; its real container and codec are retained. Missing capabilities leave the
 Original and available still choices intact.
@@ -94,11 +98,13 @@ explicit manual downloads of already handed outputs do not increment the count.
 
 `component/photo/export/dialog.vue` loads full photo details and, when eligible
 probe sources exist, refreshes the session and probes them sequentially before
-displaying choices.
+displaying choices. Busy probes retry once using Retry-After, with a maximum
+five-second wait. Persistent probe failures show a per-group error and manual Retry;
+retrying preserves selections that remain available.
 The Lightbox opens Export with Ctrl/Command+Shift+E, displayed as `Ctrl-Shift-E`
 in its action menu. Ctrl/Command+E opens Edit. Export shortcuts defer to focused
 text editors and remain disabled during face-marker mode and export transitions.
-The dialog explicitly uses the selected application theme, is 560 px wide on
+The dialog explicitly uses the fixed dark `lightbox` theme with neutral controls, is 560 px wide on
 desktop, and becomes fullscreen on mobile. Its header and actions stay fixed
 while choices scroll. Desktop gutters are 24 px and fullscreen gutters are 16 px.
 Header and option text share a 44 px preview/control column with a 12 px gap;
@@ -108,7 +114,8 @@ their label and metadata with known size on the right. Presentation orders Origi
 Video/Video Part, Full-Size Preview, then JPEG choices in their existing size order;
 JPEG sizes share one labeled Resized JPEGs section under each original. Compatible
 Video choices show a small Needs Conversion note until their output is prepared.
-This does not change queue order. Selection counts appear in chips and the Export
+This does not change queue order. Rounded file groups show nonzero counts as
+`N Selected` chips, and the total appears in the Export
 button; no selection disables Export. The multiple-download hint appears only
 when more than one output is selected. Confirmation replaces the selection list
 with compact progress rows for unfinished or failed outputs. Rows show the output
@@ -128,7 +135,7 @@ through the closing transition.
 The client consumes JSON from
 `/api/v1/videos/{hash}/{downloadToken}/export?export=probe|prepare|download`;
 preparation/download requests also select `kind=avc|video-part`. Probe data uses
-`codec`, `duration` (seconds), `appleKey`, and `avc`/`videoPart` capabilities
+`codec`, `duration` (seconds), `appleKey`, optional `captureRole`, and `avc`/`videoPart` capabilities
 (`ready`, `preparable`, `format`, `codec`, `width`, `height`, `bytes`). Prepare
 returns a verified output with `ready: true` and the same format, codec, dimensions,
 and byte fields. Download is an attachment with an optional sanitized `filename`.
@@ -144,7 +151,7 @@ Probe reads metadata and verified sidecars without creating files. Prepare share
 same-source work and serializes writers of the same standard AVC destination with
 playback. Conversion stages and verifies an output before atomic publication;
 a failed replacement preserves the existing sidecar. At most four distinct Export
-conversions and four source probes or hash validations run concurrently; excess
+conversions, four source probes, and two full-source hash verifications run concurrently; excess
 work returns 429 with Retry-After. Started conversion can finish after client
 cancellation. Download never starts conversion.
 
@@ -155,7 +162,13 @@ is disabled. This associates existing output by its standard source path, withou
 checksum receipts or a guarantee that it was generated from the current source
 bytes. Source changes require the normal sidecar maintenance policy. An invalid
 nonempty sidecar is unavailable and is not automatically overwritten. No separate
-Export cache is read, written, migrated, or cleaned up.
+derivative disk cache is read, written, migrated, or cleaned up.
+On Linux, successful source hashes are reused for five minutes in a bounded
+128-entry memory cache keyed by resolved path, indexed hash, device, inode, size,
+mtime, and ctime. Concurrent verification of one version shares work. Other
+platforms rehash each request within the same two-operation capacity bound.
+Insta360 preparation freezes both lens inputs, requires an indexed companion in
+the same photo, verifies its hash, and checks both versions before publication.
 
 Native motion video is already ready: prepare returns its metadata, and download
 serves its bounded segment directly from the source, preserving bytes, codec, and

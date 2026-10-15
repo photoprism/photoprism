@@ -1,3 +1,4 @@
+import { triggerExportShortcut } from "../page-model/dialog-export";
 import { Selector } from "testcafe";
 import { Role } from "testcafe";
 import testcafeconfig from "../../testcafeconfig.json";
@@ -206,6 +207,13 @@ test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common
   // The album's fully-populated photo, so every "must not be visible" assertion below has real
   // data to withhold. Anchored by title: editions differ in both UID and photo order.
   await photoviewer.openPhotoViewerByTitle("Albums / 2015");
+  await t.hover(photoviewer.menuButton);
+  await t.expect(Selector(".action-menu--lightbox.v-overlay--active").visible).ok();
+  await t.expect(Selector(".action-menu--lightbox .action-export").visible).notOk();
+  await t.hover(photoviewer.viewer);
+  await t.expect(Selector(".action-menu--lightbox.v-overlay--active").visible).notOk();
+  await triggerExportShortcut();
+  await t.expect(Selector(".p-photo-export-dialog.v-overlay--active").visible).notOk();
   await photoviewer.openSidebar();
 
   // Visitors hold view access on photos and places but not access_library, so the EXIF fields,

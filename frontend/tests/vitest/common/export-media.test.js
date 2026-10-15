@@ -91,7 +91,7 @@ describe("Apple Live Photo grouping", () => {
     expect(groups[1].options.map((option) => option.kind)).toEqual(["original"]);
     expect(groups[1].thumbnailSource.hash).toBe(preview.Hash);
     expect(groups[1].originals).toEqual([groups[1].original]);
-    expect(groups[0].selected).toBe(`thumbnail:${preview.UID}:fit_1920`);
+    expect(groups[0].selected).toBe("");
     expect(groups[1].selected).toBe("");
     const items = buildExportDownloads(groups, groups.slice(0, 2).flatMap((group) => group.options.map((option) => option.id)));
     expect(items.map((item) => item.filename)).toEqual(["photo.heic", "photo_preview.jpg", "photo_fit_1920.jpg", "movie.mov"]);
@@ -197,5 +197,97 @@ describe("failed metadata probes", () => {
   it.each(["playback bytes", null, []])("rejects a non-object probe response %#", async (data) => {
     vi.spyOn(Axios, "get").mockResolvedValue({ data });
     await expect(probeExportMedia({ hash: "source" }, config)).rejects.toThrow("Invalid export probe");
+  });
+});
+
+
+describe("export ownership regressions", () => {
+  it.each([["cr2", "raw", "photo.jpg"], ["nef", "raw", "photo.jpeg"], ["dng", "raw", "photo.dng.jpg"], ["heic", "image", "photo.heic.jpg"]])("keeps %s derivatives with their JPEG original", (format, type, name) => {
+    const original = file(1, `photo.${format}`, type);
+    const jpeg = file(2, name);
+    const groups = buildMediaExportGroups([original, jpeg], thumbs);
+    expect(groups[0].options.map((option) => option.kind)).toEqual(["original"]);
+    expect(groups[0].previewMissing).toBe(false);
+    expect(groups[1].options.map((option) => option.kind)).toEqual(["original", "thumbnail"]);
+    const ids = groups.flatMap((group) => group.options.map((option) => option.id));
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(groups.every((group) => group.selected === "")).toBe(true);
+  });
+  it("keeps shared original JPEG choices unique across RAW and HEIC siblings", () => {
+    const raw = file(1, "capture.dng", "raw");
+    const heic = file(2, "capture.heic");
+    const jpeg = file(3, "capture.jpg");
+    const groups = buildMediaExportGroups([raw, heic, jpeg], thumbs);
+    expect(groups.map((group) => group.previewMissing)).toEqual([false, false, false]);
+    expect(groups.map((group) => group.options.filter((option) => option.kind === "thumbnail").length)).toEqual([0, 0, 1]);
+  });
+  it("labels only the PDF preview as the first page", () => {
+    const pdf = file(1, "document.pdf", "document");
+    const jpeg = file(2, "document.pdf.jpg", "image", { Root: "sidecar" });
+    const [group] = buildMediaExportGroups([pdf, jpeg], thumbs);
+    expect(group.options[1].label).toBe("Full Size Preview (First Page)");
+    expect(group.options[0].label).toBe("Original");
+  });
+  it("uses backend capture roles to keep the second lens original-only even for AVC sources", () => {
+    const left = file(1, "renamed-one.insv", "video");
+    const right = file(2, "renamed-two.insv", "video");
+    const preview = file(3, "renamed-one.insv.jpg", "image", { Root: "sidecar" });
+    const groups = buildMediaExportGroups([left, right, preview], thumbs, {
+      ...probe(left, { codec: "avc1", captureRole: "main", avc }),
+      ...probe(right, { codec: "avc1", captureRole: "secondary" }),
+    });
+    expect(groups[0].options.map((option) => option.kind)).toEqual(["original", "preview", "thumbnail", "avc"]);
+    expect(groups[1].options.map((option) => option.kind)).toEqual(["original"]);
+    expect(groups[1].previewMissing).toBe(false);
+  });
+  it.each(["avc1", "hevc"])("offers MKV conversion only when the %s capability permits it", (codec) => {
+    const source = file(1, "video.mkv", "video");
+    const [group] = buildMediaExportGroups([source], thumbs, probe(source, { codec, avc }));
+    expect(group.options.some((option) => option.kind === "avc")).toBe(codec !== "avc1");
+  });
+});
+
+
+describe("busy export probes", () => {
+  it("retries once using Retry-After and the current source URL", async () => {
+    vi.useFakeTimers();
+    try {
+      const get = vi.spyOn(Axios, "get")
+        .mockRejectedValueOnce({ response: { status: 429, headers: { "retry-after": "2" } } })
+        .mockResolvedValueOnce({ data: { codec: "hevc", avc } });
+      const pending = probeExportMedia({ hash: "video" }, config);
+      await vi.advanceTimersByTimeAsync(1999);
+      expect(get).toHaveBeenCalledTimes(1);
+      await vi.advanceTimersByTimeAsync(1);
+      expect(await pending).toEqual({ codec: "hevc", avc });
+      expect(get).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("cancels a pending retry without sending another request", async () => {
+    vi.useFakeTimers();
+    try {
+      const controller = new AbortController();
+      const get = vi.spyOn(Axios, "get").mockRejectedValue({ response: { status: 429 } });
+      const pending = probeExportMedia({ hash: "video" }, config, controller.signal);
+      const rejected = expect(pending).rejects.toThrow("canceled");
+      await Promise.resolve();
+      controller.abort();
+      await rejected;
+      await vi.runAllTimersAsync();
+      expect(get).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("surfaces a second busy response and never retries permanent errors", async () => {
+    const error = { response: { status: 429, headers: { "retry-after": "0" } } };
+    const get = vi.spyOn(Axios, "get").mockRejectedValue(error);
+    await expect(probeExportMedia({ hash: "video" }, config)).rejects.toBe(error);
+    expect(get).toHaveBeenCalledTimes(2);
+    get.mockClear().mockRejectedValue({ response: { status: 404 } });
+    await expect(probeExportMedia({ hash: "video" }, config)).rejects.toMatchObject({ response: { status: 404 } });
+    expect(get).toHaveBeenCalledTimes(1);
   });
 });
