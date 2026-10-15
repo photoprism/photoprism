@@ -128,11 +128,7 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 		switch mt {
 		case media.Image, media.Vector, media.Raw, media.Document, media.Audio:
 			log.Infof("downloading %s from %s", mt, clean.LogUri(u.String()))
-			if dlName := clean.DlName(fs.BasePrefix(u.Path, true)); dlName != "" {
-				downloadFile = dlName + ext
-			} else {
-				downloadFile = time.Now().Format("20060102_150405") + ext
-			}
+			downloadFile = downloadName(downloadPath, fs.BasePrefix(u.Path, true), ext)
 			downloadFilePath := filepath.Join(downloadPath, downloadFile)
 			if downloadErr := fs.Download(downloadFilePath, u.String()); downloadErr != nil {
 				log.Errorf("download failed: %s", clean.ErrorFull(downloadErr))
@@ -177,11 +173,7 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 					result.Options.FFmpegPostArgs = "-metadata creation_time=" + created.UTC().Format(time.RFC3339)
 				}
 			}
-			if dlName := clean.DlName(result.Info.Title); dlName != "" {
-				downloadFile = dlName + fs.ExtMp4
-			} else {
-				downloadFile = time.Now().Format("20060102_150405") + fs.ExtMp4
-			}
+			downloadFile = downloadName(downloadPath, result.Info.Title, fs.ExtMp4)
 			downloadFilePath := filepath.Join(downloadPath, downloadFile)
 
 			if method == "pipe" {
@@ -301,4 +293,22 @@ func missingFormatsHint(err error) (string, bool) {
 	}
 
 	return "", false
+}
+
+// downloadName returns a file name in dir that is not used yet for a download from a title or remote name, or a
+// time-based name if nothing usable is left of it, or the result is not portable and would therefore not be imported.
+func downloadName(dir, name, ext string) string {
+	base := clean.DlName(name)
+
+	if base == "" || !clean.PortableName(base+ext) {
+		base = time.Now().Format("20060102_150405")
+	}
+
+	result := base + ext
+
+	for i := 2; fs.FileExists(filepath.Join(dir, result)) || fs.IsSymlink(filepath.Join(dir, result)); i++ {
+		result = fmt.Sprintf("%s_%d%s", base, i, ext)
+	}
+
+	return result
 }

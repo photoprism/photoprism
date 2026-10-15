@@ -119,6 +119,13 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 		}
 	}
 
+	// Names are checked below the configured import folder, or below the folder the walk starts in if it is elsewhere.
+	nameRoot := filepath.Clean(importPath)
+
+	if folderBase != "" {
+		nameRoot = folderBase
+	}
+
 	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: directory %s not found", clean.Log(displayFolder(importPath, folderBase))))
@@ -212,6 +219,19 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 					return result
 				}
 
+				// A folder whose name is not portable stays in the import folder with its contents. The folder a
+				// symbolic link points to is not recorded as walked, so it is still imported under its own name.
+				if p := unportablePath(fs.RelName(fileName, nameRoot)); p != "" {
+					if isSymlink {
+						if resolved, evalErr := filepath.EvalSymlinks(fileName); evalErr == nil {
+							delete(done, resolved)
+						}
+					}
+
+					warnUnportable("import", nameRoot, p, "import it")
+					return filepath.SkipDir
+				}
+
 				if fileName != importPath {
 					directories = append(directories, fileName)
 				}
@@ -225,6 +245,12 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 				}
 
 				return result
+			}
+
+			// A file whose name is not portable stays in the import folder.
+			if !clean.PortableName(filepath.Base(fileName)) {
+				warnUnportable("import", nameRoot, fs.RelName(fileName, nameRoot), "import it")
+				return nil
 			}
 
 			done[fileName] = fs.Found
@@ -278,6 +304,15 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 
 			if err != nil {
 				event.Error(fmt.Sprintf("import: %s", err))
+				return nil
+			}
+
+			// Related files whose names are not portable stay in the import folder.
+			related = portableRelated(related, mf, func(f *MediaFile) {
+				warnUnportable("import", nameRoot, fs.RelName(f.FileName(), nameRoot), "import it")
+			})
+
+			if related.Main == nil {
 				return nil
 			}
 
@@ -429,14 +464,15 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 			// The recorded name has three states, not two: the file is there and this is a duplicate,
 			// the name is free and the file can be restored to it, or an entry holds the name without
-			// the file being there, which is neither and takes the search below.
+			// the file being there, which is neither and takes the search below, as does a recorded
+			// name that is not portable.
 			if fs.FileExists(existingFilename) {
 				// The index records this hash under that name, which is not the same as the file
 				// still holding it, so the message says what was matched rather than claiming the
 				// two files are identical. StoredCopyOf is what establishes that, for the caller
 				// that removes its source.
 				return existingFilename, fmt.Errorf("%s is already indexed as %s", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName))
-			} else if !fs.IsSymlink(existingFilename) {
+			} else if !fs.IsSymlink(existingFilename) && unportablePath(f.FileName) == "" {
 				return existingFilename, nil
 			}
 		}

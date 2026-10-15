@@ -258,6 +258,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
+			// Other files in originals whose names are not portable are not indexed with the imported ones. The
+			// imported file keeps the name its destination pattern gave it.
+			if clean.PortableName(filepath.Base(f.FileName())) {
+				if related = portableRelated(related, f, func(rf *MediaFile) {
+					warnUnportable("index", entity.RootOriginals, rf.RootRelName(), "index it")
+				}); related.Main == nil {
+					continue
+				}
+			}
+
 			// Ensure every convertible file in the stack has its own preview image, mirroring
 			// IndexRelated. Otherwise a stack with more than one such file (e.g. a base .svg plus
 			// a .touch.svg variant) gets only a single preview, leaving the file that becomes the

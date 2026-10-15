@@ -106,8 +106,8 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 		assert.Empty(t, found, "a sibling directory must not record a folder in the import namespace")
 	})
 	t.Run("FolderNameIsSanitized", func(t *testing.T) {
-		// A directory name reaches the log through the folder record, so control and bidi characters
-		// must not survive into it.
+		// A directory name with control and bidi characters is skipped, and the warning that names it
+		// must not carry them.
 		cfg := newConfig(t, "import-display-clean")
 
 		importPath := cfg.ImportPath()
@@ -121,8 +121,11 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 
 		messages := loggedMessages(hook, logrus.TraceLevel)
 		require.True(t, slices.ContainsFunc(messages, func(s string) bool {
-			return strings.Contains(s, "added folder") && strings.Contains(s, "album")
+			return strings.HasPrefix(s, "import: skipped") && strings.Contains(s, "album")
 		}), "the folder line must be among %v", messages)
+		assert.False(t, slices.ContainsFunc(messages, func(s string) bool {
+			return strings.Contains(s, "added folder") && strings.Contains(s, "album")
+		}), "the folder must not be recorded")
 
 		for _, msg := range messages {
 			assert.NotContains(t, msg, "\u202e", "a log line must not carry a bidi override")

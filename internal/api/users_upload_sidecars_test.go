@@ -120,11 +120,11 @@ func TestUploadUserFilesSidecars(t *testing.T) {
 		conf.Options().UploadAllow = ""
 		token := rnd.Base36(10)
 		entries := map[string][]byte{}
-		blocked := []string{".git/photo.jpg", ".config/photo.jpg", ".photoprism/photo.jpg", "nested/.svn/photo.jpg", ".hg/photo.jpg", ".SSH/photo.jpg", ".gnupg/photo.jpg", ".env/photo.jpg", "nested/.env.production/photo.jpg", `nested\.ssh\photo.jpg`}
+		blocked := []string{".git/photo.jpg", ".config/photo.jpg", ".photoprism/photo.jpg", "nested/.svn/photo.jpg", ".hg/photo.jpg", ".SSH/photo.jpg", ".gnupg/photo.jpg", ".env/photo.jpg", "nested/.env.production/photo.jpg", `nested\.ssh\photo.jpg`, "%2egit/photo.jpg"}
 		for _, name := range fs.ReservedPathNames() {
 			blocked = append(blocked, "nested/"+name+"/photo.jpg")
 		}
-		allowed := []string{"photo.jpg", ".hidden/photo.jpg", ".github-backup/photo.jpg", "%2egit/photo.jpg"}
+		allowed := []string{"photo.jpg", ".hidden/photo.jpg", ".github-backup/photo.jpg"}
 		for _, name := range append(append([]string{}, blocked...), allowed...) {
 			entries[name] = jpeg
 		}
