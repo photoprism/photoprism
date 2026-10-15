@@ -175,6 +175,67 @@ func storedService(t *testing.T, id uint) *Service {
 	return m
 }
 
+func TestService_SaveFormRefresh(t *testing.T) {
+	// A save that changes the folder or a direction refreshes the account in any stage; other changes keep it.
+	for _, c := range []struct {
+		name    string
+		status  string
+		update  func(f *form.Service)
+		refresh bool
+	}{
+		{"SyncedInterval", SyncStatusSynced, func(f *form.Service) { f.SyncInterval = 60 }, true},
+		{"DownloadPath", SyncStatusDownload, func(f *form.Service) { f.SyncPath = "/new" }, true},
+		{"DownloadOff", SyncStatusDownload, func(f *form.Service) { f.SyncDownload = false }, true},
+		{"UploadOn", SyncStatusDownload, func(f *form.Service) { f.SyncDownload, f.SyncUpload = false, true }, true},
+		{"DownloadInterval", SyncStatusDownload, func(f *form.Service) { f.SyncInterval = 60 }, false},
+		{"UploadPassword", SyncStatusUpload, func(f *form.Service) { f.AccPass = "changed" }, false},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			model, err := AddService(form.Service{AccName: "Refresh " + c.name, AccURL: "test.com", AccType: "webdav",
+				AccSync: true, SyncDownload: true, SyncPath: "/old"})
+			require.NoError(t, err)
+			t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+			require.NoError(t, model.Updates(Values{"sync_status": c.status}))
+			stored := storedService(t, model.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			c.update(&frm)
+			require.NoError(t, stored.SaveForm(frm))
+
+			if c.refresh {
+				assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+			} else {
+				assert.Equal(t, c.status, storedService(t, model.ID).SyncStatus)
+			}
+		})
+	}
+}
+
+func TestService_SaveFormRefreshSyncOff(t *testing.T) {
+	model, err := AddService(form.Service{AccName: "Refresh Sync Off", AccURL: "test.com", AccType: "webdav",
+		AccSync: true, SyncPath: "/old"})
+	require.NoError(t, err)
+	t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+
+	// A folder changed while sync is off refreshes the account once sync is on again.
+	stored := storedService(t, model.ID)
+	frm, err := form.NewService(stored)
+	require.NoError(t, err)
+	frm.AccSync, frm.SyncPath = false, "/new"
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+
+	// Turning on uploads alone refreshes as well.
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+	stored = storedService(t, model.ID)
+	frm, err = form.NewService(stored)
+	require.NoError(t, err)
+	frm.AccSync, frm.SyncUpload = true, true
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+}
+
 func TestService_SaveFormFolderTooLong(t *testing.T) {
 	limit := strings.Repeat("/"+strings.Repeat("f", 200), 5) + "/" + strings.Repeat("g", 18)
 	require.Len(t, limit, RemoteNameMaxLen)

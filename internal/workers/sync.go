@@ -117,7 +117,7 @@ func (w *Sync) Start() (err error) {
 
 				// Uploads set aside in the previous cycle keep their count, so a remote that refuses
 				// every upload reaches the retry limit.
-				if !isUploadSetAsideError(a.AccError) {
+				if !a.SyncUpload || !isUploadSetAsideError(a.AccError) {
 					reset = true
 					accErrors = 0
 					accError = ""
@@ -135,7 +135,7 @@ func (w *Sync) Start() (err error) {
 				}
 			}
 		case entity.SyncStatusDownload:
-			if complete, downloadErr := w.download(a); downloadErr != nil {
+			if complete, downloadErr := w.downloadIfEnabled(a); downloadErr != nil {
 				accErrors++
 				accError = clean.ErrorBytes(downloadErr, txt.ClipError)
 				syncStatus = entity.SyncStatusRefresh
@@ -150,7 +150,16 @@ func (w *Sync) Start() (err error) {
 				}
 			}
 		case entity.SyncStatusUpload:
-			if complete, uploadErr := w.upload(a); uploadErr != nil {
+			// A stage whose direction was switched off ends without transfers or a report of set-aside uploads.
+			if !a.SyncUpload {
+				uploadStages.End(a.ID)
+				synced, syncStatus = true, entity.SyncStatusSynced
+				syncDate.Time, syncDate.Valid = time.Now(), true
+
+				if isUploadSetAsideError(a.AccError) {
+					reset, accErrors, accError = true, 0, ""
+				}
+			} else if complete, uploadErr := w.upload(a); uploadErr != nil {
 				accErrors++
 				accError = clean.ErrorBytes(uploadErr, txt.ClipError)
 				syncStatus = entity.SyncStatusRefresh
@@ -211,10 +220,12 @@ func (w *Sync) Start() (err error) {
 			continue
 		}
 
-		// The status is written only while the stored one is that loaded, so a status saved during the run is
-		// kept and read by the next run. Rows of earlier releases may hold NULL instead.
+		// The status is written only while the stored status, folder and directions are those loaded, so a run
+		// never advances with settings saved meanwhile. Rows of earlier releases may hold NULL instead.
 		if res := entity.Db().Model(&entity.Service{}).
 			Where("id = ? AND COALESCE(sync_status, '') = ?", a.ID, a.SyncStatus).
+			Where("(sync_path = ? OR sync_path IS NULL AND ? = '') AND COALESCE(sync_download, FALSE) = ? AND COALESCE(sync_upload, FALSE) = ?",
+				a.SyncPath, a.SyncPath, a.SyncDownload, a.SyncUpload).
 			UpdateColumns(entity.Values{"sync_status": syncStatus, "sync_date": syncDate}); res.Error != nil {
 			w.logAccountErr(res.Error, a)
 		} else if res.RowsAffected == 0 {
@@ -225,6 +236,15 @@ func (w *Sync) Start() (err error) {
 	}
 
 	return err
+}
+
+// downloadIfEnabled runs the download stage of an account, which ends at once if downloads are switched off.
+func (w *Sync) downloadIfEnabled(a entity.Service) (complete bool, err error) {
+	if !a.SyncDownload {
+		return true, nil
+	}
+
+	return w.download(a)
 }
 
 // transferStallLimit is the number of transfers of one account that may stall in a run before the worker stops

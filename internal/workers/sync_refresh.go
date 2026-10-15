@@ -62,6 +62,13 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	validNames := entity.DbDialect() == dsn.DialectPostgreSQL
 
+	// Queued files that this refresh does not list are removed from the queue once it completes.
+	unlisted, err := queuedFileSyncNames(a.ID)
+
+	if err != nil {
+		return false, err
+	}
+
 	for _, dir := range dirs {
 		if key := path.Clean("/" + dir); listed[key] {
 			continue
@@ -85,6 +92,8 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		}
 
 		for _, file := range files {
+			delete(unlisted, file.Abs)
+
 			if webdav.SkipSyncPath(file.Abs) {
 				log.Debugf("sync: skipping excluded path %s", clean.Log(file.Abs))
 				continue
@@ -149,5 +158,53 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		}
 	}
 
+	// Files queued below another sync folder, or removed from the remote, are no longer downloaded.
+	w.logAccountErr(dropQueuedFileSyncs(a.ID, unlisted), a)
+
 	return true, nil
+}
+
+// queuedFileSyncNames returns the remote names of the files queued for download from an account.
+func queuedFileSyncNames(serviceID uint) (map[string]struct{}, error) {
+	var names []string
+
+	if err := entity.Db().Model(&entity.FileSync{}).Where("service_id = ? AND status = ?", serviceID, entity.FileSyncNew).
+		Pluck("remote_name", &names).Error; err != nil {
+		return nil, err
+	}
+
+	result := make(map[string]struct{}, len(names))
+
+	for _, name := range names {
+		result[name] = struct{}{}
+	}
+
+	return result, nil
+}
+
+// dropQueuedFileSyncs removes the queued downloads of an account with the specified remote names.
+func dropQueuedFileSyncs(serviceID uint, names map[string]struct{}) error {
+	batch := make([]string, 0, 500)
+
+	flush := func() error {
+		if len(batch) == 0 {
+			return nil
+		}
+
+		err := entity.Db().Where("service_id = ? AND status = ? AND remote_name IN (?)", serviceID,
+			entity.FileSyncNew, batch).Delete(&entity.FileSync{}).Error
+		batch = batch[:0]
+
+		return err
+	}
+
+	for name := range names {
+		if batch = append(batch, name); len(batch) == cap(batch) {
+			if err := flush(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return flush()
 }
