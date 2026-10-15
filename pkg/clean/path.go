@@ -10,8 +10,8 @@ import (
 const pathReserved = `\|"?*%<>{}`
 
 // portableReserved lists the characters a portable file or folder name must not contain: those Path removes,
-// ":", which several file systems and command-line tools reserve, and "~", which stands for a home directory.
-const portableReserved = pathReserved + ":~"
+// and ":", "~" and "$", which common file systems or the tools PhotoPrism uses reserve.
+const portableReserved = pathReserved + ":~$"
 
 // Path removes reserved and unsafe characters from a path string and trims ASCII spaces, keeping the
 // other characters as they are. It returns an empty string if the result contains ".." or "//".

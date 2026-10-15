@@ -10,8 +10,9 @@ func TestPath(t *testing.T) {
 	t.Run("ValidPath", func(t *testing.T) {
 		assert.Equal(t, ProjectRoot, Path(ProjectRoot))
 	})
-	t.Run("ColonTilde", func(t *testing.T) {
+	t.Run("ColonTildeDollar", func(t *testing.T) {
 		assert.Equal(t, "~/a:b c", Path("~/a:b c"))
+		assert.Equal(t, "a$b/$(c)", Path("a$b/$(c)"))
 	})
 	t.Run("ValidFile", func(t *testing.T) {
 		assert.Equal(t, "filename.TXT", Path("filename.TXT"))
@@ -201,13 +202,13 @@ func TestPortableName(t *testing.T) {
 	t.Run("Portable", func(t *testing.T) {
 		for _, name := range []string{"03 - Março", "#1 & Friends", "[2020] (copy)", "Ünïcödé 日本 😀", "Tom's Party",
 			"a+b,c;d=e@f", "IMG_1234.JPG", "2020", "file.tar.gz", "\U0001F469\u200d\U0001F469\u200d\U0001F467", "a b", "", ".hidden", "@eaDir",
-			"a!b$c^d`e", "a\u00a0b", "\u65e5\u672c\u3000\u65c5\u884c", "a\u200bb", "\ufeffa", "Screenshot 2026-10-14 at 10.00.00\u202fAM.png",
+			"a!b^c`d", "a\u00a0b", "\u65e5\u672c\u3000\u65c5\u884c", "a\u200bb", "\ufeffa", "Screenshot 2026-10-14 at 10.00.00\u202fAM.png",
 			"a\u200eb", "\ufffd"} {
 			assert.True(t, PortableName(name), "%q", name)
 		}
 	})
 	t.Run("ReservedSet", func(t *testing.T) {
-		assert.Equal(t, `\|"?*%<>{}:~`, portableReserved)
+		assert.Equal(t, `\|"?*%<>{}:~$`, portableReserved)
 	})
 	t.Run("Reserved", func(t *testing.T) {
 		for _, c := range portableReserved {
@@ -215,7 +216,7 @@ func TestPortableName(t *testing.T) {
 				assert.False(t, PortableName(name), "%q", name)
 			}
 		}
-		for _, name := range []string{`a\b`, "a|b", `a"b`, "a?b", "a*b", "a%b", "a<b", "a>b", "a{b", "a}b", "x:y.jpg", "~home", "a~b"} {
+		for _, name := range []string{`a\b`, "a|b", `a"b`, "a?b", "a*b", "a%b", "a<b", "a>b", "a{b", "a}b", "x:y.jpg", "~home", "a~b", "$HOME", "a$(b)", "a${b}", "price$"} {
 			assert.False(t, PortableName(name), "%q", name)
 		}
 	})
