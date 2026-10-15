@@ -221,15 +221,15 @@ func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 	return pid, info, nil
 }
 
-// daemonHoldsPidFile reports whether the process holds the pid file open, as the daemon does, and is named
-// photoprism*. Where its open files cannot be listed or read, the pid file must be locked instead, by any process,
-// and the process must run as the owner of the file.
+// daemonHoldsPidFile reports whether the process holds the pid file open, or the file it replaced, as the daemon
+// does, and is named photoprism*. Where its open files cannot be listed or read, the pid file must be locked
+// instead, by any process, and the process must run as the owner of the file.
 func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) bool {
 	if p == nil || p.Pid <= 0 || p.Pid == os.Getpid() || !daemonProcess(p) {
 		return false
 	}
 
-	if open, known := holdsFile(p.Pid, info); known {
+	if open, known := holdsFile(p.Pid, pidFile, info); known {
 		return open
 	} else if !processOwnsFile(p.Pid, info) {
 		log.Debugf("cannot confirm that process %d holds pid file %s", p.Pid, clean.Log(pidFile))
@@ -241,12 +241,15 @@ func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) bool {
 	return held || !known
 }
 
-// processHasFile reports whether the process has the file open under its name. known is false if its open files cannot be
-// listed or read, e.g. by root without the capability to inspect processes of other users.
-func processHasFile(pid int, info os.FileInfo) (open, known bool) {
+// processHasFile reports whether the process has the pid file described by info open under its name, or has the file
+// open that the pid file replaced. known is false if its open files cannot be listed or read, e.g. by root without the
+// capability to inspect processes of other users.
+func processHasFile(pid int, pidFile string, info os.FileInfo) (open, known bool) {
 	if info == nil {
 		return false, false
 	}
+
+	replaced := replacedFileName(pidFile)
 
 	dir := filepath.Join("/proc", strconv.Itoa(pid), "fd")
 	entries, err := os.ReadDir(dir)
@@ -262,10 +265,21 @@ func processHasFile(pid int, info os.FileInfo) (open, known bool) {
 	for _, entry := range entries {
 		fdName := filepath.Join(dir, entry.Name())
 
+		target, linkErr := readFdLink(fdName)
+
 		// Compares the name first, which does not access the open file.
-		if target, linkErr := readFdLink(fdName); errors.Is(linkErr, os.ErrPermission) {
+		switch {
+		case errors.Is(linkErr, os.ErrPermission):
 			return false, false
-		} else if linkErr == nil && filepath.Base(target) != info.Name() {
+		case linkErr == nil && replaced != "" && target == replaced:
+			if fdInfo, statErr := statFd(fdName); statErr == nil && fileReplaced(fdInfo, info) {
+				return true, true
+			} else if errors.Is(statErr, os.ErrPermission) {
+				return false, false
+			}
+
+			continue
+		case linkErr == nil && filepath.Base(target) != info.Name():
 			continue
 		}
 
@@ -277,6 +291,36 @@ func processHasFile(pid int, info os.FileInfo) (open, known bool) {
 	}
 
 	return false, true
+}
+
+// replacedFileName returns the name under which /proc lists an open file that was at fileName before it was removed or
+// replaced, or an empty string if the folder cannot be resolved.
+func replacedFileName(fileName string) string {
+	abs, err := filepath.Abs(fileName)
+
+	if err != nil {
+		return ""
+	}
+
+	dir, err := filepath.EvalSymlinks(filepath.Dir(abs))
+
+	if err != nil {
+		return ""
+	}
+
+	return filepath.Join(dir, filepath.Base(abs)) + " (deleted)"
+}
+
+// fileReplaced reports whether the open file has no name left and is on the same device as the file that replaced it.
+func fileReplaced(open, info os.FileInfo) bool {
+	if open == nil || info == nil {
+		return false
+	}
+
+	st, ok := open.Sys().(*syscall.Stat_t)
+	current, currentOk := info.Sys().(*syscall.Stat_t)
+
+	return ok && currentOk && st.Nlink == 0 && st.Dev == current.Dev
 }
 
 // pidFileLocked reports whether another process holds the lock on the pid file described by info, as a running

@@ -206,6 +206,14 @@ func waitForName(t *testing.T, pid int, name string) {
 	}, 5*time.Second, 10*time.Millisecond)
 }
 
+// replacePidFile writes the content to a new file and renames it over the pid file, as tools that replace files do.
+func replacePidFile(t *testing.T, pidFile, content string) {
+	t.Helper()
+
+	require.NoError(t, os.WriteFile(pidFile+".new", []byte(content), daemon.FILE_PERM))
+	require.NoError(t, os.Rename(pidFile+".new", pidFile))
+}
+
 // fileInfo returns the information of an existing file.
 func fileInfo(t *testing.T, fileName string) os.FileInfo {
 	t.Helper()
@@ -350,25 +358,65 @@ func TestDaemonProcess(t *testing.T) {
 func TestProcessHasFile(t *testing.T) {
 	t.Run("Held", func(t *testing.T) {
 		cmd, pidFile := startDaemon(t, "30")
-		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
 		assert.True(t, known)
 		assert.True(t, open)
 	})
 	t.Run("NotHeld", func(t *testing.T) {
 		cmd := startProcess(t, "photoprism-test", "30")
-		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, unlockedPidFile(t, cmd.Process.Pid)))
+		pidFile := unlockedPidFile(t, cmd.Process.Pid)
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
 		assert.True(t, known)
 		assert.False(t, open)
 	})
 	t.Run("NotRunning", func(t *testing.T) {
 		requireProc(t)
-		open, known := processHasFile(3999999, fileInfo(t, unlockedPidFile(t, 3999999)))
+		pidFile := unlockedPidFile(t, 3999999)
+		open, known := processHasFile(3999999, pidFile, fileInfo(t, pidFile))
 		assert.True(t, known)
 		assert.False(t, open)
 	})
 	t.Run("NoFile", func(t *testing.T) {
-		_, known := processHasFile(os.Getpid(), nil)
+		_, known := processHasFile(os.Getpid(), filepath.Join(t.TempDir(), "photoprism.pid"), nil)
 		assert.False(t, known)
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.True(t, open)
+	})
+	t.Run("ReplacedSymlinkedFolder", func(t *testing.T) {
+		cmd, target := startDaemon(t, "30")
+		dir := filepath.Join(t.TempDir(), "storage")
+		require.NoError(t, os.Symlink(filepath.Dir(target), dir))
+		pidFile := filepath.Join(dir, filepath.Base(target))
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.True(t, open)
+	})
+	t.Run("ReplacedOtherFolder", func(t *testing.T) {
+		cmd, held := startDaemon(t, "30")
+		replacePidFile(t, held, strconv.Itoa(cmd.Process.Pid))
+		pidFile := unlockedPidFile(t, cmd.Process.Pid)
+		require.Equal(t, filepath.Base(held), filepath.Base(pidFile))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.False(t, open)
+	})
+	t.Run("NamedLikeReplaced", func(t *testing.T) {
+		dir := t.TempDir()
+		pidFile := filepath.Join(dir, "photoprism.pid")
+		f, err := os.Create(pidFile + " (deleted)") //nolint:gosec // Creates a test file.
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = f.Close() })
+		cmd := startProcess(t, "photoprism-test", "30", f)
+		require.NoError(t, os.WriteFile(pidFile, []byte(strconv.Itoa(cmd.Process.Pid)), daemon.FILE_PERM))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.False(t, open)
 	})
 	t.Run("PermissionDenied", func(t *testing.T) {
 		cmd, pidFile := startDaemon(t, "30")
@@ -379,7 +427,7 @@ func TestProcessHasFile(t *testing.T) {
 		}
 		t.Cleanup(func() { readFdLink = defaultReadFdLink })
 
-		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
 		assert.False(t, known)
 		assert.False(t, open)
 		// Falls back to the lock, which the stand-in holds.
@@ -394,7 +442,21 @@ func TestProcessHasFile(t *testing.T) {
 		}
 		t.Cleanup(func() { statFd = defaultStatFd })
 
-		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
+		assert.False(t, known)
+		assert.False(t, open)
+	})
+	t.Run("ReplacedStatPermissionDenied", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+
+		defaultStatFd := statFd
+		statFd = func(name string) (os.FileInfo, error) {
+			return nil, &os.PathError{Op: "stat", Path: name, Err: syscall.EACCES}
+		}
+		t.Cleanup(func() { statFd = defaultStatFd })
+
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
 		assert.False(t, known)
 		assert.False(t, open)
 	})
@@ -407,9 +469,71 @@ func TestProcessHasFile(t *testing.T) {
 		}
 		t.Cleanup(func() { readFdLink = defaultReadFdLink })
 
-		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		open, known := processHasFile(cmd.Process.Pid, pidFile, fileInfo(t, pidFile))
 		assert.True(t, known)
 		assert.True(t, open)
+	})
+}
+
+// TestReplacedFileName covers the name under which /proc lists an open file that was replaced.
+func TestReplacedFileName(t *testing.T) {
+	t.Run("Absolute", func(t *testing.T) {
+		dir := t.TempDir()
+		assert.Equal(t, filepath.Join(dir, "photoprism.pid")+" (deleted)", replacedFileName(filepath.Join(dir, "photoprism.pid")))
+	})
+	t.Run("SymlinkedFolder", func(t *testing.T) {
+		dir := t.TempDir()
+		link := filepath.Join(t.TempDir(), "storage")
+		require.NoError(t, os.Symlink(dir, link))
+		assert.Equal(t, filepath.Join(dir, "photoprism.pid")+" (deleted)", replacedFileName(filepath.Join(link, "photoprism.pid")))
+	})
+	t.Run("Relative", func(t *testing.T) {
+		wd, err := os.Getwd()
+		require.NoError(t, err)
+		wd, err = filepath.EvalSymlinks(wd)
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(wd, "photoprism.pid")+" (deleted)", replacedFileName("photoprism.pid"))
+	})
+	t.Run("MissingFolder", func(t *testing.T) {
+		assert.Equal(t, "", replacedFileName(filepath.Join(t.TempDir(), "missing", "photoprism.pid")))
+	})
+}
+
+// TestFileReplaced covers detecting an open file that was replaced by another file.
+func TestFileReplaced(t *testing.T) {
+	t.Run("Removed", func(t *testing.T) {
+		fileName := unlockedPidFile(t, 1234)
+		f, err := os.Open(fileName) //nolint:gosec // Opens a test file.
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = f.Close() })
+		replacePidFile(t, fileName, "1234")
+		open, err := f.Stat()
+		require.NoError(t, err)
+		assert.True(t, fileReplaced(open, fileInfo(t, fileName)))
+	})
+	t.Run("Linked", func(t *testing.T) {
+		info := fileInfo(t, unlockedPidFile(t, 1234))
+		assert.False(t, fileReplaced(info, info))
+	})
+	t.Run("OtherDevice", func(t *testing.T) {
+		open := sysFileInfo{sys: &syscall.Stat_t{Dev: 1, Nlink: 0}}
+		info := sysFileInfo{sys: &syscall.Stat_t{Dev: 2, Nlink: 1}}
+		assert.False(t, fileReplaced(open, info))
+	})
+	t.Run("SameDevice", func(t *testing.T) {
+		open := sysFileInfo{sys: &syscall.Stat_t{Dev: 2, Nlink: 0}}
+		info := sysFileInfo{sys: &syscall.Stat_t{Dev: 2, Nlink: 1}}
+		assert.True(t, fileReplaced(open, info))
+	})
+	t.Run("NoStat", func(t *testing.T) {
+		info := sysFileInfo{sys: &syscall.Stat_t{Dev: 2, Nlink: 1}}
+		assert.False(t, fileReplaced(sysFileInfo{}, info))
+		assert.False(t, fileReplaced(sysFileInfo{sys: &syscall.Stat_t{Dev: 2}}, sysFileInfo{}))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		info := fileInfo(t, unlockedPidFile(t, 1234))
+		assert.False(t, fileReplaced(nil, info))
+		assert.False(t, fileReplaced(info, nil))
 	})
 }
 
@@ -433,7 +557,7 @@ func TestClosePidFileOnExec(t *testing.T) {
 		t.Cleanup(func() { _ = syscall.Kill(pid, syscall.SIGKILL) })
 
 		waitForName(t, pid, "sleep")
-		open, known := processHasFile(pid, fileInfo(t, pidFile))
+		open, known := processHasFile(pid, pidFile, fileInfo(t, pidFile))
 		require.True(t, known)
 
 		return open
@@ -597,6 +721,21 @@ func TestChildAlreadyRunning(t *testing.T) {
 		_, running := childAlreadyRunning(pidFile)
 		assert.False(t, running)
 	})
+	t.Run("Replaced", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		pid, running := childAlreadyRunning(pidFile)
+		assert.Equal(t, cmd.Process.Pid, pid)
+		assert.True(t, running)
+	})
+	t.Run("ReplacedOtherProgram", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "sleep", "30", f)
+		require.NoError(t, f.Close())
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		_, running := childAlreadyRunning(pidFile)
+		assert.False(t, running)
+	})
 }
 
 // TestWaitForExit covers waiting for a daemon to exit.
@@ -670,6 +809,22 @@ func TestStopDaemon(t *testing.T) {
 		assert.Less(t, time.Since(start), 5*time.Second)
 		assert.False(t, processRunning(cmd.Process))
 		assertPidFileContent(t, pidFile, "3999999")
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		require.NoError(t, stopDaemon(pidFile, 10*time.Second))
+		assert.False(t, processRunning(cmd.Process))
+		assertEmptyPidFile(t, pidFile)
+	})
+	t.Run("ReplacedOtherProgram", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		cmd := startProcess(t, "sleep", "30", f)
+		require.NoError(t, f.Close())
+		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
+		require.NoError(t, stopDaemon(pidFile, 10*time.Second))
+		assert.True(t, processRunning(cmd.Process))
+		assertEmptyPidFile(t, pidFile)
 	})
 	t.Run("StalePhotoPrism", func(t *testing.T) {
 		cmd := startProcess(t, "photoprism-test", "30")
@@ -911,7 +1066,7 @@ func TestDaemonHoldsPidFile(t *testing.T) {
 	})
 	t.Run("FallbackOtherUser", func(t *testing.T) {
 		defaultHoldsFile, defaultProcessUid := holdsFile, processUid
-		holdsFile = func(int, os.FileInfo) (bool, bool) { return false, false }
+		holdsFile = func(int, string, os.FileInfo) (bool, bool) { return false, false }
 		lockedFile, _ := lockedPidFile(t)
 		otherUid := fileOwner(t, fileInfo(t, lockedFile)) + 1
 		processUid = func(int) (uint32, error) { return otherUid, nil }
@@ -922,7 +1077,7 @@ func TestDaemonHoldsPidFile(t *testing.T) {
 	})
 	t.Run("Fallback", func(t *testing.T) {
 		defaultHoldsFile := holdsFile
-		holdsFile = func(int, os.FileInfo) (bool, bool) { return false, false }
+		holdsFile = func(int, string, os.FileInfo) (bool, bool) { return false, false }
 		t.Cleanup(func() { holdsFile = defaultHoldsFile })
 
 		daemonCmd := startProcess(t, "photoprism-test", "30")
