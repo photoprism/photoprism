@@ -823,13 +823,8 @@ reset-mariadb-testdb:
 reset-mariadb-local:
 	$(info Resetting local database...)
 	$(MARIADB) < scripts/sql/reset-local.sql
-reset-mariadb-acceptance:
-	$(info Resetting acceptance database...)
-	$(MARIADB) < scripts/sql/reset-acceptance.sql
-reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
+reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local
 reset-testdb: reset-sqlite reset-mariadb-testdb
-reset-acceptance: reset-mariadb-testdb
-reset-postgres-acceptance: reset-postgres-testdb
 # Drops the Go test databases (testdb_<pkg>_<hash>) and acceptance_<pkg>_<hash> databases left by older checkouts.
 reset-postgres-testdb:
 	$(info Resetting PostgreSQL test databases...)

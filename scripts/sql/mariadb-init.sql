@@ -40,10 +40,6 @@ CREATE DATABASE IF NOT EXISTS `migrate`;
 CREATE USER IF NOT EXISTS 'migrate'@'%' IDENTIFIED BY 'migrate';
 GRANT ALL PRIVILEGES ON `migrate`.* TO 'migrate'@'%';
 
-CREATE DATABASE IF NOT EXISTS acceptance;
-CREATE USER IF NOT EXISTS acceptance@'%' IDENTIFIED BY 'acceptance';
-GRANT ALL PRIVILEGES ON acceptance.* TO acceptance@'%';
-
 CREATE DATABASE IF NOT EXISTS testcafe CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS testcafe@'%' IDENTIFIED BY 'testcafe';
 GRANT ALL PRIVILEGES ON testcafe.* TO testcafe@'%';

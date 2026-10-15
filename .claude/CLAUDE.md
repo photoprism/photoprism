@@ -68,8 +68,7 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 - `make reset-testdb` — the one to reach for: deletes the SQLite test database files, including
   the `-journal`, `-wal` and `-shm` sidecars, and drops the MariaDB databases the Go tests use.
 - `make reset-mariadb-testdb` — drops the MariaDB test databases only. `make test-mariadb` runs it
-  automatically; call it by hand after a targeted or interrupted MariaDB run. `reset-acceptance` and
-  `reset-postgres-acceptance` remain as aliases of the MariaDB and PostgreSQL test database resets.
+  automatically; call it by hand after a targeted or interrupted MariaDB run.
 - `make reset-sqlite` — removes the SQLite test files only.
 
 **Subset targets:** `make test-pkg`, `make test-api`, `make test-entity`, `make test-commands`, `make test-photoprism`, `make test-ai`
