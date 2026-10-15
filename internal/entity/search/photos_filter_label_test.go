@@ -574,8 +574,10 @@ func TestPhotosQueryLabel(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		require.NoError(t, err)
-		// TODO Finds all?
-		assert.Greater(t, len(photos), 0)
+		// A quote that is not closed extends the value to the end of the query.
+		expected, _, err := Photos(form.SearchPhotos{Query: "label:king", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("CenterDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -586,8 +588,10 @@ func TestPhotosQueryLabel(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		require.NoError(t, err)
-		// TODO Finds all?
-		assert.Greater(t, len(photos), 0)
+		// A quote that is not closed extends the value to the end of the query.
+		expected, _, err := Photos(form.SearchPhotos{Query: "label:salmon", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("EndsWithDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -598,8 +602,10 @@ func TestPhotosQueryLabel(t *testing.T) {
 		photos, _, err := Photos(f)
 
 		require.NoError(t, err)
-		// TODO Finds all?
-		assert.Greater(t, len(photos), 0)
+		// A quote that is not closed extends the value to the end of the query.
+		expected, _, err := Photos(form.SearchPhotos{Query: "label:ladder", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("OrSearch", func(t *testing.T) {
 		var f form.SearchPhotos

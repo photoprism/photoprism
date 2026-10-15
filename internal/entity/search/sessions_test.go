@@ -188,9 +188,10 @@ func TestSessions_NoMatch(t *testing.T) {
 	require.NotEmpty(t, all)
 
 	for _, frm := range []form.SearchSessions{{Query: "\x00", Count: 100}, {UID: "\xff", Count: 100},
-		{Provider: "\xff", Count: 100}, {Method: "\x00", Count: 100}} {
+		{Provider: "\xff", Count: 100}, {Method: "\x00", Count: 100}, {Query: "\x00 ", Count: 100}, {Query: "\xff|", Count: 100}} {
 		result, err := Sessions(frm)
 		require.NoError(t, err)
+		assert.NotNil(t, result)
 		assert.Empty(t, result, "%+v", frm)
 	}
 }

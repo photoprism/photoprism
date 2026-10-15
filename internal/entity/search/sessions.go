@@ -15,7 +15,7 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 	result = entity.Sessions{}
 	stmt := Db()
 
-	// A filter value of only NUL bytes and invalid UTF-8 matches nothing.
+	// A filter value whose removed NUL bytes and invalid UTF-8 leave nothing usable matches nothing.
 	userUid, uidOk := clean.SearchFilter(frm.UID)
 	search, queryOk := clean.SearchFilter(frm.Query)
 	_, providerOk := clean.SearchFilter(frm.Provider)

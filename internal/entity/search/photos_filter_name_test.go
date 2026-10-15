@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/form"
 )
@@ -856,8 +857,10 @@ func TestPhotosQueryName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO Finds all?
-		assert.Greater(t, len(photos), 1)
+		// A quote that is not closed extends the value to the end of the query.
+		expected, _, err := Photos(form.SearchPhotos{Query: "name:photo46", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("CenterDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -870,8 +873,10 @@ func TestPhotosQueryName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO Finds all?
-		assert.Greater(t, len(photos), 1)
+		// A quote that is not closed extends the value to the end of the query.
+		expected, _, err := Photos(form.SearchPhotos{Query: "name:photo47", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("EndsWithDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -884,8 +889,10 @@ func TestPhotosQueryName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO Finds all?
-		assert.Greater(t, len(photos), 1)
+		// A quote that is not closed extends the value to the end of the query.
+		expected, _, err := Photos(form.SearchPhotos{Query: "name:photo48", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("StartsWithWhitespace", func(t *testing.T) {
 		var f form.SearchPhotos

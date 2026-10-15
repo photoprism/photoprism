@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -18,7 +19,9 @@ func AlbumPhotos(a entity.Album, count int, shared bool) (results PhotoResults, 
 	}
 
 	// Parse query string and filter.
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return PhotoResults{}, nil
+	} else if err != nil {
 		return results, err
 	}
 

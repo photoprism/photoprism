@@ -156,7 +156,7 @@ func TestAccounts_NoMatch(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, all)
 
-	for _, frm := range []form.SearchServices{{Query: "\x00", Count: 10}, {Query: "\xff\xfe", Count: 10}, {Status: "\xff", Count: 10}} {
+	for _, frm := range []form.SearchServices{{Query: "\x00", Count: 10}, {Query: "\xff\xfe", Count: 10}, {Status: "\xff", Count: 10}, {Query: "\x00 ", Count: 10}, {Query: "\xff*", Count: 10}} {
 		result, err := Accounts(frm)
 		require.NoError(t, err)
 		assert.NotNil(t, result)

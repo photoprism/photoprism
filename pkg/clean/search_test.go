@@ -119,6 +119,32 @@ func TestSearchFilter(t *testing.T) {
 			assert.Equal(t, "", value)
 		}
 	})
+	t.Run("OnlySyntaxLeft", func(t *testing.T) {
+		for _, s := range []string{"\x00 ", "\xff|", "\xff*", "%\xff%", "\xff\t", "\"\xff\"", "\xff&+", "\xff/", "\xff!", "\xff/*"} {
+			_, ok := SearchFilter(s)
+			assert.False(t, ok, "%q", s)
+		}
+	})
+	t.Run("SyntaxWithoutRemovedBytes", func(t *testing.T) {
+		for _, s := range []string{" ", "|", "*", "%"} {
+			value, ok := SearchFilter(s)
+			assert.True(t, ok, "%q", s)
+			assert.Equal(t, s, value)
+		}
+	})
+}
+
+func TestSearchUsable(t *testing.T) {
+	t.Run("Usable", func(t *testing.T) {
+		for _, s := range []string{"cat", "*cat*", "a|b", "/a", "-", "1", "\U0001F600", "\uFFFD"} {
+			assert.True(t, SearchUsable(s), "%q", s)
+		}
+	})
+	t.Run("NotUsable", func(t *testing.T) {
+		for _, s := range []string{"", " ", "|", "*", "% ", "\t\n", "\x01", "${}", ":", "\"'", "+&", "<>\\", "/", "!", "/*"} {
+			assert.False(t, SearchUsable(s), "%q", s)
+		}
+	})
 }
 
 func TestSearchBindable(t *testing.T) {

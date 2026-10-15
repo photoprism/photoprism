@@ -484,3 +484,29 @@ func TestAlbumsByType(t *testing.T) {
 		assert.Len(t, actual, 21)
 	})
 }
+
+// TestAlbums_NoMatchFilter checks that a stored filter with nothing usable left gives an empty album.
+func TestAlbums_NoMatchFilter(t *testing.T) {
+	a := entity.NewMonthAlbum("No Match Filter", "no-match-filter", 2020, 1)
+	a.AlbumFilter = "\xff"
+	require.NoError(t, a.Create())
+	t.Cleanup(func() { _ = a.DeletePermanently() })
+
+	t.Run("AlbumsPhotoUIDs", func(t *testing.T) {
+		expected, err := AlbumsPhotoUIDs([]string{"as6sg6bipogaaba1"}, false, true)
+		require.NoError(t, err)
+		require.NotEmpty(t, expected)
+
+		uids, err := AlbumsPhotoUIDs([]string{a.AlbumUID, "as6sg6bipogaaba1"}, false, true)
+		require.NoError(t, err)
+		assert.ElementsMatch(t, expected, uids)
+	})
+	t.Run("AlbumCoverByUID", func(t *testing.T) {
+		_, err := AlbumCoverByUID(a.AlbumUID, true)
+		assert.EqualError(t, err, "no cover found")
+
+		found, err := AlbumByUID(a.AlbumUID)
+		require.NoError(t, err)
+		assert.False(t, found.Deleted())
+	})
+}

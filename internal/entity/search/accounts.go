@@ -12,7 +12,7 @@ func Accounts(frm form.SearchServices) (result entity.Services, err error) {
 
 	var queryOk, statusOk bool
 
-	// A filter value of only NUL bytes and invalid UTF-8 matches nothing.
+	// A filter value whose removed NUL bytes and invalid UTF-8 leave nothing usable matches nothing.
 	if frm.Query, queryOk = clean.SearchFilter(frm.Query); !queryOk {
 		return entity.Services{}, nil
 	} else if frm.Status, statusOk = clean.SearchFilter(frm.Status); !statusOk {

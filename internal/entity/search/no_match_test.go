@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -14,7 +15,8 @@ import (
 func TestNoMatch(t *testing.T) {
 	t.Run("Photos", func(t *testing.T) {
 		for _, f := range []form.SearchPhotos{{Path: "\xff"}, {Name: "\xff"}, {Filename: "\x00"}, {Query: "\x00"},
-			{Query: "path:\xff"}, {Label: "\xfe\xff"}} {
+			{Query: "path:\xff"}, {Label: "\xfe\xff"}, {Query: "\x00 "}, {Query: "\xff|"}, {Path: "\xff "}, {Path: "\xff*"},
+			{Label: "\xff "}, {Query: "before:\xff"}, {Query: "after:\xff"}, {Query: "label:\xff*"}} {
 			f.Count, f.Merged = 10, true
 			photos, count, err := Photos(f)
 			require.NoError(t, err, "%+v", f)
@@ -91,7 +93,20 @@ func TestNoMatch(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEmpty(t, lenses)
 	})
+	t.Run("AlbumPhotos", func(t *testing.T) {
+		// A stored filter whose value matches nothing returns an empty result.
+		results, err := AlbumPhotos(entity.Album{AlbumUID: "as6sg6bipotaab19", AlbumType: entity.AlbumMoment, AlbumFilter: "\xff"}, 10, false)
+		require.NoError(t, err)
+		assert.NotNil(t, results)
+		assert.Empty(t, results)
+	})
 	t.Run("Users", func(t *testing.T) {
+		for _, name := range []string{"\xff", "\xff ", "\x00*"} {
+			users, err := Users(form.SearchUsers{Name: name, Count: 100})
+			require.NoError(t, err)
+			assert.NotNil(t, users)
+			assert.Empty(t, users, "%q", name)
+		}
 		users, err := Users(form.SearchUsers{Name: "\xff", Count: 100})
 		require.NoError(t, err)
 		assert.Empty(t, users)

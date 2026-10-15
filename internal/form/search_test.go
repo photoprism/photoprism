@@ -23,6 +23,27 @@ func TestParseQueryString_Bindable(t *testing.T) {
 		assert.Equal(t, "ab", f.Title)
 		assert.Equal(t, "cat", f.Label)
 	})
+	t.Run("OpenQuote", func(t *testing.T) {
+		// A quote that is not closed extends the value to the end of the query.
+		f := &SearchPhotos{Query: "label:\"cat"}
+		require.NoError(t, ParseQueryString(f))
+		assert.Equal(t, "cat", f.Label)
+		f = &SearchPhotos{Query: "title:x label:\"cat path:dog"}
+		require.NoError(t, ParseQueryString(f))
+		assert.Equal(t, "x", f.Title)
+		assert.Equal(t, "cat path:dog", f.Label)
+		assert.Equal(t, "", f.Path)
+		f = &SearchPhotos{Query: "\"cat dog"}
+		require.NoError(t, ParseQueryString(f))
+		assert.Equal(t, "cat dog", f.Query)
+		f = &SearchPhotos{Query: "quality:\"3"}
+		require.NoError(t, ParseQueryString(f))
+		assert.Equal(t, 3, f.Quality)
+		assert.ErrorIs(t, ParseQueryString(&SearchPhotos{Query: "path:\"\xff"}), ErrNoMatch)
+		g := &SearchPhotos{}
+		require.NoError(t, Unserialize(g, "label:\"cat"))
+		assert.Equal(t, "cat", g.Label)
+	})
 }
 
 func TestParseQueryString_NoMatch(t *testing.T) {
@@ -44,6 +65,18 @@ func TestParseQueryString_NoMatch(t *testing.T) {
 			"FacesSubject":   &SearchFaces{Subject: "\xff"},
 			"UsersName":      &SearchUsers{Name: "\xff"},
 			"CamerasQuery":   &SearchCameras{Query: "\xff"},
+			"QuerySpace":     &SearchPhotos{Query: "\x00 "},
+			"QueryPipe":      &SearchPhotos{Query: "\xff|"},
+			"PathSpace":      &SearchPhotos{Path: "\xff "},
+			"PathWildcard":   &SearchPhotos{Path: "\xff*"},
+			"LabelSpace":     &SearchPhotos{Label: "\xff "},
+			"Filter":         &SearchPhotos{Filter: "\xff"},
+			"ValueWildcard":  &SearchPhotos{Query: "label:\xff*"},
+			"Before":         &SearchPhotos{Query: "before:\xff"},
+			"After":          &SearchPhotos{Query: "after:\x00"},
+			"Quality":        &SearchPhotos{Query: "quality:\xff"},
+			"Public":         &SearchPhotos{Query: "public:\xff"},
+			"GeoBefore":      &SearchPhotosGeo{Query: "before:\xff"},
 		} {
 			assert.ErrorIs(t, ParseQueryString(f), ErrNoMatch, name)
 		}
@@ -68,7 +101,8 @@ func TestParseQueryString_NoMatch(t *testing.T) {
 		for _, f := range []*SearchPhotos{
 			{}, {Query: "path:"}, {Path: "2020/Holiday"}, {Path: "2020/"}, {Path: "20*"}, {Path: "2020|2021"},
 			{Order: "\xff"}, {Filter: "path:2020"}, {Query: "label:c\xff path:"}, {Query: "label:\"a\xff b\" path:"},
-			{Query: "pa\xffth:"}, {Query: "\x00path:"}, {Query: "path:|"},
+			{Query: "pa\xffth:"}, {Query: "\x00path:"}, {Query: "path:|"}, {Path: "*"}, {Query: "|"}, {Query: "label:*"},
+			{Query: "before:2020-01-01"}, {Query: "before:2020-01-01\xff"}, {Query: "label:\xff-"},
 		} {
 			p := *f
 			require.NoError(t, f.ParseQueryString(), "%+v", p)
@@ -87,6 +121,12 @@ func TestParseQueryString_NoMatch(t *testing.T) {
 		f = &SearchPhotos{Path: "a|\x00"}
 		require.NoError(t, f.ParseQueryString())
 		assert.Equal(t, "a|", f.Path)
+	})
+	t.Run("InvalidDate", func(t *testing.T) {
+		// A date with other characters left fails as an invalid date, not as a value that matches nothing.
+		err := (&SearchPhotos{Query: "before:\xffx"}).ParseQueryString()
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrNoMatch)
 	})
 	t.Run("ReplacementCharacter", func(t *testing.T) {
 		// A valid U+FFFD in a value is searched as it is.

@@ -13,12 +13,12 @@ type SearchForm interface {
 	SetQuery(q string)
 }
 
-// ErrNoMatch is returned when a search filter value consists only of NUL bytes and invalid UTF-8, so it can
-// match nothing; callers return an empty result.
+// ErrNoMatch is returned when removing NUL bytes and invalid UTF-8 from a search filter value leaves nothing
+// usable, so it can match nothing; callers return an empty result.
 var ErrNoMatch = errors.New("search filter matches nothing")
 
 // ParseQueryString removes NUL bytes and invalid UTF-8 from the string fields of the search form, and
-// populates its fields from its query string. It returns ErrNoMatch if a filter value had nothing else.
+// populates its fields from its query string. It returns ErrNoMatch if a filter value had nothing usable left.
 func ParseQueryString(f SearchForm) (result error) {
 	q := f.GetQuery()
 	ok := bindableStrings(f)
@@ -33,7 +33,7 @@ func ParseQueryString(f SearchForm) (result error) {
 }
 
 // bindableStrings applies clean.SearchBindable to every settable string field of a pointer to a struct, and
-// reports false if a field other than the sort order had nothing else left.
+// reports false if a field other than the sort order had nothing usable left.
 func bindableStrings(f any) (ok bool) {
 	ok = true
 	v := reflect.ValueOf(f)

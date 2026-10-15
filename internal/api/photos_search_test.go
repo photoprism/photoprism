@@ -87,6 +87,15 @@ func TestSearchPhotos_NulValues(t *testing.T) {
 		})
 	}
 
+	t.Run("OnlySyntaxLeft", func(t *testing.T) {
+		for _, query := range []string{"q=%00%20", "q=%FF%7C", "path=%FF%20", "path=%FF*", "label=%FF%20",
+			"q=before:%FF", "q=after:%FF", "filter=%FF", "path=%FF/", "path=%FF/*", "label=%FF!"} {
+			r := PerformRequest(app, "GET", "/api/v1/photos?count=10&"+query)
+			assert.Equal(t, http.StatusOK, r.Code, query)
+			assert.Equal(t, "[]", r.Body.String(), query)
+		}
+	})
+
 	t.Run("Unfiltered", func(t *testing.T) {
 		for _, query := range []string{"", "&q=", "&path=", "&q=path:"} {
 			r := PerformRequest(app, "GET", "/api/v1/photos?count=10"+query)

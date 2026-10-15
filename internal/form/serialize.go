@@ -114,30 +114,25 @@ func unserialize(f SearchForm, q string) (noMatch bool, result error) {
 
 	f.SetQuery("")
 
-	q = strings.TrimSpace(q) + "\n"
-
 	var queryStrings []string
 
-	for i, char := range q {
-		// NUL bytes and invalid UTF-8 are skipped, and an invalid byte decodes as a one-byte RuneError.
-		if char == 0 || char == utf8.RuneError && !strings.HasPrefix(q[i:], string(utf8.RuneError)) {
-			dropped = dropped || isKeyValue
-			continue
-		}
+	// flush sets the field named by the current token, or keeps the token as a query string.
+	flush := func() {
+		if isKeyValue {
+			formName := strings.ToLower(string(key))
+			fieldName := fieldNames[formName]
 
-		switch {
-		case unicode.IsSpace(char) && !escaped:
-			if isKeyValue {
-				formName := strings.ToLower(string(key))
-				fieldName := fieldNames[formName]
+			field := formValues.FieldByNameFunc(func(name string) bool {
+				return strings.EqualFold(name, fieldName)
+			})
 
-				field := formValues.FieldByNameFunc(func(name string) bool {
-					return strings.EqualFold(name, fieldName)
-				})
+			stringValue := string(value)
 
-				stringValue := string(value)
-
-				if fieldName != "" && fieldName != "-" && field.CanSet() {
+			if fieldName != "" && fieldName != "-" && field.CanSet() {
+				// A value whose removed bytes leave nothing usable matches nothing, whatever the field type.
+				if dropped && !clean.SearchUsable(stringValue) {
+					noMatch = true
+				} else {
 					switch field.Interface().(type) {
 					case time.Time:
 						if timeValue := txt.ParseTimeUTC(stringValue); stringValue != "" && timeValue.IsZero() {
@@ -166,25 +161,40 @@ func unserialize(f SearchForm, q string) (noMatch bool, result error) {
 						}
 					case string:
 						searchValue := clean.SearchString(stringValue)
-						noMatch = noMatch || dropped && searchValue == ""
+						noMatch = noMatch || dropped && !clean.SearchUsable(searchValue)
 						field.SetString(searchValue)
 					case bool:
 						field.SetBool(txt.Bool(stringValue))
 					default:
 						result = fmt.Errorf("unsupported type: %s", formName)
 					}
-				} else {
-					result = fmt.Errorf("unknown filter: %s", formName)
 				}
-			} else if len(strings.TrimSpace(string(key))) > 0 {
-				queryStrings = append(queryStrings, strings.TrimSpace(string(key)))
+			} else {
+				result = fmt.Errorf("unknown filter: %s", formName)
 			}
+		} else if len(strings.TrimSpace(string(key))) > 0 {
+			queryStrings = append(queryStrings, strings.TrimSpace(string(key)))
+		}
 
-			escaped = false
-			isKeyValue = false
-			dropped = false
-			key = key[:0]
-			value = value[:0]
+		escaped = false
+		isKeyValue = false
+		dropped = false
+		key = key[:0]
+		value = value[:0]
+	}
+
+	q = strings.TrimSpace(q)
+
+	for i, char := range q {
+		// NUL bytes and invalid UTF-8 are skipped, and an invalid byte decodes as a one-byte RuneError.
+		if char == 0 || char == utf8.RuneError && !strings.HasPrefix(q[i:], string(utf8.RuneError)) {
+			dropped = dropped || isKeyValue
+			continue
+		}
+
+		switch {
+		case unicode.IsSpace(char) && !escaped:
+			flush()
 		case char == ':' && !escaped:
 			isKeyValue = true
 		case char == '"':
@@ -195,6 +205,9 @@ func unserialize(f SearchForm, q string) (noMatch bool, result error) {
 			key = append(key, unicode.ToLower(char))
 		}
 	}
+
+	// The last token ends with the string, also if its quote is not closed.
+	flush()
 
 	if len(queryStrings) > 0 {
 		f.SetQuery(clean.SearchQuery(strings.Join(queryStrings, " ")))

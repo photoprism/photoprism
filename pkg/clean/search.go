@@ -2,6 +2,7 @@ package clean
 
 import (
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -83,16 +84,25 @@ func SearchBindable(s string) string {
 	return s
 }
 
-// SearchFilter removes NUL bytes and invalid UTF-8 from a search filter value, and reports false if nothing
-// else was left of a value that was not empty, since such a filter can match nothing.
+// SearchFilter removes NUL bytes and invalid UTF-8 from a search filter value, and reports false if bytes were
+// removed and nothing usable is left, since such a filter can match nothing.
 func SearchFilter(s string) (string, bool) {
-	if s == "" {
-		return s, true
+	if b := SearchBindable(s); b != s {
+		return b, SearchUsable(b)
 	}
 
-	s = SearchBindable(s)
+	return s, true
+}
 
-	return s, s != ""
+// searchSyntax lists the characters that only form search syntax, such as wildcards and operators.
+const searchSyntax = "|&*%<>${}\\:\"'+!/"
+
+// SearchUsable reports whether a search value has a character other than whitespace, control characters,
+// and the characters that only form search syntax.
+func SearchUsable(s string) bool {
+	return strings.ContainsFunc(s, func(r rune) bool {
+		return !unicode.IsSpace(r) && !unicode.IsControl(r) && !strings.ContainsRune(searchSyntax, r)
+	})
 }
 
 // SearchString replaces search operator with default symbols.
