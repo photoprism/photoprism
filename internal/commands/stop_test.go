@@ -110,7 +110,7 @@ func lockedPidFile(t *testing.T) (string, *os.File) {
 	t.Helper()
 
 	pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
-	lock, err := daemon.OpenLockFile(pidFile, fs.ModeFile)
+	lock, err := daemon.OpenLockFile(pidFile, daemon.FILE_PERM)
 	require.NoError(t, err)
 	require.NoError(t, lock.Lock())
 	t.Cleanup(func() { _ = lock.Close() })
@@ -123,7 +123,7 @@ func unlockedPidFile(t *testing.T, pid int) string {
 	t.Helper()
 
 	pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
-	require.NoError(t, fs.WriteString(pidFile, strconv.Itoa(pid)))
+	require.NoError(t, os.WriteFile(pidFile, []byte(strconv.Itoa(pid)), daemon.FILE_PERM))
 
 	return pidFile
 }
@@ -369,6 +369,47 @@ func TestProcessHasFile(t *testing.T) {
 	t.Run("NoFile", func(t *testing.T) {
 		_, known := processHasFile(os.Getpid(), nil)
 		assert.False(t, known)
+	})
+	t.Run("PermissionDenied", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+
+		defaultReadFdLink := readFdLink
+		readFdLink = func(name string) (string, error) {
+			return "", &os.PathError{Op: "readlink", Path: name, Err: syscall.EACCES}
+		}
+		t.Cleanup(func() { readFdLink = defaultReadFdLink })
+
+		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		assert.False(t, known)
+		assert.False(t, open)
+		// Falls back to the lock, which the stand-in holds.
+		assert.True(t, daemonHoldsPidFile(cmd.Process, pidFile, fileInfo(t, pidFile)))
+	})
+	t.Run("StatPermissionDenied", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+
+		defaultStatFd := statFd
+		statFd = func(name string) (os.FileInfo, error) {
+			return nil, &os.PathError{Op: "stat", Path: name, Err: syscall.EACCES}
+		}
+		t.Cleanup(func() { statFd = defaultStatFd })
+
+		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		assert.False(t, known)
+		assert.False(t, open)
+	})
+	t.Run("ClosedMeanwhile", func(t *testing.T) {
+		cmd, pidFile := startDaemon(t, "30")
+
+		defaultReadFdLink := readFdLink
+		readFdLink = func(name string) (string, error) {
+			return "", &os.PathError{Op: "readlink", Path: name, Err: syscall.ENOENT}
+		}
+		t.Cleanup(func() { readFdLink = defaultReadFdLink })
+
+		open, known := processHasFile(cmd.Process.Pid, fileInfo(t, pidFile))
+		assert.True(t, known)
+		assert.True(t, open)
 	})
 }
 
@@ -721,6 +762,124 @@ func TestStopDaemon(t *testing.T) {
 	})
 }
 
+// fileOwner returns the user ID that owns the file.
+func fileOwner(t *testing.T, info os.FileInfo) uint32 {
+	t.Helper()
+
+	st, ok := info.Sys().(*syscall.Stat_t)
+	require.True(t, ok)
+
+	return st.Uid
+}
+
+// sysFileInfo describes a file with the given system information.
+type sysFileInfo struct {
+	os.FileInfo
+	sys any
+}
+
+// Sys returns the system information.
+func (i sysFileInfo) Sys() any { return i.sys }
+
+// TestProcessOwnsFile covers checking that a process runs as the owner of a file.
+func TestProcessOwnsFile(t *testing.T) {
+	// withUid stubs the user ID that the process runs as.
+	withUid := func(t *testing.T, uid uint32) {
+		defaultProcessUid := processUid
+		processUid = func(int) (uint32, error) { return uid, nil }
+		t.Cleanup(func() { processUid = defaultProcessUid })
+	}
+
+	t.Run("OwnerNotGroup", func(t *testing.T) {
+		withUid(t, 5)
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7}}
+		assert.True(t, processOwnsFile(os.Getpid(), info))
+	})
+	t.Run("GroupNotOwner", func(t *testing.T) {
+		withUid(t, 7)
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7}}
+		assert.False(t, processOwnsFile(os.Getpid(), info))
+	})
+	t.Run("GroupWritable", func(t *testing.T) {
+		withUid(t, 5)
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o660}}
+		assert.False(t, processOwnsFile(os.Getpid(), info))
+	})
+	t.Run("OthersWritable", func(t *testing.T) {
+		withUid(t, 5)
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o602}}
+		assert.False(t, processOwnsFile(os.Getpid(), info))
+	})
+	t.Run("OwnerOnlyWritable", func(t *testing.T) {
+		withUid(t, 5)
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o644, Nlink: 1}}
+		assert.True(t, processOwnsFile(os.Getpid(), info))
+	})
+	t.Run("HardLink", func(t *testing.T) {
+		withUid(t, 5)
+		info := sysFileInfo{sys: &syscall.Stat_t{Uid: 5, Gid: 7, Mode: syscall.S_IFREG | 0o640, Nlink: 2}}
+		assert.False(t, processOwnsFile(os.Getpid(), info))
+	})
+	t.Run("NoStat", func(t *testing.T) {
+		withUid(t, 7)
+		assert.True(t, processOwnsFile(os.Getpid(), sysFileInfo{}))
+	})
+	t.Run("NoInfo", func(t *testing.T) {
+		assert.False(t, processOwnsFile(os.Getpid(), nil))
+	})
+	t.Run("Owner", func(t *testing.T) {
+		cmd := startProcess(t, "sleep", "30")
+		assert.True(t, processOwnsFile(cmd.Process.Pid, fileInfo(t, unlockedPidFile(t, 1234))))
+	})
+	t.Run("OtherUser", func(t *testing.T) {
+		info := fileInfo(t, unlockedPidFile(t, 1234))
+		withUid(t, fileOwner(t, info)+1)
+		assert.False(t, processOwnsFile(os.Getpid(), info))
+	})
+	t.Run("NotRunning", func(t *testing.T) {
+		requireProc(t)
+		assert.False(t, processOwnsFile(3999999, fileInfo(t, unlockedPidFile(t, 1234))))
+	})
+}
+
+// TestProcUid covers reading the effective user ID of a process from /proc.
+func TestProcUid(t *testing.T) {
+	t.Run("Self", func(t *testing.T) {
+		requireProc(t)
+		uid, err := procUid(os.Getpid())
+		require.NoError(t, err)
+		assert.Equal(t, os.Geteuid(), int(uid))
+	})
+	t.Run("Root", func(t *testing.T) {
+		requireProc(t)
+		uid, err := procUid(1)
+		require.NoError(t, err)
+		assert.Equal(t, uint32(0), uid)
+	})
+	t.Run("NotRunning", func(t *testing.T) {
+		requireProc(t)
+		_, err := procUid(3999999)
+		assert.Error(t, err)
+	})
+}
+
+// TestStatusUid covers reading the effective user ID from a /proc status file.
+func TestStatusUid(t *testing.T) {
+	t.Run("Effective", func(t *testing.T) {
+		uid, err := statusUid([]byte("Name:\tphotoprism\nUid:\t1000\t1001\t1002\t1003\nGid:\t1000\t1000\t1000\t1000\n"))
+		require.NoError(t, err)
+		assert.Equal(t, uint32(1001), uid)
+	})
+	t.Run("Missing", func(t *testing.T) {
+		_, err := statusUid([]byte("Name:\tphotoprism\nGid:\t1000\t1000\t1000\t1000\n"))
+		assert.Error(t, err)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		_, err := statusUid([]byte("Uid:\tabc\tdef\n"))
+		assert.Error(t, err)
+	})
+}
+
 // TestProcCmdline covers reading the command line of a process from /proc.
 func TestProcCmdline(t *testing.T) {
 	t.Run("Running", func(t *testing.T) {
@@ -749,6 +908,17 @@ func TestDaemonHoldsPidFile(t *testing.T) {
 	})
 	t.Run("Nil", func(t *testing.T) {
 		assert.False(t, daemonHoldsPidFile(nil, filepath.Join(t.TempDir(), "photoprism.pid"), nil))
+	})
+	t.Run("FallbackOtherUser", func(t *testing.T) {
+		defaultHoldsFile, defaultProcessUid := holdsFile, processUid
+		holdsFile = func(int, os.FileInfo) (bool, bool) { return false, false }
+		lockedFile, _ := lockedPidFile(t)
+		otherUid := fileOwner(t, fileInfo(t, lockedFile)) + 1
+		processUid = func(int) (uint32, error) { return otherUid, nil }
+		t.Cleanup(func() { holdsFile, processUid = defaultHoldsFile, defaultProcessUid })
+
+		daemonCmd := startProcess(t, "photoprism-test", "30")
+		assert.False(t, daemonHoldsPidFile(daemonCmd.Process, lockedFile, fileInfo(t, lockedFile)))
 	})
 	t.Run("Fallback", func(t *testing.T) {
 		defaultHoldsFile := holdsFile

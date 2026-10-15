@@ -29,6 +29,15 @@ const clearTimeout = time.Second
 // holdsFile reports whether a process has a file open, see processHasFile.
 var holdsFile = processHasFile
 
+// readFdLink reads the target of an open file listed in /proc.
+var readFdLink = os.Readlink
+
+// statFd returns the information of an open file listed in /proc.
+var statFd = os.Stat
+
+// processUid returns the effective user ID of a process, see procUid.
+var processUid = procUid
+
 // lockStalePidFile takes the lock on a pid file before clearStalePidFile empties it.
 var lockStalePidFile = func(lock *daemon.LockFile) error { return lock.Lock() }
 
@@ -213,7 +222,8 @@ func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 }
 
 // daemonHoldsPidFile reports whether the process holds the pid file open, as the daemon does, and is named
-// photoprism*. Where its open files cannot be listed, the pid file must be locked instead.
+// photoprism*. Where its open files cannot be listed or read, the pid file must be locked instead, by any process,
+// and the process must run as the owner of the file.
 func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) bool {
 	if p == nil || p.Pid <= 0 || p.Pid == os.Getpid() || !daemonProcess(p) {
 		return false
@@ -221,6 +231,9 @@ func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) bool {
 
 	if open, known := holdsFile(p.Pid, info); known {
 		return open
+	} else if !processOwnsFile(p.Pid, info) {
+		log.Debugf("cannot confirm that process %d holds pid file %s", p.Pid, clean.Log(pidFile))
+		return false
 	}
 
 	held, known := pidFileLocked(pidFile, info)
@@ -229,7 +242,7 @@ func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) bool {
 }
 
 // processHasFile reports whether the process has the file open under its name. known is false if its open files cannot be
-// listed.
+// listed or read, e.g. by root without the capability to inspect processes of other users.
 func processHasFile(pid int, info os.FileInfo) (open, known bool) {
 	if info == nil {
 		return false, false
@@ -250,12 +263,16 @@ func processHasFile(pid int, info os.FileInfo) (open, known bool) {
 		fdName := filepath.Join(dir, entry.Name())
 
 		// Compares the name first, which does not access the open file.
-		if target, linkErr := os.Readlink(fdName); linkErr == nil && filepath.Base(target) != info.Name() {
+		if target, linkErr := readFdLink(fdName); errors.Is(linkErr, os.ErrPermission) {
+			return false, false
+		} else if linkErr == nil && filepath.Base(target) != info.Name() {
 			continue
 		}
 
-		if fdInfo, statErr := os.Stat(fdName); statErr == nil && os.SameFile(info, fdInfo) { //nolint:gosec // Reads /proc.
+		if fdInfo, statErr := statFd(fdName); statErr == nil && os.SameFile(info, fdInfo) {
 			return true, true
+		} else if errors.Is(statErr, os.ErrPermission) {
+			return false, false
 		}
 	}
 
@@ -368,6 +385,55 @@ func processRunning(p *os.Process) bool {
 	}
 
 	return len(cmdline) > 0
+}
+
+// processOwnsFile reports whether the process runs as the owner of the file, which must have a single name and must
+// not be writable by its group or others. Without /proc, the user cannot be read, so any process is accepted.
+func processOwnsFile(pid int, info os.FileInfo) bool {
+	if info == nil {
+		return false
+	}
+
+	st, ok := info.Sys().(*syscall.Stat_t)
+
+	if !ok {
+		return true
+	} else if st.Nlink > 1 || st.Mode&0o022 != 0 {
+		return false
+	}
+
+	uid, err := processUid(pid)
+
+	if err != nil {
+		return !fs.FileExists("/proc/self/status")
+	}
+
+	return uid == st.Uid
+}
+
+// procUid returns the effective user ID of the process from /proc, which can be read without the right to
+// inspect the process.
+func procUid(pid int) (uint32, error) {
+	b, err := os.ReadFile(filepath.Join("/proc", strconv.Itoa(pid), "status")) //nolint:gosec // Reads /proc by process ID.
+
+	if err != nil {
+		return 0, err
+	}
+
+	return statusUid(b)
+}
+
+// statusUid returns the effective user ID from the Uid line of a /proc status file, which lists the real,
+// effective, saved, and file system user IDs.
+func statusUid(status []byte) (uint32, error) {
+	for _, line := range strings.Split(string(status), "\n") {
+		if fields := strings.Fields(line); len(fields) >= 3 && fields[0] == "Uid:" {
+			uid, err := strconv.ParseUint(fields[2], 10, 32)
+			return uint32(uid), err
+		}
+	}
+
+	return 0, errors.New("status has no user ID")
 }
 
 // procCmdline returns the command line of the process from /proc, with its arguments separated by NUL bytes.
