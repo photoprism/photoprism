@@ -381,6 +381,7 @@ else
 	@echo "TestCafe database: $(TESTCAFE_DB)"
 endif
 acceptance-restart-%: acceptance-check-db
+	bash scripts/test/acceptance-hub.sh ./storage/acceptance
 	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
@@ -397,6 +398,7 @@ acceptance-restart-%: acceptance-check-db
 acceptance-stop-%:
 	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 acceptance-auth-restart: acceptance-check-db
+	bash scripts/test/acceptance-hub.sh ./storage/acceptance
 	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
@@ -781,6 +783,7 @@ test-sh:
 	$(info Running shell script tests...)
 	bash scripts/test/acceptance-server-test.sh
 	bash scripts/test/acceptance-db-test.sh
+	bash scripts/test/acceptance-hub-test.sh
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)

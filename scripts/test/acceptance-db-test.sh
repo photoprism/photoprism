@@ -251,24 +251,31 @@ pinned() {
   check "$name Flag ($target)" grep -qE -- " ${bin//./\\.} .*$flag.* start -d\$" <<< "$out"
 }
 
-# hubfirst checks that a restart rule restores the hub registration before it runs the binary or the scripts.
+# hubfirst checks that a restart rule runs the given acceptance-hub.sh command before it runs the binary or the other
+# scripts, and that no rule ignores its exit status.
 hubfirst() {
-  local name=$1 dir=$2 target=$3 bin=$4 out hub run
+  local name=$1 dir=$2 target=$3 bin=$4 cmd=$5 out hub run
   out=$(make -s -n -C "$dir" "$target" DB=postgres 2>/dev/null)
-  hub=$(grep -n -m 1 '^hub=' <<< "$out" | cut -d: -f1)
-  run=$(grep -nE -m 1 "$bin|acceptance-(server|db)\\.sh" <<< "$out" | cut -d: -f1)
-  check "$name HubFirst ($target)" test -n "$hub" -a -n "$run" -a "${hub:-0}" -lt "${run:-0}"
+  hub=$(grep -n -m 1 'acceptance-hub\.sh' <<< "$out")
+  run=$(grep -nE -m 1 "${bin//./\\.}|acceptance-(server|db)\\.sh" <<< "$out" | cut -d: -f1)
+  check "$name HubFirst ($target)" test -n "$hub" -a -n "$run" -a "${hub%%:*}" -lt "${run:-0}"
+  check "$name HubCommand ($target)" test "${hub#*:}" == "$cmd"
+  check "$name HubStatus ($target)" test -z "$(grep -E $'^\t[@+]*-.*acceptance-hub\\.sh' "$dir/Makefile")"
 }
 
 if command -v make >/dev/null; then
-  [[ ! -f "$root/Makefile" ]] || rules Makefile "$root" ./storage/acceptance ./photoprism "$common CONNECT" \
-    acceptance-restart-1 acceptance-stop-1
+  if [[ -f "$root/Makefile" ]]; then
+    rules Makefile "$root" ./storage/acceptance ./photoprism "$common CONNECT" acceptance-restart-1 acceptance-stop-1
+    hubfirst Makefile "$root" acceptance-restart-1 ./photoprism "bash scripts/test/acceptance-hub.sh ./storage/acceptance"
+    hubfirst Makefile "$root" acceptance-auth-restart ./photoprism "bash scripts/test/acceptance-hub.sh ./storage/acceptance"
+  fi
+
   if [[ -f "$root/plus/Makefile" ]]; then
     rules PlusMakefile "$root/plus" ./plus/storage/acceptance-plus ./photoprism-plus "$common" \
       acceptance-restart-1 acceptance-stop-1
     check "PlusMakefile KeepsConnect" lacks "-u PHOTOPRISM_CONNECT" "$root/plus/Makefile"
-    hubfirst PlusMakefile "$root/plus" acceptance-restart-1 ./photoprism-plus
-    hubfirst PlusMakefile "$root/plus" acceptance-auth-restart ./photoprism-plus
+    hubfirst PlusMakefile "$root/plus" acceptance-restart-1 ./photoprism-plus 'cd .. && bash scripts/test/acceptance-hub.sh "./plus/storage/acceptance-plus" hubBackup.yml'
+    hubfirst PlusMakefile "$root/plus" acceptance-auth-restart ./photoprism-plus 'cd .. && bash scripts/test/acceptance-hub.sh "./plus/storage/acceptance-plus" hubBackup.yml'
   fi
 
   if [[ -f "$root/pro/Makefile" ]]; then
@@ -276,7 +283,7 @@ if command -v make >/dev/null; then
     check "ProMakefile KeepsConnect" lacks "-u PHOTOPRISM_CONNECT" "$root/pro/Makefile"
 
     for t in acceptance-restart acceptance-auth-restart acceptance-auth-sync-restart acceptance-auth-ldap-restart; do
-      hubfirst ProMakefile "$root/pro" "$t" ./photoprism-pro
+      hubfirst ProMakefile "$root/pro" "$t" ./photoprism-pro 'cd .. && bash scripts/test/acceptance-hub.sh "./pro/storage/acceptance-pro" hubbackup.yml'
     done
 
     pinned ProMakefile "$root/pro" acceptance-auth-sync-restart ./photoprism-pro "--ldap-sync --auth-mode"
