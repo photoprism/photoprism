@@ -126,8 +126,23 @@ func runStopHelper(mode string) int {
 		err := startPrologue()
 		after, _ := unix.FcntlInt(daemonPidFileFd, unix.F_GETFD, 0)
 		fmt.Printf("cloexec-before=%t cloexec-after=%t err=%v\n", before&unix.FD_CLOEXEC != 0, after&unix.FD_CLOEXEC != 0, err)
-	case "write-pid":
+	case "write-pid", "write-pid-short":
 		// Runs the prologue as a daemon that inherited fd 4, see TestWriteDaemonPid.
+		if mode == "write-pid-short" {
+			// Writes one byte, after checking that the file was emptied first.
+			writePidFd = func(fd int, b []byte) (int, error) {
+				var st syscall.Stat_t
+
+				if err := syscall.Fstat(fd, &st); err != nil {
+					return 0, err
+				} else if st.Size != 0 {
+					return 0, fmt.Errorf("file has %d bytes before writing", st.Size)
+				}
+
+				return syscall.Write(fd, b[:1])
+			}
+		}
+
 		fmt.Printf("pid=%d err=%v\n", os.Getpid(), startPrologue())
 	case "reborn":
 		return runRebornHelper(os.Getenv(stopHelperPidEnv), os.Getenv(stopHelperLogEnv))

@@ -124,24 +124,7 @@ func TestWriteDaemonPid(t *testing.T) {
 	// writePid runs the prologue as a daemon with the file as fd 4 and the context naming pidFile on its standard
 	// input, and returns its process ID and error.
 	writePid := func(t *testing.T, f *os.File, pidFile string) (int, string) {
-		null, err := os.Open(os.DevNull)
-		require.NoError(t, err)
-		t.Cleanup(func() { _ = null.Close() })
-
-		context, err := json.Marshal(daemonContext{PidFileName: pidFile})
-		require.NoError(t, err)
-
-		cmd, stdout := startHelperInput(t, "write-pid", []string{"_GO_DAEMON=1"}, bytes.NewReader(context), null, f)
-		line, err := stdout.ReadString('\n')
-		require.NoError(t, err)
-		require.NoError(t, cmd.Wait())
-
-		pidText, result, found := strings.Cut(strings.TrimPrefix(strings.TrimSpace(line), "pid="), " err=")
-		require.True(t, found, line)
-		pid, err := strconv.Atoi(pidText)
-		require.NoError(t, err, line)
-
-		return pid, result
+		return writePidMode(t, "write-pid", f, pidFile)
 	}
 
 	t.Run("Overwrites", func(t *testing.T) {
@@ -206,6 +189,39 @@ func TestWriteDaemonPid(t *testing.T) {
 		assert.Contains(t, line, "standard input is not a pipe")
 		assertPidFileContent(t, pidFile, "")
 	})
+	t.Run("ShortWrite", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		_, err := f.WriteString("123456789012")
+		require.NoError(t, err)
+		_, result := writePidMode(t, "write-pid-short", f, pidFile)
+		assert.Contains(t, result, "short write")
+		assertPidFileContent(t, pidFile, "")
+	})
+}
+
+// writePidMode runs the prologue in the helper mode as a daemon with the file as fd 4 and the context naming pidFile
+// on its standard input, and returns its process ID and error.
+func writePidMode(t *testing.T, mode string, f *os.File, pidFile string) (int, string) {
+	t.Helper()
+
+	null, err := os.Open(os.DevNull)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = null.Close() })
+
+	context, err := json.Marshal(daemonContext{PidFileName: pidFile})
+	require.NoError(t, err)
+
+	cmd, stdout := startHelperInput(t, mode, []string{"_GO_DAEMON=1"}, bytes.NewReader(context), null, f)
+	line, err := stdout.ReadString('\n')
+	require.NoError(t, err)
+	require.NoError(t, cmd.Wait())
+
+	pidText, result, found := strings.Cut(strings.TrimPrefix(strings.TrimSpace(line), "pid="), " err=")
+	require.True(t, found, line)
+	pid, err := strconv.Atoi(pidText)
+	require.NoError(t, err, line)
+
+	return pid, result
 }
 
 // TestDaemonPidFileName covers reading the pid file name from the context go-daemon passes on standard input.

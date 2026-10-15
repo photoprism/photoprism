@@ -58,6 +58,9 @@ var startFlags = []cli.Flag{
 // daemonPidTimeout limits how long the start command waits for the daemon to write its process ID.
 const daemonPidTimeout = time.Minute
 
+// writePidFd writes the process ID to the pid file the daemon inherited.
+var writePidFd = syscall.Write
+
 // daemonContextMaxSize limits how much of the context go-daemon passes on its standard input is read.
 const daemonContextMaxSize = 4 << 20
 
@@ -140,17 +143,23 @@ func writeDaemonPid(pidFile string) error {
 
 	pid := []byte(strconv.Itoa(os.Getpid()))
 
+	// Empties the file first, so that no old content remains even if the daemon is killed while writing.
+	if err := syscall.Ftruncate(daemonPidFileFd, 0); err != nil {
+		return err
+	}
+
 	if _, err := syscall.Seek(daemonPidFileFd, 0, io.SeekStart); err != nil {
 		return err
 	}
 
-	if n, err := syscall.Write(daemonPidFileFd, pid); err != nil {
-		return err
-	} else if n < len(pid) {
-		return io.ErrShortWrite
-	}
+	if n, err := writePidFd(daemonPidFileFd, pid); err != nil || n < len(pid) {
+		// Removes what was written, as a part of the process ID would name another process.
+		_ = syscall.Ftruncate(daemonPidFileFd, 0)
 
-	if err := syscall.Ftruncate(daemonPidFileFd, int64(len(pid))); err != nil {
+		if err == nil {
+			err = io.ErrShortWrite
+		}
+
 		return err
 	}
 
