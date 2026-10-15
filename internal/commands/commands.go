@@ -222,7 +222,7 @@ func childAlreadyRunning(filePath string) (pid int, running bool, err error) {
 		return pid, false, err
 	}
 
-	running, err = daemonHoldsPidFile(process, filePath, info)
+	running, _, err = daemonHoldsPidFile(process, filePath, info)
 
 	return pid, running, err
 }

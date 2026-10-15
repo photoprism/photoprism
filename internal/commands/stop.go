@@ -7,6 +7,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -68,7 +69,7 @@ const procClockTicks = 100
 const startTimeTolerance = 2 * time.Second
 
 // errDaemonUnconfirmed indicates that it cannot be confirmed whether a process holds the pid file.
-var errDaemonUnconfirmed = errors.New("its lock cannot be tested")
+var errDaemonUnconfirmed = errors.New("cannot confirm")
 
 // errPidFileEmpty indicates a pid file without a process ID, as stop leaves it.
 var errPidFileEmpty = errors.New("pid file is empty")
@@ -90,7 +91,8 @@ var StopCommand = &cli.Command{
 	Aliases: []string{"down"},
 	Usage:   "Stops the Web server running in daemon mode",
 	Description: "Sends the server that holds the PID file a termination signal, waits up to one minute until it has exited, and empties the PID file. " +
-		"A PID file that no running server holds is out of date and is emptied instead, and an empty PID file means that no server is running.",
+		"A PID file that no running server holds is out of date and is emptied instead, and an empty PID file means that no server is running. " +
+		"Where the open files of the server cannot be read, e.g. by root without CAP_SYS_PTRACE, the PID file is kept, and if the server cannot be confirmed, stop reports how to proceed.",
 	Action: stopAction,
 }
 
@@ -106,8 +108,8 @@ func stopAction(ctx *cli.Context) error {
 }
 
 // stopDaemon sends the daemon that holds the pid file a SIGTERM, waits until it has exited, and empties the file.
-// A pid file that no running daemon holds is out of date and emptied instead. If the process that holds it cannot
-// be confirmed, it returns an error and keeps the file.
+// A pid file that no running daemon holds is out of date and emptied instead. Where the daemon was identified by
+// its lock, the file is kept, and if the process that holds it cannot be confirmed, an error is returned.
 func stopDaemon(pidFile string, timeout time.Duration) error {
 	log.Infof("looking for pid in %s", clean.Log(pidFile))
 
@@ -135,7 +137,7 @@ func stopDaemon(pidFile string, timeout time.Duration) error {
 		return err
 	}
 
-	held, err := daemonHoldsPidFile(p, pidFile, info)
+	held, viaLock, err := daemonHoldsPidFile(p, pidFile, info)
 
 	if err != nil {
 		return err
@@ -149,6 +151,12 @@ func stopDaemon(pidFile string, timeout time.Duration) error {
 		}
 
 		log.Info("daemon exited successfully")
+
+		// A daemon identified by its lock may have held another file, so the pid file is not changed.
+		if viaLock {
+			log.Infof("pid file %s was kept", clean.Log(pidFile))
+			return nil
+		}
 
 		// A daemon that has started meanwhile holds the lock, so its file is kept.
 		if err = clearExitedPidFile(pidFile, info, clearTimeout); errors.Is(err, daemon.ErrWouldBlock) {
@@ -252,29 +260,77 @@ func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 	return pid, info, nil
 }
 
-// daemonHoldsPidFile reports whether the process holds the pid file open, or the file it replaced, as the daemon
-// does, and is named photoprism*. Where its open files cannot be listed or read, the pid file must be locked
-// instead, by any process, and the process must match it (daemonCandidate). If the lock cannot be tested, the
-// result cannot be confirmed and errDaemonUnconfirmed is returned.
-func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) (bool, error) {
+// daemonHoldsPidFile reports whether the process, named photoprism*, holds the pid file open, or the file it replaced.
+// Where its open files cannot be read, the process must match the file (daemonCandidate) and the file must be locked,
+// or errDaemonUnconfirmed is returned; viaLock reports that this fallback decided.
+func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) (held, viaLock bool, err error) {
 	if p == nil || p.Pid <= 0 || p.Pid == os.Getpid() || !daemonProcess(p) {
-		return false, nil
+		return false, false, nil
 	}
 
 	if open, known := holdsFile(p.Pid, pidFile, info); known {
-		return open, nil
-	} else if !daemonCandidate(p.Pid, info) {
-		log.Debugf("process %d does not match pid file %s", p.Pid, clean.Log(pidFile))
-		return false, nil
+		return open, false, nil
 	}
 
-	held, known := pidFileLocked(pidFile, info)
+	var reason string
 
-	if !known {
-		return false, fmt.Errorf("cannot confirm that process %d holds pid file %s, as %w", p.Pid, clean.Log(pidFile), errDaemonUnconfirmed)
+	mismatch := !daemonCandidate(p.Pid, info)
+
+	if mismatch {
+		reason = "it does not match the pid file"
+	} else if locked, known := pidFileLocked(pidFile, info); !known {
+		reason = "the lock of the pid file cannot be tested"
+	} else if !locked {
+		reason = "the pid file is not locked"
+	} else {
+		return true, true, nil
 	}
 
-	return held, nil
+	return false, true, fmt.Errorf("%w that process %d holds pid file %s, as %s%s",
+		errDaemonUnconfirmed, p.Pid, clean.Log(pidFile), reason, unconfirmedRemedy(info, mismatch))
+}
+
+// unconfirmedRemedy suggests how to proceed where it cannot be confirmed that a process holds the pid file: run the
+// command as the owner of the file, unless the caller is the owner, or remove the file if the process does not match.
+func unconfirmedRemedy(info os.FileInfo, mismatch bool) string {
+	const remove = "remove the pid file if no server is running"
+
+	if info == nil {
+		return ""
+	}
+
+	st, ok := info.Sys().(*syscall.Stat_t)
+
+	if !ok {
+		return ""
+	} else if uint64(st.Uid) == uint64(os.Geteuid()) { //nolint:gosec // User IDs are not negative.
+		return "; " + remove
+	} else if mismatch {
+		return fmt.Sprintf("; run the command as %s, who owns the pid file, or %s", fileOwnerName(info), remove)
+	}
+
+	return fmt.Sprintf("; run the command as %s, who owns the pid file", fileOwnerName(info))
+}
+
+// fileOwnerName describes the owner of the file as "user <name>", or as "uid <id>" if the name cannot be looked up.
+func fileOwnerName(info os.FileInfo) string {
+	if info == nil {
+		return "its owner"
+	}
+
+	st, ok := info.Sys().(*syscall.Stat_t)
+
+	if !ok {
+		return "its owner"
+	}
+
+	uid := strconv.FormatUint(uint64(st.Uid), 10)
+
+	if owner, err := user.LookupId(uid); err == nil && owner.Username != "" {
+		return "user " + clean.Log(owner.Username)
+	}
+
+	return "uid " + uid
 }
 
 // processHasFile reports whether the process has the pid file described by info open under its name, or has the file
