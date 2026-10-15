@@ -100,7 +100,7 @@ Theming & UI
 Testing
 - Vitest config: `frontend/vitest.config.mjs` (Vue plugin, alias map to `src/*`; with `CUSTOM_SRC`, the build's `overlayResolver` instead), `tests/vitest/**/*`
 - Run: `cd frontend && npm run test` (or `make test-js` from repo root)
-- Acceptance: TestCafe configs in `frontend/tests/acceptance`; run against a live server
+- Acceptance: TestCafe tests in `frontend/tests/acceptance` (runner config `frontend/.testcaferc.cjs`); run via the root `acceptance-*-run-chromium` targets, which start and stop the server
 - Detailed test/lint guide (humans + agents): `frontend/tests/README.md`
 - Session/auth storage regressions: when testing `src/common/session.js`, cover both direct `config.storageNamespace` access and the real `Config` shape where the namespace is supplied via `config.values.storageNamespace`
 
