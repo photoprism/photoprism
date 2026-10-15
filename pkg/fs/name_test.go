@@ -5,9 +5,39 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestClipName(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		assert.Equal(t, "photo.jpg", ClipName("photo.jpg", 9))
+		assert.Equal(t, "", ClipName("", 5))
+	})
+	t.Run("ASCII", func(t *testing.T) {
+		assert.Equal(t, "phot", ClipName("photo.jpg", 4))
+	})
+	t.Run("RuneBoundary", func(t *testing.T) {
+		// Each character is 3 bytes long, so a cut inside one keeps the characters before it.
+		name := strings.Repeat("\u3042", 4)
+		for maxLen, want := range map[int]string{12: name, 11: name[:9], 10: name[:9], 9: name[:9], 8: name[:6], 2: "", 1: ""} {
+			got := ClipName(name, maxLen)
+			assert.Equal(t, want, got, "maxLen %d", maxLen)
+			assert.True(t, utf8.ValidString(got))
+		}
+		assert.Equal(t, "a\U0001F600"[:1], ClipName("a\U0001F600b", 4))
+		assert.Equal(t, "a\U0001F600", ClipName("a\U0001F600b", 5))
+	})
+	t.Run("InvalidUTF8", func(t *testing.T) {
+		// Continuation bytes without a start are cut at the limit.
+		assert.Equal(t, "\x80\x80\x80\x80", ClipName("\x80\x80\x80\x80\x80\x80", 4))
+	})
+	t.Run("NoRoom", func(t *testing.T) {
+		assert.Equal(t, "", ClipName("photo.jpg", 0))
+		assert.Equal(t, "", ClipName("photo.jpg", -1))
+	})
+}
 
 func TestRelName(t *testing.T) {
 	t.Run("Same", func(t *testing.T) {

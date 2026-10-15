@@ -658,7 +658,7 @@ func TestStageName(t *testing.T) {
 	t.Run("LongNameOnARuneBoundary", func(t *testing.T) {
 		// A file system that validates names refuses a split character, so the clamp must not cut
 		// one in half.
-		base := strings.Repeat("\u3042", 81) + ".jpg"
+		base := "a" + strings.Repeat("\u3042", 81) + ".jpg"
 
 		name := stageName(filepath.Join("/originals", base))
 

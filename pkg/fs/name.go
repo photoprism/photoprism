@@ -5,7 +5,26 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 )
+
+// ClipName shortens a single file name to at most maxLen bytes without splitting a UTF-8 character, since a
+// file system that validates names refuses a split one. Invalid UTF-8 without a start byte nearby is cut at maxLen.
+func ClipName(name string, maxLen int) string {
+	if maxLen <= 0 {
+		return ""
+	} else if len(name) <= maxLen {
+		return name
+	}
+
+	for cut := maxLen; cut > maxLen-utf8.UTFMax && cut >= 0; cut-- {
+		if utf8.RuneStart(name[cut]) {
+			return name[:cut]
+		}
+	}
+
+	return name[:maxLen]
+}
 
 // NameTooLong reports whether a slash-separated path contains a file or folder name longer than NameMaxLen.
 func NameTooLong(p string) bool {

@@ -779,9 +779,5 @@ func tempSink(dest string) string {
 	dir, base := filepath.Split(dest)
 	suffix := "." + rnd.Base36(8) + ".tmp"
 
-	if len(base)+len(suffix) > fs.NameMaxLen {
-		base = base[:fs.NameMaxLen-len(suffix)]
-	}
-
-	return dir + base + suffix
+	return dir + fs.ClipName(base, fs.NameMaxLen-len(suffix)) + suffix
 }

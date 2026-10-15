@@ -12,6 +12,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -861,5 +862,22 @@ func TestClient_LongNameKeepsReason(t *testing.T) {
 		err := client.Upload(filepath.Join(t.TempDir(), strings.Repeat("\xff", 250)), "/photo.jpg")
 		require.Error(t, err)
 		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "not found")
+	})
+}
+
+func TestTempSink(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		name := tempSink("/originals/2030/photo.jpg")
+		assert.True(t, strings.HasPrefix(name, "/originals/2030/photo.jpg."), name)
+		assert.True(t, strings.HasSuffix(name, ".tmp"), name)
+	})
+	t.Run("LongNameOnARuneBoundary", func(t *testing.T) {
+		// The suffix leaves 242 bytes for the base, which ends inside a 3-byte character here.
+		base := strings.Repeat("あ", 81) + ".jpg"
+		name := tempSink(filepath.Join("/originals", base))
+		assert.LessOrEqual(t, len(filepath.Base(name)), fs.NameMaxLen)
+		assert.True(t, utf8.ValidString(name), "%q", name)
+		assert.True(t, strings.HasSuffix(name, ".tmp"), name)
+		assert.Equal(t, strings.Repeat("あ", 80), strings.SplitN(filepath.Base(name), ".", 2)[0])
 	})
 }
