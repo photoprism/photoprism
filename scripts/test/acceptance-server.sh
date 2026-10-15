@@ -81,7 +81,7 @@ holder() {
 }
 
 if [[ "$mode" == "stop" ]]; then
-  # The stop command empties the PID file once the process has exited, so its ID is read before stopping.
+  # The stop command usually empties the PID file once the process has exited, so its ID is read before stopping.
   old=$(pid)
   "$@"
 

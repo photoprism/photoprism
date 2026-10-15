@@ -235,8 +235,8 @@ func detachDaemon(dctx *daemon.Context) (pid int, status daemonStatus, err error
 }
 
 // waitForStartingDaemon waits until a daemon that another process is starting holds the pid file. released reports
-// that the lock was released without a daemon. After the deadline, it fails with a hint naming the processes that
-// have the file open.
+// that the lock was released without a daemon. After the deadline, it fails, naming the processes that have the file
+// open unless the daemon cannot be confirmed.
 func waitForStartingDaemon(pidFile string, deadline time.Time) (pid int, status daemonStatus, released bool, err error) {
 	for {
 		// Errors are expected while the daemon has not written its process ID yet.
