@@ -113,7 +113,7 @@ func TestNewUsername(t *testing.T) {
 		}
 	})
 	t.Run("NotPortable", func(t *testing.T) {
-		for _, name := range []string{"50%off", "a%b@example.com", "__bob", "_.bob", "corp\\__bob", "__bob@example.com"} {
+		for _, name := range []string{"50%off", "a%b@example.com", "__bob", "_.bob", "corp\\__bob", "__bob@example.com", "a..b"} {
 			_, err := NewUsername(name)
 			assert.ErrorIs(t, err, ErrInvalid, name)
 		}
@@ -170,12 +170,13 @@ func TestFoldUsername(t *testing.T) {
 
 func TestPortableUsername(t *testing.T) {
 	t.Run("Portable", func(t *testing.T) {
-		for _, name := range []string{"jdoe", "j_doe", "_jdoe", "j__doe", "jane.doe@example.com", "corp\\jdoe"} {
+		for _, name := range []string{"jdoe", "j_doe", "_jdoe", "j__doe", "jane.doe@example.com", "corp\\jdoe", "a.b.c", "bob."} {
 			assert.True(t, PortableUsername(name), name)
 		}
 	})
 	t.Run("NotPortable", func(t *testing.T) {
-		for _, name := range []string{"50%off", "a%b@example.com", "__bob", "_.bob", "corp\\_.bob", "__"} {
+		for _, name := range []string{"50%off", "a%b@example.com", "__bob", "_.bob", "corp\\_.bob", "__", "a..b", "a .b",
+			"jane..doe@example.com", "a. b", "bob@a..example.com", "corp..x\\bob"} {
 			assert.False(t, PortableUsername(name), name)
 		}
 	})
