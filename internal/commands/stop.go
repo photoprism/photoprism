@@ -26,6 +26,14 @@ const stopTimeout = time.Minute
 // holdsFile reports whether a process has a file open, see processHasFile.
 var holdsFile = processHasFile
 
+// daemonPidFileFd is the file descriptor through which go-daemon passes the locked pid file to the daemon.
+const daemonPidFileFd = 4
+
+// closePidFileOnExec marks the pid file the daemon inherited as close-on-exec, so that programs it runs do not inherit it.
+func closePidFileOnExec() {
+	syscall.CloseOnExec(daemonPidFileFd)
+}
+
 // StopCommand configures the command name, flags, and action.
 var StopCommand = &cli.Command{
 	Name:    "stop",
@@ -174,7 +182,8 @@ func daemonHoldsPidFile(p *os.Process, pidFile string, info os.FileInfo) bool {
 	return held || !known
 }
 
-// processHasFile reports whether the process has the file open. known is false if its open files cannot be listed.
+// processHasFile reports whether the process has the file open under its name. known is false if its open files cannot be
+// listed.
 func processHasFile(pid int, info os.FileInfo) (open, known bool) {
 	if info == nil {
 		return false, false
@@ -193,6 +202,11 @@ func processHasFile(pid int, info os.FileInfo) (open, known bool) {
 
 	for _, entry := range entries {
 		fdName := filepath.Join(dir, entry.Name())
+
+		// Compares the name first, which does not access the open file.
+		if target, linkErr := os.Readlink(fdName); linkErr == nil && filepath.Base(target) != info.Name() {
+			continue
+		}
 
 		if fdInfo, statErr := os.Stat(fdName); statErr == nil && os.SameFile(info, fdInfo) { //nolint:gosec // Reads /proc.
 			return true, true

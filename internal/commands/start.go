@@ -54,6 +54,11 @@ var startFlags = []cli.Flag{
 
 // startAction starts the Web server and initializes the daemon.
 func startAction(ctx *cli.Context) error {
+	// Programs the daemon runs do not inherit its pid file.
+	if daemon.WasReborn() {
+		closePidFileOnExec()
+	}
+
 	// Leave audit persistence to the event hub, so that requests do not wait for audit writes.
 	event.SetAuditRecorder(nil)
 

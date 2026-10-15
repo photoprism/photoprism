@@ -61,6 +61,21 @@ func runStopHelper(mode string) int {
 		signal.Ignore(syscall.SIGTERM)
 		fmt.Println("ready")
 		time.Sleep(time.Minute)
+	case "subprocess", "subprocess-cloexec":
+		// Holds the pid file as fd 4 like the daemon, runs a program and prints its process ID.
+		if mode == "subprocess-cloexec" {
+			closePidFileOnExec()
+		}
+
+		cmd := exec.Command("sleep", "30") //nolint:gosec // Runs sleep from PATH with a fixed duration.
+
+		if err := cmd.Start(); err != nil {
+			fmt.Println(err)
+			return 1
+		}
+
+		fmt.Println(cmd.Process.Pid)
+		_ = cmd.Wait()
 	case "stop-self":
 		pidFile := os.Getenv(stopHelperPidEnv)
 		lock, err := daemon.CreatePidFile(pidFile, fs.ModeFile)
@@ -298,6 +313,40 @@ func TestProcessHasFile(t *testing.T) {
 	})
 }
 
+// TestClosePidFileOnExec covers keeping the pid file the daemon inherited out of the programs it runs.
+func TestClosePidFileOnExec(t *testing.T) {
+	// subprocessHoldsPidFile runs the stand-in daemon in the mode and reports whether the program it runs holds the pid file.
+	subprocessHoldsPidFile := func(t *testing.T, mode string) bool {
+		pidFile, f := lockedPidFile(t)
+
+		null, err := os.Open(os.DevNull)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = null.Close() })
+
+		// Passes the pid file as fd 4, like go-daemon.
+		_, stdout := startHelper(t, mode, nil, null, f)
+		line, err := stdout.ReadString('\n')
+		require.NoError(t, err)
+
+		pid, err := strconv.Atoi(strings.TrimSpace(line))
+		require.NoError(t, err, line)
+		t.Cleanup(func() { _ = syscall.Kill(pid, syscall.SIGKILL) })
+
+		waitForName(t, pid, "sleep")
+		open, known := processHasFile(pid, fileInfo(t, pidFile))
+		require.True(t, known)
+
+		return open
+	}
+
+	t.Run("Inherited", func(t *testing.T) {
+		assert.True(t, subprocessHoldsPidFile(t, "subprocess"))
+	})
+	t.Run("CloseOnExec", func(t *testing.T) {
+		assert.False(t, subprocessHoldsPidFile(t, "subprocess-cloexec"))
+	})
+}
+
 // TestPidFileLocked covers detecting whether another process holds the lock on a pid file.
 func TestPidFileLocked(t *testing.T) {
 	t.Run("Held", func(t *testing.T) {
@@ -337,7 +386,8 @@ func TestRemoveStalePidFile(t *testing.T) {
 	t.Run("Replaced", func(t *testing.T) {
 		pidFile := unlockedPidFile(t, 3999999)
 		info := fileInfo(t, pidFile)
-		require.NoError(t, os.Remove(pidFile))
+		// Keeps the old file, so that the new one cannot reuse its inode.
+		require.NoError(t, os.Rename(pidFile, pidFile+".old"))
 		require.NoError(t, fs.WriteString(pidFile, "3999999"))
 		err := removeStalePidFile(pidFile, info)
 		require.Error(t, err)
@@ -542,7 +592,8 @@ func TestOpenSamePidFile(t *testing.T) {
 	t.Run("Replaced", func(t *testing.T) {
 		pidFile := unlockedPidFile(t, 1234)
 		info := fileInfo(t, pidFile)
-		require.NoError(t, os.Remove(pidFile))
+		// Keeps the old file, so that the new one cannot reuse its inode.
+		require.NoError(t, os.Rename(pidFile, pidFile+".old"))
 		require.NoError(t, fs.WriteString(pidFile, "1234"))
 		_, err := openSamePidFile(pidFile, info)
 		require.Error(t, err)
