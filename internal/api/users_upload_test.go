@@ -656,9 +656,20 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
 	})
 	t.Run("UnsupportedDest", func(t *testing.T) {
+		// The upload path of the user takes precedence over the import-dest option, so both are set.
 		dest := conf.Options().ImportDest
-		t.Cleanup(func() { conf.Options().ImportDest = dest })
+		stored := entity.FindUserByUID(user.UserUID)
+		require.NotNil(t, stored)
+		t.Cleanup(func() {
+			conf.Options().ImportDest = dest
+			assert.NoError(t, entity.Db().Model(&entity.User{}).Where("user_uid = ?", user.UserUID).
+				UpdateColumn("upload_path", stored.UploadPath).Error)
+			entity.FlushUserSessionCache(user.UserUID)
+		})
 		conf.Options().ImportDest = "a:b"
+		require.NoError(t, entity.Db().Model(&entity.User{}).Where("user_uid = ?", user.UserUID).
+			UpdateColumn("upload_path", "a:b").Error)
+		entity.FlushUserSessionCache(user.UserUID)
 		token, dir := stage(t)
 		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
 		assert.Equal(t, http.StatusBadRequest, result.Code)
