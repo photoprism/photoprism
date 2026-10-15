@@ -50,6 +50,9 @@ const pidFileMaxSize = 32
 // errPidFileEmpty indicates a pid file without a process ID, as stop leaves it.
 var errPidFileEmpty = errors.New("pid file is empty")
 
+// errPidFileInvalid indicates a pid file whose content is not a valid process ID.
+var errPidFileInvalid = errors.New("does not contain a valid process ID")
+
 // errPidFileLinked indicates a pid file with more than one name, which stop keeps.
 var errPidFileLinked = errors.New("pid file has more than one link")
 
@@ -188,7 +191,7 @@ func openSamePidFile(pidFile string, flag int, info os.FileInfo) (*os.File, erro
 }
 
 // readPidFile returns the process ID in the pid file and the file it was read from. An empty file returns
-// errPidFileEmpty along with the file.
+// errPidFileEmpty, and invalid content errPidFileInvalid, along with the file.
 func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 	f, info, err := openPidFile(pidFile, os.O_RDONLY)
 
@@ -199,7 +202,7 @@ func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 	defer func() { _ = f.Close() }()
 
 	if info.Size() > pidFileMaxSize {
-		return 0, nil, fmt.Errorf("pid file %s does not contain a valid process ID", clean.Log(pidFile))
+		return 0, info, fmt.Errorf("pid file %s %w", clean.Log(pidFile), errPidFileInvalid)
 	}
 
 	b, err := io.ReadAll(io.LimitReader(f, pidFileMaxSize))
@@ -215,7 +218,7 @@ func readPidFile(pidFile string) (pid int, info os.FileInfo, err error) {
 	}
 
 	if pid, err = strconv.Atoi(content); err != nil || pid <= 0 || pid > math.MaxInt32 {
-		return 0, nil, fmt.Errorf("pid file %s does not contain a valid process ID", clean.Log(pidFile))
+		return 0, info, fmt.Errorf("pid file %s %w", clean.Log(pidFile), errPidFileInvalid)
 	}
 
 	return pid, info, nil

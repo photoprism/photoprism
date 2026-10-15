@@ -355,9 +355,10 @@ func TestReadPidFile(t *testing.T) {
 		for _, content := range []string{"abc", "0", "-1", "-1234", "4294967297"} {
 			pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 			require.NoError(t, os.WriteFile(pidFile, []byte(content), fs.ModeFile))
-			_, _, err := readPidFile(pidFile)
-			assert.Error(t, err, content)
+			_, info, err := readPidFile(pidFile)
+			assert.ErrorIs(t, err, errPidFileInvalid, content)
 			assert.NotErrorIs(t, err, errPidFileEmpty, content)
+			assert.NotNil(t, info, content)
 		}
 	})
 	t.Run("MaxSize", func(t *testing.T) {
@@ -370,9 +371,10 @@ func TestReadPidFile(t *testing.T) {
 	t.Run("Oversized", func(t *testing.T) {
 		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 		require.NoError(t, os.WriteFile(pidFile, []byte(strings.Repeat(" ", pidFileMaxSize)+"1234"), fs.ModeFile))
-		_, _, err := readPidFile(pidFile)
-		require.Error(t, err)
+		_, info, err := readPidFile(pidFile)
+		assert.ErrorIs(t, err, errPidFileInvalid)
 		assert.NotErrorIs(t, err, errPidFileEmpty)
+		assert.NotNil(t, info)
 		assert.Contains(t, err.Error(), "does not contain a valid process ID")
 	})
 	t.Run("Empty", func(t *testing.T) {
@@ -847,29 +849,61 @@ func TestClearExitedPidFile(t *testing.T) {
 func TestChildAlreadyRunning(t *testing.T) {
 	t.Run("Running", func(t *testing.T) {
 		cmd, pidFile := startDaemon(t, "30")
-		pid, running := childAlreadyRunning(pidFile)
+		pid, running, err := childAlreadyRunning(pidFile)
+		require.NoError(t, err)
 		assert.Equal(t, cmd.Process.Pid, pid)
 		assert.True(t, running)
 	})
 	t.Run("Stale", func(t *testing.T) {
 		cmd := startProcess(t, "photoprism-test", "30")
-		_, running := childAlreadyRunning(unlockedPidFile(t, cmd.Process.Pid))
+		_, running, err := childAlreadyRunning(unlockedPidFile(t, cmd.Process.Pid))
+		require.NoError(t, err)
 		assert.False(t, running)
 	})
 	t.Run("NoPidFile", func(t *testing.T) {
-		_, running := childAlreadyRunning(filepath.Join(t.TempDir(), "photoprism.pid"))
+		_, running, err := childAlreadyRunning(filepath.Join(t.TempDir(), "photoprism.pid"))
+		require.NoError(t, err)
 		assert.False(t, running)
 	})
 	t.Run("Empty", func(t *testing.T) {
-		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
-		require.NoError(t, fs.WriteString(pidFile, ""))
-		_, running := childAlreadyRunning(pidFile)
+		for _, content := range []string{"", "\n"} {
+			pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+			require.NoError(t, fs.WriteString(pidFile, content))
+			pid, running, err := childAlreadyRunning(pidFile)
+			require.NoError(t, err, content)
+			assert.False(t, running)
+			assert.Equal(t, 0, pid)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, content := range []string{"not a pid", "\x00\x00\x00\x00", strings.Repeat("1", pidFileMaxSize+1)} {
+			pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
+			require.NoError(t, fs.WriteString(pidFile, content))
+			_, running, err := childAlreadyRunning(pidFile)
+			require.NoError(t, err, content)
+			assert.False(t, running)
+		}
+	})
+	t.Run("InvalidLocked", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		_, err := f.WriteString("not a pid")
+		require.NoError(t, err)
+		_, running, err := childAlreadyRunning(pidFile)
+		require.Error(t, err)
+		assert.ErrorIs(t, err, errPidFileInvalid)
+		assert.Contains(t, err.Error(), "another process holds it locked")
+		assert.False(t, running)
+	})
+	t.Run("Directory", func(t *testing.T) {
+		_, running, err := childAlreadyRunning(t.TempDir())
+		require.Error(t, err)
 		assert.False(t, running)
 	})
 	t.Run("Replaced", func(t *testing.T) {
 		cmd, pidFile := startDaemon(t, "30")
 		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
-		pid, running := childAlreadyRunning(pidFile)
+		pid, running, err := childAlreadyRunning(pidFile)
+		require.NoError(t, err)
 		assert.Equal(t, cmd.Process.Pid, pid)
 		assert.True(t, running)
 	})
@@ -878,7 +912,8 @@ func TestChildAlreadyRunning(t *testing.T) {
 		cmd := startProcess(t, "sleep", "30", f)
 		require.NoError(t, f.Close())
 		replacePidFile(t, pidFile, strconv.Itoa(cmd.Process.Pid))
-		_, running := childAlreadyRunning(pidFile)
+		_, running, err := childAlreadyRunning(pidFile)
+		require.NoError(t, err)
 		assert.False(t, running)
 	})
 }

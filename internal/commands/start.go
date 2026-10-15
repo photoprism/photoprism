@@ -69,9 +69,7 @@ func daemonRunning(pidFile string) (pid int, running bool, err error) {
 		return 0, false, fmt.Errorf("pid file %s must not be a symbolic link", clean.Log(pidFile))
 	}
 
-	pid, running = childAlreadyRunning(pidFile)
-
-	return pid, running, nil
+	return childAlreadyRunning(pidFile)
 }
 
 // startAction starts the Web server and initializes the daemon.

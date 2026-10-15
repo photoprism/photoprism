@@ -195,22 +195,34 @@ func LogErr(err error) {
 	}
 }
 
-// childAlreadyRunning reports whether the pid file at filePath belongs to a running daemon.
-// It also returns the pid in the file.
-func childAlreadyRunning(filePath string) (pid int, running bool) {
+// childAlreadyRunning reports whether a running daemon holds the pid file at filePath, and returns the pid in the file.
+// A missing or empty pid file means that no daemon is running, as does invalid content no other process holds
+// locked, which the next daemon overwrites. A pid file that cannot be read is an error.
+func childAlreadyRunning(filePath string) (pid int, running bool, err error) {
 	pid, info, err := readPidFile(filePath)
 
-	if err != nil {
-		return pid, false
+	switch {
+	case errors.Is(err, errPidFileEmpty) || daemonNotRunning(err):
+		return 0, false, nil
+	case errors.Is(err, errPidFileInvalid):
+		if held, _ := pidFileLocked(filePath, info); held {
+			return 0, false, fmt.Errorf("%w, and another process holds it locked", err)
+		}
+
+		log.Warnf("%s, and will be overwritten", clean.Error(err))
+
+		return 0, false, nil
+	case err != nil:
+		return 0, false, err
 	}
 
 	process, err := os.FindProcess(pid)
 
 	if err != nil {
-		return pid, false
+		return pid, false, err
 	}
 
-	return pid, daemonHoldsPidFile(process, filePath, info)
+	return pid, daemonHoldsPidFile(process, filePath, info), nil
 }
 
 // ExitCode returns the process exit status for an error that app.Run returned without exiting.

@@ -88,6 +88,14 @@ func TestDaemonRunning(t *testing.T) {
 		assert.Contains(t, err.Error(), "must not be a symbolic link")
 		assert.False(t, running)
 	})
+	t.Run("InvalidLocked", func(t *testing.T) {
+		pidFile, f := lockedPidFile(t)
+		_, err := f.WriteString("not a pid")
+		require.NoError(t, err)
+		_, running, err := daemonRunning(pidFile)
+		require.Error(t, err)
+		assert.False(t, running)
+	})
 	t.Run("DanglingSymlink", func(t *testing.T) {
 		pidFile := filepath.Join(t.TempDir(), "photoprism.pid")
 		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing.pid"), pidFile))
