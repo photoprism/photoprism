@@ -54,10 +54,11 @@ func verifiedEmailUsername(userInfo *oidc.UserInfo) string {
 
 // username returns the username for the preferred claim: with the email claim, the verified address, else the
 // first name claim that yields a handle, and with the other claims the handle of the verified address as the
-// last resort. If ascii is true, values with characters other than ASCII are skipped.
+// last resort. Values that are not portable usernames are skipped, and if ascii is true, also values with
+// characters other than ASCII.
 func username(userInfo *oidc.UserInfo, preferredClaim string, ascii bool) string {
 	usable := func(value string) bool {
-		return !ascii || authn.IsASCIIUsername(value)
+		return (!ascii || authn.IsASCIIUsername(value)) && authn.PortableUsername(value)
 	}
 
 	emailClaim := preferredClaim == authn.OidcClaimEmail

@@ -44,19 +44,33 @@ func Username(name string) (sanitized string, err error) {
 	return s, err
 }
 
+// PortableUsername reports whether a new username can name the user's default folder: it must not contain "%",
+// and its handle must not start with "__" or "_.", which would hide the folder.
+func PortableUsername(name string) bool {
+	if strings.ContainsRune(name, '%') {
+		return false
+	}
+
+	h := clean.Handle(name)
+
+	return !strings.HasPrefix(h, "__") && !strings.HasPrefix(h, "_.")
+}
+
 // IsASCIIUsername reports whether name contains only ASCII characters, as new and renamed accounts require.
 func IsASCIIUsername(name string) bool {
 	return txt.IsASCII(name)
 }
 
 // NewUsername checks a name for a new or renamed account like Username and returns ErrNotASCII if it
-// contains characters other than ASCII; sanitizing ASCII input yields ASCII. Existing accounts keep
-// their names, so lookups use Username.
+// contains characters other than ASCII, or ErrInvalid if it is not a PortableUsername. Existing accounts
+// keep their names, so lookups use Username.
 func NewUsername(name string) (sanitized string, err error) {
 	if sanitized, err = Username(name); err != nil {
 		return sanitized, err
 	} else if !IsASCIIUsername(name) {
 		return sanitized, ErrNotASCII
+	} else if !PortableUsername(name) {
+		return sanitized, ErrInvalid
 	}
 
 	return sanitized, nil

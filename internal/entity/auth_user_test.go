@@ -3546,6 +3546,41 @@ func TestUser_create(t *testing.T) {
 		t.Cleanup(func() { deleteTestUser(t, m) })
 		assert.Equal(t, "create-keep-zoë", storedUser(t, m.UserUID).UserName)
 	})
+	t.Run("NotPortable", func(t *testing.T) {
+		for _, name := range []string{"create-50%off", "__create", "_.create"} {
+			m := NewUser()
+			m.UserName = name
+			m.UserRole = acl.RoleGuest.String()
+
+			assert.EqualError(t, m.create(false), "username '"+name+"' is not supported", name)
+			assert.Nil(t, FindUserByName(name), name)
+		}
+	})
+	t.Run("KeepNotPortable", func(t *testing.T) {
+		m := NewUser()
+		m.UserName = "__create-keep"
+		m.UserRole = acl.RoleGuest.String()
+
+		require.NoError(t, m.create(true))
+		t.Cleanup(func() { deleteTestUser(t, m) })
+		assert.Equal(t, "__create-keep", storedUser(t, m.UserUID).UserName)
+	})
+}
+
+func TestUser_SetUsernameNotPortable(t *testing.T) {
+	t.Run("Refused", func(t *testing.T) {
+		for _, name := range []string{"set-50%off", "__set", "_.set"} {
+			m := NewUser()
+			m.ID = 0
+			assert.EqualError(t, m.SetUsername(name), "username '"+name+"' is not supported", name)
+			assert.Equal(t, "", m.UserName, name)
+		}
+	})
+	t.Run("Accepted", func(t *testing.T) {
+		m := NewUser()
+		require.NoError(t, m.SetUsername("set_portable"))
+		assert.Equal(t, "set_portable", m.UserName)
+	})
 }
 
 func TestFindRestorableUser(t *testing.T) {

@@ -22,6 +22,24 @@ func TestUsername(t *testing.T) {
 		result := Username(info, authn.OidcClaimPreferredUsername)
 		assert.Equal(t, "jane.doe", result)
 	})
+	t.Run("NotPortableSkipped", func(t *testing.T) {
+		// Claims that would give a username with "%" or a hidden handle fall back to the next claim.
+		for _, preferred := range []string{"50%off", "__svc", "_.svc"} {
+			info := &oidc.UserInfo{}
+			info.Name = "Jane Doe"
+			info.Email = "jane@doe.com"
+			info.EmailVerified = true
+			info.PreferredUsername = preferred
+			assert.Equal(t, "jane.doe", Username(info, authn.OidcClaimPreferredUsername), preferred)
+			assert.False(t, SkipsClaim(info, authn.OidcClaimPreferredUsername), preferred)
+		}
+	})
+	t.Run("NotPortableEmail", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Email = "__svc@doe.com"
+		info.EmailVerified = true
+		assert.Equal(t, "", Username(info, authn.OidcClaimEmail))
+	})
 	t.Run("PreferredUsernameFallbackName", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"

@@ -454,7 +454,7 @@ func (m *User) create(keepName bool) (err error) {
 	// the config.
 	if !keepName && m.UserName != "" && !authn.IsASCIIUsername(m.UserName) {
 		return m.usernameASCIIError(m.UserName)
-	} else if m.ID != 1 && m.UserName != "" && !m.ValidHandle() {
+	} else if m.ID != 1 && m.UserName != "" && (!m.ValidHandle() || !keepName && !authn.PortableUsername(m.UserName)) {
 		return fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))
 	}
 
@@ -912,6 +912,8 @@ func (m *User) SetUsername(login string) (err error) {
 		return nil
 	} else if !authn.IsASCIIUsername(raw) {
 		return m.usernameASCIIError(raw)
+	} else if m.ID != 1 && !authn.PortableUsername(raw) {
+		return fmt.Errorf("username %s is not supported", clean.LogQuote(raw))
 	} else if m.UserName != "" && m.ID != 1 {
 		// An account whose stored name the sanitizer no longer accepts may be renamed, since
 		// that is the only way to repair it.
