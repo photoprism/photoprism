@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFileSync_TableName(t *testing.T) {
@@ -260,6 +262,71 @@ func TestResetFileSyncLongNames(t *testing.T) {
 	// A second reset finds nothing to remove.
 	require.NoError(t, ResetFileSyncLongNames(serviceID, "/current"))
 	assert.ElementsMatch(t, kept, names(t, serviceID))
+}
+
+func TestResetFileSyncUnportable(t *testing.T) {
+	const serviceID, otherID = 4731, 4732
+
+	var files []*File
+
+	for _, name := range []string{"2019/renamed.jpg", "2019/a:b.jpg", "dir*/x.jpg"} {
+		f := &File{FileUID: rnd.GenerateUID(FileUID), FileRoot: RootOriginals, FileName: name, FileHash: rnd.GenerateUID('h')}
+		require.NoError(t, UnscopedDb().Create(f).Error)
+		files = append(files, f)
+	}
+
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id IN (?)", []uint{serviceID, otherID}).Error)
+
+		for _, f := range files {
+			assert.NoError(t, UnscopedDb().Unscoped().Delete(f).Error)
+		}
+	})
+
+	// placeholder records a file as skipped for its name.
+	placeholder := func(t *testing.T, id uint, f *File) string {
+		ignored := NewFileSync(id, FileSyncUnportablePrefix+strconv.FormatUint(uint64(f.ID), 10))
+		ignored.FileID, ignored.Status = f.ID, FileSyncIgnore
+		require.NoError(t, ignored.Create())
+		return ignored.RemoteName
+	}
+
+	renamed := placeholder(t, serviceID, files[0])
+	kept := []string{placeholder(t, serviceID, files[1]), placeholder(t, serviceID, files[2])}
+
+	// Other placeholders of a file with a portable name are not removed.
+	excluded := NewFileSync(serviceID, ".photoprism/sync/"+strconv.FormatUint(uint64(files[0].ID), 10))
+	excluded.FileID, excluded.Status = files[0].ID, FileSyncIgnore
+	require.NoError(t, excluded.Create())
+	kept = append(kept, excluded.RemoteName)
+	other := placeholder(t, otherID, files[0])
+
+	// names returns the remote names stored for an account.
+	names := func(t *testing.T, id uint) (result []string) {
+		require.NoError(t, Db().Model(&FileSync{}).Where("service_id = ?", id).Pluck("remote_name", &result).Error)
+		return result
+	}
+
+	require.NoError(t, ResetFileSyncUnportable(serviceID))
+	assert.NotContains(t, names(t, serviceID), renamed)
+	assert.ElementsMatch(t, kept, names(t, serviceID))
+	assert.ElementsMatch(t, []string{other}, names(t, otherID))
+
+	// A second reset finds nothing to remove.
+	require.NoError(t, ResetFileSyncUnportable(serviceID))
+	assert.ElementsMatch(t, kept, names(t, serviceID))
+}
+
+func TestPortablePath(t *testing.T) {
+	t.Run("Portable", func(t *testing.T) {
+		assert.True(t, portablePath("2019/03 - Março/#1 & Friends.jpg"))
+		assert.True(t, portablePath("a.jpg"))
+	})
+	t.Run("NotPortable", func(t *testing.T) {
+		assert.False(t, portablePath("2019/a:b.jpg"))
+		assert.False(t, portablePath("dir*/x.jpg"))
+		assert.False(t, portablePath("caf\xe9/x.jpg"))
+	})
 }
 
 func TestFileSyncUploadName(t *testing.T) {

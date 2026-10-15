@@ -2,14 +2,13 @@ package workers
 
 import (
 	"path"
-	"unicode/utf8"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -27,6 +26,27 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	// Uploads that failed in the previous sync cycle are tried again, within the retry limit.
 	w.logAccountErr(entity.RetryFileSyncUploads(a.ID, a.RetryLimit), a)
+
+	// Files that keep their remote paths in originals are not downloaded from a sync folder whose name is not
+	// portable, and files queued before are removed from the queue, since nothing is listed.
+	if a.SyncFilenames && !portableSyncName("/", a.SyncPath) {
+		if a.SyncDownload {
+			log.Warnf("sync: skipped downloads from %s because the name of its sync folder %s contains characters that are not supported",
+				clean.Log(a.AccName), clean.Log(a.SyncPath))
+		}
+
+		queued, queuedErr := queuedFileSyncNames(a.ID)
+
+		if queuedErr != nil {
+			return false, queuedErr
+		}
+
+		if err = dropQueuedFileSyncs(a.ID, queued); err != nil {
+			return false, err
+		}
+
+		return true, nil
+	}
 
 	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
 
@@ -55,12 +75,13 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	defer skipped.Warn("sync: skipped %s in %s whose names are too long (%s)", "remote file", a.AccName)
 
-	// PostgreSQL cannot store names that are not valid UTF-8, so those files are skipped with one warning as well.
-	var invalid skippedNames
+	// Remote files and folders whose names are not portable are skipped with one warning as well.
+	var unsupported skippedNames
 
-	defer invalid.Warn("sync: skipped %s in %s whose names are not valid UTF-8 (%s)", "remote file", a.AccName)
+	defer unsupported.Warn("sync: skipped %s in %s that contain characters that are not supported (%s)", "remote name", a.AccName)
 
-	validNames := entity.DbDialect() == dsn.DialectPostgreSQL
+	nameRoot := syncNameRoot(a)
+	syncDir := path.Clean("/" + a.SyncPath)
 
 	// Queued files that this refresh does not list are removed from the queue once it completes.
 	unlisted, err := queuedFileSyncNames(a.ID)
@@ -79,6 +100,10 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		if webdav.SkipSyncPath(dir) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(dir))
 			continue
+		} else if path.Clean("/"+dir) != syncDir && !portableSyncName(nameRoot, dir) {
+			// The sync folder itself is listed, which matters when its files are imported.
+			unsupported.Add(dir)
+			continue
 		}
 		if mutex.SyncWorker.Canceled() {
 			return false, nil
@@ -92,6 +117,12 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		}
 
 		for _, file := range files {
+			// A file whose name is not portable is not queued, and is removed from the queue like an unlisted one.
+			if !webdav.SkipSyncPath(file.Abs) && !portableSyncName(nameRoot, file.Abs) {
+				unsupported.Add(file.Abs)
+				continue
+			}
+
 			delete(unlisted, file.Abs)
 
 			if webdav.SkipSyncPath(file.Abs) {
@@ -103,9 +134,6 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			}
 			if syncNameTooLong(file.Abs) {
 				skipped.Add(file.Abs)
-				continue
-			} else if validNames && !utf8.ValidString(file.Abs) {
-				invalid.Add(file.Abs)
 				continue
 			}
 
@@ -207,4 +235,33 @@ func dropQueuedFileSyncs(serviceID uint, names map[string]struct{}) error {
 	}
 
 	return flush()
+}
+
+// syncNameRoot returns the remote folder whose own names are not checked: the sync folder, or the root when
+// downloaded files keep their remote paths in originals.
+func syncNameRoot(a entity.Service) string {
+	if a.SyncFilenames {
+		return "/"
+	}
+
+	return a.SyncPath
+}
+
+// portableSyncName reports whether the names in a remote path below root are portable. A path that equals
+// root is checked in full.
+func portableSyncName(root, name string) bool {
+	root = path.Clean("/" + root)
+	rel := path.Clean("/" + name)
+
+	if strings.HasPrefix(rel, root+"/") {
+		rel = rel[len(root):]
+	}
+
+	for _, part := range strings.Split(strings.Trim(rel, "/"), "/") {
+		if !clean.PortableName(part) {
+			return false
+		}
+	}
+
+	return true
 }

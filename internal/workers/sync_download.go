@@ -120,8 +120,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		return false, err
 	}
 
-	// Bound each download to the originals size limit so a remote sync target
-	// cannot overrun local storage with a single oversized file.
+	// Bound each download to the originals size limit.
 	client.SetDownloadLimit(w.conf.OriginalsLimitBytes())
 
 	var baseDir string
@@ -165,6 +164,13 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
+			// A queued file whose name is not portable is removed from the queue, like in a refresh.
+			if !portableSyncName(syncNameRoot(a), file.RemoteName) {
+				log.Debugf("sync: skipping %s from %s because its name is not supported", clean.Log(file.RemoteName), clean.Log(a.AccName))
+				w.logFileErr(entity.Db().Delete(&file).Error, file.RemoteName, a)
+				continue
+			}
+
 			if !a.SyncYamlEnabled() && fs.FileType(file.RemoteName) == fs.SidecarYaml {
 				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
 				w.logFileErr(entity.Db().Save(&file).Error, file.RemoteName, a)
@@ -186,8 +192,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
-			// Resolve the local destination safely so a remote sync target cannot
-			// escape the sync base directory via a crafted parent-directory path.
+			// Resolve the local destination with a safe join below the sync base directory.
 			localName, joinErr := fs.SafeJoin(baseDir, strings.TrimPrefix(file.RemoteName, "/"))
 
 			if joinErr != nil {
@@ -274,10 +279,12 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
-			related, err := mf.RelatedFiles(w.conf.Settings().StackSequences())
+			related, err := syncRelated(mf, w.conf.Settings().StackSequences())
 
 			if err != nil {
 				log.Warnf("sync: %s (%s from %s)", clean.Error(err), clean.Log(file.RemoteName), clean.Log(a.AccName))
+				continue
+			} else if related.Main == nil {
 				continue
 			}
 
@@ -354,4 +361,17 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	}
 
 	return true, nil
+}
+
+// syncRelated returns the files to index or import with a downloaded file, without those whose names are not portable.
+func syncRelated(mf *photoprism.MediaFile, stackSequences bool) (photoprism.RelatedFiles, error) {
+	related, err := mf.RelatedFiles(stackSequences)
+
+	if err != nil {
+		return related, err
+	}
+
+	return photoprism.PortableRelated(related, mf, func(f *photoprism.MediaFile) {
+		log.Debugf("sync: skipped %s because its name is not supported", clean.Log(f.BaseName()))
+	}), nil
 }

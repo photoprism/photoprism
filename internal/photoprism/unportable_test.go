@@ -78,26 +78,26 @@ func TestPortableRelated(t *testing.T) {
 
 	t.Run("Files", func(t *testing.T) {
 		skipped = nil
-		related := portableRelated(RelatedFiles{Main: main, Files: MediaFiles{main, sidecar, other}}, main, report)
+		related := PortableRelated(RelatedFiles{Main: main, Files: MediaFiles{main, sidecar, other}}, main, report)
 		assert.Equal(t, main, related.Main)
 		assert.Equal(t, MediaFiles{main, other}, related.Files)
 		assert.Equal(t, []string{"a.x|y.jpg"}, skipped)
 	})
 	t.Run("Main", func(t *testing.T) {
 		skipped = nil
-		related := portableRelated(RelatedFiles{Main: sidecar, Files: MediaFiles{main, sidecar}}, main, report)
+		related := PortableRelated(RelatedFiles{Main: sidecar, Files: MediaFiles{main, sidecar}}, main, report)
 		assert.Equal(t, main, related.Main)
 		assert.Equal(t, MediaFiles{main}, related.Files)
 		assert.Equal(t, []string{"a.x|y.jpg"}, skipped)
 	})
 	t.Run("NotInGroup", func(t *testing.T) {
 		// A file the group leaves out, e.g. in a format that is turned off, does not become the main file.
-		related := portableRelated(RelatedFiles{Main: sidecar, Files: MediaFiles{other, sidecar}}, main, report)
+		related := PortableRelated(RelatedFiles{Main: sidecar, Files: MediaFiles{other, sidecar}}, main, report)
 		assert.Nil(t, related.Main)
 		assert.Equal(t, MediaFiles{other}, related.Files)
 	})
 	t.Run("NoMain", func(t *testing.T) {
-		related := portableRelated(RelatedFiles{Main: sidecar, Files: MediaFiles{sidecar}}, sidecar, report)
+		related := PortableRelated(RelatedFiles{Main: sidecar, Files: MediaFiles{sidecar}}, sidecar, report)
 		assert.Nil(t, related.Main)
 		assert.Empty(t, related.Files)
 	})

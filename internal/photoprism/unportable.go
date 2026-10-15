@@ -73,9 +73,9 @@ func warnUnportable(prefix, root, rel, action string) {
 	}
 }
 
-// portableRelated leaves the files whose names are not portable out of a group of related files and reports each
+// PortableRelated leaves the files whose names are not portable out of a group of related files and reports each
 // of them. If the main file is left out, mf becomes the main file if it is in the group, otherwise there is none.
-func portableRelated(related RelatedFiles, mf *MediaFile, skipped func(f *MediaFile)) RelatedFiles {
+func PortableRelated(related RelatedFiles, mf *MediaFile, skipped func(f *MediaFile)) RelatedFiles {
 	files := make(MediaFiles, 0, len(related.Files))
 	mfInGroup := false
 

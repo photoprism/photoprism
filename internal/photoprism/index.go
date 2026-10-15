@@ -206,7 +206,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		}
 
 		// Related files whose names are not portable are not indexed.
-		related = portableRelated(related, mf, func(f *MediaFile) {
+		related = PortableRelated(related, mf, func(f *MediaFile) {
 			o.FaceRegeneration.addSkipped(f.FileName())
 			warnUnportable("index", entity.RootOriginals, f.RootRelName(), "index it")
 		})

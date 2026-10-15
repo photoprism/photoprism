@@ -22,7 +22,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -257,15 +256,13 @@ func TestSync_refreshLogs(t *testing.T) {
 	})
 }
 
-// TestSync_refreshInvalidNames runs only on PostgreSQL (make test-postgres), the one driver that skips such names.
+// TestSync_refreshInvalidNames checks that remote files and folders whose names are not portable are not queued.
 func TestSync_refreshInvalidNames(t *testing.T) {
-	if entity.DbDialect() != dsn.DialectPostgreSQL {
-		t.Skip("only PostgreSQL cannot store names that are not valid UTF-8")
-	}
-
 	worker := NewSync(config.TestConfig())
 	remote := t.TempDir()
-	for _, name := range []string{"valid.jpg", "invalid-\xff.jpg", "invalid-\xfe.jpg"} {
+	for _, name := range []string{"valid.jpg", "03 - Março.jpg", "sub/ok.jpg", "invalid-\xff.jpg", "a|b.jpg", "x:y.jpg",
+		"~home.jpg", "dir*/inner.jpg"} {
+		require.NoError(t, os.MkdirAll(filepath.Dir(filepath.Join(remote, name)), fs.ModeDir))
 		require.NoError(t, os.WriteFile(filepath.Join(remote, name), []byte("jpg"), fs.ModeFile))
 	}
 
@@ -280,6 +277,13 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
 	})
 
+	// Files queued before their names were checked are removed from the queue.
+	for _, name := range []string{"/a|b.jpg", "/dir*/inner.jpg"} {
+		queued := entity.NewFileSync(a.ID, name)
+		queued.Status = entity.FileSyncNew
+		require.NoError(t, queued.Create())
+	}
+
 	hook := captureSyncLog(t)
 	complete, err := worker.refresh(a)
 	require.NoError(t, err)
@@ -287,8 +291,74 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 
 	var names []string
 	require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ?", a.ID).Pluck("remote_name", &names).Error)
-	assert.Equal(t, []string{"/valid.jpg"}, names)
+	assert.ElementsMatch(t, []string{"/valid.jpg", "/03 - Março.jpg", "/sub/ok.jpg"}, names)
 	assert.Zero(t, countLogged(hook, logrus.ErrorLevel, ""))
-	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped 2 remote files in"))
-	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "not valid UTF-8"))
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped 5 remote names in"))
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
+	// A folder whose name is not portable is skipped without listing its files.
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "/dir*"))
+	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "inner.jpg"))
+
+	// The name of the sync folder itself is checked only when files keep their remote paths in originals.
+	for _, filenames := range []bool{false, true} {
+		b := entity.Service{AccName: "Sync Invalid " + rnd.Base36(8), AccURL: server.URL + "/", AccType: "webdav", AccSync: true,
+			SyncDownload: true, SyncFilenames: filenames, SyncPath: "/dir*", AccTimeout: "low", RetryLimit: -1}
+		require.NoError(t, entity.Db().Create(&b).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "service_id = ?", b.ID).Error)
+			assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, b.ID).Error)
+		})
+
+		// A file queued below another sync folder is removed from the queue in both modes.
+		queued := entity.NewFileSync(b.ID, "/sub/ok.jpg")
+		queued.Status = entity.FileSyncNew
+		require.NoError(t, queued.Create())
+
+		hook.Reset()
+		complete, err = worker.refresh(b)
+		require.NoError(t, err)
+		assert.True(t, complete)
+
+		names = nil
+		require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ?", b.ID).Pluck("remote_name", &names).Error)
+
+		if filenames {
+			assert.Empty(t, names)
+			assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped downloads from"))
+			assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, ""))
+		} else {
+			assert.Equal(t, []string{"/dir*/inner.jpg"}, names)
+			assert.Zero(t, countLogged(hook, logrus.WarnLevel, ""))
+		}
+	}
+}
+
+func TestPortableSyncName(t *testing.T) {
+	t.Run("Portable", func(t *testing.T) {
+		assert.True(t, portableSyncName("/", "/a/b.jpg"))
+		assert.True(t, portableSyncName("/", "/"))
+		assert.True(t, portableSyncName("/Photos", "/Photos"))
+		assert.True(t, portableSyncName("/A|B", "/A|B/ok.jpg"))
+		assert.True(t, portableSyncName("/A|B/", "A|B/sub/ok.jpg"))
+		assert.True(t, portableSyncName("", "/03 - Março/#1 & Friends.jpg"))
+	})
+	t.Run("NotPortable", func(t *testing.T) {
+		assert.False(t, portableSyncName("/", "/a|b.jpg"))
+		assert.False(t, portableSyncName("/Photos", "/Photos/dir*/x.jpg"))
+		assert.False(t, portableSyncName("/A|B", "/A|B/x:y.jpg"))
+		assert.False(t, portableSyncName("/", "/caf\xe9.jpg"))
+		assert.False(t, portableSyncName("/", "/A|B/ok.jpg"))
+		// A path equal to the root, and a sibling that starts with its name, are checked in full.
+		assert.False(t, portableSyncName("/A|B", "/A|B"))
+		assert.False(t, portableSyncName("/A|B", "/A|Bx/ok.jpg"))
+	})
+}
+
+func TestSyncNameRoot(t *testing.T) {
+	t.Run("SyncFolder", func(t *testing.T) {
+		assert.Equal(t, "/A|B", syncNameRoot(entity.Service{SyncPath: "/A|B"}))
+	})
+	t.Run("Filenames", func(t *testing.T) {
+		assert.Equal(t, "/", syncNameRoot(entity.Service{SyncPath: "/A|B", SyncFilenames: true}))
+	})
 }

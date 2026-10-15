@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/crc32"
 	"strconv"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -32,6 +33,9 @@ const FileSyncUploadPrefix = fs.PPHiddenPathname + "/sync/upload/"
 
 // fileSyncStalled is the folder of placeholders of stalled uploads without an error count, which refresh removes.
 const fileSyncStalled = fs.PPHiddenPathname + "/sync/stalled/"
+
+// FileSyncUnportablePrefix starts the placeholder names that record local files whose names are not portable.
+const FileSyncUnportablePrefix = fs.PPHiddenPathname + "/sync/names/"
 
 // fileSyncLongNames is the folder of the placeholder names that record local files whose remote name is too long.
 const fileSyncLongNames = fs.PPHiddenPathname + "/sync/long/"
@@ -118,6 +122,53 @@ func FileSyncLongNamePrefix(syncPath string) string {
 func ResetFileSyncLongNames(serviceID uint, syncPath string) error {
 	return Db().Where("service_id = ? AND remote_name LIKE ? AND remote_name NOT LIKE ?", serviceID,
 		fileSyncLongNames+"%", FileSyncLongNamePrefix(syncPath)+"%").Delete(&FileSync{}).Error
+}
+
+// ResetFileSyncUnportable removes the placeholders an account recorded for local files whose names are not
+// portable once their names are, e.g. after a rename, so that the files are uploaded.
+func ResetFileSyncUnportable(serviceID uint) error {
+	var rows []struct {
+		RemoteName string
+		FileName   string
+	}
+
+	if err := Db().Table("files_sync").Select("files_sync.remote_name, files.file_name").
+		Joins("JOIN files ON files.id = files_sync.file_id").
+		Where("files_sync.service_id = ? AND files_sync.remote_name LIKE ?", serviceID, FileSyncUnportablePrefix+"%").
+		Scan(&rows).Error; err != nil {
+		return err
+	}
+
+	names := make([]string, 0, len(rows))
+
+	for _, row := range rows {
+		if portablePath(row.FileName) {
+			names = append(names, row.RemoteName)
+		}
+	}
+
+	for len(names) > 0 {
+		n := min(len(names), 500)
+
+		if err := Db().Where("service_id = ? AND remote_name IN (?)", serviceID, names[:n]).Delete(&FileSync{}).Error; err != nil {
+			return err
+		}
+
+		names = names[n:]
+	}
+
+	return nil
+}
+
+// portablePath reports whether every name in a slash-separated path is portable.
+func portablePath(name string) bool {
+	for _, part := range strings.Split(name, "/") {
+		if !clean.PortableName(part) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // FileSyncUploadName returns the placeholder name that records a failed upload of a local file.

@@ -308,7 +308,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 			}
 
 			// Related files whose names are not portable stay in the import folder.
-			related = portableRelated(related, mf, func(f *MediaFile) {
+			related = PortableRelated(related, mf, func(f *MediaFile) {
 				warnUnportable("import", nameRoot, fs.RelName(f.FileName(), nameRoot), "import it")
 			})
 

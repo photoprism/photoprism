@@ -261,7 +261,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// Other files in originals whose names are not portable are not indexed with the imported ones. The
 			// imported file keeps the name its destination pattern gave it.
 			if clean.PortableName(filepath.Base(f.FileName())) {
-				if related = portableRelated(related, f, func(rf *MediaFile) {
+				if related = PortableRelated(related, f, func(rf *MediaFile) {
 					warnUnportable("index", entity.RootOriginals, rf.RootRelName(), "index it")
 				}); related.Main == nil {
 					continue

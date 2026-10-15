@@ -33,6 +33,9 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	// Files skipped for the length of their remote name below another sync path are checked again.
 	w.logAccountErr(entity.ResetFileSyncLongNames(a.ID, a.SyncPath), a)
 
+	// Files skipped for their names are checked again once their names are portable.
+	w.logAccountErr(entity.ResetFileSyncUnportable(a.ID), a)
+
 	// Get upload file list from database
 	files, err := query.AccountUploads(a, maxResults)
 
@@ -61,6 +64,11 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 	defer skipped.Warn("sync: skipped upload of %s to %s because their remote names are too long (%s)", "file", a.AccName)
 
+	// Files whose names are not portable are not uploaded, and reported in one warning per run.
+	var unsupported skippedNames
+
+	defer unsupported.Warn("sync: skipped upload of %s to %s because their names contain characters that are not supported (%s)", "file", a.AccName)
+
 	// Files whose upload failed are set aside until the next sync cycle and reported in one warning per run.
 	var failed skippedNames
 
@@ -74,6 +82,10 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		if webdav.SkipSyncPath(file.FileName) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(file.FileName))
 			w.ignoreUpload(a, path.Join(fs.PPHiddenPathname, "sync"), file.ID)
+			continue
+		} else if !portableSyncName("/", file.FileName) {
+			unsupported.Add(file.FileName)
+			w.ignoreUpload(a, entity.FileSyncUnportablePrefix, file.ID)
 			continue
 		}
 
