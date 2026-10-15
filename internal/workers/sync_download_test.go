@@ -219,6 +219,33 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.Equal(t, 4, at.Errors)
 		assert.Equal(t, entity.FileSyncFailed, at.Status)
 	})
+	t.Run("SyncRaw", func(t *testing.T) {
+		// Raw images and videos queued while the option was on are ignored once it is off.
+		a := newAccount(t, 3)
+		newFile(t, a, "/raw-off.cr2", 0)
+		newFile(t, a, "/dng-off.dng", 0)
+		newFile(t, a, "/video-off.mp4", 0)
+		newFile(t, a, "/image-off.jpg", 0)
+
+		_, err := worker.download(a)
+		require.NoError(t, err)
+
+		assert.Equal(t, 0, attempts("/raw-off.cr2"))
+		assert.Equal(t, entity.FileSyncIgnore, stored(t, a, "/raw-off.cr2").Status)
+		assert.Equal(t, 0, attempts("/dng-off.dng"))
+		assert.Equal(t, entity.FileSyncIgnore, stored(t, a, "/dng-off.dng").Status)
+		assert.Equal(t, 0, attempts("/video-off.mp4"))
+		assert.Equal(t, entity.FileSyncIgnore, stored(t, a, "/video-off.mp4").Status)
+		assert.Equal(t, 1, attempts("/image-off.jpg"))
+
+		b := newAccount(t, 3)
+		require.NoError(t, b.Update("SyncRaw", true))
+		newFile(t, b, "/raw-on.cr2", 0)
+
+		_, err = worker.download(b)
+		require.NoError(t, err)
+		assert.Equal(t, 1, attempts("/raw-on.cr2"))
+	})
 	t.Run("LowestLimit", func(t *testing.T) {
 		a := newAccount(t, 1)
 		newFile(t, a, "/lowest.jpg", 2)

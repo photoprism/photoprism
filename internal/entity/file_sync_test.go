@@ -328,6 +328,23 @@ func TestCountFailedFileSyncUploads(t *testing.T) {
 	count, err = CountFailedFileSyncUploads(serviceID)
 	require.NoError(t, err)
 	assert.EqualValues(t, 1, count)
+
+	// Files that are missing or deleted are not counted.
+	missing, deleted := FileFixtures.Pointer("missing.jpg"), FileFixtures.Pointer("Photo18.jpg")
+	require.True(t, missing.FileMissing)
+	require.NoError(t, FailFileSyncUpload(serviceID, missing.ID, "failed"))
+	require.NoError(t, FailFileSyncUpload(serviceID, deleted.ID, "failed"))
+	count, err = CountFailedFileSyncUploads(serviceID)
+	require.NoError(t, err)
+	assert.EqualValues(t, 2, count)
+
+	require.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", deleted.ID).UpdateColumn("deleted_at", Now()).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", deleted.ID).UpdateColumn("deleted_at", nil).Error)
+	})
+	count, err = CountFailedFileSyncUploads(serviceID)
+	require.NoError(t, err)
+	assert.EqualValues(t, 1, count)
 }
 
 func TestRetryFileSyncUploads(t *testing.T) {
@@ -369,6 +386,31 @@ func TestRetryFileSyncUploads(t *testing.T) {
 	// Without a retry limit, every failed upload is tried again.
 	require.NoError(t, RetryFileSyncUploads(serviceID, -1))
 	assert.Equal(t, FileSyncRetry, status(t, serviceID, FileSyncUploadName(23)))
+}
+
+// TestRetryFileSyncUploads_MissingFile checks that a set-aside missing file is tried again once it is found.
+func TestRetryFileSyncUploads_MissingFile(t *testing.T) {
+	const serviceID = 4726
+	missing := FileFixtures.Pointer("missing.jpg")
+	require.True(t, missing.FileMissing)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&FileSync{}, "service_id = ?", serviceID).Error)
+		assert.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", missing.ID).UpdateColumn("file_missing", true).Error)
+	})
+
+	status := func() string {
+		var m FileSync
+		require.NoError(t, Db().Where("service_id = ? AND remote_name = ?", serviceID, FileSyncUploadName(missing.ID)).First(&m).Error)
+		return m.Status
+	}
+
+	require.NoError(t, FailFileSyncUpload(serviceID, missing.ID, "failed"))
+	require.NoError(t, RetryFileSyncUploads(serviceID, 3))
+	assert.Equal(t, FileSyncFailed, status())
+
+	require.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", missing.ID).UpdateColumn("file_missing", false).Error)
+	require.NoError(t, RetryFileSyncUploads(serviceID, 3))
+	assert.Equal(t, FileSyncRetry, status())
 }
 
 func TestFileSync_ServiceStatusIndex(t *testing.T) {

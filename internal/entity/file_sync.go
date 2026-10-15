@@ -173,10 +173,13 @@ func ClearFileSyncUpload(serviceID, fileID uint) error {
 		Delete(&FileSync{}).Error
 }
 
-// CountFailedFileSyncUploads returns the number of local files of an account whose last upload failed.
+// CountFailedFileSyncUploads returns the number of local files of an account whose last upload failed, except
+// files that are missing or deleted.
 func CountFailedFileSyncUploads(serviceID uint) (count int64, err error) {
 	err = Db().Model(&FileSync{}).Where("service_id = ? AND remote_name LIKE ? AND status = ?",
-		serviceID, FileSyncUploadPrefix+"%", FileSyncFailed).Count(&count).Error
+		serviceID, FileSyncUploadPrefix+"%", FileSyncFailed).
+		Where("NOT EXISTS (SELECT 1 FROM files f WHERE f.id = files_sync.file_id AND (f.file_missing = TRUE OR f.deleted_at IS NOT NULL))").
+		Count(&count).Error
 
 	return count, err
 }

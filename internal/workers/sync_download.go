@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -165,6 +166,14 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 			}
 
 			if !a.SyncYamlEnabled() && fs.FileType(file.RemoteName) == fs.SidecarYaml {
+				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
+				w.logFileErr(entity.Db().Save(&file).Error, file.RemoteName, a)
+				files[i] = file
+				continue
+			}
+
+			// Raw images and videos queued while the option was on are not downloaded once it is off.
+			if content := media.FromName(file.RemoteName); !a.SyncRaw && (content == media.Raw || content == media.Video) {
 				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
 				w.logFileErr(entity.Db().Save(&file).Error, file.RemoteName, a)
 				files[i] = file
