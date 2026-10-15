@@ -43,6 +43,7 @@ type testWebDAVServerOptions struct {
 	redirectSlashlessDepthOne  bool
 	requireBasicAuthOnDepthOne bool
 	requestPathPrefix          string
+	prefixHrefs                bool
 }
 
 // testWebDAVTree defines the depth-1 PROPFIND responses returned by the test server.
@@ -161,6 +162,18 @@ func newTestWebDAVServerWithOptions(options testWebDAVServerOptions) *httptest.S
 		if len(entries) == 0 {
 			http.Error(w, "not found", http.StatusNotFound)
 			return
+		}
+
+		// Servers return paths that include the endpoint path.
+		if prefix := strings.TrimRight(options.requestPathPrefix, "/"); prefix != "" && options.prefixHrefs {
+			prefixed := make([]testWebDAVEntry, len(entries))
+
+			for i, entry := range entries {
+				prefixed[i] = entry
+				prefixed[i].Href = prefix + entry.Href
+			}
+
+			entries = prefixed
 		}
 
 		w.Header().Set("Content-Type", "application/xml; charset=utf-8")
@@ -436,6 +449,34 @@ func TestClient_DirectoriesDepthFallback(t *testing.T) {
 		dirs, err := client.Directories("", true, MaxRequestDuration)
 		require.NoError(t, err)
 		assert.ElementsMatch(t, expected, dirs.Abs())
+	})
+	t.Run("EndpointPathInHrefs", func(t *testing.T) {
+		// Paths are checked below the endpoint path, whose own names may look hidden.
+		for _, rejectInfinity := range []bool{false, true} {
+			server := newTestWebDAVServerWithOptions(testWebDAVServerOptions{
+				rejectInfinity:    rejectInfinity,
+				requestPathPrefix: "/~user/.dav",
+				prefixHrefs:       true,
+			})
+			t.Cleanup(server.Close)
+
+			client, err := NewClient(server.URL+"/~user/.dav/", "", "", TimeoutLow, "")
+			require.NoError(t, err)
+
+			dirs, err := client.Directories("", true, MaxRequestDuration)
+			require.NoError(t, err)
+			assert.ElementsMatch(t, expected, dirs.Abs(), "rejectInfinity=%t", rejectInfinity)
+
+			if !rejectInfinity {
+				files, err := client.Files("Photos", false)
+				require.NoError(t, err)
+				assert.NotEmpty(t, files)
+
+				for _, f := range files {
+					assert.True(t, strings.HasPrefix(f.Abs, "/Photos/"), f.Abs)
+				}
+			}
+		}
 	})
 }
 

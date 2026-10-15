@@ -1,6 +1,6 @@
 ## PhotoPrism — WebDAV Service Client
 
-**Last Updated:** October 14, 2026
+**Last Updated:** October 15, 2026
 
 ### Overview
 
@@ -20,6 +20,7 @@
 
 - Fast path: when `recursive=true`, the client first performs a recursive `PROPFIND` using `Depth: infinity` through the upstream WebDAV library.
 - Compatibility fallback: if the recursive request fails, the client retries discovery by walking the tree with repeated non-recursive `PROPFIND` requests using `Depth: 1`.
+- Folders are queued relative to the account URL, since servers return paths that include its path.
 - Scope: this fallback is intentionally limited to directory enumeration. It does not change upload, download, delete, or file-listing semantics.
 
 This behavior exists because some providers and appliances accept `Depth: 1` but reject `Depth: infinity`. The fallback keeps those servers usable for:

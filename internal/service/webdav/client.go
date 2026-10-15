@@ -267,8 +267,9 @@ func appendUniqueEntries(result []webdav.FileInfo, found []webdav.FileInfo, seen
 	return result
 }
 
-// appendTraversalDirs adds unseen child directories from a non-recursive PROPFIND response to the queue.
-func appendTraversalDirs(queue []string, current string, found []webdav.FileInfo, seen map[string]bool) []string {
+// appendTraversalDirs adds unseen child directories from a non-recursive PROPFIND response to the queue, with
+// paths relative to the endpoint path, which the server includes in the paths it returns.
+func appendTraversalDirs(queue []string, current, endpoint string, found []webdav.FileInfo, seen map[string]bool) []string {
 	current = trimPath(current)
 
 	for _, entry := range found {
@@ -276,9 +277,9 @@ func appendTraversalDirs(queue []string, current string, found []webdav.FileInfo
 			continue
 		}
 
-		entryPath := trimPath(entry.Path)
+		entryPath := trimPath(fs.RelName(trimPath(entry.Path), trimPath(endpoint)))
 
-		if entryPath == "" || entryPath == current || isHiddenPath(entryPath) || seen[entryPath] {
+		if entryPath == "" || entryPath == current || isHiddenPath(entryPath) || isUnsafePath(entry.Path) || seen[entryPath] {
 			continue
 		}
 
@@ -307,7 +308,7 @@ func (c *Client) readDirFallback(ctx context.Context, dir string, timeout time.D
 		}
 
 		result = appendUniqueEntries(result, found, seenEntries)
-		queue = appendTraversalDirs(queue, current, found, traversed)
+		queue = appendTraversalDirs(queue, current, c.endpoint.Path, found, traversed)
 	}
 
 	return result, requests, nil
@@ -342,7 +343,7 @@ func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err err
 	result = make(fs.FileInfos, 0, len(found))
 
 	for _, f := range found {
-		if f.IsDir || f.Path == "" || isHiddenPath(f.Path) || isUnsafePath(f.Path) {
+		if f.IsDir || f.Path == "" || isUnsafePath(f.Path) {
 			continue
 		}
 
@@ -391,7 +392,7 @@ func (c *Client) Directories(dir string, recursive bool, timeout time.Duration) 
 	result = make(fs.FileInfos, 0, len(found))
 
 	for _, f := range found {
-		if !f.IsDir || f.Path == "" || isHiddenPath(f.Path) || isUnsafePath(f.Path) {
+		if !f.IsDir || f.Path == "" || isUnsafePath(f.Path) {
 			continue
 		}
 
