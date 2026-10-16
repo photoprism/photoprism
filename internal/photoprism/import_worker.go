@@ -63,6 +63,36 @@ func importedContent(dest, hash string) bool {
 	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
+// storedResult is how a file relates to the indexed file with the same content.
+type storedResult struct {
+	file  *entity.File
+	match storedMatch
+}
+
+// storedFilesOf returns how the files of a group that are not sidecars relate to the indexed files with the same
+// content, and whether all of them, including the main file, are or may be those files themselves.
+func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
+	results = make(map[string]storedResult, len(related.Files)+1)
+	originals = related.Main != nil
+
+	for _, f := range append(MediaFiles{related.Main}, related.Files...) {
+		if f == nil || f.IsSidecar() {
+			continue
+		} else if _, done := results[f.FileName()]; done {
+			continue
+		}
+
+		stored, match := storedFileOf(f)
+		results[f.FileName()] = storedResult{file: stored, match: match}
+
+		if match != storedSame && match != storedMaybeSame {
+			originals = false
+		}
+	}
+
+	return results, originals
+}
+
 // ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
@@ -96,14 +126,17 @@ func ImportWorker(jobs <-chan ImportJob) {
 			continue
 		}
 
-		// A main file that is the stored file itself, e.g. in a folder linked into originals, is not imported, and
-		// neither are its sidecars, since that folder is already part of originals.
-		switch _, match := storedFileOf(related.Main); match {
-		case storedSame:
-			log.Infof("import: skipped %s and its related files, as it is the same file as the original", clean.Log(originalName))
-			continue
-		case storedMaybeSame:
-			log.Infof("import: skipped %s and its related files, as it may be the same file as the original", clean.Log(originalName))
+		// A group whose files are all originals themselves, e.g. in a folder linked into originals, is not imported,
+		// and neither are its sidecars, which are not checked for duplicates.
+		results, originals := storedFilesOf(related)
+
+		if originals {
+			if results[related.Main.FileName()].match == storedSame {
+				log.Infof("import: skipped %s and its related files, as it is the same file as the original", clean.Log(originalName))
+			} else {
+				log.Infof("import: skipped %s and its related files, as it may be the same file as the original", clean.Log(originalName))
+			}
+
 			continue
 		}
 
@@ -187,7 +220,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// What follows is for a file the library already holds. The destination name is not
 				// evidence of that, so it is established once here and every step below reads it.
-				stored, match := storedFileOf(f)
+				result, found := results[f.FileName()]
+
+				if !found {
+					result.file, result.match = storedFileOf(f)
+				}
+
+				stored, match := result.file, result.match
 
 				if match != storedCopy {
 					stored = nil

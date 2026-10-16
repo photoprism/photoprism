@@ -508,7 +508,7 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 	// A name that holds nothing hashes to the empty string, so this covers an absent file too.
 	storedName := FileName(found.FileRoot, found.FileName)
 
-	if fs.Hash(storedName) != fileHash {
+	if storedHash(storedName) != fileHash {
 		return nil, storedNone
 	}
 
@@ -532,6 +532,9 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 	}
 }
 
+// storedHash returns the hash of an indexed file, which reads the whole file.
+var storedHash = fs.Hash
+
 // fileID returns the device and inode number of a file, if the file system reports them.
 var fileID = func(info os.FileInfo) (dev, ino uint64, ok bool) {
 	if st, isStat := info.Sys().(*syscall.Stat_t); isStat {
@@ -544,7 +547,8 @@ var fileID = func(info os.FileInfo) (dev, ino uint64, ok bool) {
 // maybeSameFile reports whether two files on different devices have the same size, modification time and inode
 // number, as one file on a network share that is mounted twice does, e.g. over SMB with the server's inode numbers.
 func maybeSameFile(a, b os.FileInfo) bool {
-	if a.Size() != b.Size() || !a.ModTime().Equal(b.ModTime()) {
+	// Times are compared in whole seconds, since mounts may report them with another precision.
+	if a.Size() != b.Size() || !a.ModTime().Truncate(time.Second).Equal(b.ModTime().Truncate(time.Second)) {
 		return false
 	}
 

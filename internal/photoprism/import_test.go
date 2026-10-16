@@ -239,6 +239,90 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Equal(t, 1, countPrefix(infos, "import: skipped main.jpg and its related files, as it may be the same file as the original"))
 		assert.Equal(t, 1, countPrefix(infos, "import: kept pair.png, as it may be the same file as the original"))
 	})
+	t.Run("Group", func(t *testing.T) {
+		mf := func(name string) *MediaFile {
+			f, err := NewMediaFile(name)
+			require.NoError(t, err)
+			return f
+		}
+
+		xmp := filepath.Join(importDir, "linked.xmp")
+		require.NoError(t, os.WriteFile(xmp, []byte(testXmp), fs.ModeFile))
+		t.Cleanup(func() { _ = os.Remove(xmp) })
+
+		// Sidecars are not looked up, and a group is original only if all other files are.
+		results, originals := storedFilesOf(RelatedFiles{Main: mf(linked), Files: MediaFiles{mf(linked), mf(xmp)}})
+		assert.True(t, originals)
+		assert.Len(t, results, 1)
+		assert.Equal(t, storedSame, results[linked].match)
+
+		results, originals = storedFilesOf(RelatedFiles{Main: mf(linked), Files: MediaFiles{mf(linked), mf(copied)}})
+		assert.False(t, originals)
+		assert.Equal(t, storedCopy, results[copied].match)
+
+		_, originals = storedFilesOf(RelatedFiles{})
+		assert.False(t, originals)
+	})
+	t.Run("HashOnce", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// The stored original of a duplicate is read once per import, also if it has a new sidecar.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-once-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		require.NoError(t, fs.Copy(storedPath, filepath.Join(dir, "dup.jpg"), false))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "dup.xmp"), []byte(testXmp), fs.ModeFile))
+
+		saved := storedHash
+		t.Cleanup(func() { storedHash = saved })
+		reads := 0
+		storedHash = func(name string) string {
+			if name == storedPath {
+				reads++
+			}
+			return saved(name)
+		}
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.NoFileExists(t, filepath.Join(dir, "dup.jpg"))
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted dup.jpg (already exists)"))
+		assert.Equal(t, 1, reads)
+	})
+	t.Run("Snapshot", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A hard link to an original next to a new file, e.g. in a snapshot, does not keep the new file back.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-snap-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		require.NoError(t, os.Link(storedPath, filepath.Join(dir, "snap.jpg")))
+		companion := filepath.Join(dir, "snap.png")
+		writeTestJpeg(t, companion, 315)
+		companionHash := fs.Hash(companion)
+		t.Cleanup(func() { cleanupImportedHash(t, companionHash) })
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, filepath.Join(dir, "snap.jpg"))
+		assert.NoFileExists(t, companion)
+
+		infos := loggedMessages(hook, logrus.InfoLevel)
+		assert.Zero(t, countPrefix(infos, "import: skipped snap.jpg"))
+		assert.Equal(t, 1, countPrefix(infos, "import: kept snap.jpg, as it is the same file as the original"))
+	})
 	t.Run("MoveImport", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")
@@ -325,6 +409,7 @@ func TestImport_RunLinkedOriginals(t *testing.T) {
 		assert.FileExists(t, filepath.Join(dir, "x.jpg"))
 		assert.FileExists(t, filepath.Join(dir, "x.xmp"))
 		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: moving"))
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: skipped x.jpg and its related files"))
 	})
 }
 
@@ -536,6 +621,21 @@ func TestMaybeSameFile(t *testing.T) {
 	assert.False(t, maybeSameFile(stat(a), stat(b)), "other inode")
 	stub(1, 2, 42, 42, false)
 	assert.False(t, maybeSameFile(stat(a), stat(b)), "no inode")
+
+	// One side without inode information is not enough either.
+	fileID = func(info os.FileInfo) (dev, ino uint64, found bool) {
+		if info.Name() == "a.jpg" {
+			return 1, 42, true
+		}
+		return 2, 42, false
+	}
+	assert.False(t, maybeSameFile(stat(a), stat(b)), "no inode for b")
+	assert.False(t, maybeSameFile(stat(b), stat(a)), "no inode for a")
+
+	// Times are compared in whole seconds.
+	stub(1, 2, 42, 42, true)
+	require.NoError(t, os.Chtimes(b, modTime.Add(300*time.Nanosecond), modTime.Add(300*time.Nanosecond)))
+	assert.True(t, maybeSameFile(stat(a), stat(b)), "other precision")
 
 	stub(1, 2, 42, 42, true)
 	require.NoError(t, os.Chtimes(b, modTime.Add(time.Second), modTime.Add(time.Second)))
