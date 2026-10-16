@@ -189,6 +189,15 @@ func TestStoredFileOf(t *testing.T) {
 		}
 
 		require.NoError(t, os.Remove(copied))
+		require.NoError(t, os.WriteFile(filepath.Join(importDir, "linked.xmp"), []byte(testXmp), fs.ModeFile))
+
+		// A related file that is the same file as an original is kept, while its main file is imported.
+		pair := filepath.Join(importDir, "pair.jpg")
+		writeTestJpeg(t, pair, 311)
+		require.NoError(t, os.Link(storedPath, filepath.Join(importDir, "pair.png")))
+		pairHash := fs.Hash(pair)
+		t.Cleanup(func() { cleanupImportedHash(t, pairHash) })
+
 		hook := captureLog(t)
 		convert := NewConvert(cfg)
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
@@ -196,8 +205,70 @@ func TestStoredFileOf(t *testing.T) {
 		_, err := imp.Run(ImportOptionsMove(importDir, ""))
 		require.NoError(t, err)
 		assert.FileExists(t, linked)
+		assert.FileExists(t, filepath.Join(importDir, "linked.xmp"))
 		assert.FileExists(t, storedPath)
-		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept linked.jpg, as it is the same file as the original"))
+		assert.FileExists(t, filepath.Join(importDir, "pair.png"))
+		assert.NoFileExists(t, pair)
+
+		infos := loggedMessages(hook, logrus.InfoLevel)
+		assert.Equal(t, 1, countPrefix(infos, "import: skipped linked.jpg and its related files, as it is the same file as the original"))
+		assert.Equal(t, 1, countPrefix(infos, "import: kept pair.png, as it is the same file as the original"))
+	})
+}
+
+// TestImport_RunLinkedOriginals checks that files in a folder that originals links to, or in a hidden folder in
+// originals indexed before, are left in place with their sidecars.
+func TestImport_RunLinkedOriginals(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := config.TestConfig()
+	photo := entity.PhotoFixtures.Get("Photo01")
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+	// stage writes a picture with a sidecar to dir and records the picture as indexed under rel in originals.
+	// Each case uses its own picture, so a sidecar one case moves cannot hide what another does.
+	stage := func(t *testing.T, dir, rel string, seed int) {
+		writeTestJpeg(t, filepath.Join(dir, "x.jpg"), seed)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "x.xmp"), []byte(testXmp), fs.ModeFile))
+		file := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: rel,
+			FileHash: fs.Hash(filepath.Join(dir, "x.jpg"))}
+		require.NoError(t, file.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(file).Error })
+	}
+
+	t.Run("Link", func(t *testing.T) {
+		name := "linked-" + rnd.Base36(8)
+		target := filepath.Join(filepath.Dir(cfg.OriginalsPath()), name)
+		link := filepath.Join(cfg.OriginalsPath(), name)
+		require.NoError(t, fs.MkdirAll(filepath.Join(target, "2019")))
+		require.NoError(t, os.Symlink(target, link))
+		t.Cleanup(func() { _ = os.Remove(link); _ = os.RemoveAll(target) })
+		stage(t, filepath.Join(target, "2019"), name+"/2019/x.jpg", 312)
+
+		hook := captureLog(t)
+		_, err := imp.Run(ImportOptionsMove(filepath.Join(target, "2019"), ""))
+		require.NoError(t, err)
+		assert.FileExists(t, filepath.Join(target, "2019", "x.jpg"))
+		assert.FileExists(t, filepath.Join(target, "2019", "x.xmp"))
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: skipped x.jpg and its related files"))
+		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: moving"))
+	})
+	t.Run("HiddenFolder", func(t *testing.T) {
+		name := "~Archive-" + rnd.Base36(8)
+		dir := filepath.Join(cfg.OriginalsPath(), name, "2019")
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(dir)) })
+		stage(t, dir, name+"/2019/x.jpg", 313)
+
+		hook := captureLog(t)
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, filepath.Join(dir, "x.jpg"))
+		assert.FileExists(t, filepath.Join(dir, "x.xmp"))
+		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: moving"))
 	})
 }
 
@@ -357,4 +428,28 @@ func TestImport_StartMissingPath(t *testing.T) {
 	imp.Start(ImportOptionsCopy(filepath.Join(cfg.ImportPath(), "e2e-missing/folder"), ""))
 
 	assertMissingFolderNotice(t, s.Receiver, "import: directory", "e2e-missing/folder", cfg.ImportPath())
+}
+
+// cleanupImportedHash removes the picture a test imported with a file of the given hash, and its files in originals.
+func cleanupImportedHash(t *testing.T, hash string) {
+	t.Helper()
+
+	file, err := entity.FirstFileByHash(hash)
+
+	if err != nil {
+		return
+	}
+
+	var files entity.Files
+	_ = entity.UnscopedDb().Where("photo_id = ?", file.PhotoID).Find(&files).Error
+
+	for _, f := range files {
+		if f.FileRoot == entity.RootOriginals {
+			_ = os.Remove(FileName(f.FileRoot, f.FileName))
+		}
+	}
+
+	_ = entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID).Error
+	_ = entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID).Error
+	_ = entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID).Error
 }

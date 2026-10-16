@@ -96,6 +96,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 			continue
 		}
 
+		// A main file that is the stored file itself, e.g. in a folder linked into originals, is not imported, and
+		// neither are its sidecars, since that folder is already part of originals.
+		if _, same := storedFileOf(related.Main); same {
+			log.Infof("import: skipped %s and its related files, as it is the same file as the original", clean.Log(originalName))
+			continue
+		}
+
 		event.Publish("import.file", event.Data{
 			"fileName":  originalName,
 			"baseName":  filepath.Base(related.Main.FileName()),
