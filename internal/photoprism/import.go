@@ -541,13 +541,23 @@ func (imp *Import) CheckPath(importPath string) error {
 // linksToOriginals reports whether a linked folder leads to the originals folder, a folder in it, or a folder
 // that contains it.
 func (imp *Import) linksToOriginals(dir string) bool {
-	src, dest := resolvedPath(dir), resolvedPath(imp.originalsPath())
+	return overlappingPaths(dir, imp.originalsPath())
+}
 
-	if _, ok := relBelow(dest, src); ok {
+// overlappingPaths reports whether two folders are the same, or one is inside the other, after resolving symbolic
+// links. An empty path overlaps with nothing.
+func overlappingPaths(a, b string) bool {
+	if a == "" || b == "" {
+		return false
+	}
+
+	a, b = resolvedPath(a), resolvedPath(b)
+
+	if _, ok := relBelow(b, a); ok {
 		return true
 	}
 
-	_, ok := relBelow(src, dest)
+	_, ok := relBelow(a, b)
 
 	return ok
 }

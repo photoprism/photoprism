@@ -90,6 +90,20 @@ func TestImport_linksToOriginals(t *testing.T) {
 	}
 
 	assert.False(t, imp.linksToOriginals(t.TempDir()))
+	assert.False(t, imp.linksToOriginals(""))
+}
+
+func TestOverlappingPaths(t *testing.T) {
+	dir := t.TempDir()
+	assert.True(t, overlappingPaths(dir, filepath.Join(dir, "a")))
+	assert.True(t, overlappingPaths(filepath.Join(dir, "a"), dir))
+	assert.True(t, overlappingPaths(dir, dir))
+	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), filepath.Join(dir, "b")))
+
+	// An empty path is not resolved to the working directory.
+	t.Chdir(dir)
+	assert.False(t, overlappingPaths("", dir))
+	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), ""))
 }
 
 func TestRelBelow(t *testing.T) {
