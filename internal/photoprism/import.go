@@ -510,7 +510,8 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 		dests[i] = dest
 	}
 
-	// A file that may be the file itself wins over a copy, also over one found before it.
+	// A file that may be the file itself wins over a copy, also over one found before it. Only originals are
+	// copies, since other files, e.g. sidecars, may be replaced or removed with their photo.
 	var found *entity.File
 
 	for i := range files {
@@ -523,7 +524,7 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 			case "":
 				unknown = true
 			}
-		case found == nil:
+		case found == nil && files[i].FileRoot == entity.RootOriginals:
 			if storedHash(FileName(files[i].FileRoot, files[i].FileName)) == fileHash {
 				found = &files[i]
 			}

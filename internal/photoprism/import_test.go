@@ -315,6 +315,33 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Equal(t, storedMaybeSame, match)
 		assert.Nil(t, found)
 	})
+	t.Run("Sidecar", func(t *testing.T) {
+		// A sidecar with the same content is not a copy in the library, while a sidecar that is the file itself is.
+		dir := filepath.Join(cfg.SidecarPath(), "zz-sidecar-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		src := filepath.Join(importDir, "sidecar.jpg")
+		writeTestJpeg(t, src, 318)
+		t.Cleanup(func() { _ = os.Remove(src) })
+		require.NoError(t, fs.Copy(src, filepath.Join(dir, "copy.jpg"), false))
+
+		row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootSidecar,
+			FileName: filepath.Join(filepath.Base(dir), "copy.jpg"), FileHash: fs.Hash(src)}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+
+		mf, err := NewMediaFile(src)
+		require.NoError(t, err)
+		found, match := storedFileOf(mf)
+		assert.Equal(t, storedNone, match)
+		assert.Nil(t, found)
+
+		require.NoError(t, os.Remove(filepath.Join(dir, "copy.jpg")))
+		require.NoError(t, os.Link(src, filepath.Join(dir, "copy.jpg")))
+		found, match = storedFileOf(mf)
+		assert.Equal(t, storedSame, match)
+		assert.Nil(t, found)
+	})
 	t.Run("MaybeSame", func(t *testing.T) {
 		// A copy with the same size, time and inode number on another device may be the same file.
 		stubMaybeSame(t)
