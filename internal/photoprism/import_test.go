@@ -354,9 +354,6 @@ func TestStoredFileOf(t *testing.T) {
 	t.Run("MaybeSame", func(t *testing.T) {
 		// A copy with the same size, time and inode number on another device may be the same file.
 		stubMaybeSame(t)
-		info, err := os.Stat(storedPath)
-		require.NoError(t, err)
-		require.NoError(t, os.Chtimes(copied, info.ModTime(), info.ModTime()))
 
 		mf, err := NewMediaFile(copied)
 		require.NoError(t, err)
@@ -371,8 +368,6 @@ func TestStoredFileOf(t *testing.T) {
 		}
 
 		stubMaybeSame(t)
-		info, err := os.Stat(storedPath)
-		require.NoError(t, err)
 
 		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-maybe-"+rnd.Base36(8))
 		require.NoError(t, fs.MkdirAll(dir))
@@ -381,7 +376,6 @@ func TestStoredFileOf(t *testing.T) {
 		// A main file that may be the original is skipped with its sidecar, and another file is kept.
 		for _, name := range []string{"main.jpg", "pair.png"} {
 			require.NoError(t, fs.Copy(storedPath, filepath.Join(dir, name), false))
-			require.NoError(t, os.Chtimes(filepath.Join(dir, name), info.ModTime(), info.ModTime()))
 		}
 
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "main.xmp"), []byte(testXmp), fs.ModeFile))
@@ -396,7 +390,7 @@ func TestStoredFileOf(t *testing.T) {
 		opt := ImportOptionsMove(dir, "")
 		opt.Albums = []string{"zz-import-maybe-" + rnd.Base36(8)}
 
-		_, err = imp.Run(opt)
+		_, err := imp.Run(opt)
 		require.NoError(t, err)
 
 		for _, name := range []string{"main.jpg", "main.xmp", "pair.png"} {
@@ -440,7 +434,7 @@ func TestStoredFileOf(t *testing.T) {
 			t.Skip("skipping test in short mode.")
 		}
 
-		// The stored original of a duplicate is read once per import, also if it has a new sidecar.
+		// The stored original of a duplicate is read once per group, also if it has a new sidecar.
 		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-once-"+rnd.Base36(8))
 		require.NoError(t, fs.MkdirAll(dir))
 		t.Cleanup(func() { _ = os.RemoveAll(dir) })

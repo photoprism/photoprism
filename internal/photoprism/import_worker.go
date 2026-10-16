@@ -64,7 +64,8 @@ func importedContent(dest, hash string) bool {
 }
 
 // storedFilesOf returns how the files of a group that are not sidecars relate to the indexed files with the same
-// content, and whether all of them, including the main file, are or may be those files themselves.
+// content, and whether all of them, including the main file, are or may be those files themselves. Files of
+// unknown types count as sidecars.
 func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
 	results = make(map[string]storedResult, len(related.Files)+1)
 	originals = related.Main != nil
