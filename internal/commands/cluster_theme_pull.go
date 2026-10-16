@@ -342,7 +342,7 @@ func unzipSafe(zipPath, dest string) error {
 		}
 
 		// Skip entries that look like hidden files or directories.
-		if fs.FileNameHidden(path.Base(name)) {
+		if fs.FileNameSystem(path.Base(name)) {
 			continue
 		}
 

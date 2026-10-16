@@ -78,7 +78,7 @@ func OverlayHasAmbiguousPath(requestPath, escapedPath string) bool {
 
 	if relPath := strings.Trim(cleanPath, "/"); relPath != "" {
 		for segment := range strings.SplitSeq(relPath, "/") {
-			if segment == "" || segment == "." || segment == ".." || fs.FileNameHidden(segment) {
+			if segment == "" || segment == "." || segment == ".." || fs.FileNameSystem(segment) {
 				return true
 			}
 		}
@@ -123,7 +123,7 @@ func OverlayPathBlocked(webPath string) bool {
 	segments := strings.SplitSeq(relPath, "/")
 
 	for segment := range segments {
-		if segment == "" || fs.FileNameHidden(segment) {
+		if segment == "" || fs.FileNameSystem(segment) {
 			return true
 		}
 	}

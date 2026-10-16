@@ -147,7 +147,7 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 			}
 
 			// Skip hidden files by name.
-			if fs.FileNameHidden(name) {
+			if fs.FileNameSystem(name) {
 				return nil
 			}
 

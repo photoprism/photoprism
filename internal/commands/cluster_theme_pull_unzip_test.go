@@ -56,6 +56,9 @@ func TestUnzipSafe_ValidatesZipEntryPaths(t *testing.T) {
 		"..\\win-outside.txt":   "blocked\n",
 		"nested\\win.txt":       "blocked\n",
 		".hidden":               "blocked\n",
+		"@x.txt":                "blocked\n",
+		"~font.css":             "ok\n",
+		"$logo.svg":             "ok\n",
 	})
 
 	rootDir := t.TempDir()
@@ -68,6 +71,9 @@ func TestUnzipSafe_ValidatesZipEntryPaths(t *testing.T) {
 
 	assert.FileExists(t, filepath.Join(destDir, "ok.txt"))
 	assert.FileExists(t, filepath.Join(destDir, "nested", "good.txt"))
+	assert.FileExists(t, filepath.Join(destDir, "~font.css"))
+	assert.FileExists(t, filepath.Join(destDir, "$logo.svg"))
+	assert.NoFileExists(t, filepath.Join(destDir, "@x.txt"))
 
 	_, err := os.Stat(outsidePath)
 	assert.Error(t, err)

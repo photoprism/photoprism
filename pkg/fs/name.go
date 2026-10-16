@@ -112,18 +112,34 @@ func RelName(fileName, dir string) string {
 	}
 }
 
-// FileNameHidden tests is a file name belongs to a hidden file.
+// FileNameHidden reports whether a name belongs to a hidden file: one FileNameSystem reports, or one whose name
+// starts with "$" or "~", such as "$RECYCLE.BIN" and "~$report.docx".
 func FileNameHidden(name string) bool {
+	if len(name) == 0 {
+		return false
+	} else if FileNameSystem(name) {
+		return true
+	}
+
+	switch filepath.Base(name)[0:1] {
+	case "$", "~":
+		return true
+	}
+
+	return false
+}
+
+// FileNameSystem reports whether a name starts with ".", "@", "_." or "__", as hidden files and the folders that
+// operating systems and NAS devices create do, e.g. ".git", "@eaDir" and "__MACOSX".
+func FileNameSystem(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
 
 	name = filepath.Base(name)
 
-	// Hidden, system, and temporary files and folders starting with ".", "@", "$" or "~", such as "$RECYCLE.BIN"
-	// and "~$report.docx", should be ignored.
 	switch name[0:1] {
-	case ".", "@", "$", "~":
+	case ".", "@":
 		return true
 	}
 
@@ -131,7 +147,6 @@ func FileNameHidden(name string) bool {
 		return false
 	}
 
-	// File paths starting with _. and __ like __MACOSX should be ignored.
 	switch name[0:2] {
 	case "_.", "__":
 		return true

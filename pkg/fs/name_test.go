@@ -205,6 +205,19 @@ func TestFileNameHidden(t *testing.T) {
 	})
 }
 
+func TestFileNameSystem(t *testing.T) {
+	t.Run("System", func(t *testing.T) {
+		for _, name := range []string{"/some/.folder", "/some/path/@eaDir", "_.folder", "__MACOSX", "."} {
+			assert.True(t, FileNameSystem(name), name)
+		}
+	})
+	t.Run("Other", func(t *testing.T) {
+		for _, name := range []string{"/media/$RECYCLE.BIN", "~$report.docx", "~", "_folder", "a", ""} {
+			assert.False(t, FileNameSystem(name), name)
+		}
+	})
+}
+
 // TestFilePath_InSearchDir verifies that a file in the sidecar folder outside the base folder gets its sidecar
 // next to it, while other files keep their names below the sidecar folder.
 func TestFilePath_InSearchDir(t *testing.T) {

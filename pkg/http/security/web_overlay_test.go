@@ -24,6 +24,8 @@ func TestOverlayHasAmbiguousPath(t *testing.T) {
 		{name: "TraversalBlocked", requestPath: "/docs/../env", escapedPath: "/docs/../env", blocked: true},
 		{name: "HiddenSegmentBlocked", requestPath: "/.env", escapedPath: "/.env", blocked: true},
 		{name: "SpecialSegmentBlocked", requestPath: "/@secrets.txt", escapedPath: "/@secrets.txt", blocked: true},
+		{name: "TildeSegmentAllowed", requestPath: "/~user/index.html", escapedPath: "/~user/index.html", blocked: false},
+		{name: "DollarSegmentAllowed", requestPath: "/$logo.svg", escapedPath: "/$logo.svg", blocked: false},
 		{name: "EncodedDotProbeBlocked", requestPath: "/%2eenv", escapedPath: "/%2eenv", blocked: true},
 		{name: "EncodedSlashProbeBlocked", requestPath: "/foo%2fbar", escapedPath: "/foo%2fbar", blocked: true},
 	}
@@ -70,6 +72,8 @@ func TestOverlayPathBlocked(t *testing.T) {
 		{name: "NestedHiddenFileBlocked", webPath: "foo/.env", blocked: true},
 		{name: "SpecialFileBlocked", webPath: "@secret.txt", blocked: true},
 		{name: "SpecialDirBlocked", webPath: "__MACOSX/test.txt", blocked: true},
+		{name: "TildeDirAllowed", webPath: "~user/index.html", blocked: false},
+		{name: "DollarFileAllowed", webPath: "$logo.svg", blocked: false},
 		{name: "BlockedByName", webPath: "options.yml", blocked: true},
 		{name: "BlockedByNameCaseInsensitive", webPath: "Options.YML", blocked: true},
 		{name: "BlockedByNameAuthJson", webPath: "auth.json", blocked: true},

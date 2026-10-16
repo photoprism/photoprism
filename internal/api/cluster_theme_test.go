@@ -64,6 +64,8 @@ func TestClusterGetTheme(t *testing.T) {
 		// Visible files
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "app.js"), []byte("console.log('ok')\n"), fs.ModeFile))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "style.css"), []byte("body{}\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "~font.css"), []byte("body{}\n"), fs.ModeFile))
+		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "$logo.svg"), []byte("<svg/>\n"), fs.ModeFile))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, fs.VersionTxtFile), []byte(" 1.0.0\n"), fs.ModeFile))
 		assert.NoError(t, os.WriteFile(filepath.Join(tempTheme, "sub", "visible.txt"), []byte("ok\n"), fs.ModeFile))
 		// Hidden file
@@ -96,6 +98,8 @@ func TestClusterGetTheme(t *testing.T) {
 
 		// Included
 		assert.Contains(t, names, "style.css")
+		assert.Contains(t, names, "~font.css")
+		assert.Contains(t, names, "$logo.svg")
 		// Subdirectories are not included for security reasons
 		assert.NotContains(t, names, "sub/visible.txt")
 
