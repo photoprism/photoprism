@@ -482,9 +482,9 @@ func (r storedResult) unchanged() bool {
 	return err == nil && os.SameFile(info, r.info) && info.Size() == r.info.Size() && info.ModTime().Equal(r.info.ModTime())
 }
 
-// storedFileOf reports how a file relates to the indexed files that hold the same content, and returns the one it
-// is, may be, or is a copy of, with its file info if it is a copy. The answer comes from the files rather than from the rows, since a caller removes its
-// source on the strength of it, so every row is checked: one of them may be the file itself.
+// storedFileOf reports how a file relates to the indexed files that hold the same content, and returns the row it
+// is, may be, or is a copy of, if known, with the file info of a copy. The answer comes from the files rather than
+// the rows, since a caller removes its source on the strength of it, so every row is checked.
 func storedFileOf(mediaFile *MediaFile) storedResult {
 	if mediaFile == nil {
 		return storedResult{}

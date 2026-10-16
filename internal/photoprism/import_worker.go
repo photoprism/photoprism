@@ -243,7 +243,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				stored, match := result.file, result.match
 
-				// Try to add duplicates to selected album(s) as well, see #991.
+				// Add the picture of a copy or of a kept original to the selected albums.
 				if stored != nil {
 					if albumErr := entity.AddPhotoToUserAlbums(stored.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
 						log.Warnf("import: %s (add duplicate to albums)", clean.Error(albumErr))
@@ -283,8 +283,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 		}
 
-		// The first other file placed in originals is indexed with its related files if the library already holds
-		// the main file, e.g. a new RAW file next to a hard link to an original.
+		// The first other file placed in originals is indexed with its related files if the main file was not
+		// placed because it is already indexed, e.g. a new RAW file next to a hard link to an original.
 		if mainHeld && destMainFileName == "" {
 			destMainFileName = destOtherFileName
 		}

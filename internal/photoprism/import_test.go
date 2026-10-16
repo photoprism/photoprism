@@ -388,7 +388,7 @@ func TestStoredFileOf(t *testing.T) {
 		convert := NewConvert(cfg)
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
 		opt := ImportOptionsMove(dir, "")
-		opt.Albums = []string{"zz-import-maybe-" + rnd.Base36(8)}
+		opt.Albums = []string{testAlbum(t)}
 
 		_, err := imp.Run(opt)
 		require.NoError(t, err)
@@ -523,7 +523,7 @@ func TestStoredFileOf(t *testing.T) {
 		dest := cleanupDestination(t, imp, filepath.Join(dir, "snap.jpg"), companion)
 		hook := captureLog(t)
 		opt := ImportOptionsMove(dir, "")
-		opt.Albums = []string{"zz-import-snap-" + rnd.Base36(8)}
+		opt.Albums = []string{testAlbum(t)}
 
 		_, err := imp.Run(opt)
 		require.NoError(t, err)
@@ -534,6 +534,7 @@ func TestStoredFileOf(t *testing.T) {
 		// The moved file is indexed, with the name it had in the import folder.
 		indexed, err := entity.FirstFileByHash(companionHash)
 		require.NoError(t, err)
+		require.NotEqual(t, photo.ID, indexed.PhotoID, "the cleanup removes the picture of the companion")
 		assert.Equal(t, fs.RelName(dest, cfg.OriginalsPath()), indexed.FileName)
 		assert.Equal(t, "snap.png", indexed.OriginalName)
 
@@ -954,16 +955,29 @@ func TestStoredResult_Unchanged(t *testing.T) {
 	})
 }
 
-// albumPhotoUIDs returns the pictures in the album with the given title, and removes the album when the test ends.
+// testAlbum returns a new album title and removes the album with that title, if any, when the test ends.
+func testAlbum(t *testing.T) string {
+	title := "zz-import-" + rnd.Base36(8)
+
+	t.Cleanup(func() {
+		var albums entity.Albums
+		_ = entity.UnscopedDb().Where("album_title = ?", title).Find(&albums).Error
+
+		for i := range albums {
+			_ = entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", albums[i].AlbumUID).Error
+			_ = entity.UnscopedDb().Delete(&albums[i]).Error
+		}
+	})
+
+	return title
+}
+
+// albumPhotoUIDs returns the pictures in the album with the given title.
 func albumPhotoUIDs(t *testing.T, title string) (uids []string) {
 	t.Helper()
 
 	var album entity.Album
 	require.NoError(t, entity.UnscopedDb().Where("album_title = ?", title).First(&album).Error)
-	t.Cleanup(func() {
-		_ = entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", album.AlbumUID).Error
-		_ = entity.UnscopedDb().Delete(&album).Error
-	})
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", album.AlbumUID).Pluck("photo_uid", &uids).Error)
 
 	return uids
