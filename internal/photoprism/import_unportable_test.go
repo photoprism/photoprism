@@ -198,13 +198,19 @@ func TestImport_StartUnportableFolder(t *testing.T) {
 	})
 	t.Run("LinkAfterFolder", func(t *testing.T) {
 		// A folder whose name is not portable is imported under the portable name of a link that sorts after it.
-		src := t.TempDir()
+		// The folder is resolved first, so a link in the path of the temporary folder does not hide a regression.
+		src, err := filepath.EvalSymlinks(t.TempDir())
+		require.NoError(t, err)
 		writeTestJpeg(t, filepath.Join(src, "Best|Of", "y.jpg"), 252)
 		require.NoError(t, os.Symlink("Best|Of", filepath.Join(src, "favorites")))
+		hash := fs.Hash(filepath.Join(src, "Best|Of", "y.jpg"))
+		t.Cleanup(func() { cleanupImportedHash(t, hash) })
 
 		imp.Start(ImportOptionsMove(src, ""))
 
 		assert.False(t, fs.FileExists(filepath.Join(src, "Best|Of", "y.jpg")), "favorites/y.jpg was not imported")
+		_, err = entity.FirstFileByHash(hash)
+		assert.NoError(t, err, "favorites/y.jpg is not indexed")
 	})
 }
 

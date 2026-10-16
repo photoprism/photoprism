@@ -209,7 +209,10 @@ func TestConvert_StartUnportable(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	c := config.NewMinimalTestConfig(t.TempDir())
+	// The folder is resolved first, so a link in the path of the temporary folder does not hide a regression.
+	dir, dirErr := filepath.EvalSymlinks(t.TempDir())
+	require.NoError(t, dirErr)
+	c := config.NewMinimalTestConfig(dir)
 	oldCfg := Config()
 	SetConfig(c)
 	t.Cleanup(func() { SetConfig(oldCfg) })
@@ -228,7 +231,8 @@ func TestConvert_StartUnportable(t *testing.T) {
 	// A symbolic link whose name is not portable does not keep its target from being converted.
 	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "real"), filepath.Join(c.OriginalsPath(), "link$")))
 
-	// A folder whose name is not portable is converted under the portable name of a link, also if it sorts first.
+	// A folder whose name is not portable is converted under the portable name of a link, also if the folder is
+	// walked first.
 	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "Best|Of"), filepath.Join(c.OriginalsPath(), "favorites")))
 
 	// Two of the five skipped names are reported on their own, the others in one warning.

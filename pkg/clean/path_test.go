@@ -1,6 +1,7 @@
 package clean
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -261,4 +262,18 @@ func TestUnsupportedPath(t *testing.T) {
 		assert.Equal(t, "a/$x", UnsupportedPath("a/$x/b"))
 		assert.Equal(t, "@x", UnsupportedPath("@x/a|b"))
 	})
+}
+
+func TestRefusedPath(t *testing.T) {
+	// refused rejects names that start with an x.
+	refused := func(name string) bool { return strings.HasPrefix(name, "x") }
+
+	assert.Equal(t, "", refusedPath("", refused))
+	assert.Equal(t, "", refusedPath("a/b/c", refused))
+	assert.Equal(t, "x", refusedPath("x/a", refused))
+	assert.Equal(t, "a/xb", refusedPath("a/xb/c/xd", refused))
+	assert.Equal(t, "a//xc", refusedPath("a//xc", refused))
+	assert.Equal(t, "/x", refusedPath("/x/", refused))
+	assert.Equal(t, "", refusedPath("/a/", refused))
+	assert.Equal(t, "a/", refusedPath("a/", func(name string) bool { return name == "" }))
 }
