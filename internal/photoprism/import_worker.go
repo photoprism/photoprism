@@ -63,15 +63,15 @@ func importedContent(dest, hash string) bool {
 	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
-// storedFilesOf returns how the files of a group that are not sidecars relate to the indexed files with the same
-// content, and whether all of them, including the main file, are or may be those files themselves. Files of
-// unknown types count as sidecars.
+// storedFilesOf returns how the files of a group relate to the indexed files with the same content, and whether
+// all files that are not sidecars, including the main file, are or may be those files themselves. Files of unknown
+// types count as sidecars.
 func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
 	results = make(map[string]storedResult, len(related.Files)+1)
 	originals = related.Main != nil
 
 	for _, f := range append(MediaFiles{related.Main}, related.Files...) {
-		if f == nil || f.IsSidecar() {
+		if f == nil {
 			continue
 		} else if _, done := results[f.FileName()]; done {
 			continue
@@ -80,7 +80,7 @@ func storedFilesOf(related RelatedFiles) (results map[string]storedResult, origi
 		result := storedFileOf(f)
 		results[f.FileName()] = result
 
-		if result.match != storedSame && result.match != storedMaybeSame {
+		if !f.IsSidecar() && result.match != storedSame && result.match != storedMaybeSame {
 			originals = false
 		}
 	}

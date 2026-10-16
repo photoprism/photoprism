@@ -413,14 +413,15 @@ func TestStoredFileOf(t *testing.T) {
 		}
 
 		xmp := filepath.Join(importDir, "linked.xmp")
-		require.NoError(t, os.WriteFile(xmp, []byte(testXmp), fs.ModeFile))
+		require.NoError(t, os.WriteFile(xmp, []byte(strings.Replace(testXmp, "Pair", "Group "+rnd.Base36(8), 1)), fs.ModeFile))
 		t.Cleanup(func() { _ = os.Remove(xmp) })
 
-		// Sidecars are not looked up, and a group is original only if all other files are.
+		// Sidecars are looked up too, but a group is original if all other files are.
 		results, originals := storedFilesOf(RelatedFiles{Main: mf(linked), Files: MediaFiles{mf(linked), mf(xmp)}})
 		assert.True(t, originals)
-		assert.Len(t, results, 1)
+		assert.Len(t, results, 2)
 		assert.Equal(t, storedSame, results[linked].match)
+		assert.Equal(t, storedNone, results[xmp].match)
 
 		results, originals = storedFilesOf(RelatedFiles{Main: mf(linked), Files: MediaFiles{mf(linked), mf(copied)}})
 		assert.False(t, originals)
@@ -610,6 +611,48 @@ func TestStoredFileOf(t *testing.T) {
 		assert.NoFileExists(t, filepath.Join(cfg.OriginalsPath(), absentRel))
 		assert.NoFileExists(t, companion)
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept d.jpg, as it may be the same file as the original"))
+	})
+	t.Run("LinkedSidecar", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// The indexed sidecar of an original in a folder linked into originals stays there with it, while a new
+		// file next to them is imported.
+		name := "zz-linked-side-" + rnd.Base36(8)
+		target := filepath.Join(filepath.Dir(cfg.OriginalsPath()), name)
+		require.NoError(t, fs.MkdirAll(target))
+		require.NoError(t, os.Symlink(target, filepath.Join(cfg.OriginalsPath(), name)))
+		t.Cleanup(func() { _ = os.Remove(filepath.Join(cfg.OriginalsPath(), name)); _ = os.RemoveAll(target) })
+		main := filepath.Join(target, "e.jpg")
+		writeTestJpeg(t, main, 324)
+		xmp := filepath.Join(target, "e.xmp")
+		require.NoError(t, os.WriteFile(xmp, []byte(strings.Replace(testXmp, "Pair", name, 1)), fs.ModeFile))
+		companion := filepath.Join(target, "e.png")
+		writeTestPng(t, companion, 325)
+		companionHash := fs.Hash(companion)
+		t.Cleanup(func() { cleanupImportedHash(t, companionHash) })
+
+		for _, f := range []string{main, xmp} {
+			row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals,
+				FileName: name + "/" + filepath.Base(f), FileHash: fs.Hash(f)}
+			require.NoError(t, row.Save())
+			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+		}
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		cleanupDestination(t, imp, main, companion)
+		cleanupDestination(t, imp, main, xmp)
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(target, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, main)
+		assert.FileExists(t, xmp)
+		assert.NoFileExists(t, companion)
+		infos := loggedMessages(hook, logrus.InfoLevel)
+		assert.Equal(t, 1, countPrefix(infos, "import: kept e.xmp, as it is the same file as the original"))
 	})
 	t.Run("MoveImport", func(t *testing.T) {
 		if testing.Short() {
