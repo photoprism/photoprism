@@ -183,6 +183,17 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Equal(t, storedCopy, result.match)
 		require.NotNil(t, result.info)
 		assert.True(t, result.unchanged())
+		require.NotNil(t, result.source)
+		assert.True(t, result.sourceUnchanged(copied))
+
+		// A source that changed after it was first read and hashed matches nothing.
+		changed := filepath.Join(t.TempDir(), "changed.jpg")
+		require.NoError(t, fs.Copy(storedPath, changed, false))
+		mf, err = NewMediaFile(changed)
+		require.NoError(t, err)
+		require.Equal(t, file.FileHash, mf.Hash())
+		require.NoError(t, os.WriteFile(changed, []byte("new content"), fs.ModeFile))
+		assert.Equal(t, storedNone, storedFileOf(mf).match)
 	})
 	t.Run("HardLink", func(t *testing.T) {
 		saved := storedHash
@@ -516,6 +527,41 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, err)
 		assert.FileExists(t, dup)
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept changed.jpg, as the stored file has changed"))
+	})
+	t.Run("SourceChanged", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A duplicate is kept if it is rewritten after it was compared, e.g. by a new upload with the same name.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-rewritten-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		dup := filepath.Join(dir, "rewritten.jpg")
+		require.NoError(t, fs.Copy(storedPath, dup, false))
+
+		saved := storedHash
+		t.Cleanup(func() { storedHash = saved })
+		storedHash = func(name string) string {
+			h := saved(name)
+			if name == storedPath {
+				f, err := os.OpenFile(dup, os.O_WRONLY|os.O_APPEND, 0)
+				require.NoError(t, err)
+				_, err = f.WriteString("new content")
+				require.NoError(t, err)
+				require.NoError(t, f.Close())
+			}
+			return h
+		}
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, dup)
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept rewritten.jpg, as it has changed since it was compared"))
 	})
 	t.Run("Snapshot", func(t *testing.T) {
 		if testing.Short() {
@@ -976,55 +1022,89 @@ func TestImport_StartMissingPath(t *testing.T) {
 	assertMissingFolderNotice(t, s.Receiver, "import: directory", "e2e-missing/folder", cfg.ImportPath())
 }
 
-// TestStoredResult_Unchanged checks that a stored copy counts as unchanged only while it is the same file with the
-// same size and modification time.
+// TestSameFileInfo checks that a file counts as unchanged only while it is the same file with the same size and
+// modification time.
+func TestSameFileInfo(t *testing.T) {
+	name := filepath.Join(t.TempDir(), "a.jpg")
+
+	// info writes the file and returns how it was seen.
+	info := func(t *testing.T) os.FileInfo {
+		writeTestJpeg(t, name, 323)
+		result, err := os.Stat(name)
+		require.NoError(t, err)
+		return result
+	}
+
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.True(t, sameFileInfo(name, info(t)))
+	})
+	t.Run("Modified", func(t *testing.T) {
+		i := info(t)
+		later := i.ModTime().Add(time.Second)
+		require.NoError(t, os.Chtimes(name, later, later))
+		assert.False(t, sameFileInfo(name, i))
+	})
+	t.Run("Resized", func(t *testing.T) {
+		i := info(t)
+		require.NoError(t, os.WriteFile(name, []byte("x"), fs.ModeFile))
+		require.NoError(t, os.Chtimes(name, i.ModTime(), i.ModTime()))
+		assert.False(t, sameFileInfo(name, i))
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		i := info(t)
+		other := name + ".tmp"
+		require.NoError(t, fs.Copy(name, other, false))
+		require.NoError(t, os.Chtimes(other, i.ModTime(), i.ModTime()))
+		require.NoError(t, os.Rename(other, name))
+		assert.False(t, sameFileInfo(name, i))
+	})
+	t.Run("Removed", func(t *testing.T) {
+		i := info(t)
+		require.NoError(t, os.Remove(name))
+		assert.False(t, sameFileInfo(name, i))
+	})
+}
+
 func TestStoredResult_Unchanged(t *testing.T) {
 	cfg := config.TestConfig()
 	dir := "zz-unchanged-" + rnd.Base36(8)
 	name := filepath.Join(cfg.OriginalsPath(), dir, "a.jpg")
 	t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(name)) })
-
-	// result writes the stored copy and returns how it was seen.
-	result := func(t *testing.T) storedResult {
-		writeTestJpeg(t, name, 323)
-		info, err := os.Stat(name)
-		require.NoError(t, err)
-		return storedResult{file: &entity.File{FileRoot: entity.RootOriginals, FileName: dir + "/a.jpg"}, match: storedCopy, info: info}
-	}
+	writeTestJpeg(t, name, 323)
+	info, err := os.Stat(name)
+	require.NoError(t, err)
+	r := storedResult{file: &entity.File{FileRoot: entity.RootOriginals, FileName: dir + "/a.jpg"}, match: storedCopy, info: info}
 
 	t.Run("Unchanged", func(t *testing.T) {
-		assert.True(t, result(t).unchanged())
+		assert.True(t, r.unchanged())
 	})
 	t.Run("NoCopy", func(t *testing.T) {
 		assert.False(t, storedResult{}.unchanged())
-		r := result(t)
-		r.info = nil
-		assert.False(t, r.unchanged())
+		assert.False(t, storedResult{file: r.file}.unchanged())
 	})
-	t.Run("Modified", func(t *testing.T) {
-		r := result(t)
-		later := r.info.ModTime().Add(time.Second)
+	t.Run("Changed", func(t *testing.T) {
+		later := info.ModTime().Add(time.Second)
 		require.NoError(t, os.Chtimes(name, later, later))
 		assert.False(t, r.unchanged())
 	})
-	t.Run("Resized", func(t *testing.T) {
-		r := result(t)
-		require.NoError(t, os.WriteFile(name, []byte("x"), fs.ModeFile))
-		require.NoError(t, os.Chtimes(name, r.info.ModTime(), r.info.ModTime()))
-		assert.False(t, r.unchanged())
+}
+
+func TestStoredResult_SourceUnchanged(t *testing.T) {
+	name := filepath.Join(t.TempDir(), "a.jpg")
+	writeTestJpeg(t, name, 323)
+	info, err := os.Stat(name)
+	require.NoError(t, err)
+	r := storedResult{match: storedCopy, source: info}
+
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.True(t, r.sourceUnchanged(name))
 	})
-	t.Run("Replaced", func(t *testing.T) {
-		r := result(t)
-		other := name + ".tmp"
-		require.NoError(t, fs.Copy(name, other, false))
-		require.NoError(t, os.Chtimes(other, r.info.ModTime(), r.info.ModTime()))
-		require.NoError(t, os.Rename(other, name))
-		assert.False(t, r.unchanged())
+	t.Run("NoSource", func(t *testing.T) {
+		assert.False(t, storedResult{}.sourceUnchanged(name))
 	})
-	t.Run("Removed", func(t *testing.T) {
-		r := result(t)
-		require.NoError(t, os.Remove(name))
-		assert.False(t, r.unchanged())
+	t.Run("Changed", func(t *testing.T) {
+		require.NoError(t, os.WriteFile(name, []byte("new content"), fs.ModeFile))
+		assert.False(t, r.sourceUnchanged(name))
 	})
 }
 

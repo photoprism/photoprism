@@ -317,6 +317,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 				case !opt.RemoveExistingFiles:
 				case match == storedCopy && !result.unchanged():
 					log.Infof("import: kept %s, as the stored file has changed", clean.Log(relFileName))
+				case match == storedCopy && !result.sourceUnchanged(f.FileName()):
+					log.Infof("import: kept %s, as it has changed since it was compared", clean.Log(relFileName))
 				case match == storedCopy:
 					if removeErr := f.Remove(); removeErr != nil {
 						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())
