@@ -150,8 +150,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 			destName := fmt.Sprintf("%s.%s%s", unstackFile.AbsPrefix(false), unstackFile.Checksum(), unstackFile.Extension())
 
-			// MediaFile.Move/Copy allow replacing an existing empty destination file
-			// without force, but will not overwrite non-empty files.
+			// The destination name includes the file checksum, so a file that force replaces has the same checksum.
 			if moveErr := unstackFile.Move(destName, true); moveErr != nil {
 				log.Error(moveErr)
 				log.Errorf("photo: cannot rename %s to %s (unstack)", clean.Log(unstackFile.BaseName()), clean.Log(filepath.Base(destName)))
@@ -212,8 +211,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 				// Revert file rename.
 				if unstackSingle {
-					// MediaFile.Move/Copy allow replacing an existing empty destination file
-					// without force, but will not overwrite non-empty files.
+					// Force restores the original name, which the file held before it was renamed.
 					if moveErr := r.Move(photoprism.FileName(relRoot, relName), true); moveErr != nil {
 						log.Error(moveErr)
 						log.Errorf("photo: file name could not be reverted (unstack %s)", clean.Log(r.BaseName()))

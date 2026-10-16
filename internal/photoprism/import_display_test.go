@@ -241,7 +241,9 @@ func TestMediaFile_CopyInterrupted(t *testing.T) {
 			return io.Copy(dst, r)
 		}
 
-		require.Error(t, m.Copy(dest, false))
+		copyErr := m.Copy(dest, false)
+		require.Error(t, copyErr)
+		assert.ErrorIs(t, copyErr, os.ErrExist)
 		content, readErr := os.ReadFile(dest) //nolint:gosec // dest is below a test folder
 		require.NoError(t, readErr)
 		assert.Equal(t, "other writer", string(content))
@@ -257,14 +259,31 @@ func TestMediaFile_CopyInterrupted(t *testing.T) {
 
 		require.NoError(t, m.Copy(dest, false))
 		assert.Equal(t, srcHash, fs.Hash(dest))
-		assert.ErrorContains(t, m.Copy(dest, false), "already exists")
+		assert.ErrorIs(t, m.Copy(dest, false), os.ErrExist)
+		assert.ErrorContains(t, m.Copy(dest, false), "copy: destination name dest.jpg already exists")
 
-		// A forced copy replaces the file and keeps its permissions.
-		require.NoError(t, os.Chmod(dest, 0o600))
+		// A replaced file keeps its mode, which differs from the default the umask gives, also an empty one
+		// replaced without force.
+		defaultInfo, statErr := os.Stat(dest)
+		require.NoError(t, statErr)
+		mode := os.FileMode(0o640)
+
+		if defaultInfo.Mode().Perm() == mode {
+			mode = 0o600
+		}
+
+		require.NoError(t, os.Chmod(dest, mode))
 		require.NoError(t, m.Copy(dest, true))
 		info, statErr := os.Stat(dest)
 		require.NoError(t, statErr)
-		assert.Equal(t, os.FileMode(0o600), info.Mode().Perm())
+		assert.Equal(t, mode, info.Mode().Perm())
+
+		require.NoError(t, os.Truncate(dest, 0))
+		require.NoError(t, m.Copy(dest, false))
+		info, statErr = os.Stat(dest)
+		require.NoError(t, statErr)
+		assert.Equal(t, mode, info.Mode().Perm())
+		assert.Equal(t, srcHash, fs.Hash(dest))
 
 		entries, readErr := os.ReadDir(filepath.Dir(dest))
 		require.NoError(t, readErr)

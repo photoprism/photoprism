@@ -18,6 +18,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	_ "golang.org/x/image/bmp"  // register BMP decoder
@@ -741,7 +742,7 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 		case force:
 			log.Warnf("move: overwriting destination file %s", logName)
 		default:
-			return fmt.Errorf("move: destination name %s already exists", logName)
+			return fmt.Errorf("move: destination name %s %w", logName, errNameExists)
 		}
 	}
 
@@ -821,7 +822,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 		case force:
 			log.Warnf("copy: overwriting destination file %s", logName)
 		default:
-			return fmt.Errorf("copy: destination name %s already exists", logName)
+			return fmt.Errorf("copy: destination name %s %w", logName, errNameExists)
 		}
 	}
 
@@ -841,12 +842,22 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	defer thisFile.Close()
 
-	// Write a staged sibling and publish it only once it is complete. The staged file is removed on every
-	// other way out, including a panic, so it never remains next to the destination.
+	// Write a staged sibling and publish it only once it is complete, removing it on every other way out of
+	// the call, including a panic.
 	stageFile, err := fs.OpenStageFile(filePath)
 
 	if err != nil {
 		return fmt.Errorf("copy: destination file %s cannot be created (%w)", logName, err)
+	}
+
+	// Publishing gives a replaced file a new inode, so its mode is carried over, and its owner where the
+	// process may set it; extended attributes and access control lists are not.
+	if info, statErr := os.Lstat(filePath); statErr == nil && info.Mode().IsRegular() {
+		_ = stageFile.Chmod(info.Mode().Perm())
+
+		if owner, ok := info.Sys().(*syscall.Stat_t); ok {
+			_ = stageFile.Chown(int(owner.Uid), int(owner.Gid))
+		}
 	}
 
 	staged, published := stageFile.Name(), false
@@ -866,11 +877,6 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 		log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(chtimesErr))
 	}
 
-	// A replaced file keeps its permissions, as publishing gives the destination a new inode.
-	if info, statErr := os.Lstat(filePath); force && statErr == nil && info.Mode().IsRegular() {
-		_ = os.Chmod(staged, info.Mode().Perm())
-	}
-
 	if err = fs.PublishFile(staged, filePath, force); err != nil {
 		return fmt.Errorf("copy: %w", err)
 	}
@@ -879,6 +885,18 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	return nil
 }
+
+// errNameExists is returned when a destination name is taken, and matches os.ErrExist.
+var errNameExists error = nameExistsError{}
+
+// nameExistsError is the type of errNameExists.
+type nameExistsError struct{}
+
+// Error returns the error message.
+func (nameExistsError) Error() string { return "already exists" }
+
+// Is reports whether target is os.ErrExist.
+func (nameExistsError) Is(target error) bool { return target == os.ErrExist }
 
 // copyFileContent copies the contents of a file to its staged copy, and can be replaced in tests.
 var copyFileContent = io.Copy
