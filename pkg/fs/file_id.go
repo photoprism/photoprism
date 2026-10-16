@@ -22,12 +22,17 @@ func FileID(info os.FileInfo) (dev, ino uint64, ok bool) {
 	return fileID(info)
 }
 
+// maybeSameTime is how far apart the modification times of one file may be when read through different mounts.
+const maybeSameTime = 2 * time.Second
+
 // MaybeSameFile reports whether two files on different devices have the same size, modification time and inode
 // number, as one file on a network share that is mounted twice does, e.g. over SMB with the server's inode numbers.
-// Times are compared in whole seconds, since mounts may report them with another precision. The result only means
+// Times may differ by up to two seconds, as mounts may round them or keep another precision. The result only means
 // something for two files already known to have the same content.
 func MaybeSameFile(a, b os.FileInfo) bool {
-	if a == nil || b == nil || a.Size() != b.Size() || !a.ModTime().Truncate(time.Second).Equal(b.ModTime().Truncate(time.Second)) {
+	if a == nil || b == nil || a.Size() != b.Size() {
+		return false
+	} else if d := a.ModTime().Sub(b.ModTime()); d > maybeSameTime || d < -maybeSameTime {
 		return false
 	}
 

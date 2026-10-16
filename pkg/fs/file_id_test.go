@@ -60,16 +60,20 @@ func TestMaybeSameFile(t *testing.T) {
 	assert.False(t, MaybeSameFile(stat(a), stat(b)), "no inode for b")
 	assert.False(t, MaybeSameFile(stat(b), stat(a)), "no inode for a")
 
-	// Times are compared in whole seconds. The file infos are made up, as a file system may keep whole seconds only.
+	// Times may differ by up to two seconds. The file infos are made up, as a file system may keep whole seconds only.
 	stub(1, 2, 42, 42, true)
 	second := time.Date(2026, time.October, 16, 12, 0, 0, 0, time.UTC)
 	info := func(name string, ms int) os.FileInfo {
 		return testFileInfo{name: name, size: 4, modTime: second.Add(time.Duration(ms) * time.Millisecond)}
 	}
 	assert.True(t, MaybeSameFile(info("a.jpg", 100), info("b.jpg", 900)), "other precision")
-	assert.False(t, MaybeSameFile(info("a.jpg", 900), info("b.jpg", 1100)), "next second")
+	assert.True(t, MaybeSameFile(info("a.jpg", 900), info("b.jpg", 1000)), "rounded")
+	assert.True(t, MaybeSameFile(info("a.jpg", 2000), info("b.jpg", 0)), "two seconds")
+	assert.True(t, MaybeSameFile(info("a.jpg", 0), info("b.jpg", 2000)), "two seconds")
+	assert.False(t, MaybeSameFile(info("a.jpg", 2001), info("b.jpg", 0)), "more than two seconds")
+	assert.False(t, MaybeSameFile(info("a.jpg", 0), info("b.jpg", 2001)), "more than two seconds")
 
-	require.NoError(t, os.Chtimes(b, modTime.Add(time.Second), modTime.Add(time.Second)))
+	require.NoError(t, os.Chtimes(b, modTime.Add(3*time.Second), modTime.Add(3*time.Second)))
 	assert.False(t, MaybeSameFile(stat(a), stat(b)), "other time")
 	require.NoError(t, os.Chtimes(b, modTime, modTime))
 	require.NoError(t, os.WriteFile(b, []byte("other"), ModeFile))
