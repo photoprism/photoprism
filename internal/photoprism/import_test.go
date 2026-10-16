@@ -613,6 +613,44 @@ func TestStoredFileOf(t *testing.T) {
 		assert.NoFileExists(t, companion)
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept d.jpg, as it may be the same file as the original"))
 	})
+	t.Run("HeldMainType", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A new file of a type that is not allowed is not placed in originals in place of a main file that is already
+		// indexed, whether the main file is the original itself or a copy of it. The JPEG files are reached first.
+		video := filepath.Join(filepath.Dir(storedPath), "held-"+rnd.Base36(8)+".mp4")
+		require.NoError(t, fs.Copy(filepath.Join(cfg.SamplesPath(), "gopher-video.mp4"), video, false))
+		row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals,
+			FileName: fs.RelName(video, cfg.OriginalsPath()), FileHash: fs.Hash(video)}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-type-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		require.NoError(t, os.Link(video, filepath.Join(dir, "same.mp4")))
+		writeTestJpeg(t, filepath.Join(dir, "same.jpg"), 326)
+		require.NoError(t, fs.Copy(video, filepath.Join(dir, "copy.mp4"), false))
+		writeTestJpeg(t, filepath.Join(dir, "copy.jpg"), 327)
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		imp.AllowExt = fs.NewExtList("mp4")
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, filepath.Join(dir, "same.mp4"))
+		assert.NoFileExists(t, filepath.Join(dir, "copy.mp4"))
+		assert.FileExists(t, filepath.Join(dir, "same.jpg"))
+		assert.FileExists(t, filepath.Join(dir, "copy.jpg"))
+		warnings := loggedMessages(hook, logrus.WarnLevel)
+		assert.Equal(t, 1, countPrefix(warnings, "import: skipped same.jpg because the file type is not allowed"))
+		assert.Equal(t, 1, countPrefix(warnings, "import: skipped copy.jpg because the file type is not allowed"))
+		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: moving"))
+	})
 	t.Run("LinkedSidecar", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")
@@ -957,6 +995,31 @@ func TestStoredResult_Unchanged(t *testing.T) {
 		r := result(t)
 		require.NoError(t, os.Remove(name))
 		assert.False(t, r.unchanged())
+	})
+}
+
+func TestMainTypeRefused(t *testing.T) {
+	dir := t.TempDir()
+	jpg := filepath.Join(dir, "a.jpg")
+	writeTestJpeg(t, jpg, 328)
+	unknown := filepath.Join(dir, "a.unknown")
+	require.NoError(t, os.WriteFile(unknown, []byte("x"), fs.ModeFile))
+
+	mf := func(name string) *MediaFile {
+		f, err := NewMediaFile(name)
+		require.NoError(t, err)
+		return f
+	}
+
+	t.Run("Allowed", func(t *testing.T) {
+		assert.Empty(t, mainTypeRefused(mf(jpg), fs.NewExtList("")))
+		assert.Empty(t, mainTypeRefused(mf(jpg), fs.NewExtList("jpg,png")))
+	})
+	t.Run("NotAllowed", func(t *testing.T) {
+		assert.Equal(t, "because the file type is not allowed", mainTypeRefused(mf(jpg), fs.NewExtList("png")))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.Equal(t, "due to unknown or unsupported extension", mainTypeRefused(mf(unknown), fs.NewExtList("")))
 	})
 }
 

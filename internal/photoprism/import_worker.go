@@ -89,6 +89,18 @@ func storedFilesOf(related RelatedFiles) (results map[string]storedResult, origi
 	return results, originals
 }
 
+// mainTypeRefused returns why a file is not imported as the main file of a group because of its type, if it is not.
+func mainTypeRefused(f *MediaFile, allowExt fs.ExtList) string {
+	switch fileType := f.FileType(); {
+	case fileType == fs.TypeUnknown:
+		return "due to unknown or unsupported extension"
+	case allowExt.Excludes(fileType.DefaultExt()):
+		return "because the file type is not allowed"
+	default:
+		return ""
+	}
+}
+
 // storedPhotoUIDs returns the sorted, unique picture UIDs of the stored files in results.
 func storedPhotoUIDs(results map[string]storedResult) []string {
 	uids := make([]string, 0, len(results))
@@ -108,7 +120,6 @@ func storedPhotoUIDs(results map[string]storedResult) []string {
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
 		var destMainFileName, destOtherFileName string
-		var mainHeld bool
 
 		o := job.IndexOpt
 
@@ -128,13 +139,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 		}
 
 		originalName := related.Main.RelName(src)
-		mainFileType := related.Main.FileType()
 
-		if mainFileType == fs.TypeUnknown {
-			log.Warnf("import: skipped %s due to unknown or unsupported extension", clean.Log(originalName))
-			continue
-		} else if allowExt.Excludes(mainFileType.DefaultExt()) {
-			log.Warnf("import: skipped %s because the file type is not allowed", clean.Log(originalName))
+		if reason := mainTypeRefused(related.Main, allowExt); reason != "" {
+			log.Warnf("import: skipped %s %s", clean.Log(originalName), reason)
 			continue
 		}
 
@@ -175,10 +182,27 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 		}
 
+		// A new file is indexed in place of a main file that is already indexed, so whether that is the case is
+		// known before any file is placed, and only a file that could be the main file itself is placed then.
+		mainChecked := results[related.Main.FileName()].match
+		mainHeld := mainChecked == storedSame || mainChecked == storedMaybeSame
+
+		if !mainHeld && len(related.Files) > 1 {
+			_, mainErr := imp.DestinationFilename(related.Main, related.Main, opt.DestFolder)
+			mainHeld = mainErr != nil
+		}
+
 		for _, f := range insta360ImportOrder(related) {
 			relFileName := f.RelName(src)
 			checked := results[f.FileName()].match
 			destFileName, err := "", error(nil)
+
+			if mainHeld && checked == storedNone && !f.IsSidecar() && !related.Main.HasSameName(f) {
+				if reason := mainTypeRefused(f, allowExt); reason != "" {
+					log.Warnf("import: skipped %s %s", clean.Log(relFileName), reason)
+					continue
+				}
+			}
 
 			// A file that is or may be an original stays where it is, even if the name of another row is free.
 			if checked != storedSame && checked != storedMaybeSame {
