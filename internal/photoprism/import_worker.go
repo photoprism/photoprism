@@ -238,7 +238,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 		mainDest, mainDestErr, mainDestKnown := "", error(nil), false
 
 		if !mainHeld && (slices.ContainsFunc(related.Files, refusedNew) || !allowedNew && slices.ContainsFunc(related.Files, movedSidecar)) {
-			mainDest, mainDestErr = imp.DestinationFilename(related.Main, related.Main, opt.DestFolder)
+			mainDest, mainDestErr = imp.destinationFilename(related.Main, related.Main, opt.DestFolder, results[related.Main.FileName()])
 			mainDestKnown, mainHeld = true, mainDestErr != nil
 		}
 
@@ -260,7 +260,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			case mainDestKnown && related.Main.HasSameName(f):
 				destFileName, err = mainDest, mainDestErr
 			default:
-				destFileName, err = imp.DestinationFilename(related.Main, f, opt.DestFolder)
+				destFileName, err = imp.destinationFilename(related.Main, f, opt.DestFolder, results[f.FileName()])
 			}
 
 			// A sidecar that would get a free name stays too, while one whose content is there is a duplicate.

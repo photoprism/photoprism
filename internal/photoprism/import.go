@@ -467,10 +467,12 @@ const (
 // storedResult is how a file relates to the indexed files with the same content, with the file infos of a copy
 // and of the file itself.
 type storedResult struct {
-	file   *entity.File
-	match  storedMatch
-	info   os.FileInfo
-	source os.FileInfo
+	file    *entity.File
+	match   storedMatch
+	info    os.FileInfo
+	source  os.FileInfo
+	rows    entity.Files // all files with the hash, in any root, if queried
+	queried bool
 }
 
 // unchanged reports whether the stored copy is still the file with the size and modification time it had when
@@ -511,6 +513,20 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 		return storedResult{}
 	}
 
+	files, err := filesByHash(fileHash)
+
+	if err != nil {
+		return storedResult{}
+	}
+
+	result := storedMatchOf(mediaFile, fileHash, files)
+	result.rows, result.queried = files, true
+
+	return result
+}
+
+// storedMatchOf reports how a file with the given hash relates to the indexed files with that hash, see storedFileOf.
+func storedMatchOf(mediaFile *MediaFile, fileHash string, files entity.Files) storedResult {
 	src, srcErr := os.Stat(mediaFile.FileName())
 
 	if srcErr != nil {
@@ -521,12 +537,6 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 	// but it may still be a stored file itself.
 	first := mediaFile.FileInfo()
 	changed := first == nil || !sameInfo(first, src)
-
-	files, err := entity.FilesByHash(fileHash)
-
-	if err != nil {
-		return storedResult{}
-	}
 
 	// The file itself is found without reading any file, so every row is checked for it first. A stored file that
 	// cannot be checked, other than an absent one, may be the file itself.
@@ -586,6 +596,12 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 
 	return found
 }
+
+// filesByHash returns the indexed files with a hash, and can be replaced in tests.
+var filesByHash = entity.FilesByHash
+
+// firstFileByHash returns the first indexed file with a hash, and can be replaced in tests.
+var firstFileByHash = entity.FirstFileByHash
 
 // storedHash returns the hash of an indexed file, which reads the whole file.
 var storedHash = fs.Hash
@@ -779,6 +795,12 @@ func (imp *Import) CheckDest(folder string) error {
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
 // Format: 2006/01/20060102_150405_CHECKSUM.ext
 func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile, folder string) (string, error) {
+	return imp.destinationFilename(mainFile, mediaFile, folder, storedResult{})
+}
+
+// destinationFilename works like DestinationFilename, but takes the files with the hash of mediaFile in any root
+// from stored if they were queried, so that a new file costs one lookup.
+func (imp *Import) destinationFilename(mainFile, mediaFile *MediaFile, folder string, stored storedResult) (string, error) {
 	// Get the import destination path and file name patterns.
 	pathPattern, namePattern := imp.conf.Settings().Import.GetDestName()
 
@@ -787,7 +809,18 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	dateCreated := mainFile.DateCreated()
 
 	if !mediaFile.IsSidecar() {
-		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
+		var f entity.File
+		found := false
+
+		if !stored.queried {
+			var err error
+			f, err = firstFileByHash(mediaFile.Hash())
+			found = err == nil
+		} else if len(stored.rows) > 0 {
+			f, found = stored.rows[0], true
+		}
+
+		if found {
 			existingFilename := FileName(f.FileRoot, f.FileName)
 
 			// The recorded name has three states, not two: the file is there and this is a duplicate,

@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -397,6 +399,15 @@ func TestStoredFileOf(t *testing.T) {
 		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedNone, match)
 		assert.Nil(t, found)
+
+		// The destination name still counts the sidecar, also with the files looked up for the group, so a file
+		// identical to a preview is not imported as a second picture of it.
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		_, destErr := imp.destinationFilename(mf, mf, "", storedFileOf(mf))
+		assert.ErrorContains(t, destErr, "is already indexed as")
+		_, destErr = imp.DestinationFilename(mf, mf, "")
+		assert.ErrorContains(t, destErr, "is already indexed as")
 
 		require.NoError(t, os.Remove(filepath.Join(dir, "copy.jpg")))
 		require.NoError(t, os.Link(src, filepath.Join(dir, "copy.jpg")))
@@ -1369,4 +1380,136 @@ func cleanupImportedHash(t *testing.T, hash string) {
 	_ = entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID).Error
 	_ = entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID).Error
 	_ = entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID).Error
+}
+
+// TestImport_HashLookups checks that the import looks up the hash of each new media file once, and that two groups
+// with the same content, imported by two workers, give one picture.
+func TestImport_HashLookups(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	cfg := config.TestConfig()
+
+	// countLookups counts the hash lookups by hash, and calls wait before each lookup of a files list.
+	countLookups := func(t *testing.T, wait func(hash string)) map[string]int {
+		var mu sync.Mutex
+		counts := make(map[string]int)
+		savedFiles, savedFirst := filesByHash, firstFileByHash
+		t.Cleanup(func() { filesByHash, firstFileByHash = savedFiles, savedFirst })
+
+		count := func(hash string) {
+			mu.Lock()
+			counts[hash]++
+			mu.Unlock()
+		}
+
+		filesByHash = func(hash string) (entity.Files, error) {
+			count(hash)
+			wait(hash)
+			return savedFiles(hash)
+		}
+		firstFileByHash = func(hash string) (entity.File, error) {
+			count(hash)
+			return savedFirst(hash)
+		}
+
+		return counts
+	}
+
+	t.Run("OnePerNewFile", func(t *testing.T) {
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-lookups-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+
+		names := map[string]int{"a.jpg": 334, "a.png": 335, "b.jpg": 336}
+		hashes := make([]string, 0, len(names))
+
+		for name, seed := range names {
+			if strings.HasSuffix(name, ".png") {
+				writeTestPng(t, filepath.Join(dir, name), seed)
+			} else {
+				writeTestJpeg(t, filepath.Join(dir, name), seed)
+			}
+
+			hash := fs.Hash(filepath.Join(dir, name))
+			hashes = append(hashes, hash)
+			t.Cleanup(func() { cleanupImportedHash(t, hash) })
+		}
+
+		for _, name := range []string{"a.xmp", "b.xmp"} {
+			require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte(strings.Replace(testXmp, "Pair", name+" "+filepath.Base(dir), 1)), fs.ModeFile))
+		}
+
+		counts := countLookups(t, func(string) {})
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+
+		total := 0
+
+		for _, c := range counts {
+			total += c
+		}
+
+		for _, hash := range hashes {
+			assert.Equal(t, 1, counts[hash], hash)
+		}
+
+		assert.Equal(t, len(names), total, "sidecars are not looked up")
+	})
+	t.Run("IdenticalGroups", func(t *testing.T) {
+		saved := cfg.Options().IndexWorkers
+		t.Cleanup(func() { cfg.Options().IndexWorkers = saved })
+		cfg.Options().IndexWorkers = "2"
+
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-twice-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "one")))
+		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "two")))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		first, second := filepath.Join(dir, "one", "x.jpg"), filepath.Join(dir, "two", "y.jpg")
+		writeTestJpeg(t, first, 337)
+		require.NoError(t, fs.Copy(first, second, false))
+		hash := fs.Hash(first)
+		t.Cleanup(func() { cleanupImportedHash(t, hash) })
+
+		// Both groups look up the hash before either is moved, so the second relies on the destination name.
+		var arrived sync.WaitGroup
+		arrived.Add(2)
+		release := make(chan struct{})
+		var once sync.Once
+		go func() {
+			arrived.Wait()
+			once.Do(func() { close(release) })
+		}()
+		go func() {
+			time.Sleep(5 * time.Second)
+			once.Do(func() { close(release) })
+		}()
+
+		var arrivals atomic.Int32
+		countLookups(t, func(h string) {
+			if h == hash && arrivals.Add(1) <= 2 {
+				arrived.Done()
+				<-release
+			}
+		})
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+
+		var files entity.Files
+		require.NoError(t, entity.UnscopedDb().Where("file_hash = ? AND file_root = ?", hash, entity.RootOriginals).Find(&files).Error)
+		require.Len(t, files, 1, "one file in originals holds the content")
+		assert.FileExists(t, FileName(files[0].FileRoot, files[0].FileName))
+
+		var photos int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_hash = ?", hash).Distinct("photo_id").Count(&photos).Error)
+		assert.Equal(t, int64(1), photos, "one picture")
+	})
 }
