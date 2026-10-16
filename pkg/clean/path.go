@@ -4,6 +4,8 @@ import (
 	"path"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // pathReserved lists the characters Path removes from a path, in addition to the unsafe ones.
@@ -89,4 +91,35 @@ func PortableName(name string) bool {
 	}
 
 	return !strings.ContainsFunc(name, unsafePathRune)
+}
+
+// UnportablePath returns a slash-separated path up to and including its first name that is not portable, or an
+// empty string if all of its names are.
+func UnportablePath(rel string) string {
+	return refusedPath(rel, func(name string) bool { return !PortableName(name) })
+}
+
+// UnsupportedPath returns a slash-separated path up to and including its first name that is not portable or is
+// hidden, as fs.FileNameHidden reports it, or an empty string if all of its names are portable and visible.
+func UnsupportedPath(rel string) string {
+	return refusedPath(rel, func(name string) bool { return !PortableName(name) || fs.FileNameHidden(name) })
+}
+
+// refusedPath returns a slash-separated path up to and including its first name that refused reports.
+func refusedPath(rel string, refused func(name string) bool) string {
+	for i := 0; i <= len(rel); {
+		j := strings.IndexByte(rel[i:], '/')
+
+		if j < 0 {
+			j = len(rel) - i
+		}
+
+		if refused(rel[i : i+j]) {
+			return rel[:i+j]
+		}
+
+		i += j + 1
+	}
+
+	return ""
 }

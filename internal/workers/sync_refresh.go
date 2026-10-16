@@ -270,11 +270,5 @@ func portableSyncName(root, name string) bool {
 		rel = rel[len(root):]
 	}
 
-	for _, part := range strings.Split(strings.Trim(rel, "/"), "/") {
-		if !clean.PortableName(part) {
-			return false
-		}
-	}
-
-	return true
+	return clean.UnportablePath(strings.Trim(rel, "/")) == ""
 }

@@ -173,21 +173,6 @@ func TestSkipUnportableDir(t *testing.T) {
 	})
 }
 
-func TestUnportablePath(t *testing.T) {
-	t.Run("Portable", func(t *testing.T) {
-		for _, rel := range []string{"", "a", "2020/03 - Março/#1 & Friends.jpg", "a/b/c"} {
-			assert.Equal(t, "", unportablePath(rel), rel)
-		}
-	})
-	t.Run("NotPortable", func(t *testing.T) {
-		assert.Equal(t, "a|b", unportablePath("a|b"))
-		assert.Equal(t, "2020/dir*", unportablePath("2020/dir*/inner.jpg"))
-		assert.Equal(t, "2020/x:y.jpg", unportablePath("2020/x:y.jpg"))
-		assert.Equal(t, "~home", unportablePath("~home/a/b"))
-		assert.Equal(t, "a/caf\xe9", unportablePath("a/caf\xe9/b"))
-	})
-}
-
 func TestWarnUnportable(t *testing.T) {
 	hook := captureLog(t)
 	rel := "warn-unportable/" + strconv.Itoa(len(unportablePaths.seen)) + "|x"
@@ -347,16 +332,3 @@ func TestPortableSiblings(t *testing.T) {
 	})
 }
 
-func TestUnsupportedPath(t *testing.T) {
-	t.Run("Supported", func(t *testing.T) {
-		for _, rel := range []string{"", "2019/10", "users/jane.doe", "a_b/c"} {
-			assert.Equal(t, "", unsupportedPath(rel), rel)
-		}
-	})
-	t.Run("NotSupported", func(t *testing.T) {
-		assert.Equal(t, "2019/a:b", unsupportedPath("2019/a:b/c"))
-		assert.Equal(t, "users/__bob", unsupportedPath("users/__bob/x"))
-		assert.Equal(t, "@eaDir", unsupportedPath("@eaDir"))
-		assert.Equal(t, "a/$x", unsupportedPath("a/$x/b"))
-	})
-}

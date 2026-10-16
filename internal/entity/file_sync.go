@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"hash/crc32"
 	"strconv"
-	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -142,7 +141,7 @@ func ResetFileSyncUnportable(serviceID uint) error {
 	names := make([]string, 0, len(rows))
 
 	for _, row := range rows {
-		if portablePath(row.FileName) {
+		if clean.UnportablePath(row.FileName) == "" {
 			names = append(names, row.RemoteName)
 		}
 	}
@@ -158,17 +157,6 @@ func ResetFileSyncUnportable(serviceID uint) error {
 	}
 
 	return nil
-}
-
-// portablePath reports whether every name in a slash-separated path is portable.
-func portablePath(name string) bool {
-	for _, part := range strings.Split(name, "/") {
-		if !clean.PortableName(part) {
-			return false
-		}
-	}
-
-	return true
 }
 
 // FileSyncUploadName returns the placeholder name that records a failed upload of a local file.

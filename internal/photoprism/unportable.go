@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/dustin/go-humanize/english"
@@ -81,31 +80,11 @@ func (w *warnedPaths) Flush(prefix string) int {
 	return n
 }
 
-// unportablePath returns a slash-separated relative path up to and including its first name that is not
-// portable, or an empty string if all of its names are.
-func unportablePath(rel string) string {
-	for i := 0; i <= len(rel); {
-		j := strings.IndexByte(rel[i:], '/')
-
-		if j < 0 {
-			j = len(rel) - i
-		}
-
-		if !clean.PortableName(rel[i : i+j]) {
-			return rel[:i+j]
-		}
-
-		i += j + 1
-	}
-
-	return ""
-}
-
 // skipUnportableDir returns the part of a folder's relative path up to its first name that is not portable, and then
 // removes the folder, and the folder a symbolic link points to, from the walked folders, so that a folder reached
 // under another name is still walked under that name. It returns an empty string if all names are portable.
 func skipUnportableDir(done fs.Done, fileName, rel string, isSymlink bool) string {
-	p := unportablePath(rel)
+	p := clean.UnportablePath(rel)
 
 	if p == "" {
 		return ""
@@ -120,22 +99,6 @@ func skipUnportableDir(done fs.Done, fileName, rel string, isSymlink bool) strin
 	}
 
 	return p
-}
-
-// unsupportedPath returns a slash-separated relative path up to and including its first name that is not
-// portable or hidden, or an empty string if all of its names are portable and visible.
-func unsupportedPath(rel string) string {
-	if p := unportablePath(rel); p != "" {
-		return p
-	}
-
-	for i, part := range strings.Split(rel, "/") {
-		if fs.FileNameHidden(part) {
-			return strings.Join(strings.Split(rel, "/")[:i+1], "/")
-		}
-	}
-
-	return ""
 }
 
 // warnUnportable logs once per process that a path below a root was skipped because its name is not
@@ -196,7 +159,7 @@ func portableGroup(related RelatedFiles, mf *MediaFile, keepMf bool, skipped fun
 		case keepMf && mf != nil && f.FileName() == mf.FileName():
 			return true
 		case keepMf && f.Root() == entity.RootOriginals:
-			return unportablePath(filepath.ToSlash(f.RootRelName())) == ""
+			return clean.UnportablePath(filepath.ToSlash(f.RootRelName())) == ""
 		default:
 			return clean.PortableName(filepath.Base(f.FileName()))
 		}

@@ -319,20 +319,6 @@ func TestResetFileSyncUnportable(t *testing.T) {
 	assert.ElementsMatch(t, kept, names(t, serviceID))
 }
 
-func TestPortablePath(t *testing.T) {
-	t.Run("Portable", func(t *testing.T) {
-		assert.True(t, portablePath("2019/03 - Março/#1 & Friends.jpg"))
-		assert.True(t, portablePath("a.jpg"))
-		assert.True(t, portablePath("@eaDir/x.jpg"))
-		assert.True(t, portablePath("__MACOSX/_.x.jpg"))
-	})
-	t.Run("NotPortable", func(t *testing.T) {
-		assert.False(t, portablePath("2019/a:b.jpg"))
-		assert.False(t, portablePath("dir*/x.jpg"))
-		assert.False(t, portablePath("caf\xe9/x.jpg"))
-	})
-}
-
 func TestFileSyncUploadName(t *testing.T) {
 	assert.Equal(t, ".photoprism/sync/upload/42", FileSyncUploadName(42))
 	assert.True(t, strings.HasPrefix(FileSyncUploadName(0), FileSyncUploadPrefix))

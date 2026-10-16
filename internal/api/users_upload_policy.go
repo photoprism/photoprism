@@ -30,13 +30,7 @@ func uploadSidecarAllowed(name string) bool {
 // supportedEntryName reports whether every name in an archive path is portable and not hidden, separated by
 // slashes or backslashes like the path it is extracted to.
 func supportedEntryName(name string) bool {
-	for _, part := range strings.Split(strings.ReplaceAll(name, "\\", "/"), "/") {
-		if !clean.PortableName(part) || fs.FileNameHidden(part) {
-			return false
-		}
-	}
-
-	return true
+	return clean.UnsupportedPath(strings.ReplaceAll(name, "\\", "/")) == ""
 }
 
 // uploadArchiveEntryAllowed checks archive paths, names and file formats before extraction.

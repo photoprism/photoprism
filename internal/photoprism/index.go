@@ -541,7 +541,7 @@ func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult)
 
 	// Related files whose names are not portable are not indexed with the file.
 	if related = PortableSiblings(related, file, func(f *MediaFile) {
-		if p := unportablePath(filepath.ToSlash(f.RootRelName())); p != "" {
+		if p := clean.UnportablePath(filepath.ToSlash(f.RootRelName())); p != "" {
 			warnUnportable("index", entity.RootOriginals, p, "index it")
 		}
 	}); related.Main == nil {

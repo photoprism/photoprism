@@ -644,7 +644,7 @@ func resolvedPath(dir string) string {
 // portable or hidden, which the index would skip.
 func (imp *Import) CheckDest(folder string) error {
 	// Checked as cleaned, since the destination is joined below the originals folder; ".." is refused as hidden.
-	if rel := path.Clean(clean.SlashPath(folder)); rel != "." && unsupportedPath(rel) != "" {
+	if rel := path.Clean(clean.SlashPath(folder)); rel != "." && clean.UnsupportedPath(rel) != "" {
 		return importError{fmt.Sprintf("destination folder %s is not supported", clean.Log(folder)), ErrImportDest}
 	}
 
@@ -652,7 +652,7 @@ func (imp *Import) CheckDest(folder string) error {
 	pathPattern, namePattern := imp.conf.Settings().Import.GetDestName()
 	sample := time.Date(2026, time.October, 15, 13, 4, 5, 0, time.UTC)
 
-	if unsupportedPath(path.Join(sample.Format(pathPattern), fs.CanonicalName(sample, "", namePattern)+".jpg")) != "" {
+	if clean.UnsupportedPath(path.Join(sample.Format(pathPattern), fs.CanonicalName(sample, "", namePattern)+".jpg")) != "" {
 		return importError{fmt.Sprintf("destination pattern %s is not supported", clean.Log(imp.conf.Settings().Import.GetDest())), ErrImportDest}
 	}
 
@@ -683,7 +683,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 				// two files are identical. StoredCopyOf is what establishes that, for the caller
 				// that removes its source.
 				return existingFilename, fmt.Errorf("%s is already indexed as %s", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName))
-			} else if !fs.IsSymlink(existingFilename) && unportablePath(f.FileName) == "" {
+			} else if !fs.IsSymlink(existingFilename) && clean.UnportablePath(f.FileName) == "" {
 				return existingFilename, nil
 			}
 		}
