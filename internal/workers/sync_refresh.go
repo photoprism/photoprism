@@ -104,16 +104,18 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	}
 
 	for _, dir := range dirs {
-		if key := path.Clean("/" + dir); listed[key] {
+		key := path.Clean("/" + dir)
+
+		if listed[key] {
 			continue
-		} else {
-			listed[key] = true
 		}
+
+		listed[key] = true
 
 		if webdav.SkipSyncPath(dir) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(dir))
 			continue
-		} else if path.Clean("/"+dir) != syncDir && !portableSyncName(nameRoot, dir) {
+		} else if key != syncDir && !portableSyncName(nameRoot, dir) {
 			// The sync folder itself is listed, which matters when its files are imported.
 			unsupported.Add(dir)
 			continue
@@ -130,15 +132,17 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		}
 
 		for _, file := range files {
+			excluded := webdav.SkipSyncPath(file.Abs)
+
 			// A file whose name is not portable is not queued, and is removed from the queue like an unlisted one.
-			if !webdav.SkipSyncPath(file.Abs) && !portableSyncName(nameRoot, file.Abs) {
+			if !excluded && !portableSyncName(nameRoot, file.Abs) {
 				unsupported.Add(file.Abs)
 				continue
 			}
 
 			delete(unlisted, file.Abs)
 
-			if webdav.SkipSyncPath(file.Abs) {
+			if excluded {
 				log.Debugf("sync: skipping excluded path %s", clean.Log(file.Abs))
 				continue
 			}
