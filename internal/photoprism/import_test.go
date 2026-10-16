@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	iofs "io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -1313,8 +1314,16 @@ func TestStoredFileAt(t *testing.T) {
 		assert.Equal(t, storedSame, storedFileAt(same, entity.RootOriginals, dir+"/a.jpg").match)
 	})
 	t.Run("NotIndexed", func(t *testing.T) {
+		// A file under the name with the same content is a copy, also if it is not indexed yet.
+		require.NoError(t, fs.Copy(stored, filepath.Join(filepath.Dir(stored), "c.jpg"), false))
+		result := storedFileAt(mf, entity.RootOriginals, dir+"/c.jpg")
+		assert.Equal(t, storedCopy, result.match)
+		require.NotNil(t, result.file)
+		assert.Zero(t, result.file.ID)
+		assert.True(t, result.unchanged())
+
 		assert.Equal(t, storedNone, storedFileAt(mf, entity.RootOriginals, dir+"/b.jpg").match)
-		assert.Equal(t, storedNone, storedFileAt(mf, entity.RootSidecar, dir+"/a.jpg").match)
+		assert.Equal(t, storedNone, storedFileAt(mf, entity.RootOriginals, "").match)
 		assert.Equal(t, storedNone, storedFileAt(nil, entity.RootOriginals, dir+"/a.jpg").match)
 	})
 }
@@ -1454,7 +1463,7 @@ func TestImport_HashLookups(t *testing.T) {
 
 	cfg := config.TestConfig()
 
-	// countLookups counts the hash lookups by hash, and calls wait before each lookup of a files list.
+	// countLookups counts the hash lookups by hash, and calls wait after each lookup of a files list.
 	countLookups := func(t *testing.T, wait func(hash string)) map[string]int {
 		var mu sync.Mutex
 		counts := make(map[string]int)
@@ -1469,8 +1478,9 @@ func TestImport_HashLookups(t *testing.T) {
 
 		filesByHash = func(hash string) (entity.Files, error) {
 			count(hash)
+			files, err := savedFiles(hash)
 			wait(hash)
-			return savedFiles(hash)
+			return files, err
 		}
 		firstFileByHash = func(hash string) (entity.File, error) {
 			count(hash)
@@ -1523,56 +1533,116 @@ func TestImport_HashLookups(t *testing.T) {
 
 		assert.Equal(t, len(names), total, "sidecars are not looked up")
 	})
-	t.Run("IdenticalGroups", func(t *testing.T) {
+	// importIdentical imports two copies of one picture in two groups with two workers, calling wait for each lookup
+	// of its hash, checks that one copy ends up in originals, and returns how many stay in the import folder.
+	importIdentical := func(t *testing.T, seed int, wait func(t *testing.T, arrival int32, hash string)) int {
 		saved := cfg.Options().IndexWorkers
 		t.Cleanup(func() { cfg.Options().IndexWorkers = saved })
 		cfg.Options().IndexWorkers = "2"
+
+		if cfg.IndexWorkers() < 2 {
+			t.Skip("skipping test with fewer than two index workers.")
+		}
 
 		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-twice-"+rnd.Base36(8))
 		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "one")))
 		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "two")))
 		t.Cleanup(func() { _ = os.RemoveAll(dir) })
 		first, second := filepath.Join(dir, "one", "x.jpg"), filepath.Join(dir, "two", "y.jpg")
-		writeTestJpeg(t, first, 337)
+		writeTestJpeg(t, first, seed)
 		require.NoError(t, fs.Copy(first, second, false))
-		hash := fs.Hash(first)
-		t.Cleanup(func() { cleanupImportedHash(t, hash) })
+		modTime := time.Date(2019, time.December, 1, 12, 0, 0, 0, time.UTC)
 
-		// Both groups look up the hash before either is moved, so the second relies on the destination name.
+		for _, name := range []string{first, second} {
+			require.NoError(t, os.Chtimes(name, modTime, modTime))
+		}
+
+		hash := fs.Hash(first)
+		t.Cleanup(func() {
+			cleanupImportedHash(t, hash)
+			_ = entity.UnscopedDb().Delete(&entity.Duplicate{}, "file_hash = ?", hash).Error
+		})
+
+		// Both copies get the same destination name, which is all the second worker has to go by.
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		dest := cleanupDestination(t, imp, first, first)
+		require.Equal(t, dest, cleanupDestination(t, imp, second, second))
+
+		var arrivals atomic.Int32
+		countLookups(t, func(h string) {
+			if h == hash {
+				wait(t, arrivals.Add(1), hash)
+			}
+		})
+
+		hook := captureLog(t)
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+
+		var copies []string
+		require.NoError(t, filepath.WalkDir(filepath.Dir(dest), func(name string, d iofs.DirEntry, walkErr error) error {
+			if walkErr == nil && !d.IsDir() && fs.Hash(name) == hash {
+				copies = append(copies, name)
+			}
+			return walkErr
+		}))
+		assert.Equal(t, []string{dest}, copies)
+
+		remaining := 0
+
+		for _, name := range []string{first, second} {
+			if fs.FileExists(name) {
+				remaining++
+			}
+		}
+
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: added main jpg file"))
+
+		return remaining
+	}
+
+	t.Run("IdenticalGroups", func(t *testing.T) {
+		// Both groups look up the hash before either is moved, so both choose the same destination name.
 		var arrived sync.WaitGroup
 		arrived.Add(2)
 		release := make(chan struct{})
 		var once sync.Once
+		var timedOut atomic.Bool
 		go func() {
 			arrived.Wait()
 			once.Do(func() { close(release) })
 		}()
-		go func() {
-			time.Sleep(5 * time.Second)
-			once.Do(func() { close(release) })
-		}()
+		timer := time.AfterFunc(10*time.Second, func() {
+			once.Do(func() { timedOut.Store(true); close(release) })
+		})
+		t.Cleanup(func() { timer.Stop() })
 
-		var arrivals atomic.Int32
-		countLookups(t, func(h string) {
-			if h == hash && arrivals.Add(1) <= 2 {
+		remaining := importIdentical(t, 337, func(t *testing.T, arrival int32, hash string) {
+			if arrival <= 2 {
 				arrived.Done()
 				<-release
 			}
 		})
 
-		convert := NewConvert(cfg)
-		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		assert.False(t, timedOut.Load(), "both workers looked up the hash before either moved its file")
+		assert.LessOrEqual(t, remaining, 1, "one copy was moved")
+	})
+	t.Run("IdenticalGroupsAfterIndexing", func(t *testing.T) {
+		// The second group looked up the hash before the first was indexed, and goes on once it is, so it relies on
+		// the file under the destination name rather than on a row, and removes its copy.
+		remaining := importIdentical(t, 339, func(t *testing.T, arrival int32, hash string) {
+			if arrival != 2 {
+				return
+			}
 
-		_, err := imp.Run(ImportOptionsMove(dir, ""))
-		require.NoError(t, err)
+			assert.Eventually(t, func() bool {
+				var count int64
+				_ = entity.UnscopedDb().Model(&entity.File{}).Where("file_hash = ? AND file_root = ?", hash, entity.RootOriginals).Count(&count).Error
+				return count > 0
+			}, 10*time.Second, 50*time.Millisecond)
+		})
 
-		var files entity.Files
-		require.NoError(t, entity.UnscopedDb().Where("file_hash = ? AND file_root = ?", hash, entity.RootOriginals).Find(&files).Error)
-		require.Len(t, files, 1, "one file in originals holds the content")
-		assert.FileExists(t, FileName(files[0].FileRoot, files[0].FileName))
-
-		var photos int64
-		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_hash = ?", hash).Distinct("photo_id").Count(&photos).Error)
-		assert.Equal(t, int64(1), photos, "one picture")
+		assert.Zero(t, remaining)
 	})
 }

@@ -525,10 +525,11 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 	return result
 }
 
-// storedFileAt reports how a file relates to the indexed file with the given root and name, e.g. one that a
-// destination name holds with the same content, without looking up all files with its hash.
+// storedFileAt reports how a file relates to the file with the given root and name, e.g. one that a destination
+// name holds with the same content, without looking up all files with its hash. A file that is not indexed, e.g.
+// not yet, is compared as if it were.
 func storedFileAt(mediaFile *MediaFile, fileRoot, fileName string) storedResult {
-	if mediaFile == nil || mediaFile.Hash() == "" {
+	if mediaFile == nil || mediaFile.Hash() == "" || fileName == "" {
 		return storedResult{}
 	}
 
@@ -536,6 +537,8 @@ func storedFileAt(mediaFile *MediaFile, fileRoot, fileName string) storedResult 
 
 	if err != nil {
 		return storedResult{}
+	} else if len(files) == 0 {
+		files = entity.Files{{FileRoot: fileRoot, FileName: fileName}}
 	}
 
 	return storedMatchOf(mediaFile, mediaFile.Hash(), files)
