@@ -3,6 +3,7 @@ package photoprism
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path"
 	"path/filepath"
 	"slices"
@@ -321,8 +322,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// file, not indexed, since whatever the destination holds is not this file.
 				switch {
 				case importErr == nil:
-				case importedContent(destFileName, srcHash):
+				case importedContent(destFileName, srcHash) && errors.Is(importErr, os.ErrExist):
 					log.Warnf("import: %s already holds the content, the staged file remains", logRelName)
+				case importedContent(destFileName, srcHash):
+					log.Warnf("import: %s already holds the content, the staged file remains (%s)", logRelName, clean.Error(importErr))
 				default:
 					log.Error(clean.Error(importErr))
 

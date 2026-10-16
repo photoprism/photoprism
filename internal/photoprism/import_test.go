@@ -953,7 +953,7 @@ func TestStoredFileOf(t *testing.T) {
 		saved := copyFileContent
 		t.Cleanup(func() { copyFileContent = saved })
 		copyFileContent = func(dst io.Writer, r io.Reader) (int64, error) {
-			require.NoError(t, fs.Copy(src, dest, false))
+			assert.NoError(t, fs.Copy(src, dest, false))
 			return saved(dst, r)
 		}
 
@@ -963,8 +963,38 @@ func TestStoredFileOf(t *testing.T) {
 		assert.FileExists(t, src)
 		assert.Equal(t, srcHash, fs.Hash(dest))
 		assert.Empty(t, loggedMessages(hook, logrus.ErrorLevel))
-		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.WarnLevel), "import: "+fs.RelName(dest, cfg.OriginalsPath())+" already holds the content"))
+		assert.Contains(t, loggedMessages(hook, logrus.WarnLevel), "import: "+fs.RelName(dest, cfg.OriginalsPath())+" already holds the content, the staged file remains")
 		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.WarnLevel), "import: could not copy file"))
+	})
+	t.Run("SourceNotRemovable", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		} else if os.Geteuid() == 0 {
+			t.Skip("skipping test as root, who may remove any file.")
+		}
+
+		// A moved file whose source cannot be removed is kept, and the warning names the cause.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-readonly-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		src := filepath.Join(dir, "readonly.jpg")
+		writeTestJpeg(t, src, 348)
+		srcHash := fs.Hash(src)
+		t.Cleanup(func() { cleanupImportedHash(t, srcHash) })
+		require.NoError(t, os.Chmod(dir, 0o500))                              //nolint:gosec // the folder must not be writable
+		t.Cleanup(func() { _ = os.Chmod(dir, 0o700); _ = os.RemoveAll(dir) }) //nolint:gosec // see above
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		dest := cleanupDestination(t, imp, src, src)
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, src)
+		assert.Equal(t, srcHash, fs.Hash(dest))
+
+		warnings := loggedMessages(hook, logrus.WarnLevel)
+		assert.Equal(t, 1, countPrefix(warnings, "import: "+fs.RelName(dest, cfg.OriginalsPath())+" already holds the content, the staged file remains (move: "))
 	})
 	t.Run("LinkedDestination", func(t *testing.T) {
 		if testing.Short() {
