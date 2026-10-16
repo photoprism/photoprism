@@ -70,6 +70,17 @@ func TestImport_CheckPath(t *testing.T) {
 	})
 }
 
+func TestImport_Check(t *testing.T) {
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	originals := t.TempDir()
+	cfg.Options().OriginalsPath = originals
+	imp := NewImport(cfg, nil, nil)
+
+	assert.NoError(t, imp.Check(ImportOptionsCopy(t.TempDir(), "")))
+	assert.Equal(t, ErrImportPath, imp.Check(ImportOptionsCopy(filepath.Join(originals, "sub"), "")))
+	assert.Equal(t, ErrImportDest, imp.Check(ImportOptionsMove(t.TempDir(), "a:b")))
+}
+
 func TestImportError(t *testing.T) {
 	err := importError{"destination folder x is not supported", ErrImportDest}
 	assert.EqualError(t, err, "destination folder x is not supported")

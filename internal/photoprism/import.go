@@ -157,19 +157,8 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 		return done, errors.New("directory not found")
 	}
 
-	// Files are moved or copied to originals, so the import folder must not be in it.
-	if err := imp.CheckPath(importPath); err != nil {
-		event.SystemError([]string{"import", "%s"}, err.Error())
-		event.Error("import: import and originals folders must not overlap")
-		return done, ErrImportPath
-	}
-
-	// Imported files must get names that the index accepts. The details name folders, so only the system log has
-	// them, and callers get ErrImportDest alone.
-	if err := imp.CheckDest(opt.DestFolder); err != nil {
-		event.SystemError([]string{"import", "%s"}, err.Error())
-		event.Error("import: destination is not supported")
-		return done, ErrImportDest
+	if err := imp.Check(opt); err != nil {
+		return done, err
 	}
 
 	// Reset the cached disk usage so a freshly freed disk is detected immediately.
@@ -526,6 +515,26 @@ func storedFileOf(mediaFile *MediaFile) (stored *entity.File, same bool) {
 	}
 
 	return &found, os.SameFile(src, dest)
+}
+
+// Check returns ErrImportPath or ErrImportDest if the import folder or the destination of the options is not
+// supported, see CheckPath and CheckDest. The details name folders, so only the system log has them.
+func (imp *Import) Check(opt ImportOptions) error {
+	// Files are moved or copied to originals, so the import folder must not overlap with it.
+	if err := imp.CheckPath(opt.Path); err != nil {
+		event.SystemError([]string{"import", "%s"}, err.Error())
+		event.Error("import: import and originals folders must not overlap")
+		return ErrImportPath
+	}
+
+	// Imported files must get names that the index accepts.
+	if err := imp.CheckDest(opt.DestFolder); err != nil {
+		event.SystemError([]string{"import", "%s"}, err.Error())
+		event.Error("import: destination is not supported")
+		return ErrImportDest
+	}
+
+	return nil
 }
 
 // CheckPath returns ErrImportPath if the import folder is the originals folder, a folder inside it, or a folder

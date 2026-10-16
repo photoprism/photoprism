@@ -116,11 +116,21 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Copy or move files to the destination folder?
 		if frm.Move {
-			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(importPath)))
 			opt = photoprism.ImportOptionsMove(importPath, destFolder)
 		} else {
-			event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(importPath)))
 			opt = photoprism.ImportOptionsCopy(importPath, destFolder)
+		}
+
+		// Folders that are not supported are refused before the import is announced.
+		if err := imp.Check(opt); err != nil {
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
+			return
+		}
+
+		if frm.Move {
+			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(importPath)))
+		} else {
+			event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(importPath)))
 		}
 
 		// Add imported files to albums if allowed.
