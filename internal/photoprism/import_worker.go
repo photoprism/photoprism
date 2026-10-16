@@ -101,6 +101,19 @@ func mainTypeRefused(f *MediaFile, allowExt fs.ExtList) string {
 	}
 }
 
+// albumStored reports whether the picture of the stored file in r is added to the albums selected for importing f:
+// a sidecar that is a copy may belong to another picture, as sidecars with the same content are not deduplicated.
+func albumStored(f *MediaFile, r storedResult) bool {
+	switch {
+	case r.file == nil:
+		return false
+	case r.match == storedSame || r.match == storedMaybeSame:
+		return true
+	default:
+		return r.match == storedCopy && !f.IsSidecar()
+	}
+}
+
 // storedPhotoUIDs returns the sorted, unique picture UIDs of the stored files that files in results are or may be.
 func storedPhotoUIDs(results map[string]storedResult) []string {
 	uids := make([]string, 0, len(results))
@@ -297,7 +310,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				stored, match := result.file, result.match
 
 				// Add the picture of a copy or of a kept original to the selected albums.
-				if stored != nil {
+				if albumStored(f, result) {
 					if albumErr := entity.AddPhotoToUserAlbums(stored.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
 						log.Warnf("import: %s (add duplicate to albums)", clean.Error(albumErr))
 					}

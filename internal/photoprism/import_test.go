@@ -563,6 +563,47 @@ func TestStoredFileOf(t *testing.T) {
 		assert.FileExists(t, dup)
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept rewritten.jpg, as it has changed since it was compared"))
 	})
+	t.Run("SidecarAlbums", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A sidecar that is a copy of another picture's sidecar does not add that picture to the albums.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-albums-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		main := filepath.Join(dir, "dup.jpg")
+		require.NoError(t, fs.Copy(storedPath, main, false))
+		png := filepath.Join(dir, "dup.png")
+		writeTestPng(t, png, 330)
+		pngHash := fs.Hash(png)
+		t.Cleanup(func() { cleanupImportedHash(t, pngHash) })
+		xmp := filepath.Join(dir, "dup.xmp")
+		require.NoError(t, os.WriteFile(xmp, []byte(strings.Replace(testXmp, "Pair", filepath.Base(dir), 1)), fs.ModeFile))
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		cleanupDestination(t, imp, main, png)
+
+		// The other picture's sidecar has the same content and already holds the name the import gives the XMP.
+		other := entity.PhotoFixtures.Get("Photo02")
+		otherXmp := cleanupDestination(t, imp, main, xmp)
+		require.NoError(t, fs.Copy(xmp, otherXmp, false))
+		row := &entity.File{PhotoID: other.ID, PhotoUID: other.PhotoUID, FileRoot: entity.RootOriginals,
+			FileName: fs.RelName(otherXmp, cfg.OriginalsPath()), FileHash: fs.Hash(xmp)}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+
+		opt := ImportOptionsMove(dir, "")
+		opt.Albums = []string{testAlbum(t)}
+		_, err := imp.Run(opt)
+		require.NoError(t, err)
+		assert.NoFileExists(t, png)
+
+		uids := albumPhotoUIDs(t, opt.Albums[0])
+		assert.Contains(t, uids, photo.PhotoUID)
+		assert.NotContains(t, uids, other.PhotoUID)
+	})
 	t.Run("Snapshot", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")
@@ -1130,6 +1171,34 @@ func TestMainTypeRefused(t *testing.T) {
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Equal(t, "due to unknown or unsupported extension", mainTypeRefused(mf(unknown), fs.NewExtList("")))
+	})
+}
+
+func TestAlbumStored(t *testing.T) {
+	dir := t.TempDir()
+	jpg, xmp := filepath.Join(dir, "a.jpg"), filepath.Join(dir, "a.xmp")
+	writeTestJpeg(t, jpg, 331)
+	require.NoError(t, os.WriteFile(xmp, []byte(testXmp), fs.ModeFile))
+	jpgFile, err := NewMediaFile(jpg)
+	require.NoError(t, err)
+	xmpFile, err := NewMediaFile(xmp)
+	require.NoError(t, err)
+	row := &entity.File{PhotoUID: "ps6sg6be2lvl0yh8"}
+
+	t.Run("Original", func(t *testing.T) {
+		for _, f := range []*MediaFile{jpgFile, xmpFile} {
+			assert.True(t, albumStored(f, storedResult{file: row, match: storedSame}))
+			assert.True(t, albumStored(f, storedResult{file: row, match: storedMaybeSame}))
+		}
+	})
+	t.Run("Copy", func(t *testing.T) {
+		assert.True(t, albumStored(jpgFile, storedResult{file: row, match: storedCopy}))
+		assert.False(t, albumStored(xmpFile, storedResult{file: row, match: storedCopy}))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, albumStored(jpgFile, storedResult{}))
+		assert.False(t, albumStored(jpgFile, storedResult{match: storedMaybeSame}))
+		assert.False(t, albumStored(jpgFile, storedResult{file: row, match: storedNone}))
 	})
 }
 
