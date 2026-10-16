@@ -179,11 +179,20 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Equal(t, storedCopy, match)
 	})
 	t.Run("HardLink", func(t *testing.T) {
+		saved := storedHash
+		t.Cleanup(func() { storedHash = saved })
+		reads := 0
+		storedHash = func(name string) string {
+			reads++
+			return saved(name)
+		}
+
 		mf, err := NewMediaFile(linked)
 		require.NoError(t, err)
 		found, match := storedFileOf(mf)
 		assert.Equal(t, storedSame, match)
 		assert.Nil(t, found)
+		assert.Zero(t, reads, "the file itself is found without reading the stored file")
 	})
 	t.Run("Rows", func(t *testing.T) {
 		// addRow records rel in originals as a file with the given hash.
@@ -226,10 +235,17 @@ func TestStoredFileOf(t *testing.T) {
 		require.NotNil(t, found)
 		assert.Equal(t, copyRel, found.FileName)
 
-		// A later row that may be the file itself wins over a copy too.
+		// A file that may be the file itself counts only while it holds the content.
 		saved := maybeSameFile
 		t.Cleanup(func() { maybeSameFile = saved })
-		maybeSameFile = func(a, b os.FileInfo) bool { return b.Name() == "rows-maybe.jpg" }
+		maybeName := "rows-changed.jpg"
+		maybeSameFile = func(a, b os.FileInfo) bool { return b.Name() == maybeName }
+
+		found, match = storedFileOf(mf)
+		assert.Equal(t, storedCopy, match)
+
+		// A later row that may be the file itself wins over a copy too.
+		maybeName = "rows-maybe.jpg"
 		maybeRel := filepath.Join(filepath.Dir(stored), "rows-maybe.jpg")
 		require.NoError(t, fs.Copy(src, filepath.Join(cfg.OriginalsPath(), maybeRel), false))
 		addRow(maybeRel, fs.Hash(src))

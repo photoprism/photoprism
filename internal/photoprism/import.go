@@ -489,38 +489,43 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 		return nil, storedNone
 	}
 
-	var found *entity.File
-	maybeSame := false
+	// The file itself is found without reading any file, so every row is checked for it first.
+	dests := make([]os.FileInfo, len(files))
 
 	for i := range files {
-		// A name that holds nothing hashes to the empty string, so this covers an absent file too.
-		storedName := FileName(files[i].FileRoot, files[i].FileName)
+		dest, destErr := os.Stat(FileName(files[i].FileRoot, files[i].FileName))
 
-		if storedHash(storedName) != fileHash {
+		if destErr != nil {
 			continue
-		}
-
-		dest, destErr := os.Stat(storedName)
-
-		switch {
-		case destErr != nil:
-		case os.SameFile(src, dest):
+		} else if os.SameFile(src, dest) {
 			return nil, storedSame
-		case maybeSameFile(src, dest):
-			maybeSame = true
+		}
+
+		dests[i] = dest
+	}
+
+	// A file that may be the file itself wins over a copy, also over one found before it.
+	var found *entity.File
+
+	for i := range files {
+		switch {
+		case dests[i] == nil:
+		case maybeSameFile(src, dests[i]):
+			if storedHash(FileName(files[i].FileRoot, files[i].FileName)) == fileHash {
+				return nil, storedMaybeSame
+			}
 		case found == nil:
-			found = &files[i]
+			if storedHash(FileName(files[i].FileRoot, files[i].FileName)) == fileHash {
+				found = &files[i]
+			}
 		}
 	}
 
-	switch {
-	case maybeSame:
-		return nil, storedMaybeSame
-	case found != nil:
+	if found != nil {
 		return found, storedCopy
-	default:
-		return nil, storedNone
 	}
+
+	return nil, storedNone
 }
 
 // storedHash returns the hash of an indexed file, which reads the whole file.
