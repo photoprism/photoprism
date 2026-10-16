@@ -47,6 +47,7 @@ type MediaFile struct {
 	statErr          error
 	mimeErr          error
 	modTime          time.Time
+	fileInfo         os.FileInfo
 	fileSize         int64
 	fileType         fs.Type
 	mimeType         string
@@ -161,14 +162,22 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		m.statErr = statErr
 		m.modTime = time.Time{}
 		m.fileSize = -1
+		m.fileInfo = nil
 	} else {
-		stat.Mode()
+		m.fileInfo = stat
 		m.statErr = nil
 		m.modTime = stat.ModTime().UTC().Truncate(time.Second)
 		m.fileSize = stat.Size()
 	}
 
 	return m.fileSize, m.modTime, m.statErr
+}
+
+// FileInfo returns the file info that Stat read first, with the full modification time, or nil if it failed.
+func (m *MediaFile) FileInfo() os.FileInfo {
+	_, _, _ = m.Stat()
+
+	return m.fileInfo
 }
 
 // ModTime returns the cached modification timestamp in UTC, fetching it via Stat

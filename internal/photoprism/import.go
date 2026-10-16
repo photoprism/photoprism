@@ -460,7 +460,7 @@ const (
 	storedNone      storedMatch = iota // no indexed file holds the content
 	storedCopy                         // another file holds the content
 	storedSame                         // the file itself, e.g. a link or another name for it
-	storedMaybeSame                    // possibly the file itself, e.g. through another mount or a file that cannot be read
+	storedMaybeSame                    // possibly the file itself, e.g. through another mount, a case variant, or unreadable
 )
 
 // storedResult is how a file relates to the indexed files with the same content, with the file infos of a copy
@@ -488,12 +488,17 @@ func (r storedResult) sourceUnchanged(name string) bool {
 func sameFileInfo(name string, info os.FileInfo) bool {
 	now, err := os.Stat(name)
 
-	return err == nil && os.SameFile(now, info) && now.Size() == info.Size() && now.ModTime().Equal(info.ModTime())
+	return err == nil && sameInfo(now, info)
+}
+
+// sameInfo reports whether two file infos describe the same file with the same size and modification time.
+func sameInfo(a, b os.FileInfo) bool {
+	return os.SameFile(a, b) && a.Size() == b.Size() && a.ModTime().Equal(b.ModTime())
 }
 
 // storedFileOf reports how a file relates to the indexed files that hold the same content, and returns the row it
-// is, may be, or is a copy of, if known, with the file info of a copy. The answer comes from the files rather than
-// the rows, since a caller removes its source on the strength of it, so every row is checked.
+// is, may be, or is a copy of, if known, with the file infos of a copy and of the source. The answer comes from the
+// files rather than the rows, since a caller removes its source on the strength of it, so every row is checked.
 func storedFileOf(mediaFile *MediaFile) storedResult {
 	if mediaFile == nil {
 		return storedResult{}
@@ -507,11 +512,14 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 
 	src, srcErr := os.Stat(mediaFile.FileName())
 
-	// A source that changed since it was first read may no longer have the hash, so it matches nothing.
-	if size, modTime, statErr := mediaFile.Stat(); srcErr != nil || statErr != nil || size != src.Size() ||
-		!modTime.Equal(src.ModTime().UTC().Truncate(time.Second)) {
+	if srcErr != nil {
 		return storedResult{}
 	}
+
+	// A source that changed since it was first read may no longer have the hash, so it is not a copy of anything,
+	// but it may still be a stored file itself.
+	first := mediaFile.FileInfo()
+	changed := first == nil || !sameInfo(first, src)
 
 	files, err := entity.FilesByHash(fileHash)
 
@@ -564,9 +572,9 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 			case "":
 				unknown = true
 			}
-		case found.file == nil && files[i].FileRoot == entity.RootOriginals:
+		case found.file == nil && !changed && files[i].FileRoot == entity.RootOriginals:
 			if storedHash(FileName(files[i].FileRoot, files[i].FileName)) == fileHash {
-				found = storedResult{file: &files[i], match: storedCopy, info: dests[i], source: src}
+				found = storedResult{file: &files[i], match: storedCopy, info: dests[i], source: first}
 			}
 		}
 	}

@@ -186,14 +186,43 @@ func TestStoredFileOf(t *testing.T) {
 		require.NotNil(t, result.source)
 		assert.True(t, result.sourceUnchanged(copied))
 
-		// A source that changed after it was first read and hashed matches nothing.
+		// A source that changed after it was first read and hashed is not a copy, also if only its time changed.
 		changed := filepath.Join(t.TempDir(), "changed.jpg")
 		require.NoError(t, fs.Copy(storedPath, changed, false))
 		mf, err = NewMediaFile(changed)
 		require.NoError(t, err)
 		require.Equal(t, file.FileHash, mf.Hash())
+		later := mf.FileInfo().ModTime().Add(time.Second)
+		require.NoError(t, os.Chtimes(changed, later, later))
+		assert.Equal(t, storedNone, storedFileOf(mf).match)
 		require.NoError(t, os.WriteFile(changed, []byte("new content"), fs.ModeFile))
 		assert.Equal(t, storedNone, storedFileOf(mf).match)
+	})
+	t.Run("ChangedOriginal", func(t *testing.T) {
+		// A source that changed after it was first read is still recognized as the stored file itself.
+		name := filepath.Join(filepath.Dir(storedPath), "changed-"+rnd.Base36(8)+".jpg")
+		writeTestJpeg(t, name, 332)
+		row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals,
+			FileName: fs.RelName(name, cfg.OriginalsPath()), FileHash: fs.Hash(name)}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+		link := filepath.Join(importDir, "changed-link.jpg")
+		require.NoError(t, os.Link(name, link))
+		t.Cleanup(func() { _ = os.Remove(link) })
+
+		mf, err := NewMediaFile(link)
+		require.NoError(t, err)
+		require.Equal(t, row.FileHash, mf.Hash())
+		f, err := os.OpenFile(link, os.O_WRONLY|os.O_APPEND, 0)
+		require.NoError(t, err)
+		_, err = f.WriteString("new content")
+		require.NoError(t, err)
+		require.NoError(t, f.Close())
+
+		found, match := storedFileMatch(mf)
+		assert.Equal(t, storedSame, match)
+		require.NotNil(t, found)
+		assert.Equal(t, row.FileName, found.FileName)
 	})
 	t.Run("HardLink", func(t *testing.T) {
 		saved := storedHash
