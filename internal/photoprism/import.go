@@ -135,20 +135,14 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 
 	// Folder records name the configured import namespace, so a walk of that path or of a
 	// subfolder is recorded relative to it. A walk rooted elsewhere, such as a per-session upload
-	// directory, has no place in that namespace and records none.
-	folderBase := ""
+	// directory, has no place in that namespace and records none. Names are checked below the
+	// configured import folder, or below the folder the walk starts in if it is elsewhere.
+	folderBase, nameRoot := "", filepath.Clean(importPath)
 
 	if base := imp.conf.ImportPath(); base != "" {
-		if rel, relErr := filepath.Rel(base, importPath); relErr == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
-			folderBase = base
+		if _, ok := relBelow(base, importPath); ok {
+			folderBase, nameRoot = base, base
 		}
-	}
-
-	// Names are checked below the configured import folder, or below the folder the walk starts in if it is elsewhere.
-	nameRoot := filepath.Clean(importPath)
-
-	if folderBase != "" {
-		nameRoot = folderBase
 	}
 
 	// Check if the import folder exists.
