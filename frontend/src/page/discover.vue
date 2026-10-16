@@ -1,7 +1,11 @@
 <template>
   <div class="p-page p-page-discover" tabindex="-1">
     <v-tabs v-model="active" elevation="0" grow class="bg-transparent" bg-color="secondary" :height="$vuetify.display.smAndDown ? 48 : 64">
-      <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
+      <v-tab id="tab-discover-memories" ripple @click="changePath('/discover/memories')">
+        {{ $gettext(`Memories`) }}
+      </v-tab>
+
+      <v-tab id="tab-discover-colors" ripple @click="changePath('/discover/colors')">
         {{ $gettext(`Colors`) }}
       </v-tab>
 
@@ -18,6 +22,10 @@
       </v-tab>
 
       <v-tabs-window v-model="active">
+        <v-tabs-window-item>
+          <p-tab-discover-memories></p-tab-discover-memories>
+        </v-tabs-window-item>
+
         <v-tabs-window-item>
           <p-tab-discover-colors></p-tab-discover-colors>
         </v-tabs-window-item>
@@ -39,12 +47,14 @@
 </template>
 
 <script>
+import tabMemories from "page/discover/memories.vue";
 import tabColors from "page/discover/colors.vue";
 import tabTodo from "page/discover/todo.vue";
 
 export default {
   name: "PPageDiscover",
   components: {
+    "p-tab-discover-memories": tabMemories,
     "p-tab-discover-colors": tabColors,
     "p-tab-discover-todo": tabTodo,
   },
