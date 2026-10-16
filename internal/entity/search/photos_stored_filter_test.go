@@ -8,10 +8,16 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // TestPhotos_StoredFilterNoMatch checks the album listing of a stored filter whose values have nothing usable left.
 func TestPhotos_StoredFilterNoMatch(t *testing.T) {
+	// PostgreSQL text columns cannot store invalid UTF-8, so such a filter only exists in MariaDB and SQLite.
+	if entity.DbDialect() == dsn.DialectPostgreSQL {
+		t.Skip("PostgreSQL cannot store a filter with invalid UTF-8")
+	}
+
 	// newAlbum creates an album that is removed after the test.
 	newAlbum := func(t *testing.T, a *entity.Album) entity.Album {
 		require.NotNil(t, a)
