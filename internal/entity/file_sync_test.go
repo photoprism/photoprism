@@ -291,8 +291,9 @@ func TestResetFileSyncUnportable(t *testing.T) {
 		return ignored.RemoteName
 	}
 
-	renamed := placeholder(t, serviceID, files[0])
-	kept := []string{placeholder(t, serviceID, files[1]), placeholder(t, serviceID, files[2]), placeholder(t, serviceID, files[3])}
+	// Names that are hidden locally but portable are uploaded as well.
+	renamed := []string{placeholder(t, serviceID, files[0]), placeholder(t, serviceID, files[3])}
+	kept := []string{placeholder(t, serviceID, files[1]), placeholder(t, serviceID, files[2])}
 
 	// Other placeholders of a file with a portable name are not removed.
 	excluded := NewFileSync(serviceID, ".photoprism/sync/"+strconv.FormatUint(uint64(files[0].ID), 10))
@@ -308,7 +309,8 @@ func TestResetFileSyncUnportable(t *testing.T) {
 	}
 
 	require.NoError(t, ResetFileSyncUnportable(serviceID))
-	assert.NotContains(t, names(t, serviceID), renamed)
+	assert.NotContains(t, names(t, serviceID), renamed[0])
+	assert.NotContains(t, names(t, serviceID), renamed[1])
 	assert.ElementsMatch(t, kept, names(t, serviceID))
 	assert.ElementsMatch(t, []string{other}, names(t, otherID))
 
@@ -321,13 +323,13 @@ func TestPortablePath(t *testing.T) {
 	t.Run("Portable", func(t *testing.T) {
 		assert.True(t, portablePath("2019/03 - Março/#1 & Friends.jpg"))
 		assert.True(t, portablePath("a.jpg"))
+		assert.True(t, portablePath("@eaDir/x.jpg"))
+		assert.True(t, portablePath("__MACOSX/_.x.jpg"))
 	})
 	t.Run("NotPortable", func(t *testing.T) {
 		assert.False(t, portablePath("2019/a:b.jpg"))
 		assert.False(t, portablePath("dir*/x.jpg"))
 		assert.False(t, portablePath("caf\xe9/x.jpg"))
-		assert.False(t, portablePath("@eaDir/x.jpg"))
-		assert.False(t, portablePath("2019/~IMG.jpg"))
 	})
 }
 

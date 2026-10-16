@@ -938,7 +938,7 @@ func TestClient_DeleteHidden(t *testing.T) {
 	client, err := NewClient(server.URL+"/", "", "", TimeoutLow, "")
 	require.NoError(t, err)
 
-	// Copies in folders that count as hidden can be removed, reserved and unsafe paths cannot.
+	// Copies in folders that are hidden locally can be removed, dot-directories and unsafe paths cannot.
 	require.NoError(t, client.Delete("/@Family/x.jpg"))
 	assert.ErrorIs(t, client.Delete("/.git/config"), ErrSkipPath)
 	assert.ErrorIs(t, client.Delete("/Photos/../x.jpg"), ErrUnsafePath)
@@ -949,11 +949,12 @@ func TestAppendTraversalDirs(t *testing.T) {
 	found := []webdav.FileInfo{
 		{Path: "/dav/", IsDir: true},
 		{Path: "/dav/Photos/", IsDir: true},
-		{Path: "/dav/@eaDir/", IsDir: true},
+		{Path: "/dav/.locks/", IsDir: true},
+		{Path: "/dav/@Family/", IsDir: true},
 		{Path: "/dav/a\\..\\..\\bob/", IsDir: true},
 		{Path: "/dav/Photos/x.jpg"},
 	}
 
 	queue := appendTraversalDirs(nil, "", "/dav/", found, map[string]bool{"": true})
-	assert.Equal(t, []string{"Photos"}, queue)
+	assert.Equal(t, []string{"Photos", "@Family"}, queue)
 }

@@ -79,19 +79,13 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			return false, nil
 		}
 
-		// Hidden names and names that are not portable are checked again once the file is renamed.
-		if hidden := webdav.HiddenSyncPath(file.FileName); hidden || !portableSyncName("/", file.FileName) {
-			if hidden {
-				log.Debugf("sync: skipping hidden path %s", clean.Log(file.FileName))
-			} else {
-				unsupported.Add(file.FileName)
-			}
-
-			w.ignoreUpload(a, entity.FileSyncUnportablePrefix, file.ID)
-			continue
-		} else if webdav.SkipSyncPath(file.FileName) {
+		if webdav.SkipSyncPath(file.FileName) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(file.FileName))
 			w.ignoreUpload(a, path.Join(fs.PPHiddenPathname, "sync"), file.ID)
+			continue
+		} else if !portableSyncName("/", file.FileName) {
+			unsupported.Add(file.FileName)
+			w.ignoreUpload(a, entity.FileSyncUnportablePrefix, file.ID)
 			continue
 		}
 

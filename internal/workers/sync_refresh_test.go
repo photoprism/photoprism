@@ -261,7 +261,7 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 	worker := NewSync(config.TestConfig())
 	remote := t.TempDir()
 	for _, name := range []string{"valid.jpg", "03 - Março.jpg", "sub/ok.jpg", "invalid-\xff.jpg", "a|b.jpg", "x:y.jpg",
-		"a~b.jpg", "dir*/inner.jpg", "$RECYCLE.BIN/deleted.jpg", "~$draft.jpg"} {
+		"a~b.jpg", "dir*/inner.jpg", "$RECYCLE.BIN/deleted.jpg", "~$draft.jpg", "@Family/x.jpg", ".locks/x.jpg"} {
 		require.NoError(t, os.MkdirAll(filepath.Dir(filepath.Join(remote, name)), fs.ModeDir))
 		require.NoError(t, os.WriteFile(filepath.Join(remote, name), []byte("jpg"), fs.ModeFile))
 	}
@@ -291,17 +291,16 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 
 	var names []string
 	require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ?", a.ID).Pluck("remote_name", &names).Error)
-	assert.ElementsMatch(t, []string{"/valid.jpg", "/03 - Março.jpg", "/sub/ok.jpg"}, names)
+	assert.ElementsMatch(t, []string{"/valid.jpg", "/03 - Março.jpg", "/sub/ok.jpg", "/@Family/x.jpg"}, names)
 	assert.Zero(t, countLogged(hook, logrus.ErrorLevel, ""))
-	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped 5 remote names in"))
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped 7 remote names in"))
 	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
 	// A folder whose name is not portable is skipped without listing its files.
 	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "/dir*"))
 	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "inner.jpg"))
 
-	// Hidden names are excluded without a warning.
-	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "RECYCLE"))
-	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "draft"))
+	// Names starting with "$" or "~" are counted as not portable, while dot-directories are excluded without a warning.
+	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "locks"))
 
 	// The name of the sync folder itself is checked only when files keep their remote paths in originals.
 	for _, filenames := range []bool{false, true} {
@@ -376,7 +375,7 @@ func TestSyncNameRoot(t *testing.T) {
 func TestSync_refreshExcludedSyncFolder(t *testing.T) {
 	worker := NewSync(config.TestConfig())
 	a := entity.Service{AccName: "Sync Excluded " + rnd.Base36(8), AccURL: "http://127.0.0.1:1/", AccType: "webdav", AccSync: true,
-		SyncDownload: true, SyncPath: "/@Photos", AccTimeout: "low", RetryLimit: -1}
+		SyncDownload: true, SyncPath: "/.photos", AccTimeout: "low", RetryLimit: -1}
 	require.NoError(t, entity.Db().Create(&a).Error)
 	t.Cleanup(func() {
 		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
@@ -422,7 +421,7 @@ func TestSync_StartNotice(t *testing.T) {
 	t.Cleanup(server.Close)
 
 	a := entity.Service{AccName: "Sync Notice " + rnd.Base36(8), AccURL: server.URL + "/", AccType: "webdav", AccSync: true,
-		SyncDownload: true, SyncPath: "/@Photos", SyncStatus: entity.SyncStatusRefresh, AccTimeout: "low", RetryLimit: 1}
+		SyncDownload: true, SyncPath: "/.photos", SyncStatus: entity.SyncStatusRefresh, AccTimeout: "low", RetryLimit: 1}
 	require.NoError(t, entity.Db().Create(&a).Error)
 	t.Cleanup(func() {
 		assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "service_id = ?", a.ID).Error)

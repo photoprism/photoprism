@@ -368,11 +368,11 @@ func TestSync_longRemoteNames(t *testing.T) {
 
 		a := newAccount(t, func(a *entity.Service) {
 			a.SyncUpload = true
-			a.SyncPath = "/upload-names"
+			a.SyncPath = "/@upload-names"
 		})
 
 		photo := newUploadPhoto(t, a)
-		names := []string{"2019/portable.jpg", "2019/a:b.jpg", "dir*/x.jpg", "2019/@IMG.jpg"}
+		names := []string{"2019/portable.jpg", "@Family/__x.jpg", "2019/a:b.jpg", "dir*/x.jpg"}
 		var files []*entity.File
 
 		for i, name := range names {
@@ -390,11 +390,12 @@ func TestSync_longRemoteNames(t *testing.T) {
 
 		_, err := worker.upload(a)
 		require.NoError(t, err)
-		assert.EqualValues(t, 1, puts.Load()-before)
+		assert.EqualValues(t, 2, puts.Load()-before)
+		assert.FileExists(t, filepath.Join(remote, "@upload-names", "@Family", "__x.jpg"))
 		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped upload of 2 files to"))
 		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
 
-		for _, file := range files[1:] {
+		for _, file := range files[2:] {
 			var ignored entity.FileSync
 			require.NoError(t, entity.Db().Where("service_id = ? AND file_id = ?", a.ID, file.ID).First(&ignored).Error)
 			assert.Equal(t, entity.FileSyncIgnore, ignored.Status)
@@ -404,21 +405,18 @@ func TestSync_longRemoteNames(t *testing.T) {
 		// The next run uploads nothing and warns no more.
 		_, err = worker.upload(a)
 		require.NoError(t, err)
-		assert.EqualValues(t, 1, puts.Load()-before)
+		assert.EqualValues(t, 2, puts.Load()-before)
 		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
 
-		// Renamed files keep their records and are uploaded under their new names, hidden ones as well.
-		for i, name := range map[int]string{1: "a-b.jpg", 3: "IMG.jpg"} {
-			old := filepath.Join(conf.OriginalsPath(), filepath.FromSlash(names[i]))
-			require.NoError(t, os.Rename(old, filepath.Join(conf.OriginalsPath(), "2019", name)))
-			require.NoError(t, files[i].Update("FileName", "2019/"+name))
-		}
+		// A renamed file keeps its record and is uploaded under its new name.
+		renamed := filepath.Join(conf.OriginalsPath(), "2019", "a-b.jpg")
+		require.NoError(t, os.Rename(filepath.Join(conf.OriginalsPath(), "2019", "a:b.jpg"), renamed))
+		require.NoError(t, files[2].Update("FileName", "2019/a-b.jpg"))
 
 		_, err = worker.upload(a)
 		require.NoError(t, err)
 		assert.EqualValues(t, 3, puts.Load()-before)
-		assert.FileExists(t, filepath.Join(remote, "upload-names", "2019", "a-b.jpg"))
-		assert.FileExists(t, filepath.Join(remote, "upload-names", "2019", "IMG.jpg"))
+		assert.FileExists(t, filepath.Join(remote, "@upload-names", "2019", "a-b.jpg"))
 		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
 	})
 }

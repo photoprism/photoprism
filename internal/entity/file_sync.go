@@ -34,7 +34,7 @@ const FileSyncUploadPrefix = fs.PPHiddenPathname + "/sync/upload/"
 // fileSyncStalled is the folder of placeholders of stalled uploads without an error count, which refresh removes.
 const fileSyncStalled = fs.PPHiddenPathname + "/sync/stalled/"
 
-// FileSyncUnportablePrefix starts the placeholder names that record local files whose names are not portable or hidden.
+// FileSyncUnportablePrefix starts the placeholder names that record local files whose names are not portable.
 const FileSyncUnportablePrefix = fs.PPHiddenPathname + "/sync/names/"
 
 // fileSyncLongNames is the folder of the placeholder names that record local files whose remote name is too long.
@@ -125,7 +125,7 @@ func ResetFileSyncLongNames(serviceID uint, syncPath string) error {
 }
 
 // ResetFileSyncUnportable removes the placeholders an account recorded for local files whose names are not
-// portable or hidden once they are neither, e.g. after a rename, so that the files are uploaded.
+// portable once their names are, e.g. after a rename, so that the files are uploaded.
 func ResetFileSyncUnportable(serviceID uint) error {
 	var rows []struct {
 		RemoteName string
@@ -160,10 +160,10 @@ func ResetFileSyncUnportable(serviceID uint) error {
 	return nil
 }
 
-// portablePath reports whether every name in a slash-separated path is portable and not hidden.
+// portablePath reports whether every name in a slash-separated path is portable.
 func portablePath(name string) bool {
 	for _, part := range strings.Split(name, "/") {
-		if !clean.PortableName(part) || fs.FileNameHidden(part) {
+		if !clean.PortableName(part) {
 			return false
 		}
 	}

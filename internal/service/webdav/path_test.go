@@ -45,17 +45,14 @@ func TestHasControl(t *testing.T) {
 }
 
 func TestIsHiddenPath(t *testing.T) {
-	t.Run("Hidden", func(t *testing.T) {
-		for _, name := range []string{"/.locks/upload.tmp", "/Photos/.staging/incomplete.jpg", "/Photos/@eaDir/x.jpg",
-			"/$RECYCLE.BIN/x.jpg", "/Docs/~$report.docx", "/Photos/_.x.jpg", "/__MACOSX/x.jpg", "~home"} {
-			assert.True(t, isHiddenPath(name), name)
-		}
-	})
-	t.Run("Visible", func(t *testing.T) {
-		for _, name := range []string{"/Photos/cover.jpg", "/Photos/price$5.jpg", "/Photos/a~b.jpg", "/Photos/_x.jpg", "/a@b/c.jpg", ""} {
-			assert.False(t, isHiddenPath(name), name)
-		}
-	})
+	assert.True(t, isHiddenPath("/.locks/upload.tmp"))
+	assert.True(t, isHiddenPath("/Photos/.staging/incomplete.jpg"))
+	assert.False(t, isHiddenPath("/Photos/cover.jpg"))
+
+	// Other names that are hidden locally are not hidden remotely.
+	for _, name := range []string{"/@Family/x.jpg", "/Photos/@eaDir/x.jpg", "/__MACOSX/x.jpg", "/Photos/_.x.jpg", "/$RECYCLE.BIN/x.jpg", "~home"} {
+		assert.False(t, isHiddenPath(name), name)
+	}
 }
 
 // TestClient_FilesRejectTraversalEntries verifies that files whose remote href
@@ -94,28 +91,4 @@ func TestClient_FilesRejectTraversalEntries(t *testing.T) {
 		assert.NotContains(t, p, "..", "traversal entry must be excluded from listing")
 		assert.NotContains(t, p, "outside", "traversal entry must be excluded from listing")
 	}
-}
-
-func TestHiddenSyncPath(t *testing.T) {
-	assert.True(t, HiddenSyncPath("/2019/~IMG.jpg"))
-	assert.True(t, HiddenSyncPath("@eaDir\\x.jpg"))
-	assert.False(t, HiddenSyncPath("/2019/IMG.jpg"))
-	assert.False(t, HiddenSyncPath("/2019/a:b.jpg"))
-}
-
-func TestSkipRemovePath(t *testing.T) {
-	t.Run("Allowed", func(t *testing.T) {
-		for _, name := range []string{"/@Family/x.jpg", "/~public/x.jpg", "/__Shared/x.jpg", "/$Share/x.jpg", "/Photos/x.jpg"} {
-			assert.False(t, SkipRemovePath(name), name)
-		}
-	})
-	t.Run("Skipped", func(t *testing.T) {
-		for _, name := range []string{"/.git/config", "/Photos/_netrc", "/Photos/a\x01b.jpg", "/.photos/x.jpg", "Photos\\.hidden\\x.jpg"} {
-			assert.True(t, SkipRemovePath(name), name)
-		}
-	})
-	t.Run("Unsafe", func(t *testing.T) {
-		assert.False(t, SkipRemovePath("/Photos/../x\x01.jpg"))
-		assert.True(t, UnsafeSyncPath("/Photos/../x.jpg"))
-	})
 }
