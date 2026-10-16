@@ -425,27 +425,19 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	}
 
 	if opt.RemoveHiddenFiles {
-		// Hidden files are removed, except media files whose names start with another character than a dot,
-		// and the files that share their names, such as sidecars.
-		hidden := ignore.Hidden()
-		kept := make(map[string]bool)
-
-		for _, file := range hidden {
-			if !strings.HasPrefix(filepath.Base(file), ".") && media.MainFile(file) && fs.FileExists(file) {
-				kept[fs.AbsPrefix(file, false)] = true
-				warnHidden("import", nameRoot, fs.RelName(file, nameRoot), "import it")
-			}
-		}
-
-		for _, file := range hidden {
+		// Hidden files are removed, except files of a known type whose names start with another character than a
+		// dot, such as pictures and their sidecars, which are kept and reported if they are media files.
+		for _, file := range ignore.Hidden() {
 			if !fs.FileExists(file) {
 				continue
 			}
 
 			if base := filepath.Base(file); base == ".keep" || base == ".gitkeep" {
 				log.Debugf("import: %s file is preserved", clean.Log(fs.RelName(file, importPath)))
-			} else if !strings.HasPrefix(base, ".") && kept[fs.AbsPrefix(file, false)] {
-				continue
+			} else if !strings.HasPrefix(base, ".") && fs.FileType(file) != fs.TypeUnknown {
+				if media.MainFile(file) {
+					warnHidden("import", nameRoot, fs.RelName(file, nameRoot), "import it")
+				}
 			} else if err = os.Remove(file); err != nil {
 				log.Errorf("import: failed removing %s (%s)", clean.Log(fs.RelName(file, importPath)), clean.Error(err))
 			}

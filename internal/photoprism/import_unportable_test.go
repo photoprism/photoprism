@@ -44,10 +44,15 @@ func TestImport_StartUnportableNames(t *testing.T) {
 		}
 	}
 
-	// Hidden files are not imported. A move removes them, except media files whose names do not start with a dot,
-	// which are reported, and hidden folders, which stay with their contents.
+	// Hidden files are not imported. A move removes them, except files of a known type whose names do not start with
+	// a dot, of which media files are reported, and hidden folders, which stay with their contents.
 	writeTestJpeg(t, filepath.Join(src, "~home.jpg"), 240)
 	require.NoError(t, os.WriteFile(filepath.Join(src, "~home.xmp"), []byte(testXmp), fs.ModeFile))
+	require.NoError(t, os.WriteFile(filepath.Join(src, "~home.jpg.supplemental-metadata.json"), []byte("{}"), fs.ModeFile))
+	require.NoError(t, os.WriteFile(filepath.Join(src, "~home_edit.xmp"), []byte(testXmp), fs.ModeFile))
+	writeTestJpeg(t, filepath.Join(src, "__IMG.JPG"), 244)
+	require.NoError(t, os.WriteFile(filepath.Join(src, "__img.xmp"), []byte(testXmp), fs.ModeFile))
+	require.NoError(t, os.WriteFile(filepath.Join(src, "~$x.docx"), []byte("x"), fs.ModeFile))
 	writeTestJpeg(t, filepath.Join(src, "$keep.jpg"), 241)
 	writeTestJpeg(t, filepath.Join(src, "._IMG_1234.JPG"), 242)
 	writeTestJpeg(t, filepath.Join(src, "@eaDir", "x.jpg"), 243)
@@ -80,6 +85,11 @@ func TestImport_StartUnportableNames(t *testing.T) {
 	assert.DirExists(t, filepath.Join(src, "x:y"))
 	assert.FileExists(t, filepath.Join(src, "~home.jpg"))
 	assert.FileExists(t, filepath.Join(src, "~home.xmp"))
+	assert.FileExists(t, filepath.Join(src, "~home.jpg.supplemental-metadata.json"))
+	assert.FileExists(t, filepath.Join(src, "~home_edit.xmp"))
+	assert.FileExists(t, filepath.Join(src, "__IMG.JPG"))
+	assert.FileExists(t, filepath.Join(src, "__img.xmp"))
+	assert.NoFileExists(t, filepath.Join(src, "~$x.docx"))
 	assert.FileExists(t, filepath.Join(src, "$keep.jpg"))
 	assert.FileExists(t, filepath.Join(src, "@eaDir", "x.jpg"))
 	assert.FileExists(t, filepath.Join(src, ".keep"))
@@ -101,7 +111,9 @@ func TestImport_StartUnportableNames(t *testing.T) {
 		assert.Equal(t, 1, count, "%q in %v", rel, warnings)
 	}
 
-	for _, rel := range []string{"~home.jpg", "$keep.jpg"} {
+	assert.Zero(t, countPrefix(warnings, "import: skipped hidden file "+clean.Log("~home.xmp")))
+
+	for _, rel := range []string{"~home.jpg", "$keep.jpg", "__IMG.JPG"} {
 		assert.Equal(t, 1, countPrefix(warnings, "import: skipped hidden file "+clean.Log(rel)+", rename it"), rel)
 	}
 
