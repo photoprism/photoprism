@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -39,6 +40,17 @@ func TestImport_CheckPath(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(storage, fs.PPStorageFilename), []byte("1"), fs.ModeFile))
 		t.Cleanup(func() { _ = os.RemoveAll(storage) })
 		assert.NoError(t, imp.CheckPath(filepath.Join(storage, "users", "upload")))
+	})
+	t.Run("CaseInsensitive", func(t *testing.T) {
+		// On a case-insensitive file system, a case variant of the originals path names the same folder.
+		variant := filepath.Join(filepath.Dir(originals), "ORIGINALS", "sub")
+		mode := fs.GetCaseMode()
+		t.Cleanup(func() { fs.RestoreCaseMode(mode) })
+		fs.SetCaseScopes(fs.CaseScope{Dir: originals, Ignore: false})
+		assert.NoError(t, imp.CheckPath(variant))
+		fs.SetCaseScopes(fs.CaseScope{Dir: originals, Ignore: true})
+		assert.ErrorIs(t, imp.CheckPath(variant), ErrImportPath)
+		assert.True(t, imp.linksToOriginals(variant))
 	})
 	t.Run("Contains", func(t *testing.T) {
 		for _, dir := range []string{base, filepath.Dir(base)} {
@@ -106,27 +118,35 @@ func TestImport_linksToOriginals(t *testing.T) {
 
 func TestOverlappingPaths(t *testing.T) {
 	dir := t.TempDir()
-	assert.True(t, overlappingPaths(dir, filepath.Join(dir, "a")))
-	assert.True(t, overlappingPaths(filepath.Join(dir, "a"), dir))
-	assert.True(t, overlappingPaths(dir, dir))
-	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), filepath.Join(dir, "b")))
+	assert.True(t, overlappingPaths(dir, filepath.Join(dir, "a"), false))
+	assert.True(t, overlappingPaths(filepath.Join(dir, "a"), dir, false))
+	assert.True(t, overlappingPaths(dir, dir, false))
+	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), filepath.Join(dir, "b"), false))
+
+	// Letters are compared case-insensitively if fold is set.
+	assert.False(t, overlappingPaths(strings.ToUpper(dir), filepath.Join(dir, "a"), false))
+	assert.True(t, overlappingPaths(strings.ToUpper(dir), filepath.Join(dir, "a"), true))
 
 	// An empty path is not resolved to the working directory.
 	t.Chdir(dir)
-	assert.False(t, overlappingPaths("", dir))
-	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), ""))
+	assert.False(t, overlappingPaths("", dir, false))
+	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), "", false))
 }
 
 func TestRelBelow(t *testing.T) {
-	rel, ok := relBelow("/a/b", "/a/b/c/d")
+	rel, ok := relBelow("/a/b", "/a/b/c/d", false)
 	assert.True(t, ok)
 	assert.Equal(t, filepath.Join("c", "d"), rel)
-	rel, ok = relBelow("/a/b", "/a/b")
+	rel, ok = relBelow("/a/b", "/a/b", false)
 	assert.True(t, ok)
 	assert.Equal(t, ".", rel)
 
+	rel, ok = relBelow("/A/b", "/a/B/c", true)
+	assert.True(t, ok)
+	assert.Equal(t, "c", rel)
+
 	for _, folder := range []string{"/a", "/a/bc", "/x"} {
-		_, ok = relBelow("/a/b", folder)
+		_, ok = relBelow("/a/b", folder, false)
 		assert.False(t, ok, folder)
 	}
 }

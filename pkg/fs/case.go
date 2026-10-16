@@ -110,6 +110,11 @@ func RestoreCaseMode(m CaseMode) {
 	ignoreCase, caseScopes, FileTypes = m.ignoreCase, m.caseScopes, m.fileTypes
 }
 
+// IgnoreCaseIn reports whether lookups in dir are case-insensitive, as configured or detected for the folder.
+func IgnoreCaseIn(dir string) bool {
+	return dir != "" && ignoreCaseIn(filepath.Clean(dir))
+}
+
 // ignoreCaseIn reports whether lookups in dir are case-insensitive. Case-sensitive scopes match regardless of
 // letter case, as a case-insensitive parent file system may list a mount point under another spelling.
 func ignoreCaseIn(dir string) bool {

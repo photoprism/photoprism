@@ -140,7 +140,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	folderBase, nameRoot := "", filepath.Clean(importPath)
 
 	if base := imp.conf.ImportPath(); base != "" {
-		if _, ok := relBelow(base, importPath); ok {
+		if _, ok := relBelow(base, importPath, false); ok {
 			folderBase, nameRoot = base, base
 		}
 	}
@@ -547,10 +547,11 @@ func (imp *Import) CheckPath(importPath string) error {
 	}
 
 	src, dest := resolvedPath(importPath), resolvedPath(originals)
+	fold := fs.IgnoreCaseIn(originals)
 
 	// walked reports whether folder is dir or a folder below it that a walk of dir reaches.
 	walked := func(dir, folder string) bool {
-		rel, ok := relBelow(dir, folder)
+		rel, ok := relBelow(dir, folder, fold)
 		return ok && !walkSkips(dir, rel)
 	}
 
@@ -564,29 +565,36 @@ func (imp *Import) CheckPath(importPath string) error {
 // linksToOriginals reports whether a linked folder leads to the originals folder, a folder in it, or a folder
 // that contains it.
 func (imp *Import) linksToOriginals(dir string) bool {
-	return overlappingPaths(dir, imp.originalsPath())
+	originals := imp.originalsPath()
+	return overlappingPaths(dir, originals, fs.IgnoreCaseIn(originals))
 }
 
 // overlappingPaths reports whether two folders are the same, or one is inside the other, after resolving symbolic
-// links. An empty path overlaps with nothing.
-func overlappingPaths(a, b string) bool {
+// links, comparing letters case-insensitively if fold is set. An empty path overlaps with nothing.
+func overlappingPaths(a, b string, fold bool) bool {
 	if a == "" || b == "" {
 		return false
 	}
 
 	a, b = resolvedPath(a), resolvedPath(b)
 
-	if _, ok := relBelow(b, a); ok {
+	if _, ok := relBelow(b, a, fold); ok {
 		return true
 	}
 
-	_, ok := relBelow(a, b)
+	_, ok := relBelow(a, b, fold)
 
 	return ok
 }
 
-// relBelow returns the path of folder relative to dir, and whether folder is dir itself or a folder below it.
-func relBelow(dir, folder string) (string, bool) {
+// relBelow returns the path of folder relative to dir, and whether folder is dir itself or a folder below it. If
+// fold is set, letters are compared case-insensitively, as on a case-insensitive file system, and the relative path
+// is returned in lowercase.
+func relBelow(dir, folder string, fold bool) (string, bool) {
+	if fold {
+		dir, folder = strings.ToLower(dir), strings.ToLower(folder)
+	}
+
 	rel, err := filepath.Rel(dir, folder)
 
 	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
