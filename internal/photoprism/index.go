@@ -313,26 +313,18 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 					return result
 				}
 
-				// A folder whose name is not portable is skipped with its contents, and not recorded as walked,
-				// so the folder a symbolic link points to is still indexed under its own name.
-				if p := unportablePath(relName); p != "" && !errors.Is(result, filepath.SkipDir) {
-					delete(found, fileName)
-
-					if isSymlink {
-						if resolved, evalErr := filepath.EvalSymlinks(fileName); evalErr == nil {
-							delete(found, resolved)
-						}
-					}
-
-					if !wasFound {
-						o.FaceRegeneration.addSkippedDir(fileName)
-					}
-
-					warnUnportable("index", entity.RootOriginals, p, "index it")
-					return filepath.SkipDir
-				}
-
 				if !errors.Is(result, filepath.SkipDir) {
+					// A folder whose name is not portable is skipped with its contents, and not recorded as walked,
+					// so a folder reached under another name is still indexed under that name.
+					if p := skipUnportableDir(found, fileName, relName, isSymlink); p != "" {
+						if !wasFound {
+							o.FaceRegeneration.addSkippedDir(fileName)
+						}
+
+						warnUnportable("index", entity.RootOriginals, p, "index it")
+						return filepath.SkipDir
+					}
+
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.ModTime(fileName))
 
 					if _, created, err := entity.FirstOrCreateFolder(&folder); err == nil && created && folder.Path != "" {

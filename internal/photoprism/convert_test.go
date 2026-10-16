@@ -217,7 +217,7 @@ func TestConvert_StartUnportable(t *testing.T) {
 	webp, err := os.ReadFile("testdata/norway-kjetil-moe.webp")
 	require.NoError(t, err)
 
-	names := []string{"ok.webp", "real/in.webp", "x:y.webp", "a$b.webp", "dir$/in.webp"}
+	names := []string{"ok.webp", "real/in.webp", "x:y.webp", "a$b.webp", "dir$/in.webp", "Best|Of/y.webp"}
 
 	for _, name := range names {
 		fileName := filepath.Join(c.OriginalsPath(), filepath.FromSlash(name))
@@ -228,7 +228,10 @@ func TestConvert_StartUnportable(t *testing.T) {
 	// A symbolic link whose name is not portable does not keep its target from being converted.
 	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "real"), filepath.Join(c.OriginalsPath(), "link$")))
 
-	// Two of the four skipped names are reported on their own, the others in one warning.
+	// A folder whose name is not portable is converted under the portable name of a link, also if it sorts first.
+	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "Best|Of"), filepath.Join(c.OriginalsPath(), "favorites")))
+
+	// Two of the five skipped names are reported on their own, the others in one warning.
 	saved := unportablePaths
 	t.Cleanup(func() { unportablePaths = saved })
 	unportablePaths = &warnedPaths{limit: 2}
@@ -243,8 +246,9 @@ func TestConvert_StartUnportable(t *testing.T) {
 
 	assert.True(t, converted("ok.webp"))
 	assert.True(t, converted("real/in.webp"))
+	assert.True(t, converted("favorites/y.webp"))
 
-	for _, name := range []string{"x:y.webp", "a$b.webp", "dir$/in.webp"} {
+	for _, name := range []string{"x:y.webp", "a$b.webp", "dir$/in.webp", "Best|Of/y.webp"} {
 		assert.False(t, converted(name), name)
 	}
 
@@ -254,7 +258,7 @@ func TestConvert_StartUnportable(t *testing.T) {
 		switch {
 		case strings.HasPrefix(msg, "convert: skipped") && strings.HasSuffix(msg, "rename it to convert it"):
 			listed++
-		case strings.HasPrefix(msg, "convert: skipped 2 more names"):
+		case strings.HasPrefix(msg, "convert: skipped 3 more names"):
 			counted++
 		}
 	}

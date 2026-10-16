@@ -253,15 +253,9 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 					return result
 				}
 
-				// A folder whose name is not portable stays in the import folder with its contents. The folder a
-				// symbolic link points to is not recorded as walked, so it is still imported under its own name.
-				if p := unportablePath(fs.RelName(fileName, nameRoot)); p != "" {
-					if isSymlink {
-						if resolved, evalErr := filepath.EvalSymlinks(fileName); evalErr == nil {
-							delete(done, resolved)
-						}
-					}
-
+				// A folder whose name is not portable stays in the import folder with its contents. It is not recorded as
+				// walked, so a folder reached under another name is still imported under that name.
+				if p := skipUnportableDir(done, fileName, fs.RelName(fileName, nameRoot), isSymlink); p != "" {
 					warnUnportable("import", nameRoot, p, "import it")
 					return filepath.SkipDir
 				}

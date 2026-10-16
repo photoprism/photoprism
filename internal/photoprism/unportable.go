@@ -101,6 +101,27 @@ func unportablePath(rel string) string {
 	return ""
 }
 
+// skipUnportableDir returns the part of a folder's relative path up to its first name that is not portable, and then
+// removes the folder, and the folder a symbolic link points to, from the walked folders, so that a folder reached
+// under another name is still walked under that name. It returns an empty string if all names are portable.
+func skipUnportableDir(done fs.Done, fileName, rel string, isSymlink bool) string {
+	p := unportablePath(rel)
+
+	if p == "" {
+		return ""
+	}
+
+	delete(done, fileName)
+
+	if isSymlink {
+		if resolved, err := filepath.EvalSymlinks(fileName); err == nil {
+			delete(done, resolved)
+		}
+	}
+
+	return p
+}
+
 // unsupportedPath returns a slash-separated relative path up to and including its first name that is not
 // portable or hidden, or an empty string if all of its names are portable and visible.
 func unsupportedPath(rel string) string {

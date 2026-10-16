@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -146,6 +147,30 @@ func TestFileIndexed(t *testing.T) {
 
 	require.NoError(t, entity.UnscopedDb().Delete(row).Error)
 	assert.False(t, fileIndexed(mf))
+}
+
+func TestSkipUnportableDir(t *testing.T) {
+	dir := t.TempDir()
+	require.NoError(t, fs.MkdirAll(filepath.Join(dir, "a|b")))
+	require.NoError(t, os.Symlink(filepath.Join(dir, "a|b"), filepath.Join(dir, "x:y")))
+
+	t.Run("Portable", func(t *testing.T) {
+		done := fs.Done{filepath.Join(dir, "ok"): fs.Found}
+		assert.Equal(t, "", skipUnportableDir(done, filepath.Join(dir, "ok"), "ok", false))
+		assert.Len(t, done, 1)
+	})
+	t.Run("Folder", func(t *testing.T) {
+		done := fs.Done{filepath.Join(dir, "a|b"): fs.Found, "other": fs.Found}
+		assert.Equal(t, "a|b", skipUnportableDir(done, filepath.Join(dir, "a|b"), "a|b", false))
+		assert.Equal(t, fs.Done{"other": fs.Found}, done)
+	})
+	t.Run("Link", func(t *testing.T) {
+		resolved, err := filepath.EvalSymlinks(filepath.Join(dir, "a|b"))
+		require.NoError(t, err)
+		done := fs.Done{filepath.Join(dir, "x:y"): fs.Found, resolved: fs.Found}
+		assert.Equal(t, "sub/x:y", skipUnportableDir(done, filepath.Join(dir, "x:y"), "sub/x:y/z", true))
+		assert.Empty(t, done)
+	})
 }
 
 func TestUnportablePath(t *testing.T) {

@@ -221,6 +221,16 @@ func TestImport_StartUnportableFolder(t *testing.T) {
 
 		assert.False(t, fs.FileExists(filepath.Join(src, "real", "x.jpg")), "real/x.jpg was not imported")
 	})
+	t.Run("LinkAfterFolder", func(t *testing.T) {
+		// A folder whose name is not portable is imported under the portable name of a link that sorts after it.
+		src := t.TempDir()
+		writeTestJpeg(t, filepath.Join(src, "Best|Of", "y.jpg"), 252)
+		require.NoError(t, os.Symlink("Best|Of", filepath.Join(src, "favorites")))
+
+		imp.Start(ImportOptionsMove(src, ""))
+
+		assert.False(t, fs.FileExists(filepath.Join(src, "Best|Of", "y.jpg")), "favorites/y.jpg was not imported")
+	})
 }
 
 // TestImport_DestinationFilenameUnportable checks that a file is not restored to a recorded name that is not portable.

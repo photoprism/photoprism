@@ -173,15 +173,9 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 					return result
 				}
 
-				// A folder whose name is not portable is skipped with its contents. The folder a symbolic link
-				// points to is not recorded as walked, so it is still converted under its own name.
-				if p := unportablePath(fs.RelName(fileName, nameRoot)); p != "" {
-					if isSymlink {
-						if resolved, evalErr := filepath.EvalSymlinks(fileName); evalErr == nil {
-							delete(done, resolved)
-						}
-					}
-
+				// A folder whose name is not portable is skipped with its contents. It is not recorded as walked, so a
+				// folder reached under another name is still converted under that name.
+				if p := skipUnportableDir(done, fileName, fs.RelName(fileName, nameRoot), isSymlink); p != "" {
 					warnUnportable("convert", nameRoot, p, "convert it")
 					return filepath.SkipDir
 				}
