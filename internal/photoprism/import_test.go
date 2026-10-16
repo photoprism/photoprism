@@ -201,6 +201,38 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, os.WriteFile(changed, []byte("new content"), fs.ModeFile))
 		assert.Equal(t, storedNone, storedFileOf(mf).match)
 	})
+	t.Run("ChangedMaybeSame", func(t *testing.T) {
+		// A source that changed since it was read, together with the stored file it may be, is still kept.
+		name := filepath.Join(filepath.Dir(storedPath), "changed-maybe-"+rnd.Base36(8)+".jpg")
+		writeTestJpeg(t, name, 340)
+		row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals,
+			FileName: fs.RelName(name, cfg.OriginalsPath()), FileHash: fs.Hash(name)}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+		src := filepath.Join(t.TempDir(), "changed-maybe.jpg")
+		require.NoError(t, fs.Copy(name, src, false))
+
+		saved := maybeSameFile
+		t.Cleanup(func() { maybeSameFile = saved })
+		maybeSameFile = func(a, b os.FileInfo) bool { return b.Name() == filepath.Base(name) }
+
+		mf, err := NewMediaFile(src)
+		require.NoError(t, err)
+		require.Equal(t, row.FileHash, mf.Hash())
+
+		for _, f := range []string{src, name} {
+			appendTo, openErr := os.OpenFile(f, os.O_WRONLY|os.O_APPEND, 0)
+			require.NoError(t, openErr)
+			_, err = appendTo.WriteString("new content")
+			require.NoError(t, err)
+			require.NoError(t, appendTo.Close())
+		}
+
+		found, match := storedFileMatch(mf)
+		assert.Equal(t, storedMaybeSame, match)
+		require.NotNil(t, found)
+		assert.Equal(t, row.FileName, found.FileName)
+	})
 	t.Run("ChangedOriginal", func(t *testing.T) {
 		// A source that changed after it was first read is still recognized as the stored file itself.
 		name := filepath.Join(filepath.Dir(storedPath), "changed-"+rnd.Base36(8)+".jpg")
@@ -1281,6 +1313,119 @@ func TestMainTypeRefused(t *testing.T) {
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Equal(t, "due to unknown or unsupported extension", mainTypeRefused(mf(unknown), fs.NewExtList("")))
+	})
+}
+
+func TestSameInfo(t *testing.T) {
+	dir := t.TempDir()
+	a, b := filepath.Join(dir, "a.jpg"), filepath.Join(dir, "b.jpg")
+	writeTestJpeg(t, a, 341)
+	require.NoError(t, fs.Copy(a, b, false))
+	modTime := time.Date(2019, time.December, 1, 12, 0, 0, 0, time.UTC)
+	require.NoError(t, os.Chtimes(a, modTime, modTime))
+	require.NoError(t, os.Chtimes(b, modTime, modTime))
+
+	stat := func(name string) os.FileInfo {
+		info, err := os.Stat(name)
+		require.NoError(t, err)
+		return info
+	}
+
+	t.Run("Same", func(t *testing.T) {
+		assert.True(t, sameInfo(stat(a), stat(a)))
+	})
+	t.Run("OtherFile", func(t *testing.T) {
+		assert.False(t, sameInfo(stat(a), stat(b)))
+	})
+	t.Run("Changed", func(t *testing.T) {
+		before := stat(a)
+		later := modTime.Add(time.Millisecond)
+		require.NoError(t, os.Chtimes(a, later, later))
+		assert.False(t, sameInfo(before, stat(a)))
+	})
+}
+
+func TestStoredMatchOf(t *testing.T) {
+	cfg := config.TestConfig()
+	dir := "zz-match-of-" + rnd.Base36(8)
+	stored := filepath.Join(cfg.OriginalsPath(), dir, "a.jpg")
+	writeTestJpeg(t, stored, 342)
+	t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(stored)) })
+	copied := filepath.Join(t.TempDir(), "a.jpg")
+	require.NoError(t, fs.Copy(stored, copied, false))
+	mf, err := NewMediaFile(copied)
+	require.NoError(t, err)
+	row := entity.File{FileRoot: entity.RootOriginals, FileName: dir + "/a.jpg"}
+
+	t.Run("Copy", func(t *testing.T) {
+		result := storedMatchOf(mf, mf.Hash(), entity.Files{row})
+		assert.Equal(t, storedCopy, result.match)
+		assert.False(t, result.queried, "the rows are not recorded")
+	})
+	t.Run("NoRows", func(t *testing.T) {
+		assert.Equal(t, storedNone, storedMatchOf(mf, mf.Hash(), nil).match)
+	})
+	t.Run("OtherHash", func(t *testing.T) {
+		assert.Equal(t, storedNone, storedMatchOf(mf, "other", entity.Files{row}).match)
+	})
+	t.Run("SourceMissing", func(t *testing.T) {
+		missing := &MediaFile{fileName: filepath.Join(t.TempDir(), "missing.jpg")}
+		assert.Equal(t, storedNone, storedMatchOf(missing, mf.Hash(), entity.Files{row}).match)
+	})
+}
+
+func TestImport_DestinationFilenameRows(t *testing.T) {
+	cfg := config.TestConfig()
+	convert := NewConvert(cfg)
+	imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+	dir := "zz-dest-rows-" + rnd.Base36(8)
+	present := filepath.Join(cfg.OriginalsPath(), dir, "present.jpg")
+	writeTestJpeg(t, present, 343)
+	t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(present)) })
+	src := filepath.Join(t.TempDir(), "src.jpg")
+	require.NoError(t, fs.Copy(present, src, false))
+	mf, err := NewMediaFile(src)
+	require.NoError(t, err)
+
+	lookups := 0
+	saved := firstFileByHash
+	t.Cleanup(func() { firstFileByHash = saved })
+	firstFileByHash = func(hash string) (entity.File, error) {
+		lookups++
+		return saved(hash)
+	}
+
+	t.Run("FirstRow", func(t *testing.T) {
+		// The oldest row decides, as with FirstFileByHash: a free recorded name is restored.
+		rows := entity.Files{{FileRoot: entity.RootOriginals, FileName: dir + "/absent.jpg"}, {FileRoot: entity.RootOriginals, FileName: dir + "/present.jpg"}}
+		dest, destErr := imp.destinationFilename(mf, mf, "", storedResult{rows: rows, queried: true})
+		require.NoError(t, destErr)
+		assert.Equal(t, filepath.Join(cfg.OriginalsPath(), dir, "absent.jpg"), dest)
+
+		_, destErr = imp.destinationFilename(mf, mf, "", storedResult{rows: rows[1:], queried: true})
+		assert.ErrorContains(t, destErr, "is already indexed as")
+		assert.Zero(t, lookups)
+	})
+	t.Run("NoRows", func(t *testing.T) {
+		// Queried without rows means no lookup, while results that were not queried fall back to one.
+		_, destErr := imp.destinationFilename(mf, mf, "", storedResult{queried: true})
+		require.NoError(t, destErr)
+		assert.Zero(t, lookups)
+
+		_, _ = imp.destinationFilename(mf, mf, "", storedResult{})
+		assert.Equal(t, 1, lookups)
+	})
+	t.Run("NoHash", func(t *testing.T) {
+		lookups = 0
+		gone := filepath.Join(t.TempDir(), "gone.jpg")
+		require.NoError(t, os.WriteFile(gone, []byte("x"), fs.ModeFile))
+		unreadable, newErr := NewMediaFile(gone)
+		require.NoError(t, newErr)
+		require.NoError(t, os.Remove(gone))
+		require.Empty(t, unreadable.Hash())
+
+		_, _ = imp.destinationFilename(unreadable, unreadable, "", storedResult{})
+		assert.Zero(t, lookups)
 	})
 }
 

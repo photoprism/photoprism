@@ -500,8 +500,8 @@ func sameInfo(a, b os.FileInfo) bool {
 }
 
 // storedFileOf reports how a file relates to the indexed files that hold the same content, and returns the row it
-// is, may be, or is a copy of, if known, with the file infos of a copy and of the source. The answer comes from the
-// files rather than the rows, since a caller removes its source on the strength of it, so every row is checked.
+// is, may be, or is a copy of, if known, with the file infos of a copy and of the source and all rows with the hash.
+// The answer comes from the files rather than the rows, since a caller removes its source on the strength of it.
 func storedFileOf(mediaFile *MediaFile) storedResult {
 	if mediaFile == nil {
 		return storedResult{}
@@ -595,6 +595,9 @@ func storedMatchOf(mediaFile *MediaFile, fileHash string, files entity.Files) st
 	for i := range files {
 		switch {
 		case dests[i] == nil:
+		case maybeSameFile(src, dests[i]) && changed:
+			// The hash of a source that changed since it was read cannot confirm what the stored file holds.
+			return storedResult{file: &files[i], match: storedMaybeSame}
 		case maybeSameFile(src, dests[i]):
 			switch storedHash(FileName(files[i].FileRoot, files[i].FileName)) {
 			case fileHash:
@@ -834,11 +837,14 @@ func (imp *Import) destinationFilename(mainFile, mediaFile *MediaFile, folder st
 		var f entity.File
 		found := false
 
-		if !stored.queried {
+		// A file that cannot be read matches no row, not even one recorded without a hash.
+		switch hash := mediaFile.Hash(); {
+		case hash == "":
+		case !stored.queried:
 			var err error
-			f, err = firstFileByHash(mediaFile.Hash())
+			f, err = firstFileByHash(hash)
 			found = err == nil
-		} else if len(stored.rows) > 0 {
+		case len(stored.rows) > 0:
 			f, found = stored.rows[0], true
 		}
 

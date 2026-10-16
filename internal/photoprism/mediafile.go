@@ -173,7 +173,8 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 	return m.fileSize, m.modTime, m.statErr
 }
 
-// FileInfo returns the file info that Stat read first, with the full modification time, or nil if it failed.
+// FileInfo returns the file info that Stat cached, with the full modification time, or nil if it failed. Stat reads
+// it once, when the file is created, unless the file was empty or could not be read.
 func (m *MediaFile) FileInfo() os.FileInfo {
 	_, _, _ = m.Stat()
 
