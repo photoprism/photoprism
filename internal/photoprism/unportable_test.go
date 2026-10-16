@@ -10,6 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestWarnedPaths_First(t *testing.T) {
@@ -119,6 +122,26 @@ func TestFlushHidden(t *testing.T) {
 	flushHidden("import")
 
 	assert.Equal(t, []string{"import: skipped 1 more hidden file"}, loggedMessages(hook, logrus.WarnLevel))
+}
+
+func TestFileIndexed(t *testing.T) {
+	dir := filepath.Join(Config().OriginalsPath(), "file-indexed-"+rnd.Base36(8))
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+	writeTestJpeg(t, filepath.Join(dir, "a.jpg"), 300)
+	mf, err := NewMediaFile(filepath.Join(dir, "a.jpg"))
+	require.NoError(t, err)
+
+	assert.False(t, fileIndexed(mf))
+
+	// Rows without a root match as well, as in the index.
+	row := &entity.File{FileUID: rnd.GenerateUID(entity.FileUID), FileRoot: "", FileName: mf.RootRelName(), FileHash: rnd.GenerateUID('h')}
+	require.NoError(t, entity.UnscopedDb().Create(row).Error)
+	t.Cleanup(func() { assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(row).Error) })
+	require.NoError(t, entity.UnscopedDb().Model(row).UpdateColumn("file_root", "").Error)
+	assert.True(t, fileIndexed(mf))
+
+	require.NoError(t, entity.UnscopedDb().Delete(row).Error)
+	assert.False(t, fileIndexed(mf))
 }
 
 func TestUnportablePath(t *testing.T) {
@@ -264,6 +287,34 @@ func TestPortableSiblings(t *testing.T) {
 		// The index walk checks folders on its own, so PortableRelated does not.
 		related = PortableRelated(RelatedFiles{Main: other, Files: MediaFiles{other}}, other, report)
 		assert.Equal(t, other, related.Main)
+
+		// A file in the sidecar folder does not replace a main file in a folder whose name is not portable, which
+		// stays if it is indexed. A file in originals does replace one that is not indexed.
+		raw := newIn(originals, "k.cr2")
+
+		skipped = nil
+		related = PortableSiblings(RelatedFiles{Main: raw, Files: MediaFiles{raw, preview}}, preview, report)
+		assert.Nil(t, related.Main)
+		assert.Equal(t, MediaFiles{preview}, related.Files)
+		assert.Equal(t, []string{"k.cr2"}, skipped)
+
+		related = PortableSiblings(RelatedFiles{Main: raw, Files: MediaFiles{raw, file}}, file, report)
+		assert.Equal(t, file, related.Main)
+		assert.Equal(t, MediaFiles{file}, related.Files)
+
+		row := &entity.File{FileUID: rnd.GenerateUID(entity.FileUID), FileRoot: entity.RootOriginals, FileName: folder + "/k.cr2",
+			FileHash: rnd.GenerateUID('h')}
+		require.NoError(t, entity.UnscopedDb().Create(row).Error)
+		t.Cleanup(func() { assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(row).Error) })
+
+		skipped = nil
+		related = PortableSiblings(RelatedFiles{Main: raw, Files: MediaFiles{raw, preview}}, preview, report)
+		assert.Equal(t, raw, related.Main)
+		assert.Equal(t, MediaFiles{raw, preview}, related.Files)
+		assert.Empty(t, skipped)
+
+		related = PortableSiblings(RelatedFiles{Main: raw, Files: MediaFiles{raw, file}}, file, report)
+		assert.Equal(t, raw, related.Main)
 	})
 }
 

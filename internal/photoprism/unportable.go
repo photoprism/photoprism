@@ -156,7 +156,8 @@ func PortableRelated(related RelatedFiles, mf *MediaFile, skipped func(f *MediaF
 }
 
 // PortableSiblings is like PortableRelated, but keeps mf whatever its name, for actions on a file that is
-// already indexed. Other files in originals must also be in folders whose names are portable.
+// already indexed. Other files in originals must also be in folders whose names are portable, except a main file
+// that is indexed, and mf does not become the main file if it is in the sidecar folder.
 func PortableSiblings(related RelatedFiles, mf *MediaFile, skipped func(f *MediaFile)) RelatedFiles {
 	return portableGroup(related, mf, true, skipped)
 }
@@ -178,8 +179,16 @@ func portableGroup(related RelatedFiles, mf *MediaFile, keepMf bool, skipped fun
 		}
 	}
 
+	main := related.Main
+	keepMain := keepMf && main != nil && !kept(main) && fileIndexed(main)
+
+	// stays reports whether a file stays in the group, including a main file that is kept because it is indexed.
+	stays := func(f *MediaFile) bool {
+		return kept(f) || keepMain && f.FileName() == main.FileName()
+	}
+
 	for _, f := range related.Files {
-		if f != nil && !kept(f) {
+		if f != nil && !stays(f) {
 			skipped(f)
 			continue
 		} else if f != nil && mf != nil && f.FileName() == mf.FileName() {
@@ -191,8 +200,8 @@ func portableGroup(related RelatedFiles, mf *MediaFile, keepMf bool, skipped fun
 
 	related.Files = files
 
-	if related.Main != nil && !kept(related.Main) {
-		if mfInGroup {
+	if main != nil && !stays(main) {
+		if mfInGroup && (!keepMf || !fs.InDir(mf.FileName(), Config().SidecarPath())) {
 			related.Main = mf
 		} else {
 			related.Main = nil
@@ -200,4 +209,17 @@ func portableGroup(related RelatedFiles, mf *MediaFile, keepMf bool, skipped fun
 	}
 
 	return related
+}
+
+// fileIndexed reports whether a file has an index entry that is not deleted, matching it as the index does.
+func fileIndexed(f *MediaFile) bool {
+	var count int64
+
+	if err := entity.Db().Model(&entity.File{}).Where("file_name = ? AND (file_root = ? OR file_root = '') AND deleted_at IS NULL",
+		f.RootRelName(), f.Root()).Count(&count).Error; err != nil {
+		log.Debugf("index: %s (find %s)", clean.Error(err), clean.Log(f.RootRelName()))
+		return false
+	}
+
+	return count > 0
 }
