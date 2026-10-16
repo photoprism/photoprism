@@ -65,8 +65,8 @@ func copyAction(ctx *cli.Context) error {
 		sourcePath = abs
 	}
 
-	if sourcePath == conf.OriginalsPath() {
-		return cli.Exit("source path is identical with originals", 2)
+	if err := get.Import().CheckPath(sourcePath); err != nil {
+		return cli.Exit(err, 2)
 	}
 
 	var destFolder string

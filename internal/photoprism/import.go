@@ -75,6 +75,9 @@ var ErrImportBusy = errors.New("waiting for another task to complete")
 // are not supported.
 var ErrImportDest = errors.New("destination is not supported")
 
+// ErrImportPath is returned by Import.Run when the import folder is the originals folder or a folder inside it.
+var ErrImportPath = errors.New("import folder is in the originals folder")
+
 // ErrImportIncomplete is returned by Import.Run when files could not be moved or copied to the originals.
 var ErrImportIncomplete = errors.New("some files could not be imported")
 
@@ -136,6 +139,13 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: directory %s not found", clean.Log(displayFolder(importPath, folderBase))))
 		return done, errors.New("directory not found")
+	}
+
+	// Files are moved or copied to originals, so the import folder must not be in it.
+	if err := imp.CheckPath(importPath); err != nil {
+		event.SystemError([]string{"import", "%s"}, err.Error())
+		event.Error("import: import folder is in the originals folder")
+		return done, ErrImportPath
 	}
 
 	// Imported files must get names that the index accepts. The details name folders, so only the system log has
@@ -248,6 +258,12 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 					}
 
 					warnUnportable("import", nameRoot, p, "import it")
+					return filepath.SkipDir
+				}
+
+				// A linked folder that leads to originals is not walked, since its files are already in the library.
+				if isSymlink && imp.linksToOriginals(fileName) {
+					log.Warnf("import: skipped %s because it links to the originals folder", clean.Log(fs.RelName(fileName, nameRoot)))
 					return filepath.SkipDir
 				}
 
@@ -473,11 +489,98 @@ func StoredCopyOf(mediaFile *MediaFile) *entity.File {
 	}
 
 	// A name that holds nothing hashes to the empty string, so this covers an absent file too.
-	if storedName := FileName(stored.FileRoot, stored.FileName); fs.Hash(storedName) != fileHash {
+	storedName := FileName(stored.FileRoot, stored.FileName)
+
+	if fs.Hash(storedName) != fileHash {
+		return nil
+	}
+
+	// The file itself, e.g. reached through a link, is not a copy of it.
+	if src, srcErr := os.Stat(mediaFile.FileName()); srcErr != nil {
+		return nil
+	} else if dest, destErr := os.Stat(storedName); destErr != nil || os.SameFile(src, dest) {
 		return nil
 	}
 
 	return &stored
+}
+
+// CheckPath returns ErrImportPath if the import folder is the originals folder, a folder inside it, or a folder
+// that contains it, compared after resolving symbolic links. Hidden folders are not indexed or imported, so a
+// folder below one, such as the storage folder in originals/.photoprism, may contain or be in the other.
+func (imp *Import) CheckPath(importPath string) error {
+	originals := imp.originalsPath()
+
+	if importPath == "" || originals == "" {
+		return nil
+	}
+
+	src, dest := resolvedPath(importPath), resolvedPath(originals)
+
+	// walked reports whether folder is dir or a folder below it that a walk of dir reaches.
+	walked := func(dir, folder string) bool {
+		rel, ok := relBelow(dir, folder)
+		return ok && !hiddenRel(rel)
+	}
+
+	if walked(dest, src) || walked(src, dest) {
+		return fmt.Errorf("%w: import folder %s, originals folder %s", ErrImportPath, clean.Log(importPath), clean.Log(originals))
+	}
+
+	return nil
+}
+
+// linksToOriginals reports whether a linked folder leads to the originals folder, a folder in it, or a folder
+// that contains it.
+func (imp *Import) linksToOriginals(dir string) bool {
+	src, dest := resolvedPath(dir), resolvedPath(imp.originalsPath())
+
+	if _, ok := relBelow(dest, src); ok {
+		return true
+	}
+
+	_, ok := relBelow(src, dest)
+
+	return ok
+}
+
+// relBelow returns the path of folder relative to dir, and whether folder is dir itself or a folder below it.
+func relBelow(dir, folder string) (string, bool) {
+	rel, err := filepath.Rel(dir, folder)
+
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		return "", false
+	}
+
+	return rel, true
+}
+
+// hiddenRel reports whether a relative path has a hidden name, which the index and import walks skip.
+func hiddenRel(rel string) bool {
+	if rel == "." {
+		return false
+	}
+
+	for _, name := range strings.Split(rel, string(filepath.Separator)) {
+		if fs.FileNameHidden(name) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// resolvedPath returns the absolute path of a folder with symbolic links resolved, or cleaned if it cannot be resolved.
+func resolvedPath(dir string) string {
+	if abs, err := filepath.Abs(dir); err == nil {
+		dir = abs
+	}
+
+	if resolved, err := filepath.EvalSymlinks(dir); err == nil {
+		return resolved
+	}
+
+	return filepath.Clean(dir)
 }
 
 // CheckDest returns ErrImportDest if the destination folder or the Import.Dest pattern gives names that are not

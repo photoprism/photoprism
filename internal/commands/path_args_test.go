@@ -68,6 +68,8 @@ func TestImportCopyCommandRejectsOriginalsAsSourcePath(t *testing.T) {
 	}{
 		{Name: "Import", Cmd: ImportCommand, Args: []string{"mv", conf.OriginalsPath()}},
 		{Name: "Copy", Cmd: CopyCommand, Args: []string{"cp", conf.OriginalsPath()}},
+		{Name: "ImportSubfolder", Cmd: ImportCommand, Args: []string{"mv", filepath.Join(conf.OriginalsPath(), "2019")}},
+		{Name: "CopySubfolder", Cmd: CopyCommand, Args: []string{"cp", filepath.Join(conf.OriginalsPath(), "2019")}},
 	}
 
 	for _, tt := range tests {
@@ -75,7 +77,8 @@ func TestImportCopyCommandRejectsOriginalsAsSourcePath(t *testing.T) {
 			output, err := RunWithTestContext(tt.Cmd, tt.Args)
 			assertExitCode(t, err, 2)
 
-			assert.Contains(t, err.Error(), "source path is identical with originals")
+			assert.Contains(t, err.Error(), "import folder is in the originals folder")
+			assert.Contains(t, err.Error(), conf.OriginalsPath())
 			assert.NotContains(t, output, "media files from")
 		})
 	}

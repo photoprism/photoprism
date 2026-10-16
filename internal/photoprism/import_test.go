@@ -122,6 +122,16 @@ func TestStoredCopyOf(t *testing.T) {
 
 		require.NotNil(t, found)
 		assert.Equal(t, stored, found.FileName)
+
+		// The stored file itself, reached through a link or by its own name, is not a copy of it.
+		link := filepath.Join(t.TempDir(), "link")
+		require.NoError(t, os.Symlink(filepath.Dir(storedPath), link))
+
+		for _, name := range []string{storedPath, filepath.Join(link, "present.cr2")} {
+			same, sameErr := NewMediaFile(name)
+			require.NoError(t, sameErr)
+			assert.Nil(t, StoredCopyOf(same), name)
+		}
 	})
 }
 

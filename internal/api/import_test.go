@@ -68,6 +68,16 @@ func TestStartImport(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
 	})
+	t.Run("ImportPathInOriginals", func(t *testing.T) {
+		app, router, config := NewApiTest()
+		importPath := config.Options().ImportPath
+		t.Cleanup(func() { config.Options().ImportPath = importPath })
+		config.Options().ImportPath = config.OriginalsPath()
+		StartImport(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/import/", `{"move":false}`)
+
+		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+	})
 }
 
 func TestStartImportAlbums(t *testing.T) {

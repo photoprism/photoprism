@@ -137,7 +137,7 @@ func StartImport(router *gin.RouterGroup) {
 		// Start import.
 		imported, importErr := imp.Run(opt)
 
-		if errors.Is(importErr, photoprism.ErrImportDest) {
+		if errors.Is(importErr, photoprism.ErrImportDest) || errors.Is(importErr, photoprism.ErrImportPath) {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
