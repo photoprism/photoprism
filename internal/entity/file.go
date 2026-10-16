@@ -227,6 +227,17 @@ func FirstFileByHash(fileHash string) (File, error) {
 	return file, res.Error
 }
 
+// FilesByHash returns all files with the given hash in the order they were added, including soft-deleted rows.
+func FilesByHash(fileHash string) (files Files, err error) {
+	if fileHash == "" {
+		return files, nil
+	}
+
+	err = Db().Unscoped().Where("file_hash = ?", fileHash).Order("id").Find(&files).Error
+
+	return files, err
+}
+
 // PrimaryFile finds the photo's primary file (primary flag set) regardless of soft-delete state.
 func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}

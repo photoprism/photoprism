@@ -185,6 +185,59 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Equal(t, storedSame, match)
 		assert.Nil(t, found)
 	})
+	t.Run("Rows", func(t *testing.T) {
+		// addRow records rel in originals as a file with the given hash.
+		addRow := func(rel, hash string) {
+			f := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: rel, FileHash: hash}
+			require.NoError(t, f.Save())
+			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(f).Error })
+		}
+
+		// A later row that is the file itself, through a folder linked into originals, wins over a copy.
+		name := "zz-link-" + rnd.Base36(8)
+		target := filepath.Join(filepath.Dir(cfg.OriginalsPath()), name)
+		require.NoError(t, fs.MkdirAll(target))
+		require.NoError(t, os.Symlink(target, filepath.Join(cfg.OriginalsPath(), name)))
+		t.Cleanup(func() { _ = os.Remove(filepath.Join(cfg.OriginalsPath(), name)); _ = os.RemoveAll(target) })
+		require.NoError(t, fs.Copy(storedPath, filepath.Join(target, "b.jpg"), false))
+		addRow(name+"/b.jpg", file.FileHash)
+
+		mf, err := NewMediaFile(filepath.Join(target, "b.jpg"))
+		require.NoError(t, err)
+		found, match := storedFileOf(mf)
+		assert.Equal(t, storedSame, match)
+		assert.Nil(t, found)
+
+		// A later row whose file still holds the content is a copy, if earlier ones do not.
+		src := filepath.Join(t.TempDir(), "rows.jpg")
+		writeTestJpeg(t, src, 316)
+		copyRel := filepath.Join(filepath.Dir(stored), "rows-copy.jpg")
+		changedRel := filepath.Join(filepath.Dir(stored), "rows-changed.jpg")
+		require.NoError(t, fs.Copy(src, filepath.Join(cfg.OriginalsPath(), copyRel), false))
+		require.NoError(t, os.WriteFile(filepath.Join(cfg.OriginalsPath(), changedRel), []byte("changed"), fs.ModeFile))
+		addRow(filepath.Join(filepath.Dir(stored), "rows-absent.jpg"), fs.Hash(src))
+		addRow(changedRel, fs.Hash(src))
+		addRow(copyRel, fs.Hash(src))
+
+		mf, err = NewMediaFile(src)
+		require.NoError(t, err)
+		found, match = storedFileOf(mf)
+		assert.Equal(t, storedCopy, match)
+		require.NotNil(t, found)
+		assert.Equal(t, copyRel, found.FileName)
+
+		// A later row that may be the file itself wins over a copy too.
+		saved := maybeSameFile
+		t.Cleanup(func() { maybeSameFile = saved })
+		maybeSameFile = func(a, b os.FileInfo) bool { return b.Name() == "rows-maybe.jpg" }
+		maybeRel := filepath.Join(filepath.Dir(stored), "rows-maybe.jpg")
+		require.NoError(t, fs.Copy(src, filepath.Join(cfg.OriginalsPath(), maybeRel), false))
+		addRow(maybeRel, fs.Hash(src))
+
+		found, match = storedFileOf(mf)
+		assert.Equal(t, storedMaybeSame, match)
+		assert.Nil(t, found)
+	})
 	t.Run("MaybeSame", func(t *testing.T) {
 		// A copy with the same size, time and inode number on another device may be the same file.
 		stubMaybeSame(t)

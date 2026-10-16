@@ -463,9 +463,9 @@ const (
 	storedMaybeSame                    // possibly the file itself, reached through another mount
 )
 
-// storedFileOf reports how a file relates to the indexed file that holds the same content, and returns that file if
-// it is another file. The answer comes from the files rather than from the row, since a caller removes its source
-// on the strength of it.
+// storedFileOf reports how a file relates to the indexed files that hold the same content, and returns one of them
+// if it is another file. The answer comes from the files rather than from the rows, since a caller removes its
+// source on the strength of it, so every row is checked: one of them may be the file itself.
 func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 	if mediaFile == nil {
 		return nil, storedNone
@@ -477,36 +477,49 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 		return nil, storedNone
 	}
 
-	found, err := entity.FirstFileByHash(fileHash)
-
-	if err != nil {
-		return nil, storedNone
-	}
-
-	// A name that holds nothing hashes to the empty string, so this covers an absent file too.
-	storedName := FileName(found.FileRoot, found.FileName)
-
-	if storedHash(storedName) != fileHash {
-		return nil, storedNone
-	}
-
 	src, srcErr := os.Stat(mediaFile.FileName())
 
 	if srcErr != nil {
 		return nil, storedNone
 	}
 
-	dest, destErr := os.Stat(storedName)
+	files, err := entity.FilesByHash(fileHash)
+
+	if err != nil {
+		return nil, storedNone
+	}
+
+	var found *entity.File
+	maybeSame := false
+
+	for i := range files {
+		// A name that holds nothing hashes to the empty string, so this covers an absent file too.
+		storedName := FileName(files[i].FileRoot, files[i].FileName)
+
+		if storedHash(storedName) != fileHash {
+			continue
+		}
+
+		dest, destErr := os.Stat(storedName)
+
+		switch {
+		case destErr != nil:
+		case os.SameFile(src, dest):
+			return nil, storedSame
+		case maybeSameFile(src, dest):
+			maybeSame = true
+		case found == nil:
+			found = &files[i]
+		}
+	}
 
 	switch {
-	case destErr != nil:
-		return nil, storedNone
-	case os.SameFile(src, dest):
-		return nil, storedSame
-	case maybeSameFile(src, dest):
+	case maybeSame:
 		return nil, storedMaybeSame
+	case found != nil:
+		return found, storedCopy
 	default:
-		return &found, storedCopy
+		return nil, storedNone
 	}
 }
 

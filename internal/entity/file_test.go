@@ -152,6 +152,32 @@ func TestFirstFileByHash(t *testing.T) {
 	})
 }
 
+func TestFilesByHash(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		files, err := FilesByHash("")
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		files, err := FilesByHash("xxx")
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+	t.Run("All", func(t *testing.T) {
+		hash := "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
+		second := &File{PhotoID: 1000000, FileRoot: RootOriginals, FileName: "zz-hash/second.jpg", FileHash: hash}
+		require.NoError(t, second.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(second).Error })
+		require.NoError(t, second.Delete(false))
+
+		files, err := FilesByHash(hash)
+		require.NoError(t, err)
+		require.Len(t, files, 2)
+		assert.Equal(t, uint(0xf4240), files[0].ID)
+		assert.Equal(t, second.ID, files[1].ID)
+	})
+}
+
 func TestFile_ShareFileName(t *testing.T) {
 	t.Run("WithPhotoTitle", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
