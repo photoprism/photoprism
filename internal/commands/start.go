@@ -369,9 +369,9 @@ func startAction(ctx *cli.Context) error {
 		case detachErr != nil:
 			return detachErr
 		case status == daemonAlreadyRunning:
-			log.Infof("daemon already running with process id %v\n", pid)
+			log.Infof("daemon already running with process id %v", pid)
 		default:
-			log.Infof("daemon started with process id %v\n", pid)
+			log.Infof("daemon started with process id %v", pid)
 		}
 
 		return nil

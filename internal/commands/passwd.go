@@ -86,7 +86,7 @@ func passwdAction(ctx *cli.Context) error {
 	}
 
 	// Otherwise, update the account password.
-	log.Infof("please enter a new password for %s (%d-%d characters)\n", clean.Log(m.Username()), entity.PasswordLength, txt.ClipPassword)
+	log.Infof("please enter a new password for %s (%d-%d characters)", clean.Log(m.Username()), entity.PasswordLength, txt.ClipPassword)
 
 	newPassword := getPassword("New Password: ")
 
@@ -108,9 +108,9 @@ func passwdAction(ctx *cli.Context) error {
 
 	// Show bcrypt password hash?
 	if pw := entity.FindPassword(m.UserUID); ctx.Bool("show") && pw != nil {
-		log.Infof("password for %s has been set to %s\n", clean.Log(m.Username()), pw.Hash)
+		log.Infof("password for %s has been set to %s", clean.Log(m.Username()), pw.Hash)
 	} else {
-		log.Infof("password for %s has been changed\n", clean.Log(m.Username()))
+		log.Infof("password for %s has been changed", clean.Log(m.Username()))
 	}
 
 	return nil
