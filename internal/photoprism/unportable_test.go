@@ -61,21 +61,9 @@ func TestWarnedPaths_First(t *testing.T) {
 }
 
 func TestFlushUnportable(t *testing.T) {
-	saved := unsupportedPaths
-	t.Cleanup(func() { unsupportedPaths = saved })
-	unsupportedPaths = &warnedPaths{limit: 1}
+	limitWarnedPaths(t, 1)
 
 	hook := captureLog(t)
-
-	// count returns the number of warnings that start with prefix and contain text.
-	count := func(prefix, text string) (n int) {
-		for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
-			if strings.HasPrefix(msg, prefix) && strings.Contains(msg, text) {
-				n++
-			}
-		}
-		return n
-	}
 
 	for run := 0; run < 2; run++ {
 		for _, rel := range []string{"a|b", "c|d", "e|f"} {
@@ -86,14 +74,13 @@ func TestFlushUnportable(t *testing.T) {
 
 	flushUnportable("index")
 
-	assert.Equal(t, 1, count("index: skipped", "rename it to index it"))
-	assert.Equal(t, 2, count("index: skipped 2 more names", "with unsupported characters"))
+	warnings := loggedMessages(hook, logrus.WarnLevel)
+	assert.Equal(t, 1, countPrefixSuffix(warnings, "index: skipped", "rename it to index it"))
+	assert.Equal(t, 2, countPrefix(warnings, "index: skipped 2 more names with unsupported characters"))
 }
 
 func TestWarnHidden(t *testing.T) {
-	saved := unsupportedPaths
-	t.Cleanup(func() { unsupportedPaths = saved })
-	unsupportedPaths = &warnedPaths{limit: 1}
+	limitWarnedPaths(t, 1)
 
 	hook := captureLog(t)
 
@@ -116,9 +103,7 @@ func TestWarnHidden(t *testing.T) {
 }
 
 func TestFlushHidden(t *testing.T) {
-	saved := unsupportedPaths
-	t.Cleanup(func() { unsupportedPaths = saved })
-	unsupportedPaths = &warnedPaths{limit: 0}
+	limitWarnedPaths(t, 0)
 
 	hook := captureLog(t)
 	flushHidden("import")
@@ -174,21 +159,32 @@ func TestSkipUnportableDir(t *testing.T) {
 }
 
 func TestWarnUnportable(t *testing.T) {
+	limitWarnedPaths(t, 10)
 	hook := captureLog(t)
-	rel := "warn-unportable/" + strconv.Itoa(len(unsupportedPaths.seen)) + "|x"
 
-	warnUnportable("index", "originals", rel, "index it")
-	warnUnportable("index", "originals", rel, "index it")
+	warnUnportable("index", "originals", "warn-unportable/a|x", "index it")
+	warnUnportable("index", "originals", "warn-unportable/a|x", "index it")
 
-	count := 0
+	assert.Equal(t, []string{"index: skipped warn-unportable/a|x because of unsupported characters, rename it to index it"},
+		loggedMessages(hook, logrus.WarnLevel))
+}
 
-	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
-		if strings.HasPrefix(msg, "index: skipped") && strings.Contains(msg, rel) && strings.HasSuffix(msg, "rename it to index it") {
-			count++
+// limitWarnedPaths replaces the remembered paths with an empty set that holds up to limit paths during a test.
+func limitWarnedPaths(t *testing.T, limit int) {
+	saved := unsupportedPaths
+	t.Cleanup(func() { unsupportedPaths = saved })
+	unsupportedPaths = &warnedPaths{limit: limit}
+}
+
+// countPrefixSuffix returns the number of messages that start with prefix and end with suffix.
+func countPrefixSuffix(messages []string, prefix, suffix string) (n int) {
+	for _, msg := range messages {
+		if strings.HasPrefix(msg, prefix) && strings.HasSuffix(msg, suffix) {
+			n++
 		}
 	}
 
-	assert.Equal(t, 1, count)
+	return n
 }
 
 func TestPortableRelated(t *testing.T) {
@@ -331,4 +327,3 @@ func TestPortableSiblings(t *testing.T) {
 		assert.Equal(t, raw, related.Main)
 	})
 }
-

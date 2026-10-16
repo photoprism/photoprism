@@ -169,15 +169,7 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 	warnings := loggedMessages(hook, logrus.WarnLevel)
 
 	for _, rel := range []string{dir + "/a|b.jpg", dir + "/x:y.jpg", dir + "/dir*", dir + "/caf\xe9.jpg", dir + "/a~b.jpg", dir + "/price$5.jpg", dir + "/pair.x|y.xmp", dir + "/stack.x|y.gif"} {
-		count := 0
-
-		for _, msg := range warnings {
-			if strings.HasPrefix(msg, "index: skipped") && strings.Contains(msg, "skipped "+clean.Log(rel)+" ") {
-				count++
-			}
-		}
-
-		assert.Equal(t, 1, count, "%q in %v", rel, warnings)
+		assert.Equal(t, 1, countPrefix(warnings, "index: skipped "+clean.Log(rel)+" "), "%q in %v", rel, warnings)
 	}
 
 	for _, msg := range warnings {
@@ -297,15 +289,7 @@ func TestIndex_StartUnportablePath(t *testing.T) {
 	assert.False(t, indexedFile(t, dir+"/dir*/a.jpg"))
 	assert.False(t, indexedFile(t, dir+"/dir*/sub/b.jpg"))
 
-	count := 0
-
-	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
-		if strings.HasPrefix(msg, "index: skipped "+clean.Log(dir+"/dir*")+" ") {
-			count++
-		}
-	}
-
-	assert.Equal(t, 1, count)
+	assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.WarnLevel), "index: skipped "+clean.Log(dir+"/dir*")+" "))
 }
 
 // TestIndex_StartUnportableLimit checks that names above the warning limit are counted in one warning per run.
@@ -314,9 +298,7 @@ func TestIndex_StartUnportableLimit(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	saved := unsupportedPaths
-	t.Cleanup(func() { unsupportedPaths = saved })
-	unsupportedPaths = &warnedPaths{limit: 1}
+	limitWarnedPaths(t, 1)
 
 	cfg := config.TestConfig()
 	dir := "unportable-limit-" + rnd.Base36(8)
@@ -335,16 +317,9 @@ func TestIndex_StartUnportableLimit(t *testing.T) {
 	ind.Start(opt)
 	ind.Start(opt)
 
-	listed, counted := 0, 0
-
-	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
-		switch {
-		case strings.HasPrefix(msg, "index: skipped") && strings.HasSuffix(msg, "rename it to index it"):
-			listed++
-		case strings.HasPrefix(msg, "index: skipped 2 more names"):
-			counted++
-		}
-	}
+	warnings := loggedMessages(hook, logrus.WarnLevel)
+	listed := countPrefixSuffix(warnings, "index: skipped", "rename it to index it")
+	counted := countPrefix(warnings, "index: skipped 2 more names")
 
 	assert.Equal(t, 1, listed)
 	assert.Equal(t, 2, counted)

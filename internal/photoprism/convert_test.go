@@ -232,9 +232,7 @@ func TestConvert_StartUnportable(t *testing.T) {
 	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "Best|Of"), filepath.Join(c.OriginalsPath(), "favorites")))
 
 	// Two of the five skipped names are reported on their own, the others in one warning.
-	saved := unsupportedPaths
-	t.Cleanup(func() { unsupportedPaths = saved })
-	unsupportedPaths = &warnedPaths{limit: 2}
+	limitWarnedPaths(t, 2)
 
 	hook := captureLog(t)
 	require.NoError(t, NewConvert(c).Start(c.OriginalsPath(), nil, false))
@@ -252,16 +250,9 @@ func TestConvert_StartUnportable(t *testing.T) {
 		assert.False(t, converted(name), name)
 	}
 
-	listed, counted := 0, 0
-
-	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
-		switch {
-		case strings.HasPrefix(msg, "convert: skipped") && strings.HasSuffix(msg, "rename it to convert it"):
-			listed++
-		case strings.HasPrefix(msg, "convert: skipped 3 more names"):
-			counted++
-		}
-	}
+	warnings := loggedMessages(hook, logrus.WarnLevel)
+	listed := countPrefixSuffix(warnings, "convert: skipped", "rename it to convert it")
+	counted := countPrefix(warnings, "convert: skipped 3 more names")
 
 	assert.Equal(t, 2, listed)
 	assert.Equal(t, 1, counted)

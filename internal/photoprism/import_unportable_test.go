@@ -100,15 +100,7 @@ func TestImport_StartUnportableNames(t *testing.T) {
 	warnings := loggedMessages(hook, logrus.WarnLevel)
 
 	for _, rel := range []string{"a|b.jpg", "x:y.jpg", "dir*", "caf\xe9.jpg", "a~b.jpg", "a$b.jpg", "pair.x|y.xmp", "stack.x|y.gif"} {
-		count := 0
-
-		for _, msg := range warnings {
-			if strings.HasPrefix(msg, "import: skipped "+clean.Log(rel)+" ") {
-				count++
-			}
-		}
-
-		assert.Equal(t, 1, count, "%q in %v", rel, warnings)
+		assert.Equal(t, 1, countPrefix(warnings, "import: skipped "+clean.Log(rel)+" "), "%q in %v", rel, warnings)
 	}
 
 	assert.Zero(t, countPrefix(warnings, "import: skipped hidden file "+clean.Log("~home.xmp")))
@@ -141,9 +133,7 @@ func TestImport_StartUnportableLimit(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	saved := unsupportedPaths
-	t.Cleanup(func() { unsupportedPaths = saved })
-	unsupportedPaths = &warnedPaths{limit: 1}
+	limitWarnedPaths(t, 1)
 
 	cfg := config.TestConfig()
 	src := t.TempDir()
@@ -159,16 +149,9 @@ func TestImport_StartUnportableLimit(t *testing.T) {
 	imp.Start(ImportOptionsMove(src, ""))
 	imp.Start(ImportOptionsMove(src, ""))
 
-	listed, counted := 0, 0
-
-	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
-		switch {
-		case strings.HasPrefix(msg, "import: skipped") && strings.HasSuffix(msg, "rename it to import it"):
-			listed++
-		case strings.HasPrefix(msg, "import: skipped 2 more names"):
-			counted++
-		}
-	}
+	warnings := loggedMessages(hook, logrus.WarnLevel)
+	listed := countPrefixSuffix(warnings, "import: skipped", "rename it to import it")
+	counted := countPrefix(warnings, "import: skipped 2 more names")
 
 	assert.Equal(t, 1, listed)
 	assert.Equal(t, 2, counted)
@@ -178,15 +161,7 @@ func TestImport_StartUnportableLimit(t *testing.T) {
 	hook.Reset()
 	imp.Start(ImportOptionsMove(t.TempDir(), ""))
 
-	indexed := 0
-
-	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
-		if strings.HasPrefix(msg, "index: skipped 1 more name ") {
-			indexed++
-		}
-	}
-
-	assert.Equal(t, 1, indexed)
+	assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.WarnLevel), "index: skipped 1 more name "))
 }
 
 // TestImport_StartUnportableFolder checks the names of folders below the import folder and of folders symbolic links point to.
