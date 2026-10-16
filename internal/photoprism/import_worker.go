@@ -197,15 +197,17 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// Remove duplicates to save storage, and only where the library demonstrably holds
 				// the same content.
-				if opt.RemoveExistingFiles && stored != nil {
+				switch {
+				case !opt.RemoveExistingFiles:
+				case stored != nil:
 					if removeErr := f.Remove(); removeErr != nil {
 						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())
 					} else {
 						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
-				} else if opt.RemoveExistingFiles && same {
+				case same:
 					log.Infof("import: kept %s, as it is the same file as the original", clean.Log(relFileName))
-				} else if opt.RemoveExistingFiles {
+				default:
 					// Saying nothing here reads as a failure to clean up, since the line above
 					// reports a match. The source is kept because the library does not demonstrably
 					// hold the same content, which a stale index is enough to cause.
