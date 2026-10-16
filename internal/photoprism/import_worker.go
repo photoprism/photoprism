@@ -63,12 +63,6 @@ func importedContent(dest, hash string) bool {
 	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
-// storedResult is how a file relates to the indexed files with the same content.
-type storedResult struct {
-	file  *entity.File
-	match storedMatch
-}
-
 // storedFilesOf returns how the files of a group that are not sidecars relate to the indexed files with the same
 // content, and whether all of them, including the main file, are or may be those files themselves.
 func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
@@ -82,10 +76,10 @@ func storedFilesOf(related RelatedFiles) (results map[string]storedResult, origi
 			continue
 		}
 
-		stored, match := storedFileOf(f)
-		results[f.FileName()] = storedResult{file: stored, match: match}
+		result := storedFileOf(f)
+		results[f.FileName()] = result
 
-		if match != storedSame && match != storedMaybeSame {
+		if result.match != storedSame && result.match != storedMaybeSame {
 			originals = false
 		}
 	}
@@ -243,7 +237,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				result, found := results[f.FileName()]
 
 				if !found {
-					result.file, result.match = storedFileOf(f)
+					result = storedFileOf(f)
 				}
 
 				stored, match := result.file, result.match
@@ -262,9 +256,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Remove duplicates to save storage, and only where the library demonstrably holds
-				// the same content.
+				// the same content, also after the stored file was compared.
 				switch {
 				case !opt.RemoveExistingFiles:
+				case stored != nil && !result.unchanged():
+					log.Infof("import: kept %s, as the stored file has changed", clean.Log(relFileName))
 				case stored != nil:
 					if removeErr := f.Remove(); removeErr != nil {
 						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())

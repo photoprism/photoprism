@@ -463,30 +463,49 @@ const (
 	storedMaybeSame                    // possibly the file itself, e.g. through another mount or a file that cannot be read
 )
 
+// storedResult is how a file relates to the indexed files with the same content, with the file info of a copy.
+type storedResult struct {
+	file  *entity.File
+	match storedMatch
+	info  os.FileInfo
+}
+
+// unchanged reports whether the stored copy is still the file with the size and modification time it had when
+// it was compared, so that it still holds the content without being read again.
+func (r storedResult) unchanged() bool {
+	if r.file == nil || r.info == nil {
+		return false
+	}
+
+	info, err := os.Stat(FileName(r.file.FileRoot, r.file.FileName))
+
+	return err == nil && os.SameFile(info, r.info) && info.Size() == r.info.Size() && info.ModTime().Equal(r.info.ModTime())
+}
+
 // storedFileOf reports how a file relates to the indexed files that hold the same content, and returns one of them
-// if it is another file. The answer comes from the files rather than from the rows, since a caller removes its
+// with its file info if it is another file. The answer comes from the files rather than from the rows, since a caller removes its
 // source on the strength of it, so every row is checked: one of them may be the file itself.
-func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
+func storedFileOf(mediaFile *MediaFile) storedResult {
 	if mediaFile == nil {
-		return nil, storedNone
+		return storedResult{}
 	}
 
 	fileHash := mediaFile.Hash()
 
 	if fileHash == "" {
-		return nil, storedNone
+		return storedResult{}
 	}
 
 	src, srcErr := os.Stat(mediaFile.FileName())
 
 	if srcErr != nil {
-		return nil, storedNone
+		return storedResult{}
 	}
 
 	files, err := entity.FilesByHash(fileHash)
 
 	if err != nil {
-		return nil, storedNone
+		return storedResult{}
 	}
 
 	// The file itself is found without reading any file, so every row is checked for it first. A stored file that
@@ -504,7 +523,7 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 			unknown = true
 			continue
 		case os.SameFile(src, dest):
-			return nil, storedSame
+			return storedResult{match: storedSame}
 		}
 
 		dests[i] = dest
@@ -512,7 +531,7 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 
 	// A file that may be the file itself wins over a copy, also over one found before it. Only originals are
 	// copies, since other files, e.g. sidecars, may be replaced or removed with their photo.
-	var found *entity.File
+	var found storedResult
 
 	for i := range files {
 		switch {
@@ -520,25 +539,22 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 		case maybeSameFile(src, dests[i]):
 			switch storedHash(FileName(files[i].FileRoot, files[i].FileName)) {
 			case fileHash:
-				return nil, storedMaybeSame
+				return storedResult{match: storedMaybeSame}
 			case "":
 				unknown = true
 			}
-		case found == nil && files[i].FileRoot == entity.RootOriginals:
+		case found.file == nil && files[i].FileRoot == entity.RootOriginals:
 			if storedHash(FileName(files[i].FileRoot, files[i].FileName)) == fileHash {
-				found = &files[i]
+				found = storedResult{file: &files[i], match: storedCopy, info: dests[i]}
 			}
 		}
 	}
 
-	switch {
-	case unknown:
-		return nil, storedMaybeSame
-	case found != nil:
-		return found, storedCopy
-	default:
-		return nil, storedNone
+	if unknown {
+		return storedResult{match: storedMaybeSame}
 	}
+
+	return found
 }
 
 // storedHash returns the hash of an indexed file, which reads the whole file.

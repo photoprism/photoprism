@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -32,7 +33,7 @@ func TestNewImport(t *testing.T) {
 func TestStoredFileOf_Content(t *testing.T) {
 	// storedCopyOf returns the indexed file that is a copy of a file, if there is one.
 	storedCopyOf := func(mf *MediaFile) *entity.File {
-		stored, _ := storedFileOf(mf)
+		stored, _ := storedFileMatch(mf)
 		return stored
 	}
 
@@ -44,7 +45,7 @@ func TestStoredFileOf_Content(t *testing.T) {
 	require.NotEmpty(t, mediaFile.Hash())
 
 	t.Run("Nil", func(t *testing.T) {
-		stored, match := storedFileOf(nil)
+		stored, match := storedFileMatch(nil)
 		assert.Nil(t, stored)
 		assert.Equal(t, storedNone, match)
 	})
@@ -174,10 +175,12 @@ func TestStoredFileOf(t *testing.T) {
 	t.Run("Copy", func(t *testing.T) {
 		mf, err := NewMediaFile(copied)
 		require.NoError(t, err)
-		found, match := storedFileOf(mf)
-		require.NotNil(t, found)
-		assert.Equal(t, stored, found.FileName)
-		assert.Equal(t, storedCopy, match)
+		result := storedFileOf(mf)
+		require.NotNil(t, result.file)
+		assert.Equal(t, stored, result.file.FileName)
+		assert.Equal(t, storedCopy, result.match)
+		require.NotNil(t, result.info)
+		assert.True(t, result.unchanged())
 	})
 	t.Run("HardLink", func(t *testing.T) {
 		saved := storedHash
@@ -190,7 +193,7 @@ func TestStoredFileOf(t *testing.T) {
 
 		mf, err := NewMediaFile(linked)
 		require.NoError(t, err)
-		found, match := storedFileOf(mf)
+		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedSame, match)
 		assert.Nil(t, found)
 		assert.Zero(t, reads, "the file itself is found without reading the stored file")
@@ -222,7 +225,7 @@ func TestStoredFileOf(t *testing.T) {
 
 		mf, err := NewMediaFile(filepath.Join(target, "b.jpg"))
 		require.NoError(t, err)
-		found, match := storedFileOf(mf)
+		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedSame, match)
 		assert.Nil(t, found)
 		assert.Empty(t, reads, "no file is read before every row is checked for the file itself")
@@ -241,7 +244,7 @@ func TestStoredFileOf(t *testing.T) {
 		mf, err = NewMediaFile(src)
 		require.NoError(t, err)
 		reads = nil
-		found, match = storedFileOf(mf)
+		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedCopy, match)
 		require.NotNil(t, found)
 		assert.Equal(t, copyRel, found.FileName)
@@ -253,7 +256,7 @@ func TestStoredFileOf(t *testing.T) {
 		maybeName := "rows-changed.jpg"
 		maybeSameFile = func(a, b os.FileInfo) bool { return b.Name() == maybeName }
 
-		found, match = storedFileOf(mf)
+		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedCopy, match)
 		require.NotNil(t, found)
 		assert.Equal(t, copyRel, found.FileName)
@@ -264,7 +267,7 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, fs.Copy(src, filepath.Join(cfg.OriginalsPath(), maybeRel), false))
 		addRow(maybeRel, fs.Hash(src))
 
-		found, match = storedFileOf(mf)
+		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedMaybeSame, match)
 		assert.Nil(t, found)
 	})
@@ -285,14 +288,14 @@ func TestStoredFileOf(t *testing.T) {
 		mf, err := NewMediaFile(src)
 		require.NoError(t, err)
 
-		found, match := storedFileOf(mf)
+		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedCopy, match)
 		require.NotNil(t, found)
 
 		// A stored file that cannot be looked up may be the file itself, so no other file counts as a copy.
 		unreadable := addRow(filepath.Join(filepath.Dir(stored), strings.Repeat("x", 300)+".jpg"), fs.Hash(src))
 
-		found, match = storedFileOf(mf)
+		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedMaybeSame, match)
 		assert.Nil(t, found)
 		require.NoError(t, entity.UnscopedDb().Delete(unreadable).Error)
@@ -311,7 +314,7 @@ func TestStoredFileOf(t *testing.T) {
 			return savedHash(name)
 		}
 
-		found, match = storedFileOf(mf)
+		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedMaybeSame, match)
 		assert.Nil(t, found)
 	})
@@ -332,13 +335,13 @@ func TestStoredFileOf(t *testing.T) {
 
 		mf, err := NewMediaFile(src)
 		require.NoError(t, err)
-		found, match := storedFileOf(mf)
+		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedNone, match)
 		assert.Nil(t, found)
 
 		require.NoError(t, os.Remove(filepath.Join(dir, "copy.jpg")))
 		require.NoError(t, os.Link(src, filepath.Join(dir, "copy.jpg")))
-		found, match = storedFileOf(mf)
+		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedSame, match)
 		assert.Nil(t, found)
 	})
@@ -351,7 +354,7 @@ func TestStoredFileOf(t *testing.T) {
 
 		mf, err := NewMediaFile(copied)
 		require.NoError(t, err)
-		found, match := storedFileOf(mf)
+		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedMaybeSame, match)
 		assert.Nil(t, found)
 	})
@@ -456,6 +459,42 @@ func TestStoredFileOf(t *testing.T) {
 		// The moved sidecar is not indexed on its own.
 		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: added main"))
 		assert.Empty(t, loggedMessages(hook, logrus.WarnLevel))
+	})
+	t.Run("StoredChanged", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A duplicate is kept if the stored file changes after it was compared.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-changed-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		dup := filepath.Join(dir, "changed.jpg")
+		require.NoError(t, fs.Copy(storedPath, dup, false))
+
+		info, err := os.Stat(storedPath)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.Chtimes(storedPath, info.ModTime(), info.ModTime()) })
+
+		saved := storedHash
+		t.Cleanup(func() { storedHash = saved })
+		storedHash = func(name string) string {
+			h := saved(name)
+			if name == storedPath {
+				later := info.ModTime().Add(time.Hour)
+				require.NoError(t, os.Chtimes(storedPath, later, later))
+			}
+			return h
+		}
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		hook := captureLog(t)
+
+		_, err = imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, dup)
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept changed.jpg, as the stored file has changed"))
 	})
 	t.Run("Snapshot", func(t *testing.T) {
 		if testing.Short() {
@@ -809,6 +848,64 @@ func TestImport_StartMissingPath(t *testing.T) {
 	imp.Start(ImportOptionsCopy(filepath.Join(cfg.ImportPath(), "e2e-missing/folder"), ""))
 
 	assertMissingFolderNotice(t, s.Receiver, "import: directory", "e2e-missing/folder", cfg.ImportPath())
+}
+
+// TestStoredResult_Unchanged checks that a stored copy counts as unchanged only while it is the same file with the
+// same size and modification time.
+func TestStoredResult_Unchanged(t *testing.T) {
+	cfg := config.TestConfig()
+	dir := "zz-unchanged-" + rnd.Base36(8)
+	name := filepath.Join(cfg.OriginalsPath(), dir, "a.jpg")
+	t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(name)) })
+
+	// result writes the stored copy and returns how it was seen.
+	result := func(t *testing.T) storedResult {
+		writeTestJpeg(t, name, 323)
+		info, err := os.Stat(name)
+		require.NoError(t, err)
+		return storedResult{file: &entity.File{FileRoot: entity.RootOriginals, FileName: dir + "/a.jpg"}, match: storedCopy, info: info}
+	}
+
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.True(t, result(t).unchanged())
+	})
+	t.Run("NoCopy", func(t *testing.T) {
+		assert.False(t, storedResult{}.unchanged())
+		r := result(t)
+		r.info = nil
+		assert.False(t, r.unchanged())
+	})
+	t.Run("Modified", func(t *testing.T) {
+		r := result(t)
+		later := r.info.ModTime().Add(time.Second)
+		require.NoError(t, os.Chtimes(name, later, later))
+		assert.False(t, r.unchanged())
+	})
+	t.Run("Resized", func(t *testing.T) {
+		r := result(t)
+		require.NoError(t, os.WriteFile(name, []byte("x"), fs.ModeFile))
+		require.NoError(t, os.Chtimes(name, r.info.ModTime(), r.info.ModTime()))
+		assert.False(t, r.unchanged())
+	})
+	t.Run("Replaced", func(t *testing.T) {
+		r := result(t)
+		other := name + ".tmp"
+		require.NoError(t, fs.Copy(name, other, false))
+		require.NoError(t, os.Chtimes(other, r.info.ModTime(), r.info.ModTime()))
+		require.NoError(t, os.Rename(other, name))
+		assert.False(t, r.unchanged())
+	})
+	t.Run("Removed", func(t *testing.T) {
+		r := result(t)
+		require.NoError(t, os.Remove(name))
+		assert.False(t, r.unchanged())
+	})
+}
+
+// storedFileMatch returns the stored copy and the match that storedFileOf reports for a file.
+func storedFileMatch(mf *MediaFile) (*entity.File, storedMatch) {
+	r := storedFileOf(mf)
+	return r.file, r.match
 }
 
 // stubMaybeSame reports every file on another device as possibly the same file, as two mounts of one network
