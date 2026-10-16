@@ -453,14 +453,14 @@ func (imp *Import) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
-// storedMatch describes how a file relates to the indexed file that holds the same content.
+// storedMatch describes how a file relates to the indexed files that hold the same content.
 type storedMatch int
 
 const (
 	storedNone      storedMatch = iota // no indexed file holds the content
 	storedCopy                         // another file holds the content
 	storedSame                         // the file itself, e.g. a link or another name for it
-	storedMaybeSame                    // possibly the file itself, reached through another mount
+	storedMaybeSame                    // possibly the file itself, e.g. through another mount or a file that cannot be read
 )
 
 // storedFileOf reports how a file relates to the indexed files that hold the same content, and returns one of them
@@ -489,15 +489,21 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 		return nil, storedNone
 	}
 
-	// The file itself is found without reading any file, so every row is checked for it first.
+	// The file itself is found without reading any file, so every row is checked for it first. A stored file that
+	// cannot be checked, other than an absent one, may be the file itself.
 	dests := make([]os.FileInfo, len(files))
+	unknown := false
 
 	for i := range files {
 		dest, destErr := os.Stat(FileName(files[i].FileRoot, files[i].FileName))
 
-		if destErr != nil {
+		switch {
+		case errors.Is(destErr, os.ErrNotExist):
 			continue
-		} else if os.SameFile(src, dest) {
+		case destErr != nil:
+			unknown = true
+			continue
+		case os.SameFile(src, dest):
 			return nil, storedSame
 		}
 
@@ -511,8 +517,11 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 		switch {
 		case dests[i] == nil:
 		case maybeSameFile(src, dests[i]):
-			if storedHash(FileName(files[i].FileRoot, files[i].FileName)) == fileHash {
+			switch storedHash(FileName(files[i].FileRoot, files[i].FileName)) {
+			case fileHash:
 				return nil, storedMaybeSame
+			case "":
+				unknown = true
 			}
 		case found == nil:
 			if storedHash(FileName(files[i].FileRoot, files[i].FileName)) == fileHash {
@@ -521,11 +530,14 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 		}
 	}
 
-	if found != nil {
+	switch {
+	case unknown:
+		return nil, storedMaybeSame
+	case found != nil:
 		return found, storedCopy
+	default:
+		return nil, storedNone
 	}
-
-	return nil, storedNone
 }
 
 // storedHash returns the hash of an indexed file, which reads the whole file.

@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -202,6 +203,14 @@ func TestStoredFileOf(t *testing.T) {
 			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(f).Error })
 		}
 
+		savedHash := storedHash
+		t.Cleanup(func() { storedHash = savedHash })
+		var reads []string
+		storedHash = func(name string) string {
+			reads = append(reads, filepath.Base(name))
+			return savedHash(name)
+		}
+
 		// A later row that is the file itself, through a folder linked into originals, wins over a copy.
 		name := "zz-link-" + rnd.Base36(8)
 		target := filepath.Join(filepath.Dir(cfg.OriginalsPath()), name)
@@ -216,6 +225,7 @@ func TestStoredFileOf(t *testing.T) {
 		found, match := storedFileOf(mf)
 		assert.Equal(t, storedSame, match)
 		assert.Nil(t, found)
+		assert.Empty(t, reads, "no file is read before every row is checked for the file itself")
 
 		// A later row whose file still holds the content is a copy, if earlier ones do not.
 		src := filepath.Join(t.TempDir(), "rows.jpg")
@@ -230,10 +240,12 @@ func TestStoredFileOf(t *testing.T) {
 
 		mf, err = NewMediaFile(src)
 		require.NoError(t, err)
+		reads = nil
 		found, match = storedFileOf(mf)
 		assert.Equal(t, storedCopy, match)
 		require.NotNil(t, found)
 		assert.Equal(t, copyRel, found.FileName)
+		assert.Equal(t, []string{"rows-changed.jpg", "rows-copy.jpg"}, reads, "an absent file is not read")
 
 		// A file that may be the file itself counts only while it holds the content.
 		saved := maybeSameFile
@@ -243,12 +255,61 @@ func TestStoredFileOf(t *testing.T) {
 
 		found, match = storedFileOf(mf)
 		assert.Equal(t, storedCopy, match)
+		require.NotNil(t, found)
+		assert.Equal(t, copyRel, found.FileName)
 
 		// A later row that may be the file itself wins over a copy too.
 		maybeName = "rows-maybe.jpg"
 		maybeRel := filepath.Join(filepath.Dir(stored), "rows-maybe.jpg")
 		require.NoError(t, fs.Copy(src, filepath.Join(cfg.OriginalsPath(), maybeRel), false))
 		addRow(maybeRel, fs.Hash(src))
+
+		found, match = storedFileOf(mf)
+		assert.Equal(t, storedMaybeSame, match)
+		assert.Nil(t, found)
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		// addRow records rel in originals as a file with the given hash.
+		addRow := func(rel, hash string) *entity.File {
+			f := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: rel, FileHash: hash}
+			require.NoError(t, f.Save())
+			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(f).Error })
+			return f
+		}
+
+		src := filepath.Join(t.TempDir(), "unknown.jpg")
+		writeTestJpeg(t, src, 317)
+		copyRel := filepath.Join(filepath.Dir(stored), "unknown-copy.jpg")
+		require.NoError(t, fs.Copy(src, filepath.Join(cfg.OriginalsPath(), copyRel), false))
+		addRow(copyRel, fs.Hash(src))
+		mf, err := NewMediaFile(src)
+		require.NoError(t, err)
+
+		found, match := storedFileOf(mf)
+		assert.Equal(t, storedCopy, match)
+		require.NotNil(t, found)
+
+		// A stored file that cannot be looked up may be the file itself, so no other file counts as a copy.
+		unreadable := addRow(filepath.Join(filepath.Dir(stored), strings.Repeat("x", 300)+".jpg"), fs.Hash(src))
+
+		found, match = storedFileOf(mf)
+		assert.Equal(t, storedMaybeSame, match)
+		assert.Nil(t, found)
+		require.NoError(t, entity.UnscopedDb().Delete(unreadable).Error)
+
+		// The same applies to a file that may be the file itself and cannot be read.
+		maybeRel := filepath.Join(filepath.Dir(stored), "unknown-maybe.jpg")
+		require.NoError(t, fs.Copy(src, filepath.Join(cfg.OriginalsPath(), maybeRel), false))
+		addRow(maybeRel, fs.Hash(src))
+		savedMaybe, savedHash := maybeSameFile, storedHash
+		t.Cleanup(func() { maybeSameFile, storedHash = savedMaybe, savedHash })
+		maybeSameFile = func(a, b os.FileInfo) bool { return b.Name() == "unknown-maybe.jpg" }
+		storedHash = func(name string) string {
+			if filepath.Base(name) == "unknown-maybe.jpg" {
+				return ""
+			}
+			return savedHash(name)
+		}
 
 		found, match = storedFileOf(mf)
 		assert.Equal(t, storedMaybeSame, match)

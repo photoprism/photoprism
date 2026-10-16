@@ -154,6 +154,10 @@ func TestFirstFileByHash(t *testing.T) {
 
 func TestFilesByHash(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
+		unhashed := &File{PhotoID: 1000000, FileRoot: RootOriginals, FileName: "zz-hash/unhashed.jpg"}
+		require.NoError(t, unhashed.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(unhashed).Error })
+
 		files, err := FilesByHash("")
 		require.NoError(t, err)
 		assert.Empty(t, files)

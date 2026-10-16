@@ -63,7 +63,7 @@ func importedContent(dest, hash string) bool {
 	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
-// storedResult is how a file relates to the indexed file with the same content.
+// storedResult is how a file relates to the indexed files with the same content.
 type storedResult struct {
 	file  *entity.File
 	match storedMatch
