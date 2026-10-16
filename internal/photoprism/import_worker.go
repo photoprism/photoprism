@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"sync/atomic"
 	"syscall"
 
@@ -88,6 +89,21 @@ func storedFilesOf(related RelatedFiles) (results map[string]storedResult, origi
 	return results, originals
 }
 
+// storedPhotoUIDs returns the sorted, unique picture UIDs of the stored files in results.
+func storedPhotoUIDs(results map[string]storedResult) []string {
+	uids := make([]string, 0, len(results))
+
+	for _, r := range results {
+		if r.file != nil && r.file.PhotoUID != "" && !slices.Contains(uids, r.file.PhotoUID) {
+			uids = append(uids, r.file.PhotoUID)
+		}
+	}
+
+	slices.Sort(uids)
+
+	return uids
+}
+
 // ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
@@ -123,7 +139,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 		}
 
 		// A group whose files are all originals themselves, e.g. in a folder linked into originals, is not imported,
-		// and neither are its sidecars, which are not checked for duplicates.
+		// and neither are its sidecars, but its pictures are added to the selected albums.
 		results, originals := storedFilesOf(related)
 
 		if originals {
@@ -131,6 +147,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 				log.Infof("import: skipped %s and its related files, as it is the same file as the original", clean.Log(originalName))
 			} else {
 				log.Infof("import: skipped %s and its related files, as it may be the same file as the original", clean.Log(originalName))
+			}
+
+			for _, photoUID := range storedPhotoUIDs(results) {
+				if albumErr := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
+					log.Warnf("import: %s (add picture to albums)", clean.Error(albumErr))
+				}
 			}
 
 			continue

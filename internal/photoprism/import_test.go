@@ -721,12 +721,17 @@ func TestImport_RunLinkedOriginals(t *testing.T) {
 		stage(t, filepath.Join(target, "2019"), name+"/2019/x.jpg", 312)
 
 		hook := captureLog(t)
-		_, err := imp.Run(ImportOptionsMove(filepath.Join(target, "2019"), ""))
+		opt := ImportOptionsMove(filepath.Join(target, "2019"), "")
+		opt.Albums = []string{testAlbum(t)}
+		_, err := imp.Run(opt)
 		require.NoError(t, err)
 		assert.FileExists(t, filepath.Join(target, "2019", "x.jpg"))
 		assert.FileExists(t, filepath.Join(target, "2019", "x.xmp"))
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: skipped x.jpg and its related files"))
 		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: moving"))
+
+		// The picture is added to the albums selected for the import, as for any duplicate.
+		assert.Equal(t, []string{photo.PhotoUID}, albumPhotoUIDs(t, opt.Albums[0]))
 	})
 	t.Run("HiddenFolder", func(t *testing.T) {
 		name := "~Archive-" + rnd.Base36(8)
@@ -952,6 +957,22 @@ func TestStoredResult_Unchanged(t *testing.T) {
 		r := result(t)
 		require.NoError(t, os.Remove(name))
 		assert.False(t, r.unchanged())
+	})
+}
+
+func TestStoredPhotoUIDs(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, storedPhotoUIDs(nil))
+	})
+	t.Run("SortedAndUnique", func(t *testing.T) {
+		results := map[string]storedResult{
+			"a.jpg": {file: &entity.File{PhotoUID: "ps6sg6be2lvl0yh9"}, match: storedSame},
+			"a.xmp": {file: &entity.File{PhotoUID: "ps6sg6be2lvl0yh9"}, match: storedSame},
+			"b.jpg": {file: &entity.File{PhotoUID: "ps6sg6be2lvl0yh8"}, match: storedMaybeSame},
+			"c.jpg": {match: storedMaybeSame},
+			"d.jpg": {file: &entity.File{}, match: storedCopy},
+		}
+		assert.Equal(t, []string{"ps6sg6be2lvl0yh8", "ps6sg6be2lvl0yh9"}, storedPhotoUIDs(results))
 	})
 }
 
