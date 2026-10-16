@@ -61,9 +61,9 @@ func TestWarnedPaths_First(t *testing.T) {
 }
 
 func TestFlushUnportable(t *testing.T) {
-	saved := unportablePaths
-	t.Cleanup(func() { unportablePaths = saved })
-	unportablePaths = &warnedPaths{limit: 1}
+	saved := unsupportedPaths
+	t.Cleanup(func() { unsupportedPaths = saved })
+	unsupportedPaths = &warnedPaths{limit: 1}
 
 	hook := captureLog(t)
 
@@ -91,9 +91,9 @@ func TestFlushUnportable(t *testing.T) {
 }
 
 func TestWarnHidden(t *testing.T) {
-	saved := unportablePaths
-	t.Cleanup(func() { unportablePaths = saved })
-	unportablePaths = &warnedPaths{limit: 1}
+	saved := unsupportedPaths
+	t.Cleanup(func() { unsupportedPaths = saved })
+	unsupportedPaths = &warnedPaths{limit: 1}
 
 	hook := captureLog(t)
 
@@ -116,9 +116,9 @@ func TestWarnHidden(t *testing.T) {
 }
 
 func TestFlushHidden(t *testing.T) {
-	saved := unportablePaths
-	t.Cleanup(func() { unportablePaths = saved })
-	unportablePaths = &warnedPaths{limit: 0}
+	saved := unsupportedPaths
+	t.Cleanup(func() { unsupportedPaths = saved })
+	unsupportedPaths = &warnedPaths{limit: 0}
 
 	hook := captureLog(t)
 	flushHidden("import")
@@ -175,7 +175,7 @@ func TestSkipUnportableDir(t *testing.T) {
 
 func TestWarnUnportable(t *testing.T) {
 	hook := captureLog(t)
-	rel := "warn-unportable/" + strconv.Itoa(len(unportablePaths.seen)) + "|x"
+	rel := "warn-unportable/" + strconv.Itoa(len(unsupportedPaths.seen)) + "|x"
 
 	warnUnportable("index", "originals", rel, "index it")
 	warnUnportable("index", "originals", rel, "index it")

@@ -232,9 +232,9 @@ func TestConvert_StartUnportable(t *testing.T) {
 	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "Best|Of"), filepath.Join(c.OriginalsPath(), "favorites")))
 
 	// Two of the five skipped names are reported on their own, the others in one warning.
-	saved := unportablePaths
-	t.Cleanup(func() { unportablePaths = saved })
-	unportablePaths = &warnedPaths{limit: 2}
+	saved := unsupportedPaths
+	t.Cleanup(func() { unsupportedPaths = saved })
+	unsupportedPaths = &warnedPaths{limit: 2}
 
 	hook := captureLog(t)
 	require.NoError(t, NewConvert(c).Start(c.OriginalsPath(), nil, false))

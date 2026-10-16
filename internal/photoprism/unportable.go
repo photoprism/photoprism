@@ -11,11 +11,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// unportableLimit is the number of skipped paths that are remembered, so each is reported once per process.
-const unportableLimit = 10000
+// unsupportedLimit is the number of skipped paths that are remembered, so each is reported once per process.
+const unsupportedLimit = 10000
 
-// unportablePaths remembers the paths that were skipped because their names are not portable.
-var unportablePaths = &warnedPaths{limit: unportableLimit}
+// unsupportedPaths remembers the paths that were skipped because their names are not portable or hidden.
+var unsupportedPaths = &warnedPaths{limit: unsupportedLimit}
 
 // warnedPaths remembers paths up to a limit, and counts other paths by prefix until they are flushed.
 type warnedPaths struct {
@@ -104,7 +104,7 @@ func skipUnportableDir(done fs.Done, fileName, rel string, isSymlink bool) strin
 // warnUnportable logs once per process that a path below a root was skipped because its name is not
 // portable, using a prefix such as "index" and an action such as "index it".
 func warnUnportable(prefix, root, rel, action string) {
-	if unportablePaths.First(prefix, root+":"+rel) {
+	if unsupportedPaths.First(prefix, root+":"+rel) {
 		log.Warnf("%s: skipped %s because of unsupported characters, rename it to %s",
 			prefix, clean.Log(rel), action)
 	}
@@ -113,16 +113,16 @@ func warnUnportable(prefix, root, rel, action string) {
 // flushUnportable logs one warning with the number of paths a run skipped without reporting them, because the
 // remembered paths reached their limit.
 func flushUnportable(prefix string) {
-	if n := unportablePaths.Flush(prefix); n > 0 {
+	if n := unsupportedPaths.Flush(prefix); n > 0 {
 		log.Warnf("%s: skipped %s with unsupported characters", prefix,
 			english.Plural(n, "more name", "more names"))
 	}
 }
 
-// warnHidden logs once per process that a hidden file below a root was kept, using a prefix such as "import" and
-// an action such as "import it".
+// warnHidden logs once per process that a hidden file below a root was skipped and left in place, using a prefix
+// such as "import" and an action such as "import it".
 func warnHidden(prefix, root, rel, action string) {
-	if unportablePaths.First(prefix+" hidden", root+":"+rel) {
+	if unsupportedPaths.First(prefix+" hidden", root+":"+rel) {
 		log.Warnf("%s: skipped hidden file %s, rename it to %s", prefix, clean.Log(rel), action)
 	}
 }
@@ -130,7 +130,7 @@ func warnHidden(prefix, root, rel, action string) {
 // flushHidden logs one warning with the number of hidden files a run kept without reporting them, because the
 // remembered paths reached their limit.
 func flushHidden(prefix string) {
-	if n := unportablePaths.Flush(prefix + " hidden"); n > 0 {
+	if n := unsupportedPaths.Flush(prefix + " hidden"); n > 0 {
 		log.Warnf("%s: skipped %s", prefix, english.Plural(n, "more hidden file", "more hidden files"))
 	}
 }

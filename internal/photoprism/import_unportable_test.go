@@ -141,9 +141,9 @@ func TestImport_StartUnportableLimit(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	saved := unportablePaths
-	t.Cleanup(func() { unportablePaths = saved })
-	unportablePaths = &warnedPaths{limit: 1}
+	saved := unsupportedPaths
+	t.Cleanup(func() { unsupportedPaths = saved })
+	unsupportedPaths = &warnedPaths{limit: 1}
 
 	cfg := config.TestConfig()
 	src := t.TempDir()
