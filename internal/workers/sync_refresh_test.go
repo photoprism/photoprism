@@ -396,18 +396,33 @@ func TestSync_refreshUnsupportedDest(t *testing.T) {
 	t.Cleanup(func() { conf.Options().ImportDest = dest })
 	conf.Options().ImportDest = "a:b"
 
+	remote := t.TempDir()
+	require.NoError(t, os.WriteFile(filepath.Join(remote, "x.jpg"), []byte("jpg"), fs.ModeFile))
+	server := httptest.NewServer(&webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()})
+	t.Cleanup(server.Close)
+
 	for _, filenames := range []bool{false, true} {
-		a := entity.Service{AccName: "Sync Dest " + rnd.Base36(8), AccURL: "http://127.0.0.1:1/", AccType: "webdav", AccSync: true,
+		a := entity.Service{AccName: "Sync Dest " + rnd.Base36(8), AccURL: server.URL + "/", AccType: "webdav", AccSync: true,
 			SyncDownload: true, SyncFilenames: filenames, SyncPath: "/", AccTimeout: "low", RetryLimit: -1}
+		require.NoError(t, entity.Db().Create(&a).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "service_id = ?", a.ID).Error)
+			assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Service{}, a.ID).Error)
+		})
 
 		complete, err := worker.refresh(a)
+		assert.True(t, complete)
+
+		var names []string
+		require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ?", a.ID).Pluck("remote_name", &names).Error)
 
 		if filenames {
 			// Files that keep their remote paths are not imported, so the account is listed as usual.
-			assert.NotEqual(t, syncNotice("import destination is not supported"), err)
+			assert.NoError(t, err)
+			assert.Equal(t, []string{"/x.jpg"}, names)
 		} else {
-			assert.True(t, complete)
 			assert.Equal(t, syncNotice("import destination is not supported"), err)
+			assert.Empty(t, names)
 		}
 	}
 }

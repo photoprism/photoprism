@@ -145,7 +145,9 @@ func TestWalkSkips(t *testing.T) {
 }
 
 func TestResolvedPath(t *testing.T) {
-	dir := t.TempDir()
+	// The temporary folder may itself be below a link, e.g. /var on macOS.
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	require.NoError(t, err)
 	require.NoError(t, os.Symlink(dir, filepath.Join(dir, "link")))
 	assert.Equal(t, dir, resolvedPath(filepath.Join(dir, "link")))
 	assert.Equal(t, filepath.Join(dir, "missing"), resolvedPath(dir+"/x/../missing/"))
