@@ -31,6 +31,15 @@ func TestImport_CheckPath(t *testing.T) {
 			assert.NoError(t, imp.CheckPath(dir), dir)
 		}
 	})
+	t.Run("StorageFolder", func(t *testing.T) {
+		// A storage folder in originals is marked with a file that walks skip.
+		storage := filepath.Join(originals, "storage")
+		require.NoError(t, fs.MkdirAll(filepath.Join(storage, "users", "upload")))
+		assert.ErrorIs(t, imp.CheckPath(filepath.Join(storage, "users", "upload")), ErrImportPath)
+		require.NoError(t, os.WriteFile(filepath.Join(storage, fs.PPStorageFilename), []byte("1"), fs.ModeFile))
+		t.Cleanup(func() { _ = os.RemoveAll(storage) })
+		assert.NoError(t, imp.CheckPath(filepath.Join(storage, "users", "upload")))
+	})
 	t.Run("Contains", func(t *testing.T) {
 		for _, dir := range []string{base, filepath.Dir(base)} {
 			assert.ErrorIs(t, imp.CheckPath(dir), ErrImportPath, dir)
@@ -97,11 +106,17 @@ func TestRelBelow(t *testing.T) {
 	}
 }
 
-func TestHiddenRel(t *testing.T) {
-	assert.False(t, hiddenRel("."))
-	assert.False(t, hiddenRel(filepath.Join("2019", "x")))
-	assert.True(t, hiddenRel(filepath.Join(".photoprism", "storage")))
-	assert.True(t, hiddenRel(filepath.Join("2019", "@eaDir")))
+func TestWalkSkips(t *testing.T) {
+	dir := t.TempDir()
+	require.NoError(t, fs.MkdirAll(filepath.Join(dir, "storage", "users")))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "storage", fs.PPStorageFilename), []byte("1"), fs.ModeFile))
+
+	assert.False(t, walkSkips(dir, "."))
+	assert.False(t, walkSkips(dir, filepath.Join("2019", "x")))
+	assert.True(t, walkSkips(dir, filepath.Join(".photoprism", "storage")))
+	assert.True(t, walkSkips(dir, filepath.Join("2019", "@eaDir")))
+	assert.True(t, walkSkips(dir, "storage"))
+	assert.True(t, walkSkips(dir, filepath.Join("storage", "users", "upload")))
 }
 
 func TestResolvedPath(t *testing.T) {

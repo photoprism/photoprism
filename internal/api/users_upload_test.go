@@ -676,6 +676,48 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
 		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
 	})
+	t.Run("ImportPathInOriginals", func(t *testing.T) {
+		// Originals that contain the upload folder outside a storage folder refuse the import.
+		originals := conf.Options().OriginalsPath
+		t.Cleanup(func() { conf.Options().OriginalsPath = originals })
+		conf.Options().OriginalsPath = conf.StoragePath()
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("StorageInOriginals", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A storage folder in originals is marked with a file the walks skip, so its uploads are imported.
+		storage := conf.Options().StoragePath
+		t.Cleanup(func() { conf.Options().StoragePath = storage })
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().StoragePath = filepath.Join(conf.OriginalsPath(), "storage")
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		require.NoError(t, fs.MkdirAll(conf.StoragePath()))
+		require.NoError(t, os.WriteFile(filepath.Join(conf.StoragePath(), fs.PPStorageFilename), []byte("1"), fs.ModeFile))
+		token, dir := stage(t)
+		hash := fs.Hash(filepath.Join(dir, "upload.jpg"))
+		t.Cleanup(func() {
+			file, err := entity.FirstFileByHash(hash)
+			if err != nil {
+				return
+			}
+			entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+		})
+
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
+		_, err := entity.FirstFileByHash(hash)
+		assert.NoError(t, err)
+	})
 	t.Run("Canceled", func(t *testing.T) {
 		require.NoError(t, mutex.IndexWorker.Start())
 		t.Cleanup(mutex.IndexWorker.Stop)

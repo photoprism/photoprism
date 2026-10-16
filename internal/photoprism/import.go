@@ -522,8 +522,8 @@ func StoredCopyOf(mediaFile *MediaFile) *entity.File {
 }
 
 // CheckPath returns ErrImportPath if the import folder is the originals folder, a folder inside it, or a folder
-// that contains it, compared after resolving symbolic links. Hidden folders are not indexed or imported, so a
-// folder below one, such as the storage folder in originals/.photoprism, may contain or be in the other.
+// that contains it, compared after resolving symbolic links. Walks skip hidden folders and the storage folder, so a
+// folder below one, such as originals/.photoprism/storage or originals/storage, may contain or be in the other.
 func (imp *Import) CheckPath(importPath string) error {
 	originals := imp.originalsPath()
 
@@ -536,7 +536,7 @@ func (imp *Import) CheckPath(importPath string) error {
 	// walked reports whether folder is dir or a folder below it that a walk of dir reaches.
 	walked := func(dir, folder string) bool {
 		rel, ok := relBelow(dir, folder)
-		return ok && !hiddenRel(rel)
+		return ok && !walkSkips(dir, rel)
 	}
 
 	if walked(dest, src) || walked(src, dest) {
@@ -571,14 +571,15 @@ func relBelow(dir, folder string) (string, bool) {
 	return rel, true
 }
 
-// hiddenRel reports whether a relative path has a hidden name, which the index and import walks skip.
-func hiddenRel(rel string) bool {
+// walkSkips reports whether a walk of dir skips the folder at a relative path, because a folder on the way has a
+// hidden name or contains the storage marker file, as fs.SkipWalk checks.
+func walkSkips(dir, rel string) bool {
 	if rel == "." {
 		return false
 	}
 
 	for _, name := range strings.Split(rel, string(filepath.Separator)) {
-		if fs.FileNameHidden(name) {
+		if dir = filepath.Join(dir, name); fs.FileNameHidden(name) || fs.FileExists(filepath.Join(dir, fs.PPStorageFilename)) {
 			return true
 		}
 	}
