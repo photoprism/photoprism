@@ -197,35 +197,60 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 		}
 
-		// refusedNew reports whether f is a new file other than the main file and its sidecars whose type the main
-		// file could not have.
-		refusedNew := func(f *MediaFile) bool {
+		// newOther reports whether f is a new file other than the main file and its sidecars, which is placed in
+		// originals and, if allowed, indexed in place of a main file that is already indexed.
+		newOther := func(f *MediaFile, allowed bool) bool {
 			return f != nil && !f.IsSidecar() && !related.Main.HasSameName(f) &&
-				results[f.FileName()].match == storedNone && mainTypeRefused(f, allowExt) != ""
+				results[f.FileName()].match == storedNone && (mainTypeRefused(f, allowExt) == "") == allowed
+		}
+		refusedNew := func(f *MediaFile) bool { return newOther(f, false) }
+		allowedNew := slices.ContainsFunc(related.Files, func(f *MediaFile) bool { return newOther(f, true) })
+
+		// movedSidecar reports whether f is a sidecar that would be placed in originals.
+		movedSidecar := func(f *MediaFile) bool {
+			if f == nil || !f.IsSidecar() {
+				return false
+			}
+
+			match := results[f.FileName()].match
+
+			return match != storedSame && match != storedMaybeSame
 		}
 
-		// A new file is indexed in place of a main file that is already indexed, so new files of a type the main file
-		// could not have are not placed then. Whether the main file is held is checked first, if there are any.
+		// If the main file is already indexed, new files of a type it could not have are not placed, and neither are
+		// sidecars if no file is indexed in its place, so whether it is held is checked first if that matters. The
+		// destination found for the main file is used for it below.
 		mainChecked := results[related.Main.FileName()].match
 		mainHeld := mainChecked == storedSame || mainChecked == storedMaybeSame
+		mainDest, mainDestErr, mainDestKnown := "", error(nil), false
 
-		if !mainHeld && slices.ContainsFunc(related.Files, refusedNew) {
-			_, mainErr := imp.DestinationFilename(related.Main, related.Main, opt.DestFolder)
-			mainHeld = mainErr != nil
+		if !mainHeld && (slices.ContainsFunc(related.Files, refusedNew) || !allowedNew && slices.ContainsFunc(related.Files, movedSidecar)) {
+			mainDest, mainDestErr = imp.DestinationFilename(related.Main, related.Main, opt.DestFolder)
+			mainDestKnown, mainHeld = true, mainDestErr != nil
 		}
+
+		keepSidecars := mainHeld && !allowedNew
 
 		for _, f := range insta360ImportOrder(related) {
 			relFileName := f.RelName(src)
 			checked := results[f.FileName()].match
 			destFileName, err := "", error(nil)
 
-			if mainHeld && refusedNew(f) {
+			switch {
+			case mainHeld && refusedNew(f):
 				log.Warnf("import: skipped %s %s", clean.Log(relFileName), mainTypeRefused(f, allowExt))
+				continue
+			case keepSidecars && movedSidecar(f):
+				log.Infof("import: kept %s, as its main file is already indexed", clean.Log(relFileName))
 				continue
 			}
 
 			// A file that is or may be an original stays where it is, even if the name of another row is free.
-			if checked != storedSame && checked != storedMaybeSame {
+			switch {
+			case checked == storedSame || checked == storedMaybeSame:
+			case mainDestKnown && related.Main.HasSameName(f):
+				destFileName, err = mainDest, mainDestErr
+			default:
 				destFileName, err = imp.DestinationFilename(related.Main, f, opt.DestFolder)
 			}
 

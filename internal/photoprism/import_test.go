@@ -488,7 +488,9 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted dup.jpg (already exists)"))
 		assert.Equal(t, 1, reads)
 
-		// The moved sidecar is not indexed on its own.
+		// The new sidecar of the duplicate stays in the import folder, as no file is indexed that it could belong to.
+		assert.FileExists(t, filepath.Join(dir, "dup.xmp"))
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept dup.xmp, as its main file is already indexed"))
 		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: added main"))
 		assert.Empty(t, loggedMessages(hook, logrus.WarnLevel))
 	})
@@ -735,6 +737,8 @@ func TestStoredFileOf(t *testing.T) {
 		writeTestJpeg(t, filepath.Join(dir, "same.jpg"), 326)
 		require.NoError(t, fs.Copy(video, filepath.Join(dir, "copy.mp4"), false))
 		writeTestJpeg(t, filepath.Join(dir, "copy.jpg"), 327)
+		copyXmp := filepath.Join(dir, "copy.xmp")
+		require.NoError(t, os.WriteFile(copyXmp, []byte(strings.Replace(testXmp, "Pair", "copy "+filepath.Base(dir), 1)), fs.ModeFile))
 
 		// An allowed new file is placed and indexed in place of the main file, and so is a sidecar.
 		png := filepath.Join(dir, "same.png")
@@ -759,6 +763,7 @@ func TestStoredFileOf(t *testing.T) {
 		assert.FileExists(t, filepath.Join(dir, "copy.jpg"))
 		assert.NoFileExists(t, png)
 		assert.NoFileExists(t, xmp)
+		assert.FileExists(t, copyXmp, "no file of its group is indexed")
 		warnings := loggedMessages(hook, logrus.WarnLevel)
 		assert.Equal(t, 1, countPrefix(warnings, "import: skipped same.jpg because the file type is not allowed"))
 		assert.Equal(t, 1, countPrefix(warnings, "import: skipped copy.jpg because the file type is not allowed"))
