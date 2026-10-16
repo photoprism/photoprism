@@ -1,6 +1,8 @@
 package oidc
 
 import (
+	"strings"
+
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -54,18 +56,18 @@ func verifiedEmailUsername(userInfo *oidc.UserInfo) string {
 
 // username returns the username for the preferred claim: with the email claim, the verified address, else the
 // first name claim that yields a handle, and with the other claims the handle of the verified address as the
-// last resort. Values that are not portable usernames are skipped, and if ascii is true, also values with
-// characters other than ASCII.
+// last resort. Handles are derived with runs of dots collapsed, and names that are not portable usernames are
+// skipped; if ascii is true, also values with characters other than ASCII.
 func username(userInfo *oidc.UserInfo, preferredClaim string, ascii bool) string {
 	usable := func(value string) bool {
-		return (!ascii || authn.IsASCIIUsername(value)) && authn.PortableUsername(value)
+		return !ascii || authn.IsASCIIUsername(value)
 	}
 
 	emailClaim := preferredClaim == authn.OidcClaimEmail
 
 	// With the email claim, a verified address is the username, and one with other characters is refused.
 	if emailClaim && bool(userInfo.EmailVerified) {
-		if !usable(userInfo.Email) {
+		if !usable(userInfo.Email) || !authn.PortableUsername(userInfo.Email) {
 			return ""
 		} else if name := verifiedEmailUsername(userInfo); name != "" {
 			return name
@@ -75,16 +77,28 @@ func username(userInfo *oidc.UserInfo, preferredClaim string, ascii bool) string
 	for _, claim := range claimOrder(preferredClaim) {
 		if value := claimValue(userInfo, claim); !usable(value) {
 			continue
-		} else if name := clean.Handle(value); name != "" {
+		} else if name := handle(value); name != "" && authn.PortableUsername(name) {
 			return name
 		}
 	}
 
 	if !emailClaim && usable(userInfo.Email) {
-		if name := verifiedEmailUsername(userInfo); name != "" {
-			return clean.Handle(name)
+		if name := handle(verifiedEmailUsername(userInfo)); name != "" && authn.PortableUsername(name) {
+			return name
 		}
 	}
 
 	return ""
+}
+
+// handle returns the handle of a claim value with runs of dots collapsed, so that e.g. "John F. Kennedy" gives
+// "john.f.kennedy" rather than a name with "..".
+func handle(value string) string {
+	name := clean.Handle(value)
+
+	for strings.Contains(name, "..") {
+		name = strings.ReplaceAll(name, "..", ".")
+	}
+
+	return name
 }

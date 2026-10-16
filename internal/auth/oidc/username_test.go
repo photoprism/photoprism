@@ -34,6 +34,25 @@ func TestUsername(t *testing.T) {
 			assert.False(t, SkipsClaim(info, authn.OidcClaimPreferredUsername), preferred)
 		}
 	})
+	t.Run("CollapsedDots", func(t *testing.T) {
+		// Display names whose handles would have ".." get one dot instead.
+		for name, expected := range map[string]string{"John F. Kennedy": "john.f.kennedy", "Smith, John": "smith.john",
+			"Dr. Who": "dr.who", "Jane (Doe)": "jane.doe.", "Jane  Smith": "jane.smith"} {
+			info := &oidc.UserInfo{}
+			info.Name = name
+			info.Email = "jane@doe.com"
+			info.EmailVerified = true
+			assert.Equal(t, expected, Username(info, authn.OidcClaimName), name)
+			assert.True(t, authn.PortableUsername(expected), expected)
+		}
+	})
+	t.Run("NotPortableEmailHandle", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "50%off"
+		info.Email = "__svc@doe.com"
+		info.EmailVerified = true
+		assert.Equal(t, "", Username(info, authn.OidcClaimPreferredUsername))
+	})
 	t.Run("NotPortableEmail", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Email = "__svc@doe.com"
@@ -358,4 +377,16 @@ func TestVerifiedEmailUsername(t *testing.T) {
 	assert.Equal(t, "", verifiedEmailUsername(info))
 	info.Email = "a@b"
 	assert.Equal(t, "", verifiedEmailUsername(info))
+}
+
+func TestHandle(t *testing.T) {
+	t.Run("Collapsed", func(t *testing.T) {
+		assert.Equal(t, "john.f.kennedy", handle("John F. Kennedy"))
+		assert.Equal(t, "a.b", handle("a ... b"))
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.Equal(t, "jane.doe", handle("Jane Doe"))
+		assert.Equal(t, "", handle(""))
+		assert.Equal(t, "", handle(".hidden"))
+	})
 }
