@@ -65,9 +65,9 @@ func importedContent(dest, hash string) bool {
 }
 
 // storedFilesOf returns how the files of a group relate to the indexed files with the same content, and whether
-// all files that are not sidecars, including the main file, are or may be those files themselves. Files of unknown
-// types count as sidecars, and are only looked up next to a file that is or may be a stored file itself, e.g. in a
-// folder linked into originals, since many sidecars may have the same content.
+// all files that are not sidecars, including the main file, are or may be those files themselves. Sidecars, which
+// include files of unknown types, are only looked up next to a file that is or may be a stored file itself, e.g. in
+// a folder linked into originals, since many sidecars may have the same content.
 func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
 	files := append(MediaFiles{related.Main}, related.Files...)
 	results = make(map[string]storedResult, len(files))
