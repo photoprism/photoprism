@@ -33,8 +33,10 @@ func TestNewImport(t *testing.T) {
 func TestStoredFileOf_Content(t *testing.T) {
 	// storedCopyOf returns the indexed file that is a copy of a file, if there is one.
 	storedCopyOf := func(mf *MediaFile) *entity.File {
-		stored, _ := storedFileMatch(mf)
-		return stored
+		if stored, match := storedFileMatch(mf); match == storedCopy {
+			return stored
+		}
+		return nil
 	}
 
 	cfg := config.TestConfig()
@@ -195,7 +197,8 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, err)
 		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedSame, match)
-		assert.Nil(t, found)
+		require.NotNil(t, found)
+		assert.Equal(t, stored, found.FileName)
 		assert.Zero(t, reads, "the file itself is found without reading the stored file")
 	})
 	t.Run("Rows", func(t *testing.T) {
@@ -227,7 +230,8 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, err)
 		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedSame, match)
-		assert.Nil(t, found)
+		require.NotNil(t, found)
+		assert.Equal(t, name+"/b.jpg", found.FileName)
 		assert.Empty(t, reads, "no file is read before every row is checked for the file itself")
 
 		// A later row whose file still holds the content is a copy, if earlier ones do not.
@@ -269,7 +273,8 @@ func TestStoredFileOf(t *testing.T) {
 
 		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedMaybeSame, match)
-		assert.Nil(t, found)
+		require.NotNil(t, found)
+		assert.Equal(t, maybeRel, found.FileName)
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		// addRow records rel in originals as a file with the given hash.
@@ -343,7 +348,8 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, os.Link(src, filepath.Join(dir, "copy.jpg")))
 		found, match = storedFileMatch(mf)
 		assert.Equal(t, storedSame, match)
-		assert.Nil(t, found)
+		require.NotNil(t, found)
+		assert.Equal(t, row.FileName, found.FileName)
 	})
 	t.Run("MaybeSame", func(t *testing.T) {
 		// A copy with the same size, time and inode number on another device may be the same file.
@@ -356,7 +362,8 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, err)
 		found, match := storedFileMatch(mf)
 		assert.Equal(t, storedMaybeSame, match)
-		assert.Nil(t, found)
+		require.NotNil(t, found)
+		assert.Equal(t, stored, found.FileName)
 	})
 	t.Run("MoveImportMaybeSame", func(t *testing.T) {
 		if testing.Short() {
@@ -386,8 +393,10 @@ func TestStoredFileOf(t *testing.T) {
 		hook := captureLog(t)
 		convert := NewConvert(cfg)
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		opt := ImportOptionsMove(dir, "")
+		opt.Albums = []string{"zz-import-maybe-" + rnd.Base36(8)}
 
-		_, err = imp.Run(ImportOptionsMove(dir, ""))
+		_, err = imp.Run(opt)
 		require.NoError(t, err)
 
 		for _, name := range []string{"main.jpg", "main.xmp", "pair.png"} {
@@ -398,6 +407,9 @@ func TestStoredFileOf(t *testing.T) {
 		infos := loggedMessages(hook, logrus.InfoLevel)
 		assert.Equal(t, 1, countPrefix(infos, "import: skipped main.jpg and its related files, as it may be the same file as the original"))
 		assert.Equal(t, 1, countPrefix(infos, "import: kept pair.png, as it may be the same file as the original"))
+
+		// The picture of the stored file that pair.png may be is added to the album, as for a copy.
+		assert.Contains(t, albumPhotoUIDs(t, opt.Albums[0]), photo.PhotoUID)
 	})
 	t.Run("Group", func(t *testing.T) {
 		mf := func(name string) *MediaFile {
@@ -515,9 +527,12 @@ func TestStoredFileOf(t *testing.T) {
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
 		dest := cleanupDestination(t, imp, filepath.Join(dir, "snap.jpg"), companion)
 		hook := captureLog(t)
+		opt := ImportOptionsMove(dir, "")
+		opt.Albums = []string{"zz-import-snap-" + rnd.Base36(8)}
 
-		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		_, err := imp.Run(opt)
 		require.NoError(t, err)
+		assert.Contains(t, albumPhotoUIDs(t, opt.Albums[0]), photo.PhotoUID, "the picture of the kept file is added to the album")
 		assert.FileExists(t, filepath.Join(dir, "snap.jpg"))
 		assert.NoFileExists(t, companion)
 
@@ -900,6 +915,21 @@ func TestStoredResult_Unchanged(t *testing.T) {
 		require.NoError(t, os.Remove(name))
 		assert.False(t, r.unchanged())
 	})
+}
+
+// albumPhotoUIDs returns the pictures in the album with the given title, and removes the album when the test ends.
+func albumPhotoUIDs(t *testing.T, title string) (uids []string) {
+	t.Helper()
+
+	var album entity.Album
+	require.NoError(t, entity.UnscopedDb().Where("album_title = ?", title).First(&album).Error)
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", album.AlbumUID).Error
+		_ = entity.UnscopedDb().Delete(&album).Error
+	})
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", album.AlbumUID).Pluck("photo_uid", &uids).Error)
+
+	return uids
 }
 
 // storedFileMatch returns the stored copy and the match that storedFileOf reports for a file.

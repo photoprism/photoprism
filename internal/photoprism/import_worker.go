@@ -247,9 +247,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 					if albumErr := entity.AddPhotoToUserAlbums(stored.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
 						log.Warnf("import: %s (add duplicate to albums)", clean.Error(albumErr))
 					}
+				}
 
-					// Remember the original filename for duplicates so that indexing can still persist
-					// OriginalName even when the file was not copied due to an existing identical file.
+				// Remember the original filename for duplicates so that indexing can still persist
+				// OriginalName even when the file was not copied due to an existing identical file.
+				if match == storedCopy {
 					if storedName := FileName(stored.FileRoot, stored.FileName); storedName != "" {
 						relatedOriginalNames[storedName] = relFileName
 					}
@@ -259,9 +261,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// the same content, also after the stored file was compared.
 				switch {
 				case !opt.RemoveExistingFiles:
-				case stored != nil && !result.unchanged():
+				case match == storedCopy && !result.unchanged():
 					log.Infof("import: kept %s, as the stored file has changed", clean.Log(relFileName))
-				case stored != nil:
+				case match == storedCopy:
 					if removeErr := f.Remove(); removeErr != nil {
 						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())
 					} else {
