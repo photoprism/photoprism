@@ -439,6 +439,7 @@ func TestStoredFileOf(t *testing.T) {
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
 		_, destErr := imp.destinationFilename(mf, mf, "", storedFileOf(mf))
 		assert.ErrorContains(t, destErr, "is already indexed as")
+		assert.NotErrorIs(t, destErr, errDestinationExists, "a sidecar is not compared as a file under the destination name")
 		_, destErr = imp.DestinationFilename(mf, mf, "")
 		assert.ErrorContains(t, destErr, "is already indexed as")
 
@@ -896,6 +897,66 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "same.png", indexed.OriginalName)
 		require.NotEqual(t, photo.ID, indexed.PhotoID)
+	})
+	t.Run("PreviewInOriginals", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A file identical to a generated preview is kept, also if the sidecar folder is inside originals.
+		saved := cfg.Options().SidecarPath
+		t.Cleanup(func() { cfg.Options().SidecarPath = saved })
+		cfg.Options().SidecarPath = filepath.Join(cfg.OriginalsPath(), ".zz-sidecar-"+rnd.Base36(8))
+		t.Cleanup(func() { _ = os.RemoveAll(cfg.Options().SidecarPath) })
+		preview := filepath.Join(cfg.SidecarPath(), "2020", "p.jpg")
+		writeTestJpeg(t, preview, 345)
+		row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootSidecar, FileName: "2020/p.jpg",
+			FileHash: fs.Hash(preview)}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-preview-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		src := filepath.Join(dir, "download.jpg")
+		require.NoError(t, fs.Copy(preview, src, false))
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, src)
+		assert.FileExists(t, preview)
+		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted download.jpg"))
+	})
+	t.Run("LinkedDestination", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A symbolic link under the destination name to a file with the same content is not taken for a copy.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-link-dest-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		src := filepath.Join(dir, "linked.jpg")
+		writeTestJpeg(t, src, 344)
+		external := filepath.Join(t.TempDir(), "external.jpg")
+		require.NoError(t, fs.Copy(src, external, false))
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		dest := cleanupDestination(t, imp, src, src)
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+		require.NoError(t, os.Symlink(external, dest))
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, src)
+		assert.True(t, fs.IsSymlink(dest))
+		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted linked.jpg"))
 	})
 	t.Run("LinkedSidecar", func(t *testing.T) {
 		if testing.Short() {
@@ -1408,9 +1469,16 @@ func TestImport_DestinationFilenameRows(t *testing.T) {
 	})
 	t.Run("NoRows", func(t *testing.T) {
 		// Queried without rows means no lookup, while results that were not queried fall back to one.
-		_, destErr := imp.destinationFilename(mf, mf, "", storedResult{queried: true})
+		dest, destErr := imp.destinationFilename(mf, mf, "", storedResult{queried: true})
 		require.NoError(t, destErr)
 		assert.Zero(t, lookups)
+
+		// A file with the same content under the name is reported as such.
+		require.NoError(t, fs.Copy(src, dest, false))
+		t.Cleanup(func() { _ = os.Remove(dest) })
+		taken, destErr := imp.destinationFilename(mf, mf, "", storedResult{queried: true})
+		assert.ErrorIs(t, destErr, errDestinationExists)
+		assert.Equal(t, dest, taken)
 
 		_, _ = imp.destinationFilename(mf, mf, "", storedResult{})
 		assert.Equal(t, 1, lookups)
@@ -1608,12 +1676,13 @@ func TestImport_HashLookups(t *testing.T) {
 
 	cfg := config.TestConfig()
 
-	// countLookups counts the hash lookups by hash, and calls wait after each lookup of a files list.
-	countLookups := func(t *testing.T, wait func(hash string)) map[string]int {
+	// countLookups counts the lookups by hash, and by name under the key "name", and calls wait after each lookup of
+	// the files with a hash.
+	countLookups := func(t *testing.T, wait func(hash string, files entity.Files)) map[string]int {
 		var mu sync.Mutex
 		counts := make(map[string]int)
-		savedFiles, savedFirst := filesByHash, firstFileByHash
-		t.Cleanup(func() { filesByHash, firstFileByHash = savedFiles, savedFirst })
+		savedFiles, savedFirst, savedName := filesByHash, firstFileByHash, filesByName
+		t.Cleanup(func() { filesByHash, firstFileByHash, filesByName = savedFiles, savedFirst, savedName })
 
 		count := func(hash string) {
 			mu.Lock()
@@ -1624,8 +1693,12 @@ func TestImport_HashLookups(t *testing.T) {
 		filesByHash = func(hash string) (entity.Files, error) {
 			count(hash)
 			files, err := savedFiles(hash)
-			wait(hash)
+			wait(hash, files)
 			return files, err
+		}
+		filesByName = func(fileRoot, fileName string) (entity.Files, error) {
+			count("name")
+			return savedName(fileRoot, fileName)
 		}
 		firstFileByHash = func(hash string) (entity.File, error) {
 			count(hash)
@@ -1659,7 +1732,7 @@ func TestImport_HashLookups(t *testing.T) {
 			require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte(strings.Replace(testXmp, "Pair", name+" "+filepath.Base(dir), 1)), fs.ModeFile))
 		}
 
-		counts := countLookups(t, func(string) {})
+		counts := countLookups(t, func(string, entity.Files) {})
 		convert := NewConvert(cfg)
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
 
@@ -1677,10 +1750,11 @@ func TestImport_HashLookups(t *testing.T) {
 		}
 
 		assert.Equal(t, len(names), total, "sidecars are not looked up")
+		assert.Zero(t, counts["name"])
 	})
 	// importIdentical imports two copies of one picture in two groups with two workers, calling wait for each lookup
 	// of its hash, checks that one copy ends up in originals, and returns how many stay in the import folder.
-	importIdentical := func(t *testing.T, seed int, wait func(t *testing.T, arrival int32, hash string)) int {
+	importIdentical := func(t *testing.T, seed int, wait func(t *testing.T, arrival int32, hash string, files entity.Files)) int {
 		saved := cfg.Options().IndexWorkers
 		t.Cleanup(func() { cfg.Options().IndexWorkers = saved })
 		cfg.Options().IndexWorkers = "2"
@@ -1715,9 +1789,9 @@ func TestImport_HashLookups(t *testing.T) {
 		require.Equal(t, dest, cleanupDestination(t, imp, second, second))
 
 		var arrivals atomic.Int32
-		countLookups(t, func(h string) {
+		countLookups(t, func(h string, files entity.Files) {
 			if h == hash {
-				wait(t, arrivals.Add(1), hash)
+				wait(t, arrivals.Add(1), hash, files)
 			}
 		})
 
@@ -1763,7 +1837,7 @@ func TestImport_HashLookups(t *testing.T) {
 		})
 		t.Cleanup(func() { timer.Stop() })
 
-		remaining := importIdentical(t, 337, func(t *testing.T, arrival int32, hash string) {
+		remaining := importIdentical(t, 337, func(t *testing.T, arrival int32, hash string, files entity.Files) {
 			if arrival <= 2 {
 				arrived.Done()
 				<-release
@@ -1774,20 +1848,30 @@ func TestImport_HashLookups(t *testing.T) {
 		assert.LessOrEqual(t, remaining, 1, "one copy was moved")
 	})
 	t.Run("IdenticalGroupsAfterIndexing", func(t *testing.T) {
-		// The second group looked up the hash before the first was indexed, and goes on once it is, so it relies on
-		// the file under the destination name rather than on a row, and removes its copy.
-		remaining := importIdentical(t, 339, func(t *testing.T, arrival int32, hash string) {
-			if arrival != 2 {
-				return
-			}
+		// The first group goes on once the second has looked up the hash, and the second once the first is indexed,
+		// so the second relies on the file under the destination name rather than on a row, and removes its copy.
+		looked := make(chan struct{})
+		var staleRows atomic.Bool
 
-			assert.Eventually(t, func() bool {
-				var count int64
-				_ = entity.UnscopedDb().Model(&entity.File{}).Where("file_hash = ? AND file_root = ?", hash, entity.RootOriginals).Count(&count).Error
-				return count > 0
-			}, 10*time.Second, 50*time.Millisecond)
+		remaining := importIdentical(t, 339, func(t *testing.T, arrival int32, hash string, files entity.Files) {
+			switch arrival {
+			case 1:
+				select {
+				case <-looked:
+				case <-time.After(10 * time.Second):
+				}
+			case 2:
+				staleRows.Store(len(files) == 0)
+				close(looked)
+				assert.Eventually(t, func() bool {
+					var count int64
+					_ = entity.UnscopedDb().Model(&entity.File{}).Where("file_hash = ? AND file_root = ?", hash, entity.RootOriginals).Count(&count).Error
+					return count > 0
+				}, 10*time.Second, 50*time.Millisecond)
+			}
 		})
 
+		assert.True(t, staleRows.Load(), "the second group found no rows")
 		assert.Zero(t, remaining)
 	})
 }

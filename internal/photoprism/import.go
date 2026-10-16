@@ -95,6 +95,9 @@ func (e importError) Unwrap() error {
 	return e.err
 }
 
+// errDestinationExists is returned by destinationFilename when a file with the same content already has the name.
+var errDestinationExists = errors.New("already exists")
+
 // ErrImportIncomplete is returned by Import.Run when files could not be moved or copied to the originals.
 var ErrImportIncomplete = errors.New("some files could not be imported")
 
@@ -544,7 +547,8 @@ func storedFileAt(mediaFile *MediaFile, fileRoot, fileName string) storedResult 
 	return storedMatchOf(mediaFile, mediaFile.Hash(), files)
 }
 
-// storedMatchOf reports how a file with the given hash relates to the indexed files with that hash, see storedFileOf.
+// storedMatchOf reports how a file with the given hash relates to the given files, e.g. the indexed files with that
+// hash, see storedFileOf.
 func storedMatchOf(mediaFile *MediaFile, fileHash string, files entity.Files) storedResult {
 	src, srcErr := os.Stat(mediaFile.FileName())
 
@@ -877,7 +881,7 @@ func (imp *Import) destinationFilename(mainFile, mediaFile *MediaFile, folder st
 		// Both sides hash to the empty string when they cannot be read, so a hash is compared only
 		// once there is one.
 		if h := mediaFile.Hash(); h != "" && h == fs.Hash(filePath) {
-			return filePath, fmt.Errorf("%s already exists", clean.Log(fs.RelName(filePath, imp.originalsPath())))
+			return filePath, fmt.Errorf("%s %w", clean.Log(fs.RelName(filePath, imp.originalsPath())), errDestinationExists)
 		}
 
 		i++

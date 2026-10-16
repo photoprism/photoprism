@@ -65,8 +65,8 @@ func importedContent(dest, hash string) bool {
 	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
-// storedFilesOf returns how the files of a group that are not sidecars relate to the indexed files with the same
-// content, and whether all of them, including the main file, are or may be those files themselves. A sidecar,
+// storedFilesOf returns how the files of a group relate to the indexed files with the same content, and whether
+// all files that are not sidecars, including the main file, are or may be those files themselves. A sidecar,
 // which includes files of unknown types, is only compared with the file of the same name next to such a stored
 // file, e.g. in a folder linked into originals, since sidecars of different pictures may have the same content.
 func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
@@ -351,18 +351,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// What follows is for a file the library already holds. The destination name is not
 				// evidence of that, so it is established once here and every step below reads it.
-				result, found := results[f.FileName()]
+				result := results[f.FileName()]
 
-				// A file is compared with the file under its destination name if nothing else matched, as that may have
-				// been placed after the group was checked, e.g. by another worker, and is not indexed by hash yet.
+				// A file is compared with the file under its destination name in originals if that holds the same
+				// content and nothing else matched, as it may have been placed after the group was checked, e.g. by
+				// another worker. A symbolic link there is not taken for a copy.
 				destRel := fs.RelName(destFileName, imp.originalsPath())
 
-				switch {
-				case found && result.match != storedNone:
-				case destFileName != "" && destRel != destFileName:
+				if result.match == storedNone && errors.Is(err, errDestinationExists) && destRel != destFileName &&
+					!fs.IsSymlink(destFileName) {
 					result = storedFileAt(f, entity.RootOriginals, destRel)
-				case !found:
-					result = storedFileOf(f)
 				}
 
 				stored, match := result.file, result.match

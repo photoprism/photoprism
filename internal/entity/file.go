@@ -238,7 +238,7 @@ func FilesByHash(fileHash string) (files Files, err error) {
 	return files, err
 }
 
-// FilesByName returns the files with the given root and name, including soft-deleted rows.
+// FilesByName returns the file with the given root and name, if any, including a soft-deleted row.
 func FilesByName(fileRoot, fileName string) (files Files, err error) {
 	if fileName == "" {
 		return files, nil
