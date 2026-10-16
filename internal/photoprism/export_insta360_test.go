@@ -90,7 +90,7 @@ func TestExportInsta360LensChanged(t *testing.T) {
 
 // TestExportInsta360Admission requires the companion to belong to the same indexed photo.
 func TestExportInsta360Admission(t *testing.T) {
-	for _, state := range []string{"Unindexed", "OtherPhoto", "SamePhoto"} {
+	for _, state := range []string{"Unindexed", "OtherPhoto", "SamePhoto", "StaleHash"} {
 		t.Run(state, func(t *testing.T) {
 			cfg := newInsta360StackConfig(t, "export-insta360-admission-"+state, false)
 			require.NoError(t, cfg.CreateDirectories())
@@ -107,12 +107,15 @@ func TestExportInsta360Admission(t *testing.T) {
 					require.NoError(t, owner.Create())
 				}
 				right.PhotoID, right.PhotoUID = owner.ID, owner.PhotoUID
+				if state == "StaleHash" {
+					right.FileHash = "1234567890123456789012345678901234567890"
+				}
 				require.NoError(t, right.Create())
 			}
 			before := exportCacheTree(t, cfg.CachePath())
 			for range 2 {
 				probe, err := w.ProbeExport(left)
-				if state == "SamePhoto" {
+				if state == "SamePhoto" || state == "StaleHash" {
 					require.NoError(t, err)
 					assert.Equal(t, "main", probe.CaptureRole)
 					require.NotNil(t, probe.Avc)
@@ -121,6 +124,13 @@ func TestExportInsta360Admission(t *testing.T) {
 				}
 			}
 			assert.Equal(t, before, exportCacheTree(t, cfg.CachePath()))
+			if state == "StaleHash" {
+				_, err := w.PrepareExport(left, "avc")
+				assert.ErrorIs(t, err, ErrExportSourceChanged)
+				entries, err := os.ReadDir(cfg.SidecarPath())
+				require.NoError(t, err)
+				assert.Empty(t, entries)
+			}
 		})
 	}
 }

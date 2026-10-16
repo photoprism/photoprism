@@ -9,7 +9,8 @@ export function isAvc(codec) {
 
 // exportMediaUrl builds a source-specific request with the current download token.
 export function exportMediaUrl(source, config, mode, kind = "") {
-  return `${config.apiUri}/videos/${encodeURIComponent(source.hash)}/${encodeURIComponent(config.downloadToken)}/export?export=${mode}${kind ? `&kind=${kind}` : ""}`;
+  const format = kind === "video-part" ? "native" : "avc";
+  return `${config.apiUri}/videos/${encodeURIComponent(source.hash)}/${encodeURIComponent(config.downloadToken)}/${format}?action=${mode}`;
 }
 
 // probeExportMedia retries one busy response before surfacing a retryable failure.

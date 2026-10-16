@@ -3337,3 +3337,24 @@ func TestNewMediaFileSkipResolve(t *testing.T) {
 		assert.Contains(t, clean.Error(err), "***")
 	})
 }
+
+// TestMediaFile_SetAnimationInfo checks indexed fallbacks without replacing parsed metadata.
+func TestMediaFile_SetAnimationInfo(t *testing.T) {
+	w := exportTestConfig(t)
+	w.conf.Options().DisableExifTool = true
+	data, err := os.ReadFile("testdata/2018-04-12 19_24_49.gif")
+	require.NoError(t, err)
+	name := filepath.Join(w.conf.OriginalsPath(), "indexed.gif")
+	require.NoError(t, os.WriteFile(name, data, fs.ModeFile)) // #nosec G703 -- Fixed fixture name under t.TempDir.
+	file, err := NewMediaFile(name)
+	require.NoError(t, err)
+	file.SetAnimationInfo(0, 0)
+	assert.False(t, file.IsAnimatedImage())
+	file.SetAnimationInfo(2, time.Second)
+	assert.True(t, file.IsAnimatedImage())
+	assert.Equal(t, 2, file.MetaData().Frames)
+	assert.Equal(t, time.Second, file.MetaData().Duration)
+	file.SetAnimationInfo(7, 3*time.Second)
+	assert.Equal(t, 2, file.MetaData().Frames)
+	assert.Equal(t, time.Second, file.MetaData().Duration)
+}

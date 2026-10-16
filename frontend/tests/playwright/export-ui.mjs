@@ -128,7 +128,7 @@ try {
         await route.fulfill({ json: { ...await response.json(), Files: current.files } });
       });
       await page.route(/\/t\/0{30,}\d+\/[^/]+\/tile_224$/, (route) => route.fulfill({ contentType: "image/jpeg", body: raster }));
-      await page.route(/\/videos\/0{30,}\d+\/[^/]+\/export\?export=probe$/, (route) => {
+      await page.route(/\/videos\/0{30,}\d+\/[^/]+\/(?:avc|native)\?action=probe$/, (route) => {
         const hash = new URL(route.request().url()).pathname.split("/").at(-3);
         const source = current.files.find((file) => file.Hash === hash);
         return route.fulfill({ json: { codec: source.Codec || "", duration: source.Duration / 1e9 || 0, appleKey: current.label === "AppleLivePhoto" && [still.Hash, movie.Hash].includes(hash) ? "pair" : "", avc: { preparable: true, format: "mp4", codec: "avc1" }, videoPart: source.MediaType === "live" ? { preparable: true, format: "mov", codec: "hvc1" } : undefined } });

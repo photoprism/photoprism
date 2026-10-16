@@ -1,4 +1,4 @@
-import { RequestMock, Selector } from "testcafe";
+import { RequestLogger, RequestMock, Selector } from "testcafe";
 import testcafeconfig from "../../testcafeconfig.json";
 import Toolbar from "../page-model/toolbar";
 import Photo from "../page-model/photo";
@@ -56,6 +56,19 @@ test.meta("testID", "export-001").meta({ mode: "public", type: "short" })("Commo
   }
 });
 
+test.meta("testID", "export-download-001").meta({ mode: "public", type: "short" })("Common: Export preserves existing Download attachments", async (t) => {
+  const downloads = RequestLogger(/\/api\/v1\/dl\//, { logResponseHeaders: true });
+  await t.addRequestHooks(downloads);
+  await openViewer(t);
+  await t.hover(viewer.menuButton);
+  const downloadItem = Selector(".action-menu--lightbox .action-download");
+  await t.expect(downloadItem.visible).ok();
+  await t.click(downloadItem);
+  await t.expect(downloads.contains((request) => request.response?.statusCode === 200 && /^attachment/i.test(request.response.headers["content-disposition"] || ""))).ok();
+  await t.expect(dialog.visible).notOk();
+  await viewer.triggerPhotoViewerAction("close-button");
+});
+
 const cases = [
   ["Image", [source(1, "one.jpg"), source(2, "two.jpg")], ["original", "thumbnail"]],
   ["RAW", [source(1, "one.dng", "raw"), source(2, "one.dng.jpg", "image", "sidecar")], ["original", "preview", "thumbnail"]],
@@ -76,7 +89,7 @@ for (const [index, [label, files, kinds]] of cases.entries()) {
     const hook = RequestMock()
       .onRequestTo((request) => request.method === "get" && request.url.split("?")[0].endsWith(`/api/v1/photos/${uid}`))
       .respond({ UID: uid, Files: files }, 200, { "content-type": "application/json" })
-      .onRequestTo((request) => request.url.includes("/export?export=probe"))
+      .onRequestTo((request) => request.url.includes("/avc?action=probe"))
       .respond({ codec: "hevc", duration: 2, avc: { preparable: true, format: "mp4", codec: "avc1" }, videoPart: { ready: true, format: "mp4", codec: "avc1" } }, 200, { "content-type": "application/json" });
     await t.addRequestHooks(hook);
     await openExport(t);

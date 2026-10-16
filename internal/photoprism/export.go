@@ -231,9 +231,15 @@ func (w *Convert) ProbeExport(f *entity.File) (ExportProbe, error) {
 	if err != nil {
 		return ExportProbe{}, err
 	}
+	return w.probeExport(source), nil
+}
+
+// probeExport derives capabilities from an already resolved source.
+func (w *Convert) probeExport(source *exportSource) ExportProbe {
+	f := source.file
 	result := ExportProbe{CaptureRole: source.captureRole, Codec: string(source.info.VideoCodec), Duration: source.info.Duration.Seconds(), AppleKey: w.exportAppleKey(f)}
 	if source.captureRole == "secondary" {
-		return result, nil
+		return result
 	}
 	if f.MediaType == entity.MediaLive {
 		if source.info.Compatible && !source.info.Encrypted && source.info.VideoOffset > 0 && source.info.VideoSize() > 0 && source.info.VideoWidth > 0 && source.info.VideoHeight > 0 {
@@ -257,7 +263,7 @@ func (w *Convert) ProbeExport(f *entity.File) (ExportProbe, error) {
 			result.Avc = &output
 		}
 	}
-	return result, nil
+	return result
 }
 
 // exportAvc recognizes source codec names and AVC sample entries.

@@ -95,9 +95,9 @@ async function serveRequest(request, response) {
       attachment(response, contents.get(hash).bytes, filename);
       return;
     }
-    if (filename && incoming.pathname.includes("/videos/") && incoming.searchParams.get("export") === "download") {
+    if (filename && incoming.pathname.includes("/videos/") && incoming.searchParams.get("action") === "download") {
       assert.ok(prepared.has(parts.at(-3)), "download must not start a preparation");
-      const target = incoming.searchParams.get("kind") === "video-part" ? hevcPath : avcPath;
+      const target = incoming.pathname.endsWith("/native") ? hevcPath : avcPath;
       attachment(response, await readFile(target), filename);
       return;
     }
@@ -182,16 +182,16 @@ try {
         const photo = await response.json();
         await json(route, { ...photo, Files: current.files });
       });
-      await page.route(/\/videos\/[^/]+\/[^/]+\/export\?export=(probe|prepare)(?:&|$)/, async (route) => {
+      await page.route(/\/videos\/[^/]+\/[^/]+\/(?:avc|native)\?action=(probe|prepare)(?:&|$)/, async (route) => {
         const request = new URL(route.request().url());
         const hash = request.pathname.split("/").at(-3);
         const record = contents.get(hash).record;
-        const kind = request.searchParams.get("kind");
+        const kind = request.pathname.endsWith("/native") ? "video-part" : "avc";
         const result = { ready: true, format: kind === "video-part" ? "mov" : "mp4", codec: kind === "video-part" ? "hvc1" : "avc1", width: 160, height: 120, bytes: (await readFile(kind === "video-part" ? hevcPath : avcPath)).length };
-        if (request.searchParams.get("export") === "probe") {
+        if (request.searchParams.get("action") === "probe") {
           const key = current.label.startsWith("Apple") ? "live-pair" : "";
           await json(route, { codec: hash === native.Hash ? "H.264" : "hvc1", duration: 0.3, appleKey: key, avc: { ...result, format: "mp4", ready: prepared.has(hash), preparable: true }, videoPart: record.MediaType === "live" ? { ...result, format: "mov", codec: "hvc1", ready: prepared.has(hash), preparable: true } : undefined });
-        } else if (request.searchParams.get("export") === "prepare") {
+        } else if (request.searchParams.get("action") === "prepare") {
           preparations++;
           const count = (attempts.get(hash) || 0) + 1;
           attempts.set(hash, count);

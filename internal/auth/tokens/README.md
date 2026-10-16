@@ -1,12 +1,12 @@
 ## PhotoPrism — URL Tokens
 
-**Last Updated:** October 12, 2026
+**Last Updated:** October 16, 2026
 
 ### Overview
 
 `internal/auth/tokens` mints and validates the URL tokens PhotoPrism embeds in its header-less media
 URLs. Downloads normally carry a `?t=` query parameter; media export carries the
-same compact download token in `/videos/:hash/:token/export` and disables HTTP
+same compact download token in `/videos/:hash/:token/:format?action=probe|prepare|download` and disables HTTP
 caching. Header-less downloads resolve admission and scope without per-token storage.
 
 The cryptography itself lives in `pkg/authn/authtoken`, a dependency-free leaf that implements the
@@ -97,7 +97,7 @@ reserved for the CDN-fronted preview endpoints.
 
 Scoped consumers: `DownloadAlbum` (`internal/api/download_album.go`), `GetDownload`
 (`internal/api/download.go`), `GetPhotoDownload` (`internal/api/photos.go`), and `ZipDownload`
-(`internal/api/zip.go`), plus `GetVideoExport` (`internal/api/video_export.go`), which
+(`internal/api/zip.go`), plus `GetVideo` (`internal/api/video.go`), which
 adapts the authoritative path token to the same download admission and visibility checks.
 
 ### Preview Tokens

@@ -4004,55 +4004,6 @@
                 "ResizePad"
             ]
         },
-        "photoprism.ExportOutput": {
-            "properties": {
-                "bytes": {
-                    "type": "integer"
-                },
-                "codec": {
-                    "type": "string"
-                },
-                "format": {
-                    "type": "string"
-                },
-                "height": {
-                    "type": "integer"
-                },
-                "preparable": {
-                    "type": "boolean"
-                },
-                "ready": {
-                    "type": "boolean"
-                },
-                "width": {
-                    "type": "integer"
-                }
-            },
-            "type": "object"
-        },
-        "photoprism.ExportProbe": {
-            "properties": {
-                "appleKey": {
-                    "type": "string"
-                },
-                "avc": {
-                    "$ref": "#/definitions/photoprism.ExportOutput"
-                },
-                "captureRole": {
-                    "type": "string"
-                },
-                "codec": {
-                    "type": "string"
-                },
-                "duration": {
-                    "type": "number"
-                },
-                "videoPart": {
-                    "$ref": "#/definitions/photoprism.ExportOutput"
-                }
-            },
-            "type": "object"
-        },
         "places.Location": {
             "properties": {
                 "category": {
@@ -14106,9 +14057,10 @@
                 ]
             }
         },
-        "/api/v1/videos/{hash}/{token}/export": {
+        "/api/v1/videos/{hash}/{token}/{format}": {
             "get": {
-                "operationId": "GetVideoExport",
+                "description": "Returns video bytes for playback and download, ExportProbe JSON for action=probe, or ExportOutput JSON for action=prepare.",
+                "operationId": "GetVideo",
                 "parameters": [
                     {
                         "description": "SHA1 source file hash",
@@ -14118,32 +14070,45 @@
                         "type": "string"
                     },
                     {
-                        "description": "session-bound download token",
+                        "description": "preview token for playback; download token for source-specific actions",
                         "in": "path",
                         "name": "token",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "description": "export operation",
+                        "description": "playback format; actions accept avc or native (embedded video)",
+                        "in": "path",
+                        "name": "format",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "source-specific operation without playback fallback",
                         "enum": [
                             "probe",
                             "prepare",
                             "download"
                         ],
                         "in": "query",
-                        "name": "export",
-                        "required": true,
+                        "name": "action",
                         "type": "string"
                     },
                     {
-                        "description": "rendition for prepare and download",
+                        "description": "serve playback as an attachment when nonempty",
+                        "in": "query",
+                        "name": "download",
+                        "type": "string"
+                    },
+                    {
+                        "description": "download naming convention",
                         "enum": [
-                            "avc",
-                            "video-part"
+                            "file",
+                            "share",
+                            "original"
                         ],
                         "in": "query",
-                        "name": "kind",
+                        "name": "name",
                         "type": "string"
                     },
                     {
@@ -14160,10 +14125,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/photoprism.ExportProbe"
-                        }
+                        "description": "Video content or action-specific JSON metadata"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -14238,52 +14200,7 @@
                         }
                     }
                 },
-                "summary": "probes, prepares, or downloads a source-specific media export",
-                "tags": [
-                    "Files",
-                    "Videos"
-                ]
-            }
-        },
-        "/api/v1/videos/{hash}/{token}/{format}": {
-            "get": {
-                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
-                "operationId": "GetVideo",
-                "parameters": [
-                    {
-                        "description": "SHA1 video file hash",
-                        "in": "path",
-                        "name": "hash",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "description": "user-specific security token provided with session",
-                        "in": "path",
-                        "name": "token",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "description": "video format, e.g. mp4",
-                        "in": "path",
-                        "name": "format",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "produces": [
-                    "video/mp4"
-                ],
-                "responses": {
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    }
-                },
-                "summary": "returns a video, optionally limited to a byte range for streaming",
+                "summary": "returns video content or source-specific preparation metadata",
                 "tags": [
                     "Files",
                     "Videos"

@@ -325,7 +325,7 @@ describe("mixed export preparation queue", () => {
     await queue.run();
     expect(prepare).not.toHaveBeenCalled();
     expect(transfer).toHaveBeenCalledOnce();
-    expect(transfer.mock.calls[0][0]).toContain("export=download&kind=avc");
+    expect(transfer.mock.calls[0][0]).toContain("action=download");
   });
 });
 

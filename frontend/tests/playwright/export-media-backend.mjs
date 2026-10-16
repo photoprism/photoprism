@@ -207,7 +207,7 @@ try {
         view.selected = [option.id];
       });
       let failOnce = true;
-      await page.route(/\/export\?export=prepare/, async (route) => {
+      await page.route(/\/(?:avc|native)\?action=prepare/, async (route) => {
         if (failOnce) {
           failOnce = false;
           await route.abort("connectionfailed");
@@ -233,7 +233,7 @@ try {
       verifyFormat(retryName, "mp4", retryBytes);
       const codec = execFileSync("ffprobe", ["-v", "error", "-select_streams", "v:0", "-show_entries", "stream=codec_name", "-of", "csv=p=0", retryName], { encoding: "utf8" });
       assert.equal(codec.trim(), "h264");
-      await page.unroute(/\/export\?export=prepare/);
+      await page.unroute(/\/(?:avc|native)\?action=prepare/);
       await closeExport(page);
       await page.keyboard.press("Escape");
       await page.waitForFunction(() => !document.querySelector("#app").__vue_app__.config.globalProperties.$view.current?.model);
@@ -254,7 +254,7 @@ try {
       const delivery = new Promise((resolve) => {
         release = resolve;
       });
-      await page.route(/\/export\?export=prepare/, async (route) => {
+      await page.route(/\/(?:avc|native)\?action=prepare/, async (route) => {
         const response = await route.fetch();
         prepared();
         await delivery;

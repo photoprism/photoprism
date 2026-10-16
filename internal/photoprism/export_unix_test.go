@@ -5,6 +5,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"testing"
 
@@ -46,4 +47,27 @@ func TestExportSpecialFiles(t *testing.T) {
 		require.NoError(t, syscall.Mkfifo(filepath.Join(dir, f.FileHash+"_exiftool.json"), uint32(fs.ModeFile)))
 		assert.Empty(t, w.exportAppleKey(f))
 	})
+}
+
+// TestExportPrepareSingleProbe checks that preparation resolves a non-MP4 source only once.
+func TestExportPrepareSingleProbe(t *testing.T) {
+	w := exportTestConfig(t)
+	f := exportTestVideo(t, w, "single-probe.mkv", "libx265")
+	bin := t.TempDir()
+	calls := filepath.Join(bin, "probes")
+	ffmpeg, ffprobe := w.conf.FFmpegBin(), w.conf.FFprobeBin()
+	if ffprobe == "" {
+		t.Skip("ffprobe unavailable")
+	}
+	require.NoError(t, os.Symlink(ffmpeg, filepath.Join(bin, "ffmpeg")))
+	script := "#!/bin/sh\nprintf 'probe\\n' >> " + transportShellQuote(calls) + "\nexec " + transportShellQuote(ffprobe) + " \"$@\"\n"
+	require.NoError(t, os.WriteFile(filepath.Join(bin, "ffprobe"), []byte(script), fs.ModeSecretFile|0100))
+	w.conf.Options().FFmpegBin = filepath.Join(bin, "ffmpeg")
+	output, err := w.PrepareExport(f, "avc")
+	require.NoError(t, err)
+	assert.True(t, output.Ready)
+	assert.Equal(t, "avc1", output.Codec)
+	data, err := os.ReadFile(calls) //nolint:gosec // calls belongs to the disposable executable directory
+	require.NoError(t, err)
+	assert.Equal(t, 1, strings.Count(string(data), "probe\n"))
 }

@@ -71,7 +71,7 @@ describe("export media choices", () => {
     expect(group.options[2]).toMatchObject({ format: "mov", codec: "hvc1", bytes: 1000 });
     const items = buildExportDownloads([group], group.options.map((option) => option.id));
     expect(items[2].filename).toBe("motion_video.mov");
-    expect(exportDownloadUrl(items[2], config)).toContain(`/${motion.Hash}/fresh%20token/export?export=download&kind=video-part`);
+    expect(exportDownloadUrl(items[2], config)).toContain(`/${motion.Hash}/fresh%20token/native?action=download`);
     expect(buildMediaExportGroups([motion], thumbs)[0].options.map((option) => option.kind)).toEqual(["original", "thumbnail"]);
   });
 });
@@ -146,7 +146,7 @@ describe("export media requests", () => {
     const source = { hash: "source" };
     const get = vi.spyOn(Axios, "get").mockResolvedValue({ data: { codec: "hvc1" } });
     expect(await probeExportMedia(source, config)).toEqual({ codec: "hvc1" });
-    expect(get.mock.calls[0][0]).toBe("/api/v1/videos/source/fresh%20token/export?export=probe");
+    expect(get.mock.calls[0][0]).toBe("/api/v1/videos/source/fresh%20token/avc?action=probe");
   });
   it.each([{ ready: false, format: "mp4" }, { ready: true, format: "mov", codec: "avc1" }, { ready: true, format: "mp4", codec: "hvc1" }])("rejects unverified preparation %#", async (data) => {
     vi.spyOn(Axios, "get").mockResolvedValue({ data });

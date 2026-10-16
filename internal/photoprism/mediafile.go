@@ -1170,6 +1170,17 @@ func (m *MediaFile) IsAnimatedImage() bool {
 	return fs.IsAnimatedImage(m.fileName) && (m.MetaData().Frames > 1 || m.MetaData().Duration > 0)
 }
 
+// SetAnimationInfo fills missing animation metadata from the indexed source.
+func (m *MediaFile) SetAnimationInfo(frames int, duration time.Duration) {
+	m.MetaData()
+	if m.metaData.Frames == 0 && frames > 0 {
+		m.metaData.Frames = frames
+	}
+	if m.metaData.Duration == 0 && duration > 0 {
+		m.metaData.Duration = duration
+	}
+}
+
 // IsJSON checks if the file is a JSON sidecar file with a supported file type extension.
 func (m *MediaFile) IsJSON() bool {
 	return m.HasFileType(fs.SidecarJson)

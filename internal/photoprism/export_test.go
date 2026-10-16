@@ -272,6 +272,25 @@ func TestExportPrepare(t *testing.T) {
 	})
 }
 
+// TestExportFileResolvedSource rejects a replacement after capabilities are read from a snapshot.
+func TestExportFileResolvedSource(t *testing.T) {
+	w := exportTestConfig(t)
+	f := exportTestVideo(t, w, "snapshot.mp4", "libx265")
+	source, err := w.exportSource(f)
+	require.NoError(t, err)
+	probe := w.probeExport(source)
+	require.NotNil(t, probe.Avc)
+	assert.True(t, probe.Avc.Preparable)
+	replacement := exportTestVideo(t, w, "replacement.mp4", "libx264")
+	require.NoError(t, os.Rename(filepath.Join(w.conf.OriginalsPath(), replacement.FileName), source.media.FileName()))
+	file, _, _, err := w.exportFile(source, "avc")
+	assert.ErrorIs(t, err, ErrExportSourceChanged)
+	assert.Nil(t, file)
+	entries, err := os.ReadDir(w.conf.SidecarPath())
+	require.NoError(t, err)
+	assert.Empty(t, entries)
+}
+
 // TestExportMotion verifies direct embedded-video delivery without storing a second file.
 func TestExportMotion(t *testing.T) {
 	w := exportTestConfig(t)

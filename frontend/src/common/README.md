@@ -1,6 +1,6 @@
 ## View Helper Guidelines
 
-**Last Updated:** October 15, 2026
+**Last Updated:** October 16, 2026
 
 ### Export Helpers
 
@@ -133,8 +133,8 @@ through the closing transition.
 #### Video API Integration Status
 
 The client consumes JSON from
-`/api/v1/videos/{hash}/{downloadToken}/export?export=probe|prepare|download`;
-preparation/download requests also select `kind=avc|video-part`. Probe data uses
+`/api/v1/videos/{hash}/{downloadToken}/{format}?action=probe|prepare|download`;
+`format` selects `avc` or `native` (the embedded video part). Probe data uses
 `codec`, `duration` (seconds), `appleKey`, optional `captureRole`, and `avc`/`videoPart` capabilities
 (`ready`, `preparable`, `format`, `codec`, `width`, `height`, `bytes`). Prepare
 returns a verified output with `ready: true` and the same format, codec, dimensions,

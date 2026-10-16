@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** October 14, 2026
+**Last Updated:** October 16, 2026
 
 ### Overview
 
@@ -29,6 +29,19 @@
 - Downloads: `dl/` (export and download handlers/helpers).
 - Service registry: `get/` (registry lookups and helper commands).
 - Tests & fixtures: `*_test.go`, `testdata/`, uses shared test config (`config.TestConfig()`).
+
+### Media Export Preparation
+
+`Convert.PrepareExport` resolves the selected source once and reuses that snapshot
+for capability checks, source validation, and preparation. Native motion video uses
+the same verified file-opening path as `Convert.ExportFile`. Source and companion
+hash checks and conversion-time version checks still apply.
+
+Export and playback share the AVC converter and sidecars. The video endpoint
+supports source-specific probe/prepare/download actions alongside playback. Both paths share attachment
+and Range delivery; playback also fills missing animation metadata from the index.
+Actions retain exact-source selection, preparation errors for retry, and verified
+prepared-only downloads; ordinary playback may select a related stack video.
 
 ### Label Input Preparation
 

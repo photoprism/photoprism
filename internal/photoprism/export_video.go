@@ -114,6 +114,11 @@ func (w *Convert) ExportFile(f *entity.File, kind string) (*os.File, int64, Expo
 	if err != nil {
 		return nil, 0, ExportOutput{}, err
 	}
+	return w.exportFile(source, kind)
+}
+
+// exportFile opens a rendition while retaining the resolved source's identity checks.
+func (w *Convert) exportFile(source *exportSource, kind string) (*os.File, int64, ExportOutput, error) {
 	if source.captureRole == "secondary" {
 		return nil, 0, ExportOutput{}, ErrExportUnavailable
 	}
@@ -129,7 +134,7 @@ func (w *Convert) ExportFile(f *entity.File, kind string) (*os.File, int64, Expo
 		info, probeErr := video.Probe(io.NewSectionReader(sourceFile, 0, source.stat.Size()))
 		info.FileSize = source.stat.Size()
 		exportVideoDimensions(&info)
-		if probeErr != nil || f.MediaType != entity.MediaLive || !info.Compatible || info.Encrypted || info.VideoOffset <= 0 || info.VideoSize() <= 0 || info.VideoWidth <= 0 || info.VideoHeight <= 0 {
+		if probeErr != nil || source.file.MediaType != entity.MediaLive || !info.Compatible || info.Encrypted || info.VideoOffset <= 0 || info.VideoSize() <= 0 || info.VideoWidth <= 0 || info.VideoHeight <= 0 {
 			_ = sourceFile.Close()
 			return nil, 0, ExportOutput{}, ErrExportUnavailable
 		}
@@ -165,15 +170,16 @@ func (w *Convert) ExportFile(f *entity.File, kind string) (*os.File, int64, Expo
 
 // PrepareExport reuses standard AVC sidecars and returns embedded video without storing a copy.
 func (w *Convert) PrepareExport(f *entity.File, kind string) (ExportOutput, error) {
-	probe, err := w.ProbeExport(f)
+	source, err := w.exportSource(f)
 	if err != nil {
 		return ExportOutput{}, err
 	}
+	probe := w.probeExport(source)
 	if kind == "video-part" {
 		if probe.VideoPart == nil {
 			return ExportOutput{}, ErrExportUnavailable
 		}
-		file, _, output, fileErr := w.ExportFile(f, kind)
+		file, _, output, fileErr := w.exportFile(source, kind)
 		if file != nil {
 			_ = file.Close()
 		}
@@ -182,26 +188,16 @@ func (w *Convert) PrepareExport(f *entity.File, kind string) (ExportOutput, erro
 	if kind != "avc" || probe.Avc == nil {
 		return ExportOutput{}, ErrExportUnavailable
 	}
-	source, err := w.exportSource(f)
-	if err != nil {
-		return ExportOutput{}, err
-	}
-	file, err := exportOpenFile(source.media.FileName(), false)
-	if err != nil {
-		return ExportOutput{}, ErrExportSourceChanged
-	}
-	err = source.validate(file)
-	_ = file.Close()
-	if err != nil {
-		return ExportOutput{}, err
-	}
-	if source.companion != nil {
-		companionFile, openErr := exportOpenFile(source.companion.media.FileName(), false)
+	for _, input := range []*exportSource{source, source.companion} {
+		if input == nil {
+			continue
+		}
+		file, openErr := exportOpenFile(input.media.FileName(), false)
 		if openErr != nil {
 			return ExportOutput{}, ErrExportSourceChanged
 		}
-		err = source.companion.validate(companionFile)
-		_ = companionFile.Close()
+		err = input.validate(file)
+		_ = file.Close()
 		if err != nil {
 			return ExportOutput{}, err
 		}

@@ -13,7 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,14 +23,13 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// TestGetVideoExport verifies real preparation and attachment delivery through the routed handler.
-func TestGetVideoExport(t *testing.T) {
+// TestGetVideoActions verifies real preparation and attachment delivery through the routed handler.
+func TestGetVideoActions(t *testing.T) {
 	app, router, conf := NewApiTest()
 	if conf.FFmpegBin() == "" {
 		t.Skip("ffmpeg unavailable")
@@ -43,20 +41,8 @@ func TestGetVideoExport(t *testing.T) {
 	conf.Options().SidecarPath = t.TempDir()
 	conf.Options().FFmpegEncoder = "libx264"
 	GetVideo(router)
-	f, err := query.FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
-	require.NoError(t, err)
-	f.ID, f.FileUID, f.FilePrimary = 0, "", false
-	f.TimeIndex = nil
-	f.MediaID = nil
-	f.FileName, f.FileType, f.FileVideo, f.MediaType = "export-hevc.mp4", "mp4", true, entity.MediaVideo
-	f.FileWidth, f.FileHeight, f.FileDuration = 64, 48, 400*time.Millisecond
-	name := filepath.Join(conf.OriginalsPath(), f.FileName)
-	data, err := exec.Command(conf.FFmpegBin(), "-v", "error", "-f", "lavfi", "-i", "testsrc2=size=64x48:rate=5", "-t", "0.4", "-threads", "1", "-c:v", "libx265", "-x265-params", "pools=1:frame-threads=1:log-level=error", "-y", name).CombinedOutput() //nolint:gosec // executable and paths are controlled disposable fixtures
-	require.NoError(t, err, "%s", data)
-	f.FileHash = fs.Hash(name)
-	require.NoError(t, f.Create())
-	t.Cleanup(func() { entity.UnscopedDb().Delete(f) })
-	base := "/api/v1/videos/" + f.FileHash + "/" + conf.DownloadToken() + "/export?export="
+	f := videoDownloadFixture(t, conf, "export-hevc.mp4", "libx265", 64)
+	base := "/api/v1/videos/" + f.FileHash + "/" + conf.DownloadToken() + "/avc?action="
 	t.Run("ReadOnlyProbe", func(t *testing.T) {
 		r := PerformRequest(app, http.MethodGet, base+"probe")
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
@@ -71,7 +57,7 @@ func TestGetVideoExport(t *testing.T) {
 		assert.Empty(t, entries)
 	})
 	t.Run("DownloadDoesNotPrepare", func(t *testing.T) {
-		r := PerformRequest(app, http.MethodGet, base+"download&kind=avc")
+		r := PerformRequest(app, http.MethodGet, base+"download")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		assert.Empty(t, r.Header().Get("Content-Disposition"))
 		entries, err := os.ReadDir(conf.CachePath())
@@ -79,7 +65,7 @@ func TestGetVideoExport(t *testing.T) {
 		assert.Empty(t, entries)
 	})
 	t.Run("Prepare", func(t *testing.T) {
-		r := PerformRequest(app, http.MethodGet, base+"prepare&kind=avc")
+		r := PerformRequest(app, http.MethodGet, base+"prepare")
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		var output photoprism.ExportOutput
 		require.NoError(t, json.Unmarshal(r.Body.Bytes(), &output))
@@ -89,7 +75,7 @@ func TestGetVideoExport(t *testing.T) {
 		assert.NotContains(t, r.Body.String(), conf.CachePath())
 	})
 	t.Run("Attachment", func(t *testing.T) {
-		r := PerformRequest(app, http.MethodGet, base+"download&kind=avc&filename="+url.QueryEscape("旅行.mov"))
+		r := PerformRequest(app, http.MethodGet, base+"download&filename="+url.QueryEscape("旅行.mov"))
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		_, params, err := mime.ParseMediaType(r.Header().Get("Content-Disposition"))
 		require.NoError(t, err)
@@ -103,17 +89,25 @@ func TestGetVideoExport(t *testing.T) {
 		f.OriginalName = "clip:name.mp4"
 		require.NoError(t, entity.Db().Model(f).UpdateColumn("original_name", f.OriginalName).Error)
 		defer func() { _ = entity.Db().Model(f).UpdateColumn("original_name", original).Error }()
-		r := PerformRequest(app, http.MethodGet, base+"download&kind=avc&name=original")
+		r := PerformRequest(app, http.MethodGet, base+"download&name=original")
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		_, params, err := mime.ParseMediaType(r.Header().Get("Content-Disposition"))
 		require.NoError(t, err)
 		assert.Equal(t, "clipname_avc.mp4", params["filename"])
 	})
 	t.Run("InvalidOperation", func(t *testing.T) {
-		for _, op := range []string{"invalid", "prepare&kind=invalid", "download"} {
+		for _, op := range []string{"invalid", "../prepare"} {
 			r := PerformRequest(app, http.MethodGet, base+op)
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		}
+	})
+	t.Run("InvalidActionFormat", func(t *testing.T) {
+		r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+f.FileHash+"/"+conf.DownloadToken()+"/mp4?action=prepare")
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RemovedExportFormat", func(t *testing.T) {
+		r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+f.FileHash+"/"+conf.PreviewToken()+"/export?export=probe")
+		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("PairingKeyRedaction", func(t *testing.T) {
 		dir, err := fs.CachePath(conf.CachePath(), f.FileHash, "json", true)
@@ -135,7 +129,7 @@ func TestGetVideoExport(t *testing.T) {
 			{"FullDetail", tokens.SignDownload(admin.ID), "export-pair"},
 			{"SharedDetail", tokens.SignDownload(visitor.ID), ""},
 		} {
-			r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+f.FileHash+"/"+tc.token+"/export?export=probe")
+			r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+f.FileHash+"/"+tc.token+"/avc?action=probe")
 			require.Equal(t, http.StatusOK, r.Code, tc.name+": "+r.Body.String())
 			var probe photoprism.ExportProbe
 			require.NoError(t, json.Unmarshal(r.Body.Bytes(), &probe))
@@ -144,8 +138,8 @@ func TestGetVideoExport(t *testing.T) {
 	})
 }
 
-// TestGetVideoExportEmbedded verifies native attachment bytes and ranges without cached extraction.
-func TestGetVideoExportEmbedded(t *testing.T) {
+// TestGetVideoActionsEmbedded verifies native attachment bytes and ranges without cached extraction.
+func TestGetVideoActionsEmbedded(t *testing.T) {
 	app, router, conf := NewApiTest()
 	if conf.FFmpegBin() == "" {
 		t.Skip("ffmpeg unavailable")
@@ -163,16 +157,13 @@ func TestGetVideoExportEmbedded(t *testing.T) {
 			require.NoError(t, err, "%s", data)
 			video, err := os.ReadFile(clip) //nolint:gosec // clip is inside t.TempDir
 			require.NoError(t, err)
-			f, err := query.FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
-			require.NoError(t, err)
-			f.ID, f.FileUID, f.FilePrimary, f.TimeIndex, f.MediaID = 0, "", false, nil, nil
+			f := videoDownloadFixture(t, conf, "motion-db-"+format+".mp4", "libx264", 64)
 			f.FileName, f.FileType, f.FileVideo, f.MediaType = "motion-"+format+".jpg", "jpg", false, entity.MediaLive
 			name := filepath.Join(conf.OriginalsPath(), f.FileName)
 			require.NoError(t, os.WriteFile(name, append(append([]byte{}, image...), video...), fs.ModeFile)) //nolint:gosec // source path is confined to disposable originals
 			f.FileHash = fs.Hash(name)
-			require.NoError(t, f.Create())
-			t.Cleanup(func() { entity.UnscopedDb().Delete(f) })
-			base := "/api/v1/videos/" + f.FileHash + "/" + conf.DownloadToken() + "/export?export="
+			require.NoError(t, f.Save())
+			base := "/api/v1/videos/" + f.FileHash + "/" + conf.DownloadToken() + "/native?action="
 			probeResponse := PerformRequest(app, http.MethodGet, base+"probe")
 			require.Equal(t, http.StatusOK, probeResponse.Code, probeResponse.Body.String())
 			var probe photoprism.ExportProbe
@@ -181,9 +172,9 @@ func TestGetVideoExportEmbedded(t *testing.T) {
 			assert.True(t, probe.VideoPart.Ready)
 			assert.Equal(t, format, probe.VideoPart.Format)
 			assert.Equal(t, int64(len(video)), probe.VideoPart.Bytes)
-			prepare := PerformRequest(app, http.MethodGet, base+"prepare&kind=video-part")
+			prepare := PerformRequest(app, http.MethodGet, base+"prepare")
 			require.Equal(t, http.StatusOK, prepare.Code, prepare.Body.String())
-			url := base + "download&kind=video-part&filename=" + url.QueryEscape("旅行.avi")
+			url := base + "download&filename=" + url.QueryEscape("旅行.avi")
 			attachment := PerformRequest(app, http.MethodGet, url)
 			require.Equal(t, http.StatusOK, attachment.Code)
 			assert.Equal(t, video, attachment.Body.Bytes())
@@ -219,8 +210,8 @@ func TestGetVideoExportEmbedded(t *testing.T) {
 	}
 }
 
-// TestGetVideoExportAuthorization checks path credentials, scope, and uniform hidden-source errors.
-func TestGetVideoExportAuthorization(t *testing.T) {
+// TestGetVideoActionsAuthorization checks path credentials, scope, and uniform hidden-source errors.
+func TestGetVideoActionsAuthorization(t *testing.T) {
 	app, router, conf := NewApiTest()
 	router.Use(func(c *gin.Context) { c.Query("t"); DownloadSession(c); c.Next() })
 	conf.SetAuthMode(config.AuthModePasswd)
@@ -230,23 +221,23 @@ func TestGetVideoExportAuthorization(t *testing.T) {
 	refused := entity.SessionFixtures.Get("alice_app_password_shares")
 	const hash = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"
 	t.Run("PathCredentialIsAuthoritative", func(t *testing.T) {
-		r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/invalid/export?export=probe&t="+tokens.SignDownload(admin.ID))
+		r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/invalid/avc?action=probe&t="+tokens.SignDownload(admin.ID))
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 	t.Run("PreviewTokenDoesNotAuthorize", func(t *testing.T) {
-		r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/"+conf.PreviewToken()+"/export?export=probe")
+		r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/"+conf.PreviewToken()+"/avc?action=probe")
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 	t.Run("RefusedScope", func(t *testing.T) {
-		for _, mode := range []string{"probe", "prepare&kind=avc", "download&kind=avc"} {
-			r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/"+tokens.SignDownload(refused.ID)+"/export?export="+mode)
+		for _, mode := range []string{"probe", "prepare", "download"} {
+			r := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/"+tokens.SignDownload(refused.ID)+"/avc?action="+mode)
 			assert.Equal(t, http.StatusForbidden, r.Code)
 		}
 	})
 	t.Run("MissingAndUnknownAreIdentical", func(t *testing.T) {
 		token := tokens.SignDownload(admin.ID)
-		missing := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/"+token+"/export?export=probe")
-		unknown := PerformRequest(app, http.MethodGet, "/api/v1/videos/1234567890123456789012345678901234567890/"+token+"/export?export=probe")
+		missing := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+hash+"/"+token+"/avc?action=probe")
+		unknown := PerformRequest(app, http.MethodGet, "/api/v1/videos/1234567890123456789012345678901234567890/"+token+"/avc?action=probe")
 		assert.Equal(t, http.StatusNotFound, missing.Code)
 		assert.Equal(t, missing.Code, unknown.Code)
 		assert.Equal(t, missing.Body.String(), unknown.Body.String())
@@ -259,9 +250,9 @@ func TestGetVideoExportAuthorization(t *testing.T) {
 		require.NoError(t, err)
 		require.False(t, visible)
 		token := tokens.SignDownload(visitor.ID)
-		for _, mode := range []string{"probe", "prepare&kind=avc", "download&kind=avc"} {
-			hidden := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+file.FileHash+"/"+token+"/export?export="+mode)
-			unknown := PerformRequest(app, http.MethodGet, "/api/v1/videos/1234567890123456789012345678901234567890/"+token+"/export?export="+mode)
+		for _, mode := range []string{"probe", "prepare", "download"} {
+			hidden := PerformRequest(app, http.MethodGet, "/api/v1/videos/"+file.FileHash+"/"+token+"/avc?action="+mode)
+			unknown := PerformRequest(app, http.MethodGet, "/api/v1/videos/1234567890123456789012345678901234567890/"+token+"/avc?action="+mode)
 			assert.Equal(t, http.StatusNotFound, hidden.Code)
 			assert.Equal(t, hidden.Code, unknown.Code)
 			assert.Equal(t, hidden.Body.String(), unknown.Body.String())

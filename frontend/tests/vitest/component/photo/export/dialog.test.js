@@ -393,10 +393,10 @@ describe("video export dialog", () => {
     const requests = [];
     Axios.get.mockImplementation(async (url) => {
       requests.push(url);
-      if (url.includes("export=probe")) {
+      if (url.includes("action=probe")) {
         return { data: { codec: "hvc1", avc: { preparable: true, ready: false, format: "mp4", codec: "avc1", bytes: 0 } } };
       }
-      if (requests.filter((request) => request.includes("export=prepare")).length === 1) {
+      if (requests.filter((request) => request.includes("action=prepare")).length === 1) {
         return new Promise((_resolve, reject) => {
           finish = reject;
         });
@@ -430,7 +430,7 @@ describe("video export dialog", () => {
     });
     await wrapper.find(".action-retry-output").trigger("click");
     await vi.advanceTimersByTimeAsync(250);
-    expect(requests.at(-1)).toContain("/rotated/export?export=prepare&kind=avc");
+    expect(requests.at(-1)).toContain("/rotated/avc?action=prepare");
     expect(wrapper.vm.handed).toBe(2);
     expect(wrapper.vm.errors).toBe(0);
     expect(wrapper.vm.complete).toBe(true);
@@ -447,7 +447,7 @@ describe("video export dialog", () => {
     let finish;
     const movie = file("v", { Name: "movie.mov", FileType: "mov", MediaType: "video", Video: true });
     Axios.get.mockImplementation(async (url) => {
-      if (url.includes("export=probe")) {
+      if (url.includes("action=probe")) {
         return { data: { avc: { preparable: true, ready: false, format: "mp4" } } };
       }
       return new Promise((resolve) => {
