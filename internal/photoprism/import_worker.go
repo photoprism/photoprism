@@ -3,6 +3,7 @@ package photoprism
 import (
 	"errors"
 	"fmt"
+	"path"
 	"path/filepath"
 	"slices"
 	"sync/atomic"
@@ -64,37 +65,46 @@ func importedContent(dest, hash string) bool {
 	return hash != "" && !fs.IsSymlink(dest) && fs.FileExists(dest) && fs.Hash(dest) == hash
 }
 
-// storedFilesOf returns how the files of a group relate to the indexed files with the same content, and whether
-// all files that are not sidecars, including the main file, are or may be those files themselves. Sidecars, which
-// include files of unknown types, are only looked up next to a file that is or may be a stored file itself, e.g. in
-// a folder linked into originals, since many sidecars may have the same content.
+// storedFilesOf returns how the files of a group that are not sidecars relate to the indexed files with the same
+// content, and whether all of them, including the main file, are or may be those files themselves. A sidecar,
+// which includes files of unknown types, is only compared with the file of the same name next to such a stored
+// file, e.g. in a folder linked into originals, since sidecars of different pictures may have the same content.
 func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
 	files := append(MediaFiles{related.Main}, related.Files...)
 	results = make(map[string]storedResult, len(files))
 	originals = related.Main != nil
-	holdsOriginals := false
 
-	for _, sidecars := range []bool{false, true} {
-		if sidecars && !holdsOriginals {
-			break
+	// stored contains the indexed files that files of the group are or may be.
+	var stored []*entity.File
+
+	for _, f := range files {
+		if f == nil || f.IsSidecar() {
+			continue
+		} else if _, done := results[f.FileName()]; done {
+			continue
 		}
 
-		for _, f := range files {
-			if f == nil || f.IsSidecar() != sidecars {
-				continue
-			} else if _, done := results[f.FileName()]; done {
-				continue
-			}
+		result := storedFileOf(f)
+		results[f.FileName()] = result
 
-			result := storedFileOf(f)
-			results[f.FileName()] = result
+		if result.match != storedSame && result.match != storedMaybeSame {
+			originals = false
+		} else if result.file != nil {
+			stored = append(stored, result.file)
+		}
+	}
 
-			switch {
-			case sidecars:
-			case result.match == storedSame || result.match == storedMaybeSame:
-				holdsOriginals = true
-			default:
-				originals = false
+	for _, f := range files {
+		if f == nil || !f.IsSidecar() {
+			continue
+		}
+
+		for _, file := range stored {
+			name := path.Join(path.Dir(file.FileName), filepath.Base(f.FileName()))
+
+			if result := storedFileAt(f, file.FileRoot, name); result.match == storedSame || result.match == storedMaybeSame {
+				results[f.FileName()] = result
+				break
 			}
 		}
 	}

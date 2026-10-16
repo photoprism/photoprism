@@ -481,18 +481,19 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, os.WriteFile(xmp, []byte(strings.Replace(testXmp, "Pair", "Group "+rnd.Base36(8), 1)), fs.ModeFile))
 		t.Cleanup(func() { _ = os.Remove(xmp) })
 
-		// Sidecars are looked up too, but a group is original if all other files are.
+		// A group is original if its files other than sidecars are, and a sidecar has a result only if it is or may
+		// be a stored file itself.
 		results, originals := storedFilesOf(RelatedFiles{Main: mf(linked), Files: MediaFiles{mf(linked), mf(xmp)}})
 		assert.True(t, originals)
-		assert.Len(t, results, 2)
+		assert.Len(t, results, 1)
 		assert.Equal(t, storedSame, results[linked].match)
-		assert.Equal(t, storedNone, results[xmp].match)
+		assert.NotContains(t, results, xmp)
 
 		results, originals = storedFilesOf(RelatedFiles{Main: mf(linked), Files: MediaFiles{mf(linked), mf(copied)}})
 		assert.False(t, originals)
 		assert.Equal(t, storedCopy, results[copied].match)
 
-		// Sidecars are only looked up next to a file that is or may be a stored file itself.
+		// Sidecars are only compared next to a file that is or may be a stored file itself.
 		results, originals = storedFilesOf(RelatedFiles{Main: mf(copied), Files: MediaFiles{mf(copied), mf(xmp)}})
 		assert.False(t, originals)
 		assert.Equal(t, storedCopy, results[copied].match)
@@ -897,6 +898,18 @@ func TestStoredFileOf(t *testing.T) {
 		cleanupDestination(t, imp, main, xmp)
 		hook := captureLog(t)
 
+		// The sidecar is compared with the file of its name next to the original, without looking up its hash.
+		xmpHash := fs.Hash(xmp)
+		savedFiles := filesByHash
+		t.Cleanup(func() { filesByHash = savedFiles })
+		xmpLookups := 0
+		filesByHash = func(hash string) (entity.Files, error) {
+			if hash == xmpHash {
+				xmpLookups++
+			}
+			return savedFiles(hash)
+		}
+
 		_, err := imp.Run(ImportOptionsMove(target, ""))
 		require.NoError(t, err)
 		assert.FileExists(t, main)
@@ -904,6 +917,7 @@ func TestStoredFileOf(t *testing.T) {
 		assert.NoFileExists(t, companion)
 		infos := loggedMessages(hook, logrus.InfoLevel)
 		assert.Equal(t, 1, countPrefix(infos, "import: kept e.xmp, as it is the same file as the original"))
+		assert.Zero(t, xmpLookups)
 	})
 	t.Run("MoveImport", func(t *testing.T) {
 		if testing.Short() {
