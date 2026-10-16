@@ -168,6 +168,46 @@ func TestRelBelow(t *testing.T) {
 		_, ok = relBelow("/a/b", folder, true)
 		assert.False(t, ok, folder)
 	}
+
+	// Case variants may differ in length, e.g. the Kelvin sign, and names that are not valid UTF-8 fold ASCII only.
+	rel, ok = relBelow("/data/\u212a", "/data/k/sub", true)
+	assert.True(t, ok)
+	assert.Equal(t, "sub", rel)
+	rel, ok = relBelow("/CAF\xe9", "/caf\xe9/x", true)
+	assert.True(t, ok)
+	assert.Equal(t, "x", rel)
+	_, ok = relBelow("/caf\xe9", "/caf\xe8/x", true)
+	assert.False(t, ok)
+}
+
+func TestPathNames(t *testing.T) {
+	assert.Equal(t, []string{""}, pathNames("/"))
+	assert.Equal(t, []string{"", "a", "b"}, pathNames("/a/b/"))
+	assert.Equal(t, []string{"a", "b"}, pathNames("a//b"))
+	assert.Equal(t, []string{"."}, pathNames(""))
+}
+
+func TestSameNameFold(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		assert.True(t, sameNameFold("Photos", "PHOTOS"))
+		assert.True(t, sameNameFold("\u212a", "k"))
+		assert.True(t, sameNameFold("Stra\u00dfe", "STRA\u1e9eE"))
+		assert.False(t, sameNameFold("Photos", "Photo"))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.True(t, sameNameFold("CAF\xe9", "caf\xe9"))
+		assert.False(t, sameNameFold("caf\xe9", "caf\xe8"))
+		assert.False(t, sameNameFold("caf\xe9", "caf\xe9x"))
+		assert.False(t, sameNameFold("caf\xe9", "café"))
+	})
+}
+
+func TestLowerASCII(t *testing.T) {
+	assert.Equal(t, byte('a'), lowerASCII('A'))
+	assert.Equal(t, byte('z'), lowerASCII('Z'))
+	assert.Equal(t, byte('a'), lowerASCII('a'))
+	assert.Equal(t, byte('@'), lowerASCII('@'))
+	assert.Equal(t, byte(0xc9), lowerASCII(0xc9))
 }
 
 func TestWalkSkips(t *testing.T) {

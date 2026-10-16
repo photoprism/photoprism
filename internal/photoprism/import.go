@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/karrick/godirwalk"
 
@@ -667,21 +668,23 @@ func overlappingPaths(a, b string) bool {
 // keeps the letter case of folder.
 func relBelow(dir, folder string, fold bool) (string, bool) {
 	if fold {
-		dir, folder = filepath.Clean(dir), filepath.Clean(folder)
-		sep := string(filepath.Separator)
+		dirNames, folderNames := pathNames(dir), pathNames(folder)
 
-		switch {
-		case strings.EqualFold(dir, folder):
-			return ".", true
-		case len(folder) <= len(dir) || !strings.EqualFold(folder[:len(dir)], dir):
-			return "", false
-		case dir == sep:
-			return folder[len(dir):], true
-		case folder[len(dir)] == filepath.Separator:
-			return folder[len(dir)+1:], true
-		default:
+		if len(folderNames) < len(dirNames) {
 			return "", false
 		}
+
+		for i := range dirNames {
+			if !sameNameFold(dirNames[i], folderNames[i]) {
+				return "", false
+			}
+		}
+
+		if len(folderNames) == len(dirNames) {
+			return ".", true
+		}
+
+		return filepath.Join(folderNames[len(dirNames):]...), true
 	}
 
 	rel, err := filepath.Rel(dir, folder)
@@ -691,6 +694,38 @@ func relBelow(dir, folder string, fold bool) (string, bool) {
 	}
 
 	return rel, true
+}
+
+// pathNames returns the names in a cleaned path, starting with an empty name if it is absolute.
+func pathNames(p string) []string {
+	return strings.Split(strings.TrimSuffix(filepath.Clean(p), string(filepath.Separator)), string(filepath.Separator))
+}
+
+// sameNameFold reports whether two names are equal regardless of letter case. Names that are not valid UTF-8 are
+// compared byte by byte, ignoring the case of ASCII letters only.
+func sameNameFold(a, b string) bool {
+	if utf8.ValidString(a) && utf8.ValidString(b) {
+		return strings.EqualFold(a, b)
+	} else if len(a) != len(b) {
+		return false
+	}
+
+	for i := 0; i < len(a); i++ {
+		if lowerASCII(a[i]) != lowerASCII(b[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// lowerASCII returns c in lowercase if it is an ASCII letter.
+func lowerASCII(c byte) byte {
+	if c >= 'A' && c <= 'Z' {
+		return c + ('a' - 'A')
+	}
+
+	return c
 }
 
 // walkSkips reports whether a walk of dir skips the folder at a relative path, because a folder on the way has a
