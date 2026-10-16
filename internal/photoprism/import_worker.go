@@ -66,23 +66,36 @@ func importedContent(dest, hash string) bool {
 
 // storedFilesOf returns how the files of a group relate to the indexed files with the same content, and whether
 // all files that are not sidecars, including the main file, are or may be those files themselves. Files of unknown
-// types count as sidecars.
+// types count as sidecars, and are only looked up next to a file that is or may be a stored file itself, e.g. in a
+// folder linked into originals, since many sidecars may have the same content.
 func storedFilesOf(related RelatedFiles) (results map[string]storedResult, originals bool) {
-	results = make(map[string]storedResult, len(related.Files)+1)
+	files := append(MediaFiles{related.Main}, related.Files...)
+	results = make(map[string]storedResult, len(files))
 	originals = related.Main != nil
+	holdsOriginals := false
 
-	for _, f := range append(MediaFiles{related.Main}, related.Files...) {
-		if f == nil {
-			continue
-		} else if _, done := results[f.FileName()]; done {
-			continue
+	for _, sidecars := range []bool{false, true} {
+		if sidecars && !holdsOriginals {
+			break
 		}
 
-		result := storedFileOf(f)
-		results[f.FileName()] = result
+		for _, f := range files {
+			if f == nil || f.IsSidecar() != sidecars {
+				continue
+			} else if _, done := results[f.FileName()]; done {
+				continue
+			}
 
-		if !f.IsSidecar() && result.match != storedSame && result.match != storedMaybeSame {
-			originals = false
+			result := storedFileOf(f)
+			results[f.FileName()] = result
+
+			switch {
+			case sidecars:
+			case result.match == storedSame || result.match == storedMaybeSame:
+				holdsOriginals = true
+			default:
+				originals = false
+			}
 		}
 	}
 

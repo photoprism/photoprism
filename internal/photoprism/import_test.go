@@ -452,6 +452,12 @@ func TestStoredFileOf(t *testing.T) {
 		assert.False(t, originals)
 		assert.Equal(t, storedCopy, results[copied].match)
 
+		// Sidecars are only looked up next to a file that is or may be a stored file itself.
+		results, originals = storedFilesOf(RelatedFiles{Main: mf(copied), Files: MediaFiles{mf(copied), mf(xmp)}})
+		assert.False(t, originals)
+		assert.Equal(t, storedCopy, results[copied].match)
+		assert.NotContains(t, results, xmp)
+
 		_, originals = storedFilesOf(RelatedFiles{})
 		assert.False(t, originals)
 	})
