@@ -201,6 +201,20 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Equal(t, stored, found.FileName)
 		assert.Zero(t, reads, "the file itself is found without reading the stored file")
 	})
+	t.Run("CaseVariant", func(t *testing.T) {
+		// A file whose path differs from a stored file only in letter case may be that file, e.g. on a network share
+		// whose case mode is unknown, so it is not taken for a copy.
+		variant := filepath.Join(filepath.Dir(storedPath), strings.ToUpper(filepath.Base(storedPath)))
+		require.NoError(t, fs.Copy(storedPath, variant, false))
+		t.Cleanup(func() { _ = os.Remove(variant) })
+
+		mf, err := NewMediaFile(variant)
+		require.NoError(t, err)
+		found, match := storedFileMatch(mf)
+		assert.Equal(t, storedMaybeSame, match)
+		require.NotNil(t, found)
+		assert.Equal(t, stored, found.FileName)
+	})
 	t.Run("Rows", func(t *testing.T) {
 		// addRow records rel in originals as a file with the given hash.
 		addRow := func(rel, hash string) {

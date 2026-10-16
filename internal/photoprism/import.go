@@ -513,8 +513,18 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 	dests := make([]os.FileInfo, len(files))
 	unknown := false
 
+	srcName, _ := filepath.Abs(mediaFile.FileName())
+
 	for i := range files {
-		dest, destErr := os.Stat(FileName(files[i].FileRoot, files[i].FileName))
+		storedName := FileName(files[i].FileRoot, files[i].FileName)
+
+		// A case variant of the stored name may be the stored file itself, as the case mode of the folder may be
+		// unknown or reported wrongly, e.g. on a network share.
+		if storedName != srcName && strings.EqualFold(storedName, srcName) {
+			return storedResult{file: &files[i], match: storedMaybeSame}
+		}
+
+		dest, destErr := os.Stat(storedName)
 
 		switch {
 		case errors.Is(destErr, os.ErrNotExist):
@@ -584,8 +594,9 @@ func (imp *Import) Check(opt ImportOptions) error {
 }
 
 // CheckPath returns ErrImportPath if the import folder is the originals folder, a folder inside it, or a folder
-// that contains it, compared after resolving symbolic links. Walks skip hidden folders and the storage folder, so a
-// folder below one, such as originals/.photoprism/storage or originals/storage, may contain or be in the other.
+// that contains it, compared after resolving symbolic links and regardless of letter case, since the case mode of a
+// network share can be unknown. Walks skip hidden folders and the storage folder, so a folder below one, such as
+// originals/.photoprism/storage or originals/storage, may contain or be in the other.
 func (imp *Import) CheckPath(importPath string) error {
 	originals := imp.originalsPath()
 
@@ -594,11 +605,10 @@ func (imp *Import) CheckPath(importPath string) error {
 	}
 
 	src, dest := resolvedPath(importPath), resolvedPath(originals)
-	fold := fs.IgnoreCaseIn(originals)
 
 	// walked reports whether folder is dir or a folder below it that a walk of dir reaches.
 	walked := func(dir, folder string) bool {
-		rel, ok := relBelow(dir, folder, fold)
+		rel, ok := relBelow(dir, folder, true)
 		return ok && !walkSkips(dir, rel)
 	}
 
@@ -612,34 +622,47 @@ func (imp *Import) CheckPath(importPath string) error {
 // linksToOriginals reports whether a linked folder leads to the originals folder, a folder in it, or a folder
 // that contains it.
 func (imp *Import) linksToOriginals(dir string) bool {
-	originals := imp.originalsPath()
-	return overlappingPaths(dir, originals, fs.IgnoreCaseIn(originals))
+	return overlappingPaths(dir, imp.originalsPath())
 }
 
 // overlappingPaths reports whether two folders are the same, or one is inside the other, after resolving symbolic
-// links, comparing letters case-insensitively if fold is set. An empty path overlaps with nothing.
-func overlappingPaths(a, b string, fold bool) bool {
+// links and regardless of letter case. An empty path overlaps with nothing.
+func overlappingPaths(a, b string) bool {
 	if a == "" || b == "" {
 		return false
 	}
 
 	a, b = resolvedPath(a), resolvedPath(b)
 
-	if _, ok := relBelow(b, a, fold); ok {
+	if _, ok := relBelow(b, a, true); ok {
 		return true
 	}
 
-	_, ok := relBelow(a, b, fold)
+	_, ok := relBelow(a, b, true)
 
 	return ok
 }
 
 // relBelow returns the path of folder relative to dir, and whether folder is dir itself or a folder below it. If
 // fold is set, letters are compared case-insensitively, as on a case-insensitive file system, and the relative path
-// is returned in lowercase.
+// keeps the letter case of folder.
 func relBelow(dir, folder string, fold bool) (string, bool) {
 	if fold {
-		dir, folder = strings.ToLower(dir), strings.ToLower(folder)
+		dir, folder = filepath.Clean(dir), filepath.Clean(folder)
+		sep := string(filepath.Separator)
+
+		switch {
+		case strings.EqualFold(dir, folder):
+			return ".", true
+		case len(folder) <= len(dir) || !strings.EqualFold(folder[:len(dir)], dir):
+			return "", false
+		case dir == sep:
+			return folder[len(dir):], true
+		case folder[len(dir)] == filepath.Separator:
+			return folder[len(dir)+1:], true
+		default:
+			return "", false
+		}
 	}
 
 	rel, err := filepath.Rel(dir, folder)

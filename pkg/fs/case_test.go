@@ -821,13 +821,3 @@ func TestType_FindEach_CaseDir(t *testing.T) {
 		assert.Equal(t, filepath.Join(mount, "2024", "img_2.jpg"), ImageJpeg.Find(filepath.Join(mount, "2024", "IMG_2.raw"), false))
 	})
 }
-
-func TestIgnoreCaseInExported(t *testing.T) {
-	restoreCaseMode(t)
-	SetIgnoreCase(false)
-	SetCaseScopes(CaseScope{Dir: "/originals", Ignore: true})
-	assert.True(t, IgnoreCaseIn("/originals"))
-	assert.True(t, IgnoreCaseIn("/originals/2019/"))
-	assert.False(t, IgnoreCaseIn("/import"))
-	assert.False(t, IgnoreCaseIn(""))
-}

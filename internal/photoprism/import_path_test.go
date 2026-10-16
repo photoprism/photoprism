@@ -41,16 +41,26 @@ func TestImport_CheckPath(t *testing.T) {
 		t.Cleanup(func() { _ = os.RemoveAll(storage) })
 		assert.NoError(t, imp.CheckPath(filepath.Join(storage, "users", "upload")))
 	})
-	t.Run("CaseInsensitive", func(t *testing.T) {
-		// On a case-insensitive file system, a case variant of the originals path names the same folder.
+	t.Run("CaseVariant", func(t *testing.T) {
+		// A case variant of the originals path is refused whatever the case mode, since it may name the same folder.
 		variant := filepath.Join(filepath.Dir(originals), "ORIGINALS", "sub")
 		mode := fs.GetCaseMode()
 		t.Cleanup(func() { fs.RestoreCaseMode(mode) })
-		fs.SetCaseScopes(fs.CaseScope{Dir: originals, Ignore: false})
-		assert.NoError(t, imp.CheckPath(variant))
-		fs.SetCaseScopes(fs.CaseScope{Dir: originals, Ignore: true})
-		assert.ErrorIs(t, imp.CheckPath(variant), ErrImportPath)
-		assert.True(t, imp.linksToOriginals(variant))
+
+		for _, ignore := range []bool{false, true} {
+			fs.SetCaseScopes(fs.CaseScope{Dir: originals, Ignore: ignore})
+			assert.ErrorIs(t, imp.CheckPath(variant), ErrImportPath)
+			assert.ErrorIs(t, imp.CheckPath(filepath.Dir(strings.ToUpper(base))), ErrImportPath)
+			assert.True(t, imp.linksToOriginals(variant))
+		}
+
+		// A storage folder whose name has capital letters is still found on a case-sensitive file system.
+		storage := filepath.Join(originals, "Storage")
+		require.NoError(t, fs.MkdirAll(filepath.Join(storage, "users", "upload")))
+		require.NoError(t, os.WriteFile(filepath.Join(storage, fs.PPStorageFilename), []byte("1"), fs.ModeFile))
+		t.Cleanup(func() { _ = os.RemoveAll(storage) })
+		assert.NoError(t, imp.CheckPath(filepath.Join(storage, "users", "upload")))
+		assert.NoError(t, imp.CheckPath(filepath.Join(filepath.Dir(originals), "ORIGINALS", "Storage", "users", "upload")))
 	})
 	t.Run("Contains", func(t *testing.T) {
 		for _, dir := range []string{base, filepath.Dir(base)} {
@@ -118,19 +128,19 @@ func TestImport_linksToOriginals(t *testing.T) {
 
 func TestOverlappingPaths(t *testing.T) {
 	dir := t.TempDir()
-	assert.True(t, overlappingPaths(dir, filepath.Join(dir, "a"), false))
-	assert.True(t, overlappingPaths(filepath.Join(dir, "a"), dir, false))
-	assert.True(t, overlappingPaths(dir, dir, false))
-	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), filepath.Join(dir, "b"), false))
+	assert.True(t, overlappingPaths(dir, filepath.Join(dir, "a")))
+	assert.True(t, overlappingPaths(filepath.Join(dir, "a"), dir))
+	assert.True(t, overlappingPaths(dir, dir))
+	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), filepath.Join(dir, "b")))
 
-	// Letters are compared case-insensitively if fold is set.
-	assert.False(t, overlappingPaths(strings.ToUpper(dir), filepath.Join(dir, "a"), false))
-	assert.True(t, overlappingPaths(strings.ToUpper(dir), filepath.Join(dir, "a"), true))
+	// Letters are compared case-insensitively.
+	assert.True(t, overlappingPaths(strings.ToUpper(dir), filepath.Join(dir, "a")))
+	assert.True(t, overlappingPaths(filepath.Join(dir, "a"), strings.ToUpper(dir)))
 
 	// An empty path is not resolved to the working directory.
 	t.Chdir(dir)
-	assert.False(t, overlappingPaths("", dir, false))
-	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), "", false))
+	assert.False(t, overlappingPaths("", dir))
+	assert.False(t, overlappingPaths(filepath.Join(dir, "a"), ""))
 }
 
 func TestRelBelow(t *testing.T) {
@@ -141,12 +151,21 @@ func TestRelBelow(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, ".", rel)
 
-	rel, ok = relBelow("/A/b", "/a/B/c", true)
+	// With fold, letters are compared case-insensitively and the relative path keeps the case of folder.
+	rel, ok = relBelow("/A/b", "/a/B/Cd/E", true)
 	assert.True(t, ok)
-	assert.Equal(t, "c", rel)
+	assert.Equal(t, filepath.Join("Cd", "E"), rel)
+	rel, ok = relBelow("/A/b/", "/a/B", true)
+	assert.True(t, ok)
+	assert.Equal(t, ".", rel)
+	rel, ok = relBelow("/", "/A/b", true)
+	assert.True(t, ok)
+	assert.Equal(t, filepath.Join("A", "b"), rel)
 
-	for _, folder := range []string{"/a", "/a/bc", "/x"} {
+	for _, folder := range []string{"/a", "/a/bc", "/x", "/A/BC"} {
 		_, ok = relBelow("/a/b", folder, false)
+		assert.False(t, ok, folder)
+		_, ok = relBelow("/a/b", folder, true)
 		assert.False(t, ok, folder)
 	}
 }
