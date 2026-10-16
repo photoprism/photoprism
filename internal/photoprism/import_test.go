@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -164,24 +165,79 @@ func TestStoredFileOf(t *testing.T) {
 	t.Run("Copy", func(t *testing.T) {
 		mf, err := NewMediaFile(copied)
 		require.NoError(t, err)
-		found, same := storedFileOf(mf)
+		found, match := storedFileOf(mf)
 		require.NotNil(t, found)
 		assert.Equal(t, stored, found.FileName)
-		assert.False(t, same)
+		assert.Equal(t, storedCopy, match)
 		assert.NotNil(t, StoredCopyOf(mf))
 	})
 	t.Run("HardLink", func(t *testing.T) {
 		mf, err := NewMediaFile(linked)
 		require.NoError(t, err)
-		found, same := storedFileOf(mf)
+		found, match := storedFileOf(mf)
 		require.NotNil(t, found)
-		assert.True(t, same)
+		assert.Equal(t, storedSame, match)
 		assert.Nil(t, StoredCopyOf(mf))
 	})
 	t.Run("Nil", func(t *testing.T) {
-		found, same := storedFileOf(nil)
+		found, match := storedFileOf(nil)
 		assert.Nil(t, found)
-		assert.False(t, same)
+		assert.Equal(t, storedNone, match)
+	})
+	t.Run("MaybeSame", func(t *testing.T) {
+		// A copy with the same size, time and inode number on another device may be the same file.
+		stubFileID(t, filepath.Base(storedPath))
+		info, err := os.Stat(storedPath)
+		require.NoError(t, err)
+		require.NoError(t, os.Chtimes(copied, info.ModTime(), info.ModTime()))
+
+		mf, err := NewMediaFile(copied)
+		require.NoError(t, err)
+		found, match := storedFileOf(mf)
+		require.NotNil(t, found)
+		assert.Equal(t, storedMaybeSame, match)
+		assert.Nil(t, StoredCopyOf(mf))
+	})
+	t.Run("MoveImportMaybeSame", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		stubFileID(t, filepath.Base(storedPath))
+		info, err := os.Stat(storedPath)
+		require.NoError(t, err)
+
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-maybe-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+
+		// A main file that may be the original is skipped with its sidecar, and another file is kept.
+		for _, name := range []string{"main.jpg", "pair.png"} {
+			require.NoError(t, fs.Copy(storedPath, filepath.Join(dir, name), false))
+			require.NoError(t, os.Chtimes(filepath.Join(dir, name), info.ModTime(), info.ModTime()))
+		}
+
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "main.xmp"), []byte(testXmp), fs.ModeFile))
+		pair := filepath.Join(dir, "pair.jpg")
+		writeTestJpeg(t, pair, 314)
+		pairHash := fs.Hash(pair)
+		t.Cleanup(func() { cleanupImportedHash(t, pairHash) })
+
+		hook := captureLog(t)
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+		_, err = imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+
+		for _, name := range []string{"main.jpg", "main.xmp", "pair.png"} {
+			assert.FileExists(t, filepath.Join(dir, name))
+		}
+
+		assert.NoFileExists(t, pair)
+		infos := loggedMessages(hook, logrus.InfoLevel)
+		assert.Equal(t, 1, countPrefix(infos, "import: skipped main.jpg and its related files, as it may be the same file as the original"))
+		assert.Equal(t, 1, countPrefix(infos, "import: kept pair.png, as it may be the same file as the original"))
 	})
 	t.Run("MoveImport", func(t *testing.T) {
 		if testing.Short() {
@@ -428,6 +484,77 @@ func TestImport_StartMissingPath(t *testing.T) {
 	imp.Start(ImportOptionsCopy(filepath.Join(cfg.ImportPath(), "e2e-missing/folder"), ""))
 
 	assertMissingFolderNotice(t, s.Receiver, "import: directory", "e2e-missing/folder", cfg.ImportPath())
+}
+
+// stubFileID reports the same inode number for every file, on one device for the stored file and on another for
+// the other files, as two mounts of one network share do.
+func stubFileID(t *testing.T, storedBase string) {
+	saved := fileID
+	t.Cleanup(func() { fileID = saved })
+	fileID = func(info os.FileInfo) (dev, ino uint64, ok bool) {
+		if info.Name() == storedBase {
+			return 1, 42, true
+		}
+
+		return 2, 42, true
+	}
+}
+
+func TestMaybeSameFile(t *testing.T) {
+	dir := t.TempDir()
+	a, b := filepath.Join(dir, "a.jpg"), filepath.Join(dir, "b.jpg")
+	require.NoError(t, os.WriteFile(a, []byte("same"), fs.ModeFile))
+	require.NoError(t, os.WriteFile(b, []byte("same"), fs.ModeFile))
+	modTime := time.Now().Add(-time.Hour).Truncate(time.Second)
+	require.NoError(t, os.Chtimes(a, modTime, modTime))
+	require.NoError(t, os.Chtimes(b, modTime, modTime))
+
+	stat := func(name string) os.FileInfo {
+		info, err := os.Stat(name)
+		require.NoError(t, err)
+		return info
+	}
+
+	// stub reports the device and inode numbers of a and b.
+	stub := func(aDev, bDev, aIno, bIno uint64, ok bool) {
+		fileID = func(info os.FileInfo) (dev, ino uint64, found bool) {
+			if info.Name() == "a.jpg" {
+				return aDev, aIno, ok
+			}
+			return bDev, bIno, ok
+		}
+	}
+
+	saved := fileID
+	t.Cleanup(func() { fileID = saved })
+
+	stub(1, 2, 42, 42, true)
+	assert.True(t, maybeSameFile(stat(a), stat(b)))
+	stub(1, 1, 42, 42, true)
+	assert.False(t, maybeSameFile(stat(a), stat(b)), "same device")
+	stub(1, 2, 42, 43, true)
+	assert.False(t, maybeSameFile(stat(a), stat(b)), "other inode")
+	stub(1, 2, 42, 42, false)
+	assert.False(t, maybeSameFile(stat(a), stat(b)), "no inode")
+
+	stub(1, 2, 42, 42, true)
+	require.NoError(t, os.Chtimes(b, modTime.Add(time.Second), modTime.Add(time.Second)))
+	assert.False(t, maybeSameFile(stat(a), stat(b)), "other time")
+	require.NoError(t, os.Chtimes(b, modTime, modTime))
+	require.NoError(t, os.WriteFile(b, []byte("other"), fs.ModeFile))
+	require.NoError(t, os.Chtimes(b, modTime, modTime))
+	assert.False(t, maybeSameFile(stat(a), stat(b)), "other size")
+}
+
+func TestFileID(t *testing.T) {
+	name := filepath.Join(t.TempDir(), "a.jpg")
+	require.NoError(t, os.WriteFile(name, []byte("a"), fs.ModeFile))
+	info, err := os.Stat(name)
+	require.NoError(t, err)
+
+	_, ino, ok := fileID(info)
+	assert.True(t, ok)
+	assert.NotZero(t, ino)
 }
 
 // cleanupImportedHash removes the picture a test imported with a file of the given hash, and its files in originals.

@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/karrick/godirwalk"
@@ -469,52 +470,88 @@ func (imp *Import) Cancel() {
 // answer comes from the file rather than from the row, since a caller removes its source on the
 // strength of it.
 func StoredCopyOf(mediaFile *MediaFile) *entity.File {
-	if stored, same := storedFileOf(mediaFile); !same {
+	if stored, match := storedFileOf(mediaFile); match == storedCopy {
 		return stored
 	}
 
 	return nil
 }
 
-// storedFileOf returns the indexed file that holds the same content, if there is one, and whether it is the file
-// itself, e.g. a link or another name for it, which is no copy of it.
-func storedFileOf(mediaFile *MediaFile) (stored *entity.File, same bool) {
+// storedMatch describes how a file relates to the indexed file that holds the same content.
+type storedMatch int
+
+const (
+	storedNone      storedMatch = iota // no indexed file holds the content
+	storedCopy                         // another file holds the content
+	storedSame                         // the file itself, e.g. a link or another name for it
+	storedMaybeSame                    // possibly the file itself, reached through another mount
+)
+
+// storedFileOf returns the indexed file that holds the same content, if there is one, and how the file relates to it.
+func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 	if mediaFile == nil {
-		return nil, false
+		return nil, storedNone
 	}
 
 	fileHash := mediaFile.Hash()
 
 	if fileHash == "" {
-		return nil, false
+		return nil, storedNone
 	}
 
 	found, err := entity.FirstFileByHash(fileHash)
 
 	if err != nil {
-		return nil, false
+		return nil, storedNone
 	}
 
 	// A name that holds nothing hashes to the empty string, so this covers an absent file too.
 	storedName := FileName(found.FileRoot, found.FileName)
 
 	if fs.Hash(storedName) != fileHash {
-		return nil, false
+		return nil, storedNone
 	}
 
 	src, srcErr := os.Stat(mediaFile.FileName())
 
 	if srcErr != nil {
-		return nil, false
+		return nil, storedNone
 	}
 
 	dest, destErr := os.Stat(storedName)
 
-	if destErr != nil {
-		return nil, false
+	switch {
+	case destErr != nil:
+		return nil, storedNone
+	case os.SameFile(src, dest):
+		return &found, storedSame
+	case maybeSameFile(src, dest):
+		return &found, storedMaybeSame
+	default:
+		return &found, storedCopy
+	}
+}
+
+// fileID returns the device and inode number of a file, if the file system reports them.
+var fileID = func(info os.FileInfo) (dev, ino uint64, ok bool) {
+	if st, isStat := info.Sys().(*syscall.Stat_t); isStat {
+		return uint64(st.Dev), st.Ino, true //nolint:gosec,unconvert // Dev is int32 on some platforms.
 	}
 
-	return &found, os.SameFile(src, dest)
+	return 0, 0, false
+}
+
+// maybeSameFile reports whether two files on different devices have the same size, modification time and inode
+// number, as one file on a network share that is mounted twice does, e.g. over SMB with the server's inode numbers.
+func maybeSameFile(a, b os.FileInfo) bool {
+	if a.Size() != b.Size() || !a.ModTime().Equal(b.ModTime()) {
+		return false
+	}
+
+	aDev, aIno, aOk := fileID(a)
+	bDev, bIno, bOk := fileID(b)
+
+	return aOk && bOk && aDev != bDev && aIno == bIno
 }
 
 // Check returns ErrImportPath or ErrImportDest if the import folder or the destination of the options is not

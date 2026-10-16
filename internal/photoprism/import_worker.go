@@ -98,8 +98,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 		// A main file that is the stored file itself, e.g. in a folder linked into originals, is not imported, and
 		// neither are its sidecars, since that folder is already part of originals.
-		if _, same := storedFileOf(related.Main); same {
+		switch _, match := storedFileOf(related.Main); match {
+		case storedSame:
 			log.Infof("import: skipped %s and its related files, as it is the same file as the original", clean.Log(originalName))
+			continue
+		case storedMaybeSame:
+			log.Infof("import: skipped %s and its related files, as it may be the same file as the original", clean.Log(originalName))
 			continue
 		}
 
@@ -183,9 +187,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// What follows is for a file the library already holds. The destination name is not
 				// evidence of that, so it is established once here and every step below reads it.
-				stored, same := storedFileOf(f)
+				stored, match := storedFileOf(f)
 
-				if same {
+				if match != storedCopy {
 					stored = nil
 				}
 
@@ -212,8 +216,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 					} else {
 						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
-				case same:
+				case match == storedSame:
 					log.Infof("import: kept %s, as it is the same file as the original", clean.Log(relFileName))
+				case match == storedMaybeSame:
+					log.Infof("import: kept %s, as it may be the same file as the original", clean.Log(relFileName))
 				default:
 					// Saying nothing here reads as a failure to clean up, since the line above
 					// reports a match. The source is kept because the library does not demonstrably
