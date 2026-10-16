@@ -71,6 +71,85 @@ func TestStackPrefix(t *testing.T) {
 		assert.Equal(t, "Vid_20220625_140410_00_008", StackPrefix("Lrv_20220625_140410_11_008.insv", false))
 		assert.Equal(t, "vID_20220625_140410_00_008", StackPrefix("lRV_20220625_140410_11_008.insv", false))
 	})
+	t.Run("GooglePixelPhoto", func(t *testing.T) {
+		canonical := "PXL_20230805_123456789"
+
+		for _, fileName := range []string{
+			// Standard Photo RAW+JPEG
+			"PXL_20230805_123456789.RAW-01.jpg",
+			"PXL_20230805_123456789.RAW-01.COVER.jpg",
+			"PXL_20230805_123456789.RAW-02.ORIGINAL.dng",
+			// Motion Photo RAW+JPEG
+			"PXL_20230805_123456789.RAW-01.MP.jpg",
+			"PXL_20230805_123456789.RAW-01.MP.COVER.jpg",
+			// Night Sight Photo RAW+JPEG
+			"PXL_20230805_123456789.NIGHT.RAW-01.jpg",
+			"PXL_20230805_123456789.NIGHT.RAW-01.COVER.jpg",
+			"PXL_20230805_123456789.NIGHT.RAW-02.ORIGINAL.dng",
+			// Portrait Photo JPEG
+			"PXL_20230805_123456789.PORTRAIT.jpg",
+			"PXL_20230805_123456789.PORTRAIT.ORIGINAL.jpg",
+			"PXL_20230805_123456789.PORTRAIT-01.COVER.jpg",
+			"PXL_20230805_123456789.PORTRAIT-02.ORIGINAL.jpg",
+			// Add Me Photo JPEG
+			"PXL_20230805_123456789.BURST-01.jpg",
+			"PXL_20230805_123456789.BURST-02.jpg",
+			"PXL_20230805_123456789.BURST-03.jpg",
+			// Long Exposure Photo JPEG
+			"PXL_20230805_123456789.LONG_EXPOSURE-01.jpg",
+			"PXL_20230805_123456789.LONG_EXPOSURE-01.COVER.jpg",
+			"PXL_20230805_123456789.LONG_EXPOSURE-02.ORIGINAL.jpg",
+			// Action Pan Photo JPEG
+			"PXL_20230805_123456789.ACTION_PAN-01.jpg",
+			"PXL_20230805_123456789.ACTION_PAN-01.COVER.jpg",
+			"PXL_20230805_123456789.ACTION_PAN-02.ORIGINAL.jpg",
+			// AI Pro Zoom Photo RAW+JPEG
+			"PXL_20230805_123456789.BURST-02.original.jpg",
+			"PXL_20230805_123456789.BURST-03.ORIGINAL.dng",
+			// Paths and Sidecars
+			"/originals/2023/08/PXL_20230805_123456789.RAW-01.COVER.jpg",
+			"/originals/2023/08/PXL_20230805_123456789.RAW-02.ORIGINAL.dng",
+			"PXL_20230805_123456789.RAW-01.COVER.jpg.xmp",
+			"PXL_20230805_123456789.RAW-01.COVER.xmp",
+			"PXL_20230805_123456789.RAW-01.COVER.jpg.json",
+		} {
+			assert.Equal(t, canonical, StackPrefix(fileName, false), fileName)
+			assert.Equal(t, canonical, StackPrefix(fileName, true), fileName)
+		}
+	})
+	t.Run("GooglePixelVideo", func(t *testing.T) {
+		canonical := "PXL_20230805_123456789"
+
+		for _, fileName := range []string{
+			// Video Boost MP4
+			"PXL_20230805_123456789.VB-01.COVER.mp4",
+			"PXL_20230805_123456789.VB-02.MAIN.mp4",
+			"PXL_20230805_123456789.VB-03.MAIN.mp4",
+			// Night Sight Video MP4
+			"PXL_20230805_123456789.NS-01.COVER.mp4",
+			"PXL_20230805_123456789.NS-02.MAIN.mp4",
+			"PXL_20230805_123456789.NS-03.MAIN.mp4",
+			// Paths and Sidecars
+			"/originals/2023/08/PXL_20230805_123456789.VB-02.MAIN.mp4",
+			"PXL_20230805_123456789.VB-02.MAIN.mp4.xmp",
+			"PXL_20230805_123456789.VB-02.MAIN.xmp",
+			"PXL_20230805_123456789.VB-02.MAIN.mp4.json",
+		} {
+			assert.Equal(t, canonical, StackPrefix(fileName, false), fileName)
+			assert.Equal(t, canonical, StackPrefix(fileName, true), fileName)
+		}
+	})
+	t.Run("GooglePixelLowercase", func(t *testing.T) {
+		for _, fileName := range []string{
+			"pxl_20230805_123456789.raw-01.cover.jpg",
+			"pxl_20230805_123456789.raw-02.original.dng",
+		} {
+			assert.Equal(t, "pxl_20230805_123456789", StackPrefix(fileName, false), fileName)
+			assert.Equal(t, "pxl_20230805_123456789", StackPrefix(fileName, true), fileName)
+		}
+
+		assert.Equal(t, "Pxl_20230805_123456789", StackPrefix("Pxl_20230805_123456789.raw-01.cover.jpg", false))
+	})
 
 	// Names that no rule matches must return the same as BasePrefix.
 	for _, fileName := range []string{
@@ -132,6 +211,15 @@ func TestStackPrefix(t *testing.T) {
 		"insv",
 		"VID_20220625_140410_10_008.in\u017fv",
 		"VID_20220625_140410_10_008.in\u017fv.jpg",
+		"PXL_20230805_123456.jpg",
+		"PXL_20230805_123456.MP.jpg",
+		"PXL_20230805_123456.NIGHT.jpg",
+		"PXL_20230805_123456.PANO.jpg",
+		"PXL_20230805_123456.PHOTOSPHERE.jpg",
+		"PXL_20230805_123456.TS.mp4",
+		"PXL_20230805_123456.SLOW_MOTION.mp4",
+		"PXL_20230805_123456.CINEMATIC.mp4",
+		"IMG_20230805_123456789.RAW-01.COVER.jpg",
 	} {
 		t.Run("Unchanged/"+fileName, func(t *testing.T) {
 			assert.Equal(t, BasePrefix(fileName, false), StackPrefix(fileName, false))
@@ -161,6 +249,24 @@ func TestInsta360StackName(t *testing.T) {
 	t.Run("InvalidMatch", func(t *testing.T) {
 		assert.Equal(t, "", insta360StackName(nil))
 		assert.Equal(t, "", insta360StackName([]string{"VID_20220625_140410_00_008.insv"}))
+	})
+}
+
+// TestGooglePixelStackName verifies canonical base prefix extraction for Google Pixel Camera captures.
+func TestGooglePixelStackName(t *testing.T) {
+	t.Run("Match", func(t *testing.T) {
+		assert.Equal(t, "PXL_20230805_123456789", googlePixelStackName("PXL_20230805_123456789.RAW-01.COVER"))
+		assert.Equal(t, "PXL_20230805_123456789", googlePixelStackName("PXL_20230805_123456789.RAW-02.ORIGINAL"))
+		assert.Equal(t, "PXL_20230805_123456789", googlePixelStackName("PXL_20230805_123456789.PORTRAIT-01.COVER"))
+		assert.Equal(t, "PXL_20230805_123456789", googlePixelStackName("PXL_20230805_123456789.VB-02.MAIN"))
+		assert.Equal(t, "pxl_20230805_123456789", googlePixelStackName("pxl_20230805_123456789.raw-01.cover"))
+		assert.Equal(t, "Pxl_20230805_123456789", googlePixelStackName("Pxl_20230805_123456789.raw-01.cover"))
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		assert.Equal(t, "", googlePixelStackName("PXL_20230805_123456"))
+		assert.Equal(t, "", googlePixelStackName("PXL_20230805_123456.MP"))
+		assert.Equal(t, "", googlePixelStackName("IMG_20230805_123456789.RAW-01.COVER"))
+		assert.Equal(t, "", googlePixelStackName(""))
 	})
 }
 
@@ -209,6 +315,24 @@ func TestInsta360Patterns(t *testing.T) {
 		assert.False(t, Insta360ProxyPattern.MatchString("LRV_20240415_213145_11_035.lrv"))
 		assert.False(t, Insta360ProxyPattern.MatchString("VID_20240415_213145_01_035.lrv"))
 		assert.False(t, Insta360ProxyPattern.MatchString("LRV_20240415_213145_01_035.insv"))
+	})
+}
+
+// TestGooglePixelPattern verifies that the capture pattern matches Google Pixel Camera multi-file capture prefixes.
+func TestGooglePixelPattern(t *testing.T) {
+	t.Run("Match", func(t *testing.T) {
+		assert.True(t, GooglePixelPattern.MatchString("PXL_20230805_123456789.RAW-01.COVER"))
+		assert.True(t, GooglePixelPattern.MatchString("PXL_20230805_123456789.RAW-02.ORIGINAL"))
+		assert.True(t, GooglePixelPattern.MatchString("PXL_20230805_123456789.PORTRAIT.ORIGINAL"))
+		assert.True(t, GooglePixelPattern.MatchString("PXL_20230805_123456789.PORTRAIT"))
+		assert.True(t, GooglePixelPattern.MatchString("PXL_20230805_123456789.VB-01.COVER"))
+		assert.True(t, GooglePixelPattern.MatchString("PXL_20230805_123456789.VB-02.MAIN"))
+		assert.True(t, GooglePixelPattern.MatchString("pxl_20230805_123456789.raw-01.cover"))
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		assert.False(t, GooglePixelPattern.MatchString("PXL_20230805_123456"))
+		assert.False(t, GooglePixelPattern.MatchString("PXL_20230805_123456.MP"))
+		assert.False(t, GooglePixelPattern.MatchString("IMG_20230805_123456789.RAW-01.COVER"))
 	})
 }
 
