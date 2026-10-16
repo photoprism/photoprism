@@ -11,7 +11,6 @@ import (
 	"sort"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/karrick/godirwalk"
@@ -535,28 +534,8 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 // storedHash returns the hash of an indexed file, which reads the whole file.
 var storedHash = fs.Hash
 
-// fileID returns the device and inode number of a file, if the file system reports them.
-var fileID = func(info os.FileInfo) (dev, ino uint64, ok bool) {
-	if st, isStat := info.Sys().(*syscall.Stat_t); isStat {
-		return uint64(st.Dev), st.Ino, true //nolint:gosec,unconvert // Dev is int32 on some platforms.
-	}
-
-	return 0, 0, false
-}
-
-// maybeSameFile reports whether two files on different devices have the same size, modification time and inode
-// number, as one file on a network share that is mounted twice does, e.g. over SMB with the server's inode numbers.
-func maybeSameFile(a, b os.FileInfo) bool {
-	// Times are compared in whole seconds, since mounts may report them with another precision.
-	if a.Size() != b.Size() || !a.ModTime().Truncate(time.Second).Equal(b.ModTime().Truncate(time.Second)) {
-		return false
-	}
-
-	aDev, aIno, aOk := fileID(a)
-	bDev, bIno, bOk := fileID(b)
-
-	return aOk && bOk && aDev != bDev && aIno == bIno
-}
+// maybeSameFile reports whether two files may be the same file on another mount, and can be replaced in tests.
+var maybeSameFile = fs.MaybeSameFile
 
 // Check returns ErrImportPath or ErrImportDest if the import folder or the destination of the options is not
 // supported, see CheckPath and CheckDest. The details name folders, so only the system log has them.
