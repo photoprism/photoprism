@@ -17,7 +17,7 @@ func TestImportOptions_SetUser(t *testing.T) {
 		Move:                   false,
 		NonBlocking:            false,
 		DestFolder:             "",
-		RemoveDotFiles:         false,
+		RemoveHiddenFiles:      false,
 		RemoveInvalidFiles:     false,
 		RemoveExistingFiles:    false,
 		RemoveEmptyDirectories: false,
@@ -32,7 +32,7 @@ func TestImportOptionsCopy(t *testing.T) {
 		assert.Equal(t, "xxx", result.Path)
 		assert.Equal(t, "", result.DestFolder)
 		assert.Equal(t, false, result.Move)
-		assert.Equal(t, false, result.RemoveDotFiles)
+		assert.Equal(t, false, result.RemoveHiddenFiles)
 		assert.Equal(t, false, result.RemoveInvalidFiles)
 		assert.Equal(t, false, result.RemoveExistingFiles)
 		assert.Equal(t, false, result.RemoveEmptyDirectories)
@@ -42,7 +42,7 @@ func TestImportOptionsCopy(t *testing.T) {
 		assert.Equal(t, "xxx", result.Path)
 		assert.Equal(t, "foo/bar", result.DestFolder)
 		assert.Equal(t, false, result.Move)
-		assert.Equal(t, false, result.RemoveDotFiles)
+		assert.Equal(t, false, result.RemoveHiddenFiles)
 		assert.Equal(t, false, result.RemoveInvalidFiles)
 		assert.Equal(t, false, result.RemoveExistingFiles)
 		assert.Equal(t, false, result.RemoveEmptyDirectories)
@@ -55,7 +55,7 @@ func TestImportOptionsMove(t *testing.T) {
 		assert.Equal(t, "xxx", result.Path)
 		assert.Equal(t, "", result.DestFolder)
 		assert.Equal(t, true, result.Move)
-		assert.Equal(t, true, result.RemoveDotFiles)
+		assert.Equal(t, true, result.RemoveHiddenFiles)
 		assert.Equal(t, false, result.RemoveInvalidFiles)
 		assert.Equal(t, true, result.RemoveExistingFiles)
 		assert.Equal(t, true, result.RemoveEmptyDirectories)
@@ -65,7 +65,7 @@ func TestImportOptionsMove(t *testing.T) {
 		assert.Equal(t, "xxx", result.Path)
 		assert.Equal(t, "foo/bar", result.DestFolder)
 		assert.Equal(t, true, result.Move)
-		assert.Equal(t, true, result.RemoveDotFiles)
+		assert.Equal(t, true, result.RemoveHiddenFiles)
 		assert.Equal(t, false, result.RemoveInvalidFiles)
 		assert.Equal(t, true, result.RemoveExistingFiles)
 		assert.Equal(t, true, result.RemoveEmptyDirectories)
@@ -78,7 +78,7 @@ func TestImportOptionsUpload(t *testing.T) {
 		assert.Equal(t, "users/admin", result.Path)
 		assert.Equal(t, "", result.DestFolder)
 		assert.Equal(t, true, result.Move)
-		assert.Equal(t, true, result.RemoveDotFiles)
+		assert.Equal(t, true, result.RemoveHiddenFiles)
 		assert.Equal(t, true, result.RemoveInvalidFiles)
 		assert.Equal(t, true, result.RemoveExistingFiles)
 		assert.Equal(t, true, result.RemoveEmptyDirectories)
@@ -88,7 +88,7 @@ func TestImportOptionsUpload(t *testing.T) {
 		assert.Equal(t, "users/admin", result.Path)
 		assert.Equal(t, "foo/bar", result.DestFolder)
 		assert.Equal(t, true, result.Move)
-		assert.Equal(t, true, result.RemoveDotFiles)
+		assert.Equal(t, true, result.RemoveHiddenFiles)
 		assert.Equal(t, true, result.RemoveInvalidFiles)
 		assert.Equal(t, true, result.RemoveExistingFiles)
 		assert.Equal(t, true, result.RemoveEmptyDirectories)

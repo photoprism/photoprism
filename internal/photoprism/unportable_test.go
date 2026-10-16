@@ -82,6 +82,45 @@ func TestFlushUnportable(t *testing.T) {
 	assert.Equal(t, 2, count("index: skipped 2 more names", "characters that are not supported"))
 }
 
+func TestWarnHidden(t *testing.T) {
+	saved := unportablePaths
+	t.Cleanup(func() { unportablePaths = saved })
+	unportablePaths = &warnedPaths{limit: 1}
+
+	hook := captureLog(t)
+
+	for run := 0; run < 2; run++ {
+		for _, rel := range []string{"~a.jpg", "$b.jpg", "@c.jpg"} {
+			warnHidden("import", "import", rel, "import it")
+		}
+		flushHidden("import")
+	}
+
+	// Hidden files are counted apart from names that are not portable.
+	flushUnportable("import")
+
+	warnings := loggedMessages(hook, logrus.WarnLevel)
+	assert.Equal(t, []string{
+		"import: skipped hidden file ~a.jpg, rename it to import it",
+		"import: skipped 2 more hidden files",
+		"import: skipped 2 more hidden files",
+	}, warnings)
+}
+
+func TestFlushHidden(t *testing.T) {
+	saved := unportablePaths
+	t.Cleanup(func() { unportablePaths = saved })
+	unportablePaths = &warnedPaths{limit: 0}
+
+	hook := captureLog(t)
+	flushHidden("import")
+	warnHidden("import", "import", "~a.jpg", "import it")
+	flushHidden("import")
+	flushHidden("import")
+
+	assert.Equal(t, []string{"import: skipped 1 more hidden file"}, loggedMessages(hook, logrus.WarnLevel))
+}
+
 func TestUnportablePath(t *testing.T) {
 	t.Run("Portable", func(t *testing.T) {
 		for _, rel := range []string{"", "a", "2020/03 - Março/#1 & Friends.jpg", "a/b/c"} {

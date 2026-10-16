@@ -166,6 +166,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	// The import workers check related files at their destination in originals as the index does.
 	defer flushUnportable("index")
 	defer flushUnportable("import")
+	defer flushHidden("import")
 
 	jobs := make(chan ImportJob)
 
@@ -383,7 +384,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 		for _, directory := range directories {
 			if fs.DirIsEmpty(directory) {
 				if removeErr := os.Remove(directory); removeErr != nil {
-					log.Errorf("import: failed to delete empty folder %s (%s)", clean.Log(fs.RelName(directory, importPath)), removeErr)
+					log.Errorf("import: failed to delete empty folder %s (%s)", clean.Log(fs.RelName(directory, importPath)), clean.Error(removeErr))
 				} else {
 					log.Infof("import: deleted empty folder %s", clean.Log(fs.RelName(directory, importPath)))
 				}
@@ -391,17 +392,30 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 		}
 	}
 
-	if opt.RemoveDotFiles {
-		// Remove hidden .files if option is enabled.
-		for _, file := range ignore.Hidden() {
+	if opt.RemoveHiddenFiles {
+		// Hidden files are removed, except media files whose names start with another character than a dot,
+		// and the files that share their names, such as sidecars.
+		hidden := ignore.Hidden()
+		kept := make(map[string]bool)
+
+		for _, file := range hidden {
+			if !strings.HasPrefix(filepath.Base(file), ".") && media.MainFile(file) && fs.FileExists(file) {
+				kept[fs.AbsPrefix(file, false)] = true
+				warnHidden("import", nameRoot, fs.RelName(file, nameRoot), "import it")
+			}
+		}
+
+		for _, file := range hidden {
 			if !fs.FileExists(file) {
 				continue
 			}
 
 			if base := filepath.Base(file); base == ".keep" || base == ".gitkeep" {
 				log.Debugf("import: %s file is preserved", clean.Log(fs.RelName(file, importPath)))
+			} else if !strings.HasPrefix(base, ".") && kept[fs.AbsPrefix(file, false)] {
+				continue
 			} else if err = os.Remove(file); err != nil {
-				log.Errorf("import: failed removing %s (%s)", clean.Log(fs.RelName(file, importPath)), err.Error())
+				log.Errorf("import: failed removing %s (%s)", clean.Log(fs.RelName(file, importPath)), clean.Error(err))
 			}
 		}
 	}

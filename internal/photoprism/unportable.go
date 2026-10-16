@@ -133,6 +133,22 @@ func flushUnportable(prefix string) {
 	}
 }
 
+// warnHidden logs once per process that a hidden file below a root was kept, using a prefix such as "import" and
+// an action such as "import it".
+func warnHidden(prefix, root, rel, action string) {
+	if unportablePaths.First(prefix+" hidden", root+":"+rel) {
+		log.Warnf("%s: skipped hidden file %s, rename it to %s", prefix, clean.Log(rel), action)
+	}
+}
+
+// flushHidden logs one warning with the number of hidden files a run kept without reporting them, because the
+// remembered paths reached their limit.
+func flushHidden(prefix string) {
+	if n := unportablePaths.Flush(prefix + " hidden"); n > 0 {
+		log.Warnf("%s: skipped %s", prefix, english.Plural(n, "more hidden file", "more hidden files"))
+	}
+}
+
 // PortableRelated leaves the files whose names are not portable out of a group of related files and reports each
 // of them. If the main file is left out, mf becomes the main file if it is in the group, otherwise there is none.
 func PortableRelated(related RelatedFiles, mf *MediaFile, skipped func(f *MediaFile)) RelatedFiles {

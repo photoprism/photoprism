@@ -44,10 +44,16 @@ func TestImport_StartUnportableNames(t *testing.T) {
 		}
 	}
 
-	// Hidden files are not imported or reported, and a move removes them.
-	writeTestJpeg(t, filepath.Join(src, "~$draft.jpg"), 240)
+	// Hidden files are not imported. A move removes them, except media files whose names do not start with a dot,
+	// which are reported, and hidden folders, which stay with their contents.
+	writeTestJpeg(t, filepath.Join(src, "~home.jpg"), 240)
+	require.NoError(t, os.WriteFile(filepath.Join(src, "~home.xmp"), []byte(testXmp), fs.ModeFile))
 	writeTestJpeg(t, filepath.Join(src, "$keep.jpg"), 241)
+	writeTestJpeg(t, filepath.Join(src, "._IMG_1234.JPG"), 242)
+	writeTestJpeg(t, filepath.Join(src, "@eaDir", "x.jpg"), 243)
 	require.NoError(t, os.WriteFile(filepath.Join(src, ".DS_Store"), []byte("x"), fs.ModeFile))
+	require.NoError(t, os.WriteFile(filepath.Join(src, "~$report.docx"), []byte("x"), fs.ModeFile))
+	require.NoError(t, os.WriteFile(filepath.Join(src, ".keep"), []byte{}, fs.ModeFile))
 
 	// An empty folder whose name is not portable stays as well.
 	require.NoError(t, os.MkdirAll(filepath.Join(src, "x:y"), fs.ModeDir))
@@ -72,9 +78,14 @@ func TestImport_StartUnportableNames(t *testing.T) {
 	}
 
 	assert.DirExists(t, filepath.Join(src, "x:y"))
-	assert.NoFileExists(t, filepath.Join(src, "~$draft.jpg"))
-	assert.NoFileExists(t, filepath.Join(src, "$keep.jpg"))
+	assert.FileExists(t, filepath.Join(src, "~home.jpg"))
+	assert.FileExists(t, filepath.Join(src, "~home.xmp"))
+	assert.FileExists(t, filepath.Join(src, "$keep.jpg"))
+	assert.FileExists(t, filepath.Join(src, "@eaDir", "x.jpg"))
+	assert.FileExists(t, filepath.Join(src, ".keep"))
+	assert.NoFileExists(t, filepath.Join(src, "._IMG_1234.JPG"))
 	assert.NoFileExists(t, filepath.Join(src, ".DS_Store"))
+	assert.NoFileExists(t, filepath.Join(src, "~$report.docx"))
 
 	warnings := loggedMessages(hook, logrus.WarnLevel)
 
@@ -90,9 +101,26 @@ func TestImport_StartUnportableNames(t *testing.T) {
 		assert.Equal(t, 1, count, "%q in %v", rel, warnings)
 	}
 
-	for _, msg := range warnings {
-		assert.NotContains(t, msg, "draft")
+	for _, rel := range []string{"~home.jpg", "$keep.jpg"} {
+		assert.Equal(t, 1, countPrefix(warnings, "import: skipped hidden file "+clean.Log(rel)+", rename it"), rel)
 	}
+
+	for _, msg := range warnings {
+		assert.NotContains(t, msg, "IMG_1234")
+		assert.NotContains(t, msg, "report")
+		assert.NotContains(t, msg, "eaDir")
+	}
+}
+
+// countPrefix returns the number of messages that start with prefix.
+func countPrefix(messages []string, prefix string) (n int) {
+	for _, msg := range messages {
+		if strings.HasPrefix(msg, prefix) {
+			n++
+		}
+	}
+
+	return n
 }
 
 // TestImport_StartUnportableLimit checks that names above the warning limit are counted in one warning per run.
