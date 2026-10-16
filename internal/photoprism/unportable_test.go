@@ -21,6 +21,10 @@ func TestWarnedPaths_First(t *testing.T) {
 		assert.True(t, w.First("index", "originals:a|b"))
 		assert.False(t, w.First("index", "originals:a|b"))
 		assert.True(t, w.First("import", "import:a|b"))
+
+		// The same path is remembered separately for each prefix.
+		assert.True(t, w.First("import hidden", "originals:a|b"))
+		assert.False(t, w.First("import hidden", "originals:a|b"))
 	})
 	t.Run("Limit", func(t *testing.T) {
 		// Paths above the limit are not remembered, and are counted for their prefix instead.

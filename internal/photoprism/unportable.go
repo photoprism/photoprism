@@ -27,20 +27,22 @@ type warnedPaths struct {
 	extra map[string]int
 }
 
-// First reports whether a path is not remembered yet, and remembers it if there is room. A path that does not fit
-// is counted for its prefix instead, once as long as the counted paths stay within the limit.
+// First reports whether a path is not remembered yet for a prefix, and remembers it if there is room. A path that
+// does not fit is counted for its prefix instead, once as long as the counted paths stay within the limit.
 func (w *warnedPaths) First(prefix, key string) bool {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
+	id := prefix + "\x00" + key
+
 	if w.seen == nil {
 		w.seen = make(map[string]struct{})
-	} else if _, ok := w.seen[key]; ok {
+	} else if _, ok := w.seen[id]; ok {
 		return false
 	}
 
 	if len(w.seen) < w.limit {
-		w.seen[key] = struct{}{}
+		w.seen[id] = struct{}{}
 		return true
 	}
 
