@@ -28,7 +28,7 @@
 - Bounded image decode helpers: `image_decode.go` (direct JPEG/PNG/GIF/BMP/TIFF/WEBP dispatch with TIFF offset validation).
 - File info & types: `file_type*.go`, `mime.go`, `file_ext*.go`, `name.go`.
 - Stacking names: `stack.go` (`StackPrefix`, `StackGroup`, `KeepStacked`, `Insta360VideoPattern`, `Insta360ProxyPattern`).
-- Hashing & IDs: `hash.go`, `id.go`.
+- Hashing & IDs: `hash.go`, `id.go`, `file_id.go`.
 - Walkers & ignore rules: `walk.go`, `ignore.go`, `done.go`.
 - Utilities: `bytes.go`, `resolve.go`, `symlink.go`, `modtime.go`, `readlines.go`.
 
