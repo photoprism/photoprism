@@ -779,8 +779,8 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 	return nil
 }
 
-// Copy copies the file contents to the specified destination.
-// It only overwrites existing files when the force flag is used.
+// Copy copies the file contents to the specified destination through a staged sibling, so an interrupted copy
+// leaves nothing under the final name. It only overwrites existing files when the force flag is used.
 func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	// Check for obviously empty or invalid file paths.
 	if filePath == "" || filePath == "." || filePath == ".." {
@@ -841,40 +841,47 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	defer thisFile.Close()
 
-	// Open the target file path for writing, discarding any trailing bytes. The no-follow flag puts
-	// the symbolic link rule in the call itself rather than only in the check above it.
-	// #nosec G304 -- destination path is validated and absolute.
-	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC|fs.OpenNoFollow, fs.ModeFile)
+	// Write a staged sibling and publish it only once it is complete. The staged file is removed on every
+	// other way out, including a panic, so it never remains next to the destination.
+	stageFile, err := fs.OpenStageFile(filePath)
 
 	if err != nil {
-		return fmt.Errorf("copy: destination file %s cannot be opened (%w)", logName, err)
+		return fmt.Errorf("copy: destination file %s cannot be created (%w)", logName, err)
 	}
 
+	staged, published := stageFile.Name(), false
+
 	defer func() {
-		// Update the file timestamp after the file has been copied and closed. A failure here is
-		// reported only when the copy itself succeeded, so it never replaces the copy's own error.
-		deferErr := destFile.Close()
-
-		if deferErr != nil {
-			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(deferErr))
-		} else if deferErr = os.Chtimes(filePath, time.Time{}, m.ModTime()); deferErr != nil {
-			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(deferErr))
-		}
-
-		if err == nil {
-			err = deferErr
+		if !published {
+			_ = stageFile.Close()
+			_ = os.Remove(staged)
 		}
 	}()
 
-	// Copy file contents to the destination.
-	_, err = io.Copy(destFile, thisFile)
+	if _, err = copyFileContent(stageFile, thisFile); err != nil {
+		return fmt.Errorf("copy: %w", err)
+	} else if err = stageFile.Close(); err != nil {
+		return fmt.Errorf("copy: %w", err)
+	} else if chtimesErr := os.Chtimes(staged, time.Time{}, m.ModTime()); chtimesErr != nil {
+		log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(chtimesErr))
+	}
 
-	if err != nil {
+	// A replaced file keeps its permissions, as publishing gives the destination a new inode.
+	if info, statErr := os.Lstat(filePath); force && statErr == nil && info.Mode().IsRegular() {
+		_ = os.Chmod(staged, info.Mode().Perm())
+	}
+
+	if err = fs.PublishFile(staged, filePath, force); err != nil {
 		return fmt.Errorf("copy: %w", err)
 	}
 
+	published = true
+
 	return nil
 }
+
+// copyFileContent copies the contents of a file to its staged copy, and can be replaced in tests.
+var copyFileContent = io.Copy
 
 // Extension returns the filename extension of this media file.
 func (m *MediaFile) Extension() string {

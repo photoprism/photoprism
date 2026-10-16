@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"slices"
@@ -184,4 +186,89 @@ func TestMediaFile_CopyReportsAReadFailure(t *testing.T) {
 
 	require.Error(t, err, "a source that cannot be read must not report a successful copy")
 	assert.Contains(t, err.Error(), "copy:")
+}
+
+func TestMediaFile_CopyInterrupted(t *testing.T) {
+	// A copy that stops mid-file, e.g. when a network share goes away, leaves nothing under the final name.
+	dir := t.TempDir()
+	src := filepath.Join(dir, "src.jpg")
+	writeTestJpeg(t, src, 346)
+	srcHash := fs.Hash(src)
+
+	saved := copyFileContent
+	t.Cleanup(func() { copyFileContent = saved })
+	copyFileContent = func(dst io.Writer, r io.Reader) (int64, error) {
+		n, _ := io.CopyN(dst, r, 100)
+		return n, errors.New("network share went away")
+	}
+
+	m, err := NewMediaFile(src)
+	require.NoError(t, err)
+
+	t.Run("NewName", func(t *testing.T) {
+		dest := filepath.Join(dir, "new", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+
+		copyErr := m.Copy(dest, false)
+		require.ErrorContains(t, copyErr, "network share went away")
+		assert.NoFileExists(t, dest)
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Empty(t, entries, "the staged file is removed")
+		assert.Equal(t, srcHash, fs.Hash(src), "the source is unchanged")
+	})
+	t.Run("Replace", func(t *testing.T) {
+		dest := filepath.Join(dir, "old", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+		require.NoError(t, os.WriteFile(dest, []byte("existing content"), fs.ModeFile))
+
+		require.Error(t, m.Copy(dest, true))
+		content, readErr := os.ReadFile(dest) //nolint:gosec // dest is below a test folder
+		require.NoError(t, readErr)
+		assert.Equal(t, "existing content", string(content), "a forced copy that stops keeps the existing file")
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Len(t, entries, 1)
+	})
+	t.Run("Raced", func(t *testing.T) {
+		// A file another writer places under the name while the copy runs is not replaced.
+		dest := filepath.Join(dir, "raced", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+		copyFileContent = func(dst io.Writer, r io.Reader) (int64, error) {
+			require.NoError(t, os.WriteFile(dest, []byte("other writer"), fs.ModeFile))
+			return io.Copy(dst, r)
+		}
+
+		require.Error(t, m.Copy(dest, false))
+		content, readErr := os.ReadFile(dest) //nolint:gosec // dest is below a test folder
+		require.NoError(t, readErr)
+		assert.Equal(t, "other writer", string(content))
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Len(t, entries, 1)
+	})
+	t.Run("Completed", func(t *testing.T) {
+		copyFileContent = saved
+		dest := filepath.Join(dir, "done", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+		require.NoError(t, os.Chmod(filepath.Dir(dest), 0o755))
+
+		require.NoError(t, m.Copy(dest, false))
+		assert.Equal(t, srcHash, fs.Hash(dest))
+		assert.ErrorContains(t, m.Copy(dest, false), "already exists")
+
+		// A forced copy replaces the file and keeps its permissions.
+		require.NoError(t, os.Chmod(dest, 0o640))
+		require.NoError(t, m.Copy(dest, true))
+		info, statErr := os.Stat(dest)
+		require.NoError(t, statErr)
+		assert.Equal(t, os.FileMode(0o640), info.Mode().Perm())
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Len(t, entries, 1)
+	})
 }
