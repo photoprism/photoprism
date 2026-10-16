@@ -459,17 +459,6 @@ func (imp *Import) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
-// StoredCopyOf returns the indexed file that already holds the same content, if there is one. The
-// answer comes from the file rather than from the row, since a caller removes its source on the
-// strength of it.
-func StoredCopyOf(mediaFile *MediaFile) *entity.File {
-	if stored, match := storedFileOf(mediaFile); match == storedCopy {
-		return stored
-	}
-
-	return nil
-}
-
 // storedMatch describes how a file relates to the indexed file that holds the same content.
 type storedMatch int
 
@@ -480,7 +469,9 @@ const (
 	storedMaybeSame                    // possibly the file itself, reached through another mount
 )
 
-// storedFileOf returns the indexed file that holds the same content, if there is one, and how the file relates to it.
+// storedFileOf reports how a file relates to the indexed file that holds the same content, and returns that file if
+// it is another file. The answer comes from the files rather than from the row, since a caller removes its source
+// on the strength of it.
 func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 	if mediaFile == nil {
 		return nil, storedNone
@@ -517,9 +508,9 @@ func storedFileOf(mediaFile *MediaFile) (*entity.File, storedMatch) {
 	case destErr != nil:
 		return nil, storedNone
 	case os.SameFile(src, dest):
-		return &found, storedSame
+		return nil, storedSame
 	case maybeSameFile(src, dest):
-		return &found, storedMaybeSame
+		return nil, storedMaybeSame
 	default:
 		return &found, storedCopy
 	}
@@ -680,7 +671,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 			if fs.FileExists(existingFilename) {
 				// The index records this hash under that name, which is not the same as the file
 				// still holding it, so the message says what was matched rather than claiming the
-				// two files are identical. StoredCopyOf is what establishes that, for the caller
+				// two files are identical. storedFileOf is what establishes that, for the caller
 				// that removes its source.
 				return existingFilename, fmt.Errorf("%s is already indexed as %s", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName))
 			} else if !fs.IsSymlink(existingFilename) && clean.UnportablePath(f.FileName) == "" {

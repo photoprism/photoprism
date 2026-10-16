@@ -27,7 +27,14 @@ func TestNewImport(t *testing.T) {
 	assert.IsType(t, &Import{}, imp)
 }
 
-func TestStoredCopyOf(t *testing.T) {
+// TestStoredFileOf_Content checks that an indexed file counts as a copy only while it holds the same content.
+func TestStoredFileOf_Content(t *testing.T) {
+	// storedCopyOf returns the indexed file that is a copy of a file, if there is one.
+	storedCopyOf := func(mf *MediaFile) *entity.File {
+		stored, _ := storedFileOf(mf)
+		return stored
+	}
+
 	cfg := config.TestConfig()
 	require.NoError(t, cfg.InitializeTestData())
 
@@ -36,7 +43,9 @@ func TestStoredCopyOf(t *testing.T) {
 	require.NotEmpty(t, mediaFile.Hash())
 
 	t.Run("Nil", func(t *testing.T) {
-		assert.Nil(t, StoredCopyOf(nil))
+		stored, match := storedFileOf(nil)
+		assert.Nil(t, stored)
+		assert.Equal(t, storedNone, match)
 	})
 	t.Run("NoHash", func(t *testing.T) {
 		dir := t.TempDir()
@@ -48,10 +57,10 @@ func TestStoredCopyOf(t *testing.T) {
 		require.NoError(t, os.Remove(name))
 		require.Empty(t, unreadable.Hash())
 
-		assert.Nil(t, StoredCopyOf(unreadable))
+		assert.Nil(t, storedCopyOf(unreadable))
 	})
 	t.Run("NotIndexed", func(t *testing.T) {
-		assert.Nil(t, StoredCopyOf(mediaFile), "no row records this content")
+		assert.Nil(t, storedCopyOf(mediaFile), "no row records this content")
 	})
 	t.Run("IndexedButNotOnDisk", func(t *testing.T) {
 		// A row on its own is not the content. Answering otherwise lets a caller remove the copy it
@@ -68,7 +77,7 @@ func TestStoredCopyOf(t *testing.T) {
 
 		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(file).Error })
 
-		assert.Nil(t, StoredCopyOf(mediaFile))
+		assert.Nil(t, storedCopyOf(mediaFile))
 	})
 	t.Run("IndexedButContentChanged", func(t *testing.T) {
 		// The row records what the file held when it was read. If the file has changed since, the
@@ -96,7 +105,7 @@ func TestStoredCopyOf(t *testing.T) {
 
 		require.NotEqual(t, mediaFile.Hash(), fs.Hash(storedPath), "the file must no longer match its row")
 
-		assert.Nil(t, StoredCopyOf(mediaFile))
+		assert.Nil(t, storedCopyOf(mediaFile))
 	})
 	t.Run("IndexedAndOnDisk", func(t *testing.T) {
 		photo := entity.PhotoFixtures.Get("Photo01")
@@ -120,7 +129,7 @@ func TestStoredCopyOf(t *testing.T) {
 			_ = os.RemoveAll(filepath.Dir(storedPath))
 		})
 
-		found := StoredCopyOf(mediaFile)
+		found := storedCopyOf(mediaFile)
 
 		require.NotNil(t, found)
 		assert.Equal(t, stored, found.FileName)
@@ -132,7 +141,7 @@ func TestStoredCopyOf(t *testing.T) {
 		for _, name := range []string{storedPath, filepath.Join(link, "present.cr2")} {
 			same, sameErr := NewMediaFile(name)
 			require.NoError(t, sameErr)
-			assert.Nil(t, StoredCopyOf(same), name)
+			assert.Nil(t, storedCopyOf(same), name)
 		}
 	})
 }
@@ -168,20 +177,13 @@ func TestStoredFileOf(t *testing.T) {
 		require.NotNil(t, found)
 		assert.Equal(t, stored, found.FileName)
 		assert.Equal(t, storedCopy, match)
-		assert.NotNil(t, StoredCopyOf(mf))
 	})
 	t.Run("HardLink", func(t *testing.T) {
 		mf, err := NewMediaFile(linked)
 		require.NoError(t, err)
 		found, match := storedFileOf(mf)
-		require.NotNil(t, found)
 		assert.Equal(t, storedSame, match)
-		assert.Nil(t, StoredCopyOf(mf))
-	})
-	t.Run("Nil", func(t *testing.T) {
-		found, match := storedFileOf(nil)
 		assert.Nil(t, found)
-		assert.Equal(t, storedNone, match)
 	})
 	t.Run("MaybeSame", func(t *testing.T) {
 		// A copy with the same size, time and inode number on another device may be the same file.
@@ -193,9 +195,8 @@ func TestStoredFileOf(t *testing.T) {
 		mf, err := NewMediaFile(copied)
 		require.NoError(t, err)
 		found, match := storedFileOf(mf)
-		require.NotNil(t, found)
 		assert.Equal(t, storedMaybeSame, match)
-		assert.Nil(t, StoredCopyOf(mf))
+		assert.Nil(t, found)
 	})
 	t.Run("MoveImportMaybeSame", func(t *testing.T) {
 		if testing.Short() {

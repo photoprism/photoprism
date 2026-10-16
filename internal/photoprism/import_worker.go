@@ -228,10 +228,6 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				stored, match := result.file, result.match
 
-				if match != storedCopy {
-					stored = nil
-				}
-
 				// Try to add duplicates to selected album(s) as well, see #991.
 				if stored != nil {
 					if albumErr := entity.AddPhotoToUserAlbums(stored.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
