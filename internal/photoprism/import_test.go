@@ -635,9 +635,19 @@ func TestStoredFileOf(t *testing.T) {
 		require.NoError(t, fs.Copy(video, filepath.Join(dir, "copy.mp4"), false))
 		writeTestJpeg(t, filepath.Join(dir, "copy.jpg"), 327)
 
+		// An allowed new file is placed and indexed in place of the main file, and so is a sidecar.
+		png := filepath.Join(dir, "same.png")
+		writeTestPng(t, png, 329)
+		pngHash := fs.Hash(png)
+		t.Cleanup(func() { cleanupImportedHash(t, pngHash) })
+		xmp := filepath.Join(dir, "same.xmp")
+		require.NoError(t, os.WriteFile(xmp, []byte(strings.Replace(testXmp, "Pair", filepath.Base(dir), 1)), fs.ModeFile))
+
 		convert := NewConvert(cfg)
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
-		imp.AllowExt = fs.NewExtList("mp4")
+		imp.AllowExt = fs.NewExtList("mp4,png")
+		cleanupDestination(t, imp, filepath.Join(dir, "same.mp4"), png)
+		cleanupDestination(t, imp, filepath.Join(dir, "same.mp4"), xmp)
 		hook := captureLog(t)
 
 		_, err := imp.Run(ImportOptionsMove(dir, ""))
@@ -646,10 +656,16 @@ func TestStoredFileOf(t *testing.T) {
 		assert.NoFileExists(t, filepath.Join(dir, "copy.mp4"))
 		assert.FileExists(t, filepath.Join(dir, "same.jpg"))
 		assert.FileExists(t, filepath.Join(dir, "copy.jpg"))
+		assert.NoFileExists(t, png)
+		assert.NoFileExists(t, xmp)
 		warnings := loggedMessages(hook, logrus.WarnLevel)
 		assert.Equal(t, 1, countPrefix(warnings, "import: skipped same.jpg because the file type is not allowed"))
 		assert.Equal(t, 1, countPrefix(warnings, "import: skipped copy.jpg because the file type is not allowed"))
-		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: moving"))
+
+		indexed, err := entity.FirstFileByHash(pngHash)
+		require.NoError(t, err)
+		assert.Equal(t, "same.png", indexed.OriginalName)
+		require.NotEqual(t, photo.ID, indexed.PhotoID)
 	})
 	t.Run("LinkedSidecar", func(t *testing.T) {
 		if testing.Short() {
@@ -1033,7 +1049,8 @@ func TestStoredPhotoUIDs(t *testing.T) {
 			"a.xmp": {file: &entity.File{PhotoUID: "ps6sg6be2lvl0yh9"}, match: storedSame},
 			"b.jpg": {file: &entity.File{PhotoUID: "ps6sg6be2lvl0yh8"}, match: storedMaybeSame},
 			"c.jpg": {match: storedMaybeSame},
-			"d.jpg": {file: &entity.File{}, match: storedCopy},
+			"d.jpg": {file: &entity.File{}, match: storedSame},
+			"e.xmp": {file: &entity.File{PhotoUID: "ps6sg6be2lvl0yh7"}, match: storedCopy},
 		}
 		assert.Equal(t, []string{"ps6sg6be2lvl0yh8", "ps6sg6be2lvl0yh9"}, storedPhotoUIDs(results))
 	})

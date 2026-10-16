@@ -89,7 +89,7 @@ func storedFilesOf(related RelatedFiles) (results map[string]storedResult, origi
 	return results, originals
 }
 
-// mainTypeRefused returns why a file is not imported as the main file of a group because of its type, if it is not.
+// mainTypeRefused returns why the type of a file keeps it from being imported as a main file, or an empty string.
 func mainTypeRefused(f *MediaFile, allowExt fs.ExtList) string {
 	switch fileType := f.FileType(); {
 	case fileType == fs.TypeUnknown:
@@ -101,12 +101,14 @@ func mainTypeRefused(f *MediaFile, allowExt fs.ExtList) string {
 	}
 }
 
-// storedPhotoUIDs returns the sorted, unique picture UIDs of the stored files in results.
+// storedPhotoUIDs returns the sorted, unique picture UIDs of the stored files that files in results are or may be.
 func storedPhotoUIDs(results map[string]storedResult) []string {
 	uids := make([]string, 0, len(results))
 
 	for _, r := range results {
-		if r.file != nil && r.file.PhotoUID != "" && !slices.Contains(uids, r.file.PhotoUID) {
+		if r.file == nil || r.file.PhotoUID == "" || slices.Contains(uids, r.file.PhotoUID) {
+			continue
+		} else if r.match == storedSame || r.match == storedMaybeSame {
 			uids = append(uids, r.file.PhotoUID)
 		}
 	}
@@ -182,12 +184,19 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 		}
 
-		// A new file is indexed in place of a main file that is already indexed, so whether that is the case is
-		// known before any file is placed, and only a file that could be the main file itself is placed then.
+		// refusedNew reports whether f is a new file other than the main file and its sidecars whose type the main
+		// file could not have.
+		refusedNew := func(f *MediaFile) bool {
+			return f != nil && !f.IsSidecar() && !related.Main.HasSameName(f) &&
+				results[f.FileName()].match == storedNone && mainTypeRefused(f, allowExt) != ""
+		}
+
+		// A new file is indexed in place of a main file that is already indexed, so new files of a type the main file
+		// could not have are not placed then. Whether the main file is held is checked first, if there are any.
 		mainChecked := results[related.Main.FileName()].match
 		mainHeld := mainChecked == storedSame || mainChecked == storedMaybeSame
 
-		if !mainHeld && len(related.Files) > 1 {
+		if !mainHeld && slices.ContainsFunc(related.Files, refusedNew) {
 			_, mainErr := imp.DestinationFilename(related.Main, related.Main, opt.DestFolder)
 			mainHeld = mainErr != nil
 		}
@@ -197,11 +206,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 			checked := results[f.FileName()].match
 			destFileName, err := "", error(nil)
 
-			if mainHeld && checked == storedNone && !f.IsSidecar() && !related.Main.HasSameName(f) {
-				if reason := mainTypeRefused(f, allowExt); reason != "" {
-					log.Warnf("import: skipped %s %s", clean.Log(relFileName), reason)
-					continue
-				}
+			if mainHeld && refusedNew(f) {
+				log.Warnf("import: skipped %s %s", clean.Log(relFileName), mainTypeRefused(f, allowExt))
+				continue
 			}
 
 			// A file that is or may be an original stays where it is, even if the name of another row is free.
@@ -267,7 +274,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					continue
 				}
 
-				if destOtherFileName == "" && !f.IsSidecar() && !related.Main.HasSameName(f) {
+				if destOtherFileName == "" && !f.IsSidecar() && !related.Main.HasSameName(f) && mainTypeRefused(f, allowExt) == "" {
 					destOtherFileName = destFileName
 				}
 			} else {
