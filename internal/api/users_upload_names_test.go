@@ -31,7 +31,7 @@ func TestUploadUserFilesNames(t *testing.T) {
 	jpeg := NewTestJpeg(t, 67, 49)
 
 	accepted := []string{"03 - Março.jpg", "#1 & Friends [2020] (copy) Tom's.jpg", "ok.jpg", "日本\u3000旅行 😀.jpg"}
-	rejected := []string{"a|b.jpg", "x:y.jpg", "~home.jpg", "a%b.jpg", "a{b}.jpg"}
+	rejected := []string{"a|b.jpg", "x:y.jpg", "~home.jpg", "a%b.jpg", "a{b}.jpg", "@x.jpg", "__x.jpg", "_.x.jpg"}
 
 	// upload sends a payload and returns the upload folder.
 	upload := func(t *testing.T, payload map[string][]byte) string {
@@ -63,7 +63,8 @@ func TestUploadUserFilesNames(t *testing.T) {
 		}
 	})
 	t.Run("Archive", func(t *testing.T) {
-		entries := map[string][]byte{"ok/inner.jpg": jpeg, "dir*/inner.jpg": jpeg, "a:b/inner.jpg": jpeg, "win\\inner.jpg": jpeg}
+		entries := map[string][]byte{"ok/inner.jpg": jpeg, "dir*/inner.jpg": jpeg, "a:b/inner.jpg": jpeg, "win\\inner.jpg": jpeg,
+			"@eaDir/inner.jpg": jpeg}
 		for _, name := range append(append([]string{}, accepted...), rejected...) {
 			entries[name] = jpeg
 		}
@@ -71,23 +72,25 @@ func TestUploadUserFilesNames(t *testing.T) {
 		for _, name := range append(accepted, "ok/inner.jpg", "win/inner.jpg") {
 			assert.FileExists(t, filepath.Join(dir, name))
 		}
-		for _, name := range append(rejected, "dir*/inner.jpg", "a:b/inner.jpg") {
+		for _, name := range append(rejected, "dir*/inner.jpg", "a:b/inner.jpg", "@eaDir/inner.jpg") {
 			assert.NoFileExists(t, filepath.Join(dir, name))
 		}
 		assert.NoDirExists(t, filepath.Join(dir, "dir*"))
+		assert.NoDirExists(t, filepath.Join(dir, "@eaDir"))
 	})
 }
 
-// TestPortableEntryName checks the names in archive paths.
-func TestPortableEntryName(t *testing.T) {
-	t.Run("Portable", func(t *testing.T) {
+// TestSupportedEntryName checks the names in archive paths.
+func TestSupportedEntryName(t *testing.T) {
+	t.Run("Supported", func(t *testing.T) {
 		for _, name := range []string{"a.jpg", "ok/inner.jpg", "03 - Março/#1 & Friends.jpg", "a/", "win\\inner.jpg"} {
-			assert.True(t, portableEntryName(name), name)
+			assert.True(t, supportedEntryName(name), name)
 		}
 	})
-	t.Run("NotPortable", func(t *testing.T) {
-		for _, name := range []string{"a|b.jpg", "dir*/inner.jpg", "ok/x:y.jpg", "~home/a.jpg", "caf\xe9/a.jpg", "win\\x:y.jpg"} {
-			assert.False(t, portableEntryName(name), name)
+	t.Run("NotSupported", func(t *testing.T) {
+		for _, name := range []string{"a|b.jpg", "dir*/inner.jpg", "ok/x:y.jpg", "~home/a.jpg", "caf\xe9/a.jpg", "win\\x:y.jpg",
+			"@eaDir/a.jpg", "ok/__x.jpg", "_.x.jpg", "win\\.hidden\\a.jpg"} {
+			assert.False(t, supportedEntryName(name), name)
 		}
 	})
 }

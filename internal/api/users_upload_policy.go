@@ -27,11 +27,11 @@ func uploadSidecarAllowed(name string) bool {
 	}
 }
 
-// portableEntryName reports whether every name in an archive path is portable, separated by slashes or
-// backslashes like the path it is extracted to.
-func portableEntryName(name string) bool {
+// supportedEntryName reports whether every name in an archive path is portable and not hidden, separated by
+// slashes or backslashes like the path it is extracted to.
+func supportedEntryName(name string) bool {
 	for _, part := range strings.Split(strings.ReplaceAll(name, "\\", "/"), "/") {
-		if !clean.PortableName(part) {
+		if !clean.PortableName(part) || fs.FileNameHidden(part) {
 			return false
 		}
 	}
@@ -41,7 +41,7 @@ func portableEntryName(name string) bool {
 
 // uploadArchiveEntryAllowed checks archive paths, names and file formats before extraction.
 func uploadArchiveEntryAllowed(name string, isDir bool) bool {
-	return !fs.HasReservedComponent(name) && portableEntryName(name) && (isDir || uploadSidecarAllowed(name))
+	return !fs.HasReservedComponent(name) && supportedEntryName(name) && (isDir || uploadSidecarAllowed(name))
 }
 
 // errUploadSymlink rejects staged files that contain a symbolic link.

@@ -1,6 +1,6 @@
 ## API Package Guide
 
-**Last Updated:** October 15, 2026
+**Last Updated:** October 16, 2026
 
 ### Overview
 
@@ -71,9 +71,9 @@ links are not supported: a batch that contains one is rejected and its staging f
 while other preparation errors keep the batch so that processing can be retried. Upload paths exclude the administrative names documented in [pkg/fs](../../pkg/fs/README.md),
 including `.github`, `.forgejo`, `.local`, and `_netrc`, at any depth, matched case-insensitively, along with
 the suffixes in `pkg/fs.ReservedPathSuffixes`. ZIP entry checks
-apply to files and directories before extraction; other hidden-directory handling is unchanged. Files and ZIP entries
-with a file or folder name that `clean.PortableName` rejects are also refused, with backslashes in entry names treated
-as separators; the other files of the upload are still accepted. Other import sources and WebDAV retain their format policies.
+apply to files and directories before extraction. Files and ZIP entries with a file or folder name that
+`clean.PortableName` rejects or that `fs.FileNameHidden` reports as hidden are also refused, with backslashes in entry
+names treated as separators; the other files of the upload are still accepted. Other import sources and WebDAV retain their format policies.
 
 Staged batches are eligible for cleanup once the batch directory and every entry in it
 have been unchanged for longer than `upload-maxage` (7 days by default, from one day to 100 years; `-1`
