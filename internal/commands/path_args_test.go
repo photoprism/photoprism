@@ -77,7 +77,7 @@ func TestImportCopyCommandRejectsOriginalsAsSourcePath(t *testing.T) {
 			output, err := RunWithTestContext(tt.Cmd, tt.Args)
 			assertExitCode(t, err, 2)
 
-			assert.Contains(t, err.Error(), "import folder is in the originals folder")
+			assert.Contains(t, err.Error(), "import and originals folders must not overlap")
 			assert.Contains(t, err.Error(), conf.OriginalsPath())
 			assert.NotContains(t, output, "media files from")
 		})

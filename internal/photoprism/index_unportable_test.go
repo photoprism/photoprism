@@ -130,7 +130,7 @@ func TestIndex_StartUnportableNames(t *testing.T) {
 	ind.Start(opt)
 	found, _ := ind.Start(opt)
 
-	// Skipped files are reported to a face regeneration as files the index is set to skip.
+	// Skipped files are reported to a face regeneration as files excluded from indexing.
 	for _, name := range []string{"a|b.jpg", "x:y.jpg", "dir*/inner.jpg", "pair.x|y.xmp", "stack.x|y.gif"} {
 		assert.True(t, opt.FaceRegeneration.Skipped(filepath.Join(root, name)), "%q", name)
 	}

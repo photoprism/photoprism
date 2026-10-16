@@ -49,7 +49,8 @@ func TestImport_CheckPath(t *testing.T) {
 			filepath.Join(originals, "missing"), filepath.Join(base, "link"), filepath.Join(base, "originals-link", "sub")} {
 			err := imp.CheckPath(dir)
 			assert.ErrorIs(t, err, ErrImportPath, dir)
-			assert.ErrorContains(t, err, originals, dir)
+			assert.ErrorContains(t, err, "import and originals folders must not overlap (import ", dir)
+			assert.ErrorContains(t, err, ", originals "+originals+")", dir)
 		}
 	})
 	t.Run("OriginalsLink", func(t *testing.T) {
@@ -58,6 +59,13 @@ func TestImport_CheckPath(t *testing.T) {
 		assert.ErrorIs(t, imp.CheckPath(filepath.Join(originals, "sub")), ErrImportPath)
 		assert.NoError(t, imp.CheckPath(filepath.Join(base, "originals2")))
 	})
+}
+
+func TestImportError(t *testing.T) {
+	err := importError{"destination folder x is not supported", ErrImportDest}
+	assert.EqualError(t, err, "destination folder x is not supported")
+	assert.ErrorIs(t, err, ErrImportDest)
+	assert.NotErrorIs(t, err, ErrImportPath)
 }
 
 func TestImport_linksToOriginals(t *testing.T) {

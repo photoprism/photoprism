@@ -153,7 +153,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			// Reject unsupported files and files with extensions that aren't allowed.
 			switch {
 			case !clean.PortableName(baseName):
-				log.Errorf("upload: rejected %s because it has an unsupported file name", clean.Log(baseName))
+				log.Errorf("upload: rejected %s because of unsupported characters", clean.Log(baseName))
 				continue
 			case fileType == fs.TypeUnknown:
 				log.Errorf("upload: rejected %s because it has an unsupported file extension", clean.Log(baseName))
@@ -222,7 +222,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 						log.Errorf("upload: rejected unzipped file because it has no file name")
 					} else if baseName[0] == '.' || baseName[0] == '@' {
 						logWarn("upload", os.Remove(destName))
-						log.Errorf("upload: rejected unzipped file %s because it has an unsupported file name", clean.Log(baseName))
+						log.Errorf("upload: rejected unzipped file %s because of unsupported characters", clean.Log(baseName))
 					} else if fileType == fs.TypeUnknown {
 						logWarn("upload", os.Remove(destName))
 						log.Errorf("upload: rejected unzipped file %s because it has an unsupported file extension", clean.Log(baseName))

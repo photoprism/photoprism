@@ -67,7 +67,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 	// Files whose names are not portable are not uploaded, and reported in one warning per run.
 	var unsupported skippedNames
 
-	defer unsupported.Warn("sync: skipped upload of %s to %s because their names contain characters that are not supported (%s)", "file", a.AccName)
+	defer unsupported.Warn("sync: skipped upload of %s to %s because of unsupported characters (%s)", "file", a.AccName)
 
 	// Files whose upload failed are set aside until the next sync cycle and reported in one warning per run.
 	var failed skippedNames

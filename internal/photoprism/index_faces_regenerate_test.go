@@ -945,7 +945,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		assert.True(t, strings.HasPrefix(unreachedErr.Error(), "faces: could not regenerate 1 marker in 1 file the index did not reach"))
 	})
 	t.Run("IgnoredFilesAreSkipped", func(t *testing.T) {
-		// Files the index is set to skip are reported rather than failing the run with advice that
+		// Files excluded from indexing are reported rather than failing the run with advice that
 		// cannot change them: one matched by a .ppignore pattern, and one in a hidden folder.
 		dir := filepath.Join(cfg.OriginalsPath(), "regenerate")
 		require.NoError(t, os.MkdirAll(filepath.Join(dir, ".hidden"), fs.ModeDir))
@@ -963,7 +963,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		_, skippedErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 
 		require.NoError(t, skippedErr)
-		assert.Contains(t, buffer.String(), "skipped 2 markers in 2 files the index is set to skip")
+		assert.Contains(t, buffer.String(), "skipped 2 markers in 2 files excluded from indexing")
 		assert.NotNil(t, entity.FindMarker(ignored.MarkerUID))
 		assert.NotNil(t, entity.FindMarker(hidden.MarkerUID))
 	})
@@ -991,7 +991,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		_, skippedErr := w.resetAndReindex(face.DetectorYuNet, ind, false, "regenerate")
 
 		require.NoError(t, skippedErr)
-		assert.Contains(t, buffer.String(), "skipped 1 marker in 1 file the index is set to skip")
+		assert.Contains(t, buffer.String(), "skipped 1 marker in 1 file excluded from indexing")
 	})
 	t.Run("FailedFilesAreSkipped", func(t *testing.T) {
 		// The index finds the file but cannot read it, so running again would not change the

@@ -76,7 +76,23 @@ var ErrImportBusy = errors.New("waiting for another task to complete")
 var ErrImportDest = errors.New("destination is not supported")
 
 // ErrImportPath is returned by Import.Run when the import folder is the originals folder or a folder inside it.
-var ErrImportPath = errors.New("import folder is in the originals folder")
+var ErrImportPath = errors.New("import and originals folders must not overlap")
+
+// importError is an error with its own message that matches a sentinel error such as ErrImportDest.
+type importError struct {
+	msg string
+	err error
+}
+
+// Error returns the error message.
+func (e importError) Error() string {
+	return e.msg
+}
+
+// Unwrap returns the sentinel error.
+func (e importError) Unwrap() error {
+	return e.err
+}
 
 // ErrImportIncomplete is returned by Import.Run when files could not be moved or copied to the originals.
 var ErrImportIncomplete = errors.New("some files could not be imported")
@@ -144,7 +160,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	// Files are moved or copied to originals, so the import folder must not be in it.
 	if err := imp.CheckPath(importPath); err != nil {
 		event.SystemError([]string{"import", "%s"}, err.Error())
-		event.Error("import: import folder is in the originals folder")
+		event.Error("import: import and originals folders must not overlap")
 		return done, ErrImportPath
 	}
 
@@ -524,7 +540,7 @@ func (imp *Import) CheckPath(importPath string) error {
 	}
 
 	if walked(dest, src) || walked(src, dest) {
-		return fmt.Errorf("%w: import folder %s, originals folder %s", ErrImportPath, clean.Log(importPath), clean.Log(originals))
+		return fmt.Errorf("%w (import %s, originals %s)", ErrImportPath, clean.Log(importPath), clean.Log(originals))
 	}
 
 	return nil
@@ -588,7 +604,7 @@ func resolvedPath(dir string) string {
 func (imp *Import) CheckDest(folder string) error {
 	// Checked as cleaned, since the destination is joined below the originals folder; ".." is refused as hidden.
 	if rel := path.Clean(clean.SlashPath(folder)); rel != "." && unsupportedPath(rel) != "" {
-		return fmt.Errorf("%w: folder %s, check the upload path of the user, the import-dest option, or --dest", ErrImportDest, clean.Log(folder))
+		return importError{fmt.Sprintf("destination folder %s is not supported", clean.Log(folder)), ErrImportDest}
 	}
 
 	// Literal characters of the pattern appear in every name, so one sample time shows them.
@@ -596,7 +612,7 @@ func (imp *Import) CheckDest(folder string) error {
 	sample := time.Date(2026, time.October, 15, 13, 4, 5, 0, time.UTC)
 
 	if unsupportedPath(path.Join(sample.Format(pathPattern), fs.CanonicalName(sample, "", namePattern)+".jpg")) != "" {
-		return fmt.Errorf("%w: Import.Dest pattern %s", ErrImportDest, clean.Log(imp.conf.Settings().Import.GetDest()))
+		return importError{fmt.Sprintf("destination pattern %s is not supported", clean.Log(imp.conf.Settings().Import.GetDest())), ErrImportDest}
 	}
 
 	return nil

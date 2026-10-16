@@ -294,7 +294,7 @@ func TestSync_refreshInvalidNames(t *testing.T) {
 	assert.ElementsMatch(t, []string{"/valid.jpg", "/03 - Março.jpg", "/sub/ok.jpg", "/@Family/x.jpg"}, names)
 	assert.Zero(t, countLogged(hook, logrus.ErrorLevel, ""))
 	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped 7 remote names in"))
-	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
+	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "with unsupported characters"))
 	// A folder whose name is not portable is skipped without listing its files.
 	assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "/dir*"))
 	assert.Zero(t, countLogged(hook, logrus.WarnLevel, "inner.jpg"))

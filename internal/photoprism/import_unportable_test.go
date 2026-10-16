@@ -325,6 +325,12 @@ func TestImport_CheckDest(t *testing.T) {
 			assert.ErrorContains(t, err, "folder", folder)
 		}
 	})
+	t.Run("Message", func(t *testing.T) {
+		cfg.Settings().Import.Dest = ""
+		assert.EqualError(t, imp.CheckDest("a:b"), "destination folder a:b is not supported")
+		cfg.Settings().Import.Dest = "2006/~01/20060102_150405_82F63B78.jpg"
+		assert.EqualError(t, imp.CheckDest(""), "destination pattern 2006/~01/20060102_150405_82F63B78.jpg is not supported")
+	})
 	t.Run("Pattern", func(t *testing.T) {
 		cfg.Settings().Import.Dest = "2006/01/2006-01-02T15:04:05_82F63B78.jpg"
 		assert.ErrorIs(t, imp.CheckDest(""), ErrImportDest)

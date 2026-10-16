@@ -82,7 +82,7 @@ func TestFlushUnportable(t *testing.T) {
 	flushUnportable("index")
 
 	assert.Equal(t, 1, count("index: skipped", "rename it to index it"))
-	assert.Equal(t, 2, count("index: skipped 2 more names", "characters that are not supported"))
+	assert.Equal(t, 2, count("index: skipped 2 more names", "with unsupported characters"))
 }
 
 func TestWarnHidden(t *testing.T) {

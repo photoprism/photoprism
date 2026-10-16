@@ -393,7 +393,7 @@ func TestSync_longRemoteNames(t *testing.T) {
 		assert.EqualValues(t, 2, puts.Load()-before)
 		assert.FileExists(t, filepath.Join(remote, "@upload-names", "@Family", "__x.jpg"))
 		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "skipped upload of 2 files to"))
-		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
+		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "because of unsupported characters"))
 
 		for _, file := range files[2:] {
 			var ignored entity.FileSync
@@ -406,7 +406,7 @@ func TestSync_longRemoteNames(t *testing.T) {
 		_, err = worker.upload(a)
 		require.NoError(t, err)
 		assert.EqualValues(t, 2, puts.Load()-before)
-		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
+		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "because of unsupported characters"))
 
 		// A renamed file keeps its record and is uploaded under its new name.
 		renamed := filepath.Join(conf.OriginalsPath(), "2019", "a-b.jpg")
@@ -417,7 +417,7 @@ func TestSync_longRemoteNames(t *testing.T) {
 		require.NoError(t, err)
 		assert.EqualValues(t, 3, puts.Load()-before)
 		assert.FileExists(t, filepath.Join(remote, "@upload-names", "2019", "a-b.jpg"))
-		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "characters that are not supported"))
+		assert.Equal(t, 1, countLogged(hook, logrus.WarnLevel, "because of unsupported characters"))
 	})
 }
 

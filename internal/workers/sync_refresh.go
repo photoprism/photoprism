@@ -33,7 +33,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	// portable, and files queued before are removed from the queue, since nothing is listed.
 	if a.SyncFilenames && !portableSyncName("/", a.SyncPath) {
 		if a.SyncDownload {
-			log.Warnf("sync: skipped downloads from %s because the name of its sync folder %s contains characters that are not supported",
+			log.Warnf("sync: skipped downloads from %s because sync folder %s has unsupported characters",
 				clean.Log(a.AccName), clean.Log(a.SyncPath))
 		}
 
@@ -91,7 +91,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	// Remote files and folders whose names are not portable are skipped with one warning as well.
 	var unsupported skippedNames
 
-	defer unsupported.Warn("sync: skipped %s in %s that contain characters that are not supported (%s)", "remote name", a.AccName)
+	defer unsupported.Warn("sync: skipped %s in %s with unsupported characters (%s)", "remote name", a.AccName)
 
 	nameRoot := syncNameRoot(a)
 	syncDir := path.Clean("/" + a.SyncPath)

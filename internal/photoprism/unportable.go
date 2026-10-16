@@ -119,7 +119,7 @@ func unsupportedPath(rel string) string {
 // portable, using a prefix such as "index" and an action such as "index it".
 func warnUnportable(prefix, root, rel, action string) {
 	if unportablePaths.First(prefix, root+":"+rel) {
-		log.Warnf("%s: skipped %s because its name contains characters that are not supported, rename it to %s",
+		log.Warnf("%s: skipped %s because of unsupported characters, rename it to %s",
 			prefix, clean.Log(rel), action)
 	}
 }
@@ -128,7 +128,7 @@ func warnUnportable(prefix, root, rel, action string) {
 // remembered paths reached their limit.
 func flushUnportable(prefix string) {
 	if n := unportablePaths.Flush(prefix); n > 0 {
-		log.Warnf("%s: skipped %s that contain characters that are not supported", prefix,
+		log.Warnf("%s: skipped %s with unsupported characters", prefix,
 			english.Plural(n, "more name", "more names"))
 	}
 }
