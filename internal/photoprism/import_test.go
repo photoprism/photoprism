@@ -343,6 +343,9 @@ func TestStoredFileOf(t *testing.T) {
 		t.Cleanup(func() { _ = os.RemoveAll(dir) })
 		require.NoError(t, fs.Copy(storedPath, filepath.Join(dir, "dup.jpg"), false))
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "dup.xmp"), []byte(testXmp), fs.ModeFile))
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		cleanupDestination(t, imp, filepath.Join(dir, "dup.jpg"), filepath.Join(dir, "dup.xmp"))
 
 		saved := storedHash
 		t.Cleanup(func() { storedHash = saved })
@@ -354,8 +357,6 @@ func TestStoredFileOf(t *testing.T) {
 			return saved(name)
 		}
 
-		convert := NewConvert(cfg)
-		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
 		hook := captureLog(t)
 
 		_, err := imp.Run(ImportOptionsMove(dir, ""))
@@ -363,6 +364,10 @@ func TestStoredFileOf(t *testing.T) {
 		assert.NoFileExists(t, filepath.Join(dir, "dup.jpg"))
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted dup.jpg (already exists)"))
 		assert.Equal(t, 1, reads)
+
+		// The moved sidecar is not indexed on its own.
+		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: added main"))
+		assert.Empty(t, loggedMessages(hook, logrus.WarnLevel))
 	})
 	t.Run("Snapshot", func(t *testing.T) {
 		if testing.Short() {
@@ -375,18 +380,25 @@ func TestStoredFileOf(t *testing.T) {
 		t.Cleanup(func() { _ = os.RemoveAll(dir) })
 		require.NoError(t, os.Link(storedPath, filepath.Join(dir, "snap.jpg")))
 		companion := filepath.Join(dir, "snap.png")
-		writeTestJpeg(t, companion, 315)
+		writeTestPng(t, companion, 315)
 		companionHash := fs.Hash(companion)
 		t.Cleanup(func() { cleanupImportedHash(t, companionHash) })
 
 		convert := NewConvert(cfg)
 		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		dest := cleanupDestination(t, imp, filepath.Join(dir, "snap.jpg"), companion)
 		hook := captureLog(t)
 
 		_, err := imp.Run(ImportOptionsMove(dir, ""))
 		require.NoError(t, err)
 		assert.FileExists(t, filepath.Join(dir, "snap.jpg"))
 		assert.NoFileExists(t, companion)
+
+		// The moved file is indexed, with the name it had in the import folder.
+		indexed, err := entity.FirstFileByHash(companionHash)
+		require.NoError(t, err)
+		assert.Equal(t, fs.RelName(dest, cfg.OriginalsPath()), indexed.FileName)
+		assert.Equal(t, "snap.png", indexed.OriginalName)
 
 		infos := loggedMessages(hook, logrus.InfoLevel)
 		assert.Zero(t, countPrefix(infos, "import: skipped snap.jpg"))
@@ -646,6 +658,21 @@ func stubMaybeSame(t *testing.T) {
 	saved := maybeSameFile
 	t.Cleanup(func() { maybeSameFile = saved })
 	maybeSameFile = func(a, b os.FileInfo) bool { return true }
+}
+
+// cleanupDestination removes the file that importing other with main places in originals, and returns its name.
+func cleanupDestination(t *testing.T, imp *Import, main, other string) string {
+	t.Helper()
+
+	mainFile, err := NewMediaFile(main)
+	require.NoError(t, err)
+	otherFile, err := NewMediaFile(other)
+	require.NoError(t, err)
+	dest, err := imp.DestinationFilename(mainFile, otherFile, "")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = os.Remove(dest) })
+
+	return dest
 }
 
 // cleanupImportedHash removes the picture a test imported with a file of the given hash, and its files in originals.

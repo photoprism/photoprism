@@ -5,6 +5,8 @@ import (
 	"image/color"
 	"image/gif"
 	"image/jpeg"
+	"image/png"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,6 +29,20 @@ import (
 func writeTestJpeg(t *testing.T, fileName string, seed int) {
 	t.Helper()
 
+	writeTestImage(t, fileName, seed, func(w io.Writer, img image.Image) error { return jpeg.Encode(w, img, nil) })
+}
+
+// writeTestPng writes a small PNG whose pixels depend on seed, like writeTestJpeg.
+func writeTestPng(t *testing.T, fileName string, seed int) {
+	t.Helper()
+
+	writeTestImage(t, fileName, seed, png.Encode)
+}
+
+// writeTestImage writes a small image whose pixels depend on seed with the given encoder.
+func writeTestImage(t *testing.T, fileName string, seed int, encode func(io.Writer, image.Image) error) {
+	t.Helper()
+
 	require.NoError(t, os.MkdirAll(filepath.Dir(fileName), fs.ModeDir))
 
 	img := image.NewRGBA(image.Rect(0, 0, 32, 32))
@@ -41,7 +57,7 @@ func writeTestJpeg(t *testing.T, fileName string, seed int) {
 
 	f, err := os.Create(fileName) //nolint:gosec // fileName is below the test originals folder.
 	require.NoError(t, err)
-	require.NoError(t, jpeg.Encode(f, img, nil))
+	require.NoError(t, encode(f, img))
 	require.NoError(t, f.Close())
 }
 

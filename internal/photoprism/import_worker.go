@@ -96,7 +96,8 @@ func storedFilesOf(related RelatedFiles) (results map[string]storedResult, origi
 // ImportWorker consumes ImportJob messages and performs the on-disk moves/copies plus indexing.
 func ImportWorker(jobs <-chan ImportJob) {
 	for job := range jobs {
-		var destMainFileName string
+		var destMainFileName, destOtherFileName string
+		var mainHeld bool
 
 		o := job.IndexOpt
 
@@ -214,9 +215,19 @@ func ImportWorker(jobs <-chan ImportJob) {
 					if destMainFileName == destFileName {
 						destMainFileName = ""
 					}
+
+					continue
+				}
+
+				if destOtherFileName == "" && !f.IsSidecar() && !related.Main.HasSameName(f) {
+					destOtherFileName = destFileName
 				}
 			} else {
 				log.Infof("import: %s", err)
+
+				if related.Main.HasSameName(f) {
+					mainHeld = true
+				}
 
 				// What follows is for a file the library already holds. The destination name is not
 				// evidence of that, so it is established once here and every step below reads it.
@@ -262,6 +273,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Infof("import: kept %s, as no stored file holds its contents", clean.Log(relFileName))
 				}
 			}
+		}
+
+		// The first other file placed in originals is indexed with its related files if the library already holds
+		// the main file, e.g. a new RAW file next to a hard link to an original.
+		if mainHeld && destMainFileName == "" {
+			destMainFileName = destOtherFileName
 		}
 
 		if destMainFileName != "" {
@@ -374,7 +391,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// Index main MediaFile.
 				main.SetRelatedMain(main)
-				res := ind.UserMediaFile(main, o, originalName, "", opt.UID)
+				mainOriginalName := originalName
+
+				if mainHeld {
+					mainOriginalName = relatedOriginalNames[main.FileName()]
+				}
+
+				res := ind.UserMediaFile(main, o, mainOriginalName, "", opt.UID)
 
 				// Log result.
 				log.Infof("import: %s main %s file %s", res, main.FileType(), clean.Log(main.RootRelName()))
