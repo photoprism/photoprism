@@ -2,6 +2,7 @@ package oidc
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 
@@ -56,8 +57,9 @@ func verifiedEmailUsername(userInfo *oidc.UserInfo) string {
 
 // username returns the username for the preferred claim: with the email claim, the verified address, else the
 // first name claim that yields a handle, and with the other claims the handle of the verified address as the
-// last resort. Handles are derived with runs of dots collapsed, and names that are not portable usernames are
-// skipped; if ascii is true, also values with characters other than ASCII.
+// last resort. Handles are derived with runs of dots collapsed, those of names and nicknames without punctuation
+// at their ends, and names that are not portable usernames are skipped; if ascii is true, also values with
+// characters other than ASCII.
 func username(userInfo *oidc.UserInfo, preferredClaim string, ascii bool) string {
 	usable := func(value string) bool {
 		return !ascii || authn.IsASCIIUsername(value)
@@ -75,9 +77,23 @@ func username(userInfo *oidc.UserInfo, preferredClaim string, ascii bool) string
 	}
 
 	for _, claim := range claimOrder(preferredClaim) {
-		if value := claimValue(userInfo, claim); !usable(value) {
+		value := claimValue(userInfo, claim)
+
+		if !usable(value) {
 			continue
-		} else if name := handle(value); name != "" && authn.PortableUsername(name) {
+		}
+
+		// Names and nicknames are display text, so punctuation at their edges is not part of the username, also
+		// where the handle maps it to a dot.
+		var name string
+
+		if claim == authn.OidcClaimName || claim == authn.OidcClaimNickname {
+			name = trimText(handle(trimText(value)))
+		} else {
+			name = handle(value)
+		}
+
+		if name != "" && authn.PortableUsername(name) {
 			return name
 		}
 	}
@@ -101,4 +117,11 @@ func handle(value string) string {
 	}
 
 	return name
+}
+
+// trimText removes punctuation, symbols, and whitespace from both ends of a name derived from display text.
+func trimText(name string) string {
+	return strings.TrimFunc(name, func(r rune) bool {
+		return unicode.IsPunct(r) || unicode.IsSymbol(r) || unicode.IsSpace(r)
+	})
 }

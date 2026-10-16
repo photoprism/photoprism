@@ -37,7 +37,8 @@ func TestUsername(t *testing.T) {
 	t.Run("CollapsedDots", func(t *testing.T) {
 		// Display names whose handles would have ".." get one dot instead.
 		for name, expected := range map[string]string{"John F. Kennedy": "john.f.kennedy", "Smith, John": "smith.john",
-			"Dr. Who": "dr.who", "Jane (Doe)": "jane.doe.", "Jane  Smith": "jane.smith"} {
+			"Dr. Who": "dr.who", "Jane (Doe)": "jane.doe", "Jane  Smith": "jane.smith", "...Bob!": "bob", " _Ann_ ": "ann",
+			"Mr. Smith Jr.": "mr.smith.jr", "Bob .\x01": "bob"} {
 			info := &oidc.UserInfo{}
 			info.Name = name
 			info.Email = "jane@doe.com"
@@ -45,6 +46,18 @@ func TestUsername(t *testing.T) {
 			assert.Equal(t, expected, Username(info, authn.OidcClaimName), name)
 			assert.True(t, authn.PortableUsername(expected), expected)
 		}
+	})
+	t.Run("PreferredUsernameNotTrimmed", func(t *testing.T) {
+		// A preferred username is not display text, so its dots are kept.
+		info := &oidc.UserInfo{}
+		info.PreferredUsername = "bob."
+		info.Name = "Bob"
+		assert.Equal(t, "bob.", Username(info, authn.OidcClaimPreferredUsername))
+	})
+	t.Run("NicknameTrimmed", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Nickname = "-Jens-"
+		assert.Equal(t, "jens", Username(info, authn.OidcClaimNickname))
 	})
 	t.Run("NotPortableEmailHandle", func(t *testing.T) {
 		info := &oidc.UserInfo{}
@@ -388,5 +401,17 @@ func TestHandle(t *testing.T) {
 		assert.Equal(t, "jane.doe", handle("Jane Doe"))
 		assert.Equal(t, "", handle(""))
 		assert.Equal(t, "", handle(".hidden"))
+	})
+}
+
+func TestTrimText(t *testing.T) {
+	t.Run("Trimmed", func(t *testing.T) {
+		assert.Equal(t, "jane.doe", trimText("jane.doe."))
+		assert.Equal(t, "bob", trimText("..._bob!^"))
+		assert.Equal(t, "", trimText("..."))
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		assert.Equal(t, "jane.doe", trimText("jane.doe"))
+		assert.Equal(t, "a_b", trimText("a_b"))
 	})
 }
