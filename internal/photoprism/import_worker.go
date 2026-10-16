@@ -249,12 +249,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			checked := results[f.FileName()].match
 			destFileName, err := "", error(nil)
 
-			switch {
-			case mainHeld && refusedNew(f):
+			if mainHeld && refusedNew(f) {
 				log.Warnf("import: skipped %s %s", clean.Log(relFileName), mainTypeRefused(f, allowExt))
-				continue
-			case keepSidecars && movedSidecar(f):
-				log.Infof("import: kept %s, as its main file is already indexed", clean.Log(relFileName))
 				continue
 			}
 
@@ -265,6 +261,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 				destFileName, err = mainDest, mainDestErr
 			default:
 				destFileName, err = imp.DestinationFilename(related.Main, f, opt.DestFolder)
+			}
+
+			// A sidecar that would get a free name stays too, while one whose content is there is a duplicate.
+			if err == nil && keepSidecars && movedSidecar(f) {
+				log.Infof("import: kept %s, as its main file is already indexed", clean.Log(relFileName))
+				continue
 			}
 
 			if destFileName != "" && err == nil {

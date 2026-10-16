@@ -571,6 +571,37 @@ func TestStoredFileOf(t *testing.T) {
 		assert.FileExists(t, dup)
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept rewritten.jpg, as it has changed since it was compared"))
 	})
+	t.Run("SidecarReimport", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A sidecar imported again with its duplicate is removed too, if the same content is at its destination.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-again-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		main := filepath.Join(dir, "again.jpg")
+		require.NoError(t, fs.Copy(storedPath, main, false))
+		xmp := filepath.Join(dir, "again.xmp")
+		require.NoError(t, os.WriteFile(xmp, []byte(strings.Replace(testXmp, "Pair", filepath.Base(dir), 1)), fs.ModeFile))
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		storedXmp := cleanupDestination(t, imp, main, xmp)
+		require.NoError(t, fs.Copy(xmp, storedXmp, false))
+		row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals,
+			FileName: fs.RelName(storedXmp, cfg.OriginalsPath()), FileHash: fs.Hash(xmp)}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.NoFileExists(t, main)
+		assert.NoFileExists(t, xmp)
+		assert.FileExists(t, storedXmp)
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted again.xmp (already exists)"))
+	})
 	t.Run("SidecarAlbums", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")
