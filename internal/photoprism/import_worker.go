@@ -176,7 +176,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// What follows is for a file the library already holds. The destination name is not
 				// evidence of that, so it is established once here and every step below reads it.
-				stored := StoredCopyOf(f)
+				stored, same := storedFileOf(f)
+
+				if same {
+					stored = nil
+				}
 
 				// Try to add duplicates to selected album(s) as well, see #991.
 				if stored != nil {
@@ -199,6 +203,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 					} else {
 						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
+				} else if opt.RemoveExistingFiles && same {
+					log.Infof("import: kept %s, as it is the same file as the original", clean.Log(relFileName))
 				} else if opt.RemoveExistingFiles {
 					// Saying nothing here reads as a failure to clean up, since the line above
 					// reports a match. The source is kept because the library does not demonstrably

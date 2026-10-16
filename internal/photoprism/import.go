@@ -480,37 +480,52 @@ func (imp *Import) Cancel() {
 // answer comes from the file rather than from the row, since a caller removes its source on the
 // strength of it.
 func StoredCopyOf(mediaFile *MediaFile) *entity.File {
+	if stored, same := storedFileOf(mediaFile); !same {
+		return stored
+	}
+
+	return nil
+}
+
+// storedFileOf returns the indexed file that holds the same content, if there is one, and whether it is the file
+// itself, e.g. a link or another name for it, which is no copy of it.
+func storedFileOf(mediaFile *MediaFile) (stored *entity.File, same bool) {
 	if mediaFile == nil {
-		return nil
+		return nil, false
 	}
 
 	fileHash := mediaFile.Hash()
 
 	if fileHash == "" {
-		return nil
+		return nil, false
 	}
 
-	stored, err := entity.FirstFileByHash(fileHash)
+	found, err := entity.FirstFileByHash(fileHash)
 
 	if err != nil {
-		return nil
+		return nil, false
 	}
 
 	// A name that holds nothing hashes to the empty string, so this covers an absent file too.
-	storedName := FileName(stored.FileRoot, stored.FileName)
+	storedName := FileName(found.FileRoot, found.FileName)
 
 	if fs.Hash(storedName) != fileHash {
-		return nil
+		return nil, false
 	}
 
-	// The file itself, e.g. reached through a link, is not a copy of it.
-	if src, srcErr := os.Stat(mediaFile.FileName()); srcErr != nil {
-		return nil
-	} else if dest, destErr := os.Stat(storedName); destErr != nil || os.SameFile(src, dest) {
-		return nil
+	src, srcErr := os.Stat(mediaFile.FileName())
+
+	if srcErr != nil {
+		return nil, false
 	}
 
-	return &stored
+	dest, destErr := os.Stat(storedName)
+
+	if destErr != nil {
+		return nil, false
+	}
+
+	return &found, os.SameFile(src, dest)
 }
 
 // CheckPath returns ErrImportPath if the import folder is the originals folder, a folder inside it, or a folder

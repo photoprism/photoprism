@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestNewImport(t *testing.T) {
@@ -132,6 +134,70 @@ func TestStoredCopyOf(t *testing.T) {
 			require.NoError(t, sameErr)
 			assert.Nil(t, StoredCopyOf(same), name)
 		}
+	})
+}
+
+func TestStoredFileOf(t *testing.T) {
+	cfg := config.TestConfig()
+	photo := entity.PhotoFixtures.Get("Photo01")
+	stored := "zz-stored-same/" + rnd.Base36(8) + ".jpg"
+	storedPath := filepath.Join(cfg.OriginalsPath(), stored)
+	writeTestJpeg(t, storedPath, 310)
+
+	file := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: stored,
+		FileHash: fs.Hash(storedPath)}
+	require.NoError(t, file.Save())
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Delete(file).Error
+		_ = os.RemoveAll(filepath.Dir(storedPath))
+	})
+
+	// A hard link outside originals, on the same file system, is the same file.
+	importDir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-same-"+rnd.Base36(8))
+	require.NoError(t, fs.MkdirAll(importDir))
+	t.Cleanup(func() { _ = os.RemoveAll(importDir) })
+	linked := filepath.Join(importDir, "linked.jpg")
+	require.NoError(t, os.Link(storedPath, linked))
+	copied := filepath.Join(importDir, "copied.jpg")
+	require.NoError(t, fs.Copy(storedPath, copied, false))
+
+	t.Run("Copy", func(t *testing.T) {
+		mf, err := NewMediaFile(copied)
+		require.NoError(t, err)
+		found, same := storedFileOf(mf)
+		require.NotNil(t, found)
+		assert.Equal(t, stored, found.FileName)
+		assert.False(t, same)
+		assert.NotNil(t, StoredCopyOf(mf))
+	})
+	t.Run("HardLink", func(t *testing.T) {
+		mf, err := NewMediaFile(linked)
+		require.NoError(t, err)
+		found, same := storedFileOf(mf)
+		require.NotNil(t, found)
+		assert.True(t, same)
+		assert.Nil(t, StoredCopyOf(mf))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		found, same := storedFileOf(nil)
+		assert.Nil(t, found)
+		assert.False(t, same)
+	})
+	t.Run("MoveImport", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		require.NoError(t, os.Remove(copied))
+		hook := captureLog(t)
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+
+		_, err := imp.Run(ImportOptionsMove(importDir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, linked)
+		assert.FileExists(t, storedPath)
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept linked.jpg, as it is the same file as the original"))
 	})
 }
 
