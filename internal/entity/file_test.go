@@ -152,6 +152,34 @@ func TestFirstFileByHash(t *testing.T) {
 	})
 }
 
+func TestFilesByName(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		files, err := FilesByName(RootOriginals, "")
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		files, err := FilesByName(RootOriginals, "zz-name/missing.jpg")
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+	t.Run("Found", func(t *testing.T) {
+		row := &File{PhotoID: 1000000, FileRoot: RootOriginals, FileName: "zz-name/found.xmp", FileHash: "zz-name"}
+		require.NoError(t, row.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(row).Error })
+		require.NoError(t, row.Delete(false))
+
+		files, err := FilesByName(RootOriginals, "zz-name/found.xmp")
+		require.NoError(t, err)
+		require.Len(t, files, 1)
+		assert.Equal(t, row.ID, files[0].ID)
+
+		files, err = FilesByName(RootSidecar, "zz-name/found.xmp")
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+}
+
 func TestFilesByHash(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		unhashed := &File{PhotoID: 1000000, FileRoot: RootOriginals, FileName: "zz-hash/unhashed.jpg"}

@@ -635,12 +635,25 @@ func TestStoredFileOf(t *testing.T) {
 		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
 		hook := captureLog(t)
 
+		// The sidecar is compared with the file under its destination name only, not with all files of its content.
+		xmpHash := fs.Hash(xmp)
+		savedFiles := filesByHash
+		t.Cleanup(func() { filesByHash = savedFiles })
+		xmpLookups := 0
+		filesByHash = func(hash string) (entity.Files, error) {
+			if hash == xmpHash {
+				xmpLookups++
+			}
+			return savedFiles(hash)
+		}
+
 		_, err := imp.Run(ImportOptionsMove(dir, ""))
 		require.NoError(t, err)
 		assert.NoFileExists(t, main)
 		assert.NoFileExists(t, xmp)
 		assert.FileExists(t, storedXmp)
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted again.xmp (already exists)"))
+		assert.Zero(t, xmpLookups)
 	})
 	t.Run("SidecarAlbums", func(t *testing.T) {
 		if testing.Short() {
@@ -1253,6 +1266,42 @@ func TestMainTypeRefused(t *testing.T) {
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Equal(t, "due to unknown or unsupported extension", mainTypeRefused(mf(unknown), fs.NewExtList("")))
+	})
+}
+
+func TestStoredFileAt(t *testing.T) {
+	cfg := config.TestConfig()
+	photo := entity.PhotoFixtures.Get("Photo01")
+	dir := "zz-stored-at-" + rnd.Base36(8)
+	stored := filepath.Join(cfg.OriginalsPath(), dir, "a.jpg")
+	writeTestJpeg(t, stored, 338)
+	t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(stored)) })
+	row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: dir + "/a.jpg",
+		FileHash: fs.Hash(stored)}
+	require.NoError(t, row.Save())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+
+	copied := filepath.Join(t.TempDir(), "a.jpg")
+	require.NoError(t, fs.Copy(stored, copied, false))
+	mf, err := NewMediaFile(copied)
+	require.NoError(t, err)
+
+	t.Run("Copy", func(t *testing.T) {
+		result := storedFileAt(mf, entity.RootOriginals, dir+"/a.jpg")
+		assert.Equal(t, storedCopy, result.match)
+		require.NotNil(t, result.file)
+		assert.Equal(t, row.ID, result.file.ID)
+		assert.False(t, result.queried)
+	})
+	t.Run("Same", func(t *testing.T) {
+		same, sameErr := NewMediaFile(stored)
+		require.NoError(t, sameErr)
+		assert.Equal(t, storedSame, storedFileAt(same, entity.RootOriginals, dir+"/a.jpg").match)
+	})
+	t.Run("NotIndexed", func(t *testing.T) {
+		assert.Equal(t, storedNone, storedFileAt(mf, entity.RootOriginals, dir+"/b.jpg").match)
+		assert.Equal(t, storedNone, storedFileAt(mf, entity.RootSidecar, dir+"/a.jpg").match)
+		assert.Equal(t, storedNone, storedFileAt(nil, entity.RootOriginals, dir+"/a.jpg").match)
 	})
 }
 

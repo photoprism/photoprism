@@ -525,6 +525,22 @@ func storedFileOf(mediaFile *MediaFile) storedResult {
 	return result
 }
 
+// storedFileAt reports how a file relates to the indexed file with the given root and name, e.g. one that a
+// destination name holds with the same content, without looking up all files with its hash.
+func storedFileAt(mediaFile *MediaFile, fileRoot, fileName string) storedResult {
+	if mediaFile == nil || mediaFile.Hash() == "" {
+		return storedResult{}
+	}
+
+	files, err := filesByName(fileRoot, fileName)
+
+	if err != nil {
+		return storedResult{}
+	}
+
+	return storedMatchOf(mediaFile, mediaFile.Hash(), files)
+}
+
 // storedMatchOf reports how a file with the given hash relates to the indexed files with that hash, see storedFileOf.
 func storedMatchOf(mediaFile *MediaFile, fileHash string, files entity.Files) storedResult {
 	src, srcErr := os.Stat(mediaFile.FileName())
@@ -599,6 +615,9 @@ func storedMatchOf(mediaFile *MediaFile, fileHash string, files entity.Files) st
 
 // filesByHash returns the indexed files with a hash, and can be replaced in tests.
 var filesByHash = entity.FilesByHash
+
+// filesByName returns the indexed files with a root and name, and can be replaced in tests.
+var filesByName = entity.FilesByName
 
 // firstFileByHash returns the first indexed file with a hash, and can be replaced in tests.
 var firstFileByHash = entity.FirstFileByHash

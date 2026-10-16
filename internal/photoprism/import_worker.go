@@ -343,7 +343,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// evidence of that, so it is established once here and every step below reads it.
 				result, found := results[f.FileName()]
 
-				if !found {
+				// A sidecar is compared with the file under its destination name, which holds its content, since
+				// many sidecars may have the same content.
+				switch {
+				case found:
+				case f.IsSidecar() && destFileName != "":
+					result = storedFileAt(f, entity.RootOriginals, fs.RelName(destFileName, imp.originalsPath()))
+				default:
 					result = storedFileOf(f)
 				}
 

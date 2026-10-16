@@ -238,6 +238,17 @@ func FilesByHash(fileHash string) (files Files, err error) {
 	return files, err
 }
 
+// FilesByName returns the files with the given root and name, including soft-deleted rows.
+func FilesByName(fileRoot, fileName string) (files Files, err error) {
+	if fileName == "" {
+		return files, nil
+	}
+
+	err = Db().Unscoped().Where("file_root = ? AND file_name = ?", fileRoot, fileName).Order("id").Find(&files).Error
+
+	return files, err
+}
+
 // PrimaryFile finds the photo's primary file (primary flag set) regardless of soft-delete state.
 func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}
