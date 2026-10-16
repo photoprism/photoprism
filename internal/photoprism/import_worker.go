@@ -160,8 +160,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 		for _, f := range insta360ImportOrder(related) {
 			relFileName := f.RelName(src)
+			checked := results[f.FileName()].match
+			destFileName, err := "", error(nil)
 
-			if destFileName, err := imp.DestinationFilename(related.Main, f, opt.DestFolder); err == nil {
+			// A file that is or may be an original stays where it is, even if the name of another row is free.
+			if checked != storedSame && checked != storedMaybeSame {
+				destFileName, err = imp.DestinationFilename(related.Main, f, opt.DestFolder)
+			}
+
+			if destFileName != "" && err == nil {
 				destDir := filepath.Dir(destFileName)
 
 				// Remember the original filenames of related files, so they can later be indexed and searched.
@@ -223,7 +230,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 					destOtherFileName = destFileName
 				}
 			} else {
-				log.Infof("import: %s", err)
+				if err != nil {
+					log.Infof("import: %s", err)
+				}
 
 				if related.Main.HasSameName(f) {
 					mainHeld = true

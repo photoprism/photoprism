@@ -492,6 +492,77 @@ func TestStoredFileOf(t *testing.T) {
 		assert.Zero(t, countPrefix(infos, "import: skipped snap.jpg"))
 		assert.Equal(t, 1, countPrefix(infos, "import: kept snap.jpg, as it is the same file as the original"))
 	})
+	t.Run("LinkedMain", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A main file that is an original through a later row stays in place, although the name of the first row is free.
+		name := "zz-linked-main-" + rnd.Base36(8)
+		target := filepath.Join(filepath.Dir(cfg.OriginalsPath()), name)
+		require.NoError(t, fs.MkdirAll(target))
+		require.NoError(t, os.Symlink(target, filepath.Join(cfg.OriginalsPath(), name)))
+		t.Cleanup(func() { _ = os.Remove(filepath.Join(cfg.OriginalsPath(), name)); _ = os.RemoveAll(target) })
+		main := filepath.Join(target, "c.jpg")
+		writeTestJpeg(t, main, 319)
+		companion := filepath.Join(target, "c.png")
+		writeTestPng(t, companion, 320)
+		companionHash := fs.Hash(companion)
+		t.Cleanup(func() { cleanupImportedHash(t, companionHash) })
+
+		absentRel := name + "-absent/a.jpg"
+		t.Cleanup(func() { _ = os.RemoveAll(filepath.Join(cfg.OriginalsPath(), filepath.Dir(absentRel))) })
+
+		for _, rel := range []string{absentRel, name + "/c.jpg"} {
+			row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: rel, FileHash: fs.Hash(main)}
+			require.NoError(t, row.Save())
+			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+		}
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		cleanupDestination(t, imp, main, companion)
+		hook := captureLog(t)
+
+		_, err := imp.Run(ImportOptionsMove(target, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, main)
+		assert.NoFileExists(t, filepath.Join(cfg.OriginalsPath(), absentRel))
+		assert.NoFileExists(t, companion)
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept c.jpg, as it is the same file as the original"))
+
+		// The same applies to a main file that may be an original.
+		stubMaybeSame(t)
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), name+"-maybe")
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		main = filepath.Join(dir, "d.jpg")
+		writeTestJpeg(t, main, 321)
+		companion = filepath.Join(dir, "d.png")
+		writeTestPng(t, companion, 322)
+		maybeHash := fs.Hash(companion)
+		t.Cleanup(func() { cleanupImportedHash(t, maybeHash) })
+		maybeRel := filepath.Join(filepath.Dir(stored), "d.jpg")
+		require.NoError(t, fs.Copy(main, filepath.Join(cfg.OriginalsPath(), maybeRel), false))
+
+		absentRel = name + "-absent/b.jpg"
+
+		for _, rel := range []string{absentRel, maybeRel} {
+			row := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: rel, FileHash: fs.Hash(main)}
+			require.NoError(t, row.Save())
+			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(row).Error })
+		}
+
+		cleanupDestination(t, imp, main, companion)
+		hook = captureLog(t)
+
+		_, err = imp.Run(ImportOptionsMove(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, main)
+		assert.NoFileExists(t, filepath.Join(cfg.OriginalsPath(), absentRel))
+		assert.NoFileExists(t, companion)
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: kept d.jpg, as it may be the same file as the original"))
+	})
 	t.Run("MoveImport", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")
