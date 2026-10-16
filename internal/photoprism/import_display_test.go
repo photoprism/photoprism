@@ -254,18 +254,17 @@ func TestMediaFile_CopyInterrupted(t *testing.T) {
 		copyFileContent = saved
 		dest := filepath.Join(dir, "done", "dest.jpg")
 		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
-		require.NoError(t, os.Chmod(filepath.Dir(dest), 0o755))
 
 		require.NoError(t, m.Copy(dest, false))
 		assert.Equal(t, srcHash, fs.Hash(dest))
 		assert.ErrorContains(t, m.Copy(dest, false), "already exists")
 
 		// A forced copy replaces the file and keeps its permissions.
-		require.NoError(t, os.Chmod(dest, 0o640))
+		require.NoError(t, os.Chmod(dest, 0o600))
 		require.NoError(t, m.Copy(dest, true))
 		info, statErr := os.Stat(dest)
 		require.NoError(t, statErr)
-		assert.Equal(t, os.FileMode(0o640), info.Mode().Perm())
+		assert.Equal(t, os.FileMode(0o600), info.Mode().Perm())
 
 		entries, readErr := os.ReadDir(filepath.Dir(dest))
 		require.NoError(t, readErr)

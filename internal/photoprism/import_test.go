@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"io"
 	iofs "io/fs"
 	"os"
 	"path/filepath"
@@ -221,7 +222,7 @@ func TestStoredFileOf(t *testing.T) {
 		require.Equal(t, row.FileHash, mf.Hash())
 
 		for _, f := range []string{src, name} {
-			appendTo, openErr := os.OpenFile(f, os.O_WRONLY|os.O_APPEND, 0)
+			appendTo, openErr := os.OpenFile(f, os.O_WRONLY|os.O_APPEND, 0) //nolint:gosec // the file is below a test folder
 			require.NoError(t, openErr)
 			_, err = appendTo.WriteString("new content")
 			require.NoError(t, err)
@@ -248,7 +249,7 @@ func TestStoredFileOf(t *testing.T) {
 		mf, err := NewMediaFile(link)
 		require.NoError(t, err)
 		require.Equal(t, row.FileHash, mf.Hash())
-		f, err := os.OpenFile(link, os.O_WRONLY|os.O_APPEND, 0)
+		f, err := os.OpenFile(link, os.O_WRONLY|os.O_APPEND, 0) //nolint:gosec // the file is below a test folder
 		require.NoError(t, err)
 		_, err = f.WriteString("new content")
 		require.NoError(t, err)
@@ -628,7 +629,7 @@ func TestStoredFileOf(t *testing.T) {
 		storedHash = func(name string) string {
 			h := saved(name)
 			if name == storedPath {
-				f, err := os.OpenFile(dup, os.O_WRONLY|os.O_APPEND, 0)
+				f, err := os.OpenFile(dup, os.O_WRONLY|os.O_APPEND, 0) //nolint:gosec // the file is below a test folder
 				require.NoError(t, err)
 				_, err = f.WriteString("new content")
 				require.NoError(t, err)
@@ -930,6 +931,40 @@ func TestStoredFileOf(t *testing.T) {
 		assert.FileExists(t, src)
 		assert.FileExists(t, preview)
 		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: deleted download.jpg"))
+	})
+	t.Run("ContentPlacedMeanwhile", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
+		// A copy whose destination gets the same content meanwhile, e.g. from another worker, logs no error.
+		dir := filepath.Join(filepath.Dir(cfg.OriginalsPath()), "import-meanwhile-"+rnd.Base36(8))
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		src := filepath.Join(dir, "meanwhile.jpg")
+		writeTestJpeg(t, src, 347)
+		srcHash := fs.Hash(src)
+		t.Cleanup(func() { cleanupImportedHash(t, srcHash) })
+
+		convert := NewConvert(cfg)
+		imp := NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert)
+		dest := cleanupDestination(t, imp, src, src)
+
+		saved := copyFileContent
+		t.Cleanup(func() { copyFileContent = saved })
+		copyFileContent = func(dst io.Writer, r io.Reader) (int64, error) {
+			require.NoError(t, fs.Copy(src, dest, false))
+			return saved(dst, r)
+		}
+
+		hook := captureLog(t)
+		_, err := imp.Run(ImportOptionsCopy(dir, ""))
+		require.NoError(t, err)
+		assert.FileExists(t, src)
+		assert.Equal(t, srcHash, fs.Hash(dest))
+		assert.Empty(t, loggedMessages(hook, logrus.ErrorLevel))
+		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.WarnLevel), "import: "+fs.RelName(dest, cfg.OriginalsPath())+" already holds the content"))
+		assert.Zero(t, countPrefix(loggedMessages(hook, logrus.WarnLevel), "import: could not copy file"))
 	})
 	t.Run("LinkedDestination", func(t *testing.T) {
 		if testing.Short() {
@@ -1817,6 +1852,7 @@ func TestImport_HashLookups(t *testing.T) {
 		}
 
 		assert.Equal(t, 1, countPrefix(loggedMessages(hook, logrus.InfoLevel), "import: added main jpg file"))
+		assert.Empty(t, loggedMessages(hook, logrus.ErrorLevel))
 
 		return remaining
 	}

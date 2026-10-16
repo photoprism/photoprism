@@ -312,13 +312,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 				var importErr error
 
 				if opt.Move {
-					if importErr = f.Move(destFileName, false); importErr != nil {
-						log.Error(clean.Error(importErr))
-						log.Warnf("import: could not move file to %s", logRelName)
-					}
-				} else if importErr = f.Copy(destFileName, false); importErr != nil {
-					log.Error(clean.Error(importErr))
-					log.Warnf("import: could not copy file to %s", logRelName)
+					importErr = f.Move(destFileName, false)
+				} else {
+					importErr = f.Copy(destFileName, false)
 				}
 
 				// A file whose content did not reach the originals is counted and, if it is the main
@@ -328,6 +324,14 @@ func ImportWorker(jobs <-chan ImportJob) {
 				case importedContent(destFileName, srcHash):
 					log.Warnf("import: %s already holds the content, the staged file remains", logRelName)
 				default:
+					log.Error(clean.Error(importErr))
+
+					if opt.Move {
+						log.Warnf("import: could not move file to %s", logRelName)
+					} else {
+						log.Warnf("import: could not copy file to %s", logRelName)
+					}
+
 					job.Failures.add(importErr)
 
 					if destMainFileName == destFileName {
