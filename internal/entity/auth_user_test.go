@@ -1280,6 +1280,40 @@ func TestAddUser(t *testing.T) {
 		assert.Equal(t, int64(1), settings)
 		assert.Equal(t, int64(1), details)
 	})
+	t.Run("AuthID", func(t *testing.T) {
+		const authId = "adduser-subject-5f3a"
+
+		t.Cleanup(func() {
+			deleteTestUser(t, FindUserByName("adduser-holder"))
+			deleteTestUser(t, FindUserByName("adduser-taker"))
+		})
+
+		require.NoError(t, AddUser(form.User{UserName: "adduser-holder", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, Password: "adduser-password"}))
+
+		holder := func() *User {
+			u := FindUserByName("adduser-holder")
+			require.NotNil(t, u)
+			return u
+		}
+
+		// A refused add leaves the account that holds the auth ID unchanged.
+		err := AddUser(form.User{UserName: "adduser-tak\u00e9r", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, Password: "adduser-password"})
+		require.ErrorIs(t, err, authn.ErrNotASCII)
+		assert.Equal(t, authId, holder().AuthID)
+		assert.Equal(t, authn.ProviderOIDC.String(), holder().AuthProvider)
+
+		// An added account takes the auth ID over.
+		require.NoError(t, AddUser(form.User{UserName: "adduser-taker", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, Password: "adduser-password"}))
+		assert.Equal(t, "", holder().AuthID)
+		assert.Equal(t, authn.ProviderNone.String(), holder().AuthProvider)
+
+		taker := FindUserByName("adduser-taker")
+		require.NotNil(t, taker)
+		assert.Equal(t, authId, taker.AuthID)
+	})
 	t.Run("NotASCII", func(t *testing.T) {
 		for _, name := range []string{"adduser-josé", "\u212Aate-adduser", "adduser-jo\u200bse"} {
 			err := AddUser(form.User{UserName: name, UserRole: acl.RoleAdmin.String(), AuthProvider: "none"})

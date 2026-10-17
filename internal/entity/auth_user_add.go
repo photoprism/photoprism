@@ -13,10 +13,13 @@ import (
 
 // AddUser creates a new user record and sets the password in a single transaction.
 func AddUser(frm form.User) error {
+	// The auth ID is set after validation, since setting it clears the same ID on other accounts.
+	authForm := frm
+	frm.AuthID = ""
 	user := NewUser().SetFormValues(frm)
 
 	// Check auth id and password.
-	if authId := clean.Auth(frm.AuthID); frm.Provider().Is(authn.ProviderOIDC) && len(authId) < 4 {
+	if authId := clean.Auth(authForm.AuthID); frm.Provider().Is(authn.ProviderOIDC) && len(authId) < 4 {
 		return authn.ErrAuthIDRequired
 	} else if len(frm.Password) > txt.ClipPassword {
 		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
@@ -30,6 +33,8 @@ func AddUser(frm form.User) error {
 	} else if err := user.Validate(); err != nil {
 		return err
 	}
+
+	user.SetAuthID(authForm.AuthID, authForm.AuthIssuer)
 
 	err := Db().Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(user).Error; err != nil {
