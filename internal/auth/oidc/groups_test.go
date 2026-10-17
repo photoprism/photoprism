@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 )
@@ -98,15 +99,15 @@ func TestPortalGrantedRole(t *testing.T) {
 		assert.True(t, ok)
 		assert.Equal(t, acl.RoleAdmin, role)
 	})
-	t.Run("ClusterAdminRejected", func(t *testing.T) {
+	t.Run("ClusterAdminGuest", func(t *testing.T) {
 		role, ok := PortalGrantedRole(portal("cluster_admin"))
-		assert.False(t, ok)
-		assert.Equal(t, acl.RoleNone, role)
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleGuest, role)
 	})
-	t.Run("VisitorRejected", func(t *testing.T) {
+	t.Run("VisitorGuest", func(t *testing.T) {
 		role, ok := PortalGrantedRole(portal("visitor"))
-		assert.False(t, ok)
-		assert.Equal(t, acl.RoleNone, role)
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleGuest, role)
 	})
 	t.Run("EmptyRole", func(t *testing.T) {
 		role, ok := PortalGrantedRole(portal(""))
@@ -115,8 +116,51 @@ func TestPortalGrantedRole(t *testing.T) {
 	})
 	t.Run("UnknownRole", func(t *testing.T) {
 		role, ok := PortalGrantedRole(portal("wizard"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleGuest, role)
+	})
+	t.Run("NotString", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal(42))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleGuest, role)
+	})
+	t.Run("NoRole", func(t *testing.T) {
+		role, ok := PortalGrantedRole(map[string]any{"pp_issuer_kind": "portal"})
 		assert.False(t, ok)
 		assert.Equal(t, acl.RoleNone, role)
+		role, ok = PortalGrantedRole(portal(" "))
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
+	t.Run("RoleNotInEdition", func(t *testing.T) {
+		orig := acl.UserRoles
+		t.Cleanup(func() { acl.UserRoles = orig })
+
+		acl.UserRoles = acl.RoleStrings{"admin": acl.RoleAdmin, "guest": acl.RoleGuest, "visitor": acl.RoleVisitor}
+
+		for _, name := range []string{"manager", "user", "contributor", "viewer"} {
+			role, ok := PortalGrantedRole(portal(name))
+			assert.True(t, ok, name)
+			assert.Equal(t, acl.RoleGuest, role, name)
+		}
+
+		acl.UserRoles = acl.RoleStrings{"admin": acl.RoleAdmin, "user": acl.RoleUser, "viewer": acl.RoleViewer, "guest": acl.RoleGuest}
+
+		role, ok := PortalGrantedRole(portal("manager"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleUser, role)
+		role, ok = PortalGrantedRole(portal("contributor"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleGuest, role, "viewer can see the library, which a contributor cannot")
+
+		acl.UserRoles = acl.RoleStrings{"admin": acl.RoleAdmin, "contributor": acl.RoleContributor, "uploader": acl.RoleContributor, "guest": acl.RoleGuest}
+
+		role, ok = PortalGrantedRole(portal("uploader"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleContributor, role)
+		role, ok = PortalGrantedRole(portal("manager"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleGuest, role)
 	})
 	t.Run("NonPortalIssuerKind", func(t *testing.T) {
 		role, ok := PortalGrantedRole(map[string]any{"pp_issuer_kind": "upstream", "pp_role": "admin"})
@@ -132,5 +176,40 @@ func TestPortalGrantedRole(t *testing.T) {
 		role, ok := PortalGrantedRole(nil)
 		assert.False(t, ok)
 		assert.Equal(t, acl.RoleNone, role)
+	})
+}
+
+func TestPortalRoleFallback(t *testing.T) {
+	for _, role := range acl.ClusterInstanceRoles {
+		fallback, ok := portalRoleFallback[role]
+		require.True(t, ok, role)
+		require.NotEmpty(t, fallback, role)
+		assert.Equal(t, role, fallback[0], role)
+		assert.Equal(t, acl.RoleGuest, fallback[len(fallback)-1], role)
+
+		for _, r := range fallback {
+			assert.True(t, acl.IsClusterInstanceRole(r), "%s: %s", role, r)
+		}
+	}
+
+	assert.Len(t, portalRoleFallback, len(acl.ClusterInstanceRoles))
+}
+
+func TestEditionRole(t *testing.T) {
+	orig := acl.UserRoles
+	t.Cleanup(func() { acl.UserRoles = orig })
+
+	acl.UserRoles = acl.RoleStrings{"admin": acl.RoleAdmin, "user": acl.RoleUser, "viewer": acl.RoleViewer, "guest": acl.RoleGuest}
+
+	t.Run("Known", func(t *testing.T) {
+		assert.Equal(t, acl.RoleUser, editionRole(acl.RoleUser))
+		assert.Equal(t, acl.RoleAdmin, editionRole(acl.RoleAdmin))
+	})
+	t.Run("Fallback", func(t *testing.T) {
+		assert.Equal(t, acl.RoleUser, editionRole(acl.RoleManager))
+		assert.Equal(t, acl.RoleGuest, editionRole(acl.RoleContributor))
+	})
+	t.Run("NotClusterInstanceRole", func(t *testing.T) {
+		assert.Equal(t, acl.RoleGuest, editionRole(acl.RoleVisitor))
 	})
 }

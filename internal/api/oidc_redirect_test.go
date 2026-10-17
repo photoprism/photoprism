@@ -678,9 +678,27 @@ func TestOIDCRedirect_Groups(t *testing.T) {
 	})
 	t.Run("PortalRoleNotInEdition", func(t *testing.T) {
 		// The manager role that petra's Portal claim grants does not exist in this edition, so the
-		// default role applies.
+		// nearest role it has applies rather than the default role.
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCRole = "admin"
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "petra")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, "guest", findOidcTestUser("sub00000007").UserRole)
+	})
+	t.Run("PortalRoleNotInEditionUpdate", func(t *testing.T) {
+		// An existing account takes the nearest lower role this edition has.
 		conf := useOidcTestConfig(t)
 		app := newOidcTestApp(conf)
+
+		require.Equal(t, http.StatusOK, oidcLogin(t, app, "petra").Code)
+
+		user := findOidcTestUser("sub00000007")
+		require.NotNil(t, user)
+		require.NoError(t, entity.UnscopedDb().Model(user).UpdateColumn("user_role", "admin").Error)
+		require.Equal(t, "admin", findOidcTestUser("sub00000007").UserRole)
 
 		r := oidcLogin(t, app, "petra")
 

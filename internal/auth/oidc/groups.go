@@ -77,10 +77,20 @@ func MapGroupsToRole(groups []string, mapping map[string]acl.Role) (acl.Role, bo
 	return acl.RoleNone, false
 }
 
-// PortalGrantedRole returns the instance login role from the pp_role claim, and
-// true only when pp_issuer_kind marks the token as Portal-issued and the role is
-// federatable. The issuer-kind gate stops a non-Portal IdP from injecting a role,
-// and the federatable check keeps a Portal operator from becoming a login identity.
+// portalRoleFallback lists, for each cluster instance role, the roles an edition may assign
+// in its place, strongest first; none grants access the Portal role does not include.
+var portalRoleFallback = map[acl.Role][]acl.Role{
+	acl.RoleAdmin:       {acl.RoleAdmin, acl.RoleGuest},
+	acl.RoleManager:     {acl.RoleManager, acl.RoleUser, acl.RoleViewer, acl.RoleGuest},
+	acl.RoleUser:        {acl.RoleUser, acl.RoleViewer, acl.RoleGuest},
+	acl.RoleContributor: {acl.RoleContributor, acl.RoleGuest},
+	acl.RoleViewer:      {acl.RoleViewer, acl.RoleGuest},
+	acl.RoleGuest:       {acl.RoleGuest},
+}
+
+// PortalGrantedRole returns the instance login role from the pp_role claim, and true
+// when pp_issuer_kind marks the token as Portal-issued and pp_role is set. A role this
+// edition does not have maps to the strongest fallback it has, and any other value to guest.
 func PortalGrantedRole(claims map[string]any) (acl.Role, bool) {
 	if len(claims) == 0 {
 		return acl.RoleNone, false
@@ -90,14 +100,30 @@ func PortalGrantedRole(claims map[string]any) (acl.Role, bool) {
 		return acl.RoleNone, false
 	}
 
-	roleName, _ := claims["pp_role"].(string)
-	role := acl.ParseRole(strings.TrimSpace(roleName))
+	raw, found := claims["pp_role"]
+	roleName, isString := raw.(string)
 
-	if !acl.IsFederatedRole(role) {
+	if !found || isString && strings.TrimSpace(roleName) == "" {
 		return acl.RoleNone, false
+	} else if role := acl.ParseRole(roleName); acl.IsFederatedRole(role) {
+		return role, true
+	} else if granted, ok := acl.ClusterInstanceRole(roleName); ok {
+		return editionRole(granted), true
 	}
 
-	return role, true
+	return acl.RoleGuest, true
+}
+
+// editionRole returns the strongest role in the fallback list of role that this edition has,
+// or guest when it has none of them.
+func editionRole(role acl.Role) acl.Role {
+	for _, r := range portalRoleFallback[role] {
+		if acl.ParseRole(r.String()) == r {
+			return r
+		}
+	}
+
+	return acl.RoleGuest
 }
 
 // HasAnyGroup returns true when at least one of the user's groups matches a required group.
