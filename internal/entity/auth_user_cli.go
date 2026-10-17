@@ -37,13 +37,11 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		privilegeLevelChange = true
 	}
 
-	// Authentication ID.
+	// Authentication ID, which is set after validation, since setting it clears the same ID on other accounts.
 	if ctx.IsSet("auth-id") {
 		if frm.AuthID == "" {
 			m.AuthID = ""
 			m.AuthIssuer = ""
-		} else {
-			m.SetAuthID(frm.AuthID, m.AuthIssuer)
 		}
 		privilegeLevelChange = true
 	}
@@ -108,7 +106,13 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	if err := m.Validate(); err != nil {
 		// Invalid.
 		return err
-	} else if privilegeLevelChange {
+	}
+
+	if ctx.IsSet("auth-id") && frm.AuthID != "" {
+		m.SetAuthID(frm.AuthID, m.AuthIssuer)
+	}
+
+	if privilegeLevelChange {
 		// Revoke all user sessions after a privilege level change,
 		// except for app passwords and client access tokens.
 		m.RevokeDerivedSessions(nil)

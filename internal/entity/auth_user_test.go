@@ -1306,13 +1306,16 @@ func TestAddUser(t *testing.T) {
 
 		// An added account takes the auth ID over.
 		require.NoError(t, AddUser(form.User{UserName: "adduser-taker", UserRole: acl.RoleAdmin.String(),
-			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, Password: "adduser-password"}))
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, AuthIssuer: "https://adduser.example.com",
+			Password: "adduser-password"}))
 		assert.Equal(t, "", holder().AuthID)
 		assert.Equal(t, authn.ProviderNone.String(), holder().AuthProvider)
 
 		taker := FindUserByName("adduser-taker")
 		require.NotNil(t, taker)
 		assert.Equal(t, authId, taker.AuthID)
+		assert.Equal(t, "https://adduser.example.com", taker.AuthIssuer)
+		assert.Equal(t, authn.ProviderOIDC.String(), taker.AuthProvider)
 	})
 	t.Run("NotASCII", func(t *testing.T) {
 		for _, name := range []string{"adduser-josé", "\u212Aate-adduser", "adduser-jo\u200bse"} {
@@ -3378,6 +3381,52 @@ func TestUser_SetValuesFromCliScope(t *testing.T) {
 	ctx := cli.NewContext(app, set, nil)
 	require.NoError(t, user.SetValuesFromCli(ctx))
 	assert.Equal(t, "videos:view", user.UserScope)
+}
+
+func TestUser_SetValuesFromCliAuthID(t *testing.T) {
+	const authId = "usersmod-subject-7c2e"
+
+	t.Cleanup(func() {
+		deleteTestUser(t, FindUserByName("usersmod-holder"))
+		deleteTestUser(t, FindUserByName("usersmod-editor"))
+	})
+
+	for _, name := range []string{"usersmod-holder", "usersmod-editor"} {
+		require.NoError(t, AddUser(form.User{UserName: name, UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: name + "-subject", Password: "usersmod-password"}))
+	}
+
+	holder := func() *User {
+		u := FindUserByName("usersmod-holder")
+		require.NotNil(t, u)
+		return u
+	}
+
+	require.NoError(t, holder().UpdateAuthID(authId, ""))
+
+	modContext := func(args ...string) *cli.Context {
+		set := flag.NewFlagSet("users mod", flag.ContinueOnError)
+		_ = set.String("auth-id", "", "")
+		_ = set.String("email", "", "")
+		require.NoError(t, set.Parse(args))
+		return cli.NewContext(cli.NewApp(), set, nil)
+	}
+
+	editor := FindUserByName("usersmod-editor")
+	require.NotNil(t, editor)
+
+	// A refused change leaves the account that holds the auth ID unchanged.
+	require.Error(t, editor.SetValuesFromCli(modContext("--auth-id", authId, "--email", "usersmod@localhost")))
+	assert.Equal(t, authId, holder().AuthID)
+	assert.Equal(t, authn.ProviderOIDC.String(), holder().AuthProvider)
+
+	// An accepted change takes the auth ID over.
+	editor = FindUserByName("usersmod-editor")
+	require.NotNil(t, editor)
+	require.NoError(t, editor.SetValuesFromCli(modContext("--auth-id", authId)))
+	assert.Equal(t, authId, editor.AuthID)
+	assert.Equal(t, "", holder().AuthID)
+	assert.Equal(t, authn.ProviderNone.String(), holder().AuthProvider)
 }
 
 func TestUser_AuthIDSQLite(t *testing.T) {
