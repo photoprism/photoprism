@@ -75,6 +75,7 @@ The following features are supported by the current implementation:
 - Optional required membership: `--oidc-group` (or `PHOTOPRISM_OIDC_GROUP`) lists one or more groups that must be present; login is rejected if none match. If the token signals overage via `_claim_names.groups` and contains no groups, login is denied with an audit entry explaining that membership could not be validated.
 - Group-to-role mapping: `--oidc-group-role` (`GROUP=ROLE`, repeatable) assigns the first matching role; falls back to `--oidc-role` (default `guest`) when no mapping matches.
 - Tokens issued by a PhotoPrism Portal (`pp_issuer_kind` = `portal`) carry the instance role in `pp_role`, which takes precedence over `--oidc-group-role` and `--oidc-role`. A role this edition does not have is replaced by the strongest role it has that grants no more access (`PortalGrantedRole`), and any other value by `guest`.
+- On sign-in, the role of an existing account is updated to the Portal-granted or group-mapped role and the change is audited; super admins keep their role, and a promotion the user quota does not allow is not applied. A new account is checked against the quota with the role it receives.
 - Keeps app/directory roles (`roles`, `wids`) separate from security groups to avoid accidental privilege escalation.
 - Claim name is configurable via `--oidc-group-claim` (default `groups`).
 - On Portal builds, persists the merged, normalized group set from the ID token and userinfo on the login session (`entity.SessionData.Groups`), so the Portal can evaluate group-based cluster access at authorize time without another IdP round-trip. Instance and CE sessions never store groups, and the session API responses redact the field (`SessionData.Redacted`), so group membership is not exposed to clients.
@@ -106,7 +107,7 @@ The following features are supported by the current implementation:
 8. Restart PhotoPrism; on login the service will:
    - Read groups from the ID token and the userinfo response and merge them.
    - Deny login if required groups are configured but none are present (and overage is signaled).
-   - Apply the first matching group→role mapping; otherwise assign the fallback role.
+   - Give new accounts the first matching group→role mapping, otherwise the fallback role; update existing accounts other than super admins to a matching mapped role.
 
 Please note:
 

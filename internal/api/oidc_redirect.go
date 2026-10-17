@@ -389,11 +389,9 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Apply a federated role only when federation may set it: an existing
-			// cluster_admin/visitor account is never touched, and the IdP can never
-			// escalate to a non-federatable role. A Portal-granted pp_role takes
-			// precedence over the group mapping.
-			// Federation sets the role of existing accounts other than super admins.
+			// Apply a federated role only when federation may set it: super admins and existing
+			// cluster_admin/visitor accounts keep their role, and the IdP can never escalate to a
+			// non-federatable role. A Portal-granted pp_role takes precedence over the group mapping.
 			prevRole := user.AclRole()
 			var role acl.Role
 			var update bool

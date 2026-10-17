@@ -11,7 +11,7 @@ import (
 
 var stop = make(chan bool, 1)
 
-// CleanupAction deletes sessions that have expired.
+// CleanupAction deletes sessions that have expired; extensions may wrap it to remove other expired records.
 var CleanupAction = func() {
 	if n := entity.DeleteExpiredSessions(); n > 0 {
 		event.AuditInfo([]string{"deleted %s"}, english.Plural(n, "expired session", "expired sessions"))
