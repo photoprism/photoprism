@@ -634,6 +634,17 @@ func TestOIDCRedirect_Groups(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.NotNil(t, findOidcTestUser("sub00000003"))
 	})
+	t.Run("RequiredGroupInvalid", func(t *testing.T) {
+		// A required group that is not a valid group ID still restricts login.
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCGroup = []string{strings.Repeat("photoprism-user", 20)}
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "oscar")
+
+		assertOidcLoginRefused(t, r, i18n.ErrForbidden)
+		assert.Nil(t, findOidcTestUser("sub00000003"))
+	})
 	t.Run("RequiredGroupMissing", func(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		conf.Options().OIDCGroup = []string{"photoprism-user"}

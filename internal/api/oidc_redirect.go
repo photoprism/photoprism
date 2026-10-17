@@ -207,8 +207,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		requiredGroups := conf.OIDCGroup()
 
-		if len(requiredGroups) > 0 {
+		if len(requiredGroups) > 0 || conf.OIDCGroupSet() {
 			switch {
+			case len(requiredGroups) == 0:
+				message := "required groups are not valid group IDs"
+				event.AuditErr([]string{clientIp, "create session", "oidc", message})
+				event.LoginError(clientIp, "oidc", userName, userAgent, message)
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrForbidden))
+				return
 			case groupOverage && len(groups) == 0:
 				message := "IdP omitted some or all groups; cannot validate required groups"
 				event.AuditErr([]string{clientIp, "create session", "oidc", message})

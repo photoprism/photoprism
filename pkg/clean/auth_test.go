@@ -4,9 +4,69 @@ import (
 	"strings"
 	"testing"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestAuthRunes(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, 0, AuthRunes(""))
+		assert.Equal(t, 0, AuthRunes("  \x00<>  "))
+	})
+	t.Run("Dropped", func(t *testing.T) {
+		assert.Equal(t, 9, AuthRunes("  Photo\x01 <Adm>  "))
+		assert.Equal(t, 1, AuthRunes("< x"))
+	})
+	t.Run("Uncapped", func(t *testing.T) {
+		assert.Equal(t, 600, AuthRunes(strings.Repeat("a", 600)))
+		assert.Equal(t, AuthMaxRunes+1, AuthRunes(strings.Repeat("a", AuthMaxRunes)+"b"))
+	})
+	t.Run("TrailingOther", func(t *testing.T) {
+		assert.Equal(t, AuthMaxRunes+1, AuthRunes(strings.Repeat("a", AuthMaxRunes)+"\u00a0"))
+		assert.Equal(t, 2, AuthRunes("\xff\xfe"))
+	})
+	t.Run("MatchesAuth", func(t *testing.T) {
+		for _, s := range []string{" Photo  Admins ", "\tA<b>c\x7fd ", "\u00a0x", strings.Repeat("\u023a", 100), strings.Repeat("a", AuthMaxRunes)} {
+			assert.Equal(t, utf8.RuneCountInString(Auth(s)), AuthRunes(s), s)
+		}
+	})
+}
+
+func TestGroupID(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "photo admins", GroupID(" Photo Admins "))
+		assert.Equal(t, strings.Repeat("a", AuthMaxRunes), GroupID(strings.Repeat("A", AuthMaxRunes)))
+		assert.Len(t, GroupID(strings.Repeat("\u023a", 170)), GroupIDMaxBytes)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", GroupID(""))
+		assert.Equal(t, "", GroupID("\x00<>"))
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		assert.Equal(t, "", GroupID(strings.Repeat("a", AuthMaxRunes+1)))
+		assert.Equal(t, "", GroupID(strings.Repeat("a", 253)+"  users"))
+		assert.Equal(t, "", GroupID(strings.Repeat("\u023a", 171)))
+		assert.Equal(t, "", GroupID(strings.Repeat("\xff", 200)))
+	})
+	t.Run("Idempotent", func(t *testing.T) {
+		for _, s := range []string{"Photo Admins", strings.Repeat("\u023a", 170), strings.Repeat("A", AuthMaxRunes), "\xffx"} {
+			id := GroupID(s)
+			assert.NotEmpty(t, id, s)
+			assert.Equal(t, id, GroupID(id), s)
+		}
+	})
+}
+
+func TestGroupIDTooLong(t *testing.T) {
+	assert.False(t, GroupIDTooLong(""))
+	assert.False(t, GroupIDTooLong("\x00<>"))
+	assert.False(t, GroupIDTooLong(strings.Repeat("a", AuthMaxRunes)+"   "))
+	assert.True(t, GroupIDTooLong(strings.Repeat("a", AuthMaxRunes+1)))
+	assert.True(t, GroupIDTooLong(strings.Repeat("\u3042", 171)))
+	assert.True(t, GroupIDTooLong(strings.Repeat("\x01", 600)+"admins"))
+	assert.False(t, GroupIDTooLong(strings.Repeat("\x01", 600)))
+}
 
 func TestAuth(t *testing.T) {
 	t.Run("Admin", func(t *testing.T) {
@@ -333,4 +393,22 @@ func TestIdentityHelpersAreIdempotent(t *testing.T) {
 			})
 		})
 	}
+}
+
+func FuzzGroupID(f *testing.F) {
+	for _, s := range []string{"Photo Admins", " \x01<a>", strings.Repeat("\u023a", 170), strings.Repeat("a", 256), "\xff\xfe"} {
+		f.Add(s)
+	}
+
+	f.Fuzz(func(t *testing.T, s string) {
+		id := GroupID(s)
+
+		if id == "" {
+			return
+		}
+
+		assert.Equal(t, strings.ToLower(Auth(s)), id)
+		assert.Equal(t, id, GroupID(id))
+		assert.LessOrEqual(t, len(id), GroupIDMaxBytes)
+	})
 }

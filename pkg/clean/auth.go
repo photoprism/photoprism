@@ -15,9 +15,18 @@ var EmailRegexp = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+/=?^_` +
 // DomainRegexp validates hostnames for authentication inputs.
 var DomainRegexp = regexp.MustCompile(`^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$`)
 
+// AuthMaxRunes is the maximum number of characters Auth keeps.
+const AuthMaxRunes = 255
+
+// AuthMaxBytes is the maximum input length of Auth in bytes; longer input returns an empty string.
+const AuthMaxBytes = 510
+
+// GroupIDMaxBytes is the maximum length of a group ID returned by GroupID in bytes.
+const GroupIDMaxBytes = AuthMaxBytes
+
 // Auth returns the sanitized authentication identifier trimmed to a maximum length of 255 characters.
 func Auth(s string) string {
-	if s == "" || len(s) > 510 {
+	if s == "" || len(s) > AuthMaxBytes {
 		return ""
 	}
 
@@ -36,7 +45,7 @@ func Auth(s string) string {
 
 		i++
 
-		if i > 255 {
+		if i > AuthMaxRunes {
 			return -1
 		}
 
@@ -46,6 +55,46 @@ func Auth(s string) string {
 	s = strings.TrimRight(s, " ")
 
 	return s
+}
+
+// AuthRunes returns the number of characters Auth keeps from s, without its length limits,
+// so that a result longer than AuthMaxRunes shows that Auth would cut s.
+func AuthRunes(s string) int {
+	n, trailing := 0, 0
+
+	for _, r := range s {
+		if n == 0 && r == 32 || r < 32 || r == 127 || r == '<' || r == '>' {
+			continue
+		}
+
+		n++
+
+		if r == 32 {
+			trailing++
+		} else {
+			trailing = 0
+		}
+	}
+
+	return n - trailing
+}
+
+// GroupID returns the sanitized group identifier (GUID or name) in lowercase, or an empty string
+// if it is empty or GroupIDTooLong reports it.
+func GroupID(s string) string {
+	if GroupIDTooLong(s) {
+		return ""
+	}
+
+	return strings.ToLower(Auth(s))
+}
+
+// GroupIDTooLong reports whether GroupID refuses s because Auth would cut or drop it, or because
+// its lowercase form exceeds GroupIDMaxBytes and so would not survive a second pass.
+func GroupIDTooLong(s string) bool {
+	n := AuthRunes(s)
+
+	return n > AuthMaxRunes || n > 0 && len(s) > AuthMaxBytes || len(strings.ToLower(Auth(s))) > GroupIDMaxBytes
 }
 
 // Handle returns the sanitized username with trimmed whitespace and in lowercase. It folds the

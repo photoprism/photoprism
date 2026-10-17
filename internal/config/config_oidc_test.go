@@ -2,6 +2,7 @@ package config
 
 import (
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -215,9 +216,31 @@ func TestConfig_OIDCGroup(t *testing.T) {
 
 	assert.Nil(t, c.OIDCGroup())
 
-	c.options.OIDCGroup = []string{"ABC-123", "  DEF-456  ", ""}
+	c.options.OIDCGroup = []string{"ABC-123", "  DEF-456  ", "", strings.Repeat("a", 256)}
 
 	assert.Equal(t, []string{"abc-123", "def-456"}, c.OIDCGroup())
+}
+
+func TestConfig_OIDCGroupSet(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.OIDCGroupSet())
+
+	c.options.OIDCGroup = []string{"", " "}
+	assert.False(t, c.OIDCGroupSet())
+
+	c.options.OIDCGroup = []string{strings.Repeat("a", 256)}
+	assert.True(t, c.OIDCGroupSet())
+	assert.Empty(t, c.OIDCGroup())
+
+	c.options.OIDCGroup = []string{"Staff", strings.Repeat("a", 256)}
+	assert.Equal(t, []string{"staff"}, c.OIDCGroup())
+}
+
+func TestNormalizeGroupID(t *testing.T) {
+	assert.Equal(t, "photo admins", normalizeGroupID(" Photo Admins "))
+	assert.Equal(t, strings.Repeat("a", 255), normalizeGroupID(strings.Repeat("A", 255)))
+	assert.Equal(t, "", normalizeGroupID(strings.Repeat("a", 253)+"  users"))
 }
 
 func TestConfig_OIDCGroupRoles(t *testing.T) {

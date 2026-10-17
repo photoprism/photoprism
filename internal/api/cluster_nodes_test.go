@@ -275,6 +275,17 @@ func TestClusterUpdateNode_GroupRules(t *testing.T) {
 		assert.Contains(t, r.Body.String(), `"media-acme-admin"`)
 		assert.Contains(t, r.Body.String(), `"GroupsFullView":true`)
 	})
+	t.Run("GroupIDTooLong", func(t *testing.T) {
+		long := strings.Repeat("a", 256)
+
+		r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"AllowGroups":["`+long+`"]}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+		r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"AllowGroupRoles":{"`+long+`":"admin"}}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+
+		data := entity.FindClientByNodeUUID(n.UUID).GetData()
+		assert.Equal(t, []string{"media-acme-admin", "media-acme-viewer"}, data.AllowGroups)
+	})
 	t.Run("OmittedFieldsUnchanged", func(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"DisplayName":"Groups Node"}`)
 		assert.Equal(t, http.StatusOK, r.Code)

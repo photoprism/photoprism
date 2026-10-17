@@ -321,6 +321,13 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 		}
 
 		if req.AllowGroups != nil {
+			for _, group := range *req.AllowGroups {
+				if clean.GroupIDTooLong(group) {
+					AbortBadRequest(c, fmt.Errorf("group id %s is too long", clean.LogQuote(group)))
+					return
+				}
+			}
+
 			// Non-nil slice (even empty) replaces the persisted set; nil is "no change".
 			normalized := oidc.MergeGroups(*req.AllowGroups)
 			if normalized == nil {
@@ -373,6 +380,10 @@ func normalizeAllowGroupRoles(in map[string]string) (map[string]string, error) {
 	out := make(map[string]string, len(in))
 
 	for group, roleName := range in {
+		if clean.GroupIDTooLong(group) {
+			return nil, fmt.Errorf("group id %s is too long", clean.LogQuote(group))
+		}
+
 		g := oidc.NormalizeGroupID(group)
 
 		if g == "" {

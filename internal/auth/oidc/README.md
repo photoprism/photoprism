@@ -82,8 +82,8 @@ The following features are supported by the current implementation:
 #### Configuration Options
 
 - `--oidc-group-claim` / `PHOTOPRISM_OIDC_GROUP_CLAIM`: claim to read (default `groups`).
-- `--oidc-group` / `PHOTOPRISM_OIDC_GROUP`: comma- or multi-flag list of groups required for login (IDs or names accepted; normalized with `NormalizeGroupID`, which lowercases them and removes control characters, `<`, `>`, and leading or trailing spaces, so other characters such as spaces, dots, commas, and `=` are kept; IDs keep at most 255 characters, and an ID longer than 510 bytes is ignored).
-- `--oidc-group-role` / `PHOTOPRISM_OIDC_GROUP_ROLE`: mapping `GROUP=ROLE` (roles: `admin|manager|user|contributor|viewer|guest`). First match wins. Entries are separated by commas or whitespace, so map a group whose ID contains a space by its GUID or another ID without spaces.
+- `--oidc-group` / `PHOTOPRISM_OIDC_GROUP`: comma- or multi-flag list of groups required for login (IDs or names accepted; normalized with `NormalizeGroupID`, which lowercases them and removes control characters, `<`, `>`, and leading or trailing spaces, so other characters such as spaces, dots, commas, and `=` are kept; an ID with more than 255 characters or 510 bytes is not a valid group ID; if none of the listed IDs is valid, every login is refused).
+- `--oidc-group-role` / `PHOTOPRISM_OIDC_GROUP_ROLE`: mapping `GROUP=ROLE` (roles: `admin|manager|user|contributor|viewer|guest`). First match wins. Entries are separated by commas or whitespace, so map a group whose ID contains a space by its GUID or another ID without spaces; an entry whose group ID is not valid is skipped.
 - `--oidc-role` / `PHOTOPRISM_OIDC_ROLE`: fallback role if no group mapping matches (defaults to `guest`).
 
 #### Integration Guide for Entra ID

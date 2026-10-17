@@ -1,6 +1,7 @@
 package oidc
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -66,6 +67,36 @@ func TestHasAnyGroup(t *testing.T) {
 	assert.True(t, HasAnyGroup([]string{"ABC-123"}, required))
 	assert.False(t, HasAnyGroup([]string{"zzz"}, required))
 	assert.True(t, HasAnyGroup([]string{"zzz"}, nil))
+}
+
+func TestNormalizeGroupID(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "photo admins", NormalizeGroupID(" Photo Admins "))
+		assert.Equal(t, strings.Repeat("a", 255), NormalizeGroupID(strings.Repeat("A", 255)))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", NormalizeGroupID(""))
+		assert.Equal(t, "", NormalizeGroupID("\x00<>"))
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		assert.Equal(t, "", NormalizeGroupID(strings.Repeat("a", 256)))
+		assert.Equal(t, "", NormalizeGroupID("CN="+strings.Repeat("A", 251)+" Admins,OU=Groups"))
+		assert.Equal(t, "", NormalizeGroupID(strings.Repeat("a", 253)+"  users"))
+	})
+	t.Run("Idempotent", func(t *testing.T) {
+		for _, s := range []string{"Photo Admins", strings.Repeat("\u023a", 170), strings.Repeat("A", 255)} {
+			id := NormalizeGroupID(s)
+			assert.NotEmpty(t, id, s)
+			assert.Equal(t, id, NormalizeGroupID(id), s)
+		}
+
+		assert.Equal(t, "", NormalizeGroupID(strings.Repeat("\u023a", 171)))
+	})
+}
+
+func TestGroupsFromClaims_TooLong(t *testing.T) {
+	groups, _ := GroupsFromClaims(map[string]any{"groups": []any{"Admins", strings.Repeat("a", 253) + "  users"}}, "")
+	assert.Equal(t, []string{"admins"}, groups)
 }
 
 func TestPortalGrantedRole(t *testing.T) {

@@ -317,8 +317,8 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 		rows = append(rows, []string{"oidc-group-claim", claim})
 	}
 
-	if groups := c.OIDCGroup(); len(groups) > 0 {
-		rows = append(rows, []string{"oidc-group", strings.Join(groups, ",")})
+	if c.OIDCGroupSet() {
+		rows = append(rows, []string{"oidc-group", strings.Join(c.OIDCGroup(), ",")})
 	}
 
 	if roles := c.OIDCGroupRoles(); len(roles) > 0 {
@@ -341,7 +341,20 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 	return rows, cols
 }
 
-// normalizeGroupID lowercases and sanitizes a group identifier (GUID or name) for comparisons.
+// normalizeGroupID lowercases and sanitizes a group identifier (GUID or name) for comparisons,
+// like oidc.NormalizeGroupID.
 func normalizeGroupID(id string) string {
-	return strings.ToLower(clean.Auth(id))
+	return clean.GroupID(id)
+}
+
+// OIDCGroupSet reports whether required groups are configured, including entries that are not
+// valid group IDs, so a list that normalizes to nothing still restricts login.
+func (c *Config) OIDCGroupSet() bool {
+	for _, g := range c.options.OIDCGroup {
+		if strings.TrimSpace(g) != "" {
+			return true
+		}
+	}
+
+	return false
 }

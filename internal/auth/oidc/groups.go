@@ -7,9 +7,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// NormalizeGroupID lowercases and sanitizes a group identifier (GUID or name).
+// NormalizeGroupID lowercases and sanitizes a group identifier (GUID or name) with clean.GroupID,
+// which returns an empty ID for one that is too long.
 func NormalizeGroupID(id string) string {
-	return strings.ToLower(clean.Auth(id))
+	return clean.GroupID(id)
 }
 
 // GroupsFromClaims extracts group identifiers from token or userinfo claims and detects Entra-style overage markers.
