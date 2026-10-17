@@ -1,6 +1,6 @@
 ## PhotoPrism — OIDC Integration
 
-**Last Updated:** October 8, 2026
+**Last Updated:** October 17, 2026
 
 ### Overview
 
@@ -81,7 +81,7 @@ The following features are supported by the current implementation:
 #### Configuration Options
 
 - `--oidc-group-claim` / `PHOTOPRISM_OIDC_GROUP_CLAIM`: claim to read (default `groups`).
-- `--oidc-group` / `PHOTOPRISM_OIDC_GROUP`: comma- or multi-flag list of groups required for login (IDs or names accepted, normalized to lowercase alphanumerics/hyphen/underscore).
+- `--oidc-group` / `PHOTOPRISM_OIDC_GROUP`: comma- or multi-flag list of groups required for login (IDs or names accepted; normalized with `NormalizeGroupID`, which lowercases them and removes control characters, `<`, `>`, and leading or trailing spaces, so other characters such as spaces, dots, commas, and `=` are kept).
 - `--oidc-group-role` / `PHOTOPRISM_OIDC_GROUP_ROLE`: mapping `GROUP=ROLE` (roles: `admin|manager|user|contributor|viewer|guest|none`). First match wins.
 - `--oidc-role` / `PHOTOPRISM_OIDC_ROLE`: fallback role if no group mapping matches (defaults to `guest`).
 
