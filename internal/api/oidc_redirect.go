@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -236,9 +237,29 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// A PhotoPrism Portal OP grants the instance login role via the pp_role
 		// claim (gated by pp_issuer_kind); prefer the verified ID token, then user
 		// info. It takes precedence over the group mapping below.
-		portalRole, hasPortalRole := oidc.PortalGrantedRole(idTokenClaims)
+		portalClaims := idTokenClaims
+		portalRole, hasPortalRole := oidc.PortalGrantedRole(portalClaims)
 		if !hasPortalRole {
-			portalRole, hasPortalRole = oidc.PortalGrantedRole(userInfo.Claims)
+			portalClaims = userInfo.Claims
+			portalRole, hasPortalRole = oidc.PortalGrantedRole(portalClaims)
+		}
+
+		if granted := oidc.PortalRoleClaim(portalClaims); !hasPortalRole || granted == portalRole.String() {
+			// The granted role applies as is.
+		} else if granted == "" {
+			event.AuditWarn([]string{clientIp, "create session", "oidc", "portal role is invalid, applying %s"}, portalRole.String())
+		} else {
+			event.AuditWarn([]string{clientIp, "create session", "oidc", "portal role %s is not available, applying %s"}, clean.LogQuote(granted), portalRole.String())
+		}
+
+		// The role a new account receives: a Portal-granted role, then a federatable
+		// group-mapped role, else the configured default.
+		newUserRole := defaultRole
+		switch {
+		case hasPortalRole:
+			newUserRole = portalRole
+		case hasMappedRole && acl.IsFederatedRole(mappedRole):
+			newUserRole = mappedRole
 		}
 
 		// Step 1: Create user account if it does not exist yet.
@@ -372,14 +393,27 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// cluster_admin/visitor account is never touched, and the IdP can never
 			// escalate to a non-federatable role. A Portal-granted pp_role takes
 			// precedence over the group mapping.
-			if hasPortalRole {
-				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), portalRole); ok {
-					user.SetRole(role.String())
-				}
+			// Federation sets the role of existing accounts other than super admins.
+			prevRole := user.AclRole()
+			var role acl.Role
+			var update bool
+
+			if user.SuperAdmin {
+				// Do nothing.
+			} else if hasPortalRole {
+				role, update = acl.FederatedRoleUpdate(prevRole, portalRole)
 			} else if hasMappedRole {
-				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), mappedRole); ok {
-					user.SetRole(role.String())
-				}
+				role, update = acl.FederatedRoleUpdate(prevRole, mappedRole)
+			}
+
+			// A role that counts toward the user quota is not applied while the quota is reached.
+			if update && !conf.UsersQuotaReached(prevRole) && conf.UsersQuotaReached(role) {
+				event.AuditWarn([]string{clientIp, "create session", "oidc", "update user %s", "role %s not applied", authn.ErrUsersQuotaExceeded.Error()}, clean.LogQuote(userName), role.String())
+				update = false
+			}
+
+			if update {
+				user.SetRole(role.String())
 			}
 
 			// Update Subject ID and Issuer URI.
@@ -395,13 +429,17 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.ReportSharedEmail()
 			}
 
+			if update {
+				event.AuditInfo([]string{clientIp, "create session", "oidc", "update user %s", "role %s changed to %s", status.Updated}, clean.LogQuote(userName), prevRole.String(), role.String())
+			}
+
 			// Set user avatar image?
 			if avatarUrl := userInfo.Picture; avatarUrl != "" && !user.HasAvatar() {
 				if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC, conf.ThumbCachePath()); err != nil {
 					event.AuditWarn([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), "failed to set avatar image", status.Error(err)})
 				}
 			}
-		} else if conf.UsersQuotaReached(conf.OIDCRole()) { //nolint:gocritic
+		} else if conf.UsersQuotaReached(newUserRole) { //nolint:gocritic
 			userName = oidcUser.Username()
 			event.AuditWarn([]string{clientIp, "create session", "oidc", "create user", clean.LogQuote(userName), authn.ErrUsersQuotaExceeded.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrUsersQuotaExceeded.Error())
@@ -492,17 +530,8 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Set user role and permissions. A Portal-granted pp_role wins, then a
-			// group-mapped role when federation may set it, else the configured
-			// default; all are filtered to federatable roles (no cluster_admin/visitor).
-			switch {
-			case hasPortalRole:
-				user.SetRole(portalRole.String())
-			case hasMappedRole && acl.IsFederatedRole(mappedRole):
-				user.SetRole(mappedRole.String())
-			default:
-				user.SetRole(defaultRole.String())
-			}
+			// Set user role and permissions.
+			user.SetRole(newUserRole.String())
 			user.CanLogin = true
 			user.WebDAV = conf.OIDCWebDAV()
 
@@ -518,6 +547,8 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}
+
+			config.FlushUsageCache()
 
 			// Report an email address that other accounts also hold.
 			if count, _ := user.ReportSharedEmail(); count > 0 {

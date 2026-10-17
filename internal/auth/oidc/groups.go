@@ -115,6 +115,18 @@ func PortalGrantedRole(claims map[string]any) (acl.Role, bool) {
 	return acl.RoleGuest, true
 }
 
+// PortalRoleClaim returns the pp_role claim of a Portal-issued token as a normalized role name,
+// or an empty string when the token is not Portal-issued or has no string role.
+func PortalRoleClaim(claims map[string]any) string {
+	if kind, _ := claims["pp_issuer_kind"].(string); kind != acl.RolePortal.String() {
+		return ""
+	}
+
+	role, _ := claims["pp_role"].(string)
+
+	return clean.Role(role)
+}
+
 // editionRole returns the strongest role in the fallback list of role that this edition has,
 // or guest when it has none of them.
 func editionRole(role acl.Role) acl.Role {

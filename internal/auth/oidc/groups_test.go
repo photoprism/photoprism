@@ -226,6 +226,13 @@ func TestPortalRoleFallback(t *testing.T) {
 	assert.Len(t, portalRoleFallback, len(acl.ClusterInstanceRoles))
 }
 
+func TestPortalRoleClaim(t *testing.T) {
+	assert.Equal(t, "manager", PortalRoleClaim(map[string]any{"pp_issuer_kind": "portal", "pp_role": " Manager "}))
+	assert.Equal(t, "", PortalRoleClaim(map[string]any{"pp_issuer_kind": "portal", "pp_role": 42}))
+	assert.Equal(t, "", PortalRoleClaim(map[string]any{"pp_issuer_kind": "upstream", "pp_role": "admin"}))
+	assert.Equal(t, "", PortalRoleClaim(nil))
+}
+
 func TestEditionRole(t *testing.T) {
 	orig := acl.UserRoles
 	t.Cleanup(func() { acl.UserRoles = orig })

@@ -486,6 +486,36 @@ func TestOIDCRedirect_Flow(t *testing.T) {
 		assertOidcLoginRefused(t, r, i18n.ErrRegistrationDisabled)
 		assert.Nil(t, findOidcTestUser("sub00000001"))
 	})
+	t.Run("UsersQuotaMappedRole", func(t *testing.T) {
+		// The quota applies to the role a new account receives from a group mapping.
+		conf := useOidcTestConfig(t)
+		conf.Options().UsersQuota = 1
+		conf.Options().OIDCGroupRole = []string{"photoprism-admin=admin"}
+		config.FlushUsageCache()
+		app := newOidcTestApp(conf)
+
+		r := oidcLogin(t, app, "olivia")
+
+		assertOidcLoginRefused(t, r, i18n.ErrQuotaExceeded)
+		assert.Nil(t, findOidcTestUser("sub00000002"))
+	})
+	t.Run("UsersQuotaRoleUpdate", func(t *testing.T) {
+		// A role update that counts toward the quota is not applied while it is reached.
+		conf := useOidcTestConfig(t)
+		app := newOidcTestApp(conf)
+
+		require.Equal(t, http.StatusOK, oidcLogin(t, app, "olivia").Code)
+		require.Equal(t, "guest", findOidcTestUser("sub00000002").UserRole)
+
+		conf.Options().UsersQuota = 1
+		conf.Options().OIDCGroupRole = []string{"photoprism-admin=admin"}
+		config.FlushUsageCache()
+
+		r := oidcLogin(t, app, "olivia")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, "guest", findOidcTestUser("sub00000002").UserRole)
+	})
 	t.Run("UsersQuota", func(t *testing.T) {
 		// The quota applies to the default role, and a guest is never counted.
 		conf := useOidcTestConfig(t)
@@ -699,6 +729,31 @@ func TestOIDCRedirect_Groups(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.Equal(t, "guest", findOidcTestUser("sub00000007").UserRole)
 	})
+	t.Run("PortalRoleSuperAdmin", func(t *testing.T) {
+		// A super admin keeps the admin role, and no role change is audited.
+		conf := useOidcTestConfig(t)
+		app := newOidcTestApp(conf)
+
+		require.Equal(t, http.StatusOK, oidcLogin(t, app, "petra").Code)
+
+		user := findOidcTestUser("sub00000007")
+		require.NotNil(t, user)
+		require.NoError(t, entity.UnscopedDb().Model(user).UpdateColumns(entity.Values{"user_role": "admin", "super_admin": true}).Error)
+
+		origAudit := event.AuditLog
+		auditLogger, auditHook := logtest.NewNullLogger()
+		event.AuditLog = auditLogger
+		t.Cleanup(func() { event.AuditLog = origAudit })
+
+		r := oidcLogin(t, app, "petra")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, "admin", findOidcTestUser("sub00000007").UserRole)
+
+		for _, entry := range auditHook.AllEntries() {
+			assert.NotContains(t, entry.Message, "changed to", entry.Message)
+		}
+	})
 	t.Run("PortalRoleNotInEditionUpdate", func(t *testing.T) {
 		// An existing account takes the nearest lower role this edition has.
 		conf := useOidcTestConfig(t)
@@ -711,10 +766,22 @@ func TestOIDCRedirect_Groups(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().Model(user).UpdateColumn("user_role", "admin").Error)
 		require.Equal(t, "admin", findOidcTestUser("sub00000007").UserRole)
 
+		origAudit := event.AuditLog
+		auditLogger, auditHook := logtest.NewNullLogger()
+		event.AuditLog = auditLogger
+		t.Cleanup(func() { event.AuditLog = origAudit })
+
 		r := oidcLogin(t, app, "petra")
 
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.Equal(t, "guest", findOidcTestUser("sub00000007").UserRole)
+
+		var messages []string
+		for _, entry := range auditHook.AllEntries() {
+			messages = append(messages, entry.Message)
+		}
+		assert.Contains(t, strings.Join(messages, "\n"), "portal role 'manager' is not available, applying guest")
+		assert.Contains(t, strings.Join(messages, "\n"), "role admin changed to guest › updated")
 	})
 }
 
