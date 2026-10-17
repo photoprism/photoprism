@@ -27,21 +27,15 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 ## Testing
 
 **Run all tests:**
-- `make test` — runs the JS and Go tests on SQLite and the shell script tests (`make test-sh`); it does not cover MariaDB. Its Go half sweeps
-  `./pkg/... ./internal/... ./.../internal/...`, so the editions' `internal/` packages **are** included;
-  what it leaves out is MariaDB and each edition's own `make -C <edition> test` extras
+- `make test` — runs the JS and Go tests on SQLite and the shell script tests (`make test-sh`); it does not cover MariaDB. Its Go half sweeps `./pkg/... ./internal/... ./.../internal/...`, so the editions' `internal/` packages **are** included; what it leaves out is MariaDB and each edition's own `make -C <edition> test` extras
 - `make test-go` — the Go tests on SQLite (~3-15 min), without the opt-in `integration` build tag
-- `make test-integration` — the same run plus the `integration` matrices (Insta360 stacking, import and
-  reconciliation); run it when changing those areas
+- `make test-integration` — the same run plus the `integration` matrices (Insta360 stacking, import and reconciliation); run it when changing those areas
 - `make test-mariadb` — the same Go suite against MariaDB (~5-20 min)
 - `make test-postgres` — the same Go suite against the optional PostgreSQL service (experimental)
 - `make test-js` — frontend unit tests (Vitest)
-- `make test-short` — short Go tests in parallel (~3-5 min); skips tests that run the indexer or
-  importer on fixture media. Its `-timeout 5m` applies per package, and under full-suite load
-  `internal/api` (~3.5 min) and `internal/photoprism` (~2.5 min) come closest to it
+- `make test-short` — short Go tests in parallel (~3-5 min); skips tests that run the indexer or importer on fixture media. Its `-timeout 5m` applies per package, and under full-suite load `internal/api` (~3.5 min) and `internal/photoprism` (~2.5 min) come closest to it
 
-Go runs packages concurrently, so wall-clock time depends on the core count, on how warm the
-build cache is, and on what else is using the host. Treat the ranges as orders of magnitude.
+Go runs packages concurrently, so wall-clock time depends on the core count, on how warm the build cache is, and on what else is using the host. Treat the ranges as orders of magnitude.
 
 **Run targeted Go tests:**
 ```bash
@@ -55,20 +49,14 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 - `make vitest-coverage` — Vitest with coverage report
 
 **Run the Go tests against MariaDB:**
-- `make test-mariadb` runs the suite against MariaDB instead of SQLite. Each package gets its
-  own database (`testdb_<pkg>_<hash>`), and the target resets them via `reset-mariadb-testdb` before it starts.
-- The editions are not covered by the root target and each need their own run:
-  `make -C plus test-mariadb`, `make -C pro test-mariadb`, `make -C portal test-mariadb`.
-- For a targeted run, export the same `PHOTOPRISM_TEST_DRIVER` and `PHOTOPRISM_TEST_DSN` that
-  `run-test-mariadb` sets in the `Makefile`, then call `go test` on the packages you want.
-- PostgreSQL (experimental) works the same way: `make test-postgres` and `make -C <edition> test-postgres`
-  run against the optional `postgres` compose service, and `make reset-postgres-testdb` drops their databases.
+- `make test-mariadb` runs the suite against MariaDB instead of SQLite. Each package gets its own database (`testdb_<pkg>_<hash>`), and the target resets them via `reset-mariadb-testdb` before it starts.
+- The editions are not covered by the root target and each need their own run: `make -C plus test-mariadb`, `make -C pro test-mariadb`, `make -C portal test-mariadb`.
+- For a targeted run, export the same `PHOTOPRISM_TEST_DRIVER` and `PHOTOPRISM_TEST_DSN` that `run-test-mariadb` sets in the `Makefile`, then call `go test` on the packages you want.
+- PostgreSQL (experimental) works the same way: `make test-postgres` and `make -C <edition> test-postgres` run against the optional `postgres` compose service, and `make reset-postgres-testdb` drops their databases.
 
 **Reset test databases:**
-- `make reset-testdb` — the one to reach for: deletes the SQLite test database files, including
-  the `-journal`, `-wal` and `-shm` sidecars, and drops the MariaDB databases the Go tests use.
-- `make reset-mariadb-testdb` — drops the MariaDB test databases only. `make test-mariadb` runs it
-  automatically; call it by hand after a targeted or interrupted MariaDB run.
+- `make reset-testdb` — the one to reach for: deletes the SQLite test database files, including the `-journal`, `-wal` and `-shm` sidecars, and drops the MariaDB databases the Go tests use.
+- `make reset-mariadb-testdb` — drops the MariaDB test databases only. `make test-mariadb` runs it automatically; call it by hand after a targeted or interrupted MariaDB run.
 - `make reset-sqlite` — removes the SQLite test files only.
 
 **Subset targets:** `make test-pkg`, `make test-api`, `make test-entity`, `make test-commands`, `make test-photoprism`, `make test-ai`

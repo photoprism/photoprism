@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** October 1, 2026
+**Last Updated:** October 17, 2026
 
 ## Purpose
 
@@ -67,6 +67,7 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 
 - Markdown headings use a Chicago-style title case, with additional code- and path-aware normalization rules (see *Title Case rules* below). Always spell the product name as `PhotoPrism`.
 - Put option flags before positional arguments unless the command requires another order.
+- **Do not hard-wrap Markdown prose.** Write each paragraph and list item on one line, in Markdown files and in text posted elsewhere: GitHub issue descriptions, issue and pull request comments, discussion posts, and email drafts. Markdown renders a soft-wrapped line the same, and agents read the source either way, so fixed-width wraps only add re-wrapping work and noisy diffs; this overrides any agent or editor default that wraps at a column. Keep line breaks where they carry meaning: code blocks, tables, front matter, and deliberate hard breaks. When editing an already wrapped paragraph, unwrap the paragraph you change and leave the rest alone. Commit message bodies and code comments are plain text and keep their own conventions.
 - Name environment variables in full in user-facing docs, READMEs, examples, and templates (`PHOTOPRISM_DETECT_NSFW`, not `DETECT_NSFW`), since readers copy them verbatim. CLI flags (`--detect-nsfw`) and YAML option keys keep their own names.
 - Use RFC 3339 UTC timestamps and valid ID, UID, and UUID examples in docs and tests.
 - The nested `specs/` repository may be absent. Do not add main-repo `Makefile` targets that depend on it; when present, you may run its tools manually.
