@@ -1110,6 +1110,45 @@ func TestConvert_JpegConvertCmds_RawDisabled(t *testing.T) {
 	assert.True(t, previewImage, "embedded preview must still be extracted when RAW conversion is disabled")
 }
 
+// TestConvert_JpegConvertCmds_DarktableOutputName verifies that unsupported Darktable output names are
+// rendered by the next converter.
+func TestConvert_JpegConvertCmds_DarktableOutputName(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.DarktableEnabled() {
+		t.Skip("Darktable must be available")
+	}
+
+	convert := NewConvert(cnf)
+	rawFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng")
+
+	mediaFile, err := NewMediaFile(rawFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	darktable := func(cmds ConvertCmds) bool {
+		for _, cmd := range cmds {
+			if filepath.Base(cmd.Cmd.Path) == "darktable-cli" {
+				return true
+			}
+		}
+		return false
+	}
+
+	t.Run("Default", func(t *testing.T) {
+		cmds, _, cmdErr := convert.JpegConvertCmds(mediaFile, filepath.Join(t.TempDir(), "canon_eos_6d.dng.jpg"), "")
+		require.NoError(t, cmdErr)
+		assert.True(t, darktable(cmds))
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		cmds, _, cmdErr := convert.JpegConvertCmds(mediaFile, filepath.Join(t.TempDir(), "image$(x).dng.jpg"), "")
+		require.NoError(t, cmdErr)
+		assert.False(t, darktable(cmds))
+		assert.NotEmpty(t, cmds)
+	})
+}
+
 // TestConvert_JpegConvertCmds_HeifFallback verifies that the documented external
 // fallback command is emitted for HEIC and AVIF inputs when libheif tooling
 // (heif-dec / heif-convert) is available — see issue #5509.

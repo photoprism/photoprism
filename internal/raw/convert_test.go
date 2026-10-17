@@ -62,3 +62,14 @@ func TestExifToolPreviewImageCmd(t *testing.T) {
 	cmd := ExifToolPreviewImageCmd("/usr/bin/exiftool", "image.cr2")
 	assert.True(t, strings.HasSuffix(cmd.String(), "-q -q -b -PreviewImage image.cr2"))
 }
+
+func TestDarktableOutputAllowed(t *testing.T) {
+	t.Run("Allowed", func(t *testing.T) {
+		assert.True(t, DarktableOutputAllowed("/sidecar/2026/image.cr2.jpg"))
+		assert.True(t, DarktableOutputAllowed("/sidecar/2026/price $5 (sale).cr2.jpg"))
+		assert.True(t, DarktableOutputAllowed(""))
+	})
+	t.Run("Refused", func(t *testing.T) {
+		assert.False(t, DarktableOutputAllowed("/sidecar/2026/image$(x).cr2.jpg"))
+	})
+}

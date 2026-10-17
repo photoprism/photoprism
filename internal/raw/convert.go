@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strconv"
+	"strings"
 )
 
 // DarktableOptions configures a Darktable RAW to JPEG conversion command.
@@ -50,6 +51,11 @@ func DarktableCmd(o DarktableOptions) (*exec.Cmd, bool) {
 
 	// #nosec G204 -- arguments are built from validated config and file paths.
 	return exec.Command(o.Bin, args...), o.Presets
+}
+
+// DarktableOutputAllowed reports whether name is a supported Darktable output file name.
+func DarktableOutputAllowed(name string) bool {
+	return !strings.Contains(name, "$(")
 }
 
 // TherapeeCmd builds the RawTherapee CLI command that renders a RAW file to JPEG.
