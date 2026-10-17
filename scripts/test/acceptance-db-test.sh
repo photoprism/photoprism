@@ -133,12 +133,12 @@ check "TransferFailsNoTarget" test ! -e "$fx/config-mariadb-generated"
 
 expect "PostgreSQL" 0 "Created $fx/config-postgres-generated" postgres "$tmp/photoprism" "$fx/config-sqlite"
 check "PostgreSQLDriver" grep -qx 'DatabaseDriver: postgres' "$fx/config-postgres-generated/options.yml"
-check "PostgreSQLServer" grep -qx 'DatabaseServer: "postgres:4002"' "$fx/config-postgres-generated/options.yml"
+check "PostgreSQLServer" grep -qx 'DatabaseServer: "postgres.:4002"' "$fx/config-postgres-generated/options.yml"
 check "PostgreSQLLocale" grep -q "ENCODING ''UTF8'' TEMPLATE template0 LOCALE_PROVIDER icu ICU_LOCALE ''und''" "$LOG"
-check "PostgreSQLClient" grep -qx "args: --pg postgres://photoprism:photoprism@postgres:4002/postgres -v ON_ERROR_STOP=1 -q" "$LOG"
+check "PostgreSQLClient" grep -qx "args: --pg postgres://photoprism:photoprism@postgres.:4002/postgres -v ON_ERROR_STOP=1 -q" "$LOG"
 check "PostgreSQLUserPassword" grep -q "ALTER USER testcafe LOGIN PASSWORD 'testcafe';" "$LOG"
-check "PostgreSQLTransfer" grep -q -- "--target-driver postgres --target-server postgres:4002 --target-name testcafe --target-user testcafe password: testcafe" "$LOG"
-POSTGRES_ADMIN_URI=postgres://admin@db/postgres POSTGRES_PORT=5432 expect "PostgreSQLEnv" 0 "postgres:5432" postgres "$tmp/photoprism" "$fx/config-sqlite"
+check "PostgreSQLTransfer" grep -q -- "--target-driver postgres --target-server postgres.:4002 --target-name testcafe --target-user testcafe password: testcafe" "$LOG"
+POSTGRES_ADMIN_URI=postgres://admin@db/postgres POSTGRES_PORT=5432 expect "PostgreSQLEnv" 0 "postgres.:5432" postgres "$tmp/photoprism" "$fx/config-sqlite"
 check "PostgreSQLEnvClient" grep -qx "args: --pg postgres://admin@db/postgres -v ON_ERROR_STOP=1 -q" "$LOG"
 
 # Without a hub.yml in the fixture, none is created.

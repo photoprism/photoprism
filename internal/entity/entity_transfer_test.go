@@ -35,7 +35,7 @@ import (
 // Servers of the development environment that transfer tests use as targets, unless the environment names others.
 const (
 	transferTestMariaDbDSN  = "root:photoprism@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
-	transferTestPostgresDSN = "postgres://photoprism:photoprism@postgres:4002/testdb?sslmode=disable&TimeZone=UTC" //nolint:gosec // development environment
+	transferTestPostgresDSN = "postgres://photoprism:photoprism@postgres.:4002/testdb?sslmode=disable&TimeZone=UTC" //nolint:gosec // development environment
 )
 
 // transferTestServerDSN returns the DSN of the server that a transfer test may create a target database on: the test

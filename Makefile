@@ -70,10 +70,11 @@ HASRICHGO := $(shell which richgo)
 # Client for the development database, which runs MariaDB.
 MARIADB ?= mariadb
 
-# Client and URIs for the optional PostgreSQL service ("docker compose --profile postgres up -d").
+# Client and URIs for the optional PostgreSQL service ("docker compose --profile postgres up -d"). The trailing
+# dot makes the host name absolute, so that it resolves to the compose service only.
 PSQL ?= psql
-POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/postgres
-POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/testdb?sslmode=disable&TimeZone=UTC
+POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres.:$${POSTGRES_PORT:-4002}/postgres
+POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres.:$${POSTGRES_PORT:-4002}/testdb?sslmode=disable&TimeZone=UTC
 
 # Records a video of each failed TestCafe test in "frontend/tests/acceptance/videos/" if TC_USE_VIDEO is set.
 ifneq ($(filter-out 0 false no off,$(value TC_USE_VIDEO)),)

@@ -26,7 +26,7 @@ case "$db" in
     ;;
   postgres)
     driver=postgres
-    server=postgres:${POSTGRES_PORT:-4002}
+    server=postgres.:${POSTGRES_PORT:-4002}
     ;;
   *)
     echo "$0: unsupported database \"$db\", use sqlite, mariadb, or postgres" >&2
@@ -94,7 +94,7 @@ ALTER USER '$user'@'%' IDENTIFIED BY '$pass';
 GRANT ALL PRIVILEGES ON \`$name\`.* TO '$user'@'%';
 EOF
 else
-  "${psql[@]}" "${POSTGRES_ADMIN_URI:-postgres://photoprism:photoprism@postgres:${POSTGRES_PORT:-4002}/postgres}" \
+  "${psql[@]}" "${POSTGRES_ADMIN_URI:-postgres://photoprism:photoprism@postgres.:${POSTGRES_PORT:-4002}/postgres}" \
     -v ON_ERROR_STOP=1 -q <<EOF
 SELECT 'CREATE USER $user' WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '$user')\gexec
 ALTER USER $user LOGIN PASSWORD '$pass';
