@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 
@@ -87,25 +88,39 @@ func OAuthAppAuthorize(c *gin.Context) {
 
 	actor = "client " + clean.Log(r.ClientID)
 
-	client, clientErr := oauth.FindClient(conf, r.ClientID)
+	client, clientErr := oauth.FindClient(conf, r.ClientID, oauth.ClientLookup{AllowFetch: oauthMetadataFetchAllowed(clientIp)})
 
-	if clientErr != nil {
+	switch {
+	case errors.Is(clientErr, oauth.ErrMetadataRateLimited):
+		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(clientErr)})
+		RenderOAuthError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		return
+	case clientErr != nil:
 		limiter.Authorize.Reserve(clientIp)
 		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(clientErr)})
 		RenderOAuthError(c, http.StatusBadRequest, oauth.ErrCodeInvalidClient, "unknown client")
 		return
-	} else if !oauth.MatchRedirectURI(client.RedirectURIs, r.RedirectURI) {
+	case !oauth.MatchRedirectURI(client.RedirectURIs, r.RedirectURI):
 		limiter.Authorize.Reserve(clientIp)
 		event.AuditWarn([]string{clientIp, "oauth2", actor, action, "redirect uri not registered", status.Denied})
 		RenderOAuthError(c, http.StatusBadRequest, oauth.ErrCodeInvalidRequest, "redirect_uri not registered")
 		return
 	}
 
-	// From here, errors are passed to the client with a redirect.
+	// From here, errors of registered clients are passed to the client with a redirect, while those of clients
+	// with a metadata document are rendered, since the caller chooses its redirect URIs.
+	fail := func(errCode, description string) {
+		if client.Metadata {
+			RenderOAuthError(c, http.StatusBadRequest, errCode, description)
+		} else {
+			oauthErrorRedirect(c, r.RedirectURI, errCode, description, r.State)
+		}
+	}
+
 	if err := r.Validate(); err != nil {
 		limiter.Authorize.Reserve(clientIp)
 		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
-		oauthErrorRedirect(c, r.RedirectURI, err.Code, err.Description, r.State)
+		fail(err.Code, err.Description)
 		return
 	}
 
@@ -116,7 +131,7 @@ func OAuthAppAuthorize(c *gin.Context) {
 	} else if resource != conf.OAuthResourceUrl() {
 		limiter.Authorize.Reserve(clientIp)
 		event.AuditWarn([]string{clientIp, "oauth2", actor, action, "invalid resource", status.Denied})
-		oauthErrorRedirect(c, r.RedirectURI, oauth.ErrCodeInvalidTarget, "resource not supported", r.State)
+		fail(oauth.ErrCodeInvalidTarget, "resource not supported")
 		return
 	}
 
@@ -125,7 +140,7 @@ func OAuthAppAuthorize(c *gin.Context) {
 	if scopeErr != nil {
 		limiter.Authorize.Reserve(clientIp)
 		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(scopeErr)})
-		oauthErrorRedirect(c, r.RedirectURI, scopeErr.Code, scopeErr.Description, r.State)
+		fail(scopeErr.Code, scopeErr.Description)
 		return
 	}
 
@@ -145,12 +160,26 @@ func OAuthAppAuthorize(c *gin.Context) {
 
 	if err != nil {
 		event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(err)})
-		oauthErrorRedirect(c, r.RedirectURI, oauth.ErrCodeServerError, "failed to store request", r.State)
+		fail(oauth.ErrCodeServerError, "failed to store request")
 		return
 	}
 
 	event.AuditInfo([]string{clientIp, "oauth2", actor, action, "redirecting to consent", status.Succeeded})
 	c.Redirect(http.StatusFound, conf.FrontendUri(OAuthConsentUri)+"?"+url.Values{"request": {requestID}}.Encode())
+}
+
+// oauthMetadataFetchAllowed returns a function that charges the authorization rate limit before a client
+// metadata document is fetched, and refuses the fetch once the limit is exceeded.
+func oauthMetadataFetchAllowed(clientIp string) func() bool {
+	return func() bool {
+		if limiter.Authorize.Reject(clientIp) {
+			return false
+		}
+
+		limiter.Authorize.Reserve(clientIp)
+
+		return true
+	}
 }
 
 // oauthErrorRedirect redirects the browser to a verified redirect URI with an OAuth error and the issuer,

@@ -1,6 +1,7 @@
 package safe
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -152,7 +153,10 @@ func checkRedirect(allowPrivate bool) func(req *http.Request, via []*http.Reques
 		if len(via) >= maxRedirects {
 			return fmt.Errorf("stopped after %d redirects", maxRedirects)
 		} else if !allowPrivate {
-			if err := checkHost(req.URL.Hostname()); err != nil {
+			ctx, cancel := context.WithTimeout(req.Context(), 5*time.Second)
+			defer cancel()
+
+			if err := checkHostContext(ctx, req.URL.Hostname()); err != nil {
 				return err
 			}
 		}

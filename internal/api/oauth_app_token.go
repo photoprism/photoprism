@@ -35,7 +35,7 @@ func OAuthAppToken(c *gin.Context) {
 	clientIp := ClientIP(c)
 	action := "redeem code"
 
-	client, ok := oauthAppTokenClient(c, action)
+	client, ok := oauthAppTokenClient(c, action, false)
 
 	if !ok {
 		return
@@ -85,7 +85,7 @@ func OAuthAppRefresh(c *gin.Context) {
 	clientIp := ClientIP(c)
 	action := "refresh token"
 
-	client, ok := oauthAppTokenClient(c, action)
+	client, ok := oauthAppTokenClient(c, action, true)
 
 	if !ok {
 		return
@@ -143,8 +143,8 @@ func OAuthAppRefresh(c *gin.Context) {
 }
 
 // oauthAppTokenClient returns the app client of a token request, which authenticates with its client ID only,
-// or responds with an error.
-func oauthAppTokenClient(c *gin.Context, action string) (*oauth.Client, bool) {
+// or responds with an error. With allowStale, an expired client metadata document is used while it cannot be fetched.
+func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth.Client, bool) {
 	clientIp := ClientIP(c)
 	conf := get.Config()
 
@@ -166,9 +166,14 @@ func oauthAppTokenClient(c *gin.Context, action string) (*oauth.Client, bool) {
 		clientID = basicID
 	}
 
-	client, err := oauth.FindClient(conf, clientID)
+	client, err := oauth.FindClient(conf, clientID, oauth.ClientLookup{AllowFetch: oauthMetadataFetchAllowed(clientIp), AllowStale: allowStale})
 
-	if err != nil {
+	switch {
+	case errors.Is(err, oauth.ErrMetadataRateLimited):
+		event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
+		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		return nil, false
+	case err != nil:
 		event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
 		oauthTokenError(c, http.StatusUnauthorized, oauth.ErrCodeInvalidClient, "invalid client")
 		return nil, false

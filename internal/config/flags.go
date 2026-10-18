@@ -165,7 +165,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "oauth-apps",
-			Usage:   "`POLICY` for connecting apps via OAuth sign-in and consent (registered, any, none, or a comma-separated list of HTTPS client metadata origins)",
+			Usage:   "`POLICY` for connecting apps via OAuth sign-in and consent (registered, none, a comma-separated list of HTTPS origins whose client metadata documents are trusted, or any to fetch them from every public host)",
 			Value:   OAuthAppsRegistered,
 			EnvVars: EnvVars("OAUTH_APPS"),
 		}}, {

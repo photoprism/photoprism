@@ -498,7 +498,7 @@ func TestOAuthAppTokenClient(t *testing.T) {
 			c.Request.SetBasicAuth(basicID, basicSecret)
 		}
 
-		result, ok := oauthAppTokenClient(c, "test")
+		result, ok := oauthAppTokenClient(c, "test", false)
 
 		return result, ok, w.Code
 	}

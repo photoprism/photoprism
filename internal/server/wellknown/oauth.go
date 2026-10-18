@@ -23,9 +23,6 @@ var (
 	OAuthAppCodeChallengeMethods     = []string{"S256"}
 )
 
-// ClientIdMetadataDocuments reports whether the app flow accepts client metadata documents yet.
-var ClientIdMetadataDocuments = false
-
 // oauthValues returns the values, followed by the app flow values if the app flow is enabled.
 func oauthValues(conf *config.Config, values, appValues []string) []string {
 	if !conf.OAuthAppsEnabled() {
@@ -88,6 +85,6 @@ func NewOAuthAuthorizationServer(conf *config.Config) *OAuthAuthorizationServer 
 		DeviceAuthorizationEndpoint:                "",
 		DpopSigningAlgValuesSupported:              []string{},
 		AuthorizationResponseIssParameterSupported: conf.OAuthAppsEnabled(),
-		ClientIdMetadataDocumentSupported:          ClientIdMetadataDocuments && conf.OAuthAppsMetadataSupported(),
+		ClientIdMetadataDocumentSupported:          conf.OAuthAppsMetadataSupported(),
 	}
 }

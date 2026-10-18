@@ -79,6 +79,14 @@ func disallowedAddr(addr netip.Addr) bool {
 
 // checkHost returns ErrPrivateIP if host is, or resolves to, an address that is not allowed.
 func checkHost(host string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return checkHostContext(ctx, host)
+}
+
+// checkHostContext checks the host like checkHost within the deadline of the context.
+func checkHostContext(ctx context.Context, host string) error {
 	if ip := net.ParseIP(host); ip != nil {
 		if isPrivateOrDisallowedIP(ip) {
 			return ErrPrivateIP
@@ -86,9 +94,6 @@ func checkHost(host string) error {
 
 		return nil
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	addrs, err := lookupIPAddr(ctx, host)
 

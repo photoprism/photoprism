@@ -19,18 +19,35 @@ type Client struct {
 	Name         string
 	Scope        string
 	RedirectURIs []string
+	Metadata     bool
+}
+
+// ClientLookup controls how FindClient uses client metadata documents.
+type ClientLookup struct {
+	AllowFetch func() bool // AllowFetch, if set, is asked before a document is fetched.
+	AllowStale bool        // AllowStale permits an expired document while it cannot be fetched.
 }
 
 // FindClient returns the app client with the specified client ID, or ErrInvalidClient if the app flow is
-// unavailable for it.
-func FindClient(conf *config.Config, clientID string) (*Client, error) {
+// unavailable for it. Client metadata documents are looked up as specified by the optional ClientLookup.
+func FindClient(conf *config.Config, clientID string, lookup ...ClientLookup) (*Client, error) {
 	if !conf.OAuthAppsEnabled() || clientID == "" {
 		return nil, ErrInvalidClient
 	}
 
-	// Client ID Metadata Documents are not accepted yet.
+	// A client ID that is an HTTPS URL names a client metadata document, if the configuration allows it.
 	if strings.HasPrefix(clientID, "https://") {
-		return nil, ErrInvalidClient
+		if !conf.OAuthAppsMetadata(clientID) {
+			return nil, ErrInvalidClient
+		}
+
+		var opt ClientLookup
+
+		if len(lookup) > 0 {
+			opt = lookup[0]
+		}
+
+		return FindMetadataClient(clientID, opt)
 	}
 
 	m := entity.FindClientByUID(clientID)
@@ -45,6 +62,16 @@ func FindClient(conf *config.Config, clientID string) (*Client, error) {
 		Scope:        m.Scope(),
 		RedirectURIs: m.RedirectURIs(),
 	}, nil
+}
+
+// ClientOrigin returns the origin shown for a client: the host of a client metadata document URL, or the
+// origin of the redirect URI of a registered client.
+func ClientOrigin(clientID, redirectURI string) string {
+	if strings.HasPrefix(clientID, "https://") {
+		return strings.TrimSuffix(scheme.OriginURL(clientID), "/")
+	}
+
+	return RedirectOrigin(redirectURI)
 }
 
 // RedirectOrigin returns the origin of a redirect URI for display: "scheme://host" for web URLs,

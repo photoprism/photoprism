@@ -34,7 +34,7 @@ func NewUserGrant(m entity.Grant) UserGrant {
 		UID:        m.GrantUID,
 		ClientID:   m.ClientID,
 		ClientName: m.ClientName,
-		Origin:     oauth.RedirectOrigin(m.RedirectURI),
+		Origin:     oauth.ClientOrigin(m.ClientID, m.RedirectURI),
 		Scope:      m.Scope,
 		CreatedAt:  m.CreatedAt,
 		UsedAt:     m.UsedAt,

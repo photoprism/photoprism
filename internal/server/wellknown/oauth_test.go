@@ -41,11 +41,10 @@ func TestOAuthAuthorizationServer_AppFlow(t *testing.T) {
 	})
 	t.Run("Metadata", func(t *testing.T) {
 		opt.OAuthApps = config.OAuthAppsAny
-		assert.Equal(t, ClientIdMetadataDocuments, NewOAuthAuthorizationServer(conf).ClientIdMetadataDocumentSupported)
+		assert.True(t, NewOAuthAuthorizationServer(conf).ClientIdMetadataDocumentSupported)
+		assert.True(t, NewOpenIDConfiguration(conf).ClientIdMetadataDocumentSupported)
 
-		prev := ClientIdMetadataDocuments
-		ClientIdMetadataDocuments = true
-		t.Cleanup(func() { ClientIdMetadataDocuments = prev })
+		opt.OAuthApps = "https://claude.ai"
 		assert.True(t, NewOAuthAuthorizationServer(conf).ClientIdMetadataDocumentSupported)
 	})
 	t.Run("Disabled", func(t *testing.T) {

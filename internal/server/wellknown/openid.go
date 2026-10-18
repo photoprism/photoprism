@@ -71,6 +71,6 @@ func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 		DeviceAuthorizationEndpoint:                "",
 		DpopSigningAlgValuesSupported:              []string{},
 		AuthorizationResponseIssParameterSupported: conf.OAuthAppsEnabled(),
-		ClientIdMetadataDocumentSupported:          ClientIdMetadataDocuments && conf.OAuthAppsMetadataSupported(),
+		ClientIdMetadataDocumentSupported:          conf.OAuthAppsMetadataSupported(),
 	}
 }

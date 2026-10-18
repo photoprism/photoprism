@@ -88,7 +88,7 @@ func OAuthConsent(router *gin.RouterGroup) {
 			Client: OAuthConsentClient{
 				ID:     m.ClientID,
 				Name:   m.ClientName,
-				Origin: oauth.RedirectOrigin(m.RedirectURI),
+				Origin: oauth.ClientOrigin(m.ClientID, m.RedirectURI),
 			},
 			Account: OAuthConsentAccount{
 				Name:        user.Username(),
@@ -298,7 +298,7 @@ func oauthConsentRequest(c *gin.Context, action string) (s *entity.Session, user
 	}
 
 	// The app client or its callback URL may have been disabled or removed since the request was made.
-	if client, clientErr := oauth.FindClient(conf, m.ClientID); clientErr != nil {
+	if client, clientErr := oauth.FindClient(conf, m.ClientID, oauth.ClientLookup{AllowFetch: oauthMetadataFetchAllowed(clientIp)}); clientErr != nil {
 		event.AuditWarn([]string{clientIp, "session %s", "oauth2", "client %s", "%s", status.Error(clientErr)}, s.RefID, clean.Log(m.ClientID), action)
 		AbortEntityNotFound(c)
 		return s, user, m, frm, false
