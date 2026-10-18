@@ -29,43 +29,37 @@ func newMcpGrantSessions(server *sdkmcp.Server) *mcpGrantSessions {
 	return &mcpGrantSessions{server: server, grants: make(map[string]string)}
 }
 
-// Add remembers the grant of an MCP session and forgets sessions that no longer exist. A session of a grant
-// that no longer exists, e.g. because it was revoked while the session was opened, is closed instead.
+// Add remembers the grant of an MCP session and forgets sessions that no longer exist. The grant is checked
+// after the session is recorded, so a revocation that deletes it meanwhile either finds the session or is seen here.
 func (m *mcpGrantSessions) Add(sessionID, grantUID string, grantExists func(string) bool) {
 	if m == nil || sessionID == "" || grantUID == "" {
 		return
 	}
 
-	if grantExists != nil && !grantExists(grantUID) {
+	m.mu.Lock()
+	_, known := m.grants[sessionID]
+
+	if !known {
+		active := make(map[string]bool)
+
 		for ss := range m.server.Sessions() {
-			if ss.ID() == sessionID {
-				_ = ss.Close()
+			active[ss.ID()] = true
+		}
+
+		for id := range m.grants {
+			if !active[id] {
+				delete(m.grants, id)
 			}
 		}
 
-		return
+		m.grants[sessionID] = grantUID
 	}
 
-	m.mu.Lock()
-	defer m.mu.Unlock()
+	m.mu.Unlock()
 
-	if _, known := m.grants[sessionID]; known {
-		return
+	if !known && grantExists != nil && !grantExists(grantUID) {
+		m.Close(grantUID)
 	}
-
-	active := make(map[string]bool)
-
-	for ss := range m.server.Sessions() {
-		active[ss.ID()] = true
-	}
-
-	for id := range m.grants {
-		if !active[id] {
-			delete(m.grants, id)
-		}
-	}
-
-	m.grants[sessionID] = grantUID
 }
 
 // Close ends the MCP sessions of the specified grant.

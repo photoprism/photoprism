@@ -46,12 +46,12 @@ func authResetAction(ctx *cli.Context) error {
 		db := conf.Db()
 
 		// Drop and re-create the tables with sessions, app grants, and pending authorization codes.
-		for _, table := range []any{&entity.Session{}, &entity.Grant{}, &entity.AuthCode{}} {
-			if err := db.Migrator().DropTable(table); err != nil {
-				return cli.Exit(err, 1)
-			} else if err = entity.CreateTable(db, table); err != nil {
-				return cli.Exit(err, 1)
-			}
+		if err := db.Migrator().DropTable(&entity.Session{}); err != nil {
+			return cli.Exit(err, 1)
+		} else if err = entity.CreateTable(db, &entity.Session{}); err != nil {
+			return cli.Exit(err, 1)
+		} else if err = ResetAppGrants(db); err != nil {
+			return cli.Exit(err, 1)
 		}
 
 		log.Infof("all sessions have been removed")

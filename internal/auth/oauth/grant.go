@@ -117,19 +117,33 @@ func RefreshGrant(raw, clientID string) (*entity.Grant, string, error) {
 		return m, "", ErrRefreshTokenReused
 	}
 
-	next := rnd.RefreshToken(m.GrantUID)
+	next, err := rotateGrant(m, hash)
 
-	if changed, err := m.Rotate(hash, HashSecret(next)); err != nil {
+	if errors.Is(err, ErrRefreshTokenReused) {
+		return m, "", err
+	} else if err != nil {
 		return nil, "", err
-	} else if !changed {
-		if err = m.Delete(); err != nil {
-			return nil, "", err
-		}
-
-		return m, "", ErrRefreshTokenReused
 	}
 
 	return m, next, nil
+}
+
+// rotateGrant replaces the refresh token of a grant whose current hash is the specified one and returns
+// the new raw token. If another request rotated it first, the grant is revoked as for a reused token.
+func rotateGrant(m *entity.Grant, hash string) (string, error) {
+	next := rnd.RefreshToken(m.GrantUID)
+
+	if changed, err := m.Rotate(hash, HashSecret(next)); err != nil {
+		return "", err
+	} else if !changed {
+		if err = m.Delete(); err != nil {
+			return "", err
+		}
+
+		return "", ErrRefreshTokenReused
+	}
+
+	return next, nil
 }
 
 // RevokeRefreshToken deletes the grant of a refresh token and its access tokens if the token is current and,

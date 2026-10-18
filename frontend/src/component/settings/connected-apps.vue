@@ -24,7 +24,7 @@
               :loading="loading"
               hide-default-footer
               item-key="UID"
-              :no-data-text="$gettext('No apps are connected to your account.')"
+              :no-data-text="noDataText"
               density="compact"
               class="elevation-0 user-results list-view"
             >
@@ -93,6 +93,7 @@ export default {
   data() {
     return {
       loading: false,
+      failed: false,
       busy: false,
       results: [],
       revoke: {
@@ -107,6 +108,12 @@ export default {
         { title: "", key: "", sortable: false, align: "right" },
       ],
     };
+  },
+  computed: {
+    // noDataText returns the text of an empty list, which reports a failed load.
+    noDataText() {
+      return this.failed ? this.$gettext("Something went wrong, try again") : this.$gettext("No apps are connected to your account.");
+    },
   },
   watch: {
     visible: function (show) {
@@ -143,6 +150,7 @@ export default {
       }
 
       this.loading = true;
+      this.failed = false;
 
       this.model
         .findGrants()
@@ -151,6 +159,7 @@ export default {
         })
         .catch(() => {
           this.results = [];
+          this.failed = true;
         })
         .finally(() => {
           this.loading = false;

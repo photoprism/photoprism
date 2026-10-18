@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestAuthResetCommand(t *testing.T) {
@@ -32,5 +35,22 @@ func TestAuthResetCommand(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, output1, "alice")
 		assert.Contains(t, output1, "visitor")
+	})
+	t.Run("Confirmed", func(t *testing.T) {
+		c := resetConfigAndOpenDB(t)
+		seedAppGrant(t)
+
+		_, err := RunWithTestContext(AuthResetCommand, []string{"reset", "--yes"})
+		require.NoError(t, err)
+
+		c = reopenConnection()
+
+		var sessions int64
+		require.NoError(t, c.Db().Model(&entity.Session{}).Count(&sessions).Error)
+		assert.Zero(t, sessions)
+
+		grants, codes := countAppGrants(t, c.Db())
+		assert.Zero(t, grants)
+		assert.Zero(t, codes)
 	})
 }

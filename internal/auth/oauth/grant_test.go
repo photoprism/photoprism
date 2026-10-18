@@ -186,3 +186,21 @@ func TestFindRefreshGrant(t *testing.T) {
 		assert.Nil(t, FindRefreshGrant("abc"))
 	})
 }
+
+func TestRotateGrant(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m, raw := newTestGrant(t, "cs5gfen1bgxz7s9i")
+
+		next, err := rotateGrant(m, HashSecret(raw))
+		require.NoError(t, err)
+		assert.NotEqual(t, raw, next)
+		assert.Equal(t, HashSecret(next), entity.FindGrant(m.GrantUID).RefreshHash)
+	})
+	t.Run("RotatedMeanwhile", func(t *testing.T) {
+		m, _ := newTestGrant(t, "cs5gfen1bgxz7s9i")
+
+		_, err := rotateGrant(m, HashSecret("stale"))
+		assert.ErrorIs(t, err, ErrRefreshTokenReused)
+		assert.Nil(t, entity.FindGrant(m.GrantUID))
+	})
+}

@@ -27,6 +27,26 @@ func TestMcpGrantSessions(t *testing.T) {
 		m.Close("gs5gfen1bgxz7s9i")
 		assert.Equal(t, 0, m.Len())
 	})
+	t.Run("GrantGone", func(t *testing.T) {
+		m := newMcpGrantSessions(server)
+		checked := 0
+		m.Add("session-1", "gs5gfen1bgxz7s9i", func(string) bool { checked++; return false })
+		assert.Equal(t, 1, checked)
+		assert.Equal(t, 0, m.Len())
+
+		// A known session is not checked again.
+		m.Add("session-2", "gs5gfen1bgxz7s9i", func(string) bool { return true })
+		m.Add("session-2", "gs5gfen1bgxz7s9i", func(string) bool { checked++; return false })
+		assert.Equal(t, 1, checked)
+		assert.Equal(t, 1, m.Len())
+	})
+	t.Run("RevokedWhileRecording", func(t *testing.T) {
+		m := newMcpGrantSessions(server)
+
+		// The grant is revoked after the session was recorded and before the check.
+		m.Add("session-1", "gs5gfen1bgxz7s9i", func(uid string) bool { m.Close(uid); return true })
+		assert.Equal(t, 0, m.Len())
+	})
 	t.Run("Empty", func(t *testing.T) {
 		m := newMcpGrantSessions(server)
 		m.Add("", "gs5gfen1bgxz7s9i", nil)

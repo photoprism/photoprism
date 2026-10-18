@@ -29,6 +29,7 @@
 - `start.go` — main startup flow: `newRouter` builds the Gin engine with middleware, extensions, application routes, and health endpoints (`registerHealthRoutes`); `Start` then selects the listener (HTTP/HTTPS/AutoTLS/Unix socket via `listenUnixSocket`) and handles graceful shutdown.
 - `autotls.go` — Let's Encrypt certificate manager for automatic HTTPS (`AutoTLS`).
 - `routes_webapp.go` — Web UI routes and shared method helpers (`MethodsGetHead`).
+- `routes_wellknown.go` & `wellknown/` — discovery documents: OpenID and OAuth authorization server metadata, and the protected resource metadata of the MCP endpoint.
 - `static_precompressed.go` — `PrecompressedStatic` handler that serves bundled `/static/*` assets from precompressed siblings emitted by `frontend/scripts/precompress.js`; the same handler accepts operator-supplied siblings for `/c/static/*` and falls back to identity when none exist. Range requests always serve identity, and `http.ServeContent` continues to handle `Last-Modified` + `If-Modified-Since` revalidation for both encoded and identity responses (the handler does not set an `ETag`, so `If-None-Match` is latent rather than active).
 - `recovery.go` — panic recovery middleware with stack trace logging.
 - `logger.go` — request logging middleware (enabled in debug mode).

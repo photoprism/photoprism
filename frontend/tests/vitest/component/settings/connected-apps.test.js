@@ -52,14 +52,23 @@ describe("component/settings/connected-apps", () => {
     expect(wrapper.vm.busy).toBe(false);
   });
 
-  it("shows an empty list when loading fails", async () => {
-    const model = { findGrants: vi.fn(() => Promise.reject(new Error("failed"))), revokeGrant: vi.fn() };
-    const wrapper = mountDialog(model);
+  it("reports a failed load instead of an empty list", async () => {
+    const findGrants = vi.fn(() => Promise.reject(new Error("failed")));
+    const wrapper = mountDialog({ findGrants, revokeGrant: vi.fn() });
 
     wrapper.vm.find();
     await flushPromises();
 
     expect(wrapper.vm.results).toEqual([]);
+    expect(wrapper.vm.failed).toBe(true);
+    expect(wrapper.vm.noDataText).toBe("Something went wrong, try again");
+
+    findGrants.mockImplementation(() => Promise.resolve([]));
+    wrapper.vm.find();
+    await flushPromises();
+
+    expect(wrapper.vm.failed).toBe(false);
+    expect(wrapper.vm.noDataText).toBe("No apps are connected to your account.");
   });
 
   it("formats the last use", () => {

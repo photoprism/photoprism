@@ -68,12 +68,8 @@ func clientsResetAction(ctx *cli.Context) error {
 		}
 
 		// Recreate the grants and authorization codes of apps, which belong to the removed clients.
-		for _, table := range []any{&entity.Grant{}, &entity.AuthCode{}} {
-			if err := db.Migrator().DropTable(table); err != nil {
-				return cli.Exit(err, 1)
-			} else if err = entity.CreateTable(db, table); err != nil {
-				return cli.Exit(err, 1)
-			}
+		if err := ResetAppGrants(db); err != nil {
+			return cli.Exit(err, 1)
 		}
 
 		// Delete the sessions of the removed clients and apps once the tables have been recreated.
