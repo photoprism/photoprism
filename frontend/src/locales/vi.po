@@ -31,6 +31,14 @@ msgstr "%s đã tồn tại"
 msgid "%s has been restored"
 msgstr "%s đã được khôi phục"
 
+#: src/page/auth/consent.vue:23
+msgid "%{client} cannot be connected to your account %{account} on %{site}."
+msgstr ""
+
+#: src/page/auth/consent.vue:20
+msgid "%{client} wants to access your account %{account} on %{site}."
+msgstr ""
+
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB trong số %{q} GB đã sử dụng"
@@ -126,7 +134,7 @@ msgstr "Mã API"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:88 src/component/navigation.vue:595
+#: src/app/routes.js:89 src/component/navigation.vue:595
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -152,7 +160,7 @@ msgstr "Khả năng tiếp cận"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:86 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "Tài khoản"
@@ -388,7 +396,7 @@ msgstr "Không tìm thấy album"
 msgid "Album saved"
 msgstr "Đã lưu album"
 
-#: src/app/routes.js:333 src/component/album/toolbar.vue:118
+#: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
@@ -453,6 +461,10 @@ msgstr "Tất cả các tệp từ thư mục nhập"
 msgid "All originals"
 msgstr "Tất cả bản gốc"
 
+#: src/page/auth/consent.vue:72
+msgid "Allow"
+msgstr ""
+
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
 msgstr "Cho phép thu phóng trang"
@@ -506,7 +518,7 @@ msgstr "Độ cao"
 msgid "Altitude (m)"
 msgstr "Độ cao (m)"
 
-#: src/app/routes.js:414 src/common/util.js:961
+#: src/app/routes.js:427 src/common/util.js:961
 #: src/component/photo/batch-edit.vue:68 src/component/photo/batch-edit.vue:127
 #: src/component/photo/edit/files.vue:194
 #: src/component/photo/view/cards.vue:113
@@ -551,7 +563,7 @@ msgstr "Phê duyệt và lưu thay đổi"
 msgid "Apps and Devices"
 msgstr "Ứng dụng và thiết bị"
 
-#: src/app/routes.js:445 src/component/navigation.vue:183
+#: src/app/routes.js:458 src/component/navigation.vue:183
 #: src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
@@ -616,7 +628,7 @@ msgstr "Tỷ lệ khung hình"
 msgid "Attributes"
 msgstr "Thuộc tính"
 
-#: src/app/routes.js:407 src/common/util.js:959
+#: src/app/routes.js:420 src/common/util.js:959
 #: src/component/navigation.vue:254 src/options/options.js:361
 msgid "Audio"
 msgstr "Âm thanh"
@@ -644,6 +656,10 @@ msgstr "Tự động"
 #: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "Mặt sau"
+
+#: src/page/auth/consent.vue:61
+msgid "Back to App"
+msgstr ""
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -739,7 +755,7 @@ msgstr "Đang bận, vui lòng đợi…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Bằng cách sử dụng phần mềm và dịch vụ chúng tôi cung cấp, bạn đồng ý với các điều khoản dịch vụ, chính sách quyền riêng tư và quy tắc ứng xử của chúng tôi."
 
-#: src/app/routes.js:346 src/component/navigation.vue:396
+#: src/app/routes.js:359 src/component/navigation.vue:396
 #: src/options/options.js:264 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
@@ -956,7 +972,7 @@ msgstr "Khách hàng"
 msgid "Close"
 msgstr "Đóng"
 
-#: src/app/routes.js:225
+#: src/app/routes.js:226
 msgid "Cluster"
 msgstr "Cụm"
 
@@ -1012,6 +1028,10 @@ msgstr "Xác nhận"
 #: src/component/service/add.vue:104 src/page/services.vue:114
 msgid "Connect"
 msgstr "Kết nối"
+
+#: src/app/routes.js:249
+msgid "Connect App"
+msgstr ""
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:187
@@ -1232,6 +1252,10 @@ msgstr "Xóa tất cả?"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Xóa các mục chỉ mục mồ côi, tệp sidecar và hình thu nhỏ."
 
+#: src/page/auth/consent.vue:61
+msgid "Deny"
+msgstr ""
+
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
 msgid "Description"
@@ -1353,8 +1377,8 @@ msgstr "Bỏ qua những thay đổi không hợp lệ nhé?"
 msgid "Discard unsaved changes?"
 msgstr "Bỏ qua những thay đổi chưa được lưu nhé?"
 
-#: src/app/routes.js:736 src/app/routes.js:743 src/app/routes.js:750
-#: src/app/routes.js:757
+#: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
+#: src/app/routes.js:770
 msgid "Discover"
 msgstr "Phát hiện"
 
@@ -1588,7 +1612,7 @@ msgstr "Không tìm thấy thực thể"
 msgid "Error"
 msgstr "Lỗi"
 
-#: src/app/routes.js:534 src/component/navigation.vue:511
+#: src/app/routes.js:547 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "Lỗi"
 
@@ -1749,7 +1773,7 @@ msgstr "Nhanh"
 msgid "Favorite"
 msgstr "Yêu thích"
 
-#: src/app/routes.js:379 src/component/navigation.vue:316
+#: src/app/routes.js:392 src/component/navigation.vue:316
 #: src/options/options.js:262 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
@@ -1776,7 +1800,7 @@ msgstr "Nữ giới"
 msgid "File"
 msgstr "Tài liệu"
 
-#: src/app/routes.js:503
+#: src/app/routes.js:516
 msgid "File Browser"
 msgstr "Trình duyệt tệp"
 
@@ -1860,7 +1884,7 @@ msgstr "Thư mục chứa tệp %{n}"
 msgid "Folder is empty"
 msgstr "Tệp này rỗng"
 
-#: src/app/routes.js:359 src/component/navigation.vue:463
+#: src/app/routes.js:372 src/component/navigation.vue:463
 #: src/options/options.js:267 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
@@ -1957,7 +1981,7 @@ msgstr "Băm"
 msgid "Help"
 msgstr "Giúp đỡ"
 
-#: src/app/routes.js:100
+#: src/app/routes.js:101
 msgid "Help & Support"
 msgstr "Trợ giúp & Hỗ trợ"
 
@@ -1965,7 +1989,7 @@ msgstr "Trợ giúp & Hỗ trợ"
 msgid "Hidden"
 msgstr "Ẩn giấu"
 
-#: src/app/routes.js:518
+#: src/app/routes.js:531
 msgid "Hidden Files"
 msgstr "Các tệp ẩn"
 
@@ -2140,7 +2164,7 @@ msgstr "Không thể kết nối với máy chủ. Hãy thử lại khi máy ch�
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:452
 #: src/component/user/edit/dialog.vue:27 src/page/admin/users.vue:286
-#: src/app/routes.js:248 src/locales.js:388
+#: src/app/routes.js:261 src/locales.js:388
 msgid "Instances"
 msgstr "Các trường hợp"
 
@@ -2265,7 +2289,7 @@ msgstr "Không tìm thấy nhãn"
 msgid "Label saved"
 msgstr "Đã lưu nhãn"
 
-#: src/component/cluster/node/overview.vue:63 src/app/routes.js:549
+#: src/component/cluster/node/overview.vue:63 src/app/routes.js:562
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
@@ -2336,12 +2360,12 @@ msgstr "Ống kính"
 msgid "Lens not found"
 msgstr "Không tìm thấy ống kính"
 
-#: src/app/routes.js:603 src/app/routes.js:619 src/app/routes.js:635
+#: src/app/routes.js:616 src/app/routes.js:632 src/app/routes.js:648
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "Thư viện"
 
-#: src/page/connect.vue:5 src/app/routes.js:94
+#: src/page/connect.vue:5 src/app/routes.js:95
 #: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
@@ -2382,7 +2406,7 @@ msgstr "Xem danh sách"
 msgid "Live"
 msgstr "Sống"
 
-#: src/app/routes.js:393 src/component/navigation.vue:247
+#: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
 msgstr "Ảnh trực tiếp"
 
@@ -2511,7 +2535,7 @@ msgstr "Đánh dấu"
 msgid "Maximum number of accounts has been reached."
 msgstr "Đã đạt đến số lượng tài khoản tối đa."
 
-#: src/app/routes.js:386 src/component/navigation.vue:225
+#: src/app/routes.js:399 src/component/navigation.vue:225
 #: src/options/options.js:259 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "Media"
@@ -2557,7 +2581,7 @@ msgstr "Cấu hình bị thiếu hoặc không hợp lệ"
 msgid "Modified"
 msgstr "Đã sửa đổi"
 
-#: src/app/routes.js:320 src/component/navigation.vue:423
+#: src/app/routes.js:333 src/component/navigation.vue:423
 #: src/options/options.js:265 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
@@ -2688,10 +2712,6 @@ msgstr "Năm sau"
 msgid "No"
 msgstr "KHÔNG"
 
-#: src/options/admin.js:26
-msgid "No Access"
-msgstr "Không được truy cập"
-
 #: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "Không có album nào được gán"
@@ -2747,7 +2767,7 @@ msgstr "Không tìm thấy người nào"
 #: src/component/lightbox.vue:667 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:883
+#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
 msgid "No pictures found"
 msgstr "Không tìm thấy hình ảnh nào"
 
@@ -2917,6 +2937,10 @@ msgstr "Một người được tìm thấy"
 msgid "One picture found"
 msgstr "Một hình ảnh được tìm thấy"
 
+#: src/page/auth/consent.vue:30
+msgid "Only allow access if you started connecting this app yourself."
+msgstr ""
+
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "Chỉ những tài khoản được quản lý cục bộ mới có thể được thiết lập để xác thực bằng 2FA."
@@ -3038,7 +3062,7 @@ msgstr "Tạm dừng"
 msgid "Payment required"
 msgstr "Cần thanh toán"
 
-#: src/app/routes.js:564 src/app/routes.js:588
+#: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
@@ -3096,7 +3120,7 @@ msgstr "PhotoPrism được tự tài trợ 100% và độc lập."
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ Tư cách thành viên"
 
-#: src/app/routes.js:313
+#: src/app/routes.js:326
 msgid "Photos"
 msgstr "Ảnh"
 
@@ -3125,8 +3149,8 @@ msgstr "Địa điểm"
 msgid "Place & Time"
 msgstr "Địa điểm & Thời gian"
 
-#: src/app/routes.js:463 src/app/routes.js:469 src/app/routes.js:475
-#: src/app/routes.js:490 src/component/navigation.vue:352
+#: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
+#: src/app/routes.js:503 src/component/navigation.vue:352
 #: src/component/navigation.vue:746 src/options/options.js:263
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:409 src/page/settings/general.vue:493
@@ -3241,7 +3265,7 @@ msgstr "Năm trước"
 msgid "Primary"
 msgstr "Sơ đẳng"
 
-#: src/app/routes.js:428 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:441 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
 #: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
@@ -3356,7 +3380,7 @@ msgstr "Hãy giảm bớt các hiệu ứng chuyển động và hiệu ứng đ
 msgid "Refresh"
 msgstr "Làm cho khỏe lại"
 
-#: src/app/routes.js:497 src/component/navigation.vue:330
+#: src/app/routes.js:510 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
 msgid "Regions"
 msgstr "Các vùng"
@@ -3477,7 +3501,7 @@ msgstr "Giới hạn thử lại"
 msgid "Retype Password"
 msgstr "Gõ lại mật khẩu"
 
-#: src/app/routes.js:421 src/component/navigation.vue:169
+#: src/app/routes.js:434 src/component/navigation.vue:169
 msgid "Review"
 msgstr "Ôn tập"
 
@@ -3571,6 +3595,14 @@ msgstr "Tìm kiếm"
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
 msgstr "Bộ lọc tìm kiếm"
+
+#: src/page/auth/consent.vue:169
+msgid "Search and view your photos"
+msgstr ""
+
+#: src/page/auth/consent.vue:170
+msgid "Search and view your videos"
+msgstr ""
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3716,9 +3748,9 @@ msgid "Set as Cover Image"
 msgstr "Đặt làm Ảnh bìa"
 
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
-#: src/component/navigation.vue:494 src/app/routes.js:205 src/app/routes.js:652
-#: src/app/routes.js:664 src/app/routes.js:676 src/app/routes.js:693
-#: src/app/routes.js:705 src/app/routes.js:725 src/component/navigation.vue:533
+#: src/component/navigation.vue:494 src/app/routes.js:206 src/app/routes.js:665
+#: src/app/routes.js:677 src/app/routes.js:689 src/app/routes.js:706
+#: src/app/routes.js:718 src/app/routes.js:738 src/component/navigation.vue:533
 #: src/component/navigation.vue:706 src/options/options.js:268
 msgid "Settings"
 msgstr "Cài đặt"
@@ -3901,6 +3933,7 @@ msgid "Some albums could not be updated"
 msgstr "Một số album không thể cập nhật"
 
 #: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "Đã xảy ra lỗi, hãy thử lại"
 
@@ -4111,6 +4144,10 @@ msgstr "chủ đề"
 msgid "This account is missing an ID and can't be edited."
 msgstr "Tài khoản này chưa có ID nên không thể chỉnh sửa được."
 
+#: src/page/auth/consent.vue:15
+msgid "This authorization request has expired or is invalid. Please return to the app and try again."
+msgstr ""
+
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
 #: src/common/form.js:360 src/common/form.js:370 src/common/form.js:382
@@ -4303,6 +4340,10 @@ msgstr "ID duy nhất"
 msgid "Unknown"
 msgstr "không xác định"
 
+#: src/page/auth/consent.vue:129
+msgid "Unknown App"
+msgstr ""
+
 #: src/page/photos.vue:455
 msgid "Unknown location"
 msgstr "Vị trí không rõ"
@@ -4313,7 +4354,7 @@ msgstr "Vị trí không rõ"
 msgid "Unregistered"
 msgstr "Chưa đăng ký"
 
-#: src/app/routes.js:372 src/component/navigation.vue:212
+#: src/app/routes.js:385 src/component/navigation.vue:212
 msgid "Unsorted"
 msgstr "Chưa sắp xếp"
 
@@ -4450,6 +4491,10 @@ msgstr "Đang tải lên…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Những tải lên có thể chứa những hình ảnh như vậy sẽ tự động bị từ chối."
 
+#: src/page/auth/consent.vue:168
+msgid "Use PhotoPrism tools in this app"
+msgstr ""
+
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
 msgstr "Sử dụng cài đặt trước"
@@ -4538,7 +4583,7 @@ msgstr "Băng hình"
 msgid "Video Duration"
 msgstr "Thời lượng video"
 
-#: src/app/routes.js:400 src/component/navigation.vue:240
+#: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
 msgid "Videos"
 msgstr "Video"
@@ -4548,9 +4593,53 @@ msgstr "Video"
 msgid "View"
 msgstr "Xem"
 
+#: src/page/auth/consent.vue:179
+msgid "View cameras"
+msgstr ""
+
+#: src/page/auth/consent.vue:180
+msgid "View lenses"
+msgstr ""
+
+#: src/page/auth/consent.vue:178
+msgid "View people"
+msgstr ""
+
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
 msgstr "Xem kết quả tìm kiếm dưới dạng danh sách."
+
+#: src/page/auth/consent.vue:171
+msgid "View your albums"
+msgstr ""
+
+#: src/page/auth/consent.vue:174
+msgid "View your calendar"
+msgstr ""
+
+#: src/page/auth/consent.vue:172
+msgid "View your favorites"
+msgstr ""
+
+#: src/page/auth/consent.vue:181
+msgid "View your files"
+msgstr ""
+
+#: src/page/auth/consent.vue:175
+msgid "View your folders"
+msgstr ""
+
+#: src/page/auth/consent.vue:177
+msgid "View your labels"
+msgstr ""
+
+#: src/page/auth/consent.vue:173
+msgid "View your moments"
+msgstr ""
+
+#: src/page/auth/consent.vue:176
+msgid "View your places"
+msgstr ""
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4685,6 +4774,10 @@ msgstr "Bạn có thể quét lại thư viện của mình để tìm thêm khu
 msgid "Your account could not be connected"
 msgstr "Tài khoản của bạn không thể kết nối được"
 
+#: src/page/auth/consent.vue:33
+msgid "Your account does not have the permissions this app requires."
+msgstr ""
+
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
 msgstr "Tài khoản của bạn đã được kết nối thành công."
@@ -4730,6 +4823,10 @@ msgstr "TRONG"
 msgid "mixed"
 msgstr "hỗn hợp"
 
+#: src/page/auth/consent.vue:186
+msgid "not available"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "không bắt buộc"
@@ -4773,6 +4870,9 @@ msgstr "{0} đã chọn"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} của {2}"
+
+#~ msgid "No Access"
+#~ msgstr "Không được truy cập"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

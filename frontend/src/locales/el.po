@@ -31,6 +31,14 @@ msgstr "%s υπάρχει ήδη"
 msgid "%s has been restored"
 msgstr "%s έχει αποκατασταθεί"
 
+#: src/page/auth/consent.vue:23
+msgid "%{client} cannot be connected to your account %{account} on %{site}."
+msgstr ""
+
+#: src/page/auth/consent.vue:20
+msgid "%{client} wants to access your account %{account} on %{site}."
+msgstr ""
+
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB από %{q} GB σε χρήση"
@@ -126,7 +134,7 @@ msgstr "Κλειδί API"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:88 src/component/navigation.vue:595
+#: src/app/routes.js:89 src/component/navigation.vue:595
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -152,7 +160,7 @@ msgstr "Προσβασιμότητα"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:86 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "Λογαριασμός"
@@ -388,7 +396,7 @@ msgstr "Το άλμπουμ δεν βρέθηκε"
 msgid "Album saved"
 msgstr "Το άλμπουμ αποθηκεύθηκε"
 
-#: src/app/routes.js:333 src/component/album/toolbar.vue:118
+#: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
@@ -453,6 +461,10 @@ msgstr "Όλα τα αρχεία από το φάκελο εισαγωγής"
 msgid "All originals"
 msgstr "Όλα τα πρωτότυπα"
 
+#: src/page/auth/consent.vue:72
+msgid "Allow"
+msgstr ""
+
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
 msgstr "Επιτρέπεται η μεγέθυνση της σελίδας"
@@ -506,7 +518,7 @@ msgstr "Υψόμετρο"
 msgid "Altitude (m)"
 msgstr "Υψόμετρο (m)"
 
-#: src/app/routes.js:414 src/common/util.js:961
+#: src/app/routes.js:427 src/common/util.js:961
 #: src/component/photo/batch-edit.vue:68 src/component/photo/batch-edit.vue:127
 #: src/component/photo/edit/files.vue:194
 #: src/component/photo/view/cards.vue:113
@@ -551,7 +563,7 @@ msgstr "Έγκριση και αποθήκευση αλλαγών"
 msgid "Apps and Devices"
 msgstr "Εφαρμογές και Συσκευές"
 
-#: src/app/routes.js:445 src/component/navigation.vue:183
+#: src/app/routes.js:458 src/component/navigation.vue:183
 #: src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
@@ -616,7 +628,7 @@ msgstr "Αναλογία διαστάσεων"
 msgid "Attributes"
 msgstr "Χαρακτηριστικά"
 
-#: src/app/routes.js:407 src/common/util.js:959
+#: src/app/routes.js:420 src/common/util.js:959
 #: src/component/navigation.vue:254 src/options/options.js:361
 msgid "Audio"
 msgstr "Ήχος"
@@ -644,6 +656,10 @@ msgstr "Αυτόματο"
 #: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "Πίσω"
+
+#: src/page/auth/consent.vue:61
+msgid "Back to App"
+msgstr ""
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -739,7 +755,7 @@ msgstr "Το σύστημα είναι απασχολημένο, περιμέν�
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Χρησιμοποιώντας το λογισμικό και τις υπηρεσίες που παρέχουμε, συμφωνείτε με τους όρους χρήσης, την πολιτική απορρήτου και τον κώδικα δεοντολογίας."
 
-#: src/app/routes.js:346 src/component/navigation.vue:396
+#: src/app/routes.js:359 src/component/navigation.vue:396
 #: src/options/options.js:264 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
@@ -956,7 +972,7 @@ msgstr "Πελάτης"
 msgid "Close"
 msgstr "Κλείσιμο"
 
-#: src/app/routes.js:225
+#: src/app/routes.js:226
 msgid "Cluster"
 msgstr "Συστάδα"
 
@@ -1012,6 +1028,10 @@ msgstr "Επιβεβαίωση"
 #: src/component/service/add.vue:104 src/page/services.vue:114
 msgid "Connect"
 msgstr "Σύνδεση"
+
+#: src/app/routes.js:249
+msgid "Connect App"
+msgstr ""
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:187
@@ -1232,6 +1252,10 @@ msgstr "Να διαγραφούν όλα;"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Διαγραφή ορφανών καταχωρήσεων ευρετηρίου, αρχείων sidecar και μικρογραφιών."
 
+#: src/page/auth/consent.vue:61
+msgid "Deny"
+msgstr ""
+
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
 msgid "Description"
@@ -1353,8 +1377,8 @@ msgstr "Απορρίψτε τις άκυρες αλλαγές;"
 msgid "Discard unsaved changes?"
 msgstr "Απορρίψτε τις μη αποθηκευμένες αλλαγές;"
 
-#: src/app/routes.js:736 src/app/routes.js:743 src/app/routes.js:750
-#: src/app/routes.js:757
+#: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
+#: src/app/routes.js:770
 msgid "Discover"
 msgstr "Ανακαλύψτε το"
 
@@ -1588,7 +1612,7 @@ msgstr "Η οντότητα δεν βρέθηκε"
 msgid "Error"
 msgstr "Σφάλμα"
 
-#: src/app/routes.js:534 src/component/navigation.vue:511
+#: src/app/routes.js:547 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "Σφάλματα"
 
@@ -1749,7 +1773,7 @@ msgstr "Γρήγορο"
 msgid "Favorite"
 msgstr "Αγαπημένο"
 
-#: src/app/routes.js:379 src/component/navigation.vue:316
+#: src/app/routes.js:392 src/component/navigation.vue:316
 #: src/options/options.js:262 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
@@ -1776,7 +1800,7 @@ msgstr "Γυναίκα"
 msgid "File"
 msgstr "Αρχείο"
 
-#: src/app/routes.js:503
+#: src/app/routes.js:516
 msgid "File Browser"
 msgstr "Πρόγραμμα περιήγησης αρχείων"
 
@@ -1860,7 +1884,7 @@ msgstr "Ο φάκελος περιέχει %{n} αρχεία"
 msgid "Folder is empty"
 msgstr "Ο φάκελος είναι άδειος"
 
-#: src/app/routes.js:359 src/component/navigation.vue:463
+#: src/app/routes.js:372 src/component/navigation.vue:463
 #: src/options/options.js:267 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
@@ -1957,7 +1981,7 @@ msgstr "Ψηφιακή ταυτότητα"
 msgid "Help"
 msgstr "Βοήθεια"
 
-#: src/app/routes.js:100
+#: src/app/routes.js:101
 msgid "Help & Support"
 msgstr "Βοήθεια & Υποστήριξη"
 
@@ -1965,7 +1989,7 @@ msgstr "Βοήθεια & Υποστήριξη"
 msgid "Hidden"
 msgstr "Με απόκρυψη"
 
-#: src/app/routes.js:518
+#: src/app/routes.js:531
 msgid "Hidden Files"
 msgstr "Κρυμμένα αρχεία"
 
@@ -2140,7 +2164,7 @@ msgstr "Δεν είναι δυνατή η πρόσβαση στο αντίγρα
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:452
 #: src/component/user/edit/dialog.vue:27 src/page/admin/users.vue:286
-#: src/app/routes.js:248 src/locales.js:388
+#: src/app/routes.js:261 src/locales.js:388
 msgid "Instances"
 msgstr "Instances"
 
@@ -2265,7 +2289,7 @@ msgstr "Η ετικέτα δεν βρέθηκε"
 msgid "Label saved"
 msgstr "Η ετικέτα αποθηκεύτηκε"
 
-#: src/component/cluster/node/overview.vue:63 src/app/routes.js:549
+#: src/component/cluster/node/overview.vue:63 src/app/routes.js:562
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
@@ -2336,12 +2360,12 @@ msgstr "Φακός"
 msgid "Lens not found"
 msgstr "Δεν βρέθηκε ο φακός"
 
-#: src/app/routes.js:603 src/app/routes.js:619 src/app/routes.js:635
+#: src/app/routes.js:616 src/app/routes.js:632 src/app/routes.js:648
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "Βιβλιοθήκη"
 
-#: src/page/connect.vue:5 src/app/routes.js:94
+#: src/page/connect.vue:5 src/app/routes.js:95
 #: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
@@ -2382,7 +2406,7 @@ msgstr "Προβολή σε Λίστα"
 msgid "Live"
 msgstr "Ζωντανό"
 
-#: src/app/routes.js:393 src/component/navigation.vue:247
+#: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
 msgstr "Ζωντανές Εικόνες"
 
@@ -2511,7 +2535,7 @@ msgstr "Δείκτης"
 msgid "Maximum number of accounts has been reached."
 msgstr "Έχει ξεπεραστεί ο μέγιστος αριθμός λογαριασμών."
 
-#: src/app/routes.js:386 src/component/navigation.vue:225
+#: src/app/routes.js:399 src/component/navigation.vue:225
 #: src/options/options.js:259 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "Μέσα"
@@ -2557,7 +2581,7 @@ msgstr "Απουσιάζει ή είναι άκυρη η διαμόρφωση"
 msgid "Modified"
 msgstr "Τροποποιημένο"
 
-#: src/app/routes.js:320 src/component/navigation.vue:423
+#: src/app/routes.js:333 src/component/navigation.vue:423
 #: src/options/options.js:265 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
@@ -2688,10 +2712,6 @@ msgstr "Του χρόνου"
 msgid "No"
 msgstr "Όχι"
 
-#: src/options/admin.js:26
-msgid "No Access"
-msgstr "Δεν υπάρχει πρόσβαση"
-
 #: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "Δεν έχουν ανατεθεί άλμπουμ"
@@ -2747,7 +2767,7 @@ msgstr "Δεν βρέθηκαν άτομα"
 #: src/component/lightbox.vue:667 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:883
+#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
 msgid "No pictures found"
 msgstr "Δεν βρέθηκαν εικόνες"
 
@@ -2917,6 +2937,10 @@ msgstr "Ένα άτομο βρέθηκε"
 msgid "One picture found"
 msgstr "Μια εικόνα βρέθηκε"
 
+#: src/page/auth/consent.vue:30
+msgid "Only allow access if you started connecting this app yourself."
+msgstr ""
+
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "Μόνο οι τοπικά διαχειριζόμενοι λογαριασμοί μπορούν να ρυθμιστούν για έλεγχο ταυτότητας με το 2FA."
@@ -3038,7 +3062,7 @@ msgstr "Παύση"
 msgid "Payment required"
 msgstr "Απαιτείται πληρωμή"
 
-#: src/app/routes.js:564 src/app/routes.js:588
+#: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
@@ -3096,7 +3120,7 @@ msgstr "Το PhotoPrism είναι 100% αυτοχρηματοδοτούμενο
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ Μέλος"
 
-#: src/app/routes.js:313
+#: src/app/routes.js:326
 msgid "Photos"
 msgstr "Φωτογραφίες"
 
@@ -3125,8 +3149,8 @@ msgstr "Τοποθεσία"
 msgid "Place & Time"
 msgstr "Τόποθεσία & Ώρα"
 
-#: src/app/routes.js:463 src/app/routes.js:469 src/app/routes.js:475
-#: src/app/routes.js:490 src/component/navigation.vue:352
+#: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
+#: src/app/routes.js:503 src/component/navigation.vue:352
 #: src/component/navigation.vue:746 src/options/options.js:263
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:409 src/page/settings/general.vue:493
@@ -3241,7 +3265,7 @@ msgstr "Προηγούμενο έτος"
 msgid "Primary"
 msgstr "Κύριο"
 
-#: src/app/routes.js:428 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:441 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
 #: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
@@ -3356,7 +3380,7 @@ msgstr "Μειώστε τις κινούμενες εικόνες και τα ε
 msgid "Refresh"
 msgstr "Ανανέωση"
 
-#: src/app/routes.js:497 src/component/navigation.vue:330
+#: src/app/routes.js:510 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
 msgid "Regions"
 msgstr "Περιοχές"
@@ -3477,7 +3501,7 @@ msgstr "Όριο επανάληψης"
 msgid "Retype Password"
 msgstr "Επαναλάβετε τον κωδικό πρόσβασης"
 
-#: src/app/routes.js:421 src/component/navigation.vue:169
+#: src/app/routes.js:434 src/component/navigation.vue:169
 msgid "Review"
 msgstr "Ανασκόπηση"
 
@@ -3571,6 +3595,14 @@ msgstr "Αναζήτηση"
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
 msgstr "Φίλτρα αναζήτησης"
+
+#: src/page/auth/consent.vue:169
+msgid "Search and view your photos"
+msgstr ""
+
+#: src/page/auth/consent.vue:170
+msgid "Search and view your videos"
+msgstr ""
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3716,9 +3748,9 @@ msgid "Set as Cover Image"
 msgstr "Ορισμός ως εικόνα εξωφύλλου"
 
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
-#: src/component/navigation.vue:494 src/app/routes.js:205 src/app/routes.js:652
-#: src/app/routes.js:664 src/app/routes.js:676 src/app/routes.js:693
-#: src/app/routes.js:705 src/app/routes.js:725 src/component/navigation.vue:533
+#: src/component/navigation.vue:494 src/app/routes.js:206 src/app/routes.js:665
+#: src/app/routes.js:677 src/app/routes.js:689 src/app/routes.js:706
+#: src/app/routes.js:718 src/app/routes.js:738 src/component/navigation.vue:533
 #: src/component/navigation.vue:706 src/options/options.js:268
 msgid "Settings"
 msgstr "Ρυθμίσεις"
@@ -3901,6 +3933,7 @@ msgid "Some albums could not be updated"
 msgstr "Ορισμένα άλμπουμ δεν ήταν δυνατό να ενημερωθούν"
 
 #: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "Κάτι πήγε στραβά, δοκιμάστε ξανά"
 
@@ -4111,6 +4144,10 @@ msgstr "Θέμα"
 msgid "This account is missing an ID and can't be edited."
 msgstr "Αυτός ο λογαριασμός δεν διαθέτει αναγνωριστικό και δεν μπορεί να τροποποιηθεί."
 
+#: src/page/auth/consent.vue:15
+msgid "This authorization request has expired or is invalid. Please return to the app and try again."
+msgstr ""
+
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
 #: src/common/form.js:360 src/common/form.js:370 src/common/form.js:382
@@ -4303,6 +4340,10 @@ msgstr "Μοναδικό αναγνωριστικό"
 msgid "Unknown"
 msgstr "Άγνωστο"
 
+#: src/page/auth/consent.vue:129
+msgid "Unknown App"
+msgstr ""
+
 #: src/page/photos.vue:455
 msgid "Unknown location"
 msgstr "Άγνωστη τοποθεσία"
@@ -4313,7 +4354,7 @@ msgstr "Άγνωστη τοποθεσία"
 msgid "Unregistered"
 msgstr "Μη εγγεγραμμένο"
 
-#: src/app/routes.js:372 src/component/navigation.vue:212
+#: src/app/routes.js:385 src/component/navigation.vue:212
 msgid "Unsorted"
 msgstr "Χωρίς ταξινόμηση"
 
@@ -4450,6 +4491,10 @@ msgstr "Επαναγέμισμα…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Ανεβάσματα που ενδέχεται να περιέχουν τέτοιες εικόνες θα απορρίπτονται αυτόματα."
 
+#: src/page/auth/consent.vue:168
+msgid "Use PhotoPrism tools in this app"
+msgstr ""
+
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
 msgstr "Χρήση Προεπιλογών"
@@ -4538,7 +4583,7 @@ msgstr "Βίντεο"
 msgid "Video Duration"
 msgstr "Διάρκεια Βίντεο"
 
-#: src/app/routes.js:400 src/component/navigation.vue:240
+#: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
 msgid "Videos"
 msgstr "Βίντεο"
@@ -4548,9 +4593,53 @@ msgstr "Βίντεο"
 msgid "View"
 msgstr "Προβολή"
 
+#: src/page/auth/consent.vue:179
+msgid "View cameras"
+msgstr ""
+
+#: src/page/auth/consent.vue:180
+msgid "View lenses"
+msgstr ""
+
+#: src/page/auth/consent.vue:178
+msgid "View people"
+msgstr ""
+
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
 msgstr "Προβολή των αποτελεσμάτων της αναζήτησης σε μορφή λίστας."
+
+#: src/page/auth/consent.vue:171
+msgid "View your albums"
+msgstr ""
+
+#: src/page/auth/consent.vue:174
+msgid "View your calendar"
+msgstr ""
+
+#: src/page/auth/consent.vue:172
+msgid "View your favorites"
+msgstr ""
+
+#: src/page/auth/consent.vue:181
+msgid "View your files"
+msgstr ""
+
+#: src/page/auth/consent.vue:175
+msgid "View your folders"
+msgstr ""
+
+#: src/page/auth/consent.vue:177
+msgid "View your labels"
+msgstr ""
+
+#: src/page/auth/consent.vue:173
+msgid "View your moments"
+msgstr ""
+
+#: src/page/auth/consent.vue:176
+msgid "View your places"
+msgstr ""
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4685,6 +4774,10 @@ msgstr "Μπορείτε να σαρώσετε εκ νέου τη βιβλιοθ
 msgid "Your account could not be connected"
 msgstr "Ο λογαριασμός σας δεν ήταν δυνατό να συνδεθεί"
 
+#: src/page/auth/consent.vue:33
+msgid "Your account does not have the permissions this app requires."
+msgstr ""
+
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
 msgstr "Ο λογαριασμός σας έχει συνδεθεί επιτυχώς."
@@ -4730,6 +4823,10 @@ msgstr "στο"
 msgid "mixed"
 msgstr "μικτή"
 
+#: src/page/auth/consent.vue:186
+msgid "not available"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "προαιρετικό"
@@ -4773,6 +4870,9 @@ msgstr "{0} επιλεγμένα"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} από {2}"
+
+#~ msgid "No Access"
+#~ msgstr "Δεν υπάρχει πρόσβαση"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

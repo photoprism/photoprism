@@ -34,6 +34,14 @@ msgstr "%s पहले से मौजूद है"
 msgid "%s has been restored"
 msgstr "%s बहाल कर दिया गया है"
 
+#: src/page/auth/consent.vue:23
+msgid "%{client} cannot be connected to your account %{account} on %{site}."
+msgstr ""
+
+#: src/page/auth/consent.vue:20
+msgid "%{client} wants to access your account %{account} on %{site}."
+msgstr ""
+
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{q} GB में से %{n} GB उपयोग किया गया"
@@ -129,7 +137,7 @@ msgstr "एपीआई कुंजी"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:88 src/component/navigation.vue:595
+#: src/app/routes.js:89 src/component/navigation.vue:595
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -155,7 +163,7 @@ msgstr "पहुँच"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:86 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "लेखा"
@@ -391,7 +399,7 @@ msgstr "एल्बम नहीं मिला"
 msgid "Album saved"
 msgstr "एल्बम सहेजा गया"
 
-#: src/app/routes.js:333 src/component/album/toolbar.vue:118
+#: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
@@ -456,6 +464,10 @@ msgstr "आयात फ़ोल्डर से सभी फ़ाइले�
 msgid "All originals"
 msgstr "सभी मूल"
 
+#: src/page/auth/consent.vue:72
+msgid "Allow"
+msgstr ""
+
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
 msgstr "पृष्ठ ज़ूम की अनुमति दें"
@@ -509,7 +521,7 @@ msgstr "ऊंचाई"
 msgid "Altitude (m)"
 msgstr "ऊंचाई (एम)"
 
-#: src/app/routes.js:414 src/common/util.js:961
+#: src/app/routes.js:427 src/common/util.js:961
 #: src/component/photo/batch-edit.vue:68 src/component/photo/batch-edit.vue:127
 #: src/component/photo/edit/files.vue:194
 #: src/component/photo/view/cards.vue:113
@@ -554,7 +566,7 @@ msgstr "परिवर्तनों को स्वीकृत करें
 msgid "Apps and Devices"
 msgstr "ऐप्स और डिवाइस"
 
-#: src/app/routes.js:445 src/component/navigation.vue:183
+#: src/app/routes.js:458 src/component/navigation.vue:183
 #: src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
@@ -619,7 +631,7 @@ msgstr "आस्पेक्ट अनुपात"
 msgid "Attributes"
 msgstr "गुण"
 
-#: src/app/routes.js:407 src/common/util.js:959
+#: src/app/routes.js:420 src/common/util.js:959
 #: src/component/navigation.vue:254 src/options/options.js:361
 msgid "Audio"
 msgstr "ऑडियो"
@@ -647,6 +659,10 @@ msgstr "ऑटो"
 #: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "पीछे"
+
+#: src/page/auth/consent.vue:61
+msgid "Back to App"
+msgstr ""
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -742,7 +758,7 @@ msgstr "व्यस्त, कृपया प्रतीक्षा कर�
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "हमारे द्वारा प्रदान किए जाने वाले सॉफ़्टवेयर और सेवाओं का उपयोग करके, आप हमारी सेवा की शर्तों, गोपनीयता नीति और आचार संहिता से सहमत होते हैं।"
 
-#: src/app/routes.js:346 src/component/navigation.vue:396
+#: src/app/routes.js:359 src/component/navigation.vue:396
 #: src/options/options.js:264 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
@@ -959,7 +975,7 @@ msgstr "ग्राहक"
 msgid "Close"
 msgstr "बंद करे"
 
-#: src/app/routes.js:225
+#: src/app/routes.js:226
 msgid "Cluster"
 msgstr "झुंड"
 
@@ -1015,6 +1031,10 @@ msgstr "पुष्टि करना"
 #: src/component/service/add.vue:104 src/page/services.vue:114
 msgid "Connect"
 msgstr "जुडिये"
+
+#: src/app/routes.js:249
+msgid "Connect App"
+msgstr ""
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:187
@@ -1235,6 +1255,10 @@ msgstr "सभी हटा दो?"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "अनाथ अनुक्रमणिका प्रविष्टियाँ, साइडकार फ़ाइलें और थंबनेल हटाएँ।"
 
+#: src/page/auth/consent.vue:61
+msgid "Deny"
+msgstr ""
+
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
 msgid "Description"
@@ -1356,8 +1380,8 @@ msgstr "अमान्य परिवर्तनों को हटाएं
 msgid "Discard unsaved changes?"
 msgstr "बचाए बिना किए गए बदलावों को हटाएं?"
 
-#: src/app/routes.js:736 src/app/routes.js:743 src/app/routes.js:750
-#: src/app/routes.js:757
+#: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
+#: src/app/routes.js:770
 msgid "Discover"
 msgstr "डिस्कवर"
 
@@ -1591,7 +1615,7 @@ msgstr "इकाई नहीं मिली"
 msgid "Error"
 msgstr "त्रुटि"
 
-#: src/app/routes.js:534 src/component/navigation.vue:511
+#: src/app/routes.js:547 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "त्रुटियाँ"
 
@@ -1752,7 +1776,7 @@ msgstr "तेज"
 msgid "Favorite"
 msgstr "पसंदीदा"
 
-#: src/app/routes.js:379 src/component/navigation.vue:316
+#: src/app/routes.js:392 src/component/navigation.vue:316
 #: src/options/options.js:262 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
@@ -1779,7 +1803,7 @@ msgstr "मादा"
 msgid "File"
 msgstr "फ़ाइल"
 
-#: src/app/routes.js:503
+#: src/app/routes.js:516
 msgid "File Browser"
 msgstr "फ़ाइल ब्राउज़र"
 
@@ -1863,7 +1887,7 @@ msgstr "फ़ोल्डर में %{n} फाइलें हैं"
 msgid "Folder is empty"
 msgstr "फ़ोल्डर खाली है"
 
-#: src/app/routes.js:359 src/component/navigation.vue:463
+#: src/app/routes.js:372 src/component/navigation.vue:463
 #: src/options/options.js:267 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
@@ -1960,7 +1984,7 @@ msgstr "हैश"
 msgid "Help"
 msgstr "मदद"
 
-#: src/app/routes.js:100
+#: src/app/routes.js:101
 msgid "Help & Support"
 msgstr "मदद समर्थन"
 
@@ -1968,7 +1992,7 @@ msgstr "मदद समर्थन"
 msgid "Hidden"
 msgstr "छिपा हुआ"
 
-#: src/app/routes.js:518
+#: src/app/routes.js:531
 msgid "Hidden Files"
 msgstr "छिपी हुई फाइलें"
 
@@ -2143,7 +2167,7 @@ msgstr "इंस्टेंस तक पहुँच नहीं हो प�
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:452
 #: src/component/user/edit/dialog.vue:27 src/page/admin/users.vue:286
-#: src/app/routes.js:248 src/locales.js:388
+#: src/app/routes.js:261 src/locales.js:388
 msgid "Instances"
 msgstr "उदाहरण"
 
@@ -2268,7 +2292,7 @@ msgstr "लेबल नहीं मिला"
 msgid "Label saved"
 msgstr "लेबल सहेजा गया"
 
-#: src/component/cluster/node/overview.vue:63 src/app/routes.js:549
+#: src/component/cluster/node/overview.vue:63 src/app/routes.js:562
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
@@ -2339,12 +2363,12 @@ msgstr "लेंस"
 msgid "Lens not found"
 msgstr "लेंस नहीं मिला"
 
-#: src/app/routes.js:603 src/app/routes.js:619 src/app/routes.js:635
+#: src/app/routes.js:616 src/app/routes.js:632 src/app/routes.js:648
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "पुस्तकालय"
 
-#: src/page/connect.vue:5 src/app/routes.js:94
+#: src/page/connect.vue:5 src/app/routes.js:95
 #: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
@@ -2385,7 +2409,7 @@ msgstr "लिस्ट व्यू"
 msgid "Live"
 msgstr "लाइव"
 
-#: src/app/routes.js:393 src/component/navigation.vue:247
+#: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
 msgstr "लाइव तस्वीरें"
 
@@ -2514,7 +2538,7 @@ msgstr "निशान"
 msgid "Maximum number of accounts has been reached."
 msgstr "खातों की अधिकतम संख्या पहुँच गई है।"
 
-#: src/app/routes.js:386 src/component/navigation.vue:225
+#: src/app/routes.js:399 src/component/navigation.vue:225
 #: src/options/options.js:259 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "मिडिया"
@@ -2560,7 +2584,7 @@ msgstr "गुम या अमान्य कॉन्फ़िगरेशन
 msgid "Modified"
 msgstr "संशोधित"
 
-#: src/app/routes.js:320 src/component/navigation.vue:423
+#: src/app/routes.js:333 src/component/navigation.vue:423
 #: src/options/options.js:265 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
@@ -2691,10 +2715,6 @@ msgstr "अगले साल"
 msgid "No"
 msgstr "नहीं"
 
-#: src/options/admin.js:26
-msgid "No Access"
-msgstr "पहुँच नहीं"
-
 #: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "कोई एल्बम असाइन नहीं किया गया"
@@ -2750,7 +2770,7 @@ msgstr "कोई व्यक्ति नहीं मिला"
 #: src/component/lightbox.vue:667 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:883
+#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
 msgid "No pictures found"
 msgstr "कोई चित्र नहीं मिला"
 
@@ -2920,6 +2940,10 @@ msgstr "एक व्यक्ति मिला"
 msgid "One picture found"
 msgstr "एक तस्वीर मिली"
 
+#: src/page/auth/consent.vue:30
+msgid "Only allow access if you started connecting this app yourself."
+msgstr ""
+
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "केवल स्थानीय रूप से प्रबंधित खातों को ही 2FA प्रमाणीकरण के लिए सेट किया जा सकता है।"
@@ -3041,7 +3065,7 @@ msgstr "रुकें"
 msgid "Payment required"
 msgstr "भुगतान आवश्यक है"
 
-#: src/app/routes.js:564 src/app/routes.js:588
+#: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
@@ -3099,7 +3123,7 @@ msgstr "PhotoPrism 100% स्व-वित्तपोषित और स्�
 msgid "PhotoPrism+ Membership"
 msgstr "फोटोप्रिज्म+ सदस्यता"
 
-#: src/app/routes.js:313
+#: src/app/routes.js:326
 msgid "Photos"
 msgstr "तस्वीरें"
 
@@ -3128,8 +3152,8 @@ msgstr "स्थान"
 msgid "Place & Time"
 msgstr "स्थान और समय"
 
-#: src/app/routes.js:463 src/app/routes.js:469 src/app/routes.js:475
-#: src/app/routes.js:490 src/component/navigation.vue:352
+#: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
+#: src/app/routes.js:503 src/component/navigation.vue:352
 #: src/component/navigation.vue:746 src/options/options.js:263
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:409 src/page/settings/general.vue:493
@@ -3244,7 +3268,7 @@ msgstr "पिछला वर्ष"
 msgid "Primary"
 msgstr "मुख्य"
 
-#: src/app/routes.js:428 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:441 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
 #: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
@@ -3359,7 +3383,7 @@ msgstr "इंटरफ़ेस एनिमेशन और मोशन इ�
 msgid "Refresh"
 msgstr "ताज़ा करना"
 
-#: src/app/routes.js:497 src/component/navigation.vue:330
+#: src/app/routes.js:510 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
 msgid "Regions"
 msgstr "क्षेत्रों"
@@ -3480,7 +3504,7 @@ msgstr "पुनः प्रयास सीमा"
 msgid "Retype Password"
 msgstr "पासवर्ड फिर से लिखें"
 
-#: src/app/routes.js:421 src/component/navigation.vue:169
+#: src/app/routes.js:434 src/component/navigation.vue:169
 msgid "Review"
 msgstr "समीक्षा"
 
@@ -3574,6 +3598,14 @@ msgstr "खोज"
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
 msgstr "खोज फ़िल्टर"
+
+#: src/page/auth/consent.vue:169
+msgid "Search and view your photos"
+msgstr ""
+
+#: src/page/auth/consent.vue:170
+msgid "Search and view your videos"
+msgstr ""
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3719,9 +3751,9 @@ msgid "Set as Cover Image"
 msgstr "कवर छवि के रूप में सेट करें"
 
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
-#: src/component/navigation.vue:494 src/app/routes.js:205 src/app/routes.js:652
-#: src/app/routes.js:664 src/app/routes.js:676 src/app/routes.js:693
-#: src/app/routes.js:705 src/app/routes.js:725 src/component/navigation.vue:533
+#: src/component/navigation.vue:494 src/app/routes.js:206 src/app/routes.js:665
+#: src/app/routes.js:677 src/app/routes.js:689 src/app/routes.js:706
+#: src/app/routes.js:718 src/app/routes.js:738 src/component/navigation.vue:533
 #: src/component/navigation.vue:706 src/options/options.js:268
 msgid "Settings"
 msgstr "समायोजन"
@@ -3904,6 +3936,7 @@ msgid "Some albums could not be updated"
 msgstr "कुछ एल्बम अपडेट नहीं किए जा सके"
 
 #: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "कुछ गलत हुआ है, दोबारा कोशिश करें"
 
@@ -4114,6 +4147,10 @@ msgstr "विषय"
 msgid "This account is missing an ID and can't be edited."
 msgstr "इस खाते में आईडी नहीं है और इसे संपादित नहीं किया जा सकता।"
 
+#: src/page/auth/consent.vue:15
+msgid "This authorization request has expired or is invalid. Please return to the app and try again."
+msgstr ""
+
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
 #: src/common/form.js:360 src/common/form.js:370 src/common/form.js:382
@@ -4306,6 +4343,10 @@ msgstr "एक अलग पहचान"
 msgid "Unknown"
 msgstr "अनजान"
 
+#: src/page/auth/consent.vue:129
+msgid "Unknown App"
+msgstr ""
+
 #: src/page/photos.vue:455
 msgid "Unknown location"
 msgstr "अज्ञात स्थान"
@@ -4316,7 +4357,7 @@ msgstr "अज्ञात स्थान"
 msgid "Unregistered"
 msgstr "अपंजीकृत"
 
-#: src/app/routes.js:372 src/component/navigation.vue:212
+#: src/app/routes.js:385 src/component/navigation.vue:212
 msgid "Unsorted"
 msgstr "अवर्गीकृत"
 
@@ -4453,6 +4494,10 @@ msgstr "अपलोड हो रहा है…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "ऐसे चित्र शामिल होने वाले अपलोड स्वचालित रूप से अस्वीकार कर दिए जाएंगे।"
 
+#: src/page/auth/consent.vue:168
+msgid "Use PhotoPrism tools in this app"
+msgstr ""
+
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
 msgstr "प्रीसेट का उपयोग करें"
@@ -4541,7 +4586,7 @@ msgstr "वीडियो"
 msgid "Video Duration"
 msgstr "वीडियो अवधि"
 
-#: src/app/routes.js:400 src/component/navigation.vue:240
+#: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
 msgid "Videos"
 msgstr "वीडियो"
@@ -4551,9 +4596,53 @@ msgstr "वीडियो"
 msgid "View"
 msgstr "राय"
 
+#: src/page/auth/consent.vue:179
+msgid "View cameras"
+msgstr ""
+
+#: src/page/auth/consent.vue:180
+msgid "View lenses"
+msgstr ""
+
+#: src/page/auth/consent.vue:178
+msgid "View people"
+msgstr ""
+
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
 msgstr "खोज परिणामों को सूची के रूप में देखें।"
+
+#: src/page/auth/consent.vue:171
+msgid "View your albums"
+msgstr ""
+
+#: src/page/auth/consent.vue:174
+msgid "View your calendar"
+msgstr ""
+
+#: src/page/auth/consent.vue:172
+msgid "View your favorites"
+msgstr ""
+
+#: src/page/auth/consent.vue:181
+msgid "View your files"
+msgstr ""
+
+#: src/page/auth/consent.vue:175
+msgid "View your folders"
+msgstr ""
+
+#: src/page/auth/consent.vue:177
+msgid "View your labels"
+msgstr ""
+
+#: src/page/auth/consent.vue:173
+msgid "View your moments"
+msgstr ""
+
+#: src/page/auth/consent.vue:176
+msgid "View your places"
+msgstr ""
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4688,6 +4777,10 @@ msgstr "अतिरिक्त चेहरों को खोजने क�
 msgid "Your account could not be connected"
 msgstr "आपका खाता कनेक्ट नहीं किया जा सका"
 
+#: src/page/auth/consent.vue:33
+msgid "Your account does not have the permissions this app requires."
+msgstr ""
+
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
 msgstr "आपका खाता सफलतापूर्वक कनेक्ट कर दिया गया है।"
@@ -4733,6 +4826,10 @@ msgstr "में"
 msgid "mixed"
 msgstr "मिश्रित"
 
+#: src/page/auth/consent.vue:186
+msgid "not available"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "वैकल्पिक"
@@ -4776,6 +4873,9 @@ msgstr "{0} चयनित"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} में से {2}"
+
+#~ msgid "No Access"
+#~ msgstr "पहुँच नहीं"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

@@ -34,6 +34,14 @@ msgstr "%s 已存在"
 msgid "%s has been restored"
 msgstr "%s 已恢复"
 
+#: src/page/auth/consent.vue:23
+msgid "%{client} cannot be connected to your account %{account} on %{site}."
+msgstr ""
+
+#: src/page/auth/consent.vue:20
+msgid "%{client} wants to access your account %{account} on %{site}."
+msgstr ""
+
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
 msgstr "已使用%{n}GB，共%{q}GB"
@@ -129,7 +137,7 @@ msgstr "API 密钥"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:88 src/component/navigation.vue:595
+#: src/app/routes.js:89 src/component/navigation.vue:595
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -155,7 +163,7 @@ msgstr "无障碍功能"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:86 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "账户"
@@ -391,7 +399,7 @@ msgstr "相册未找到"
 msgid "Album saved"
 msgstr "相册已保存"
 
-#: src/app/routes.js:333 src/component/album/toolbar.vue:118
+#: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
@@ -456,6 +464,10 @@ msgstr "导入文件夹中的所有文件"
 msgid "All originals"
 msgstr "全部源图"
 
+#: src/page/auth/consent.vue:72
+msgid "Allow"
+msgstr ""
+
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
 msgstr "允许页面缩放"
@@ -509,7 +521,7 @@ msgstr "海拔"
 msgid "Altitude (m)"
 msgstr "海拔（米）"
 
-#: src/app/routes.js:414 src/common/util.js:961
+#: src/app/routes.js:427 src/common/util.js:961
 #: src/component/photo/batch-edit.vue:68 src/component/photo/batch-edit.vue:127
 #: src/component/photo/edit/files.vue:194
 #: src/component/photo/view/cards.vue:113
@@ -554,7 +566,7 @@ msgstr "批准并保存更改"
 msgid "Apps and Devices"
 msgstr "应用程序和设备"
 
-#: src/app/routes.js:445 src/component/navigation.vue:183
+#: src/app/routes.js:458 src/component/navigation.vue:183
 #: src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
@@ -619,7 +631,7 @@ msgstr "长宽比"
 msgid "Attributes"
 msgstr "属性"
 
-#: src/app/routes.js:407 src/common/util.js:959
+#: src/app/routes.js:420 src/common/util.js:959
 #: src/component/navigation.vue:254 src/options/options.js:361
 msgid "Audio"
 msgstr "音频"
@@ -647,6 +659,10 @@ msgstr "汽车"
 #: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "后退"
+
+#: src/page/auth/consent.vue:61
+msgid "Back to App"
+msgstr ""
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -742,7 +758,7 @@ msgstr "正在忙碌，请稍候…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "通过使用我们提供的软件和服务，您同意我们的服务条款、隐私政策和行为准则。"
 
-#: src/app/routes.js:346 src/component/navigation.vue:396
+#: src/app/routes.js:359 src/component/navigation.vue:396
 #: src/options/options.js:264 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
@@ -959,7 +975,7 @@ msgstr "客户"
 msgid "Close"
 msgstr "关闭"
 
-#: src/app/routes.js:225
+#: src/app/routes.js:226
 msgid "Cluster"
 msgstr "群组"
 
@@ -1015,6 +1031,10 @@ msgstr "确认"
 #: src/component/service/add.vue:104 src/page/services.vue:114
 msgid "Connect"
 msgstr "连接"
+
+#: src/app/routes.js:249
+msgid "Connect App"
+msgstr ""
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:187
@@ -1235,6 +1255,10 @@ msgstr "全部删除？"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "删除孤立索引项、副卡文件和缩略图。"
 
+#: src/page/auth/consent.vue:61
+msgid "Deny"
+msgstr ""
+
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
 msgid "Description"
@@ -1356,8 +1380,8 @@ msgstr "丢弃无效更改？"
 msgid "Discard unsaved changes?"
 msgstr "丢弃未保存的更改？"
 
-#: src/app/routes.js:736 src/app/routes.js:743 src/app/routes.js:750
-#: src/app/routes.js:757
+#: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
+#: src/app/routes.js:770
 msgid "Discover"
 msgstr "探索"
 
@@ -1591,7 +1615,7 @@ msgstr "实体未找到"
 msgid "Error"
 msgstr "错误"
 
-#: src/app/routes.js:534 src/component/navigation.vue:511
+#: src/app/routes.js:547 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "错误"
 
@@ -1752,7 +1776,7 @@ msgstr "快"
 msgid "Favorite"
 msgstr "收藏"
 
-#: src/app/routes.js:379 src/component/navigation.vue:316
+#: src/app/routes.js:392 src/component/navigation.vue:316
 #: src/options/options.js:262 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
@@ -1779,7 +1803,7 @@ msgstr "女"
 msgid "File"
 msgstr "文件"
 
-#: src/app/routes.js:503
+#: src/app/routes.js:516
 msgid "File Browser"
 msgstr "文件浏览器"
 
@@ -1863,7 +1887,7 @@ msgstr "文件夹中有 %{n} 个文件"
 msgid "Folder is empty"
 msgstr "文件夹为空"
 
-#: src/app/routes.js:359 src/component/navigation.vue:463
+#: src/app/routes.js:372 src/component/navigation.vue:463
 #: src/options/options.js:267 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
@@ -1960,7 +1984,7 @@ msgstr "哈希"
 msgid "Help"
 msgstr "帮助"
 
-#: src/app/routes.js:100
+#: src/app/routes.js:101
 msgid "Help & Support"
 msgstr "帮助和支持"
 
@@ -1968,7 +1992,7 @@ msgstr "帮助和支持"
 msgid "Hidden"
 msgstr "隐藏"
 
-#: src/app/routes.js:518
+#: src/app/routes.js:531
 msgid "Hidden Files"
 msgstr "隐藏文件"
 
@@ -2143,7 +2167,7 @@ msgstr "无法连接到该实例。请在实例恢复在线后重试。"
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:452
 #: src/component/user/edit/dialog.vue:27 src/page/admin/users.vue:286
-#: src/app/routes.js:248 src/locales.js:388
+#: src/app/routes.js:261 src/locales.js:388
 msgid "Instances"
 msgstr "实例"
 
@@ -2268,7 +2292,7 @@ msgstr "标签未找到"
 msgid "Label saved"
 msgstr "标签已保存"
 
-#: src/component/cluster/node/overview.vue:63 src/app/routes.js:549
+#: src/component/cluster/node/overview.vue:63 src/app/routes.js:562
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
@@ -2339,12 +2363,12 @@ msgstr "镜头"
 msgid "Lens not found"
 msgstr "未找到镜头"
 
-#: src/app/routes.js:603 src/app/routes.js:619 src/app/routes.js:635
+#: src/app/routes.js:616 src/app/routes.js:632 src/app/routes.js:648
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "资料库"
 
-#: src/page/connect.vue:5 src/app/routes.js:94
+#: src/page/connect.vue:5 src/app/routes.js:95
 #: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
@@ -2385,7 +2409,7 @@ msgstr "列表查看"
 msgid "Live"
 msgstr "实况"
 
-#: src/app/routes.js:393 src/component/navigation.vue:247
+#: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
 msgstr "实况照片"
 
@@ -2514,7 +2538,7 @@ msgstr "标记"
 msgid "Maximum number of accounts has been reached."
 msgstr "账户数已达到上限。"
 
-#: src/app/routes.js:386 src/component/navigation.vue:225
+#: src/app/routes.js:399 src/component/navigation.vue:225
 #: src/options/options.js:259 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "媒体"
@@ -2560,7 +2584,7 @@ msgstr "配置缺失或无效"
 msgid "Modified"
 msgstr "修改的"
 
-#: src/app/routes.js:320 src/component/navigation.vue:423
+#: src/app/routes.js:333 src/component/navigation.vue:423
 #: src/options/options.js:265 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
@@ -2691,10 +2715,6 @@ msgstr "明年"
 msgid "No"
 msgstr "否"
 
-#: src/options/admin.js:26
-msgid "No Access"
-msgstr "无权限"
-
 #: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "未指定专辑"
@@ -2750,7 +2770,7 @@ msgstr "找不到人物"
 #: src/component/lightbox.vue:667 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:883
+#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
 msgid "No pictures found"
 msgstr "找不到图片"
 
@@ -2920,6 +2940,10 @@ msgstr "已找到一个人物"
 msgid "One picture found"
 msgstr "已发现一张图片"
 
+#: src/page/auth/consent.vue:30
+msgid "Only allow access if you started connecting this app yourself."
+msgstr ""
+
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "仅可设置本地管理的帐户进行 2FA 身份验证。"
@@ -3042,7 +3066,7 @@ msgstr "暂停"
 msgid "Payment required"
 msgstr "需付款"
 
-#: src/app/routes.js:564 src/app/routes.js:588
+#: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
@@ -3100,7 +3124,7 @@ msgstr "PhotoPrism是100%自筹资金和独立的。"
 msgid "PhotoPrism+ Membership"
 msgstr "照片棱镜+会员资格"
 
-#: src/app/routes.js:313
+#: src/app/routes.js:326
 msgid "Photos"
 msgstr "照片"
 
@@ -3129,8 +3153,8 @@ msgstr "地点"
 msgid "Place & Time"
 msgstr "地点和时间"
 
-#: src/app/routes.js:463 src/app/routes.js:469 src/app/routes.js:475
-#: src/app/routes.js:490 src/component/navigation.vue:352
+#: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
+#: src/app/routes.js:503 src/component/navigation.vue:352
 #: src/component/navigation.vue:746 src/options/options.js:263
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:409 src/page/settings/general.vue:493
@@ -3245,7 +3269,7 @@ msgstr "上一年度"
 msgid "Primary"
 msgstr "主文件"
 
-#: src/app/routes.js:428 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:441 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
 #: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
@@ -3361,7 +3385,7 @@ msgstr "减少界面动画和动态效果。"
 msgid "Refresh"
 msgstr "刷新"
 
-#: src/app/routes.js:497 src/component/navigation.vue:330
+#: src/app/routes.js:510 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
 msgid "Regions"
 msgstr "地区"
@@ -3482,7 +3506,7 @@ msgstr "重试限制"
 msgid "Retype Password"
 msgstr "重新输入密码"
 
-#: src/app/routes.js:421 src/component/navigation.vue:169
+#: src/app/routes.js:434 src/component/navigation.vue:169
 msgid "Review"
 msgstr "审查"
 
@@ -3576,6 +3600,14 @@ msgstr "搜索"
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
 msgstr "搜索筛选条件"
+
+#: src/page/auth/consent.vue:169
+msgid "Search and view your photos"
+msgstr ""
+
+#: src/page/auth/consent.vue:170
+msgid "Search and view your videos"
+msgstr ""
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3721,9 +3753,9 @@ msgid "Set as Cover Image"
 msgstr "设置为封面图像"
 
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
-#: src/component/navigation.vue:494 src/app/routes.js:205 src/app/routes.js:652
-#: src/app/routes.js:664 src/app/routes.js:676 src/app/routes.js:693
-#: src/app/routes.js:705 src/app/routes.js:725 src/component/navigation.vue:533
+#: src/component/navigation.vue:494 src/app/routes.js:206 src/app/routes.js:665
+#: src/app/routes.js:677 src/app/routes.js:689 src/app/routes.js:706
+#: src/app/routes.js:718 src/app/routes.js:738 src/component/navigation.vue:533
 #: src/component/navigation.vue:706 src/options/options.js:268
 msgid "Settings"
 msgstr "设置"
@@ -3906,6 +3938,7 @@ msgid "Some albums could not be updated"
 msgstr "某些相册无法更新"
 
 #: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "出错了，再试一次"
 
@@ -4116,6 +4149,10 @@ msgstr "主题"
 msgid "This account is missing an ID and can't be edited."
 msgstr "该账户缺少ID，无法进行编辑。"
 
+#: src/page/auth/consent.vue:15
+msgid "This authorization request has expired or is invalid. Please return to the app and try again."
+msgstr ""
+
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
 #: src/common/form.js:360 src/common/form.js:370 src/common/form.js:382
@@ -4308,6 +4345,10 @@ msgstr "唯一标识符"
 msgid "Unknown"
 msgstr "未知"
 
+#: src/page/auth/consent.vue:129
+msgid "Unknown App"
+msgstr ""
+
 #: src/page/photos.vue:455
 msgid "Unknown location"
 msgstr "未知地点"
@@ -4318,7 +4359,7 @@ msgstr "未知地点"
 msgid "Unregistered"
 msgstr "未注册的"
 
-#: src/app/routes.js:372 src/component/navigation.vue:212
+#: src/app/routes.js:385 src/component/navigation.vue:212
 msgid "Unsorted"
 msgstr "未分类"
 
@@ -4455,6 +4496,10 @@ msgstr "上传中…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "可能包含此类图像的上传将被自动拒绝。"
 
+#: src/page/auth/consent.vue:168
+msgid "Use PhotoPrism tools in this app"
+msgstr ""
+
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
 msgstr "使用预设"
@@ -4543,7 +4588,7 @@ msgstr "视频"
 msgid "Video Duration"
 msgstr "视频时长"
 
-#: src/app/routes.js:400 src/component/navigation.vue:240
+#: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
 msgid "Videos"
 msgstr "视频"
@@ -4553,9 +4598,53 @@ msgstr "视频"
 msgid "View"
 msgstr "视图"
 
+#: src/page/auth/consent.vue:179
+msgid "View cameras"
+msgstr ""
+
+#: src/page/auth/consent.vue:180
+msgid "View lenses"
+msgstr ""
+
+#: src/page/auth/consent.vue:178
+msgid "View people"
+msgstr ""
+
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
 msgstr "以列表形式查看搜索结果。"
+
+#: src/page/auth/consent.vue:171
+msgid "View your albums"
+msgstr ""
+
+#: src/page/auth/consent.vue:174
+msgid "View your calendar"
+msgstr ""
+
+#: src/page/auth/consent.vue:172
+msgid "View your favorites"
+msgstr ""
+
+#: src/page/auth/consent.vue:181
+msgid "View your files"
+msgstr ""
+
+#: src/page/auth/consent.vue:175
+msgid "View your folders"
+msgstr ""
+
+#: src/page/auth/consent.vue:177
+msgid "View your labels"
+msgstr ""
+
+#: src/page/auth/consent.vue:173
+msgid "View your moments"
+msgstr ""
+
+#: src/page/auth/consent.vue:176
+msgid "View your places"
+msgstr ""
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4690,6 +4779,10 @@ msgstr "你可以重新扫描你的库以找到更多的面部。"
 msgid "Your account could not be connected"
 msgstr "你的账户无法连接"
 
+#: src/page/auth/consent.vue:33
+msgid "Your account does not have the permissions this app requires."
+msgstr ""
+
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
 msgstr "您的账户已成功连接。"
@@ -4735,6 +4828,10 @@ msgstr "于"
 msgid "mixed"
 msgstr "混合型"
 
+#: src/page/auth/consent.vue:186
+msgid "not available"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "可选的"
@@ -4778,6 +4875,9 @@ msgstr "{0}已选定"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{2}的{0}-{1}部分"
+
+#~ msgid "No Access"
+#~ msgstr "无权限"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

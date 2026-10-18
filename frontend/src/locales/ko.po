@@ -34,6 +34,14 @@ msgstr "%s가 이미 존재함"
 msgid "%s has been restored"
 msgstr "%s이(가) 복원되었습니다"
 
+#: src/page/auth/consent.vue:23
+msgid "%{client} cannot be connected to your account %{account} on %{site}."
+msgstr ""
+
+#: src/page/auth/consent.vue:20
+msgid "%{client} wants to access your account %{account} on %{site}."
+msgstr ""
+
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} %{q}의 GB 사용된 GB"
@@ -129,7 +137,7 @@ msgstr "API 키"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:88 src/component/navigation.vue:595
+#: src/app/routes.js:89 src/component/navigation.vue:595
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -155,7 +163,7 @@ msgstr "접근성"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:86 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "계정"
@@ -391,7 +399,7 @@ msgstr "앨범을 찾을 수 없음"
 msgid "Album saved"
 msgstr "앨범 저장됨"
 
-#: src/app/routes.js:333 src/component/album/toolbar.vue:118
+#: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
@@ -456,6 +464,10 @@ msgstr "폴더의 모든 파일 가져오기"
 msgid "All originals"
 msgstr "모든 원본"
 
+#: src/page/auth/consent.vue:72
+msgid "Allow"
+msgstr ""
+
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
 msgstr "페이지 확대/축소 허용"
@@ -509,7 +521,7 @@ msgstr "고도"
 msgid "Altitude (m)"
 msgstr "고도 (m)"
 
-#: src/app/routes.js:414 src/common/util.js:961
+#: src/app/routes.js:427 src/common/util.js:961
 #: src/component/photo/batch-edit.vue:68 src/component/photo/batch-edit.vue:127
 #: src/component/photo/edit/files.vue:194
 #: src/component/photo/view/cards.vue:113
@@ -554,7 +566,7 @@ msgstr "변경 사항 승인 및 저장"
 msgid "Apps and Devices"
 msgstr "앱 및 디바이스"
 
-#: src/app/routes.js:445 src/component/navigation.vue:183
+#: src/app/routes.js:458 src/component/navigation.vue:183
 #: src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
@@ -619,7 +631,7 @@ msgstr "종횡비"
 msgid "Attributes"
 msgstr "속성"
 
-#: src/app/routes.js:407 src/common/util.js:959
+#: src/app/routes.js:420 src/common/util.js:959
 #: src/component/navigation.vue:254 src/options/options.js:361
 msgid "Audio"
 msgstr "오디오"
@@ -647,6 +659,10 @@ msgstr "자동"
 #: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "뒤쪽에"
+
+#: src/page/auth/consent.vue:61
+msgid "Back to App"
+msgstr ""
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -742,7 +758,7 @@ msgstr "처리중, 잠시만 기다려주세요…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "당사가 제공하는 소프트웨어 및 서비스를 사용함으로써 귀하는 당사의 서비스 약관, 개인 정보 보호 정책 및 행동 강령에 동의하는 것입니다."
 
-#: src/app/routes.js:346 src/component/navigation.vue:396
+#: src/app/routes.js:359 src/component/navigation.vue:396
 #: src/options/options.js:264 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
@@ -959,7 +975,7 @@ msgstr "클라이언트"
 msgid "Close"
 msgstr "닫기"
 
-#: src/app/routes.js:225
+#: src/app/routes.js:226
 msgid "Cluster"
 msgstr "클러스터"
 
@@ -1015,6 +1031,10 @@ msgstr "확인하다"
 #: src/component/service/add.vue:104 src/page/services.vue:114
 msgid "Connect"
 msgstr "연결"
+
+#: src/app/routes.js:249
+msgid "Connect App"
+msgstr ""
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:187
@@ -1235,6 +1255,10 @@ msgstr "모두 삭제하시겠습니까?"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "고아가 된 색인 항목, 사이드카 파일 및 썸네일을 삭제합니다."
 
+#: src/page/auth/consent.vue:61
+msgid "Deny"
+msgstr ""
+
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
 msgid "Description"
@@ -1356,8 +1380,8 @@ msgstr "유효하지 않은 변경 사항을 삭제하시겠습니까?"
 msgid "Discard unsaved changes?"
 msgstr "저장하지 않은 변경 사항을 삭제하시겠습니까?"
 
-#: src/app/routes.js:736 src/app/routes.js:743 src/app/routes.js:750
-#: src/app/routes.js:757
+#: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
+#: src/app/routes.js:770
 msgid "Discover"
 msgstr "디스커버"
 
@@ -1591,7 +1615,7 @@ msgstr "항목을 찾을 수 없음"
 msgid "Error"
 msgstr "오류"
 
-#: src/app/routes.js:534 src/component/navigation.vue:511
+#: src/app/routes.js:547 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "오류"
 
@@ -1752,7 +1776,7 @@ msgstr "빠른"
 msgid "Favorite"
 msgstr "즐겨 찾기"
 
-#: src/app/routes.js:379 src/component/navigation.vue:316
+#: src/app/routes.js:392 src/component/navigation.vue:316
 #: src/options/options.js:262 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
@@ -1779,7 +1803,7 @@ msgstr "여성"
 msgid "File"
 msgstr "파일"
 
-#: src/app/routes.js:503
+#: src/app/routes.js:516
 msgid "File Browser"
 msgstr "파일 탐색기"
 
@@ -1863,7 +1887,7 @@ msgstr "폴더에 %{n} 파일을 포함됨"
 msgid "Folder is empty"
 msgstr "폴더가 비어 있습니다"
 
-#: src/app/routes.js:359 src/component/navigation.vue:463
+#: src/app/routes.js:372 src/component/navigation.vue:463
 #: src/options/options.js:267 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
@@ -1960,7 +1984,7 @@ msgstr "해시"
 msgid "Help"
 msgstr "도움말"
 
-#: src/app/routes.js:100
+#: src/app/routes.js:101
 msgid "Help & Support"
 msgstr "도움말/지원"
 
@@ -1968,7 +1992,7 @@ msgstr "도움말/지원"
 msgid "Hidden"
 msgstr "숨김"
 
-#: src/app/routes.js:518
+#: src/app/routes.js:531
 msgid "Hidden Files"
 msgstr "숨김 파일"
 
@@ -2143,7 +2167,7 @@ msgstr "인스턴스에 연결할 수 없습니다. 다시 온라인 상태가 �
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:452
 #: src/component/user/edit/dialog.vue:27 src/page/admin/users.vue:286
-#: src/app/routes.js:248 src/locales.js:388
+#: src/app/routes.js:261 src/locales.js:388
 msgid "Instances"
 msgstr "인스턴스"
 
@@ -2268,7 +2292,7 @@ msgstr "라벨을 찾을 수 없음"
 msgid "Label saved"
 msgstr "라벨이 저장되었습니다"
 
-#: src/component/cluster/node/overview.vue:63 src/app/routes.js:549
+#: src/component/cluster/node/overview.vue:63 src/app/routes.js:562
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
@@ -2339,12 +2363,12 @@ msgstr "렌즈"
 msgid "Lens not found"
 msgstr "렌즈를 찾을 수 없습니다"
 
-#: src/app/routes.js:603 src/app/routes.js:619 src/app/routes.js:635
+#: src/app/routes.js:616 src/app/routes.js:632 src/app/routes.js:648
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "라이브러리"
 
-#: src/page/connect.vue:5 src/app/routes.js:94
+#: src/page/connect.vue:5 src/app/routes.js:95
 #: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
@@ -2385,7 +2409,7 @@ msgstr "목록 보기"
 msgid "Live"
 msgstr "라이브"
 
-#: src/app/routes.js:393 src/component/navigation.vue:247
+#: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
 msgstr "라이브 포토"
 
@@ -2514,7 +2538,7 @@ msgstr "마커"
 msgid "Maximum number of accounts has been reached."
 msgstr "최대 계정 수에 도달했습니다."
 
-#: src/app/routes.js:386 src/component/navigation.vue:225
+#: src/app/routes.js:399 src/component/navigation.vue:225
 #: src/options/options.js:259 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "미디어"
@@ -2560,7 +2584,7 @@ msgstr "구성이 누락되었거나 유효하지 않습니다."
 msgid "Modified"
 msgstr "수정됨"
 
-#: src/app/routes.js:320 src/component/navigation.vue:423
+#: src/app/routes.js:333 src/component/navigation.vue:423
 #: src/options/options.js:265 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
@@ -2691,10 +2715,6 @@ msgstr "내년"
 msgid "No"
 msgstr "아니요"
 
-#: src/options/admin.js:26
-msgid "No Access"
-msgstr "접근 불가"
-
 #: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "할당된 앨범 없음"
@@ -2750,7 +2770,7 @@ msgstr "사람이 없습니다"
 #: src/component/lightbox.vue:667 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:883
+#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
 msgid "No pictures found"
 msgstr "사진이 없습니다"
 
@@ -2920,6 +2940,10 @@ msgstr "한 사람이 발견됨"
 msgid "One picture found"
 msgstr "사진 1장 발견"
 
+#: src/page/auth/consent.vue:30
+msgid "Only allow access if you started connecting this app yourself."
+msgstr ""
+
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "2FA 인증을 위해 로컬로 관리되는 계정만 설정할 수 있습니다."
@@ -3041,7 +3065,7 @@ msgstr "일시 정지"
 msgid "Payment required"
 msgstr "결제 필요"
 
-#: src/app/routes.js:564 src/app/routes.js:588
+#: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
@@ -3099,7 +3123,7 @@ msgstr "포토프리즘은 100% 자체 자금으로 독립적으로 운영됩니
 msgid "PhotoPrism+ Membership"
 msgstr "포토프리즘+ 멤버십"
 
-#: src/app/routes.js:313
+#: src/app/routes.js:326
 msgid "Photos"
 msgstr "사진"
 
@@ -3128,8 +3152,8 @@ msgstr "장소"
 msgid "Place & Time"
 msgstr "장소 & 시간"
 
-#: src/app/routes.js:463 src/app/routes.js:469 src/app/routes.js:475
-#: src/app/routes.js:490 src/component/navigation.vue:352
+#: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
+#: src/app/routes.js:503 src/component/navigation.vue:352
 #: src/component/navigation.vue:746 src/options/options.js:263
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:409 src/page/settings/general.vue:493
@@ -3244,7 +3268,7 @@ msgstr "전년도"
 msgid "Primary"
 msgstr "주요"
 
-#: src/app/routes.js:428 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:441 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
 #: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
@@ -3359,7 +3383,7 @@ msgstr "인터페이스 애니메이션과 모션 효과를 줄이세요."
 msgid "Refresh"
 msgstr "새로 고침"
 
-#: src/app/routes.js:497 src/component/navigation.vue:330
+#: src/app/routes.js:510 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
 msgid "Regions"
 msgstr "지역"
@@ -3480,7 +3504,7 @@ msgstr "재시도 제한"
 msgid "Retype Password"
 msgstr "비밀번호 다시 입력"
 
-#: src/app/routes.js:421 src/component/navigation.vue:169
+#: src/app/routes.js:434 src/component/navigation.vue:169
 msgid "Review"
 msgstr "리뷰"
 
@@ -3574,6 +3598,14 @@ msgstr "검색"
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
 msgstr "검색 필터"
+
+#: src/page/auth/consent.vue:169
+msgid "Search and view your photos"
+msgstr ""
+
+#: src/page/auth/consent.vue:170
+msgid "Search and view your videos"
+msgstr ""
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3719,9 +3751,9 @@ msgid "Set as Cover Image"
 msgstr "표지 이미지로 설정"
 
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
-#: src/component/navigation.vue:494 src/app/routes.js:205 src/app/routes.js:652
-#: src/app/routes.js:664 src/app/routes.js:676 src/app/routes.js:693
-#: src/app/routes.js:705 src/app/routes.js:725 src/component/navigation.vue:533
+#: src/component/navigation.vue:494 src/app/routes.js:206 src/app/routes.js:665
+#: src/app/routes.js:677 src/app/routes.js:689 src/app/routes.js:706
+#: src/app/routes.js:718 src/app/routes.js:738 src/component/navigation.vue:533
 #: src/component/navigation.vue:706 src/options/options.js:268
 msgid "Settings"
 msgstr "설정"
@@ -3904,6 +3936,7 @@ msgid "Some albums could not be updated"
 msgstr "일부 앨범을 업데이트할 수 없습니다."
 
 #: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "문제가 발생했습니다. 다시 시도하세요."
 
@@ -4114,6 +4147,10 @@ msgstr "테마"
 msgid "This account is missing an ID and can't be edited."
 msgstr "이 계정에는 ID가 입력되어 있지 않아 편집할 수 없습니다."
 
+#: src/page/auth/consent.vue:15
+msgid "This authorization request has expired or is invalid. Please return to the app and try again."
+msgstr ""
+
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
 #: src/common/form.js:360 src/common/form.js:370 src/common/form.js:382
@@ -4306,6 +4343,10 @@ msgstr "유일 ID"
 msgid "Unknown"
 msgstr "알 수 없는"
 
+#: src/page/auth/consent.vue:129
+msgid "Unknown App"
+msgstr ""
+
 #: src/page/photos.vue:455
 msgid "Unknown location"
 msgstr "알 수 없는 위치"
@@ -4316,7 +4357,7 @@ msgstr "알 수 없는 위치"
 msgid "Unregistered"
 msgstr "미등록"
 
-#: src/app/routes.js:372 src/component/navigation.vue:212
+#: src/app/routes.js:385 src/component/navigation.vue:212
 msgid "Unsorted"
 msgstr "정렬되지 않음"
 
@@ -4453,6 +4494,10 @@ msgstr "업로드 중…"
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "이러한 이미지가 포함될 수 있는 업로드는 자동으로 거부됩니다."
 
+#: src/page/auth/consent.vue:168
+msgid "Use PhotoPrism tools in this app"
+msgstr ""
+
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
 msgstr "사전 설정 사용"
@@ -4541,7 +4586,7 @@ msgstr "동영상"
 msgid "Video Duration"
 msgstr "비디오 시간"
 
-#: src/app/routes.js:400 src/component/navigation.vue:240
+#: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
 msgid "Videos"
 msgstr "동영상"
@@ -4551,9 +4596,53 @@ msgstr "동영상"
 msgid "View"
 msgstr "보기"
 
+#: src/page/auth/consent.vue:179
+msgid "View cameras"
+msgstr ""
+
+#: src/page/auth/consent.vue:180
+msgid "View lenses"
+msgstr ""
+
+#: src/page/auth/consent.vue:178
+msgid "View people"
+msgstr ""
+
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
 msgstr "검색 결과를 목록으로 봅니다."
+
+#: src/page/auth/consent.vue:171
+msgid "View your albums"
+msgstr ""
+
+#: src/page/auth/consent.vue:174
+msgid "View your calendar"
+msgstr ""
+
+#: src/page/auth/consent.vue:172
+msgid "View your favorites"
+msgstr ""
+
+#: src/page/auth/consent.vue:181
+msgid "View your files"
+msgstr ""
+
+#: src/page/auth/consent.vue:175
+msgid "View your folders"
+msgstr ""
+
+#: src/page/auth/consent.vue:177
+msgid "View your labels"
+msgstr ""
+
+#: src/page/auth/consent.vue:173
+msgid "View your moments"
+msgstr ""
+
+#: src/page/auth/consent.vue:176
+msgid "View your places"
+msgstr ""
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4688,6 +4777,10 @@ msgstr "추가 얼굴을 찾기 위해 라이브러리를 다시 검색할 수 �
 msgid "Your account could not be connected"
 msgstr "계정을 연결할 수 없습니다"
 
+#: src/page/auth/consent.vue:33
+msgid "Your account does not have the permissions this app requires."
+msgstr ""
+
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
 msgstr "계정이 성공적으로 연결되었습니다."
@@ -4733,6 +4826,10 @@ msgstr "입력"
 msgid "mixed"
 msgstr "혼합"
 
+#: src/page/auth/consent.vue:186
+msgid "not available"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "선택 사항"
@@ -4776,6 +4873,9 @@ msgstr "{0} 선택됨"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{2}의 {0}-{1}"
+
+#~ msgid "No Access"
+#~ msgstr "접근 불가"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"
