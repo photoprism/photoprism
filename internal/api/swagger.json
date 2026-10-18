@@ -37,6 +37,76 @@
             },
             "type": "object"
         },
+        "api.OAuthConsentAccount": {
+            "properties": {
+                "displayName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "api.OAuthConsentClient": {
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "origin": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "api.OAuthConsentRedirect": {
+            "properties": {
+                "redirectUri": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "api.OAuthConsentResponse": {
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/api.OAuthConsentAccount"
+                },
+                "available": {
+                    "type": "boolean"
+                },
+                "client": {
+                    "$ref": "#/definitions/api.OAuthConsentClient"
+                },
+                "expiresAt": {
+                    "type": "string"
+                },
+                "scopes": {
+                    "items": {
+                        "$ref": "#/definitions/api.OAuthConsentScope"
+                    },
+                    "type": "array"
+                },
+                "siteUrl": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "api.OAuthConsentScope": {
+            "properties": {
+                "available": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "authn.GrantType": {
             "enum": [
                 "",
@@ -2948,6 +3018,23 @@
                     "type": "number"
                 }
             },
+            "type": "object"
+        },
+        "form.OAuthConsent": {
+            "properties": {
+                "request": {
+                    "type": "string"
+                },
+                "scopes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "request"
+            ],
             "type": "object"
         },
         "form.OAuthCreateToken": {
@@ -9965,13 +10052,20 @@
             "get": {
                 "operationId": "OAuthAuthorize",
                 "produces": [
-                    "application/json"
+                    "application/json",
+                    "text/html"
                 ],
                 "responses": {
                     "302": {
-                        "description": "redirect to the client redirect_uri with an authorization code",
+                        "description": "redirect to the consent page, or to the client redirect_uri with an error",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     },
                     "403": {
@@ -9985,9 +10079,243 @@
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
                     }
                 },
-                "summary": "OAuth2/OIDC authorization endpoint",
+                "summary": "OAuth2 authorization endpoint for apps (authorization code flow with PKCE)",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
+        "/api/v1/oauth/consent": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "OAuthConsent",
+                "parameters": [
+                    {
+                        "description": "pending request ID",
+                        "in": "body",
+                        "name": "request",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.OAuthConsent"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.OAuthConsentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "returns a pending OAuth authorization request for the consent page",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
+        "/api/v1/oauth/consent/approve": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "OAuthConsentApprove",
+                "parameters": [
+                    {
+                        "description": "pending request ID and approved scopes",
+                        "in": "body",
+                        "name": "request",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.OAuthConsent"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.OAuthConsentRedirect"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "approves a pending OAuth authorization request",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
+        "/api/v1/oauth/consent/deny": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "OAuthConsentDeny",
+                "parameters": [
+                    {
+                        "description": "pending request ID",
+                        "in": "body",
+                        "name": "request",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.OAuthConsent"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.OAuthConsentRedirect"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "denies a pending OAuth authorization request",
                 "tags": [
                     "Authentication"
                 ]

@@ -38,6 +38,7 @@ import Admin from "page/admin.vue";
 import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
 import Instances from "page/auth/instances.vue";
+import Consent from "page/auth/consent.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
 import License from "page/about/license.vue";
@@ -238,6 +239,18 @@ export default [
         // cluster.vue redirects to the user's default route in `created()`.
         next();
       }
+    },
+  },
+  {
+    name: "consent",
+    path: "/oauth/consent",
+    component: Consent,
+    meta: {
+      title: $gettext("Connect App"),
+      requiresAuth: true,
+      hideNav: true,
+      settings: false,
+      background: "background",
     },
   },
   {

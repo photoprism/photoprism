@@ -2,27 +2,35 @@ package api
 
 import (
 	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/oauth"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
+// OAuthConsentUri is the web app route where users approve or deny an authorization request.
+const OAuthConsentUri = "/oauth/consent"
+
 // OAuthAuthorize registers the OAuth2/OIDC authorization endpoint. The behavior
-// is provided by OAuthAuthorizeHandler, which defaults to a placeholder and is
-// replaced by Portal builds with the OIDC OP authorize flow (see
-// oauth_handlers.go and portal/internal/server/register.go).
+// is provided by OAuthAuthorizeHandler, which defaults to the app flow and is
+// replaced by Portal builds with a dispatcher that also serves the cluster OP
+// (see oauth_handlers.go and portal/internal/server/register.go).
 //
-//	@Summary	OAuth2/OIDC authorization endpoint
+//	@Summary	OAuth2 authorization endpoint for apps (authorization code flow with PKCE)
 //	@Id			OAuthAuthorize
 //	@Tags		Authentication
-//	@Produce	json
-//	@Success	302		{string}	string	"redirect to the client redirect_uri with an authorization code"
-//	@Failure	403,405	{object}	i18n.Response
+//	@Produce	json,html
+//	@Success	302				{string}	string	"redirect to the consent page, or to the client redirect_uri with an error"
+//	@Failure	400,403,405,429	{object}	i18n.Response
 //	@Router		/api/v1/oauth/authorize [get]
 func OAuthAuthorize(router *gin.RouterGroup) {
 	router.GET("/oauth/authorize", func(c *gin.Context) {
@@ -30,9 +38,10 @@ func OAuthAuthorize(router *gin.RouterGroup) {
 	})
 }
 
-// defaultOAuthAuthorize is the placeholder authorization handler used unless a
-// Portal build overrides OAuthAuthorizeHandler with the OIDC OP authorize flow.
-func defaultOAuthAuthorize(c *gin.Context) {
+// OAuthAppAuthorize validates an authorization request of an app client, stores it as a pending request,
+// and redirects the browser to the consent page. Errors are rendered as a page until the client and its
+// redirect URI are verified, and redirected to the client afterwards.
+func OAuthAppAuthorize(c *gin.Context) {
 	// Prevent CDNs from caching this endpoint.
 	if header.IsCdn(c.Request) {
 		AbortNotFound(c)
@@ -42,18 +51,119 @@ func defaultOAuthAuthorize(c *gin.Context) {
 	// Disable caching of responses.
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
-	// Get client IP address for logs and rate limiting checks.
+	conf := get.Config()
 	clientIp := ClientIP(c)
 	actor := "unknown client"
 	action := "authorize"
 
 	// Abort if running in public mode.
-	if get.Config().Public() {
+	if conf.Public() {
 		event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrDisabledInPublicMode.Error()})
 		Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 		return
 	}
 
-	// The OIDC OP authorization endpoint is only available on Portal builds.
-	c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
+	// Abort if apps cannot be connected.
+	if !conf.OAuthAppsEnabled() {
+		c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
+		return
+	}
+
+	// Refuse clients that exceeded the authorization request rate limit.
+	if limiter.Authorize.Reject(clientIp) {
+		RenderOAuthError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		return
+	}
+
+	r := oauth.ParseAuthorizeRequest(c.Request.URL.Query())
+
+	// Until the client and its redirect URI are verified, errors are rendered instead of redirected.
+	if err := r.ValidateClient(); err != nil {
+		limiter.Authorize.Reserve(clientIp)
+		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
+		RenderOAuthError(c, http.StatusBadRequest, err.Code, err.Description)
+		return
+	}
+
+	actor = "client " + clean.Log(r.ClientID)
+
+	client, clientErr := oauth.FindClient(conf, r.ClientID)
+
+	if clientErr != nil {
+		limiter.Authorize.Reserve(clientIp)
+		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(clientErr)})
+		RenderOAuthError(c, http.StatusBadRequest, oauth.ErrCodeInvalidClient, "unknown client")
+		return
+	} else if !oauth.MatchRedirectURI(client.RedirectURIs, r.RedirectURI) {
+		limiter.Authorize.Reserve(clientIp)
+		event.AuditWarn([]string{clientIp, "oauth2", actor, action, "redirect uri not registered", status.Denied})
+		RenderOAuthError(c, http.StatusBadRequest, oauth.ErrCodeInvalidRequest, "redirect_uri not registered")
+		return
+	}
+
+	// From here, errors are passed to the client with a redirect.
+	if err := r.Validate(); err != nil {
+		limiter.Authorize.Reserve(clientIp)
+		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
+		oauthErrorRedirect(c, r.RedirectURI, err.Code, err.Description, r.State)
+		return
+	}
+
+	resource := r.Resource
+
+	if resource == "" {
+		resource = conf.OAuthResourceUrl()
+	} else if resource != conf.OAuthResourceUrl() {
+		limiter.Authorize.Reserve(clientIp)
+		event.AuditWarn([]string{clientIp, "oauth2", actor, action, "invalid resource", status.Denied})
+		oauthErrorRedirect(c, r.RedirectURI, oauth.ErrCodeInvalidTarget, "resource not supported", r.State)
+		return
+	}
+
+	scopes, scopeErr := oauth.ValidateScopes(r.Scopes(), client.Scope)
+
+	if scopeErr != nil {
+		limiter.Authorize.Reserve(clientIp)
+		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(scopeErr)})
+		oauthErrorRedirect(c, r.RedirectURI, scopeErr.Code, scopeErr.Description, r.State)
+		return
+	}
+
+	// Charge the rate limit for each stored request, as the endpoint does not require authentication.
+	limiter.Authorize.Reserve(clientIp)
+
+	requestID, err := oauth.NewRequest(oauth.RequestSpec{
+		ClientID:            client.ID,
+		ClientName:          client.Name,
+		RedirectURI:         r.RedirectURI,
+		Scopes:              scopes,
+		Resource:            resource,
+		State:               r.State,
+		CodeChallenge:       r.CodeChallenge,
+		CodeChallengeMethod: r.CodeChallengeMethod,
+	})
+
+	if err != nil {
+		event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(err)})
+		oauthErrorRedirect(c, r.RedirectURI, oauth.ErrCodeServerError, "failed to store request", r.State)
+		return
+	}
+
+	event.AuditInfo([]string{clientIp, "oauth2", actor, action, "redirecting to consent", status.Succeeded})
+	c.Redirect(http.StatusFound, conf.FrontendUri(OAuthConsentUri)+"?"+url.Values{"request": {requestID}}.Encode())
+}
+
+// oauthErrorRedirect redirects the browser to a verified redirect URI with an OAuth error and the issuer,
+// or renders the error if no redirect URL can be built.
+func oauthErrorRedirect(c *gin.Context, redirectURI, errCode, description, state string) {
+	dest, err := oauth.ErrorRedirectURL(redirectURI, errCode, description, state, get.Config().SiteUrl())
+
+	if err != nil {
+		RenderOAuthError(c, http.StatusBadRequest, errCode, description)
+		return
+	}
+
+	c.Header(header.CacheControl, header.CacheControlNoStore)
+	c.Redirect(http.StatusFound, dest)
+	c.Abort()
 }
