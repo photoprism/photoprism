@@ -10077,6 +10077,61 @@
         "/api/v1/oauth/authorize": {
             "get": {
                 "operationId": "OAuthAuthorize",
+                "parameters": [
+                    {
+                        "description": "must be code",
+                        "in": "query",
+                        "name": "response_type",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "app client ID or client metadata document URL",
+                        "in": "query",
+                        "name": "client_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "registered redirect URI",
+                        "in": "query",
+                        "name": "redirect_uri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "PKCE code challenge",
+                        "in": "query",
+                        "name": "code_challenge",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "must be S256",
+                        "in": "query",
+                        "name": "code_challenge_method",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "opaque value returned to the client",
+                        "in": "query",
+                        "name": "state",
+                        "type": "string"
+                    },
+                    {
+                        "description": "space-separated scopes, mcp is always included",
+                        "in": "query",
+                        "name": "scope",
+                        "type": "string"
+                    },
+                    {
+                        "description": "MCP endpoint URL (RFC 8707)",
+                        "in": "query",
+                        "name": "resource",
+                        "type": "string"
+                    }
+                ],
                 "produces": [
                     "application/json",
                     "text/html"
@@ -10089,13 +10144,22 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "OAuth error and error_description (HTML page for browsers)",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -10107,9 +10171,12 @@
                         }
                     },
                     "429": {
-                        "description": "Too Many Requests",
+                        "description": "OAuth error and error_description (HTML page for browsers)",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
                         }
                     }
                 },

@@ -22,6 +22,7 @@ type UserRenameHandler func(tx *gorm.DB, m *User, oldName, newName string) error
 var UserRenameHandlers = map[string]UserRenameHandler{
 	Session{}.TableName(): renameSessionUser,
 	Client{}.TableName():  renameClientUser,
+	Grant{}.TableName():   renameGrantUser,
 }
 
 // CheckRename returns newName in its stored form if the account can be renamed to it, or an empty
@@ -179,6 +180,19 @@ func renameSessionUser(tx *gorm.DB, m *User, _, newName string) error {
 	}
 
 	log.Debugf("users: changed username of %s", english.Plural(int(res.RowsAffected), "session", "sessions"))
+
+	return nil
+}
+
+// renameGrantUser updates the username stored with the app grants of the account.
+func renameGrantUser(tx *gorm.DB, m *User, _, newName string) error {
+	res := tx.Model(&Grant{}).Where("user_uid = ?", m.UserUID).UpdateColumn("user_name", newName)
+
+	if res.Error != nil {
+		return res.Error
+	}
+
+	log.Debugf("users: changed username of %s", english.Plural(int(res.RowsAffected), "grant", "grants"))
 
 	return nil
 }

@@ -19,12 +19,14 @@
 
 ### Package layout
 
-| Package                    | Purpose                                                                                                                                                                              |
-|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `internal/mcp/`            | Core MCP logic: server factory, data pipeline, resources, tools                                                                                                                      |
-| `internal/api/mcp.go`      | Gin HTTP handler with auth middleware, route registration                                                                                                                            |
-| `internal/commands/mcp.go` | CLI command (`photoprism mcp serve`) using stdio transport                                                                                                                           |
-| `internal/auth/acl/`       | `ResourceMCP` constant and ACL grant rules (`GrantFullAccess` for admin; `GrantSearchAll` for manager in Pro/Portal and for the API client roles: client, instance, service, portal) |
+| Package                      | Purpose                                                                                                                                                                              |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `internal/mcp/`              | Core MCP logic: server factory, data pipeline, resources, tools                                                                                                                      |
+| `internal/api/mcp.go`        | Gin HTTP handler with auth middleware, route registration                                                                                                                            |
+| `internal/api/mcp_auth.go`   | `401` challenge naming the protected resource metadata, `TokenInfo` binding of MCP sessions to their owner                                                                           |
+| `internal/api/mcp_grants.go` | Closes the MCP sessions of an app when its OAuth grant is revoked                                                                                                                    |
+| `internal/commands/mcp.go`   | CLI command (`photoprism mcp serve`) using stdio transport                                                                                                                           |
+| `internal/auth/acl/`         | `ResourceMCP` constant and ACL grant rules (`GrantFullAccess` for admin; `GrantSearchAll` for manager in Pro/Portal and for the API client roles: client, instance, service, portal) |
 
 ### Scope
 
@@ -181,7 +183,7 @@ The HTTP endpoint uses PhotoPrism's existing ACL system:
   - All other roles (`user`, `viewer`, `guest`, `visitor`, `contributor`, default) are denied.
 - **Why `GrantSearchAll` for non-admins?** It includes `AccessAll`, `ActionView`, and `ActionSearch` — exactly what the read-only tools need — but excludes `ActionManage`/`ActionUpdate`/`ActionDelete`/`ActionCreate`. The handler checks `ActionView` on `ResourceMCP` only, so the grant does not limit what an individual tool can do: a tool that reads or changes library data MUST check the resource and action of that data on each call, with the same scope and visibility rules as the matching REST endpoint. A client token then needs both the `mcp` scope and the scope of that resource.
 - **Client tokens:** API client sessions must also include the `mcp` resource (or a wildcard) in their session scope; the ACL grant alone is not sufficient.
-- **Auth model:** request-level. The handler runs `Auth(c, acl.ResourceMCP, acl.ActionView)` followed by `s.Abort(c)`, which writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
+- **Auth model:** request-level. The handler runs `AuthAudience(c, conf.OAuthResourceUrl(), acl.ResourceMCP, acl.ActionView)`, i.e. `Auth()` that also accepts OAuth app access tokens issued for this endpoint, followed by `s.Abort(c)`, which writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
 - **Public mode:** anonymous access is permitted. In public mode, `api.Session()` returns the default public session (effectively admin), so `Auth(...)` passes and the currently registered read-only tools are reachable without a token. This is an intentional, narrow allowance for demo deployments (`demo.photoprism.app`); it is safe only because every registered tool today returns static reference metadata derived from `config.Flags` and `form.Report(&form.SearchPhotos{})` — no database access, no per-user state, no secrets, no mutations. **Any future tool that touches per-user state, the database, or mutates anything MUST NOT be registered on this server without an additional per-tool check**. See *Extending the Tool Surface* below.
 - **Stdio transport:** no authentication for the currently registered read-only tools — the trust boundary is the OS process pipe between client and server, and the spawning shell already has full PhotoPrism access on the host. The same static-data contract that makes public-mode HTTP safe makes stdio safe. **Any future write-capable, destructive, or per-user tool MUST require a session token on stdio too** (for example via `PHOTOPRISM_MCP_TOKEN` or a `--session` flag, validated through the same `Auth(...)` path the HTTP handler uses), so a misbehaving or prompt-injected MCP client cannot destroy data the user did not explicitly authorize. See *Extending the Tool Surface* below.
 
@@ -237,7 +239,7 @@ Whichever path you pick, **add a test in `internal/mcp/server_test.go` that fail
 
 ### How Users Get Access
 
-Regular user accounts (`RoleUser`, `RoleViewer`, etc.) are intentionally **not** in the `ResourceMCP` ACL. Regular users typically don't have shell access to the server, so they can't run the CLI commands themselves — and the currently registered tools only return static reference data, so there's no per-user information to authorize against. Access is therefore granted through admin-issued client tokens.
+Regular user accounts (`RoleUser`, `RoleViewer`, etc.) are intentionally **not** in the `ResourceMCP` ACL. Regular users typically don't have shell access to the server, so they can't run the CLI commands themselves — and the currently registered tools only return static reference data, so there's no per-user information to authorize against. Access is therefore granted through admin-issued client tokens, or by signing in from an MCP client (see below).
 
 To onboard a user (or a CI job, IDE, etc.), an administrator runs the following on the PhotoPrism server:
 
@@ -259,4 +261,6 @@ To revoke access without disabling the user account, the administrator runs:
 
 > **Heads up:** `photoprism auth add --scope mcp <username>` creates an *app password* tied to a user account, but it currently does **not** grant MCP access — `RoleUser` is not in the `ResourceMCP` ACL. Use `photoprism clients add` for MCP integrations until that policy changes. This is a deliberate hold, not an oversight.
 
-When MCP eventually grows tools that need user-scoped data (e.g. "list my albums"), the team will revisit the policy and likely add `RoleUser → GrantSearchAll` so the app-password path lights up. Until then, every MCP integration is an admin-provisioned client token tied to a named application.
+When MCP eventually grows tools that need user-scoped data (e.g. "list my albums"), the team will revisit the policy and likely add `RoleUser → GrantSearchAll` so the app-password path lights up. Until then, MCP access is limited to admin-provisioned client tokens and the accounts whose role may use `mcp`.
+
+Accounts whose role may use `mcp` (admins, and managers in Pro and Portal) can also connect an MCP client such as `claude.ai` by signing in to PhotoPrism and approving it (OAuth authorization code flow with PKCE). The app is registered with `photoprism clients add --callback <url>` or, where `--oauth-apps` allows it, identified by its client metadata URL; the connection is listed under Settings > Account > Connected Apps, where it can be disconnected.

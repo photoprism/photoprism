@@ -30,8 +30,17 @@ const OAuthConsentUri = "/oauth/consent"
 //	@Id			OAuthAuthorize
 //	@Tags		Authentication
 //	@Produce	json,html
-//	@Success	302				{string}	string	"redirect to the consent page, or to the client redirect_uri with an error"
-//	@Failure	400,403,405,429	{object}	i18n.Response
+//	@Param		response_type			query		string				true	"must be code"
+//	@Param		client_id				query		string				true	"app client ID or client metadata document URL"
+//	@Param		redirect_uri			query		string				true	"registered redirect URI"
+//	@Param		code_challenge			query		string				true	"PKCE code challenge"
+//	@Param		code_challenge_method	query		string				true	"must be S256"
+//	@Param		state					query		string				false	"opaque value returned to the client"
+//	@Param		scope					query		string				false	"space-separated scopes, mcp is always included"
+//	@Param		resource				query		string				false	"MCP endpoint URL (RFC 8707)"
+//	@Success	302						{string}	string				"redirect to the consent page, or to the client redirect_uri with an error"
+//	@Failure	400,429					{object}	map[string]string	"OAuth error and error_description (HTML page for browsers)"
+//	@Failure	403,404,405				{object}	i18n.Response
 //	@Router		/api/v1/oauth/authorize [get]
 func OAuthAuthorize(router *gin.RouterGroup) {
 	router.GET("/oauth/authorize", func(c *gin.Context) {

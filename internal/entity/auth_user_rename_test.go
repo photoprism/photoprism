@@ -612,6 +612,28 @@ func TestRenameSessionUser(t *testing.T) {
 	assert.Equal(t, "alice", storedSessionUserName(t, other.ID))
 }
 
+func TestRenameGrantUser(t *testing.T) {
+	m := newRenameTestUser(t, "rename-grants", acl.RoleAdmin)
+	alice := FindUserByName("alice")
+	require.NotNil(t, alice)
+
+	grant := &Grant{UserUID: m.UserUID, UserName: m.UserName, ClientID: "https://claude.ai/rename.json", RefreshHash: "hash"}
+	other := &Grant{UserUID: alice.UserUID, UserName: alice.UserName, ClientID: "https://claude.ai/rename.json", RefreshHash: "hash"}
+	require.NoError(t, grant.Create())
+	require.NoError(t, other.Create())
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&Grant{}, "grant_uid IN (?)", []string{grant.GrantUID, other.GrantUID}).Error)
+	})
+
+	require.NoError(t, Db().Transaction(func(tx *gorm.DB) error {
+		return renameGrantUser(tx, m, m.UserName, "rename-grants-new")
+	}))
+
+	assert.Equal(t, "rename-grants-new", FindGrant(grant.GrantUID).UserName)
+	assert.Equal(t, "alice", FindGrant(other.GrantUID).UserName)
+	assert.Contains(t, UserRenameHandlers, Grant{}.TableName())
+}
+
 func TestRenameClientUser(t *testing.T) {
 	m := newRenameTestUser(t, "rename-clients", acl.RoleAdmin)
 	client := newRenameTestClient(t, m, false)

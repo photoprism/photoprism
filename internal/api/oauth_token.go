@@ -75,10 +75,9 @@ func OAuthToken(router *gin.RouterGroup) {
 			}
 		}
 
-		// The Portal OIDC OP handles the authorization_code grant and parses the request
-		// itself, so a single token_endpoint serves both. This runs before the binding
-		// because form.OAuthCreateToken.Validate rejects the grant, and it is gated on a
-		// form content type per RFC 6749.
+		// OAuthAuthorizationCodeHandler (the app flow; on Portal a dispatcher) parses the
+		// authorization_code grant itself. This runs before the binding, which rejects the
+		// grant, and is gated on a form content type per RFC 6749.
 		if IsOAuthFormRequest(c) && authn.Grant(c.PostForm("grant_type")) == authn.GrantAuthorizationCode {
 			if OAuthAuthorizationCodeHandler != nil {
 				OAuthAuthorizationCodeHandler(c)
