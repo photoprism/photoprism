@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"path"
 	"strings"
 	"testing"
@@ -1265,6 +1266,47 @@ func TestUser_Validate(t *testing.T) {
 	})
 }
 
+func TestIsUserValidationError(t *testing.T) {
+	t.Run("Wrapped", func(t *testing.T) {
+		assert.True(t, IsUserValidationError(UserValidationError{Err: authn.ErrAuthIDRequired}))
+		assert.True(t, IsUserValidationError(fmt.Errorf("add: %w", UserValidationError{Err: authn.ErrAuthIDRequired})))
+	})
+	t.Run("Other", func(t *testing.T) {
+		assert.False(t, IsUserValidationError(nil))
+		assert.False(t, IsUserValidationError(authn.ErrAuthIDRequired))
+	})
+}
+
+// closedDbProvider returns a database whose connection pool is closed, so that every query fails.
+type closedDbProvider struct {
+	db *gorm.DB
+}
+
+// Db returns the closed database.
+func (p closedDbProvider) Db() *gorm.DB {
+	return p.db
+}
+
+func TestUser_ValidateQueryError(t *testing.T) {
+	conn, ok := dbConn.(*DbConn)
+	require.True(t, ok, "test database provider")
+
+	db, err := OpenDb(conn.Driver, conn.Dsn)
+	require.NoError(t, err)
+	require.NoError(t, CloseDb(db))
+
+	SetDbProvider(closedDbProvider{db: db})
+	t.Cleanup(func() { SetDbProvider(conn) })
+
+	m := NewUser()
+	m.UserName = "validate-query-error"
+	m.UserRole = acl.RoleAdmin.String()
+
+	err = m.Validate()
+	require.Error(t, err)
+	assert.False(t, IsUserValidationError(err), err.Error())
+}
+
 func TestAddUser(t *testing.T) {
 	t.Run("SettingsAndDetails", func(t *testing.T) {
 		t.Cleanup(func() { deleteTestUser(t, FindUserByName("adduser-related")) })
@@ -1317,6 +1359,18 @@ func TestAddUser(t *testing.T) {
 		assert.Equal(t, "https://adduser.example.com", taker.AuthIssuer)
 		assert.Equal(t, authn.ProviderOIDC.String(), taker.AuthProvider)
 	})
+	t.Run("ValidationError", func(t *testing.T) {
+		err := AddUser(form.User{UserName: "adduser-bad-email", UserEmail: "x@localhost", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: "none"})
+		require.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
+		assert.Equal(t, "email 'x@localhost' does not have a fully qualified domain", err.Error())
+		assert.Nil(t, FindUserByName("adduser-bad-email"))
+
+		err = AddUser(form.User{UserName: "adduser-josé", UserRole: acl.RoleAdmin.String(), AuthProvider: "none"})
+		assert.True(t, IsUserValidationError(err))
+		assert.ErrorIs(t, err, authn.ErrNotASCII)
+	})
 	t.Run("NotASCII", func(t *testing.T) {
 		for _, name := range []string{"adduser-josé", "\u212Aate-adduser", "adduser-jo\u200bse"} {
 			err := AddUser(form.User{UserName: name, UserRole: acl.RoleAdmin.String(), AuthProvider: "none"})
@@ -1333,6 +1387,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 	t.Run("TooLong", func(t *testing.T) {
 		u := form.User{
@@ -1344,6 +1399,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 	t.Run("InvalidRole", func(t *testing.T) {
 		u := form.User{
@@ -1355,6 +1411,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 	t.Run("ValidLocalUser", func(t *testing.T) {
 		u := form.User{
@@ -1392,6 +1449,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 }
 

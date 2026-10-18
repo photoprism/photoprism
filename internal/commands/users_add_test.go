@@ -96,7 +96,7 @@ func TestUsersAddCommand_Restore(t *testing.T) {
 
 		_, err := RunWithTestContext(UsersAddCommand, []string{"add", "--password=test1234", "restoreaddno"})
 
-		assert.ErrorIs(t, err, authn.ErrAccountAlreadyExists)
+		assert.ErrorIs(t, err, authn.ErrUserAlreadyExists)
 		assert.True(t, entity.FindUserByName("restoreaddno").IsDeleted())
 	})
 	t.Run("Confirmed", func(t *testing.T) {
@@ -136,7 +136,7 @@ func TestUsersAddCommand_Restore(t *testing.T) {
 	t.Run("NotDeleted", func(t *testing.T) {
 		_, err := RunWithTestContext(UsersAddCommand, []string{"add", "--restore", "--password=test1234", "alice"})
 
-		assert.ErrorIs(t, err, authn.ErrAccountAlreadyExists)
+		assert.ErrorIs(t, err, authn.ErrUserAlreadyExists)
 		assert.False(t, entity.FindUserByName("alice").IsDeleted())
 	})
 	t.Run("RestoreFlagOtherName", func(t *testing.T) {
@@ -157,7 +157,7 @@ func TestUsersAddCommand_Restore(t *testing.T) {
 
 		// MariaDB compares names that differ only by accents as equal.
 		if entity.IsDialect(dsn.DriverMySQL) {
-			assert.ErrorIs(t, err, authn.ErrAccountAlreadyExists)
+			assert.ErrorIs(t, err, authn.ErrUserAlreadyExists)
 		} else {
 			assert.NoError(t, err)
 		}

@@ -1398,31 +1398,32 @@ func (m *User) DeactivatePasscode() (passcode *Passcode, err error) {
 	return passcode, err
 }
 
-// Validate checks if username, email and role are valid and returns an error otherwise.
+// Validate checks if username, email and role are valid and returns an error otherwise. A refused value is
+// returned as UserValidationError, a failed database query as is.
 func (m *User) Validate() (err error) {
 	// Validate username. A stored name keeps its form if another account holds the normalized one, as with
 	// SetNormalizedUsername.
 	userName, nameErr := m.normalizedUsername()
 
 	if nameErr != nil {
-		return nameErr
+		return UserValidationError{Err: nameErr}
 	} else if m.ID <= 0 || userName == m.UserName || m.checkUsernameHolder(userName) == nil {
 		m.UserName = userName
 	}
 
 	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
-		return fmt.Errorf("username must have at least %d characters", UsernameLength)
+		return UserValidationError{Err: fmt.Errorf("username must have at least %d characters", UsernameLength)}
 	}
 
 	// Refuse a new username that does not yield a valid handle.
 	if m.ID == 0 && !m.ValidHandle() {
-		return fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))
+		return UserValidationError{Err: fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))}
 	}
 
 	// Check user role.
 	if acl.UserRoles[m.UserRole] == "" {
-		return fmt.Errorf("unsupported user role")
+		return UserValidationError{Err: fmt.Errorf("unsupported user role")}
 	}
 
 	// Check if the username, and the normalized form of a kept name, is unique. An existing account is
@@ -1437,7 +1438,7 @@ func (m *User) Validate() (err error) {
 
 	for i := range duplicates {
 		if m.ID <= 0 || duplicates[i].UserName == m.UserName || duplicates[i].UserName == userName {
-			return fmt.Errorf("user %s already exists", clean.LogQuote(userName))
+			return UserValidationError{Err: fmt.Errorf("user %s already exists", clean.LogQuote(userName))}
 		}
 	}
 
@@ -1448,9 +1449,9 @@ func (m *User) Validate() (err error) {
 
 	// Parse and validate email address.
 	if a, err := mail.ParseAddress(m.UserEmail); err != nil {
-		return fmt.Errorf("email %s is invalid", clean.LogQuote(m.UserEmail))
+		return UserValidationError{Err: fmt.Errorf("email %s is invalid", clean.LogQuote(m.UserEmail))}
 	} else if email := a.Address; !strings.ContainsRune(email, '.') {
-		return fmt.Errorf("email %s does not have a fully qualified domain", clean.LogQuote(m.UserEmail))
+		return UserValidationError{Err: fmt.Errorf("email %s does not have a fully qualified domain", clean.LogQuote(m.UserEmail))}
 	} else {
 		m.UserEmail = email
 	}
