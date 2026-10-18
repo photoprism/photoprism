@@ -428,6 +428,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 
 			if update {
+				config.FlushUsageCache()
 				event.AuditInfo([]string{clientIp, "create session", "oidc", "update user %s", "role %s changed to %s", status.Updated}, clean.LogQuote(userName), prevRole.String(), role.String())
 			}
 
