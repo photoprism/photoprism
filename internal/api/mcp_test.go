@@ -213,10 +213,10 @@ func TestServeMCP(t *testing.T) {
 		// The rewritten response must not leak the SDK's 400 phrasing.
 		assert.NotContains(t, w.Body.String(), "failed to read body")
 	})
-	t.Run("NoChallengeByDefault", func(t *testing.T) {
+	t.Run("NoChallengeWhenAppsDisabled", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		conf := prepareMCPTest(t)
-		conf.Options().OAuthApps = ""
+		conf.Options().OAuthApps = "none"
 		ServeMCP(router)
 
 		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, "", "")

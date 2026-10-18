@@ -39,6 +39,10 @@ func clientsAddAction(ctx *cli.Context) error {
 
 		frm := form.AddClientFromCli(ctx)
 
+		if err := validateAppClientForm(frm); err != nil {
+			return err
+		}
+
 		// A client added for a user belongs to the active account with that UID or exactly that name; a client
 		// without a user is added by omitting the argument.
 		if frm.UserUID != "" {
@@ -109,11 +113,13 @@ func clientsAddAction(ctx *cli.Context) error {
 
 			var authExpires string
 
-			if client.AuthExpires > 0 {
+			if client.IsApp() {
+				// App tokens have a fixed lifetime, see the OAuth app flow.
+			} else if client.AuthExpires > 0 {
 				authExpires = client.Expires().String()
 			}
 
-			if client.AuthTokens > 0 {
+			if client.AuthTokens > 0 && !client.IsApp() {
 				if authExpires != "" {
 					authExpires = fmt.Sprintf("%s; up to %s", authExpires, english.Plural(int(client.Tokens()), "token", "tokens"))
 				} else {
@@ -138,7 +144,13 @@ func clientsAddAction(ctx *cli.Context) error {
 			}
 		}
 
-		// Se a random secret or the secret specified in the command flags, if any.
+		// App clients authenticate without a client secret.
+		if client.IsApp() {
+			fmt.Printf("\nUsers can now connect the app with the following client ID:\n\n%s\n\n", client.ClientUID)
+			return nil
+		}
+
+		// Set a random secret or the secret specified in the command flags, if any.
 		var secret, message string
 		var err error
 

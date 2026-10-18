@@ -46,6 +46,12 @@ func TestRegisterWellknownRoutes(t *testing.T) {
 		assert.NotEmpty(t, result["issuer"])
 	})
 	t.Run("OAuthProtectedResourceDisabled", func(t *testing.T) {
+		opt := conf.Options()
+		apps, public, authMode := opt.OAuthApps, opt.Public, opt.AuthMode
+		t.Cleanup(func() { opt.OAuthApps, opt.Public, opt.AuthMode = apps, public, authMode })
+
+		opt.OAuthApps, opt.Public, opt.AuthMode = "none", false, config.AuthModePasswd
+
 		w := request("/.well-known/oauth-protected-resource/api/v1/mcp")
 		assert.Equal(t, http.StatusNotFound, w.Code)
 	})

@@ -18,6 +18,7 @@ const (
 	MethodOAuth2    MethodType = "oauth2"
 	Method2FA       MethodType = "2fa"
 	MethodJWT       MethodType = "jwt"
+	MethodPKCE      MethodType = "pkce"
 )
 
 // Method casts a string to a normalized method type.
@@ -62,6 +63,8 @@ func (t MethodType) Pretty() string {
 		return "2FA"
 	case MethodJWT:
 		return "JWT"
+	case MethodPKCE:
+		return "PKCE"
 	default:
 		return txt.UpperFirst(t.String())
 	}

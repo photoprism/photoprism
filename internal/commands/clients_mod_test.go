@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 // TestClientsModCommand checks authentication changes with isolated client and session fixtures.
@@ -244,5 +246,73 @@ func TestClientsModCommand_RestorePrompt(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, output, "Client Secret")
 		assert.NotNil(t, entity.FindPassword(uid))
+	})
+}
+
+func TestClientsModCommand_App(t *testing.T) {
+	t.Run("Callbacks", func(t *testing.T) {
+		client, err := entity.AddClient(form.Client{ClientName: "Mod App", AuthMethod: authn.MethodPKCE.String(), AuthScope: "mcp",
+			RedirectURIs: []string{"https://claude.ai/cb"}})
+		require.NoError(t, err)
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--callback=https://claude.ai/new", "--callback=http://127.0.0.1/cb", client.ClientUID})
+		require.NoError(t, err)
+
+		found := entity.FindClientByUID(client.ClientUID)
+		require.NotNil(t, found)
+		assert.Equal(t, []string{"https://claude.ai/new", "http://127.0.0.1/cb"}, found.RedirectURIs())
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--callback=http://example.com/cb", client.ClientUID})
+		assert.Error(t, err)
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--regenerate", client.ClientUID})
+		assert.Error(t, err)
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq9i8u", client.ClientUID})
+		assert.Error(t, err)
+		assert.Nil(t, entity.FindPassword(client.ClientUID))
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=instance", client.ClientUID})
+		assert.Error(t, err)
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--method=oauth2", client.ClientUID})
+		assert.Error(t, err)
+
+		found = entity.FindClientByUID(client.ClientUID)
+		require.NotNil(t, found)
+		assert.True(t, found.IsApp())
+		assert.Equal(t, "client", found.ClientRole)
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--name=Renamed App", client.ClientUID})
+		assert.NoError(t, err)
+		assert.NoError(t, found.Delete())
+	})
+	t.Run("CallbacksForClientCredentials", func(t *testing.T) {
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--callback=https://claude.ai/cb", "cs5gfen1bgxz7s9i"})
+		assert.Error(t, err)
+	})
+	t.Run("ConvertNodeClientToApp", func(t *testing.T) {
+		client, err := entity.AddClient(form.Client{ClientName: "Node Client", AuthScope: "cluster"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+
+		data := client.GetData()
+		data.RedirectURIs = []string{"https://node.example.com/api/v1/oidc/redirect"}
+		require.NoError(t, client.SetData(data).Save())
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--method=pkce", client.ClientUID})
+		assert.Error(t, err)
+
+		found := entity.FindClientByUID(client.ClientUID)
+		require.NotNil(t, found)
+		assert.False(t, found.IsApp())
+	})
+	t.Run("ConvertToApp", func(t *testing.T) {
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--method=pkce", "--callback=https://claude.ai/cb", "cs5gfen1bgxz7s9i"})
+		assert.Error(t, err)
+
+		found := entity.FindClientByUID("cs5gfen1bgxz7s9i")
+		require.NotNil(t, found)
+		assert.False(t, found.IsApp())
 	})
 }

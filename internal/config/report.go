@@ -41,6 +41,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"register-uri", c.RegisterUri()},
 		{"login-uri", c.LoginUri()},
 		{"login-info", c.LoginInfo()},
+		{"oauth-apps", c.OAuthApps()},
 		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
 		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
 		{"session-cache", fmt.Sprintf("%d", c.SessionCache())},

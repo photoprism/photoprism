@@ -45,6 +45,8 @@ func TestMethodType_Pretty(t *testing.T) {
 	assert.Equal(t, "Default", MethodDefault.Pretty())
 	assert.Equal(t, "OAuth2", MethodOAuth2.Pretty())
 	assert.Equal(t, "2FA", Method2FA.Pretty())
+	assert.Equal(t, "PKCE", MethodPKCE.Pretty())
+	assert.Equal(t, MethodPKCE, Method("PKCE"))
 	assert.Equal(t, "Default", MethodUndefined.Pretty())
 }
 
