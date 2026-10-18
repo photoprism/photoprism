@@ -251,10 +251,10 @@ var (
 	// xmpFNumberChain: exif:FNumber.
 	xmpFNumberChain = chainXPath{elemOrAttr("exif:FNumber")}
 
-	// xmpFocalLengthChain: exif:FocalLength → exif:FocalLengthIn35mmFilm.
+	// xmpFocalLengthChain: exif:FocalLengthIn35mmFilm → exif:FocalLength.
 	xmpFocalLengthChain = chainXPath{
-		elemOrAttr("exif:FocalLength"),
 		elemOrAttr("exif:FocalLengthIn35mmFilm"),
+		elemOrAttr("exif:FocalLength"),
 	}
 
 	// xmpIsoChain: exifEX:PhotographicSensitivity (modern) →
@@ -598,7 +598,7 @@ func (doc *XmpDocument) FNumber() float32 {
 
 // FocalLength returns the focal length in millimeters (rounded; the
 // data field is int and sub-mm precision is discarded).
-// Priority: exif:FocalLength (native) → exif:FocalLengthIn35mmFilm.
+// Priority: exif:FocalLengthIn35mmFilm → exif:FocalLength (native).
 func (doc *XmpDocument) FocalLength() int {
 	return int(math.Round(rationalAccessor(xmpFocalLengthChain, doc.doc)))
 }

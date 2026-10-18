@@ -601,7 +601,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "SM-C200", data.CameraModel)
 		assert.Equal(t, "", data.CameraOwner)
 		assert.Equal(t, "", data.CameraSerial)
-		assert.Equal(t, 1, data.FocalLength)
+		assert.Equal(t, 6, data.FocalLength)
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
 	})
@@ -726,7 +726,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.CameraSerial)
 		assert.Equal(t, "", data.LensMake)
 		assert.Equal(t, "", data.LensModel)
-		assert.Equal(t, 5, data.FocalLength)
+		assert.Equal(t, 27, data.FocalLength)
 		assert.Equal(t, 1, int(data.Orientation))
 	})
 	t.Run("DateMovJson", func(t *testing.T) {

@@ -711,9 +711,16 @@ func TestXmpDocument_FNumber(t *testing.T) {
 }
 
 func TestXmpDocument_FocalLength(t *testing.T) {
-	// photoshop.xmp has <exif:FocalLength>5580/1000</exif:FocalLength> ≈ 5.58 mm → 6.
-	doc := loadXmp(t, "testdata/photoshop.xmp")
-	assert.Equal(t, 6, doc.FocalLength())
+	t.Run("PrefersFocalLengthIn35mmFilm", func(t *testing.T) {
+		// photoshop.xmp has <exif:FocalLength>5580/1000</exif:FocalLength> and <exif:FocalLengthIn35mmFilm>27</exif:FocalLengthIn35mmFilm>.
+		doc := loadXmp(t, "testdata/photoshop.xmp")
+		assert.Equal(t, 27, doc.FocalLength())
+	})
+	t.Run("FallsBackToFocalLength", func(t *testing.T) {
+		// canon_eos_6d.xmp has only <exif:FocalLength>65/1</exif:FocalLength>.
+		doc := loadXmp(t, "testdata/canon_eos_6d.xmp")
+		assert.Equal(t, 65, doc.FocalLength())
+	})
 }
 
 func TestXmpDocument_Iso(t *testing.T) {

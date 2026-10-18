@@ -70,7 +70,7 @@ type Data struct {
 	LensModel        string        `meta:"LensModel,Lens,LensID" xmp:"exifEX:LensModel,aux:Lens,aux:LensID"`
 	Software         string        `meta:"Software,Producer,CreatorTool,CreatorSubTool,HistorySoftwareAgent,ProcessingSoftware" xmp:"xmp:CreatorTool,tiff:Software"`
 	Flash            bool          `meta:"FlashFired" xmp:"exif:Flash/exif:Fired"`
-	FocalLength      int           `meta:"FocalLength,FocalLengthIn35mmFormat" xmp:"exif:FocalLength,exif:FocalLengthIn35mmFilm"`
+	FocalLength      int           `meta:"FocalLengthIn35mmFormat,FocalLength" xmp:"exif:FocalLengthIn35mmFilm,exif:FocalLength"`
 	FocalDistance    float64       `meta:"HyperfocalDistance"`
 	Exposure         string        `meta:"ExposureTime,ShutterSpeedValue,ShutterSpeed,TargetExposureTime" xmp:"exif:ExposureTime,exif:ShutterSpeedValue"`
 	Aperture         float32       `meta:"ApertureValue,Aperture" xmp:"exif:ApertureValue"`
