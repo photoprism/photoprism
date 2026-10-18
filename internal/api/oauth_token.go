@@ -27,9 +27,9 @@ import (
 //	@Tags		Authentication
 //	@Accept		json,x-www-form-urlencoded,mpfd
 //	@Produce	json
-//	@Param		request				body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
-//	@Success	200					{object}	gin.H
-//	@Failure	400,401,403,413,429	{object}	i18n.Response
+//	@Param		request					body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, session, authorization_code, or refresh_token grant)"
+//	@Success	200						{object}	gin.H
+//	@Failure	400,401,403,413,429,500	{object}	i18n.Response
 //	@Router		/api/v1/oauth/token [post]
 func OAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
@@ -90,6 +90,13 @@ func OAuthToken(router *gin.RouterGroup) {
 				"error":             "unsupported_grant_type",
 				"error_description": "grant_type is not supported",
 			})
+			return
+		}
+
+		// Refresh tokens are only issued to apps, which authenticate without a client secret,
+		// so the grant is handled before HTTP Basic credentials select client_credentials.
+		if IsOAuthFormRequest(c) && authn.Grant(c.PostForm("grant_type")) == authn.GrantRefreshToken {
+			OAuthAppRefresh(c)
 			return
 		}
 

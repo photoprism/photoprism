@@ -27,6 +27,17 @@ func Auth(c *gin.Context, resource acl.Resource, perm acl.Permission) *entity.Se
 // AuthAny checks if the user is authorized to access a resource with any of the specified permissions
 // and returns the session or nil otherwise.
 func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *entity.Session) {
+	return authAny(c, "", resource, perms)
+}
+
+// AuthAudience checks the authorization like Auth, and also accepts a session issued for the specified
+// audience, such as an app access token for the MCP endpoint.
+func AuthAudience(c *gin.Context, audience string, resource acl.Resource, perm acl.Permission) *entity.Session {
+	return authAny(c, audience, resource, acl.Permissions{perm})
+}
+
+// authAny implements AuthAny and AuthAudience.
+func authAny(c *gin.Context, audience string, resource acl.Resource, perms acl.Permissions) (s *entity.Session) {
 	// Prevent CDNs from caching responses that require authentication.
 	if header.IsCdn(c.Request) {
 		return entity.SessionStatusForbidden()
@@ -58,7 +69,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// Find active session to perform authorization check or deny if no session was found.
 	var err error
 
-	if s, err = LookupSession(clientIp, authToken); s == nil {
+	if s, err = lookupSession(clientIp, authToken, audience); s == nil {
 		// Refuse a client that exceeded the rate limit after the check above, again without an audit event.
 		if errors.Is(err, authn.ErrRateLimitExceeded) {
 			return entity.SessionStatusTooManyRequests()
@@ -143,8 +154,8 @@ func authorizeSession(clientIp string, s *entity.Session, resource acl.Resource,
 	// Perform a regular ACL authorization check based on the user role.
 	u := s.GetUser()
 
-	// Reject requests from unknown or disabled users.
-	if u.IsUnknown() || u.IsDisabled() {
+	// Reject requests from unknown or disabled users, and app tokens of users who may not sign in.
+	if u.IsUnknown() || u.IsDisabled() || s.IsOAuthApp() && u.DenyLogIn() {
 		event.AuditWarn([]string{clientIp, "session %s", "%s %s as unauthorized user", status.Denied}, s.RefID, perms.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
 	}

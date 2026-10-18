@@ -10,30 +10,32 @@ import (
 
 // OpenIDConfiguration represents the values returned by the "/.well-known/openid-configuration" endpoint.
 type OpenIDConfiguration struct {
-	Issuer                                    string   `json:"issuer"`
-	AuthorizationEndpoint                     string   `json:"authorization_endpoint"`
-	TokenEndpoint                             string   `json:"token_endpoint"`
-	UserinfoEndpoint                          string   `json:"userinfo_endpoint"`
-	RegistrationEndpoint                      string   `json:"registration_endpoint"`
-	JwksUri                                   string   `json:"jwks_uri"`
-	ResponseTypesSupported                    []string `json:"response_types_supported"`
-	ResponseModesSupported                    []string `json:"response_modes_supported"`
-	GrantTypesSupported                       []string `json:"grant_types_supported"`
-	SubjectTypesSupported                     []string `json:"subject_types_supported"`
-	IdTokenSigningAlgValuesSupported          []string `json:"id_token_signing_alg_values_supported"`
-	ScopesSupported                           []string `json:"scopes_supported"`
-	TokenEndpointAuthMethodsSupported         []string `json:"token_endpoint_auth_methods_supported"`
-	ClaimsSupported                           []string `json:"claims_supported"`
-	CodeChallengeMethodsSupported             []string `json:"code_challenge_methods_supported"`
-	IntrospectionEndpoint                     string   `json:"introspection_endpoint"`
-	IntrospectionEndpointAuthMethodsSupported []string `json:"introspection_endpoint_auth_methods_supported"`
-	RevocationEndpoint                        string   `json:"revocation_endpoint"`
-	RevocationEndpointAuthMethodsSupported    []string `json:"revocation_endpoint_auth_methods_supported"`
-	EndSessionEndpoint                        string   `json:"end_session_endpoint"`
-	RequestParameterSupported                 bool     `json:"request_parameter_supported"`
-	RequestObjectSigningAlgValuesSupported    []string `json:"request_object_signing_alg_values_supported"`
-	DeviceAuthorizationEndpoint               string   `json:"device_authorization_endpoint"`
-	DpopSigningAlgValuesSupported             []string `json:"dpop_signing_alg_values_supported"`
+	Issuer                                     string   `json:"issuer"`
+	AuthorizationEndpoint                      string   `json:"authorization_endpoint"`
+	TokenEndpoint                              string   `json:"token_endpoint"`
+	UserinfoEndpoint                           string   `json:"userinfo_endpoint"`
+	RegistrationEndpoint                       string   `json:"registration_endpoint"`
+	JwksUri                                    string   `json:"jwks_uri"`
+	ResponseTypesSupported                     []string `json:"response_types_supported"`
+	ResponseModesSupported                     []string `json:"response_modes_supported"`
+	GrantTypesSupported                        []string `json:"grant_types_supported"`
+	SubjectTypesSupported                      []string `json:"subject_types_supported"`
+	IdTokenSigningAlgValuesSupported           []string `json:"id_token_signing_alg_values_supported"`
+	ScopesSupported                            []string `json:"scopes_supported"`
+	TokenEndpointAuthMethodsSupported          []string `json:"token_endpoint_auth_methods_supported"`
+	ClaimsSupported                            []string `json:"claims_supported"`
+	CodeChallengeMethodsSupported              []string `json:"code_challenge_methods_supported"`
+	IntrospectionEndpoint                      string   `json:"introspection_endpoint"`
+	IntrospectionEndpointAuthMethodsSupported  []string `json:"introspection_endpoint_auth_methods_supported"`
+	RevocationEndpoint                         string   `json:"revocation_endpoint"`
+	RevocationEndpointAuthMethodsSupported     []string `json:"revocation_endpoint_auth_methods_supported"`
+	EndSessionEndpoint                         string   `json:"end_session_endpoint"`
+	RequestParameterSupported                  bool     `json:"request_parameter_supported"`
+	RequestObjectSigningAlgValuesSupported     []string `json:"request_object_signing_alg_values_supported"`
+	DeviceAuthorizationEndpoint                string   `json:"device_authorization_endpoint"`
+	DpopSigningAlgValuesSupported              []string `json:"dpop_signing_alg_values_supported"`
+	AuthorizationResponseIssParameterSupported bool     `json:"authorization_response_iss_parameter_supported,omitempty"`
+	ClientIdMetadataDocumentSupported          bool     `json:"client_id_metadata_document_supported,omitempty"`
 }
 
 // NewOpenIDConfiguration creates a service discovery endpoint response based on the config provided.
@@ -44,29 +46,31 @@ func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 	jwksURL := strings.TrimRight(conf.SiteUrl(), "/") + "/.well-known/jwks.json"
 
 	return &OpenIDConfiguration{
-		Issuer:                                    conf.SiteUrl(),
-		AuthorizationEndpoint:                     fmt.Sprintf("%sapi/v1/oauth/authorize", conf.SiteUrl()),
-		TokenEndpoint:                             fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
-		UserinfoEndpoint:                          fmt.Sprintf("%sapi/v1/oauth/userinfo", conf.SiteUrl()),
-		RegistrationEndpoint:                      "",
-		JwksUri:                                   jwksURL,
-		ResponseTypesSupported:                    OAuthResponseTypes,
-		ResponseModesSupported:                    []string{},
-		GrantTypesSupported:                       OAuthGrantTypes,
-		SubjectTypesSupported:                     []string{},
-		IdTokenSigningAlgValuesSupported:          []string{},
-		ScopesSupported:                           acl.Rules.Resources(),
-		TokenEndpointAuthMethodsSupported:         OAuthTokenEndpointAuthMethods,
-		ClaimsSupported:                           []string{},
-		CodeChallengeMethodsSupported:             []string{},
-		IntrospectionEndpoint:                     "",
-		IntrospectionEndpointAuthMethodsSupported: []string{},
-		RevocationEndpoint:                        fmt.Sprintf("%sapi/v1/oauth/revoke", conf.SiteUrl()),
-		RevocationEndpointAuthMethodsSupported:    OAuthRevocationEndpointAuthMethods,
-		EndSessionEndpoint:                        "",
-		RequestParameterSupported:                 false,
-		RequestObjectSigningAlgValuesSupported:    []string{},
-		DeviceAuthorizationEndpoint:               "",
-		DpopSigningAlgValuesSupported:             []string{},
+		Issuer:                                     conf.SiteUrl(),
+		AuthorizationEndpoint:                      fmt.Sprintf("%sapi/v1/oauth/authorize", conf.SiteUrl()),
+		TokenEndpoint:                              fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
+		UserinfoEndpoint:                           fmt.Sprintf("%sapi/v1/oauth/userinfo", conf.SiteUrl()),
+		RegistrationEndpoint:                       "",
+		JwksUri:                                    jwksURL,
+		ResponseTypesSupported:                     oauthValues(conf, OAuthResponseTypes, OAuthAppResponseTypes),
+		ResponseModesSupported:                     []string{},
+		GrantTypesSupported:                        oauthValues(conf, OAuthGrantTypes, OAuthAppGrantTypes),
+		SubjectTypesSupported:                      []string{},
+		IdTokenSigningAlgValuesSupported:           []string{},
+		ScopesSupported:                            acl.Rules.Resources(),
+		TokenEndpointAuthMethodsSupported:          oauthValues(conf, OAuthTokenEndpointAuthMethods, OAuthAppTokenEndpointAuthMethods),
+		ClaimsSupported:                            []string{},
+		CodeChallengeMethodsSupported:              oauthValues(conf, []string{}, OAuthAppCodeChallengeMethods),
+		IntrospectionEndpoint:                      "",
+		IntrospectionEndpointAuthMethodsSupported:  []string{},
+		RevocationEndpoint:                         fmt.Sprintf("%sapi/v1/oauth/revoke", conf.SiteUrl()),
+		RevocationEndpointAuthMethodsSupported:     OAuthRevocationEndpointAuthMethods,
+		EndSessionEndpoint:                         "",
+		RequestParameterSupported:                  false,
+		RequestObjectSigningAlgValuesSupported:     []string{},
+		DeviceAuthorizationEndpoint:                "",
+		DpopSigningAlgValuesSupported:              []string{},
+		AuthorizationResponseIssParameterSupported: conf.OAuthAppsEnabled(),
+		ClientIdMetadataDocumentSupported:          ClientIdMetadataDocuments && conf.OAuthAppsMetadataSupported(),
 	}
 }

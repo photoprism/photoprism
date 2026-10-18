@@ -10447,6 +10447,12 @@
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
                     }
                 },
                 "summary": "revoke an OAuth2 access token or session",
@@ -10465,7 +10471,7 @@
                 "operationId": "OAuthToken",
                 "parameters": [
                     {
-                        "description": "token request (supports client_credentials, password, or session grant)",
+                        "description": "token request (supports client_credentials, password, session, authorization_code, or refresh_token grant)",
                         "in": "body",
                         "name": "request",
                         "required": true,
@@ -10510,6 +10516,12 @@
                     },
                     "429": {
                         "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }

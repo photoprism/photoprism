@@ -6,16 +6,17 @@ Package `oauth` implements the protocol side of the OAuth 2.1 authorization code
 
 ### Building Blocks
 
-| File           | Purpose                                                                                                                                                                                        |
-|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `authorize.go` | `ParseAuthorizeRequest`, `ValidateClient` (client ID and redirect URI, checked before an error may be redirected) and `Validate` (all other parameter bounds).                                 |
-| `pkce.go`      | `VerifyPKCE` and `ValidCodeChallenge`; only `S256` is accepted.                                                                                                                                |
-| `redirect.go`  | `ValidRedirectURI`, `MatchRedirectURI` (exact match; any port for HTTP loopback URIs) and the response URL builders, which always add `iss` (RFC 9207).                                        |
-| `client.go`    | `FindClient` returns an enabled, undeleted app client (client metadata documents are refused until supported), `RedirectOrigin` the origin shown on the consent page.                          |
-| `scope.go`     | `AppScopes` (`mcp` and the library resources MCP tools read), `ValidateScopes` (always adds `mcp`), `ScopeUsable`/`UsableScopes` (ACL rules per role; nothing is usable without `mcp`).        |
-| `request.go`   | `NewRequest`, `FindRequest`, `CompleteRequest` (turns an approved request into a code once, valid for one minute) and `DenyRequest` for pending requests, valid for 15 minutes (`RequestTTL`). |
-| `code.go`      | `IssueCode` and `RedeemCode` for single-use codes valid for one minute, and `PurgeExpired`, which the session cleanup worker calls.                                                            |
-| `secret.go`    | `HashSecret`, the SHA-256 hash under which codes, request IDs and refresh tokens are stored.                                                                                                   |
+| File           | Purpose                                                                                                                                                                                                   |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `authorize.go` | `ParseAuthorizeRequest`, `ValidateClient` (client ID and redirect URI, checked before an error may be redirected) and `Validate` (all other parameter bounds).                                            |
+| `pkce.go`      | `VerifyPKCE` and `ValidCodeChallenge`; only `S256` is accepted.                                                                                                                                           |
+| `redirect.go`  | `ValidRedirectURI`, `MatchRedirectURI` (exact match; any port for HTTP loopback URIs) and the response URL builders, which always add `iss` (RFC 9207).                                                   |
+| `client.go`    | `FindClient` returns an enabled, undeleted app client (client metadata documents are refused until supported), `RedirectOrigin` the origin shown on the consent page.                                     |
+| `scope.go`     | `AppScopes` (`mcp` and the library resources MCP tools read), `ValidateScopes` (always adds `mcp`), `ScopeUsable`/`UsableScopes` (ACL rules per role; nothing is usable without `mcp`).                   |
+| `request.go`   | `NewRequest`, `FindRequest`, `CompleteRequest` (turns an approved request into a code once, valid for one minute) and `DenyRequest` for pending requests, valid for 15 minutes (`RequestTTL`).            |
+| `grant.go`     | `NewGrant`, `NewAccessToken` (one-hour sessions with the MCP endpoint as audience), `RefreshGrant` (rotation; reuse revokes the grant), `RevokeRefreshToken` and `PurgeIdleGrants` (90 days without use). |
+| `code.go`      | `IssueCode` and `RedeemCode` for single-use codes valid for one minute, and `PurgeExpired`, which the session cleanup worker calls.                                                                       |
+| `secret.go`    | `HashSecret`, the SHA-256 hash under which codes, request IDs and refresh tokens are stored.                                                                                                              |
 
 ### Rules
 

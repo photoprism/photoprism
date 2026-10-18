@@ -56,6 +56,19 @@ func ValidateScopes(requested []string, clientScope string) ([]string, *RequestE
 	return result, nil
 }
 
+// ClientScopes returns the scopes that the client scope still permits.
+func ClientScopes(scopes []string, clientScope string) []string {
+	result := make([]string, 0, len(scopes))
+
+	for _, s := range scopes {
+		if acl.ScopePermits(clientScope, acl.Resource(s), acl.Permissions{acl.ActionView}) {
+			result = append(result, s)
+		}
+	}
+
+	return result
+}
+
 // ScopeUsable reports whether the ACL rules allow a role to use the resource named by a scope.
 func ScopeUsable(scope string, role acl.Role) bool {
 	if scope == "" {

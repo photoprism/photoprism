@@ -18,6 +18,7 @@ const (
 	ProviderClient      ProviderType = "client"
 	ProviderApplication ProviderType = "application"
 	ProviderAccessToken ProviderType = "access_token"
+	ProviderOAuthApp    ProviderType = "oauth_app"
 	ProviderLocal       ProviderType = "local"
 	ProviderOIDC        ProviderType = "oidc"
 	ProviderLDAP        ProviderType = "ldap"
@@ -106,6 +107,8 @@ func (t ProviderType) Pretty() string {
 		return "Client"
 	case ProviderAccessToken:
 		return "Access Token"
+	case ProviderOAuthApp:
+		return "OAuth App"
 	default:
 		return txt.UpperFirst(t.String())
 	}

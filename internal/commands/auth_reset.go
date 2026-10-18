@@ -10,7 +10,7 @@ import (
 )
 
 // AuthResetDescription explains the effect of the auth reset command.
-const AuthResetDescription = "This command recreates the auth_sessions database table so that it is compatible with the current version. As a result, all users and clients must re-authenticate. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
+const AuthResetDescription = "This command recreates the auth_sessions, auth_grants, and auth_codes database tables so that they are compatible with the current version. As a result, all users and clients must re-authenticate. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated, and connected apps must be connected again."
 
 // AuthResetCommand configures the command name, flags, and action.
 var AuthResetCommand = &cli.Command{
@@ -45,14 +45,13 @@ func authResetAction(ctx *cli.Context) error {
 
 		db := conf.Db()
 
-		// Drop existing sessions table.
-		if err := db.Migrator().DropTable(&entity.Session{}); err != nil {
-			return cli.Exit(err, 1)
-		}
-
-		// Re-create auth_sessions.
-		if err := entity.CreateTable(db, &entity.Session{}); err != nil {
-			return cli.Exit(err, 1)
+		// Drop and re-create the tables with sessions, app grants, and pending authorization codes.
+		for _, table := range []any{&entity.Session{}, &entity.Grant{}, &entity.AuthCode{}} {
+			if err := db.Migrator().DropTable(table); err != nil {
+				return cli.Exit(err, 1)
+			} else if err = entity.CreateTable(db, table); err != nil {
+				return cli.Exit(err, 1)
+			}
 		}
 
 		log.Infof("all sessions have been removed")

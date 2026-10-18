@@ -86,3 +86,40 @@ func TestRegisterWellknownRoutes(t *testing.T) {
 		assert.Empty(t, w.Header().Get(header.ETag))
 	})
 }
+
+func TestRegisterWellknownRoutes_AppFlow(t *testing.T) {
+	conf := config.TestConfig()
+	opt := conf.Options()
+	apps, public, authMode := opt.OAuthApps, opt.Public, opt.AuthMode
+	t.Cleanup(func() { opt.OAuthApps, opt.Public, opt.AuthMode = apps, public, authMode })
+
+	router := gin.New()
+	registerWellknownRoutes(router, conf)
+
+	request := func(path string) map[string]any {
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, httptest.NewRequest(http.MethodGet, conf.BaseUri(path), nil))
+		require.Equal(t, http.StatusOK, w.Code)
+
+		var result map[string]any
+		require.NoError(t, json.Unmarshal(w.Body.Bytes(), &result))
+
+		return result
+	}
+
+	t.Run("Enabled", func(t *testing.T) {
+		opt.OAuthApps, opt.Public, opt.AuthMode = config.OAuthAppsRegistered, false, config.AuthModePasswd
+		result := request("/.well-known/oauth-authorization-server")
+		assert.Equal(t, []any{"client_credentials", "authorization_code", "refresh_token"}, result["grant_types_supported"])
+		assert.Equal(t, []any{"S256"}, result["code_challenge_methods_supported"])
+		assert.Equal(t, true, result["authorization_response_iss_parameter_supported"])
+		assert.NotContains(t, result, "client_id_metadata_document_supported")
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		opt.OAuthApps, opt.Public, opt.AuthMode = config.OAuthAppsNone, false, config.AuthModePasswd
+		result := request("/.well-known/oauth-authorization-server")
+		assert.Equal(t, []any{"client_credentials"}, result["grant_types_supported"])
+		assert.NotContains(t, result, "authorization_response_iss_parameter_supported")
+		assert.NotContains(t, result, "client_id_metadata_document_supported")
+	})
+}

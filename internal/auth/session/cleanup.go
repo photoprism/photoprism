@@ -12,8 +12,8 @@ import (
 
 var stop = make(chan bool, 1)
 
-// CleanupAction deletes sessions and authorization codes that have expired; extensions may wrap it to
-// remove other expired records.
+// CleanupAction deletes expired sessions and authorization codes and idle app grants; extensions may wrap it
+// to remove other expired records.
 var CleanupAction = func() {
 	if n := entity.DeleteExpiredSessions(); n > 0 {
 		event.AuditInfo([]string{"deleted %s"}, english.Plural(n, "expired session", "expired sessions"))
@@ -22,6 +22,7 @@ var CleanupAction = func() {
 	}
 
 	oauth.PurgeExpired()
+	oauth.PurgeIdleGrants()
 }
 
 // Cleanup starts a background worker that periodically deletes expired sessions.

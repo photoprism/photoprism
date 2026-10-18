@@ -38,6 +38,7 @@ var Entities = Tables{
 	Session{}.TableName():           &Session{},
 	Client{}.TableName():            &Client{},
 	AuthCode{}.TableName():          &AuthCode{},
+	Grant{}.TableName():             &Grant{},
 	Service{}.TableName():           &Service{},
 	Folder{}.TableName():            &Folder{},
 	Duplicate{}.TableName():         &Duplicate{},

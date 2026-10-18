@@ -18,6 +18,12 @@ func Session(clientIp, authToken string) *entity.Session {
 // names the reason: authn.ErrTokenRequired, authn.ErrInvalidToken, or authn.ErrRateLimitExceeded.
 // A failed database query also returns authn.ErrInvalidToken, without counting against the limit.
 func LookupSession(clientIp, authToken string) (*entity.Session, error) {
+	return lookupSession(clientIp, authToken, "")
+}
+
+// lookupSession finds the session for the auth token like LookupSession, and also accepts a session that was
+// issued for the specified audience if it is not empty.
+func lookupSession(clientIp, authToken, audience string) (*entity.Session, error) {
 	// Skip authentication and return the default session when public mode is enabled.
 	if get.Config().Public() {
 		return get.Session().Public(), nil
@@ -36,7 +42,14 @@ func LookupSession(clientIp, authToken string) (*entity.Session, error) {
 	}
 
 	// Try to find an active session based on the hashed auth token.
-	sess, err := entity.FindSession(rnd.SessionID(authToken))
+	var sess *entity.Session
+	var err error
+
+	if audience == "" {
+		sess, err = entity.FindSession(rnd.SessionID(authToken))
+	} else {
+		sess, err = entity.FindAudienceSession(rnd.SessionID(authToken), audience)
+	}
 
 	// Count a token without an active session towards the failure rate limit and return nil.
 	if err != nil {

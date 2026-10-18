@@ -84,7 +84,7 @@ func ServeMCP(router *gin.RouterGroup) {
 	// the default public session; any tool that touches per-user state must
 	// add an explicit gate before being registered on this shared server.
 	mcpHandler := func(c *gin.Context) {
-		s := Auth(c, acl.ResourceMCP, acl.ActionView)
+		s := AuthAudience(c, conf.OAuthResourceUrl(), acl.ResourceMCP, acl.ActionView)
 
 		// Point clients to the protected resource metadata, so they can start the app flow.
 		if s.Status == http.StatusUnauthorized && conf.OAuthAppsEnabled() {

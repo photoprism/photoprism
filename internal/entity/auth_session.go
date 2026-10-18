@@ -71,6 +71,7 @@ type Session struct {
 	AuthIssuer   string          `gorm:"type:bytes;size:255;default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
 	AuthID       string          `gorm:"type:bytes;size:255;index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	AuthScope    string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	AuthAudience string          `gorm:"type:bytes;size:512;default:'';" json:"-" yaml:"AuthAudience,omitempty"`
 	GrantType    string          `gorm:"type:bytes;size:64;default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
 	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	SessExpires  int64           `gorm:"index" json:"Expires" yaml:"Expires,omitempty"`
@@ -436,6 +437,16 @@ func (m *Session) HasClient() bool {
 // NoClient if this session has no client entity assigned.
 func (m *Session) NoClient() bool {
 	return !m.HasClient()
+}
+
+// IsOAuthApp reports whether the session is an access token of an app connected with the OAuth app flow.
+func (m *Session) IsOAuthApp() bool {
+	return m != nil && authn.Provider(m.AuthProvider) == authn.ProviderOAuthApp
+}
+
+// HasAudience reports whether the session was issued for a specific resource only, such as an app access token.
+func (m *Session) HasAudience() bool {
+	return m != nil && m.AuthAudience != ""
 }
 
 // IsClient checks if this session authenticates an API client.

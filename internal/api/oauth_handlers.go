@@ -23,8 +23,8 @@ var OAuthUserinfoHandler gin.HandlerFunc = defaultOAuthUserinfo
 var OAuthLogoutHandler gin.HandlerFunc = defaultOAuthLogout
 
 // OAuthAuthorizationCodeHandler handles the authorization_code grant on the
-// shared POST /api/v1/oauth/token endpoint. Nil on CE/Pro builds (the grant is
-// then reported as unsupported); Portal builds set it to the OIDC OP token
-// handler. The client_credentials, password, and session grants are always
-// handled by OAuthToken itself and stay DB-backed.
-var OAuthAuthorizationCodeHandler gin.HandlerFunc
+// shared POST /api/v1/oauth/token endpoint. Defaults to the app flow; Portal
+// builds set it to a dispatcher that also serves the OIDC OP for cluster instances.
+// The client_credentials, password, session, and refresh_token grants are always
+// handled by OAuthToken itself.
+var OAuthAuthorizationCodeHandler gin.HandlerFunc = OAuthAppToken
