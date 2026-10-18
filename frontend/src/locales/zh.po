@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -36,11 +36,11 @@ msgstr "%s 已恢复"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} 无法连接到您在 %{site} 上的 %{account} 账户。"
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} 希望访问您在 %{site} 上的 %{account} 账户。"
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -466,7 +466,7 @@ msgstr "全部源图"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "允许"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -662,7 +662,7 @@ msgstr "后退"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "返回应用"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1035,7 +1035,7 @@ msgstr "连接"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "Connect 应用"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1049,7 +1049,7 @@ msgstr "已连接"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "关联应用"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1263,7 +1263,7 @@ msgstr "删除孤立索引项、副卡文件和缩略图。"
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "拒绝"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1388,7 +1388,7 @@ msgstr "丢弃未保存的更改？"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "断开连接"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2741,7 +2741,7 @@ msgstr "未选择相册"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "您的账户未关联任何应用。"
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2958,7 +2958,7 @@ msgstr "已发现一张图片"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "仅当您亲自启动了此应用的连接时，才允许访问。"
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3620,11 +3620,11 @@ msgstr "搜索筛选条件"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "搜索和查看您的照片"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "搜索和查看您的视频"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4169,7 +4169,7 @@ msgstr "该账户缺少ID，无法进行编辑。"
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "此授权请求已过期或无效。请返回应用并重试。"
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4365,7 +4365,7 @@ msgstr "未知"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "未知应用"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4516,7 +4516,7 @@ msgstr "可能包含此类图像的上传将被自动拒绝。"
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "使用本应用中的 PhotoPrism 工具"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4618,15 +4618,15 @@ msgstr "视图"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "查看相机"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "查看镜头"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "查看人员"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4634,35 +4634,35 @@ msgstr "以列表形式查看搜索结果。"
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "查看您的相册"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "查看您的日历"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "查看您的收藏"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "查看您的文件"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "查看您的文件夹"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "查看您的标签"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "查看您的精彩瞬间"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "查看您的地点"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4799,7 +4799,7 @@ msgstr "你的账户无法连接"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "您的账户没有该应用所需的权限。"
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4848,7 +4848,7 @@ msgstr "混合型"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "暂无"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

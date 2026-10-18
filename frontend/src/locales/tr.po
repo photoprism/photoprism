@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -36,11 +36,11 @@ msgstr "%s geri yüklendi"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client}, %{site} üzerindeki %{account} hesabınıza bağlanamıyor."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client}, %{site} sitesindeki %{account} hesabınıza erişmek istiyor."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -466,7 +466,7 @@ msgstr "Tüm orijinaller"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "İzin ver"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -662,7 +662,7 @@ msgstr "Geri"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "Uygulamaya Geri Dön"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1035,7 +1035,7 @@ msgstr "Bağlan"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "Connect Uygulaması"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1049,7 +1049,7 @@ msgstr "Bağlandı"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "Bağlı Uygulamalar"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1263,7 +1263,7 @@ msgstr "Artık dizin girişlerini, sidecar dosyalarını ve küçük resimleri s
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "Reddet"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1388,7 +1388,7 @@ msgstr "Kaydedilmemiş değişiklikler atılsın mı?"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "Bağlantıyı kes"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2741,7 +2741,7 @@ msgstr "Seçili albüm yok"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "Hesabınıza bağlı hiçbir uygulama yok."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2958,7 +2958,7 @@ msgstr "Bir resim bulundu"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "Bu uygulamaya bağlanma işlemini kendiniz başlattıysanız erişime izin verin."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3618,11 +3618,11 @@ msgstr "Arama Filtreleri"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "Fotoğraflarınızı arayın ve görüntüleyin"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "Videolarınızı arayın ve görüntüleyin"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4167,7 +4167,7 @@ msgstr "Bu hesabın kimlik numarası eksik ve düzenlenemiyor."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "Bu yetkilendirme talebinin süresi dolmuş veya geçersizdir. Lütfen uygulamaya geri dönün ve tekrar deneyin."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4363,7 +4363,7 @@ msgstr "Bilinmeyen"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "Bilinmeyen Uygulama"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4514,7 +4514,7 @@ msgstr "Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedil
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "Bu uygulamadaki PhotoPrism araçlarını kullanın"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4616,15 +4616,15 @@ msgstr "Görünüm"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "Kamera modellerini görüntüle"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "Lensleri görüntüle"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "Kişileri görüntüle"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4632,35 +4632,35 @@ msgstr "Arama sonuçlarını liste olarak görüntüleyin."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "Albümlerini görüntüle"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "Takviminizi görüntüleyin"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "Favorilerinizi görüntüleyin"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "Dosyalarınızı görüntüleyin"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "Klasörlerinizi görüntüleyin"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "Etiketlerinizi görüntüleyin"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "Anlarınızı görüntüleyin"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "Yerlerinizi görüntüleyin"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4797,7 +4797,7 @@ msgstr "Hesabınız bağlanamadı"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "Hesabınızda bu uygulamanın gerektirdiği izinler bulunmamaktadır."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4846,7 +4846,7 @@ msgstr "karışık"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "mevcut değil"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

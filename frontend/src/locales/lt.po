@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
@@ -36,11 +36,11 @@ msgstr "%s buvo atkurta"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} negalima prijungti prie jūsų paskyros %{account} svetainėje %{site}."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} nori prisijungti prie jūsų paskyros %{account} svetainėje %{site}."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -466,7 +466,7 @@ msgstr "Visi originalai"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "Leisti"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -662,7 +662,7 @@ msgstr "Atgal"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "Grįžti į programėlę"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1035,7 +1035,7 @@ msgstr "Prisijungti"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "„Connect“ programa"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1049,7 +1049,7 @@ msgstr "Prisijungti"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "Susietos programėlės"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1263,7 +1263,7 @@ msgstr "Ištrinkite našlaičių indekso įrašus, šalutinius failus ir miniati
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "Atsisakyti"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1388,7 +1388,7 @@ msgstr "Atmesti neišsaugotus pakeitimus?"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "Atsijungti"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2741,7 +2741,7 @@ msgstr "Nėra pasirinktų albumų"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "Su jūsų paskyra nėra susieta nė viena programa."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2958,7 +2958,7 @@ msgstr "Vienas rastas paveikslėlis"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "Leiskite prieigą tik tuo atveju, jei šią programėlę prisijungėte patys."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3618,11 +3618,11 @@ msgstr "Paieškos filtrai"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "Ieškokite ir peržiūrėkite savo nuotraukas"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "Ieškokite ir peržiūrėkite savo vaizdo įrašus"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4167,7 +4167,7 @@ msgstr "Šiame paskyroje nėra ID, todėl jos negalima redaguoti."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "Šio leidimo prašymo galiojimo laikas pasibaigęs arba jis yra negaliojantis. Grįžkite į programėlę ir pabandykite dar kartą."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4363,7 +4363,7 @@ msgstr "Nežinomas"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "Nežinoma programa"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4514,7 +4514,7 @@ msgstr "Siunčiami vaizdai, kuriuose gali būti tokių vaizdų, bus automatiška
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "Naudokite šioje programėlėje esančius „PhotoPrism“ įrankius"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4616,15 +4616,15 @@ msgstr "Peržiūrėti"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "Peržiūrėti fotoaparatus"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "Peržiūrėti objektyvus"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "Peržiūrėti žmones"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4632,35 +4632,35 @@ msgstr "Peržiūrėkite paieškos rezultatus kaip sąrašą."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "Peržiūrėkite savo albumus"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "Peržiūrėkite savo kalendorių"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "Peržiūrėti mėgstamus"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "Peržiūrėkite savo failus"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "Peržiūrėkite savo aplankus"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "Peržiūrėkite savo etiketes"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "Peržiūrėkite savo akimirkas"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "Peržiūrėkite savo vietas"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4797,7 +4797,7 @@ msgstr "Nepavyko prisijungti prie jūsų paskyros"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "Jūsų paskyra neturi šiai programai reikalingų teisių."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4846,7 +4846,7 @@ msgstr "mišrus"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "nėra prieinama"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

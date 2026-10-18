@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -35,11 +35,11 @@ msgstr "%s visszaállítva"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "A %{client} nem tud csatlakozni a %{site} oldalon található %{account} fiókjához."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} hozzáférést szeretne kérni a %{site} webhelyen található %{account} fiókjához."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -465,7 +465,7 @@ msgstr "Összes eredeti"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "Engedélyezés"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -661,7 +661,7 @@ msgstr "Vissza"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "Vissza az alkalmazáshoz"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1034,7 +1034,7 @@ msgstr "Csatlakozás"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "Csatlakozz az alkalmazáshoz"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1048,7 +1048,7 @@ msgstr "Csatlakozva"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "Kapcsolódó alkalmazások"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1262,7 +1262,7 @@ msgstr "Törli az elárvult indexbejegyzéseket, oldalkocsis fájlokat és minia
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "Elutasítás"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1387,7 +1387,7 @@ msgstr "A nem mentett módosítások elvetése?"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "Kapcsolat bontása"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2740,7 +2740,7 @@ msgstr "Nincsenek kiválasztott albumok"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "A fiókodhoz nincs csatlakoztatva egyetlen alkalmazás sem."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2957,7 +2957,7 @@ msgstr "Egy kép található"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "Csak akkor engedélyezd a hozzáférést, ha te magad kezdeményezted az alkalmazás csatlakozását."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3617,11 +3617,11 @@ msgstr "Keresési szűrők"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "Fényképeid keresése és megtekintése"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "Videóid keresése és megtekintése"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4166,7 +4166,7 @@ msgstr "Ennek a fióknak nincs azonosítója, ezért nem szerkeszthető."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "Ez az engedélyezési kérelem lejárt vagy érvénytelen. Kérjük, térjen vissza az alkalmazásba, és próbálja meg újra."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4362,7 +4362,7 @@ msgstr "Ismeretlen"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "Ismeretlen alkalmazás"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4513,7 +4513,7 @@ msgstr "Az esetlegesen ilyen képeket tartalmazó feltöltések automatikusan el
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "Használja a PhotoPrism eszközeit ebben az alkalmazásban"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4615,15 +4615,15 @@ msgstr "Kilátás"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "Fényképezőgépek megtekintése"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "Objektívek megtekintése"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "Személyek megtekintése"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4631,35 +4631,35 @@ msgstr "A keresési eredmények listaként történő megtekintése."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "Az albumok megtekintése"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "Naptár megtekintése"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "A kedvencek megtekintése"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "Fájlok megtekintése"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "A mappák megtekintése"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "Címkéinek megtekintése"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "Tekintsd meg a pillanataidat"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "Helyeid megtekintése"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4796,7 +4796,7 @@ msgstr "A fiókját nem lehetett csatlakoztatni"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "A fiókod nem rendelkezik az alkalmazáshoz szükséges jogosultságokkal."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4845,7 +4845,7 @@ msgstr "vegyes"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "nem elérhető"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

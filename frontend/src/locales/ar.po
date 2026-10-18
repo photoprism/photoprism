@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -36,11 +36,11 @@ msgstr "تمت استعادة %s"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "لا يمكن ربط %{client} بحسابك %{account} على موقع %{site}."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "يرغب %{client} في الوصول إلى حسابك %{account} على موقع %{site}."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -466,7 +466,7 @@ msgstr "جميع النسخ الأصلية"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "السماح"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -662,7 +662,7 @@ msgstr "خلف"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "العودة إلى التطبيق"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1035,7 +1035,7 @@ msgstr "الاتصال"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "تطبيق Connect"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1049,7 +1049,7 @@ msgstr "متصل"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "التطبيقات المتصلة"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1263,7 +1263,7 @@ msgstr "حذف إدخالات الفهرس المعزولة والملفات ا�
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "رفض"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1388,7 +1388,7 @@ msgstr "تجاهل التغييرات غير المحفوظة؟"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "قطع الاتصال"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2741,7 +2741,7 @@ msgstr "لم يتم تحديد ألبومات"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "لا توجد أي تطبيقات متصلة بحسابك."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2958,7 +2958,7 @@ msgstr "تم العثور على صورة واحدة"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "لا تسمح بالوصول إلا إذا كنت أنت من بدأ عملية ربط هذا التطبيق بنفسك."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3618,11 +3618,11 @@ msgstr "معايير البحث"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "ابحث عن صورك واعرضها"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "ابحث عن مقاطع الفيديو الخاصة بك وشاهدها"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4167,7 +4167,7 @@ msgstr "هذا الحساب يفتقد إلى معرّف ولا يمكن تعد�
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "لقد انتهت صلاحية طلب التفويض هذا أو أنه غير صالح. يرجى العودة إلى التطبيق ومحاولة إجرائه مرة أخرى."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4363,7 +4363,7 @@ msgstr "غير معروف"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "تطبيق غير معروف"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4514,7 +4514,7 @@ msgstr "سيتم رفض التحميلات التي قد تحتوي على مث�
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "استخدم أدوات PhotoPrism في هذا التطبيق"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4616,15 +4616,15 @@ msgstr "العرض"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "عرض الكاميرات"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "عرض العدسات"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "عرض الأشخاص"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4632,35 +4632,35 @@ msgstr "عرض نتائج البحث كقائمة."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "عرض ألبوماتك"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "عرض التقويم الخاص بك"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "عرض المفضلة"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "عرض ملفاتك"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "عرض مجلداتك"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "عرض ملصقاتك"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "شاهد لحظاتك"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "عرض الأماكن التي زرتها"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4797,7 +4797,7 @@ msgstr "لا يمكن ربط حسابك"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "حسابك لا يمتلك الأذونات التي يتطلبها هذا التطبيق."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4846,7 +4846,7 @@ msgstr "مختلطة"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "غير متوفر"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
