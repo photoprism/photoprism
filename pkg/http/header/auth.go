@@ -12,11 +12,12 @@ import (
 
 // Authentication header names.
 const (
-	Auth          = "Authorization" // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
-	XAuthToken    = "X-Auth-Token"  //nolint:gosec // header name, not a secret
-	XSessionID    = "X-Session-ID"
-	OpenAIOrg     = "OpenAI-Organization"
-	OpenAIProject = "OpenAI-Project"
+	Auth            = "Authorization" // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
+	XAuthToken      = "X-Auth-Token"  //nolint:gosec // header name, not a secret
+	XSessionID      = "X-Session-ID"
+	WWWAuthenticate = "WWW-Authenticate" // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
+	OpenAIOrg       = "OpenAI-Organization"
+	OpenAIProject   = "OpenAI-Project"
 )
 
 // Authentication header values.

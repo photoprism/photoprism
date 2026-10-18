@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
@@ -85,6 +86,15 @@ func ServeMCP(router *gin.RouterGroup) {
 	mcpHandler := func(c *gin.Context) {
 		s := Auth(c, acl.ResourceMCP, acl.ActionView)
 
+		// Point clients to the protected resource metadata, so they can start the app flow.
+		if s.Status == http.StatusUnauthorized && conf.OAuthAppsEnabled() {
+			if AuthToken(c) == "" {
+				c.Header(header.WWWAuthenticate, McpChallenge(conf, ""))
+			} else {
+				c.Header(header.WWWAuthenticate, McpChallenge(conf, McpErrInvalidToken))
+			}
+		}
+
 		// Abort writes the matching 401/403/429 response if the session
 		// is invalid and returns true so the handler can exit early.
 		if s.Abort(c) {
@@ -108,12 +118,23 @@ func ServeMCP(router *gin.RouterGroup) {
 		c.Request.Body = &mcpLimitReader{ReadCloser: c.Request.Body, tripped: tripped}
 		writer := &mcpLimitWriter{ResponseWriter: c.Writer, tripped: tripped}
 
-		handler.ServeHTTP(writer, c.Request)
+		// Bind MCP sessions to the authenticated user or client, except in public mode.
+		if conf.Public() {
+			handler.ServeHTTP(writer, c.Request)
+		} else if info := mcpTokenInfo(s); info == nil {
+			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "session has no owner", status.Denied}, s.RefID)
+			AbortForbidden(c)
+			return
+		} else {
+			mcpSessionHandler(handler, info).ServeHTTP(writer, mcpBearerRequest(c.Request, AuthToken(c)))
+		}
 
 		// Audit the rewritten 413 so the audit log reflects the final
 		// status the client received, not the SDK's internal 400.
 		if writer.suppress.Load() {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "request body too large", status.Failed}, s.RefID)
+		} else if writer.Status() == http.StatusForbidden {
+			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "request refused", status.Denied}, s.RefID)
 		}
 	}
 

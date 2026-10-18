@@ -21,6 +21,18 @@ func registerWellknownRoutes(router *gin.Engine, conf *config.Config) {
 		c.JSON(http.StatusOK, wellknown.NewOAuthAuthorizationServer(conf))
 	})
 
+	// Registers the protected resource metadata of the MCP endpoint, which is only published while the app flow is enabled.
+	router.GET(conf.OAuthResourceMetadataUri(), func(c *gin.Context) {
+		if conf.DisableMCP() || !conf.OAuthAppsEnabled() {
+			c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+			return
+		}
+
+		c.Header(header.AccessControlAllowOrigin, header.Any)
+		c.Header(header.CacheControl, "max-age=300, public")
+		c.JSON(http.StatusOK, wellknown.NewOAuthProtectedResource(conf))
+	})
+
 	// Registers the "/.well-known/openid-configuration" service discovery endpoint for OpenID Connect clients.
 	// Portal builds advertise the Portal OIDC OP shape (EdDSA ID tokens, authorization-code + PKCE);
 	// other builds advertise the instance's OAuth2 server.
