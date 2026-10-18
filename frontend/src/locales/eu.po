@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,11 +33,11 @@ msgstr "%s berreskuratu da"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} ezin da lotu zure %{account} kontuarekin %{site} webgunean."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client}ek zure %{account} kontuan sartzea nahi du %{site}n."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -463,7 +463,7 @@ msgstr "Jatorrizko guztiak"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "Baimentu"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -659,7 +659,7 @@ msgstr "Itzuli"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "Aplikaziora itzuli"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1032,7 +1032,7 @@ msgstr "Konektatu"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "Aplikazioa konektatu"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1046,7 +1046,7 @@ msgstr "Konektatuta"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "Aplikazio konektatuak"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1260,7 +1260,7 @@ msgstr "Ezabatu umezurtz indize-sarrerak, sidecar fitxategiak eta miniaturak."
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "Ukatu"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1385,7 +1385,7 @@ msgstr "Gorde gabeko aldaketak baztertu?"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "Deskonektatu"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2738,7 +2738,7 @@ msgstr "Ez dago aukeratutako albumik"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "Zure kontuari aplikaziorik ez dago konektatuta."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2955,7 +2955,7 @@ msgstr "Irudi bat aurkitu da"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "Baimentu sarbidea soilik zuk aplikazio hau zuk zeuk konektatu baduzu."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3615,11 +3615,11 @@ msgstr "Bilaketa-iragazkiak"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "Bilatu eta ikusi zure argazkiak"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "Bilatu eta ikusi zure bideoak"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4164,7 +4164,7 @@ msgstr "Kontu honek ID bat falta du eta ezin da editatu."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "Baimen-eskaera hau iraungi egin da edo baliogabea da. Mesedez, itzuli aplikaziora eta saiatu berriro."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4360,7 +4360,7 @@ msgstr "Ezezaguna"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "Ezezaguna den aplikazioa"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4511,7 +4511,7 @@ msgstr "Horrelako irudiak izan ditzaketen kargak automatikoki baztertuko dira."
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "Erabili PhotoPrism tresnak aplikazio honetan"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4613,15 +4613,15 @@ msgstr "Ikusi"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "Ikuskako kamerak"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "Ikusi lenteak"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "Pertsonak ikusi"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4629,35 +4629,35 @@ msgstr "Ikusi bilaketa-emaitzak zerrenda gisa."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "Ikusi zure albumak"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "Ikusi zure egutegia"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "Ikusi zure gogokoenak"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "Ikusi zure fitxategiak"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "Ikusi zure karpetak"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "Ikusi zure etiketak"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "Ikusi zure uneak"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "Ikusi zure lekuak"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4794,7 +4794,7 @@ msgstr "Zure kontua ezin izan da konektatu"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "Zure kontuak ez ditu aplikazio honek behar dituen baimenak."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4843,7 +4843,7 @@ msgstr "nahasi"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "Ez dago eskuragarri"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

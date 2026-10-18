@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,11 +33,11 @@ msgstr "%s έχει αποκατασταθεί"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "Δεν είναι δυνατή η σύνδεση του %{client} με τον λογαριασμό σας %{account} στον ιστότοπο %{site}."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "Ο %{client} επιθυμεί να αποκτήσει πρόσβαση στον λογαριασμό σας %{account} στον ιστότοπο %{site}."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -463,7 +463,7 @@ msgstr "Όλα τα πρωτότυπα"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "Επιτρέπεται"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -659,7 +659,7 @@ msgstr "Πίσω"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "Επιστροφή στην εφαρμογή"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1032,7 +1032,7 @@ msgstr "Σύνδεση"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "Εφαρμογή Connect"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1046,7 +1046,7 @@ msgstr "Σύνδεση"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "Συνδεδεμένες εφαρμογές"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1260,7 +1260,7 @@ msgstr "Διαγραφή ορφανών καταχωρήσεων ευρετηρ�
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "Άρνηση"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1385,7 +1385,7 @@ msgstr "Απορρίψτε τις μη αποθηκευμένες αλλαγές
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "Αποσύνδεση"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2738,7 +2738,7 @@ msgstr "Δεν έχουν επιλεγεί συλλογές"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "Δεν υπάρχουν εφαρμογές συνδεδεμένες με τον λογαριασμό σας."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2955,7 +2955,7 @@ msgstr "Μια εικόνα βρέθηκε"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "Επιτρέψτε την πρόσβαση μόνο αν έχετε ξεκινήσει εσείς οι ίδιοι τη σύνδεση με αυτήν την εφαρμογή."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3615,11 +3615,11 @@ msgstr "Φίλτρα αναζήτησης"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "Αναζήτηση και προβολή των φωτογραφιών σας"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "Αναζήτηση και προβολή των βίντεό σας"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4164,7 +4164,7 @@ msgstr "Αυτός ο λογαριασμός δεν διαθέτει αναγν�
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "Αυτό το αίτημα εξουσιοδότησης έχει λήξει ή δεν είναι έγκυρο. Επιστρέψτε στην εφαρμογή και δοκιμάστε ξανά."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4360,7 +4360,7 @@ msgstr "Άγνωστο"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "Άγνωστη εφαρμογή"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4511,7 +4511,7 @@ msgstr "Ανεβάσματα που ενδέχεται να περιέχουν �
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "Χρησιμοποιήστε τα εργαλεία του PhotoPrism σε αυτήν την εφαρμογή"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4613,15 +4613,15 @@ msgstr "Προβολή"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "Προβολή φωτογραφικών μηχανών"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "Προβολή φακών"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "Προβολή ατόμων"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4629,35 +4629,35 @@ msgstr "Προβολή των αποτελεσμάτων της αναζήτησ
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "Δείτε τα άλμπουμ σας"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "Δείτε το ημερολόγιό σας"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "Δείτε τα αγαπημένα σας"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "Προβολή των αρχείων σας"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "Προβολή των φακέλων σας"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "Δείτε τις ετικέτες σας"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "Δείτε τις στιγμές σας"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "Δείτε τα μέρη που έχετε επισκεφτεί"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4794,7 +4794,7 @@ msgstr "Ο λογαριασμός σας δεν ήταν δυνατό να συ�
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "Ο λογαριασμός σας δεν διαθέτει τα δικαιώματα που απαιτεί αυτή η εφαρμογή."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4843,7 +4843,7 @@ msgstr "μικτή"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "δεν είναι διαθέσιμο"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,11 +33,11 @@ msgstr "%s geherstel"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} kan nie aan jou rekening %{account} op %{site} gekoppel word nie."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} wil toegang kry tot jou rekening %{account} op %{site}."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -463,7 +463,7 @@ msgstr "Alle oorspronklikes"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "Toelaat"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -659,7 +659,7 @@ msgstr "Terug"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "Terug na app"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1032,7 +1032,7 @@ msgstr "Koppel"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "Koppel App"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1046,7 +1046,7 @@ msgstr "Gekoppel"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "Gekoppelde toepassings"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1260,7 +1260,7 @@ msgstr "Vee wees indeksinskrywings, syspanlêers en duimnaels uit."
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "Weier"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1385,7 +1385,7 @@ msgstr "Verwerp ongespaarde veranderinge?"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "Ontkoppel"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2738,7 +2738,7 @@ msgstr "Geen albums geselekteer nie"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "Geen programme is aan jou rekening gekoppel nie."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2955,7 +2955,7 @@ msgstr "Een foto gevind"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "Laat net toegang toe as jy self hierdie app gekoppel het."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3615,11 +3615,11 @@ msgstr "Soekfilters"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "Soek en besigtig jou foto's"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "Soek en besigtig jou video's"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4164,7 +4164,7 @@ msgstr "Hierdie rekening ontbreek 'n ID en kan nie gewysig word nie."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "Hierdie magtigingsversoek het verval of is ongeldig. Keer asseblief terug na die app en probeer weer."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4360,7 +4360,7 @@ msgstr "Onbekend"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "Onbekende app"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4511,7 +4511,7 @@ msgstr "Oplaaie wat sulke beelde kan bevat, sal outomaties verwerp word."
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "Gebruik PhotoPrism-gereedskap in hierdie app"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4613,15 +4613,15 @@ msgstr "Beskou"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "Kykkamera's"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "Kyk lense"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "Kyk mense"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4629,35 +4629,35 @@ msgstr "Bekyk soekresultate as 'n lys."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "Beskou jou albums"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "Beskou jou kalender"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "Beskou jou gunstelinge"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "Beskou jou lêers"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "Beskou jou vouers"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "Beskou jou etikette"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "Beskou jou oomblikke"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "Beskou jou plekke"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4794,7 +4794,7 @@ msgstr "Jou rekening kon nie gekoppel word nie"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "Jou rekening het nie die toestemmings wat hierdie app benodig nie."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4843,7 +4843,7 @@ msgstr "gemeng"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "Nie beskikbaar nie"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

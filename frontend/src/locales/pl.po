@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -35,11 +35,11 @@ msgstr "%s zostało przywrócone"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr ""
+msgstr "Nie można połączyć się z kontem %{account} użytkownika %{client} na stronie %{site}."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr ""
+msgstr "%{client} chce uzyskać dostęp do twojego konta %{account} na stronie %{site}."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -465,7 +465,7 @@ msgstr "Wszystkie oryginały"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr ""
+msgstr "Zezwól"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -661,7 +661,7 @@ msgstr "Z powrotem"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr ""
+msgstr "Powrót do aplikacji"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1034,7 +1034,7 @@ msgstr "Połącz"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr ""
+msgstr "Aplikacja Connect"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1048,7 +1048,7 @@ msgstr "Połączony"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr ""
+msgstr "Powiązane aplikacje"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1262,7 +1262,7 @@ msgstr "Usuwanie osieroconych wpisów indeksu, plików sidecar i miniatur."
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr ""
+msgstr "Odrzuć"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -1387,7 +1387,7 @@ msgstr "Odrzucić niezapisane zmiany?"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr ""
+msgstr "Odłącz"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -2740,7 +2740,7 @@ msgstr "Nie wybrano albumów"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr ""
+msgstr "Do twojego konta nie są podłączone żadne aplikacje."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2957,7 +2957,7 @@ msgstr "Znaleziono jedno zdjęcie"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr ""
+msgstr "Zezwól na dostęp tylko wtedy, gdy sam rozpocząłeś łączenie się z tą aplikacją."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3617,11 +3617,11 @@ msgstr "Filtry wyszukiwania"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr ""
+msgstr "Wyszukaj i przeglądaj swoje zdjęcia"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr ""
+msgstr "Wyszukaj i obejrzyj swoje filmy"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4166,7 +4166,7 @@ msgstr "W tym koncie brakuje identyfikatora i nie można go edytować."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr ""
+msgstr "Ten wniosek o autoryzację stracił ważność lub jest nieprawidłowy. Wróć do aplikacji i spróbuj jeszcze raz."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4362,7 +4362,7 @@ msgstr "Nieznany"
 
 #: src/page/auth/consent.vue:129
 msgid "Unknown App"
-msgstr ""
+msgstr "Nieznana aplikacja"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4513,7 +4513,7 @@ msgstr "Tego typu obrazy zostaną automatycznie odrzucone."
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr ""
+msgstr "Korzystaj z narzędzi PhotoPrism w tej aplikacji"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4615,15 +4615,15 @@ msgstr "Widok"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr ""
+msgstr "Zobacz aparaty fotograficzne"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr ""
+msgstr "Zobacz obiektywy"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr ""
+msgstr "Zobacz osoby"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4631,35 +4631,35 @@ msgstr "Wyświetl wyniki wyszukiwania jako listę."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr ""
+msgstr "Zobacz swoje albumy"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr ""
+msgstr "Zobacz swój kalendarz"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr ""
+msgstr "Zobacz swoje ulubione"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr ""
+msgstr "Wyświetl swoje pliki"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr ""
+msgstr "Wyświetl swoje foldery"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr ""
+msgstr "Zobacz swoje etykiety"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr ""
+msgstr "Zobacz swoje chwile"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr ""
+msgstr "Zobacz swoje miejsca"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4796,7 +4796,7 @@ msgstr "Twoje konto nie może być podłączone"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr ""
+msgstr "Twoje konto nie ma uprawnień wymaganych przez tę aplikację."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4845,7 +4845,7 @@ msgstr "mieszany"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr ""
+msgstr "niedostępne"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
