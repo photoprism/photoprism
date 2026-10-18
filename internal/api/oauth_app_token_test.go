@@ -76,7 +76,11 @@ func prepareAppTokenTest(t *testing.T) (*gin.Engine, *gin.RouterGroup, *config.C
 	ServeMCP(router)
 	SearchPhotos(router)
 
-	t.Cleanup(func() { entity.DeleteClientGrants(client.ClientUID) })
+	prevHandler := entity.GrantDeletedHandler
+	t.Cleanup(func() {
+		entity.DeleteClientGrants(client.ClientUID)
+		entity.GrantDeletedHandler = prevHandler
+	})
 
 	return app, router, conf, client
 }
@@ -651,4 +655,15 @@ func TestOAuthAppRefresh_ClientScope(t *testing.T) {
 	require.NoError(t, client.SetScope("mcp").Save())
 	r = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {refreshToken}}, "", "")
 	assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+}
+
+// refreshForm returns the form values of a refresh_token request.
+func refreshForm(clientID, refreshToken string) url.Values {
+	return url.Values{"grant_type": {"refresh_token"}, "client_id": {clientID}, "refresh_token": {refreshToken}}
+}
+
+// signIn returns an auth token for the user from the session route, which must already be registered.
+func signIn(app *gin.Engine, username, password string) string {
+	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{Username: username, Password: password}))
+	return gjson.Get(r.Body.String(), "access_token").String()
 }

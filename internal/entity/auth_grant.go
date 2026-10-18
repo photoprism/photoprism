@@ -15,6 +15,9 @@ import (
 // GrantUID is the unique ID prefix of app grants.
 const GrantUID = byte('g')
 
+// GrantDeletedHandler is called with the UID of a deleted grant, e.g. to end the app's MCP sessions.
+var GrantDeletedHandler func(grantUID string)
+
 // Grants represents a list of app grants.
 type Grants []Grant
 
@@ -107,7 +110,13 @@ func (m *Grant) Delete() error {
 		return err
 	}
 
-	return DeleteGrantSessions(m.GrantUID)
+	err := DeleteGrantSessions(m.GrantUID)
+
+	if handler := GrantDeletedHandler; handler != nil {
+		handler(m.GrantUID)
+	}
+
+	return err
 }
 
 // FindGrant returns the grant with the specified UID, or nil if it does not exist.

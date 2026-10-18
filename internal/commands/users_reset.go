@@ -54,7 +54,7 @@ func usersResetAction(ctx *cli.Context) error {
 		}
 
 		// Drop existing user management tables.
-		if err := db.Migrator().DropTable(&entity.User{}, &entity.UserDetails{}, &entity.UserSettings{}, &entity.UserShare{}, &entity.Passcode{}, &entity.Session{}); err != nil {
+		if err := db.Migrator().DropTable(&entity.User{}, &entity.UserDetails{}, &entity.UserSettings{}, &entity.UserShare{}, &entity.Passcode{}, &entity.Session{}, &entity.Grant{}, &entity.AuthCode{}); err != nil {
 			return cli.Exit(err, 1)
 		}
 
@@ -83,9 +83,11 @@ func usersResetAction(ctx *cli.Context) error {
 			return cli.Exit(err, 1)
 		}
 
-		// Re-create auth_sessions.
-		if err := entity.CreateTable(db, &entity.Session{}); err != nil {
-			return cli.Exit(err, 1)
+		// Re-create auth_sessions, auth_grants, and auth_codes.
+		for _, table := range []any{&entity.Session{}, &entity.Grant{}, &entity.AuthCode{}} {
+			if err := entity.CreateTable(db, table); err != nil {
+				return cli.Exit(err, 1)
+			}
 		}
 
 		if err := LogDeleteUserClients(db); err != nil {

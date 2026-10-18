@@ -555,3 +555,26 @@ describe("model/user", () => {
     });
   });
 });
+
+describe("model/user grants", () => {
+  it("finds and revokes connected apps", async () => {
+    const { Mock } = await import("../fixtures");
+    const user = new User({ UID: "uqxetse3cy5eo9z2", Name: "admin" });
+    Mock.onGet("api/v1/users/uqxetse3cy5eo9z2/grants").reply(200, [{ UID: "gs5gfen1bgxz7s9i", ClientName: "Claude" }]);
+    Mock.onDelete("api/v1/users/uqxetse3cy5eo9z2/grants/gs5gfen1bgxz7s9i").reply(200, { UID: "gs5gfen1bgxz7s9i" });
+
+    const grants = await user.findGrants();
+    expect(grants[0].ClientName).toBe("Claude");
+
+    const revoked = await user.revokeGrant("gs5gfen1bgxz7s9i");
+    expect(revoked.UID).toBe("gs5gfen1bgxz7s9i");
+
+    Mock.resetHandlers();
+  });
+
+  it("rejects requests without a UID", async () => {
+    const user = new User({ Name: "admin" });
+    await expect(user.findGrants()).rejects.toBeUndefined();
+    await expect(user.revokeGrant("gs5gfen1bgxz7s9i")).rejects.toBeUndefined();
+  });
+});

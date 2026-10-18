@@ -50,6 +50,8 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.OAuthConsent(APIv1)
 	api.OAuthConsentApprove(APIv1)
 	api.OAuthConsentDeny(APIv1)
+	api.FindUserGrants(APIv1)
+	api.DeleteUserGrant(APIv1)
 	api.OAuthUserinfo(APIv1)
 	api.OAuthToken(APIv1)
 	api.OAuthRevoke(APIv1)

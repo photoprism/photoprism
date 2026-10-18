@@ -746,6 +746,11 @@ export default class Config {
     return this.values.settings.features[name] === true;
   }
 
+  // featOAuthApps checks if users can connect apps with OAuth sign-in and consent.
+  featOAuthApps() {
+    return this.values?.oauthApps === true;
+  }
+
   // featAppPasswords checks if app passwords (app-specific passwords) are enabled.
   featAppPasswords() {
     return this.feature("appPasswords");

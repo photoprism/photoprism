@@ -107,6 +107,32 @@
             },
             "type": "object"
         },
+        "api.UserGrant": {
+            "properties": {
+                "ClientID": {
+                    "type": "string"
+                },
+                "ClientName": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Origin": {
+                    "type": "string"
+                },
+                "Scope": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UsedAt": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "authn.GrantType": {
             "enum": [
                 "",
@@ -13733,6 +13759,136 @@
                 "summary": "upload a new avatar image for a user",
                 "tags": [
                     "Users"
+                ]
+            }
+        },
+        "/api/v1/users/{uid}/grants": {
+            "get": {
+                "operationId": "FindUserGrants",
+                "parameters": [
+                    {
+                        "description": "user uid",
+                        "in": "path",
+                        "name": "uid",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/api.UserGrant"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "list the apps connected to a user account",
+                "tags": [
+                    "Users",
+                    "Authentication"
+                ]
+            }
+        },
+        "/api/v1/users/{uid}/grants/{grant}": {
+            "delete": {
+                "operationId": "DeleteUserGrant",
+                "parameters": [
+                    {
+                        "description": "user uid",
+                        "in": "path",
+                        "name": "uid",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "grant uid",
+                        "in": "path",
+                        "name": "grant",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.UserGrant"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "disconnect an app from a user account",
+                "tags": [
+                    "Users",
+                    "Authentication"
                 ]
             }
         },

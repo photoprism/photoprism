@@ -297,6 +297,14 @@ describe("common/config", () => {
     expect(cfg.featAppPasswords()).toBe(false);
   });
 
+  it("featOAuthApps follows the oauthApps value", () => {
+    const cfg = createTestConfig();
+    cfg.set("oauthApps", true);
+    expect(cfg.featOAuthApps()).toBe(true);
+    cfg.set("oauthApps", false);
+    expect(cfg.featOAuthApps()).toBe(false);
+  });
+
   it("returns albums when library access is restricted", () => {
     const cfg = createTestConfig();
     const settings = JSON.parse(JSON.stringify(cfg.getSettings()));

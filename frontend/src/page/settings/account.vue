@@ -175,6 +175,19 @@
                   <v-icon end>mdi-cellphone-link</v-icon>
                 </v-btn>
               </v-col>
+              <v-col v-if="showConnectedApps" cols="12" sm="6">
+                <v-btn
+                  block
+                  variant="flat"
+                  color="button"
+                  class="action-connected-apps-dialog"
+                  :disabled="isPublic || isDemo || user.Name === ''"
+                  @click.stop="showDialog('connectedApps')"
+                >
+                  {{ $gettext(`Connected Apps`) }}
+                  <v-icon end>mdi-connection</v-icon>
+                </v-btn>
+              </v-col>
               <v-col cols="12" sm="6">
                 <v-btn
                   block
@@ -317,6 +330,7 @@
       </v-form>
     </div>
     <p-settings-apps :visible="dialog.apps" :model="user" @close="dialog.apps = false"></p-settings-apps>
+    <p-settings-connected-apps :visible="dialog.connectedApps" :model="user" @close="dialog.connectedApps = false"></p-settings-connected-apps>
     <p-settings-passcode :visible="dialog.passcode" :model="user" @close="dialog.passcode = false" @update-user="updateUser()"></p-settings-passcode>
     <p-settings-password :visible="dialog.password" :model="user" @close="dialog.password = false"></p-settings-password>
     <p-settings-webdav :visible="dialog.webdav" @close="dialog.webdav = false"></p-settings-webdav>
@@ -325,6 +339,7 @@
 
 <script>
 import PSettingsApps from "component/settings/apps.vue";
+import PSettingsConnectedApps from "component/settings/connected-apps.vue";
 import PSettingsPasscode from "component/settings/passcode.vue";
 import PSettingsPassword from "component/settings/password.vue";
 import PSettingsWebdav from "component/settings/webdav.vue";
@@ -336,6 +351,7 @@ export default {
   name: "PSettingsAccount",
   components: {
     PSettingsApps,
+    PSettingsConnectedApps,
     PSettingsPasscode,
     PSettingsPassword,
     PSettingsWebdav,
@@ -358,6 +374,7 @@ export default {
       session: this.$session,
       dialog: {
         apps: false,
+        connectedApps: false,
         passcode: false,
         password: false,
         webdav: false,
@@ -365,6 +382,10 @@ export default {
     };
   },
   computed: {
+    // showConnectedApps reports whether users can connect apps with OAuth sign-in, so the dialog is offered.
+    showConnectedApps() {
+      return this.$config.featOAuthApps();
+    },
     accountInfo() {
       const user = this.$session.getUser();
       if (user) {

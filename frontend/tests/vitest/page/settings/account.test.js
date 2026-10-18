@@ -27,4 +27,10 @@ describe("page/settings/account", () => {
       expect(canEditEmail(null, ["manage"])).toBe(false);
     });
   });
+  describe("showConnectedApps", () => {
+    it("follows the oauthApps config value", () => {
+      expect(PSettingsAccount.computed.showConnectedApps.call({ $config: { featOAuthApps: () => true } })).toBe(true);
+      expect(PSettingsAccount.computed.showConnectedApps.call({ $config: { featOAuthApps: () => false } })).toBe(false);
+    });
+  });
 });

@@ -13,6 +13,7 @@ import (
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -79,6 +80,10 @@ func ServeMCP(router *gin.RouterGroup) {
 		},
 	)
 
+	// MCP sessions opened with app access tokens end when their grant is revoked.
+	grantSessions := newMcpGrantSessions(mcpServer)
+	entity.GrantDeletedHandler = grantSessions.Close
+
 	// mcpHandler authenticates each request, caps the JSON-RPC payload size,
 	// and surfaces 413 on overflow. Public mode reaches read-only tools as
 	// the default public session; any tool that touches per-user state must
@@ -127,6 +132,11 @@ func ServeMCP(router *gin.RouterGroup) {
 			return
 		} else {
 			mcpSessionHandler(handler, info).ServeHTTP(writer, mcpBearerRequest(c.Request, AuthToken(c)))
+		}
+
+		// Remember which grant the MCP session of an app access token belongs to.
+		if s.IsOAuthApp() && writer.Status() < http.StatusBadRequest {
+			grantSessions.Add(writer.Header().Get(sdkSessionIdHeader), s.AuthID, mcpGrantExists)
 		}
 
 		// Audit the rewritten 413 so the audit log reflects the final

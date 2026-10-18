@@ -490,6 +490,8 @@ func (m *User) Delete() (err error) {
 		return fmt.Errorf("uid is required to delete user")
 	}
 
+	m.RevokeGrants()
+
 	if err = UnscopedDb().Delete(&Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
 		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", status.Error(err)}, m.RefID)
 	}
@@ -1217,6 +1219,11 @@ func (m *User) RevokeSessions(omit []string, scope authn.SessionScope) (deleted 
 		// Remove all sessions, including app passwords, client access tokens, and derived sessions.
 	}
 
+	// Grants of connected apps end together with derived sessions, which also removes their access tokens.
+	if scope == authn.RevokeDerivedSessions || scope == authn.RevokeAllSessions {
+		m.RevokeGrants()
+	}
+
 	// Fetch matching sessions from the database.
 	sess := Sessions{}
 
@@ -1254,6 +1261,9 @@ func (m *User) SetPassword(password string) error {
 		return err
 	}
 
+	// A new password ends the connected apps of the account.
+	m.RevokeGrants()
+
 	return m.RegenerateTokens()
 }
 
@@ -1288,9 +1298,30 @@ func (m *User) DeletePassword() (err error) {
 		event.AuditErr([]string{"user %s", "failed to remove password", status.Error(err)}, m.RefID)
 	} else {
 		event.AuditWarn([]string{"user %s", "password has been removed"}, m.RefID)
+		m.RevokeGrants()
 	}
 
 	return err
+}
+
+// RevokeGrants ends the apps connected to the account, with their access tokens and pending authorization codes,
+// and returns the number of revoked grants.
+func (m *User) RevokeGrants() int {
+	if m == nil || m.UserUID == "" {
+		return 0
+	}
+
+	if err := UnscopedDb().Delete(&AuthCode{}, "user_uid = ?", m.UserUID).Error; err != nil {
+		event.AuditErr([]string{"user %s", "failed to remove authorization codes", status.Error(err)}, m.RefID)
+	}
+
+	n := DeleteUserGrants(m.UserUID)
+
+	if n > 0 {
+		event.AuditInfo([]string{"user %s", "revoked %d connected apps", status.Deleted}, m.RefID, n)
+	}
+
+	return n
 }
 
 // InvalidPassword returns true if the specified password is invalid or the account is not registered.

@@ -446,6 +446,24 @@ export class User extends RestModel {
       .then((response) => Promise.resolve(response.data));
   }
 
+  // findGrants returns the apps connected to this account with the OAuth app flow.
+  findGrants() {
+    if (!this.UID) {
+      return Promise.reject();
+    }
+
+    return $api.get(this.getEntityResource() + "/grants").then((response) => Promise.resolve(response.data));
+  }
+
+  // revokeGrant disconnects an app from this account.
+  revokeGrant(grantUID) {
+    if (!this.UID || !grantUID) {
+      return Promise.reject();
+    }
+
+    return $api.delete(this.getEntityResource() + "/grants/" + encodeURIComponent(grantUID)).then((response) => Promise.resolve(response.data));
+  }
+
   static batchSize() {
     return BatchSize;
   }

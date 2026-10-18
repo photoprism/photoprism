@@ -73,6 +73,7 @@ type ClientConfig struct {
 	UploadAllow      string              `json:"uploadAllow"`
 	Public           bool                `json:"public"`
 	AuthMode         string              `json:"authMode"`
+	OAuthApps        bool                `json:"oauthApps"`
 	UsersPath        string              `json:"usersPath"`
 	LoginUri         string              `json:"loginUri"`
 	LoginInfo        string              `json:"loginInfo"`
@@ -535,6 +536,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		UploadAllow:      c.UploadAllow().Accept(),
 		Public:           c.Public(),
 		AuthMode:         c.AuthMode(),
+		OAuthApps:        c.OAuthAppsEnabled(),
 		UsersPath:        c.UsersPath(),
 		LoginUri:         c.LoginUri(),
 		LoginInfo:        c.LoginInfo(),

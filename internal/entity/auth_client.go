@@ -405,6 +405,9 @@ func (m *Client) Delete() (err error) {
 		return err
 	}
 
+	// Removing an app client ends the grants of the users who connected it.
+	DeleteClientGrants(m.ClientUID)
+
 	if err = m.DeleteSecret(); err != nil {
 		return err
 	}
@@ -521,6 +524,8 @@ func (m *Client) Purge() (err error) {
 	if _, err = m.DeleteSessions(); err != nil {
 		return err
 	}
+
+	DeleteClientGrants(m.ClientUID)
 
 	// The client UID becomes available again, so its stored secret does not outlive it.
 	if err = m.DeleteSecret(); err != nil {
