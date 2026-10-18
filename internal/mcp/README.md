@@ -1,6 +1,6 @@
 ## PhotoPrism MCP Server
 
-**Last Updated:** May 10, 2026
+**Last Updated:** October 18, 2026
 
 ### Current Capabilities
 
@@ -179,7 +179,7 @@ The HTTP endpoint uses PhotoPrism's existing ACL system:
   - `RoleManager` → `GrantSearchAll` in Pro and Portal builds (the role does not exist in CE/Plus).
   - `RoleClient`, `RoleInstance`, `RoleService`, `RolePortal` → `GrantSearchAll` in every edition.
   - All other roles (`user`, `viewer`, `guest`, `visitor`, `contributor`, default) are denied.
-- **Why `GrantSearchAll` for non-admins?** It includes `AccessAll`, `ActionView`, and `ActionSearch` — exactly what the read-only tools need — but excludes `ActionManage`/`ActionUpdate`/`ActionDelete`/`ActionCreate`. Any future write-capable MCP tool gated on those permissions will automatically be admin-only without needing per-tool checks.
+- **Why `GrantSearchAll` for non-admins?** It includes `AccessAll`, `ActionView`, and `ActionSearch` — exactly what the read-only tools need — but excludes `ActionManage`/`ActionUpdate`/`ActionDelete`/`ActionCreate`. The handler checks `ActionView` on `ResourceMCP` only, so the grant does not limit what an individual tool can do: a tool that reads or changes library data MUST check the resource and action of that data on each call, with the same scope and visibility rules as the matching REST endpoint. A client token then needs both the `mcp` scope and the scope of that resource.
 - **Client tokens:** API client sessions must also include the `mcp` resource (or a wildcard) in their session scope; the ACL grant alone is not sufficient.
 - **Auth model:** request-level. The handler runs `Auth(c, acl.ResourceMCP, acl.ActionView)` followed by `s.Abort(c)`, which writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
 - **Public mode:** anonymous access is permitted. In public mode, `api.Session()` returns the default public session (effectively admin), so `Auth(...)` passes and the currently registered read-only tools are reachable without a token. This is an intentional, narrow allowance for demo deployments (`demo.photoprism.app`); it is safe only because every registered tool today returns static reference metadata derived from `config.Flags` and `form.Report(&form.SearchPhotos{})` — no database access, no per-user state, no secrets, no mutations. **Any future tool that touches per-user state, the database, or mutates anything MUST NOT be registered on this server without an additional per-tool check**. See *Extending the Tool Surface* below.
@@ -220,7 +220,7 @@ Anonymous access in public mode is only safe as long as every registered tool re
 If a proposed tool does **not** fit that contract, do not register it on the default `*sdkmcp.Server`. Instead, take one of these paths (ordered by how much work they are):
 
 1. **Two servers, one factory.** `internal/api/mcp.go` already passes a factory to `sdkmcp.NewStreamableHTTPHandler`. Build a second server with the full tool set and return it from the factory only when the request is non-public and authenticated; keep the default server restricted to the public-safe tools. Policy becomes declarative at construction time, and a missing tool in the public server surfaces as a standard "tool not found" from the SDK rather than leaking its existence.
-2. **Per-tool context checks.** `sdkmcp.AddTool` closures receive a `*sdkmcp.CallToolRequest`; stash caller context on the MCP session at `initialize` and reject inside the tool closure when public mode is active or the ACL deny list applies. Use this when the same tool has different output per caller (e.g. admin sees raw values, client sees redacted).
+2. **Per-tool context checks.** `sdkmcp.AddTool` closures receive a `*sdkmcp.CallToolRequest`; read the caller from the current request (`req.Extra.TokenInfo`, populated by the handler from the authenticated session) rather than from state stored at `initialize`, and reject inside the tool closure when public mode is active or the ACL denies the call. Use this when the same tool has different output per caller (e.g. admin sees raw values, client sees redacted).
 3. **SDK middleware.** For cross-cutting concerns such as per-tool rate limits or structured audit entries, wire an `sdkmcp.Middleware` that inspects the JSON-RPC method and tool name before dispatch.
 
 When the new tool needs an authenticated stdio session (any write-capable, destructive, or per-user tool), apply the same gate to `mcp serve`:
