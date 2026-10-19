@@ -123,7 +123,7 @@ export class ExportQueue {
     });
   }
 
-  // pump transfers ready outputs in fixed order after refreshing the current session.
+  // pump transfers ready outputs in fixed order after refreshing configuration.
   async pump(refresh) {
     try {
       if (refresh) {

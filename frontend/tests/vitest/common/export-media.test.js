@@ -69,4 +69,14 @@ describe("metadata-based export choices", () => {
   it("accepts missing file lists", () => {
     expect(buildMediaExportGroups(null, thumbs)).toEqual([]);
   });
+  it("keeps a motion JPEG without MediaType in the image group", () => {
+    const [group] = buildMediaExportGroups([file(1, "motion.jpg", "", { Video: true })], thumbs);
+    expect(group.original.mediaType).toBe("image");
+    expect(group.options.map((option) => option.kind)).toEqual(["original"]);
+  });
+  it.each(["gif", "webp", "avifs", "heics"])("recognizes a %s animation without MediaType from its frames", (format) => {
+    const [group] = buildMediaExportGroups([file(1, `animation.${format}`, "", { Frames: 2 })], thumbs);
+    expect(group.original.mediaType).toBe("animated");
+    expect(group.options.map((option) => option.kind)).toEqual(["original", "avc"]);
+  });
 });

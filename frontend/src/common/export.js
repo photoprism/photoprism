@@ -1,6 +1,14 @@
 import * as media from "common/media";
 
 const mediaTypes = new Set([media.Image, media.Raw, media.Vector, media.Document, media.Animated, media.Live, media.Video, media.Audio]);
+const formatMediaTypes = new Map([
+  [media.Image, ["jpg", "jpeg", "jxl", "thm", "png", "gif", "tiff", "psd", "bmp", "cin", "mpo", "avif", "avifs", "heif", "heic", "heics", "webp", "insp"]],
+  [media.Raw, ["raw", "dng", "3fr", "ari", "arw", "bay", "cap", "crw", "cr2", "cr3", "data", "dcs", "dcr", "drf", "eip", "erf", "fff", "gpr", "iiq", "k25", "kdc", "mdc", "mef", "mos", "mrw", "nef", "nrw", "obm", "orf", "ori", "pef", "ptx", "pxn", "r3d", "raf", "rwl", "rwz", "rw2", "srf", "srw", "sr2", "x3f"]],
+  [media.Vector, ["svg", "ai", "ps", "eps"]],
+  [media.Document, ["pdf"]],
+  [media.Video, ["webm", "avc", "hvc", "hev", "vvc", "evc", "avi", "av1", "vp8", "vp9", "mpg", "mjpg", "mp2", "mp4", "m4v", "mkv", "mov", "mxf", "3gp", "3g2", "flv", "m2t", "mts", "ogv", "asf", "wmv", "dv", "insv", "lrv"]],
+  [media.Sidecar, ["xmp", "xml", "aae", "yml", "json", "txt", "nfo", "md"]],
+].flatMap(([type, formats]) => formats.map((format) => [format, type])));
 
 // canExport reads the session-filtered Export feature flag.
 export function canExport(config) {
@@ -14,15 +22,13 @@ function fileFormat(file) {
   return format === "jpeg" ? media.FormatJpeg : format;
 }
 
-// fileMediaType recognizes image records whose default media type is omitted.
+// fileMediaType derives missing media types from the format before the video flag.
 function fileMediaType(file) {
   if (file.MediaType) {
     return file.MediaType;
   }
-  if (file.Video) {
-    return media.Video;
-  }
-  return [media.FormatJpeg, media.FormatPng].includes(fileFormat(file)) ? media.Image : "";
+  const type = formatMediaTypes.get(typeof file.FileType === "string" ? file.FileType.toLowerCase() : "");
+  return type || (file.Video ? media.Video : "");
 }
 
 // isMediaFile excludes metadata sidecars from the full file list.
@@ -80,7 +86,7 @@ function nameStem(name) {
 
 // preferredPreview chooses a unique candidate in the preferred available raster format.
 function preferredPreview(original, candidates) {
-  const preferred = original.MediaType === media.Vector ? media.FormatPng : media.FormatJpeg;
+  const preferred = fileMediaType(original) === media.Vector ? media.FormatPng : media.FormatJpeg;
   const matches = candidates.filter((file) => fileFormat(file) === preferred);
   const available = matches.length ? matches : candidates;
   return available.length === 1 ? available[0] : null;

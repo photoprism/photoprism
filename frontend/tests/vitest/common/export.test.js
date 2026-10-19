@@ -448,4 +448,42 @@ describe("export default image media type", () => {
     expect(group.original.mediaType).toBe("video");
     expect(buildExportGroups([makeFile({ MediaType: undefined, FileType: "xmp" })], thumbs)).toEqual([]);
   });
+  it.each([
+    ["raw", "raw"], ["dng", "raw"], ["CR2", "raw"], ["arw", "raw"], ["nef", "raw"],
+    ["heic", "image"], ["heif", "image"], ["jxl", "image"], ["webp", "image"], ["avif", "image"],
+    ["avifs", "image"], ["heics", "image"], ["gif", "image"], ["tiff", "image"], ["psd", "image"],
+    ["bmp", "image"], ["cin", "image"], ["mpo", "image"], ["thm", "image"], ["insp", "image"],
+    ["svg", "vector"], ["ai", "vector"], ["ps", "vector"], ["eps", "vector"], ["pdf", "document"],
+    ["mov", "video"], ["mp4", "video"], ["insv", "video"], ["lrv", "video"], ["mxf", "video"],
+  ])("derives an omitted media type for %s without needing the Video flag", (format, type) => {
+    const source = Object.freeze(makeFile({ FileType: format, Name: `picture.${format}`, MediaType: undefined }));
+    const [group] = buildExportGroups([source], thumbs);
+    expect(group.original.mediaType).toBe(type);
+    expect(group.options[0]).toMatchObject({ kind: "original", format: format.toLowerCase() });
+    expect(source.MediaType).toBeUndefined();
+  });
+  it("retains a generic RAW type independently of the filename extension", () => {
+    const [group] = buildExportGroups([makeFile({ FileType: "RAW", MediaType: "", Name: "capture.custom" })]);
+    expect(group.original).toMatchObject({ format: "custom", mediaType: "raw" });
+  });
+  it("lists an older RAW/JPEG stack as two originals", () => {
+    const raw = makeFile({ FileType: "raw", MediaType: "", Name: "elephantRAW.CR2" });
+    const jpg = makeFile({ MediaType: "", Name: "elephantRAW.JPG" });
+    const groups = buildExportGroups([raw, jpg], thumbs);
+    expect(groups.map((group) => group.original.name)).toEqual(["elephantRAW.CR2", "elephantRAW.JPG"]);
+    expect(groups[0]).toMatchObject({ original: { format: "cr2", mediaType: "raw" }, previewMissing: false });
+  });
+  it("prefers PNG for a vector with no stored media type when JPEG is also available", () => {
+    const vector = makeFile({ FileType: "svg", MediaType: undefined, Name: "logo.svg" });
+    const png = makeFile({ FileType: "png", MediaType: "", Root: "sidecar", Name: "logo.svg.png" });
+    const jpg = makeFile({ MediaType: "", Root: "sidecar", Name: "logo.svg.jpg" });
+    expect(buildExportGroups([vector, jpg, png], thumbs)[0].thumbnailSource.hash).toBe(png.Hash);
+  });
+  it("preserves an explicit media type and uses Video only for unknown formats", () => {
+    const live = makeFile({ MediaType: "live", Video: true });
+    const unknown = makeFile({ MediaType: "", FileType: "unknown", Video: true });
+    expect(buildExportGroups([live, unknown], thumbs).map((group) => group.original.mediaType)).toEqual(["live", "video"]);
+    expect(buildExportGroups([makeFile({ MediaType: "", FileType: "unknown" })], thumbs)).toEqual([]);
+    expect(buildExportGroups([makeFile({ MediaType: "", FileType: "xmp", Video: true })], thumbs)).toEqual([]);
+  });
 });

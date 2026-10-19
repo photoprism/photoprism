@@ -7,6 +7,7 @@ import File from "model/file";
 import Config from "common/config";
 import Util from "common/util";
 import Axios from "axios";
+import $api from "common/api";
 import { customDark, customLight } from "../../../helpers/themes";
 
 const thumbs = [
@@ -32,9 +33,10 @@ async function open(files = [file("a"), file("b")], options = {}) {
     values: reactive({ settings: { features: { export: true, download: false } }, acl: { files: { access_all: true } }, thumbs }),
     allow: Config.prototype.allow,
   };
-  session = { refresh: vi.fn(async () => {
+  config.update = vi.fn(async () => {
     config.downloadToken = "fresh";
-  }) };
+  });
+  session = { refresh: vi.fn(), reset: vi.fn() };
   view = { enter: vi.fn(), leave: vi.fn(), focus: vi.fn() };
   vi.spyOn(Photo.prototype, "find").mockResolvedValue({ Files: files });
   Photo.prototype.find.mockClear();
@@ -47,7 +49,7 @@ async function open(files = [file("a"), file("b")], options = {}) {
     },
   });
   await flushPromises();
-  session.refresh.mockClear();
+  config.update.mockClear();
   return wrapper;
 }
 
@@ -197,6 +199,13 @@ describe("photo export dialog", () => {
     expect(wrapper.vm.groups[0].options).toHaveLength(1);
     expect(wrapper.vm.selected).toEqual([]);
   });
+  it.each(["raw", "heic", "svg", "gif"])("lists a %s original without a stored media type", async (format) => {
+    const original = file("r", { Name: `capture.${format === "raw" ? "CR2" : format}`, FileType: format, MediaType: "" });
+    await open([original]);
+    expect(wrapper.text()).not.toContain("No supported files");
+    expect(wrapper.find(".export-filename").text()).toBe(original.Name);
+    expect(wrapper.find(`input[value="original:${original.UID}"]`).exists()).toBe(true);
+  });
   it("shows a retryable error and then an empty state", async () => {
     await open([], { visible: false });
     Photo.prototype.find.mockRejectedValueOnce(new Error("offline"));
@@ -274,7 +283,8 @@ describe("photo export dialog", () => {
     expect(wrapper.findAll(".export-output a")).toHaveLength(0);
     expect(wrapper.vm.downloads.map((item) => item.id)).toEqual(["original:fs6sg6bqhhin0097", "thumbnail:fs6sg6bqhhin0097:fit_720", "original:fs6sg6bqhhin0098"]);
     await wrapper.vm.confirm();
-    expect(session.refresh).toHaveBeenCalledOnce();
+    expect(config.update).toHaveBeenCalledOnce();
+    expect(session.refresh).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(500);
     await running;
     expect(wrapper.vm.complete).toBe(true);
@@ -284,26 +294,30 @@ describe("photo export dialog", () => {
     expect(wrapper.text()).not.toContain("Files have been sent to your browser.");
     expect(wrapper.find(".export-error").exists()).toBe(false);
     expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(3);
+    expect(HTMLAnchorElement.prototype.click.mock.instances[0].href).toContain("?t=fresh&name=original");
   });
   it("keeps a failed export open and closes after retrying it successfully", async () => {
     await open();
     await wrapper.setData({ selected: [`original:${file("a").UID}`] });
-    await wrapper.setData({ selected: [`original:${file("a").UID}`] });
-    session.refresh.mockRejectedValueOnce(new Error("expired"));
+    HTMLAnchorElement.prototype.click.mockImplementationOnce(() => {
+      throw new Error("handoff failed");
+    });
     await wrapper.vm.confirm();
     expect(wrapper.vm.complete).toBe(false);
     expect(wrapper.vm.transferError).toBe(true);
     expect(wrapper.emitted("close")).toBeUndefined();
     expect(wrapper.find('.export-error[role="alert"]').text()).toBe("Some files could not be exported. Please try again.");
     expect(wrapper.find(".action-close").text()).toBe("Close");
-    expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
     await wrapper.find(".action-retry-output").trigger("click");
     await flushPromises();
     expect(wrapper.vm.handed).toBe(1);
     expect(wrapper.vm.complete).toBe(true);
     expect(wrapper.vm.transferError).toBe(false);
     expect(wrapper.emitted("close")).toHaveLength(1);
-    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(2);
+    expect(config.update).toHaveBeenCalledTimes(2);
+    expect(session.refresh).not.toHaveBeenCalled();
   });
   it.each(["cancel", "escape", "close", "uid", "revoke"])("stops pending handoffs on %s", async (action) => {
     await open();
@@ -334,14 +348,54 @@ describe("photo export dialog", () => {
       expect(wrapper.emitted("close")).toHaveLength(1);
     }
   });
-  it("reports session refresh failures without handing a file to the browser", async () => {
+  it.each(["network", 429, 500])("continues with current tokens when config refresh fails with %s", async (failure) => {
+    await open();
+    config.updating = false;
+    config.update.mockImplementation(() => Config.prototype.update.call(config));
+    const request = vi.spyOn($api, "get").mockRejectedValueOnce(failure === "network" ? new Error("offline") : { response: { status: failure } });
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    await wrapper.setData({ selected: [`original:${file("a").UID}`] });
+    await wrapper.vm.confirm();
+    expect(request).toHaveBeenCalledWith("config");
+    expect(warning).toHaveBeenCalledWith("config update failed");
+    expect(config.downloadToken).toBe("old");
+    expect(wrapper.vm.complete).toBe(true);
+    expect(wrapper.vm.handed).toBe(1);
+    expect(session.refresh).not.toHaveBeenCalled();
+    expect(session.reset).not.toHaveBeenCalled();
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
+    expect(HTMLAnchorElement.prototype.click.mock.instances[0].href).toContain("?t=old&name=original");
+  });
+  it("retries a failed handoff with current tokens when config refresh is offline", async () => {
     await open();
     await wrapper.setData({ selected: [`original:${file("a").UID}`] });
-    session.refresh.mockRejectedValueOnce(new Error("expired"));
+    HTMLAnchorElement.prototype.click.mockImplementationOnce(() => {
+      throw new Error("handoff failed");
+    });
     await wrapper.vm.confirm();
-    expect(wrapper.vm.transferError).toBe(true);
+    config.updating = false;
+    config.update.mockImplementation(() => Config.prototype.update.call(config));
+    vi.spyOn($api, "get").mockRejectedValueOnce(new Error("offline"));
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    await wrapper.vm.retry(wrapper.vm.downloads[0]);
+    expect(wrapper.vm.complete).toBe(true);
+    expect(wrapper.vm.handed).toBe(1);
+    expect(session.refresh).not.toHaveBeenCalled();
+    expect(session.reset).not.toHaveBeenCalled();
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(2);
+    expect(HTMLAnchorElement.prototype.click.mock.instances[1].href).toContain("?t=fresh&name=original");
+  });
+  it("stops before handing off when config refresh revokes Export", async () => {
+    await open();
+    config.update.mockImplementationOnce(async () => {
+      config.values.settings.features.export = false;
+    });
+    await wrapper.setData({ selected: [`original:${file("a").UID}`] });
+    await wrapper.vm.confirm();
+    expect(config.update).toHaveBeenCalledOnce();
     expect(wrapper.vm.handed).toBe(0);
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+    expect(wrapper.emitted("close")).toHaveLength(1);
   });
   it("uses the shared focus scope and lets native Tab, Space, and Enter stay in the dialog", async () => {
     await open();

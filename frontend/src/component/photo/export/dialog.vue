@@ -336,7 +336,7 @@ export default {
         }
       });
       this.queue = markRaw(new ExportQueue(this.downloads, {
-        refresh: () => this.$session.refresh(),
+        refresh: () => this.$config.update(),
         allowed: () => generation === this.generation && this.visible && this.permitted,
         config: this.$config,
         progress: (count) => {
