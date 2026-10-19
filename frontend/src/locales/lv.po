@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
