@@ -18,6 +18,9 @@ const (
 	// searchFiltersURI is the URI of the "search-filters" resource,
 	// which mirrors the `photoprism show search-filters` CLI report.
 	searchFiltersURI = "photoprism://search-filters"
+	// cliCommandsURI is the URI of the "cli-commands" resource, which mirrors
+	// the `photoprism show commands` CLI report of the running edition.
+	cliCommandsURI = "photoprism://cli-commands"
 	// fileFormatsURI is the URI of the "file-formats" resource,
 	// which mirrors the `photoprism show file-formats` CLI report.
 	fileFormatsURI = "photoprism://file-formats"
@@ -34,6 +37,7 @@ type Dataset struct {
 	CurrentEdition  string
 	ConfigOptions   []ConfigOption
 	SearchFilters   []SearchFilter
+	CliCommands     []CliCommand
 	FileFormats     []FileFormat
 	FileFormatTypes []string
 	MetadataFields  []MetadataField
@@ -71,14 +75,16 @@ type SearchFiltersResource struct {
 	Items   []SearchFilter `json:"items"`
 }
 
-// NewDataset builds the static MCP dataset for the current build.
-func NewDataset(currentEdition string) *Dataset {
+// NewDataset builds the static MCP dataset for the current build. CliCommands is nil if
+// opt.Commands is nil.
+func NewDataset(currentEdition string, opt Options) *Dataset {
 	fileFormats := buildFileFormats()
 
 	return &Dataset{
 		CurrentEdition:  normalizeEdition(currentEdition),
 		ConfigOptions:   buildConfigOptions(),
 		SearchFilters:   buildSearchFilters(),
+		CliCommands:     buildCliCommands(opt.Commands, opt.GlobalFlags),
 		FileFormats:     fileFormats,
 		FileFormatTypes: fileFormatTypes(fileFormats),
 		MetadataFields:  buildMetadataFields(),

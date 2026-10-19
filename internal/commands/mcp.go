@@ -68,19 +68,18 @@ func mcpDisabledExit(conf *config.Config) error {
 	return cli.Exit(errors.New("mcp serve disabled by config; pass --disable-mcp=false to override"), 1)
 }
 
-// runMCPServer builds an MCP server from the CLI app metadata (Version,
-// Edition) and runs it over the given transport until ctx is canceled or
-// the transport closes. The transport is a parameter so tests can
-// substitute an in-memory transport for the stdio one mcpServeAction uses
-// in production.
+// runMCPServer builds an MCP server from the CLI app metadata (Version, Edition) and command
+// list, and runs it over the given transport until ctx is canceled or the transport closes.
+// The transport is a parameter so tests can substitute an in-memory transport for stdio.
 func runMCPServer(ctx context.Context, appCtx *cli.Context, transport sdkmcp.Transport) error {
 	implementation := &sdkmcp.Implementation{
 		Name:    "photoprism-mcp",
 		Version: mcpAppMetadata(appCtx, "Version", "development"),
 	}
 	edition := mcpAppMetadata(appCtx, "Edition", "unknown")
+	opt := mcp.Options{Commands: appCtx.App.Commands, GlobalFlags: appCtx.App.Flags}
 
-	return mcp.NewServer(implementation, edition).Run(ctx, transport)
+	return mcp.NewServer(implementation, edition, opt).Run(ctx, transport)
 }
 
 // mcpAppMetadata returns the named string entry from the CLI app metadata,

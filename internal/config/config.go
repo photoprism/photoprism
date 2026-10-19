@@ -785,6 +785,15 @@ func (c *Config) CliContext() *cli.Context {
 	return c.cliCtx
 }
 
+// CliApp returns the CLI app of the cli context, or nil if no context is set.
+func (c *Config) CliApp() *cli.App {
+	if c == nil || c.cliCtx == nil {
+		return nil
+	}
+
+	return c.cliCtx.App
+}
+
 // CliContextString returns a global cli string flag value if set.
 func (c *Config) CliContextString(name string) string {
 	if c.cliCtx == nil {

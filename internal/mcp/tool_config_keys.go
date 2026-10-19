@@ -93,6 +93,17 @@ func registerTools(server *sdkmcp.Server, data *Dataset) {
 	})
 
 	sdkmcp.AddTool(server, &sdkmcp.Tool{
+		Name: "list_cli_commands",
+		Description: "Lists the photoprism CLI commands of this edition with their usage, arguments, aliases, and own flags, " +
+			"as reported by `photoprism show commands`. Search command paths such as \"users add\", descriptions, and flag " +
+			"names with query. Global options are not listed; call list_config_keys for those. " +
+			"Returns at most limit items (default 20, max 50) starting at offset.",
+		Annotations: readOnly(),
+	}, func(ctx context.Context, req *sdkmcp.CallToolRequest, input ListCliCommandsInput) (*sdkmcp.CallToolResult, ListCliCommandsOutput, error) {
+		return listCliCommands(ctx, req, input, data)
+	})
+
+	sdkmcp.AddTool(server, &sdkmcp.Tool{
 		Name: "list_file_formats",
 		Description: "Lists the file formats PhotoPrism supports, with their type, description, and file extensions, " +
 			"as reported by `photoprism show file-formats`. Filter by type, e.g. image, raw, or video, or search format " +

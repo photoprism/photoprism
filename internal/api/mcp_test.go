@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -83,6 +84,29 @@ func assertMCPReferenceTools(t *testing.T, app http.Handler, authToken, sessionI
 		assert.Contains(t, w.Body.String(), `"items":[{`, name)
 		assert.NotContains(t, w.Body.String(), `"isError":true`, name)
 	}
+
+	// The test config's CLI app has no commands, so the tool returns no items and a warning.
+	w = mcpPost(app, `{"jsonrpc":"2.0","id":12,"method":"tools/call","params":{"name":"list_cli_commands","arguments":{"query":"users"}}}`, authToken, sessionID)
+	require.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), `"items":[]`)
+	assert.Contains(t, w.Body.String(), "the command list of this edition is not available")
+	assert.NotContains(t, w.Body.String(), `"isError":true`)
+}
+
+// mcpInitSession initializes an MCP session and returns its ID.
+func mcpInitSession(t *testing.T, app http.Handler, authToken string) string {
+	t.Helper()
+
+	w := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0"}}}`, authToken, "")
+	require.Equal(t, http.StatusOK, w.Code)
+
+	sessionID := w.Header().Get("Mcp-Session-Id")
+	require.NotEmpty(t, sessionID)
+
+	w = mcpPost(app, `{"jsonrpc":"2.0","method":"notifications/initialized"}`, authToken, sessionID)
+	require.Less(t, w.Code, 300)
+
+	return sessionID
 }
 
 // TestServeMCP exercises the HTTP handler installed by ServeMCP: the
@@ -122,6 +146,45 @@ func TestServeMCP(t *testing.T) {
 		assert.Contains(t, w4.Body.String(), "matches")
 
 		assertMCPReferenceTools(t, app, "", sessionID)
+	})
+	t.Run("EditionCommandList", func(t *testing.T) {
+		// ServeMCP passes the command list of the running edition from the CLI app to the server.
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		conf.Options().Public = true
+
+		cliApp := conf.CliApp()
+		require.NotNil(t, cliApp)
+
+		commands, flags := cliApp.Commands, cliApp.Flags
+		t.Cleanup(func() { cliApp.Commands, cliApp.Flags = commands, flags })
+
+		cliApp.Commands = []*cli.Command{
+			{Name: "ldap", Usage: "Directory commands", Subcommands: []*cli.Command{
+				{Name: "sync", Usage: "Synchronizes accounts", Flags: []cli.Flag{
+					&cli.StringFlag{Name: "role", Usage: "account role", Value: "user"},
+					&cli.BoolFlag{Name: "debug", Usage: "repeats a global flag"},
+				}},
+			}},
+			{Name: "secret", Usage: "Hidden command", Hidden: true},
+		}
+		cliApp.Flags = []cli.Flag{&cli.BoolFlag{Name: "debug"}}
+
+		ServeMCP(router)
+
+		sessionID := mcpInitSession(t, app, "")
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_cli_commands","arguments":{}}}`, "", sessionID)
+		require.Equal(t, http.StatusOK, w.Code)
+
+		body := w.Body.String()
+		assert.Contains(t, body, `"command":"photoprism ldap"`)
+		assert.Contains(t, body, `"command":"photoprism ldap sync"`)
+		assert.Contains(t, body, `"name":"--role"`)
+		assert.Contains(t, body, `\"user\"`)
+		assert.Contains(t, body, `"total":2`)
+		assert.NotContains(t, body, "photoprism secret")
+		assert.NotContains(t, body, `"name":"--debug"`)
+		assert.NotContains(t, body, "not available")
 	})
 	t.Run("DisabledViaConfig", func(t *testing.T) {
 		// When DisableMCP is set, ServeMCP must skip route registration so

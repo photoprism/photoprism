@@ -38,6 +38,25 @@ func registerResources(server *sdkmcp.Server, data *Dataset) {
 	})
 
 	server.AddResource(&sdkmcp.Resource{
+		URI:         cliCommandsURI,
+		Name:        "cli-commands",
+		Title:       "PhotoPrism CLI Commands",
+		Description: "Read-only list of the CLI commands of this edition derived from the existing command catalog.",
+		MIMEType:    header.ContentTypeJson,
+	}, func(_ context.Context, req *sdkmcp.ReadResourceRequest) (*sdkmcp.ReadResourceResult, error) {
+		items := data.CliCommands
+
+		if items == nil {
+			items = []CliCommand{}
+		}
+
+		return newResourceResult(req.Params.URI, CliCommandsResource{
+			Edition: data.CurrentEdition,
+			Items:   items,
+		})
+	})
+
+	server.AddResource(&sdkmcp.Resource{
 		URI:         fileFormatsURI,
 		Name:        "file-formats",
 		Title:       "PhotoPrism File Formats",

@@ -10,12 +10,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// connectTestClient connects an in-memory client to the MCP server.
+// connectTestClient connects an in-memory client to an MCP server with the synthetic test commands.
 func connectTestClient(t *testing.T) *sdkmcp.ClientSession {
 	t.Helper()
 
+	return connectServer(t, NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce", Options{Commands: testCommands(), GlobalFlags: testGlobalFlags()}))
+}
+
+// connectServer connects an in-memory client to the specified MCP server.
+func connectServer(t *testing.T, server *sdkmcp.Server) *sdkmcp.ClientSession {
+	t.Helper()
+
 	ctx := context.Background()
-	server := NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce")
 	client := sdkmcp.NewClient(&sdkmcp.Implementation{Name: "photoprism-mcp-test", Version: "test"}, nil)
 	serverTransport, clientTransport := sdkmcp.NewInMemoryTransports()
 
@@ -64,6 +70,11 @@ func TestNewServerResources(t *testing.T) {
 	require.NoError(t, json.Unmarshal([]byte(filterResource.Contents[0].Text), &filterPayload))
 	require.NotEmpty(t, filterPayload.Items)
 	require.Equal(t, "ce", filterPayload.Edition)
+
+	var commandsPayload CliCommandsResource
+	readResourcePayload(t, session, cliCommandsURI, &commandsPayload)
+	require.Equal(t, buildCliCommands(testCommands(), testGlobalFlags()), commandsPayload.Items)
+	require.Equal(t, "ce", commandsPayload.Edition)
 
 	var formatsPayload FileFormatsResource
 	readResourcePayload(t, session, fileFormatsURI, &formatsPayload)

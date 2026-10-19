@@ -13,12 +13,14 @@
 - Read-only resources:
   - `photoprism://config-options`
   - `photoprism://search-filters`
+  - `photoprism://cli-commands`
   - `photoprism://file-formats`
   - `photoprism://metadata-fields`
   - `photoprism://thumbnail-sizes`
 - Read-only tools, each annotated with `readOnlyHint: true`:
   - `list_config_keys`
   - `find_search_filters`
+  - `list_cli_commands`
   - `list_file_formats`
   - `list_metadata_fields`
   - `list_thumbnail_sizes`
@@ -53,11 +55,12 @@ Out of scope for the current server (must not regress without additional per-too
 
 - Config options: `internal/config.Flags` plus `internal/config.OptionsReportSections`
 - Search filters: `internal/form.Report(&form.SearchPhotos{})`
+- CLI commands: the command list and global flags of the running edition, passed to `mcp.NewServer` in `mcp.Options` by `ServeMCP` (from the CLI app of the config) and by `photoprism mcp serve`, and converted with `internal/commands/catalog` as `photoprism show commands`
 - File formats: `pkg/media.Report(fs.ExtensionList.Types(true), true, true, true)`, as `photoprism show file-formats`
 - Metadata fields: `internal/meta.Report(&meta.Data{})` sorted by type and field, plus `meta.Docs`, as `photoprism show metadata`
 - Thumbnail sizes: `internal/thumb.Report(thumb.Sizes.All(), false)`, as `photoprism show thumb-sizes`, with the sizes in `thumb.VideoSizes` (`photoprism show video-sizes`) marked as video sizes
 
-The data is built once when the server is created. It comes from compile-time tables only, never from package variables that are set from the runtime config, such as the thumbnail size limits.
+The data is built once when the server is created. It comes from compile-time tables only, never from package variables that are set from the runtime config, such as the thumbnail size limits. The command list contains no runtime values either: hidden commands and flags are skipped, and a flag `default` is omitted if the flag can also be set through an environment variable or a file, holds a generic value, or its command path is not unique.
 
 ### Run locally (stdio)
 
@@ -115,6 +118,7 @@ Useful smoke tests:
 - Read `photoprism://search-filters`
 - Call `list_config_keys` with `{"query":"http","limit":3}`
 - Call `find_search_filters` with `{"query":"Berlin","limit":5}`
+- Call `list_cli_commands` with `{"query":"users add"}`
 - Call `list_file_formats` with `{"type":"raw"}`
 - Call `list_metadata_fields` with `{"query":"exif:DateTimeOriginal"}`
 - Call `list_thumbnail_sizes` with `{"type":"video"}`
@@ -130,6 +134,13 @@ Useful smoke tests:
 
 - JSON payload with `edition` and `items`
 - Each item includes `filter`, `type`, `examples`, and `notes`
+
+`photoprism://cli-commands`
+
+- JSON payload with `edition` and `items`, in the order of `photoprism show commands`
+- Each item includes `command` (the full path, e.g. `photoprism users add`), `usage`, `description`, `args_usage`, `aliases`, and `flags`
+- Each flag includes `name`, `aliases`, `type`, `usage`, `required`, `env`, and `default` if the flag definition has a literal default
+- Hidden commands, hidden flags, and flags that repeat a global option are not included; global options are covered by `photoprism://config-options`
 
 `photoprism://file-formats`
 
@@ -162,6 +173,12 @@ Useful smoke tests:
 - Validation rejects unsupported filter `type` values
 
 The following tools return `items`, `total`, `limit`, `offset`, `truncated`, and an optional `warnings` array. `limit` defaults to 20 and is capped at 50, `offset` must not be negative, and free-text inputs are capped at 200 characters. An offset past the end returns no items with the correct `total`.
+
+`list_cli_commands`
+
+- Inputs: `query` (command paths, aliases, usage, descriptions, and flag names), `limit`, `offset`
+- Returns the items of `photoprism://cli-commands`
+- Returns no items and a warning if the server was created without a command list
 
 `list_file_formats`
 

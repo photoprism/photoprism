@@ -366,3 +366,88 @@ func TestReadOnly(t *testing.T) {
 	require.True(t, a.ReadOnlyHint)
 	require.NotSame(t, a, b)
 }
+
+// TestListCliCommandsTool exercises CLI command lookups, pagination, and validation.
+func TestListCliCommandsTool(t *testing.T) {
+	session := connectTestClient(t)
+
+	t.Run("Success", func(t *testing.T) {
+		out := callTool[ListCliCommandsOutput](t, session, "list_cli_commands", nil)
+		require.Equal(t, buildCliCommands(testCommands(), testGlobalFlags()), out.Items)
+		require.Equal(t, 3, out.Total)
+		require.Equal(t, defaultResultLimit, out.Limit)
+		require.False(t, out.Truncated)
+		require.Empty(t, out.Warnings)
+	})
+	t.Run("QueryPath", func(t *testing.T) {
+		out := callTool[ListCliCommandsOutput](t, session, "list_cli_commands", map[string]any{"query": "Users Add"})
+		require.Equal(t, 1, out.Total)
+		require.Equal(t, "photoprism users add", out.Items[0].Command)
+	})
+	t.Run("QueryFlag", func(t *testing.T) {
+		out := callTool[ListCliCommandsOutput](t, session, "list_cli_commands", map[string]any{"query": "--role"})
+		require.Equal(t, 1, out.Total)
+		require.Equal(t, "photoprism users add", out.Items[0].Command)
+	})
+	t.Run("HiddenCommand", func(t *testing.T) {
+		out := callTool[ListCliCommandsOutput](t, session, "list_cli_commands", map[string]any{"query": "maintenance"})
+		require.Zero(t, out.Total)
+		require.NotNil(t, out.Items)
+		require.Empty(t, out.Warnings)
+	})
+	t.Run("Pagination", func(t *testing.T) {
+		out := callTool[ListCliCommandsOutput](t, session, "list_cli_commands", map[string]any{"limit": 1, "offset": 1})
+		require.Len(t, out.Items, 1)
+		require.Equal(t, "photoprism users add", out.Items[0].Command)
+		require.True(t, out.Truncated)
+		require.Equal(t, []string{"returned 1 of 3 matches starting at offset 1; call again with offset 2 to retrieve more"}, out.Warnings)
+	})
+	t.Run("InvalidInput", func(t *testing.T) {
+		require.Contains(t, callToolError(t, session, "list_cli_commands", map[string]any{"offset": -1}), "offset must be 0 or greater")
+		require.Contains(t, callToolError(t, session, "list_cli_commands", map[string]any{"limit": -1}), "limit must be greater than 0")
+		require.Contains(t, callToolError(t, session, "list_cli_commands", map[string]any{"query": strings.Repeat("a", maxQueryLength+1)}), "query must not exceed 200 characters")
+	})
+}
+
+// TestListCliCommandsWithoutCommands checks the tool and resource of a server created without a command list.
+func TestListCliCommandsWithoutCommands(t *testing.T) {
+	session := connectServer(t, NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce", Options{}))
+
+	out := callTool[ListCliCommandsOutput](t, session, "list_cli_commands", map[string]any{"query": "users"})
+	require.NotNil(t, out.Items)
+	require.Empty(t, out.Items)
+	require.Zero(t, out.Total)
+	require.Equal(t, []string{cliCommandsUnavailable}, out.Warnings)
+
+	var payload CliCommandsResource
+	readResourcePayload(t, session, cliCommandsURI, &payload)
+	require.NotNil(t, payload.Items)
+	require.Empty(t, payload.Items)
+
+	formats := callTool[ListFileFormatsOutput](t, session, "list_file_formats", nil)
+	require.NotEmpty(t, formats.Items)
+}
+
+// TestMatchesCliCommandQuery covers matches on each searched field.
+func TestMatchesCliCommandQuery(t *testing.T) {
+	cmd := CliCommand{
+		Command:     "photoprism users add",
+		Usage:       "Adds a new user account",
+		Description: "Creates an account.",
+		Aliases:     []string{"a"},
+		Flags:       []CliFlag{{Name: "--role", Aliases: []string{"-r"}, Usage: "account role"}},
+	}
+
+	t.Run("Match", func(t *testing.T) {
+		require.True(t, matchesCliCommandQuery(cmd, ""))
+		require.True(t, matchesCliCommandQuery(cmd, "users add"))
+		require.True(t, matchesCliCommandQuery(cmd, "new user"))
+		require.True(t, matchesCliCommandQuery(cmd, "creates"))
+		require.True(t, matchesCliCommandQuery(cmd, "--role"))
+		require.True(t, matchesCliCommandQuery(CliCommand{Command: "x", Aliases: []string{"ls"}}, "ls"))
+		require.True(t, matchesCliCommandQuery(CliCommand{Command: "x", Flags: []CliFlag{{Name: "--y", Aliases: []string{"-z"}}}}, "-z"))
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		require.False(t, matchesCliCommandQuery(cmd, "account role"))
+	})
+}

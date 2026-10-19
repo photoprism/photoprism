@@ -2,7 +2,10 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"flag"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -11,6 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/commands/catalog"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
@@ -91,6 +96,23 @@ func TestRunMCPServerOverInMemoryTransport(t *testing.T) {
 		require.True(t, ok, name)
 		require.NotEmpty(t, out["items"], name)
 	}
+
+	res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{Name: "list_cli_commands", Arguments: map[string]any{"query": "mcp serve"}})
+	require.NoError(t, err)
+	require.False(t, res.IsError)
+	raw, err := json.Marshal(res.StructuredContent)
+	require.NoError(t, err)
+	require.Contains(t, string(raw), `"command":"photoprism mcp serve"`)
+
+	// The resource lists the commands built from the app's command list and global flags.
+	resource, err := session.ReadResource(ctx, &sdkmcp.ReadResourceParams{URI: "photoprism://cli-commands"})
+	require.NoError(t, err)
+	require.Len(t, resource.Contents, 1)
+
+	var payload mcp.CliCommandsResource
+	require.NoError(t, json.Unmarshal([]byte(resource.Contents[0].Text), &payload))
+	require.Equal(t, mcp.NewDataset("pro", mcp.Options{Commands: appCtx.App.Commands, GlobalFlags: appCtx.App.Flags}).CliCommands, payload.Items)
+	require.NotEqual(t, mcp.NewDataset("pro", mcp.Options{Commands: appCtx.App.Commands}).CliCommands, payload.Items)
 
 	require.NoError(t, session.Close())
 	cancel()
@@ -187,4 +209,174 @@ func TestMCPAppMetadata(t *testing.T) {
 			require.Equal(t, tc.want, mcpAppMetadata(ctx, tc.key, tc.fallback))
 		})
 	}
+}
+
+// TestMCPCliCommandsMatchShowCommands checks that list_cli_commands lists the same commands and flags
+// as `photoprism show commands --json` for the CE command list.
+func TestMCPCliCommandsMatchShowCommands(t *testing.T) {
+	out, err := RunWithTestContext(ShowCommandsCommand, []string{"commands", "--json"})
+	require.NoError(t, err)
+
+	var report struct {
+		Commands []catalog.Command `json:"commands"`
+	}
+	require.NoError(t, json.Unmarshal([]byte(out), &report))
+	require.NotEmpty(t, report.Commands)
+
+	ctx := NewTestContext(nil)
+	data := mcp.NewDataset("ce", mcp.Options{Commands: ctx.App.Commands, GlobalFlags: ctx.App.Flags})
+	require.Len(t, data.CliCommands, len(report.Commands))
+
+	flagCount := 0
+
+	for i, cmd := range data.CliCommands {
+		expected := report.Commands[i]
+		require.Equal(t, expected.FullName, cmd.Command)
+		require.Equal(t, expected.Usage, cmd.Usage, cmd.Command)
+		require.Len(t, cmd.Flags, len(expected.Flags), cmd.Command)
+
+		for j, f := range cmd.Flags {
+			require.Equal(t, expected.Flags[j].Name, f.Name, cmd.Command)
+		}
+
+		flagCount += len(cmd.Flags)
+	}
+
+	require.Positive(t, flagCount)
+	require.Equal(t, "photoprism mcp serve", findCliCommand(t, data.CliCommands, "photoprism mcp serve").Command)
+	require.Equal(t, `"admin"`, findCliFlag(t, findCliCommand(t, data.CliCommands, "photoprism users add"), "--role").Default)
+}
+
+// TestMCPCliCommandsOmitEnvironmentValues sets a sentinel in the environment variable of every CE
+// command flag and every secret config flag, applies the command flags twice, and checks that no
+// list_cli_commands row carries the value or a default for these flags.
+func TestMCPCliCommandsOmitEnvironmentValues(t *testing.T) {
+	const sentinel = "TestMCPCliCommandsOmitEnvironmentValues"
+
+	for _, f := range config.Flags {
+		if f.Secret {
+			t.Setenv(f.EnvVar(), sentinel)
+		}
+	}
+
+	envFlags := applyEnvFlagsTwice(t, PhotoPrism, sentinel)
+	require.Contains(t, envFlags, "photoprism database transfer --target-password")
+	require.Contains(t, catalog.DescribeFlag(envFlags["photoprism database transfer --target-password"]).Default, sentinel,
+		"a second Apply must report the environment value, or this test cannot fail")
+
+	data := mcp.NewDataset("ce", mcp.Options{Commands: PhotoPrism, GlobalFlags: config.Flags.Cli()})
+
+	raw, err := json.Marshal(data.CliCommands)
+	require.NoError(t, err)
+	require.NotContains(t, string(raw), sentinel)
+
+	for _, cmd := range data.CliCommands {
+		for _, f := range cmd.Flags {
+			if _, ok := envFlags[cmd.Command+" "+f.Name]; ok {
+				require.Empty(t, f.Default, "%s %s", cmd.Command, f.Name)
+				require.NotEmpty(t, f.Env, "%s %s", cmd.Command, f.Name)
+			}
+		}
+	}
+}
+
+// applyEnvFlagsTwice sets the environment variables of every flag in the command tree, applies each
+// of these flags to two fresh flag sets, and restores the flag definitions when the test ends. It
+// returns the flags by command path and flag name.
+func applyEnvFlagsTwice(t *testing.T, commands []*cli.Command, sentinel string) map[string]cli.Flag {
+	t.Helper()
+
+	result := make(map[string]cli.Flag)
+
+	var walk func(cmds []*cli.Command, parent string)
+
+	walk = func(cmds []*cli.Command, parent string) {
+		for _, c := range cmds {
+			if c == nil {
+				continue
+			}
+
+			name := parent + " " + c.Name
+
+			for _, f := range c.Flags {
+				e, ok := f.(interface{ GetEnvVars() []string })
+
+				if !ok || len(e.GetEnvVars()) == 0 {
+					continue
+				}
+
+				value := sentinel
+
+				switch catalog.DescribeFlag(f).Type {
+				case "bool":
+					value = "true"
+				case "int", "int64", "uint", "uint64", "float64":
+					value = "4242"
+				case "duration":
+					value = "4242s"
+				}
+
+				for _, env := range e.GetEnvVars() {
+					t.Setenv(env, value)
+				}
+
+				t.Cleanup(restoreFlag(f))
+
+				for range 2 {
+					require.NoError(t, f.Apply(flag.NewFlagSet("test", flag.ContinueOnError)), name)
+				}
+
+				result[name+" "+catalog.DescribeFlag(f).Name] = f
+			}
+
+			walk(c.Subcommands, name)
+		}
+	}
+
+	walk(commands, "photoprism")
+
+	return result
+}
+
+// restoreFlag returns a function that restores the flag definition, including the state that Apply sets.
+func restoreFlag(f cli.Flag) func() {
+	if w, ok := f.(interface{ Unwrap() cli.Flag }); ok {
+		f = w.Unwrap()
+	}
+
+	v := reflect.ValueOf(f).Elem()
+	saved := reflect.New(v.Type()).Elem()
+	saved.Set(v)
+
+	return func() { v.Set(saved) }
+}
+
+// findCliCommand returns the command with the specified path, failing the test if there is none.
+func findCliCommand(t *testing.T, commands []mcp.CliCommand, path string) mcp.CliCommand {
+	t.Helper()
+
+	for _, cmd := range commands {
+		if cmd.Command == path {
+			return cmd
+		}
+	}
+
+	require.FailNow(t, "command not found", path)
+
+	return mcp.CliCommand{}
+}
+
+// findCliFlag returns the flag with the specified name, failing the test if there is none.
+func findCliFlag(t *testing.T, cmd mcp.CliCommand, name string) mcp.CliFlag {
+	t.Helper()
+
+	for _, f := range cmd.Flags {
+		if f.Name == name {
+			return f
+		}
+	}
+
+	require.FailNow(t, "flag not found", "%s %s", cmd.Command, name)
+
+	return mcp.CliFlag{}
 }

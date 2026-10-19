@@ -59,13 +59,20 @@ func ServeMCP(router *gin.RouterGroup) {
 		return
 	}
 
+	// The command list of the running edition is only available from the CLI app.
+	var opt mcp.Options
+
+	if app := conf.CliApp(); app != nil {
+		opt.Commands, opt.GlobalFlags = app.Commands, app.Flags
+	}
+
 	// One server instance is shared across all HTTP requests. The SDK
 	// isolates concurrent callers through its own session bookkeeping,
 	// keyed by the Mcp-Session-Id response header.
 	mcpServer := mcp.NewServer(&sdkmcp.Implementation{
 		Name:    "photoprism-mcp",
 		Version: conf.Version(),
-	}, conf.Edition())
+	}, conf.Edition(), opt)
 
 	// Streamable HTTP handler with warn-level logging and an explicit CrossOriginProtection,
 	// which go-sdk does not enable implicitly. The option is deprecated in favor of wrapping
