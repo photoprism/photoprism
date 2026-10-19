@@ -6,6 +6,7 @@ import (
 	"flag"
 	"strings"
 	"testing"
+	"time"
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/stretchr/testify/require"
@@ -68,6 +69,66 @@ func (f *testFieldWrappedFlag) String() string {
 // Unwrap returns the inner flag.
 func (f *testFieldWrappedFlag) Unwrap() cli.Flag {
 	return f.inner
+}
+
+// testTextWrapper is a wrapper with its own default text.
+type testTextWrapper struct {
+	testChainFlag
+}
+
+// GetDefaultText returns text that is not the default of the inner flag.
+func (f *testTextWrapper) GetDefaultText() string {
+	return "TestTextWrapper"
+}
+
+// testCustomFlag is a flag type that urfave/cli does not define.
+type testCustomFlag struct {
+	name string
+}
+
+// Apply does nothing.
+func (f *testCustomFlag) Apply(*flag.FlagSet) error { return nil }
+
+// Names returns the flag name.
+func (f *testCustomFlag) Names() []string { return []string{f.name} }
+
+// IsSet reports false.
+func (f *testCustomFlag) IsSet() bool { return false }
+
+// String returns the flag name.
+func (f *testCustomFlag) String() string { return f.name }
+
+// GetDefaultText returns a default value.
+func (f *testCustomFlag) GetDefaultText() string { return "custom" }
+
+// testChainFlag wraps any flag in a named field, so wrappers can be nested.
+type testChainFlag struct {
+	inner cli.Flag
+}
+
+// Apply applies the inner flag.
+func (f *testChainFlag) Apply(set *flag.FlagSet) error { return f.inner.Apply(set) }
+
+// Names returns the names of the inner flag.
+func (f *testChainFlag) Names() []string { return f.inner.Names() }
+
+// IsSet reports whether the inner flag is set.
+func (f *testChainFlag) IsSet() bool { return f.inner.IsSet() }
+
+// String returns the help text of the inner flag.
+func (f *testChainFlag) String() string { return f.inner.String() }
+
+// Unwrap returns the inner flag.
+func (f *testChainFlag) Unwrap() cli.Flag { return f.inner }
+
+// testLoopFlag is a wrapper that unwraps to itself.
+type testLoopFlag struct {
+	*cli.StringFlag
+}
+
+// Unwrap returns the flag itself.
+func (f *testLoopFlag) Unwrap() cli.Flag {
+	return f
 }
 
 // testEnvVars lists the environment variables of the env-backed flags in testCommands.
@@ -265,6 +326,11 @@ func TestNewCliCommand(t *testing.T) {
 	t.Run("UnknownFlag", func(t *testing.T) {
 		require.Empty(t, newCliCommand(cmd, &cli.Command{Name: "add"}).Flags[0].Default)
 	})
+	t.Run("WrapperDefaultText", func(t *testing.T) {
+		wrapped := &cli.Command{Name: "add", Flags: []cli.Flag{&testTextWrapper{testChainFlag{&cli.StringFlag{Name: "role", Value: "admin"}}}}}
+		wrappedCmd := catalog.Command{FullName: "photoprism users add", Flags: []catalog.Flag{{Name: "--role", Type: "string", Default: "TestTextWrapper"}}}
+		require.Equal(t, `"admin"`, newCliCommand(wrappedCmd, wrapped).Flags[0].Default)
+	})
 }
 
 // TestFindFlag covers found, missing, and nil flags.
@@ -281,30 +347,59 @@ func TestFindFlag(t *testing.T) {
 	})
 }
 
-// TestFlagDefaultAllowed covers literal, env-backed, file-backed, generic, wrapped, and missing flags.
-func TestFlagDefaultAllowed(t *testing.T) {
+// TestLiteralFlag covers literal, env-backed, file-backed, generic, wrapped, and missing flags.
+func TestLiteralFlag(t *testing.T) {
 	t.Run("Literal", func(t *testing.T) {
-		require.True(t, flagDefaultAllowed(&cli.StringFlag{Name: "role", Value: "admin"}))
-		require.True(t, flagDefaultAllowed(&cli.StringSliceFlag{Name: "tags"}))
-		require.True(t, flagDefaultAllowed(&testWrappedFlag{&cli.StringFlag{Name: "wrapped"}}))
-		require.True(t, flagDefaultAllowed(&testFieldWrappedFlag{&cli.StringFlag{Name: "wrapped"}}))
+		require.NotNil(t, literalFlag(&cli.StringFlag{Name: "role", Value: "admin"}))
+		require.NotNil(t, literalFlag(&cli.StringSliceFlag{Name: "tags"}))
+		require.NotNil(t, literalFlag(&testWrappedFlag{&cli.StringFlag{Name: "wrapped"}}))
+		require.NotNil(t, literalFlag(&testFieldWrappedFlag{&cli.StringFlag{Name: "wrapped"}}))
 	})
 	t.Run("Environment", func(t *testing.T) {
-		require.False(t, flagDefaultAllowed(&cli.StringFlag{Name: "dsn", EnvVars: []string{"DSN"}}))
-		require.False(t, flagDefaultAllowed(&cli.StringSliceFlag{Name: "tags", EnvVars: []string{"TAGS"}}))
-		require.False(t, flagDefaultAllowed(&testWrappedFlag{&cli.StringFlag{Name: "wrapped", EnvVars: []string{"WRAPPED"}}}))
-		require.False(t, flagDefaultAllowed(&testFieldWrappedFlag{&cli.StringFlag{Name: "wrapped", EnvVars: []string{"WRAPPED"}}}))
+		require.Nil(t, literalFlag(&cli.StringFlag{Name: "dsn", EnvVars: []string{"DSN"}}))
+		require.Nil(t, literalFlag(&cli.StringSliceFlag{Name: "tags", EnvVars: []string{"TAGS"}}))
+		require.Nil(t, literalFlag(&testWrappedFlag{&cli.StringFlag{Name: "wrapped", EnvVars: []string{"WRAPPED"}}}))
+		require.Nil(t, literalFlag(&testFieldWrappedFlag{&cli.StringFlag{Name: "wrapped", EnvVars: []string{"WRAPPED"}}}))
 	})
 	t.Run("File", func(t *testing.T) {
-		require.False(t, flagDefaultAllowed(&cli.StringFlag{Name: "secret", FilePath: "/etc/secret"}))
-		require.False(t, flagDefaultAllowed(&testWrappedFlag{&cli.StringFlag{Name: "wrapped", FilePath: "/etc/secret"}}))
-		require.False(t, flagDefaultAllowed(&testFieldWrappedFlag{&cli.StringFlag{Name: "wrapped", FilePath: "/etc/secret"}}))
+		require.Nil(t, literalFlag(&cli.StringFlag{Name: "secret", FilePath: "/etc/secret"}))
+		require.Nil(t, literalFlag(&testWrappedFlag{&cli.StringFlag{Name: "wrapped", FilePath: "/etc/secret"}}))
+		require.Nil(t, literalFlag(&testFieldWrappedFlag{&cli.StringFlag{Name: "wrapped", FilePath: "/etc/secret"}}))
 	})
 	t.Run("Generic", func(t *testing.T) {
-		require.False(t, flagDefaultAllowed(&cli.GenericFlag{Name: "generic", Value: &testGeneric{}}))
+		require.Nil(t, literalFlag(&cli.GenericFlag{Name: "generic", Value: &testGeneric{}}))
 	})
 	t.Run("Missing", func(t *testing.T) {
-		require.False(t, flagDefaultAllowed(nil))
+		require.Nil(t, literalFlag(nil))
+		require.Nil(t, literalFlag(&testChainFlag{}))
+	})
+	t.Run("LiteralTypes", func(t *testing.T) {
+		for _, f := range []cli.Flag{
+			&cli.BoolFlag{}, &cli.StringFlag{}, &cli.PathFlag{}, &cli.IntFlag{}, &cli.Int64Flag{}, &cli.UintFlag{},
+			&cli.Uint64Flag{}, &cli.Float64Flag{}, &cli.DurationFlag{}, &cli.StringSliceFlag{}, &cli.IntSliceFlag{},
+			&cli.Int64SliceFlag{}, &cli.UintSliceFlag{}, &cli.Uint64SliceFlag{}, &cli.Float64SliceFlag{},
+		} {
+			require.NotNil(t, literalFlag(f), "%T", f)
+		}
+	})
+	t.Run("UnknownType", func(t *testing.T) {
+		require.Nil(t, literalFlag(&cli.TimestampFlag{Name: "since", Layout: time.RFC3339}))
+		require.Nil(t, literalFlag(&testCustomFlag{name: "custom"}))
+		require.Nil(t, literalFlag(&testChainFlag{&testCustomFlag{name: "custom"}}))
+	})
+	t.Run("Innermost", func(t *testing.T) {
+		inner := &cli.StringFlag{Name: "inner", Value: "literal"}
+		require.Same(t, inner, literalFlag(&testTextWrapper{testChainFlag{inner}}))
+	})
+	t.Run("UnwrapDepth", func(t *testing.T) {
+		require.Nil(t, literalFlag(&testLoopFlag{&cli.StringFlag{Name: "loop"}}))
+
+		var f cli.Flag = &cli.StringFlag{Name: "deep"}
+		for range maxFlagUnwrapDepth {
+			f = &testChainFlag{f}
+		}
+		require.NotNil(t, literalFlag(f))
+		require.Nil(t, literalFlag(&testChainFlag{f}))
 	})
 }
 
@@ -333,5 +428,20 @@ func TestCloneStrings(t *testing.T) {
 	})
 	t.Run("Nil", func(t *testing.T) {
 		require.Equal(t, []string{}, cloneStrings(nil))
+	})
+}
+
+// TestLiteralDefaultFlag covers allowed and rejected flag types.
+func TestLiteralDefaultFlag(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		require.True(t, literalDefaultFlag(&cli.StringFlag{}))
+		require.True(t, literalDefaultFlag(&cli.Float64SliceFlag{}))
+	})
+	t.Run("Rejected", func(t *testing.T) {
+		require.False(t, literalDefaultFlag(&cli.GenericFlag{}))
+		require.False(t, literalDefaultFlag(&cli.TimestampFlag{}))
+		require.False(t, literalDefaultFlag(&testCustomFlag{}))
+		require.False(t, literalDefaultFlag(&testChainFlag{&cli.StringFlag{}}))
+		require.False(t, literalDefaultFlag(nil))
 	})
 }

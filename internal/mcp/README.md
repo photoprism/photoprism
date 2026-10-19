@@ -60,7 +60,7 @@ Out of scope for the current server (must not regress without additional per-too
 - Metadata fields: `internal/meta.Report(&meta.Data{})` sorted by type and field, plus `meta.Docs`, as `photoprism show metadata`
 - Thumbnail sizes: `internal/thumb.Report(thumb.Sizes.All(), false)`, as `photoprism show thumb-sizes`, with the sizes in `thumb.VideoSizes` (`photoprism show video-sizes`) marked as video sizes
 
-The data is built once when the server is created. It comes from compile-time tables only, never from package variables that are set from the runtime config, such as the thumbnail size limits. The command list contains no runtime values either: hidden commands and flags are skipped, and a flag `default` is omitted if the flag can also be set through an environment variable or a file, holds a generic value, or its command path is not unique.
+The data is built once when the server is created. It comes from compile-time tables only, never from package variables that are set from the runtime config, such as the thumbnail size limits. The command list contains no runtime values either: hidden commands and flags are skipped, and a flag `default` is returned only for the standard scalar, path, and slice flag types, and omitted if the flag can also be set through an environment variable or a file, or its command path is not unique.
 
 ### Run locally (stdio)
 

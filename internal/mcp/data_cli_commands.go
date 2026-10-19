@@ -91,8 +91,8 @@ func cliCommandSources(commands []*cli.Command) map[string]*cli.Command {
 	return sources
 }
 
-// newCliCommand converts a catalog command into a CliCommand. A flag keeps its default only if
-// its definition in src shows that the default is a literal.
+// newCliCommand converts a catalog command into a CliCommand. A flag gets a default only if its
+// definition in src shows that the default is a literal.
 func newCliCommand(cmd catalog.Command, src *cli.Command) CliCommand {
 	flags := make([]CliFlag, 0, len(cmd.Flags))
 
@@ -106,8 +106,10 @@ func newCliCommand(cmd catalog.Command, src *cli.Command) CliCommand {
 			Env:      cloneStrings(f.Env),
 		}
 
-		if src != nil && flagDefaultAllowed(findFlag(src.Flags, f.Name)) {
-			flag.Default = f.Default
+		if src != nil {
+			if inner := literalFlag(findFlag(src.Flags, f.Name)); inner != nil {
+				flag.Default = catalog.DescribeFlag(inner).Default
+			}
 		}
 
 		flags = append(flags, flag)
@@ -134,29 +136,54 @@ func findFlag(flags []cli.Flag, name string) cli.Flag {
 	return nil
 }
 
-// flagDefaultAllowed reports whether the default of a flag is a literal of its definition. It is not
-// if the flag can be set through an environment variable or a file, or holds a generic value that
-// parsed arguments change.
-func flagDefaultAllowed(f cli.Flag) bool {
-	for f != nil {
-		if e, ok := f.(interface{ GetEnvVars() []string }); ok && len(e.GetEnvVars()) > 0 {
-			return false
+// maxFlagUnwrapDepth is the number of wrappers literalFlag looks through.
+const maxFlagUnwrapDepth = 4
+
+// literalFlag returns the innermost flag if its default is a literal of its definition, or nil. That is
+// only the case for the flag types in literalDefaultFlag that cannot be set through an environment
+// variable or a file, so the default is read from the returned flag rather than from a wrapper.
+func literalFlag(f cli.Flag) cli.Flag {
+	for range maxFlagUnwrapDepth + 1 {
+		if f == nil {
+			return nil
 		}
 
-		if _, ok := f.(*cli.GenericFlag); ok || flagFilePath(f) != "" {
-			return false
+		if e, ok := f.(interface{ GetEnvVars() []string }); ok && len(e.GetEnvVars()) > 0 {
+			return nil
+		}
+
+		if flagFilePath(f) != "" {
+			return nil
 		}
 
 		w, ok := f.(interface{ Unwrap() cli.Flag })
 
 		if !ok {
-			return true
+			if literalDefaultFlag(f) {
+				return f
+			}
+
+			return nil
 		}
 
 		f = w.Unwrap()
 	}
 
-	return false
+	return nil
+}
+
+// literalDefaultFlag reports whether the flag type keeps its default when arguments are parsed, so the
+// default is a literal unless an environment variable or a file sets it. Generic and timestamp flags
+// parse into the value their default is read from.
+func literalDefaultFlag(f cli.Flag) bool {
+	switch f.(type) {
+	case *cli.BoolFlag, *cli.StringFlag, *cli.PathFlag, *cli.IntFlag, *cli.Int64Flag, *cli.UintFlag,
+		*cli.Uint64Flag, *cli.Float64Flag, *cli.DurationFlag, *cli.StringSliceFlag, *cli.IntSliceFlag,
+		*cli.Int64SliceFlag, *cli.UintSliceFlag, *cli.Uint64SliceFlag, *cli.Float64SliceFlag:
+		return true
+	default:
+		return false
+	}
 }
 
 // flagFilePath returns the FilePath field of a flag struct, or an empty string if it has none.
