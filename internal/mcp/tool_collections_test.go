@@ -239,7 +239,9 @@ func TestListCollections(t *testing.T) {
 		var thumb string
 		require.NoError(t, entity.Db().Table("albums").Select("thumb").Where("album_uid = ?", "as6sg6bxpogaaba7").Row().Scan(&thumb))
 		require.NoError(t, entity.Db().Model(&entity.Album{}).Where("album_uid = ?", "as6sg6bxpogaaba7").UpdateColumn("thumb", cover.Hash).Error)
-		t.Cleanup(func() { _ = entity.Db().Model(&entity.Album{}).Where("album_uid = ?", "as6sg6bxpogaaba7").UpdateColumn("thumb", thumb).Error })
+		t.Cleanup(func() {
+			_ = entity.Db().Model(&entity.Album{}).Where("album_uid = ?", "as6sg6bxpogaaba7").UpdateColumn("thumb", thumb).Error
+		})
 
 		_, out, err := listCollections(context.Background(), sessionRequest(admin), ListCollectionsInput{Limit: 50})
 		require.NoError(t, err)

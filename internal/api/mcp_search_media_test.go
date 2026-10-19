@@ -437,3 +437,82 @@ func TestServeMCP_Collections(t *testing.T) {
 		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos", "albums"), w.Header().Get("WWW-Authenticate"))
 	})
 }
+
+// TestServeMCP_PeopleAndLabels checks that list_people and list_labels return the people and labels the
+// subjects and labels endpoints return for the same session.
+func TestServeMCP_PeopleAndLabels(t *testing.T) {
+	app, router, conf := NewApiTest()
+	prepareMCPTest(t)
+	ServeMCP(router)
+	SearchSubjects(router)
+	SearchLabels(router)
+
+	token := AuthenticateAdmin(app, router)
+	sessionID := mcpInitSession(t, app, token)
+
+	listUIDs := func(t *testing.T, name string, args map[string]any) (uids []string, total int64) {
+		for offset := 0; ; offset += 5 {
+			args["limit"] = 5
+			args["offset"] = offset
+			out := mcpCallTool(t, app, token, sessionID, name, args)
+			total = out.Get("total").Int()
+			for _, item := range out.Get("items").Array() {
+				uids = append(uids, item.Get("uid").String())
+			}
+			if !out.Get("truncated").Bool() {
+				return uids, total
+			}
+		}
+	}
+
+	restUIDs := func(t *testing.T, url string) (uids []string) {
+		r := AuthenticatedRequest(app, http.MethodGet, url, token)
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		for _, item := range gjson.Parse(r.Body.String()).Array() {
+			uids = append(uids, item.Get("UID").String())
+		}
+		return uids
+	}
+
+	t.Run("People", func(t *testing.T) {
+		expected := restUIDs(t, "/api/v1/subjects?count=100000&type=person&files=1")
+		require.NotEmpty(t, expected)
+		got, total := listUIDs(t, "list_people", map[string]any{})
+		assert.Equal(t, expected, got)
+		assert.Equal(t, int64(len(expected)), total)
+	})
+	t.Run("Labels", func(t *testing.T) {
+		for _, all := range []string{"false", "true"} {
+			expected := restUIDs(t, "/api/v1/labels?count=100000&all="+all)
+			require.NotEmpty(t, expected)
+			got, total := listUIDs(t, "list_labels", map[string]any{"all": all == "true"})
+			assert.Equal(t, expected, got, all)
+			assert.Equal(t, int64(len(expected)), total, all)
+		}
+	})
+	t.Run("InstanceClient", func(t *testing.T) {
+		// A client role without people and labels grants is not offered these tools.
+		client, err := entity.AddClient(form.Client{ClientName: "MCP Instance Test", ClientRole: "instance", AuthScope: "*"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+
+		sess := client.NewSession(nil, authn.GrantClientCredentials)
+		require.NoError(t, sess.Create())
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":8,"method":"tools/list"}`, sess.AuthToken(), mcpInitSession(t, app, sess.AuthToken()))
+		require.Equal(t, http.StatusOK, w.Code)
+		assert.NotContains(t, w.Body.String(), `"name":"list_people"`)
+		assert.NotContains(t, w.Body.String(), `"name":"list_labels"`)
+		assert.Contains(t, w.Body.String(), `"name":"list_config_keys"`)
+	})
+	t.Run("StepUp", func(t *testing.T) {
+		sess, err := entity.AddClientSession("mcp-test-labels", 3600, "mcp", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":9,"method":"tools/call","params":{"name":"list_labels","arguments":{}}}`, sess.AuthToken(), mcpInitSession(t, app, sess.AuthToken()))
+		assert.Equal(t, http.StatusForbidden, w.Code)
+		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "labels"), w.Header().Get("WWW-Authenticate"))
+	})
+}

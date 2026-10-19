@@ -57,6 +57,8 @@ var LibraryToolNames = []string{
 	"get_media",
 	"list_collections",
 	"get_collection",
+	"list_people",
+	"list_labels",
 }
 
 // NewServer returns a read-only MCP server with the tools and resources in ToolNames and ResourceURIs.
@@ -95,4 +97,5 @@ func registerLibraryTools(server *sdkmcp.Server, opt Options) {
 	registerSearchMedia(server, opt)
 	registerGetMedia(server)
 	registerCollectionTools(server)
+	registerPeopleAndLabelTools(server)
 }

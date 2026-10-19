@@ -29,6 +29,8 @@
   - `get_media`
   - `list_collections`
   - `get_collection`
+  - `list_people`
+  - `list_labels`
 
 ### Package layout
 
@@ -224,6 +226,12 @@ The library tools read the library with the permissions of the session, through 
 - `get_collection` input: `uid` (collection UID from `list_collections`)
 - Each collection has `uid`, `type`, `title`, `description`, `media_count`, `cover` (media UID, if the session may see the picture), `year`, `month`, and `day` (months and moments), `created_at`, and `updated_at`
 - Runs `search.UserAlbums` per type, like `GET /api/v1/albums?type=<type>`, so each type is checked by its own resource (`search.AlbumTypeResource`), and a token also needs the scope of that resource: `albums`, `folders`, `moments`, `calendar` (months), or `places` (states). With `all`, types the role or token may not see are left out, with a warning naming a missing scope. `get_collection` checks a collection by its own type and reports one the session cannot see as not found
+
+`list_people` (declaration: `people`, `search`) and `list_labels` (`labels`, `search`)
+
+- Inputs: `query` (text in names and aliases of people, or in label names), `limit`, `offset`; `list_labels` also `all` (include labels with low priority or a single media)
+- Return `items`, `total`, `limit`, `offset`, `truncated`, and optional `warnings`; people have `uid`, `name`, `media_count`, and `cover` (media UID, if the session may see the picture), labels `uid`, `name`, `slug` (for the `label:` filter), `media_count`, and `categories` (names, without private ones for sessions that see public labels only)
+- Run `search.UserSubjects` with type `person` and at least one file, like the people page (`GET /api/v1/subjects?type=person&files=1`), and `search.UserLabels` after `entity.UpdateLabelCountsIfNeeded`, like `GET /api/v1/labels`, so private and hidden people and private labels follow the same rules
 
 ### MCP Client Compatibility
 
