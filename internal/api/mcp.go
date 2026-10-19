@@ -75,6 +75,9 @@ func ServeMCP(router *gin.RouterGroup) {
 		opt.Commands = app.Commands
 	}
 
+	// Data tools apply the current feature settings, as the web app's search does.
+	opt.Settings = conf.Settings
+
 	// Public mode gets the reference server, authenticated sessions the library server, whose
 	// middleware authorizes each tool call. Each instance is shared across HTTP requests; the SDK
 	// isolates callers through its session bookkeeping, keyed by the Mcp-Session-Id header.

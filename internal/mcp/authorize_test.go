@@ -212,7 +212,7 @@ func TestNewLibraryServer(t *testing.T) {
 
 func TestRegisterLibraryTools(t *testing.T) {
 	server := sdkmcp.NewServer(&sdkmcp.Implementation{Name: "test"}, nil)
-	registerLibraryTools(server)
+	registerLibraryTools(server, Options{})
 	assert.ElementsMatch(t, LibraryToolNames, toolNames(t, connectServer(t, server)))
 }
 
@@ -353,7 +353,7 @@ func TestAuthorizeTools(t *testing.T) {
 
 	t.Run("Admin", func(t *testing.T) {
 		session := connectAuthorized(t, newServer(), testUserSession(acl.RoleAdmin, 0, ""))
-		assert.ElementsMatch(t, append(append([]string{}, ToolNames...), testSearchLabels, testManageSettings), toolNames(t, session))
+		assert.ElementsMatch(t, append(append(append([]string{}, ToolNames...), LibraryToolNames...), testSearchLabels, testManageSettings), toolNames(t, session))
 		assert.False(t, call(t, session, testManageSettings).IsError)
 		assert.False(t, call(t, session, testSearchLabels).IsError)
 		assert.False(t, call(t, session, "list_thumbnail_sizes").IsError)

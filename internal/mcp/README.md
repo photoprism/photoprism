@@ -24,6 +24,8 @@
   - `list_file_formats`
   - `list_metadata_fields`
   - `list_thumbnail_sizes`
+- Library tools, registered on the library server only (authenticated, non-public sessions) and authorized per call:
+  - `search_media`
 
 ### Package layout
 
@@ -196,6 +198,16 @@ The following tools return `items`, `total`, `limit`, `offset`, `truncated`, and
 - Inputs: `type` (`image`, `video`, or `all`; default `all`)
 - Returns `items` and `total`; `video` returns only the standard video sizes, while `image` and `all` return every thumbnail size
 - Validation rejects unsupported `type` values
+
+The library tools read the library with the permissions of the session, through the same search functions and feature settings as the matching REST endpoints. They are not available in public mode or with `photoprism mcp serve`, and a token needs the scope of the tool's resource besides `mcp`.
+
+`search_media` (declaration: `photos`, `search`)
+
+- Inputs: `query` (search filters, see `find_search_filters`), `type` (`image`, `raw`, `live`, `video`, `animated`, `audio`, `vector`, `document`, combined with `|`), `collection` (album UID), `person` (person UID), `taken_after`, `taken_before` (`YYYY-MM-DD`; on or after, and before the date), `order` (`newest` default, `oldest`, `added`, `edited`, `relevance`), `limit` (default 20, max 50), `offset`, `detail` (`brief` default, `full`)
+- Returns `items`, `limit`, `offset`, `next_offset`, `truncated`, and optional `warnings`, without `total`; each item is a media with `uid`, `type`, `title`, `taken_at`, `taken_at_local`, `place` (`name`, `country`), and `favorite`, and with `detail=full` also `caption`, `camera`, `lens`, `labels`, `people`, and `collections`
+- Runs `search.UserPhotos` like `GET /api/v1/photos?merged=true`: the web app's file selection, so file filters such as `codec:avc1` find the same media, with the feature settings of `search.ApplyPhotoFeatures`, as the photos endpoint applies them; structured inputs take precedence over the same filters in `query`
+- `offset` is a row position of the search result, not a media count: pass back `next_offset`, which is omitted on the last page. Each page reads one row before `offset` and a window of `3 * limit` rows (at most 150), skips the rows of a media that began before `offset`, and reads on in windows that double in size (at most 5,000 rows) until it has `limit` media and has seen where the next one begins (`pageMedia`); it stops when the request is canceled. The offered orders keep the rows of a media adjacent, which `TestSearchMediaOrders` checks
+- `detail=full` loads labels, people, and collections with one query per kind for the page and keeps those the session may see: labels without private ones if `search.LabelsPublicOnly` applies, people as `search.UserSubjects` returns them, and collections as `search.UserAlbums` returns them per collection type. Labels and people require full access to pictures and collections view access to albums, including the `albums` scope of a token, as in the photo details
 
 ### MCP Client Compatibility
 

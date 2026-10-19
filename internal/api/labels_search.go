@@ -46,18 +46,13 @@ func SearchLabels(router *gin.RouterGroup) {
 			return
 		}
 
-		if acl.Rules.Deny(acl.ResourceLabels, s.GetUserRole(), acl.AccessPrivate) {
-			frm.NSFW = false
-			frm.Public = true
-		}
-
 		// Update precalculated photo counts if needed.
 		if err = entity.UpdateLabelCountsIfNeeded(); err != nil {
 			log.Warnf("labels: could not update photo counts (%s)", err)
 		}
 
 		// Search matching labels.
-		result, err := search.Labels(frm)
+		result, err := search.UserLabels(frm, s)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})

@@ -50,12 +50,8 @@ func SearchAlbums(router *gin.RouterGroup) {
 			return
 		}
 
-		settings := get.Config().Settings()
-
-		// Ignore private flag if feature is disabled.
-		if !settings.Features.Private {
-			frm.Public = false
-		}
+		// Apply the feature settings.
+		search.ApplyAlbumFeatures(&frm, get.Config().Settings().Features.Private)
 
 		// Find matching albums.
 		result, err := search.UserAlbums(frm, s)

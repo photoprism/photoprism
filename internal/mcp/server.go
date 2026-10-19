@@ -3,6 +3,8 @@ package mcp
 import (
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/internal/config/customize"
 )
 
 // ToolNames lists the read-only tools registered on the MCP server in the
@@ -29,15 +31,30 @@ var ResourceURIs = []string{
 	thumbnailSizesURI,
 }
 
-// Options contains the reference data that only the caller can provide.
+// Options contains the reference data and settings that only the caller can provide.
 type Options struct {
 	// Commands is the CLI command list of the running edition.
 	Commands []*cli.Command
+	// Settings returns the current settings, whose features change search results like in the web app.
+	Settings func() *customize.Settings
+}
+
+// features returns the current feature settings, or the defaults if no settings are available.
+func (opt Options) features() customize.FeatureSettings {
+	if opt.Settings != nil {
+		if settings := opt.Settings(); settings != nil {
+			return settings.Features
+		}
+	}
+
+	return customize.NewDefaultSettings().Features
 }
 
 // LibraryToolNames lists the tools that read library data. They are registered only on the library server, whose
 // middleware checks each call against the tool's declaration.
-var LibraryToolNames = []string{}
+var LibraryToolNames = []string{
+	"search_media",
+}
 
 // NewServer returns a read-only MCP server with the tools and resources in ToolNames and ResourceURIs.
 // The implementation is reported to clients as the server's identity; currentEdition is normalized
@@ -65,11 +82,12 @@ func NewLibraryServer(implementation *sdkmcp.Implementation, currentEdition stri
 // newLibraryServer registers the tools and resources of the library server without its middleware.
 func newLibraryServer(implementation *sdkmcp.Implementation, currentEdition string, opt Options) *sdkmcp.Server {
 	server := NewServer(implementation, currentEdition, opt)
-	registerLibraryTools(server)
+	registerLibraryTools(server, opt)
 
 	return server
 }
 
 // registerLibraryTools registers the tools in LibraryToolNames.
-func registerLibraryTools(_ *sdkmcp.Server) {
+func registerLibraryTools(server *sdkmcp.Server, opt Options) {
+	registerSearchMedia(server, opt)
 }
