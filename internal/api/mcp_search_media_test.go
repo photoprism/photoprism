@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
@@ -243,12 +244,21 @@ func TestServeMCP_SearchMediaScopes(t *testing.T) {
 		assert.Contains(t, ref.Body.String(), `"structuredContent"`)
 		w := mcpPost(app, call, token, sessionID)
 		assert.Equal(t, http.StatusForbidden, w.Code)
-		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"), w.Header().Get("WWW-Authenticate"))
+		assert.Equal(t, `Bearer resource_metadata="`+conf.OAuthResourceMetadataUrl()+`", error="insufficient_scope", scope="mcp photos"`, w.Header().Get("WWW-Authenticate"))
 	})
 	t.Run("ReadVerb", func(t *testing.T) {
 		token := newClient(t, "read")
 		out := mcpCallTool(t, app, token, mcpInitSession(t, app, token), "search_media", map[string]any{"limit": 2})
 		assert.Len(t, out.Get("items").Array(), 2)
+	})
+	t.Run("AppsDisabled", func(t *testing.T) {
+		prev := conf.Options().OAuthApps
+		t.Cleanup(func() { conf.Options().OAuthApps = prev })
+		conf.Options().OAuthApps = config.OAuthAppsNone
+		token := newClient(t, "mcp")
+		w := mcpPost(app, call, token, mcpInitSession(t, app, token))
+		assert.Equal(t, http.StatusForbidden, w.Code)
+		assert.Equal(t, `Bearer error="insufficient_scope", scope="mcp photos"`, w.Header().Get("WWW-Authenticate"))
 	})
 	t.Run("MCPReadVerb", func(t *testing.T) {
 		token := newClient(t, "mcp read")
