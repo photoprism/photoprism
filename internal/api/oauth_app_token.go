@@ -68,6 +68,17 @@ func OAuthAppToken(c *gin.Context) {
 		return
 	}
 
+	// Limit the grant to the scopes the client may still request.
+	scope := oauth.ClientScopes(strings.Fields(code.Scope), client.Scope)
+
+	if !slices.Contains(scope, oauth.DefaultScope) {
+		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "client scope no longer includes %s", status.Denied}, actor, action, oauth.DefaultScope)
+		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "scope no longer allowed")
+		return
+	}
+
+	code.Scope = oauth.JoinScopes(scope)
+
 	grant, refreshToken, err := oauth.NewGrant(code, user, client.Name)
 
 	if err != nil {

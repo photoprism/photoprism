@@ -186,6 +186,16 @@ func TestOAuthAppToken(t *testing.T) {
 		r := postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"client_credentials"}, "client_id": {client.ClientUID}, "client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq9i8u"}}, "", "")
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
+	t.Run("AppClientWithSecret", func(t *testing.T) {
+		// The auth method alone refuses the grant, also if a secret is stored for the client.
+		app, _, _, client := prepareAppTokenTest(t)
+		secret := "xcCbOrw6I0vcoXzhnOmXhjpVSyFq9i8u"
+		pw := entity.NewPassword(client.ClientUID, secret, false)
+		require.NoError(t, pw.Save())
+		t.Cleanup(func() { _ = pw.Delete() })
+		r := postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"client_credentials"}, "client_id": {client.ClientUID}, "client_secret": {secret}}, "", "")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
 	t.Run("AppsDisabled", func(t *testing.T) {
 		app, router, conf, client := prepareAppTokenTest(t)
 		code := approvedCode(t, app, router, conf, client)

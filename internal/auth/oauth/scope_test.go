@@ -27,12 +27,38 @@ func TestValidateScopes(t *testing.T) {
 		_, err = ValidateScopes([]string{"unknown"}, "*")
 		require.NotNil(t, err)
 	})
+	t.Run("AnyClientScope", func(t *testing.T) {
+		result, err := ValidateScopes(AppScopes, "*")
+		require.Nil(t, err)
+		assert.Equal(t, AppScopes, result)
+		_, err = ValidateScopes([]string{"mcp", "users"}, "*")
+		require.NotNil(t, err)
+		assert.Equal(t, ErrCodeInvalidScope, err.Code)
+	})
 	t.Run("NotAllowedForClient", func(t *testing.T) {
 		_, err := ValidateScopes([]string{"mcp", "photos"}, "mcp")
 		require.NotNil(t, err)
 		assert.Equal(t, ErrCodeInvalidScope, err.Code)
 		_, err = ValidateScopes(nil, "photos")
 		require.NotNil(t, err)
+	})
+}
+
+func TestClientScopes(t *testing.T) {
+	t.Run("AnyClientScope", func(t *testing.T) {
+		assert.Equal(t, []string{"mcp", "photos"}, ClientScopes([]string{"mcp", "photos"}, "*"))
+	})
+	t.Run("Narrowed", func(t *testing.T) {
+		assert.Equal(t, []string{"mcp"}, ClientScopes([]string{"mcp", "photos"}, "mcp"))
+	})
+	t.Run("ReadVerb", func(t *testing.T) {
+		assert.Equal(t, []string{"mcp", "photos"}, ClientScopes([]string{"mcp", "photos"}, "mcp read photos"))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Empty(t, ClientScopes([]string{"mcp", "photos"}, "albums"))
+	})
+	t.Run("NoLongerAppScope", func(t *testing.T) {
+		assert.Equal(t, []string{"mcp"}, ClientScopes([]string{"mcp", "users"}, "*"))
 	})
 }
 

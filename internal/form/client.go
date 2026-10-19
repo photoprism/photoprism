@@ -97,10 +97,6 @@ func AddClientFromCli(ctx *cli.Context) Client {
 	if callbacks := callbackURLs(ctx); len(callbacks) > 0 {
 		f.RedirectURIs = callbacks
 		f.AuthMethod = authn.MethodPKCE.String()
-
-		if f.AuthScope == "" {
-			f.AuthScope = acl.ResourceMCP.String()
-		}
 	}
 
 	if f.AuthScope == "" {
