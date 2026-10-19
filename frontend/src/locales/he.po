@@ -466,7 +466,7 @@ msgstr "כל המקורות"
 
 #: src/page/auth/consent.vue:72
 msgid "Allow"
-msgstr "לאפשר"
+msgstr "אפשר"
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
@@ -1035,7 +1035,7 @@ msgstr "התחבר"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "אפליקציית Connect"
+msgstr "חיבור אפליקציה"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1263,7 +1263,7 @@ msgstr "מחק ערכי אינדקס יתומים, קבצי צדדיות ותמ�
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr "להכחיש"
+msgstr "דחה"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -4167,7 +4167,7 @@ msgstr "בחשבון זה חסר מזהה ולכן לא ניתן לערוך או
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr "בקשת ההרשאה הזו פקעה או אינה תקפה. אנא חזור לאפליקציה ונסה שוב."
+msgstr "פג תוקפה של בקשת ההרשאה או שהיא אינה תקפה. אנא חזור לאפליקציה ונסה שוב."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4616,7 +4616,7 @@ msgstr "תצוגה"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr "צפה במצלמות"
+msgstr "הצג מצלמות"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
@@ -4656,7 +4656,7 @@ msgstr "הצג את התוויות שלך"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "צפה ברגעים שלך"
+msgstr "הצג את הרגעים שלך"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"

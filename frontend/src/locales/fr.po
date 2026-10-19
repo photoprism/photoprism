@@ -36,11 +36,11 @@ msgstr "%s a été restauré"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr "%{client} ne peut pas se connecter à ton compte %{account} sur %{site}."
+msgstr "Impossible de connecter %{client} à votre compte %{account} sur %{site}."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr "%{client} souhaite accéder à ton compte %{account} sur %{site}."
+msgstr "%{client} souhaite accéder à votre compte %{account} sur %{site}."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -662,7 +662,7 @@ msgstr "Retour"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr "Retour à l'appli"
+msgstr "Retour à l'application"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1035,7 +1035,7 @@ msgstr "Connecter"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Appli Connect"
+msgstr "Connecter une application"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -2741,7 +2741,7 @@ msgstr "Aucun album sélectionné"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr "Aucune application n'est associée à ton compte."
+msgstr "Aucune application n'est connectée à votre compte."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2958,7 +2958,7 @@ msgstr "Une image trouvée"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr "N'autorise l'accès que si c'est toi qui as lancé la connexion à cette appli."
+msgstr "N'autorisez l'accès que si vous avez vous-même lancé la connexion à cette application."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3618,11 +3618,11 @@ msgstr "Filtres de recherche"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr "Rechercher et consulter tes photos"
+msgstr "Rechercher et voir vos photos"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Rechercher et visionner tes vidéos"
+msgstr "Rechercher et voir vos vidéos"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4167,7 +4167,7 @@ msgstr "Ce compte n'a pas d'identifiant et ne peut être modifié."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr "Cette demande d'autorisation a expiré ou n'est pas valide. Retourne dans l'appli et réessaie."
+msgstr "Cette demande d'autorisation a expiré ou n'est pas valide. Veuillez retourner dans l'application et réessayer."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4514,7 +4514,7 @@ msgstr "Les fichiers chargés qui contiendraient de telles images seront automat
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr "Utilise les outils PhotoPrism dans cette appli"
+msgstr "Utiliser les outils PhotoPrism dans cette application"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4632,35 +4632,35 @@ msgstr "Afficher les résultats de la recherche sous forme de liste."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr "Consultez vos albums"
+msgstr "Voir vos albums"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr "Consultez ton calendrier"
+msgstr "Voir votre calendrier"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr "Consulter tes favoris"
+msgstr "Voir vos favoris"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr "Consulter tes fichiers"
+msgstr "Voir vos fichiers"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr "Afficher tes dossiers"
+msgstr "Voir vos dossiers"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr "Afficher tes étiquettes"
+msgstr "Voir vos étiquettes"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Découvre tes moments"
+msgstr "Voir vos moments"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr "Voir tes lieux"
+msgstr "Voir vos lieux"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
@@ -4797,7 +4797,7 @@ msgstr "Votre compte n'a pas pu être connecté"
 
 #: src/page/auth/consent.vue:33
 msgid "Your account does not have the permissions this app requires."
-msgstr "Ton compte ne dispose pas des autorisations requises par cette application."
+msgstr "Votre compte ne dispose pas des autorisations requises par cette application."
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4846,7 +4846,7 @@ msgstr "mélangé"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr "pas disponible"
+msgstr "non disponible"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

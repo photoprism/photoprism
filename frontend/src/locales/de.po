@@ -1035,7 +1035,7 @@ msgstr "Verbinden"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Connect-App"
+msgstr "App verbinden"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -2958,7 +2958,7 @@ msgstr "Ein Bild gefunden"
 
 #: src/page/auth/consent.vue:30
 msgid "Only allow access if you started connecting this app yourself."
-msgstr "Erlaube den Zugriff nur, wenn du die Verbindung zu dieser App selbst hergestellt hast."
+msgstr "Erlaube den Zugriff nur, wenn du die Verbindung mit dieser App selbst gestartet hast."
 
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
@@ -3618,11 +3618,11 @@ msgstr "Suchfilter"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr "Fotos suchen und ansehen"
+msgstr "Deine Bilder suchen und anzeigen"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Deine Videos suchen und ansehen"
+msgstr "Deine Videos suchen und anzeigen"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4514,7 +4514,7 @@ msgstr "Diese werden automatisch erkannt und gelöscht."
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr "Nutze die PhotoPrism-Tools in dieser App"
+msgstr "PhotoPrism-Tools in dieser App nutzen"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4616,7 +4616,7 @@ msgstr "Ansicht"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr "Großformatkameras anzeigen"
+msgstr "Kameras anzeigen"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
@@ -4632,7 +4632,7 @@ msgstr "Suchergebnisse als Liste anzeigen."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr "Deine Alben ansehen"
+msgstr "Deine Alben anzeigen"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
@@ -4652,11 +4652,11 @@ msgstr "Deine Ordner anzeigen"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr "Deine Etiketten anzeigen"
+msgstr "Deine Kategorien anzeigen"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Deine Momente ansehen"
+msgstr "Deine Ereignisse anzeigen"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
