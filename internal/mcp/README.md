@@ -301,7 +301,7 @@ Cross-cutting MCP primitives that protect *every* transport (and SHOULD be appli
 - **`destructiveHint` annotation.** Mark high-blast-radius tools (`delete_album`, `wipe_index`, `reset_users`) with `annotations.destructiveHint: true` so MCP-aware UIs warn the human before approving the call.
 - **`elicitation/create` for confirmation.** For destructive calls, ask the host to elicit human consent before mutating — the MCP-native equivalent of the `--yes` flag the destructive CLI commands already require.
 
-Whichever path you pick, **add a test in `internal/mcp/server_test.go` that fails if the restricted tool shows up in `tools/list` or is callable over the public path or an unauthenticated stdio session**, and update the *Available Tools* table below.
+Whichever path you pick, **add a test in `internal/mcp/server_test.go` that fails if the restricted tool shows up in `tools/list` or is callable over the public path or an unauthenticated stdio session**, and update *Available tools* above.
 
 ### How Users Get Access
 

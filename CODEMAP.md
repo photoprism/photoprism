@@ -22,7 +22,7 @@ Executables & Entry Points
 - CLI app (binary name across docs/images is `photoprism`):
   - Main: `cmd/photoprism/photoprism.go`
   - Commands registry: `internal/commands/commands.go` (array `commands.PhotoPrism`)
-  - Catalog helpers: `internal/commands/catalog` (DTOs and builders to enumerate commands/flags; Markdown renderer)
+  - Catalog helpers: `internal/commands/catalog` (DTOs and builders to enumerate commands/flags; Markdown renderer); also feeds the MCP `list_cli_commands` tool
 - Web server:
   - Startup: `internal/commands/start.go` → `server.Start` (starts HTTP(S), workers, session cleanup)
   - HTTP server: `internal/server/start.go` (compression, security, healthz, readiness, TLS/AutoTLS/unix socket)
