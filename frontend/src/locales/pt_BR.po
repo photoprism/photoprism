@@ -1035,7 +1035,7 @@ msgstr "Conectar"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Aplicativo Connect"
+msgstr "Conectar aplicativo"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -3618,11 +3618,11 @@ msgstr "Filtros de pesquisa"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr "Pesquise e veja suas fotos"
+msgstr "Pesquisar e ver suas fotos"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Pesquise e veja seus vídeos"
+msgstr "Pesquisar e ver seus vídeos"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4167,7 +4167,7 @@ msgstr "Esta conta não tem um ID e não pode ser editada."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr "Esse pedido de autorização expirou ou não é válido. Volta pro app e tenta de novo."
+msgstr "Esta solicitação de autorização expirou ou não é válida. Volte ao aplicativo e tente novamente."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4514,7 +4514,7 @@ msgstr "Envios que possam conter tais imagens serão rejeitados automaticamente.
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr "Use as ferramentas do PhotoPrism neste aplicativo"
+msgstr "Usar as ferramentas do PhotoPrism neste aplicativo"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4632,35 +4632,35 @@ msgstr "Exibir os resultados da pesquisa como uma lista."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr "Veja seus álbuns"
+msgstr "Ver seus álbuns"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr "Veja sua agenda"
+msgstr "Ver seu calendário"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr "Veja seus favoritos"
+msgstr "Ver seus favoritos"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr "Veja seus arquivos"
+msgstr "Ver seus arquivos"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr "Veja suas pastas"
+msgstr "Ver suas pastas"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr "Veja suas etiquetas"
+msgstr "Ver suas etiquetas"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Veja seus momentos"
+msgstr "Ver seus momentos"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr "Veja seus lugares"
+msgstr "Ver seus lugares"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"

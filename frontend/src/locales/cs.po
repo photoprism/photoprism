@@ -1035,7 +1035,7 @@ msgstr "Připojit"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Aplikace Connect"
+msgstr "Připojit aplikaci"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1049,7 +1049,7 @@ msgstr "Připojeno"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr "Propojené aplikace"
+msgstr "Připojené aplikace"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -1263,7 +1263,7 @@ msgstr "Odstranění osiřelých položek indexu, souborů postranních oddílů
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr "Popřít"
+msgstr "Zamítnout"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -3618,11 +3618,11 @@ msgstr "Filtrování vyhledávání"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr "Vyhledávejte a prohlížejte si své fotografie"
+msgstr "Vyhledávat a zobrazovat vaše fotografie"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Vyhledávejte a prohlížejte si svá videa"
+msgstr "Vyhledávat a zobrazovat vaše videa"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4514,7 +4514,7 @@ msgstr "Nahrávání obsahující takovéto snímky budou automaticky odmítnuta
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr "V této aplikaci můžete využívat nástroje PhotoPrism"
+msgstr "Používat nástroje PhotoPrism v této aplikaci"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4616,7 +4616,7 @@ msgstr "Zobrazit"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr "Prohlížet fotoaparáty"
+msgstr "Zobrazit fotoaparáty"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
@@ -4632,7 +4632,7 @@ msgstr "Zobrazení výsledků vyhledávání jako seznamu."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr "Prohlédněte si svá alba"
+msgstr "Zobrazit vaše alba"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
@@ -4656,7 +4656,7 @@ msgstr "Zobrazit štítky"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Prohlédněte si své okamžiky"
+msgstr "Zobrazit vaše okamžiky"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"

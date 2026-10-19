@@ -36,11 +36,11 @@ msgstr "%s foi restaurado"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr "O %{client} não consegue ligar-se à tua conta %{account} no %{site}."
+msgstr "Não é possível ligar %{client} à tua conta %{account} em %{site}."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
-msgstr "O %{client} quer aceder à tua conta %{account} no %{site}."
+msgstr "%{client} quer aceder à tua conta %{account} em %{site}."
 
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
@@ -1035,7 +1035,7 @@ msgstr "Conectar"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Aplicação Connect"
+msgstr "Ligar aplicação"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -4514,7 +4514,7 @@ msgstr "Envios que possam conter tais imagens serão rejeitados automaticamente.
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr "Usa as ferramentas do PhotoPrism nesta aplicação"
+msgstr "Usar as ferramentas do PhotoPrism nesta aplicação"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4656,7 +4656,7 @@ msgstr "Ver as tuas etiquetas"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Vê os teus momentos"
+msgstr "Ver os teus momentos"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"

@@ -1035,7 +1035,7 @@ msgstr "连接"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Connect 应用"
+msgstr "连接应用"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1049,7 +1049,7 @@ msgstr "已连接"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr "关联应用"
+msgstr "已连接的应用"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -2741,7 +2741,7 @@ msgstr "未选择相册"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr "您的账户未关联任何应用。"
+msgstr "您的账户未连接任何应用。"
 
 #: src/locales.js:280
 msgid "No data available"
@@ -4516,7 +4516,7 @@ msgstr "可能包含此类图像的上传将被自动拒绝。"
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr "使用本应用中的 PhotoPrism 工具"
+msgstr "在此应用中使用 PhotoPrism 工具"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4626,7 +4626,7 @@ msgstr "查看镜头"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr "查看人员"
+msgstr "查看人物"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4658,7 +4658,7 @@ msgstr "查看您的标签"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "查看您的精彩瞬间"
+msgstr "查看您的瞬间"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
@@ -4848,7 +4848,7 @@ msgstr "混合型"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr "暂无"
+msgstr "不可用"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"

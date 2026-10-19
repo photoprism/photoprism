@@ -35,7 +35,7 @@ msgstr "%s zostało przywrócone"
 
 #: src/page/auth/consent.vue:23
 msgid "%{client} cannot be connected to your account %{account} on %{site}."
-msgstr "Nie można połączyć się z kontem %{account} użytkownika %{client} na stronie %{site}."
+msgstr "Nie można połączyć aplikacji %{client} z twoim kontem %{account} na stronie %{site}."
 
 #: src/page/auth/consent.vue:20
 msgid "%{client} wants to access your account %{account} on %{site}."
@@ -1034,7 +1034,7 @@ msgstr "Połącz"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Aplikacja Connect"
+msgstr "Połącz aplikację"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1048,7 +1048,7 @@ msgstr "Połączony"
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
-msgstr "Powiązane aplikacje"
+msgstr "Połączone aplikacje"
 
 #: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
@@ -2740,7 +2740,7 @@ msgstr "Nie wybrano albumów"
 
 #: src/component/settings/connected-apps.vue:27
 msgid "No apps are connected to your account."
-msgstr "Do twojego konta nie są podłączone żadne aplikacje."
+msgstr "Z twoim kontem nie są połączone żadne aplikacje."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -3617,11 +3617,11 @@ msgstr "Filtry wyszukiwania"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr "Wyszukaj i przeglądaj swoje zdjęcia"
+msgstr "Wyszukuj i przeglądaj swoje zdjęcia"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Wyszukaj i obejrzyj swoje filmy"
+msgstr "Wyszukuj i przeglądaj swoje filmy"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4166,7 +4166,7 @@ msgstr "W tym koncie brakuje identyfikatora i nie można go edytować."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr "Ten wniosek o autoryzację stracił ważność lub jest nieprawidłowy. Wróć do aplikacji i spróbuj jeszcze raz."
+msgstr "To żądanie autoryzacji wygasło lub jest nieprawidłowe. Wróć do aplikacji i spróbuj jeszcze raz."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4615,7 +4615,7 @@ msgstr "Widok"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr "Zobacz aparaty fotograficzne"
+msgstr "Zobacz aparaty"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
@@ -4643,11 +4643,11 @@ msgstr "Zobacz swoje ulubione"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr "Wyświetl swoje pliki"
+msgstr "Zobacz swoje pliki"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr "Wyświetl swoje foldery"
+msgstr "Zobacz swoje foldery"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"

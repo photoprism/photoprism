@@ -1035,7 +1035,7 @@ msgstr "Connetti"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "App Connect"
+msgstr "Collega un'app"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -3622,7 +3622,7 @@ msgstr "Cerca e visualizza le tue foto"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Cerca e guarda i tuoi video"
+msgstr "Cerca e visualizza i tuoi video"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4616,7 +4616,7 @@ msgstr "Visualizza"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr "Guarda le fotocamere"
+msgstr "Visualizza le fotocamere"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
@@ -4656,7 +4656,7 @@ msgstr "Visualizza le tue etichette"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Guarda i tuoi momenti"
+msgstr "Visualizza i tuoi momenti"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"

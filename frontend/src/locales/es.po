@@ -662,7 +662,7 @@ msgstr "Volver"
 
 #: src/page/auth/consent.vue:61
 msgid "Back to App"
-msgstr "Volver a la app"
+msgstr "Volver a la aplicación"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -1035,7 +1035,7 @@ msgstr "Conectar"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Aplicación Connect"
+msgstr "Conectar aplicación"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1263,7 +1263,7 @@ msgstr "Eliminar entradas de índice, archivos sidecar y miniaturas huérfanos."
 
 #: src/page/auth/consent.vue:61
 msgid "Deny"
-msgstr "Negar"
+msgstr "Denegar"
 
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
@@ -3619,11 +3619,11 @@ msgstr "Filtros de búsqueda"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr "Busca y mira tus fotos"
+msgstr "Buscar y ver tus fotos"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Busca y visualiza tus vídeos"
+msgstr "Buscar y ver tus vídeos"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4168,7 +4168,7 @@ msgstr "A esta cuenta le falta un ID y no se puede editar."
 
 #: src/page/auth/consent.vue:15
 msgid "This authorization request has expired or is invalid. Please return to the app and try again."
-msgstr "Esta solicitud de autorización ha caducado o no es válida. Vuelve a la app e inténtalo de nuevo."
+msgstr "Esta solicitud de autorización ha caducado o no es válida. Vuelve a la aplicación e inténtalo de nuevo."
 
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
@@ -4515,7 +4515,7 @@ msgstr "Las subidas que puedan contener tales imágenes serán rechazadas autom�
 
 #: src/page/auth/consent.vue:168
 msgid "Use PhotoPrism tools in this app"
-msgstr "Usa las herramientas de PhotoPrism en esta app"
+msgstr "Usar las herramientas de PhotoPrism en esta aplicación"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4637,7 +4637,7 @@ msgstr "Ver tus álbumes"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr "Echa un vistazo a tu calendario"
+msgstr "Ver tu calendario"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
@@ -4657,7 +4657,7 @@ msgstr "Ver tus etiquetas"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Echa un vistazo a tus momentos"
+msgstr "Ver tus momentos"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"

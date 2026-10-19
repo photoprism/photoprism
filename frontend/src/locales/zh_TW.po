@@ -1035,7 +1035,7 @@ msgstr "連線"
 
 #: src/app/routes.js:249
 msgid "Connect App"
-msgstr "Connect 應用程式"
+msgstr "連結應用程式"
 
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
@@ -1388,7 +1388,7 @@ msgstr "丟棄未儲存的變更？"
 
 #: src/component/settings/connected-apps.vue:51
 msgid "Disconnect"
-msgstr "斷開連接"
+msgstr "取消連結"
 
 #: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
 #: src/app/routes.js:770
@@ -4616,15 +4616,15 @@ msgstr "檢視"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr "瀏覽相機"
+msgstr "檢視相機"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr "瀏覽鏡頭"
+msgstr "檢視鏡頭"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr "檢視人員"
+msgstr "檢視人物"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4632,11 +4632,11 @@ msgstr "以清單形式查看搜尋結果。"
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr "瀏覽您的相簿"
+msgstr "檢視您的相簿"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr "檢視您的行事曆"
+msgstr "檢視您的日曆"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
@@ -4656,7 +4656,7 @@ msgstr "檢視您的標籤"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "瀏覽您的精彩時刻"
+msgstr "檢視您的回憶時刻"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
@@ -4846,7 +4846,7 @@ msgstr "混合"
 
 #: src/page/auth/consent.vue:186
 msgid "not available"
-msgstr "暫無"
+msgstr "無法使用"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
