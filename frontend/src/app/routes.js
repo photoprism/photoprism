@@ -246,7 +246,7 @@ export default [
     path: "/oauth/consent",
     component: Consent,
     meta: {
-      title: $gettext("Connect App"),
+      title: $gettext("Connect"),
       requiresAuth: true,
       hideNav: true,
       settings: false,

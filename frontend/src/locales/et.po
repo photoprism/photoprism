@@ -95,7 +95,7 @@ msgstr "2-faktoriline autentimine"
 #: src/component/user/edit/dialog.vue:292
 #: src/component/cluster/node/user-edit.vue:244
 #: src/component/user/edit/dialog.vue:315
-#: src/component/user/edit/dialog.vue:308 src/options/auth.js:76
+#: src/component/user/edit/dialog.vue:308 src/options/auth.js:78
 msgid "2FA"
 msgstr "2FA"
 
@@ -140,7 +140,7 @@ msgstr "API võti"
 msgid "About"
 msgstr "Teave"
 
-#: src/options/auth.js:46 src/options/auth.js:74
+#: src/options/auth.js:47 src/options/auth.js:75
 msgid "Access Token"
 msgstr "Juurdepääsutunnus"
 
@@ -540,7 +540,7 @@ msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Kõik isiklikud fotod ja videod jäävad isiklikuks ja neid ei jagata."
 
 #: src/page/admin/sessions.vue:132 src/component/cluster/node/overview.vue:23
-#: src/page/admin/sessions.vue:172 src/locales.js:381 src/options/auth.js:45
+#: src/page/admin/sessions.vue:172 src/locales.js:381 src/options/auth.js:46
 msgid "Application"
 msgstr "Taotlus"
 
@@ -709,7 +709,7 @@ msgstr "Kuna me oleme 100% isefinantseeritud ja sõltumatud, võime lubada, et m
 msgid "Bio"
 msgstr "Elulugu"
 
-#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:41
+#: src/page/settings/account.vue:225 src/component/people/edit/dialog.vue:41
 #: src/page/settings/account.vue:209
 msgid "Birth Date"
 msgstr "Sünnikuupäev"
@@ -874,8 +874,8 @@ msgstr "Muuda isiklikkust"
 #: src/component/cluster/node/user-edit.vue:367
 #: src/component/user/add/dialog.vue:291 src/component/user/add/dialog.vue:296
 #: src/component/user/edit/dialog.vue:517
-#: src/component/user/edit/dialog.vue:522 src/page/settings/account.vue:543
-#: src/page/settings/account.vue:548 src/component/user/edit/dialog.vue:443
+#: src/component/user/edit/dialog.vue:522 src/page/settings/account.vue:564
+#: src/page/settings/account.vue:569 src/component/user/edit/dialog.vue:443
 #: src/component/user/edit/dialog.vue:448
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
@@ -941,7 +941,7 @@ msgid "Clear {0}"
 msgstr "Clear {0}"
 
 #: src/options/admin.js:40 src/options/auth.js:13 src/options/auth.js:43
-#: src/options/auth.js:73
+#: src/options/auth.js:74
 msgid "Client"
 msgstr "Klient"
 
@@ -1026,15 +1026,12 @@ msgstr "Kindlus"
 msgid "Confirm"
 msgstr "Kinnita"
 
-#: src/component/service/add.vue:104 src/page/services.vue:114
+#: src/app/routes.js:249 src/component/service/add.vue:104
+#: src/page/services.vue:114
 msgid "Connect"
 msgstr "Ühenda"
 
-#: src/app/routes.js:249
-msgid "Connect App"
-msgstr "Ühenda rakendus"
-
-#: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
+#: src/page/settings/account.vue:216 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
 msgid "Connect via WebDAV"
 msgstr "Ühenda WebDAV-i kaudu"
@@ -1043,12 +1040,13 @@ msgstr "Ühenda WebDAV-i kaudu"
 msgid "Connected"
 msgstr "Ühendatud"
 
+#: src/page/settings/account.vue:203
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
 msgstr "Ühendatud rakendused"
 
-#: src/page/settings/account.vue:346 src/page/settings/account.vue:276
+#: src/page/settings/account.vue:359 src/page/settings/account.vue:276
 msgid "Contact Details"
 msgstr "Kontaktandmed"
 
@@ -1127,7 +1125,7 @@ msgstr "Ei saanud uuendada isiku katet"
 msgid "Couldn't find anything."
 msgstr "Midagi ei leitud."
 
-#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:293
+#: src/page/settings/account.vue:382 src/component/photo/batch-edit.vue:293
 #: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:108
 #: src/page/settings/account.vue:299
 msgid "Country"
@@ -1171,7 +1169,7 @@ msgstr "Praegune nimi"
 msgid "Current Password"
 msgstr "Praegune parool"
 
-#: src/options/auth.js:107 src/options/themes.js:1021
+#: src/options/auth.js:109 src/options/themes.js:1021
 #: src/options/themes.js:1031
 msgid "Custom"
 msgstr "Kohandatud"
@@ -1200,7 +1198,7 @@ msgstr "Andmebaasid"
 msgid "Date & Time"
 msgstr "Kuupäev ja kellaaeg"
 
-#: src/page/settings/account.vue:220 src/component/meta/datetime/dialog.vue:30
+#: src/page/settings/account.vue:233 src/component/meta/datetime/dialog.vue:30
 #: src/component/photo/batch-edit.vue:198
 #: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:217
 msgid "Day"
@@ -1220,7 +1218,7 @@ msgstr "Tõrkeotsingu logid"
 #: src/page/admin/users.vue:374 src/common/util.js:983
 #: src/component/photo/edit/info.vue:23 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
-#: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:253
+#: src/options/auth.js:70 src/options/auth.js:71 src/options/options.js:253
 #: src/options/options.js:256 src/options/options.js:296
 #: src/options/options.js:380 src/options/themes.js:863
 msgid "Default"
@@ -1544,7 +1542,7 @@ msgstr "Muudetud"
 #: src/component/user/add/dialog.vue:86 src/component/user/edit/dialog.vue:123
 #: src/component/cluster/node/user-edit.vue:97
 #: src/component/user/add/dialog.vue:92 src/component/user/edit/dialog.vue:130
-#: src/page/settings/account.vue:91 src/page/settings/account.vue:320
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:333
 #: src/page/settings/account.vue:79
 msgid "Email"
 msgstr "E-post"
@@ -1908,7 +1906,7 @@ msgstr "Unustasid parooli?"
 msgid "Frames"
 msgstr "Kaadrid"
 
-#: src/options/auth.js:84 src/options/auth.js:94
+#: src/options/auth.js:86 src/options/auth.js:96
 msgid "Full Access"
 msgstr "Täielik juurdepääs"
 
@@ -2282,7 +2280,7 @@ msgstr "Märksõna"
 msgid "Keywords"
 msgstr "Märksõnad"
 
-#: src/options/auth.js:49
+#: src/options/auth.js:50
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -2332,7 +2330,7 @@ msgid "Last Sync"
 msgstr "Viimane sünkroonimine"
 
 #: src/component/settings/apps.vue:292
-#: src/component/settings/connected-apps.vue:106
+#: src/component/settings/connected-apps.vue:107
 msgid "Last Used"
 msgstr "Viimati kasutatud"
 
@@ -2397,7 +2395,7 @@ msgstr "Laimiroheline"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limiit saavutatud, näidatakse esimest %{n} faili"
 
-#: src/model/link.js:104 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:104 src/options/auth.js:51 src/options/auth.js:52
 msgid "Link"
 msgstr "Link"
 
@@ -2433,7 +2431,7 @@ msgstr "Laadimine..."
 msgid "Loading..."
 msgstr "Laadimine..."
 
-#: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:47
+#: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:48
 #: src/options/options.js:94 src/page/settings/general.vue:46
 msgid "Local"
 msgstr "Kohalik"
@@ -2443,7 +2441,7 @@ msgstr "Kohalik"
 msgid "Local Time"
 msgstr "Kohalik aeg"
 
-#: src/page/settings/account.vue:359 src/page/settings/account.vue:361
+#: src/page/settings/account.vue:372 src/page/settings/account.vue:374
 #: src/common/util.js:995 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:267
@@ -2572,7 +2570,7 @@ msgstr "Sõnum"
 msgid "Metadata"
 msgstr "Metaandmed"
 
-#: src/options/auth.js:86 src/options/auth.js:102
+#: src/options/auth.js:88 src/options/auth.js:104
 msgid "Metrics"
 msgstr "Mõõdikud"
 
@@ -2602,7 +2600,7 @@ msgstr "Hetked"
 msgid "Monochrome"
 msgstr "Mustvalge"
 
-#: src/page/settings/account.vue:240 src/component/meta/datetime/dialog.vue:50
+#: src/page/settings/account.vue:253 src/component/meta/datetime/dialog.vue:50
 #: src/component/photo/batch-edit.vue:217
 #: src/component/photo/edit/details.vue:67 src/component/photo/toolbar.vue:207
 #: src/page/settings/account.vue:237
@@ -2658,7 +2656,7 @@ msgstr "Mute"
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:173 src/component/settings/apps.vue:118
 #: src/component/settings/apps.vue:281
-#: src/component/settings/connected-apps.vue:104 src/locales.js:346
+#: src/component/settings/connected-apps.vue:105 src/locales.js:346
 #: src/page/albums.vue:402 src/page/auth/login.vue:80
 #: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
@@ -2736,7 +2734,7 @@ msgstr "Albumeid ei leitud"
 msgid "No albums selected"
 msgstr "Ühtegi albumit pole valitud"
 
-#: src/component/settings/connected-apps.vue:27
+#: src/component/settings/connected-apps.vue:115
 msgid "No apps are connected to your account."
 msgstr "Sinu kontoga ei ole ühendatud ühtegi rakendust."
 
@@ -2838,7 +2836,7 @@ msgstr "Sõlmed"
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne kui nad otsingutulemustes ilmuvad."
 
-#: src/options/auth.js:52 src/options/options.js:274 src/options/options.js:392
+#: src/options/auth.js:53 src/options/options.js:274 src/options/options.js:392
 msgid "None"
 msgstr "Puudub"
 
@@ -2979,7 +2977,7 @@ msgstr "Ava hiirega üle libistamisel"
 msgid "Orange"
 msgstr "Oranžikas"
 
-#: src/page/settings/account.vue:305 src/page/settings/account.vue:307
+#: src/page/settings/account.vue:318 src/page/settings/account.vue:320
 msgid "Organization"
 msgstr "Organisatsioon"
 
@@ -3061,7 +3059,7 @@ msgstr "Osa valitud fotodest"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:186
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:36
-#: src/component/settings/passcode.vue:177 src/options/auth.js:121
+#: src/component/settings/passcode.vue:177 src/options/auth.js:123
 #: src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Parool"
@@ -3120,7 +3118,7 @@ msgstr "Isikut ei leitud"
 msgid "Person saved"
 msgstr "Isik salvestatud"
 
-#: src/options/auth.js:72
+#: src/options/auth.js:73
 msgid "Personal"
 msgstr "Isiklik"
 
@@ -3589,7 +3587,7 @@ msgstr "Skannid"
 #: src/page/admin/sessions.vue:179 src/page/admin/sessions.vue:296
 #: src/page/admin/sessions.vue:294 src/component/settings/apps.vue:135
 #: src/component/settings/apps.vue:283
-#: src/component/settings/connected-apps.vue:105 src/locales.js:366
+#: src/component/settings/connected-apps.vue:106 src/locales.js:366
 msgid "Scope"
 msgstr "Reguleerimisala"
 
@@ -3741,8 +3739,8 @@ msgstr "Teenuse URL"
 msgid "Services"
 msgstr "Teenused"
 
-#: src/locales.js:369 src/model/session.js:83 src/options/auth.js:71
-#: src/options/auth.js:120
+#: src/locales.js:369 src/model/session.js:83 src/options/auth.js:72
+#: src/options/auth.js:122
 msgid "Session"
 msgstr "Sessioon"
 
@@ -3772,7 +3770,7 @@ msgstr "Määra kaanepildiks"
 msgid "Settings"
 msgstr "Seaded"
 
-#: src/page/settings/account.vue:537 src/page/settings/account.vue:566
+#: src/page/settings/account.vue:558 src/page/settings/account.vue:587
 #: src/component/settings/passcode.vue:378 src/locales.js:467
 #: src/page/settings/account.vue:466 src/page/settings/account.vue:495
 msgid "Settings saved"
@@ -3949,7 +3947,8 @@ msgstr "Mõnda albumit ei saanud luua. Palun redigeerige nimesid ja proovige uue
 msgid "Some albums could not be updated"
 msgstr "Mõnda albumit ei saanud uuendada"
 
-#: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/component/lightbox.vue:1255
+#: src/component/settings/connected-apps.vue:115 src/locales.js:397
 #: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "Midagi läks valesti, proovige uuesti"
@@ -4072,7 +4071,7 @@ msgstr "Edukalt aktiveeritud"
 
 #: src/component/session/remove/dialog.vue:60
 #: src/component/settings/apps.vue:450
-#: src/component/settings/connected-apps.vue:178
+#: src/component/settings/connected-apps.vue:187
 msgid "Successfully deleted"
 msgstr "Edukalt kustutatud"
 
@@ -4224,7 +4223,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Pealkiri"
 
-#: src/page/settings/account.vue:291 src/page/settings/account.vue:293
+#: src/page/settings/account.vue:304 src/page/settings/account.vue:306
 msgid "Title / Position"
 msgstr "Tiitel / ametikoht"
 
@@ -4330,8 +4329,8 @@ msgstr "Võta tagasi"
 msgid "Unique ID"
 msgstr "Unikaalne ID"
 
-#: src/model/cluster-node.js:47 src/page/settings/account.vue:221
-#: src/page/settings/account.vue:241 src/page/settings/account.vue:261
+#: src/model/cluster-node.js:47 src/page/settings/account.vue:234
+#: src/page/settings/account.vue:254 src/page/settings/account.vue:274
 #: src/common/util.js:724 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:702
@@ -4366,8 +4365,8 @@ msgstr "Tundmatu rakendus"
 msgid "Unknown location"
 msgstr "Asukoht teadmata"
 
-#: src/component/navigation.vue:567 src/page/settings/account.vue:466
-#: src/page/settings/account.vue:474 src/component/navigation.vue:876
+#: src/component/navigation.vue:567 src/page/settings/account.vue:487
+#: src/page/settings/account.vue:495 src/component/navigation.vue:876
 #: src/page/settings/account.vue:395 src/page/settings/account.vue:403
 msgid "Unregistered"
 msgstr "Mitteregistreeritud"
@@ -4501,7 +4500,7 @@ msgstr "Üleslaadimine %{n}/%{t}…"
 msgid "Uploading photos…"
 msgstr "Fotode üleslaadimine…"
 
-#: src/page/settings/account.vue:559 src/page/settings/account.vue:488
+#: src/page/settings/account.vue:580 src/page/settings/account.vue:488
 msgid "Uploading…"
 msgstr "Üleslaadimine…"
 
@@ -4693,7 +4692,7 @@ msgstr "Veebisisene sisselogimine"
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
 #: src/component/user/add/dialog.vue:155 src/component/user/edit/dialog.vue:305
 #: src/page/admin/users.vue:296 src/component/user/edit/dialog.vue:298
-#: src/page/admin/users.vue:280 src/options/auth.js:85 src/options/auth.js:98
+#: src/page/admin/users.vue:280 src/options/auth.js:87 src/options/auth.js:100
 #: src/options/options.js:501
 msgid "WebDAV"
 msgstr "WebDAV"
@@ -4710,7 +4709,7 @@ msgstr "WebDAV kliendid saavad PhotoPrismiga ühenduda järgmise URL-i kaudu:"
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad PhotoPrismiga otse ühenduda."
 
-#: src/page/settings/account.vue:335 src/page/settings/account.vue:391
+#: src/page/settings/account.vue:348 src/page/settings/account.vue:404
 #: src/page/settings/account.vue:321
 msgid "Website"
 msgstr "Veebileht"
@@ -4719,11 +4718,11 @@ msgstr "Veebileht"
 msgid "White"
 msgstr "Valge"
 
-#: src/page/settings/account.vue:279
+#: src/page/settings/account.vue:292
 msgid "Work Details"
 msgstr "Töö üksikasjad"
 
-#: src/page/settings/account.vue:260 src/component/meta/datetime/dialog.vue:70
+#: src/page/settings/account.vue:273 src/component/meta/datetime/dialog.vue:70
 #: src/component/photo/batch-edit.vue:236
 #: src/component/photo/edit/details.vue:88 src/component/photo/toolbar.vue:188
 #: src/page/albums.vue:66 src/page/settings/account.vue:257
@@ -4888,6 +4887,9 @@ msgstr "{0} valitud"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} of {2}"
+
+#~ msgid "Connect App"
+#~ msgstr "Ühenda rakendus"
 
 #~ msgid "No Access"
 #~ msgstr "Juurdepääs puudub"

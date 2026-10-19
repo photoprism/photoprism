@@ -98,7 +98,7 @@ msgstr "Dvoufaktorové ověřování"
 #: src/component/user/edit/dialog.vue:292
 #: src/component/cluster/node/user-edit.vue:244
 #: src/component/user/edit/dialog.vue:315
-#: src/component/user/edit/dialog.vue:308 src/options/auth.js:76
+#: src/component/user/edit/dialog.vue:308 src/options/auth.js:78
 msgid "2FA"
 msgstr "2FA"
 
@@ -143,7 +143,7 @@ msgstr "API klíč"
 msgid "About"
 msgstr "O nás"
 
-#: src/options/auth.js:46 src/options/auth.js:74
+#: src/options/auth.js:47 src/options/auth.js:75
 msgid "Access Token"
 msgstr "Přístupový token"
 
@@ -543,7 +543,7 @@ msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Jakékoliv soukromé fotografie nebo videa zůstanou soukromé a nebudou sdílena."
 
 #: src/page/admin/sessions.vue:132 src/component/cluster/node/overview.vue:23
-#: src/page/admin/sessions.vue:172 src/locales.js:381 src/options/auth.js:45
+#: src/page/admin/sessions.vue:172 src/locales.js:381 src/options/auth.js:46
 msgid "Application"
 msgstr "Aplikace"
 
@@ -712,7 +712,7 @@ msgstr "Vzhledem k tomu, že jsme stoprocentně financováni z vlastních zdroj�
 msgid "Bio"
 msgstr "Biografie"
 
-#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:41
+#: src/page/settings/account.vue:225 src/component/people/edit/dialog.vue:41
 #: src/page/settings/account.vue:209
 msgid "Birth Date"
 msgstr "Datum narození"
@@ -877,8 +877,8 @@ msgstr "Změnit soukromou vlaječku"
 #: src/component/cluster/node/user-edit.vue:367
 #: src/component/user/add/dialog.vue:291 src/component/user/add/dialog.vue:296
 #: src/component/user/edit/dialog.vue:517
-#: src/component/user/edit/dialog.vue:522 src/page/settings/account.vue:543
-#: src/page/settings/account.vue:548 src/component/user/edit/dialog.vue:443
+#: src/component/user/edit/dialog.vue:522 src/page/settings/account.vue:564
+#: src/page/settings/account.vue:569 src/component/user/edit/dialog.vue:443
 #: src/component/user/edit/dialog.vue:448
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
@@ -944,7 +944,7 @@ msgid "Clear {0}"
 msgstr "Vymazat {0}"
 
 #: src/options/admin.js:40 src/options/auth.js:13 src/options/auth.js:43
-#: src/options/auth.js:73
+#: src/options/auth.js:74
 msgid "Client"
 msgstr "Klient"
 
@@ -1029,15 +1029,12 @@ msgstr "Jistota"
 msgid "Confirm"
 msgstr "Potvrdit"
 
-#: src/component/service/add.vue:104 src/page/services.vue:114
+#: src/app/routes.js:249 src/component/service/add.vue:104
+#: src/page/services.vue:114
 msgid "Connect"
 msgstr "Připojit"
 
-#: src/app/routes.js:249
-msgid "Connect App"
-msgstr "Připojit aplikaci"
-
-#: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
+#: src/page/settings/account.vue:216 src/component/settings/webdav.vue:15
 #: src/page/services.vue:109 src/page/settings/account.vue:200
 msgid "Connect via WebDAV"
 msgstr "Připojit přes WebDAV"
@@ -1046,12 +1043,13 @@ msgstr "Připojit přes WebDAV"
 msgid "Connected"
 msgstr "Připojeno"
 
+#: src/page/settings/account.vue:203
 #: src/component/settings/connected-apps.vue:15
 #: src/page/settings/account.vue:187
 msgid "Connected Apps"
 msgstr "Připojené aplikace"
 
-#: src/page/settings/account.vue:346 src/page/settings/account.vue:276
+#: src/page/settings/account.vue:359 src/page/settings/account.vue:276
 msgid "Contact Details"
 msgstr "Kontaktní údaje"
 
@@ -1130,7 +1128,7 @@ msgstr "Nelze aktualizovat kryt osoby"
 msgid "Couldn't find anything."
 msgstr "Nebylo nic nalezeno."
 
-#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:293
+#: src/page/settings/account.vue:382 src/component/photo/batch-edit.vue:293
 #: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:108
 #: src/page/settings/account.vue:299
 msgid "Country"
@@ -1174,7 +1172,7 @@ msgstr "Aktuální jméno"
 msgid "Current Password"
 msgstr "Aktuální heslo"
 
-#: src/options/auth.js:107 src/options/themes.js:1021
+#: src/options/auth.js:109 src/options/themes.js:1021
 #: src/options/themes.js:1031
 msgid "Custom"
 msgstr "Vlastní"
@@ -1203,7 +1201,7 @@ msgstr "Databáze"
 msgid "Date & Time"
 msgstr "Datum a čas"
 
-#: src/page/settings/account.vue:220 src/component/meta/datetime/dialog.vue:30
+#: src/page/settings/account.vue:233 src/component/meta/datetime/dialog.vue:30
 #: src/component/photo/batch-edit.vue:198
 #: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:217
 msgid "Day"
@@ -1223,7 +1221,7 @@ msgstr "Protokoly ladění"
 #: src/page/admin/users.vue:374 src/common/util.js:983
 #: src/component/photo/edit/info.vue:23 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
-#: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:253
+#: src/options/auth.js:70 src/options/auth.js:71 src/options/options.js:253
 #: src/options/options.js:256 src/options/options.js:296
 #: src/options/options.js:380 src/options/themes.js:863
 msgid "Default"
@@ -1547,7 +1545,7 @@ msgstr "Upraveno"
 #: src/component/user/add/dialog.vue:86 src/component/user/edit/dialog.vue:123
 #: src/component/cluster/node/user-edit.vue:97
 #: src/component/user/add/dialog.vue:92 src/component/user/edit/dialog.vue:130
-#: src/page/settings/account.vue:91 src/page/settings/account.vue:320
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:333
 #: src/page/settings/account.vue:79
 msgid "Email"
 msgstr "Email"
@@ -1911,7 +1909,7 @@ msgstr "Zapoměli jste heslo?"
 msgid "Frames"
 msgstr "Frames"
 
-#: src/options/auth.js:84 src/options/auth.js:94
+#: src/options/auth.js:86 src/options/auth.js:96
 msgid "Full Access"
 msgstr "Volný přístup"
 
@@ -2285,7 +2283,7 @@ msgstr "Klíčové slovo"
 msgid "Keywords"
 msgstr "Klíčová slova"
 
-#: src/options/auth.js:49
+#: src/options/auth.js:50
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -2335,7 +2333,7 @@ msgid "Last Sync"
 msgstr "Poslední synchronizace"
 
 #: src/component/settings/apps.vue:292
-#: src/component/settings/connected-apps.vue:106
+#: src/component/settings/connected-apps.vue:107
 msgid "Last Used"
 msgstr "Naposledy použitý"
 
@@ -2400,7 +2398,7 @@ msgstr "Limetková"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Dosaženo limitu, zobrazeno prvních %{n} souborů"
 
-#: src/model/link.js:104 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:104 src/options/auth.js:51 src/options/auth.js:52
 msgid "Link"
 msgstr "Odkaz"
 
@@ -2436,7 +2434,7 @@ msgstr "Načítání položek..."
 msgid "Loading..."
 msgstr "Načítání..."
 
-#: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:47
+#: src/locales.js:368 src/options/auth.js:42 src/options/auth.js:48
 #: src/options/options.js:94 src/page/settings/general.vue:46
 msgid "Local"
 msgstr "Místní"
@@ -2446,7 +2444,7 @@ msgstr "Místní"
 msgid "Local Time"
 msgstr "Místní čas"
 
-#: src/page/settings/account.vue:359 src/page/settings/account.vue:361
+#: src/page/settings/account.vue:372 src/page/settings/account.vue:374
 #: src/common/util.js:995 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:267
@@ -2575,7 +2573,7 @@ msgstr "Zpráva"
 msgid "Metadata"
 msgstr "Metadata"
 
-#: src/options/auth.js:86 src/options/auth.js:102
+#: src/options/auth.js:88 src/options/auth.js:104
 msgid "Metrics"
 msgstr "Metriky"
 
@@ -2605,7 +2603,7 @@ msgstr "Okamžiky"
 msgid "Monochrome"
 msgstr "Monochromatické"
 
-#: src/page/settings/account.vue:240 src/component/meta/datetime/dialog.vue:50
+#: src/page/settings/account.vue:253 src/component/meta/datetime/dialog.vue:50
 #: src/component/photo/batch-edit.vue:217
 #: src/component/photo/edit/details.vue:67 src/component/photo/toolbar.vue:207
 #: src/page/settings/account.vue:237
@@ -2661,7 +2659,7 @@ msgstr "Ztlumit"
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:173 src/component/settings/apps.vue:118
 #: src/component/settings/apps.vue:281
-#: src/component/settings/connected-apps.vue:104 src/locales.js:346
+#: src/component/settings/connected-apps.vue:105 src/locales.js:346
 #: src/page/albums.vue:402 src/page/auth/login.vue:80
 #: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
@@ -2739,7 +2737,7 @@ msgstr "Nenalezena žádná alba"
 msgid "No albums selected"
 msgstr "Nebyla vybrána žádná alba"
 
-#: src/component/settings/connected-apps.vue:27
+#: src/component/settings/connected-apps.vue:115
 msgid "No apps are connected to your account."
 msgstr "K vašemu účtu není připojena žádná aplikace."
 
@@ -2841,7 +2839,7 @@ msgstr "Uzly"
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Nefotografické obrázky a snímky nízké kvality vyžadují kontrolu, než se objeví ve výsledcích vyhledávání."
 
-#: src/options/auth.js:52 src/options/options.js:274 src/options/options.js:392
+#: src/options/auth.js:53 src/options/options.js:274 src/options/options.js:392
 msgid "None"
 msgstr "Žádné"
 
@@ -2982,7 +2980,7 @@ msgstr "Otevřít při najetí myší"
 msgid "Orange"
 msgstr "Oranžová"
 
-#: src/page/settings/account.vue:305 src/page/settings/account.vue:307
+#: src/page/settings/account.vue:318 src/page/settings/account.vue:320
 msgid "Organization"
 msgstr "Organizace"
 
@@ -3064,7 +3062,7 @@ msgstr "Část vybraných fotografií"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:186
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:36
-#: src/component/settings/passcode.vue:177 src/options/auth.js:121
+#: src/component/settings/passcode.vue:177 src/options/auth.js:123
 #: src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Heslo"
@@ -3123,7 +3121,7 @@ msgstr "Osoba nebyla nalezena"
 msgid "Person saved"
 msgstr "Uložená osoba"
 
-#: src/options/auth.js:72
+#: src/options/auth.js:73
 msgid "Personal"
 msgstr "Osobní"
 
@@ -3592,7 +3590,7 @@ msgstr "Skeny"
 #: src/page/admin/sessions.vue:179 src/page/admin/sessions.vue:296
 #: src/page/admin/sessions.vue:294 src/component/settings/apps.vue:135
 #: src/component/settings/apps.vue:283
-#: src/component/settings/connected-apps.vue:105 src/locales.js:366
+#: src/component/settings/connected-apps.vue:106 src/locales.js:366
 msgid "Scope"
 msgstr "Oblast působnosti"
 
@@ -3744,8 +3742,8 @@ msgstr "URL služby"
 msgid "Services"
 msgstr "Služby"
 
-#: src/locales.js:369 src/model/session.js:83 src/options/auth.js:71
-#: src/options/auth.js:120
+#: src/locales.js:369 src/model/session.js:83 src/options/auth.js:72
+#: src/options/auth.js:122
 msgid "Session"
 msgstr "Relace"
 
@@ -3775,7 +3773,7 @@ msgstr "Nastavit jako titulní obrázek"
 msgid "Settings"
 msgstr "Nastavení"
 
-#: src/page/settings/account.vue:537 src/page/settings/account.vue:566
+#: src/page/settings/account.vue:558 src/page/settings/account.vue:587
 #: src/component/settings/passcode.vue:378 src/locales.js:467
 #: src/page/settings/account.vue:466 src/page/settings/account.vue:495
 msgid "Settings saved"
@@ -3952,7 +3950,8 @@ msgstr "Některá alba nebylo možné vytvořit. Upravte prosím názvy a zkuste
 msgid "Some albums could not be updated"
 msgstr "Některá alba nebylo možné aktualizovat"
 
-#: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/component/lightbox.vue:1255
+#: src/component/settings/connected-apps.vue:115 src/locales.js:397
 #: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "Něco se pokazilo, zkuste to znovu"
@@ -4075,7 +4074,7 @@ msgstr "Úspěšně aktivováno"
 
 #: src/component/session/remove/dialog.vue:60
 #: src/component/settings/apps.vue:450
-#: src/component/settings/connected-apps.vue:178
+#: src/component/settings/connected-apps.vue:187
 msgid "Successfully deleted"
 msgstr "Úspěšně odstraněno"
 
@@ -4227,7 +4226,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Titulek"
 
-#: src/page/settings/account.vue:291 src/page/settings/account.vue:293
+#: src/page/settings/account.vue:304 src/page/settings/account.vue:306
 msgid "Title / Position"
 msgstr "Název / pozice"
 
@@ -4333,8 +4332,8 @@ msgstr "Vrátit"
 msgid "Unique ID"
 msgstr "Jedinečné ID"
 
-#: src/model/cluster-node.js:47 src/page/settings/account.vue:221
-#: src/page/settings/account.vue:241 src/page/settings/account.vue:261
+#: src/model/cluster-node.js:47 src/page/settings/account.vue:234
+#: src/page/settings/account.vue:254 src/page/settings/account.vue:274
 #: src/common/util.js:724 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:702
@@ -4369,8 +4368,8 @@ msgstr "Neznámá aplikace"
 msgid "Unknown location"
 msgstr "Neznámé místo"
 
-#: src/component/navigation.vue:567 src/page/settings/account.vue:466
-#: src/page/settings/account.vue:474 src/component/navigation.vue:876
+#: src/component/navigation.vue:567 src/page/settings/account.vue:487
+#: src/page/settings/account.vue:495 src/component/navigation.vue:876
 #: src/page/settings/account.vue:395 src/page/settings/account.vue:403
 msgid "Unregistered"
 msgstr "Neregistrovaný"
@@ -4504,7 +4503,7 @@ msgstr "Nahrávání %{n} z %{t}…"
 msgid "Uploading photos…"
 msgstr "Nahrávání fotografií…"
 
-#: src/page/settings/account.vue:559 src/page/settings/account.vue:488
+#: src/page/settings/account.vue:580 src/page/settings/account.vue:488
 msgid "Uploading…"
 msgstr "Nahrávání…"
 
@@ -4696,7 +4695,7 @@ msgstr "Webové přihlášení"
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
 #: src/component/user/add/dialog.vue:155 src/component/user/edit/dialog.vue:305
 #: src/page/admin/users.vue:296 src/component/user/edit/dialog.vue:298
-#: src/page/admin/users.vue:280 src/options/auth.js:85 src/options/auth.js:98
+#: src/page/admin/users.vue:280 src/options/auth.js:87 src/options/auth.js:100
 #: src/options/options.js:501
 msgid "WebDAV"
 msgstr "WebDAV"
@@ -4713,7 +4712,7 @@ msgstr "WebDAV klienti se mohou k PhotoPrism připojit pomocí následující UR
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAC klienti, jako Microsoftí Windows Exporer nebo Applovský Finder, se mohou k PhotoPrism připojit přímo."
 
-#: src/page/settings/account.vue:335 src/page/settings/account.vue:391
+#: src/page/settings/account.vue:348 src/page/settings/account.vue:404
 #: src/page/settings/account.vue:321
 msgid "Website"
 msgstr "Webová stránka"
@@ -4722,11 +4721,11 @@ msgstr "Webová stránka"
 msgid "White"
 msgstr "Bílá"
 
-#: src/page/settings/account.vue:279
+#: src/page/settings/account.vue:292
 msgid "Work Details"
 msgstr "Podrobnosti o práci"
 
-#: src/page/settings/account.vue:260 src/component/meta/datetime/dialog.vue:70
+#: src/page/settings/account.vue:273 src/component/meta/datetime/dialog.vue:70
 #: src/component/photo/batch-edit.vue:236
 #: src/component/photo/edit/details.vue:88 src/component/photo/toolbar.vue:188
 #: src/page/albums.vue:66 src/page/settings/account.vue:257
@@ -4891,6 +4890,9 @@ msgstr "{0} vybráno"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} z {2}"
+
+#~ msgid "Connect App"
+#~ msgstr "Připojit aplikaci"
 
 #~ msgid "No Access"
 #~ msgstr "Žádný přístup"
