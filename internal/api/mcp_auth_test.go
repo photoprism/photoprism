@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -43,6 +44,7 @@ func TestMcpTokenInfo(t *testing.T) {
 		assert.Equal(t, "uqxetse3cy5eo9z2", info.UserID)
 		assert.Equal(t, []string{"mcp", "photos"}, info.Scopes)
 		assert.True(t, info.Expiration.IsZero())
+		assert.Same(t, s, info.Extra[mcp.SessionKey])
 	})
 	t.Run("Client", func(t *testing.T) {
 		s := &entity.Session{ClientUID: "cs5gfen1bgxz7s9i", RefID: "sessxkkcxxxz", AuthScope: "*"}

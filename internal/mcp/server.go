@@ -35,6 +35,10 @@ type Options struct {
 	Commands []*cli.Command
 }
 
+// LibraryToolNames lists the tools that read library data. They are registered only on the library server, whose
+// middleware checks each call against the tool's declaration.
+var LibraryToolNames = []string{}
+
 // NewServer returns a read-only MCP server with the tools and resources in ToolNames and ResourceURIs.
 // The implementation is reported to clients as the server's identity; currentEdition is normalized
 // and embedded in the resource payloads and tool responses.
@@ -46,4 +50,26 @@ func NewServer(implementation *sdkmcp.Implementation, currentEdition string, opt
 	registerTools(server, data)
 
 	return server
+}
+
+// NewLibraryServer returns the MCP server for authenticated sessions, with the tools of NewServer and the tools
+// in LibraryToolNames. It checks every tools/call against the tool's declaration and the session in the token
+// info of the request, and lists only the tools the caller's role and account may use.
+func NewLibraryServer(implementation *sdkmcp.Implementation, currentEdition string, opt Options) *sdkmcp.Server {
+	server := newLibraryServer(implementation, currentEdition, opt)
+	server.AddReceivingMiddleware(authorizeTools)
+
+	return server
+}
+
+// newLibraryServer registers the tools and resources of the library server without its middleware.
+func newLibraryServer(implementation *sdkmcp.Implementation, currentEdition string, opt Options) *sdkmcp.Server {
+	server := NewServer(implementation, currentEdition, opt)
+	registerLibraryTools(server)
+
+	return server
+}
+
+// registerLibraryTools registers the tools in LibraryToolNames.
+func registerLibraryTools(_ *sdkmcp.Server) {
 }

@@ -76,7 +76,7 @@ func readOnly() *sdkmcp.ToolAnnotations {
 
 // registerTools registers the tools in ToolNames against the shared *Dataset.
 func registerTools(server *sdkmcp.Server, data *Dataset) {
-	sdkmcp.AddTool(server, &sdkmcp.Tool{
+	AddTool(server, staticAccess, &sdkmcp.Tool{
 		Name:        "list_config_keys",
 		Description: "Lists read-only PhotoPrism config keys from the existing config report.",
 		Annotations: readOnly(),
@@ -84,7 +84,7 @@ func registerTools(server *sdkmcp.Server, data *Dataset) {
 		return listConfigKeys(ctx, req, input, data)
 	})
 
-	sdkmcp.AddTool(server, &sdkmcp.Tool{
+	AddTool(server, staticAccess, &sdkmcp.Tool{
 		Name:        "find_search_filters",
 		Description: "Finds PhotoPrism search filters from the existing search filter reference.",
 		Annotations: readOnly(),
@@ -92,7 +92,7 @@ func registerTools(server *sdkmcp.Server, data *Dataset) {
 		return findSearchFilters(ctx, req, input, data)
 	})
 
-	sdkmcp.AddTool(server, &sdkmcp.Tool{
+	AddTool(server, staticAccess, &sdkmcp.Tool{
 		Name: "list_cli_commands",
 		Description: "Lists the photoprism CLI commands of this edition with their usage, arguments, aliases, and own flags, " +
 			"as reported by `photoprism show commands`. Search command paths such as \"users add\", descriptions, and flag " +
@@ -103,7 +103,7 @@ func registerTools(server *sdkmcp.Server, data *Dataset) {
 		return listCliCommands(ctx, req, input, data)
 	})
 
-	sdkmcp.AddTool(server, &sdkmcp.Tool{
+	AddTool(server, staticAccess, &sdkmcp.Tool{
 		Name: "list_file_formats",
 		Description: "Lists the file formats PhotoPrism supports, with their type, description, and file extensions, " +
 			"as reported by `photoprism show file-formats`. Filter by type, e.g. image, raw, or video, or search format " +
@@ -113,7 +113,7 @@ func registerTools(server *sdkmcp.Server, data *Dataset) {
 		return listFileFormats(ctx, req, input, data)
 	})
 
-	sdkmcp.AddTool(server, &sdkmcp.Tool{
+	AddTool(server, staticAccess, &sdkmcp.Tool{
 		Name: "list_metadata_fields",
 		Description: "Lists the metadata fields PhotoPrism reads from files, with the ExifTool, Adobe XMP, and Dublin Core " +
 			"tags each one is read from, as reported by `photoprism show metadata`. Search field and tag names with query. " +
@@ -123,7 +123,7 @@ func registerTools(server *sdkmcp.Server, data *Dataset) {
 		return listMetadataFields(ctx, req, input, data)
 	})
 
-	sdkmcp.AddTool(server, &sdkmcp.Tool{
+	AddTool(server, staticAccess, &sdkmcp.Tool{
 		Name: "list_thumbnail_sizes",
 		Description: "Lists the thumbnail sizes PhotoPrism generates, with their dimensions, availability, and use, " +
 			"as reported by `photoprism show thumb-sizes`. Sizes marked as video are the standard video sizes of " +

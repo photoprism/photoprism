@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -58,9 +59,11 @@ func mcpTokenInfo(s *entity.Session) *auth.TokenInfo {
 		return nil
 	}
 
+	// The session is passed in process only, so the tools and the middleware can authorize each call.
 	return &auth.TokenInfo{
 		Scopes: strings.Fields(s.Scope()),
 		UserID: userID,
+		Extra:  map[string]any{mcp.SessionKey: s},
 	}
 }
 

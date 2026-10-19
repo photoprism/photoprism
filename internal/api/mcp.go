@@ -1,18 +1,23 @@
 package api
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
 	"os"
-	"sync/atomic"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/auth/oauth"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mcp"
@@ -22,6 +27,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
+
+// newMcpLibraryServer creates the MCP server for authenticated sessions.
+var newMcpLibraryServer = mcp.NewLibraryServer
 
 // McpSessionTimeout configures the idle lifetime of MCP Streamable HTTP sessions.
 // Sessions abandoned without a DELETE tear-down free their SDK-side bookkeeping
@@ -67,20 +75,29 @@ func ServeMCP(router *gin.RouterGroup) {
 		opt.Commands = app.Commands
 	}
 
-	// One server instance is shared across all HTTP requests. The SDK
-	// isolates concurrent callers through its own session bookkeeping,
-	// keyed by the Mcp-Session-Id response header.
-	mcpServer := mcp.NewServer(&sdkmcp.Implementation{
+	// Public mode gets the reference server, authenticated sessions the library server, whose
+	// middleware authorizes each tool call. Each instance is shared across HTTP requests; the SDK
+	// isolates callers through its session bookkeeping, keyed by the Mcp-Session-Id header.
+	implementation := &sdkmcp.Implementation{
 		Name:    "photoprism-mcp",
 		Version: conf.Version(),
-	}, conf.Edition(), opt)
+	}
+
+	referenceServer := mcp.NewServer(implementation, conf.Edition(), opt)
+	libraryServer := newMcpLibraryServer(implementation, conf.Edition(), opt)
 
 	// Streamable HTTP handler with warn-level logging and an explicit CrossOriginProtection,
 	// which go-sdk does not enable implicitly. The option is deprecated in favor of wrapping
 	// the handler and is still honored as of go-sdk v1.8.0, so an upgrade has to confirm the
 	// check still runs rather than assume it.
 	handler := sdkmcp.NewStreamableHTTPHandler(
-		func(r *http.Request) *sdkmcp.Server { return mcpServer },
+		func(r *http.Request) *sdkmcp.Server {
+			if conf.Public() {
+				return referenceServer
+			}
+
+			return libraryServer
+		},
 		&sdkmcp.StreamableHTTPOptions{
 			SessionTimeout:        McpSessionTimeout,
 			Logger:                slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelWarn})),
@@ -89,13 +106,12 @@ func ServeMCP(router *gin.RouterGroup) {
 	)
 
 	// MCP sessions opened with app access tokens end when their grant is revoked.
-	grantSessions := newMcpGrantSessions(mcpServer)
+	grantSessions := newMcpGrantSessions(libraryServer)
 	entity.GrantDeletedHandler = grantSessions.Close
 
-	// mcpHandler authenticates each request, caps the JSON-RPC payload size,
-	// and surfaces 413 on overflow. Public mode reaches read-only tools as
-	// the default public session; any tool that touches per-user state must
-	// add an explicit gate before being registered on this shared server.
+	// mcpHandler authenticates each request, checks the account setting, caps the JSON-RPC payload size,
+	// and asks for the scopes a tool call needs. Public mode reaches the reference server as the default
+	// public session; data tools exist only on the library server, which authorizes each call.
 	mcpHandler := func(c *gin.Context) {
 		s := AuthAudience(c, conf.OAuthResourceUrl(), acl.ResourceMCP, acl.ActionView)
 
@@ -121,44 +137,51 @@ func ServeMCP(router *gin.RouterGroup) {
 			return
 		}
 
-		// Reject oversized requests up front when Content-Length is
-		// known; chunked or unknown-length bodies fall through to
-		// MaxBytesReader below.
+		// Reject oversized requests up front when Content-Length is known; other bodies are capped below.
 		if c.Request.ContentLength > MaxMCPRequestBytes {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "request body too large", status.Failed}, s.RefID)
 			AbortRequestTooLarge(c, i18n.ErrBadRequest)
 			return
 		}
 
-		// Cap the body before the SDK reads it; the wrapper rewrites the
-		// SDK's "failed to read body" 400 into a standard 413 on overflow.
-		LimitRequestBodyBytes(c, MaxMCPRequestBytes)
+		// Read the capped body of a request, so it can be checked before the SDK runs it.
+		if c.Request.Method == http.MethodPost {
+			LimitRequestBodyBytes(c, MaxMCPRequestBytes)
 
-		tripped := &atomic.Bool{}
-		c.Request.Body = &mcpLimitReader{ReadCloser: c.Request.Body, tripped: tripped}
-		writer := &mcpLimitWriter{ResponseWriter: c.Writer, tripped: tripped}
+			calls, ok := mcpReadCalls(c, s)
+
+			if !ok {
+				return
+			}
+
+			// Ask OAuth clients to re-authorize for the scopes a tool call needs.
+			if missing := mcpMissingScopes(s, calls, conf.Public()); len(missing) > 0 {
+				event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "call needs scope %s", status.Denied}, s.RefID, clean.Log(strings.Join(missing, " ")))
+				c.Header(header.WWWAuthenticate, McpChallenge(conf, McpErrInsufficientScope, mcpChallengeScopes(s, missing)...))
+				AbortForbidden(c)
+				return
+			}
+		}
 
 		// Bind MCP sessions to the authenticated user or client, except in public mode.
 		if conf.Public() {
-			handler.ServeHTTP(writer, c.Request)
+			handler.ServeHTTP(c.Writer, c.Request)
 		} else if info := mcpTokenInfo(s); info == nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "session has no owner", status.Denied}, s.RefID)
 			AbortForbidden(c)
 			return
 		} else {
-			mcpSessionHandler(handler, info).ServeHTTP(writer, mcpBearerRequest(c.Request, AuthToken(c)))
+			info.Extra[mcp.ClientIPKey] = ClientIP(c)
+			mcpSessionHandler(handler, info).ServeHTTP(c.Writer, mcpBearerRequest(c.Request, AuthToken(c)))
 		}
 
 		// Remember which grant the MCP session of an app access token belongs to.
-		if s.IsOAuthApp() && writer.Status() < http.StatusBadRequest {
-			grantSessions.Add(writer.Header().Get(sdkSessionIdHeader), s.AuthID, mcpGrantExists)
+		if s.IsOAuthApp() && c.Writer.Status() < http.StatusBadRequest {
+			grantSessions.Add(c.Writer.Header().Get(sdkSessionIdHeader), s.AuthID, mcpGrantExists)
 		}
 
-		// Audit the rewritten 413 so the audit log reflects the final
-		// status the client received, not the SDK's internal 400.
-		if writer.suppress.Load() {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "request body too large", status.Failed}, s.RefID)
-		} else if writer.Status() == http.StatusForbidden {
+		// Audit requests the SDK refused, e.g. for the MCP session of another user.
+		if c.Writer.Status() == http.StatusForbidden {
 			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "request refused", status.Denied}, s.RefID)
 		}
 	}
@@ -171,57 +194,122 @@ func ServeMCP(router *gin.RouterGroup) {
 	router.DELETE("/mcp", mcpHandler)
 }
 
-// mcpLimitReader wraps an http.MaxBytesReader-bounded body and records
-// whether the read failed with *http.MaxBytesError so the paired writer
-// can translate the SDK's 400 response into the standard 413.
-type mcpLimitReader struct {
-	io.ReadCloser
-	tripped *atomic.Bool
+// MaxMCPBatchMessages is the maximum number of messages in a JSON-RPC batch, which the SDK still accepts for
+// protocol version 2025-03-26.
+const MaxMCPBatchMessages = 10
+
+// mcpCall is the part of a JSON-RPC message that identifies a tool call.
+type mcpCall struct {
+	Method string `json:"method"`
+	Params struct {
+		Name string `json:"name"`
+	} `json:"params"`
 }
 
-// Read delegates to the wrapped body and flips the shared flag when the
-// MaxBytesReader cap is exceeded.
-func (r *mcpLimitReader) Read(p []byte) (int, error) {
-	n, err := r.ReadCloser.Read(p)
+// mcpReadCalls reads and restores the request body, and returns the JSON-RPC messages in it, which may be a
+// batch. It aborts and returns false if the body cannot be read, is not a single JSON value, or holds more than
+// MaxMCPBatchMessages.
+func mcpReadCalls(c *gin.Context, s *entity.Session) (calls []mcpCall, ok bool) {
+	body, err := io.ReadAll(c.Request.Body)
 
 	if err != nil {
-		var maxBytesErr *http.MaxBytesError
-		if errors.As(err, &maxBytesErr) {
-			r.tripped.Store(true)
+		if IsRequestBodyTooLarge(err) {
+			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "request body too large", status.Failed}, s.RefID)
+			AbortRequestTooLarge(c, i18n.ErrBadRequest)
+		} else {
+			AbortBadRequest(c, err)
+		}
+
+		return nil, false
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewReader(body))
+
+	trimmed := bytes.TrimSpace(body)
+
+	if len(trimmed) == 0 {
+		return nil, true
+	}
+
+	// Decode the first JSON value, as the SDK does, and refuse data after it, so both read the same messages.
+	var first json.RawMessage
+
+	dec := json.NewDecoder(bytes.NewReader(trimmed))
+
+	if err = dec.Decode(&first); err != nil || len(bytes.TrimSpace(trimmed[dec.InputOffset():])) > 0 {
+		AbortBadRequest(c, errors.New("malformed request body"))
+		return nil, false
+	}
+
+	if first[0] == '[' {
+		var batch []json.RawMessage
+
+		if err = json.Unmarshal(first, &batch); err != nil {
+			AbortBadRequest(c, errors.New("malformed request body"))
+			return nil, false
+		} else if len(batch) > MaxMCPBatchMessages {
+			event.AuditWarn([]string{ClientIP(c), "session %s", "mcp", "batch of %d messages", status.Denied}, s.RefID, len(batch))
+			AbortBadRequest(c, fmt.Errorf("batch must not exceed %d messages", MaxMCPBatchMessages))
+			return nil, false
+		}
+
+		for _, raw := range batch {
+			var call mcpCall
+
+			if json.Unmarshal(raw, &call) == nil {
+				calls = append(calls, call)
+			}
+		}
+	} else {
+		var call mcpCall
+
+		if json.Unmarshal(first, &call) == nil {
+			calls = append(calls, call)
 		}
 	}
 
-	return n, err
+	return calls, true
 }
 
-// mcpLimitWriter rewrites the SDK's 400 "failed to read body" to 413 when the body cap
-// was exceeded. Writes arriving after the rewrite are suppressed so the SDK's phrasing
-// does not replace the standard 413 payload.
-type mcpLimitWriter struct {
-	gin.ResponseWriter
-	tripped  *atomic.Bool
-	suppress atomic.Bool
-}
-
-// WriteHeader rewrites 400 to 413 when the request body exceeded the cap
-// and marks the response body as suppressed so subsequent Write calls
-// cannot leak the SDK's 400 payload.
-func (w *mcpLimitWriter) WriteHeader(statusCode int) {
-	if statusCode == http.StatusBadRequest && w.tripped.Load() {
-		statusCode = http.StatusRequestEntityTooLarge
-		w.suppress.Store(true)
+// mcpMissingScopes returns the scopes the session's token lacks for the tool calls, if its role and account may
+// use the tools; none in public mode, which serves only the reference tools. The middleware of the library server
+// authorizes each call again, so this check only lets OAuth clients ask for the scopes in advance.
+func mcpMissingScopes(s *entity.Session, calls []mcpCall, public bool) (scopes []string) {
+	if public {
+		return nil
 	}
 
-	w.ResponseWriter.WriteHeader(statusCode)
-}
+	for _, call := range calls {
+		if call.Method != "tools/call" {
+			continue
+		}
 
-// Write forwards payload bytes unless the response is a rewritten 413,
-// in which case the SDK's body is silently dropped so the final response
-// stays consistent with AbortRequestTooLarge.
-func (w *mcpLimitWriter) Write(b []byte) (int, error) {
-	if w.suppress.Load() {
-		return len(b), nil
+		if decision, needed := mcp.AuthorizeTool(s, call.Params.Name); decision == mcp.ToolMissingScope {
+			for _, scope := range needed {
+				if !slices.Contains(scopes, scope) {
+					scopes = append(scopes, scope)
+				}
+			}
+		}
 	}
 
-	return w.ResponseWriter.Write(b)
+	return scopes
+}
+
+// mcpChallengeScopes returns the scopes an OAuth client should request: the app scopes its token already has
+// and the missing ones, so that re-authorizing does not drop the scopes of other tools.
+func mcpChallengeScopes(s *entity.Session, missing []string) (scopes []string) {
+	for _, scope := range strings.Fields(s.Scope()) {
+		if slices.Contains(oauth.AppScopes, scope) && !slices.Contains(scopes, scope) {
+			scopes = append(scopes, scope)
+		}
+	}
+
+	for _, scope := range missing {
+		if !slices.Contains(scopes, scope) {
+			scopes = append(scopes, scope)
+		}
+	}
+
+	return scopes
 }
