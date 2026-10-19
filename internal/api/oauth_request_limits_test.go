@@ -97,7 +97,6 @@ func TestOAuthToken_ChargesPreCredentialRejections(t *testing.T) {
 		status      int
 	}{
 		{"UnusableGrant", header.ContentTypeJson, `{"padding":"nothing that matches a form field"}`, http.StatusUnauthorized},
-		{"UnsupportedGrant", header.ContentTypeForm, "grant_type=authorization_code", http.StatusBadRequest},
 	}
 
 	for _, tc := range cases {

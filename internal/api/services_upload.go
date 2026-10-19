@@ -6,6 +6,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -100,7 +101,8 @@ func UploadToService(router *gin.RouterGroup) {
 
 		folder := frm.Folder
 
-		if webdav.SkipSyncPath(folder) || webdav.UnsafeSyncPath(folder) {
+		// A folder must leave room for the file names below it.
+		if webdav.SkipSyncPath(folder) || webdav.UnsafeSyncPath(folder) || len(folder) >= entity.RemoteNameMaxLen {
 			log.Tracef("services: rejected upload folder %s", clean.Log(folder))
 			AbortBadRequest(c, errors.New("destination folder is not allowed"))
 			return
@@ -119,6 +121,9 @@ func UploadToService(router *gin.RouterGroup) {
 
 		selected := files[:0]
 
+		// Files whose destination names are too long are reported in one warning.
+		var tooLong []string
+
 		for _, file := range files {
 			if webdav.SkipSyncPath(file.FileName) {
 				log.Debugf("services: skipping excluded file %s", clean.Log(file.FileName))
@@ -130,6 +135,9 @@ func UploadToService(router *gin.RouterGroup) {
 			if webdav.SkipSyncPath(alias) || webdav.UnsafeSyncPath(alias) {
 				log.Debugf("services: skipping rejected destination %s", clean.Log(alias))
 				continue
+			} else if entity.RemoteNameTooLong(alias) {
+				tooLong = append(tooLong, file.FileName)
+				continue
 			}
 
 			aliases.Keep(alias)
@@ -137,6 +145,11 @@ func UploadToService(router *gin.RouterGroup) {
 			entity.FirstOrCreateFileShare(entity.NewFileShare(file.ID, m.ID, alias))
 
 			selected = append(selected, file)
+		}
+
+		if len(tooLong) > 0 {
+			log.Warnf("services: skipped %s because their remote names are too long (%s)",
+				english.Plural(len(tooLong), "file", "files"), clean.LogNames(tooLong))
 		}
 
 		workers.RunShare(get.Config())

@@ -57,6 +57,11 @@ export class Service extends RestModel {
     return this.ID ? this.ID : false;
   }
 
+  // hasError reports whether the account has an error message or failed sync attempts to show.
+  hasError() {
+    return !!this.AccErrors || !!this.AccError;
+  }
+
   Folders() {
     return $api.get(this.getEntityResource() + "/folders").then((response) => Promise.resolve(response.data));
   }

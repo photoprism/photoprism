@@ -26,8 +26,8 @@ func TestDownloadFileName(t *testing.T) {
 	}{
 		{"Absent", "", ".jpg", "fallback.jpg"},
 		{"Unicode", "旅行_preview.png", ".jpg", "旅行_preview.jpg"},
-		{"NonBreakingSpace", "my\u00a0photo.png", ".jpg", "myphoto.jpg"},
-		{"UnicodeSpaces", "my\u1680\u2007\u202f\u205f\u3000photo.png", ".jpg", "myphoto.jpg"},
+		{"NonBreakingSpace", "my\u00a0photo.png", ".jpg", "my\u00a0photo.jpg"},
+		{"UnicodeSpaces", "my\u1680\u2007\u202f\u205f\u3000photo.png", ".jpg", "my\u1680\u2007\u202f\u205f\u3000photo.jpg"},
 		{"AsciiSpace", "my photo.png", ".jpg", "my photo.jpg"},
 		{"Trim", "  photo  .png ", ".jpg", "photo.jpg"},
 		{"Controls", "photo\r\n\x00.png", ".jpg", "photo.jpg"},

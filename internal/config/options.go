@@ -54,6 +54,7 @@ type Options struct {
 	OIDCRole                  string        `yaml:"-" json:"-" flag:"oidc-role" tags:"portal,pro"`
 	OIDCWebDAV                bool          `yaml:"OIDCWebDAV" json:"-" flag:"oidc-webdav"`
 	DisableOIDC               bool          `yaml:"DisableOIDC" json:"DisableOIDC" flag:"disable-oidc"`
+	OAuthApps                 string        `yaml:"OAuthApps" json:"-" flag:"oauth-apps"`
 	SessionMaxAge             int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout            int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	SessionCache              int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`

@@ -52,7 +52,7 @@ func (c *Config) DatabaseDriver() string {
 		c.options.DatabaseDriver = dsn.DriverSQLite3
 		c.options.DatabaseDSN = ""
 	default:
-		log.Warnf("config: unsupported database driver %s, using sqlite", c.options.DatabaseDriver)
+		log.Warnf("config: unsupported database driver %s, using sqlite", clean.Log(c.options.DatabaseDriver))
 		c.options.DatabaseDriver = dsn.DriverSQLite3
 		c.options.DatabaseDSN = ""
 	}

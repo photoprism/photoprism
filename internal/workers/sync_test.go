@@ -16,9 +16,12 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/net/webdav"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -261,11 +264,12 @@ func TestSync_StartStoredError(t *testing.T) {
 
 	worker := NewSync(config.TestConfig())
 
-	// The remote answers the listing with an error whose text holds a new line, a field separator and more.
+	// The remote answers the listing with an error whose text holds a URL with credentials, a new line, a field
+	// separator and more.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("listing failed\nsync \u203a admin " + strings.Repeat("x", 800)))
+		_, _ = w.Write([]byte("listing failed https://sync-user:notreal@dav.example.com/photos\nsync \u203a admin " + strings.Repeat("x", 800)))
 	}))
 	t.Cleanup(server.Close)
 
@@ -275,7 +279,21 @@ func TestSync_StartStoredError(t *testing.T) {
 		a.SyncStatus = entity.SyncStatusRefresh
 	})
 
+	logger, hook := test.NewNullLogger()
+	prev := log
+	log = logger
+	t.Cleanup(func() { log = prev })
+
 	require.NoError(t, worker.Start())
+
+	// The failure names the account.
+	var named int
+	for _, e := range hook.AllEntries() {
+		if e.Level == logrus.ErrorLevel && strings.Contains(e.Message, "(list remote folders of "+clean.Log(a.AccName)+")") {
+			named++
+		}
+	}
+	assert.Equal(t, 1, named)
 
 	stored := storedSyncAccount(t, a.ID)
 	assert.Equal(t, 1, stored.AccErrors)
@@ -283,6 +301,7 @@ func TestSync_StartStoredError(t *testing.T) {
 	assert.LessOrEqual(t, len(stored.AccError), txt.ClipError)
 	assert.NotContains(t, stored.AccError, "\n")
 	assert.NotContains(t, stored.AccError, "\u203a")
+	assert.NotContains(t, stored.AccError, "notreal")
 }
 
 func TestSync_StartRetryLimit(t *testing.T) {
@@ -454,4 +473,271 @@ func TestSync_StartRetryLimit(t *testing.T) {
 		require.NoError(t, worker.Start())
 		assert.True(t, storedSyncAccount(t, a.ID).AccSync)
 	})
+}
+
+func TestSync_StartKeepsChanges(t *testing.T) {
+	isolateSyncAccounts(t)
+
+	worker := NewSync(config.TestConfig())
+
+	// newChangingAccount creates an account whose remote fails every request and, on the first one, stores
+	// values for its own row, as saving the account during the run does.
+	newChangingAccount := func(t *testing.T, status string, values entity.Values) *entity.Service {
+		var a *entity.Service
+		var once sync.Once
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if values != nil {
+				once.Do(func() {
+					assert.NoError(t, entity.Db().Model(&entity.Service{ID: a.ID}).UpdateColumns(values).Error)
+				})
+			}
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}))
+		t.Cleanup(server.Close)
+
+		a = newSyncAccount(t, func(m *entity.Service) {
+			m.AccURL = server.URL + "/"
+			m.AccTimeout = "low"
+			m.SyncStatus = status
+			m.SyncDownload = true
+			m.AccErrors, m.AccError = 2, "previous error"
+		})
+
+		if status == entity.SyncStatusDownload {
+			require.NoError(t, entity.NewFileSync(a.ID, "/changing.jpg").Create())
+			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&entity.FileSync{}, "service_id = ?", a.ID).Error })
+		}
+
+		return a
+	}
+
+	t.Run("ErrorsReset", func(t *testing.T) {
+		// The failed refresh is counted on the reset value.
+		a := newChangingAccount(t, entity.SyncStatusRefresh, entity.Values{"acc_errors": 0, "acc_error": ""})
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, 1, stored.AccErrors)
+		assert.NotEqual(t, "previous error", stored.AccError)
+		assert.NotEmpty(t, stored.AccError)
+		assert.Equal(t, entity.SyncStatusRefresh, stored.SyncStatus)
+	})
+	t.Run("CountChanged", func(t *testing.T) {
+		// Errors counted by another writer during the run, e.g. failed folder listings, are kept.
+		a := newChangingAccount(t, entity.SyncStatusRefresh, entity.Values{"acc_errors": 5})
+		require.NoError(t, worker.Start())
+		assert.Equal(t, 6, storedSyncAccount(t, a.ID).AccErrors)
+	})
+	t.Run("StatusChanged", func(t *testing.T) {
+		// The download stage completes without a retry limit, so the worker would move the account to synced.
+		a := newChangingAccount(t, entity.SyncStatusDownload, entity.Values{"sync_status": entity.SyncStatusUpload})
+		require.NoError(t, entity.Db().Model(&entity.Service{ID: a.ID}).UpdateColumn("retry_limit", -1).Error)
+		logger, hook := test.NewNullLogger()
+		logger.SetLevel(logrus.DebugLevel)
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, entity.SyncStatusUpload, stored.SyncStatus)
+		assert.Equal(t, -1, stored.RetryLimit)
+		var kept int
+		for _, e := range hook.AllEntries() {
+			if strings.Contains(e.Message, "kept the status saved to") {
+				kept++
+			}
+		}
+		assert.Equal(t, 1, kept)
+	})
+	t.Run("CountKeptWhenStageCompletes", func(t *testing.T) {
+		// A download stage that completes writes its status, but leaves the errors counted during the run.
+		a := newChangingAccount(t, entity.SyncStatusDownload, entity.Values{"acc_errors": 9})
+		require.NoError(t, entity.Db().Model(&entity.Service{ID: a.ID}).UpdateColumn("retry_limit", -1).Error)
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
+		assert.Equal(t, 9, stored.AccErrors)
+		assert.Equal(t, "previous error", stored.AccError)
+	})
+	t.Run("OtherSettingsChanged", func(t *testing.T) {
+		// A change of columns the worker does not write leaves its own values to be written.
+		a := newChangingAccount(t, entity.SyncStatusRefresh, entity.Values{"retry_limit": 7, "sync_interval": 60})
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, 3, stored.AccErrors)
+		assert.NotEqual(t, "previous error", stored.AccError)
+		assert.Equal(t, 7, stored.RetryLimit)
+		assert.Equal(t, 60, stored.SyncInterval)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		a := newChangingAccount(t, entity.SyncStatusRefresh, nil)
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, 3, stored.AccErrors)
+		assert.NotEqual(t, "previous error", stored.AccError)
+		assert.Equal(t, entity.SyncStatusRefresh, stored.SyncStatus)
+	})
+	t.Run("ErrorsChangeWhileProgressing", func(t *testing.T) {
+		// Errors written by others during a stage that completes do not keep it from advancing.
+		remote := t.TempDir()
+		var a *entity.Service
+		handler := &webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()}
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.NoError(t, entity.Db().Model(&entity.Service{ID: a.ID}).
+				UpdateColumn("acc_errors", gorm.Expr("acc_errors + 1")).Error)
+			handler.ServeHTTP(w, r)
+		}))
+		t.Cleanup(server.Close)
+		a = newSyncAccount(t, func(m *entity.Service) {
+			m.AccURL, m.AccTimeout, m.SyncStatus, m.SyncDownload = server.URL+"/", "low", entity.SyncStatusRefresh, true
+		})
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, entity.SyncStatusDownload, stored.SyncStatus)
+		assert.Equal(t, 0, stored.AccErrors)
+	})
+	t.Run("Synced", func(t *testing.T) {
+		// A download stage without queued files completes without a request and writes the sync date.
+		a := newSyncAccount(t, func(m *entity.Service) {
+			m.SyncStatus, m.SyncDownload, m.SyncDate = entity.SyncStatusDownload, true, sql.NullTime{}
+			m.AccErrors, m.AccError = 1, "previous error"
+		})
+		sub := event.Subscribe("sync.synced")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, entity.SyncStatusSynced, stored.SyncStatus)
+		assert.True(t, stored.SyncDate.Valid)
+		select {
+		case msg := <-sub.Receiver:
+			assert.Equal(t, "sync.synced", msg.Name)
+		case <-time.After(2 * time.Second):
+			t.Fatal("expected one sync.synced event")
+		}
+		assert.WithinDuration(t, time.Now(), stored.SyncDate.Time, time.Minute)
+		assert.Equal(t, 1, stored.AccErrors)
+	})
+	t.Run("SyncedStatusKept", func(t *testing.T) {
+		// A stage that completes while the status was changed is not reported as synced.
+		a := newSyncAccount(t, func(m *entity.Service) {
+			m.SyncStatus, m.SyncDownload, m.SyncDate = entity.SyncStatusDownload, true, sql.NullTime{}
+		})
+		require.NoError(t, entity.Db().Callback().Query().After("gorm:query").Register("test:change_sync_status", func(tx *gorm.DB) {
+			if tx.Statement.Table == "files_sync" {
+				_ = entity.UnscopedDb().Exec("UPDATE services SET sync_status = ? WHERE id = ?", entity.SyncStatusRefresh, a.ID).Error
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove("test:change_sync_status") })
+		sub := event.Subscribe("sync.synced")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+		require.NoError(t, worker.Start())
+		assert.Equal(t, entity.SyncStatusRefresh, storedSyncAccount(t, a.ID).SyncStatus)
+		select {
+		case msg := <-sub.Receiver:
+			t.Fatalf("unexpected event %s", msg.Name)
+		case <-time.After(200 * time.Millisecond):
+		}
+	})
+	t.Run("NothingToWrite", func(t *testing.T) {
+		// A synced account that is not due keeps its values, so nothing is written.
+		a := newSyncAccount(t, nil)
+		var updates int
+		require.NoError(t, entity.Db().Callback().Update().Before("gorm:update").Register("test:count_service_updates", func(tx *gorm.DB) {
+			if tx.Statement.Table == (entity.Service{}).TableName() {
+				updates++
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("test:count_service_updates") })
+		require.NoError(t, worker.Start())
+		assert.Zero(t, updates)
+		assert.Equal(t, entity.SyncStatusSynced, storedSyncAccount(t, a.ID).SyncStatus)
+	})
+	t.Run("NullColumns", func(t *testing.T) {
+		// Rows written by earlier releases may hold NULL in the columns the worker writes.
+		a := newChangingAccount(t, entity.SyncStatusRefresh, nil)
+		require.NoError(t, entity.Db().Model(&entity.Service{ID: a.ID}).UpdateColumns(map[string]any{
+			"acc_errors": gorm.Expr("NULL"), "acc_error": gorm.Expr("NULL"), "sync_status": gorm.Expr("NULL")}).Error)
+		require.NoError(t, worker.Start())
+		stored := storedSyncAccount(t, a.ID)
+		assert.Equal(t, entity.SyncStatusRefresh, stored.SyncStatus)
+
+		require.NoError(t, worker.Start())
+		stored = storedSyncAccount(t, a.ID)
+		assert.Equal(t, 1, stored.AccErrors)
+		assert.NotEmpty(t, stored.AccError)
+	})
+}
+
+func TestSync_logAccountErr(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	a := entity.Service{AccName: "Account\nName"}
+	t.Run("Error", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logAccountErr(errors.New("upload failed"), a)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.ErrorLevel, hook.LastEntry().Level)
+		assert.Equal(t, "sync: upload failed ("+clean.Log(a.AccName)+")", hook.LastEntry().Message)
+		assert.NotContains(t, hook.LastEntry().Message, "\n")
+	})
+	t.Run("NoError", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logAccountErr(nil, a)
+		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+func TestSync_logFileErr(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	a := entity.Service{AccName: "Account"}
+	t.Run("Error", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logFileErr(errors.New("save failed"), "/photos/a\nb.jpg", a)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.ErrorLevel, hook.LastEntry().Level)
+		assert.Equal(t, "sync: save failed ("+clean.Log("/photos/a\nb.jpg")+" from "+clean.Log("Account")+")", hook.LastEntry().Message)
+		assert.NotContains(t, hook.LastEntry().Message, "\n")
+	})
+	t.Run("NoError", func(t *testing.T) {
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+		worker.logFileErr(nil, "/photos/a.jpg", a)
+		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+func TestSync_logErr(t *testing.T) {
+	worker := NewSync(config.TestConfig())
+	for _, c := range []struct {
+		name  string
+		log   func(err error)
+		level logrus.Level
+	}{
+		{"Error", worker.logErr, logrus.ErrorLevel},
+		{"Warning", worker.logWarn, logrus.WarnLevel},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			logger, hook := test.NewNullLogger()
+			prev := log
+			log = logger
+			t.Cleanup(func() { log = prev })
+			c.log(nil)
+			assert.Empty(t, hook.AllEntries())
+			c.log(errors.New("failed\nsync: forged"))
+			require.Len(t, hook.AllEntries(), 1)
+			assert.Equal(t, c.level, hook.LastEntry().Level)
+			assert.NotContains(t, hook.LastEntry().Message, "\n")
+			assert.True(t, strings.HasPrefix(hook.LastEntry().Message, "sync: failed"), hook.LastEntry().Message)
+		})
+	}
 }

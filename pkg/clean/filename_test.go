@@ -40,6 +40,30 @@ func TestFileName(t *testing.T) {
 	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "filename.", FileName("filename."+string(rune(127))))
 	})
+	t.Run("RealNamesKept", func(t *testing.T) {
+		for _, s := range []string{
+			"\U0001F469\u200D\U0001F469\u200D\U0001F467.jpg",
+			"\U0001F3F4\U000E0067\U000E0062\U000E0073\U000E0063\U000E0074\U000E007F.jpg",
+			"Screenshot 2026-10-14 at 10.00.00\u202FAM.png",
+			"mi\u200Cxwaham.jpg",
+			"Gr\xfc\xdfe.jpg",
+		} {
+			assert.Equal(t, s, FileName(s), "%+q", s)
+		}
+	})
+	t.Run("CheckedAfterRemoval", func(t *testing.T) {
+		assert.Equal(t, "", FileName("a.*.jpg"))
+		assert.Equal(t, "", FileName("a.\u202E.jpg"))
+		assert.Equal(t, "", FileName(" . "))
+	})
+	t.Run("ASCIISpacesTrimmed", func(t *testing.T) {
+		assert.Equal(t, "a b.jpg", FileName(" a b.jpg\t"))
+		assert.Equal(t, "trail\u00A0.jpg", FileName("trail\u00A0.jpg "))
+	})
+	t.Run("UnsafeRemoved", func(t *testing.T) {
+		assert.Equal(t, "photoabc.jpg", FileName("photo\u202Eabc.jpg"))
+		assert.Equal(t, "abc.jpg", FileName("a\u0085b\u2028c.jpg"))
+	})
 }
 
 func TestFileNameRedacted(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/url"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -91,6 +92,80 @@ func TestPostgresDialector_Migrator(t *testing.T) {
 		columns, err = db.Migrator().ColumnTypes("migrator_tests")
 		require.NoError(t, err)
 		assert.Len(t, columns, 2)
+	})
+}
+
+// pkWidthTest has a binary string primary key column of the size the test migrates to.
+type pkWidthTest struct {
+	Code  string `gorm:"primaryKey;autoIncrement:false;type:bytes;size:32"`
+	Owner uint   `gorm:"primaryKey;autoIncrement:false;size:32"`
+}
+
+// TableName returns the name of the test table.
+func (pkWidthTest) TableName() string { return "pk_width_tests" }
+
+// pkWidthShortTest has a shorter primary key column than the table the test creates.
+type pkWidthShortTest struct {
+	Code  string `gorm:"primaryKey;autoIncrement:false;type:bytes;size:4"`
+	Owner uint   `gorm:"primaryKey;autoIncrement:false;size:32"`
+}
+
+// TableName returns the name of the test table.
+func (pkWidthShortTest) TableName() string { return "pk_width_tests" }
+
+func TestPostgresMigrator_MigrateColumn(t *testing.T) {
+	db := openPostgresTestDb(t, nil)
+
+	// create creates the test table with an 8 byte primary key column and one row.
+	create := func(t *testing.T) {
+		require.NoError(t, db.Exec("DROP TABLE IF EXISTS pk_width_tests").Error)
+		require.NoError(t, db.Exec(`CREATE TABLE pk_width_tests (code varchar(8) COLLATE "C", owner bigint, PRIMARY KEY (code, owner))`).Error)
+		require.NoError(t, db.Exec("INSERT INTO pk_width_tests (code, owner) VALUES ('short', 1)").Error)
+		t.Cleanup(func() { _ = db.Exec("DROP TABLE IF EXISTS pk_width_tests").Error })
+	}
+
+	// length returns the length of the primary key column.
+	length := func(t *testing.T) (n int64) {
+		require.NoError(t, db.Raw("SELECT character_maximum_length FROM information_schema.columns "+
+			"WHERE table_name = 'pk_width_tests' AND column_name = 'code'").Row().Scan(&n))
+		return n
+	}
+
+	// collation returns the collation of the primary key column.
+	collation := func(t *testing.T) (name string) {
+		require.NoError(t, db.Raw("SELECT COALESCE(collation_name, '') FROM information_schema.columns "+
+			"WHERE table_name = 'pk_width_tests' AND column_name = 'code'").Row().Scan(&name))
+		return name
+	}
+
+	t.Run("Lengthened", func(t *testing.T) {
+		create(t)
+		require.NoError(t, db.AutoMigrate(&pkWidthTest{}))
+		assert.EqualValues(t, 32, length(t))
+		assert.Equal(t, "C", collation(t))
+
+		// The key and its rows are kept, and a second run changes nothing.
+		var count int64
+		require.NoError(t, db.Model(&pkWidthTest{}).Where("code = ? AND owner = ?", "short", 1).Count(&count).Error)
+		assert.EqualValues(t, 1, count)
+		assert.Error(t, db.Exec("INSERT INTO pk_width_tests (code, owner) VALUES ('short', 1)").Error)
+		require.NoError(t, db.Create(&pkWidthTest{Code: strings.Repeat("c", 32), Owner: 1}).Error)
+
+		var altered []string
+		require.NoError(t, db.Callback().Raw().Before("gorm:raw").Register("test:pk_width_alter", func(tx *gorm.DB) {
+			if sql := strings.ToUpper(tx.Statement.SQL.String()); strings.HasPrefix(strings.TrimSpace(sql), "ALTER") {
+				altered = append(altered, sql)
+			}
+		}))
+		t.Cleanup(func() { _ = db.Callback().Raw().Remove("test:pk_width_alter") })
+		require.NoError(t, db.AutoMigrate(&pkWidthTest{}))
+		assert.EqualValues(t, 32, length(t))
+		assert.Empty(t, altered)
+	})
+	t.Run("NotShortened", func(t *testing.T) {
+		create(t)
+		require.NoError(t, db.AutoMigrate(&pkWidthShortTest{}))
+		assert.EqualValues(t, 8, length(t))
 	})
 }
 

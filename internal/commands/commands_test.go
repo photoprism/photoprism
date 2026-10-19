@@ -65,6 +65,11 @@ func TestMain(m *testing.M) {
 
 // runTestMain initializes shared command fixtures and executes the package tests.
 func runTestMain(m *testing.M) int {
+	// Runs as a stand-in process for the stop tests, without the shared fixtures.
+	if mode := os.Getenv(stopHelperEnv); mode != "" {
+		return runStopHelper(mode)
+	}
+
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	log = logrus.StandardLogger()
@@ -693,6 +698,52 @@ func TestShowUsageError(t *testing.T) {
 }
 
 // TestCallWithDependencies covers the exit code reported when the configuration cannot be loaded.
+func TestCallWithCoreDependencies(t *testing.T) {
+	initCoreConfig := InitCoreConfig
+	t.Cleanup(func() { InitCoreConfig = initCoreConfig })
+
+	t.Run("Success", func(t *testing.T) {
+		// The configured log level applies, as Config.Propagate is not called without a database.
+		prevLevel := event.SystemLog.GetLevel()
+		t.Cleanup(func() { config.SetAppLogLevel(prevLevel) })
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf.Options().LogLevel = "error"
+		config.SetAppLogLevel(logrus.PanicLevel)
+		InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
+			assert.False(t, quiet)
+			return conf, nil
+		}
+
+		var got *config.Config
+		require.NoError(t, CallWithCoreDependencies(NewTestContext(nil), func(c *config.Config) error {
+			got = c
+			return nil
+		}))
+		assert.Same(t, conf, got)
+		assert.Equal(t, conf.LogLevel(), event.SystemLog.GetLevel())
+	})
+	t.Run("InitErrorExitsOne", func(t *testing.T) {
+		InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
+			return nil, errors.New("config not readable")
+		}
+
+		err := CallWithCoreDependencies(NewTestContext(nil), func(*config.Config) error {
+			t.Fatal("the action must not run without a configuration")
+			return nil
+		})
+
+		assertExitCode(t, err, 1)
+		assert.Contains(t, err.Error(), "config not readable")
+	})
+	t.Run("InitExitCodeIsKept", func(t *testing.T) {
+		InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
+			return nil, cli.Exit("invalid flag", 2)
+		}
+
+		assertExitCode(t, CallWithCoreDependencies(NewTestContext(nil), func(*config.Config) error { return nil }), 2)
+	})
+}
+
 func TestCallWithDependencies(t *testing.T) {
 	initConfig := InitConfig
 	t.Cleanup(func() { InitConfig = initConfig })

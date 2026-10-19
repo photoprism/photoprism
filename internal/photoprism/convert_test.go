@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -200,4 +201,63 @@ func TestConvert_StartAvcMetadata(t *testing.T) {
 		return nil
 	})
 	assert.Empty(t, transcoded)
+}
+
+// TestConvert_StartUnportable checks that files and folders whose names are not portable are not converted.
+func TestConvert_StartUnportable(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// The folder is resolved first, so a link in the path of the temporary folder does not hide a regression.
+	dir, dirErr := filepath.EvalSymlinks(t.TempDir())
+	require.NoError(t, dirErr)
+	c := config.NewMinimalTestConfig(dir)
+	oldCfg := Config()
+	SetConfig(c)
+	t.Cleanup(func() { SetConfig(oldCfg) })
+
+	webp, err := os.ReadFile("testdata/norway-kjetil-moe.webp")
+	require.NoError(t, err)
+
+	names := []string{"ok.webp", "real/in.webp", "x:y.webp", "a$b.webp", "dir$/in.webp", "Best|Of/y.webp"}
+
+	for _, name := range names {
+		fileName := filepath.Join(c.OriginalsPath(), filepath.FromSlash(name))
+		require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+		require.NoError(t, os.WriteFile(fileName, webp, fs.ModeFile)) //nolint:gosec // G703: test-owned path
+	}
+
+	// A symbolic link whose name is not portable does not keep its target from being converted.
+	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "real"), filepath.Join(c.OriginalsPath(), "link$")))
+
+	// A folder whose name is not portable is converted under the portable name of a link, also if the folder is
+	// walked first.
+	require.NoError(t, os.Symlink(filepath.Join(c.OriginalsPath(), "Best|Of"), filepath.Join(c.OriginalsPath(), "favorites")))
+
+	// Two of the five skipped names are reported on their own, the others in one warning.
+	limitWarnedPaths(t, 2)
+
+	hook := captureLog(t)
+	require.NoError(t, NewConvert(c).Start(c.OriginalsPath(), nil, false))
+
+	// converted reports whether a preview of an original exists.
+	converted := func(name string) bool {
+		return fs.FileExists(filepath.Join(c.SidecarPath(), filepath.FromSlash(name)+".jpg"))
+	}
+
+	assert.True(t, converted("ok.webp"))
+	assert.True(t, converted("real/in.webp"))
+	assert.True(t, converted("favorites/y.webp"))
+
+	for _, name := range []string{"x:y.webp", "a$b.webp", "dir$/in.webp", "Best|Of/y.webp"} {
+		assert.False(t, converted(name), name)
+	}
+
+	warnings := loggedMessages(hook, logrus.WarnLevel)
+	listed := countPrefixSuffix(warnings, "convert: skipped", "rename it to convert it")
+	counted := countPrefix(warnings, "convert: skipped 3 more names")
+
+	assert.Equal(t, 2, listed)
+	assert.Equal(t, 1, counted)
 }

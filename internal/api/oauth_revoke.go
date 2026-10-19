@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/auth/oauth"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -46,9 +47,9 @@ func revokeSession(authToken string) *entity.Session {
 //	@Tags		Authentication
 //	@Accept		json,x-www-form-urlencoded,mpfd
 //	@Produce	json
-//	@Param		request					body		form.OAuthRevokeToken	true	"revoke request"
-//	@Success	200						{object}	gin.H
-//	@Failure	400,401,403,404,413,429	{object}	i18n.Response
+//	@Param		request						body		form.OAuthRevokeToken	true	"revoke request"
+//	@Success	200							{object}	gin.H
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
 //	@Router		/api/v1/oauth/revoke [post]
 func OAuthRevoke(router *gin.RouterGroup) {
 	router.POST("/oauth/revoke", func(c *gin.Context) {
@@ -161,6 +162,24 @@ func OAuthRevoke(router *gin.RouterGroup) {
 			return
 		}
 
+		// Revoke the grant of a refresh token. Like an unknown token, a refresh token that is not current is
+		// answered with success, so the response does not reveal whether it was valid (RFC 7009).
+		if frm.TokenTypeHint == form.RefreshToken {
+			if grant, revokeErr := oauth.RevokeRefreshToken(frm.Token, c.PostForm("client_id")); revokeErr != nil {
+				event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", "revoke grant", status.Error(revokeErr)}, actor, action)
+				AbortUnexpectedError(c)
+				return
+			} else if grant == nil {
+				charge()
+				event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "refresh token not found", status.Denied}, actor, action)
+			} else {
+				event.AuditInfo([]string{clientIp, "oauth2", "client %s", "user %s", "%s", "revoke grant %s", status.Deleted}, clean.Log(grant.ClientID), clean.Log(grant.UserName), action, clean.Log(grant.GrantUID))
+			}
+
+			c.JSON(http.StatusOK, gin.H{"status": StatusSuccess})
+			return
+		}
+
 		// Find session to be revoked.
 		switch frm.TokenTypeHint {
 		case form.RefID:
@@ -183,9 +202,9 @@ func OAuthRevoke(router *gin.RouterGroup) {
 				return
 			}
 
-			sess, err = entity.FindSession(frm.Token)
+			sess, err = entity.FindAnySession(frm.Token)
 		case form.AccessToken:
-			sess, err = entity.FindSession(rnd.SessionID(frm.Token))
+			sess, err = entity.FindAnySession(rnd.SessionID(frm.Token))
 		}
 
 		// A session that resolved from a submitted secret proves the caller holds it, so the
@@ -202,7 +221,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 				role = sess.GetClientRole()
 				actor = fmt.Sprintf("client %s", clean.LogQuote(sess.GetClientInfo()))
 			} else if username := sess.GetUserName(); username != "" {
-				role = s.GetUserRole()
+				role = sess.GetUserRole()
 				actor = fmt.Sprintf("user %s", clean.LogQuote(username))
 			} else {
 				role = sess.GetUserRole()
@@ -226,7 +245,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 			charge()
 			event.AuditErr([]string{clientIp, "oauth2", "%s", action, "delete %s as %s", status.Denied}, actor, clean.Log(sess.RefID), role.String())
 			return
-		case !sess.IsClient():
+		case !sess.IsClient() && !sess.IsOAuthApp():
 			charge()
 			event.AuditErr([]string{clientIp, "oauth2", "%s", action, "delete %s as %s", status.Denied}, actor, clean.Log(sess.RefID), role.String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))

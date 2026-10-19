@@ -36,3 +36,27 @@ func TestOpenIDConfiguration(t *testing.T) {
 		assert.Equal(t, "http://foo:2342/foo/.well-known/jwks.json", result.JwksUri)
 	})
 }
+
+func TestOpenIDConfiguration_AppFlow(t *testing.T) {
+	conf := config.TestConfig()
+	opt := conf.Options()
+	apps, public, authMode := opt.OAuthApps, opt.Public, opt.AuthMode
+	t.Cleanup(func() { opt.OAuthApps, opt.Public, opt.AuthMode = apps, public, authMode })
+	opt.Public, opt.AuthMode = false, config.AuthModePasswd
+
+	t.Run("Enabled", func(t *testing.T) {
+		opt.OAuthApps = config.OAuthAppsRegistered
+		result := NewOpenIDConfiguration(conf)
+		assert.Equal(t, []string{"token", "code"}, result.ResponseTypesSupported)
+		assert.Equal(t, []string{"client_credentials", "authorization_code", "refresh_token"}, result.GrantTypesSupported)
+		assert.Equal(t, []string{"S256"}, result.CodeChallengeMethodsSupported)
+		assert.True(t, result.AuthorizationResponseIssParameterSupported)
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		opt.OAuthApps = config.OAuthAppsNone
+		result := NewOpenIDConfiguration(conf)
+		assert.Equal(t, OAuthResponseTypes, result.ResponseTypesSupported)
+		assert.Empty(t, result.CodeChallengeMethodsSupported)
+		assert.False(t, result.AuthorizationResponseIssParameterSupported)
+	})
+}

@@ -103,6 +103,17 @@ pids+=($!)
 echo "$!" > "$stale/photoprism.pid"
 TIMEOUT=10 expect "StaleForeignPid" 0 "Port $port is free" stop "$stale" true
 
+# An empty PID file, as the stop command leaves it, means that no server is running.
+empty=$(config empty "HttpPort: $port")
+: > "$empty/photoprism.pid"
+expect "StartedEmptyPid" 1 "is not running" started "$empty"
+expect "StopEmptyPid" 0 "Port $port is free" stop "$empty" true
+listen "$empty"
+: > "$empty/photoprism.pid"
+expect "StopEmptyPidForeign" 1 "in use by" stop "$empty" true
+kill "${pids[-1]}"
+wait "${pids[-1]}" 2>/dev/null
+
 for spelling in "HttpPort: 0" "HttpPort: 08" "HttpPort: 65536" "HttpPort: 80abc"; do
   expect "Invalid ($spelling)" 1 "invalid HttpPort" stop "$(config "invalid$RANDOM" "$spelling")" true
 done
@@ -110,10 +121,10 @@ done
 TIMEOUT=abc expect "InvalidTimeout" 2 "must be a number" stop "$free" true
 expect "Usage" 2 "Usage" stop "$free"
 
-# The stop command removes the PID file at once, and the process exits two seconds later.
+# The stand-in stop command empties the PID file at once, and the process exits two seconds later.
 slow=$(config slow "HttpPort: $port")
 standin "$slow" sleep 2
-expect "StopWaitsForExit" 0 "Port $port is free" stop "$slow" rm -f "$slow/photoprism.pid"
+expect "StopWaitsForExit" 0 "Port $port is free" stop "$slow" truncate -s 0 "$slow/photoprism.pid"
 
 if kill -0 "${pids[-1]}" 2>/dev/null; then
   echo "FAIL StopWaitsForExit: returned before the process exited"

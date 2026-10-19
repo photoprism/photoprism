@@ -19,7 +19,7 @@ import (
 // flags for nodes mod
 var (
 	nodesModRoleFlag    = &cli.StringFlag{Name: "role", Aliases: []string{"t"}, Usage: "node `ROLE` (portal, instance, service)"}
-	nodesModInternal    = &cli.StringFlag{Name: "advertise-url", Aliases: []string{"i"}, Usage: "internal service `URL`"}
+	nodesModInternal    = &LocalStringFlag{&cli.StringFlag{Name: "advertise-url", Aliases: []string{"i"}, Usage: "internal service `URL`"}}
 	nodesModLabel       = &cli.StringSliceFlag{Name: "label", Aliases: []string{"l"}, Usage: "`k=v` label (repeatable)"}
 	nodesModDisplayName = &cli.StringFlag{Name: "display-name", Aliases: []string{"d"}, Usage: "human-friendly display `NAME` (admin override; empty clears it)"}
 )

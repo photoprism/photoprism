@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -63,7 +64,7 @@ func usersModAction(ctx *cli.Context) error {
 			} else if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
 				return err
 			} else if !restore {
-				return fmt.Errorf("user already exists")
+				return authn.ErrUserAlreadyExists
 			}
 
 			m.DeletedAt = entity.DeletedAt{}

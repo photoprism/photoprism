@@ -96,7 +96,9 @@ func AlbumCoverByUID(uid string, excludePrivate bool) (file entity.File, err err
 
 		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: sortby.Relevance, Count: 1, Offset: 0, Merged: false}
 
-		if err = f.ParseQueryString(); err != nil {
+		if err = f.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+			return file, fmt.Errorf("no cover found")
+		} else if err != nil {
 			return file, err
 		}
 
@@ -309,7 +311,9 @@ func AlbumsPhotoUIDs(albums []string, includeDefault, includePrivate bool) (phot
 			Quality:  1,
 		}
 
-		if err := frm.ParseQueryString(); err != nil {
+		if err := frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+			continue
+		} else if err != nil {
 			return photos, err
 		}
 

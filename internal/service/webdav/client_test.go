@@ -1,6 +1,7 @@
 package webdav
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -11,7 +12,9 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
+	"github.com/emersion/go-webdav"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -41,6 +44,7 @@ type testWebDAVServerOptions struct {
 	redirectSlashlessDepthOne  bool
 	requireBasicAuthOnDepthOne bool
 	requestPathPrefix          string
+	prefixHrefs                bool
 }
 
 // testWebDAVTree defines the depth-1 PROPFIND responses returned by the test server.
@@ -159,6 +163,18 @@ func newTestWebDAVServerWithOptions(options testWebDAVServerOptions) *httptest.S
 		if len(entries) == 0 {
 			http.Error(w, "not found", http.StatusNotFound)
 			return
+		}
+
+		// Servers return paths that include the endpoint path.
+		if prefix := strings.TrimRight(options.requestPathPrefix, "/"); prefix != "" && options.prefixHrefs {
+			prefixed := make([]testWebDAVEntry, len(entries))
+
+			for i, entry := range entries {
+				prefixed[i] = entry
+				prefixed[i].Href = prefix + entry.Href
+			}
+
+			entries = prefixed
 		}
 
 		w.Header().Set("Content-Type", "application/xml; charset=utf-8")
@@ -435,6 +451,34 @@ func TestClient_DirectoriesDepthFallback(t *testing.T) {
 		require.NoError(t, err)
 		assert.ElementsMatch(t, expected, dirs.Abs())
 	})
+	t.Run("EndpointPathInHrefs", func(t *testing.T) {
+		// Paths are checked below the endpoint path, whose own names may look hidden.
+		for _, rejectInfinity := range []bool{false, true} {
+			server := newTestWebDAVServerWithOptions(testWebDAVServerOptions{
+				rejectInfinity:    rejectInfinity,
+				requestPathPrefix: "/~user/.dav",
+				prefixHrefs:       true,
+			})
+			t.Cleanup(server.Close)
+
+			client, err := NewClient(server.URL+"/~user/.dav/", "", "", TimeoutLow, "")
+			require.NoError(t, err)
+
+			dirs, err := client.Directories("", true, MaxRequestDuration)
+			require.NoError(t, err)
+			assert.ElementsMatch(t, expected, dirs.Abs(), "rejectInfinity=%t", rejectInfinity)
+
+			if !rejectInfinity {
+				files, err := client.Files("Photos", false)
+				require.NoError(t, err)
+				assert.NotEmpty(t, files)
+
+				for _, f := range files {
+					assert.True(t, strings.HasPrefix(f.Abs, "/Photos/"), f.Abs)
+				}
+			}
+		}
+	})
 }
 
 func TestClient_DirectoriesDepthFallback_DeduplicatesEntries(t *testing.T) {
@@ -706,6 +750,21 @@ func TestClient_Upload(t *testing.T) {
 			w.WriteHeader(http.StatusForbidden)
 		case "failed.jpg":
 			w.WriteHeader(http.StatusInternalServerError)
+		case "toolarge.mp4":
+			w.WriteHeader(http.StatusRequestEntityTooLarge)
+		case "unsupported.heic":
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+		case "conflict.jpg":
+			w.WriteHeader(http.StatusConflict)
+		case "unauthorized.jpg":
+			w.WriteHeader(http.StatusUnauthorized)
+		case "busy.jpg":
+			w.WriteHeader(http.StatusTooManyRequests)
+		case "full.jpg":
+			w.WriteHeader(http.StatusInsufficientStorage)
+		case "moved.jpg":
+			w.Header().Set("Location", "/dav/elsewhere.jpg")
+			w.WriteHeader(http.StatusPermanentRedirect)
 		case "redirect.jpg":
 			http.Redirect(w, r, "/dav/elsewhere.jpg", http.StatusFound)
 		case "elsewhere.jpg":
@@ -744,6 +803,26 @@ func TestClient_Upload(t *testing.T) {
 		require.Error(t, err)
 		assert.NotErrorIs(t, err, ErrForbidden)
 		assert.Contains(t, err.Error(), "500 Internal Server Error")
+	})
+	t.Run("Unavailable", func(t *testing.T) {
+		// Failures caused by the remote rather than the file are reported as unavailable.
+		for name, unavailable := range map[string]bool{"failed.jpg": true, "unauthorized.jpg": true, "busy.jpg": true,
+			"full.jpg": true, "redirect.jpg": true, "moved.jpg": true, "toolarge.mp4": false, "unsupported.heic": false, "conflict.jpg": false,
+			"forbidden.yml": false} {
+			err := client.Upload(src, "folder/"+name)
+			require.Error(t, err, name)
+			assert.Equal(t, unavailable, errors.Is(err, ErrUnavailable), name)
+		}
+		err := client.Upload(src+".missing", "folder/missing.jpg")
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrUnavailable)
+
+		// A connection that fails is unavailable as well.
+		closed := httptest.NewServer(http.NotFoundHandler())
+		closed.Close()
+		offline, err := NewClient(closed.URL+"/dav/", testUser, testPass, TimeoutLow, "")
+		require.NoError(t, err)
+		assert.ErrorIs(t, offline.Upload(src, "folder/offline.jpg"), ErrUnavailable)
 	})
 	t.Run("LongNameKeepsStatus", func(t *testing.T) {
 		// The name is bounded, so the reason after it survives a stored error of txt.ClipError bytes.
@@ -826,4 +905,56 @@ func TestClient_LongNameKeepsReason(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, clean.ErrorBytes(err, txt.ClipError), "not found")
 	})
+}
+
+func TestTempSink(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		name := tempSink("/originals/2030/photo.jpg")
+		assert.True(t, strings.HasPrefix(name, "/originals/2030/photo.jpg."), name)
+		assert.True(t, strings.HasSuffix(name, ".tmp"), name)
+	})
+	t.Run("LongNameOnARuneBoundary", func(t *testing.T) {
+		// The suffix leaves 242 bytes for the base, which ends inside a 3-byte character here.
+		base := strings.Repeat("あ", 81) + ".jpg"
+		name := tempSink(filepath.Join("/originals", base))
+		assert.LessOrEqual(t, len(filepath.Base(name)), fs.NameMaxLen)
+		assert.True(t, utf8.ValidString(name), "%q", name)
+		assert.True(t, strings.HasSuffix(name, ".tmp"), name)
+		assert.Equal(t, strings.Repeat("あ", 80), strings.SplitN(filepath.Base(name), ".", 2)[0])
+	})
+}
+
+func TestClient_DeleteHidden(t *testing.T) {
+	var deleted []string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodDelete {
+			deleted = append(deleted, r.URL.Path)
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	t.Cleanup(server.Close)
+
+	client, err := NewClient(server.URL+"/", "", "", TimeoutLow, "")
+	require.NoError(t, err)
+
+	// Copies in folders that are hidden locally can be removed, dot-directories and unsafe paths cannot.
+	require.NoError(t, client.Delete("/@Family/x.jpg"))
+	assert.ErrorIs(t, client.Delete("/.git/config"), ErrSkipPath)
+	assert.ErrorIs(t, client.Delete("/Photos/../x.jpg"), ErrUnsafePath)
+	assert.Equal(t, []string{"/@Family/x.jpg"}, deleted)
+}
+
+func TestAppendTraversalDirs(t *testing.T) {
+	found := []webdav.FileInfo{
+		{Path: "/dav/", IsDir: true},
+		{Path: "/dav/Photos/", IsDir: true},
+		{Path: "/dav/.locks/", IsDir: true},
+		{Path: "/dav/@Family/", IsDir: true},
+		{Path: "/dav/a\\..\\..\\bob/", IsDir: true},
+		{Path: "/dav/Photos/x.jpg"},
+	}
+
+	queue := appendTraversalDirs(nil, "", "/dav/", found, map[string]bool{"": true})
+	assert.Equal(t, []string{"Photos", "@Family"}, queue)
 }

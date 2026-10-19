@@ -101,6 +101,8 @@ func TestClientsResetCommand(t *testing.T) {
 		assert.Equal(t, 1, countPasswordRows(t, aliceUID))
 		assert.Equal(t, 1, countPasswordRows(t, otherPw.UID))
 
+		seedAppGrant(t)
+
 		// Run command with test context.
 		output, err := RunWithTestContext(ClientsResetCommand, []string{"reset"})
 
@@ -132,6 +134,10 @@ func TestClientsResetCommand(t *testing.T) {
 		assert.Equal(t, 0, countPasswordRows(t, deletedClient.ClientUID))
 		assert.Equal(t, 1, countPasswordRows(t, aliceUID))
 		assert.Equal(t, 1, countPasswordRows(t, otherPw.UID))
+
+		grants, codes := countAppGrants(t, c.Db())
+		assert.Zero(t, grants)
+		assert.Zero(t, codes)
 
 		entity.CreateClientFixtures()
 		entity.CreatePasswordFixtures()

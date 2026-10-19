@@ -48,6 +48,11 @@ func TestIsHiddenPath(t *testing.T) {
 	assert.True(t, isHiddenPath("/.locks/upload.tmp"))
 	assert.True(t, isHiddenPath("/Photos/.staging/incomplete.jpg"))
 	assert.False(t, isHiddenPath("/Photos/cover.jpg"))
+
+	// Other names that are hidden locally are not hidden remotely.
+	for _, name := range []string{"/@Family/x.jpg", "/Photos/@eaDir/x.jpg", "/__MACOSX/x.jpg", "/Photos/_.x.jpg", "/$RECYCLE.BIN/x.jpg", "~home"} {
+		assert.False(t, isHiddenPath(name), name)
+	}
 }
 
 // TestClient_FilesRejectTraversalEntries verifies that files whose remote href

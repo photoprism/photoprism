@@ -59,6 +59,8 @@ func TestUsersResetCommand(t *testing.T) {
 		require.NotNil(t, entity.FindPassword(aliceUID))
 		_, clientSecrets := countResetTestPasswords(t, c.Db())
 
+		seedAppGrant(t)
+
 		dbDrv := os.Getenv("PHOTOPRISM_TEST_DRIVER")
 		dbDSN := os.Getenv("PHOTOPRISM_TEST_DSN")
 		// Run command with test context.
@@ -91,6 +93,10 @@ func TestUsersResetCommand(t *testing.T) {
 			return
 		}
 		assert.Equal(t, int64(0), count)
+
+		grants, codes := countAppGrants(t, c.Db())
+		assert.Zero(t, grants)
+		assert.Zero(t, codes)
 
 		// The client applications registered to users are deleted with the accounts.
 		remaining, otherClients := int64(1), int64(0)

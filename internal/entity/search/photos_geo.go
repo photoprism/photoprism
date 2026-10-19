@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"fmt"
 	"path"
 	"strings"
@@ -39,8 +40,12 @@ func PhotosGeo(frm form.SearchPhotosGeo) (results GeoResults, err error) {
 func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoResults, err error) {
 	start := time.Now()
 
-	// Parse query string and filter.
-	if err = frm.ParseQueryString(); err != nil {
+	// Parse query string and filter. A search that can match nothing still runs the scope check below.
+	noMatch := false
+
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		noMatch = true
+	} else if err != nil {
 		log.Debugf("search: %s", err)
 		return GeoResults{}, ErrBadRequest
 	}
@@ -121,15 +126,18 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		} else if album.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = FALSE AND photos_albums.album_uid = ?", album.AlbumUID)
-		} else if formErr := form.Unserialize(&frm, album.AlbumFilter); formErr != nil {
+		} else if filterNoMatch, formErr := form.UnserializeFilter(&frm, album.AlbumFilter); formErr != nil {
 			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(album.AlbumFilter))
 			return GeoResults{}, ErrBadFilter
 		} else {
 			frm.Filter = album.AlbumFilter
 
-			// Folder albums show the pictures in their folder, compared by exact path.
+			// Folder albums show the pictures in their folder, compared by exact path. Folder albums whose
+			// folder is unknown, and other albums whose stored filter can match nothing, show no pictures.
 			if p := folderAlbumPath(album); p != "" {
 				frm.Path = p
+			} else if filterNoMatch || album.AlbumType == entity.AlbumFolder {
+				noMatch = true
 			}
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
 		}
@@ -181,6 +189,10 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR "+clean.SqlPrefixCond(entity.DbDialect(), true, "photos.photo_path"), args...)
 			}
 		}
+	}
+
+	if noMatch {
+		return GeoResults{}, nil
 	}
 
 	// Sort results by time, unless the "Near" filter is used together with "nearLat" and "nearLng".
@@ -242,7 +254,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		include, exclude, sawPositive, labelErr := entity.ParseLabelFilter(frm.Label)
 
 		if labelErr != nil || (sawPositive && len(include) == 0) {
-			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
+			log.Debugf("search: label %s not found", clean.LogLower(frm.Label))
 			return GeoResults{}, nil
 		}
 
@@ -335,7 +347,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	// Filter by label, label category, and keywords.
 	if frm.Query != "" {
 		if labelIds, labelsErr := entity.FindLabelIDs(frm.Query, " ", true); labelsErr != nil || len(labelIds) == 0 {
-			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(frm.Query))
+			log.Tracef("search: label %s not found, using fuzzy search", clean.LogLower(frm.Query))
 
 			wheres, values := LikeAnyKeyword("k.keyword", frm.Query, false)
 			for i, where := range wheres {

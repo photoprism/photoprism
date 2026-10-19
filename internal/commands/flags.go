@@ -9,6 +9,20 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/search"
 )
 
+// LocalStringFlag is a string flag that has the name of a config flag but a different meaning, so that
+// its value does not apply to the config (see config.LocalFlag).
+type LocalStringFlag struct {
+	*cli.StringFlag
+}
+
+// LocalFlag marks the flag as a config.LocalFlag.
+func (*LocalStringFlag) LocalFlag() {}
+
+// Unwrap returns the wrapped string flag.
+func (f *LocalStringFlag) Unwrap() cli.Flag {
+	return f.StringFlag
+}
+
 // JsonFlag returns the shared CLI flag definition for JSON output across commands.
 func JsonFlag() *cli.BoolFlag {
 	return &cli.BoolFlag{Name: "json", Aliases: []string{"j"}, Usage: "print machine-readable JSON"}

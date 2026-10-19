@@ -405,6 +405,9 @@ func (m *Client) Delete() (err error) {
 		return err
 	}
 
+	// Removing an app client ends the grants of the users who connected it.
+	DeleteClientGrants(m.ClientUID)
+
 	if err = m.DeleteSecret(); err != nil {
 		return err
 	}
@@ -521,6 +524,8 @@ func (m *Client) Purge() (err error) {
 	if _, err = m.DeleteSessions(); err != nil {
 		return err
 	}
+
+	DeleteClientGrants(m.ClientUID)
 
 	// The client UID becomes available again, so its stored secret does not outlive it.
 	if err = m.DeleteSecret(); err != nil {
@@ -868,7 +873,37 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 		m.AuthTokens = -1
 	}
 
+	// Set the callback URLs of app clients, which authenticate without a client secret.
+	if frm.RedirectURIs != nil {
+		data := m.GetData()
+		data.RedirectURIs = frm.RedirectURIs
+		m.SetData(data)
+	}
+
+	if m.IsApp() {
+		m.ClientType = authn.ClientPublic
+		m.ClientRole = acl.RoleClient.String()
+	}
+
 	return m
+}
+
+// IsApp reports whether this is an app client that users connect with the authorization code flow.
+func (m *Client) IsApp() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.Method() == authn.MethodPKCE
+}
+
+// RedirectURIs returns the registered callback URLs of the client.
+func (m *Client) RedirectURIs() []string {
+	if m == nil {
+		return nil
+	}
+
+	return m.GetData().RedirectURIs
 }
 
 // Validate checks the client application properties before saving them.
@@ -896,6 +931,16 @@ func (m *Client) Validate() (err error) {
 	// Empty authorization scope?
 	if m.AuthScope == "" {
 		return errors.New("authorization scope must not be empty")
+	}
+
+	// App clients need at least one callback URL.
+	if m.IsApp() && len(m.RedirectURIs()) == 0 {
+		return errors.New("app clients require at least one callback URL")
+	}
+
+	// App client data, which holds the callback URLs, exceeds the column size?
+	if m.IsApp() && len(m.DataJSON) > ClientDataMaxBytes {
+		return errors.New("client data is too large")
 	}
 
 	return nil

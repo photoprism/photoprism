@@ -3,10 +3,41 @@ package fs
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestClipName(t *testing.T) {
+	t.Run("Short", func(t *testing.T) {
+		assert.Equal(t, "photo.jpg", ClipName("photo.jpg", 9))
+		assert.Equal(t, "", ClipName("", 5))
+	})
+	t.Run("ASCII", func(t *testing.T) {
+		assert.Equal(t, "phot", ClipName("photo.jpg", 4))
+	})
+	t.Run("RuneBoundary", func(t *testing.T) {
+		// Each character is 3 bytes long, so a cut inside one keeps the characters before it.
+		name := strings.Repeat("\u3042", 4)
+		for maxLen, want := range map[int]string{12: name, 11: name[:9], 10: name[:9], 9: name[:9], 8: name[:6], 2: "", 1: ""} {
+			got := ClipName(name, maxLen)
+			assert.Equal(t, want, got, "maxLen %d", maxLen)
+			assert.True(t, utf8.ValidString(got))
+		}
+		assert.Equal(t, "a\U0001F600"[:1], ClipName("a\U0001F600b", 4))
+		assert.Equal(t, "a\U0001F600", ClipName("a\U0001F600b", 5))
+	})
+	t.Run("InvalidUTF8", func(t *testing.T) {
+		// Continuation bytes without a start are cut at the limit.
+		assert.Equal(t, "\x80\x80\x80\x80", ClipName("\x80\x80\x80\x80\x80\x80", 4))
+	})
+	t.Run("NoRoom", func(t *testing.T) {
+		assert.Equal(t, "", ClipName("photo.jpg", 0))
+		assert.Equal(t, "", ClipName("photo.jpg", -1))
+	})
+}
 
 func TestRelName(t *testing.T) {
 	t.Run("Same", func(t *testing.T) {
@@ -154,6 +185,15 @@ func TestFileNameHidden(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/@path/ea@Dir"))
 		assert.False(t, FileNameHidden("@/eaDir"))
 	})
+	t.Run("DollarTilde", func(t *testing.T) {
+		assert.True(t, FileNameHidden("/media/$RECYCLE.BIN"))
+		assert.True(t, FileNameHidden("$"))
+		assert.True(t, FileNameHidden("/some/~$report.docx"))
+		assert.True(t, FileNameHidden("~"))
+		assert.False(t, FileNameHidden("/some/price$5.jpg"))
+		assert.False(t, FileNameHidden("/some/a~b.jpg"))
+		assert.False(t, FileNameHidden("/~home/a.jpg"))
+	})
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/path/folder"))
 	})
@@ -162,6 +202,19 @@ func TestFileNameHidden(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.False(t, FileNameHidden(""))
+	})
+}
+
+func TestFileNameSystem(t *testing.T) {
+	t.Run("System", func(t *testing.T) {
+		for _, name := range []string{"/some/.folder", "/some/path/@eaDir", "_.folder", "__MACOSX", "."} {
+			assert.True(t, FileNameSystem(name), name)
+		}
+	})
+	t.Run("Other", func(t *testing.T) {
+		for _, name := range []string{"/media/$RECYCLE.BIN", "~$report.docx", "~", "_folder", "a", ""} {
+			assert.False(t, FileNameSystem(name), name)
+		}
 	})
 }
 
@@ -182,5 +235,23 @@ func TestFilePath_InSearchDir(t *testing.T) {
 		result, err := FilePath("/originals/.photoprism/sidecar/2024/x.mp4", "/originals/.photoprism/sidecar", "/originals", ".jpg")
 		assert.NoError(t, err)
 		assert.Equal(t, "/originals/.photoprism/sidecar/.photoprism/sidecar/2024/x.mp4.jpg", result)
+	})
+}
+
+func TestNameTooLong(t *testing.T) {
+	name := strings.Repeat("n", NameMaxLen)
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, NameTooLong(""))
+		assert.False(t, NameTooLong("/"))
+		assert.False(t, NameTooLong("//a//"))
+	})
+	t.Run("AtLimit", func(t *testing.T) {
+		assert.False(t, NameTooLong(name))
+		assert.False(t, NameTooLong("/"+name+"/"+name+"/"))
+	})
+	t.Run("OverLimit", func(t *testing.T) {
+		assert.True(t, NameTooLong(name+"n"))
+		assert.True(t, NameTooLong("/"+name+"n/file.jpg"))
+		assert.True(t, NameTooLong("/folder/"+name+"n"))
 	})
 }

@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -25,7 +26,12 @@ func Albums(frm form.SearchAlbums) (results AlbumResults, err error) {
 func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResults, err error) {
 	start := time.Now()
 
-	if err = frm.ParseQueryString(); err != nil {
+	// A search that can match nothing still runs the permission check below.
+	noMatch := false
+
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		noMatch = true
+	} else if err != nil {
 		log.Debugf("albums: %s", err)
 		return AlbumResults{}, err
 	}
@@ -95,6 +101,10 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			frm.Public = true
 			frm.Private = false
 		}
+	}
+
+	if noMatch {
+		return AlbumResults{}, nil
 	}
 
 	// Set sort order.

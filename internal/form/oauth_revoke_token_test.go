@@ -155,3 +155,21 @@ func TestOAuthRevokeToken_JSON(t *testing.T) {
 	assert.Equal(t, SessionID, m.TokenTypeHint)
 	assert.False(t, m.Empty())
 }
+
+func TestOAuthRevokeToken_RefreshToken(t *testing.T) {
+	token := rnd.RefreshToken(rnd.GenerateUID('g'))
+
+	t.Run("Detected", func(t *testing.T) {
+		f := OAuthRevokeToken{Token: token}
+		assert.NoError(t, f.Validate())
+		assert.Equal(t, RefreshToken, f.TokenTypeHint)
+	})
+	t.Run("Hint", func(t *testing.T) {
+		f := OAuthRevokeToken{Token: token, TokenTypeHint: RefreshToken}
+		assert.NoError(t, f.Validate())
+	})
+	t.Run("InvalidWithHint", func(t *testing.T) {
+		f := OAuthRevokeToken{Token: rnd.AuthToken(), TokenTypeHint: RefreshToken}
+		assert.Error(t, f.Validate())
+	})
+}

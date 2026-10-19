@@ -16,7 +16,7 @@ type Service struct {
 	AccUser       string `json:"AccUser"`
 	AccPass       string `json:"AccPass"`
 	AccTimeout    string `json:"AccTimeout"` // Request timeout: default, high, medium, low, none
-	AccError      string `json:"AccError"`
+	AccError      string `json:"AccError"`   // Read only, except that an empty value clears it.
 	AccShare      bool   `json:"AccShare"`   // Manual upload enabled, see SharePath, ShareSize, and ShareExpires.
 	AccSync       bool   `json:"AccSync"`    // Background sync enabled, see SyncDownload and SyncUpload.
 	RetryLimit    int    `json:"RetryLimit"` // Maximum number of failed requests.

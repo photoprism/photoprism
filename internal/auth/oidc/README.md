@@ -1,6 +1,6 @@
 ## PhotoPrism — OIDC Integration
 
-**Last Updated:** October 8, 2026
+**Last Updated:** October 17, 2026
 
 ### Overview
 
@@ -43,7 +43,7 @@
 
 - `internal/server/routes.go` registers the OIDC auth and callback endpoints.
 - `pkg/authn` defines required scopes and shared auth helpers.
-- `internal/auth/acl` and private extension LDAP packages (`pro/internal/auth/ldap`, `portal/internal/auth/ldap`) handle role/group mapping; the planned OIDC group parsing will mirror this logic.
+- `internal/auth/acl` and private extension LDAP packages (`pro/internal/auth/ldap`, `portal/internal/auth/ldap`) handle role/group mapping; OIDC group parsing in `groups.go` follows the same normalization.
 - `internal/config` provides OIDC options/flags (issuer, client ID/secret, scopes, insecure).
 - `internal/event` supplies the logger used for audit and error reporting.
 
@@ -74,6 +74,8 @@ The following features are supported by the current implementation:
 - Reads security groups from the `groups` claim in ID or access tokens; accepts GUIDs or names (case-insensitive, sanitized via `NormalizeGroupID`).
 - Optional required membership: `--oidc-group` (or `PHOTOPRISM_OIDC_GROUP`) lists one or more groups that must be present; login is rejected if none match. If the token signals overage via `_claim_names.groups` and contains no groups, login is denied with an audit entry explaining that membership could not be validated.
 - Group-to-role mapping: `--oidc-group-role` (`GROUP=ROLE`, repeatable) assigns the first matching role; falls back to `--oidc-role` (default `guest`) when no mapping matches.
+- Tokens issued by a PhotoPrism Portal (`pp_issuer_kind` = `portal`) carry the instance role in `pp_role`, which takes precedence over `--oidc-group-role` and `--oidc-role`. A role this edition does not have is replaced by the strongest role it has that grants no more access (`PortalGrantedRole`), and any other value by `guest`.
+- On sign-in, the role of an existing account is updated to the Portal-granted or group-mapped role and the change is audited; super admins keep their role, and a promotion the user quota does not allow is not applied. A new account is checked against the quota with the role it receives.
 - Keeps app/directory roles (`roles`, `wids`) separate from security groups to avoid accidental privilege escalation.
 - Claim name is configurable via `--oidc-group-claim` (default `groups`).
 - On Portal builds, persists the merged, normalized group set from the ID token and userinfo on the login session (`entity.SessionData.Groups`), so the Portal can evaluate group-based cluster access at authorize time without another IdP round-trip. Instance and CE sessions never store groups, and the session API responses redact the field (`SessionData.Redacted`), so group membership is not exposed to clients.
@@ -81,8 +83,8 @@ The following features are supported by the current implementation:
 #### Configuration Options
 
 - `--oidc-group-claim` / `PHOTOPRISM_OIDC_GROUP_CLAIM`: claim to read (default `groups`).
-- `--oidc-group` / `PHOTOPRISM_OIDC_GROUP`: comma- or multi-flag list of groups required for login (IDs or names accepted, normalized to lowercase alphanumerics/hyphen/underscore).
-- `--oidc-group-role` / `PHOTOPRISM_OIDC_GROUP_ROLE`: mapping `GROUP=ROLE` (roles: `admin|manager|user|contributor|viewer|guest|none`). First match wins.
+- `--oidc-group` / `PHOTOPRISM_OIDC_GROUP`: comma- or multi-flag list of groups required for login (IDs or names accepted; normalized with `NormalizeGroupID`, which lowercases them and removes control characters, `<`, `>`, and leading or trailing spaces, so other characters such as spaces, dots, commas, and `=` are kept; an ID with more than 255 characters or 510 bytes is not a valid group ID; if none of the listed IDs is valid, every login is refused).
+- `--oidc-group-role` / `PHOTOPRISM_OIDC_GROUP_ROLE`: mapping `GROUP=ROLE` (roles: `admin|manager|user|contributor|viewer|guest`). First match wins. Entries are separated by commas or whitespace, so map a group whose ID contains a space by its GUID or another ID without spaces; an entry whose group ID is not valid is skipped.
 - `--oidc-role` / `PHOTOPRISM_OIDC_ROLE`: fallback role if no group mapping matches (defaults to `guest`).
 
 #### Integration Guide for Entra ID
@@ -103,9 +105,9 @@ The following features are supported by the current implementation:
    PHOTOPRISM_OIDC_GROUP_ROLE="photoprism-admins=admin, photoprism-users=user"
    ```
 8. Restart PhotoPrism; on login the service will:
-   - Read groups from ID token, then fall back to userinfo if absent.
+   - Read groups from the ID token and the userinfo response and merge them.
    - Deny login if required groups are configured but none are present (and overage is signaled).
-   - Apply the first matching group→role mapping; otherwise assign the fallback role.
+   - Give new accounts the first matching group→role mapping, otherwise the fallback role; update existing accounts other than super admins to a matching mapped role.
 
 Please note:
 

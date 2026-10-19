@@ -7,15 +7,15 @@ import (
 )
 
 // AttachmentName returns a file name for a download or archive entry: whitespace controls become a space,
-// path separators become an underscore, other control and non-printable characters are removed, and
-// the extension and other non-ASCII characters are kept. Leading dots are removed, and a name without
-// a stem is named "download".
+// path separators and other characters Windows does not allow in names become an underscore, other control
+// and non-printable characters are removed, and the extension and non-ASCII characters are kept. Leading
+// dots are removed, and a name without a stem is named "download".
 func AttachmentName(s string) string {
 	s = strings.Map(func(r rune) rune {
 		switch {
 		case r == '\t', r == '\n', r == '\v', r == '\f', r == '\r':
 			return ' '
-		case r == '/', r == '\\':
+		case r == '/', r == '\\', r == ':', r == '*', r == '?', r == '"', r == '<', r == '>', r == '|':
 			return '_'
 		case unsafeDropRune(r):
 			return -1

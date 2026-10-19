@@ -20,7 +20,7 @@
 
 ### Package Layout (Code Map)
 
-- Indexing/import: `index.go`, `index_main.go`, `index_mediafile.go`, `index_related.go`, `import_worker.go`, `files.go`, `photos.go`.
+- Indexing/import: `index.go`, `index_main.go`, `index_mediafile.go`, `index_related.go`, `import.go`, `import_worker.go`, `unportable.go`, `files.go`, `photos.go`.
 - Media files & helpers: `mediafile*.go`, `mediafile_thumbs.go`, `mediafile_vision.go`, `convert_*.go`, `colors.go`, `label.go`.
 - Media exports: `export.go` probes the selected source; `export_video.go` verifies standard full-name AVC sidecars and serves embedded motion video directly. `convert_video_coordinate.go` coordinates AVC publication across Export and playback.
 - 360° originals: `mediafile_insta360.go` and `mediafile_projection.go` detect fisheye/dual-fisheye sources, `convert_image*.go` / `convert_video_avc.go` dewarp them to equirectangular derivatives, `index_mediafile.go` stacks late lens and proxy files by their stack name (`fs.StackPrefix`), and `index_insta360.go` merges photos that older versions created for separate lens files whenever a capture is indexed in rescan mode, keeping the lowest-ID photo's archive state. `import_worker.go` recognizes imported captures by their original names and rebuilds their combined preview after indexing.

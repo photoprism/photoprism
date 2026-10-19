@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -700,6 +702,119 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, wrote)
 	})
+	t.Run("SaveClusterOptionsUpdateReplacesDSN", func(t *testing.T) {
+		newConfig := func(t *testing.T) *Config {
+			t.Helper()
+			c := NewConfig(CliTestContext())
+			c.options.ConfigPath = t.TempDir()
+			c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+			c.options.DatabaseDriver = dsn.DriverMySQL
+			c.options.DatabaseDSN = "pp_user:old_pw@tcp(db.local:3306)/pp_db?parseTime=true"
+
+			b, err := yaml.Marshal(map[string]any{"DatabaseDSN": c.options.DatabaseDSN, "DatabaseDsn": "legacy"})
+			require.NoError(t, err)
+			require.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+			return c
+		}
+
+		readOptions := func(t *testing.T, c *Config) map[string]any {
+			t.Helper()
+			content, err := os.ReadFile(c.OptionsYaml())
+			require.NoError(t, err)
+
+			var merged map[string]any
+			require.NoError(t, yaml.Unmarshal(content, &merged))
+
+			return merged
+		}
+
+		// Separate settings remove a stored DSN, which would otherwise take precedence over them.
+		c := newConfig(t)
+		update := cluster.OptionsUpdate{}
+		update.SetDatabaseName("pp_db")
+		update.SetDatabaseUser("pp_user")
+		update.SetDatabasePassword("new_pw")
+
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.True(t, wrote)
+
+		merged := readOptions(t, c)
+		assert.NotContains(t, merged, "DatabaseDSN")
+		assert.NotContains(t, merged, "DatabaseDsn")
+		assert.Equal(t, "new_pw", merged["DatabasePassword"])
+		assert.Equal(t, "", c.options.DatabaseDSN)
+		assert.Equal(t, "new_pw", c.DatabasePassword())
+
+		// An update without database settings, and a DSN update, keep a DSN.
+		c = newConfig(t)
+		update = cluster.OptionsUpdate{}
+		update.SetNodeClientID(cluster.ExampleClientID)
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.Contains(t, readOptions(t, c), "DatabaseDSN")
+		assert.NotEmpty(t, c.options.DatabaseDSN)
+
+		// A failed write keeps the DSN in memory.
+		c = newConfig(t)
+		require.NoError(t, os.Chmod(c.OptionsYaml(), 0o400))
+		require.NoError(t, os.Chmod(c.options.ConfigPath, 0o500))       //nolint:gosec // a directory needs the execute bit
+		t.Cleanup(func() { _ = os.Chmod(c.options.ConfigPath, 0o700) }) //nolint:gosec // a directory needs the execute bit
+
+		if f, openErr := os.OpenFile(c.OptionsYaml(), os.O_WRONLY, 0); openErr == nil {
+			_ = f.Close()
+			t.Log("skipping the failed write, since the directory is still writable (root)")
+		} else {
+			update = cluster.OptionsUpdate{}
+			update.SetDatabasePassword("new_pw")
+			_, err = c.SaveClusterOptionsUpdate(update)
+			require.Error(t, err)
+			assert.NotEmpty(t, c.options.DatabaseDSN)
+		}
+
+		require.NoError(t, os.Chmod(c.options.ConfigPath, 0o700)) //nolint:gosec // a directory needs the execute bit
+
+		// A DSN that is not in the file, e.g. from an environment variable, still applies.
+		hook := systemLogHook(t)
+		c = newConfig(t)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("SiteTitle: Example\n"), fs.ModeFile))
+		update = cluster.OptionsUpdate{}
+		update.SetDatabasePassword("new_pw")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.NotEmpty(t, c.options.DatabaseDSN)
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "takes precedence over the saved database settings")
+
+		// A DSN flag still applies on the next start, even though the saved DSN was removed.
+		hook.Reset()
+		c = newConfig(t)
+		c.cliCtx = dsnFlagContext(t, c.options.DatabaseDSN)
+		update = cluster.OptionsUpdate{}
+		update.SetDatabasePassword("new_pw")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.NotContains(t, readOptions(t, c), "DatabaseDSN")
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "takes precedence over the saved database settings")
+
+		// Without one, removing the saved DSN logs nothing.
+		hook.Reset()
+		c = newConfig(t)
+		update = cluster.OptionsUpdate{}
+		update.SetDatabasePassword("new_pw")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.Nil(t, hook.LastEntry())
+
+		c = newConfig(t)
+		update = cluster.OptionsUpdate{}
+		update.SetDatabaseDSN("pp_user:new_pw@tcp(db.local:3306)/pp_db?parseTime=true")
+		_, err = c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.Contains(t, readOptions(t, c)["DatabaseDSN"], "pp_user:new_pw@tcp(db.local:3306)/pp_db")
+	})
 	t.Run("SaveClusterOptionsUpdateInvalidUUID", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ConfigPath = t.TempDir()
@@ -716,12 +831,72 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.ConfigPath = t.TempDir()
 		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
 
+		hook := systemLogHook(t)
 		update := cluster.OptionsUpdate{}
 		update.SetDatabaseName("--option=value")
 		wrote, err := c.SaveClusterOptionsUpdate(update)
-		assert.EqualError(t, err, "invalid database name")
+		assert.NoError(t, err)
 		assert.False(t, wrote)
 		assert.NoFileExists(t, c.OptionsYaml())
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "ignored database settings (invalid database name)")
+	})
+	t.Run("SaveClusterOptionsUpdateSkipsInvalidDatabase", func(t *testing.T) {
+		// Refused database settings are skipped as a whole, and the rest of the update is saved without
+		// changing the stored database settings.
+		for reason, set := range map[string]func(*cluster.OptionsUpdate){
+			"invalid database driver": func(u *cluster.OptionsUpdate) { u.SetDatabaseDriver("sqlite") },
+			"invalid database name":   func(u *cluster.OptionsUpdate) { u.SetDatabaseName("db?x") },
+			"invalid database user":   func(u *cluster.OptionsUpdate) { u.SetDatabaseUser("-x") },
+			"invalid database server": func(u *cluster.OptionsUpdate) { u.SetDatabaseServer("/run/mysqld/mysqld.sock:3306") },
+			"invalid database dsn": func(u *cluster.OptionsUpdate) {
+				u.SetDatabaseDSN("pp_user:pp_pw@tcp(db.local:3306)/pp_db?tls=custom")
+			},
+		} {
+			t.Run(reason, func(t *testing.T) {
+				c := NewConfig(CliTestContext())
+				c.options.ConfigPath = t.TempDir()
+				c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+				stored := "pp_user:old_pw@tcp(db.local:3306)/pp_db?parseTime=true"
+				b, err := yaml.Marshal(map[string]any{"DatabaseDriver": dsn.DriverMySQL, "DatabaseDSN": stored})
+				require.NoError(t, err)
+				require.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+				c.options.DatabaseDSN = stored
+
+				hook := systemLogHook(t)
+				update := cluster.OptionsUpdate{}
+				update.SetNodeClientID(cluster.ExampleClientID)
+				update.SetNodeUUID("0198b8f6-6a8b-7c3d-9e0f-1a2b3c4d5e6f")
+				update.SetDatabaseDriver(dsn.DriverMySQL)
+				update.SetDatabaseName("pp_db")
+				update.SetDatabaseUser("pp_user")
+				update.SetDatabasePassword("new_pw")
+				update.SetDatabaseServer("db.local:3306")
+				set(&update)
+
+				wrote, err := c.SaveClusterOptionsUpdate(update)
+				require.NoError(t, err)
+				assert.True(t, wrote)
+				require.NotNil(t, hook.LastEntry())
+				assert.Contains(t, hook.LastEntry().Message, "ignored database settings ("+reason+")")
+
+				content, err := os.ReadFile(c.OptionsYaml())
+				require.NoError(t, err)
+
+				var merged map[string]any
+				require.NoError(t, yaml.Unmarshal(content, &merged))
+				assert.Equal(t, cluster.ExampleClientID, merged["NodeClientID"])
+				assert.Equal(t, "0198b8f6-6a8b-7c3d-9e0f-1a2b3c4d5e6f", merged["NodeUUID"])
+				assert.Equal(t, stored, merged["DatabaseDSN"])
+				assert.Equal(t, dsn.DriverMySQL, merged["DatabaseDriver"])
+
+				for _, key := range []string{"DatabaseName", "DatabaseUser", "DatabasePassword", "DatabaseServer"} {
+					assert.NotContains(t, merged, key)
+				}
+
+				assert.Equal(t, stored, c.options.DatabaseDSN)
+			})
+		}
 	})
 	t.Run("SaveClusterOptionsUpdateDSNParams", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -1120,28 +1295,54 @@ func TestConfig_JWTRotateDays(t *testing.T) {
 	})
 }
 
-// TestValidateClusterOptionsUpdate checks the values a cluster options update may carry.
+// TestValidateClusterOptionsUpdate checks the cluster values an options update may carry.
 func TestValidateClusterOptionsUpdate(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		update := cluster.OptionsUpdate{}
 		update.SetClusterUUID("4a47c940-d5de-41b3-88a2-eb816cc659ca")
+		update.SetNodeUUID("0198b8f6-6a8b-7c3d-9e0f-1a2b3c4d5e6f")
+		assert.NoError(t, validateClusterOptionsUpdate(update))
+		assert.NoError(t, validateClusterOptionsUpdate(cluster.OptionsUpdate{}))
+	})
+	t.Run("DatabaseIgnored", func(t *testing.T) {
+		// The database settings are validated separately, so they can be skipped without the rest.
+		update := cluster.OptionsUpdate{}
+		update.SetDatabaseDriver("sqlite")
+		update.SetDatabaseName("-x")
+		assert.NoError(t, validateClusterOptionsUpdate(update))
+	})
+	t.Run("InvalidUUID", func(t *testing.T) {
+		update := cluster.OptionsUpdate{}
+		update.SetNodeUUID("invalid-uuid")
+		assert.EqualError(t, validateClusterOptionsUpdate(update), "invalid node UUID")
+		update = cluster.OptionsUpdate{}
+		update.SetClusterUUID("invalid-uuid")
+		assert.EqualError(t, validateClusterOptionsUpdate(update), "invalid cluster UUID")
+	})
+}
+
+// TestValidateClusterDatabaseUpdate checks the database values a cluster options update may carry.
+func TestValidateClusterDatabaseUpdate(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		update := cluster.OptionsUpdate{}
+		update.SetClusterUUID("invalid-uuid")
 		update.SetDatabaseDriver("mysql")
 		update.SetDatabaseName("cluster_d0123456789a")
 		update.SetDatabaseUser("cluster_u0123456789a")
 		update.SetDatabaseServer("mariadb:4001")
 		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true")
-		assert.NoError(t, validateClusterOptionsUpdate(update))
+		assert.NoError(t, ValidateClusterDatabaseUpdate(update))
 		update.SetDatabaseDriver("MariaDB")
 		update.SetDatabaseName("photo-prism_2")
 		update.SetDatabaseServer("")
-		assert.NoError(t, validateClusterOptionsUpdate(update))
-		assert.NoError(t, validateClusterOptionsUpdate(cluster.OptionsUpdate{}))
+		assert.NoError(t, ValidateClusterDatabaseUpdate(update))
+		assert.NoError(t, ValidateClusterDatabaseUpdate(cluster.OptionsUpdate{}))
 	})
 	t.Run("InvalidDriver", func(t *testing.T) {
 		for _, driver := range []string{"", "sqlite", "postgres", "x"} {
 			update := cluster.OptionsUpdate{}
 			update.SetDatabaseDriver(driver)
-			assert.EqualError(t, validateClusterOptionsUpdate(update), "invalid database driver", "driver %q", driver)
+			assert.EqualError(t, ValidateClusterDatabaseUpdate(update), "invalid database driver", "driver %q", driver)
 		}
 	})
 	t.Run("InvalidDatabase", func(t *testing.T) {
@@ -1156,7 +1357,7 @@ func TestValidateClusterOptionsUpdate(t *testing.T) {
 			for _, value := range []string{"-x", "--option=value", " -x", "db?option=value", "db/x", "db@x"} {
 				update := cluster.OptionsUpdate{}
 				tc.set(&update, value)
-				assert.EqualError(t, validateClusterOptionsUpdate(update), tc.err, "value %q", value)
+				assert.EqualError(t, ValidateClusterDatabaseUpdate(update), tc.err, "value %q", value)
 			}
 		}
 	})
@@ -1165,19 +1366,17 @@ func TestValidateClusterOptionsUpdate(t *testing.T) {
 			"user:secret@tcp(mariadb:4001)/--option=value?parseTime=true": "invalid database name",
 			"-x:secret@tcp(mariadb:4001)/photoprism":                      "invalid database user",
 			"user:secret@tcp(--option=value)/photoprism":                  "invalid database server",
+			"user:secret@tcp(/run/mysqld/mysqld.sock:3306)/photoprism":    "invalid database server",
 			"user:secret@unix(/run/mysqld/mysqld.sock)/photoprism":        "invalid database dsn",
 			"/srv/photoprism/index.db":                                    "invalid database dsn",
 			"-x":                                                          "invalid database dsn",
+			"user:secret@tcp(:3306)/photoprism":                           "invalid database dsn",
+			"user:secret@tcp([]:3306)/photoprism":                         "invalid database dsn",
 		} {
 			update := cluster.OptionsUpdate{}
 			update.SetDatabaseDSN(dsnValue)
-			assert.EqualError(t, validateClusterOptionsUpdate(update), err, "dsn %q", dsnValue)
+			assert.EqualError(t, ValidateClusterDatabaseUpdate(update), err, "dsn %q", dsnValue)
 		}
-	})
-	t.Run("InvalidUUID", func(t *testing.T) {
-		update := cluster.OptionsUpdate{}
-		update.SetNodeUUID("invalid-uuid")
-		assert.EqualError(t, validateClusterOptionsUpdate(update), "invalid node UUID")
 	})
 }
 
@@ -1198,6 +1397,8 @@ func TestValidateClusterDatabase(t *testing.T) {
 	})
 	t.Run("InvalidServer", func(t *testing.T) {
 		assert.EqualError(t, validateClusterDatabase(nil, nil, str("mariadb:4001)/x")), "invalid database server")
+		assert.EqualError(t, validateClusterDatabase(nil, nil, str(":3306")), "invalid database server")
+		assert.EqualError(t, validateClusterDatabase(nil, nil, str("[]:3306")), "invalid database server")
 	})
 }
 
@@ -1336,4 +1537,67 @@ func TestConfig_DatabaseServerDSN(t *testing.T) {
 		assert.Equal(t, "db.example.com", c.DatabaseHost())
 		assert.Equal(t, 3307, c.DatabasePort())
 	})
+}
+
+func TestConfig_databaseDsnFromCli(t *testing.T) {
+	t.Run("NoContext", func(t *testing.T) {
+		assert.False(t, (&Config{}).databaseDsnFromCli())
+	})
+	t.Run("NotSet", func(t *testing.T) {
+		assert.False(t, (&Config{cliCtx: dsnFlagContext(t, "")}).databaseDsnFromCli())
+		assert.False(t, NewConfig(CliTestContext()).databaseDsnFromCli())
+	})
+	t.Run("Flag", func(t *testing.T) {
+		assert.True(t, (&Config{cliCtx: dsnFlagContext(t, "pp_user:pp_pw@tcp(db.local:3306)/pp_db")}).databaseDsnFromCli())
+	})
+}
+
+// dsnFlagContext returns a CLI context with the database-dsn flag, set to dsnValue unless it is empty.
+func dsnFlagContext(t *testing.T, dsnValue string) *cli.Context {
+	t.Helper()
+
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
+	flags.String("database-dsn", "", "doc")
+	ctx := cli.NewContext(cli.NewApp(), flags, nil)
+
+	if dsnValue != "" {
+		require.NoError(t, ctx.Set("database-dsn", dsnValue))
+	}
+
+	return ctx
+}
+
+func TestConfig_DatabaseDSNOverride(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "", (&Config{options: &Options{}}).DatabaseDSNOverride())
+	})
+	t.Run("Flag", func(t *testing.T) {
+		c := &Config{options: &Options{}, cliCtx: dsnFlagContext(t, "pp_user:pp_pw@tcp(db.local:3306)/pp_db")}
+		t.Setenv("PHOTOPRISM_DATABASE_DSN", "")
+		assert.Equal(t, "--database-dsn", c.DatabaseDSNOverride())
+	})
+	t.Run("EnvVar", func(t *testing.T) {
+		c := &Config{options: &Options{}, cliCtx: dsnFlagContext(t, "pp_user:pp_pw@tcp(db.local:3306)/pp_db")}
+		t.Setenv("PHOTOPRISM_DATABASE_DSN", "pp_user:pp_pw@tcp(db.local:3306)/pp_db")
+		assert.Equal(t, "PHOTOPRISM_DATABASE_DSN", c.DatabaseDSNOverride())
+	})
+	t.Run("EmptyValue", func(t *testing.T) {
+		// An empty DSN selects the separate settings, so it overrides nothing.
+		flags := flag.NewFlagSet("test", flag.ContinueOnError)
+		flags.String("database-dsn", "", "doc")
+		ctx := cli.NewContext(cli.NewApp(), flags, nil)
+		require.NoError(t, ctx.Set("database-dsn", ""))
+		require.True(t, ctx.IsSet("database-dsn"))
+		t.Setenv("PHOTOPRISM_DATABASE_DSN", "")
+		assert.Equal(t, "", (&Config{options: &Options{}, cliCtx: ctx}).DatabaseDSNOverride())
+	})
+}
+
+func TestDatabaseDsnInArgs(t *testing.T) {
+	for _, args := range [][]string{{"photoprism", "--database-dsn", "x"}, {"photoprism", "--dsn=x"}, {"photoprism", "-dsn", "x"}} {
+		assert.True(t, databaseDsnInArgs(args), "%v", args)
+	}
+	for _, args := range [][]string{{"photoprism"}, {"photoprism", "--database-name", "dsn"}, {"photoprism", "dsn"}, {"photoprism", "--dsn-file"}} {
+		assert.False(t, databaseDsnInArgs(args), "%v", args)
+	}
 }

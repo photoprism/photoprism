@@ -149,11 +149,12 @@ func TestSyncPathPolicy(t *testing.T) {
 		require.NoError(t, entity.NewFileSync(a.ID, name).Create())
 	}
 
+	// Every queued file is ignored, so no file is left to download and the stage completes.
 	before := transfers.Load()
 	complete, err = worker.download(a)
 
 	require.NoError(t, err)
-	assert.False(t, complete)
+	assert.True(t, complete)
 	assert.Equal(t, before, transfers.Load())
 
 	rows, err := query.FileSyncs(a.ID, entity.FileSyncNew, 1000)
@@ -169,7 +170,7 @@ func TestSyncPathPolicy(t *testing.T) {
 	a.SyncPath = ".config"
 	complete, err = worker.refresh(a)
 
-	require.NoError(t, err)
+	assert.Equal(t, syncNotice("sync folder is not supported"), err)
 	assert.True(t, complete)
 
 	beforeUnsafe := requests.Load()

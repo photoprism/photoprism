@@ -56,11 +56,12 @@ alive() {
   [[ "${name##*/}" == photoprism* ]]
 }
 
-# pid prints the process ID in the PID file if it belongs to a running PhotoPrism process.
+# pid prints the process ID in the PID file if it belongs to a running PhotoPrism process. An empty PID file means that
+# no server is running.
 pid() {
   local p=""
 
-  if [[ -f "$pidfile" ]]; then
+  if [[ -f "$pidfile" && -s "$pidfile" ]]; then
     p=$(tr -dc '0-9' < "$pidfile")
   fi
 
@@ -80,7 +81,7 @@ holder() {
 }
 
 if [[ "$mode" == "stop" ]]; then
-  # The PID file is removed before the process exits, so its ID is read before stopping.
+  # The stop command usually empties the PID file once the process has exited, so its ID is read before stopping.
   old=$(pid)
   "$@"
 

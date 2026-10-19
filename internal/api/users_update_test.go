@@ -69,6 +69,16 @@ func TestUpdateUser(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 		UpdateUser(router)
+
+		// The display name and upload path are restored, so later tests see the fixture.
+		stored := entity.FindUserByUID("uqxetse3cy5eo9z2")
+		require.NotNil(t, stored)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.Db().Model(&entity.User{}).Where("user_uid = ?", stored.UserUID).
+				UpdateColumns(entity.Values{"display_name": stored.DisplayName, "upload_path": stored.UploadPath}).Error)
+			entity.FlushUserSessionCache(stored.UserUID)
+		})
+
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
 		f := form.User{

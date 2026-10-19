@@ -1,6 +1,8 @@
 package form
 
 import (
+	"strings"
+
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -12,18 +14,19 @@ import (
 
 // Client represents client application settings.
 type Client struct {
-	UserUID      string `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
-	UserName     string `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
-	ClientID     string `json:"ClientID,omitempty" yaml:"ClientID,omitempty"`
-	ClientSecret string `json:"ClientSecret,omitempty" yaml:"ClientSecret,omitempty"` //nolint:gosec // G117: Expected credential field.
-	ClientName   string `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
-	ClientRole   string `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
-	AuthProvider string `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
-	AuthMethod   string `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
-	AuthScope    string `json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
-	AuthExpires  int64  `json:"AuthExpires,omitempty" yaml:"AuthExpires,omitempty"`
-	AuthTokens   int64  `json:"AuthTokens,omitempty" yaml:"AuthTokens,omitempty"`
-	AuthEnabled  bool   `json:"AuthEnabled,omitempty" yaml:"AuthEnabled,omitempty"`
+	UserUID      string   `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
+	UserName     string   `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
+	ClientID     string   `json:"ClientID,omitempty" yaml:"ClientID,omitempty"`
+	ClientSecret string   `json:"ClientSecret,omitempty" yaml:"ClientSecret,omitempty"` //nolint:gosec // G117: Expected credential field.
+	ClientName   string   `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
+	ClientRole   string   `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
+	AuthProvider string   `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string   `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
+	AuthScope    string   `json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
+	AuthExpires  int64    `json:"AuthExpires,omitempty" yaml:"AuthExpires,omitempty"`
+	AuthTokens   int64    `json:"AuthTokens,omitempty" yaml:"AuthTokens,omitempty"`
+	AuthEnabled  bool     `json:"AuthEnabled,omitempty" yaml:"AuthEnabled,omitempty"`
+	RedirectURIs []string `json:"RedirectURIs,omitempty" yaml:"RedirectURIs,omitempty"`
 }
 
 // NewClient creates new client application settings.
@@ -90,6 +93,16 @@ func AddClientFromCli(ctx *cli.Context) Client {
 
 	f.AuthScope = clean.Scope(ctx.String("scope"))
 
+	// Callback URLs register an app client that users connect with the authorization code flow.
+	if callbacks := callbackURLs(ctx); len(callbacks) > 0 {
+		f.RedirectURIs = callbacks
+		f.AuthMethod = authn.MethodPKCE.String()
+
+		if f.AuthScope == "" {
+			f.AuthScope = acl.ResourceMCP.String()
+		}
+	}
+
 	if f.AuthScope == "" {
 		f.AuthScope = "*"
 	}
@@ -141,6 +154,10 @@ func ModClientFromCli(ctx *cli.Context) Client {
 		f.AuthTokens = ctx.Int64("tokens")
 	}
 
+	if ctx.IsSet("callback") {
+		f.RedirectURIs = callbackURLs(ctx)
+	}
+
 	if ctx.Bool("enable") {
 		f.AuthEnabled = true
 	} else if ctx.Bool("disable") {
@@ -148,6 +165,24 @@ func ModClientFromCli(ctx *cli.Context) Client {
 	}
 
 	return f
+}
+
+// callbackURLs returns the trimmed, non-empty callback URLs passed with the "callback" flag.
+func callbackURLs(ctx *cli.Context) []string {
+	var result []string
+
+	for _, uri := range ctx.StringSlice("callback") {
+		if uri = strings.TrimSpace(uri); uri != "" {
+			result = append(result, uri)
+		}
+	}
+
+	return result
+}
+
+// IsApp reports whether the form describes an app client that uses the authorization code flow.
+func (f *Client) IsApp() bool {
+	return f.Method() == authn.MethodPKCE
 }
 
 // ID returns the client id, if any.

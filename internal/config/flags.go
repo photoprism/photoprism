@@ -163,6 +163,12 @@ var Flags = CliFlags{
 			Usage:   "disables single sign-on via OpenID Connect, even if an identity provider has been configured",
 			EnvVars: EnvVars("DISABLE_OIDC"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "oauth-apps",
+			Usage:   "`POLICY` for connecting apps via OAuth sign-in and consent (registered, none, a comma-separated list of HTTPS origins whose client metadata documents are trusted, or any to fetch them from every public host)",
+			Value:   OAuthAppsRegistered,
+			EnvVars: EnvVars("OAUTH_APPS"),
+		}}, {
 		Flag: &cli.Int64Flag{
 			Name:    "session-maxage",
 			Value:   DefaultSessionMaxAge,

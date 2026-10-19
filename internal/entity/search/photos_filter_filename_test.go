@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/form"
 )
@@ -867,9 +868,14 @@ func TestPhotosQueryFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO Finds all?
+		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "2000/02/photo46.jpg", parsed.Filename)
 
-		assert.Greater(t, len(photos), 1)
+		expected, _, err := Photos(form.SearchPhotos{Query: "filename:2000/02/photo46.jpg", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("CenterDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -882,9 +888,14 @@ func TestPhotosQueryFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO Finds all?
+		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "2000/02/photo47.jpg", parsed.Filename)
 
-		assert.Greater(t, len(photos), 1)
+		expected, _, err := Photos(form.SearchPhotos{Query: "filename:2000/02/photo47.jpg", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("EndsWithDoubleQuotes", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -897,9 +908,14 @@ func TestPhotosQueryFilename(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO Finds all?
+		// A quote that is not closed extends the value to the end of the query.
+		parsed := form.SearchPhotos{Query: f.Query}
+		require.NoError(t, parsed.ParseQueryString())
+		assert.Equal(t, "2000/02/photo48.jpg", parsed.Filename)
 
-		assert.Greater(t, len(photos), 1)
+		expected, _, err := Photos(form.SearchPhotos{Query: "filename:2000/02/photo48.jpg", Merged: true})
+		require.NoError(t, err)
+		assert.Equal(t, len(expected), len(photos))
 	})
 	t.Run("StartsWithWhitespace", func(t *testing.T) {
 		var f form.SearchPhotos

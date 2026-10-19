@@ -31,7 +31,8 @@ func FileShares(accountId uint, status string) (result []entity.FileShare, err e
 	return result, nil
 }
 
-// QueuedFileShares returns up to 100 queued file shares for an account, omitting YAML sidecar files unless it syncs them.
+// QueuedFileShares returns up to 100 queued file shares for an account, those that failed least often first and
+// then the oldest, omitting YAML sidecar files unless it syncs them.
 func QueuedFileShares(account entity.Service) (result []entity.FileShare, err error) {
 	s := Db().Model(&entity.FileShare{}).Select("files_share.*").
 		Where("files_share.service_id = ? AND files_share.status = ?", account.ID, entity.FileShareNew)
@@ -41,7 +42,7 @@ func QueuedFileShares(account entity.Service) (result []entity.FileShare, err er
 			Where("(files.file_type <> ? OR files.file_type IS NULL)", fs.SidecarYaml.String())
 	}
 
-	s = s.Order("files_share.created_at ASC")
+	s = s.Order("COALESCE(files_share.errors, 0) ASC, files_share.created_at ASC")
 	s = s.Limit(100).Offset(0)
 
 	s = s.Preload("File")

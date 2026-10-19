@@ -11,6 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 	"gopkg.in/yaml.v2"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -123,10 +124,22 @@ func TestSaveConfigOptions(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, os.WriteFile(conf.OptionsYaml(), seed, fs.ModeFile))
 
+		hook := captureLog(t)
 		body := `{"SiteDescription":"` + strings.Repeat("d", 2000) + `"}`
 		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", body, authToken)
 
 		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
+
+		// One warning tells the operator why the change was not applied, without the request content.
+		var warnings []string
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel {
+				warnings = append(warnings, e.Message)
+			}
+		}
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0], "options file would exceed its size limit")
+		assert.NotContains(t, warnings[0], "ddd")
 		assert.NotContains(t, conf.Options().SiteDescription, "ddd")
 
 		optionsData, readErr := os.ReadFile(conf.OptionsYaml())

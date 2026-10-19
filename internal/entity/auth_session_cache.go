@@ -29,8 +29,31 @@ func FindSessionByAuthToken(token string) (*Session, error) {
 	return FindSession(rnd.SessionID(token))
 }
 
-// FindSession finds a session based on the id string or returns nil if it does not exist.
+// FindSession finds a session based on the id string or returns an error if it does not exist. Sessions
+// issued for a specific audience, such as app access tokens, are only returned by FindAudienceSession.
 func FindSession(id string) (*Session, error) {
+	sess, err := FindAnySession(id)
+
+	if err == nil && sess.HasAudience() {
+		return &Session{}, ErrSessionNotFound
+	}
+
+	return sess, err
+}
+
+// FindAudienceSession finds a session that has no audience or was issued for the specified audience.
+func FindAudienceSession(id, audience string) (*Session, error) {
+	sess, err := FindAnySession(id)
+
+	if err == nil && sess.HasAudience() && sess.AuthAudience != audience {
+		return &Session{}, ErrSessionNotFound
+	}
+
+	return sess, err
+}
+
+// FindAnySession finds a session based on the id string regardless of its audience, e.g. to revoke it.
+func FindAnySession(id string) (*Session, error) {
 	generation := CurrentAuthCacheGeneration()
 	found := &Session{}
 

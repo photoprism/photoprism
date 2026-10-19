@@ -8,16 +8,30 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"sync/atomic"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Verifies OAuth path in cluster theme pull using client_id/client_secret.
 func TestClusterThemePull_OAuth(t *testing.T) {
+	// Theme pull runs on a node that has not joined yet, so it must not need the database the Portal provides.
+	// The harness reassigns InitConfig for each run, so the test checks that the core loader was used.
+	initCoreConfig := InitCoreConfig
+	t.Cleanup(func() { InitCoreConfig = initCoreConfig })
+	var core atomic.Bool
+	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
+		core.Store(true)
+		return initCoreConfig(ctx, quiet)
+	}
+	t.Cleanup(func() { assert.True(t, core.Load()) })
+
 	// Build an in-memory zip with one file
 	var zipBuf bytes.Buffer
 	zw := zip.NewWriter(&zipBuf)

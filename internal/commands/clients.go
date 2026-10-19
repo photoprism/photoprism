@@ -17,6 +17,7 @@ const (
 	ClientNameUsage        = "`CLIENT` name to help identify the application"
 	ClientAuthScope        = "client authorization `SCOPE` as space-separated resources, or '*' for full access"
 	ClientAuthProvider     = "client authentication `PROVIDER`"
+	ClientCallbackUsage    = "callback `URL` of an app that users connect with OAuth sign-in and consent (repeat for each URL)"
 	ClientAuthMethod       = "client authentication `METHOD`"
 	ClientAuthExpires      = "access token `LIFETIME` in seconds, after which a new token must be requested"
 	ClientAuthTokens       = "maximum `NUMBER` of access tokens that the client can request (-1 to disable the limit)"
@@ -68,6 +69,10 @@ var ClientAddFlags = []cli.Flag{
 		Value:   acl.RoleClient.String(),
 	},
 	ScopeFlag(ClientAuthScope),
+	&cli.StringSliceFlag{
+		Name:  "callback",
+		Usage: ClientCallbackUsage,
+	},
 	&cli.StringFlag{
 		Name:    "provider",
 		Aliases: []string{"p"},
@@ -114,6 +119,10 @@ var ClientModFlags = []cli.Flag{
 		Usage:   ClientRoleUsage,
 	},
 	ScopeFlag(ClientAuthScope),
+	&cli.StringSliceFlag{
+		Name:  "callback",
+		Usage: ClientCallbackUsage,
+	},
 	&cli.StringFlag{
 		Name:    "provider",
 		Aliases: []string{"p"},

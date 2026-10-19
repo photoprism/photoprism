@@ -134,6 +134,8 @@ func TestUploadArchiveEntryAllowed(t *testing.T) {
 	assert.False(t, uploadArchiveEntryAllowed("photo.rclonelink", true))
 	assert.False(t, uploadArchiveEntryAllowed("nested/photo.RCLONELINK/photo.jpg", false))
 	assert.True(t, uploadArchiveEntryAllowed("nested/photo.rclonelink.jpg", false))
-	assert.True(t, uploadArchiveEntryAllowed(".ordinary", true))
+	assert.False(t, uploadArchiveEntryAllowed(".ordinary", true))
+	assert.False(t, uploadArchiveEntryAllowed("@eaDir/photo.jpg", false))
+	assert.True(t, uploadArchiveEntryAllowed("ordinary", true))
 	assert.True(t, uploadArchiveEntryAllowed("ordinary/photo.md", false))
 }

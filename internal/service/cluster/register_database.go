@@ -6,7 +6,7 @@ import (
 )
 
 // Server returns the database server address of a registration response, the host with the port if one
-// is set, and whether an instance can connect to it. Without a host or port, it returns "" and true.
+// is set, and whether an instance can connect to it, which requires a host.
 func (d RegisterDatabase) Server() (server string, ok bool) {
 	server = d.Host
 
@@ -14,5 +14,5 @@ func (d RegisterDatabase) Server() (server string, ok bool) {
 		server = dns.JoinHostPort(d.Host, d.Port)
 	}
 
-	return server, server == "" || dsn.ValidServer(server)
+	return server, dsn.ValidServer(server) && (&dsn.DSN{Server: server}).Host() != ""
 }

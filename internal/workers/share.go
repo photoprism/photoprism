@@ -44,8 +44,9 @@ func (w *Share) logErr(err error) {
 func (w *Share) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("share: %s (worker panic)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("share: %s (worker panic)", clean.Log(fmt.Sprint(r)))
 			log.Error(err)
+			log.Debugf("share: stack of the worker panic: %s", debug.Stack())
 		}
 	}()
 
@@ -107,6 +108,7 @@ func (w *Share) Start() (err error) {
 		// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
 		var refusedYaml []entity.FileShare
 		var otherRefused bool
+		var stalls stallBudget
 
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
@@ -183,6 +185,12 @@ func (w *Share) Start() (err error) {
 			}
 
 			w.logErr(entity.Db().Save(&file).Error)
+
+			// The remaining files are uploaded in a later run, where files that failed come last.
+			if stalls.Add(errors.Is(err, webdav.ErrStalled)) {
+				stalls.Warn("share", a.AccName)
+				break
+			}
 		}
 
 		if len(refusedYaml) > 0 && !otherRefused {

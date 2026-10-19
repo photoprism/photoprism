@@ -6,10 +6,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// AccountUploads a list of files for uploading to a remote account.
+// AccountUploads returns the files to upload to a remote account: those without a sync record, and those whose
+// failed upload is tried again in this sync cycle.
 func AccountUploads(a entity.Service, limit int) (results entity.Files, err error) {
 	s := Db().Where("files.file_missing = FALSE").
-		Where("files.id NOT IN (SELECT file_id FROM files_sync WHERE file_id > 0 AND service_id = ?)", a.ID)
+		Where("files.id NOT IN (SELECT file_id FROM files_sync WHERE file_id > 0 AND service_id = ? AND COALESCE(status, '') <> ?)",
+			a.ID, entity.FileSyncRetry)
 
 	if !a.SyncRaw {
 		// Hold back raw images and standalone videos, gating on the media type like the

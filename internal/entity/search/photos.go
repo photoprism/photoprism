@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"fmt"
 	"path"
 	"strings"
@@ -66,8 +67,12 @@ func PhotoIds(frm form.SearchPhotos) (files PhotoResults, count int, err error) 
 func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string, shared bool) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
-	// Parse query string and filter.
-	if err = frm.ParseQueryString(); err != nil {
+	// Parse query string and filter. A search that can match nothing still runs the scope check below.
+	noMatch := false
+
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		noMatch = true
+	} else if err != nil {
 		log.Debugf("search: %s", err)
 		return PhotoResults{}, 0, ErrBadRequest
 	}
@@ -141,15 +146,18 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		} else if album.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = FALSE AND photos_albums.album_uid = ?", album.AlbumUID)
-		} else if formErr := form.Unserialize(&frm, album.AlbumFilter); formErr != nil {
+		} else if filterNoMatch, formErr := form.UnserializeFilter(&frm, album.AlbumFilter); formErr != nil {
 			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(album.AlbumFilter))
 			return PhotoResults{}, 0, ErrBadFilter
 		} else {
 			frm.Filter = album.AlbumFilter
 
-			// Folder albums show the pictures in their folder, compared by exact path.
+			// Folder albums show the pictures in their folder, compared by exact path. Folder albums whose
+			// folder is unknown, and other albums whose stored filter can match nothing, show no pictures.
 			if p := folderAlbumPath(album); p != "" {
 				frm.Path = p
+			} else if filterNoMatch || album.AlbumType == entity.AlbumFolder {
+				noMatch = true
 			}
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
 		}
@@ -210,6 +218,10 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if frm.Scope == "" {
 			s = ScopePhotosForSession(s, sess)
 		}
+	}
+
+	if noMatch {
+		return PhotoResults{}, 0, nil
 	}
 
 	// Set sort order.
@@ -325,7 +337,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		include, exclude, sawPositive, labelErr := entity.ParseLabelFilter(frm.Label)
 
 		if labelErr != nil || (sawPositive && len(include) == 0) {
-			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
+			log.Debugf("search: label %s not found", clean.LogLower(frm.Label))
 			return PhotoResults{}, 0, nil
 		}
 
@@ -440,7 +452,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	// Filter by query string.
 	if frm.Query != "" {
 		if labelIds, labelsErr := entity.FindLabelIDs(frm.Query, " ", true); labelsErr != nil || len(labelIds) == 0 {
-			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(frm.Query))
+			log.Tracef("search: label %s not found, using fuzzy search", clean.LogLower(frm.Query))
 
 			wheres, values := LikeAnyKeyword("k.keyword", frm.Query, false)
 			for i, where := range wheres {

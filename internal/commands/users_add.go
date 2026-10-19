@@ -62,12 +62,12 @@ func usersAddAction(ctx *cli.Context) error {
 		if frm.UserName == "" {
 			return authn.ErrUsernameRequired
 		} else if m, held := entity.FindRestorableUser(frm.UserName); held && m == nil {
-			return authn.ErrAccountAlreadyExists
+			return authn.ErrUserAlreadyExists
 		} else if m != nil {
 			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore user %s", m.String()), "--restore"); err != nil {
 				return err
 			} else if !restore {
-				return authn.ErrAccountAlreadyExists
+				return authn.ErrUserAlreadyExists
 			}
 
 			if err := m.RestoreFromCli(ctx, frm.Password); err != nil {

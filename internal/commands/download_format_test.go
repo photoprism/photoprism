@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -43,6 +44,7 @@ func createArgsLoggingYtDlp(t *testing.T) string {
 	b.WriteString("for a in \"$@\"; do if [[ \"$a\" == \"--print\" ]]; then OUT=\"$OUT_TPL\"; OUT=${OUT//%(id)s/abc}; OUT=${OUT//%(ext)s/mp4}; mkdir -p \"$(dirname \"$OUT\")\"; CONTENT=\"${YTDLP_DUMMY_CONTENT:-dummy}\"; printf \"%s\" \"$CONTENT\" > \"$OUT\"; echo \"$OUT\"; exit 0; fi; done\n")
 	b.WriteString("echo '[download]' 1>&2\n")
 	b.WriteString("echo 'DATA'\n")
+	b.WriteString("if [[ \"${YTDLP_FAIL_PIPE:-}\" == \"1\" ]]; then echo 'ERROR: simulated stream failure' 1>&2; exit 1; fi\n")
 
 	if err := os.WriteFile(path, []byte(b.String()), 0o600); err != nil {
 		t.Fatalf("failed to write fake yt-dlp: %v", err)
@@ -108,6 +110,70 @@ func TestRunDownload_FileMethod_OmitsFormatSort(t *testing.T) {
 	}
 	if strings.Contains(content, "--format-sort") {
 		t.Fatalf("file method should not pass --format-sort; args: %q", content)
+	}
+	if !strings.Contains(content, "-f "+dl.FormatBest+" ") {
+		t.Fatalf("file method should request %s; args: %q", dl.FormatBest, content)
+	}
+}
+
+func TestRunDownload_PipeMethod_StreamFailure(t *testing.T) {
+	t.Setenv("YTDLP_FORCE_SHELL", "1")
+	argsLog := filepath.Join(t.TempDir(), "args.log")
+	t.Setenv("YTDLP_ARGS_LOG", argsLog)
+	t.Setenv("YTDLP_FAIL_PIPE", "1")
+	dl.ResetVersionWarningForTest()
+
+	fake := createArgsLoggingYtDlp(t)
+	origBin := dl.YtDlpBin
+	dl.YtDlpBin = fake
+	defer func() { dl.YtDlpBin = origBin }()
+
+	conf := get.Config()
+	if conf == nil {
+		t.Fatalf("missing test config")
+	}
+	conf.RegisterDb()
+
+	opt := conf.Options()
+	origFFmpeg := opt.FFmpegBin
+	opt.FFmpegBin = "/bin/false"
+	settings := conf.Settings()
+	origConvert := settings.Index.Convert
+	settings.Index.Convert = false
+
+	var logOutput bytes.Buffer
+	log.SetOutput(&logOutput)
+
+	dest := "dl-pipe-failure"
+	t.Cleanup(func() {
+		log.SetOutput(os.Stderr)
+		_ = os.RemoveAll(filepath.Join(conf.OriginalsPath(), dest))
+		settings.Index.Convert = origConvert
+		opt.FFmpegBin = origFFmpeg
+	})
+
+	err := runDownload(conf, DownloadOpts{Dest: dest, Method: "pipe"}, []string{"https://example.com/video"})
+	if err == nil || err.Error() != "1 download failed" {
+		t.Fatalf("expected the failed stream to count as a failed download, got %v", err)
+	}
+
+	logs := logOutput.String()
+	if !strings.Contains(logs, "download failed: simulated stream failure") {
+		t.Fatalf("expected the yt-dlp error to be logged, got: %q", logs)
+	}
+	if strings.Contains(logs, "remux failed") {
+		t.Fatalf("expected no remux of an incomplete download, got: %q", logs)
+	}
+	if files, _ := filepath.Glob(filepath.Join(conf.OriginalsPath(), dest, "*")); len(files) > 0 {
+		t.Fatalf("expected no imported files, got %v", files)
+	}
+
+	data, readErr := os.ReadFile(argsLog) //nolint:gosec // test temp file
+	if readErr != nil {
+		t.Fatalf("reading args log failed: %v", readErr)
+	}
+	if !strings.Contains(string(data), "-f "+dl.FormatBest+" ") {
+		t.Fatalf("pipe method should request %s; args: %q", dl.FormatBest, string(data))
 	}
 }
 

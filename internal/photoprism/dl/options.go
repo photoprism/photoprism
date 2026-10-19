@@ -95,12 +95,11 @@ func (result Metadata) DownloadWithOptions(
 	}
 
 	dr := &DownloadResult{
-		waitCh: make(chan struct{}),
+		waitCh:     make(chan struct{}),
+		stderrDone: make(chan struct{}),
 	}
 
-	cmd := exec.CommandContext( // #nosec G204 yt-dlp command uses validated binary path and controlled args
-		ctx,
-		FindYtDlpBin(),
+	cmd := ytDlpCommand(ctx, []string{
 		// see comment below about ignoring errors for playlists
 		"--ignore-errors",
 		// TODO: deprecated in yt-dlp?
@@ -112,12 +111,13 @@ func (result Metadata) DownloadWithOptions(
 		"--restrict-filenames",
 		// use .netrc authentication data
 		// "--netrc",
-	)
+	})
 
 	if options.Output != "" {
 		cmd.Args = append(cmd.Args, "--output", options.Output)
 	} else {
-		cmd.Args = append(cmd.Args, "--output", "-")
+		// FFmpeg reads the source URLs itself when yt-dlp merges streams to stdout.
+		cmd.Args = append(cmd.Args, "--output", "-", "--downloader-args", "ffmpeg_i:"+ffmpegReconnectArgs)
 	}
 
 	if result.Options.noInfoDownload {
@@ -273,29 +273,37 @@ func (result Metadata) DownloadWithOptions(
 	}
 
 	go func() {
-		_ = cmd.Wait()
+		dr.waitErr = cmd.Wait()
 		_ = stdoutW.Close()
 		_ = stderrW.Close()
 		_ = os.RemoveAll(tempPath)
 		close(dr.waitCh)
 	}()
 
-	// blocks return until yt-dlp is downloading or has errored
-	ytErrCh := make(chan error)
+	// Blocks until yt-dlp is downloading or has errored, then keeps the last error for Close.
+	ytErrCh := make(chan error, 1)
 	go func() {
+		defer close(dr.stderrDone)
+		const downloadPrefix = "[download]"
+		const errorPrefix = "ERROR: "
+		started := false
 		stderrLineScanner := bufio.NewScanner(stderrR)
 		for stderrLineScanner.Scan() {
-			const downloadPrefix = "[download]"
-			const errorPrefix = "ERROR: "
 			line := stderrLineScanner.Text()
-			if strings.HasPrefix(line, downloadPrefix) {
-				break
-			} else if strings.HasPrefix(line, errorPrefix) {
-				ytErrCh <- errors.New(line[len(errorPrefix):])
-				return
+			if strings.HasPrefix(line, errorPrefix) {
+				dr.stderrErr = line[len(errorPrefix):]
+				if !started {
+					started = true
+					ytErrCh <- errors.New(dr.stderrErr)
+				}
+			} else if !started && strings.HasPrefix(line, downloadPrefix) {
+				started = true
+				ytErrCh <- nil
 			}
 		}
-		ytErrCh <- nil
+		if !started {
+			ytErrCh <- nil
+		}
 		_, _ = io.Copy(io.Discard, stderrR)
 	}()
 

@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
@@ -177,6 +178,99 @@ func TestUploadToServiceAliases(t *testing.T) {
 		var count int64
 		require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Count(&count).Error)
 		assert.EqualValues(t, 0, count)
+	})
+	// The remote decides which file and folder names it accepts, so a long one is queued.
+	t.Run("LongFolder", func(t *testing.T) {
+		folder := strings.Repeat("f", 120) + "/" + strings.Repeat("g", 300)
+		names := uploadAliases(t, "Alias Control Long", folder)
+		require.Len(t, names, 4)
+		for _, name := range names {
+			assert.Greater(t, len(name), 255)
+			assert.Equal(t, folder, path.Dir(name))
+		}
+	})
+	// Long titles are shortened, and names that are equal after that still get names of their own.
+	t.Run("LongTitles", func(t *testing.T) {
+		var uids []string
+		for i, suffix := range []string{"A", "B"} {
+			p := entity.NewPhoto(false)
+			p.PhotoTitle = strings.Repeat("東京タワー", 39) + suffix
+			p.TakenAt = time.Date(2026, 9, 17, 10, 30, 0, 0, time.UTC)
+			p.TakenAtLocal = p.TakenAt
+			p.PhotoQuality = 3
+			require.NoError(t, p.Save())
+			t.Cleanup(func() {
+				entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", p.ID)
+				entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", p.ID)
+				entity.UnscopedDb().Unscoped().Delete(&p)
+			})
+			f := &entity.File{PhotoID: p.ID, PhotoUID: p.PhotoUID, FileRoot: entity.RootOriginals, FileName: fmt.Sprintf("long-title-%d.jpg", i),
+				FileType: "jpg", MediaType: entity.MediaImage, FileHash: fmt.Sprintf("deadbeef%032d", 950+i), FilePrimary: true}
+			require.NoError(t, f.Create())
+			uids = append(uids, p.PhotoUID)
+		}
+		account := entity.Service{AccName: "Alias Control Long Titles", AccURL: "http://127.0.0.1/", AccType: "webdav", AccShare: true}
+		require.NoError(t, entity.Db().Create(&account).Error)
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.FileShare{}, "service_id = ?", account.ID)
+			entity.UnscopedDb().Unscoped().Delete(&account)
+		})
+		uri := fmt.Sprintf("/api/v1/services/%d/upload", account.ID)
+		body := fmt.Sprintf(`{"selection":{"photos":[%q,%q]},"folder":"Uploads"}`, uids[0], uids[1])
+		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+		var names []string
+		require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Pluck("remote_name", &names).Error)
+		require.Len(t, names, 2)
+		assert.NotEqual(t, names[0], names[1])
+		for _, name := range names {
+			assert.LessOrEqual(t, len(path.Base(name)), fs.NameMaxLen, name)
+			assert.Equal(t, ".jpg", path.Ext(name))
+		}
+	})
+	// Names up to the limit are queued, longer ones are skipped with one warning.
+	t.Run("AliasAtLimit", func(t *testing.T) {
+		base := files[3].ShareBase(0)
+		rest := entity.RemoteNameMaxLen - 1 - len(base)
+		folder := strings.Repeat(strings.Repeat("f", 200)+"/", 4)
+		folder += strings.Repeat("g", rest-len(folder))
+		require.Len(t, path.Join(folder, base), entity.RemoteNameMaxLen)
+
+		hook := captureLog(t)
+		names := uploadAliases(t, "Alias Control Limit", folder)
+		assert.ElementsMatch(t, []string{path.Join(folder, files[0].ShareBase(0)), path.Join(folder, base)}, names)
+
+		var warnings []string
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel {
+				warnings = append(warnings, e.Message)
+			}
+		}
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0], "skipped 2 files because their remote names are too long")
+	})
+	// A folder that leaves no room for file names below it is rejected like an unsafe one.
+	t.Run("FolderTooLong", func(t *testing.T) {
+		account := entity.Service{AccName: "Alias Control Too Long", AccURL: "http://127.0.0.1/", AccType: "webdav", AccShare: true}
+		require.NoError(t, entity.Db().Create(&account).Error)
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.FileShare{}, "service_id = ?", account.ID)
+			entity.UnscopedDb().Unscoped().Delete(&account)
+		})
+		uri := fmt.Sprintf("/api/v1/services/%d/upload", account.ID)
+		limit := strings.Repeat(strings.Repeat("f", 200)+"/", 5) + strings.Repeat("g", 19)
+		require.Len(t, limit, entity.RemoteNameMaxLen)
+		body := fmt.Sprintf(`{"selection":{"photos":[%q]},"folder":%q}`, photo.PhotoUID, limit)
+		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
+		require.Equal(t, http.StatusBadRequest, result.Code)
+		var count int64
+		require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Count(&count).Error)
+		assert.EqualValues(t, 0, count)
+		// One byte shorter, the folder is accepted, while no file name fits below it.
+		body = fmt.Sprintf(`{"selection":{"photos":[%q]},"folder":%q}`, photo.PhotoUID, limit[:len(limit)-1])
+		result = PerformRequestWithBody(app, http.MethodPost, uri, body)
+		require.Equal(t, http.StatusOK, result.Code)
+		assert.JSONEq(t, "[]", result.Body.String())
 	})
 	t.Run("RootFolder", func(t *testing.T) {
 		names := uploadAliases(t, "Alias Control Root", "")

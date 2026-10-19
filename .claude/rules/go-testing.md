@@ -7,12 +7,8 @@
 
 - Tests live next to sources (`<file>_test.go`); group cases with `t.Run(...)` using **PascalCase** names (`Success`, `InvalidRequest`). Consecutive subtests inside the same `Test*` function are written without blank lines between them so the cases read as a compact table; reserve blank lines for separating distinct setup blocks.
 - Do not run multiple test commands in parallel — suites share fixtures, temp assets, and DB state.
-- Put Go scratch work in a per-run directory under `.local/scratch/`:
-  `mkdir -p .local/scratch && mktemp -d .local/scratch/<name>.XXXXXX`. Code there can import
-  `internal/...` (Go refuses that from `/tmp`), `.local/` is gitignored, and `./...` skips it, so
-  it never joins a full suite. The `../../storage` fallback in the test config helpers resolves to
-  `.local/storage` from there, so `config.TestConfig()` needs `PHOTOPRISM_STORAGE_PATH` set (the
-  development environment sets it). Delete the directory when done.
+- Put Go scratch work in a per-run directory under `.local/scratch/`: `mkdir -p .local/scratch && mktemp -d .local/scratch/<name>.XXXXXX`. Code there can import `internal/...` (Go refuses that from `/tmp`), `.local/` is gitignored, and `./...` skips it, so it never joins a full suite. The `../../storage` fallback in the test config helpers resolves to `.local/storage` from there, so `config.TestConfig()` needs `PHOTOPRISM_STORAGE_PATH` set (the development environment sets it).
+- Create the scratch directory in its own command, and delete it when done by the literal path `mktemp` printed, e.g. `rm -r .local/scratch/<name>.Ab12Cd`, never `.local/scratch/` itself. Claude Code asks for confirmation in every permission mode before an `rm` whose target is a glob, a variable or `$(…)`, and a subagent waits unseen on that prompt. If a removal prompts or is refused, do not retry it in another form; leave the directory and report its path.
 - A test that runs the indexer or importer on fixture media (`Index.Start`, `IndexMain`/`IndexRelated`,
   `UserMediaFile`, `Import.Start`, the import worker) starts with
   `if testing.Short() { t.Skip("skipping test in short mode.") }`, placed before any setup; gate only the subtest

@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 // ClientsResetDescription explains the effect of the clients reset command.
@@ -66,9 +67,14 @@ func clientsResetAction(ctx *cli.Context) error {
 			return cli.Exit(err, 1)
 		}
 
-		// Delete the sessions of the removed clients once the table has been recreated.
+		// Recreate the grants and authorization codes of apps, which belong to the removed clients.
+		if err := ResetAppGrants(db); err != nil {
+			return cli.Exit(err, 1)
+		}
+
+		// Delete the sessions of the removed clients and apps once the tables have been recreated.
 		if db.Migrator().HasTable(&entity.Session{}) {
-			res := db.Where("client_uid <> ''").Delete(&entity.Session{})
+			res := db.Where("client_uid <> '' OR auth_provider = ?", authn.ProviderOAuthApp.String()).Delete(&entity.Session{})
 
 			if res.Error != nil {
 				return cli.Exit(res.Error, 1)

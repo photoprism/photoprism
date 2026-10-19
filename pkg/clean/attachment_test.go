@@ -30,6 +30,12 @@ func TestAttachmentName(t *testing.T) {
 		assert.Equal(t, "Folder_Name.jpg", AttachmentName("Folder\\Name.jpg"))
 		assert.Equal(t, "a_b.jpg", AttachmentName("a/b.jpg"))
 	})
+	t.Run("Windows", func(t *testing.T) {
+		assert.Equal(t, "x_y.jpg", AttachmentName("x:y.jpg"))
+		assert.Equal(t, "p_q.jpg", AttachmentName("p|q.jpg"))
+		assert.Equal(t, "a_b_c_d_e_f.jpg", AttachmentName("a*b?c\"d<e>f.jpg"))
+		assert.Equal(t, "日本_写真.jpg", AttachmentName("日本:写真.jpg"))
+	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "download", AttachmentName(""))
 		assert.Equal(t, "download", AttachmentName("\x00\x1b"))

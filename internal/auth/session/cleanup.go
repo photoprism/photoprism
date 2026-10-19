@@ -5,19 +5,24 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/auth/oauth"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 )
 
 var stop = make(chan bool, 1)
 
-// CleanupAction deletes sessions that have expired.
+// CleanupAction deletes expired sessions and authorization codes and idle app grants; extensions may wrap it
+// to remove other expired records.
 var CleanupAction = func() {
 	if n := entity.DeleteExpiredSessions(); n > 0 {
 		event.AuditInfo([]string{"deleted %s"}, english.Plural(n, "expired session", "expired sessions"))
 	} else {
 		event.AuditTrace([]string{"found no expired sessions"})
 	}
+
+	oauth.PurgeExpired()
+	oauth.PurgeIdleGrants()
 }
 
 // Cleanup starts a background worker that periodically deletes expired sessions.

@@ -93,7 +93,7 @@ func TestGetVideoActions(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		_, params, err := mime.ParseMediaType(r.Header().Get("Content-Disposition"))
 		require.NoError(t, err)
-		assert.Equal(t, "clipname_avc.mp4", params["filename"])
+		assert.Equal(t, "clip_name_avc.mp4", params["filename"])
 	})
 	t.Run("InvalidOperation", func(t *testing.T) {
 		for _, op := range []string{"invalid", "../prepare"} {

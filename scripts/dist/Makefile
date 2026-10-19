@@ -40,7 +40,7 @@ Other:
   proxysql-admin   Install the ProxySQL admin and scheduler tools
   davfs            Install the davfs2 WebDAV filesystem driver
   yt-dlp           Update yt-dlp to the latest release
-  Related: yt-dlp-nightly, yt-dlp-master
+  Related: yt-dlp-nightly, yt-dlp-master, deno
 
 Run "make -C /scripts list" to show all targets, including those not listed here.
 endef
@@ -144,6 +144,9 @@ install-yt-dlp-nightly:
 yt-dlp-master: install-yt-dlp-master
 install-yt-dlp-master:
 	@/scripts/install-yt-dlp.sh --master
+deno: install-deno
+install-deno:
+	@/scripts/install-deno.sh
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make

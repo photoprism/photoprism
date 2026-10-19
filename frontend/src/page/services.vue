@@ -53,7 +53,7 @@
           </td>
           <td class="text-center">
             <v-btn icon density="comfortable" variant="plain" :ripple="false" class="action-toggle-sync" @click.stop.prevent="editSync(props.item)">
-              <v-icon v-if="props.item.AccErrors" color="surface-variant" :title="props.item.AccError">mdi-alert </v-icon>
+              <v-icon v-if="props.item.hasError()" color="surface-variant" :title="props.item.AccError">mdi-alert </v-icon>
               <v-icon v-else-if="props.item.AccSync" color="surface-variant">mdi-sync</v-icon>
               <v-icon v-else color="surface-variant">mdi-sync-off</v-icon>
             </v-btn>

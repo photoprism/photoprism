@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -11,6 +12,45 @@ import (
 )
 
 func TestAccountUploads(t *testing.T) {
+	t.Run("FailedUploads", func(t *testing.T) {
+		// A failed upload is not selected again in the same sync cycle, and is once refresh marks it for retry.
+		const serviceID = 4731
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&entity.FileSync{}, "service_id = ?", serviceID).Error })
+
+		a := entity.Service{ID: serviceID, SyncRaw: true}
+		all, err := AccountUploads(a, 1000)
+		require.NoError(t, err)
+		require.NotEmpty(t, all)
+		file := all[0]
+
+		require.NoError(t, entity.FailFileSyncUpload(serviceID, file.ID, "failed"))
+		results, err := AccountUploads(a, 1000)
+		require.NoError(t, err)
+		assert.Len(t, results, len(all)-1)
+		for _, f := range results {
+			assert.NotEqual(t, file.ID, f.ID)
+		}
+
+		require.NoError(t, entity.RetryFileSyncUploads(serviceID, -1))
+		results, err = AccountUploads(a, 1000)
+		require.NoError(t, err)
+		assert.Len(t, results, len(all))
+
+		// A record whose status is NULL, from an earlier release, keeps the file from being selected.
+		require.NoError(t, entity.Db().Exec("UPDATE files_sync SET status = NULL WHERE service_id = ?", serviceID).Error)
+		results, err = AccountUploads(a, 1000)
+		require.NoError(t, err)
+		assert.Len(t, results, len(all)-1)
+		require.NoError(t, entity.Db().Exec("UPDATE files_sync SET status = ? WHERE service_id = ?", entity.FileSyncRetry, serviceID).Error)
+
+		// An uploaded file is never selected again, also while a retry placeholder remains.
+		uploaded := entity.NewFileSync(serviceID, "/"+file.FileName)
+		uploaded.FileID, uploaded.Status = file.ID, entity.FileSyncUploaded
+		require.NoError(t, uploaded.Create())
+		results, err = AccountUploads(a, 1000)
+		require.NoError(t, err)
+		assert.Len(t, results, len(all)-1)
+	})
 	t.Run("FindUploads", func(t *testing.T) {
 		results, err := AccountUploads(entity.Service{ID: 1, SyncRaw: false}, 10)
 

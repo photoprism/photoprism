@@ -23,6 +23,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -548,10 +549,22 @@ func TestClusterNodesRegister(t *testing.T) {
 		token := oauthNodeAccessToken(t, app, router, conf, nr.ClientID, nr.ClientSecret)
 		newUUID := rnd.UUIDv7()
 		body := `{"NodeName":"pp-uuid-repin","NodeUUID":"` + newUUID + `"}`
+		hook := captureAuditLog(t)
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
 		assert.Equal(t, http.StatusOK, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
 		assert.Equal(t, newUUID, gjson.Get(r.Body.String(), "Node.UUID").String())
+
+		// The change is audited with the node's address, e.g. for a node that cannot keep its UUID.
+		var audited bool
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "pp-uuid-repin › change uuid old "+n.UUID+" new "+newUUID) {
+				audited = true
+				msg := strings.TrimPrefix(entry.Message, event.AuditPrefix)
+				assert.NotEmpty(t, event.AuditIP(strings.Split(msg, event.MessageSep)), entry.Message)
+			}
+		}
+		assert.True(t, audited, "expected an audit entry for the UUID change")
 
 		got, err := regy.FindByNodeUUID(newUUID)
 		assert.NoError(t, err)
@@ -1354,6 +1367,72 @@ func TestClusterNodesRegister_IncompleteDatabase(t *testing.T) {
 			assert.Equal(t, dbName, stored.Database.Name)
 			assert.Equal(t, dbUser, stored.Database.User)
 		}
+	})
+}
+
+func TestCreateJoiningNode(t *testing.T) {
+	conf := get.Config()
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	require.NoError(t, err)
+
+	driver, dsnValue := provisioner.DatabaseDriver, provisioner.ProvisionDSN
+	t.Cleanup(func() { provisioner.DatabaseDriver, provisioner.ProvisionDSN = driver, dsnValue })
+
+	// newNode returns a joining node that is removed when the test ends.
+	newNode := func(t *testing.T, name string) *reg.Node {
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: name, Role: cluster.RoleInstance}}
+		n.ClientSecret = rnd.ClientSecret()
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(n.UUID) })
+		return n
+	}
+
+	t.Run("WithDatabase", func(t *testing.T) {
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "MariaDB", "root:secret@tcp(127.0.0.1:1)/photoprism"
+		n := newNode(t, "pp-joining-db")
+
+		require.NoError(t, createJoiningNode(conf, regy, n, true))
+
+		dbName, dbUser, _ := provisioner.GenerateCredentials(conf, n.UUID, n.Name)
+		stored, err := regy.FindByNodeUUID(n.UUID)
+		require.NoError(t, err)
+		if assert.NotNil(t, stored.Database) {
+			assert.Equal(t, dbName, stored.Database.Name)
+			assert.Equal(t, dbUser, stored.Database.User)
+			assert.Equal(t, "mariadb", stored.Database.Driver)
+			assert.Empty(t, stored.Database.RotatedAt)
+		}
+	})
+	t.Run("WithoutDatabase", func(t *testing.T) {
+		n := newNode(t, "pp-joining-nodb")
+
+		require.NoError(t, createJoiningNode(conf, regy, n, false))
+
+		stored, err := regy.FindByNodeUUID(n.UUID)
+		require.NoError(t, err)
+		assert.True(t, stored.Database == nil || stored.Database.Name == "")
+	})
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "sqlite3", "root:secret@tcp(127.0.0.1:1)/photoprism"
+		n := newNode(t, "pp-joining-driver")
+
+		assert.ErrorIs(t, createJoiningNode(conf, regy, n, true), provisioner.ErrUnsupportedDriver)
+		assert.Empty(t, entity.FindClientsByNodeUUID(n.UUID), "no record may be created")
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		provisioner.DatabaseDriver, provisioner.ProvisionDSN = "mysql", ""
+		n := newNode(t, "pp-joining-dsn")
+
+		assert.ErrorIs(t, createJoiningNode(conf, regy, n, true), provisioner.ErrNotConfigured)
+		assert.Empty(t, entity.FindClientsByNodeUUID(n.UUID), "no record may be created")
+	})
+	t.Run("ExistingUUID", func(t *testing.T) {
+		first := newNode(t, "pp-joining-first")
+		require.NoError(t, createJoiningNode(conf, regy, first, false))
+
+		second := newNode(t, "pp-joining-second")
+		second.UUID = first.UUID
+
+		assert.ErrorIs(t, createJoiningNode(conf, regy, second, false), reg.ErrIdentifierMismatch)
 	})
 }
 

@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
-	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -53,26 +52,17 @@ func checkDest(dest string, force bool) error {
 // ignores. It keeps the destination's extension, which the media tools that read a staged file
 // detect its type from, and clamps the base so the name still fits a directory entry.
 func stageName(dest string) string {
-	const maxNameLen = 255
-
 	dir, base := filepath.Split(dest)
 	ext := filepath.Ext(base)
 
 	// A name whose extension alone would fill the entry is staged without it.
-	if len(ext) > maxNameLen/2 {
+	if len(ext) > NameMaxLen/2 {
 		ext = ""
 	}
 
 	prefix, suffix := ".", "."+rnd.Base36(8)+ExtTmp+ext
 
-	// Clamped on a rune boundary, since a file system that validates names refuses a split character.
-	if limit := maxNameLen - len(prefix) - len(suffix); len(base) > limit {
-		base = base[:limit]
-
-		for len(base) > 0 && !utf8.ValidString(base) {
-			base = base[:len(base)-1]
-		}
-	}
+	base = ClipName(base, NameMaxLen-len(prefix)-len(suffix))
 
 	return dir + prefix + base + suffix
 }

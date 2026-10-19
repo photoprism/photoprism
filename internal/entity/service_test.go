@@ -1,16 +1,20 @@
 package entity
 
 import (
-	"errors"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
-	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"golang.org/x/net/webdav"
 
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestCreateService(t *testing.T) {
@@ -161,6 +165,289 @@ func TestService_SaveForm(t *testing.T) {
 	})
 }
 
+func TestService_SaveFormAccError(t *testing.T) {
+	t.Run("NewAccount", func(t *testing.T) {
+		model, err := AddService(form.Service{AccName: "Error New", AccURL: "test.com", AccType: "webdav", AccError: "client value"})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		assert.Empty(t, storedService(t, model.ID).AccError)
+	})
+	t.Run("Kept", func(t *testing.T) {
+		model, err := AddService(form.Service{AccName: "Error Kept", AccURL: "test.com", AccType: "webdav"})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		require.NoError(t, model.Updates(Values{"acc_error": "worker error"}))
+
+		stored := storedService(t, model.ID)
+		frm, err := form.NewService(stored)
+		require.NoError(t, err)
+		frm.AccError = "client value"
+		require.NoError(t, stored.SaveForm(frm))
+		assert.Equal(t, "worker error", storedService(t, model.ID).AccError)
+	})
+	t.Run("ResetOnSave", func(t *testing.T) {
+		// Saving an account with sync on still resets its errors, including the message.
+		model, err := AddService(form.Service{AccName: "Error Reset", AccURL: "test.com", AccType: "webdav", AccSync: true})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		require.NoError(t, model.Updates(Values{"acc_error": "worker error", "acc_errors": 2}))
+
+		stored := storedService(t, model.ID)
+		frm, err := form.NewService(stored)
+		require.NoError(t, err)
+		require.NoError(t, stored.SaveForm(frm))
+		assert.Empty(t, storedService(t, model.ID).AccError)
+		assert.Zero(t, storedService(t, model.ID).AccErrors)
+	})
+	t.Run("Cleared", func(t *testing.T) {
+		model, err := AddService(form.Service{AccName: "Error Cleared", AccURL: "test.com", AccType: "webdav"})
+		require.NoError(t, err)
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		require.NoError(t, model.Updates(Values{"acc_error": "worker error"}))
+
+		stored := storedService(t, model.ID)
+		frm, err := form.NewService(stored)
+		require.NoError(t, err)
+		frm.AccError = ""
+		require.NoError(t, stored.SaveForm(frm))
+		assert.Empty(t, storedService(t, model.ID).AccError)
+	})
+}
+
+// storedService returns a service as currently stored in the database.
+func storedService(t *testing.T, id uint) *Service {
+	t.Helper()
+
+	m := &Service{}
+	require.NoError(t, Db().First(m, id).Error)
+
+	return m
+}
+
+func TestService_SaveFormRefresh(t *testing.T) {
+	// A save that changes the folder or a direction, or turns on raw and video files, refreshes the account in any
+	// stage; other changes keep it.
+	for _, c := range []struct {
+		name    string
+		status  string
+		update  func(f *form.Service)
+		refresh bool
+	}{
+		{"SyncedInterval", SyncStatusSynced, func(f *form.Service) { f.SyncInterval = 60 }, true},
+		{"DownloadPath", SyncStatusDownload, func(f *form.Service) { f.SyncPath = "/new" }, true},
+		{"DownloadOff", SyncStatusDownload, func(f *form.Service) { f.SyncDownload = false }, true},
+		{"UploadOn", SyncStatusDownload, func(f *form.Service) { f.SyncDownload, f.SyncUpload = false, true }, true},
+		{"DownloadInterval", SyncStatusDownload, func(f *form.Service) { f.SyncInterval = 60 }, false},
+		{"UploadPassword", SyncStatusUpload, func(f *form.Service) { f.AccPass = "changed" }, false},
+		{"RawOn", SyncStatusDownload, func(f *form.Service) { f.SyncRaw = true }, true},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			model, err := AddService(form.Service{AccName: "Refresh " + c.name, AccURL: "test.com", AccType: "webdav",
+				AccSync: true, SyncDownload: true, SyncPath: "/old"})
+			require.NoError(t, err)
+			t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+			require.NoError(t, model.Updates(Values{"sync_status": c.status}))
+			stored := storedService(t, model.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			c.update(&frm)
+			require.NoError(t, stored.SaveForm(frm))
+
+			if c.refresh {
+				assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+			} else {
+				assert.Equal(t, c.status, storedService(t, model.ID).SyncStatus)
+			}
+		})
+	}
+}
+
+func TestService_SaveFormRefreshRawKept(t *testing.T) {
+	// An account with raw and video files already on keeps its stage when other settings change.
+	model, err := AddService(form.Service{AccName: "Refresh Raw Kept", AccURL: "test.com", AccType: "webdav",
+		AccSync: true, SyncDownload: true, SyncRaw: true, SyncPath: "/old"})
+	require.NoError(t, err)
+	t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+
+	stored := storedService(t, model.ID)
+	require.True(t, stored.SyncRaw)
+	frm, err := form.NewService(stored)
+	require.NoError(t, err)
+	frm.SyncInterval = 60
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusDownload, storedService(t, model.ID).SyncStatus)
+}
+
+func TestService_SaveFormRefreshSyncOff(t *testing.T) {
+	model, err := AddService(form.Service{AccName: "Refresh Sync Off", AccURL: "test.com", AccType: "webdav",
+		AccSync: true, SyncPath: "/old"})
+	require.NoError(t, err)
+	t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+
+	// A folder changed while sync is off refreshes the account once sync is on again.
+	stored := storedService(t, model.ID)
+	frm, err := form.NewService(stored)
+	require.NoError(t, err)
+	frm.AccSync, frm.SyncPath = false, "/new"
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+
+	// Turning on uploads alone refreshes as well.
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+	stored = storedService(t, model.ID)
+	frm, err = form.NewService(stored)
+	require.NoError(t, err)
+	frm.AccSync, frm.SyncUpload = true, true
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+
+	// Turning raw and video files on while sync is off refreshes as well, and turning them off does not.
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload, "acc_sync": false}))
+	stored = storedService(t, model.ID)
+	frm, err = form.NewService(stored)
+	require.NoError(t, err)
+	frm.SyncRaw = true
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusRefresh, storedService(t, model.ID).SyncStatus)
+
+	require.NoError(t, model.Updates(Values{"sync_status": SyncStatusDownload}))
+	stored = storedService(t, model.ID)
+	frm, err = form.NewService(stored)
+	require.NoError(t, err)
+	frm.SyncRaw = false
+	require.NoError(t, stored.SaveForm(frm))
+	assert.Equal(t, SyncStatusDownload, storedService(t, model.ID).SyncStatus)
+}
+
+func TestService_SaveFormFolderTooLong(t *testing.T) {
+	limit := strings.Repeat("/"+strings.Repeat("f", 200), 5) + "/" + strings.Repeat("g", 18)
+	require.Len(t, limit, RemoteNameMaxLen)
+	longName := "/photos/" + strings.Repeat("n", fs.NameMaxLen+1)
+
+	for _, c := range []struct {
+		name string
+		form form.Service
+		err  bool
+	}{
+		{"SyncPathAtLimit", form.Service{SyncPath: limit, SyncDownload: true}, true},
+		{"SyncPathBelowLimit", form.Service{SyncPath: limit[:len(limit)-1], SyncDownload: true}, false},
+		{"SharePathAtLimit", form.Service{SharePath: limit}, true},
+		{"SharePathBelowLimit", form.Service{SharePath: limit[:len(limit)-1]}, false},
+		{"DownloadFolderNameTooLong", form.Service{SyncPath: longName, SyncDownload: true}, true},
+		// The remote decides which folder names it accepts for uploads.
+		{"UploadFolderNameTooLong", form.Service{SyncPath: longName, SyncUpload: true}, false},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			c.form.AccName, c.form.AccURL, c.form.AccType = "Folder "+c.name, "test.com", "webdav"
+			model, err := AddService(c.form)
+			t.Cleanup(func() {
+				if model != nil && model.ID > 0 {
+					UnscopedDb().Unscoped().Delete(model)
+				}
+			})
+
+			if c.err {
+				assert.ErrorIs(t, err, ErrServiceFolderTooLong)
+				var count int64
+				require.NoError(t, Db().Model(&Service{}).Where("acc_name = ?", c.form.AccName).Count(&count).Error)
+				assert.Zero(t, count)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+
+	// A stored folder that the rules refuse is checked only when a save changes it or turns on its use.
+	t.Run("StoredFolder", func(t *testing.T) {
+		newStored := func(t *testing.T) *Service {
+			model, err := AddService(form.Service{AccName: "Folder Stored " + t.Name(), AccURL: "test.com", AccType: "webdav",
+				AccShare: true, AccSync: true, SyncDownload: true})
+			require.NoError(t, err)
+			t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+			require.NoError(t, model.Updates(Values{"sync_path": longName, "share_path": limit}))
+			return storedService(t, model.ID)
+		}
+
+		for _, c := range []struct {
+			name   string
+			update func(f *form.Service)
+			err    bool
+		}{
+			{"SyncOff", func(f *form.Service) { f.AccSync = false }, false},
+			{"ShareOff", func(f *form.Service) { f.AccShare = false }, false},
+			{"Password", func(f *form.Service) { f.AccPass = "changed" }, false},
+			{"Name", func(f *form.Service) { f.AccName += " Renamed" }, false},
+			{"RetryLimit", func(f *form.Service) { f.RetryLimit = 5 }, false},
+			{"SyncPathChanged", func(f *form.Service) { f.SyncPath = longName + "x" }, true},
+			{"SharePathChanged", func(f *form.Service) { f.SharePath = limit + "x" }, true},
+			{"SharePathShortened", func(f *form.Service) { f.SharePath = "/share" }, false},
+		} {
+			t.Run(c.name, func(t *testing.T) {
+				stored := newStored(t)
+				frm, err := form.NewService(stored)
+				require.NoError(t, err)
+				c.update(&frm)
+
+				if err = stored.SaveForm(frm); c.err {
+					assert.ErrorIs(t, err, ErrServiceFolderTooLong)
+				} else {
+					assert.NoError(t, err)
+				}
+			})
+		}
+
+		// Turning on what a stored folder is used for checks it.
+		t.Run("DownloadOn", func(t *testing.T) {
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"sync_download": false, "share_path": "/"}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.SyncDownload = true
+			assert.ErrorIs(t, stored.SaveForm(frm), ErrServiceFolderTooLong)
+		})
+		t.Run("SyncOn", func(t *testing.T) {
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"acc_sync": false, "sync_download": false, "share_path": "/"}))
+			stored = storedService(t, stored.ID)
+			require.NoError(t, stored.Updates(Values{"sync_path": limit}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.AccSync = true
+			assert.ErrorIs(t, stored.SaveForm(frm), ErrServiceFolderTooLong)
+		})
+		t.Run("ControlCharacter", func(t *testing.T) {
+			// A folder stored with a control character compares equal to its cleaned form.
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"sync_path": longName + "\x01"}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.AccSync = false
+			assert.NoError(t, stored.SaveForm(frm))
+		})
+		t.Run("ShareOn", func(t *testing.T) {
+			stored := newStored(t)
+			require.NoError(t, stored.Updates(Values{"acc_share": false}))
+			stored = storedService(t, stored.ID)
+			frm, err := form.NewService(stored)
+			require.NoError(t, err)
+			frm.AccShare = true
+			assert.ErrorIs(t, stored.SaveForm(frm), ErrServiceFolderTooLong)
+		})
+	})
+}
+
+func TestServiceFolder(t *testing.T) {
+	assert.Equal(t, "/", serviceFolder(""))
+	assert.Equal(t, "/", serviceFolder("\x01"))
+	assert.Equal(t, "/photos", serviceFolder("/photos"))
+	assert.Equal(t, "/photos", serviceFolder("/pho\x00tos"))
+}
+
 func TestService_SyncYamlEnabled(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		assert.True(t, (&Service{}).SyncYamlEnabled())
@@ -250,6 +537,59 @@ func TestService_Directories(t *testing.T) {
 
 		assert.Empty(t, result.Abs())
 	})
+	// Listing the folders of an account changes neither its error count nor its sharing, nor the errors of its files.
+	for _, c := range []struct {
+		name string
+		fail bool
+	}{{"FailureKeepsAccount", true}, {"SuccessKeepsAccount", false}} {
+		t.Run(c.name, func(t *testing.T) {
+			remote := t.TempDir()
+			require.NoError(t, os.MkdirAll(filepath.Join(remote, "Photos"), fs.ModeDir))
+			handler := &webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()}
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if c.fail {
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+				handler.ServeHTTP(w, r)
+			}))
+			t.Cleanup(server.Close)
+
+			m := &Service{AccName: "Directories " + c.name, AccURL: server.URL + "/", AccType: "webdav", AccTimeout: "low",
+				AccShare: true, AccSync: true, RetryLimit: 1, AccErrors: 2, AccError: "previous error"}
+			require.NoError(t, Db().Create(m).Error)
+			fileSync, fileShare := NewFileSync(m.ID, "/listing.jpg"), NewFileShare(1, m.ID, "listing.jpg")
+			fileSync.Errors, fileShare.Errors = 4, 5
+			require.NoError(t, fileSync.Create())
+			require.NoError(t, fileShare.Create())
+			t.Cleanup(func() {
+				UnscopedDb().Delete(&FileSync{}, "service_id = ?", m.ID)
+				UnscopedDb().Delete(&FileShare{}, "service_id = ?", m.ID)
+				UnscopedDb().Unscoped().Delete(m)
+			})
+
+			result, err := m.Directories("")
+			if c.fail {
+				assert.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				assert.Contains(t, result.Abs(), "/Photos")
+			}
+
+			var stored Service
+			require.NoError(t, Db().First(&stored, m.ID).Error)
+			assert.Equal(t, 2, stored.AccErrors)
+			assert.Equal(t, "previous error", stored.AccError)
+			assert.True(t, stored.AccShare)
+
+			var storedSync FileSync
+			require.NoError(t, Db().Where("service_id = ?", m.ID).First(&storedSync).Error)
+			assert.Equal(t, 4, storedSync.Errors)
+			var storedShare FileShare
+			require.NoError(t, Db().Where("service_id = ?", m.ID).First(&storedShare).Error)
+			assert.Equal(t, 5, storedShare.Errors)
+		})
+	}
 }
 
 func TestService_Updates(t *testing.T) {
@@ -342,144 +682,6 @@ func TestService_Save(t *testing.T) {
 	})
 }
 
-func TestService_LogErr(t *testing.T) {
-	t.Run("ClipsMultiByteErrorMessage", func(t *testing.T) {
-		// acc_error is a bounded VARBINARY column and LogErr budgets messages to
-		// txt.ClipError (255) bytes; a long multi-byte error must be clipped on a rune
-		// boundary so the stored value stays within budget and valid UTF-8.
-		account := Service{AccName: "LogErrAccount", AccOwner: "LogErr", AccURL: "test.com", AccType: "test",
-			AccKey: "123", AccUser: "testuser", AccPass: "testpass", RetryLimit: 4}
-
-		accountForm, err := form.NewService(account)
-		if err != nil {
-			t.Fatal(err)
-		}
-		model, err := AddService(accountForm)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		longErr := errors.New(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
-
-		if err = model.LogErr(longErr); err != nil {
-			t.Fatal(err)
-		}
-
-		assert.NotEmpty(t, model.AccError)
-		assert.LessOrEqual(t, len(model.AccError), txt.ClipError)
-		assert.True(t, utf8.ValidString(model.AccError))
-		assert.Equal(t, 1, model.AccErrors)
-
-		// The clipped message is also what gets persisted.
-		var reloaded Service
-		if err = Db().Where("id = ?", model.ID).First(&reloaded).Error; err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, model.AccError, reloaded.AccError)
-		assert.LessOrEqual(t, len(reloaded.AccError), txt.ClipError)
-	})
-	t.Run("SanitizesStoredError", func(t *testing.T) {
-		model, err := AddService(form.Service{AccName: "LogErrSanitized", AccURL: "test.com", AccType: "webdav"})
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
-		//nolint:gosec // G101: Example credential in a fixture URL, which is the subject of the test.
-		if err = model.LogErr(errors.New("PROPFIND https://sync-user:notreal@dav.example.com/photos:\nsync \u203a failed")); err != nil {
-			t.Fatal(err)
-		}
-		var m Service
-		if err = Db().First(&m, model.ID).Error; err != nil {
-			t.Fatal(err)
-		}
-		assert.NotContains(t, m.AccError, "notreal")
-		assert.NotContains(t, m.AccError, "\n")
-		assert.NotContains(t, m.AccError, "\u203a")
-	})
-	t.Run("NilErrorResetsErrors", func(t *testing.T) {
-		// A nil error clears the recorded message and counter via ResetErrors.
-		account := Service{AccName: "LogErrReset", AccOwner: "LogErr", AccURL: "test.com", AccType: "test",
-			AccKey: "123", AccUser: "testuser", AccPass: "testpass", RetryLimit: 4}
-
-		accountForm, err := form.NewService(account)
-		if err != nil {
-			t.Fatal(err)
-		}
-		model, err := AddService(accountForm)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = model.LogErr(errors.New("boom")); err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, 1, model.AccErrors)
-
-		if err = model.LogErr(nil); err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, 0, model.AccErrors)
-		assert.Equal(t, "", model.AccError)
-	})
-	t.Run("RetryLimit", func(t *testing.T) {
-		stored := func(t *testing.T, id uint) Service {
-			var m Service
-			if err := Db().First(&m, id).Error; err != nil {
-				t.Fatal(err)
-			}
-			return m
-		}
-		for _, c := range []struct {
-			name        string
-			limit, errs int
-			share       bool
-		}{
-			{"AtLimit", 2, 2, true},
-			{"AboveLimit", 2, 3, false},
-			{"ZeroLimit", 0, 5, true},
-			{"NoLimit", -1, 5, true},
-		} {
-			t.Run(c.name, func(t *testing.T) {
-				model, err := AddService(form.Service{AccName: "LogErrLimit", AccURL: "test.com", AccType: "webdav", AccShare: true, RetryLimit: c.limit})
-				if err != nil {
-					t.Fatal(err)
-				}
-				t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
-				// SaveForm stores 0 as -1, so the limit is set directly.
-				if err = model.Update("retry_limit", c.limit); err != nil {
-					t.Fatal(err)
-				}
-				assert.Equal(t, c.limit, model.RetryLimit)
-				// Changed in the database only, so a full-row save would revert it.
-				if err = Db().Model(&Service{ID: model.ID}).UpdateColumn("acc_name", "LogErrChanged").Error; err != nil {
-					t.Fatal(err)
-				}
-				for i := 0; i < c.errs; i++ {
-					if err = model.LogErr(errors.New("boom")); err != nil {
-						t.Fatal(err)
-					}
-				}
-				m := stored(t, model.ID)
-				assert.Equal(t, "LogErrChanged", m.AccName)
-				assert.Equal(t, c.errs, m.AccErrors)
-				assert.Equal(t, "boom", m.AccError)
-				assert.Equal(t, c.share, m.AccShare)
-				// A success resets the counters and leaves the stored share flag alone.
-				if err = Db().Model(&Service{ID: model.ID}).UpdateColumn("acc_share", !c.share).Error; err != nil {
-					t.Fatal(err)
-				}
-				if err = model.LogErr(nil); err != nil {
-					t.Fatal(err)
-				}
-				m = stored(t, model.ID)
-				assert.Equal(t, 0, m.AccErrors)
-				assert.Equal(t, "", m.AccError)
-				assert.Equal(t, !c.share, m.AccShare)
-			})
-		}
-	})
-}
-
 func TestService_ResetErrors(t *testing.T) {
 	// newAccount creates a WebDAV account with sync and sharing on, one failed download, and one failed share.
 	newAccount := func(t *testing.T, limit int) *Service {
@@ -553,9 +755,9 @@ func TestService_ResetErrors(t *testing.T) {
 		assert.Equal(t, 0, fileShare.Errors)
 		assert.Equal(t, "", fileShare.Error)
 	})
-	t.Run("FolderListing", func(t *testing.T) {
+	t.Run("Direct", func(t *testing.T) {
 		m := newAccount(t, -1)
-		if err := m.LogErr(nil); err != nil {
+		if err := m.ResetErrors(true, true); err != nil {
 			t.Fatal(err)
 		}
 		fileSync, fileShare := stored(t, m)

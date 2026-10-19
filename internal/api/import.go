@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"path"
@@ -115,11 +116,21 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Copy or move files to the destination folder?
 		if frm.Move {
-			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(importPath)))
 			opt = photoprism.ImportOptionsMove(importPath, destFolder)
 		} else {
-			event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(importPath)))
 			opt = photoprism.ImportOptionsCopy(importPath, destFolder)
+		}
+
+		// Folders that are not supported are refused before the import is announced.
+		if err := imp.Check(opt); err != nil {
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
+			return
+		}
+
+		if frm.Move {
+			event.InfoMsg(i18n.MsgMovingFilesFrom, clean.Log(filepath.Base(importPath)))
+		} else {
+			event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(importPath)))
 		}
 
 		// Add imported files to albums if allowed.
@@ -134,7 +145,12 @@ func StartImport(router *gin.RouterGroup) {
 		}
 
 		// Start import.
-		imported := imp.Start(opt)
+		imported, importErr := imp.Run(opt)
+
+		if errors.Is(importErr, photoprism.ErrImportDest) || errors.Is(importErr, photoprism.ErrImportPath) {
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
+			return
+		}
 
 		// Delete empty import directory.
 		if srcFolder != "" && importPath != conf.ImportPath() && fs.DirIsEmpty(importPath) {

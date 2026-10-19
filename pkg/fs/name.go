@@ -5,7 +5,39 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 )
+
+// ClipName shortens a single file name to at most maxLen bytes without splitting a UTF-8 character, since a
+// file system that validates names refuses a split one. Invalid UTF-8 without a start byte nearby is cut at maxLen.
+func ClipName(name string, maxLen int) string {
+	if maxLen <= 0 {
+		return ""
+	} else if len(name) <= maxLen {
+		return name
+	}
+
+	for cut := maxLen; cut > maxLen-utf8.UTFMax && cut >= 0; cut-- {
+		if utf8.RuneStart(name[cut]) {
+			return name[:cut]
+		}
+	}
+
+	return name[:maxLen]
+}
+
+// NameTooLong reports whether a slash-separated path contains a file or folder name longer than NameMaxLen.
+func NameTooLong(p string) bool {
+	for p != "" {
+		var name string
+
+		if name, p, _ = strings.Cut(p, "/"); len(name) > NameMaxLen {
+			return true
+		}
+	}
+
+	return false
+}
 
 // FileName returns the file path for a sidecar file with the specified extension and creates its folder.
 func FileName(fileName, dirName, baseDir, fileExt string) (string, error) {
@@ -80,15 +112,32 @@ func RelName(fileName, dir string) string {
 	}
 }
 
-// FileNameHidden tests is a file name belongs to a hidden file.
+// FileNameHidden reports whether a name belongs to a hidden file: one FileNameSystem reports, or one whose name
+// starts with "$" or "~", such as "$RECYCLE.BIN" and "~$report.docx".
 func FileNameHidden(name string) bool {
+	if len(name) == 0 {
+		return false
+	} else if FileNameSystem(name) {
+		return true
+	}
+
+	switch filepath.Base(name)[0:1] {
+	case "$", "~":
+		return true
+	}
+
+	return false
+}
+
+// FileNameSystem reports whether a name starts with ".", "@", "_." or "__", as hidden files and the folders that
+// operating systems and NAS devices create do, e.g. ".git", "@eaDir" and "__MACOSX".
+func FileNameSystem(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
 
 	name = filepath.Base(name)
 
-	// Hidden files and folders starting with "." or "@" should be ignored.
 	switch name[0:1] {
 	case ".", "@":
 		return true
@@ -98,7 +147,6 @@ func FileNameHidden(name string) bool {
 		return false
 	}
 
-	// File paths starting with _. and __ like __MACOSX should be ignored.
 	switch name[0:2] {
 	case "_.", "__":
 		return true

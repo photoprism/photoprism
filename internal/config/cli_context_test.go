@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"os"
 	"testing"
 	"time"
 
@@ -77,4 +78,127 @@ func TestApplyCliContext_IndexWorkersString(t *testing.T) {
 			assert.Equal(t, tc.input, target.IndexWorkers)
 		})
 	}
+}
+
+type siteUrlTarget struct {
+	SiteUrl string `flag:"site-url"`
+	Trace   bool   `flag:"trace"`
+}
+
+// testLocalFlag is a string flag that does not apply to the config.
+type testLocalFlag struct {
+	*cli.StringFlag
+}
+
+// LocalFlag marks the flag as a LocalFlag.
+func (*testLocalFlag) LocalFlag() {}
+
+// runSubcommand runs a command whose flags repeat the names of global flags, and returns the values
+// ApplyCliContext reads from its context.
+func runSubcommand(t *testing.T, local cli.Flag, args ...string) siteUrlTarget {
+	t.Helper()
+
+	var target siteUrlTarget
+
+	app := cli.NewApp()
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{Name: "site-url", Value: "http://localhost:2342/", EnvVars: []string{"PHOTOPRISM_SITE_URL"}},
+		&cli.BoolFlag{Name: "trace", EnvVars: []string{"PHOTOPRISM_TRACE"}},
+	}
+	app.Commands = []*cli.Command{{
+		Name:  "cmd",
+		Flags: []cli.Flag{local, &cli.BoolFlag{Name: "trace"}},
+		Action: func(ctx *cli.Context) error {
+			return ApplyCliContext(&target, ctx)
+		},
+	}}
+
+	assert.NoError(t, app.Run(append([]string{"photoprism"}, args...)))
+
+	return target
+}
+
+// unsetEnv removes an environment variable for the duration of a test, which t.Setenv cannot do.
+func unsetEnv(t *testing.T, key string) {
+	t.Helper()
+	t.Setenv(key, "")
+	assert.NoError(t, os.Unsetenv(key))
+}
+
+func TestApplyCliContext_CommandFlags(t *testing.T) {
+	localSiteUrl := func() cli.Flag { return &cli.StringFlag{Name: "site-url"} }
+	unsetEnv(t, "PHOTOPRISM_TRACE")
+
+	t.Run("Default", func(t *testing.T) {
+		unsetEnv(t, "PHOTOPRISM_SITE_URL")
+		assert.Equal(t, siteUrlTarget{SiteUrl: "http://localhost:2342/"}, runSubcommand(t, localSiteUrl(), "cmd"))
+	})
+	t.Run("Environment", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_SITE_URL", "https://env.example.com/")
+		t.Setenv("PHOTOPRISM_TRACE", "true")
+		assert.Equal(t, siteUrlTarget{SiteUrl: "https://env.example.com/", Trace: true}, runSubcommand(t, localSiteUrl(), "cmd"))
+	})
+	t.Run("GlobalFlag", func(t *testing.T) {
+		unsetEnv(t, "PHOTOPRISM_SITE_URL")
+		assert.Equal(t, "https://global.example.com/", runSubcommand(t, localSiteUrl(), "--site-url", "https://global.example.com/", "cmd").SiteUrl)
+	})
+	t.Run("CommandFlag", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_SITE_URL", "https://env.example.com/")
+		assert.Equal(t, siteUrlTarget{SiteUrl: "https://cmd.example.com/", Trace: true},
+			runSubcommand(t, localSiteUrl(), "cmd", "--site-url", "https://cmd.example.com/", "--trace"))
+	})
+	t.Run("LocalFlag", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_SITE_URL", "https://env.example.com/")
+		local := &testLocalFlag{&cli.StringFlag{Name: "site-url", Aliases: []string{"s"}}}
+		assert.Equal(t, "https://env.example.com/", runSubcommand(t, local, "cmd", "-s", "https://node.example.com/").SiteUrl)
+		assert.Equal(t, "https://env.example.com/", runSubcommand(t, local, "cmd").SiteUrl)
+	})
+}
+
+func TestFlagContext(t *testing.T) {
+	t.Run("NoApp", func(t *testing.T) {
+		flags := flag.NewFlagSet("test", flag.ContinueOnError)
+		flags.String("site-url", "", "doc")
+		ctx := cli.NewContext(nil, flags, nil)
+		assert.Same(t, ctx, flagContext(ctx, "site-url"))
+	})
+	t.Run("Nested", func(t *testing.T) {
+		parentFlags := flag.NewFlagSet("parent", flag.ContinueOnError)
+		parentFlags.String("site-url", "", "doc")
+		parent := cli.NewContext(cli.NewApp(), parentFlags, nil)
+		childFlags := flag.NewFlagSet("child", flag.ContinueOnError)
+		childFlags.String("site-url", "", "doc")
+		child := cli.NewContext(parent.App, childFlags, parent)
+
+		assert.Same(t, parent, flagContext(child, "site-url"), "an unset command flag falls back to the outer context")
+		assert.NoError(t, parent.Set("site-url", "https://global.example.com/"))
+		assert.Same(t, parent, flagContext(child, "site-url"))
+		assert.NoError(t, child.Set("site-url", "https://cmd.example.com/"))
+		assert.Same(t, child, flagContext(child, "site-url"))
+	})
+	t.Run("SingleContext", func(t *testing.T) {
+		flags := flag.NewFlagSet("test", flag.ContinueOnError)
+		flags.String("site-url", "", "doc")
+		ctx := cli.NewContext(cli.NewApp(), flags, nil)
+		assert.Same(t, ctx, flagContext(ctx, "site-url"))
+		assert.NoError(t, ctx.Set("site-url", "https://example.com/"))
+		assert.Same(t, ctx, flagContext(ctx, "site-url"))
+	})
+}
+
+func TestIsLocalFlag(t *testing.T) {
+	cmd := &cli.Command{Flags: []cli.Flag{
+		&testLocalFlag{&cli.StringFlag{Name: "advertise-url", Aliases: []string{"i"}}},
+		&cli.StringFlag{Name: "site-url"},
+	}}
+
+	t.Run("Local", func(t *testing.T) {
+		assert.True(t, isLocalFlag(cmd, "advertise-url"))
+		assert.True(t, isLocalFlag(cmd, "i"))
+	})
+	t.Run("NotLocal", func(t *testing.T) {
+		assert.False(t, isLocalFlag(cmd, "site-url"))
+		assert.False(t, isLocalFlag(cmd, "portal-url"))
+		assert.False(t, isLocalFlag(nil, "advertise-url"))
+	})
 }

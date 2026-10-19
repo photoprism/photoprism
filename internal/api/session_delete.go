@@ -73,6 +73,17 @@ func DeleteSession(router *gin.RouterGroup) {
 				Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 				return
 			}
+
+			// Deleting an app access token as manager disconnects the app.
+			if s.IsOAuthApp() {
+				if grant := entity.FindGrant(s.AuthID); grant != nil {
+					if err := grant.Delete(); err != nil {
+						event.AuditErr([]string{clientIp, "session %s", "revoke grant %s", status.Error(err)}, s.RefID, clean.Log(grant.GrantUID))
+					} else {
+						event.AuditInfo([]string{clientIp, "session %s", "revoke grant %s", status.Deleted}, s.RefID, clean.Log(grant.GrantUID))
+					}
+				}
+			}
 		} else if id != "" && s.ID != id {
 			event.AuditWarn([]string{clientIp, "session %s", "delete %s as %s", "ids do not match"}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)

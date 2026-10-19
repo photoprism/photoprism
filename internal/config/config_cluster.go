@@ -48,6 +48,16 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 		return false, err
 	}
 
+	// Database settings are saved as a whole or not at all, and refused ones do not prevent saving the rest.
+	if err := ValidateClusterDatabaseUpdate(update); err != nil {
+		event.SystemWarn([]string{"config", "cluster", "ignored database settings (%s)"}, clean.Error(err))
+		update.ClearDatabase()
+
+		if update.IsZero() {
+			return false, nil
+		}
+	}
+
 	// Store a DSN rebuilt from its validated parts and accepted parameters.
 	if update.DatabaseDSN != nil {
 		dsnValue, dropped, err := clusterDatabaseDSN(*update.DatabaseDSN, c.DatabaseTimeout())
@@ -77,10 +87,66 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 	setOptionString(patch, "DatabaseUser", update.DatabaseUser)
 	setOptionString(patch, "DatabasePassword", update.DatabasePassword)
 
-	return c.SaveOptionsPatch(patch)
+	// Separate database settings replace a stored DSN, which would otherwise take precedence over them.
+	if update.DatabaseDSN != nil || update.DatabaseName == nil && update.DatabaseUser == nil && update.DatabasePassword == nil {
+		changed, _, err := c.saveOptionsPatch(patch)
+		return changed, err
+	}
+
+	changed, removed, err := c.saveOptionsPatch(patch, "DatabaseDSN", "DatabaseDsn")
+
+	if err != nil {
+		return changed, err
+	} else if len(removed) > 0 {
+		c.options.DatabaseDSN = ""
+		c.options.Deprecated.DatabaseDsn = ""
+	}
+
+	// A DSN set by an environment variable or flag applies again on the next start.
+	if c.databaseDsnFromCli() || len(removed) == 0 && (c.options.DatabaseDSN != "" || c.options.Deprecated.DatabaseDsn != "") {
+		event.SystemWarn([]string{"config", "cluster", "database dsn from an environment variable or flag takes precedence over the saved database settings"})
+	}
+
+	return changed, nil
 }
 
-// validateClusterOptionsUpdate validates cluster-managed option updates.
+// databaseDsnFromCli reports whether an environment variable or flag sets the database DSN.
+func (c *Config) databaseDsnFromCli() bool {
+	if c.cliCtx == nil {
+		return false
+	}
+
+	ctx := flagContext(c.cliCtx, "database-dsn")
+
+	return ctx.IsSet("database-dsn") && ctx.String("database-dsn") != ""
+}
+
+// DatabaseDSNOverride returns the environment variable or flag that sets a database DSN, which takes precedence
+// over database settings saved separately in the options file, or an empty string if neither does.
+func (c *Config) DatabaseDSNOverride() string {
+	if !c.databaseDsnFromCli() {
+		return ""
+	} else if envVar := EnvVar("DATABASE_DSN"); os.Getenv(envVar) != "" && !databaseDsnInArgs(os.Args) {
+		return envVar
+	}
+
+	return "--database-dsn"
+}
+
+// databaseDsnInArgs reports whether command-line arguments set the database DSN flag or its alias.
+func databaseDsnInArgs(args []string) bool {
+	for _, arg := range args {
+		name, _, _ := strings.Cut(strings.TrimLeft(arg, "-"), "=")
+
+		if strings.HasPrefix(arg, "-") && (name == "database-dsn" || name == "dsn") {
+			return true
+		}
+	}
+
+	return false
+}
+
+// validateClusterOptionsUpdate validates the cluster-managed options of an update other than the database settings.
 func validateClusterOptionsUpdate(update cluster.OptionsUpdate) error {
 	if update.ClusterUUID != nil && !rnd.IsUUID(*update.ClusterUUID) {
 		return fmt.Errorf("invalid cluster UUID")
@@ -90,6 +156,11 @@ func validateClusterOptionsUpdate(update cluster.OptionsUpdate) error {
 		return fmt.Errorf("invalid node UUID")
 	}
 
+	return nil
+}
+
+// ValidateClusterDatabaseUpdate validates the database settings of a cluster options update.
+func ValidateClusterDatabaseUpdate(update cluster.OptionsUpdate) error {
 	if update.DatabaseDriver != nil && dsn.ParseDriver(*update.DatabaseDriver) != dsn.DriverMySQL {
 		return fmt.Errorf("invalid database driver")
 	}
@@ -118,7 +189,7 @@ func validateClusterDatabase(name, user, server *string) error {
 		return fmt.Errorf("invalid database user")
 	}
 
-	if server != nil && *server != "" && !dsn.ValidServer(*server) {
+	if server != nil && *server != "" && (!dsn.ValidServer(*server) || (&dsn.DSN{Server: *server}).Host() == "") {
 		return fmt.Errorf("invalid database server")
 	}
 
@@ -150,7 +221,7 @@ func clusterDatabaseDSN(s string, timeout int) (result string, dropped []string,
 
 	d := dsn.Parse(s)
 
-	if d.Driver != dsn.DriverMySQL || d.Net != "tcp" || d.Name == "" || d.User == "" {
+	if d.Driver != dsn.DriverMySQL || d.Net != "tcp" || d.Name == "" || d.User == "" || d.Host() == "" {
 		return "", nil, fmt.Errorf("invalid database dsn")
 	}
 
@@ -664,7 +735,7 @@ func (c *Config) NodeUUID() string {
 	c.options.NodeUUID = uuid
 
 	if err := c.SaveNodeUUID(uuid); err != nil {
-		log.Warnf("config: could not save node UUID (%s)", clean.Error(err))
+		event.SystemWarn([]string{"config", "cluster", "could not save node UUID", "%s"}, clean.ErrorFull(err))
 	}
 
 	return uuid
@@ -786,7 +857,7 @@ func (c *Config) SetJWKSUrl(url string) {
 
 	trimmed, ok := validClusterURL(url)
 	if !ok {
-		log.Warnf("config: rejecting JWKS URL %s (must be https, or http on loopback)", clean.Log(trimmed))
+		event.SystemWarn([]string{"config", "cluster", "rejecting JWKS URL %s (must be https, or http on loopback)"}, clean.Log(trimmed))
 		return
 	}
 
@@ -817,7 +888,7 @@ func (c *Config) SetPortalLoginUrl(url string) {
 
 	trimmed, ok := validClusterURL(url)
 	if !ok {
-		log.Warnf("config: rejecting portal login URL %s (must be https, or http on loopback)", clean.Log(trimmed))
+		event.SystemWarn([]string{"config", "cluster", "rejecting portal login URL %s (must be https, or http on loopback)"}, clean.Log(trimmed))
 		return
 	}
 

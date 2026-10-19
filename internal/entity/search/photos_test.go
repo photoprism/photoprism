@@ -177,6 +177,16 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 2, len(photos))
 	})
+	t.Run("LabelQueryOpenQuote", func(t *testing.T) {
+		// A quote that is not closed extends the value to the end of the query.
+		photos, count, err := Photos(form.SearchPhotos{Query: "label:\"xxx", Count: 10})
+		assert.NoError(t, err)
+		assert.Equal(t, PhotoResults{}, photos)
+		assert.Equal(t, 0, count)
+		photos, _, err = Photos(form.SearchPhotos{Query: "label:\"landscape", Count: 10})
+		assert.NoError(t, err)
+		assert.LessOrEqual(t, 2, len(photos))
+	})
 	t.Run("InvalidLabelQuery", func(t *testing.T) {
 		var frm form.SearchPhotos
 

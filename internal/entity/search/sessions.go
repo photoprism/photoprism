@@ -15,8 +15,17 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 	result = entity.Sessions{}
 	stmt := Db()
 
-	userUid := strings.TrimSpace(clean.SearchBindable(frm.UID))
-	search := strings.TrimSpace(clean.SearchBindable(frm.Query))
+	// A filter value whose removed NUL bytes and invalid UTF-8 leave nothing usable matches nothing.
+	userUid, uidOk := clean.SearchFilter(frm.UID)
+	search, queryOk := clean.SearchFilter(frm.Query)
+	_, providerOk := clean.SearchFilter(frm.Provider)
+	_, methodOk := clean.SearchFilter(frm.Method)
+
+	if !uidOk || !queryOk || !providerOk || !methodOk {
+		return result, nil
+	}
+
+	userUid, search = strings.TrimSpace(userUid), strings.TrimSpace(search)
 
 	order := frm.Order
 	limit := frm.Count

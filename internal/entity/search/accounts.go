@@ -10,8 +10,14 @@ import (
 func Accounts(frm form.SearchServices) (result entity.Services, err error) {
 	s := Db().Where(&entity.Service{})
 
-	frm.Query = clean.SearchBindable(frm.Query)
-	frm.Status = clean.SearchBindable(frm.Status)
+	var queryOk, statusOk bool
+
+	// A filter value whose removed NUL bytes and invalid UTF-8 leave nothing usable matches nothing.
+	if frm.Query, queryOk = clean.SearchFilter(frm.Query); !queryOk {
+		return entity.Services{}, nil
+	} else if frm.Status, statusOk = clean.SearchFilter(frm.Status); !statusOk {
+		return entity.Services{}, nil
+	}
 
 	if frm.Query != "" {
 		s = s.Where(likeCond("acc_name", false), SqlParam(frm.Query, "%", "%"))

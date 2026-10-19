@@ -848,9 +848,10 @@ export default {
       }).catch(() => {});
     },
     // search loads locations and waits for the active map source before updating markers.
+    // While busy, it returns the last search instead of starting another one.
     search(force) {
       if (this.loading) {
-        return;
+        return this._searchPromise;
       }
 
       // Do not query the same data more than once unless search results need to be updated.
@@ -872,7 +873,7 @@ export default {
       };
 
       // Fetch results from server.
-      return $api
+      this._searchPromise = $api
         .get("geo", options)
         .then(async (response) => {
           if (!response.data.features || response.data.features.length === 0) {
@@ -889,8 +890,8 @@ export default {
 
           const map = this.map;
 
+          // Without a map source, nothing is shown, so the search stays uninitialized and is repeated on load.
           if (!map || typeof map.getSource !== "function") {
-            this.initialized = true;
             this.loading = false;
             return;
           }
@@ -898,7 +899,6 @@ export default {
           const source = map.getSource("photos");
 
           if (!source || typeof source.setData !== "function") {
-            this.initialized = true;
             this.loading = false;
             return;
           }
@@ -932,6 +932,8 @@ export default {
           this.initialized = true;
           this.loading = false;
         });
+
+      return this._searchPromise;
     },
     renderMap() {
       const lastProjection = this.getProjection(true);
@@ -1318,8 +1320,8 @@ export default {
       this.map.on("resize", this.updateMarkers);
       this.map.on("idle", this.updateMarkers);
 
-      // Load pictures.
-      this.search().finally(() => {
+      // Load pictures, or wait for the search that is already running.
+      Promise.resolve(this.search()).finally(() => {
         this.loaded = true;
       });
     },

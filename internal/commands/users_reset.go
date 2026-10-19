@@ -88,6 +88,11 @@ func usersResetAction(ctx *cli.Context) error {
 			return cli.Exit(err, 1)
 		}
 
+		// Re-create auth_grants and auth_codes.
+		if err := ResetAppGrants(db); err != nil {
+			return cli.Exit(err, 1)
+		}
+
 		if err := LogDeleteUserClients(db); err != nil {
 			return cli.Exit(err, 1)
 		}

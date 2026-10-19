@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-13 05:07+0000\n"
+"PO-Revision-Date: 2026-10-18 16:55+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
@@ -34,6 +34,14 @@ msgstr "%s bestaat al"
 msgid "%s has been restored"
 msgstr "%s is hersteld"
 
+#: src/page/auth/consent.vue:23
+msgid "%{client} cannot be connected to your account %{account} on %{site}."
+msgstr "%{client} kan geen verbinding maken met je account %{account} op %{site}."
+
+#: src/page/auth/consent.vue:20
+msgid "%{client} wants to access your account %{account} on %{site}."
+msgstr "%{client} wil toegang krijgen tot je account %{account} op %{site}."
+
 #: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB van %{q} GB gebruikt"
@@ -61,7 +69,7 @@ msgstr "%{n} foto's gevonden"
 
 #: src/common/form.js:311 src/common/form.js:316
 #: src/component/input/chip-selector.vue:277
-#: src/component/lightbox/sidebar.vue:1677
+#: src/component/lightbox/sidebar.vue:1682
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/labels.vue:299
 msgid "%{s} is too long"
@@ -102,7 +110,7 @@ msgstr "Softwarepakketten van derden"
 msgid "4 hours"
 msgstr "4 uren"
 
-#: src/component/share/dialog.vue:123
+#: src/component/share/dialog.vue:104
 msgid "A click will copy it to your clipboard."
 msgstr "Een klik zal het naar uw klembord kopiëren."
 
@@ -129,7 +137,7 @@ msgstr "API sleutel"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:88 src/component/navigation.vue:595
+#: src/app/routes.js:89 src/component/navigation.vue:595
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -155,7 +163,7 @@ msgstr "Toegankelijkheid"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:358 src/model/service.js:81 src/model/user.js:151
+#: src/locales.js:358 src/model/service.js:86 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "Account"
@@ -254,7 +262,7 @@ msgstr "Toevoegen aan album"
 msgid "Add Link"
 msgstr "Link toevoegen"
 
-#: src/component/lightbox/sidebar.vue:891
+#: src/component/lightbox/sidebar.vue:892
 msgid "Add Notes"
 msgstr "Opmerkingen toevoegen"
 
@@ -315,7 +323,7 @@ msgid "Adjust Location"
 msgstr "Locatie aanpassen"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:967 src/options/auth.js:6
+#: src/common/util.js:1021 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
@@ -391,7 +399,7 @@ msgstr "Album niet gevonden"
 msgid "Album saved"
 msgstr "Album opgeslagen"
 
-#: src/app/routes.js:333 src/component/album/toolbar.vue:118
+#: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:258
@@ -456,6 +464,10 @@ msgstr "Alle bestanden uit de importmap"
 msgid "All originals"
 msgstr "Alle originelen"
 
+#: src/page/auth/consent.vue:72
+msgid "Allow"
+msgstr "Toestaan"
+
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
 msgstr "Pagina zoomen toestaan"
@@ -496,7 +508,7 @@ msgstr "Laat gebruikers nieuwe foto's en video's uploaden via de webinterface."
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "Maak zoomen met knijpgebaren mogelijk op mobiele apparaten."
 
-#: src/component/share/dialog.vue:125
+#: src/component/share/dialog.vue:106
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "U kunt ook rechtstreeks bestanden uploaden naar WebDAV-servers zoals Nextcloud."
 
@@ -509,7 +521,7 @@ msgstr "Hoogte"
 msgid "Altitude (m)"
 msgstr "Hoogte (m)"
 
-#: src/app/routes.js:414 src/common/util.js:907
+#: src/app/routes.js:427 src/common/util.js:961
 #: src/component/photo/batch-edit.vue:68 src/component/photo/batch-edit.vue:127
 #: src/component/photo/edit/files.vue:194
 #: src/component/photo/view/cards.vue:113
@@ -526,7 +538,7 @@ msgstr "Animatie"
 msgid "Animations"
 msgstr "Animaties"
 
-#: src/component/share/dialog.vue:124
+#: src/component/share/dialog.vue:105
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Alle privéfoto's en -video's blijven privé en worden niet gedeeld."
 
@@ -554,7 +566,7 @@ msgstr "Wijzigingen goedkeuren en opslaan"
 msgid "Apps and Devices"
 msgstr "Apps en apparaten"
 
-#: src/app/routes.js:445 src/component/navigation.vue:183
+#: src/app/routes.js:458 src/component/navigation.vue:183
 #: src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
@@ -603,7 +615,7 @@ msgstr "Weet je zeker dat je dit bestand permanent wilt verwijderen?"
 msgid "Are you sure?"
 msgstr "Weet je het zeker?"
 
-#: src/component/lightbox/sidebar.vue:848
+#: src/component/lightbox/sidebar.vue:849
 #: src/component/photo/batch-edit.vue:392
 #: src/component/photo/batch-edit.vue:394
 #: src/component/photo/edit/details.vue:319
@@ -619,7 +631,7 @@ msgstr "Verhoudingen"
 msgid "Attributes"
 msgstr "Attributen"
 
-#: src/app/routes.js:407 src/common/util.js:905
+#: src/app/routes.js:420 src/common/util.js:959
 #: src/component/navigation.vue:254 src/options/options.js:361
 msgid "Audio"
 msgstr "Audio"
@@ -639,7 +651,7 @@ msgstr "Audio"
 msgid "Authentication"
 msgstr "Authenticatie"
 
-#: src/common/util.js:927
+#: src/common/util.js:981
 msgid "Auto"
 msgstr "Auto"
 
@@ -647,6 +659,10 @@ msgstr "Auto"
 #: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "Terug"
+
+#: src/page/auth/consent.vue:61
+msgid "Back to App"
+msgstr "Terug naar de app"
 
 #: src/component/scroll.vue:6
 msgid "Back to top"
@@ -669,7 +685,7 @@ msgstr "Badge"
 msgid "Base Path"
 msgstr "Basispad"
 
-#: src/common/util.js:961
+#: src/common/util.js:1015
 msgid "Batch"
 msgstr "Batch"
 
@@ -697,7 +713,7 @@ msgid "Bio"
 msgstr "Bio"
 
 #: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:41
-#: src/page/settings/account.vue:196
+#: src/page/settings/account.vue:209
 msgid "Birth Date"
 msgstr "Geboortedatum"
 
@@ -742,7 +758,7 @@ msgstr "Bezig, wacht even…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Door gebruik te maken van de software en diensten die wij leveren, gaat u akkoord met onze servicevoorwaarden, ons privacybeleid en onze gedragscode."
 
-#: src/app/routes.js:346 src/component/navigation.vue:396
+#: src/app/routes.js:359 src/component/navigation.vue:396
 #: src/options/options.js:264 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
@@ -802,17 +818,17 @@ msgstr "Kan niet meer items selecteren"
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:157
 #: src/component/settings/passcode.vue:107
 #: src/component/settings/passcode.vue:148
-#: src/component/settings/password.vue:91 src/component/share/dialog.vue:170
-#: src/locales.js:225 src/page/auth/login.vue:133 src/page/connect.vue:36
+#: src/component/settings/password.vue:91 src/locales.js:225
+#: src/page/auth/login.vue:133 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/common/util.js:1145 src/common/util.js:1152
+#: src/common/util.js:1199 src/common/util.js:1206
 msgid "Cannot copy to clipboard"
 msgstr "Kan niet naar klembord kopiëren"
 
-#: src/common/util.js:949 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:1003 src/component/lightbox/sidebar.vue:808
 #: src/component/photo/batch-edit.vue:175
 #: src/component/photo/batch-edit.vue:178
 #: src/component/photo/edit/details.vue:28
@@ -870,7 +886,7 @@ msgstr "Privé vlag geschakeld"
 #: src/component/people/edit/dialog.vue:168
 #: src/component/photo/batch-edit.vue:1466
 #: src/component/photo/edit/details.vue:635 src/locales.js:399
-#: src/page/settings/account.vue:451 src/page/settings/account.vue:456
+#: src/page/settings/account.vue:472 src/page/settings/account.vue:477
 msgid "Changes could not be saved"
 msgstr "Wijzigingen kunnen niet worden opgeslagen"
 
@@ -884,8 +900,8 @@ msgstr "Wijzigingen kunnen niet worden opgeslagen"
 #: src/component/album/edit/dialog.vue:177
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3221
 #: src/component/photo/batch-edit.vue:1498
-#: src/component/photo/edit/files.vue:569 src/component/service/edit.vue:382
-#: src/component/share/dialog.vue:241 src/component/share/dialog.vue:260
+#: src/component/photo/edit/files.vue:574 src/component/service/edit.vue:382
+#: src/component/share/dialog.vue:214 src/component/share/dialog.vue:233
 #: src/locales.js:452 src/page/albums.vue:1205 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
@@ -950,16 +966,17 @@ msgstr "Klant"
 #: src/component/photo/edit/details.vue:380
 #: src/component/photo/edit/details.vue:385 src/component/photo/toolbar.vue:94
 #: src/component/settings/apps.vue:91 src/component/settings/apps.vue:215
+#: src/component/settings/connected-apps.vue:65
 #: src/component/settings/passcode.vue:67
 #: src/component/settings/passcode.vue:204
 #: src/component/settings/passcode.vue:219 src/component/settings/webdav.vue:74
-#: src/component/share/dialog.vue:133 src/component/update.vue:25
+#: src/component/share/dialog.vue:114 src/component/update.vue:25
 #: src/component/upload/dialog.vue:20 src/component/upload/dialog.vue:119
 #: src/locales.js:221 src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Sluiten"
 
-#: src/app/routes.js:225
+#: src/app/routes.js:226
 msgid "Cluster"
 msgstr "Cluster"
 
@@ -1016,8 +1033,12 @@ msgstr "Bevestigen"
 msgid "Connect"
 msgstr "Verbinden"
 
+#: src/app/routes.js:249
+msgid "Connect App"
+msgstr "Connect-app"
+
 #: src/page/settings/account.vue:203 src/component/settings/webdav.vue:15
-#: src/page/services.vue:109 src/page/settings/account.vue:187
+#: src/page/services.vue:109 src/page/settings/account.vue:200
 msgid "Connect via WebDAV"
 msgstr "Verbinding maken via WebDAV"
 
@@ -1025,7 +1046,12 @@ msgstr "Verbinding maken via WebDAV"
 msgid "Connected"
 msgstr "Verbonden"
 
-#: src/page/settings/account.vue:346 src/page/settings/account.vue:263
+#: src/component/settings/connected-apps.vue:15
+#: src/page/settings/account.vue:187
+msgid "Connected Apps"
+msgstr "Gekoppelde apps"
+
+#: src/page/settings/account.vue:346 src/page/settings/account.vue:276
 msgid "Contact Details"
 msgstr "Contactgegevens"
 
@@ -1068,7 +1094,7 @@ msgstr "Bijdrager"
 msgid "Converting"
 msgstr "Converteren"
 
-#: src/common/util.js:1138
+#: src/common/util.js:1192
 msgid "Copied to clipboard"
 msgstr "Gekopieerd naar klembord"
 
@@ -1080,7 +1106,7 @@ msgstr "Kopiëren"
 msgid "Copying files from %s"
 msgstr "Bestanden kopiëren uit %s"
 
-#: src/component/lightbox/sidebar.vue:834
+#: src/component/lightbox/sidebar.vue:835
 #: src/component/photo/batch-edit.vue:375
 #: src/component/photo/batch-edit.vue:377
 #: src/component/photo/edit/details.vue:306
@@ -1106,7 +1132,7 @@ msgstr "Kon niets vinden."
 
 #: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:293
 #: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:108
-#: src/page/settings/account.vue:286
+#: src/page/settings/account.vue:299
 msgid "Country"
 msgstr "Land"
 
@@ -1179,7 +1205,7 @@ msgstr "Datum en tijd"
 
 #: src/page/settings/account.vue:220 src/component/meta/datetime/dialog.vue:30
 #: src/component/photo/batch-edit.vue:198
-#: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:204
+#: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:217
 msgid "Day"
 msgstr "Dag"
 
@@ -1194,7 +1220,7 @@ msgstr "Debug-logs"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:929
+#: src/page/admin/users.vue:374 src/common/util.js:983
 #: src/component/photo/edit/info.vue:23 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:253
@@ -1214,7 +1240,7 @@ msgstr "Standaard map"
 #: src/component/file/delete/dialog.vue:22 src/component/label/clipboard.vue:34
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:103
-#: src/component/service/remove.vue:22 src/component/share/dialog.vue:105
+#: src/component/service/remove.vue:22 src/component/share/dialog.vue:86
 #: src/locales.js:344 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "Verwijder"
@@ -1235,6 +1261,10 @@ msgstr "Alles verwijderen?"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Verwijder verweesde indexvermeldingen, zijspanbestanden en miniaturen."
 
+#: src/page/auth/consent.vue:61
+msgid "Deny"
+msgstr "Weigeren"
+
 #: src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:155 src/page/albums.vue:244
 msgid "Description"
@@ -1250,7 +1280,7 @@ msgstr "Gedetailleerde instructies zijn te vinden in onze gebruikershandleiding.
 msgid "Details"
 msgstr "Details"
 
-#: src/component/photo/edit/files.vue:426
+#: src/component/photo/edit/files.vue:427
 msgid "Dimensions"
 msgstr "Afmetingen"
 
@@ -1348,16 +1378,20 @@ msgstr "Gooi weg"
 msgid "Discard changes and close"
 msgstr "Wijzigingen weggooien en sluiten"
 
-#: src/component/lightbox/sidebar.vue:930
+#: src/component/lightbox/sidebar.vue:931
 msgid "Discard invalid changes?"
 msgstr "Ongeldige wijzigingen weggooien?"
 
-#: src/component/lightbox/sidebar.vue:932
+#: src/component/lightbox/sidebar.vue:933
 msgid "Discard unsaved changes?"
 msgstr "Niet-opgeslagen wijzigingen verwijderen?"
 
-#: src/app/routes.js:736 src/app/routes.js:743 src/app/routes.js:750
-#: src/app/routes.js:757
+#: src/component/settings/connected-apps.vue:51
+msgid "Disconnect"
+msgstr "Verbinding verbreken"
+
+#: src/app/routes.js:749 src/app/routes.js:756 src/app/routes.js:763
+#: src/app/routes.js:770
 msgid "Discover"
 msgstr "Ontdek"
 
@@ -1387,7 +1421,7 @@ msgstr "Afbeeldingsbijschriften weergeven in zoekresultaten."
 msgid "Display picture titles in search results."
 msgstr "Afbeeldings titels weergeven in zoekresultaten."
 
-#: src/common/util.js:911 src/component/photo/view/cards.vue:115
+#: src/common/util.js:965 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:373
@@ -1411,7 +1445,6 @@ msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Gebruik geen RawTherapee om RAW beelden te converteren."
 
 #: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:94
-#: src/component/share/dialog.vue:171
 msgid "Done"
 msgstr "Klaar"
 
@@ -1441,7 +1474,7 @@ msgstr "Bestanden op afstand downloaden"
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
 #: src/component/lightbox.vue:3315 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:403 src/component/photo/clipboard.vue:421
-#: src/component/photo/edit/files.vue:526
+#: src/component/photo/edit/files.vue:531
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:237
 msgid "Downloading…"
@@ -1592,11 +1625,11 @@ msgstr "Entiteit niet gevonden"
 msgid "Error"
 msgstr "Fout"
 
-#: src/app/routes.js:534 src/component/navigation.vue:511
+#: src/app/routes.js:547 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "Fouten"
 
-#: src/common/util.js:931
+#: src/common/util.js:985
 msgid "Estimate"
 msgstr "Schatting"
 
@@ -1632,7 +1665,7 @@ msgstr "Experimentele eigenschappen"
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
 #: src/component/settings/apps.vue:144 src/component/settings/apps.vue:301
-#: src/component/share/dialog.vue:204
+#: src/component/share/dialog.vue:177
 msgid "Expires"
 msgstr "Verloopt"
 
@@ -1676,7 +1709,7 @@ msgstr "Bestand aanmaken mislukt, controleer alstublieft de rechten"
 msgid "Failed creating folder, please check permissions"
 msgstr "Folder aanmaken mislukt, controleer alstublieft de rechten"
 
-#: src/component/share/dialog.vue:251
+#: src/component/share/dialog.vue:224
 msgid "Failed removing link"
 msgstr "Mislukte verwijderingslink"
 
@@ -1708,14 +1741,14 @@ msgstr "Naam niet verwijderd"
 msgid "Failed to restart server"
 msgstr "Het opnieuw opstarten van de server is mislukt"
 
-#: src/component/lightbox/sidebar.vue:1702
-#: src/component/lightbox/sidebar.vue:1946
-#: src/component/lightbox/sidebar.vue:1987
-#: src/component/lightbox/sidebar.vue:2045
-#: src/component/lightbox/sidebar.vue:2065
-#: src/component/lightbox/sidebar.vue:2172
-#: src/component/lightbox/sidebar.vue:2195
-#: src/component/lightbox/sidebar.vue:2225
+#: src/component/lightbox/sidebar.vue:1707
+#: src/component/lightbox/sidebar.vue:1951
+#: src/component/lightbox/sidebar.vue:1992
+#: src/component/lightbox/sidebar.vue:2050
+#: src/component/lightbox/sidebar.vue:2070
+#: src/component/lightbox/sidebar.vue:2177
+#: src/component/lightbox/sidebar.vue:2200
+#: src/component/lightbox/sidebar.vue:2230
 #: src/component/photo/batch-edit.vue:1505
 msgid "Failed to save changes"
 msgstr "Wijzigingen niet opgeslagen"
@@ -1724,11 +1757,11 @@ msgstr "Wijzigingen niet opgeslagen"
 msgid "Failed to save face marker"
 msgstr "Mislukt om gezicht te redden marker"
 
-#: src/component/lightbox/sidebar.vue:1453
+#: src/component/lightbox/sidebar.vue:1458
 msgid "Failed to save name"
 msgstr "Mislukt om naam op te slaan"
 
-#: src/component/share/dialog.vue:225
+#: src/component/share/dialog.vue:198
 msgid "Failed updating link"
 msgstr "Mislukte actualiseringslink"
 
@@ -1753,7 +1786,7 @@ msgstr "Snel"
 msgid "Favorite"
 msgstr "Favoriet"
 
-#: src/app/routes.js:379 src/component/navigation.vue:316
+#: src/app/routes.js:392 src/component/navigation.vue:316
 #: src/options/options.js:262 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
@@ -1775,12 +1808,12 @@ msgstr "Kenmerken"
 msgid "Female"
 msgstr "Vrouw"
 
-#: src/common/util.js:933 src/component/lightbox/sidebar.vue:1101
-#: src/component/photo/edit/info.vue:94 src/model/file.js:274
+#: src/common/util.js:987 src/component/lightbox/sidebar.vue:1106
+#: src/component/photo/edit/info.vue:94 src/model/file.js:278
 msgid "File"
 msgstr "Bestand"
 
-#: src/app/routes.js:503
+#: src/app/routes.js:516
 msgid "File Browser"
 msgstr "Bestands Browser"
 
@@ -1852,7 +1885,7 @@ msgstr "Brandpuntsafstand"
 #: src/component/photo/edit/info.vue:44 src/component/service/edit.vue:44
 #: src/component/service/edit.vue:95 src/component/service/edit.vue:100
 #: src/component/service/upload.vue:42 src/component/service/upload.vue:48
-#: src/model/folder.js:181 src/page/library/browse.vue:77
+#: src/model/folder.js:185 src/page/library/browse.vue:77
 msgid "Folder"
 msgstr "Map"
 
@@ -1864,7 +1897,7 @@ msgstr "Map bevat %{n} bestanden"
 msgid "Folder is empty"
 msgstr "Map is leeg"
 
-#: src/app/routes.js:359 src/component/navigation.vue:463
+#: src/app/routes.js:372 src/component/navigation.vue:463
 #: src/options/options.js:267 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
@@ -1961,7 +1994,7 @@ msgstr "Hash"
 msgid "Help"
 msgstr "Help"
 
-#: src/app/routes.js:100
+#: src/app/routes.js:101
 msgid "Help & Support"
 msgstr "Hulp en Ondersteuning"
 
@@ -1969,7 +2002,7 @@ msgstr "Hulp en Ondersteuning"
 msgid "Hidden"
 msgstr "Verborgen"
 
-#: src/app/routes.js:518
+#: src/app/routes.js:531
 msgid "Hidden Files"
 msgstr "Verborgen bestanden"
 
@@ -1985,8 +2018,7 @@ msgstr "Verberg titel"
 #: src/component/service/add.vue:59 src/component/service/edit.vue:193
 #: src/component/settings/apps.vue:46 src/component/settings/passcode.vue:50
 #: src/component/settings/passcode.vue:191
-#: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
-#: src/page/auth/login.vue:116
+#: src/component/settings/password.vue:41 src/page/auth/login.vue:116
 msgid "Hide Password"
 msgstr "Wachtwoord verbergen"
 
@@ -2027,8 +2059,8 @@ msgstr "IP-adres"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Als u de toegang tot uw authenticatie-app of -apparaat verliest, kunt u uw herstelcode gebruiken om weer toegang te krijgen tot uw account."
 
-#: src/common/util.js:897 src/common/util.js:939
-#: src/component/photo/view/cards.vue:246 src/model/file.js:201
+#: src/common/util.js:951 src/common/util.js:993
+#: src/component/photo/view/cards.vue:246 src/model/file.js:205
 #: src/options/options.js:345
 msgid "Image"
 msgstr "Afbeelding"
@@ -2145,7 +2177,7 @@ msgstr "De server is momenteel niet bereikbaar. Probeer het opnieuw zodra hij we
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:452
 #: src/component/user/edit/dialog.vue:27 src/page/admin/users.vue:286
-#: src/app/routes.js:248 src/locales.js:388
+#: src/app/routes.js:261 src/locales.js:388
 msgid "Instances"
 msgstr "Instanties"
 
@@ -2165,7 +2197,7 @@ msgstr "Interval"
 #: src/common/form.js:260 src/common/form.js:339 src/common/form.js:342
 #: src/common/form.js:353 src/common/form.js:356 src/common/form.js:382
 #: src/common/form.js:384 src/common/form.js:391 src/common/form.js:393
-#: src/common/form.js:408 src/common/form.js:410 src/model/link.js:41
+#: src/common/form.js:408 src/common/form.js:410 src/model/link.js:39
 msgid "Invalid"
 msgstr "Ongeldig"
 
@@ -2189,7 +2221,7 @@ msgstr "Ongeldige inloggegevens"
 msgid "Invalid date"
 msgstr "Ongeldige datum"
 
-#: src/component/share/dialog.vue:232 src/locales.js:441
+#: src/component/share/dialog.vue:205 src/locales.js:441
 msgid "Invalid link"
 msgstr "Ongeldige link"
 
@@ -2223,7 +2255,7 @@ msgstr "Ongeldige verificatiecode. Probeer het opnieuw"
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr "Het is een eenmalige code die 2FA voor je account uitschakelt als je hem gebruikt."
 
-#: src/model/rest.js:242
+#: src/model/rest.js:232
 msgid "Item"
 msgstr "Item"
 
@@ -2243,11 +2275,11 @@ msgstr "JPEG-groottegrens: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG's en thumbnails worden automatisch weergegeven als dat nodig is."
 
-#: src/common/util.js:951
+#: src/common/util.js:1005
 msgid "Keyword"
 msgstr "Trefwoord"
 
-#: src/component/lightbox/sidebar.vue:876
+#: src/component/lightbox/sidebar.vue:877
 #: src/component/photo/edit/details.vue:347
 #: src/component/photo/edit/details.vue:350
 msgid "Keywords"
@@ -2270,7 +2302,7 @@ msgstr "Label niet gevonden"
 msgid "Label saved"
 msgstr "Labels opgeslagen"
 
-#: src/component/cluster/node/overview.vue:63 src/app/routes.js:549
+#: src/component/cluster/node/overview.vue:63 src/app/routes.js:562
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
@@ -2303,6 +2335,7 @@ msgid "Last Sync"
 msgstr "Laatste synchronisatie"
 
 #: src/component/settings/apps.vue:292
+#: src/component/settings/connected-apps.vue:106
 msgid "Last Used"
 msgstr "Laatst gebruikt"
 
@@ -2341,13 +2374,13 @@ msgstr "Lens"
 msgid "Lens not found"
 msgstr "Lens niet gevonden"
 
-#: src/app/routes.js:603 src/app/routes.js:619 src/app/routes.js:635
+#: src/app/routes.js:616 src/app/routes.js:632 src/app/routes.js:648
 #: src/component/navigation.vue:483 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "Bibliotheek"
 
-#: src/page/connect.vue:5 src/app/routes.js:94
-#: src/component/lightbox/sidebar.vue:862 src/component/navigation.vue:575
+#: src/page/connect.vue:5 src/app/routes.js:95
+#: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
 #: src/component/photo/edit/details.vue:332
@@ -2367,7 +2400,7 @@ msgstr "Limoen"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limiet bereikt, toont eerste %{n} bestanden"
 
-#: src/model/link.js:106 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:104 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
 msgstr "Link"
 
@@ -2379,7 +2412,7 @@ msgstr "Lijst"
 msgid "List View"
 msgstr "Lijstweergave"
 
-#: src/common/util.js:901 src/component/photo/batch-edit.vue:65
+#: src/common/util.js:955 src/component/photo/batch-edit.vue:65
 #: src/component/photo/batch-edit.vue:124
 #: src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
@@ -2387,7 +2420,7 @@ msgstr "Lijstweergave"
 msgid "Live"
 msgstr "Live"
 
-#: src/app/routes.js:393 src/component/navigation.vue:247
+#: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
 msgstr "Live foto's"
 
@@ -2414,7 +2447,7 @@ msgid "Local Time"
 msgstr "Lokale tijd"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:941 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:995 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:267
 #: src/component/photo/batch-edit.vue:595
@@ -2422,8 +2455,8 @@ msgstr "Lokale tijd"
 #: src/component/photo/edit/details.vue:573
 #: src/component/photo/edit/details.vue:678
 #: src/component/photo/view/cards.vue:255 src/component/photo/view/list.vue:43
-#: src/page/albums.vue:403 src/page/settings/account.vue:276
-#: src/page/settings/account.vue:278
+#: src/page/albums.vue:403 src/page/settings/account.vue:289
+#: src/page/settings/account.vue:291
 msgid "Location"
 msgstr "Locatie"
 
@@ -2480,7 +2513,7 @@ msgstr "Account beheren"
 msgid "Manager"
 msgstr "Manager"
 
-#: src/common/util.js:963
+#: src/common/util.js:1017
 msgid "Manual"
 msgstr "Handmatig"
 
@@ -2508,7 +2541,7 @@ msgstr "Kaarten"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "Kaarten zijn niet beschikbaar. Probeer een andere browser of een ander apparaat."
 
-#: src/common/util.js:943 src/model/marker.js:132
+#: src/common/util.js:997 src/model/marker.js:132
 msgid "Marker"
 msgstr "Symbool"
 
@@ -2516,7 +2549,7 @@ msgstr "Symbool"
 msgid "Maximum number of accounts has been reached."
 msgstr "Het maximum aantal accounts is bereikt."
 
-#: src/app/routes.js:386 src/component/navigation.vue:225
+#: src/app/routes.js:399 src/component/navigation.vue:225
 #: src/options/options.js:259 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "Media"
@@ -2538,7 +2571,7 @@ msgstr "%{a} samenvoegen met %{b}?"
 msgid "Message"
 msgstr "Bericht"
 
-#: src/common/util.js:953
+#: src/common/util.js:1007
 msgid "Metadata"
 msgstr "Metagegevens"
 
@@ -2558,11 +2591,11 @@ msgstr "Ontbrekend"
 msgid "Missing or invalid configuration"
 msgstr "Ontbrekende of ongeldige configuratie"
 
-#: src/common/util.js:935
+#: src/common/util.js:989
 msgid "Modified"
 msgstr "Gewijzigd"
 
-#: src/app/routes.js:320 src/component/navigation.vue:423
+#: src/app/routes.js:333 src/component/navigation.vue:423
 #: src/options/options.js:265 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
@@ -2575,7 +2608,7 @@ msgstr "Monochroom"
 #: src/page/settings/account.vue:240 src/component/meta/datetime/dialog.vue:50
 #: src/component/photo/batch-edit.vue:217
 #: src/component/photo/edit/details.vue:67 src/component/photo/toolbar.vue:207
-#: src/page/settings/account.vue:224
+#: src/page/settings/account.vue:237
 msgid "Month"
 msgstr "Maand"
 
@@ -2611,7 +2644,7 @@ msgstr "Stomme"
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:937 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:991 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2621,22 +2654,23 @@ msgstr "Stomme"
 #: src/component/people/edit/dialog.vue:31
 #: src/component/people/edit/dialog.vue:32
 #: src/component/photo/album/dialog.vue:143
-#: src/component/photo/edit/files.vue:420 src/component/photo/edit/info.vue:52
+#: src/component/photo/edit/files.vue:421 src/component/photo/edit/info.vue:52
 #: src/component/photo/edit/labels.vue:51
 #: src/component/photo/edit/labels.vue:135
 #: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:173 src/component/settings/apps.vue:118
-#: src/component/settings/apps.vue:281 src/locales.js:346
+#: src/component/settings/apps.vue:281
+#: src/component/settings/connected-apps.vue:104 src/locales.js:346
 #: src/page/albums.vue:402 src/page/auth/login.vue:80
 #: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
 msgstr "Naam"
 
-#: src/component/lightbox/sidebar.vue:1922
-#: src/component/lightbox/sidebar.vue:1971
-#: src/component/lightbox/sidebar.vue:2020
-#: src/component/lightbox/sidebar.vue:2087
+#: src/component/lightbox/sidebar.vue:1927
+#: src/component/lightbox/sidebar.vue:1976
+#: src/component/lightbox/sidebar.vue:2025
+#: src/component/lightbox/sidebar.vue:2092
 msgid "Name too long"
 msgstr "Titel is te lang"
 
@@ -2693,10 +2727,6 @@ msgstr "Volgend jaar"
 msgid "No"
 msgstr "Nee"
 
-#: src/options/admin.js:26
-msgid "No Access"
-msgstr "Geen toegang"
-
 #: src/component/photo/batch-edit.vue:434
 msgid "No albums assigned"
 msgstr "Geen albums toegewezen"
@@ -2708,6 +2738,10 @@ msgstr "Geen albums gevonden"
 #: src/locales.js:437
 msgid "No albums selected"
 msgstr "Geen albums geselecteerd"
+
+#: src/component/settings/connected-apps.vue:27
+msgid "No apps are connected to your account."
+msgstr "Er zijn geen apps gekoppeld aan je account."
 
 #: src/locales.js:280
 msgid "No data available"
@@ -2752,7 +2786,7 @@ msgstr "Geen mensen gevonden"
 #: src/component/lightbox.vue:667 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:883
+#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
 msgid "No pictures found"
 msgstr "Geen foto's gevonden"
 
@@ -2848,7 +2882,7 @@ msgstr "Notitie:"
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "Opmerking: Alleen WebDAV-servers, zoals Nextcloud of PhotoPrism, kunnen worden geconfigureerd als service op afstand voor het maken van back-ups en het uploaden van bestanden."
 
-#: src/component/lightbox/sidebar.vue:890
+#: src/component/lightbox/sidebar.vue:891
 #: src/component/photo/edit/details.vue:362
 #: src/component/photo/edit/details.vue:365
 msgid "Notes"
@@ -2922,6 +2956,10 @@ msgstr "Eén persoon vond"
 msgid "One picture found"
 msgstr "Een foto gevonden"
 
+#: src/page/auth/consent.vue:30
+msgid "Only allow access if you started connecting this app yourself."
+msgstr "Geef alleen toegang als je zelf bent begonnen met het koppelen van deze app."
+
 #: src/component/settings/passcode.vue:213
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "Alleen lokaal beheerde accounts kunnen worden ingesteld voor verificatie met 2FA."
@@ -2961,7 +2999,7 @@ msgstr "Originele naam"
 msgid "Original file names will be stored and indexed."
 msgstr "Originele bestandsnamen worden opgeslagen en geïndexeerd."
 
-#: src/component/navigation.vue:497 src/model/file.js:182
+#: src/component/navigation.vue:497 src/model/file.js:186
 #: src/options/options.js:477 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
@@ -2997,7 +3035,7 @@ msgstr "PNG-groottegrens: %{n}px"
 msgid "Page {0}, Current page"
 msgstr "Pagina {0}, Huidige pagina"
 
-#: src/component/photo/edit/files.vue:182 src/model/photo.js:962
+#: src/component/photo/edit/files.vue:182 src/model/photo.js:963
 msgid "Pages"
 msgstr "Pagina's"
 
@@ -3026,8 +3064,8 @@ msgstr "Deel van een aantal geselecteerde foto's"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:186
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:36
-#: src/component/settings/passcode.vue:177 src/component/share/dialog.vue:169
-#: src/options/auth.js:121 src/page/auth/login.vue:101
+#: src/component/settings/passcode.vue:177 src/options/auth.js:121
+#: src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Wachtwoord"
 
@@ -3043,7 +3081,7 @@ msgstr "Pauze"
 msgid "Payment required"
 msgstr "Betaling vereist"
 
-#: src/app/routes.js:564 src/app/routes.js:588
+#: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
@@ -3051,7 +3089,7 @@ msgstr "Betaling vereist"
 msgid "People"
 msgstr "Personen"
 
-#: src/component/share/dialog.vue:122
+#: src/component/share/dialog.vue:103
 msgid "People you share a link with will be able to view public contents."
 msgstr "Mensen met wie je een link deelt, kunnen de openbare inhoud bekijken."
 
@@ -3089,7 +3127,7 @@ msgstr "Persoon gered"
 msgid "Personal"
 msgstr "Persoonlijk"
 
-#: src/model/photo.js:1449
+#: src/model/photo.js:1450
 msgid "Photo"
 msgstr "Foto"
 
@@ -3101,7 +3139,7 @@ msgstr "PhotoPrism is 100% zelf gefinancierd en onafhankelijk."
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ lidmaatschap"
 
-#: src/app/routes.js:313
+#: src/app/routes.js:326
 msgid "Photos"
 msgstr "Foto’s"
 
@@ -3130,8 +3168,8 @@ msgstr "Plaats"
 msgid "Place & Time"
 msgstr "Plaats en Tijd"
 
-#: src/app/routes.js:463 src/app/routes.js:469 src/app/routes.js:475
-#: src/app/routes.js:490 src/component/navigation.vue:352
+#: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
+#: src/app/routes.js:503 src/component/navigation.vue:352
 #: src/component/navigation.vue:746 src/options/options.js:263
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:409 src/page/settings/general.vue:493
@@ -3242,11 +3280,11 @@ msgid "Previous year"
 msgstr "Vorig jaar"
 
 #: src/component/photo/edit/files.vue:79 src/component/photo/edit/files.vue:226
-#: src/component/photo/edit/files.vue:413
+#: src/component/photo/edit/files.vue:414
 msgid "Primary"
 msgstr "Primair"
 
-#: src/app/routes.js:428 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:441 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:176 src/component/people/edit/dialog.vue:68
 #: src/component/photo/batch-edit.vue:1563
 #: src/component/photo/edit/info.vue:173 src/page/settings/general.vue:200
@@ -3295,7 +3333,7 @@ msgstr "Willekeurig"
 msgid "Rating {0} of {1}"
 msgstr "Beoordeling {0} van {1}"
 
-#: src/common/util.js:899 src/options/options.js:349
+#: src/common/util.js:953 src/options/options.js:349
 msgid "Raw"
 msgstr "Raw"
 
@@ -3361,7 +3399,7 @@ msgstr "Beperk interface-animaties en bewegingseffecten."
 msgid "Refresh"
 msgstr "Vernieuw"
 
-#: src/app/routes.js:497 src/component/navigation.vue:330
+#: src/app/routes.js:510 src/component/navigation.vue:330
 #: src/component/navigation.vue:367
 msgid "Regions"
 msgstr "Regio's"
@@ -3482,7 +3520,7 @@ msgstr "Herhaal Limiet"
 msgid "Retype Password"
 msgstr "Herhaal je wachtwoord"
 
-#: src/app/routes.js:421 src/component/navigation.vue:169
+#: src/app/routes.js:434 src/component/navigation.vue:169
 msgid "Review"
 msgstr "Beoordeling"
 
@@ -3527,7 +3565,7 @@ msgstr "Satelliet"
 #: src/component/people/edit/dialog.vue:77
 #: src/component/photo/batch-edit.vue:497
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:259
-#: src/component/settings/password.vue:94 src/component/share/dialog.vue:111
+#: src/component/settings/password.vue:94 src/component/share/dialog.vue:92
 msgid "Save"
 msgstr "Opslaan"
 
@@ -3553,7 +3591,8 @@ msgstr "Scans"
 #: src/page/admin/sessions.vue:139 src/page/admin/sessions.vue:223
 #: src/page/admin/sessions.vue:179 src/page/admin/sessions.vue:296
 #: src/page/admin/sessions.vue:294 src/component/settings/apps.vue:135
-#: src/component/settings/apps.vue:283 src/locales.js:366
+#: src/component/settings/apps.vue:283
+#: src/component/settings/connected-apps.vue:105 src/locales.js:366
 msgid "Scope"
 msgstr "Toepassingsgebied"
 
@@ -3576,6 +3615,14 @@ msgstr "Zoeken"
 #: src/component/photo/toolbar.vue:51 src/page/albums.vue:39
 msgid "Search Filters"
 msgstr "Zoekfilters"
+
+#: src/page/auth/consent.vue:169
+msgid "Search and view your photos"
+msgstr "Zoek en bekijk je foto’s"
+
+#: src/page/auth/consent.vue:170
+msgid "Search and view your videos"
+msgstr "Zoek en bekijk je video’s"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -3689,7 +3736,6 @@ msgid "Service"
 msgstr "Service"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:176
-#: src/component/share/dialog.vue:167
 msgid "Service URL"
 msgstr "Service URL"
 
@@ -3722,16 +3768,16 @@ msgid "Set as Cover Image"
 msgstr "Instellen als omslagafbeelding"
 
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
-#: src/component/navigation.vue:494 src/app/routes.js:205 src/app/routes.js:652
-#: src/app/routes.js:664 src/app/routes.js:676 src/app/routes.js:693
-#: src/app/routes.js:705 src/app/routes.js:725 src/component/navigation.vue:533
+#: src/component/navigation.vue:494 src/app/routes.js:206 src/app/routes.js:665
+#: src/app/routes.js:677 src/app/routes.js:689 src/app/routes.js:706
+#: src/app/routes.js:718 src/app/routes.js:738 src/component/navigation.vue:533
 #: src/component/navigation.vue:706 src/options/options.js:268
 msgid "Settings"
 msgstr "Instellingen"
 
 #: src/page/settings/account.vue:537 src/page/settings/account.vue:566
 #: src/component/settings/passcode.vue:378 src/locales.js:467
-#: src/page/settings/account.vue:445 src/page/settings/account.vue:474
+#: src/page/settings/account.vue:466 src/page/settings/account.vue:495
 msgid "Settings saved"
 msgstr "Instellingen opgeslagen"
 
@@ -3782,8 +3828,7 @@ msgstr "Alleen belangrijk tonen"
 #: src/component/service/add.vue:59 src/component/service/edit.vue:193
 #: src/component/settings/apps.vue:46 src/component/settings/passcode.vue:50
 #: src/component/settings/passcode.vue:191
-#: src/component/settings/password.vue:41 src/component/share/dialog.vue:93
-#: src/page/auth/login.vue:116
+#: src/component/settings/password.vue:41 src/page/auth/login.vue:116
 msgid "Show Password"
 msgstr "Wachtwoord weergeven"
 
@@ -3847,7 +3892,7 @@ msgstr "Open het gedeelte ‘Media’ om door video’s, livefoto’s en animati
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Toon de weergave Plaatsen met interactieve kaarten zodat je foto's per locatie kunt bekijken."
 
-#: src/common/util.js:913 src/model/file.js:197
+#: src/common/util.js:967 src/model/file.js:201
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "Sidecar"
@@ -3874,7 +3919,7 @@ msgid "Site URL"
 msgstr "URL website"
 
 #: src/component/photo/edit/files.vue:174
-#: src/component/photo/edit/files.vue:434 src/component/service/edit.vue:58
+#: src/component/photo/edit/files.vue:435 src/component/service/edit.vue:58
 msgid "Size"
 msgstr "Grootte"
 
@@ -3908,6 +3953,7 @@ msgid "Some albums could not be updated"
 msgstr "Sommige albums konden niet worden bijgewerkt"
 
 #: src/component/lightbox.vue:1255 src/locales.js:397
+#: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
 msgstr "Er ging iets mis, probeer het opnieuw."
 
@@ -3979,7 +4025,7 @@ msgstr "Startpagina"
 msgid "Static Size Limit: %{n}px"
 msgstr "Statische Grootte Limiet: %{n}px"
 
-#: src/component/photo/edit/files.vue:448
+#: src/component/photo/edit/files.vue:449
 msgid "Status"
 msgstr "Status"
 
@@ -3999,7 +4045,7 @@ msgstr "Opslag"
 msgid "Streets"
 msgstr "Straat"
 
-#: src/common/util.js:955 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:1009 src/component/lightbox/sidebar.vue:821
 #: src/component/photo/batch-edit.vue:337
 #: src/component/photo/batch-edit.vue:340
 #: src/component/photo/edit/details.vue:291
@@ -4029,6 +4075,7 @@ msgstr "Met succes geactiveerd"
 
 #: src/component/session/remove/dialog.vue:60
 #: src/component/settings/apps.vue:450
+#: src/component/settings/connected-apps.vue:178
 msgid "Successfully deleted"
 msgstr "Succesvol verwijderd"
 
@@ -4118,6 +4165,10 @@ msgstr "Thema"
 msgid "This account is missing an ID and can't be edited."
 msgstr "Dit account heeft geen ID en kan niet worden bewerkt."
 
+#: src/page/auth/consent.vue:15
+msgid "This authorization request has expired or is invalid. Please return to the app and try again."
+msgstr "Dit autorisatieverzoek is verlopen of ongeldig. Ga terug naar de app en probeer het nog eens."
+
 #: src/common/form.js:249 src/common/form.js:258 src/common/form.js:267
 #: src/common/form.js:276 src/common/form.js:285 src/common/form.js:309
 #: src/common/form.js:360 src/common/form.js:370 src/common/form.js:382
@@ -4153,7 +4204,7 @@ msgstr "Tijdzone"
 msgid "Timeout"
 msgstr "time-out"
 
-#: src/common/util.js:957 src/component/photo/view/list.vue:34
+#: src/common/util.js:1011 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Titel"
 
@@ -4167,7 +4218,7 @@ msgctxt "Account"
 msgid "Title"
 msgstr "Titel"
 
-#: src/component/lightbox/sidebar.vue:795
+#: src/component/lightbox/sidebar.vue:796
 #: src/component/photo/batch-edit.vue:158
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:17
@@ -4245,7 +4296,7 @@ msgstr "Twee-factor authenticatie is ingeschakeld voor je account."
 
 #: src/component/photo/batch-edit.vue:357
 #: src/component/photo/edit/files.vue:166
-#: src/component/photo/edit/files.vue:442 src/component/photo/edit/info.vue:21
+#: src/component/photo/edit/files.vue:443 src/component/photo/edit/info.vue:21
 #: src/component/service/edit.vue:213
 msgid "Type"
 msgstr "Type"
@@ -4284,12 +4335,12 @@ msgstr "Unieke id"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:670 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:724 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:279
-#: src/component/lightbox/sidebar.vue:701
-#: src/component/lightbox/sidebar.vue:713
-#: src/component/lightbox/sidebar.vue:993
-#: src/component/lightbox/sidebar.vue:1742
+#: src/component/lightbox/sidebar.vue:702
+#: src/component/lightbox/sidebar.vue:714
+#: src/component/lightbox/sidebar.vue:994
+#: src/component/lightbox/sidebar.vue:1747
 #: src/component/meta/datetime/dialog.vue:31
 #: src/component/meta/datetime/dialog.vue:51
 #: src/component/meta/datetime/dialog.vue:71
@@ -4297,18 +4348,22 @@ msgstr "Unieke id"
 #: src/component/photo/edit/details.vue:68
 #: src/component/photo/edit/details.vue:89
 #: src/component/photo/edit/details.vue:437 src/component/photo/toolbar.vue:385
-#: src/model/album.js:178 src/model/photo.js:333 src/model/photo.js:871
-#: src/model/photo.js:896 src/model/photo.js:919 src/model/photo.js:926
-#: src/model/photo.js:998 src/model/photo.js:1006 src/model/photo.js:1088
-#: src/model/photo.js:1110 src/model/photo.js:1147 src/model/photo.js:1177
+#: src/model/album.js:178 src/model/photo.js:333 src/model/photo.js:872
+#: src/model/photo.js:897 src/model/photo.js:920 src/model/photo.js:927
+#: src/model/photo.js:999 src/model/photo.js:1007 src/model/photo.js:1089
+#: src/model/photo.js:1111 src/model/photo.js:1148 src/model/photo.js:1178
 #: src/model/user.js:137 src/options/options.js:61 src/options/options.js:107
 #: src/options/options.js:125 src/options/options.js:142
 #: src/options/options.js:156 src/options/options.js:168
 #: src/page/library/errors.vue:370 src/page/library/errors.vue:377
-#: src/page/settings/account.vue:205 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:245
+#: src/page/settings/account.vue:218 src/page/settings/account.vue:238
+#: src/page/settings/account.vue:258
 msgid "Unknown"
 msgstr "Onbekend"
+
+#: src/page/auth/consent.vue:129
+msgid "Unknown App"
+msgstr "Onbekende app"
 
 #: src/page/photos.vue:455
 msgid "Unknown location"
@@ -4316,11 +4371,11 @@ msgstr "Onbekende locatie"
 
 #: src/component/navigation.vue:567 src/page/settings/account.vue:466
 #: src/page/settings/account.vue:474 src/component/navigation.vue:876
-#: src/page/settings/account.vue:374 src/page/settings/account.vue:382
+#: src/page/settings/account.vue:395 src/page/settings/account.vue:403
 msgid "Unregistered"
 msgstr "Ongeregistreerd"
 
-#: src/app/routes.js:372 src/component/navigation.vue:212
+#: src/app/routes.js:385 src/component/navigation.vue:212
 msgid "Unsorted"
 msgstr "Ongesorteerd"
 
@@ -4449,13 +4504,17 @@ msgstr "Het uploaden van %{n} van %{t}…"
 msgid "Uploading photos…"
 msgstr "Foto’s uploaden…"
 
-#: src/page/settings/account.vue:559 src/page/settings/account.vue:467
+#: src/page/settings/account.vue:559 src/page/settings/account.vue:488
 msgid "Uploading…"
 msgstr "Uploaden…"
 
 #: src/component/upload/dialog.vue:108
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Uploads die dergelijke beelden kunnen bevatten, worden automatisch geweigerd."
+
+#: src/page/auth/consent.vue:168
+msgid "Use PhotoPrism tools in this app"
+msgstr "Gebruik de PhotoPrism-tools in deze app"
 
 #: src/page/settings/advanced.vue:372
 msgid "Use Presets"
@@ -4472,7 +4531,7 @@ msgstr "Gebruik je herstelcode of neem contact op met een beheerder voor hulp."
 #: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:221
 #: src/component/cluster/node/overview.vue:77 src/model/cluster-instance.js:32
 #: src/page/admin/sessions.vue:138 src/page/admin/sessions.vue:294
-#: src/page/admin/sessions.vue:292 src/locales.js:356 src/model/user.js:458
+#: src/page/admin/sessions.vue:292 src/locales.js:356 src/model/user.js:476
 #: src/options/auth.js:9
 msgid "User"
 msgstr "Gebruiker"
@@ -4494,8 +4553,7 @@ msgstr "Gebruiker niet gevonden"
 #: src/component/user/add/dialog.vue:38 src/page/admin/sessions.vue:131
 #: src/page/admin/users.vue:282 src/page/admin/users.vue:269
 #: src/common/form.js:293 src/component/service/add.vue:38
-#: src/component/service/edit.vue:179 src/component/share/dialog.vue:168
-#: src/locales.js:347
+#: src/component/service/edit.vue:179 src/locales.js:347
 msgid "Username"
 msgstr "Gebruikersnaam"
 
@@ -4507,7 +4565,7 @@ msgstr "De gebruikersnaam mag alleen ASCII-tekens bevatten"
 msgid "Users"
 msgstr "Gebruikers"
 
-#: src/common/util.js:909 src/component/photo/view/cards.vue:114
+#: src/common/util.js:963 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:369
 msgid "Vector"
@@ -4533,12 +4591,12 @@ msgstr "Geverifieerd e-mailadres vereist"
 msgid "Version"
 msgstr "Versie"
 
-#: src/common/util.js:903 src/component/photo/batch-edit.vue:69
+#: src/common/util.js:957 src/component/photo/batch-edit.vue:69
 #: src/component/photo/batch-edit.vue:128
 #: src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
-#: src/component/photo/view/mosaic.vue:77 src/model/file.js:204
-#: src/model/photo.js:1022 src/model/photo.js:1040 src/options/options.js:357
+#: src/component/photo/view/mosaic.vue:77 src/model/file.js:208
+#: src/model/photo.js:1023 src/model/photo.js:1041 src/options/options.js:357
 msgid "Video"
 msgstr "Video"
 
@@ -4546,7 +4604,7 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Videoduur"
 
-#: src/app/routes.js:400 src/component/navigation.vue:240
+#: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
 msgid "Videos"
 msgstr "Video's"
@@ -4556,15 +4614,59 @@ msgstr "Video's"
 msgid "View"
 msgstr "Weergave"
 
+#: src/page/auth/consent.vue:179
+msgid "View cameras"
+msgstr "Bekijk camera's"
+
+#: src/page/auth/consent.vue:180
+msgid "View lenses"
+msgstr "Bekijk lenzen"
+
+#: src/page/auth/consent.vue:178
+msgid "View people"
+msgstr "Mensen bekijken"
+
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
 msgstr "Bekijk zoekresultaten als een lijst."
+
+#: src/page/auth/consent.vue:171
+msgid "View your albums"
+msgstr "Bekijk je albums"
+
+#: src/page/auth/consent.vue:174
+msgid "View your calendar"
+msgstr "Bekijk je agenda"
+
+#: src/page/auth/consent.vue:172
+msgid "View your favorites"
+msgstr "Bekijk je favorieten"
+
+#: src/page/auth/consent.vue:181
+msgid "View your files"
+msgstr "Bekijk je bestanden"
+
+#: src/page/auth/consent.vue:175
+msgid "View your folders"
+msgstr "Bekijk je mappen"
+
+#: src/page/auth/consent.vue:177
+msgid "View your labels"
+msgstr "Bekijk je labels"
+
+#: src/page/auth/consent.vue:173
+msgid "View your moments"
+msgstr "Bekijk je momenten"
+
+#: src/page/auth/consent.vue:176
+msgid "View your places"
+msgstr "Bekijk je plaatsen"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
 msgstr "Kijker"
 
-#: src/common/util.js:965
+#: src/common/util.js:1019
 msgid "Vision"
 msgstr "Visie"
 
@@ -4599,7 +4701,7 @@ msgstr "Web Login"
 msgid "WebDAV"
 msgstr "WebDAV"
 
-#: src/component/service/upload.vue:16 src/component/share/dialog.vue:130
+#: src/component/service/upload.vue:16 src/component/share/dialog.vue:111
 msgid "WebDAV Upload"
 msgstr "Uploaden"
 
@@ -4612,7 +4714,7 @@ msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, ca
 msgstr "WebDAV cliënten, zoals Microsoft's Windows Explorer of Apple's Finder, kunnen rechtstreeks verbinding maken met PhotoPrism."
 
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
-#: src/page/settings/account.vue:308
+#: src/page/settings/account.vue:321
 msgid "Website"
 msgstr "Website"
 
@@ -4627,7 +4729,7 @@ msgstr "Werk Details"
 #: src/page/settings/account.vue:260 src/component/meta/datetime/dialog.vue:70
 #: src/component/photo/batch-edit.vue:236
 #: src/component/photo/edit/details.vue:88 src/component/photo/toolbar.vue:188
-#: src/page/albums.vue:66 src/page/settings/account.vue:244
+#: src/page/albums.vue:66 src/page/settings/account.vue:257
 msgid "Year"
 msgstr "Jaar"
 
@@ -4693,6 +4795,10 @@ msgstr "U kunt uw bibliotheek opnieuw scannen om meer gezichten te vinden."
 msgid "Your account could not be connected"
 msgstr "Uw account kon niet worden aangesloten"
 
+#: src/page/auth/consent.vue:33
+msgid "Your account does not have the permissions this app requires."
+msgstr "Je account heeft niet de rechten die deze app nodig heeft."
+
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
 msgstr "Uw account is succesvol verbonden."
@@ -4738,6 +4844,10 @@ msgstr "in"
 msgid "mixed"
 msgstr "gemengd"
 
+#: src/page/auth/consent.vue:186
+msgid "not available"
+msgstr "niet beschikbaar"
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "optioneel"
@@ -4781,6 +4891,9 @@ msgstr "{0} geselecteerd"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} van {2}"
+
+#~ msgid "No Access"
+#~ msgstr "Geen toegang"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

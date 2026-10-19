@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Roles, Providers, RoleLabel, RoleOptions, ProviderLabel, ProviderOptions } from "options/auth";
+import { Roles, Providers, Methods, RoleLabel, RoleOptions, ProviderLabel, ProviderOptions } from "options/auth";
 
 describe("options/auth RoleLabel", () => {
   it("resolves mapped roles from the shared Roles map", () => {
@@ -51,6 +51,13 @@ describe("options/auth ProviderLabel", () => {
   });
   it("falls back to the raw key when unmapped", () => {
     expect(ProviderLabel("does-not-exist")).toBe("does-not-exist");
+  });
+});
+
+describe("options/auth OAuth app labels", () => {
+  it("labels the provider and method of OAuth app tokens", () => {
+    expect(ProviderLabel("oauth_app")).toBe("OAuth App");
+    expect(Methods()["pkce"]).toBe("PKCE");
   });
 });
 

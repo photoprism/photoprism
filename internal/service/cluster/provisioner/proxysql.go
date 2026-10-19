@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -167,9 +168,9 @@ func normalizeProxyDSN(proxyDsn string) (string, error) {
 	if err != nil {
 		return "", err
 	} else if names := dsn.LoggableParamNames(dropped); len(names) > 0 {
-		log.Warnf("proxysql: ignored %d unsupported admin dsn parameters %s", len(dropped), clean.LogNames(names))
+		event.SystemWarn([]string{"proxysql", "ignored %d unsupported admin dsn parameters %s"}, len(dropped), clean.LogNames(names))
 	} else if len(dropped) > 0 {
-		log.Warnf("proxysql: ignored %d unsupported admin dsn parameters", len(dropped))
+		event.SystemWarn([]string{"proxysql", "ignored %d unsupported admin dsn parameters"}, len(dropped))
 	}
 
 	defaults := "charset=utf8mb4&interpolateParams=true"

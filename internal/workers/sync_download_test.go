@@ -1,7 +1,11 @@
 package workers
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"image"
+	"image/jpeg"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -15,10 +19,13 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -177,6 +184,12 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		return f
 	}
 
+	// countStored returns the number of stored records of a remote file.
+	countStored := func(t *testing.T, a entity.Service, name string) (n int64) {
+		require.NoError(t, entity.Db().Model(&entity.FileSync{}).Where("service_id = ? AND remote_name = ?", a.ID, name).Count(&n).Error)
+		return n
+	}
+
 	// attempts returns how often a remote file was requested.
 	attempts := func(name string) int {
 		mu.Lock()
@@ -216,6 +229,86 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		at := stored(t, a, "/at.jpg")
 		assert.Equal(t, 4, at.Errors)
 		assert.Equal(t, entity.FileSyncFailed, at.Status)
+	})
+	t.Run("Unportable", func(t *testing.T) {
+		// Files queued under names that are not portable are removed from the queue instead of downloaded.
+		a := newAccount(t, 3)
+		newFile(t, a, "/x:y.jpg", 0)
+		newFile(t, a, "/dir*/inner.jpg", 0)
+		newFile(t, a, "/portable.jpg", 0)
+
+		_, err := worker.download(a)
+		require.NoError(t, err)
+
+		for _, name := range []string{"/x:y.jpg", "/dir*/inner.jpg"} {
+			assert.Equal(t, 0, attempts(name), name)
+			assert.Equal(t, int64(0), countStored(t, a, name), name)
+		}
+
+		assert.Equal(t, 1, attempts("/portable.jpg"))
+	})
+	t.Run("UnsupportedDest", func(t *testing.T) {
+		// Downloads that are imported are not requested if the import destination gives names the index skips.
+		dest := worker.conf.Options().ImportDest
+		t.Cleanup(func() { worker.conf.Options().ImportDest = dest })
+		worker.conf.Options().ImportDest = "a:b"
+
+		a := newAccount(t, 3)
+		newFile(t, a, "/dest-refused.jpg", 0)
+
+		complete, err := worker.download(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.Equal(t, 0, attempts("/dest-refused.jpg"))
+		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/dest-refused.jpg").Status)
+	})
+	t.Run("UnportableSyncFolder", func(t *testing.T) {
+		// The name of the sync folder itself is not checked when files are imported.
+		a := newAccount(t, 3)
+		require.NoError(t, a.Update("SyncPath", "/A|B"))
+		newFile(t, a, "/A|B/kept.jpg", 0)
+
+		_, err := worker.download(a)
+		require.NoError(t, err)
+		assert.Equal(t, 1, attempts("/A|B/kept.jpg"))
+
+		// It is when files keep their remote paths in originals.
+		b := newAccount(t, 3)
+		require.NoError(t, b.Update("SyncPath", "/A|B"))
+		require.NoError(t, b.Update("SyncFilenames", true))
+		newFile(t, b, "/A|B/refused.jpg", 0)
+
+		_, err = worker.download(b)
+		require.NoError(t, err)
+		assert.Equal(t, 0, attempts("/A|B/refused.jpg"))
+		assert.Equal(t, int64(0), countStored(t, b, "/A|B/refused.jpg"))
+	})
+	t.Run("SyncRaw", func(t *testing.T) {
+		// Raw images and videos queued while the option was on are ignored once it is off.
+		a := newAccount(t, 3)
+		newFile(t, a, "/raw-off.cr2", 0)
+		newFile(t, a, "/dng-off.dng", 0)
+		newFile(t, a, "/video-off.mp4", 0)
+		newFile(t, a, "/image-off.jpg", 0)
+
+		_, err := worker.download(a)
+		require.NoError(t, err)
+
+		assert.Equal(t, 0, attempts("/raw-off.cr2"))
+		assert.Equal(t, entity.FileSyncIgnore, stored(t, a, "/raw-off.cr2").Status)
+		assert.Equal(t, 0, attempts("/dng-off.dng"))
+		assert.Equal(t, entity.FileSyncIgnore, stored(t, a, "/dng-off.dng").Status)
+		assert.Equal(t, 0, attempts("/video-off.mp4"))
+		assert.Equal(t, entity.FileSyncIgnore, stored(t, a, "/video-off.mp4").Status)
+		assert.Equal(t, 1, attempts("/image-off.jpg"))
+
+		b := newAccount(t, 3)
+		require.NoError(t, b.Update("SyncRaw", true))
+		newFile(t, b, "/raw-on.cr2", 0)
+
+		_, err = worker.download(b)
+		require.NoError(t, err)
+		assert.Equal(t, 1, attempts("/raw-on.cr2"))
 	})
 	t.Run("LowestLimit", func(t *testing.T) {
 		a := newAccount(t, 1)
@@ -304,6 +397,146 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.Equal(t, 2, attempts("/stuck.jpg"))
 		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/stuck.jpg").Status)
 	})
+	t.Run("NoLimitWindow", func(t *testing.T) {
+		// With more failing files than one run reads, the stage stays open until every file was tried once.
+		limit := downloadLimit
+		downloadLimit = 55
+		t.Cleanup(func() { downloadLimit = limit })
+
+		// Two runs read 7 files each, so the third finds the one file left.
+		a := newAccount(t, -1)
+		for i := 0; i < 15; i++ {
+			newFile(t, a, fmt.Sprintf("/window-%02d.jpg", i), 0)
+		}
+
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+
+		var runs []bool
+		for run := 0; run < 3; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+		assert.Equal(t, []bool{false, false, true}, runs)
+
+		for i := 0; i < 15; i++ {
+			name := fmt.Sprintf("/window-%02d.jpg", i)
+			assert.GreaterOrEqual(t, attempts(name), 1, name)
+			assert.Equal(t, entity.FileSyncNew, stored(t, a, name).Status)
+		}
+
+		var warnings []string
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel {
+				warnings = append(warnings, e.Message)
+			}
+		}
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0], "failed to download 15 files from")
+	})
+	t.Run("NoLimitAllFail", func(t *testing.T) {
+		// When every file was tried and failed, the stage closes after one run.
+		a := newAccount(t, -1)
+		for i := 0; i < 3; i++ {
+			newFile(t, a, fmt.Sprintf("/all-fail-%d.jpg", i), 0)
+		}
+
+		logger, hook := test.NewNullLogger()
+		prev := log
+		log = logger
+		t.Cleanup(func() { log = prev })
+
+		complete, err := worker.download(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "failed to download 3 files from")
+	})
+	t.Run("NoLimitSaveFails", func(t *testing.T) {
+		// Files whose outcome cannot be saved stay untried, so the stage stays open only while others make progress.
+		a := newAccount(t, -1)
+		require.NoError(t, a.Update("sync_yaml", -1))
+		failing := map[string]bool{"/save-fails.jpg": true, "/save-fails.yml": true}
+		newFile(t, a, "/save-fails.jpg", 0)
+		newFile(t, a, "/save-fails.yml", 0)
+		newFile(t, a, "/save-works.jpg", 0)
+		newFile(t, a, "/ok-save.txt", 0)
+
+		require.NoError(t, entity.Db().Callback().Update().Before("gorm:update").Register("test:fail_file_sync_save", func(tx *gorm.DB) {
+			if f, ok := tx.Statement.Dest.(*entity.FileSync); ok && f.ServiceID == a.ID && failing[f.RemoteName] {
+				_ = tx.AddError(errors.New("save failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("test:fail_file_sync_save") })
+
+		var runs []bool
+		for run := 0; run < 2; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+
+		assert.Equal(t, []bool{false, true}, runs)
+		assert.Equal(t, 2, attempts("/save-fails.jpg"))
+		assert.Equal(t, 0, attempts("/save-fails.yml"))
+		assert.Equal(t, 0, stored(t, a, "/save-fails.jpg").Errors)
+		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/save-fails.yml").Status)
+		assert.Equal(t, 2, stored(t, a, "/save-works.jpg").Errors)
+		assert.Equal(t, entity.FileSyncDownloaded, stored(t, a, "/ok-save.txt").Status)
+	})
+	t.Run("LimitCloses", func(t *testing.T) {
+		// With a positive limit, a failing file is tried in each run until it exceeds the limit.
+		a := newAccount(t, 2)
+		newFile(t, a, "/limit-closes.jpg", 0)
+
+		var runs []bool
+		for run := 0; run < 3; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+
+		assert.Equal(t, []bool{false, false, true}, runs)
+		assert.Equal(t, entity.FileSyncFailed, stored(t, a, "/limit-closes.jpg").Status)
+	})
+	t.Run("LimitLowered", func(t *testing.T) {
+		// A file left over a limit that was lowered is not tried and does not keep the stage open.
+		a := newAccount(t, 1)
+		newFile(t, a, "/limit-lowered.jpg", 5)
+
+		complete, err := worker.download(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.Equal(t, 0, attempts("/limit-lowered.jpg"))
+	})
+	t.Run("LimitSaveFails", func(t *testing.T) {
+		// With a positive limit, a file whose outcome cannot be saved keeps the stage open only while others make progress.
+		a := newAccount(t, 3)
+		newFile(t, a, "/limit-save-fails.jpg", 0)
+		newFile(t, a, "/limit-save-works.jpg", 2)
+
+		require.NoError(t, entity.Db().Callback().Update().Before("gorm:update").Register("test:fail_limit_save", func(tx *gorm.DB) {
+			if f, ok := tx.Statement.Dest.(*entity.FileSync); ok && f.ServiceID == a.ID && f.RemoteName == "/limit-save-fails.jpg" {
+				_ = tx.AddError(errors.New("save failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Update().Remove("test:fail_limit_save") })
+
+		var runs []bool
+		for run := 0; run < 3; run++ {
+			complete, err := worker.download(a)
+			require.NoError(t, err)
+			runs = append(runs, complete)
+		}
+
+		// The second file fails twice more and so exceeds the limit, and the next run, which makes no progress, closes the stage.
+		assert.Equal(t, []bool{false, false, true}, runs)
+		assert.Equal(t, entity.FileSyncFailed, stored(t, a, "/limit-save-works.jpg").Status)
+		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/limit-save-fails.jpg").Status)
+	})
 	t.Run("LowestLimitOpen", func(t *testing.T) {
 		a := newAccount(t, 1)
 		newFile(t, a, "/lowest-open.jpg", 0)
@@ -369,11 +602,9 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.Contains(t, result, "/zz-order")
 	})
 	t.Run("LongNameFailed", func(t *testing.T) {
-		skipInvalidUTF8(t)
-
-		// A failed request names the file, and replacing invalid UTF-8 can make that longer than the column holds.
+		// A failed request names the file, which can make the error longer than txt.ClipError.
 		a := newAccount(t, -1)
-		name := "/" + strings.Repeat("\xff", 250) + ".png"
+		name := "/" + strings.Repeat("\u00e9", 120) + ".png"
 		newFile(t, a, name, 0)
 
 		_, err := worker.download(a)
@@ -425,11 +656,9 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 			assert.Equal(t, 2, stored(t, a, "/huge.jpg").Errors)
 		})
 		t.Run("LongName", func(t *testing.T) {
-			skipInvalidUTF8(t)
-
-			// The error names the file, and replacing invalid UTF-8 can make it longer than the column holds.
+			// The error names the file and stays valid UTF-8 for a long name of multibyte characters.
 			a := newAccount(t, -1)
-			name := "/" + strings.Repeat("\xff", 250) + ".jpg"
+			name := "/" + strings.Repeat("\u00e9", 120) + ".jpg"
 			newSizedFile(t, a, name, maxBytes+1)
 
 			_, err := worker.download(a)
@@ -472,5 +701,47 @@ func TestSync_downloadRetryLimit(t *testing.T) {
 		assert.True(t, s.SyncDate.Valid)
 		assert.Equal(t, 1, attempts("/start.jpg"))
 		assert.Equal(t, entity.FileSyncNew, stored(t, a, "/start.jpg").Status)
+	})
+}
+
+func TestSyncRelated(t *testing.T) {
+	writeJpeg := func(t *testing.T, name string) {
+		var buf bytes.Buffer
+		require.NoError(t, jpeg.Encode(&buf, image.NewRGBA(image.Rect(0, 0, 8, 8)), nil))
+		require.NoError(t, os.WriteFile(name, buf.Bytes(), fs.ModeFile))
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		dir := t.TempDir()
+		writeJpeg(t, filepath.Join(dir, "a.jpg"))
+		writeJpeg(t, filepath.Join(dir, "a.b.jpg"))
+		writeJpeg(t, filepath.Join(dir, "a.x|y.jpg"))
+
+		mf, err := photoprism.NewMediaFile(filepath.Join(dir, "a.jpg"))
+		require.NoError(t, err)
+
+		related, err := syncRelated(mf, false)
+		require.NoError(t, err)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, mf.FileName(), related.Main.FileName())
+
+		var names []string
+		for _, f := range related.Files {
+			names = append(names, f.BaseName())
+		}
+
+		assert.ElementsMatch(t, []string{"a.jpg", "a.b.jpg"}, names)
+	})
+	t.Run("NotPortable", func(t *testing.T) {
+		dir := t.TempDir()
+		writeJpeg(t, filepath.Join(dir, "c:d.jpg"))
+
+		mf, err := photoprism.NewMediaFile(filepath.Join(dir, "c:d.jpg"))
+		require.NoError(t, err)
+
+		related, err := syncRelated(mf, false)
+		require.NoError(t, err)
+		assert.Nil(t, related.Main)
+		assert.Empty(t, related.Files)
 	})
 }

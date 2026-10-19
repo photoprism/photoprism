@@ -110,6 +110,7 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 	}
 
 	defer mutex.IndexWorker.Stop()
+	defer flushUnportable("convert")
 
 	jobs := make(chan ConvertJob)
 
@@ -133,6 +134,13 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 
 	ignore.Log = func(fileName string) {
 		log.Infof("convert: ignoring %s", clean.Log(filepath.Base(fileName)))
+	}
+
+	// Names are checked below the originals folder, or below the folder the walk starts in if it is elsewhere.
+	nameRoot := filepath.Clean(dir)
+
+	if originals := filepath.Clean(w.conf.OriginalsPath()); fs.InDir(nameRoot, originals) {
+		nameRoot = originals
 	}
 
 	err = godirwalk.Walk(dir, &godirwalk.Options{
@@ -161,7 +169,24 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 
 			// Skip file?
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
+				if !isDir || errors.Is(result, filepath.SkipDir) {
+					return result
+				}
+
+				// A folder whose name is not portable is skipped with its contents. It is not recorded as walked, so a
+				// folder reached under another name is still converted under that name.
+				if p := skipUnportableDir(done, fileName, fs.RelName(fileName, nameRoot), isSymlink); p != "" {
+					warnUnportable("convert", nameRoot, p, "convert it")
+					return filepath.SkipDir
+				}
+
 				return result
+			}
+
+			// Files whose names are not portable are not passed to converters.
+			if !clean.PortableName(filepath.Base(fileName)) {
+				warnUnportable("convert", nameRoot, fs.RelName(fileName, nameRoot), "convert it")
+				return nil
 			}
 
 			// Process only files with specified extensions?

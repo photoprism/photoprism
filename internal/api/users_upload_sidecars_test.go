@@ -120,15 +120,17 @@ func TestUploadUserFilesSidecars(t *testing.T) {
 		conf.Options().UploadAllow = ""
 		token := rnd.Base36(10)
 		entries := map[string][]byte{}
-		blocked := []string{".git/photo.jpg", ".config/photo.jpg", ".photoprism/photo.jpg", "nested/.svn/photo.jpg", ".hg/photo.jpg", ".SSH/photo.jpg", ".gnupg/photo.jpg", ".env/photo.jpg", "nested/.env.production/photo.jpg", `nested\.ssh\photo.jpg`}
+		blocked := []string{".git/photo.jpg", ".config/photo.jpg", ".photoprism/photo.jpg", "nested/.svn/photo.jpg", ".hg/photo.jpg", ".SSH/photo.jpg", ".gnupg/photo.jpg", ".env/photo.jpg", "nested/.env.production/photo.jpg", `nested\.ssh\photo.jpg`, "%2egit/photo.jpg"}
 		for _, name := range fs.ReservedPathNames() {
 			blocked = append(blocked, "nested/"+name+"/photo.jpg")
 		}
-		allowed := []string{"photo.jpg", ".hidden/photo.jpg", ".github-backup/photo.jpg", "%2egit/photo.jpg"}
+		// Other hidden folders are not extracted either, since the import would skip them.
+		blocked = append(blocked, ".hidden/photo.jpg", ".github-backup/photo.jpg")
+		allowed := []string{"photo.jpg", "visible/photo.jpg"}
 		for _, name := range append(append([]string{}, blocked...), allowed...) {
 			entries[name] = jpeg
 		}
-		body, ctype, err := buildMultipart(map[string][]byte{"batch.zip": buildZipWithDirsAndFiles([]string{".git", ".ssh", "nested/.ENV.empty", ".hidden"}, entries)})
+		body, ctype, err := buildMultipart(map[string][]byte{"batch.zip": buildZipWithDirsAndFiles([]string{".git", ".ssh", "nested/.ENV.empty", ".hidden", "visible"}, entries)})
 		require.NoError(t, err)
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+user.UserUID+"/upload/"+token, body)
 		req.Header.Set("Content-Type", ctype)
@@ -149,7 +151,7 @@ func TestUploadUserFilesSidecars(t *testing.T) {
 			require.NoError(t, err)
 			assert.Equal(t, jpeg, data)
 		}
-		assert.DirExists(t, filepath.Join(dir, ".hidden"))
+		assert.NoDirExists(t, filepath.Join(dir, ".hidden"))
 	})
 	t.Run("OperatorMayNarrow", func(t *testing.T) {
 		conf.Options().UploadAllow = "jpg"

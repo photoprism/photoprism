@@ -12,7 +12,12 @@ const (
 	SessionID = "session_id"
 	// AccessToken indicates a bearer access token identifier.
 	AccessToken = "access_token"
+	// RefreshToken indicates a refresh token of an app grant.
+	RefreshToken = "refresh_token"
 )
+
+// grantUIDPrefix is the UID prefix of app grants, whose UID starts their refresh tokens.
+const grantUIDPrefix = byte('g')
 
 // OAuthRevokeToken represents a token revocation form.
 type OAuthRevokeToken struct {
@@ -43,10 +48,13 @@ func (f *OAuthRevokeToken) Validate() error {
 	isRefID := rnd.IsRefID(f.Token)
 	isSessionID := rnd.IsSessionID(f.Token)
 	isAuthAny := rnd.IsAuthAny(f.Token)
+	_, _, isRefreshToken := rnd.ParseRefreshToken(f.Token, grantUIDPrefix)
 
 	switch f.TokenTypeHint {
 	case "":
 		switch {
+		case isRefreshToken:
+			f.TokenTypeHint = RefreshToken
 		case !isRefID && !isSessionID && !isAuthAny:
 			return authn.ErrInvalidToken
 		case isRefID:
@@ -66,6 +74,10 @@ func (f *OAuthRevokeToken) Validate() error {
 		}
 	case AccessToken:
 		if !isAuthAny {
+			return authn.ErrInvalidToken
+		}
+	case RefreshToken:
+		if !isRefreshToken {
 			return authn.ErrInvalidToken
 		}
 	default:

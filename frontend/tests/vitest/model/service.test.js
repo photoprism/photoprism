@@ -30,6 +30,12 @@ describe("model/service", () => {
     expect(result).toBe(5);
   });
 
+  it("should report an error message or failed attempts as an error", () => {
+    expect(new Service({ ID: 5 }).hasError()).toBe(false);
+    expect(new Service({ ID: 5, AccErrors: 2 }).hasError()).toBe(true);
+    expect(new Service({ ID: 5, AccErrors: 0, AccError: "3 files could not be uploaded" }).hasError()).toBe(true);
+  });
+
   it("should get folders", async () => {
     const values = { ID: 123, AccName: "Test Name" };
     const service = new Service(values);

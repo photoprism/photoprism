@@ -8,6 +8,9 @@ const (
 	PPHiddenPathname  = ".photoprism"
 )
 
+// NameMaxLen is the length in bytes of the longest file or folder name that common file systems accept.
+const NameMaxLen = 255
+
 // Common directory names used across packages (sorted by name).
 const (
 	AlbumsDir       = "albums"

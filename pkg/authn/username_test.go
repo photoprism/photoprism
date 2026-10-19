@@ -89,7 +89,7 @@ func TestIsASCIIUsername(t *testing.T) {
 
 func TestNewUsername(t *testing.T) {
 	t.Run("Accepted", func(t *testing.T) {
-		for _, name := range []string{"jose", "Jose", "j.doe", "j_doe-1", "name@example.com", "a!b%c^d[e]f\\g"} {
+		for _, name := range []string{"jose", "Jose", "j.doe", "j_doe-1", "_jdoe", "name@example.com", "a!b^c[d]e\\f"} {
 			s, err := NewUsername(name)
 			assert.NoError(t, err, name)
 			assert.Equal(t, clean.Username(name), s, name)
@@ -110,6 +110,12 @@ func TestNewUsername(t *testing.T) {
 			s, err := NewUsername(name)
 			assert.ErrorIs(t, err, ErrNotASCII, name)
 			assert.Equal(t, sanitized, s, name)
+		}
+	})
+	t.Run("NotPortable", func(t *testing.T) {
+		for _, name := range []string{"50%off", "a%b@example.com", "__bob", "_.bob", "corp\\__bob", "__bob@example.com", "a..b"} {
+			_, err := NewUsername(name)
+			assert.ErrorIs(t, err, ErrInvalid, name)
 		}
 	})
 	t.Run("InvalidBeforeNotASCII", func(t *testing.T) {
@@ -159,5 +165,19 @@ func TestFoldUsername(t *testing.T) {
 	})
 	t.Run("NothingLeft", func(t *testing.T) {
 		assert.Equal(t, "", FoldUsername("\u0301"))
+	})
+}
+
+func TestPortableUsername(t *testing.T) {
+	t.Run("Portable", func(t *testing.T) {
+		for _, name := range []string{"jdoe", "j_doe", "_jdoe", "j__doe", "jane.doe@example.com", "corp\\jdoe", "a.b.c", "bob."} {
+			assert.True(t, PortableUsername(name), name)
+		}
+	})
+	t.Run("NotPortable", func(t *testing.T) {
+		for _, name := range []string{"50%off", "a%b@example.com", "__bob", "_.bob", "corp\\_.bob", "__", "a..b", "a .b",
+			"jane..doe@example.com", "a. b", "bob@a..example.com", "corp..x\\bob"} {
+			assert.False(t, PortableUsername(name), name)
+		}
 	})
 }

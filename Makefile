@@ -9,6 +9,7 @@ override TESTCAFE_DBS := sqlite mariadb postgres
 override TESTCAFE_DB := $(if $(filter command line,$(origin DB)),$(value DB),sqlite)
 override TESTCAFE_DB := $(if $(filter 1,$(words $(TESTCAFE_DB))),$(filter $(TESTCAFE_DBS),$(TESTCAFE_DB)))
 override DB := $(TESTCAFE_DB)
+override TESTCAFE_CONFIG := config-$(TESTCAFE_DB)$(if $(filter-out sqlite,$(TESTCAFE_DB)),-generated)
 
 export GO111MODULE=on
 export NPM_CONFIG_IGNORE_SCRIPTS ?= true
@@ -69,10 +70,11 @@ HASRICHGO := $(shell which richgo)
 # Client for the development database, which runs MariaDB.
 MARIADB ?= mariadb
 
-# Client and URIs for the optional PostgreSQL service ("docker compose --profile postgres up -d").
+# Client and URIs for the optional PostgreSQL service ("docker compose --profile postgres up -d"). The trailing
+# dot makes the host name absolute, so that it resolves to the compose service only.
 PSQL ?= psql
-POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/postgres
-POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres:$${POSTGRES_PORT:-4002}/testdb?sslmode=disable&TimeZone=UTC
+POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres.:$${POSTGRES_PORT:-4002}/postgres
+POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres.:$${POSTGRES_PORT:-4002}/testdb?sslmode=disable&TimeZone=UTC
 
 TESTCAFE_BROWSER ?= chrome
 
@@ -391,6 +393,7 @@ else
 	@echo "TestCafe database: $(TESTCAFE_DB)"
 endif
 acceptance-restart-%: acceptance-check-db
+	bash scripts/test/acceptance-hub.sh ./storage/acceptance
 	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
@@ -402,17 +405,18 @@ acceptance-restart-%: acceptance-check-db
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
 	@$(call acceptance-env,./storage/acceptance) MARIADB="$(MARIADB)" PSQL="$(PSQL)" POSTGRES_ADMIN_URI="$(POSTGRES_ADMIN_URI)" bash scripts/test/acceptance-db.sh $(TESTCAFE_DB) ./photoprism "./storage/acceptance/config-sqlite"
-	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="public" -c "./storage/acceptance/config-$(TESTCAFE_DB)" start -d
-	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-$(TESTCAFE_DB)"
+	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="public" -c "./storage/acceptance/$(TESTCAFE_CONFIG)" start -d
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/$(TESTCAFE_CONFIG)"
 acceptance-stop-%:
 	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 acceptance-auth-restart: acceptance-check-db
+	bash scripts/test/acceptance-hub.sh ./storage/acceptance
 	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	@$(call acceptance-env,./storage/acceptance) MARIADB="$(MARIADB)" PSQL="$(PSQL)" POSTGRES_ADMIN_URI="$(POSTGRES_ADMIN_URI)" bash scripts/test/acceptance-db.sh $(TESTCAFE_DB) ./photoprism "./storage/acceptance/config-sqlite"
-	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="password" -c "./storage/acceptance/config-$(TESTCAFE_DB)" start -d
-	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/config-$(TESTCAFE_DB)"
+	$(call acceptance-env,./storage/acceptance) ./photoprism --auth-mode="password" -c "./storage/acceptance/$(TESTCAFE_CONFIG)" start -d
+	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh started "./storage/acceptance/$(TESTCAFE_CONFIG)"
 acceptance-auth-stop:
 	$(call acceptance-env,./storage/acceptance) bash scripts/test/acceptance-server.sh stop "./storage/acceptance/config-sqlite" ./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" stop
 acceptance-sqlite-restart-%:
@@ -791,6 +795,7 @@ test-sh:
 	$(info Running shell script tests...)
 	bash scripts/test/acceptance-server-test.sh
 	bash scripts/test/acceptance-db-test.sh
+	bash scripts/test/acceptance-hub-test.sh
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)
@@ -833,13 +838,8 @@ reset-mariadb-testdb:
 reset-mariadb-local:
 	$(info Resetting local database...)
 	$(MARIADB) < scripts/sql/reset-local.sql
-reset-mariadb-acceptance:
-	$(info Resetting acceptance database...)
-	$(MARIADB) < scripts/sql/reset-acceptance.sql
-reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
+reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local
 reset-testdb: reset-sqlite reset-mariadb-testdb
-reset-acceptance: reset-mariadb-testdb
-reset-postgres-acceptance: reset-postgres-testdb
 # Drops the Go test databases (testdb_<pkg>_<hash>) and acceptance_<pkg>_<hash> databases left by older checkouts.
 reset-postgres-testdb:
 	$(info Resetting PostgreSQL test databases...)

@@ -1,6 +1,7 @@
 package search
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -31,7 +32,9 @@ func UserSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subjec
 // given: a role without AccessPrivate must not reach a person marked private or hidden through any
 // filter. Hidden is off by default for everyone, so only asking for it is refused here.
 func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results SubjectResults, err error) {
-	if err = frm.ParseQueryString(); err != nil {
+	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
+		return SubjectResults{}, nil
+	} else if err != nil {
 		return results, err
 	}
 

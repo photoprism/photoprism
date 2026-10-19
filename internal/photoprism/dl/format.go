@@ -4,6 +4,13 @@ import (
 	"fmt"
 )
 
+// FormatBest selects the best video and audio streams to merge, or the best single file if none can be merged.
+const FormatBest = "bv*+ba/b"
+
+// ffmpegReconnectArgs let FFmpeg reconnect to an http(s) source and resume the stream when it merges to stdout.
+// FFmpeg rejects them for other protocols, e.g. RTMP or RTSP.
+const ffmpegReconnectArgs = "-reconnect 1 -reconnect_streamed 1 -reconnect_on_network_error 1 -reconnect_delay_max 5"
+
 // Format youtube-dl downloadable format
 type Format struct {
 	Ext            string            `json:"ext"`             // Video filename extension

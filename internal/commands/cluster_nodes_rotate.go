@@ -102,7 +102,7 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 			// A database that exists is recorded, so removing the node also removes it.
 			if errors.Is(credsErr, provisioner.ErrIncomplete) {
 				if _, recordErr := regy.RecordDatabase(n, cluster.NodeDatabase{Name: creds.Name, User: creds.User, Driver: creds.Driver}); recordErr != nil {
-					log.Warnf("cluster: failed to record database %s of node %s (%s)", clean.Log(creds.Name), clean.LogQuote(name), clean.Error(recordErr))
+					event.SystemWarn([]string{"cluster", "failed to record database %s of node %s", "%s"}, clean.Log(creds.Name), clean.LogQuote(name), clean.ErrorFull(recordErr))
 				}
 			}
 		} else {
@@ -212,7 +212,18 @@ func rotateNodeViaPortal(conf *config.Config, portalURL, joinToken, name string,
 }
 
 func clusterNodesRotateAction(ctx *cli.Context) error {
-	return CallWithDependencies(ctx, func(conf *config.Config) error {
+	// A Portal rotates through its registry, which needs the database. An instance calls the Portal, so
+	// it does not wait for a database it may not reach, e.g. after its credentials changed.
+	if config.NewConfig(ctx).Portal() {
+		return CallWithDependencies(ctx, clusterNodesRotate(ctx))
+	}
+
+	return CallWithCoreDependencies(ctx, clusterNodesRotate(ctx))
+}
+
+// clusterNodesRotate returns the action that rotates the secret or database credentials of a node.
+func clusterNodesRotate(ctx *cli.Context) func(conf *config.Config) error {
+	return func(conf *config.Config) error {
 		key := ctx.Args().First()
 		if key == "" {
 			return cli.Exit(fmt.Errorf("node id or name is required"), 2)
@@ -317,7 +328,7 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 		}
 
 		return finishNodeRotation(ctx, conf, resp, err, rotateDatabase)
-	})
+	}
 }
 
 // finishNodeRotation audits and prints the credentials a rotation issued, and returns err.

@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
@@ -42,8 +43,9 @@ func init() {
 	config.Register(config.StageBoot, "cluster-node", InitConfig, nil)
 }
 
-// InitConfig performs node bootstrap: optional registration with the Portal
-// and theme installation. Runs early during config.Init().
+// InitConfig performs node bootstrap during config.Init(): when the server starts, optional registration
+// with the Portal and theme installation; for other commands and the start command's config report,
+// a warning if the node has not joined yet.
 func InitConfig(c *config.Config) error {
 	role := c.NodeRole()
 
@@ -53,8 +55,10 @@ func InitConfig(c *config.Config) error {
 		return nil
 	}
 
-	// Auto-join the cluster and sync the theme when enabled and configured.
-	if cluster.BootstrapAutoJoinEnabled || cluster.BootstrapAutoThemeEnabled {
+	// Auto-join the cluster and sync the theme when the server starts, if enabled and configured.
+	if !c.Starting() || c.StartReport() {
+		warnNotJoined(c)
+	} else if cluster.BootstrapAutoJoinEnabled || cluster.BootstrapAutoThemeEnabled {
 		bootstrapClusterNode(c)
 	}
 
@@ -69,6 +73,18 @@ func InitConfig(c *config.Config) error {
 	}
 
 	return nil
+}
+
+// warnNotJoined warns that a command runs without the cluster settings when the node is configured to
+// join a cluster but has not joined yet, since only the start command joins it.
+func warnNotJoined(c *config.Config) {
+	if !cluster.BootstrapAutoJoinEnabled || strings.TrimSpace(c.PortalUrl()) == "" || strings.TrimSpace(c.JoinToken()) == "" {
+		return
+	} else if strings.TrimSpace(c.NodeClientID()) != "" && strings.TrimSpace(c.NodeClientSecret()) != "" {
+		return
+	}
+
+	log.Warnf("cluster: this node has not joined the cluster yet, start the server first")
 }
 
 // bootstrapClusterNode registers the node with the configured Portal and installs
@@ -535,22 +551,22 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 			log.Warnf("cluster: the portal could not complete database provisioning, retrying on the next start")
 		}
 
-		if r.Database.DSN != "" {
-			updates.SetDatabaseDriver(r.Database.Driver)
-			updates.SetDatabaseDSN(r.Database.DSN)
-		} else if r.Database.Name != "" && r.Database.User != "" && r.Database.Password != "" {
-			// The settings are ignored as a whole if the server address is unusable.
-			if server, ok := r.Database.Server(); !ok {
-				log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
-			} else {
-				updates.SetDatabaseDriver(r.Database.Driver)
-				if server != "" {
-					updates.SetDatabaseServer(server)
-				}
-				updates.SetDatabaseName(r.Database.Name)
-				updates.SetDatabaseUser(r.Database.User)
-				updates.SetDatabasePassword(r.Database.Password)
+		if server, ok := updates.SetDatabase(r.Database); !ok {
+			log.Warnf("cluster: ignored database settings with unusable server address %s", clean.Log(server))
+		} else if !updates.HasDatabaseUpdate() && r.Database.DSN != "" && !r.Database.Incomplete {
+			// A response without separate settings may still carry a DSN.
+			driver := strings.TrimSpace(r.Database.Driver)
+			if driver == "" {
+				driver = dsn.DriverMySQL
 			}
+			updates.SetDatabaseDriver(driver)
+			updates.SetDatabaseDSN(r.Database.DSN)
+		}
+
+		// Database settings the config refuses are skipped as a whole, and the rest is saved.
+		if err := config.ValidateClusterDatabaseUpdate(updates); err != nil {
+			log.Warnf("cluster: ignored database settings (%s)", clean.Error(err))
+			updates.ClearDatabase()
 		}
 	}
 

@@ -180,3 +180,18 @@ func TestSessions_Bindable(t *testing.T) {
 	require.NoError(t, err)
 	assert.Len(t, result, len(expected))
 }
+
+func TestSessions_NoMatch(t *testing.T) {
+	// A filter value of only NUL bytes and invalid UTF-8 matches nothing, while an empty one stays unfiltered.
+	all, err := Sessions(form.SearchSessions{Count: 100})
+	require.NoError(t, err)
+	require.NotEmpty(t, all)
+
+	for _, frm := range []form.SearchSessions{{Query: "\x00", Count: 100}, {UID: "\xff", Count: 100},
+		{Provider: "\xff", Count: 100}, {Method: "\x00", Count: 100}, {Query: "\x00 ", Count: 100}, {Query: "\xff|", Count: 100}} {
+		result, err := Sessions(frm)
+		require.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Empty(t, result, "%+v", frm)
+	}
+}

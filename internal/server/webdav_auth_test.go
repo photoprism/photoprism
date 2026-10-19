@@ -581,3 +581,22 @@ func TestWebDAVAuth_LoginEventName(t *testing.T) {
 		assert.Equal(t, "webdav-josé", login("webdav-josé"))
 	})
 }
+
+func TestWebDAVAuthSession_AppAccessToken(t *testing.T) {
+	sess := entity.NewSession(3600, 0)
+	sess.SetUser(entity.UserFixtures.Pointer("alice"))
+	sess.AuthProvider = authn.ProviderOAuthApp.String()
+	sess.AuthMethod = authn.MethodPKCE.String()
+	sess.AuthScope = "*"
+	sess.AuthAudience = "http://localhost:2342/api/v1/mcp"
+	require.NoError(t, sess.Create())
+	t.Cleanup(func() { _ = sess.Delete() })
+
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodGet, "/originals/", nil)
+
+	found, user, _, cached := WebDAVAuthSession(c, sess.AuthToken())
+	assert.Nil(t, found)
+	assert.Nil(t, user)
+	assert.False(t, cached)
+}

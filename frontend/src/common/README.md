@@ -1,6 +1,6 @@
 ## View Helper Guidelines
 
-**Last Updated:** October 16, 2026
+**Last Updated:** October 19, 2026
 
 ### Export Helpers
 
@@ -79,14 +79,7 @@ Original and available still choices intact.
 Zero-valued byte counts in video capabilities mean the output size is unknown;
 the dialog omits that size until a positive byte count is available.
 
-`export-download.js` freezes selected sources, names, and group order. It orders
-Originals, Preview, thumbnails from smallest to largest, then video derivatives.
-Final names are sanitized after appending the output extension. Unicode
-whitespace is removed to match server cleaning; normal internal ASCII spaces
-are preserved. Case-insensitive collisions across originals and derivatives
-receive `_2`, `_3`, and subsequent suffixes. Original names use their own last `OriginalName`/`Name` component and
-actual extension. Other outputs use the still/group basename with `_preview`,
-`_fit_*`, `_avc.mp4`, or `_video` and the native container extension.
+`export-download.js` freezes selected sources, names, and group order. It orders Originals, Preview, thumbnails from smallest to largest, then video derivatives. Final names are sanitized after appending the output extension. The client removes Unicode whitespace and preserves normal internal ASCII spaces. The server also accepts internal Unicode space separators. Case-insensitive collisions across originals and derivatives receive `_2`, `_3`, and subsequent suffixes. Original names use their own last `OriginalName`/`Name` component and actual extension. Other outputs use the still/group basename with `_preview`, `_fit_*`, `_avc.mp4`, or `_video` and the native container extension.
 
 `ExportQueue` refreshes sessions and constructs URLs with current tokens. Ready
 outputs are handed directly to the browser immediately, with 250 ms between

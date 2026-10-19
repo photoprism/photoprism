@@ -153,6 +153,8 @@ func TestProviderType_Pretty(t *testing.T) {
 	assert.Equal(t, "Default", ProviderDefault.Pretty())
 	assert.Equal(t, "Default", ProviderUndefined.Pretty())
 	assert.Equal(t, "Access Token", ProviderAccessToken.Pretty())
+	assert.Equal(t, "OAuth App", ProviderOAuthApp.Pretty())
+	assert.False(t, ProviderOAuthApp.IsClient())
 	assert.Equal(t, "Client", ProviderClient.Pretty())
 }
 

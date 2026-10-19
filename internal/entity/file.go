@@ -6,8 +6,10 @@ import (
 	"math"
 	"path/filepath"
 	"sort"
+	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gosimple/slug"
@@ -225,6 +227,28 @@ func FirstFileByHash(fileHash string) (File, error) {
 	return file, res.Error
 }
 
+// FilesByHash returns all files with the given hash in the order they were added, including soft-deleted rows.
+func FilesByHash(fileHash string) (files Files, err error) {
+	if fileHash == "" {
+		return files, nil
+	}
+
+	err = Db().Unscoped().Where("file_hash = ?", fileHash).Order("id").Find(&files).Error
+
+	return files, err
+}
+
+// FilesByName returns the file with the given root and name, if any, including a soft-deleted row.
+func FilesByName(fileRoot, fileName string) (files Files, err error) {
+	if fileName == "" {
+		return files, nil
+	}
+
+	err = Db().Unscoped().Where("file_root = ? AND file_name = ?", fileRoot, fileName).Order("id").Find(&files).Error
+
+	return files, err
+}
+
 // PrimaryFile finds the photo's primary file (primary flag set) regardless of soft-delete state.
 func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}
@@ -348,12 +372,30 @@ func (m *File) ShareBase(seq int) string {
 	fileTime := takenAt.Format("20060102-150405")
 	fileTitle = txt.Title(slug.MakeLang(fileTitle, "en"))
 
-	// Append file sequence number if requested.
+	return ShareName(fileTime, fileTitle, seq, m.FileType)
+}
+
+// ShareName returns a file name composed of a capture time, a title, a sequence number if it is positive, and a
+// file type, shortening the title so that the name is at most fs.NameMaxLen bytes, which common file systems accept.
+func ShareName(taken, title string, seq int, fileType string) string {
+	suffix := "." + fileType
+
 	if seq > 0 {
-		return fmt.Sprintf("%s-%s (%d).%s", fileTime, fileTitle, seq, m.FileType)
+		suffix = fmt.Sprintf(" (%d).%s", seq, fileType)
 	}
 
-	return fmt.Sprintf("%s-%s.%s", fileTime, fileTitle, m.FileType)
+	if room := fs.NameMaxLen - len(taken) - 1 - len(suffix); len(title) > room {
+		cut := max(room, 0)
+
+		for cut > 0 && !utf8.RuneStart(title[cut]) {
+			cut--
+		}
+
+		title = strings.TrimRight(title[:cut], "-")
+	}
+
+	// A file type that leaves no room for a title is cut as well, so the name always fits.
+	return fs.ClipName(taken+"-"+title+suffix, fs.NameMaxLen)
 }
 
 // Changed reports whether the given size or modification time differs from the stored metadata.

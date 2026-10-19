@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copies the index of a TestCafe fixture into the "testcafe" database on MariaDB or PostgreSQL, and writes a
-# "config-<db>" folder next to the fixture's "config-sqlite" folder that uses it. With sqlite, it does nothing.
+# "config-<db>-generated" folder next to the fixture's "config-sqlite" folder that uses it. With sqlite, it does nothing.
 set -euo pipefail
 
 if (( $# != 3 )); then
@@ -26,7 +26,7 @@ case "$db" in
     ;;
   postgres)
     driver=postgres
-    server=postgres:${POSTGRES_PORT:-4002}
+    server=postgres.:${POSTGRES_PORT:-4002}
     ;;
   *)
     echo "$0: unsupported database \"$db\", use sqlite, mariadb, or postgres" >&2
@@ -41,7 +41,7 @@ fi
 
 dir=$(dirname "$src")
 root=$(realpath -- "$dir")
-dst=$dir/config-$db
+dst=$dir/config-$db-generated
 marker=.testcafe-generated
 
 if [[ "$(basename "$src")" != "config-sqlite" || ! -f "$src/options.yml" ]]; then
@@ -94,7 +94,7 @@ ALTER USER '$user'@'%' IDENTIFIED BY '$pass';
 GRANT ALL PRIVILEGES ON \`$name\`.* TO '$user'@'%';
 EOF
 else
-  "${psql[@]}" "${POSTGRES_ADMIN_URI:-postgres://photoprism:photoprism@postgres:${POSTGRES_PORT:-4002}/postgres}" \
+  "${psql[@]}" "${POSTGRES_ADMIN_URI:-postgres://photoprism:photoprism@postgres.:${POSTGRES_PORT:-4002}/postgres}" \
     -v ON_ERROR_STOP=1 -q <<EOF
 SELECT 'CREATE USER $user' WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '$user')\gexec
 ALTER USER $user LOGIN PASSWORD '$pass';
@@ -108,7 +108,7 @@ PHOTOPRISM_TRANSFER_PASSWORD=$pass "$bin" -c "$src" database transfer --force \
   --target-driver "$db" --target-server "$server" --target-name "$name" --target-user "$user"
 
 # Builds the folder under a temporary name, so that an interrupted run leaves no partial config behind.
-tmp=$(mktemp -d "$dir/.config-$db.XXXXXX")
+tmp=$(mktemp -d "$dir/.config-$db-generated.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT
 touch "$tmp/$marker"
 cp -RLp "$src/." "$tmp/"

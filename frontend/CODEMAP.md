@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 15, 2026
+**Last Updated:** October 19, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -41,7 +41,7 @@ Startup Templates & Splash Screen
 
 Runtime & Plugins
 - Vue 3 + Vuetify 4 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
-- **Vuetify version pin:** `vuetify` is pinned to **`4.2.4` exactly** (no caret); see [Dependency Pinning Policy](README.md#dependency-pinning-policy) for the rationale and required autocomplete checks. The sibling-menu gate in `src/common/view.js` cooperates with the pin but is not a substitute for it.
+- **Vuetify version pin:** `vuetify` is pinned to **`4.2.6` exactly** (no caret); see [Dependency Pinning Policy](README.md#dependency-pinning-policy) for the rationale and required autocomplete checks. The sibling-menu gate in `src/common/view.js` cooperates with the pin but is not a substitute for it.
   - **Vuetify 3 appearance:** `vite.config.mjs` compiles Vuetify's styles with `src/css/vuetify/settings.scss` (Vuetify 3 breakpoints, Material Design 2 typography and button text), `src/css/vuetify-v3.css` restores the Vuetify 3 reset, grid (including the `v-col-N` classes used on plain elements), typography weights and line heights, navigation rail and slider layout, component shadows, and elevation classes, and `src/app.js` sets the matching display thresholds.
   - **Cascade layers:** Vuetify 4 puts its styles in cascade layers, and a later layer wins regardless of specificity. `src/css/layers.css`, imported first, declares their order. `src/css/app.css` imports the application styles into Vuetify's component layer, where specificity decides as in Vuetify 3; new style sheets imported there need `layer(vuetify-components)`. Exceptions: rules that replace Vuetify's override layer go in `src/css/vuetify-overrides.css`; utility classes outrank the application styles unless a rule is `!important`, and the typography utilities set only size, letter spacing, and text transform, with weight, line height, and font family in `vuetify-v3.css`; theme variables such as `--v-btn-height` are set in the utility layer and outrank component-layer rules for the same custom property. Unlayered CSS outranks all layers, so component `<style src>` sheets wrap their rules in `@layer vuetify-components`, and the splash entry imports `src/css/splash-entry.css`.
   - **Counter fields:** with the project default `hideDetails: "auto"`, Vuetify 4 renders a field's counter row only while the field has focus or shows messages, so fields with `counter` set `:hide-details="false"` to keep the row reserved as in Vuetify 3.
@@ -77,6 +77,7 @@ Auth, Session, and Config
 - `$config`: `src/common/config.js` — reactive view of server config and user settings; sets theme, language, limits; exposes `deny()` for feature flags
 - Route guards live in `src/app.js` (router `beforeEach`/`afterEach`) and use `$session` + `$config`
 - `$view`: `src/common/view.js` — manages focus/scroll helpers; use `saveWindowScrollPos()` / `restoreWindowScrollPos()` when navigating so infinite-scroll pages land back where users left them; behavior is covered by `tests/vitest/common/view.test.js`
+- OAuth consent page: `src/page/auth/consent.vue` (route `consent`, `/oauth/consent`) — approve or deny an app's authorization request; connected apps: `src/component/settings/connected-apps.vue` (Settings > Account)
 - Login page: `src/page/auth/login.vue` — password + OIDC entrypoint; the `Stay signed in on this device` toggle maps to persistent namespaced `localStorage` when checked and ephemeral namespaced `sessionStorage` when unchecked, initializing from the current session storage mode
 
 Models (REST)
@@ -104,7 +105,7 @@ Theming & UI
 Testing
 - Vitest config: `frontend/vitest.config.mjs` (Vue plugin, alias map to `src/*`; with `CUSTOM_SRC`, the build's `overlayResolver` instead), `tests/vitest/**/*`
 - Run: `cd frontend && npm run test` (or `make test-js` from repo root)
-- Acceptance: TestCafe configs in `frontend/tests/acceptance`; run against a live server
+- Acceptance: TestCafe tests in `frontend/tests/acceptance` (runner config `frontend/.testcaferc.cjs`); run via the root `acceptance-*-run-chromium` targets, which start and stop the server
 - Detailed test/lint guide (humans + agents): `frontend/tests/README.md`
 - Session/auth storage regressions: when testing `src/common/session.js`, cover both direct `config.storageNamespace` access and the real `Config` shape where the namespace is supplied via `config.values.storageNamespace`
 

@@ -158,6 +158,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	defer mutex.IndexWorker.Stop()
+	defer flushUnportable("index")
 
 	jobs := make(chan IndexJob)
 
@@ -204,6 +205,12 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			log.Warnf("index: %s", relErr)
 			return
 		}
+
+		// Related files whose names are not portable are not indexed.
+		related = PortableRelated(related, mf, func(f *MediaFile) {
+			o.FaceRegeneration.addSkipped(f.FileName())
+			warnUnportable("index", entity.RootOriginals, f.RootRelName(), "index it")
+		})
 
 		// Main media file is required to proceed.
 		if related.Main == nil {
@@ -307,6 +314,17 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				}
 
 				if !errors.Is(result, filepath.SkipDir) {
+					// A folder whose name is not portable is skipped with its contents, and not recorded as walked,
+					// so a folder reached under another name is still indexed under that name.
+					if p := skipUnportableDir(found, fileName, relName, isSymlink); p != "" {
+						if !wasFound {
+							o.FaceRegeneration.addSkippedDir(fileName)
+						}
+
+						warnUnportable("index", entity.RootOriginals, p, "index it")
+						return filepath.SkipDir
+					}
+
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.ModTime(fileName))
 
 					if _, created, err := entity.FirstOrCreateFolder(&folder); err == nil && created && folder.Path != "" {
@@ -320,6 +338,16 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				})
 
 				return result
+			}
+
+			// A file whose name is not portable is skipped.
+			if !clean.PortableName(filepath.Base(fileName)) {
+				if !wasFound {
+					o.FaceRegeneration.addSkipped(fileName)
+				}
+
+				warnUnportable("index", entity.RootOriginals, relName, "index it")
+				return nil
 			}
 
 			found[fileName] = fs.Found
@@ -506,6 +534,18 @@ func (ind *Index) FileName(fileName string, o IndexOptions) (result IndexResult)
 
 	if err != nil {
 		result.Err = err
+		result.Status = IndexFailed
+
+		return result
+	}
+
+	// Related files whose names are not portable are not indexed with the file.
+	if related = PortableSiblings(related, file, func(f *MediaFile) {
+		if p := clean.UnportablePath(filepath.ToSlash(f.RootRelName())); p != "" {
+			warnUnportable("index", entity.RootOriginals, p, "index it")
+		}
+	}); related.Main == nil {
+		result.Err = fmt.Errorf("index: found no supported main file for %s", clean.Log(file.RootRelName()))
 		result.Status = IndexFailed
 
 		return result

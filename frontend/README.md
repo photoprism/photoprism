@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 8, 2026
+**Last Updated:** October 17, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -58,7 +58,7 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 
 | Package   | Pin      | Reason                                                                                                                                                                                                                                                                                                                         |
 |-----------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `vuetify` | `4.2.4`  | Check the photo edit dialog's Country and Time Zone autocompletes in Chrome before bumping: menus must stay open and filter as you type. The Vuetify 3 appearance depends on the files named in the `//vuetify` entry in `package.json` and [Production Build](#production-build). `@vuetify/v0` is held by the lockfile only. |
+| `vuetify` | `4.2.6`  | Check the photo edit dialog's Country and Time Zone autocompletes in Chrome before bumping: menus must stay open and filter as you type. The Vuetify 3 appearance depends on the files named in the `//vuetify` entry in `package.json` and [Production Build](#production-build). `@vuetify/v0` is held by the lockfile only. |
 | `axios`   | `1.20.0` | Keep an exact version so transport updates receive explicit review and validation. Check request cancellation, authentication, redirects, and error handling when upgrading; `src/common/api.js` handles canceled navigation requests through its error interceptor.                                                           |
 
 ### Override Layer (Transitive Pins)

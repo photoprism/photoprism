@@ -49,6 +49,11 @@ func clientsModAction(ctx *cli.Context) error {
 			return fmt.Errorf("client %s not found", clean.Log(id))
 		}
 
+		// App clients keep their type, role and lack of a secret; callbacks can only be set on them.
+		if err := validateAppClientMod(ctx, client, frm); err != nil {
+			return err
+		}
+
 		// Check if the client exists but has been deleted.
 		if client.Deleted() {
 			if restore, err := ConfirmRestore(ctx.Bool("restore"), fmt.Sprintf("Restore client %s", client.String()), "--restore"); err != nil {
@@ -63,7 +68,7 @@ func clientsModAction(ctx *cli.Context) error {
 
 			log.Infof("client %s has been restored", client.String())
 
-			if !ctx.Bool("regenerate") && frm.Secret() == "" {
+			if !client.IsApp() && !ctx.Bool("regenerate") && frm.Secret() == "" {
 				log.Warnf("client %s has no secret, use --regenerate to create one", client.String())
 			}
 		}

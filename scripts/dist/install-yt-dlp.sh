@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Installs the yt-dlp binary (stable, nightly, or master) on Linux.
+# Installs the yt-dlp binary (stable, nightly, or master) on Linux, along with the Deno JavaScript runtime it uses.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-yt-dlp.sh)
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-yt-dlp.sh) -- --nightly
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-yt-dlp.sh) -- --master
@@ -14,8 +14,8 @@ fi
 
 # Show usage information if first argument is --help.
 if [[ ${1:-} == "--help" ]]; then
-  echo "Usage: ${0##*/} [--nightly|--master|--stable] [--allow-unverified] [destdir] [version]" 1>&2
-  echo "       ${0##*/} [--channel nightly|master|stable] [--allow-unverified] [destdir] [version]" 1>&2
+  echo "Usage: ${0##*/} [--nightly|--master|--stable] [--allow-unverified] [--no-deno] [destdir] [version]" 1>&2
+  echo "       ${0##*/} [--channel nightly|master|stable] [--allow-unverified] [--no-deno] [destdir] [version]" 1>&2
   echo "" 1>&2
   echo "Environment:" 1>&2
   echo "  PHOTOPRISM_YTDLP_CHANNEL=nightly|master|stable" 1>&2
@@ -24,6 +24,8 @@ fi
 
 CHANNEL=${PHOTOPRISM_YTDLP_CHANNEL:-stable}
 ALLOW_UNVERIFIED=false
+INSTALL_DENO=true
+DENO_SCRIPT_URL="https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-deno.sh"
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -43,6 +45,10 @@ while [[ $# -gt 0 ]]; do
       ALLOW_UNVERIFIED=true
       shift
       ;;
+    --no-deno)
+      INSTALL_DENO=false
+      shift
+      ;;
     --channel)
       CHANNEL=${2:-}
       if [[ -z $CHANNEL ]]; then
@@ -52,8 +58,8 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --help)
-      echo "Usage: ${0##*/} [--nightly|--master|--stable] [--allow-unverified] [destdir] [version]" 1>&2
-      echo "       ${0##*/} [--channel nightly|master|stable] [--allow-unverified] [destdir] [version]" 1>&2
+      echo "Usage: ${0##*/} [--nightly|--master|--stable] [--allow-unverified] [--no-deno] [destdir] [version]" 1>&2
+      echo "       ${0##*/} [--channel nightly|master|stable] [--allow-unverified] [--no-deno] [destdir] [version]" 1>&2
       echo "" 1>&2
       echo "Environment:" 1>&2
       echo "  PHOTOPRISM_YTDLP_CHANNEL=nightly|master|stable" 1>&2
@@ -215,7 +221,7 @@ echo "--------------------------------------------------------------------------
 echo "Downloading the yt-dlp binary to \"${DESTBIN}\"..."
 mkdir -p "${DESTDIR}/bin"
 tmp_bin=$(mktemp)
-trap 'rm -f "${tmp_bin}" "${tmp_bin}.sums"' EXIT
+trap 'rm -f "${tmp_bin}" "${tmp_bin}.sums" "${tmp_bin}.deno.sh"' EXIT
 curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${GITHUB_URL}" -o "${tmp_bin}"
 
 # Verify the binary against the release SHA2-256SUMS manifest before installing.
@@ -256,3 +262,18 @@ echo "Installing yt-dlp to \"${DESTBIN}\" with permissions 755..."
 install -m 755 "${tmp_bin}" "${DESTBIN}"
 
 echo "Done."
+
+# Install Deno as a dependency, since yt-dlp uses it by default to extract YouTube video formats.
+# When this script runs from a URL, e.g. with bash <(curl ...), install-deno.sh is fetched from the develop branch.
+if [[ ${INSTALL_DENO} == "true" ]]; then
+  DENO_SCRIPT="$(dirname "${BASH_SOURCE[0]}")/install-deno.sh"
+  if [[ ! -f ${DENO_SCRIPT} ]]; then
+    DENO_SCRIPT="${tmp_bin}.deno.sh"
+    echo "Downloading install-deno.sh from ${DENO_SCRIPT_URL}..."
+    if ! curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${DENO_SCRIPT_URL}" -o "${DENO_SCRIPT}"; then
+      echo "Error: Unable to download install-deno.sh; re-run with --no-deno to skip installing Deno." 1>&2
+      exit 1
+    fi
+  fi
+  bash "${DENO_SCRIPT}" "${DESTDIR}"
+fi

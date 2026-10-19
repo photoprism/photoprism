@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"slices"
@@ -106,8 +108,8 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 		assert.Empty(t, found, "a sibling directory must not record a folder in the import namespace")
 	})
 	t.Run("FolderNameIsSanitized", func(t *testing.T) {
-		// A directory name reaches the log through the folder record, so control and bidi characters
-		// must not survive into it.
+		// A directory name with control and bidi characters is skipped, and the warning that names it
+		// must not carry them.
 		cfg := newConfig(t, "import-display-clean")
 
 		importPath := cfg.ImportPath()
@@ -121,8 +123,11 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 
 		messages := loggedMessages(hook, logrus.TraceLevel)
 		require.True(t, slices.ContainsFunc(messages, func(s string) bool {
-			return strings.Contains(s, "added folder") && strings.Contains(s, "album")
+			return strings.HasPrefix(s, "import: skipped") && strings.Contains(s, "album")
 		}), "the folder line must be among %v", messages)
+		assert.False(t, slices.ContainsFunc(messages, func(s string) bool {
+			return strings.Contains(s, "added folder") && strings.Contains(s, "album")
+		}), "the folder must not be recorded")
 
 		for _, msg := range messages {
 			assert.NotContains(t, msg, "\u202e", "a log line must not carry a bidi override")
@@ -181,4 +186,107 @@ func TestMediaFile_CopyReportsAReadFailure(t *testing.T) {
 
 	require.Error(t, err, "a source that cannot be read must not report a successful copy")
 	assert.Contains(t, err.Error(), "copy:")
+}
+
+func TestMediaFile_CopyInterrupted(t *testing.T) {
+	// A copy that stops mid-file, e.g. when a network share goes away, leaves nothing under the final name.
+	dir := t.TempDir()
+	src := filepath.Join(dir, "src.jpg")
+	writeTestJpeg(t, src, 346)
+	srcHash := fs.Hash(src)
+
+	saved := copyFileContent
+	t.Cleanup(func() { copyFileContent = saved })
+	copyFileContent = func(dst io.Writer, r io.Reader) (int64, error) {
+		n, _ := io.CopyN(dst, r, 100)
+		return n, errors.New("network share went away")
+	}
+
+	m, err := NewMediaFile(src)
+	require.NoError(t, err)
+
+	t.Run("NewName", func(t *testing.T) {
+		dest := filepath.Join(dir, "new", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+
+		copyErr := m.Copy(dest, false)
+		require.ErrorContains(t, copyErr, "network share went away")
+		assert.NoFileExists(t, dest)
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Empty(t, entries, "the staged file is removed")
+		assert.Equal(t, srcHash, fs.Hash(src), "the source is unchanged")
+	})
+	t.Run("Replace", func(t *testing.T) {
+		dest := filepath.Join(dir, "old", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+		require.NoError(t, os.WriteFile(dest, []byte("existing content"), fs.ModeFile))
+
+		require.Error(t, m.Copy(dest, true))
+		content, readErr := os.ReadFile(dest) //nolint:gosec // dest is below a test folder
+		require.NoError(t, readErr)
+		assert.Equal(t, "existing content", string(content), "a forced copy that stops keeps the existing file")
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Len(t, entries, 1)
+	})
+	t.Run("Raced", func(t *testing.T) {
+		// A file another writer places under the name while the copy runs is not replaced.
+		dest := filepath.Join(dir, "raced", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+		copyFileContent = func(dst io.Writer, r io.Reader) (int64, error) {
+			require.NoError(t, os.WriteFile(dest, []byte("other writer"), fs.ModeFile))
+			return io.Copy(dst, r)
+		}
+
+		copyErr := m.Copy(dest, false)
+		require.Error(t, copyErr)
+		assert.ErrorIs(t, copyErr, os.ErrExist)
+		content, readErr := os.ReadFile(dest) //nolint:gosec // dest is below a test folder
+		require.NoError(t, readErr)
+		assert.Equal(t, "other writer", string(content))
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Len(t, entries, 1)
+	})
+	t.Run("Completed", func(t *testing.T) {
+		copyFileContent = saved
+		dest := filepath.Join(dir, "done", "dest.jpg")
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dest)))
+
+		require.NoError(t, m.Copy(dest, false))
+		assert.Equal(t, srcHash, fs.Hash(dest))
+		assert.ErrorIs(t, m.Copy(dest, false), os.ErrExist)
+		assert.ErrorContains(t, m.Copy(dest, false), "copy: destination name dest.jpg already exists")
+
+		// A replaced file keeps its mode, which differs from the default the umask gives, also an empty one
+		// replaced without force.
+		defaultInfo, statErr := os.Stat(dest)
+		require.NoError(t, statErr)
+		mode := os.FileMode(0o640)
+
+		if defaultInfo.Mode().Perm() == mode {
+			mode = 0o600
+		}
+
+		require.NoError(t, os.Chmod(dest, mode))
+		require.NoError(t, m.Copy(dest, true))
+		info, statErr := os.Stat(dest)
+		require.NoError(t, statErr)
+		assert.Equal(t, mode, info.Mode().Perm())
+
+		require.NoError(t, os.Truncate(dest, 0))
+		require.NoError(t, m.Copy(dest, false))
+		info, statErr = os.Stat(dest)
+		require.NoError(t, statErr)
+		assert.Equal(t, mode, info.Mode().Perm())
+		assert.Equal(t, srcHash, fs.Hash(dest))
+
+		entries, readErr := os.ReadDir(filepath.Dir(dest))
+		require.NoError(t, readErr)
+		assert.Len(t, entries, 1)
+	})
 }

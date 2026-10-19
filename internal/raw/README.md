@@ -1,6 +1,6 @@
 ## PhotoPrism — RAW Image Conversion
 
-**Last Updated:** June 30, 2026
+**Last Updated:** October 17, 2026
 
 ### Overview
 
@@ -11,6 +11,7 @@ The package owns the small amount of RAW-specific knowledge that would otherwise
 #### Builders
 
 - `DarktableCmd(DarktableOptions) (*exec.Cmd, bool)` — also reports whether the command needs a global mutex (presets mode runs one instance at a time).
+- `DarktableOutputAllowed(name) bool` — reports whether a name is a supported Darktable output file name; otherwise `Convert.JpegConvertCmds` uses the next converter.
 - `TherapeeCmd(bin, rawName, jpegName, profile string, quality int) *exec.Cmd` — RawTherapee render to JPEG (named without the `Raw` prefix to avoid a `raw.RawTherapee…` stutter).
 - `ExifToolJpgFromRawCmd` / `ExifToolPreviewImageCmd` — extract the full-resolution / smaller embedded preview to stdout.
 

@@ -37,6 +37,9 @@ const (
 	ClientGroupsSrcManual = "manual"
 )
 
+// ClientDataMaxBytes is the size of the auth_clients.data_json column.
+const ClientDataMaxBytes = 4096
+
 // NewClientData creates a new client data struct and returns a pointer to it.
 func NewClientData() *ClientData {
 	return &ClientData{}

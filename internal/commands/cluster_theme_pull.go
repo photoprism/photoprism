@@ -16,6 +16,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -46,7 +47,7 @@ var ClusterThemePullCommand = &cli.Command{
 }
 
 func clusterThemePullAction(ctx *cli.Context) error {
-	return CallWithDependencies(ctx, func(conf *config.Config) error {
+	return CallWithCoreDependencies(ctx, func(conf *config.Config) error {
 		portalURL := ""
 
 		if ctx.IsSet("portal-url") && ctx.String("portal-url") != "" {
@@ -90,7 +91,7 @@ func clusterThemePullAction(ctx *cli.Context) error {
 			// OAuth client_credentials
 			t, err := obtainOAuthToken(portalURL, clientID, clientSecret)
 			if err != nil {
-				log.Warnf("cluster: oauth token failed, falling back to join token (%s)", clean.ErrorFull(err))
+				event.SystemWarn([]string{"cluster", "oauth token failed, falling back to join token", "%s"}, clean.ErrorFull(err))
 			} else {
 				token = t
 			}
@@ -341,7 +342,7 @@ func unzipSafe(zipPath, dest string) error {
 		}
 
 		// Skip entries that look like hidden files or directories.
-		if fs.FileNameHidden(path.Base(name)) {
+		if fs.FileNameSystem(path.Base(name)) {
 			continue
 		}
 

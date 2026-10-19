@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -109,7 +110,7 @@ func GetServiceFolders(router *gin.RouterGroup) {
 		list, err := m.Directories(conf.ServicesCIDR())
 
 		if err != nil {
-			log.Errorf("%s: %s", serviceFolder, err.Error())
+			log.Errorf("%s: %s", serviceFolder, clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return
 		}
@@ -170,7 +171,10 @@ func AddService(router *gin.RouterGroup) {
 
 		m, err := entity.AddService(frm)
 
-		if err != nil {
+		if errors.Is(err, entity.ErrServiceFolderTooLong) {
+			Abort(c, http.StatusBadRequest, i18n.ErrFolderTooLong)
+			return
+		} else if err != nil {
 			AbortBadRequest(c, err)
 			return
 		}
@@ -240,7 +244,10 @@ func UpdateService(router *gin.RouterGroup) {
 		}
 
 		// 3) Save model with values from form
-		if err = m.SaveForm(frm); err != nil {
+		if err = m.SaveForm(frm); errors.Is(err, entity.ErrServiceFolderTooLong) {
+			Abort(c, http.StatusBadRequest, i18n.ErrFolderTooLong)
+			return
+		} else if err != nil {
 			log.Errorf("service: %s (save form)", clean.Error(err))
 			AbortSaveFailed(c)
 			return

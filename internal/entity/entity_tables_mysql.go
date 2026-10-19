@@ -23,6 +23,14 @@ type mysqlTable struct {
 	Name      string
 	Engine    string
 	Collation string
+	RowFormat string
+}
+
+// SmallIndexes reports whether the table uses a row format whose index entries are limited to 767 bytes,
+// so that longer columns in an index or primary key cannot be created.
+func (t mysqlTable) SmallIndexes() bool {
+	return strings.EqualFold(t.Engine, mysqlEngine) &&
+		(strings.EqualFold(t.RowFormat, "Compact") || strings.EqualFold(t.RowFormat, "Redundant"))
 }
 
 // Charset returns the character set of the table collation.
@@ -36,7 +44,7 @@ func mysqlTables(db *gorm.DB, list Tables) (result []mysqlTable, err error) {
 	var tables []mysqlTable
 
 	if err = db.Raw("SELECT table_name AS name, COALESCE(engine, '') AS engine, " +
-		"COALESCE(table_collation, '') AS collation FROM information_schema.tables " +
+		"COALESCE(table_collation, '') AS collation, COALESCE(row_format, '') AS row_format FROM information_schema.tables " +
 		"WHERE table_schema = DATABASE() AND table_type = 'BASE TABLE' ORDER BY table_name").
 		Scan(&tables).Error; err != nil {
 		return nil, err
@@ -98,10 +106,11 @@ func mysqlPreferCollation(collation, target string) bool {
 	}
 }
 
-// warnMysqlTables logs a warning naming the tables that do not use InnoDB, and the tables to convert
-// if a table does not use utf8mb4 or the collations differ, since string comparisons between them fail.
+// warnMysqlTables logs a warning naming the tables that do not use InnoDB or use a row format with small
+// indexes, and the tables to convert if a table does not use utf8mb4 or the collations differ, since string
+// comparisons between them fail.
 func warnMysqlTables(tables []mysqlTable) {
-	var engine, convert []string
+	var engine, rowFormat, convert []string
 
 	collations := make(map[string]bool)
 	charset := true
@@ -109,6 +118,8 @@ func warnMysqlTables(tables []mysqlTable) {
 	for _, t := range tables {
 		if !strings.EqualFold(t.Engine, mysqlEngine) {
 			engine = append(engine, t.Name)
+		} else if t.SmallIndexes() {
+			rowFormat = append(rowFormat, t.Name)
 		}
 
 		if t.Charset() != "utf8mb4" {
@@ -121,6 +132,11 @@ func warnMysqlTables(tables []mysqlTable) {
 	if len(engine) > 0 {
 		log.Warnf("migrate: found tables without InnoDB (%s), run \"ALTER TABLE <table> ENGINE=InnoDB;\" "+
 			"for each to convert them", strings.Join(engine, ", "))
+	}
+
+	if len(rowFormat) > 0 {
+		log.Warnf("migrate: found tables with the Compact or Redundant row format (%s), run \"ALTER TABLE <table> "+
+			"ROW_FORMAT=DYNAMIC;\" for each to convert them", strings.Join(rowFormat, ", "))
 	}
 
 	if charset && len(collations) <= 1 {

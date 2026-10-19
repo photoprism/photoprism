@@ -281,11 +281,7 @@ func readDirN(dir string, n int, dev uint64) ([]os.DirEntry, uint64, error) {
 		return nil, 0, fmt.Errorf("%s is not a directory", filepath.Base(dir))
 	}
 
-	var dirDev uint64
-
-	if st, isStat := info.Sys().(*syscall.Stat_t); isStat {
-		dirDev = uint64(st.Dev) //nolint:unconvert // Dev is uint32 on some platforms
-	}
+	dirDev, _, _ := FileID(info)
 
 	if dev != anyDevice && dirDev != dev {
 		return nil, dirDev, errOtherDevice

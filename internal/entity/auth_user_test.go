@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"path"
 	"strings"
 	"testing"
@@ -1265,6 +1266,47 @@ func TestUser_Validate(t *testing.T) {
 	})
 }
 
+func TestIsUserValidationError(t *testing.T) {
+	t.Run("Wrapped", func(t *testing.T) {
+		assert.True(t, IsUserValidationError(UserValidationError{Err: authn.ErrAuthIDRequired}))
+		assert.True(t, IsUserValidationError(fmt.Errorf("add: %w", UserValidationError{Err: authn.ErrAuthIDRequired})))
+	})
+	t.Run("Other", func(t *testing.T) {
+		assert.False(t, IsUserValidationError(nil))
+		assert.False(t, IsUserValidationError(authn.ErrAuthIDRequired))
+	})
+}
+
+// closedDbProvider returns a database whose connection pool is closed, so that every query fails.
+type closedDbProvider struct {
+	db *gorm.DB
+}
+
+// Db returns the closed database.
+func (p closedDbProvider) Db() *gorm.DB {
+	return p.db
+}
+
+func TestUser_ValidateQueryError(t *testing.T) {
+	conn, ok := dbConn.(*DbConn)
+	require.True(t, ok, "test database provider")
+
+	db, err := OpenDb(conn.Driver, conn.Dsn)
+	require.NoError(t, err)
+	require.NoError(t, CloseDb(db))
+
+	SetDbProvider(closedDbProvider{db: db})
+	t.Cleanup(func() { SetDbProvider(conn) })
+
+	m := NewUser()
+	m.UserName = "validate-query-error"
+	m.UserRole = acl.RoleAdmin.String()
+
+	err = m.Validate()
+	require.Error(t, err)
+	assert.False(t, IsUserValidationError(err), err.Error())
+}
+
 func TestAddUser(t *testing.T) {
 	t.Run("SettingsAndDetails", func(t *testing.T) {
 		t.Cleanup(func() { deleteTestUser(t, FindUserByName("adduser-related")) })
@@ -1279,6 +1321,55 @@ func TestAddUser(t *testing.T) {
 		require.NoError(t, UnscopedDb().Model(&UserDetails{}).Where("user_uid = ?", uid).Count(&details).Error)
 		assert.Equal(t, int64(1), settings)
 		assert.Equal(t, int64(1), details)
+	})
+	t.Run("AuthID", func(t *testing.T) {
+		const authId = "adduser-subject-5f3a"
+
+		t.Cleanup(func() {
+			deleteTestUser(t, FindUserByName("adduser-holder"))
+			deleteTestUser(t, FindUserByName("adduser-taker"))
+		})
+
+		require.NoError(t, AddUser(form.User{UserName: "adduser-holder", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, Password: "adduser-password"}))
+
+		holder := func() *User {
+			u := FindUserByName("adduser-holder")
+			require.NotNil(t, u)
+			return u
+		}
+
+		// A refused add leaves the account that holds the auth ID unchanged.
+		err := AddUser(form.User{UserName: "adduser-tak\u00e9r", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, Password: "adduser-password"})
+		require.ErrorIs(t, err, authn.ErrNotASCII)
+		assert.Equal(t, authId, holder().AuthID)
+		assert.Equal(t, authn.ProviderOIDC.String(), holder().AuthProvider)
+
+		// An added account takes the auth ID over.
+		require.NoError(t, AddUser(form.User{UserName: "adduser-taker", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: authId, AuthIssuer: "https://adduser.example.com",
+			Password: "adduser-password"}))
+		assert.Equal(t, "", holder().AuthID)
+		assert.Equal(t, authn.ProviderNone.String(), holder().AuthProvider)
+
+		taker := FindUserByName("adduser-taker")
+		require.NotNil(t, taker)
+		assert.Equal(t, authId, taker.AuthID)
+		assert.Equal(t, "https://adduser.example.com", taker.AuthIssuer)
+		assert.Equal(t, authn.ProviderOIDC.String(), taker.AuthProvider)
+	})
+	t.Run("ValidationError", func(t *testing.T) {
+		err := AddUser(form.User{UserName: "adduser-bad-email", UserEmail: "x@localhost", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: "none"})
+		require.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
+		assert.Equal(t, "email 'x@localhost' does not have a fully qualified domain", err.Error())
+		assert.Nil(t, FindUserByName("adduser-bad-email"))
+
+		err = AddUser(form.User{UserName: "adduser-josé", UserRole: acl.RoleAdmin.String(), AuthProvider: "none"})
+		assert.True(t, IsUserValidationError(err))
+		assert.ErrorIs(t, err, authn.ErrNotASCII)
 	})
 	t.Run("NotASCII", func(t *testing.T) {
 		for _, name := range []string{"adduser-josé", "\u212Aate-adduser", "adduser-jo\u200bse"} {
@@ -1296,6 +1387,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 	t.Run("TooLong", func(t *testing.T) {
 		u := form.User{
@@ -1307,6 +1399,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 	t.Run("InvalidRole", func(t *testing.T) {
 		u := form.User{
@@ -1318,6 +1411,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 	t.Run("ValidLocalUser", func(t *testing.T) {
 		u := form.User{
@@ -1355,6 +1449,7 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Error(t, err)
+		assert.True(t, IsUserValidationError(err))
 	})
 }
 
@@ -3346,6 +3441,52 @@ func TestUser_SetValuesFromCliScope(t *testing.T) {
 	assert.Equal(t, "videos:view", user.UserScope)
 }
 
+func TestUser_SetValuesFromCliAuthID(t *testing.T) {
+	const authId = "usersmod-subject-7c2e"
+
+	t.Cleanup(func() {
+		deleteTestUser(t, FindUserByName("usersmod-holder"))
+		deleteTestUser(t, FindUserByName("usersmod-editor"))
+	})
+
+	for _, name := range []string{"usersmod-holder", "usersmod-editor"} {
+		require.NoError(t, AddUser(form.User{UserName: name, UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: name + "-subject", Password: "usersmod-password"}))
+	}
+
+	holder := func() *User {
+		u := FindUserByName("usersmod-holder")
+		require.NotNil(t, u)
+		return u
+	}
+
+	require.NoError(t, holder().UpdateAuthID(authId, ""))
+
+	modContext := func(args ...string) *cli.Context {
+		set := flag.NewFlagSet("users mod", flag.ContinueOnError)
+		_ = set.String("auth-id", "", "")
+		_ = set.String("email", "", "")
+		require.NoError(t, set.Parse(args))
+		return cli.NewContext(cli.NewApp(), set, nil)
+	}
+
+	editor := FindUserByName("usersmod-editor")
+	require.NotNil(t, editor)
+
+	// A refused change leaves the account that holds the auth ID unchanged.
+	require.Error(t, editor.SetValuesFromCli(modContext("--auth-id", authId, "--email", "usersmod@localhost")))
+	assert.Equal(t, authId, holder().AuthID)
+	assert.Equal(t, authn.ProviderOIDC.String(), holder().AuthProvider)
+
+	// An accepted change takes the auth ID over.
+	editor = FindUserByName("usersmod-editor")
+	require.NotNil(t, editor)
+	require.NoError(t, editor.SetValuesFromCli(modContext("--auth-id", authId)))
+	assert.Equal(t, authId, editor.AuthID)
+	assert.Equal(t, "", holder().AuthID)
+	assert.Equal(t, authn.ProviderNone.String(), holder().AuthProvider)
+}
+
 func TestUser_AuthIDSQLite(t *testing.T) {
 	user := FindLocalUser("alice")
 	require.NotNil(t, user)
@@ -3545,6 +3686,41 @@ func TestUser_create(t *testing.T) {
 		require.NoError(t, m.create(true))
 		t.Cleanup(func() { deleteTestUser(t, m) })
 		assert.Equal(t, "create-keep-zoë", storedUser(t, m.UserUID).UserName)
+	})
+	t.Run("NotPortable", func(t *testing.T) {
+		for _, name := range []string{"create-50%off", "__create", "_.create"} {
+			m := NewUser()
+			m.UserName = name
+			m.UserRole = acl.RoleGuest.String()
+
+			assert.EqualError(t, m.create(false), "username '"+name+"' is not supported", name)
+			assert.Nil(t, FindUserByName(name), name)
+		}
+	})
+	t.Run("KeepNotPortable", func(t *testing.T) {
+		m := NewUser()
+		m.UserName = "__create-keep"
+		m.UserRole = acl.RoleGuest.String()
+
+		require.NoError(t, m.create(true))
+		t.Cleanup(func() { deleteTestUser(t, m) })
+		assert.Equal(t, "__create-keep", storedUser(t, m.UserUID).UserName)
+	})
+}
+
+func TestUser_SetUsernameNotPortable(t *testing.T) {
+	t.Run("Refused", func(t *testing.T) {
+		for _, name := range []string{"set-50%off", "__set", "_.set"} {
+			m := NewUser()
+			m.ID = 0
+			assert.EqualError(t, m.SetUsername(name), "username '"+name+"' is not supported", name)
+			assert.Equal(t, "", m.UserName, name)
+		}
+	})
+	t.Run("Accepted", func(t *testing.T) {
+		m := NewUser()
+		require.NoError(t, m.SetUsername("set_portable"))
+		assert.Equal(t, "set_portable", m.UserName)
 	})
 }
 

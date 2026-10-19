@@ -18,6 +18,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	_ "golang.org/x/image/bmp"  // register BMP decoder
@@ -47,6 +48,7 @@ type MediaFile struct {
 	statErr               error
 	mimeErr               error
 	modTime               time.Time
+	fileInfo              os.FileInfo
 	fileSize              int64
 	fileType              fs.Type
 	mimeType              string
@@ -163,14 +165,23 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		m.statErr = statErr
 		m.modTime = time.Time{}
 		m.fileSize = -1
+		m.fileInfo = nil
 	} else {
-		stat.Mode()
+		m.fileInfo = stat
 		m.statErr = nil
 		m.modTime = stat.ModTime().UTC().Truncate(time.Second)
 		m.fileSize = stat.Size()
 	}
 
 	return m.fileSize, m.modTime, m.statErr
+}
+
+// FileInfo returns the file info that Stat cached, with the full modification time, or nil if it failed. Stat reads
+// it once, when the file is created, unless the file was empty or could not be read.
+func (m *MediaFile) FileInfo() os.FileInfo {
+	_, _, _ = m.Stat()
+
+	return m.fileInfo
 }
 
 // ModTime returns the cached modification timestamp in UTC, fetching it via Stat
@@ -733,7 +744,7 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 		case force:
 			log.Warnf("move: overwriting destination file %s", logName)
 		default:
-			return fmt.Errorf("move: destination name %s already exists", logName)
+			return fmt.Errorf("move: destination name %s %w", logName, errNameExists)
 		}
 	}
 
@@ -771,8 +782,8 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 	return nil
 }
 
-// Copy copies the file contents to the specified destination.
-// It only overwrites existing files when the force flag is used.
+// Copy copies the file contents to the specified destination through a staged sibling, so an interrupted copy
+// leaves nothing under the final name. It only overwrites existing files when the force flag is used.
 func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	// Check for obviously empty or invalid file paths.
 	if filePath == "" || filePath == "." || filePath == ".." {
@@ -813,7 +824,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 		case force:
 			log.Warnf("copy: overwriting destination file %s", logName)
 		default:
-			return fmt.Errorf("copy: destination name %s already exists", logName)
+			return fmt.Errorf("copy: destination name %s %w", logName, errNameExists)
 		}
 	}
 
@@ -833,40 +844,64 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	defer thisFile.Close()
 
-	// Open the target file path for writing, discarding any trailing bytes. The no-follow flag puts
-	// the symbolic link rule in the call itself rather than only in the check above it.
-	// #nosec G304 -- destination path is validated and absolute.
-	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC|fs.OpenNoFollow, fs.ModeFile)
+	// Write a staged sibling and publish it only once it is complete, removing it on every other way out of
+	// the call, including a panic.
+	stageFile, err := fs.OpenStageFile(filePath)
 
 	if err != nil {
-		return fmt.Errorf("copy: destination file %s cannot be opened (%w)", logName, err)
+		return fmt.Errorf("copy: destination file %s cannot be created (%w)", logName, err)
 	}
 
-	defer func() {
-		// Update the file timestamp after the file has been copied and closed. A failure here is
-		// reported only when the copy itself succeeded, so it never replaces the copy's own error.
-		deferErr := destFile.Close()
+	// Publishing gives a replaced file a new inode, so its mode is carried over, and its owner where the
+	// process may set it; extended attributes and access control lists are not.
+	if info, statErr := os.Lstat(filePath); statErr == nil && info.Mode().IsRegular() {
+		_ = stageFile.Chmod(info.Mode().Perm())
 
-		if deferErr != nil {
-			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(deferErr))
-		} else if deferErr = os.Chtimes(filePath, time.Time{}, m.ModTime()); deferErr != nil {
-			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(deferErr))
+		if owner, ok := info.Sys().(*syscall.Stat_t); ok {
+			_ = stageFile.Chown(int(owner.Uid), int(owner.Gid))
 		}
+	}
 
-		if err == nil {
-			err = deferErr
+	staged, published := stageFile.Name(), false
+
+	defer func() {
+		if !published {
+			_ = stageFile.Close()
+			_ = os.Remove(staged)
 		}
 	}()
 
-	// Copy file contents to the destination.
-	_, err = io.Copy(destFile, thisFile)
+	if _, err = copyFileContent(stageFile, thisFile); err != nil {
+		return fmt.Errorf("copy: %w", err)
+	} else if err = stageFile.Close(); err != nil {
+		return fmt.Errorf("copy: %w", err)
+	} else if chtimesErr := os.Chtimes(staged, time.Time{}, m.ModTime()); chtimesErr != nil {
+		log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(chtimesErr))
+	}
 
-	if err != nil {
+	if err = fs.PublishFile(staged, filePath, force); err != nil {
 		return fmt.Errorf("copy: %w", err)
 	}
 
+	published = true
+
 	return nil
 }
+
+// errNameExists is returned when a destination name is taken, and matches os.ErrExist.
+var errNameExists error = nameExistsError{}
+
+// nameExistsError is the type of errNameExists.
+type nameExistsError struct{}
+
+// Error returns the error message.
+func (nameExistsError) Error() string { return "already exists" }
+
+// Is reports whether target is os.ErrExist.
+func (nameExistsError) Is(target error) bool { return target == os.ErrExist }
+
+// copyFileContent copies the contents of a file to its staged copy, and can be replaced in tests.
+var copyFileContent = io.Copy
 
 // Extension returns the filename extension of this media file.
 func (m *MediaFile) Extension() string {

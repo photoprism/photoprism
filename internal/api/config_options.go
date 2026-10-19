@@ -90,6 +90,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 				AbortBadRequest(c, err)
 				return
 			} else if errors.Is(err, config.ErrOptionsTooLarge) {
+				log.Warnf("config: options not saved because the options file would exceed its size limit")
 				AbortRequestTooLarge(c, i18n.ErrFileTooLarge)
 				return
 			}

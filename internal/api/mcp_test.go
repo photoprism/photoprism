@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -211,6 +212,129 @@ func TestServeMCP(t *testing.T) {
 		assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
 		// The rewritten response must not leak the SDK's 400 phrasing.
 		assert.NotContains(t, w.Body.String(), "failed to read body")
+	})
+	t.Run("NoChallengeWhenAppsDisabled", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		conf.Options().OAuthApps = "none"
+		ServeMCP(router)
+
+		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, "", "")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Empty(t, r.Header().Get(header.WWWAuthenticate))
+	})
+	t.Run("ChallengeWhenAppsEnabled", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		conf.Options().OAuthApps = "registered"
+		ServeMCP(router)
+
+		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, "", "")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Equal(t, `Bearer resource_metadata="`+conf.OAuthResourceMetadataUrl()+`"`, r.Header().Get(header.WWWAuthenticate))
+		assert.Contains(t, r.Body.String(), "error")
+
+		r = mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, "sessxkkcxxxz0000000000000000000000000000000000000000000000000000", "")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Contains(t, r.Header().Get(header.WWWAuthenticate), `error="invalid_token"`)
+
+		authToken := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		r = mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, authToken, "")
+		assert.Equal(t, http.StatusForbidden, r.Code)
+		assert.Empty(t, r.Header().Get(header.WWWAuthenticate))
+	})
+	t.Run("PublicModeWithAppsEnabled", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		conf.Options().Public = true
+		conf.Options().OAuthApps = "registered"
+		ServeMCP(router)
+
+		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0"}}}`
+		w := mcpPost(app, initBody, "", "")
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Empty(t, w.Header().Get(header.WWWAuthenticate))
+		sessionID := w.Header().Get("Mcp-Session-Id")
+		assert.NotEmpty(t, sessionID)
+
+		w2 := mcpPost(app, `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_config_keys","arguments":{"query":"database","limit":5}}}`, "", sessionID)
+		assert.Equal(t, http.StatusOK, w2.Code)
+	})
+	t.Run("SessionBoundToUser", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		prepareMCPTest(t)
+		ServeMCP(router)
+
+		adminToken := AuthenticateAdmin(app, router)
+
+		alice := entity.FindUserByName("alice")
+		if alice == nil {
+			t.Fatal("admin fixture user 'alice' must not be nil")
+		}
+
+		adminSess := Session("", adminToken)
+		if adminSess == nil {
+			t.Fatal("admin session must not be nil")
+		}
+
+		assert.NotEqual(t, alice.UserUID, adminSess.UserUID)
+
+		aliceSess, err := entity.AddClientSession("mcp-test-session-binding", 3600, "mcp", authn.GrantCLI, alice)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() { _ = aliceSess.Delete() })
+
+		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0"}}}`
+		w := mcpPost(app, initBody, adminToken, "")
+		assert.Equal(t, http.StatusOK, w.Code)
+		sessionID := w.Header().Get("Mcp-Session-Id")
+		assert.NotEmpty(t, sessionID)
+
+		// The other user is authorized for MCP and can open a session of their own.
+		w1 := mcpPost(app, initBody, aliceSess.AuthToken(), "")
+		assert.Equal(t, http.StatusOK, w1.Code)
+		assert.NotEmpty(t, w1.Header().Get("Mcp-Session-Id"))
+		assert.NotEqual(t, sessionID, w1.Header().Get("Mcp-Session-Id"))
+
+		callBody := `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_config_keys","arguments":{"query":"database","limit":5}}}`
+
+		// Another user presenting the session ID is refused.
+		audit := captureAuditLog(t)
+		w2 := mcpPost(app, callBody, aliceSess.AuthToken(), sessionID)
+		assert.Equal(t, http.StatusForbidden, w2.Code)
+		assert.Contains(t, w2.Body.String(), "session user mismatch")
+		require.NotNil(t, audit.LastEntry())
+		assert.Contains(t, audit.LastEntry().Message, "mcp › request refused › denied")
+
+		// The same token reaches the session through the X-Auth-Token header.
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/mcp", strings.NewReader(callBody))
+		req.Header.Set(header.XAuthToken, adminToken)
+		req.Header.Set(header.ContentType, header.ContentTypeJson)
+		req.Header.Set(header.Accept, header.ContentTypeJson+", "+header.ContentTypeEventStream)
+		req.Header.Set("Mcp-Session-Id", sessionID)
+		w3 := httptest.NewRecorder()
+		app.ServeHTTP(w3, req)
+		assert.Equal(t, http.StatusOK, w3.Code)
+		assert.Contains(t, w3.Body.String(), "matches")
+
+		// The X-Auth-Token header takes precedence over a bearer token of another user.
+		req, _ = http.NewRequest(http.MethodPost, "/api/v1/mcp", strings.NewReader(callBody))
+		req.Header.Set(header.XAuthToken, aliceSess.AuthToken())
+		header.SetAuthorization(req, adminToken)
+		req.Header.Set(header.ContentType, header.ContentTypeJson)
+		req.Header.Set(header.Accept, header.ContentTypeJson+", "+header.ContentTypeEventStream)
+		req.Header.Set("Mcp-Session-Id", sessionID)
+		w4 := httptest.NewRecorder()
+		app.ServeHTTP(w4, req)
+		assert.Equal(t, http.StatusForbidden, w4.Code)
+		assert.Contains(t, w4.Body.String(), "session user mismatch")
+
+		// The owner still reaches the session with the bearer token.
+		w5 := mcpPost(app, callBody, adminToken, sessionID)
+		assert.Equal(t, http.StatusOK, w5.Code)
+		assert.Contains(t, w5.Body.String(), "matches")
 	})
 	t.Run("InitializeAndCallTools", func(t *testing.T) {
 		app, router, _ := NewApiTest()

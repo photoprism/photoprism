@@ -12,6 +12,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/node"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -109,7 +110,7 @@ func clusterRegisterToken(conf *config.Config, portalURL, joinToken, nodeName st
 		return "", fmt.Errorf("portal access token request failed: %w", err)
 	}
 
-	log.Warnf("cluster: %s, retrying with the join token", clean.ErrorFull(err))
+	event.SystemWarn([]string{"cluster", "%s, retrying with the join token"}, clean.ErrorFull(err))
 
 	return joinToken, nil
 }

@@ -2816,6 +2816,29 @@ func TestMediaFile_Stat(t *testing.T) {
 	})
 }
 
+func TestMediaFile_FileInfo(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		name := filepath.Join(t.TempDir(), "a.jpg")
+		writeTestJpeg(t, name, 333)
+		modTime := time.Date(2026, time.October, 16, 12, 0, 0, 123456789, time.UTC)
+		require.NoError(t, os.Chtimes(name, modTime, modTime))
+		mediaFile, err := NewMediaFile(name)
+		require.NoError(t, err)
+
+		info := mediaFile.FileInfo()
+		require.NotNil(t, info)
+		stat, err := os.Stat(name)
+		require.NoError(t, err)
+		assert.True(t, os.SameFile(stat, info))
+		assert.True(t, stat.ModTime().Equal(info.ModTime()), "the modification time is not truncated")
+		assert.Equal(t, mediaFile.FileSize(), info.Size())
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		mediaFile := &MediaFile{fileName: "/missing.jpg", fileNameResolved: "/missing.jpg"}
+		assert.Nil(t, mediaFile.FileInfo())
+	})
+}
+
 func TestMediaFile_FileSize(t *testing.T) {
 	t.Run("IphoneSevenHeic", func(t *testing.T) {
 		c := config.TestConfig()

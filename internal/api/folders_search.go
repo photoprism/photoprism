@@ -103,7 +103,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			if cacheData, ok := cache.Get(cacheKey); ok {
 				cached := cacheData.(FoldersResponse)
 
-				log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
+				log.Tracef("api: cache hit for %s [%s]", clean.Log(cacheKey), time.Since(start))
 
 				c.JSON(http.StatusOK, cached)
 				return
@@ -111,7 +111,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		}
 
 		if folders, err := query.FoldersByPath(rootName, rootPath, path, recursive); err != nil {
-			log.Errorf("folder: %s", err)
+			log.Errorf("folder: %s", clean.Error(err))
 			c.JSON(http.StatusOK, resp)
 			return
 		} else {
@@ -120,7 +120,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 
 		if listFiles {
 			if files, err := query.FilesByPath(frm.Count, frm.Offset, rootName, path, frm.Public); err != nil {
-				log.Errorf("folder: %s", err)
+				log.Errorf("folder: %s", clean.Error(err))
 			} else {
 				resp.Files = files
 			}
@@ -128,7 +128,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 
 		if !uncached {
 			cache.SetDefault(cacheKey, resp)
-			log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
+			log.Debugf("cached %s [%s]", clean.Log(cacheKey), time.Since(start))
 		}
 
 		AddFileCountHeaders(c, len(resp.Files), len(resp.Folders))

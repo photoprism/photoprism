@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 16, 2026
+**Last Updated:** October 19, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -43,13 +43,13 @@ High-Level Package Map (Go)
 - `internal/ai/onnx` — shared ONNX model description and session construction: artifact identity and checksum, graph inspection and verification, preprocessing contract, runtime loading, and execution-provider selection. Consumed by `internal/ai/face`, `internal/ai/classify`, and `internal/ai/nsfw`. See [`internal/ai/onnx/README.md`](internal/ai/onnx/README.md).
 - `internal/ai/face` — face detection and embedding: the detector registry selected by `FACE_DETECTOR`, the embedding-model registry selected by `FACE_MODEL`, landmark alignment, and distance thresholds. See [`internal/ai/face/README.md`](internal/ai/face/README.md).
 - `internal/workers` — background schedulers (index, vision, sync, meta, backup)
-- `internal/auth` — ACL, sessions, OIDC
+- `internal/auth` — ACL, sessions, OIDC, OAuth app flow
 - `internal/service` — cluster/portal, maps, hub, webdav
   - WebDAV client docs: `internal/service/webdav/README.md`
   - Key WebDAV client behavior:
     - Recursive directory discovery prefers `PROPFIND Depth: infinity` and falls back to iterative `Depth: 1` traversal for incompatible servers.
     - Hidden dotfiles and entries inside hidden dot-directories are excluded from listings and fallback traversal because they often represent lock files, partial uploads, or provider metadata.
-    - Service timeouts apply to control operations (`Files`, `Directories`, `Mkdir`, `Delete`), while `Upload` and `Download` avoid total request deadlines and instead use connection-level safeguards.
+    - Service timeouts apply to control operations (`Files`, `Directories`, `Mkdir`, `Delete`), while `Upload` and `Download` have no total request deadline; they end when less than 1 MiB moves within five minutes, on top of connection-level safeguards. With the timeout "None", control operations are capped at 30 minutes.
 - `internal/event` — logging, pub/sub, audit; canonical outcome tokens live in `pkg/log/status` (use helpers like `status.Error(err)` when the sanitized message should be the outcome). Docs: `internal/event/README.md`.
 - `internal/ffmpeg`, `internal/thumb`, `internal/meta`, `internal/form`, `internal/mutex` — media, thumbs, metadata, forms, coordination. Docs: `internal/ffmpeg/README.md`, `internal/meta/README.md`.
 - `pkg/*` — reusable utilities (must never import from `internal/*`), e.g. `pkg/clean`, `pkg/enum`, `pkg/fs`, `pkg/txt`, `pkg/http/header`, `pkg/authn/authtoken`
@@ -120,6 +120,7 @@ AuthN/Z & Sessions
   - `internal/entity/auth_session_jwt.go` builds transient sessions from portal-issued JWTs; used by `internal/api/api_auth_jwt.go` when nodes authenticate portal requests.
 - ACL: `internal/auth/acl/*` — roles, grants, scopes; use constants; avoid logging secrets, compare tokens constant‑time; for scope checks use `acl.ScopePermits` / `ScopeAttrPermits` instead of rolling your own parsing.
 - OIDC: `internal/auth/oidc/*`.
+- OAuth app flow (authorization code with PKCE for apps and MCP clients): `internal/auth/oauth/*` — PKCE, authorize parameter bounds, redirect URI rules, hashed single-use codes stored as `entity.AuthCode` (`auth_codes`), app grants with rotating refresh tokens (`entity.Grant`, `auth_grants`) and one-hour access tokens confined to the MCP endpoint by their audience (`entity.FindSession` refuses them; `FindAudienceSession`, `api.AuthAudience`); see `internal/auth/oauth/README.md`.
 - URL tokens (signed downloads, previews): `pkg/authn/authtoken` is the dependency-free primitive that mints/verifies the bunny.net-compatible HMAC-SHA256 token format (docs: `pkg/authn/authtoken/README.md`); `internal/auth/tokens` holds the app-level wiring — a generic `Signer` (key + signature path) with one instance per kind (`Download` today, previews next), the delivery policy (`DownloadToken`/`SignDownload`/`VerifyDownload`/`IsCoarseDownload`), and `Derive` for the not-yet-signed preview token. Full details, including the delivery rules and test gotchas, are in `internal/auth/tokens/README.md`. It is a Propagate-configured leaf like `thumb`/`dl`/`ttl`, so it imports neither `config` nor `get`: `Config.Propagate` sets the signer key/path plus `tokens.PublicMode`/`CoarseDownload`, and config owns `Config.TokenSigningKey` (the shared `config/keys/signing.key` secret) and `DownloadTokenMaxAge` (the `download-token-maxage` option, effective value in `ttl.DownloadToken`). Download tokens are **stateless** — no per-session/user storage. Request-side resolution in `internal/api/auth_tokens.go`: `AuthDownload(c) (sess, valid)` is the merged gate the endpoints use (session-or-coarse authorization + the resolved session in one call, auditing a denial centrally like `AuthAny`), `InvalidDownloadToken` is a thin wrapper, and `DownloadSession` resolves a signed `?t=` token to its session — accepting, before the token, a **Portal cluster JWT in a request header** (`authAnyJWT` requiring `acl.AccessAll` on files, so only a trusted full-access principal qualifies; a transient JWT session can't back a `?t=` token, and only JWTs — not arbitrary bearer/Basic-auth headers — take this path, which otherwise falls through to `?t=`). Scoped consumers: `DownloadAlbum` (`internal/api/download_album.go`), `GetDownload` (`internal/api/download.go`), `GetPhotoDownload` (`internal/api/photos.go`), `ZipDownload` (`internal/api/zip.go`), `GetVideo` source-specific actions (`internal/api/video.go`, authoritative path download token and no-store responses).
 
 Media Processing
@@ -140,6 +141,7 @@ Background Workers
 Cluster / Portal
 - Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
+  - Only `start` joins the cluster and syncs the theme (`Config.Starting()`), but not `start --config` (`Config.StartReport()`); other commands on a node that has not joined yet log a warning instead.
   - Bootstrap treats 400, 401, 403, 404 and 409 as final and retries 429, 5xx and network errors (6 attempts, 15 s apart), then reports the Portal's reason; `cluster register` retries only 429, with backoff.
   - Theme sync logs at info level when it downloads, updates, or skips a bundle, so operators can trace it in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
@@ -211,7 +213,7 @@ Security & Hot Spots (Where to Look)
   - Endpoints: `internal/api/thumbnails.go` (`GetThumb`), `internal/api/albums_cover.go` (`AlbumCover`, shared `coverSize`), `internal/api/labels_cover.go` (`LabelCover`), `internal/api/folders_cover.go` (`FolderCover`); response and cover caching in `internal/api/cache.go`.
 
 - Safe HTTP downloader:
-  - Shared utility: `pkg/http/safe` (`Download`, `Options`).
+  - Shared utility: `pkg/http/safe` (`Download`, `Options`); `Fetch` reads small documents into memory with the same checks (OAuth client metadata documents).
   - Protections: scheme allow‑list (http/https), pre‑DNS + per‑redirect hostname/IP validation, final peer IP check, size and timeout enforcement, temp file `0600` + rename.
   - Avatars: wrapper `internal/thumb/avatar.SafeDownload` applies stricter defaults (15s, 10 MiB, `AllowPrivate=false`, image‑focused `Accept`).
   - Tests: `go test ./pkg/http/safe -count=1` (includes redirect SSRF cases); avatars: `go test ./internal/thumb/avatar -count=1`.
@@ -274,6 +276,7 @@ Downloads (CLI) & yt-dlp helpers
   - `internal/commands/download_impl.go` (testable implementation used by CLI)
 - yt-dlp wrappers:
   - `internal/photoprism/dl/options.go` (arg wiring; `FFmpegPostArgs` hook for `--postprocessor-args`)
+  - `internal/photoprism/dl/format.go` (`FormatBest` selector; FFmpeg reconnect args for stdout merges)
   - `internal/photoprism/dl/info.go` (metadata discovery)
   - `internal/photoprism/dl/file.go` (file method with `--output`/`--print`)
   - `internal/photoprism/dl/meta.go` (`CreatedFromInfo` fallback; `RemuxOptionsFromInfo`)

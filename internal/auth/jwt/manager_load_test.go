@@ -8,6 +8,8 @@ import (
 	"github.com/sirupsen/logrus"
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestManagerLoadKeysUnreadableFile(t *testing.T) {
@@ -19,10 +21,12 @@ func TestManagerLoadKeysUnreadableFile(t *testing.T) {
 	broken := filepath.Join(keyDir, privateKeyPrefix+"20250924T1030Z-broken"+privateKeyExt)
 	require.NoError(t, os.Symlink(filepath.Join(keyDir, "missing.json"), broken))
 
-	logger, ok := log.(*logrus.Logger)
-	require.True(t, ok)
-	hook := logtest.NewLocal(logger)
-	t.Cleanup(hook.Reset)
+	// Operator-only detail goes to the system log.
+	logger, hook := logtest.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	prev := event.SystemLog
+	event.SystemLog = logger
+	t.Cleanup(func() { event.SystemLog = prev })
 
 	m, err := NewManager(c)
 	require.NoError(t, err)
@@ -39,10 +43,9 @@ func TestManagerLoadKeysUnreadableFile(t *testing.T) {
 			continue
 		}
 		warned = true
-		require.NotContains(t, msg, keyDir)
-		require.NotContains(t, msg, c.PortalConfigPath())
 		require.Contains(t, msg, "read signing key")
-		// The file name stays, so an operator can still tell which entry was skipped.
+		// The console keeps the location, so an operator can tell which entry was skipped and where.
+		require.Contains(t, msg, keyDir)
 		require.Contains(t, msg, "broken")
 	}
 

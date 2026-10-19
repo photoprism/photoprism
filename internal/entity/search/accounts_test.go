@@ -149,3 +149,17 @@ func TestAccounts_Bindable(t *testing.T) {
 		assert.Len(t, result, len(expected), status)
 	}
 }
+
+func TestAccounts_NoMatch(t *testing.T) {
+	// A filter value of only NUL bytes and invalid UTF-8 matches nothing, while an empty one stays unfiltered.
+	all, err := Accounts(form.SearchServices{Count: 10})
+	require.NoError(t, err)
+	require.NotEmpty(t, all)
+
+	for _, frm := range []form.SearchServices{{Query: "\x00", Count: 10}, {Query: "\xff\xfe", Count: 10}, {Status: "\xff", Count: 10}, {Query: "\x00 ", Count: 10}, {Query: "\xff*", Count: 10}} {
+		result, err := Accounts(frm)
+		require.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Empty(t, result, "%q", frm.Query+frm.Status)
+	}
+}
