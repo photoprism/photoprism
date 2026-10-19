@@ -84,7 +84,7 @@ func NewDataset(currentEdition string, opt Options) *Dataset {
 		CurrentEdition:  normalizeEdition(currentEdition),
 		ConfigOptions:   buildConfigOptions(),
 		SearchFilters:   buildSearchFilters(),
-		CliCommands:     buildCliCommands(opt.Commands, opt.GlobalFlags),
+		CliCommands:     buildCliCommands(opt.Commands),
 		FileFormats:     fileFormats,
 		FileFormatTypes: fileFormatTypes(fileFormats),
 		MetadataFields:  buildMetadataFields(),

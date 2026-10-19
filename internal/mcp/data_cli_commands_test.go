@@ -102,7 +102,8 @@ func testCommands() []*cli.Command {
 						&cli.GenericFlag{Name: "parsed", Usage: "generic option set by arguments", Value: &testGeneric{"literal"}},
 						&cli.StringFlag{Name: "name-file", Usage: "file option", Value: "literal", FilePath: "/nonexistent/photoprism-test-mcp"},
 						&testWrappedFlag{&cli.StringFlag{Name: "wrapped", Usage: "wrapped option", Value: "literal", EnvVars: []string{"PHOTOPRISM_TEST_MCP_WRAPPED"}}},
-						&cli.BoolFlag{Name: "debug", Usage: "repeats a global flag"},
+						&cli.BoolFlag{Name: "debug", Usage: "has the name of a global flag"},
+						cli.HelpFlag,
 					},
 				},
 				{Name: "purge", Usage: "Hidden subcommand", Hidden: true},
@@ -112,11 +113,6 @@ func testCommands() []*cli.Command {
 		{Name: "maintenance", Usage: "Hidden top-level command", Hidden: true, Subcommands: []*cli.Command{{Name: "run", Usage: "Runs maintenance"}}},
 		{Name: "help", Aliases: []string{"h"}, Usage: "Shows a list of commands or help for one command"},
 	}
-}
-
-// testGlobalFlags returns the synthetic global flags for testCommands.
-func testGlobalFlags() []cli.Flag {
-	return []cli.Flag{&cli.BoolFlag{Name: "debug", Usage: "enables debug mode"}}
 }
 
 // applyTwice applies each env-backed flag to two fresh flag sets, which makes urfave/cli keep the
@@ -148,7 +144,7 @@ func applyTwice(t *testing.T, commands []*cli.Command) {
 // TestBuildCliCommands checks which commands and flags are listed and how they are described.
 func TestBuildCliCommands(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		items := buildCliCommands(testCommands(), testGlobalFlags())
+		items := buildCliCommands(testCommands())
 
 		names := make([]string, 0, len(items))
 		for _, item := range items {
@@ -168,8 +164,9 @@ func TestBuildCliCommands(t *testing.T) {
 			flags[f.Name] = f
 		}
 		require.NotContains(t, flags, "--secret", "hidden flag")
-		require.NotContains(t, flags, "--debug", "global flag")
-		require.Len(t, flags, 8)
+		require.NotContains(t, flags, "--help", "help flag")
+		require.Contains(t, flags, "--debug", "flag with the name of a global flag")
+		require.Len(t, flags, 9)
 
 		require.Equal(t, CliFlag{Name: "--role", Aliases: []string{"-r"}, Type: "string", Usage: "account role", Default: `"admin"`, Env: []string{}}, flags["--role"])
 		require.Equal(t, []string{"PHOTOPRISM_TEST_MCP_PASSWORD"}, flags["--password"].Env)
@@ -179,22 +176,18 @@ func TestBuildCliCommands(t *testing.T) {
 		}
 	})
 	t.Run("NilList", func(t *testing.T) {
-		require.Nil(t, buildCliCommands(nil, testGlobalFlags()))
+		require.Nil(t, buildCliCommands(nil))
 	})
 	t.Run("EmptyList", func(t *testing.T) {
-		items := buildCliCommands([]*cli.Command{}, nil)
+		items := buildCliCommands([]*cli.Command{})
 		require.NotNil(t, items)
 		require.Empty(t, items)
 	})
 	t.Run("NilEntries", func(t *testing.T) {
-		items := buildCliCommands([]*cli.Command{nil, {Name: "start", Usage: "Starts the server"}}, nil)
+		items := buildCliCommands([]*cli.Command{nil, {Name: "start", Usage: "Starts the server"}})
 		require.Len(t, items, 1)
 		require.Equal(t, "photoprism start", items[0].Command)
 		require.Equal(t, []CliFlag{}, items[0].Flags)
-	})
-	t.Run("NoGlobalFlags", func(t *testing.T) {
-		items := buildCliCommands(testCommands(), nil)
-		require.Len(t, items[1].Flags, 9, "--debug is kept without global flags")
 	})
 }
 
@@ -219,7 +212,7 @@ func TestBuildCliCommandsOmitsEnvironmentValues(t *testing.T) {
 	require.Contains(t, catalog.DescribeFlag(findFlag(add.Flags, "--password")).Default, sentinel)
 	require.Equal(t, "4242", catalog.DescribeFlag(findFlag(add.Flags, "--count")).Default)
 
-	server := NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce", Options{Commands: commands, GlobalFlags: testGlobalFlags()})
+	server := NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce", Options{Commands: commands})
 	session := connectServer(t, server)
 
 	res, err := session.ReadResource(context.Background(), &sdkmcp.ReadResourceParams{URI: cliCommandsURI})

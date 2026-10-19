@@ -104,15 +104,14 @@ func TestRunMCPServerOverInMemoryTransport(t *testing.T) {
 	require.NoError(t, err)
 	require.Contains(t, string(raw), `"command":"photoprism mcp serve"`)
 
-	// The resource lists the commands built from the app's command list and global flags.
+	// The resource lists the commands built from the app's command list.
 	resource, err := session.ReadResource(ctx, &sdkmcp.ReadResourceParams{URI: "photoprism://cli-commands"})
 	require.NoError(t, err)
 	require.Len(t, resource.Contents, 1)
 
 	var payload mcp.CliCommandsResource
 	require.NoError(t, json.Unmarshal([]byte(resource.Contents[0].Text), &payload))
-	require.Equal(t, mcp.NewDataset("pro", mcp.Options{Commands: appCtx.App.Commands, GlobalFlags: appCtx.App.Flags}).CliCommands, payload.Items)
-	require.NotEqual(t, mcp.NewDataset("pro", mcp.Options{Commands: appCtx.App.Commands}).CliCommands, payload.Items)
+	require.Equal(t, mcp.NewDataset("pro", mcp.Options{Commands: appCtx.App.Commands}).CliCommands, payload.Items)
 
 	require.NoError(t, session.Close())
 	cancel()
@@ -224,7 +223,7 @@ func TestMCPCliCommandsMatchShowCommands(t *testing.T) {
 	require.NotEmpty(t, report.Commands)
 
 	ctx := NewTestContext(nil)
-	data := mcp.NewDataset("ce", mcp.Options{Commands: ctx.App.Commands, GlobalFlags: ctx.App.Flags})
+	data := mcp.NewDataset("ce", mcp.Options{Commands: ctx.App.Commands})
 	require.Len(t, data.CliCommands, len(report.Commands))
 
 	flagCount := 0
@@ -264,7 +263,7 @@ func TestMCPCliCommandsOmitEnvironmentValues(t *testing.T) {
 	require.Contains(t, catalog.DescribeFlag(envFlags["photoprism database transfer --target-password"]).Default, sentinel,
 		"a second Apply must report the environment value, or this test cannot fail")
 
-	data := mcp.NewDataset("ce", mcp.Options{Commands: PhotoPrism, GlobalFlags: config.Flags.Cli()})
+	data := mcp.NewDataset("ce", mcp.Options{Commands: PhotoPrism})
 
 	raw, err := json.Marshal(data.CliCommands)
 	require.NoError(t, err)

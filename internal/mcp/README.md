@@ -55,7 +55,7 @@ Out of scope for the current server (must not regress without additional per-too
 
 - Config options: `internal/config.Flags` plus `internal/config.OptionsReportSections`
 - Search filters: `internal/form.Report(&form.SearchPhotos{})`
-- CLI commands: the command list and global flags of the running edition, passed to `mcp.NewServer` in `mcp.Options` by `ServeMCP` (from the CLI app of the config) and by `photoprism mcp serve`, and converted with `internal/commands/catalog` as `photoprism show commands`
+- CLI commands: the command list of the running edition, passed to `mcp.NewServer` in `mcp.Options` by `ServeMCP` (from the CLI app of the config) and by `photoprism mcp serve`, and converted with `internal/commands/catalog` as `photoprism show commands`
 - File formats: `pkg/media.Report(fs.ExtensionList.Types(true), true, true, true)`, as `photoprism show file-formats`
 - Metadata fields: `internal/meta.Report(&meta.Data{})` sorted by type and field, plus `meta.Docs`, as `photoprism show metadata`
 - Thumbnail sizes: `internal/thumb.Report(thumb.Sizes.All(), false)`, as `photoprism show thumb-sizes`, with the sizes in `thumb.VideoSizes` (`photoprism show video-sizes`) marked as video sizes
@@ -140,7 +140,7 @@ Useful smoke tests:
 - JSON payload with `edition` and `items`, in the order of `photoprism show commands`
 - Each item includes `command` (the full path, e.g. `photoprism users add`), `usage`, `description`, `args_usage`, `aliases`, and `flags`
 - Each flag includes `name`, `aliases`, `type`, `usage`, `required`, `env`, and `default` if the flag definition has a literal default
-- Hidden commands, hidden flags, and flags that repeat a global option are not included; global options are covered by `photoprism://config-options`
+- Hidden commands, hidden flags, and the `--help` flag are not included; global options are covered by `photoprism://config-options`
 
 `photoprism://file-formats`
 

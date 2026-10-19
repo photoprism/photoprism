@@ -5,7 +5,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/urfave/cli/v2"
+
 	catalogpkg "github.com/photoprism/photoprism/internal/commands/catalog"
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 func TestShowCommands_JSON_Flat(t *testing.T) {
@@ -17,7 +20,7 @@ func TestShowCommands_JSON_Flat(t *testing.T) {
 		if c.Hidden {
 			continue
 		}
-		flat = append(flat, catalogpkg.BuildFlat(c, 1, "photoprism", false, global)...)
+		flat = append(flat, catalogpkg.BuildFlat(c, 1, "photoprism", false)...)
 	}
 	out := struct {
 		App         catalogpkg.App       `json:"app"`
@@ -71,13 +74,12 @@ func TestShowCommands_JSON_Flat(t *testing.T) {
 
 func TestShowCommands_JSON_Nested(t *testing.T) {
 	ctx := NewTestContext([]string{"commands"})
-	global := catalogpkg.FlagsToCatalog(ctx.App.Flags, false)
 	var tree []catalogpkg.Node
 	for _, c := range ctx.App.Commands {
 		if c.Hidden {
 			continue
 		}
-		tree = append(tree, catalogpkg.BuildNode(c, 1, "photoprism", false, global))
+		tree = append(tree, catalogpkg.BuildNode(c, 1, "photoprism", false))
 	}
 	b, err := json.Marshal(struct {
 		Commands []catalogpkg.Node `json:"commands"`
@@ -124,4 +126,83 @@ func TestShowCommands_Markdown_Default(t *testing.T) {
 	if !strings.Contains(out, "### photoprism auth ") { // subcommand headings begin with parent
 		t.Fatalf("expected '### photoprism auth <sub>' heading in output\n%s", out[:min(600, len(out))])
 	}
+}
+
+// TestShowCommands_FlagsSharingGlobalNames checks that command flags with the name of a global flag
+// are listed, and that the help flag added to the running command is not.
+func TestShowCommands_FlagsSharingGlobalNames(t *testing.T) {
+	out, err := RunWithTestContext(ShowCommandsCommand, []string{"commands", "--json"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	var report struct {
+		Commands []catalogpkg.Command `json:"commands"`
+	}
+	if err = json.Unmarshal([]byte(out), &report); err != nil {
+		t.Fatalf("invalid json: %v", err)
+	}
+
+	flags := make(map[string]bool)
+	for _, c := range report.Commands {
+		for _, f := range c.Flags {
+			flags[c.FullName+" "+f.Name] = true
+		}
+	}
+
+	for _, name := range []string{
+		"photoprism cluster register --portal-url",
+		"photoprism cluster register --join-token",
+		"photoprism cluster register --advertise-url",
+		"photoprism cluster register --site-url",
+		"photoprism cluster register --app-name",
+		"photoprism start --config",
+		"photoprism users ls --login",
+		"photoprism migrate --trace",
+	} {
+		if !flags[name] {
+			t.Errorf("expected flag %q", name)
+		}
+	}
+
+	for name := range flags {
+		if strings.HasSuffix(name, " --help") {
+			t.Errorf("unexpected help flag %q", name)
+		}
+	}
+}
+
+// TestCommandFlagsAreNotGlobalFlags checks that no command flag is a global flag object, since
+// the command catalog lists every command flag apart from the help flag.
+func TestCommandFlagsAreNotGlobalFlags(t *testing.T) {
+	global := make(map[cli.Flag]bool)
+	for _, f := range config.Flags.Cli() {
+		global[f] = true
+	}
+
+	var walk func(cmds []*cli.Command, parent string)
+
+	walk = func(cmds []*cli.Command, parent string) {
+		for _, c := range cmds {
+			if c == nil {
+				continue
+			}
+
+			name := parent + " " + c.Name
+
+			for _, f := range c.Flags {
+				if w, ok := f.(interface{ Unwrap() cli.Flag }); ok {
+					f = w.Unwrap()
+				}
+
+				if global[f] {
+					t.Errorf("%s uses the global flag %q", name, f.Names()[0])
+				}
+			}
+
+			walk(c.Subcommands, name)
+		}
+	}
+
+	walk(PhotoPrism, "photoprism")
 }

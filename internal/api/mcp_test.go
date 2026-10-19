@@ -156,19 +156,19 @@ func TestServeMCP(t *testing.T) {
 		cliApp := conf.CliApp()
 		require.NotNil(t, cliApp)
 
-		commands, flags := cliApp.Commands, cliApp.Flags
-		t.Cleanup(func() { cliApp.Commands, cliApp.Flags = commands, flags })
+		commands := cliApp.Commands
+		t.Cleanup(func() { cliApp.Commands = commands })
 
 		cliApp.Commands = []*cli.Command{
 			{Name: "ldap", Usage: "Directory commands", Subcommands: []*cli.Command{
 				{Name: "sync", Usage: "Synchronizes accounts", Flags: []cli.Flag{
 					&cli.StringFlag{Name: "role", Usage: "account role", Value: "user"},
-					&cli.BoolFlag{Name: "debug", Usage: "repeats a global flag"},
+					&cli.BoolFlag{Name: "debug", Usage: "has the name of a global flag"},
+					cli.HelpFlag,
 				}},
 			}},
 			{Name: "secret", Usage: "Hidden command", Hidden: true},
 		}
-		cliApp.Flags = []cli.Flag{&cli.BoolFlag{Name: "debug"}}
 
 		ServeMCP(router)
 
@@ -183,7 +183,8 @@ func TestServeMCP(t *testing.T) {
 		assert.Contains(t, body, `\"user\"`)
 		assert.Contains(t, body, `"total":2`)
 		assert.NotContains(t, body, "photoprism secret")
-		assert.NotContains(t, body, `"name":"--debug"`)
+		assert.Contains(t, body, `"name":"--debug"`)
+		assert.NotContains(t, body, `"name":"--help"`)
 		assert.NotContains(t, body, "not available")
 	})
 	t.Run("DisabledViaConfig", func(t *testing.T) {

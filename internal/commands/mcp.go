@@ -77,7 +77,7 @@ func runMCPServer(ctx context.Context, appCtx *cli.Context, transport sdkmcp.Tra
 		Version: mcpAppMetadata(appCtx, "Version", "development"),
 	}
 	edition := mcpAppMetadata(appCtx, "Edition", "unknown")
-	opt := mcp.Options{Commands: appCtx.App.Commands, GlobalFlags: appCtx.App.Flags}
+	opt := mcp.Options{Commands: appCtx.App.Commands}
 
 	return mcp.NewServer(implementation, edition, opt).Run(ctx, transport)
 }

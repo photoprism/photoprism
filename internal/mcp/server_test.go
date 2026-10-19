@@ -14,7 +14,7 @@ import (
 func connectTestClient(t *testing.T) *sdkmcp.ClientSession {
 	t.Helper()
 
-	return connectServer(t, NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce", Options{Commands: testCommands(), GlobalFlags: testGlobalFlags()}))
+	return connectServer(t, NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce", Options{Commands: testCommands()}))
 }
 
 // connectServer connects an in-memory client to the specified MCP server.
@@ -73,7 +73,7 @@ func TestNewServerResources(t *testing.T) {
 
 	var commandsPayload CliCommandsResource
 	readResourcePayload(t, session, cliCommandsURI, &commandsPayload)
-	require.Equal(t, buildCliCommands(testCommands(), testGlobalFlags()), commandsPayload.Items)
+	require.Equal(t, buildCliCommands(testCommands()), commandsPayload.Items)
 	require.Equal(t, "ce", commandsPayload.Edition)
 
 	var formatsPayload FileFormatsResource

@@ -33,8 +33,6 @@ var ResourceURIs = []string{
 type Options struct {
 	// Commands is the CLI command list of the running edition.
 	Commands []*cli.Command
-	// GlobalFlags are the global CLI flags, used only to omit command flags that repeat them.
-	GlobalFlags []cli.Flag
 }
 
 // NewServer returns a read-only MCP server with the tools and resources in ToolNames and ResourceURIs.

@@ -63,7 +63,7 @@ func ServeMCP(router *gin.RouterGroup) {
 	var opt mcp.Options
 
 	if app := conf.CliApp(); app != nil {
-		opt.Commands, opt.GlobalFlags = app.Commands, app.Flags
+		opt.Commands = app.Commands
 	}
 
 	// One server instance is shared across all HTTP requests. The SDK

@@ -373,7 +373,7 @@ func TestListCliCommandsTool(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		out := callTool[ListCliCommandsOutput](t, session, "list_cli_commands", nil)
-		require.Equal(t, buildCliCommands(testCommands(), testGlobalFlags()), out.Items)
+		require.Equal(t, buildCliCommands(testCommands()), out.Items)
 		require.Equal(t, 3, out.Total)
 		require.Equal(t, defaultResultLimit, out.Limit)
 		require.False(t, out.Truncated)

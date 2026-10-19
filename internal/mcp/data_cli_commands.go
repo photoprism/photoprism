@@ -41,12 +41,11 @@ type CliCommandsResource struct {
 
 // buildCliCommands returns the visible commands with their own visible flags in the order of
 // `photoprism show commands`, or nil if no command list was passed.
-func buildCliCommands(commands []*cli.Command, globalFlags []cli.Flag) []CliCommand {
+func buildCliCommands(commands []*cli.Command) []CliCommand {
 	if commands == nil {
 		return nil
 	}
 
-	global := catalog.FlagsToCatalog(globalFlags, false)
 	sources := cliCommandSources(commands)
 	items := make([]CliCommand, 0, len(commands))
 
@@ -55,7 +54,7 @@ func buildCliCommands(commands []*cli.Command, globalFlags []cli.Flag) []CliComm
 			continue
 		}
 
-		for _, cmd := range catalog.BuildFlat(root, 1, cliRootName, false, global) {
+		for _, cmd := range catalog.BuildFlat(root, 1, cliRootName, false) {
 			items = append(items, newCliCommand(cmd, sources[cmd.FullName]))
 		}
 	}
