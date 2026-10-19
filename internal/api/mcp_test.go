@@ -1,12 +1,14 @@
 package api
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -254,6 +256,77 @@ func TestServeMCP(t *testing.T) {
 		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"qa","version":"1.0"}}}`
 		r := mcpPost(app, initBody, sess.AuthToken(), "")
 		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("AccountSetting", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		ServeMCP(router)
+
+		alice := entity.FindUserByName("alice")
+		require.NotNil(t, alice)
+		setMCP := func(value int) {
+			alice.MCP = value
+			require.NoError(t, alice.Save())
+		}
+		t.Cleanup(func() { setMCP(0) })
+
+		appPassword, err := entity.AddClientSession("mcp-test-account-setting", 3600, "mcp", authn.GrantCLI, alice)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = appPassword.Delete() })
+
+		client := entity.ClientFixtures.Pointer("alice").NewSession(nil, authn.GrantClientCredentials)
+		require.NoError(t, client.Create())
+		t.Cleanup(func() { _ = client.Delete() })
+		require.True(t, client.IsClient())
+		require.True(t, client.HasUser())
+
+		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"qa","version":"1.0"}}}`
+
+		for _, value := range []int{0, 1} {
+			setMCP(value)
+			assert.Equal(t, http.StatusOK, mcpPost(app, initBody, appPassword.AuthToken(), "").Code)
+			assert.Equal(t, http.StatusOK, mcpPost(app, initBody, client.AuthToken(), "").Code)
+		}
+
+		// An open MCP session stops working once the setting turns MCP off.
+		setMCP(0)
+		sessionID := mcpInitSession(t, app, appPassword.AuthToken())
+		setMCP(-1)
+
+		audit := captureAuditLog(t)
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":2,"method":"tools/list"}`, appPassword.AuthToken(), sessionID)
+		assert.Equal(t, http.StatusForbidden, w.Code)
+		require.NotNil(t, audit.LastEntry())
+		assert.Contains(t, audit.LastEntry().Message, "mcp › disabled for user alice › denied")
+
+		assert.Equal(t, http.StatusForbidden, mcpPost(app, initBody, appPassword.AuthToken(), "").Code)
+		assert.Equal(t, http.StatusForbidden, mcpPost(app, initBody, client.AuthToken(), "").Code)
+
+		// The event stream and session tear-down are refused as well.
+		for _, method := range []string{http.MethodGet, http.MethodDelete} {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			req, _ := http.NewRequestWithContext(ctx, method, "/api/v1/mcp", nil)
+			header.SetAuthorization(req, appPassword.AuthToken())
+			req.Header.Set(header.Accept, header.ContentTypeEventStream)
+			req.Header.Set("Mcp-Session-Id", sessionID)
+			w := httptest.NewRecorder()
+			app.ServeHTTP(w, req)
+			assert.Equal(t, http.StatusForbidden, w.Code, method)
+			cancel()
+		}
+
+		// A client without a user does not depend on the setting.
+		clientOnly, err := entity.AddClientSession("mcp-test-client-only", 3600, "mcp", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = clientOnly.Delete() })
+		assert.Equal(t, http.StatusOK, mcpPost(app, initBody, clientOnly.AuthToken(), "").Code)
+
+		// The public session stands for no account, so the setting of the admin it carries does not apply.
+		publicMCP := entity.Admin.MCP
+		t.Cleanup(func() { entity.Admin.MCP = publicMCP })
+		entity.Admin.MCP = -1
+		conf.Options().Public = true
+		assert.Equal(t, http.StatusOK, mcpPost(app, initBody, "", "").Code)
 	})
 	t.Run("RequestTooLargeContentLength", func(t *testing.T) {
 		// The handler must reject oversized POST bodies with a 413 before

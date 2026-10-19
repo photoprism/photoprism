@@ -65,6 +65,7 @@ type User struct {
 	LoginAt      *time.Time    `json:"LoginAt" yaml:"LoginAt,omitempty"`
 	ExpiresAt    *time.Time    `gorm:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	WebDAV       bool          `gorm:"column:webdav;" json:"WebDAV" yaml:"WebDAV,omitempty"`
+	MCP          int           `gorm:"column:mcp;type:int;size:16;default:0;" json:"MCP" yaml:"MCP,omitempty"`
 	BasePath     string        `gorm:"type:bytes;size:1024;" json:"BasePath" yaml:"BasePath,omitempty"`
 	UploadPath   string        `gorm:"type:bytes;size:1024;" json:"UploadPath" yaml:"UploadPath,omitempty"`
 	CanInvite    bool          `json:"CanInvite" yaml:"CanInvite,omitempty"`
@@ -665,6 +666,15 @@ func (m *User) CanUseWebDAV() bool {
 		// Check if the ACL allows downloading files via WebDAV based on the user role.
 		return acl.Rules.Allow(acl.ResourceWebDAV, m.AclRole(), acl.ActionDownload)
 	}
+}
+
+// CanUseMCP checks whether the user may use the MCP server, which the MCP setting allows unless it is -1.
+func (m *User) CanUseMCP() bool {
+	if m == nil || m.MCP < 0 || m.IsSystemOrInvalid() || m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() || m.HasProvider(authn.ProviderNone) {
+		return false
+	}
+
+	return acl.Rules.Allow(acl.ResourceMCP, m.AclRole(), acl.ActionView)
 }
 
 // CanUpload checks if the user is allowed to upload files.
@@ -1578,6 +1588,7 @@ func (m *User) SetFormValues(frm form.User) *User {
 	m.SuperAdmin = frm.SuperAdmin
 	m.CanLogin = frm.CanLogin
 	m.WebDAV = frm.WebDAV
+	m.MCP = frm.MCPSetting()
 	m.SetRole(frm.Role())
 	if scope := frm.Scope(); scope != "" {
 		m.UserScope = scope
@@ -1766,6 +1777,7 @@ func (m *User) PrivilegeLevelChange(frm form.User) bool {
 		m.SuperAdmin != frm.SuperAdmin ||
 		m.CanLogin != frm.CanLogin ||
 		m.WebDAV != frm.WebDAV ||
+		m.MCP != frm.MCPSetting() ||
 		m.UserAttr != frm.Attr() ||
 		m.AuthProvider != frm.AuthProvider ||
 		m.AuthMethod != frm.AuthMethod ||
@@ -1776,7 +1788,7 @@ func (m *User) PrivilegeLevelChange(frm form.User) bool {
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-// Privilege-level fields (role, login, WebDAV, paths) are applied only when byAdmin;
+// Privilege-level fields (role, login, WebDAV, MCP, paths) are applied only when byAdmin;
 // the most sensitive ones (super-admin status, auth provider/method such as 2FA,
 // external identity) also require bySuperAdmin. The caller passes both explicitly so a
 // user-less cluster service principal can act despite failing u.IsAdmin()/IsSuperAdmin().
@@ -1844,6 +1856,7 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 		}
 
 		m.WebDAV = frm.WebDAV
+		m.MCP = frm.MCPSetting()
 		m.UserAttr = frm.Attr()
 
 		// Only super-admin-level authority may change the auth method or grant super admin:

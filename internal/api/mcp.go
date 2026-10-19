@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -110,6 +111,13 @@ func ServeMCP(router *gin.RouterGroup) {
 		// Abort writes the matching 401/403/429 response if the session
 		// is invalid and returns true so the handler can exit early.
 		if s.Abort(c) {
+			return
+		}
+
+		// Sessions that act as a user also need the account's MCP setting, except the public session.
+		if u := s.GetUser(); !conf.Public() && s.HasUser() && !u.CanUseMCP() {
+			event.AuditErr([]string{ClientIP(c), "session %s", "mcp", "disabled for user %s", status.Denied}, s.RefID, clean.Log(u.Username()))
+			AbortForbidden(c)
 			return
 		}
 

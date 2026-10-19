@@ -12,6 +12,7 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tidwall/gjson"
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -266,6 +267,29 @@ func TestUpdateUser_Guards(t *testing.T) {
 		body := `{"UserName":"admin","SuperAdmin":true,"CanLogin":true,"DisplayName":"` + admin.DisplayName + `"}`
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.Admin.UserUID, body, sessId)
 		assert.Equal(t, http.StatusOK, r.Code, "unchanged privilege flags must not block own-profile edits; body=%s", r.Body.String())
+	})
+	t.Run("MCPSetting", func(t *testing.T) {
+		// Revoking sessions and grants on a change is covered by the edition suites, where admins manage all accounts.
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateAdmin(app, router)
+		t.Cleanup(func() {
+			if m := entity.FindUserByUID(entity.Admin.UserUID); m != nil && m.MCP != 0 {
+				m.MCP = 0
+				_ = m.Save()
+			}
+		})
+
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.Admin.UserUID, `{"MCP":-1}`, sessId)
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, int64(-1), gjson.Get(r.Body.String(), "MCP").Int())
+		assert.Equal(t, -1, entity.FindUserByUID(entity.Admin.UserUID).MCP)
+
+		r = AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.Admin.UserUID, `{"MCP":0}`, sessId)
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, 0, entity.FindUserByUID(entity.Admin.UserUID).MCP)
 	})
 	t.Run("SystemAccountForbidden", func(t *testing.T) {
 		app, router, conf := NewApiTest()

@@ -20,6 +20,7 @@ const (
 	UserAdminUsage      = "makes user super admin with full access"
 	UserNoLoginUsage    = "disables login on the web interface"
 	UserWebDAVUsage     = "allows to sync files via WebDAV"
+	UserMCPUsage        = "allows the use of MCP if the role permits it (default), --mcp=false disallows it"
 	UserDisable2FA      = "deactivates two-factor authentication"
 	UserRestoreUsage    = "restores a deleted account without asking for confirmation"
 )
@@ -27,6 +28,11 @@ const (
 // UserRestoreFlag returns the --restore flag of the commands that offer to restore a deleted account.
 func UserRestoreFlag() *cli.BoolFlag {
 	return &cli.BoolFlag{Name: "restore", Usage: UserRestoreUsage}
+}
+
+// UserMCPFlag returns the --mcp flag of the add and modify user commands.
+func UserMCPFlag() *cli.BoolFlag {
+	return &cli.BoolFlag{Name: "mcp", Usage: UserMCPUsage}
 }
 
 // UserRoleUsageFor builds the --role flag help from the assignable user roles in m, so
@@ -107,6 +113,7 @@ var UserFlags = []cli.Flag{
 		Aliases: []string{"w"},
 		Usage:   UserWebDAVUsage,
 	},
+	UserMCPFlag(),
 }
 
 // UserTokensFlag is a CLI flag for showing the security tokens in reports.

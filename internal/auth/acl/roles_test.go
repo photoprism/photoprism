@@ -258,3 +258,17 @@ func TestResourceNames_ContainsCore(t *testing.T) {
 		assert.Truef(t, found, "resource %s not found in ResourceNames", w)
 	}
 }
+
+func TestRoleStrings_Allowed(t *testing.T) {
+	t.Run("MCP", func(t *testing.T) {
+		assert.Equal(t, []string{"admin"}, UserRoles.Allowed(Rules, ResourceMCP, ActionView))
+		assert.Equal(t, []string{"admin"}, UserRoles.Allowed(Rules, ResourceMCP, ActionManage))
+	})
+	t.Run("CustomACL", func(t *testing.T) {
+		a := ACL{ResourcePhotos: Roles{RoleGuest: GrantViewAll, RoleAdmin: GrantFullAccess}}
+		assert.Equal(t, []string{"admin", "guest"}, UserRoles.Allowed(a, ResourcePhotos, ActionView))
+		assert.Equal(t, []string{"admin"}, UserRoles.Allowed(a, ResourcePhotos, ActionDelete))
+		assert.Empty(t, UserRoles.Allowed(a, ResourceAlbums, ActionView))
+		assert.NotNil(t, RoleStrings{}.Allowed(a, ResourcePhotos, ActionView))
+	})
+}

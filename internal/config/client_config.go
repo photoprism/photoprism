@@ -102,6 +102,7 @@ type ClientConfig struct {
 	Usage            Usage               `json:"usage"`
 	Settings         *customize.Settings `json:"settings,omitempty"`
 	ACL              acl.Grants          `json:"acl,omitempty"`
+	McpRoles         []string            `json:"mcpRoles,omitempty"`
 	Ext              Values              `json:"ext"`
 }
 
@@ -112,6 +113,13 @@ func (c *ClientConfig) ApplyACL(a acl.ACL, r acl.Role) *ClientConfig {
 	}
 
 	c.ACL = a.Grants(r)
+
+	// Roles that may access all accounts also receive the user roles that may use MCP, for the account dialogs.
+	if c.ACL[acl.ResourceUsers].Allow(acl.AccessAll) {
+		c.McpRoles = acl.UserRoles.Allowed(a, acl.ResourceMCP, acl.ActionView)
+	} else {
+		c.McpRoles = nil
+	}
 
 	if !c.ACL[acl.ResourceUsers].Allow(acl.ActionView) {
 		c.Usage.UsersFreePct = -1

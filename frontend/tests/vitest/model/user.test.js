@@ -359,6 +359,56 @@ describe("model/user", () => {
     });
   });
 
+  // The MCP switch shows whether MCP is usable: the -1/0/1 setting allows it and the role is one the
+  // client config lists in mcpRoles. Switching back restores the saved value, so an untouched 0 stays 0.
+  describe("MCP setting", () => {
+    const roles = $config.values.mcpRoles;
+
+    afterEach(() => {
+      $config.values.mcpRoles = roles;
+    });
+
+    it("defaults to 0", () => {
+      expect(new User().getDefaults().MCP).toBe(0);
+    });
+    it("canEnableMCP follows the roles in the client config", () => {
+      $config.values.mcpRoles = ["admin", "user", "viewer"];
+      expect(new User({ ID: 1, Name: "max", Role: "viewer" }).canEnableMCP()).toBe(true);
+      expect(new User({ ID: 1, Name: "max", Role: "guest" }).canEnableMCP()).toBe(false);
+      expect(new User({ ID: 1, Name: "max", Role: "viewer", AuthProvider: "none" }).canEnableMCP()).toBe(false);
+      expect(new User({ ID: 1, Name: "", Role: "viewer" }).canEnableMCP()).toBe(false);
+      $config.values.mcpRoles = undefined;
+      expect(new User({ ID: 1, Name: "max", Role: "admin" }).canEnableMCP()).toBe(false);
+    });
+    it("hasMCP shows the default as on for eligible roles only", () => {
+      $config.values.mcpRoles = ["admin", "user"];
+      expect(new User({ ID: 1, Name: "max", Role: "user", MCP: 0 }).hasMCP()).toBe(true);
+      expect(new User({ ID: 1, Name: "max", Role: "user", MCP: 1 }).hasMCP()).toBe(true);
+      expect(new User({ ID: 1, Name: "max", Role: "user", MCP: -1 }).hasMCP()).toBe(false);
+      expect(new User({ ID: 1, Name: "max", Role: "contributor", MCP: 0 }).hasMCP()).toBe(false);
+      expect(new User({ ID: 1, Name: "max", Role: "contributor", MCP: 1 }).hasMCP()).toBe(false);
+    });
+    it("setMCP sends -1 when switched off and nothing when switched back on", () => {
+      $config.values.mcpRoles = ["admin", "user"];
+      const user = new User({ ID: 1, UID: "us1234567890mcp1", Name: "max", Role: "user", MCP: 0 });
+      user.setMCP(false);
+      expect(user.MCP).toBe(-1);
+      expect(user.getValues(true)).toEqual({ MCP: -1 });
+      user.setMCP(true);
+      expect(user.MCP).toBe(0);
+      expect(user.getValues(true)).toEqual({});
+    });
+    it("a role change leaves the setting unchanged", () => {
+      $config.values.mcpRoles = ["admin", "user"];
+      const user = new User({ ID: 1, UID: "us1234567890mcp2", Name: "max", Role: "user", MCP: 0 });
+      user.Role = "contributor";
+      expect(user.hasMCP()).toBe(false);
+      user.Role = "user";
+      expect(user.hasMCP()).toBe(true);
+      expect(user.MCP).toBe(0);
+    });
+  });
+
   // canHavePassword gates the admin "change password" action: visitors, system
   // users, and accounts with authentication disabled cannot have a local password,
   // mirroring the backend, which only allows passwords for registered accounts.

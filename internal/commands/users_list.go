@@ -24,7 +24,7 @@ func usersListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
 
-		cols := []string{"UID", "Username", "Email", "Role", "Authentication", "Super Admin", "Web Login", "WebDAV"}
+		cols := []string{"UID", "Username", "Email", "Role", "Authentication", "Super Admin", "Web Login", "WebDAV", "MCP"}
 
 		if ctx.Bool("login") {
 			cols = append(cols, "Last Login")
@@ -65,6 +65,7 @@ func usersListAction(ctx *cli.Context) error {
 				report.Bool(user.SuperAdmin, report.Yes, report.No),
 				report.Bool(user.CanLogIn(), report.Enabled, report.Disabled),
 				report.Bool(user.CanUseWebDAV(), report.Enabled, report.Disabled),
+				report.Bool(user.CanUseMCP(), report.Enabled, report.Disabled),
 			}
 
 			if ctx.Bool("login") {

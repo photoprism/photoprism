@@ -211,11 +211,11 @@ func OAuthConsentDeny(router *gin.RouterGroup) {
 }
 
 // oauthConsentUsableScopes returns the requested scopes that the account's role, and the scope of the session
-// if it has one, allow to use; none if the MCP scope is not usable.
+// if it has one, allow to use; none if the MCP scope is not usable or the account may not use MCP.
 func oauthConsentUsableScopes(s *entity.Session, user *entity.User, requested []string) []string {
 	result := []string{}
 
-	if s == nil || user == nil {
+	if s == nil || user == nil || !user.CanUseMCP() {
 		return result
 	}
 

@@ -24,6 +24,7 @@ type User struct {
 	SuperAdmin   bool         `json:"SuperAdmin,omitempty" yaml:"SuperAdmin,omitempty"`
 	CanLogin     bool         `json:"CanLogin,omitempty" yaml:"CanLogin,omitempty"`
 	WebDAV       bool         `json:"WebDAV,omitempty" yaml:"WebDAV,omitempty"`
+	MCP          int          `json:"MCP,omitempty" yaml:"MCP,omitempty"`
 	UserAttr     string       `json:"Attr,omitempty" yaml:"Attr,omitempty"`
 	BasePath     string       `json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
 	UploadPath   string       `json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
@@ -47,10 +48,35 @@ func NewUserFromCli(ctx *cli.Context) User {
 		SuperAdmin:   ctx.Bool("superadmin"),
 		CanLogin:     !ctx.Bool("no-login"),
 		WebDAV:       ctx.Bool("webdav"),
+		MCP:          cliSetting(ctx, "mcp"),
 		UserAttr:     clean.Attr(ctx.String("attr")),
 		BasePath:     clean.UserPath(ctx.String("base-path")),
 		UploadPath:   clean.UserPath(ctx.String("upload-path")),
 		Password:     clean.Password(ctx.String("password")),
+	}
+}
+
+// cliSetting returns 1 if the bool flag is set to true, -1 if it is set to false, and 0 if it is not set.
+func cliSetting(ctx *cli.Context, name string) int {
+	switch {
+	case !ctx.IsSet(name):
+		return 0
+	case ctx.Bool(name):
+		return 1
+	default:
+		return -1
+	}
+}
+
+// MCPSetting returns the MCP setting clamped to -1 (disabled), 0 (default), or 1 (enabled).
+func (f *User) MCPSetting() int {
+	switch {
+	case f.MCP < 0:
+		return -1
+	case f.MCP > 0:
+		return 1
+	default:
+		return 0
 	}
 }
 
