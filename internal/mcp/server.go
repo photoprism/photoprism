@@ -7,9 +7,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 )
 
-// ToolNames lists the read-only tools registered on the MCP server in the
-// order they are added. Callers use it for startup logging and tests that
-// need to assert the registered tool surface.
+// ToolNames lists the reference tools in the order they are added, which both the reference and the library
+// server register. Callers use it for startup logging and tests that assert the registered tool surface.
 var ToolNames = []string{
 	"list_config_keys",
 	"find_search_filters",

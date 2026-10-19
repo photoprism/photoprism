@@ -51,12 +51,14 @@ In scope for the current server:
 - Keep outputs compact enough for LLM consumption.
 - Authenticated remote access via the Streamable HTTP transport, plus a stdio transport for local development and testing.
 
-Out of scope for the current server (must not regress without additional per-tool gates):
+Out of scope for the reference server (public mode and stdio), which must not regress without additional per-tool gates:
 
 - Write-capable tools.
 - Direct database access.
 - Live PhotoPrism instance or API queries.
 - Per-user state (albums, photos, sessions, settings).
+
+The library server reads per-user library data with the session's permissions, through the search layer and the relation queries of `media.go`, `covers.go`, and `tool_people_labels.go`, which apply the same visibility rules; write-capable tools stay out of scope.
 
 ### Internal data sources
 
@@ -298,7 +300,7 @@ The MCP handler does not install a custom rate limiter — there is no per-endpo
 
 | Build  | Generic per-IP HTTP limiter? | Notes                                                                                                                                                                                                                                                        |
 |--------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CE     | no                           | Only the admin/client auth check protects the endpoint. In public mode all callers are anonymous, so CE deployments that run with `--public` have no per-request throttle in front of MCP.                                                                   |
+| CE     | no                           | Only the authentication check protects the endpoint. In public mode all callers are anonymous, so CE deployments that run with `--public` have no per-request throttle in front of MCP.                                                                      |
 | Plus   | no                           | Same as CE. The IPS middleware exists but only consumes tokens on known scanner/exploit paths, so it does not throttle MCP traffic.                                                                                                                          |
 | Pro    | yes                          | `pro/internal/server/register.go` calls `router.Use(limiter.Middleware(limiter.NewLimit(rate.Every(secOpt.RequestInterval), secOpt.RequestLimit)))` when both options are set. The limiter is per client IP and applies to every API endpoint, MCP included. |
 | Portal | yes                          | Same wiring as Pro in `portal/internal/server/register.go`.                                                                                                                                                                                                  |
@@ -352,12 +354,12 @@ API clients get access through admin-issued client tokens, for example for a CI 
 ```bash
 ./photoprism clients add \
   --name "Alice's IDE" \
-  --scope mcp \
+  --scope "mcp read photos albums people labels" \
   --role client \
   --expires 2592000          # 30 days; use -1 for no expiry
 ```
 
-The command prints a client ID and secret. Combine them into a bearer token (or pass them through the OAuth2 client-credentials flow) and paste the resulting value into the MCP client config — the same JSON snippets shown above under *MCP Client Compatibility* apply unchanged. Replace `<admin-token>` with the issued token. A client added for a user account (`photoprism clients add [flags] <username>`) also follows that account's MCP setting.
+The command prints a client ID and secret. Combine them into a bearer token (or pass them through the OAuth2 client-credentials flow) and paste the resulting value into the MCP client config — the same JSON snippets shown above under *MCP Client Compatibility* apply unchanged. Replace `<admin-token>` with the issued token. A client gets the library tools whose resource scopes it holds; with `mcp` alone, only the reference tools. Resource scopes apply to the whole API, not only to MCP, and `read` limits the token to read operations; add `folders`, `moments`, or `calendar` for those collection types, and `places` only if the client should receive coordinates. A client added for a user account (`photoprism clients add [flags] <username>`) also follows that account's MCP setting.
 
 To revoke access without disabling the user account, the administrator runs:
 
@@ -365,6 +367,6 @@ To revoke access without disabling the user account, the administrator runs:
 ./photoprism clients remove <client-id>
 ```
 
-An app password with the `mcp` scope (`photoprism auth add --scope mcp <username>`) works for every account that may use MCP.
+An app password needs `mcp` plus the scope of each tool's resource, e.g. `photoprism auth add --scope "mcp read photos albums people labels" <username>`, with the same rules as for clients; with `mcp` alone, it reaches the reference tools only.
 
 Accounts that may use MCP can also connect an MCP client such as `claude.ai` by signing in to PhotoPrism and approving it (OAuth authorization code flow with PKCE). The app is registered with `photoprism clients add --callback <url>` or, where `--oauth-apps` allows it, identified by its client metadata URL; the connection is listed under Settings > Account > Connected Apps, where it can be disconnected.

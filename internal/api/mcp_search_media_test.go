@@ -237,6 +237,10 @@ func TestServeMCP_SearchMediaScopes(t *testing.T) {
 		token := newClient(t, "mcp")
 		sessionID := mcpInitSession(t, app, token)
 		assert.Contains(t, mcpPost(app, `{"jsonrpc":"2.0","id":3,"method":"tools/list"}`, token, sessionID).Body.String(), `"name":"search_media"`)
+		ref := mcpPost(app, `{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"list_thumbnail_sizes","arguments":{}}}`, token, sessionID)
+		require.Equal(t, http.StatusOK, ref.Code)
+		assert.NotContains(t, ref.Body.String(), `"isError":true`)
+		assert.Contains(t, ref.Body.String(), `"structuredContent"`)
 		w := mcpPost(app, call, token, sessionID)
 		assert.Equal(t, http.StatusForbidden, w.Code)
 		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"), w.Header().Get("WWW-Authenticate"))
@@ -251,6 +255,11 @@ func TestServeMCP_SearchMediaScopes(t *testing.T) {
 		w := mcpPost(app, call, token, mcpInitSession(t, app, token))
 		assert.Equal(t, http.StatusForbidden, w.Code)
 		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"), w.Header().Get("WWW-Authenticate"))
+	})
+	t.Run("MCPReadPhotos", func(t *testing.T) {
+		token := newClient(t, "mcp read photos")
+		out := mcpCallTool(t, app, token, mcpInitSession(t, app, token), "search_media", map[string]any{"limit": 2})
+		assert.Len(t, out.Get("items").Array(), 2)
 	})
 	t.Run("MCPAndPhotos", func(t *testing.T) {
 		token := newClient(t, "mcp photos")
