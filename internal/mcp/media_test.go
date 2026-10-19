@@ -169,7 +169,9 @@ func TestAddMediaDetails(t *testing.T) {
 			Order("pl.photo_id").Limit(1).Scan(&label).Error)
 		require.NotEmpty(t, label.LabelUID)
 		require.NoError(t, entity.Db().Table("labels").Where("id = ?", label.ID).UpdateColumn("photo_count", 0).Error)
-		t.Cleanup(func() { _ = entity.Db().Table("labels").Where("id = ?", label.ID).UpdateColumn("photo_count", label.Count).Error })
+		t.Cleanup(func() {
+			_ = entity.Db().Table("labels").Where("id = ?", label.ID).UpdateColumn("photo_count", label.Count).Error
+		})
 
 		items := newMediaList(rows)
 		addMediaDetails(items, rows, admin)

@@ -54,6 +54,7 @@ func (opt Options) features() customize.FeatureSettings {
 // middleware checks each call against the tool's declaration.
 var LibraryToolNames = []string{
 	"search_media",
+	"get_media",
 }
 
 // NewServer returns a read-only MCP server with the tools and resources in ToolNames and ResourceURIs.
@@ -90,4 +91,5 @@ func newLibraryServer(implementation *sdkmcp.Implementation, currentEdition stri
 // registerLibraryTools registers the tools in LibraryToolNames.
 func registerLibraryTools(server *sdkmcp.Server, opt Options) {
 	registerSearchMedia(server, opt)
+	registerGetMedia(server)
 }

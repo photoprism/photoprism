@@ -26,6 +26,7 @@
   - `list_thumbnail_sizes`
 - Library tools, registered on the library server only (authenticated, non-public sessions) and authorized per call:
   - `search_media`
+  - `get_media`
 
 ### Package layout
 
@@ -208,6 +209,12 @@ The library tools read the library with the permissions of the session, through 
 - Runs `search.UserPhotos` like `GET /api/v1/photos?merged=true`: the web app's file selection, so file filters such as `codec:avc1` find the same media, with the feature settings of `search.ApplyPhotoFeatures`, as the photos endpoint applies them; structured inputs take precedence over the same filters in `query`
 - `offset` is a row position of the search result, not a media count: pass back `next_offset`, which is omitted on the last page. Each page reads one row before `offset` and a window of `3 * limit` rows (at most 150), skips the rows of a media that began before `offset`, and reads on in windows that double in size (at most 5,000 rows) until it has `limit` media and has seen where the next one begins (`pageMedia`); it stops when the request is canceled. The offered orders keep the rows of a media adjacent, which `TestSearchMediaOrders` checks
 - `detail=full` loads labels, people, and collections with one query per kind for the page and keeps those the session may see: labels without private ones if `search.LabelsPublicOnly` applies, people as `search.UserSubjects` returns them, and collections as `search.UserAlbums` returns them per collection type. Labels and people require full access to pictures and collections view access to albums, including the `albums` scope of a token, as in the photo details
+
+`get_media` (declaration: `photos`, `view`)
+
+- Inputs: `uid` (media UID from `search_media`)
+- Returns the `detail=full` fields of `search_media` plus `width` and `height` (primary file), `duration` (seconds), `location` (`lat`, `lng`, `altitude`) if the session may view places, `keywords` of the picture details if it has full access to pictures, `files` (`name` without path, `type`, `size`, `primary`), `quality`, `private`, `archived`, and `review` (quality 0 to 2)
+- Uses the checks of `GET /api/v1/photos/:uid` (`search.PhotoVisibleToSession`, `query.PhotoPreloadByUID`, `Photo.RedactForSession`) and the relation filters of `search_media`; a UID the session cannot see gets the same not-found error as one that does not exist
 
 ### MCP Client Compatibility
 

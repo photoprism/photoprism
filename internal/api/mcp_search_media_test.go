@@ -313,3 +313,74 @@ func TestServeMCP_SearchMediaStepUp(t *testing.T) {
 	out := mcpCallTool(t, app, second, mcpInitSession(t, app, second), "search_media", map[string]any{"limit": 2})
 	assert.Len(t, out.Get("items").Array(), 2)
 }
+
+// TestServeMCP_GetMedia checks that get_media returns the picture GET /api/v1/photos/:uid returns for the session.
+func TestServeMCP_GetMedia(t *testing.T) {
+	app, router, conf := NewApiTest()
+	prepareMCPTest(t)
+	ServeMCP(router)
+	GetPhoto(router)
+
+	token := AuthenticateAdmin(app, router)
+	sessionID := mcpInitSession(t, app, token)
+
+	t.Run("SameAsWebApp", func(t *testing.T) {
+		for _, item := range mcpCallTool(t, app, token, sessionID, "search_media", map[string]any{"limit": 10}).Get("items").Array() {
+			uid := item.Get("uid").String()
+			r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/photos/"+uid, token)
+			require.Equal(t, http.StatusOK, r.Code)
+			photo := gjson.Parse(r.Body.String())
+
+			out := mcpCallTool(t, app, token, sessionID, "get_media", map[string]any{"uid": uid})
+			assert.Equal(t, uid, out.Get("uid").String())
+			assert.Equal(t, photo.Get("Type").String(), out.Get("type").String())
+			assert.Equal(t, photo.Get("Title").String(), out.Get("title").String())
+			assert.Equal(t, photo.Get("Quality").Int(), out.Get("quality").Int())
+			assert.Equal(t, photo.Get("Private").Bool(), out.Get("private").Bool())
+
+			var names []string
+			for _, f := range photo.Get("Files").Array() {
+				if !f.Get("Missing").Bool() {
+					name := f.Get("Name").String()
+					names = append(names, name[strings.LastIndex(name, "/")+1:])
+				}
+			}
+
+			var got []string
+			for _, f := range out.Get("files").Array() {
+				got = append(got, f.Get("name").String())
+			}
+
+			assert.ElementsMatch(t, names, got, uid)
+
+			// Only the documented fields, so no paths, hashes, owners, or internal IDs.
+			allowed := []string{"uid", "type", "title", "taken_at", "taken_at_local", "place", "favorite", "caption", "camera",
+				"lens", "labels", "people", "collections", "width", "height", "duration", "location", "keywords", "files",
+				"quality", "private", "archived", "review"}
+			for key := range out.Map() {
+				assert.Contains(t, allowed, key)
+			}
+			for _, f := range out.Get("files").Array() {
+				for key := range f.Map() {
+					assert.Contains(t, []string{"name", "type", "size", "primary"}, key)
+				}
+			}
+		}
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"get_media","arguments":{"uid":"ps6sg6be2lvl0yzz"}}}`, token, sessionID)
+		require.Equal(t, http.StatusOK, w.Code)
+		result := mcpResult(t, w.Body.String())
+		assert.True(t, result.Get("result.isError").Bool())
+		assert.Contains(t, result.Raw, "media ps6sg6be2lvl0yzz not found")
+	})
+	t.Run("StepUp", func(t *testing.T) {
+		sess, err := entity.AddClientSession("mcp-test-get-media", 3600, "mcp", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"get_media","arguments":{"uid":"ps6sg6be2lvl0yzz"}}}`, sess.AuthToken(), mcpInitSession(t, app, sess.AuthToken()))
+		assert.Equal(t, http.StatusForbidden, w.Code)
+		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"), w.Header().Get("WWW-Authenticate"))
+	})
+}
