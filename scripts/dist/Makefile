@@ -21,8 +21,8 @@ Security:
 
 Graphics & Video:
   gpu              Detect and install the GPU drivers for this system
-  intel            Install the Intel GPU drivers and VA-API tools
-  amd              Install the AMD VA-API GPU drivers
+  intel            Install the Intel GPU drivers, VA-API, and Vulkan tools
+  amd              Install the AMD VA-API and Vulkan GPU drivers
   vulkan           Install the Mesa Vulkan drivers and tools
   ffmpeg           Install the latest FFmpeg build in "/opt"
   darktable        Install darktable for RAW image conversion
@@ -108,13 +108,13 @@ codex:
 davfs: install-davfs
 install-davfs:
 	/scripts/install-davfs.sh
-intel: update install-intel
+intel: update install-intel install-vulkan
 install-intel-graphics: intel
 intel-graphics: intel
 install-intel:
 	@echo "Installing Intel GPU Drivers..."
 	apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-gen1.2 va-driver-all vainfo libva2 libvpl2
-amd: update install-amd
+amd: update install-amd install-vulkan
 install-amd:
 	@echo "Installing AMD VA-API GPU Drivers..."
 	apt-get -qq install mesa-va-drivers vainfo libva2
