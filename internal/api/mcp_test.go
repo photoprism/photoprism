@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -58,6 +59,32 @@ func mcpPost(app http.Handler, body, authToken, sessionID string) *httptest.Resp
 	return w
 }
 
+// assertMCPReferenceTools lists the tools of an initialized MCP session and calls each reference tool
+// that returns a list of items, asserting a successful result with rows.
+func assertMCPReferenceTools(t *testing.T, app http.Handler, authToken, sessionID string) {
+	t.Helper()
+
+	w := mcpPost(app, `{"jsonrpc":"2.0","id":10,"method":"tools/list"}`, authToken, sessionID)
+	require.Equal(t, http.StatusOK, w.Code)
+
+	for _, name := range mcp.ToolNames {
+		assert.Contains(t, w.Body.String(), `"name":"`+name+`"`)
+	}
+
+	calls := map[string]string{
+		"list_file_formats":    `{"type":"raw","limit":5}`,
+		"list_metadata_fields": `{"query":"exif","limit":5}`,
+		"list_thumbnail_sizes": `{"type":"video"}`,
+	}
+
+	for name, args := range calls {
+		w = mcpPost(app, `{"jsonrpc":"2.0","id":11,"method":"tools/call","params":{"name":"`+name+`","arguments":`+args+`}}`, authToken, sessionID)
+		require.Equal(t, http.StatusOK, w.Code, name)
+		assert.Contains(t, w.Body.String(), `"items":[{`, name)
+		assert.NotContains(t, w.Body.String(), `"isError":true`, name)
+	}
+}
+
 // TestServeMCP exercises the HTTP handler installed by ServeMCP: the
 // public-mode anonymous path, unauthenticated and non-admin denial, and
 // the full admin round-trip through initialize, notifications/initialized,
@@ -67,7 +94,7 @@ func TestServeMCP(t *testing.T) {
 		// In public mode, Session() returns the default public session and
 		// the currently registered MCP tools only surface static reference
 		// data. Anonymous callers must therefore be able to initialize an
-		// MCP session and call both tools without a token — this is what
+		// MCP session and call every tool without a token - this is what
 		// lets the MCP server run on demo.photoprism.app. Guard the policy
 		// here so it regresses loudly if a future change tightens it.
 		app, router, _ := NewApiTest()
@@ -93,6 +120,8 @@ func TestServeMCP(t *testing.T) {
 		w4 := mcpPost(app, `{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"find_search_filters","arguments":{"query":"color","limit":5}}}`, "", sessionID)
 		assert.Equal(t, http.StatusOK, w4.Code)
 		assert.Contains(t, w4.Body.String(), "matches")
+
+		assertMCPReferenceTools(t, app, "", sessionID)
 	})
 	t.Run("DisabledViaConfig", func(t *testing.T) {
 		// When DisableMCP is set, ServeMCP must skip route registration so
@@ -365,6 +394,8 @@ func TestServeMCP(t *testing.T) {
 		w4 := mcpPost(app, `{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"find_search_filters","arguments":{"query":"color","limit":5}}}`, authToken, sessionID)
 		assert.Equal(t, http.StatusOK, w4.Code)
 		assert.Contains(t, w4.Body.String(), "matches")
+
+		assertMCPReferenceTools(t, app, authToken, sessionID)
 	})
 }
 

@@ -1,6 +1,6 @@
 ## PhotoPrism MCP Server
 
-**Last Updated:** October 18, 2026
+**Last Updated:** October 19, 2026
 
 ### Current Capabilities
 
@@ -13,9 +13,15 @@
 - Read-only resources:
   - `photoprism://config-options`
   - `photoprism://search-filters`
-- Read-only tools:
+  - `photoprism://file-formats`
+  - `photoprism://metadata-fields`
+  - `photoprism://thumbnail-sizes`
+- Read-only tools, each annotated with `readOnlyHint: true`:
   - `list_config_keys`
   - `find_search_filters`
+  - `list_file_formats`
+  - `list_metadata_fields`
+  - `list_thumbnail_sizes`
 
 ### Package layout
 
@@ -32,7 +38,7 @@
 
 In scope for the current server:
 
-- Reuse existing internal reference data (`config.Flags`, `config.OptionsReportSections`, `form.Report(&form.SearchPhotos{})`) instead of maintaining a parallel dataset.
+- Reuse the existing internal reference data behind the `photoprism show` reports (see *Internal data sources*) instead of maintaining a parallel dataset.
 - Keep outputs compact enough for LLM consumption.
 - Authenticated remote access via the Streamable HTTP transport, plus a stdio transport for local development and testing.
 
@@ -47,6 +53,11 @@ Out of scope for the current server (must not regress without additional per-too
 
 - Config options: `internal/config.Flags` plus `internal/config.OptionsReportSections`
 - Search filters: `internal/form.Report(&form.SearchPhotos{})`
+- File formats: `pkg/media.Report(fs.ExtensionList.Types(true), true, true, true)`, as `photoprism show file-formats`
+- Metadata fields: `internal/meta.Report(&meta.Data{})` sorted by type and field, plus `meta.Docs`, as `photoprism show metadata`
+- Thumbnail sizes: `internal/thumb.Report(thumb.Sizes.All(), false)`, as `photoprism show thumb-sizes`, with the sizes in `thumb.VideoSizes` (`photoprism show video-sizes`) marked as video sizes
+
+The data is built once when the server is created. It comes from compile-time tables only, never from package variables that are set from the runtime config, such as the thumbnail size limits.
 
 ### Run locally (stdio)
 
@@ -104,6 +115,9 @@ Useful smoke tests:
 - Read `photoprism://search-filters`
 - Call `list_config_keys` with `{"query":"http","limit":3}`
 - Call `find_search_filters` with `{"query":"Berlin","limit":5}`
+- Call `list_file_formats` with `{"type":"raw"}`
+- Call `list_metadata_fields` with `{"query":"exif:DateTimeOriginal"}`
+- Call `list_thumbnail_sizes` with `{"type":"video"}`
 
 ### Available resources
 
@@ -116,6 +130,22 @@ Useful smoke tests:
 
 - JSON payload with `edition` and `items`
 - Each item includes `filter`, `type`, `examples`, and `notes`
+
+`photoprism://file-formats`
+
+- JSON payload with `edition` and `items`
+- Each item includes `format`, `description`, `type` (lowercase, e.g. `image`, `raw`, `video`), and `extensions`
+
+`photoprism://metadata-fields`
+
+- JSON payload with `edition`, `items`, and `docs`
+- Each item includes `field`, `type`, and the `exiftool`, `xmp`, and `dcmi` tags it is read from
+- Each `docs` entry links a metadata `namespace` to its documentation `url`
+
+`photoprism://thumbnail-sizes`
+
+- JSON payload with `edition` and `items`
+- Each item includes `name`, `width`, `height`, `aspect_ratio`, `available`, `usage`, and `video`, which marks the standard video sizes
 
 ### Available tools
 
@@ -130,6 +160,25 @@ Useful smoke tests:
 - Inputs: `query`, `type`, `limit`
 - Returns matching search filters with examples and notes
 - Validation rejects unsupported filter `type` values
+
+The following tools return `items`, `total`, `limit`, `offset`, `truncated`, and an optional `warnings` array. `limit` defaults to 20 and is capped at 50, `offset` must not be negative, and free-text inputs are capped at 200 characters. An offset past the end returns no items with the correct `total`.
+
+`list_file_formats`
+
+- Inputs: `query` (format names, extensions, and descriptions), `type` (a format type such as `image`, `raw`, or `video`, or `all`), `limit`, `offset`
+- Returns the items of `photoprism://file-formats`
+- Validation rejects unsupported `type` values and names the accepted ones
+
+`list_metadata_fields`
+
+- Inputs: `query` (field and tag names), `limit`, `offset`
+- Returns the items of `photoprism://metadata-fields`
+
+`list_thumbnail_sizes`
+
+- Inputs: `type` (`image`, `video`, or `all`; default `all`)
+- Returns `items` and `total`; `video` returns only the standard video sizes, while `image` and `all` return every thumbnail size
+- Validation rejects unsupported `type` values
 
 ### MCP Client Compatibility
 
@@ -184,7 +233,7 @@ The HTTP endpoint uses PhotoPrism's existing ACL system:
 - **Why `GrantSearchAll` for non-admins?** It includes `AccessAll`, `ActionView`, and `ActionSearch` — exactly what the read-only tools need — but excludes `ActionManage`/`ActionUpdate`/`ActionDelete`/`ActionCreate`. The handler checks `ActionView` on `ResourceMCP` only, so the grant does not limit what an individual tool can do: a tool that reads or changes library data MUST check the resource and action of that data on each call, with the same scope and visibility rules as the matching REST endpoint. A client token then needs both the `mcp` scope and the scope of that resource.
 - **Client tokens:** API client sessions must also include the `mcp` resource (or a wildcard) in their session scope; the ACL grant alone is not sufficient.
 - **Auth model:** request-level. The handler runs `AuthAudience(c, conf.OAuthResourceUrl(), acl.ResourceMCP, acl.ActionView)`, i.e. `Auth()` that also accepts OAuth app access tokens issued for this endpoint, followed by `s.Abort(c)`, which writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
-- **Public mode:** anonymous access is permitted. In public mode, `api.Session()` returns the default public session (effectively admin), so `Auth(...)` passes and the currently registered read-only tools are reachable without a token. This is an intentional, narrow allowance for demo deployments (`demo.photoprism.app`); it is safe only because every registered tool today returns static reference metadata derived from `config.Flags` and `form.Report(&form.SearchPhotos{})` — no database access, no per-user state, no secrets, no mutations. **Any future tool that touches per-user state, the database, or mutates anything MUST NOT be registered on this server without an additional per-tool check**. See *Extending the Tool Surface* below.
+- **Public mode:** anonymous access is permitted. In public mode, `api.Session()` returns the default public session (effectively admin), so `Auth(...)` passes and the currently registered read-only tools are reachable without a token. This is an intentional, narrow allowance for demo deployments (`demo.photoprism.app`); it is safe only because every registered tool today returns static reference metadata derived from the sources listed under *Internal data sources* — no database access, no per-user state, no secrets, no mutations. **Any future tool that touches per-user state, the database, or mutates anything MUST NOT be registered on this server without an additional per-tool check**. See *Extending the Tool Surface* below.
 - **Stdio transport:** no authentication for the currently registered read-only tools — the trust boundary is the OS process pipe between client and server, and the spawning shell already has full PhotoPrism access on the host. The same static-data contract that makes public-mode HTTP safe makes stdio safe. **Any future write-capable, destructive, or per-user tool MUST require a session token on stdio too** (for example via `PHOTOPRISM_MCP_TOKEN` or a `--session` flag, validated through the same `Auth(...)` path the HTTP handler uses), so a misbehaving or prompt-injected MCP client cannot destroy data the user did not explicitly authorize. See *Extending the Tool Surface* below.
 
 ### Rate Limiting

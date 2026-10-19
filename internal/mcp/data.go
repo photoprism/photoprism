@@ -18,13 +18,27 @@ const (
 	// searchFiltersURI is the URI of the "search-filters" resource,
 	// which mirrors the `photoprism show search-filters` CLI report.
 	searchFiltersURI = "photoprism://search-filters"
+	// fileFormatsURI is the URI of the "file-formats" resource,
+	// which mirrors the `photoprism show file-formats` CLI report.
+	fileFormatsURI = "photoprism://file-formats"
+	// metadataFieldsURI is the URI of the "metadata-fields" resource,
+	// which mirrors the `photoprism show metadata` CLI report.
+	metadataFieldsURI = "photoprism://metadata-fields"
+	// thumbnailSizesURI is the URI of the "thumbnail-sizes" resource, which
+	// mirrors the `photoprism show thumb-sizes` and `show video-sizes` reports.
+	thumbnailSizesURI = "photoprism://thumbnail-sizes"
 )
 
 // Dataset caches the static MCP data returned by resources and tools.
 type Dataset struct {
-	CurrentEdition string
-	ConfigOptions  []ConfigOption
-	SearchFilters  []SearchFilter
+	CurrentEdition  string
+	ConfigOptions   []ConfigOption
+	SearchFilters   []SearchFilter
+	FileFormats     []FileFormat
+	FileFormatTypes []string
+	MetadataFields  []MetadataField
+	MetadataDocs    []MetadataDoc
+	ThumbnailSizes  []ThumbnailSize
 }
 
 // ConfigOption represents a single config option report row with section metadata.
@@ -59,10 +73,17 @@ type SearchFiltersResource struct {
 
 // NewDataset builds the static MCP dataset for the current build.
 func NewDataset(currentEdition string) *Dataset {
+	fileFormats := buildFileFormats()
+
 	return &Dataset{
-		CurrentEdition: normalizeEdition(currentEdition),
-		ConfigOptions:  buildConfigOptions(),
-		SearchFilters:  buildSearchFilters(),
+		CurrentEdition:  normalizeEdition(currentEdition),
+		ConfigOptions:   buildConfigOptions(),
+		SearchFilters:   buildSearchFilters(),
+		FileFormats:     fileFormats,
+		FileFormatTypes: fileFormatTypes(fileFormats),
+		MetadataFields:  buildMetadataFields(),
+		MetadataDocs:    buildMetadataDocs(),
+		ThumbnailSizes:  buildThumbnailSizes(),
 	}
 }
 

@@ -24,6 +24,11 @@ const (
 	maxQueryLength = 200
 )
 
+// pageWarningTemplate is the fmt.Sprintf template of the warning returned when more
+// items follow a page. Arguments are: returned count, total count, offset, and the
+// offset of the next page.
+const pageWarningTemplate = "returned %d of %d matches starting at offset %d; call again with offset %d to retrieve more"
+
 // allowedEditions is the closed allowlist of values accepted by the
 // "edition" argument of list_config_keys. An empty edition defaults to
 // "all"; anything outside this set is rejected with a validation error.
@@ -64,13 +69,17 @@ type ConfigKeyMatch struct {
 	EditionSupport string `json:"edition_support"`
 }
 
-// registerTools registers every read-only tool exposed by the server
-// against the shared *Dataset. The order matches ToolNames so the
-// startup log and the SDK's tools/list response stay in sync.
+// readOnly returns the annotations of a read-only tool.
+func readOnly() *sdkmcp.ToolAnnotations {
+	return &sdkmcp.ToolAnnotations{ReadOnlyHint: true}
+}
+
+// registerTools registers the tools in ToolNames against the shared *Dataset.
 func registerTools(server *sdkmcp.Server, data *Dataset) {
 	sdkmcp.AddTool(server, &sdkmcp.Tool{
 		Name:        "list_config_keys",
 		Description: "Lists read-only PhotoPrism config keys from the existing config report.",
+		Annotations: readOnly(),
 	}, func(ctx context.Context, req *sdkmcp.CallToolRequest, input ListConfigKeysInput) (*sdkmcp.CallToolResult, ListConfigKeysOutput, error) {
 		return listConfigKeys(ctx, req, input, data)
 	})
@@ -78,8 +87,39 @@ func registerTools(server *sdkmcp.Server, data *Dataset) {
 	sdkmcp.AddTool(server, &sdkmcp.Tool{
 		Name:        "find_search_filters",
 		Description: "Finds PhotoPrism search filters from the existing search filter reference.",
+		Annotations: readOnly(),
 	}, func(ctx context.Context, req *sdkmcp.CallToolRequest, input FindSearchFiltersInput) (*sdkmcp.CallToolResult, FindSearchFiltersOutput, error) {
 		return findSearchFilters(ctx, req, input, data)
+	})
+
+	sdkmcp.AddTool(server, &sdkmcp.Tool{
+		Name: "list_file_formats",
+		Description: "Lists the file formats PhotoPrism supports, with their type, description, and file extensions, " +
+			"as reported by `photoprism show file-formats`. Filter by type, e.g. image, raw, or video, or search format " +
+			"names, extensions, and descriptions. Returns at most limit items (default 20, max 50) starting at offset.",
+		Annotations: readOnly(),
+	}, func(ctx context.Context, req *sdkmcp.CallToolRequest, input ListFileFormatsInput) (*sdkmcp.CallToolResult, ListFileFormatsOutput, error) {
+		return listFileFormats(ctx, req, input, data)
+	})
+
+	sdkmcp.AddTool(server, &sdkmcp.Tool{
+		Name: "list_metadata_fields",
+		Description: "Lists the metadata fields PhotoPrism reads from files, with the ExifTool, Adobe XMP, and Dublin Core " +
+			"tags each one is read from, as reported by `photoprism show metadata`. Search field and tag names with query. " +
+			"Returns at most limit items (default 20, max 50) starting at offset.",
+		Annotations: readOnly(),
+	}, func(ctx context.Context, req *sdkmcp.CallToolRequest, input ListMetadataFieldsInput) (*sdkmcp.CallToolResult, ListMetadataFieldsOutput, error) {
+		return listMetadataFields(ctx, req, input, data)
+	})
+
+	sdkmcp.AddTool(server, &sdkmcp.Tool{
+		Name: "list_thumbnail_sizes",
+		Description: "Lists the thumbnail sizes PhotoPrism generates, with their dimensions, availability, and use, " +
+			"as reported by `photoprism show thumb-sizes`. Sizes marked as video are the standard video sizes of " +
+			"`photoprism show video-sizes`; set type to video to list only those.",
+		Annotations: readOnly(),
+	}, func(ctx context.Context, req *sdkmcp.CallToolRequest, input ListThumbnailSizesInput) (*sdkmcp.CallToolResult, ListThumbnailSizesOutput, error) {
+		return listThumbnailSizes(ctx, req, input, data)
 	})
 }
 
@@ -186,6 +226,36 @@ func validateLimit(limit int) (int, error) {
 	}
 
 	return limit, nil
+}
+
+// validateOffset checks the requested result offset and rejects negative values.
+func validateOffset(offset int) (int, error) {
+	if offset < 0 {
+		return 0, fmt.Errorf("offset must be 0 or greater")
+	}
+
+	return offset, nil
+}
+
+// pageOf returns a copy of the items selected by offset and limit, and reports
+// whether more items follow.
+func pageOf[T any](items []T, limit, offset int) ([]T, bool) {
+	if offset >= len(items) {
+		return []T{}, false
+	}
+
+	end := offset + min(limit, len(items)-offset)
+
+	return slices.Clone(items[offset:end]), end < len(items)
+}
+
+// pageWarnings returns the warning for a page of results that more items follow.
+func pageWarnings(count, total, offset int, truncated bool) []string {
+	if !truncated {
+		return nil
+	}
+
+	return []string{fmt.Sprintf(pageWarningTemplate, count, total, offset, offset+count)}
 }
 
 // validateString validates and normalizes a free-text input field, using the

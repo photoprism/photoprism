@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
@@ -72,7 +73,24 @@ func TestRunMCPServerOverInMemoryTransport(t *testing.T) {
 
 	tools, err := session.ListTools(ctx, nil)
 	require.NoError(t, err)
-	require.Len(t, tools.Tools, 2, "server should advertise the two read-only tools over stdio-equivalent transport")
+	names := make([]string, 0, len(tools.Tools))
+	for _, tool := range tools.Tools {
+		names = append(names, tool.Name)
+	}
+	require.ElementsMatch(t, mcp.ToolNames, names, "server should advertise every read-only tool over stdio-equivalent transport")
+
+	for name, args := range map[string]map[string]any{
+		"list_file_formats":    {"type": "raw", "limit": 5},
+		"list_metadata_fields": {"query": "exif", "limit": 5},
+		"list_thumbnail_sizes": {"type": "video"},
+	} {
+		res, callErr := session.CallTool(ctx, &sdkmcp.CallToolParams{Name: name, Arguments: args})
+		require.NoError(t, callErr, name)
+		require.False(t, res.IsError, name)
+		out, ok := res.StructuredContent.(map[string]any)
+		require.True(t, ok, name)
+		require.NotEmpty(t, out["items"], name)
+	}
 
 	require.NoError(t, session.Close())
 	cancel()
