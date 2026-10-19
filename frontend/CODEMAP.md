@@ -21,10 +21,10 @@ Directory Map (src)
 - `src/common/map.js`, `src/common/maplibregl.js` — shared WebGL2 capability probe, concurrent lazy loading, MapLibre 6 worker URL, and language-label adapter; the worker is emitted into a versioned directory by `vite.config.mjs`.
 - `src/component/map.vue`, `src/page/places.vue` — mini-maps/location controls and Places; map-unavailable UI is confined to the map surface.
 - `src/common/*` — framework-agnostic helpers: `$api` (Axios), `$notify`, `$view`, `$event` (PubSub), i18n (`gettext`), util, fullscreen, map utils, websocket, `sphere.js` (lazy-loaded 360° viewer wrapper)
-- `src/common/export.js` — independent Export capability check and pure file-group/size choices from full photo details.
-- `src/common/export-media.js` — media classification, unique Apple pairing with separate photo/MOV groups, and the source-specific video capability/preparation API.
-- `src/common/export-download.js` — immutable attachment names/URLs, serial preparation, Retry, and independent ready browser handoffs.
-- `src/component/photo/export/dialog.vue` — Lightbox stack Export, matched thumbnails, probe/output Retry, automatic completion closure, and shared dialog focus.
+- `src/common/export.js` — server-filtered Export capability check and pure file-group/size choices from full picture details.
+- `src/common/export-media.js` — metadata-based AVC choices for videos, animations, and live photos; indexed Insta360 derivatives.
+- `src/common/export-download.js` — immutable selections and suggested filenames, API attachment URLs, and a cancelable browser handoff queue with Retry.
+- `src/component/photo/export/dialog.vue` — Lightbox stack Export, matched thumbnails, output Retry, closure after browser handoff, and shared dialog focus.
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)
 - `src/model/*` — REST models; base `Rest` class (`model/rest.js`) wraps Axios CRUD for collections and entities

@@ -2,20 +2,32 @@ import * as media from "common/media";
 
 const mediaTypes = new Set([media.Image, media.Raw, media.Vector, media.Document, media.Animated, media.Live, media.Video, media.Audio]);
 
-// canExport checks the independent Export flag and unrestricted file access.
+// canExport reads the session-filtered Export feature flag.
 export function canExport(config) {
-  return config?.values?.settings?.features?.export === true && config.allow?.("files", "access_all") === true;
+  return config?.values?.settings?.features?.export === true;
 }
 
 // fileFormat normalizes the file's stored format for export options.
 function fileFormat(file) {
-  const format = typeof file.FileType === "string" ? file.FileType.toLowerCase() : "";
+  const stored = typeof file.FileType === "string" ? file.FileType.toLowerCase() : "";
+  const format = stored === "raw" ? (file.Name?.match(/\.([^./\\]+)$/)?.[1] || stored).toLowerCase() : stored;
   return format === "jpeg" ? media.FormatJpeg : format;
+}
+
+// fileMediaType recognizes image records whose default media type is omitted.
+function fileMediaType(file) {
+  if (file.MediaType) {
+    return file.MediaType;
+  }
+  if (file.Video) {
+    return media.Video;
+  }
+  return [media.FormatJpeg, media.FormatPng].includes(fileFormat(file)) ? media.Image : "";
 }
 
 // isMediaFile excludes metadata sidecars from the full file list.
 function isMediaFile(file) {
-  return !!file && !file.Sidecar && mediaTypes.has(file.MediaType);
+  return !!file && !file.Sidecar && mediaTypes.has(fileMediaType(file));
 }
 
 // isAvailable checks whether a file can be used as an export source.
@@ -25,12 +37,12 @@ function isAvailable(file) {
 
 // isRaster checks for a JPEG or PNG image usable as a thumbnail source.
 function isRaster(file) {
-  return !file.Video && !isAnimatedFile(file) && file.MediaType === media.Image && [media.FormatJpeg, media.FormatPng].includes(fileFormat(file));
+  return !file.Video && !isAnimatedFile(file) && fileMediaType(file) === media.Image && [media.FormatJpeg, media.FormatPng].includes(fileFormat(file));
 }
 
 // isAnimatedFile recognizes indexed image animations by their frames or duration.
 function isAnimatedFile(file) {
-  return file.MediaType === media.Animated || (file.MediaType === media.Image && (file.Frames > 1 || file.Duration > 0));
+  return fileMediaType(file) === media.Animated || (fileMediaType(file) === media.Image && (file.Frames > 1 || file.Duration > 0));
 }
 
 // knownDimension returns a positive integer dimension or null when unknown.
@@ -47,7 +59,7 @@ function sourceInfo(file) {
     originalName: file.OriginalName || "",
     hash: file.Hash,
     format: fileFormat(file),
-    mediaType: isAnimatedFile(file) ? media.Animated : file.MediaType,
+    mediaType: isAnimatedFile(file) ? media.Animated : fileMediaType(file),
     width: knownDimension(file.Width),
     height: knownDimension(file.Height),
     bytes: Number.isSafeInteger(file.Size) && file.Size >= 0 ? file.Size : null,
@@ -162,14 +174,14 @@ export function buildExportGroups(files, thumbs = [], thumbLimit = 1920) {
   for (const original of originals.filter(isAvailable)) {
     const source = sourceInfo(original);
     const options = [fileOption("original", source)];
-    const still = original.MediaType !== media.Audio;
-    const nativeStill = isRaster(original) || (original.MediaType === media.Live && [media.FormatJpeg, media.FormatPng].includes(source.format));
+    const still = source.mediaType !== media.Audio;
+    const nativeStill = isRaster(original) || (source.mediaType === media.Live && [media.FormatJpeg, media.FormatPng].includes(source.format));
     const preview = still && !nativeStill ? findPreview(original, originals, rasters) : null;
     const thumbnailSource = nativeStill ? source : preview ? sourceInfo(preview) : null;
 
     const previewOwned = preview?.Root === "/";
     if (preview && !previewOwned) {
-      options.push({ ...fileOption("preview", thumbnailSource), label: source.format === "pdf" ? "Full Size Preview (First Page)" : "Full-Size Preview" });
+      options.push({ ...fileOption("preview", thumbnailSource), label: source.format === "pdf" ? "Full-Size Preview (First Page)" : "Full-Size Preview" });
     }
     if (thumbnailSource && still && !previewOwned) {
       options.push(...thumbnailOptions(thumbnailSource, Array.isArray(thumbs) ? thumbs : [], options, thumbLimit));

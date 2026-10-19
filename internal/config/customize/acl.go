@@ -35,6 +35,7 @@ func (s *Settings) ApplyACL(list acl.ACL, role acl.Role) *Settings {
 
 	// Browse, upload and download files.
 	m.Features.Upload = s.Features.Upload && list.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
+	m.Features.Export = s.Features.Export && list.AllowAll(acl.ResourcePhotos, role, acl.Permissions{acl.AccessAll, acl.ActionDownload})
 	m.Features.Download = s.Features.Download && !s.Download.Disabled && list.Allow(acl.ResourcePhotos, role, acl.ActionDownload)
 
 	// Library.

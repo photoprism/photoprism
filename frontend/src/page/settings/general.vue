@@ -243,7 +243,7 @@
                 class="ma-0 pa-0 input-export"
                 density="compact"
                 :label="$gettext('Export')"
-                :hint="$gettext('Allow exporting photos in different formats and sizes.')"
+                :hint="$gettext('Allow exporting pictures in different formats and sizes.')"
                 prepend-icon="mdi-file-export"
                 persistent-hint
                 @update:model-value="onChange"

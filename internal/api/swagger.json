@@ -8210,23 +8210,6 @@
                         "name": "file",
                         "required": true,
                         "type": "string"
-                    },
-                    {
-                        "description": "download naming convention",
-                        "enum": [
-                            "file",
-                            "share",
-                            "original"
-                        ],
-                        "in": "query",
-                        "name": "name",
-                        "type": "string"
-                    },
-                    {
-                        "description": "attachment filename for hash downloads; sanitized and forced to the source extension",
-                        "in": "query",
-                        "name": "filename",
-                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -13663,29 +13646,6 @@
                         "name": "size",
                         "required": true,
                         "type": "string"
-                    },
-                    {
-                        "description": "return the thumbnail as an attachment when nonempty",
-                        "in": "query",
-                        "name": "download",
-                        "type": "string"
-                    },
-                    {
-                        "description": "download naming convention",
-                        "enum": [
-                            "file",
-                            "share",
-                            "original"
-                        ],
-                        "in": "query",
-                        "name": "name",
-                        "type": "string"
-                    },
-                    {
-                        "description": "attachment filename; sanitized and forced to .jpg without changing the thumbnail cache",
-                        "in": "query",
-                        "name": "filename",
-                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -14623,148 +14583,43 @@
         },
         "/api/v1/videos/{hash}/{token}/{format}": {
             "get": {
-                "description": "Returns video bytes for playback and download, ExportProbe JSON for action=probe, or ExportOutput JSON for action=prepare.",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
                 "operationId": "GetVideo",
                 "parameters": [
                     {
-                        "description": "SHA1 source file hash",
+                        "description": "SHA1 video file hash",
                         "in": "path",
                         "name": "hash",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "description": "preview token for playback; download token for source-specific actions",
+                        "description": "user-specific security token provided with session",
                         "in": "path",
                         "name": "token",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "description": "playback format; actions accept avc or native (embedded video)",
+                        "description": "video format, e.g. mp4",
                         "in": "path",
                         "name": "format",
                         "required": true,
                         "type": "string"
-                    },
-                    {
-                        "description": "source-specific operation without playback fallback",
-                        "enum": [
-                            "probe",
-                            "prepare",
-                            "download"
-                        ],
-                        "in": "query",
-                        "name": "action",
-                        "type": "string"
-                    },
-                    {
-                        "description": "serve playback as an attachment when nonempty",
-                        "in": "query",
-                        "name": "download",
-                        "type": "string"
-                    },
-                    {
-                        "description": "download naming convention",
-                        "enum": [
-                            "file",
-                            "share",
-                            "original"
-                        ],
-                        "in": "query",
-                        "name": "name",
-                        "type": "string"
-                    },
-                    {
-                        "description": "sanitized attachment filename with the real output extension",
-                        "in": "query",
-                        "name": "filename",
-                        "type": "string"
                     }
                 ],
                 "produces": [
-                    "application/json",
-                    " video/mp4",
-                    " video/quicktime"
+                    "video/mp4"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Video content or action-specific JSON metadata"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        }
-                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "429": {
-                        "description": "Too Many Requests",
-                        "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "504": {
-                        "description": "Gateway Timeout",
-                        "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        }
-                    },
-                    "507": {
-                        "description": "Insufficient Storage",
-                        "schema": {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
-                "summary": "returns video content or source-specific preparation metadata",
+                "summary": "returns a video, optionally limited to a byte range for streaming",
                 "tags": [
                     "Files",
                     "Videos"

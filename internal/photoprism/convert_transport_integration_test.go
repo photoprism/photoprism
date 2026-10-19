@@ -293,9 +293,9 @@ func TestConvert_CoordinatedTransportFallback(t *testing.T) {
 // TestConvert_CoordinatedTransportInvalidPath refuses paths before registering an operation.
 func TestConvert_CoordinatedTransportInvalidPath(t *testing.T) {
 	convert := NewConvert(config.TestConfig())
-	_, err := convert.coordinatedTransport(&MediaFile{}, encode.SoftwareAvc, false, false, nil)
+	_, err := convert.coordinatedTransport(&MediaFile{}, encode.SoftwareAvc, false, false)
 	require.Error(t, err)
-	_, err = convert.coordinatedTransport(&MediaFile{fileName: filepath.Join(t.TempDir(), "missing.m2ts")}, encode.SoftwareAvc, false, false, nil)
+	_, err = convert.coordinatedTransport(&MediaFile{fileName: filepath.Join(t.TempDir(), "missing.m2ts")}, encode.SoftwareAvc, false, false)
 	require.Error(t, err)
 }
 
@@ -337,20 +337,20 @@ func TestConvert_CoordinatedTransportExcludes(t *testing.T) {
 	require.Eventually(t, func() bool { return transportStarts(logName, "r") == 1 }, 5*time.Second, 10*time.Millisecond)
 	var key string
 	var firstCall *transportCall
-	avcConversions.mutex.Lock()
-	for destination, call := range avcConversions.calls {
+	transportConversions.mutex.Lock()
+	for destination, call := range transportConversions.calls {
 		if call.request.source == source {
 			key, firstCall = destination, call
 			break
 		}
 	}
-	avcConversions.mutex.Unlock()
+	transportConversions.mutex.Unlock()
 	require.NotNil(t, firstCall)
 	launch(second)
 	require.Eventually(t, func() bool {
-		avcConversions.mutex.Lock()
-		defer avcConversions.mutex.Unlock()
-		call := avcConversions.calls[key]
+		transportConversions.mutex.Lock()
+		defer transportConversions.mutex.Unlock()
+		call := transportConversions.calls[key]
 		return call != nil && call != firstCall
 	}, 3*time.Second, 10*time.Millisecond, "distinct exclusion snapshots must queue separate operations")
 	assert.Equal(t, 1, transportStarts(logName, "r"))

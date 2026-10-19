@@ -65,7 +65,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
-			Export:       true,
+			Export:       false,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,
@@ -112,4 +112,42 @@ func TestSettings_ApplyACL(t *testing.T) {
 		assert.Equal(t, r.Features.Account, r.Features.AppPasswords)
 		assert.False(t, r.Features.AppPasswords)
 	})
+}
+
+// TestSettings_ApplyACL_Export checks Export grants independently of the Download setting.
+func TestSettings_ApplyACL_Export(t *testing.T) {
+	roles := acl.Roles{
+		acl.RoleAdmin:   acl.GrantFullAccess,
+		acl.RoleManager: acl.Grant{acl.AccessAll: true, acl.ActionDownload: true},
+		acl.RoleUser:    acl.Grant{acl.AccessAll: true, acl.ActionDownload: true},
+		acl.RoleGuest:   acl.Grant{acl.AccessShared: true, acl.ActionDownload: true},
+		acl.RoleVisitor: acl.GrantViewShared,
+		acl.RoleViewer:  acl.Grant{acl.AccessAll: true},
+	}
+	rules := acl.ACL{acl.ResourcePhotos: roles}
+	for _, tc := range []struct {
+		name    string
+		role    acl.Role
+		allowed bool
+	}{
+		{"Admin", acl.RoleAdmin, true},
+		{"Manager", acl.RoleManager, true},
+		{"User", acl.RoleUser, true},
+		{"Guest", acl.RoleGuest, false},
+		{"Visitor", acl.RoleVisitor, false},
+		{"Viewer", acl.RoleViewer, false},
+		{"None", acl.RoleNone, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s := NewDefaultSettings()
+			s.Features.Download = false
+			s.Download.Disabled = true
+			result := s.ApplyACL(rules, tc.role)
+			assert.Equal(t, tc.allowed, result.Features.Export)
+			assert.True(t, s.Features.Export)
+			assert.False(t, result.Features.Download)
+			s.Features.Export = false
+			assert.False(t, s.ApplyACL(rules, tc.role).Features.Export)
+		})
+	}
 }

@@ -38,7 +38,7 @@
                 <span class="text-caption text-medium-emphasis">{{ optionMetadata(item) }}</span>
                 <span class="text-caption" :class="{ 'text-error': states[item.id]?.state === 'error' }" role="status">{{ stateLabel(item) }}</span>
               </span>
-              <v-btn v-if="states[item.id]?.state === 'error'" class="action-retry-output" variant="text" color="on-surface" size="small" :aria-label="$gettext('Retry') + ' ' + item.filename" @click="retry(item)">{{ $gettext("Retry") }}</v-btn>
+              <v-btn v-if="states[item.id]?.state === 'error'" class="action-retry-output" variant="text" color="on-surface" size="small" :aria-label="$gettext('Retry %{filename}', { filename: item.filename })" @click="retry(item)">{{ $gettext("Retry") }}</v-btn>
             </div>
           </div>
         </div>
@@ -60,10 +60,6 @@
               </v-expansion-panel-title>
               <v-expansion-panel-text class="export-group-options">
                 <p v-if="group.previewMissing" class="text-body-2 text-error mb-3">{{ $gettext("A unique still preview could not be found.") }}</p>
-                <div v-if="probeErrors[group.original.hash]" class="export-probe-error text-body-2 text-error mb-3" role="alert">
-                  {{ $gettext("Failed to check video options. Please try again.") }}
-                  <v-btn class="action-retry-probe" variant="text" :disabled="probing[group.original.hash]" @click="retryProbe(group)">{{ $gettext("Retry") }}</v-btn>
-                </div>
                 <div v-for="section in optionSections(group)" :key="section.id" class="export-options-section" :class="{ 'export-resized-jpegs': section.id === 'resized' }" :role="section.label ? 'group' : undefined" :aria-label="section.label || undefined">
                   <v-divider v-if="section.label"></v-divider>
                   <p v-if="section.label" class="export-section-title text-caption text-medium-emphasis">{{ section.label }}</p>
@@ -74,7 +70,7 @@
                           <span class="export-option-description">
                             <span class="text-body-2 font-weight-medium">{{ optionLabel(option) }}</span>
                             <span class="text-caption">{{ optionMetadata(option) }}</span>
-                            <span v-if="needsConversion(option)" class="export-conversion-note text-caption text-medium-emphasis">{{ $gettext("Needs Conversion") }}</span>
+                            <span v-if="needsConversion(option)" class="export-conversion-note text-caption text-medium-emphasis">{{ $gettext("Needs Conversion") }} {{ $gettext("The download will start when the video is ready.") }}</span>
                           </span>
                           <span v-if="optionBytes(option)" class="export-option-size text-caption">{{ optionBytes(option) }}</span>
                         </span>
@@ -90,10 +86,10 @@
       </v-card-text>
       <v-divider></v-divider>
       <div v-if="transferError" class="export-error text-body-2 text-error" role="alert">
-        {{ $gettext("Export stopped. Please try again.") }}
+        {{ $gettext("Some files could not be exported. Please try again.") }}
       </div>
       <v-card-actions class="action-buttons export-actions">
-        <v-btn v-if="started || !$vuetify.display.smAndDown" variant="flat" color="button" height="44" :block="started && $vuetify.display.smAndDown" class="action-close action-cancel" @click.stop="close">{{ started && errors && !pending && !preparing ? $gettext("Close") : $gettext("Cancel") }}</v-btn>
+        <v-btn v-if="started || !$vuetify.display.smAndDown" variant="flat" color="button" height="44" :block="started && $vuetify.display.smAndDown" class="action-close action-cancel" @click.stop="close">{{ started && errors && !pending ? $gettext("Close") : $gettext("Cancel") }}</v-btn>
         <v-btn v-if="!started" variant="flat" color="highlight" height="44" :block="$vuetify.display.smAndDown" class="action-export action-confirm" :disabled="loading || !selected.length || !permitted" @click.stop="confirm">{{ exportLabel }}</v-btn>
       </v-card-actions>
     </v-card>
@@ -103,8 +99,8 @@
 import { markRaw } from "vue";
 import Photo from "model/photo";
 import File from "model/file";
-import { canExport, buildExportGroups } from "common/export";
-import { buildMediaExportGroups, probeExportMedia } from "common/export-media";
+import { canExport } from "common/export";
+import { buildMediaExportGroups } from "common/export-media";
 import { buildExportDownloads, exportBaseName, ExportQueue } from "common/export-download";
 
 export default {
@@ -122,11 +118,6 @@ export default {
       loadError: false,
       transferError: false,
       groups: [],
-      files: [],
-      probes: {},
-      probeErrors: {},
-      probing: {},
-      probeController: null,
       expanded: [],
       selected: [],
       downloads: [],
@@ -147,19 +138,15 @@ export default {
     activeOutputs() {
       return this.downloads.filter((item) => this.states[item.id]?.state !== "handed");
     },
-    // pending counts outputs waiting for preparation or browser handoff.
+    // pending counts outputs waiting for browser handoff.
     pending() {
-      return Object.values(this.states).filter((item) => ["waiting", "ready"].includes(item.state)).length;
-    },
-    // preparing counts the active server preparation.
-    preparing() {
-      return Object.values(this.states).filter((item) => item.state === "preparing").length;
+      return Object.values(this.states).filter((item) => item.state === "ready").length;
     },
     // errors counts individually retryable outputs.
     errors() {
       return Object.values(this.states).filter((item) => item.state === "error").length;
     },
-    // permitted checks the live Export setting and file permission independently of Download.
+    // permitted reads the server-filtered Export setting independently of Download.
     permitted() {
       return canExport(this.$config);
     },
@@ -191,8 +178,10 @@ export default {
       }
     },
   },
+  // beforeUnmount releases the focus scope when parent closure skips the leave transition.
   beforeUnmount() {
     this.stop();
+    this.$view.leave(this);
   },
   methods: {
     // afterEnter installs the shared dialog focus scope.
@@ -208,7 +197,6 @@ export default {
     stop() {
       this.generation++;
       this.queue?.cancel();
-      this.probeController?.abort();
     },
     // reset restores the initial selection state for each opening.
     reset() {
@@ -218,10 +206,6 @@ export default {
       this.loadError = false;
       this.transferError = false;
       this.groups = [];
-      this.files = [];
-      this.probes = {};
-      this.probeErrors = {};
-      this.probing = {};
       this.expanded = [];
       this.selected = [];
       this.downloads = [];
@@ -246,9 +230,6 @@ export default {
         this.close();
         return;
       }
-      this.probeController?.abort();
-      const controller = markRaw(new AbortController());
-      this.probeController = controller;
       const generation = ++this.generation;
       const uid = this.uid;
       this.loading = true;
@@ -258,29 +239,7 @@ export default {
         if (generation !== this.generation || !this.visible || uid !== this.uid || !this.permitted) {
           return;
         }
-        const probes = {};
-        const probeErrors = {};
-        const candidates = buildExportGroups(photo.Files).filter((group) => ["video", "animated", "live"].includes(group.original.mediaType) || ["jpg", "heic"].includes(group.original.format));
-        if (candidates.length) {
-          await this.$session.refresh();
-        }
-        for (const group of candidates) {
-          if (generation !== this.generation || !this.visible || !this.permitted) {
-            return;
-          }
-          try {
-            probes[group.original.hash] = await probeExportMedia(group.original, this.$config, controller.signal);
-          } catch {
-            probeErrors[group.original.hash] = true;
-          }
-        }
-        if (generation !== this.generation || !this.visible || !this.permitted) {
-          return;
-        }
-        this.files = photo.Files;
-        this.probes = probes;
-        this.probeErrors = probeErrors;
-        this.groups = buildMediaExportGroups(photo.Files, this.$config.values.thumbs, probes, this.$config.values.thumbLimit);
+        this.groups = buildMediaExportGroups(photo.Files, this.$config.values.thumbs, this.$config.values.thumbLimit);
         this.expanded = this.groups.length ? [this.groups[0].id] : [];
         this.selected = [];
       } catch {
@@ -290,35 +249,6 @@ export default {
       } finally {
         if (generation === this.generation) {
           this.loading = false;
-        }
-      }
-    },
-    // retryProbe refreshes one failed capability without discarding other selections.
-    async retryProbe(group) {
-      const source = group.original;
-      if (this.probing[source.hash] || this.started || !this.visible || !this.permitted) {
-        return;
-      }
-      const generation = this.generation;
-      this.probing[source.hash] = true;
-      try {
-        await this.$session.refresh();
-        const probe = await probeExportMedia(source, this.$config, this.probeController?.signal);
-        if (generation !== this.generation || !this.visible || !this.permitted) {
-          return;
-        }
-        this.probes[source.hash] = probe;
-        delete this.probeErrors[source.hash];
-        this.groups = buildMediaExportGroups(this.files, this.$config.values.thumbs, this.probes, this.$config.values.thumbLimit);
-        const available = new Set(this.groups.flatMap((item) => item.options.map((option) => option.id)));
-        this.selected = this.selected.filter((id) => available.has(id));
-      } catch {
-        if (generation === this.generation) {
-          this.probeErrors[source.hash] = true;
-        }
-      } finally {
-        if (generation === this.generation) {
-          delete this.probing[source.hash];
         }
       }
     },
@@ -338,10 +268,10 @@ export default {
     mediaIcon(group) {
       return { video: "mdi-video", live: "mdi-motion-play", animated: "mdi-motion-play", document: "mdi-file-document", vector: "mdi-svg", raw: "mdi-file-image" }[group.original.mediaType] || "mdi-image";
     },
-    // mediaLabel names the original format and media type, including paired Live Photos.
+    // mediaLabel names the original format and media type.
     mediaLabel(group) {
-      const labels = { video: this.$gettext("Video"), live: this.$gettext("Live"), animated: this.$gettext("Animated"), document: this.$gettext("Document"), vector: this.$gettext("Vector"), raw: this.$gettext("RAW"), image: this.$gettext("Image") };
-      return [group.original.format.toUpperCase(), group.apple ? this.$gettext("Live Photo") : labels[group.original.mediaType]].filter(Boolean).join(" · ");
+      const labels = { video: this.$gettext("Video"), live: this.$gettext("Live Photo"), animated: this.$gettext("Animated"), document: this.$gettext("Document"), vector: this.$gettext("Vector"), raw: this.$gettext("RAW"), image: this.$gettext("Image") };
+      return [group.original.format.toUpperCase(), labels[group.original.mediaType]].filter(Boolean).join(" · ");
     },
     // fileMetadata formats only known original dimensions, codec, duration, and size.
     fileMetadata(source) {
@@ -360,31 +290,30 @@ export default {
         { id: "resized", label: this.$gettext("Resized JPEGs"), options: options.filter((option) => option.kind === "thumbnail") },
       ].filter((section) => section.options.length > 0);
     },
-    // needsConversion identifies an AVC output that has not been prepared yet.
+    // needsConversion identifies a video output without an indexed AVC derivative.
     needsConversion(option) {
-      return option.kind === "avc" && !option.ready && !this.states[option.id]?.result?.ready;
+      return ["avc", "video-part"].includes(option.kind) && !option.ready;
     },
     // optionLabel translates the output choice independently of its metadata.
     optionLabel(option) {
-      const labels = { Original: this.$gettext("Original"), "Full-Size Preview": this.$gettext("Full-Size Preview"), "Full Size Preview (First Page)": this.$gettext("Full Size Preview (First Page)"), "Full Size": this.$gettext("Full Size"), "Full HD": this.$gettext("Full HD"), "MP4 AVC": this.$gettext("Compatible Video"), "Video Part": this.$gettext("Video Part") };
+      const labels = { Original: this.$gettext("Original"), "Full-Size Preview": this.$gettext("Full-Size Preview"), "Full-Size Preview (First Page)": this.$gettext("Full-Size Preview (First Page)"), "Full Size": this.$gettext("Full Size"), "Full HD": this.$gettext("Full HD"), "MP4 AVC": this.$gettext("Compatible Video"), "Video Part": this.$gettext("Video Part") };
       return labels[option.label] || option.label;
     },
-    // optionMetadata includes verified output dimensions and codec when preparation completes.
+    // optionMetadata formats indexed dimensions, output format, and codec.
     optionMetadata(option) {
-      const result = this.states[option.id]?.result;
-      const width = result?.width || option.width;
-      const height = result?.height || option.height;
-      const codec = result?.codec || option.codec || (["original", "preview"].includes(option.kind) ? option.source.codec : "");
+      const width = option.width;
+      const height = option.height;
+      const codec = option.codec || (["original", "preview"].includes(option.kind) ? option.source.codec : "");
       return [width && height ? `${width} × ${height}` : "", option.format.toUpperCase(), codec].filter(Boolean).join(" · ");
     },
-    // optionBytes reports existing or verified file sizes without estimating JPEG outputs.
+    // optionBytes reports indexed file sizes without estimating generated outputs.
     optionBytes(option) {
-      const bytes = ["avc", "video-part"].includes(option.kind) ? this.states[option.id]?.result?.bytes ?? option.bytes : option.kind === "thumbnail" ? null : option.source.bytes;
+      const bytes = ["avc", "video-part"].includes(option.kind) ? option.bytes : option.kind === "thumbnail" ? null : option.source.bytes;
       return bytes !== null && bytes !== undefined ? this.$util.formatBytes(bytes) : "";
     },
     // stateLabel translates the current output state.
     stateLabel(item) {
-      const labels = { waiting: this.$gettext("Pending"), preparing: this.$gettext("Preparing"), ready: this.$gettext("Ready"), error: this.$gettext("Failed") };
+      const labels = { ready: this.$gettext("Pending"), error: this.$gettext("Failed") };
       return labels[this.states[item.id]?.state] || "";
     },
     // retry restarts one failed output with current authorization and tokens.
@@ -572,15 +501,7 @@ export default {
     padding: 16px;
   }
 
-  .export-groups {
-  gap: 12px;
-}
-
-.export-group {
-  overflow: hidden;
-}
-
-.export-group-title {
+  .export-group-title {
     padding: 12px;
   }
 

@@ -114,7 +114,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
-			Export:       true,
+			Export:       false,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,
@@ -158,7 +158,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     true,
-			Export:       true,
+			Export:       false,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,
@@ -202,7 +202,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 			Archive:      false,
 			Delete:       false,
 			Download:     false,
-			Export:       true,
+			Export:       false,
 			Edit:         false,
 			BatchEdit:    false,
 			Estimates:    true,
@@ -238,4 +238,30 @@ func TestSettings_ApplyScope(t *testing.T) {
 		t.Logf("VisitorMetrics: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
+}
+
+// TestSettings_ApplyScope_Export checks the photos scope and preserves an ACL-filtered flag.
+func TestSettings_ApplyScope_Export(t *testing.T) {
+	for _, tc := range []struct {
+		name    string
+		scope   string
+		allowed bool
+	}{
+		{"Unscoped", "", true},
+		{"All", "*", true},
+		{"Photos", "photos", true},
+		{"PhotosVideos", "photos videos", true},
+		{"Files", "files", false},
+		{"Videos", "videos", false},
+		{"Metrics", "metrics", false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s := NewDefaultSettings()
+			result := s.ApplyScope(tc.scope)
+			assert.Equal(t, tc.allowed, result.Features.Export)
+			assert.True(t, s.Features.Export)
+			s.Features.Export = false
+			assert.False(t, s.ApplyScope(tc.scope).Features.Export)
+		})
+	}
 }

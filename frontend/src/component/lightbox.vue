@@ -382,6 +382,7 @@ export default {
     visible(value) {
       if (!value) {
         this.exportVisible = false;
+        this.exportBlocking = false;
       }
     },
     // Routes null ↔ active transitions through enterFaceMarkerMode /

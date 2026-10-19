@@ -34,10 +34,6 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 		return nil
 	}
 
-	if f.exportCaptureResolved {
-		return f.exportCapture
-	}
-
 	name, ok := media.ParseInsta360VideoName(f.FileName())
 
 	// The capture files are looked up under their canonical names, which must include f itself.

@@ -76,8 +76,6 @@ PSQL ?= psql
 POSTGRES_ADMIN_URI ?= postgres://photoprism:photoprism@postgres.:$${POSTGRES_PORT:-4002}/postgres
 POSTGRES_TEST_DSN ?= postgres://photoprism:photoprism@postgres.:$${POSTGRES_PORT:-4002}/testdb?sslmode=disable&TimeZone=UTC
 
-TESTCAFE_BROWSER ?= chrome
-
 # Records a video of each failed TestCafe test in "frontend/tests/acceptance/videos/" if TC_USE_VIDEO is set.
 ifneq ($(filter-out 0 false no off,$(value TC_USE_VIDEO)),)
 TESTCAFE_VIDEO = --video tests/acceptance/videos/ --video-options singleFile=false,failedOnly=true
@@ -164,8 +162,6 @@ Test:
                            Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
   test-postgres            Run the default Go suite against PostgreSQL (experimental)
   reset-testdb             Reset the SQLite and MariaDB test databases
-  acceptance-export        Run Export dialog and feature-setting acceptance tests
-                           Add TESTCAFE_BROWSER=chromium to use Chromium
   acceptance-run-chromium  Run the TestCafe acceptance tests in Chrome
                            Add DB=mariadb or DB=postgres to run them on that database
                            Add TC_USE_VIDEO=1 to record videos of failed tests
@@ -233,13 +229,6 @@ acceptance-run-chromium: acceptance-check-db storage/acceptance
 	+$(call acceptance-stage,acceptance-restart-1 wait-1 acceptance-api,acceptance-stop-1)
 	+$(call acceptance-stage,acceptance-auth-restart wait-2 acceptance-auth,acceptance-auth-stop)
 	+$(call acceptance-stage,acceptance-restart-3 wait-3 acceptance,acceptance-stop-3)
-acceptance-export: acceptance-check-db storage/acceptance
-	+$(call acceptance-stage,acceptance-restart-1 wait-1 acceptance-export-public,acceptance-stop-1)
-	+$(call acceptance-stage,acceptance-auth-restart wait-2 acceptance-export-auth,acceptance-auth-stop)
-acceptance-export-public:
-	(cd frontend && npm run testcafe -- "$(TESTCAFE_BROWSER) --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^Common: Export" --test-execution-timeout 300000 --test-meta mode=public --config-file ./.testcaferc.cjs "tests/acceptance")
-acceptance-export-auth:
-	(cd frontend && npm run testcafe -- "$(TESTCAFE_BROWSER) --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common: Export|Common: Lightbox sidebar shows only restricted metadata on share links)" --test-execution-timeout 300000 --test-meta mode=auth --config-file ./.testcaferc.cjs "tests/acceptance")
 acceptance-run-chromium-short: acceptance-check-db storage/acceptance
 	+$(call acceptance-stage,acceptance-auth-restart wait-1 acceptance-auth-short,acceptance-auth-stop)
 	+$(call acceptance-stage,acceptance-restart-2 wait-2 acceptance-short,acceptance-stop-2)

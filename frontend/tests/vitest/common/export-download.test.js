@@ -15,7 +15,7 @@ function file(id, values = {}) {
 
 // allDownloads selects each output from the given stack.
 function allDownloads(files, thumbLimit = 1920) {
-  const groups = buildMediaExportGroups(files, thumbs, {}, thumbLimit);
+  const groups = buildMediaExportGroups(files, thumbs, thumbLimit);
   return buildExportDownloads(groups, groups.flatMap((group) => group.options.map((option) => option.id)));
 }
 
@@ -106,9 +106,9 @@ describe("image export choices and filenames", () => {
 describe("export attachment URLs and queue", () => {
   it("uses the original or preview hash and the thumbnail's fit code with encoded tokens and names", () => {
     const items = allDownloads([file("r", { Name: "a.cr2", FileType: "cr2", MediaType: "raw" }), file("p", { Root: "sidecar", Name: "a.cr2.jpg" })]);
-    expect(exportDownloadUrl(items[0], config)).toBe(`/api/v1/dl/${file("r").Hash}?t=download%20token&filename=a.cr2`);
+    expect(exportDownloadUrl(items[0], config)).toBe(`/api/v1/dl/${file("r").Hash}?t=download%20token&name=original`);
     expect(exportDownloadUrl(items[1], config)).toContain(`/dl/${file("p").Hash}?t=`);
-    expect(exportDownloadUrl(items[2], config)).toBe(`/content/t/${file("p").Hash}/preview%20token/fit_720?download=1&filename=a_fit_720.jpg`);
+    expect(exportDownloadUrl(items[2], config)).toBe(`/api/v1/t/${file("p").Hash}/preview%20token/fit_720?download=1&name=original`);
   });
   it("creates a direct anchor and removes it without using Blob or XHR", () => {
     const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function () {
@@ -188,251 +188,87 @@ describe("export attachment URLs and queue", () => {
   });
 });
 
-// deferred exposes a controllable server response for queue race tests.
-function deferred() {
-  let resolve;
-  let reject;
-  const promise = new Promise((yes, no) => {
-    resolve = yes;
-    reject = no;
-  });
-  return { promise, resolve, reject };
-}
 
-// videoItem creates an immutable output needing a preparation request.
-function videoItem(id, extra = {}) {
-  return Object.freeze({ id, kind: "avc", format: "mp4", source: { hash: id }, filename: `${id}_avc.mp4`, ready: false, ...extra });
-}
-
-describe("mixed export preparation queue", () => {
-  it("does not start queued preparation when the first ready handoff cancels the dialog", async () => {
-    const refresh = vi.fn().mockResolvedValue(undefined);
-    const prepare = vi.fn();
-    const queue = new ExportQueue([allDownloads([file("a")])[0], videoItem("pending")], {
-      refresh, allowed: () => true, config, prepare, transfer: () => queue.cancel(),
+describe("export retry queue", () => {
+  it("retries an output at the end of a runner without repeating successful downloads", async () => {
+    vi.useFakeTimers();
+    const items = allDownloads([file("a")]).slice(0, 2);
+    const transfer = vi.fn().mockImplementationOnce(() => {
+      throw new Error("unavailable");
     });
-    expect(await queue.run()).toBe(1);
-    expect(refresh).toHaveBeenCalledOnce();
-    expect(prepare).not.toHaveBeenCalled();
-    expect(queue.states.get("pending").state).toBe("waiting");
+    let retried;
+    const queue = new ExportQueue(items, {
+      refresh: async () => {}, allowed: () => true, config, transfer,
+      progress: (count) => {
+        if (count === 1) {
+          retried = queue.retry(items[0]);
+        }
+      },
+    });
+    await queue.run();
+    await vi.runAllTimersAsync();
+    await retried;
+    expect(queue.handed).toBe(2);
+    expect([...queue.states.values()].map((state) => state.state)).toEqual(["handed", "handed"]);
+    expect(transfer.mock.calls.map((call) => call[1])).toEqual([items[0].filename, items[1].filename, items[0].filename]);
   });
-  it("continues to the next output when preparation authorization throws synchronously", async () => {
-    const refresh = vi.fn().mockResolvedValueOnce(undefined).mockImplementationOnce(() => {
-      throw new Error("session storage unavailable");
-    }).mockResolvedValue(undefined);
-    const prepare = vi.fn().mockResolvedValue({ ready: true });
-    const transfer = vi.fn();
-    const queue = new ExportQueue([videoItem("failed"), videoItem("next")], { refresh, allowed: () => true, config, transfer, prepare });
-    expect(await queue.run()).toBe(1);
-    expect(queue.states.get("failed").state).toBe("error");
-    expect(queue.states.get("next").state).toBe("handed");
-    expect(prepare.mock.calls.map((call) => call[0].id)).toEqual(["next"]);
-    expect(transfer).toHaveBeenCalledOnce();
-    expect(queue.preparing).toBeNull();
-  });
-  it("hands ready files over while a conversion waits and serializes preparations", async () => {
-    vi.useFakeTimers();
-    const first = deferred();
-    const second = deferred();
-    const prepare = vi.fn().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
-    const transfer = vi.fn();
-    const items = [videoItem("one"), ...allDownloads([file("a")]), videoItem("two")];
-    const queue = new ExportQueue(items, { refresh: async () => {}, allowed: () => true, config, transfer, prepare });
-    const running = queue.run();
-    await vi.advanceTimersByTimeAsync(500);
-    expect(prepare).toHaveBeenCalledTimes(1);
-    expect(transfer.mock.calls.map((call) => call[1])).toEqual(["a.jpg", "a_fit_720.jpg", "a_fit_1920.jpg"]);
-    expect(queue.states.get("one").state).toBe("preparing");
-    expect(queue.states.get("two").state).toBe("waiting");
-    first.resolve({ ready: true, format: "mp4", codec: "avc1", bytes: 123 });
-    await vi.advanceTimersByTimeAsync(250);
-    expect(prepare).toHaveBeenCalledTimes(2);
-    expect(transfer.mock.calls[3][1]).toBe("one_avc.mp4");
-    second.resolve({ ready: true, format: "mp4", codec: "avc1" });
-    await vi.advanceTimersByTimeAsync(250);
-    expect(await running).toBe(5);
-    expect(queue.states.get("two").state).toBe("handed");
-    expect(queue.states.get("one").result.bytes).toBe(123);
-  });
-  it("retries only a failed output after rechecking tokens and permission", async () => {
-    vi.useFakeTimers();
-    const prepare = vi.fn().mockRejectedValueOnce(new Error("encoder")).mockResolvedValueOnce({ ready: true });
-    const transfer = vi.fn();
+  it("allows repeated retries after a transfer fails again and refreshes the token", async () => {
+    const item = allDownloads([file("a")])[0];
     const current = { ...config };
     const refresh = vi.fn(async () => {
       current.downloadToken = `token-${refresh.mock.calls.length}`;
     });
-    const failed = videoItem("failed");
-    const queue = new ExportQueue([failed, allDownloads([file("a")])[0]], { refresh, allowed: () => true, config: current, transfer, prepare });
+    const transfer = vi.fn().mockImplementationOnce(() => {
+      throw new Error("unavailable");
+    })
+      .mockImplementationOnce(() => {
+        throw new Error("unavailable");
+      });
+    const queue = new ExportQueue([item], { refresh, allowed: () => true, config: current, transfer });
     await queue.run();
-    expect(queue.states.get("failed").state).toBe("error");
-    expect(transfer).toHaveBeenCalledOnce();
-    const retry = queue.retry(failed);
-    await vi.advanceTimersByTimeAsync(250);
-    expect(await retry).toBe(2);
-    expect(prepare).toHaveBeenCalledTimes(2);
-    expect(transfer.mock.calls.map((call) => call[1])).toEqual(["a.jpg", "failed_avc.mp4"]);
-    expect(transfer.mock.calls[1][0]).toContain("token-4");
-    await queue.retry(failed);
-    expect(transfer).toHaveBeenCalledTimes(2);
+    await queue.retry(item);
+    expect(queue.states.get(item.id).state).toBe("error");
+    await queue.retry(item);
+    expect(queue.states.get(item.id).state).toBe("handed");
+    expect(queue.handed).toBe(1);
+    expect(transfer.mock.calls[2][0]).toContain("t=token-3");
+    await queue.retry(item);
+    expect(transfer).toHaveBeenCalledTimes(3);
   });
-  it("queues a retry behind an active preparation", async () => {
-    const slow = deferred();
-    const failed = videoItem("failed");
-    const other = videoItem("other");
-    const prepare = vi.fn().mockRejectedValueOnce(new Error("encoder")).mockReturnValueOnce(slow.promise).mockResolvedValueOnce({ ready: true });
-    const queue = new ExportQueue([failed, other], { refresh: async () => {}, allowed: () => true, config, transfer: vi.fn(), prepare });
-    const running = queue.run();
-    for (let i = 0; i < 12; i++) {
-      await Promise.resolve();
-    }
-    expect(queue.states.get("failed").state).toBe("error");
-    expect(queue.states.get("other").state).toBe("preparing");
-    const retry = queue.retry(failed);
-    slow.resolve({ ready: true });
-    await retry;
-    await running;
-    expect(prepare.mock.calls.map((call) => call[0].id)).toEqual(["failed", "other", "failed"]);
-    expect(queue.handed).toBe(2);
-  });
-  it.each(["cancel", "revoke"])("discards a late prepared response after %s without starting the next request", async (action) => {
-    const slow = deferred();
-    const transfer = vi.fn();
-    const change = vi.fn();
+  it.each(["cancel", "revoke", "reject"])("does not transfer after a pending retry refresh ends in %s", async (action) => {
+    const item = allDownloads([file("a")])[0];
+    let finish;
+    let fail;
     let allowed = true;
-    const prepare = vi.fn().mockReturnValue(slow.promise);
-    const queue = new ExportQueue([videoItem("first"), videoItem("second")], { refresh: async () => {}, allowed: () => allowed, config, transfer, prepare, change });
-    const running = queue.run();
-    for (let i = 0; i < 5; i++) {
-      await Promise.resolve();
-    }
-    const changes = change.mock.calls.length;
+    const refresh = vi.fn().mockRejectedValueOnce(new Error("expired")).mockImplementationOnce(() => new Promise((resolve, reject) => {
+      finish = resolve; fail = reject;
+    }));
+    const transfer = vi.fn();
+    const queue = new ExportQueue([item], { refresh, allowed: () => allowed, config, transfer });
+    await queue.run();
+    const retry = queue.retry(item);
+    await queue.retry(item);
+    expect(refresh).toHaveBeenCalledTimes(2);
     if (action === "cancel") {
       queue.cancel();
-    } else {
+    }
+    if (action === "revoke") {
       allowed = false;
     }
-    slow.resolve({ ready: true });
-    await running;
-    expect(transfer).not.toHaveBeenCalled();
-    expect(prepare).toHaveBeenCalledOnce();
-    expect(change).toHaveBeenCalledTimes(changes);
-  });
-  it("downloads cached derivatives without preparing them", async () => {
-    const prepare = vi.fn();
-    const transfer = vi.fn();
-    const queue = new ExportQueue([videoItem("cached", { ready: true })], { refresh: async () => {}, allowed: () => true, config, transfer, prepare });
-    await queue.run();
-    expect(prepare).not.toHaveBeenCalled();
-    expect(transfer).toHaveBeenCalledOnce();
-    expect(transfer.mock.calls[0][0]).toContain("action=download");
-  });
-});
-
-describe("manual export handoffs", () => {
-  it("removes a ready manual handoff from the automatic queue and keeps counts unique", async () => {
-    vi.useFakeTimers();
-    const transfer = vi.fn();
-    const items = allDownloads([file("a")]);
-    const queue = new ExportQueue(items, { refresh: async () => {}, allowed: () => true, config, transfer });
-    const running = queue.run();
-    await Promise.resolve();
-    await queue.manual(items[1]);
-    await vi.advanceTimersByTimeAsync(500);
-    expect(await running).toBe(3);
-    expect(transfer.mock.calls.map((call) => call[1])).toEqual(["a.jpg", "a_fit_720.jpg", "a_fit_1920.jpg"]);
-    await queue.manual(items[1]);
-    expect(transfer).toHaveBeenCalledTimes(4);
-    expect(queue.handed).toBe(3);
-  });
-  it("does not duplicate an automatic handoff that completed while manual refresh was pending", async () => {
-    vi.useFakeTimers();
-    const refresh = vi.fn().mockResolvedValueOnce(undefined);
-    const late = deferred();
-    refresh.mockReturnValueOnce(late.promise);
-    const transfer = vi.fn();
-    const items = allDownloads([file("a")]);
-    const queue = new ExportQueue(items, { refresh, allowed: () => true, config, transfer });
-    const running = queue.run();
-    await Promise.resolve();
-    const manual = queue.manual(items[1]);
-    await vi.advanceTimersByTimeAsync(500);
-    await running;
-    late.resolve();
-    await manual;
-    expect(transfer).toHaveBeenCalledTimes(3);
-  });
-});
-
-describe("retry authorization during preparation", () => {
-  it("refreshes tokens before retrying a failed Original alongside an active preparation", async () => {
-    vi.useFakeTimers();
-    const slow = deferred();
-    const original = allDownloads([file("a")])[0];
-    const current = { ...config };
-    const refresh = vi.fn(async () => {
-      current.downloadToken = `retry-token-${refresh.mock.calls.length}`;
-    });
-    const transfer = vi.fn().mockImplementationOnce(() => {
-      throw new Error("browser refused");
-    });
-    const queue = new ExportQueue([original, videoItem("slow")], { refresh, allowed: () => true, config: current, transfer, prepare: () => slow.promise });
-    const running = queue.run();
-    await vi.advanceTimersByTimeAsync(0);
-    expect(queue.states.get(original.id).state).toBe("error");
-    const refreshed = refresh.mock.calls.length;
-    const retry = queue.retry(original);
-    await vi.advanceTimersByTimeAsync(0);
-    expect(refresh).toHaveBeenCalledTimes(refreshed + 1);
-    expect(transfer.mock.calls[1][0]).toContain(`t=retry-token-${refreshed + 1}`);
-    slow.resolve({ ready: true });
-    await vi.advanceTimersByTimeAsync(250);
-    expect(await retry).toBe(2);
-    await running;
-  });
-  it("blocks duplicate retries and ignores a late retry refresh after cancellation", async () => {
-    const original = allDownloads([file("a")])[0];
-    const refresh = vi.fn().mockRejectedValueOnce(new Error("expired"));
-    const late = deferred();
-    refresh.mockReturnValueOnce(late.promise);
-    const transfer = vi.fn();
-    const queue = new ExportQueue([original], { refresh, allowed: () => true, config, transfer });
-    await queue.run();
-    const retry = queue.retry(original);
-    await queue.retry(original);
-    expect(refresh).toHaveBeenCalledTimes(2);
-    queue.cancel();
-    late.resolve();
+    if (action === "reject") {
+      fail(new Error("expired"));
+    } else {
+      finish();
+    }
     await retry;
     expect(transfer).not.toHaveBeenCalled();
-    expect(queue.states.get(original.id).state).toBe("error");
+    expect(queue.states.get(item.id).state).toBe("error");
   });
-});
-
-describe("repeated failed-output retries", () => {
-  it("allows another Original retry while an unrelated preparation remains pending", async () => {
-    vi.useFakeTimers();
-    const slow = deferred();
-    const original = allDownloads([file("a")])[0];
-    const transfer = vi.fn().mockImplementationOnce(() => {
-      throw new Error("blocked");
-    }).mockImplementationOnce(() => {
-      throw new Error("blocked again");
-    });
-    const queue = new ExportQueue([original, videoItem("slow")], { refresh: async () => {}, allowed: () => true, config, transfer, prepare: () => slow.promise });
-    const running = queue.run();
-    await vi.advanceTimersByTimeAsync(0);
-    const firstRetry = queue.retry(original);
-    await vi.advanceTimersByTimeAsync(0);
-    expect(queue.states.get(original.id).state).toBe("error");
-    expect(queue.states.get("slow").state).toBe("preparing");
-    const secondRetry = queue.retry(original);
-    await vi.advanceTimersByTimeAsync(0);
-    expect(transfer).toHaveBeenCalledTimes(3);
-    expect(queue.states.get(original.id).state).toBe("handed");
-    slow.resolve({ ready: true });
-    await vi.advanceTimersByTimeAsync(250);
-    await Promise.all([running, firstRetry, secondRetry]);
-    expect(queue.handed).toBe(2);
+  it("hands AVC requests to the attachment endpoint without a preparation request", async () => {
+    const transfer = vi.fn();
+    const item = { id: "avc:file", kind: "avc", source: { hash: "source" }, filename: "movie.mp4" };
+    const queue = new ExportQueue([item], { refresh: async () => {}, allowed: () => true, config, transfer });
+    expect(await queue.run()).toBe(1);
+    expect(transfer.mock.calls[0][0]).toBe("/api/v1/dl/source?t=download%20token&name=original&format=avc");
   });
 });

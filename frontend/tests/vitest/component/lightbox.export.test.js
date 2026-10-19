@@ -10,7 +10,7 @@ import { $view } from "common/view";
 function context(enabled = true, allowed = true) {
   return {
     visible: true, model: { UID: "ps6sg6be2lvl0yh7" }, exportBlocking: false, exportVisible: false,
-    $config: { values: { settings: { features: { export: enabled, download: false } } }, allow: () => allowed },
+    $config: { values: { settings: { features: { export: enabled && allowed, download: false } } }, allow: () => allowed },
     $gettext: (value) => value, $pgettext: (_ctx, value) => value,
     pauseLightbox: vi.fn(), $refs: { menu: { hide: vi.fn() } }, focusContent: vi.fn(),
   };
@@ -156,11 +156,48 @@ describe("Lightbox image export", () => {
     Lightbox.methods.onShortCut.call(ctx, { code: "KeyD", ctrlKey: true });
     expect(ctx.onDownload).toHaveBeenCalledOnce();
   });
-  it("stops exports when the Lightbox is hidden and prevents stealing dialog focus", () => {
+  it("clears export blocking when the parent closes without a child leave event", () => {
     const ctx = { ...context(), exportVisible: true, exportBlocking: true };
     Lightbox.watch.visible.call(ctx, false);
     expect(ctx.exportVisible).toBe(false);
-    Lightbox.methods.focusContent.call(ctx);
-    expect(ctx.focusContent).not.toHaveBeenCalled();
+    expect(ctx.exportBlocking).toBe(false);
+    ctx.visible = true;
+    Lightbox.methods.onExport.call(ctx);
+    expect(ctx.exportVisible).toBe(true);
+  });
+  it("does not steal dialog focus while the export overlay owns it", () => {
+    const content = document.createElement("div");
+    content.tabIndex = -1;
+    document.body.appendChild(content);
+    const focus = vi.spyOn(content, "focus");
+    const ctx = { ...context(), exportBlocking: true, $refs: { content } };
+    try {
+      Lightbox.methods.focusContent.call(ctx);
+      expect(focus).not.toHaveBeenCalled();
+      ctx.exportBlocking = false;
+      Lightbox.methods.focusContent.call(ctx);
+      expect(focus).toHaveBeenCalledOnce();
+    } finally {
+      content.remove();
+    }
+  });
+  it("blocks ordinary keys and Enter while Export is active", () => {
+    const overlay = { handleEnter: vi.fn() };
+    const ctx = {
+      ...context(), exportBlocking: true, $view: { isActive: () => true },
+      pauseSlideshow: vi.fn(), toggleVideo: vi.fn(), getContent: () => ({ video: {} }), $refs: { faceMarkerOverlay: overlay },
+    };
+    const event = { code: "Space", preventDefault: vi.fn(), stopPropagation: vi.fn() };
+    Lightbox.methods.onKeyDown.call(ctx, event);
+    Lightbox.methods.onEnterKey.call(ctx);
+    expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+    expect(ctx.toggleVideo).not.toHaveBeenCalled();
+    expect(overlay.handleEnter).not.toHaveBeenCalled();
+    ctx.exportBlocking = false;
+    Lightbox.methods.onKeyDown.call(ctx, event);
+    Lightbox.methods.onEnterKey.call(ctx);
+    expect(ctx.pauseSlideshow).toHaveBeenCalledOnce();
+    expect(ctx.toggleVideo).toHaveBeenCalledOnce();
+    expect(overlay.handleEnter).toHaveBeenCalledOnce();
   });
 });

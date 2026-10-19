@@ -41,18 +41,9 @@ function hashes(group) {
 }
 
 describe("common/export capability", () => {
-  it.each([
-    ["access_all", { access_all: true }, true],
-    ["full_access", { full_access: true }, true],
-    ["restricted read access", { view: true, download: true, access_own: true }, false],
-    ["restricted writes", { update: true, manage: true }, false],
-    ["explicit denial", { access_all: false, full_access: false }, false],
-    ["missing files ACL", undefined, false],
-  ])("checks %s with the shared ACL evaluator", (_name, filesAcl, allowed) => {
-    const config = { values: { settings: { features: { export: true } }, acl: { files: filesAcl } }, allow: Config.prototype.allow };
-    expect(canExport(config)).toBe(allowed);
+  it.each([true, false])("uses the server-filtered Export flag %s without a client ACL check", (enabled) => {
+    expect(canExport({ values: { settings: { features: { export: enabled } } } })).toBe(enabled);
   });
-
   it.each([true, false])("ignores Download=%s and download file filters", (download) => {
     const config = {
       values: { settings: { features: { export: true, download }, download: { originals: false, raw: false, sidecar: false } }, acl: { files: { access_all: true } } },
@@ -63,7 +54,7 @@ describe("common/export capability", () => {
     expect(canExport(config)).toBe(false);
   });
 
-  it.each([undefined, {}, { values: {} }, { values: { settings: {} } }, { values: { settings: { features: { export: true } } }, allow: Config.prototype.allow }])(
+  it.each([undefined, {}, { values: {} }, { values: { settings: {} } }])(
     "fails closed for incomplete config %#", (config) => expect(canExport(config)).toBe(false)
   );
 });
@@ -422,5 +413,39 @@ describe("export source metadata", () => {
     const group = buildExportGroups([makeFile({ MediaType: "video", Duration: duration, Codec: undefined })], thumbs)[0];
     expect(group.original).toMatchObject({ duration: null, codec: "" });
     expect(group.thumbnailSource).toBeNull();
+  });
+});
+
+describe("RAW export format", () => {
+  it.each(["CR2", "dng", "ARW"])("uses the %s extension for a generic RAW record", (extension) => {
+    const [group] = buildExportGroups([makeFile({ Name: `dir/picture.${extension}`, FileType: "raw", MediaType: "raw" })], thumbs);
+    expect(group.original.format).toBe(extension.toLowerCase());
+    expect(group.options[0].format).toBe(extension.toLowerCase());
+  });
+  it("retains RAW when the filename has no extension", () => {
+    expect(buildExportGroups([makeFile({ Name: "picture", FileType: "raw", MediaType: "raw" })])[0].original.format).toBe("raw");
+  });
+});
+
+describe("export default image media type", () => {
+  it.each([undefined, "", null])("keeps JPEG originals and their resized choices when MediaType is %s", (type) => {
+    const source = makeFile({ MediaType: type });
+    const [group] = buildExportGroups([source], thumbs);
+    expect(group.original.mediaType).toBe("image");
+    expect(group.options.map((option) => option.kind)).toEqual(["original", "thumbnail", "thumbnail", "thumbnail"]);
+    expect(source.MediaType).toBe(type);
+  });
+  it("matches PNG previews with an omitted media type and keeps indexed animation detection", () => {
+    const source = makeFile({ Name: "picture.cr2", FileType: "raw", MediaType: "raw" });
+    const preview = makeFile({ UID: "fs6sg6bqhhin0098", Name: "picture.cr2.png", Root: "sidecar", FileType: "png", MediaType: undefined });
+    expect(buildExportGroups([source, preview], thumbs)[0].options.map((option) => option.kind)).toContain("preview");
+    const [animated] = buildExportGroups([makeFile({ FileType: "png", MediaType: undefined, Frames: 2 })], thumbs);
+    expect(animated.original.mediaType).toBe("animated");
+    expect(animated.options).toHaveLength(1);
+  });
+  it("uses the Video flag for video records and excludes unknown metadata types", () => {
+    const [group] = buildExportGroups([makeFile({ Video: true, FileType: "mp4", MediaType: undefined })], thumbs);
+    expect(group.original.mediaType).toBe("video");
+    expect(buildExportGroups([makeFile({ MediaType: undefined, FileType: "xmp" })], thumbs)).toEqual([]);
   });
 });

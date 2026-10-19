@@ -129,10 +129,10 @@ describe("photo export dialog", () => {
     expect(wrapper.vm.mediaIcon(wrapper.vm.groups[0])).toBe("mdi-file-document");
   });
   it("orders compatible video before the preview and JPEG sizes without changing queue order", async () => {
-    const animation = file("a", { Name: "animation.gif", FileType: "gif", Frames: 2 });
+    const animation = file("a", { Name: "animation.gif", FileType: "gif", Frames: 2, Duration: 2000000000, Codec: "gif" });
     const preview = file("p", { Name: "animation.gif.jpg", Root: "sidecar" });
-    Axios.get.mockResolvedValue({ data: { codec: "gif", duration: 2, avc: { ready: true, format: "mp4", codec: "avc1", width: 4000, height: 3000, bytes: 50000 } } });
-    await open([animation, preview]);
+    const avc = file("v", { Name: "animation.mp4", Root: "sidecar", MediaType: "video", Codec: "avc1", Size: 50000 });
+    await open([animation, preview, avc]);
     expect(wrapper.findAll(".export-option").map((row) => row.attributes("data-option-id").split(":")[0])).toEqual(["original", "avc", "preview", "thumbnail", "thumbnail"]);
     expect(wrapper.vm.groups[0].options.map((option) => option.kind)).toEqual(["original", "preview", "thumbnail", "thumbnail", "avc"]);
     const compatible = wrapper.find('.export-option[data-option-id^="avc"]');
@@ -237,11 +237,11 @@ describe("photo export dialog", () => {
   });
   it("rechecks settings and ACL and closes when either is lost", async () => {
     await open();
-    config.values.acl.files.access_all = false;
+    config.values.settings.features.export = false;
     await flushPromises();
     expect(wrapper.emitted("close")).toHaveLength(1);
     expect(wrapper.find(".action-export").attributes("disabled")).toBeDefined();
-    config.values.acl.files.access_all = true;
+    config.values.settings.features.export = true;
     config.values.settings.features.export = false;
     await flushPromises();
     expect(wrapper.vm.permitted).toBe(false);
@@ -294,7 +294,7 @@ describe("photo export dialog", () => {
     expect(wrapper.vm.complete).toBe(false);
     expect(wrapper.vm.transferError).toBe(true);
     expect(wrapper.emitted("close")).toBeUndefined();
-    expect(wrapper.find('.export-error[role="alert"]').text()).toBe("Export stopped. Please try again.");
+    expect(wrapper.find('.export-error[role="alert"]').text()).toBe("Some files could not be exported. Please try again.");
     expect(wrapper.find(".action-close").text()).toBe("Close");
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
     await wrapper.find(".action-retry-output").trigger("click");
@@ -324,7 +324,7 @@ describe("photo export dialog", () => {
       await wrapper.setProps({ uid: "ps6sg6be2lvl0yh8" });
     }
     if (action === "revoke") {
-      config.values.acl.files.access_all = false; await Promise.resolve();
+      config.values.settings.features.export = false; await Promise.resolve();
     }
     await vi.runAllTimersAsync();
     await running;
@@ -362,162 +362,6 @@ describe("photo export dialog", () => {
   });
 });
 
-describe("video export dialog", () => {
-  it("does not label native motion-video extraction as conversion", async () => {
-    const motion = file("m", { Name: "motion.jpg", MediaType: "live", Video: true });
-    Axios.get.mockResolvedValue({ data: { videoPart: { preparable: true, ready: false, format: "mp4", codec: "hvc1", bytes: 0 } } });
-    await open([motion]);
-    expect(wrapper.find('.export-option[data-option-id^="video-part"]').exists()).toBe(true);
-    expect(wrapper.find(".export-conversion-note").exists()).toBe(false);
-  });
-  it("shows separate Apple groups and counts two Original selections as two outputs", async () => {
-    const image = file("a", { Name: "live.jpg" });
-    const movie = file("b", { Name: "live.mov", FileType: "mov", MediaType: "video", Video: true });
-    Axios.get.mockImplementation(async (url) => ({ data: url.includes(movie.Hash) ? { appleKey: "live-pair", codec: "avc1", duration: 3 } : { appleKey: "live-pair" } }));
-    await open([movie, image]);
-    expect(wrapper.vm.groups).toHaveLength(2);
-    expect(wrapper.vm.groups.map((group) => group.id)).toEqual([image.UID, movie.UID]);
-    expect(wrapper.vm.groups[1].options.map((option) => option.kind)).toEqual(["original"]);
-    expect(wrapper.vm.groups[0].apple).toBe(true);
-    expect(wrapper.text()).toContain("Live Photo");
-    await wrapper.setData({ selected: [`original:${image.UID}`, `original:${movie.UID}`] });
-    expect(wrapper.vm.selectedCount(wrapper.vm.groups[0])).toBe(1);
-    expect(wrapper.vm.selectedCount(wrapper.vm.groups[1])).toBe(1);
-    expect(wrapper.find(".action-export").text()).toBe("Export 2 Files");
-    expect(wrapper.findAll(".export-filename").map((item) => item.text())).toEqual(["live.jpg", "live.mov"]);
-  });
-  it("shows preparing without blocking an Original and retries only the failed AVC", async () => {
-    vi.useFakeTimers();
-    const movie = file("v", { Name: "movie.mov", FileType: "mov", MediaType: "video", Video: true });
-    let finish;
-    const requests = [];
-    Axios.get.mockImplementation(async (url) => {
-      requests.push(url);
-      if (url.includes("action=probe")) {
-        return { data: { codec: "hvc1", avc: { preparable: true, ready: false, format: "mp4", codec: "avc1", bytes: 0 } } };
-      }
-      if (requests.filter((request) => request.includes("action=prepare")).length === 1) {
-        return new Promise((_resolve, reject) => {
-          finish = reject;
-        });
-      }
-      return { data: { ready: true, codec: "avc1", format: "mp4", width: 1280, height: 720, bytes: 1000 } };
-    });
-    await open([movie]);
-    expect(wrapper.find('.export-option[data-option-id^="avc"] .export-option-size').exists()).toBe(false);
-    expect(wrapper.find('.export-option[data-option-id^="avc"] .export-conversion-note').text()).toBe("Needs Conversion");
-    await wrapper.setData({ selected: wrapper.vm.groups[0].options.map((option) => option.id) });
-    const running = wrapper.vm.confirm();
-    await flushPromises();
-    expect(wrapper.vm.handed).toBe(1);
-    expect(wrapper.vm.preparing).toBe(1);
-    expect(wrapper.text()).toContain("Preparing");
-    expect(wrapper.find('.export-option[data-option-id^="avc"] .export-option-size').exists()).toBe(false);
-    expect(wrapper.find(".export-output[data-option-id^=avc] .v-progress-circular").exists()).toBe(true);
-    expect(wrapper.findAll(".export-output a")).toHaveLength(0);
-    expect(wrapper.findAll(".export-output")).toHaveLength(1);
-    expect(wrapper.emitted("close")).toBeUndefined();
-    expect(wrapper.vm.downloads.map((item) => item.filename)).toEqual(["movie.mov", "movie_avc.mp4"]);
-    finish(new Error("encoder failed"));
-    await running;
-    await flushPromises();
-    expect(wrapper.vm.errors).toBe(1);
-    expect(wrapper.vm.transferError).toBe(true);
-    expect(wrapper.findAll(".action-retry-output")).toHaveLength(1);
-    expect(wrapper.find('.export-output[data-option-id^="avc"]').text()).toContain("Failed");
-    session.refresh.mockImplementation(async () => {
-      config.downloadToken = "rotated";
-    });
-    await wrapper.find(".action-retry-output").trigger("click");
-    await vi.advanceTimersByTimeAsync(250);
-    expect(requests.at(-1)).toContain("/rotated/avc?action=prepare");
-    expect(wrapper.vm.handed).toBe(2);
-    expect(wrapper.vm.errors).toBe(0);
-    expect(wrapper.vm.complete).toBe(true);
-    expect(wrapper.vm.transferError).toBe(false);
-    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(2);
-    expect(wrapper.emitted("close")).toHaveLength(1);
-    expect(wrapper.findAll(".export-output a")).toHaveLength(0);
-    const avc = wrapper.vm.downloads.find((item) => item.kind === "avc");
-    expect(wrapper.vm.optionMetadata(avc)).toBe("1280 × 720 · MP4 · avc1");
-    expect(wrapper.vm.optionBytes(avc)).toBe("1 KB");
-    expect(wrapper.vm.needsConversion(avc)).toBe(false);
-  });
-  it.each(["cancel", "escape", "photo", "lightbox", "revoke", "unmount"])("ignores a late preparation after %s", async (action) => {
-    let finish;
-    const movie = file("v", { Name: "movie.mov", FileType: "mov", MediaType: "video", Video: true });
-    Axios.get.mockImplementation(async (url) => {
-      if (url.includes("action=probe")) {
-        return { data: { avc: { preparable: true, ready: false, format: "mp4" } } };
-      }
-      return new Promise((resolve) => {
-        finish = resolve;
-      });
-    });
-    await open([movie]);
-    const dialog = wrapper.vm;
-    await wrapper.setData({ selected: [`avc:${movie.UID}`] });
-    const running = wrapper.vm.confirm();
-    await flushPromises();
-    expect(wrapper.vm.preparing).toBe(1);
-    if (action === "cancel") {
-      wrapper.vm.close();
-    } else if (action === "escape") {
-      await wrapper.find(".dialog-stub").trigger("keydown", { key: "Escape", code: "Escape" });
-    } else if (action === "photo") {
-      await wrapper.setProps({ uid: "ps6sg6be2lvl0yh8" });
-    } else if (action === "lightbox") {
-      await wrapper.setProps({ visible: false });
-    } else if (action === "unmount") {
-      wrapper.unmount();
-      wrapper = null;
-    } else {
-      config.values.acl.files.access_all = false;
-      await flushPromises();
-    }
-    await running;
-    finish({ data: { ready: true, format: "mp4", codec: "avc1" } });
-    await flushPromises();
-    expect(dialog.handed).toBe(0);
-    expect(dialog.states[`avc:${movie.UID}`].state).toBe("preparing");
-    expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
-  });
-  it("rediscovers ready cache on reopening and drops a late probe from the old opening", async () => {
-    const movie = file("v", { Name: "movie.mov", FileType: "mov", MediaType: "video", Video: true });
-    let finish;
-    await open([movie], { visible: false });
-    Axios.get.mockImplementationOnce(() => new Promise((resolve) => {
-      finish = resolve;
-    }));
-    await wrapper.setProps({ visible: true });
-    await flushPromises();
-    expect(wrapper.vm.loading).toBe(true);
-    wrapper.vm.close();
-    await wrapper.setProps({ visible: false });
-    Axios.get.mockResolvedValue({ data: { avc: { ready: true, preparable: false, format: "mp4", codec: "avc1" } } });
-    await wrapper.setProps({ visible: true });
-    await flushPromises();
-    expect(wrapper.vm.groups[0].options[1].ready).toBe(true);
-    expect(wrapper.vm.selected).toEqual([]);
-    finish({ data: { avc: { ready: false, preparable: false, format: "mp4" } } });
-    await flushPromises();
-    expect(wrapper.vm.groups[0].options[1].ready).toBe(true);
-  });
-});
-
-describe("indexed animated-image probing", () => {
-  it("probes image PNG/WebP animations using file Frames and Duration", async () => {
-    const png = file("a", { Name: "animated.png", FileType: "png", Frames: 2 });
-    const webp = file("b", { Name: "animated.webp", FileType: "webp", Duration: 1000000000 });
-    Axios.get.mockResolvedValue({ data: { avc: { ready: false, preparable: true, format: "mp4", codec: "avc1" } } });
-    await open([png, webp]);
-    expect(Axios.get).toHaveBeenCalledTimes(2);
-    expect(wrapper.vm.groups.map((group) => group.original.mediaType)).toEqual(["animated", "animated"]);
-    expect(wrapper.vm.groups.every((group) => group.options.map((option) => option.kind).join() === "original,avc")).toBe(true);
-  });
-});
-
-
 describe("export feedback regressions", () => {
   it("keeps counts local to JPEG original groups and suppresses misleading RAW errors", async () => {
     const raw = file("r", { Name: "capture.cr2", MediaType: "raw", FileType: "cr2" });
@@ -539,41 +383,60 @@ describe("export feedback regressions", () => {
     Photo.prototype.find.mockResolvedValue({ Files: [pdf, file("p", { Name: "document.pdf.jpg", Root: "sidecar" })] });
     await wrapper.vm.loadFiles();
     await flushPromises();
-    expect(wrapper.text()).toContain("Full Size Preview (First Page)");
+    expect(wrapper.text()).toContain("Full-Size Preview (First Page)");
     expect(wrapper.text()).not.toContain("unique still preview");
   });
-  it("surfaces failed probes and retries one group without losing another group's selection", async () => {
-    const movie = file("m", { Name: "movie.mov", FileType: "mov", MediaType: "video" });
-    const still = file("s");
-    Axios.get.mockImplementation((url) => url.includes(movie.Hash) ? Promise.reject({ response: { status: 503 } }) : Promise.resolve({ data: {} }));
-    await open([movie, still]);
-    expect(wrapper.find(".export-probe-error").text()).toContain("Failed to check video options");
-    expect(wrapper.vm.groups[0].options.map((option) => option.kind)).toEqual(["original"]);
-    await wrapper.setData({ selected: [`original:${still.UID}`] });
-    Axios.get.mockResolvedValue({ data: { codec: "hevc", avc: { format: "mp4", codec: "avc1", preparable: true } } });
-    await wrapper.find(".action-retry-probe").trigger("click");
-    await flushPromises();
-    expect(wrapper.find(".export-probe-error").exists()).toBe(false);
-    expect(wrapper.vm.groups[0].options.some((option) => option.kind === "avc")).toBe(true);
-    expect(wrapper.vm.selected).toEqual([`original:${still.UID}`]);
+});
+
+describe("metadata-based video export dialog", () => {
+  it.each(["video", "live", "animated"])("offers %s AVC downloads and explains the conversion wait", async (type) => {
+    await open([file("v", { Name: "movie.mov", FileType: "mov", MediaType: type, Codec: "hevc" })]);
+    expect(Axios.get).not.toHaveBeenCalled();
+    expect(wrapper.find(".export-conversion-note").text()).toContain("The download will start when the video is ready.");
+    expect(wrapper.find('.export-option[data-option-id^="avc"] .export-option-size').exists()).toBe(false);
+    const option = wrapper.vm.groups[0].options.at(-1);
+    await wrapper.setData({ selected: [option.id] });
+    const urls = [];
+    HTMLAnchorElement.prototype.click.mockImplementation(function () {
+      urls.push(this.getAttribute("href"));
+    });
+    await wrapper.vm.confirm();
+    expect(urls).toEqual([`/api/v1/dl/${file("v").Hash}?t=fresh&name=original&format=avc`]);
+    expect(wrapper.emitted("close")).toHaveLength(1);
+    expect(Axios.get).not.toHaveBeenCalled();
   });
-  it("ignores a manual probe retry that completes after reopening", async () => {
-    const movie = file("m", { Name: "movie.mov", FileType: "mov", MediaType: "video" });
-    Axios.get.mockRejectedValue({ response: { status: 503 } });
-    await open([movie]);
-    let resolve;
-    Axios.get.mockImplementationOnce(() => new Promise((done) => {
-      resolve = done;
-    }));
-    const pending = wrapper.vm.retryProbe(wrapper.vm.groups[0]);
-    await Promise.resolve();
-    await wrapper.setProps({ visible: false });
-    Axios.get.mockResolvedValue({ data: {} });
-    await wrapper.setProps({ visible: true });
+  it("shows real RAW extensions from generic RAW file records", async () => {
+    await open([file("r", { Name: "picture.CR2", FileType: "raw", MediaType: "raw" })]);
+    expect(wrapper.find(".export-file-type").text()).toBe("CR2 · RAW");
+    expect(wrapper.vm.optionMetadata(wrapper.vm.groups[0].options[0])).toContain("CR2");
+  });
+  it("keeps successful handoffs moving when another output fails", async () => {
+    await open();
+    vi.useFakeTimers();
+    HTMLAnchorElement.prototype.click.mockImplementationOnce(() => {
+      throw new Error("unavailable");
+    });
+    await wrapper.setData({ selected: wrapper.vm.groups.flatMap((group) => group.options.map((option) => option.id)) });
+    const running = wrapper.vm.confirm();
     await flushPromises();
-    resolve({ data: { avc: { format: "mp4", preparable: true } } });
-    await pending;
-    expect(wrapper.vm.groups[0].options.map((option) => option.kind)).toEqual(["original"]);
-    expect(wrapper.vm.selected).toEqual([]);
+    expect(wrapper.vm.pending).toBeGreaterThan(0);
+    expect(wrapper.text()).toContain("Some files could not be exported. Please try again.");
+    expect(wrapper.text()).not.toContain("Export stopped");
+    await vi.runAllTimersAsync();
+    await running;
+    expect(wrapper.vm.handed).toBe(wrapper.vm.downloads.length - 1);
+    expect(wrapper.vm.errors).toBe(1);
+    expect(wrapper.find(".action-retry-output").attributes("aria-label")).toBe("Retry a.jpg");
+  });
+});
+
+describe("export parent teardown", () => {
+  it("releases the focus scope on unmount without waiting for afterLeave", async () => {
+    await open();
+    wrapper.vm.afterEnter();
+    const dialog = wrapper.vm;
+    wrapper.unmount();
+    wrapper = null;
+    expect(view.leave).toHaveBeenCalledWith(dialog);
   });
 });

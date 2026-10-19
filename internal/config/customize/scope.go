@@ -41,6 +41,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 
 	// Browse, upload and download files.
 	m.Features.Upload = s.Features.Upload && scopes.Contains(acl.ResourcePhotos.String())
+	m.Features.Export = s.Features.Export && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Download = s.Features.Download && scopes.Contains(acl.ResourcePhotos.String())
 
 	// Library.

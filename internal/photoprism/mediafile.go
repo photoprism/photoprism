@@ -42,42 +42,40 @@ import (
 
 // MediaFile represents a single photo, video, sidecar, or other supported media file.
 type MediaFile struct {
-	fileName              string
-	fileNameResolved      string
-	fileRoot              string
-	statErr               error
-	mimeErr               error
-	modTime               time.Time
-	fileInfo              os.FileInfo
-	fileSize              int64
-	fileType              fs.Type
-	mimeType              string
-	contentType           string
-	takenAt               time.Time
-	takenAtLocal          time.Time
-	takenAtSrc            string
-	hash                  string
-	checksum              string
-	hasPreviewImage       bool
-	noColorProfile        bool
-	colorProfile          string
-	width                 int
-	height                int
-	metaData              meta.Data
-	metaOnce              sync.Once
-	videoInfo             video.Info
-	videoOnce             sync.Once
-	insta360Model         string
-	insta360Once          sync.Once
-	exportCapture         *Insta360Capture
-	exportCaptureResolved bool
-	importedCapture       *Insta360Capture
-	importedOnce          sync.Once
-	visualProjection      projection.Type
-	fileMutex             sync.Mutex
-	location              *entity.Cell
-	imageConfig           *image.Config
-	relatedMain           *MediaFile
+	fileName         string
+	fileNameResolved string
+	fileRoot         string
+	statErr          error
+	mimeErr          error
+	modTime          time.Time
+	fileInfo         os.FileInfo
+	fileSize         int64
+	fileType         fs.Type
+	mimeType         string
+	contentType      string
+	takenAt          time.Time
+	takenAtLocal     time.Time
+	takenAtSrc       string
+	hash             string
+	checksum         string
+	hasPreviewImage  bool
+	noColorProfile   bool
+	colorProfile     string
+	width            int
+	height           int
+	metaData         meta.Data
+	metaOnce         sync.Once
+	videoInfo        video.Info
+	videoOnce        sync.Once
+	insta360Model    string
+	insta360Once     sync.Once
+	importedCapture  *Insta360Capture
+	importedOnce     sync.Once
+	visualProjection projection.Type
+	fileMutex        sync.Mutex
+	location         *entity.Cell
+	imageConfig      *image.Config
+	relatedMain      *MediaFile
 }
 
 // SetRelatedMain caches the main file of the group this file belongs to, so
@@ -1203,17 +1201,6 @@ func (m *MediaFile) Duration() time.Duration {
 // IsAnimatedImage checks if the file is an animated image.
 func (m *MediaFile) IsAnimatedImage() bool {
 	return fs.IsAnimatedImage(m.fileName) && (m.MetaData().Frames > 1 || m.MetaData().Duration > 0)
-}
-
-// SetAnimationInfo fills missing animation metadata from the indexed source.
-func (m *MediaFile) SetAnimationInfo(frames int, duration time.Duration) {
-	m.MetaData()
-	if m.metaData.Frames == 0 && frames > 0 {
-		m.metaData.Frames = frames
-	}
-	if m.metaData.Duration == 0 && duration > 0 {
-		m.metaData.Duration = duration
-	}
 }
 
 // IsJSON checks if the file is a JSON sidecar file with a supported file type extension.

@@ -10,7 +10,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 // transportConversions coordinates transport-stream output throughout the serving process.
@@ -28,13 +27,12 @@ type transportRequest struct {
 	exclude string
 	noMutex bool
 	force   bool
-	exact   bool
 }
 
 // matches reports whether callers share both conversion settings and the observed source version.
 // Exclusion strings use Formats.String, whose sorted keys make equal sets compare identically.
 func (r transportRequest) matches(other transportRequest) bool {
-	if r.source != other.source || r.conf != other.conf || r.encoder != other.encoder || r.exclude != other.exclude || r.noMutex != other.noMutex || r.force != other.force || r.exact != other.exact {
+	if r.source != other.source || r.conf != other.conf || r.encoder != other.encoder || r.exclude != other.exclude || r.noMutex != other.noMutex || r.force != other.force {
 		return false
 	}
 	if r.info == nil || other.info == nil {
@@ -49,7 +47,6 @@ type transportCall struct {
 	previous   *transportCall
 	done       chan struct{}
 	path       string
-	projection projection.Type
 	err        error
 	panicValue any
 }
@@ -62,14 +59,6 @@ type transportGroup struct {
 
 // start registers an operation before returning, retaining only the current tail for each destination.
 func (g *transportGroup) start(key string, request transportRequest, run func() (string, error)) *transportCall {
-	return g.startProjected(key, request, func() (string, projection.Type, error) {
-		name, err := run()
-		return name, projection.Unknown, err
-	})
-}
-
-// startProjected coordinates results while retaining explicit output projection metadata.
-func (g *transportGroup) startProjected(key string, request transportRequest, run func() (string, projection.Type, error)) *transportCall {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
 	previous := g.calls[key]
@@ -86,7 +75,7 @@ func (g *transportGroup) startProjected(key string, request transportRequest, ru
 }
 
 // execute publishes completion even when a callback panics or exits its goroutine.
-func (g *transportGroup) execute(key string, call *transportCall, run func() (string, projection.Type, error)) {
+func (g *transportGroup) execute(key string, call *transportCall, run func() (string, error)) {
 	completed := false
 	defer func() {
 		if !completed {
@@ -104,7 +93,7 @@ func (g *transportGroup) execute(key string, call *transportCall, run func() (st
 		<-call.previous.done
 		call.previous = nil
 	}
-	call.path, call.projection, call.err = run()
+	call.path, call.err = run()
 	completed = true
 }
 
@@ -119,7 +108,7 @@ func (call *transportCall) wait() (string, error) {
 
 // coordinatedTransport retains destination coordination through remuxing and any fallback transcode.
 // Results carry paths rather than mutable MediaFile objects so each caller gets its own metadata view.
-func (w *Convert) coordinatedTransport(f *MediaFile, encoder encode.Encoder, noMutex, force bool, version *avcSourceVersion) (*MediaFile, error) {
+func (w *Convert) coordinatedTransport(f *MediaFile, encoder encode.Encoder, noMutex, force bool) (*MediaFile, error) {
 	destination, err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4)
 	if err != nil {
 		return nil, fmt.Errorf("convert: %w (remux)", err)
@@ -128,15 +117,17 @@ func (w *Convert) coordinatedTransport(f *MediaFile, encoder encode.Encoder, noM
 	if err != nil {
 		return nil, fmt.Errorf("convert: %w (remux)", err)
 	}
-	if version == nil {
-		version, err = newAvcSourceVersion(f.FileName())
-		if err != nil {
-			return nil, fmt.Errorf("convert: %w (remux)", err)
-		}
+	source, err := fs.Resolve(f.FileName())
+	if err != nil {
+		return nil, fmt.Errorf("convert: %w (remux)", err)
 	}
-	request := transportRequest{source: version.name, info: version.info, conf: w.conf, encoder: encoder, exclude: w.ffmpegExclude.String(), noMutex: noMutex, force: force}
+	info, err := os.Stat(source)
+	if err != nil {
+		return nil, fmt.Errorf("convert: %w (remux)", err)
+	}
+	request := transportRequest{source: source, info: info, conf: w.conf, encoder: encoder, exclude: w.ffmpegExclude.String(), noMutex: noMutex, force: force}
 	call := transportConversions.start(filepath.Join(parent, filepath.Base(destination)), request, func() (string, error) {
-		file, runErr := w.toAvc(f, encoder, noMutex, force, false, false, version)
+		file, runErr := w.toAvc(f, encoder, noMutex, force, false)
 		if file == nil {
 			return "", runErr
 		}

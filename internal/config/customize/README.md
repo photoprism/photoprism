@@ -1,6 +1,6 @@
 ## PhotoPrism — Customize Package
 
-**Last Updated:** October 9, 2026
+**Last Updated:** October 19, 2026
 
 ### Overview
 
@@ -20,7 +20,7 @@ The `customize` package defines user-facing configuration defaults for PhotoPris
 
 ### Per-Role & Per-Scope Gating
 
-- `Settings.ApplyACL(rules, role)` and `Settings.ApplyScope(scope)` filter selected feature flags for each session. Export retains its configured value; the frontend's `canExport(config)` additionally requires `files.access_all` or `files.full_access`. Existing API authorization is unchanged.
+- `Settings.ApplyACL(rules, role)` and `Settings.ApplyScope(scope)` filter selected feature flags for each session. Export requires both `photos.access_all` and `photos.download` grants and the `photos` scope. The frontend's `canExport(config)` reads the resulting `features.export` flag. Export stays independent of the Download setting and its content filters; existing endpoint authorization still applies.
 - The `Account` and `AppPasswords` flags require permission (and scope) to update the password (`ResourcePassword`/`ActionUpdate`), so a share-token visitor without an account does not see the account or app-password affordances.
 - This per-session gating shapes only the client config the Web UI reads; server-side enforcement of disabled app passwords uses the global `AppPasswords` flag via `Config.DisableAppPasswords()`.
 
