@@ -147,10 +147,10 @@ func ServeMCP(router *gin.RouterGroup) {
 			return
 		}
 
-		// Read the capped body of a request, so it can be checked before the SDK runs it.
-		if c.Request.Method == http.MethodPost {
+		// Read the capped body of a request, so it can be checked before the SDK runs it; cap other bodies as well.
+		if c.Request.Method != http.MethodPost {
 			LimitRequestBodyBytes(c, MaxMCPRequestBytes)
-
+		} else {
 			calls, ok := mcpReadCalls(c, s)
 
 			if !ok {
@@ -209,10 +209,12 @@ type mcpCall struct {
 	} `json:"params"`
 }
 
-// mcpReadCalls reads and restores the request body, and returns the JSON-RPC messages in it, which may be a
-// batch. It aborts and returns false if the body cannot be read, is not a single JSON value, or holds more than
-// MaxMCPBatchMessages.
+// mcpReadCalls reads at most MaxMCPRequestBytes of the request body, restores it, and returns the JSON-RPC messages
+// in it, which may be a batch. It aborts and returns false if the body is too large or cannot be read, is not a
+// single JSON value, or holds more than MaxMCPBatchMessages.
 func mcpReadCalls(c *gin.Context, s *entity.Session) (calls []mcpCall, ok bool) {
+	LimitRequestBodyBytes(c, MaxMCPRequestBytes)
+
 	body, err := io.ReadAll(c.Request.Body)
 
 	if err != nil {

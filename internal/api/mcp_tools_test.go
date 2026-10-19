@@ -287,6 +287,13 @@ func TestMcpReadCalls(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, c.Writer.Status(), suffix)
 		}
 	})
+	t.Run("HelperCaps", func(t *testing.T) {
+		// The helper caps the body itself.
+		c := newContext(strings.NewReader("[" + strings.Repeat(" ", int(MaxMCPRequestBytes)) + "]"))
+		_, ok := mcpReadCalls(c, &entity.Session{})
+		assert.False(t, ok)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, c.Writer.Status())
+	})
 	t.Run("ReadError", func(t *testing.T) {
 		c := newContext(iotest.ErrReader(errors.New("read failed")))
 		_, ok := mcpReadCalls(c, &entity.Session{})
