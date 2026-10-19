@@ -29,8 +29,6 @@ Graphics & Video:
   Related: ffmpeg-release, ffmpeg-master
 
 Machine Learning:
-  tensorflow       Install the TensorFlow library for CPUs
-  tensorflow-gpu   Install the TensorFlow library with GPU support
   onnxruntime      Install the ONNX Runtime library
   onnxruntime-gpu  Install the ONNX Runtime library with CUDA support, and the cuda target
   cuda             Install the NVIDIA CUDA runtime libraries on their own
@@ -85,12 +83,6 @@ install-proxysql-admin:
 gpu: install-gpu
 install-gpu:
 	/scripts/install-gpu.sh
-tensorflow: install-tensorflow
-tensorflow-amd64-cpu: install-tensorflow
-tensorflow-amd64-avx: install-tensorflow
-tensorflow-amd64-avx2: install-tensorflow
-install-tensorflow:
-	/scripts/install-tensorflow.sh auto
 onnxruntime: install-onnx
 install-onnx:
 	/scripts/install-onnx.sh
@@ -100,9 +92,6 @@ install-onnx-gpu:
 cuda: install-cuda
 install-cuda:
 	/scripts/install-cuda.sh
-tensorflow-gpu: install-tensorflow-gpu
-install-tensorflow-gpu:
-	/scripts/install-tensorflow.sh gpu
 codex:
 	/scripts/install-codex.sh
 davfs: install-davfs
