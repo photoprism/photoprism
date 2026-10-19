@@ -30,7 +30,7 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 - An issue is complete only when every `MUST` is checked; never tick a box on the strength of a plan alone or an unrun test.
 - When referencing an issue from a commit that fulfills some of its criteria, update the matching boxes first.
 
-> Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
+> Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user. Ticking the Acceptance Criteria checkboxes of an issue you are delivering against, for work that is committed and verified, is not a restricted modification.
 
 The repo's issue templates use the GitHub `type:` property instead of `bug`/`idea` labels. The types are configured for the organization, not in this repo, so read them with `gh api orgs/photoprism/issue-types --jq '.[].name'` rather than assuming — as of September 2026 they are `Task`, `Bug`, `Feature`, `Enhancement` and `Epic`, and the templates name only some of them. `gh issue create --type <name>` sets the type when filing, and `gh issue edit --type <name>` changes it afterwards; neither needs the web UI.
 
