@@ -17,6 +17,25 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// AlbumTypeResource returns the ACL resource that governs the albums of the type, or the default resource for
+// an unknown or empty type.
+func AlbumTypeResource(albumType string) acl.Resource {
+	switch albumType {
+	case entity.AlbumManual:
+		return acl.ResourceAlbums
+	case entity.AlbumFolder:
+		return acl.ResourceFolders
+	case entity.AlbumMoment:
+		return acl.ResourceMoments
+	case entity.AlbumMonth:
+		return acl.ResourceCalendar
+	case entity.AlbumState:
+		return acl.ResourcePlaces
+	default:
+		return acl.ResourceDefault
+	}
+}
+
 // Albums finds AlbumResults based on the search form without checking rights or permissions.
 func Albums(frm form.SearchAlbums) (results AlbumResults, err error) {
 	return UserAlbums(frm, nil)
@@ -55,27 +74,12 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	if sess != nil {
 		user := sess.GetUser()
 
-		// Determine resource to check.
-		var aclResource acl.Resource
-		switch frm.Type {
-		case entity.AlbumManual:
+		// Determine resource to check. When no album type is given and the UID filter is used, default to
+		// the "albums" resource, so requests from roles without default access to all resources are not denied.
+		aclResource := AlbumTypeResource(frm.Type)
+
+		if aclResource == acl.ResourceDefault && len(uids) > 0 {
 			aclResource = acl.ResourceAlbums
-		case entity.AlbumFolder:
-			aclResource = acl.ResourceFolders
-		case entity.AlbumMoment:
-			aclResource = acl.ResourceMoments
-		case entity.AlbumMonth:
-			aclResource = acl.ResourceCalendar
-		case entity.AlbumState:
-			aclResource = acl.ResourcePlaces
-		default:
-			// When no album type is given and the UID filter is used, default to the "albums" resource,
-			// so requests from roles without default access to all resources are not denied.
-			if len(uids) > 0 {
-				aclResource = acl.ResourceAlbums
-			} else {
-				aclResource = acl.ResourceDefault
-			}
 		}
 
 		// Check the session's effective permissions: for a client session, the intersection of the

@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -118,4 +119,18 @@ func TestLabelsPublicOnly(t *testing.T) {
 	assert.False(t, LabelsPublicOnly(entity.SessionFixtures.Pointer("alice")))
 	assert.True(t, LabelsPublicOnly(guest))
 	assert.True(t, LabelsPublicOnly(&entity.Session{AuthProvider: authn.ProviderClient.String()}))
+}
+
+func TestAlbumTypeResource(t *testing.T) {
+	for albumType, resource := range map[string]acl.Resource{
+		entity.AlbumManual: acl.ResourceAlbums,
+		entity.AlbumFolder: acl.ResourceFolders,
+		entity.AlbumMoment: acl.ResourceMoments,
+		entity.AlbumMonth:  acl.ResourceCalendar,
+		entity.AlbumState:  acl.ResourcePlaces,
+		"":                 acl.ResourceDefault,
+		"album|folder":     acl.ResourceDefault,
+	} {
+		assert.Equal(t, resource, AlbumTypeResource(albumType), albumType)
+	}
 }

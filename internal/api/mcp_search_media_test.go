@@ -384,3 +384,56 @@ func TestServeMCP_GetMedia(t *testing.T) {
 		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"), w.Header().Get("WWW-Authenticate"))
 	})
 }
+
+// TestServeMCP_Collections checks that list_collections and get_collection return the albums GET /api/v1/albums
+// returns for the same session.
+func TestServeMCP_Collections(t *testing.T) {
+	app, router, conf := NewApiTest()
+	prepareMCPTest(t)
+	ServeMCP(router)
+	SearchAlbums(router)
+
+	token := AuthenticateAdmin(app, router)
+	sessionID := mcpInitSession(t, app, token)
+
+	t.Run("SameAsWebApp", func(t *testing.T) {
+		for _, albumType := range []string{"album", "folder", "moment", "month", "state"} {
+			r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/albums?count=100000&type="+albumType, token)
+			require.Equal(t, http.StatusOK, r.Code)
+
+			var expected []string
+			for _, a := range gjson.Parse(r.Body.String()).Array() {
+				expected = append(expected, a.Get("UID").String())
+			}
+
+			var got []string
+			for offset := 0; ; offset += 7 {
+				out := mcpCallTool(t, app, token, sessionID, "list_collections", map[string]any{"type": albumType, "limit": 7, "offset": offset})
+				assert.Equal(t, int64(len(expected)), out.Get("total").Int(), albumType)
+				for _, c := range out.Get("items").Array() {
+					got = append(got, c.Get("uid").String())
+				}
+				if !out.Get("truncated").Bool() {
+					break
+				}
+			}
+
+			assert.Equal(t, expected, got, albumType)
+
+			for _, uid := range expected {
+				out := mcpCallTool(t, app, token, sessionID, "get_collection", map[string]any{"uid": uid})
+				assert.Equal(t, uid, out.Get("uid").String())
+				assert.Equal(t, albumType, out.Get("type").String())
+			}
+		}
+	})
+	t.Run("StepUp", func(t *testing.T) {
+		sess, err := entity.AddClientSession("mcp-test-collections", 3600, "mcp photos", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"list_collections","arguments":{}}}`, sess.AuthToken(), mcpInitSession(t, app, sess.AuthToken()))
+		assert.Equal(t, http.StatusForbidden, w.Code)
+		assert.Equal(t, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos", "albums"), w.Header().Get("WWW-Authenticate"))
+	})
+}

@@ -183,8 +183,8 @@ func addMediaDetails(items []Media, rows search.PhotoResults, s *entity.Session)
 	addMediaCollections(items, index, ids, s)
 }
 
-// addMediaCollections adds the collections of the pictures to the media, each type checked by the rules of its own
-// resource, if the session may view albums.
+// addMediaCollections adds the collections of the pictures to the media, each type checked by the rules and the
+// token scope of its own resource, if the session may view albums.
 func addMediaCollections(items []Media, index map[uint]int, ids []uint, s *entity.Session) {
 	if s.SeesAnyDetail(acl.ResourceAlbums) {
 		var refs []struct {
@@ -209,6 +209,10 @@ func addMediaCollections(items []Media, index map[uint]int, ids []uint, s *entit
 		titles := make(map[string]Ref)
 
 		for albumType, uids := range byType {
+			if _, ok := collectionTypeScope(s, albumType); !ok {
+				continue
+			}
+
 			albums, err := search.UserAlbums(form.SearchAlbums{UID: strings.Join(uids, "|"), Type: albumType, Count: len(uids)}, s)
 
 			if err != nil {

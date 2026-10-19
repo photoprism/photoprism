@@ -27,6 +27,8 @@
 - Library tools, registered on the library server only (authenticated, non-public sessions) and authorized per call:
   - `search_media`
   - `get_media`
+  - `list_collections`
+  - `get_collection`
 
 ### Package layout
 
@@ -205,7 +207,7 @@ The library tools read the library with the permissions of the session, through 
 `search_media` (declaration: `photos`, `search`)
 
 - Inputs: `query` (search filters, see `find_search_filters`), `type` (`image`, `raw`, `live`, `video`, `animated`, `audio`, `vector`, `document`, combined with `|`), `collection` (album UID), `person` (person UID), `taken_after`, `taken_before` (`YYYY-MM-DD`; on or after, and before the date), `order` (`newest` default, `oldest`, `added`, `edited`, `relevance`), `limit` (default 20, max 50), `offset`, `detail` (`brief` default, `full`)
-- Returns `items`, `limit`, `offset`, `next_offset`, `truncated`, and optional `warnings`, without `total`; each item is a media with `uid`, `type`, `title`, `taken_at`, `taken_at_local`, `place` (`name`, `country`), and `favorite`, and with `detail=full` also `caption`, `camera`, `lens`, `labels`, `people`, and `collections`
+- Returns `items`, `limit`, `offset`, `next_offset`, `truncated`, and optional `warnings`, without `total`; each item is a media with `uid`, `type`, `title`, `taken_at`, `taken_at_local`, `place` (`name`, `country`), and `favorite`, and with `detail=full` also `caption`, `camera`, `lens`, `labels`, `people`, and `collections` (each collection type only with the token scope of its resource)
 - Runs `search.UserPhotos` like `GET /api/v1/photos?merged=true`: the web app's file selection, so file filters such as `codec:avc1` find the same media, with the feature settings of `search.ApplyPhotoFeatures`, as the photos endpoint applies them; structured inputs take precedence over the same filters in `query`
 - `offset` is a row position of the search result, not a media count: pass back `next_offset`, which is omitted on the last page. Each page reads one row before `offset` and a window of `3 * limit` rows (at most 150), skips the rows of a media that began before `offset`, and reads on in windows that double in size (at most 5,000 rows) until it has `limit` media and has seen where the next one begins (`pageMedia`); it stops when the request is canceled. The offered orders keep the rows of a media adjacent, which `TestSearchMediaOrders` checks
 - `detail=full` loads labels, people, and collections with one query per kind for the page and keeps those the session may see: labels without private ones if `search.LabelsPublicOnly` applies, people as `search.UserSubjects` returns them, and collections as `search.UserAlbums` returns them per collection type. Labels and people require full access to pictures and collections view access to albums, including the `albums` scope of a token, as in the photo details
@@ -215,6 +217,13 @@ The library tools read the library with the permissions of the session, through 
 - Inputs: `uid` (media UID from `search_media`)
 - Returns the `detail=full` fields of `search_media` plus `width` and `height` (primary file), `duration` (seconds), `location` (`lat`, `lng`, `altitude`) if the session may view places, `keywords` of the picture details if it has full access to pictures, `files` (`name` without path, `type`, `size`, `primary`), `quality`, `private`, `archived`, and `review` (quality 0 to 2)
 - Uses the checks of `GET /api/v1/photos/:uid` (`search.PhotoVisibleToSession`, `query.PhotoPreloadByUID`, `Photo.RedactForSession`) and the relation filters of `search_media`; a UID the session cannot see gets the same not-found error as one that does not exist
+
+`list_collections` (declaration: `albums`, `search`) and `get_collection` (`albums`, `view`)
+
+- `list_collections` inputs: `type` (`album` default, `folder`, `moment`, `month`, `state`, or `all`), `query` (text in titles and locations, not search filters), `limit`, `offset`; returns `items`, `total`, `limit`, `offset`, `truncated`, and optional `warnings`
+- `get_collection` input: `uid` (collection UID from `list_collections`)
+- Each collection has `uid`, `type`, `title`, `description`, `media_count`, `cover` (media UID, if the session may see the picture), `year`, `month`, and `day` (months and moments), `created_at`, and `updated_at`
+- Runs `search.UserAlbums` per type, like `GET /api/v1/albums?type=<type>`, so each type is checked by its own resource (`search.AlbumTypeResource`), and a token also needs the scope of that resource: `albums`, `folders`, `moments`, `calendar` (months), or `places` (states). With `all`, types the role or token may not see are left out, with a warning naming a missing scope. `get_collection` checks a collection by its own type and reports one the session cannot see as not found
 
 ### MCP Client Compatibility
 

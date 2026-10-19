@@ -139,6 +139,10 @@ func TestAddMediaDetails(t *testing.T) {
 		assert.True(t, hasMoment(admin))
 		assert.True(t, hasMoment(client))
 
+		// The token scope of the type applies too.
+		assert.False(t, hasMoment(&entity.Session{AuthProvider: authn.ProviderClient.String(), AuthScope: "mcp photos albums"}))
+		assert.True(t, hasMoment(&entity.Session{AuthProvider: authn.ProviderClient.String(), AuthScope: "mcp photos albums moments"}))
+
 		acl.RulesMutex.Lock()
 		grant := acl.Rules[acl.ResourceMoments][acl.RoleClient]
 		delete(acl.Rules[acl.ResourceMoments], acl.RoleClient)
