@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 
 	"github.com/stretchr/testify/assert"
@@ -1448,5 +1449,136 @@ func TestClient_HasInactiveUser(t *testing.T) {
 		u.SuperAdmin = true
 		m := NewClient().SetUser(&u)
 		assert.False(t, m.HasInactiveUser())
+	})
+}
+
+func TestClient_Save_Disabled(t *testing.T) {
+	t.Run("AppClient", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Disabled App", AuthMethod: authn.MethodPKCE.String(), AuthScope: "mcp", RedirectURIs: []string{"https://claude.ai/cb"}})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+
+		g := newTestGrant(t, client.ClientUID)
+		sess := newTestGrantSession(t, g)
+
+		client.AuthEnabled = false
+		require.NoError(t, client.Save())
+
+		// The grant stays so that users need no new approval, while its access token ends.
+		assert.NotNil(t, FindGrant(g.GrantUID))
+		_, err = FindAnySession(sess.ID)
+		assert.Error(t, err)
+	})
+	t.Run("EnabledAppClient", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Enabled App", AuthMethod: authn.MethodPKCE.String(), AuthScope: "mcp", RedirectURIs: []string{"https://claude.ai/cb"}})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+
+		g := newTestGrant(t, client.ClientUID)
+		sess := newTestGrantSession(t, g)
+
+		client.ClientName = "Renamed App"
+		require.NoError(t, client.Save())
+
+		_, err = FindAnySession(sess.ID)
+		assert.NoError(t, err)
+	})
+	t.Run("ApiClient", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00020"
+		require.NoError(t, client.Save())
+		t.Cleanup(func() { _ = client.Delete() })
+
+		ids := newClientSessions(t, client, 2, time.Date(2026, 10, 20, 10, 0, 0, 0, time.UTC))
+
+		client.AuthEnabled = false
+		require.NoError(t, client.Save())
+		assertSessions(t, nil, ids)
+	})
+}
+
+func TestClient_RevokeChangedAccess(t *testing.T) {
+	t.Run("ScopeChanged", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00021"
+		client.AuthScope = "metrics"
+		ids := newClientSessions(t, client, 2, time.Date(2026, 10, 20, 10, 0, 0, 0, time.UTC))
+
+		assert.Equal(t, 0, client.RevokeChangedAccess(client.ClientRole, "metrics"))
+		assertSessions(t, ids, nil)
+
+		client.AuthScope = "metrics vision"
+		assert.Equal(t, 2, client.RevokeChangedAccess(client.ClientRole, "metrics"))
+		assertSessions(t, nil, ids)
+	})
+	t.Run("RoleChanged", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00022"
+		client.AuthScope = "*"
+		ids := newClientSessions(t, client, 1, time.Date(2026, 10, 20, 10, 0, 0, 0, time.UTC))
+
+		client.ClientRole = "admin"
+		assert.Equal(t, 1, client.RevokeChangedAccess("client", "*"))
+		assertSessions(t, nil, ids)
+	})
+	t.Run("EmptyScope", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00027"
+		client.AuthScope = "*"
+		ids := newClientSessions(t, client, 1, time.Date(2026, 10, 20, 10, 0, 0, 0, time.UTC))
+
+		// An empty scope is stored as "*", which is no change.
+		assert.Equal(t, 0, client.RevokeChangedAccess(client.ClientRole, ""))
+		assertSessions(t, ids, nil)
+	})
+	t.Run("AppClient", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00023"
+		client.AuthMethod = authn.MethodPKCE.String()
+		client.AuthScope = "mcp"
+		ids := newClientSessions(t, client, 1, time.Date(2026, 10, 20, 10, 0, 0, 0, time.UTC))
+
+		assert.Equal(t, 0, client.RevokeChangedAccess(client.ClientRole, "*"))
+		assertSessions(t, ids, nil)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var client *Client
+		assert.Equal(t, 0, client.RevokeChangedAccess("client", "*"))
+	})
+}
+
+func TestCountClientSessions(t *testing.T) {
+	first := NewClient()
+	first.ClientUID = "cs5gfen1bgx00024"
+	second := NewClient()
+	second.ClientUID = "cs5gfen1bgx00025"
+
+	newClientSessions(t, first, 2, time.Date(2026, 10, 20, 10, 0, 0, 0, time.UTC))
+	ids := newClientSessions(t, second, 2, time.Date(2026, 10, 20, 10, 0, 0, 0, time.UTC))
+
+	// An expired session is not counted, while a session without an expiration time is.
+	require.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", ids[0]).UpdateColumn("sess_expires", unix.Now()-60).Error)
+	require.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", ids[1]).UpdateColumn("sess_expires", 0).Error)
+
+	t.Run("Success", func(t *testing.T) {
+		counts, err := CountClientSessions([]string{first.ClientUID, second.ClientUID, "cs5gfen1bgx00026"})
+		require.NoError(t, err)
+		assert.Equal(t, map[string]int{first.ClientUID: 2, second.ClientUID: 1}, counts)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		counts, err := CountClientSessions(nil)
+		require.NoError(t, err)
+		assert.Empty(t, counts)
+	})
+}
+
+func TestClientScope(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "metrics vision", clientScope("vision  metrics"))
+		assert.Equal(t, "*", clientScope("*"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "*", clientScope(""))
+		assert.Equal(t, "*", clientScope("  "))
 	})
 }

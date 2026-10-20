@@ -76,10 +76,10 @@ func prepareAppTokenTest(t *testing.T) (*gin.Engine, *gin.RouterGroup, *config.C
 	ServeMCP(router)
 	SearchPhotos(router)
 
-	prevHandler := entity.GrantDeletedHandler
+	prevDeleted, prevSuspended := entity.GrantDeletedHandler, entity.GrantSuspendedHandler
 	t.Cleanup(func() {
 		entity.DeleteClientGrants(client.ClientUID)
-		entity.GrantDeletedHandler = prevHandler
+		entity.GrantDeletedHandler, entity.GrantSuspendedHandler = prevDeleted, prevSuspended
 	})
 
 	return app, router, conf, client
@@ -676,4 +676,39 @@ func refreshForm(clientID, refreshToken string) url.Values {
 func signIn(app *gin.Engine, username, password string) string {
 	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{Username: username, Password: password}))
 	return gjson.Get(r.Body.String(), "access_token").String()
+}
+
+func TestOAuthAppToken_DisabledClient(t *testing.T) {
+	app, router, conf, client := prepareAppTokenTest(t)
+	call := `{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}`
+
+	r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, approvedCode(t, app, router, conf, client)), "", "")
+	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+	accessToken := gjson.Get(r.Body.String(), "access_token").String()
+	refreshToken := gjson.Get(r.Body.String(), "refresh_token").String()
+	mcpSession := mcpInitSession(t, app, accessToken)
+	require.Equal(t, http.StatusOK, mcpPost(app, call, accessToken, mcpSession).Code)
+
+	client.AuthEnabled = false
+	require.NoError(t, client.Save())
+
+	// The access token ends at once, the grant stays, and a refresh is refused while the client is disabled.
+	assert.Equal(t, http.StatusUnauthorized, mcpPost(app, call, accessToken, mcpSession).Code)
+	grants, err := entity.FindClientGrants(client.ClientUID)
+	require.NoError(t, err)
+	assert.Len(t, grants, 1)
+
+	r = postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
+	assert.Equal(t, http.StatusUnauthorized, r.Code)
+	assert.Equal(t, oauth.ErrCodeInvalidClient, gjson.Get(r.Body.String(), "error").String())
+
+	// Once enabled again, the refresh succeeds without a new approval, and the MCP session that was open has ended.
+	client.AuthEnabled = true
+	require.NoError(t, client.Save())
+
+	r = postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
+	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+	nextToken := gjson.Get(r.Body.String(), "access_token").String()
+	assert.Equal(t, http.StatusNotFound, mcpPost(app, call, nextToken, mcpSession).Code)
+	assert.Equal(t, http.StatusOK, mcpPost(app, call, nextToken, mcpInitSession(t, app, nextToken)).Code)
 }

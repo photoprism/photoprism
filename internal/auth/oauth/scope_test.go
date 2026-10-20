@@ -35,6 +35,12 @@ func TestValidateScopes(t *testing.T) {
 		require.NotNil(t, err)
 		assert.Equal(t, ErrCodeInvalidScope, err.Code)
 	})
+	t.Run("ClientManagement", func(t *testing.T) {
+		assert.NotContains(t, AppScopes, acl.ResourceClients.String())
+		_, err := ValidateScopes([]string{"mcp", acl.ResourceClients.String()}, "*")
+		require.NotNil(t, err)
+		assert.Equal(t, ErrCodeInvalidScope, err.Code)
+	})
 	t.Run("NotAllowedForClient", func(t *testing.T) {
 		_, err := ValidateScopes([]string{"mcp", "photos"}, "mcp")
 		require.NotNil(t, err)

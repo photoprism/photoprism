@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -176,6 +177,42 @@ func FindClientsByNodeUUID(nodeUUID string) []Client {
 	}
 
 	return list
+}
+
+// clientScope returns the sanitized scope, reading an empty scope as "*", which SetFormValues stores for it.
+func clientScope(s string) string {
+	if s = clean.Scope(s); s == "" {
+		return list.Any
+	}
+
+	return s
+}
+
+// CountClientSessions returns the number of sessions per client UID for the specified client UIDs, leaving out
+// those whose expiration time has passed.
+func CountClientSessions(clientUIDs []string) (map[string]int, error) {
+	result := make(map[string]int, len(clientUIDs))
+
+	if len(clientUIDs) == 0 {
+		return result, nil
+	}
+
+	rows := []struct {
+		ClientUID string
+		Count     int
+	}{}
+
+	if err := Db().Model(&Session{}).Select("client_uid, COUNT(*) AS count").
+		Where("client_uid IN (?)", clientUIDs).Where("(sess_expires <= 0 OR sess_expires >= ?)", unix.Now()).
+		Group("client_uid").Scan(&rows).Error; err != nil {
+		return result, err
+	}
+
+	for _, row := range rows {
+		result[row.ClientUID] = row.Count
+	}
+
+	return result, nil
 }
 
 // GetUID returns the client uid string.
@@ -383,14 +420,29 @@ func (m *Client) Save() error {
 		return err
 	}
 
-	// Delete related sessions if authentication is disabled.
+	// Delete related sessions and app access tokens if authentication is disabled.
 	if m.AuthEnabled {
 		return nil
 	} else if _, err := m.DeleteSessions(); err != nil {
 		return err
+	} else if m.IsApp() {
+		SuspendClientGrants(m.ClientUID)
 	}
 
 	return nil
+}
+
+// RevokeChangedAccess revokes the sessions of a client that is not an app client if its role or scope
+// differs from the specified previous values, and returns the number of revoked sessions. App clients are
+// skipped, since their next access token takes the new scope.
+func (m *Client) RevokeChangedAccess(prevRole, prevScope string) int {
+	if m == nil || m.IsApp() {
+		return 0
+	} else if m.ClientRole == prevRole && m.Scope() == clientScope(prevScope) {
+		return 0
+	}
+
+	return m.RevokeSessions(nil)
 }
 
 // Delete marks the entity as deleted and removes its sessions and secret. The record is retained,

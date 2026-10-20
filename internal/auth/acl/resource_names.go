@@ -23,6 +23,7 @@ var ResourceNames = []Resource{
 	ResourceServices,
 	ResourceUsers,
 	ResourceSessions,
+	ResourceClients,
 	ResourceLogs,
 	ResourceApi,
 	ResourceWebDAV,

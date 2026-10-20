@@ -108,9 +108,10 @@ func ServeMCP(router *gin.RouterGroup) {
 		},
 	)
 
-	// MCP sessions opened with app access tokens end when their grant is revoked.
+	// MCP sessions opened with app access tokens end when their grant is revoked or its client disabled.
 	grantSessions := newMcpGrantSessions(libraryServer)
 	entity.GrantDeletedHandler = grantSessions.Close
+	entity.GrantSuspendedHandler = grantSessions.Close
 
 	// mcpHandler authenticates each request, checks the account setting, caps the JSON-RPC payload size,
 	// and asks for the scopes a tool call needs. Public mode reaches the reference server as the default
@@ -180,7 +181,7 @@ func ServeMCP(router *gin.RouterGroup) {
 
 		// Remember which grant the MCP session of an app access token belongs to.
 		if s.IsOAuthApp() && c.Writer.Status() < http.StatusBadRequest {
-			grantSessions.Add(c.Writer.Header().Get(sdkSessionIdHeader), s.AuthID, mcpGrantExists)
+			grantSessions.Add(c.Writer.Header().Get(sdkSessionIdHeader), s.AuthID, mcpGrantActive)
 		}
 
 		// Audit requests the SDK refused, e.g. for the MCP session of another user.

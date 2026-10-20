@@ -74,6 +74,7 @@ const (
 	ResourceServices  Resource = "services"
 	ResourceUsers     Resource = "users"
 	ResourceSessions  Resource = "sessions"
+	ResourceClients   Resource = "clients"
 	ResourceLogs      Resource = "logs"
 	ResourceApi       Resource = "api"
 	ResourceWebDAV    Resource = "webdav"

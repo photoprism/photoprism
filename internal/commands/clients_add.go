@@ -7,6 +7,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/oauth"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -39,7 +40,7 @@ func clientsAddAction(ctx *cli.Context) error {
 
 		frm := form.AddClientFromCli(ctx)
 
-		if err := validateAppClientForm(frm); err != nil {
+		if err := oauth.ValidateClientForm(frm); err != nil {
 			return err
 		}
 

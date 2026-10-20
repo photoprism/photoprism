@@ -5,6 +5,12 @@ import (
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestMcpGrantSessions(t *testing.T) {
@@ -59,7 +65,34 @@ func TestMcpGrantSessions(t *testing.T) {
 	})
 }
 
-func TestMcpGrantExists(t *testing.T) {
-	assert.False(t, mcpGrantExists("gs5gfen1bgxz7s9i"))
-	assert.False(t, mcpGrantExists(""))
+func TestMcpGrantActive(t *testing.T) {
+	alice := entity.UserFixtures.Pointer("alice")
+
+	newGrant := func(t *testing.T, clientID string) *entity.Grant {
+		g := &entity.Grant{UserUID: alice.UserUID, ClientID: clientID, Scope: "mcp", RefreshHash: rnd.Sha256([]byte(rnd.AuthToken()))}
+		require.NoError(t, g.Create())
+		t.Cleanup(func() { _ = g.Delete() })
+		return g
+	}
+
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, mcpGrantActive("gs5gfen1bgxz7s9i"))
+		assert.False(t, mcpGrantActive(""))
+	})
+	t.Run("RegisteredClient", func(t *testing.T) {
+		client, err := entity.AddClient(form.Client{ClientName: "Grant Active App", AuthMethod: authn.MethodPKCE.String(), AuthScope: "mcp",
+			RedirectURIs: []string{"https://claude.ai/cb"}})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+
+		g := newGrant(t, client.ClientUID)
+		assert.True(t, mcpGrantActive(g.GrantUID))
+
+		require.NoError(t, client.Updates(entity.Values{"auth_enabled": false}))
+		assert.False(t, mcpGrantActive(g.GrantUID))
+	})
+	t.Run("MetadataClient", func(t *testing.T) {
+		g := newGrant(t, "https://app.example.com/oauth/client.json")
+		assert.True(t, mcpGrantActive(g.GrantUID))
+	})
 }
