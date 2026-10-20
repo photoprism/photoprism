@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-20 18:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -3616,11 +3616,11 @@ msgstr "Filtres de recherche"
 
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
-msgstr "Rechercher et voir vos photos"
+msgstr "Rechercher et afficher vos photos"
 
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
-msgstr "Rechercher et voir vos vidéos"
+msgstr "Rechercher et afficher vos vidéos"
 
 #: src/page/discover.vue:13
 msgid "Season"
@@ -4615,15 +4615,15 @@ msgstr "Voir"
 
 #: src/page/auth/consent.vue:179
 msgid "View cameras"
-msgstr "Voir les appareils photo"
+msgstr "Afficher les appareils photo"
 
 #: src/page/auth/consent.vue:180
 msgid "View lenses"
-msgstr "Voir les objectifs"
+msgstr "Afficher les objectifs"
 
 #: src/page/auth/consent.vue:178
 msgid "View people"
-msgstr "Voir les personnes"
+msgstr "Afficher les personnes"
 
 #: src/page/settings/content.vue:128
 msgid "View search results as a list."
@@ -4631,35 +4631,35 @@ msgstr "Afficher les résultats de la recherche sous forme de liste."
 
 #: src/page/auth/consent.vue:171
 msgid "View your albums"
-msgstr "Voir vos albums"
+msgstr "Afficher vos albums"
 
 #: src/page/auth/consent.vue:174
 msgid "View your calendar"
-msgstr "Voir votre calendrier"
+msgstr "Afficher votre calendrier"
 
 #: src/page/auth/consent.vue:172
 msgid "View your favorites"
-msgstr "Voir vos favoris"
+msgstr "Afficher vos favoris"
 
 #: src/page/auth/consent.vue:181
 msgid "View your files"
-msgstr "Voir vos fichiers"
+msgstr "Afficher vos fichiers"
 
 #: src/page/auth/consent.vue:175
 msgid "View your folders"
-msgstr "Voir vos dossiers"
+msgstr "Afficher vos dossiers"
 
 #: src/page/auth/consent.vue:177
 msgid "View your labels"
-msgstr "Voir vos étiquettes"
+msgstr "Afficher vos étiquettes"
 
 #: src/page/auth/consent.vue:173
 msgid "View your moments"
-msgstr "Voir vos moments"
+msgstr "Afficher vos moments"
 
 #: src/page/auth/consent.vue:176
 msgid "View your places"
-msgstr "Voir vos lieux"
+msgstr "Afficher vos lieux"
 
 #: src/model/cluster-instance.js:36 src/options/auth.js:10
 msgid "Viewer"
