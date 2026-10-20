@@ -22,9 +22,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// revokeSession resolves the session a revoke request carries in its header, without charging
-// the authentication failure budget. The handler owns that accounting, because a header that does
-// not resolve is not a failed authentication on its own: the request may still prove possession
+// revokeSession resolves the session a revoke request carries in its header, unless its client is disabled,
+// without charging the authentication failure budget. The handler owns that accounting, because a header
+// that does not resolve is not a failed authentication on its own: the request may still prove possession
 // with the token it submits, and then it is not charged at all.
 func revokeSession(authToken string) *entity.Session {
 	if !rnd.IsAuthAny(authToken) {
@@ -33,7 +33,7 @@ func revokeSession(authToken string) *entity.Session {
 
 	sess, err := entity.FindSession(rnd.SessionID(authToken))
 
-	if err != nil {
+	if err != nil || sess.ClientDisabled() {
 		return nil
 	}
 

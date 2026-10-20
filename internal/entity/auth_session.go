@@ -497,6 +497,16 @@ func (m *Session) clientRole(resolve bool) acl.Role {
 	return acl.RoleNone
 }
 
+// ClientDisabled reports whether the session belongs to a registered client that is missing, deleted, or
+// disabled, based on the stored client rather than the copy held by the session.
+func (m *Session) ClientDisabled() bool {
+	if m == nil || m.ClientUID == "" {
+		return false
+	}
+
+	return FindClientByUID(m.ClientUID).Disabled()
+}
+
 // GetUser returns the related user entity.
 func (m *Session) GetUser() *User {
 	switch {

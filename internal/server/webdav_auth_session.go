@@ -51,6 +51,12 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 		return nil, nil, sid, false
 	}
 
+	// Refuse sessions of registered clients that are missing, deleted, or disabled.
+	if sess.ClientDisabled() {
+		event.AuditErr([]string{header.ClientIP(c), "webdav", "session %s", "client disabled", status.Denied}, sess.RefID)
+		return nil, nil, sid, false
+	}
+
 	// Retain credential permissions when reusing the authenticated account.
 	if cachedUser := entity.CachedWebDAVUser(sid); cachedUser != nil {
 		return sess, cachedUser, sid, true

@@ -99,6 +99,12 @@ func authAny(c *gin.Context, audience string, resource acl.Resource, perms acl.P
 // authorizeSession applies the credential, scope, owner, and ACL checks to a resolved session, and returns
 // it, or a session carrying the HTTP status of the refusal.
 func authorizeSession(clientIp string, s *entity.Session, resource acl.Resource, perms acl.Permissions) *entity.Session {
+	// Refuse sessions of registered clients that are missing, deleted, or disabled.
+	if s.ClientDisabled() {
+		event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s", status.Disabled}, clean.Log(s.GetClientInfo()), s.RefID, perms.String(), string(resource))
+		return entity.SessionStatusUnauthorized()
+	}
+
 	// Enforce restrictions for app password sessions, identified by the "application" auth provider.
 	if s.IsApplication() {
 		// Reject app passwords when the feature is disabled.

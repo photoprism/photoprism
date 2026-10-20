@@ -89,6 +89,11 @@ func downloadNotAdmitted(c *gin.Context, sess *entity.Session) bool {
 		return false
 	}
 
+	// A session of a registered client requires the client to be enabled.
+	if sess.ClientDisabled() {
+		return true
+	}
+
 	// An app password depends on the feature flag and on its account's Web UI/API access.
 	if sess.IsApplication() && (get.Config().DisableAppPasswords() || sess.GetUser().DenyLogIn()) {
 		return true

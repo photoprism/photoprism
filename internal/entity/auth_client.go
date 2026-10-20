@@ -64,6 +64,7 @@ type Client struct {
 	IdToken      string          `gorm:"type:bytes;size:2048;column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
 	DataJSON     json.RawMessage `gorm:"type:bytes;size:4096;" json:"-" yaml:"Data,omitempty"`
 	data         *ClientData     `gorm:"-" yaml:"-"`
+	secretHash   string          `gorm:"-" yaml:"-"`
 	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
@@ -478,12 +479,16 @@ func (m *Client) RevokeChangedAccess(prevRole, prevScope string) int {
 	return m.RevokeSessions(nil)
 }
 
-// Delete marks the entity as deleted and removes its sessions and secret. The record is retained,
-// so the identifiers it holds stay reserved and remain unavailable to any other record. Use Purge
-// to release them.
+// Delete removes the secret, sessions, and grants of the client, and then marks it as deleted. The record
+// is retained, so the identifiers it holds stay reserved and remain unavailable to any other record. Use
+// Purge to release them.
 func (m *Client) Delete() (err error) {
 	if m.ClientUID == "" {
 		return fmt.Errorf("client uid is empty")
+	}
+
+	if err = m.DeleteSecret(); err != nil {
+		return err
 	}
 
 	if _, err = m.DeleteSessions(); err != nil {
@@ -493,15 +498,7 @@ func (m *Client) Delete() (err error) {
 	// Removing an app client ends the grants of the users who connected it.
 	DeleteClientGrants(m.ClientUID)
 
-	if err = m.DeleteSecret(); err != nil {
-		return err
-	}
-
-	if err = Db().Delete(m).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return Db().Delete(m).Error
 }
 
 // Restore removes the deletion mark, so the client can be used again once a new secret is set. A
@@ -606,16 +603,16 @@ func (m *Client) Purge() (err error) {
 		return fmt.Errorf("client uid is empty")
 	}
 
+	// The client UID becomes available again, so its stored secret does not outlive it.
+	if err = m.DeleteSecret(); err != nil {
+		return err
+	}
+
 	if _, err = m.DeleteSessions(); err != nil {
 		return err
 	}
 
 	DeleteClientGrants(m.ClientUID)
-
-	// The client UID becomes available again, so its stored secret does not outlive it.
-	if err = m.DeleteSecret(); err != nil {
-		return err
-	}
 
 	return UnscopedDb().Delete(m).Error
 }
@@ -768,7 +765,29 @@ func (m *Client) InvalidSecret(s string) bool {
 		return true
 	}
 
+	m.secretHash = pw.Hash
+
 	return false
+}
+
+// AuthChanged reports whether the stored client differs from the settings this copy was
+// authenticated with: it is missing, deleted, or disabled, its role or scope differs, or its secret
+// hash differs from the one InvalidSecret matched. Secrets are not compared again.
+func (m *Client) AuthChanged() bool {
+	stored := m.Stored()
+
+	switch {
+	case stored == nil || stored.Disabled():
+		return true
+	case stored.AclRole() != m.AclRole() || clientScope(stored.AuthScope) != clientScope(m.AuthScope):
+		return true
+	case m.secretHash == "":
+		return true
+	}
+
+	pw := FindPassword(m.ClientUID)
+
+	return pw == nil || pw.Hash != m.secretHash
 }
 
 // Provider returns the client authentication provider.

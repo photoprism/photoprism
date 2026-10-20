@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 func TestNewClient(t *testing.T) {
@@ -332,6 +334,101 @@ func TestClient_Delete(t *testing.T) {
 		err := m.Delete()
 
 		assert.Error(t, err)
+	})
+}
+
+// clientStateOnSessionDelete records whether the first session of the client was deleted, and whether the
+// client row and its secret existed and the row was marked as deleted at that time.
+func clientStateOnSessionDelete(t *testing.T, clientUID string) (fired, exists, deleted, secret *bool) {
+	t.Helper()
+
+	fired, exists, deleted, secret = new(bool), new(bool), new(bool), new(bool)
+	name := "test:client_state_" + rnd.Base36(8)
+	var once sync.Once
+
+	err := Db().Callback().Delete().Before("gorm:delete").Register(name, func(tx *gorm.DB) {
+		if s, ok := tx.Statement.Model.(*Session); !ok || s.ClientUID != clientUID {
+			return
+		}
+
+		once.Do(func() {
+			*fired = true
+			db := tx.Session(&gorm.Session{NewDB: true})
+			found := Client{}
+
+			if db.Unscoped().Where("client_uid = ?", clientUID).Limit(1).Find(&found).RowsAffected == 1 {
+				*exists = true
+				*deleted = found.Deleted()
+			}
+
+			*secret = db.Where("uid = ?", clientUID).Limit(1).Find(&Password{}).RowsAffected == 1
+		})
+	})
+
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = Db().Callback().Delete().Remove(name) })
+
+	return fired, exists, deleted, secret
+}
+
+// secretOnClientDelete records whether the secret of the client existed when its row was deleted.
+func secretOnClientDelete(t *testing.T, clientUID string) (fired, secret *bool) {
+	t.Helper()
+
+	fired, secret = new(bool), new(bool)
+	name := "test:client_secret_" + rnd.Base36(8)
+
+	err := Db().Callback().Delete().Before("gorm:delete").Register(name, func(tx *gorm.DB) {
+		if c, ok := tx.Statement.Model.(*Client); !ok || c.ClientUID != clientUID {
+			return
+		}
+
+		*fired = true
+		*secret = tx.Session(&gorm.Session{NewDB: true}).Where("uid = ?", clientUID).Limit(1).Find(&Password{}).RowsAffected == 1
+	})
+
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = Db().Callback().Delete().Remove(name) })
+
+	return fired, secret
+}
+
+func TestClient_DeleteOrder(t *testing.T) {
+	t.Run("Delete", func(t *testing.T) {
+		m, err := AddClient(form.Client{ClientName: "Delete Order", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = m.Purge() })
+		_, err = m.NewSecret()
+		require.NoError(t, err)
+		newClientSessions(t, m, 1, time.Now().UTC())
+
+		fired, exists, deleted, secret := clientStateOnSessionDelete(t, m.ClientUID)
+		rowFired, rowSecret := secretOnClientDelete(t, m.ClientUID)
+		require.NoError(t, m.Delete())
+
+		require.True(t, *fired)
+		assert.True(t, *exists)
+		assert.False(t, *deleted)
+		assert.False(t, *secret)
+		require.True(t, *rowFired)
+		assert.False(t, *rowSecret)
+	})
+	t.Run("Purge", func(t *testing.T) {
+		m, err := AddClient(form.Client{ClientName: "Purge Order", AuthScope: "metrics"})
+		require.NoError(t, err)
+		_, err = m.NewSecret()
+		require.NoError(t, err)
+		newClientSessions(t, m, 1, time.Now().UTC())
+
+		fired, exists, _, secret := clientStateOnSessionDelete(t, m.ClientUID)
+		rowFired, rowSecret := secretOnClientDelete(t, m.ClientUID)
+		require.NoError(t, m.Purge())
+
+		require.True(t, *fired)
+		assert.True(t, *exists)
+		assert.False(t, *secret)
+		require.True(t, *rowFired)
+		assert.False(t, *rowSecret)
 	})
 }
 
@@ -1662,5 +1759,94 @@ func TestClient_SaveChanges(t *testing.T) {
 		assert.ErrorIs(t, (&Client{}).SaveChanges(), ErrClientNotFound)
 		var m *Client
 		assert.ErrorIs(t, m.SaveChanges(), ErrClientNotFound)
+	})
+}
+
+func TestClient_AuthChanged(t *testing.T) {
+	// newAuthClient creates a client with a secret and returns a copy authenticated with it.
+	newAuthClient := func(t *testing.T, scope string) *Client {
+		t.Helper()
+
+		client, err := AddClient(form.Client{ClientName: "Auth Changed " + rnd.Base36(6), AuthScope: scope})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		secret, err := client.NewSecret()
+		require.NoError(t, err)
+
+		authenticated := FindClientByUID(client.ClientUID)
+		require.NotNil(t, authenticated)
+		require.False(t, authenticated.InvalidSecret(secret))
+
+		return authenticated
+	}
+
+	t.Run("Unchanged", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		assert.False(t, client.AuthChanged())
+	})
+	t.Run("EmptyScope", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_scope", "").Error)
+		client.AuthScope = ""
+		assert.False(t, client.AuthChanged())
+
+		// An empty scope reads as "*".
+		client.AuthScope = "*"
+		assert.False(t, client.AuthChanged())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		assert.True(t, client.AuthChanged())
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("deleted_at", time.Now().UTC()).Error)
+		assert.True(t, client.AuthChanged())
+	})
+	t.Run("Missing", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, UnscopedDb().Delete(&Client{}, "client_uid = ?", client.ClientUID).Error)
+		assert.True(t, client.AuthChanged())
+	})
+	t.Run("RoleChanged", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("client_role", acl.RoleNone.String()).Error)
+		assert.True(t, client.AuthChanged())
+	})
+	t.Run("ScopeChanged", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_scope", "metrics vision").Error)
+		assert.True(t, client.AuthChanged())
+	})
+	t.Run("SecretChanged", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		stored := FindClientByUID(client.ClientUID)
+		_, err := stored.NewSecret()
+		require.NoError(t, err)
+		assert.True(t, client.AuthChanged())
+	})
+	t.Run("SecretDeleted", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, client.DeleteSecret())
+		assert.True(t, client.AuthChanged())
+	})
+	t.Run("NotAuthenticated", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		unverified := FindClientByUID(client.ClientUID)
+		require.NotNil(t, unverified)
+		assert.True(t, unverified.AuthChanged())
+	})
+	t.Run("NotAuthenticatedEmptyHash", func(t *testing.T) {
+		client := newAuthClient(t, "metrics")
+		require.NoError(t, UnscopedDb().Model(&Password{}).Where("uid = ?", client.ClientUID).UpdateColumn("hash", "").Error)
+		unverified := FindClientByUID(client.ClientUID)
+		require.NotNil(t, unverified)
+		assert.True(t, unverified.AuthChanged())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var client *Client
+		assert.True(t, client.AuthChanged())
 	})
 }
