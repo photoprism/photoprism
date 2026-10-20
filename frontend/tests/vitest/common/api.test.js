@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { $api } from "../fixtures";
 import clientConfig from "../config";
 import { buildNamespace } from "common/storage";
+import $notify from "common/notify";
 
 describe("common/api", () => {
   const getCollectionResponse = [
@@ -118,9 +119,13 @@ describe("common/api", () => {
       }
     };
 
+    const defaultToken = $api.defaults.headers.common["X-Auth-Token"];
+    $api.defaults.headers.common["X-Auth-Token"] = "d4e5f6";
+
     try {
       clientConfig.debug = false;
       const err = await rejected();
+      expect($api.defaults.headers.common["X-Auth-Token"]).toBe("d4e5f6");
       expect(err.config.data).toBeUndefined();
       expect(err.config.headers["X-Auth-Token"]).toBeUndefined();
       expect(err.config.headers["X-Custom"]).toBe("kept");
@@ -134,7 +139,37 @@ describe("common/api", () => {
     } finally {
       clientConfig.debug = false;
       log.mockRestore();
+
+      if (defaultToken === undefined) {
+        delete $api.defaults.headers.common["X-Auth-Token"];
+      } else {
+        $api.defaults.headers.common["X-Auth-Token"] = defaultToken;
+      }
     }
+  });
+
+  // signsOut sends a request that the server answers with the specified status and body, and reports whether it signed out.
+  const signsOut = async (status, body) => {
+    const { Mock } = await import("../fixtures");
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const logout = vi.spyOn($notify, "logout").mockImplementation(() => {});
+
+    try {
+      Mock.onPost("signout-test").replyOnce(status, body);
+      await expect($api.post("signout-test", {})).rejects.toBeDefined();
+      return logout.mock.calls.length > 0;
+    } finally {
+      logout.mockRestore();
+      log.mockRestore();
+    }
+  };
+
+  it("keeps the session after invalid credentials were entered", async () => {
+    expect(await signsOut(401, { error: "invalid credentials", code: 44, message: "Invalid credentials" })).toBe(false);
+  });
+
+  it("signs out when the session is no longer valid", async () => {
+    expect(await signsOut(401, { error: "Unauthorized", code: 401 })).toBe(true);
   });
 
   it("returns the error itself for logging only in debug mode", async () => {
