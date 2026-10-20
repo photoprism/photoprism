@@ -1755,6 +1755,52 @@ func TestClient_SaveChanges(t *testing.T) {
 		assert.Equal(t, "0199e6b5-41b2-7e0c-9b8f-1e9c6f3b4a21", found.NodeUUID)
 		assert.Equal(t, int64(1760950000), found.LastActive)
 	})
+	t.Run("Fields", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Field Changes", AuthScope: "metrics", AuthExpires: 600})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		stale := *client
+		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).
+			UpdateColumns(Values{"auth_enabled": false, "auth_scope": "vision"}).Error)
+
+		stale.ClientName = "Field Changes Renamed"
+		stale.AuthExpires = 900
+		require.NoError(t, stale.SaveChanges("ClientName", "ClientName", "UpdatedAt"))
+
+		found := FindClientByUID(client.ClientUID)
+		require.NotNil(t, found)
+		assert.Equal(t, "Field Changes Renamed", found.ClientName)
+		assert.False(t, found.AuthEnabled)
+		assert.Equal(t, "vision", found.AuthScope)
+		assert.Equal(t, int64(600), found.AuthExpires)
+	})
+	t.Run("FieldsKeepSessions", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Field Sessions", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+		ids := newClientSessions(t, client, 1, time.Now().UTC())
+
+		// A copy that reads as disabled ends sessions only if it writes the enabled state.
+		stale := *client
+		stale.AuthEnabled = false
+		stale.ClientName = "Field Sessions Renamed"
+		require.NoError(t, stale.SaveChanges("ClientName"))
+		assertSessions(t, ids, nil)
+		assert.True(t, FindClientByUID(client.ClientUID).AuthEnabled)
+
+		require.NoError(t, stale.SaveChanges("AuthEnabled"))
+		assertSessions(t, nil, ids)
+	})
+	t.Run("UnsupportedField", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Unsupported Field", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		client.NodeUUID = rnd.UUIDv7()
+		assert.Error(t, client.SaveChanges("NodeUUID"))
+		assert.Equal(t, "", FindClientByUID(client.ClientUID).NodeUUID)
+	})
 	t.Run("NoUID", func(t *testing.T) {
 		assert.ErrorIs(t, (&Client{}).SaveChanges(), ErrClientNotFound)
 		var m *Client

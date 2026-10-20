@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -432,14 +433,31 @@ func (m *Client) Save() error {
 	return m.endDisabledSessions()
 }
 
-// SaveChanges writes the settings of a client that exists and is not deleted, and returns ErrClientNotFound
-// otherwise, so that a concurrent deletion is not undone as by Save, which inserts a missing row.
-func (m *Client) SaveChanges() error {
+// SaveChanges writes the specified settings, or all of clientChangeFields if none are specified, of a client that
+// exists and is not deleted, and returns ErrClientNotFound otherwise, as Save would insert a missing row. It ends
+// the sessions of a disabled client if it writes AuthEnabled.
+func (m *Client) SaveChanges(fields ...string) error {
 	if m == nil || !m.HasUID() {
 		return ErrClientNotFound
 	}
 
-	result := Db().Model(m).Select(clientChangeFields).Updates(m)
+	selected := clientChangeFields
+
+	if len(fields) > 0 {
+		selected = make([]string, 0, len(fields)+1)
+
+		for _, field := range fields {
+			if !slices.Contains(clientChangeFields, field) {
+				return fmt.Errorf("unsupported client field %s", clean.Log(field))
+			} else if field != "UpdatedAt" && !slices.Contains(selected, field) {
+				selected = append(selected, field)
+			}
+		}
+
+		selected = append(selected, "UpdatedAt")
+	}
+
+	result := Db().Model(m).Select(selected).Updates(m)
 
 	if result.Error != nil {
 		return result.Error
@@ -448,6 +466,10 @@ func (m *Client) SaveChanges() error {
 		if stored := m.Stored(); stored == nil || stored.Deleted() {
 			return ErrClientNotFound
 		}
+	}
+
+	if !slices.Contains(selected, "AuthEnabled") {
+		return nil
 	}
 
 	return m.endDisabledSessions()
