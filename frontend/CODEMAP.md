@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 17, 2026
+**Last Updated:** October 20, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -66,6 +66,7 @@ HTTP Client
   - Adds `X-Auth-Token`, `X-Client-Uri`, `X-Client-Version`
   - Bootstraps `X-Auth-Token` from app-local namespaced storage (`getAppStorage().getItem("session.token")`)
   - Interceptors drive global progress notifications and token refresh via headers `X-Preview-Token`/`X-Download-Token`
+  - On failure the interceptor logs a one-line summary and, outside debug/trace mode, removes the request body and auth headers from the error (`requestErrorSummary`, `redactRequestError`); components that log a request error use `requestErrorDetails`
 
 Auth, Session, and Config
 - `$session`: `src/common/session.js` — restores and persists namespaced browser session state (`session.token`, `session.id`, user/provider/scope/data), selects `localStorage` vs `sessionStorage` from the namespaced `session` preference flag, resolves `storageNamespace` from the actual client config payload, and provides guards/default routes

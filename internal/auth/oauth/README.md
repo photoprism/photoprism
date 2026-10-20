@@ -23,7 +23,7 @@ Package `oauth` implements the protocol side of the OAuth 2.1 authorization code
 ### Rules
 
 - `ValidateClient` checks syntax only. An error may be redirected to the client only after its redirect URI matched the client's registration (`MatchRedirectURI`); before that, it is rendered as a page.
-- Redirect URIs match exactly as registered, without wildcards: a `*` in a registered URI is compared literally and matches no request. The one exception is the port of an HTTP loopback URI, which may differ (RFC 8252). Register each callback URL an app uses separately.
+- Redirect URIs match exactly as registered, without wildcards: a `*` in a registered URI is an ordinary character that matches only itself, never as a pattern. The one exception is the port of an HTTP loopback URI, which may differ (RFC 8252). Register each callback URL an app uses separately.
 - Redirect URIs are HTTPS URLs with a host, HTTP URLs on a loopback host (`localhost`, `127.0.0.0/8`, `::1`), or private-use schemes in reverse domain notation followed by a single slash (`app.example:/callback`, RFC 8252). Fragments and user info are refused. The response builders refuse any other URI and an empty issuer, keep the well-formed query parameters of the registered URI, and override `code`, `state`, `iss` and the error parameters, removing them when the response has no value for them.
 - Repeated authorization request parameters are refused, and values must not contain control, format or line separator characters.
 - A code is consumed by the first redemption attempt, even if the client, redirect URI or verifier do not match. A row without a user or resource is never redeemed.
