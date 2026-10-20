@@ -170,7 +170,7 @@
 </template>
 <script>
 import Axios from "axios";
-import $api from "common/api";
+import $api, { requestErrorDetails } from "common/api";
 import $notify from "common/notify";
 import download from "common/download";
 import Photo from "model/photo";
@@ -406,7 +406,7 @@ export default {
               }
             })
             .catch((err) => {
-              console.warn("download failed", err);
+              console.warn("download failed", requestErrorDetails(err));
 
               // The API client already notifies the user of failed requests.
               if (!Axios.isAxiosError(err)) {
