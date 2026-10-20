@@ -27,6 +27,14 @@ const (
 	ClientUID = byte('c')
 )
 
+// clientChangeFields lists the settings SaveChanges writes, so that identifiers and activity data changed
+// meanwhile are kept. Updates with Select("*") would insert a missing row.
+var clientChangeFields = []string{"ClientName", "ClientRole", "ClientType", "AuthProvider", "AuthMethod", "AuthScope",
+	"AuthExpires", "AuthTokens", "AuthEnabled", "DataJSON", "UpdatedAt"}
+
+// ErrClientNotFound is returned when a client does not exist or has been deleted.
+var ErrClientNotFound = errors.New("client not found")
+
 // Clients is a convenience alias for slices of Client.
 type Clients []Client
 
@@ -420,7 +428,32 @@ func (m *Client) Save() error {
 		return err
 	}
 
-	// Delete related sessions and app access tokens if authentication is disabled.
+	return m.endDisabledSessions()
+}
+
+// SaveChanges writes the settings of a client that exists and is not deleted, and returns ErrClientNotFound
+// otherwise, so that a concurrent deletion is not undone as by Save, which inserts a missing row.
+func (m *Client) SaveChanges() error {
+	if m == nil || !m.HasUID() {
+		return ErrClientNotFound
+	}
+
+	result := Db().Model(m).Select(clientChangeFields).Updates(m)
+
+	if result.Error != nil {
+		return result.Error
+	} else if result.RowsAffected == 0 {
+		// MariaDB reports no affected rows for an update that changes nothing.
+		if stored := m.Stored(); stored == nil || stored.Deleted() {
+			return ErrClientNotFound
+		}
+	}
+
+	return m.endDisabledSessions()
+}
+
+// endDisabledSessions deletes the sessions and app access tokens of a client whose authentication is disabled.
+func (m *Client) endDisabledSessions() error {
 	if m.AuthEnabled {
 		return nil
 	} else if _, err := m.DeleteSessions(); err != nil {

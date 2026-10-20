@@ -1582,3 +1582,85 @@ func TestClientScope(t *testing.T) {
 		assert.Equal(t, "*", clientScope("  "))
 	})
 }
+
+func TestClient_SaveChanges(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Save Changes", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		client.ClientName = "Saved Changes"
+		client.AuthTokens = 0
+		require.NoError(t, client.SaveChanges())
+
+		found := FindClientByUID(client.ClientUID)
+		require.NotNil(t, found)
+		assert.Equal(t, "Saved Changes", found.ClientName)
+		assert.Equal(t, int64(0), found.AuthTokens)
+
+		// Saving unchanged values succeeds too.
+		require.NoError(t, client.SaveChanges())
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Deleted Changes", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		stale := *client
+		require.NoError(t, client.Delete())
+
+		stale.ClientName = "Restored By Update"
+		assert.ErrorIs(t, stale.SaveChanges(), ErrClientNotFound)
+
+		found := FindClientByUID(client.ClientUID)
+		require.NotNil(t, found)
+		assert.True(t, found.Deleted())
+		assert.Equal(t, "Deleted Changes", found.ClientName)
+	})
+	t.Run("Purged", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Purged Changes", AuthScope: "metrics"})
+		require.NoError(t, err)
+
+		stale := *client
+		require.NoError(t, client.Purge())
+		assert.ErrorIs(t, stale.SaveChanges(), ErrClientNotFound)
+		assert.Nil(t, FindClientByUID(client.ClientUID))
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Disabled Changes", AuthMethod: authn.MethodPKCE.String(), AuthScope: "mcp", RedirectURIs: []string{"https://claude.ai/cb"}})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		g := newTestGrant(t, client.ClientUID)
+		sess := newTestGrantSession(t, g)
+
+		client.AuthEnabled = false
+		require.NoError(t, client.SaveChanges())
+		assert.False(t, FindClientByUID(client.ClientUID).AuthEnabled)
+		assert.NotNil(t, FindGrant(g.GrantUID))
+		_, err = FindAnySession(sess.ID)
+		assert.Error(t, err)
+	})
+	t.Run("KeepsOtherFields", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Other Fields", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		stale := *client
+		require.NoError(t, client.Updates(Values{"node_uuid": "0199e6b5-41b2-7e0c-9b8f-1e9c6f3b4a21", "last_active": 1760950000}))
+
+		stale.ClientName = "Other Fields Changed"
+		require.NoError(t, stale.SaveChanges())
+
+		found := FindClientByUID(client.ClientUID)
+		require.NotNil(t, found)
+		assert.Equal(t, "Other Fields Changed", found.ClientName)
+		assert.Equal(t, "0199e6b5-41b2-7e0c-9b8f-1e9c6f3b4a21", found.NodeUUID)
+		assert.Equal(t, int64(1760950000), found.LastActive)
+	})
+	t.Run("NoUID", func(t *testing.T) {
+		assert.ErrorIs(t, (&Client{}).SaveChanges(), ErrClientNotFound)
+		var m *Client
+		assert.ErrorIs(t, m.SaveChanges(), ErrClientNotFound)
+	})
+}
