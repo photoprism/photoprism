@@ -1,6 +1,6 @@
 ## PhotoPrism MCP Server
 
-**Last Updated:** October 19, 2026
+**Last Updated:** October 20, 2026
 
 ### Current Capabilities
 
@@ -39,7 +39,7 @@
 | `internal/mcp/`              | Core MCP logic: reference and library servers, per-tool authorization (`authorize.go`), data pipeline, resources, tools                                                          |
 | `internal/api/mcp.go`        | Gin HTTP handler with auth middleware, account check, scope step-up, route registration                                                                                          |
 | `internal/api/mcp_auth.go`   | `401` challenge naming the protected resource metadata, `TokenInfo` binding of MCP sessions to their owner                                                                       |
-| `internal/api/mcp_grants.go` | Closes the MCP sessions of an app when its OAuth grant is revoked                                                                                                                |
+| `internal/api/mcp_grants.go` | Closes the MCP sessions of an app when its OAuth grant is revoked or its client is disabled                                                                                                                |
 | `internal/commands/mcp.go`   | CLI command (`photoprism mcp serve`) using stdio transport                                                                                                                       |
 | `internal/auth/acl/`         | `ResourceMCP` constant and ACL grant rules (`GrantFullAccess` for admin; `GrantSearchAll` for the API client roles: client, instance, service, portal; editions add their roles) |
 
@@ -315,7 +315,7 @@ CE and Plus deployments that expose the endpoint to untrusted networks should en
 
 - **Sanitization:** `pkg/clean.Scope` lowercases the input and parses it through `pkg/list.ParseAttr`. There is no allowlist of valid scope tokens, so `--scope mcp`, `--scope "mcp metrics"`, and `--scope "*"` are all accepted by `clients add` and `auth add` without any registry update.
 - **Authorization:** `internal/auth/acl.ScopePermits` checks the parsed attribute list against the resource string. Because `acl.ResourceMCP.String() == "mcp"`, the existing `attr.Contains(...)` path matches a session that holds the `mcp` token. See `TestScopePermits/MCPScope` in `internal/auth/acl/scope_test.go` for the canonical assertions (admin token, mixed scopes, case-insensitivity, deny on unrelated scopes).
-- **Cluster JWTs:** instance-side validation runs through `Config.JWTAllowedScopes()` (`internal/api/api_auth_jwt.go`). The default allowlist is `DefaultJWTAllowedScopes = "config cluster vision metrics mcp"` in `internal/config/config_cluster.go`, so portal-issued JWTs with `scope=mcp` are accepted out of the box. Operators that override the list via `--jwt-scope` / `PHOTOPRISM_JWT_SCOPE` need to include `mcp` themselves.
+- **Cluster JWTs:** instance-side validation runs through `Config.JWTAllowedScopes()` (`internal/api/api_auth_jwt.go`). The default allowlist is `DefaultJWTAllowedScopes = "config cluster vision metrics mcp users"` in `internal/config/config_cluster.go`, so portal-issued JWTs with `scope=mcp` are accepted out of the box. Operators that override the list via `--jwt-scope` / `PHOTOPRISM_JWT_SCOPE` need to include `mcp` themselves.
 
 ### Extending the Tool Surface
 
@@ -359,14 +359,14 @@ API clients get access through admin-issued client tokens, for example for a CI 
   --expires 2592000          # 30 days; use -1 for no expiry
 ```
 
-The command prints a client ID and secret. Combine them into a bearer token (or pass them through the OAuth2 client-credentials flow) and paste the resulting value into the MCP client config — the same JSON snippets shown above under *MCP Client Compatibility* apply unchanged. Replace `<admin-token>` with the issued token. A client gets the library tools whose resource scopes it holds; with `mcp` alone, only the reference tools. Resource scopes apply to the whole API, not only to MCP, and `read` limits the token to read operations; add `folders`, `moments`, or `calendar` for those collection types, and `places` only if the client should receive coordinates. A client added for a user account (`photoprism clients add [flags] <username>`) also follows that account's MCP setting.
+The command prints a client ID and secret. Combine them into a bearer token (or pass them through the OAuth2 client-credentials flow) and paste the resulting value into the MCP client config — the same JSON snippets shown above under *MCP Client Compatibility* apply unchanged. Replace `<admin-token>` with the issued token. A client gets the library tools whose resource scopes it holds; with `mcp` alone, only the reference tools. Resource scopes apply to the whole API, not only to MCP, and `read` limits the token to read operations; add `folders`, `moments`, or `calendar` for those collection types, and `places` only if the client should receive coordinates. A client added for a user account (`photoprism clients add [flags] <username>`) also follows that account's MCP setting. In PhotoPrism Pro, admins can also add, edit, disable and delete clients in the **Clients** tab of the admin settings, where managers can view them.
 
 To revoke access without disabling the user account, the administrator runs:
 
 ```bash
-./photoprism clients remove <client-id>
+./photoprism clients rm <client-id>
 ```
 
 An app password needs `mcp` plus the scope of each tool's resource, e.g. `photoprism auth add --scope "mcp read photos albums people labels" <username>`, with the same rules as for clients; with `mcp` alone, it reaches the reference tools only.
 
-Accounts that may use MCP can also connect an MCP client such as `claude.ai` by signing in to PhotoPrism and approving it (OAuth authorization code flow with PKCE). The app is registered with `photoprism clients add --callback <url>` or, where `--oauth-apps` allows it, identified by its client metadata URL; the connection is listed under Settings > Account > Connected Apps, where it can be disconnected.
+Accounts that may use MCP can also connect an MCP client such as `claude.ai` by signing in to PhotoPrism and approving it (OAuth authorization code flow with PKCE). The app is registered with `photoprism clients add --callback <url>` (in Pro also in the **Clients** tab, which lists the connected accounts of each app) or, where `--oauth-apps` allows it, identified by its client metadata URL; the connection is listed under Settings > Account > Connected Apps, where it can be disconnected.
