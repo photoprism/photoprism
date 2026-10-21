@@ -27,7 +27,7 @@ func TestAddClientFromCli_Callback(t *testing.T) {
 		f := AddClientFromCli(newAppClientFlags("--name=Claude", "--callback=https://claude.ai/api/mcp/auth_callback", "--callback= http://127.0.0.1/callback "))
 		assert.True(t, f.IsApp())
 		assert.Equal(t, authn.MethodPKCE, f.Method())
-		assert.Equal(t, "mcp", f.Scope())
+		assert.Equal(t, "*", f.Scope())
 		assert.Equal(t, []string{"https://claude.ai/api/mcp/auth_callback", "http://127.0.0.1/callback"}, f.RedirectURIs)
 	})
 	t.Run("CustomScope", func(t *testing.T) {

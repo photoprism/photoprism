@@ -132,3 +132,47 @@ func TestNewUserFromCli(t *testing.T) {
 		assert.Equal(t, "", frm.UserName)
 	})
 }
+
+func TestUser_MCPSetting(t *testing.T) {
+	for in, out := range map[int]int{-9: -1, -1: -1, 0: 0, 1: 1, 2: 1} {
+		f := &User{MCP: in}
+		assert.Equal(t, out, f.MCPSetting(), in)
+	}
+}
+
+func TestNewUserFromCli_MCP(t *testing.T) {
+	newContext := func(t *testing.T, args ...string) *cli.Context {
+		set := flag.NewFlagSet("users add", flag.ContinueOnError)
+		_ = set.Bool("mcp", false, "")
+		if err := set.Parse(args); err != nil {
+			t.Fatal(err)
+		}
+		return cli.NewContext(cli.NewApp(), set, nil)
+	}
+
+	t.Run("NotSet", func(t *testing.T) {
+		assert.Equal(t, 0, NewUserFromCli(newContext(t, "alice")).MCP)
+	})
+	t.Run("True", func(t *testing.T) {
+		assert.Equal(t, 1, NewUserFromCli(newContext(t, "--mcp", "alice")).MCP)
+	})
+	t.Run("False", func(t *testing.T) {
+		assert.Equal(t, -1, NewUserFromCli(newContext(t, "--mcp=false", "alice")).MCP)
+	})
+}
+
+func TestCliSetting(t *testing.T) {
+	set := flag.NewFlagSet("test", flag.ContinueOnError)
+	_ = set.Bool("on", false, "")
+	_ = set.Bool("off", true, "")
+	_ = set.Bool("unset", true, "")
+	if err := set.Parse([]string{"--on", "--off=false"}); err != nil {
+		t.Fatal(err)
+	}
+	ctx := cli.NewContext(cli.NewApp(), set, nil)
+
+	assert.Equal(t, 1, cliSetting(ctx, "on"))
+	assert.Equal(t, -1, cliSetting(ctx, "off"))
+	assert.Equal(t, 0, cliSetting(ctx, "unset"))
+	assert.Equal(t, 0, cliSetting(ctx, "missing"))
+}

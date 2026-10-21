@@ -10,12 +10,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// connectTestClient connects an in-memory client to the MCP server.
+// connectTestClient connects an in-memory client to an MCP server with the synthetic test commands.
 func connectTestClient(t *testing.T) *sdkmcp.ClientSession {
 	t.Helper()
 
+	return connectServer(t, NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce", Options{Commands: testCommands()}))
+}
+
+// connectServer connects an in-memory client to the specified MCP server.
+func connectServer(t *testing.T, server *sdkmcp.Server) *sdkmcp.ClientSession {
+	t.Helper()
+
 	ctx := context.Background()
-	server := NewServer(&sdkmcp.Implementation{Name: "photoprism-mcp", Version: "test"}, "ce")
 	client := sdkmcp.NewClient(&sdkmcp.Implementation{Name: "photoprism-mcp-test", Version: "test"}, nil)
 	serverTransport, clientTransport := sdkmcp.NewInMemoryTransports()
 
@@ -33,18 +39,19 @@ func connectTestClient(t *testing.T) *sdkmcp.ClientSession {
 }
 
 // TestNewServerResources lists and reads the registered MCP resources,
-// asserting that every URI advertised in ResourceURIs is exposed in the
-// declared order and returns a non-empty JSON payload.
+// asserting that exactly the URIs in ResourceURIs are exposed and return
+// the expected JSON payloads.
 func TestNewServerResources(t *testing.T) {
 	ctx := context.Background()
 	session := connectTestClient(t)
 
 	resources, err := session.ListResources(ctx, nil)
 	require.NoError(t, err)
-	require.Len(t, resources.Resources, len(ResourceURIs))
-	for i, uri := range ResourceURIs {
-		require.Equal(t, uri, resources.Resources[i].URI)
+	uris := make([]string, 0, len(resources.Resources))
+	for _, resource := range resources.Resources {
+		uris = append(uris, resource.URI)
 	}
+	require.ElementsMatch(t, ResourceURIs, uris)
 
 	configResource, err := session.ReadResource(ctx, &sdkmcp.ReadResourceParams{URI: configOptionsURI})
 	require.NoError(t, err)
@@ -63,10 +70,43 @@ func TestNewServerResources(t *testing.T) {
 	require.NoError(t, json.Unmarshal([]byte(filterResource.Contents[0].Text), &filterPayload))
 	require.NotEmpty(t, filterPayload.Items)
 	require.Equal(t, "ce", filterPayload.Edition)
+
+	var commandsPayload CliCommandsResource
+	readResourcePayload(t, session, cliCommandsURI, &commandsPayload)
+	require.Equal(t, buildCliCommands(testCommands()), commandsPayload.Items)
+	require.Equal(t, "ce", commandsPayload.Edition)
+
+	var formatsPayload FileFormatsResource
+	readResourcePayload(t, session, fileFormatsURI, &formatsPayload)
+	require.Equal(t, buildFileFormats(), formatsPayload.Items)
+	require.Equal(t, "ce", formatsPayload.Edition)
+
+	var metadataPayload MetadataFieldsResource
+	readResourcePayload(t, session, metadataFieldsURI, &metadataPayload)
+	require.Equal(t, buildMetadataFields(), metadataPayload.Items)
+	require.Equal(t, buildMetadataDocs(), metadataPayload.Docs)
+	require.Equal(t, "ce", metadataPayload.Edition)
+
+	var sizesPayload ThumbnailSizesResource
+	readResourcePayload(t, session, thumbnailSizesURI, &sizesPayload)
+	require.Equal(t, buildThumbnailSizes(), sizesPayload.Items)
+	require.Equal(t, "ce", sizesPayload.Edition)
+}
+
+// readResourcePayload reads the resource with the specified URI and decodes its JSON payload.
+func readResourcePayload(t *testing.T, session *sdkmcp.ClientSession, uri string, payload any) {
+	t.Helper()
+
+	res, err := session.ReadResource(context.Background(), &sdkmcp.ReadResourceParams{URI: uri})
+	require.NoError(t, err)
+	require.Len(t, res.Contents, 1)
+	require.Equal(t, uri, res.Contents[0].URI)
+	require.NoError(t, json.Unmarshal([]byte(res.Contents[0].Text), payload))
 }
 
 // TestNewServerToolList asserts that the server advertises exactly the
-// tools listed in ToolNames and that every tool carries a JSON schema.
+// tools listed in ToolNames and that every tool carries a JSON schema
+// and the read-only annotation.
 func TestNewServerToolList(t *testing.T) {
 	ctx := context.Background()
 	session := connectTestClient(t)
@@ -79,6 +119,8 @@ func TestNewServerToolList(t *testing.T) {
 	for _, tool := range tools.Tools {
 		names = append(names, tool.Name)
 		require.NotNil(t, tool.InputSchema)
+		require.NotNil(t, tool.Annotations, tool.Name)
+		require.True(t, tool.Annotations.ReadOnlyHint, tool.Name)
 	}
 	for _, expected := range ToolNames {
 		require.Contains(t, names, expected)

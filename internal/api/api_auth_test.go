@@ -571,6 +571,28 @@ func TestAuthAnyPortalJWT_MissingScope(t *testing.T) {
 	assert.True(t, s.Abort(c))
 }
 
+func TestAuthAnyPortalJWT_ClientsScope(t *testing.T) {
+	fx := newPortalJWTFixture(t, "clients-scope")
+	spec := fx.defaultClaimsSpec()
+	spec.Scope = []string{"cluster", "clients"}
+	token := fx.issue(t, spec)
+
+	gin.SetMode(gin.TestMode)
+
+	for _, perm := range []acl.Permission{acl.ActionSearch, acl.ActionView, acl.ActionManage} {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/clients", nil)
+		req.Header.Set("Authorization", "Bearer "+token)
+		req.RemoteAddr = "10.0.0.5:1234"
+		c.Request = req
+
+		// The default JWT scope allowlist does not include clients.
+		s := AuthAny(c, acl.ResourceClients, acl.Permissions{perm})
+		require.NotNil(t, s)
+		assert.True(t, s.Abort(c), perm)
+	}
+}
+
 func TestAuthAnyPortalJWT_InvalidIssuer(t *testing.T) {
 	fx := newPortalJWTFixture(t, "invalid-issuer")
 	spec := fx.defaultClaimsSpec()

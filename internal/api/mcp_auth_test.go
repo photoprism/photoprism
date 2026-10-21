@@ -10,15 +10,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 func TestMcpChallenge(t *testing.T) {
-	conf := get.Config()
+	conf := prepareMCPTest(t)
 	metadataUrl := conf.OAuthResourceMetadataUrl()
+	require.True(t, conf.OAuthAppsEnabled())
 
 	t.Run("Default", func(t *testing.T) {
 		assert.Equal(t, `Bearer resource_metadata="`+metadataUrl+`"`, McpChallenge(conf, ""))
@@ -28,6 +30,19 @@ func TestMcpChallenge(t *testing.T) {
 	})
 	t.Run("InsufficientScope", func(t *testing.T) {
 		assert.Equal(t, `Bearer resource_metadata="`+metadataUrl+`", error="insufficient_scope", scope="mcp photos"`, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"))
+	})
+	t.Run("AppsDisabled", func(t *testing.T) {
+		// Without the app flow, the challenge does not name the protected resource metadata.
+		prev := conf.Options().OAuthApps
+		t.Cleanup(func() { conf.Options().OAuthApps = prev })
+		conf.Options().OAuthApps = config.OAuthAppsNone
+		assert.Equal(t, `Bearer error="insufficient_scope", scope="mcp photos"`, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"))
+		assert.Empty(t, McpChallenge(conf, ""))
+	})
+	t.Run("PublicMode", func(t *testing.T) {
+		conf.Options().Public = true
+		t.Cleanup(func() { conf.Options().Public = false })
+		assert.Equal(t, `Bearer error="insufficient_scope", scope="mcp photos"`, McpChallenge(conf, McpErrInsufficientScope, "mcp", "photos"))
 	})
 }
 
@@ -43,6 +58,7 @@ func TestMcpTokenInfo(t *testing.T) {
 		assert.Equal(t, "uqxetse3cy5eo9z2", info.UserID)
 		assert.Equal(t, []string{"mcp", "photos"}, info.Scopes)
 		assert.True(t, info.Expiration.IsZero())
+		assert.Same(t, s, info.Extra[mcp.SessionKey])
 	})
 	t.Run("Client", func(t *testing.T) {
 		s := &entity.Session{ClientUID: "cs5gfen1bgxz7s9i", RefID: "sessxkkcxxxz", AuthScope: "*"}

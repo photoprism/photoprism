@@ -4,12 +4,29 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// LabelsPublicOnly reports whether the session may see public labels only, because its user role may not see
+// private content; this includes sessions without a user, such as API clients.
+func LabelsPublicOnly(sess *entity.Session) bool {
+	return sess != nil && acl.Rules.Deny(acl.ResourceLabels, sess.GetUserRole(), acl.AccessPrivate)
+}
+
+// UserLabels searches labels like Labels and returns only public labels if LabelsPublicOnly applies to the session.
+func UserLabels(frm form.SearchLabels, sess *entity.Session) (results []Label, err error) {
+	if LabelsPublicOnly(sess) {
+		frm.NSFW = false
+		frm.Public = true
+	}
+
+	return Labels(frm)
+}
 
 // Labels searches labels based on their name.
 func Labels(frm form.SearchLabels) (results []Label, err error) {

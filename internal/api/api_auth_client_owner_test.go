@@ -51,6 +51,11 @@ func newOwnedClientSession(t *testing.T, scope string) (*entity.User, *entity.Se
 	return user, sess
 }
 
+// disableStoredClient sets the stored auth_enabled value of the client to false.
+func disableStoredClient(clientUID string) error {
+	return entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientUID).UpdateColumn("auth_enabled", false).Error
+}
+
 // authStatus returns the HTTP status of an authorization check with the given token.
 func authStatus(token string, resource acl.Resource, perm acl.Permission) int {
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
@@ -120,6 +125,12 @@ func TestSessionReusable(t *testing.T) {
 
 		assert.False(t, sessionReusable(sess))
 	})
+	t.Run("ClientDisabled", func(t *testing.T) {
+		_, sess := newOwnedClientSession(t, "*")
+		require.True(t, sessionReusable(sess))
+		require.NoError(t, disableStoredClient(sess.ClientUID))
+		assert.False(t, sessionReusable(sess))
+	})
 	t.Run("UserSession", func(t *testing.T) {
 		sess := entity.NewSession(3600, 0).SetUser(entity.UserFixtures.Pointer("alice"))
 		require.NoError(t, sess.Save())
@@ -144,6 +155,25 @@ func TestAuthorizeSession(t *testing.T) {
 	t.Run("ClientOutsideScope", func(t *testing.T) {
 		_, sess := newOwnedClientSession(t, "metrics")
 		assert.False(t, authorizeSession("10.4.4.4", sess, acl.ResourceConfig, acl.Permissions{acl.ActionView}).Valid())
+	})
+	t.Run("ClientDisabled", func(t *testing.T) {
+		_, sess := newOwnedClientSession(t, "*")
+		require.True(t, authorizeSession("10.4.4.4", sess, acl.ResourceConfig, acl.Permissions{acl.ActionView}).Valid())
+		require.NoError(t, disableStoredClient(sess.ClientUID))
+
+		result := authorizeSession("10.4.4.4", sess, acl.ResourceConfig, acl.Permissions{acl.ActionView})
+		assert.Equal(t, http.StatusUnauthorized, result.HttpStatus())
+	})
+	t.Run("ClientDisabledOtherProvider", func(t *testing.T) {
+		_, clientSess := newOwnedClientSession(t, "*")
+		require.NoError(t, disableStoredClient(clientSess.ClientUID))
+
+		sess := entity.NewSession(3600, 0).SetUser(entity.UserFixtures.Pointer("alice"))
+		sess.ClientUID = clientSess.ClientUID
+		require.False(t, sess.IsClient())
+
+		result := authorizeSession("10.4.4.4", sess, acl.ResourceConfig, acl.Permissions{acl.ActionView})
+		assert.Equal(t, http.StatusUnauthorized, result.HttpStatus())
 	})
 	t.Run("ClientOfDeactivatedOwner", func(t *testing.T) {
 		user, sess := newOwnedClientSession(t, "*")

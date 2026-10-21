@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -20,10 +21,15 @@ const (
 	McpErrInsufficientScope = "insufficient_scope"
 )
 
-// McpChallenge returns the WWW-Authenticate header value that points MCP clients to the protected resource
-// metadata, optionally with an OAuth error code and the scopes a request needs.
+// McpChallenge returns the WWW-Authenticate header value with an optional OAuth error code and the scopes a
+// request needs; it points MCP clients to the protected resource metadata only while the app flow is enabled,
+// and returns an empty string if there is nothing to say.
 func McpChallenge(conf *config.Config, errCode string, scopes ...string) string {
-	params := []string{fmt.Sprintf("resource_metadata=%q", conf.OAuthResourceMetadataUrl())}
+	var params []string
+
+	if conf.OAuthAppsEnabled() {
+		params = append(params, fmt.Sprintf("resource_metadata=%q", conf.OAuthResourceMetadataUrl()))
+	}
 
 	if errCode != "" {
 		params = append(params, fmt.Sprintf("error=%q", errCode))
@@ -31,6 +37,10 @@ func McpChallenge(conf *config.Config, errCode string, scopes ...string) string 
 
 	if len(scopes) > 0 {
 		params = append(params, fmt.Sprintf("scope=%q", strings.Join(scopes, " ")))
+	}
+
+	if len(params) == 0 {
+		return ""
 	}
 
 	return header.AuthBearer + " " + strings.Join(params, ", ")
@@ -58,9 +68,11 @@ func mcpTokenInfo(s *entity.Session) *auth.TokenInfo {
 		return nil
 	}
 
+	// The session is passed in process only, so the tools and the middleware can authorize each call.
 	return &auth.TokenInfo{
 		Scopes: strings.Fields(s.Scope()),
 		UserID: userID,
+		Extra:  map[string]any{mcp.SessionKey: s},
 	}
 }
 

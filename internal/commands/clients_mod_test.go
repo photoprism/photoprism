@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestClientsModCommand checks authentication changes with isolated client and session fixtures.
@@ -314,5 +315,64 @@ func TestClientsModCommand_App(t *testing.T) {
 		found := entity.FindClientByUID("cs5gfen1bgxz7s9i")
 		require.NotNil(t, found)
 		assert.False(t, found.IsApp())
+	})
+}
+
+func TestClientsModCommand_RevokeOnChange(t *testing.T) {
+	t.Run("ScopeAndRole", func(t *testing.T) {
+		client, err := entity.AddClient(form.Client{ClientName: "Revoke Client", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+
+		newSession := func() string {
+			sess := entity.NewSession(3600, 0)
+			sess.SetClient(client)
+			require.NoError(t, sess.Save())
+			return sess.ID
+		}
+
+		// A name change keeps the issued tokens.
+		id := newSession()
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--name=Renamed Client", client.ClientUID})
+		require.NoError(t, err)
+		_, err = entity.FindSession(id)
+		assert.NoError(t, err)
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--scope=metrics vision", client.ClientUID})
+		require.NoError(t, err)
+		_, err = entity.FindSession(id)
+		assert.Error(t, err)
+
+		id = newSession()
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--role=admin", client.ClientUID})
+		require.NoError(t, err)
+		_, err = entity.FindSession(id)
+		assert.Error(t, err)
+	})
+	t.Run("DisableApp", func(t *testing.T) {
+		client, err := entity.AddClient(form.Client{ClientName: "Disable App", AuthMethod: authn.MethodPKCE.String(), AuthScope: "mcp",
+			RedirectURIs: []string{"https://claude.ai/cb"}})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+
+		alice := entity.UserFixtures.Pointer("alice")
+		grant := &entity.Grant{UserUID: alice.UserUID, UserName: alice.UserName, ClientID: client.ClientUID, Scope: "mcp",
+			RefreshHash: rnd.Sha256([]byte(rnd.AuthToken()))}
+		require.NoError(t, grant.Create())
+
+		sess := entity.NewSession(3600, 0)
+		sess.SetUser(alice)
+		sess.AuthProvider = authn.ProviderOAuthApp.String()
+		sess.AuthMethod = authn.MethodPKCE.String()
+		sess.AuthID = grant.GrantUID
+		require.NoError(t, sess.Create())
+
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--disable", client.ClientUID})
+		require.NoError(t, err)
+
+		// The access token ends, while the grant stays for when the client is enabled again.
+		_, err = entity.FindAnySession(sess.ID)
+		assert.Error(t, err)
+		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
 	})
 }

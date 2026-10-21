@@ -1,5 +1,7 @@
 // Utility functions for handling album selection logic
 
+import { requestErrorDetails } from "common/api";
+
 export function processAlbumSelection(selectedAlbums, availableAlbums) {
   if (!Array.isArray(selectedAlbums)) {
     return { processed: [], changed: false };
@@ -50,7 +52,7 @@ export function createAlbumSelectionWatcher(albumsProperty) {
         this.$nextTick(() => {
           this.selectedAlbums = processed;
         }).catch((error) => {
-          console.error("Error updating selectedAlbums:", error);
+          console.error("Error updating selectedAlbums:", requestErrorDetails(error));
         });
       }
     },

@@ -511,6 +511,7 @@
   </v-dialog>
 </template>
 <script>
+import { requestErrorDetails } from "common/api";
 import * as options from "options/options";
 import * as contexts from "options/contexts";
 import IconLivePhoto from "../icon/live-photo.vue";
@@ -1623,7 +1624,7 @@ export default {
           customSlug: (label.CustomSlug || "").toLowerCase(),
         }));
       } catch (error) {
-        console.error("Error fetching available options:", error);
+        console.error("Error fetching available options:", requestErrorDetails(error));
       } finally {
         this.loading = false;
       }

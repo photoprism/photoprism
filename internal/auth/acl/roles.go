@@ -77,6 +77,19 @@ func (m RoleStrings) Strings() []string {
 	return result
 }
 
+// Allowed returns the sorted names of the roles to which the ACL grants the permission on the resource.
+func (m RoleStrings) Allowed(a ACL, resource Resource, perm Permission) []string {
+	result := []string{}
+
+	for _, name := range m.Strings() {
+		if a.Allow(resource, m[name], perm) {
+			result = append(result, name)
+		}
+	}
+
+	return result
+}
+
 // String returns the comma separated roles as string.
 func (m RoleStrings) String() string {
 	return strings.Join(m.Strings(), ", ")

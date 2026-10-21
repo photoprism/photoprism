@@ -109,6 +109,8 @@ var Rules = ACL{
 		RolePortal:  GrantFullAccess,
 		RoleDefault: GrantOwn,
 	},
+	// ResourceClients grants no role, so ResourceDefault does not apply: clients are managed with the CLI.
+	ResourceClients: Roles{},
 	ResourceLogs: Roles{
 		RoleAdmin:  GrantFullAccess,
 		RolePortal: GrantFullAccess,

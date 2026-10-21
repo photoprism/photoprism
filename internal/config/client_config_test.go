@@ -202,6 +202,21 @@ func TestClientConfig_ApplyACL(t *testing.T) {
 		assert.Equal(t, -1, u.FilesUsedPct)
 		assert.EqualValues(t, 0, u.FilesTotal)
 	})
+	t.Run("McpRoles", func(t *testing.T) {
+		// Community Edition admins manage only their own account, so they do not receive the list.
+		assert.Nil(t, (&ClientConfig{}).ApplyACL(acl.Rules, acl.RoleAdmin).McpRoles)
+
+		a := acl.ACL{
+			acl.ResourceUsers: acl.Roles{acl.RoleAdmin: acl.GrantFullAccess, acl.RoleGuest: acl.GrantViewUpdateOwn},
+			acl.ResourceMCP:   acl.Roles{acl.RoleAdmin: acl.GrantFullAccess, acl.RoleGuest: acl.GrantSearchAll},
+		}
+
+		admin := (&ClientConfig{}).ApplyACL(a, acl.RoleAdmin)
+		assert.Equal(t, []string{"admin", "guest"}, admin.McpRoles)
+
+		// Roles that cannot manage all accounts do not receive the list, and a reused config is cleared.
+		assert.Nil(t, admin.ApplyACL(a, acl.RoleGuest).McpRoles)
+	})
 }
 
 func TestConfig_ClientUser(t *testing.T) {

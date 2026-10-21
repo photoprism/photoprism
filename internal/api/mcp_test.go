@@ -1,19 +1,20 @@
 package api
 
 import (
-	"io"
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
-	"sync/atomic"
 	"testing"
+	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -58,6 +59,55 @@ func mcpPost(app http.Handler, body, authToken, sessionID string) *httptest.Resp
 	return w
 }
 
+// assertMCPReferenceTools lists the tools of an initialized MCP session and calls each reference tool
+// that returns a list of items, asserting a successful result with rows.
+func assertMCPReferenceTools(t *testing.T, app http.Handler, authToken, sessionID string) {
+	t.Helper()
+
+	w := mcpPost(app, `{"jsonrpc":"2.0","id":10,"method":"tools/list"}`, authToken, sessionID)
+	require.Equal(t, http.StatusOK, w.Code)
+
+	for _, name := range mcp.ToolNames {
+		assert.Contains(t, w.Body.String(), `"name":"`+name+`"`)
+	}
+
+	calls := map[string]string{
+		"list_file_formats":    `{"type":"raw","limit":5}`,
+		"list_metadata_fields": `{"query":"exif","limit":5}`,
+		"list_thumbnail_sizes": `{"type":"video"}`,
+	}
+
+	for name, args := range calls {
+		w = mcpPost(app, `{"jsonrpc":"2.0","id":11,"method":"tools/call","params":{"name":"`+name+`","arguments":`+args+`}}`, authToken, sessionID)
+		require.Equal(t, http.StatusOK, w.Code, name)
+		assert.Contains(t, w.Body.String(), `"items":[{`, name)
+		assert.NotContains(t, w.Body.String(), `"isError":true`, name)
+	}
+
+	// The test config's CLI app has no commands, so the tool returns no items and a warning.
+	w = mcpPost(app, `{"jsonrpc":"2.0","id":12,"method":"tools/call","params":{"name":"list_cli_commands","arguments":{"query":"users"}}}`, authToken, sessionID)
+	require.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), `"items":[]`)
+	assert.Contains(t, w.Body.String(), "the command list of this edition is not available")
+	assert.NotContains(t, w.Body.String(), `"isError":true`)
+}
+
+// mcpInitSession initializes an MCP session and returns its ID.
+func mcpInitSession(t *testing.T, app http.Handler, authToken string) string {
+	t.Helper()
+
+	w := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0"}}}`, authToken, "")
+	require.Equal(t, http.StatusOK, w.Code)
+
+	sessionID := w.Header().Get("Mcp-Session-Id")
+	require.NotEmpty(t, sessionID)
+
+	w = mcpPost(app, `{"jsonrpc":"2.0","method":"notifications/initialized"}`, authToken, sessionID)
+	require.Less(t, w.Code, 300)
+
+	return sessionID
+}
+
 // TestServeMCP exercises the HTTP handler installed by ServeMCP: the
 // public-mode anonymous path, unauthenticated and non-admin denial, and
 // the full admin round-trip through initialize, notifications/initialized,
@@ -67,7 +117,7 @@ func TestServeMCP(t *testing.T) {
 		// In public mode, Session() returns the default public session and
 		// the currently registered MCP tools only surface static reference
 		// data. Anonymous callers must therefore be able to initialize an
-		// MCP session and call both tools without a token — this is what
+		// MCP session and call every tool without a token - this is what
 		// lets the MCP server run on demo.photoprism.app. Guard the policy
 		// here so it regresses loudly if a future change tightens it.
 		app, router, _ := NewApiTest()
@@ -93,6 +143,48 @@ func TestServeMCP(t *testing.T) {
 		w4 := mcpPost(app, `{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"find_search_filters","arguments":{"query":"color","limit":5}}}`, "", sessionID)
 		assert.Equal(t, http.StatusOK, w4.Code)
 		assert.Contains(t, w4.Body.String(), "matches")
+
+		assertMCPReferenceTools(t, app, "", sessionID)
+	})
+	t.Run("EditionCommandList", func(t *testing.T) {
+		// ServeMCP passes the command list of the running edition from the CLI app to the server.
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		conf.Options().Public = true
+
+		cliApp := conf.CliApp()
+		require.NotNil(t, cliApp)
+
+		commands := cliApp.Commands
+		t.Cleanup(func() { cliApp.Commands = commands })
+
+		cliApp.Commands = []*cli.Command{
+			{Name: "ldap", Usage: "Directory commands", Subcommands: []*cli.Command{
+				{Name: "sync", Usage: "Synchronizes accounts", Flags: []cli.Flag{
+					&cli.StringFlag{Name: "role", Usage: "account role", Value: "user"},
+					&cli.BoolFlag{Name: "debug", Usage: "has the name of a global flag"},
+					cli.HelpFlag,
+				}},
+			}},
+			{Name: "secret", Usage: "Hidden command", Hidden: true},
+		}
+
+		ServeMCP(router)
+
+		sessionID := mcpInitSession(t, app, "")
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_cli_commands","arguments":{}}}`, "", sessionID)
+		require.Equal(t, http.StatusOK, w.Code)
+
+		body := w.Body.String()
+		assert.Contains(t, body, `"command":"photoprism ldap"`)
+		assert.Contains(t, body, `"command":"photoprism ldap sync"`)
+		assert.Contains(t, body, `"name":"--role"`)
+		assert.Contains(t, body, `\"user\"`)
+		assert.Contains(t, body, `"total":2`)
+		assert.NotContains(t, body, "photoprism secret")
+		assert.Contains(t, body, `"name":"--debug"`)
+		assert.NotContains(t, body, `"name":"--help"`)
+		assert.NotContains(t, body, "not available")
 	})
 	t.Run("DisabledViaConfig", func(t *testing.T) {
 		// When DisableMCP is set, ServeMCP must skip route registration so
@@ -162,6 +254,77 @@ func TestServeMCP(t *testing.T) {
 		r := mcpPost(app, initBody, sess.AuthToken(), "")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("AccountSetting", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		ServeMCP(router)
+
+		alice := entity.FindUserByName("alice")
+		require.NotNil(t, alice)
+		setMCP := func(value int) {
+			alice.MCP = value
+			require.NoError(t, alice.Save())
+		}
+		t.Cleanup(func() { setMCP(0) })
+
+		appPassword, err := entity.AddClientSession("mcp-test-account-setting", 3600, "mcp", authn.GrantCLI, alice)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = appPassword.Delete() })
+
+		client := entity.ClientFixtures.Pointer("alice").NewSession(nil, authn.GrantClientCredentials)
+		require.NoError(t, client.Create())
+		t.Cleanup(func() { _ = client.Delete() })
+		require.True(t, client.IsClient())
+		require.True(t, client.HasUser())
+
+		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"qa","version":"1.0"}}}`
+
+		for _, value := range []int{0, 1} {
+			setMCP(value)
+			assert.Equal(t, http.StatusOK, mcpPost(app, initBody, appPassword.AuthToken(), "").Code)
+			assert.Equal(t, http.StatusOK, mcpPost(app, initBody, client.AuthToken(), "").Code)
+		}
+
+		// An open MCP session stops working once the setting turns MCP off.
+		setMCP(0)
+		sessionID := mcpInitSession(t, app, appPassword.AuthToken())
+		setMCP(-1)
+
+		audit := captureAuditLog(t)
+		w := mcpPost(app, `{"jsonrpc":"2.0","id":2,"method":"tools/list"}`, appPassword.AuthToken(), sessionID)
+		assert.Equal(t, http.StatusForbidden, w.Code)
+		require.NotNil(t, audit.LastEntry())
+		assert.Contains(t, audit.LastEntry().Message, "mcp › disabled for user alice › denied")
+
+		assert.Equal(t, http.StatusForbidden, mcpPost(app, initBody, appPassword.AuthToken(), "").Code)
+		assert.Equal(t, http.StatusForbidden, mcpPost(app, initBody, client.AuthToken(), "").Code)
+
+		// The event stream and session tear-down are refused as well.
+		for _, method := range []string{http.MethodGet, http.MethodDelete} {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			req, _ := http.NewRequestWithContext(ctx, method, "/api/v1/mcp", nil)
+			header.SetAuthorization(req, appPassword.AuthToken())
+			req.Header.Set(header.Accept, header.ContentTypeEventStream)
+			req.Header.Set("Mcp-Session-Id", sessionID)
+			w := httptest.NewRecorder()
+			app.ServeHTTP(w, req)
+			assert.Equal(t, http.StatusForbidden, w.Code, method)
+			cancel()
+		}
+
+		// A client without a user does not depend on the setting.
+		clientOnly, err := entity.AddClientSession("mcp-test-client-only", 3600, "mcp", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = clientOnly.Delete() })
+		assert.Equal(t, http.StatusOK, mcpPost(app, initBody, clientOnly.AuthToken(), "").Code)
+
+		// The public session stands for no account, so the setting of the admin it carries does not apply.
+		publicMCP := entity.Admin.MCP
+		t.Cleanup(func() { entity.Admin.MCP = publicMCP })
+		entity.Admin.MCP = -1
+		conf.Options().Public = true
+		assert.Equal(t, http.StatusOK, mcpPost(app, initBody, "", "").Code)
+	})
 	t.Run("RequestTooLargeContentLength", func(t *testing.T) {
 		// The handler must reject oversized POST bodies with a 413 before
 		// the MCP SDK reads them into memory. This branch covers the
@@ -185,33 +348,32 @@ func TestServeMCP(t *testing.T) {
 		assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
 	})
 	t.Run("RequestTooLargeStreamed", func(t *testing.T) {
-		// MaxBytesReader plus the response-writer wrapper must convert the
-		// SDK's 400 "failed to read body" into the standard 413 when the
-		// client streams a body larger than the cap without a
-		// Content-Length header. This path is what protects deployments
-		// that sit behind proxies using chunked transfer encoding.
-		app, router, _ := NewApiTest()
-		prepareMCPTest(t)
-		ServeMCP(router)
+		// A body larger than the cap without a Content-Length header, as sent with chunked transfer
+		// encoding, is answered with the standard 413 before the SDK reads it, in public mode too.
+		for _, public := range []bool{false, true} {
+			app, router, _ := NewApiTest()
+			conf := prepareMCPTest(t)
+			ServeMCP(router)
 
-		authToken := AuthenticateAdmin(app, router)
+			authToken := AuthenticateAdmin(app, router)
+			conf.Options().Public = public
 
-		oversizedBody := strings.Repeat("a", int(MaxMCPRequestBytes)+1024)
-		req, _ := http.NewRequest(http.MethodPost, "/api/v1/mcp", strings.NewReader(oversizedBody))
-		header.SetAuthorization(req, authToken)
-		req.Header.Set(header.ContentType, header.ContentTypeJson)
-		req.Header.Set(header.Accept, header.ContentTypeJson+", "+header.ContentTypeEventStream)
-		// Force chunked transfer encoding semantics by clearing the
-		// Content-Length signal, matching the behavior of a streaming
-		// upstream proxy or client that sends Transfer-Encoding: chunked.
-		req.ContentLength = -1
+			oversizedBody := strings.Repeat("a", int(MaxMCPRequestBytes)+1024)
+			req, _ := http.NewRequest(http.MethodPost, "/api/v1/mcp", strings.NewReader(oversizedBody))
+			header.SetAuthorization(req, authToken)
+			req.Header.Set(header.ContentType, header.ContentTypeJson)
+			req.Header.Set(header.Accept, header.ContentTypeJson+", "+header.ContentTypeEventStream)
+			req.ContentLength = -1
 
-		w := httptest.NewRecorder()
-		app.ServeHTTP(w, req)
+			audit := captureAuditLog(t)
+			w := httptest.NewRecorder()
+			app.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
-		// The rewritten response must not leak the SDK's 400 phrasing.
-		assert.NotContains(t, w.Body.String(), "failed to read body")
+			assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
+			assert.NotContains(t, w.Body.String(), "request body exceeds")
+			require.NotNil(t, audit.LastEntry())
+			assert.Contains(t, audit.LastEntry().Message, "mcp › request body too large › failed")
+		}
 	})
 	t.Run("NoChallengeWhenAppsDisabled", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -365,74 +527,7 @@ func TestServeMCP(t *testing.T) {
 		w4 := mcpPost(app, `{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"find_search_filters","arguments":{"query":"color","limit":5}}}`, authToken, sessionID)
 		assert.Equal(t, http.StatusOK, w4.Code)
 		assert.Contains(t, w4.Body.String(), "matches")
-	})
-}
 
-// TestMcpLimitReader exercises the body wrapper that sets the shared
-// "tripped" flag when http.MaxBytesReader returns its sentinel error.
-func TestMcpLimitReader(t *testing.T) {
-	t.Run("FlagsOnMaxBytesError", func(t *testing.T) {
-		rec := httptest.NewRecorder()
-		body := io.NopCloser(strings.NewReader("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"))
-		tripped := &atomic.Bool{}
-		r := &mcpLimitReader{
-			ReadCloser: http.MaxBytesReader(rec, body, 4),
-			tripped:    tripped,
-		}
-		buf := make([]byte, 16)
-		n, err := r.Read(buf)
-		assert.Less(t, n, 16)
-		assert.Error(t, err)
-		assert.True(t, tripped.Load())
-	})
-	t.Run("NoFlagOnNormalRead", func(t *testing.T) {
-		rec := httptest.NewRecorder()
-		body := io.NopCloser(strings.NewReader("hello"))
-		tripped := &atomic.Bool{}
-		r := &mcpLimitReader{
-			ReadCloser: http.MaxBytesReader(rec, body, 1024),
-			tripped:    tripped,
-		}
-		buf := make([]byte, 64)
-		n, _ := r.Read(buf)
-		assert.Equal(t, 5, n)
-		assert.False(t, tripped.Load())
-	})
-}
-
-// TestMcpLimitWriter exercises the response-writer wrapper that translates
-// the SDK's 400 into a 413 once the paired reader has tripped.
-func TestMcpLimitWriter(t *testing.T) {
-	t.Run("RewritesBadRequestWhenTripped", func(t *testing.T) {
-		rec := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(rec)
-		tripped := &atomic.Bool{}
-		tripped.Store(true)
-		w := &mcpLimitWriter{ResponseWriter: c.Writer, tripped: tripped}
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("failed to read body\n"))
-		assert.Equal(t, http.StatusRequestEntityTooLarge, c.Writer.Status())
-		assert.True(t, w.suppress.Load())
-		// The SDK-provided body must not reach the client on the 413
-		// rewrite path; only the status code is preserved.
-		assert.NotContains(t, rec.Body.String(), "failed to read body")
-	})
-	t.Run("PassesThroughWhenNotTripped", func(t *testing.T) {
-		c, _ := gin.CreateTestContext(httptest.NewRecorder())
-		tripped := &atomic.Bool{}
-		w := &mcpLimitWriter{ResponseWriter: c.Writer, tripped: tripped}
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("ok"))
-		assert.Equal(t, http.StatusOK, c.Writer.Status())
-		assert.False(t, w.suppress.Load())
-	})
-	t.Run("LeavesNonBadRequestAlone", func(t *testing.T) {
-		c, _ := gin.CreateTestContext(httptest.NewRecorder())
-		tripped := &atomic.Bool{}
-		tripped.Store(true)
-		w := &mcpLimitWriter{ResponseWriter: c.Writer, tripped: tripped}
-		w.WriteHeader(http.StatusInternalServerError)
-		assert.Equal(t, http.StatusInternalServerError, c.Writer.Status())
-		assert.False(t, w.suppress.Load())
+		assertMCPReferenceTools(t, app, authToken, sessionID)
 	})
 }

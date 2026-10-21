@@ -72,6 +72,12 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		privilegeLevelChange = true
 	}
 
+	// Allow the use of MCP?
+	if ctx.IsSet("mcp") {
+		m.MCP = frm.MCPSetting()
+		privilegeLevelChange = true
+	}
+
 	// Set custom attributes?
 	if ctx.IsSet("attr") {
 		m.UserAttr = frm.Attr()

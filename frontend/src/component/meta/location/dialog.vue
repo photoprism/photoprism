@@ -128,6 +128,7 @@
 </template>
 
 <script>
+import { requestErrorDetails } from "common/api";
 import PMetaLocationInput from "component/meta/location/input.vue";
 import PMap from "component/map.vue";
 
@@ -263,7 +264,7 @@ export default {
           }
         })
         .catch((error) => {
-          console.error("Reverse geocoding error:", error);
+          console.error("Reverse geocoding error:", requestErrorDetails(error));
           this.location = null;
         })
         .finally(() => {
@@ -309,7 +310,7 @@ export default {
           }
         })
         .catch((error) => {
-          console.error("Place search error:", error);
+          console.error("Place search error:", requestErrorDetails(error));
           if (this.searchQuery === query) {
             this.searchResults = [];
           }

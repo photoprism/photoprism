@@ -36,6 +36,7 @@ export class User extends RestModel {
       BasePath: "",
       UploadPath: "",
       WebDAV: false,
+      MCP: 0,
       Thumb: "",
       ThumbSrc: "",
       Settings: {
@@ -326,6 +327,27 @@ export class User extends RestModel {
     }
 
     return WebDavRoles.includes(this.Role);
+  }
+
+  // canEnableMCP reports whether the account role may use MCP, based on the roles in the client config.
+  canEnableMCP() {
+    if (this.AuthProvider === "none" || !this.Name) {
+      return false;
+    }
+
+    const roles = $config.get("mcpRoles");
+
+    return Array.isArray(roles) && roles.includes(this.Role);
+  }
+
+  // hasMCP reports whether MCP is usable for the account: the setting allows it and the role permits it.
+  hasMCP() {
+    return this.flagEnabled("MCP", true) && this.canEnableMCP();
+  }
+
+  // setMCP switches the MCP setting, restoring the saved value when switched back.
+  setMCP(enabled) {
+    this.setFlag("MCP", enabled, true);
   }
 
   // Checks if the user role supports a custom base path.

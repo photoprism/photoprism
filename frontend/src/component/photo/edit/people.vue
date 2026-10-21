@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import { requestErrorDetails } from "common/api";
 import Marker from "model/marker";
 import Subject, { MaxLength as SubjectMaxLength } from "model/subject";
 import typeaheadCache from "common/typeahead-cache";
@@ -231,7 +232,7 @@ export default {
     },
     loadSubject(uid) {
       return new Subject({ UID: uid }).find(uid).catch((err) => {
-        console.error("faces: failed loading subject", err);
+        console.error("faces: failed loading subject", requestErrorDetails(err));
         return null;
       });
     },
@@ -262,7 +263,7 @@ export default {
         })
         .catch((err) => {
           if (!err || err.message !== SUBJECT_NOT_FOUND) {
-            console.error("faces: failed opening person", err);
+            console.error("faces: failed opening person", requestErrorDetails(err));
           }
         });
     },
@@ -297,7 +298,7 @@ export default {
         })
         .catch((err) => {
           if (err) {
-            console.error("faces: failed setting person cover", err);
+            console.error("faces: failed setting person cover", requestErrorDetails(err));
             this.$notify.error(this.$gettext("Could not update person cover"));
           }
         })

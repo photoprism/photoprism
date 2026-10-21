@@ -44,6 +44,46 @@ const testConfig = {
 
 const c = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
 
+// requestErrorSummary describes a failed request by its method, path and error message, without its data,
+// headers, or query string.
+export function requestErrorSummary(error) {
+  const method = error?.config?.method ? String(error.config.method).toUpperCase() : "";
+  const path = typeof error?.config?.url === "string" ? error.config.url.split("?")[0] : "";
+  const message = error?.message ? error.message : "Request failed";
+
+  return ["api:", method, path, "›", message].filter((v) => v).join(" ");
+}
+
+// redactRequestError removes the request body and auth headers from a failed request outside debug and trace mode,
+// so that later logging, e.g. of a rejected promise, shows neither.
+export function redactRequestError(error) {
+  if (c.debug || c.trace || !error?.config) {
+    return error;
+  }
+
+  delete error.config.data;
+
+  const headers = error.config.headers;
+
+  if (headers) {
+    for (const name of ["X-Auth-Token", "Authorization"]) {
+      if (typeof headers.delete === "function") {
+        headers.delete(name);
+      } else {
+        delete headers[name];
+      }
+    }
+  }
+
+  return error;
+}
+
+// requestErrorDetails returns a request error for logging: the error itself in debug or trace mode, and its summary
+// otherwise. Other errors carry no request details and are returned as they are.
+export function requestErrorDetails(error) {
+  return c.debug || c.trace || !error?.config ? error : requestErrorSummary(error);
+}
+
 const $api = Axios.create({
   baseURL: c.apiUri,
   headers: {
@@ -89,14 +129,18 @@ $api.interceptors.response.use(
   function (error) {
     $notify.ajaxEnd();
 
+    // Take the error details for logging first, then remove the request body and auth headers outside debug mode.
+    const summary = requestErrorDetails(error);
+    redactRequestError(error);
+
     // Skip error handling if request was canceled.
     if (Axios.isCancel(error)) {
       return Promise.reject(error);
     }
 
-    // Log error for debugging.
+    // Log a summary of the error, and the request details only in debug mode.
     if (console && console.log && error) {
-      console.log(error);
+      console.log(summary);
     }
 
     // Default error message.

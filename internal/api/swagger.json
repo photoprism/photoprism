@@ -2524,6 +2524,9 @@
                 "LoginAt": {
                     "type": "string"
                 },
+                "MCP": {
+                    "type": "integer"
+                },
                 "Name": {
                     "type": "string"
                 },
@@ -3483,6 +3486,9 @@
                 },
                 "Email": {
                     "type": "string"
+                },
+                "MCP": {
+                    "type": "integer"
                 },
                 "Name": {
                     "type": "string"

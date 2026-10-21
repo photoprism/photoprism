@@ -306,3 +306,78 @@ func TestGrantRefreshTokenRevokeForm(t *testing.T) {
 	require.NoError(t, f.Validate())
 	assert.Equal(t, form.RefreshToken, f.TokenTypeHint)
 }
+
+func TestFindClientGrants(t *testing.T) {
+	older := newTestGrant(t, "csgrantlist00001")
+	newer := &Grant{UserUID: UserFixtures.Pointer("bob").UserUID, ClientID: "csgrantlist00001", Scope: "mcp", RefreshHash: rnd.Sha256([]byte(rnd.AuthToken()))}
+	require.NoError(t, newer.Create())
+	t.Cleanup(func() { _ = newer.Delete() })
+	newTestGrant(t, "csgrantlist00002")
+	require.NoError(t, UnscopedDb().Model(&Grant{}).Where("grant_uid = ?", older.GrantUID).UpdateColumn("used_at", time.Now().UTC().Add(-time.Hour)).Error)
+
+	t.Run("Success", func(t *testing.T) {
+		found, err := FindClientGrants("csgrantlist00001")
+		require.NoError(t, err)
+		require.Len(t, found, 2)
+		assert.Equal(t, newer.GrantUID, found[0].GrantUID)
+		assert.Equal(t, older.GrantUID, found[1].GrantUID)
+	})
+	t.Run("None", func(t *testing.T) {
+		found, err := FindClientGrants("csgrantlist00003")
+		require.NoError(t, err)
+		assert.Empty(t, found)
+		found, err = FindClientGrants("")
+		require.NoError(t, err)
+		assert.Empty(t, found)
+	})
+}
+
+func TestCountClientGrants(t *testing.T) {
+	newTestGrant(t, "csgrantcount0001")
+	g := &Grant{UserUID: UserFixtures.Pointer("bob").UserUID, ClientID: "csgrantcount0001", Scope: "mcp", RefreshHash: rnd.Sha256([]byte(rnd.AuthToken()))}
+	require.NoError(t, g.Create())
+	t.Cleanup(func() { _ = g.Delete() })
+	newTestGrant(t, "csgrantcount0002")
+
+	t.Run("Success", func(t *testing.T) {
+		counts, err := CountClientGrants([]string{"csgrantcount0001", "csgrantcount0002", "csgrantcount0003"})
+		require.NoError(t, err)
+		assert.Equal(t, map[string]int{"csgrantcount0001": 2, "csgrantcount0002": 1}, counts)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		counts, err := CountClientGrants(nil)
+		require.NoError(t, err)
+		assert.Empty(t, counts)
+	})
+}
+
+func TestSuspendClientGrants(t *testing.T) {
+	prev := GrantSuspendedHandler
+	t.Cleanup(func() { GrantSuspendedHandler = prev })
+
+	var suspended []string
+	GrantSuspendedHandler = func(uid string) { suspended = append(suspended, uid) }
+
+	t.Run("Success", func(t *testing.T) {
+		m := newTestGrant(t, "csgrantsusp00001")
+		sess := newTestGrantSession(t, m)
+		other := newTestGrant(t, "csgrantsusp00002")
+		otherSess := newTestGrantSession(t, other)
+
+		assert.Equal(t, 1, SuspendClientGrants("csgrantsusp00001"))
+		assert.Equal(t, []string{m.GrantUID}, suspended)
+
+		// The grant stays, its access token is deleted, and other clients are not affected.
+		assert.NotNil(t, FindGrant(m.GrantUID))
+		_, err := FindAnySession(sess.ID)
+		assert.Error(t, err)
+		_, err = FindAnySession(otherSess.ID)
+		assert.NoError(t, err)
+	})
+	t.Run("None", func(t *testing.T) {
+		suspended = nil
+		assert.Equal(t, 0, SuspendClientGrants("csgrantsusp00003"))
+		assert.Equal(t, 0, SuspendClientGrants(""))
+		assert.Empty(t, suspended)
+	})
+}

@@ -314,6 +314,30 @@ func TestOAuthConsent(t *testing.T) {
 		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/oauth/consent/approve", `{"request":"`+id+`","scopes":["mcp","albums"]}`, authToken)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
+	t.Run("AccountWithoutMCP", func(t *testing.T) {
+		app, router, conf, client := prepareAppFlowTest(t, "mcp photos")
+		q := testAuthorizeQuery(conf, client.ClientUID)
+		q.Set("scope", "mcp photos")
+		id := authorizeRequestID(t, app, q)
+		authToken := AuthenticateAdmin(app, router)
+
+		admin := entity.FindUserByName("admin")
+		require.NotNil(t, admin)
+		admin.MCP = -1
+		require.NoError(t, admin.Save())
+		t.Cleanup(func() {
+			admin.MCP = 0
+			_ = admin.Save()
+		})
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/oauth/consent", `{"request":"`+id+`"}`, authToken)
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.False(t, gjson.Get(r.Body.String(), "available").Bool())
+		assert.Equal(t, `[{"name":"mcp","available":false},{"name":"photos","available":false}]`, gjson.Get(r.Body.String(), "scopes").Raw)
+
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/oauth/consent/approve", `{"request":"`+id+`","scopes":["mcp","photos"]}`, authToken)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
 	t.Run("RoleWithoutMCP", func(t *testing.T) {
 		app, router, conf, client := prepareAppFlowTest(t, "mcp photos")
 		q := testAuthorizeQuery(conf, client.ClientUID)
@@ -502,6 +526,13 @@ func TestOAuthConsentUsableScopes(t *testing.T) {
 	})
 	t.Run("RoleWithoutMCP", func(t *testing.T) {
 		assert.Empty(t, oauthConsentUsableScopes(&entity.Session{}, guest, []string{"mcp", "photos"}))
+	})
+	t.Run("AccountSetting", func(t *testing.T) {
+		u := *admin
+		u.MCP = 1
+		assert.Equal(t, []string{"mcp", "photos"}, oauthConsentUsableScopes(&entity.Session{}, &u, []string{"mcp", "photos"}))
+		u.MCP = -1
+		assert.Empty(t, oauthConsentUsableScopes(&entity.Session{}, &u, []string{"mcp", "photos"}))
 	})
 	t.Run("Nil", func(t *testing.T) {
 		assert.Empty(t, oauthConsentUsableScopes(nil, admin, []string{"mcp"}))

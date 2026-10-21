@@ -35,6 +35,18 @@ export default defineConfig({
         replacement: path.resolve(import.meta.dirname, "../pro/frontend/component/user/remove/dialog.vue"),
       },
       {
+        find: /^component\/client\/(.*)$/,
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/component/client/$1"),
+      },
+      {
+        find: "model/client",
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/model/client.js"),
+      },
+      {
+        find: /^page\/admin\/(.*)$/,
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/page/admin/$1"),
+      },
+      {
         find: "options/admin",
         replacement: path.resolve(import.meta.dirname, "../pro/frontend/options/admin.js"),
       },

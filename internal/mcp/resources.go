@@ -9,9 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
-// registerResources registers every read-only resource exposed by the
-// server against the shared *Dataset. The order matches ResourceURIs so
-// the startup log and the SDK's resources/list response stay in sync.
+// registerResources registers the resources in ResourceURIs against the shared *Dataset.
 func registerResources(server *sdkmcp.Server, data *Dataset) {
 	server.AddResource(&sdkmcp.Resource{
 		URI:         configOptionsURI,
@@ -36,6 +34,65 @@ func registerResources(server *sdkmcp.Server, data *Dataset) {
 		return newResourceResult(req.Params.URI, SearchFiltersResource{
 			Edition: data.CurrentEdition,
 			Items:   data.SearchFilters,
+		})
+	})
+
+	server.AddResource(&sdkmcp.Resource{
+		URI:         cliCommandsURI,
+		Name:        "cli-commands",
+		Title:       "PhotoPrism CLI Commands",
+		Description: "Read-only list of the CLI commands of this edition derived from the existing command catalog.",
+		MIMEType:    header.ContentTypeJson,
+	}, func(_ context.Context, req *sdkmcp.ReadResourceRequest) (*sdkmcp.ReadResourceResult, error) {
+		items := data.CliCommands
+
+		if items == nil {
+			items = []CliCommand{}
+		}
+
+		return newResourceResult(req.Params.URI, CliCommandsResource{
+			Edition: data.CurrentEdition,
+			Items:   items,
+		})
+	})
+
+	server.AddResource(&sdkmcp.Resource{
+		URI:         fileFormatsURI,
+		Name:        "file-formats",
+		Title:       "PhotoPrism File Formats",
+		Description: "Read-only list of supported file formats derived from the existing file format report.",
+		MIMEType:    header.ContentTypeJson,
+	}, func(_ context.Context, req *sdkmcp.ReadResourceRequest) (*sdkmcp.ReadResourceResult, error) {
+		return newResourceResult(req.Params.URI, FileFormatsResource{
+			Edition: data.CurrentEdition,
+			Items:   data.FileFormats,
+		})
+	})
+
+	server.AddResource(&sdkmcp.Resource{
+		URI:         metadataFieldsURI,
+		Name:        "metadata-fields",
+		Title:       "PhotoPrism Metadata Fields",
+		Description: "Read-only list of supported metadata fields and tags derived from the existing metadata report.",
+		MIMEType:    header.ContentTypeJson,
+	}, func(_ context.Context, req *sdkmcp.ReadResourceRequest) (*sdkmcp.ReadResourceResult, error) {
+		return newResourceResult(req.Params.URI, MetadataFieldsResource{
+			Edition: data.CurrentEdition,
+			Items:   data.MetadataFields,
+			Docs:    data.MetadataDocs,
+		})
+	})
+
+	server.AddResource(&sdkmcp.Resource{
+		URI:         thumbnailSizesURI,
+		Name:        "thumbnail-sizes",
+		Title:       "PhotoPrism Thumbnail Sizes",
+		Description: "Read-only list of thumbnail and video sizes derived from the existing thumbnail size report.",
+		MIMEType:    header.ContentTypeJson,
+	}, func(_ context.Context, req *sdkmcp.ReadResourceRequest) (*sdkmcp.ReadResourceResult, error) {
+		return newResourceResult(req.Params.URI, ThumbnailSizesResource{
+			Edition: data.CurrentEdition,
+			Items:   data.ThumbnailSizes,
 		})
 	})
 }

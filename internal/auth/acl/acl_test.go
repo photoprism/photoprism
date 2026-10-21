@@ -146,6 +146,18 @@ func TestACL_DenyAll(t *testing.T) {
 	})
 }
 
+func TestACL_ResourceClients(t *testing.T) {
+	t.Run("NoRoleGranted", func(t *testing.T) {
+		for _, role := range []Role{RoleAdmin, RolePortal, RoleInstance, RoleService, RoleClient, RoleGuest, RoleVisitor} {
+			assert.True(t, Rules.DenyAll(ResourceClients, role, Permissions{AccessAll, ActionSearch, ActionView, ActionManage, FullAccess}), role)
+		}
+	})
+	t.Run("DefaultNotApplied", func(t *testing.T) {
+		assert.True(t, Rules.Allow(ResourceDefault, RoleAdmin, ActionManage))
+		assert.True(t, Rules.Deny(ResourceClients, RoleAdmin, ActionManage))
+	})
+}
+
 func TestACL_ResourceMCP(t *testing.T) {
 	t.Run("AdminActionView", func(t *testing.T) {
 		assert.True(t, Rules.Allow(ResourceMCP, RoleAdmin, ActionView))

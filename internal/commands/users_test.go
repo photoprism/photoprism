@@ -66,3 +66,15 @@ func TestUsersCommand(t *testing.T) {
 		assert.NotContains(t, output6, "│ DeletedAt    │ <nil>")
 	})
 }
+
+func TestUserMCPFlag(t *testing.T) {
+	t.Run("Help", func(t *testing.T) {
+		flag := UserMCPFlag()
+		assert.Equal(t, "mcp", flag.Name)
+		assert.Contains(t, flag.String(), "--mcp=false disallows it")
+	})
+	t.Run("NoDefault", func(t *testing.T) {
+		// An absent flag keeps the stored value with users mod, so the help shows no default.
+		assert.NotContains(t, UserMCPFlag().String(), "(default")
+	})
+}

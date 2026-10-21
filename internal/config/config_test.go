@@ -153,6 +153,21 @@ func TestNewConfig(t *testing.T) {
 	assert.False(t, c.Experimental())
 }
 
+func TestConfig_CliApp(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		ctx := CliTestContext()
+		c := &Config{cliCtx: ctx}
+		assert.Same(t, ctx.App, c.CliApp())
+	})
+	t.Run("NoContext", func(t *testing.T) {
+		assert.Nil(t, (&Config{}).CliApp())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		var c *Config
+		assert.Nil(t, c.CliApp())
+	})
+}
+
 func TestConfig_Prod(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

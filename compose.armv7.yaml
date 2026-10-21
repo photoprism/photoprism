@@ -67,13 +67,11 @@ services:
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680           # On-demand rendering size limit (default 7680, min 720, max 15360)
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       TF_CPP_MIN_LOG_LEVEL: 1                        # Show TensorFlow log messages for development
-      ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
-      # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       ## Hardware video transcoding config (optional):
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # transcoding bitrate threshold in Mbps, also NVIDIA peak limit (default: 60)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
-      # PHOTOPRISM_INIT: "intel-graphics tensorflow-amd64-avx2" # Enable TensorFlow AVX2 & Intel Graphics support
+      # PHOTOPRISM_INIT: "intel-graphics"           # Enable Intel Graphics support
       # PHOTOPRISM_INIT: "install-updates"           # Installs general operating system updates
     ## Hardware devices for video transcoding and machine learning (optional):
     # devices:

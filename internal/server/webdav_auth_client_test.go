@@ -89,6 +89,23 @@ func TestWebDAVAuth_UserBoundClient(t *testing.T) {
 		})
 		assert.Equal(t, http.StatusUnauthorized, request(token))
 	})
+	t.Run("ClientDisabled", func(t *testing.T) {
+		token := newClientToken(t, "webdav", nil)
+		require.Equal(t, http.StatusOK, request(token))
+
+		sess, err := entity.FindSession(rnd.SessionID(token))
+		require.NoError(t, err)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", sess.ClientUID).UpdateColumn("auth_enabled", false).Error)
+
+		// This request uses the cached session and account.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = &http.Request{Method: http.MethodGet, Header: make(http.Header)}
+		header.SetAuthorization(c.Request, token)
+		webdavHandler(c)
+		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+
+		assert.Equal(t, http.StatusUnauthorized, request(token))
+	})
 	t.Run("OwnerProviderNone", func(t *testing.T) {
 		token := newClientToken(t, "webdav", func(u *entity.User) {
 			require.NoError(t, entity.Db().Model(u).UpdateColumn("auth_provider", authn.ProviderNone.String()).Error)

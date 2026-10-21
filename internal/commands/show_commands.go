@@ -89,10 +89,10 @@ func showCommandsAction(ctx *cli.Context) error {
 			continue
 		}
 		if nested {
-			node := catalog.BuildNode(c, 1, "photoprism", includeHidden, globalFlags)
+			node := catalog.BuildNode(c, 1, "photoprism", includeHidden)
 			tree = append(tree, node)
 		} else {
-			flat = append(flat, catalog.BuildFlat(c, 1, "photoprism", includeHidden, globalFlags)...)
+			flat = append(flat, catalog.BuildFlat(c, 1, "photoprism", includeHidden)...)
 		}
 	}
 

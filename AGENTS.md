@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** October 17, 2026
+**Last Updated:** October 19, 2026
 
 ## Purpose
 
@@ -61,7 +61,7 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
   - Leave items that are unverified, not yet implemented, or skipped optional (`MAY`) enhancements unchecked.
   - An issue is complete only when every `MUST` is checked; never tick a box on the strength of a plan alone or an unrun test.
   - When referencing an issue from a commit that fulfills some of its criteria, update the matching boxes first.
-- Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
+- Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user. Ticking the Acceptance Criteria checkboxes of an issue you are delivering against, for work that is committed and verified, is not a restricted modification.
 
 ### Specifications & Documentation
 

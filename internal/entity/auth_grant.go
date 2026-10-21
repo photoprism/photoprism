@@ -18,6 +18,10 @@ const GrantUID = byte('g')
 // GrantDeletedHandler is called with the UID of a deleted grant, e.g. to end the app's MCP sessions.
 var GrantDeletedHandler func(grantUID string)
 
+// GrantSuspendedHandler is called with the UID of a grant whose access tokens were deleted while the grant
+// remains, e.g. because its client was disabled, so the app's MCP sessions can end as well.
+var GrantSuspendedHandler func(grantUID string)
+
 // Grants represents a list of app grants.
 type Grants []Grant
 
@@ -162,6 +166,73 @@ func FindUserClientGrant(userUID, clientID string) *Grant {
 	return m
 }
 
+// FindClientGrants returns the grants of the specified client, most recently used first.
+func FindClientGrants(clientID string) (Grants, error) {
+	result := Grants{}
+
+	if clientID == "" {
+		return result, nil
+	}
+
+	err := UnscopedDb().Where("client_id = ?", clientID).Order("used_at DESC, grant_uid").Find(&result).Error
+
+	return result, err
+}
+
+// CountClientGrants returns the number of grants per client ID for the specified client IDs.
+func CountClientGrants(clientIDs []string) (map[string]int, error) {
+	result := make(map[string]int, len(clientIDs))
+
+	if len(clientIDs) == 0 {
+		return result, nil
+	}
+
+	rows := []struct {
+		ClientID string
+		Count    int
+	}{}
+
+	if err := UnscopedDb().Model(&Grant{}).Select("client_id, COUNT(*) AS count").
+		Where("client_id IN (?)", clientIDs).Group("client_id").Scan(&rows).Error; err != nil {
+		return result, err
+	}
+
+	for _, row := range rows {
+		result[row.ClientID] = row.Count
+	}
+
+	return result, nil
+}
+
+// SuspendClientGrants deletes the access tokens issued for the grants of a client and keeps the grants,
+// so that users do not need to approve the app again once the client is enabled. It returns the number
+// of grants processed without an error.
+func SuspendClientGrants(clientID string) (suspended int) {
+	grants, err := FindClientGrants(clientID)
+
+	if err != nil {
+		event.AuditErr([]string{"client %s", "failed to find grants", status.Error(err)}, clientID)
+		return 0
+	}
+
+	for i := range grants {
+		err = DeleteGrantSessions(grants[i].GrantUID)
+
+		// Close the app's MCP sessions even if deleting its access tokens failed.
+		if handler := GrantSuspendedHandler; handler != nil {
+			handler(grants[i].GrantUID)
+		}
+
+		if err != nil {
+			event.AuditErr([]string{"grant %s", "failed to delete access tokens", status.Error(err)}, grants[i].GrantUID)
+		} else {
+			suspended++
+		}
+	}
+
+	return suspended
+}
+
 // DeleteGrants deletes the specified grants and their access tokens and returns the number of deleted grants.
 func DeleteGrants(grants Grants) (deleted int) {
 	for i := range grants {
@@ -193,9 +264,9 @@ func DeleteClientGrants(clientID string) int {
 		return 0
 	}
 
-	grants := Grants{}
+	grants, err := FindClientGrants(clientID)
 
-	if err := UnscopedDb().Where("client_id = ?", clientID).Find(&grants).Error; err != nil {
+	if err != nil {
 		event.AuditErr([]string{"client %s", "failed to find grants", status.Error(err)}, clientID)
 		return 0
 	}

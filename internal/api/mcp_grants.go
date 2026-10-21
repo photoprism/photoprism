@@ -6,6 +6,7 @@ import (
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // sdkSessionIdHeader is the response header in which the MCP SDK returns the ID of a new session.
@@ -19,9 +20,18 @@ type mcpGrantSessions struct {
 	grants map[string]string
 }
 
-// mcpGrantExists reports whether the grant with the specified UID still exists.
-func mcpGrantExists(grantUID string) bool {
-	return entity.FindGrant(grantUID) != nil
+// mcpGrantActive reports whether the grant with the specified UID still exists and its client, if registered,
+// is enabled.
+func mcpGrantActive(grantUID string) bool {
+	g := entity.FindGrant(grantUID)
+
+	if g == nil {
+		return false
+	} else if !rnd.IsUID(g.ClientID, entity.ClientUID) {
+		return true
+	}
+
+	return !entity.FindClientByUID(g.ClientID).Disabled()
 }
 
 // newMcpGrantSessions returns an empty map for the MCP sessions of the specified server.
@@ -31,7 +41,7 @@ func newMcpGrantSessions(server *sdkmcp.Server) *mcpGrantSessions {
 
 // Add remembers the grant of an MCP session and forgets sessions that no longer exist. The grant is checked
 // after the session is recorded, so a revocation that deletes it meanwhile either finds the session or is seen here.
-func (m *mcpGrantSessions) Add(sessionID, grantUID string, grantExists func(string) bool) {
+func (m *mcpGrantSessions) Add(sessionID, grantUID string, grantActive func(string) bool) {
 	if m == nil || sessionID == "" || grantUID == "" {
 		return
 	}
@@ -57,7 +67,7 @@ func (m *mcpGrantSessions) Add(sessionID, grantUID string, grantExists func(stri
 
 	m.mu.Unlock()
 
-	if !known && grantExists != nil && !grantExists(grantUID) {
+	if !known && grantActive != nil && !grantActive(grantUID) {
 		m.Close(grantUID)
 	}
 }

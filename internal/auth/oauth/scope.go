@@ -56,12 +56,12 @@ func ValidateScopes(requested []string, clientScope string) ([]string, *RequestE
 	return result, nil
 }
 
-// ClientScopes returns the scopes that the client scope still permits.
+// ClientScopes returns the scopes that are still app scopes and that the client scope still permits.
 func ClientScopes(scopes []string, clientScope string) []string {
 	result := make([]string, 0, len(scopes))
 
 	for _, s := range scopes {
-		if acl.ScopePermits(clientScope, acl.Resource(s), acl.Permissions{acl.ActionView}) {
+		if slices.Contains(AppScopes, s) && acl.ScopePermits(clientScope, acl.Resource(s), acl.Permissions{acl.ActionView}) {
 			result = append(result, s)
 		}
 	}

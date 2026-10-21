@@ -22,7 +22,7 @@ Executables & Entry Points
 - CLI app (binary name across docs/images is `photoprism`):
   - Main: `cmd/photoprism/photoprism.go`
   - Commands registry: `internal/commands/commands.go` (array `commands.PhotoPrism`)
-  - Catalog helpers: `internal/commands/catalog` (DTOs and builders to enumerate commands/flags; Markdown renderer)
+  - Catalog helpers: `internal/commands/catalog` (DTOs and builders to enumerate commands/flags; Markdown renderer); also feeds the MCP `list_cli_commands` tool
 - Web server:
   - Startup: `internal/commands/start.go` → `server.Start` (starts HTTP(S), workers, session cleanup)
   - HTTP server: `internal/server/start.go` (compression, security, healthz, readiness, TLS/AutoTLS/unix socket)
@@ -35,7 +35,7 @@ High-Level Package Map (Go)
 - `internal/server` — HTTP server, middleware, routing, static/ui/webdav
 - `internal/config` — configuration, flags/env/options, client config, DB init/migrate
 - `internal/entity` — GORM v2 models, queries, search helpers, migrations
-  - Label lookup helpers now live in `internal/entity/label*.go`; reuse `FindLabels(...)`, `FindLabelIDs(...)`, and `LabelSlugs(...)` for homophone-aware exact-name/slug resolution instead of duplicating slug SQL in callers.
+  - Label lookup helpers live in `internal/entity/label*.go`; reuse `FindLabels(...)`, `FindLabelIDs(...)`, and `LabelSlugs(...)` for homophone-aware exact-name/slug resolution instead of duplicating slug SQL in callers.
 - `internal/photoprism` — core domain logic (indexing, import, faces, thumbnails, cleanup)
 - `internal/ai/vision` — multi-engine computer vision pipeline (models, adapters, schema). Adapter docs: [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md) and [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md).
 - `internal/ai/classify` — fixed-taxonomy ONNX image labeling, model registry, embedded vocabulary, and preprocessing. See [`internal/ai/classify/README.md`](internal/ai/classify/README.md).
@@ -44,6 +44,7 @@ High-Level Package Map (Go)
 - `internal/ai/face` — face detection and embedding: the detector registry selected by `FACE_DETECTOR`, the embedding-model registry selected by `FACE_MODEL`, landmark alignment, and distance thresholds. See [`internal/ai/face/README.md`](internal/ai/face/README.md).
 - `internal/workers` — background schedulers (index, vision, sync, meta, backup)
 - `internal/auth` — ACL, sessions, OIDC, OAuth app flow
+- `internal/mcp` — MCP server: reference tools and resources (public mode, stdio) and the library server with per-tool authorization (`authorize.go`). Docs: `internal/mcp/README.md`.
 - `internal/service` — cluster/portal, maps, hub, webdav
   - WebDAV client docs: `internal/service/webdav/README.md`
   - Key WebDAV client behavior:

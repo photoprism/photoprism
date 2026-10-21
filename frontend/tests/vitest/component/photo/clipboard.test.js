@@ -5,7 +5,7 @@ import PPhotoClipboard from "component/photo/clipboard.vue";
 import Photo from "model/photo";
 import Rest from "model/rest";
 import $notify from "common/notify";
-import $api from "common/api";
+import $api, { requestErrorDetails } from "common/api";
 
 const baseFeatures = {
   edit: true,
@@ -208,7 +208,7 @@ describe("component/photo/clipboard", () => {
 
     it("leaves failed single photo requests to the API client notification", async () => {
       const { wrapper } = mountClipboard();
-      const err = new AxiosError("Request failed with status code 404", AxiosError.ERR_BAD_REQUEST);
+      const err = new AxiosError("Request failed with status code 404", AxiosError.ERR_BAD_REQUEST, { method: "get", url: "photos/pt5y3865st5p3k5l" });
       const findSpy = vi.spyOn(Rest.prototype, "find").mockRejectedValue(err);
       const logSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
       const successSpy = vi.spyOn($notify, "success").mockImplementation(() => {});
@@ -218,7 +218,8 @@ describe("component/photo/clipboard", () => {
       wrapper.vm.download();
       await flushPromises();
 
-      expect(logSpy).toHaveBeenCalledWith("download failed", err);
+      expect(logSpy).toHaveBeenCalledWith("download failed", "api: GET photos/pt5y3865st5p3k5l › Request failed with status code 404");
+      expect(requestErrorDetails(err)).not.toBe(err);
       expect(successSpy).not.toHaveBeenCalled();
       expect(warnSpy).not.toHaveBeenCalled();
       expect(wrapper.vm.busy).toBe(false);

@@ -86,32 +86,32 @@ type MarkdownData struct {
 }
 
 // BuildFlat returns a depth-first flat list of commands starting at c.
-func BuildFlat(c *cli.Command, depth int, parentFull string, includeHidden bool, global []Flag) []Command {
+func BuildFlat(c *cli.Command, depth int, parentFull string, includeHidden bool) []Command {
 	// Omit nested 'help' subcommands; keep only top-level 'photoprism help'
 	if skipHelp(c, parentFull) {
 		return nil
 	}
 	var out []Command
-	info := CommandInfo(c, depth, parentFull, includeHidden, global)
+	info := CommandInfo(c, depth, parentFull, includeHidden)
 	out = append(out, info)
 	for _, sub := range c.Subcommands {
 		if sub == nil || (sub.Hidden && !includeHidden) || skipHelp(sub, info.FullName) {
 			continue
 		}
-		out = append(out, BuildFlat(sub, depth+1, info.FullName, includeHidden, global)...)
+		out = append(out, BuildFlat(sub, depth+1, info.FullName, includeHidden)...)
 	}
 	return out
 }
 
 // BuildNode returns a nested representation of c and its subcommands.
-func BuildNode(c *cli.Command, depth int, parentFull string, includeHidden bool, global []Flag) Node {
-	info := CommandInfo(c, depth, parentFull, includeHidden, global)
+func BuildNode(c *cli.Command, depth int, parentFull string, includeHidden bool) Node {
+	info := CommandInfo(c, depth, parentFull, includeHidden)
 	node := Node{Command: info}
 	for _, sub := range c.Subcommands {
 		if sub == nil || (sub.Hidden && !includeHidden) || skipHelp(sub, info.FullName) {
 			continue
 		}
-		node.Subcommands = append(node.Subcommands, BuildNode(sub, depth+1, info.FullName, includeHidden, global))
+		node.Subcommands = append(node.Subcommands, BuildNode(sub, depth+1, info.FullName, includeHidden))
 	}
 	return node
 }
@@ -129,8 +129,9 @@ func skipHelp(c *cli.Command, parentFull string) bool {
 	return false
 }
 
-// CommandInfo converts a cli.Command to a Command DTO.
-func CommandInfo(c *cli.Command, depth int, parentFull string, includeHidden bool, global []Flag) Command {
+// CommandInfo converts a cli.Command to a Command DTO, omitting the help flag that urfave/cli adds
+// to a command when it runs.
+func CommandInfo(c *cli.Command, depth int, parentFull string, includeHidden bool) Command {
 	pathName := c.Name
 	fullName := strings.TrimSpace(parentFull + " " + pathName)
 	parent := parentFull
@@ -148,27 +149,14 @@ func CommandInfo(c *cli.Command, depth int, parentFull string, includeHidden boo
 		Hidden:      c.Hidden,
 	}
 
-	// Build set of canonical global flag names to exclude from per-command flags
-	globalSet := map[string]struct{}{}
-	for _, gf := range global {
-		globalSet[strings.TrimLeft(gf.Name, "-")] = struct{}{}
-	}
-
-	// Convert flags and optionally filter hidden/global
-	flags := FlagsToCatalog(c.Flags, includeHidden)
-	keep := make([]Flag, 0, len(flags))
-	for _, f := range flags {
-		name := strings.TrimLeft(f.Name, "-")
-		if _, isGlobal := globalSet[name]; isGlobal {
-			continue
+	// Convert flags without the help flag, optionally filtering hidden flags
+	flags := make([]cli.Flag, 0, len(c.Flags))
+	for _, f := range c.Flags {
+		if f != nil && f != cli.HelpFlag {
+			flags = append(flags, f)
 		}
-		if !includeHidden && f.Hidden {
-			continue
-		}
-		keep = append(keep, f)
 	}
-	sort.Slice(keep, func(i, j int) bool { return keep[i].Name < keep[j].Name })
-	cmd.Flags = keep
+	cmd.Flags = FlagsToCatalog(flags, includeHidden)
 	return cmd
 }
 

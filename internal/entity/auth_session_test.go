@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/list"
@@ -1398,5 +1399,36 @@ func TestUsableIdToken(t *testing.T) {
 		usable, dropped := UsableIdToken(token)
 		assert.True(t, dropped)
 		assert.Empty(t, usable)
+	})
+}
+
+func TestSession_ClientDisabled(t *testing.T) {
+	t.Run("Enabled", func(t *testing.T) {
+		m := SessionFixtures.Get("token_metrics")
+		assert.False(t, m.ClientDisabled())
+	})
+	t.Run("NoClient", func(t *testing.T) {
+		m := SessionFixtures.Get("alice")
+		assert.False(t, m.ClientDisabled())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var m *Session
+		assert.False(t, m.ClientDisabled())
+	})
+	t.Run("Missing", func(t *testing.T) {
+		m := &Session{ClientUID: "cs5cpu17n6gj2zzz", AuthProvider: authn.ProviderClient.String()}
+		assert.True(t, m.ClientDisabled())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		client, err := AddClient(form.Client{ClientName: "Session Client Disabled", AuthScope: "metrics"})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Purge() })
+
+		m := client.NewSession(nil, authn.GrantClientCredentials)
+		assert.False(t, m.ClientDisabled())
+
+		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		assert.Equal(t, acl.RoleClient, m.GetClientRole())
+		assert.True(t, m.ClientDisabled())
 	})
 }
