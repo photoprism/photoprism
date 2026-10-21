@@ -176,7 +176,7 @@ func TestCachedClientByUID(t *testing.T) {
 		assert.Equal(t, client.ClientUID, found.ClientUID)
 		assert.False(t, clientCached(client.ClientUID))
 	})
-	t.Run("ReadDuringWrite", func(t *testing.T) {
+	t.Run("FlushAfterWrite", func(t *testing.T) {
 		client := newCacheTestClient(t, "Client Cache Write Read")
 		FlushClientCache()
 
@@ -202,6 +202,40 @@ func TestCachedClientByUID(t *testing.T) {
 		found, err := CachedClientByUID(client.ClientUID)
 		require.NoError(t, err)
 		assert.Equal(t, "Client Cache Written", found.ClientName)
+	})
+	t.Run("FlushDuringRead", func(t *testing.T) {
+		client := newCacheTestClient(t, "Client Cache Flush Read")
+		FlushClientCache()
+
+		// The row changes and is flushed after the read returned and before its result is cached.
+		name := "test:flush_client_reads_" + rnd.Base36(8)
+		changed := false
+		require.NoError(t, Db().Callback().Query().After("gorm:query").Register(name, func(db *gorm.DB) {
+			if changed || db.Statement.Table != (Client{}).TableName() {
+				return
+			}
+			changed = true
+			assert.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("client_name", "Client Cache Flushed").Error)
+			flushClientCache(client.ClientUID)
+		}))
+		removed := false
+		t.Cleanup(func() {
+			if !removed {
+				_ = Db().Callback().Query().Remove(name)
+			}
+		})
+
+		stale, err := CachedClientByUID(client.ClientUID)
+		require.NoError(t, err)
+		require.True(t, changed)
+		assert.Equal(t, "Client Cache Flush Read", stale.ClientName)
+		require.NoError(t, Db().Callback().Query().Remove(name))
+		removed = true
+
+		// The version guard kept the stale result out of the cache.
+		found, err := CachedClientByUID(client.ClientUID)
+		require.NoError(t, err)
+		assert.Equal(t, "Client Cache Flushed", found.ClientName)
 	})
 	t.Run("SessionClient", func(t *testing.T) {
 		client := newCacheTestClient(t, "Client Cache Session")
