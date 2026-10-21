@@ -25,13 +25,35 @@ func Token(s string) string {
 	return s
 }
 
-// UrlToken returns the sanitized URL token with a length of up to 42 characters.
+// UrlTokenMaxLength is the maximum length of a URL token, such as a signed preview token.
+const UrlTokenMaxLength = 256
+
+// UrlToken returns the URL token with up to UrlTokenMaxLength characters, keeping only [0-9a-zA-Z-_:.].
 func UrlToken(s string) string {
-	if s == "" || len(s) > 64 {
+	if s == "" || len(s) > UrlTokenMaxLength {
 		return ""
 	}
 
-	return Token(s)
+	for i := 0; i < len(s); i++ {
+		if !urlTokenByte(s[i]) {
+			dst := make([]byte, 0, len(s))
+
+			for j := 0; j < len(s); j++ {
+				if urlTokenByte(s[j]) {
+					dst = append(dst, s[j])
+				}
+			}
+
+			return string(dst)
+		}
+	}
+
+	return s
+}
+
+// urlTokenByte reports whether b may appear in a URL token.
+func urlTokenByte(b byte) bool {
+	return b >= '0' && b <= '9' || b >= 'a' && b <= 'z' || b >= 'A' && b <= 'Z' || b == '-' || b == '_' || b == ':' || b == '.'
 }
 
 // ShareToken returns the sanitized link share token with a length of up to 160 characters.
