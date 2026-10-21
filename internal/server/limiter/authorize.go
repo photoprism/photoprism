@@ -10,6 +10,6 @@ const (
 	DefaultAuthorizeLimit    = DefaultAuthLimit    // burst limit of counted OAuth authorization requests
 )
 
-// Authorize limits the unauthenticated OAuth authorization requests and failed client checks per client IP.
+// Authorize limits the OAuth authorization requests, failed client checks and client metadata fetches per client IP.
 // It is separate from Auth, so these requests cannot affect the authentication of existing sessions.
 var Authorize = NewLimit(rate.Every(DefaultAuthorizeInterval), DefaultAuthorizeLimit)
