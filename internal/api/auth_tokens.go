@@ -81,29 +81,12 @@ func PreviewSession(c *gin.Context) *entity.Session {
 			// Not a signed token.
 		} else if id, valid := tokens.VerifyPreview(expires, sid, token); !valid {
 			// Forged or expired.
-		} else if found := signedTokenSession(ClientIP(c), id); found != nil && found.SignedPreview() {
+		} else if found, err := entity.FindSession(id); err == nil && found.SignedPreview() {
 			sess = found
 		}
 	}
 
 	c.Set(previewSessionKey, sess)
-
-	return sess
-}
-
-// signedTokenSession returns the session a verified signed token is bound to, or nil if there is none. A
-// missing session counts towards the authentication failure limit until it is reached; the limit does
-// not refuse a valid token.
-func signedTokenSession(clientIp, sessionID string) *entity.Session {
-	sess, err := entity.FindSession(sessionID)
-
-	if err != nil {
-		if entity.SessionNotFound(err) && !limiter.Auth.Reject(clientIp) {
-			limiter.Auth.Reserve(clientIp)
-		}
-
-		return nil
-	}
 
 	return sess
 }
@@ -289,7 +272,9 @@ func resolveDownloadSession(c *gin.Context) *entity.Session {
 	// Header-less browser context: a signed, session-bound "?t=" token (compact `<expires>.<sid>.<token>`
 	// or verbose `token=…`) binds the request to its session.
 	if sessionID, ok := signedDownloadSession(c); ok {
-		return signedTokenSession(ClientIP(c), sessionID)
+		if sess, err := entity.FindSession(sessionID); err == nil {
+			return sess
+		}
 	}
 
 	// A coarse (static/instance) token or an unknown value resolves to no session: the handlers treat a

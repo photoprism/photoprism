@@ -553,20 +553,15 @@ func TestSignedTokens_GoneSession(t *testing.T) {
 		_, sess, signed := newPreviewClientSession(t, "*")
 		require.NoError(t, sess.Delete())
 
-		// Each request whose session is gone counts towards the authentication failure limit.
-		for i := 0; i < 3; i++ {
-			require.False(t, limiter.Auth.Reject(clientIp))
+		queries := countSessionQueries(t)
+
+		// A request whose session is gone costs one session query and does not count towards the limit.
+		for i := 0; i < 6; i++ {
 			assert.True(t, InvalidPreviewToken(previewCtx(signed, ""), previewThumbResources))
 		}
 
-		assert.True(t, limiter.Auth.Reject(clientIp))
-
-		// Charging stops at the limit, so the bucket does not go into debt.
-		for i := 0; i < 10; i++ {
-			assert.True(t, InvalidPreviewToken(previewCtx(signed, ""), previewThumbResources))
-		}
-
-		assert.Greater(t, limiter.Auth.IP(clientIp).Tokens(), -1.0)
+		assert.Equal(t, int64(6), queries.Load())
+		assert.False(t, limiter.Auth.Reject(clientIp))
 	})
 	t.Run("Download", func(t *testing.T) {
 		withAuthLimit(t, 3)
@@ -574,12 +569,14 @@ func TestSignedTokens_GoneSession(t *testing.T) {
 		token := tokens.SignDownload(sess.ID)
 		require.NoError(t, sess.Delete())
 
-		for i := 0; i < 3; i++ {
-			require.False(t, limiter.Auth.Reject(clientIp))
+		queries := countSessionQueries(t)
+
+		for i := 0; i < 6; i++ {
 			assert.Nil(t, DownloadSession(downloadCtx("t="+url.QueryEscape(token))))
 		}
 
-		assert.True(t, limiter.Auth.Reject(clientIp))
+		assert.Equal(t, int64(6), queries.Load())
+		assert.False(t, limiter.Auth.Reject(clientIp))
 	})
 	t.Run("ValidNotCharged", func(t *testing.T) {
 		withAuthLimit(t, 3)
@@ -611,40 +608,16 @@ func TestSignedTokens_GoneSession(t *testing.T) {
 		_, sess, signed := newPreviewClientSession(t, "*")
 		forged := changeByte(signed, len(signed)-2)
 
-		// With the session gone, a lookup of the forged token would query the database and be charged.
+		// With the session gone, a lookup of the forged token would query the database.
 		require.NoError(t, sess.Delete())
 		queries := countSessionQueries(t)
 
-		// A forged token costs no session query and is not charged.
+		// A forged token costs no session query and does not count towards the authentication limit.
 		for i := 0; i < 5; i++ {
 			assert.True(t, InvalidPreviewToken(previewCtx(forged, ""), previewThumbResources))
 		}
 
 		assert.Equal(t, int64(0), queries.Load())
 		assert.False(t, limiter.Auth.Reject(clientIp))
-	})
-}
-
-func TestSignedTokenSession(t *testing.T) {
-	const clientIp = "198.51.100.91"
-
-	t.Run("Found", func(t *testing.T) {
-		withAuthLimit(t, 3)
-		_, sess, _ := newPreviewClientSession(t, "*")
-		got := signedTokenSession(clientIp, sess.ID)
-		require.NotNil(t, got)
-		assert.Equal(t, sess.ID, got.ID)
-		assert.False(t, limiter.Auth.Reject(clientIp))
-	})
-	t.Run("Gone", func(t *testing.T) {
-		withAuthLimit(t, 3)
-		_, sess, _ := newPreviewClientSession(t, "*")
-		require.NoError(t, sess.Delete())
-
-		for i := 0; i < 3; i++ {
-			assert.Nil(t, signedTokenSession(clientIp, sess.ID))
-		}
-
-		assert.True(t, limiter.Auth.Reject(clientIp))
 	})
 }
