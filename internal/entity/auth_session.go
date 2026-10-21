@@ -385,8 +385,8 @@ func (m *Session) GetClient() *Client {
 	// Get client ID.
 	uid := m.ClientUID
 
-	if c := FindClientByUID(uid); c != nil {
-		m.SetClient(c)
+	if c, err := CachedClientByUID(uid); err == nil {
+		m.SetClient(&c)
 		return m.client
 	}
 
@@ -463,9 +463,9 @@ func (m *Session) IsApplication() bool {
 }
 
 // clientRole resolves the client role for this session. When resolve is true it
-// may perform a one-time lookup via FindClientByUID; callers that already
-// depend on GetClientRole must pass resolve=false to avoid the recursive loop
-// that previously caused stack overflows between GetClient() and GetClientRole().
+// may perform a one-time lookup via CachedClientByUID; callers that already
+// depend on GetClientRole must pass resolve=false to avoid a recursive loop
+// between GetClient() and GetClientRole().
 func (m *Session) clientRole(resolve bool) acl.Role {
 	if m == nil {
 		return acl.RoleNone
@@ -477,8 +477,8 @@ func (m *Session) clientRole(resolve bool) acl.Role {
 
 	if !resolve || m.ClientUID == "" {
 		// Skip lookup to avoid recursive loop.
-	} else if c := FindClientByUID(m.ClientUID); c != nil {
-		m.SetClient(c)
+	} else if c, err := CachedClientByUID(m.ClientUID); err == nil {
+		m.SetClient(&c)
 		return c.AclRole()
 	}
 

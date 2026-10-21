@@ -2,10 +2,13 @@ package entity
 
 import (
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -208,10 +211,50 @@ func TestCachedClientByUID(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumns(Values{"client_name": "Client Cache Session Changed", "client_role": "admin"}).Error)
 
-		// GetClient and the client role of a session read the stored client, which the session then keeps.
+		// GetClient and the client role of a session read through the cache.
+		assert.Equal(t, "Client Cache Session", (&Session{ClientUID: client.ClientUID}).GetClient().ClientName)
+		assert.Equal(t, acl.RoleClient, (&Session{ClientUID: client.ClientUID}).GetClientRole())
+
+		FlushClientCache()
 		assert.Equal(t, "Client Cache Session Changed", (&Session{ClientUID: client.ClientUID}).GetClient().ClientName)
 		assert.Equal(t, acl.RoleAdmin, (&Session{ClientUID: client.ClientUID}).GetClientRole())
-		assert.False(t, (&Session{ClientUID: client.ClientUID}).ClientDisabled())
+	})
+	t.Run("SessionLoad", func(t *testing.T) {
+		client := newCacheTestClient(t, "Client Cache Session Load")
+		ctx, _ := gin.CreateTestContext(httptest.NewRecorder())
+		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+
+		ids := make([]string, 3)
+
+		for i := range ids {
+			sess := client.NewSession(ctx, authn.GrantClientCredentials)
+			require.NoError(t, sess.Save())
+			ids[i] = sess.ID
+		}
+
+		FlushSessionCache()
+		FlushClientCache()
+		queries := countClientQueries(t)
+
+		// Loading several sessions of one client reads the client once.
+		for _, id := range ids {
+			sess, err := FindSession(id)
+			require.NoError(t, err)
+			assert.Equal(t, acl.RoleClient, sess.GetClientRole())
+			assert.Equal(t, client.ClientUID, sess.GetClient().ClientUID)
+		}
+
+		assert.Equal(t, int64(1), queries.Load())
+
+		// A role change through the client methods is seen on the next session load.
+		client.ClientRole = acl.RoleAdmin.String()
+		require.NoError(t, client.SaveChanges("ClientRole"))
+		sess := client.NewSession(ctx, authn.GrantClientCredentials)
+		require.NoError(t, sess.Save())
+		FlushSessionCache()
+		found, err := FindSession(sess.ID)
+		require.NoError(t, err)
+		assert.Equal(t, acl.RoleAdmin, found.GetClientRole())
 	})
 	t.Run("Expires", func(t *testing.T) {
 		prev := ClientCacheDuration
