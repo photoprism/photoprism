@@ -5,12 +5,16 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+	"golang.org/x/time/rate"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
@@ -18,8 +22,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // previewThumbResources are the resources a thumbnail or video request authorizes against.
@@ -492,4 +498,136 @@ func TestSearchGeo_SignedPreview(t *testing.T) {
 	require.NotEmpty(t, src, r.Body.String())
 	assert.True(t, strings.HasPrefix(src, conf.ApiUri()+"/t/"), src)
 	assert.Contains(t, src, "/"+signed+"/")
+}
+
+// countSessionQueries counts the queries of the auth_sessions table until the test ends.
+func countSessionQueries(t *testing.T) *atomic.Int64 {
+	t.Helper()
+
+	name := "test:count_session_queries_" + rnd.Base36(8)
+	count := &atomic.Int64{}
+
+	require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (entity.Session{}).TableName() {
+			count.Add(1)
+		}
+	}))
+	t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+	return count
+}
+
+// withAuthLimit replaces limiter.Auth with one that allows burst failures, and restores it after the test.
+func withAuthLimit(t *testing.T, burst int) {
+	t.Helper()
+	prev := limiter.Auth
+	limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), burst)
+	t.Cleanup(func() { limiter.Auth = prev })
+}
+
+func TestSignedTokens_GoneSession(t *testing.T) {
+	withPreviewAuth(t)
+
+	// clientIp is the address previewCtx and downloadCtx requests come from.
+	clientIp := ClientIP(previewCtx("", ""))
+
+	t.Run("Preview", func(t *testing.T) {
+		withAuthLimit(t, 3)
+		_, sess, signed := newPreviewClientSession(t, "*")
+		require.NoError(t, sess.Delete())
+
+		// Each request whose session is gone counts towards the authentication failure limit.
+		for i := 0; i < 3; i++ {
+			require.False(t, limiter.Auth.Reject(clientIp))
+			assert.True(t, InvalidPreviewToken(previewCtx(signed, ""), previewThumbResources))
+		}
+
+		assert.True(t, limiter.Auth.Reject(clientIp))
+
+		// Charging stops at the limit, so the bucket does not go into debt.
+		for i := 0; i < 10; i++ {
+			assert.True(t, InvalidPreviewToken(previewCtx(signed, ""), previewThumbResources))
+		}
+
+		assert.Greater(t, limiter.Auth.IP(clientIp).Tokens(), -1.0)
+	})
+	t.Run("Download", func(t *testing.T) {
+		withAuthLimit(t, 3)
+		_, sess, _ := newPreviewClientSession(t, "*")
+		token := tokens.SignDownload(sess.ID)
+		require.NoError(t, sess.Delete())
+
+		for i := 0; i < 3; i++ {
+			require.False(t, limiter.Auth.Reject(clientIp))
+			assert.Nil(t, DownloadSession(downloadCtx("t="+url.QueryEscape(token))))
+		}
+
+		assert.True(t, limiter.Auth.Reject(clientIp))
+	})
+	t.Run("ValidNotCharged", func(t *testing.T) {
+		withAuthLimit(t, 3)
+		_, sess, signed := newPreviewClientSession(t, "*")
+		download := tokens.SignDownload(sess.ID)
+
+		for i := 0; i < 3; i++ {
+			assert.False(t, InvalidPreviewToken(previewCtx(signed, ""), previewThumbResources))
+			assert.NotNil(t, DownloadSession(downloadCtx("t="+url.QueryEscape(download))))
+		}
+
+		assert.False(t, limiter.Auth.Reject(clientIp))
+	})
+	t.Run("ValidOverLimit", func(t *testing.T) {
+		// A valid token is not refused by the limit.
+		withAuthLimit(t, 3)
+		_, sess, signed := newPreviewClientSession(t, "*")
+		for !limiter.Auth.Reject(clientIp) {
+			limiter.Auth.Reserve(clientIp)
+		}
+
+		assert.False(t, InvalidPreviewToken(previewCtx(signed, ""), previewThumbResources))
+		got := DownloadSession(downloadCtx("t=" + url.QueryEscape(tokens.SignDownload(sess.ID))))
+		require.NotNil(t, got)
+		assert.Equal(t, sess.ID, got.ID)
+	})
+	t.Run("ForgedNotCharged", func(t *testing.T) {
+		withAuthLimit(t, 3)
+		_, sess, signed := newPreviewClientSession(t, "*")
+		forged := changeByte(signed, len(signed)-2)
+
+		// With the session gone, a lookup of the forged token would query the database and be charged.
+		require.NoError(t, sess.Delete())
+		queries := countSessionQueries(t)
+
+		// A forged token costs no session query and is not charged.
+		for i := 0; i < 5; i++ {
+			assert.True(t, InvalidPreviewToken(previewCtx(forged, ""), previewThumbResources))
+		}
+
+		assert.Equal(t, int64(0), queries.Load())
+		assert.False(t, limiter.Auth.Reject(clientIp))
+	})
+}
+
+func TestSignedTokenSession(t *testing.T) {
+	const clientIp = "198.51.100.91"
+
+	t.Run("Found", func(t *testing.T) {
+		withAuthLimit(t, 3)
+		_, sess, _ := newPreviewClientSession(t, "*")
+		got := signedTokenSession(clientIp, sess.ID)
+		require.NotNil(t, got)
+		assert.Equal(t, sess.ID, got.ID)
+		assert.False(t, limiter.Auth.Reject(clientIp))
+	})
+	t.Run("Gone", func(t *testing.T) {
+		withAuthLimit(t, 3)
+		_, sess, _ := newPreviewClientSession(t, "*")
+		require.NoError(t, sess.Delete())
+
+		for i := 0; i < 3; i++ {
+			assert.Nil(t, signedTokenSession(clientIp, sess.ID))
+		}
+
+		assert.True(t, limiter.Auth.Reject(clientIp))
+	})
 }
