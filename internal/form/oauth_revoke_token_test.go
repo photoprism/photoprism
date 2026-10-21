@@ -134,6 +134,17 @@ func TestOAuthRevokeToken_Validate(t *testing.T) {
 		assert.NoError(t, m.Validate())
 		assert.Equal(t, AccessToken, m.TokenTypeHint)
 	})
+	t.Run("MismatchedHint", func(t *testing.T) {
+		m := OAuthRevokeToken{Token: rnd.SessionID(rnd.AuthToken()), TokenTypeHint: AccessToken}
+		assert.NoError(t, m.Validate())
+		assert.Equal(t, SessionID, m.TokenTypeHint)
+		m = OAuthRevokeToken{Token: "sessxkkcabce", TokenTypeHint: SessionID}
+		assert.NoError(t, m.Validate())
+		assert.Equal(t, RefID, m.TokenTypeHint)
+		m = OAuthRevokeToken{Token: rnd.AuthToken(), TokenTypeHint: RefID}
+		assert.NoError(t, m.Validate())
+		assert.Equal(t, AccessToken, m.TokenTypeHint)
+	})
 	t.Run("TypeHintEmptyInvalidToken", func(t *testing.T) {
 		m := OAuthRevokeToken{
 			Token:         "123",
@@ -169,9 +180,15 @@ func TestOAuthRevokeToken_RefreshToken(t *testing.T) {
 		f := OAuthRevokeToken{Token: token, TokenTypeHint: RefreshToken}
 		assert.NoError(t, f.Validate())
 	})
-	t.Run("InvalidWithHint", func(t *testing.T) {
+	t.Run("OtherHint", func(t *testing.T) {
+		f := OAuthRevokeToken{Token: token, TokenTypeHint: AccessToken}
+		assert.NoError(t, f.Validate())
+		assert.Equal(t, RefreshToken, f.TokenTypeHint)
+	})
+	t.Run("AccessTokenWithHint", func(t *testing.T) {
 		f := OAuthRevokeToken{Token: rnd.AuthToken(), TokenTypeHint: RefreshToken}
-		assert.Error(t, f.Validate())
+		assert.NoError(t, f.Validate())
+		assert.Equal(t, AccessToken, f.TokenTypeHint)
 	})
 	t.Run("Signed", func(t *testing.T) {
 		f := OAuthRevokeToken{Token: token + ".1700000000." + strings.Repeat("a", 32)}

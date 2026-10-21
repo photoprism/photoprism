@@ -300,6 +300,56 @@ func TestOAuthRevoke_AppTokens(t *testing.T) {
 		r = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {refreshToken}}, "", "")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("MismatchedHint", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		accessToken, refreshToken := tokenPair(t, app, router, conf, client)
+		installAuthorizeBudget(t, 3)
+		installAuthBudget(t, 3)
+		ip := appTokenTestClientIP()
+
+		// A hint that does not match the token is ignored, and the token is revoked as the type it has.
+		r := postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {accessToken}, "token_type_hint": {"refresh_token"}}, "", "")
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, http.StatusUnauthorized, mcpPost(app, initBody, accessToken, "").Code)
+
+		grantUID, _, _ := strings.Cut(refreshToken, ".")
+		require.NotNil(t, entity.FindGrant(grantUID))
+		r = postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {refreshToken}, "token_type_hint": {"access_token"}}, "", "")
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Nil(t, entity.FindGrant(grantUID))
+
+		assert.InDelta(t, 3, limiter.Auth.IP(ip).Tokens(), 0.01)
+		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
+	})
+	t.Run("Charges", func(t *testing.T) {
+		app, _, _, _ := prepareAppTokenTest(t)
+		ip := appTokenTestClientIP()
+
+		// revoke sends a revoke request and returns the charges to limiter.Auth and limiter.Authorize.
+		revoke := func(t *testing.T, values url.Values) (int, float64, float64) {
+			installAuthorizeBudget(t, 3)
+			installAuthBudget(t, 3)
+			r := postTokenForm(app, "/api/v1/oauth/revoke", values, "", "")
+			return r.Code, 3 - limiter.Auth.IP(ip).Tokens(), 3 - limiter.Authorize.IP(ip).Tokens()
+		}
+
+		// An unknown or malformed access token counts towards limiter.Auth.
+		code, auth, authorize := revoke(t, url.Values{"token": {rnd.AuthToken()}, "token_type_hint": {"access_token"}})
+		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.InDelta(t, 1, auth, 0.01)
+		assert.InDelta(t, 0, authorize, 0.01)
+		code, auth, authorize = revoke(t, url.Values{"token": {"abc"}})
+		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.InDelta(t, 1, auth, 0.01)
+		assert.InDelta(t, 0, authorize, 0.01)
+
+		// An invalid refresh token counts towards limiter.Authorize, also with another hint.
+		forged := rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID))
+		code, auth, authorize = revoke(t, url.Values{"token": {forged}, "token_type_hint": {"access_token"}})
+		assert.Equal(t, http.StatusOK, code)
+		assert.InDelta(t, 0, auth, 0.01)
+		assert.InDelta(t, 1, authorize, 0.01)
+	})
 }
 
 func TestMCP_AppTokenAudience(t *testing.T) {

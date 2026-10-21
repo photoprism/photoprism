@@ -239,9 +239,12 @@ func TestOAuthRevoke(t *testing.T) {
 		revokeResp := httptest.NewRecorder()
 		app.ServeHTTP(revokeResp, revokeToken)
 
+		// A hint that does not match the token is ignored, so the access token is revoked.
 		t.Logf("Header: %s", revokeResp.Header())
 		t.Logf("BODY: %s", revokeResp.Body.String())
-		assert.Equal(t, http.StatusUnauthorized, revokeResp.Code)
+		assert.Equal(t, http.StatusOK, revokeResp.Code)
+		_, err := entity.FindSession(rnd.SessionID(authToken))
+		assert.Error(t, err)
 	})
 	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()
