@@ -557,6 +557,29 @@ func TestOAuthAppTokenResponse(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("auth_id = ?", grant.GrantUID).Count(&count).Error)
 		assert.Zero(t, count)
 	})
+	t.Run("GrantReadError", func(t *testing.T) {
+		_, _, _, client := prepareAppTokenTest(t)
+		admin := entity.FindUserByName("admin")
+		require.NotNil(t, admin)
+
+		grant, _, err := oauth.NewGrant(&entity.AuthCode{UserUID: admin.UserUID, ClientID: client.ClientUID, Scope: "mcp", Resource: "https://photos.example.com/api/v1/mcp"}, admin, "Test App")
+		require.NoError(t, err)
+		name := "test:fail_grant_reads_" + rnd.Base36(8)
+		require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (entity.Grant{}).TableName() {
+				_ = db.AddError(errors.New("grant lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+		oauthAppTokenResponse(c, grant, admin, "refresh", authn.GrantRefreshToken, "client test", "refresh token")
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		assert.Equal(t, oauth.ErrCodeServerError, gjson.Get(w.Body.String(), "error").String())
+	})
 }
 
 func TestOAuthAppTokenClient(t *testing.T) {
@@ -1062,7 +1085,7 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		}))
 		t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
 
-		// A grant that cannot be read is a server error, which is not charged.
+		// A grant that cannot be read is answered with a server error.
 		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
 		assert.Equal(t, http.StatusInternalServerError, r.Code, r.Body.String())
 		r = postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {refreshToken}, "token_type_hint": {"refresh_token"}}, "", "")

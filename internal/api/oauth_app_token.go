@@ -269,7 +269,11 @@ func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.Use
 	}
 
 	// The grant may have been revoked concurrently, e.g. because its refresh token was reused.
-	if entity.FindGrant(grant.GrantUID) == nil {
+	if found, err := entity.LookupGrant(grant.GrantUID); err != nil {
+		event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to create access token")
+		return
+	} else if found == nil {
 		_ = sess.Delete()
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "grant %s revoked", status.Denied}, actor, action, clean.Log(grant.GrantUID))
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "grant has been revoked")
