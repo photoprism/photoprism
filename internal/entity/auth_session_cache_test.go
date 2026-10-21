@@ -3,12 +3,15 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -216,5 +219,180 @@ func TestCacheSession(t *testing.T) {
 		assert.Empty(t, r2)
 		assert.False(t, b2)
 		sessionCache.Flush()
+	})
+}
+
+func TestFindAnySession_ResolvesClient(t *testing.T) {
+	t.Run("ClientSession", func(t *testing.T) {
+		FlushSessionCache()
+		t.Cleanup(FlushSessionCache)
+
+		fixture := SessionFixtures.Get("client_metrics")
+		found, err := FindAnySession(fixture.ID)
+		require.NoError(t, err)
+
+		// The client is resolved before the session is cached, so readers of the cached session only read it.
+		require.NotNil(t, found.client)
+		assert.Equal(t, fixture.ClientUID, found.client.ClientUID)
+		_, cached := sessionCache.Get(fixture.ID)
+		assert.True(t, cached)
+
+		var wg sync.WaitGroup
+
+		for range 8 {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				assert.Equal(t, acl.RoleClient, found.GetClientRole())
+				assert.NotEmpty(t, found.Scope())
+				assert.NotNil(t, found.GetClient())
+			}()
+		}
+
+		wg.Wait()
+	})
+	t.Run("ClientLookupError", func(t *testing.T) {
+		FlushSessionCache()
+		FlushClientCache()
+		t.Cleanup(FlushSessionCache)
+
+		// A session whose client cannot be read is returned, but not cached.
+		name := "test:fail_client_reads_" + rnd.Base36(8)
+		require.NoError(t, Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (Client{}).TableName() {
+				_ = db.AddError(errors.New("client lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = Db().Callback().Query().Remove(name) })
+
+		fixture := SessionFixtures.Get("client_metrics")
+		found, err := FindAnySession(fixture.ID)
+		require.NoError(t, err)
+		assert.Nil(t, found.client)
+		_, cached := sessionCache.Get(fixture.ID)
+		assert.False(t, cached)
+	})
+	t.Run("ClientNotFound", func(t *testing.T) {
+		FlushSessionCache()
+		t.Cleanup(FlushSessionCache)
+
+		// A session of a client that no longer exists is cached without a client.
+		sess := NewSession(3600, 0)
+		sess.ClientUID = rnd.GenerateUID(ClientUID)
+		require.NoError(t, sess.Create())
+		t.Cleanup(func() { _ = sess.Delete() })
+		sessionCache.Delete(sess.ID)
+
+		found, err := FindAnySession(sess.ID)
+		require.NoError(t, err)
+		assert.Nil(t, found.client)
+		_, cached := sessionCache.Get(sess.ID)
+		assert.True(t, cached)
+	})
+	t.Run("OwnerLookupError", func(t *testing.T) {
+		FlushSessionCache()
+		FlushClientCache()
+		t.Cleanup(FlushSessionCache)
+
+		// A session whose client owner cannot be read is returned, but not cached.
+		fixture := ClientFixtures.Get("alice")
+		sess := NewSession(3600, 0)
+		sess.ClientUID = fixture.ClientUID
+		sess.UserUID = fixture.UserUID
+		require.NoError(t, sess.Create())
+		t.Cleanup(func() { _ = sess.Delete() })
+		sessionCache.Delete(sess.ID)
+
+		name := "test:fail_owner_reads_" + rnd.Base36(8)
+		require.NoError(t, Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (User{}).TableName() {
+				_ = db.AddError(errors.New("user lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = Db().Callback().Query().Remove(name) })
+
+		found, err := FindAnySession(sess.ID)
+		require.NoError(t, err)
+		assert.Equal(t, fixture.UserUID, found.UserUID)
+		_, cached := sessionCache.Get(sess.ID)
+		assert.False(t, cached)
+	})
+	t.Run("UserSession", func(t *testing.T) {
+		FlushSessionCache()
+		t.Cleanup(FlushSessionCache)
+
+		found, err := FindAnySession(SessionFixtures.Get("alice").ID)
+		require.NoError(t, err)
+		assert.Nil(t, found.client)
+	})
+}
+
+func TestSession_setClient(t *testing.T) {
+	client := ClientFixtures.Get("metrics")
+
+	t.Run("KeepAuth", func(t *testing.T) {
+		m := (&Session{AuthProvider: "access_token", AuthMethod: "session"}).setClient(&client, true)
+		assert.Equal(t, "access_token", m.AuthProvider)
+		assert.Equal(t, "session", m.AuthMethod)
+		assert.Equal(t, client.ClientUID, m.ClientUID)
+		assert.Equal(t, client.Scope(), m.AuthScope)
+	})
+	t.Run("SetAuth", func(t *testing.T) {
+		m := (&Session{AuthProvider: "access_token", AuthMethod: "session"}).setClient(&client, false)
+		assert.Equal(t, client.Provider().String(), m.AuthProvider)
+		assert.Equal(t, client.Method().String(), m.AuthMethod)
+	})
+	t.Run("NoClient", func(t *testing.T) {
+		m := (&Session{AuthProvider: "access_token"}).setClient(nil, false)
+		assert.Equal(t, "access_token", m.AuthProvider)
+		assert.Nil(t, m.client)
+	})
+}
+
+func TestSession_SetClientOwnerUnavailable(t *testing.T) {
+	FlushClientCache()
+	name := "test:fail_user_reads_" + rnd.Base36(8)
+	require.NoError(t, Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (User{}).TableName() {
+			_ = db.AddError(errors.New("user lookup failed"))
+		}
+	}))
+	t.Cleanup(func() { _ = Db().Callback().Query().Remove(name) })
+
+	// The session keeps the owner of the client when the owner's account cannot be read.
+	fixture := ClientFixtures.Get("alice")
+	client := Client{ClientUID: fixture.ClientUID, UserUID: fixture.UserUID, UserName: fixture.UserName}
+	require.NotEmpty(t, client.UserUID)
+	m := (&Session{}).SetClient(&client)
+	assert.Equal(t, client.UserUID, m.UserUID)
+	assert.False(t, m.NoUser())
+	assert.Nil(t, m.user)
+}
+
+func TestSession_ResolveClient(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := &Session{ClientUID: ClientFixtures.Get("metrics").ClientUID}
+		assert.NoError(t, m.resolveClient())
+		require.NotNil(t, m.client)
+		assert.Equal(t, m.ClientUID, m.client.ClientUID)
+	})
+	t.Run("UnknownClient", func(t *testing.T) {
+		m := &Session{ClientUID: rnd.GenerateUID(ClientUID)}
+		assert.ErrorIs(t, m.resolveClient(), ErrClientNotFound)
+		assert.Nil(t, m.client)
+	})
+	t.Run("KeepsProvider", func(t *testing.T) {
+		client := ClientFixtures.Get("metrics")
+		m := &Session{ClientUID: client.ClientUID, AuthProvider: "access_token", AuthMethod: "session", AuthScope: "*"}
+		assert.NoError(t, m.resolveClient())
+		require.NotNil(t, m.client)
+		assert.Equal(t, "access_token", m.AuthProvider)
+		assert.Equal(t, "session", m.AuthMethod)
+		assert.Equal(t, client.Scope(), m.AuthScope)
+	})
+	t.Run("NoClient", func(t *testing.T) {
+		m := &Session{}
+		assert.NoError(t, m.resolveClient())
+		assert.Nil(t, m.client)
 	})
 }

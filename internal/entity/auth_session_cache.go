@@ -81,7 +81,12 @@ func FindAnySession(id string) (*Session, error) {
 		found.stored = true
 		// Set session activity timestamp and update the last_active column in the sessions table.
 		found.UpdateLastActive(true)
-		CacheSession(found, SessionCacheDuration)
+
+		// Cache the session only with its client and owner resolved, or with a client that no longer exists.
+		if err := found.resolveClient(); err == nil || errors.Is(err, ErrClientNotFound) {
+			CacheSession(found, SessionCacheDuration)
+		}
+
 		return found, nil
 	} else if err := found.Delete(); err != nil {
 		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", status.Error(err)}, found.RefID)

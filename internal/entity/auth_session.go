@@ -265,6 +265,32 @@ func (m *Session) CacheDuration(d time.Duration) {
 	CacheSession(m, d)
 }
 
+// errClientOwnerUnavailable is returned when the account a client belongs to cannot be read.
+var errClientOwnerUnavailable = errors.New("client owner unavailable")
+
+// resolveClient assigns the client of a client session before it is shared through the session cache,
+// keeping the auth provider and method stored with the session, and returns an error if the client or
+// its owner cannot be read.
+func (m *Session) resolveClient() error {
+	if m.client != nil || m.ClientUID == "" {
+		return nil
+	}
+
+	c, err := CachedClientByUID(m.ClientUID)
+
+	if err != nil {
+		return err
+	}
+
+	m.setClient(&c, true)
+
+	if m.UserUID != "" && m.user == nil {
+		return errClientOwnerUnavailable
+	}
+
+	return nil
+}
+
 // Cache caches the session with the default expiration duration.
 func (m *Session) Cache() {
 	m.CacheDuration(SessionCacheDuration)
@@ -346,8 +372,13 @@ func (m *Session) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-// SetClient sets the client of this session.
+// SetClient sets the client of this session, including its auth provider and method.
 func (m *Session) SetClient(c *Client) *Session {
+	return m.setClient(c, false)
+}
+
+// setClient sets the client of this session and, unless keepAuth is true, its auth provider and method.
+func (m *Session) setClient(c *Client, keepAuth bool) *Session {
 	if c == nil {
 		return m
 	}
@@ -355,10 +386,22 @@ func (m *Session) SetClient(c *Client) *Session {
 	m.client = c
 	m.ClientUID = c.GetUID()
 	m.ClientName = c.ClientName
-	m.AuthProvider = c.Provider().String()
-	m.AuthMethod = c.Method().String()
+
+	if !keepAuth {
+		m.AuthProvider = c.Provider().String()
+		m.AuthMethod = c.Method().String()
+	}
+
 	m.AuthScope = c.Scope()
-	m.SetUser(c.User())
+
+	// Keep the owner of the client if its account cannot be read.
+	if u := c.User(); u.HasUID() || c.UserUID == "" {
+		m.SetUser(u)
+	} else {
+		m.user = nil
+		m.UserUID = c.UserUID
+		m.UserName = c.UserName
+	}
 
 	return m
 }
@@ -386,7 +429,7 @@ func (m *Session) GetClient() *Client {
 	uid := m.ClientUID
 
 	if c, err := CachedClientByUID(uid); err == nil {
-		m.SetClient(&c)
+		m.setClient(&c, true)
 		return m.client
 	}
 
@@ -478,7 +521,7 @@ func (m *Session) clientRole(resolve bool) acl.Role {
 	if !resolve || m.ClientUID == "" {
 		// Skip lookup to avoid recursive loop.
 	} else if c, err := CachedClientByUID(m.ClientUID); err == nil {
-		m.SetClient(&c)
+		m.setClient(&c, true)
 		return c.AclRole()
 	}
 
