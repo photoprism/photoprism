@@ -123,19 +123,28 @@ func (m *Grant) Delete() error {
 	return err
 }
 
-// FindGrant returns the grant with the specified UID, or nil if it does not exist.
+// FindGrant returns the grant with the specified UID, or nil if it does not exist or cannot be read.
 func FindGrant(grantUID string) *Grant {
+	m, _ := LookupGrant(grantUID)
+	return m
+}
+
+// LookupGrant returns the grant with the specified UID. It returns neither a grant nor an error if there is
+// no such grant, and the error if the grant cannot be read.
+func LookupGrant(grantUID string) (*Grant, error) {
 	if !rnd.IsUID(grantUID, GrantUID) {
-		return nil
+		return nil, nil
 	}
 
 	m := &Grant{}
 
-	if err := UnscopedDb().Where("grant_uid = ?", grantUID).First(m).Error; err != nil {
-		return nil
+	if err := UnscopedDb().Where("grant_uid = ?", grantUID).First(m).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
 	}
 
-	return m
+	return m, nil
 }
 
 // FindUserGrants returns the grants of the specified user, most recently used first.

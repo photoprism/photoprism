@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -36,6 +37,18 @@ func newTestGrant(t *testing.T, clientID string) (*entity.Grant, string) {
 	t.Cleanup(func() { _ = grant.Delete() })
 
 	return grant, refreshToken
+}
+
+// failGrantReads makes queries of the grants table fail until the test ends.
+func failGrantReads(t *testing.T) {
+	t.Helper()
+	name := "test:fail_grant_reads_" + rnd.Base36(8)
+	require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (entity.Grant{}).TableName() {
+			_ = db.AddError(errors.New("grant lookup failed"))
+		}
+	}))
+	t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
 }
 
 // refreshGrantOf returns the grant of a refresh token found with FindRefreshGrant, or nil.
@@ -266,6 +279,14 @@ func TestFindRefreshGrant(t *testing.T) {
 		assert.ErrorIs(t, err, ErrTokenExpired)
 		assert.NotErrorIs(t, err, ErrRefreshTokenReused)
 		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
+	})
+	t.Run("ReadError", func(t *testing.T) {
+		_, refreshToken := newTestGrant(t, "csgrantfind00006")
+		failGrantReads(t)
+		found, err := FindRefreshGrant(refreshToken)
+		assert.Error(t, err)
+		assert.NotErrorIs(t, err, ErrInvalidGrant)
+		assert.Nil(t, found)
 	})
 	t.Run("GrantNotFound", func(t *testing.T) {
 		grant, refreshToken := newTestGrant(t, "csgrantfind00005")

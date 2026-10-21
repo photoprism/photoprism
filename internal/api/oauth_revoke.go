@@ -180,7 +180,11 @@ func OAuthRevoke(router *gin.RouterGroup) {
 					charge()
 				}
 
-				event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "refresh token not found", status.Denied}, actor, action)
+				if revokeErr != nil {
+					event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(revokeErr)}, actor, action)
+				} else {
+					event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "refresh token not current", status.Denied}, actor, action)
+				}
 			default:
 				event.AuditInfo([]string{clientIp, "oauth2", "client %s", "user %s", "%s", "revoke grant %s", status.Deleted}, clean.Log(grant.ClientID), clean.Log(grant.UserName), action, clean.Log(grant.GrantUID))
 			}

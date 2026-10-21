@@ -123,7 +123,7 @@ func TestOAuthApp_MetadataClient(t *testing.T) {
 		assert.Greater(t, limiter.Authorize.IP(header.UnknownIP).Tokens(), after-1.5)
 		assert.Equal(t, 1, *calls)
 
-		// Token requests of a cached client are not charged.
+		// A token request of a cached client uses the cached document.
 		after = limiter.Authorize.IP(header.UnknownIP).Tokens()
 		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(testMetadataClientID, tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))), "", "")
 		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())

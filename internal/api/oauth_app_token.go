@@ -106,7 +106,11 @@ func OAuthAppRefresh(c *gin.Context) {
 	raw := c.PostForm("refresh_token")
 	current, err := oauth.FindRefreshGrant(raw)
 
-	if err != nil {
+	if err != nil && !errors.Is(err, oauth.ErrInvalidGrant) {
+		event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to refresh token")
+		return
+	} else if err != nil {
 		oauthChargeInvalidToken(clientIp, err)
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid refresh token")
@@ -232,11 +236,11 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 	return client, true
 }
 
-// oauthChargeInvalidToken counts a code or refresh token towards limiter.Authorize if it has an invalid
-// signature or expiry, or names no grant.
+// oauthChargeInvalidToken counts a code or refresh token towards limiter.Authorize if it fails verification
+// or names no grant. It takes a token only while one is available, so the budget refills once requests stop.
 func oauthChargeInvalidToken(clientIp string, err error) {
 	if errors.Is(err, oauth.ErrInvalidToken) || errors.Is(err, oauth.ErrTokenExpired) || errors.Is(err, oauth.ErrGrantNotFound) {
-		limiter.Authorize.Reserve(clientIp)
+		limiter.Authorize.Allow(clientIp)
 	}
 }
 

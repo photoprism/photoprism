@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -696,9 +697,17 @@ func TestOAuthChargeInvalidToken(t *testing.T) {
 		oauthChargeInvalidToken(ip, oauth.ErrGrantNotFound)
 		assert.InDelta(t, 0, limiter.Authorize.IP(ip).Tokens(), 0.01)
 	})
-	t.Run("NotCharged", func(t *testing.T) {
+	t.Run("OverBudget", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+		for range 5 {
+			oauthChargeInvalidToken(ip, oauth.ErrInvalidToken)
+		}
+		assert.InDelta(t, 0, limiter.Authorize.IP(ip).Tokens(), 0.01)
+	})
+	t.Run("OtherErrors", func(t *testing.T) {
 		installAuthorizeBudget(t, 3)
 		oauthChargeInvalidToken(ip, oauth.ErrInvalidGrant)
+		oauthChargeInvalidToken(ip, errors.New("database error"))
 		oauthChargeInvalidToken(ip, oauth.ErrRefreshTokenReused)
 		oauthChargeInvalidToken(ip, nil)
 		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
@@ -963,7 +972,7 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.Positive(t, queries.Load())
 
-		// A consumed code with a valid signature is refused without a charge.
+		// A second redemption of the genuine code is refused.
 		refused(t, app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), 0)
 	})
 	t.Run("CachedClient", func(t *testing.T) {
@@ -988,6 +997,8 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		refreshToken := gjson.Get(r.Body.String(), "refresh_token").String()
 		grantUID, _, _ := strings.Cut(refreshToken, ".")
 		queries := countTableQueries(t, entity.Grant{}.TableName())
+		clientQueries := countTableQueries(t, entity.Client{}.TableName())
+		entity.FlushClientCache()
 
 		value, _, _, ok := tokens.SplitValue(refreshToken)
 		require.True(t, ok)
@@ -999,6 +1010,7 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		}
 
 		assert.Equal(t, int64(0), queries.Load())
+		assert.Equal(t, int64(0), clientQueries.Load())
 		assert.NotNil(t, entity.FindGrant(grantUID))
 
 		// The genuine refresh token rotates into another signed one.
@@ -1037,6 +1049,25 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 
 		// Revoking a refresh token that is no longer current succeeds without effect.
 		refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {first}, "token_type_hint": {"refresh_token"}}, 0)
+	})
+	t.Run("GrantReadError", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		_, refreshToken := tokenPair(t, app, router, conf, client)
+		installAuthorizeBudget(t, 3)
+		name := "test:fail_grant_reads_" + rnd.Base36(8)
+		require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (entity.Grant{}).TableName() {
+				_ = db.AddError(errors.New("grant lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+		// A grant that cannot be read is a server error, which is not charged.
+		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
+		assert.Equal(t, http.StatusInternalServerError, r.Code, r.Body.String())
+		r = postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {refreshToken}, "token_type_hint": {"refresh_token"}}, "", "")
+		assert.Equal(t, http.StatusInternalServerError, r.Code, r.Body.String())
+		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
 	})
 	t.Run("GrantGone", func(t *testing.T) {
 		app, router, conf, client := prepareAppTokenTest(t)

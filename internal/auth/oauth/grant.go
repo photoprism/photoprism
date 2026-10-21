@@ -83,13 +83,16 @@ func NewAccessToken(grant *entity.Grant, user *entity.User, grantType authn.Gran
 }
 
 // FindRefreshGrant returns the grant a signed refresh token names, without consuming the token. A token that
-// fails VerifyRefreshToken is refused before the grant is looked up.
+// fails VerifyRefreshToken is refused before the grant is looked up, and an error reading the grant is returned
+// as is.
 func FindRefreshGrant(raw string) (*entity.Grant, error) {
 	grantUID, err := refreshGrantUID(raw)
 
 	if err != nil {
 		return nil, err
-	} else if m := entity.FindGrant(grantUID); m != nil {
+	} else if m, findErr := entity.LookupGrant(grantUID); findErr != nil {
+		return nil, findErr
+	} else if m != nil {
 		return m, nil
 	}
 
