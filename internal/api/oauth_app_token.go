@@ -30,7 +30,6 @@ type OAuthAppTokenResponse struct {
 
 // OAuthAppToken redeems an authorization code of an app client for an access token and a refresh token.
 // It serves the authorization_code grant of POST /api/v1/oauth/token, see OAuthAuthorizationCodeHandler.
-// Refused codes and refresh tokens do not charge limiter.Auth, since they cannot be guessed.
 func OAuthAppToken(c *gin.Context) {
 	clientIp := ClientIP(c)
 	action := "redeem code"
@@ -160,8 +159,14 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 	conf := get.Config()
 
 	if !conf.OAuthAppsEnabled() {
-		limiter.Auth.Reserve(clientIp)
-		oauthTokenError(c, http.StatusBadRequest, "unsupported_grant_type", "grant_type is not supported")
+		if limiter.Authorize.Reject(clientIp) {
+			event.AuditWarn([]string{clientIp, "oauth2", "%s", status.RateLimited}, action)
+			oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		} else {
+			limiter.Authorize.Reserve(clientIp)
+			oauthTokenError(c, http.StatusBadRequest, "unsupported_grant_type", "grant_type is not supported")
+		}
+
 		return nil, false
 	}
 
@@ -177,8 +182,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 		clientID = basicID
 	}
 
-	// A registered client ID is looked up in the database, so an address over the authorization failure
-	// limit is refused first. Client metadata documents are fetched behind the same limit.
+	// Refuse an address over the authorization failure limit before looking up a registered client ID.
 	registered := !strings.HasPrefix(clientID, "https://")
 
 	if registered && limiter.Authorize.Reject(clientIp) {
@@ -195,8 +199,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
 		return nil, false
 	case err != nil:
-		// A registered client ID that resolves to no app client counts as a failed authorization. It does
-		// not count towards limiter.Auth, which hosted clients' shared addresses also need for bearer access.
+		// A registered client ID that resolves to no app client counts towards limiter.Authorize.
 		if registered {
 			limiter.Authorize.Reserve(clientIp)
 		}

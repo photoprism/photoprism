@@ -155,8 +155,8 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the required request parameters are present.
-		if c.Query("state") == "" || c.Query("code") == "" {
+		// Check if the required request parameters are present and the code is within its length limit.
+		if code := c.Query("code"); c.Query("state") == "" || code == "" || len(code) > MaxOIDCCodeLength {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthCodeRequired.Error()})
 			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return

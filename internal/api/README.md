@@ -1,6 +1,6 @@
 ## API Package Guide
 
-**Last Updated:** October 16, 2026
+**Last Updated:** October 21, 2026
 
 ### Overview
 
@@ -33,7 +33,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Keep new JSON binding sites on the shared request-limit path by running `make check-api-request-limits` (also included in `make lint`) after adding or refactoring API handlers in the root repo or private overlays.
 - List `413` in the `@Failure` annotation of every handler that can answer it; `make check-api-failure-codes` (also included in `make lint`) reports a Swagger-documented handler that does not.
 - Never log secrets or tokens. Prefer structured logging through `event.Log` and redact sensitive values before logging.
-- Enforce rate limiting with the shared limiters (`limiter.Auth`, `limiter.Login`, and `limiter.Authorize` for the OAuth authorize endpoint and client metadata fetches) and respond with `limiter.AbortJSON` to maintain consistent 429 JSON payloads.
+- Enforce rate limiting with the shared limiters (`limiter.Auth`, `limiter.Login`, and `limiter.Authorize` for the OAuth authorize endpoint, client metadata fetches, and the token endpoint's client checks) and respond with `limiter.AbortJSON` to maintain consistent 429 JSON payloads.
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
 - **Upload file checks (`UploadCheckFile`)** — every saved upload, including files extracted from ZIP archives, is checked for a supported type and extension, the RAW setting, the total upload size, and the resolution limit: images whose dimensions exceed `PHOTOPRISM_RESOLUTION_LIMIT` are rejected and removed before screening. The dimensions are read from the file header of the image format detected from the content, so they cost no pixel decoding; formats whose dimensions cannot be read from such a header are not checked against the limit at upload.

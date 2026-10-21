@@ -55,6 +55,13 @@ func postTokenForm(app http.Handler, path string, values url.Values, basicID, ba
 	return w
 }
 
+// appTokenTestClientIP returns the client IP that requests sent with postTokenForm come from.
+func appTokenTestClientIP() string {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+	return ClientIP(c)
+}
+
 // codeTokenForm returns the form values of an authorization_code token request.
 func codeTokenForm(clientID, code string) url.Values {
 	return url.Values{
@@ -460,14 +467,17 @@ func TestOAuthAppToken_Rechecks(t *testing.T) {
 		app, _, conf, _ := prepareAppTokenTest(t)
 		conf.Options().OAuthApps = config.OAuthAppsNone
 		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		limiter.Authorize = limiter.NewLimit(rate.Every(24*time.Hour), 3)
 
-		limited := false
+		codes := make([]int, 0, 6)
 
-		for i := 0; i < 10 && !limited; i++ {
-			limited = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "refresh_token": {"abc"}}, "", "").Code == http.StatusTooManyRequests
+		for i := 0; i < 6; i++ {
+			codes = append(codes, postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "refresh_token": {"abc"}}, "", "").Code)
 		}
 
-		assert.True(t, limited)
+		assert.Equal(t, []int{400, 400, 400, 429, 429, 429}, codes)
+		assert.True(t, limiter.Authorize.Reject(appTokenTestClientIP()))
+		assert.False(t, limiter.Auth.Reject(appTokenTestClientIP()))
 	})
 }
 

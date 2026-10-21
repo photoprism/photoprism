@@ -125,6 +125,31 @@ func TestOAuthToken_ChargesPreCredentialRejections(t *testing.T) {
 	}
 }
 
+// TestOAuthToken_OversizedFormChargesAuthorize covers that an oversized form request counts towards
+// limiter.Authorize rather than limiter.Auth, and is refused once that budget is spent.
+func TestOAuthToken_OversizedFormChargesAuthorize(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	OAuthToken(router)
+
+	oldAuth, oldAuthorize := limiter.Auth, limiter.Authorize
+	defer func() { limiter.Auth, limiter.Authorize = oldAuth, oldAuthorize }()
+	limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+	limiter.Authorize = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+
+	codes := make([]int, 0, 5)
+
+	for range 5 {
+		body := io.MultiReader(strings.NewReader("grant_type=authorization_code&code="), strings.NewReader(strings.Repeat("a", int(MaxOAuthRequestBytes))))
+		code, _ := postCounted(app, "/api/v1/oauth/token", header.ContentTypeForm, body)
+		codes = append(codes, code)
+	}
+
+	assert.Equal(t, []int{413, 413, 413, 429, 429}, codes)
+	assert.False(t, limiter.Auth.Reject("192.0.2.1"))
+}
+
 // TestOAuthToken_RefundsOnSuccess covers that a successful request returns the failure budget
 // it reserved, so a client authenticating repeatedly is not throttled.
 func TestOAuthToken_RefundsOnSuccess(t *testing.T) {

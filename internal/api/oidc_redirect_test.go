@@ -82,11 +82,19 @@ func TestOIDCRedirect(t *testing.T) {
 		require.True(t, conf.OIDCEnabled())
 		app := newOidcTestApp(conf)
 
-		for _, query := range []string{"", "?state=s1", "?code=c1"} {
+		for _, query := range []string{"", "?state=s1", "?code=c1", "?state=s1&code=" + strings.Repeat("c", MaxOIDCCodeLength+1)} {
 			r := PerformRequest(app, http.MethodGet, "/api/v1/oidc/redirect"+query)
 			assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
 			assert.Equal(t, conf.LoginUri(), r.Header().Get("Location"))
 		}
+	})
+	t.Run("CodeAtLengthLimit", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		app := newOidcTestApp(conf)
+
+		// A code of the maximum length is passed on to the exchange.
+		r := PerformRequest(app, http.MethodGet, "/api/v1/oidc/redirect?state=s1&code="+strings.Repeat("c", MaxOIDCCodeLength))
+		assert.NotEqual(t, conf.LoginUri(), r.Header().Get("Location"))
 	})
 	t.Run("AuthTemplatePreservesSessionStoragePreference", func(t *testing.T) {
 		app := gin.New()
