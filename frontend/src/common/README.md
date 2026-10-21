@@ -1,6 +1,6 @@
 ## View Helper Guidelines
 
-**Last Updated:** October 19, 2026
+**Last Updated:** October 21, 2026
 
 ### Export Helpers
 
@@ -12,7 +12,7 @@
 
 `buildExportDownloads(groups, selectedIds)` in `export-download.js` freezes the selected sources, ordering, and suggested browser filenames. `exportDownloadUrl(item, config)` uses `apiUri` for all attachment URLs: originals and previews use `/dl/{hash}?t=...&name=original`; resized JPEGs use `/t/{hash}/{previewToken}/{size}?download=1&name=original`. Compatible video and live-photo video choices use `/dl/{hash}?t=...&name=original&format=avc`. The server controls attachment filenames through the existing `name` convention; client suggestions do not override response headers.
 
-The dialog refreshes tokens and the Export feature flag through `$config.update()` before initial downloads and retries; a failed config request preserves the current session and tokens. `ExportQueue` hands downloads to browser anchors, spaces handoffs, and retries failed handoffs without repeating successful ones. Cancellation, permission loss, a changed picture, or Lightbox closure stops pending client work and discards late responses. A handoff does not confirm that the browser saved the file. The dialog explains that conversion-dependent downloads start when the video is ready.
+The dialog refreshes tokens and the Export feature flag through `$config.update()` before initial downloads and retries; a failed config request preserves the current session and tokens. `ExportQueue` hands downloads to browser anchors, spaces handoffs, and retries failed handoffs without repeating successful ones. Cancellation, permission loss, a changed picture, or Lightbox closure stops pending client work and discards late responses. A handoff does not confirm that the browser saved the file. Conversion-dependent choices show the single sentence "Download starts after transcoding."
 
 The `format=avc` download contract requires the separate backend implementation; the streaming video endpoint is unchanged by Export.
 

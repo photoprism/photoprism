@@ -70,7 +70,7 @@
                           <span class="export-option-description">
                             <span class="text-body-2 font-weight-medium">{{ optionLabel(option) }}</span>
                             <span class="text-caption">{{ optionMetadata(option) }}</span>
-                            <span v-if="needsConversion(option)" class="export-conversion-note text-caption text-medium-emphasis">{{ $gettext("Needs Conversion") }} {{ $gettext("The download will start when the video is ready.") }}</span>
+                            <span v-if="needsConversion(option)" class="export-conversion-note text-caption text-medium-emphasis">{{ $gettext("Download starts after transcoding.") }}</span>
                           </span>
                           <span v-if="optionBytes(option)" class="export-option-size text-caption">{{ optionBytes(option) }}</span>
                         </span>

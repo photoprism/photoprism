@@ -446,7 +446,7 @@ describe("metadata-based video export dialog", () => {
   it.each(["video", "live", "animated"])("offers %s AVC downloads and explains the conversion wait", async (type) => {
     await open([file("v", { Name: "movie.mov", FileType: "mov", MediaType: type, Codec: "hevc" })]);
     expect(Axios.get).not.toHaveBeenCalled();
-    expect(wrapper.find(".export-conversion-note").text()).toContain("The download will start when the video is ready.");
+    expect(wrapper.find(".export-conversion-note").text()).toBe("Download starts after transcoding.");
     expect(wrapper.find('.export-option[data-option-id^="avc"] .export-option-size').exists()).toBe(false);
     const option = wrapper.vm.groups[0].options.at(-1);
     await wrapper.setData({ selected: [option.id] });
