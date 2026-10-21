@@ -1,6 +1,6 @@
 ## PhotoPrism — URL Tokens
 
-**Last Updated:** July 25, 2026
+**Last Updated:** October 21, 2026
 
 ### Overview
 
@@ -31,7 +31,10 @@ per-kind policy, and the delivery rules.
 - `download.go` — the `Download` signer instance, the `DownloadToken` / `SignDownload` /
   `VerifyDownload` / `IsCoarseDownload` policy wrappers, and the `PublicMode` / `CoarseDownload`
   delivery settings; tests in `download_test.go`.
-- `derive.go` — `Derive(key, purpose)` for the not-yet-signed preview token; tests in `derive_test.go`.
+- `preview.go` — the `Preview` signer instance and the `PreviewToken` / `PreviewExpires` / `SignPreview` /
+  `VerifyPreview` / `ParseCompact` wrappers for the session-bound preview tokens of OAuth2 clients without
+  an account; tests in `preview_test.go`.
+- `derive.go` — `Derive(key, purpose)` for the instance preview token; tests in `derive_test.go`.
 
 ### Signing Key
 
@@ -45,13 +48,15 @@ a token's scope is bound in the signed message, not in the key — and it never 
 ```go
 tokens.Download.Key = c.TokenSigningKey()
 tokens.Download.SignaturePath = c.ApiUri()
+tokens.Preview.Key = c.TokenSigningKey()
+tokens.Preview.SignaturePath = c.ApiUri()
 tokens.PublicMode = c.Public()
 tokens.CoarseDownload = c.DownloadToken()
 ```
 
 ### Download Tokens
 
-The only signed kind today. `Download` signs over `Config.ApiUri()` — a directory token authorizing every
+`Download` signs over `Config.ApiUri()` — a directory token authorizing every
 download URL — and the thin wrappers add the per-kind policy: the per-session `sid` parameter, the compact
 `<expires>.<sid>.<token>` encoding, and the `ttl.DownloadToken` lifetime (one hour by default, floor of 15
 minutes, overridable via `PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE`).
@@ -68,8 +73,8 @@ minutes, overridable via `PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE`).
   operator configured one, so a default instance neither hands out nor accepts an unscoped capability.
 
 `ClientSession` (`internal/config/client_config.go`) and `AddTokenHeaders`
-(`internal/api/api_response_headers.go`) deliver it only to a session that already has its own preview
-token: the download token is the higher-value credential, since it authorizes originals and a coarse one
+(`internal/api/api_response_headers.go`) deliver it only to a session that has a preview token of its
+own or receives signed preview tokens (see *Preview Tokens*): the download token is the higher-value credential, since it authorizes originals and a coarse one
 is cross-accepted for previews. Search handlers pass the same value into viewer results so the client can
 refresh it while browsing instead of polling.
 
@@ -101,31 +106,45 @@ Scoped consumers: `DownloadAlbum` (`internal/api/download_album.go`), `GetDownlo
 
 ### Preview Tokens
 
-Not signed yet. `Derive(key, PurposePreview)` folds the signing key into the stable hex token that
-`Config.PreviewToken()` returns: HMAC-SHA256 keeps the key unrecoverable from the value, and the
-purpose separates it from other kinds so one cannot be replayed as another. It is registered under
+Accounts, app passwords and OAuth app tokens carry their account's random preview token, which
+`entity.PreviewToken` matches by value. `Derive(key, PurposePreview)` folds the signing key into the stable
+hex token that `Config.PreviewToken()` returns: HMAC-SHA256 keeps the key unrecoverable from the value, and
+the purpose separates it from other kinds so one cannot be replayed as another. It is registered under
 `entity.TokenConfig` and accepted on the preview endpoints, but no client config delivers it, so an
 operator who pins one with `--preview-token` builds those URLs themselves.
 `Derive` takes the key as a parameter rather than reading `Download.Key`, so deriving the preview token in
 `Propagate` has no ordering dependency on the signer configuration.
 
-Signed preview tokens slot in as a second `Signer` instance beside `Download` without a new package, since
-the per-kind policy lives in the wrappers rather than in the generic signer.
+Sessions of OAuth2 clients without an account (`Session.SignedPreview`) receive a signed token instead and
+store none. `Preview` signs the compact `<expires>.<sid>.<token>` form over the API path, with a `kind`
+parameter that is signed but not transmitted, so a download token never verifies as a preview token and
+the reverse. The expiry is the session's own, so the value stays the same for the whole session; a session
+without an expiry gets the end of the next UTC day (`PreviewExpires`), so its value changes once a day and
+is always valid for at least one more.
+
+`internal/api/auth_tokens.go` verifies it: `InvalidPreviewToken(c, resources)` takes a value of the compact
+shape from the `:token` segment, or from `?t=` when the segment is `signed`, resolves its session through
+`PreviewSession` (memoized on the request), and refuses it unless the client is enabled and the session's
+scope and client role cover one of the endpoint's resources. Other values, including a `?t=` read because the segment
+cleaned to empty, are matched by value, with no session lookup. Such clients load previews from
+the API: `Config.ClientOAuth` sets their `contentUri` and `videoUri` to `ApiUri()`, and
+`SessionContentUri` does the same for the viewer URLs.
 
 ### Testing
 
 ```bash
 go test ./internal/auth/tokens ./pkg/authn/authtoken -count=1
-go test ./internal/api -run 'AuthDownload|DownloadSession|AddTokenHeaders' -count=1
-go test ./internal/config -run 'TokenSigningKey|ClientSessionConfig|PreviewToken|DownloadToken' -count=1
+go test ./internal/api -run 'AuthDownload|DownloadSession|AddTokenHeaders|Preview|SessionContentUri' -count=1
+go test ./internal/config -run 'TokenSigningKey|ClientSessionConfig|ClientOAuth|PreviewToken|DownloadToken' -count=1
 ```
 
 Two gotchas when writing tests against token delivery:
 
 - `TestConfig_ClientSessionConfig`-style tests need `c.Propagate()`, or the signer stays unconfigured and
   the coarse fallback is empty. Most session fixtures carry a `PreviewToken` and therefore assert a
-  **non-empty**, signed download token; the user-less client and cluster fixtures carry none and assert
-  both tokens empty. Check the fixture before writing the assertion — `assert.NotEmpty` on a token
+  **non-empty**, signed download token; the user-less client and cluster fixtures carry none. A client
+  session without an account takes its client's scope through `SetClient`, so build it from a client
+  with the scope under test rather than editing the session's scope. Check the fixture before writing the assertion — `assert.NotEmpty` on a token
   proves nothing about *which* token was delivered.
 - `config.NewMinimalTestConfig` runs in public mode, so `PreviewToken` / `DownloadToken` short-circuit to
   the public placeholder. Clear `Public` and `Demo` when exercising authenticated behavior.

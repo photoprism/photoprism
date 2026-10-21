@@ -307,10 +307,10 @@ func (c *Config) DownloadTokenMaxAge() time.Duration {
 	return time.Duration(maxAge) * time.Second
 }
 
-// PreviewToken returns the thumbnail and video streaming API token, derived from the instance signing
-// key unless a static one is configured.
+// PreviewToken returns the instance-wide thumbnail and video streaming API token, derived from the
+// instance signing key unless a static one is configured. It is accepted but not delivered to sessions.
 // It is not derived from the storage serial, which is world-readable by design so that it survives a
-// UID/GID change, and is replaced by signed preview tokens once those land.
+// UID/GID change.
 func (c *Config) PreviewToken() string {
 	if c.Public() {
 		return entity.TokenPublic

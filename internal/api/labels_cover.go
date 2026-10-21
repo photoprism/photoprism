@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -35,7 +36,7 @@ const labelCover = "label-cover"
 //	@Router			/api/v1/labels/{uid}/t/{token}/{size} [get]
 func LabelCover(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
-		if InvalidPreviewToken(c) {
+		if InvalidPreviewToken(c, acl.Resources{acl.ResourceLabels, acl.ResourcePhotos}) {
 			c.Data(http.StatusForbidden, "image/svg+xml", labelIconSvg)
 			return
 		}

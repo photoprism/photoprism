@@ -46,17 +46,49 @@ func AddFileCountHeaders(c *gin.Context, filesCount, foldersCount int) {
 
 // AddTokenHeaders adds the preview and download tokens to the response so the client can refresh them
 // while browsing instead of polling. Both mirror what ClientSession puts in the client config: a session
-// without its own preview token receives neither, since the download token also authorizes originals.
+// without a preview token of its own receives neither, since the download token also authorizes originals,
+// except a client session without an account, which receives the download token its scope permits.
 func AddTokenHeaders(c *gin.Context, s *entity.Session) {
-	if get.Config().Public() || s.PreviewToken == "" {
+	if s == nil || get.Config().Public() {
 		return
 	}
 
-	c.Header("X-Preview-Token", s.PreviewToken)
+	preview := SessionPreviewToken(s)
+
+	if preview != "" {
+		c.Header("X-Preview-Token", preview)
+	} else if !s.SignedPreview() {
+		return
+	}
 
 	if v := SessionDownloadToken(s); v != "" {
 		c.Header("X-Download-Token", v)
 	}
+}
+
+// SessionPreviewToken returns the preview token to deliver to the session: for a client session without
+// an account, a signed token if its scope and role cover previews and none otherwise; else its stored token.
+func SessionPreviewToken(s *entity.Session) string {
+	switch {
+	case s == nil:
+		return ""
+	case !s.SignedPreview():
+		return s.PreviewToken
+	case !s.ScopePermitsPreview() || !s.RolePermitsPreview():
+		return ""
+	}
+
+	return tokens.PreviewToken(s.ID, s.ExpiresAt())
+}
+
+// SessionContentUri returns the base URI of the session's thumbnail URLs, which is the API for an OAuth2
+// client without an account, as in Config.ClientOAuth.
+func SessionContentUri(s *entity.Session) string {
+	if s != nil && s.NoUser() && s.IsClient() {
+		return get.Config().ApiUri()
+	}
+
+	return get.Config().ContentUri()
 }
 
 // SessionDownloadToken returns the "?t=" value a client appends to a download URL: a signed,

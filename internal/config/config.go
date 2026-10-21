@@ -463,9 +463,11 @@ func (c *Config) Propagate() {
 	ttl.DownloadToken = ttl.Duration(int(c.DownloadTokenMaxAge().Seconds()))
 
 	// Configure signed URL tokens, which must be complete before anything mints or verifies one. A single
-	// signing key covers every token kind (downloads today, previews next); the signature path is per kind.
+	// signing key covers every token kind; the signed parameters keep the kinds apart.
 	tokens.Download.Key = c.TokenSigningKey()
 	tokens.Download.SignaturePath = c.ApiUri()
+	tokens.Preview.Key = c.TokenSigningKey()
+	tokens.Preview.SignaturePath = c.ApiUri()
 
 	// Configure download-token delivery: public mode delivers a placeholder, every session receives a
 	// signed token, and the coarse token covers only the sessionless client configs.

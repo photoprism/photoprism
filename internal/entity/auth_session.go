@@ -700,6 +700,33 @@ func (m *Session) ScopePermitsDownload() bool {
 	return m.ValidateScope(acl.ResourcePhotos, perms) || m.ValidateScope(acl.ResourceFiles, perms)
 }
 
+// ScopePermitsPreview checks if the scope includes viewing pictures or their files, the two resources
+// thumbnails and videos authorize against. The preview endpoints apply their own per-resource scope check.
+func (m *Session) ScopePermitsPreview() bool {
+	if m.NoScope() {
+		return true
+	}
+
+	perms := acl.Permissions{acl.ActionView}
+
+	return m.ValidateScope(acl.ResourcePhotos, perms) || m.ValidateScope(acl.ResourceFiles, perms)
+}
+
+// RolePermitsPreview checks if the client role of the session may view pictures or their files, as the
+// REST API requires. The preview endpoints apply their own per-resource role check.
+func (m *Session) RolePermitsPreview() bool {
+	role := m.GetClientRole()
+	perms := acl.Permissions{acl.ActionView}
+
+	return acl.Rules.AllowAny(acl.ResourcePhotos, role, perms) || acl.Rules.AllowAny(acl.ResourceFiles, role, perms)
+}
+
+// SignedPreview reports whether the session belongs to a registered client without an account and has a
+// valid ID, so it receives signed preview tokens instead of a stored one.
+func (m *Session) SignedPreview() bool {
+	return m.HasClient() && m.NoUser() && m.IsClient() && rnd.IsSessionID(m.ID)
+}
+
 // SetScope sets a custom authentication scope.
 func (m *Session) SetScope(scope string) *Session {
 	if scope == "" {
@@ -745,7 +772,8 @@ func (m *Session) ChangePassword(newPw string) (err error) {
 	return nil
 }
 
-// SetPreviewToken updates the preview token if not empty.
+// SetPreviewToken updates the preview token if not empty, or generates one if the session has none and
+// does not receive signed preview tokens.
 func (m *Session) SetPreviewToken(token string) *Session {
 	if m.ID == "" {
 		return m
@@ -754,7 +782,7 @@ func (m *Session) SetPreviewToken(token string) *Session {
 	if token != "" {
 		m.PreviewToken = token
 		PreviewToken.Set(m.ID, token)
-	} else if m.PreviewToken == "" {
+	} else if m.PreviewToken == "" && !m.SignedPreview() {
 		m.PreviewToken = GenerateToken()
 		PreviewToken.Set(m.ID, m.PreviewToken)
 	}
