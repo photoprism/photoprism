@@ -51,8 +51,8 @@ func TestNewGrant(t *testing.T) {
 		assert.Equal(t, "https://photos.example.com/api/v1/mcp", grant.Resource)
 		assert.Equal(t, HashSecret(refreshToken), grant.RefreshHash)
 		assert.NotEqual(t, refreshToken, grant.RefreshHash)
-		value, ok := tokens.VerifyRefresh(refreshToken)
-		assert.True(t, ok)
+		value, err := tokens.VerifyRefresh(refreshToken)
+		assert.NoError(t, err)
 		assert.True(t, strings.HasPrefix(value, grant.GrantUID+"."))
 	})
 	t.Run("ReplacesPrevious", func(t *testing.T) {
@@ -255,9 +255,16 @@ func TestFindRefreshGrant(t *testing.T) {
 		require.True(t, ok)
 		expired := tokens.SignRefresh(value, time.Now().Add(-time.Second))
 		_, err := FindRefreshGrant(expired)
-		assert.ErrorIs(t, err, ErrInvalidToken)
+		assert.ErrorIs(t, err, ErrTokenExpired)
+		assert.Contains(t, err.Error(), grant.GrantUID)
 		_, _, err = RefreshGrant(refreshGrantOf(expired), expired, "csgrantfind00004")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
+
+		// An expired value of the current token neither rotates nor revokes the grant.
+		_, _, err = RefreshGrant(grant, expired, "csgrantfind00004")
+		assert.ErrorIs(t, err, ErrTokenExpired)
+		assert.NotErrorIs(t, err, ErrRefreshTokenReused)
 		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
 	})
 	t.Run("GrantNotFound", func(t *testing.T) {
@@ -276,9 +283,12 @@ func TestVerifyRefreshToken(t *testing.T) {
 		assert.NoError(t, VerifyRefreshToken(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute))))
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		for _, raw := range []string{"", rnd.RefreshToken("gs5gfen1bgxz7s9i"), tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(-time.Minute)), tokens.SignCode(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute))} {
+		for _, raw := range []string{"", rnd.RefreshToken("gs5gfen1bgxz7s9i"), tokens.SignCode(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute))} {
 			assert.ErrorIs(t, VerifyRefreshToken(raw), ErrInvalidToken, raw)
 		}
+	})
+	t.Run("Expired", func(t *testing.T) {
+		assert.ErrorIs(t, VerifyRefreshToken(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(-time.Minute))), ErrTokenExpired)
 	})
 }
 
@@ -289,7 +299,9 @@ func TestRotateGrant(t *testing.T) {
 		next, err := rotateGrant(m, HashSecret(raw))
 		require.NoError(t, err)
 		assert.NotEqual(t, raw, next)
-		assert.Equal(t, m.GrantUID, refreshGrantUID(next))
+		grantUID, err := refreshGrantUID(next)
+		assert.NoError(t, err)
+		assert.Equal(t, m.GrantUID, grantUID)
 		assert.Equal(t, HashSecret(next), entity.FindGrant(m.GrantUID).RefreshHash)
 	})
 	t.Run("RotatedMeanwhile", func(t *testing.T) {
@@ -305,10 +317,13 @@ func TestNewRefreshToken(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		raw, err := newRefreshToken("gs5gfen1bgxz7s9i")
 		require.NoError(t, err)
-		assert.Equal(t, "gs5gfen1bgxz7s9i", refreshGrantUID(raw))
+		grantUID, err := refreshGrantUID(raw)
+		assert.NoError(t, err)
+		assert.Equal(t, "gs5gfen1bgxz7s9i", grantUID)
 		_, expires, _, ok := tokens.SplitValue(raw)
 		assert.True(t, ok)
-		assert.InDelta(t, time.Now().Add(GrantMaxIdle).Unix(), expires, 5)
+		assert.InDelta(t, time.Now().Add(RefreshTokenTTL).Unix(), expires, 5)
+		assert.Greater(t, RefreshTokenTTL, GrantMaxIdle)
 	})
 	t.Run("Unconfigured", func(t *testing.T) {
 		orig := *tokens.OAuth
@@ -322,13 +337,21 @@ func TestNewRefreshToken(t *testing.T) {
 
 func TestRefreshGrantUID(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		assert.Equal(t, "gs5gfen1bgxz7s9i", refreshGrantUID(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute))))
+		grantUID, err := refreshGrantUID(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute)))
+		assert.NoError(t, err)
+		assert.Equal(t, "gs5gfen1bgxz7s9i", grantUID)
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		assert.Equal(t, "", refreshGrantUID(""))
-		assert.Equal(t, "", refreshGrantUID(rnd.RefreshToken("gs5gfen1bgxz7s9i")))
-		assert.Equal(t, "", refreshGrantUID(tokens.SignCode(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute))))
-		assert.Equal(t, "", refreshGrantUID(tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute))))
-		assert.Equal(t, "", refreshGrantUID(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(-time.Second))))
+		for _, raw := range []string{"", rnd.RefreshToken("gs5gfen1bgxz7s9i"), tokens.SignCode(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute)), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute)), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(-time.Minute))} {
+			grantUID, err := refreshGrantUID(raw)
+			assert.ErrorIs(t, err, ErrInvalidToken, raw)
+			assert.Empty(t, grantUID, raw)
+		}
+	})
+	t.Run("Expired", func(t *testing.T) {
+		grantUID, err := refreshGrantUID(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(-time.Second)))
+		assert.ErrorIs(t, err, ErrTokenExpired)
+		assert.Contains(t, err.Error(), "gs5gfen1bgxz7s9i")
+		assert.Empty(t, grantUID)
 	})
 }

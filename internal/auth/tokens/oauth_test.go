@@ -33,7 +33,7 @@ func TestSignCode(t *testing.T) {
 		assert.True(t, strings.HasPrefix(signed, value+"."+strconv.FormatInt(expires.Unix(), 10)+"."))
 		assert.Len(t, signed, len(value)+1+10+1+2*valueMacLen)
 		assert.Equal(t, signed, SignCode(value, expires))
-		assert.True(t, VerifyCode(signed))
+		assert.NoError(t, VerifyCode(signed))
 	})
 	t.Run("Unconfigured", func(t *testing.T) {
 		withOAuthKey(t, nil)
@@ -45,14 +45,14 @@ func TestVerifyCode(t *testing.T) {
 	t.Run("Forged", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
 		value := rnd.AuthToken()
-		assert.False(t, VerifyCode(value))
-		assert.False(t, VerifyCode(value+"."+strconv.FormatInt(inOneHour().Unix(), 10)+"."+strings.Repeat("0", 2*valueMacLen)))
-		assert.False(t, VerifyCode(rnd.AuthToken()+SignCode(value, inOneHour())[len(value):]))
+		assert.ErrorIs(t, VerifyCode(value), ErrInvalidValue)
+		assert.ErrorIs(t, VerifyCode(value+"."+strconv.FormatInt(inOneHour().Unix(), 10)+"."+strings.Repeat("0", 2*valueMacLen)), ErrInvalidValue)
+		assert.ErrorIs(t, VerifyCode(rnd.AuthToken()+SignCode(value, inOneHour())[len(value):]), ErrInvalidValue)
 	})
 	t.Run("Expired", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
-		assert.False(t, VerifyCode(SignCode(rnd.AuthToken(), time.Now().Add(-time.Second))))
-		assert.False(t, VerifyCode(SignCode(rnd.AuthToken(), time.Now())))
+		assert.ErrorIs(t, VerifyCode(SignCode(rnd.AuthToken(), time.Now().Add(-time.Second))), ErrExpiredValue)
+		assert.NoError(t, VerifyCode(SignCode(rnd.AuthToken(), time.Now().Add(time.Second))))
 	})
 	t.Run("ExpiryChanged", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
@@ -62,23 +62,23 @@ func TestVerifyCode(t *testing.T) {
 		_, _, mac, ok := SplitValue(signed)
 		assert.True(t, ok)
 		assert.Equal(t, value+"."+past+"."+mac, signed)
-		assert.False(t, VerifyCode(value+"."+strconv.FormatInt(inOneHour().Unix(), 10)+"."+mac))
+		assert.ErrorIs(t, VerifyCode(value+"."+strconv.FormatInt(inOneHour().Unix(), 10)+"."+mac), ErrInvalidValue)
 	})
 	t.Run("OtherKey", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
 		signed := SignCode(rnd.AuthToken(), inOneHour())
 		OAuth.Key = []byte(strings.Repeat("k", KeyLen))
-		assert.False(t, VerifyCode(signed))
+		assert.ErrorIs(t, VerifyCode(signed), ErrInvalidValue)
 	})
 	t.Run("RefreshTokenRefused", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
-		assert.False(t, VerifyCode(SignRefresh(rnd.AuthToken(), inOneHour())))
+		assert.ErrorIs(t, VerifyCode(SignRefresh(rnd.AuthToken(), inOneHour())), ErrInvalidValue)
 	})
 	t.Run("Unconfigured", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
 		signed := SignCode(rnd.AuthToken(), inOneHour())
 		OAuth.Key = nil
-		assert.False(t, VerifyCode(signed))
+		assert.ErrorIs(t, VerifyCode(signed), ErrInvalidValue)
 	})
 }
 
@@ -88,8 +88,8 @@ func TestSignRefresh(t *testing.T) {
 		value := rnd.RefreshToken(rnd.GenerateUID('g'))
 		signed := SignRefresh(value, inOneHour())
 		assert.True(t, strings.HasPrefix(signed, value+"."))
-		got, ok := VerifyRefresh(signed)
-		assert.True(t, ok)
+		got, err := VerifyRefresh(signed)
+		assert.NoError(t, err)
 		assert.Equal(t, value, got)
 	})
 	t.Run("Unconfigured", func(t *testing.T) {
@@ -102,21 +102,25 @@ func TestVerifyRefresh(t *testing.T) {
 	t.Run("Forged", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
 		value := rnd.RefreshToken(rnd.GenerateUID('g'))
-		_, ok := VerifyRefresh(value)
-		assert.False(t, ok)
+		got, err := VerifyRefresh(value)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.Empty(t, got)
 		signed := SignRefresh(value, inOneHour())
-		_, ok = VerifyRefresh(rnd.RefreshToken(rnd.GenerateUID('g')) + signed[len(value):])
-		assert.False(t, ok)
+		got, err = VerifyRefresh(rnd.RefreshToken(rnd.GenerateUID('g')) + signed[len(value):])
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.Empty(t, got)
 	})
 	t.Run("Expired", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
-		_, ok := VerifyRefresh(SignRefresh(rnd.RefreshToken(rnd.GenerateUID('g')), time.Now().Add(-time.Second)))
-		assert.False(t, ok)
+		value := rnd.RefreshToken(rnd.GenerateUID('g'))
+		got, err := VerifyRefresh(SignRefresh(value, time.Now().Add(-time.Second)))
+		assert.ErrorIs(t, err, ErrExpiredValue)
+		assert.Equal(t, value, got)
 	})
 	t.Run("CodeRefused", func(t *testing.T) {
 		withOAuthKey(t, make([]byte, KeyLen))
-		_, ok := VerifyRefresh(SignCode(rnd.RefreshToken(rnd.GenerateUID('g')), inOneHour()))
-		assert.False(t, ok)
+		_, err := VerifyRefresh(SignCode(rnd.RefreshToken(rnd.GenerateUID('g')), inOneHour()))
+		assert.ErrorIs(t, err, ErrInvalidValue)
 	})
 }
 
@@ -141,38 +145,45 @@ func TestSigner_VerifyValue(t *testing.T) {
 	signed := s.SignValue("a", "value", 100)
 
 	t.Run("Success", func(t *testing.T) {
-		value, ok := s.VerifyValue("a", signed, 99)
-		assert.True(t, ok)
+		value, err := s.VerifyValue("a", signed, 99)
+		assert.NoError(t, err)
+		assert.Equal(t, "value", value)
+		value, err = s.VerifyValue("a", signed, 100)
+		assert.NoError(t, err)
 		assert.Equal(t, "value", value)
 	})
 	t.Run("Expired", func(t *testing.T) {
-		_, ok := s.VerifyValue("a", signed, 100)
-		assert.False(t, ok)
-		_, ok = s.VerifyValue("a", signed, 101)
-		assert.False(t, ok)
+		value, err := s.VerifyValue("a", signed, 101)
+		assert.ErrorIs(t, err, ErrExpiredValue)
+		assert.Equal(t, "value", value)
 	})
 	t.Run("ExpiryChanged", func(t *testing.T) {
-		_, ok := s.VerifyValue("a", "value.200"+signed[len("value.100"):], 99)
-		assert.False(t, ok)
-		_, ok = s.VerifyValue("a", "value.0100"+signed[len("value.100"):], 99)
-		assert.False(t, ok)
+		_, err := s.VerifyValue("a", "value.200"+signed[len("value.100"):], 99)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		_, err = s.VerifyValue("a", "value.0100"+signed[len("value.100"):], 99)
+		assert.ErrorIs(t, err, ErrInvalidValue)
 	})
 	t.Run("InvalidShape", func(t *testing.T) {
 		for _, v := range []string{"", ".", "value", "value.", "." + signed[len("value."):], signed + "0", signed[:len(signed)-1], strings.Repeat("a", maxTokenLen+1)} {
-			_, ok := s.VerifyValue("a", v, 99)
-			assert.False(t, ok, v)
+			value, err := s.VerifyValue("a", v, 99)
+			assert.ErrorIs(t, err, ErrInvalidValue, v)
+			assert.Empty(t, value, v)
 		}
 	})
 	t.Run("TooLong", func(t *testing.T) {
 		long := s.SignValue("a", strings.Repeat("v", maxTokenLen), 100)
-		_, ok := s.VerifyValue("a", long, 99)
-		assert.False(t, ok)
+		_, err := s.VerifyValue("a", long, 99)
+		assert.ErrorIs(t, err, ErrInvalidValue)
 	})
 	t.Run("OtherPurpose", func(t *testing.T) {
-		_, ok := s.VerifyValue("b", signed, 99)
-		assert.False(t, ok)
-		_, ok = s.VerifyValue("", signed, 99)
-		assert.False(t, ok)
+		_, err := s.VerifyValue("b", signed, 99)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		_, err = s.VerifyValue("", signed, 99)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+	})
+	t.Run("ExpiredOtherPurpose", func(t *testing.T) {
+		_, err := s.VerifyValue("b", signed, 101)
+		assert.ErrorIs(t, err, ErrInvalidValue)
 	})
 }
 

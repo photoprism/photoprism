@@ -22,8 +22,11 @@ const (
 // ErrInvalidGrant is returned when an authorization code or refresh token cannot be redeemed.
 var ErrInvalidGrant = errors.New("invalid grant")
 
-// ErrInvalidToken is returned for a code or refresh token whose signature or signed expiry is invalid.
-var ErrInvalidToken = fmt.Errorf("%w: invalid or expired token", ErrInvalidGrant)
+// ErrInvalidToken is returned for a code or refresh token with an invalid shape or signature.
+var ErrInvalidToken = fmt.Errorf("%w: invalid token", ErrInvalidGrant)
+
+// ErrTokenExpired is returned for a code or refresh token with a valid signature whose signed expiry has passed.
+var ErrTokenExpired = fmt.Errorf("%w: token expired", ErrInvalidGrant)
 
 // ErrGrantNotFound is returned for a valid refresh token whose grant does not exist.
 var ErrGrantNotFound = fmt.Errorf("%w: grant not found", ErrInvalidGrant)

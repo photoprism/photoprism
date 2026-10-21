@@ -235,7 +235,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 // oauthChargeInvalidToken counts a code or refresh token towards limiter.Authorize if it has an invalid
 // signature or expiry, or names no grant.
 func oauthChargeInvalidToken(clientIp string, err error) {
-	if errors.Is(err, oauth.ErrInvalidToken) || errors.Is(err, oauth.ErrGrantNotFound) {
+	if errors.Is(err, oauth.ErrInvalidToken) || errors.Is(err, oauth.ErrTokenExpired) || errors.Is(err, oauth.ErrGrantNotFound) {
 		limiter.Authorize.Reserve(clientIp)
 	}
 }

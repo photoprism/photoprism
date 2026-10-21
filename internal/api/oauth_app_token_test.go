@@ -642,8 +642,9 @@ func TestOAuthChargeInvalidToken(t *testing.T) {
 	t.Run("Charged", func(t *testing.T) {
 		installAuthorizeBudget(t, 3)
 		oauthChargeInvalidToken(ip, oauth.ErrInvalidToken)
+		oauthChargeInvalidToken(ip, oauth.ErrTokenExpired)
 		oauthChargeInvalidToken(ip, oauth.ErrGrantNotFound)
-		assert.InDelta(t, 1, limiter.Authorize.IP(ip).Tokens(), 0.01)
+		assert.InDelta(t, 0, limiter.Authorize.IP(ip).Tokens(), 0.01)
 	})
 	t.Run("NotCharged", func(t *testing.T) {
 		installAuthorizeBudget(t, 3)
@@ -954,8 +955,8 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		r = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {refreshToken}}, "", "")
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		next := gjson.Get(r.Body.String(), "refresh_token").String()
-		_, ok = tokens.VerifyRefresh(next)
-		assert.True(t, ok)
+		_, err := tokens.VerifyRefresh(next)
+		assert.NoError(t, err)
 		assert.NotEqual(t, refreshToken, next)
 		assert.Positive(t, queries.Load())
 	})

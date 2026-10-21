@@ -41,11 +41,17 @@ func TestIssueCode(t *testing.T) {
 		raw, err := IssueCode(testCodeSpec())
 		require.NoError(t, err)
 		assert.Len(t, raw, 92)
-		assert.True(t, tokens.VerifyCode(raw))
+		assert.NoError(t, tokens.VerifyCode(raw))
 
 		m, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
 		require.NoError(t, err)
 		require.NotNil(t, m)
+
+		// The signed expiry is the stored one, which has no fractional seconds.
+		_, expires, _, ok := tokens.SplitValue(raw)
+		require.True(t, ok)
+		assert.Equal(t, m.ExpiresAt.Unix(), expires)
+		assert.Zero(t, m.ExpiresAt.Nanosecond())
 		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
 		assert.NotEqual(t, raw, m.CodeHash)
 		assert.WithinDuration(t, time.Now().UTC().Add(CodeTTL), m.ExpiresAt, 5*time.Second)
@@ -174,7 +180,7 @@ func TestRedeemCode(t *testing.T) {
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
 		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
-		assert.ErrorIs(t, err, ErrInvalidToken)
+		assert.ErrorIs(t, err, ErrTokenExpired)
 		found, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
 		require.NoError(t, err)
 		assert.NotNil(t, found)
@@ -216,9 +222,14 @@ func TestVerifyCode(t *testing.T) {
 		assert.NoError(t, VerifyCode(tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))))
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		for _, raw := range []string{"", rnd.AuthToken(), tokens.SignCode(rnd.AuthToken(), time.Now().Add(-time.Minute)), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute)), tokens.SignCode(strings.Repeat("a", 100), time.Now().Add(time.Minute))} {
+		for _, raw := range []string{"", rnd.AuthToken(), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute)), tokens.SignCode(strings.Repeat("a", 100), time.Now().Add(time.Minute))} {
 			assert.ErrorIs(t, VerifyCode(raw), ErrInvalidToken, raw)
 		}
+	})
+	t.Run("Expired", func(t *testing.T) {
+		err := VerifyCode(tokens.SignCode(rnd.AuthToken(), time.Now().Add(-time.Minute)))
+		assert.ErrorIs(t, err, ErrTokenExpired)
+		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 }
 
@@ -242,7 +253,7 @@ func TestNewCodeValue(t *testing.T) {
 		expires := time.Now().Add(CodeTTL)
 		raw, err := newCodeValue(expires)
 		require.NoError(t, err)
-		assert.True(t, tokens.VerifyCode(raw))
+		assert.NoError(t, tokens.VerifyCode(raw))
 		_, signed, _, ok := tokens.SplitValue(raw)
 		assert.True(t, ok)
 		assert.Equal(t, expires.Unix(), signed)

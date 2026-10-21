@@ -52,7 +52,7 @@ func IssueCode(spec CodeSpec) (string, error) {
 		return "", err
 	}
 
-	expires := time.Now().UTC().Add(CodeTTL)
+	expires := time.Now().UTC().Add(CodeTTL).Truncate(time.Second)
 	raw, err := newCodeValue(expires)
 
 	if err != nil {
@@ -82,7 +82,7 @@ func IssueCode(spec CodeSpec) (string, error) {
 
 // RedeemCode consumes the authorization code and returns it if the client ID, redirect URI and code
 // verifier match the values it is bound to. A code is consumed by the first attempt, even if it fails,
-// and a code with an invalid signature or expiry is refused with ErrInvalidToken before it is looked up.
+// and a code that fails VerifyCode is refused before it is looked up.
 func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, error) {
 	if err := VerifyCode(raw); err != nil {
 		return nil, err
@@ -118,9 +118,14 @@ func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, 
 	return m, nil
 }
 
-// VerifyCode returns ErrInvalidToken if the authorization code has an invalid shape, signature or expiry.
+// VerifyCode returns ErrInvalidToken if the authorization code has an invalid shape or signature, and
+// ErrTokenExpired if its signed expiry has passed.
 func VerifyCode(raw string) error {
-	if raw == "" || len(raw) > 128 || !tokens.VerifyCode(raw) {
+	if raw == "" || len(raw) > 128 {
+		return ErrInvalidToken
+	} else if err := tokens.VerifyCode(raw); errors.Is(err, tokens.ErrExpiredValue) {
+		return ErrTokenExpired
+	} else if err != nil {
 		return ErrInvalidToken
 	}
 

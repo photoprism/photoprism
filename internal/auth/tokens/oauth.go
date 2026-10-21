@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -18,31 +19,38 @@ const (
 	valueMacLen = 16
 )
 
+var (
+	// ErrInvalidValue is returned for a signed value with another shape or a MAC that does not match.
+	ErrInvalidValue = errors.New("invalid signature")
+	// ErrExpiredValue is returned for a signed value whose MAC matches and whose expiry has passed.
+	ErrExpiredValue = errors.New("signature expired")
+)
+
 // OAuth signs the authorization codes and refresh tokens of the OAuth app flow. Its key is set by
 // config.Propagate; its signature path is not used.
 var OAuth = &Signer{}
 
-// SignCode returns the authorization code value with an appended expiry and signature, or "" if the
-// signer is unconfigured.
+// SignCode returns the authorization code value with an appended expiry and signature, or "" if it
+// cannot be signed.
 func SignCode(value string, expires time.Time) string {
 	return OAuth.SignValue(PurposeCode, value, expires.Unix())
 }
 
-// VerifyCode reports whether a signed authorization code carries a valid signature and has not expired.
-func VerifyCode(signed string) bool {
-	_, ok := OAuth.VerifyValue(PurposeCode, signed, time.Now().Unix())
-	return ok
+// VerifyCode returns ErrInvalidValue or ErrExpiredValue if a signed authorization code is not valid.
+func VerifyCode(signed string) error {
+	_, err := OAuth.VerifyValue(PurposeCode, signed, time.Now().Unix())
+	return err
 }
 
-// SignRefresh returns the refresh token value with an appended expiry and signature, or "" if the signer
-// is unconfigured.
+// SignRefresh returns the refresh token value with an appended expiry and signature, or "" if it cannot
+// be signed.
 func SignRefresh(value string, expires time.Time) string {
 	return OAuth.SignValue(PurposeRefresh, value, expires.Unix())
 }
 
-// VerifyRefresh returns the value of a signed refresh token, and false if its signature is invalid or it
-// has expired.
-func VerifyRefresh(signed string) (string, bool) {
+// VerifyRefresh returns the value of a signed refresh token. It returns ErrInvalidValue if the token is not
+// valid, and the value with ErrExpiredValue if it has expired.
+func VerifyRefresh(signed string) (string, error) {
 	return OAuth.VerifyValue(PurposeRefresh, signed, time.Now().Unix())
 }
 
@@ -58,20 +66,23 @@ func (s *Signer) SignValue(purpose, value string, expires int64) string {
 	return body + "." + s.valueMac(purpose, body)
 }
 
-// VerifyValue returns the value of a "<value>.<expires>.<mac>" string signed for the purpose, and false
-// if it has another shape, its MAC does not match, or it expired at or before now.
-func (s *Signer) VerifyValue(purpose, signed string, now int64) (string, bool) {
+// VerifyValue returns the value of a "<value>.<expires>.<mac>" string signed for the purpose. It returns
+// ErrInvalidValue if the string has another shape or its MAC does not match, and the value with
+// ErrExpiredValue if its expiry is before now, so a value is valid through the second it expires.
+func (s *Signer) VerifyValue(purpose, signed string, now int64) (string, error) {
 	if !s.Configured() || purpose == "" || len(signed) > maxTokenLen {
-		return "", false
+		return "", ErrInvalidValue
 	}
 
 	value, expires, mac, ok := SplitValue(signed)
 
-	if !ok || !hmac.Equal([]byte(mac), []byte(s.valueMac(purpose, signed[:len(signed)-len(mac)-1]))) || expires <= now {
-		return "", false
+	if !ok || !hmac.Equal([]byte(mac), []byte(s.valueMac(purpose, signed[:len(signed)-len(mac)-1]))) {
+		return "", ErrInvalidValue
+	} else if expires < now {
+		return value, ErrExpiredValue
 	}
 
-	return value, true
+	return value, nil
 }
 
 // SplitValue splits a string with the shape "<value>.<expires>.<mac>" of a signed value, without

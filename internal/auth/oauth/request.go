@@ -120,7 +120,7 @@ func CompleteRequest(m *entity.AuthCode, userUID string, scopes []string) (strin
 		return "", err
 	}
 
-	expires := time.Now().UTC().Add(CodeTTL)
+	expires := time.Now().UTC().Add(CodeTTL).Truncate(time.Second)
 	raw, err := newCodeValue(expires)
 
 	if err != nil {
