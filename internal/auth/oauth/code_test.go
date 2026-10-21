@@ -40,7 +40,7 @@ func TestIssueCode(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		raw, err := IssueCode(testCodeSpec())
 		require.NoError(t, err)
-		assert.Len(t, raw, 81)
+		assert.Len(t, raw, 92)
 		assert.True(t, tokens.VerifyCode(raw))
 
 		m, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
@@ -135,7 +135,7 @@ func TestRedeemCode(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("NoUser", func(t *testing.T) {
-		raw := tokens.SignCode(rnd.AuthToken())
+		raw := tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))
 		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, RedirectURI: spec.RedirectURI,
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
@@ -151,12 +151,24 @@ func TestRedeemCode(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("Unknown", func(t *testing.T) {
-		_, err := RedeemCode(tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdef"), spec.ClientID, spec.RedirectURI, testVerifier)
+		_, err := RedeemCode(tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdef", time.Now().Add(time.Minute)), spec.ClientID, spec.RedirectURI, testVerifier)
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("Unsigned", func(t *testing.T) {
 		// A stored code whose value carries no signature is refused without being looked up or consumed.
 		raw := rnd.AuthToken()
+		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, UserUID: spec.UserUID, RedirectURI: spec.RedirectURI,
+			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
+		require.NoError(t, m.Create())
+		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
+		assert.ErrorIs(t, err, ErrInvalidGrant)
+		found, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
+		require.NoError(t, err)
+		assert.NotNil(t, found)
+	})
+	t.Run("SignatureExpired", func(t *testing.T) {
+		// A stored code whose signed expiry has passed is refused without being looked up or consumed.
+		raw := tokens.SignCode(rnd.AuthToken(), time.Now().Add(-time.Second))
 		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, UserUID: spec.UserUID, RedirectURI: spec.RedirectURI,
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
@@ -177,7 +189,7 @@ func TestRedeemCode(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("RefreshTokenIsNotACode", func(t *testing.T) {
-		raw := tokens.SignRefresh(rnd.AuthToken())
+		raw := tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute))
 		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, UserUID: spec.UserUID, RedirectURI: spec.RedirectURI,
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
@@ -189,7 +201,7 @@ func TestRedeemCode(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("RequestIDIsNotACode", func(t *testing.T) {
-		raw := tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdee")
+		raw := tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdee", time.Now().Add(time.Minute))
 		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeRequest, ClientID: spec.ClientID, RedirectURI: spec.RedirectURI,
 			CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
@@ -215,16 +227,20 @@ func TestPurgeExpired(t *testing.T) {
 
 func TestNewCodeValue(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		raw, err := newCodeValue()
+		expires := time.Now().Add(CodeTTL)
+		raw, err := newCodeValue(expires)
 		require.NoError(t, err)
 		assert.True(t, tokens.VerifyCode(raw))
-		assert.NotEqual(t, raw, tokens.SignCode(rnd.AuthToken()))
+		_, signed, _, ok := tokens.SplitValue(raw)
+		assert.True(t, ok)
+		assert.Equal(t, expires.Unix(), signed)
+		assert.NotEqual(t, raw, tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute)))
 	})
 	t.Run("Unconfigured", func(t *testing.T) {
 		orig := *tokens.OAuth
 		t.Cleanup(func() { *tokens.OAuth = orig })
 		tokens.OAuth.Key = nil
-		raw, err := newCodeValue()
+		raw, err := newCodeValue(time.Now().Add(CodeTTL))
 		assert.ErrorIs(t, err, ErrSigningKey)
 		assert.Empty(t, raw)
 	})

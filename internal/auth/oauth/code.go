@@ -52,7 +52,8 @@ func IssueCode(spec CodeSpec) (string, error) {
 		return "", err
 	}
 
-	raw, err := newCodeValue()
+	expires := time.Now().UTC().Add(CodeTTL)
+	raw, err := newCodeValue(expires)
 
 	if err != nil {
 		return "", err
@@ -69,7 +70,7 @@ func IssueCode(spec CodeSpec) (string, error) {
 		Resource:            spec.Resource,
 		CodeChallenge:       spec.CodeChallenge,
 		CodeChallengeMethod: spec.CodeChallengeMethod,
-		ExpiresAt:           time.Now().UTC().Add(CodeTTL),
+		ExpiresAt:           expires,
 	}
 
 	if err = m.Create(); err != nil {
@@ -81,7 +82,7 @@ func IssueCode(spec CodeSpec) (string, error) {
 
 // RedeemCode consumes the authorization code and returns it if the client ID, redirect URI and code
 // verifier match the values it is bound to. A code is consumed by the first attempt, even if it fails,
-// and a code without a valid signature is refused before it is looked up.
+// and a code with an invalid signature or expiry is refused before it is looked up.
 func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, error) {
 	if raw == "" || len(raw) > 128 || !tokens.VerifyCode(raw) {
 		return nil, ErrInvalidGrant
@@ -117,9 +118,9 @@ func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, 
 	return m, nil
 }
 
-// newCodeValue returns a new random, signed authorization code value.
-func newCodeValue() (string, error) {
-	if raw := tokens.SignCode(rnd.AuthToken()); raw != "" {
+// newCodeValue returns a new random authorization code value, signed with the expiry.
+func newCodeValue(expires time.Time) (string, error) {
+	if raw := tokens.SignCode(rnd.AuthToken(), expires); raw != "" {
 		return raw, nil
 	}
 

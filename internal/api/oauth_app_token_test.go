@@ -861,7 +861,11 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		code := approvedCode(t, app, router, conf, client)
 		queries := countTableQueries(t, entity.AuthCode{}.TableName())
 
-		for _, forged := range []string{rnd.AuthToken(), tokens.SignRefresh(rnd.AuthToken()), code[:len(code)-1] + "x"} {
+		value, _, _, ok := tokens.SplitValue(code)
+		require.True(t, ok)
+		expired := tokens.SignCode(value, time.Now().Add(-time.Second))
+
+		for _, forged := range []string{rnd.AuthToken(), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute)), code[:len(code)-1] + "x", expired} {
 			refused(t, app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, forged))
 		}
 
@@ -881,7 +885,11 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		grantUID, _, _ := strings.Cut(refreshToken, ".")
 		queries := countTableQueries(t, entity.Grant{}.TableName())
 
-		for _, forged := range []string{rnd.RefreshToken(grantUID), tokens.SignCode(rnd.RefreshToken(grantUID)), refreshToken[:len(refreshToken)-1] + "x"} {
+		value, _, _, ok := tokens.SplitValue(refreshToken)
+		require.True(t, ok)
+		expired := tokens.SignRefresh(value, time.Now().Add(-time.Second))
+
+		for _, forged := range []string{rnd.RefreshToken(grantUID), tokens.SignCode(rnd.RefreshToken(grantUID), time.Now().Add(time.Minute)), refreshToken[:len(refreshToken)-1] + "x", expired} {
 			refused(t, app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {forged}})
 			refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {forged}, "token_type_hint": {"refresh_token"}})
 		}
@@ -893,7 +901,7 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		r = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {refreshToken}}, "", "")
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		next := gjson.Get(r.Body.String(), "refresh_token").String()
-		_, ok := tokens.VerifyRefresh(next)
+		_, ok = tokens.VerifyRefresh(next)
 		assert.True(t, ok)
 		assert.NotEqual(t, refreshToken, next)
 		assert.Positive(t, queries.Load())

@@ -78,9 +78,9 @@ func ParseCompact(value string) (expires int64, sid, token string, ok bool) {
 		return 0, "", "", false
 	}
 
-	expires, err := strconv.ParseInt(parts[0], 10, 64)
+	expires, ok = parseExpires(parts[0])
 
-	if err != nil || expires <= 0 || strconv.FormatInt(expires, 10) != parts[0] {
+	if !ok {
 		return 0, "", "", false
 	}
 

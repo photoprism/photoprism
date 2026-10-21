@@ -88,9 +88,10 @@ func (f *OAuthRevokeToken) Validate() error {
 	return nil
 }
 
-// isRefreshTokenShape reports whether s has the shape of a grant refresh token, with or without a signature.
+// isRefreshTokenShape reports whether s has the shape of a grant refresh token, with or without an expiry
+// and signature.
 func isRefreshTokenShape(s string) bool {
-	if value, _, ok := tokens.SplitValue(s); ok {
+	if value, _, _, ok := tokens.SplitValue(s); ok {
 		s = value
 	}
 

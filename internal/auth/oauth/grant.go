@@ -79,7 +79,7 @@ func NewAccessToken(grant *entity.Grant, user *entity.User, grantType authn.Gran
 }
 
 // FindRefreshGrant returns the grant a signed refresh token names, without consuming the token. A token
-// without a valid signature is refused before the grant is looked up.
+// with an invalid signature or expiry is refused before the grant is looked up.
 func FindRefreshGrant(raw string) *entity.Grant {
 	if grantUID := refreshGrantUID(raw); grantUID != "" {
 		return entity.FindGrant(grantUID)
@@ -165,16 +165,17 @@ func RevokeRefreshToken(raw, clientID string) (*entity.Grant, error) {
 	return m, nil
 }
 
-// newRefreshToken returns a new signed refresh token for the grant.
+// newRefreshToken returns a new refresh token for the grant, signed with an expiry GrantMaxIdle from now.
 func newRefreshToken(grantUID string) (string, error) {
-	if raw := tokens.SignRefresh(rnd.RefreshToken(grantUID)); raw != "" {
+	if raw := tokens.SignRefresh(rnd.RefreshToken(grantUID), time.Now().UTC().Add(GrantMaxIdle)); raw != "" {
 		return raw, nil
 	}
 
 	return "", ErrSigningKey
 }
 
-// refreshGrantUID returns the grant UID of a signed refresh token, or "" if the token or its signature is invalid.
+// refreshGrantUID returns the grant UID of a signed refresh token, or "" if the token, its signature or its
+// expiry is invalid.
 func refreshGrantUID(raw string) string {
 	value, ok := tokens.VerifyRefresh(raw)
 

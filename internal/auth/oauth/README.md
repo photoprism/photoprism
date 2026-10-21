@@ -29,4 +29,4 @@ Package `oauth` implements the protocol side of the OAuth 2.1 authorization code
 - A code is consumed by the first redemption attempt, even if the client, redirect URI or verifier do not match. A row without a user or resource is never redeemed.
 - A pending request becomes a code only while it is unexpired (`entity.AuthCode.Replace`).
 - Raw codes are returned to the client only; `auth_codes` stores their hash.
-- Codes and refresh tokens are signed with the instance signing key (`tokens.SignCode`, `tokens.SignRefresh`), each kind with its own purpose, so neither is accepted as the other. A value without a valid signature is refused before anything is looked up. Clients treat both as opaque.
+- Codes and refresh tokens carry an expiry and are signed with the instance signing key (`tokens.SignCode`, `tokens.SignRefresh`), each kind with its own purpose, so neither is accepted as the other. Codes expire after `CodeTTL`, refresh tokens `GrantMaxIdle` after issue. A value without a valid signature or past its expiry is refused before anything is looked up. Clients treat both as opaque.
