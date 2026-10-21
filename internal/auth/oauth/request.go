@@ -120,7 +120,11 @@ func CompleteRequest(m *entity.AuthCode, userUID string, scopes []string) (strin
 		return "", err
 	}
 
-	raw := rnd.AuthToken()
+	raw, err := newCodeValue()
+
+	if err != nil {
+		return "", err
+	}
 
 	changed, err := m.Replace(HashSecret(raw), entity.AuthCodeCode, entity.Values{
 		"user_uid":   spec.UserUID,

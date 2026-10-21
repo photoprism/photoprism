@@ -1,6 +1,6 @@
 ## OAuth Authorization Code Flow for Apps
 
-**Last Updated:** October 20, 2026
+**Last Updated:** October 21, 2026
 
 Package `oauth` implements the protocol side of the OAuth 2.1 authorization code flow with PKCE that lets users connect apps and remote MCP clients to an instance. API handlers stay thin and call it; `internal/entity` provides the storage. The Portal's cluster OIDC provider is separate and keeps its own code.
 
@@ -15,7 +15,7 @@ Package `oauth` implements the protocol side of the OAuth 2.1 authorization code
 | `metadata.go`    | `FindMetadataClient` fetches client metadata documents with `safe.Fetch` (no private addresses, no redirects, 16 KiB, 5 s) once the caller allows the fetch, `ParseClientMetadata` validates them, and a bounded cache keeps them for their `max-age` (5 minutes to 24 hours), longer while a document cannot be fetched. |
 | `scope.go`       | `AppScopes` (`mcp` and the library resources MCP tools read), `ValidateScopes` (always adds `mcp`), `ScopeUsable`/`UsableScopes` (ACL rules per role; nothing is usable without `mcp`).                                                                                                                                   |
 | `request.go`     | `NewRequest`, `FindRequest`, `CompleteRequest` (turns an approved request into a code once, valid for one minute) and `DenyRequest` for pending requests, valid for 15 minutes (`RequestTTL`).                                                                                                                            |
-| `grant.go`       | `NewGrant`, `NewAccessToken` (one-hour sessions with the MCP endpoint as audience), `RefreshGrant` (rotation; reuse revokes the grant), `RevokeRefreshToken` and `PurgeIdleGrants` (90 days without use).                                                                                                                 |
+| `grant.go`       | `NewGrant`, `NewAccessToken` (one-hour sessions with the MCP endpoint as audience), `FindRefreshGrant` and `RefreshGrant` (rotation; reuse revokes the grant), `RevokeRefreshToken` and `PurgeIdleGrants` (90 days without use).                                                                                         |
 | `code.go`        | `IssueCode` and `RedeemCode` for single-use codes valid for one minute, and `PurgeExpired`, which the session cleanup worker calls.                                                                                                                                                                                       |
 | `client_form.go` | `ValidateClientForm`, `ValidateClientChange` and `ValidateCallbackURLs`, which the `clients add` and `clients mod` commands and the Pro client endpoints share: callback URLs only on app clients, no secret, user or other role for them, and no switch to or from the app type.                                         |
 | `secret.go`      | `HashSecret`, the SHA-256 hash under which codes, request IDs and refresh tokens are stored.                                                                                                                                                                                                                              |
@@ -29,3 +29,4 @@ Package `oauth` implements the protocol side of the OAuth 2.1 authorization code
 - A code is consumed by the first redemption attempt, even if the client, redirect URI or verifier do not match. A row without a user or resource is never redeemed.
 - A pending request becomes a code only while it is unexpired (`entity.AuthCode.Replace`).
 - Raw codes are returned to the client only; `auth_codes` stores their hash.
+- Codes and refresh tokens are signed with the instance signing key (`tokens.SignCode`, `tokens.SignRefresh`), each kind with its own purpose, so neither is accepted as the other. A value without a valid signature is refused before anything is looked up. Clients treat both as opaque.

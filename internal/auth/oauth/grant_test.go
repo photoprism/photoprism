@@ -2,14 +2,17 @@ package oauth
 
 import (
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // newTestGrant redeems a new code for alice and the client and returns the grant with its refresh token.
@@ -42,6 +45,9 @@ func TestNewGrant(t *testing.T) {
 		assert.Equal(t, "https://photos.example.com/api/v1/mcp", grant.Resource)
 		assert.Equal(t, HashSecret(refreshToken), grant.RefreshHash)
 		assert.NotEqual(t, refreshToken, grant.RefreshHash)
+		value, ok := tokens.VerifyRefresh(refreshToken)
+		assert.True(t, ok)
+		assert.True(t, strings.HasPrefix(value, grant.GrantUID+"."))
 	})
 	t.Run("ReplacesPrevious", func(t *testing.T) {
 		first, _ := newTestGrant(t, "csgrantreplace01")
@@ -79,13 +85,13 @@ func TestRefreshGrant(t *testing.T) {
 	t.Run("Rotation", func(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantrefresh01")
 
-		refreshed, second, err := RefreshGrant(first, "csgrantrefresh01")
+		refreshed, second, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantrefresh01")
 		require.NoError(t, err)
 		assert.Equal(t, grant.GrantUID, refreshed.GrantUID)
 		assert.NotEqual(t, first, second)
 		assert.Equal(t, 1, refreshed.RefreshGen)
 
-		_, third, err := RefreshGrant(second, "csgrantrefresh01")
+		_, third, err := RefreshGrant(FindRefreshGrant(second), second, "csgrantrefresh01")
 		require.NoError(t, err)
 		assert.NotEmpty(t, third)
 	})
@@ -94,10 +100,10 @@ func TestRefreshGrant(t *testing.T) {
 		sess := NewAccessToken(grant, entity.FindUserByName("alice"), authn.GrantAuthorizationCode)
 		require.NoError(t, sess.Create())
 
-		_, second, err := RefreshGrant(first, "csgrantreuse0001")
+		_, second, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantreuse0001")
 		require.NoError(t, err)
 
-		revoked, _, err := RefreshGrant(first, "csgrantreuse0001")
+		revoked, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantreuse0001")
 		assert.ErrorIs(t, err, ErrRefreshTokenReused)
 		assert.True(t, errors.Is(err, ErrInvalidGrant))
 		require.NotNil(t, revoked)
@@ -107,12 +113,12 @@ func TestRefreshGrant(t *testing.T) {
 		assert.Error(t, err)
 
 		// The current refresh token no longer works either.
-		_, _, err = RefreshGrant(second, "csgrantreuse0001")
+		_, _, err = RefreshGrant(FindRefreshGrant(second), second, "csgrantreuse0001")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("OtherClient", func(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantotherc001")
-		_, _, err := RefreshGrant(first, "csgrantotherc002")
+		_, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantotherc002")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
 	})
@@ -120,15 +126,36 @@ func TestRefreshGrant(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantidle00001")
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Grant{}).Where("grant_uid = ?", grant.GrantUID).
 			UpdateColumn("used_at", time.Now().UTC().Add(-GrantMaxIdle-time.Hour)).Error)
-		_, _, err := RefreshGrant(first, "csgrantidle00001")
+		_, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantidle00001")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 		assert.Nil(t, entity.FindGrant(grant.GrantUID))
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		_, _, err := RefreshGrant("abc", "csgrantrefresh01")
+		_, _, err := RefreshGrant(nil, "abc", "csgrantrefresh01")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
-		_, _, err = RefreshGrant("gs5gfen1bgxz7s9i.0123456789abcdef0123456789abcdef0123456789abcdef", "csgrantrefresh01")
+		_, _, err = RefreshGrant(nil, tokens.SignRefresh("gs5gfen1bgxz7s9i.0123456789abcdef0123456789abcdef0123456789abcdef"), "csgrantrefresh01")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
+	})
+	t.Run("UnsignedRefused", func(t *testing.T) {
+		grant, _ := newTestGrant(t, "csgrantunsigned1")
+		unsigned := rnd.RefreshToken(grant.GrantUID)
+		_, _, err := RefreshGrant(grant, unsigned, "csgrantunsigned1")
+		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.NotErrorIs(t, err, ErrRefreshTokenReused)
+		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
+	})
+	t.Run("ForgedRefused", func(t *testing.T) {
+		grant, refreshToken := newTestGrant(t, "csgrantforged001")
+		_, _, err := RefreshGrant(grant, flipLast(refreshToken), "csgrantforged001")
+		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
+	})
+	t.Run("OtherGrant", func(t *testing.T) {
+		grant, _ := newTestGrant(t, "csgrantother0001")
+		_, other := newTestGrant(t, "csgrantother0002")
+		_, _, err := RefreshGrant(grant, other, "csgrantother0001")
+		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
 	})
 }
 
@@ -142,7 +169,7 @@ func TestRevokeRefreshToken(t *testing.T) {
 	})
 	t.Run("NotCurrent", func(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantrevoke002")
-		_, _, err := RefreshGrant(first, "csgrantrevoke002")
+		_, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantrevoke002")
 		require.NoError(t, err)
 		revoked, err := RevokeRefreshToken(first, "")
 		require.NoError(t, err)
@@ -160,6 +187,16 @@ func TestRevokeRefreshToken(t *testing.T) {
 		revoked, err := RevokeRefreshToken("abc", "")
 		assert.NoError(t, err)
 		assert.Nil(t, revoked)
+	})
+	t.Run("Unsigned", func(t *testing.T) {
+		grant, _ := newTestGrant(t, "csgrantrevoke005")
+		unsigned := rnd.RefreshToken(grant.GrantUID)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Grant{}).Where("grant_uid = ?", grant.GrantUID).
+			UpdateColumn("refresh_hash", HashSecret(unsigned)).Error)
+		revoked, err := RevokeRefreshToken(unsigned, "")
+		assert.NoError(t, err)
+		assert.Nil(t, revoked)
+		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
 	})
 }
 
@@ -179,11 +216,19 @@ func TestFindRefreshGrant(t *testing.T) {
 		assert.Equal(t, grant.GrantUID, found.GrantUID)
 
 		// Finding the grant does not consume the token.
-		_, _, err := RefreshGrant(refreshToken, "csgrantfind00001")
+		_, _, err := RefreshGrant(FindRefreshGrant(refreshToken), refreshToken, "csgrantfind00001")
 		assert.NoError(t, err)
 	})
 	t.Run("Invalid", func(t *testing.T) {
 		assert.Nil(t, FindRefreshGrant("abc"))
+	})
+	t.Run("Unsigned", func(t *testing.T) {
+		grant, _ := newTestGrant(t, "csgrantfind00002")
+		assert.Nil(t, FindRefreshGrant(rnd.RefreshToken(grant.GrantUID)))
+	})
+	t.Run("Forged", func(t *testing.T) {
+		_, refreshToken := newTestGrant(t, "csgrantfind00003")
+		assert.Nil(t, FindRefreshGrant(flipLast(refreshToken)))
 	})
 }
 
@@ -194,6 +239,7 @@ func TestRotateGrant(t *testing.T) {
 		next, err := rotateGrant(m, HashSecret(raw))
 		require.NoError(t, err)
 		assert.NotEqual(t, raw, next)
+		assert.Equal(t, m.GrantUID, refreshGrantUID(next))
 		assert.Equal(t, HashSecret(next), entity.FindGrant(m.GrantUID).RefreshHash)
 	})
 	t.Run("RotatedMeanwhile", func(t *testing.T) {
@@ -202,5 +248,33 @@ func TestRotateGrant(t *testing.T) {
 		_, err := rotateGrant(m, HashSecret("stale"))
 		assert.ErrorIs(t, err, ErrRefreshTokenReused)
 		assert.Nil(t, entity.FindGrant(m.GrantUID))
+	})
+}
+
+func TestNewRefreshToken(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		raw, err := newRefreshToken("gs5gfen1bgxz7s9i")
+		require.NoError(t, err)
+		assert.Equal(t, "gs5gfen1bgxz7s9i", refreshGrantUID(raw))
+	})
+	t.Run("Unconfigured", func(t *testing.T) {
+		orig := *tokens.OAuth
+		t.Cleanup(func() { *tokens.OAuth = orig })
+		tokens.OAuth.Key = nil
+		raw, err := newRefreshToken("gs5gfen1bgxz7s9i")
+		assert.ErrorIs(t, err, ErrSigningKey)
+		assert.Empty(t, raw)
+	})
+}
+
+func TestRefreshGrantUID(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "gs5gfen1bgxz7s9i", refreshGrantUID(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"))))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, "", refreshGrantUID(""))
+		assert.Equal(t, "", refreshGrantUID(rnd.RefreshToken("gs5gfen1bgxz7s9i")))
+		assert.Equal(t, "", refreshGrantUID(tokens.SignCode(rnd.RefreshToken("gs5gfen1bgxz7s9i"))))
+		assert.Equal(t, "", refreshGrantUID(tokens.SignRefresh(rnd.AuthToken())))
 	})
 }

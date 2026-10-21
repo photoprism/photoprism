@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -87,6 +88,7 @@ func TestCompleteRequest(t *testing.T) {
 
 		code, err := CompleteRequest(m, "uqxetse3cy5eo9z2", []string{"mcp"})
 		require.NoError(t, err)
+		assert.True(t, tokens.VerifyCode(code))
 
 		// The request can no longer be found or completed.
 		_, err = FindRequest(raw)

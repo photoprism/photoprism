@@ -1,6 +1,7 @@
 package form
 
 import (
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -48,7 +49,7 @@ func (f *OAuthRevokeToken) Validate() error {
 	isRefID := rnd.IsRefID(f.Token)
 	isSessionID := rnd.IsSessionID(f.Token)
 	isAuthAny := rnd.IsAuthAny(f.Token)
-	_, _, isRefreshToken := rnd.ParseRefreshToken(f.Token, grantUIDPrefix)
+	isRefreshToken := isRefreshTokenShape(f.Token)
 
 	switch f.TokenTypeHint {
 	case "":
@@ -85,4 +86,15 @@ func (f *OAuthRevokeToken) Validate() error {
 	}
 
 	return nil
+}
+
+// isRefreshTokenShape reports whether s has the shape of a grant refresh token, with or without a signature.
+func isRefreshTokenShape(s string) bool {
+	if value, _, ok := tokens.SplitValue(s); ok {
+		s = value
+	}
+
+	_, _, ok := rnd.ParseRefreshToken(s, grantUIDPrefix)
+
+	return ok
 }

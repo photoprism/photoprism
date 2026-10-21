@@ -30,13 +30,18 @@ per-kind policy, and the delivery rules.
   delivery settings; tests in `download_test.go`.
 - `preview.go` — the `Preview` signer instance and the `PreviewToken` / `PreviewExpires` / `SignPreview` / `VerifyPreview` / `ParseCompact` wrappers for the session-bound preview tokens of OAuth2 clients without an account; tests in `preview_test.go`.
 - `derive.go` — `Derive(key, purpose)` for the instance preview token; tests in `derive_test.go`.
+- `oauth.go` — the `OAuth` signer instance and the `SignCode` / `VerifyCode` / `SignRefresh` / `VerifyRefresh` wrappers for the authorization codes and refresh tokens of the OAuth app flow, built on `Signer.SignValue` / `VerifyValue` and `SplitValue`; tests in `oauth_test.go`.
 
 ### Signing Key
 
 `Config.TokenSigningKey()` returns a 32-byte instance secret stored at `config/keys/signing.key`
 (`fs.ModeSecretFile`). It is regenerated when missing rather than backed up, and kept in memory even when
 it cannot be persisted, so signing never fails on a read-only disk. A single key covers every token kind —
-a token's scope is bound in the signed message, not in the key — and it never reaches clients.
+URL tokens bind their scope in the signed message, and OAuth values use a subkey derived per purpose —
+and it never reaches clients. Refresh tokens live for months, so the key must survive restarts and be
+shared by replicas: if `config/keys` cannot be written, is not restored with a backup, or differs
+between replicas, apps connected with the OAuth app flow must be approved again, and their old grants
+stay listed until the idle purge. `tokens.OAuth` always uses this instance key, also once URL tokens can be signed with a CDN key.
 
 `Config.Propagate` configures the package before anything mints or verifies a token:
 
@@ -45,9 +50,14 @@ tokens.Download.Key = c.TokenSigningKey()
 tokens.Download.SignaturePath = c.ApiUri()
 tokens.Preview.Key = c.TokenSigningKey()
 tokens.Preview.SignaturePath = c.ApiUri()
+tokens.OAuth.Key = c.TokenSigningKey()
 tokens.PublicMode = c.Public()
 tokens.CoarseDownload = c.DownloadToken()
 ```
+
+### OAuth Codes & Refresh Tokens
+
+`OAuth` appends a MAC to the random values the OAuth app flow issues: a code becomes `<random>.<mac>` and a refresh token `<GrantUID>.<random>.<mac>`, where the MAC is 16 bytes of HMAC-SHA256 in hex, keyed by a subkey derived from the signing key for the purpose (`oauth-code`, `oauth-refresh`), so neither kind verifies as the other or as a URL token. `internal/auth/oauth` verifies the MAC before it looks up a code or grant and stores the SHA-256 hash of the full value. The values carry no expiry; code lifetime, grant rotation and idle expiry stay in the database. A new signing key invalidates every outstanding code and refresh token, so connected apps sign in again (see Signing Key).
 
 ### Download Tokens
 

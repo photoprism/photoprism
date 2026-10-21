@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -51,7 +52,11 @@ func IssueCode(spec CodeSpec) (string, error) {
 		return "", err
 	}
 
-	raw := rnd.AuthToken()
+	raw, err := newCodeValue()
+
+	if err != nil {
+		return "", err
+	}
 
 	m := &entity.AuthCode{
 		CodeHash:            HashSecret(raw),
@@ -67,7 +72,7 @@ func IssueCode(spec CodeSpec) (string, error) {
 		ExpiresAt:           time.Now().UTC().Add(CodeTTL),
 	}
 
-	if err := m.Create(); err != nil {
+	if err = m.Create(); err != nil {
 		return "", err
 	}
 
@@ -75,9 +80,10 @@ func IssueCode(spec CodeSpec) (string, error) {
 }
 
 // RedeemCode consumes the authorization code and returns it if the client ID, redirect URI and code
-// verifier match the values it is bound to. A code is consumed by the first attempt, even if it fails.
+// verifier match the values it is bound to. A code is consumed by the first attempt, even if it fails,
+// and a code without a valid signature is refused before it is looked up.
 func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, error) {
-	if raw == "" || len(raw) > 128 {
+	if raw == "" || len(raw) > 128 || !tokens.VerifyCode(raw) {
 		return nil, ErrInvalidGrant
 	}
 
@@ -109,6 +115,15 @@ func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, 
 	}
 
 	return m, nil
+}
+
+// newCodeValue returns a new random, signed authorization code value.
+func newCodeValue() (string, error) {
+	if raw := tokens.SignCode(rnd.AuthToken()); raw != "" {
+		return raw, nil
+	}
+
+	return "", ErrSigningKey
 }
 
 // PurgeExpired deletes expired authorization requests and codes.

@@ -2,6 +2,7 @@ package form
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -171,5 +172,25 @@ func TestOAuthRevokeToken_RefreshToken(t *testing.T) {
 	t.Run("InvalidWithHint", func(t *testing.T) {
 		f := OAuthRevokeToken{Token: rnd.AuthToken(), TokenTypeHint: RefreshToken}
 		assert.Error(t, f.Validate())
+	})
+	t.Run("Signed", func(t *testing.T) {
+		f := OAuthRevokeToken{Token: token + "." + strings.Repeat("a", 32)}
+		assert.NoError(t, f.Validate())
+		assert.Equal(t, RefreshToken, f.TokenTypeHint)
+	})
+}
+
+func TestIsRefreshTokenShape(t *testing.T) {
+	token := rnd.RefreshToken(rnd.GenerateUID('g'))
+
+	t.Run("Success", func(t *testing.T) {
+		assert.True(t, isRefreshTokenShape(token))
+		assert.True(t, isRefreshTokenShape(token+"."+strings.Repeat("0", 32)))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.False(t, isRefreshTokenShape(""))
+		assert.False(t, isRefreshTokenShape(rnd.AuthToken()))
+		assert.False(t, isRefreshTokenShape(rnd.AuthToken()+"."+strings.Repeat("0", 32)))
+		assert.False(t, isRefreshTokenShape(token+"."+strings.Repeat("0", 31)))
 	})
 }

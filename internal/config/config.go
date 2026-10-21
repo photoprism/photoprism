@@ -468,6 +468,7 @@ func (c *Config) Propagate() {
 	tokens.Download.SignaturePath = c.ApiUri()
 	tokens.Preview.Key = c.TokenSigningKey()
 	tokens.Preview.SignaturePath = c.ApiUri()
+	tokens.OAuth.Key = c.TokenSigningKey()
 
 	// Configure download-token delivery: public mode delivers a placeholder, every session receives a
 	// signed token, and the coarse token covers only the sessionless client configs.

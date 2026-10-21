@@ -102,10 +102,14 @@ func OAuthAppRefresh(c *gin.Context) {
 	}
 
 	actor := "client " + clean.Log(client.ID)
+	raw := c.PostForm("refresh_token")
+	current := oauth.FindRefreshGrant(raw)
 
 	// Check the user and the client scope first, so that a refusal does not consume the refresh token.
-	if current := oauth.FindRefreshGrant(c.PostForm("refresh_token")); current != nil && current.ClientID == client.ID {
-		if _, ok = oauthAppTokenUser(c, current.UserUID, actor, action); !ok {
+	var user *entity.User
+
+	if current != nil && current.ClientID == client.ID {
+		if user, ok = oauthAppTokenUser(c, current.UserUID, actor, action); !ok {
 			return
 		} else if !slices.Contains(oauth.ClientScopes(strings.Fields(current.Scope), client.Scope), oauth.DefaultScope) {
 			event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "client scope no longer includes %s", status.Denied}, actor, action, oauth.DefaultScope)
@@ -114,7 +118,8 @@ func OAuthAppRefresh(c *gin.Context) {
 		}
 	}
 
-	grant, refreshToken, err := oauth.RefreshGrant(c.PostForm("refresh_token"), client.ID)
+	// RefreshGrant succeeds only for the current grant of this client, whose user was checked above.
+	grant, refreshToken, err := oauth.RefreshGrant(current, raw, client.ID)
 
 	switch {
 	case errors.Is(err, oauth.ErrRefreshTokenReused):
@@ -125,11 +130,8 @@ func OAuthAppRefresh(c *gin.Context) {
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid refresh token")
 		return
-	}
-
-	user, ok := oauthAppTokenUser(c, grant.UserUID, actor, action)
-
-	if !ok {
+	case user == nil:
+		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to refresh token")
 		return
 	}
 

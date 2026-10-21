@@ -20,3 +20,6 @@ const (
 
 // ErrInvalidGrant is returned when an authorization code or refresh token cannot be redeemed.
 var ErrInvalidGrant = errors.New("invalid grant")
+
+// ErrSigningKey is returned when a code or refresh token cannot be signed because no signing key is configured.
+var ErrSigningKey = errors.New("oauth: token signing key unavailable")

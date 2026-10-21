@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -13,8 +14,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"golang.org/x/time/rate"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/oauth"
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -813,4 +816,114 @@ func TestOAuthAppToken_DisabledClient(t *testing.T) {
 	nextToken := gjson.Get(r.Body.String(), "access_token").String()
 	assert.Equal(t, http.StatusNotFound, mcpPost(app, call, nextToken, mcpSession).Code)
 	assert.Equal(t, http.StatusOK, mcpPost(app, call, nextToken, mcpInitSession(t, app, nextToken)).Code)
+}
+
+// countTableQueries counts the queries of a table until the test ends.
+func countTableQueries(t *testing.T, table string) *atomic.Int64 {
+	t.Helper()
+
+	name := "test:count_table_queries_" + rnd.Base36(8)
+	count := &atomic.Int64{}
+
+	require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == table {
+			count.Add(1)
+		}
+	}))
+	t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+	return count
+}
+
+func TestOAuthAppToken_SignedValues(t *testing.T) {
+	ip := appTokenTestClientIP()
+
+	// refused sends a token request that must be refused as invalid_grant without a limiter charge.
+	refused := func(t *testing.T, app http.Handler, path string, values url.Values) {
+		t.Helper()
+		prevAuth, prevAuthorize := limiter.Auth, limiter.Authorize
+		t.Cleanup(func() { limiter.Auth, limiter.Authorize = prevAuth, prevAuthorize })
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		limiter.Authorize = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		r := postTokenForm(app, path, values, "", "")
+		if path == "/api/v1/oauth/token" {
+			assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+			assert.Equal(t, oauth.ErrCodeInvalidGrant, gjson.Get(r.Body.String(), "error").String())
+		} else {
+			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		}
+		assert.InDelta(t, 3, limiter.Auth.IP(ip).Tokens(), 0.01)
+		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
+	}
+
+	t.Run("ForgedCode", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		code := approvedCode(t, app, router, conf, client)
+		queries := countTableQueries(t, entity.AuthCode{}.TableName())
+
+		for _, forged := range []string{rnd.AuthToken(), tokens.SignRefresh(rnd.AuthToken()), code[:len(code)-1] + "x"} {
+			refused(t, app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, forged))
+		}
+
+		assert.Equal(t, int64(0), queries.Load())
+
+		// The genuine code was not consumed, and its lookup is counted.
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Positive(t, queries.Load())
+	})
+	t.Run("ForgedRefreshToken", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		code := approvedCode(t, app, router, conf, client)
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		refreshToken := gjson.Get(r.Body.String(), "refresh_token").String()
+		grantUID, _, _ := strings.Cut(refreshToken, ".")
+		queries := countTableQueries(t, entity.Grant{}.TableName())
+
+		for _, forged := range []string{rnd.RefreshToken(grantUID), tokens.SignCode(rnd.RefreshToken(grantUID)), refreshToken[:len(refreshToken)-1] + "x"} {
+			refused(t, app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {forged}})
+			refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {forged}, "token_type_hint": {"refresh_token"}})
+		}
+
+		assert.Equal(t, int64(0), queries.Load())
+		assert.NotNil(t, entity.FindGrant(grantUID))
+
+		// The genuine refresh token rotates into another signed one.
+		r = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {refreshToken}}, "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		next := gjson.Get(r.Body.String(), "refresh_token").String()
+		_, ok := tokens.VerifyRefresh(next)
+		assert.True(t, ok)
+		assert.NotEqual(t, refreshToken, next)
+		assert.Positive(t, queries.Load())
+	})
+	t.Run("RevokeWithUnknownBearer", func(t *testing.T) {
+		app, _, _, _ := prepareAppTokenTest(t)
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		limiter.Authorize = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+
+		// A header token that resolves to no session counts towards limiter.Auth once.
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/oauth/revoke", strings.NewReader(url.Values{"token": {rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID))}}.Encode()))
+		req.Header.Set(header.ContentType, header.ContentTypeForm)
+		req.Header.Set(header.Auth, header.AuthBearer+" "+rnd.AuthToken())
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code, w.Body.String())
+		assert.InDelta(t, 2, limiter.Auth.IP(ip).Tokens(), 0.01)
+		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
+	})
+	t.Run("StaleRefreshTokenRevokeNotCharged", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		code := approvedCode(t, app, router, conf, client)
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		first := gjson.Get(r.Body.String(), "refresh_token").String()
+		r = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {first}}, "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+
+		// Revoking a refresh token that is no longer current succeeds without effect.
+		refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {first}, "token_type_hint": {"refresh_token"}})
+	})
 }

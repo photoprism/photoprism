@@ -170,7 +170,11 @@ func OAuthRevoke(router *gin.RouterGroup) {
 				AbortUnexpectedError(c)
 				return
 			} else if grant == nil {
-				charge()
+				// A header token that resolved to no session counts as a failed credential.
+				if rnd.IsAuthAny(authToken) {
+					charge()
+				}
+
 				event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "refresh token not found", status.Denied}, actor, action)
 			} else {
 				event.AuditInfo([]string{clientIp, "oauth2", "client %s", "user %s", "%s", "revoke grant %s", status.Deleted}, clean.Log(grant.ClientID), clean.Log(grant.UserName), action, clean.Log(grant.GrantUID))
