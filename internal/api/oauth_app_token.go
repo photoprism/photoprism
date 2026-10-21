@@ -177,6 +177,16 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 		clientID = basicID
 	}
 
+	// A registered client ID is looked up in the database, so an address over the authorization failure
+	// limit is refused first. Client metadata documents are fetched behind the same limit.
+	registered := !strings.HasPrefix(clientID, "https://")
+
+	if registered && limiter.Authorize.Reject(clientIp) {
+		event.AuditWarn([]string{clientIp, "oauth2", "%s", status.RateLimited}, action)
+		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		return nil, false
+	}
+
 	client, err := oauth.FindClient(conf, clientID, oauth.ClientLookup{AllowFetch: oauthMetadataFetchAllowed(clientIp), AllowStale: allowStale})
 
 	switch {
@@ -185,6 +195,12 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
 		return nil, false
 	case err != nil:
+		// A registered client ID that resolves to no app client counts as a failed authorization. It does
+		// not count towards limiter.Auth, which hosted clients' shared addresses also need for bearer access.
+		if registered {
+			limiter.Authorize.Reserve(clientIp)
+		}
+
 		event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
 		oauthTokenError(c, http.StatusUnauthorized, oauth.ErrCodeInvalidClient, "invalid client")
 		return nil, false

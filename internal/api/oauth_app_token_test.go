@@ -498,6 +498,11 @@ func TestOAuthAppTokenResponse(t *testing.T) {
 func TestOAuthAppTokenClient(t *testing.T) {
 	_, _, _, client := prepareAppTokenTest(t)
 
+	// clientIp is the address the requests below come from.
+	ipCtx, _ := gin.CreateTestContext(httptest.NewRecorder())
+	ipCtx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+	clientIp := ClientIP(ipCtx)
+
 	request := func(form url.Values, basicID, basicSecret string) (*oauth.Client, bool, int) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
@@ -538,6 +543,70 @@ func TestOAuthAppTokenClient(t *testing.T) {
 		assert.False(t, ok)
 		assert.Equal(t, http.StatusUnauthorized, code)
 	})
+	t.Run("UnknownClientCharged", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+		installAuthBudget(t, 3)
+		queries := countClientQueries(t)
+
+		for range 3 {
+			_, ok, code := request(url.Values{"client_id": {rnd.GenerateUID(entity.ClientUID)}}, "", "")
+			assert.False(t, ok)
+			assert.Equal(t, http.StatusUnauthorized, code)
+		}
+
+		// Once the budget is spent, unknown client IDs are refused without a lookup.
+		before := queries.Load()
+		_, ok, code := request(url.Values{"client_id": {rnd.GenerateUID(entity.ClientUID)}}, "", "")
+		assert.False(t, ok)
+		assert.Equal(t, http.StatusTooManyRequests, code)
+		assert.Equal(t, before, queries.Load())
+		assert.False(t, limiter.Auth.Reject(clientIp))
+	})
+	t.Run("MetadataClientNotCharged", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+
+		for range 5 {
+			_, ok, code := request(url.Values{"client_id": {"https://unregistered.example.com/oauth/client.json"}}, "", "")
+			assert.False(t, ok)
+			assert.Equal(t, http.StatusUnauthorized, code)
+		}
+
+		assert.False(t, limiter.Authorize.Reject(clientIp))
+	})
+	t.Run("KnownClientNotCharged", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+
+		for range 5 {
+			_, ok, _ := request(url.Values{"client_id": {client.ClientUID}}, "", "")
+			require.True(t, ok)
+		}
+
+		assert.False(t, limiter.Authorize.Reject(clientIp))
+	})
+	t.Run("OverBudget", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+
+		for !limiter.Authorize.Reject(clientIp) {
+			limiter.Authorize.Reserve(clientIp)
+		}
+
+		// Registered client IDs are refused before the lookup, metadata client IDs are not.
+		_, ok, code := request(url.Values{"client_id": {client.ClientUID}}, "", "")
+		assert.False(t, ok)
+		assert.Equal(t, http.StatusTooManyRequests, code)
+
+		_, ok, code = request(url.Values{"client_id": {"https://unregistered.example.com/oauth/client.json"}}, "", "")
+		assert.False(t, ok)
+		assert.Equal(t, http.StatusUnauthorized, code)
+	})
+}
+
+// installAuthorizeBudget replaces limiter.Authorize with a budget of n failures, and restores it after the test.
+func installAuthorizeBudget(t *testing.T, n int) {
+	t.Helper()
+	prev := limiter.Authorize
+	t.Cleanup(func() { limiter.Authorize = prev })
+	limiter.Authorize = limiter.NewLimit(rate.Every(24*time.Hour), n)
 }
 
 func TestOAuthAppTokenUser(t *testing.T) {
@@ -623,10 +692,33 @@ func TestOAuthAppToken_RateLimit(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, rnd.AuthToken()), "", "")
 			require.Equal(t, http.StatusBadRequest, r.Code)
-			r = postTokenForm(app, "/api/v1/oauth/token", codeTokenForm("csunknown0000001", rnd.AuthToken()), "", "")
-			require.Equal(t, http.StatusUnauthorized, r.Code)
 		}
 
+		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0"}}}`
+		assert.Equal(t, http.StatusOK, mcpPost(app, initBody, accessToken, "").Code)
+	})
+	t.Run("UnknownClientsCharged", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		accessToken, _ := tokenPair(t, app, router, conf, client)
+		installAuthorizeBudget(t, 3)
+		installAuthBudget(t, 3)
+		queries := countClientQueries(t)
+
+		codes := make([]int, 0, 6)
+
+		for range 6 {
+			before := queries.Load()
+			r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(rnd.GenerateUID(entity.ClientUID), rnd.AuthToken()), "", "")
+			codes = append(codes, r.Code)
+
+			if r.Code == http.StatusTooManyRequests {
+				assert.Equal(t, before, queries.Load(), "a refused request looked up the client")
+			}
+		}
+
+		assert.Equal(t, []int{401, 401, 401, 429, 429, 429}, codes)
+
+		// Bearer access from the same address is not affected.
 		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0"}}}`
 		assert.Equal(t, http.StatusOK, mcpPost(app, initBody, accessToken, "").Code)
 	})

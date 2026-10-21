@@ -517,6 +517,23 @@ func countSessionQueries(t *testing.T) *atomic.Int64 {
 	return count
 }
 
+// countClientQueries counts the queries of the auth_clients table until the test ends.
+func countClientQueries(t *testing.T) *atomic.Int64 {
+	t.Helper()
+
+	name := "test:count_client_queries_" + rnd.Base36(8)
+	count := &atomic.Int64{}
+
+	require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (entity.Client{}).TableName() {
+			count.Add(1)
+		}
+	}))
+	t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+	return count
+}
+
 // withAuthLimit replaces limiter.Auth with one that allows burst failures, and restores it after the test.
 func withAuthLimit(t *testing.T, burst int) {
 	t.Helper()
