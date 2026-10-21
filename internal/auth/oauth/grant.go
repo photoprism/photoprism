@@ -79,10 +79,23 @@ func NewAccessToken(grant *entity.Grant, user *entity.User, grantType authn.Gran
 }
 
 // FindRefreshGrant returns the grant a signed refresh token names, without consuming the token. A token
-// with an invalid signature or expiry is refused before the grant is looked up.
-func FindRefreshGrant(raw string) *entity.Grant {
-	if grantUID := refreshGrantUID(raw); grantUID != "" {
-		return entity.FindGrant(grantUID)
+// with an invalid signature or expiry is refused with ErrInvalidToken before the grant is looked up.
+func FindRefreshGrant(raw string) (*entity.Grant, error) {
+	grantUID := refreshGrantUID(raw)
+
+	if grantUID == "" {
+		return nil, ErrInvalidToken
+	} else if m := entity.FindGrant(grantUID); m != nil {
+		return m, nil
+	}
+
+	return nil, ErrGrantNotFound
+}
+
+// VerifyRefreshToken returns ErrInvalidToken if the refresh token has an invalid shape, signature or expiry.
+func VerifyRefreshToken(raw string) error {
+	if refreshGrantUID(raw) == "" {
+		return ErrInvalidToken
 	}
 
 	return nil
@@ -150,11 +163,14 @@ func rotateGrant(m *entity.Grant, hash string) (string, error) {
 }
 
 // RevokeRefreshToken deletes the grant of a refresh token and its access tokens if the token is current and,
-// if a client ID is specified, belongs to this client, and returns the revoked grant.
+// if a client ID is specified, belongs to this client, and returns the revoked grant. It returns the error of
+// FindRefreshGrant for a token that names no grant, and neither a grant nor an error for one that is not current.
 func RevokeRefreshToken(raw, clientID string) (*entity.Grant, error) {
-	m := FindRefreshGrant(raw)
+	m, err := FindRefreshGrant(raw)
 
-	if m == nil || clientID != "" && clientID != m.ClientID || subtle.ConstantTimeCompare([]byte(HashSecret(raw)), []byte(m.RefreshHash)) != 1 {
+	if err != nil {
+		return nil, err
+	} else if clientID != "" && clientID != m.ClientID || subtle.ConstantTimeCompare([]byte(HashSecret(raw)), []byte(m.RefreshHash)) != 1 {
 		return nil, nil
 	}
 

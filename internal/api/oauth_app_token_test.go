@@ -526,7 +526,7 @@ func TestOAuthAppTokenClient(t *testing.T) {
 			c.Request.SetBasicAuth(basicID, basicSecret)
 		}
 
-		result, ok := oauthAppTokenClient(c, "test", false)
+		result, ok := oauthAppTokenClient(c, "test", false, nil)
 
 		return result, ok, w.Code
 	}
@@ -550,6 +550,20 @@ func TestOAuthAppTokenClient(t *testing.T) {
 		_, ok, code := request(url.Values{"client_id": {client.ClientUID}, "client_secret": {"x"}}, "", "")
 		assert.False(t, ok)
 		assert.Equal(t, http.StatusUnauthorized, code)
+	})
+	t.Run("InvalidValue", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+		queries := countTableQueries(t, entity.Client{}.TableName())
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(url.Values{"client_id": {rnd.GenerateUID(entity.ClientUID)}}.Encode()))
+		c.Request.Header.Set(header.ContentType, header.ContentTypeForm)
+		_, ok := oauthAppTokenClient(c, "test", false, func() error { return oauth.ErrInvalidToken })
+		assert.False(t, ok)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Equal(t, oauth.ErrCodeInvalidGrant, gjson.Get(w.Body.String(), "error").String())
+		assert.Equal(t, int64(0), queries.Load())
+		assert.InDelta(t, 2, limiter.Authorize.IP(clientIp).Tokens(), 0.01)
 	})
 	t.Run("NotAnApp", func(t *testing.T) {
 		_, ok, code := request(url.Values{"client_id": {"cs5gfen1bgxz7s9i"}}, "", "")
@@ -620,6 +634,24 @@ func installAuthorizeBudget(t *testing.T, n int) {
 	prev := limiter.Authorize
 	t.Cleanup(func() { limiter.Authorize = prev })
 	limiter.Authorize = limiter.NewLimit(rate.Every(24*time.Hour), n)
+}
+
+func TestOAuthChargeInvalidToken(t *testing.T) {
+	ip := "203.0.113.71"
+
+	t.Run("Charged", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+		oauthChargeInvalidToken(ip, oauth.ErrInvalidToken)
+		oauthChargeInvalidToken(ip, oauth.ErrGrantNotFound)
+		assert.InDelta(t, 1, limiter.Authorize.IP(ip).Tokens(), 0.01)
+	})
+	t.Run("NotCharged", func(t *testing.T) {
+		installAuthorizeBudget(t, 3)
+		oauthChargeInvalidToken(ip, oauth.ErrInvalidGrant)
+		oauthChargeInvalidToken(ip, oauth.ErrRefreshTokenReused)
+		oauthChargeInvalidToken(ip, nil)
+		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
+	})
 }
 
 func TestOAuthAppTokenUser(t *testing.T) {
@@ -721,7 +753,7 @@ func TestOAuthAppToken_RateLimit(t *testing.T) {
 
 		for range 6 {
 			before := queries.Load()
-			r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(rnd.GenerateUID(entity.ClientUID), rnd.AuthToken()), "", "")
+			r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(rnd.GenerateUID(entity.ClientUID), tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))), "", "")
 			codes = append(codes, r.Code)
 
 			if r.Code == http.StatusTooManyRequests {
@@ -838,8 +870,9 @@ func countTableQueries(t *testing.T, table string) *atomic.Int64 {
 func TestOAuthAppToken_SignedValues(t *testing.T) {
 	ip := appTokenTestClientIP()
 
-	// refused sends a token request that must be refused as invalid_grant without a limiter charge.
-	refused := func(t *testing.T, app http.Handler, path string, values url.Values) {
+	// refused sends a token request that must be refused as invalid_grant, and checks that it charges
+	// limiter.Authorize the specified number of times and leaves limiter.Auth untouched.
+	refused := func(t *testing.T, app http.Handler, path string, values url.Values, charges float64) {
 		t.Helper()
 		prevAuth, prevAuthorize := limiter.Auth, limiter.Authorize
 		t.Cleanup(func() { limiter.Auth, limiter.Authorize = prevAuth, prevAuthorize })
@@ -853,28 +886,48 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		}
 		assert.InDelta(t, 3, limiter.Auth.IP(ip).Tokens(), 0.01)
-		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
+		assert.InDelta(t, 3-charges, limiter.Authorize.IP(ip).Tokens(), 0.01)
 	}
 
 	t.Run("ForgedCode", func(t *testing.T) {
 		app, router, conf, client := prepareAppTokenTest(t)
 		code := approvedCode(t, app, router, conf, client)
 		queries := countTableQueries(t, entity.AuthCode{}.TableName())
+		clientQueries := countTableQueries(t, entity.Client{}.TableName())
+		entity.FlushClientCache()
 
 		value, _, _, ok := tokens.SplitValue(code)
 		require.True(t, ok)
 		expired := tokens.SignCode(value, time.Now().Add(-time.Second))
 
 		for _, forged := range []string{rnd.AuthToken(), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute)), code[:len(code)-1] + "x", expired} {
-			refused(t, app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, forged))
+			refused(t, app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, forged), 1)
 		}
 
 		assert.Equal(t, int64(0), queries.Load())
+		assert.Equal(t, int64(0), clientQueries.Load())
 
 		// The genuine code was not consumed, and its lookup is counted.
 		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
 		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.Positive(t, queries.Load())
+
+		// A consumed code with a valid signature is refused without a charge.
+		refused(t, app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), 0)
+	})
+	t.Run("CachedClient", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		code := approvedCode(t, app, router, conf, client)
+		queries := countTableQueries(t, entity.Client{}.TableName())
+
+		// The authorization request read the client, so the token endpoint finds it in the cache.
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		refreshToken := gjson.Get(r.Body.String(), "refresh_token").String()
+		refused(t, app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, rnd.AuthToken()), 1)
+		r = postTokenForm(app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {refreshToken}}, "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, int64(0), queries.Load())
 	})
 	t.Run("ForgedRefreshToken", func(t *testing.T) {
 		app, router, conf, client := prepareAppTokenTest(t)
@@ -890,8 +943,8 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		expired := tokens.SignRefresh(value, time.Now().Add(-time.Second))
 
 		for _, forged := range []string{rnd.RefreshToken(grantUID), tokens.SignCode(rnd.RefreshToken(grantUID), time.Now().Add(time.Minute)), refreshToken[:len(refreshToken)-1] + "x", expired} {
-			refused(t, app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {forged}})
-			refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {forged}, "token_type_hint": {"refresh_token"}})
+			refused(t, app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {forged}}, 1)
+			refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {forged}, "token_type_hint": {"refresh_token"}}, 1)
 		}
 
 		assert.Equal(t, int64(0), queries.Load())
@@ -920,7 +973,7 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code, w.Body.String())
 		assert.InDelta(t, 2, limiter.Auth.IP(ip).Tokens(), 0.01)
-		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
+		assert.InDelta(t, 2, limiter.Authorize.IP(ip).Tokens(), 0.01)
 	})
 	t.Run("StaleRefreshTokenRevokeNotCharged", func(t *testing.T) {
 		app, router, conf, client := prepareAppTokenTest(t)
@@ -932,6 +985,21 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 
 		// Revoking a refresh token that is no longer current succeeds without effect.
-		refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {first}, "token_type_hint": {"refresh_token"}})
+		refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {first}, "token_type_hint": {"refresh_token"}}, 0)
+	})
+	t.Run("GrantGone", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		code := approvedCode(t, app, router, conf, client)
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		refreshToken := gjson.Get(r.Body.String(), "refresh_token").String()
+		grantUID, _, _ := strings.Cut(refreshToken, ".")
+		grant := entity.FindGrant(grantUID)
+		require.NotNil(t, grant)
+		require.NoError(t, grant.Delete())
+
+		// A refresh token whose grant is gone counts towards limiter.Authorize at both endpoints.
+		refused(t, app, "/api/v1/oauth/token", url.Values{"grant_type": {"refresh_token"}, "client_id": {client.ClientUID}, "refresh_token": {refreshToken}}, 1)
+		refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {refreshToken}, "token_type_hint": {"refresh_token"}}, 1)
 	})
 }

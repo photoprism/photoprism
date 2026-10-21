@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"errors"
+	"fmt"
 )
 
 // OAuth error codes (RFC 6749, RFC 8707).
@@ -20,6 +21,12 @@ const (
 
 // ErrInvalidGrant is returned when an authorization code or refresh token cannot be redeemed.
 var ErrInvalidGrant = errors.New("invalid grant")
+
+// ErrInvalidToken is returned for a code or refresh token whose signature or signed expiry is invalid.
+var ErrInvalidToken = fmt.Errorf("%w: invalid or expired token", ErrInvalidGrant)
+
+// ErrGrantNotFound is returned for a valid refresh token whose grant does not exist.
+var ErrGrantNotFound = fmt.Errorf("%w: grant not found", ErrInvalidGrant)
 
 // ErrSigningKey is returned when a code or refresh token cannot be signed because no signing key is configured.
 var ErrSigningKey = errors.New("oauth: token signing key unavailable")

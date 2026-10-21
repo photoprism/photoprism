@@ -34,7 +34,7 @@ func OAuthAppToken(c *gin.Context) {
 	clientIp := ClientIP(c)
 	action := "redeem code"
 
-	client, ok := oauthAppTokenClient(c, action, false)
+	client, ok := oauthAppTokenClient(c, action, false, func() error { return oauth.VerifyCode(c.PostForm("code")) })
 
 	if !ok {
 		return
@@ -45,6 +45,7 @@ func OAuthAppToken(c *gin.Context) {
 	code, err := oauth.RedeemCode(c.PostForm("code"), client.ID, c.PostForm("redirect_uri"), c.PostForm("code_verifier"))
 
 	if err != nil {
+		oauthChargeInvalidToken(clientIp, err)
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid authorization code")
 		return
@@ -95,7 +96,7 @@ func OAuthAppRefresh(c *gin.Context) {
 	clientIp := ClientIP(c)
 	action := "refresh token"
 
-	client, ok := oauthAppTokenClient(c, action, true)
+	client, ok := oauthAppTokenClient(c, action, true, func() error { return oauth.VerifyRefreshToken(c.PostForm("refresh_token")) })
 
 	if !ok {
 		return
@@ -103,12 +104,19 @@ func OAuthAppRefresh(c *gin.Context) {
 
 	actor := "client " + clean.Log(client.ID)
 	raw := c.PostForm("refresh_token")
-	current := oauth.FindRefreshGrant(raw)
+	current, err := oauth.FindRefreshGrant(raw)
+
+	if err != nil {
+		oauthChargeInvalidToken(clientIp, err)
+		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid refresh token")
+		return
+	}
 
 	// Check the user and the client scope first, so that a refusal does not consume the refresh token.
 	var user *entity.User
 
-	if current != nil && current.ClientID == client.ID {
+	if current.ClientID == client.ID {
 		if user, ok = oauthAppTokenUser(c, current.UserUID, actor, action); !ok {
 			return
 		} else if !slices.Contains(oauth.ClientScopes(strings.Fields(current.Scope), client.Scope), oauth.DefaultScope) {
@@ -155,8 +163,9 @@ func OAuthAppRefresh(c *gin.Context) {
 }
 
 // oauthAppTokenClient returns the app client of a token request, which authenticates with its client ID only,
-// or responds with an error. With allowStale, an expired client metadata document is used while it cannot be fetched.
-func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth.Client, bool) {
+// or responds with an error. The optional verify function checks the presented code or refresh token before the
+// client is looked up. With allowStale, an expired client metadata document is used while it cannot be fetched.
+func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify func() error) (*oauth.Client, bool) {
 	clientIp := ClientIP(c)
 	conf := get.Config()
 
@@ -193,6 +202,15 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 		return nil, false
 	}
 
+	if verify != nil {
+		if err := verify(); err != nil {
+			oauthChargeInvalidToken(clientIp, err)
+			event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
+			oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid grant")
+			return nil, false
+		}
+	}
+
 	client, err := oauth.FindClient(conf, clientID, oauth.ClientLookup{AllowFetch: oauthMetadataFetchAllowed(clientIp), AllowStale: allowStale})
 
 	switch {
@@ -212,6 +230,14 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 	}
 
 	return client, true
+}
+
+// oauthChargeInvalidToken counts a code or refresh token towards limiter.Authorize if it has an invalid
+// signature or expiry, or names no grant.
+func oauthChargeInvalidToken(clientIp string, err error) {
+	if errors.Is(err, oauth.ErrInvalidToken) || errors.Is(err, oauth.ErrGrantNotFound) {
+		limiter.Authorize.Reserve(clientIp)
+	}
 }
 
 // oauthAppTokenUser returns the active user a code or grant belongs to, or responds with an error.

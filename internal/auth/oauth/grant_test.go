@@ -38,6 +38,12 @@ func newTestGrant(t *testing.T, clientID string) (*entity.Grant, string) {
 	return grant, refreshToken
 }
 
+// refreshGrantOf returns the grant of a refresh token found with FindRefreshGrant, or nil.
+func refreshGrantOf(raw string) *entity.Grant {
+	m, _ := FindRefreshGrant(raw)
+	return m
+}
+
 func TestNewGrant(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		grant, refreshToken := newTestGrant(t, "csgrantnew000001")
@@ -85,13 +91,13 @@ func TestRefreshGrant(t *testing.T) {
 	t.Run("Rotation", func(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantrefresh01")
 
-		refreshed, second, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantrefresh01")
+		refreshed, second, err := RefreshGrant(refreshGrantOf(first), first, "csgrantrefresh01")
 		require.NoError(t, err)
 		assert.Equal(t, grant.GrantUID, refreshed.GrantUID)
 		assert.NotEqual(t, first, second)
 		assert.Equal(t, 1, refreshed.RefreshGen)
 
-		_, third, err := RefreshGrant(FindRefreshGrant(second), second, "csgrantrefresh01")
+		_, third, err := RefreshGrant(refreshGrantOf(second), second, "csgrantrefresh01")
 		require.NoError(t, err)
 		assert.NotEmpty(t, third)
 	})
@@ -100,10 +106,10 @@ func TestRefreshGrant(t *testing.T) {
 		sess := NewAccessToken(grant, entity.FindUserByName("alice"), authn.GrantAuthorizationCode)
 		require.NoError(t, sess.Create())
 
-		_, second, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantreuse0001")
+		_, second, err := RefreshGrant(refreshGrantOf(first), first, "csgrantreuse0001")
 		require.NoError(t, err)
 
-		revoked, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantreuse0001")
+		revoked, _, err := RefreshGrant(refreshGrantOf(first), first, "csgrantreuse0001")
 		assert.ErrorIs(t, err, ErrRefreshTokenReused)
 		assert.True(t, errors.Is(err, ErrInvalidGrant))
 		require.NotNil(t, revoked)
@@ -113,12 +119,12 @@ func TestRefreshGrant(t *testing.T) {
 		assert.Error(t, err)
 
 		// The current refresh token no longer works either.
-		_, _, err = RefreshGrant(FindRefreshGrant(second), second, "csgrantreuse0001")
+		_, _, err = RefreshGrant(refreshGrantOf(second), second, "csgrantreuse0001")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("OtherClient", func(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantotherc001")
-		_, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantotherc002")
+		_, _, err := RefreshGrant(refreshGrantOf(first), first, "csgrantotherc002")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
 	})
@@ -126,7 +132,7 @@ func TestRefreshGrant(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantidle00001")
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Grant{}).Where("grant_uid = ?", grant.GrantUID).
 			UpdateColumn("used_at", time.Now().UTC().Add(-GrantMaxIdle-time.Hour)).Error)
-		_, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantidle00001")
+		_, _, err := RefreshGrant(refreshGrantOf(first), first, "csgrantidle00001")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 		assert.Nil(t, entity.FindGrant(grant.GrantUID))
 	})
@@ -169,7 +175,7 @@ func TestRevokeRefreshToken(t *testing.T) {
 	})
 	t.Run("NotCurrent", func(t *testing.T) {
 		grant, first := newTestGrant(t, "csgrantrevoke002")
-		_, _, err := RefreshGrant(FindRefreshGrant(first), first, "csgrantrevoke002")
+		_, _, err := RefreshGrant(refreshGrantOf(first), first, "csgrantrevoke002")
 		require.NoError(t, err)
 		revoked, err := RevokeRefreshToken(first, "")
 		require.NoError(t, err)
@@ -185,7 +191,7 @@ func TestRevokeRefreshToken(t *testing.T) {
 	})
 	t.Run("Invalid", func(t *testing.T) {
 		revoked, err := RevokeRefreshToken("abc", "")
-		assert.NoError(t, err)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 		assert.Nil(t, revoked)
 	})
 	t.Run("Unsigned", func(t *testing.T) {
@@ -194,9 +200,16 @@ func TestRevokeRefreshToken(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Grant{}).Where("grant_uid = ?", grant.GrantUID).
 			UpdateColumn("refresh_hash", HashSecret(unsigned)).Error)
 		revoked, err := RevokeRefreshToken(unsigned, "")
-		assert.NoError(t, err)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 		assert.Nil(t, revoked)
 		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
+	})
+	t.Run("GrantNotFound", func(t *testing.T) {
+		grant, refreshToken := newTestGrant(t, "csgrantrevoke006")
+		require.NoError(t, grant.Delete())
+		revoked, err := RevokeRefreshToken(refreshToken, "")
+		assert.ErrorIs(t, err, ErrGrantNotFound)
+		assert.Nil(t, revoked)
 	})
 }
 
@@ -211,34 +224,61 @@ func TestPurgeIdleGrants(t *testing.T) {
 func TestFindRefreshGrant(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		grant, refreshToken := newTestGrant(t, "csgrantfind00001")
-		found := FindRefreshGrant(refreshToken)
+		found, err := FindRefreshGrant(refreshToken)
+		require.NoError(t, err)
 		require.NotNil(t, found)
 		assert.Equal(t, grant.GrantUID, found.GrantUID)
 
 		// Finding the grant does not consume the token.
-		_, _, err := RefreshGrant(FindRefreshGrant(refreshToken), refreshToken, "csgrantfind00001")
+		_, _, err = RefreshGrant(found, refreshToken, "csgrantfind00001")
 		assert.NoError(t, err)
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		assert.Nil(t, FindRefreshGrant("abc"))
+		found, err := FindRefreshGrant("abc")
+		assert.ErrorIs(t, err, ErrInvalidToken)
+		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.Nil(t, found)
 	})
 	t.Run("Unsigned", func(t *testing.T) {
 		grant, _ := newTestGrant(t, "csgrantfind00002")
-		assert.Nil(t, FindRefreshGrant(rnd.RefreshToken(grant.GrantUID)))
+		_, err := FindRefreshGrant(rnd.RefreshToken(grant.GrantUID))
+		assert.ErrorIs(t, err, ErrInvalidToken)
 	})
 	t.Run("Forged", func(t *testing.T) {
 		_, refreshToken := newTestGrant(t, "csgrantfind00003")
-		assert.Nil(t, FindRefreshGrant(flipLast(refreshToken)))
+		_, err := FindRefreshGrant(flipLast(refreshToken))
+		assert.ErrorIs(t, err, ErrInvalidToken)
 	})
 	t.Run("Expired", func(t *testing.T) {
 		grant, refreshToken := newTestGrant(t, "csgrantfind00004")
 		value, _, _, ok := tokens.SplitValue(refreshToken)
 		require.True(t, ok)
 		expired := tokens.SignRefresh(value, time.Now().Add(-time.Second))
-		assert.Nil(t, FindRefreshGrant(expired))
-		_, _, err := RefreshGrant(FindRefreshGrant(expired), expired, "csgrantfind00004")
+		_, err := FindRefreshGrant(expired)
+		assert.ErrorIs(t, err, ErrInvalidToken)
+		_, _, err = RefreshGrant(refreshGrantOf(expired), expired, "csgrantfind00004")
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 		assert.NotNil(t, entity.FindGrant(grant.GrantUID))
+	})
+	t.Run("GrantNotFound", func(t *testing.T) {
+		grant, refreshToken := newTestGrant(t, "csgrantfind00005")
+		require.NoError(t, grant.Delete())
+		found, err := FindRefreshGrant(refreshToken)
+		assert.ErrorIs(t, err, ErrGrantNotFound)
+		assert.NotErrorIs(t, err, ErrInvalidToken)
+		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.Nil(t, found)
+	})
+}
+
+func TestVerifyRefreshToken(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, VerifyRefreshToken(tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute))))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, raw := range []string{"", rnd.RefreshToken("gs5gfen1bgxz7s9i"), tokens.SignRefresh(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(-time.Minute)), tokens.SignCode(rnd.RefreshToken("gs5gfen1bgxz7s9i"), time.Now().Add(time.Minute))} {
+			assert.ErrorIs(t, VerifyRefreshToken(raw), ErrInvalidToken, raw)
+		}
 	})
 }
 

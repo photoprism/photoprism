@@ -13,10 +13,12 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/auth/oauth"
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 const (
@@ -123,7 +125,7 @@ func TestOAuthApp_MetadataClient(t *testing.T) {
 
 		// Token requests of a cached client are not charged.
 		after = limiter.Authorize.IP(header.UnknownIP).Tokens()
-		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(testMetadataClientID, "x"), "", "")
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(testMetadataClientID, tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))), "", "")
 		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
 		assert.Greater(t, limiter.Authorize.IP(header.UnknownIP).Tokens(), after-0.5)
 	})
@@ -136,12 +138,27 @@ func TestOAuthApp_MetadataClient(t *testing.T) {
 		codes := make([]int, 0, 5)
 
 		for i := 0; i < 5; i++ {
-			codes = append(codes, postTokenForm(app, "/api/v1/oauth/token", refreshForm("https://claude.ai/oauth/client-"+strconv.Itoa(i)+".json", "x"), "", "").Code)
+			code := tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))
+			codes = append(codes, postTokenForm(app, "/api/v1/oauth/token", codeTokenForm("https://claude.ai/oauth/client-"+strconv.Itoa(i)+".json", code), "", "").Code)
 		}
 
-		// Each request fetches a new document, which the refresh token does not belong to.
+		// Each request fetches a new document, and the code was not issued.
 		assert.Equal(t, []int{http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusTooManyRequests, http.StatusTooManyRequests}, codes)
 		assert.Equal(t, 3, *calls)
+	})
+	t.Run("InvalidValueNotFetched", func(t *testing.T) {
+		app, _, conf, _ := prepareAppTokenTest(t)
+		calls := stubAppMetadata(t)
+		conf.Options().OAuthApps = config.OAuthAppsAny
+		installAuthorizeBudget(t, 3)
+
+		// A code or refresh token that fails verification is refused before the document is fetched.
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm("https://claude.ai/oauth/client-x.json", rnd.AuthToken()), "", "")
+		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+		r = postTokenForm(app, "/api/v1/oauth/token", refreshForm("https://claude.ai/oauth/client-y.json", "x"), "", "")
+		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+		assert.Equal(t, 0, *calls)
+		assert.InDelta(t, 1, limiter.Authorize.IP(appTokenTestClientIP()).Tokens(), 0.01)
 	})
 	t.Run("ConsentFetchRateLimited", func(t *testing.T) {
 		app, router, conf, _ := prepareAppTokenTest(t)

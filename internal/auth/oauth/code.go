@@ -82,10 +82,10 @@ func IssueCode(spec CodeSpec) (string, error) {
 
 // RedeemCode consumes the authorization code and returns it if the client ID, redirect URI and code
 // verifier match the values it is bound to. A code is consumed by the first attempt, even if it fails,
-// and a code with an invalid signature or expiry is refused before it is looked up.
+// and a code with an invalid signature or expiry is refused with ErrInvalidToken before it is looked up.
 func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, error) {
-	if raw == "" || len(raw) > 128 || !tokens.VerifyCode(raw) {
-		return nil, ErrInvalidGrant
+	if err := VerifyCode(raw); err != nil {
+		return nil, err
 	}
 
 	m, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
@@ -116,6 +116,15 @@ func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, 
 	}
 
 	return m, nil
+}
+
+// VerifyCode returns ErrInvalidToken if the authorization code has an invalid shape, signature or expiry.
+func VerifyCode(raw string) error {
+	if raw == "" || len(raw) > 128 || !tokens.VerifyCode(raw) {
+		return ErrInvalidToken
+	}
+
+	return nil
 }
 
 // newCodeValue returns a new random authorization code value, signed with the expiry.

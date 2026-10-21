@@ -29,7 +29,8 @@ type ClientLookup struct {
 }
 
 // FindClient returns the app client with the specified client ID, or ErrInvalidClient if the app flow is
-// unavailable for it. Client metadata documents are looked up as specified by the optional ClientLookup.
+// unavailable for it. Registered clients are read through the client cache, and client metadata documents
+// are looked up as specified by the optional ClientLookup.
 func FindClient(conf *config.Config, clientID string, lookup ...ClientLookup) (*Client, error) {
 	if !conf.OAuthAppsEnabled() || clientID == "" {
 		return nil, ErrInvalidClient
@@ -50,9 +51,9 @@ func FindClient(conf *config.Config, clientID string, lookup ...ClientLookup) (*
 		return FindMetadataClient(clientID, opt)
 	}
 
-	m := entity.FindClientByUID(clientID)
+	m, err := entity.CachedClientByUID(clientID)
 
-	if m == nil || m.Deleted() || m.Disabled() || !m.IsApp() {
+	if err != nil || m.Deleted() || m.Disabled() || !m.IsApp() {
 		return nil, ErrInvalidClient
 	}
 

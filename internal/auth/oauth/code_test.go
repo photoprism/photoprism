@@ -153,6 +153,7 @@ func TestRedeemCode(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
 		_, err := RedeemCode(tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdef", time.Now().Add(time.Minute)), spec.ClientID, spec.RedirectURI, testVerifier)
 		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.NotErrorIs(t, err, ErrInvalidToken)
 	})
 	t.Run("Unsigned", func(t *testing.T) {
 		// A stored code whose value carries no signature is refused without being looked up or consumed.
@@ -161,7 +162,7 @@ func TestRedeemCode(t *testing.T) {
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
 		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
-		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 		found, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
 		require.NoError(t, err)
 		assert.NotNil(t, found)
@@ -173,7 +174,7 @@ func TestRedeemCode(t *testing.T) {
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
 		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
-		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 		found, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
 		require.NoError(t, err)
 		assert.NotNil(t, found)
@@ -182,7 +183,7 @@ func TestRedeemCode(t *testing.T) {
 		raw, err := IssueCode(spec)
 		require.NoError(t, err)
 		_, err = RedeemCode(flipLast(raw), spec.ClientID, spec.RedirectURI, testVerifier)
-		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 
 		// The genuine code was not consumed.
 		_, err = RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
@@ -194,11 +195,11 @@ func TestRedeemCode(t *testing.T) {
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
 		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
-		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 	})
 	t.Run("Empty", func(t *testing.T) {
 		_, err := RedeemCode("", spec.ClientID, spec.RedirectURI, testVerifier)
-		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 	})
 	t.Run("RequestIDIsNotACode", func(t *testing.T) {
 		raw := tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdee", time.Now().Add(time.Minute))
@@ -207,6 +208,17 @@ func TestRedeemCode(t *testing.T) {
 		require.NoError(t, m.Create())
 		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
 		assert.ErrorIs(t, err, ErrInvalidGrant)
+	})
+}
+
+func TestVerifyCode(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, VerifyCode(tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, raw := range []string{"", rnd.AuthToken(), tokens.SignCode(rnd.AuthToken(), time.Now().Add(-time.Minute)), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute)), tokens.SignCode(strings.Repeat("a", 100), time.Now().Add(time.Minute))} {
+			assert.ErrorIs(t, VerifyCode(raw), ErrInvalidToken, raw)
+		}
 	})
 }
 

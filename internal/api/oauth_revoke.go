@@ -165,18 +165,23 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		// Revoke the grant of a refresh token. Like an unknown token, a refresh token that is not current is
 		// answered with success, so the response does not reveal whether it was valid (RFC 7009).
 		if frm.TokenTypeHint == form.RefreshToken {
-			if grant, revokeErr := oauth.RevokeRefreshToken(frm.Token, c.PostForm("client_id")); revokeErr != nil {
+			grant, revokeErr := oauth.RevokeRefreshToken(frm.Token, c.PostForm("client_id"))
+
+			switch {
+			case revokeErr != nil && !errors.Is(revokeErr, oauth.ErrInvalidGrant):
 				event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", "revoke grant", status.Error(revokeErr)}, actor, action)
 				AbortUnexpectedError(c)
 				return
-			} else if grant == nil {
+			case grant == nil:
+				oauthChargeInvalidToken(clientIp, revokeErr)
+
 				// A header token that resolved to no session counts as a failed credential.
 				if rnd.IsAuthAny(authToken) {
 					charge()
 				}
 
 				event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "refresh token not found", status.Denied}, actor, action)
-			} else {
+			default:
 				event.AuditInfo([]string{clientIp, "oauth2", "client %s", "user %s", "%s", "revoke grant %s", status.Deleted}, clean.Log(grant.ClientID), clean.Log(grant.UserName), action, clean.Log(grant.GrantUID))
 			}
 
