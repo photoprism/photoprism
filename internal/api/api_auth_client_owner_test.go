@@ -106,6 +106,22 @@ func TestAuthAny_UserBoundClient(t *testing.T) {
 	})
 }
 
+func TestAuthAny_UserBoundClientOwnerGone(t *testing.T) {
+	_, _, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	user, sess := newOwnedClientSession(t, "metrics")
+	token := sess.AuthToken()
+	require.Equal(t, http.StatusOK, authStatus(token, acl.ResourceMetrics, acl.AccessAll))
+
+	// A client whose owner no longer exists is refused on every request.
+	require.NoError(t, entity.UnscopedDb().Unscoped().Delete(user).Error)
+	entity.FlushSessionCache()
+	assert.Equal(t, http.StatusForbidden, authStatus(token, acl.ResourceMetrics, acl.AccessAll))
+	assert.Equal(t, http.StatusForbidden, authStatus(token, acl.ResourceMetrics, acl.AccessAll))
+}
+
 func TestSessionReusable(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		assert.False(t, sessionReusable(nil))
