@@ -272,6 +272,20 @@ func TestUser_Rename(t *testing.T) {
 		assert.Equal(t, "alice", storedClientUserName(t, other.ClientUID))
 		assert.Nil(t, FindUserByName("rename-success"))
 	})
+	t.Run("ClientCache", func(t *testing.T) {
+		m := newRenameTestUser(t, "rename-cache", acl.RoleAdmin)
+		client := newRenameTestClient(t, m, false)
+
+		cached, err := CachedClientByUID(client.ClientUID)
+		require.NoError(t, err)
+		assert.Equal(t, "rename-cache", cached.UserName)
+
+		require.NoError(t, m.Rename("rename-cache-new"))
+
+		cached, err = CachedClientByUID(client.ClientUID)
+		require.NoError(t, err)
+		assert.Equal(t, "rename-cache-new", cached.UserName)
+	})
 	t.Run("SameName", func(t *testing.T) {
 		m := newRenameTestUser(t, "rename-same", acl.RoleAdmin)
 		withRenameHandler(t, "zz_rename_test", func(*gorm.DB, *User, string, string) error {

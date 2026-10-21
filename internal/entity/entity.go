@@ -49,6 +49,7 @@ func FlushCaches() {
 	FlushLabelCache()
 	FlushPhotoLabelCache()
 	FlushSessionCache()
+	FlushClientCache()
 	FlushKeywordCache()
 	FlushPhotoKeywordCache()
 }

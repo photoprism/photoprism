@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** October 14, 2026
+**Last Updated:** October 21, 2026
 
 ### Overview
 
@@ -11,6 +11,8 @@
 `User.Save` evicts that account's cached sessions and WebDAV authentication entries after a successful database save. `FlushUserSessionCache` matches the user UID and leaves other users' entries and persisted credentials intact. `FlushSessionCache` clears both caches when a global refresh is required.
 
 WebDAV uses `CachedWebDAVUser` and `CacheWebDAVUser` for its one-minute credential cache. Authentication captures `CurrentAuthCacheGeneration` before loading the user or session, and insertion checks that generation under the same short mutex used by invalidation. A superseded result is not cached, but the request is not canceled. Per-user invalidation leaves other accounts' pending cache writes valid; a global flush invalidates every older snapshot and clears the per-user revision table. Account changes are therefore handled at the same persistence boundary as the general session cache. Sessions created or loaded through the entity helpers retain their generation so an in-flight object cannot repopulate the general cache after eviction. A raw untracked record may be cached only before its user is resolved. This is process-local invalidation; writes through another process or directly to the database do not signal a running server.
+
+`CachedClientByUID` caches the client lookup of `Session.ClientDisabled`, which runs on every request of a client session, for one minute (`ClientCacheDuration`). It returns an independent copy without the account or secret state, caches neither a missing row nor an error, and uses its own version guard, so a read that started before a write is never stored. The client write methods flush the client's entry after writing, `User.Rename` and `FlushCaches` flush them all, and a change written by another process is seen once the entry expires. Lookups that act on a client, such as token issuance, admin endpoints, the registry, and `Session.GetClient`, which copies the client's role and scope onto the session, read the database with `FindClientByUID`.
 
 A session read from or written to the database is only ever updated afterwards: `Session.Save` writes it through `Update`, and inserts only a session that was never stored. `Session.VerifyStored` confirms that a session's row still exists; app-password sign-in, the OAuth password and session grants, and `OIDCSessionEligible` call it before deriving a credential from a session, and a missing row evicts the session from the session and preview token caches.
 

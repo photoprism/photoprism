@@ -51,9 +51,12 @@ func newOwnedClientSession(t *testing.T, scope string) (*entity.User, *entity.Se
 	return user, sess
 }
 
-// disableStoredClient sets the stored auth_enabled value of the client to false.
+// disableStoredClient sets the stored auth_enabled value of the client to false and flushes the client cache.
 func disableStoredClient(clientUID string) error {
-	return entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientUID).UpdateColumn("auth_enabled", false).Error
+	err := entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientUID).UpdateColumn("auth_enabled", false).Error
+	entity.FlushClientCache()
+
+	return err
 }
 
 // authStatus returns the HTTP status of an authorization check with the given token.

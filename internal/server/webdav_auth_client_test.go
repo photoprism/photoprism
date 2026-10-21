@@ -96,6 +96,7 @@ func TestWebDAVAuth_UserBoundClient(t *testing.T) {
 		sess, err := entity.FindSession(rnd.SessionID(token))
 		require.NoError(t, err)
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", sess.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		entity.FlushClientCache()
 
 		// This request uses the cached session and account.
 		c, _ := gin.CreateTestContext(httptest.NewRecorder())

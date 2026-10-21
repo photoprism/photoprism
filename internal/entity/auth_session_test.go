@@ -1428,6 +1428,8 @@ func TestSession_ClientDisabled(t *testing.T) {
 		assert.False(t, m.ClientDisabled())
 
 		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		assert.False(t, m.ClientDisabled())
+		FlushClientCache()
 		assert.Equal(t, acl.RoleClient, m.GetClientRole())
 		assert.True(t, m.ClientDisabled())
 	})
