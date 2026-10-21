@@ -95,7 +95,8 @@ func cacheClient(m Client, version uint64) {
 	clientCache.Set(m.ClientUID, m, ClientCacheDuration)
 }
 
-// cacheCopy returns a copy that shares no references with the receiver and holds no account or secret state.
+// cacheCopy returns a copy that shares no references with the receiver and holds no account, parsed data or
+// matched secret hash.
 func (m Client) cacheCopy() Client {
 	m.user = nil
 	m.data = nil

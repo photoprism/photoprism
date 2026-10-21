@@ -78,9 +78,8 @@ func wsRelease(connId string) {
 	delete(wsAuth.client, connId)
 }
 
-// wsSessionClient returns the client a session authenticates, using the same predicate the REST
-// handlers apply. It is read before the role, because resolving the role loads the client entity onto
-// the session and rewrites the provider the predicate reads.
+// wsSessionClient returns the client a session authenticates and its role, using the same predicate
+// the REST handlers apply.
 func wsSessionClient(s *entity.Session) wsClientRole {
 	if s == nil || !s.IsClient() {
 		return wsClientRole{}
