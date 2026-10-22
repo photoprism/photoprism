@@ -579,6 +579,11 @@ func TestOAuthAppTokenResponse(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 		assert.Equal(t, oauth.ErrCodeServerError, gjson.Get(w.Body.String(), "error").String())
+
+		// The access token stored before the check is deleted.
+		var count int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("auth_id = ?", grant.GrantUID).Count(&count).Error)
+		assert.Zero(t, count)
 	})
 }
 
