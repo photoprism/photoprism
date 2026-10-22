@@ -124,6 +124,11 @@ func authorizeSession(clientIp string, s *entity.Session, resource acl.Resource,
 		// If the request is from a client application, check its authorization based
 		// on the allowed scope, the ACL, and the user account it belongs to (if any).
 
+		// Read the owner first, as its scope applies to a client with full access.
+		if !s.NoUser() {
+			s.GetUser()
+		}
+
 		// Check the resource and required permissions against the session scope.
 		if s.InsufficientScope(resource, perms) {
 			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", status.Error(authn.ErrInsufficientScope)}, clean.Log(s.GetClientInfo()), s.RefID, string(resource))

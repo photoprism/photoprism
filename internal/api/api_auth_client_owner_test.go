@@ -1,14 +1,17 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
@@ -238,4 +241,34 @@ func TestAuthAny_UserBoundClientDeactivatedOwner(t *testing.T) {
 	assert.False(t, sessionReusable(sess))
 	assert.Equal(t, http.StatusUnauthorized, AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{}`, token).Code)
 	assert.Equal(t, http.StatusForbidden, PerformRequest(app, http.MethodGet, "/api/v1/photos/"+uid+"/dl?t="+downloadToken).Code)
+}
+
+func TestAuthorizeSession_OwnerScopeBeforeScopeCheck(t *testing.T) {
+	_, _, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	user, sess := newOwnedClientSession(t, "*")
+	user.UserScope = "photos"
+	require.NoError(t, user.Save())
+	entity.FlushSessionCache()
+	entity.FlushClientCache()
+
+	// The first read of the owner fails, so the session is loaded without it.
+	var failed atomic.Bool
+	name := "test:fail_first_owner_read_" + rnd.Base36(8)
+	require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (entity.User{}).TableName() && failed.CompareAndSwap(false, true) {
+			_ = db.AddError(errors.New("owner lookup failed"))
+		}
+	}))
+	t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+	s, err := entity.FindAnySession(sess.ID)
+	require.NoError(t, err)
+	require.True(t, failed.Load())
+
+	// The owner's scope applies to the scope check once the owner is read during authorization.
+	assert.Equal(t, http.StatusForbidden, authorizeSession("10.4.4.4", s, acl.ResourceMetrics, acl.Permissions{acl.AccessAll}).HttpStatus())
+	assert.Equal(t, "photos", s.Scope())
 }
