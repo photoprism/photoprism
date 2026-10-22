@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"golang.org/x/time/rate"
 
@@ -72,15 +73,15 @@ func TestOAuthRevoke_RateLimit(t *testing.T) {
 		OAuthRevoke(router)
 		installAuthBudget(t, 3)
 
-		// Well-formed tokens, so each request passes validation and is refused by the
-		// lookup rather than before it.
+		// Well-formed tokens, so each request passes validation and reaches the lookup; an
+		// unknown token is answered with success (RFC 7009) and still charged.
 		for i := range 3 {
 			w := revokeForm(app, url.Values{
 				"token":           {deadAuthToken()},
 				"token_type_hint": {"access_token"},
 			}, "")
 
-			assert.Equal(t, http.StatusUnauthorized, w.Code, "attempt %d", i+1)
+			assert.Equal(t, http.StatusOK, w.Code, "attempt %d", i+1)
 		}
 
 		w := revokeForm(app, url.Values{
@@ -110,7 +111,7 @@ func TestOAuthRevoke_RateLimit(t *testing.T) {
 				"token_type_hint": {"access_token"},
 			}, "")
 
-			assert.Equal(t, http.StatusUnauthorized, w.Code, "attempt %d", i+1)
+			assert.Equal(t, http.StatusOK, w.Code, "attempt %d", i+1)
 		}
 
 		w := revokeForm(app, url.Values{
@@ -173,7 +174,7 @@ func TestOAuthRevoke_RateLimit(t *testing.T) {
 				"token_type_hint": {"access_token"},
 			}, "")
 
-			assert.Equal(t, http.StatusUnauthorized, w.Code)
+			assert.Equal(t, http.StatusOK, w.Code)
 		}
 
 		assert.True(t, limiter.Auth.Reject(testIP))
@@ -211,7 +212,7 @@ func TestOAuthRevoke_RateLimit(t *testing.T) {
 				"token_type_hint": {"access_token"},
 			}, deadAuthToken())
 
-			assert.Equal(t, http.StatusUnauthorized, w.Code, "attempt %d", i+1)
+			assert.Equal(t, http.StatusOK, w.Code, "attempt %d", i+1)
 		}
 
 		// Three requests, three tokens: the budget is spent, not overspent.
@@ -293,10 +294,10 @@ func TestOAuthRevoke_RateLimit(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code, "%s", w.Body.String())
 
 		// Deleting the same entry again finds nothing, which a stale list produces. It is
-		// refused, but the caller proved possession, so it is not an authentication failure.
+		// answered with success, and the caller proved possession, so it is not charged.
 		for i := range 4 {
 			w = revokeForm(app, url.Values{"token": {refID}}, sessId)
-			assert.Equal(t, http.StatusUnauthorized, w.Code, "retry %d: %s", i+1, w.Body.String())
+			assert.Equal(t, http.StatusOK, w.Code, "retry %d: %s", i+1, w.Body.String())
 		}
 
 		assert.False(t, limiter.Auth.Reject(testIP), "the web ui revoke flow must not spend the budget")
@@ -388,7 +389,7 @@ func TestOAuthRevoke_ChargesOnlyUnprovenRequests(t *testing.T) {
 			"token_type_hint": {"access_token"},
 		}, "")
 
-		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.Equal(t, http.StatusOK, code)
 		assert.Equal(t, 1, cost)
 	})
 	t.Run("UnresolvedTokenWithDeadHeader", func(t *testing.T) {
@@ -397,7 +398,7 @@ func TestOAuthRevoke_ChargesOnlyUnprovenRequests(t *testing.T) {
 			"token_type_hint": {"access_token"},
 		}, rnd.AuthToken())
 
-		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.Equal(t, http.StatusOK, code)
 		assert.Equal(t, 1, cost, "two failed lookups in one request still cost one token")
 	})
 	t.Run("MalformedHeaderToken", func(t *testing.T) {
@@ -408,7 +409,7 @@ func TestOAuthRevoke_ChargesOnlyUnprovenRequests(t *testing.T) {
 			"token_type_hint": {"access_token"},
 		}, "not-a-token")
 
-		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.Equal(t, http.StatusOK, code)
 		assert.Equal(t, 1, cost)
 	})
 	t.Run("ValidHeaderAndUnresolvedToken", func(t *testing.T) {
@@ -425,7 +426,7 @@ func TestOAuthRevoke_ChargesOnlyUnprovenRequests(t *testing.T) {
 			"token_type_hint": {"access_token"},
 		}, sess.AuthToken())
 
-		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.Equal(t, http.StatusOK, code)
 		assert.Equal(t, 0, cost)
 	})
 	t.Run("MalformedToken", func(t *testing.T) {
@@ -434,7 +435,7 @@ func TestOAuthRevoke_ChargesOnlyUnprovenRequests(t *testing.T) {
 			"token_type_hint": {"access_token"},
 		}, "")
 
-		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.Equal(t, http.StatusOK, code)
 		assert.Equal(t, 1, cost)
 	})
 	t.Run("SuccessfulRevoke", func(t *testing.T) {
@@ -494,4 +495,54 @@ func TestOAuthRevoke_StaleHeaderWithValidToken(t *testing.T) {
 
 	// The shared budget is untouched, so the routes that enforce it still answer normally.
 	assert.False(t, limiter.Auth.Reject(header.UnknownIP))
+}
+
+// TestOAuthRevoke_Answers pins the status of each kind of refusal: an invalid submitted token is
+// answered with success (RFC 7009), while the caller's own authentication and authorization are not.
+func TestOAuthRevoke_Answers(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	OAuthRevoke(router)
+
+	// post sends a revoke request with the form values and an optional header token.
+	post := func(values url.Values, authToken string) int {
+		installAuthBudget(t, 3)
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/revoke", strings.NewReader(values.Encode()))
+		req.Header.Set(header.ContentType, header.ContentTypeForm)
+
+		if authToken != "" {
+			req.Header.Set(header.XAuthToken, authToken)
+		}
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		return w.Code
+	}
+
+	t.Run("UnknownHeaderToken", func(t *testing.T) {
+		assert.Equal(t, http.StatusUnauthorized, post(url.Values{}, rnd.AuthToken()))
+	})
+	t.Run("MissingToken", func(t *testing.T) {
+		assert.Equal(t, http.StatusBadRequest, post(url.Values{"token_type_hint": {"access_token"}}, ""))
+	})
+	t.Run("UnsupportedHint", func(t *testing.T) {
+		assert.Equal(t, http.StatusBadRequest, post(url.Values{"token": {rnd.AuthToken()}, "token_type_hint": {"id_token"}}, ""))
+	})
+	t.Run("OtherUsersSession", func(t *testing.T) {
+		alice := entity.FindUserByName("alice")
+		bob := entity.FindUserByName("bob")
+		require.NotNil(t, alice)
+		require.NotNil(t, bob)
+		header, err := entity.AddClientSession("revoke-answers-alice", conf.SessionMaxAge(), "*", authn.GrantSession, alice)
+		require.NoError(t, err)
+		other, err := entity.AddClientSession("revoke-answers-bob", conf.SessionMaxAge(), "*", authn.GrantSession, bob)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = header.Delete(); _ = other.Delete() })
+
+		assert.Equal(t, http.StatusForbidden, post(url.Values{"token": {other.AuthToken()}, "token_type_hint": {"access_token"}}, header.AuthToken()))
+		_, err = entity.FindAnySession(other.ID)
+		assert.NoError(t, err)
+	})
 }

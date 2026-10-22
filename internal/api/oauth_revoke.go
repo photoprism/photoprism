@@ -130,6 +130,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 
 		// Get the auth token to be revoked from the submitted form values or the request header.
 		err = BindOAuthRequest(c, &frm)
+		fromHeader := false
 
 		switch {
 		case IsRequestBodyTooLarge(err):
@@ -152,13 +153,30 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		case frm.Empty():
 			frm.Token = authToken
 			frm.TokenTypeHint = form.AccessToken
+			fromHeader = true
+		}
+
+		// Answer an invalid or unknown token with success, as RFC 7009 requires, unless it is the
+		// header token the request authenticates with.
+		invalidToken := func() {
+			if fromHeader {
+				AbortInvalidCredentials(c)
+			} else {
+				c.JSON(http.StatusOK, gin.H{"status": StatusSuccess})
+			}
 		}
 
 		// Validate revocation form values.
 		if err = frm.Validate(); err != nil {
 			charge()
 			event.AuditWarn([]string{clientIp, "oauth2", "%s", action, status.Error(err)}, actor)
-			AbortInvalidCredentials(c)
+
+			if errors.Is(err, authn.ErrInvalidToken) {
+				invalidToken()
+			} else {
+				AbortBadRequest(c, err)
+			}
+
 			return
 		}
 
@@ -211,7 +229,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 			} else if sess = entity.FindSessionByRefID(frm.Token); sess == nil {
 				charge()
 				event.AuditWarn([]string{clientIp, "oauth2", "%s", action, "ref id not found", status.Denied}, actor)
-				AbortInvalidCredentials(c)
+				invalidToken()
 				return
 			}
 		case form.SessionID:
@@ -254,12 +272,12 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		case err != nil:
 			charge()
 			event.AuditErr([]string{clientIp, "oauth2", "%s", action, "delete %s as %s", status.Error(err)}, actor, clean.Log(sess.RefID), role.String())
-			AbortInvalidCredentials(c)
+			invalidToken()
 			return
 		case sess == nil:
 			charge()
 			event.AuditErr([]string{clientIp, "oauth2", "%s", action, "delete %s as %s", status.Denied}, actor, "", role.String())
-			AbortInvalidCredentials(c)
+			invalidToken()
 			return
 		case sess.Abort(c):
 			charge()
@@ -273,7 +291,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		case sUserUID != "" && sess.UserUID != sUserUID:
 			charge()
 			event.AuditErr([]string{clientIp, "oauth2", "%s", action, "delete %s as %s", authn.ErrUnauthorized.Error()}, actor, clean.Log(sess.RefID), role.String())
-			AbortInvalidCredentials(c)
+			AbortForbidden(c)
 			return
 		default:
 			event.AuditInfo([]string{clientIp, "oauth2", "%s", action, "delete %s as %s", status.Granted}, actor, clean.Log(sess.RefID), role.String())

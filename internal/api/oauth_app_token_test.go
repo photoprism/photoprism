@@ -335,15 +335,29 @@ func TestOAuthRevoke_AppTokens(t *testing.T) {
 			return r.Code, 3 - limiter.Auth.IP(ip).Tokens(), 3 - limiter.Authorize.IP(ip).Tokens()
 		}
 
-		// An unknown or malformed access token counts towards limiter.Auth.
+		// An unknown, expired or malformed access token is answered with success (RFC 7009) and counts
+		// towards limiter.Auth.
 		code, auth, authorize := revoke(t, url.Values{"token": {rnd.AuthToken()}, "token_type_hint": {"access_token"}})
-		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.Equal(t, http.StatusOK, code)
 		assert.InDelta(t, 1, auth, 0.01)
 		assert.InDelta(t, 0, authorize, 0.01)
 		code, auth, authorize = revoke(t, url.Values{"token": {"abc"}})
-		assert.Equal(t, http.StatusUnauthorized, code)
+		assert.Equal(t, http.StatusOK, code)
 		assert.InDelta(t, 1, auth, 0.01)
 		assert.InDelta(t, 0, authorize, 0.01)
+		expired := entity.NewClientSession("expired-app", 1, "metrics", authn.GrantClientCredentials, nil)
+		require.NoError(t, expired.Create())
+		t.Cleanup(func() { _ = expired.Delete() })
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", expired.ID).UpdateColumn("sess_expires", time.Now().Add(-time.Hour).Unix()).Error)
+		entity.FlushSessionCache()
+		code, auth, authorize = revoke(t, url.Values{"token": {expired.AuthToken()}, "token_type_hint": {"access_token"}})
+		assert.Equal(t, http.StatusOK, code)
+		assert.InDelta(t, 1, auth, 0.01)
+		assert.InDelta(t, 0, authorize, 0.01)
+
+		// A request without a token, or with an unsupported hint, is malformed.
+		code, _, _ = revoke(t, url.Values{"token": {rnd.AuthToken()}, "token_type_hint": {"id_token"}})
+		assert.Equal(t, http.StatusBadRequest, code)
 
 		// A refresh token that fails verification is answered without a lookup, also with another hint.
 		forged := rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID))
