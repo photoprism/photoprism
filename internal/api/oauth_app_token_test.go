@@ -1108,3 +1108,74 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 		refused(t, app, "/api/v1/oauth/revoke", url.Values{"token": {refreshToken}, "token_type_hint": {"refresh_token"}}, 1)
 	})
 }
+
+// auditMessagesOf returns the audit messages logged by each request, one per request.
+func auditMessagesOf(t *testing.T, app http.Handler, requests ...func() *httptest.ResponseRecorder) []string {
+	t.Helper()
+
+	hook := captureAuditLog(t)
+	result := make([]string, 0, len(requests))
+
+	for _, request := range requests {
+		hook.Reset()
+		request()
+		require.NotEmpty(t, hook.AllEntries())
+		result = append(result, hook.LastEntry().Message)
+	}
+
+	return result
+}
+
+func TestOAuthAppTokenClient_ConstantAuditMessages(t *testing.T) {
+	ip := appTokenTestClientIP()
+
+	// tokenRequest returns a function that sends a token request with the form values.
+	tokenRequest := func(app http.Handler, values url.Values) func() *httptest.ResponseRecorder {
+		return func() *httptest.ResponseRecorder { return postTokenForm(app, "/api/v1/oauth/token", values, "", "") }
+	}
+
+	t.Run("ClientSecret", func(t *testing.T) {
+		app, _, _, _ := prepareAppTokenTest(t)
+		installAuthorizeBudget(t, 3)
+		form := func(id string) url.Values {
+			v := codeTokenForm(id, rnd.AuthToken())
+			v.Set("client_secret", "secret")
+			return v
+		}
+		messages := auditMessagesOf(t, app, tokenRequest(app, form(rnd.GenerateUID(entity.ClientUID))), tokenRequest(app, form(rnd.GenerateUID(entity.ClientUID))))
+		assert.Equal(t, messages[0], messages[1])
+	})
+	t.Run("InvalidValue", func(t *testing.T) {
+		app, _, _, _ := prepareAppTokenTest(t)
+		installAuthorizeBudget(t, 3)
+		messages := auditMessagesOf(t, app,
+			tokenRequest(app, codeTokenForm(rnd.GenerateUID(entity.ClientUID), rnd.AuthToken())),
+			tokenRequest(app, codeTokenForm(rnd.GenerateUID(entity.ClientUID), rnd.AuthToken())))
+		assert.Equal(t, messages[0], messages[1])
+	})
+	t.Run("MetadataRateLimited", func(t *testing.T) {
+		app, _, conf, _ := prepareAppTokenTest(t)
+		stubAppMetadata(t)
+		conf.Options().OAuthApps = config.OAuthAppsAny
+		installAuthorizeBudget(t, 3)
+		for !limiter.Authorize.Reject(ip) {
+			limiter.Authorize.Reserve(ip)
+		}
+		code := tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))
+		messages := auditMessagesOf(t, app,
+			tokenRequest(app, codeTokenForm("https://claude.ai/oauth/audit-a.json", code)),
+			tokenRequest(app, codeTokenForm("https://claude.ai/oauth/audit-b.json", code)))
+		assert.Equal(t, messages[0], messages[1])
+	})
+	t.Run("MetadataNotAllowed", func(t *testing.T) {
+		app, _, conf, _ := prepareAppTokenTest(t)
+		conf.Options().OAuthApps = config.OAuthAppsRegistered
+		installAuthorizeBudget(t, 3)
+		code := tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))
+		messages := auditMessagesOf(t, app,
+			tokenRequest(app, codeTokenForm("https://example.com/audit-a.json", code)),
+			tokenRequest(app, codeTokenForm("https://example.com/audit-b.json", code)))
+		assert.Equal(t, messages[0], messages[1])
+		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
+	})
+}
