@@ -54,9 +54,7 @@ func OAuthToken(router *gin.RouterGroup) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
-		// Abort if the client has exhausted its authentication failure budget. Checked
-		// before the body is read, and charged on each path below that rejects a request
-		// before it presents credentials.
+		// Abort if the client has exhausted its authentication failure budget, checked before the body is read.
 		if limiter.Auth.Reject(clientIp) {
 			limiter.AbortJSON(c)
 			return
@@ -67,8 +65,14 @@ func OAuthToken(router *gin.RouterGroup) {
 		LimitRequestBodyBytes(c, MaxOAuthRequestBytes)
 
 		if IsOAuthFormRequest(c) {
+			// An oversized form counts towards limiter.Authorize.
 			if err := c.Request.ParseForm(); IsRequestBodyTooLarge(err) {
-				limiter.Auth.Reserve(clientIp)
+				if limiter.Authorize.Reject(clientIp) {
+					limiter.AbortJSON(c)
+					return
+				}
+
+				limiter.Authorize.Reserve(clientIp)
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "request too large", status.Error(err)})
 				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return

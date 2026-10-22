@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -165,6 +167,36 @@ func TestSessionStatusTooManyRequests(t *testing.T) {
 	m := SessionStatusTooManyRequests()
 	assert.Equal(t, http.StatusTooManyRequests, m.Status)
 	assert.IsType(t, &Session{}, m)
+}
+
+func TestLookupSessionByRefID(t *testing.T) {
+	t.Run("Found", func(t *testing.T) {
+		m, err := LookupSessionByRefID("sessxkkcabcd")
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		assert.Equal(t, "sessxkkcabcd", m.RefID)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		m, err := LookupSessionByRefID(rnd.RefID("sess"))
+		assert.NoError(t, err)
+		assert.Nil(t, m)
+		m, err = LookupSessionByRefID("")
+		assert.NoError(t, err)
+		assert.Nil(t, m)
+	})
+	t.Run("ReadError", func(t *testing.T) {
+		name := "test:fail_ref_id_reads_" + rnd.Base36(8)
+		require.NoError(t, Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (Session{}).TableName() {
+				_ = db.AddError(errors.New("session lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = Db().Callback().Query().Remove(name) })
+		m, err := LookupSessionByRefID("sessxkkcabcd")
+		assert.Error(t, err)
+		assert.Nil(t, m)
+		assert.Nil(t, FindSessionByRefID("sessxkkcabcd"))
+	})
 }
 
 func TestFindSessionByRefID(t *testing.T) {
@@ -1428,7 +1460,120 @@ func TestSession_ClientDisabled(t *testing.T) {
 		assert.False(t, m.ClientDisabled())
 
 		require.NoError(t, UnscopedDb().Model(&Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		assert.False(t, m.ClientDisabled())
+		FlushClientCache()
 		assert.Equal(t, acl.RoleClient, m.GetClientRole())
 		assert.True(t, m.ClientDisabled())
+	})
+}
+
+func TestSession_ScopePermitsPreview(t *testing.T) {
+	t.Run("NoScope", func(t *testing.T) {
+		assert.True(t, (&Session{}).ScopePermitsPreview())
+		assert.True(t, (&Session{AuthScope: list.Any}).ScopePermitsPreview())
+	})
+	t.Run("Photos", func(t *testing.T) {
+		assert.True(t, (&Session{AuthScope: "photos albums"}).ScopePermitsPreview())
+	})
+	t.Run("Files", func(t *testing.T) {
+		assert.True(t, (&Session{AuthScope: "files"}).ScopePermitsPreview())
+	})
+	t.Run("Read", func(t *testing.T) {
+		assert.True(t, (&Session{AuthScope: "read"}).ScopePermitsPreview())
+	})
+	t.Run("Unrelated", func(t *testing.T) {
+		assert.False(t, (&Session{AuthScope: "albums shares"}).ScopePermitsPreview())
+		assert.False(t, (&Session{AuthScope: "metrics"}).ScopePermitsPreview())
+	})
+}
+
+func TestSession_RolePermitsPreview(t *testing.T) {
+	for _, tc := range []struct {
+		role string
+		want bool
+	}{{"client", true}, {"instance", true}, {"admin", true}, {acl.RoleAliasNone, false}} {
+		t.Run(tc.role, func(t *testing.T) {
+			client, err := AddClient(form.Client{ClientName: "Role Preview " + tc.role, AuthScope: "*", ClientRole: tc.role})
+			require.NoError(t, err)
+			t.Cleanup(func() { _ = client.Purge() })
+
+			m := &Session{ClientUID: client.ClientUID, AuthProvider: authn.ProviderClient.String()}
+			assert.Equal(t, tc.want, m.RolePermitsPreview())
+		})
+	}
+}
+
+func TestSession_SignedPreview(t *testing.T) {
+	t.Run("ClientWithoutAccount", func(t *testing.T) {
+		assert.True(t, SessionFixtures.Pointer("client_metrics").SignedPreview())
+	})
+	t.Run("AccessTokenWithoutClient", func(t *testing.T) {
+		assert.False(t, SessionFixtures.Pointer("token_metrics").SignedPreview())
+	})
+	t.Run("Account", func(t *testing.T) {
+		assert.False(t, SessionFixtures.Pointer("alice").SignedPreview())
+		assert.False(t, SessionFixtures.Pointer("alice_app_password_full_access").SignedPreview())
+	})
+	t.Run("NoID", func(t *testing.T) {
+		m := *SessionFixtures.Pointer("client_metrics")
+		m.ID = ""
+		assert.False(t, m.SignedPreview())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var m *Session
+		assert.False(t, m.SignedPreview())
+	})
+}
+
+func TestSession_SetPreviewToken_SignedPreview(t *testing.T) {
+	client, err := AddClient(form.Client{ClientName: "Signed Preview Client", AuthScope: "*"})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = client.Purge() })
+
+	ctx, _ := gin.CreateTestContext(httptest.NewRecorder())
+	ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+
+	t.Run("Issued", func(t *testing.T) {
+		m := client.NewSession(ctx, authn.GrantClientCredentials)
+		require.True(t, m.SignedPreview())
+		assert.Empty(t, m.PreviewToken)
+		assert.False(t, PreviewToken.Has(m.ID))
+
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = m.Delete() })
+
+		stored := &Session{}
+		require.NoError(t, Db().First(stored, "id = ?", m.ID).Error)
+		assert.Empty(t, stored.PreviewToken)
+	})
+	t.Run("Reloaded", func(t *testing.T) {
+		m := client.NewSession(ctx, authn.GrantClientCredentials)
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = m.Delete() })
+		FlushSessionCache()
+
+		found, err := FindSession(m.ID)
+		require.NoError(t, err)
+		assert.Equal(t, client.ClientUID, found.GetClient().ClientUID)
+		assert.Equal(t, acl.RoleClient, found.GetClientRole())
+		assert.Empty(t, found.PreviewToken)
+		assert.False(t, PreviewToken.Has(m.ID))
+	})
+	t.Run("ExplicitToken", func(t *testing.T) {
+		m := client.NewSession(ctx, authn.GrantClientCredentials)
+		m.SetPreviewToken("signedpv1")
+		t.Cleanup(func() { PreviewToken.Unset(m.ID) })
+		assert.Equal(t, "signedpv1", m.PreviewToken)
+	})
+	t.Run("ClientWithAccount", func(t *testing.T) {
+		alice := FindUserByName("alice")
+		require.NotNil(t, alice)
+		owned := NewClient().SetName("Signed Preview Owned").SetUser(alice)
+		require.NoError(t, owned.Create())
+		t.Cleanup(func() { _ = owned.Purge() })
+
+		m := owned.NewSession(ctx, authn.GrantClientCredentials)
+		assert.False(t, m.SignedPreview())
+		assert.Equal(t, alice.PreviewToken, m.PreviewToken)
 	})
 }

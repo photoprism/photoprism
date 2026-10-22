@@ -81,7 +81,7 @@ func OAuthAppAuthorize(c *gin.Context) {
 
 	// Refuse clients that exceeded the authorization request rate limit.
 	if limiter.Authorize.Reject(clientIp) {
-		RenderOAuthError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		RenderOAuthError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, authn.ErrRateLimitExceeded.Error())
 		return
 	}
 
@@ -101,8 +101,8 @@ func OAuthAppAuthorize(c *gin.Context) {
 
 	switch {
 	case errors.Is(clientErr, oauth.ErrMetadataRateLimited):
-		event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(clientErr)})
-		RenderOAuthError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		event.AuditDebug([]string{clientIp, "oauth2", "%s", status.RateLimited}, action)
+		RenderOAuthError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, authn.ErrRateLimitExceeded.Error())
 		return
 	case clientErr != nil:
 		limiter.Authorize.Reserve(clientIp)

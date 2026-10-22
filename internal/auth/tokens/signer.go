@@ -15,10 +15,9 @@ const (
 	maxTokenLen = 512
 )
 
-// Signer holds the configured signing material for one kind of bunny.net-compatible URL token.
-// config.Propagate sets Key and SignaturePath on each package-level Signer (see Download), so this
-// leaf never imports config or get. The zero value is unconfigured and refuses to mint or verify, so
-// a missing key degrades to rejection rather than to a forgeable empty-key HMAC.
+// Signer holds the signing material for one kind of token: bunny.net-compatible URL tokens, or the
+// signed values of the OAuth app flow (see OAuth). config.Propagate sets its fields, so this leaf never
+// imports config or get. The zero value is unconfigured and refuses to mint or verify.
 type Signer struct {
 	Key           []byte // HMAC key; an instance secret that never reaches client config.
 	SignaturePath string // URL path prefix the signature is bound to (a directory-style token).

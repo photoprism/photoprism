@@ -1,12 +1,14 @@
 package entity
 
 import (
+	"errors"
 	"slices"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -227,6 +229,38 @@ func TestFindGrant(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
 		assert.Nil(t, FindGrant("abc"))
 		assert.Nil(t, FindGrant(rnd.GenerateUID(GrantUID)))
+	})
+}
+
+func TestLookupGrant(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := newTestGrant(t, "csgrantlookup001")
+		found, err := LookupGrant(m.GrantUID)
+		require.NoError(t, err)
+		require.NotNil(t, found)
+		assert.Equal(t, m.ClientID, found.ClientID)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		found, err := LookupGrant(rnd.GenerateUID(GrantUID))
+		assert.NoError(t, err)
+		assert.Nil(t, found)
+		found, err = LookupGrant("abc")
+		assert.NoError(t, err)
+		assert.Nil(t, found)
+	})
+	t.Run("ReadError", func(t *testing.T) {
+		m := newTestGrant(t, "csgrantlookup002")
+		name := "test:fail_grant_reads_" + rnd.Base36(8)
+		require.NoError(t, Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (Grant{}).TableName() {
+				_ = db.AddError(errors.New("grant lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = Db().Callback().Query().Remove(name) })
+		found, err := LookupGrant(m.GrantUID)
+		assert.Error(t, err)
+		assert.Nil(t, found)
+		assert.Nil(t, FindGrant(m.GrantUID))
 	})
 }
 

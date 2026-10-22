@@ -120,12 +120,17 @@ func CompleteRequest(m *entity.AuthCode, userUID string, scopes []string) (strin
 		return "", err
 	}
 
-	raw := rnd.AuthToken()
+	expires := time.Now().UTC().Add(CodeTTL).Truncate(time.Second)
+	raw, err := newCodeValue(expires)
+
+	if err != nil {
+		return "", err
+	}
 
 	changed, err := m.Replace(HashSecret(raw), entity.AuthCodeCode, entity.Values{
 		"user_uid":   spec.UserUID,
 		"scope":      spec.Scope,
-		"expires_at": time.Now().UTC().Add(CodeTTL),
+		"expires_at": expires,
 	})
 
 	if err != nil {

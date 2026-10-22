@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -87,6 +88,16 @@ func TestCompleteRequest(t *testing.T) {
 
 		code, err := CompleteRequest(m, "uqxetse3cy5eo9z2", []string{"mcp"})
 		require.NoError(t, err)
+		assert.NoError(t, tokens.VerifyCode(code))
+
+		// The signed expiry is the stored one.
+		stored, err := entity.FindAuthCode(HashSecret(code), entity.AuthCodeCode)
+		require.NoError(t, err)
+		require.NotNil(t, stored)
+		_, expires, _, ok := tokens.SplitValue(code)
+		require.True(t, ok)
+		assert.Equal(t, stored.ExpiresAt.Unix(), expires)
+		assert.Zero(t, stored.ExpiresAt.Nanosecond())
 
 		// The request can no longer be found or completed.
 		_, err = FindRequest(raw)

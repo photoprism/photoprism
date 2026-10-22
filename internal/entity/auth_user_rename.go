@@ -167,6 +167,7 @@ func (m *User) SaveRename(oldName string) error {
 
 	m.SaveRelated()
 	FlushUserSessionCache(m.UserUID)
+	FlushClientCache()
 
 	return nil
 }

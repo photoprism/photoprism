@@ -81,7 +81,12 @@ func FindAnySession(id string) (*Session, error) {
 		found.stored = true
 		// Set session activity timestamp and update the last_active column in the sessions table.
 		found.UpdateLastActive(true)
-		CacheSession(found, SessionCacheDuration)
+
+		// Cache the session only with its client and owner resolved, or with a client that no longer exists.
+		if err := found.resolveClient(); err == nil || errors.Is(err, ErrClientNotFound) {
+			CacheSession(found, SessionCacheDuration)
+		}
+
 		return found, nil
 	} else if err := found.Delete(); err != nil {
 		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", status.Error(err)}, found.RefID)
@@ -98,6 +103,7 @@ func FlushSessionCache() {
 	authCacheState.version++
 	authCacheState.flushed = authCacheState.version
 	clear(authCacheState.users)
+	clear(authCacheState.deleted)
 	sessionCache.Flush()
 	webDAVUserCache.Flush()
 }
@@ -144,9 +150,9 @@ func CacheSession(s *Session, d time.Duration) {
 		if s.user != nil {
 			return
 		}
-		s.cacheGeneration = &AuthCacheGeneration{version: authCacheState.version}
+		s.cacheGeneration = &AuthCacheGeneration{version: authCacheState.version, at: time.Now()}
 	}
-	if !s.cacheGeneration.valid(s.UserUID) {
+	if !s.cacheGeneration.valid(s.UserUID) || s.cacheGeneration.sessionDeleted(s.ID) {
 		return
 	}
 

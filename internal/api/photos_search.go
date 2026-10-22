@@ -130,7 +130,7 @@ func SearchPhotosView(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), s.PreviewToken, SessionDownloadToken(s))
+		result, count, err := search.UserPhotosViewerResults(f, s, SessionContentUri(s), conf.ApiUri(), SessionPreviewToken(s), SessionDownloadToken(s))
 
 		if err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", status.Error(err)}, s.RefID)

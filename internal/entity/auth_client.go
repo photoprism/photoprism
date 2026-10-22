@@ -421,12 +421,18 @@ func (m *Client) AuthInfo() string {
 
 // Create new entity in the database.
 func (m *Client) Create() error {
-	return Db().Create(m).Error
+	err := Db().Create(m).Error
+	flushClientCache(m.ClientUID)
+
+	return err
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Client) Save() error {
-	if err := Db().Save(m).Error; err != nil {
+	err := Db().Save(m).Error
+	flushClientCache(m.ClientUID)
+
+	if err != nil {
 		return err
 	}
 
@@ -458,6 +464,7 @@ func (m *Client) SaveChanges(fields ...string) error {
 	}
 
 	result := Db().Model(m).Select(selected).Updates(m)
+	flushClientCache(m.ClientUID)
 
 	if result.Error != nil {
 		return result.Error
@@ -520,7 +527,10 @@ func (m *Client) Delete() (err error) {
 	// Removing an app client ends the grants of the users who connected it.
 	DeleteClientGrants(m.ClientUID)
 
-	return Db().Delete(m).Error
+	err = Db().Delete(m).Error
+	flushClientCache(m.ClientUID)
+
+	return err
 }
 
 // Restore removes the deletion mark, so the client can be used again once a new secret is set. A
@@ -544,7 +554,10 @@ func (m *Client) Restore() error {
 		}
 	}
 
-	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
+	err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error
+	flushClientCache(m.ClientUID)
+
+	if err != nil {
 		return err
 	}
 
@@ -636,7 +649,10 @@ func (m *Client) Purge() (err error) {
 
 	DeleteClientGrants(m.ClientUID)
 
-	return UnscopedDb().Delete(m).Error
+	err = UnscopedDb().Delete(m).Error
+	flushClientCache(m.ClientUID)
+
+	return err
 }
 
 // DeleteSecret removes the stored client secret, if any.
@@ -646,7 +662,10 @@ func (m *Client) DeleteSecret() error {
 	}
 
 	if pw := FindPassword(m.ClientUID); pw != nil {
-		return pw.Delete()
+		err := pw.Delete()
+		flushClientCache(m.ClientUID)
+
+		return err
 	}
 
 	return nil
@@ -722,7 +741,10 @@ func (m *Client) Disabled() bool {
 
 // Updates multiple properties in the database.
 func (m *Client) Updates(values any) error {
-	return UnscopedDb().Model(m).Updates(values).Error
+	err := UnscopedDb().Model(m).Updates(values).Error
+	flushClientCache(m.ClientUID)
+
+	return err
 }
 
 // NewSecret sets a random client secret and returns it if successful.
@@ -749,8 +771,10 @@ func (m *Client) SetSecret(secret string) (err error) {
 	}
 
 	pw := NewPassword(m.ClientUID, secret, false)
+	err = pw.Save()
+	flushClientCache(m.ClientUID)
 
-	return pw.Save()
+	return err
 }
 
 // VerifySecret checks if the given client secret is correct.
@@ -852,6 +876,7 @@ func (m *Client) SetScope(s string) *Client {
 }
 
 // UpdateLastActive sets the time of last activity to now and optionally also updates the auth_clients table.
+// It does not flush the client cache, since no cached read depends on LastActive.
 func (m *Client) UpdateLastActive(save bool) *Client {
 	if m == nil {
 		return &Client{}

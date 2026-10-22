@@ -23,6 +23,8 @@ const (
 	MaxSessionRequestBytes int64 = MaxAuthRequestBytes
 	// MaxOAuthRequestBytes bounds OAuth2 token, revoke, and OIDC endpoint payloads.
 	MaxOAuthRequestBytes int64 = MaxAuthRequestBytes
+	// MaxOIDCCodeLength bounds the authorization code an OIDC provider returns to the redirect endpoint.
+	MaxOIDCCodeLength = 16 * 1024
 	// MaxAlbumRequestBytes bounds album create and update payloads.
 	MaxAlbumRequestBytes int64 = MaxMutationRequestBytes
 	// MaxSettingsRequestBytes bounds settings and config option payloads.

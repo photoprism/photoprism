@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -45,7 +46,7 @@ func coverSize(size thumb.Size) thumb.Size {
 //	@Router			/api/v1/albums/{uid}/t/{token}/{size} [get]
 func AlbumCover(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
-		if InvalidPreviewToken(c) {
+		if InvalidPreviewToken(c, acl.Resources{acl.ResourceAlbums, acl.ResourcePhotos}) {
 			c.Data(http.StatusForbidden, "image/svg+xml", albumIconSvg)
 			return
 		}

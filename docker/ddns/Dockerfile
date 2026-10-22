@@ -1,4 +1,4 @@
-FROM golang:1.27.1-alpine
+FROM golang:1.27.3-alpine
 
 ENV DO_NOT_TRACK=true
 

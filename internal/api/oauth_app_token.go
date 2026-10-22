@@ -30,12 +30,11 @@ type OAuthAppTokenResponse struct {
 
 // OAuthAppToken redeems an authorization code of an app client for an access token and a refresh token.
 // It serves the authorization_code grant of POST /api/v1/oauth/token, see OAuthAuthorizationCodeHandler.
-// Refused codes and refresh tokens do not charge limiter.Auth, since they cannot be guessed.
 func OAuthAppToken(c *gin.Context) {
 	clientIp := ClientIP(c)
 	action := "redeem code"
 
-	client, ok := oauthAppTokenClient(c, action, false)
+	client, ok := oauthAppTokenClient(c, action, false, func() error { return oauth.VerifyCode(c.PostForm("code")) })
 
 	if !ok {
 		return
@@ -96,17 +95,39 @@ func OAuthAppRefresh(c *gin.Context) {
 	clientIp := ClientIP(c)
 	action := "refresh token"
 
-	client, ok := oauthAppTokenClient(c, action, true)
+	client, ok := oauthAppTokenClient(c, action, true, func() error { return oauth.VerifyRefreshToken(c.PostForm("refresh_token")) })
 
 	if !ok {
 		return
 	}
 
 	actor := "client " + clean.Log(client.ID)
+	raw := c.PostForm("refresh_token")
+
+	// Refuse an address over the authorization failure limit before the grant of a valid token is looked up.
+	if limiter.Authorize.Reject(clientIp) {
+		oauthAbortRateLimited(c, action)
+		return
+	}
+
+	current, err := oauth.FindRefreshGrant(raw)
+
+	if err != nil && !errors.Is(err, oauth.ErrInvalidGrant) {
+		event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to refresh token")
+		return
+	} else if err != nil {
+		oauthChargeMissingGrant(clientIp, err)
+		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid refresh token")
+		return
+	}
 
 	// Check the user and the client scope first, so that a refusal does not consume the refresh token.
-	if current := oauth.FindRefreshGrant(c.PostForm("refresh_token")); current != nil && current.ClientID == client.ID {
-		if _, ok = oauthAppTokenUser(c, current.UserUID, actor, action); !ok {
+	var user *entity.User
+
+	if current.ClientID == client.ID {
+		if user, ok = oauthAppTokenUser(c, current.UserUID, actor, action); !ok {
 			return
 		} else if !slices.Contains(oauth.ClientScopes(strings.Fields(current.Scope), client.Scope), oauth.DefaultScope) {
 			event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "client scope no longer includes %s", status.Denied}, actor, action, oauth.DefaultScope)
@@ -115,7 +136,8 @@ func OAuthAppRefresh(c *gin.Context) {
 		}
 	}
 
-	grant, refreshToken, err := oauth.RefreshGrant(c.PostForm("refresh_token"), client.ID)
+	// RefreshGrant succeeds only for the current grant of this client, whose user was checked above.
+	grant, refreshToken, err := oauth.RefreshGrant(current, raw, client.ID)
 
 	switch {
 	case errors.Is(err, oauth.ErrRefreshTokenReused):
@@ -126,11 +148,8 @@ func OAuthAppRefresh(c *gin.Context) {
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid refresh token")
 		return
-	}
-
-	user, ok := oauthAppTokenUser(c, grant.UserUID, actor, action)
-
-	if !ok {
+	case user == nil:
+		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to refresh token")
 		return
 	}
 
@@ -154,14 +173,20 @@ func OAuthAppRefresh(c *gin.Context) {
 }
 
 // oauthAppTokenClient returns the app client of a token request, which authenticates with its client ID only,
-// or responds with an error. With allowStale, an expired client metadata document is used while it cannot be fetched.
-func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth.Client, bool) {
+// or responds with an error. The optional verify function checks the presented code or refresh token before the
+// client is looked up. With allowStale, an expired client metadata document is used while it cannot be fetched.
+func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify func() error) (*oauth.Client, bool) {
 	clientIp := ClientIP(c)
 	conf := get.Config()
 
 	if !conf.OAuthAppsEnabled() {
-		limiter.Auth.Reserve(clientIp)
-		oauthTokenError(c, http.StatusBadRequest, "unsupported_grant_type", "grant_type is not supported")
+		if limiter.Authorize.Reject(clientIp) {
+			oauthAbortRateLimited(c, action)
+		} else {
+			limiter.Authorize.Reserve(clientIp)
+			oauthTokenError(c, http.StatusBadRequest, "unsupported_grant_type", "grant_type is not supported")
+		}
+
 		return nil, false
 	}
 
@@ -170,27 +195,60 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool) (*oauth
 
 	// App clients are public and authenticate without a client secret.
 	if basic && (basicSecret != "" || clientID != "" && clientID != basicID) || c.PostForm("client_secret") != "" {
-		event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", "client secret not supported", status.Denied}, clean.Log(clientID), action)
+		log.Debugf("oauth2: client %s sent a client secret (%s)", clean.Log(clientID), action)
+		event.AuditDebug([]string{clientIp, "oauth2", "%s", "client secret not supported", status.Denied}, action)
 		oauthTokenError(c, http.StatusUnauthorized, oauth.ErrCodeInvalidClient, "invalid client")
 		return nil, false
 	} else if basic {
 		clientID = basicID
 	}
 
+	// Refuse an address over the authorization failure limit before looking up a registered client ID.
+	registered := !strings.HasPrefix(clientID, "https://")
+
+	if registered && limiter.Authorize.Reject(clientIp) {
+		oauthAbortRateLimited(c, action)
+		return nil, false
+	}
+
+	if verify != nil {
+		if err := verify(); err != nil {
+			event.AuditDebug([]string{clientIp, "oauth2", "%s", status.Error(err)}, action)
+			oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid grant")
+			return nil, false
+		}
+	}
+
 	client, err := oauth.FindClient(conf, clientID, oauth.ClientLookup{AllowFetch: oauthMetadataFetchAllowed(clientIp), AllowStale: allowStale})
 
 	switch {
 	case errors.Is(err, oauth.ErrMetadataRateLimited):
-		event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
-		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		oauthAbortRateLimited(c, action)
 		return nil, false
 	case err != nil:
-		event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
+		// A registered client ID that resolves to no app client counts towards limiter.Authorize and is logged;
+		// the submitted URL of a metadata client is logged at debug level only.
+		if registered {
+			limiter.Authorize.Reserve(clientIp)
+			event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
+		} else {
+			log.Debugf("oauth2: client %s refused (%s)", clean.Log(clientID), action)
+			event.AuditDebug([]string{clientIp, "oauth2", "%s", status.Error(err)}, action)
+		}
+
 		oauthTokenError(c, http.StatusUnauthorized, oauth.ErrCodeInvalidClient, "invalid client")
 		return nil, false
 	}
 
 	return client, true
+}
+
+// oauthChargeMissingGrant counts a valid refresh token whose grant does not exist towards limiter.Authorize.
+// It takes a token only while one is available, so the budget refills once requests stop.
+func oauthChargeMissingGrant(clientIp string, err error) {
+	if errors.Is(err, oauth.ErrGrantNotFound) {
+		limiter.Authorize.Allow(clientIp)
+	}
 }
 
 // oauthAppTokenUser returns the active user a code or grant belongs to, or responds with an error.
@@ -218,7 +276,12 @@ func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.Use
 	}
 
 	// The grant may have been revoked concurrently, e.g. because its refresh token was reused.
-	if entity.FindGrant(grant.GrantUID) == nil {
+	if found, err := entity.LookupGrant(grant.GrantUID); err != nil {
+		_ = sess.Delete()
+		event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to create access token")
+		return
+	} else if found == nil {
 		_ = sess.Delete()
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "grant %s revoked", status.Denied}, actor, action, clean.Log(grant.GrantUID))
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "grant has been revoked")
@@ -236,6 +299,12 @@ func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.Use
 		RefreshToken: refreshToken,
 		Scope:        grant.Scope,
 	})
+}
+
+// oauthAbortRateLimited aborts a token request from an address over a limit and audits the refusal at debug level.
+func oauthAbortRateLimited(c *gin.Context, action string) {
+	event.AuditDebug([]string{ClientIP(c), "oauth2", "%s", status.RateLimited}, action)
+	limiter.AbortJSON(c)
 }
 
 // oauthTokenError responds with a standard OAuth error (RFC 6749, section 5.2).

@@ -183,13 +183,11 @@ func sessionReusable(s *entity.Session) bool {
 		return false
 	case !s.IsClient():
 		return true
-	case !s.ValidateScope(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}):
+	case s.IsApplication() && s.GetUser().DenyLogIn():
 		return false
-	case s.IsApplication():
-		return !s.GetUser().DenyLogIn()
-	case s.NoUser():
-		return true
+	case s.HasUser() && s.GetUser().DenyClientAccess():
+		return false
 	default:
-		return !s.GetUser().DenyClientAccess()
+		return s.ValidateScope(acl.ResourceSessions, acl.Permissions{acl.ActionCreate})
 	}
 }

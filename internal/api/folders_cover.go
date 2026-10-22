@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -36,7 +37,7 @@ const (
 //	@Router			/api/v1/folders/t/{uid}/{token}/{size} [get]
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
-		if InvalidPreviewToken(c) {
+		if InvalidPreviewToken(c, acl.Resources{acl.ResourceFolders, acl.ResourcePhotos}) {
 			c.Data(http.StatusForbidden, "image/svg+xml", folderIconSvg)
 			return
 		}

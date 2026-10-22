@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -26,15 +27,31 @@ func testCodeSpec() CodeSpec {
 	}
 }
 
+// flipLast returns s with its last character replaced by another hex digit.
+func flipLast(s string) string {
+	if strings.HasSuffix(s, "0") {
+		return s[:len(s)-1] + "1"
+	}
+
+	return s[:len(s)-1] + "0"
+}
+
 func TestIssueCode(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		raw, err := IssueCode(testCodeSpec())
 		require.NoError(t, err)
-		assert.Len(t, raw, 48)
+		assert.Len(t, raw, 92)
+		assert.NoError(t, tokens.VerifyCode(raw))
 
 		m, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
 		require.NoError(t, err)
 		require.NotNil(t, m)
+
+		// The signed expiry is the stored one, which has no fractional seconds.
+		_, expires, _, ok := tokens.SplitValue(raw)
+		require.True(t, ok)
+		assert.Equal(t, m.ExpiresAt.Unix(), expires)
+		assert.Zero(t, m.ExpiresAt.Nanosecond())
 		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
 		assert.NotEqual(t, raw, m.CodeHash)
 		assert.WithinDuration(t, time.Now().UTC().Add(CodeTTL), m.ExpiresAt, 5*time.Second)
@@ -124,7 +141,7 @@ func TestRedeemCode(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("NoUser", func(t *testing.T) {
-		raw := rnd.AuthToken()
+		raw := tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))
 		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, RedirectURI: spec.RedirectURI,
 			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
@@ -140,19 +157,78 @@ func TestRedeemCode(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 	t.Run("Unknown", func(t *testing.T) {
-		_, err := RedeemCode("0123456789abcdef0123456789abcdef0123456789abcdef", spec.ClientID, spec.RedirectURI, testVerifier)
+		_, err := RedeemCode(tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdef", time.Now().Add(time.Minute)), spec.ClientID, spec.RedirectURI, testVerifier)
 		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.NotErrorIs(t, err, ErrInvalidToken)
+	})
+	t.Run("Unsigned", func(t *testing.T) {
+		// A stored code whose value carries no signature is refused without being looked up or consumed.
+		raw := rnd.AuthToken()
+		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, UserUID: spec.UserUID, RedirectURI: spec.RedirectURI,
+			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
+		require.NoError(t, m.Create())
+		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
+		assert.ErrorIs(t, err, ErrInvalidToken)
+		found, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
+		require.NoError(t, err)
+		assert.NotNil(t, found)
+	})
+	t.Run("SignatureExpired", func(t *testing.T) {
+		// A stored code whose signed expiry has passed is refused without being looked up or consumed.
+		raw := tokens.SignCode(rnd.AuthToken(), time.Now().Add(-time.Second))
+		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, UserUID: spec.UserUID, RedirectURI: spec.RedirectURI,
+			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
+		require.NoError(t, m.Create())
+		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
+		assert.ErrorIs(t, err, ErrTokenExpired)
+		found, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
+		require.NoError(t, err)
+		assert.NotNil(t, found)
+	})
+	t.Run("Forged", func(t *testing.T) {
+		raw, err := IssueCode(spec)
+		require.NoError(t, err)
+		_, err = RedeemCode(flipLast(raw), spec.ClientID, spec.RedirectURI, testVerifier)
+		assert.ErrorIs(t, err, ErrInvalidToken)
+
+		// The genuine code was not consumed.
+		_, err = RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
+		assert.NoError(t, err)
+	})
+	t.Run("RefreshTokenIsNotACode", func(t *testing.T) {
+		raw := tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute))
+		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeCode, ClientID: spec.ClientID, UserUID: spec.UserUID, RedirectURI: spec.RedirectURI,
+			Resource: spec.Resource, CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
+		require.NoError(t, m.Create())
+		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 	})
 	t.Run("Empty", func(t *testing.T) {
 		_, err := RedeemCode("", spec.ClientID, spec.RedirectURI, testVerifier)
-		assert.ErrorIs(t, err, ErrInvalidGrant)
+		assert.ErrorIs(t, err, ErrInvalidToken)
 	})
 	t.Run("RequestIDIsNotACode", func(t *testing.T) {
-		raw := "0123456789abcdef0123456789abcdef0123456789abcdee"
+		raw := tokens.SignCode("0123456789abcdef0123456789abcdef0123456789abcdee", time.Now().Add(time.Minute))
 		m := &entity.AuthCode{CodeHash: HashSecret(raw), CodeType: entity.AuthCodeRequest, ClientID: spec.ClientID, RedirectURI: spec.RedirectURI,
 			CodeChallenge: spec.CodeChallenge, CodeChallengeMethod: spec.CodeChallengeMethod, ExpiresAt: time.Now().UTC().Add(time.Minute)}
 		require.NoError(t, m.Create())
 		_, err := RedeemCode(raw, spec.ClientID, spec.RedirectURI, testVerifier)
+		assert.ErrorIs(t, err, ErrInvalidGrant)
+	})
+}
+
+func TestVerifyCode(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, VerifyCode(tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, raw := range []string{"", rnd.AuthToken(), tokens.SignRefresh(rnd.AuthToken(), time.Now().Add(time.Minute)), tokens.SignCode(strings.Repeat("a", 100), time.Now().Add(time.Minute))} {
+			assert.ErrorIs(t, VerifyCode(raw), ErrInvalidToken, raw)
+		}
+	})
+	t.Run("Expired", func(t *testing.T) {
+		err := VerifyCode(tokens.SignCode(rnd.AuthToken(), time.Now().Add(-time.Minute)))
+		assert.ErrorIs(t, err, ErrTokenExpired)
 		assert.ErrorIs(t, err, ErrInvalidGrant)
 	})
 }
@@ -169,5 +245,26 @@ func TestPurgeExpired(t *testing.T) {
 		m, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
 		assert.NoError(t, err)
 		assert.Nil(t, m)
+	})
+}
+
+func TestNewCodeValue(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		expires := time.Now().Add(CodeTTL)
+		raw, err := newCodeValue(expires)
+		require.NoError(t, err)
+		assert.NoError(t, tokens.VerifyCode(raw))
+		_, signed, _, ok := tokens.SplitValue(raw)
+		assert.True(t, ok)
+		assert.Equal(t, expires.Unix(), signed)
+		assert.NotEqual(t, raw, tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute)))
+	})
+	t.Run("Unconfigured", func(t *testing.T) {
+		orig := *tokens.OAuth
+		t.Cleanup(func() { *tokens.OAuth = orig })
+		tokens.OAuth.Key = nil
+		raw, err := newCodeValue(time.Now().Add(CodeTTL))
+		assert.ErrorIs(t, err, ErrSigningKey)
+		assert.Empty(t, raw)
 	})
 }

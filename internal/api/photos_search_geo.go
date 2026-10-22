@@ -93,7 +93,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		// Render JSON response.
 		switch clean.Token(c.Param("format")) {
 		case "view":
-			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), s.PreviewToken, SessionDownloadToken(s))
+			resp, err = photos.ViewerJSON(SessionContentUri(s), conf.ApiUri(), SessionPreviewToken(s), SessionDownloadToken(s))
 		default:
 			resp, err = photos.GeoJSON()
 		}

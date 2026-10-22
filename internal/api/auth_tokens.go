@@ -17,18 +17,107 @@ import (
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
-// InvalidPreviewToken checks if the token found in the request is valid for image thumbnails and video
-// streams. A valid preview token is accepted, and so is the coarse download token (cross-acceptance: the
-// higher-value download token also grants preview access — a signed download token is longer than 64
-// characters, so clean.UrlToken trims it and it never matches here).
-func InvalidPreviewToken(c *gin.Context) bool {
-	token := clean.UrlToken(c.Param("token"))
+// PreviewSignedSegment is the reserved :token path value of a preview URL that carries a signed preview
+// token in "?t=" instead.
+const PreviewSignedSegment = "signed"
 
-	if token == "" {
-		token = clean.UrlToken(c.Query("t"))
+// previewSessionKey is the gin context key under which the session of a signed preview token is memoized.
+const previewSessionKey = "preview_session"
+
+// InvalidPreviewToken checks if the request carries no token that authorizes previews of the resources.
+// A registered preview token and the coarse download token are matched by value; a signed download token
+// matches neither. A signed preview token must belong to an admitted session whose scope and client role
+// cover one of the resources.
+func InvalidPreviewToken(c *gin.Context, resources acl.Resources) bool {
+	if !entity.ValidateTokens {
+		return false
 	}
 
-	return entity.InvalidPreviewToken(token) && !tokens.IsCoarseDownload(token)
+	if signed, static := previewTokens(c); signed == "" {
+		return entity.InvalidPreviewToken(static) && !tokens.IsCoarseDownload(static)
+	}
+
+	sess := PreviewSession(c)
+
+	return sess == nil || downloadNotAdmitted(c, sess) || previewOutOfScope(sess, resources) || previewRoleDenied(sess, resources)
+}
+
+// previewTokens returns the cleaned preview token of the request, either as one to verify as a signed
+// token or as one to match by value. "?t=" is read after the "signed" segment, where it must be a signed
+// token, and when the segment is empty, where it is matched by value.
+func previewTokens(c *gin.Context) (signed, static string) {
+	segment := clean.UrlToken(c.Param("token"))
+
+	switch {
+	case segment == PreviewSignedSegment && c.Query("t") != "":
+		if signed = clean.UrlToken(c.Query("t")); signed == "" {
+			return "", ""
+		}
+
+		return signed, ""
+	case segment == "":
+		return "", clean.UrlToken(c.Query("t"))
+	}
+
+	if _, _, _, ok := tokens.ParseCompact(segment); ok {
+		return segment, ""
+	}
+
+	return "", segment
+}
+
+// PreviewSession returns the session a signed preview token in the request is bound to, or nil if there
+// is none or it does not receive signed preview tokens. The result is memoized on the request context.
+func PreviewSession(c *gin.Context) *entity.Session {
+	if v, ok := c.Get(previewSessionKey); ok {
+		sess, _ := v.(*entity.Session)
+		return sess
+	}
+
+	var sess *entity.Session
+
+	if signed, _ := previewTokens(c); signed != "" {
+		if expires, sid, token, ok := tokens.ParseCompact(signed); !ok {
+			// Not a signed token.
+		} else if id, valid := tokens.VerifyPreview(expires, sid, token); !valid {
+			// Forged or expired.
+		} else if found, err := entity.FindSession(id); err == nil && found.SignedPreview() {
+			sess = found
+		}
+	}
+
+	c.Set(previewSessionKey, sess)
+
+	return sess
+}
+
+// previewRoleDenied reports whether the client role of the session may view none of the resources.
+func previewRoleDenied(sess *entity.Session, resources acl.Resources) bool {
+	role := sess.GetClientRole()
+
+	for _, resource := range resources {
+		if acl.Rules.AllowAny(resource, role, acl.Permissions{acl.ActionView}) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// previewOutOfScope reports whether the session's authorization scope excludes viewing every one of the
+// resources.
+func previewOutOfScope(sess *entity.Session, resources acl.Resources) bool {
+	if !sess.HasScope() {
+		return false
+	}
+
+	for _, resource := range resources {
+		if sess.ValidateScope(resource, acl.Permissions{acl.ActionView}) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // AuthDownload authorizes a download request for any of the specified resources and returns the session

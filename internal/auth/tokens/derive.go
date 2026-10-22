@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"strings"
 )
 
 const (
@@ -14,11 +15,11 @@ const (
 )
 
 // Derive returns a stable token derived from the instance signing key for the given purpose, or "" when
-// no usable key or purpose is provided.
+// no usable key or purpose is provided. Purposes containing ":" are reserved for subkeys.
 // HMAC-SHA256 keeps the key unrecoverable from the token, which is published in URLs, and the purpose
 // separates the tokens of different kinds so one cannot be replayed as another.
 func Derive(key []byte, purpose string) string {
-	if len(key) < KeyLen || purpose == "" {
+	if len(key) < KeyLen || purpose == "" || strings.Contains(purpose, ":") {
 		return ""
 	}
 

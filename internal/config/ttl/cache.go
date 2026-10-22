@@ -23,4 +23,7 @@ const (
 	// Unlike CacheCover, which is the Cache-Control lifetime for the same responses,
 	// this and CacheCollection are server-side lifetimes used with Duration().
 	CacheCollectionCleanup Duration = 300 // 5 minutes
+
+	// CacheClient is the server-side lifetime of cached client lookups (in seconds).
+	CacheClient Duration = 60 // 1 minute
 )

@@ -175,21 +175,29 @@ func SessionStatusTooManyRequests() *Session {
 
 // FindSessionByRefID finds an existing session by ref ID.
 func FindSessionByRefID(refId string) *Session {
+	m, _ := LookupSessionByRefID(refId)
+	return m
+}
+
+// LookupSessionByRefID returns the session with the specified reference ID. It returns neither a session nor
+// an error if there is no such session, and the error if the session cannot be read.
+func LookupSessionByRefID(refId string) (*Session, error) {
 	if !rnd.IsRefID(refId) {
-		return nil
+		return nil, nil
 	}
 
 	generation := CurrentAuthCacheGeneration()
 	m := &Session{cacheGeneration: &generation}
 
-	// Build query.
-	if err := UnscopedDb().Where("ref_id = ?", refId).First(m).Error; err != nil {
-		return nil
+	if err := UnscopedDb().Where("ref_id = ?", refId).First(m).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
 	}
 
 	m.stored = true
 
-	return m
+	return m, nil
 }
 
 // AuthToken returns the session's bearer token. Stored sessions read this value from
@@ -263,6 +271,32 @@ func (m *Session) CacheDuration(d time.Duration) {
 	}
 
 	CacheSession(m, d)
+}
+
+// errClientOwnerUnavailable is returned when the account a client belongs to cannot be read.
+var errClientOwnerUnavailable = errors.New("client owner unavailable")
+
+// resolveClient assigns the client of a client session before it is shared through the session cache,
+// keeping the auth provider and method stored with the session, and returns an error if the client or
+// its owner cannot be read.
+func (m *Session) resolveClient() error {
+	if m.client != nil || m.ClientUID == "" {
+		return nil
+	}
+
+	c, err := CachedClientByUID(m.ClientUID)
+
+	if err != nil {
+		return err
+	}
+
+	m.setClient(&c, true)
+
+	if m.UserUID != "" && m.user == nil {
+		return errClientOwnerUnavailable
+	}
+
+	return nil
 }
 
 // Cache caches the session with the default expiration duration.
@@ -346,8 +380,13 @@ func (m *Session) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-// SetClient sets the client of this session.
+// SetClient sets the client of this session, including its auth provider and method.
 func (m *Session) SetClient(c *Client) *Session {
+	return m.setClient(c, false)
+}
+
+// setClient sets the client of this session and, unless keepAuth is true, its auth provider and method.
+func (m *Session) setClient(c *Client, keepAuth bool) *Session {
 	if c == nil {
 		return m
 	}
@@ -355,10 +394,24 @@ func (m *Session) SetClient(c *Client) *Session {
 	m.client = c
 	m.ClientUID = c.GetUID()
 	m.ClientName = c.ClientName
-	m.AuthProvider = c.Provider().String()
-	m.AuthMethod = c.Method().String()
+
+	if !keepAuth {
+		m.AuthProvider = c.Provider().String()
+		m.AuthMethod = c.Method().String()
+	}
+
 	m.AuthScope = c.Scope()
-	m.SetUser(c.User())
+
+	// Keep an owner already resolved, and the owner's UID if its account cannot be read.
+	if u := m.user; u != nil && c.UserUID != "" && u.UserUID == c.UserUID {
+		m.SetUser(u)
+	} else if u = c.User(); u.HasUID() || c.UserUID == "" {
+		m.SetUser(u)
+	} else {
+		m.user = nil
+		m.UserUID = c.UserUID
+		m.UserName = c.UserName
+	}
 
 	return m
 }
@@ -385,8 +438,8 @@ func (m *Session) GetClient() *Client {
 	// Get client ID.
 	uid := m.ClientUID
 
-	if c := FindClientByUID(uid); c != nil {
-		m.SetClient(c)
+	if c, err := CachedClientByUID(uid); err == nil {
+		m.setClient(&c, true)
 		return m.client
 	}
 
@@ -463,9 +516,9 @@ func (m *Session) IsApplication() bool {
 }
 
 // clientRole resolves the client role for this session. When resolve is true it
-// may perform a one-time lookup via FindClientByUID; callers that already
-// depend on GetClientRole must pass resolve=false to avoid the recursive loop
-// that previously caused stack overflows between GetClient() and GetClientRole().
+// may perform a one-time lookup via CachedClientByUID; callers that already
+// depend on GetClientRole must pass resolve=false to avoid a recursive loop
+// between GetClient() and GetClientRole().
 func (m *Session) clientRole(resolve bool) acl.Role {
 	if m == nil {
 		return acl.RoleNone
@@ -477,8 +530,8 @@ func (m *Session) clientRole(resolve bool) acl.Role {
 
 	if !resolve || m.ClientUID == "" {
 		// Skip lookup to avoid recursive loop.
-	} else if c := FindClientByUID(m.ClientUID); c != nil {
-		m.SetClient(c)
+	} else if c, err := CachedClientByUID(m.ClientUID); err == nil {
+		m.setClient(&c, true)
 		return c.AclRole()
 	}
 
@@ -498,13 +551,15 @@ func (m *Session) clientRole(resolve bool) acl.Role {
 }
 
 // ClientDisabled reports whether the session belongs to a registered client that is missing, deleted, or
-// disabled, based on the stored client rather than the copy held by the session.
+// disabled, based on the cached client rather than the copy held by the session.
 func (m *Session) ClientDisabled() bool {
 	if m == nil || m.ClientUID == "" {
 		return false
 	}
 
-	return FindClientByUID(m.ClientUID).Disabled()
+	c, err := CachedClientByUID(m.ClientUID)
+
+	return err != nil || c.Disabled()
 }
 
 // GetUser returns the related user entity.
@@ -698,6 +753,33 @@ func (m *Session) ScopePermitsDownload() bool {
 	return m.ValidateScope(acl.ResourcePhotos, perms) || m.ValidateScope(acl.ResourceFiles, perms)
 }
 
+// ScopePermitsPreview checks if the scope includes viewing pictures or their files, the two resources
+// thumbnails and videos authorize against. The preview endpoints apply their own per-resource scope check.
+func (m *Session) ScopePermitsPreview() bool {
+	if m.NoScope() {
+		return true
+	}
+
+	perms := acl.Permissions{acl.ActionView}
+
+	return m.ValidateScope(acl.ResourcePhotos, perms) || m.ValidateScope(acl.ResourceFiles, perms)
+}
+
+// RolePermitsPreview checks if the client role of the session may view pictures or their files, as the
+// REST API requires. The preview endpoints apply their own per-resource role check.
+func (m *Session) RolePermitsPreview() bool {
+	role := m.GetClientRole()
+	perms := acl.Permissions{acl.ActionView}
+
+	return acl.Rules.AllowAny(acl.ResourcePhotos, role, perms) || acl.Rules.AllowAny(acl.ResourceFiles, role, perms)
+}
+
+// SignedPreview reports whether the session belongs to a registered client without an account and has a
+// valid ID, so it receives signed preview tokens instead of a stored one.
+func (m *Session) SignedPreview() bool {
+	return m.HasClient() && m.NoUser() && m.IsClient() && rnd.IsSessionID(m.ID)
+}
+
 // SetScope sets a custom authentication scope.
 func (m *Session) SetScope(scope string) *Session {
 	if scope == "" {
@@ -743,7 +825,8 @@ func (m *Session) ChangePassword(newPw string) (err error) {
 	return nil
 }
 
-// SetPreviewToken updates the preview token if not empty.
+// SetPreviewToken updates the preview token if not empty, or generates one if the session has none and
+// does not receive signed preview tokens.
 func (m *Session) SetPreviewToken(token string) *Session {
 	if m.ID == "" {
 		return m
@@ -752,7 +835,7 @@ func (m *Session) SetPreviewToken(token string) *Session {
 	if token != "" {
 		m.PreviewToken = token
 		PreviewToken.Set(m.ID, token)
-	} else if m.PreviewToken == "" {
+	} else if m.PreviewToken == "" && !m.SignedPreview() {
 		m.PreviewToken = GenerateToken()
 		PreviewToken.Set(m.ID, m.PreviewToken)
 	}

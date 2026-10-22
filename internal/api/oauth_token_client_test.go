@@ -263,12 +263,14 @@ func TestAuthorizeSession_ClientDisabled(t *testing.T) {
 	t.Run("Cached", func(t *testing.T) {
 		client, token := newToken(t)
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		entity.FlushClientCache()
 
 		assert.Equal(t, http.StatusUnauthorized, AuthenticatedRequest(app, http.MethodGet, "/api/v1/metrics-check", token).Code)
 	})
 	t.Run("Stored", func(t *testing.T) {
 		client, token := newToken(t)
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		entity.FlushClientCache()
 		entity.FlushSessionCache()
 
 		assert.Equal(t, http.StatusUnauthorized, AuthenticatedRequest(app, http.MethodGet, "/api/v1/metrics-check", token).Code)
@@ -276,6 +278,7 @@ func TestAuthorizeSession_ClientDisabled(t *testing.T) {
 	t.Run("Deleted", func(t *testing.T) {
 		client, token := newToken(t)
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", client.ClientUID).UpdateColumn("deleted_at", time.Now().UTC()).Error)
+		entity.FlushClientCache()
 
 		assert.Equal(t, http.StatusUnauthorized, AuthenticatedRequest(app, http.MethodGet, "/api/v1/metrics-check", token).Code)
 	})
@@ -289,16 +292,27 @@ func TestAuthorizeSession_ClientDisabled(t *testing.T) {
 func TestRevokeSession(t *testing.T) {
 	t.Run("Enabled", func(t *testing.T) {
 		_, sess := newOwnedClientSession(t, "*")
-		assert.NotNil(t, revokeSession(sess.AuthToken()))
+		found, err := revokeSession(sess.AuthToken())
+		assert.NoError(t, err)
+		assert.NotNil(t, found)
 	})
 	t.Run("ClientDisabled", func(t *testing.T) {
 		_, sess := newOwnedClientSession(t, "*")
-		require.NotNil(t, revokeSession(sess.AuthToken()))
+		found, err := revokeSession(sess.AuthToken())
+		require.NoError(t, err)
+		require.NotNil(t, found)
 		require.NoError(t, disableStoredClient(sess.ClientUID))
-		assert.Nil(t, revokeSession(sess.AuthToken()))
+		found, err = revokeSession(sess.AuthToken())
+		assert.NoError(t, err)
+		assert.Nil(t, found)
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
-		assert.Nil(t, revokeSession("invalid"))
+		found, err := revokeSession("invalid")
+		assert.NoError(t, err)
+		assert.Nil(t, found)
+		found, err = revokeSession(rnd.AuthToken())
+		assert.NoError(t, err)
+		assert.Nil(t, found)
 	})
 }
 

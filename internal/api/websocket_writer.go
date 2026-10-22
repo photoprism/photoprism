@@ -78,9 +78,8 @@ func wsRelease(connId string) {
 	delete(wsAuth.client, connId)
 }
 
-// wsSessionClient returns the client a session authenticates, using the same predicate the REST
-// handlers apply. It is read before the role, because resolving the role loads the client entity onto
-// the session and rewrites the provider the predicate reads.
+// wsSessionClient returns the client a session authenticates and its role, using the same predicate
+// the REST handlers apply.
 func wsSessionClient(s *entity.Session) wsClientRole {
 	if s == nil || !s.IsClient() {
 		return wsClientRole{}
@@ -158,7 +157,8 @@ func wsOutgoing(topic, sid string, user entity.User, client wsClientRole, fields
 
 // wsWriter initializes a WebSocket writer for sending messages.
 func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
-	pingTicker := time.NewTicker(15 * time.Second)
+	pingTicker := time.NewTicker(time.Duration(wsPingInterval.Load()))
+	sessionChecked := time.Now()
 
 	// Subscribe to events.
 	topics := append([]string(nil), WebsocketTopics...)
@@ -178,6 +178,16 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	for {
 		select {
 		case <-pingTicker.C:
+			// Close the connection once the session it authenticated with has ended.
+			if time.Since(sessionChecked) >= time.Duration(wsSessionCheckInterval.Load()) {
+				sessionChecked = time.Now()
+
+				if !wsSessionActive(connId) {
+					wsClose(ws, writeMutex, websocket.ClosePolicyViolation, "session ended")
+					return
+				}
+			}
+
 			writeMutex.Lock()
 
 			if err := ws.SetWriteDeadline(time.Now().Add(30 * time.Second)); err != nil {

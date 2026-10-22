@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -51,7 +52,12 @@ func IssueCode(spec CodeSpec) (string, error) {
 		return "", err
 	}
 
-	raw := rnd.AuthToken()
+	expires := time.Now().UTC().Add(CodeTTL).Truncate(time.Second)
+	raw, err := newCodeValue(expires)
+
+	if err != nil {
+		return "", err
+	}
 
 	m := &entity.AuthCode{
 		CodeHash:            HashSecret(raw),
@@ -64,10 +70,10 @@ func IssueCode(spec CodeSpec) (string, error) {
 		Resource:            spec.Resource,
 		CodeChallenge:       spec.CodeChallenge,
 		CodeChallengeMethod: spec.CodeChallengeMethod,
-		ExpiresAt:           time.Now().UTC().Add(CodeTTL),
+		ExpiresAt:           expires,
 	}
 
-	if err := m.Create(); err != nil {
+	if err = m.Create(); err != nil {
 		return "", err
 	}
 
@@ -75,10 +81,11 @@ func IssueCode(spec CodeSpec) (string, error) {
 }
 
 // RedeemCode consumes the authorization code and returns it if the client ID, redirect URI and code
-// verifier match the values it is bound to. A code is consumed by the first attempt, even if it fails.
+// verifier match the values it is bound to. A code is consumed by the first attempt, even if it fails,
+// and a code that fails VerifyCode is refused before it is looked up.
 func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, error) {
-	if raw == "" || len(raw) > 128 {
-		return nil, ErrInvalidGrant
+	if err := VerifyCode(raw); err != nil {
+		return nil, err
 	}
 
 	m, err := entity.FindAuthCode(HashSecret(raw), entity.AuthCodeCode)
@@ -109,6 +116,29 @@ func RedeemCode(raw, clientID, redirectURI, verifier string) (*entity.AuthCode, 
 	}
 
 	return m, nil
+}
+
+// VerifyCode returns ErrInvalidToken if the authorization code has an invalid shape or signature, and
+// ErrTokenExpired if its signed expiry has passed.
+func VerifyCode(raw string) error {
+	if raw == "" || len(raw) > 128 {
+		return ErrInvalidToken
+	} else if err := tokens.VerifyCode(raw); errors.Is(err, tokens.ErrExpiredValue) {
+		return ErrTokenExpired
+	} else if err != nil {
+		return ErrInvalidToken
+	}
+
+	return nil
+}
+
+// newCodeValue returns a new random authorization code value, signed with the expiry.
+func newCodeValue(expires time.Time) (string, error) {
+	if raw := tokens.SignCode(rnd.AuthToken(), expires); raw != "" {
+		return raw, nil
+	}
+
+	return "", ErrSigningKey
 }
 
 // PurgeExpired deletes expired authorization requests and codes.

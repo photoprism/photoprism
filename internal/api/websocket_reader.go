@@ -28,6 +28,7 @@ func wsClose(ws *websocket.Conn, writeMutex *sync.Mutex, code int, reason string
 
 // wsReader initializes a WebSocket reader for receiving messages.
 func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config, clientIp string) {
+	defer wsRelease(connId)
 	defer ws.Close()
 
 	ws.SetReadLimit(4096)

@@ -1,14 +1,17 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
@@ -51,9 +54,12 @@ func newOwnedClientSession(t *testing.T, scope string) (*entity.User, *entity.Se
 	return user, sess
 }
 
-// disableStoredClient sets the stored auth_enabled value of the client to false.
+// disableStoredClient sets the stored auth_enabled value of the client to false and flushes the client cache.
 func disableStoredClient(clientUID string) error {
-	return entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientUID).UpdateColumn("auth_enabled", false).Error
+	err := entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientUID).UpdateColumn("auth_enabled", false).Error
+	entity.FlushClientCache()
+
+	return err
 }
 
 // authStatus returns the HTTP status of an authorization check with the given token.
@@ -101,6 +107,22 @@ func TestAuthAny_UserBoundClient(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{}`, token)
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
+}
+
+func TestAuthAny_UserBoundClientOwnerGone(t *testing.T) {
+	_, _, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	user, sess := newOwnedClientSession(t, "metrics")
+	token := sess.AuthToken()
+	require.Equal(t, http.StatusOK, authStatus(token, acl.ResourceMetrics, acl.AccessAll))
+
+	// A client whose owner no longer exists is refused on every request.
+	require.NoError(t, entity.UnscopedDb().Unscoped().Delete(user).Error)
+	entity.FlushSessionCache()
+	assert.Equal(t, http.StatusForbidden, authStatus(token, acl.ResourceMetrics, acl.AccessAll))
+	assert.Equal(t, http.StatusForbidden, authStatus(token, acl.ResourceMetrics, acl.AccessAll))
 }
 
 func TestSessionReusable(t *testing.T) {
@@ -219,4 +241,93 @@ func TestAuthAny_UserBoundClientDeactivatedOwner(t *testing.T) {
 	assert.False(t, sessionReusable(sess))
 	assert.Equal(t, http.StatusUnauthorized, AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{}`, token).Code)
 	assert.Equal(t, http.StatusForbidden, PerformRequest(app, http.MethodGet, "/api/v1/photos/"+uid+"/dl?t="+downloadToken).Code)
+}
+
+// failOwnerReads makes the next n queries of the users table fail and returns the number of queries seen.
+func failOwnerReads(t *testing.T, n int32) *atomic.Int32 {
+	t.Helper()
+
+	var seen atomic.Int32
+	name := "test:fail_owner_reads_" + rnd.Base36(8)
+	require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (entity.User{}).TableName() && seen.Add(1) <= n {
+			_ = db.AddError(errors.New("owner lookup failed"))
+		}
+	}))
+	t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+	return &seen
+}
+
+// loadOwnedClientSession returns a client session with full access whose owner is limited to the photos scope,
+// loaded while the first read of the owner fails.
+func loadOwnedClientSession(t *testing.T, failReads int32) *entity.Session {
+	t.Helper()
+
+	user, sess := newOwnedClientSession(t, "*")
+	user.UserScope = "photos"
+	require.NoError(t, user.Save())
+	entity.FlushSessionCache()
+	entity.FlushClientCache()
+
+	seen := failOwnerReads(t, failReads)
+	s, err := entity.FindAnySession(sess.ID)
+	require.NoError(t, err)
+	require.Equal(t, int32(1), seen.Load())
+	require.Equal(t, "*", s.Scope())
+
+	return s
+}
+
+func TestAuthorizeSession_OwnerScopeBeforeScopeCheck(t *testing.T) {
+	_, _, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	t.Run("OwnerReadSucceeds", func(t *testing.T) {
+		s := loadOwnedClientSession(t, 1)
+		assert.Equal(t, http.StatusForbidden, authorizeSession("10.4.4.4", s, acl.ResourceMetrics, acl.Permissions{acl.AccessAll}).HttpStatus())
+	})
+	t.Run("OwnerReadFails", func(t *testing.T) {
+		// The read during authorization fails as well, and a later read would succeed.
+		s := loadOwnedClientSession(t, 2)
+		assert.Equal(t, http.StatusForbidden, authorizeSession("10.4.4.4", s, acl.ResourceMetrics, acl.Permissions{acl.AccessAll}).HttpStatus())
+	})
+	t.Run("NoOwner", func(t *testing.T) {
+		sess, err := entity.AddClientSession("owner-less-client", 3600, "metrics", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+		require.True(t, sess.NoUser())
+
+		seen := failOwnerReads(t, 0)
+		assert.True(t, authorizeSession("10.4.4.4", sess, acl.ResourceMetrics, acl.Permissions{acl.AccessAll}).Valid())
+		assert.Equal(t, int32(0), seen.Load())
+	})
+}
+
+func TestSessionReusable_OwnerScope(t *testing.T) {
+	_, _, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	t.Run("OwnerReadSucceeds", func(t *testing.T) {
+		s := loadOwnedClientSession(t, 1)
+		assert.False(t, sessionReusable(s))
+	})
+	t.Run("OwnerReadFails", func(t *testing.T) {
+		s := loadOwnedClientSession(t, 2)
+		assert.False(t, sessionReusable(s))
+	})
+	t.Run("AppPasswordOwnerReadFails", func(t *testing.T) {
+		sess, err := entity.AddClientSession("reuse-app-password", 3600, "*", authn.GrantPassword, entity.UserFixtures.Pointer("bob"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+		require.True(t, sess.IsApplication())
+		entity.FlushSessionCache()
+
+		failOwnerReads(t, 100)
+		s, err := entity.FindAnySession(sess.ID)
+		require.NoError(t, err)
+		assert.False(t, sessionReusable(s))
+	})
 }

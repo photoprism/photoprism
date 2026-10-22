@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -34,7 +35,7 @@ import (
 //	@Router			/api/v1/t/{thumb}/{token}/{size} [get]
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
-		if InvalidPreviewToken(c) {
+		if InvalidPreviewToken(c, acl.Resources{acl.ResourcePhotos, acl.ResourceFiles}) {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}

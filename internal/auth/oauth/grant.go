@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -17,6 +18,10 @@ const AccessTokenTTL = time.Hour
 // GrantMaxIdle is how long a grant remains valid without being used.
 const GrantMaxIdle = 90 * 24 * time.Hour
 
+// RefreshTokenTTL is the signed lifetime of a refresh token. It exceeds GrantMaxIdle, which is measured from
+// a later write, so the grant's idle limit applies first.
+const RefreshTokenTTL = GrantMaxIdle + time.Hour
+
 // ErrRefreshTokenReused is returned when a refresh token that has already been used is presented again.
 var ErrRefreshTokenReused = fmt.Errorf("%w: refresh token reused", ErrInvalidGrant)
 
@@ -27,15 +32,22 @@ func NewGrant(code *entity.AuthCode, user *entity.User, clientName string) (*ent
 		return nil, "", errors.New("oauth: invalid authorization code")
 	}
 
+	grantUID := rnd.GenerateUID(entity.GrantUID)
+	refreshToken, err := newRefreshToken(grantUID)
+
+	if err != nil {
+		return nil, "", err
+	}
+
 	// A user has at most one grant per app; approving it again replaces the previous one and its tokens.
 	if prev := entity.FindUserClientGrant(user.UserUID, code.ClientID); prev != nil {
-		if err := prev.Delete(); err != nil {
+		if err = prev.Delete(); err != nil {
 			return nil, "", err
 		}
 	}
 
 	m := &entity.Grant{
-		GrantUID:    rnd.GenerateUID(entity.GrantUID),
+		GrantUID:    grantUID,
 		UserUID:     user.UserUID,
 		UserName:    user.Username(),
 		ClientID:    code.ClientID,
@@ -45,10 +57,9 @@ func NewGrant(code *entity.AuthCode, user *entity.User, clientName string) (*ent
 		Resource:    code.Resource,
 	}
 
-	refreshToken := rnd.RefreshToken(m.GrantUID)
 	m.RefreshHash = HashSecret(refreshToken)
 
-	if err := m.Create(); err != nil {
+	if err = m.Create(); err != nil {
 		return nil, "", err
 	}
 
@@ -71,29 +82,39 @@ func NewAccessToken(grant *entity.Grant, user *entity.User, grantType authn.Gran
 	return sess
 }
 
-// FindRefreshGrant returns the grant a refresh token names, without verifying or consuming the token.
-func FindRefreshGrant(raw string) *entity.Grant {
-	grantUID, _, ok := rnd.ParseRefreshToken(raw, entity.GrantUID)
+// FindRefreshGrant returns the grant a signed refresh token names, without consuming the token. A token that
+// fails VerifyRefreshToken is refused before the grant is looked up, and an error reading the grant is returned
+// as is.
+func FindRefreshGrant(raw string) (*entity.Grant, error) {
+	grantUID, err := refreshGrantUID(raw)
 
-	if !ok {
-		return nil
+	if err != nil {
+		return nil, err
+	} else if m, findErr := entity.LookupGrant(grantUID); findErr != nil {
+		return nil, findErr
+	} else if m != nil {
+		return m, nil
 	}
 
-	return entity.FindGrant(grantUID)
+	return nil, ErrGrantNotFound
 }
 
-// RefreshGrant rotates the refresh token of a grant and returns the grant with the new raw refresh token.
-// A refresh token that does not match the current one revokes the grant, as does a concurrent rotation.
-func RefreshGrant(raw, clientID string) (*entity.Grant, string, error) {
-	grantUID, _, ok := rnd.ParseRefreshToken(raw, entity.GrantUID)
+// VerifyRefreshToken returns ErrInvalidToken if the refresh token has an invalid shape or signature, and
+// ErrTokenExpired if its signed expiry has passed.
+func VerifyRefreshToken(raw string) error {
+	_, err := refreshGrantUID(raw)
+	return err
+}
 
-	if !ok {
-		return nil, "", ErrInvalidGrant
-	}
-
-	m := entity.FindGrant(grantUID)
-
+// RefreshGrant rotates the refresh token of the grant found with FindRefreshGrant and returns the grant with
+// the new raw refresh token. A valid refresh token of the grant that does not match the current one revokes
+// the grant, as does a concurrent rotation.
+func RefreshGrant(m *entity.Grant, raw, clientID string) (*entity.Grant, string, error) {
 	if m == nil || clientID == "" || m.ClientID != clientID {
+		return nil, "", ErrInvalidGrant
+	} else if grantUID, err := refreshGrantUID(raw); err != nil {
+		return nil, "", err
+	} else if grantUID != m.GrantUID {
 		return nil, "", ErrInvalidGrant
 	}
 
@@ -131,10 +152,14 @@ func RefreshGrant(raw, clientID string) (*entity.Grant, string, error) {
 // rotateGrant replaces the refresh token of a grant whose current hash is the specified one and returns
 // the new raw token. If another request rotated it first, the grant is revoked as for a reused token.
 func rotateGrant(m *entity.Grant, hash string) (string, error) {
-	next := rnd.RefreshToken(m.GrantUID)
+	next, err := newRefreshToken(m.GrantUID)
 
-	if changed, err := m.Rotate(hash, HashSecret(next)); err != nil {
+	if err != nil {
 		return "", err
+	}
+
+	if changed, rotateErr := m.Rotate(hash, HashSecret(next)); rotateErr != nil {
+		return "", rotateErr
 	} else if !changed {
 		if err = m.Delete(); err != nil {
 			return "", err
@@ -147,17 +172,14 @@ func rotateGrant(m *entity.Grant, hash string) (string, error) {
 }
 
 // RevokeRefreshToken deletes the grant of a refresh token and its access tokens if the token is current and,
-// if a client ID is specified, belongs to this client, and returns the revoked grant.
+// if a client ID is specified, belongs to this client, and returns the revoked grant. It returns the error of
+// FindRefreshGrant for a token that names no grant, and neither a grant nor an error for one that is not current.
 func RevokeRefreshToken(raw, clientID string) (*entity.Grant, error) {
-	grantUID, _, ok := rnd.ParseRefreshToken(raw, entity.GrantUID)
+	m, err := FindRefreshGrant(raw)
 
-	if !ok {
-		return nil, nil
-	}
-
-	m := entity.FindGrant(grantUID)
-
-	if m == nil || clientID != "" && clientID != m.ClientID || subtle.ConstantTimeCompare([]byte(HashSecret(raw)), []byte(m.RefreshHash)) != 1 {
+	if err != nil {
+		return nil, err
+	} else if clientID != "" && clientID != m.ClientID || subtle.ConstantTimeCompare([]byte(HashSecret(raw)), []byte(m.RefreshHash)) != 1 {
 		return nil, nil
 	}
 
@@ -166,6 +188,35 @@ func RevokeRefreshToken(raw, clientID string) (*entity.Grant, error) {
 	}
 
 	return m, nil
+}
+
+// newRefreshToken returns a new refresh token for the grant, signed with an expiry RefreshTokenTTL from now.
+func newRefreshToken(grantUID string) (string, error) {
+	if raw := tokens.SignRefresh(rnd.RefreshToken(grantUID), time.Now().UTC().Add(RefreshTokenTTL)); raw != "" {
+		return raw, nil
+	}
+
+	return "", ErrSigningKey
+}
+
+// refreshGrantUID returns the grant UID of a signed refresh token. It returns ErrInvalidToken if the token or
+// its signature is invalid, and ErrTokenExpired, naming the grant, if its signed expiry has passed.
+func refreshGrantUID(raw string) (string, error) {
+	value, err := tokens.VerifyRefresh(raw)
+
+	if err != nil && !errors.Is(err, tokens.ErrExpiredValue) {
+		return "", ErrInvalidToken
+	}
+
+	grantUID, _, ok := rnd.ParseRefreshToken(value, entity.GrantUID)
+
+	if !ok {
+		return "", ErrInvalidToken
+	} else if err != nil {
+		return "", fmt.Errorf("%w, grant %s", ErrTokenExpired, grantUID)
+	}
+
+	return grantUID, nil
 }
 
 // PurgeIdleGrants deletes grants that have not been used for GrantMaxIdle.

@@ -762,12 +762,22 @@ func (c *Config) ClientRole(role acl.Role) *ClientConfig {
 	return c.ClientUser(true).ApplyACL(acl.Rules, role)
 }
 
+// ClientOAuth provides the client config values for a session of an OAuth2 client without an account,
+// which loads previews from the API rather than a CDN. ClientSession assigns its tokens.
+func (c *Config) ClientOAuth(sess *entity.Session) *ClientConfig {
+	cfg := c.ClientUser(false).ApplyACL(acl.Rules, sess.GetClientRole())
+	cfg.Settings = c.SessionSettings(sess)
+	cfg.ContentUri = c.ApiUri()
+	cfg.VideoUri = c.ApiUri()
+
+	return cfg
+}
+
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 	switch {
 	case sess.NoUser() && sess.IsClient():
-		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetClientRole())
-		cfg.Settings = c.SessionSettings(sess)
+		cfg = c.ClientOAuth(sess)
 	case sess.GetUser().IsVisitor():
 		cfg = c.ClientShare()
 	case sess.GetUser().IsRegistered():
@@ -781,6 +791,20 @@ func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 	case c.Public():
 		cfg.PreviewToken = entity.TokenPublic
 		cfg.DownloadToken = entity.TokenPublic
+	case sess.SignedPreview():
+		// A client session without an account receives a signed preview token bound to the session, and
+		// none if its scope or role does not cover previews.
+		cfg.PreviewToken = ""
+
+		if sess.ScopePermitsPreview() && sess.RolePermitsPreview() {
+			cfg.PreviewToken = tokens.PreviewToken(sess.ID, sess.ExpiresAt())
+		}
+
+		cfg.DownloadToken = ""
+
+		if sess.ScopePermitsDownload() {
+			cfg.DownloadToken = tokens.DownloadToken(sess.ID)
+		}
 	case sess.PreviewToken != "":
 		cfg.PreviewToken = sess.PreviewToken
 

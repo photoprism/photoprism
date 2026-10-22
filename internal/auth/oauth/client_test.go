@@ -67,6 +67,28 @@ func TestFindClient(t *testing.T) {
 		_, err := FindClient(conf, m.ClientUID)
 		assert.ErrorIs(t, err, ErrInvalidClient)
 	})
+	t.Run("Cached", func(t *testing.T) {
+		m := newTestAppClient(t, "mcp", "https://claude.ai/cb")
+		_, err := FindClient(conf, m.ClientUID)
+		require.NoError(t, err)
+
+		// A change that bypasses the entity methods is not seen until the cache is flushed.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", m.ClientUID).UpdateColumn("auth_enabled", false).Error)
+		_, err = FindClient(conf, m.ClientUID)
+		assert.NoError(t, err)
+		entity.FlushClientCache()
+		_, err = FindClient(conf, m.ClientUID)
+		assert.ErrorIs(t, err, ErrInvalidClient)
+	})
+	t.Run("DisabledAfterRead", func(t *testing.T) {
+		m := newTestAppClient(t, "mcp", "https://claude.ai/cb")
+		_, err := FindClient(conf, m.ClientUID)
+		require.NoError(t, err)
+		m.AuthEnabled = false
+		require.NoError(t, m.Save())
+		_, err = FindClient(conf, m.ClientUID)
+		assert.ErrorIs(t, err, ErrInvalidClient)
+	})
 	t.Run("FlowDisabled", func(t *testing.T) {
 		conf.Options().OAuthApps = config.OAuthAppsNone
 		_, err := FindClient(conf, app.ClientUID)

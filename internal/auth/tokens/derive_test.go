@@ -12,6 +12,9 @@ func TestDerive(t *testing.T) {
 	key[0] = 0x42
 	other := make([]byte, KeyLen)
 	other[0] = 0x43
+	t.Run("ReservedPurpose", func(t *testing.T) {
+		assert.Equal(t, "", Derive(key, "value:"+PurposeCode))
+	})
 	t.Run("Stable", func(t *testing.T) {
 		// Must not change between calls or restarts, or every cached preview URL would break.
 		assert.Equal(t, Derive(key, PurposePreview), Derive(key, PurposePreview))
