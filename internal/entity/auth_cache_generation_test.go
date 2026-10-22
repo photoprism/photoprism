@@ -151,3 +151,34 @@ func TestFindSessionGeneration(t *testing.T) {
 	_, found = sessionCache.Get(sess.ID)
 	assert.True(t, found)
 }
+
+func TestAuthCacheGeneration_SessionDeleted(t *testing.T) {
+	id := rnd.SessionID(rnd.AuthToken())
+	before := CurrentAuthCacheGeneration()
+	invalidateSessionCache(id)
+	after := CurrentAuthCacheGeneration()
+
+	authCacheState.Lock()
+	defer authCacheState.Unlock()
+
+	assert.True(t, before.sessionDeleted(id))
+	assert.False(t, after.sessionDeleted(id))
+	assert.False(t, before.sessionDeleted(rnd.SessionID(rnd.AuthToken())))
+}
+
+func TestCacheSession_StaleGeneration(t *testing.T) {
+	// A lookup older than the tombstone lifetime may have missed a pruned tombstone, so it is not cached.
+	stale := CurrentAuthCacheGeneration()
+	stale.at = time.Now().Add(-2 * sessionTombstoneTTL)
+	m := &Session{ID: rnd.SessionID(rnd.AuthToken()), cacheGeneration: &stale}
+	CacheSession(m, time.Hour)
+	_, cached := sessionCache.Get(m.ID)
+	assert.False(t, cached)
+
+	fresh := CurrentAuthCacheGeneration()
+	m.cacheGeneration = &fresh
+	CacheSession(m, time.Hour)
+	_, cached = sessionCache.Get(m.ID)
+	assert.True(t, cached)
+	DeleteFromSessionCache(m.ID)
+}

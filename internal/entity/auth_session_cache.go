@@ -150,7 +150,7 @@ func CacheSession(s *Session, d time.Duration) {
 		if s.user != nil {
 			return
 		}
-		s.cacheGeneration = &AuthCacheGeneration{version: authCacheState.version}
+		s.cacheGeneration = &AuthCacheGeneration{version: authCacheState.version, at: time.Now()}
 	}
 	if !s.cacheGeneration.valid(s.UserUID) || s.cacheGeneration.sessionDeleted(s.ID) {
 		return

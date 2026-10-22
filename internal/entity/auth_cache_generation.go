@@ -8,6 +8,7 @@ import (
 // AuthCacheGeneration identifies the account-cache state before an authentication lookup.
 type AuthCacheGeneration struct {
 	version uint64
+	at      time.Time
 }
 
 // sessionTombstoneTTL is how long a deleted session ID is remembered, much longer than a session lookup takes.
@@ -34,7 +35,7 @@ func CurrentAuthCacheGeneration() AuthCacheGeneration {
 	authCacheState.Lock()
 	defer authCacheState.Unlock()
 
-	return AuthCacheGeneration{version: authCacheState.version}
+	return AuthCacheGeneration{version: authCacheState.version, at: time.Now()}
 }
 
 // valid reports whether the account has remained unchanged while authCacheState is locked.
@@ -43,8 +44,13 @@ func (g AuthCacheGeneration) valid(userUID string) bool {
 }
 
 // sessionDeleted reports whether the session was deleted after the generation was captured, while
-// authCacheState is locked.
+// authCacheState is locked. A generation older than sessionTombstoneTTL counts as deleted, since the
+// tombstone it would be checked against may already be pruned.
 func (g AuthCacheGeneration) sessionDeleted(sessionID string) bool {
+	if time.Since(g.at) > sessionTombstoneTTL {
+		return true
+	}
+
 	t, ok := authCacheState.deleted[sessionID]
 	return ok && g.version < t.version
 }

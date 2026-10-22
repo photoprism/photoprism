@@ -435,17 +435,3 @@ func TestInvalidateSessionCache_Prune(t *testing.T) {
 	assert.False(t, staleFound)
 	assert.True(t, found)
 }
-
-func TestAuthCacheGeneration_SessionDeleted(t *testing.T) {
-	id := rnd.SessionID(rnd.AuthToken())
-	before := CurrentAuthCacheGeneration()
-	invalidateSessionCache(id)
-	after := CurrentAuthCacheGeneration()
-
-	authCacheState.Lock()
-	defer authCacheState.Unlock()
-
-	assert.True(t, before.sessionDeleted(id))
-	assert.False(t, after.sessionDeleted(id))
-	assert.False(t, before.sessionDeleted(rnd.SessionID(rnd.AuthToken())))
-}
