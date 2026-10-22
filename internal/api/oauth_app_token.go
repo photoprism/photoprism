@@ -301,8 +301,7 @@ func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.Use
 	})
 }
 
-// oauthAbortRateLimited aborts a token request from an address over a limit. The refusal is audited at debug
-// level only, so a flood of refused requests is not recorded by default.
+// oauthAbortRateLimited aborts a token request from an address over a limit and audits the refusal at debug level.
 func oauthAbortRateLimited(c *gin.Context, action string) {
 	event.AuditDebug([]string{ClientIP(c), "oauth2", "%s", status.RateLimited}, action)
 	limiter.AbortJSON(c)
