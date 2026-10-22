@@ -157,7 +157,8 @@ func wsOutgoing(topic, sid string, user entity.User, client wsClientRole, fields
 
 // wsWriter initializes a WebSocket writer for sending messages.
 func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
-	pingTicker := time.NewTicker(15 * time.Second)
+	pingTicker := time.NewTicker(time.Duration(wsPingInterval.Load()))
+	sessionChecked := time.Now()
 
 	// Subscribe to events.
 	topics := append([]string(nil), WebsocketTopics...)
@@ -177,6 +178,16 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 	for {
 		select {
 		case <-pingTicker.C:
+			// Close the connection once the session it authenticated with has ended.
+			if time.Since(sessionChecked) >= time.Duration(wsSessionCheckInterval.Load()) {
+				sessionChecked = time.Now()
+
+				if !wsSessionActive(connId) {
+					wsClose(ws, writeMutex, websocket.ClosePolicyViolation, "session ended")
+					return
+				}
+			}
+
 			writeMutex.Lock()
 
 			if err := ws.SetWriteDeadline(time.Now().Add(30 * time.Second)); err != nil {

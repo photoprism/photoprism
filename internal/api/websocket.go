@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -13,6 +14,21 @@ import (
 
 // wsTimeout specifies the timeout duration for WebSocket connections.
 var wsTimeout = 90 * time.Second
+
+// wsPingInterval specifies how often a ping is sent to an open WebSocket connection, in nanoseconds.
+var wsPingInterval = wsDuration(15 * time.Second)
+
+// wsSessionCheckInterval specifies the minimum time between two session checks of an open connection, in
+// nanoseconds; the check runs with the next ping after it has passed.
+var wsSessionCheckInterval = wsDuration(time.Minute)
+
+// wsDuration returns a duration that can be read and changed while connections are open.
+func wsDuration(d time.Duration) *atomic.Int64 {
+	v := &atomic.Int64{}
+	v.Store(int64(d))
+
+	return v
+}
 
 // wsSubPerm specifies the permissions required to subscribe to a channel.
 var wsSubscribePerms = acl.Permissions{acl.ActionSubscribe}
