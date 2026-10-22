@@ -269,6 +269,10 @@ func OAuthRevoke(router *gin.RouterGroup) {
 
 		// Check revocation request and abort if invalid.
 		switch {
+		case err != nil && !entity.SessionNotFound(err):
+			event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+			AbortUnexpectedError(c)
+			return
 		case err != nil:
 			charge()
 			event.AuditErr([]string{clientIp, "oauth2", "%s", action, "delete %s as %s", status.Error(err)}, actor, clean.Log(sess.RefID), role.String())

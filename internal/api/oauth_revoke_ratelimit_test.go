@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -12,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"golang.org/x/time/rate"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -529,6 +531,19 @@ func TestOAuthRevoke_Answers(t *testing.T) {
 	})
 	t.Run("UnsupportedHint", func(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, post(url.Values{"token": {rnd.AuthToken()}, "token_type_hint": {"id_token"}}, ""))
+	})
+	t.Run("SessionReadError", func(t *testing.T) {
+		name := "test:fail_session_reads_" + rnd.Base36(8)
+		require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (entity.Session{}).TableName() {
+				_ = db.AddError(errors.New("session lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+		// A token that cannot be looked up is a server error, not an invalid token.
+		assert.Equal(t, http.StatusInternalServerError, post(url.Values{"token": {rnd.AuthToken()}, "token_type_hint": {"access_token"}}, ""))
+		assert.InDelta(t, 3, limiter.Auth.IP(header.UnknownIP).Tokens(), 0.01)
 	})
 	t.Run("OtherUsersSession", func(t *testing.T) {
 		alice := entity.FindUserByName("alice")
