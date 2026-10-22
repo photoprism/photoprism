@@ -226,8 +226,8 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 		oauthAbortRateLimited(c, action)
 		return nil, false
 	case err != nil:
-		// A registered client ID that resolves to no app client counts towards limiter.Authorize, and only a
-		// counted refusal logs the client ID.
+		// A registered client ID that resolves to no app client counts towards limiter.Authorize and is logged;
+		// the submitted URL of a metadata client is logged at debug level only.
 		if registered {
 			limiter.Authorize.Reserve(clientIp)
 			event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)

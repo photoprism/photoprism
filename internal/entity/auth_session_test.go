@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -165,6 +167,36 @@ func TestSessionStatusTooManyRequests(t *testing.T) {
 	m := SessionStatusTooManyRequests()
 	assert.Equal(t, http.StatusTooManyRequests, m.Status)
 	assert.IsType(t, &Session{}, m)
+}
+
+func TestLookupSessionByRefID(t *testing.T) {
+	t.Run("Found", func(t *testing.T) {
+		m, err := LookupSessionByRefID("sessxkkcabcd")
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		assert.Equal(t, "sessxkkcabcd", m.RefID)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		m, err := LookupSessionByRefID(rnd.RefID("sess"))
+		assert.NoError(t, err)
+		assert.Nil(t, m)
+		m, err = LookupSessionByRefID("")
+		assert.NoError(t, err)
+		assert.Nil(t, m)
+	})
+	t.Run("ReadError", func(t *testing.T) {
+		name := "test:fail_ref_id_reads_" + rnd.Base36(8)
+		require.NoError(t, Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (Session{}).TableName() {
+				_ = db.AddError(errors.New("session lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = Db().Callback().Query().Remove(name) })
+		m, err := LookupSessionByRefID("sessxkkcabcd")
+		assert.Error(t, err)
+		assert.Nil(t, m)
+		assert.Nil(t, FindSessionByRefID("sessxkkcabcd"))
+	})
 }
 
 func TestFindSessionByRefID(t *testing.T) {

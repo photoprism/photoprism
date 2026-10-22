@@ -185,6 +185,11 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		if frm.TokenTypeHint == form.RefreshToken {
 			// Refuse an address over the authorization failure limit before the grant of a valid token is looked up.
 			if oauth.VerifyRefreshToken(frm.Token) == nil && limiter.Authorize.Reject(clientIp) {
+				// A header token that resolved to no session counts as a failed credential.
+				if rnd.IsAuthAny(authToken) {
+					charge()
+				}
+
 				event.AuditDebug([]string{clientIp, "oauth2", "%s", "%s", status.RateLimited}, actor, action)
 				limiter.AbortJSON(c)
 				return
@@ -226,7 +231,11 @@ func OAuthRevoke(router *gin.RouterGroup) {
 				event.AuditWarn([]string{clientIp, "oauth2", "%s", action, "ref id requires a session", status.Denied}, actor)
 				c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 				return
-			} else if sess = entity.FindSessionByRefID(frm.Token); sess == nil {
+			} else if sess, err = entity.LookupSessionByRefID(frm.Token); err != nil {
+				event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+				AbortUnexpectedError(c)
+				return
+			} else if sess == nil {
 				charge()
 				event.AuditWarn([]string{clientIp, "oauth2", "%s", action, "ref id not found", status.Denied}, actor)
 				invalidToken()

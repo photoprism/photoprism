@@ -26,6 +26,7 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -1260,4 +1261,40 @@ func TestOAuthAppRefresh_RefusedBeforeGrantLookup(t *testing.T) {
 		assert.Equal(t, int64(1), queries.Load())
 		assert.InDelta(t, 3, limiter.Auth.IP(ip).Tokens(), 0.01)
 	})
+}
+
+func TestOAuthAbortRateLimited(t *testing.T) {
+	hook := captureAuditLog(t)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+
+	oauthAbortRateLimited(c, "refresh token")
+
+	assert.Equal(t, http.StatusTooManyRequests, w.Code)
+	assert.True(t, c.IsAborted())
+	require.Len(t, hook.AllEntries(), 1)
+	assert.Equal(t, logrus.DebugLevel, hook.LastEntry().Level)
+	assert.Contains(t, hook.LastEntry().Message, status.RateLimited)
+}
+
+func TestOAuthAppRefresh_InvalidValueOverBudget(t *testing.T) {
+	app, _, conf, _ := prepareAppTokenTest(t)
+	stubAppMetadata(t)
+	conf.Options().OAuthApps = config.OAuthAppsAny
+	installAuthorizeBudget(t, 3)
+	ip := appTokenTestClientIP()
+
+	for !limiter.Authorize.Reject(ip) {
+		limiter.Authorize.Reserve(ip)
+	}
+
+	// An invalid or expired refresh token of a client metadata URL is refused as such, also over the budget.
+	expired := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(-time.Minute))
+
+	for _, value := range []string{"x", expired} {
+		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(testMetadataClientID, value), "", "")
+		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+		assert.Equal(t, oauth.ErrCodeInvalidGrant, gjson.Get(r.Body.String(), "error").String())
+	}
 }

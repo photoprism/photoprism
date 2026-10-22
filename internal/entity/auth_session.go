@@ -175,21 +175,29 @@ func SessionStatusTooManyRequests() *Session {
 
 // FindSessionByRefID finds an existing session by ref ID.
 func FindSessionByRefID(refId string) *Session {
+	m, _ := LookupSessionByRefID(refId)
+	return m
+}
+
+// LookupSessionByRefID returns the session with the specified reference ID. It returns neither a session nor
+// an error if there is no such session, and the error if the session cannot be read.
+func LookupSessionByRefID(refId string) (*Session, error) {
 	if !rnd.IsRefID(refId) {
-		return nil
+		return nil, nil
 	}
 
 	generation := CurrentAuthCacheGeneration()
 	m := &Session{cacheGeneration: &generation}
 
-	// Build query.
-	if err := UnscopedDb().Where("ref_id = ?", refId).First(m).Error; err != nil {
-		return nil
+	if err := UnscopedDb().Where("ref_id = ?", refId).First(m).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
 	}
 
 	m.stored = true
 
-	return m
+	return m, nil
 }
 
 // AuthToken returns the session's bearer token. Stored sessions read this value from

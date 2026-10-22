@@ -9,17 +9,20 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 	"golang.org/x/time/rate"
 	"gorm.io/gorm"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -545,6 +548,24 @@ func TestOAuthRevoke_Answers(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, post(url.Values{"token": {rnd.AuthToken()}, "token_type_hint": {"access_token"}}, ""))
 		assert.InDelta(t, 3, limiter.Auth.IP(header.UnknownIP).Tokens(), 0.01)
 	})
+	t.Run("MissingTokenWithHeader", func(t *testing.T) {
+		assert.Equal(t, http.StatusBadRequest, post(url.Values{"token_type_hint": {"access_token"}, "client_id": {"x"}}, rnd.AuthToken()))
+	})
+	t.Run("RefIDReadError", func(t *testing.T) {
+		sess, err := entity.AddClientSession("revoke-answers-refid", conf.SessionMaxAge(), "*", authn.GrantSession, entity.FindUserByName("alice"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+		name := "test:fail_ref_id_reads_" + rnd.Base36(8)
+		require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (entity.Session{}).TableName() {
+				_ = db.AddError(errors.New("ref id lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+		// A reference id that cannot be looked up is a server error, not an unknown token.
+		assert.Equal(t, http.StatusInternalServerError, post(url.Values{"token": {rnd.RefID("sess")}, "token_type_hint": {"ref_id"}}, sess.AuthToken()))
+	})
 	t.Run("OtherUsersSession", func(t *testing.T) {
 		alice := entity.FindUserByName("alice")
 		bob := entity.FindUserByName("bob")
@@ -560,4 +581,48 @@ func TestOAuthRevoke_Answers(t *testing.T) {
 		_, err = entity.FindAnySession(other.ID)
 		assert.NoError(t, err)
 	})
+}
+
+func TestOAuthRevoke_RateLimitedRefreshToken(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	OAuthRevoke(router)
+	installAuthBudget(t, 3)
+	installAuthorizeBudget(t, 3)
+
+	for !limiter.Authorize.Reject(header.UnknownIP) {
+		limiter.Authorize.Reserve(header.UnknownIP)
+	}
+
+	hook := captureAuditLog(t)
+	gone := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(time.Hour))
+	req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/revoke", strings.NewReader(url.Values{"token": {gone}, "token_type_hint": {"refresh_token"}}.Encode()))
+	req.Header.Set(header.ContentType, header.ContentTypeForm)
+	req.Header.Set(header.XAuthToken, rnd.AuthToken())
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+
+	// The refusal over limiter.Authorize still counts the header token that resolved to no session, and is
+	// audited at debug level only.
+	assert.Equal(t, http.StatusTooManyRequests, w.Code)
+	assert.InDelta(t, 2, limiter.Auth.IP(header.UnknownIP).Tokens(), 0.01)
+
+	for _, e := range hook.AllEntries() {
+		if strings.Contains(e.Message, status.RateLimited) {
+			assert.Equal(t, logrus.DebugLevel, e.Level, e.Message)
+		}
+	}
+
+	// A request over limiter.Auth is refused first, also audited at debug level only.
+	for !limiter.Auth.Reject(header.UnknownIP) {
+		limiter.Auth.Reserve(header.UnknownIP)
+	}
+
+	hook.Reset()
+	w = httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusTooManyRequests, w.Code)
+	require.Len(t, hook.AllEntries(), 1)
+	assert.Equal(t, logrus.DebugLevel, hook.LastEntry().Level)
 }

@@ -16,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
@@ -1002,8 +1003,13 @@ func TestClusterNodesRegister_RateLimit(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	}
 
+	hook := captureAuditLog(t)
 	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":""}`)
 	assert.Equal(t, http.StatusTooManyRequests, r.Code)
+
+	// The refusal is audited at debug level only.
+	require.Len(t, hook.AllEntries(), 1)
+	assert.Equal(t, logrus.DebugLevel, hook.LastEntry().Level)
 }
 
 // TestBuildPortalLoginURL covers the browser-facing Portal login URL reported
