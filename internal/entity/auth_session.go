@@ -402,8 +402,10 @@ func (m *Session) setClient(c *Client, keepAuth bool) *Session {
 
 	m.AuthScope = c.Scope()
 
-	// Keep the owner of the client if its account cannot be read.
-	if u := c.User(); u.HasUID() || c.UserUID == "" {
+	// Keep an owner already resolved, and the owner's UID if its account cannot be read.
+	if u := m.user; u != nil && c.UserUID != "" && u.UserUID == c.UserUID {
+		m.SetUser(u)
+	} else if u = c.User(); u.HasUID() || c.UserUID == "" {
 		m.SetUser(u)
 	} else {
 		m.user = nil

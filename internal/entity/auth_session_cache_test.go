@@ -369,6 +369,32 @@ func TestSession_SetClientOwnerUnavailable(t *testing.T) {
 	assert.Nil(t, m.user)
 }
 
+func TestSession_SetClientKeepsResolvedOwner(t *testing.T) {
+	FlushClientCache()
+	fixture := ClientFixtures.Get("alice")
+	owner := FindUserByUID(fixture.UserUID)
+	require.NotNil(t, owner)
+	owner.UserScope = "photos"
+
+	m := &Session{ClientUID: fixture.ClientUID, AuthScope: "*"}
+	m.SetUser(owner)
+	require.Equal(t, "photos", m.Scope())
+
+	name := "test:fail_user_reads_" + rnd.Base36(8)
+	require.NoError(t, Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (User{}).TableName() {
+			_ = db.AddError(errors.New("user lookup failed"))
+		}
+	}))
+	t.Cleanup(func() { _ = Db().Callback().Query().Remove(name) })
+
+	// Assigning the client keeps the owner already resolved, and with it the owner's scope.
+	client := Client{ClientUID: fixture.ClientUID, UserUID: fixture.UserUID, UserName: fixture.UserName, AuthScope: "*"}
+	m.setClient(&client, true)
+	assert.Same(t, owner, m.user)
+	assert.Equal(t, "photos", m.Scope())
+}
+
 func TestSession_ResolveClient(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := &Session{ClientUID: ClientFixtures.Get("metrics").ClientUID}
