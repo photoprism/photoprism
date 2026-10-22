@@ -174,7 +174,6 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 
 	if !conf.OAuthAppsEnabled() {
 		if limiter.Authorize.Reject(clientIp) {
-			event.AuditWarn([]string{clientIp, "oauth2", "%s", status.RateLimited}, action)
 			oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
 		} else {
 			limiter.Authorize.Reserve(clientIp)
@@ -201,7 +200,6 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 	registered := !strings.HasPrefix(clientID, "https://")
 
 	if registered && limiter.Authorize.Reject(clientIp) {
-		event.AuditWarn([]string{clientIp, "oauth2", "%s", status.RateLimited}, action)
 		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
 		return nil, false
 	}
@@ -218,7 +216,6 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 
 	switch {
 	case errors.Is(err, oauth.ErrMetadataRateLimited):
-		event.AuditWarn([]string{clientIp, "oauth2", "%s", status.Error(err)}, action)
 		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
 		return nil, false
 	case err != nil:

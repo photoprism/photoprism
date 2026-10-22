@@ -1153,7 +1153,7 @@ func TestOAuthAppTokenClient_ConstantAuditMessages(t *testing.T) {
 			tokenRequest(app, codeTokenForm(rnd.GenerateUID(entity.ClientUID), rnd.AuthToken())))
 		assert.Equal(t, messages[0], messages[1])
 	})
-	t.Run("MetadataRateLimited", func(t *testing.T) {
+	t.Run("RateLimited", func(t *testing.T) {
 		app, _, conf, _ := prepareAppTokenTest(t)
 		stubAppMetadata(t)
 		conf.Options().OAuthApps = config.OAuthAppsAny
@@ -1161,11 +1161,15 @@ func TestOAuthAppTokenClient_ConstantAuditMessages(t *testing.T) {
 		for !limiter.Authorize.Reject(ip) {
 			limiter.Authorize.Reserve(ip)
 		}
+
+		// Requests refused over the limit write no audit entry.
+		hook := captureAuditLog(t)
 		code := tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))
-		messages := auditMessagesOf(t, app,
-			tokenRequest(app, codeTokenForm("https://claude.ai/oauth/audit-a.json", code)),
-			tokenRequest(app, codeTokenForm("https://claude.ai/oauth/audit-b.json", code)))
-		assert.Equal(t, messages[0], messages[1])
+		assert.Equal(t, http.StatusTooManyRequests, tokenRequest(app, codeTokenForm("https://claude.ai/oauth/audit-a.json", code))().Code)
+		assert.Equal(t, http.StatusTooManyRequests, tokenRequest(app, codeTokenForm(rnd.GenerateUID(entity.ClientUID), code))().Code)
+		conf.Options().OAuthApps = config.OAuthAppsNone
+		assert.Equal(t, http.StatusTooManyRequests, tokenRequest(app, codeTokenForm(rnd.GenerateUID(entity.ClientUID), code))().Code)
+		assert.Empty(t, hook.AllEntries())
 	})
 	t.Run("MetadataNotAllowed", func(t *testing.T) {
 		app, _, conf, _ := prepareAppTokenTest(t)
