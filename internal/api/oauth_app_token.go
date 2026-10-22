@@ -106,7 +106,7 @@ func OAuthAppRefresh(c *gin.Context) {
 
 	// Refuse an address over the authorization failure limit before the grant of a valid token is looked up.
 	if limiter.Authorize.Reject(clientIp) {
-		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		oauthAbortRateLimited(c, action)
 		return
 	}
 
@@ -181,7 +181,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 
 	if !conf.OAuthAppsEnabled() {
 		if limiter.Authorize.Reject(clientIp) {
-			oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+			oauthAbortRateLimited(c, action)
 		} else {
 			limiter.Authorize.Reserve(clientIp)
 			oauthTokenError(c, http.StatusBadRequest, "unsupported_grant_type", "grant_type is not supported")
@@ -207,7 +207,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 	registered := !strings.HasPrefix(clientID, "https://")
 
 	if registered && limiter.Authorize.Reject(clientIp) {
-		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		oauthAbortRateLimited(c, action)
 		return nil, false
 	}
 
@@ -223,7 +223,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 
 	switch {
 	case errors.Is(err, oauth.ErrMetadataRateLimited):
-		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		oauthAbortRateLimited(c, action)
 		return nil, false
 	case err != nil:
 		// A registered client ID that resolves to no app client counts towards limiter.Authorize, and only a
@@ -299,6 +299,13 @@ func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.Use
 		RefreshToken: refreshToken,
 		Scope:        grant.Scope,
 	})
+}
+
+// oauthAbortRateLimited aborts a token request from an address over a limit. The refusal is audited at debug
+// level only, so a flood of refused requests is not recorded by default.
+func oauthAbortRateLimited(c *gin.Context, action string) {
+	event.AuditDebug([]string{ClientIP(c), "oauth2", "%s", status.RateLimited}, action)
+	limiter.AbortJSON(c)
 }
 
 // oauthTokenError responds with a standard OAuth error (RFC 6749, section 5.2).

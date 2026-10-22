@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
@@ -1167,14 +1168,17 @@ func TestOAuthAppTokenClient_ConstantAuditMessages(t *testing.T) {
 			limiter.Authorize.Reserve(ip)
 		}
 
-		// Requests refused over the limit write no audit entry.
+		// Requests refused over the limit are audited at debug level only.
 		hook := captureAuditLog(t)
 		code := tokens.SignCode(rnd.AuthToken(), time.Now().Add(time.Minute))
 		assert.Equal(t, http.StatusTooManyRequests, tokenRequest(app, codeTokenForm("https://claude.ai/oauth/audit-a.json", code))().Code)
 		assert.Equal(t, http.StatusTooManyRequests, tokenRequest(app, codeTokenForm(rnd.GenerateUID(entity.ClientUID), code))().Code)
 		conf.Options().OAuthApps = config.OAuthAppsNone
 		assert.Equal(t, http.StatusTooManyRequests, tokenRequest(app, codeTokenForm(rnd.GenerateUID(entity.ClientUID), code))().Code)
-		assert.Empty(t, hook.AllEntries())
+		require.Len(t, hook.AllEntries(), 3)
+		for _, e := range hook.AllEntries() {
+			assert.Equal(t, logrus.DebugLevel, e.Level, e.Message)
+		}
 	})
 	t.Run("MetadataNotAllowed", func(t *testing.T) {
 		app, _, conf, _ := prepareAppTokenTest(t)

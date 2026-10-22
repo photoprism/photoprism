@@ -78,7 +78,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		// session lookup and the body are read. Reject only reads the budget; the charging
 		// rule is set up below.
 		if limiter.Auth.Reject(clientIp) {
-			event.AuditWarn([]string{clientIp, "oauth2", "%s", action, "rate limit exceeded", status.Denied}, actor)
+			event.AuditDebug([]string{clientIp, "oauth2", "%s", "%s", status.RateLimited}, actor, action)
 			limiter.AbortJSON(c)
 			return
 		}
@@ -167,6 +167,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		if frm.TokenTypeHint == form.RefreshToken {
 			// Refuse an address over the authorization failure limit before the grant of a valid token is looked up.
 			if oauth.VerifyRefreshToken(frm.Token) == nil && limiter.Authorize.Reject(clientIp) {
+				event.AuditDebug([]string{clientIp, "oauth2", "%s", "%s", status.RateLimited}, actor, action)
 				limiter.AbortJSON(c)
 				return
 			}

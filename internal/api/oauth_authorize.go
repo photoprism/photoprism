@@ -101,6 +101,7 @@ func OAuthAppAuthorize(c *gin.Context) {
 
 	switch {
 	case errors.Is(clientErr, oauth.ErrMetadataRateLimited):
+		event.AuditDebug([]string{clientIp, "oauth2", "%s", status.RateLimited}, action)
 		RenderOAuthError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
 		return
 	case clientErr != nil:
