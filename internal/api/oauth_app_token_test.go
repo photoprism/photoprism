@@ -1314,11 +1314,11 @@ func TestOAuthRevoke_RefusalAuditLevel(t *testing.T) {
 	r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
 	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 
-	// Refused refresh tokens are audited at debug level only.
 	hook := captureAuditLog(t)
 	expired := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(-time.Minute))
 
-	for _, value := range []string{rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), expired, refreshToken} {
+	// Refresh tokens that fail verification are audited at debug level only.
+	for _, value := range []string{rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), expired} {
 		hook.Reset()
 		w := postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {value}, "token_type_hint": {"refresh_token"}}, "", "")
 		assert.Equal(t, http.StatusOK, w.Code, w.Body.String())
@@ -1326,5 +1326,15 @@ func TestOAuthRevoke_RefusalAuditLevel(t *testing.T) {
 		for _, e := range hook.AllEntries() {
 			assert.Equal(t, logrus.DebugLevel, e.Level, e.Message)
 		}
+	}
+
+	// A valid refresh token that is no longer current is audited as a warning.
+	hook.Reset()
+	w := postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {refreshToken}, "token_type_hint": {"refresh_token"}}, "", "")
+	assert.Equal(t, http.StatusOK, w.Code, w.Body.String())
+
+	if e := hook.LastEntry(); assert.NotNil(t, e) {
+		assert.Equal(t, logrus.WarnLevel, e.Level, e.Message)
+		assert.Contains(t, e.Message, "refresh token not current")
 	}
 }

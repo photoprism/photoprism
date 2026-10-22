@@ -73,7 +73,13 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		// Optional IP-based allowance via ClusterCIDR.
 		if cidr := strings.TrimSpace(conf.ClusterCIDR()); cidr != "" {
 			if !clusterCIDRAllowsClientIP(cidr, clientIp) {
-				event.AuditDebug([]string{clientIp, string(acl.ResourceCluster), "register", "client ip outside cluster-cidr", status.Denied})
+				// A valid join token is audited as a warning, other requests at debug level.
+				if clusterJoinTokenValid(c, conf.JoinToken()) {
+					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "client ip outside cluster-cidr", status.Denied})
+				} else {
+					event.AuditDebug([]string{clientIp, string(acl.ResourceCluster), "register", "client ip outside cluster-cidr", status.Denied})
+				}
+
 				r.Success() // Return reserved tokens before aborting.
 				AbortUnauthorized(c)
 				return
@@ -161,13 +167,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		}
 
 		// Join token is only valid in Authorization Bearer format for first-time joins.
-		joinTokenValid := false
-		if expected := strings.TrimSpace(conf.JoinToken()); expected != "" {
-			if bearer := header.BearerToken(c); bearer != "" &&
-				subtle.ConstantTimeCompare([]byte(expected), []byte(bearer)) == 1 {
-				joinTokenValid = true
-			}
-		}
+		joinTokenValid := clusterJoinTokenValid(c, conf.JoinToken())
 
 		// Resolve existing node by requested name before selecting auth mode.
 		existingNode, _ := regy.FindByName(name)
@@ -803,6 +803,14 @@ func isClusterServiceHost(host string) bool {
 	}
 
 	return false
+}
+
+// clusterJoinTokenValid reports whether the request carries the configured join token as Bearer token.
+func clusterJoinTokenValid(c *gin.Context, joinToken string) bool {
+	expected := strings.TrimSpace(joinToken)
+	bearer := header.BearerToken(c)
+
+	return expected != "" && bearer != "" && subtle.ConstantTimeCompare([]byte(expected), []byte(bearer)) == 1
 }
 
 // clusterCIDRAllowsClientIP reports whether clientIP is within the configured cidr.

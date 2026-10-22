@@ -104,13 +104,23 @@ func TestClusterNodesRegister(t *testing.T) {
 		ClusterNodesRegister(router)
 
 		hook := captureAuditLog(t)
-		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-blocked"}`, cluster.ExampleJoinToken, "198.51.100.9")
+		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-blocked"}`, "invalid-join-token", "198.51.100.9")
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 
-		// The refusal is audited at debug level only.
+		// A refusal without a valid join token is audited at debug level only.
 		require.NotEmpty(t, hook.AllEntries())
 		for _, e := range hook.AllEntries() {
 			assert.Equal(t, logrus.DebugLevel, e.Level, e.Message)
+		}
+
+		// A valid join token from outside the range is audited as a warning.
+		hook.Reset()
+		r = AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-blocked"}`, cluster.ExampleJoinToken, "198.51.100.9")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+
+		if e := hook.LastEntry(); assert.NotNil(t, e) {
+			assert.Equal(t, logrus.WarnLevel, e.Level, e.Message)
+			assert.Contains(t, e.Message, "outside cluster-cidr")
 		}
 	})
 	t.Run("ClusterCIDRAllowsClientIPInRange", func(t *testing.T) {
@@ -1733,4 +1743,31 @@ func TestValidateSiteURL(t *testing.T) {
 			t.Fatalf("validateSiteURL(%q) = %v, want %v", c.u, got, c.ok)
 		}
 	}
+}
+
+func TestClusterJoinTokenValid(t *testing.T) {
+	newContext := func(token string) *gin.Context {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/cluster/nodes/register", nil)
+
+		if token != "" {
+			header.SetAuthorization(c.Request, token)
+		}
+
+		return c
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		assert.True(t, clusterJoinTokenValid(newContext(cluster.ExampleJoinToken), " "+cluster.ExampleJoinToken+" "))
+	})
+	t.Run("WrongToken", func(t *testing.T) {
+		assert.False(t, clusterJoinTokenValid(newContext("invalid-join-token"), cluster.ExampleJoinToken))
+	})
+	t.Run("MissingToken", func(t *testing.T) {
+		assert.False(t, clusterJoinTokenValid(newContext(""), cluster.ExampleJoinToken))
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		assert.False(t, clusterJoinTokenValid(newContext(cluster.ExampleJoinToken), ""))
+		assert.False(t, clusterJoinTokenValid(newContext(""), ""))
+	})
 }

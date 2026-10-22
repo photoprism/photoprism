@@ -216,13 +216,14 @@ func OAuthRevoke(router *gin.RouterGroup) {
 					charge()
 				}
 
-				// A refresh token whose grant is gone is logged as a warning, other refusals at debug level.
-				if errors.Is(revokeErr, oauth.ErrGrantNotFound) {
+				// A refresh token that fails verification is logged at debug level, other refusals as a warning.
+				switch {
+				case errors.Is(revokeErr, oauth.ErrGrantNotFound):
 					event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(revokeErr)}, actor, action)
-				} else if revokeErr != nil {
+				case revokeErr != nil:
 					event.AuditDebug([]string{clientIp, "oauth2", "%s", "%s", status.Error(revokeErr)}, actor, action)
-				} else {
-					event.AuditDebug([]string{clientIp, "oauth2", "%s", "%s", "refresh token not current", status.Denied}, actor, action)
+				default:
+					event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "refresh token not current or client mismatch", status.Denied}, actor, action)
 				}
 			default:
 				event.AuditInfo([]string{clientIp, "oauth2", "client %s", "user %s", "%s", "revoke grant %s", status.Deleted}, clean.Log(grant.ClientID), clean.Log(grant.UserName), action, clean.Log(grant.GrantUID))
