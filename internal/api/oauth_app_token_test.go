@@ -1130,7 +1130,8 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 	})
 }
 
-// auditMessagesOf returns the audit messages logged by each request, one per request.
+// auditMessagesOf returns the audit messages logged by each request, one per request, and checks that
+// requests refused without a charge are audited at debug level only.
 func auditMessagesOf(t *testing.T, app http.Handler, requests ...func() *httptest.ResponseRecorder) []string {
 	t.Helper()
 
@@ -1142,6 +1143,10 @@ func auditMessagesOf(t *testing.T, app http.Handler, requests ...func() *httptes
 		request()
 		require.NotEmpty(t, hook.AllEntries())
 		result = append(result, hook.LastEntry().Message)
+
+		for _, e := range hook.AllEntries() {
+			assert.Equal(t, logrus.DebugLevel, e.Level, e.Message)
+		}
 	}
 
 	return result
@@ -1296,5 +1301,30 @@ func TestOAuthAppRefresh_InvalidValueOverBudget(t *testing.T) {
 		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(testMetadataClientID, value), "", "")
 		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
 		assert.Equal(t, oauth.ErrCodeInvalidGrant, gjson.Get(r.Body.String(), "error").String())
+	}
+}
+
+func TestOAuthRevoke_UnchargedRefusalsAuditLevel(t *testing.T) {
+	app, router, conf, client := prepareAppTokenTest(t)
+	_, refreshToken := tokenPair(t, app, router, conf, client)
+	installAuthBudget(t, 3)
+	installAuthorizeBudget(t, 3)
+
+	// rotated returns a refresh token of the grant that is no longer current.
+	r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
+	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+
+	// Refresh tokens refused without a charge are audited at debug level only.
+	hook := captureAuditLog(t)
+	expired := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(-time.Minute))
+
+	for _, value := range []string{rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), expired, refreshToken} {
+		hook.Reset()
+		w := postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {value}, "token_type_hint": {"refresh_token"}}, "", "")
+		assert.Equal(t, http.StatusOK, w.Code, w.Body.String())
+
+		for _, e := range hook.AllEntries() {
+			assert.Equal(t, logrus.DebugLevel, e.Level, e.Message)
+		}
 	}
 }

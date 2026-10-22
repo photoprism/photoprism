@@ -196,7 +196,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 	// App clients are public and authenticate without a client secret.
 	if basic && (basicSecret != "" || clientID != "" && clientID != basicID) || c.PostForm("client_secret") != "" {
 		log.Debugf("oauth2: client %s sent a client secret (%s)", clean.Log(clientID), action)
-		event.AuditWarn([]string{clientIp, "oauth2", "%s", "client secret not supported", status.Denied}, action)
+		event.AuditDebug([]string{clientIp, "oauth2", "%s", "client secret not supported", status.Denied}, action)
 		oauthTokenError(c, http.StatusUnauthorized, oauth.ErrCodeInvalidClient, "invalid client")
 		return nil, false
 	} else if basic {
@@ -213,7 +213,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 
 	if verify != nil {
 		if err := verify(); err != nil {
-			event.AuditWarn([]string{clientIp, "oauth2", "%s", status.Error(err)}, action)
+			event.AuditDebug([]string{clientIp, "oauth2", "%s", status.Error(err)}, action)
 			oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid grant")
 			return nil, false
 		}
@@ -233,7 +233,7 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 			event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
 		} else {
 			log.Debugf("oauth2: client %s refused (%s)", clean.Log(clientID), action)
-			event.AuditWarn([]string{clientIp, "oauth2", "%s", status.Error(err)}, action)
+			event.AuditDebug([]string{clientIp, "oauth2", "%s", status.Error(err)}, action)
 		}
 
 		oauthTokenError(c, http.StatusUnauthorized, oauth.ErrCodeInvalidClient, "invalid client")
