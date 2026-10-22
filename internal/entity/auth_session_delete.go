@@ -36,7 +36,24 @@ func DeleteSession(s *Session) error {
 	// token is dropped while still in use.
 	PreviewToken.Unset(s.ID)
 
-	return UnscopedDb().Delete(s).Error
+	if err := UnscopedDb().Delete(s).Error; err != nil {
+		return err
+	}
+
+	invalidateSessionCache(s.ID)
+
+	return nil
+}
+
+// invalidateSessionCache removes a deleted session from the cache and advances the cache generation under
+// the lock CacheSession takes, so a lookup that read the session before it was deleted does not cache it.
+func invalidateSessionCache(id string) {
+	authCacheState.Lock()
+	defer authCacheState.Unlock()
+
+	authCacheState.version++
+	authCacheState.flushed = authCacheState.version
+	sessionCache.Delete(id)
 }
 
 // DeleteChildSessions deletes sessions that authenticated via the provided parent session ID.

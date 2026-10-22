@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -354,4 +355,45 @@ func TestClient_RevokeSessions(t *testing.T) {
 		assert.Equal(t, 0, (&Client{}).RevokeSessions(nil))
 		assert.Equal(t, 0, (*Client)(nil).RevokeSessions(nil))
 	})
+}
+
+func TestDeleteSession_ConcurrentLookup(t *testing.T) {
+	m := NewSession(3600, 0)
+	m.SetClientName("delete-concurrent-lookup")
+	require.NoError(t, m.Save())
+	t.Cleanup(func() { _ = m.Delete() })
+	DeleteFromSessionCache(m.ID)
+
+	// A lookup that read the row before the session was deleted publishes it afterwards.
+	generation := CurrentAuthCacheGeneration()
+	found := &Session{}
+	require.NoError(t, UnscopedDb().First(found, "id = ?", m.ID).Error)
+	found.cacheGeneration = &generation
+
+	require.NoError(t, m.Delete())
+	CacheSession(found, time.Hour)
+
+	_, cached := sessionCache.Get(m.ID)
+	assert.False(t, cached)
+	_, err := FindAnySession(m.ID)
+	assert.Error(t, err)
+}
+
+func TestInvalidateSessionCache(t *testing.T) {
+	id := rnd.SessionID(rnd.AuthToken())
+	generation := CurrentAuthCacheGeneration()
+	CacheSession(&Session{ID: id}, time.Hour)
+	_, cached := sessionCache.Get(id)
+	require.True(t, cached)
+
+	invalidateSessionCache(id)
+
+	_, cached = sessionCache.Get(id)
+	assert.False(t, cached)
+
+	// A session read before the invalidation is no longer cached.
+	CacheSession(&Session{ID: id, cacheGeneration: &generation}, time.Hour)
+	_, cached = sessionCache.Get(id)
+	assert.False(t, cached)
+	DeleteFromSessionCache(id)
 }
