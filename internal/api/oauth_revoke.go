@@ -173,7 +173,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 				AbortUnexpectedError(c)
 				return
 			case grant == nil:
-				oauthChargeInvalidToken(clientIp, revokeErr)
+				oauthChargeMissingGrant(clientIp, revokeErr)
 
 				// A header token that resolved to no session counts as a failed credential.
 				if rnd.IsAuthAny(authToken) {

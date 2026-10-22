@@ -158,7 +158,7 @@ func TestOAuthApp_MetadataClient(t *testing.T) {
 		r = postTokenForm(app, "/api/v1/oauth/token", refreshForm("https://claude.ai/oauth/client-y.json", "x"), "", "")
 		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
 		assert.Equal(t, 0, *calls)
-		assert.InDelta(t, 1, limiter.Authorize.IP(appTokenTestClientIP()).Tokens(), 0.01)
+		assert.InDelta(t, 3, limiter.Authorize.IP(appTokenTestClientIP()).Tokens(), 0.01)
 	})
 	t.Run("ConsentFetchRateLimited", func(t *testing.T) {
 		app, router, conf, _ := prepareAppTokenTest(t)

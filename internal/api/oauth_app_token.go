@@ -45,7 +45,6 @@ func OAuthAppToken(c *gin.Context) {
 	code, err := oauth.RedeemCode(c.PostForm("code"), client.ID, c.PostForm("redirect_uri"), c.PostForm("code_verifier"))
 
 	if err != nil {
-		oauthChargeInvalidToken(clientIp, err)
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid authorization code")
 		return
@@ -111,7 +110,7 @@ func OAuthAppRefresh(c *gin.Context) {
 		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to refresh token")
 		return
 	} else if err != nil {
-		oauthChargeInvalidToken(clientIp, err)
+		oauthChargeMissingGrant(clientIp, err)
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid refresh token")
 		return
@@ -208,7 +207,6 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 
 	if verify != nil {
 		if err := verify(); err != nil {
-			oauthChargeInvalidToken(clientIp, err)
 			event.AuditWarn([]string{clientIp, "oauth2", "client %s", "%s", status.Error(err)}, clean.Log(clientID), action)
 			oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "invalid grant")
 			return nil, false
@@ -236,10 +234,10 @@ func oauthAppTokenClient(c *gin.Context, action string, allowStale bool, verify 
 	return client, true
 }
 
-// oauthChargeInvalidToken counts a code or refresh token towards limiter.Authorize if it fails verification
-// or names no grant. It takes a token only while one is available, so the budget refills once requests stop.
-func oauthChargeInvalidToken(clientIp string, err error) {
-	if errors.Is(err, oauth.ErrInvalidToken) || errors.Is(err, oauth.ErrTokenExpired) || errors.Is(err, oauth.ErrGrantNotFound) {
+// oauthChargeMissingGrant counts a valid refresh token whose grant does not exist towards limiter.Authorize.
+// It takes a token only while one is available, so the budget refills once requests stop.
+func oauthChargeMissingGrant(clientIp string, err error) {
+	if errors.Is(err, oauth.ErrGrantNotFound) {
 		limiter.Authorize.Allow(clientIp)
 	}
 }
