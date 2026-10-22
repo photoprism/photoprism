@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/gorm/clause"
 
@@ -45,15 +46,27 @@ func DeleteSession(s *Session) error {
 	return nil
 }
 
-// invalidateSessionCache removes a deleted session from the cache and advances the cache generation under
-// the lock CacheSession takes, so a lookup that read the session before it was deleted does not cache it.
+// invalidateSessionCache removes a deleted session from the cache and records its ID with a new cache version
+// under the lock CacheSession takes, so a lookup that read the session before it was deleted does not cache it.
 func invalidateSessionCache(id string) {
 	authCacheState.Lock()
 	defer authCacheState.Unlock()
 
+	now := time.Now()
 	authCacheState.version++
-	authCacheState.flushed = authCacheState.version
+	authCacheState.deleted[id] = sessionTombstone{version: authCacheState.version, at: now}
 	sessionCache.Delete(id)
+
+	// Forget deleted IDs no lookup in progress can still have read.
+	if now.Sub(authCacheState.pruned) > sessionTombstoneTTL {
+		for k, t := range authCacheState.deleted {
+			if now.Sub(t.at) > sessionTombstoneTTL {
+				delete(authCacheState.deleted, k)
+			}
+		}
+
+		authCacheState.pruned = now
+	}
 }
 
 // DeleteChildSessions deletes sessions that authenticated via the provided parent session ID.

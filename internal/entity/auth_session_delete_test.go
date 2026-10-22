@@ -397,3 +397,55 @@ func TestInvalidateSessionCache(t *testing.T) {
 	assert.False(t, cached)
 	DeleteFromSessionCache(id)
 }
+
+func TestInvalidateSessionCache_OtherEntries(t *testing.T) {
+	// Deleting a session does not prevent other lookups that started before it from caching their results.
+	generation := CurrentAuthCacheGeneration()
+	invalidateSessionCache(rnd.SessionID(rnd.AuthToken()))
+
+	other := &Session{ID: rnd.SessionID(rnd.AuthToken()), cacheGeneration: &generation}
+	CacheSession(other, time.Hour)
+	_, cached := sessionCache.Get(other.ID)
+	assert.True(t, cached)
+	DeleteFromSessionCache(other.ID)
+
+	key := "test-webdav-" + rnd.Base36(8)
+	CacheWebDAVUser(key, &User{UserUID: rnd.GenerateUID(UserUID)}, generation)
+	_, cached = webDAVUserCache.Get(key)
+	assert.True(t, cached)
+	webDAVUserCache.Delete(key)
+}
+
+func TestInvalidateSessionCache_Prune(t *testing.T) {
+	stale := rnd.SessionID(rnd.AuthToken())
+
+	authCacheState.Lock()
+	authCacheState.deleted[stale] = sessionTombstone{version: 1, at: time.Now().Add(-2 * sessionTombstoneTTL)}
+	authCacheState.pruned = time.Now().Add(-2 * sessionTombstoneTTL)
+	authCacheState.Unlock()
+
+	id := rnd.SessionID(rnd.AuthToken())
+	invalidateSessionCache(id)
+
+	authCacheState.Lock()
+	_, staleFound := authCacheState.deleted[stale]
+	_, found := authCacheState.deleted[id]
+	authCacheState.Unlock()
+
+	assert.False(t, staleFound)
+	assert.True(t, found)
+}
+
+func TestAuthCacheGeneration_SessionDeleted(t *testing.T) {
+	id := rnd.SessionID(rnd.AuthToken())
+	before := CurrentAuthCacheGeneration()
+	invalidateSessionCache(id)
+	after := CurrentAuthCacheGeneration()
+
+	authCacheState.Lock()
+	defer authCacheState.Unlock()
+
+	assert.True(t, before.sessionDeleted(id))
+	assert.False(t, after.sessionDeleted(id))
+	assert.False(t, before.sessionDeleted(rnd.SessionID(rnd.AuthToken())))
+}

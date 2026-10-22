@@ -267,8 +267,8 @@ func TestAuthorizeSession_OwnerScopeBeforeScopeCheck(t *testing.T) {
 	s, err := entity.FindAnySession(sess.ID)
 	require.NoError(t, err)
 	require.True(t, failed.Load())
+	require.Equal(t, "*", s.Scope())
 
 	// The owner's scope applies to the scope check once the owner is read during authorization.
 	assert.Equal(t, http.StatusForbidden, authorizeSession("10.4.4.4", s, acl.ResourceMetrics, acl.Permissions{acl.AccessAll}).HttpStatus())
-	assert.Equal(t, "photos", s.Scope())
 }

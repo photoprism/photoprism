@@ -103,6 +103,7 @@ func FlushSessionCache() {
 	authCacheState.version++
 	authCacheState.flushed = authCacheState.version
 	clear(authCacheState.users)
+	clear(authCacheState.deleted)
 	sessionCache.Flush()
 	webDAVUserCache.Flush()
 }
@@ -151,7 +152,7 @@ func CacheSession(s *Session, d time.Duration) {
 		}
 		s.cacheGeneration = &AuthCacheGeneration{version: authCacheState.version}
 	}
-	if !s.cacheGeneration.valid(s.UserUID) {
+	if !s.cacheGeneration.valid(s.UserUID) || s.cacheGeneration.sessionDeleted(s.ID) {
 		return
 	}
 
