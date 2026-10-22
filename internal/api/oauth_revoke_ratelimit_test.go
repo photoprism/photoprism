@@ -566,6 +566,23 @@ func TestOAuthRevoke_Answers(t *testing.T) {
 		// A reference id that cannot be looked up is a server error, not an unknown token.
 		assert.Equal(t, http.StatusInternalServerError, post(url.Values{"token": {rnd.RefID("sess")}, "token_type_hint": {"ref_id"}}, sess.AuthToken()))
 	})
+	t.Run("HeaderSessionReadError", func(t *testing.T) {
+		sess, err := entity.AddClientSession("revoke-answers-header", conf.SessionMaxAge(), "*", authn.GrantSession, entity.FindUserByName("alice"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+		entity.FlushSessionCache()
+		name := "test:fail_header_session_reads_" + rnd.Base36(8)
+		require.NoError(t, entity.Db().Callback().Query().Before("gorm:query").Register(name, func(db *gorm.DB) {
+			if db.Statement.Table == (entity.Session{}).TableName() {
+				_ = db.AddError(errors.New("session lookup failed"))
+			}
+		}))
+		t.Cleanup(func() { _ = entity.Db().Callback().Query().Remove(name) })
+
+		// A header session that cannot be read is answered with a server error.
+		assert.Equal(t, http.StatusInternalServerError, post(url.Values{"token": {rnd.RefID("sess")}, "token_type_hint": {"ref_id"}}, sess.AuthToken()))
+		assert.InDelta(t, 3, limiter.Auth.IP(header.UnknownIP).Tokens(), 0.01)
+	})
 	t.Run("OtherUsersSession", func(t *testing.T) {
 		alice := entity.FindUserByName("alice")
 		bob := entity.FindUserByName("bob")

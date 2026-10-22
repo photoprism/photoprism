@@ -25,19 +25,21 @@ import (
 // revokeSession resolves the session a revoke request carries in its header, unless its client is disabled,
 // without charging the authentication failure budget. The handler owns that accounting, because a header
 // that does not resolve is not a failed authentication on its own: the request may still prove possession
-// with the token it submits, and then it is not charged at all.
-func revokeSession(authToken string) *entity.Session {
+// with the token it submits, and then it is not charged at all. It returns the error if the session cannot be read.
+func revokeSession(authToken string) (*entity.Session, error) {
 	if !rnd.IsAuthAny(authToken) {
-		return nil
+		return nil, nil
 	}
 
 	sess, err := entity.FindSession(rnd.SessionID(authToken))
 
-	if err != nil || sess.ClientDisabled() {
-		return nil
+	if err != nil && !entity.SessionNotFound(err) {
+		return nil, err
+	} else if err != nil || sess.ClientDisabled() {
+		return nil, nil
 	}
 
-	return sess
+	return sess, nil
 }
 
 // OAuthRevoke revokes an access token or session. A client may only revoke its own tokens.
@@ -95,7 +97,11 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		// Get token and session from request header.
 		if authToken = AuthToken(c); authToken == "" {
 			role = acl.RoleNone
-		} else if s = revokeSession(authToken); s != nil {
+		} else if s, err = revokeSession(authToken); err != nil {
+			event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
+			AbortUnexpectedError(c)
+			return
+		} else if s != nil {
 			// Set log role and actor based on the session referenced in request header.
 			sUserUID = s.UserUID
 			if s.IsClient() {

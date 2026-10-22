@@ -1131,7 +1131,7 @@ func TestOAuthAppToken_SignedValues(t *testing.T) {
 }
 
 // auditMessagesOf returns the audit messages logged by each request, one per request, and checks that
-// requests refused without a charge are audited at debug level only.
+// the refusals are audited at debug level only.
 func auditMessagesOf(t *testing.T, app http.Handler, requests ...func() *httptest.ResponseRecorder) []string {
 	t.Helper()
 
@@ -1260,7 +1260,7 @@ func TestOAuthAppRefresh_RefusedBeforeGrantLookup(t *testing.T) {
 		assert.Equal(t, http.StatusTooManyRequests, r.Code, r.Body.String())
 		assert.Equal(t, int64(1), queries.Load())
 
-		// A value that fails verification is answered without a lookup and is not refused.
+		// A value that fails verification is answered with success without a lookup.
 		r = postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID))}, "token_type_hint": {"refresh_token"}}, "", "")
 		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.Equal(t, int64(1), queries.Load())
@@ -1294,7 +1294,7 @@ func TestOAuthAppRefresh_InvalidValueOverBudget(t *testing.T) {
 		limiter.Authorize.Reserve(ip)
 	}
 
-	// An invalid or expired refresh token of a client metadata URL is refused as such, also over the budget.
+	// An invalid or expired refresh token of a client metadata URL is answered with invalid_grant.
 	expired := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(-time.Minute))
 
 	for _, value := range []string{"x", expired} {
@@ -1304,7 +1304,7 @@ func TestOAuthAppRefresh_InvalidValueOverBudget(t *testing.T) {
 	}
 }
 
-func TestOAuthRevoke_UnchargedRefusalsAuditLevel(t *testing.T) {
+func TestOAuthRevoke_RefusalAuditLevel(t *testing.T) {
 	app, router, conf, client := prepareAppTokenTest(t)
 	_, refreshToken := tokenPair(t, app, router, conf, client)
 	installAuthBudget(t, 3)
@@ -1314,7 +1314,7 @@ func TestOAuthRevoke_UnchargedRefusalsAuditLevel(t *testing.T) {
 	r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
 	require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 
-	// Refresh tokens refused without a charge are audited at debug level only.
+	// Refused refresh tokens are audited at debug level only.
 	hook := captureAuditLog(t)
 	expired := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(-time.Minute))
 

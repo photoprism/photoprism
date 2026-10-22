@@ -73,7 +73,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		// Optional IP-based allowance via ClusterCIDR.
 		if cidr := strings.TrimSpace(conf.ClusterCIDR()); cidr != "" {
 			if !clusterCIDRAllowsClientIP(cidr, clientIp) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "client ip outside cluster-cidr", status.Denied})
+				event.AuditDebug([]string{clientIp, string(acl.ResourceCluster), "register", "client ip outside cluster-cidr", status.Denied})
 				r.Success() // Return reserved tokens before aborting.
 				AbortUnauthorized(c)
 				return

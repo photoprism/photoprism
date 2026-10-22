@@ -292,16 +292,27 @@ func TestAuthorizeSession_ClientDisabled(t *testing.T) {
 func TestRevokeSession(t *testing.T) {
 	t.Run("Enabled", func(t *testing.T) {
 		_, sess := newOwnedClientSession(t, "*")
-		assert.NotNil(t, revokeSession(sess.AuthToken()))
+		found, err := revokeSession(sess.AuthToken())
+		assert.NoError(t, err)
+		assert.NotNil(t, found)
 	})
 	t.Run("ClientDisabled", func(t *testing.T) {
 		_, sess := newOwnedClientSession(t, "*")
-		require.NotNil(t, revokeSession(sess.AuthToken()))
+		found, err := revokeSession(sess.AuthToken())
+		require.NoError(t, err)
+		require.NotNil(t, found)
 		require.NoError(t, disableStoredClient(sess.ClientUID))
-		assert.Nil(t, revokeSession(sess.AuthToken()))
+		found, err = revokeSession(sess.AuthToken())
+		assert.NoError(t, err)
+		assert.Nil(t, found)
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
-		assert.Nil(t, revokeSession("invalid"))
+		found, err := revokeSession("invalid")
+		assert.NoError(t, err)
+		assert.Nil(t, found)
+		found, err = revokeSession(rnd.AuthToken())
+		assert.NoError(t, err)
+		assert.Nil(t, found)
 	})
 }
 

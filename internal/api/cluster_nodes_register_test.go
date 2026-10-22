@@ -103,8 +103,15 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().ClusterCIDR = "192.0.2.0/24"
 		ClusterNodesRegister(router)
 
+		hook := captureAuditLog(t)
 		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-blocked"}`, cluster.ExampleJoinToken, "198.51.100.9")
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
+
+		// The refusal is audited at debug level only.
+		require.NotEmpty(t, hook.AllEntries())
+		for _, e := range hook.AllEntries() {
+			assert.Equal(t, logrus.DebugLevel, e.Level, e.Message)
+		}
 	})
 	t.Run("ClusterCIDRAllowsClientIPInRange", func(t *testing.T) {
 		app, router, conf := NewApiTest()
