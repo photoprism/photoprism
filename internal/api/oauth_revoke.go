@@ -165,6 +165,12 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		// Revoke the grant of a refresh token. Like an unknown token, a refresh token that is not current is
 		// answered with success, so the response does not reveal whether it was valid (RFC 7009).
 		if frm.TokenTypeHint == form.RefreshToken {
+			// Refuse an address over the authorization failure limit before the grant of a valid token is looked up.
+			if oauth.VerifyRefreshToken(frm.Token) == nil && limiter.Authorize.Reject(clientIp) {
+				limiter.AbortJSON(c)
+				return
+			}
+
 			grant, revokeErr := oauth.RevokeRefreshToken(frm.Token, c.PostForm("client_id"))
 
 			switch {

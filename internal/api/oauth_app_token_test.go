@@ -1188,3 +1188,58 @@ func TestOAuthAppTokenClient_ConstantAuditMessages(t *testing.T) {
 		assert.InDelta(t, 3, limiter.Authorize.IP(ip).Tokens(), 0.01)
 	})
 }
+
+func TestOAuthAppRefresh_RefusedBeforeGrantLookup(t *testing.T) {
+	ip := appTokenTestClientIP()
+
+	// exhaust uses up limiter.Authorize for the test client address.
+	exhaust := func() {
+		for !limiter.Authorize.Reject(ip) {
+			limiter.Authorize.Reserve(ip)
+		}
+	}
+
+	t.Run("MetadataClient", func(t *testing.T) {
+		app, _, conf, _ := prepareAppTokenTest(t)
+		stubAppMetadata(t)
+		conf.Options().OAuthApps = config.OAuthAppsAny
+		installAuthorizeBudget(t, 3)
+		queries := countTableQueries(t, entity.Grant{}.TableName())
+		gone := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(time.Hour))
+
+		// Within the budget, the grant is looked up and its absence is charged.
+		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(testMetadataClientID, gone), "", "")
+		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+		assert.Equal(t, int64(1), queries.Load())
+
+		// Over the budget, a valid refresh token is refused before the lookup.
+		exhaust()
+		r = postTokenForm(app, "/api/v1/oauth/token", refreshForm(testMetadataClientID, gone), "", "")
+		assert.Equal(t, http.StatusTooManyRequests, r.Code, r.Body.String())
+		assert.Equal(t, int64(1), queries.Load())
+	})
+	t.Run("Revoke", func(t *testing.T) {
+		app, _, _, _ := prepareAppTokenTest(t)
+		installAuthorizeBudget(t, 3)
+		installAuthBudget(t, 3)
+		queries := countTableQueries(t, entity.Grant{}.TableName())
+		gone := tokens.SignRefresh(rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID)), time.Now().Add(time.Hour))
+		form := url.Values{"token": {gone}, "token_type_hint": {"refresh_token"}}
+
+		r := postTokenForm(app, "/api/v1/oauth/revoke", form, "", "")
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, int64(1), queries.Load())
+		assert.InDelta(t, 2, limiter.Authorize.IP(ip).Tokens(), 0.01)
+
+		exhaust()
+		r = postTokenForm(app, "/api/v1/oauth/revoke", form, "", "")
+		assert.Equal(t, http.StatusTooManyRequests, r.Code, r.Body.String())
+		assert.Equal(t, int64(1), queries.Load())
+
+		// A value that fails verification is answered without a lookup and is not refused.
+		r = postTokenForm(app, "/api/v1/oauth/revoke", url.Values{"token": {rnd.RefreshToken(rnd.GenerateUID(entity.GrantUID))}, "token_type_hint": {"refresh_token"}}, "", "")
+		assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, int64(1), queries.Load())
+		assert.InDelta(t, 3, limiter.Auth.IP(ip).Tokens(), 0.01)
+	})
+}

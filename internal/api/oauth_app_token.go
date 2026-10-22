@@ -103,6 +103,13 @@ func OAuthAppRefresh(c *gin.Context) {
 
 	actor := "client " + clean.Log(client.ID)
 	raw := c.PostForm("refresh_token")
+
+	// Refuse an address over the authorization failure limit before the grant of a valid token is looked up.
+	if limiter.Authorize.Reject(clientIp) {
+		oauthTokenError(c, http.StatusTooManyRequests, oauth.ErrCodeTemporarilyUnavailable, "rate limit exceeded")
+		return
+	}
+
 	current, err := oauth.FindRefreshGrant(raw)
 
 	if err != nil && !errors.Is(err, oauth.ErrInvalidGrant) {
