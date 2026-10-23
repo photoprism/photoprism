@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -48,7 +48,7 @@ msgstr "%{n} %{q}의 GB 사용된 GB"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} 개 선택됨"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -128,7 +128,7 @@ msgstr "%{s}의 새 버전을 사용할 수 있습니다:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "해당 이미지에 대한 미리보기를 찾을 수 없습니다."
 
 #: src/locales.js:308
 msgid "AM"
@@ -158,7 +158,7 @@ msgstr "액세스 토큰"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "액세스 토큰 유효 기간"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -277,7 +277,7 @@ msgstr "앨범 추가"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "고객 추가"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -507,7 +507,7 @@ msgstr "여러 사진의 메타데이터, 레이블 및 앨범을 한 번에 편
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "다양한 형식과 크기로 사진을 내보낼 수 있도록 하십시오."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -981,7 +981,7 @@ msgstr "클라이언트"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "클라이언트"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1056,7 +1056,7 @@ msgstr "에디션 비교"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "호환되는 동영상"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1150,7 +1150,7 @@ msgstr "복사"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "새로운 클라이언트 시크릿을 복사하여 안전한 곳에 보관하십시오. 이 정보는 나중에 다시 확인할 수 없기 때문입니다:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1529,7 +1529,7 @@ msgstr "원격 파일 다운로드하기"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "트랜스코딩이 끝나면 다운로드가 시작됩니다."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1595,7 +1595,7 @@ msgstr "계정 편집"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "클라이언트 편집"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1741,15 +1741,15 @@ msgstr "만료"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "내보내기"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "%{n}개 파일 내보내기"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "파일 1개 내보내기"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1785,7 +1785,7 @@ msgstr "얼굴"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "실패함"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1809,7 +1809,7 @@ msgstr "zip 파일 생성 실패"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "파일 로딩에 실패했습니다. 다시 시도해 주세요."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2008,19 +2008,19 @@ msgstr "전체 권한"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "풀 HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "전체 크기"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "전체 크기 미리보기"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "전체 크기 미리보기 (첫 페이지)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2531,7 +2531,7 @@ msgstr "라이브"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "라이브 포토"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2551,7 +2551,7 @@ msgstr "로드 중..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "로딩 중…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2939,7 +2939,7 @@ msgstr "구성된 서비스가 없습니다."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "내보낼 수 있는 지원되는 파일이 없습니다."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3214,7 +3214,7 @@ msgstr "결제 필요"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "처리 중"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3628,11 +3628,11 @@ msgstr "사진이 아닌 이미지와 저화질 이미지는 검색 결과에 �
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "비밀번호 재설정"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "크기가 조정된 JPEG 파일"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3660,7 +3660,7 @@ msgstr "다시 시도"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "%{filename}을 다시 시도하십시오"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3856,7 +3856,7 @@ msgstr "연도 선택"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "선택됨"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4115,7 +4115,7 @@ msgstr "일부 앨범을 업데이트할 수 없습니다."
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "일부 파일을 내보낼 수 없습니다. 다시 시도해 주십시오."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4441,7 +4441,7 @@ msgstr "토큰"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "토큰 한도"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4781,7 +4781,7 @@ msgstr "비디오 시간"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "동영상 부분"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4984,7 +4984,7 @@ msgstr "계정이 성공적으로 연결되었습니다."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "사용 중인 브라우저에서 여러 개의 다운로드를 허용할지 묻는 메시지가 표시될 수 있습니다."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -48,7 +48,7 @@ msgstr "%{n} GB daripada %{q} GB digunakan"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} Pilihan"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -128,7 +128,7 @@ msgstr "Versi baharu %{s} tersedia:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "Previu imej pegun unik tidak dapat ditemui."
 
 #: src/locales.js:308
 msgid "AM"
@@ -158,7 +158,7 @@ msgstr "Token akses"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "Tempoh Hayat Token Akses"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -277,7 +277,7 @@ msgstr "Tambah Album"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "Tambah Klien"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -507,7 +507,7 @@ msgstr "Benarkan pengeditan metadata, label dan album berbilang gambar sekaligus
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "Benarkan mengeksport gambar dalam pelbagai format dan saiz."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -981,7 +981,7 @@ msgstr "Pelanggan"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "Pelanggan"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1056,7 +1056,7 @@ msgstr "Bandingkan Edisi"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "Video Serasi"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1150,7 +1150,7 @@ msgstr "Salinan"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Salin rahsia klien baru dan simpan di tempat yang selamat, kerana anda tidak akan dapat melihatnya lagi:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1529,7 +1529,7 @@ msgstr "Muat turun fail jauh"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "Muat turun bermula selepas penukaran."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1595,7 +1595,7 @@ msgstr "Edit Akaun"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "Sunting Klien"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1741,15 +1741,15 @@ msgstr "Luput"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "Eksport"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "Eksport Fail %{n}"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "Eksport 1 Fail"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1785,7 +1785,7 @@ msgstr "Muka"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "Gagal"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1809,7 +1809,7 @@ msgstr "Gagal mencipta fail zip"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "Gagal memuatkan fail. Sila cuba lagi."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2008,19 +2008,19 @@ msgstr "Akses penuh"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "Penuh HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "Saiz Penuh"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "Pratinjau Saiz Penuh"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "Pratinjau Saiz Penuh (Halaman Pertama)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2531,7 +2531,7 @@ msgstr "Langsung"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "Foto Langsung"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2551,7 +2551,7 @@ msgstr "Memuatkan..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "Memuat…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2939,7 +2939,7 @@ msgstr "Tiada pelayan dikonfigurasikan."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "Tiada fail yang disokong tersedia untuk dieksport."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3119,7 +3119,7 @@ msgstr "Orientasi"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Original"
-msgstr ""
+msgstr "Asli"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
 #: src/options/options.js:505
@@ -3214,7 +3214,7 @@ msgstr "Bayaran diperlukan"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "Tunggakan"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3628,11 +3628,11 @@ msgstr "Memerlukan imej bukan fotografi dan berkualiti rendah untuk disemak sebe
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "Reset Rahsia"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "JPEG yang telah diubah saiz"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3660,7 +3660,7 @@ msgstr "Cuba semula"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "Cuba semula %{filename}"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3856,7 +3856,7 @@ msgstr "Pilih tahun"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "Dipilih"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4115,7 +4115,7 @@ msgstr "Beberapa album tidak dapat dikemas kini"
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "Beberapa fail tidak dapat dieksport. Sila cuba lagi."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4441,7 +4441,7 @@ msgstr "Token"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "Had Token"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4781,7 +4781,7 @@ msgstr "Tempoh"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "Bahagian Video"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4984,7 +4984,7 @@ msgstr "Akaun anda telah berjaya disambungkan."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "Pelayar anda mungkin meminta anda membenarkan pelbagai muat turun."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33

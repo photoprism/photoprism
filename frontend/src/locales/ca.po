@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -48,7 +48,7 @@ msgstr "%{n} GB de %{q} GB utilitzats"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} Seleccionat"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -128,7 +128,7 @@ msgstr "Hi ha disponible una versió nova de %{s}:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "No s'ha pogut trobar una previsualització única de la imatge fixa."
 
 #: src/locales.js:308
 msgid "AM"
@@ -158,7 +158,7 @@ msgstr "Fitxa d'accés"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "Durada del token d'accés"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -277,7 +277,7 @@ msgstr "Afegeix un àlbum"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "Afegir client"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -507,7 +507,7 @@ msgstr "Permet editar les metadades, les etiquetes i els àlbums de diverses ima
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "Permetre exportar imatges en diferents formats i mides."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -981,7 +981,7 @@ msgstr "Client"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "Client"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1056,7 +1056,7 @@ msgstr "Compara Edicions"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "Vídeo compatible"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1150,7 +1150,7 @@ msgstr "Còpia"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Copieu el nou secret del client i guardeu-lo en un lloc segur, ja que no el podreu veure més:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1529,7 +1529,7 @@ msgstr "Descarrega fitxers remots"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "La descàrrega comença després de la transcodificació."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1595,7 +1595,7 @@ msgstr "Editar Compte"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "Edita client"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1741,15 +1741,15 @@ msgstr "Caduca"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "Exportar"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "Exportar fitxers %{n}"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "Exporta 1 fitxer"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1785,7 +1785,7 @@ msgstr "Cares"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "Fallat"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1809,7 +1809,7 @@ msgstr "No s'ha pogut crear el fitxer zip"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "S'ha fallat la càrrega dels fitxers. Torneu-ho a provar."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2008,19 +2008,19 @@ msgstr "Accés complet"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "Full HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "Mida completa"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "Previsualització a mida completa"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "Previsualització a mida completa (primera pàgina)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2531,7 +2531,7 @@ msgstr "En viu"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "Fotos en directe"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2551,7 +2551,7 @@ msgstr "Carregant..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "Carregant…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2939,7 +2939,7 @@ msgstr "No s'ha configurat cap servei."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "No hi ha cap fitxer suportat disponible per a l'exportació."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3119,7 +3119,7 @@ msgstr "Orientació"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Original"
-msgstr ""
+msgstr "Original"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
 #: src/options/options.js:505
@@ -3214,7 +3214,7 @@ msgstr "Pagament requerit"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "Pendents"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3628,11 +3628,11 @@ msgstr "Exigir que es revisin imatges no fotogràfiques i de baixa qualitat aban
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "Restablir secret"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "JPEGs redimensionats"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3660,7 +3660,7 @@ msgstr "Tornar a provar"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "Tornar a provar %{filename}"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3856,7 +3856,7 @@ msgstr "Selecciona l'any"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "Seleccionat"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4115,7 +4115,7 @@ msgstr "No s'han pogut actualitzar alguns àlbums"
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "Alguns fitxers no s'han pogut exportar. Torni a provar."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4441,7 +4441,7 @@ msgstr "Token"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "Límit de fitxes"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4781,7 +4781,7 @@ msgstr "Durada del vídeo"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "Part de vídeo"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4984,7 +4984,7 @@ msgstr "El vostre compte s'ha connectat correctament."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "El vostre navegador us pot demanar que permeteu diverses descàrregues."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33

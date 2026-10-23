@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -45,7 +45,7 @@ msgstr "%{n} GB-tik %{q} GB erabilita"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} hautatua"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -125,7 +125,7 @@ msgstr "%{s} bertsio berri bat dago eskuragarri:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "Ez da aurkitu bakarra den iragazki-aurrebista."
 
 #: src/locales.js:308
 msgid "AM"
@@ -155,7 +155,7 @@ msgstr "Sarbide-tokena"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "Sarbide-tokena bizitza-iraupena"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -274,7 +274,7 @@ msgstr "Gehitu albuma"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "Gehitu bezeroa"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -504,7 +504,7 @@ msgstr "Baimendu hainbat argazkiren metadatuak, etiketak eta albumak aldi berean
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "Irudiak formatu eta tamaina desberdinetan esportatzea ahalbidetu."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -978,7 +978,7 @@ msgstr "Bezeroa"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "Bezeroa"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1053,7 +1053,7 @@ msgstr "Edizioak alderatu"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "Bateragarria den bideoa"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1147,7 +1147,7 @@ msgstr "Kopiatu"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Kopiatatu bezero-gako sekretu berria eta gorde leku seguruan, berriro ezin izango baituzu ikusi:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1526,7 +1526,7 @@ msgstr "Deskargatu urruneko fitxategiak"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "Deskarga transkodifikazioaren ondoren hasten da."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1592,7 +1592,7 @@ msgstr "Editatu kontua"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "Bezeroa editatu"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1644,7 +1644,7 @@ msgstr "Gaitu fitxategi-arakatzailea Jatorrizkoak karpeta-egitura arakatzeko."
 
 #: src/component/client/edit/dialog.vue:144 src/page/admin/clients.vue:212
 msgid "Enabled"
-msgstr ""
+msgstr "Gaitu"
 
 #: src/page/settings/advanced.vue:373
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1738,15 +1738,15 @@ msgstr "Iraungitzen da"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "Exportatu"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "Exportatu %{n} fitxategiak"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "Exportatu 1 fitxategia"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1782,7 +1782,7 @@ msgstr "Aurpegiak"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "Huts egin du"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1806,7 +1806,7 @@ msgstr "Zip fitxategia sortzea huts egin du"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "Fitxategiak kargatzean huts egin da. Mesedez, saiatu berriro."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2005,19 +2005,19 @@ msgstr "Sarbide osoa"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "Full HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "Tamaina osoa"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "Tamaina osoko aurrebista"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "Tamaina osoko aurrebista (lehen orrialdea)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2528,7 +2528,7 @@ msgstr "Zuzenean"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "Argazki bizia"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2548,7 +2548,7 @@ msgstr "Kargatzen..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "Kargatzen…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2936,7 +2936,7 @@ msgstr "Ez dago zerbitzurik konfiguratuta."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "Exportatzeko fitxategi onik ez dago eskuragarri."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3116,7 +3116,7 @@ msgstr "Orientazio"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Original"
-msgstr ""
+msgstr "Jatorrizkoa"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
 #: src/options/options.js:505
@@ -3211,7 +3211,7 @@ msgstr "Ordainketa beharrezkoa da"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "Itxaroten"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3625,11 +3625,11 @@ msgstr "Eskatu argazkirik gabeko eta kalitate baxuko irudiak berrikustea bilaket
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "Berrezarri sekretua"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "Tamaina aldaturiko JPEGak"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3657,7 +3657,7 @@ msgstr "Berriro saiatu"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "Berriro saiatu %{filename}"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3853,7 +3853,7 @@ msgstr "Urtea hautatu"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "Aukeratua"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4112,7 +4112,7 @@ msgstr "Album batzuk ezin izan dira eguneratu"
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "Fitxategi batzuk ezin izan dira esportatu. Mesedez, saiatu berriro."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4438,7 +4438,7 @@ msgstr "Tokena"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "Tokenen muga"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4778,7 +4778,7 @@ msgstr "Bideoaren Iraupena"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "Bideo zatia"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4981,7 +4981,7 @@ msgstr "Zure kontua behar bezala konektatu da."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "Zure nabigatzaileak deskarga anitz baimentzeko eskatuko dizu."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33

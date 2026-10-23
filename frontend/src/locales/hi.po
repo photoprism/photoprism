@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -48,7 +48,7 @@ msgstr "%{q} GB में से %{n} GB उपयोग किया गया"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} चयनित"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -128,7 +128,7 @@ msgstr "%{s} का नया संस्करण उपलब्ध है:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "एक अद्वितीय स्टिल पूर्वावलोकन नहीं मिला।"
 
 #: src/locales.js:308
 msgid "AM"
@@ -158,7 +158,7 @@ msgstr "एक्सेस टोकन"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "एक्सेस टोकन का जीवनकाल"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -277,7 +277,7 @@ msgstr "एल्बम जोड़ें"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "क्लाइंट जोड़ें"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -507,7 +507,7 @@ msgstr "एक साथ कई चित्रों के मेटाडे�
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "विभिन्न प्रारूपों और आकारों में तस्वीरें निर्यात करने की अनुमति दें।"
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -981,7 +981,7 @@ msgstr "ग्राहक"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "ग्राहक"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1056,7 +1056,7 @@ msgstr "संस्करणों की तुलना करें"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "संगत वीडियो"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1150,7 +1150,7 @@ msgstr "प्रतिलिपि"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "नए क्लाइंट सीक्रेट की प्रतिलिपि बनाएँ और इसे किसी सुरक्षित स्थान पर रखें, क्योंकि आप इसे फिर से नहीं देख पाएँगे:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1529,7 +1529,7 @@ msgstr "दूरस्थ फ़ाइलें डाउनलोड करे
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "ट्रांसकोडिंग के बाद डाउनलोड शुरू होता है।"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1595,7 +1595,7 @@ msgstr "खाता संपादित करें"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "क्लाइंट संपादित करें"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1741,15 +1741,15 @@ msgstr "समय-सीमा समाप्त"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "निर्यात"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "%{n} फ़ाइलें निर्यात करें"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "1 फ़ाइल निर्यात करें"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1785,7 +1785,7 @@ msgstr "चेहरे के"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "असफल"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1809,7 +1809,7 @@ msgstr "ज़िप फ़ाइल बनाने में विफल"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "फ़ाइलें लोड करने में विफल। कृपया फिर से प्रयास करें।"
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2008,19 +2008,19 @@ msgstr "पूर्ण पहुँच"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "फुल एचडी"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "पूर्ण आकार"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "पूर्ण आकार पूर्वावलोकन"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "पूर्ण आकार पूर्वावलोकन (पहला पृष्ठ)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2531,7 +2531,7 @@ msgstr "लाइव"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "लाइव तस्वीरें"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2551,7 +2551,7 @@ msgstr "लोड हो रहा है..।"
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "लोड हो रहा है…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2939,7 +2939,7 @@ msgstr "कोई सेवा कॉन्फ़िगर नहीं की �
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "निर्यात के लिए कोई समर्थित फ़ाइलें उपलब्ध नहीं हैं।"
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3214,7 +3214,7 @@ msgstr "भुगतान आवश्यक है"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "लंबित"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3628,11 +3628,11 @@ msgstr "खोज परिणामों में प्रदर्शित
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "गुप्त रीसेट"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "आकार बदले हुए जेपीईजी"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3660,7 +3660,7 @@ msgstr "दोबारा प्रयास करें"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "%{filename} को फिर से प्रयास करें"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3856,7 +3856,7 @@ msgstr "वर्ष चुनें"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "चयनित"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4115,7 +4115,7 @@ msgstr "कुछ एल्बम अपडेट नहीं किए जा 
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "कुछ फ़ाइलें निर्यात नहीं की जा सकीं। कृपया फिर से प्रयास करें।"
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4441,7 +4441,7 @@ msgstr "टोकन"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "टोकन सीमा"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4781,7 +4781,7 @@ msgstr "वीडियो अवधि"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "वीडियो भाग"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4984,7 +4984,7 @@ msgstr "आपका खाता सफलतापूर्वक कनेक
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "आपका ब्राउज़र आपसे कई डाउनलोड की अनुमति देने के लिए कह सकता है।"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33

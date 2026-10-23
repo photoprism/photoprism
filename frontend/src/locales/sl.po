@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -45,7 +45,7 @@ msgstr "%{n} GB od %{q} GB uporabljenih"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} izbranih"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -125,7 +125,7 @@ msgstr "Na voljo je nova različica %{s}:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "Edinstvenega predogleda slike ni bilo mogoče najti."
 
 #: src/locales.js:308
 msgid "AM"
@@ -155,7 +155,7 @@ msgstr "Žeton za dostop"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "Trajanje veljavnosti dostopnega žetona"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -274,7 +274,7 @@ msgstr "Dodajanje albuma"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "Dodaj stranko"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -504,7 +504,7 @@ msgstr "Omogoča urejanje metapodatkov, oznak in albumov več slik hkrati."
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "Omogočite izvoz slik v različnih formatih in velikostih."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -978,7 +978,7 @@ msgstr "Stranka"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "Stranka"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1053,7 +1053,7 @@ msgstr "Primerjaj izdaje"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "Združljivi videoposnetki"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1147,7 +1147,7 @@ msgstr "Kopirati"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Kopirajte novo skrivno geslo odjemalca in ga shranite na varno mesto, saj ga ne boste mogli več videti:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1526,7 +1526,7 @@ msgstr "Prenos oddaljenih datotek"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "Prenos se začne po pretvorbi."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1592,7 +1592,7 @@ msgstr "Urejanje računa"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "Uredi stranko"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1738,15 +1738,15 @@ msgstr "Velja do"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "Izvoz"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "Izvozi %{n} datotek"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "Izvoz 1 datoteke"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1782,7 +1782,7 @@ msgstr "Obrazi"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "Ni uspelo"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1806,7 +1806,7 @@ msgstr "Ni uspelo ustvariti datoteke zip"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "Datotek ni bilo mogoče naložiti. Poskusite še enkrat."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2005,19 +2005,19 @@ msgstr "Popoln dostop"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "Full HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "V polni velikosti"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "Predogled v polni velikosti"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "Predogled v polni velikosti (prva stran)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2528,7 +2528,7 @@ msgstr "V živo"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "Živa fotografija"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2548,7 +2548,7 @@ msgstr "Nalaganje..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "Nalaganje…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2936,7 +2936,7 @@ msgstr "Strežniki niso konfigurirani."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "Za izvoz ni na voljo nobenih podprtih datotek."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3116,7 +3116,7 @@ msgstr "Orientacija"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Original"
-msgstr ""
+msgstr "Izvirnik"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
 #: src/options/options.js:505
@@ -3211,7 +3211,7 @@ msgstr "Potrebno je plačilo"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "V obravnavi"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3625,11 +3625,11 @@ msgstr "zahteva, da se pred prikazom v rezultatih iskanja pregledajo nefotografs
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "Ponastavi geslo"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "JPEG-datoteke s spremenjeno velikostjo"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3657,7 +3657,7 @@ msgstr "Ponovi"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "Ponovi poskus z datoteko %{filename}"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3853,7 +3853,7 @@ msgstr "Izberite leto"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "Izbrano"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4112,7 +4112,7 @@ msgstr "Nekaterih albumov ni bilo mogoče posodobiti"
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "Nekaterih datotek ni bilo mogoče izvoziti. Poskusite še enkrat."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4438,7 +4438,7 @@ msgstr "Žeton"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "Omejitev števila žetonov"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4778,7 +4778,7 @@ msgstr "Trajanje"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "Videoposnetek"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4981,7 +4981,7 @@ msgstr "Vaš račun je bil uspešno povezan."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "Vaš brskalnik vas bo morda prosil, da dovolite več hkratnih prenosov."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33

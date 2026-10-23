@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -45,7 +45,7 @@ msgstr "Úsáideadh %{n} GB as %{q} GB"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} Roghnaithe"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -125,7 +125,7 @@ msgstr "Tá leagan nua de %{s} ar fáil:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "Níor aimsíodh réamhamharc uathúil ar an bpictiúr ciúin."
 
 #: src/locales.js:308
 msgid "AM"
@@ -155,7 +155,7 @@ msgstr "Comhartha Rochtana"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "Saolré an Ticéid Rochtana"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -274,7 +274,7 @@ msgstr "Cuir Albam leis"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "Cuir Cliaint leis"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -504,7 +504,7 @@ msgstr "Ceadaigh eagarthóireacht a dhéanamh ar mheiteashonraí, lipéid agus a
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "Ceadaigh pictiúir a easpórtáil i bhformáidí agus i méideanna éagsúla."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -978,7 +978,7 @@ msgstr "Cliant"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "Cliant"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1053,7 +1053,7 @@ msgstr "Déan comparáid idir Eagráin"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "Físeán comhoiriúnach"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1147,7 +1147,7 @@ msgstr "Cóip"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Cóipeáil an rún cliant nua agus coinnigh in áit shábháilte é, mar ní bheidh tú in ann é a fheiceáil arís:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1526,7 +1526,7 @@ msgstr "Íoslódáil comhaid iargúlta"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "Tosaíonn an t-íoslódáil tar éis an traschódaithe."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1592,7 +1592,7 @@ msgstr "Cuir Cuntas in Eagar"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "Cuir in eagar an cliant"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1644,7 +1644,7 @@ msgstr "Cumasaigh an brabhsálaí comhad chun nascleanúint a dhéanamh trí str
 
 #: src/component/client/edit/dialog.vue:144 src/page/admin/clients.vue:212
 msgid "Enabled"
-msgstr ""
+msgstr "Cumasaichte"
 
 #: src/page/settings/advanced.vue:373
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1738,15 +1738,15 @@ msgstr "In éag"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "Easpórtáil"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "Easpórtáil Comhaid %{n}"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "Easpórtáil 1 Comhad"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1782,7 +1782,7 @@ msgstr "Aghaidheanna"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "Teipthe"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1806,7 +1806,7 @@ msgstr "Theip ar chruthú an chomhaid zip"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "Theip ar na comhaid a lódáil. Déan iarracht eile, le do thoil."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2005,19 +2005,19 @@ msgstr "Rochtain Iomlán"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "Iomlán HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "Méid iomlán"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "Réamhamharc lánmhéide"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "Réamhamharc lánmhéide (an chéad leathanach)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2528,7 +2528,7 @@ msgstr "Beo"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "Grianghraif Beo"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2548,7 +2548,7 @@ msgstr "Á lódáil..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "Á lódáil…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2936,7 +2936,7 @@ msgstr "Níl aon seirbhísí cumraithe."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "Níl aon chomhaid tacaíochta ar fáil le honnmhairiú."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3116,7 +3116,7 @@ msgstr "Treoshuíomh"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Original"
-msgstr ""
+msgstr "Bunábhair"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
 #: src/options/options.js:505
@@ -3211,7 +3211,7 @@ msgstr "Íocaíocht ag teastáil"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "Ar feitheamh"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3625,11 +3625,11 @@ msgstr "A éileamh go ndéanfaí athbhreithniú ar íomhánna neamh-ghrianghrafa
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "Athshocraigh Rún"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "JPEGanna athmhéide"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3657,7 +3657,7 @@ msgstr "Ath-iarracht"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "Ath-iarracht %{filename}"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3853,7 +3853,7 @@ msgstr "Roghnaigh bliain"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "Roghnaithe"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4112,7 +4112,7 @@ msgstr "Níorbh fhéidir roinnt albaim a nuashonrú"
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "Níorbh fhéidir roinnt comhad a onnmhairiú. Déan iarracht arís, le do thoil."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4438,7 +4438,7 @@ msgstr "Comhartha"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "Teorainn Ticéad"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4778,7 +4778,7 @@ msgstr "Fad Físeáin"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "Cuid Físeáin"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4981,7 +4981,7 @@ msgstr "D'éirigh le do chuntas a nascadh."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "D'fhéadfadh do bhrabhsálaí iarraidh ort cead a thabhairt do íoslódálacha iolracha."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
