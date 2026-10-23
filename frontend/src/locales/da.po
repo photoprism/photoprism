@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
@@ -48,7 +48,7 @@ msgstr "%{n} GB af %{q} GB brugt"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} valgt"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -128,7 +128,7 @@ msgstr "En ny version af %{s} er tilgængelig:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "Der kunne ikke findes et unikt stillbillede."
 
 #: src/locales.js:308
 msgid "AM"
@@ -158,7 +158,7 @@ msgstr "Adgangstoken"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "Adgangstokenets gyldighedsperiode"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -277,7 +277,7 @@ msgstr "Tilføj album"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "Tilføj kunde"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -507,7 +507,7 @@ msgstr "Gør det muligt at redigere metadata, etiketter og album for flere bille
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "Gør det muligt at eksportere billeder i forskellige formater og størrelser."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -981,7 +981,7 @@ msgstr "Kunde"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "Kunde"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1056,7 +1056,7 @@ msgstr "Sammenlign udgaver"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "Kompatibel video"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1150,7 +1150,7 @@ msgstr "Kopier"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Kopier den nye klientnøgle, og opbevar den et sikkert sted, da du ikke vil kunne se den igen:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1529,7 +1529,7 @@ msgstr "Download fjernfiler"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "Downloaden starter, når omkodningen er færdig."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1595,7 +1595,7 @@ msgstr "Rediger konto"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "Rediger klient"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1741,15 +1741,15 @@ msgstr "Udløber"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "Eksport"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "Eksporter %{n} filer"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "Eksporter 1 fil"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1785,7 +1785,7 @@ msgstr "Ansigter"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "Mislykket"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1809,7 +1809,7 @@ msgstr "Det lykkedes ikke at oprette zip-fil"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "Det lykkedes ikke at indlæse filerne. Prøv venligst igen."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2008,19 +2008,19 @@ msgstr "Fuld adgang"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "Full HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "Fuld størrelse"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "Forhåndsvisning i fuld størrelse"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "Forhåndsvisning i fuld størrelse (første side)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2531,7 +2531,7 @@ msgstr "Direkte"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "Live-fotos"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2551,7 +2551,7 @@ msgstr "Indlæser..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "Indlæser…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2939,7 +2939,7 @@ msgstr "Ingen tjenester er konfigureret."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "Der er ingen filer, der understøttes, tilgængelige til eksport."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3214,7 +3214,7 @@ msgstr "Betaling kræves"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "Afventer"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3628,11 +3628,11 @@ msgstr "Kræv, at ikke-fotografiske billeder og billeder af lav kvalitet skal ge
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "Nulstil hemmelighed"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "JPEG-filer i ændret størrelse"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3660,7 +3660,7 @@ msgstr "Prøv igen"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "Prøv igen med %{filename}"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3856,7 +3856,7 @@ msgstr "Vælg år"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "Udvalgt"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4115,7 +4115,7 @@ msgstr "Nogle albums kunne ikke opdateres"
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "Nogle filer kunne ikke eksporteres. Prøv venligst igen."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4441,7 +4441,7 @@ msgstr "Token"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "Token-grænse"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4781,7 +4781,7 @@ msgstr "Videoens varighed"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "Videodel"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4984,7 +4984,7 @@ msgstr "Din konto er blevet forbundet."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "Din browser beder dig muligvis om at tillade flere downloads."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33

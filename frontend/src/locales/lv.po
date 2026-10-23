@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-18 16:55+0000\n"
+"PO-Revision-Date: 2026-10-23 09:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: none\n"
 "Language: lv\n"
@@ -44,7 +44,7 @@ msgstr "Izmantots %{n} GB no %{q} GB"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "%{n} Selected"
-msgstr ""
+msgstr "%{n} izvēlēts"
 
 #: src/page/albums.vue:1116
 msgid "%{n} albums found"
@@ -124,7 +124,7 @@ msgstr "Ir pieejama jauna %{s} versija:"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "A unique still preview could not be found."
-msgstr ""
+msgstr "Neizdevās atrast unikālu attēla priekšskatījumu."
 
 #: src/locales.js:308
 msgid "AM"
@@ -154,7 +154,7 @@ msgstr "Piekļuves žetons"
 #: src/component/client/add/dialog.vue:105
 #: src/component/client/edit/dialog.vue:117
 msgid "Access Token Lifetime"
-msgstr ""
+msgstr "Piekļuves žetona derīguma termiņš"
 
 #: src/component/cluster/instance-access.vue:209
 #: src/component/cluster/instance-access.vue:211
@@ -273,7 +273,7 @@ msgstr "Pievienot albumu"
 
 #: src/component/client/add/dialog.vue:16
 msgid "Add Client"
-msgstr ""
+msgstr "Pievienot klientu"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -503,7 +503,7 @@ msgstr "Ļauj vienlaikus rediģēt vairāku attēlu metadatus, etiķetes un albu
 
 #: src/page/settings/general.vue:246
 msgid "Allow exporting pictures in different formats and sizes."
-msgstr ""
+msgstr "Ļauj eksportēt attēlus dažādos formātos un izmēros."
 
 #: src/page/settings/general.vue:261
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
@@ -977,7 +977,7 @@ msgstr "Klients"
 
 #: src/page/admin.vue:66
 msgid "Clients"
-msgstr ""
+msgstr "Klienti"
 
 #: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
 #: src/page/admin/sessions.vue:184 src/component/cluster/node/dialog.vue:15
@@ -1052,7 +1052,7 @@ msgstr "Salīdzināt izdevumus"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr ""
+msgstr "Saderīgs video"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1146,7 +1146,7 @@ msgstr "Kopēt"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Nokopējiet jauno klienta slepeno kodu un glabājiet to drošā vietā, jo vairs nevarēsiet to apskatīt:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -1525,7 +1525,7 @@ msgstr "Lejupielādēt attālinātos failus"
 
 #: src/component/photo/export/dialog.vue:73
 msgid "Download starts after transcoding."
-msgstr ""
+msgstr "Lejupielāde sākas pēc transkodēšanas."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
@@ -1591,7 +1591,7 @@ msgstr "Rediģēt kontu"
 
 #: src/component/client/edit/dialog.vue:17
 msgid "Edit Client"
-msgstr ""
+msgstr "Rediģēt klientu"
 
 #: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
@@ -1643,7 +1643,7 @@ msgstr "Ieslēgt failu pārlūku, lai pārvietotos pa oriģinālu mapi."
 
 #: src/component/client/edit/dialog.vue:144 src/page/admin/clients.vue:212
 msgid "Enabled"
-msgstr ""
+msgstr "Ieslēgts"
 
 #: src/page/settings/advanced.vue:373
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1737,15 +1737,15 @@ msgstr "Derīguma termiņš beidzas"
 #: src/component/lightbox.vue:1818 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
-msgstr ""
+msgstr "Eksports"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export %{n} Files"
-msgstr ""
+msgstr "Eksportēt %{n} failus"
 
 #: src/component/photo/export/dialog.vue:135
 msgid "Export 1 File"
-msgstr ""
+msgstr "Eksportēt 1 failu"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
@@ -1781,7 +1781,7 @@ msgstr "Sejas"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Failed"
-msgstr ""
+msgstr "Neizdevās"
 
 #: src/locales.js:429
 msgid "Failed creating file, please check permissions"
@@ -1805,7 +1805,7 @@ msgstr "Neizdevās izveidot ZIP failu"
 
 #: src/component/photo/export/dialog.vue:28
 msgid "Failed to load files. Please try again."
-msgstr ""
+msgstr "Failu ielāde neizdevās. Lūdzu, mēģiniet vēlreiz."
 
 #: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
@@ -2004,19 +2004,19 @@ msgstr "Pilna piekļuve"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full HD"
-msgstr ""
+msgstr "Full HD"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full Size"
-msgstr ""
+msgstr "Pilna izmēra"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview"
-msgstr ""
+msgstr "Pilna izmēra priekšskatījums"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr ""
+msgstr "Pilna izmēra priekšskatījums (pirmā lappuse)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2527,7 +2527,7 @@ msgstr "Tiešraide"
 
 #: src/component/photo/export/dialog.vue:273
 msgid "Live Photo"
-msgstr ""
+msgstr "Dzīvā fotogrāfija"
 
 #: src/app/routes.js:406 src/component/navigation.vue:247
 msgid "Live Photos"
@@ -2547,7 +2547,7 @@ msgstr "Notiek ielāde..."
 
 #: src/component/photo/export/dialog.vue:25
 msgid "Loading…"
-msgstr ""
+msgstr "Ielādējas…"
 
 #: src/locales.js:368 src/options/auth.js:45 src/options/auth.js:51
 #: src/options/options.js:94 src/page/settings/general.vue:46
@@ -2935,7 +2935,7 @@ msgstr "Nav konfigurētu pakalpojumu."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr ""
+msgstr "Nav pieejamu atbalstītu failu eksportēšanai."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3115,7 +3115,7 @@ msgstr "Orientācija"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Original"
-msgstr ""
+msgstr "Oriģināls"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
 #: src/options/options.js:505
@@ -3210,7 +3210,7 @@ msgstr "Nepieciešams veikt maksājumu"
 
 #: src/component/photo/export/dialog.vue:316
 msgid "Pending"
-msgstr ""
+msgstr "Gaida izskatīšanu"
 
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
@@ -3624,11 +3624,11 @@ msgstr "Pieprasīt, lai attēli, kas nav fotoattēli un ir zemas kvalitātes, ti
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr ""
+msgstr "Atjaunot paroli"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
-msgstr ""
+msgstr "JPEG faili ar mainītu izmēru"
 
 #: src/component/photo/edit/info.vue:125
 msgid "Resolution"
@@ -3656,7 +3656,7 @@ msgstr "Mēģināt vēlreiz"
 
 #: src/component/photo/export/dialog.vue:41
 msgid "Retry %{filename}"
-msgstr ""
+msgstr "Mēģināt vēlreiz %{filename}"
 
 #: src/component/service/edit.vue:241
 msgid "Retry Limit"
@@ -3852,7 +3852,7 @@ msgstr "Izvēlieties gadu"
 
 #: src/component/photo/export/dialog.vue:59
 msgid "Selected"
-msgstr ""
+msgstr "Izvēlēts"
 
 #: src/component/photo/batch-edit.vue:89
 msgid "Selection"
@@ -4111,7 +4111,7 @@ msgstr "Dažus albumus nevarēja atjaunināt"
 
 #: src/component/photo/export/dialog.vue:89
 msgid "Some files could not be exported. Please try again."
-msgstr ""
+msgstr "Dažus failus neizdevās eksportēt. Lūdzu, mēģiniet vēlreiz."
 
 #: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
@@ -4437,7 +4437,7 @@ msgstr "Žetons"
 #: src/component/client/add/dialog.vue:117
 #: src/component/client/edit/dialog.vue:129
 msgid "Token Limit"
-msgstr ""
+msgstr "Žetonu limits"
 
 #: src/component/upload/dialog.vue:403
 msgid "Too many files selected"
@@ -4777,7 +4777,7 @@ msgstr "Video ilgums"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Video Part"
-msgstr ""
+msgstr "Video daļa"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
 #: src/options/options.js:260
@@ -4980,7 +4980,7 @@ msgstr "Jūsu konts ir veiksmīgi pievienots."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr ""
+msgstr "Jūsu pārlūkprogramma var lūgt jums atļaut vairāku failu lejupielādi."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
