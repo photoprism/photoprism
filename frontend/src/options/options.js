@@ -179,6 +179,8 @@ export const SetDefaultLocale = (locale) => {
     return;
   }
 
+  // Clears the previous default, so a locale that is not offered resolves to the first offered one.
+  DefaultLocale = "";
   DefaultLocale = FindLocale(locale);
 };
 
@@ -194,7 +196,8 @@ export const FallbackLanguage = () => {
   return { text: "English", value: "en" };
 };
 
-// Finds the best matching language by locale.
+// Finds the best matching language by locale, or else the default language if offered, or else the first one.
+// Reads DefaultLocale directly, since SetDefaultLocale resolves its value through this function.
 export const FindLanguage = (locale) => {
   if (!locale || locale.length < 2) {
     locale = DefaultLocale;
@@ -215,7 +218,7 @@ export const FindLanguage = (locale) => {
   if (found) {
     return found;
   } else if (languages.length > 0) {
-    return languages[0];
+    return languages.find((l) => l.value === DefaultLocale) ?? languages[0];
   } else {
     return locales.Options[0];
   }
