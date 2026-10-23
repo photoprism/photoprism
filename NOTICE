@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-10-17
+Date generated: 2026-10-23
 
 ================================================================================
 
@@ -267,8 +267,8 @@ limitations under the License.
 --------------------------------------------------------------------------------
 
 Package: github.com/abema/go-mp4
-Version: v1.7.3
-License: MIT (https://github.com/abema/go-mp4/blob/v1.7.3/LICENSE)
+Version: v1.7.4
+License: MIT (https://github.com/abema/go-mp4/blob/v1.7.4/LICENSE)
 
 MIT License
 
@@ -2433,8 +2433,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20260928092222-7d12f68cfadb
-License: Apache-2.0 (https://github.com/golang/geo/blob/7d12f68cfadb/LICENSE)
+Version: v0.0.0-20261022062553-461c194586d4
+License: Apache-2.0 (https://github.com/golang/geo/blob/461c194586d4/LICENSE)
 
 
                                  Apache License

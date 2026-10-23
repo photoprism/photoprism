@@ -92,7 +92,7 @@ require (
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
-	github.com/abema/go-mp4 v1.7.3
+	github.com/abema/go-mp4 v1.7.4
 	github.com/antchfx/xmlquery v1.5.2
 	github.com/antchfx/xpath v1.3.9
 	github.com/davidbyttow/govips/v2 v2.20.0
@@ -111,7 +111,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.15
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/golang/geo v0.0.0-20260928092222-7d12f68cfadb
+	github.com/golang/geo v0.0.0-20261022062553-461c194586d4
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
