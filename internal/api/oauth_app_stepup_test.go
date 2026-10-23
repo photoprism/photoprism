@@ -65,12 +65,12 @@ func appTokens(t *testing.T, app *gin.Engine, conf *config.Config, adminToken, c
 func TestOAuthApp_StepUpWithDefaultClient(t *testing.T) {
 	app, router, conf, _ := prepareAppTokenTest(t)
 
-	// Register the app client as "photoprism clients add --name ... --callback ..." does, without a scope.
+	// Register the app client as "photoprism clients add --name ... --redirect-uri ..." does, without a scope.
 	flags := flag.NewFlagSet("test", flag.ContinueOnError)
 	flags.String("name", "", "Usage")
 	flags.String("scope", "", "Usage")
-	flags.Var(cli.NewStringSlice(), "callback", "Usage")
-	require.NoError(t, flags.Parse([]string{"--name=Default App", "--callback=" + testAppCallback}))
+	flags.Var(cli.NewStringSlice(), "redirect-uri", "Usage")
+	require.NoError(t, flags.Parse([]string{"--name=Default App", "--redirect-uri=" + testAppCallback}))
 
 	f := form.AddClientFromCli(cli.NewContext(cli.NewApp(), flags, nil))
 	require.Equal(t, "*", f.Scope())

@@ -40,7 +40,7 @@ func TestClientsAddCommand_AddWithRoleAndUser(t *testing.T) {
 
 func TestClientsAddCommand_App(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		output, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Claude Connector", "--callback=https://claude.ai/api/mcp/auth_callback", "--callback=http://127.0.0.1/callback"})
+		output, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Claude Connector", "--redirect-uri=https://claude.ai/api/mcp/auth_callback", "--redirect-uri=http://127.0.0.1/callback"})
 
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Claude Connector")
@@ -59,15 +59,15 @@ func TestClientsAddCommand_App(t *testing.T) {
 		assert.NoError(t, found.Delete())
 	})
 	t.Run("InstanceRole", func(t *testing.T) {
-		_, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Role App", "--role=instance", "--callback=https://claude.ai/cb"})
+		_, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Role App", "--role=instance", "--redirect-uri=https://claude.ai/cb"})
 		assert.Error(t, err)
 	})
-	t.Run("InvalidCallback", func(t *testing.T) {
-		_, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Bad App", "--callback=javascript:alert(1)"})
+	t.Run("InvalidRedirectURI", func(t *testing.T) {
+		_, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=Bad App", "--redirect-uri=javascript:alert(1)"})
 		assert.Error(t, err)
 	})
 	t.Run("WithUser", func(t *testing.T) {
-		_, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=User App", "--callback=https://claude.ai/cb", "alice"})
+		_, err := RunWithTestContext(ClientsAddCommand, []string{"add", "--name=User App", "--redirect-uri=https://claude.ai/cb", "alice"})
 		assert.Error(t, err)
 	})
 }

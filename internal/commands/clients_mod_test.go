@@ -251,19 +251,19 @@ func TestClientsModCommand_RestorePrompt(t *testing.T) {
 }
 
 func TestClientsModCommand_App(t *testing.T) {
-	t.Run("Callbacks", func(t *testing.T) {
+	t.Run("RedirectURIs", func(t *testing.T) {
 		client, err := entity.AddClient(form.Client{ClientName: "Mod App", AuthMethod: authn.MethodPKCE.String(), AuthScope: "mcp",
 			RedirectURIs: []string{"https://claude.ai/cb"}})
 		require.NoError(t, err)
 
-		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--callback=https://claude.ai/new", "--callback=http://127.0.0.1/cb", client.ClientUID})
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--redirect-uri=https://claude.ai/new", "--redirect-uri=http://127.0.0.1/cb", client.ClientUID})
 		require.NoError(t, err)
 
 		found := entity.FindClientByUID(client.ClientUID)
 		require.NotNil(t, found)
 		assert.Equal(t, []string{"https://claude.ai/new", "http://127.0.0.1/cb"}, found.RedirectURIs())
 
-		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--callback=http://example.com/cb", client.ClientUID})
+		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--redirect-uri=http://example.com/cb", client.ClientUID})
 		assert.Error(t, err)
 
 		_, err = RunWithTestContext(ClientsModCommand, []string{"mod", "--regenerate", client.ClientUID})
@@ -288,8 +288,8 @@ func TestClientsModCommand_App(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NoError(t, found.Delete())
 	})
-	t.Run("CallbacksForClientCredentials", func(t *testing.T) {
-		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--callback=https://claude.ai/cb", "cs5gfen1bgxz7s9i"})
+	t.Run("RedirectURIsForClientCredentials", func(t *testing.T) {
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--redirect-uri=https://claude.ai/cb", "cs5gfen1bgxz7s9i"})
 		assert.Error(t, err)
 	})
 	t.Run("ConvertNodeClientToApp", func(t *testing.T) {
@@ -309,7 +309,7 @@ func TestClientsModCommand_App(t *testing.T) {
 		assert.False(t, found.IsApp())
 	})
 	t.Run("ConvertToApp", func(t *testing.T) {
-		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--method=pkce", "--callback=https://claude.ai/cb", "cs5gfen1bgxz7s9i"})
+		_, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--method=pkce", "--redirect-uri=https://claude.ai/cb", "cs5gfen1bgxz7s9i"})
 		assert.Error(t, err)
 
 		found := entity.FindClientByUID("cs5gfen1bgxz7s9i")

@@ -17,12 +17,12 @@ type ClientChange struct {
 	NewSecret bool // NewSecret is true if the request asks for a new random secret.
 }
 
-// ValidateClientForm checks the values of a new client: an app client has callback URLs, belongs to
-// no user and does not use a client secret, and only app clients have callback URLs.
+// ValidateClientForm checks the values of a new client: an app client has redirect URIs, belongs to
+// no user and does not use a client secret, and only app clients have redirect URIs.
 func ValidateClientForm(frm form.Client) error {
 	if !frm.IsApp() {
 		if len(frm.RedirectURIs) > 0 {
-			return fmt.Errorf("callback URLs can only be set for app clients")
+			return fmt.Errorf("redirect URIs can only be set for app clients")
 		}
 
 		return nil
@@ -30,7 +30,7 @@ func ValidateClientForm(frm form.Client) error {
 
 	switch {
 	case len(frm.RedirectURIs) == 0:
-		return fmt.Errorf("app clients require at least one callback URL")
+		return fmt.Errorf("app clients require at least one redirect URI")
 	case frm.UserUID != "" || frm.UserName != "":
 		return fmt.Errorf("app clients cannot belong to a user")
 	case frm.Secret() != "":
@@ -39,11 +39,11 @@ func ValidateClientForm(frm form.Client) error {
 		return fmt.Errorf("app clients must have the %s role", acl.RoleClient.String())
 	}
 
-	return ValidateCallbackURLs(frm.RedirectURIs)
+	return ValidateRedirectURIs(frm.RedirectURIs)
 }
 
 // ValidateClientChange checks changes to an existing client: its auth method cannot be switched to or from
-// the app type, app clients keep the client role and no secret, and only app clients have callback URLs.
+// the app type, app clients keep the client role and no secret, and only app clients have redirect URIs.
 func ValidateClientChange(client *entity.Client, frm form.Client, set ClientChange) error {
 	if client == nil {
 		return fmt.Errorf("client not found")
@@ -55,7 +55,7 @@ func ValidateClientChange(client *entity.Client, frm form.Client, set ClientChan
 	case (set.Method || frm.AuthMethod != "") && frm.IsApp() != isApp:
 		return fmt.Errorf("the authentication method of app clients cannot be changed")
 	case frm.RedirectURIs != nil && !isApp:
-		return fmt.Errorf("callback URLs can only be set for app clients")
+		return fmt.Errorf("redirect URIs can only be set for app clients")
 	case !isApp:
 		return nil
 	case frm.Secret() != "" || set.NewSecret:
@@ -64,15 +64,15 @@ func ValidateClientChange(client *entity.Client, frm form.Client, set ClientChan
 		return fmt.Errorf("app clients must have the %s role", acl.RoleClient.String())
 	}
 
-	return ValidateCallbackURLs(frm.RedirectURIs)
+	return ValidateRedirectURIs(frm.RedirectURIs)
 }
 
-// ValidateCallbackURLs checks that each callback URL is an HTTPS URL, an HTTP URL on a loopback host,
+// ValidateRedirectURIs checks that each redirect URI is an HTTPS URL, an HTTP URL on a loopback host,
 // or a private-use URI scheme in reverse domain notation.
-func ValidateCallbackURLs(uris []string) error {
+func ValidateRedirectURIs(uris []string) error {
 	for _, uri := range uris {
 		if !ValidRedirectURI(uri) || !ValidValue(uri, MaxRedirectURILength) {
-			return fmt.Errorf("invalid callback URL %s", clean.LogQuote(uri))
+			return fmt.Errorf("invalid redirect URI %s", clean.LogQuote(uri))
 		}
 	}
 

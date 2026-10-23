@@ -17,7 +17,7 @@ const (
 	ClientNameUsage        = "`CLIENT` name to help identify the application"
 	ClientAuthScope        = "client authorization `SCOPE` as space-separated resources, or '*' for full access"
 	ClientAuthProvider     = "client authentication `PROVIDER`"
-	ClientCallbackUsage    = "callback `URL` of an app that users connect with OAuth sign-in and consent (repeat for each URL)"
+	ClientRedirectURIUsage = "redirect `URI` of an app that users connect with OAuth sign-in and consent (repeat for each URI)"
 	ClientAuthMethod       = "client authentication `METHOD`"
 	ClientAuthExpires      = "access token `LIFETIME` in seconds, after which a new token must be requested"
 	ClientAuthTokens       = "maximum `NUMBER` of access tokens that the client can request (-1 to disable the limit)"
@@ -70,8 +70,8 @@ var ClientAddFlags = []cli.Flag{
 	},
 	ScopeFlag(ClientAuthScope),
 	&cli.StringSliceFlag{
-		Name:  "callback",
-		Usage: ClientCallbackUsage,
+		Name:  "redirect-uri",
+		Usage: ClientRedirectURIUsage,
 	},
 	&cli.StringFlag{
 		Name:    "provider",
@@ -120,8 +120,8 @@ var ClientModFlags = []cli.Flag{
 	},
 	ScopeFlag(ClientAuthScope),
 	&cli.StringSliceFlag{
-		Name:  "callback",
-		Usage: ClientCallbackUsage,
+		Name:  "redirect-uri",
+		Usage: ClientRedirectURIUsage,
 	},
 	&cli.StringFlag{
 		Name:    "provider",

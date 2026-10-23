@@ -93,9 +93,9 @@ func AddClientFromCli(ctx *cli.Context) Client {
 
 	f.AuthScope = clean.Scope(ctx.String("scope"))
 
-	// Callback URLs register an app client that users connect with the authorization code flow.
-	if callbacks := callbackURLs(ctx); len(callbacks) > 0 {
-		f.RedirectURIs = callbacks
+	// Redirect URIs register an app client that users connect with the authorization code flow.
+	if uris := redirectURIs(ctx); len(uris) > 0 {
+		f.RedirectURIs = uris
 		f.AuthMethod = authn.MethodPKCE.String()
 	}
 
@@ -150,8 +150,8 @@ func ModClientFromCli(ctx *cli.Context) Client {
 		f.AuthTokens = ctx.Int64("tokens")
 	}
 
-	if ctx.IsSet("callback") {
-		f.RedirectURIs = callbackURLs(ctx)
+	if ctx.IsSet("redirect-uri") {
+		f.RedirectURIs = redirectURIs(ctx)
 	}
 
 	if ctx.Bool("enable") {
@@ -163,11 +163,11 @@ func ModClientFromCli(ctx *cli.Context) Client {
 	return f
 }
 
-// callbackURLs returns the trimmed, non-empty callback URLs passed with the "callback" flag.
-func callbackURLs(ctx *cli.Context) []string {
+// redirectURIs returns the trimmed, non-empty redirect URIs passed with the "redirect-uri" flag.
+func redirectURIs(ctx *cli.Context) []string {
 	var result []string
 
-	for _, uri := range ctx.StringSlice("callback") {
+	for _, uri := range ctx.StringSlice("redirect-uri") {
 		if uri = strings.TrimSpace(uri); uri != "" {
 			result = append(result, uri)
 		}

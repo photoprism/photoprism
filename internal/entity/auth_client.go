@@ -1024,7 +1024,7 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 		m.AuthTokens = -1
 	}
 
-	// Set the callback URLs of app clients, which authenticate without a client secret.
+	// Set the redirect URIs of app clients, which authenticate without a client secret.
 	if frm.RedirectURIs != nil {
 		data := m.GetData()
 		data.RedirectURIs = frm.RedirectURIs
@@ -1048,7 +1048,7 @@ func (m *Client) IsApp() bool {
 	return m.Method() == authn.MethodPKCE
 }
 
-// RedirectURIs returns the registered callback URLs of the client.
+// RedirectURIs returns the registered redirect URIs of the client.
 func (m *Client) RedirectURIs() []string {
 	if m == nil {
 		return nil
@@ -1084,12 +1084,12 @@ func (m *Client) Validate() (err error) {
 		return errors.New("authorization scope must not be empty")
 	}
 
-	// App clients need at least one callback URL.
+	// App clients need at least one redirect URI.
 	if m.IsApp() && len(m.RedirectURIs()) == 0 {
-		return errors.New("app clients require at least one callback URL")
+		return errors.New("app clients require at least one redirect URI")
 	}
 
-	// App client data, which holds the callback URLs, exceeds the column size?
+	// App client data, which holds the redirect URIs, exceeds the column size?
 	if m.IsApp() && len(m.DataJSON) > ClientDataMaxBytes {
 		return errors.New("client data is too large")
 	}

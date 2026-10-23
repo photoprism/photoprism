@@ -17,10 +17,10 @@ func TestValidateClientForm(t *testing.T) {
 		assert.NoError(t, ValidateClientForm(app))
 		assert.NoError(t, ValidateClientForm(form.Client{AuthMethod: authn.MethodOAuth2.String()}))
 	})
-	t.Run("NoCallback", func(t *testing.T) {
+	t.Run("NoRedirectURI", func(t *testing.T) {
 		f := app
 		f.RedirectURIs = nil
-		assert.EqualError(t, ValidateClientForm(f), "app clients require at least one callback URL")
+		assert.EqualError(t, ValidateClientForm(f), "app clients require at least one redirect URI")
 	})
 	t.Run("User", func(t *testing.T) {
 		f := app
@@ -39,13 +39,13 @@ func TestValidateClientForm(t *testing.T) {
 		f.ClientRole = "client"
 		assert.NoError(t, ValidateClientForm(f))
 	})
-	t.Run("CallbackWithoutApp", func(t *testing.T) {
-		assert.EqualError(t, ValidateClientForm(form.Client{AuthMethod: authn.MethodOAuth2.String(), RedirectURIs: []string{"https://claude.ai/cb"}}), "callback URLs can only be set for app clients")
+	t.Run("RedirectURIWithoutApp", func(t *testing.T) {
+		assert.EqualError(t, ValidateClientForm(form.Client{AuthMethod: authn.MethodOAuth2.String(), RedirectURIs: []string{"https://claude.ai/cb"}}), "redirect URIs can only be set for app clients")
 	})
-	t.Run("InvalidCallback", func(t *testing.T) {
+	t.Run("InvalidRedirectURI", func(t *testing.T) {
 		f := app
 		f.RedirectURIs = []string{"http://example.com/cb"}
-		assert.EqualError(t, ValidateClientForm(f), "invalid callback URL 'http://example.com/cb'")
+		assert.EqualError(t, ValidateClientForm(f), "invalid redirect URI 'http://example.com/cb'")
 	})
 }
 
@@ -72,9 +72,9 @@ func TestValidateClientChange(t *testing.T) {
 		assert.EqualError(t, ValidateClientChange(app, form.Client{AuthMethod: "jwt"}, ClientChange{}), "the authentication method of app clients cannot be changed")
 		assert.NoError(t, ValidateClientChange(api, form.Client{AuthMethod: authn.MethodOAuth2.String()}, ClientChange{}))
 	})
-	t.Run("CallbackWithoutApp", func(t *testing.T) {
-		assert.EqualError(t, ValidateClientChange(api, form.Client{RedirectURIs: []string{"https://claude.ai/cb"}}, ClientChange{}), "callback URLs can only be set for app clients")
-		assert.EqualError(t, ValidateClientChange(api, form.Client{RedirectURIs: []string{}}, ClientChange{}), "callback URLs can only be set for app clients")
+	t.Run("RedirectURIWithoutApp", func(t *testing.T) {
+		assert.EqualError(t, ValidateClientChange(api, form.Client{RedirectURIs: []string{"https://claude.ai/cb"}}, ClientChange{}), "redirect URIs can only be set for app clients")
+		assert.EqualError(t, ValidateClientChange(api, form.Client{RedirectURIs: []string{}}, ClientChange{}), "redirect URIs can only be set for app clients")
 	})
 	t.Run("Secret", func(t *testing.T) {
 		assert.EqualError(t, ValidateClientChange(app, form.Client{ClientSecret: "xcCbOrw6I0vcoXzhnOmXhjpVSyFq9i8u"}, ClientChange{}), "app clients do not use a client secret")
@@ -85,18 +85,18 @@ func TestValidateClientChange(t *testing.T) {
 		assert.EqualError(t, ValidateClientChange(app, form.Client{ClientRole: ""}, ClientChange{Role: true}), "app clients must have the client role")
 		assert.NoError(t, ValidateClientChange(app, form.Client{ClientRole: "admin"}, ClientChange{}))
 	})
-	t.Run("InvalidCallback", func(t *testing.T) {
-		assert.EqualError(t, ValidateClientChange(app, form.Client{RedirectURIs: []string{"javascript:alert(1)"}}, ClientChange{}), "invalid callback URL 'javascript:alert(1)'")
+	t.Run("InvalidRedirectURI", func(t *testing.T) {
+		assert.EqualError(t, ValidateClientChange(app, form.Client{RedirectURIs: []string{"javascript:alert(1)"}}, ClientChange{}), "invalid redirect URI 'javascript:alert(1)'")
 	})
 }
 
-func TestValidateCallbackURLs(t *testing.T) {
+func TestValidateRedirectURIs(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
-		assert.NoError(t, ValidateCallbackURLs([]string{"https://claude.ai/cb", "http://localhost:6274/oauth/callback", "app.photoprism.mobile:/oauth"}))
-		assert.NoError(t, ValidateCallbackURLs(nil))
+		assert.NoError(t, ValidateRedirectURIs([]string{"https://claude.ai/cb", "http://localhost:6274/oauth/callback", "app.photoprism.mobile:/oauth"}))
+		assert.NoError(t, ValidateRedirectURIs(nil))
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		assert.Error(t, ValidateCallbackURLs([]string{"https://claude.ai/cb", "http://example.com/cb"}))
-		assert.Error(t, ValidateCallbackURLs([]string{"javascript:alert(1)"}))
+		assert.Error(t, ValidateRedirectURIs([]string{"https://claude.ai/cb", "http://example.com/cb"}))
+		assert.Error(t, ValidateRedirectURIs([]string{"javascript:alert(1)"}))
 	})
 }
