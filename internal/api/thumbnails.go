@@ -36,7 +36,7 @@ import (
 //	@Param			thumb			path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
 //	@Param			token			path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
 //	@Param			size			path	string	true	"thumbnail size; sizes above the server limit are reduced"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
-//	@Param			download		query	string	false	"returns the thumbnail as an attachment named <stem>_<size> with the extension of the thumbnail; placeholders then use 400, 404, or 500"
+//	@Param			download		query	string	false	"returns the thumbnail as an attachment named <stem>_<size> with the extension of the thumbnail, or after the crop size for a cropped thumbnail; placeholders then use 400, 404, or 500"
 //	@Param			name			query	string	false	"attachment name type (file, share, original)"
 //	@Router			/api/v1/t/{thumb}/{token}/{size} [get]
 func GetThumb(router *gin.RouterGroup) {

@@ -13679,7 +13679,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "returns the thumbnail as an attachment named \u003cstem\u003e_\u003csize\u003e with the extension of the thumbnail; placeholders then use 400, 404, or 500",
+                        "description": "returns the thumbnail as an attachment named \u003cstem\u003e_\u003csize\u003e with the extension of the thumbnail, or after the crop size for a cropped thumbnail; placeholders then use 400, 404, or 500",
                         "in": "query",
                         "name": "download",
                         "type": "string"

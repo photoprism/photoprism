@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 21, 2026
+**Last Updated:** October 23, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -79,6 +79,7 @@ HTTP API
 - Hidden search behavior (used by the hidden route under the configured frontend URI, default `/library/hidden` for CE/Plus/Pro and `/portal/hidden` for Portal) is implemented in `internal/entity/search/photos.go`:
   - `frm.Hidden` enforces `photos.photo_quality = -1` and `photos.deleted_at IS NULL`.
   - Non-hidden searches exclude errored files by default (`files.file_error = ''`) unless `frm.Error` is explicitly set.
+- Downloads: `internal/api/download.go` (`GET /api/v1/dl/{hash}`); `?format=avc` returns the AVC rendition of a video, live photo, or animation (`download_avc.go`), resolved like playback by `resolveVideo` (`video_source.go`, shared with `video.go`). Thumbnail attachments (`/t/...?download=1`) are named `<stem>_<size>.jpg` by `thumbDownloadName` in `thumbnails.go`. The Lightbox Export dialog uses both; see `frontend/CODEMAP.md`.
 - Search DTOs in `internal/entity/search/photos_results.go` expose `FileError` (`files.file_error`) so clients can render hidden reasons without loading full file details first.
 
 Configuration & Flags
@@ -101,7 +102,7 @@ Configuration & Flags
   - CDN behavior: Requests carrying CDN headers are rejected with `404` to prevent intermediary cache mix-ups between public and session-specific config payloads.
   - Assembly: Built from `internal/config/client_config.go` (not a direct serialization of Options) plus extension values registered via `config.Register` in `internal/config/extensions.go`.
   - Updates: Back-end calls `UpdateClientConfig()` to publish "config.updated" over websockets after changes (see `internal/api/config_options.go` and `internal/api/config_settings.go`).
-  - ACL/mode aware: Values are filtered by user/session and may differ for public vs. authenticated users.
+  - ACL/mode aware: Values are filtered by user/session and may differ for public vs. authenticated users. Feature flags such as `Export` are shaped per session by `Settings.ApplyACL` / `ApplyScope` (`internal/config/customize`), and `thumbLimit` tells the client the largest thumbnail size the server renders.
   - Don’t expose secrets: Treat it as client-visible; avoid sensitive data. To add fields, extend client values via `config.Register` rather than exposing Options directly.
   - Refresh cadence: The web UI (non‑mobile) also polls for updates every 10 minutes via `$config.update()` in `frontend/src/app.js`, complementing the websocket push.
 - OIDC Groups (Pro-Only)
@@ -125,7 +126,6 @@ AuthN/Z & Sessions
 - URL tokens (signed downloads and previews): `pkg/authn/authtoken` mints/verifies the bunny.net-compatible HMAC-SHA256 format; `internal/auth/tokens` (a Propagate-configured leaf) holds the per-kind signers `Download`, `Preview` and `OAuth` (codes and refresh tokens of the app flow), the delivery policy, and `Derive` for the instance preview token. Request side in `internal/api/auth_tokens.go`: `AuthDownload`/`DownloadSession` for downloads, and `InvalidPreviewToken(c, resources)`/`PreviewSession` for previews. Delivery: `Config.ClientSession`/`ClientOAuth` and `SessionDownloadToken`/`SessionPreviewToken`/`SessionContentUri` (`internal/api/api_response_headers.go`). Details, the JWT precedence, the scoped consumers and test gotchas: `internal/auth/tokens/README.md`.
 
 Media Processing
-- Media export: `frontend/src/component/photo/export/dialog.vue` offers per-file choices from full picture details; `frontend/src/common/export*.js` builds choices and attachment URLs. Client configuration exposes ACL/scope-filtered `Export` and the effective thumbnail limit.
 - Thumbnails: `internal/thumb/*` and helpers in `internal/photoprism/mediafile_thumbs.go`.
 - Metadata: `internal/meta/*`.
 - FFmpeg integration: `internal/ffmpeg/*`.
