@@ -107,7 +107,7 @@ func TestRemoveFromAlbumCoverCache(t *testing.T) {
 
 	for thumbName := range thumb.Sizes {
 		key := CacheKey(albumCover, uid, string(thumbName))
-		cache.SetDefault(key, ThumbCache{FileName: "cached-file", ShareName: "share"})
+		cache.SetDefault(key, ThumbCache{FileName: "cached-file"})
 	}
 
 	conf := get.Config()
@@ -156,7 +156,7 @@ func TestRemoveFromAlbumCoverCacheInvalidUID(t *testing.T) {
 
 	uid := "" // empty string fails rnd.IsAlnum
 	key := CacheKey(albumCover, uid, thumb.Tile500.String())
-	cache.SetDefault(key, ThumbCache{FileName: "file", ShareName: "share"})
+	cache.SetDefault(key, ThumbCache{FileName: "file"})
 
 	RemoveFromAlbumCoverCache(uid)
 
@@ -189,7 +189,7 @@ func TestRemoveFromLabelCoverCache(t *testing.T) {
 
 	for thumbName := range thumb.Sizes {
 		key := CacheKey(labelCover, uid, string(thumbName))
-		cache.SetDefault(key, ThumbCache{FileName: "cached-file", ShareName: "share"})
+		cache.SetDefault(key, ThumbCache{FileName: "cached-file"})
 	}
 
 	RemoveFromLabelCoverCache(uid)
@@ -207,7 +207,7 @@ func TestRemoveFromLabelCoverCacheInvalidUID(t *testing.T) {
 
 	uid := ""
 	key := CacheKey(labelCover, uid, thumb.Tile500.String())
-	cache.SetDefault(key, ThumbCache{FileName: "file", ShareName: "share"})
+	cache.SetDefault(key, ThumbCache{FileName: "file"})
 
 	RemoveFromLabelCoverCache(uid)
 

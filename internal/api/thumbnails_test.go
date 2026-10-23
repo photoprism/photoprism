@@ -149,8 +149,8 @@ func TestGetThumb(t *testing.T) {
 	})
 	t.Run("SizeExceedsLimitDownload", func(t *testing.T) {
 		// Unlike the cover endpoints, this one honors ?download=, and the attachment must be the
-		// reduced size rather than the original. The attachment path skips the shortcut that
-		// serves an existing rendition, so it reaches the cache lookup instead.
+		// reduced size rather than the original. The attachment path skips the cached entry and
+		// the shortcut that serves an existing rendition, so it resolves the indexed file instead.
 		app, router, conf := NewApiTest()
 		SetTestThumbSizes(t, thumb.SizeFit1920.Width, thumb.SizeFit7680.Width)
 		fileHash := "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818"

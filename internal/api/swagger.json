@@ -13677,6 +13677,18 @@
                         "name": "size",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "description": "returns the thumbnail as an attachment named \u003cstem\u003e_\u003csize\u003e with the extension of the thumbnail; placeholders then use 400, 404, or 500",
+                        "in": "query",
+                        "name": "download",
+                        "type": "string"
+                    },
+                    {
+                        "description": "attachment name type (file, share, original)",
+                        "in": "query",
+                        "name": "name",
+                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -13690,8 +13702,26 @@
                             "type": "file"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "file"
                         }

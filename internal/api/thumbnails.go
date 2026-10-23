@@ -1,13 +1,17 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -26,12 +30,14 @@ import (
 //	@Id				GetThumb
 //	@Produce		image/jpeg, image/svg+xml
 //	@Tags			Images, Files
-//	@Failure		403		{file}	image/svg+xml
-//	@Success		200		{file}	image/svg+xml
-//	@Success		200		{file}	image/jpg
-//	@Param			thumb	path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
-//	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param			size	path	string	true	"thumbnail size; sizes above the server limit are reduced"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
+//	@Failure		400,403,404,500	{file}	image/svg+xml
+//	@Success		200				{file}	image/svg+xml
+//	@Success		200				{file}	image/jpg
+//	@Param			thumb			path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
+//	@Param			token			path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param			size			path	string	true	"thumbnail size; sizes above the server limit are reduced"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
+//	@Param			download		query	string	false	"returns the thumbnail as an attachment named <stem>_<size> with the extension of the thumbnail; placeholders then use 400, 404, or 500"
+//	@Param			name			query	string	false	"attachment name type (file, share, original)"
 //	@Router			/api/v1/t/{thumb}/{token}/{size} [get]
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
@@ -55,7 +61,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 			if !ok {
 				log.Errorf("%s: invalid size %s", logPrefix, clean.Log(string(cropName)))
-				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+				abortThumb(c, attachment, http.StatusBadRequest, photoIconSvg)
 				return
 			}
 
@@ -63,11 +69,11 @@ func GetThumb(router *gin.RouterGroup) {
 
 			if err != nil {
 				log.Warnf("%s: %s in %s", logPrefix, clean.Error(err), thumbLogName(fileHash))
-				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+				abortThumb(c, attachment, http.StatusNotFound, brokenIconSvg)
 				return
 			} else if fileName == "" {
 				log.Errorf("%s: empty file name - you may have found a bug", logPrefix)
-				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+				abortThumb(c, attachment, http.StatusInternalServerError, brokenIconSvg)
 				return
 			}
 
@@ -89,7 +95,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		if !ok {
 			log.Errorf("%s: invalid size %s", logPrefix, clean.Log(sizeName.String()))
-			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			abortThumb(c, attachment, http.StatusBadRequest, photoIconSvg)
 			return
 		}
 
@@ -98,7 +104,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 			if sizeName == "" {
 				log.Errorf("%s: invalid size %d", logPrefix, conf.ThumbSizePrecached())
-				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+				abortThumb(c, attachment, http.StatusInternalServerError, photoIconSvg)
 				return
 			}
 		}
@@ -116,7 +122,8 @@ func GetThumb(router *gin.RouterGroup) {
 		// That mapping only depends on the file, so the entry stays valid.
 		cacheKey := CacheKey("thumbs", fileHash, string(sizeName))
 
-		if cacheData, ok := cache.Get(cacheKey); ok {
+		// Downloads are named from the indexed file, so they skip the cache.
+		if cacheData, ok := cache.Get(cacheKey); ok && !attachment {
 			log.Tracef("api: cache hit for %s [%s]", cacheKey, time.Since(start))
 
 			cached := cacheData.(ThumbCache)
@@ -131,12 +138,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 			// Add HTTP cache header.
 			AddImmutableCacheHeader(c)
-
-			if attachment {
-				c.FileAttachment(cached.FileName, cached.ShareName)
-			} else {
-				c.File(cached.FileName)
-			}
+			c.File(cached.FileName)
 
 			return
 		}
@@ -157,21 +159,21 @@ func GetThumb(router *gin.RouterGroup) {
 		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
-			c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+			abortThumb(c, attachment, http.StatusNotFound, photoIconSvg)
 			return
 		}
 
 		// Find supported preview image if media file is not a JPEG or PNG.
 		if f.NoJpeg() && f.NoPng() {
 			if f, err = query.FileByPhotoUID(f.PhotoUID); err != nil {
-				c.Data(http.StatusOK, "image/svg+xml", fileIconSvg)
+				abortThumb(c, attachment, http.StatusNotFound, fileIconSvg)
 				return
 			}
 		}
 
 		// Return SVG icon as placeholder if file has errors.
 		if f.FileError != "" {
-			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+			abortThumb(c, attachment, http.StatusNotFound, brokenIconSvg)
 			return
 		}
 
@@ -179,7 +181,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		if fileName, err = fs.Resolve(fileName); err != nil {
 			log.Errorf("%s: file %s is missing", logPrefix, clean.Log(f.FileName))
-			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+			abortThumb(c, attachment, http.StatusNotFound, brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			logErr(logPrefix, f.Update("FileMissing", true))
@@ -213,18 +215,23 @@ func GetThumb(router *gin.RouterGroup) {
 		}
 
 		// Failed?
-		if err != nil {
+		switch {
+		case errors.Is(err, thumb.ErrNotCached):
 			log.Errorf("%s: %s in %s", logPrefix, clean.Error(err), clean.Log(f.FileName))
-			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+			abortThumb(c, attachment, http.StatusNotFound, brokenIconSvg)
 			return
-		} else if thumbName == "" {
+		case err != nil:
+			log.Errorf("%s: %s in %s", logPrefix, clean.Error(err), clean.Log(f.FileName))
+			abortThumb(c, attachment, http.StatusInternalServerError, brokenIconSvg)
+			return
+		case thumbName == "":
 			log.Errorf("%s: %s has empty thumb name - you may have found a bug", logPrefix, filepath.Base(fileName))
-			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+			abortThumb(c, attachment, http.StatusInternalServerError, brokenIconSvg)
 			return
 		}
 
 		// Cache thumbnail filename to reduce the number of index queries.
-		cache.SetDefault(cacheKey, ThumbCache{thumbName, f.ShareBase(0)})
+		cache.SetDefault(cacheKey, ThumbCache{FileName: thumbName})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		// Add HTTP cache header.
@@ -232,11 +239,66 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Return requested content.
 		if attachment {
-			c.FileAttachment(thumbName, f.DownloadName(DownloadName(c), 0))
+			c.FileAttachment(thumbName, thumbDownloadName(f, DownloadName(c), sizeName, thumbName))
 		} else {
 			c.File(thumbName)
 		}
 	})
+}
+
+// abortThumb sends a placeholder icon, with the given status code only if the thumbnail was requested as a download.
+func abortThumb(c *gin.Context, download bool, code int, icon []byte) {
+	if !download {
+		code = http.StatusOK
+	}
+
+	c.Data(code, "image/svg+xml", icon)
+}
+
+// thumbDownloadName returns the attachment name of a thumbnail: the selected download name of the original it
+// belongs to without its last extension, followed by the size and the extension of the thumbnail file.
+func thumbDownloadName(f *entity.File, n customize.DownloadName, size thumb.Name, thumbName string) string {
+	return clean.AttachmentName(fs.StripExt(thumbOwner(f).DownloadName(n, 0)) + "_" + size.String() + filepath.Ext(thumbName))
+}
+
+// thumbOwner returns the original of the same picture that a preview outside the originals folder was made from,
+// matched by its full name or, if unambiguous, by its stem, or the file itself otherwise.
+func thumbOwner(f *entity.File) *entity.File {
+	if f.FileRoot == entity.RootOriginals || f.PhotoID == 0 {
+		return f
+	}
+
+	var originals entity.Files
+
+	if err := entity.Db().Where("photo_id = ? AND file_root = ? AND file_sidecar = ?", f.PhotoID, entity.RootOriginals, false).
+		Preload("Photo").Find(&originals).Error; err != nil {
+		return f
+	}
+
+	stem := strings.TrimSuffix(f.FileName, filepath.Ext(f.FileName))
+	var match *entity.File
+
+	for i := range originals {
+		if originals[i].FileName == stem {
+			return &originals[i]
+		}
+	}
+
+	for i := range originals {
+		if name := originals[i].FileName; strings.TrimSuffix(name, filepath.Ext(name)) != stem {
+			continue
+		} else if match != nil {
+			return f
+		}
+
+		match = &originals[i]
+	}
+
+	if match != nil {
+		return match
+	}
+
+	return f
 }
 
 // thumbLogName returns the name of the original a thumbnail belongs to, for naming it in a log message
