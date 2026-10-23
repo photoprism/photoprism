@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 
-	"github.com/dustin/go-humanize/english"
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
@@ -112,22 +111,6 @@ func clientsAddAction(ctx *cli.Context) error {
 			cols := []string{"Client ID", "Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
 			rows := make([][]string, 1)
 
-			var authExpires string
-
-			if client.IsApp() {
-				// App tokens have a fixed lifetime, see the OAuth app flow.
-			} else if client.AuthExpires > 0 {
-				authExpires = client.Expires().String()
-			}
-
-			if client.AuthTokens > 0 && !client.IsApp() {
-				if authExpires != "" {
-					authExpires = fmt.Sprintf("%s; up to %s", authExpires, english.Plural(int(client.Tokens()), "token", "tokens"))
-				} else {
-					authExpires = fmt.Sprintf("up to %d tokens", client.AuthTokens)
-				}
-			}
-
 			rows[0] = []string{
 				client.GetUID(),
 				client.Name(),
@@ -136,7 +119,7 @@ func clientsAddAction(ctx *cli.Context) error {
 				client.AclRole().String(),
 				client.Scope(),
 				report.Bool(client.AuthEnabled, report.Yes, report.No),
-				authExpires,
+				clientTokenInfo(client),
 				client.CreatedAt.Format("2006-01-02 15:04:05"),
 			}
 

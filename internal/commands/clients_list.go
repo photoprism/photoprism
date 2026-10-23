@@ -30,7 +30,7 @@ func clientsListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		deleted := ctx.Bool("deleted")
 
-		cols := []string{"Client ID", "Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
+		cols := []string{"Client ID", "Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Last Active", "Created At"}
 
 		if deleted {
 			cols = append(cols, "Deleted At")
@@ -60,20 +60,6 @@ func clientsListAction(ctx *cli.Context) error {
 
 		// Display report.
 		for i, client := range clients {
-			var authExpires string
-
-			if client.AuthExpires > 0 {
-				authExpires = client.Expires().String()
-			}
-
-			if client.AuthTokens > 0 {
-				if authExpires != "" {
-					authExpires = fmt.Sprintf("%s; up to %s", authExpires, english.Plural(int(client.Tokens()), "token", "tokens"))
-				} else {
-					authExpires = fmt.Sprintf("up to %d tokens", client.AuthTokens)
-				}
-			}
-
 			// A deleted client resolves as role none for access checks, so the listing
 			// reports the role it was configured with rather than that outcome.
 			role := client.AclRole().String()
@@ -90,7 +76,8 @@ func clientsListAction(ctx *cli.Context) error {
 				role,
 				client.Scope(),
 				report.Bool(client.AuthEnabled, report.Yes, report.No),
-				authExpires,
+				clientTokenInfo(&client),
+				clientLastActive(&client),
 				client.CreatedAt.Format("2006-01-02 15:04:05"),
 			}
 

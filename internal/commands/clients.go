@@ -2,10 +2,14 @@ package commands
 
 import (
 	"fmt"
+	"time"
+
+	"github.com/dustin/go-humanize/english"
 
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
@@ -170,4 +174,37 @@ var ClientModFlags = []cli.Flag{
 		Name:  "restore",
 		Usage: ClientRestore,
 	},
+}
+
+// clientTokenInfo returns the access token lifetime and limit of an API client, and nothing for app clients,
+// whose tokens are bounded by their grants.
+func clientTokenInfo(client *entity.Client) string {
+	if client == nil || client.IsApp() {
+		return ""
+	}
+
+	var info string
+
+	if client.AuthExpires > 0 {
+		info = client.Expires().String()
+	}
+
+	if client.AuthTokens > 0 {
+		if info != "" {
+			info = fmt.Sprintf("%s; up to %s", info, english.Plural(int(client.Tokens()), "token", "tokens"))
+		} else {
+			info = fmt.Sprintf("up to %d tokens", client.AuthTokens)
+		}
+	}
+
+	return info
+}
+
+// clientLastActive returns the time of the client's last activity in UTC, or nothing if it was never active.
+func clientLastActive(client *entity.Client) string {
+	if client == nil || client.LastActive <= 0 {
+		return ""
+	}
+
+	return time.Unix(client.LastActive, 0).UTC().Format("2006-01-02 15:04:05")
 }
