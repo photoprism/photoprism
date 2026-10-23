@@ -8216,10 +8216,29 @@
                         "name": "file",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "description": "download token",
+                        "in": "query",
+                        "name": "t",
+                        "type": "string"
+                    },
+                    {
+                        "description": "attachment name type (file, share, original)",
+                        "in": "query",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "description": "avc returns an MPEG-4 AVC rendition of a video, live photo, or animated image",
+                        "in": "query",
+                        "name": "format",
+                        "type": "string"
                     }
                 ],
                 "produces": [
-                    "application/octet-stream"
+                    "application/octet-stream",
+                    "video/mp4"
                 ],
                 "responses": {
                     "200": {
@@ -8242,6 +8261,12 @@
                     },
                     "429": {
                         "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "507": {
+                        "description": "Insufficient Storage",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }

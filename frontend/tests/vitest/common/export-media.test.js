@@ -54,6 +54,23 @@ describe("metadata-based export choices", () => {
     const [group] = buildMediaExportGroups([file(1, "movie.mov", "video"), file(2, "movie.avc", "video", { Root: "sidecar", ...extra })], thumbs);
     expect(group.options.at(-1).ready).toBe(false);
   });
+  it("ignores MPEG-4 originals of videos that the server would not serve as their AVC rendition", () => {
+    const [group] = buildMediaExportGroups([file(1, "movie.mov", "video"), file(2, "movie.mp4", "video", { Codec: "avc1" })], thumbs);
+    expect(group.options.at(-1)).toMatchObject({ kind: "avc", ready: false });
+  });
+  it.each([
+    ["animated.gif", "animated", "animated.gif.mp4", true],
+    ["animated.gif", "animated", "animated.mp4", true],
+    ["animated.gif", "animated", "animated.gif.avc", false],
+    ["clip.m2t", "video", "clip.m2t.mp4", true],
+    ["clip.m2t", "video", "clip.m2t.avc", true],
+    ["clip.mov", "video", "clip.mov.mp4", false],
+    ["clip.mov", "video", "clip.mov.avc", true],
+  ])("finds the derivative of %s named %s", (name, type, derivative, ready) => {
+    const source = file(1, name, type, { Codec: "" });
+    const [group] = buildMediaExportGroups([source, file(2, derivative, "video", { Root: "sidecar", Codec: "avc1" })], thumbs);
+    expect(group.options.at(-1)).toMatchObject({ kind: "avc", ready });
+  });
   it("offers Insta360 stitched output only when it is present in the indexed file list", () => {
     const source = file(1, "VID_20220625_140410_00_008.insv", "video", { Codec: "avc1" });
     const other = file(2, "unrelated.avc", "video", { Root: "sidecar" });

@@ -42,11 +42,14 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 //	@Summary	returns the raw file data
 //	@Id			GetDownload
 //	@Tags		Images, Files
-//	@Produce	application/octet-stream
+//	@Produce	application/octet-stream,video/mp4
 //	@Failure	403,404	{file}		image/svg+xml
-//	@Failure	429		{object}	i18n.Response
+//	@Failure	429,507	{object}	i18n.Response
 //	@Success	200		{file}		application/octet-stream
 //	@Param		file	path		string	true	"file hash or unique download id"
+//	@Param		t		query		string	false	"download token"
+//	@Param		name	query		string	false	"attachment name type (file, share, original)"
+//	@Param		format	query		string	false	"avc returns an MPEG-4 AVC rendition of a video, live photo, or animated image"
 //	@Router		/api/v1/dl/{file} [get]
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:file", func(c *gin.Context) {
@@ -110,6 +113,13 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
+		switch c.Query("format") {
+		case "":
+			c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
+		case DownloadFormatAvc:
+			sendAvcDownload(c, f, sess)
+		default:
+			c.Data(http.StatusNotFound, "image/svg+xml", brokenIconSvg)
+		}
 	})
 }

@@ -91,6 +91,13 @@ describe("image export choices and filenames", () => {
     const items = buildExportDownloads(groups, groups[0].options.slice(0, 2).map((option) => option.id));
     expect(items.map((item) => item.filename)).toEqual(["photo.heic", "photo_preview.png"]);
   });
+  it("names AVC renditions and video parts like the server attachment", () => {
+    const items = allDownloads([
+      file("m", { Name: "clips/movie.mov", OriginalName: "camera/Holiday.mov", FileType: "mov", MediaType: "video", Codec: "hvc1", Width: 0, Height: 0 }),
+      file("l", { Name: "live.heic", FileType: "heic", MediaType: "live", Width: 0, Height: 0 }),
+    ]);
+    expect(items.map((item) => [item.kind, item.filename])).toEqual([["original", "Holiday.mov"], ["avc", "Holiday.mp4"], ["original", "live.heic"], ["video-part", "live.mp4"]]);
+  });
   it("freezes a stable group and option order independently of click order", () => {
     const groups = buildMediaExportGroups([file("a"), file("b")], thumbs);
     const ids = groups.flatMap((group) => group.options.map((option) => option.id)).reverse();

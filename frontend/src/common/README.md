@@ -8,13 +8,13 @@
 
 `buildExportGroups(files, thumbs, thumbLimit)` creates original, existing preview, and resized JPEG choices from the complete photo-detail `Files` list. It excludes unavailable files and metadata sidecars, resolves previews across the full stack, and merges duplicate JPEG dimensions within the effective client-config `thumbLimit`. RAW labels use the source filename extension. Records with an omitted media type are classified from their known file type before the `Video` flag; indexed frame and duration metadata still identifies animations. Inputs are not modified.
 
-`buildMediaExportGroups(files, thumbs, thumbLimit)` in `export-media.js` adds AVC choices for videos that are not already AVC, animations, and live photos using indexed metadata. Audio is omitted. Insta360 sources offer compatible video only when a matching AVC derivative is already indexed. Apple image and video files retain separate groups. No capability probes or preparation requests are made.
+`buildMediaExportGroups(files, thumbs, thumbLimit)` in `export-media.js` adds AVC choices for videos that are not already AVC, animations, and live photos using indexed metadata. Audio is omitted. Insta360 sources offer compatible video only when an AVC derivative is already indexed under a name the server looks up for it. Apple image and video files retain separate groups. No capability probes or preparation requests are made.
 
 `buildExportDownloads(groups, selectedIds)` in `export-download.js` freezes the selected sources, ordering, and suggested browser filenames. `exportDownloadUrl(item, config)` uses `apiUri` for all attachment URLs: originals and previews use `/dl/{hash}?t=...&name=original`; resized JPEGs use `/t/{hash}/{previewToken}/{size}?download=1&name=original`. Compatible video and live-photo video choices use `/dl/{hash}?t=...&name=original&format=avc`. The server controls attachment filenames through the existing `name` convention; client suggestions do not override response headers.
 
 The dialog refreshes tokens and the Export feature flag through `$config.update()` before initial downloads and retries; a failed config request preserves the current session and tokens. `ExportQueue` hands downloads to browser anchors, spaces handoffs, and retries failed handoffs without repeating successful ones. Cancellation, permission loss, a changed picture, or Lightbox closure stops pending client work and discards late responses. A handoff does not confirm that the browser saved the file. Conversion-dependent choices show the single sentence "Download starts after transcoding."
 
-The `format=avc` download contract requires the separate backend implementation; the streaming video endpoint is unchanged by Export.
+For `format=avc`, the server sends an MPEG-4 AVC rendition of the requested original as `<stem>.mp4`: an existing AVC derivative, the video embedded in a live photo, or a conversion made during the request. It answers 404 for files the dialog offers no AVC choice for. The streaming video endpoint is unchanged by Export.
 
 ### Focus Management
 

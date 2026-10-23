@@ -6,10 +6,15 @@ export function isAvc(codec) {
   return /^(avc[1-4]?|h\.?264|x264)([ /._-]|$)/i.test(codec || "");
 }
 
-// existingAvc finds an indexed AVC derivative belonging to this source.
+// existingAvc finds an indexed AVC derivative under the names the server looks up for this source:
+// animations are converted to MP4 files, videos to AVC files, and transport streams may have an MP4 copy.
 function existingAvc(source, files) {
   const stem = source.name.replace(/\.[^/.]+$/, "");
-  const names = new Set([`${stem}.avc`, `${source.name}.avc`, `${stem}.mp4`, `${source.name}.mp4`]);
+  const ext = source.mediaType === media.Animated ? "mp4" : "avc";
+  const names = new Set([`${stem}.${ext}`, `${source.name}.${ext}`]);
+  if (["m2t", "mts"].includes(source.format)) {
+    names.add(`${source.name}.mp4`);
+  }
   return files.find((file) => file.UID && file.Hash && !file.Missing && !file.Error && !file.DeletedAt
     && ["/", "sidecar"].includes(file.Root) && file.Hash !== source.hash && names.has(file.Name)
     && (isAvc(file.Codec) || file.FileType === "avc"));

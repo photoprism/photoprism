@@ -693,6 +693,23 @@ func TestFile_DownloadName(t *testing.T) {
 		file := &File{FileType: "jpg", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", FileName: "2019/صورة 日本.jpg"}
 		assert.Equal(t, "صورة 日本.jpg", file.DownloadName(customize.DownloadNameFile, 0))
 	})
+	t.Run("Avc", func(t *testing.T) {
+		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Morning"}
+		file := &File{Photo: photo, FileType: "avc", FileRoot: RootSidecar, FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", FileName: "2019/clip.mov.avc"}
+		assert.Equal(t, "clip.mp4", file.DownloadName(customize.DownloadNameFile, 0))
+		assert.Equal(t, "clip.mp4", file.DownloadName(customize.DownloadNameOriginal, 0))
+		assert.Equal(t, "20190115-000000-Morning.mp4", file.DownloadName(customize.DownloadNameShare, 0))
+		file.OriginalName = "camera/Holiday.MOV.avc"
+		assert.Equal(t, "Holiday.mp4", file.DownloadName(customize.DownloadNameOriginal, 0))
+	})
+	t.Run("AvcOriginal", func(t *testing.T) {
+		file := &File{FileType: "avc", FileRoot: RootOriginals, FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", FileName: "2019/clip.h264"}
+		assert.Equal(t, "clip.h264", file.DownloadName(customize.DownloadNameFile, 0))
+	})
+	t.Run("Mp4", func(t *testing.T) {
+		file := &File{FileType: "mp4", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", FileName: "2019/clip.gif.mp4"}
+		assert.Equal(t, "clip.gif.mp4", file.DownloadName(customize.DownloadNameFile, 0))
+	})
 }
 
 func TestFile_Undelete(t *testing.T) {

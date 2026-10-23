@@ -282,15 +282,24 @@ func (m *File) BeforeCreate(tx *gorm.DB) error {
 
 // DownloadName selects a download filename according to the configured naming policy,
 // sanitized with clean.AttachmentName for use in a response header or archive entry.
+// AVC transcodes outside the originals folder are named with the extension of their MPEG-4 container.
 func (m *File) DownloadName(n customize.DownloadName, seq int) string {
+	var name string
+
 	switch n {
 	case customize.DownloadNameFile:
-		return clean.AttachmentName(m.Base(seq))
+		name = m.Base(seq)
 	case customize.DownloadNameOriginal:
-		return clean.AttachmentName(m.OriginalBase(seq))
+		name = m.OriginalBase(seq)
 	default:
-		return clean.AttachmentName(m.ShareBase(seq))
+		name = m.ShareBase(seq)
 	}
+
+	if fs.VideoAvc.Equal(m.FileType) && m.FileRoot != RootOriginals {
+		name = fs.StripKnownExt(name) + fs.ExtMp4
+	}
+
+	return clean.AttachmentName(name)
 }
 
 // Base returns the file name without path.

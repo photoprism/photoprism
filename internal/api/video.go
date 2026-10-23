@@ -3,19 +3,14 @@ package api
 import (
 	"errors"
 	"net/http"
-	"path/filepath"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media/video"
@@ -97,135 +92,43 @@ func GetVideo(router *gin.RouterGroup) {
 
 		// Get app config.
 		conf := get.Config()
-
-		// Get video bitrate, codec, and file type.
-		videoFileType := f.Type()
-		videoBitrate := f.Bitrate()
-		videoFileName := photoprism.FileName(f.FileRoot, f.FileName)
-		videoContentType := f.ContentType()
-		var videoCodec string
+		src := newVideoSource(f)
 
 		// If the file has a hybrid photo/video format, try to find and send the embedded video data.
 		if f.MediaType == entity.MediaLive {
-			if info, videoErr := video.ProbeFile(videoFileName); info.VideoOffset < 0 || !info.Compatible || videoErr != nil {
-				logErr("video", videoErr)
-				log.Warnf("video: no embedded media found in %s", clean.Log(f.FileName))
+			info, reader, embedErr := openEmbeddedVideo(f, src.FileName)
+
+			if embedErr != nil {
 				AbortVideo(c)
 				return
-			} else if reader, readErr := video.NewReader(videoFileName, info.VideoOffset); readErr != nil {
-				log.Errorf("video: failed to read media embedded in %s (%s)", clean.Log(f.FileName), clean.Error(readErr))
-				AbortVideo(c)
-				return
-			} else if c.Request.Header.Get("Range") == "" && info.VideoCodec == format.Codec {
-				defer reader.Close()
+			}
+
+			defer reader.Close()
+
+			if c.Request.Header.Get("Range") == "" && info.VideoCodec == format.Codec {
 				AddVideoCacheHeader(c, conf.CdnVideo())
 				c.DataFromReader(http.StatusOK, info.VideoSize(), info.VideoContentType(), reader, nil)
 				return
-			} else if cacheName, cacheErr := fs.CacheFileFromReader(filepath.Join(conf.MediaFileCachePath(f.FileHash), f.FileHash+info.VideoFileExt()), reader); cacheErr != nil {
-				log.Errorf("video: failed to cache %s embedded in %s (%s)", videoFileType.ToUpper(), clean.Log(f.FileName), clean.Error(cacheErr))
+			}
+
+			// Serve embedded videos from cache to allow streaming and transcoding.
+			if src, embedErr = cacheEmbeddedVideo(conf, f, info, reader); embedErr != nil {
 				AbortVideo(c)
 				return
-			} else {
-				// Serve embedded videos from cache to allow streaming and transcoding.
-				videoBitrate = info.VideoBitrate()
-				videoCodec = info.VideoCodec
-				videoFileType = info.VideoFileType()
-				videoFileName = cacheName
-				videoContentType = info.VideoContentType()
-				log.Debugf("video: streaming %s encoded %s in %s from cache", strings.ToUpper(videoCodec), videoFileType.ToUpper(), clean.Log(f.FileName))
 			}
 		}
 
-		// Verify video format support and compatibility.
-		supported := video.Compatible(videoContentType, format.ContentType)
+		videoFileName, contentType, videoErr := resolveVideo(conf, f, src, format, false)
 
-		// Check video bitrate against the configured limit
-		bitrateExceeded := conf.FFmpegEnabled() && conf.FFmpegBitrateExceeded(videoBitrate)
-		transcode := !supported || bitrateExceeded
-
-		mediaFile, mediaErr := photoprism.NewMediaFile(videoFileName)
-		if mediaErr != nil {
-			// Set missing flag so that the file doesn't show up in search results anymore.
-			logErr("video", f.Update("FileMissing", true))
-
-			// Log error and default to 404.mp4
-			log.Errorf("video: file %s is missing", clean.Log(f.FileName))
+		if errors.Is(videoErr, status.ErrInsufficientStorage) {
+			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+			return
+		} else if videoErr != nil {
 			AbortVideo(c)
 			return
 		}
 
-		// Footage that can be dewarped is never converted inline in an HTTP request: index/import workers
-		// create its AVC, and an older LRV derivative is a safe fallback. Other footage plays as it is.
-		if playable, ready := photoprism.Insta360PlaybackFile(mediaFile); !ready {
-			log.Warnf("video: equirectangular derivative for %s is not ready", clean.Log(f.FileName))
-			AbortVideo(c)
-			return
-		} else if playable != mediaFile {
-			mediaFile = playable
-			videoFileName = playable.FileName()
-			videoFileType = playable.FileType()
-			videoContentType = playable.ContentType()
-			info := playable.VideoInfo()
-			videoBitrate = info.VideoBitrate()
-			supported = video.Compatible(videoContentType, format.ContentType)
-			bitrateExceeded = conf.FFmpegEnabled() && conf.FFmpegBitrateExceeded(videoBitrate)
-			transcode = !supported || bitrateExceeded
-		}
-
-		if transcode {
-			if supported && bitrateExceeded {
-				log.Debugf(
-					"video: %s has an average bitrate of %.1f Mbps, which exceeds the %d Mbps limit",
-					clean.Log(f.FileName),
-					videoBitrate,
-					conf.FFmpegBitrate(),
-				)
-			} else {
-				log.Debugf(
-					"video: %s has content type %s and cannot be streamed directly (average bitrate %.1f Mbps)",
-					clean.Log(f.FileName),
-					clean.Log(videoContentType),
-					videoBitrate,
-				)
-			}
-
-			conv := get.Convert()
-
-			if avcFile, avcErr := conv.ToAvc(mediaFile, get.Config().FFmpegEncoder(), false, false); avcFile != nil && avcErr == nil {
-				videoFileName = avcFile.FileName()
-				AddContentTypeHeader(c, header.ContentTypeMp4AvcMain)
-			} else if errors.Is(avcErr, status.ErrInsufficientStorage) {
-				log.Warnf("video: insufficient storage to transcode %s", clean.Log(f.FileName))
-				Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
-				return
-			} else {
-				// Log error and default to 404.mp4
-				if avcErr != nil {
-					log.Debugf("video: %s", clean.Error(avcErr))
-				}
-
-				log.Errorf("video: failed to transcode %s", clean.Log(f.FileName))
-				AbortVideo(c)
-				return
-			}
-		} else {
-			var contentType string
-
-			if videoFileType != f.Type() {
-				contentType = mediaFile.ContentType()
-			} else {
-				contentType = f.ContentType()
-			}
-
-			log.Debugf(
-				"video: %s has content type %s (average bitrate %.1f Mbps)",
-				clean.Log(f.FileName),
-				clean.Log(contentType),
-				videoBitrate,
-			)
-
-			AddContentTypeHeader(c, contentType)
-		}
+		AddContentTypeHeader(c, contentType)
 
 		// Add HTTP cache header.
 		AddVideoCacheHeader(c, conf.CdnVideo())

@@ -33,8 +33,8 @@ export function buildExportDownloads(groups, selectedIds) {
       const source = Object.freeze({ ...option.source });
       const sourceExtension = splitExtension(source.name.split(/[\\/]/).pop())[1] || `.${source.format}`;
       const outputStem = option.kind === "original" ? splitExtension(exportBaseName(source))[0].trim() : stem;
-      const outputSuffix = { preview: "preview", avc: "avc", "video-part": "video" }[option.kind] || option.size;
-      const name = exportBaseName({ name: option.kind === "original" ? `${outputStem}${sourceExtension}` : `${outputStem}_${outputSuffix}.${option.format}` });
+      const outputSuffix = { preview: "_preview", avc: "", "video-part": "" }[option.kind] ?? `_${option.size}`;
+      const name = exportBaseName({ name: option.kind === "original" ? `${outputStem}${sourceExtension}` : `${outputStem}${outputSuffix}.${option.format}` });
       const [base, extension] = splitExtension(name);
       let filename = name;
       let suffix = 2;
