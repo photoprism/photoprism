@@ -180,6 +180,42 @@ func TestConvert_ToAvc_Failed(t *testing.T) {
 		assert.ErrorAs(t, avcErr, &exitErr)
 		assert.Nil(t, avcFile)
 		assert.False(t, fs.FileExists(outputName))
+		assert.Empty(t, stagedAvcFiles(t, outputName))
+	})
+	t.Run("EmptyOutput", func(t *testing.T) {
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		require.NoError(t, os.WriteFile(stub, []byte("#!/bin/sh\nexit 0\n"), 0o700)) //nolint:gosec // G306: test executable
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = stub
+		t.Cleanup(func() { conf.Options().FFmpegBin = orig })
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.SoftwareAvc, false, false)
+
+		assert.ErrorContains(t, avcErr, "empty output")
+		assert.Nil(t, avcFile)
+		assert.False(t, fs.FileExists(outputName))
+		assert.Empty(t, stagedAvcFiles(t, outputName))
+	})
+	t.Run("StagedOutput", func(t *testing.T) {
+		// The stub refuses to write the transcode name directly and runs FFmpeg for any other output.
+		realBin := conf.FFmpegBin()
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		script := fmt.Sprintf("#!/bin/sh\nfor last; do :; done\n[ \"$last\" = %s ] && exit 9\nexec %s \"$@\"\n", transportShellQuote(outputName), transportShellQuote(realBin))
+		require.NoError(t, os.WriteFile(stub, []byte(script), 0o700)) //nolint:gosec // G306: test executable
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = stub
+		t.Cleanup(func() {
+			conf.Options().FFmpegBin = orig
+			_ = os.Remove(outputName)
+		})
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.SoftwareAvc, false, false)
+
+		require.NoError(t, avcErr)
+		require.NotNil(t, avcFile)
+		assert.Equal(t, outputName, avcFile.FileName())
+		assert.True(t, fs.FileExistsNotEmpty(outputName))
+		assert.Empty(t, stagedAvcFiles(t, outputName))
 	})
 	t.Run("Hardware", func(t *testing.T) {
 		fakeFFmpeg(t, conf, "h264_nvenc")
@@ -190,9 +226,91 @@ func TestConvert_ToAvc_Failed(t *testing.T) {
 		require.NotNil(t, avcFile)
 		assert.Equal(t, outputName, avcFile.FileName())
 
-		// The software retry replaces the incomplete output of the failed hardware encoder.
+		// The software retry publishes a complete transcode; the hardware output stays staged and is removed.
 		assert.Greater(t, fs.FileSize(outputName), int64(len("partial")))
+		assert.Empty(t, stagedAvcFiles(t, outputName))
 	})
+	t.Run("ForcedHardwareRetry", func(t *testing.T) {
+		// The stub fails the hardware encoder after writing partial output, and fails the software
+		// retry if the staged output of the hardware attempt is still there.
+		realBin := conf.FFmpegBin()
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		pattern := filepath.Join(filepath.Dir(outputName), "."+filepath.Base(outputName)+".*"+fs.ExtTmp+"*")
+		script := fmt.Sprintf("#!/bin/sh\nfor last; do :; done\ncase \"$*\" in\n  *h264_nvenc*) printf partial > \"$last\"; exit 1;;\n  *libx264*) [ \"$(ls -a %s 2>/dev/null | wc -l)\" -gt 1 ] && exit 7;;\nesac\nexec %s \"$@\"\n",
+			pattern, transportShellQuote(realBin))
+		require.NoError(t, os.WriteFile(stub, []byte(script), 0o700)) //nolint:gosec // G306: test executable
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = stub
+		t.Cleanup(func() { conf.Options().FFmpegBin = orig })
+
+		require.NoError(t, fs.WriteString(outputName, "stale"))
+		oldTime := time.Now().Add(-time.Hour)
+		require.NoError(t, os.Chtimes(outputName, oldTime, oldTime))
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.NvidiaAvc, false, true)
+
+		require.NoError(t, avcErr)
+		require.NotNil(t, avcFile)
+		assert.Greater(t, fs.FileSize(outputName), int64(len("stale")))
+		info, err := os.Stat(outputName)
+		require.NoError(t, err)
+		assert.True(t, info.ModTime().After(oldTime))
+		assert.Empty(t, stagedAvcFiles(t, outputName))
+	})
+	t.Run("PublishedMeanwhile", func(t *testing.T) {
+		// The stub publishes a transcode under the final name before it writes its own output.
+		_ = os.Remove(outputName)
+		realBin := conf.FFmpegBin()
+		other := filepath.Join(conf.SamplesPath(), "blue-go-video.mp4")
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		script := fmt.Sprintf("#!/bin/sh\ncp %s %s\nexec %s \"$@\"\n", transportShellQuote(other), transportShellQuote(outputName), transportShellQuote(realBin))
+		require.NoError(t, os.WriteFile(stub, []byte(script), 0o700)) //nolint:gosec // G306: test executable
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = stub
+		t.Cleanup(func() {
+			conf.Options().FFmpegBin = orig
+			_ = os.Remove(outputName)
+		})
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.SoftwareAvc, false, false)
+
+		require.NoError(t, avcErr)
+		require.NotNil(t, avcFile)
+		assert.Equal(t, outputName, avcFile.FileName())
+		assert.Equal(t, fs.FileSize(other), fs.FileSize(outputName))
+		assert.Empty(t, stagedAvcFiles(t, outputName))
+	})
+	t.Run("DanglingLink", func(t *testing.T) {
+		_ = os.Remove(outputName)
+		marker := filepath.Join(t.TempDir(), "ffmpeg-called")
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		require.NoError(t, os.WriteFile(stub, []byte("#!/bin/sh\ntouch "+transportShellQuote(marker)+"\nexit 1\n"), 0o700)) //nolint:gosec // G306: test executable
+		orig := conf.Options().FFmpegBin
+		conf.Options().FFmpegBin = stub
+		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing.avc"), outputName))
+		t.Cleanup(func() {
+			conf.Options().FFmpegBin = orig
+			_ = os.Remove(outputName)
+		})
+
+		avcFile, avcErr := NewConvert(conf).ToAvc(mf, encode.SoftwareAvc, false, false)
+
+		assert.ErrorContains(t, avcErr, "cannot replace")
+		assert.Nil(t, avcFile)
+		assert.NoFileExists(t, marker)
+		assert.True(t, fs.IsSymlink(outputName))
+		assert.Empty(t, stagedAvcFiles(t, outputName))
+	})
+}
+
+// stagedAvcFiles returns the staged siblings of a transcode name that are left in its folder.
+func stagedAvcFiles(t *testing.T, avcName string) []string {
+	t.Helper()
+
+	matches, err := filepath.Glob(filepath.Join(filepath.Dir(avcName), "."+filepath.Base(avcName)+".*"+fs.ExtTmp+"*"))
+	require.NoError(t, err)
+
+	return matches
 }
 
 // transcodeFailures returns the levels of the logged transcoding failures of the encoder.
@@ -1379,5 +1497,54 @@ func TestConvert_avcName(t *testing.T) {
 	t.Run("EmptyName", func(t *testing.T) {
 		_, err := convert.avcName(&MediaFile{})
 		assert.Error(t, err)
+	})
+}
+
+func TestReplaceableAvc(t *testing.T) {
+	dir := t.TempDir()
+	t.Run("Missing", func(t *testing.T) {
+		assert.True(t, replaceableAvc(filepath.Join(dir, "missing.avc")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		fileName := filepath.Join(dir, "empty.avc")
+		require.NoError(t, os.WriteFile(fileName, nil, fs.ModeFile)) //nolint:gosec // test writes a temp file
+		assert.True(t, replaceableAvc(fileName))
+	})
+	t.Run("NotEmpty", func(t *testing.T) {
+		fileName := filepath.Join(dir, "full.avc")
+		require.NoError(t, os.WriteFile(fileName, []byte("x"), fs.ModeFile)) //nolint:gosec // test writes a temp file
+		assert.False(t, replaceableAvc(fileName))
+	})
+	t.Run("DanglingLink", func(t *testing.T) {
+		fileName := filepath.Join(dir, "dangling.avc")
+		require.NoError(t, os.Symlink(filepath.Join(dir, "nowhere"), fileName))
+		assert.False(t, replaceableAvc(fileName))
+	})
+	t.Run("Directory", func(t *testing.T) {
+		fileName := filepath.Join(dir, "folder.avc")
+		require.NoError(t, os.Mkdir(fileName, fs.ModeDir))
+		assert.False(t, replaceableAvc(fileName))
+	})
+}
+
+func TestRegularNotEmpty(t *testing.T) {
+	dir := t.TempDir()
+	full := filepath.Join(dir, "full.avc")
+	require.NoError(t, os.WriteFile(full, []byte("x"), fs.ModeFile)) //nolint:gosec // test writes a temp file
+	t.Run("Regular", func(t *testing.T) {
+		assert.True(t, regularNotEmpty(full))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		fileName := filepath.Join(dir, "empty.avc")
+		require.NoError(t, os.WriteFile(fileName, nil, fs.ModeFile)) //nolint:gosec // test writes a temp file
+		assert.False(t, regularNotEmpty(fileName))
+	})
+	t.Run("Link", func(t *testing.T) {
+		fileName := filepath.Join(dir, "link.avc")
+		require.NoError(t, os.Symlink(full, fileName))
+		assert.False(t, regularNotEmpty(fileName))
+	})
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, regularNotEmpty(filepath.Join(dir, "missing.avc")))
 	})
 }

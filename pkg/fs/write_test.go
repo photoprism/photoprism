@@ -2,13 +2,17 @@ package fs
 
 import (
 	"bytes"
+	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWriteFile(t *testing.T) {
@@ -226,4 +230,92 @@ func TestWriteFileFromReader_Errors(t *testing.T) {
 	assert.Error(t, WriteFileFromReader(p, nil))
 	// empty filename
 	assert.Error(t, WriteFileFromReader("", bytes.NewBufferString("hi")))
+}
+
+// writeOnRead is a reader that creates a file before it reports the end of its data.
+type writeOnRead struct {
+	fileName string
+	data     string
+}
+
+// Read writes the file and reports the end of the data.
+func (r writeOnRead) Read([]byte) (int, error) {
+	if err := os.WriteFile(r.fileName, []byte(r.data), ModeFile); err != nil { //nolint:gosec // test writes a temp file
+		return 0, err
+	}
+
+	return 0, io.EOF
+}
+
+// failingReader returns some data and then an error.
+type failingReader struct{ read bool }
+
+// Read returns one byte and then an error.
+func (r *failingReader) Read(p []byte) (int, error) {
+	if r.read {
+		return 0, errors.New("read failed")
+	}
+
+	r.read = true
+	p[0] = 'x'
+
+	return 1, nil
+}
+
+func TestCacheFileFromReader_Staged(t *testing.T) {
+	// staged returns the staged siblings of the file that are left in its folder.
+	staged := func(t *testing.T, fileName string) []string {
+		matches, err := filepath.Glob(filepath.Join(filepath.Dir(fileName), "."+filepath.Base(fileName)+".*"))
+		require.NoError(t, err)
+		return matches
+	}
+	t.Run("FailingReader", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "video.mp4")
+		_, err := CacheFileFromReader(fileName, &failingReader{})
+		assert.ErrorContains(t, err, "read failed")
+		assert.NoFileExists(t, fileName)
+		assert.Empty(t, staged(t, fileName))
+	})
+	t.Run("ConcurrentPublish", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "video.mp4")
+		result, err := CacheFileFromReader(fileName, writeOnRead{fileName: fileName, data: "other"})
+		require.NoError(t, err)
+		assert.Equal(t, fileName, result)
+		data, err := os.ReadFile(fileName) //nolint:gosec // test reads a temp file
+		require.NoError(t, err)
+		assert.Equal(t, "other", string(data))
+		assert.Empty(t, staged(t, fileName))
+	})
+	t.Run("ReplacesEmpty", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "video.mp4")
+		require.NoError(t, os.WriteFile(fileName, nil, ModeFile)) //nolint:gosec // test writes a temp file
+		_, err := CacheFileFromReader(fileName, strings.NewReader("data"))
+		require.NoError(t, err)
+		data, err := os.ReadFile(fileName) //nolint:gosec // test reads a temp file
+		require.NoError(t, err)
+		assert.Equal(t, "data", string(data))
+		assert.Empty(t, staged(t, fileName))
+	})
+	t.Run("DirectoryAtName", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "video.mp4")
+		require.NoError(t, os.Mkdir(fileName, ModeDir))
+		_, err := CacheFileFromReader(fileName, strings.NewReader("data"))
+		assert.Error(t, err)
+		assert.Empty(t, staged(t, fileName))
+	})
+	t.Run("DanglingLink", func(t *testing.T) {
+		dir := t.TempDir()
+		fileName := filepath.Join(dir, "video.mp4")
+		target := filepath.Join(dir, "target.mp4")
+		require.NoError(t, os.Symlink(target, fileName))
+		_, err := CacheFileFromReader(fileName, strings.NewReader("data"))
+		assert.Error(t, err)
+		assert.NoFileExists(t, target)
+		assert.True(t, IsSymlink(fileName))
+		assert.Empty(t, staged(t, fileName))
+	})
+	t.Run("NoReader", func(t *testing.T) {
+		_, err := CacheFileFromReader(filepath.Join(t.TempDir(), "video.mp4"), nil)
+		assert.Error(t, err)
+	})
 }

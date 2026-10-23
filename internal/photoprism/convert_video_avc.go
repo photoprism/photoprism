@@ -142,7 +142,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	// Return the AVC-encoded video file if it already exists.
 	if mediaFile == nil || err != nil {
 		// Do nothing.
-	} else if mediaFile.IsVideo() && (!force || !mediaFile.InSidecar()) {
+	} else if mediaFile.IsVideo() && !mediaFile.Empty() && (!force || !mediaFile.InSidecar()) {
 		// Return existing AVC file.
 		log.Debugf("convert: %s has already been transcoded to MPEG-4 AVC", logFileName)
 		return mediaFile, nil
@@ -165,7 +165,24 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		return nil, err
 	}
 
-	cmd, useMutex, err := w.TranscodeToAvcCmd(f, avcName, encoder)
+	// Transcode into a staged sibling that is published only on success, so a partial file is never
+	// found under the transcode name.
+	stagedName, err := fs.CreateStageFile(avcName)
+
+	if disk.IsNoSpace(err) {
+		return nil, disk.AsInsufficientStorage(err)
+	} else if err != nil {
+		return nil, fmt.Errorf("convert: %s in %s (stage)", clean.Error(err), logFileName)
+	}
+
+	// Remove only the file this call created, on every way out including a panic.
+	defer func() {
+		if removeErr := os.Remove(stagedName); removeErr != nil && !os.IsNotExist(removeErr) {
+			log.Warnf("convert: %s in %s (remove staged file)", clean.Error(removeErr), logFileName)
+		}
+	}()
+
+	cmd, useMutex, err := w.TranscodeToAvcCmd(f, stagedName, encoder)
 
 	// Return if an error occurred, which the caller logs.
 	if err != nil {
@@ -184,18 +201,21 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		defer w.cmdMutex.Unlock()
 	}
 
-	// Check if target file already exists.
-	if fs.FileExists(avcName) {
+	// Check if target file already exists. A forced transcode replaces it when published, and an
+	// empty file is replaced either way; anything else under the name is not transcoded over.
+	if fs.FileExistsNotEmpty(avcName) {
 		avcFile, avcErr := NewMediaFile(avcName)
-		if avcErr != nil {
+
+		switch {
+		case avcErr != nil:
 			return avcFile, avcErr
-		} else if !force || !avcFile.InSidecar() {
+		case !force || !avcFile.InSidecar():
 			return avcFile, nil
-		} else if err = avcFile.Remove(); err != nil {
-			return avcFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(avcFile.RootRelName()), err)
-		} else {
+		default:
 			log.Infof("convert: replacing %s", clean.Log(avcFile.RootRelName()))
 		}
+	} else if !force && !replaceableAvc(avcName) {
+		return nil, fmt.Errorf("convert: cannot replace %s", clean.Log(RootRelName(avcName)))
 	}
 
 	// Fetch command output.
@@ -224,8 +244,12 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	}
 
 	start := time.Now()
-	if err = proc.Run(cmd, budget); err != nil {
-		// Log the transcoder output for debugging, which is console-only.
+	if err = proc.Run(cmd, budget); err == nil && !fs.FileExistsNotEmpty(stagedName) {
+		err = fmt.Errorf("empty output")
+	}
+
+	if err != nil {
+		// Log the transcoder output for debugging.
 		if s := strings.TrimSpace(stderr.String()); s != "" {
 			log.Debugf("%s: %s for %s", encoder, s, logFileName)
 		}
@@ -238,23 +262,31 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 			log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
 		}
 
-		// Remove broken video file, keeping the transcoding error for the checks below.
-		if !fs.FileExists(avcName) {
-			// Do nothing.
-		} else if removeErr := os.Remove(avcName); removeErr != nil {
-			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), removeErr)
-		}
-
 		switch {
 		case disk.IsNoSpace(err):
 			// Do not retry on a full disk; surface the cause so the worker can abort the run.
 			return nil, disk.AsInsufficientStorage(err)
 		case encoder != encode.SoftwareAvc:
-			// Retry in software within the current destination operation.
-			return w.toAvc(f, encode.SoftwareAvc, true, false, false)
+			// Retry in software within the current destination operation, which still replaces a
+			// forced transcode, as the existing one is kept until a new one is published.
+			if removeErr := os.Remove(stagedName); removeErr != nil && !os.IsNotExist(removeErr) {
+				log.Warnf("convert: %s in %s (remove staged file)", clean.Error(removeErr), logFileName)
+			}
+
+			return w.toAvc(f, encode.SoftwareAvc, true, force, false)
 		default:
 			return nil, fmt.Errorf("convert: failed to transcode %s (%w)", logFileName, err)
 		}
+	}
+
+	// Publish the transcode. Without force, a link fails when the name is taken, so a transcode that
+	// appeared while this one was written is used rather than replaced.
+	if err = fs.PublishFile(stagedName, avcName, force); errors.Is(err, os.ErrExist) && regularNotEmpty(avcName) {
+		return NewMediaFile(avcName)
+	} else if disk.IsNoSpace(err) {
+		return nil, disk.AsInsufficientStorage(err)
+	} else if err != nil {
+		return nil, fmt.Errorf("convert: %s in %s (publish)", clean.Error(err), logFileName)
 	}
 
 	// Log filename and transcoding time.
@@ -273,6 +305,21 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	}
 
 	return avcFile, avcErr
+}
+
+// replaceableAvc reports whether a transcode may be published under the name without force: nothing
+// is there yet, or an empty regular file.
+func replaceableAvc(avcName string) bool {
+	info, err := os.Lstat(avcName)
+
+	return os.IsNotExist(err) || err == nil && info.Mode().IsRegular() && info.Size() == 0
+}
+
+// regularNotEmpty reports whether the name is a non-empty regular file, without following a link.
+func regularNotEmpty(fileName string) bool {
+	info, err := os.Lstat(fileName)
+
+	return err == nil && info.Mode().IsRegular() && info.Size() > 0
 }
 
 // avcFromM2TS returns the MPEG-4 container of a transport stream that carries AVC, and nil when the

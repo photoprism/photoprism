@@ -85,14 +85,48 @@ func WriteFileFromReader(fileName string, reader io.Reader) (err error) {
 }
 
 // CacheFileFromReader writes data from an io.Reader to a file with the specified name if it does not exist.
+// The data is written to a staged sibling and published once complete, so the name never holds a partial file.
 // If the path does not exist or the file cannot be written, an error is returned.
-// No error is returned if the file already exists.
 func CacheFileFromReader(fileName string, reader io.Reader) (string, error) {
-	if FileExistsNotEmpty(fileName) {
+	switch {
+	case FileExistsNotEmpty(fileName):
 		return fileName, nil
+	case fileName == "":
+		return "", errors.New("filename missing")
+	case reader == nil:
+		return "", errors.New("reader missing")
 	}
 
-	if err := WriteFileFromReader(fileName, reader); err != nil {
+	file, err := OpenStageFile(fileName)
+
+	if err != nil {
+		return "", err
+	}
+
+	stagedName := file.Name()
+
+	// Remove only the file this call created, on every way out including a panic.
+	defer func() {
+		_ = os.Remove(stagedName)
+	}()
+
+	buf := getCopyBuffer()
+	defer putCopyBuffer(buf)
+
+	_, err = io.CopyBuffer(file, reader, buf)
+
+	if closeErr := file.Close(); closeErr != nil && err == nil {
+		err = closeErr
+	}
+
+	if err != nil {
+		return "", err
+	}
+
+	// A link fails when the name is taken, so a file published by a concurrent call is used.
+	if err = PublishFile(stagedName, fileName, false); errors.Is(err, os.ErrExist) && FileExistsNotEmpty(fileName) {
+		return fileName, nil
+	} else if err != nil {
 		return "", err
 	}
 
