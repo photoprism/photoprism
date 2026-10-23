@@ -54,7 +54,6 @@ type Client struct {
 	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
 	ClientType   string          `gorm:"type:bytes;size:16" json:"ClientType" yaml:"ClientType,omitempty"`
 	ClientURL    string          `gorm:"type:bytes;size:255;default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
-	CallbackURL  string          `gorm:"type:bytes;size:255;default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
 	AuthProvider string          `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod   string          `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthScope    string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
@@ -85,7 +84,6 @@ func NewClient() *Client {
 		ClientRole:   acl.RoleClient.String(),
 		ClientType:   authn.ClientConfidential,
 		ClientURL:    "",
-		CallbackURL:  "",
 		AuthProvider: authn.ProviderClient.String(),
 		AuthMethod:   authn.MethodOAuth2.String(),
 		AuthScope:    "",
