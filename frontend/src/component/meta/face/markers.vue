@@ -7,7 +7,6 @@
     @pointerdown="onPointerDown"
     @pointermove="onHoverMove"
     @pointerleave="onHoverLeave"
-    @wheel="onWheel"
   >
     <svg v-if="bounds" class="p-meta-face-markers__svg" :style="svgStyle" :viewBox="`0 0 ${bounds.width} ${bounds.height}`">
       <g v-for="m in markers" :key="markerKey(m)">
@@ -297,6 +296,9 @@ export default {
     this.onWindowResize = () => this.scheduleUpdate();
     window.addEventListener("resize", this.onWindowResize);
 
+    // Registered as non-passive, since app.js makes wheel listeners passive by default.
+    this.$refs.root?.addEventListener("wheel", this.onWheel, { passive: false });
+
     if (typeof ResizeObserver === "function") {
       this.resizeObserver = new ResizeObserver(() => this.scheduleUpdate());
       if (this.$refs.root) {
@@ -308,6 +310,7 @@ export default {
     this.detachPswpListeners();
     this.detachImageLoadListener();
     window.removeEventListener("resize", this.onWindowResize);
+    this.$refs.root?.removeEventListener("wheel", this.onWheel, { passive: false });
     window.removeEventListener("pointermove", this.onPointerMove);
     window.removeEventListener("pointerup", this.onPointerUp);
     window.removeEventListener("pointercancel", this.onPointerUp);
@@ -478,7 +481,34 @@ export default {
       if (b && b.left === left && b.top === top && b.width === width && b.height === height) {
         return;
       }
-      this.bounds = { left, top, width, height };
+      const next = { left, top, width, height };
+      this.realignToBounds(b, next);
+      this.bounds = next;
+    },
+    // realignToBounds rescales the draft, pending, and gesture rects when the
+    // image bounds change, e.g. on zoom, so they stay on the same image area.
+    realignToBounds(prev, next) {
+      if (!prev || !next || prev.width <= 0 || prev.height <= 0) {
+        return;
+      }
+      const sx = next.width / prev.width;
+      const sy = next.height / prev.height;
+      if (sx === 1 && sy === 1) {
+        return;
+      }
+      const scale = (r) => (r ? { ...r, x: r.x * sx, y: r.y * sy, w: r.w * sx, h: r.h * sy } : r);
+      // Flush first so a queued rect in old coordinates cannot land after the rescale.
+      this.flushQueuedDrag();
+      this.draft = scale(this.draft);
+      this.pending = scale(this.pending);
+      if (this.dragStart) {
+        const local = this.dragStart.local;
+        this.dragStart = {
+          ...this.dragStart,
+          local: local ? { x: local.x * sx, y: local.y * sy } : local,
+          pending: scale(this.dragStart.pending),
+        };
+      }
     },
     // onPointerDown begins a resize, move, remove-click, or new draft depending on what the pointer lands on (edit mode only).
     onPointerDown(ev) {

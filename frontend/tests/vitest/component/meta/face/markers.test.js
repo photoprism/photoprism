@@ -1192,6 +1192,131 @@ describe("PMetaFaceMarkers", () => {
     });
   });
 
+  // Zooming changes the image bounds; the draft, pending, and gesture rects
+  // must stay on the same image area and confirm the same normalized marker.
+  describe("correctness — realignment on zoom", () => {
+    const ZOOMED_RECT = { left: -100, top: -100, width: 800, height: 600, right: 700, bottom: 500 };
+    function zoom(wrapper, pswp, rect) {
+      pswp.img.getBoundingClientRect = () => rect;
+      wrapper.vm.updateBounds();
+    }
+    function down(wrapper, pointerId, clientX, clientY) {
+      wrapper.vm.onPointerDown({ button: 0, pointerId, clientX, clientY, stopPropagation: () => {}, preventDefault: () => {} });
+    }
+
+    it("rescales the pending rect and confirms the same marker after zooming", () => {
+      const onCreate = vi.fn();
+      const { wrapper, pswp } = mountOverlay({}, { onCreate });
+      down(wrapper, 1, 150, 100);
+      wrapper.vm.onPointerMove({ pointerId: 1, clientX: 280, clientY: 180 });
+      wrapper.vm.onPointerUp({ pointerId: 1 });
+      expect(wrapper.vm.pending).toMatchObject({ x: 50, y: 50, w: 130, h: 130 });
+      zoom(wrapper, pswp, ZOOMED_RECT);
+      expect(wrapper.vm.bounds).toEqual({ left: -100, top: -100, width: 800, height: 600 });
+      expect(wrapper.vm.pending).toMatchObject({ x: 100, y: 100, w: 260, h: 260 });
+      zoom(wrapper, pswp, IMAGE_RECT);
+      expect(wrapper.vm.pending).toMatchObject({ x: 50, y: 50, w: 130, h: 130 });
+      wrapper.vm.onConfirmPending();
+      expect(onCreate).toHaveBeenCalledWith({ X: 50 / 400, Y: 50 / 300, W: 130 / 400, H: 130 / 300 });
+    });
+    it("keeps an in-progress draw anchored to the image when zooming mid-gesture", () => {
+      const { wrapper, pswp } = mountOverlay();
+      // Anchor at image-local (50, 50).
+      down(wrapper, 2, 150, 100);
+      wrapper.vm.onPointerMove({ pointerId: 2, clientX: 200, clientY: 150 });
+      zoom(wrapper, pswp, ZOOMED_RECT);
+      expect(wrapper.vm.dragStart.local).toEqual({ x: 100, y: 100 });
+      expect(wrapper.vm.draft).toMatchObject({ x: 100, y: 100, w: 100, h: 100 });
+      // Image point (180, 130) before zoom is (360, 260) local, client (260, 160) after.
+      wrapper.vm.onPointerMove({ pointerId: 2, clientX: 260, clientY: 160 });
+      wrapper.vm.onPointerUp({ pointerId: 2 });
+      expect(wrapper.vm.pending).toMatchObject({ x: 100, y: 100, w: 260, h: 260 });
+    });
+    it("rescales the move snapshot so Escape restores the zoomed pending rect", () => {
+      const { wrapper, pswp } = mountOverlay();
+      wrapper.vm.pending = { x: 50, y: 50, w: 100, h: 100 };
+      down(wrapper, 3, 200, 150);
+      expect(wrapper.vm.interaction).toBe("move");
+      zoom(wrapper, pswp, ZOOMED_RECT);
+      expect(wrapper.vm.dragStart.pending).toMatchObject({ x: 100, y: 100, w: 200, h: 200 });
+      expect(wrapper.vm.handleEscape()).toBe(true);
+      expect(wrapper.vm.pending).toMatchObject({ x: 100, y: 100, w: 200, h: 200 });
+    });
+    it("applies a queued drag before rescaling it", () => {
+      const frames = [];
+      vi.stubGlobal("requestAnimationFrame", (cb) => frames.push(cb));
+      const { wrapper, pswp } = mountOverlay();
+      down(wrapper, 4, 150, 100);
+      wrapper.vm.onPointerMove({ pointerId: 4, clientX: 250, clientY: 200 });
+      expect(wrapper.vm.draft).toMatchObject({ w: 0, h: 0 });
+      zoom(wrapper, pswp, ZOOMED_RECT);
+      expect(wrapper.vm.draft).toMatchObject({ x: 100, y: 100, w: 200, h: 200 });
+      // The stale frame no longer holds a rect, so it cannot undo the rescale.
+      frames.forEach((cb) => cb());
+      expect(wrapper.vm.draft).toMatchObject({ x: 100, y: 100, w: 200, h: 200 });
+    });
+    it("scales each axis by its own factor", () => {
+      const { wrapper, pswp } = mountOverlay();
+      wrapper.vm.pending = { x: 40, y: 30, w: 100, h: 100 };
+      zoom(wrapper, pswp, { left: 0, top: 0, width: 800, height: 450, right: 800, bottom: 450 });
+      expect(wrapper.vm.pending).toMatchObject({ x: 80, y: 45, w: 200, h: 150 });
+    });
+    it("rescales the fixed corner of a resize that is in progress", () => {
+      const { wrapper, pswp } = mountOverlay();
+      wrapper.vm.pending = { x: 100, y: 100, w: 100, h: 100 };
+      // Grab the br corner at local (200, 200) → client (300, 250); tl stays fixed.
+      down(wrapper, 5, 300, 250);
+      expect(wrapper.vm.interaction).toBe("resize");
+      expect(wrapper.vm.dragStart.local).toEqual({ x: 100, y: 100 });
+      zoom(wrapper, pswp, ZOOMED_RECT);
+      expect(wrapper.vm.dragStart.local).toEqual({ x: 200, y: 200 });
+      expect(wrapper.vm.pending).toMatchObject({ x: 200, y: 200, w: 200, h: 200 });
+      // Local (500, 500) is client (400, 400) at the zoomed bounds.
+      wrapper.vm.onPointerMove({ pointerId: 5, clientX: 400, clientY: 400 });
+      wrapper.vm.onPointerUp({ pointerId: 5 });
+      expect(wrapper.vm.pending).toMatchObject({ x: 200, y: 200, w: 300, h: 300 });
+    });
+    it("realignToBounds leaves rects unchanged without previous bounds or a size change", () => {
+      const { wrapper } = mountOverlay();
+      wrapper.vm.pending = { x: 50, y: 50, w: 100, h: 100 };
+      wrapper.vm.realignToBounds(null, { left: 0, top: 0, width: 800, height: 600 });
+      expect(wrapper.vm.pending).toEqual({ x: 50, y: 50, w: 100, h: 100 });
+      wrapper.vm.realignToBounds({ left: 0, top: 0, width: 400, height: 300 }, { left: -20, top: 10, width: 400, height: 300 });
+      expect(wrapper.vm.pending).toEqual({ x: 50, y: 50, w: 100, h: 100 });
+    });
+  });
+
+  // app.js makes wheel listeners passive unless they opt out, which would
+  // ignore preventDefault and let the browser zoom the page as well.
+  describe("correctness — wheel forwarding", () => {
+    it("registers a non-passive wheel listener and forwards the event to PhotoSwipe", () => {
+      const spy = vi.spyOn(HTMLElement.prototype, "addEventListener");
+      const { wrapper, pswp } = mountOverlay();
+      const call = spy.mock.calls.find((c) => c[0] === "wheel" && c[1] === wrapper.vm.onWheel);
+      spy.mockRestore();
+      expect(call).toBeDefined();
+      expect(call[2]).toEqual({ passive: false });
+      pswp.element = document.createElement("div");
+      const forwarded = vi.fn();
+      pswp.element.addEventListener("wheel", forwarded);
+      const ev = new WheelEvent("wheel", { deltaY: -100, clientX: 200, clientY: 150, cancelable: true, bubbles: true });
+      wrapper.vm.$refs.root.dispatchEvent(ev);
+      expect(ev.defaultPrevented).toBe(true);
+      expect(forwarded).toHaveBeenCalledTimes(1);
+      expect(forwarded.mock.calls[0][0].deltaY).toBe(-100);
+    });
+    it("removes the wheel listener on unmount", () => {
+      const { wrapper, pswp } = mountOverlay();
+      const root = wrapper.vm.$refs.root;
+      pswp.element = document.createElement("div");
+      const forwarded = vi.fn();
+      pswp.element.addEventListener("wheel", forwarded);
+      wrapper.unmount();
+      root.dispatchEvent(new WheelEvent("wheel", { deltaY: -100, cancelable: true }));
+      expect(forwarded).not.toHaveBeenCalled();
+    });
+  });
+
   // Corner handles use a larger grab radius on coarse pointers so they are
   // easier to grab on touch, while the mouse radius is unchanged.
   describe("ux — touch-friendly resize handles", () => {
