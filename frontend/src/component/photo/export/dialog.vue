@@ -322,6 +322,13 @@ export default {
         await this.queue?.retry(item);
       }
     },
+    // refreshConfig updates tokens and settings, and fails when the server answers with the public config of a session it no longer accepts.
+    async refreshConfig() {
+      await this.$config.update();
+      if (this.$config.values?.mode === "public") {
+        throw new Error("session ended");
+      }
+    },
     // confirm freezes the selected output list and starts a single cancelable queue.
     async confirm() {
       if (this.started || this.loading || !this.selected.length || !this.permitted || !this.visible) {
@@ -336,7 +343,7 @@ export default {
         }
       });
       this.queue = markRaw(new ExportQueue(this.downloads, {
-        refresh: () => this.$config.update(),
+        refresh: () => this.refreshConfig(),
         allowed: () => generation === this.generation && this.visible && this.permitted,
         config: this.$config,
         progress: (count) => {

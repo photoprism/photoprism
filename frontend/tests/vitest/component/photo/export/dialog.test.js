@@ -324,7 +324,8 @@ describe("photo export dialog", () => {
     vi.useFakeTimers();
     await wrapper.setData({ selected: ["original:fs6sg6bqhhin0097", "original:fs6sg6bqhhin0098"] });
     const running = wrapper.vm.confirm();
-    await Promise.resolve();
+    await flushPromises();
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
     if (action === "cancel") {
       await wrapper.find(".action-close").trigger("click");
     }
@@ -396,6 +397,38 @@ describe("photo export dialog", () => {
     expect(wrapper.vm.handed).toBe(0);
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
     expect(wrapper.emitted("close")).toHaveLength(1);
+  });
+  it.each(["user", "share"])("hands off downloads when config refresh returns the %s config", async (mode) => {
+    await open();
+    config.update.mockImplementation(async () => {
+      config.values.mode = mode;
+    });
+    await wrapper.setData({ selected: [`original:${file("a").UID}`] });
+    await wrapper.vm.confirm();
+    expect(wrapper.vm.handed).toBe(1);
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
+  });
+  it("marks outputs as failed and keeps Retry when config refresh returns the public config", async () => {
+    await open();
+    config.update.mockImplementation(async () => {
+      config.values.mode = "public";
+    });
+    await wrapper.setData({ selected: [`original:${file("a").UID}`, `original:${file("b").UID}`] });
+    await wrapper.vm.confirm();
+    expect(wrapper.vm.handed).toBe(0);
+    expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+    expect(Object.values(wrapper.vm.states).map((item) => item.state)).toEqual(["error", "error"]);
+    expect(wrapper.vm.transferError).toBe(true);
+    expect(wrapper.emitted("close")).toBeUndefined();
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find(".action-retry-output").exists()).toBe(true);
+    await wrapper.vm.retry(wrapper.vm.downloads[0]);
+    expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+    config.update.mockImplementation(async () => {
+      config.values.mode = "user";
+    });
+    await wrapper.vm.retry(wrapper.vm.downloads[0]);
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
   });
   it("uses the shared focus scope and lets native Tab, Space, and Enter stay in the dialog", async () => {
     await open();
