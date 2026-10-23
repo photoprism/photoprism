@@ -64,6 +64,7 @@
           <td class="hidden-xs text-end" nowrap>
             <v-btn
               icon="mdi-delete"
+              :title="$gettext('Delete')"
               color="surface-variant"
               density="comfortable"
               variant="plain"
@@ -73,6 +74,7 @@
             ></v-btn>
             <v-btn
               icon="mdi-pencil"
+              :title="$gettext('Edit')"
               color="surface-variant"
               density="comfortable"
               variant="plain"

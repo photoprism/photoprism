@@ -195,6 +195,7 @@
                         <div class="table-actions">
                           <v-btn
                             icon="mdi-delete"
+                            :title="$gettext('Delete')"
                             color="surface-variant"
                             density="compact"
                             variant="plain"
