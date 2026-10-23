@@ -11,6 +11,9 @@ export const Roles = () => {
     "contributor": $gettext("Contributor"),
     "guest": $gettext("Guest"),
     "client": $gettext("Client"),
+    "instance": $gettext("Instance"),
+    "service": $gettext("Service"),
+    "portal": $gettext("Portal"),
     "visitor": $gettext("Visitor"),
     "": $gettext("Unauthorized"),
   };
