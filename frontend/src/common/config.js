@@ -456,42 +456,38 @@ export default class Config {
     return this;
   }
 
-  // getLanguageLocale returns the ISO/IEC 15897 locale,
-  // e.g. "en" or "zh_TW" (minimum 2 letters).
+  // getLanguageLocale returns the ISO/IEC 15897 locale, e.g. "en" or "zh_TW" (minimum 2 letters).
+  // While loading or with a ?locale= override, it is copied to settings.ui.language, which the language picker binds to.
   getLanguageLocale() {
-    // Get default locale from web browser.
+    const loading = this.loading();
     let locale = navigator?.language;
+    let mirror = loading;
 
     // Override language locale with query parameter?
     if (window.location?.search) {
-      const query = new URLSearchParams(window.location.search);
-      const queryLocale = query.get("locale");
+      const queryLocale = new URLSearchParams(window.location.search).get("locale");
       if (queryLocale && queryLocale.length > 1 && queryLocale.length < 6) {
-        // Change the locale settings.
         locale = options.FindLocale(queryLocale);
+        mirror = true;
         this.storage.setItem(this.storageKey + ".locale", locale);
-        if (this.values?.settings?.ui) {
-          this.values.settings.ui.language = locale;
-        }
       }
     }
 
     // Get user locale from storage if settings have not yet been loaded from backend.
-    if (this.loading()) {
-      const stored = this.storage.getItem(this.storageKey + ".locale");
-      if (stored) {
-        locale = stored;
-
-        if (this.values?.settings?.ui) {
-          this.values.settings.ui.language = locale;
-        }
-      }
-    } else if (this.values?.settings?.ui?.language) {
+    if (loading) {
+      locale = this.storage.getItem(this.storageKey + ".locale") || locale;
+    } else if (!mirror && this.values?.settings?.ui?.language) {
       locale = this.values.settings.ui.language;
     }
 
-    // Find and return the best matching language locale that exists.
-    return options.FindLocale(locale);
+    // Find the best matching language locale that exists.
+    locale = options.FindLocale(locale);
+
+    if (mirror && this.values?.settings?.ui) {
+      this.values.settings.ui.language = locale;
+    }
+
+    return locale;
   }
 
   // getLanguageCode returns the ISO 639-1 language code (2 letters),
