@@ -1802,6 +1802,17 @@ export default {
           },
         },
         {
+          name: "export",
+          icon: "mdi-export",
+          text: this.$gettext("Export"),
+          shortcut: "Ctrl-Shift-E",
+          disabled: !this.model?.UID,
+          visible: canExport(this.$config),
+          click: () => {
+            this.onExport();
+          },
+        },
+        {
           name: "download",
           icon: "mdi-download",
           text: this.$gettext("Download"),
@@ -1810,17 +1821,6 @@ export default {
           visible: this.canDownload,
           click: () => {
             this.onDownload();
-          },
-        },
-        {
-          name: "export",
-          icon: "mdi-file-export-outline",
-          text: this.$gettext("Export"),
-          shortcut: "Ctrl-Shift-E",
-          disabled: !this.model?.UID,
-          visible: canExport(this.$config),
-          click: () => {
-            this.onExport();
           },
         },
         {

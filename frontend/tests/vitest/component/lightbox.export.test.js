@@ -63,6 +63,11 @@ describe("Lightbox image export", () => {
     expect(Lightbox.methods.menuActions.call(context(false)).find((item) => item.name === "export").visible).toBe(false);
     expect(Lightbox.methods.menuActions.call(context(true, false)).find((item) => item.name === "export").visible).toBe(false);
   });
+  it("lists Export with its icon directly above Download", () => {
+    const names = Lightbox.methods.menuActions.call(context()).map((item) => item.name);
+    expect(names.indexOf("download") - names.indexOf("export")).toBe(1);
+    expect(Lightbox.methods.menuActions.call(context()).find((item) => item.name === "export").icon).toBe("mdi-export");
+  });
   it("opens only for a permitted current photo and pauses playback", () => {
     const ctx = context();
     Lightbox.methods.onExport.call(ctx);
