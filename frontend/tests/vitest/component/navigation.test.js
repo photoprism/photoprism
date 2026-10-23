@@ -1,10 +1,22 @@
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach, onTestFinished } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PNavigation from "component/navigation.vue";
 import { buildNamespace } from "common/storage";
 import clientConfig from "../config";
 
 const navigationModeKey = `${buildNamespace(clientConfig.storageNamespace)}navigation.mode`;
+
+// setDisplayWidth resizes the window for one test, since the Vuetify display breakpoints are read-only.
+function setDisplayWidth(wrapper, width) {
+  const display = wrapper.vm.$vuetify.display;
+  const previous = window.innerWidth;
+  onTestFinished(() => {
+    window.innerWidth = previous;
+    display.update();
+  });
+  window.innerWidth = width;
+  display.update();
+}
 
 function mountNavigation({
   routeName = "photos",
@@ -203,7 +215,7 @@ describe("component/navigation", () => {
       });
 
       // Force small-screen mode and authenticated session
-      wrapper.vm.$vuetify.display.smAndDown = true;
+      setDisplayWidth(wrapper, 500);
       wrapper.vm.session.auth = true;
       wrapper.vm.isPublic = false;
 
@@ -285,7 +297,7 @@ describe("component/navigation", () => {
       });
 
       // Ensure mobile mode and authenticated session so drawer logic runs
-      wrapper.vm.$vuetify.display.smAndDown = true;
+      setDisplayWidth(wrapper, 500);
       wrapper.vm.session.auth = true;
       wrapper.vm.isPublic = false;
       wrapper.vm.drawer = false;
@@ -302,7 +314,7 @@ describe("component/navigation", () => {
       });
 
       // Force desktop mode explicitly to avoid relying on Vuetify defaults
-      wrapper.vm.$vuetify.display.smAndDown = false;
+      setDisplayWidth(wrapper, 1280);
 
       wrapper.vm.onHome({ target: {} });
       expect(push).toHaveBeenCalledWith({ name: "home" });

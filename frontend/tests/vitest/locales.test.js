@@ -14,8 +14,10 @@ const untranslatedPaths = [
   "rules",
   "command",
   "hotkey",
-  "video",
+  "media",
   "colorPicker",
+  "rangeSlider",
+  "splitBtn",
 ];
 
 // keyPaths returns the dot-separated paths of all leaf values in a message tree.
