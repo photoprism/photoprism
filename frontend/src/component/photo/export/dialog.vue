@@ -59,7 +59,7 @@
                 <v-chip v-if="selectedCount(group)" :closable="false" variant="tonal" size="x-small" color="on-surface" :title="$gettext('Selected')" class="export-selected ms-2 me-2">{{ $gettext("%{n} Selected", { n: selectedCount(group) }) }}</v-chip>
               </v-expansion-panel-title>
               <v-expansion-panel-text class="export-group-options">
-                <p v-if="group.previewMissing" class="text-body-2 text-error mb-3">{{ $gettext("A unique still preview could not be found.") }}</p>
+                <p v-if="group.previewMissing" class="text-body-2 text-error mb-3">{{ $gettext("No preview image available.") }}</p>
                 <div v-for="section in optionSections(group)" :key="section.id" class="export-options-section" :class="{ 'export-resized-jpegs': section.id === 'resized' }" :role="section.label ? 'group' : undefined" :aria-label="section.label || undefined">
                   <v-divider v-if="section.label"></v-divider>
                   <p v-if="section.label" class="export-section-title text-caption text-medium-emphasis">{{ section.label }}</p>

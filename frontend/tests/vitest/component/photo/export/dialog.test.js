@@ -195,7 +195,7 @@ describe("photo export dialog", () => {
   });
   it("explains a missing or ambiguous preview and leaves Original unselected", async () => {
     await open([file("r", { Name: "a.cr2", MediaType: "raw", FileType: "cr2" })]);
-    expect(wrapper.text()).toContain("A unique still preview could not be found");
+    expect(wrapper.text()).toContain("No preview image available");
     expect(wrapper.vm.groups[0].options).toHaveLength(1);
     expect(wrapper.vm.selected).toEqual([]);
   });
@@ -455,7 +455,7 @@ describe("export feedback regressions", () => {
     const jpeg = file("j", { Name: "capture.jpg" });
     await open([raw, jpeg]);
     await wrapper.setData({ expanded: [raw.UID, jpeg.UID] });
-    expect(wrapper.text()).not.toContain("unique still preview");
+    expect(wrapper.text()).not.toContain("No preview image available");
     expect(wrapper.vm.groups[0].options).toHaveLength(1);
     await wrapper.find(`input[value="original:${jpeg.UID}"]`).setValue(true);
     expect(wrapper.vm.selectedCount(wrapper.vm.groups[0])).toBe(0);
@@ -466,12 +466,12 @@ describe("export feedback regressions", () => {
   it("renders real preview errors in the error color and labels the PDF first page", async () => {
     const pdf = file("d", { Name: "document.pdf", MediaType: "document", FileType: "pdf" });
     await open([pdf]);
-    expect(wrapper.find(".text-error").text()).toContain("unique still preview");
+    expect(wrapper.find(".text-error").text()).toContain("No preview image available");
     Photo.prototype.find.mockResolvedValue({ Files: [pdf, file("p", { Name: "document.pdf.jpg", Root: "sidecar" })] });
     await wrapper.vm.loadFiles();
     await flushPromises();
     expect(wrapper.text()).toContain("Full-Size Preview (First Page)");
-    expect(wrapper.text()).not.toContain("unique still preview");
+    expect(wrapper.text()).not.toContain("No preview image available");
   });
 });
 

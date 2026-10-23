@@ -104,7 +104,7 @@ for (const [index, [label, files, kinds]] of cases.entries()) {
       await t.click(groups.nth(1).find(".export-group-title"));
       await t.expect(originalOnly.find(".export-option").count).eql(1);
       if (label !== "Live Photo") {
-        await t.expect(dialog.innerText).notContains("unique still preview");
+        await t.expect(dialog.innerText).notContains("No preview image available");
       }
     }
     await t.click(groups.nth(0).find('input[type="checkbox"]').nth(0));
