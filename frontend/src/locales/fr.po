@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-23 09:04+0000\n"
+"PO-Revision-Date: 2026-10-24 20:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1054,7 +1054,7 @@ msgstr "Comparer les éditions"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Compatible Video"
-msgstr "Vidéo compatible"
+msgstr "Vidéo prise en charge"
 
 #: src/page/library/index.vue:39
 msgid "Complete Rescan"
@@ -1148,7 +1148,7 @@ msgstr "Copier"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Copiez le nouveau secret client et conservez-le en lieu sûr, car vous ne pourrez plus le consulter par la suite :"
+msgstr "Copiez la nouvelle clé secrète client et conservez-la en lieu sûr : vous ne pourrez plus la consulter ensuite:"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -2027,7 +2027,7 @@ msgstr "Aperçu en taille réelle"
 
 #: src/component/photo/export/dialog.vue:299
 msgid "Full-Size Preview (First Page)"
-msgstr "Aperçu en taille réelle (première page)"
+msgstr "Aperçu en pleine résolution (première page)"
 
 #: src/common/map.js:128 src/component/lightbox.vue:1657
 #: src/component/lightbox.vue:1658
@@ -2921,7 +2921,7 @@ msgstr "Aucune image trouvée"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "No preview image available."
-msgstr "Aucune image d'aperçu disponible."
+msgstr "Aucun aperçu disponible"
 
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
@@ -2950,7 +2950,7 @@ msgstr "Aucun service n'est configuré."
 
 #: src/component/photo/export/dialog.vue:45
 msgid "No supported files available for export."
-msgstr "Aucun fichier compatible n'est disponible pour l'exportation."
+msgstr "Aucun fichier pris en charge n'est disponible pour l'exportation."
 
 #: src/component/confirm/sponsor.vue:30
 msgid "No thanks"
@@ -3639,7 +3639,7 @@ msgstr "Impose un examen préalable des images non photographiques ou de faible 
 
 #: src/component/client/edit/dialog.vue:202
 msgid "Reset Secret"
-msgstr "Réinitialiser le secret"
+msgstr "Réinitialiser la clé secrète"
 
 #: src/component/photo/export/dialog.vue:290
 msgid "Resized JPEGs"
@@ -4995,7 +4995,7 @@ msgstr "Votre compte a été connecté avec succès."
 
 #: src/component/photo/export/dialog.vue:84
 msgid "Your browser may ask you to allow multiple downloads."
-msgstr "Votre navigateur peut vous demander d'autoriser plusieurs téléchargements."
+msgstr "Votre navigateur pourrait vous demander d'autoriser plusieurs téléchargements."
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
