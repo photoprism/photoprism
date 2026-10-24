@@ -177,6 +177,7 @@
 </template>
 
 <script>
+import { markRaw } from "vue";
 import Axios from "axios";
 import PhotoSwipe from "photoswipe";
 import Lightbox from "photoswipe/lightbox";
@@ -1384,13 +1385,14 @@ export default {
       let lightbox = new Lightbox(options);
       let firstPicture = true;
 
-      // Keep reference to PhotoSwipe instance.
-      this.lightbox = lightbox;
+      // Keep reference to PhotoSwipe instance. It stays raw, since PhotoSwipe compares
+      // its own objects by identity, e.g. before dispatching zoomPanUpdate.
+      this.lightbox = markRaw(lightbox);
       this.idleTimer = false;
 
       // Use dynamic caption plugin,
       // see https://github.com/dimsemenov/photoswipe-dynamic-caption-plugin.
-      this.captionPlugin = new Captions(this.lightbox, {
+      this.captionPlugin = markRaw(new Captions(this.lightbox, {
         type: "below",
         mobileLayoutBreakpoint: 1024,
         // Gate the plugin's panAreaSize adjustment on the user's
@@ -1408,7 +1410,7 @@ export default {
           }
           return this.models[slide.index] || null;
         },
-      });
+      }));
 
       // Register animation event handlers to prevent user actions during animations,
       // see https://photoswipe.com/events/#opening-or-closing-transition-events.

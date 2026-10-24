@@ -2,7 +2,7 @@ import { mount, flushPromises, config as VTUConfig } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { AxiosError } from "axios";
 import * as contexts from "options/contexts";
-import { nextTick } from "vue";
+import { isProxy, nextTick, toRaw } from "vue";
 import PLightbox from "component/lightbox.vue";
 import Photo from "model/photo";
 import Thumb from "model/thumb";
@@ -156,6 +156,41 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     await wrapper.vm.onShortCut({ code: "KeyH" });
     await nextTick();
     expect(localStorage.getItem(captionKey)).toBe("true");
+  });
+
+  // PhotoSwipe compares its own objects by identity, e.g. a slide with
+  // pswp.currSlide before dispatching zoomPanUpdate, so no proxy may wrap it.
+  it("keeps PhotoSwipe raw so slides created by navigation still dispatch zoomPanUpdate", async () => {
+    const wrapper = mountLightbox();
+    const el = document.createElement("div");
+    document.body.appendChild(el);
+    const matchMedia = window.matchMedia;
+    window.matchMedia = () => ({ matches: false, addEventListener: () => {}, removeEventListener: () => {} });
+    // The stubbed dialog renders no content, so provide the PhotoSwipe container.
+    wrapper.vm.$.refs.lightbox = el;
+    try {
+      const models = ["ps6sg6be2lvl0y12", "ps6sg6be2lvl0y13", "ps6sg6be2lvl0y14"].map((UID) => new Thumb({ UID, Type: "image", Width: 800, Height: 600 }));
+      await wrapper.vm.renderLightbox(models, 0);
+      await flushPromises();
+      expect(isProxy(wrapper.vm.lightbox)).toBe(false);
+      expect(isProxy(wrapper.vm.captionPlugin)).toBe(false);
+      const pswp = wrapper.vm.pswp();
+      expect(pswp).toBeTruthy();
+      // Navigate like the keyboard handlers, which call next() on pswp().
+      pswp.next();
+      pswp.next();
+      await flushPromises();
+      const updates = vi.fn();
+      pswp.on("zoomPanUpdate", updates);
+      toRaw(pswp).currSlide.applyCurrentZoomPan();
+      expect(updates).toHaveBeenCalledTimes(1);
+    } finally {
+      wrapper.vm.lightbox?.destroy?.();
+      await vi.waitFor(() => expect(window.pswp).toBeFalsy());
+      el.remove();
+      wrapper.unmount();
+      window.matchMedia = matchMedia;
+    }
   });
 
   it("KeyH is ignored when dialog is not visible", async () => {
