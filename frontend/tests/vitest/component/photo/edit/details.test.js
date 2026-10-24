@@ -363,7 +363,7 @@ describe("component/photo/edit/details", () => {
       expect(wrapper.vm.locationDialog).toBe(false);
     });
 
-    it("sets Country VAutocomplete readonly prop when Lat/Lng are present", async () => {
+    it("keeps Country VAutocomplete editable when Lat/Lng are present", async () => {
       // Use full mount with real VAutocomplete (not stubbed) so we can assert props
       const w = mount(PTabPhotoDetails, {
         props: { uid: "p123" },
@@ -396,13 +396,13 @@ describe("component/photo/edit/details", () => {
       const allAutocompletes = w.findAllComponents({ name: "VAutocomplete" });
       const countryAuto = allAutocompletes.find((c) => c.classes().includes("input-country"));
       expect(countryAuto).toBeTruthy();
-      expect(countryAuto.props("readonly")).toBe(false);
+      expect(countryAuto.props("readonly")).not.toBe(true);
 
-      // Set Lat/Lng to non-zero → readonly=true
+      // Country can be corrected manually without clearing the coordinates.
       w.vm.view.model.Lat = 37.5;
       w.vm.view.model.Lng = -122.4;
       await nextTick();
-      expect(countryAuto.props("readonly")).toBe(true);
+      expect(countryAuto.props("readonly")).not.toBe(true);
 
       w.unmount();
     });
