@@ -64,7 +64,6 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 		formValues.TimeZone.Action == ActionUpdate
 
 	if timeChanged {
-		fromUTC := p.TimeZoneUTC()
 		p.PhotoYear = formData.PhotoYear
 		p.PhotoMonth = formData.PhotoMonth
 		p.PhotoDay = formData.PhotoDay
@@ -76,11 +75,7 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 
 		p.NormalizeValues()
 
-		// Changing only the zone converts a UTC time to the local time in the new zone and otherwise keeps the local time.
-		if fromUTC && !batchChangesDate(formValues) && !p.TimeZoneUTC() && !p.TimeZoneLocal() {
-			p.TakenAtLocal = p.GetTakenAtLocal()
-			p.SetKnownDateParts()
-		} else if p.TimeZoneUTC() {
+		if p.TimeZoneUTC() {
 			p.TakenAt = p.TakenAtLocal
 		} else {
 			p.TakenAt = p.GetTakenAt()

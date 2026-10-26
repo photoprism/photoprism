@@ -131,11 +131,19 @@ func (m *Photo) UpdateTimeZone(zone string) {
 		return
 	}
 
-	if m.TimeZoneUTC() {
-		m.TimeZone = zone
+	from := m.TimeZone
+	m.TimeZone = zone
+	m.ApplyTimeZoneChange(from)
+}
+
+// ApplyTimeZoneChange updates the capture time after TimeZone was changed from the given zone without
+// editing the time: a UTC time is converted to the local time in the new zone, and a local time is kept.
+// A TakenAt that already matches the local time is kept, e.g. in a repeated daylight-saving hour.
+func (m *Photo) ApplyTimeZoneChange(from string) {
+	if tz.IsUTC(from) && !m.TimeZoneUTC() && !m.TimeZoneLocal() {
 		m.TakenAtLocal = m.GetTakenAtLocal()
-	} else {
-		m.TimeZone = zone
+		m.SetKnownDateParts()
+	} else if m.TimeZoneLocal() || !m.GetTakenAtLocal().Equal(m.TakenAtLocal) {
 		m.TakenAt = m.GetTakenAt()
 	}
 }

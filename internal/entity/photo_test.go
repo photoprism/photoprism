@@ -211,6 +211,17 @@ func TestSavePhotoForm_TakenAt(t *testing.T) {
 		assert.Equal(t, "2025-06-30T14:00:00Z", photo.TakenAt.Format(time.RFC3339))
 		assert.Equal(t, "2025-06-30T14:00:00Z", photo.TakenAtLocal.Format(time.RFC3339))
 	})
+	t.Run("ZoneAndDateChangeKeepsWallTime", func(t *testing.T) {
+		taken := time.Date(2025, 6, 30, 23, 30, 0, 0, time.UTC)
+		photo := createTakenAtTestPhoto(t, tz.UTC, taken, taken)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone, frm.PhotoDay = "Europe/Berlin", 15
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-06-30T23:30:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+		assert.Equal(t, "2025-06-30T21:30:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, []int{2025, 6, 15}, []int{photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay})
+	})
 	t.Run("FromUTCWithLocalTimeUsesIt", func(t *testing.T) {
 		taken := time.Date(2025, 6, 30, 23, 30, 0, 0, time.UTC)
 		photo := createTakenAtTestPhoto(t, tz.UTC, taken, taken)

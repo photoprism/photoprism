@@ -46,14 +46,14 @@ The `internal/photoprism/batch` package implements the form schema (`PhotosForm`
 
 `POST /api/v1/batch/photos/edit` accepts a `PhotosRequest` payload and returns the refreshed photo models plus a `PhotosForm` snapshot. All fields follow JSON casing from `internal/photoprism/batch/request.go` and `photos.go`.
 
-| Field                   | Type             | Examples                                                     | Notes                                                                                                                                                                                     |
-|:------------------------|:-----------------|:-------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `photos`                | `string[]`       | `['pq1z9t3', 'px4y2k0']`                                     | Required. Contains `PhotoUID` values selected in the UI. Empty lists are rejected with `400`.                                                                                             |
-| `values`                | `PhotosForm`     | `{ "Title": { "action": "update", "value": "Vacation" } }`   | Optional. When omitted, the endpoint only loads the selection + aggregated form data.                                                                                                     |
-| `values.Albums.items[]` | `Items` entry    | `{ "value": "ab1c", "title": "Favorites", "action": "add" }` | Action must be `add`/`remove`; `title` is used to create albums when `value` is empty.                                                                                                    |
-| `values.Labels.items[]` | `Items` entry    | `{ "value": "lb2d", "action": "remove" }`                    | Removing requires a valid label UID. Adds accept either UID or plain title.                                                                                                               |
-| `values.TimeZone`       | `String` wrapper | `{ "value": "Europe/Berlin", "action": "update" }`           | Paired with `Day/Month/Year` to recompute `TakenAt` and `TakenAtLocal`. On its own, it converts a time saved in UTC to the local time in the new zone and otherwise keeps the local time. |
-| `values.DetailsSubject` | `String` wrapper | `{ "action": "remove" }`                                     | Setting `action="remove"` clears the field without needing `value`.                                                                                                                       |
+| Field                   | Type             | Examples                                                     | Notes                                                                                                                                                                                                       |
+|:------------------------|:-----------------|:-------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `photos`                | `string[]`       | `['pq1z9t3', 'px4y2k0']`                                     | Required. Contains `PhotoUID` values selected in the UI. Empty lists are rejected with `400`.                                                                                                               |
+| `values`                | `PhotosForm`     | `{ "Title": { "action": "update", "value": "Vacation" } }`   | Optional. When omitted, the endpoint only loads the selection + aggregated form data.                                                                                                                       |
+| `values.Albums.items[]` | `Items` entry    | `{ "value": "ab1c", "title": "Favorites", "action": "add" }` | Action must be `add`/`remove`; `title` is used to create albums when `value` is empty.                                                                                                                      |
+| `values.Labels.items[]` | `Items` entry    | `{ "value": "lb2d", "action": "remove" }`                    | Removing requires a valid label UID. Adds accept either UID or plain title.                                                                                                                                 |
+| `values.TimeZone`       | `String` wrapper | `{ "value": "Europe/Berlin", "action": "update" }`           | Paired with `Day/Month/Year` to recompute `TakenAt` and `TakenAtLocal`. Each photo keeps its local time, also when its zone was `UTC`, so a zone can be added to pictures whose local time was read as UTC. |
+| `values.DetailsSubject` | `String` wrapper | `{ "action": "remove" }`                                     | Setting `action="remove"` clears the field without needing `value`.                                                                                                                                         |
 
 #### Request Example
 
@@ -222,6 +222,7 @@ Batch label updates and deletes write through `PhotoLabel.Updates` and `PhotoLab
   - `internal/photoprism/batch/apply_labels_test.go` validates label mutations, UID validation, and keyword handling.
   - `internal/photoprism/batch/convert_test.go` and `photos_test.go` cover form aggregation and mixed-value detection.  
   - `internal/photoprism/batch/datelogic_test.go` ensures cross-field dependencies (local time vs. UTC) stay consistent.  
+  - `internal/photoprism/batch/save_photo_test.go` checks per-photo saves, including that zone and date changes keep each photo's local time.
   - `internal/photoprism/batch/save_test.go` exercises partial updates, detail edits, `CheckedAt` resets, the `PreparePhotoSaveRequests` / `PrepareAndSavePhotos` helpers, and the `batchChangesDate` / `batchChangesTime` date-change detection that gates file-index regeneration.  
   - `internal/api/batch_photos_edit_test.go` provides end-to-end coverage for response envelopes (`SuccessNoChange`, `SuccessRemoveValues`, etc.).
   - `internal/photoprism/batch/save_resolve_test.go` validates pre-resolution helpers for albums/labels, while `save_backup_test.go` covers the YAML backup flow controlled by `updateAlbumBackups`.
@@ -249,8 +250,8 @@ Batch label updates and deletes write through `PhotoLabel.Updates` and `PhotoLab
 - `save.go` — differential persistence, `PreparePhotoSaveRequests`, `PrepareAndSavePhotos`, `NewPhotoSaveRequest`, `PhotoSaveRequest`, background worker triggers, and the shared `batchChangesDate`/`batchChangesTime` predicates that gate post-save file-index regeneration.
 - `save_photo.go` — `savePhoto` applies a single request, compares old/new values, and writes only the changed columns (indirectly invoked by `SavePhotos`).
 - `save_resolve.go` — album/label title resolution helpers that run before persistence so per-photo work only receives resolved UIDs.
-- `save_backup.go` — YAML backup synchronisation for albums whenever batch edits touch them and backups are enabled.
-- `datelogic.go` — helpers for reconciling time zones and date parts when the UI only supplies partial values.
+- `save_backup.go` — YAML backup synchronization for albums whenever batch edits touch them and backups are enabled.
+- `datelogic.go` — `ComputeDateChange` applies entered date parts to each photo's local date.
 - `values.go` — typed wrappers for request fields (value + action + mixed flag).
 
 ### Next Steps

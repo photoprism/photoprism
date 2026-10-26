@@ -1919,7 +1919,7 @@ describe("PLightboxSidebar component", () => {
     return attachRollbackContract(photo, initial);
   }
 
-  describe("confirmDateTime failure rollback", () => {
+  describe("confirmDateTime", () => {
     function buildDateTimePhoto(overrides = {}) {
       const photo = buildSidebarPhoto(
         {
@@ -1932,11 +1932,7 @@ describe("PLightboxSidebar component", () => {
         },
         overrides
       );
-      photo.localDate = vi.fn().mockReturnValue({
-        isValid: true,
-        toISO: () => "2022-07-15T13:45:30",
-        toUTC: () => ({ toISO: () => "2022-07-15T11:45:30Z" }),
-      });
+      photo.setLocalTime = vi.fn().mockReturnValue({ isValid: true });
       return photo;
     }
 
@@ -1995,10 +1991,14 @@ describe("PLightboxSidebar component", () => {
       expect(w.vm.$notify.error).not.toHaveBeenCalled();
     });
 
-    it("derives TakenAt from the edited wall time in a named zone", () => {
+    it("sets the edited wall time in the selected zone", () => {
       const photo = buildDateTimePhoto();
       // Keeps the save pending, so the named zone is not rendered with the stubbed DateTime.
       photo.update.mockReturnValueOnce(new Promise(() => {}));
+      photo.setLocalTime.mockImplementation(function () {
+        expect([this.TimeZone, this.Year, this.Month, this.Day]).toEqual(["Europe/Berlin", 2022, 7, 15]);
+        return { isValid: true };
+      });
 
       const w = mountSidebar({
         props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
@@ -2007,24 +2007,22 @@ describe("PLightboxSidebar component", () => {
 
       w.vm.confirmDateTime({ ...newDateTimeData, TimeZone: "Europe/Berlin" });
 
-      expect(photo.TakenAtLocal).toBe("2022-07-15T13:45:30Z");
-      expect(photo.TakenAt).toBe("2022-07-15T11:45:30Z");
+      expect(photo.setLocalTime).toHaveBeenCalledWith("13:45:30");
+      expect(photo.update).toHaveBeenCalledTimes(1);
     });
 
-    it("keeps TakenAt when the zone is Local", () => {
+    it("does not save an invalid date", () => {
       const photo = buildDateTimePhoto();
-      // Keeps the save pending, so the named zone is not rendered with the stubbed DateTime.
-      photo.update.mockReturnValueOnce(new Promise(() => {}));
+      photo.setLocalTime.mockReturnValueOnce({ isValid: false });
 
       const w = mountSidebar({
         props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
         global: { stubs: { PMap: true } },
       });
 
-      w.vm.confirmDateTime({ ...newDateTimeData, TimeZone: "Local" });
+      w.vm.confirmDateTime(newDateTimeData);
 
-      expect(photo.TakenAtLocal).toBe("2022-07-15T13:45:30Z");
-      expect(photo.TakenAt).toBe("2020-01-01T00:00:00Z");
+      expect(photo.update).not.toHaveBeenCalled();
     });
 
     it("uses the timestamps passed by the dialog", () => {
@@ -2048,7 +2046,7 @@ describe("PLightboxSidebar component", () => {
         TakenAtLocal: "2020-01-01T01:00:00Z",
       });
 
-      expect(photo.localDate).not.toHaveBeenCalled();
+      expect(photo.setLocalTime).not.toHaveBeenCalled();
       expect(photo.TakenAt).toBe("2020-01-01T00:00:00Z");
       expect(photo.TakenAtLocal).toBe("2020-01-01T01:00:00Z");
       expect(photo.TimeZone).toBe("Europe/Berlin");

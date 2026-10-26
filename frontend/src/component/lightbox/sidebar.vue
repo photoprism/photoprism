@@ -2150,21 +2150,8 @@ export default {
       if (data.TakenAt && data.TakenAtLocal) {
         photo.TakenAt = data.TakenAt;
         photo.TakenAtLocal = data.TakenAtLocal;
-      } else {
-        const localDate = photo.localDate(data.time);
-        if (!localDate.isValid) {
-          return;
-        }
-
-        photo.TakenAtLocal =
-          localDate.toISO({
-            suppressMilliseconds: true,
-            includeOffset: false,
-          }) + "Z";
-
-        if (photo.TimeZone && photo.TimeZone !== "Local") {
-          photo.TakenAt = localDate.toUTC().toISO({ suppressMilliseconds: true });
-        }
+      } else if (!photo.setLocalTime(data.time).isValid) {
+        return;
       }
 
       photo

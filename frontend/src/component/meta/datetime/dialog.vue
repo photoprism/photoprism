@@ -102,6 +102,7 @@
           </v-col>
           <v-col cols="6">
             <v-autocomplete
+              :key="timeZoneKey"
               :model-value="timeZone"
               :label="$gettext('Time Zone')"
               hide-no-data
@@ -131,7 +132,7 @@
 import { DateTime } from "luxon";
 import * as options from "options/options";
 import { rules } from "common/form";
-import { Photo } from "model/photo";
+import { Photo, isTimeZoneUTC } from "model/photo";
 
 export default {
   name: "PMetaDatetimeDialog",
@@ -157,13 +158,13 @@ export default {
       timeZone: "",
       invalidDate: false,
       dateChanged: false,
-      zoneFromUTC: false,
-      projected: null,
+      timeZoneKey: 0,
+      draft: null,
     };
   },
   computed: {
     timeLabel() {
-      if (this.isUTC(this.timeZone)) {
+      if (isTimeZoneUTC(this.timeZone)) {
         return "UTC";
       }
       return this.$gettext("Local Time");
@@ -197,8 +198,14 @@ export default {
       this.time = taken.toFormat("HH:mm:ss");
       this.invalidDate = false;
       this.dateChanged = false;
-      this.zoneFromUTC = this.isUTC(this.timeZone);
-      this.projected = null;
+      this.draft = new Photo({
+        TakenAt: this.photo.TakenAt,
+        TakenAtLocal: this.photo.TakenAtLocal,
+        TimeZone: this.timeZone,
+        Year: this.year,
+        Month: this.month,
+        Day: this.day,
+      });
     },
     effectiveYear() {
       if (this.year > 0) {
@@ -285,56 +292,43 @@ export default {
     syncTime() {
       this.updateLocalDate();
     },
-    // isUTC reports whether the zone is UTC.
-    isUTC(zone) {
-      return typeof zone === "string" && zone.toLowerCase() === "utc";
-    },
     // setTimeZone changes the zone of the shown date and time like the edit dialog, see Photo.changeTimeZone.
+    // The draft starts from the saved photo, so its time anchor follows the same rule; a cleared or refused
+    // selection re-renders the field, so it shows the zone that is kept.
     setTimeZone(zone) {
-      if (!this.photo || zone === this.timeZone) {
+      if (zone === this.timeZone) {
+        return;
+      } else if (!this.draft || !zone || (this.dateChanged && !this.applyToDraft())) {
+        this.timeZoneKey++;
         return;
       }
 
-      const base = this.projected || this.photo;
-      const draft = new Photo({
-        TakenAt: base.TakenAt,
-        TakenAtLocal: base.TakenAtLocal,
-        TimeZone: this.timeZone,
-        Year: this.year,
-        Month: this.month,
-        Day: this.day,
-      });
+      this.draft.changeTimeZone(zone);
 
-      if (this.dateChanged) {
-        const localDate = draft.localDate(this.time);
-
-        if (!rules.isTime(this.time) || !localDate.isValid) {
-          return;
-        }
-
-        draft.TakenAtLocal = localDate.toISO({ suppressMilliseconds: true, includeOffset: false }) + "Z";
-
-        if (draft.TimeZone && draft.TimeZone !== "Local") {
-          draft.TakenAt = localDate.toUTC().toISO({ suppressMilliseconds: true });
-        }
-
-        this.zoneFromUTC = this.isUTC(this.timeZone);
-      }
-
-      draft.changeTimeZone(zone, this.zoneFromUTC);
-
-      if (draft.TimeZone !== zone) {
+      if (this.draft.TimeZone !== zone) {
+        this.timeZoneKey++;
         return;
       }
 
       this.timeZone = zone;
-      this.day = draft.Day;
-      this.month = draft.Month;
-      this.year = draft.Year;
-      this.time = draft.getDateTime().toFormat("HH:mm:ss");
-      this.projected = { TakenAt: draft.TakenAt, TakenAtLocal: draft.TakenAtLocal };
+      this.day = this.draft.Day;
+      this.month = this.draft.Month;
+      this.year = this.draft.Year;
+      this.time = this.draft.getDateTime().toFormat("HH:mm:ss");
       this.dateChanged = false;
       this.updateLocalDate();
+    },
+    // applyToDraft applies the edited fields to the draft and reports whether they form a valid date and time.
+    applyToDraft() {
+      if (!rules.isTime(this.time)) {
+        return false;
+      }
+
+      this.draft.Year = this.year;
+      this.draft.Month = this.month;
+      this.draft.Day = this.day;
+
+      return this.draft.setLocalTime(this.time).isValid;
     },
     localYearString() {
       if (this.year <= 0) {
@@ -390,7 +384,7 @@ export default {
 
       // Without manual edits, the timestamps are passed on so they are not recomputed from the wall time.
       if (!this.dateChanged) {
-        const base = this.projected || this.photo;
+        const base = this.draft || this.photo;
         data.TakenAt = base.TakenAt;
         data.TakenAtLocal = base.TakenAtLocal;
       }

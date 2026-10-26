@@ -319,6 +319,39 @@ func TestPhoto_SetKnownDateParts(t *testing.T) {
 	}
 }
 
+// TestPhoto_ApplyTimeZoneChange checks that a zone change converts a UTC time and keeps a local time.
+func TestPhoto_ApplyTimeZoneChange(t *testing.T) {
+	utc := time.Date(2025, 6, 30, 23, 30, 0, 0, time.UTC)
+	berlin := time.Date(2025, 6, 30, 12, 0, 0, 0, time.UTC)
+	berlinLocal := time.Date(2025, 6, 30, 14, 0, 0, 0, time.UTC)
+	cases := []struct {
+		name, from, to               string
+		taken, local                 time.Time
+		day                          int
+		expectedLocal, expectedTaken string
+		expectedDate                 []int
+	}{
+		{"FromUTCConverts", tz.UTC, "Europe/Berlin", utc, utc, 30, "2025-07-01T01:30:00Z", "2025-06-30T23:30:00Z", []int{2025, 7, 1}},
+		{"FromUTCUnknownDay", tz.UTC, "UTC-12", time.Date(2020, 1, 1, 3, 0, 0, 0, time.UTC), time.Date(2020, 1, 1, 3, 0, 0, 0, time.UTC), -1, "2019-12-31T15:00:00Z", "2020-01-01T03:00:00Z", []int{2020, 1, -1}},
+		{"FromUTCToLocalKeepsWallTime", tz.UTC, tz.Local, utc, utc, 30, "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", []int{2025, 6, 30}},
+		{"NamedKeepsWallTime", "Europe/Berlin", "America/New_York", berlin, berlinLocal, 30, "2025-06-30T14:00:00Z", "2025-06-30T18:00:00Z", []int{2025, 6, 30}},
+		{"NamedToUTCKeepsWallTime", "Europe/Berlin", tz.UTC, berlin, berlinLocal, 30, "2025-06-30T14:00:00Z", "2025-06-30T14:00:00Z", []int{2025, 6, 30}},
+		{"LocalToNamedKeepsWallTime", tz.Local, "Europe/Berlin", berlinLocal, berlinLocal, 30, "2025-06-30T14:00:00Z", "2025-06-30T12:00:00Z", []int{2025, 6, 30}},
+		{"NamedToLocalKeepsWallTime", "Europe/Berlin", tz.Local, berlin, berlinLocal, 30, "2025-06-30T14:00:00Z", "2025-06-30T14:00:00Z", []int{2025, 6, 30}},
+		{"RepeatedHourKeepsTakenAt", "Europe/Berlin", "Europe/Paris", time.Date(2025, 10, 26, 0, 30, 0, 0, time.UTC), time.Date(2025, 10, 26, 2, 30, 0, 0, time.UTC), 26, "2025-10-26T02:30:00Z", "2025-10-26T00:30:00Z", []int{2025, 10, 26}},
+		{"UnresolvableZoneKeepsTakenAt", "Europe/Berlin", "Mars/Olympus", berlin, berlinLocal, 30, "2025-06-30T14:00:00Z", "2025-06-30T12:00:00Z", []int{2025, 6, 30}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			m := Photo{TimeZone: tc.to, TakenAt: tc.taken, TakenAtLocal: tc.local, PhotoYear: tc.local.Year(), PhotoMonth: int(tc.local.Month()), PhotoDay: tc.day}
+			m.ApplyTimeZoneChange(tc.from)
+			assert.Equal(t, tc.expectedLocal, m.TakenAtLocal.Format(time.RFC3339))
+			assert.Equal(t, tc.expectedTaken, m.TakenAt.Format(time.RFC3339))
+			assert.Equal(t, tc.expectedDate, []int{m.PhotoYear, m.PhotoMonth, m.PhotoDay})
+		})
+	}
+}
+
 func TestPhoto_UpdateTimeZone(t *testing.T) {
 	t.Run("PhotoTimeZone", func(t *testing.T) {
 		m := PhotoFixtures.Get("PhotoTimeZone")
@@ -483,5 +516,14 @@ func TestPhoto_UpdateTimeZone(t *testing.T) {
 		photo.UpdateTimeZone("")
 		assert.Equal(t, time.Date(2015, 11, 11, 9, 7, 18, 0, time.UTC), photo.TakenAt)
 		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+	})
+	t.Run("FromUTCUpdatesDateParts", func(t *testing.T) {
+		taken := time.Date(2025, 6, 30, 23, 30, 0, 0, time.UTC)
+		m := Photo{TimeZone: tz.UTC, TakenSrc: SrcMeta, TakenAt: taken, TakenAtLocal: taken, PhotoYear: 2025, PhotoMonth: 6, PhotoDay: 30}
+		m.UpdateTimeZone("Europe/Berlin")
+		assert.Equal(t, "Europe/Berlin", m.TimeZone)
+		assert.Equal(t, taken, m.TakenAt)
+		assert.Equal(t, "2025-07-01T01:30:00Z", m.TakenAtLocal.Format(time.RFC3339))
+		assert.Equal(t, []int{2025, 7, 1}, []int{m.PhotoYear, m.PhotoMonth, m.PhotoDay})
 	})
 }

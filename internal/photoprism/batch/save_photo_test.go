@@ -109,7 +109,7 @@ func TestSavePhoto_ControlCharacters(t *testing.T) {
 	require.Equal(t, "de", updated.PhotoCountry)
 }
 
-// TestSavePhoto_TimeZone checks how batch time zone changes treat UTC and local capture times.
+// TestSavePhoto_TimeZone checks that batch date and time zone changes keep each photo's local time.
 func TestSavePhoto_TimeZone(t *testing.T) {
 	cases := []struct {
 		name, zone, taken, local string
@@ -119,11 +119,13 @@ func TestSavePhoto_TimeZone(t *testing.T) {
 		expectedLocal            string
 		expectedDate             []int
 	}{
-		{"FromUTCConverts", "UTC", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", 30, PhotosForm{TimeZone: String{Value: "Europe/Berlin", Action: ActionUpdate}}, "2025-06-30T23:30:00Z", "2025-07-01T01:30:00Z", []int{2025, 7, 1}},
-		{"FromUTCUnknownDay", "UTC", "2020-01-01T03:00:00Z", "2020-01-01T03:00:00Z", -1, PhotosForm{TimeZone: String{Value: "America/New_York", Action: ActionUpdate}}, "2020-01-01T03:00:00Z", "2019-12-31T22:00:00Z", []int{2020, 1, -1}},
+		{"FromUTCKeepsWallTime", "UTC", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", 30, PhotosForm{TimeZone: String{Value: "Europe/Berlin", Action: ActionUpdate}}, "2025-06-30T21:30:00Z", "2025-06-30T23:30:00Z", []int{2025, 6, 30}},
+		{"FromUTCUnknownDay", "UTC", "2020-01-01T03:00:00Z", "2020-01-01T03:00:00Z", -1, PhotosForm{TimeZone: String{Value: "America/New_York", Action: ActionUpdate}}, "2020-01-01T08:00:00Z", "2020-01-01T03:00:00Z", []int{2020, 1, -1}},
 		{"FromUTCWithDateChange", "UTC", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", 30, PhotosForm{TimeZone: String{Value: "Europe/Berlin", Action: ActionUpdate}, PhotoDay: Int{Value: 2, Action: ActionUpdate}}, "2025-06-02T21:30:00Z", "2025-06-02T23:30:00Z", []int{2025, 6, 2}},
 		{"FromNamedKeepsWallTime", "Europe/Berlin", "2025-06-30T12:00:00Z", "2025-06-30T14:00:00Z", 30, PhotosForm{TimeZone: String{Value: "America/New_York", Action: ActionUpdate}}, "2025-06-30T18:00:00Z", "2025-06-30T14:00:00Z", []int{2025, 6, 30}},
 		{"ToUTCKeepsWallTime", "Europe/Berlin", "2025-06-30T12:00:00Z", "2025-06-30T14:00:00Z", 30, PhotosForm{TimeZone: String{Value: "UTC", Action: ActionUpdate}}, "2025-06-30T14:00:00Z", "2025-06-30T14:00:00Z", []int{2025, 6, 30}},
+		{"MixedZoneDateInUTC", "UTC", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", 30, PhotosForm{PhotoDay: Int{Value: 2, Action: ActionUpdate}}, "2025-06-02T23:30:00Z", "2025-06-02T23:30:00Z", []int{2025, 6, 2}},
+		{"MixedZoneDateInNamedZone", "Europe/Berlin", "2025-06-30T12:00:00Z", "2025-06-30T14:00:00Z", 30, PhotosForm{PhotoDay: Int{Value: 2, Action: ActionUpdate}}, "2025-06-02T12:00:00Z", "2025-06-02T14:00:00Z", []int{2025, 6, 2}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
