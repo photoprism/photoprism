@@ -1043,6 +1043,14 @@ docker-develop-resolute-slim:
 	docker pull --platform=amd64 ubuntu:resolute
 	docker pull --platform=arm64 ubuntu:resolute
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute-slim /resolute-slim
+docker-develop-stonking:
+	docker pull --platform=amd64 ubuntu:stonking
+	docker pull --platform=arm64 ubuntu:stonking
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 stonking /stonking
+docker-develop-stonking-slim:
+	docker pull --platform=amd64 ubuntu:stonking
+	docker pull --platform=arm64 ubuntu:stonking
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 stonking-slim /stonking-slim
 unstable: docker-unstable
 docker-unstable: docker-unstable-mantic
 docker-unstable-jammy:
