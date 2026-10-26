@@ -111,7 +111,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.15
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/golang/geo v0.0.0-20261023135424-713b284b73ea
+	github.com/golang/geo v0.0.0-20261026081726-9e1e803a26c2
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
