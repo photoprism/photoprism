@@ -169,9 +169,10 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 
 	locChanged := m.PhotoLat != form.PhotoLat || m.PhotoLng != form.PhotoLng || m.PhotoCountry != form.PhotoCountry
 
-	fromUTC := m.TimeZoneUTC()
-	zoneOnly := tz.Name(m.TimeZone) != tz.Name(form.TimeZone) && m.TakenAt.Equal(form.TakenAt) && m.TakenAtLocal.Equal(form.TakenAtLocal)
-	dateUnchanged := m.PhotoYear == form.PhotoYear && m.PhotoMonth == form.PhotoMonth && m.PhotoDay == form.PhotoDay
+	prevZone := m.TimeZone
+	zoneOnly := tz.Name(m.TimeZone) != tz.Name(form.TimeZone) &&
+		m.TakenAt.Equal(form.TakenAt) && m.TakenAtLocal.Equal(form.TakenAtLocal) &&
+		m.PhotoYear == form.PhotoYear && m.PhotoMonth == form.PhotoMonth && m.PhotoDay == form.PhotoDay
 
 	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
@@ -183,20 +184,12 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 		return errors.New("cannot save form when photo id is missing")
 	}
 
-	// Changing only the zone converts a UTC time to the local time in the new zone and otherwise keeps the local time.
-	if zoneOnly && fromUTC && !m.TimeZoneUTC() && !m.TimeZoneLocal() {
-		m.TakenAtLocal = m.GetTakenAtLocal()
-
-		if dateUnchanged {
-			m.SetKnownDateParts()
-		}
-	} else if zoneOnly && !fromUTC && m.TimeZoneUTC() {
-		m.TakenAt = m.TakenAtLocal
-	}
-
-	// TakenAtLocal is the wall time in TimeZone and determines TakenAt, unless the submitted TakenAt
-	// already matches it, e.g. in a repeated daylight-saving hour.
-	if m.TimeZoneUTC() {
+	// A change of only the zone does not edit the time, see ApplyTimeZoneChange. Otherwise, TakenAtLocal is the
+	// wall time in TimeZone and determines TakenAt, unless the submitted TakenAt already matches it, e.g. in a
+	// repeated daylight-saving hour.
+	if zoneOnly {
+		m.ApplyTimeZoneChange(prevZone)
+	} else if m.TimeZoneUTC() {
 		m.TakenAtLocal = m.TakenAt
 	} else if m.TimeZoneLocal() || !m.GetTakenAtLocal().Equal(m.TakenAtLocal) {
 		m.TakenAt = m.GetTakenAt()

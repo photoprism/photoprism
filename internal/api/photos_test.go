@@ -361,6 +361,7 @@ func TestUpdatePhoto_TimeZone(t *testing.T) {
 		{"ZoneOnlyFromUTCConverts", "UTC", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", `{"TimeZone":"Europe/Berlin","TakenSrc":"manual"}`, "2025-06-30T23:30:00Z", "2025-07-01T01:30:00Z", 2025, 7, 1},
 		{"ZoneOnlyFromUTCUnknownDay", "UTC", "2020-01-01T03:00:00Z", "2020-01-01T03:00:00Z", `{"TimeZone":"America/New_York"}`, "2020-01-01T03:00:00Z", "2019-12-31T22:00:00Z", 2020, 1, -1},
 		{"AssignLocalZone", "Local", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", `{"TakenAt":"2025-06-30T21:30:00Z","TimeZone":"Europe/Berlin"}`, "2025-06-30T21:30:00Z", "2025-06-30T23:30:00Z", 2025, 6, 30},
+		{"LocalTimeEdit", "Local", "2025-06-30T14:00:00Z", "2025-06-30T14:00:00Z", `{"TakenAtLocal":"2025-06-30T16:00:00Z","TakenSrc":"manual"}`, "2025-06-30T16:00:00Z", "2025-06-30T16:00:00Z", 2025, 6, 30},
 		{"RemoveZone", "Europe/Berlin", "2025-06-30T21:30:00Z", "2025-06-30T23:30:00Z", `{"TakenAt":"2025-06-30T23:30:00Z","TimeZone":"Local"}`, "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", 2025, 6, 30},
 		{"UnknownDay", "UTC", "2020-01-01T03:00:00Z", "2020-01-01T03:00:00Z", `{"TakenAtLocal":"2019-12-31T22:00:00Z","TimeZone":"America/New_York"}`, "2020-01-01T03:00:00Z", "2019-12-31T22:00:00Z", 2020, 1, -1},
 		{"UnknownDate", "UTC", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", `{"TakenAtLocal":"2025-07-01T01:30:00Z","TimeZone":"Europe/Berlin"}`, "2025-06-30T23:30:00Z", "2025-07-01T01:30:00Z", -1, -1, -1},

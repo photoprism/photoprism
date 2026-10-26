@@ -22,6 +22,21 @@ export const DayUnknown = -1;
 export const TimeZoneUTC = "UTC";
 export const TimeZoneLocal = "Local";
 
+// isTimeZoneUTC reports whether the time zone is UTC.
+export function isTimeZoneUTC(zone) {
+  return typeof zone === "string" && zone.toLowerCase() === TimeZoneUTC.toLowerCase();
+}
+
+// isTimeZoneLocal reports whether the time zone is Local or not set, so the wall time is all that is known.
+export function isTimeZoneLocal(zone) {
+  return !zone || zone === TimeZoneLocal;
+}
+
+// localTimeString formats the wall time of a date as the naive UTC timestamp stored in TakenAtLocal.
+function localTimeString(date) {
+  return date.toISO({ suppressMilliseconds: true, includeOffset: false }) + "Z";
+}
+
 export let BatchSize = 156;
 
 // MaxLength mirrors the backend Set*-helper clips (txt.ClipShortText / ClipText)
@@ -259,26 +274,76 @@ export class Photo extends RestModel {
     }
   }
 
-  // changeTimeZone sets a new zone: a UTC time is converted to the local time in that zone, while a local time is kept.
-  // fromUTC defaults to the saved zone, so changing the selection repeatedly before saving does not shift the time.
-  // Month and Year follow only while all finer date parts are known, since an unknown day leaves a placeholder.
-  changeTimeZone(zone, fromUTC = this.originalTimeZoneUTC()) {
+  // setValues also resets the time anchor when the values carry a time or zone, since they are the known time again.
+  setValues(values, scalarOnly) {
+    if (values && ["TakenAt", "TakenAtLocal", "TimeZone"].some((key) => Object.hasOwn(values, key))) {
+      this.__timeAnchor = null;
+    }
+
+    return super.setValues(values, scalarOnly);
+  }
+
+  // rollback also resets the time anchor to the saved values.
+  rollback() {
+    this.__timeAnchor = null;
+    return super.rollback();
+  }
+
+  // timeAnchor returns the known time that time zone changes start from: the time entered last with
+  // setLocalTime, or else the saved one, so changing the zone several times gives the same result as once.
+  timeAnchor() {
+    if (this.__timeAnchor) {
+      return this.__timeAnchor;
+    }
+
+    return {
+      fromUTC: this.originalTimeZoneUTC(),
+      TakenAt: this.originalValue("TakenAt"),
+      TakenAtLocal: this.originalValue("TakenAtLocal"),
+    };
+  }
+
+  // setLocalTime sets the capture time from the date parts and a wall time in the current zone,
+  // and makes it the known time for later zone changes. It returns the parsed local date.
+  setLocalTime(time) {
+    const localDate = this.localDate(time);
+
+    if (!localDate.isValid) {
+      return localDate;
+    }
+
+    this.TakenAtLocal = localTimeString(localDate);
+
+    if (!isTimeZoneLocal(this.TimeZone)) {
+      this.TakenAt = localDate.toUTC().toISO({ suppressMilliseconds: true });
+    }
+
+    this.__timeAnchor = { fromUTC: this.currentTimeZoneUTC(), TakenAt: this.TakenAt, TakenAtLocal: this.TakenAtLocal };
+
+    return localDate;
+  }
+
+  // changeTimeZone sets a new zone without editing the time: a known UTC time is converted to the local time
+  // in that zone, and a known local time is kept, see timeAnchor. Month and Year follow only while all finer
+  // date parts are known, since an unknown day leaves a placeholder.
+  changeTimeZone(zone) {
     if (zone === this.TimeZone) {
       return;
     }
 
-    const toLocal = !zone || zone === TimeZoneLocal;
+    const anchor = this.timeAnchor();
+    const toLocal = isTimeZoneLocal(zone);
     const taken =
-      fromUTC && !toLocal
-        ? DateTime.fromISO(this.TakenAt, { zone: "UTC" }).setZone(zone)
-        : DateTime.fromISO(this.TakenAtLocal, { zone: "UTC" }).setZone(toLocal ? "UTC" : zone, { keepLocalTime: true });
+      anchor.fromUTC && !toLocal
+        ? DateTime.fromISO(anchor.TakenAt, { zone: "UTC" }).setZone(zone)
+        : DateTime.fromISO(anchor.TakenAtLocal, { zone: "UTC" }).setZone(toLocal ? "UTC" : zone, { keepLocalTime: true });
 
     if (!taken.isValid) {
       return;
     }
 
     this.TimeZone = zone;
-    this.TakenAtLocal = taken.toISO({ suppressMilliseconds: true, includeOffset: false }) + "Z";
+    this.TakenAtLocal = localTimeString(taken);
     this.TakenAt = taken.toUTC().toISO({ suppressMilliseconds: true });
 
     if (this.Day > 0) {
@@ -293,24 +358,12 @@ export class Photo extends RestModel {
   }
 
   currentTimeZoneUTC() {
-    const tz = this.getTimeZone();
-
-    if (tz) {
-      return tz.toLowerCase() === TimeZoneUTC.toLowerCase();
-    }
-
-    return false;
+    return isTimeZoneUTC(this.getTimeZone());
   }
 
   // originalTimeZoneUTC reports whether the saved time zone is UTC.
   originalTimeZoneUTC() {
-    const tz = this.originalValue("TimeZone");
-
-    if (tz) {
-      return tz.toLowerCase() === TimeZoneUTC.toLowerCase();
-    }
-
-    return false;
+    return isTimeZoneUTC(this.originalValue("TimeZone"));
   }
 
   localDate(time) {
@@ -318,14 +371,11 @@ export class Photo extends RestModel {
       return this.utcDate();
     }
 
-    let iso = this.localDateString(time);
-    let zone = this.getTimeZone();
+    const iso = this.localDateString(time);
+    const zone = this.getTimeZone();
 
-    if (zone === "") {
-      zone = "UTC";
-    }
-
-    return DateTime.fromISO(iso, { zone });
+    // A Local wall time is naive, so it is read as UTC rather than in the browser's zone.
+    return DateTime.fromISO(iso, { zone: isTimeZoneLocal(zone) ? "UTC" : zone });
   }
 
   utcDate() {

@@ -188,14 +188,27 @@ describe("PMetaDatetimeDialog component", () => {
       expect(onConfirm.mock.calls[0][0]).toMatchObject({ TimeZone: "America/New_York", TakenAt: "2023-06-15T18:30:00Z", TakenAtLocal: "2023-06-15T14:30:00Z" });
     });
 
+    it("does not shift the time when the selection passes through Local or is cleared", () => {
+      const { w, onConfirm } = mountUTC();
+      const key = w.vm.timeZoneKey;
+      w.vm.setTimeZone("Europe/Berlin");
+      w.vm.setTimeZone("Local");
+      w.vm.setTimeZone(null);
+      expect([w.vm.timeZone, w.vm.time, w.vm.timeZoneKey]).toEqual(["Local", "23:30:00", key + 1]);
+      w.vm.setTimeZone("America/New_York");
+      w.vm.confirm();
+      expect(onConfirm.mock.calls[0][0]).toMatchObject({ TakenAt: "2025-06-30T23:30:00Z", TakenAtLocal: "2025-06-30T19:30:00Z", time: "19:30:00" });
+    });
+
     it("ignores an invalid zone and an invalid pending time", () => {
       const { w } = mountUTC();
+      const key = w.vm.timeZoneKey;
       w.vm.setTimeZone("Invalid/Zone");
-      expect(w.vm.timeZone).toBe("UTC");
+      expect([w.vm.timeZone, w.vm.timeZoneKey]).toEqual(["UTC", key + 1]);
       w.vm.time = "25:99";
       w.vm.setTime();
       w.vm.setTimeZone("Europe/Berlin");
-      expect([w.vm.timeZone, w.vm.time]).toEqual(["UTC", "25:99"]);
+      expect([w.vm.timeZone, w.vm.time, w.vm.timeZoneKey]).toEqual(["UTC", "25:99", key + 2]);
     });
   });
 
