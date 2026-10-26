@@ -107,6 +107,11 @@ func TestOAuthApp_MetadataClient(t *testing.T) {
 		r = AuthenticatedRequest(app, http.MethodGet, "/api/v1/users/"+entity.Admin.UserUID+"/grants", adminToken)
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.Equal(t, "https://claude.ai", gjson.Get(r.Body.String(), "#(ClientID==\""+testMetadataClientID+"\").Origin").String())
+
+		// Issuing tokens does not add an auth_clients row for the client.
+		var count int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", testMetadataClientID).Count(&count).Error)
+		assert.Zero(t, count)
 	})
 	t.Run("FetchChargesRateLimit", func(t *testing.T) {
 		app, _, conf, _ := prepareAppTokenTest(t)

@@ -86,7 +86,9 @@ func OAuthAppToken(c *gin.Context) {
 		return
 	}
 
-	oauthAppTokenResponse(c, grant, user, refreshToken, authn.GrantAuthorizationCode, actor, action)
+	if oauthAppTokenResponse(c, grant, user, refreshToken, authn.GrantAuthorizationCode, actor, action) {
+		oauthAppClientActive(client)
+	}
 }
 
 // OAuthAppRefresh issues a new access token and refresh token for the grant of an app client's refresh token.
@@ -169,7 +171,9 @@ func OAuthAppRefresh(c *gin.Context) {
 
 	grant.Scope = oauth.JoinScopes(scope)
 
-	oauthAppTokenResponse(c, grant, user, refreshToken, authn.GrantRefreshToken, actor, action)
+	if oauthAppTokenResponse(c, grant, user, refreshToken, authn.GrantRefreshToken, actor, action) {
+		oauthAppClientActive(client)
+	}
 }
 
 // oauthAppTokenClient returns the app client of a token request, which authenticates with its client ID only,
@@ -265,14 +269,15 @@ func oauthAppTokenUser(c *gin.Context, userUID, actor, action string) (*entity.U
 }
 
 // oauthAppTokenResponse stores a new access token for the grant and sends it with the refresh token.
-func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.User, refreshToken string, grantType authn.GrantType, actor, action string) {
+// It returns true if the tokens were sent.
+func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.User, refreshToken string, grantType authn.GrantType, actor, action string) bool {
 	clientIp := ClientIP(c)
 	sess := oauth.NewAccessToken(grant, user, grantType).SetContext(c)
 
 	if err := sess.Create(); err != nil {
 		event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to create access token")
-		return
+		return false
 	}
 
 	// The grant may have been revoked concurrently, e.g. because its refresh token was reused.
@@ -280,12 +285,12 @@ func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.Use
 		_ = sess.Delete()
 		event.AuditErr([]string{clientIp, "oauth2", "%s", "%s", status.Error(err)}, actor, action)
 		oauthTokenError(c, http.StatusInternalServerError, oauth.ErrCodeServerError, "failed to create access token")
-		return
+		return false
 	} else if found == nil {
 		_ = sess.Delete()
 		event.AuditWarn([]string{clientIp, "oauth2", "%s", "%s", "grant %s revoked", status.Denied}, actor, action, clean.Log(grant.GrantUID))
 		oauthTokenError(c, http.StatusBadRequest, oauth.ErrCodeInvalidGrant, "grant has been revoked")
-		return
+		return false
 	}
 
 	event.AuditInfo([]string{clientIp, "oauth2", "%s", "user %s", "%s", "session %s", status.Granted}, actor, clean.Log(user.Username()), action, sess.RefID)
@@ -299,6 +304,18 @@ func oauthAppTokenResponse(c *gin.Context, grant *entity.Grant, user *entity.Use
 		RefreshToken: refreshToken,
 		Scope:        grant.Scope,
 	})
+
+	return true
+}
+
+// oauthAppClientActive sets the time of last activity of a registered app client after it obtained tokens.
+// Clients identified by a metadata document have no auth_clients row and are skipped.
+func oauthAppClientActive(client *oauth.Client) {
+	if client == nil || client.Metadata {
+		return
+	}
+
+	(&entity.Client{ClientUID: client.ID}).UpdateLastActive(true)
 }
 
 // oauthAbortRateLimited aborts a token request from an address over a limit and audits the refusal at debug level.

@@ -552,6 +552,37 @@ func TestOAuthAppToken_Rechecks(t *testing.T) {
 }
 
 func TestOAuthAppTokenResponse(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		_, _, _, client := prepareAppTokenTest(t)
+		admin := entity.FindUserByName("admin")
+		require.NotNil(t, admin)
+
+		grant, _, err := oauth.NewGrant(&entity.AuthCode{UserUID: admin.UserUID, ClientID: client.ClientUID, Scope: "mcp", Resource: "https://photos.example.com/api/v1/mcp"}, admin, "Test App")
+		require.NoError(t, err)
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+		assert.True(t, oauthAppTokenResponse(c, grant, admin, "refresh", authn.GrantRefreshToken, "client test", "refresh token"))
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.NotEmpty(t, gjson.Get(w.Body.String(), "access_token").String())
+	})
+	t.Run("SessionCreateError", func(t *testing.T) {
+		_, _, _, client := prepareAppTokenTest(t)
+		admin := entity.FindUserByName("admin")
+		require.NotNil(t, admin)
+
+		grant, _, err := oauth.NewGrant(&entity.AuthCode{UserUID: admin.UserUID, ClientID: client.ClientUID, Scope: "mcp", Resource: "https://photos.example.com/api/v1/mcp"}, admin, "Test App")
+		require.NoError(t, err)
+		failSessionCreates(t)
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
+		assert.False(t, oauthAppTokenResponse(c, grant, admin, "refresh", authn.GrantRefreshToken, "client test", "refresh token"))
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		assert.Equal(t, oauth.ErrCodeServerError, gjson.Get(w.Body.String(), "error").String())
+	})
 	t.Run("GrantRevoked", func(t *testing.T) {
 		_, _, _, client := prepareAppTokenTest(t)
 		admin := entity.FindUserByName("admin")
@@ -564,7 +595,7 @@ func TestOAuthAppTokenResponse(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
-		oauthAppTokenResponse(c, grant, admin, "refresh", authn.GrantRefreshToken, "client test", "refresh token")
+		assert.False(t, oauthAppTokenResponse(c, grant, admin, "refresh", authn.GrantRefreshToken, "client test", "refresh token"))
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 		assert.Equal(t, oauth.ErrCodeInvalidGrant, gjson.Get(w.Body.String(), "error").String())
@@ -591,7 +622,7 @@ func TestOAuthAppTokenResponse(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/oauth/token", nil)
-		oauthAppTokenResponse(c, grant, admin, "refresh", authn.GrantRefreshToken, "client test", "refresh token")
+		assert.False(t, oauthAppTokenResponse(c, grant, admin, "refresh", authn.GrantRefreshToken, "client test", "refresh token"))
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 		assert.Equal(t, oauth.ErrCodeServerError, gjson.Get(w.Body.String(), "error").String())
@@ -1337,4 +1368,141 @@ func TestOAuthRevoke_RefusalAuditLevel(t *testing.T) {
 		assert.Equal(t, logrus.WarnLevel, e.Level, e.Message)
 		assert.Contains(t, e.Message, "refresh token not current")
 	}
+}
+
+// failSessionCreates makes inserts into the sessions table fail until the test ends.
+func failSessionCreates(t *testing.T) {
+	t.Helper()
+
+	name := "test:fail_session_creates_" + rnd.Base36(8)
+	require.NoError(t, entity.Db().Callback().Create().Before("gorm:create").Register(name, func(db *gorm.DB) {
+		if db.Statement.Table == (entity.Session{}).TableName() {
+			_ = db.AddError(errors.New("session create failed"))
+		}
+	}))
+	t.Cleanup(func() { _ = entity.Db().Callback().Create().Remove(name) })
+}
+
+// clientLastActive returns functions that set the client's last activity to a past time and read it.
+func clientLastActive(t *testing.T, clientUID string) (reset func(), read func() int64) {
+	t.Helper()
+
+	reset = func() {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientUID).UpdateColumn("last_active", 1000).Error)
+	}
+	read = func() int64 {
+		m := entity.FindClientByUID(clientUID)
+		require.NotNil(t, m)
+		return m.LastActive
+	}
+
+	return reset, read
+}
+
+func TestOAuthAppToken_LastActive(t *testing.T) {
+	t.Run("CodeAndRefresh", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		reset, read := clientLastActive(t, client.ClientUID)
+		code := approvedCode(t, app, router, conf, client)
+		reset()
+
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Greater(t, read(), int64(1000))
+
+		reset()
+		r = postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, gjson.Get(r.Body.String(), "refresh_token").String()), "", "")
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Greater(t, read(), int64(1000))
+	})
+	t.Run("WrongVerifier", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		reset, read := clientLastActive(t, client.ClientUID)
+		code := approvedCode(t, app, router, conf, client)
+		reset()
+
+		form := codeTokenForm(client.ClientUID, code)
+		form.Set("code_verifier", testAppVerifier+"x")
+		r := postTokenForm(app, "/api/v1/oauth/token", form, "", "")
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, int64(1000), read())
+	})
+	t.Run("CodeOfDisabledClient", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		reset, read := clientLastActive(t, client.ClientUID)
+		code := approvedCode(t, app, router, conf, client)
+		require.NoError(t, client.Updates(entity.Values{"AuthEnabled": false}))
+		reset()
+
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Equal(t, int64(1000), read())
+	})
+	t.Run("RefreshOfDisabledClient", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		reset, read := clientLastActive(t, client.ClientUID)
+		_, refreshToken := tokenPair(t, app, router, conf, client)
+		require.NoError(t, client.Updates(entity.Values{"AuthEnabled": false}))
+		reset()
+
+		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(client.ClientUID, refreshToken), "", "")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Equal(t, int64(1000), read())
+	})
+	t.Run("SessionCreateError", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		reset, read := clientLastActive(t, client.ClientUID)
+		code := approvedCode(t, app, router, conf, client)
+		failSessionCreates(t)
+		reset()
+
+		r := postTokenForm(app, "/api/v1/oauth/token", codeTokenForm(client.ClientUID, code), "", "")
+		assert.Equal(t, http.StatusInternalServerError, r.Code)
+		assert.Equal(t, int64(1000), read())
+	})
+	t.Run("OtherClient", func(t *testing.T) {
+		app, router, conf, client := prepareAppTokenTest(t)
+		reset, read := clientLastActive(t, client.ClientUID)
+		_, refreshToken := tokenPair(t, app, router, conf, client)
+		other, err := entity.AddClient(entityAppForm("Other App"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = other.Delete() })
+		resetOther, readOther := clientLastActive(t, other.ClientUID)
+		reset()
+		resetOther()
+
+		r := postTokenForm(app, "/api/v1/oauth/token", refreshForm(other.ClientUID, refreshToken), "", "")
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, int64(1000), readOther())
+		assert.Equal(t, int64(1000), read())
+	})
+}
+
+func TestOAuthAppClientActive(t *testing.T) {
+	t.Run("Registered", func(t *testing.T) {
+		client, err := entity.AddClient(entityAppForm("Active App"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = client.Delete() })
+		reset, read := clientLastActive(t, client.ClientUID)
+		reset()
+
+		oauthAppClientActive(&oauth.Client{ID: client.ClientUID})
+		assert.Greater(t, read(), int64(1000))
+	})
+	t.Run("Metadata", func(t *testing.T) {
+		clientID := "https://claude.ai/oauth/active-client.json"
+		oauthAppClientActive(&oauth.Client{ID: clientID, Metadata: true})
+
+		var count int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientID).Count(&count).Error)
+		assert.Zero(t, count)
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		clientID := rnd.GenerateUID(entity.ClientUID)
+		assert.NotPanics(t, func() { oauthAppClientActive(&oauth.Client{ID: clientID}) })
+		assert.Nil(t, entity.FindClientByUID(clientID))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.NotPanics(t, func() { oauthAppClientActive(nil) })
+	})
 }
