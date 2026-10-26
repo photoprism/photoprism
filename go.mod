@@ -111,7 +111,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.15
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/golang/geo v0.0.0-20261022062553-461c194586d4
+	github.com/golang/geo v0.0.0-20261023135424-713b284b73ea
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
@@ -130,7 +130,7 @@ require (
 	github.com/mattn/go-isatty v0.0.24
 	github.com/mattn/go-sqlite3 v1.14.52
 	github.com/modelcontextprotocol/go-sdk v1.8.0
-	github.com/montanaflynn/stats v0.13.0
+	github.com/montanaflynn/stats v0.14.0
 	github.com/olekukonko/tablewriter v1.1.5
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
@@ -151,7 +151,7 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
-	github.com/yalue/onnxruntime_go v1.36.0
+	github.com/yalue/onnxruntime_go v1.38.0
 	github.com/zitadel/oidc/v3 v3.51.16
 	golang.org/x/crypto v0.58.0
 	golang.org/x/image v0.47.0

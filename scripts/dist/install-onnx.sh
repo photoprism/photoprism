@@ -5,7 +5,7 @@ set -euo pipefail
 # ONNX_DEFAULT_VERSION must match the C API headers vendored by the
 # "github.com/yalue/onnxruntime_go" module, as the binding requests that exact
 # API version and fails to initialize against an older shared library.
-ONNX_DEFAULT_VERSION=1.29.1
+ONNX_DEFAULT_VERSION=1.31.0
 ONNX_VERSION=${ONNX_VERSION:-${ONNX_DEFAULT_VERSION}}
 TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
@@ -78,14 +78,14 @@ case "${SYSTEM}" in
           else
             archive="onnxruntime-linux-x64-gpu_${gpu_variant}-${ONNX_VERSION}.tgz"
             if [[ "${gpu_variant}" == "cuda13" ]]; then
-              sha="0e948660440e1e53ce555f2be3d03fd097d006fd7d52255eda59280e059ad0df"
+              sha="2867dec99c6a4926e8142361b9d4d1518c16c85b854b4d41d28d65d3b2c81135"
             else
-              sha="b404524d9e9f0b4f6f309cf5e5fa407ee9bfafd193e433ce6f2be05fddec7692"
+              sha="62d3af5269af2143b5d37494337573f1ffb8885f3ad7477ae0cb1cc79c8dedfd"
             fi
           fi
         else
           archive="onnxruntime-linux-x64-${ONNX_VERSION}.tgz"
-          sha="a28d7d65acafc06fb0f416cb409998773f5314c7eebf77caf907812831cdfc67"
+          sha="cc5c72baf5ae5c8238a6841f0897227be2d02826b9cf98eaf02fdefaeeb03a57"
         fi
         ;;
       arm64|ARM64|aarch64)
@@ -96,7 +96,7 @@ case "${SYSTEM}" in
           gpu_variant=""
         fi
         archive="onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"
-        sha="e53fc0cfb72e505031e06e13c651c1cb78424f39f15d304f47a3d5b907bcf9f2"
+        sha="c5b8b3cca31f3d643a3b313b8f42e2d0f16a4fcefd02cda343d97bd5306afaab"
         ;;
       *)
         echo "Warning: ONNX Runtime is not provided for Linux/${ARCH}; skipping install." >&2
@@ -112,7 +112,7 @@ case "${SYSTEM}" in
     case "${ARCH}" in
       arm64|ARM64|aarch64)
         archive="onnxruntime-osx-arm64-${ONNX_VERSION}.tgz"
-        sha="c845ad2f4340669dc454c0ae092ccef7270d5bf858281890aef3c9bbf7da41e9"
+        sha="1031b36dd3bdaa8d976a6130d9cf2a05e9be320b93ae804f8427b91dc3432afc"
         ;;
       x86_64|x86-64)
         echo "Warning: ONNX Runtime is not provided for macOS/${ARCH} in v${ONNX_VERSION}; skipping install." >&2
