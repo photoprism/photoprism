@@ -59,7 +59,7 @@ export default {
     },
   },
   emits: ["update:latlng", "marker-moved", "marker-clicked", "map-clicked"],
-  // data initializes the map state and rendering options.
+  // data initializes the map, marker, and animation state.
   data() {
     const settings = this.$config.getSettings();
 
@@ -68,18 +68,6 @@ export default {
       marker: null,
       position: [0.0, 0.0],
       animate: this.$util.mapAnimateDuration(settings, this.animateDuration),
-      options: {
-        container: null,
-        // Styles can be edited/created with https://maplibre.org/maputnik/.
-        // To test new styles, put the style file in /assets/static/maps
-        // and include it from there e.g. "/static/maps/embedded.json":
-        // style: "/static/maps/embedded.json",
-        style: `https://cdn.photoprism.app/maps/${this.style}.json`,
-        glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
-        zoom: this.zoom,
-        interactive: this.interactive,
-        attributionControl: false,
-      },
       loaded: false,
       markerDragged: false,
       mapError: "",
@@ -127,19 +115,24 @@ export default {
       }
 
       try {
-        this.options.container = this.$refs.map;
-
-        // Set center based on coordinates or default
-        if (!(this.latlng[0] && this.latlng[1] && !(this.latlng[0] === 0 && this.latlng[1] === 0))) {
-          this.options.zoom = 2;
-          this.options.center = [0, 20];
-        } else {
-          this.options.center = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
-        }
+        const position = this.lngLat(this.latlng);
 
         // MapLibre stays raw, since a reactive proxy breaks the read-only values it
         // memoizes on its own objects, e.g. the channels of parsed style colors.
-        this.map = markRaw(new maplibregl.Map({ ...this.options, locale: map.locale() }));
+        this.map = markRaw(
+          new maplibregl.Map({
+            container: this.$refs.map,
+            // Styles can be edited with https://maplibre.org/maputnik/; to test one, put it in
+            // /assets/static/maps and use e.g. "/static/maps/embedded.json" as style.
+            style: `https://cdn.photoprism.app/maps/${this.style}.json`,
+            glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
+            center: position || [0, 20],
+            zoom: position ? this.zoom : 2,
+            interactive: this.interactive,
+            attributionControl: false,
+            locale: map.locale(),
+          })
+        );
 
         // Add controls if requested
         if (this.showControls) {
@@ -205,43 +198,46 @@ export default {
     onMapPointerStart() {
       this.markerDragged = false;
     },
+    // lngLat converts [lat, lng] to MapLibre's [lng, lat] order, or returns null for
+    // missing or out-of-range coordinates; [0, 0] means no location has been set.
+    lngLat(latlng) {
+      const lat = parseFloat(latlng?.[0]);
+      const lng = parseFloat(latlng?.[1]);
+
+      if (!(Math.abs(lat) <= 90 && Math.abs(lng) <= 180) || (lat === 0 && lng === 0)) {
+        return null;
+      }
+
+      return [lng, lat];
+    },
     // updatePosition places the marker and optionally recenters external coordinate changes.
     updatePosition(latlng = this.latlng, recenter = true) {
       if (!this.map || !this.loaded) {
         return;
       }
 
-      if (this.position[0] === latlng[1] && this.position[1] === latlng[0] && this.marker) {
+      const position = this.lngLat(latlng);
+
+      if (!position) {
+        this.removeMarker();
         return;
       }
 
-      // Skip invalid or empty coordinates
-      if (!(latlng[0] && latlng[1] && !(latlng[0] === 0 && latlng[1] === 0))) {
-        if (this.marker) {
-          this.marker.remove();
-          this.marker = null;
-        }
+      if (this.marker && this.position[0] === position[0] && this.position[1] === position[1]) {
         return;
       }
 
-      this.position = [latlng[1], latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
+      this.position = position;
 
-      if (recenter && this.animate > 0) {
-        this.map.flyTo({
-          center: this.position,
-          zoom: this.interactive ? this.zoom : undefined, // Only set zoom in interactive mode
-          duration: this.animate,
-          essential: true, // Respects prefers-reduced-motion
-        });
-      } else if (recenter) {
-        // Use setCenter for instant positioning (no animation)
-        if (this.interactive) {
-          this.map.setCenter(this.position, {
-            zoom: this.zoom,
-            animate: false,
-          });
+      if (recenter) {
+        // Only interactive maps zoom in. Animations are not essential, so MapLibre
+        // skips them when the system prefers reduced motion.
+        const camera = { center: this.position, zoom: this.interactive ? this.zoom : undefined };
+
+        if (this.animate > 0) {
+          this.map.flyTo({ ...camera, duration: this.animate, essential: false });
         } else {
-          this.map.setCenter(this.position);
+          this.map.jumpTo(camera);
         }
       }
 
@@ -272,11 +268,8 @@ export default {
           });
         }
 
-        // Add click listener on the marker's DOM element when the
-        // consumer opted in via `markerClickable`. MapLibre renders
-        // the default marker as a <button>, so we get keyboard
-        // activation for free; `.stop` prevents the click from
-        // bubbling to a possible map-level handler.
+        // MapLibre renders the default marker as a <button>, so keyboard activation works;
+        // stopping propagation keeps the click from reaching a map-level handler.
         if (this.markerClickable) {
           const el = this.marker.getElement();
           if (el) {
@@ -289,14 +282,14 @@ export default {
         }
       }
     },
-    // Public method to remove marker
+    // removeMarker removes the location marker from the map, if any.
     removeMarker() {
       if (this.marker) {
         this.marker.remove();
         this.marker = null;
       }
     },
-    // Public method to fly to coordinates
+    // flyTo moves the map to the given coordinates, animated unless animations are off.
     flyTo(lat, lng, zoom = this.zoom) {
       if (this.map) {
         if (this.animate > 0) {
@@ -304,7 +297,7 @@ export default {
             center: [lng, lat],
             zoom: zoom,
             duration: this.animate,
-            essential: true,
+            essential: false,
           });
         } else {
           this.map.jumpTo({
