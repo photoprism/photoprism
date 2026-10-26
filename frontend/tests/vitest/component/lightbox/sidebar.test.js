@@ -1935,8 +1935,8 @@ describe("PLightboxSidebar component", () => {
       photo.localDate = vi.fn().mockReturnValue({
         isValid: true,
         toISO: () => "2022-07-15T13:45:30",
+        toUTC: () => ({ toISO: () => "2022-07-15T11:45:30Z" }),
       });
-      photo.currentTimeZoneUTC = vi.fn().mockReturnValue(true);
       return photo;
     }
 
@@ -1993,6 +1993,65 @@ describe("PLightboxSidebar component", () => {
       expect(photo.Year).toBe(2022);
       expect(photo.TimeZone).toBe("UTC");
       expect(w.vm.$notify.error).not.toHaveBeenCalled();
+    });
+
+    it("derives TakenAt from the edited wall time in a named zone", () => {
+      const photo = buildDateTimePhoto();
+      // Keeps the save pending, so the named zone is not rendered with the stubbed DateTime.
+      photo.update.mockReturnValueOnce(new Promise(() => {}));
+
+      const w = mountSidebar({
+        props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+        global: { stubs: { PMap: true } },
+      });
+
+      w.vm.confirmDateTime({ ...newDateTimeData, TimeZone: "Europe/Berlin" });
+
+      expect(photo.TakenAtLocal).toBe("2022-07-15T13:45:30Z");
+      expect(photo.TakenAt).toBe("2022-07-15T11:45:30Z");
+    });
+
+    it("keeps TakenAt when the zone is Local", () => {
+      const photo = buildDateTimePhoto();
+      // Keeps the save pending, so the named zone is not rendered with the stubbed DateTime.
+      photo.update.mockReturnValueOnce(new Promise(() => {}));
+
+      const w = mountSidebar({
+        props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+        global: { stubs: { PMap: true } },
+      });
+
+      w.vm.confirmDateTime({ ...newDateTimeData, TimeZone: "Local" });
+
+      expect(photo.TakenAtLocal).toBe("2022-07-15T13:45:30Z");
+      expect(photo.TakenAt).toBe("2020-01-01T00:00:00Z");
+    });
+
+    it("uses the timestamps passed by the dialog", () => {
+      const photo = buildDateTimePhoto();
+      // Keeps the save pending, so the named zone is not rendered with the stubbed DateTime.
+      photo.update.mockReturnValueOnce(new Promise(() => {}));
+
+      const w = mountSidebar({
+        props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+        global: { stubs: { PMap: true } },
+      });
+
+      w.vm.confirmDateTime({
+        ...newDateTimeData,
+        Day: 1,
+        Month: 1,
+        Year: 2020,
+        TimeZone: "Europe/Berlin",
+        time: "01:00:00",
+        TakenAt: "2020-01-01T00:00:00Z",
+        TakenAtLocal: "2020-01-01T01:00:00Z",
+      });
+
+      expect(photo.localDate).not.toHaveBeenCalled();
+      expect(photo.TakenAt).toBe("2020-01-01T00:00:00Z");
+      expect(photo.TakenAtLocal).toBe("2020-01-01T01:00:00Z");
+      expect(photo.TimeZone).toBe("Europe/Berlin");
     });
   });
 

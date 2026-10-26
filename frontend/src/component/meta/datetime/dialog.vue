@@ -102,7 +102,7 @@
           </v-col>
           <v-col cols="6">
             <v-autocomplete
-              v-model="timeZone"
+              :model-value="timeZone"
               :label="$gettext('Time Zone')"
               hide-no-data
               item-value="ID"
@@ -110,7 +110,7 @@
               :items="options.TimeZones()"
               density="comfortable"
               class="input-timezone"
-              @update:model-value="syncTime"
+              @update:model-value="setTimeZone"
             ></v-autocomplete>
           </v-col>
         </v-row>
@@ -131,6 +131,7 @@
 import { DateTime } from "luxon";
 import * as options from "options/options";
 import { rules } from "common/form";
+import { Photo } from "model/photo";
 
 export default {
   name: "PMetaDatetimeDialog",
@@ -155,12 +156,15 @@ export default {
       time: "",
       timeZone: "",
       invalidDate: false,
+      dateChanged: false,
+      zoneFromUTC: false,
+      projected: null,
     };
   },
   computed: {
     timeLabel() {
-      if (this.photo && this.photo.timeIsUTC()) {
-        return this.$gettext("Time UTC");
+      if (this.isUTC(this.timeZone)) {
+        return "UTC";
       }
       return this.$gettext("Local Time");
     },
@@ -192,6 +196,9 @@ export default {
       const taken = this.photo.getDateTime();
       this.time = taken.toFormat("HH:mm:ss");
       this.invalidDate = false;
+      this.dateChanged = false;
+      this.zoneFromUTC = this.isUTC(this.timeZone);
+      this.projected = null;
     },
     effectiveYear() {
       if (this.year > 0) {
@@ -216,7 +223,9 @@ export default {
         this.day = maxDay;
       }
     },
+    // setDay applies a manual date selection.
     setDay(v) {
+      this.dateChanged = true;
       if (Number.isInteger(v?.value)) {
         this.day = v.value;
         this.clampDayToValidRange();
@@ -231,7 +240,9 @@ export default {
         this.syncTime();
       }
     },
+    // setMonth applies a manual date selection.
     setMonth(v) {
+      this.dateChanged = true;
       if (Number.isInteger(v?.value)) {
         this.month = v.value;
         this.clampDayToValidRange();
@@ -246,7 +257,9 @@ export default {
         this.syncTime();
       }
     },
+    // setYear applies a manual date selection.
     setYear(v) {
+      this.dateChanged = true;
       if (Number.isInteger(v?.value)) {
         this.year = v.value;
         this.clampDayToValidRange();
@@ -260,11 +273,9 @@ export default {
         this.syncTime();
       }
     },
+    // setTime applies a manual time edit and marks a malformed time as invalid, so Save stays disabled.
     setTime() {
-      // Always reflect time validity in invalidDate — the previous
-      // `if (isTime) updateLocalDate()` shape skipped the update on bad
-      // input, leaving invalidDate stale and the Confirm button enabled
-      // against a malformed time string.
+      this.dateChanged = true;
       if (!rules.isTime(this.time)) {
         this.invalidDate = true;
         return;
@@ -272,6 +283,57 @@ export default {
       this.updateLocalDate();
     },
     syncTime() {
+      this.updateLocalDate();
+    },
+    // isUTC reports whether the zone is UTC.
+    isUTC(zone) {
+      return typeof zone === "string" && zone.toLowerCase() === "utc";
+    },
+    // setTimeZone changes the zone of the shown date and time like the edit dialog, see Photo.changeTimeZone.
+    setTimeZone(zone) {
+      if (!this.photo || zone === this.timeZone) {
+        return;
+      }
+
+      const base = this.projected || this.photo;
+      const draft = new Photo({
+        TakenAt: base.TakenAt,
+        TakenAtLocal: base.TakenAtLocal,
+        TimeZone: this.timeZone,
+        Year: this.year,
+        Month: this.month,
+        Day: this.day,
+      });
+
+      if (this.dateChanged) {
+        const localDate = draft.localDate(this.time);
+
+        if (!rules.isTime(this.time) || !localDate.isValid) {
+          return;
+        }
+
+        draft.TakenAtLocal = localDate.toISO({ suppressMilliseconds: true, includeOffset: false }) + "Z";
+
+        if (draft.TimeZone && draft.TimeZone !== "Local") {
+          draft.TakenAt = localDate.toUTC().toISO({ suppressMilliseconds: true });
+        }
+
+        this.zoneFromUTC = this.isUTC(this.timeZone);
+      }
+
+      draft.changeTimeZone(zone, this.zoneFromUTC);
+
+      if (draft.TimeZone !== zone) {
+        return;
+      }
+
+      this.timeZone = zone;
+      this.day = draft.Day;
+      this.month = draft.Month;
+      this.year = draft.Year;
+      this.time = draft.getDateTime().toFormat("HH:mm:ss");
+      this.projected = { TakenAt: draft.TakenAt, TakenAtLocal: draft.TakenAtLocal };
+      this.dateChanged = false;
       this.updateLocalDate();
     },
     localYearString() {
@@ -318,13 +380,22 @@ export default {
         return;
       }
 
-      this.$emit("confirm", {
+      const data = {
         Day: this.day,
         Month: this.month,
         Year: this.year,
         TimeZone: this.timeZone,
         time: this.time,
-      });
+      };
+
+      // Without manual edits, the timestamps are passed on so they are not recomputed from the wall time.
+      if (!this.dateChanged) {
+        const base = this.projected || this.photo;
+        data.TakenAt = base.TakenAt;
+        data.TakenAtLocal = base.TakenAtLocal;
+      }
+
+      this.$emit("confirm", data);
     },
   },
 };

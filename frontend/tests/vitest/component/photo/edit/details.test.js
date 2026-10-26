@@ -543,22 +543,38 @@ describe("component/photo/edit/details", () => {
     });
   });
 
-  describe("time zone date boundaries", () => {
-    // loadCapture binds a real photo model to the editor and echoes successful API updates.
+  describe("time zone changes", () => {
+    // loadCapture binds a real photo model to the editor; the PUT mock merges each request into the last saved values.
     const loadCapture = (values = {}) => {
       const photo = new Photo({
-        UID: "ps6sg6be2lvl0yh7", Caption: "", CaptionSrc: "",
-        TakenAt: "2025-06-30T23:30:00Z", TakenAtLocal: "2025-06-30T23:30:00Z",
-        TimeZone: "UTC", Year: 2025, Month: 6, Day: 30, Details: {}, ...values,
+        UID: "ps6sg6be2lvl0yh7",
+        Caption: "",
+        CaptionSrc: "",
+        TakenAt: "2025-06-30T23:30:00Z",
+        TakenAtLocal: "2025-06-30T23:30:00Z",
+        TakenSrc: "manual",
+        TimeZone: "UTC",
+        Year: 2025,
+        Month: 6,
+        Day: 30,
+        Details: {},
+        ...values,
       });
+      let saved = photo.getValues();
       wrapper.vm.view.model = photo;
       wrapper.vm.syncData();
       Mock.resetHistory();
-      Mock.onPut(photo.getEntityResource()).reply((request) => [200, { ...photo.getValues(), ...JSON.parse(request.data) }]);
+      Mock.onPut(photo.getEntityResource()).reply((request) => {
+        saved = { ...saved, ...JSON.parse(request.data) };
+        return [200, saved];
+      });
       return photo;
     };
 
-    it("retains a pending manual date before a zone change", async () => {
+    // lastBody returns the JSON body of the most recent PUT request.
+    const lastBody = () => JSON.parse(Mock.history.put.at(-1).data);
+
+    it("applies a pending manual date before converting from UTC", async () => {
       const photo = loadCapture();
       wrapper.vm.setDay(29);
       wrapper.vm.setTimeZone("Europe/Berlin");
@@ -566,6 +582,17 @@ describe("component/photo/edit/details", () => {
       expect(photo.TakenAt).toBe("2025-06-29T23:30:00Z");
       expect(photo.TakenAtLocal).toBe("2025-06-30T01:30:00Z");
       expect([photo.Year, photo.Month, photo.Day]).toEqual([2025, 6, 30]);
+    });
+
+    it("keeps a manual local time when the zone changes again", () => {
+      const photo = loadCapture();
+      wrapper.vm.setTimeZone("Europe/Berlin");
+      wrapper.vm.time = "03:45:00";
+      wrapper.vm.setTime();
+      wrapper.vm.setTimeZone("America/New_York");
+      expect(photo.TakenAtLocal).toBe("2025-07-01T03:45:00Z");
+      expect(photo.TakenAt).toBe("2025-07-01T07:45:00Z");
+      expect(wrapper.vm.time).toBe("03:45:00");
     });
 
     it("applies manual local date and time after a zone change", async () => {
@@ -584,88 +611,149 @@ describe("component/photo/edit/details", () => {
       const photo = loadCapture({ Year: -1, Month: -1, Day: -1 });
       photo.Caption = "Updated caption";
       await wrapper.vm.save(false);
-      expect(JSON.parse(Mock.history.put.at(-1).data)).toEqual({ Caption: "Updated caption", CaptionSrc: "manual" });
+      expect(lastBody()).toEqual({ Caption: "Updated caption", CaptionSrc: "manual" });
       expect(photo.TakenAt).toBe("2025-06-30T23:30:00Z");
       expect(photo.TakenAtLocal).toBe("2025-06-30T23:30:00Z");
       expect([photo.Year, photo.Month, photo.Day]).toEqual([-1, -1, -1]);
     });
 
-    it("preserves Local wall time when assigning a known zone", async () => {
-      const photo = loadCapture({ TimeZone: "Local" });
-      wrapper.vm.setTimeZone("Europe/Berlin");
+    it("keeps a known month and year when the day is unknown", async () => {
+      const photo = loadCapture({ TakenAt: "2020-01-01T03:00:00Z", TakenAtLocal: "2020-01-01T03:00:00Z", Year: 2020, Month: 1, Day: -1 });
+      wrapper.vm.setTimeZone("America/New_York");
       await wrapper.vm.save(false);
-      expect(photo.TakenAt).toBe("2025-06-30T21:30:00Z");
-      expect(photo.TakenAtLocal).toBe("2025-06-30T23:30:00Z");
+      expect(lastBody()).toEqual({ TakenAtLocal: "2019-12-31T22:00:00Z", TimeZone: "America/New_York", TakenSrc: "manual" });
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([2020, 1, -1]);
     });
 
     const cases = [
-      ["UTC", "Europe/Berlin", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", "2025-07-01T01:30:00Z", 2025, 7, 1],
-      ["UTC-12", "UTC", "2020-01-01T11:45:00Z", "2019-12-31T23:45:00Z", "2020-01-01T11:45:00Z", 2020, 1, 1],
-      ["UTC", "UTC-12", "2020-01-01T00:30:00Z", "2020-01-01T00:30:00Z", "2019-12-31T12:30:00Z", 2019, 12, 31],
-      ["Europe/Berlin", "UTC", "2024-02-29T23:30:00Z", "2024-03-01T00:30:00Z", "2024-02-29T23:30:00Z", 2024, 2, 29],
+      // zone, target, taken, local, request body, saved TakenAt, saved TakenAtLocal, Y/M/D
+      [
+        "UTC",
+        "Europe/Berlin",
+        "2025-06-30T23:30:00Z",
+        "2025-06-30T23:30:00Z",
+        { TakenAtLocal: "2025-07-01T01:30:00Z", TimeZone: "Europe/Berlin", Month: 7, Day: 1 },
+        "2025-06-30T23:30:00Z",
+        "2025-07-01T01:30:00Z",
+        [2025, 7, 1],
+      ],
+      [
+        "UTC",
+        "UTC-12",
+        "2020-01-01T00:30:00Z",
+        "2020-01-01T00:30:00Z",
+        { TakenAtLocal: "2019-12-31T12:30:00Z", TimeZone: "UTC-12", Year: 2019, Month: 12, Day: 31 },
+        "2020-01-01T00:30:00Z",
+        "2019-12-31T12:30:00Z",
+        [2019, 12, 31],
+      ],
+      [
+        "UTC-12",
+        "UTC",
+        "2020-01-01T11:45:00Z",
+        "2019-12-31T23:45:00Z",
+        { TakenAt: "2019-12-31T23:45:00Z", TimeZone: "UTC" },
+        "2019-12-31T23:45:00Z",
+        "2019-12-31T23:45:00Z",
+        [2019, 12, 31],
+      ],
+      [
+        "Europe/Berlin",
+        "America/New_York",
+        "2025-06-30T12:00:00Z",
+        "2025-06-30T14:00:00Z",
+        { TakenAt: "2025-06-30T18:00:00Z", TimeZone: "America/New_York" },
+        "2025-06-30T18:00:00Z",
+        "2025-06-30T14:00:00Z",
+        [2025, 6, 30],
+      ],
+      [
+        "Local",
+        "Europe/Berlin",
+        "2025-06-30T23:30:00Z",
+        "2025-06-30T23:30:00Z",
+        { TakenAt: "2025-06-30T21:30:00Z", TimeZone: "Europe/Berlin" },
+        "2025-06-30T21:30:00Z",
+        "2025-06-30T23:30:00Z",
+        [2025, 6, 30],
+      ],
+      [
+        "Europe/Berlin",
+        "Local",
+        "2025-06-30T21:30:00Z",
+        "2025-06-30T23:30:00Z",
+        { TakenAt: "2025-06-30T23:30:00Z", TimeZone: "Local" },
+        "2025-06-30T23:30:00Z",
+        "2025-06-30T23:30:00Z",
+        [2025, 6, 30],
+      ],
     ];
 
-    it.each(cases)("keeps the instant from %s to %s across saves", async (zone, target, taken, local, expected, year, month, day) => {
-      const photo = new Photo({
-        UID: "ps6sg6be2lvl0yh7",
-        Caption: "",
-        CaptionSrc: "",
+    it.each(cases)("changes %s to %s and keeps the result across saves", async (zone, target, taken, local, body, savedTaken, savedLocal, ymd) => {
+      const photo = loadCapture({
         TakenAt: taken,
         TakenAtLocal: local,
         TimeZone: zone,
         Year: Number(local.slice(0, 4)),
         Month: Number(local.slice(5, 7)),
         Day: Number(local.slice(8, 10)),
-        Details: {},
-      });
-      wrapper.vm.view.model = photo;
-      wrapper.vm.syncData();
-      Mock.resetHistory();
-      Mock.onPut(photo.getEntityResource()).reply((request) => {
-        const values = JSON.parse(request.data);
-        // Echo the submitted fields so a response cannot hide an inconsistent request.
-        return [200, { ...photo.getValues(), ...values }];
       });
 
-      const timezone = wrapper.findComponent(".input-timezone");
-      await timezone.vm.$emit("update:modelValue", target);
+      await wrapper.findComponent(".input-timezone").vm.$emit("update:modelValue", target);
+      expect(wrapper.vm.time).toBe(savedLocal.slice(11, 19));
       await wrapper.vm.save(false);
 
-      expect(photo.TakenAt).toBe(taken);
-      expect(photo.TakenAtLocal).toBe(expected);
-      expect([photo.Year, photo.Month, photo.Day]).toEqual([year, month, day]);
-      expect(wrapper.vm.time).toBe(expected.slice(11, 19));
+      expect(lastBody()).toEqual({ ...body, TakenSrc: "manual" });
+      expect(photo.TakenAt).toBe(savedTaken);
+      expect(photo.TakenAtLocal).toBe(savedLocal);
+      expect([photo.Year, photo.Month, photo.Day]).toEqual(ymd);
 
       photo.Caption = "Updated caption";
       await wrapper.vm.save(false);
-      const captionRequest = JSON.parse(Mock.history.put.at(-1).data);
-      expect(captionRequest).toEqual({ Caption: "Updated caption", CaptionSrc: "manual" });
-      expect(photo.TakenAt).toBe(taken);
-      expect(photo.TakenAtLocal).toBe(expected);
+      expect(lastBody()).toEqual({ Caption: "Updated caption", CaptionSrc: "manual" });
+      expect(photo.TakenAt).toBe(savedTaken);
+      expect(photo.TakenAtLocal).toBe(savedLocal);
+    });
+
+    it("does not shift the time when the selection changes repeatedly before saving", () => {
+      const utc = loadCapture();
+      for (const zone of ["Europe/Berlin", "America/New_York", "UTC-12", "Europe/Berlin"]) {
+        wrapper.vm.setTimeZone(zone);
+      }
+      expect([utc.TakenAt, utc.TakenAtLocal]).toEqual(["2025-06-30T23:30:00Z", "2025-07-01T01:30:00Z"]);
+
+      const berlin = loadCapture({ TimeZone: "Europe/Berlin", TakenAt: "2025-06-30T12:00:00Z", TakenAtLocal: "2025-06-30T14:00:00Z" });
+      for (const zone of ["UTC", "America/New_York"]) {
+        wrapper.vm.setTimeZone(zone);
+      }
+      expect([berlin.TakenAt, berlin.TakenAtLocal]).toEqual(["2025-06-30T18:00:00Z", "2025-06-30T14:00:00Z"]);
     });
   });
 
-  describe("timezone handling", () => {
-    it("syncs time when timezone changes", () => {
-      const syncTimeSpy = vi.spyOn(wrapper.vm, "syncTime");
-      wrapper.vm.view.model.TimeZone = "America/New_York";
-      wrapper.vm.syncTime();
-      expect(syncTimeSpy).toHaveBeenCalled();
+  describe("updateModel", () => {
+    // mockLocalDate returns a valid local date stub whose UTC value differs from the wall time.
+    const mockLocalDate = () => ({
+      isValid: true,
+      toFormat: () => "2023-06-15",
+      toISO: () => "2023-06-15T14:30:00",
+      toUTC: () => ({ toISO: () => "2023-06-15T12:30:00Z" }),
     });
 
-    it("updates TakenAt when in UTC timezone", () => {
-      wrapper.vm.view.model.currentTimeZoneUTC = vi.fn().mockReturnValue(true);
-      const mockLocalDate = {
-        isValid: true,
-        toFormat: () => "2023-06-15",
-        toISO: () => "2023-06-15T14:30:00",
-        toUTC: () => ({ toISO: () => "2023-06-15T14:30:00Z" }),
-      };
-
-      wrapper.vm.view.model.localDate.mockReturnValue(mockLocalDate);
+    it("derives TakenAt from the wall time in a named zone", () => {
+      wrapper.vm.view.model.TimeZone = "Europe/Berlin";
+      wrapper.vm.view.model.localDate.mockReturnValue(mockLocalDate());
       wrapper.vm.updateModel();
+      expect(wrapper.vm.view.model.TakenAtLocal).toBe("2023-06-15T14:30:00Z");
+      expect(wrapper.vm.view.model.TakenAt).toBe("2023-06-15T12:30:00Z");
+    });
 
-      expect(wrapper.vm.view.model.TakenAt).toBe("2023-06-15T14:30:00Z");
+    it("keeps TakenAt when the zone is Local", () => {
+      wrapper.vm.view.model.TimeZone = "Local";
+      wrapper.vm.view.model.TakenAt = "2023-06-15T10:00:00Z";
+      wrapper.vm.view.model.localDate.mockReturnValue(mockLocalDate());
+      wrapper.vm.updateModel();
+      expect(wrapper.vm.view.model.TakenAtLocal).toBe("2023-06-15T14:30:00Z");
+      expect(wrapper.vm.view.model.TakenAt).toBe("2023-06-15T10:00:00Z");
     });
   });
 });

@@ -2133,6 +2133,7 @@ export default {
           this.clearChipInput("albums");
         });
     },
+    // confirmDateTime saves the date, time and zone from the datetime dialog, using its timestamps when it passes them.
     confirmDateTime(data) {
       this.dateTimeDialog = false;
 
@@ -2146,21 +2147,24 @@ export default {
       photo.Year = data.Year;
       photo.TimeZone = data.TimeZone;
 
-      const localDate = photo.localDate(data.time);
-      if (!localDate.isValid) {
-        return;
-      }
+      if (data.TakenAt && data.TakenAtLocal) {
+        photo.TakenAt = data.TakenAt;
+        photo.TakenAtLocal = data.TakenAtLocal;
+      } else {
+        const localDate = photo.localDate(data.time);
+        if (!localDate.isValid) {
+          return;
+        }
 
-      const isoTime =
-        localDate.toISO({
-          suppressMilliseconds: true,
-          includeOffset: false,
-        }) + "Z";
+        photo.TakenAtLocal =
+          localDate.toISO({
+            suppressMilliseconds: true,
+            includeOffset: false,
+          }) + "Z";
 
-      photo.TakenAtLocal = isoTime;
-
-      if (photo.currentTimeZoneUTC()) {
-        photo.TakenAt = isoTime;
+        if (photo.TimeZone && photo.TimeZone !== "Local") {
+          photo.TakenAt = localDate.toUTC().toISO({ suppressMilliseconds: true });
+        }
       }
 
       photo

@@ -169,21 +169,9 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 
 	locChanged := m.PhotoLat != form.PhotoLat || m.PhotoLng != form.PhotoLng || m.PhotoCountry != form.PhotoCountry
 
-	zoneChanged := tz.Name(m.TimeZone) != tz.Name(form.TimeZone)
-	timeChanged := zoneChanged || !m.TakenAt.Equal(form.TakenAt) || !m.TakenAtLocal.Equal(form.TakenAtLocal)
-	zoneOnly := false
-	if zoneChanged && !m.TimeZoneLocal() && !tz.IsLocal(form.TimeZone) && !m.TakenAt.IsZero() && m.TakenAt.Equal(form.TakenAt) {
-		projected := Photo{TakenAt: m.TakenAt, TakenAtLocal: m.TakenAtLocal, TimeZone: form.TimeZone}
-		local := projected.GetTakenAtLocal()
-		unchanged := m.TakenAtLocal.Equal(form.TakenAtLocal) &&
-			m.PhotoYear == form.PhotoYear && m.PhotoMonth == form.PhotoMonth && m.PhotoDay == form.PhotoDay
-		// Accept projected editor values without reversing an ambiguous daylight-saving wall time.
-		converted := form.TakenAtLocal.Equal(local) &&
-			(form.PhotoYear <= 0 || form.PhotoYear == local.Year()) &&
-			(form.PhotoMonth <= 0 || form.PhotoMonth == int(local.Month())) &&
-			(form.PhotoDay <= 0 || form.PhotoDay == local.Day())
-		zoneOnly = unchanged || converted
-	}
+	fromUTC := m.TimeZoneUTC()
+	zoneOnly := tz.Name(m.TimeZone) != tz.Name(form.TimeZone) && m.TakenAt.Equal(form.TakenAt) && m.TakenAtLocal.Equal(form.TakenAtLocal)
+	dateUnchanged := m.PhotoYear == form.PhotoYear && m.PhotoMonth == form.PhotoMonth && m.PhotoDay == form.PhotoDay
 
 	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
@@ -195,24 +183,23 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 		return errors.New("cannot save form when photo id is missing")
 	}
 
-	// Zone-only edits preserve the capture instant; explicit date edits use the submitted wall time.
-	if zoneOnly {
+	// Changing only the zone converts a UTC time to the local time in the new zone and otherwise keeps the local time.
+	if zoneOnly && fromUTC && !m.TimeZoneUTC() && !m.TimeZoneLocal() {
 		m.TakenAtLocal = m.GetTakenAtLocal()
-		if m.PhotoYear > 0 {
-			m.PhotoYear = m.TakenAtLocal.Year()
+
+		if dateUnchanged {
+			m.SetKnownDateParts()
 		}
-		if m.PhotoMonth > 0 {
-			m.PhotoMonth = int(m.TakenAtLocal.Month())
-		}
-		if m.PhotoDay > 0 {
-			m.PhotoDay = m.TakenAtLocal.Day()
-		}
-	} else if timeChanged {
-		if m.TimeZoneUTC() {
-			m.TakenAtLocal = m.TakenAt
-		} else {
-			m.TakenAt = m.GetTakenAt()
-		}
+	} else if zoneOnly && !fromUTC && m.TimeZoneUTC() {
+		m.TakenAt = m.TakenAtLocal
+	}
+
+	// TakenAtLocal is the wall time in TimeZone and determines TakenAt, unless the submitted TakenAt
+	// already matches it, e.g. in a repeated daylight-saving hour.
+	if m.TimeZoneUTC() {
+		m.TakenAtLocal = m.TakenAt
+	} else if m.TimeZoneLocal() || !m.GetTakenAtLocal().Equal(m.TakenAtLocal) {
+		m.TakenAt = m.GetTakenAt()
 	}
 
 	m.UpdateDateFields()

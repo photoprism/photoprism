@@ -259,17 +259,19 @@ export class Photo extends RestModel {
     }
   }
 
-  // changeTimeZone projects the current capture instant without accumulating time zone offsets.
-  changeTimeZone(zone) {
+  // changeTimeZone sets a new zone: a UTC time is converted to the local time in that zone, while a local time is kept.
+  // fromUTC defaults to the saved zone, so changing the selection repeatedly before saving does not shift the time.
+  // Month and Year follow only while all finer date parts are known, since an unknown day leaves a placeholder.
+  changeTimeZone(zone, fromUTC = this.originalTimeZoneUTC()) {
     if (zone === this.TimeZone) {
       return;
     }
 
-    const previous = this.TimeZone;
-    const local = !previous || previous === TimeZoneLocal || !zone || zone === TimeZoneLocal;
-    const taken = local
-      ? DateTime.fromISO(this.TakenAtLocal, { zone: "UTC" }).setZone(zone && zone !== TimeZoneLocal ? zone : "UTC", { keepLocalTime: true })
-      : DateTime.fromISO(this.TakenAt, { zone: "UTC" }).setZone(zone);
+    const toLocal = !zone || zone === TimeZoneLocal;
+    const taken =
+      fromUTC && !toLocal
+        ? DateTime.fromISO(this.TakenAt, { zone: "UTC" }).setZone(zone)
+        : DateTime.fromISO(this.TakenAtLocal, { zone: "UTC" }).setZone(toLocal ? "UTC" : zone, { keepLocalTime: true });
 
     if (!taken.isValid) {
       return;
@@ -278,9 +280,14 @@ export class Photo extends RestModel {
     this.TimeZone = zone;
     this.TakenAtLocal = taken.toISO({ suppressMilliseconds: true, includeOffset: false }) + "Z";
     this.TakenAt = taken.toUTC().toISO({ suppressMilliseconds: true });
-    for (const [field, value] of [["Year", taken.year], ["Month", taken.month], ["Day", taken.day]]) {
-      if (this[field] > 0) {
-        this[field] = value;
+
+    if (this.Day > 0) {
+      this.Day = taken.day;
+      if (this.Month > 0) {
+        this.Month = taken.month;
+        if (this.Year > 0) {
+          this.Year = taken.year;
+        }
       }
     }
   }
@@ -295,6 +302,7 @@ export class Photo extends RestModel {
     return false;
   }
 
+  // originalTimeZoneUTC reports whether the saved time zone is UTC.
   originalTimeZoneUTC() {
     const tz = this.originalValue("TimeZone");
 

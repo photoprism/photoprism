@@ -106,7 +106,7 @@
                 v-model="time"
                 :append-inner-icon="view.model.TakenSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                :label="view.model.timeIsUTC() ? $gettext('Time UTC') : $gettext('Local Time')"
+                :label="view.model.timeIsUTC() ? 'UTC' : $gettext('Local Time')"
                 :prepend-inner-icon="$vuetify.display.xs ? undefined : 'mdi-clock-time-eight-outline'"
                 autocomplete="off"
                 autocorrect="off"
@@ -446,6 +446,7 @@ export default {
       showTimePicker: false,
       invalidDate: false,
       dateChanged: false,
+      zoneFromUTC: false,
       time: "",
       locationLabel: this.$gettext("Location"),
       locationDialog: false,
@@ -574,6 +575,7 @@ export default {
     // syncData refreshes the editor after loading or saving a photo.
     syncData() {
       this.dateChanged = false;
+      this.zoneFromUTC = !!this.view?.model?.originalTimeZoneUTC?.();
       this.syncLocation();
       this.syncTime();
     },
@@ -584,15 +586,17 @@ export default {
         this.locationLabel = this.$gettext("Location");
       }
     },
-    // setTimeZone preserves pending date edits before projecting the capture instant into a new zone.
+    // setTimeZone applies pending date edits, then changes the zone with Photo.changeTimeZone.
+    // The time stays converted from UTC as long as the last saved or edited time was in UTC.
     setTimeZone(zone) {
       if (this.dateChanged) {
         this.updateModel();
         if (this.invalidDate) {
           return;
         }
+        this.zoneFromUTC = this.view.model.currentTimeZoneUTC();
       }
-      this.view.model.changeTimeZone(zone);
+      this.view.model.changeTimeZone(zone, this.zoneFromUTC);
       this.dateChanged = false;
       this.syncTime();
     },

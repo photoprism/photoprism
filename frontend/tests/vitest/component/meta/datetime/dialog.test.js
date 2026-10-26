@@ -15,9 +15,6 @@ describe("PMetaDatetimeDialog component", () => {
       getDateTime() {
         return DateTime.fromISO(this.TakenAtLocal).toUTC();
       },
-      timeIsUTC() {
-        return false;
-      },
       ...overrides,
     };
     return base;
@@ -73,10 +70,11 @@ describe("PMetaDatetimeDialog component", () => {
 
     w.vm.loadFromPhoto();
 
-    w.vm.day = 20;
-    w.vm.month = 3;
-    w.vm.year = 2024;
+    w.vm.setDay(20);
+    w.vm.setMonth(3);
+    w.vm.setYear(2024);
     w.vm.time = "09:15:00";
+    w.vm.setTime();
     w.vm.timeZone = "America/New_York";
 
     w.vm.confirm();
@@ -88,6 +86,116 @@ describe("PMetaDatetimeDialog component", () => {
       Year: 2024,
       TimeZone: "America/New_York",
       time: "09:15:00",
+    });
+  });
+
+  it("should pass the stored timestamps when nothing was edited", () => {
+    const onConfirm = vi.fn();
+    const w = mount(PMetaDatetimeDialog, {
+      props: { visible: false, photo: mockPhoto(), onConfirm },
+    });
+
+    w.vm.loadFromPhoto();
+    w.vm.confirm();
+
+    expect(onConfirm).toHaveBeenCalledWith({
+      Day: 15,
+      Month: 6,
+      Year: 2023,
+      TimeZone: "Europe/Berlin",
+      time: "14:30:00",
+      TakenAt: "2023-06-15T12:30:00Z",
+      TakenAtLocal: "2023-06-15T14:30:00",
+    });
+  });
+
+  describe("time zone changes", () => {
+    // mountUTC mounts the dialog for a UTC photo taken late on June 30.
+    const mountUTC = (overrides = {}) => {
+      const onConfirm = vi.fn();
+      const photo = mockPhoto({
+        Day: 30,
+        Month: 6,
+        Year: 2025,
+        TimeZone: "UTC",
+        TakenAt: "2025-06-30T23:30:00Z",
+        TakenAtLocal: "2025-06-30T23:30:00Z",
+        ...overrides,
+      });
+      const w = mount(PMetaDatetimeDialog, { props: { visible: false, photo, onConfirm } });
+      w.vm.loadFromPhoto();
+      return { w, onConfirm };
+    };
+
+    it("moves the shown date and time and passes the timestamps on", () => {
+      const { w, onConfirm } = mountUTC();
+      w.vm.setTimeZone("Europe/Berlin");
+      expect([w.vm.year, w.vm.month, w.vm.day, w.vm.time]).toEqual([2025, 7, 1, "01:30:00"]);
+      expect(w.vm.timeLabel).toContain("Local");
+      w.vm.confirm();
+      expect(onConfirm).toHaveBeenCalledWith({
+        Day: 1,
+        Month: 7,
+        Year: 2025,
+        TimeZone: "Europe/Berlin",
+        time: "01:30:00",
+        TakenAt: "2025-06-30T23:30:00Z",
+        TakenAtLocal: "2025-07-01T01:30:00Z",
+      });
+    });
+
+    it("applies a pending time edit before moving it", () => {
+      const { w, onConfirm } = mountUTC();
+      w.vm.time = "10:00:00";
+      w.vm.setTime();
+      w.vm.setTimeZone("Europe/Berlin");
+      expect([w.vm.day, w.vm.time]).toEqual([30, "12:00:00"]);
+      w.vm.confirm();
+      expect(onConfirm.mock.calls[0][0]).toMatchObject({ TakenAt: "2025-06-30T10:00:00Z", TakenAtLocal: "2025-06-30T12:00:00Z" });
+    });
+
+    it("sends manual edits after a zone change as wall time", () => {
+      const { w, onConfirm } = mountUTC();
+      w.vm.setTimeZone("Europe/Berlin");
+      w.vm.time = "03:45:00";
+      w.vm.setTime();
+      w.vm.confirm();
+      expect(onConfirm.mock.calls[0][0]).toEqual({ Day: 1, Month: 7, Year: 2025, TimeZone: "Europe/Berlin", time: "03:45:00" });
+    });
+
+    it("keeps a known month and year when the day is unknown", () => {
+      const { w } = mountUTC({ Day: -1, Month: 1, Year: 2020, TakenAt: "2020-01-01T03:00:00Z", TakenAtLocal: "2020-01-01T03:00:00Z" });
+      w.vm.setTimeZone("America/New_York");
+      expect([w.vm.year, w.vm.month, w.vm.day, w.vm.time]).toEqual([2020, 1, -1, "22:00:00"]);
+    });
+
+    it("converts from the saved UTC time through repeated selections", () => {
+      const { w } = mountUTC();
+      w.vm.setTimeZone("Europe/Berlin");
+      w.vm.setTimeZone("America/New_York");
+      expect([w.vm.year, w.vm.month, w.vm.day, w.vm.time]).toEqual([2025, 6, 30, "19:30:00"]);
+    });
+
+    it("keeps the local time of a named zone, also through UTC", () => {
+      const onConfirm = vi.fn();
+      const w = mount(PMetaDatetimeDialog, { props: { visible: false, photo: mockPhoto(), onConfirm } });
+      w.vm.loadFromPhoto();
+      w.vm.setTimeZone("UTC");
+      expect([w.vm.time, w.vm.timeLabel]).toEqual(["14:30:00", "UTC"]);
+      w.vm.setTimeZone("America/New_York");
+      expect(w.vm.time).toBe("14:30:00");
+      w.vm.confirm();
+      expect(onConfirm.mock.calls[0][0]).toMatchObject({ TimeZone: "America/New_York", TakenAt: "2023-06-15T18:30:00Z", TakenAtLocal: "2023-06-15T14:30:00Z" });
+    });
+
+    it("ignores an invalid zone and an invalid pending time", () => {
+      const { w } = mountUTC();
+      w.vm.setTimeZone("Invalid/Zone");
+      expect(w.vm.timeZone).toBe("UTC");
+      w.vm.time = "25:99";
+      w.vm.setTime();
+      w.vm.setTimeZone("Europe/Berlin");
+      expect([w.vm.timeZone, w.vm.time]).toEqual(["UTC", "25:99"]);
     });
   });
 
@@ -133,15 +241,13 @@ describe("PMetaDatetimeDialog component", () => {
     expect(w.vm.invalidDate).toBe(false);
   });
 
-  it("should show UTC label when photo time is UTC", () => {
-    const photo = mockPhoto({
-      timeIsUTC() {
-        return true;
-      },
-    });
+  it("should show UTC label when the selected zone is UTC", () => {
+    const photo = mockPhoto({ TimeZone: "UTC" });
     const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
+
+    w.vm.loadFromPhoto();
 
     expect(w.vm.timeLabel).toContain("UTC");
   });
