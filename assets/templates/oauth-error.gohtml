@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="auto" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark" class="loading">
+<html lang="en" dir="auto" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>{{ .error }} – {{if and .config.SiteCaption .config.Sponsor }}{{ .config.SiteCaption }}{{else}}{{ .config.Name }}{{end}}</title>
 
@@ -11,23 +11,37 @@
 {{template "styles.gohtml" .}}
 
   <style>
-    .oauth-error { max-width: 30rem; margin: 0 auto; padding: 2rem; text-align: center; }
-    .oauth-error h1 { font-size: 1.25rem; font-weight: 500; margin: 0 0 0.75rem; }
-    .oauth-error p { margin: 0 0 1.5rem; opacity: 0.7; }
-    .oauth-error code { font-size: 0.85rem; opacity: 0.6; }
-    .oauth-error a { display: inline-block; padding: 0.5rem 1.25rem; border: 1px solid currentColor; border-radius: 0.25rem; text-decoration: none; }
+    .oauth-error { position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: flex; overflow-y: auto; padding: 24px; }
+    .oauth-error-content { width: 100%; max-width: 28rem; margin: auto; text-align: center; color: #efefef; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .oauth-error-logo { width: 96px; height: 96px; margin: 0 auto 32px; }
+    .oauth-error-logo svg, .oauth-error-logo img { display: block; width: 100%; height: 100%; }
+    .oauth-error h1 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; margin: 0 0 12px; color: #efefef; }
+    .oauth-error p { font-size: 1rem; line-height: 1.5; margin: 0 0 12px; color: #d0d0cb; }
+    .oauth-error .oauth-error-code { font-size: 0.875rem; margin: 0 0 32px; color: #9e9e99; }
+    .oauth-error code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 2px 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.08); color: #d0d0cb; }
+    .oauth-error-action { display: inline-block; min-width: 10rem; padding: 12px 24px; border-radius: 24px; background: linear-gradient(135deg, #b8edff, #d4b8ff); color: #141417; font-size: 1rem; font-weight: 600; text-decoration: none; }
+    .oauth-error-action:hover { filter: brightness(1.08); }
+    .oauth-error-action:focus-visible { outline: 2px solid #efefef; outline-offset: 3px; }
+    @media (min-width: 600px) {
+      .oauth-error-logo { width: 125px; height: 125px; margin-bottom: 40px; }
+      .oauth-error h1 { font-size: 1.75rem; }
+    }
   </style>
 </head>
 <body class="{{ .config.Flags }} nojs">
 <div id="app">
   <div id="photoprism" class="container splash-screen">
-    <div class="fullscreen">
-      <div class="oauth-error" role="alert">
-        <h1>{{ .error_description }}</h1>
-        <p><code>{{ .error }}</code></p>
-        <a href="{{ .config.LoginUri }}">Continue</a>
+    <main class="oauth-error">
+      <div class="oauth-error-content">
+        <div class="oauth-error-logo">{{template "logo.gohtml" .}}</div>
+        <div role="alert">
+          <h1>Authorization Failed</h1>
+          {{if .message }}<p>{{ .message }}</p>{{end}}
+          <p class="oauth-error-code">Error: <code>{{ .error }}</code></p>
+        </div>
+        <a href="{{ .config.LoginUri }}" class="oauth-error-action">Continue</a>
       </div>
-    </div>
+    </main>
   </div>
 </div>
 </body>

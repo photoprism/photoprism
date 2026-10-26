@@ -70,13 +70,69 @@ func TestRenderOAuthError(t *testing.T) {
 		req.Header.Set(header.FetchMode, "navigate")
 		w := httptest.NewRecorder()
 		app.ServeHTTP(w, req)
+		body := w.Body.String()
 		assert.Equal(t, http.StatusForbidden, w.Code)
 		assert.Contains(t, w.Header().Get("Content-Type"), "text/html")
-		assert.Contains(t, w.Body.String(), "redirect_uri not registered")
-		assert.Contains(t, w.Body.String(), "access_denied")
+		assert.Equal(t, header.CacheControlNoStore, w.Header().Get(header.CacheControl))
+		assert.Contains(t, body, `class="oauth-error-logo"><svg`)
+		assert.Contains(t, body, "<h1>Authorization Failed</h1>")
+		assert.Contains(t, body, "<p>redirect_uri not registered.</p>")
+		assert.Contains(t, body, "<code>access_denied</code>")
+		assert.Contains(t, body, `href="`+get.Config().ClientPublic().LoginUri+`" class="oauth-error-action">Continue</a>`)
+	})
+	t.Run("HTMLEscapesDescription", func(t *testing.T) {
+		app := gin.New()
+		app.LoadHTMLFiles(get.Config().TemplateFiles()...)
+		app.GET("/x", func(c *gin.Context) {
+			RenderOAuthError(c, http.StatusBadRequest, "invalid_request", "<script>alert(1)</script>")
+		})
+		req, _ := http.NewRequest(http.MethodGet, "/x", nil)
+		req.Header.Set(header.Accept, "text/html")
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.NotContains(t, w.Body.String(), "<script>alert")
+		assert.Contains(t, w.Body.String(), "&lt;script&gt;")
+	})
+	t.Run("HTMLWithoutDescription", func(t *testing.T) {
+		app := gin.New()
+		app.LoadHTMLFiles(get.Config().TemplateFiles()...)
+		app.GET("/x", func(c *gin.Context) {
+			RenderOAuthError(c, http.StatusBadRequest, "server_error", "")
+		})
+		req, _ := http.NewRequest(http.MethodGet, "/x", nil)
+		req.Header.Set(header.Accept, "text/html")
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Contains(t, w.Body.String(), "<code>server_error</code>")
+		assert.NotContains(t, w.Body.String(), "<p></p>")
 	})
 	t.Run("NilContext", func(t *testing.T) {
 		assert.NotPanics(t, func() { RenderOAuthError(nil, http.StatusBadRequest, "x", "y") })
+	})
+}
+
+func TestOAuthErrorMessage(t *testing.T) {
+	t.Run("Sentence", func(t *testing.T) {
+		assert.Equal(t, "Unknown client.", oauthErrorMessage("unknown client"))
+		assert.Equal(t, "Rate limit exceeded.", oauthErrorMessage(" rate limit exceeded "))
+	})
+	t.Run("ParameterName", func(t *testing.T) {
+		assert.Equal(t, "redirect_uri not registered.", oauthErrorMessage("redirect_uri not registered"))
+		assert.Equal(t, "code_challenge_method must be S256.", oauthErrorMessage("code_challenge_method must be S256"))
+		assert.Equal(t, "Scope must include openid.", oauthErrorMessage("scope must include openid"))
+	})
+	t.Run("KeepsPunctuation", func(t *testing.T) {
+		assert.Equal(t, "Already done.", oauthErrorMessage("Already done."))
+		assert.Equal(t, "Invalid request (x)", oauthErrorMessage("invalid request (x)"))
+	})
+	t.Run("MultiByte", func(t *testing.T) {
+		assert.Equal(t, "Ünknown.", oauthErrorMessage("ünknown"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", oauthErrorMessage(""))
+		assert.Equal(t, "", oauthErrorMessage("   "))
 	})
 }
 

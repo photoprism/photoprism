@@ -222,6 +222,51 @@ func TestOAuthAppAuthorize(t *testing.T) {
 		assert.Empty(t, r.Header().Get("Location"))
 		assert.Equal(t, oauth.ErrCodeInvalidClient, gjson.Get(r.Body.String(), "error").String())
 	})
+	t.Run("DisabledClientMatchesUnknown", func(t *testing.T) {
+		app, _, conf, client := prepareAppFlowTest(t, "mcp")
+		app.LoadHTMLFiles(conf.TemplateFiles()...)
+		client.AuthEnabled = false
+		require.NoError(t, client.Save())
+
+		perform := func(clientID, accept string) *httptest.ResponseRecorder {
+			req, _ := http.NewRequest(http.MethodGet, "/api/v1/oauth/authorize?"+testAuthorizeQuery(conf, clientID).Encode(), nil)
+			req.Header.Set(header.Accept, accept)
+			w := httptest.NewRecorder()
+			app.ServeHTTP(w, req)
+			return w
+		}
+
+		disabledHTML := perform(client.ClientUID, "text/html")
+		unknownHTML := perform("cs5gfen1bgxz7s9i", "text/html")
+		assert.Equal(t, http.StatusBadRequest, disabledHTML.Code)
+		assert.Contains(t, disabledHTML.Header().Get("Content-Type"), "text/html")
+		assert.Contains(t, disabledHTML.Body.String(), "<p>Unknown client.</p>")
+		assert.Equal(t, unknownHTML.Code, disabledHTML.Code)
+		assert.Equal(t, unknownHTML.Body.String(), disabledHTML.Body.String())
+
+		disabledJSON := perform(client.ClientUID, "application/json")
+		unknownJSON := perform("cs5gfen1bgxz7s9i", "application/json")
+		assert.Equal(t, http.StatusBadRequest, disabledJSON.Code)
+		assert.JSONEq(t, `{"error":"invalid_client","error_description":"unknown client"}`, disabledJSON.Body.String())
+		assert.Equal(t, unknownJSON.Code, disabledJSON.Code)
+		assert.Equal(t, unknownJSON.Body.String(), disabledJSON.Body.String())
+	})
+	t.Run("UnregisteredRedirectURIPage", func(t *testing.T) {
+		app, _, conf, client := prepareAppFlowTest(t, "mcp")
+		app.LoadHTMLFiles(conf.TemplateFiles()...)
+		q := testAuthorizeQuery(conf, client.ClientUID)
+		q.Set("redirect_uri", "https://evil.example.com/callback")
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/oauth/authorize?"+q.Encode(), nil)
+		req.Header.Set(header.FetchMode, "navigate")
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Empty(t, w.Header().Get("Location"))
+		assert.Contains(t, w.Body.String(), "<p>redirect_uri not registered.</p>")
+		assert.Contains(t, w.Body.String(), "<code>invalid_request</code>")
+		assert.NotContains(t, w.Body.String(), "evil.example.com")
+		assert.NotContains(t, w.Body.String(), client.ClientUID)
+	})
 	t.Run("MetadataClientRefusedByDefault", func(t *testing.T) {
 		app, _, conf, _ := prepareAppFlowTest(t, "mcp")
 		r := PerformRequest(app, http.MethodGet, "/api/v1/oauth/authorize?"+testAuthorizeQuery(conf, "https://claude.ai/oauth/client.json").Encode())

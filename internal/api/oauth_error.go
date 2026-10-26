@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
 
@@ -49,6 +51,7 @@ func RenderOAuthError(c *gin.Context, statusCode int, errCode, errDescription st
 			"code":              statusCode,
 			"error":             errCode,
 			"error_description": errDescription,
+			"message":           oauthErrorMessage(errDescription),
 		})
 		c.Abort()
 		return
@@ -58,6 +61,28 @@ func RenderOAuthError(c *gin.Context, statusCode int, errCode, errDescription st
 		"error":             errCode,
 		"error_description": errDescription,
 	})
+}
+
+// oauthErrorMessage returns the error description as a sentence for the HTML error page.
+// A first word with an underscore, such as redirect_uri, keeps its case, and a period is
+// added only after a letter or digit.
+func oauthErrorMessage(description string) string {
+	s := strings.TrimSpace(description)
+
+	if s == "" {
+		return ""
+	}
+
+	if first, _, _ := strings.Cut(s, " "); !strings.Contains(first, "_") {
+		r, size := utf8.DecodeRuneInString(s)
+		s = string(unicode.ToUpper(r)) + s[size:]
+	}
+
+	if r, _ := utf8.DecodeLastRuneInString(s); unicode.IsLetter(r) || unicode.IsDigit(r) {
+		s += "."
+	}
+
+	return s
 }
 
 // RedirectOAuthError sends the browser back to a validated redirect_uri with the
