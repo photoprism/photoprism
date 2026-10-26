@@ -14,7 +14,7 @@
 #
 # --deb is what our own images use, and they select it through PHOTOPRISM_CONTAINER rather
 # than by passing the flag. It exists so an image carries one libheif rather than two: Resolute
-# installs photoprism-libheif via a real .deb that Provides/Replaces/Conflicts apt's libheif1,
+# and Stonking install photoprism-libheif via a real .deb that Provides/Replaces/Conflicts apt's libheif1,
 # libheif-dev, libheif-examples and libheif-plugin-* names, and other Debian distros get a
 # contentless stub with the same metadata after the tarball extract. Either way the package is
 # apt-mark held so dist-upgrade leaves it alone - but an explicit `apt install libheif1` would
@@ -286,11 +286,11 @@ fi
 
 echo "Installing libheif..."
 
-# On Ubuntu 26.04 LTS (Resolute) we ship a real .deb (photoprism-libheif) so
+# On Ubuntu 26.04 LTS (Resolute) and 26.10 (Stonking) we ship a real .deb (photoprism-libheif) so
 # apt's libheif1 / libheif-dev / libheif-plugin-* don't coexist with the
 # from-source build. The .deb only exists when DESTDIR is left at the default
 # /usr or /usr/local - dpkg paths are absolute and ignore custom prefixes.
-if [[ $USE_DEB == 1 ]] && [[ $VERSION_CODENAME == "resolute" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]] && command -v apt-get > /dev/null; then
+if [[ $USE_DEB == 1 ]] && [[ $VERSION_CODENAME == "resolute" || $VERSION_CODENAME == "stonking" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]] && command -v apt-get > /dev/null; then
   ARCHIVE="libheif-${VERSION_CODENAME}-${DESTARCH}-${LIBHEIF_VERSION}.deb"
   URL="https://dl.photoprism.app/dist/libheif/${ARCHIVE}"
   TMPDEB="${STAGING_DIR}/${ARCHIVE}"
@@ -395,7 +395,7 @@ fi
 # install as a substitute and won't pull the older distro library back in on the next
 # dist-upgrade. The actual binaries live under $DESTDIR (typically /usr/local/lib),
 # and ldconfig already orders /usr/local/lib ahead of /usr/lib so consumers resolve
-# to the from-source build. Resolute exits earlier through the real .deb path above.
+# to the from-source build. Resolute and Stonking exit earlier through the real .deb path above.
 if [[ $USE_DEB == 1 ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]] && command -v apt-get > /dev/null && command -v dpkg-deb > /dev/null; then
   INSTALLED_LIBHEIF_PKGS=$(dpkg-query -W -f='${Package}\n' 'libheif*' 2>/dev/null | grep -v '^photoprism-libheif$' | sort -u || true)
   if [[ -n $INSTALLED_LIBHEIF_PKGS ]]; then

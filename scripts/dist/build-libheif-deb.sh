@@ -11,9 +11,9 @@
 # a complete substitute and never pulls Canonical's older 1.21.2 alongside.
 #
 # Run inside a photoprism/develop:<codename> container that matches the
-# target distro's libc / libstdc++ / codec ABI. Currently exercised against
-# photoprism/develop:resolute (Ubuntu 26.04 LTS, libc 2.38, libstdc++ 13);
-# other codenames need their own .deb because runtime soname pinning differs.
+# target distro's libc / libstdc++ / codec ABI: resolute (Ubuntu 26.04 LTS) or
+# stonking (Ubuntu 26.10). Each codename needs its own .deb because runtime
+# soname pinning differs.
 #
 #   docker run --rm --platform=amd64 --pull=always \
 #     -v ".:/go/src/github.com/photoprism/photoprism" \
@@ -59,14 +59,17 @@ esac
 # shellcheck source=/dev/null
 . /etc/os-release
 
-# Only Resolute (Ubuntu 26.04) is currently in the .deb matrix; abort early
-# on other codenames to avoid silently producing a .deb that would dpkg -i
-# onto a host with mismatched libc/libstdc++ sonames.
-if [[ $VERSION_CODENAME != "resolute" ]]; then
-  echo "Error: ${0##*/} currently supports only VERSION_CODENAME=resolute," 1>&2
-  echo "       this container reports VERSION_CODENAME=$VERSION_CODENAME." 1>&2
-  exit 1
-fi
+# Only codenames in the .deb matrix are accepted; abort early on others to avoid
+# silently producing a .deb that would dpkg -i onto a host with mismatched
+# libc/libstdc++ sonames.
+case $VERSION_CODENAME in
+  resolute | stonking) ;;
+  *)
+    echo "Error: ${0##*/} supports only VERSION_CODENAME=resolute or stonking," 1>&2
+    echo "       this container reports VERSION_CODENAME=$VERSION_CODENAME." 1>&2
+    exit 1
+    ;;
+esac
 
 LATEST=$(curl --silent "https://api.github.com/repos/strukturag/libheif/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 LIBHEIF_VERSION=${1:-$LATEST}
@@ -187,7 +190,7 @@ cat > "${WORK_DIR}/changelog.Debian" <<EOF
 photoprism-libheif (${DEB_VERSION}) unstable; urgency=medium
 
   * Repackaged upstream libheif ${LIBHEIF_VERSION} for PhotoPrism's
-    Resolute (Ubuntu 26.04) base image. Provides/Replaces/Conflicts
+    ${PRETTY_NAME} base image. Provides/Replaces/Conflicts
     against distro libheif1, libheif-dev, libheif-examples, and
     libheif-plugin-* so the apt solver picks this build as the single
     libheif provider.
