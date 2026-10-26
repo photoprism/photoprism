@@ -1148,7 +1148,7 @@ msgstr "Copier"
 #: src/component/client/add/dialog.vue:27
 #: src/component/client/edit/dialog.vue:28
 msgid "Copy the new client secret and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Copiez la nouvelle clé secrète client et conservez-la en lieu sûr : vous ne pourrez plus la consulter ensuite:"
+msgstr "Copiez la nouvelle clé secrète client et conservez-la en lieu sûr : vous ne pourrez plus la consulter ensuite :"
 
 #: src/locales.js:477
 msgid "Copying files from %s"
@@ -2921,7 +2921,7 @@ msgstr "Aucune image trouvée"
 
 #: src/component/photo/export/dialog.vue:62
 msgid "No preview image available."
-msgstr "Aucun aperçu disponible"
+msgstr "Aucun aperçu disponible."
 
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
