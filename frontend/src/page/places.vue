@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { markRaw } from "vue";
 import $api from "common/api";
 import $fullscreen from "common/fullscreen";
 import * as sky from "common/sky";
@@ -656,7 +657,7 @@ export default {
       }
 
       this.filter = filter;
-      this.options = mapOptions;
+      this.options = markRaw(mapOptions);
     },
     getClusterFromUrl() {
       const hasLatLng = this.$route.query.latlng !== undefined && this.$route.query.latlng !== "";
@@ -938,7 +939,9 @@ export default {
     renderMap() {
       const lastProjection = this.getProjection(true);
 
-      this.map = new maplibregl.Map({ ...this.options, locale: maps.locale() });
+      // MapLibre stays raw, since a reactive proxy breaks the read-only values it
+      // memoizes on its own objects, e.g. the channels of parsed style colors.
+      this.map = markRaw(new maplibregl.Map({ ...this.options, locale: maps.locale() }));
       this.map.setLanguage(this.$config.values.settings.ui.language.split("-")[0]);
 
       // Get informed about projection type changes.
@@ -1061,9 +1064,11 @@ export default {
         el.style.width = "50px";
         el.style.height = "50px";
 
-        marker = this.markers[id] = new maplibregl.Marker({
-          element: el,
-        }).setLngLat(coords);
+        marker = this.markers[id] = markRaw(
+          new maplibregl.Marker({
+            element: el,
+          }).setLngLat(coords)
+        );
       } else {
         marker.setLngLat(coords);
       }
@@ -1118,9 +1123,11 @@ export default {
 
         el.append(imageContainer);
         el.append(counterBubble);
-        marker = this.markers[id] = new maplibregl.Marker({
-          element: el,
-        }).setLngLat(coords);
+        marker = this.markers[id] = markRaw(
+          new maplibregl.Marker({
+            element: el,
+          }).setLngLat(coords)
+        );
       } else {
         marker.setLngLat(coords);
       }
@@ -1215,9 +1222,11 @@ export default {
 
             el.append(imageContainer);
             el.append(counterBubble);
-            marker = this.markers[id] = new maplibregl.Marker({
-              element: el,
-            }).setLngLat(coords);
+            marker = this.markers[id] = markRaw(
+              new maplibregl.Marker({
+                element: el,
+              }).setLngLat(coords)
+            );
           } else {
             marker.setLngLat(coords);
           }

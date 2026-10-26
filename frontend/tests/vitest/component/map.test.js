@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
+import { isProxy } from "vue";
 import PMap from "component/map.vue";
 
 const mocks = vi.hoisted(() => ({ load: vi.fn(), supportsWebGL2: vi.fn(), locale: vi.fn(() => ({ "Map.Title": "Karte" })) }));
@@ -89,6 +90,20 @@ describe("PMap", () => {
     resolve(namespace);
     await flushPromises();
     expect(namespace.Map).not.toHaveBeenCalled();
+  });
+
+  // MapLibre memoizes values like color channels as read-only, non-configurable
+  // properties, which a reactive proxy cannot return without throwing.
+  it("keeps the renderer and marker raw so memoized read-only values stay readable", async () => {
+    const color = {};
+    Object.defineProperty(color, "rgb", { value: [0, 0, 0, 1] });
+    renderer.style = { color };
+    wrapper = mountMap();
+    await flushPromises();
+    events.load();
+    expect(isProxy(wrapper.vm.map)).toBe(false);
+    expect(isProxy(wrapper.vm.marker)).toBe(false);
+    expect(wrapper.vm.map.style.color.rgb).toBe(color.rgb);
   });
 
   it("preserves controls, coordinate ordering, click and drag events, and cleanup", async () => {

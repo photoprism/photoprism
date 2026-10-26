@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
+import { isProxy } from "vue";
 import PPdfViewer from "component/pdf-viewer.vue";
 
 // Mock the engine seam so no real pdfjs/worker is loaded in the component test.
@@ -73,6 +74,8 @@ describe("component/pdf-viewer", () => {
     const wrapper = await mountViewer();
     expect(h.loadPdfDocument).toHaveBeenCalledWith("/api/v1/files/abc/file.pdf");
     expect(wrapper.vm.pageCount).toBe(3);
+    // pdf.js objects stay out of Vue reactivity, like the MapLibre renderer.
+    expect(isProxy(wrapper.vm.pdf)).toBe(false);
     expect(wrapper.findAll(".p-pdf-viewer__page")).toHaveLength(3);
     expect(wrapper.findAll(".p-pdf-viewer__thumb")).toHaveLength(3);
     expect(wrapper.find(".p-pdf-viewer__pageinput").element.value).toBe("1");

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, shallowMount } from "@vue/test-utils";
+import { isProxy } from "vue";
 import Places from "page/places.vue";
 import * as maps from "common/map";
 import api from "common/api";
@@ -52,6 +53,35 @@ describe("Places map compatibility", () => {
     wrapper = mountPlaces();
     await flushPromises();
     expect(wrapper.vm.mapError).toBe(message);
+  });
+
+  // MapLibre memoizes values like color channels as read-only, non-configurable
+  // properties, which a reactive proxy cannot return without throwing.
+  it("keeps the renderer, options, and markers raw so memoized read-only values stay readable", async () => {
+    const color = {};
+    Object.defineProperty(color, "rgb", { value: [0, 0, 0, 1] });
+    const renderer = { style: { color }, setLanguage: vi.fn(), on: vi.fn(), addControl: vi.fn(), off: vi.fn(), remove: vi.fn() };
+    const marker = { setLngLat: vi.fn().mockReturnThis(), addTo: vi.fn().mockReturnThis(), getElement: () => document.createElement("div"), remove: vi.fn() };
+    const control = vi.fn();
+    maps.load.mockResolvedValueOnce({
+      Map: vi.fn(function () {
+        return renderer;
+      }),
+      Marker: vi.fn(function () {
+        return marker;
+      }),
+      NavigationControl: control, TerrainControl: control, GlobeControl: control, FullscreenControl: control, GeolocateControl: control, ScaleControl: control,
+    });
+    wrapper = mountPlaces();
+    await flushPromises();
+    expect(wrapper.vm.mapError).toBe(false);
+    expect(isProxy(wrapper.vm.map)).toBe(false);
+    expect(isProxy(wrapper.vm.options)).toBe(false);
+    expect(wrapper.vm.map.style.color.rgb).toBe(color.rgb);
+    const feature = { id: 1, properties: { UID: "ps6sg6be2lvl0y12", Title: "Lake", Hash: "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818" }, geometry: { coordinates: [9.5, 42.5] } };
+    wrapper.vm.renderPhotoMarker(feature, "public", {}, wrapper.vm.map);
+    expect(isProxy(wrapper.vm.markers[1])).toBe(false);
+    expect(marker.addTo).toHaveBeenCalledWith(renderer);
   });
 
   it("always releases the busy state when a style cannot be rendered", () => {

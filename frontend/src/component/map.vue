@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { markRaw } from "vue";
 import * as map from "common/map";
 
 let maplibregl = null;
@@ -136,7 +137,9 @@ export default {
           this.options.center = [this.latlng[1], this.latlng[0]]; // Convert [lat, lng] to [lng, lat] for MapLibre
         }
 
-        this.map = new maplibregl.Map({ ...this.options, locale: map.locale() });
+        // MapLibre stays raw, since a reactive proxy breaks the read-only values it
+        // memoizes on its own objects, e.g. the channels of parsed style colors.
+        this.map = markRaw(new maplibregl.Map({ ...this.options, locale: map.locale() }));
 
         // Add controls if requested
         if (this.showControls) {
@@ -245,12 +248,14 @@ export default {
       if (this.marker) {
         this.marker.setLngLat(this.position);
       } else {
-        this.marker = new maplibregl.Marker({
-          color: "#3fb4df",
-          draggable: this.draggable,
-        })
-          .setLngLat(this.position)
-          .addTo(this.map);
+        this.marker = markRaw(
+          new maplibregl.Marker({
+            color: "#3fb4df",
+            draggable: this.draggable,
+          })
+            .setLngLat(this.position)
+            .addTo(this.map)
+        );
 
         // Add drag event listener for draggable markers
         if (this.draggable) {
