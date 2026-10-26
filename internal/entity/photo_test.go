@@ -122,6 +122,35 @@ func TestSavePhotoForm(t *testing.T) {
 	})
 }
 
+// TestSavePhotoForm_TimeZoneCycles keeps the capture instant stable through repeated saved zone edits.
+func TestSavePhotoForm_TimeZoneCycles(t *testing.T) {
+	for _, tc := range []struct{ name, source string }{{"Manual", SrcManual}, {"Batch", SrcBatch}} {
+		t.Run(tc.name, func(t *testing.T) {
+			photo := NewPhoto(false)
+			photo.TakenAt = time.Date(2020, 1, 1, 0, 30, 0, 0, time.UTC)
+			photo.TakenAtLocal = photo.TakenAt
+			photo.TimeZone, photo.TakenSrc = tz.UTC, tc.source
+			photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay = 2020, 1, 1
+			require.NoError(t, photo.Create())
+			t.Cleanup(func() { UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID); UnscopedDb().Delete(&photo) })
+			taken := photo.TakenAt
+			for round := 0; round < 3; round++ {
+				for _, zone := range []string{"UTC-12", "Pacific/Kiritimati", "Europe/Berlin", "America/New_York", tz.UTC} {
+					frm, err := form.NewPhoto(&photo)
+					require.NoError(t, err)
+					frm.TimeZone = zone
+					require.NoError(t, SavePhotoForm(&photo, frm))
+					require.NoError(t, Db().First(&photo, photo.ID).Error)
+					expected := taken.In(tz.Find(zone))
+					assert.True(t, photo.TakenAt.Equal(taken), "capture instant changed in %s", zone)
+					assert.Equal(t, expected.Format("2006-01-02T15:04:05"), photo.TakenAtLocal.Format("2006-01-02T15:04:05"))
+					assert.Equal(t, []int{expected.Year(), int(expected.Month()), expected.Day()}, []int{photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay})
+				}
+			}
+		})
+	}
+}
+
 func TestPhoto_LabelKeywords(t *testing.T) {
 	t.Run("CollectsSearchableKeywords", func(t *testing.T) {
 		photo := Photo{

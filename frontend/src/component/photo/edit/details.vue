@@ -121,7 +121,7 @@
             </v-col>
             <v-col cols="6" lg="4">
               <v-autocomplete
-                v-model="view.model.TimeZone"
+                :model-value="view.model.TimeZone"
                 :disabled="disabled"
                 :label="$gettext('Time Zone')"
                 hide-no-data
@@ -130,7 +130,7 @@
                 :items="options.TimeZones()"
                 density="comfortable"
                 class="input-timezone"
-                @update:model-value="syncTime"
+                @update:model-value="setTimeZone"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12" sm="6" md="6">
@@ -445,6 +445,7 @@ export default {
       showDatePicker: false,
       showTimePicker: false,
       invalidDate: false,
+      dateChanged: false,
       time: "",
       locationLabel: this.$gettext("Location"),
       locationDialog: false,
@@ -480,7 +481,9 @@ export default {
     this.$refs.form?.validate?.();
   },
   methods: {
+    // setDay applies a manual date selection.
     setDay(v) {
+      this.dateChanged = true;
       if (Number.isInteger(v?.value)) {
         this.view.model.Day = v?.value;
         this.clampDayToValidRange();
@@ -496,7 +499,9 @@ export default {
         this.syncTime();
       }
     },
+    // setMonth applies a manual date selection.
     setMonth(v) {
+      this.dateChanged = true;
       if (Number.isInteger(v?.value)) {
         this.view.model.Month = v?.value;
         this.clampDayToValidRange();
@@ -512,7 +517,9 @@ export default {
         this.syncTime();
       }
     },
+    // setYear applies a manual date selection.
     setYear(v) {
+      this.dateChanged = true;
       if (Number.isInteger(v?.value)) {
         this.view.model.Year = v?.value;
         this.clampDayToValidRange();
@@ -557,12 +564,16 @@ export default {
         this.view.model.Day = maxDay;
       }
     },
+    // setTime applies a valid manual time edit.
     setTime() {
+      this.dateChanged = true;
       if (this.rules.isTime(this.time)) {
         this.updateModel();
       }
     },
+    // syncData refreshes the editor after loading or saving a photo.
     syncData() {
+      this.dateChanged = false;
       this.syncLocation();
       this.syncTime();
     },
@@ -573,6 +584,19 @@ export default {
         this.locationLabel = this.$gettext("Location");
       }
     },
+    // setTimeZone preserves pending date edits before projecting the capture instant into a new zone.
+    setTimeZone(zone) {
+      if (this.dateChanged) {
+        this.updateModel();
+        if (this.invalidDate) {
+          return;
+        }
+      }
+      this.view.model.changeTimeZone(zone);
+      this.dateChanged = false;
+      this.syncTime();
+    },
+    // syncTime refreshes the time input from the current photo values.
     syncTime() {
       if (!this.view?.model.hasId()) {
         return;
@@ -581,6 +605,7 @@ export default {
       const taken = this.view.model.getDateTime();
       this.time = taken.toFormat("HH:mm:ss");
     },
+    // updateModel applies manual calendar fields and time to the capture timestamps.
     updateModel() {
       if (!this.view?.model.hasId()) {
         return;
@@ -614,13 +639,14 @@ export default {
 
       this.view.model.TakenAtLocal = isoTime;
 
-      if (this.view.model.currentTimeZoneUTC()) {
-        this.view.model.TakenAt = isoTime;
+      if (this.view.model.TimeZone && this.view.model.TimeZone !== "Local") {
+        this.view.model.TakenAt = localDate.toUTC().toISO({ suppressMilliseconds: true });
       }
     },
     openPhoto() {
       this.$lightbox.openModels(Thumb.fromPhotos([this.view.model]), 0);
     },
+    // save validates and persists the edited photo.
     save(close) {
       if (this.invalidDate) {
         this.$notify.error(this.$gettext("Invalid date"));
@@ -636,7 +662,13 @@ export default {
           return;
         }
 
-        this.updateModel();
+        if (this.dateChanged) {
+          this.updateModel();
+          if (this.invalidDate) {
+            this.$notify.error(this.$gettext("Invalid date"));
+            return;
+          }
+        }
 
         // Photo.update() runs trimInputs() before the PUT.
         return this.view.model.update().then(() => {

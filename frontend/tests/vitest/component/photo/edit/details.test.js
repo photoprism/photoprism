@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { shallowMount, mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import PTabPhotoDetails from "component/photo/edit/details.vue";
+import { Photo } from "model/photo";
+import { Mock } from "../../../fixtures";
 
 // Mock model factory
 const createMockModel = (overrides = {}) => ({
@@ -23,7 +25,9 @@ const createMockModel = (overrides = {}) => ({
       return "2024-04-01T11:29:54";
     },
     toISO: () => "2024-04-01T11:29:54",
+    toUTC: () => ({ toISO: () => "2024-04-01T11:29:54Z" }),
   }),
+  changeTimeZone: vi.fn(),
   currentTimeZoneUTC: () => false,
   timeIsUTC: () => false,
   Title: "Example",
@@ -292,6 +296,7 @@ describe("component/photo/edit/details", () => {
           return "2023-06-15";
         }),
         toISO: () => "2023-06-15T14:30:00",
+        toUTC: () => ({ toISO: () => "2023-06-15T14:30:00Z" }),
       };
 
       wrapper.vm.view.model.localDate.mockReturnValue(mockLocalDate);
@@ -418,6 +423,7 @@ describe("component/photo/edit/details", () => {
 
     it("saves successfully with valid data", async () => {
       wrapper.vm.invalidDate = false;
+      wrapper.vm.dateChanged = true;
       const updateModelSpy = vi.spyOn(wrapper.vm, "updateModel");
       const syncDataSpy = vi.spyOn(wrapper.vm, "syncData");
 
@@ -537,6 +543,108 @@ describe("component/photo/edit/details", () => {
     });
   });
 
+  describe("time zone date boundaries", () => {
+    // loadCapture binds a real photo model to the editor and echoes successful API updates.
+    const loadCapture = (values = {}) => {
+      const photo = new Photo({
+        UID: "ps6sg6be2lvl0yh7", Caption: "", CaptionSrc: "",
+        TakenAt: "2025-06-30T23:30:00Z", TakenAtLocal: "2025-06-30T23:30:00Z",
+        TimeZone: "UTC", Year: 2025, Month: 6, Day: 30, Details: {}, ...values,
+      });
+      wrapper.vm.view.model = photo;
+      wrapper.vm.syncData();
+      Mock.resetHistory();
+      Mock.onPut(photo.getEntityResource()).reply((request) => [200, { ...photo.getValues(), ...JSON.parse(request.data) }]);
+      return photo;
+    };
+
+    it("retains a pending manual date before a zone change", async () => {
+      const photo = loadCapture();
+      wrapper.vm.setDay(29);
+      wrapper.vm.setTimeZone("Europe/Berlin");
+      await wrapper.vm.save(false);
+      expect(photo.TakenAt).toBe("2025-06-29T23:30:00Z");
+      expect(photo.TakenAtLocal).toBe("2025-06-30T01:30:00Z");
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([2025, 6, 30]);
+    });
+
+    it("applies manual local date and time after a zone change", async () => {
+      const photo = loadCapture();
+      wrapper.vm.setTimeZone("Europe/Berlin");
+      wrapper.vm.setDay(2);
+      wrapper.vm.time = "03:45:00";
+      wrapper.vm.setTime();
+      await wrapper.vm.save(false);
+      expect(photo.TakenAt).toBe("2025-07-02T01:45:00Z");
+      expect(photo.TakenAtLocal).toBe("2025-07-02T03:45:00Z");
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([2025, 7, 2]);
+    });
+
+    it("keeps unknown components and the timestamp on a caption save", async () => {
+      const photo = loadCapture({ Year: -1, Month: -1, Day: -1 });
+      photo.Caption = "Updated caption";
+      await wrapper.vm.save(false);
+      expect(JSON.parse(Mock.history.put.at(-1).data)).toEqual({ Caption: "Updated caption", CaptionSrc: "manual" });
+      expect(photo.TakenAt).toBe("2025-06-30T23:30:00Z");
+      expect(photo.TakenAtLocal).toBe("2025-06-30T23:30:00Z");
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([-1, -1, -1]);
+    });
+
+    it("preserves Local wall time when assigning a known zone", async () => {
+      const photo = loadCapture({ TimeZone: "Local" });
+      wrapper.vm.setTimeZone("Europe/Berlin");
+      await wrapper.vm.save(false);
+      expect(photo.TakenAt).toBe("2025-06-30T21:30:00Z");
+      expect(photo.TakenAtLocal).toBe("2025-06-30T23:30:00Z");
+    });
+
+    const cases = [
+      ["UTC", "Europe/Berlin", "2025-06-30T23:30:00Z", "2025-06-30T23:30:00Z", "2025-07-01T01:30:00Z", 2025, 7, 1],
+      ["UTC-12", "UTC", "2020-01-01T11:45:00Z", "2019-12-31T23:45:00Z", "2020-01-01T11:45:00Z", 2020, 1, 1],
+      ["UTC", "UTC-12", "2020-01-01T00:30:00Z", "2020-01-01T00:30:00Z", "2019-12-31T12:30:00Z", 2019, 12, 31],
+      ["Europe/Berlin", "UTC", "2024-02-29T23:30:00Z", "2024-03-01T00:30:00Z", "2024-02-29T23:30:00Z", 2024, 2, 29],
+    ];
+
+    it.each(cases)("keeps the instant from %s to %s across saves", async (zone, target, taken, local, expected, year, month, day) => {
+      const photo = new Photo({
+        UID: "ps6sg6be2lvl0yh7",
+        Caption: "",
+        CaptionSrc: "",
+        TakenAt: taken,
+        TakenAtLocal: local,
+        TimeZone: zone,
+        Year: Number(local.slice(0, 4)),
+        Month: Number(local.slice(5, 7)),
+        Day: Number(local.slice(8, 10)),
+        Details: {},
+      });
+      wrapper.vm.view.model = photo;
+      wrapper.vm.syncData();
+      Mock.resetHistory();
+      Mock.onPut(photo.getEntityResource()).reply((request) => {
+        const values = JSON.parse(request.data);
+        // Echo the submitted fields so a response cannot hide an inconsistent request.
+        return [200, { ...photo.getValues(), ...values }];
+      });
+
+      const timezone = wrapper.findComponent(".input-timezone");
+      await timezone.vm.$emit("update:modelValue", target);
+      await wrapper.vm.save(false);
+
+      expect(photo.TakenAt).toBe(taken);
+      expect(photo.TakenAtLocal).toBe(expected);
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([year, month, day]);
+      expect(wrapper.vm.time).toBe(expected.slice(11, 19));
+
+      photo.Caption = "Updated caption";
+      await wrapper.vm.save(false);
+      const captionRequest = JSON.parse(Mock.history.put.at(-1).data);
+      expect(captionRequest).toEqual({ Caption: "Updated caption", CaptionSrc: "manual" });
+      expect(photo.TakenAt).toBe(taken);
+      expect(photo.TakenAtLocal).toBe(expected);
+    });
+  });
+
   describe("timezone handling", () => {
     it("syncs time when timezone changes", () => {
       const syncTimeSpy = vi.spyOn(wrapper.vm, "syncTime");
@@ -551,6 +659,7 @@ describe("component/photo/edit/details", () => {
         isValid: true,
         toFormat: () => "2023-06-15",
         toISO: () => "2023-06-15T14:30:00",
+        toUTC: () => ({ toISO: () => "2023-06-15T14:30:00Z" }),
       };
 
       wrapper.vm.view.model.localDate.mockReturnValue(mockLocalDate);
