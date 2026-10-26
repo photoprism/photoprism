@@ -83,11 +83,11 @@ msgstr "%{s} خیلی طولانی است"
 msgid "%{s} is too short"
 msgstr "%{s} خیلی کوتاه است"
 
-#: src/options/options.js:426
+#: src/options/options.js:429
 msgid "1 hour"
 msgstr "1 ساعت"
 
-#: src/options/options.js:428
+#: src/options/options.js:431
 msgid "12 hours"
 msgstr "12 ساعت"
 
@@ -110,7 +110,7 @@ msgstr "2FA"
 msgid "3rd-party software packages"
 msgstr "بسته‌های نرم‌افزاری شخص ثالث"
 
-#: src/options/options.js:427
+#: src/options/options.js:430
 msgid "4 hours"
 msgstr "4 ساعت"
 
@@ -335,7 +335,7 @@ msgstr "تاریخ و زمان را تنظیم کنید"
 
 #: src/component/meta/location/dialog.vue:18
 #: src/component/photo/batch-edit.vue:278
-#: src/component/photo/edit/details.vue:145
+#: src/component/photo/edit/details.vue:146
 msgid "Adjust Location"
 msgstr "تنظیم مکان"
 
@@ -348,15 +348,15 @@ msgstr "مدیر"
 msgid "Advanced"
 msgstr "پیشرفته"
 
-#: src/options/options.js:436
+#: src/options/options.js:439
 msgid "After 1 day"
 msgstr "بعد از 1 روز"
 
-#: src/options/options.js:437
+#: src/options/options.js:440
 msgid "After 3 days"
 msgstr "بعد از 3 روز"
 
-#: src/options/options.js:438
+#: src/options/options.js:441
 msgid "After 7 days"
 msgstr "بعد از 7 روز"
 
@@ -364,11 +364,11 @@ msgstr "بعد از 7 روز"
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr "پس از وارد کردن رمز عبور خود برای تأیید، می توانید احراز هویت دو مرحله ای را با یک برنامه یا دستگاه تأیید کننده سازگار تنظیم کنید:"
 
-#: src/options/options.js:440
+#: src/options/options.js:443
 msgid "After one month"
 msgstr "بعد از یک ماه"
 
-#: src/options/options.js:442
+#: src/options/options.js:445
 msgid "After one year"
 msgstr "بعد از یک سال"
 
@@ -376,11 +376,11 @@ msgstr "بعد از یک سال"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "پس از انتخاب تصاویر از نتایج جستجو، می توانید آنها را با استفاده از منوی زمینه به آلبوم اضافه کنید."
 
-#: src/options/options.js:441
+#: src/options/options.js:444
 msgid "After two months"
 msgstr "بعد از دو ماه"
 
-#: src/options/options.js:439
+#: src/options/options.js:442
 msgid "After two weeks"
 msgstr "بعد از دو هفته"
 
@@ -419,7 +419,7 @@ msgstr "آلبوم ذخیره شد"
 #: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
-#: src/component/photo/edit/info.vue:107 src/options/options.js:258
+#: src/component/photo/edit/info.vue:107 src/options/options.js:261
 #: src/page/settings/collections.vue:113 src/page/settings/general.vue:81
 msgid "Albums"
 msgstr "آلبوم ها"
@@ -538,7 +538,7 @@ msgid "Altitude"
 msgstr "ارتفاع"
 
 #: src/component/photo/batch-edit.vue:317
-#: src/component/photo/edit/details.vue:180
+#: src/component/photo/edit/details.vue:181
 msgid "Altitude (m)"
 msgstr "ارتفاع (M)"
 
@@ -548,7 +548,7 @@ msgstr "ارتفاع (M)"
 #: src/component/photo/export/dialog.vue:273
 #: src/component/photo/view/cards.vue:113
 #: src/component/photo/view/cards.vue:230 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:68 src/options/options.js:365
+#: src/component/photo/view/mosaic.vue:68 src/options/options.js:368
 msgid "Animated"
 msgstr "متحرک"
 
@@ -574,12 +574,12 @@ msgid "Applications"
 msgstr "کاربردها"
 
 #: src/component/photo/clipboard.vue:36
-#: src/component/photo/edit/details.vue:395
+#: src/component/photo/edit/details.vue:396
 #: src/component/photo/view/cards.vue:177
 msgid "Approve"
 msgstr "تأیید"
 
-#: src/component/photo/edit/details.vue:391
+#: src/component/photo/edit/details.vue:392
 msgid "Approve and save changes"
 msgstr "تایید و ذخیره تغییرات"
 
@@ -594,13 +594,13 @@ msgctxt "Noun"
 msgid "Archive"
 msgstr "بایگانی"
 
-#: src/component/lightbox.vue:1777 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1779 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "بایگانی"
 
-#: src/component/lightbox.vue:3324 src/component/photo/edit/info.vue:303
+#: src/component/lightbox.vue:3326 src/component/photo/edit/info.vue:303
 msgid "Archived"
 msgstr "بایگانی شده"
 
@@ -640,8 +640,8 @@ msgstr "مطمئن هستی؟"
 #: src/component/lightbox/sidebar.vue:849
 #: src/component/photo/batch-edit.vue:392
 #: src/component/photo/batch-edit.vue:394
-#: src/component/photo/edit/details.vue:319
-#: src/component/photo/edit/details.vue:321
+#: src/component/photo/edit/details.vue:320
+#: src/component/photo/edit/details.vue:322
 msgid "Artist"
 msgstr "هنرمند"
 
@@ -654,7 +654,7 @@ msgid "Attributes"
 msgstr "ویژگی‌ها"
 
 #: src/app/routes.js:420 src/common/util.js:959
-#: src/component/navigation.vue:254 src/options/options.js:361
+#: src/component/navigation.vue:254 src/options/options.js:364
 msgid "Audio"
 msgstr "صوتی"
 
@@ -677,8 +677,8 @@ msgstr "احراز هویت"
 msgid "Auto"
 msgstr "خودکار"
 
-#: src/component/meta/face/markers.vue:94
-#: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
+#: src/component/meta/face/markers.vue:93
+#: src/component/meta/face/markers.vue:94 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "بازگشت"
 
@@ -739,15 +739,15 @@ msgstr "بود"
 msgid "Birth Date"
 msgstr "تاریخ تولد"
 
-#: src/options/options.js:461
+#: src/options/options.js:464
 msgid "Black"
 msgstr "سیاه"
 
-#: src/options/options.js:457
+#: src/options/options.js:460
 msgid "Blue"
 msgstr "آبی"
 
-#: src/options/options.js:458
+#: src/options/options.js:461
 msgid "Brown"
 msgstr "قهوه ای"
 
@@ -764,7 +764,7 @@ msgstr "مرور فایل ها"
 msgid "Browse Pictures"
 msgstr "مرور تصاویر"
 
-#: src/options/options.js:467
+#: src/options/options.js:470
 msgid "Bug Report"
 msgstr "گزارش اشکال"
 
@@ -781,14 +781,14 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "با استفاده از نرم‌افزار و خدماتی که ما ارائه می‌کنیم، با شرایط خدمات، خط‌مشی رازداری و آیین‌نامه رفتار ما موافقت می‌کنید."
 
 #: src/app/routes.js:359 src/component/navigation.vue:396
-#: src/options/options.js:264 src/page/settings/collections.vue:173
+#: src/options/options.js:267 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
 msgstr "تقویم"
 
 #: src/component/lightbox/sidebar.vue:119
 #: src/component/meta/camera/dialog.vue:30
-#: src/component/photo/edit/details.vue:195 src/component/photo/toolbar.vue:129
+#: src/component/photo/edit/details.vue:196 src/component/photo/toolbar.vue:129
 #: src/component/photo/view/cards.vue:204 src/component/photo/view/list.vue:40
 msgid "Camera"
 msgstr "دوربین"
@@ -832,9 +832,9 @@ msgstr "موارد بیشتری را انتخاب نمی کند"
 #: src/component/label/delete/dialog.vue:19
 #: src/component/label/edit/dialog.vue:43
 #: src/component/meta/camera/dialog.vue:118
-#: src/component/meta/datetime/dialog.vue:120
-#: src/component/meta/face/markers.vue:54
-#: src/component/meta/face/markers.vue:73
+#: src/component/meta/datetime/dialog.vue:121
+#: src/component/meta/face/markers.vue:53
+#: src/component/meta/face/markers.vue:72
 #: src/component/meta/location/dialog.vue:109
 #: src/component/people/edit/dialog.vue:74
 #: src/component/photo/album/dialog.vue:64
@@ -912,7 +912,7 @@ msgstr "تغییر پرچم خصوصی"
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:168
 #: src/component/photo/batch-edit.vue:1467
-#: src/component/photo/edit/details.vue:635 src/locales.js:399
+#: src/component/photo/edit/details.vue:670 src/locales.js:399
 #: src/page/settings/account.vue:472 src/page/settings/account.vue:477
 msgid "Changes could not be saved"
 msgstr "تغییرات را نمی توان ذخیره کرد"
@@ -926,7 +926,7 @@ msgstr "تغییرات را نمی توان ذخیره کرد"
 #: src/component/client/edit/dialog.vue:457
 #: src/component/user/edit/dialog.vue:459
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3276
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3278
 #: src/component/photo/batch-edit.vue:1499
 #: src/component/photo/edit/files.vue:574 src/component/service/edit.vue:382
 #: src/component/share/dialog.vue:214 src/component/share/dialog.vue:233
@@ -992,16 +992,16 @@ msgstr "کلاینت‌ها"
 #: src/component/client/edit/dialog.vue:219
 #: src/component/user/edit/dialog.vue:330
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:579
-#: src/component/lightbox.vue:1580 src/component/lightbox.vue:1581
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:580
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
 #: src/component/people/edit/dialog.vue:21
 #: src/component/photo/album/dialog.vue:18
 #: src/component/photo/batch-edit.vue:18 src/component/photo/batch-edit.vue:487
-#: src/component/photo/edit/details.vue:380
-#: src/component/photo/edit/details.vue:385
+#: src/component/photo/edit/details.vue:381
+#: src/component/photo/edit/details.vue:386
 #: src/component/photo/export/dialog.vue:19
 #: src/component/photo/export/dialog.vue:92 src/component/photo/toolbar.vue:94
 #: src/component/settings/apps.vue:91 src/component/settings/apps.vue:216
@@ -1065,7 +1065,7 @@ msgstr "اسکن کامل"
 msgid "Confidence"
 msgstr "اعتماد"
 
-#: src/component/meta/face/markers.vue:64
+#: src/component/meta/face/markers.vue:63
 #: src/component/meta/location/dialog.vue:120
 #: src/component/photo/album/dialog.vue:67
 #: src/component/settings/passcode.vue:110 src/page/people/new.vue:101
@@ -1157,8 +1157,8 @@ msgstr "کپی کردن فایل ها از %s"
 #: src/component/lightbox/sidebar.vue:835
 #: src/component/photo/batch-edit.vue:375
 #: src/component/photo/batch-edit.vue:377
-#: src/component/photo/edit/details.vue:306
-#: src/component/photo/edit/details.vue:308
+#: src/component/photo/edit/details.vue:307
+#: src/component/photo/edit/details.vue:309
 msgid "Copyright"
 msgstr "حق چاپ"
 
@@ -1179,7 +1179,7 @@ msgid "Couldn't find anything."
 msgstr "نتوانست چیزی پیدا کند."
 
 #: src/page/settings/account.vue:382 src/component/photo/batch-edit.vue:293
-#: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:108
+#: src/component/photo/edit/details.vue:160 src/component/photo/toolbar.vue:108
 #: src/page/settings/account.vue:299
 msgid "Country"
 msgstr "کشور"
@@ -1214,7 +1214,7 @@ msgstr "ایجاد شده"
 msgid "Creating thumbnails for"
 msgstr "ایجاد تصاویر کوچک برای"
 
-#: src/options/options.js:504
+#: src/options/options.js:507
 msgid "Current Name"
 msgstr "نام کنونی"
 
@@ -1227,11 +1227,11 @@ msgstr "رمز عبور فعلی"
 msgid "Custom"
 msgstr "سفارشی"
 
-#: src/options/options.js:456
+#: src/options/options.js:459
 msgid "Cyan"
 msgstr "فیروزه ای"
 
-#: src/options/options.js:429
+#: src/options/options.js:432
 msgid "Daily"
 msgstr "روزانه"
 
@@ -1271,9 +1271,9 @@ msgstr "گزارش‌های اشکال زدایی"
 #: src/page/admin/users.vue:392 src/common/util.js:983
 #: src/component/photo/edit/info.vue:23 src/model/session.js:42
 #: src/model/user.js:365 src/options/auth.js:43 src/options/auth.js:44
-#: src/options/auth.js:73 src/options/auth.js:74 src/options/options.js:253
-#: src/options/options.js:256 src/options/options.js:296
-#: src/options/options.js:380 src/options/themes.js:863
+#: src/options/auth.js:73 src/options/auth.js:74 src/options/options.js:256
+#: src/options/options.js:259 src/options/options.js:299
+#: src/options/options.js:383 src/options/themes.js:863
 msgid "Default"
 msgstr "پیشفرض"
 
@@ -1425,11 +1425,11 @@ msgstr "رمزگذاری ویدیو و استخراج تصاویر کوچک را
 
 #: src/component/lightbox/sidebar.vue:472
 #: src/component/photo/batch-edit.vue:486
-#: src/component/photo/edit/details.vue:384
+#: src/component/photo/edit/details.vue:385
 msgid "Discard"
 msgstr "دور انداختن"
 
-#: src/component/photo/edit/details.vue:380
+#: src/component/photo/edit/details.vue:381
 msgid "Discard changes and close"
 msgstr "تغییرات را نادیده بگیرید و ببندید"
 
@@ -1483,7 +1483,7 @@ msgstr "نمایش عناوین تصاویر در نتایج جستجو"
 #: src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
-#: src/options/options.js:373
+#: src/options/options.js:376
 msgid "Document"
 msgstr "سند"
 
@@ -1516,7 +1516,7 @@ msgstr "انجام شده است."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
 #: src/component/file/clipboard.vue:24 src/component/label/clipboard.vue:21
-#: src/component/lightbox.vue:1818 src/component/people/clipboard.vue:23
+#: src/component/lightbox.vue:1820 src/component/people/clipboard.vue:23
 #: src/component/photo/clipboard.vue:84 src/component/photo/edit/files.vue:67
 #: src/page/settings/collections.vue:31 src/page/settings/content.vue:174
 #: src/page/settings/general.vue:230
@@ -1537,7 +1537,7 @@ msgstr "دانلود پس از تبدیل شروع می‌شود."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3370 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3372 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:403 src/component/photo/clipboard.vue:421
 #: src/component/photo/edit/files.vue:531
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
@@ -1577,7 +1577,7 @@ msgstr "محدودیت اندازه پویا: %{n}px"
 #: src/page/admin/users.vue:162 src/page/cluster/nodes.vue:53
 #: src/page/admin/clients.vue:110 src/page/admin/users.vue:159
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1711 src/component/lightbox.vue:1712
+#: src/component/lightbox.vue:1713 src/component/lightbox.vue:1714
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1696,7 +1696,7 @@ msgstr "رمز عبور خود را برای تایید عمل وارد کنید
 msgid "Entity not found"
 msgstr "موجودیت پیدا نشد"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:584
+#: src/page/connect.vue:14 src/component/lightbox.vue:585
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "خطا"
@@ -1717,7 +1717,7 @@ msgstr "تخمین مکان ها"
 msgid "Estimate the approximate location of pictures without GPS coordinates."
 msgstr "مکان تقریبی تصاویر را بدون مختصات GPS تخمین بزنید."
 
-#: src/options/options.js:430
+#: src/options/options.js:433
 msgid "Every two days"
 msgstr "هر دو روز"
 
@@ -1745,7 +1745,7 @@ msgstr "ویژگی های تجربی"
 msgid "Expires"
 msgstr "منقضی می شود"
 
-#: src/component/lightbox.vue:1807 src/component/photo/export/dialog.vue:18
+#: src/component/lightbox.vue:1809 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
 msgstr "خروجی گرفتن"
@@ -1760,8 +1760,8 @@ msgstr "خروجی گرفتن از ۱ فایل"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
-#: src/component/photo/edit/details.vue:230
-#: src/component/photo/edit/details.vue:234
+#: src/component/photo/edit/details.vue:231
+#: src/component/photo/edit/details.vue:235
 msgid "Exposure"
 msgstr "قرارگیری در معرض"
 
@@ -1770,7 +1770,7 @@ msgid "Extract still images and generate thumbnails while indexing."
 msgstr "در حین نمایه سازی، تصاویر ثابت را استخراج کنید و تصاویر کوچک تولید کنید."
 
 #: src/component/meta/camera/dialog.vue:93
-#: src/component/photo/edit/details.vue:263
+#: src/component/photo/edit/details.vue:264
 msgid "F Number"
 msgstr "شماره F"
 
@@ -1826,11 +1826,11 @@ msgstr "بارگذاری سند PDF ناموفق بود."
 msgid "Failed to load users."
 msgstr "بارگذاری کاربران ناموفق بود."
 
-#: src/component/lightbox.vue:2327
+#: src/component/lightbox.vue:2329
 msgid "Failed to remove face marker"
 msgstr "حذف نشانگر صورت ناموفق بود"
 
-#: src/component/lightbox.vue:2260
+#: src/component/lightbox.vue:2262
 msgid "Failed to remove name"
 msgstr "حذف نام ناموفق بود"
 
@@ -1843,14 +1843,14 @@ msgstr "راه‌اندازی مجدد سرور ناموفق بود"
 #: src/component/lightbox/sidebar.vue:1992
 #: src/component/lightbox/sidebar.vue:2050
 #: src/component/lightbox/sidebar.vue:2070
-#: src/component/lightbox/sidebar.vue:2177
-#: src/component/lightbox/sidebar.vue:2200
-#: src/component/lightbox/sidebar.vue:2230
+#: src/component/lightbox/sidebar.vue:2168
+#: src/component/lightbox/sidebar.vue:2191
+#: src/component/lightbox/sidebar.vue:2221
 #: src/component/photo/batch-edit.vue:1506
 msgid "Failed to save changes"
 msgstr "ذخیره تغییرات ناموفق بود"
 
-#: src/component/lightbox.vue:2232
+#: src/component/lightbox.vue:2234
 msgid "Failed to save face marker"
 msgstr "ذخیره کردن نشانگر صورت ناموفق بود"
 
@@ -1871,7 +1871,7 @@ msgstr "پیوند به روز نشد"
 msgid "Family Name"
 msgstr "خانواده"
 
-#: src/options/options.js:278
+#: src/options/options.js:281
 msgid "Fast"
 msgstr "سریع"
 
@@ -1884,12 +1884,12 @@ msgid "Favorite"
 msgstr "موردعلاقه"
 
 #: src/app/routes.js:392 src/component/navigation.vue:316
-#: src/options/options.js:262 src/page/albums.vue:401
+#: src/options/options.js:265 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
 msgstr "موارد دلخواه"
 
-#: src/options/options.js:466
+#: src/options/options.js:469
 msgid "Feature Request"
 msgstr "درخواست ویژگی"
 
@@ -1901,7 +1901,7 @@ msgstr "ویژگی غیرفعال است"
 msgid "Features"
 msgstr "ویژگی‌ها"
 
-#: src/options/options.js:490
+#: src/options/options.js:493
 msgid "Female"
 msgstr "زن"
 
@@ -1920,11 +1920,11 @@ msgstr "تبدیل فایل"
 
 #: src/component/photo/batch-edit.vue:621
 #: src/component/photo/batch-edit.vue:641 src/component/photo/view/list.vue:34
-#: src/options/options.js:517
+#: src/options/options.js:520
 msgid "File Name"
 msgstr "نام فایل"
 
-#: src/options/options.js:518
+#: src/options/options.js:521
 msgid "File Size"
 msgstr "فایل"
 
@@ -1975,7 +1975,7 @@ msgid "Fisheye"
 msgstr "چشم‌ماهی"
 
 #: src/component/meta/camera/dialog.vue:105
-#: src/component/photo/edit/details.vue:276
+#: src/component/photo/edit/details.vue:277
 msgid "Focal Length"
 msgstr "فاصله کانونی"
 
@@ -1995,7 +1995,7 @@ msgid "Folder is empty"
 msgstr "پوشه خالی است"
 
 #: src/app/routes.js:372 src/component/navigation.vue:463
-#: src/options/options.js:267 src/page/settings/collections.vue:128
+#: src/options/options.js:270 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
 msgstr "پوشه ها"
@@ -2029,8 +2029,8 @@ msgstr "پیش‌نمایش اندازه کامل"
 msgid "Full-Size Preview (First Page)"
 msgstr "پیش‌نمایش اندازه کامل (صفحه اول)"
 
-#: src/common/map.js:128 src/component/lightbox.vue:1657
-#: src/component/lightbox.vue:1658
+#: src/common/map.js:128 src/component/lightbox.vue:1659
+#: src/component/lightbox.vue:1660
 msgid "Fullscreen"
 msgstr "تمام صفحه"
 
@@ -2079,15 +2079,15 @@ msgstr "به صفحهٔ %{n} بروید"
 msgid "Go to page {0}"
 msgstr "رفتن به صفحه {0}"
 
-#: src/options/options.js:451
+#: src/options/options.js:454
 msgid "Gold"
 msgstr "طلا"
 
-#: src/options/options.js:454
+#: src/options/options.js:457
 msgid "Green"
 msgstr "سبز"
 
-#: src/options/options.js:460
+#: src/options/options.js:463
 msgid "Grey"
 msgstr "خاکستری"
 
@@ -2124,7 +2124,7 @@ msgstr "فایل های مخفی"
 msgid "Hide"
 msgstr "مخفی"
 
-#: src/component/lightbox.vue:1840
+#: src/component/lightbox.vue:1842
 msgid "Hide Caption"
 msgstr "پنهان کردن توضیحات"
 
@@ -2152,7 +2152,7 @@ msgstr "موارد خصوصی را از نماهای سراسری پنهان ک�
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
 msgstr "میله‌ی پیمایش دائمی را که در برخی مرورگرهای دسکتاپ نمایش داده می‌شود، پنهان کنید."
 
-#: src/options/options.js:384
+#: src/options/options.js:387
 msgid "High"
 msgstr "بالا"
 
@@ -2160,7 +2160,7 @@ msgstr "بالا"
 msgid "High Dynamic Range (HDR)"
 msgstr "محدوده دینامیکی بالا (HDR)"
 
-#: src/options/options.js:307
+#: src/options/options.js:310
 msgid "Hybrid"
 msgstr "ترکیبی"
 
@@ -2176,7 +2176,7 @@ msgstr "اگر دسترسی به برنامه یا دستگاه احراز هو�
 #: src/common/util.js:951 src/common/util.js:993
 #: src/component/photo/export/dialog.vue:273
 #: src/component/photo/view/cards.vue:246 src/model/file.js:205
-#: src/options/options.js:345
+#: src/options/options.js:348
 msgid "Image"
 msgstr "تصویر"
 
@@ -2268,7 +2268,7 @@ msgstr "نمایه سازی رسانه و فایل های جانبی…"
 msgid "Indexing originals..."
 msgstr "نمایه سازی نسخه های اصلی ..."
 
-#: src/component/lightbox.vue:1605 src/component/lightbox.vue:1606
+#: src/component/lightbox.vue:1607 src/component/lightbox.vue:1608
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "اطلاعات"
@@ -2332,7 +2332,8 @@ msgstr "کشور نامعتبر"
 msgid "Invalid credentials"
 msgstr "گواهی نامه نامعتبر"
 
-#: src/component/photo/edit/details.vue:626
+#: src/component/photo/edit/details.vue:661
+#: src/component/photo/edit/details.vue:677
 msgid "Invalid date"
 msgstr "تاریخ نامعتبر است"
 
@@ -2395,8 +2396,8 @@ msgid "Keyword"
 msgstr "کلمه کلیدی"
 
 #: src/component/lightbox/sidebar.vue:877
-#: src/component/photo/edit/details.vue:347
-#: src/component/photo/edit/details.vue:350
+#: src/component/photo/edit/details.vue:348
+#: src/component/photo/edit/details.vue:351
 msgid "Keywords"
 msgstr "کلید واژه ها"
 
@@ -2422,7 +2423,7 @@ msgstr "برچسب ذخیره شد"
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:352
-#: src/options/options.js:266 src/page/settings/general.vue:186
+#: src/options/options.js:269 src/page/settings/general.vue:186
 msgid "Labels"
 msgstr "برچسب ها"
 
@@ -2481,7 +2482,7 @@ msgstr "اطلاعات حقوقی"
 
 #: src/component/lightbox/sidebar.vue:140
 #: src/component/meta/camera/dialog.vue:46
-#: src/component/photo/edit/details.vue:243
+#: src/component/photo/edit/details.vue:244
 #: src/component/photo/view/cards.vue:213
 msgid "Lens"
 msgstr "لنز"
@@ -2499,16 +2500,16 @@ msgstr "کتابخانه"
 #: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
-#: src/component/photo/edit/details.vue:332
-#: src/component/photo/edit/details.vue:335 src/page/about/license.vue:5
+#: src/component/photo/edit/details.vue:333
+#: src/component/photo/edit/details.vue:336 src/page/about/license.vue:5
 msgid "License"
 msgstr "مجوز"
 
-#: src/component/lightbox.vue:1675 src/component/lightbox.vue:1676
+#: src/component/lightbox.vue:1677 src/component/lightbox.vue:1678
 msgid "Like"
 msgstr "پسندیدن"
 
-#: src/options/options.js:453
+#: src/options/options.js:456
 msgid "Lime"
 msgstr "اهک"
 
@@ -2532,7 +2533,7 @@ msgstr "نمایش لیست"
 #: src/component/photo/batch-edit.vue:124
 #: src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
-#: src/component/photo/view/mosaic.vue:67 src/options/options.js:353
+#: src/component/photo/view/mosaic.vue:67 src/options/options.js:356
 msgid "Live"
 msgstr "زنده"
 
@@ -2565,7 +2566,7 @@ msgstr "در حال بارگذاری…"
 msgid "Local"
 msgstr "محلی"
 
-#: src/component/meta/datetime/dialog.vue:165
+#: src/component/meta/datetime/dialog.vue:170
 #: src/component/photo/edit/details.vue:109
 msgid "Local Time"
 msgstr "زمان محلی"
@@ -2575,9 +2576,9 @@ msgstr "زمان محلی"
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:267
 #: src/component/photo/batch-edit.vue:596
-#: src/component/photo/edit/details.vue:449
-#: src/component/photo/edit/details.vue:573
-#: src/component/photo/edit/details.vue:678
+#: src/component/photo/edit/details.vue:452
+#: src/component/photo/edit/details.vue:597
+#: src/component/photo/edit/details.vue:719
 #: src/component/photo/view/cards.vue:255 src/component/photo/view/list.vue:43
 #: src/page/albums.vue:403 src/page/settings/account.vue:289
 #: src/page/settings/account.vue:291
@@ -2610,11 +2611,11 @@ msgstr "طول جغرافیایی"
 msgid "Lost server connection"
 msgstr "اتصال سرور از دست رفته"
 
-#: src/options/options.js:388
+#: src/options/options.js:391
 msgid "Low"
 msgstr "کم"
 
-#: src/options/options.js:447
+#: src/options/options.js:450
 msgid "Magenta"
 msgstr "ارغوانی"
 
@@ -2622,7 +2623,7 @@ msgstr "ارغوانی"
 msgid "Main Color"
 msgstr "رنگ اصلی"
 
-#: src/options/options.js:489
+#: src/options/options.js:492
 msgid "Male"
 msgstr "نر"
 
@@ -2661,7 +2662,7 @@ msgstr "سبک نقشه"
 msgid "Maps"
 msgstr "نقشه ها"
 
-#: src/component/map.vue:120 src/page/places.vue:430 src/page/places.vue:435
+#: src/component/map.vue:109 src/page/places.vue:431 src/page/places.vue:436
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "نقشه‌ها در دسترس نیستند. مرورگر یا دستگاه دیگری را امتحان کنید."
 
@@ -2674,11 +2675,11 @@ msgid "Maximum number of accounts has been reached."
 msgstr "به حداکثر تعداد حساب ها رسیده است."
 
 #: src/app/routes.js:399 src/component/navigation.vue:225
-#: src/options/options.js:259 src/page/settings/general.vue:126
+#: src/options/options.js:262 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "رسانه ها"
 
-#: src/options/options.js:282
+#: src/options/options.js:285
 msgid "Medium"
 msgstr "متوسط"
 
@@ -2720,7 +2721,7 @@ msgid "Modified"
 msgstr "اصلاح‌شده"
 
 #: src/app/routes.js:333 src/component/navigation.vue:423
-#: src/options/options.js:265 src/page/settings/collections.vue:143
+#: src/options/options.js:268 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
 msgstr "لحظه ها"
@@ -2736,7 +2737,7 @@ msgstr "تک رنگ"
 msgid "Month"
 msgstr "ماه"
 
-#: src/component/lightbox.vue:1730
+#: src/component/lightbox.vue:1732
 msgid "More options"
 msgstr "گزینه های بیشتر"
 
@@ -2744,7 +2745,7 @@ msgstr "گزینه های بیشتر"
 msgid "Mosaic"
 msgstr "موزائیک"
 
-#: src/options/options.js:521
+#: src/options/options.js:524
 msgid "Most Relevant"
 msgstr "بسیار مرتبط"
 
@@ -2760,7 +2761,7 @@ msgstr "انتقال فایل ها از %s"
 msgid "Must have at least %{n} characters."
 msgstr "باید حداقل %{n} حرف داشته باشد."
 
-#: src/component/lightbox.vue:1624 src/component/lightbox.vue:1625
+#: src/component/lightbox.vue:1626 src/component/lightbox.vue:1627
 msgid "Mute"
 msgstr "بی صدا"
 
@@ -2804,8 +2805,8 @@ msgstr "نام خیلی طولانی است"
 
 #: src/page/admin/users.vue:286 src/page/admin/users.vue:485
 #: src/component/client/edit/dialog.vue:440 src/page/admin/clients.vue:309
-#: src/page/admin/users.vue:429 src/options/options.js:425
-#: src/options/options.js:435 src/page/services.vue:253
+#: src/page/admin/users.vue:429 src/options/options.js:428
+#: src/options/options.js:438 src/page/services.vue:253
 msgid "Never"
 msgstr "هرگز"
 
@@ -2817,11 +2818,11 @@ msgstr "جدید"
 msgid "New Password"
 msgstr "رمزعبور جدید"
 
-#: src/options/options.js:511 src/page/albums.vue:404
+#: src/options/options.js:514 src/page/albums.vue:404
 msgid "Newest First"
 msgstr "اول جدیدترین ها"
 
-#: src/component/lightbox.vue:582 src/component/lightbox.vue:583
+#: src/component/lightbox.vue:583 src/component/lightbox.vue:584
 #: src/component/pdf-viewer.vue:127 src/component/pdf-viewer.vue:128
 #: src/locales.js:324
 msgid "Next"
@@ -2876,7 +2877,7 @@ msgstr "هیچ اپلیکیشنی به حساب کاربری شما متصل ن�
 msgid "No data available"
 msgstr "هیچ داده ای در دسترس نیست"
 
-#: src/component/lightbox.vue:3372 src/component/lightbox.vue:3380
+#: src/component/lightbox.vue:3374 src/component/lightbox.vue:3382
 #: src/component/photo/clipboard.vue:405 src/component/photo/clipboard.vue:413
 #: src/locales.js:438
 msgid "No files available for download"
@@ -2912,10 +2913,10 @@ msgstr "دیگر نه"
 msgid "No people found"
 msgstr "هیچ فردی پیدا نشد"
 
-#: src/component/lightbox.vue:688 src/component/photo/view/cards.vue:9
+#: src/component/lightbox.vue:689 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
+#: src/page/photos.vue:720 src/page/places.vue:759 src/page/places.vue:885
 msgid "No pictures found"
 msgstr "هیچ تصویری پیدا نشد"
 
@@ -2978,11 +2979,11 @@ msgstr "گره‌ها"
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز به بررسی دارند."
 
-#: src/options/auth.js:56 src/options/options.js:274 src/options/options.js:392
+#: src/options/auth.js:56 src/options/options.js:277 src/options/options.js:395
 msgid "None"
 msgstr "هیچ یک"
 
-#: src/component/lightbox.vue:1175 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1176 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "مجاز نیست"
@@ -2995,7 +2996,7 @@ msgstr "در حالت عمومی در دسترس نیست"
 msgid "Not available in read-only mode"
 msgstr "در حالت فقط خواندنی در دسترس نیست"
 
-#: src/component/lightbox.vue:1172 src/locales.js:402
+#: src/component/lightbox.vue:1173 src/locales.js:402
 msgid "Not found"
 msgstr "پیدا نشد"
 
@@ -3003,7 +3004,7 @@ msgstr "پیدا نشد"
 msgid "Not sorted."
 msgstr "مرتب نشده است."
 
-#: src/component/lightbox.vue:1169 src/component/lightbox.vue:1283
+#: src/component/lightbox.vue:1170 src/component/lightbox.vue:1284
 msgid "Not supported"
 msgstr "پشتیبانی نمی شود"
 
@@ -3020,8 +3021,8 @@ msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configure
 msgstr "توجه: فقط سرورهای WebDAV، مانند Nextcloud یا PhotoPrism، می توانند به عنوان سرویس راه دور برای پشتیبان گیری و آپلود فایل پیکربندی شوند."
 
 #: src/component/lightbox/sidebar.vue:891
-#: src/component/photo/edit/details.vue:362
-#: src/component/photo/edit/details.vue:365
+#: src/component/photo/edit/details.vue:363
+#: src/component/photo/edit/details.vue:366
 msgid "Notes"
 msgstr "یادداشت"
 
@@ -3042,11 +3043,11 @@ msgstr "چیزی پیدا نشد."
 msgid "OK"
 msgstr "باشه"
 
-#: src/options/options.js:334
+#: src/options/options.js:337
 msgid "Offline"
 msgstr "آفلاین"
 
-#: src/options/options.js:512 src/page/albums.vue:405
+#: src/options/options.js:515 src/page/albums.vue:405
 msgid "Oldest First"
 msgstr "اول قدیمی‌تر ها"
 
@@ -3058,7 +3059,7 @@ msgstr "در ویندوز، منبع زیر را در گفتگوی اتصال و
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "تولید تصاویر بندانگشتی بر اساس تقاضا ممکن است باعث مصرف بالای CPU و حافظه شود. برای سرورهای دارای محدودیت منابع و دستگاه های NAS توصیه نمی شود."
 
-#: src/options/options.js:431
+#: src/options/options.js:434
 msgid "Once a week"
 msgstr "یک بار در هفته"
 
@@ -3116,7 +3117,7 @@ msgstr "در مرورگر دسکتاپ، منوها هنگام hover کردن ب
 msgid "Open on Hover"
 msgstr "با hover باز شود"
 
-#: src/options/options.js:450
+#: src/options/options.js:453
 msgid "Orange"
 msgstr "نارنجی"
 
@@ -3133,7 +3134,7 @@ msgid "Original"
 msgstr "اصلی"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
-#: src/options/options.js:505
+#: src/options/options.js:508
 msgid "Original Name"
 msgstr "اسم اصلی"
 
@@ -3142,7 +3143,7 @@ msgid "Original file names will be stored and indexed."
 msgstr "نام فایل های اصلی ذخیره و نمایه می شود."
 
 #: src/component/navigation.vue:497 src/model/file.js:186
-#: src/options/options.js:477 src/page/library/browse.vue:7
+#: src/options/options.js:480 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:379
 msgid "Originals"
@@ -3152,7 +3153,7 @@ msgstr "اصلی ها"
 msgid "Originals folder is empty"
 msgstr "پوشه اصلی خالی است"
 
-#: src/options/options.js:468 src/options/options.js:491
+#: src/options/options.js:471 src/options/options.js:494
 msgid "Other"
 msgstr "دیگر"
 
@@ -3161,7 +3162,7 @@ msgstr "دیگر"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "ماموریت ما ارائه کاربرپسندترین راه حل برای حفظ حریم خصوصی برای سازماندهی و در دسترس نگه داشتن تصاویر شماست."
 
-#: src/options/options.js:319
+#: src/options/options.js:322
 msgid "Outdoor"
 msgstr "بیرون"
 
@@ -3177,7 +3178,7 @@ msgstr "محدودیت اندازه PNG: %{n}px"
 msgid "Page {0}, Current page"
 msgstr "صفحه {0}، صفحه فعلی"
 
-#: src/component/photo/edit/files.vue:182 src/model/photo.js:963
+#: src/component/photo/edit/files.vue:182 src/model/photo.js:1043
 msgid "Pages"
 msgstr "صفحات"
 
@@ -3230,7 +3231,7 @@ msgstr "در انتظار"
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
-#: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
+#: src/component/photo/edit/dialog.vue:62 src/options/options.js:264
 #: src/page/settings/general.vue:141
 msgid "People"
 msgstr "مردم"
@@ -3273,7 +3274,7 @@ msgstr "فرد ذخیره شد"
 msgid "Personal"
 msgstr "شخصی"
 
-#: src/model/photo.js:1450
+#: src/model/photo.js:1530
 msgid "Photo"
 msgstr "تصویر"
 
@@ -3294,11 +3295,11 @@ msgstr "تصاویر"
 msgid "Picture"
 msgstr "تصویر"
 
-#: src/options/options.js:516
+#: src/options/options.js:519
 msgid "Picture Title"
 msgstr "عنوان تصویر"
 
-#: src/options/options.js:448
+#: src/options/options.js:451
 msgid "Pink"
 msgstr "صورتی"
 
@@ -3316,7 +3317,7 @@ msgstr "مکان و زمان"
 
 #: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
 #: src/app/routes.js:503 src/component/navigation.vue:352
-#: src/component/navigation.vue:746 src/options/options.js:263
+#: src/component/navigation.vue:746 src/options/options.js:266
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:424 src/page/settings/general.vue:508
 msgid "Places"
@@ -3399,7 +3400,7 @@ msgstr "پیش نمایش"
 msgid "Preview Images"
 msgstr "پیش نمایش تصاویر"
 
-#: src/component/lightbox.vue:582 src/component/lightbox.vue:583
+#: src/component/lightbox.vue:583 src/component/lightbox.vue:584
 #: src/component/pdf-viewer.vue:115 src/component/pdf-viewer.vue:116
 #: src/locales.js:325
 msgid "Previous"
@@ -3441,7 +3442,7 @@ msgstr "خصوصی"
 msgid "Processing upload..."
 msgstr "در حال بارگذاری..."
 
-#: src/options/options.js:465
+#: src/options/options.js:468
 msgid "Product Feedback"
 msgstr "بازخورد محصول"
 
@@ -3449,7 +3450,7 @@ msgstr "بازخورد محصول"
 msgid "Projection"
 msgstr "طرح ها"
 
-#: src/options/options.js:446
+#: src/options/options.js:449
 msgid "Purple"
 msgstr "بنفش"
 
@@ -3480,7 +3481,7 @@ msgstr "تصادفی"
 msgid "Rating {0} of {1}"
 msgstr "رتبه بندی {0} از {1}"
 
-#: src/common/util.js:953 src/options/options.js:349
+#: src/common/util.js:953 src/options/options.js:352
 msgid "Raw"
 msgstr "خام"
 
@@ -3496,15 +3497,15 @@ msgstr "منطقه‌های صورت و نام‌ها را از متادادای
 msgid "Read-Only Mode"
 msgstr "حالت فقط خواندنی"
 
-#: src/options/options.js:513 src/page/albums.vue:406
+#: src/options/options.js:516 src/page/albums.vue:406
 msgid "Recently Added"
 msgstr "به تازگی اضافه شده"
 
-#: src/options/options.js:514
+#: src/options/options.js:517
 msgid "Recently Archived"
 msgstr "اخیراً بایگانی شده است"
 
-#: src/options/options.js:515 src/page/albums.vue:407
+#: src/options/options.js:518 src/page/albums.vue:407
 msgid "Recently Edited"
 msgstr "به تازگی ویرایش شده است"
 
@@ -3521,7 +3522,7 @@ msgstr "شناسایی شده"
 msgid "Recovery Code"
 msgstr "کد بازیابی"
 
-#: src/options/options.js:449
+#: src/options/options.js:452
 msgid "Red"
 msgstr "قرمز"
 
@@ -3579,7 +3580,7 @@ msgstr "همگام سازی از راه دور"
 #: src/component/lightbox/sidebar.vue:310
 #: src/component/lightbox/sidebar.vue:374
 #: src/component/lightbox/sidebar.vue:375
-#: src/component/meta/face/markers.vue:83
+#: src/component/meta/face/markers.vue:82
 #: src/component/photo/edit/people.vue:20
 msgid "Remove"
 msgstr "حذف"
@@ -3588,7 +3589,7 @@ msgstr "حذف"
 msgid "Remove Location"
 msgstr "حذف مکان"
 
-#: src/component/lightbox.vue:1762 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1764 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "حذف از آلبوم"
 
@@ -3625,7 +3626,7 @@ msgstr "%{name} حذف شد"
 msgid "Repeated"
 msgstr "تکرار شده"
 
-#: src/common/api.js:147 src/component/lightbox.vue:1279
+#: src/common/api.js:147 src/component/lightbox.vue:1280
 msgid "Request failed - are you offline?"
 msgstr "درخواست انجام نشد - آفلاین هستید؟"
 
@@ -3656,11 +3657,11 @@ msgstr "راه اندازی مجدد"
 
 #: src/component/user/edit/dialog.vue:354 src/page/admin/users.vue:137
 #: src/component/user/edit/dialog.vue:340 src/page/admin/users.vue:134
-#: src/component/lightbox.vue:1792 src/component/photo/clipboard.vue:48
+#: src/component/lightbox.vue:1794 src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "بازگرداندن"
 
-#: src/component/lightbox.vue:3343
+#: src/component/lightbox.vue:3345
 msgid "Restored"
 msgstr "بازسازی شد"
 
@@ -3712,7 +3713,7 @@ msgstr "چرخانده شده"
 msgid "Rows per page:"
 msgstr "ردیف در هر صفحه:"
 
-#: src/options/options.js:313
+#: src/options/options.js:316
 msgid "Satellite"
 msgstr "ماهواره"
 
@@ -3725,17 +3726,17 @@ msgstr "ماهواره"
 #: src/component/label/edit/dialog.vue:46
 #: src/component/lightbox/sidebar/toolbar.vue:22
 #: src/component/meta/camera/dialog.vue:121
-#: src/component/meta/datetime/dialog.vue:123
+#: src/component/meta/datetime/dialog.vue:124
 #: src/component/people/edit/dialog.vue:77
 #: src/component/photo/batch-edit.vue:497
-#: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:259
+#: src/component/photo/edit/details.vue:397 src/component/service/edit.vue:259
 #: src/component/settings/password.vue:94 src/component/share/dialog.vue:92
 msgid "Save"
 msgstr "ذخیره"
 
 #: src/component/meta/camera/dialog.vue:120
-#: src/component/meta/datetime/dialog.vue:122
-#: src/component/photo/edit/details.vue:391
+#: src/component/meta/datetime/dialog.vue:123
+#: src/component/photo/edit/details.vue:392
 msgid "Save changes"
 msgstr "ذخیره تغییرات"
 
@@ -3771,7 +3772,7 @@ msgstr "محدوده‌ها"
 #: src/page/admin/clients.vue:13 src/component/meta/location/dialog.vue:60
 #: src/component/navigation.vue:91 src/component/navigation.vue:728
 #: src/component/photo/toolbar.vue:32 src/locales.js:342
-#: src/options/options.js:257 src/page/albums.vue:19 src/page/labels.vue:15
+#: src/options/options.js:260 src/page/albums.vue:19 src/page/labels.vue:15
 #: src/page/library/errors.vue:18 src/page/people/recognized.vue:14
 #: src/page/places.vue:22 src/page/services.vue:15
 #: src/page/settings/content.vue:117
@@ -3802,7 +3803,7 @@ msgstr "محرمانه"
 msgid "Security and Access"
 msgstr "امنیت و دسترسی"
 
-#: src/component/lightbox.vue:1693 src/component/lightbox.vue:1694
+#: src/component/lightbox.vue:1695 src/component/lightbox.vue:1696
 msgid "Select"
 msgstr "انتخاب"
 
@@ -3930,7 +3931,7 @@ msgstr "شناسه جلسه"
 msgid "Sessions"
 msgstr "جلسات"
 
-#: src/component/lightbox.vue:1752
+#: src/component/lightbox.vue:1754
 msgid "Set as Album Cover"
 msgstr "تنظیم به عنوان جلد آلبوم"
 
@@ -3943,7 +3944,7 @@ msgstr "تنظیم به عنوان تصویر جلد"
 #: src/app/routes.js:206 src/app/routes.js:665 src/app/routes.js:677
 #: src/app/routes.js:689 src/app/routes.js:706 src/app/routes.js:718
 #: src/app/routes.js:738 src/component/navigation.vue:533
-#: src/component/navigation.vue:706 src/options/options.js:268
+#: src/component/navigation.vue:706 src/options/options.js:271
 msgid "Settings"
 msgstr "تنظیمات"
 
@@ -3972,7 +3973,7 @@ msgstr "اشتراک گذاری"
 msgid "Share %{s}"
 msgstr "اشتراک گذاری %{s}"
 
-#: src/options/options.js:506
+#: src/options/options.js:509
 msgid "Share Friendly"
 msgstr "اشتراک‌گذاری دوستانه"
 
@@ -3984,7 +3985,7 @@ msgstr "نمایش"
 msgid "Show All Labels"
 msgstr "نمایش همه برچسب‌ها"
 
-#: src/component/lightbox.vue:1829
+#: src/component/lightbox.vue:1831
 msgid "Show Caption"
 msgstr "نمایش توضیح"
 
@@ -4095,11 +4096,11 @@ msgstr "آدرس سایت"
 msgid "Size"
 msgstr "سایز"
 
-#: src/component/lightbox.vue:1640 src/component/lightbox.vue:1641
+#: src/component/lightbox.vue:1642 src/component/lightbox.vue:1643
 msgid "Slideshow"
 msgstr "نمایش اسلاید"
 
-#: src/options/options.js:286
+#: src/options/options.js:289
 msgid "Slow"
 msgstr "آهسته"
 
@@ -4128,7 +4129,7 @@ msgstr "بعضی از آلبوم‌ها قابل به‌روزرسانی نبو�
 msgid "Some files could not be exported. Please try again."
 msgstr "برخی فایل‌ها قابل صادر شدن نبودند. لطفاً دوباره تلاش کنید."
 
-#: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
+#: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1277
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
 #: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
@@ -4218,15 +4219,15 @@ msgstr "پایان انتخاب بازیگر"
 msgid "Storage"
 msgstr "ذخیره سازی"
 
-#: src/options/options.js:301
+#: src/options/options.js:304
 msgid "Streets"
 msgstr "خیابان ها"
 
 #: src/common/util.js:1009 src/component/lightbox/sidebar.vue:821
 #: src/component/photo/batch-edit.vue:337
 #: src/component/photo/batch-edit.vue:340
-#: src/component/photo/edit/details.vue:291
-#: src/component/photo/edit/details.vue:294
+#: src/component/photo/edit/details.vue:292
+#: src/component/photo/edit/details.vue:295
 msgid "Subject"
 msgstr "موضوع"
 
@@ -4293,11 +4294,11 @@ msgstr "همگام سازی فایل های خام و ویدیویی"
 msgid "Taken"
 msgstr "گرفته شده"
 
-#: src/options/options.js:455
+#: src/options/options.js:458
 msgid "Teal"
 msgstr "آبی رنگ"
 
-#: src/options/options.js:325
+#: src/options/options.js:328
 msgid "Terrain"
 msgstr "زمین"
 
@@ -4367,14 +4368,9 @@ msgstr "این پوشه اصلی را به عنوان درایو شبکه نصب
 msgid "Time"
 msgstr "زمان"
 
-#: src/component/meta/datetime/dialog.vue:163
-#: src/component/photo/edit/details.vue:109
-msgid "Time UTC"
-msgstr "زمان UTC"
-
-#: src/component/meta/datetime/dialog.vue:106
+#: src/component/meta/datetime/dialog.vue:107
 #: src/component/photo/batch-edit.vue:255
-#: src/component/photo/edit/details.vue:126 src/page/settings/general.vue:47
+#: src/component/photo/edit/details.vue:127 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "منطقه زمانی"
 
@@ -4530,11 +4526,11 @@ msgstr "شناسه منحصربفرد"
 #: src/component/photo/edit/details.vue:46
 #: src/component/photo/edit/details.vue:68
 #: src/component/photo/edit/details.vue:89
-#: src/component/photo/edit/details.vue:437 src/component/photo/toolbar.vue:385
-#: src/model/album.js:178 src/model/photo.js:333 src/model/photo.js:872
-#: src/model/photo.js:897 src/model/photo.js:920 src/model/photo.js:927
-#: src/model/photo.js:999 src/model/photo.js:1007 src/model/photo.js:1089
-#: src/model/photo.js:1111 src/model/photo.js:1148 src/model/photo.js:1178
+#: src/component/photo/edit/details.vue:438 src/component/photo/toolbar.vue:385
+#: src/model/album.js:178 src/model/photo.js:413 src/model/photo.js:952
+#: src/model/photo.js:977 src/model/photo.js:1000 src/model/photo.js:1007
+#: src/model/photo.js:1079 src/model/photo.js:1087 src/model/photo.js:1169
+#: src/model/photo.js:1191 src/model/photo.js:1228 src/model/photo.js:1258
 #: src/model/user.js:138 src/options/options.js:61 src/options/options.js:107
 #: src/options/options.js:125 src/options/options.js:142
 #: src/options/options.js:156 src/options/options.js:168
@@ -4752,7 +4748,7 @@ msgstr "کاربران"
 #: src/common/util.js:963 src/component/photo/export/dialog.vue:273
 #: src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
-#: src/component/photo/view/mosaic.vue:69 src/options/options.js:369
+#: src/component/photo/view/mosaic.vue:69 src/options/options.js:372
 msgid "Vector"
 msgstr "بردار"
 
@@ -4782,11 +4778,11 @@ msgstr "نسخه"
 #: src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:208
-#: src/model/photo.js:1023 src/model/photo.js:1041 src/options/options.js:357
+#: src/model/photo.js:1103 src/model/photo.js:1121 src/options/options.js:360
 msgid "Video"
 msgstr "ویدیو"
 
-#: src/options/options.js:519
+#: src/options/options.js:522
 msgid "Video Duration"
 msgstr "مدت"
 
@@ -4795,7 +4791,7 @@ msgid "Video Part"
 msgstr "بخش ویدیو"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
-#: src/options/options.js:260
+#: src/options/options.js:263
 msgid "Videos"
 msgstr "ویدیو ها"
 
@@ -4865,7 +4861,7 @@ msgstr "چشم انداز"
 msgid "Visitor"
 msgstr "بازدید کننده"
 
-#: src/options/options.js:520
+#: src/options/options.js:523
 msgid "Visual Similarity"
 msgstr "گروه بندی بر اساس شباهت"
 
@@ -4887,7 +4883,7 @@ msgstr "ورود به وب"
 #: src/component/user/add/dialog.vue:155 src/component/user/edit/dialog.vue:305
 #: src/page/admin/users.vue:313 src/component/user/edit/dialog.vue:298
 #: src/page/admin/users.vue:297 src/options/auth.js:90 src/options/auth.js:103
-#: src/options/options.js:501
+#: src/options/options.js:504
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4908,7 +4904,7 @@ msgstr "کلاینت های WebDAV، مانند Windows Explorer مایکروس�
 msgid "Website"
 msgstr "سایت اینترنتی"
 
-#: src/options/options.js:459
+#: src/options/options.js:462
 msgid "White"
 msgstr "سفید"
 
@@ -4923,7 +4919,7 @@ msgstr "جزئیات"
 msgid "Year"
 msgstr "سال"
 
-#: src/options/options.js:452
+#: src/options/options.js:455
 msgid "Yellow"
 msgstr "زرد"
 
@@ -5021,7 +5017,7 @@ msgstr "زوم به داخل"
 msgid "Zoom Out"
 msgstr "نزدیکی‌زدایی"
 
-#: src/component/lightbox.vue:580
+#: src/component/lightbox.vue:581
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
 
@@ -5085,6 +5081,9 @@ msgstr "{0} انتخاب شد"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} از {2}"
+
+#~ msgid "Time UTC"
+#~ msgstr "زمان UTC"
 
 #~ msgid "A unique still preview could not be found."
 #~ msgstr "پیش‌نمایش منحصربه‌فردی برای استیل یافت نشد."

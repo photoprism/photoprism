@@ -83,11 +83,11 @@ msgstr "%{s} çok uzun"
 msgid "%{s} is too short"
 msgstr "%{s} çok kısa"
 
-#: src/options/options.js:426
+#: src/options/options.js:429
 msgid "1 hour"
 msgstr "1 saat"
 
-#: src/options/options.js:428
+#: src/options/options.js:431
 msgid "12 hours"
 msgstr "12 saat"
 
@@ -110,7 +110,7 @@ msgstr "2FA"
 msgid "3rd-party software packages"
 msgstr "Üçüncü taraf yazılım paketleri"
 
-#: src/options/options.js:427
+#: src/options/options.js:430
 msgid "4 hours"
 msgstr "4 saat"
 
@@ -335,7 +335,7 @@ msgstr "Tarih ve Saati Ayarla"
 
 #: src/component/meta/location/dialog.vue:18
 #: src/component/photo/batch-edit.vue:278
-#: src/component/photo/edit/details.vue:145
+#: src/component/photo/edit/details.vue:146
 msgid "Adjust Location"
 msgstr "Konum Ayarlama"
 
@@ -348,15 +348,15 @@ msgstr "Yönetici"
 msgid "Advanced"
 msgstr "Gelişmiş"
 
-#: src/options/options.js:436
+#: src/options/options.js:439
 msgid "After 1 day"
 msgstr "1 gün sonra"
 
-#: src/options/options.js:437
+#: src/options/options.js:440
 msgid "After 3 days"
 msgstr "3 gün sonra"
 
-#: src/options/options.js:438
+#: src/options/options.js:441
 msgid "After 7 days"
 msgstr "7 gün sonra"
 
@@ -364,11 +364,11 @@ msgstr "7 gün sonra"
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr "Onay için şifrenizi girdikten sonra, uyumlu bir kimlik doğrulama uygulaması veya cihazıyla iki faktörlü kimlik doğrulamayı ayarlayabilirsiniz:"
 
-#: src/options/options.js:440
+#: src/options/options.js:443
 msgid "After one month"
 msgstr "Bir ay sonra"
 
-#: src/options/options.js:442
+#: src/options/options.js:445
 msgid "After one year"
 msgstr "Bir yıl sonra"
 
@@ -376,11 +376,11 @@ msgstr "Bir yıl sonra"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Arama sonuçlarından resimleri seçtikten sonra, içerik menüsünü kullanarak bunları bir albüme ekleyebilirsiniz."
 
-#: src/options/options.js:441
+#: src/options/options.js:444
 msgid "After two months"
 msgstr "İki ay sonra"
 
-#: src/options/options.js:439
+#: src/options/options.js:442
 msgid "After two weeks"
 msgstr "İki hafta sonra"
 
@@ -419,7 +419,7 @@ msgstr "Albüm kaydedildi"
 #: src/app/routes.js:346 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
-#: src/component/photo/edit/info.vue:107 src/options/options.js:258
+#: src/component/photo/edit/info.vue:107 src/options/options.js:261
 #: src/page/settings/collections.vue:113 src/page/settings/general.vue:81
 msgid "Albums"
 msgstr "Albümler"
@@ -538,7 +538,7 @@ msgid "Altitude"
 msgstr "Rakım"
 
 #: src/component/photo/batch-edit.vue:317
-#: src/component/photo/edit/details.vue:180
+#: src/component/photo/edit/details.vue:181
 msgid "Altitude (m)"
 msgstr "Rakım (m)"
 
@@ -548,7 +548,7 @@ msgstr "Rakım (m)"
 #: src/component/photo/export/dialog.vue:273
 #: src/component/photo/view/cards.vue:113
 #: src/component/photo/view/cards.vue:230 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:68 src/options/options.js:365
+#: src/component/photo/view/mosaic.vue:68 src/options/options.js:368
 msgid "Animated"
 msgstr "Hareketli"
 
@@ -574,12 +574,12 @@ msgid "Applications"
 msgstr "Uygulamalar"
 
 #: src/component/photo/clipboard.vue:36
-#: src/component/photo/edit/details.vue:395
+#: src/component/photo/edit/details.vue:396
 #: src/component/photo/view/cards.vue:177
 msgid "Approve"
 msgstr "Onayla"
 
-#: src/component/photo/edit/details.vue:391
+#: src/component/photo/edit/details.vue:392
 msgid "Approve and save changes"
 msgstr "Değişiklikleri onaylayın ve kaydedin"
 
@@ -594,13 +594,13 @@ msgctxt "Noun"
 msgid "Archive"
 msgstr "Arşiv"
 
-#: src/component/lightbox.vue:1777 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1779 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arşiv"
 
-#: src/component/lightbox.vue:3324 src/component/photo/edit/info.vue:303
+#: src/component/lightbox.vue:3326 src/component/photo/edit/info.vue:303
 msgid "Archived"
 msgstr "Arşivlendi"
 
@@ -640,8 +640,8 @@ msgstr "Emin misiniz?"
 #: src/component/lightbox/sidebar.vue:849
 #: src/component/photo/batch-edit.vue:392
 #: src/component/photo/batch-edit.vue:394
-#: src/component/photo/edit/details.vue:319
-#: src/component/photo/edit/details.vue:321
+#: src/component/photo/edit/details.vue:320
+#: src/component/photo/edit/details.vue:322
 msgid "Artist"
 msgstr "Sanatçı"
 
@@ -654,7 +654,7 @@ msgid "Attributes"
 msgstr "Nitelikler"
 
 #: src/app/routes.js:420 src/common/util.js:959
-#: src/component/navigation.vue:254 src/options/options.js:361
+#: src/component/navigation.vue:254 src/options/options.js:364
 msgid "Audio"
 msgstr "Ses"
 
@@ -677,8 +677,8 @@ msgstr "Kimlik Doğrulama"
 msgid "Auto"
 msgstr "Otomatik"
 
-#: src/component/meta/face/markers.vue:94
-#: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:56
+#: src/component/meta/face/markers.vue:93
+#: src/component/meta/face/markers.vue:94 src/component/settings/apps.vue:56
 msgid "Back"
 msgstr "Geri"
 
@@ -739,15 +739,15 @@ msgstr "Özgeçmiş"
 msgid "Birth Date"
 msgstr "Doğum Tarihi"
 
-#: src/options/options.js:461
+#: src/options/options.js:464
 msgid "Black"
 msgstr "Siyah"
 
-#: src/options/options.js:457
+#: src/options/options.js:460
 msgid "Blue"
 msgstr "Mavi"
 
-#: src/options/options.js:458
+#: src/options/options.js:461
 msgid "Brown"
 msgstr "Kahverengi"
 
@@ -764,7 +764,7 @@ msgstr "Dosyalara Gözat"
 msgid "Browse Pictures"
 msgstr "Resimlere Gözat"
 
-#: src/options/options.js:467
+#: src/options/options.js:470
 msgid "Bug Report"
 msgstr "Hata raporu"
 
@@ -781,14 +781,14 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "Sağladığımız yazılım ve hizmetleri kullanarak hizmet şartlarımızı, gizlilik politikamızı ve davranış kurallarımızı kabul etmiş olursunuz."
 
 #: src/app/routes.js:359 src/component/navigation.vue:396
-#: src/options/options.js:264 src/page/settings/collections.vue:173
+#: src/options/options.js:267 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
 msgstr "Takvim"
 
 #: src/component/lightbox/sidebar.vue:119
 #: src/component/meta/camera/dialog.vue:30
-#: src/component/photo/edit/details.vue:195 src/component/photo/toolbar.vue:129
+#: src/component/photo/edit/details.vue:196 src/component/photo/toolbar.vue:129
 #: src/component/photo/view/cards.vue:204 src/component/photo/view/list.vue:40
 msgid "Camera"
 msgstr "Kamera"
@@ -832,9 +832,9 @@ msgstr "Daha fazla öğe seçilemiyor"
 #: src/component/label/delete/dialog.vue:19
 #: src/component/label/edit/dialog.vue:43
 #: src/component/meta/camera/dialog.vue:118
-#: src/component/meta/datetime/dialog.vue:120
-#: src/component/meta/face/markers.vue:54
-#: src/component/meta/face/markers.vue:73
+#: src/component/meta/datetime/dialog.vue:121
+#: src/component/meta/face/markers.vue:53
+#: src/component/meta/face/markers.vue:72
 #: src/component/meta/location/dialog.vue:109
 #: src/component/people/edit/dialog.vue:74
 #: src/component/photo/album/dialog.vue:64
@@ -912,7 +912,7 @@ msgstr "Özel işaretini değiştir"
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:168
 #: src/component/photo/batch-edit.vue:1467
-#: src/component/photo/edit/details.vue:635 src/locales.js:399
+#: src/component/photo/edit/details.vue:670 src/locales.js:399
 #: src/page/settings/account.vue:472 src/page/settings/account.vue:477
 msgid "Changes could not be saved"
 msgstr "Değişiklikler kaydedilemedi"
@@ -926,7 +926,7 @@ msgstr "Değişiklikler kaydedilemedi"
 #: src/component/client/edit/dialog.vue:457
 #: src/component/user/edit/dialog.vue:459
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3276
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3278
 #: src/component/photo/batch-edit.vue:1499
 #: src/component/photo/edit/files.vue:574 src/component/service/edit.vue:382
 #: src/component/share/dialog.vue:214 src/component/share/dialog.vue:233
@@ -992,16 +992,16 @@ msgstr "İstemciler"
 #: src/component/client/edit/dialog.vue:219
 #: src/component/user/edit/dialog.vue:330
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:579
-#: src/component/lightbox.vue:1580 src/component/lightbox.vue:1581
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:580
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
 #: src/component/people/edit/dialog.vue:21
 #: src/component/photo/album/dialog.vue:18
 #: src/component/photo/batch-edit.vue:18 src/component/photo/batch-edit.vue:487
-#: src/component/photo/edit/details.vue:380
-#: src/component/photo/edit/details.vue:385
+#: src/component/photo/edit/details.vue:381
+#: src/component/photo/edit/details.vue:386
 #: src/component/photo/export/dialog.vue:19
 #: src/component/photo/export/dialog.vue:92 src/component/photo/toolbar.vue:94
 #: src/component/settings/apps.vue:91 src/component/settings/apps.vue:216
@@ -1065,7 +1065,7 @@ msgstr "Tam Yeniden Tarama"
 msgid "Confidence"
 msgstr "Güven"
 
-#: src/component/meta/face/markers.vue:64
+#: src/component/meta/face/markers.vue:63
 #: src/component/meta/location/dialog.vue:120
 #: src/component/photo/album/dialog.vue:67
 #: src/component/settings/passcode.vue:110 src/page/people/new.vue:101
@@ -1157,8 +1157,8 @@ msgstr "Dosyaları %s'dan kopyalama"
 #: src/component/lightbox/sidebar.vue:835
 #: src/component/photo/batch-edit.vue:375
 #: src/component/photo/batch-edit.vue:377
-#: src/component/photo/edit/details.vue:306
-#: src/component/photo/edit/details.vue:308
+#: src/component/photo/edit/details.vue:307
+#: src/component/photo/edit/details.vue:309
 msgid "Copyright"
 msgstr "Telif hakkı"
 
@@ -1179,7 +1179,7 @@ msgid "Couldn't find anything."
 msgstr "Hiçbir şey bulunamadı."
 
 #: src/page/settings/account.vue:382 src/component/photo/batch-edit.vue:293
-#: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:108
+#: src/component/photo/edit/details.vue:160 src/component/photo/toolbar.vue:108
 #: src/page/settings/account.vue:299
 msgid "Country"
 msgstr "Ülke"
@@ -1214,7 +1214,7 @@ msgstr "Oluşturuldu"
 msgid "Creating thumbnails for"
 msgstr "Önizlemeler üretiliyor"
 
-#: src/options/options.js:504
+#: src/options/options.js:507
 msgid "Current Name"
 msgstr "Mevcut Adı"
 
@@ -1227,11 +1227,11 @@ msgstr "Mevcut Şifre"
 msgid "Custom"
 msgstr "Özel"
 
-#: src/options/options.js:456
+#: src/options/options.js:459
 msgid "Cyan"
 msgstr "Camgöbeği"
 
-#: src/options/options.js:429
+#: src/options/options.js:432
 msgid "Daily"
 msgstr "Günlük"
 
@@ -1271,9 +1271,9 @@ msgstr "Hata Kayıtları"
 #: src/page/admin/users.vue:392 src/common/util.js:983
 #: src/component/photo/edit/info.vue:23 src/model/session.js:42
 #: src/model/user.js:365 src/options/auth.js:43 src/options/auth.js:44
-#: src/options/auth.js:73 src/options/auth.js:74 src/options/options.js:253
-#: src/options/options.js:256 src/options/options.js:296
-#: src/options/options.js:380 src/options/themes.js:863
+#: src/options/auth.js:73 src/options/auth.js:74 src/options/options.js:256
+#: src/options/options.js:259 src/options/options.js:299
+#: src/options/options.js:383 src/options/themes.js:863
 msgid "Default"
 msgstr "Varsayılan"
 
@@ -1425,11 +1425,11 @@ msgstr "Video kod dönüştürmeyi ve küçük resim çıkarmayı devre dışı 
 
 #: src/component/lightbox/sidebar.vue:472
 #: src/component/photo/batch-edit.vue:486
-#: src/component/photo/edit/details.vue:384
+#: src/component/photo/edit/details.vue:385
 msgid "Discard"
 msgstr "Iskarta"
 
-#: src/component/photo/edit/details.vue:380
+#: src/component/photo/edit/details.vue:381
 msgid "Discard changes and close"
 msgstr "Değişiklikleri atın ve kapatın"
 
@@ -1483,7 +1483,7 @@ msgstr "Arama sonuçlarında resim başlıklarını görüntüleyin."
 #: src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
-#: src/options/options.js:373
+#: src/options/options.js:376
 msgid "Document"
 msgstr "Belge"
 
@@ -1516,7 +1516,7 @@ msgstr "Tamamlandı."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
 #: src/component/file/clipboard.vue:24 src/component/label/clipboard.vue:21
-#: src/component/lightbox.vue:1818 src/component/people/clipboard.vue:23
+#: src/component/lightbox.vue:1820 src/component/people/clipboard.vue:23
 #: src/component/photo/clipboard.vue:84 src/component/photo/edit/files.vue:67
 #: src/page/settings/collections.vue:31 src/page/settings/content.vue:174
 #: src/page/settings/general.vue:230
@@ -1537,7 +1537,7 @@ msgstr "İndirme işlemi, kod dönüştürme tamamlandıktan sonra başlar."
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3370 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3372 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:403 src/component/photo/clipboard.vue:421
 #: src/component/photo/edit/files.vue:531
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
@@ -1577,7 +1577,7 @@ msgstr "Dinamik Boyut Sınırı: %{n}px"
 #: src/page/admin/users.vue:162 src/page/cluster/nodes.vue:53
 #: src/page/admin/clients.vue:110 src/page/admin/users.vue:159
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1711 src/component/lightbox.vue:1712
+#: src/component/lightbox.vue:1713 src/component/lightbox.vue:1714
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1696,7 +1696,7 @@ msgstr "İşlemi onaylamak ve devam etmek için şifrenizi girin:"
 msgid "Entity not found"
 msgstr "Varlık bulunamadı"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:584
+#: src/page/connect.vue:14 src/component/lightbox.vue:585
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Hata"
@@ -1717,7 +1717,7 @@ msgstr "Tahmini Konumlar"
 msgid "Estimate the approximate location of pictures without GPS coordinates."
 msgstr "GPS koordinatları olmadan resimlerin yaklaşık konumunu tahmin edin."
 
-#: src/options/options.js:430
+#: src/options/options.js:433
 msgid "Every two days"
 msgstr "İki günde bir"
 
@@ -1745,7 +1745,7 @@ msgstr "Deneysel Özellikler"
 msgid "Expires"
 msgstr "Süre sonu"
 
-#: src/component/lightbox.vue:1807 src/component/photo/export/dialog.vue:18
+#: src/component/lightbox.vue:1809 src/component/photo/export/dialog.vue:18
 #: src/page/settings/general.vue:245
 msgid "Export"
 msgstr "Dışa Aktar"
@@ -1760,8 +1760,8 @@ msgstr "1 Dosyayı Dışa Aktar"
 
 #: src/component/meta/camera/dialog.vue:79
 #: src/component/meta/camera/dialog.vue:83
-#: src/component/photo/edit/details.vue:230
-#: src/component/photo/edit/details.vue:234
+#: src/component/photo/edit/details.vue:231
+#: src/component/photo/edit/details.vue:235
 msgid "Exposure"
 msgstr "Pozlama"
 
@@ -1770,7 +1770,7 @@ msgid "Extract still images and generate thumbnails while indexing."
 msgstr "Hareketsiz görüntüleri ayıklayın ve indeksleme sırasında küçük resimler oluşturun."
 
 #: src/component/meta/camera/dialog.vue:93
-#: src/component/photo/edit/details.vue:263
+#: src/component/photo/edit/details.vue:264
 msgid "F Number"
 msgstr "F Numarası"
 
@@ -1826,11 +1826,11 @@ msgstr "PDF belgesi yüklenemedi."
 msgid "Failed to load users."
 msgstr "Kullanıcılar yüklenemedi."
 
-#: src/component/lightbox.vue:2327
+#: src/component/lightbox.vue:2329
 msgid "Failed to remove face marker"
 msgstr "Yüz işaretleyicisi kaldırılamadı"
 
-#: src/component/lightbox.vue:2260
+#: src/component/lightbox.vue:2262
 msgid "Failed to remove name"
 msgstr "Ad kaldırılamadı"
 
@@ -1843,14 +1843,14 @@ msgstr "Sunucu yeniden başlatılamadı"
 #: src/component/lightbox/sidebar.vue:1992
 #: src/component/lightbox/sidebar.vue:2050
 #: src/component/lightbox/sidebar.vue:2070
-#: src/component/lightbox/sidebar.vue:2177
-#: src/component/lightbox/sidebar.vue:2200
-#: src/component/lightbox/sidebar.vue:2230
+#: src/component/lightbox/sidebar.vue:2168
+#: src/component/lightbox/sidebar.vue:2191
+#: src/component/lightbox/sidebar.vue:2221
 #: src/component/photo/batch-edit.vue:1506
 msgid "Failed to save changes"
 msgstr "Değişiklikler kaydedilemedi"
 
-#: src/component/lightbox.vue:2232
+#: src/component/lightbox.vue:2234
 msgid "Failed to save face marker"
 msgstr "Yüz işaretleyicisini kurtaramadı"
 
@@ -1871,7 +1871,7 @@ msgstr "Bağlantı güncellenemedi"
 msgid "Family Name"
 msgstr "Soyadı"
 
-#: src/options/options.js:278
+#: src/options/options.js:281
 msgid "Fast"
 msgstr "Hızlı"
 
@@ -1884,12 +1884,12 @@ msgid "Favorite"
 msgstr "Favori"
 
 #: src/app/routes.js:392 src/component/navigation.vue:316
-#: src/options/options.js:262 src/page/albums.vue:401
+#: src/options/options.js:265 src/page/albums.vue:401
 #: src/page/settings/general.vue:96
 msgid "Favorites"
 msgstr "Favoriler"
 
-#: src/options/options.js:466
+#: src/options/options.js:469
 msgid "Feature Request"
 msgstr "Özellik isteği"
 
@@ -1901,7 +1901,7 @@ msgstr "Özellik devre dışı"
 msgid "Features"
 msgstr "Özellikler"
 
-#: src/options/options.js:490
+#: src/options/options.js:493
 msgid "Female"
 msgstr "Kadın"
 
@@ -1920,11 +1920,11 @@ msgstr "Dosya Dönüştürme"
 
 #: src/component/photo/batch-edit.vue:621
 #: src/component/photo/batch-edit.vue:641 src/component/photo/view/list.vue:34
-#: src/options/options.js:517
+#: src/options/options.js:520
 msgid "File Name"
 msgstr "Dosya Adı"
 
-#: src/options/options.js:518
+#: src/options/options.js:521
 msgid "File Size"
 msgstr "Dosya Boyutu"
 
@@ -1975,7 +1975,7 @@ msgid "Fisheye"
 msgstr "Balık Gözü"
 
 #: src/component/meta/camera/dialog.vue:105
-#: src/component/photo/edit/details.vue:276
+#: src/component/photo/edit/details.vue:277
 msgid "Focal Length"
 msgstr "Odak uzaklığı"
 
@@ -1995,7 +1995,7 @@ msgid "Folder is empty"
 msgstr "Klasör boş"
 
 #: src/app/routes.js:372 src/component/navigation.vue:463
-#: src/options/options.js:267 src/page/settings/collections.vue:128
+#: src/options/options.js:270 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
 msgstr "Klasörler"
@@ -2029,8 +2029,8 @@ msgstr "Tam Boyutlu Önizleme"
 msgid "Full-Size Preview (First Page)"
 msgstr "Tam Boyutlu Önizleme (İlk Sayfa)"
 
-#: src/common/map.js:128 src/component/lightbox.vue:1657
-#: src/component/lightbox.vue:1658
+#: src/common/map.js:128 src/component/lightbox.vue:1659
+#: src/component/lightbox.vue:1660
 msgid "Fullscreen"
 msgstr "Tam ekran"
 
@@ -2079,15 +2079,15 @@ msgstr "%{n} sayfasına git"
 msgid "Go to page {0}"
 msgstr "{0}. sayfaya gidin"
 
-#: src/options/options.js:451
+#: src/options/options.js:454
 msgid "Gold"
 msgstr "Altın"
 
-#: src/options/options.js:454
+#: src/options/options.js:457
 msgid "Green"
 msgstr "Yeşil"
 
-#: src/options/options.js:460
+#: src/options/options.js:463
 msgid "Grey"
 msgstr "Gri"
 
@@ -2124,7 +2124,7 @@ msgstr "Gizli Dosyalar"
 msgid "Hide"
 msgstr "Gizle"
 
-#: src/component/lightbox.vue:1840
+#: src/component/lightbox.vue:1842
 msgid "Hide Caption"
 msgstr "Başlığı Gizle"
 
@@ -2152,7 +2152,7 @@ msgstr "Özel öğeleri genel görünümlerden gizlerken Özel bölümünde eri�
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
 msgstr "Bazı masaüstü tarayıcılarında görüntülenen sabit kaydırma çubuğunu gizleyin."
 
-#: src/options/options.js:384
+#: src/options/options.js:387
 msgid "High"
 msgstr "Yüksek"
 
@@ -2160,7 +2160,7 @@ msgstr "Yüksek"
 msgid "High Dynamic Range (HDR)"
 msgstr "Yüksek Dinamik Aralık (HDR)"
 
-#: src/options/options.js:307
+#: src/options/options.js:310
 msgid "Hybrid"
 msgstr "Hibrit"
 
@@ -2176,7 +2176,7 @@ msgstr "Kimlik doğrulayıcı uygulamanıza veya cihazınıza erişiminizi kaybe
 #: src/common/util.js:951 src/common/util.js:993
 #: src/component/photo/export/dialog.vue:273
 #: src/component/photo/view/cards.vue:246 src/model/file.js:205
-#: src/options/options.js:345
+#: src/options/options.js:348
 msgid "Image"
 msgstr "Resim"
 
@@ -2268,7 +2268,7 @@ msgstr "Medya ve yardımcı dosyalar indeksleniyor…"
 msgid "Indexing originals..."
 msgstr "Orijinalleri dizinliyor..."
 
-#: src/component/lightbox.vue:1605 src/component/lightbox.vue:1606
+#: src/component/lightbox.vue:1607 src/component/lightbox.vue:1608
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Bilgi"
@@ -2332,7 +2332,8 @@ msgstr "Geçersiz ülke"
 msgid "Invalid credentials"
 msgstr "Geçersiz kimlik bilgileri"
 
-#: src/component/photo/edit/details.vue:626
+#: src/component/photo/edit/details.vue:661
+#: src/component/photo/edit/details.vue:677
 msgid "Invalid date"
 msgstr "Geçersiz tarih"
 
@@ -2395,8 +2396,8 @@ msgid "Keyword"
 msgstr "Anahtar Kelime"
 
 #: src/component/lightbox/sidebar.vue:877
-#: src/component/photo/edit/details.vue:347
-#: src/component/photo/edit/details.vue:350
+#: src/component/photo/edit/details.vue:348
+#: src/component/photo/edit/details.vue:351
 msgid "Keywords"
 msgstr "Anahtar Kelimeler"
 
@@ -2422,7 +2423,7 @@ msgstr "Etiket kaydedildi"
 #: src/component/photo/batch-edit.vue:444
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:352
-#: src/options/options.js:266 src/page/settings/general.vue:186
+#: src/options/options.js:269 src/page/settings/general.vue:186
 msgid "Labels"
 msgstr "Etiketler"
 
@@ -2481,7 +2482,7 @@ msgstr "Yasal Bilgiler"
 
 #: src/component/lightbox/sidebar.vue:140
 #: src/component/meta/camera/dialog.vue:46
-#: src/component/photo/edit/details.vue:243
+#: src/component/photo/edit/details.vue:244
 #: src/component/photo/view/cards.vue:213
 msgid "Lens"
 msgstr "Lens"
@@ -2499,16 +2500,16 @@ msgstr "Kütüphane"
 #: src/component/lightbox/sidebar.vue:863 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:409
 #: src/component/photo/batch-edit.vue:412
-#: src/component/photo/edit/details.vue:332
-#: src/component/photo/edit/details.vue:335 src/page/about/license.vue:5
+#: src/component/photo/edit/details.vue:333
+#: src/component/photo/edit/details.vue:336 src/page/about/license.vue:5
 msgid "License"
 msgstr "Lisans"
 
-#: src/component/lightbox.vue:1675 src/component/lightbox.vue:1676
+#: src/component/lightbox.vue:1677 src/component/lightbox.vue:1678
 msgid "Like"
 msgstr "Sevmek"
 
-#: src/options/options.js:453
+#: src/options/options.js:456
 msgid "Lime"
 msgstr "Lime yeşili"
 
@@ -2532,7 +2533,7 @@ msgstr "Liste Görünümü"
 #: src/component/photo/batch-edit.vue:124
 #: src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
-#: src/component/photo/view/mosaic.vue:67 src/options/options.js:353
+#: src/component/photo/view/mosaic.vue:67 src/options/options.js:356
 msgid "Live"
 msgstr "Canlı"
 
@@ -2565,7 +2566,7 @@ msgstr "Yükleniyor…"
 msgid "Local"
 msgstr "Yerel"
 
-#: src/component/meta/datetime/dialog.vue:165
+#: src/component/meta/datetime/dialog.vue:170
 #: src/component/photo/edit/details.vue:109
 msgid "Local Time"
 msgstr "Yerel Saat"
@@ -2575,9 +2576,9 @@ msgstr "Yerel Saat"
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:267
 #: src/component/photo/batch-edit.vue:596
-#: src/component/photo/edit/details.vue:449
-#: src/component/photo/edit/details.vue:573
-#: src/component/photo/edit/details.vue:678
+#: src/component/photo/edit/details.vue:452
+#: src/component/photo/edit/details.vue:597
+#: src/component/photo/edit/details.vue:719
 #: src/component/photo/view/cards.vue:255 src/component/photo/view/list.vue:43
 #: src/page/albums.vue:403 src/page/settings/account.vue:289
 #: src/page/settings/account.vue:291
@@ -2610,11 +2611,11 @@ msgstr "Boylam"
 msgid "Lost server connection"
 msgstr "Kayıp sunucu bağlantısı"
 
-#: src/options/options.js:388
+#: src/options/options.js:391
 msgid "Low"
 msgstr "Düşük"
 
-#: src/options/options.js:447
+#: src/options/options.js:450
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -2622,7 +2623,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Ana renk"
 
-#: src/options/options.js:489
+#: src/options/options.js:492
 msgid "Male"
 msgstr "Erkek"
 
@@ -2661,7 +2662,7 @@ msgstr "Harita Stili"
 msgid "Maps"
 msgstr "Haritalar"
 
-#: src/component/map.vue:120 src/page/places.vue:430 src/page/places.vue:435
+#: src/component/map.vue:109 src/page/places.vue:431 src/page/places.vue:436
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "Haritalar kullanılamıyor. Başka bir tarayıcı veya cihaz deneyin."
 
@@ -2674,11 +2675,11 @@ msgid "Maximum number of accounts has been reached."
 msgstr "Maksimum hesap sayısına ulaşıldı."
 
 #: src/app/routes.js:399 src/component/navigation.vue:225
-#: src/options/options.js:259 src/page/settings/general.vue:126
+#: src/options/options.js:262 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "Medya"
 
-#: src/options/options.js:282
+#: src/options/options.js:285
 msgid "Medium"
 msgstr "Orta"
 
@@ -2720,7 +2721,7 @@ msgid "Modified"
 msgstr "Değiştirildi"
 
 #: src/app/routes.js:333 src/component/navigation.vue:423
-#: src/options/options.js:265 src/page/settings/collections.vue:143
+#: src/options/options.js:268 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
 msgstr "Anlar"
@@ -2736,7 +2737,7 @@ msgstr "Monokrom"
 msgid "Month"
 msgstr "Ay"
 
-#: src/component/lightbox.vue:1730
+#: src/component/lightbox.vue:1732
 msgid "More options"
 msgstr "Daha fazla seçenek"
 
@@ -2744,7 +2745,7 @@ msgstr "Daha fazla seçenek"
 msgid "Mosaic"
 msgstr "Mozaik"
 
-#: src/options/options.js:521
+#: src/options/options.js:524
 msgid "Most Relevant"
 msgstr "En Alakalı"
 
@@ -2760,7 +2761,7 @@ msgstr "Dosyaları %s'dan taşıma"
 msgid "Must have at least %{n} characters."
 msgstr "En az %{n} karakter olmalıdır."
 
-#: src/component/lightbox.vue:1624 src/component/lightbox.vue:1625
+#: src/component/lightbox.vue:1626 src/component/lightbox.vue:1627
 msgid "Mute"
 msgstr "Sessiz"
 
@@ -2804,8 +2805,8 @@ msgstr "İsim çok uzun"
 
 #: src/page/admin/users.vue:286 src/page/admin/users.vue:485
 #: src/component/client/edit/dialog.vue:440 src/page/admin/clients.vue:309
-#: src/page/admin/users.vue:429 src/options/options.js:425
-#: src/options/options.js:435 src/page/services.vue:253
+#: src/page/admin/users.vue:429 src/options/options.js:428
+#: src/options/options.js:438 src/page/services.vue:253
 msgid "Never"
 msgstr "Asla"
 
@@ -2817,11 +2818,11 @@ msgstr "Yeni"
 msgid "New Password"
 msgstr "Yeni Şifre"
 
-#: src/options/options.js:511 src/page/albums.vue:404
+#: src/options/options.js:514 src/page/albums.vue:404
 msgid "Newest First"
 msgstr "Yeniden Eskiye"
 
-#: src/component/lightbox.vue:582 src/component/lightbox.vue:583
+#: src/component/lightbox.vue:583 src/component/lightbox.vue:584
 #: src/component/pdf-viewer.vue:127 src/component/pdf-viewer.vue:128
 #: src/locales.js:324
 msgid "Next"
@@ -2876,7 +2877,7 @@ msgstr "Hesabınıza bağlı hiçbir uygulama yok."
 msgid "No data available"
 msgstr "Veri mevcut değil"
 
-#: src/component/lightbox.vue:3372 src/component/lightbox.vue:3380
+#: src/component/lightbox.vue:3374 src/component/lightbox.vue:3382
 #: src/component/photo/clipboard.vue:405 src/component/photo/clipboard.vue:413
 #: src/locales.js:438
 msgid "No files available for download"
@@ -2912,10 +2913,10 @@ msgstr "Artık yok"
 msgid "No people found"
 msgstr "Hiç kimse bulunamadı"
 
-#: src/component/lightbox.vue:688 src/component/photo/view/cards.vue:9
+#: src/component/lightbox.vue:689 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
 #: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:758 src/page/places.vue:884
+#: src/page/photos.vue:720 src/page/places.vue:759 src/page/places.vue:885
 msgid "No pictures found"
 msgstr "Resim bulunamadı"
 
@@ -2978,11 +2979,11 @@ msgstr "Düğümler"
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Fotoğrafik olmayan ve düşük kaliteli görüntülerin arama sonuçlarında görünmeden önce incelenmesi gerekmektedir."
 
-#: src/options/auth.js:56 src/options/options.js:274 src/options/options.js:392
+#: src/options/auth.js:56 src/options/options.js:277 src/options/options.js:395
 msgid "None"
 msgstr "Hiçbiri"
 
-#: src/component/lightbox.vue:1175 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1176 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "İzin verilmez"
@@ -2995,7 +2996,7 @@ msgstr "Genel modda mevcut değil"
 msgid "Not available in read-only mode"
 msgstr "Salt okunur modda kullanılamaz"
 
-#: src/component/lightbox.vue:1172 src/locales.js:402
+#: src/component/lightbox.vue:1173 src/locales.js:402
 msgid "Not found"
 msgstr "Bulunamadı"
 
@@ -3003,7 +3004,7 @@ msgstr "Bulunamadı"
 msgid "Not sorted."
 msgstr "Sıralanmamış."
 
-#: src/component/lightbox.vue:1169 src/component/lightbox.vue:1283
+#: src/component/lightbox.vue:1170 src/component/lightbox.vue:1284
 msgid "Not supported"
 msgstr "Desteklenmiyor"
 
@@ -3020,8 +3021,8 @@ msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configure
 msgstr "Not: Yalnızca Nextcloud veya PhotoPrism gibi WebDAV sunucuları yedekleme ve dosya yükleme için uzak hizmet olarak yapılandırılabilir."
 
 #: src/component/lightbox/sidebar.vue:891
-#: src/component/photo/edit/details.vue:362
-#: src/component/photo/edit/details.vue:365
+#: src/component/photo/edit/details.vue:363
+#: src/component/photo/edit/details.vue:366
 msgid "Notes"
 msgstr "Notlar"
 
@@ -3042,11 +3043,11 @@ msgstr "Hiçbir şey bulunamadı."
 msgid "OK"
 msgstr "TAMAM"
 
-#: src/options/options.js:334
+#: src/options/options.js:337
 msgid "Offline"
 msgstr "Çevrimdışı"
 
-#: src/options/options.js:512 src/page/albums.vue:405
+#: src/options/options.js:515 src/page/albums.vue:405
 msgid "Oldest First"
 msgstr "Eskiden Yeniye"
 
@@ -3058,7 +3059,7 @@ msgstr "Windows'ta, bağlantı iletişim kutusuna aşağıdaki kaynağı girin:"
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Küçük resimlerin isteğe bağlı olarak oluşturulması yüksek CPU ve bellek kullanımına neden olabilir. Kaynakları kısıtlı sunucular ve NAS cihazları için önerilmez."
 
-#: src/options/options.js:431
+#: src/options/options.js:434
 msgid "Once a week"
 msgstr "Haftada bir"
 
@@ -3116,7 +3117,7 @@ msgstr "Masaüstü tarayıcısı kullanılırken, menüleri tıklama yerine fare
 msgid "Open on Hover"
 msgstr "Fareyle Üzerine Gelindiğinde Aç"
 
-#: src/options/options.js:450
+#: src/options/options.js:453
 msgid "Orange"
 msgstr "Turuncu"
 
@@ -3133,7 +3134,7 @@ msgid "Original"
 msgstr "Orijinal"
 
 #: src/component/photo/edit/files.vue:158 src/component/photo/edit/info.vue:60
-#: src/options/options.js:505
+#: src/options/options.js:508
 msgid "Original Name"
 msgstr "Orijinal Adı"
 
@@ -3142,7 +3143,7 @@ msgid "Original file names will be stored and indexed."
 msgstr "Orijinal dosya adları saklanacak ve indekslenecektir."
 
 #: src/component/navigation.vue:497 src/model/file.js:186
-#: src/options/options.js:477 src/page/library/browse.vue:7
+#: src/options/options.js:480 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:379
 msgid "Originals"
@@ -3152,7 +3153,7 @@ msgstr "Orijinaller"
 msgid "Originals folder is empty"
 msgstr "Orijinaller klasörü boş"
 
-#: src/options/options.js:468 src/options/options.js:491
+#: src/options/options.js:471 src/options/options.js:494
 msgid "Other"
 msgstr "Diğer"
 
@@ -3161,7 +3162,7 @@ msgstr "Diğer"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Misyonumuz, resimlerinizi düzenli ve erişilebilir tutmak için en kullanıcı ve gizlilik dostu çözümü sunmaktır."
 
-#: src/options/options.js:319
+#: src/options/options.js:322
 msgid "Outdoor"
 msgstr "Dış mekan"
 
@@ -3177,7 +3178,7 @@ msgstr "PNG Boyut Sınırı: %{n}px"
 msgid "Page {0}, Current page"
 msgstr "Sayfa {0}, Mevcut sayfa"
 
-#: src/component/photo/edit/files.vue:182 src/model/photo.js:963
+#: src/component/photo/edit/files.vue:182 src/model/photo.js:1043
 msgid "Pages"
 msgstr "Sayfalar"
 
@@ -3230,7 +3231,7 @@ msgstr "Beklemede"
 #: src/app/routes.js:577 src/app/routes.js:601
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
 #: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:59
-#: src/component/photo/edit/dialog.vue:62 src/options/options.js:261
+#: src/component/photo/edit/dialog.vue:62 src/options/options.js:264
 #: src/page/settings/general.vue:141
 msgid "People"
 msgstr "Kişi"
@@ -3273,7 +3274,7 @@ msgstr "Kurtarılan kişi"
 msgid "Personal"
 msgstr "Kişisel"
 
-#: src/model/photo.js:1450
+#: src/model/photo.js:1530
 msgid "Photo"
 msgstr "Fotoğraf"
 
@@ -3294,11 +3295,11 @@ msgstr "Fotoğraflar"
 msgid "Picture"
 msgstr "Resim"
 
-#: src/options/options.js:516
+#: src/options/options.js:519
 msgid "Picture Title"
 msgstr "Resim Başlığı"
 
-#: src/options/options.js:448
+#: src/options/options.js:451
 msgid "Pink"
 msgstr "Pembe"
 
@@ -3316,7 +3317,7 @@ msgstr "Yer ve Zaman"
 
 #: src/app/routes.js:476 src/app/routes.js:482 src/app/routes.js:488
 #: src/app/routes.js:503 src/component/navigation.vue:352
-#: src/component/navigation.vue:746 src/options/options.js:263
+#: src/component/navigation.vue:746 src/options/options.js:266
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:424 src/page/settings/general.vue:508
 msgid "Places"
@@ -3399,7 +3400,7 @@ msgstr "Önizleme"
 msgid "Preview Images"
 msgstr "Önizleme Görüntüleri"
 
-#: src/component/lightbox.vue:582 src/component/lightbox.vue:583
+#: src/component/lightbox.vue:583 src/component/lightbox.vue:584
 #: src/component/pdf-viewer.vue:115 src/component/pdf-viewer.vue:116
 #: src/locales.js:325
 msgid "Previous"
@@ -3441,7 +3442,7 @@ msgstr "Özel"
 msgid "Processing upload..."
 msgstr "Yükleme işlemi..."
 
-#: src/options/options.js:465
+#: src/options/options.js:468
 msgid "Product Feedback"
 msgstr "Ürün Geri Bildirimi"
 
@@ -3449,7 +3450,7 @@ msgstr "Ürün Geri Bildirimi"
 msgid "Projection"
 msgstr "Projeksiyon"
 
-#: src/options/options.js:446
+#: src/options/options.js:449
 msgid "Purple"
 msgstr "Mor"
 
@@ -3480,7 +3481,7 @@ msgstr "Rastgele"
 msgid "Rating {0} of {1}"
 msgstr "Değerlendirme {1}'in {0}'ı"
 
-#: src/common/util.js:953 src/options/options.js:349
+#: src/common/util.js:953 src/options/options.js:352
 msgid "Raw"
 msgstr "Raw"
 
@@ -3496,15 +3497,15 @@ msgstr "XMP meta verilerinden yüz bölgelerini ve isimleri okuyarak kişi işar
 msgid "Read-Only Mode"
 msgstr "Salt Okunur Modu"
 
-#: src/options/options.js:513 src/page/albums.vue:406
+#: src/options/options.js:516 src/page/albums.vue:406
 msgid "Recently Added"
 msgstr "Son Eklenenler"
 
-#: src/options/options.js:514
+#: src/options/options.js:517
 msgid "Recently Archived"
 msgstr "Yakın Zamanda Arşivlendi"
 
-#: src/options/options.js:515 src/page/albums.vue:407
+#: src/options/options.js:518 src/page/albums.vue:407
 msgid "Recently Edited"
 msgstr "Son zamanlarda Düzenlendi"
 
@@ -3521,7 +3522,7 @@ msgstr "Tanımlanmış"
 msgid "Recovery Code"
 msgstr "Kurtarma Kodu"
 
-#: src/options/options.js:449
+#: src/options/options.js:452
 msgid "Red"
 msgstr "Kırmızı"
 
@@ -3579,7 +3580,7 @@ msgstr "Uzaktan Senkronizasyon"
 #: src/component/lightbox/sidebar.vue:310
 #: src/component/lightbox/sidebar.vue:374
 #: src/component/lightbox/sidebar.vue:375
-#: src/component/meta/face/markers.vue:83
+#: src/component/meta/face/markers.vue:82
 #: src/component/photo/edit/people.vue:20
 msgid "Remove"
 msgstr "Kaldır"
@@ -3588,7 +3589,7 @@ msgstr "Kaldır"
 msgid "Remove Location"
 msgstr "Konumu Kaldır"
 
-#: src/component/lightbox.vue:1762 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1764 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Albümden çıkar"
 
@@ -3625,7 +3626,7 @@ msgstr "%{name} kaldırıldı"
 msgid "Repeated"
 msgstr "Tekrarlanan"
 
-#: src/common/api.js:147 src/component/lightbox.vue:1279
+#: src/common/api.js:147 src/component/lightbox.vue:1280
 msgid "Request failed - are you offline?"
 msgstr "İstek başarısız oldu - çevrimdışı mısınız?"
 
@@ -3656,11 +3657,11 @@ msgstr "Yeniden Başlat"
 
 #: src/component/user/edit/dialog.vue:354 src/page/admin/users.vue:137
 #: src/component/user/edit/dialog.vue:340 src/page/admin/users.vue:134
-#: src/component/lightbox.vue:1792 src/component/photo/clipboard.vue:48
+#: src/component/lightbox.vue:1794 src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Geri Yükle"
 
-#: src/component/lightbox.vue:3343
+#: src/component/lightbox.vue:3345
 msgid "Restored"
 msgstr "Restore edildi"
 
@@ -3712,7 +3713,7 @@ msgstr "Döndürülmüş"
 msgid "Rows per page:"
 msgstr "Sayfa başına satır sayısı:"
 
-#: src/options/options.js:313
+#: src/options/options.js:316
 msgid "Satellite"
 msgstr "Uydu"
 
@@ -3725,17 +3726,17 @@ msgstr "Uydu"
 #: src/component/label/edit/dialog.vue:46
 #: src/component/lightbox/sidebar/toolbar.vue:22
 #: src/component/meta/camera/dialog.vue:121
-#: src/component/meta/datetime/dialog.vue:123
+#: src/component/meta/datetime/dialog.vue:124
 #: src/component/people/edit/dialog.vue:77
 #: src/component/photo/batch-edit.vue:497
-#: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:259
+#: src/component/photo/edit/details.vue:397 src/component/service/edit.vue:259
 #: src/component/settings/password.vue:94 src/component/share/dialog.vue:92
 msgid "Save"
 msgstr "Kaydet"
 
 #: src/component/meta/camera/dialog.vue:120
-#: src/component/meta/datetime/dialog.vue:122
-#: src/component/photo/edit/details.vue:391
+#: src/component/meta/datetime/dialog.vue:123
+#: src/component/photo/edit/details.vue:392
 msgid "Save changes"
 msgstr "Değişiklikleri kaydet"
 
@@ -3771,7 +3772,7 @@ msgstr "Dürbünler"
 #: src/page/admin/clients.vue:13 src/component/meta/location/dialog.vue:60
 #: src/component/navigation.vue:91 src/component/navigation.vue:728
 #: src/component/photo/toolbar.vue:32 src/locales.js:342
-#: src/options/options.js:257 src/page/albums.vue:19 src/page/labels.vue:15
+#: src/options/options.js:260 src/page/albums.vue:19 src/page/labels.vue:15
 #: src/page/library/errors.vue:18 src/page/people/recognized.vue:14
 #: src/page/places.vue:22 src/page/services.vue:15
 #: src/page/settings/content.vue:117
@@ -3802,7 +3803,7 @@ msgstr "Gizli"
 msgid "Security and Access"
 msgstr "Güvenlik ve Erişim"
 
-#: src/component/lightbox.vue:1693 src/component/lightbox.vue:1694
+#: src/component/lightbox.vue:1695 src/component/lightbox.vue:1696
 msgid "Select"
 msgstr "Seç"
 
@@ -3930,7 +3931,7 @@ msgstr "Oturum Kimliği"
 msgid "Sessions"
 msgstr "Oturumlar"
 
-#: src/component/lightbox.vue:1752
+#: src/component/lightbox.vue:1754
 msgid "Set as Album Cover"
 msgstr "Albüm Kapağı Olarak Ayarla"
 
@@ -3943,7 +3944,7 @@ msgstr "Kapak Resmi Olarak Ayarla"
 #: src/app/routes.js:206 src/app/routes.js:665 src/app/routes.js:677
 #: src/app/routes.js:689 src/app/routes.js:706 src/app/routes.js:718
 #: src/app/routes.js:738 src/component/navigation.vue:533
-#: src/component/navigation.vue:706 src/options/options.js:268
+#: src/component/navigation.vue:706 src/options/options.js:271
 msgid "Settings"
 msgstr "Ayarlar"
 
@@ -3972,7 +3973,7 @@ msgstr "Paylaş"
 msgid "Share %{s}"
 msgstr "Paylaş %{s}"
 
-#: src/options/options.js:506
+#: src/options/options.js:509
 msgid "Share Friendly"
 msgstr "Paylaşmaya Uygun"
 
@@ -3984,7 +3985,7 @@ msgstr "Göster"
 msgid "Show All Labels"
 msgstr "Tüm Etiketleri Göster"
 
-#: src/component/lightbox.vue:1829
+#: src/component/lightbox.vue:1831
 msgid "Show Caption"
 msgstr "Başlık Göster"
 
@@ -4095,11 +4096,11 @@ msgstr "Site URL'si"
 msgid "Size"
 msgstr "Boyut"
 
-#: src/component/lightbox.vue:1640 src/component/lightbox.vue:1641
+#: src/component/lightbox.vue:1642 src/component/lightbox.vue:1643
 msgid "Slideshow"
 msgstr "Slayt gösterisi"
 
-#: src/options/options.js:286
+#: src/options/options.js:289
 msgid "Slow"
 msgstr "Yavaş"
 
@@ -4128,7 +4129,7 @@ msgstr "Bazı albümler güncellenemedi"
 msgid "Some files could not be exported. Please try again."
 msgstr "Bazı dosyalar dışa aktarılamadı. Lütfen tekrar deneyin."
 
-#: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1276
+#: src/component/client/edit/dialog.vue:162 src/component/lightbox.vue:1277
 #: src/component/settings/connected-apps.vue:115 src/locales.js:397
 #: src/page/auth/consent.vue:216 src/page/auth/consent.vue:226
 msgid "Something went wrong, try again"
@@ -4218,15 +4219,15 @@ msgstr "Dökümü Durdur"
 msgid "Storage"
 msgstr "Depolama"
 
-#: src/options/options.js:301
+#: src/options/options.js:304
 msgid "Streets"
 msgstr "Sokaklar"
 
 #: src/common/util.js:1009 src/component/lightbox/sidebar.vue:821
 #: src/component/photo/batch-edit.vue:337
 #: src/component/photo/batch-edit.vue:340
-#: src/component/photo/edit/details.vue:291
-#: src/component/photo/edit/details.vue:294
+#: src/component/photo/edit/details.vue:292
+#: src/component/photo/edit/details.vue:295
 msgid "Subject"
 msgstr "Konu"
 
@@ -4293,11 +4294,11 @@ msgstr "Ham ve video dosyalarını senkronize edin"
 msgid "Taken"
 msgstr "Alınmış"
 
-#: src/options/options.js:455
+#: src/options/options.js:458
 msgid "Teal"
 msgstr "Turkuaz"
 
-#: src/options/options.js:325
+#: src/options/options.js:328
 msgid "Terrain"
 msgstr "Arazi"
 
@@ -4367,14 +4368,9 @@ msgstr "Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosy
 msgid "Time"
 msgstr "Zaman"
 
-#: src/component/meta/datetime/dialog.vue:163
-#: src/component/photo/edit/details.vue:109
-msgid "Time UTC"
-msgstr "Zaman UTC"
-
-#: src/component/meta/datetime/dialog.vue:106
+#: src/component/meta/datetime/dialog.vue:107
 #: src/component/photo/batch-edit.vue:255
-#: src/component/photo/edit/details.vue:126 src/page/settings/general.vue:47
+#: src/component/photo/edit/details.vue:127 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "Saat dilimi"
 
@@ -4530,11 +4526,11 @@ msgstr "Benzersiz kimlik"
 #: src/component/photo/edit/details.vue:46
 #: src/component/photo/edit/details.vue:68
 #: src/component/photo/edit/details.vue:89
-#: src/component/photo/edit/details.vue:437 src/component/photo/toolbar.vue:385
-#: src/model/album.js:178 src/model/photo.js:333 src/model/photo.js:872
-#: src/model/photo.js:897 src/model/photo.js:920 src/model/photo.js:927
-#: src/model/photo.js:999 src/model/photo.js:1007 src/model/photo.js:1089
-#: src/model/photo.js:1111 src/model/photo.js:1148 src/model/photo.js:1178
+#: src/component/photo/edit/details.vue:438 src/component/photo/toolbar.vue:385
+#: src/model/album.js:178 src/model/photo.js:413 src/model/photo.js:952
+#: src/model/photo.js:977 src/model/photo.js:1000 src/model/photo.js:1007
+#: src/model/photo.js:1079 src/model/photo.js:1087 src/model/photo.js:1169
+#: src/model/photo.js:1191 src/model/photo.js:1228 src/model/photo.js:1258
 #: src/model/user.js:138 src/options/options.js:61 src/options/options.js:107
 #: src/options/options.js:125 src/options/options.js:142
 #: src/options/options.js:156 src/options/options.js:168
@@ -4752,7 +4748,7 @@ msgstr "Kullanıcılar"
 #: src/common/util.js:963 src/component/photo/export/dialog.vue:273
 #: src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
-#: src/component/photo/view/mosaic.vue:69 src/options/options.js:369
+#: src/component/photo/view/mosaic.vue:69 src/options/options.js:372
 msgid "Vector"
 msgstr "Vektör"
 
@@ -4782,11 +4778,11 @@ msgstr "Versiyon"
 #: src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:208
-#: src/model/photo.js:1023 src/model/photo.js:1041 src/options/options.js:357
+#: src/model/photo.js:1103 src/model/photo.js:1121 src/options/options.js:360
 msgid "Video"
 msgstr "Video"
 
-#: src/options/options.js:519
+#: src/options/options.js:522
 msgid "Video Duration"
 msgstr "Video Süresi"
 
@@ -4795,7 +4791,7 @@ msgid "Video Part"
 msgstr "Video Bölümü"
 
 #: src/app/routes.js:413 src/component/navigation.vue:240
-#: src/options/options.js:260
+#: src/options/options.js:263
 msgid "Videos"
 msgstr "Videolar"
 
@@ -4865,7 +4861,7 @@ msgstr "Vizyon"
 msgid "Visitor"
 msgstr "Ziyaretçi"
 
-#: src/options/options.js:520
+#: src/options/options.js:523
 msgid "Visual Similarity"
 msgstr "Görsel Benzerlik"
 
@@ -4887,7 +4883,7 @@ msgstr "Web Girişi"
 #: src/component/user/add/dialog.vue:155 src/component/user/edit/dialog.vue:305
 #: src/page/admin/users.vue:313 src/component/user/edit/dialog.vue:298
 #: src/page/admin/users.vue:297 src/options/auth.js:90 src/options/auth.js:103
-#: src/options/options.js:501
+#: src/options/options.js:504
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4908,7 +4904,7 @@ msgstr "Microsoft'un Windows Gezgini veya Apple'ın Finder'ı gibi WebDAV istemc
 msgid "Website"
 msgstr "Website"
 
-#: src/options/options.js:459
+#: src/options/options.js:462
 msgid "White"
 msgstr "Beyaz"
 
@@ -4923,7 +4919,7 @@ msgstr "İş Detayları"
 msgid "Year"
 msgstr "Yıl"
 
-#: src/options/options.js:452
+#: src/options/options.js:455
 msgid "Yellow"
 msgstr "Sarı"
 
@@ -5021,7 +5017,7 @@ msgstr "Yakınlaştır"
 msgid "Zoom Out"
 msgstr "Uzaklaştır"
 
-#: src/component/lightbox.vue:580
+#: src/component/lightbox.vue:581
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
 
@@ -5085,6 +5081,9 @@ msgstr "{0} seçildi"
 #: src/locales.js:253
 msgid "{0}-{1} of {2}"
 msgstr "{2} içinden {0}-{1}"
+
+#~ msgid "Time UTC"
+#~ msgstr "Zaman UTC"
 
 #~ msgid "A unique still preview could not be found."
 #~ msgstr "Eşsiz bir sabit görüntü önizlemesi bulunamadı."
