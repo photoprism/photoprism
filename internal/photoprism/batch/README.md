@@ -1,6 +1,6 @@
 ## PhotoPrism — Batch Edit Package
 
-**Last Updated:** October 13, 2026
+**Last Updated:** October 26, 2026
 
 ### Overview
 
@@ -46,14 +46,14 @@ The `internal/photoprism/batch` package implements the form schema (`PhotosForm`
 
 `POST /api/v1/batch/photos/edit` accepts a `PhotosRequest` payload and returns the refreshed photo models plus a `PhotosForm` snapshot. All fields follow JSON casing from `internal/photoprism/batch/request.go` and `photos.go`.
 
-| Field                   | Type             | Examples                                                     | Notes                                                                                         |
-|:------------------------|:-----------------|:-------------------------------------------------------------|:----------------------------------------------------------------------------------------------|
-| `photos`                | `string[]`       | `['pq1z9t3', 'px4y2k0']`                                     | Required. Contains `PhotoUID` values selected in the UI. Empty lists are rejected with `400`. |
-| `values`                | `PhotosForm`     | `{ "Title": { "action": "update", "value": "Vacation" } }`   | Optional. When omitted, the endpoint only loads the selection + aggregated form data.         |
-| `values.Albums.items[]` | `Items` entry    | `{ "value": "ab1c", "title": "Favorites", "action": "add" }` | Action must be `add`/`remove`; `title` is used to create albums when `value` is empty.        |
-| `values.Labels.items[]` | `Items` entry    | `{ "value": "lb2d", "action": "remove" }`                    | Removing requires a valid label UID. Adds accept either UID or plain title.                   |
-| `values.TimeZone`       | `String` wrapper | `{ "value": "Europe/Berlin", "action": "update" }`           | Paired with `Day/Month/Year` to recompute `TakenAt` and `TakenAtLocal`.                       |
-| `values.DetailsSubject` | `String` wrapper | `{ "action": "remove" }`                                     | Setting `action="remove"` clears the field without needing `value`.                           |
+| Field                   | Type             | Examples                                                     | Notes                                                                                                                                                                                     |
+|:------------------------|:-----------------|:-------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `photos`                | `string[]`       | `['pq1z9t3', 'px4y2k0']`                                     | Required. Contains `PhotoUID` values selected in the UI. Empty lists are rejected with `400`.                                                                                             |
+| `values`                | `PhotosForm`     | `{ "Title": { "action": "update", "value": "Vacation" } }`   | Optional. When omitted, the endpoint only loads the selection + aggregated form data.                                                                                                     |
+| `values.Albums.items[]` | `Items` entry    | `{ "value": "ab1c", "title": "Favorites", "action": "add" }` | Action must be `add`/`remove`; `title` is used to create albums when `value` is empty.                                                                                                    |
+| `values.Labels.items[]` | `Items` entry    | `{ "value": "lb2d", "action": "remove" }`                    | Removing requires a valid label UID. Adds accept either UID or plain title.                                                                                                               |
+| `values.TimeZone`       | `String` wrapper | `{ "value": "Europe/Berlin", "action": "update" }`           | Paired with `Day/Month/Year` to recompute `TakenAt` and `TakenAtLocal`. On its own, it converts a time saved in UTC to the local time in the new zone and otherwise keeps the local time. |
+| `values.DetailsSubject` | `String` wrapper | `{ "action": "remove" }`                                     | Setting `action="remove"` clears the field without needing `value`.                                                                                                                       |
 
 #### Request Example
 

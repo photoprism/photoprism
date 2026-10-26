@@ -122,33 +122,140 @@ func TestSavePhotoForm(t *testing.T) {
 	})
 }
 
-// TestSavePhotoForm_TimeZoneCycles keeps the capture instant stable through repeated saved zone edits.
+// createTakenAtTestPhoto creates a photo with a manual capture time and removes it after the test.
+func createTakenAtTestPhoto(t *testing.T, zone string, takenAt, takenAtLocal time.Time) *Photo {
+	t.Helper()
+	photo := NewPhoto(false)
+	photo.TakenAt, photo.TakenAtLocal = takenAt, takenAtLocal
+	photo.TimeZone, photo.TakenSrc = zone, SrcManual
+	photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay = takenAtLocal.Year(), int(takenAtLocal.Month()), takenAtLocal.Day()
+	require.NoError(t, photo.Create())
+	t.Cleanup(func() {
+		UnscopedDb().Delete(&PhotoKeyword{}, "photo_id = ?", photo.ID)
+		UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID)
+		UnscopedDb().Delete(photo)
+	})
+	return &photo
+}
+
+// TestSavePhotoForm_TimeZoneCycles checks that converted UTC times stay stable through later unrelated saves.
 func TestSavePhotoForm_TimeZoneCycles(t *testing.T) {
-	for _, tc := range []struct{ name, source string }{{"Manual", SrcManual}, {"Batch", SrcBatch}} {
-		t.Run(tc.name, func(t *testing.T) {
-			photo := NewPhoto(false)
-			photo.TakenAt = time.Date(2020, 1, 1, 0, 30, 0, 0, time.UTC)
-			photo.TakenAtLocal = photo.TakenAt
-			photo.TimeZone, photo.TakenSrc = tz.UTC, tc.source
-			photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay = 2020, 1, 1
-			require.NoError(t, photo.Create())
-			t.Cleanup(func() { UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID); UnscopedDb().Delete(&photo) })
-			taken := photo.TakenAt
-			for round := 0; round < 3; round++ {
-				for _, zone := range []string{"UTC-12", "Pacific/Kiritimati", "Europe/Berlin", "America/New_York", tz.UTC} {
-					frm, err := form.NewPhoto(&photo)
-					require.NoError(t, err)
-					frm.TimeZone = zone
-					require.NoError(t, SavePhotoForm(&photo, frm))
-					require.NoError(t, Db().First(&photo, photo.ID).Error)
-					expected := taken.In(tz.Find(zone))
-					assert.True(t, photo.TakenAt.Equal(taken), "capture instant changed in %s", zone)
-					assert.Equal(t, expected.Format("2006-01-02T15:04:05"), photo.TakenAtLocal.Format("2006-01-02T15:04:05"))
-					assert.Equal(t, []int{expected.Year(), int(expected.Month()), expected.Day()}, []int{photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay})
-				}
+	taken := time.Date(2020, 1, 1, 0, 30, 0, 0, time.UTC)
+	for _, zone := range []string{"UTC-12", "Pacific/Kiritimati", "Europe/Berlin", "America/New_York", "Asia/Kathmandu"} {
+		t.Run(zone, func(t *testing.T) {
+			photo := createTakenAtTestPhoto(t, tz.UTC, taken, taken)
+			expected := taken.In(tz.Find(zone))
+			frm, err := form.NewPhoto(photo)
+			require.NoError(t, err)
+			frm.TimeZone = zone
+			frm.TakenAtLocal = time.Date(expected.Year(), expected.Month(), expected.Day(), expected.Hour(), expected.Minute(), expected.Second(), 0, time.UTC)
+			frm.PhotoYear, frm.PhotoMonth, frm.PhotoDay = expected.Year(), int(expected.Month()), expected.Day()
+			require.NoError(t, SavePhotoForm(photo, frm))
+			for range 3 {
+				frm, err = form.NewPhoto(photo)
+				require.NoError(t, err)
+				require.NoError(t, SavePhotoForm(photo, frm))
+				require.NoError(t, Db().First(photo, photo.ID).Error)
+				assert.True(t, photo.TakenAt.Equal(taken), "capture instant changed in %s", zone)
+				assert.Equal(t, expected.Format("2006-01-02T15:04:05"), photo.TakenAtLocal.Format("2006-01-02T15:04:05"))
+				assert.Equal(t, []int{expected.Year(), int(expected.Month()), expected.Day()}, []int{photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay})
 			}
 		})
 	}
+}
+
+// TestSavePhotoForm_TakenAt checks how TakenAt is derived from the submitted wall time and zone.
+func TestSavePhotoForm_TakenAt(t *testing.T) {
+	berlin := time.Date(2025, 6, 30, 12, 0, 0, 0, time.UTC)
+	berlinLocal := time.Date(2025, 6, 30, 14, 0, 0, 0, time.UTC)
+	repeated := time.Date(2025, 10, 26, 0, 30, 0, 0, time.UTC)
+	repeatedLocal := time.Date(2025, 10, 26, 2, 30, 0, 0, time.UTC)
+	t.Run("ZoneOnlyKeepsWallTime", func(t *testing.T) {
+		photo := createTakenAtTestPhoto(t, "Europe/Berlin", berlin, berlinLocal)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone = "America/New_York"
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-06-30T18:00:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2025-06-30T14:00:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+	})
+	t.Run("ZoneOnlyFromUTCConverts", func(t *testing.T) {
+		taken := time.Date(2025, 6, 30, 23, 30, 0, 0, time.UTC)
+		photo := createTakenAtTestPhoto(t, tz.UTC, taken, taken)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone = "Europe/Berlin"
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-06-30T23:30:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2025-07-01T01:30:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+		assert.Equal(t, []int{2025, 7, 1}, []int{photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay})
+	})
+	t.Run("ZoneOnlyFromUTCUnknownDay", func(t *testing.T) {
+		taken := time.Date(2020, 1, 1, 3, 0, 0, 0, time.UTC)
+		photo := createTakenAtTestPhoto(t, tz.UTC, taken, taken)
+		require.NoError(t, photo.Update("PhotoDay", -1))
+		photo.PhotoDay = -1
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone = "America/New_York"
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2019-12-31T22:00:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+		assert.Equal(t, []int{2020, 1, -1}, []int{photo.PhotoYear, photo.PhotoMonth, photo.PhotoDay})
+	})
+	t.Run("ZoneOnlyToUTCKeepsWallTime", func(t *testing.T) {
+		photo := createTakenAtTestPhoto(t, "Europe/Berlin", berlin, berlinLocal)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone = tz.UTC
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-06-30T14:00:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2025-06-30T14:00:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+	})
+	t.Run("FromUTCWithLocalTimeUsesIt", func(t *testing.T) {
+		taken := time.Date(2025, 6, 30, 23, 30, 0, 0, time.UTC)
+		photo := createTakenAtTestPhoto(t, tz.UTC, taken, taken)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone, frm.TakenAtLocal = "Europe/Berlin", time.Date(2025, 7, 2, 3, 45, 0, 0, time.UTC)
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-07-02T01:45:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2025-07-02T03:45:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+	})
+	t.Run("InconsistentTakenAtIsDerived", func(t *testing.T) {
+		photo := createTakenAtTestPhoto(t, "Europe/Berlin", berlin, berlinLocal)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TakenAt = berlin.Add(5 * time.Hour)
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-06-30T12:00:00Z", photo.TakenAt.Format(time.RFC3339))
+	})
+	t.Run("RepeatedHourZoneChange", func(t *testing.T) {
+		photo := createTakenAtTestPhoto(t, tz.UTC, repeated, repeated)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone, frm.TakenAtLocal = "Europe/Berlin", repeatedLocal
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-10-26T00:30:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2025-10-26T02:30:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+	})
+	t.Run("RepeatedHourUnrelatedSave", func(t *testing.T) {
+		photo := createTakenAtTestPhoto(t, "Europe/Berlin", repeated, repeatedLocal)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.PhotoTitle, frm.TitleSrc = "Repeated Hour", SrcManual
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-10-26T00:30:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2025-10-26T02:30:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+	})
+	t.Run("LocalUsesWallTime", func(t *testing.T) {
+		photo := createTakenAtTestPhoto(t, "Europe/Berlin", berlin, berlinLocal)
+		frm, err := form.NewPhoto(photo)
+		require.NoError(t, err)
+		frm.TimeZone = tz.Local
+		require.NoError(t, SavePhotoForm(photo, frm))
+		assert.Equal(t, "2025-06-30T14:00:00Z", photo.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2025-06-30T14:00:00Z", photo.TakenAtLocal.Format(time.RFC3339))
+	})
 }
 
 func TestPhoto_LabelKeywords(t *testing.T) {

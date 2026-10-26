@@ -296,6 +296,29 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 
 }
 
+// TestPhoto_SetKnownDateParts checks that only known date parts follow TakenAtLocal.
+func TestPhoto_SetKnownDateParts(t *testing.T) {
+	local := time.Date(2019, 12, 31, 22, 0, 0, 0, time.UTC)
+	cases := []struct {
+		name             string
+		year, month, day int
+		expected         []int
+	}{
+		{"AllKnown", 2020, 1, 1, []int{2019, 12, 31}},
+		{"UnknownYear", -1, 1, 1, []int{-1, 12, 31}},
+		{"UnknownMonth", 2020, -1, 1, []int{2020, -1, 31}},
+		{"UnknownDay", 2020, 1, -1, []int{2020, 1, -1}},
+		{"Zero", 0, 0, 0, []int{0, 0, 0}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			m := Photo{TakenAtLocal: local, PhotoYear: tc.year, PhotoMonth: tc.month, PhotoDay: tc.day}
+			m.SetKnownDateParts()
+			assert.Equal(t, tc.expected, []int{m.PhotoYear, m.PhotoMonth, m.PhotoDay})
+		})
+	}
+}
+
 func TestPhoto_UpdateTimeZone(t *testing.T) {
 	t.Run("PhotoTimeZone", func(t *testing.T) {
 		m := PhotoFixtures.Get("PhotoTimeZone")

@@ -140,6 +140,28 @@ func (m *Photo) UpdateTimeZone(zone string) {
 	}
 }
 
+// SetKnownDateParts updates the known date parts from TakenAtLocal.
+// Month and Year follow only while all finer parts are known, since an unknown day leaves a placeholder.
+func (m *Photo) SetKnownDateParts() {
+	if m.PhotoDay <= 0 {
+		return
+	}
+
+	m.PhotoDay = m.TakenAtLocal.Day()
+
+	if m.PhotoMonth <= 0 {
+		return
+	}
+
+	m.PhotoMonth = int(m.TakenAtLocal.Month())
+
+	if m.PhotoYear <= 0 {
+		return
+	}
+
+	m.PhotoYear = m.TakenAtLocal.Year()
+}
+
 // UpdateDateFields updates internal date fields.
 func (m *Photo) UpdateDateFields() {
 	if m.TakenAt.IsZero() || m.TakenAt.Year() < 1000 {
