@@ -658,6 +658,84 @@ describe("model/photo", () => {
     expect(result2).toBe("2010");
   });
 
+  describe("changeTimeZone", () => {
+    // capture returns a complete, saved UTC photo near a year boundary.
+    const capture = (values = {}) => new Photo({
+      UID: "ps6sg6be2lvl0yh7",
+      TakenAt: "2020-01-01T00:30:00Z",
+      TakenAtLocal: "2020-01-01T00:30:00Z",
+      TimeZone: "UTC",
+      Year: 2020, Month: 1, Day: 1,
+      ...values,
+    });
+
+    it.each([false, true])("anchors repeated choices to the capture instant, saving=%s", (save) => {
+      const photo = capture();
+      for (let round = 0; round < 10; round++) {
+        for (const zone of ["UTC-12", "Pacific/Kiritimati", "Europe/Berlin", "America/New_York", "UTC"]) {
+          photo.changeTimeZone(zone);
+          expect(photo.TakenAt).toBe("2020-01-01T00:30:00Z");
+          const projected = photo.utcDate().setZone(zone);
+          expect(photo.TakenAtLocal).toBe(projected.toISO({ suppressMilliseconds: true, includeOffset: false }) + "Z");
+          expect([photo.Year, photo.Month, photo.Day]).toEqual([projected.year, projected.month, projected.day]);
+          expect(photo.getDateTime().toFormat("HH:mm:ss")).toBe(projected.toFormat("HH:mm:ss"));
+          if (save) {
+            photo.setValues(photo.getValues());
+          }
+        }
+      }
+      expect(photo.TakenAtLocal).toBe("2020-01-01T00:30:00Z");
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([2020, 1, 1]);
+    });
+
+    it.each([-1, 0])("preserves unknown calendar fields (%s)", (unknown) => {
+      const photo = capture({ Year: unknown, Month: unknown, Day: unknown });
+      photo.changeTimeZone("UTC-12");
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([unknown, unknown, unknown]);
+      expect(photo.TakenAt).toBe("2020-01-01T00:30:00Z");
+      expect(photo.TakenAtLocal).toBe("2019-12-31T12:30:00Z");
+    });
+
+    it("updates known components while keeping an unknown year", () => {
+      const photo = capture({ Year: -1 });
+      photo.changeTimeZone("UTC-12");
+      expect([photo.Year, photo.Month, photo.Day]).toEqual([-1, 12, 31]);
+    });
+
+    it("interprets Local wall time when assigning a known zone", () => {
+      const photo = capture({ TimeZone: "Local" });
+      photo.changeTimeZone("Europe/Berlin");
+      expect(photo.TakenAtLocal).toBe("2020-01-01T00:30:00Z");
+      expect(photo.TakenAt).toBe("2019-12-31T23:30:00Z");
+    });
+
+    it("keeps wall time when removing the time zone", () => {
+      const photo = capture({ TimeZone: "Europe/Berlin", TakenAt: "2019-12-31T23:30:00Z" });
+      photo.changeTimeZone("Local");
+      expect(photo.TakenAtLocal).toBe("2020-01-01T00:30:00Z");
+      expect(photo.TakenAt).toBe("2020-01-01T00:30:00Z");
+    });
+
+    it("ignores invalid zones, missing timestamps and unchanged selections", () => {
+      const photo = capture();
+      photo.changeTimeZone("invalid/zone");
+      photo.changeTimeZone("UTC");
+      expect(photo.wasChanged()).toBe(false);
+      photo.TakenAt = "";
+      photo.changeTimeZone("Europe/Berlin");
+      expect(photo.TimeZone).toBe("UTC");
+    });
+
+    it("interprets a manual local date in the selected zone even when originally UTC", () => {
+      const photo = capture();
+      photo.changeTimeZone("Europe/Berlin");
+      photo.Year = 2025;
+      photo.Month = 7;
+      photo.Day = 2;
+      expect(photo.localDate("01:30:00").toUTC().toISO({ suppressMilliseconds: true })).toBe("2025-07-01T23:30:00Z");
+    });
+  });
+
   it("should get local date string", () => {
     const values = {
       ID: 5,

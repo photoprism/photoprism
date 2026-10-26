@@ -223,6 +223,7 @@ export class Photo extends RestModel {
     return this.Year.toString();
   }
 
+  // localDateString combines calendar fields and wall time in the current time zone.
   localDateString(time) {
     if (!this.localYearString()) {
       return this.TakenAtLocal;
@@ -234,13 +235,7 @@ export class Photo extends RestModel {
       time = this.TakenAtLocal.substring(11, 19);
     }
 
-    let iso = `${date}T${time}`;
-
-    if (this.originalTimeZoneUTC()) {
-      iso += "Z";
-    }
-
-    return iso;
+    return `${date}T${time}${this.currentTimeZoneUTC() ? "Z" : ""}`;
   }
 
   getTimeZone() {
@@ -251,8 +246,9 @@ export class Photo extends RestModel {
     return "";
   }
 
+  // timeIsUTC reports whether the displayed time uses UTC.
   timeIsUTC() {
-    return this.originalTimeZoneUTC() || this.currentTimeZoneUTC();
+    return this.currentTimeZoneUTC();
   }
 
   getDateTime() {
@@ -260,6 +256,32 @@ export class Photo extends RestModel {
       return DateTime.fromISO(this.TakenAt).toUTC();
     } else {
       return DateTime.fromISO(this.TakenAtLocal).toUTC();
+    }
+  }
+
+  // changeTimeZone projects the current capture instant without accumulating time zone offsets.
+  changeTimeZone(zone) {
+    if (zone === this.TimeZone) {
+      return;
+    }
+
+    const previous = this.TimeZone;
+    const local = !previous || previous === TimeZoneLocal || !zone || zone === TimeZoneLocal;
+    const taken = local
+      ? DateTime.fromISO(this.TakenAtLocal, { zone: "UTC" }).setZone(zone && zone !== TimeZoneLocal ? zone : "UTC", { keepLocalTime: true })
+      : DateTime.fromISO(this.TakenAt, { zone: "UTC" }).setZone(zone);
+
+    if (!taken.isValid) {
+      return;
+    }
+
+    this.TimeZone = zone;
+    this.TakenAtLocal = taken.toISO({ suppressMilliseconds: true, includeOffset: false }) + "Z";
+    this.TakenAt = taken.toUTC().toISO({ suppressMilliseconds: true });
+    for (const [field, value] of [["Year", taken.year], ["Month", taken.month], ["Day", taken.day]]) {
+      if (this[field] > 0) {
+        this[field] = value;
+      }
     }
   }
 

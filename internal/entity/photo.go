@@ -169,6 +169,22 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 
 	locChanged := m.PhotoLat != form.PhotoLat || m.PhotoLng != form.PhotoLng || m.PhotoCountry != form.PhotoCountry
 
+	zoneChanged := tz.Name(m.TimeZone) != tz.Name(form.TimeZone)
+	timeChanged := zoneChanged || !m.TakenAt.Equal(form.TakenAt) || !m.TakenAtLocal.Equal(form.TakenAtLocal)
+	zoneOnly := false
+	if zoneChanged && !m.TimeZoneLocal() && !tz.IsLocal(form.TimeZone) && !m.TakenAt.IsZero() && m.TakenAt.Equal(form.TakenAt) {
+		projected := Photo{TakenAt: m.TakenAt, TakenAtLocal: m.TakenAtLocal, TimeZone: form.TimeZone}
+		local := projected.GetTakenAtLocal()
+		unchanged := m.TakenAtLocal.Equal(form.TakenAtLocal) &&
+			m.PhotoYear == form.PhotoYear && m.PhotoMonth == form.PhotoMonth && m.PhotoDay == form.PhotoDay
+		// Accept projected editor values without reversing an ambiguous daylight-saving wall time.
+		converted := form.TakenAtLocal.Equal(local) &&
+			(form.PhotoYear <= 0 || form.PhotoYear == local.Year()) &&
+			(form.PhotoMonth <= 0 || form.PhotoMonth == int(local.Month())) &&
+			(form.PhotoDay <= 0 || form.PhotoDay == local.Day())
+		zoneOnly = unchanged || converted
+	}
+
 	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
 	}
@@ -179,15 +195,24 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 		return errors.New("cannot save form when photo id is missing")
 	}
 
-	// Update time fields.
-	// Batch edit (and other callers) treat TakenAtLocal as a naive timestamp that already includes
-	// any new Day/Month/Year. Here we normalize it back to UTC using the photo's TimeZone so MariaDB
-	// (which lacks TZ support) stores a consistent pair of TakenAt / TakenAtLocal values. See
-	// ComputeDateChange for details on why it returns UTC.
-	if m.TimeZoneUTC() {
-		m.TakenAtLocal = m.TakenAt
-	} else {
-		m.TakenAt = m.GetTakenAt()
+	// Zone-only edits preserve the capture instant; explicit date edits use the submitted wall time.
+	if zoneOnly {
+		m.TakenAtLocal = m.GetTakenAtLocal()
+		if m.PhotoYear > 0 {
+			m.PhotoYear = m.TakenAtLocal.Year()
+		}
+		if m.PhotoMonth > 0 {
+			m.PhotoMonth = int(m.TakenAtLocal.Month())
+		}
+		if m.PhotoDay > 0 {
+			m.PhotoDay = m.TakenAtLocal.Day()
+		}
+	} else if timeChanged {
+		if m.TimeZoneUTC() {
+			m.TakenAtLocal = m.TakenAt
+		} else {
+			m.TakenAt = m.GetTakenAt()
+		}
 	}
 
 	m.UpdateDateFields()
