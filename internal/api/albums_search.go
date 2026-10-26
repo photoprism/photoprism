@@ -21,15 +21,25 @@ import (
 //	@Id			SearchAlbums
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200		{object}	search.AlbumResults
-//	@Header		200		{number}	X-Count		"The actual number of albums returned"
-//	@Header		200		{number}	X-Limit		"The limit of the number of albums to be returned"
-//	@Header		200		{number}	X-Offset	"The offset that was used"
-//	@Failure	400,404	{object}	i18n.Response
-//	@Param		count	query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
-//	@Param		offset	query		int		false	"search result offset"		minimum(0)	maximum(100000)
-//	@Param		order	query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
-//	@Param		q		query		string	false	"search query"
+//	@Success	200			{object}	search.AlbumResults
+//	@Header		200			{number}	X-Count		"The actual number of albums returned"
+//	@Header		200			{number}	X-Limit		"The limit of the number of albums to be returned"
+//	@Header		200			{number}	X-Offset	"The offset that was used"
+//	@Failure	400,404		{object}	i18n.Response
+//	@Param		count		query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
+//	@Param		offset		query		int		false	"search result offset"		minimum(0)	maximum(100000)
+//	@Param		order		query		string	false	"sort order"				Enums(favorites, name, name_reverse, added, edited, newest, oldest, moment, count, place, path, category, slug)
+//	@Param		reverse		query		bool	false	"reverses the sort order"
+//	@Param		q			query		string	false	"search query, matches album titles and locations"
+//	@Param		uid			query		string	false	"album uids (separate with |)"
+//	@Param		type		query		string	false	"album types: album, folder, moment, month, state (separate with |)"
+//	@Param		category	query		string	false	"album categories (separate with |)"
+//	@Param		location	query		string	false	"album locations (separate with |)"
+//	@Param		year		query		string	false	"years (separate with |)"
+//	@Param		month		query		string	false	"months, 1-12 (separate with |)"
+//	@Param		day			query		string	false	"days of the month, 1-31 (separate with |)"
+//	@Param		favorite	query		bool	false	"favorites only"
+//	@Param		public		query		bool	false	"excludes private albums"
 //	@Router		/api/v1/albums [get]
 func SearchAlbums(router *gin.RouterGroup) {
 	router.GET("/albums", func(c *gin.Context) {

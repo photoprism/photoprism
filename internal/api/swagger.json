@@ -5689,19 +5689,87 @@
                         "enum": [
                             "favorites",
                             "name",
-                            "title",
+                            "name_reverse",
                             "added",
-                            "edited"
+                            "edited",
+                            "newest",
+                            "oldest",
+                            "moment",
+                            "count",
+                            "place",
+                            "path",
+                            "category",
+                            "slug"
                         ],
                         "in": "query",
                         "name": "order",
                         "type": "string"
                     },
                     {
-                        "description": "search query",
+                        "description": "reverses the sort order",
+                        "in": "query",
+                        "name": "reverse",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "search query, matches album titles and locations",
                         "in": "query",
                         "name": "q",
                         "type": "string"
+                    },
+                    {
+                        "description": "album uids (separate with |)",
+                        "in": "query",
+                        "name": "uid",
+                        "type": "string"
+                    },
+                    {
+                        "description": "album types: album, folder, moment, month, state (separate with |)",
+                        "in": "query",
+                        "name": "type",
+                        "type": "string"
+                    },
+                    {
+                        "description": "album categories (separate with |)",
+                        "in": "query",
+                        "name": "category",
+                        "type": "string"
+                    },
+                    {
+                        "description": "album locations (separate with |)",
+                        "in": "query",
+                        "name": "location",
+                        "type": "string"
+                    },
+                    {
+                        "description": "years (separate with |)",
+                        "in": "query",
+                        "name": "year",
+                        "type": "string"
+                    },
+                    {
+                        "description": "months, 1-12 (separate with |)",
+                        "in": "query",
+                        "name": "month",
+                        "type": "string"
+                    },
+                    {
+                        "description": "days of the month, 1-31 (separate with |)",
+                        "in": "query",
+                        "name": "day",
+                        "type": "string"
+                    },
+                    {
+                        "description": "favorites only",
+                        "in": "query",
+                        "name": "favorite",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "excludes private albums",
+                        "in": "query",
+                        "name": "public",
+                        "type": "boolean"
                     }
                 ],
                 "produces": [
