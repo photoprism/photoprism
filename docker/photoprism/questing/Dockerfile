@@ -41,7 +41,6 @@ ENV DO_NOT_TRACK=true \
     ORT_DISABLE_TELEMETRY=1 \
     PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
-    PHOTOPRISM_YTDLP_CHANNEL="master" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL=4 \
@@ -93,7 +92,7 @@ RUN printf 'DOCKER_ENV=prod\nDOCKER_IMG=ce\n' > /scripts/.env && chmod 0444 /scr
 # Update pre-installed packages.
 RUN apt-get update && \
     apt-get -qq dist-upgrade && \
-    /scripts/install-yt-dlp.sh --no-deno && \
+    yt-dlp --update-to master && \
     /scripts/cleanup.sh
 
 # Set default working directory.
