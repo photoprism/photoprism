@@ -567,7 +567,7 @@ func clearStalePidFile(pidFile string, info os.FileInfo) error {
 }
 
 // clearExitedPidFile empties the pid file of a daemon that has exited, like clearStalePidFile, and retries until
-// the timeout while its lock is held, as the files of an exiting process close after its command line is gone.
+// the timeout while its lock is held, as the files of an exiting process close after it has become a zombie.
 func clearExitedPidFile(pidFile string, info os.FileInfo, timeout time.Duration) error {
 	deadline := time.Now().Add(timeout)
 
@@ -605,18 +605,43 @@ func daemonProcess(p *os.Process) bool {
 }
 
 // processRunning reports whether the process runs, counting one that has exited but was not reaped yet as gone.
+// It reads the state rather than the command line, which is still empty while the process is being executed.
 func processRunning(p *os.Process) bool {
 	if p == nil || p.Signal(syscall.Signal(0)) != nil {
 		return false
 	}
 
-	cmdline, err := procCmdline(p.Pid)
+	state, err := procState(p.Pid)
 
 	if err != nil {
-		return !fs.FileExists("/proc/self/cmdline")
+		return !fs.FileExists("/proc/self/stat")
 	}
 
-	return len(cmdline) > 0
+	return state != 'Z' && state != 'X' && state != 'x'
+}
+
+// procState returns the state code of the process from /proc, e.g. R for running or Z for a zombie.
+func procState(pid int) (byte, error) {
+	stat, err := os.ReadFile(filepath.Join("/proc", strconv.Itoa(pid), "stat")) //nolint:gosec // Reads /proc by process ID.
+
+	if err != nil {
+		return 0, err
+	}
+
+	return parseProcState(stat)
+}
+
+// parseProcState returns the state code that follows the program name in a /proc/<pid>/stat file.
+func parseProcState(stat []byte) (byte, error) {
+	rest, err := procStatFields(stat)
+
+	if err != nil {
+		return 0, err
+	} else if len(rest) < 2 || rest[0] != ' ' {
+		return 0, errors.New("stat has no process state")
+	}
+
+	return rest[1], nil
 }
 
 // daemonCandidate reports whether the process matches the pid file as the daemon would: it runs as the owner of the
@@ -694,14 +719,14 @@ func ticksDuration(ticks uint64) time.Duration {
 // parseProcStat returns the session ID and the start time in clock ticks after boot from a /proc/<pid>/stat file,
 // whose second field, the program name in parentheses, may contain spaces and parentheses.
 func parseProcStat(stat []byte) (session int, startTicks uint64, err error) {
-	end := bytes.LastIndexByte(stat, ')')
+	rest, err := procStatFields(stat)
 
-	if end < 0 {
-		return 0, 0, errors.New("stat has no program name")
+	if err != nil {
+		return 0, 0, err
 	}
 
 	// The fields after the name start with the state (field 3); the session is field 6 and the start time field 22.
-	fields := strings.Fields(string(stat[end+1:]))
+	fields := strings.Fields(string(rest))
 
 	if len(fields) < 20 {
 		return 0, 0, errors.New("stat has too few fields")
@@ -716,6 +741,18 @@ func parseProcStat(stat []byte) (session int, startTicks uint64, err error) {
 	}
 
 	return session, startTicks, nil
+}
+
+// procStatFields returns the part of a /proc/<pid>/stat file after the program name, which is in parentheses and
+// may contain spaces and parentheses itself, so the name ends at the last closing parenthesis.
+func procStatFields(stat []byte) ([]byte, error) {
+	end := bytes.LastIndexByte(stat, ')')
+
+	if end < 0 {
+		return nil, errors.New("stat has no program name")
+	}
+
+	return stat[end+1:], nil
 }
 
 // parseBootTime returns the boot time from the btime line of /proc/stat.

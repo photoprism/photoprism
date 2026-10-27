@@ -1920,7 +1920,83 @@ func TestProcessRunning(t *testing.T) {
 		require.NoError(t, p.Signal(syscall.Signal(0)))
 		assert.False(t, processRunning(p))
 	})
+	t.Run("Starting", func(t *testing.T) {
+		requireProc(t)
+
+		// The command line of a process that is still being executed can be empty.
+		for i := 0; i < 20; i++ {
+			cmd := exec.Command("sleep", "30") //nolint:gosec // Runs sleep from PATH with a fixed duration.
+			require.NoError(t, cmd.Start())
+			running := processRunning(cmd.Process)
+			_ = cmd.Process.Kill()
+			_ = cmd.Wait()
+			require.True(t, running, "attempt %d", i)
+		}
+	})
 	t.Run("Nil", func(t *testing.T) {
 		assert.False(t, processRunning(nil))
+	})
+}
+
+// TestProcStatFields covers splitting the fields after the program name from a /proc/<pid>/stat file.
+func TestProcStatFields(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		rest, err := procStatFields([]byte("123 (a) b (c)) S 1"))
+		require.NoError(t, err)
+		assert.Equal(t, " S 1", string(rest))
+	})
+	t.Run("NoProgramName", func(t *testing.T) {
+		_, err := procStatFields([]byte("123 photoprism S 1"))
+		assert.Error(t, err)
+	})
+}
+
+// TestParseProcState covers reading the process state from a /proc/<pid>/stat file.
+func TestParseProcState(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		state, err := parseProcState([]byte("123 (photoprism) S 1 123 123 0 -1"))
+		require.NoError(t, err)
+		assert.Equal(t, byte('S'), state)
+	})
+	t.Run("NameWithParentheses", func(t *testing.T) {
+		state, err := parseProcState([]byte("123 (a) Z (b)) S 1 123 123 0 -1"))
+		require.NoError(t, err)
+		assert.Equal(t, byte('S'), state)
+	})
+	t.Run("NameWithSpaces", func(t *testing.T) {
+		state, err := parseProcState([]byte("123 (Web Content) R 1 123 123 0 -1"))
+		require.NoError(t, err)
+		assert.Equal(t, byte('R'), state)
+	})
+	t.Run("InvalidStat", func(t *testing.T) {
+		for _, stat := range []string{"", "123 photoprism S", "123 (photoprism)", "123 (photoprism) ", "123 (photoprism)S 1"} {
+			_, err := parseProcState([]byte(stat))
+			assert.Error(t, err, "stat %q", stat)
+		}
+	})
+}
+
+// TestProcState covers reading the state of a process from /proc.
+func TestProcState(t *testing.T) {
+	t.Run("Stopped", func(t *testing.T) {
+		cmd := startProcess(t, "sleep", "30")
+		require.NoError(t, cmd.Process.Signal(syscall.SIGSTOP))
+		t.Cleanup(func() { _ = cmd.Process.Signal(syscall.SIGCONT) })
+
+		require.Eventually(t, func() bool {
+			state, err := procState(cmd.Process.Pid)
+			return err == nil && state == 'T'
+		}, 5*time.Second, 10*time.Millisecond)
+	})
+	t.Run("Running", func(t *testing.T) {
+		cmd := startProcess(t, "sleep", "30")
+		state, err := procState(cmd.Process.Pid)
+		require.NoError(t, err)
+		assert.Contains(t, []byte{'R', 'S'}, state)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		requireProc(t)
+		_, err := procState(math.MaxInt32)
+		assert.Error(t, err)
 	})
 }
