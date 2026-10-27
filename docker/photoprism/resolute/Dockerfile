@@ -92,7 +92,7 @@ RUN printf 'DOCKER_ENV=prod\nDOCKER_IMG=ce\n' > /scripts/.env && chmod 0444 /scr
 # Update pre-installed packages.
 RUN apt-get update && \
     apt-get -qq dist-upgrade && \
-    yt-dlp --update-to master && \
+    yt-dlp -U && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \
     /scripts/cleanup.sh
 
