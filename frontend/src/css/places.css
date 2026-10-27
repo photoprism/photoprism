@@ -19,6 +19,12 @@
 .map-container {
     background-color: rgb(var(--v-theme-background));
     z-index: 1;
+    font-family: var(--v-font-family);
+    font-size: 12px;
+    line-height: normal;
+    overflow: hidden;
+    -webkit-tap-highlight-color: rgb(0 0 0/0);
+    -webkit-touch-callout: none;
 }
 
 .map-background {
@@ -139,8 +145,8 @@
 .maplibregl-ctrl.maplibregl-ctrl-attrib > .maplibregl-ctrl-attrib-inner {
     height: auto;
     min-height: 19px;
-    display: flex;
-    align-items: center;
+    line-height: 19px;
+    color: #333 !important;
 }
 
 .maplibregl-ctrl-attrib-inner a {

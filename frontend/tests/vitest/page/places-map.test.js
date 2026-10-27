@@ -87,7 +87,7 @@ describe("Places map compatibility", () => {
   it("always releases the busy state when a style cannot be rendered", () => {
     const context = {
       loading: false, $notify: { blockUI: vi.fn(), unblockUI: vi.fn() },
-      $refs: { map: document.createElement("div") }, configureMap: vi.fn(),
+      $refs: { map: document.createElement("div") }, removeMap: vi.fn(), configureMap: vi.fn(),
       renderMap: vi.fn(() => {
         throw new Error("GPU unavailable");
       }), showMapError: vi.fn(),
@@ -269,11 +269,44 @@ describe("Places map compatibility", () => {
 
   it("releases the sky renderer when the map is torn down", () => {
     const destroy = vi.fn();
-    const context = { map: { off: vi.fn(), remove: vi.fn() }, _sky: { destroy }, _styleSky: {}, markersOnScreen: {}, clearAllMarkerClicks: vi.fn() };
+    const remove = vi.fn();
+    const context = { map: { off: vi.fn(), remove }, _sky: { destroy, detach: vi.fn() }, _styleSky: {}, markersOnScreen: {}, clearAllMarkerClicks: vi.fn(), removeMap: Places.methods.removeMap };
     Places.methods.teardownMap.call(context);
+    expect(remove).toHaveBeenCalledOnce();
     expect(destroy).toHaveBeenCalledOnce();
     expect(context._sky).toBeNull();
     expect(context._styleSky).toBeNull();
+  });
+
+  it("removes the map and its markers but keeps the sky renderer for the next map", () => {
+    const map = { off: vi.fn(), remove: vi.fn() };
+    const marker = { remove: vi.fn() };
+    const handler = vi.fn();
+    const sky = { destroy: vi.fn(), detach: vi.fn() };
+    const context = { map, _sky: sky, _styleSky: { map }, _mapDataHandler: handler, markers: { 1: marker }, markersOnScreen: { 1: marker }, markerHandlers: { 1: {} }, clearAllMarkerClicks: vi.fn(), updateMarkers: vi.fn() };
+    Places.methods.removeMap.call(context);
+    expect(map.off).toHaveBeenCalledWith("data", handler);
+    ["move", "moveend", "resize", "idle"].forEach((type) => expect(map.off).toHaveBeenCalledWith(type, context.updateMarkers));
+    expect(map.remove).toHaveBeenCalledOnce();
+    expect(context._mapDataHandler).toBeNull();
+    expect(marker.remove).toHaveBeenCalledOnce();
+    expect(sky.detach).toHaveBeenCalledOnce();
+    expect(sky.destroy).not.toHaveBeenCalled();
+    expect(context._sky).toBe(sky);
+    expect(context.map).toBeNull();
+    expect(context._styleSky).toBeNull();
+    expect(context.markers).toEqual({});
+    expect(context.markersOnScreen).toEqual({});
+  });
+
+  it("removes the previous map before rendering a new style", () => {
+    const calls = [];
+    const context = {
+      loading: false, $notify: { blockUI: vi.fn(), unblockUI: vi.fn() }, $refs: { map: document.createElement("div") },
+      removeMap: vi.fn(() => calls.push("removeMap")), configureMap: vi.fn(), renderMap: vi.fn(() => calls.push("renderMap")), showMapError: vi.fn(),
+    };
+    expect(Places.methods.setStyle.call(context, "default")).toBe(true);
+    expect(calls).toEqual(["removeMap", "renderMap"]);
   });
 
   it("shows CSS stars when the star map cannot be loaded, unless unmounted", async () => {
@@ -296,5 +329,25 @@ describe("Places map compatibility", () => {
     } finally {
       vi.unstubAllGlobals();
     }
+  });
+
+  it("releases the busy state and shows the error when the previous map cannot be removed", () => {
+    const context = {
+      loading: false, $notify: { blockUI: vi.fn(), unblockUI: vi.fn() }, $refs: { map: document.createElement("div") },
+      removeMap: vi.fn(() => {
+        throw new Error("remove failed");
+      }), configureMap: vi.fn(), renderMap: vi.fn(), showMapError: vi.fn(),
+    };
+    expect(Places.methods.setStyle.call(context, "default")).toBe(false);
+    expect(context.renderMap).not.toHaveBeenCalled();
+    expect(context.showMapError).toHaveBeenCalledOnce();
+    expect(context.$notify.unblockUI).toHaveBeenCalledOnce();
+  });
+
+  it("ignores map shortcuts while no map exists", () => {
+    const context = { map: null, initialized: true, loading: false, $view: { isActive: () => true }, setProjection: vi.fn() };
+    expect(() => Places.methods.onKeyDown.call(context, new KeyboardEvent("keydown", { code: "ArrowUp" }))).not.toThrow();
+    Places.methods.toggleProjection.call(context);
+    expect(context.setProjection).not.toHaveBeenCalled();
   });
 });

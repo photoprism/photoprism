@@ -196,8 +196,17 @@ export default {
     this.$view.leave(this);
   },
   methods: {
-    // Removes map event listeners and marker handlers before the component is disposed.
+    // teardownMap releases the map and the sky renderer before the component is disposed.
     teardownMap() {
+      this.removeMap();
+
+      if (this._sky) {
+        this._sky.destroy();
+        this._sky = null;
+      }
+    },
+    // removeMap removes the map with its event listeners and markers, and detaches the sky renderer from it.
+    removeMap() {
       if (!this.map) {
         return;
       }
@@ -212,13 +221,8 @@ export default {
         this.map.off("idle", this.updateMarkers);
       }
 
-      if (this._sky) {
-        this._sky.destroy();
-        this._sky = null;
-      }
-
+      this._sky?.detach();
       this._styleSky = null;
-
       this._mapDataHandler = null;
 
       this.clearAllMarkerClicks();
@@ -371,7 +375,7 @@ export default {
             }
             break;
         }
-      } else if (this.initialized) {
+      } else if (this.initialized && this.map) {
         // Use the arrow keys to move around the map with game-like controls.
         switch (ev.code) {
           case "ArrowUp":
@@ -404,7 +408,7 @@ export default {
       }
     },
     toggleProjection() {
-      if (!this.initialized || this.loading) {
+      if (!this.map || !this.initialized || this.loading) {
         return;
       }
 
@@ -510,9 +514,10 @@ export default {
 
       this.lastFilter = {};
       this.initialized = false;
-      this.$refs.map.innerHTML = "";
 
       try {
+        this.removeMap();
+        this.$refs.map.innerHTML = "";
         this.configureMap(style);
         this.renderMap();
         this.mapError = false;
