@@ -39,7 +39,7 @@ New container deployments should pull the `:latest` tag (or an explicit current 
 
 ### Legacy Images ("Use at Your Own Risk")
 
-The `develop/` and `photoprism/` directories also contain Dockerfiles for a number of **older Linux distributions**, for example Ubuntu *Jammy*, *Noble*, *Oracular*, *Plucky*, *Questing*, *Impish*, *Lunar*, *Mantic* and Debian *Buster*, *Bullseye*, *Bookworm*, as well as an `armv7` variant.
+The `develop/` and `photoprism/` directories also contain Dockerfiles for a number of **older Linux distributions**, for example Ubuntu *Jammy*, *Noble*, *Oracular*, *Plucky*, *Questing*, *Impish*, *Lunar*, *Mantic* and Debian *Buster*, *Bullseye*, *Bookworm*.
 
 These files are **kept for documentation and reference purposes only**:
 

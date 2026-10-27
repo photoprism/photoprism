@@ -7,7 +7,6 @@ ENV NPM_CONFIG_IGNORE_SCRIPTS=true
 ## Alternative Environments:
 # FROM photoprism/develop:questing # Ubuntu 25.10 (Questing Quokka)
 # FROM photoprism/develop:plucky   # Ubuntu 25.04 (Plucky Puffin)
-# FROM photoprism/develop:armv7    # ARMv7 (32bit)
 # FROM photoprism/develop:oracular # Ubuntu 24.10 (Oracular Oriole)
 # FROM photoprism/develop:noble    # Ubuntu 24.04 LTS (Noble Numbat)
 # FROM photoprism/develop:mantic   # Ubuntu 23.10 (Mantic Minotaur)

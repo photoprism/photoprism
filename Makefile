@@ -345,8 +345,6 @@ pkg-amd64:
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" photoprism/develop:jammy make all install tar.gz
 pkg-arm64:
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" photoprism/develop:jammy make all install tar.gz
-pkg-armv7:
-	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" photoprism/develop:jammy make all install tar.gz
 install:
 	$(info Installing in "$(DESTDIR)"...)
 	@[ ! -d "$(DESTDIR)" ] || (echo "ERROR: Install path '$(DESTDIR)' already exists!"; exit 1)
@@ -967,10 +965,6 @@ docker-develop-bullseye-slim:
 	docker pull --platform=amd64 debian:bullseye-slim
 	docker pull --platform=arm64 debian:bullseye-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
-develop-armv7: docker-develop-armv7
-docker-develop-armv7:
-	docker pull --platform=arm ubuntu:noble
-	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
 docker-develop-buster:
 	docker pull --platform=amd64 golang:1-buster
 	docker pull --platform=arm64 golang:1-buster
@@ -1073,17 +1067,13 @@ docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
 docker-preview-ubuntu: docker-preview-resolute
 docker-preview-other: docker-preview-debian docker-preview-bullseye
-docker-preview-arm: docker-preview-arm64 docker-preview-armv7
+docker-preview-arm: docker-preview-arm64
 docker-preview-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bookworm /bookworm "-t photoprism/photoprism:preview-ce-debian"
-docker-preview-armv7:
-	docker pull --platform=arm photoprism/develop:armv7
-	docker pull --platform=arm ubuntu:noble
-	scripts/docker/buildx.sh photoprism linux/arm preview-armv7 /armv7
 docker-preview-arm64:
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
@@ -1161,17 +1151,13 @@ docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
 docker-release-ubuntu: docker-release-resolute
 docker-release-other: docker-release-debian docker-release-bullseye
-docker-release-arm: docker-release-arm64 docker-release-armv7
+docker-release-arm: docker-release-arm64
 docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-bookworm /bookworm "-t photoprism/photoprism:ce-debian"
-docker-release-armv7:
-	docker pull --platform=arm photoprism/develop:armv7
-	docker pull --platform=arm ubuntu:noble
-	scripts/docker/buildx.sh photoprism linux/arm armv7 /armv7
 docker-release-arm64:
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
