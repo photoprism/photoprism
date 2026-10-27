@@ -156,7 +156,6 @@
                 v-model="view.model.Country"
                 :append-inner-icon="view.model.PlaceSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                :readonly="!!(view.model.Lat || view.model.Lng)"
                 :label="$gettext('Country')"
                 hide-no-data
                 autocomplete="off"
