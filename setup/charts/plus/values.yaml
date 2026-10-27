@@ -46,6 +46,10 @@ cluster:
     jwtScope: ""
 
 persistence:
+  # Keep the volume claims when the release is uninstalled with Helm or its
+  # Argo CD application is deleted, so your library is not removed with it.
+  # Delete a claim manually once its data is no longer needed.
+  keep: true
   storageClassName: ""
   originals:
     enabled: true
@@ -75,6 +79,29 @@ ingress:
   annotations: {}
   hosts: []
   tls: []
+
+# Startup and readiness probes on the status endpoint (<site-url>api/v1/status),
+# so the pod counts as ready only once PhotoPrism is listening and its database
+# is available. The startup probe allows up to 10 minutes for a first start,
+# e.g. for database migrations. The liveness probe restarts an unresponsive
+# server; it is off by default, since heavy indexing can delay responses.
+# Set scheme to HTTPS only if PhotoPrism terminates TLS itself.
+probes:
+  enabled: true
+  scheme: HTTP
+  startup:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 60
+  readiness:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  liveness:
+    enabled: false
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 6
 
 resources:
   limits:

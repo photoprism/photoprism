@@ -238,6 +238,12 @@
       "type": "object",
       "additionalProperties": true,
       "properties": {
+        "keep": {
+          "type": "boolean",
+          "default": true,
+          "title": "Keep Volumes",
+          "description": "Keep the volume claims when the release is uninstalled or its Argo CD application is deleted."
+        },
         "storageClassName": {
           "type": "string",
           "default": "",
@@ -422,6 +428,19 @@
       },
       "title": "Ingress",
       "description": "Ingress exposing the application outside the cluster."
+    },
+    "probes": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Health Probes",
+      "description": "Startup, readiness and optional liveness probes on the status endpoint (<site-url>api/v1/status).",
+      "properties": {
+        "enabled": {"type": "boolean", "default": true, "title": "Enable Probes", "description": "Adds the probes to the container."},
+        "scheme": {"type": "string", "default": "HTTP", "enum": ["HTTP", "HTTPS"], "title": "Probe Scheme", "description": "Use HTTPS only if PhotoPrism terminates TLS itself."},
+        "startup": {"type": "object", "additionalProperties": true, "title": "Startup Probe", "description": "Probe timing; the default allows up to 10 minutes for a first start."},
+        "readiness": {"type": "object", "additionalProperties": true, "title": "Readiness Probe", "description": "Probe timing for readiness."},
+        "liveness": {"type": "object", "additionalProperties": true, "title": "Liveness Probe", "description": "Probe timing; set enabled to true to restart an unresponsive server."}
+      }
     },
     "resources": {
       "type": "object",

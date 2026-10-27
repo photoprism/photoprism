@@ -295,6 +295,12 @@ questions:
     description: "Maximum number of idle connections (0 lets PhotoPrism decide)."
     type: int
     default: "0"
+  - variable: persistence.keep
+    group: "Storage"
+    label: "Keep Volumes on Uninstall"
+    description: "Keep the volume claims, and with them your library, when the release is uninstalled or its Argo CD application is deleted."
+    type: boolean
+    default: true
   - variable: persistence.storage.size
     group: "Storage"
     label: "Storage Volume Size"

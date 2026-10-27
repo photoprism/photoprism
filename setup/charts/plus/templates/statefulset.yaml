@@ -131,6 +131,7 @@ spec:
           ports:
             - containerPort: 2342
               name: http
+          {{- include "photoprism-plus.probes" . | nindent 10 }}
           volumeMounts:
             {{- if .Values.persistence.originals.enabled }}
             - name: originals

@@ -61,3 +61,47 @@ photoprism-cluster-secrets
   {{- $site -}}
 {{- end -}}
 {{- end -}}
+
+{{- /*
+Annotations for the chart's PersistentVolumeClaims. With persistence.keep, the
+claims survive "helm uninstall" and the deletion or pruning of an Argo CD
+application, so the library is not removed with the release.
+*/ -}}
+{{- define "photoprism-plus.pvcAnnotations" -}}
+{{- if .Values.persistence.keep -}}
+annotations:
+  helm.sh/resource-policy: keep
+  argocd.argoproj.io/sync-options: Delete=false
+{{- end -}}
+{{- end -}}
+
+{{- /*
+Startup, readiness and optional liveness probes on the status endpoint, which
+the server serves below its site URL path (<site-url>api/v1/status) once it
+is listening and its database is available.
+*/ -}}
+{{- define "photoprism-plus.probes" -}}
+{{- $probes := .Values.probes | default dict -}}
+{{- if $probes.enabled -}}
+{{- $base := (urlParse (include "photoprism-plus.siteURL" . | trim)).path | default "/" -}}
+{{- $http := dict "path" (printf "%s/api/v1/status" (trimSuffix "/" $base)) "port" "http" "scheme" ($probes.scheme | default "HTTP") -}}
+{{- with $probes.startup }}
+startupProbe:
+  httpGet:
+    {{- toYaml $http | nindent 4 }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with $probes.readiness }}
+readinessProbe:
+  httpGet:
+    {{- toYaml $http | nindent 4 }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- if and $probes.liveness $probes.liveness.enabled }}
+livenessProbe:
+  httpGet:
+    {{- toYaml $http | nindent 4 }}
+  {{- toYaml (omit $probes.liveness "enabled") | nindent 2 }}
+{{- end }}
+{{- end -}}
+{{- end -}}

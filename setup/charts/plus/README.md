@@ -6,7 +6,7 @@ This chart provides an easy way to run [PhotoPrism®](https://www.photoprism.app
 
 - Runs the official `photoprism/photoprism` image with non-root defaults (UID/GID 1000).
 - Ships with SQLite out of the box; switch to MariaDB/MySQL by filling in the database section.
-- Creates lightweight PVCs for `/photoprism/storage` (5 GiB) and, optionally, `/photoprism/originals` (10 GiB) – the cluster’s default storage class is used unless you override it.
+- Creates lightweight PVCs for `/photoprism/storage` (5 GiB) and, optionally, `/photoprism/originals` (10 GiB) – the cluster’s default storage class is used unless you override it, and the volumes are kept when you uninstall the release.
 - Surfaces the most relevant customization settings (locale, themes, login footer, CORS/CDN, backup schedule) directly in Rancher’s UI or via `values.yaml`.
 
 ## Quick Start
@@ -34,6 +34,7 @@ helm upgrade --install photos photoprism/photoprism-plus \
 
 - `persistence.storage` is always created and holds the application state.
 - `persistence.originals` can be disabled or redirected to an NFS export when you manage originals elsewhere.
+- `persistence.keep` (default `true`) keeps both volume claims when the release is uninstalled or its Argo CD application is deleted, see [Uninstalling](#uninstalling).
 - Backup options (`PHOTOPRISM_BACKUP_*`) are exposed so you can point scheduled backups to another path or tweak retention.
 
 ## Customization
@@ -49,7 +50,7 @@ See [`values.yaml`](https://github.com/photoprism/photoprism/blob/develop/setup/
 
 ## Networking & TLS
 
-The chart exposes PhotoPrism on TCP 2342 through a ClusterIP service. You can override the service type or enable an Ingress resource when you terminate TLS  in the cluster edge:
+The chart exposes PhotoPrism on TCP 2342 through a ClusterIP service. You can override the service type or enable an Ingress resource when you terminate TLS at the cluster edge:
 
 ```yaml
 service:
@@ -98,6 +99,18 @@ copied into the managed Secret). If neither is set, no password env var is injec
 - When `adminPassword` is left blank, a random password is generated and stored in `secret/<release>-photoprism-secrets`.
 - Prefer MariaDB/MySQL for multi-user setups or large libraries, and back up both the database and storage PVCs regularly.
 - If you expose PhotoPrism on the public internet, pair it with HTTPS termination (Ingress/TLS or an external proxy) and keep the container image up to date.
+
+## Health Checks
+
+The chart adds startup and readiness probes on PhotoPrism's status endpoint (`/api/v1/status`, below the path of `PHOTOPRISM_SITE_URL` if it has one), so the pod counts as ready only once PhotoPrism is listening and its database is available. The startup probe allows up to 10 minutes for a first start, for example for database migrations. A liveness probe is available with `probes.liveness.enabled: true`; it is off by default, since indexing large files can delay responses. Set `probes.enabled: false` to remove all probes.
+
+## Uninstalling
+
+```bash
+helm uninstall photos --namespace photos
+```
+
+This removes the release, including its secret with the generated admin password, but keeps the volume claims and with them your originals, index and thumbnails (`persistence.keep: true`). The same applies when you delete the release's application in Argo CD. Installing the chart again with the same release name and namespace reuses the volumes. Once you no longer need the data, delete the claims yourself, for example with `kubectl delete pvc --namespace photos -l app.kubernetes.io/instance=photos`.
 
 ## Getting Support
 
