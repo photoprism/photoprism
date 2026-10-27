@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { flushPromises, shallowMount } from "@vue/test-utils";
 import { isProxy } from "vue";
 import Places from "page/places.vue";
@@ -206,5 +206,95 @@ describe("Places map compatibility", () => {
     expect(api.get).toHaveBeenCalledOnce();
     expect(source.setData).toHaveBeenCalledOnce();
     expect(context.loaded).toBe(true);
+  });
+
+  it("draws the atmosphere in globe view and restores the style sky otherwise", () => {
+    const map = { getSky: vi.fn(() => undefined), setSky: vi.fn() };
+    let projection = "globe";
+    const context = { map, _styleSky: null, getProjection: () => projection };
+    Places.methods.updateAtmosphere.call(context);
+    Places.methods.updateAtmosphere.call(context);
+    expect(map.setSky).toHaveBeenCalledOnce();
+    expect(map.setSky.mock.calls[0][0]["atmosphere-blend"]).toBeDefined();
+    projection = "mercator";
+    Places.methods.updateAtmosphere.call(context);
+    expect(map.setSky).toHaveBeenLastCalledWith(undefined);
+    expect(context._styleSky).toBeNull();
+  });
+
+  it("restores a style sky with the defaults of the properties the atmosphere set", () => {
+    const map = { getSky: () => ({ "sky-color": "#000000" }), setSky: vi.fn() };
+    let projection = "globe";
+    const context = { map, _styleSky: null, getProjection: () => projection };
+    Places.methods.updateAtmosphere.call(context);
+    projection = "mercator";
+    Places.methods.updateAtmosphere.call(context);
+    const restored = map.setSky.mock.calls[1][0];
+    expect(restored["sky-color"]).toBe("#000000");
+    expect(restored["atmosphere-blend"]).toBe(0.8);
+  });
+
+  it("retries the atmosphere after the style was still loading", () => {
+    const map = { getSky: () => undefined, setSky: vi.fn().mockImplementationOnce(() => {
+      throw new Error("Style is not done loading.");
+    }) };
+    const context = { map, _styleSky: null, getProjection: () => "globe" };
+    expect(() => Places.methods.updateAtmosphere.call(context)).not.toThrow();
+    expect(context._styleSky).toBeNull();
+    Places.methods.updateAtmosphere.call(context);
+    expect(map.setSky).toHaveBeenCalledTimes(2);
+    expect(context._styleSky.map).toBe(map);
+  });
+
+  it("renders the sky once and follows the current map", () => {
+    vi.stubGlobal("Image", class {
+      decode() {
+        return new Promise(() => {});
+      }
+    });
+    onTestFinished(() => vi.unstubAllGlobals());
+    const first = { on: vi.fn(), off: vi.fn() };
+    const second = { on: vi.fn(), off: vi.fn() };
+    const context = { $refs: { background: document.createElement("div") }, $config: { staticUri: "/static" }, map: first, _sky: null };
+    Places.methods.renderSky.call(context);
+    const renderer = context._sky;
+    expect(first.on).toHaveBeenCalledWith("render", renderer.onRender);
+    context.map = second;
+    Places.methods.renderSky.call(context);
+    expect(context._sky).toBe(renderer);
+    expect(first.off).toHaveBeenCalledWith("render", renderer.onRender);
+    expect(second.on).toHaveBeenCalledWith("render", renderer.onRender);
+    renderer.destroy();
+  });
+
+  it("releases the sky renderer when the map is torn down", () => {
+    const destroy = vi.fn();
+    const context = { map: { off: vi.fn(), remove: vi.fn() }, _sky: { destroy }, _styleSky: {}, markersOnScreen: {}, clearAllMarkerClicks: vi.fn() };
+    Places.methods.teardownMap.call(context);
+    expect(destroy).toHaveBeenCalledOnce();
+    expect(context._sky).toBeNull();
+    expect(context._styleSky).toBeNull();
+  });
+
+  it("shows CSS stars when the star map cannot be loaded, unless unmounted", async () => {
+    vi.stubGlobal("Image", class {
+      decode() {
+        return Promise.reject(new Error("EncodingError"));
+      }
+    });
+    try {
+      for (const unmounted of [false, true]) {
+        const el = document.createElement("div");
+        const map = { on: vi.fn(), off: vi.fn() };
+        const context = { $refs: { background: el }, $config: { staticUri: "/static", debug: false }, map, _sky: null, _mapUnmounted: unmounted };
+        Places.methods.renderSky.call(context);
+        await flushPromises();
+        expect(el.querySelectorAll(".star").length > 0).toBe(!unmounted);
+        expect(context._sky.destroyed).toBe(true);
+        expect(map.off).toHaveBeenCalledWith("render", context._sky.onRender);
+      }
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

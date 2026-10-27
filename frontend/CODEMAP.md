@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 23, 2026
+**Last Updated:** October 27, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -20,6 +20,7 @@ Directory Map (src)
 - `src/app/session.js` — `$config` and `$session` singletons wired from server-provided `window.__CONFIG__` and storage
 - `src/common/map.js`, `src/common/maplibregl.js` — shared WebGL2 capability probe, concurrent lazy loading, MapLibre 6 worker URL, and language-label adapter; the worker is emitted into a versioned directory by `vite.config.mjs`.
 - `src/component/map.vue`, `src/page/places.vue` — mini-maps/location controls and Places; map-unavailable UI is confined to the map surface.
+- `src/common/sky.js` — WebGL2 star map behind the Places globe (`assets/static/img/sky/stars.avif`), the MapLibre atmosphere sky, and the CSS star fallback.
 - `src/common/*` — framework-agnostic helpers: `$api` (Axios), `$notify`, `$view`, `$event` (PubSub), i18n (`gettext`), util, fullscreen, map utils, websocket, `sphere.js` (lazy-loaded 360° viewer wrapper)
 - `src/common/export.js` — server-filtered Export capability check and pure file-group/size choices from full picture details.
 - `src/common/export-media.js` — metadata-based AVC choices for videos, animations, and live photos, marked ready when an indexed derivative has a name the server looks up; Insta360 only with such a derivative.

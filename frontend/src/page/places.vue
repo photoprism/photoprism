@@ -146,7 +146,6 @@ export default {
       settings: settings.maps,
       animate: this.$util.mapAnimateDuration(settings),
       loaded: false,
-      skyRendered: false,
     };
   },
   watch: {
@@ -166,6 +165,8 @@ export default {
   },
   created() {
     this._mapDataHandler = null;
+    this._sky = null;
+    this._styleSky = null;
     this.mapStyles = options.MapsStyle(this.featExperimental, this.$config.has("mapKey"));
   },
   // mounted initializes the map and keeps renderer failures inside the Places view.
@@ -210,6 +211,13 @@ export default {
         this.map.off("resize", this.updateMarkers);
         this.map.off("idle", this.updateMarkers);
       }
+
+      if (this._sky) {
+        this._sky.destroy();
+        this._sky = null;
+      }
+
+      this._styleSky = null;
 
       this._mapDataHandler = null;
 
@@ -286,12 +294,55 @@ export default {
         this.clearMarkerClick(markerId, marker);
       });
     },
+    // renderSky shows the star map behind the globe, or CSS stars if it cannot be rendered.
     renderSky() {
-      if (!this.skyRendered && sky.render && this.$refs.background) {
-        this.$nextTick(() => {
-          sky.render(this.$refs.background, 320);
-          this.skyRendered = true;
+      const el = this.$refs.background;
+
+      if (!el || !this.map) {
+        return;
+      }
+
+      if (!this._sky) {
+        const fallback = () => {
+          if (!this._mapUnmounted) {
+            sky.render(el, 320);
+          }
+        };
+        const renderer = new sky.Sky(el, { onLost: fallback });
+        this._sky = renderer;
+        renderer.load(`${this.$config.staticUri}/img/sky/stars.avif`).catch((err) => {
+          if (this.$config.debug) {
+            console.debug("places: sky fallback", err);
+          }
+          renderer.destroy();
+          fallback();
         });
+      }
+
+      this._sky.attach(this.map);
+    },
+    // updateAtmosphere draws the atmosphere around the globe and restores the style sky otherwise.
+    updateAtmosphere() {
+      const map = this.map;
+
+      if (!map || typeof map.setSky !== "function") {
+        return;
+      }
+
+      // Setters throw while the style is loading; the next projection change or style load retries.
+      try {
+        if (this.getProjection() === ProjectionGlobe) {
+          if (this._styleSky?.map !== map) {
+            const styleSky = map.getSky();
+            map.setSky(sky.atmosphere());
+            this._styleSky = { map, sky: styleSky };
+          }
+        } else if (this._styleSky?.map === map) {
+          map.setSky(sky.styleSky(this._styleSky.sky));
+          this._styleSky = null;
+        }
+      } catch {
+        // Ignore.
       }
     },
     onKeyDown(ev) {
@@ -414,6 +465,7 @@ export default {
         }
       }
     },
+    // onProjectionChange remembers the projection and shows the sky and atmosphere in globe view.
     onProjectionChange(ev) {
       // Update current projection.
       this.projection = ev.newProjection;
@@ -425,6 +477,8 @@ export default {
       if (ev.newProjection === ProjectionGlobe) {
         this.renderSky();
       }
+
+      this.updateAtmosphere();
     },
     // showMapError provides a readable fallback for rendering and loading failures.
     showMapError() {
@@ -946,6 +1000,9 @@ export default {
 
       // Get informed about projection type changes.
       this.map.on("projectiontransition", (ev) => this.onProjectionChange(ev));
+
+      // Add the atmosphere to a style that loads in globe projection.
+      this.map.on("style.load", () => this.updateAtmosphere());
 
       // Restore last used projection type, if any.
       if (lastProjection) {

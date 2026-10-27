@@ -26,6 +26,12 @@
     z-index: -1;
 }
 
+.map-background .sky-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 .map-background .star {
     position: absolute;
     background: white;

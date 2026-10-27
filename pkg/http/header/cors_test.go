@@ -30,6 +30,11 @@ func TestAllowCORS(t *testing.T) {
 		assert.False(t, AllowCORS("/static/build/.mjs"))
 		assert.False(t, AllowCORS("mjs"))
 	})
+	t.Run("Images", func(t *testing.T) {
+		assert.True(t, AllowCORS("/static/img/sky/stars.avif"))
+		assert.False(t, AllowCORS("/static/img/sky/.avif"))
+		assert.False(t, AllowCORS("/static/img/404.jpg"))
+	})
 	t.Run("NotAllowed", func(t *testing.T) {
 		assert.False(t, AllowCORS("/static/build/sw.map"))
 		assert.False(t, AllowCORS("/originals/photo.jpg"))

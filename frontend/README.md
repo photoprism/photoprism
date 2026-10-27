@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 23, 2026
+**Last Updated:** October 27, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -99,7 +99,7 @@ MapLibre GL JS 6 renders Places, lightbox mini-maps, and the location editor. It
 
 The build emits the self-contained `maplibre-gl-worker.mjs` under `maplibre/<package-version>/`. The version is read from the installed package, so a cached worker from an earlier release is never loaded by a newer bundle. The worker appears in the flat manifest and production precache; keep it as a module asset. Since MapLibre 6.13, `maplibre-gl-shared.mjs` is an empty file kept only for existing copy steps, so the build does not emit it.
 
-`component/map.vue` supplies missing style images through `setMissingStyleImageResolver`. Places waits for `GeoJSONSource.setData()` before reconciling markers. Verify style/language changes, clustering, marker clicks and dragging, globe/terrain controls, and the unavailable-WebGL2 path when updating the renderer.
+`component/map.vue` supplies missing style images through `setMissingStyleImageResolver`. Places waits for `GeoJSONSource.setData()` before reconciling markers. Verify style/language changes, clustering, marker clicks and dragging, globe/terrain controls, the globe star map and atmosphere, and the unavailable-WebGL2 path when updating the renderer.
 
 In Adjust Location, dragging the pin or clicking the map preserves the current center and zoom. A drag's trailing click does not select another location; the next mouse or touch gesture can place the pin normally. Search results and typed-coordinate changes still recenter the map. Direct placement stops any active camera animation.
 
