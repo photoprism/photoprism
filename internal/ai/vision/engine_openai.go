@@ -168,7 +168,14 @@ func (openaiBuilder) Build(ctx context.Context, model *Model, files Files, media
 			}
 		}
 
-		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(model.Name)), "gpt-5") {
+		// Check the model the request is sent for, which may come from Service.Model, Model, or the default.
+		modelName, _, _ := model.GetModel()
+
+		if modelName == "" {
+			modelName = openaiDefaultModel()
+		}
+
+		if openai.IsReasoningModel(modelName) {
 			req.Options.Temperature = 0
 			req.Options.TopP = 0
 		}

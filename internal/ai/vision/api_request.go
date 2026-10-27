@@ -446,7 +446,7 @@ func (r *ApiRequest) openAIJSON() ([]byte, error) {
 		payload.Model = openaiDefaultModel()
 	}
 
-	if strings.HasPrefix(strings.ToLower(payload.Model), "gpt-5") {
+	if openai.IsReasoningModel(payload.Model) {
 		payload.Reasoning = &openai.Reasoning{Effort: "low"}
 	}
 

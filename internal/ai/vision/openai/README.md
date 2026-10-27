@@ -1,6 +1,6 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** October 4, 2026
+**Last Updated:** October 27, 2026
 
 ### Overview
 
@@ -27,7 +27,7 @@ This package contains PhotoPrism’s adapter for the OpenAI Responses API. It en
 
 ### Prompt, Model, & Schema Guidance
 
-- **Models:** The adapter targets GPT‑5 vision tiers (e.g. `gpt-5-nano`, `gpt-5-mini`). These models support image inputs, structured outputs, and deterministic settings. Set `Name` to the exact provider identifier so defaults are applied correctly. Caption models share the same configuration surface and run through the same adapter.
+- **Models:** The adapter targets OpenAI's GPT-6 and GPT-5 vision models (e.g. `gpt-6-luna`, the default, or `gpt-6.1-terra`). These models support image inputs and structured outputs, and take a reasoning effort instead of sampling settings. Set `Name` or `Model` to the exact provider identifier so defaults are applied correctly. Caption models share the same configuration surface and run through the same adapter.
 - **Prompts:** Defaults live in `defaults.go`. Captions use a single-sentence instruction; labels use `LabelPromptDefault` (or `LabelPromptNSFW` when the package-level `vision.DetectNSFWLabels` global is true, which requires `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_NSFW_MODEL=labels`). Custom prompts should retain schema reminders so structured outputs stay valid.
 - **Schemas:** Labels use the JSON schema returned by `schema.LabelsJsonSchema(nsfw)`; the response format name is derived via `schema.JsonSchemaName` (e.g. `photoprism_vision_labels_v1`). Captions omit schemas unless operators explicitly request a structured format.
 - **Label names:** OpenAI's own models (`gpt-*`, `o1`/`o3`/`o4`) default to `Normalize: phrase`, so a compound name such as `ferris wheel` is stored whole instead of collapsing to `Ferris` — those tiers return a compound only when the subject has one. The default applies with `Engine: openai` and is keyed on the model identifier, so an OpenAI-compatible endpoint serving an open-weight model locally keeps `single-word`. Either can be overridden per model.
@@ -38,7 +38,7 @@ Budget-conscious operators can experiment with lighter prompts or lower-resoluti
 #### Performance & Cost Estimates
 
 - **Token budgets:** Captions request up to 512 output tokens; labels request up to 1024. Input tokens are typically ≤700 for a single 720 px thumbnail plus prompts.
-- **Latency:** GPT‑5 nano/mini vision calls typically complete in 3–8 s, depending on OpenAI region. Including reasoning metadata (`reasoning.effort=low`) has negligible impact but improves traceability.
+- **Latency:** Vision calls typically complete within a few seconds, depending on the model and OpenAI region. The adapter requests `reasoning.effort=low` for GPT-5 and GPT-6 models to keep reasoning tokens to a minimum.
 - **Costs:** Consult OpenAI’s pricing for the selected model. Multiply input/output tokens by the published rate. PhotoPrism currently sends one image per request to keep costs linear with photo count.
 
 ### Configuration
@@ -47,7 +47,7 @@ Budget-conscious operators can experiment with lighter prompts or lower-resoluti
 
 - `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` — fallback credentials when a model’s `Service.Key` is unset.
 - `OPENAI_BASE_URL` — Base URL of an OpenAI-compatible API, including the version path as in the OpenAI SDKs; defaults to `https://api.openai.com/v1`; trailing slashes of the path are trimmed, and a query such as `?api-version=...` is moved to the end of the request URL. The engine's default service URI is `${OPENAI_BASE_URL}/responses`, so models without their own `Service.Uri` send their requests, images, and API key to that host, and a value other than the default is written to the system log at startup; set `Service.Uri` explicitly if the variable is also set for other tools. As the URI is built from it, a value without `/v1` (e.g. `https://api.openai.com`) yields `https://api.openai.com/responses`.
-- `OPENAI_MODEL` — Default model of the OpenAI engine, used for models that configure none of `Service.Model`, `Model`, or `Name` and for requests without a model; defaults to `gpt-5-mini`.
+- `OPENAI_MODEL` — Default model of the OpenAI engine, used for models that configure none of `Service.Model`, `Model`, or `Name` and for requests without a model; defaults to `gpt-6-luna`.
 - Existing `PHOTOPRISM_VISION_*` variables remain authoritative (see the [Getting Started Guide](https://docs.photoprism.app/getting-started/config-options/#computer-vision) for full lists).
 
 #### `vision.yml` Examples
@@ -55,7 +55,7 @@ Budget-conscious operators can experiment with lighter prompts or lower-resoluti
 ```yaml
 Models:
   - Type: caption
-    Name: gpt-5-nano
+    Name: gpt-6-luna
     Engine: openai
     Disabled: false    # opt in manually
     Resolution: 720    # optional; default is 720
@@ -68,7 +68,7 @@ Models:
       Key: ${OPENAI_API_KEY}
 
   - Type: labels
-    Name: gpt-5-mini
+    Name: gpt-6.1-terra
     Engine: openai
     Disabled: false
     Resolution: 720
@@ -91,8 +91,8 @@ Only the last enabled labels entry is used, so remove or disable other labels en
 
 - File scheme: `data:` URLs (base64) for all OpenAI models.
 - Resolution: 720 px thumbnails (`vision.Thumb(ModelTypeCaption|Labels)`).
-- Options: `MaxOutputTokens` raised to 512 (caption) / 1024 (labels); `ForceJson=false` for captions, `true` for labels; `reasoning.effort="low"`.
-- Sampling: `Temperature` and `TopP` set to `0` for `gpt-5*` models; inherited values (0.1/0.9) remain for other engines. `openaiBuilder.Build` performs this override while preserving the struct defaults for non-OpenAI adapters.
+- Options: `MaxOutputTokens` raised to 512 (caption) / 1024 (labels); `ForceJson=false` for captions, `true` for labels; `reasoning.effort="low"` for GPT-5 and GPT-6 models.
+- Sampling: `Temperature` and `TopP` set to `0` for GPT-5 and GPT-6 models (`openai.IsReasoningModel`), so the request omits them; configured values remain for other models. `openaiBuilder.Build` checks the model the request is sent for, whether it comes from `Service.Model`, `Model`, `Name`, or the engine default.
 - Schema naming: Automatically derived via `schema.JsonSchemaName`, so operators may omit `SchemaVersion`.
 
 ### Documentation

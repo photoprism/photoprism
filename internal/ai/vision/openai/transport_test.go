@@ -126,6 +126,33 @@ func TestIsCloudUrl(t *testing.T) {
 	}
 }
 
+func TestIsReasoningModel(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		out  bool
+	}{
+		{name: "Default", in: DefaultModel, out: true},
+		{name: "GPT5Mini", in: "gpt-5-mini", out: true},
+		{name: "GPT5", in: "gpt-5", out: true},
+		{name: "PointRelease", in: "gpt-5.6-terra", out: true},
+		{name: "GPT6PointRelease", in: "gpt-6.1-sol", out: true},
+		{name: "Uppercase", in: "  GPT-6-LUNA ", out: true},
+		{name: "GPT4", in: "gpt-4.1-mini", out: false},
+		{name: "FamilyPrefixCollision", in: "gpt-50", out: false},
+		{name: "OpenWeight", in: "Qwen2.5-VL-7B-Instruct", out: false},
+		{name: "Empty", in: "", out: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := IsReasoningModel(tc.in); got != tc.out {
+				t.Fatalf("IsReasoningModel(%q) = %v, want %v", tc.in, got, tc.out)
+			}
+		})
+	}
+}
+
 func TestIsCloudModel(t *testing.T) {
 	cases := []struct {
 		name string

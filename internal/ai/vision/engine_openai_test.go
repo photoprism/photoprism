@@ -53,6 +53,33 @@ func TestOpenAIBuilderBuildCaptionDisablesForceJSON(t *testing.T) {
 	assert.GreaterOrEqual(t, request.Options.MaxOutputTokens, openai.CaptionMaxTokens)
 }
 
+func TestOpenAIBuilderBuildSampling(t *testing.T) {
+	build := func(t *testing.T, model *Model) *ModelOptions {
+		t.Helper()
+		model.Options = &ModelOptions{Temperature: 0.2, TopP: 0.8}
+		model.ApplyEngineDefaults()
+		request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal)
+		require.NoError(t, err)
+		require.NotNil(t, request.Options)
+		return request.Options
+	}
+	t.Run("DefaultModel", func(t *testing.T) {
+		opts := build(t, &Model{Type: ModelTypeLabels, Engine: openai.EngineName})
+		assert.Zero(t, opts.Temperature)
+		assert.Zero(t, opts.TopP)
+	})
+	t.Run("ModelOverride", func(t *testing.T) {
+		opts := build(t, &Model{Type: ModelTypeCaption, Name: "openai-captions", Model: "gpt-5.6-terra", Engine: openai.EngineName})
+		assert.Zero(t, opts.Temperature)
+		assert.Zero(t, opts.TopP)
+	})
+	t.Run("NonReasoningModel", func(t *testing.T) {
+		opts := build(t, &Model{Type: ModelTypeCaption, Name: "gpt-4.1-mini", Engine: openai.EngineName})
+		assert.InDelta(t, 0.2, opts.Temperature, 1e-6)
+		assert.InDelta(t, 0.8, opts.TopP, 1e-6)
+	})
+}
+
 func TestApiRequestJSONForOpenAI(t *testing.T) {
 	req := &ApiRequest{
 		Model:          "gpt-5-mini",

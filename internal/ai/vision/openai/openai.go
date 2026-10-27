@@ -33,6 +33,9 @@ import (
 // CloudModelFamilies lists the identifier families OpenAI uses for the models it hosts itself.
 var CloudModelFamilies = []string{"gpt", "chatgpt", "o1", "o3", "o4"}
 
+// ReasoningModelFamilies lists the GPT families that take a reasoning effort instead of sampling settings.
+var ReasoningModelFamilies = []string{"gpt-5", "gpt-6"}
+
 // IsCloudUrl reports whether the URL points at the OpenAI API host.
 func IsCloudUrl(rawUrl string) bool {
 	if rawUrl = strings.TrimSpace(rawUrl); rawUrl == "" {
@@ -64,6 +67,20 @@ func IsCloudModel(name string) bool {
 		// Match the family itself or a variant of it, never a longer name that merely starts
 		// with the same letters, so a local "o11vision" is not read as OpenAI's "o1".
 		if name == family || strings.HasPrefix(name, family+"-") {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsReasoningModel reports whether the model identifier belongs to a GPT reasoning family,
+// including point releases such as "gpt-5.6-terra" and "gpt-6.1-sol".
+func IsReasoningModel(name string) bool {
+	name = strings.ToLower(strings.TrimSpace(name))
+
+	for _, family := range ReasoningModelFamilies {
+		if name == family || strings.HasPrefix(name, family+"-") || strings.HasPrefix(name, family+".") {
 			return true
 		}
 	}

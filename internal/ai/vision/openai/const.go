@@ -22,7 +22,7 @@ const (
 	// ModelEnv defines the environment variable that sets the default model.
 	ModelEnv = "OPENAI_MODEL"
 	// DefaultModel is the model used by default when accessing the OpenAI API.
-	DefaultModel = "gpt-5-mini"
+	DefaultModel = "gpt-6-luna"
 	// DefaultResolution is the default thumbnail size submitted to the OpenAI.
 	DefaultResolution = 720
 	// CaptionSystem defines the default system prompt for caption models.

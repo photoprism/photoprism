@@ -385,7 +385,7 @@ func TestModel_GetModelRequestEngine(t *testing.T) {
 		assert.Equal(t, "Q4_K_M", version)
 	})
 	t.Run("EngineDefaults", func(t *testing.T) {
-		for engine, want := range map[string]string{openai.EngineName: "gpt-5-mini", ollama.EngineName: "gemma4:latest"} {
+		for engine, want := range map[string]string{openai.EngineName: "gpt-6-luna", ollama.EngineName: "gemma4:latest"} {
 			m := &Model{Engine: engine}
 			m.ApplyEngineDefaults()
 			model, _, _ := m.GetModel()
