@@ -19,6 +19,11 @@
 .map-container {
     background-color: rgb(var(--v-theme-background));
     z-index: 1;
+}
+
+/* Base styles for all maps, also where Vue's class binding removes the maplibregl-map class. */
+.map-container,
+.maplibregl-map {
     font-family: var(--v-font-family);
     font-size: 12px;
     line-height: normal;
