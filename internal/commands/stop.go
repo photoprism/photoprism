@@ -567,7 +567,7 @@ func clearStalePidFile(pidFile string, info os.FileInfo) error {
 }
 
 // clearExitedPidFile empties the pid file of a daemon that has exited, like clearStalePidFile, and retries until
-// the timeout while its lock is held, as the files of an exiting process close after it has become a zombie.
+// the timeout while its lock is held, as the files of an exiting process can close after it has become a zombie.
 func clearExitedPidFile(pidFile string, info os.FileInfo, timeout time.Duration) error {
 	deadline := time.Now().Add(timeout)
 
@@ -605,7 +605,7 @@ func daemonProcess(p *os.Process) bool {
 }
 
 // processRunning reports whether the process runs, counting one that has exited but was not reaped yet as gone.
-// It reads the state rather than the command line, which is still empty while the process is being executed.
+// The command line cannot be used, as it can be empty while exec is still in progress.
 func processRunning(p *os.Process) bool {
 	if p == nil || p.Signal(syscall.Signal(0)) != nil {
 		return false
