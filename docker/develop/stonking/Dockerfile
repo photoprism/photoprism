@@ -103,6 +103,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
+    /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \
     /scripts/install-sudoers.sh --develop && \
     mkdir -p /etc/skel/.config/go/telemetry && \
