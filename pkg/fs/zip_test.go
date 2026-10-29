@@ -2,8 +2,10 @@ package fs
 
 import (
 	"archive/zip"
+	"bytes"
 	"encoding/binary"
 	"fmt"
+	"hash/crc32"
 	"math"
 	"os"
 	"path/filepath"
@@ -67,7 +69,7 @@ func TestUnzip_SkipRulesAndLimits(t *testing.T) {
 	writeZip(t, zipPath, entries)
 
 	t.Run("UnlimitedTotalSize", func(t *testing.T) {
-		files, skipped, err := Unzip(zipPath, filepath.Join(dir, "a"), 0, 0)
+		files, skipped, err := Unzip(zipPath, filepath.Join(dir, "a"), 0, -1)
 		assert.NoError(t, err)
 		assert.ElementsMatch(t, []string{
 			filepath.Join(dir, "a", "ok1.txt"),
@@ -202,6 +204,293 @@ func TestUnzip_EntryLimit(t *testing.T) {
 	_, _, err := Unzip(zipPath, filepath.Join(dir, "out"), 0, 0)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "entry limit")
+}
+
+// zipTestEntry is a named archive entry for writeOrderedZip; a name ending in "/" is a directory.
+type zipTestEntry struct {
+	name string
+	data []byte
+}
+
+// writeOrderedZip writes a zip archive with stored entries in the given order.
+func writeOrderedZip(t *testing.T, path string, entries []zipTestEntry) {
+	t.Helper()
+
+	var buf bytes.Buffer
+
+	zw := zip.NewWriter(&buf)
+
+	for _, e := range entries {
+		w, err := zw.CreateHeader(&zip.FileHeader{Name: e.name, Method: zip.Store})
+		require.NoError(t, err)
+		_, err = w.Write(e.data)
+		require.NoError(t, err)
+	}
+
+	require.NoError(t, zw.Close())
+	require.NoError(t, os.WriteFile(path, buf.Bytes(), 0o600))
+}
+
+// writeZipWithDeclaredSize writes a zip archive with stored entries around one whose header declares the given size.
+func writeZipWithDeclaredSize(t *testing.T, path string, entries []zipTestEntry, name string, data []byte, declared uint64, after ...zipTestEntry) {
+	t.Helper()
+
+	var buf bytes.Buffer
+
+	zw := zip.NewWriter(&buf)
+
+	for _, e := range entries {
+		w, err := zw.CreateHeader(&zip.FileHeader{Name: e.name, Method: zip.Store})
+		require.NoError(t, err)
+		_, err = w.Write(e.data)
+		require.NoError(t, err)
+	}
+
+	w, err := zw.CreateRaw(&zip.FileHeader{
+		Name:               name,
+		Method:             zip.Store,
+		CRC32:              crc32.ChecksumIEEE(data),
+		CompressedSize64:   uint64(len(data)),
+		UncompressedSize64: declared,
+	})
+	require.NoError(t, err)
+	_, err = w.Write(data)
+	require.NoError(t, err)
+
+	for _, e := range after {
+		w, err = zw.CreateHeader(&zip.FileHeader{Name: e.name, Method: zip.Store})
+		require.NoError(t, err)
+		_, err = w.Write(e.data)
+		require.NoError(t, err)
+	}
+
+	require.NoError(t, zw.Close())
+	require.NoError(t, os.WriteFile(path, buf.Bytes(), 0o600))
+}
+
+// regularFiles returns the regular files below dir, relative to it and with slash separators.
+func regularFiles(t *testing.T, dir string) (result []string) {
+	t.Helper()
+
+	err := filepath.WalkDir(dir, func(p string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		} else if d.Type().IsRegular() {
+			rel, relErr := filepath.Rel(dir, p)
+			result = append(result, filepath.ToSlash(rel))
+			return relErr
+		}
+
+		return nil
+	})
+
+	if !os.IsNotExist(err) {
+		require.NoError(t, err)
+	}
+
+	return result
+}
+
+// TestUnzip_TotalSizeLimit checks that the total size budget applies to every file entry of an archive.
+func TestUnzip_TotalSizeLimit(t *testing.T) {
+	t.Run("OverBudgetEntryStopsExtraction", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "budget.zip")
+		out := filepath.Join(dir, "out")
+		writeOrderedZip(t, zipPath, []zipTestEntry{
+			{"a.txt", []byte("aaa")},
+			{"big.txt", bytes.Repeat([]byte("b"), 10)},
+			{"c.txt", []byte("c")},
+			{"d.txt", []byte("d")},
+		})
+
+		files, skipped, err := Unzip(zipPath, out, 0, 8)
+
+		require.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(out, "a.txt")}, files)
+		assert.Equal(t, []string{"big.txt", "c.txt", "d.txt"}, skipped)
+		assert.Equal(t, []string{"a.txt"}, regularFiles(t, out))
+	})
+	t.Run("ExactFitRejected", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "exact.zip")
+		out := filepath.Join(dir, "out")
+		writeOrderedZip(t, zipPath, []zipTestEntry{
+			{"a.txt", []byte("aa")},
+			{"b.txt", []byte("bbb")},
+			{"c.txt", []byte("c")},
+		})
+
+		// b.txt would leave exactly 0 bytes, which the upload size check rejects as well.
+		files, skipped, err := Unzip(zipPath, out, 0, 5)
+
+		require.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(out, "a.txt")}, files)
+		assert.Equal(t, []string{"b.txt", "c.txt"}, skipped)
+		assert.Equal(t, []string{"a.txt"}, regularFiles(t, out))
+	})
+	t.Run("OneByteLeftFits", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "fit.zip")
+		out := filepath.Join(dir, "out")
+		writeOrderedZip(t, zipPath, []zipTestEntry{
+			{"a.txt", []byte("aa")},
+			{"b.txt", []byte("bbb")},
+		})
+
+		files, skipped, err := Unzip(zipPath, out, 0, 6)
+
+		require.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(out, "a.txt"), filepath.Join(out, "b.txt")}, files)
+		assert.Empty(t, skipped)
+	})
+	t.Run("ZeroBudget", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "zero.zip")
+		out := filepath.Join(dir, "out")
+		writeOrderedZip(t, zipPath, []zipTestEntry{
+			{"sub/", nil},
+			{"sub/a.txt", []byte("a")},
+			{"empty.txt", nil},
+		})
+
+		// Directory entries cost no bytes and are still created; every file entry is skipped.
+		files, skipped, err := Unzip(zipPath, out, 0, 0)
+
+		require.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(out, "sub")}, files)
+		assert.Equal(t, []string{"sub/a.txt", "empty.txt"}, skipped)
+		assert.Empty(t, regularFiles(t, out))
+	})
+	t.Run("Unlimited", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "unlimited.zip")
+		out := filepath.Join(dir, "out")
+		writeOrderedZip(t, zipPath, []zipTestEntry{
+			{"a.txt", bytes.Repeat([]byte("a"), 1000)},
+			{"b.txt", []byte("b")},
+		})
+
+		files, skipped, err := Unzip(zipPath, out, 0, -1)
+
+		require.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(out, "a.txt"), filepath.Join(out, "b.txt")}, files)
+		assert.Empty(t, skipped)
+	})
+	t.Run("AllEntriesFit", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "fit.zip")
+		out := filepath.Join(dir, "out")
+		writeOrderedZip(t, zipPath, []zipTestEntry{
+			{"a.txt", []byte("aaa")},
+			{"sub/b.txt", []byte("bb")},
+			{"c.txt", []byte("c")},
+		})
+
+		files, skipped, err := Unzip(zipPath, out, 10, 100)
+
+		require.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(out, "a.txt"), filepath.Join(out, "sub/b.txt"), filepath.Join(out, "c.txt")}, files)
+		assert.Empty(t, skipped)
+		assert.Equal(t, []string{"a.txt", "c.txt", "sub/b.txt"}, regularFiles(t, out))
+	})
+	t.Run("ChargedByBytesWritten", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "short.zip")
+		out := filepath.Join(dir, "out")
+
+		// short.txt declares 4 bytes but holds 2, so 6 of 8 bytes remain and the 5-byte entry still fits.
+		writeZipWithDeclaredSize(t, zipPath, nil, "short.txt", []byte("ss"), 4, zipTestEntry{"b.txt", []byte("bbbbb")})
+
+		files, skipped, err := Unzip(zipPath, out, 0, 8)
+
+		require.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(out, "short.txt"), filepath.Join(out, "b.txt")}, files)
+		assert.Empty(t, skipped)
+	})
+	t.Run("ChecksumMismatch", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "crc.zip")
+		out := filepath.Join(dir, "out")
+		data := []byte("crc-control")
+
+		var buf bytes.Buffer
+
+		zw := zip.NewWriter(&buf)
+		w, err := zw.CreateRaw(&zip.FileHeader{
+			Name:               "bad.txt",
+			Method:             zip.Store,
+			CRC32:              crc32.ChecksumIEEE(data) + 1,
+			CompressedSize64:   uint64(len(data)),
+			UncompressedSize64: uint64(len(data)),
+		})
+		require.NoError(t, err)
+		_, err = w.Write(data)
+		require.NoError(t, err)
+		require.NoError(t, zw.Close())
+		require.NoError(t, os.WriteFile(zipPath, buf.Bytes(), 0o600))
+
+		files, _, err := Unzip(zipPath, out, 1024, 1024)
+
+		require.ErrorIs(t, err, zip.ErrChecksum)
+		assert.Empty(t, files)
+		assert.Empty(t, regularFiles(t, out))
+	})
+	t.Run("DataExceedsDeclaredSize", func(t *testing.T) {
+		dir := t.TempDir()
+		zipPath := filepath.Join(dir, "declared.zip")
+		out := filepath.Join(dir, "out")
+		writeZipWithDeclaredSize(t, zipPath, []zipTestEntry{{"a.txt", []byte("aaa")}}, "b.txt", bytes.Repeat([]byte("b"), 64), 4)
+
+		files, _, err := Unzip(zipPath, out, 0, 32)
+
+		require.Error(t, err)
+		assert.NotContains(t, files, filepath.Join(out, "b.txt"))
+		assert.NoFileExists(t, filepath.Join(out, "b.txt"))
+		assert.Equal(t, []string{"a.txt"}, regularFiles(t, out))
+	})
+}
+
+// TestUnzipEntry checks that an entry is written up to its cap and removed when its data exceeds it.
+func TestUnzipEntry(t *testing.T) {
+	dir := t.TempDir()
+	zipPath := filepath.Join(dir, "entry.zip")
+	writeOrderedZip(t, zipPath, []zipTestEntry{{"sub/", nil}, {"a.txt", []byte("abcdef")}})
+	r := openZipReader(t, zipPath)
+
+	t.Run("Success", func(t *testing.T) {
+		out := t.TempDir()
+		fileName, written, err := unzipEntry(r.File[1], out, 6)
+
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(out, "a.txt"), fileName)
+		assert.Equal(t, int64(6), written)
+		assert.FileExists(t, fileName)
+	})
+	t.Run("DeclaredSizeWithoutCap", func(t *testing.T) {
+		out := t.TempDir()
+		_, written, err := unzipEntry(r.File[1], out, 0)
+
+		require.NoError(t, err)
+		assert.Equal(t, int64(6), written)
+	})
+	t.Run("Directory", func(t *testing.T) {
+		out := t.TempDir()
+		fileName, written, err := unzipEntry(r.File[0], out, 1)
+
+		require.NoError(t, err)
+		assert.Equal(t, int64(0), written)
+		assert.DirExists(t, fileName)
+	})
+	t.Run("ExceedsCap", func(t *testing.T) {
+		out := t.TempDir()
+		fileName, written, err := unzipEntry(r.File[1], out, 4)
+
+		require.Error(t, err)
+		assert.LessOrEqual(t, written, int64(4))
+		assert.NoFileExists(t, fileName)
+		assert.Empty(t, regularFiles(t, out))
+	})
 }
 
 // writeZip64Stub writes a minimal ZIP64 archive with one stored entry and custom size values.

@@ -849,6 +849,124 @@ func TestUploadUserFiles_Multipart_SkippedEntryNames(t *testing.T) {
 	})
 }
 
+// uploadPart is a named file for buildMultipartParts.
+type uploadPart struct {
+	name string
+	data []byte
+}
+
+// buildMultipartParts builds a multipart form with the files in the given order, all in the "files" field.
+func buildMultipartParts(parts ...uploadPart) (body *bytes.Buffer, contentType string, err error) {
+	body = &bytes.Buffer{}
+	mw := multipart.NewWriter(body)
+
+	for _, part := range parts {
+		fw, createErr := mw.CreateFormFile("files", part.name)
+
+		if createErr != nil {
+			return nil, "", createErr
+		}
+
+		if _, writeErr := fw.Write(part.data); writeErr != nil {
+			return nil, "", writeErr
+		}
+	}
+
+	return body, mw.FormDataContentType(), mw.Close()
+}
+
+// TestUploadUserFiles_Multipart_ZipBudget checks that archives are extracted only within the remaining
+// total upload size budget of the request.
+func TestUploadUserFiles_Multipart_ZipBudget(t *testing.T) {
+	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
+	conf.Options().UploadArchives = true
+	conf.Options().UploadAllow = "jpg,zip"
+	conf.Options().UploadLimit = 1 // 1 MiB total
+	conf.Options().UploadNSFW = true
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+
+	adminUid := entity.Admin.UserUID
+	uploadBase := filepath.Join(conf.UserStoragePath(adminUid), "upload")
+
+	jpg, err := os.ReadFile(filepath.Clean("../../pkg/fs/testdata/directory/example.jpg"))
+	require.NoError(t, err)
+
+	// Each of these uses a little more than half of the budget.
+	half := bytes.Repeat(jpg, 9)
+	archive := buildZipWithDirsAndFiles(nil, map[string][]byte{"sub/inner.jpg": jpg})
+
+	// upload sends the parts and returns the log messages and the staged files relative to the batch folder.
+	upload := func(t *testing.T, uploadToken string, parts ...uploadPart) (messages, staged []string, batchDir string) {
+		t.Helper()
+
+		body, ctype, buildErr := buildMultipartParts(parts...)
+		require.NoError(t, buildErr)
+
+		hook := captureLog(t)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/"+uploadToken, body)
+		req.Header.Set("Content-Type", ctype)
+		header.SetAuthorization(req, token)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		require.Equal(t, http.StatusOK, w.Code, w.Body.String())
+
+		for _, entry := range hook.AllEntries() {
+			messages = append(messages, entry.Message)
+		}
+
+		entries, _ := os.ReadDir(uploadBase)
+
+		for _, e := range entries {
+			if e.IsDir() && strings.HasSuffix(e.Name(), uploadToken) {
+				batchDir = filepath.Join(uploadBase, e.Name())
+			}
+		}
+
+		require.NotEmpty(t, batchDir)
+
+		for _, f := range findUploadedFilesForToken(t, uploadBase, uploadToken) {
+			rel, relErr := filepath.Rel(batchDir, f)
+			require.NoError(t, relErr)
+			staged = append(staged, filepath.ToSlash(rel))
+		}
+
+		return messages, staged, batchDir
+	}
+
+	t.Run("BudgetUsedUp", func(t *testing.T) {
+		defer removeUploadDirsForToken(t, uploadBase, "zipbudgetout")
+
+		messages, staged, batchDir := upload(t, "zipbudgetout",
+			uploadPart{"a.jpg", half}, uploadPart{"b.jpg", half}, uploadPart{"c.zip", archive})
+
+		assert.Equal(t, []string{"a.jpg"}, staged)
+		assert.NoDirExists(t, filepath.Join(batchDir, "sub"))
+
+		var archiveRejected bool
+
+		for _, m := range messages {
+			assert.NotContains(t, m, "inner.jpg")
+
+			if strings.Contains(m, "c.zip") && strings.Contains(m, "total upload size limit has been reached") {
+				archiveRejected = true
+			}
+		}
+
+		assert.True(t, archiveRejected, "expected the archive to be rejected for the total upload size limit: %v", messages)
+	})
+	t.Run("WithinBudget", func(t *testing.T) {
+		defer removeUploadDirsForToken(t, uploadBase, "zipbudgetin")
+
+		_, staged, _ := upload(t, "zipbudgetin", uploadPart{"a.jpg", half}, uploadPart{"c.zip", archive})
+
+		assert.ElementsMatch(t, []string{"a.jpg", "sub/inner.jpg"}, staged)
+	})
+}
+
 func TestUploadUserFiles_Multipart_TokenTooLong(t *testing.T) {
 	app, router, conf := NewApiTest()
 	options := *conf.Options()

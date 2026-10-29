@@ -200,6 +200,12 @@ func UploadUserFiles(router *gin.RouterGroup) {
 					continue
 				}
 
+				if totalSizeLimit == 0 {
+					logWarn("upload", os.Remove(destName))
+					log.Errorf("upload: rejected %s because the total upload size limit has been reached", clean.Log(baseName))
+					continue
+				}
+
 				zipFiles, skippedFiles, zipErr := fs.Unzip(destName, uploadDir, fileSizeLimit, totalSizeLimit, uploadArchiveEntryAllowed)
 
 				logWarn("upload", os.Remove(destName))

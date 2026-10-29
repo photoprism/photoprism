@@ -105,8 +105,9 @@ func ZipFile(zipWriter *zip.Writer, fileName, fileAlias string, compress bool) (
 	return err
 }
 
-// Unzip extracts the contents of a zip file to the target directory.
-// Nonpositive total size limits are unlimited; optional filters select entries before extraction.
+// Unzip extracts the contents of a zip file to the target directory, and optional filters select entries.
+// A negative total size limit is unlimited and 0 leaves no budget. Each file must leave at least one byte
+// of the budget, and once one does not fit, no later file entry is extracted.
 func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64, filters ...func(string, bool) bool) (files []string, skipped []string, err error) {
 	zipReader, err := zip.OpenReader(zipName)
 
@@ -117,11 +118,6 @@ func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64, filters ...
 	defer func() {
 		err = errors.Join(err, zipReader.Close())
 	}()
-
-	// Treat 0 as no limit; negative also unlimited.
-	if totalSizeLimit == 0 {
-		totalSizeLimit = -1
-	}
 
 	entryLimit := MaxUnzipEntries
 
@@ -158,19 +154,21 @@ func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64, filters ...
 			continue
 		}
 
-		if totalSizeLimit > 0 {
-			entrySize := int64(zipFile.UncompressedSize64) //nolint:gosec // safe: capped by check above
+		writeLimit := fileSizeLimit
 
-			totalSizeLimit -= entrySize
-
-			if totalSizeLimit < 1 {
+		if totalSizeLimit >= 0 && !zipFile.FileInfo().IsDir() {
+			if int64(zipFile.UncompressedSize64) >= totalSizeLimit { //nolint:gosec // safe: capped by check above
 				skipped = append(skipped, zipFile.Name)
 				totalSizeLimit = 0
 				continue
 			}
+
+			if writeLimit <= 0 || writeLimit > totalSizeLimit-1 {
+				writeLimit = totalSizeLimit - 1
+			}
 		}
 
-		fileName, unzipErr := unzipFileWithLimit(zipFile, dir, fileSizeLimit)
+		fileName, written, unzipErr := unzipEntry(zipFile, dir, writeLimit)
 
 		if errors.Is(unzipErr, ErrReservedPath) || errors.Is(unzipErr, ErrArchiveSymlink) {
 			skipped = append(skipped, zipFile.Name)
@@ -179,6 +177,10 @@ func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64, filters ...
 
 		if unzipErr != nil {
 			return files, skipped, unzipErr
+		}
+
+		if totalSizeLimit > 0 {
+			totalSizeLimit -= written
 		}
 
 		files = append(files, fileName)
@@ -194,15 +196,33 @@ func UnzipFile(f *zip.File, dir string) (fileName string, err error) {
 
 // unzipFileWithLimit writes a file from a zip archive to the target destination while applying a size limit.
 func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName string, err error) {
+	fileName, _, err = unzipEntry(f, dir, fileSizeLimit)
+	return fileName, err
+}
+
+// unzipEntry writes a file from a zip archive to the target destination and returns the number of bytes written.
+// A positive limit caps the write, otherwise the declared size does; a file not written completely is removed.
+func unzipEntry(f *zip.File, dir string, limit int64) (fileName string, written int64, err error) {
 	if HasReservedComponent(f.Name) {
-		return "", ErrReservedPath
+		return "", 0, ErrReservedPath
 	} else if f.Mode()&os.ModeSymlink != 0 {
-		return "", ErrArchiveSymlink
+		return "", 0, ErrArchiveSymlink
 	}
+
+	var opened, complete bool
+
+	// Registered first so that it runs after the deferred closes below.
+	defer func() {
+		if opened && (!complete || err != nil) {
+			if removeErr := os.Remove(fileName); removeErr != nil && !os.IsNotExist(removeErr) {
+				err = errors.Join(err, removeErr)
+			}
+		}
+	}()
 
 	rc, err := f.Open()
 	if err != nil {
-		return fileName, err
+		return fileName, 0, err
 	}
 
 	defer func() {
@@ -211,12 +231,12 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 
 	// Compose destination file or directory path with safety checks.
 	if fileName, err = SafeJoin(dir, f.Name); err != nil {
-		return fileName, err
+		return fileName, 0, err
 	}
 
 	// Create destination path if it is a directory.
 	if f.FileInfo().IsDir() {
-		return fileName, MkdirAll(fileName)
+		return fileName, 0, MkdirAll(fileName)
 	}
 
 	// If it is a file, make sure its destination directory exists.
@@ -227,46 +247,51 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 	}
 
 	if err = MkdirAll(basePath); err != nil {
-		return fileName, err
+		return fileName, 0, err
 	}
 
 	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode()) //nolint:gosec // destination derived from SafeJoin
 
 	if err != nil {
-		return fileName, err
+		return fileName, 0, err
 	}
+
+	opened = true
 
 	defer func() {
 		err = errors.Join(err, fd.Close())
 	}()
 
-	limit := fileSizeLimit
+	capped := limit > 0
 
-	if limit <= 0 {
+	if !capped {
 		switch {
 		case f.UncompressedSize64 == 0:
 			limit = math.MaxInt64
 		case f.UncompressedSize64 > uint64(math.MaxInt64):
-			return fileName, fmt.Errorf("zip entry too large")
+			return fileName, 0, fmt.Errorf("zip entry too large")
 		default:
 			limit = int64(f.UncompressedSize64) //nolint:gosec // safe: capped above
+			capped = true
 		}
 	}
 
 	written, copyErr := io.CopyN(fd, rc, limit)
 
 	if copyErr != nil && !errors.Is(copyErr, io.EOF) && !errors.Is(copyErr, io.ErrUnexpectedEOF) {
-		return fileName, copyErr
+		return fileName, written, copyErr
 	}
 
-	// Abort if the entry exceeded the configured limit.
-	if written >= limit && (fileSizeLimit > 0 || f.UncompressedSize64 > 0) {
+	// Abort if the entry exceeded the limit.
+	if capped && written >= limit {
 		// Drain a single byte to see if more data remains (indicating truncation).
 		var b [1]byte
 		if _, extraErr := rc.Read(b[:]); extraErr == nil {
-			return fileName, fmt.Errorf("zip entry exceeds limit")
+			return fileName, written, fmt.Errorf("zip entry exceeds limit")
 		}
 	}
 
-	return fileName, nil
+	complete = true
+
+	return fileName, written, nil
 }
