@@ -358,3 +358,56 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
     expect(stub.loadMore).not.toHaveBeenCalled();
   });
 });
+
+describe("page/album/photos.vue findAlbum", () => {
+  const findAlbum = PAlbumPhotos.methods.findAlbum;
+
+  // Captures the surface of `this` that findAlbum touches.
+  function newFindStub(find) {
+    return {
+      uid: "album-1",
+      collectionRoute: "albums",
+      model: { find },
+      $config: { get: () => "PhotoPrism" },
+      $router: { push: vi.fn() },
+      $util,
+    };
+  }
+
+  it("resolves with the album and sets the title", async () => {
+    const album = { UID: "album-1", Title: "Found" };
+    const stub = newFindStub(vi.fn(() => Promise.resolve(album)));
+
+    await expect(findAlbum.call(stub)).resolves.toBe(album);
+
+    expect(stub.model).toBe(album);
+    expect(window.document.title).toBe("PhotoPrism: \u2068Found\u2069");
+    expect(stub.$router.push).not.toHaveBeenCalled();
+  });
+  it("leaves the view and resolves with null when the album is missing", async () => {
+    const stub = newFindStub(vi.fn(() => Promise.reject(new Error("Request failed with status code 404"))));
+
+    await expect(findAlbum.call(stub)).resolves.toBeNull();
+
+    expect(stub.$router.push).toHaveBeenCalledWith({ name: "albums" });
+  });
+});
+
+describe("page/album/photos.vue loadAlbum", () => {
+  const loadAlbum = PAlbumPhotos.methods.loadAlbum;
+
+  it("searches once the album was found", async () => {
+    const stub = { findAlbum: vi.fn(() => Promise.resolve({ UID: "album-1" })), search: vi.fn() };
+
+    await loadAlbum.call(stub);
+
+    expect(stub.search).toHaveBeenCalledTimes(1);
+  });
+  it("skips the search when the album was not found", async () => {
+    const stub = { findAlbum: vi.fn(() => Promise.resolve(null)), search: vi.fn() };
+
+    await expect(loadAlbum.call(stub)).resolves.toBeUndefined();
+
+    expect(stub.search).not.toHaveBeenCalled();
+  });
+});

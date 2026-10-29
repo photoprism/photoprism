@@ -201,14 +201,14 @@ export default {
 
       if (this.uid !== this.$route.params.album) {
         this.uid = this.$route.params.album;
-        this.findAlbum().then(() => this.search());
+        this.loadAlbum();
       } else {
         this.search();
       }
     },
   },
   created() {
-    this.findAlbum().then(() => this.search());
+    this.loadAlbum();
 
     this.subscriptions.push(this.$event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
     this.subscriptions.push(this.$event.subscribe("albums.deleted", (ev, data) => this.onAlbumsDeleted(ev, data)));
@@ -602,6 +602,15 @@ export default {
           this.listen = true;
         });
     },
+    // loadAlbum finds the album and searches its photos once it was found.
+    loadAlbum() {
+      return this.findAlbum().then((m) => {
+        if (m) {
+          this.search();
+        }
+      });
+    },
+    // findAlbum fetches the album by its UID, or leaves the view and resolves with null if that fails.
     findAlbum() {
       return this.model
         .find(this.uid)
@@ -610,11 +619,11 @@ export default {
 
           window.document.title = `${this.$config.get("siteTitle")}: ${this.$util.isolate(this.model.Title)}`;
 
-          return Promise.resolve(this.model);
+          return this.model;
         })
-        .catch((e) => {
+        .catch(() => {
           this.$router.push({ name: this.collectionRoute });
-          return Promise.reject(e);
+          return null;
         });
     },
     // onAlbumsUpdated reloads the open album when an albums.updated event
