@@ -209,7 +209,7 @@ func CreateLink(c *gin.Context) {
 //	@Success	200							{object}	entity.Link
 //	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
 //	@Param		uid							path		string		true	"album uid"
-//	@Param		link						body		form.Link	true	"link settings: slug, expires (seconds, 0 = never), and max views (0 = unlimited)"
+//	@Param		link						body		form.Link	true	"link settings: slug and expires (seconds, 0 = never); max views is reserved and should be 0"
 //	@Router		/api/v1/albums/{uid}/links [post]
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
@@ -239,7 +239,7 @@ func CreateAlbumLink(router *gin.RouterGroup) {
 //	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
 //	@Param		uid							path		string		true	"album uid"
 //	@Param		linkuid						path		string		true	"link uid"
-//	@Param		link						body		form.Link	true	"link settings: slug, expires, and max views are replaced as sent, an empty token keeps the current one"
+//	@Param		link						body		form.Link	true	"link settings: slug, expires, and max views are replaced as sent, an empty token keeps the current one; max views is reserved and should be 0"
 //	@Router		/api/v1/albums/{uid}/links/{linkuid} [put]
 func UpdateAlbumLink(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid/links/:link", func(c *gin.Context) {

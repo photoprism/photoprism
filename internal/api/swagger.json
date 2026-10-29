@@ -1847,6 +1847,7 @@
                     "type": "integer"
                 },
                 "MaxViews": {
+                    "description": "Reserved, should be 0.",
                     "type": "integer"
                 },
                 "ModifiedAt": {
@@ -1868,6 +1869,7 @@
                     "type": "string"
                 },
                 "Views": {
+                    "description": "Counts the redemptions of the link.",
                     "type": "integer"
                 }
             },
@@ -2978,6 +2980,7 @@
                     "type": "integer"
                 },
                 "MaxViews": {
+                    "description": "Reserved, should be 0.",
                     "type": "integer"
                 },
                 "Slug": {
@@ -6398,7 +6401,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "link settings: slug, expires (seconds, 0 = never), and max views (0 = unlimited)",
+                        "description": "link settings: slug and expires (seconds, 0 = never); max views is reserved and should be 0",
                         "in": "body",
                         "name": "link",
                         "required": true,
@@ -6557,7 +6560,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "link settings: slug, expires, and max views are replaced as sent, an empty token keeps the current one",
+                        "description": "link settings: slug, expires, and max views are replaced as sent, an empty token keeps the current one; max views is reserved and should be 0",
                         "in": "body",
                         "name": "link",
                         "required": true,

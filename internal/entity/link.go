@@ -38,8 +38,8 @@ type Link struct {
 	ShareSlug   string    `gorm:"type:bytes;size:160;index;" json:"Slug" yaml:"Slug,omitempty"`
 	LinkToken   string    `gorm:"type:bytes;size:160;uniqueIndex:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
 	LinkExpires int       `gorm:"size:32" json:"Expires" yaml:"Expires,omitempty"`
-	LinkViews   uint      `gorm:"size:32" json:"Views" yaml:"-"`
-	MaxViews    uint      `gorm:"size:32" json:"MaxViews" yaml:"-"`
+	LinkViews   uint      `gorm:"size:32" json:"Views" yaml:"-"`    // Counts the redemptions of the link.
+	MaxViews    uint      `gorm:"size:32" json:"MaxViews" yaml:"-"` // Reserved, should be 0.
 	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm        uint      `gorm:"size:32" json:"Perm,omitempty" yaml:"Perm,omitempty"`
 	RefID       string    `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`

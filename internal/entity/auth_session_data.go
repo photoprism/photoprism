@@ -55,8 +55,7 @@ func (data *SessionData) RedeemedLinks(token string) (found Links) {
 }
 
 // RefreshShares updates the list of shared UIDs in the session data. A redeemed link keeps its share
-// until it is removed or reaches its expiration time, so the view limit bounds how many sessions a
-// link admits rather than how long each of them lasts.
+// until it is removed or reaches its expiration time.
 func (data *SessionData) RefreshShares() *SessionData {
 	var shares []string
 
