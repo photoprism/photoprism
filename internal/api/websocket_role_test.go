@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"net"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -77,6 +79,35 @@ func wsReceivesMarker(t *testing.T, conn *websocket.Conn, marker string, wait ti
 	}
 }
 
+// wsRefusalGrace is how long a refused connection is watched after the same event reached the admin
+// connection; Publish has queued it for every subscriber by then, so a longer wait proves nothing more.
+const wsRefusalGrace = 250 * time.Millisecond
+
+// wsRefused publishes a log event and reports whether the connection did not receive it, after the admin
+// connection confirmed delivery of the same event. The watch must end in a read timeout, not a closed socket.
+func wsRefused(t *testing.T, admin, conn *websocket.Conn, publish func() string) bool {
+	t.Helper()
+
+	marker := publish()
+	require.True(t, wsReceivesMarker(t, admin, marker, 5*time.Second), "admin connection was not sent the event")
+	require.NoError(t, conn.SetReadDeadline(time.Now().Add(wsRefusalGrace)))
+
+	for {
+		_, raw, err := conn.ReadMessage()
+
+		if err != nil {
+			var netErr net.Error
+			require.True(t, errors.As(err, &netErr) && netErr.Timeout(), "connection closed instead of staying open: %v", err)
+
+			return true
+		}
+
+		if strings.Contains(string(raw), marker) {
+			return false
+		}
+	}
+}
+
 // TestWebSocket_EffectiveRole covers what the production handshake and delivery loop send a client
 // session acting for a privileged account.
 func TestWebSocket_EffectiveRole(t *testing.T) {
@@ -98,24 +129,25 @@ func TestWebSocket_EffectiveRole(t *testing.T) {
 		return marker
 	}
 
+	// The admin connection is the positive control for every refusal below: each one first confirms that
+	// the event was delivered, so a refusal cannot follow from the socket never delivering anything.
+	admin := wsConnect(t, srv, adminToken)
+
 	t.Run("AdminSessionReceivesLogEvents", func(t *testing.T) {
-		// The positive control: without it, a refusal below could follow from the socket never
-		// delivering anything at all.
-		conn := wsConnect(t, srv, adminToken)
-		assert.True(t, wsReceivesMarker(t, conn, publishMarker(), 5*time.Second))
+		assert.True(t, wsReceivesMarker(t, admin, publishMarker(), 5*time.Second))
 	})
 	t.Run("InstanceClientForAdminAccountRefused", func(t *testing.T) {
 		conn := wsConnect(t, srv, mixedPrincipalToken(t, acl.RoleInstance, "alice"))
-		assert.False(t, wsReceivesMarker(t, conn, publishMarker(), 2*time.Second))
+		assert.True(t, wsRefused(t, admin, conn, publishMarker))
 	})
 	t.Run("ServiceClientForAdminAccountRefused", func(t *testing.T) {
 		conn := wsConnect(t, srv, mixedPrincipalToken(t, acl.RoleService, "alice"))
-		assert.False(t, wsReceivesMarker(t, conn, publishMarker(), 2*time.Second))
+		assert.True(t, wsRefused(t, admin, conn, publishMarker))
 	})
 	t.Run("DefaultClientForAdminAccountRefused", func(t *testing.T) {
 		// A registered client is refused whichever role it holds, the default one included.
 		conn := wsConnect(t, srv, mixedPrincipalToken(t, acl.RoleClient, "alice"))
-		assert.False(t, wsReceivesMarker(t, conn, publishMarker(), 2*time.Second))
+		assert.True(t, wsRefused(t, admin, conn, publishMarker))
 	})
 	t.Run("AppPasswordForAdminAccountRefused", func(t *testing.T) {
 		// An app password authenticates a client or an agent, so it is refused like one even though it
@@ -127,7 +159,7 @@ func TestWebSocket_EffectiveRole(t *testing.T) {
 		entity.FlushSessionCache()
 
 		conn := wsConnect(t, srv, sess.AuthToken())
-		assert.False(t, wsReceivesMarker(t, conn, publishMarker(), 2*time.Second))
+		assert.True(t, wsRefused(t, admin, conn, publishMarker))
 	})
 	t.Run("InstanceClientRefusedAfterAReload", func(t *testing.T) {
 		token := providerClientToken(t, acl.RoleInstance, authn.ProviderLocal, "alice")
@@ -137,7 +169,7 @@ func TestWebSocket_EffectiveRole(t *testing.T) {
 		entity.FlushSessionCache()
 
 		conn := wsConnect(t, srv, token)
-		assert.False(t, wsReceivesMarker(t, conn, publishMarker(), 2*time.Second))
+		assert.True(t, wsRefused(t, admin, conn, publishMarker))
 	})
 	t.Run("ClientWithAnUnlistedRoleRefused", func(t *testing.T) {
 		// A role another edition registers, reaching this build through a restored database. It maps to
@@ -145,7 +177,7 @@ func TestWebSocket_EffectiveRole(t *testing.T) {
 		token := unlistedRoleToken(t, "manager", "alice")
 		conn := wsConnect(t, srv, token)
 
-		assert.False(t, wsReceivesMarker(t, conn, publishMarker(), 2*time.Second))
+		assert.True(t, wsRefused(t, admin, conn, publishMarker))
 	})
 }
 
