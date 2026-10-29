@@ -93,10 +93,14 @@ services:
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # transcoding bitrate threshold in Mbps, also NVIDIA peak limit (default: 60)
-      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, 900-1250, and 2000-2100):
+      ## Compatibility option if the "user" property below cannot be set, e.g. on some NAS devices;
+      ## runs as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, 900-1250, and 2000-2100):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
+    ## Run as a non-root user (recommended, see https://docs.photoprism.app/getting-started/advanced/docker-security/);
+    ## "1000:1000" disables access to hardware devices, use "1000" to keep it for hardware transcoding:
+    # user: "1000:1000"
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
