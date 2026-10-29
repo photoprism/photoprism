@@ -11,9 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // jwksServer serves the given key set and counts the requests it answers.
