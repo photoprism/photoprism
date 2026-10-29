@@ -1,40 +1,46 @@
 package entity
 
-type PasswordMap map[string]Password
+// PasswordFixture is a test password with its UID, hashed only when a Password is built from it.
+type PasswordFixture struct {
+	UID      string
+	Password string
+}
 
+// PasswordMap maps fixture names to test passwords.
+type PasswordMap map[string]PasswordFixture
+
+// Get returns the named password fixture with a fresh hash, or an empty Password if there is none.
 func (m PasswordMap) Get(name string) Password {
-	if result, ok := m[name]; ok {
-		return result
+	if f, ok := m[name]; ok {
+		return NewPassword(f.UID, f.Password, false)
 	}
 
 	return Password{}
 }
 
+// Pointer returns a pointer to the named password fixture, see Get.
 func (m PasswordMap) Pointer(name string) *Password {
-	if result, ok := m[name]; ok {
-		return &result
-	}
-
-	return &Password{}
+	result := m.Get(name)
+	return &result
 }
 
 var PasswordFixtures = PasswordMap{
-	"alice":         NewPassword("uqxetse3cy5eo9z2", "Alice123!", false),
-	"bob":           NewPassword("uqxc08w3d0ej2283", "Bobbob123!", false),
-	"friend":        NewPassword("uqxqg7i1kperxvu7", "!Friend321", false),
-	"fowler":        NewPassword("urinotv3d6jedvlm", "PleaseChange$42", false),
-	"jane":          NewPassword("usamyuogp49vd4lh", "Jane123!", false),
-	"deleted":       NewPassword("uqxqg7i1kperxvu8", "Deleted123!", false),
-	"metrics":       NewPassword("cs5cpu17n6gj2qo5", "xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e", false),
-	"isolated":      NewPassword("cs5cpu17n6gj2rvk", "aQw7tPz2LkNv9XrBeCdH4FsMgJyU1Two", false),
-	"no_local_auth": NewPassword("usg73p55zwgr1ytr", "None123!", false),
-	"2fa":           NewPassword("usg73p55zwgr1ojy", "2fa-123!", false),
-	"gandalf":       NewPassword("uqxetse3cy5eu3r0", "Gandalf123!", false),
+	"alice":         {"uqxetse3cy5eo9z2", "Alice123!"},
+	"bob":           {"uqxc08w3d0ej2283", "Bobbob123!"},
+	"friend":        {"uqxqg7i1kperxvu7", "!Friend321"},
+	"fowler":        {"urinotv3d6jedvlm", "PleaseChange$42"},
+	"jane":          {"usamyuogp49vd4lh", "Jane123!"},
+	"deleted":       {"uqxqg7i1kperxvu8", "Deleted123!"},
+	"metrics":       {"cs5cpu17n6gj2qo5", "xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+	"isolated":      {"cs5cpu17n6gj2rvk", "aQw7tPz2LkNv9XrBeCdH4FsMgJyU1Two"},
+	"no_local_auth": {"usg73p55zwgr1ytr", "None123!"},
+	"2fa":           {"usg73p55zwgr1ojy", "2fa-123!"},
+	"gandalf":       {"uqxetse3cy5eu3r0", "Gandalf123!"},
 }
 
 // CreatePasswordFixtures inserts known entities into the database for testing.
 func CreatePasswordFixtures() {
-	for _, entity := range PasswordFixtures {
-		createFixture(&entity)
+	for name := range PasswordFixtures {
+		createFixture(PasswordFixtures.Pointer(name))
 	}
 }
