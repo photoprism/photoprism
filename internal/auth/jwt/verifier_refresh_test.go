@@ -3,6 +3,7 @@ package jwt
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -10,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -178,6 +180,11 @@ func TestVerifierSharedRefreshKeepsCachedKeysUsable(t *testing.T) {
 	url := server.URL + "/.well-known/jwks.json"
 	clock := time.Now()
 	v := refreshTestVerifier(t, url, func() time.Time { return clock })
+
+	// A long stale wait keeps the ordinary call on the failure fallback this test is about.
+	prevWait := jwksStaleWait
+	jwksStaleWait = time.Minute
+	t.Cleanup(func() { jwksStaleWait = prevWait })
 
 	primed, err := v.keysForURL(context.Background(), url, false)
 	require.NoError(t, err)
@@ -394,5 +401,371 @@ func TestVerifierTakeForcedRefresh(t *testing.T) {
 	t.Run("AllowedAgainAfterTheInterval", func(t *testing.T) {
 		clock = clock.Add(jwksForceRefreshAfter + time.Second)
 		assert.True(t, v.takeForcedRefresh("https://portal.example.com/jwks.json"))
+	})
+}
+
+// TestVerifierStaleWait checks how long an ordinary verification waits for a refresh while its cached
+// keys are past their TTL: briefly while they are still usable, and for the refresh once they are not.
+func TestVerifierStaleWait(t *testing.T) {
+	prev := jwksStaleWait
+	jwksStaleWait = 50 * time.Millisecond
+	t.Cleanup(func() { jwksStaleWait = prev })
+
+	// stalledServer serves keys once, then holds every further request until released and fails it.
+	stalledServer := func(t *testing.T, keys []PublicJWK) (url string, release func()) {
+		t.Helper()
+
+		var requests atomic.Int64
+		block := make(chan struct{})
+
+		var once sync.Once
+		release = func() { once.Do(func() { close(block) }) }
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			if requests.Add(1) > 1 {
+				<-block
+				w.WriteHeader(http.StatusServiceUnavailable)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			require.NoError(t, json.NewEncoder(w).Encode(JWKS{Keys: keys}))
+		}))
+		t.Cleanup(server.Close)
+		t.Cleanup(release)
+
+		return server.URL + "/.well-known/jwks.json", release
+	}
+
+	t.Run("UsableKeysServedWhileRefreshStalls", func(t *testing.T) {
+		_, keys := claimsTestSigner(t)
+		url, release := stalledServer(t, keys)
+		clock := time.Now()
+		v := refreshTestVerifier(t, url, func() time.Time { return clock })
+
+		_, err := v.keysForURL(context.Background(), url, false)
+		require.NoError(t, err)
+
+		clock = clock.Add(defaultJWKSCacheTTL + time.Minute)
+
+		start := time.Now()
+		got, err := v.keysForURL(context.Background(), url, false)
+
+		assert.NoError(t, err)
+		assert.Equal(t, keys, got)
+		assert.Less(t, time.Since(start), 5*time.Second, "the stalled refresh must not hold the verification")
+
+		// The refresh keeps running after the early return and records its failure once released.
+		release()
+		assert.Eventually(t, func() bool { return v.recentFetchFailure(url) != nil }, 10*time.Second, 10*time.Millisecond)
+	})
+	t.Run("RefreshInTimeDecides", func(t *testing.T) {
+		_, oldKeys := claimsTestSigner(t)
+		_, newKeys := claimsTestSigner(t)
+		require.NotEqual(t, oldKeys[0].Kid, newKeys[0].Kid)
+
+		var requests atomic.Int64
+
+		// The first fetch serves the old key, every later one only the new key.
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			keys := newKeys
+
+			if requests.Add(1) == 1 {
+				keys = oldKeys
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			require.NoError(t, json.NewEncoder(w).Encode(JWKS{Keys: keys}))
+		}))
+		t.Cleanup(server.Close)
+
+		url := server.URL + "/.well-known/jwks.json"
+		clock := time.Now()
+		v := refreshTestVerifier(t, url, func() time.Time { return clock })
+
+		// The wait must not cut a refresh short that answers in time.
+		prevWait := jwksStaleWait
+		jwksStaleWait = 5 * time.Second
+		t.Cleanup(func() { jwksStaleWait = prevWait })
+
+		_, err := v.keysForURL(context.Background(), url, false)
+		require.NoError(t, err)
+
+		clock = clock.Add(defaultJWKSCacheTTL + time.Minute)
+
+		got, err := v.keysForURL(context.Background(), url, false)
+
+		assert.NoError(t, err)
+		assert.Equal(t, newKeys, got, "a key the refresh removed is not served")
+	})
+	t.Run("ForcedCallerWaitsForRefresh", func(t *testing.T) {
+		// A caller looking for a key the cache lacks waits for the refresh in flight, also when the
+		// forced interval is used up and its own call counts as ordinary.
+		_, keys := claimsTestSigner(t)
+		url, release := stalledServer(t, keys)
+		clock := time.Now()
+		v := refreshTestVerifier(t, url, func() time.Time { return clock })
+
+		_, err := v.keysForURL(context.Background(), url, false)
+		require.NoError(t, err)
+
+		clock = clock.Add(defaultJWKSCacheTTL + time.Minute)
+
+		first := make(chan struct{})
+
+		go func() {
+			defer close(first)
+			_, _ = v.keysForURL(context.Background(), url, true)
+		}()
+
+		require.Eventually(t, func() bool { return !v.forcedRefreshDue(url) }, 5*time.Second, 5*time.Millisecond)
+
+		done := make(chan error, 1)
+
+		go func() {
+			_, getErr := v.keysForURL(context.Background(), url, true)
+			done <- getErr
+		}()
+
+		select {
+		case <-done:
+			t.Fatal("returned before the refresh in flight finished")
+		case <-time.After(10 * jwksStaleWait):
+		}
+
+		release()
+
+		select {
+		case <-done:
+		case <-time.After(10 * time.Second):
+			t.Fatal("verification did not return")
+		}
+
+		<-first
+	})
+	t.Run("UnusableKeysWaitForRefresh", func(t *testing.T) {
+		_, keys := claimsTestSigner(t)
+		url, release := stalledServer(t, keys)
+		clock := time.Now()
+		v := refreshTestVerifier(t, url, func() time.Time { return clock })
+
+		_, err := v.keysForURL(context.Background(), url, false)
+		require.NoError(t, err)
+
+		// Past the window in which cached keys may still be served.
+		clock = clock.Add(defaultJWKSCacheTTL + RotationOverlap() + time.Minute)
+
+		done := make(chan error, 1)
+
+		go func() {
+			_, getErr := v.keysForURL(context.Background(), url, false)
+			done <- getErr
+		}()
+
+		select {
+		case <-done:
+			t.Fatal("returned before the refresh finished")
+		case <-time.After(10 * jwksStaleWait):
+		}
+
+		release()
+
+		select {
+		case getErr := <-done:
+			assert.Error(t, getErr)
+		case <-time.After(10 * time.Second):
+			t.Fatal("verification did not return")
+		}
+	})
+}
+
+func TestHasKid(t *testing.T) {
+	keys := []PublicJWK{{Kid: "a"}, {Kid: "b"}}
+
+	t.Run("Found", func(t *testing.T) {
+		assert.True(t, hasKid(keys, "b"))
+	})
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, hasKid(keys, "c"))
+		assert.False(t, hasKid(nil, "a"))
+	})
+	t.Run("NoKid", func(t *testing.T) {
+		assert.True(t, hasKid(keys, ""))
+		assert.True(t, hasKid(nil, ""))
+	})
+}
+
+// TestVerifierNewKeyWaitsForRefresh checks that a token signed with a key the cache lacks waits for the
+// refresh in flight rather than being refused when the stale wait ends.
+func TestVerifierNewKeyWaitsForRefresh(t *testing.T) {
+	prev := jwksStaleWait
+	jwksStaleWait = 50 * time.Millisecond
+	t.Cleanup(func() { jwksStaleWait = prev })
+
+	clusterUUID := rnd.UUIDv7()
+
+	// newSigner returns a key manager with its own active key for the cluster.
+	newSigner := func() *Manager {
+		cfg := newTestConfig(t)
+		cfg.Options().ClusterUUID = clusterUUID
+		mgr, err := NewManager(cfg)
+		require.NoError(t, err)
+		_, err = mgr.EnsureActiveKey()
+		require.NoError(t, err)
+		return mgr
+	}
+
+	oldSigner, newSigner2 := newSigner(), newSigner()
+	require.NotEqual(t, oldSigner.JWKS().Keys[0].Kid, newSigner2.JWKS().Keys[0].Kid)
+
+	var requests atomic.Int64
+	block := make(chan struct{})
+
+	var once sync.Once
+	release := func() { once.Do(func() { close(block) }) }
+
+	// The first fetch serves the old key; later ones wait until released, then serve the new key.
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		jwks := oldSigner.JWKS()
+
+		if requests.Add(1) > 1 {
+			<-block
+			jwks = newSigner2.JWKS()
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		require.NoError(t, json.NewEncoder(w).Encode(jwks))
+	}))
+	t.Cleanup(server.Close)
+	t.Cleanup(release)
+
+	nodeCfg := newTestConfig(t)
+	nodeCfg.SetJWKSUrl(server.URL + "/.well-known/jwks.json")
+	nodeCfg.Options().ClusterUUID = clusterUUID
+
+	spec := ClaimsSpec{
+		Issuer:   fmt.Sprintf("portal:%s", clusterUUID),
+		Subject:  "portal:client-test",
+		Audience: fmt.Sprintf("node:%s", nodeCfg.NodeUUID()),
+		Scope:    []string{"cluster"},
+	}
+	expected := ExpectedClaims{Issuer: spec.Issuer, Audience: spec.Audience, JWKSURL: nodeCfg.JWKSUrl()}
+
+	ctx := context.Background()
+	v := NewVerifier(nodeCfg)
+	require.NoError(t, v.Prime(ctx, nodeCfg.JWKSUrl()))
+
+	// Age the cache past its TTL but inside the window in which its keys stay usable.
+	v.mu.Lock()
+	v.cache.FetchedAt -= int64((time.Duration(nodeCfg.JWKSCacheTTL())*time.Second + time.Minute) / time.Second)
+	v.mu.Unlock()
+
+	// A forced refresh is in flight and holds the forced interval.
+	forced := make(chan struct{})
+
+	go func() {
+		defer close(forced)
+		_, _ = v.keysForURL(ctx, nodeCfg.JWKSUrl(), true)
+	}()
+
+	require.Eventually(t, func() bool { return !v.forcedRefreshDue(nodeCfg.JWKSUrl()) }, 5*time.Second, 5*time.Millisecond)
+
+	token, err := NewIssuer(newSigner2).Issue(spec)
+	require.NoError(t, err)
+
+	done := make(chan error, 1)
+
+	go func() {
+		_, verifyErr := v.VerifyToken(ctx, token, expected)
+		done <- verifyErr
+	}()
+
+	select {
+	case verifyErr := <-done:
+		t.Fatalf("returned before the refresh in flight finished: %v", verifyErr)
+	case <-time.After(10 * jwksStaleWait):
+	}
+
+	release()
+
+	select {
+	case verifyErr := <-done:
+		assert.NoError(t, verifyErr, "the refreshed key verifies the token")
+	case <-time.After(10 * time.Second):
+		t.Fatal("verification did not return")
+	}
+
+	<-forced
+}
+
+func TestVerifier_keysForKid(t *testing.T) {
+	prev := jwksStaleWait
+	jwksStaleWait = 50 * time.Millisecond
+	t.Cleanup(func() { jwksStaleWait = prev })
+
+	_, keys := claimsTestSigner(t)
+	kid := keys[0].Kid
+
+	var requests atomic.Int64
+	block := make(chan struct{})
+
+	var once sync.Once
+	release := func() { once.Do(func() { close(block) }) }
+
+	// The first fetch serves the keys; later ones wait until released and fail.
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		if requests.Add(1) > 1 {
+			<-block
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		require.NoError(t, json.NewEncoder(w).Encode(JWKS{Keys: keys}))
+	}))
+	t.Cleanup(server.Close)
+	t.Cleanup(release)
+
+	url := server.URL + "/.well-known/jwks.json"
+
+	var clock atomic.Int64
+	clock.Store(time.Now().UnixNano())
+	v := refreshTestVerifier(t, url, func() time.Time { return time.Unix(0, clock.Load()) })
+
+	t.Run("CachedWithinTTL", func(t *testing.T) {
+		got, err := v.keysForKid(context.Background(), url, "unknown", false)
+		require.NoError(t, err)
+		assert.Equal(t, keys, got)
+	})
+
+	// Past the TTL, inside the window in which the cached keys stay usable.
+	clock.Store(time.Unix(0, clock.Load()).Add(defaultJWKSCacheTTL + time.Minute).UnixNano())
+
+	t.Run("KnownKidAfterStaleWait", func(t *testing.T) {
+		got, err := v.keysForKid(context.Background(), url, kid, false)
+		require.NoError(t, err)
+		assert.Equal(t, keys, got)
+	})
+	t.Run("UnknownKidWaitsForRefresh", func(t *testing.T) {
+		done := make(chan struct{})
+
+		go func() {
+			defer close(done)
+			_, _ = v.keysForKid(context.Background(), url, "unknown", false)
+		}()
+
+		select {
+		case <-done:
+			t.Fatal("returned before the refresh finished")
+		case <-time.After(10 * jwksStaleWait):
+		}
+
+		release()
+
+		select {
+		case <-done:
+		case <-time.After(10 * time.Second):
+			t.Fatal("did not return")
+		}
 	})
 }

@@ -89,6 +89,10 @@ const (
 	defaultJWKSCacheTTL = 300 * time.Second
 )
 
+// jwksStaleWait bounds how long an ordinary verification waits for a refresh while it holds cached keys
+// that are past their TTL but still usable; a refresh that answers in time still decides the keys.
+var jwksStaleWait = 2 * time.Second
+
 // randInt63n is defined for deterministic testing of jitter (overridable in tests).
 var randInt63n = rand.Int64N
 
@@ -407,7 +411,7 @@ func (v *Verifier) Status(ttl time.Duration) VerifierStatus {
 
 // publicKeyForKid resolves the public key for the given key ID, fetching JWKS data if needed.
 func (v *Verifier) publicKeyForKid(ctx context.Context, url, kid string, force bool) (ed25519.PublicKey, error) {
-	keys, err := v.keysForURL(ctx, url, force)
+	keys, err := v.keysForKid(ctx, url, kid, force)
 
 	if err != nil {
 		return nil, err
@@ -435,11 +439,21 @@ func (v *Verifier) publicKeyForKid(ctx context.Context, url, kid string, force b
 // keysForURL returns JWKS keys for the specified endpoint, reusing cache when possible. Concurrent
 // callers for the same endpoint share one refresh.
 func (v *Verifier) keysForURL(ctx context.Context, url string, force bool) ([]PublicJWK, error) {
+	return v.keysForKid(ctx, url, "", force)
+}
+
+// keysForKid returns the keys for url, like keysForURL. Given a key ID, an ordinary caller takes the stale
+// wait only while the cached keys contain it, since cached keys without it cannot verify the token.
+func (v *Verifier) keysForKid(ctx context.Context, url, kid string, force bool) ([]PublicJWK, error) {
 	ttl := defaultJWKSCacheTTL
 
 	if v.conf != nil && v.conf.JWKSCacheTTL() > 0 {
 		ttl = time.Duration(v.conf.JWKSCacheTTL()) * time.Second
 	}
+
+	// A caller that asked for a forced refresh looks for keys the cache lacks, so it does not take the
+	// stale wait below even when the interval turns it into an ordinary request.
+	requested := force
 
 	// A forced refresh runs at most once per interval per endpoint; beyond that the request is
 	// answered from cache.
@@ -465,18 +479,50 @@ func (v *Verifier) keysForURL(ctx context.Context, url string, force bool) ([]Pu
 		return v.refreshKeys(context.WithoutCancel(ctx), url, ttl, force && v.takeForcedRefresh(url))
 	})
 
-	select {
-	case res := <-ch:
-		if res.Err != nil {
-			return v.keysAfterFailedRefresh(url, ttl, force, v.snapshotCache(), res.Err)
-		}
+	// An ordinary caller with usable cached keys waits only briefly; the refresh continues either way.
+	var staleWait <-chan time.Time
 
-		keys, _ := res.Val.([]PublicJWK)
-
-		return append([]PublicJWK(nil), keys...), nil
-	case <-ctx.Done():
-		return v.keysAfterFailedRefresh(url, ttl, force, v.snapshotCache(), ctx.Err())
+	if keys, ok := v.staleKeys(url, ttl, cached); ok && !requested && hasKid(keys, kid) {
+		timer := time.NewTimer(jwksStaleWait)
+		defer timer.Stop()
+		staleWait = timer.C
 	}
+
+	for {
+		select {
+		case res := <-ch:
+			if res.Err != nil {
+				return v.keysAfterFailedRefresh(url, ttl, force, v.snapshotCache(), res.Err)
+			}
+
+			keys, _ := res.Val.([]PublicJWK)
+
+			return append([]PublicJWK(nil), keys...), nil
+		case <-staleWait:
+			if keys, ok := v.staleKeys(url, ttl, v.snapshotCache()); ok && hasKid(keys, kid) {
+				return keys, nil
+			}
+
+			staleWait = nil
+		case <-ctx.Done():
+			return v.keysAfterFailedRefresh(url, ttl, force, v.snapshotCache(), ctx.Err())
+		}
+	}
+}
+
+// hasKid reports whether keys contain the key ID, or true if none is given.
+func hasKid(keys []PublicJWK, kid string) bool {
+	if kid == "" {
+		return true
+	}
+
+	for _, k := range keys {
+		if k.Kid == kid {
+			return true
+		}
+	}
+
+	return false
 }
 
 // keysAfterFailedRefresh applies this caller's own fallback when a refresh did not deliver keys, so a
@@ -686,7 +732,7 @@ func (v *Verifier) clearFetchFailure() {
 	v.failedErr = nil
 }
 
-// staleKeysUsable reports whether cached keys may still be served after a refresh failure.
+// staleKeysUsable reports whether cached keys may still be served after a refresh failed or outlasted jwksStaleWait.
 // Age is measured from the last successful fetch, and the window runs one cache TTL beyond
 // the issuer's rotation overlap, which no live token can outlast.
 func (v *Verifier) staleKeysUsable(cache cacheEntry, ttl time.Duration) bool {
