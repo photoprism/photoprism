@@ -186,8 +186,6 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	// Check session permissions and apply as needed. Each check evaluates the session's effective
 	// role: for a client session, the intersection of the client and user roles.
 	if sess != nil {
-		user := sess.GetUser()
-
 		// Exclude private content.
 		if sess.Denies(acl.ResourcePhotos, acl.AccessPrivate) {
 			frm.Public = true
@@ -208,7 +206,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		// Visitors and other restricted users can only access shared content. A non-empty Scope
 		// bypasses the personal ScopePhotosForSession filter below, so it is gated here instead: a
 		// session without whole-library reach may scope only to an album it owns or has shared.
-		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.DeniesAll(acl.ResourcePhotos, libraryAccess) || sess.NotRegistered()) ||
+		if frm.Scope != "" && !album.SharedWithSession(sess) && (sess.DeniesAll(acl.ResourcePhotos, libraryAccess) || sess.NotRegistered()) ||
 			frm.Scope == "" && sess.Denies(acl.ResourcePhotos, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), sessionAuditRole(sess))
 			return PhotoResults{}, 0, ErrForbidden

@@ -170,7 +170,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		}
 
 		// Visitors and other restricted users can only access shared content.
-		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.DeniesAll(acl.ResourcePlaces, libraryAccess) || sess.NotRegistered()) ||
+		if frm.Scope != "" && !album.SharedWithSession(sess) && (sess.DeniesAll(acl.ResourcePlaces, libraryAccess) || sess.NotRegistered()) ||
 			frm.Scope == "" && sess.Denies(acl.ResourcePlaces, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), sessionAuditRole(sess))
 			return GeoResults{}, ErrForbidden

@@ -317,3 +317,40 @@ func geoUIDs(results GeoResults) []string {
 
 	return uids
 }
+
+// clientSessionWithoutAccount builds a client session with the given client role and no user account.
+func clientSessionWithoutAccount(role acl.Role) *entity.Session {
+	s := &entity.Session{}
+	s.SetClient(&entity.Client{ClientRole: role.String(), AuthProvider: authn.ProviderClient.String()})
+	return s
+}
+
+func TestUserPhotos_AlbumScopeWithoutAccount(t *testing.T) {
+	t.Run("OwnerlessAlbumForbidden", func(t *testing.T) {
+		_, _, err := UserPhotos(form.SearchPhotos{Scope: roleTestAlbum}, clientSessionWithoutAccount(acl.RoleInstance))
+		assert.Equal(t, ErrForbidden, err)
+	})
+	t.Run("OwnerlessAlbumGeoForbidden", func(t *testing.T) {
+		_, err := UserPhotosGeo(form.SearchPhotosGeo{Scope: roleTestAlbum}, clientSessionWithoutAccount(acl.RoleInstance))
+		assert.Equal(t, ErrForbidden, err)
+	})
+	t.Run("SharedAlbumAllowed", func(t *testing.T) {
+		sess := clientSessionWithoutAccount(acl.RoleInstance)
+		sess.SetData(&entity.SessionData{Tokens: []string{scopeAlbumShareToken}})
+		require.True(t, sess.HasShare(roleTestAlbum))
+		_, _, err := UserPhotos(form.SearchPhotos{Scope: roleTestAlbum}, sess)
+		assert.NoError(t, err)
+	})
+	t.Run("OwnedAlbumAllowed", func(t *testing.T) {
+		guest := entity.UserFixtures.Pointer("guest")
+		album := entity.NewAlbum("Owned by Guest", entity.AlbumManual)
+		album.CreatedBy = guest.UserUID
+		require.NoError(t, album.Create())
+		t.Cleanup(func() { _ = album.DeletePermanently() })
+
+		_, _, err := UserPhotos(form.SearchPhotos{Scope: album.AlbumUID}, scopeSession("guest"))
+		assert.NoError(t, err)
+		_, _, err = UserPhotos(form.SearchPhotos{Scope: roleTestAlbum}, scopeSession("guest"))
+		assert.Equal(t, ErrForbidden, err)
+	})
+}

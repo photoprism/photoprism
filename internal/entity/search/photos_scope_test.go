@@ -82,6 +82,8 @@ const (
 	//nolint:gosec // G101: deterministic fixture share-link tokens for tests only.
 	scopeFolderShareToken = "8jxf3jfn2k" // link to "april-1990" folder album (contains 1990/04)
 	//nolint:gosec // G101: deterministic fixture share-link tokens for tests only.
+	scopeAlbumShareToken = "1jxf3jfn2k" // link to the manual album as6sg6bxpogaaba8
+	//nolint:gosec // G101: deterministic fixture share-link tokens for tests only.
 	scopeStateShareToken = "9jxf3jfn2k" // link to "california-usa" state album (excludes 1990/04)
 	//nolint:gosec // G101: deterministic fixture share-link tokens for tests only.
 	scopeRegularShareToken = "4jxf3jfn2k" // link to "christmas-2030" regular album (no filter)
@@ -214,8 +216,8 @@ func TestUserPhotos_ScopeAuthorization(t *testing.T) {
 		assert.Equal(t, ErrForbidden, err)
 	})
 	t.Run("VisitorSharedScopeNoMatch", func(t *testing.T) {
-		visitor := &entity.Session{}
-		visitor.SetData(&entity.SessionData{Shares: entity.UIDs{album}})
+		visitor := scopeVisitorWithShares(scopeAlbumShareToken)
+		require.True(t, visitor.HasShare(album))
 		photos, _, err := UserPhotos(form.SearchPhotos{Scope: album, Query: "\xff "}, visitor)
 		assert.NoError(t, err)
 		assert.NotNil(t, photos)
@@ -223,8 +225,8 @@ func TestUserPhotos_ScopeAuthorization(t *testing.T) {
 	})
 	t.Run("VisitorSharedScopeAllowed", func(t *testing.T) {
 		// Unregistered visitor whose session carries a share for the scoped album.
-		visitor := &entity.Session{}
-		visitor.SetData(&entity.SessionData{Shares: entity.UIDs{album}})
+		visitor := scopeVisitorWithShares(scopeAlbumShareToken)
+		require.True(t, visitor.HasShare(album))
 		_, _, err := UserPhotos(form.SearchPhotos{Scope: album}, visitor)
 		assert.NoError(t, err)
 	})
