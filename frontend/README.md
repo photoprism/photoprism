@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 27, 2026
+**Last Updated:** October 29, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -52,14 +52,14 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 
 ## Dependency Pinning Policy
 
-**Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.20.0"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -S "<pkg>" -- frontend/package.json` from the repository root).
+**Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.21.0"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -S "<pkg>" -- frontend/package.json` from the repository root).
 
 ### Currently Pinned Packages
 
 | Package   | Pin      | Reason                                                                                                                                                                                                                                                                                                                         |
 |-----------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `vuetify` | `4.3.1`  | Check the photo edit dialog's Country and Time Zone autocompletes in Chrome before bumping: menus must stay open and filter as you type. The Vuetify 3 appearance depends on the files named in the `//vuetify` entry in `package.json` and [Production Build](#production-build). `@vuetify/v0` is held by the lockfile only. |
-| `axios`   | `1.20.0` | Keep an exact version so transport updates receive explicit review and validation. Check request cancellation, authentication, redirects, and error handling when upgrading; `src/common/api.js` handles canceled navigation requests through its error interceptor.                                                           |
+| `axios`   | `1.21.0` | Keep an exact version so transport updates receive explicit review and validation. Check request cancellation, authentication, redirects, and error handling when upgrading; `src/common/api.js` handles canceled navigation requests through its error interceptor.                                                           |
 
 ### Override Layer (Transitive Pins)
 
