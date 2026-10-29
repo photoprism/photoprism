@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -145,6 +146,22 @@ func TestAddClientSession(t *testing.T) {
 		}
 
 		t.Logf("sess: %#v", sess)
+	})
+	t.Run("RegistersPreviewTokenOnCreate", func(t *testing.T) {
+		u := NewUser()
+		u.UserName = "client-session-preview"
+		u.UserRole = acl.RoleAdmin.String()
+		u.CanLogin = true
+		require.NoError(t, u.Create())
+		t.Cleanup(func() { deleteTestUser(t, u) })
+
+		sess, err := AddClientSession("Preview Token Client", unix.Day, "*", authn.GrantPassword, u)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		assert.Equal(t, []string{sess.ID}, PreviewToken.Keys(u.PreviewToken))
+		require.NoError(t, sess.Delete())
+		assert.True(t, InvalidPreviewToken(u.PreviewToken))
 	})
 	t.Run("NoClientIPPersistsNullLoginAt", func(t *testing.T) {
 		// Sessions created without a client IP (e.g. via "photoprism auth add")

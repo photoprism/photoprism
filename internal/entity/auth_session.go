@@ -218,16 +218,10 @@ func (m *Session) SetAuthToken(authToken string) *Session {
 	m.ID = rnd.SessionID(authToken)
 	m.stored = false
 
-	// Migrate any preview token registration from the previous ID so it is not orphaned in the lookup
-	// cache. Callers like NewClientSession assign the user's token (via SetUser) before finalizing the
-	// ID here, so without this the old ID would keep the value resolvable for the lifetime of the
-	// process even after DeleteSession.
+	// Release the preview token registered under the previous ID; saving or loading the session
+	// registers it under the new one.
 	if rnd.IsSessionID(oldID) && oldID != m.ID {
 		PreviewToken.Unset(oldID)
-
-		if m.PreviewToken != "" {
-			PreviewToken.Set(m.ID, m.PreviewToken)
-		}
 	}
 
 	return m
@@ -826,19 +820,25 @@ func (m *Session) ChangePassword(newPw string) (err error) {
 }
 
 // SetPreviewToken updates the preview token if not empty, or generates one if the session has none and
-// does not receive signed preview tokens.
+// does not receive signed preview tokens. A different value already registered under the session ID is
+// released first.
 func (m *Session) SetPreviewToken(token string) *Session {
-	if m.ID == "" {
+	switch {
+	case m.ID == "":
+		return m
+	case token != "":
+		m.PreviewToken = token
+	case m.PreviewToken == "" && !m.SignedPreview():
+		m.PreviewToken = GenerateToken()
+	default:
 		return m
 	}
 
-	if token != "" {
-		m.PreviewToken = token
-		PreviewToken.Set(m.ID, token)
-	} else if m.PreviewToken == "" && !m.SignedPreview() {
-		m.PreviewToken = GenerateToken()
-		PreviewToken.Set(m.ID, m.PreviewToken)
+	if prev := PreviewToken.Get(m.ID); prev != "" && prev != m.PreviewToken {
+		PreviewToken.Unset(m.ID)
 	}
+
+	PreviewToken.Set(m.ID, m.PreviewToken)
 
 	return m
 }

@@ -960,24 +960,51 @@ func TestSession_SetPreviewToken(t *testing.T) {
 		m.SetPreviewToken("12345")
 		assert.Equal(t, "", m.PreviewToken)
 	})
+	t.Run("ReplacesPreviousValue", func(t *testing.T) {
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		other := &Session{}
+		other.SetAuthToken(rnd.AuthToken())
+		t.Cleanup(func() {
+			PreviewToken.Unset(m.ID)
+			PreviewToken.Unset(other.ID)
+		})
+
+		m.SetPreviewToken("replace-preview-a")
+		other.SetPreviewToken("replace-preview-a")
+		m.SetPreviewToken("replace-preview-b")
+
+		assert.Equal(t, "replace-preview-b", PreviewToken.Get(m.ID))
+		assert.Equal(t, []string{m.ID}, PreviewToken.Keys("replace-preview-b"))
+		assert.Equal(t, []string{other.ID}, PreviewToken.Keys("replace-preview-a"))
+	})
+	t.Run("EmptyKeepsExistingValue", func(t *testing.T) {
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		m.PreviewToken = "existing-preview"
+		t.Cleanup(func() { PreviewToken.Unset(m.ID) })
+
+		m.SetPreviewToken("")
+
+		assert.Equal(t, "existing-preview", m.PreviewToken)
+		assert.False(t, PreviewToken.Has(m.ID))
+	})
 }
 
 func TestSession_SetAuthToken(t *testing.T) {
-	t.Run("MigratesTokensWhenIdChanges", func(t *testing.T) {
-		// A session that already carries preview/download tokens must move their lookup-cache
-		// registrations to the new ID when SetAuthToken reassigns it, so the old ID does not
-		// orphan the values (#5733).
+	t.Run("ReleasesPreviousId", func(t *testing.T) {
 		m := &Session{}
 		m.SetAuthToken(rnd.AuthToken())
 		oldID := m.ID
-		m.SetPreviewToken("migrate-preview")
-		assert.Equal(t, []string{oldID}, PreviewToken.Keys("migrate-preview"))
+		m.SetPreviewToken("release-preview")
+		assert.Equal(t, []string{oldID}, PreviewToken.Keys("release-preview"))
 
 		m.SetAuthToken(rnd.AppPassword())
 		assert.NotEqual(t, oldID, m.ID)
-		assert.Equal(t, []string{m.ID}, PreviewToken.Keys("migrate-preview"))
-
-		PreviewToken.Unset(m.ID)
+		assert.Equal(t, "release-preview", m.PreviewToken)
+		assert.False(t, PreviewToken.Has(oldID))
+		assert.False(t, PreviewToken.Has(m.ID))
+		assert.True(t, PreviewToken.MissingValue("release-preview"))
 	})
 	t.Run("NoTokensNoOp", func(t *testing.T) {
 		m := &Session{}

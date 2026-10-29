@@ -4,13 +4,16 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -686,5 +689,176 @@ func TestSessionLogIn(t *testing.T) {
 		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
+	})
+}
+
+func TestSessionLogIn_PreviewToken(t *testing.T) {
+	const clientIp = "1.2.3.4"
+	const password = "LogIn123!"
+	const invalidShareToken = "1jxf3jfxxx"
+
+	// Each account has its own preview token, so no fixture session keeps it admitted.
+	newUser := func(t *testing.T, name string) *User {
+		u := NewUser()
+		u.UserName = name
+		u.UserRole = acl.RoleAdmin.String()
+		u.AuthProvider = authn.ProviderLocal.String()
+		u.CanLogin = true
+		require.NoError(t, u.Create())
+		require.NoError(t, u.SetPassword(password))
+		t.Cleanup(func() {
+			_ = u.DeletePassword()
+			deleteTestUser(t, u)
+		})
+		require.NotEmpty(t, u.PreviewToken)
+		return u
+	}
+	newStoredSession := func(t *testing.T, u *User) *Session {
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+		m.SetUser(u)
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = m.Delete() })
+		return m
+	}
+	logIn := func(m *Session, frm form.Login) error {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = clientIp
+		return m.LogIn(frm, c)
+	}
+	// A login limit without refill shows each charge as a missing token.
+	newLoginLimit := func(t *testing.T) {
+		prev := limiter.Login
+		limiter.Login = limiter.NewLimit(rate.Every(24*time.Hour), 10)
+		t.Cleanup(func() { limiter.Login = prev })
+	}
+	loginTokens := func(m *Session) float64 {
+		return limiter.Login.IP(m.IP()).Tokens()
+	}
+
+	t.Run("ContinuedInvalidPassword", func(t *testing.T) {
+		u := newUser(t, "login-token-a")
+		m := newStoredSession(t, u)
+
+		assert.Error(t, logIn(m, form.Login{Username: u.UserName, Password: "wrong-password"}))
+		assert.False(t, PreviewToken.Has(m.ID))
+		assert.True(t, InvalidPreviewToken(u.PreviewToken))
+	})
+	t.Run("ContinuedPasscodeRequired", func(t *testing.T) {
+		u := FindUserByName("jane")
+		require.NotNil(t, u)
+		m := newStoredSession(t, u)
+
+		assert.ErrorIs(t, logIn(m, form.Login{Username: "jane", Password: "Jane123!"}), authn.ErrPasscodeRequired)
+		assert.False(t, PreviewToken.Has(m.ID))
+	})
+	t.Run("ContinuedInvalidShareToken", func(t *testing.T) {
+		u := newUser(t, "login-token-b")
+		m := newStoredSession(t, u)
+		id := m.ID
+		newLoginLimit(t)
+
+		require.NoError(t, logIn(m, form.Login{Username: u.UserName, Password: password, Token: invalidShareToken}))
+		assert.InDelta(t, 9, loginTokens(m), 0.01)
+		assert.NotEqual(t, id, m.ID)
+		assert.Equal(t, u.UserUID, m.UserUID)
+		assert.Equal(t, u.PreviewToken, PreviewToken.Get(m.ID))
+		assert.False(t, PreviewToken.Has(id))
+	})
+	t.Run("NewInvalidShareToken", func(t *testing.T) {
+		u := newUser(t, "login-token-c")
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+		newLoginLimit(t)
+
+		require.NoError(t, logIn(m, form.Login{Username: u.UserName, Password: password, Token: invalidShareToken}))
+		assert.InDelta(t, 9, loginTokens(m), 0.01)
+		assert.Equal(t, u.UserUID, m.UserUID)
+		assert.Equal(t, u.PreviewToken, PreviewToken.Get(m.ID))
+	})
+	t.Run("ValidShareToken", func(t *testing.T) {
+		u := newUser(t, "login-token-k")
+		link := newTestLink(t, 0)
+		m := newStoredSession(t, u)
+		newLoginLimit(t)
+
+		require.NoError(t, logIn(m, form.Login{Username: u.UserName, Password: password, Token: link.LinkToken}))
+		assert.InDelta(t, 10, loginTokens(m), 0.01)
+		assert.True(t, m.HasShare(link.ShareUID))
+	})
+	t.Run("VisitorSignsIn", func(t *testing.T) {
+		u := newUser(t, "login-token-l")
+		link := newTestLink(t, 0)
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+
+		require.NoError(t, logIn(m, form.Login{Token: link.LinkToken}))
+		require.True(t, m.IsVisitor())
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = m.Delete() })
+		visitorToken := m.PreviewToken
+		require.NotEmpty(t, visitorToken)
+		require.False(t, InvalidPreviewToken(visitorToken))
+
+		require.NoError(t, logIn(m, form.Login{Username: u.UserName, Password: password}))
+		assert.Equal(t, u.UserUID, m.UserUID)
+		assert.Equal(t, u.PreviewToken, PreviewToken.Get(m.ID))
+		assert.True(t, InvalidPreviewToken(visitorToken))
+	})
+	t.Run("ContinuedOtherAccount", func(t *testing.T) {
+		u := newUser(t, "login-token-g")
+		other := newUser(t, "login-token-h")
+		m := newStoredSession(t, u)
+
+		require.NoError(t, logIn(m, form.Login{Username: other.UserName, Password: password}))
+		assert.Equal(t, other.PreviewToken, PreviewToken.Get(m.ID))
+		assert.True(t, InvalidPreviewToken(u.PreviewToken))
+		assert.False(t, InvalidPreviewToken(other.PreviewToken))
+	})
+	t.Run("ContinuedOtherAccountInvalidShareToken", func(t *testing.T) {
+		u := newUser(t, "login-token-i")
+		other := newUser(t, "login-token-j")
+		m := newStoredSession(t, u)
+
+		newLoginLimit(t)
+
+		require.NoError(t, logIn(m, form.Login{Username: other.UserName, Password: password, Token: invalidShareToken}))
+		assert.InDelta(t, 9, loginTokens(m), 0.01)
+		assert.Equal(t, other.PreviewToken, PreviewToken.Get(m.ID))
+		assert.True(t, InvalidPreviewToken(u.PreviewToken))
+	})
+	t.Run("OtherSessionActive", func(t *testing.T) {
+		u := newUser(t, "login-token-d")
+		newStoredSession(t, u)
+		m := newStoredSession(t, u)
+
+		assert.Error(t, logIn(m, form.Login{Username: u.UserName, Password: "wrong-password"}))
+		assert.False(t, PreviewToken.Has(m.ID))
+		assert.False(t, InvalidPreviewToken(u.PreviewToken))
+	})
+	t.Run("StoredInvalidShareToken", func(t *testing.T) {
+		u := newUser(t, "login-token-e")
+		m := newStoredSession(t, u)
+		id := m.ID
+		newLoginLimit(t)
+
+		assert.Error(t, logIn(m, form.Login{Token: invalidShareToken}))
+		assert.InDelta(t, 10, loginTokens(m), 0.01)
+		assert.Equal(t, id, m.ID)
+		assert.True(t, PreviewToken.Has(m.ID))
+		assert.False(t, InvalidPreviewToken(u.PreviewToken))
+	})
+	t.Run("Success", func(t *testing.T) {
+		u := newUser(t, "login-token-f")
+		m := newStoredSession(t, u)
+		id := m.ID
+		newLoginLimit(t)
+
+		require.NoError(t, logIn(m, form.Login{Username: u.UserName, Password: password}))
+		assert.InDelta(t, 10, loginTokens(m), 0.01)
+		assert.NotEqual(t, id, m.ID)
+		assert.True(t, PreviewToken.Has(m.ID))
+		assert.False(t, InvalidPreviewToken(u.PreviewToken))
 	})
 }

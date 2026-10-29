@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -239,13 +240,11 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 }
 
 // LogIn performs authentication checks against the specified login form.
+// If the credentials are valid, an invalid share token is not redeemed and counts as a failed login request.
 func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 	if c != nil {
 		m.SetContext(c)
 	}
-
-	// r := limiter.Login.Reserve(m.IP())
-	// r.Cancel()
 
 	var user *User
 	var provider authn.ProviderType
@@ -281,11 +280,15 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 			if shares == 0 {
 				message := authn.ErrInvalidShareToken.Error()
 				event.AuditWarn([]string{m.IP(), "session %s", message}, m.RefID)
-				m.Status = http.StatusNotFound
-				return i18n.Error(i18n.ErrInvalidLink)
+				if frm.HasCredentials() {
+					limiter.Login.Reserve(m.IP())
+				} else {
+					m.Status = http.StatusNotFound
+					return i18n.Error(i18n.ErrInvalidLink)
+				}
+			} else {
+				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares)
 			}
-
-			event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares)
 		} else if data := m.GetData(); data == nil {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)

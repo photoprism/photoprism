@@ -202,15 +202,27 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", body)
 		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
-	t.Run("PublicInvalidToken", func(t *testing.T) {
+	t.Run("CredentialsInvalidToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		installAuthBudget(t, 10)
 
 		CreateSession(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism", "token": "xxx"}`)
-		assert.Equal(t, http.StatusNotFound, r.Code)
+		require.Equal(t, http.StatusOK, r.Code)
+
+		authToken := gjson.Get(r.Body.String(), "access_token").String()
+		require.True(t, rnd.IsAuthToken(authToken))
+		t.Cleanup(func() {
+			if sess, err := entity.FindSession(rnd.SessionID(authToken)); err == nil {
+				_ = sess.Delete()
+			}
+		})
+
+		// The invalid token counts as a failed login request.
+		assert.InDelta(t, 9, limiter.Login.IP(header.UnknownIP).Tokens(), 0.01)
 	})
 	t.Run("AdminInvalidToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()

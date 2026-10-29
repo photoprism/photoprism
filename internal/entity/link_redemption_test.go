@@ -198,10 +198,11 @@ func TestLinkRedemption(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, control.Status)
 
+		// The exhausted token is not redeemed, while the valid credentials still sign in.
 		bob, err := redeemInNewSession(t, link.LinkToken, "bob", "Bobbob123!")
 
-		require.Error(t, err)
-		assert.Equal(t, http.StatusNotFound, bob.Status)
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusOK, bob.Status)
 		assert.False(t, bob.HasShare(link.ShareUID))
 		assert.Equal(t, uint(1), linkViews(t, link))
 	})
