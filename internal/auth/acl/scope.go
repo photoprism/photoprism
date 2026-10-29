@@ -68,7 +68,8 @@ func ScopeAttrWithin(scope, allowed list.Attr) list.Attr {
 	result := make(list.Attr, 0, len(ResourceNames)+3)
 
 	for _, resource := range ResourceNames {
-		permitted := ScopeAttrPermits(scopeAttrCopy(a), resource, nil) && ScopeAttrPermits(scopeAttrCopy(b), resource, nil)
+		// a and b are private sorted copies, so the in-place sort of ScopeAttrPermits leaves them unchanged.
+		permitted := ScopeAttrPermits(a, resource, nil) && ScopeAttrPermits(b, resource, nil)
 
 		switch {
 		case permitted && !wild:
