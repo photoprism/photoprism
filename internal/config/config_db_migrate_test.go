@@ -28,6 +28,10 @@ func (migrateFailEntity) TableName() string {
 
 // TestConfig_MigrateDbVersion pins that a version is recorded as migrated only after its schema migration succeeded.
 func TestConfig_MigrateDbVersion(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	if TestConfig().DatabaseDriver() != dsn.DriverSQLite3 {
 		t.Skip("requires a SQLite database of its own")
 	}

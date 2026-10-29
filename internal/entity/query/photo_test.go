@@ -325,7 +325,8 @@ func TestFlagHiddenPhotos(t *testing.T) {
 	})
 	t.Run("SuccessWith1000", func(t *testing.T) {
 		var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
-		// Load 1000 photos that need to be hidden
+		// Load 1000 photos that need to be hidden, in batches so the inserts stay cheap on SQLite.
+		photos := make([]entity.Photo, 0, 1000)
 		for range 1000 {
 			newPhoto := entity.Photo{ // JPG, Geo from metadata, indexed
 				//ID:               1000049,
@@ -380,9 +381,10 @@ func TestFlagHiddenPhotos(t *testing.T) {
 				PhotoStack:       0,
 				PhotoFaces:       0,
 			}
-			if err := Db().Create(&newPhoto).Error; err != nil {
-				t.Fatal(err)
-			}
+			photos = append(photos, newPhoto)
+		}
+		if err := Db().CreateInBatches(&photos, 250).Error; err != nil {
+			t.Fatal(err)
 		}
 		// Set photo quality scores to -1 if files are missing.
 		if err := FlagHiddenPhotos(); err != nil {

@@ -324,7 +324,34 @@ func transferProbeTables(t *testing.T, db *gorm.DB) (result []string) {
 	return result
 }
 
+// TestTables_TransferSubset copies two tables into a new SQLite file, so short runs keep an end-to-end
+// transfer while TestTables_Transfer covers every table and driver.
+func TestTables_TransferSubset(t *testing.T) {
+	albums, keywords := Album{}.TableName(), Keyword{}.TableName()
+	subset := Tables{albums: Entities[albums], keywords: Entities[keywords]}
+
+	dst, err := OpenDb(dsn.DriverSQLite3, fmt.Sprintf("%s?%s", filepath.Join(t.TempDir(), "target.db"), dsn.Params[dsn.DriverSQLite3]))
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = CloseDb(dst) })
+	require.NoError(t, dst.AutoMigrate(Entities[albums], Entities[keywords]))
+
+	result, err := subset.Transfer(Db(), dst, TransferOptions{BatchSize: 7})
+	require.NoError(t, err)
+
+	for _, name := range []string{albums, keywords} {
+		src := transferTestRows(t, Db(), name, Entities[name])
+
+		assert.NotEmpty(t, src, name)
+		assert.Len(t, src, int(result[name]), name)
+		assert.Equal(t, src, transferTestRows(t, dst, name, Entities[name]), name)
+	}
+}
+
 func TestTables_Transfer(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Rows whose values a default or a numeric conversion would change.
 	album := &Album{AlbumUID: rnd.GenerateUID(AlbumUID), AlbumSlug: "transfer-test", AlbumTitle: "Transfer Test", AlbumType: AlbumManual}
 	require.NoError(t, UnscopedDb().Create(album).Error)

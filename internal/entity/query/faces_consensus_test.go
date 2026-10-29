@@ -49,9 +49,17 @@ func consensusTestFace(t *testing.T, axis int) *entity.Face {
 func consensusTestMarkers(t *testing.T, f *entity.Face, n int, subjUID, subjSrc string, invalid bool, model string) {
 	t.Helper()
 
-	for range n {
-		m := entity.Marker{
-			MarkerUID:     rnd.GenerateUID('m'),
+	if n <= 0 {
+		return
+	}
+
+	markers := make([]entity.Marker, n)
+	uids := make([]string, n)
+
+	for i := range markers {
+		uids[i] = rnd.GenerateUID('m')
+		markers[i] = entity.Marker{
+			MarkerUID:     uids[i],
 			FileUID:       rnd.GenerateUID(entity.FileUID),
 			MarkerType:    entity.MarkerFace,
 			MarkerInvalid: invalid,
@@ -63,13 +71,14 @@ func consensusTestMarkers(t *testing.T, f *entity.Face, n int, subjUID, subjSrc 
 			W:             0.1,
 			H:             0.1,
 		}
-
-		require.NoError(t, UnscopedDb().Create(&m).Error)
-
-		t.Cleanup(func() {
-			UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID)
-		})
 	}
+
+	// One statement per call keeps the many markers these fixtures need cheap on SQLite.
+	require.NoError(t, UnscopedDb().Create(&markers).Error)
+
+	t.Cleanup(func() {
+		UnscopedDb().Delete(&entity.Marker{}, "marker_uid IN (?)", uids)
+	})
 }
 
 // foreignEmbeddingModel returns a model whose vectors the configured one cannot compare.

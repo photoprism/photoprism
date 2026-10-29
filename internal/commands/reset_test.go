@@ -74,13 +74,25 @@ func TestResetCommand(t *testing.T) {
 	}
 
 	t.Run("YesKeepsFiles", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		keepsFiles(t, "--yes")
 	})
 	t.Run("NonInteractiveKeepsFiles", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
 		keepsFiles(t)
 	})
 	t.Run("PipedAnswerKeepsFiles", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		// Only the index question can be answered from the pipe, so the files are kept, and the
 		// run succeeds because it did what it was asked.
 		t.Setenv("PHOTOPRISM_CLI", "")
@@ -92,6 +104,10 @@ func TestResetCommand(t *testing.T) {
 		}
 	})
 	t.Run("ResetIndex", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		c := resetConfigAndOpenDB(t)
 		count := int64(0)
 		if err := c.Db().Model(&entity.Photo{}).Count(&count).Error; err != nil {

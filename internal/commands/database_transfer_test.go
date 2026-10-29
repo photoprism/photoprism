@@ -146,6 +146,10 @@ func TestDatabaseTransferCommand(t *testing.T) {
 	args := []string{"transfer", "--target-driver", "sqlite", "--target-dsn", fileName, "--batch", "13"}
 
 	t.Run("SQLite", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		_, err := RunWithTestContext(DatabaseTransferCommand, args)
 
 		require.NoError(t, err)
@@ -155,6 +159,11 @@ func TestDatabaseTransferCommand(t *testing.T) {
 		assert.Equal(t, int64(1), versions)
 	})
 	t.Run("NotEmpty", func(t *testing.T) {
+		// Needs the target the SQLite case writes.
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		_, err := RunWithTestContext(DatabaseTransferCommand, args)
 
 		require.Error(t, err)
@@ -163,6 +172,10 @@ func TestDatabaseTransferCommand(t *testing.T) {
 		assert.Contains(t, err.Error(), "already been started")
 	})
 	t.Run("Force", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		_, err := RunWithTestContext(DatabaseTransferCommand, append(args, "--force"))
 
 		require.NoError(t, err)
@@ -194,6 +207,10 @@ func TestDatabaseTransferCommand(t *testing.T) {
 		assert.Contains(t, err.Error(), m.ID)
 	})
 	t.Run("FailedMigrationAllowed", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		failedTestMigration(t)
 		targetFile := filepath.Join(t.TempDir(), "target.db")
 

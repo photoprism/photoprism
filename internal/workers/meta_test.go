@@ -16,7 +16,21 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// TestMeta_StartRunning checks that the worker refuses to start while its mutex is held, which needs no run.
+func TestMeta_StartRunning(t *testing.T) {
+	worker := NewMeta(config.TestConfig())
+
+	require.NoError(t, mutex.MetaWorker.Start())
+	t.Cleanup(mutex.MetaWorker.Stop)
+
+	assert.EqualError(t, worker.Start(time.Second, time.Second, true), "already running")
+}
+
 func TestMeta_Start(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	conf := config.TestConfig()
 
 	t.Logf("database-dsn: %s", conf.DatabaseDSN())
@@ -51,6 +65,10 @@ func TestMeta_Start(t *testing.T) {
 }
 
 func TestMeta_Start_PublishesSavedPhotos(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	conf := config.NewMinimalTestConfigWithDb("workers-meta-events", t.TempDir())
 	fixture := entity.PhotoFixtures.Get("VisionResetTarget")
 
@@ -131,6 +149,10 @@ func receivePhotoUids(t *testing.T, sub hub.Subscription) (uids []string) {
 }
 
 func TestMeta_Start_PublishesMergedPhotos(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	t.Run("IntoProcessedPhoto", func(t *testing.T) {
 		conf := config.NewMinimalTestConfigWithDb("workers-meta-merge", t.TempDir())
 
