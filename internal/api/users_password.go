@@ -102,10 +102,27 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		// Return the reserved request rate limit tokens after successful authentication.
 		r.Success()
 
+		// Validate the new password before other sessions are revoked.
+		if err := entity.ValidatePasswordLength(f.NewPassword); err != nil {
+			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
+			return
+		}
+
+		// Revoke other login sessions, but not app passwords or client access tokens, before the tokens
+		// are regenerated, so they do not receive the new preview token.
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "revoked %s"}, s.RefID, clean.LogQuote(u.UserName),
+			english.Plural(u.RevokeDerivedSessions([]string{s.ID}), "session", "sessions"))
+
 		// Set new password.
 		if err := u.SetPassword(f.NewPassword); err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 			return
+		}
+
+		// Revoke sessions that were signed in while the password was changed.
+		if n := u.RevokeDerivedSessions([]string{s.ID}); n > 0 {
+			event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "revoked %s"}, s.RefID, clean.LogQuote(u.UserName),
+				english.Plural(n, "session", "sessions"))
 		}
 
 		// Update tokens if user matches with session.
@@ -115,11 +132,6 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "password", "changed"}, s.RefID, clean.LogQuote(u.UserName))
-
-		// Revoke other user sessions after a privilege level change,
-		// except for app passwords and client access tokens.
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "revoked %s"}, s.RefID, clean.LogQuote(u.UserName),
-			english.Plural(u.RevokeDerivedSessions([]string{s.ID}), "session", "sessions"))
 
 		AddTokenHeaders(c, s)
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPasswordChanged))

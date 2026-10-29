@@ -1633,17 +1633,20 @@ func (m *User) RegenerateTokens() error {
 		return err
 	}
 
-	// Drop the replaced token from the in-memory cache and rewrite the denormalized copy on the user's
-	// sessions that still hold it, so a surviving session (e.g. an app password) cannot re-register the
-	// revoked token from its stale column on reload.
+	// Rewrite the copy on the user's sessions that still hold the replaced token, so a surviving session
+	// (e.g. an app password) reloads the new one, then drop the replaced token from the in-memory cache.
 	if oldPreviewToken != "" && oldPreviewToken != m.PreviewToken {
-		PreviewToken.UnsetValue(oldPreviewToken)
-
 		if err := Db().Model(&Session{}).
 			Where("user_uid = ? AND preview_token = ?", m.UserUID, oldPreviewToken).
 			Update("preview_token", m.PreviewToken).Error; err != nil {
 			event.AuditWarn([]string{"user %s", "failed to update session preview token", status.Error(err)}, m.RefID)
+		} else {
+			// Evict the account's cached sessions and WebDAV credentials so the next request reloads them.
+			FlushUserSessionCache(m.UserUID)
 		}
+
+		// Released last, so a lookup that read the old row before the flush cannot keep it registered.
+		PreviewToken.UnsetValue(oldPreviewToken)
 	}
 
 	return nil

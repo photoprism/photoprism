@@ -3327,6 +3327,42 @@ func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
 	require.NoError(t, reloaded.Delete())
 }
 
+func TestUser_RegenerateTokens_FlushesCachedSessions(t *testing.T) {
+	u := NewUser()
+	u.UserName = "regen-flush-cache"
+	u.UserRole = acl.RoleAdmin.String()
+	u.CanLogin = true
+	require.NoError(t, u.Create())
+	t.Cleanup(func() { deleteTestUser(t, u) })
+
+	appPw, err := AddClientSession("regen-flush-client", unix.Day, "*", authn.GrantPassword, u)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = appPw.Delete() })
+
+	cached, err := FindSession(appPw.ID)
+	require.NoError(t, err)
+
+	const webDAVKey = "regen-flush-webdav"
+	CacheWebDAVUser(webDAVKey, u, CurrentAuthCacheGeneration())
+	require.NotNil(t, CachedWebDAVUser(webDAVKey))
+
+	oldPreview := u.PreviewToken
+	require.NoError(t, u.RegenerateTokens())
+
+	// The next lookup reads the stored row instead of the object cached before the change.
+	found, err := FindSession(appPw.ID)
+	require.NoError(t, err)
+	assert.NotSame(t, cached, found)
+	assert.Equal(t, u.PreviewToken, found.PreviewToken)
+	assert.False(t, InvalidPreviewToken(u.PreviewToken))
+	assert.True(t, InvalidPreviewToken(oldPreview))
+	assert.Nil(t, CachedWebDAVUser(webDAVKey))
+
+	// An object loaded before the change is not cached again.
+	CacheSession(cached, time.Hour)
+	assert.True(t, InvalidPreviewToken(oldPreview))
+}
+
 func TestUser_HasShares(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
 		assert.False(t, Visitor.HasShares())
