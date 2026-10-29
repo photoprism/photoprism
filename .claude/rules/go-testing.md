@@ -14,6 +14,7 @@
   `if testing.Short() { t.Skip("skipping test in short mode.") }`, placed before any setup; gate only the subtest
   when the rest of the test is unit-level. `make test-short` then stays within its per-package `-timeout 5m`, and
   non-short runs with the required build tags still run the test. Classify by what the test runs, not by its name.
+- Keep tests cheap, since they run many times a day and on notebooks: no fixed multi-second wait to prove that something does not happen (confirm a positive control received the event, then use a short grace period), no expensive package-level variable or `init()`, and precomputed bcrypt hashes at the minimum cost. Test binaries hash at `bcrypt.MinCost` (`entity.passwordCost`), production at `entity.PasswordCost`. A test that stays heavy is skipped in short mode.
 - Prefer focused runs: `go test ./internal/<pkg> -run <Name> -count=1`. Avoid `./...` unless needed; full integration packages such as `internal/photoprism` can take many minutes, depending on the database backend and media tools.
 
 ### Optional Integration Matrices

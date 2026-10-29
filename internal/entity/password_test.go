@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func TestNewPassword(t *testing.T) {
@@ -47,10 +48,12 @@ func TestPassword_SetPassword(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("Hash", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2", true)
+		// A stored hash is accepted as is; the minimum cost keeps the comparisons below fast.
+		p := NewPassword("urrwaxd19ldtz68x", "$2a$04$VPVNtdVM1FtICW/4/vf9kOACPvqZa0t9sHstnccPXR14.N.Dh/I1G", true)
 		assert.Len(t, p.Hash, 60)
+		assert.Equal(t, "$2a$04$VPVNtdVM1FtICW/4/vf9kOACPvqZa0t9sHstnccPXR14.N.Dh/I1G", p.Hash)
 		assert.True(t, p.Valid("photoprism"))
-		assert.False(t, p.Valid("$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2"))
+		assert.False(t, p.Valid("$2a$04$VPVNtdVM1FtICW/4/vf9kOACPvqZa0t9sHstnccPXR14.N.Dh/I1G"))
 		assert.False(t, p.Valid("other"))
 	})
 }
@@ -142,7 +145,23 @@ func TestFindPassword(t *testing.T) {
 	})
 }
 
+// passwordCostAtInit is DefaultPasswordCost as initialized, before init lowers it for tests.
+var passwordCostAtInit = DefaultPasswordCost
+
+func TestPasswordCost(t *testing.T) {
+	t.Run("Production", func(t *testing.T) {
+		assert.Equal(t, PasswordCost, passwordCost(false))
+	})
+	t.Run("Test", func(t *testing.T) {
+		assert.Equal(t, bcrypt.MinCost, passwordCost(true))
+	})
+}
+
 func TestPassword_Cost(t *testing.T) {
+	t.Run("ProductionCost", func(t *testing.T) {
+		assert.Equal(t, 12, PasswordCost)
+		assert.Equal(t, PasswordCost, passwordCostAtInit)
+	})
 	t.Run("DefaultPasswordCost", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "photoprism", false)
 		if cost, err := p.Cost(); err != nil {

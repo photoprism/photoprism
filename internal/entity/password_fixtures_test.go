@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func TestPasswordMap_Get(t *testing.T) {
@@ -47,6 +48,14 @@ func TestCreatePasswordFixtures(t *testing.T) {
 			if assert.NotNil(t, stored, name) {
 				assert.True(t, stored.Valid(f.Password), name)
 			}
+		}
+	})
+	t.Run("MinimumCostInTests", func(t *testing.T) {
+		// Test binaries use the minimum cost, so fixtures and test accounts hash quickly.
+		assert.Equal(t, bcrypt.MinCost, DefaultPasswordCost)
+
+		if cost, err := PasswordFixtures.Pointer("bob").Cost(); assert.NoError(t, err) {
+			assert.Equal(t, bcrypt.MinCost, cost)
 		}
 	})
 }
