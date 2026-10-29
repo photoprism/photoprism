@@ -822,13 +822,13 @@
           "type": "string",
           "default": "5000",
           "title": "Maximum Original Size (MB)",
-          "description": "Largest allowed original file size."
+          "description": "Largest single original file in MB (-1 to disable)."
         },
         "PHOTOPRISM_UPLOAD_LIMIT": {
           "type": "string",
           "default": "5000",
           "title": "Maximum Upload Size (MB)",
-          "description": "Largest allowed upload size."
+          "description": "Largest total size of one upload in MB, including the contents of uploaded ZIP archives (-1 to disable)."
         },
         "PHOTOPRISM_UPLOAD_ALLOW": {
           "type": "string",

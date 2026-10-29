@@ -316,13 +316,13 @@ questions:
   - variable: config.PHOTOPRISM_ORIGINALS_LIMIT
     group: "Storage"
     label: "Maximum Original Size (MB)"
-    description: "Largest allowed original file size."
+    description: "Largest single original file in MB (-1 to disable)."
     type: int
     default: "5000"
   - variable: config.PHOTOPRISM_UPLOAD_LIMIT
     group: "Storage"
     label: "Maximum Upload Size (MB)"
-    description: "Largest allowed upload size."
+    description: "Largest total size of one upload in MB, including the contents of uploaded ZIP archives (-1 to disable)."
     type: int
     default: "5000"
   - variable: config.PHOTOPRISM_UPLOAD_ALLOW
