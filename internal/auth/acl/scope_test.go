@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/list"
 )
 
 func TestGrantScopeRead(t *testing.T) {
@@ -185,4 +187,59 @@ func TestScopeAttrPermits(t *testing.T) {
 			assert.Equalf(t, tc.want, got, "scope %q resource %q perms %v", tc.scope, tc.resource, tc.perms)
 		})
 	}
+}
+
+func TestScopeAttrWithin(t *testing.T) {
+	within := func(scope, allowed string) list.Attr {
+		return ScopeAttrWithin(ScopeAttr(scope), ScopeAttr(allowed))
+	}
+
+	t.Run("AllowedWildcard", func(t *testing.T) {
+		assert.Equal(t, "mcp photos", within("mcp photos", "*").String())
+	})
+	t.Run("Reduced", func(t *testing.T) {
+		result := within("mcp photos albums", "config cluster vision metrics mcp users")
+		assert.Equal(t, "mcp", result.String())
+		assert.True(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionSearch}))
+	})
+	t.Run("ScopeWildcard", func(t *testing.T) {
+		result := within("*", "cluster mcp")
+		assert.Equal(t, "cluster mcp", result.String())
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionView}))
+	})
+	t.Run("ReadOnlyScope", func(t *testing.T) {
+		result := within("read", "mcp photos")
+		assert.True(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionUpdate}))
+		assert.False(t, ScopeAttrPermits(result, ResourceAlbums, Permissions{ActionView}))
+	})
+	t.Run("ScopeModifierKept", func(t *testing.T) {
+		result := within("mcp read", "mcp")
+		assert.True(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionUpdate}))
+	})
+	t.Run("AllowedModifierNarrows", func(t *testing.T) {
+		result := within("mcp", "mcp read")
+		assert.True(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionUpdate}))
+	})
+	t.Run("NegatedEntryKept", func(t *testing.T) {
+		result := within("mcp photos:false", "mcp photos")
+		assert.True(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionView}))
+	})
+	t.Run("AllowedNegation", func(t *testing.T) {
+		result := within("mcp photos", "mcp photos:false")
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionView}))
+	})
+	t.Run("NoOverlap", func(t *testing.T) {
+		result := within("photos", "mcp")
+		assert.Empty(t, result)
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionView}))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, within("", "mcp"))
+		assert.Empty(t, within("mcp", ""))
+	})
 }

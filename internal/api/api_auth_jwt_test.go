@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/time/rate"
@@ -17,6 +18,8 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mcp"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -662,5 +665,56 @@ func TestDownloadSessionPortalJWT(t *testing.T) {
 		spec := fx.defaultClaimsSpec()
 		spec.Scope = []string{"cluster", "config"}
 		assert.Nil(t, DownloadSession(jwtDownloadCtx(fx.issue(t, spec))))
+	})
+}
+
+func TestAuthAnyJWT_SessionScopeWithinAllowList(t *testing.T) {
+	// Building the library server registers the tool declarations that mcp.AuthorizeTool reads.
+	mcp.NewLibraryServer(&sdkmcp.Implementation{Name: "photoprism", Version: "test"}, "ce", mcp.Options{})
+
+	authorize := func(t *testing.T, allowList string) *entity.Session {
+		t.Helper()
+		fx := newPortalJWTFixture(t, "jwt-scope-within")
+		spec := fx.defaultClaimsSpec()
+		spec.Scope = []string{"mcp", "photos", "albums"}
+		token := fx.issue(t, spec)
+
+		origScope := fx.nodeConf.Options().JWTScope
+		fx.nodeConf.Options().JWTScope = allowList
+		get.SetConfig(fx.nodeConf)
+		t.Cleanup(func() {
+			fx.nodeConf.Options().JWTScope = origScope
+			get.SetConfig(fx.nodeConf)
+		})
+
+		gin.SetMode(gin.TestMode)
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/mcp", nil)
+		req.Header.Set("Authorization", "Bearer "+token)
+		req.RemoteAddr = "192.0.2.70:1001"
+		c.Request = req
+
+		sess := authAnyJWT(c, "192.0.2.70", token, acl.ResourceMCP, acl.Permissions{acl.ActionView})
+		require.NotNil(t, sess)
+		return sess
+	}
+
+	t.Run("DefaultAllowList", func(t *testing.T) {
+		sess := authorize(t, config.DefaultJWTAllowedScopes)
+		assert.False(t, sess.ValidateScope(acl.ResourcePhotos, acl.Permissions{acl.ActionSearch}))
+
+		for _, tool := range []string{"search_media", "list_collections"} {
+			decision, _ := mcp.AuthorizeTool(sess, tool)
+			assert.Equal(t, mcp.ToolMissingScope, decision, tool)
+		}
+	})
+	t.Run("AllowListIncludesResources", func(t *testing.T) {
+		sess := authorize(t, "cluster mcp photos albums")
+		assert.True(t, sess.ValidateScope(acl.ResourcePhotos, acl.Permissions{acl.ActionSearch}))
+
+		for _, tool := range []string{"search_media", "list_collections"} {
+			decision, _ := mcp.AuthorizeTool(sess, tool)
+			assert.Equal(t, mcp.ToolAllowed, decision, tool)
+		}
 	})
 }

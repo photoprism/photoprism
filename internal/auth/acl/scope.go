@@ -55,6 +55,59 @@ func ScopeAttr(s string) list.Attr {
 	return list.ParseAttr(strings.ToLower(s))
 }
 
+// ScopeAttrWithin returns the entries of scope that the allowed list admits, so the result never exceeds either.
+// A wildcard or modifier-only scope takes the allowed entries, and read and write modifiers of both lists are kept.
+func ScopeAttrWithin(scope, allowed list.Attr) list.Attr {
+	if len(scope) == 0 || len(allowed) == 0 {
+		return list.Attr{}
+	} else if allowed.String() == list.Any {
+		return scope
+	}
+
+	result := make(list.Attr, 0, len(scope)+len(allowed))
+
+	add := func(kv *list.KeyValue) {
+		for _, existing := range result {
+			if strings.EqualFold(existing.Key, kv.Key) {
+				return
+			}
+		}
+
+		result = append(result, &list.KeyValue{Key: kv.Key, Value: kv.Value})
+	}
+
+	isModifier := func(kv *list.KeyValue) bool {
+		return kv.Key == ScopeRead.String() || kv.Key == ScopeWrite.String()
+	}
+
+	resources := false
+
+	for _, kv := range scope {
+		switch {
+		case kv.Key == list.Any:
+			resources = true
+			for _, a := range allowed {
+				add(a)
+			}
+		case isModifier(kv):
+			add(kv)
+		case allowed.Contains(kv.Key):
+			resources = true
+			add(kv)
+		default:
+			resources = true
+		}
+	}
+
+	for _, a := range allowed {
+		if isModifier(a) || !resources {
+			add(a)
+		}
+	}
+
+	return result
+}
+
 // ScopePermits sanitizes the raw scope string and then calls ScopeAttrPermits for
 // the actual authorization check.
 func ScopePermits(scope string, resource Resource, perms Permissions) bool {

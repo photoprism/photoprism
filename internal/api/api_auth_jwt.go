@@ -95,7 +95,8 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 		return nil
 	}
 
-	claims.Scope = tokenScopes.String()
+	// The session keeps only the token scopes the instance allow-list admits, so later scope checks use both.
+	claims.Scope = acl.ScopeAttrWithin(tokenScopes, allowedScopes).String()
 
 	var issuedAt, notBefore, expiresAt *time.Time
 	if claims.IssuedAt != nil {
