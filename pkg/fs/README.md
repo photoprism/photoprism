@@ -1,6 +1,6 @@
 ## PhotoPrism — pkg/fs
 
-**Last Updated:** October 16, 2026
+**Last Updated:** October 29, 2026
 
 ### Overview
 
@@ -52,7 +52,7 @@
 ### Recent Changes & Improvements
 
 - Shared `SafeJoin` (`join.go`): normalize `\\`/`/`, use `filepath.Rel` to reject paths escaping `baseDir`, and keep volume/absolute checks. Reused by `Unzip`, the WebDAV sync client, and the server upload handler.
-- Added optional max-entries guard in `Unzip` and treat `totalSizeLimit=0` as “no limit” while documenting `-1` as unlimited.
+- Added optional max-entries guard in `Unzip`. A negative `totalSizeLimit` is unlimited, `0` leaves no budget, and a positive value is the remaining budget; each file must leave at least one byte of it, and once one does not fit, no later file entry is extracted.
 - Added pool copy buffers (128–256 KiB) that use `io.CopyBuffer` in `Copy`, `Hash`, `Checksum`, `Sha256`, `WriteFileFromReader` to cut allocations/GC.
 
 #### Pool Copy Buffers
