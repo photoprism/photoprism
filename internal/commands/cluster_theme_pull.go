@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -309,7 +310,14 @@ func removeDirContents(dir string) error {
 	return nil
 }
 
-// unzipSafe extracts a theme archive into dest, skipping hidden names and entries outside dest. New files get fs.ModeFile.
+// Theme archive bounds, the same limits as for theme installs at node bootstrap.
+var (
+	themeFileSizeLimit  int64 = 32 * fs.MB
+	themeTotalSizeLimit int64 = 512 * fs.MB
+)
+
+// unzipSafe extracts a theme archive into dest, skipping hidden names and entries outside dest. New files get
+// fs.ModeFile, and a file over themeFileSizeLimit or the themeTotalSizeLimit budget is removed with an error.
 func unzipSafe(zipPath, dest string) error {
 	r, err := zip.OpenReader(zipPath)
 
@@ -328,6 +336,8 @@ func unzipSafe(zipPath, dest string) error {
 	if err != nil {
 		return err
 	}
+
+	var total int64
 
 	// Empty theme archives are valid; install succeeds without files.
 	for _, f := range r.File {
@@ -388,11 +398,17 @@ func unzipSafe(zipPath, dest string) error {
 			return err
 		}
 
-		_, copyErr := io.Copy(out, rc) //nolint:gosec // zip entries size is bounded by upstream
+		// Copy one byte more than the remaining budget allows, so that an oversized file is detected.
+		limit := min(themeFileSizeLimit, themeTotalSizeLimit-total)
+		n, copyErr := io.CopyN(out, rc, limit+1)
+		total += n
 		closeOutErr := out.Close()
 		closeRcErr := rc.Close()
 
-		if copyErr != nil {
+		if n > limit {
+			_ = os.Remove(targetAbs)
+			return fmt.Errorf("theme file %s exceeds the size limit", clean.Log(name))
+		} else if copyErr != nil && !errors.Is(copyErr, io.EOF) {
 			return copyErr
 		}
 
