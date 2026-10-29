@@ -532,6 +532,38 @@ func TestUnzipEntry(t *testing.T) {
 		assert.NoFileExists(t, fileName)
 		assert.Empty(t, regularFiles(t, out))
 	})
+	t.Run("CreationMode", func(t *testing.T) {
+		modeZip := filepath.Join(dir, "mode.zip")
+		zf, err := os.Create(modeZip) //nolint:gosec // test path in a temporary directory
+		require.NoError(t, err)
+		zw := zip.NewWriter(zf)
+		modes := []os.FileMode{os.ModeSetuid | os.ModeSetgid | os.ModeSticky | 0o777, 0o400}
+		for i, mode := range modes {
+			header := &zip.FileHeader{Name: fmt.Sprintf("mode%d.txt", i), Method: zip.Store}
+			header.SetMode(mode)
+			w, createErr := zw.CreateHeader(header)
+			require.NoError(t, createErr)
+			_, err = w.Write([]byte("mode"))
+			require.NoError(t, err)
+		}
+		require.NoError(t, zw.Close())
+		require.NoError(t, zf.Close())
+
+		entries := openZipReader(t, modeZip).File
+		require.NotZero(t, entries[0].Mode()&os.ModeSetuid)
+		out := t.TempDir()
+
+		for _, entry := range entries {
+			fileName, _, err := unzipEntry(entry, out, 0)
+			require.NoError(t, err)
+			info, err := os.Stat(fileName)
+			require.NoError(t, err)
+
+			assert.Zero(t, info.Mode()&(os.ModeSetuid|os.ModeSetgid|os.ModeSticky), entry.Name)
+			assert.Zero(t, info.Mode().Perm()&0o111, entry.Name)
+			assert.Equal(t, os.FileMode(0o600), info.Mode().Perm()&0o600, entry.Name)
+		}
+	})
 }
 
 // writeZip64Stub writes a minimal ZIP64 archive with one stored entry and custom size values.

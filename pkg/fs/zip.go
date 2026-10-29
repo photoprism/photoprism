@@ -202,7 +202,7 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 
 // unzipEntry writes a file from a zip archive to the target destination and returns the number of bytes written.
 // A positive limit caps the write, otherwise the declared size does. An entry whose data is incomplete, exceeds
-// the limit, or does not match its checksum returns an error, and its file is removed.
+// the limit, or does not match its checksum returns an error, and its file is removed. New files get ModeFile.
 func unzipEntry(f *zip.File, dir string, limit int64) (fileName string, written int64, err error) {
 	if HasReservedComponent(f.Name) {
 		return "", 0, ErrReservedPath
@@ -251,7 +251,7 @@ func unzipEntry(f *zip.File, dir string, limit int64) (fileName string, written 
 		return fileName, 0, err
 	}
 
-	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode()) //nolint:gosec // destination derived from SafeJoin
+	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, ModeFile) //nolint:gosec // destination derived from SafeJoin
 
 	if err != nil {
 		return fileName, 0, err

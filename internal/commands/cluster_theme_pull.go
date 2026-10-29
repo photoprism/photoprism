@@ -309,6 +309,7 @@ func removeDirContents(dir string) error {
 	return nil
 }
 
+// unzipSafe extracts a theme archive into dest, skipping hidden names and entries outside dest. New files get fs.ModeFile.
 func unzipSafe(zipPath, dest string) error {
 	r, err := zip.OpenReader(zipPath)
 
@@ -380,7 +381,7 @@ func unzipSafe(zipPath, dest string) error {
 		}
 
 		// Create/truncate target.
-		out, err := os.OpenFile(targetAbs, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, f.Mode()) //nolint:gosec // paths derived from zip entries validated earlier
+		out, err := os.OpenFile(targetAbs, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, fs.ModeFile) //nolint:gosec // paths derived from zip entries validated earlier
 
 		if err != nil {
 			_ = rc.Close()
