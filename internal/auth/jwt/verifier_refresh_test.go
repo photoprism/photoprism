@@ -150,11 +150,20 @@ func TestVerifierSharedRefreshKeepsCachedKeysUsable(t *testing.T) {
 	_, keys := claimsTestSigner(t)
 
 	var requests atomic.Int64
+	arrived := make(chan struct{})
 	block := make(chan struct{})
 
-	// The endpoint is primed once, then hangs: the state a Portal outage leaves behind.
+	var release sync.Once
+	unblock := func() { release.Do(func() { close(block) }) }
+
+	// The endpoint is primed once, then stalls until released and fails: the state a Portal outage
+	// leaves behind. The second request signals that the forced refresh is in flight.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		if requests.Add(1) > 1 {
+		if n := requests.Add(1); n > 1 {
+			if n == 2 {
+				close(arrived)
+			}
+
 			<-block
 			w.WriteHeader(http.StatusServiceUnavailable)
 			return
@@ -164,6 +173,7 @@ func TestVerifierSharedRefreshKeepsCachedKeysUsable(t *testing.T) {
 		require.NoError(t, json.NewEncoder(w).Encode(JWKS{Keys: keys}))
 	}))
 	t.Cleanup(server.Close)
+	t.Cleanup(unblock)
 
 	url := server.URL + "/.well-known/jwks.json"
 	clock := time.Now()
@@ -185,13 +195,36 @@ func TestVerifierSharedRefreshKeepsCachedKeysUsable(t *testing.T) {
 		_, _ = v.keysForURL(context.Background(), url, true)
 	}()
 
+	select {
+	case <-arrived:
+	case <-time.After(5 * time.Second):
+		t.Fatal("forced refresh did not reach the endpoint")
+	}
+
+	type result struct {
+		keys []PublicJWK
+		err  error
+	}
+
+	ordinary := make(chan result, 1)
+
+	go func() {
+		got, getErr := v.keysForURL(context.Background(), url, false)
+		ordinary <- result{got, getErr}
+	}()
+
+	// The refresh stays stalled long enough for the ordinary call to join it, then fails at once.
 	time.Sleep(100 * time.Millisecond)
+	unblock()
 
-	got, err := v.keysForURL(context.Background(), url, false)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, got, "an ordinary verification keeps its cached keys while a shared refresh fails")
+	select {
+	case r := <-ordinary:
+		assert.NoError(t, r.err)
+		assert.NotEmpty(t, r.keys, "an ordinary verification keeps its cached keys while a shared refresh fails")
+	case <-time.After(10 * time.Second):
+		t.Fatal("ordinary verification did not return")
+	}
 
-	close(block)
 	<-forced
 }
 

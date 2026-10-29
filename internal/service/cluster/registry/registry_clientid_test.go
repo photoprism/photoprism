@@ -42,7 +42,6 @@ func TestClientRegistry_ClientIDChangedAfterRestore(t *testing.T) {
 
 	// Simulate restore: remove old row, create new row for same node UUID with new UID
 	assert.NoError(t, a.Delete())
-	time.Sleep(1100 * time.Millisecond)
 	b := entity.NewClient().SetName("pp-restore").SetRole(cluster.RoleInstance)
 	b.NodeUUID = uuid
 	assert.NoError(t, b.Create())
@@ -76,7 +75,6 @@ func TestClientRegistry_SwapNames_UUIDAuthoritative(t *testing.T) {
 
 	// Swap names via UUID-targeted updates
 	assert.NoError(t, r.Put(&Node{Node: cluster.Node{UUID: a.UUID, Name: "pp-b"}}))
-	time.Sleep(1100 * time.Millisecond)
 	assert.NoError(t, r.Put(&Node{Node: cluster.Node{UUID: b.UUID, Name: "pp-a"}}))
 
 	// UUID lookups map to the correct updated names

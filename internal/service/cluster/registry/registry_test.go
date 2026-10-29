@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -86,23 +87,46 @@ func TestClientRegistry_ListOrderByUpdatedAtDesc(t *testing.T) {
 	a := &Node{Node: cluster.Node{Name: "pp-a", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
 	b := &Node{Node: cluster.Node{Name: "pp-b", Role: "service", UUID: rnd.UUIDv7()}}
 	assert.NoError(t, r.Put(a))
-	// Ensure distinct UpdatedAt values (DBs often have second precision)
-	time.Sleep(1100 * time.Millisecond)
 	assert.NoError(t, r.Put(b))
 
+	// Timestamps have second precision, so both rows are dated back before a is updated again.
+	backdateClient(t, a.ClientID, 2*time.Minute)
+	backdateClient(t, b.ClientID, time.Minute)
+
 	// Update a to make it most recent
-	time.Sleep(1100 * time.Millisecond)
 	assert.NoError(t, r.Put(&Node{Node: cluster.Node{ClientID: a.ClientID, Name: a.Name}}))
 
 	list, err := r.List()
 	assert.NoError(t, err)
-	if assert.GreaterOrEqual(t, len(list), 2) {
-		// First should be the most recently updated (a)
-		assert.Equal(t, "pp-a", list[0].Name)
-		// Basic ID shape checks
-		assert.True(t, rnd.IsUUID(list[0].UUID))
-		assert.True(t, rnd.IsUID(list[0].ClientID, entity.ClientUID))
+
+	// Other rows, such as fixtures, may share a's second, so the order is checked rather than list[0].
+	indexOf := func(name string) int {
+		for i := range list {
+			if list[i].Name == name {
+				return i
+			}
+		}
+
+		return -1
 	}
+
+	ia, ib := indexOf("pp-a"), indexOf("pp-b")
+	require.GreaterOrEqual(t, ia, 0)
+	require.GreaterOrEqual(t, ib, 0)
+	assert.Less(t, ia, ib, "the most recently updated node comes first")
+
+	for i := 1; i < len(list); i++ {
+		prev, prevErr := time.Parse(time.RFC3339, list[i-1].UpdatedAt)
+		cur, curErr := time.Parse(time.RFC3339, list[i].UpdatedAt)
+
+		if assert.NoError(t, prevErr) && assert.NoError(t, curErr) {
+			assert.False(t, cur.After(prev), "list is ordered by UpdatedAt, newest first")
+		}
+	}
+
+	// Basic ID shape checks
+	assert.True(t, rnd.IsUUID(list[ia].UUID))
+	assert.True(t, rnd.IsUID(list[ia].ClientID, entity.ClientUID))
 }
 
 func TestResponseBuilders_RedactionAndOpts(t *testing.T) {

@@ -52,7 +52,7 @@ func TestClientRegistry_FindByNodeUUID_PrefersLatest(t *testing.T) {
 	c1 := entity.NewClient().SetName("pp-dup-1").SetRole(cluster.RoleInstance)
 	c1.NodeUUID = uuid
 	assert.NoError(t, c1.Create())
-	time.Sleep(1100 * time.Millisecond)
+	backdateClient(t, c1.ClientUID, time.Minute)
 	c2 := entity.NewClient().SetName("pp-dup-2").SetRole(cluster.RoleService)
 	c2.NodeUUID = uuid
 	assert.NoError(t, c2.Create())

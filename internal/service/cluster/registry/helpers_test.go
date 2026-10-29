@@ -2,8 +2,12 @@ package registry
 
 import (
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
 
 	cfg "github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 // newRegistryTestConfig creates a minimal registry test config and closes its database during cleanup.
@@ -18,6 +22,15 @@ func newRegistryTestConfig(t *testing.T, name string) *cfg.Config {
 	})
 
 	return c
+}
+
+// backdateClient moves the client's updated_at into the past, so a later write sorts after it although
+// timestamps have only second precision.
+func backdateClient(t *testing.T, clientUID string, age time.Duration) {
+	t.Helper()
+
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).Where("client_uid = ?", clientUID).
+		UpdateColumn("updated_at", time.Now().UTC().Add(-age)).Error)
 }
 
 // listNodeByName returns the listed node with the given name, or nil if absent.

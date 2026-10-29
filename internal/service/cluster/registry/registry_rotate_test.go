@@ -19,12 +19,14 @@ func TestClientRegistry_RotateSecretByUUID_LatestRow(t *testing.T) {
 	r, _ := NewClientRegistryWithConfig(c)
 	uuid := rnd.UUIDv7()
 
-	// Create two entries for same NodeUUID; c2 will be latest
+	// Two rows share the NodeUUID: a registered node and a later duplicate, created directly because a
+	// second Put with the same UUID updates the first row.
 	n1 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-a", Role: cluster.RoleInstance}}
 	assert.NoError(t, r.Put(n1))
-	time.Sleep(1100 * time.Millisecond)
-	n2 := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-rot-b", Role: cluster.RoleInstance}}
-	assert.NoError(t, r.Put(n2))
+	backdateClient(t, n1.ClientID, time.Minute)
+	c2 := entity.NewClient().SetName("pp-rot-b").SetRole(cluster.RoleInstance)
+	c2.NodeUUID = uuid
+	require.NoError(t, c2.Create())
 
 	// Rotate by UUID
 	rotated, err := r.RotateSecret(uuid)
@@ -32,6 +34,7 @@ func TestClientRegistry_RotateSecretByUUID_LatestRow(t *testing.T) {
 	if assert.NotNil(t, rotated) {
 		assert.NotEmpty(t, rotated.ClientSecret)
 		assert.Equal(t, uuid, rotated.UUID)
+		assert.Equal(t, c2.ClientUID, rotated.ClientID, "rotation selects the latest row")
 		// Password row updated for latest ClientID
 		pw := entity.FindPassword(rotated.ClientID)
 		if assert.NotNil(t, pw) {

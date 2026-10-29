@@ -18,11 +18,8 @@ func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
 	// Create two clients directly to simulate duplicates with same name.
 	c1 := entity.NewClient().SetName("pp-dupe").SetRole(cluster.RoleInstance)
 	assert.NoError(t, c1.Create())
-	// Backdate c1 so c2 is unambiguously the most recently updated. Timestamps are
-	// stored with second precision, so a sub-second stagger would not separate them.
-	assert.NoError(t, entity.UnscopedDb().Model(&entity.Client{}).
-		Where("client_uid = ?", c1.ClientUID).
-		UpdateColumn("updated_at", entity.Now().Add(-time.Hour)).Error)
+	// Backdate c1 so c2 is unambiguously the most recently updated.
+	backdateClient(t, c1.ClientUID, time.Hour)
 	c2 := entity.NewClient().SetName("pp-dupe").SetRole(cluster.RoleService)
 	assert.NoError(t, c2.Create())
 

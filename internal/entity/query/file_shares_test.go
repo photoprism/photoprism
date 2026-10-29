@@ -90,7 +90,6 @@ func TestQueuedFileShares(t *testing.T) {
 
 func TestExpiredFileShares(t *testing.T) {
 	t.Run("ExpiredFileShareExists", func(t *testing.T) {
-		time.Sleep(2 * time.Second)
 		r, err := ExpiredFileShares(entity.ServiceFixtureWebdavDummy)
 		if err != nil {
 			t.Fatal(err)
