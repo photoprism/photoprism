@@ -1,6 +1,10 @@
 /*
 Package api provides REST-API authentication and request handlers.
 
+The API reference generated from this package reflects source code under continuous development.
+It may list fields, parameters, and endpoints that are not part of a release or are reserved for
+planned features. Only functionality described in the User Guide or the release notes is supported.
+
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
@@ -45,6 +49,7 @@ import (
 //	@title						PhotoPrism API
 //	@description				API request bodies and responses are usually JSON-encoded, except for binary data and some of the OAuth2 endpoints. Note that the `Content-Type` header must be set to `application/json` for this, as the request may otherwise fail with error 400.
 //	@description				When clients have a valid access token, e.g. obtained through the `POST /api/v1/session` or `POST /api/v1/oauth/token` endpoint, they can use a standard Bearer Authorization header to authenticate their requests. Submitting the access token with a custom `X-Auth-Token` header is supported as well.
+//	@description				This reference is generated from source code under continuous development. It may list fields, parameters, and endpoints that are not part of a release or are reserved for planned features. Only functionality described in the User Guide or the release notes is supported.
 //	@externalDocs.description	Learn more ›
 //	@externalDocs.url			https://docs.photoprism.app/developer-guide/api/
 //	@version					v1

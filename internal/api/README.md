@@ -1,10 +1,12 @@
 ## API Package Guide
 
-**Last Updated:** October 21, 2026
+**Last Updated:** October 29, 2026
 
 ### Overview
 
 The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each file under `internal/api` contains the handlers, request/response DTOs, and Swagger annotations for a specific feature area. Handlers remain thin: they validate input, enforce security or ACL checks, and delegate domain work to services in `internal/photoprism`, `internal/service`, or other internal packages. Keep exported types aligned with the REST schema and avoid embedding business logic directly in handlers.
+
+The Swagger annotations in this package generate the public API reference. It is generated from source code under continuous development, so it may list fields, parameters, and endpoints that are not part of a release or are reserved for planned features. Only functionality described in the User Guide or the release notes is supported.
 
 ### Routing & Wiring
 

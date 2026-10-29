@@ -5661,7 +5661,7 @@
     "host": "demo.photoprism.app",
     "info": {
         "contact": {},
-        "description": "API request bodies and responses are usually JSON-encoded, except for binary data and some of the OAuth2 endpoints. Note that the `Content-Type` header must be set to `application/json` for this, as the request may otherwise fail with error 400.\nWhen clients have a valid access token, e.g. obtained through the `POST /api/v1/session` or `POST /api/v1/oauth/token` endpoint, they can use a standard Bearer Authorization header to authenticate their requests. Submitting the access token with a custom `X-Auth-Token` header is supported as well.",
+        "description": "API request bodies and responses are usually JSON-encoded, except for binary data and some of the OAuth2 endpoints. Note that the `Content-Type` header must be set to `application/json` for this, as the request may otherwise fail with error 400.\nWhen clients have a valid access token, e.g. obtained through the `POST /api/v1/session` or `POST /api/v1/oauth/token` endpoint, they can use a standard Bearer Authorization header to authenticate their requests. Submitting the access token with a custom `X-Auth-Token` header is supported as well.\nThis reference is generated from source code under continuous development. It may list fields, parameters, and endpoints that are not part of a release or are reserved for planned features. Only functionality described in the User Guide or the release notes is supported.",
         "title": "PhotoPrism API",
         "version": "v1"
     },
