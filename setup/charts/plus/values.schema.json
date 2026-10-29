@@ -45,12 +45,12 @@
     "command": {
       "type": "array",
       "title": "Command",
-      "description": "Overrides the container entrypoint. Leave empty to use the image default."
+      "description": "Overrides the container entrypoint. Defaults to the PhotoPrism binary; set to an empty list to use the image entrypoint, which requires a less restrictive securityContext."
     },
     "args": {
       "type": "array",
       "title": "Args",
-      "description": "Overrides the container arguments. Leave empty to use the image default."
+      "description": "Overrides the container arguments. Defaults to start; set to an empty list together with command to use the image default."
     },
     "securityContext": {
       "type": "object",

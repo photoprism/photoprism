@@ -4,7 +4,7 @@ This chart provides an easy way to run [PhotoPrism®](https://www.photoprism.app
 
 ## Highlights
 
-- Runs the official `photoprism/photoprism` image with non-root defaults (UID/GID 1000).
+- Runs the official `photoprism/photoprism` image with non-root defaults (UID/GID 1000) and a security context that meets the Kubernetes `restricted` Pod Security Standard.
 - Ships with SQLite out of the box; switch to MariaDB/MySQL by filling in the database section.
 - Creates lightweight PVCs for `/photoprism/storage` (5 GiB) and, optionally, `/photoprism/originals` (10 GiB) – the cluster’s default storage class is used unless you override it, and the volumes are kept when you uninstall the release.
 - Surfaces the most relevant customization settings (locale, themes, login footer, CORS/CDN, backup schedule) directly in Rancher’s UI or via `values.yaml`.
@@ -93,6 +93,38 @@ You can provide the database password in two ways:
 
 If both are set, `database.passwordSecretName` takes precedence and the inline `database.password` is ignored (it is not
 copied into the managed Secret). If neither is set, no password env var is injected (suitable for SQLite).
+
+## Container Startup & Security Context
+
+By default, the chart runs the PhotoPrism binary directly (`command: ["/opt/photoprism/bin/photoprism"]`, `args: ["start"]`) as a non-root user with `allowPrivilegeEscalation: false`, all capabilities dropped, and the `RuntimeDefault` seccomp profile. This is compatible with the Kubernetes Pod Security Standard `restricted` and the OpenShift `restricted-v2` SCC.
+
+Because the image's init script does not run, the following are not available:
+
+- `PHOTOPRISM_INIT` actions such as installing drivers or updates. Update by pulling a newer image tag instead.
+- `PHOTOPRISM_UID`, `PHOTOPRISM_GID`, and `PHOTOPRISM_UMASK`. Use `securityContext.runAsUser`, `securityContext.runAsGroup`, and `podSecurityContext.fsGroup` instead.
+- Automatic permission updates. Existing volumes, for example on NFS, must be readable and writable by the configured user and group.
+
+No hardware devices are mounted by default. For hardware video transcoding, mount the device (for example with a device plugin) and make sure the pod is a member of the group that owns it on the node, for example:
+
+```yaml
+podSecurityContext:
+  fsGroup: 1000
+  supplementalGroups: [44]   # group that owns /dev/dri/renderD* on the node
+```
+
+On OpenShift, remove `runAsUser`, `runAsGroup`, and `fsGroup` from your values so that the SCC can assign IDs from the namespace range.
+
+If your cluster allows it and you need the init script, you can use the image entrypoint instead. It needs to escalate privileges at startup, so the security context must be relaxed as well, which is not permitted under the `restricted` standard:
+
+```yaml
+command: []
+args: []
+securityContext:
+  allowPrivilegeEscalation: true
+  capabilities: null   # removes the default "drop: [ALL]"
+```
+
+The other `securityContext` defaults, such as `runAsUser`, are kept, since Helm merges your values with the chart defaults.
 
 ## Security Tips
 

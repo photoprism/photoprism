@@ -9,8 +9,17 @@ image:
   tag: ""
   pullPolicy: IfNotPresent
 
-command: []
-args: []
+# Runs the PhotoPrism binary directly, without the image's init script, so the
+# container starts under the securityContext below (also with Pod Security
+# "restricted" and OpenShift "restricted-v2"). PHOTOPRISM_INIT actions,
+# PHOTOPRISM_UID/GID, and automatic permission updates are not available.
+# To use the init script instead, set command and args to [] and relax the
+# securityContext with allowPrivilegeEscalation: true and capabilities: null,
+# since the init script needs these privileges to start (see README.md).
+command:
+  - "/opt/photoprism/bin/photoprism"
+args:
+  - "start"
 
 securityContext:
   allowPrivilegeEscalation: false
