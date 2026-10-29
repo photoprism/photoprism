@@ -1,6 +1,7 @@
 package acl
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -242,4 +243,103 @@ func TestScopeAttrWithin(t *testing.T) {
 		assert.Empty(t, within("", "mcp"))
 		assert.Empty(t, within("mcp", ""))
 	})
+}
+
+func TestScopeAttrWithin_Shapes(t *testing.T) {
+	within := func(scope, allowed string) list.Attr {
+		return ScopeAttrWithin(list.ParseAttr(scope), list.ParseAttr(allowed))
+	}
+
+	t.Run("AllowedReadOnly", func(t *testing.T) {
+		result := within("mcp", "read")
+		assert.True(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(result, ResourceMCP, Permissions{ActionUpdate}))
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionView}))
+	})
+	t.Run("ConflictingModifiers", func(t *testing.T) {
+		assert.False(t, ScopeAttrPermits(within("mcp read:false", "mcp read"), ResourceMCP, Permissions{ActionUpdate}))
+		assert.False(t, ScopeAttrPermits(within("mcp write:false", "mcp write"), ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(within("mcp", "mcp read read:*"), ResourceMCP, Permissions{ActionUpdate}))
+	})
+	t.Run("DuplicateKeys", func(t *testing.T) {
+		assert.False(t, ScopeAttrPermits(within("mcp photos:* photos:false", "mcp photos"), ResourcePhotos, Permissions{ActionView}))
+		assert.False(t, ScopeAttrPermits(within("*", "mcp photos:false photos:*"), ResourcePhotos, Permissions{ActionView}))
+	})
+	t.Run("LongValue", func(t *testing.T) {
+		long := strings.Repeat("a", 770)
+		result := within("mcp mcp:"+long, "config cluster vision metrics mcp users")
+		assert.Equal(t, "mcp", result.String())
+		result = within("mcp read:"+long, "mcp write")
+		assert.False(t, ScopeAttrPermits(ScopeAttr(result.String()), ResourceMCP, Permissions{ActionView}))
+	})
+	t.Run("LongKey", func(t *testing.T) {
+		stored := func(scope, allowed string) string { return within(scope, allowed).String() }
+		result := stored("mcp photos "+strings.Repeat("a", 756), "read")
+		assert.False(t, ScopePermits(result, ResourcePhotos, Permissions{ActionUpdate}))
+		assert.False(t, ScopePermits(result, ResourceMCP, Permissions{ActionUpdate}))
+		result = stored("* mcp read "+strings.Repeat("s", 758)+":false", "* users:false")
+		assert.False(t, ScopePermits(result, ResourceUsers, Permissions{ActionView}))
+		result = stored("users write "+strings.Repeat("k", 755), "read")
+		assert.False(t, ScopePermits(result, ResourceUsers, Permissions{ActionView}))
+	})
+	t.Run("ModifierOnlyScope", func(t *testing.T) {
+		assert.Empty(t, within("write", "mcp"))
+		assert.Empty(t, within("read:false", "mcp"))
+		assert.Empty(t, within("photos read", "mcp"))
+		assert.Empty(t, within("photos", "mcp read"))
+	})
+	t.Run("UnsortedInput", func(t *testing.T) {
+		scope, allowed := list.ParseAttr("mcp photos photos:false"), list.ParseAttr("mcp photos")
+		result := ScopeAttrWithin(scope, allowed)
+		assert.False(t, ScopeAttrPermits(result, ResourcePhotos, Permissions{ActionView}))
+		assert.Equal(t, "photos:false", scope[2].Key+":"+scope[2].Value)
+	})
+}
+
+// TestScopeAttrWithin_Property checks that the result permits a resource and permissions only where both lists do,
+// and exactly there when neither list repeats a key.
+func TestScopeAttrWithin_Property(t *testing.T) {
+	atoms := []string{"*", "read", "write", "mcp", "photos", "albums", "photos:false", "mcp:false", "read:false"}
+	resources := []Resource{ResourceMCP, ResourcePhotos, ResourceAlbums, ResourceUsers}
+	perms := []Permissions{nil, {ActionView}, {ActionUpdate}, {ActionView, ActionUpdate}}
+
+	var lists []string
+	for i := range atoms {
+		lists = append(lists, atoms[i])
+		for j := i + 1; j < len(atoms); j++ {
+			lists = append(lists, atoms[i]+" "+atoms[j])
+			for k := j + 1; k < len(atoms); k++ {
+				lists = append(lists, atoms[i]+" "+atoms[j]+" "+atoms[k])
+			}
+		}
+	}
+
+	repeats := func(s string) bool {
+		seen := map[string]bool{}
+		for _, f := range strings.Fields(s) {
+			k, _, _ := strings.Cut(f, ":")
+			if seen[k] {
+				return true
+			}
+			seen[k] = true
+		}
+		return false
+	}
+
+	for _, scope := range lists {
+		for _, allowed := range lists {
+			result := ScopeAttrWithin(ScopeAttr(scope), ScopeAttr(allowed)).String()
+			for _, r := range resources {
+				for _, p := range perms {
+					got := ScopePermits(result, r, p)
+					want := ScopePermits(scope, r, p) && ScopePermits(allowed, r, p)
+					if got && !want {
+						t.Fatalf("widened: scope=%q allowed=%q result=%q resource=%s perms=%v", scope, allowed, result, r, p)
+					} else if want && !got && !repeats(scope) && !repeats(allowed) {
+						t.Fatalf("narrowed: scope=%q allowed=%q result=%q resource=%s perms=%v", scope, allowed, result, r, p)
+					}
+				}
+			}
+		}
+	}
 }

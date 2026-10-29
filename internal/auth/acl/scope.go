@@ -55,57 +55,75 @@ func ScopeAttr(s string) list.Attr {
 	return list.ParseAttr(strings.ToLower(s))
 }
 
-// ScopeAttrWithin returns the entries of scope that the allowed list admits, so the result never exceeds either.
-// A wildcard or modifier-only scope takes the allowed entries, and read and write modifiers of both lists are kept.
+// ScopeAttrWithin returns a scope that permits a resource and action only where both lists do, derived from each
+// list's own decision for every name in ResourceNames, as ScopePermits makes it for lowercase input from ScopeAttr.
+// It is empty if the lists share no resource.
 func ScopeAttrWithin(scope, allowed list.Attr) list.Attr {
 	if len(scope) == 0 || len(allowed) == 0 {
 		return list.Attr{}
-	} else if allowed.String() == list.Any {
-		return scope
 	}
 
-	result := make(list.Attr, 0, len(scope)+len(allowed))
+	a, b := scopeAttrCopy(scope), scopeAttrCopy(allowed)
+	wild := scopeAttrWild(a) && scopeAttrWild(b)
+	result := make(list.Attr, 0, len(ResourceNames)+3)
 
-	add := func(kv *list.KeyValue) {
-		for _, existing := range result {
-			if strings.EqualFold(existing.Key, kv.Key) {
-				return
-			}
-		}
+	for _, resource := range ResourceNames {
+		permitted := ScopeAttrPermits(scopeAttrCopy(a), resource, nil) && ScopeAttrPermits(scopeAttrCopy(b), resource, nil)
 
-		result = append(result, &list.KeyValue{Key: kv.Key, Value: kv.Value})
-	}
-
-	isModifier := func(kv *list.KeyValue) bool {
-		return kv.Key == ScopeRead.String() || kv.Key == ScopeWrite.String()
-	}
-
-	resources := false
-
-	for _, kv := range scope {
 		switch {
-		case kv.Key == list.Any:
-			resources = true
-			for _, a := range allowed {
-				add(a)
-			}
-		case isModifier(kv):
-			add(kv)
-		case allowed.Contains(kv.Key):
-			resources = true
-			add(kv)
-		default:
-			resources = true
+		case permitted && !wild:
+			result = append(result, &list.KeyValue{Key: resource.String(), Value: enum.True})
+		case !permitted && wild:
+			result = append(result, &list.KeyValue{Key: resource.String(), Value: enum.False})
 		}
 	}
 
-	for _, a := range allowed {
-		if isModifier(a) || !resources {
-			add(a)
+	if wild {
+		result = append(result, &list.KeyValue{Key: list.Any})
+	} else if len(result) == 0 {
+		return list.Attr{}
+	}
+
+	for _, mod := range []Permission{ScopeRead, ScopeWrite} {
+		if scopeAttrModifier(a, mod) || scopeAttrModifier(b, mod) {
+			result = append(result, &list.KeyValue{Key: mod.String(), Value: enum.True})
 		}
 	}
 
 	return result
+}
+
+// scopeAttrCopy returns a sorted copy of the list, as ScopeAttrPermits sorts the list it checks in place.
+func scopeAttrCopy(attr list.Attr) list.Attr {
+	result := make(list.Attr, 0, len(attr))
+
+	for _, kv := range attr {
+		if kv != nil {
+			result = append(result, &list.KeyValue{Key: strings.ToLower(kv.Key), Value: kv.Value})
+		}
+	}
+
+	return result.Sort()
+}
+
+// scopeAttrWild reports whether the list is a wildcard: exactly "*" or "read", or with a "*" entry.
+func scopeAttrWild(attr list.Attr) bool {
+	if s := scopeAttrCopy(attr).String(); s == list.Any || s == ScopeRead.String() {
+		return true
+	}
+
+	for _, kv := range attr {
+		if kv != nil && kv.Key == list.Any && kv.Value != enum.False {
+			return true
+		}
+	}
+
+	return false
+}
+
+// scopeAttrModifier reports whether the list limits its resources to the read or write operations.
+func scopeAttrModifier(attr list.Attr, mod Permission) bool {
+	return scopeAttrCopy(attr).Find(mod.String()).Value == enum.True
 }
 
 // ScopePermits sanitizes the raw scope string and then calls ScopeAttrPermits for
