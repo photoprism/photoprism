@@ -201,7 +201,8 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 }
 
 // unzipEntry writes a file from a zip archive to the target destination and returns the number of bytes written.
-// A positive limit caps the write, otherwise the declared size does; a file not written completely is removed.
+// A positive limit caps the write, otherwise the declared size does. An entry whose data is incomplete, exceeds
+// the limit, or does not match its checksum returns an error, and its file is removed.
 func unzipEntry(f *zip.File, dir string, limit int64) (fileName string, written int64, err error) {
 	if HasReservedComponent(f.Name) {
 		return "", 0, ErrReservedPath
@@ -278,16 +279,18 @@ func unzipEntry(f *zip.File, dir string, limit int64) (fileName string, written 
 
 	written, copyErr := io.CopyN(fd, rc, limit)
 
-	if copyErr != nil && !errors.Is(copyErr, io.EOF) && !errors.Is(copyErr, io.ErrUnexpectedEOF) {
+	if copyErr != nil && !errors.Is(copyErr, io.EOF) {
 		return fileName, written, copyErr
 	}
 
-	// Abort if the entry exceeded the limit.
+	// Read past the limit to detect remaining data and to let the archive reader verify the entry.
 	if capped && written >= limit {
-		// Drain a single byte to see if more data remains (indicating truncation).
 		var b [1]byte
-		if _, extraErr := rc.Read(b[:]); extraErr == nil {
+
+		if n, extraErr := rc.Read(b[:]); n > 0 || extraErr == nil {
 			return fileName, written, fmt.Errorf("zip entry exceeds limit")
+		} else if !errors.Is(extraErr, io.EOF) {
+			return fileName, written, extraErr
 		}
 	}
 

@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
+	"hash/crc32"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -965,6 +966,79 @@ func TestUploadUserFiles_Multipart_ZipBudget(t *testing.T) {
 
 		assert.ElementsMatch(t, []string{"a.jpg", "sub/inner.jpg"}, staged)
 	})
+}
+
+// TestUploadUserFiles_Multipart_ZipIncompleteEntry checks that an archive entry whose data ends before its
+// declared size is not staged, while complete entries before it are.
+func TestUploadUserFiles_Multipart_ZipIncompleteEntry(t *testing.T) {
+	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
+	conf.Options().UploadArchives = true
+	conf.Options().UploadAllow = "jpg,zip"
+	conf.Options().UploadNSFW = true
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+
+	adminUid := entity.Admin.UserUID
+	uploadBase := filepath.Join(conf.UserStoragePath(adminUid), "upload")
+	defer removeUploadDirsForToken(t, uploadBase, "zipincomplete")
+
+	jpg, err := os.ReadFile(filepath.Clean("../../pkg/fs/testdata/directory/example.jpg"))
+	require.NoError(t, err)
+
+	// The second entry holds the first half of the image but declares its full size.
+	half := jpg[:len(jpg)/2]
+
+	var zbuf bytes.Buffer
+
+	zw := zip.NewWriter(&zbuf)
+	w, err := zw.Create("complete.jpg")
+	require.NoError(t, err)
+	_, err = w.Write(jpg)
+	require.NoError(t, err)
+	w, err = zw.CreateRaw(&zip.FileHeader{
+		Name:               "incomplete.jpg",
+		Method:             zip.Store,
+		CRC32:              crc32.ChecksumIEEE(jpg),
+		CompressedSize64:   uint64(len(half)),
+		UncompressedSize64: uint64(len(jpg)),
+	})
+	require.NoError(t, err)
+	_, err = w.Write(half)
+	require.NoError(t, err)
+	require.NoError(t, zw.Close())
+
+	body, ctype, err := buildMultipartParts(uploadPart{"archive.zip", zbuf.Bytes()})
+	require.NoError(t, err)
+
+	hook := captureLog(t)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/zipincomplete", body)
+	req.Header.Set("Content-Type", ctype)
+	header.SetAuthorization(req, token)
+	w2 := httptest.NewRecorder()
+	app.ServeHTTP(w2, req)
+	require.Equal(t, http.StatusOK, w2.Code, w2.Body.String())
+
+	var staged []string
+
+	for _, f := range findUploadedFilesForToken(t, uploadBase, "zipincomplete") {
+		staged = append(staged, filepath.Base(f))
+	}
+
+	assert.Equal(t, []string{"complete.jpg"}, staged)
+
+	// Extraction itself must fail on the entry, independent of the checks applied to extracted files.
+	var extractFailed bool
+
+	for _, entry := range hook.AllEntries() {
+		if strings.Contains(entry.Message, "failed to extract files from archive.zip") && strings.Contains(entry.Message, "unexpected EOF") {
+			extractFailed = true
+		}
+	}
+
+	assert.True(t, extractFailed, "expected the archive extraction to fail on the incomplete entry")
 }
 
 func TestUploadUserFiles_Multipart_TokenTooLong(t *testing.T) {
