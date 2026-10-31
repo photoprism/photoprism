@@ -164,6 +164,21 @@
 
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
+                v-model="settings.features.discover"
+                :disabled="busy"
+                class="ma-0 pa-0 input-discover"
+                density="compact"
+                :label="$gettext('Discover')"
+                :hint="$gettext('Show the Discover section to browse pictures from this day and month in past years.')"
+                prepend-icon="mdi-calendar-heart"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
                 v-model="settings.features.moments"
                 :disabled="busy"
                 class="ma-0 pa-0 input-moments"

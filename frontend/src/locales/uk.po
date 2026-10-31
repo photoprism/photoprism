@@ -66,10 +66,18 @@ msgstr "%{n} міток знайдено"
 msgid "%{n} people found"
 msgstr "%{n} людей знайдено"
 
+#: src/page/discover/past.vue:290
+msgid "%{n} pictures"
+msgstr ""
+
 #: src/page/album/photos.vue:395 src/page/album/photos.vue:586
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "%{n} зображень знайдено"
+
+#: src/page/discover/past.vue:282
+msgid "%{n} years ago"
+msgstr ""
 
 #: src/common/form.js:311 src/common/form.js:316
 #: src/component/input/chip-selector.vue:277
@@ -87,6 +95,12 @@ msgstr "%{s} занадто короткий"
 msgid "1 hour"
 msgstr "1 година"
 
+#: src/page/discover/past.vue:287
+msgid "1 picture"
+msgstr ""
+#: src/page/discover/past.vue:279
+msgid "1 year ago"
+msgstr ""
 #: src/options/options.js:431
 msgid "12 hours"
 msgstr "12 годин"
@@ -1043,10 +1057,6 @@ msgstr "Колір"
 #: src/component/photo/edit/files.vue:307
 msgid "Color Profile"
 msgstr "Профіль кольору"
-
-#: src/page/discover.vue:5
-msgid "Colors"
-msgstr "Кольори"
 
 #: src/page/connect.vue:141 src/page/connect.vue:151 src/page/connect.vue:123
 msgid "Compare Editions"
@@ -2923,6 +2933,12 @@ msgstr "Зображення не знайдено"
 #: src/component/photo/export/dialog.vue:62
 msgid "No preview image available."
 msgstr "Зображення для попереднього перегляду недоступне."
+#: src/page/discover/past.vue:127
+msgid "No pictures from this day in past years"
+msgstr ""
+#: src/page/discover/past.vue:127
+msgid "No pictures from this month in past years"
+msgstr ""
 
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
@@ -3290,6 +3306,9 @@ msgstr "Членство в PhotoPrism+"
 msgid "Photos"
 msgstr "Фотографії"
 
+#: src/page/discover/past.vue:130
+msgid "Photos taken in previous years will appear here when they match today's date."
+msgstr ""
 #: src/component/photo/batch-edit.vue:615
 #: src/component/photo/batch-edit.vue:635
 msgid "Picture"
@@ -3786,15 +3805,9 @@ msgstr "Фільтри пошуку"
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
 msgstr "Пошук і перегляд ваших фотографій"
-
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
 msgstr "Пошук та перегляд ваших відео"
-
-#: src/page/discover.vue:13
-msgid "Season"
-msgstr "Сезон"
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Таємний"
@@ -4041,6 +4054,10 @@ msgstr "Відкрийте розділ «Альбоми», щоб вручну 
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "Покажіть подання \"Календар\", щоб переглянути бібліотеку за роками та місяцями."
 
+#: src/page/settings/general.vue:172
+msgid "Show the Discover section to browse pictures from this day and month in past years."
+msgstr ""
+
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr "Відкрийте розділ «Вибране», щоб швидко отримати доступ до своїх фотографій, позначених зірочкою."
@@ -4065,6 +4082,9 @@ msgstr "Відкрийте розділ «Медіа», щоб переглян�
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Увімкніть подання \"Місця\" з інтерактивними мапами, щоб ви могли переглядати фотографії за місцем розташування."
 
+#: src/page/discover.vue:29
+msgid "Shuffle"
+msgstr ""
 #: src/common/util.js:967 src/model/file.js:201
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -4082,10 +4102,6 @@ msgstr "Вийти"
 #: src/page/auth/login.vue:153
 msgid "Sign in"
 msgstr "Увійти"
-
-#: src/page/discover.vue:9
-msgid "Similar"
-msgstr "Схожі"
 
 #: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
@@ -4339,6 +4355,22 @@ msgstr "Можливо, їх формат не підтримується, во�
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Тема"
+
+#: src/page/discover.vue:14
+msgid "This Day"
+msgstr ""
+
+#: src/page/discover.vue:13
+msgid "This Day in the Past"
+msgstr ""
+
+#: src/page/discover.vue:18
+msgid "This Month"
+msgstr ""
+
+#: src/page/discover.vue:17
+msgid "This Month in the Past"
+msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
@@ -5093,6 +5125,14 @@ msgstr "{0}-{1} з {2}"
 
 #~ msgid "No Access"
 #~ msgstr "Доступ заборонено"
+#~ msgid "Colors"
+#~ msgstr "Кольори"
+
+#~ msgid "Season"
+#~ msgstr "Сезон"
+
+#~ msgid "Similar"
+#~ msgstr "Схожі"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"

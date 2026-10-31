@@ -270,6 +270,7 @@
 </template>
 <script>
 import download from "common/download";
+import { selectionRange } from "common/selection";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 import { virtualizationTools } from "common/virtualization-tools";
@@ -283,6 +284,10 @@ export default {
   },
   props: {
     photos: {
+      type: Array,
+      default: () => [],
+    },
+    selectionPhotos: {
       type: Array,
       default: () => [],
     },
@@ -523,8 +528,15 @@ export default {
         this.selectRange(index);
       }
     },
+    // selectRange extends the selection through the full result list when one section shows a slice.
     selectRange(index) {
-      this.$clipboard.addRange(index, this.photos);
+      const range = selectionRange(this.photos, index, this.selectionPhotos);
+
+      if (!range) {
+        return;
+      }
+
+      this.$clipboard.addRange(range.index, range.photos);
       /**
        * updating the clipboard does not rerender this component. Because of that
        * there can be scenarios where the select-icon is missing after a change,
