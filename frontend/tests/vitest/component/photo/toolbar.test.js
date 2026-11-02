@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PPhotoToolbar from "component/photo/toolbar.vue";
+import { photoOptions } from "common/sort";
 import * as contexts from "options/contexts";
 import "../../fixtures";
 
@@ -23,6 +24,7 @@ function mountToolbar({
   featuresOverrides = {},
   searchOverrides = {},
   allowMock,
+  display,
   refresh = vi.fn(),
   updateFilter = vi.fn(),
   updateQuery = vi.fn(),
@@ -85,9 +87,11 @@ function mountToolbar({
     openUrl: openUrlSpy || vi.fn(),
   };
 
-  const wrapper = shallowMount(PPhotoToolbar, {
+  const component = display ? { ...PPhotoToolbar, computed: { ...PPhotoToolbar.computed, $vuetify: () => ({ display }) } } : PPhotoToolbar;
+  const wrapper = shallowMount(component, {
     props: {
       context,
+      sortOptions: photoOptions(context === contexts.Archive ? "archive" : "browse"),
       filter,
       staticFilter,
       settings,
@@ -109,6 +113,11 @@ function mountToolbar({
         $util: util,
       },
       stubs: {
+        ...(display ? {
+          VForm: { template: "<form><slot /></form>" },
+          VToolbar: { template: "<div><slot /></div>" },
+          VMenu: { template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
+        } : {}),
         PActionMenu: true,
         PConfirmDialog: true,
       },
@@ -252,6 +261,43 @@ describe("component/photo/toolbar", () => {
       const values = wrapper.vm.sortOptions.map((o) => o.value);
       expect(values).toContain("similar");
       expect(values).toContain("relevance");
+    });
+  });
+
+  describe("sort visibility and compact view", () => {
+    it("shows sorting even when all management permissions are denied", () => {
+      const { wrapper } = mountToolbar({ allowMock: () => false, display: { smAndDown: false, mdAndUp: true } });
+      expect(wrapper.findComponent({ name: "PSortMenu" }).exists()).toBe(true);
+    });
+    it("replaces the desktop view toggle with a menu on small displays", () => {
+      const { wrapper } = mountToolbar({ display: { smAndDown: true, mdAndUp: false } });
+      expect(wrapper.findComponent({ name: "VBtnToggle" }).exists()).toBe(false);
+      expect(wrapper.find(".action-view").exists()).toBe(true);
+      expect(wrapper.vm.viewOptions.map((item) => item.icon)).toEqual(["mdi-view-comfy", "mdi-view-column", "mdi-view-list"]);
+    });
+    it("retains the view toggle on larger displays", () => {
+      const { wrapper } = mountToolbar({ display: { smAndDown: false, mdAndUp: true } });
+      expect(wrapper.findComponent({ name: "VBtnToggle" }).exists()).toBe(true);
+      expect(wrapper.find(".action-view").exists()).toBe(false);
+    });
+  });
+
+  describe("media filters", () => {
+    it("offers the specified media types including an empty All value", () => {
+      const { wrapper } = mountToolbar();
+      expect(wrapper.vm.showMediaType).toBe(true);
+      expect(wrapper.vm.mediaOptions.map((item) => item.value)).toEqual(["", "image", "video", "live", "raw", "animated", "vector"]);
+    });
+
+    it.each(["video", "live", "animated", "audio", "type"])("hides the selector for fixed %s pages", (key) => {
+      const { wrapper } = mountToolbar({ staticFilter: { [key]: "true" } });
+      expect(wrapper.vm.showMediaType).toBe(false);
+    });
+
+    it("hides the selector on embedded lists", () => {
+      const { wrapper } = mountToolbar({ embedded: true });
+      expect(wrapper.vm.showMediaType).toBe(false);
+      expect(wrapper.findComponent({ name: "PSortMenu" }).exists()).toBe(false);
     });
   });
 

@@ -44,6 +44,8 @@
           </template>
         </v-text-field>
 
+        <p-sort-menu :options="sortOptions" :model-value="filter" :disabled="loading || !listen" @update:model-value="updateQuery"></p-sort-menu>
+
         <v-btn
           v-if="canManage && staticFilter.type === 'album'"
           :title="$gettext('Add Album')"
@@ -60,7 +62,7 @@
           <v-card v-show="expanded" flat color="secondary">
             <v-card-text class="dense">
               <v-row density="compact">
-                <v-col cols="12" sm="4" class="p-year-select">
+                <v-col cols="12" sm="6" class="p-year-select">
                   <v-select
                     :model-value="filter.year"
                     :label="$gettext('Year')"
@@ -81,7 +83,7 @@
                   >
                   </v-select>
                 </v-col>
-                <v-col cols="12" sm="4" class="p-category-select">
+                <v-col cols="12" sm="6" class="p-category-select">
                   <v-select
                     :model-value="filter.category"
                     :label="$gettext('Category')"
@@ -96,26 +98,6 @@
                     @update:model-value="
                       (v) => {
                         updateQuery({ category: v });
-                      }
-                    "
-                  >
-                  </v-select>
-                </v-col>
-                <v-col cols="12" sm="4" class="p-sort-select">
-                  <v-select
-                    :model-value="filter.order"
-                    :label="$gettext('Sort Order')"
-                    :menu-props="{ maxHeight: 400 }"
-                    single-line
-                    hide-details
-                    variant="solo-filled"
-                    :density="density"
-                    :items="context === contexts.Album ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
-                    item-title="text"
-                    item-value="value"
-                    @update:model-value="
-                      (v) => {
-                        updateQuery({ order: v });
                       }
                     "
                   >
@@ -298,6 +280,9 @@ import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import * as options from "options/options";
 import * as contexts from "options/contexts";
 
+import { albumOptions, resolveSort, sortParams } from "common/sort";
+import PSortMenu from "component/sort/menu.vue";
+
 import PLoading from "component/loading.vue";
 import PActionMenu from "component/action/menu.vue";
 
@@ -310,6 +295,7 @@ const maxLiveRefetch = 50;
 export default {
   name: "PPageAlbums",
   components: {
+    PSortMenu,
     PLoading,
     PActionMenu,
   },
@@ -328,11 +314,11 @@ export default {
     },
   },
   expose: ["onShortCut"],
+  // data initializes the page filters and result state.
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const order = this.sortOrder();
-    const reverse = this.sortReverse();
+    const { order, reverse } = this.resolveSort();
     const q = query["q"] ? query["q"] : "";
     const category = query["category"] ? query["category"] : "";
     const year = query["year"] ? parseInt(query["year"]) : "";
@@ -396,20 +382,13 @@ export default {
       all: {
         years: [{ value: "", text: this.$gettext("All Years") }],
       },
-      options: {
-        sorting: [
-          { value: "favorites", text: this.$gettext("Favorites") },
-          { value: "name", text: this.$gettext("Name") },
-          { value: "place", text: this.$gettext("Location") },
-          { value: "newest", text: this.$gettext("Newest First") },
-          { value: "oldest", text: this.$gettext("Oldest First") },
-          { value: "added", text: this.$gettext("Recently Added") },
-          { value: "edited", text: this.$gettext("Recently Edited") },
-        ],
-      },
     };
   },
   computed: {
+    // sortOptions returns the entries available for this album type.
+    sortOptions() {
+      return albumOptions(this.staticFilter?.type);
+    },
     density() {
       return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
     },
@@ -429,6 +408,7 @@ export default {
     },
   },
   watch: {
+    // $route restores filters and searches when the active route changes.
     $route() {
       if (!this.$view.isActive(this)) {
         return;
@@ -444,8 +424,7 @@ export default {
       this.filter.q = this.q;
       this.filter.category = query["category"] ? query["category"] : "";
       this.filter.year = query["year"] ? parseInt(query["year"]) : "";
-      this.filter.order = this.sortOrder();
-      this.filter.reverse = this.sortReverse();
+      Object.assign(this.filter, this.resolveSort());
 
       this.initRestoreState();
       this.search();
@@ -565,23 +544,10 @@ export default {
     yearOptions() {
       return this.all.years.concat(options.IndexedYears());
     },
-    sortOrder() {
-      const typeName = this.staticFilter?.type;
-      const keyName = "albums.order." + typeName;
-      const queryParam = this.$route.query["order"];
-      const storeOrder = appStorage.getItem(keyName);
-
-      if (queryParam) {
-        appStorage.setItem(keyName, queryParam);
-        return queryParam;
-      } else if (storeOrder) {
-        return storeOrder;
-      }
-
-      return this.defaultOrder;
-    },
-    sortReverse() {
-      return !!this.$route?.query["reverse"] && this.$route.query["reverse"] === "true";
+    // resolveSort restores the preference independently for each album type.
+    resolveSort() {
+      const type = this.staticFilter?.type;
+      return resolveSort(this.$route.query, appStorage, { order: "albums.order." + type, reverse: "albums.reverse." + type }, albumOptions(type), this.defaultOrder);
     },
     searchCount() {
       if (this.restoring && this.restoreTargetCount > 0) {
@@ -875,6 +841,7 @@ export default {
         }
       }
     },
+    // loadMore fetches the next batch with the active sort and fixed scope.
     loadMore(force = false) {
       const restoring = this.restorePending > 0;
 
@@ -927,7 +894,7 @@ export default {
 
       let shouldEnsureRestore = false;
 
-      Album.search(params)
+      Album.search(sortParams(params))
         .then((resp) => {
           this.results = this.dirty || offset === 0 ? resp.models : this.results.concat(resp.models);
 
@@ -997,6 +964,7 @@ export default {
         appStorage.setItem("albums." + key, this.settings[key]);
       }
     },
+    // updateFilter applies recognized filter values.
     updateFilter(props) {
       if (!props || typeof props !== "object" || props.target) {
         return;
@@ -1015,12 +983,13 @@ export default {
         }
       }
     },
+    // updateQuery replaces the route with the current filter values.
     updateQuery(props) {
-      this.updateFilter(props);
-
-      if (this.loading) {
+      if (this.loading || this.listen === false) {
         return false;
       }
+
+      this.updateFilter(props);
 
       const query = {
         view: this.settings.view,
@@ -1042,6 +1011,7 @@ export default {
 
       return true;
     },
+    // searchParams builds the request using the page filters and fixed scope.
     searchParams() {
       const params = {
         count: this.searchCount(),
@@ -1054,7 +1024,7 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      return params;
+      return sortParams(params);
     },
     reset() {
       this.results = [];

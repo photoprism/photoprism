@@ -58,7 +58,36 @@
           </template>
         </v-text-field>
 
+        <p-sort-menu :options="sortOptions" :model-value="filter" :disabled="loading" @update:model-value="onUpdate"></p-sort-menu>
+
+        <v-menu v-if="$vuetify.display.smAndDown">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :title="$gettext('Toggle View')"
+              :aria-label="$gettext('Toggle View')"
+              class="action-view ms-1"
+              :icon="settings.view === 'cards' ? 'mdi-view-column' : settings.view === 'list' ? 'mdi-view-list' : 'mdi-view-comfy'"
+            ></v-btn>
+          </template>
+          <v-list :aria-label="$gettext('View')" bg-color="navigation" nav>
+            <v-list-subheader>{{ $gettext('View') }}</v-list-subheader>
+            <v-list-item
+              v-for="item in viewOptions"
+              :key="item.value"
+              :title="item.text"
+              :prepend-icon="item.icon"
+              role="button"
+              :aria-pressed="settings.view === item.value"
+              :active="settings.view === item.value"
+              :class="'action-view-' + item.value"
+              @click="setView(item.value)"
+            ></v-list-item>
+          </v-list>
+        </v-menu>
+
         <v-btn-toggle
+          v-else
           :model-value="settings.view"
           :title="$gettext('Toggle View')"
           :density="$vuetify.display.smAndDown ? 'comfortable' : 'default'"
@@ -163,24 +192,21 @@
                 >
                 </v-select>
               </v-col>
-              <v-col cols="12" sm="6" md="3" class="p-time-select">
+              <v-col v-if="showMediaType" cols="12" sm="6" md="3" class="p-media-type-select">
                 <v-select
-                  :model-value="filter.order"
-                  :label="$gettext('Sort Order')"
+                  :model-value="filter.type"
+                  :label="$gettext('Media Type')"
+                  :disabled="loading"
                   :menu-props="{ maxHeight: 400 }"
                   single-line
+                  hide-details
                   variant="solo-filled"
                   :density="density"
-                  :items="sortOptions"
+                  :items="mediaOptions"
                   item-title="text"
                   item-value="value"
-                  @update:model-value="
-                    (v) => {
-                      onUpdate({ order: v });
-                    }
-                  "
-                >
-                </v-select>
+                  @update:model-value="(v) => onUpdate({ type: v })"
+                ></v-select>
               </v-col>
               <v-col cols="12" sm="6" md="3" class="p-year-select">
                 <v-select
@@ -298,16 +324,21 @@ import links from "common/links";
 import Photo from "model/photo";
 import * as contexts from "options/contexts";
 
+import PSortMenu from "component/sort/menu.vue";
+
 import PActionMenu from "component/action/menu.vue";
 import PConfirmDialog from "component/confirm/dialog.vue";
 
 export default {
   name: "PPhotoToolbar",
   components: {
+    PSortMenu,
     PActionMenu,
     PConfirmDialog,
   },
   props: {
+    loading: { type: Boolean, default: false },
+    sortOptions: { type: Array, default: () => [] },
     context: {
       type: String,
       default: contexts.Photos,
@@ -391,30 +422,36 @@ export default {
     categoryOptions() {
       return this.all.categories.concat(this.config.categories);
     },
+    // viewOptions returns the enabled display modes and their icons.
     viewOptions() {
       if (this.$config.getSettings()?.search?.listView) {
         return [
-          { value: "mosaic", text: this.$gettext("Mosaic") },
-          { value: "cards", text: this.$gettext("Cards") },
-          { value: "list", text: this.$gettext("List") },
+          { value: "mosaic", text: this.$gettext("Mosaic"), icon: "mdi-view-comfy" },
+          { value: "cards", text: this.$gettext("Cards"), icon: "mdi-view-column" },
+          { value: "list", text: this.$gettext("List"), icon: "mdi-view-list" },
         ];
       } else {
         return [
-          { value: "mosaic", text: this.$gettext("Mosaic") },
-          { value: "cards", text: this.$gettext("Cards") },
+          { value: "mosaic", text: this.$gettext("Mosaic"), icon: "mdi-view-comfy" },
+          { value: "cards", text: this.$gettext("Cards"), icon: "mdi-view-column" },
         ];
       }
     },
-    sortOptions() {
-      switch (this.context) {
-        case contexts.Archive:
-          return options.SortOrderOptions(["newest", "oldest", "added", "archived", "title", "name", "size", "duration"]);
-        case contexts.Hidden:
-        case contexts.Review:
-          return options.SortOrderOptions(["newest", "oldest", "added", "title", "name", "size", "duration"]);
-        default:
-          return options.SortOrderOptions(["newest", "oldest", "added", "edited", "title", "name", "size", "duration", "similar", "relevance"]);
-      }
+    // showMediaType hides the type selector on pages with a fixed media type.
+    showMediaType() {
+      return !this.embedded && !["video", "live", "animated", "audio", "type"].some((key) => this.staticFilter?.[key]);
+    },
+    // mediaOptions returns the supported translated media filter values.
+    mediaOptions() {
+      return [
+        { value: "", text: this.$gettext("All") },
+        { value: "image", text: this.$gettext("Photos") },
+        { value: "video", text: this.$gettext("Videos") },
+        { value: "live", text: this.$gettext("Live") },
+        { value: "raw", text: this.$gettext("RAW") },
+        { value: "animated", text: this.$gettext("Animated") },
+        { value: "vector", text: this.$gettext("Vector") },
+      ];
     },
   },
   methods: {
