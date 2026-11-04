@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** October 31, 2026
+**Last Updated:** November 3, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -27,6 +27,7 @@ Directory Map (src)
 - `src/common/export-download.js` — immutable selections and the attachment names the server uses (`<stem>.mp4`, `<stem>_<size>.jpg`), API attachment URLs (`/dl?format=avc`, `/t?download=1`), and a cancelable browser handoff queue with Retry.
 - `src/component/photo/export/dialog.vue` — Lightbox stack Export, matched thumbnails, a config refresh before the first handoff and each Retry that holds downloads when it returns the public config, output Retry, closure after browser handoff, and shared dialog focus.
 - `src/common/sort.js` — photo/album menu options, direction transitions, URL and per-page storage restoration, and API sort parameter normalization.
+- `src/common/photo-types.js` — shared media type options filtered by page scope for the toolbar and URL validation.
 - `src/component/sort/menu.vue` — shared accessible sort menu used by the photo toolbar and album overview page; the photo toolbar also owns the URL-based Media Type selector and compact View menu.
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)

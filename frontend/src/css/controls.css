@@ -236,6 +236,7 @@ table td > .action-buttons {
     border-width: thin;
 }
 
+.v-menu > .v-overlay__content > .v-list.action-menu__list > .action-menu__row,
 .v-menu > .v-overlay__content > .v-list.action-menu__list > .v-list-item.v-list-item--density-compact.action-menu__item {
     padding: 8px 10px;
     margin: 2px 0;

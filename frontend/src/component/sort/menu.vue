@@ -1,8 +1,7 @@
 <template>
-  <v-menu ref="menu" v-model="open" :close-on-content-click="false" location="bottom end" max-height="560">
+  <v-menu ref="menu" v-model="open" class="action-menu" :open-on-hover="openOnHover" :close-on-content-click="false" location="bottom end">
     <template #activator="{ props }">
       <v-btn
-        v-tooltip="label"
         v-bind="props"
         :aria-label="label"
         :title="label"
@@ -15,11 +14,15 @@
         <v-icon v-if="active?.direction" :icon="ascending ? 'mdi-arrow-up' : 'mdi-arrow-down'" size="small"></v-icon>
       </v-btn>
     </template>
-    <v-list class="p-sort-menu" role="group" :aria-label="$gettext('Sort By')" bg-color="navigation" nav>
-      <v-list-subheader>{{ $gettext('Sort By') }}</v-list-subheader>
-      <div v-for="item in options" :key="item.value" class="d-flex align-center" :class="{ 'bg-primary rounded': isActive(item) }">
+    <v-list class="action-menu__list" slim nav density="compact" role="group" :aria-label="$gettext('Sort Order')" bg-color="navigation">
+      <v-list-subheader>{{ $gettext('Sort Order') }}</v-list-subheader>
+      <div
+        v-for="item in options"
+        :key="item.value"
+        class="action-menu__row d-flex align-center rounded"
+        :class="{ 'action-menu__row--active': isActive(item) }"
+      >
         <v-list-item
-          :active="isActive(item)"
           role="button"
           :aria-pressed="isActive(item)"
           :prepend-icon="item.icon"
@@ -37,9 +40,11 @@
             :title="directionLabel(item, up)"
             :aria-pressed="isActive(item) && ascending === up"
             :variant="isActive(item) && ascending === up ? 'tonal' : 'text'"
+            :color="isActive(item) && ascending === up ? 'primary' : undefined"
             :data-direction="up ? 'ascending' : 'descending'"
             :data-sort="item.value"
             size="small"
+            density="compact"
             @click.stop="choose(item, up)"
           ></v-btn>
         </template>
@@ -63,6 +68,10 @@ export default {
     return { open: false, restoreFocus: false };
   },
   computed: {
+    // openOnHover reflects the current accessibility preference.
+    openOnHover() {
+      return this.$util.shouldOpenOnHover();
+    },
     // active returns the currently selected menu entry.
     active() {
       return this.options.find((item) => this.isActive(item));
@@ -125,8 +134,26 @@ export default {
 </script>
 <style scoped>
 @layer vuetify-components {
-  .p-sort-menu {
-    width: min(340px, calc(100vw - 24px));
+  .action-menu__list {
+    width: min(300px, calc(100vw - 24px));
+  }
+
+  .action-menu__row--active {
+    background-color: rgba(var(--v-theme-primary), 0.12);
+  }
+
+  .action-menu__row--active :deep(.v-list-item__prepend) {
+    color: rgb(var(--v-theme-primary));
+  }
+
+  .action-menu__row :deep(.v-btn[aria-pressed="true"]) {
+    background-color: rgba(var(--v-theme-primary), 0.18);
+  }
+
+  .action-menu__row > .v-list-item {
+    min-height: 0;
+    margin: 0;
+    padding: 0;
   }
 }
 </style>

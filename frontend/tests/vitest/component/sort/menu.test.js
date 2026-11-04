@@ -1,4 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
+import { reactive } from "vue";
 import { mount, flushPromises } from "@vue/test-utils";
 import PSortMenu from "component/sort/menu.vue";
 import { photoOptions, albumOptions } from "common/sort";
@@ -6,9 +7,10 @@ import { photoOptions, albumOptions } from "common/sort";
 const wrappers = [];
 
 // mountMenu mounts the actual Vuetify menu and tracks its cleanup.
-function mountMenu(props = {}) {
+function mountMenu(props = {}, hoverSettings = reactive({ enabled: false })) {
   const wrapper = mount(PSortMenu, {
     attachTo: document.body,
+    global: { mocks: { $util: { shouldOpenOnHover: () => hoverSettings.enabled } } },
     props: { options: photoOptions("browse"), modelValue: { order: "newest", reverse: false }, ...props },
   });
   wrappers.push(wrapper);
@@ -21,10 +23,44 @@ afterEach(() => {
 });
 
 describe("sort menu", () => {
+  it("updates the hover preference without remounting", async () => {
+    const settings = reactive({ enabled: false });
+    const wrapper = mountMenu({}, settings);
+    const menu = wrapper.findComponent({ name: "VMenu" });
+    expect(menu.props("openOnHover")).toBe(false);
+    settings.enabled = true;
+    await wrapper.vm.$nextTick();
+    expect(menu.props("openOnHover")).toBe(true);
+  });
+  it("uses shared compact action menu styles and a single native tooltip", async () => {
+    const wrapper = mountMenu();
+    expect(wrapper.get(".action-sort").attributes("title")).toBe("Sorted by Date Taken, descending");
+    await wrapper.get(".action-sort").trigger("click");
+    await flushPromises();
+    expect(document.querySelector(".v-tooltip")).toBeNull();
+    expect(document.querySelector(".v-menu.action-menu")).not.toBeNull();
+    const list = document.querySelector(".action-menu__list");
+    expect(list.classList.contains("v-list--density-compact")).toBe(true);
+    expect(list.textContent).toContain("Sort Order");
+    const selected = list.querySelector('.v-list-item[data-sort="newest"]');
+    const row = selected.closest(".action-menu__row");
+    expect(row.classList.contains("action-menu__row--active")).toBe(true);
+    expect(row.querySelector('[data-direction="descending"]').classList.contains("v-btn--variant-tonal")).toBe(true);
+  });
+  it("handles an arrow key activation without toggling its parent row", async () => {
+    const wrapper = mountMenu();
+    await wrapper.get(".action-sort").trigger("click");
+    await flushPromises();
+    const arrow = document.querySelector('button[data-sort="size"][data-direction="ascending"]');
+    arrow.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    arrow.click();
+    expect(wrapper.emitted("update:modelValue")).toEqual([[{ order: "size", reverse: true }]]);
+  });
   it("exposes the full current direction in the button label", () => {
     const wrapper = mountMenu();
-    expect(wrapper.get(".action-sort").attributes("aria-label")).toBe("Sorted by Date Taken, newest first");
-    expect(wrapper.get(".action-sort").attributes("title")).toBe("Sorted by Date Taken, newest first");
+    expect(wrapper.get(".action-sort").attributes("aria-label")).toBe("Sorted by Date Taken, descending");
+    expect(wrapper.get(".action-sort").attributes("title")).toBe("Sorted by Date Taken, descending");
   });
   it("opens the real menu and toggles the active date row", async () => {
     const wrapper = mountMenu();
@@ -42,7 +78,7 @@ describe("sort menu", () => {
     await wrapper.get(".action-sort").trigger("click");
     await flushPromises();
     const arrow = document.querySelector('button[data-sort="size"][data-direction="ascending"]');
-    expect(arrow.getAttribute("aria-label")).toBe("Sorted by File Size, smallest first");
+    expect(arrow.getAttribute("aria-label")).toBe("Sorted by File Size, ascending");
     expect(arrow.closest(".v-list-item")).toBeNull();
     arrow.click();
     await flushPromises();
@@ -66,7 +102,7 @@ describe("sort menu", () => {
     const wrapper = mountMenu();
     await wrapper.setProps({ modelValue: { order: "oldest", reverse: false } });
     expect(wrapper.vm.ascending).toBe(true);
-    expect(wrapper.get(".action-sort").attributes("aria-label")).toBe("Sorted by Date Taken, oldest first");
+    expect(wrapper.get(".action-sort").attributes("aria-label")).toBe("Sorted by Date Taken, ascending");
   });
   it("exposes row actions and their selected state to assistive technology", async () => {
     const wrapper = mountMenu({ modelValue: { order: "added", reverse: false } });

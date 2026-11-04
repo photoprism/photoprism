@@ -60,7 +60,7 @@
 
         <p-sort-menu :options="sortOptions" :model-value="filter" :disabled="loading" @update:model-value="onUpdate"></p-sort-menu>
 
-        <v-menu v-if="$vuetify.display.smAndDown">
+        <v-menu v-if="$vuetify.display.smAndDown" class="action-menu" :open-on-hover="openOnHover">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
@@ -70,7 +70,7 @@
               :icon="settings.view === 'cards' ? 'mdi-view-column' : settings.view === 'list' ? 'mdi-view-list' : 'mdi-view-comfy'"
             ></v-btn>
           </template>
-          <v-list :aria-label="$gettext('View')" bg-color="navigation" nav>
+          <v-list :aria-label="$gettext('View')" bg-color="navigation" class="action-menu__list" slim nav density="compact">
             <v-list-subheader>{{ $gettext('View') }}</v-list-subheader>
             <v-list-item
               v-for="item in viewOptions"
@@ -81,6 +81,8 @@
               :aria-pressed="settings.view === item.value"
               :active="settings.view === item.value"
               :class="'action-view-' + item.value"
+              class="action-menu__item"
+              color="primary"
               @click="setView(item.value)"
             ></v-list-item>
           </v-list>
@@ -318,6 +320,7 @@
 </template>
 <script>
 import * as options from "options/options";
+import { photoTypeOptions } from "common/photo-types";
 import $api from "common/api";
 import $notify from "common/notify";
 import links from "common/links";
@@ -408,6 +411,10 @@ export default {
     };
   },
   computed: {
+    // openOnHover reflects the current accessibility preference.
+    openOnHover() {
+      return this.$util.shouldOpenOnHover();
+    },
     density() {
       return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
     },
@@ -439,19 +446,12 @@ export default {
     },
     // showMediaType hides the type selector on pages with a fixed media type.
     showMediaType() {
-      return !this.embedded && !["video", "live", "animated", "audio", "type"].some((key) => this.staticFilter?.[key]);
+      return !this.embedded && this.mediaOptions.length > 2;
     },
     // mediaOptions returns the supported translated media filter values.
     mediaOptions() {
-      return [
-        { value: "", text: this.$gettext("All") },
-        { value: "image", text: this.$gettext("Photos") },
-        { value: "video", text: this.$gettext("Videos") },
-        { value: "live", text: this.$gettext("Live") },
-        { value: "raw", text: this.$gettext("RAW") },
-        { value: "animated", text: this.$gettext("Animated") },
-        { value: "vector", text: this.$gettext("Vector") },
-      ];
+      const types = photoTypeOptions(this.staticFilter, this.filter?.q);
+      return types.length ? [{ value: "", text: this.$gettext("All") }, ...types] : [];
     },
   },
   methods: {

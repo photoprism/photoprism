@@ -78,22 +78,12 @@ export function sortLabel(state, item) {
   if (!item) {
     return $gettext("Sort By");
   }
-  const reverse = state.order === "oldest" || state.reverse;
-  if (item.value === "place") {
-    return $gettext("Sorted by %{name}, alphabetical", { name: item.text });
+  if (!item.direction) {
+    return $gettext("Sorted by %{name}", { name: item.text });
   }
-  switch (item.direction) {
-    case "date":
-      return reverse ? $gettext("Sorted by %{name}, oldest first", { name: item.text }) : $gettext("Sorted by %{name}, newest first", { name: item.text });
-    case "text":
-      return reverse ? $gettext("Sorted by %{name}, reverse alphabetical", { name: item.text }) : $gettext("Sorted by %{name}, alphabetical", { name: item.text });
-    case "size":
-      return reverse ? $gettext("Sorted by %{name}, smallest first", { name: item.text }) : $gettext("Sorted by %{name}, largest first", { name: item.text });
-    case "duration":
-      return reverse ? $gettext("Sorted by %{name}, shortest first", { name: item.text }) : $gettext("Sorted by %{name}, longest first", { name: item.text });
-    default:
-      return $gettext("Sorted by %{name}", { name: item.text });
-  }
+  return sortAscending(state, item)
+    ? $gettext("Sorted by %{name}, ascending", { name: item.text })
+    : $gettext("Sorted by %{name}, descending", { name: item.text });
 }
 
 // photoSortKeys preserves existing preference keys and isolates other photo routes.

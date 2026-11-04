@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 31, 2026
+**Last Updated:** November 3, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -13,15 +13,7 @@ Other frontend documentation lives next to this file:
 
 ## Sorting & Media Filters
 
-Use the sort button next to Search to choose how photos or albums are ordered. Select the active option again to reverse it, or use its up/down buttons to choose a direction directly. Options without arrows have one direction. Hover over the button, or read its accessible label, to identify the current option and direction.
-
-The browser remembers the sort and direction separately for each photo page and each album overview type. A sort in the page URL overrides the saved choice. On small screens, the View button opens the Cards, List, and Mosaic choices; List appears only when enabled in the search settings.
-
-On photo pages, expand Search Filters to select a Media Type: All, Photos, Videos, Live, RAW, Animated, or Vector. This filter is stored in the URL and combines with the other search filters. Videos, Live, Animated, and Audio pages already have a fixed media type and hide this selector.
-
-Album overviews offer Name and Date Created in both directions. Moments also offers Year, and Calendar offers Date. Location and Favorites First have one direction; Recently Edited is available on Albums. Location keeps albums without a location last, and Moments keeps entries without a year first in both year directions. Sorting inside an album, Labels, People, Edit Album, and Settings → Library retain their separate controls.
-
-The menu is available whenever a photo or album overview search field is available, including permitted viewer and share-link visitor pages. Embedded photos beside the Places map keep their fixed newest-first order.
+Sorting helpers live in `src/common/sort.js`, and the shared menu lives in `src/component/sort/menu.vue`. The photo toolbar owns the compact View menu and Media Type selector; `src/common/photo-types.js` filters the shared `options.PhotoTypes()` entries by page scope and validates URL media types in the photos page.
 
 ## Setup & Workspace
 

@@ -101,6 +101,22 @@ describe("page sort integration", () => {
     expect(component.methods.updateQuery.call({ loading: false, listen: false, updateFilter }, { order: "name" })).toBe(false);
     expect(updateFilter).not.toHaveBeenCalled();
   });
+  it.each([
+    [{ photo: "true" }, { type: "video", q: "stacks" }, ""],
+    [{ photo: "true" }, { type: "video", q: "scans" }, ""],
+    [{ photo: "true" }, { type: "raw" }, "raw"],
+    [{}, { type: "video", q: "mono:true quality:3 photo:true" }, ""],
+    [{ media: "true" }, { type: "raw" }, ""],
+    [{ media: "true" }, { type: "video" }, "video"],
+    [{}, { type: "image", q: "vectors" }, ""],
+    [{}, { type: "video", q: "documents" }, ""],
+    [{}, { type: "unknown" }, ""],
+    [{}, { type: ["raw"] }, ""],
+    [{}, { type: "audio" }, "audio"],
+    [{}, { type: "document" }, "document"],
+  ])("validates the URL media type against %j / %j", (staticFilter, query, expected) => {
+    expect(Photos.methods.mediaType.call({ staticFilter }, query)).toBe(expected);
+  });
   it("restores media types only on unrestricted photo pages", () => {
     expect(Photos.methods.mediaType.call({ staticFilter: {} }, { type: "raw" })).toBe("raw");
     expect(Photos.methods.mediaType.call({ staticFilter: {} }, {})).toBe("");

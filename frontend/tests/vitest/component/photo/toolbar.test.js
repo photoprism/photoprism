@@ -2,9 +2,12 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import { photoOptions } from "common/sort";
+import { PhotoTypes } from "options/options";
+import { reactive } from "vue";
 import * as contexts from "options/contexts";
 import "../../fixtures";
 
+// mountToolbar mounts the toolbar with configurable scope and accessibility settings.
 function mountToolbar({
   context = contexts.Photos,
   embedded = false,
@@ -32,6 +35,7 @@ function mountToolbar({
   routerOverrides = {},
   clipboard,
   openUrlSpy,
+  hoverSettings = reactive({ enabled: false }),
 } = {}) {
   const baseConfig = VTUConfig.global.mocks.$config;
   const baseSettings = baseConfig.getSettings ? baseConfig.getSettings() : { features: {} };
@@ -85,6 +89,7 @@ function mountToolbar({
   const util = {
     ...baseUtil,
     openUrl: openUrlSpy || vi.fn(),
+    shouldOpenOnHover: () => hoverSettings.enabled,
   };
 
   const component = display ? { ...PPhotoToolbar, computed: { ...PPhotoToolbar.computed, $vuetify: () => ({ display }) } } : PPhotoToolbar;
@@ -116,7 +121,7 @@ function mountToolbar({
         ...(display ? {
           VForm: { template: "<form><slot /></form>" },
           VToolbar: { template: "<div><slot /></div>" },
-          VMenu: { template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
+          VMenu: { name: "VMenu", props: ["openOnHover"], template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
         } : {}),
         PActionMenu: true,
         PConfirmDialog: true,
@@ -282,16 +287,43 @@ describe("component/photo/toolbar", () => {
     });
   });
 
+  it("updates the compact menu hover preference without remounting", async () => {
+    const hoverSettings = reactive({ enabled: false });
+    const { wrapper } = mountToolbar({ display: { smAndDown: true, mdAndUp: false }, hoverSettings });
+    const menu = wrapper.findComponent({ name: "VMenu" });
+    expect(menu.props("openOnHover")).toBe(false);
+    hoverSettings.enabled = true;
+    await wrapper.vm.$nextTick();
+    expect(menu.props("openOnHover")).toBe(true);
+  });
+
   describe("media filters", () => {
     it("offers the specified media types including an empty All value", () => {
       const { wrapper } = mountToolbar();
       expect(wrapper.vm.showMediaType).toBe(true);
-      expect(wrapper.vm.mediaOptions.map((item) => item.value)).toEqual(["", "image", "video", "live", "raw", "animated", "vector"]);
+      expect(wrapper.vm.mediaOptions).toEqual([{ value: "", text: "All" }, ...PhotoTypes()]);
     });
 
     it.each(["video", "live", "animated", "audio", "type"])("hides the selector for fixed %s pages", (key) => {
       const { wrapper } = mountToolbar({ staticFilter: { [key]: "true" } });
       expect(wrapper.vm.showMediaType).toBe(false);
+    });
+
+    it.each([
+      [{ photo: "true" }, "stacks", ["", "image", "raw", "live"]],
+      [{ photo: "true" }, "scans", ["", "image", "raw", "live"]],
+      [{}, "mono:true quality:3 photo:true", ["", "image", "raw", "live"]],
+      [{ media: "true" }, "", ["", "live", "video", "animated"]],
+    ])("limits options to the page scope %j / %s", (staticFilter, q, values) => {
+      const { wrapper } = mountToolbar({ staticFilter, filter: { q } });
+      expect(wrapper.vm.mediaOptions.map((item) => item.value)).toEqual(values);
+    });
+
+    it.each(["vectors", "documents"])("hides the selector on %s and updates after navigation", async (q) => {
+      const { wrapper } = mountToolbar({ filter: { q } });
+      expect(wrapper.vm.showMediaType).toBe(false);
+      await wrapper.setProps({ filter: { q: "cats" } });
+      expect(wrapper.vm.showMediaType).toBe(true);
     });
 
     it("hides the selector on embedded lists", () => {

@@ -78,6 +78,7 @@ import PLoading from "component/loading.vue";
 import PScroll from "component/scroll.vue";
 import { photoOptions, photoSortKeys, resolveSort, sortParams } from "common/sort";
 import { getAppStorage } from "common/storage";
+import { photoTypeOptions } from "common/photo-types";
 
 const appStorage = getAppStorage();
 
@@ -390,10 +391,7 @@ export default {
     },
     // mediaType reads the URL media filter without overriding a fixed-type page.
     mediaType(query) {
-      if (["video", "live", "animated", "audio", "type"].some((key) => this.staticFilter?.[key])) {
-        return "";
-      }
-      return typeof query.type === "string" ? query.type : "";
+      return photoTypeOptions(this.staticFilter, query.q).some((item) => item.value === query.type) ? query.type : "";
     },
     openDate(index) {
       const photo = this.results[index];

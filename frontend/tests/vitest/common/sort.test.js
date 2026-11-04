@@ -121,18 +121,22 @@ describe("per-page preference restoration", () => {
 
 describe("translated sort descriptions", () => {
   it.each([
-    ["newest", false, "Sorted by Date Taken, newest first"],
-    ["oldest", false, "Sorted by Date Taken, oldest first"],
-    ["title", false, "Sorted by Title, alphabetical"],
-    ["title", true, "Sorted by Title, reverse alphabetical"],
-    ["size", true, "Sorted by File Size, smallest first"],
-    ["size", false, "Sorted by File Size, largest first"],
-    ["duration", true, "Sorted by Video Duration, shortest first"],
-    ["duration", false, "Sorted by Video Duration, longest first"],
+    ["newest", false, "Sorted by Date Taken, descending"],
+    ["oldest", false, "Sorted by Date Taken, ascending"],
+    ["title", false, "Sorted by Title, ascending"],
+    ["title", true, "Sorted by Title, descending"],
+    ["size", true, "Sorted by File Size, ascending"],
+    ["size", false, "Sorted by File Size, descending"],
+    ["duration", true, "Sorted by Video Duration, ascending"],
+    ["duration", false, "Sorted by Video Duration, descending"],
     ["added", false, "Sorted by Recently Added"],
   ])("describes %s reverse=%s", (order, reverse, label) => {
     const item = photos.find((entry) => entry.value === (order === "oldest" ? "newest" : order));
     expect(sortLabel({ order, reverse }, item)).toBe(label);
+  });
+  it("describes Location without a direction", () => {
+    const location = albumOptions("album").find((item) => item.value === "place");
+    expect(sortLabel({ order: "place", reverse: false }, location)).toBe("Sorted by Location");
   });
   it("has an accessible fallback for a missing option", () => {
     expect(sortLabel({}, undefined)).toBe("Sort By");
