@@ -313,7 +313,7 @@ describe("component/photo/toolbar", () => {
       [{ photo: "true" }, "stacks", ["", "image", "raw", "live"]],
       [{ photo: "true" }, "scans", ["", "image", "raw", "live"]],
       [{}, "mono:true quality:3 photo:true", ["", "image", "raw", "live"]],
-      [{ media: "true" }, "", ["", "live", "video", "animated"]],
+      [{ media: "true" }, "", ["", "live", "video", "audio", "animated"]],
     ])("limits options to the page scope %j / %s", (staticFilter, q, values) => {
       const { wrapper } = mountToolbar({ staticFilter, filter: { q } });
       expect(wrapper.vm.mediaOptions.map((item) => item.value)).toEqual(values);
@@ -324,6 +324,14 @@ describe("component/photo/toolbar", () => {
       expect(wrapper.vm.showMediaType).toBe(false);
       await wrapper.setProps({ filter: { q: "cats" } });
       expect(wrapper.vm.showMediaType).toBe(true);
+    });
+
+    it.each(["live", "raw", "animated", "audio", "video", "monochrome", "cats documents"])("keeps the selector and selected RAW for search %s", async (q) => {
+      const { wrapper } = mountToolbar({ filter: { q: "", type: "raw" } });
+      await wrapper.setProps({ filter: { q, type: "raw" } });
+      expect(wrapper.vm.showMediaType).toBe(true);
+      expect(wrapper.vm.mediaOptions).toEqual([{ value: "", text: "All" }, ...PhotoTypes()]);
+      expect(wrapper.props("filter").type).toBe("raw");
     });
 
     it("hides the selector on embedded lists", () => {

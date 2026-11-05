@@ -4,19 +4,19 @@ import { PhotoTypes } from "options/options";
 export function photoTypeOptions(staticFilter = {}, query = "") {
   // enabled recognizes affirmative search filter values.
   const enabled = (value) => value === true || value === "true" || value === 1 || value === "1";
-  const terms = typeof query === "string" ? query.toLowerCase().match(/"[^"\n]*"|'[^'\n]*'|\S+/g) || [] : [];
+  const fixedSearch = typeof query === "string" ? query.trim().toLowerCase() : "";
   if (
     staticFilter.type ||
     ["video", "live", "animated", "audio", "vector", "document", "raw"].some((key) => enabled(staticFilter[key])) ||
-    terms.some((term) => /^(vectors?|documents?|videos?|audio|sounds|live|animated|gifs?|raws?)$/.test(term) || /^(type:.+|(vector|document|video|audio|live|animated|raw):true)$/.test(term))
+    ["vectors", "documents"].includes(fixedSearch)
   ) {
     return [];
   }
   let allowed;
-  if (enabled(staticFilter.photo) || terms.some((term) => ["photo:true", "monochrome", "mono", "mono:true"].includes(term))) {
+  if (enabled(staticFilter.photo) || fixedSearch === "mono:true quality:3 photo:true") {
     allowed = ["image", "live", "raw"];
-  } else if (enabled(staticFilter.media) || terms.includes("media:true")) {
-    allowed = ["live", "video", "animated"];
+  } else if (enabled(staticFilter.media)) {
+    allowed = ["live", "video", "audio", "animated"];
   }
   return PhotoTypes().filter((item) => !allowed || allowed.includes(item.value));
 }
