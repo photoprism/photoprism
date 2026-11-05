@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 29, 2026
+**Last Updated:** November 3, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -10,6 +10,10 @@ Other frontend documentation lives next to this file:
 - [Code Map](CODEMAP.md) — module layout and responsibilities
 - [Common Modules](src/common/README.md) — dialog/focus patterns and shared helpers
 - [Tests & Linting](tests/README.md) — test layout and toolchain validation
+
+## Sorting & Media Filters
+
+Sorting helpers live in `src/common/sort.js`, and the shared menu lives in `src/component/sort/menu.vue`. The photo toolbar owns the compact View menu and Media Type selector; `src/common/photo-types.js` filters the shared `options.PhotoTypes()` entries by page scope and validates URL media types in the photos page.
 
 ## Setup & Workspace
 

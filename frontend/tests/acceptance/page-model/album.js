@@ -169,18 +169,17 @@ export default class Page {
     }
   }
 
+  // checkSortOptions verifies the exact options offered by the album sort menu.
   async checkSortOptions(type) {
-    await t.click(Selector("i.mdi-tune"));
-    await t.click(Selector(".p-sort-select"));
-    await t.expect(Selector("div[role=listbox]:first-of-type").visible).ok();
-
-    const sortOptionsCount = Selector("div[role=listbox]:first-of-type div[role=option]").count;
-
-    if (type === "album") {
-      await t.expect(sortOptionsCount).eql(7);
-    } else {
-      await t.expect(sortOptionsCount).eql(6);
+    await t.click(Selector("button.action-sort"));
+    const items = Selector(".p-sort-menu .v-list-item[data-sort]");
+    const values = type === "album" ? ["name", "added", "place", "edited", "favorites"] :
+      ["moment", "month", "calendar"].includes(type) ? ["name", "added", "newest", "place", "favorites"] : ["name", "added", "place", "favorites"];
+    await t.expect(items.count).eql(values.length);
+    for (let index = 0; index < values.length; index++) {
+      await t.expect(items.nth(index).getAttribute("data-sort")).eql(values[index]);
     }
+    await t.pressKey("esc");
   }
 
   getAlbumCardPreviewSelector(uid) {
