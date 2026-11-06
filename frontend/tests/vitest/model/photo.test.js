@@ -11,6 +11,14 @@ import { $config } from "app/session";
 const flushEvents = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe("model/photo", () => {
+  it("does not select a repaired static JPEG for animation playback", () => {
+    const file = { FileType: "jpg", MediaType: "image", Frames: 0, FPS: 0, Duration: 0, Video: false, Primary: true };
+    const photo = new Photo({ Type: "image", Files: [file] });
+
+    expect(photo.isPlayable()).toBe(false);
+    expect(photo.animatedFile()).toBeUndefined();
+    expect(photo.videoFile()).toBeUndefined();
+  });
   // Pins the per-field length caps to the backend VARCHAR + clip ceilings.
   // If a backend bump (internal/entity/photo.go or details.go) changes any
   // of these, this test fails on purpose so the frontend cap moves with it.

@@ -540,6 +540,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 			// Get video metadata from embedded file?
 			if !data.HasVideoEmbedded {
+				// Clear stale animation metadata when re-indexing a still JPEG.
+				if m.IsJpeg() {
+					file.FileFrames = 0
+					file.FileFPS = 0
+					file.FileDuration = 0
+				}
+
 				file.SetDuration(data.Duration)
 				file.SetFPS(data.FPS)
 				file.SetFrames(data.Frames)
