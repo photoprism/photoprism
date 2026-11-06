@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PTabPhotoFiles from "component/photo/edit/files.vue";
 import Thumb from "model/thumb";
+import File from "model/file";
 
 function createFile(overrides = {}) {
   return {
@@ -147,6 +148,26 @@ function mountPhotoFiles({
 describe("component/photo/edit/files", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it.each([
+    [0, false],
+    [6, true],
+  ])("sets JPEG animation and orientation controls for %i frames", (frames, animated) => {
+    const previous = VTUConfig.global.renderStubDefaultSlot;
+    VTUConfig.global.renderStubDefaultSlot = true;
+
+    try {
+      const { wrapper } = mountPhotoFiles({
+        fileOverrides: { MediaType: "image", Orientation: 1, Frames: frames, isAnimated: File.prototype.isAnimated },
+      });
+
+      expect(wrapper.text().includes("Animated")).toBe(animated);
+      expect(wrapper.findComponent(".input-orientation").props("readonly")).toBe(animated);
+      wrapper.unmount();
+    } finally {
+      VTUConfig.global.renderStubDefaultSlot = previous;
+    }
   });
 
   describe("action buttons visibility", () => {

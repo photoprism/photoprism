@@ -1,11 +1,13 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,7 +15,95 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
+
+// TestIndex_MediaFile_JpegFrames verifies new JPEGs and repairs stale animation metadata.
+func TestIndex_MediaFile_JpegFrames(t *testing.T) {
+	for _, name := range []string{"Static", "MetadataError", "EmbeddedVideo"} {
+		t.Run(name, func(t *testing.T) {
+			useTestDb(t, "jpeg-frames")
+			cfg := config.NewMinimalTestConfigWithDb("jpeg-frames", filepath.Join(t.TempDir(), "storage"))
+			oldCfg := Config()
+			SetConfig(cfg)
+			t.Cleanup(func() {
+				SetConfig(oldCfg)
+				_ = cfg.CloseDb()
+				oldCfg.RegisterDb()
+			})
+
+			src, err := NewMediaFile("testdata/flash.jpg")
+			require.NoError(t, err)
+			dst := filepath.Join(cfg.OriginalsPath(), "pixel-hdr.jpg")
+			require.NoError(t, src.Copy(dst, false))
+			require.NoError(t, fs.Copy("../meta/testdata/pixel-hdr.jpg.json", dst+".json", false))
+
+			opt := IndexOptionsSingle(cfg)
+			opt.Convert, opt.DetectFaces, opt.ImportFaceTags, opt.GenerateLabels, opt.DetectNsfw = false, false, false, false, false
+			ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+			mf, err := NewMediaFile(dst)
+			require.NoError(t, err)
+			res := ind.MediaFile(mf, opt, "", "")
+			require.True(t, res.Success(), "%v", res.Err)
+
+			var file entity.File
+			require.NoError(t, entity.UnscopedDb().First(&file, "file_uid = ?", res.FileUID).Error)
+			assert.Zero(t, file.FileFrames)
+			assert.Zero(t, file.FileFPS)
+			assert.Zero(t, file.FileDuration)
+			assert.Equal(t, entity.MediaImage, file.MediaType)
+			assert.False(t, file.FileVideo)
+
+			require.NoError(t, file.Updates(entity.Values{"FileFrames": 6, "FileFPS": 30, "FileDuration": time.Second}))
+			companion := entity.File{
+				PhotoID: file.PhotoID, PhotoUID: file.PhotoUID, FileName: "pixel-hdr.mp4",
+				FileType: "mp4", MediaType: entity.MediaVideo, FileVideo: true,
+				FileFrames: 48, FileFPS: 24, FileDuration: 2 * time.Second,
+			}
+			require.NoError(t, companion.Create())
+
+			for pass := 0; pass < 2; pass++ {
+				mf, err = NewMediaFile(dst)
+				require.NoError(t, err)
+				require.NoError(t, mf.MetaData().Error)
+				switch name {
+				case "MetadataError":
+					mf.metaData.Error = errors.New("metadata unavailable")
+				case "EmbeddedVideo":
+					mf.metaData.HasVideoEmbedded = true
+					mf.videoOnce.Do(func() {
+						mf.videoInfo = video.Info{Compatible: true, Frames: 48, FPS: 24, Duration: 2 * time.Second}
+					})
+				}
+
+				res = ind.MediaFile(mf, opt, "", "")
+				require.True(t, res.Success(), "%v", res.Err)
+				require.NoError(t, entity.UnscopedDb().First(&file, file.ID).Error)
+				switch name {
+				case "Static":
+					assert.Zero(t, file.FileFrames)
+					assert.Zero(t, file.FileFPS)
+					assert.Zero(t, file.FileDuration)
+					assert.False(t, file.IsAnimated())
+				case "MetadataError":
+					assert.Equal(t, 6, file.FileFrames)
+					assert.Equal(t, float64(30), file.FileFPS)
+					assert.Equal(t, time.Second, file.FileDuration)
+				case "EmbeddedVideo":
+					assert.Equal(t, 48, file.FileFrames)
+					assert.Equal(t, float64(24), file.FileFPS)
+					assert.Equal(t, 2*time.Second, file.FileDuration)
+					assert.Equal(t, entity.MediaLive, file.MediaType)
+					assert.True(t, file.FileVideo)
+				}
+				require.NoError(t, entity.UnscopedDb().First(&companion, companion.ID).Error)
+				assert.Equal(t, 48, companion.FileFrames)
+				assert.Equal(t, float64(24), companion.FileFPS)
+				assert.Equal(t, 2*time.Second, companion.FileDuration)
+			}
+		})
+	}
+}
 
 func TestIndex_MediaFile(t *testing.T) {
 	if testing.Short() {

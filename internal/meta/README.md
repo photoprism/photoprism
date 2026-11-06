@@ -1,6 +1,6 @@
 ## PhotoPrism — Metadata Pipeline
 
-**Last Updated:** October 13, 2026
+**Last Updated:** November 6, 2026
 
 ### Overview
 
@@ -61,6 +61,7 @@ The `.xmp` sidecar reader (`xmp.go` + `xmp_document.go`) is XPath-based on `antc
 
 ### Motion Photos & Embedded Media
 
+- JPEG `FrameCount` metadata describes capture bursts such as Google HDRP, so it is excluded from animation frame counts. Embedded Motion Photo video information is still read through the video probe. Re-indexing successfully read JPEGs without embedded video clears stale file frame counts, frame rates, and durations before applying current metadata; use `photoprism index --force <subfolder>` to repair existing records. Existing ExifTool JSON caches can be reused.
 - Motion-photo JSON readers set `HasThumbEmbedded` / `HasVideoEmbedded`, `Codec`, `Duration`, and capture accurate timestamps (including ns) when present.
 - Time zones from motion metadata are respected; missing zones fall back to UTC.
 
