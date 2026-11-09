@@ -5,13 +5,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 func TestGetMomentsTime(t *testing.T) {
@@ -42,21 +40,8 @@ func TestGetMomentsTime_Access(t *testing.T) {
 	t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
 	GetMomentsTime(router)
 
-	// session creates a session for the specified scope and user, or a user-less client if nil.
 	session := func(t *testing.T, scope string, user *entity.User) string {
-		t.Helper()
-
-		grant := authn.GrantPassword
-
-		if user == nil {
-			grant = authn.GrantClientCredentials
-		}
-
-		s, err := entity.AddClientSession("moments-time-test", conf.SessionMaxAge(), scope, grant, user)
-		require.NoError(t, err)
-		t.Cleanup(func() { _ = s.Delete() })
-
-		return s.AuthToken()
+		return scopedSessionToken(t, conf, scope, user)
 	}
 
 	request := func(token string) int {

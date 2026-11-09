@@ -238,7 +238,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 //	@Router		/api/v1/photos/{uid}/yaml [get]
 func GetPhotoYaml(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/yaml", func(c *gin.Context) {
-		s := Auth(c, acl.ResourcePhotos, acl.AccessAll)
+		s := AuthAccess(c, acl.ResourcePhotos, acl.ActionView, acl.Permissions{acl.AccessAll})
 
 		if s.Abort(c) {
 			return

@@ -22,15 +22,10 @@ import (
 //	@Router		/api/v1/moments/time [get]
 func GetMomentsTime(router *gin.RouterGroup) {
 	router.GET("/moments/time", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceCalendar, acl.ActionSearch)
+		// Monthly counts cover the whole library, so shared-only access is not sufficient.
+		s := AuthAccess(c, acl.ResourceCalendar, acl.ActionSearch, acl.Permissions{acl.AccessAll, acl.AccessLibrary})
 
 		if s.Abort(c) {
-			return
-		}
-
-		// Monthly counts cover the whole library, so shared-only access is not sufficient.
-		if s.DeniesAll(acl.ResourceCalendar, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			AbortForbidden(c)
 			return
 		}
 

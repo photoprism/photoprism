@@ -291,7 +291,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 //	@Router		/api/v1/batch/photos/private [post]
 func BatchPhotosPrivate(router *gin.RouterGroup) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
-		s := Auth(c, acl.ResourcePhotos, acl.AccessPrivate)
+		s := AuthAccess(c, acl.ResourcePhotos, acl.ActionUpdate, acl.Permissions{acl.AccessPrivate})
 
 		if s.Abort(c) {
 			return

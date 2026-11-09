@@ -30,6 +30,24 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	return authAny(c, "", resource, perms)
 }
 
+// AuthAccess checks the action like Auth and then requires any of the access levels, so that a
+// scope limited to read or write operations is checked against the action.
+func AuthAccess(c *gin.Context, resource acl.Resource, action acl.Permission, access acl.Permissions) *entity.Session {
+	s := Auth(c, resource, action)
+
+	// Cluster JWT sessions are authorized by their scope alone, as in Auth.
+	if s.Invalid() || s.GrantType == authn.GrantJwtBearer.String() {
+		return s
+	}
+
+	if s.DeniesAll(resource, access) {
+		event.AuditWarn([]string{ClientIP(c), "session %s", "%s %s", status.Denied}, s.RefID, access.String(), string(resource))
+		return entity.SessionStatusForbidden()
+	}
+
+	return s
+}
+
 // AuthAudience checks the authorization like Auth, and also accepts a session issued for the specified
 // audience, such as an app access token for the MCP endpoint.
 func AuthAudience(c *gin.Context, audience string, resource acl.Resource, perm acl.Permission) *entity.Session {

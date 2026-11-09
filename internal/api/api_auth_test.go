@@ -3,8 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -930,4 +932,157 @@ func TestAuthAnyVisionServiceKeyLimit(t *testing.T) {
 		}
 		assert.False(t, limiter.Auth.Reject("198.51.100.37"))
 	})
+}
+
+// scopedSessionToken creates a session with the specified scope for the user, or for a user-less
+// client if user is nil, and returns its auth token.
+func scopedSessionToken(t *testing.T, conf *config.Config, scope string, user *entity.User) string {
+	t.Helper()
+
+	grant := authn.GrantPassword
+
+	if user == nil {
+		grant = authn.GrantClientCredentials
+	}
+
+	s, err := entity.AddClientSession("scoped-session-test", conf.SessionMaxAge(), scope, grant, user)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = s.Delete() })
+
+	return s.AuthToken()
+}
+
+// scopedUserSessionToken creates a user session (not a client session) with the specified scope and
+// returns its auth token.
+func scopedUserSessionToken(t *testing.T, conf *config.Config, scope string, user *entity.User) string {
+	t.Helper()
+
+	s := entity.NewSession(conf.SessionMaxAge(), conf.SessionTimeout()).SetUser(user).SetScope(scope)
+	require.NoError(t, s.Create())
+	t.Cleanup(func() { _ = s.Delete() })
+
+	return s.AuthToken()
+}
+
+func TestAuthAccess(t *testing.T) {
+	_, _, conf := NewApiTest()
+
+	// authAccess runs AuthAccess for the calendar with the specified auth token.
+	authAccess := func(authToken string) *entity.Session {
+		gin.SetMode(gin.TestMode)
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = &http.Request{Header: make(http.Header)}
+
+		if authToken != "" {
+			header.SetAuthorization(c.Request, authToken)
+		}
+
+		return AuthAccess(c, acl.ResourceCalendar, acl.ActionSearch, acl.Permissions{acl.AccessAll, acl.AccessLibrary})
+	}
+
+	t.Run("Public", func(t *testing.T) {
+		s := authAccess(session.PublicAuthToken)
+		assert.Equal(t, http.StatusOK, s.HttpStatus())
+		assert.Equal(t, session.PublicID, s.ID)
+	})
+
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+	t.Run("Success", func(t *testing.T) {
+		s := authAccess(scopedSessionToken(t, conf, "*", entity.UserFixtures.Pointer("alice")))
+		assert.Equal(t, http.StatusOK, s.HttpStatus())
+		assert.Equal(t, "alice", s.GetUserName())
+	})
+	t.Run("Unauthorized", func(t *testing.T) {
+		assert.Equal(t, http.StatusUnauthorized, authAccess("").HttpStatus())
+	})
+	t.Run("AccessDenied", func(t *testing.T) {
+		// Guests may search the calendar, but only for shared content.
+		s := authAccess(scopedSessionToken(t, conf, "*", entity.UserFixtures.Pointer("guest")))
+		assert.Equal(t, http.StatusForbidden, s.HttpStatus())
+		assert.Empty(t, s.ID)
+	})
+	t.Run("ActionOutOfScope", func(t *testing.T) {
+		s := authAccess(scopedSessionToken(t, conf, "calendar write", entity.UserFixtures.Pointer("alice")))
+		assert.Equal(t, http.StatusForbidden, s.HttpStatus())
+	})
+}
+
+// TestAuthAccess_ScopeModifiers checks that the handlers using AuthAccess accept a scope limited to
+// read or write operations only if it matches what the handler does.
+func TestAuthAccess_ScopeModifiers(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+	GetConfigOptions(router)
+	GetPhotoYaml(router)
+	GetSettings(router)
+	GetMetrics(router)
+	SearchFoldersOriginals(router)
+	GetMomentsTime(router)
+	BatchPhotosEdit(router)
+	BatchPhotosPrivate(router)
+
+	alice := entity.UserFixtures.Pointer("alice")
+	photoUid := entity.PhotoFixtures.Get("19800101_000002_D640C559").PhotoUID
+
+	// The write requests send an empty selection, so a request that passes authorization ends with 400.
+	cases := []struct {
+		name, method, path, body, resource string
+		allowed                            string
+		status                             int
+	}{
+		{"ConfigOptions", http.MethodGet, "/api/v1/config/options", "", "config", "read", http.StatusOK},
+		{"PhotoYaml", http.MethodGet, "/api/v1/photos/" + photoUid + "/yaml", "", "photos", "read", http.StatusOK},
+		{"Settings", http.MethodGet, "/api/v1/settings", "", "settings", "read", http.StatusOK},
+		{"Metrics", http.MethodGet, "/api/v1/metrics", "", "metrics", "read", http.StatusOK},
+		{"Folders", http.MethodGet, "/api/v1/folders/originals", "", "files", "read", http.StatusOK},
+		{"MomentsTime", http.MethodGet, "/api/v1/moments/time", "", "calendar", "read", http.StatusOK},
+		{"BatchPhotosEdit", http.MethodPost, "/api/v1/batch/photos/edit", `{"photos":[]}`, "photos", "write", http.StatusBadRequest},
+		{"BatchPhotosPrivate", http.MethodPost, "/api/v1/batch/photos/private", `{"photos":[]}`, "photos", "write", http.StatusBadRequest},
+	}
+
+	t.Run("SettingsOwn", func(t *testing.T) {
+		// Guests may read their own settings with a scope limited to read operations.
+		token := scopedUserSessionToken(t, conf, "settings read", entity.UserFixtures.Pointer("guest"))
+		assert.Equal(t, http.StatusOK, AuthenticatedRequest(app, http.MethodGet, "/api/v1/settings", token).Code)
+	})
+	t.Run("BatchPhotosEditClient", func(t *testing.T) {
+		// A client without an owner is authorized by its client role.
+		token := scopedSessionToken(t, conf, "photos", nil)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/batch/photos/edit", `{"photos":[]}`, token)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+
+	for _, tc := range cases {
+		denied := "write"
+
+		if tc.allowed == "write" {
+			denied = "read"
+		}
+
+		// request uses a recorder that supports streamed responses, as the metrics endpoint requires.
+		request := func(scope string) int {
+			var body io.Reader
+
+			if tc.body != "" {
+				body = strings.NewReader(tc.body)
+			}
+
+			req, _ := http.NewRequest(tc.method, tc.path, body)
+			header.SetAuthorization(req, scopedUserSessionToken(t, conf, scope, alice))
+			w := &CloseableResponseRecorder{httptest.NewRecorder(), make(chan bool, 1)}
+			app.ServeHTTP(w, req)
+
+			return w.Code
+		}
+
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.status, request(tc.resource+" "+tc.allowed), "%s %s", tc.resource, tc.allowed)
+			assert.Equal(t, tc.status, request(tc.resource), tc.resource)
+			assert.Equal(t, http.StatusForbidden, request(tc.resource+" "+denied), "%s %s", tc.resource, denied)
+		})
+	}
 }
