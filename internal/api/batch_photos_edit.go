@@ -32,16 +32,10 @@ import (
 //	@Router		/api/v1/batch/photos/edit [post]
 func BatchPhotosEdit(router *gin.RouterGroup) {
 	router.Match(MethodsPutPost, "/batch/photos/edit", func(c *gin.Context) {
-		// Require access to all photos.
-		s := Auth(c, acl.ResourcePhotos, acl.AccessAll)
+		// Require update permissions and access to all photos.
+		s := AuthAccess(c, acl.ResourcePhotos, acl.ActionUpdate, acl.Permissions{acl.AccessAll})
 
 		if s.Abort(c) {
-			return
-		}
-
-		// Require update permissions for photos.
-		if acl.Rules.Deny(acl.ResourcePhotos, s.GetUserRole(), acl.ActionUpdate) {
-			AbortForbidden(c)
 			return
 		}
 

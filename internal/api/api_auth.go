@@ -30,6 +30,37 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	return authAny(c, "", resource, perms)
 }
 
+// AuthAccess checks the action like Auth and then requires any of the access levels, so that a
+// scope limited to read or write operations is checked against the action.
+func AuthAccess(c *gin.Context, resource acl.Resource, action acl.Permission, access acl.Permissions) *entity.Session {
+	s := Auth(c, resource, action)
+
+	// Cluster JWT sessions are authorized by their scope alone, as in Auth.
+	if s.Invalid() || s.GrantType == authn.GrantJwtBearer.String() {
+		return s
+	}
+
+	if s.DeniesAll(resource, access) {
+		auditAccessDenied(ClientIP(c), s, resource, access)
+		return entity.SessionStatusForbidden()
+	}
+
+	return s
+}
+
+// auditAccessDenied logs a refused access level with the segments authorizeSession uses for the role that refused it.
+// A refusal that neither role makes alone is logged like an owner refusal, which names both principals.
+func auditAccessDenied(clientIp string, s *entity.Session, resource acl.Resource, access acl.Permissions) {
+	switch {
+	case !s.IsClient():
+		event.AuditErr([]string{clientIp, "session %s", "%s %s as %s", status.Denied}, s.RefID, access.String(), string(resource), s.GetUserRole().String())
+	case s.NoUser() || acl.Rules.DenyAll(resource, s.GetClientRole(), access):
+		event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s", status.Denied}, clean.Log(s.GetClientInfo()), s.RefID, access.String(), string(resource))
+	default:
+		event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as %s", status.Denied}, clean.Log(s.GetClientInfo()), s.RefID, access.String(), string(resource), s.GetUser().String())
+	}
+}
+
 // AuthAudience checks the authorization like Auth, and also accepts a session issued for the specified
 // audience, such as an app access token for the MCP endpoint.
 func AuthAudience(c *gin.Context, audience string, resource acl.Resource, perm acl.Permission) *entity.Session {

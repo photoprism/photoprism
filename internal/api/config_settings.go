@@ -26,7 +26,7 @@ import (
 //	@Router		/api/v1/settings [get]
 func GetSettings(router *gin.RouterGroup) {
 	router.GET("/settings", func(c *gin.Context) {
-		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.AccessAll, acl.AccessOwn})
+		s := AuthAccess(c, acl.ResourceSettings, acl.ActionView, acl.Permissions{acl.AccessAll, acl.AccessOwn})
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {

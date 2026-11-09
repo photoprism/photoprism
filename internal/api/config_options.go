@@ -26,7 +26,7 @@ import (
 //	@Router		/api/v1/config/options [get]
 func GetConfigOptions(router *gin.RouterGroup) {
 	router.GET("/config/options", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceConfig, acl.AccessAll)
+		s := AuthAccess(c, acl.ResourceConfig, acl.ActionView, acl.Permissions{acl.AccessAll})
 		conf := get.Config()
 
 		// Abort if permission is not granted.
