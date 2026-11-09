@@ -28,6 +28,12 @@ func GetMomentsTime(router *gin.RouterGroup) {
 			return
 		}
 
+		// Monthly counts cover the whole library, so shared-only access is not sufficient.
+		if s.DeniesAll(acl.ResourceCalendar, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+			AbortForbidden(c)
+			return
+		}
+
 		conf := get.Config()
 
 		result, err := query.MomentsTime(1, conf.Settings().Features.Private)
