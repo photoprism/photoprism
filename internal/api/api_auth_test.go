@@ -28,6 +28,7 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -998,10 +999,32 @@ func TestAuthAccess(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, authAccess("").HttpStatus())
 	})
 	t.Run("AccessDenied", func(t *testing.T) {
+		token := scopedSessionToken(t, conf, "*", entity.UserFixtures.Pointer("guest"))
+
+		origAudit := event.AuditLog
+		auditLogger, auditHook := test.NewNullLogger()
+		auditLogger.SetLevel(logrus.TraceLevel)
+		event.AuditLog = auditLogger
+		t.Cleanup(func() { event.AuditLog = origAudit })
+
 		// Guests may search the calendar, but only for shared content.
-		s := authAccess(scopedSessionToken(t, conf, "*", entity.UserFixtures.Pointer("guest")))
+		s := authAccess(token)
 		assert.Equal(t, http.StatusForbidden, s.HttpStatus())
 		assert.Empty(t, s.ID)
+
+		// The refusal is the only event at warning level or above, which Pro stores by default.
+		var denied []string
+
+		for _, entry := range auditHook.AllEntries() {
+			if entry.Level <= logrus.WarnLevel {
+				assert.Equal(t, logrus.ErrorLevel, entry.Level)
+				denied = append(denied, entry.Message)
+			}
+		}
+
+		require.Len(t, denied, 1)
+		assert.Contains(t, denied[0], " › client scoped-session-test › ")
+		assert.Contains(t, denied[0], " › access all, access library calendar as 'guest' › denied")
 	})
 	t.Run("ActionOutOfScope", func(t *testing.T) {
 		s := authAccess(scopedSessionToken(t, conf, "calendar write", entity.UserFixtures.Pointer("alice")))
@@ -1085,4 +1108,72 @@ func TestAuthAccess_ScopeModifiers(t *testing.T) {
 			assert.Equal(t, http.StatusForbidden, request(tc.resource+" "+denied), "%s %s", tc.resource, denied)
 		})
 	}
+}
+
+func TestAuditAccessDenied(t *testing.T) {
+	access := acl.Permissions{acl.AccessAll, acl.AccessLibrary}
+	guest := entity.UserFixtures.Pointer("guest")
+	alice := entity.UserFixtures.Pointer("alice")
+
+	// audit returns the messages auditAccessDenied logs for the session.
+	audit := func(t *testing.T, s *entity.Session) []string {
+		t.Helper()
+
+		origAudit := event.AuditLog
+		auditLogger, auditHook := test.NewNullLogger()
+		auditLogger.SetLevel(logrus.TraceLevel)
+		event.AuditLog = auditLogger
+		t.Cleanup(func() { event.AuditLog = origAudit })
+
+		auditAccessDenied("198.51.100.80", s, acl.ResourceCalendar, access)
+
+		var messages []string
+
+		for _, entry := range auditHook.AllEntries() {
+			assert.Equal(t, logrus.ErrorLevel, entry.Level)
+			messages = append(messages, entry.Message)
+		}
+
+		return messages
+	}
+
+	t.Run("User", func(t *testing.T) {
+		s := entity.NewSession(3600, 0).SetUser(guest)
+		messages := audit(t, s)
+		require.Len(t, messages, 1)
+		assert.Equal(t, "audit: 198.51.100.80 › session "+s.RefID+" › access all, access library calendar as guest › denied", messages[0])
+	})
+	t.Run("Client", func(t *testing.T) {
+		s := entity.NewClientSession("audit-client", 3600, "*", authn.GrantClientCredentials, nil)
+		messages := audit(t, s)
+		require.Len(t, messages, 1)
+		assert.Equal(t, "audit: 198.51.100.80 › client audit-client › session "+s.RefID+" › access all, access library calendar › denied", messages[0])
+	})
+	t.Run("ClientOwner", func(t *testing.T) {
+		// The client role allows access, but its owner's role does not.
+		s := entity.NewClientSession("audit-app", 3600, "*", authn.GrantPassword, guest)
+		messages := audit(t, s)
+		require.Len(t, messages, 1)
+		assert.Equal(t, "audit: 198.51.100.80 › client audit-app › session "+s.RefID+" › access all, access library calendar as 'guest' › denied", messages[0])
+	})
+	t.Run("ClientRole", func(t *testing.T) {
+		// The owner's role allows access, but the client role does not.
+		client := entity.NewClient()
+		client.ClientName = "Audit Portal"
+		client.ClientRole = acl.RolePortal.String()
+		client.UserUID = alice.UserUID
+		client.UserName = alice.UserName
+		require.NoError(t, entity.Save(client))
+		t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(client) })
+
+		s := entity.NewClientSession(client.ClientName, 3600, "*", authn.GrantClientCredentials, alice)
+		s.ClientUID = client.ClientUID
+		require.Equal(t, acl.RolePortal, s.GetClientRole())
+		require.Equal(t, "alice", s.GetUserName())
+		require.False(t, acl.Rules.DenyAll(acl.ResourceCalendar, s.GetUserRole(), access))
+
+		messages := audit(t, s)
+		require.Len(t, messages, 1)
+		assert.Equal(t, "audit: 198.51.100.80 › client "+clean.Log(s.GetClientInfo())+" › session "+s.RefID+" › access all, access library calendar › denied", messages[0])
+	})
 }
