@@ -452,7 +452,7 @@ dep-list:
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
 vuln: audit
-audit: audit-frontend audit-backend
+audit: audit-backend audit-frontend
 audit-frontend: npm-audit
 audit-backend: dep-vuln
 dep-audit: dep-vuln

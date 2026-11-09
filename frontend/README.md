@@ -71,6 +71,10 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 
 Retire an override only when upstream dependency ranges select an acceptable version without it, then rerun `make audit` and the build/test checks.
 
+### Known Advisories
+
+`make audit` may report advisories in build or test tooling whose fix exists only in a new major that the affected libraries do not declare support for, or not at all. Do not force such a major with an override: semver allows it to break the libraries that depend on it. Recheck on each upgrade pass instead, and let upstream releases select a fixed version.
+
 ## Major-Version Upgrade Constraints
 
 These packages need a separate compatibility evaluation; a newer major is not evidence that it is safe to update automatically.
@@ -146,7 +150,7 @@ A package without a direct consumer or required peer can be removed from `fronte
 1. Review maintainership, provenance, release history, and publisher protections; prefer a maintained scoped package when suitable.
 2. Avoid packages that require `postinstall`/`install` scripts. Installs default to `--ignore-scripts`.
 3. Add to `frontend/package.json`. From the **repo root** run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` so the workspace lockfile updates.
-4. `make audit` must report zero advisories.
+4. The new package must not add advisories to `make audit` (see [Known Advisories](#known-advisories)).
 5. Run `npm run lint --workspace frontend`, `make build-js`, and `make test-js`.
 6. `make notice` to refresh `NOTICE` and `frontend/NOTICE`.
 
