@@ -279,20 +279,28 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
   // Captures the surface of `this` that onAlbumsUpdated touches; the
   // album model reload resolves synchronously via a stubbed load().
   function newAlbumStub() {
-    return {
+    const stub = {
+      albumGeneration: 0,
+      lightbox: {},
+      uid: "album-1",
+      headerRevision: 0,
+      $route: { query: {} },
+      search: vi.fn(),
       listen: true,
       dirty: false,
       complete: true,
       scrollDisabled: true,
       lastParams: { order: "oldest" },
       collectionRoute: "albums",
-      model: { UID: "album-1", Title: "Album", Order: "oldest", load: vi.fn(() => Promise.resolve()) },
+      model: { UID: "album-1", Title: "Album", Order: "oldest" },
       $config: { get: () => "PhotoPrism" },
       $router: { push: vi.fn() },
       $util,
       updateQuery: vi.fn(),
       loadMore: vi.fn(),
     };
+    stub.model.find = vi.fn(() => Promise.resolve(stub.model));
+    return stub;
   }
 
   it("reloads the open album when reported as updated", async () => {
@@ -301,7 +309,8 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
     onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
     await Promise.resolve();
 
-    expect(stub.model.load).toHaveBeenCalledTimes(1);
+    expect(stub.model.find).toHaveBeenCalledTimes(1);
+    expect(stub.headerRevision).toBe(1);
     expect(stub.dirty).toBe(true);
     expect(stub.complete).toBe(false);
     expect(window.document.title).toBe("PhotoPrism: \u2068Album\u2069");
@@ -311,16 +320,48 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
 
   it("updates the query when the album order changed", async () => {
     const stub = newAlbumStub();
-    stub.model.load = vi.fn(() => {
+    stub.model.find = vi.fn(() => {
       stub.model.Order = "newest";
-      return Promise.resolve();
+      return Promise.resolve(stub.model);
     });
 
     onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
     await Promise.resolve();
 
-    expect(stub.updateQuery).toHaveBeenCalledTimes(1);
-    expect(stub.loadMore).toHaveBeenCalledWith(true);
+    expect(stub.search).toHaveBeenCalledTimes(1);
+    expect(stub.updateQuery).not.toHaveBeenCalled();
+    expect(stub.loadMore).not.toHaveBeenCalled();
+  });
+
+  it("preserves a temporary order when the saved order changes", async () => {
+    const stub = newAlbumStub();
+    stub.$route.query = { order: "size", reverse: "true", q: "cat" };
+    stub.model.find = vi.fn(() => { stub.model.Order = "newest"; return Promise.resolve(stub.model); });
+    await onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
+    expect(stub.search).not.toHaveBeenCalled();
+    expect(stub.$route.query).toEqual({ order: "size", reverse: "true", q: "cat" });
+  });
+
+  it("queues metadata changes while photos are loading", () => {
+    const stub = newAlbumStub();
+    stub.listen = false;
+    onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
+    expect(stub.pendingAlbumUpdate).toBe(true);
+    expect(stub.model.find).not.toHaveBeenCalled();
+  });
+
+  it("discards superseded metadata responses", async () => {
+    const stub = newAlbumStub();
+    const pending = [];
+    stub.model.find = vi.fn(() => new Promise((resolve) => pending.push(resolve)));
+    const oldRequest = onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
+    const newRequest = onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
+    pending[1]({ UID: "album-1", Title: "New", Order: "oldest" });
+    await newRequest;
+    pending[0]({ UID: "album-1", Title: "Old", Order: "oldest" });
+    await oldRequest;
+    expect(stub.model.Title).toBe("New");
+    expect(stub.headerRevision).toBe(1);
   });
 
   it("ignores events for other albums", () => {
@@ -328,13 +369,13 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
 
     onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-2"] });
 
-    expect(stub.model.load).not.toHaveBeenCalled();
+    expect(stub.model.find).not.toHaveBeenCalled();
     expect(stub.dirty).toBe(false);
   });
 
   it("leaves the view when the scoped reload returns 404", async () => {
     const stub = newAlbumStub();
-    stub.model.load = vi.fn(() => Promise.reject({ response: { status: 404 } }));
+    stub.model.find = vi.fn(() => Promise.reject({ response: { status: 404 } }));
 
     onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
     await Promise.resolve();
@@ -346,7 +387,7 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
 
   it("marks the view dirty when the reload fails transiently", async () => {
     const stub = newAlbumStub();
-    stub.model.load = vi.fn(() => Promise.reject(new Error("offline")));
+    stub.model.find = vi.fn(() => Promise.reject(new Error("offline")));
 
     onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
     await Promise.resolve();
@@ -365,6 +406,7 @@ describe("page/album/photos.vue findAlbum", () => {
   // Captures the surface of `this` that findAlbum touches.
   function newFindStub(find) {
     return {
+      albumGeneration: 0,
       uid: "album-1",
       collectionRoute: "albums",
       model: { find },

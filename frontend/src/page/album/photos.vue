@@ -2,6 +2,9 @@
   <div ref="page" tabindex="-1" class="p-page p-page-album-photos" :class="$config.aclClasses('photos')">
     <p-album-toolbar
       ref="toolbar"
+      :compact="headerCollapsed"
+      :collapse-progress="headerProgress"
+      :cover-style="headerStyle"
       :filter="filter"
       :album="model"
       :settings="settings"
@@ -11,16 +14,22 @@
       class="p-page__navigation"
     ></p-album-toolbar>
 
+    <p-album-header :album="model" :revision="headerRevision" @appearance="headerStyle = $event" @collapsed="headerCollapsed = $event" @collapse-progress="headerProgress = $event"></p-album-header>
+
     <div v-if="loading" class="p-page__loading">
       <p-loading></p-loading>
     </div>
     <div v-else class="p-page__content">
+      <div v-if="!results.length && !searchFailed" class="album-empty-state" role="status">
+        <p>{{ $gettext("No pictures found") }}</p>
+        <v-btn v-if="filter.q" class="action-album-clear-search" @click="updateQuery({ q: '' })">{{ $gettext("Clear Search") }}</v-btn>
+      </div>
       <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"> </p-scroll>
 
       <p-photo-clipboard :refresh="refresh" :album="model" :context="contexts.Album"></p-photo-clipboard>
 
       <p-photo-view-mosaic
-        v-if="settings.view === 'mosaic'"
+        v-if="results.length && settings.view === 'mosaic'"
         :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
@@ -31,7 +40,7 @@
         :is-shared-view="isShared"
       ></p-photo-view-mosaic>
       <p-photo-view-list
-        v-else-if="settings.view === 'list'"
+        v-else-if="results.length && settings.view === 'list'"
         :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
@@ -44,7 +53,7 @@
         :is-shared-view="isShared"
       ></p-photo-view-list>
       <p-photo-view-cards
-        v-else
+        v-else-if="results.length"
         :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
@@ -67,6 +76,8 @@ import Thumb from "model/thumb";
 import { ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED } from "common/event";
 import * as contexts from "options/contexts";
 import PAlbumToolbar from "component/album/toolbar.vue";
+import PAlbumHeader from "component/album/header.vue";
+import { albumOrder, albumCoverTone } from "common/album-view";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
 import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
@@ -96,6 +107,7 @@ export default {
   components: {
     PLoading,
     PAlbumToolbar,
+    PAlbumHeader,
     PPhotoClipboard,
     PPhotoViewCards,
     PPhotoViewMosaic,
@@ -109,6 +121,7 @@ export default {
     },
   },
   expose: ["onShortCut"],
+  // data initializes album-scoped photo loading and URL state.
   data() {
     const uid = this.$route.params.album;
     const query = this.$route.query;
@@ -122,6 +135,14 @@ export default {
     const batchSize = Photo.batchSize();
 
     return {
+      headerCollapsed: false,
+      headerProgress: 0,
+      headerStyle: albumCoverTone([]),
+      headerRevision: 0,
+      pendingAlbumUpdate: false,
+      searchGeneration: 0,
+      albumGeneration: 0,
+      searchFailed: false,
       isShared: this.$config.deny("photos", "manage"),
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       hasPlaces: this.$config.allow("places", "view") && this.$config.feature("places"),
@@ -164,6 +185,7 @@ export default {
     },
   },
   watch: {
+    // $route restores search and ordering before loading the current album.
     $route() {
       if (!this.$view.isActive(this)) {
         return;
@@ -178,19 +200,7 @@ export default {
       this.filter.country = query["country"] ? query["country"] : "";
       this.settings.view = this.getViewType();
 
-      /**
-       * Even if the filter is unchanged, if the route is changed (for example
-       * from `/review` to `/browse`), then the lastFilter must be reset, so that
-       * a new search is actually triggered. That is because both routes use
-       * this component, so it is reused by vue. See
-       * https://github.com/photoprism/photoprism/pull/2782#issuecomment-1279821448.
-       *
-       * However, if the route is unchanged, the not resetting lastFilter prevents
-       * unnecessary search-api-calls! These search-calls would otherwise reset
-       * the view, even if we for example just returned from a fullscreen-download
-       * in the ios-pwa. See
-       * https://github.com/photoprism/photoprism/pull/2782#issue-1409954466
-       */
+      // Reused routes must invalidate a query even when their visible filters match.
       const routeChanged = this.routeName !== this.$route.name;
 
       if (routeChanged) {
@@ -200,6 +210,12 @@ export default {
       this.routeName = this.$route.name;
 
       if (this.uid !== this.$route.params.album) {
+        this.searchGeneration++;
+        this.albumGeneration++;
+        this.pendingAlbumUpdate = false;
+        this.resetLastFilter();
+        this.reset();
+        this.loading = true;
         this.uid = this.$route.params.album;
         this.loadAlbum();
       } else {
@@ -207,12 +223,18 @@ export default {
       }
     },
   },
+  // created loads the album and subscribes to metadata and photo changes.
   created() {
     this.loadAlbum();
 
     this.subscriptions.push(this.$event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
     this.subscriptions.push(this.$event.subscribe("albums.deleted", (ev, data) => this.onAlbumsDeleted(ev, data)));
-    this.subscriptions.push(this.$event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("photos", (ev, data) => {
+      if (!this.model.Thumb) {
+        this.headerRevision++;
+      }
+      this.onUpdate(ev, data);
+    }));
 
     this.subscriptions.push(
       this.$event.subscribe("lightbox.opened", () => {
@@ -231,7 +253,10 @@ export default {
   mounted() {
     this.$view.enter(this, this.$refs?.page);
   },
+  // beforeUnmount invalidates requests and releases event subscriptions.
   beforeUnmount() {
+    this.albumGeneration++;
+    this.searchGeneration++;
     for (let i = 0; i < this.subscriptions.length; i++) {
       this.$event.unsubscribe(this.subscriptions[i]);
     }
@@ -240,7 +265,9 @@ export default {
     this.$view.leave(this);
   },
   methods: {
+    // resetLastFilter invalidates the previous search signature.
     resetLastFilter() {
+      this.lastSearch = null;
       this.lastFilter = {};
     },
     onShortCut(ev) {
@@ -276,12 +303,13 @@ export default {
 
       return "cards";
     },
+    // sortOrder resolves the temporary URL order or the album default.
     sortOrder() {
-      const query = this.$route.query;
-      return query["order"] ? query["order"] : this.model?.Order;
+      return albumOrder(this.$route.query, this.model?.Order).order;
     },
+    // sortReverse permits reverse only for supported two-direction orders.
     sortReverse() {
-      return !!this.$route?.query["reverse"] && this.$route.query["reverse"] === "true";
+      return albumOrder(this.$route.query, this.model?.Order).reverse;
     },
     openDate(index) {
       if (!this.canEdit) {
@@ -299,6 +327,7 @@ export default {
 
       this.$router.push({ query: { q: "taken:" + photo.TakenAt.substring(0, 10) } });
     },
+    // openLocation opens the album map without the current text search.
     openLocation(index) {
       if (!this.hasPlaces) {
         return;
@@ -310,7 +339,7 @@ export default {
         return;
       }
 
-      if (this.canAccessLibrary && photo.CellID && photo.CellID !== "zz") {
+      if (!this.uid && this.canAccessLibrary && photo.CellID && photo.CellID !== "zz") {
         this.$router.push({ name: "places", query: { q: photo.CellID } });
       } else if (this.uid) {
         this.$router.push({ name: "places_view", params: { s: this.uid }, query: { q: photo.CellID } });
@@ -350,6 +379,7 @@ export default {
 
       return true;
     },
+    // loadMore refreshes or extends the current scoped result window.
     loadMore(force) {
       if (!force && (this.scrollDisabled || this.$view.isHidden(this))) {
         return;
@@ -371,7 +401,7 @@ export default {
         s: this.uid,
         merged: true,
         order: this.sortOrder(),
-        reverse: this.sortReverse(),
+        ...(this.sortReverse() ? { reverse: true } : {}),
       };
 
       Object.assign(params, this.lastFilter);
@@ -382,8 +412,12 @@ export default {
 
       this.lastParams = params;
 
+      const generation = this.searchGeneration;
       Photo.search(params)
         .then((response) => {
+          if (generation !== this.searchGeneration) {
+            return;
+          }
           this.results = Photo.mergeResponse(this.results, response);
           this.complete = response.count < count;
           this.scrollDisabled = this.complete;
@@ -413,12 +447,22 @@ export default {
           }
         })
         .catch(() => {
+          if (generation !== this.searchGeneration) {
+            return;
+          }
           this.scrollDisabled = false;
         })
         .finally(() => {
+          if (generation !== this.searchGeneration) {
+            return;
+          }
           this.dirty = false;
           this.loading = false;
           this.listen = true;
+          if (this.pendingAlbumUpdate) {
+            this.pendingAlbumUpdate = false;
+            this.onAlbumsUpdated("albums.updated", { entities: [this.uid] });
+          }
         });
     },
     updateSettings(props) {
@@ -441,6 +485,7 @@ export default {
         appStorage.setItem("album.photos." + key, this.settings[key]);
       }
     },
+    // updateFilter applies supported user search fields.
     updateFilter(props) {
       if (!props || typeof props !== "object" || props.target) {
         return;
@@ -459,14 +504,12 @@ export default {
         }
       }
     },
+    // updateQuery writes search changes while retaining temporary ordering.
     updateQuery(props) {
       this.updateFilter(props);
 
-      if (this.loading) {
-        return false;
-      }
-
       const query = {
+        ...this.$route.query,
         view: this.settings.view,
       };
 
@@ -486,6 +529,7 @@ export default {
 
       return true;
     },
+    // searchParams builds the active album request without unsupported direction flags.
     searchParams() {
       const params = {
         count: this.batchSize,
@@ -493,7 +537,7 @@ export default {
         s: this.uid,
         merged: true,
         order: this.sortOrder(),
-        reverse: this.sortReverse(),
+        ...(this.sortReverse() ? { reverse: true } : {}),
       };
 
       Object.assign(params, this.filter);
@@ -533,25 +577,23 @@ export default {
       this.results = [];
       this.lightbox.results = [];
     },
+    // search reloads changed album queries and ignores superseded responses.
     search() {
-      /**
-       * search is called on mount or route change. If the route changed to an
-       * open lightbox, no search is required. There is no reason to do an
-       * initial results load, if the results aren't currently visible
-       */
       if (this.lightbox.open) {
         return;
       }
 
-      this.scrollDisabled = true;
-
-      // Don't query the same data more than once
-      if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
+      const key = { ...this.filter, s: this.uid, order: this.sortOrder(), reverse: this.sortReverse() };
+      if (JSON.stringify(this.lastSearch) === JSON.stringify(key)) {
         // this.$nextTick(() => this.$emit("scrollRefresh"));
         return;
       }
 
-      Object.assign(this.lastFilter, this.filter);
+      this.scrollDisabled = true;
+      this.lastSearch = key;
+      this.lastFilter = { ...this.filter };
+      const generation = ++this.searchGeneration;
+      this.searchFailed = false;
 
       this.offset = 0;
       this.page = 0;
@@ -565,6 +607,9 @@ export default {
 
       Photo.search(params)
         .then((response) => {
+          if (generation !== this.searchGeneration) {
+            return;
+          }
           // Hide search toolbar expansion panel when matching pictures were found.
           if (this.offset === 0 && response.count > 0) {
             this.hideExpansionPanel();
@@ -594,12 +639,24 @@ export default {
           }
         })
         .catch(() => {
+          if (generation !== this.searchGeneration) {
+            return;
+          }
+          this.searchFailed = true;
+          this.lastSearch = null;
           this.reset();
         })
         .finally(() => {
+          if (generation !== this.searchGeneration) {
+            return;
+          }
           this.dirty = false;
           this.loading = false;
           this.listen = true;
+          if (this.pendingAlbumUpdate) {
+            this.pendingAlbumUpdate = false;
+            this.onAlbumsUpdated("albums.updated", { entities: [this.uid] });
+          }
         });
     },
     // loadAlbum finds the album and searches its photos once it was found.
@@ -612,9 +669,14 @@ export default {
     },
     // findAlbum fetches the album by its UID, or leaves the view and resolves with null if that fails.
     findAlbum() {
+      const uid = this.uid;
+      const generation = ++this.albumGeneration;
       return this.model
-        .find(this.uid)
+        .find(uid)
         .then((m) => {
+          if (uid !== this.uid || generation !== this.albumGeneration) {
+            return null;
+          }
           this.model = m;
 
           window.document.title = `${this.$config.get("siteTitle")}: ${this.$util.isolate(this.model.Title)}`;
@@ -622,54 +684,51 @@ export default {
           return this.model;
         })
         .catch(() => {
-          this.$router.push({ name: this.collectionRoute });
+          if (uid === this.uid && generation === this.albumGeneration) {
+            this.$router.push({ name: this.collectionRoute });
+          }
           return null;
         });
     },
-    // onAlbumsUpdated reloads the open album when an albums.updated event
-    // reports it changed; the event carries only UIDs, so the refreshed
-    // values are fetched through the scoped REST API. When the album is
-    // no longer visible to this session, the view is left instead of
-    // rendering stale data.
+    // onAlbumsUpdated reloads scoped album metadata without replacing the active photo view.
     onAlbumsUpdated(ev, data) {
+      if (!Array.isArray(data?.entities) || !data.entities.includes(this.uid)) {
+        return;
+      }
       if (!this.listen) {
+        this.pendingAlbumUpdate = true;
         return;
       }
-
-      if (!data || !data.entities || !Array.isArray(data.entities)) {
-        return;
-      }
-
-      if (!data.entities.includes(this.model.UID)) {
-        return;
-      }
-
-      this.model
-        .load()
-        .then(() => {
-          window.document.title = `${this.$config.get("siteTitle")}: ${this.$util.isolate(this.model.Title)}`;
-
+      const uid = this.uid;
+      const oldOrder = this.model.Order;
+      const generation = ++this.albumGeneration;
+      return this.model.find(uid).then((model) => {
+        if (this.uid !== uid || generation !== this.albumGeneration) {
+          return;
+        }
+        this.model = model;
+        this.headerRevision++;
+        this.lightbox.dirty = true;
+        window.document.title = `${this.$config.get("siteTitle")}: ${this.$util.isolate(this.model.Title)}`;
+        if (!this.$route.query.order && oldOrder !== this.model.Order) {
+          this.search();
+        } else {
           this.dirty = true;
           this.complete = false;
           this.scrollDisabled = false;
-
-          if (this.lastParams?.order !== this.model?.Order) {
-            this.updateQuery();
-          }
-
           this.loadMore(true);
-        })
-        .catch((err) => {
-          if (err?.response?.status === 404) {
-            this.$router.push({ name: this.collectionRoute });
-            return;
-          }
-
-          // Transient failure: flag the view dirty so the next
-          // interaction refetches instead of trusting stale state.
+        }
+      }).catch((err) => {
+        if (generation !== this.albumGeneration) {
+          return;
+        }
+        if (this.uid === uid && err?.response?.status === 404) {
+          this.$router.push({ name: this.collectionRoute });
+        } else if (this.uid === uid) {
           this.dirty = true;
           this.complete = false;
-        });
+        }
+      });
     },
     onAlbumsDeleted(ev, data) {
       if (!this.listen) {

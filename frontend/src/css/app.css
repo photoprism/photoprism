@@ -42,6 +42,7 @@ Additional information can be found in our Developer Guide:
 @import url("labels.css") layer(vuetify-components);
 @import url("files.css") layer(vuetify-components);
 @import url("pages.css") layer(vuetify-components);
+@import url("albums.css") layer(vuetify-components);
 @import url("help.css") layer(vuetify-components);
 @import url("auth.css") layer(vuetify-components);
 @import url("layout.css") layer(vuetify-components);

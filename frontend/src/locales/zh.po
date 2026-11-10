@@ -66,7 +66,7 @@ msgstr "已找到 %{n} 个标签"
 msgid "%{n} people found"
 msgstr "已找到 %{n} 个人物"
 
-#: src/page/album/photos.vue:395 src/page/album/photos.vue:586
+#: src/page/album/photos.vue:429 src/page/album/photos.vue:631
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "已找到 %{n} 张图片"
@@ -404,7 +404,7 @@ msgstr "相册内容已复制"
 msgid "Album created"
 msgstr "相册已创建"
 
-#: src/page/album/photos.vue:678
+#: src/page/album/photos.vue:746
 msgid "Album deleted"
 msgstr "相册已删除"
 
@@ -416,7 +416,7 @@ msgstr "相册未找到"
 msgid "Album saved"
 msgstr "相册已保存"
 
-#: src/app/routes.js:346 src/component/album/toolbar.vue:118
+#: src/app/routes.js:346 src/component/album/toolbar.vue:153
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:428
 #: src/component/photo/edit/info.vue:107 src/options/options.js:261
@@ -620,7 +620,7 @@ msgstr "你确定要删除这些标签吗？"
 msgid "Are you sure you want to delete this account?"
 msgstr "你确定要删除此账号吗？"
 
-#: src/component/album/toolbar.vue:56
+#: src/component/album/toolbar.vue:84
 msgid "Are you sure you want to delete this album?"
 msgstr "您确定要删除此相册吗？"
 
@@ -805,7 +805,7 @@ msgstr "未找到摄像头"
 msgid "Can't access your authenticator app or device?"
 msgstr "无法访问您的身份验证应用程序或设备？"
 
-#: src/page/album/photos.vue:403 src/page/photos.vue:537
+#: src/page/album/photos.vue:437 src/page/photos.vue:537
 msgid "Can't load more, limit reached"
 msgstr "无法加载更多内容，已达上限"
 
@@ -862,7 +862,8 @@ msgstr "无法复制到剪贴板"
 msgid "Caption"
 msgstr "标题"
 
-#: src/component/photo/toolbar.vue:398 src/component/photo/toolbar.vue:404
+#: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:398
+#: src/component/photo/toolbar.vue:404
 msgid "Cards"
 msgstr "卡片"
 
@@ -966,6 +967,10 @@ msgstr "清理"
 #: src/component/photo/batch-edit.vue:1190
 msgid "Clear"
 msgstr "清晰"
+
+#: src/page/album/photos.vue:25
+msgid "Clear Search"
+msgstr ""
 
 #: src/locales.js:293
 msgid "Clear {0}"
@@ -1251,6 +1256,10 @@ msgstr "数据库"
 msgid "Date & Time"
 msgstr "日期和时间"
 
+#: src/component/album/toolbar.vue:182
+msgid "Date Taken"
+msgstr ""
+
 #: src/page/settings/account.vue:233 src/component/meta/datetime/dialog.vue:30
 #: src/component/photo/batch-edit.vue:198
 #: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:217
@@ -1288,7 +1297,7 @@ msgstr "默认文件夹"
 #: src/page/cluster/nodes.vue:109 src/page/admin/clients.vue:98
 #: src/page/admin/clients.vue:150 src/page/admin/users.vue:147
 #: src/component/album/clipboard.vue:68
-#: src/component/album/delete/dialog.vue:22 src/component/album/toolbar.vue:57
+#: src/component/album/delete/dialog.vue:22 src/component/album/toolbar.vue:85
 #: src/component/file/delete/dialog.vue:22 src/component/label/clipboard.vue:34
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:103
@@ -1298,7 +1307,7 @@ msgstr "默认文件夹"
 msgid "Delete"
 msgstr "删除"
 
-#: src/component/album/toolbar.vue:195
+#: src/component/album/toolbar.vue:311
 msgid "Delete Album"
 msgstr "删除相册"
 
@@ -1514,7 +1523,7 @@ msgstr "完成"
 msgid "Done."
 msgstr "完成。"
 
-#: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
+#: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:301
 #: src/component/file/clipboard.vue:24 src/component/label/clipboard.vue:21
 #: src/component/lightbox.vue:1820 src/component/people/clipboard.vue:23
 #: src/component/photo/clipboard.vue:84 src/component/photo/edit/files.vue:67
@@ -1535,7 +1544,7 @@ msgstr "下载远端文件"
 msgid "Download starts after transcoding."
 msgstr "转码完成后将开始下载。"
 
-#: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
+#: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:352
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
 #: src/component/lightbox.vue:3372 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:403 src/component/photo/clipboard.vue:421
@@ -1576,7 +1585,7 @@ msgstr "动态尺寸限制：%{n}px"
 #: src/page/admin/users.vue:94 src/component/cluster/node/users.vue:85
 #: src/page/admin/users.vue:162 src/page/cluster/nodes.vue:53
 #: src/page/admin/clients.vue:110 src/page/admin/users.vue:159
-#: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
+#: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:272
 #: src/component/lightbox.vue:1713 src/component/lightbox.vue:1714
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
@@ -1918,13 +1927,13 @@ msgstr "文件浏览器"
 msgid "File Conversion"
 msgstr "文件转换"
 
-#: src/component/photo/batch-edit.vue:621
+#: src/component/album/toolbar.vue:182 src/component/photo/batch-edit.vue:621
 #: src/component/photo/batch-edit.vue:641 src/component/photo/view/list.vue:34
 #: src/options/options.js:520
 msgid "File Name"
 msgstr "文件名"
 
-#: src/options/options.js:521
+#: src/component/album/toolbar.vue:183 src/options/options.js:521
 msgid "File Size"
 msgstr "文件大小"
 
@@ -2521,7 +2530,7 @@ msgstr "已达到限制，显示前 %{n} 个文件"
 msgid "Link"
 msgstr "链接"
 
-#: src/component/photo/toolbar.vue:399
+#: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:399
 msgid "List"
 msgstr "列表"
 
@@ -2662,7 +2671,7 @@ msgstr "地图样式"
 msgid "Maps"
 msgstr "地图"
 
-#: src/component/map.vue:109 src/page/places.vue:431 src/page/places.vue:436
+#: src/component/map.vue:109 src/page/places.vue:489 src/page/places.vue:494
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "地图无法显示。请尝试使用其他浏览器或设备。"
 
@@ -2741,11 +2750,12 @@ msgstr "月"
 msgid "More options"
 msgstr "更多选择"
 
-#: src/component/photo/toolbar.vue:397 src/component/photo/toolbar.vue:403
+#: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:397
+#: src/component/photo/toolbar.vue:403
 msgid "Mosaic"
 msgstr "马赛克"
 
-#: src/options/options.js:524
+#: src/component/album/toolbar.vue:184 src/options/options.js:524
 msgid "Most Relevant"
 msgstr "最相关"
 
@@ -2915,8 +2925,9 @@ msgstr "找不到人物"
 
 #: src/component/lightbox.vue:689 src/component/photo/view/cards.vue:9
 #: src/component/photo/view/list.vue:9 src/component/photo/view/mosaic.vue:9
-#: src/page/album/photos.vue:582 src/page/library/browse.vue:31
-#: src/page/photos.vue:720 src/page/places.vue:759 src/page/places.vue:885
+#: src/page/album/photos.vue:24 src/page/album/photos.vue:627
+#: src/page/library/browse.vue:31 src/page/photos.vue:720
+#: src/page/places.vue:818 src/page/places.vue:944
 msgid "No pictures found"
 msgstr "找不到图片"
 
@@ -3091,7 +3102,7 @@ msgstr "已找到一个标签"
 msgid "One person found"
 msgstr "已找到一个人物"
 
-#: src/page/album/photos.vue:584 src/page/photos.vue:722
+#: src/page/album/photos.vue:629 src/page/photos.vue:722
 msgid "One picture found"
 msgstr "已发现一张图片"
 
@@ -3504,7 +3515,8 @@ msgstr "从 XMP 元数据中读取面部区域和姓名，以创建人物标记�
 msgid "Read-Only Mode"
 msgstr "只读模式"
 
-#: src/options/options.js:516 src/page/albums.vue:406
+#: src/component/album/toolbar.vue:183 src/options/options.js:516
+#: src/page/albums.vue:406
 msgid "Recently Added"
 msgstr "最近添加"
 
@@ -3512,7 +3524,8 @@ msgstr "最近添加"
 msgid "Recently Archived"
 msgstr "最近存档"
 
-#: src/options/options.js:518 src/page/albums.vue:407
+#: src/component/album/toolbar.vue:184 src/options/options.js:518
+#: src/page/albums.vue:407
 msgid "Recently Edited"
 msgstr "最近编辑"
 
@@ -3547,7 +3560,7 @@ msgstr "减少界面动画和动态效果。"
 #: src/page/cluster/activity.vue:42 src/page/cluster/nodes.vue:26
 #: src/page/admin/activity.vue:42 src/page/admin/clients.vue:249
 #: src/page/admin/sessions.vue:336 src/page/admin/users.vue:342
-#: src/component/album/toolbar.vue:146 src/component/photo/toolbar.vue:439
+#: src/component/album/toolbar.vue:262 src/component/photo/toolbar.vue:439
 #: src/locales.js:343 src/page/albums.vue:488 src/page/labels.vue:270
 #: src/page/library/browse.vue:16 src/page/library/errors.vue:194
 #: src/page/people/new.vue:7 src/page/people/recognized.vue:35
@@ -3790,6 +3803,11 @@ msgstr "搜索"
 msgid "Search Filters"
 msgstr "搜索筛选条件"
 
+#: src/component/album/toolbar.vue:16 src/component/album/toolbar.vue:17
+#: src/component/album/toolbar.vue:39
+msgid "Search This Album"
+msgstr ""
+
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
 msgstr "搜索和查看您的照片"
@@ -3971,7 +3989,7 @@ msgstr "设置"
 msgid "Severity"
 msgstr "严重性"
 
-#: src/component/album/clipboard.vue:24 src/component/album/toolbar.vue:165
+#: src/component/album/clipboard.vue:24 src/component/album/toolbar.vue:281
 #: src/component/photo/clipboard.vue:24 src/page/settings/general.vue:305
 msgid "Share"
 msgstr "分享"
@@ -4003,6 +4021,14 @@ msgstr "显示字幕"
 #: src/page/labels.vue:289
 msgid "Show Important Only"
 msgstr "只显示重要信息"
+
+#: src/component/album/header.vue:11
+msgid "Show Less"
+msgstr ""
+
+#: src/component/album/header.vue:11
+msgid "Show More"
+msgstr ""
 
 #: src/component/user/add/dialog.vue:59 src/component/user/add/dialog.vue:65
 #: src/component/service/add.vue:59 src/component/service/edit.vue:193
@@ -4142,8 +4168,9 @@ msgstr "部分文件无法导出。请重试。"
 msgid "Something went wrong, try again"
 msgstr "出错了，再试一次"
 
-#: src/component/album/edit/dialog.vue:67 src/component/photo/toolbar.vue:169
-#: src/page/albums.vue:107 src/page/settings/collections.vue:101
+#: src/component/album/edit/dialog.vue:67 src/component/album/toolbar.vue:42
+#: src/component/photo/toolbar.vue:169 src/page/albums.vue:107
+#: src/page/settings/collections.vue:101
 msgid "Sort Order"
 msgstr "排序"
 
@@ -4385,7 +4412,8 @@ msgstr "时区"
 msgid "Timeout"
 msgstr "超时"
 
-#: src/common/util.js:1011 src/component/photo/view/list.vue:34
+#: src/common/util.js:1011 src/component/album/toolbar.vue:182
+#: src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "标题"
 
@@ -4444,7 +4472,7 @@ msgstr "切换署名"
 msgid "Toggle Thumbnails"
 msgstr "切换缩略图"
 
-#: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:63
+#: src/component/album/toolbar.vue:58 src/component/photo/toolbar.vue:63
 msgid "Toggle View"
 msgstr "切换视图"
 
@@ -4491,7 +4519,7 @@ msgstr "类型"
 msgid "URL"
 msgstr "URL"
 
-#: src/component/album/toolbar.vue:240
+#: src/component/album/toolbar.vue:358
 msgid "Unable to delete"
 msgstr "无法删除"
 
@@ -4624,7 +4652,7 @@ msgstr "升级"
 msgid "Upgrade Now"
 msgstr "立即升级"
 
-#: src/component/album/toolbar.vue:175 src/component/navigation.vue:714
+#: src/component/album/toolbar.vue:291 src/component/navigation.vue:714
 #: src/component/photo/toolbar.vue:449 src/component/service/upload.vue:63
 #: src/component/upload/dialog.vue:132 src/component/upload/dialog.vue:196
 #: src/page/albums.vue:498 src/page/labels.vue:325
@@ -4789,7 +4817,7 @@ msgstr "版本"
 msgid "Video"
 msgstr "视频"
 
-#: src/options/options.js:522
+#: src/component/album/toolbar.vue:183 src/options/options.js:522
 msgid "Video Duration"
 msgstr "视频时长"
 

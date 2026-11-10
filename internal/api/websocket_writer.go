@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -149,10 +150,46 @@ func wsPayload(topic string, user entity.User, fields event.Data) event.Data {
 // whether it receives the message at all.
 func wsOutgoing(topic, sid string, user entity.User, client wsClientRole, fields event.Data) (ev string, data event.Data, ok bool) {
 	if ev, ok = wsDelivery(topic, sid, user, client); !ok {
+		if topic == "albums.updated" && !client.Present {
+			if session, err := query.Session(sid); err == nil {
+				data, ok = wsAlbumUpdates(&session, fields)
+				return ev, data, ok
+			}
+		}
 		return ev, nil, false
 	}
 
 	return ev, wsPayload(topic, user, fields), true
+}
+
+// wsAlbumUpdates delivers only album UIDs the current session can view through the REST API.
+func wsAlbumUpdates(session *entity.Session, fields event.Data) (event.Data, bool) {
+	if session == nil || session.Expired() || session.IsClient() || session.HasAudience() || session.IsApplication() || session.IsOAuthApp() || !session.SeesAnyDetail(acl.ResourceAlbums) {
+		return nil, false
+	}
+	user := session.GetUser()
+	if user.IsUnknown() || user.IsDisabled() {
+		return nil, false
+	}
+	uids, ok := fields["entities"].([]string)
+	if !ok || len(uids) == 0 {
+		return nil, false
+	}
+	visible := make([]string, 0)
+	// Batches bound the SQL parameter count even for a library-wide cover refresh.
+	for offset := 0; offset < len(uids); offset += 100 {
+		var albums entity.Albums
+		end := min(offset+100, len(uids))
+		if err := entity.Db().Where("album_uid IN (?)", uids[offset:end]).Find(&albums).Error; err != nil {
+			return nil, false
+		}
+		for _, album := range albums {
+			if albumViewableBySession(session, album) {
+				visible = append(visible, album.AlbumUID)
+			}
+		}
+	}
+	return event.Data{"entities": visible}, len(visible) > 0
 }
 
 // wsWriter initializes a WebSocket writer for sending messages.
