@@ -1144,6 +1144,12 @@ docker-preview-resolute:
 	docker pull --platform=arm64 photoprism/develop:resolute
 	docker pull --platform=arm64 photoprism/develop:resolute-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /resolute
+docker-preview-stonking:
+	docker pull --platform=amd64 photoprism/develop:stonking
+	docker pull --platform=amd64 photoprism/develop:stonking-slim
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-stonking /stonking
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
@@ -1228,6 +1234,12 @@ docker-release-resolute:
 	docker pull --platform=arm64 photoprism/develop:resolute
 	docker pull --platform=arm64 photoprism/develop:resolute-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /resolute
+docker-release-stonking:
+	docker pull --platform=amd64 photoprism/develop:stonking
+	docker pull --platform=amd64 photoprism/develop:stonking-slim
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-stonking /stonking
 start-traefik:
 	$(DOCKER_COMPOSE) up -d --wait traefik
 stop-traefik:
@@ -1332,9 +1344,13 @@ docker-local-resolute:
 	docker pull photoprism/develop:resolute
 	docker pull ubuntu:resolute
 	scripts/docker/build.sh photoprism ce-resolute /resolute "-t photoprism/photoprism:local"
+docker-local-stonking:
+	docker pull photoprism/develop:stonking
+	docker pull ubuntu:stonking
+	scripts/docker/build.sh photoprism ce-stonking /stonking "-t photoprism/photoprism:local"
 local-develop: docker-local-develop
 docker-local-develop: docker-local-develop-resolute
-docker-local-develop-all: docker-local-develop-resolute docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop-all: docker-local-develop-stonking docker-local-develop-resolute docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
@@ -1374,6 +1390,9 @@ docker-local-develop-plucky:
 docker-local-develop-resolute:
 	docker pull ubuntu:resolute
 	scripts/docker/build.sh develop resolute /resolute
+docker-local-develop-stonking:
+	docker pull ubuntu:stonking
+	scripts/docker/build.sh develop stonking /stonking
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
