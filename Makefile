@@ -1062,10 +1062,10 @@ docker-unstable-mantic:
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-ce: docker-preview-resolute
+docker-preview-ce: docker-preview-stonking
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-resolute
+docker-preview-ubuntu: docker-preview-stonking
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64
 docker-preview-bookworm:
@@ -1075,9 +1075,9 @@ docker-preview-bookworm:
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bookworm /bookworm "-t photoprism/photoprism:preview-ce-debian"
 docker-preview-arm64:
-	docker pull --platform=arm64 photoprism/develop:lunar
-	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /lunar
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /stonking
 docker-preview-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=amd64 photoprism/develop:bullseye-slim
