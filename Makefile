@@ -1143,13 +1143,13 @@ docker-preview-resolute:
 	docker pull --platform=amd64 photoprism/develop:resolute-slim
 	docker pull --platform=arm64 photoprism/develop:resolute
 	docker pull --platform=arm64 photoprism/develop:resolute-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /resolute
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-resolute /resolute
 docker-preview-stonking:
 	docker pull --platform=amd64 photoprism/develop:stonking
 	docker pull --platform=amd64 photoprism/develop:stonking-slim
 	docker pull --platform=arm64 photoprism/develop:stonking
 	docker pull --platform=arm64 photoprism/develop:stonking-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-stonking /stonking
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /stonking
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
