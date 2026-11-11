@@ -5,6 +5,8 @@ FROM photoprism/develop:261111-resolute
 ENV NPM_CONFIG_IGNORE_SCRIPTS=true
 
 ## Alternative Environments:
+# FROM photoprism/develop:stonking # Ubuntu 26.10 (Stonking Stingray)
+# FROM photoprism/develop:resolute # Ubuntu 26.04 LTS (Resolute Raccoon)
 # FROM photoprism/develop:questing # Ubuntu 25.10 (Questing Quokka)
 # FROM photoprism/develop:plucky   # Ubuntu 25.04 (Plucky Puffin)
 # FROM photoprism/develop:oracular # Ubuntu 24.10 (Oracular Oriole)
