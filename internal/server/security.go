@@ -14,6 +14,7 @@ import (
 // Security is a middleware that adds security-related headers to the server's response.
 var Security = func(conf *config.Config) gin.HandlerFunc {
 	proxyPathPrefix := conf.BaseUri(proxy.PathPrefix)
+	landingPath := conf.FrontendUri("")
 
 	return func(c *gin.Context) {
 		if strings.HasPrefix(c.Request.URL.Path, proxyPathPrefix) {
@@ -22,10 +23,15 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 
 		// Only allow crawlers to index the site if it is a public demo (or if there is a public image wall):
 		// https://github.com/photoprism/photoprism/issues/669
+		//
+		// Set "X-Robots-Tag" header:
+		// https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag#xrobotstag
 		if !conf.Demo() || !conf.Public() {
-			// Set "X-Robots-Tag" header:
-			// https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag#xrobotstag
 			c.Header(header.RobotsTag, header.RobotsNone)
+		} else if p := c.Request.URL.Path; p != landingPath && p != landingPath+"/" {
+			// Every other route of a public demo serves the same app shell, so only
+			// the landing page should appear in search results.
+			c.Header(header.RobotsTag, header.RobotsNoIndex)
 		}
 
 		// Abort if the request must not be served through a CDN.
