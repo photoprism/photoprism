@@ -463,6 +463,11 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
+	// JPEG frame counts describe capture bursts, not animation frames.
+	if data.MimeType == header.ContentTypeJpeg || data.MimeType == "" && strings.EqualFold(data.json["FileType"], "JPEG") {
+		data.Frames = 0
+	}
+
 	// Nanoseconds.
 	if data.TakenNs <= 0 {
 		for _, name := range exifSubSecTags {
