@@ -4,6 +4,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -41,6 +43,17 @@ func oidcSubTestValue() string {
 	return "sub-" + rnd.Base36(12)
 }
 
+// oidcSubAuditWarnings returns the number of audit warnings that contain the message.
+func oidcSubAuditWarnings(hook *test.Hook, message string) (n int) {
+	for _, e := range hook.AllEntries() {
+		if e.Level == logrus.WarnLevel && strings.Contains(e.Message, message) {
+			n++
+		}
+	}
+
+	return n
+}
+
 func TestValidOIDCSub(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		assert.True(t, ValidOIDCSub("usg73p55zwgr1gbq"))
@@ -66,8 +79,10 @@ func TestUser_InitOIDCSub(t *testing.T) {
 		require.NoError(t, user.Updates(Values{"auth_method": authn.Method2FA.String(), "auth_issuer": "https://old.example.com/"}))
 		user.AuthIssuer = "https://old.example.com/"
 		sub := oidcSubTestValue()
+		hook := captureAuditLog(t)
 
 		assert.True(t, user.InitOIDCSub(sub))
+		assert.Equal(t, 1, oidcSubAuditWarnings(hook, "linked to oidc subject"))
 		assert.Equal(t, authn.ProviderOIDC.String(), user.AuthProvider)
 		assert.Equal(t, sub, user.AuthID)
 		assert.Equal(t, "", user.AuthIssuer)
@@ -120,8 +135,10 @@ func TestUser_InitOIDCSub(t *testing.T) {
 		sub := oidcSubTestValue()
 		user := createOIDCSubTestUser(t, authn.ProviderOIDC, sub, true)
 		require.NoError(t, user.Updates(Values{"auth_issuer": "https://idp.example.com/"}))
+		hook := captureAuditLog(t)
 
 		assert.False(t, user.InitOIDCSub(sub))
+		assert.Equal(t, 0, oidcSubAuditWarnings(hook, "linked to oidc subject"))
 		found := FindUserByUID(user.UserUID)
 		assert.Equal(t, sub, found.AuthID)
 		assert.Equal(t, "https://idp.example.com/", found.AuthIssuer)
@@ -138,8 +155,10 @@ func TestUser_InitOIDCSub(t *testing.T) {
 		sub := oidcSubTestValue()
 		other := createOIDCSubTestUser(t, authn.ProviderOIDC, sub, false)
 		user := createOIDCSubTestUser(t, authn.ProviderLocal, "", true)
+		hook := captureAuditLog(t)
 
 		assert.True(t, user.InitOIDCSub(sub))
+		assert.Equal(t, 1, oidcSubAuditWarnings(hook, "oidc subject detached from '"+other.UserName+"'"))
 		assert.Equal(t, sub, FindUserByUID(user.UserUID).AuthID)
 		found := FindUserByUID(other.UserUID)
 		assert.Equal(t, authn.ProviderNone.String(), found.AuthProvider)

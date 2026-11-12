@@ -73,14 +73,14 @@ func (m *User) InitOIDCSub(sub string) (updated bool) {
 	user.SetAuthID(sub, "")
 
 	for _, other := range holders {
-		event.SystemWarn([]string{"config", "init", "admin account %s", "oidc subject detached from %s", status.Updated}, name, clean.LogQuote(other.Username()))
+		event.AuditWarn([]string{"config", "init", "admin account %s", "oidc subject detached from %s", status.Updated}, name, clean.LogQuote(other.Username()))
 	}
 
 	m.AuthProvider = user.AuthProvider
 	m.AuthID = user.AuthID
 	m.AuthIssuer = user.AuthIssuer
 
-	event.AuditInfo([]string{"config", "init", "admin account %s", "linked to oidc subject", status.Updated}, name)
+	event.AuditWarn([]string{"config", "init", "admin account %s", "linked to oidc subject", status.Updated}, name)
 
 	return true
 }
