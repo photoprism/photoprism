@@ -143,6 +143,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Photo Albums.
 	api.SearchAlbums(APIv1)
 	api.GetAlbum(APIv1)
+	api.GetAlbumHeader(APIv1)
 	api.AlbumCover(APIv1)
 	api.CreateAlbum(APIv1)
 	api.UpdateAlbum(APIv1)

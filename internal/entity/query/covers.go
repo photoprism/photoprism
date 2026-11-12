@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -25,6 +26,8 @@ var coversBusy = atomic.Bool{}
 func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
+
+	defer notifyAlbumCoverChanges(entity.AlbumManual, albums...)()
 
 	start := time.Now()
 
@@ -99,6 +102,8 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
+	defer notifyAlbumCoverChanges(entity.AlbumFolder, albums...)()
+
 	start := time.Now()
 
 	var res *gorm.DB
@@ -169,6 +174,8 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
+
+	defer notifyAlbumCoverChanges(entity.AlbumMonth, albums...)()
 
 	start := time.Now()
 
@@ -671,4 +678,54 @@ func UpdateCovers() (err error) {
 	}
 
 	return nil
+}
+
+// notifyAlbumCoverChanges snapshots automatic covers and publishes only committed changes after cache eviction.
+func notifyAlbumCoverChanges(albumType string, albums ...entity.Album) func() {
+	type coverState struct {
+		AlbumUID string
+		Thumb    string
+	}
+	stmt := Db().Model(&entity.Album{}).Where("album_type = ?", albumType)
+	if len(albums) > 0 {
+		uids := make([]string, 0, len(albums))
+		for _, album := range albums {
+			if album.AlbumUID != "" && album.AlbumType == albumType && album.ThumbSrc == entity.SrcAuto {
+				uids = append(uids, album.AlbumUID)
+			}
+		}
+		if len(uids) == 0 {
+			return func() {}
+		}
+		stmt = stmt.Where("album_uid IN (?)", uids)
+	}
+	var before []coverState
+	if err := stmt.Session(&gorm.Session{}).Select("album_uid, thumb").Where("thumb_src = ?", entity.SrcAuto).Find(&before).Error; err != nil {
+		log.Errorf("covers: %s", err)
+		return func() {}
+	}
+	return func() {
+		if len(before) == 0 {
+			return
+		}
+		var after []coverState
+		if err := stmt.Session(&gorm.Session{}).Select("album_uid, thumb").Find(&after).Error; err != nil {
+			log.Errorf("covers: %s", err)
+			return
+		}
+		previous := make(map[string]string, len(before))
+		for _, album := range before {
+			previous[album.AlbumUID] = album.Thumb
+		}
+		changed := make([]string, 0)
+		for _, album := range after {
+			if thumb, ok := previous[album.AlbumUID]; ok && thumb != album.Thumb {
+				changed = append(changed, album.AlbumUID)
+			}
+		}
+		if len(changed) > 0 {
+			entity.FlushAlbumCache()
+			event.EntitiesUpdated("albums", changed)
+		}
+	}
 }

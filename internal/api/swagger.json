@@ -1,5 +1,39 @@
 {
     "definitions": {
+        "api.AlbumHeaderData": {
+            "properties": {
+                "Faces": {
+                    "$ref": "#/definitions/api.AlbumHeaderRect"
+                },
+                "Hash": {
+                    "type": "string"
+                },
+                "Height": {
+                    "type": "integer"
+                },
+                "Width": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "api.AlbumHeaderRect": {
+            "properties": {
+                "H": {
+                    "type": "number"
+                },
+                "W": {
+                    "type": "number"
+                },
+                "X": {
+                    "type": "number"
+                },
+                "Y": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
         "api.FoldersResponse": {
             "properties": {
                 "cached": {
@@ -6218,6 +6252,59 @@
                 "tags": [
                     "Albums",
                     "Download"
+                ]
+            }
+        },
+        "/api/v1/albums/{uid}/header": {
+            "get": {
+                "operationId": "GetAlbumHeader",
+                "parameters": [
+                    {
+                        "description": "Album UID",
+                        "in": "path",
+                        "name": "uid",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.AlbumHeaderData"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "returns album header information",
+                "tags": [
+                    "Albums"
                 ]
             }
         },
