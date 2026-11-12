@@ -1155,7 +1155,7 @@ docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-resolute
+docker-release-ubuntu: docker-release-stonking
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64
 docker-release-bookworm:
@@ -1165,9 +1165,9 @@ docker-release-bookworm:
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-bookworm /bookworm "-t photoprism/photoprism:ce-debian"
 docker-release-arm64:
-	docker pull --platform=arm64 photoprism/develop:lunar
-	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx.sh photoprism linux/arm64 ce-arm64 /lunar
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx.sh photoprism linux/arm64 ce-arm64 /stonking
 docker-release-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=amd64 photoprism/develop:bullseye-slim
@@ -1233,13 +1233,13 @@ docker-release-resolute:
 	docker pull --platform=amd64 photoprism/develop:resolute-slim
 	docker pull --platform=arm64 photoprism/develop:resolute
 	docker pull --platform=arm64 photoprism/develop:resolute-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /resolute
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-resolute /resolute
 docker-release-stonking:
 	docker pull --platform=amd64 photoprism/develop:stonking
 	docker pull --platform=amd64 photoprism/develop:stonking-slim
 	docker pull --platform=arm64 photoprism/develop:stonking
 	docker pull --platform=arm64 photoprism/develop:stonking-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-stonking /stonking
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /stonking
 start-traefik:
 	$(DOCKER_COMPOSE) up -d --wait traefik
 stop-traefik:
@@ -1286,12 +1286,12 @@ terminal-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml exec photoprism-preview bash
 logs-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml logs -f photoprism-preview
-docker-local: docker-local-resolute
+docker-local: docker-local-stonking
 docker-local-up:
 	$(DOCKER_COMPOSE) -f compose.local.yaml up --force-recreate
 docker-local-down:
 	$(DOCKER_COMPOSE) -f compose.local.yaml down --remove-orphans
-docker-local-all: docker-local-resolute docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
+docker-local-all: docker-local-stonking docker-local-resolute docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
