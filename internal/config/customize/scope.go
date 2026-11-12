@@ -23,6 +23,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 	m.Features.Cameras = s.Features.Cameras && scopes.Contains(acl.ResourceCameras.String())
 	m.Features.Lenses = s.Features.Lenses && scopes.Contains(acl.ResourceLenses.String())
 	m.Features.Calendar = s.Features.Calendar && scopes.Contains(acl.ResourceCalendar.String())
+	m.Features.Discover = s.Features.Discover && scopes.Contains(acl.ResourcePhotos.String())
 	m.Features.Moments = s.Features.Moments && scopes.Contains(acl.ResourceMoments.String())
 	m.Features.People = s.Features.People && scopes.Contains(acl.ResourcePeople.String())
 	m.Features.Places = s.Features.Places && scopes.Contains(acl.ResourcePlaces.String())

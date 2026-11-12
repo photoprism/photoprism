@@ -120,6 +120,7 @@
 </template>
 <script>
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
+import { selectionRange } from "common/selection";
 import { virtualizationTools } from "common/virtualization-tools";
 import IconLivePhoto from "component/icon/live-photo.vue";
 
@@ -130,6 +131,10 @@ export default {
   },
   props: {
     photos: {
+      type: Array,
+      default: () => [],
+    },
+    selectionPhotos: {
       type: Array,
       default: () => [],
     },
@@ -339,8 +344,15 @@ export default {
         this.selectRange(index);
       }
     },
+    // selectRange extends the selection through the full result list when one section shows a slice.
     selectRange(index) {
-      this.$clipboard.addRange(index, this.photos);
+      const range = selectionRange(this.photos, index, this.selectionPhotos);
+
+      if (!range) {
+        return;
+      }
+
+      this.$clipboard.addRange(range.index, range.photos);
       this.$forceUpdate();
     },
   },
