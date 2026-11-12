@@ -135,7 +135,18 @@ func TestRunRestore_Sqlite(t *testing.T) {
 		require.NoError(t, os.Chmod(dbFile, 0o400))
 		_, restoreErr = runRestore(sqliteRestoreCmd(bin, dbFile), strings.NewReader("INSERT INTO t VALUES (1);\nINSERT INTO t VALUES (2);\n"), "")
 		require.Error(t, restoreErr)
-		assert.Contains(t, restoreErr.Error(), "(8)")
+		assert.Contains(t, restoreErr.Error(), "attempt to write a readonly database")
+	})
+	t.Run("SequenceTable", func(t *testing.T) {
+		// A dump with the line creating sqlite_sequence restores with the local client, in safe mode where supported.
+		dbFile := filepath.Join(t.TempDir(), "index.db")
+		dump := sqliteDump(string(sqliteSequenceTable), "\n")
+		failed, restoreErr := runRestore(sqliteRestoreCmd(bin, dbFile), restoreReader(dsn.DriverSQLite3, strings.NewReader(dump)), "")
+		require.NoError(t, restoreErr)
+		assert.Zero(t, failed.Count)
+		seq, err := exec.Command(bin, dbFile, "SELECT name || '=' || seq FROM sqlite_sequence;").Output() //nolint:gosec // G204: test command
+		require.NoError(t, err)
+		assert.Equal(t, "t=1\n", string(seq))
 	})
 }
 
