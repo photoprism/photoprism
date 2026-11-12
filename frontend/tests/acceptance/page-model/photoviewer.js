@@ -30,11 +30,11 @@ export const SIDEBAR_ROW_KEYS = [
 ];
 
 export default class Page {
+  // constructor initializes the photo viewer selectors.
   constructor() {
     this.view = Selector("div.p-view-select", { timeout: 15000 });
     this.camera = Selector("div.p-camera-select", { timeout: 15000 });
     this.countries = Selector("div.p-countries-select", { timeout: 15000 });
-    this.time = Selector("div.p-time-select", { timeout: 15000 });
     this.search1 = Selector("div.input-search input", { timeout: 15000 });
     this.menuButton = Selector("button.pswp__button--menu-button", { timeout: 15000 });
     this.viewer = Selector("div.p-lightbox__pswp", { timeout: 15000 });

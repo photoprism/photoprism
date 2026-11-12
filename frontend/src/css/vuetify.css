@@ -314,7 +314,8 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     opacity: 0.97;
 }
 
-.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact.v-list-item--one-line {
+.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact.v-list-item--one-line,
+.v-menu > .v-overlay__content > .v-list > .action-menu__row > .v-list-item.v-list-item--density-compact.v-list-item--one-line {
     line-height: 36px;
     min-height: 36px;
     padding-top: 6px;
@@ -455,7 +456,8 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 }
 
 .v-input.v-select.v-input--density-compact > .v-input__control > .v-field .v-select__selection,
-.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__prepend {
+.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__prepend,
+.v-menu > .v-overlay__content > .v-list > .action-menu__row > .v-list-item.v-list-item--density-compact > .v-list-item__prepend {
     display: flex;
     flex-wrap: nowrap;
 }
@@ -466,12 +468,14 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     justify-content: flex-start;
 }
 
-.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__prepend .v-list-item__spacer {
+.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__prepend .v-list-item__spacer,
+.v-menu > .v-overlay__content > .v-list > .action-menu__row > .v-list-item.v-list-item--density-compact > .v-list-item__prepend .v-list-item__spacer {
     width: 8px;
 }
 
 .v-input.v-select.v-input--density-compact > .v-input__control > .v-field .v-select__selection .v-icon,
-.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__prepend .v-icon {
+.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__prepend .v-icon,
+.v-menu > .v-overlay__content > .v-list > .action-menu__row > .v-list-item.v-list-item--density-compact > .v-list-item__prepend .v-icon {
     font-size: 19px;
     height: 19px;
     width: 19px;
@@ -518,7 +522,8 @@ body .v-table > .v-table__wrapper > table {
 /* Menu */
 
 .v-input.v-select.v-input--density-compact > .v-input__control > .v-field .v-select__selection,
-.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__content > .v-list-item-title {
+.v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__content > .v-list-item-title,
+.v-menu > .v-overlay__content > .v-list > .action-menu__row > .v-list-item.v-list-item--density-compact > .v-list-item__content > .v-list-item-title {
     font-size: 0.75rem;
 }
 

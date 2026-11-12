@@ -242,6 +242,12 @@ table td > .action-buttons {
     user-select: none;
 }
 
+.v-menu > .v-overlay__content > .v-list.action-menu__list > .action-menu__row {
+    padding-inline-end: 10px;
+    margin: 2px 0;
+    user-select: none;
+}
+
 .v-menu.action-menu.action-menu--lightbox .action-menu__list {
     opacity: 0.9;
     background: #191a1c;

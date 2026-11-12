@@ -11,6 +11,10 @@ Other frontend documentation lives next to this file:
 - [Common Modules](src/common/README.md) — dialog/focus patterns and shared helpers
 - [Tests & Linting](tests/README.md) — test layout and toolchain validation
 
+## Sorting & Media Filters
+
+Sorting helpers live in `src/common/sort.js`, and the shared menu lives in `src/component/sort/menu.vue`. The photo toolbar owns the compact View menu and Media Type selector; `src/common/photo-types.js` filters the shared `options.PhotoTypes()` entries by page scope and validates URL media types in the photos page.
+
 ## Setup & Workspace
 
 Use Node.js 24.15.0 or later (Node.js 25 is not supported) and npm 9 or later; `package.json` declares the engine floors. The root `package.json` owns the npm workspace, and the root `package-lock.json` is the only dependency lockfile. Install from the repository root:

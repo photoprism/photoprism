@@ -1,9 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PPhotoToolbar from "component/photo/toolbar.vue";
+import { photoOptions } from "common/sort";
+import { PhotoTypes } from "options/options";
+import { reactive } from "vue";
 import * as contexts from "options/contexts";
 import "../../fixtures";
 
+// mountToolbar mounts the toolbar with configurable scope and accessibility settings.
 function mountToolbar({
   context = contexts.Photos,
   embedded = false,
@@ -23,6 +27,7 @@ function mountToolbar({
   featuresOverrides = {},
   searchOverrides = {},
   allowMock,
+  display,
   refresh = vi.fn(),
   updateFilter = vi.fn(),
   updateQuery = vi.fn(),
@@ -30,6 +35,7 @@ function mountToolbar({
   routerOverrides = {},
   clipboard,
   openUrlSpy,
+  hoverSettings = reactive({ enabled: false }),
 } = {}) {
   const baseConfig = VTUConfig.global.mocks.$config;
   const baseSettings = baseConfig.getSettings ? baseConfig.getSettings() : { features: {} };
@@ -83,11 +89,14 @@ function mountToolbar({
   const util = {
     ...baseUtil,
     openUrl: openUrlSpy || vi.fn(),
+    shouldOpenOnHover: () => hoverSettings.enabled,
   };
 
-  const wrapper = shallowMount(PPhotoToolbar, {
+  const component = display ? { ...PPhotoToolbar, computed: { ...PPhotoToolbar.computed, $vuetify: () => ({ display }) } } : PPhotoToolbar;
+  const wrapper = shallowMount(component, {
     props: {
       context,
+      sortOptions: photoOptions(context === contexts.Archive ? "archive" : "browse"),
       filter,
       staticFilter,
       settings,
@@ -109,6 +118,11 @@ function mountToolbar({
         $util: util,
       },
       stubs: {
+        ...(display ? {
+          VForm: { template: "<form><slot /></form>" },
+          VToolbar: { template: "<div><slot /></div>" },
+          VMenu: { name: "VMenu", props: ["openOnHover"], template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
+        } : {}),
         PActionMenu: true,
         PConfirmDialog: true,
       },
@@ -252,6 +266,78 @@ describe("component/photo/toolbar", () => {
       const values = wrapper.vm.sortOptions.map((o) => o.value);
       expect(values).toContain("similar");
       expect(values).toContain("relevance");
+    });
+  });
+
+  describe("sort visibility and compact view", () => {
+    it("shows sorting even when all management permissions are denied", () => {
+      const { wrapper } = mountToolbar({ allowMock: () => false, display: { smAndDown: false, mdAndUp: true } });
+      expect(wrapper.findComponent({ name: "PSortMenu" }).exists()).toBe(true);
+    });
+    it("replaces the desktop view toggle with a menu on small displays", () => {
+      const { wrapper } = mountToolbar({ display: { smAndDown: true, mdAndUp: false } });
+      expect(wrapper.findComponent({ name: "VBtnToggle" }).exists()).toBe(false);
+      expect(wrapper.find(".action-view").exists()).toBe(true);
+      expect(wrapper.vm.viewOptions.map((item) => item.icon)).toEqual(["mdi-view-comfy", "mdi-view-column", "mdi-view-list"]);
+    });
+    it("retains the view toggle on larger displays", () => {
+      const { wrapper } = mountToolbar({ display: { smAndDown: false, mdAndUp: true } });
+      expect(wrapper.findComponent({ name: "VBtnToggle" }).exists()).toBe(true);
+      expect(wrapper.find(".action-view").exists()).toBe(false);
+    });
+  });
+
+  it("updates the compact menu hover preference without remounting", async () => {
+    const hoverSettings = reactive({ enabled: false });
+    const { wrapper } = mountToolbar({ display: { smAndDown: true, mdAndUp: false }, hoverSettings });
+    const menu = wrapper.findComponent({ name: "VMenu" });
+    expect(menu.props("openOnHover")).toBe(false);
+    hoverSettings.enabled = true;
+    await wrapper.vm.$nextTick();
+    expect(menu.props("openOnHover")).toBe(true);
+  });
+
+  describe("media filters", () => {
+    it("offers the specified media types including an empty All value", () => {
+      const { wrapper } = mountToolbar();
+      expect(wrapper.vm.showMediaType).toBe(true);
+      expect(wrapper.vm.mediaOptions).toEqual([{ value: "", text: "All" }, ...PhotoTypes()]);
+    });
+
+    it.each(["video", "live", "animated", "audio", "type"])("hides the selector for fixed %s pages", (key) => {
+      const { wrapper } = mountToolbar({ staticFilter: { [key]: "true" } });
+      expect(wrapper.vm.showMediaType).toBe(false);
+    });
+
+    it.each([
+      [{ photo: "true" }, "stacks", ["", "image", "raw", "live"]],
+      [{ photo: "true" }, "scans", ["", "image", "raw", "live"]],
+      [{}, "mono:true quality:3 photo:true", ["", "image", "raw", "live"]],
+      [{ media: "true" }, "", ["", "live", "video", "audio", "animated"]],
+    ])("limits options to the page scope %j / %s", (staticFilter, q, values) => {
+      const { wrapper } = mountToolbar({ staticFilter, filter: { q } });
+      expect(wrapper.vm.mediaOptions.map((item) => item.value)).toEqual(values);
+    });
+
+    it.each(["vectors", "documents"])("hides the selector on %s and updates after navigation", async (q) => {
+      const { wrapper } = mountToolbar({ filter: { q } });
+      expect(wrapper.vm.showMediaType).toBe(false);
+      await wrapper.setProps({ filter: { q: "cats" } });
+      expect(wrapper.vm.showMediaType).toBe(true);
+    });
+
+    it.each(["live", "raw", "animated", "audio", "video", "monochrome", "cats documents"])("keeps the selector and selected RAW for search %s", async (q) => {
+      const { wrapper } = mountToolbar({ filter: { q: "", type: "raw" } });
+      await wrapper.setProps({ filter: { q, type: "raw" } });
+      expect(wrapper.vm.showMediaType).toBe(true);
+      expect(wrapper.vm.mediaOptions).toEqual([{ value: "", text: "All" }, ...PhotoTypes()]);
+      expect(wrapper.props("filter").type).toBe("raw");
+    });
+
+    it("hides the selector on embedded lists", () => {
+      const { wrapper } = mountToolbar({ embedded: true });
+      expect(wrapper.vm.showMediaType).toBe(false);
+      expect(wrapper.findComponent({ name: "PSortMenu" }).exists()).toBe(false);
     });
   });
 
