@@ -1,5 +1,6 @@
-# Ubuntu 26.04 LTS (Resolute Raccoon)
-FROM photoprism/develop:261111-resolute
+# Develop Base Image
+ARG DOCKERFILE_IMAGE_TAG=261111-stonking
+FROM photoprism/develop:${DOCKERFILE_IMAGE_TAG}
 
 # Harden npm usage by default (applies to npm ci / install in dev container)
 ENV NPM_CONFIG_IGNORE_SCRIPTS=true
