@@ -936,7 +936,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-resolute docker-develop-resolute-slim
+docker-develop-ubuntu: docker-develop-stonking docker-develop-stonking-slim docker-develop-resolute docker-develop-resolute-slim
 docker-develop-legacy: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
@@ -1032,7 +1032,7 @@ docker-develop-questing-slim:
 docker-develop-resolute:
 	docker pull --platform=amd64 ubuntu:resolute
 	docker pull --platform=arm64 ubuntu:resolute
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute
 docker-develop-resolute-slim:
 	docker pull --platform=amd64 ubuntu:resolute
 	docker pull --platform=arm64 ubuntu:resolute
@@ -1040,7 +1040,7 @@ docker-develop-resolute-slim:
 docker-develop-stonking:
 	docker pull --platform=amd64 ubuntu:stonking
 	docker pull --platform=arm64 ubuntu:stonking
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 stonking /stonking
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 stonking /stonking "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-stonking-slim:
 	docker pull --platform=amd64 ubuntu:stonking
 	docker pull --platform=arm64 ubuntu:stonking
