@@ -143,6 +143,9 @@ func resetIndexDb(c *config.Config) {
 		entity.Admin.InitAccount(c.AdminInitName(), c.AdminPassword(), c.AdminScope())
 	}
 
+	// Link the initial Super Admin account to an OIDC subject, if specified.
+	entity.Admin.InitOIDCSub(c.AdminOIDCSub())
+
 	log.Infof("completed in %s", time.Since(start))
 }
 

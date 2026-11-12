@@ -36,6 +36,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"admin-user", c.AdminUser()},
 		{"admin-password", maskedSecret(c.AdminPassword())},
 		{"admin-scope", c.AdminScope()},
+		{"admin-oidc-sub", c.AdminOIDCSub()},
 		{"password-length", fmt.Sprintf("%d", c.PasswordLength())},
 		{"password-reset-uri", c.PasswordResetUri()},
 		{"register-uri", c.RegisterUri()},

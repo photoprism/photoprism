@@ -31,6 +31,7 @@ type Options struct {
 	AdminUser                 string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword             string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	AdminScope                string        `yaml:"AdminScope" json:"-" flag:"admin-scope" tags:"portal,pro"`
+	AdminOIDCSub              string        `yaml:"AdminOIDCSub" json:"-" flag:"admin-oidc-sub" tags:"portal,pro"`
 	PasswordLength            int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
 	PasswordResetUri          string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri" tags:"plus,portal,pro"`
 	RegisterUri               string        `yaml:"RegisterUri" json:"-" flag:"register-uri" tags:"portal,pro"`

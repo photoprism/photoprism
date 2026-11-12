@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -134,6 +135,24 @@ func (c *Config) AdminScope() string {
 	}
 
 	return clean.Scope(c.options.AdminScope)
+}
+
+// AdminOIDCSub returns the OIDC subject linked to the initial admin account, or an empty string if none
+// is configured or the value is invalid.
+func (c *Config) AdminOIDCSub() string {
+	sub := strings.TrimSpace(c.options.AdminOIDCSub)
+
+	if sub == "" {
+		return ""
+	} else if !entity.ValidOIDCSub(sub) {
+		if _, warned := c.warnedOnce.LoadOrStore("admin-oidc-sub: "+sub, true); !warned {
+			event.SystemWarn([]string{"config", "admin oidc sub", "invalid subject, value ignored"})
+		}
+
+		return ""
+	}
+
+	return sub
 }
 
 // PasswordLength returns the minimum password length in characters.
