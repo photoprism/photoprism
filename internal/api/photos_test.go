@@ -286,6 +286,17 @@ func TestPhotoPrimary(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	t.Run("OtherPhotoFile", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		PhotoPrimary(router)
+		var before, after []string
+		require.NoError(t, entity.Db().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", "ps6sg6be2lvl0yh7").Pluck("file_uid", &before).Error)
+		require.NotEmpty(t, before)
+		r := PerformRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/files/fs6sg6bwhhbnlqdn/primary")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+		require.NoError(t, entity.Db().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", "ps6sg6be2lvl0yh7").Pluck("file_uid", &after).Error)
+		assert.Equal(t, before, after)
+	})
 }
 
 func TestGetPhotoYaml(t *testing.T) {

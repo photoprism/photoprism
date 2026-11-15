@@ -227,14 +227,32 @@ func TestFileByHash(t *testing.T) {
 }
 
 func TestSetPhotoPrimary(t *testing.T) {
+	// primaryFiles returns the UIDs of a photo's primary files.
+	primaryFiles := func(t *testing.T, photoUid string) (uids []string) {
+		require.NoError(t, Db().Model(&entity.File{}).Where("photo_uid = ? AND file_primary = TRUE", photoUid).Pluck("file_uid", &uids).Error)
+		return uids
+	}
 	t.Run("Success", func(t *testing.T) {
 		assert.Equal(t, false, entity.FileFixturesExampleXMP.FilePrimary)
+		t.Cleanup(func() { assert.NoError(t, SetPhotoPrimary("ps6sg6be2lvl0yh0", "fs6sg6bw15bnlqdw")) })
+
+		require.NoError(t, SetPhotoPrimary("ps6sg6be2lvl0yh0", "fs6sg6bwhhbnlqdn"))
+		assert.Equal(t, []string{"fs6sg6bwhhbnlqdn"}, primaryFiles(t, "ps6sg6be2lvl0yh0"))
+	})
+	t.Run("OtherPhoto", func(t *testing.T) {
+		before := primaryFiles(t, "ps6sg6be2lvl0yh7")
+		require.NotEmpty(t, before)
 
 		err := SetPhotoPrimary("ps6sg6be2lvl0yh7", "fs6sg6bwhhbnlqdn")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "cannot find file")
+		assert.Equal(t, before, primaryFiles(t, "ps6sg6be2lvl0yh7"))
+	})
+	t.Run("UnknownFile", func(t *testing.T) {
+		before := primaryFiles(t, "ps6sg6be2lvl0yh7")
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.Error(t, SetPhotoPrimary("ps6sg6be2lvl0yh7", "fs6sg6bw45bn9999"))
+		assert.Equal(t, before, primaryFiles(t, "ps6sg6be2lvl0yh7"))
 	})
 	t.Run("NoFileUid", func(t *testing.T) {
 		err := SetPhotoPrimary("ps6sg6be2lvl0yh7", "")
