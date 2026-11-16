@@ -196,6 +196,7 @@ Git (main repository and cloned sub-repositories):
   git-pull                 Pull the latest changes into every repository
   git-develop              Switch every repository to "develop" and fast-forward it
   git-checkout BRANCH=...  Switch every repository to the given branch
+  git-rebase [BRANCH=...]  Like git-develop, but rebase unpushed local commits
   git-status               Show the branch and changes of every repository
 
 Other:
@@ -914,12 +915,17 @@ git-pull:
 		echo "Updating photoprism/$$d"; \
 		git -C "$$d" pull --ff-only || echo "Warning: git pull failed in $$d"; \
 	done;
+GIT_BRANCH_ORIGIN := $(origin BRANCH)
 git-checkout: override export BRANCH := $(value BRANCH)
 git-checkout:
-	@[ "$(origin BRANCH)" = "command line" ] && [ -n "$$BRANCH" ] || { echo 'Usage: make git-checkout BRANCH=<branch>'; exit 2; }
+	@[ "$(GIT_BRANCH_ORIGIN)" = "command line" ] && [ -n "$$BRANCH" ] || { echo 'Usage: make git-checkout BRANCH=<branch>'; exit 2; }
 	@bash ./scripts/git-checkout.sh "$$BRANCH"
 git-develop:
 	@bash ./scripts/git-checkout.sh develop
+git-rebase: override export BRANCH := $(value BRANCH)
+git-rebase:
+	@if [ "$(GIT_BRANCH_ORIGIN)" = "command line" ]; then b="$$BRANCH"; else b=develop; fi; \
+	bash ./scripts/git-checkout.sh --rebase "$$b"
 git-status:
 	@bash ./scripts/git-checkout.sh --status
 docker-pull:

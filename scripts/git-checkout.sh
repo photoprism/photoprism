@@ -2,10 +2,13 @@
 
 # Switches the main repository and every cloned sub-repository to the same branch, or prints their status.
 #
-# Usage: git-checkout.sh <branch>   fetch, switch to <branch>, and fast-forward it to origin/<branch>
-#        git-checkout.sh --status   show branch, revision, changes, and ahead/behind counts
+# Usage: git-checkout.sh <branch>            fetch, switch to <branch>, and fast-forward it to origin/<branch>
+#        git-checkout.sh --rebase <branch>   same, but rebase unpushed local commits onto origin/<branch>
+#        git-checkout.sh --status            show branch, revision, changes, and ahead/behind counts
 #
-# It works on the repository it belongs to, wherever it is called from, and never merges, rebases, or stashes.
+# It works on the repository it belongs to, wherever it is called from. It never merges or stashes, and rebases
+# only with --rebase: then only commits that are on no remote are moved, merge commits are refused, and a
+# rebase that stops (conflict, hook, signing) is aborted. Commits already upstream are dropped as empty.
 # It refuses to start while any repository has uncommitted changes, an operation in progress, or commits
 # that only a detached HEAD holds. The branch must exist on origin; exits 1 if any repository fails to switch.
 set -uo pipefail
@@ -83,6 +86,14 @@ status() {
   done < <(repos)
 }
 
+# rpath prints the path of a file in a repository's Git directory, relative to the main repository.
+rpath() {
+  local p
+  p=$(g "$1" rev-parse --git-path "$2") || return 1
+  [[ $p == /* ]] || p="$1/$p"
+  echo "$p"
+}
+
 # blocked prints why a repository must not be switched now, or nothing if it may be.
 blocked() {
   local r=$1 out p
@@ -97,8 +108,7 @@ blocked() {
     return
   fi
   for p in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISECT_START BISECT_LOG sequencer; do
-    p=$(g "$r" rev-parse --git-path "$p") || continue
-    [[ $p == /* ]] || p="$r/$p"
+    p=$(rpath "$r" "$p") || continue
     if [[ -e $p ]]; then
       echo "an operation is in progress (${p##*/}); finish or abort it first"
       return
@@ -109,14 +119,20 @@ blocked() {
   fi
 }
 
-if [[ $# -ne 1 || -z $1 ]]; then
-  echo "Usage: $0 <branch> | --status" >&2
-  exit 2
-fi
-
-if [[ $1 == "--status" ]]; then
+if [[ $# -eq 1 && $1 == "--status" ]]; then
   status
   exit 0
+fi
+
+rebase=0
+if [[ $# -eq 2 && $1 == "--rebase" ]]; then
+  rebase=1
+  shift
+fi
+
+if [[ $# -ne 1 || -z $1 ]]; then
+  echo "Usage: $0 [--rebase] <branch> | --status" >&2
+  exit 2
 fi
 
 branch=$1
@@ -176,9 +192,45 @@ for r in "${list[@]}"; do
     failed=1
     continue
   fi
-  if ! out=$(g "$r" merge --ff-only --quiet "$remote" 2>&1) || ! g "$r" merge-base --is-ancestor "$remote" HEAD; then
-    printf '%-22s %s\n' "$name" "NOT UPDATED (local branch has diverged from origin/$branch)"
-    indent "$out"
+  if g "$r" merge-base --is-ancestor HEAD "$remote" || g "$r" merge-base --is-ancestor "$remote" HEAD; then
+    if ! out=$(g "$r" merge --ff-only --quiet "$remote" 2>&1); then
+      printf '%-22s %s\n' "$name" "NOT UPDATED"
+      indent "$out"
+      failed=1
+      continue
+    fi
+  elif [[ $rebase -eq 0 ]]; then
+    printf '%-22s %s\n' "$name" "NOT UPDATED (local branch has diverged from origin/$branch; try git-rebase)"
+    failed=1
+    continue
+  elif [[ -n $(g "$r" rev-list -n 1 --merges "$remote..HEAD") ]]; then
+    printf '%-22s %s\n' "$name" "NOT REBASED (unpushed merge commits; rebase them by hand)"
+    failed=1
+    continue
+  elif [[ $(g "$r" rev-list --count "$remote..HEAD") != "$(g "$r" rev-list --count "$remote..HEAD" --not --remotes)" ]]; then
+    printf '%-22s %s\n' "$name" "NOT REBASED (local commits are also on another remote branch; rebase them by hand)"
+    failed=1
+    continue
+  else
+    before=$(g "$r" rev-parse HEAD)
+    if ! out=$(g "$r" rebase --quiet --no-autostash --no-autosquash --no-update-refs "$remote" 2>&1); then
+      abort=$(g "$r" rebase --abort 2>&1)
+      if [[ -e $(rpath "$r" rebase-merge) || -e $(rpath "$r" rebase-apply) || $(g "$r" rev-parse HEAD) != "$before" ||
+        $(g "$r" symbolic-ref --quiet --short HEAD) != "$branch" ]]; then
+        printf '%-22s %s\n' "$name" "LEFT MID-REBASE (the abort failed; run git rebase --abort there)"
+        indent "$abort"
+      else
+        printf '%-22s %s\n' "$name" "REBASE FAILED, left unchanged (conflict or hook; rebase it by hand)"
+      fi
+      indent "$out"
+      failed=1
+      continue
+    fi
+    printf '%-22s %s\n' "$name" "OK (rebased, $(g "$r" rev-list --count "$remote..HEAD") local commits on top)"
+    continue
+  fi
+  if ! g "$r" merge-base --is-ancestor "$remote" HEAD; then
+    printf '%-22s %s\n' "$name" "NOT UPDATED"
     failed=1
     continue
   fi

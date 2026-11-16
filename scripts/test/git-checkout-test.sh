@@ -231,6 +231,113 @@ check "Status: lists main" 'grep -qE "^photoprism +feature " <<<"$out"'
 check "Status: shows ahead count" 'grep -qE "^photoprism/pro +develop .* ahead=1 behind=0" <<<"$out"'
 check "Status: no switch or fetch" '[[ $(branch "$w") == feature && $(refs | sha1sum) == "$before" ]]'
 
+# pushfile commits a file with the given content to a branch of a bare origin.
+pushfile() {
+  local w="$tmp/pushfile-$1-$2"
+  git clone -q -b "$2" "$tmp/remotes/$1.git" "$w"
+  echo "$4" > "$w/$3"
+  git -C "$w" add "$3" && git -C "$w" commit -q -m "upstream $3"
+  git -C "$w" push -q origin "$2"
+  rm -rf "$w"
+}
+
+# Rebase mode puts unpushed local commits on top of origin instead of failing.
+w=$(workspace rebase pro)
+git -C "$w" checkout -q develop
+echo local > "$w/local.txt" && git -C "$w" add local.txt && git -C "$w" commit -q -m "local work"
+git -C "$w" checkout -q feature
+pushfile main develop upstream.txt one
+out=$(run "$w" develop 2>&1); rc=$?
+check "Rebase: plain mode refuses and points to git-rebase" '[[ $rc -eq 1 ]] && grep -q "try git-rebase" <<<"$out"'
+out=$(run "$w" --rebase develop 2>&1); rc=$?
+check "Rebase: exit 0" '[[ $rc -eq 0 ]]'
+check "Rebase: reports the count" 'grep -q "photoprism .*OK (rebased, 1 local commits on top)" <<<"$out"'
+check "Rebase: local commit on top of origin" '[[ $(git -C "$w" rev-parse HEAD^) == $(git -C "$w" rev-parse origin/develop) && $(git -C "$w" log -1 --format=%s) == "local work" ]]'
+check "Rebase: no merge commit" '[[ $(git -C "$w" rev-list --merges --count origin/develop..HEAD) -eq 0 ]]'
+check "Rebase: pro switched too" '[[ $(branch "$w/pro") == develop ]] && at "$w/pro" develop'
+
+# A conflict aborts the rebase in that repository, leaves it as it was, and the others are still processed.
+w=$(workspace conflict pro)
+git -C "$w" checkout -q develop
+echo mine > "$w/clash.txt" && git -C "$w" add clash.txt && git -C "$w" commit -q -m "mine"
+mine=$(git -C "$w" rev-parse HEAD)
+git -C "$w" checkout -q feature
+git -C "$w/pro" checkout -q develop
+echo pro > "$w/pro/pro.txt" && git -C "$w/pro" add pro.txt && git -C "$w/pro" commit -q -m "pro work"
+pushfile main develop clash.txt theirs
+pushfile pro develop other.txt theirs
+out=$(run "$w" --rebase develop 2>&1); rc=$?
+check "Conflict: exit 1" '[[ $rc -eq 1 ]]'
+check "Conflict: reported" 'grep -q "photoprism .*REBASE FAILED, left unchanged" <<<"$out"'
+check "Conflict: commit and branch unchanged" '[[ $(branch "$w") == develop && $(git -C "$w" rev-parse HEAD) == "$mine" ]]'
+check "Conflict: no rebase left in progress" '[[ ! -e "$w/.git/rebase-merge" && ! -e "$w/.git/rebase-apply" && -z $(git -C "$w" status --porcelain --untracked-files=no) ]]'
+check "Conflict: pro still rebased" 'grep -q "photoprism/pro .*OK (rebased, 1 local commits on top)" <<<"$out" && [[ $(git -C "$w/pro" rev-parse HEAD^) == $(git -C "$w/pro" rev-parse origin/develop) ]]'
+
+# Commits that are also on another remote branch are not rewritten.
+w=$(workspace shared)
+git -C "$w" checkout -q develop
+git -C "$w" checkout -q -b topic
+git -C "$w" commit -q --allow-empty -m "pushed topic"
+git -C "$w" push -q origin topic
+git -C "$w" checkout -q develop
+git -C "$w" merge -q --ff-only topic
+git -C "$w" commit -q --allow-empty -m "local on develop"
+shared=$(git -C "$w" rev-parse HEAD)
+git -C "$w" branch -q other HEAD~1
+git -C "$w" config rebase.updateRefs true
+git -C "$w" checkout -q feature
+push main develop
+out=$(run "$w" --rebase develop 2>&1); rc=$?
+check "Shared: exit 1" '[[ $rc -eq 1 ]]'
+check "Shared: reported" 'grep -q "NOT REBASED (local commits are also on another remote branch" <<<"$out"'
+check "Shared: develop unchanged" '[[ $(git -C "$w" rev-parse develop) == "$shared" ]]'
+git -C "$w" push -q origin --delete topic
+git -C "$w" fetch -q --prune origin
+otherbefore=$(git -C "$w" rev-parse other)
+out=$(run "$w" --rebase develop 2>&1); rc=$?
+check "UpdateRefs: rebased" '[[ $rc -eq 0 && $(git -C "$w" rev-parse HEAD~2) == $(git -C "$w" rev-parse origin/develop) ]]'
+check "UpdateRefs: other local branch not moved" '[[ $(git -C "$w" rev-parse other) == "$otherbefore" ]]'
+
+# A failing hook stops the rebase, which is aborted and reported, not left in progress.
+w=$(workspace hook)
+git -C "$w" checkout -q develop
+git -C "$w" commit -q --allow-empty -m "local work"
+hooked=$(git -C "$w" rev-parse HEAD)
+git -C "$w" checkout -q feature
+printf '#!/bin/sh\nexit 1\n' > "$w/.git/hooks/pre-rebase" && chmod +x "$w/.git/hooks/pre-rebase"
+push main develop
+out=$(run "$w" --rebase develop 2>&1); rc=$?
+check "Hook: exit 1 and unchanged" '[[ $rc -eq 1 && $(git -C "$w" rev-parse develop) == "$hooked" ]]'
+check "Hook: reported as failed" 'grep -q "REBASE FAILED, left unchanged" <<<"$out"'
+
+# Unpushed merge commits are not flattened.
+w=$(workspace merges)
+git -C "$w" checkout -q develop
+git -C "$w" checkout -q -b side
+git -C "$w" commit -q --allow-empty -m side
+git -C "$w" checkout -q develop
+git -C "$w" commit -q --allow-empty -m main
+git -C "$w" merge -q --no-ff --no-edit side
+merged=$(git -C "$w" rev-parse HEAD)
+git -C "$w" checkout -q feature
+push main develop
+out=$(run "$w" --rebase develop 2>&1); rc=$?
+check "Merges: exit 1" '[[ $rc -eq 1 ]]'
+check "Merges: reported" 'grep -q "NOT REBASED (unpushed merge commits" <<<"$out"'
+check "Merges: branch unchanged" '[[ $(git -C "$w" rev-parse develop) == "$merged" ]]'
+
+# A branch that is only ahead of origin is left as it is.
+w=$(workspace ahead)
+git -C "$w" checkout -q develop
+git -C "$w" commit -q --allow-empty -m unpushed
+ahead=$(git -C "$w" rev-parse HEAD)
+git -C "$w" checkout -q feature
+out=$(run "$w" --rebase develop 2>&1); rc=$?
+check "Ahead: exit 0 and unchanged" '[[ $rc -eq 0 && $(git -C "$w" rev-parse HEAD) == "$ahead" ]]'
+check "Ahead: status shows it" 'grep -qE "^photoprism +develop .* ahead=1 behind=0" <<<"$out"'
+(run "$w" --rebase >/dev/null 2>&1); rc=$?
+check "Ahead: --rebase without a branch exits 2" '[[ $rc -eq 2 ]]'
+
 # Invalid arguments are rejected before anything runs.
 for name in "bad..name" "--force" "-x" "@{-1}" "a b"; do
   (run "$w" "$name" >/dev/null 2>&1); rc=$?
