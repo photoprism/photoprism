@@ -192,6 +192,12 @@ Translations:
   gettext-compile          Compile the frontend translation catalogs
   gettext-lint             Check the translation catalogs for errors
 
+Git (main repository and cloned sub-repositories):
+  git-pull                 Pull the latest changes into every repository
+  git-develop              Switch every repository to "develop" and fast-forward it
+  git-checkout BRANCH=...  Switch every repository to the given branch
+  git-status               Show the branch and changes of every repository
+
 Other:
   show-build               Show the build tag of the current revision
   list                     List all targets, including those not shown here
@@ -785,6 +791,7 @@ test-sh:
 	bash scripts/test/acceptance-server-test.sh
 	bash scripts/test/acceptance-db-test.sh
 	bash scripts/test/acceptance-hub-test.sh
+	bash scripts/test/git-checkout-test.sh
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)
@@ -907,6 +914,14 @@ git-pull:
 		echo "Updating photoprism/$$d"; \
 		git -C "$$d" pull --ff-only || echo "Warning: git pull failed in $$d"; \
 	done;
+git-checkout: override export BRANCH := $(value BRANCH)
+git-checkout:
+	@[ "$(origin BRANCH)" = "command line" ] && [ -n "$$BRANCH" ] || { echo 'Usage: make git-checkout BRANCH=<branch>'; exit 2; }
+	@bash ./scripts/git-checkout.sh "$$BRANCH"
+git-develop:
+	@bash ./scripts/git-checkout.sh develop
+git-status:
+	@bash ./scripts/git-checkout.sh --status
 docker-pull:
 	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) -f compose.latest.yaml pull --ignore-pull-failures
@@ -1441,7 +1456,7 @@ lint-go:
 	golangci-lint run --issues-exit-code 0 ./pkg/... ./internal/... ./.../internal/...
 lint-sh:
 	$(info Checking the shell scripts that ship in the container images and the test scripts...)
-	shellcheck scripts/dist/*.sh scripts/test/*.sh
+	shellcheck scripts/dist/*.sh scripts/test/*.sh scripts/git-checkout.sh
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/lint/check-api-request-limits.sh
