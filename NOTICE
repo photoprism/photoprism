@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-11-16
+Date generated: 2026-11-17
 
 ================================================================================
 
@@ -1953,8 +1953,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-sql-driver/mysql
-Version: v1.10.1
-License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.10.1/LICENSE)
+Version: v1.10.2
+License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.10.2/LICENSE)
 
 Mozilla Public License Version 2.0
 ==================================
@@ -6965,8 +6965,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/tidwall/gjson
-Version: v1.20.3
-License: MIT (https://github.com/tidwall/gjson/blob/v1.20.3/LICENSE)
+Version: v1.20.4
+License: MIT (https://github.com/tidwall/gjson/blob/v1.20.4/LICENSE)
 
 The MIT License (MIT)
 

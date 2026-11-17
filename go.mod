@@ -111,7 +111,7 @@ require (
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-co-op/gocron/v2 v2.23.1
 	github.com/go-ldap/ldap/v3 v3.4.15
-	github.com/go-sql-driver/mysql v1.10.1
+	github.com/go-sql-driver/mysql v1.10.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang/geo v0.0.0-20261106073233-5e8d6967632a
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
@@ -148,7 +148,7 @@ require (
 	github.com/sunfish-shogi/bufseekio v0.1.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
-	github.com/tidwall/gjson v1.20.3
+	github.com/tidwall/gjson v1.20.4
 	github.com/ugjka/go-tz/v2 v2.2.10
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli/v2 v2.27.7
