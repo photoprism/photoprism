@@ -157,15 +157,17 @@ describe("component/photo/edit/files", () => {
     const previous = VTUConfig.global.renderStubDefaultSlot;
     VTUConfig.global.renderStubDefaultSlot = true;
 
+    let wrapper;
+
     try {
-      const { wrapper } = mountPhotoFiles({
+      ({ wrapper } = mountPhotoFiles({
         fileOverrides: { MediaType: "image", Orientation: 1, Frames: frames, isAnimated: File.prototype.isAnimated },
-      });
+      }));
 
       expect(wrapper.text().includes("Animated")).toBe(animated);
       expect(wrapper.findComponent(".input-orientation").props("readonly")).toBe(animated);
-      wrapper.unmount();
     } finally {
+      wrapper?.unmount();
       VTUConfig.global.renderStubDefaultSlot = previous;
     }
   });

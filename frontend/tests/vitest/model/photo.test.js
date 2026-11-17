@@ -19,6 +19,7 @@ describe("model/photo", () => {
     expect(photo.animatedFile()).toBeUndefined();
     expect(photo.videoFile()).toBeUndefined();
   });
+
   // Pins the per-field length caps to the backend VARCHAR + clip ceilings.
   // If a backend bump (internal/entity/photo.go or details.go) changes any
   // of these, this test fails on purpose so the frontend cap moves with it.

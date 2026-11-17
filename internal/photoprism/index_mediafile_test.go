@@ -20,7 +20,11 @@ import (
 
 // TestIndex_MediaFile_JpegFrames verifies new JPEGs and repairs stale animation metadata.
 func TestIndex_MediaFile_JpegFrames(t *testing.T) {
-	for _, name := range []string{"Static", "MetadataError", "EmbeddedVideo"} {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	for _, name := range []string{"Static", "MetadataError", "EmbeddedVideo", "UnreadableVideo"} {
 		t.Run(name, func(t *testing.T) {
 			useTestDb(t, "jpeg-frames")
 			cfg := config.NewMinimalTestConfigWithDb("jpeg-frames", filepath.Join(t.TempDir(), "storage"))
@@ -74,6 +78,11 @@ func TestIndex_MediaFile_JpegFrames(t *testing.T) {
 					mf.videoOnce.Do(func() {
 						mf.videoInfo = video.Info{Compatible: true, Frames: 48, FPS: 24, Duration: 2 * time.Second}
 					})
+				case "UnreadableVideo":
+					mf.metaData.HasVideoEmbedded = true
+					mf.videoOnce.Do(func() {
+						mf.videoInfo = video.Info{Compatible: false}
+					})
 				}
 
 				res = ind.MediaFile(mf, opt, "", "")
@@ -95,6 +104,13 @@ func TestIndex_MediaFile_JpegFrames(t *testing.T) {
 					assert.Equal(t, 2*time.Second, file.FileDuration)
 					assert.Equal(t, entity.MediaLive, file.MediaType)
 					assert.True(t, file.FileVideo)
+				case "UnreadableVideo":
+					assert.Zero(t, file.FileFrames)
+					assert.Zero(t, file.FileFPS)
+					assert.Zero(t, file.FileDuration)
+					assert.Equal(t, entity.MediaImage, file.MediaType)
+					assert.False(t, file.FileVideo)
+					assert.False(t, file.IsAnimated())
 				}
 				require.NoError(t, entity.UnscopedDb().First(&companion, companion.ID).Error)
 				assert.Equal(t, 48, companion.FileFrames)
