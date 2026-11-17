@@ -25,6 +25,8 @@ Additional information can be found in our Developer Guide:
 
 import saveAs from "file-saver";
 import $util from "common/util";
+import $notify from "common/notify";
+import { $gettext } from "common/gettext";
 
 // Detect Safari browser.
 const isSafari = navigator.appVersion.indexOf("Safari/") !== -1 && navigator.appVersion.indexOf("Chrome") === -1;
@@ -47,12 +49,19 @@ export default function download(url, name) {
     xhr.open("GET", url);
     xhr.responseType = "blob";
 
+    // Saves only a successful response, so an error page is never stored under the file's name.
     xhr.onload = function () {
+      if (xhr.status < 200 || xhr.status > 299) {
+        console.warn(`download failed with status ${xhr.status}`);
+        $notify.error(xhr.status === 404 ? $gettext("File not found") : $gettext("Something went wrong, try again"));
+        return;
+      }
+
       saveAs(xhr.response, name);
     };
 
     xhr.onerror = function () {
-      console.error("download failed", url);
+      console.error("download failed");
     };
 
     xhr.send();

@@ -173,6 +173,25 @@ describe("component/photo/edit/files", () => {
   });
 
   describe("action buttons visibility", () => {
+    it("lists no panel or download button for a file flagged as missing", () => {
+      const previous = VTUConfig.global.renderStubDefaultSlot;
+      VTUConfig.global.renderStubDefaultSlot = true;
+      let wrapper;
+
+      try {
+        const present = createFile({ UID: "fs6sg6bw45bn0001", Name: "2018/01/present.jpg", Primary: true });
+        const missing = createFile({ UID: "fs6sg6bw45bn0002", Name: "2018/01/missing.png", FileType: "png", Missing: true });
+        ({ wrapper } = mountPhotoFiles({ modelOverrides: { fileModels: vi.fn(() => [present, missing]) } }));
+
+        expect(wrapper.findAll(".action-download")).toHaveLength(1);
+        expect(wrapper.text()).toContain("2018/01/present.jpg");
+        expect(wrapper.text()).not.toContain("2018/01/missing.png");
+      } finally {
+        wrapper?.unmount();
+        VTUConfig.global.renderStubDefaultSlot = previous;
+      }
+    });
+
     it("shows download, primary, unstack and delete buttons for editable JPG file", () => {
       const { wrapper } = mountPhotoFiles({
         fileOverrides: { FileType: "jpg", Primary: false, Sidecar: false, Root: "/", Error: "" },

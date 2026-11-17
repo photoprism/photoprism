@@ -684,22 +684,24 @@ export class Photo extends RestModel {
       return this;
     }
 
+    // Skip files flagged as missing, as they can be neither shown nor downloaded; the primary file stays the fallback.
+    const present = files.filter((f) => !f.Missing);
     let file;
 
     // Find file with matching media type.
     switch (this.Type) {
       case media.Animated:
-        file = files.find((f) => f.MediaType === media.Image && f.Root === "/");
+        file = present.find((f) => f.MediaType === media.Image && f.Root === "/");
         break;
       case media.Live:
-        file = files.find((f) => (f.MediaType === media.Video || f.MediaType === media.Live || f.Video) && f.Root === "/");
+        file = present.find((f) => (f.MediaType === media.Video || f.MediaType === media.Live || f.Video) && f.Root === "/");
         break;
       case media.Video:
-        file = files.find((f) => (f.MediaType === media.Video || f.Video) && f.Root === "/");
+        file = present.find((f) => (f.MediaType === media.Video || f.Video) && f.Root === "/");
         break;
       case media.Raw:
       case media.Vector:
-        file = files.find((f) => f.MediaType === this.Type && f.Root === "/");
+        file = present.find((f) => f.MediaType === this.Type && f.Root === "/");
         break;
     }
 
@@ -709,7 +711,7 @@ export class Photo extends RestModel {
     }
 
     // Find first original media file with a format other than JPEG.
-    file = files.find((f) => !f.Sidecar && f.FileType !== media.FormatJpeg && f.Root === "/");
+    file = present.find((f) => !f.Sidecar && f.FileType !== media.FormatJpeg && f.Root === "/");
 
     // Found?
     if (file) {
@@ -872,6 +874,15 @@ export class Photo extends RestModel {
 
     files.forEach((file) => {
       if (!file || !file.Hash) {
+        return;
+      }
+
+      // Skip files the server has flagged as missing, since their download would fail.
+      if (file.Missing) {
+        if ($config.debug) {
+          console.log(`download: skipped missing file ${file.Name}`);
+        }
+        skipped++;
         return;
       }
 
