@@ -36,6 +36,16 @@ func TestConfig_Report(t *testing.T) {
 	assert.Equal(t, m.FrontendUri(""), values["frontend-uri"])
 	assert.Equal(t, CaseModeAuto, values["storage-case"])
 	assert.Equal(t, CaseModeAuto, values["originals-case"])
+	assert.Equal(t, "", values["admin-oidc-sub"])
+
+	m.options.AdminOIDCSub = "usg73p55zwgr1gbq"
+	r, _ = m.Report()
+
+	for _, row := range r {
+		values[row[0]] = row[1]
+	}
+
+	assert.Equal(t, "usg73p55zwgr1gbq", values["admin-oidc-sub"])
 
 	m.options.StorageCase = " Insensitive"
 	r, _ = m.Report()

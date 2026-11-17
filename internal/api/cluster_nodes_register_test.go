@@ -668,29 +668,28 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
-		// Pre-create node in registry so handler goes through existing-node path
-		// and rotates the secret before attempting DB ensure. Don't reuse the
-		// Monitoring fixture client ID to avoid changing its secret, which is
-		// used by OAuth tests running in the same package.
+		// Pre-create a node so the handler takes the existing-node path and rotates the secret before
+		// the database ensure. No other test uses its name, and it is not the Monitoring fixture,
+		// whose secret the OAuth tests in this package rely on.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-01", Role: cluster.RoleInstance}}
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-rotate-secret", Role: cluster.RoleInstance}}
 		assert.NoError(t, regy.Put(n))
-		n, err = regy.RotateSecret(n.UUID)
+		nodeUUID := n.UUID
+		t.Cleanup(func() { _ = regy.DeleteAllByUUID(nodeUUID) })
+		n, err = regy.RotateSecret(nodeUUID)
 		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
 			return
 		}
 
 		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
-		body := `{"NodeName":"pp-node-01","RotateSecret":true}`
+		body := `{"NodeName":"pp-rotate-secret","RotateSecret":true}`
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
 		assert.Equal(t, http.StatusOK, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
 
 		// Secret should have rotated and been persisted even though DB ensure failed.
-		// Fetch by name (most-recently-updated) to avoid flakiness if another test adds
-		// a node with the same name and a different id.
-		n2, err := regy.FindByName("pp-node-01")
+		n2, err := regy.FindByNodeUUID(nodeUUID)
 		assert.NoError(t, err)
 		// With client-backed registry, plaintext secret is not persisted; only rotation timestamp is updated.
 		if assert.NotNil(t, n2) {

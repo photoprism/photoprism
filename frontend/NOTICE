@@ -24,7 +24,7 @@ eslint-config-prettier                              MIT            Simon Lydell
 eslint-plugin-vue                                   MIT            Toru Nagashima (https://github.com/mysticatea)
 eslint-plugin-vuetify                               MIT            Kael Watts-Deuchar <kaelwd@gmail.com>
 file-saver                                          MIT            Eli Grey <me@eligrey.com>
-globals                                             MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
+globals                                             MIT            Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 hls.js                                              Apache-2.0     n/a
 jsdom                                               MIT            n/a
 luxon                                               MIT            Isaac Cambron

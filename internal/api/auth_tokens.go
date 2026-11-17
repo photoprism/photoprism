@@ -259,7 +259,7 @@ func resolveDownloadSession(c *gin.Context) *entity.Session {
 	// can't back a "?t=" token). Restricted to JWTs (authAnyJWT rejects non-JWT tokens) granting access to
 	// all files, so only a trusted full-access principal qualifies; every other client presents a "?t=".
 	if AuthToken(c) != "" {
-		if s := authAnyJWT(c, ClientIP(c), AuthToken(c), acl.ResourceFiles, acl.Permissions{acl.AccessAll}); s != nil && s.Valid() {
+		if s := authAnyJWT(c, ClientIP(c), AuthToken(c), acl.ResourceFiles, acl.Permissions{acl.ActionDownload, acl.AccessAll}); s != nil && s.Valid() {
 			c.Set(downloadHeaderAuthKey, true)
 			return s
 		} else if limiter.Auth.Reject(ClientIP(c)) {

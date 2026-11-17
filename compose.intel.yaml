@@ -5,7 +5,8 @@ services:
       context: .
       dockerfile: ${DOCKERFILE:-Dockerfile}
       args:
-        WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
+        - WORKING_DIR=${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}
+        - DOCKERFILE_IMAGE_TAG
     image: photoprism/photoprism:develop
     depends_on:
       - mariadb

@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** October 29, 2026
+**Last Updated:** November 11, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -52,14 +52,14 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 
 ## Dependency Pinning Policy
 
-**Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.21.0"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -S "<pkg>" -- frontend/package.json` from the repository root).
+**Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.21.1"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -S "<pkg>" -- frontend/package.json` from the repository root).
 
 ### Currently Pinned Packages
 
 | Package   | Pin      | Reason                                                                                                                                                                                                                                                                                                                         |
 |-----------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `vuetify` | `4.3.1`  | Check the photo edit dialog's Country and Time Zone autocompletes in Chrome before bumping: menus must stay open and filter as you type. The Vuetify 3 appearance depends on the files named in the `//vuetify` entry in `package.json` and [Production Build](#production-build). `@vuetify/v0` is held by the lockfile only. |
-| `axios`   | `1.21.0` | Keep an exact version so transport updates receive explicit review and validation. Check request cancellation, authentication, redirects, and error handling when upgrading; `src/common/api.js` handles canceled navigation requests through its error interceptor.                                                           |
+| `vuetify` | `4.3.3`  | Check the photo edit dialog's Country and Time Zone autocompletes in Chrome before bumping: menus must stay open and filter as you type. The Vuetify 3 appearance depends on the files named in the `//vuetify` entry in `package.json` and [Production Build](#production-build). `@vuetify/v0` is held by the lockfile only. |
+| `axios`   | `1.21.1` | Keep an exact version so transport updates receive explicit review and validation. Check request cancellation, authentication, redirects, and error handling when upgrading; `src/common/api.js` handles canceled navigation requests through its error interceptor.                                                           |
 
 ### Override Layer (Transitive Pins)
 
@@ -70,6 +70,10 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 | `"serialize-javascript": "^7.1.2"` | Keeps the Workbox minification dependency on the reviewed maintenance range and above every release a published advisory affects. |
 
 Retire an override only when upstream dependency ranges select an acceptable version without it, then rerun `make audit` and the build/test checks.
+
+### Known Advisories
+
+`make audit` may report advisories in build or test tooling whose fix exists only in a new major that the affected libraries do not declare support for, or not at all. Do not force such a major with an override: semver allows it to break the libraries that depend on it. Recheck on each upgrade pass instead, and let upstream releases select a fixed version.
 
 ## Major-Version Upgrade Constraints
 
@@ -146,7 +150,7 @@ A package without a direct consumer or required peer can be removed from `fronte
 1. Review maintainership, provenance, release history, and publisher protections; prefer a maintained scoped package when suitable.
 2. Avoid packages that require `postinstall`/`install` scripts. Installs default to `--ignore-scripts`.
 3. Add to `frontend/package.json`. From the **repo root** run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` so the workspace lockfile updates.
-4. `make audit` must report zero advisories.
+4. The new package must not add advisories to `make audit` (see [Known Advisories](#known-advisories)).
 5. Run `npm run lint --workspace frontend`, `make build-js`, and `make test-js`.
 6. `make notice` to refresh `NOTICE` and `frontend/NOTICE`.
 

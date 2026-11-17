@@ -50,8 +50,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		// Limit the edit to the file's photo within the session's shared scope. Gating on the file's
-		// own PhotoUID (not the path :uid) prevents pairing an in-scope :uid with an out-of-scope file.
+		// Limit the edit to the file's own photo within the session scope.
 		if !search.PhotoSessionSeesEverything(s) {
 			if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
 				AbortForbidden(c)

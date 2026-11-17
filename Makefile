@@ -192,6 +192,13 @@ Translations:
   gettext-compile          Compile the frontend translation catalogs
   gettext-lint             Check the translation catalogs for errors
 
+Git (main repository and cloned sub-repositories):
+  git-pull                 Pull the latest changes into every repository
+  git-develop              Switch every repository to "develop" and fast-forward it
+  git-checkout BRANCH=...  Switch every repository to the given branch
+  git-rebase [BRANCH=...]  Like git-develop, but rebase unpushed local commits
+  git-status               Show the branch and changes of every repository
+
 Other:
   show-build               Show the build tag of the current revision
   list                     List all targets, including those not shown here
@@ -452,7 +459,7 @@ dep-list:
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
 vuln: audit
-audit: audit-frontend audit-backend
+audit: audit-backend audit-frontend
 audit-frontend: npm-audit
 audit-backend: dep-vuln
 dep-audit: dep-vuln
@@ -741,12 +748,14 @@ build-libheif-arm64:
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:trixie ./scripts/dist/build-libheif.sh v1.23.7
 build-libheif-latest: build-libheif-amd64-latest build-libheif-arm64-latest
 build-libheif-amd64-latest:
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:stonking ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh
 build-libheif-arm64-latest:
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:stonking ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh
@@ -783,6 +792,7 @@ test-sh:
 	bash scripts/test/acceptance-server-test.sh
 	bash scripts/test/acceptance-db-test.sh
 	bash scripts/test/acceptance-hub-test.sh
+	bash scripts/test/git-checkout-test.sh
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)
@@ -905,6 +915,19 @@ git-pull:
 		echo "Updating photoprism/$$d"; \
 		git -C "$$d" pull --ff-only || echo "Warning: git pull failed in $$d"; \
 	done;
+GIT_BRANCH_ORIGIN := $(origin BRANCH)
+git-checkout: override export BRANCH := $(value BRANCH)
+git-checkout:
+	@[ "$(GIT_BRANCH_ORIGIN)" = "command line" ] && [ -n "$$BRANCH" ] || { echo 'Usage: make git-checkout BRANCH=<branch>'; exit 2; }
+	@bash ./scripts/git-checkout.sh "$$BRANCH"
+git-develop:
+	@bash ./scripts/git-checkout.sh develop
+git-rebase: override export BRANCH := $(value BRANCH)
+git-rebase:
+	@if [ "$(GIT_BRANCH_ORIGIN)" = "command line" ]; then b="$$BRANCH"; else b=develop; fi; \
+	bash ./scripts/git-checkout.sh --rebase "$$b"
+git-status:
+	@bash ./scripts/git-checkout.sh --status
 docker-pull:
 	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) -f compose.latest.yaml pull --ignore-pull-failures
@@ -936,7 +959,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-resolute docker-develop-resolute-slim
+docker-develop-ubuntu: docker-develop-stonking docker-develop-stonking-slim docker-develop-resolute docker-develop-resolute-slim
 docker-develop-legacy: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
@@ -1032,7 +1055,7 @@ docker-develop-questing-slim:
 docker-develop-resolute:
 	docker pull --platform=amd64 ubuntu:resolute
 	docker pull --platform=arm64 ubuntu:resolute
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute
 docker-develop-resolute-slim:
 	docker pull --platform=amd64 ubuntu:resolute
 	docker pull --platform=arm64 ubuntu:resolute
@@ -1040,7 +1063,7 @@ docker-develop-resolute-slim:
 docker-develop-stonking:
 	docker pull --platform=amd64 ubuntu:stonking
 	docker pull --platform=arm64 ubuntu:stonking
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 stonking /stonking
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 stonking /stonking "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-stonking-slim:
 	docker pull --platform=amd64 ubuntu:stonking
 	docker pull --platform=arm64 ubuntu:stonking
@@ -1062,10 +1085,10 @@ docker-unstable-mantic:
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-ce: docker-preview-resolute
+docker-preview-ce: docker-preview-stonking
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-resolute
+docker-preview-ubuntu: docker-preview-stonking
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64
 docker-preview-bookworm:
@@ -1075,9 +1098,9 @@ docker-preview-bookworm:
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bookworm /bookworm "-t photoprism/photoprism:preview-ce-debian"
 docker-preview-arm64:
-	docker pull --platform=arm64 photoprism/develop:lunar
-	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /lunar
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx.sh photoprism linux/arm64 preview-arm64 /stonking
 docker-preview-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=amd64 photoprism/develop:bullseye-slim
@@ -1143,13 +1166,19 @@ docker-preview-resolute:
 	docker pull --platform=amd64 photoprism/develop:resolute-slim
 	docker pull --platform=arm64 photoprism/develop:resolute
 	docker pull --platform=arm64 photoprism/develop:resolute-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /resolute
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-resolute /resolute
+docker-preview-stonking:
+	docker pull --platform=amd64 photoprism/develop:stonking
+	docker pull --platform=amd64 photoprism/develop:stonking-slim
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /stonking
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-resolute
+docker-release-ubuntu: docker-release-stonking
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64
 docker-release-bookworm:
@@ -1159,9 +1188,9 @@ docker-release-bookworm:
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-bookworm /bookworm "-t photoprism/photoprism:ce-debian"
 docker-release-arm64:
-	docker pull --platform=arm64 photoprism/develop:lunar
-	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx.sh photoprism linux/arm64 ce-arm64 /lunar
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx.sh photoprism linux/arm64 ce-arm64 /stonking
 docker-release-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=amd64 photoprism/develop:bullseye-slim
@@ -1227,7 +1256,13 @@ docker-release-resolute:
 	docker pull --platform=amd64 photoprism/develop:resolute-slim
 	docker pull --platform=arm64 photoprism/develop:resolute
 	docker pull --platform=arm64 photoprism/develop:resolute-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /resolute
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-resolute /resolute
+docker-release-stonking:
+	docker pull --platform=amd64 photoprism/develop:stonking
+	docker pull --platform=amd64 photoprism/develop:stonking-slim
+	docker pull --platform=arm64 photoprism/develop:stonking
+	docker pull --platform=arm64 photoprism/develop:stonking-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /stonking
 start-traefik:
 	$(DOCKER_COMPOSE) up -d --wait traefik
 stop-traefik:
@@ -1274,12 +1309,12 @@ terminal-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml exec photoprism-preview bash
 logs-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml logs -f photoprism-preview
-docker-local: docker-local-resolute
+docker-local: docker-local-stonking
 docker-local-up:
 	$(DOCKER_COMPOSE) -f compose.local.yaml up --force-recreate
 docker-local-down:
 	$(DOCKER_COMPOSE) -f compose.local.yaml down --remove-orphans
-docker-local-all: docker-local-resolute docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
+docker-local-all: docker-local-stonking docker-local-resolute docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -1332,9 +1367,13 @@ docker-local-resolute:
 	docker pull photoprism/develop:resolute
 	docker pull ubuntu:resolute
 	scripts/docker/build.sh photoprism ce-resolute /resolute "-t photoprism/photoprism:local"
+docker-local-stonking:
+	docker pull photoprism/develop:stonking
+	docker pull ubuntu:stonking
+	scripts/docker/build.sh photoprism ce-stonking /stonking "-t photoprism/photoprism:local"
 local-develop: docker-local-develop
-docker-local-develop: docker-local-develop-resolute
-docker-local-develop-all: docker-local-develop-resolute docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop: docker-local-develop-stonking
+docker-local-develop-all: docker-local-develop-stonking docker-local-develop-resolute docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
@@ -1374,6 +1413,9 @@ docker-local-develop-plucky:
 docker-local-develop-resolute:
 	docker pull ubuntu:resolute
 	scripts/docker/build.sh develop resolute /resolute
+docker-local-develop-stonking:
+	docker pull ubuntu:stonking
+	scripts/docker/build.sh develop stonking /stonking
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
@@ -1420,7 +1462,7 @@ lint-go:
 	golangci-lint run --issues-exit-code 0 ./pkg/... ./internal/... ./.../internal/...
 lint-sh:
 	$(info Checking the shell scripts that ship in the container images and the test scripts...)
-	shellcheck scripts/dist/*.sh scripts/test/*.sh
+	shellcheck scripts/dist/*.sh scripts/test/*.sh scripts/git-checkout.sh
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/lint/check-api-request-limits.sh

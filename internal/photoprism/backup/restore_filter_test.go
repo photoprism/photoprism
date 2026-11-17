@@ -158,10 +158,8 @@ func TestRestoreReader(t *testing.T) {
 		assert.Equal(t, dumpHeader(on, "\n")+"INSERT", string(out))
 	})
 	t.Run("OtherDrivers", func(t *testing.T) {
-		for _, driver := range []string{dsn.DriverSQLite3, ""} {
-			r := strings.NewReader(dumpHeader(off, "\n"))
-			assert.Same(t, r, restoreReader(driver, r), "driver %q", driver)
-		}
+		r := strings.NewReader(dumpHeader(off, "\n"))
+		assert.Same(t, r, restoreReader("", r))
 		out, err := io.ReadAll(restoreReader(dsn.DriverMySQL, bytes.NewReader([]byte(dumpHeader(off, "\n")))))
 		require.NoError(t, err)
 		assert.Equal(t, dumpHeader(on, "\n"), string(out))
@@ -174,4 +172,106 @@ func TestIsUniqueChecksOff(t *testing.T) {
 	assert.False(t, isUniqueChecksOff(uniqueChecksOff))
 	assert.False(t, isUniqueChecksOff(append(append([]byte{}, uniqueChecksOn...), '\n')))
 	assert.False(t, isUniqueChecksOff([]byte("\n")))
+}
+
+func TestIsDumpLine(t *testing.T) {
+	stmt := []byte("COMMIT;")
+	assert.True(t, isDumpLine([]byte("COMMIT;\n"), stmt))
+	assert.True(t, isDumpLine([]byte("COMMIT;\r\n"), stmt))
+	assert.False(t, isDumpLine([]byte("COMMIT;"), stmt))
+	assert.False(t, isDumpLine([]byte("COMMIT; \n"), stmt))
+	assert.False(t, isDumpLine([]byte(" COMMIT;\n"), stmt))
+	assert.False(t, isDumpLine([]byte("COMMIT;\r\r\n"), stmt))
+	assert.False(t, isDumpLine([]byte("\n"), stmt))
+}
+
+// sqliteDump returns a SQLite dump of a table with an AUTOINCREMENT key, with sequence as the line before
+// the sqlite_sequence rows.
+func sqliteDump(sequence, eol string) string {
+	lines := []string{
+		"PRAGMA foreign_keys=OFF;",
+		"BEGIN TRANSACTION;",
+		"CREATE TABLE t(id INTEGER PRIMARY KEY AUTOINCREMENT, v TEXT);",
+		"INSERT INTO t VALUES(1,'x');",
+		"PRAGMA writable_schema=ON;",
+	}
+
+	if sequence != "" {
+		lines = append(lines, sequence)
+	}
+
+	lines = append(lines, "DELETE FROM sqlite_sequence;", "INSERT INTO sqlite_sequence VALUES('t',1);",
+		"PRAGMA writable_schema=OFF;", "COMMIT;", "")
+
+	return strings.Join(lines, eol)
+}
+
+// filterSqliteDump returns what restoreReader passes on for a SQLite dump.
+func filterSqliteDump(t *testing.T, r io.Reader) string {
+	t.Helper()
+
+	out, err := io.ReadAll(restoreReader(dsn.DriverSQLite3, r))
+	require.NoError(t, err)
+
+	return string(out)
+}
+
+func TestSqliteSequenceReader(t *testing.T) {
+	seq := string(sqliteSequenceTable)
+
+	t.Run("LineDropped", func(t *testing.T) {
+		assert.Equal(t, sqliteDump("", "\n"), filterSqliteDump(t, strings.NewReader(sqliteDump(seq, "\n"))))
+	})
+	t.Run("LineDroppedCrLf", func(t *testing.T) {
+		assert.Equal(t, sqliteDump("", "\r\n"), filterSqliteDump(t, strings.NewReader(sqliteDump(seq, "\r\n"))))
+	})
+	t.Run("OneByteReads", func(t *testing.T) {
+		out, err := io.ReadAll(iotest.OneByteReader(restoreReader(dsn.DriverSQLite3, iotest.OneByteReader(strings.NewReader(sqliteDump(seq, "\n"))))))
+		require.NoError(t, err)
+		assert.Equal(t, sqliteDump("", "\n"), string(out))
+	})
+	t.Run("NoLine", func(t *testing.T) {
+		dump := sqliteDump("", "\n")
+		assert.Equal(t, dump, filterSqliteDump(t, strings.NewReader(dump)))
+	})
+	t.Run("OnceOnly", func(t *testing.T) {
+		assert.Equal(t, sqliteDump("", "\n")+seq+"\n", filterSqliteDump(t, strings.NewReader(sqliteDump(seq, "\n")+seq+"\n")))
+	})
+	t.Run("PartialLines", func(t *testing.T) {
+		// Only a whole line is dropped, with a line break and nothing else around it.
+		for _, dump := range []string{
+			" " + seq + "\n",
+			seq + " \n",
+			seq,
+			"-- " + seq + "\n",
+			"INSERT INTO t VALUES(2,'" + seq + "');\n",
+			strings.Repeat("x", uniqueChecksLineBytes) + seq + "\n",
+		} {
+			assert.Equal(t, dump, filterSqliteDump(t, strings.NewReader(dump)), "%.40q", dump)
+		}
+	})
+	t.Run("AfterLargeData", func(t *testing.T) {
+		// The line is found anywhere in the dump, after table data of any size.
+		long := strings.Repeat("x", 2*uniqueChecksLineBytes+5) + "\n"
+		rows := strings.Repeat("INSERT INTO t VALUES(1,'"+strings.Repeat("v", 5000)+"');\n", 100)
+		assert.Equal(t, long+rows+sqliteDump("", "\n"), filterSqliteDump(t, strings.NewReader(long+rows+sqliteDump(seq, "\n"))))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, filterSqliteDump(t, strings.NewReader("")))
+	})
+	t.Run("ReadError", func(t *testing.T) {
+		// The data read before an error is passed on, followed by the error.
+		r := restoreReader(dsn.DriverSQLite3, io.MultiReader(strings.NewReader("BEGIN TRANSACTION;\nINSERT"),
+			iotest.ErrReader(errors.New("read failed"))))
+		out, err := io.ReadAll(r)
+		assert.EqualError(t, err, "read failed")
+		assert.Equal(t, "BEGIN TRANSACTION;\nINSERT", string(out))
+	})
+	t.Run("ReadErrorAfterLine", func(t *testing.T) {
+		r := restoreReader(dsn.DriverSQLite3, io.MultiReader(strings.NewReader(seq+"\nINSERT"),
+			iotest.ErrReader(errors.New("read failed"))))
+		out, err := io.ReadAll(r)
+		assert.EqualError(t, err, "read failed")
+		assert.Equal(t, "INSERT", string(out))
+	})
 }

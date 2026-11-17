@@ -261,7 +261,8 @@ func (c *Config) LegalUrl() string {
 // https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
 func (c *Config) RobotsTxt() ([]byte, error) {
 	if c.Demo() && c.Public() {
-		// Allow public demo instances to be indexed.
+		// Allow crawling public demo instances. Only the landing page may be indexed,
+		// see the X-Robots-Tag header set by the server's Security middleware.
 		return fmt.Appendf(nil,
 			"User-agent: *\nDisallow: /\nAllow: %s/\nAllow: %s/\nAllow: .js\nAllow: .css",
 			c.BaseUri(c.FrontendPath()),

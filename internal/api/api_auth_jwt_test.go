@@ -666,6 +666,46 @@ func TestDownloadSessionPortalJWT(t *testing.T) {
 		spec.Scope = []string{"cluster", "config"}
 		assert.Nil(t, DownloadSession(jwtDownloadCtx(fx.issue(t, spec))))
 	})
+	t.Run("WriteScopeDenied", func(t *testing.T) {
+		// A scope limited to write operations does not include downloads.
+		spec := fx.defaultClaimsSpec()
+		spec.Scope = []string{"files", "write"}
+		assert.Nil(t, DownloadSession(jwtDownloadCtx(fx.issue(t, spec))))
+	})
+}
+
+// TestAuthAccess_PortalJWT checks that AuthAccess authorizes a cluster JWT session by its scope, as Auth does.
+func TestAuthAccess_PortalJWT(t *testing.T) {
+	fx := newPortalJWTFixture(t, "auth-access")
+	origScope := fx.nodeConf.Options().JWTScope
+	fx.nodeConf.Options().JWTScope = "cluster files"
+	get.SetConfig(fx.nodeConf)
+	t.Cleanup(func() {
+		fx.nodeConf.Options().JWTScope = origScope
+		get.SetConfig(fx.nodeConf)
+	})
+
+	authAccess := func(scope ...string) *entity.Session {
+		spec := fx.defaultClaimsSpec()
+		spec.Scope = scope
+		gin.SetMode(gin.TestMode)
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/folders/originals", nil)
+		req.Header.Set("Authorization", "Bearer "+fx.issue(t, spec))
+		req.RemoteAddr = "192.0.2.60:4567"
+		c.Request = req
+
+		return AuthAccess(c, acl.ResourceFiles, acl.ActionSearch, acl.Permissions{acl.AccessAll})
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		s := authAccess("files")
+		assert.Equal(t, http.StatusOK, s.HttpStatus())
+		assert.Equal(t, acl.RolePortal, s.GetClientRole())
+	})
+	t.Run("OtherResource", func(t *testing.T) {
+		assert.True(t, authAccess("cluster").Invalid())
+	})
 }
 
 func TestAuthAnyJWT_SessionScopeWithinAllowList(t *testing.T) {

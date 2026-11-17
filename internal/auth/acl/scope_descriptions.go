@@ -4,7 +4,7 @@ package acl
 var ScopeDescriptions = map[string]string{
 	Any:                        "Wildcard granting full access to every resource and permission.",
 	ScopeRead.String():         "Read-only access across all resources (search, view, download).",
-	ScopeWrite.String():        "Write access across all resources (create, update, delete) without implicit read permissions.",
+	ScopeWrite.String():        "Write access across all resources (create, update, delete); responses may include resource data.",
 	ResourceFiles.String():     "Full access to original and derived files on disk.",
 	ResourceFolders.String():   "Manage virtual folders derived from the filesystem.",
 	ResourceShares.String():    "Manage share links and published collections.",

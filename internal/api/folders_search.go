@@ -65,7 +65,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		// A directory listing names every file in the library, private pictures included, so it
 		// asks for whole-library access rather than library reach alone - no less than the File
 		// Browser, Index and Import pages require before they render it.
-		s := Auth(c, acl.ResourceFiles, acl.AccessAll)
+		s := AuthAccess(c, acl.ResourceFiles, acl.ActionSearch, acl.Permissions{acl.AccessAll})
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
