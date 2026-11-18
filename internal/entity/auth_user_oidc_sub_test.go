@@ -72,6 +72,27 @@ func TestValidOIDCSub(t *testing.T) {
 	})
 }
 
+func TestValidOIDCSignInSub(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		assert.True(t, ValidOIDCSignInSub("1"))
+		assert.True(t, ValidOIDCSignInSub("abc"))
+		assert.True(t, ValidOIDCSignInSub("4f2c1a7e-0d3b-4c8e-9a51-6e2f8b7d9c10"))
+		assert.True(t, ValidOIDCSignInSub("AAAAAAAAAAAAAAAAAAAAAIGl8i-9dVtaXxJmqHdPeOc"))
+		assert.True(t, ValidOIDCSignInSub("a b"))
+		assert.True(t, ValidOIDCSignInSub(strings.Repeat("a", 255)))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.False(t, ValidOIDCSignInSub(""))
+		assert.False(t, ValidOIDCSignInSub("abc\x01def"))
+		assert.False(t, ValidOIDCSignInSub("abc\x00"))
+		assert.False(t, ValidOIDCSignInSub("<abcdef>"))
+		assert.False(t, ValidOIDCSignInSub(" abcdef"))
+		assert.False(t, ValidOIDCSignInSub("abcdef "))
+		assert.False(t, ValidOIDCSignInSub(strings.Repeat("a", 256)))
+		assert.False(t, ValidOIDCSignInSub(strings.Repeat("ä", 200)))
+	})
+}
+
 func TestUser_InitOIDCSub(t *testing.T) {
 	t.Run("LinkLocal", func(t *testing.T) {
 		user := createOIDCSubTestUser(t, authn.ProviderLocal, "", true)

@@ -7,9 +7,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
-// ValidOIDCSub reports whether sub fits the auth_id column and is not changed by cleaning.
+// ValidOIDCSub reports whether sub is valid for sign-in and long enough to be configured as an admin subject.
 func ValidOIDCSub(sub string) bool {
-	return len(sub) >= 4 && len(sub) <= 255 && clean.Auth(sub) == sub
+	return len(sub) >= 4 && ValidOIDCSignInSub(sub)
+}
+
+// ValidOIDCSignInSub reports whether a subject presented at sign-in fits the auth_id column and is not changed
+// by cleaning, so that it is stored and compared exactly as the identity provider sent it.
+func ValidOIDCSignInSub(sub string) bool {
+	return sub != "" && len(sub) <= 255 && clean.Auth(sub) == sub
 }
 
 // InitOIDCSub links the account to the OIDC subject sub if it has no OIDC subject yet and no other super

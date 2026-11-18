@@ -56,7 +56,8 @@ func AddUser(frm form.User) error {
 		return err
 	}
 
-	user.SetAuthID(authForm.AuthID, authForm.AuthIssuer)
+	// Other accounts are detached from the auth ID only once the account has been added.
+	detach := user.setAuthID(authForm.AuthID, authForm.AuthIssuer)
 
 	err := Db().Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(user).Error; err != nil {
@@ -84,6 +85,10 @@ func AddUser(frm form.User) error {
 	})
 
 	if err == nil {
+		if detach {
+			user.DetachAuthID()
+		}
+
 		user.WarnExistingBasePath()
 	}
 

@@ -139,6 +139,26 @@ func TestOidcUser(t *testing.T) {
 		assert.Equal(t, "", m.UserName)
 		assert.Equal(t, "Jane Doe", m.DisplayName)
 	})
+	t.Run("ShortSubject", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Subject = "1"
+
+		m := OidcUser(info, "", "jane.doe")
+
+		assert.Equal(t, "1", m.AuthID)
+		assert.Equal(t, authn.ProviderOIDC.String(), m.AuthProvider)
+	})
+	t.Run("SubjectChangedByCleaning", func(t *testing.T) {
+		for _, sub := range []string{"jane<doe>", "jane\x00doe", " jane", "jane ", strings.Repeat("a", 256)} {
+			info := &oidc.UserInfo{}
+			info.Subject = sub
+
+			m := OidcUser(info, "", "jane.doe")
+
+			assert.Equal(t, "", m.AuthID, "%q", sub)
+			assert.Equal(t, "", m.AuthProvider, "%q", sub)
+		}
+	})
 	t.Run("NoSubject", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"
@@ -1359,6 +1379,42 @@ func TestAddUser(t *testing.T) {
 		assert.Equal(t, "https://adduser.example.com", taker.AuthIssuer)
 		assert.Equal(t, authn.ProviderOIDC.String(), taker.AuthProvider)
 	})
+	t.Run("AuthIDDetachedAfterAdd", func(t *testing.T) {
+		sub := rnd.UUID()
+		holder := newAuthIDTestUser(t, "adduser-subholder", sub, false)
+		login := newAuthIDTestSession(t, holder, authn.ProviderOIDC)
+		frm := form.User{UserName: "adduser-subtaker", UserRole: acl.RoleAdmin.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: sub, Password: "adduser-password"}
+
+		t.Cleanup(func() { deleteTestUser(t, FindUserByName("adduser-subtaker")) })
+
+		// An add that fails while the account is created leaves the holder unchanged.
+		const failCreate = "photoprism:test_fail_user_create"
+		require.NoError(t, Db().Callback().Create().Before("gorm:create").Register(failCreate, func(db *gorm.DB) {
+			if db.Statement.Table == (User{}).TableName() {
+				_ = db.AddError(errors.New("create failed"))
+			}
+		}))
+
+		err := AddUser(frm)
+		require.NoError(t, Db().Callback().Create().Remove(failCreate))
+		require.Error(t, err)
+
+		found := FindUserByUID(holder.UserUID)
+		require.NotNil(t, found)
+		assert.Equal(t, sub, found.AuthID)
+		_, err = FindAnySession(login.ID)
+		assert.NoError(t, err)
+
+		// A successful add detaches the holder and revokes its login sessions.
+		require.NoError(t, AddUser(frm))
+
+		found = FindUserByUID(holder.UserUID)
+		require.NotNil(t, found)
+		assert.Equal(t, authn.ProviderNone.String(), found.AuthProvider)
+		_, err = FindAnySession(login.ID)
+		assert.Error(t, err)
+	})
 	t.Run("ValidationError", func(t *testing.T) {
 		err := AddUser(form.User{UserName: "adduser-bad-email", UserEmail: "x@localhost", UserRole: acl.RoleAdmin.String(),
 			AuthProvider: "none"})
@@ -2503,6 +2559,176 @@ func TestUser_SetAuthID(t *testing.T) {
 		assert.Equal(t, "", n.AuthID)
 		assert.Equal(t, authn.ProviderNone.String(), n.AuthProvider)
 	})
+	t.Run("DetachedSessionsRevoked", func(t *testing.T) {
+		sub := rnd.UUID()
+		holder := newAuthIDTestUser(t, "authid-holder", sub, false)
+		login := newAuthIDTestSession(t, holder, authn.ProviderOIDC)
+		app := newAuthIDTestSession(t, holder, authn.ProviderApplication)
+
+		// Load the app password session into the cache with its account.
+		cached, err := FindSession(app.ID)
+		require.NoError(t, err)
+		require.Equal(t, authn.ProviderOIDC.String(), cached.GetUser().AuthProvider)
+
+		m := newAuthIDTestUser(t, "authid-taker", rnd.UUID(), false)
+		hook := captureAuditLog(t)
+		m.SetAuthID(sub, issuer)
+
+		holder = FindUserByUID(holder.UserUID)
+		require.NotNil(t, holder)
+		assert.Equal(t, authn.ProviderNone.String(), holder.AuthProvider)
+		assert.Equal(t, 1, oidcSubAuditWarnings(hook, "auth id detached from user "+holder.RefID+" › 1 sessions revoked"))
+
+		_, err = FindAnySession(login.ID)
+		assert.Error(t, err)
+
+		// App passwords are kept, as after other privilege changes, and are read again with the new provider.
+		found, err := FindSession(app.ID)
+		require.NoError(t, err)
+		assert.Equal(t, authn.ProviderNone.String(), found.GetUser().AuthProvider)
+	})
+	t.Run("SuperAdminKeepsSessions", func(t *testing.T) {
+		sub := rnd.UUID()
+		holder := newAuthIDTestUser(t, "authid-super", sub, true)
+		login := newAuthIDTestSession(t, holder, authn.ProviderOIDC)
+
+		m := newAuthIDTestUser(t, "authid-other", rnd.UUID(), false)
+		m.SetAuthID(sub, issuer)
+
+		holder = FindUserByUID(holder.UserUID)
+		require.NotNil(t, holder)
+		assert.Equal(t, sub, holder.AuthID)
+
+		_, err := FindAnySession(login.ID)
+		assert.NoError(t, err)
+	})
+}
+
+func TestUser_setAuthID(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		sub := rnd.UUID()
+		holder := newAuthIDTestUser(t, "setauthid-holder", sub, false)
+		m := &User{UserUID: rnd.GenerateUID(UserUID), AuthProvider: authn.ProviderOIDC.String()}
+
+		assert.True(t, m.setAuthID(sub, "https://setauthid.example.com"))
+		assert.Equal(t, sub, m.AuthID)
+		assert.Equal(t, "https://setauthid.example.com", m.AuthIssuer)
+
+		// Other accounts are not changed.
+		found := FindUserByUID(holder.UserUID)
+		require.NotNil(t, found)
+		assert.Equal(t, sub, found.AuthID)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		m := &User{AuthID: "kept", AuthIssuer: "https://kept.example.com"}
+
+		assert.False(t, m.setAuthID("", "https://other.example.com"))
+		assert.Equal(t, "kept", m.AuthID)
+		assert.Equal(t, "https://kept.example.com", m.AuthIssuer)
+	})
+}
+
+func TestFindAuthIDHolders(t *testing.T) {
+	sub := rnd.UUID()
+	plain := newAuthIDTestUser(t, "holders-plain", sub, false)
+	other := newAuthIDTestUser(t, "holders-other", sub, false)
+	require.NoError(t, other.Updates(Values{"auth_issuer": "https://a.example.com"}))
+	uids := func(holders Users) (result []string) {
+		for _, u := range holders {
+			result = append(result, u.UserUID)
+		}
+		return result
+	}
+
+	t.Run("AnyIssuer", func(t *testing.T) {
+		holders, err := FindAuthIDHolders(authn.ProviderOIDC.String(), sub, "", "")
+		require.NoError(t, err)
+		assert.ElementsMatch(t, []string{plain.UserUID, other.UserUID}, uids(holders))
+	})
+	t.Run("SameIssuer", func(t *testing.T) {
+		holders, err := FindAuthIDHolders(authn.ProviderOIDC.String(), sub, "https://a.example.com", "")
+		require.NoError(t, err)
+		assert.ElementsMatch(t, []string{plain.UserUID, other.UserUID}, uids(holders))
+	})
+	t.Run("OtherIssuer", func(t *testing.T) {
+		holders, err := FindAuthIDHolders(authn.ProviderOIDC.String(), sub, "https://b.example.com", "")
+		require.NoError(t, err)
+		assert.Equal(t, []string{plain.UserUID}, uids(holders))
+	})
+	t.Run("ExceptUID", func(t *testing.T) {
+		holders, err := FindAuthIDHolders(authn.ProviderOIDC.String(), sub, "", plain.UserUID)
+		require.NoError(t, err)
+		assert.Equal(t, []string{other.UserUID}, uids(holders))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		holders, err := FindAuthIDHolders("", sub, "", "")
+		require.NoError(t, err)
+		assert.Empty(t, holders)
+		holders, err = FindAuthIDHolders(authn.ProviderOIDC.String(), "", "", "")
+		require.NoError(t, err)
+		assert.Empty(t, holders)
+	})
+}
+
+func TestUser_DetachAuthID(t *testing.T) {
+	t.Run("OtherIssuerKept", func(t *testing.T) {
+		sub := rnd.UUID()
+		holder := newAuthIDTestUser(t, "detach-issuer-a", sub, false)
+		require.NoError(t, holder.Updates(Values{"auth_issuer": "https://a.example.com"}))
+		login := newAuthIDTestSession(t, holder, authn.ProviderOIDC)
+
+		m := newAuthIDTestUser(t, "detach-issuer-b", rnd.UUID(), false)
+		m.SetAuthID(sub, "https://b.example.com")
+
+		found := FindUserByUID(holder.UserUID)
+		require.NotNil(t, found)
+		assert.Equal(t, sub, found.AuthID)
+		_, err := FindAnySession(login.ID)
+		assert.NoError(t, err)
+	})
+	t.Run("EmptyAuthID", func(t *testing.T) {
+		holder := newAuthIDTestUser(t, "detach-emptyid", "", false)
+		m := &User{UserUID: rnd.GenerateUID(UserUID), AuthProvider: authn.ProviderOIDC.String()}
+
+		m.DetachAuthID()
+
+		found := FindUserByUID(holder.UserUID)
+		require.NotNil(t, found)
+		assert.Equal(t, authn.ProviderOIDC.String(), found.AuthProvider)
+	})
+}
+
+// newAuthIDTestUser creates an OIDC account linked to sub and deletes it when the test ends.
+func newAuthIDTestUser(t *testing.T, name, sub string, superAdmin bool) *User {
+	t.Helper()
+
+	u := NewUser()
+	u.UserName = name
+	u.UserRole = acl.RoleAdmin.String()
+	u.AuthProvider = authn.ProviderOIDC.String()
+	u.AuthID = sub
+	u.SuperAdmin = superAdmin
+	u.CanLogin = true
+	require.NoError(t, u.Create())
+
+	t.Cleanup(func() {
+		u.RevokeSessions(nil, authn.RevokeAllSessions)
+		_ = UnscopedDb().Delete(u).Error
+	})
+
+	return u
+}
+
+// newAuthIDTestSession stores a session of u with the given auth provider.
+func newAuthIDTestSession(t *testing.T, u *User, provider authn.ProviderType) *Session {
+	t.Helper()
+
+	sess := NewSession(3600, 0)
+	sess.SetUser(u)
+	sess.AuthProvider = provider.String()
+	require.NoError(t, sess.Create())
+
+	return sess
 }
 
 func TestUser_UpdateAuthID(t *testing.T) {

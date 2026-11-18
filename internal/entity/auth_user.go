@@ -106,13 +106,13 @@ func NewUser() (m *User) {
 	}
 }
 
-// OidcUser creates a new OIDC user entity.
+// OidcUser creates a new OIDC user entity, or an empty one if the subject is not valid for sign-in.
 func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
-	authId := clean.Auth(userInfo.Subject)
-
-	if authId == "" {
+	if !ValidOIDCSignInSub(userInfo.Subject) {
 		return User{}
 	}
+
+	authId := userInfo.Subject
 
 	return User{
 		UserName:     userName,
@@ -845,26 +845,87 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 	return m
 }
 
-// SetAuthID sets a custom authentication identifier.
+// SetAuthID sets a custom authentication identifier and detaches it from other accounts.
 func (m *User) SetAuthID(id, issuer string) *User {
-	// Update auth id if not empty.
-	if authId := clean.Auth(id); authId == "" {
-		return m
-	} else {
-		m.AuthID = authId
-		m.AuthIssuer = clean.Uri(issuer)
-	}
-
-	// Make sure other users do not use the same identifier.
-	if m.HasUID() && m.AuthProvider != "" {
-		if err := UnscopedDb().Model(&User{}).
-			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = FALSE", m.UserUID, m.AuthProvider, m.AuthID).
-			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
-			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(err)}, m.RefID)
-		}
+	if m.setAuthID(id, issuer) {
+		m.DetachAuthID()
 	}
 
 	return m
+}
+
+// setAuthID sets the auth id and issuer if the id is not empty, without changing other accounts.
+func (m *User) setAuthID(id, issuer string) bool {
+	authId := clean.Auth(id)
+
+	if authId == "" {
+		return false
+	}
+
+	m.AuthID = authId
+	m.AuthIssuer = clean.Uri(issuer)
+
+	return true
+}
+
+// FindAuthIDHolders returns the accounts other than uid that hold the auth id for the provider, scoped to
+// accounts without an issuer or with the same issuer as FindUser does, or to any issuer if it is empty.
+func FindAuthIDHolders(provider, authId, issuer, uid string) (holders Users, err error) {
+	if provider == "" || authId == "" {
+		return holders, nil
+	}
+
+	stmt := UnscopedDb().Where("user_uid <> ? AND auth_provider = ? AND auth_id = ?", uid, provider, authId)
+
+	if issuer != "" {
+		stmt = stmt.Where("(auth_issuer = '' OR auth_issuer = ?)", issuer)
+	}
+
+	err = stmt.Find(&holders).Error
+
+	return holders, err
+}
+
+// DetachAuthID sets the provider of other accounts holding the auth id to none and revokes their
+// sessions, as for other privilege changes. Super admins keep the identifier.
+func (m *User) DetachAuthID() {
+	const cond = "user_uid = ? AND auth_provider = ? AND auth_id = ? AND super_admin = FALSE"
+
+	if !m.HasUID() || m.AuthProvider == "" || m.AuthID == "" {
+		return
+	}
+
+	holders, err := FindAuthIDHolders(m.AuthProvider, m.AuthID, m.AuthIssuer, m.UserUID)
+
+	if err != nil {
+		event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(err)}, m.RefID)
+		return
+	}
+
+	for i := range holders {
+		other := &holders[i]
+
+		if other.SuperAdmin {
+			continue
+		}
+
+		res := UnscopedDb().Model(&User{}).Where(cond, other.UserUID, m.AuthProvider, m.AuthID).
+			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone})
+
+		if res.Error != nil {
+			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(res.Error)}, m.RefID)
+			continue
+		} else if res.RowsAffected == 0 {
+			continue
+		}
+
+		other.AuthID = ""
+		other.AuthProvider = authn.ProviderNone.String()
+		revoked := other.RevokeDerivedSessions(nil)
+		FlushUserSessionCache(other.UserUID)
+
+		event.AuditWarn([]string{"user %s", "auth id detached from user %s", "%d sessions revoked", status.Updated}, m.RefID, other.RefID, revoked)
+	}
 }
 
 // UpdateAuthID updated the custom authentication identifier.
@@ -1577,12 +1638,13 @@ func (m *User) storedEmail() string {
 	return stored.UserEmail
 }
 
-// SetFormValues sets the values specified in the form.
+// SetFormValues sets the values specified in the form; DetachAuthID detaches the auth id from other
+// accounts once the account is saved.
 func (m *User) SetFormValues(frm form.User) *User {
 	m.UserName = frm.Username()
 	m.SetProvider(frm.Provider())
 	m.SetMethod(frm.Method())
-	m.SetAuthID(frm.AuthID, frm.AuthIssuer)
+	m.setAuthID(frm.AuthID, frm.AuthIssuer)
 	m.UserEmail = frm.Email()
 	m.DisplayName = frm.DisplayName
 	m.SuperAdmin = frm.SuperAdmin

@@ -284,6 +284,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			return
 		}
 
+		// Refuse a subject that cleaning would change, so it is matched exactly as sent.
+		if !entity.ValidOIDCSignInSub(userInfo.Subject) {
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrInvalidAuthID.Error()})
+			event.LoginError(clientIp, "oidc", oidc.Username(userInfo, conf.OIDCUsername()), userAgent, authn.ErrInvalidAuthID.Error())
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
+			return
+		}
+
 		// Find existing user record and update it, if necessary.
 		if oidcUser := entity.OidcUser(userInfo, provider.Issuer(), oidc.Username(userInfo, conf.OIDCUsername())); authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthProviderIsNotOIDC.Error()})
