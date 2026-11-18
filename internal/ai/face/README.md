@@ -317,10 +317,10 @@ The collision radius is deliberately not part of the criterion. It records a str
 Additional safeguards limit how often stubborn clusters are retried:
 
 - Every manual cluster stores a retry counter (`faces.merge_retry`) and optional note (`merge_notes`). The optimizer skips clusters once the retry count reaches `MergeMaxRetry` (default **1**). The limit may be raised or disabled with the environment variable `PHOTOPRISM_FACE_MERGE_MAX_RETRY` (`0` = unlimited retries).
-- Warnings surface only when the retry counter is incremented. Subsequent optimize runs log at debug level until counters are reset.
+- Retained clusters are logged at debug level on every run that finds them; only a failed retry-counter update is logged as a warning.
 - `photoprism faces optimize --retry` clears retry counters before running the optimizer, allowing administrators to reprocess clusters after manual cleanup.
 - `photoprism faces audit --subject=<uid>` focuses the audit report on a specific person and prints retry counts, sample statistics, and outstanding clusters so operators know which photos still need attention.
-- The warning text includes the retry count and cluster IDs.
+- The debug line names the retained cluster IDs and how many there are, which can be fewer than the candidates.
 
 #### Midpoint Computation
 
