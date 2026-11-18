@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"io"
 	"mime/multipart"
 	"net/http"
 
@@ -67,6 +68,39 @@ func IsRequestBodyTooLarge(err error) bool {
 	var maxBytesErr *http.MaxBytesError
 
 	return errors.As(err, &maxBytesErr) || errors.Is(err, multipart.ErrMessageTooLarge)
+}
+
+// readRequestBody reads at most limit bytes of the request body into memory, or aborts and returns false. Handlers
+// that take a lock read the body first, so a body that arrives slowly is not waited for under it. The limit must be
+// positive: without one, the body is not read at all rather than read unbounded.
+func readRequestBody(c *gin.Context, limit int64) (body []byte, ok bool) {
+	if c == nil || c.Request == nil {
+		return nil, true
+	} else if limit <= 0 {
+		log.Errorf("api: request body limit %d is not positive", limit)
+		AbortUnexpectedError(c)
+		return nil, false
+	}
+
+	LimitRequestBodyBytes(c, limit)
+
+	if c.Request.Body == nil {
+		return nil, true
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+
+	if err != nil {
+		if IsRequestBodyTooLarge(err) {
+			AbortRequestTooLarge(c, i18n.ErrBadRequest)
+		} else {
+			AbortBadRequest(c, err)
+		}
+
+		return nil, false
+	}
+
+	return body, true
 }
 
 // AbortRequestTooLarge writes a localized 413 response and stops the current request.

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -82,6 +83,13 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
+		// Read before the lock, so a body that arrives slowly is not waited for under it.
+		body, ok := readRequestBody(c, MaxMutationRequestBytes)
+
+		if !ok {
+			return
+		}
+
 		if err := mutex.UpdatePeople.Start(); err != nil {
 			AbortBusy(c)
 			return
@@ -112,14 +120,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
-
-		if err = c.BindJSON(frm); err != nil {
-			if IsRequestBodyTooLarge(err) {
-				AbortRequestTooLarge(c, i18n.ErrBadRequest)
-				return
-			}
-
+		if err = binding.JSON.BindBody(body, frm); err != nil {
 			log.Errorf("subject: %s (update form)", err)
 			AbortBadRequest(c, err)
 			return

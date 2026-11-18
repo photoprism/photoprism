@@ -2,6 +2,9 @@ package api
 
 import (
 	"net/http"
+	"net/http/httptest"
+	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -12,7 +15,32 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
+
+// slowBody signals its first read and blocks it until released, as a body that arrives slowly would.
+type slowBody struct {
+	started chan struct{}
+	release chan struct{}
+	data    *strings.Reader
+	once    sync.Once
+}
+
+// newSlowBody returns a slowBody that eventually yields data.
+func newSlowBody(data string) *slowBody {
+	return &slowBody{started: make(chan struct{}), release: make(chan struct{}), data: strings.NewReader(data)}
+}
+
+// Read blocks until the body is released, then returns its data.
+func (b *slowBody) Read(p []byte) (int, error) {
+	b.once.Do(func() { close(b.started) })
+	<-b.release
+
+	return b.data.Read(p)
+}
+
+// Close does nothing.
+func (b *slowBody) Close() error { return nil }
 
 // holdPeopleLock takes the people update lock for the rest of the test, as a concurrent edit would.
 func holdPeopleLock(t *testing.T) {
@@ -101,6 +129,75 @@ func TestPeopleLockOrder(t *testing.T) {
 		})
 	}
 
+	t.Run("BodyReadBeforeTheLock", func(t *testing.T) {
+		// While the body is still arriving, the lock is free for other edits. The body is invalid
+		// JSON, so the request ends at the form and changes no fixture.
+		for _, e := range []struct {
+			name string
+			path string
+		}{
+			{"UpdateMarker", "/api/v1/markers/ms6sg6b14ahkyd24"},
+			{"UpdateSubject", "/api/v1/subjects/js6sg6b1qekk9jx8"},
+		} {
+			t.Run(e.name, func(t *testing.T) {
+				require.False(t, mutex.UpdatePeople.Running())
+				t.Cleanup(mutex.UpdatePeople.Stop)
+
+				body := newSlowBody("{")
+				released := false
+				t.Cleanup(func() {
+					if !released {
+						close(body.release)
+					}
+				})
+
+				req := httptest.NewRequest(http.MethodPut, e.path, body)
+				req.Header.Set(header.XAuthToken, adminToken)
+				w := httptest.NewRecorder()
+				done := make(chan struct{})
+
+				go func() {
+					app.ServeHTTP(w, req)
+					close(done)
+				}()
+
+				select {
+				case <-body.started:
+				case <-time.After(10 * time.Second):
+					t.Fatal("the handler never read the body")
+				}
+
+				assert.False(t, mutex.UpdatePeople.Running(), "the lock is not held while the body arrives")
+
+				released = true
+				close(body.release)
+				<-done
+
+				assert.Equal(t, http.StatusBadRequest, w.Code, w.Body.String())
+				assert.False(t, mutex.UpdatePeople.Running())
+			})
+		}
+	})
+	t.Run("OversizedBodyBeforeTheLock", func(t *testing.T) {
+		// The body is bounded and read before the lock, so an oversized one is refused even while
+		// another edit holds it.
+		holdPeopleLock(t)
+
+		oversized := `{"Name":"` + strings.Repeat("x", int(MaxMutationRequestBytes)) + `"}`
+
+		// Exactly at the bound, the same body passes the read and meets the held lock instead.
+		within := `{"Name":"` + strings.Repeat("x", int(MaxMutationRequestBytes)-11) + `"}`
+		require.Len(t, within, int(MaxMutationRequestBytes))
+
+		for _, path := range []string{"/api/v1/markers/ms6sg6b14ahkyd24", "/api/v1/subjects/js6sg6b1qekk9jx8"} {
+			r := AuthenticatedRequestWithBody(app, http.MethodPut, path, oversized, adminToken)
+			assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code, path)
+			assert.True(t, mutex.UpdatePeople.Running(), "the lock stays with its holder")
+
+			r = AuthenticatedRequestWithBody(app, http.MethodPut, path, within, adminToken)
+			assert.Equal(t, http.StatusTooManyRequests, r.Code, path)
+		}
+	})
 	t.Run("WakeupIntervalAfterAuthorization", func(t *testing.T) {
 		// The interval is reported only to an authorized caller.
 		prevInterval, prevUnsafe := conf.Options().WakeupInterval, conf.Options().Unsafe
