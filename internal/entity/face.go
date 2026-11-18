@@ -112,7 +112,8 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 	// so the message has to name the way out.
 	if dims := face.ExpectedDims(); len(m.embedding) != dims {
 		if current := face.EmbeddingModelName(); current != "" {
-			return fmt.Errorf("embedding has %d values, expected %d for model %s, run photoprism faces migrate to regenerate", len(m.embedding), dims, clean.Log(current))
+			return fmt.Errorf("embedding has %d values, expected %d for model %s, run %s to regenerate",
+				len(m.embedding), dims, clean.Log(current), face.MigrateCommand(current))
 		}
 
 		return fmt.Errorf("embedding has %d values, expected %d", len(m.embedding), dims)

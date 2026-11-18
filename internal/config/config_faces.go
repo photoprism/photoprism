@@ -734,8 +734,17 @@ func (c *Config) reportIgnoredFaceModel() {
 		return
 	}
 
+	// A model that needs TensorFlow, or one this edition may not use, is not a migration target worth
+	// naming, and the model a completed migration records in the file wins anyway, so nothing is advised.
+	if m := face.FindEmbeddingModel(configured); m == nil || m.RequiresTensorFlow() || face.LicenseRefused(configured, c.Edition()) != nil {
+		log.Infof("config: face model %s is configured but ignored, this library uses %s",
+			clean.Log(configured), clean.Log(inForce))
+
+		return
+	}
+
 	log.Infof("config: face model %s is configured but ignored, this library uses %s "+
-		`(run "photoprism faces migrate --to %s" to change it)`, clean.Log(configured), clean.Log(inForce), clean.Log(configured))
+		`(run "%s" to change it)`, clean.Log(configured), clean.Log(inForce), face.MigrateCommand(configured))
 }
 
 // detectFaceModel returns the model that produced the library's vectors, or the first installed
@@ -843,15 +852,14 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 
 	face.BlockEmbeddings(reason)
 
-	log.Warnf(`faces: %s, so face embeddings are not processed (run "photoprism faces migrate --to %s" to migrate them)`,
-		reason, clean.Log(name))
+	log.Warnf(`faces: %s, so face embeddings are not processed (run "%s" to migrate them)`,
+		reason, face.MigrateCommand(name))
 }
 
-// unfinishedFaceMigrationAdvice returns the commands that finish an unfinished migration or move to the
-// configured model, which the check cannot choose between: a setting changed by hand reads the same.
+// unfinishedFaceMigrationAdvice returns the command that finishes an unfinished migration. A model set
+// by hand instead is overridden by the one the completed migration records, so it needs no other step.
 func (c *Config) unfinishedFaceMigrationAdvice() string {
-	return fmt.Sprintf(`run "photoprism faces migrate" to finish it, or "photoprism faces migrate --to %s" to use %s instead`,
-		clean.Log(c.FaceModel()), clean.Log(c.FaceModel()))
+	return `run "photoprism faces migrate" to finish it`
 }
 
 // unfinishedFaceMigration returns the default embedding model when every marker the configured one

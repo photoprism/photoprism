@@ -575,3 +575,18 @@ func TestEmbeddingModelDetectors(t *testing.T) {
 		})
 	}
 }
+
+func TestMigrateCommand(t *testing.T) {
+	t.Run("OnnxTarget", func(t *testing.T) {
+		assert.Equal(t, "photoprism faces migrate --to sface", MigrateCommand(ModelSFace))
+		assert.Equal(t, "photoprism faces migrate --to arcface_r50", MigrateCommand(ModelArcFaceR50))
+	})
+	t.Run("TensorFlowTarget", func(t *testing.T) {
+		// A model that needs TensorFlow is not a target to recommend, so the default is left to the command.
+		assert.Equal(t, "photoprism faces migrate", MigrateCommand(ModelFaceNet))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.Equal(t, "photoprism faces migrate", MigrateCommand("unknown"))
+		assert.Equal(t, "photoprism faces migrate", MigrateCommand(""))
+	})
+}

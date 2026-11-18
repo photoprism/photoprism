@@ -454,12 +454,28 @@ func (w *Faces) migrationTarget(target string) (string, error) {
 	return target, nil
 }
 
+// deprecatedMigrationTarget returns the warning for a migration to a model that needs TensorFlow, or ""
+// for any other target. Such a migration stays possible, since it is useful for testing.
+func deprecatedMigrationTarget(target face.ModelName) string {
+	if m := face.FindEmbeddingModel(target); m == nil || !m.RequiresTensorFlow() {
+		return ""
+	}
+
+	return fmt.Sprintf("faces: %s is deprecated and intended for testing only, and will be removed together with TensorFlow",
+		clean.Log(target))
+}
+
 // PlanMigration validates the target and returns a read-only migration summary.
 func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error) {
 	target, err = w.migrationTarget(target)
 
 	if err != nil {
 		return result, err
+	}
+
+	// Planned once per command, before the prompt, so the warning is seen before anything changes.
+	if warning := deprecatedMigrationTarget(target); warning != "" {
+		log.Warn(warning)
 	}
 
 	result.Target = target

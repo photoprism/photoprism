@@ -9,8 +9,11 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -907,6 +910,59 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 
 	_, _, _, err = buildFaceMigrationClusters("unknown")
 	require.Error(t, err)
+}
+
+func TestDeprecatedMigrationTarget(t *testing.T) {
+	t.Run("FaceNet", func(t *testing.T) {
+		assert.Equal(t, "faces: facenet is deprecated and intended for testing only, and will be removed together with TensorFlow",
+			deprecatedMigrationTarget(face.ModelFaceNet))
+	})
+	t.Run("OnnxModels", func(t *testing.T) {
+		assert.Empty(t, deprecatedMigrationTarget(face.ModelSFace))
+		assert.Empty(t, deprecatedMigrationTarget(face.ModelArcFaceR50))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.Empty(t, deprecatedMigrationTarget("unknown"))
+	})
+}
+
+func TestFaces_PlanMigrationWarnsAboutFaceNet(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	if _, err := w.migrationTarget(face.ModelFaceNet); err != nil {
+		t.Skipf("faces: skipping, facenet cannot be a migration target here (%s)", err)
+	}
+
+	hook := test.NewGlobal()
+	t.Cleanup(hook.Reset)
+
+	// The target stays accepted, since migrating to it is useful for testing, but it is flagged.
+	plan, err := w.PlanMigration(face.ModelFaceNet)
+	require.NoError(t, err)
+	assert.Equal(t, face.ModelFaceNet, plan.Target)
+	assert.Contains(t, loggedMessages(hook, logrus.WarnLevel), deprecatedMigrationTarget(face.ModelFaceNet))
+
+	// The command hands its plan to Migrate, which must not warn a second time.
+	_, err = w.Migrate(context.Background(), FacesMigrateOptions{Target: face.ModelFaceNet, DryRun: true, Plan: &plan})
+	require.NoError(t, err)
+
+	warned := 0
+
+	for _, msg := range loggedMessages(hook, logrus.WarnLevel) {
+		if msg == deprecatedMigrationTarget(face.ModelFaceNet) {
+			warned++
+		}
+	}
+
+	assert.Equal(t, 1, warned)
+
+	hook.Reset()
+
+	if _, err = w.migrationTarget(face.ModelSFace); err == nil {
+		_, err = w.PlanMigration(face.ModelSFace)
+		require.NoError(t, err)
+		assert.NotContains(t, strings.Join(loggedMessages(hook, logrus.WarnLevel), "\n"), "deprecated")
+	}
 }
 
 func TestFaces_migrationTarget(t *testing.T) {

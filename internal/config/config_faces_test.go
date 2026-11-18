@@ -987,8 +987,22 @@ func TestConfig_checkFaceModelMismatch(t *testing.T) {
 		assert.Equal(t, face.ModelSFace, c.faceUnfinished)
 		// The advice follows the consequence, so the pause does not read as caused by the command.
 		assert.Equal(t, `faces: 1423 marker(s) use the default model sface, as after an unfinished migration, but this instance is configured for facenet, `+
-			`so face embeddings are not processed (run "photoprism faces migrate" to finish it, or `+
-			`"photoprism faces migrate --to facenet" to use facenet instead)`, lastFaceLogMessage(t, hook))
+			`so face embeddings are not processed (run "photoprism faces migrate" to finish it)`, lastFaceLogMessage(t, hook))
+	})
+	t.Run("FaceNetIsNotAMigrationTarget", func(t *testing.T) {
+		// A library on another model while FaceNet is configured is migrated to the default model,
+		// since moving it to a model that needs TensorFlow is not a step to recommend.
+		hook := captureLog(t)
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelFaceNet
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: face.ModelSFace, Markers: 3}, {EmbedModel: face.ModelArcFaceR50, Markers: 2}})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, lastFaceLogMessage(t, hook), `(run "photoprism faces migrate" to migrate them)`)
+		assert.NotContains(t, lastFaceLogMessage(t, hook), "--to")
 	})
 	t.Run("OtherMismatchKeepsItsAdvice", func(t *testing.T) {
 		hook := captureLog(t)
@@ -1039,9 +1053,8 @@ func TestConfig_unfinishedFaceMigrationAdvice(t *testing.T) {
 	c.faceModel = face.ModelFaceNet
 	c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
 
-	// The check cannot tell an unrecorded finalize from a setting edited back, so it names both ways.
-	assert.Equal(t, `run "photoprism faces migrate" to finish it, or "photoprism faces migrate --to facenet" to use facenet instead`,
-		c.unfinishedFaceMigrationAdvice())
+	// Only finishing is advised: a model set by hand is overridden by the one the migration records.
+	assert.Equal(t, `run "photoprism faces migrate" to finish it`, c.unfinishedFaceMigrationAdvice())
 }
 
 func TestUnfinishedFaceMigration(t *testing.T) {
@@ -1241,6 +1254,37 @@ func TestConfig_reportIgnoredFaceModel(t *testing.T) {
 		assert.Contains(t, lines[0], "face model sface is configured but ignored")
 		assert.Contains(t, lines[0], "this library uses facenet")
 		assert.Contains(t, lines[0], "faces migrate --to sface")
+	})
+	t.Run("FaceNetIsNotAdvised", func(t *testing.T) {
+		// Migrating back to a model that needs TensorFlow is not a step to recommend, and a completed
+		// migration's recorded model overrides the one set here.
+		c := NewConfig(CliTestContext())
+		hook := captureLog(t)
+		c.faceModelFlag = face.ModelFaceNet
+		c.options.FaceModel = face.ModelSFace
+
+		c.reportIgnoredFaceModel()
+
+		lines := ignoredLines(t, hook)
+
+		require.Len(t, lines, 1)
+		assert.Equal(t, "config: face model facenet is configured but ignored, this library uses sface", lines[0])
+	})
+	t.Run("LicenseRefusedIsNotAdvised", func(t *testing.T) {
+		// A gated model this edition may not use would only be refused by the advised command.
+		t.Setenv(face.LicenseAcceptanceVar, "")
+
+		c := NewConfig(CliTestContext())
+		hook := captureLog(t)
+		c.faceModelFlag = face.ModelArcFaceR50
+		c.options.FaceModel = face.ModelSFace
+
+		c.reportIgnoredFaceModel()
+
+		lines := ignoredLines(t, hook)
+
+		require.Len(t, lines, 1)
+		assert.Equal(t, "config: face model arcface_r50 is configured but ignored, this library uses sface", lines[0])
 	})
 	t.Run("DisabledPointsAtTheFile", func(t *testing.T) {
 		// A migration cannot turn embeddings off, so naming it as the way to apply this

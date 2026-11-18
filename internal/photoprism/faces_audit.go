@@ -929,7 +929,7 @@ func (w *Faces) auditEmbeddingModels() {
 	}
 
 	if stale > 0 {
-		log.Warnf("faces: run photoprism faces migrate to regenerate %s with the configured model",
+		log.Warnf("faces: run %s to regenerate %s", face.MigrateCommand(current),
 			english.Plural(stale, "cluster", "clusters"))
 	}
 }

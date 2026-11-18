@@ -420,6 +420,16 @@ func (m *EmbeddingModel) RequiresTensorFlow() bool {
 	return m != nil && m.Runtime == RuntimeTensorFlow
 }
 
+// MigrateCommand returns the command that migrates a library to the target, naming the target only when
+// it is one to recommend: a model that needs TensorFlow, or an unknown one, is left to the default.
+func MigrateCommand(target ModelName) string {
+	if m := FindEmbeddingModel(target); m == nil || m.RequiresTensorFlow() {
+		return "photoprism faces migrate"
+	}
+
+	return "photoprism faces migrate --to " + target
+}
+
 // String returns the model name, or "none" for nil receivers.
 func (m *EmbeddingModel) String() string {
 	if m == nil {

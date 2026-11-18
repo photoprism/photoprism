@@ -1306,8 +1306,7 @@ func TestConfig_faceEmbedderStatus(t *testing.T) {
 		unfinished.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 1423}})
 
 		assert.Equal(t, `Face embeddings are paused, because 1423 marker(s) use the default model sface, as after an unfinished `+
-			`migration, but this instance is configured for facenet. Run "photoprism faces migrate" to finish it, or "photoprism faces migrate `+
-			`--to facenet" to use facenet instead.`, unfinished.faceEmbedderStatus())
+			`migration, but this instance is configured for facenet. Run "photoprism faces migrate" to finish it.`, unfinished.faceEmbedderStatus())
 	})
 }
 

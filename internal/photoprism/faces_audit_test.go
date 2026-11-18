@@ -380,6 +380,8 @@ func TestFaces_auditEmbeddingModels(t *testing.T) {
 		assert.Contains(t, strings.Join(warnings, "\n"), face.ModelArcFaceR50)
 		assert.Contains(t, strings.Join(warnings, "\n"), "faces migrate",
 			"the operator is told how to resolve it")
+		// The command names the model in force, so the run regenerates into it rather than the default.
+		assert.Contains(t, strings.Join(warnings, "\n"), "run "+face.MigrateCommand(face.EmbeddingModelName())+" to regenerate")
 	})
 	t.Run("NoModelConfigured", func(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))

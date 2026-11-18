@@ -331,7 +331,7 @@ func (w *Faces) cluster(opt FacesOptions, core int, retry bool) (added entity.Fa
 		log.Debugf("faces: at least %d samples needed for clustering", opt.SampleThreshold())
 		return added, true, nil
 	} else if embeddings.Dims() < 1 {
-		return added, true, fmt.Errorf("cannot cluster %d samples of different lengths, run photoprism faces migrate", samples)
+		return added, true, fmt.Errorf("cannot cluster %d samples of different lengths, run %s", samples, face.MigrateCommand(current))
 	} else {
 		var c alg.HardClusterer
 
