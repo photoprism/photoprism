@@ -3543,10 +3543,10 @@ func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
 	require.NoError(t, UnscopedDb().First(reloaded, "id = ?", appPw.ID).Error)
 	assert.Equal(t, u.PreviewToken, reloaded.PreviewToken)
 
-	// Simulate a fresh reload after cache eviction: caching the row must not resurrect
-	// the revoked token, and the current token resolves.
+	// Load the session again after cache eviction: the revoked token stays revoked, and the current token resolves.
 	DeleteFromSessionCache(appPw.ID)
-	CacheSession(reloaded, time.Hour)
+	_, err := FindAnySession(appPw.ID)
+	require.NoError(t, err)
 	assert.True(t, InvalidPreviewToken(oldPreview))
 	assert.False(t, InvalidPreviewToken(u.PreviewToken))
 

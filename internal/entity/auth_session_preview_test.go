@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // newPreviewTestUser creates an active account with a preview token and deletes it when the test ends.
@@ -24,6 +25,8 @@ func newPreviewTestUser(t *testing.T, name string) *User {
 
 	t.Cleanup(func() {
 		u.RevokeSessions(nil, authn.RevokeAllSessions)
+		_ = UnscopedDb().Delete(&UserDetails{}, "user_uid = ?", u.UserUID).Error
+		_ = UnscopedDb().Delete(&UserSettings{}, "user_uid = ?", u.UserUID).Error
 		_ = UnscopedDb().Delete(u).Error
 	})
 
@@ -209,4 +212,64 @@ func TestUser_Delete_PreviewToken(t *testing.T) {
 	require.NoError(t, u.Delete())
 
 	assert.Empty(t, PreviewToken.Get(app.ID))
+}
+
+func TestCacheSession_PreviewToken(t *testing.T) {
+	t.Run("UnresolvedAccount", func(t *testing.T) {
+		s := NewSession(3600, 0)
+		s.UserUID = rnd.GenerateUID(UserUID)
+		s.UserName = "preview-unresolved"
+		s.PreviewToken = GenerateToken()
+		require.NoError(t, Db().Create(s).Error)
+		t.Cleanup(func() { _ = s.Delete() })
+		DeleteFromSessionCache(s.ID)
+		PreviewToken.Unset(s.ID)
+
+		// The session is still returned, but its token is registered only once the account resolves.
+		_, err := FindAnySession(s.ID)
+		require.NoError(t, err)
+		assert.Empty(t, PreviewToken.Get(s.ID))
+	})
+	t.Run("UnresolvedVisitor", func(t *testing.T) {
+		s := NewSession(3600, 0)
+		s.UserUID = Visitor.UserUID
+		s.PreviewToken = GenerateToken()
+		PreviewToken.Unset(s.ID)
+		t.Cleanup(func() { DeleteFromSessionCache(s.ID); PreviewToken.Unset(s.ID) })
+
+		// A link visitor's own token does not depend on an account.
+		CacheSession(s, time.Minute)
+		assert.Equal(t, s.PreviewToken, PreviewToken.Get(s.ID))
+	})
+	t.Run("NoAccount", func(t *testing.T) {
+		s := NewSession(3600, 0)
+		s.PreviewToken = GenerateToken()
+		require.NoError(t, Db().Create(s).Error)
+		t.Cleanup(func() { _ = s.Delete() })
+		DeleteFromSessionCache(s.ID)
+		PreviewToken.Unset(s.ID)
+
+		_, err := FindAnySession(s.ID)
+		require.NoError(t, err)
+		assert.Equal(t, s.PreviewToken, PreviewToken.Get(s.ID))
+	})
+}
+
+func TestSession_ChangePassword_PreviewToken(t *testing.T) {
+	t.Run("Active", func(t *testing.T) {
+		u := newPreviewTestUser(t, "preview-password-active")
+		s := newPreviewTestSession(t, u, authn.ProviderLocal)
+
+		require.NoError(t, s.ChangePassword("PreviewPassword1!"))
+		assert.Equal(t, u.PreviewToken, PreviewToken.Get(s.ID))
+	})
+	t.Run("Inactive", func(t *testing.T) {
+		u := newPreviewTestUser(t, "preview-password-inactive")
+		s := newPreviewTestSession(t, u, authn.ProviderLocal)
+		u.AuthProvider = authn.ProviderNone.String()
+		PreviewToken.Unset(s.ID)
+
+		require.NoError(t, s.ChangePassword("PreviewPassword1!"))
+		assert.Empty(t, PreviewToken.Get(s.ID))
+	})
 }

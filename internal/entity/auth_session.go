@@ -818,7 +818,9 @@ func (m *Session) ChangePassword(newPw string) (err error) {
 		return err
 	}
 
-	m.SetPreviewToken(u.PreviewToken)
+	if !u.isInactive() {
+		m.SetPreviewToken(u.PreviewToken)
+	}
 
 	return nil
 }
