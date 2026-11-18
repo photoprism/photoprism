@@ -53,38 +53,31 @@ func faceMigrationRunning(c *gin.Context) bool {
 	return true
 }
 
-// findFileMarker returns the session, file and marker entity matching the api request.
-func findFileMarker(c *gin.Context) (s *entity.Session, file *entity.File, marker *entity.Marker, err error) {
-	// Check authorization.
-	s = Auth(c, acl.ResourceFiles, acl.ActionUpdate)
-
-	if s.Abort(c) {
-		return s, nil, nil, errors.New("unauthorized")
-	}
-
+// findFileMarker returns the file and marker entity matching the api request for an authorized session.
+func findFileMarker(c *gin.Context, s *entity.Session) (file *entity.File, marker *entity.Marker, err error) {
 	// Check feature flags.
 	conf := get.Config()
 	if !conf.Settings().Features.People {
 		AbortFeatureDisabled(c)
-		return s, nil, nil, errors.New("feature disabled")
+		return nil, nil, errors.New("feature disabled")
 	}
 
 	// Find marker.
 	if uid := c.Param("marker_uid"); uid == "" {
 		AbortBadRequest(c)
-		return s, nil, nil, errors.New("bad request")
+		return nil, nil, errors.New("bad request")
 	} else if marker, err = query.MarkerByUID(uid); err != nil {
 		AbortEntityNotFound(c)
-		return s, nil, nil, fmt.Errorf("uid %s %s", uid, err)
+		return nil, nil, fmt.Errorf("uid %s %s", uid, err)
 	} else if marker.FileUID == "" {
 		AbortEntityNotFound(c)
-		return s, nil, marker, errors.New("marker file missing")
+		return nil, marker, errors.New("marker file missing")
 	}
 
 	// Find file.
 	if file, err = query.FileByUID(marker.FileUID); err != nil {
 		AbortEntityNotFound(c)
-		return s, file, marker, fmt.Errorf("file %s %s", marker.FileUID, err)
+		return file, marker, fmt.Errorf("file %s %s", marker.FileUID, err)
 	}
 
 	// Limit the edit to the file's photo within the session's shared scope. PhotoSessionSeesEverything
@@ -92,7 +85,7 @@ func findFileMarker(c *gin.Context) (s *entity.Session, file *entity.File, marke
 	if !search.PhotoSessionSeesEverything(s) {
 		if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
 			AbortForbidden(c)
-			return s, file, marker, errors.New("forbidden")
+			return file, marker, errors.New("forbidden")
 		}
 	}
 
@@ -101,10 +94,10 @@ func findFileMarker(c *gin.Context) (s *entity.Session, file *entity.File, marke
 	// subject handlers answer for the same person.
 	if marker.WithheldFromSession(s) {
 		AbortEntityNotFound(c)
-		return s, file, marker, errors.New("marker withheld")
+		return file, marker, errors.New("marker withheld")
 	}
 
-	return s, file, marker, nil
+	return file, marker, nil
 }
 
 // markerSubjectSrcAccepted reports whether a marker request may name a face with the subject source it
@@ -267,6 +260,13 @@ func CreateMarker(router *gin.RouterGroup) {
 //	@Router		/api/v1/markers/{marker_uid} [put]
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
+		// Authorized before the lock, so a request that is refused never holds it.
+		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
+
+		if s.Abort(c) {
+			return
+		}
+
 		// Abort if workers runs less than once per hour.
 		if wakeupIntervalTooHigh(c) {
 			return
@@ -280,7 +280,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 		defer mutex.UpdatePeople.Stop()
 
-		s, file, marker, err := findFileMarker(c)
+		file, marker, err := findFileMarker(c, s)
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to update)", err)
@@ -381,6 +381,13 @@ func UpdateMarker(router *gin.RouterGroup) {
 //	@Router		/api/v1/markers/{marker_uid}/subject [delete]
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
+		// Authorized before the lock, so a request that is refused never holds it.
+		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
+
+		if s.Abort(c) {
+			return
+		}
+
 		// Abort if workers runs less than once per hour.
 		if wakeupIntervalTooHigh(c) {
 			return
@@ -394,7 +401,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 
 		defer mutex.UpdatePeople.Stop()
 
-		s, file, marker, err := findFileMarker(c)
+		file, marker, err := findFileMarker(c, s)
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to clear subject)", err)
