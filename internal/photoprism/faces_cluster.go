@@ -24,8 +24,8 @@ func (w *Faces) reportClusteringSkipped(eligible, required int) {
 		return
 	}
 
-	log.Infof("faces: %d of the %d new markers required for clustering clear the %d px size and %d score thresholds",
-		eligible, required, face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector()))
+	log.Infof("faces: clustering needs %d new markers that clear the %d px size and %d score thresholds, found %d",
+		required, face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector()), eligible)
 }
 
 // reportNoClustersFormed states that a pass ran on enough samples and formed nothing. The run

@@ -23,7 +23,9 @@ type IDs []string
 type FaceMap map[string]entity.Face
 
 // ErrRetainedManualClusters indicates that candidate clusters could not be purged after merging
-// because markers still reference them. Callers may treat this as a non-fatal warning.
+// because markers still reference them. Callers report it at debug level as an expected outcome, so
+// it is returned only once the merge itself succeeded and is never joined with another error; a
+// failed retry-counter update is logged separately at warning level.
 var ErrRetainedManualClusters = errors.New("faces: retained manual clusters after merge")
 
 // MergeMaxRetry limits how often the optimizer retries stubborn manual clusters (0 = unlimited).

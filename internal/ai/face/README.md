@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** October 6, 2026
+**Last Updated:** November 18, 2026
 
 ### Overview
 
@@ -290,17 +290,17 @@ Two boundaries are worth knowing:
 
 ### Manual Cluster Merging & Retained Markers
 
-The `Faces.Optimize` loop reads the operator-curated clusters (`face_src = 'manual'`). `mergeGroups` partitions one subject's clusters into the sets a single midpoint can stand for, linked transitively at the merge bound, and a group of at least `face.ManualClusterCore` is merged: `query.MergeFaces` averages their embeddings into a midpoint and reassigns markers to it. Below that they wait, since a pair averages to a point that describes neither. If some markers remain attached to the original clusters (for example because their embeddings sit far from the midpoint), the old clusters cannot be purged and `Faces.OptimizeFor` reports it through `event.SystemWarn`, with a fuller per-cluster line at debug level:
+The `Faces.Optimize` loop reads the operator-curated clusters (`face_src = 'manual'`). `mergeGroups` partitions one subject's clusters into the sets a single midpoint can stand for, linked transitively at the merge bound, and a group of at least `face.ManualClusterCore` is merged: `query.MergeFaces` averages their embeddings into a midpoint and reassigns markers to it. Below that they wait, since a pair averages to a point that describes neither. If some markers remain attached to the original clusters (for example because their embeddings sit far from the midpoint), the old clusters cannot be purged and `Faces.OptimizeFor` logs it at debug level only, since it is the expected outcome and repeats on every run that finds the same group; any other merge error is logged at error level:
 
 ```
-faces: optimize: retained manual clusters after merge: subject <uid>, iteration 0, cluster 2, count 4, ids <id>, <id>, <id>, <id>
+faces: retained manual clusters after merge: kept 2 candidate cluster(s) ['<id>, <id>'] for subject <uid> because markers still reference them (merge) itr 0 group 2 count 4
 ```
 
-This is informational—the optimizer skips that merge and progresses. To reduce noise, consider:
+This is informational—the optimizer skips that merge and progresses. If a subject keeps retaining clusters, consider:
 
 - Running `photoprism faces reset --detector=<auto|none|yunet>` to regenerate every marker with the same detector.
 - Reviewing the subject’s manual clusters in the UI and trimming outliers or reassigning photos to other people.
-- Confirming that the remaining clusters genuinely represent different appearances (lighting, age); in that case it is safe to ignore the warning.
+- Confirming that the remaining clusters genuinely represent different appearances (lighting, age); in that case nothing needs to be done.
 
 No automatic data cleanup runs in this scenario, so operators remain in control of manual edits.
 

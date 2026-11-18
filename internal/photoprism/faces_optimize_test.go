@@ -1,9 +1,14 @@
 package photoprism
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -11,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestFaces_Optimize(t *testing.T) {
@@ -25,6 +31,68 @@ func TestFaces_Optimize(t *testing.T) {
 	}
 
 	t.Log(r)
+}
+
+// TestReportMergeError pins that retained manual clusters, the expected outcome of a merge that
+// cannot absorb its markers, stay at debug level and reach no system event, while any other merge
+// error is still logged at error level.
+func TestReportMergeError(t *testing.T) {
+	level := log.GetLevel()
+	log.SetLevel(logrus.DebugLevel)
+	t.Cleanup(func() { log.SetLevel(level) })
+
+	merge := entity.Faces{
+		{ID: "RETAINEDAAAAAAAAAAAAAAAAAAAAAAAA", SubjUID: "js6sg6b1qekk9jx1"},
+		{ID: "RETAINEDBBBBBBBBBBBBBBBBBBBBBBBB", SubjUID: "js6sg6b1qekk9jx1"},
+		{ID: "RETAINEDCCCCCCCCCCCCCCCCCCCCCCCC", SubjUID: "js6sg6b1qekk9jx1"},
+	}
+
+	t.Run("RetainedManualClusters", func(t *testing.T) {
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		// System events and user notifications.
+		s := event.Subscribe("system.log.*", "notify.*")
+		t.Cleanup(func() { event.Unsubscribe(s) })
+
+		retained := fmt.Errorf("%w: kept 1 candidate cluster(s) [RETAINEDBBBBBBBBBBBBBBBBBBBBBBBB]", query.ErrRetainedManualClusters)
+		reportMergeError(retained, 0, 2, merge)
+
+		// Positive control: published after the call, so it arrives first unless the call published.
+		event.SystemInfo([]string{"faces", "test marker"})
+
+		select {
+		case msg := <-s.Receiver:
+			assert.Equal(t, "system.log.info", msg.Name, "retained clusters must not publish an event above debug")
+			assert.Contains(t, msg.Fields["message"], "test marker")
+		case <-time.After(time.Second):
+			t.Fatal("positive control event not received")
+		}
+
+		assert.Empty(t, loggedMessages(hook, logrus.InfoLevel), "retained clusters must not log above debug")
+
+		// The debug line names the clusters actually retained, not every candidate.
+		assert.Contains(t, loggedMessages(hook, logrus.DebugLevel), retained.Error()+" (merge) itr 0 group 2 count 3")
+	})
+	t.Run("OtherError", func(t *testing.T) {
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		reportMergeError(errors.New("faces: test merge failure"), 1, 4, merge)
+
+		errs := loggedMessages(hook, logrus.ErrorLevel)
+		require.Len(t, errs, 1, "a merge failure other than retained clusters must log at error level")
+		assert.Equal(t, "faces: test merge failure (merge) itr 1 group 4 count 3", errs[0])
+	})
+	t.Run("NoError", func(t *testing.T) {
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		reportMergeError(nil, 0, 0, merge)
+		reportMergeError(fmt.Errorf("%w", query.ErrRetainedManualClusters), 0, 0, nil)
+
+		assert.Empty(t, loggedMessages(hook, logrus.WarnLevel))
+	})
 }
 
 // TestMergeGroups covers the partition Optimize merges, which has to follow the distances rather

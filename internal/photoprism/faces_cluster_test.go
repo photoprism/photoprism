@@ -210,34 +210,34 @@ func TestFaces_reportClusteringSkipped(t *testing.T) {
 
 	w.reportClusteringSkipped(3, 8)
 
-	var reported int
-
-	for _, entry := range hook.AllEntries() {
-		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "clear the") {
-			reported++
-
-			assert.Contains(t, entry.Message, "3 of the 8")
-			assert.Contains(t, entry.Message, fmt.Sprintf("%d px size", face.ClusterSizeThreshold))
+	// skipped returns the skipped messages logged at info level.
+	skipped := func() (messages []string) {
+		for _, entry := range hook.AllEntries() {
+			if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "clustering needs") {
+				messages = append(messages, entry.Message)
+			}
 		}
+
+		return messages
 	}
 
-	require.Equal(t, 1, reported, "the gap must be named, and it must be actionable")
+	messages := skipped()
+
+	require.Len(t, messages, 1, "the gap must be named, and it must be actionable")
+
+	// The minimum and the count are stated separately, so neither reads as the other.
+	assert.Equal(t, fmt.Sprintf("faces: clustering needs 8 new markers that clear the %d px size and %d score thresholds, found 3",
+		face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector())), messages[0])
 
 	// A worker that wakes every few minutes must not repeat an unchanged condition.
 	w.reportClusteringSkipped(3, 8)
 
-	reported = 0
-
-	for _, entry := range hook.AllEntries() {
-		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "clear the") {
-			reported++
-		}
-	}
-
-	assert.Equal(t, 1, reported)
+	assert.Len(t, skipped(), 1)
 
 	// A different count is a different state and is reported again.
 	w.reportClusteringSkipped(4, 8)
+
+	assert.Len(t, skipped(), 2)
 
 	assert.NotPanics(t, func() { (*Faces)(nil).reportClusteringSkipped(1, 8) })
 }
