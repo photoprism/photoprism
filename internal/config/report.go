@@ -920,11 +920,13 @@ func (c *Config) faceClusterScoreFloor() int {
 func (c *Config) faceEmbedderStatus() string {
 	if err := face.EmbedderError(); err != nil {
 		return fmt.Sprintf("The face embedding model failed to load: %s.", err)
-	} else if reason := face.EmbeddingsBlockedReason(); reason != "" {
+	} else if reason := face.EmbeddingsBlockedReason(); reason == "" {
+		return ""
+	} else if c.faceUnfinished != "" {
+		return fmt.Sprintf("Face embeddings are paused, because %s. %s.", reason, txt.UpperFirst(c.unfinishedFaceMigrationAdvice()))
+	} else {
 		return fmt.Sprintf("Face embeddings are paused, because %s.", reason)
 	}
-
-	return ""
 }
 
 // reportGroupRoles renders a group → role mapping as sorted "group=role" pairs

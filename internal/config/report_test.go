@@ -1296,6 +1296,19 @@ func TestConfig_faceEmbedderStatus(t *testing.T) {
 
 		assert.Equal(t, "Face embeddings are paused, because 12 marker(s) use facenet.", c.faceEmbedderStatus())
 	})
+	t.Run("UnfinishedMigration", func(t *testing.T) {
+		// The status names the command that completes an unfinished migration, as the warning does.
+		t.Cleanup(face.UnblockEmbeddings)
+
+		unfinished := NewConfig(CliTestContext())
+		unfinished.faceModel = face.ModelFaceNet
+		unfinished.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		unfinished.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 1423}})
+
+		assert.Equal(t, `Face embeddings are paused, because 1423 marker(s) use the default model sface, as after an unfinished `+
+			`migration, but this instance is configured for facenet. Run "photoprism faces migrate" to finish it, or "photoprism faces migrate `+
+			`--to facenet" to use facenet instead.`, unfinished.faceEmbedderStatus())
+	})
 }
 
 func TestFaceReportValue(t *testing.T) {

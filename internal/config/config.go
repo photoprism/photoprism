@@ -87,16 +87,18 @@ type Config struct {
 	warnedOnce    sync.Map
 	faceModel     string
 	faceModelFlag string
-	token         string
-	serial        string
-	tokenKey      []byte
-	tokenKeyOnce  sync.Once
-	env           string
-	start         bool
-	startReport   bool
-	ready         atomic.Bool
-	cache         *gc.Cache
-	testFolder    string
+	// faceUnfinished is the target of an unfinished migration the mismatch check found, if any.
+	faceUnfinished string
+	token          string
+	serial         string
+	tokenKey       []byte
+	tokenKeyOnce   sync.Once
+	env            string
+	start          bool
+	startReport    bool
+	ready          atomic.Bool
+	cache          *gc.Cache
+	testFolder     string
 }
 
 // Values is a shorthand alias for map[string]interface{}.

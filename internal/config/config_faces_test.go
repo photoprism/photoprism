@@ -965,6 +965,46 @@ func TestConfig_checkFaceModelMismatch(t *testing.T) {
 		require.True(t, face.EmbeddingsBlocked())
 		assert.Contains(t, face.EmbeddingsBlockedReason(), "42 marker(s) use facenet,")
 	})
+	t.Run("UnfinishedMigrationAsksToFinishIt", func(t *testing.T) {
+		// Markers on the default model while the instance holds the previous one are what an
+		// interrupted migration leaves, so the advice is to finish it rather than to migrate back.
+		target := face.DefaultModelName()
+		require.Equal(t, face.ModelSFace, target)
+
+		hook := captureLog(t)
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelFaceNet
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: "", Markers: 152},
+			{EmbedModel: face.ModelSFace, Markers: 1423},
+		})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Equal(t, "1423 marker(s) use the default model sface, as after an unfinished migration, but this instance is configured for facenet",
+			face.EmbeddingsBlockedReason())
+		assert.Equal(t, face.ModelSFace, c.faceUnfinished)
+		// The advice follows the consequence, so the pause does not read as caused by the command.
+		assert.Equal(t, `faces: 1423 marker(s) use the default model sface, as after an unfinished migration, but this instance is configured for facenet, `+
+			`so face embeddings are not processed (run "photoprism faces migrate" to finish it, or `+
+			`"photoprism faces migrate --to facenet" to use facenet instead)`, lastFaceLogMessage(t, hook))
+	})
+	t.Run("OtherMismatchKeepsItsAdvice", func(t *testing.T) {
+		hook := captureLog(t)
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelSFace
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		// A target an earlier check recorded must not outlive it.
+		c.faceUnfinished = face.ModelSFace
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelFaceNet, Markers: 12}})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.NotContains(t, face.EmbeddingsBlockedReason(), "unfinished")
+		assert.Empty(t, c.faceUnfinished)
+		assert.Contains(t, lastFaceLogMessage(t, hook), `run "photoprism faces migrate --to sface" to migrate them`)
+	})
 	t.Run("AfterAMigrationAsksForARestart", func(t *testing.T) {
 		// The library and the recorded setting agree here, and only this process disagrees with
 		// both: advising the model it holds would ask for the migration to be undone.
@@ -992,6 +1032,42 @@ func newSupersededTestConfig(t *testing.T, loaded, recorded face.ModelName) *Con
 	require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: "+recorded+"\n"), fs.ModeConfigFile))
 
 	return c
+}
+
+func TestConfig_unfinishedFaceMigrationAdvice(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.faceModel = face.ModelFaceNet
+	c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+
+	// The check cannot tell an unrecorded finalize from a setting edited back, so it names both ways.
+	assert.Equal(t, `run "photoprism faces migrate" to finish it, or "photoprism faces migrate --to facenet" to use facenet instead`,
+		c.unfinishedFaceMigrationAdvice())
+}
+
+func TestUnfinishedFaceMigration(t *testing.T) {
+	target := face.DefaultModelName()
+	require.Equal(t, face.ModelSFace, target)
+
+	t.Run("StaleMarkersOnTheDefaultModel", func(t *testing.T) {
+		assert.Equal(t, target, unfinishedFaceMigration([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: "", Markers: 152}, {EmbedModel: face.ModelSFace, Markers: 1423}}, face.ModelFaceNet))
+	})
+	t.Run("ConfiguredForTheDefaultModel", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, unfinishedFaceMigration([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: face.ModelFaceNet, Markers: 12}}, face.ModelSFace))
+	})
+	t.Run("StaleMarkersOnAnotherModel", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, unfinishedFaceMigration([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: face.ModelSFace, Markers: 3}, {EmbedModel: face.ModelArcFaceR50, Markers: 2}}, face.ModelFaceNet))
+	})
+	t.Run("NothingStale", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, unfinishedFaceMigration([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: "", Markers: 12}}, face.ModelFaceNet))
+	})
+	t.Run("ModelNone", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, unfinishedFaceMigration([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: face.ModelSFace, Markers: 12}}, face.ModelNone))
+	})
 }
 
 // lastFaceLogMessage returns the most recent message the shared logger recorded.
