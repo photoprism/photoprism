@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -1249,6 +1250,83 @@ func TestMigrationCanceled(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	require.Error(t, migrationCanceled(ctx, nil))
+}
+
+// lockProbeContext runs a probe each time a migration checks it for cancellation, which is the
+// moment its checkpoints are reached, and so observes the run from inside.
+type lockProbeContext struct {
+	context.Context
+	probe func()
+}
+
+// Done runs the probe and returns the parent's channel.
+func (c *lockProbeContext) Done() <-chan struct{} {
+	c.probe()
+	return c.Context.Done()
+}
+
+// TestFaces_MigrateLock pins that a run interrupted at a checkpoint still holds the lock there and
+// releases it on its way out, so a second run is accepted at once, and that a live lock refuses one.
+func TestFaces_MigrateLock(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+	target := face.NormalizeModelName(w.conf.FaceModel())
+	lockFile := w.conf.FacesLockFile()
+	require.Empty(t, mutex.FileLockHeld(lockFile))
+
+	t.Run("InterruptedRunReleasesTheLock", func(t *testing.T) {
+		parent, cancel := context.WithCancel(context.Background())
+		cancel()
+
+		var checked, held, locked bool
+		var secondErr error
+
+		ctx := &lockProbeContext{Context: parent, probe: func() {
+			if checked {
+				return
+			}
+
+			checked = true
+			held = mutex.FileLockHeld(lockFile) != ""
+			locked = w.conf.FacesLocked() != ""
+
+			if second, err := mutex.AcquireFileLock(lockFile, "faces migration"); err != nil {
+				secondErr = err
+			} else {
+				second.Release()
+			}
+		}}
+
+		// The cancellation is noticed at the first checkpoint, after the lock was taken.
+		_, err := w.Migrate(ctx, FacesMigrateOptions{Target: target})
+		require.ErrorIs(t, err, context.Canceled)
+		require.True(t, checked, "the run must reach a checkpoint")
+		assert.True(t, held, "the lock is held while the run is at its checkpoint")
+		assert.True(t, locked, "indexing and the workers hold off while it runs")
+		assert.ErrorContains(t, secondErr, "faces migration is already in progress")
+
+		assert.NoFileExists(t, lockFile)
+		assert.False(t, mutex.FacesWorker.Running())
+
+		lock, err := mutex.AcquireFileLock(lockFile, "faces migration")
+		require.NoError(t, err)
+		lock.Release()
+	})
+	t.Run("LiveLockRefusesASecondRun", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(lockFile, "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		// Canceled, so a refusal that regressed stops at the first checkpoint rather than finalizing.
+		ctx, cancel := context.WithCancel(context.Background())
+		cancel()
+
+		_, err = w.Migrate(ctx, FacesMigrateOptions{Target: target})
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, context.Canceled)
+		assert.Contains(t, err.Error(), "faces migration is already in progress")
+		assert.Contains(t, err.Error(), "its lock expires within")
+		assert.NotEmpty(t, mutex.FileLockHeld(lockFile), "the refused run leaves the holder's lock alone")
+	})
 }
 
 func TestFacesMigrateRerunError_Error(t *testing.T) {

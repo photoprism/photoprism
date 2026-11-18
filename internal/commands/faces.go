@@ -2,10 +2,14 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
+	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -239,7 +243,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 			return nil
 		}
 
-		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{
+		// Registered only now, so an interrupt at the prompt still ends the command at once.
+		runCtx, stopInterrupt := cancelOnInterrupt(ctx.Context, os.Interrupt, syscall.SIGTERM)
+		defer stopInterrupt()
+
+		result, migrateErr := w.Migrate(runCtx, photoprism.FacesMigrateOptions{
 			Target: plan.Target,
 			Force:  ctx.Bool("force"),
 			Plan:   &plan,
@@ -327,9 +335,56 @@ func faceModelSwitchedMessage(target string) string {
 func facesMigrateExit(err error) error {
 	if err == nil {
 		return nil
+	} else if errors.Is(err, context.Canceled) {
+		return cli.Exit("faces: migration interrupted, run the command again to continue where it stopped", 1)
 	}
 
 	return cli.Exit(err.Error(), 1)
+}
+
+// signalNotify, signalStop and signalIgnored register, unregister and inspect signal handlers;
+// tests replace them.
+var signalNotify, signalStop, signalIgnored = signal.Notify, signal.Stop, signal.Ignored
+
+// cancelOnInterrupt returns a context that the first of the signals cancels, so a migration stops at
+// its next checkpoint and releases its lock. The signals then take the action they had before, so a
+// second one ends the process at once; an ignored signal, such as an inherited SIGINT, stays ignored.
+func cancelOnInterrupt(parent context.Context, signals ...os.Signal) (ctx context.Context, stop func()) {
+	if parent == nil {
+		parent = context.Background()
+	}
+
+	ctx, cancel := context.WithCancel(parent)
+	caught := make([]os.Signal, 0, len(signals))
+
+	for _, sig := range signals {
+		if !signalIgnored(sig) {
+			caught = append(caught, sig)
+		}
+	}
+
+	if len(caught) == 0 {
+		return ctx, cancel
+	}
+
+	received := make(chan os.Signal, 1)
+	signalNotify(received, caught...)
+
+	go func() {
+		select {
+		case <-received:
+			signalStop(received)
+			log.Warnf("faces: stopping the migration after the current file, or once it has replaced the clusters " +
+				"if it is already doing so; interrupt again to exit at once and leave its lock to expire")
+			cancel()
+		case <-ctx.Done():
+		}
+	}()
+
+	return ctx, func() {
+		signalStop(received)
+		cancel()
+	}
 }
 
 // reportMigrationCropCoverage states how much of the crop detail the thumbnail cache already holds,

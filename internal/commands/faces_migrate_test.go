@@ -1,10 +1,15 @@
 package commands
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
+	"syscall"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
@@ -153,8 +158,116 @@ func TestFacesMigrateExit(t *testing.T) {
 		assert.Equal(t, 1, exit.ExitCode())
 		assert.Equal(t, aborted.Error(), err.Error())
 	})
+	t.Run("Interrupted", func(t *testing.T) {
+		err := facesMigrateExit(fmt.Errorf("faces: %w", context.Canceled))
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, "faces: migration interrupted, run the command again to continue where it stopped", err.Error())
+	})
 	t.Run("Success", func(t *testing.T) {
 		assert.NoError(t, facesMigrateExit(nil))
+	})
+}
+
+// countSignalCalls replaces the signal registration functions with ones that count their calls.
+func countSignalCalls(t *testing.T) (notified, stopped *atomic.Int32) {
+	t.Helper()
+
+	notified, stopped = &atomic.Int32{}, &atomic.Int32{}
+	notify, stop := signalNotify, signalStop
+
+	signalNotify = func(c chan<- os.Signal, sig ...os.Signal) {
+		notified.Add(1)
+		notify(c, sig...)
+	}
+	signalStop = func(c chan<- os.Signal) {
+		stopped.Add(1)
+		stop(c)
+	}
+
+	t.Cleanup(func() { signalNotify, signalStop = notify, stop })
+
+	return notified, stopped
+}
+
+// TestCancelOnInterrupt sends the process a signal it registered for, so a signal that was not
+// caught would end the test binary rather than fail an assertion.
+func TestCancelOnInterrupt(t *testing.T) {
+	t.Run("SignalCancels", func(t *testing.T) {
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+		hook := test.NewLocal(logger)
+		t.Cleanup(hook.Reset)
+
+		notified, stopped := countSignalCalls(t)
+		ctx, stop := cancelOnInterrupt(context.Background(), syscall.SIGUSR2)
+		t.Cleanup(stop)
+		require.Equal(t, int32(1), notified.Load())
+
+		require.NoError(t, syscall.Kill(os.Getpid(), syscall.SIGUSR2))
+
+		select {
+		case <-ctx.Done():
+		case <-time.After(10 * time.Second):
+			t.Fatal("the signal did not cancel the context")
+		}
+
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+
+		// The handler is unregistered before the context is canceled, so a second signal is not
+		// caught, and the warning is logged before it too.
+		assert.Equal(t, int32(1), stopped.Load())
+
+		var warned bool
+		for _, entry := range hook.AllEntries() {
+			warned = warned || strings.Contains(entry.Message, "interrupt again to exit at once")
+		}
+		assert.True(t, warned)
+	})
+	t.Run("StopUnregisters", func(t *testing.T) {
+		_, stopped := countSignalCalls(t)
+		ctx, stop := cancelOnInterrupt(context.Background(), syscall.SIGUSR2)
+		require.NoError(t, ctx.Err())
+
+		stop()
+		stop()
+
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+		assert.Equal(t, int32(2), stopped.Load())
+	})
+	t.Run("IgnoredSignalStaysIgnored", func(t *testing.T) {
+		// Stubbed, since a signal the test really ignored would stay ignored for the whole binary.
+		ignored := signalIgnored
+		signalIgnored = func(sig os.Signal) bool { return sig == syscall.SIGUSR2 }
+		t.Cleanup(func() { signalIgnored = ignored })
+
+		notified, _ := countSignalCalls(t)
+		ctx, stop := cancelOnInterrupt(context.Background(), syscall.SIGUSR2)
+		t.Cleanup(stop)
+
+		assert.Zero(t, notified.Load())
+		assert.NoError(t, ctx.Err())
+
+		stop()
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+	})
+	t.Run("ParentCancels", func(t *testing.T) {
+		parent, cancel := context.WithCancel(context.Background())
+		ctx, stop := cancelOnInterrupt(parent, syscall.SIGUSR2)
+		t.Cleanup(stop)
+
+		cancel()
+
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+	})
+	t.Run("NilParent", func(t *testing.T) {
+		//nolint:staticcheck // a nil parent is what a context built without one carries
+		ctx, stop := cancelOnInterrupt(nil, syscall.SIGUSR2)
+		t.Cleanup(stop)
+
+		assert.NoError(t, ctx.Err())
 	})
 }
 

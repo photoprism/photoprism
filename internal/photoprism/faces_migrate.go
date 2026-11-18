@@ -923,6 +923,9 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		event.SystemWarn([]string{"faces", "migrate", "finalizing the migration anyway because %s"}, reason)
 	}
 
+	// No checkpoint follows, so an operator who interrupts from here on waits for the rest.
+	log.Infof("faces: replacing the face clusters, which completes before the migration exits")
+
 	clusters, rebuilt, excluded, clusterErr := buildFaceMigrationClusters(plan.Target)
 	if clusterErr != nil {
 		return result, clusterErr

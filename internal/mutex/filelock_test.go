@@ -146,6 +146,7 @@ func TestAcquireFileLock(t *testing.T) {
 		require.Error(t, err)
 		assert.Nil(t, lock)
 		assert.Contains(t, err.Error(), "process 9")
+		assert.Contains(t, err.Error(), "its lock expires within 5 minutes")
 	})
 	t.Run("TakesOverAnExpiredLock", func(t *testing.T) {
 		fileName := filepath.Join(t.TempDir(), "faces.lock")
@@ -419,4 +420,28 @@ func TestFileLock_write(t *testing.T) {
 	require.NoError(t, lock.write())
 
 	assert.True(t, ReadFileLock(fileName).ExpiresAt.After(first))
+}
+
+func TestFileLockHeldError(t *testing.T) {
+	t.Run("NamesTheHolderAndTheExpiry", func(t *testing.T) {
+		err := fileLockHeldError("faces migration", "faces migration, running as process 9 on neon")
+		assert.EqualError(t, err, "faces migration is already in progress (faces migration, running as process 9 on neon); "+
+			"if that process has exited or was killed, its lock expires within 5 minutes")
+	})
+}
+
+// TestFileLock_writeAfterRelease pins that a renewal reaching its write after the release, as
+// one whose tick fired just before it would, does not publish the lock file again.
+func TestFileLock_writeAfterRelease(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "faces.lock")
+
+	lock, err := AcquireFileLock(fileName, "faces migration")
+	require.NoError(t, err)
+
+	lock.Release()
+	require.NoFileExists(t, fileName)
+
+	require.NoError(t, lock.write())
+	assert.NoFileExists(t, fileName)
+	assert.Empty(t, FileLockHeld(fileName))
 }

@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -81,6 +83,11 @@ type FileLock struct {
 	action   string
 	done     chan struct{}
 	stop     sync.Once
+
+	// mu orders a renewal against the release, so a renewal already writing when the lock is
+	// released cannot publish the file again after it was removed.
+	mu       sync.Mutex
+	released bool
 }
 
 // ReadFileLock returns what a lock file records, or a zero state when it does not exist or
@@ -173,7 +180,7 @@ func (l *FileLock) create() error {
 	// Somebody holds it. Only an expired lock may be taken over, and the replacement is renamed
 	// into place so a reader never sees the gap between truncating and writing.
 	if held := FileLockHeld(l.fileName); held != "" {
-		return fmt.Errorf("%s is already in progress (%s)", l.action, held)
+		return fileLockHeldError(l.action, held)
 	}
 
 	if err = l.replace(b); err != nil {
@@ -185,10 +192,17 @@ func (l *FileLock) create() error {
 	host, _ := os.Hostname()
 
 	if state := ReadFileLock(l.fileName); !state.HeldBy(os.Getpid(), host) {
-		return fmt.Errorf("%s is already in progress (%s)", l.action, state.String())
+		return fileLockHeldError(l.action, state.String())
 	}
 
 	return nil
+}
+
+// fileLockHeldError refuses an action whose lock another holder has, and says when the lock frees
+// itself, since a holder that was killed cannot release it and its process may not be visible here.
+func fileLockHeldError(action, held string) error {
+	return fmt.Errorf("%s is already in progress (%s); if that process has exited or was killed, its lock expires within %s",
+		action, held, english.Plural(int(FileLockMaxAge/time.Minute), "minute", "minutes"))
 }
 
 // Release stops renewing the lock and removes its file. It is safe to call more than once, so
@@ -204,6 +218,10 @@ func (l *FileLock) Release() {
 	l.stop.Do(func() {
 		close(l.done)
 
+		l.mu.Lock()
+		defer l.mu.Unlock()
+
+		l.released = true
 		host, _ := os.Hostname()
 
 		if state := ReadFileLock(l.fileName); !state.HeldBy(os.Getpid(), host) {
@@ -230,8 +248,15 @@ func (l *FileLock) state() ([]byte, error) {
 	})
 }
 
-// write records the holder and moves the expiry forward.
+// write records the holder and moves the expiry forward, unless the lock was released.
 func (l *FileLock) write() error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if l.released {
+		return nil
+	}
+
 	b, err := l.state()
 
 	if err != nil {
