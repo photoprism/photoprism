@@ -31,8 +31,8 @@ import (
 //	@Router		/api/v1/users/{uid}/sessions [get]
 func FindUserSessions(router *gin.RouterGroup) {
 	router.GET("/users/:uid/sessions", func(c *gin.Context) {
-		// Require own-session management access.
-		s := Auth(c, acl.ResourceSessions, acl.ActionManageOwn)
+		// Require own-session management access; the scope is checked against the read action.
+		s := AuthAccess(c, acl.ResourceSessions, acl.ActionView, acl.Permissions{acl.ActionManageOwn})
 
 		if s.Abort(c) {
 			return
