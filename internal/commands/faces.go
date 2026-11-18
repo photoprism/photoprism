@@ -198,10 +198,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 				plan.Markers.Unreadable)
 		}
 		// The counts above come from the index, which believes whatever it was told last. An
-		// unmounted originals volume leaves them looking clean and then fails every file.
+		// unmounted originals volume leaves them looking clean, and then only files with a cached
+		// rendition can be re-embedded.
 		if plan.OriginalsUnavailable {
-			event.SystemWarn([]string{"faces", "migrate", "originals path %s is empty or cannot be read, so no marker can be re-embedded"},
-				clean.Log(conf.OriginalsPath()))
+			reportOriginalsUnavailable(conf.OriginalsPath())
 		}
 		for _, count := range plan.MarkerModels {
 			log.Info(embeddingModelCountMessage(count.EmbedModel, count.Markers, "marker"))
@@ -216,9 +216,7 @@ func facesMigrateAction(ctx *cli.Context) error {
 
 		// Finalizing clears the stored vectors of every marker that is not on the target
 		// model, so an operator has to see that number before deciding to run this.
-		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
-			event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
-		}
+		reportStaleMarkers(plan)
 		// A crop is taken from a thumbnail and never from the original, so what the cache holds
 		// decides how much detail the vectors rest on. The run renders what it is missing; this
 		// says how much of that is coming, and how much of it the originals cannot supply.
@@ -268,7 +266,7 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// markers hold a vector drawn from fewer pixels than their original could supply.
 		if result.FailedThumbs > 0 {
 			event.SystemWarn([]string{"faces", "migrate", "%d file(s) could not be given the wider thumbnail their face crops need, " +
-				"so those markers were embedded from upscaled crops; re-run once the cache volume is writable"},
+				"so those markers were embedded from upscaled crops, which later runs to the same model keep"},
 				result.FailedThumbs)
 		}
 		// The other cost that leaves no trace in the vectors: an aligned model was trained on
@@ -302,6 +300,28 @@ func facesMigrateAction(ctx *cli.Context) error {
 
 		return facesMigrateExit(migrateErr)
 	})
+}
+
+// reportOriginalsUnavailable warns that the originals cannot be read, and says what the run does
+// without them: a crop is taken from a cached thumbnail, and only a file that has none needs its original.
+func reportOriginalsUnavailable(originalsPath string) {
+	event.SystemWarn([]string{"faces", "migrate", "originals path %s is empty or cannot be read: markers are re-embedded " +
+		"from cached thumbnails, upscaled where those are smaller than their crops need and kept that way by later runs " +
+		"to the same model, and those of files without one fail as read errors"}, clean.Log(originalsPath))
+}
+
+// reportStaleMarkers states how many markers the run re-embeds that hold a vector it clears if that
+// fails, and how many hold none and so have no vector to lose.
+func reportStaleMarkers(plan photoprism.FacesMigratePlan) {
+	if stale := plan.Markers.Vectors - plan.Markers.Ready; stale > 0 {
+		event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
+	}
+
+	// A failure still counts toward the bound that refuses the finalize, so they are not free.
+	if empty := plan.Markers.Valid - plan.Markers.Vectors; empty > 0 {
+		log.Infof("faces: %d markers hold no vector, so a failed re-embedding loses none, "+
+			"though it counts toward the share that refuses the finalize", empty)
+	}
 }
 
 // embeddingModelCountMessage returns the migration plan line counting the markers or clusters of one
@@ -401,7 +421,12 @@ func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
 
 	// Markers rather than files, because that is the population the buckets count: a file with
 	// several of them is rendered for once, so the number of renditions is lower than this.
-	if coverage.Upscaled > 0 {
+	if coverage.Upscaled > 0 && plan.OriginalsUnavailable {
+		log.Infof("faces: %d of %d markers (%d%%) need a wider crop than the largest thumbnail this library holds (%dx%d), "+
+			"which the originals cannot supply while they cannot be read, so their crops are upscaled",
+			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),
+			plan.ThumbSize.Width, plan.ThumbSize.Height)
+	} else if coverage.Upscaled > 0 {
 		log.Infof("faces: %d of %d markers (%d%%) need a wider crop than the largest thumbnail this library holds (%dx%d), "+
 			"so their files are rendered again from the original as the run reaches them",
 			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),

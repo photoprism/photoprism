@@ -82,8 +82,8 @@ type FacesMigratePlan struct {
 	RecropMarkers int
 
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
-	// unmounted volume looks like. The counting queries cannot see it, so a plan would
-	// otherwise be reported as clean and then fail on every file it tried to re-embed.
+	// unmounted volume looks like. The counting queries cannot see it, so a plan would otherwise
+	// be reported as clean, while only files with a cached rendition can be re-embedded.
 	OriginalsUnavailable bool
 
 	// CropCoverage reports how many markers the pre-generated thumbnails can supply a full-detail
@@ -703,7 +703,8 @@ func (w *Faces) migrationCropCoverage(target string) (widest thumb.Size, counts 
 
 // originalsUnavailable reports whether the originals root is missing or holds nothing, at the cost of
 // a stat and one directory entry. It answers the case a per-file check cannot improve on: when the
-// volume is not mounted every marker fails, and the plan is the last point at which that is cheap.
+// volume is not mounted only cached renditions can be cropped, and the plan is the last point at
+// which that is cheap to say.
 func originalsUnavailable(originalsPath string) bool {
 	return !fs.PathExists(originalsPath) || fs.DirIsEmpty(originalsPath)
 }

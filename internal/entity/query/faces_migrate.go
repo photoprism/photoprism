@@ -36,6 +36,7 @@ type FaceMigrationMarkerCounts struct {
 	Valid      int
 	Invalid    int
 	Ready      int
+	Vectors    int
 	Unlinked   int
 	Unreadable int
 	Manual     int
@@ -57,6 +58,7 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 		{base.Where("marker_invalid = FALSE"), &result.Valid},
 		{base.Where("marker_invalid = TRUE"), &result.Invalid},
 		{whereEmbeddingModel(base.Where("marker_invalid = FALSE AND LENGTH(embeddings_json) > 0"), model), &result.Ready},
+		{base.Where("marker_invalid = FALSE AND LENGTH(embeddings_json) > 0"), &result.Vectors},
 		{base.Where("marker_invalid = FALSE AND file_uid = ''"), &result.Unlinked},
 		{whereFaceMigrationUnreadableFile(base), &result.Unreadable},
 		{base.Where("subj_src = ?", entity.SrcManual), &result.Manual},

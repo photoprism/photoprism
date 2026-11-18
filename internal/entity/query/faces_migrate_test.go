@@ -20,7 +20,38 @@ func TestFaceMigrationCounts(t *testing.T) {
 	require.NoError(t, err)
 	assert.Positive(t, result.Total)
 	assert.Equal(t, result.Total, result.Valid+result.Invalid)
-	assert.LessOrEqual(t, result.Ready, result.Valid)
+	assert.LessOrEqual(t, result.Ready, result.Vectors)
+	assert.LessOrEqual(t, result.Vectors, result.Valid)
+
+	// Counted independently, so the predicate is checked rather than restated.
+	var vectors int
+	row := Db().Raw("SELECT COUNT(*) FROM markers WHERE marker_type = ? AND marker_invalid = FALSE"+
+		" AND embeddings_json IS NOT NULL AND LENGTH(embeddings_json) > 0", entity.MarkerFace).Row()
+	require.NoError(t, row.Scan(&vectors))
+	assert.Equal(t, vectors, result.Vectors)
+
+	// Holding a vector does not depend on the target, while being ready does.
+	other, err := FaceMigrationCounts(face.ModelSFace)
+	require.NoError(t, err)
+	assert.Equal(t, result.Vectors, other.Vectors)
+	assert.Less(t, other.Ready, other.Vectors)
+
+	// A valid marker whose vector was cleared counts as valid and not as holding one.
+	var marker entity.Marker
+	require.NoError(t, UnscopedDb().Where("marker_type = ? AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Order("marker_uid").First(&marker).Error)
+	stored := marker.EmbeddingsJSON
+	require.NoError(t, UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", marker.MarkerUID).
+		UpdateColumn("embeddings_json", []byte("")).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", marker.MarkerUID).
+			UpdateColumn("embeddings_json", []byte(stored)).Error)
+	})
+
+	cleared, err := FaceMigrationCounts(face.ModelFaceNet)
+	require.NoError(t, err)
+	assert.Equal(t, result.Valid, cleared.Valid)
+	assert.Equal(t, result.Vectors-1, cleared.Vectors)
 
 	_, err = FaceMigrationCounts("")
 	require.Error(t, err)
