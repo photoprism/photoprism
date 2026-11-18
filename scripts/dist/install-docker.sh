@@ -10,11 +10,20 @@ set -e
 sudo apt-get update
 sudo apt-get -qq install ca-certificates curl gnupg lsb-release
 
-# Install key. "--batch --yes" overwrites an existing keyring when the script is
-# run again, e.g. after a release upgrade, instead of prompting on /dev/tty.
+# Download the repository signing key and replace an existing keyring only once the
+# download is a valid key, e.g. when the script is run again after a release upgrade.
+KEY_DIR=$(mktemp -d)
+trap 'rm -rf "$KEY_DIR" "${BACKUP_DIR:-}"' EXIT
+mkdir -m 700 "$KEY_DIR/gnupg"
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o "$KEY_DIR/docker.asc"
+if ! GNUPGHOME="$KEY_DIR/gnupg" gpg --show-keys "$KEY_DIR/docker.asc" > /dev/null 2>&1 ||
+  ! GNUPGHOME="$KEY_DIR/gnupg" gpg --dearmor < "$KEY_DIR/docker.asc" > "$KEY_DIR/docker.gpg" 2>/dev/null ||
+  [ ! -s "$KEY_DIR/docker.gpg" ]; then
+  echo "Error: the downloaded Docker signing key is not valid; the installed keyring was kept." >&2
+  exit 1
+fi
 sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+sudo install -m 644 -o root -g root "$KEY_DIR/docker.gpg" /etc/apt/keyrings/docker.gpg
 
 # Determine the Ubuntu release codename. UBUNTU_CODENAME also covers
 # derivatives such as Linux Mint; DOCKER_CODENAME overrides both.
