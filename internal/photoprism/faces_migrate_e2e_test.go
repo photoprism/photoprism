@@ -358,6 +358,7 @@ func TestFaces_migrate(t *testing.T) {
 		assert.ErrorIs(t, err, query.ErrFaceMigrationIdentitiesChanged)
 		assert.Contains(t, err.Error(), "run again")
 		assert.Positive(t, result.Migrated, "the rollback happens after markers were regenerated")
+		assert.False(t, result.ModelRecorded, "a rolled-back run records no model, so it asks for no restart")
 
 		// The rollback has to leave the clusters alone, which is what makes re-running safe.
 		assert.Zero(t, countFaceRows(t))
@@ -378,6 +379,7 @@ func TestFaces_migrate(t *testing.T) {
 		require.Error(t, err)
 		assert.IsType(t, &FacesMigrateAbortedError{}, err)
 		assert.Zero(t, result.Migrated)
+		assert.False(t, result.ModelRecorded, "a refused run records no model, so it asks for no restart")
 
 		// A run that did not replace the clusters must not move the setting either.
 		assert.NotEqual(t, face.ModelFaceNet, savedFaceModel(t, c))
@@ -399,11 +401,12 @@ func TestFaces_migrate(t *testing.T) {
 		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
 
 		plan := FacesMigratePlan{Target: face.ModelFaceNet}
-		_, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, FacesMigrateOptions{Target: face.ModelFaceNet, Force: true}, FacesMigrateResult{Target: face.ModelFaceNet})
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, FacesMigrateOptions{Target: face.ModelFaceNet, Force: true}, FacesMigrateResult{Target: face.ModelFaceNet})
 
 		// Force finalizes, so the stale vector is cleared rather than kept.
 		require.Error(t, err)
 		assert.IsType(t, &FacesMigrateIncompleteError{}, err)
+		assert.True(t, result.ModelRecorded, "an incomplete run that finalized still records the model")
 
 		stored := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)

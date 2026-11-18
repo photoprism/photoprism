@@ -123,6 +123,48 @@ func TestFacesMigrateCommand(t *testing.T) {
 	})
 }
 
+// TestFacesMigrateExit pins that a migration which was applied but lost markers still exits with
+// status 1, so a script can tell it from a clean run, and that its message names no restart.
+func TestFacesMigrateExit(t *testing.T) {
+	t.Run("Incomplete", func(t *testing.T) {
+		for _, incomplete := range []*photoprism.FacesMigrateIncompleteError{
+			{Failed: 900, Clusterable: 3},
+			{Failed: 5, Unreadable: 5},
+			{Failed: 9, Clusterable: 4, Unreadable: 5},
+			{Failed: 7},
+		} {
+			err := facesMigrateExit(incomplete)
+
+			var exit cli.ExitCoder
+			require.ErrorAs(t, err, &exit)
+			assert.Equal(t, 1, exit.ExitCode())
+			assert.Equal(t, incomplete.Error(), err.Error())
+			assert.True(t, strings.HasPrefix(err.Error(), "faces: migration applied; "))
+			// The restart instruction is logged once, with the model the run recorded.
+			assert.NotContains(t, err.Error(), "restart")
+		}
+	})
+	t.Run("Aborted", func(t *testing.T) {
+		aborted := &photoprism.FacesMigrateAbortedError{Failed: 12, Reason: "nothing could be re-embedded"}
+		err := facesMigrateExit(aborted)
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, aborted.Error(), err.Error())
+	})
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, facesMigrateExit(nil))
+	})
+}
+
+// TestFaceModelSwitchedMessage pins that the line ending a migration that recorded its target
+// carries the restart instruction.
+func TestFaceModelSwitchedMessage(t *testing.T) {
+	assert.Equal(t, "faces: the configured face model is now sface, restart the instance to load it",
+		faceModelSwitchedMessage(face.ModelSFace))
+}
+
 func TestPercentOf(t *testing.T) {
 	t.Run("Rounds", func(t *testing.T) {
 		// A share of 14.69, so truncating would report a percent less.

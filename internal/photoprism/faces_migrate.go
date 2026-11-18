@@ -135,6 +135,10 @@ type FacesMigrateResult struct {
 	RenderedThumbs int
 	FailedThumbs   int
 
+	// ModelRecorded reports whether this run finalized and saved the target as the configured model,
+	// which is what a running instance has to be restarted to load.
+	ModelRecorded bool
+
 	// UnalignedCrops counts the markers an aligned model embedded from a plain box crop, whether
 	// the landmarks did not fit its template or the source could not be decoded. Only failures
 	// log, and at debug level, so without this the rate is unobservable on an ordinary run.
@@ -168,18 +172,19 @@ type FacesMigrateIncompleteError struct {
 func (e *FacesMigrateIncompleteError) Error() string {
 	switch {
 	case e.Unreadable > 0 && e.Clusterable > 0:
-		return fmt.Sprintf("faces: migration completed, but %d marker(s) that clear the clustering "+
-			"thresholds lost their vector and %d file(s) could not be read", e.Clusterable, e.Unreadable)
+		return fmt.Sprintf("faces: migration applied; %d marker(s) that clear the clustering "+
+			"thresholds lost their vector, and %d marker(s) could not be re-embedded because their file "+
+			"is missing or unreadable", e.Clusterable, e.Unreadable)
 	case e.Unreadable > 0:
-		return fmt.Sprintf("faces: migration completed, but %d marker(s) could not be re-embedded "+
+		return fmt.Sprintf("faces: migration applied; %d marker(s) could not be re-embedded "+
 			"because their file is missing or unreadable", e.Unreadable)
 	case e.Clusterable > 0:
-		return fmt.Sprintf("faces: migration completed, but %d marker(s) that clear the clustering "+
+		return fmt.Sprintf("faces: migration applied; %d marker(s) that clear the clustering "+
 			"thresholds could not be re-detected and lost their vector", e.Clusterable)
 	default:
 		// Below the clustering bars, so the ratio guard never saw them - but a third of a library
 		// can sit here, and an exit status of zero would report that as a clean run.
-		return fmt.Sprintf("faces: migration completed, but %d marker(s) could not be re-detected "+
+		return fmt.Sprintf("faces: migration applied; %d marker(s) could not be re-detected "+
 			"and lost their vector, none of which clears the clustering thresholds", e.Failed)
 	}
 }
@@ -815,6 +820,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// setter also re-propagates the target's calibrated distances, which the clustering reads
 	// from the face package rather than from the configuration.
 	settingErr := w.conf.SetFaceModel(plan.Target)
+	result.ModelRecorded = settingErr == nil
 	face.UnblockEmbeddings()
 
 	entity.UpdateFaces.Store(true)

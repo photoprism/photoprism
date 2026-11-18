@@ -61,19 +61,26 @@ func (e *migrationTestEmbedder) Close() error { return nil }
 // marker an earlier detector placed and this one cannot find again is the ordinary outcome, and
 // reporting the total as a fault tells an operator to fix something that is not broken.
 func TestFacesMigrateIncompleteError_Error(t *testing.T) {
+	// appliedPrefix opens every case, since the run recorded the target before reporting the loss.
+	const appliedPrefix = "faces: migration applied; "
+
 	t.Run("Clusterable", func(t *testing.T) {
 		err := (&FacesMigrateIncompleteError{Failed: 900, Clusterable: 3}).Error()
-		assert.Contains(t, err, "3 marker(s) that clear the clustering thresholds")
+		assert.Equal(t, appliedPrefix+"3 marker(s) that clear the clustering thresholds could not be re-detected and lost their vector", err)
 		assert.NotContains(t, err, "900")
 	})
 	t.Run("Unreadable", func(t *testing.T) {
 		err := (&FacesMigrateIncompleteError{Failed: 5, Unreadable: 5}).Error()
-		assert.Contains(t, err, "missing or unreadable")
+		assert.Equal(t, appliedPrefix+"5 marker(s) could not be re-embedded because their file is missing or unreadable", err)
 	})
 	t.Run("Both", func(t *testing.T) {
 		err := (&FacesMigrateIncompleteError{Failed: 9, Clusterable: 4, Unreadable: 5}).Error()
-		assert.Contains(t, err, "4 marker(s)")
-		assert.Contains(t, err, "5 file(s)")
+		assert.Equal(t, appliedPrefix+"4 marker(s) that clear the clustering thresholds lost their vector, "+
+			"and 5 marker(s) could not be re-embedded because their file is missing or unreadable", err)
+	})
+	t.Run("NoneClusterable", func(t *testing.T) {
+		err := (&FacesMigrateIncompleteError{Failed: 7}).Error()
+		assert.Equal(t, appliedPrefix+"7 marker(s) could not be re-detected and lost their vector, none of which clears the clustering thresholds", err)
 	})
 }
 

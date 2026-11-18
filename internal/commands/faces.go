@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"math"
 	"path/filepath"
@@ -295,21 +294,30 @@ func facesMigrateAction(ctx *cli.Context) error {
 				result.ExcludedMarkers, result.LowQualityMarkers)
 		}
 
-		// The setting is written by a run that replaced the clusters, including one that
-		// reports failed markers. A write that failed carries its own error, so this line has
-		// to follow the file rather than the value this process is holding.
-		var settingErr *photoprism.FacesMigrateSettingError
-
-		if !errors.As(migrateErr, &settingErr) && conf.FaceModel() == plan.Target {
-			log.Infof("faces: the configured face model is now %s", clean.Log(plan.Target))
+		// The setting is written by a run that replaced the clusters, including one that reports
+		// failed markers or fails afterwards. A write that failed carries its own error instead.
+		if result.ModelRecorded {
+			log.Info(faceModelSwitchedMessage(plan.Target))
 		}
 
-		if migrateErr != nil {
-			return cli.Exit(migrateErr.Error(), 1)
-		}
-
-		return nil
+		return facesMigrateExit(migrateErr)
 	})
+}
+
+// faceModelSwitchedMessage returns the line that ends a migration which recorded its target, and
+// carries the restart instruction, since a running instance keeps the model it loaded at startup.
+func faceModelSwitchedMessage(target string) string {
+	return fmt.Sprintf("faces: the configured face model is now %s, restart the instance to load it", clean.Log(target))
+}
+
+// facesMigrateExit returns the exit error for a migration result, or nil if it succeeded.
+// A run that was applied but lost markers also exits with status 1, so scripts can tell.
+func facesMigrateExit(err error) error {
+	if err == nil {
+		return nil
+	}
+
+	return cli.Exit(err.Error(), 1)
 }
 
 // reportMigrationCropCoverage states how much of the crop detail the thumbnail cache already holds,
