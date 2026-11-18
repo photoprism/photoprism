@@ -73,6 +73,20 @@ func TestFacesMigrateIncompleteError_Error(t *testing.T) {
 		err := (&FacesMigrateIncompleteError{Failed: 5, Unreadable: 5}).Error()
 		assert.Equal(t, appliedPrefix+"5 marker(s) could not be re-embedded because their file is missing or unreadable", err)
 	})
+	t.Run("EmbedErrors", func(t *testing.T) {
+		// A face found and not embedded is a fault of the run, not a face that is gone.
+		const suffix = "; 2 lost marker(s) were found but could not be embedded, which running the migration again can regenerate"
+
+		assert.Equal(t, appliedPrefix+"3 marker(s) that clear the clustering thresholds could not be regenerated and lost their vector"+suffix,
+			(&FacesMigrateIncompleteError{Failed: 5, Clusterable: 3, EmbedErrors: 2}).Error())
+		assert.Equal(t, appliedPrefix+"4 marker(s) could not be re-embedded because their file is missing or unreadable"+suffix,
+			(&FacesMigrateIncompleteError{Failed: 6, Unreadable: 4, EmbedErrors: 2}).Error())
+		assert.Equal(t, appliedPrefix+"3 marker(s) that clear the clustering thresholds lost their vector, and 4 marker(s) could not "+
+			"be re-embedded because their file is missing or unreadable"+suffix,
+			(&FacesMigrateIncompleteError{Failed: 9, Clusterable: 3, Unreadable: 4, EmbedErrors: 2}).Error())
+		assert.Equal(t, appliedPrefix+"5 marker(s) could not be regenerated and lost their vector, none of which clears the clustering thresholds"+suffix,
+			(&FacesMigrateIncompleteError{Failed: 5, EmbedErrors: 2}).Error())
+	})
 	t.Run("Both", func(t *testing.T) {
 		err := (&FacesMigrateIncompleteError{Failed: 9, Clusterable: 4, Unreadable: 5}).Error()
 		assert.Equal(t, appliedPrefix+"4 marker(s) that clear the clustering thresholds lost their vector, "+
@@ -85,19 +99,52 @@ func TestFacesMigrateIncompleteError_Error(t *testing.T) {
 }
 
 func TestFacesMigrateAbortedError_Error(t *testing.T) {
-	t.Run("NamesWhatWasCommitted", func(t *testing.T) {
-		// Embeddings are checkpointed per file, so the message has to account for the
-		// markers a refused run already regenerated and left unmatched.
-		err := (&FacesMigrateAbortedError{Migrated: 7, Failed: 90, Reason: "storage is unreadable"}).Error()
+	t.Run("FacesNotFoundAgain", func(t *testing.T) {
+		// Embeddings are checkpointed per file, so the message accounts for the markers earlier
+		// runs regenerated, and says that a face not found again is not found on a re-run either.
+		err := (&FacesMigrateAbortedError{Unmatched: 7, Failed: 90, Reason: "none of 90 marker(s) could be re-embedded"}).Error()
 
-		assert.Contains(t, err, "storage is unreadable")
 		assert.Contains(t, err, "clusters were not replaced")
-		assert.Contains(t, err, "7 regenerated marker(s) stay unmatched")
-		assert.Contains(t, err, "--force")
+		assert.Contains(t, err, "7 regenerated marker(s) stay unmatched until the migration completes.")
+		assert.Contains(t, err, " 90 marker(s) whose face was not found again fail again with the same configuration.")
+		assert.Contains(t, err, "Use --force to finalize anyway, which keeps every person and assignment and removes only the vectors that could not be regenerated")
+		assert.NotContains(t, err, "once the cause is fixed")
 	})
-	t.Run("NothingRegenerated", func(t *testing.T) {
-		err := (&FacesMigrateAbortedError{Migrated: 0, Failed: 12, Reason: "nothing could be re-embedded"}).Error()
+	t.Run("Faults", func(t *testing.T) {
+		err := (&FacesMigrateAbortedError{Failed: 12, Unreadable: 10, ReadErrors: 10, EmbedErrors: 2, Reason: "none of 12 marker(s) could be re-embedded"}).Error()
+
 		assert.Contains(t, err, "0 regenerated marker(s)")
+		assert.Contains(t, err, " 12 marker(s) that could not be read or embedded may succeed once the cause is fixed.")
+		assert.NotContains(t, err, "fail again")
+	})
+	t.Run("AllKinds", func(t *testing.T) {
+		// Each kind of failure is named with what can change it, since fixing one cannot help another.
+		err := (&FacesMigrateAbortedError{Failed: 100, Unreadable: 3, ReadErrors: 1, Reason: "none of 100 marker(s) could be re-embedded"}).Error()
+
+		assert.Contains(t, err, "1 marker(s) that could not be read or embedded may succeed once the cause is fixed; "+
+			"2 marker(s) of files the index no longer lists may succeed once those files are restored and indexed; "+
+			"97 marker(s) whose face was not found again fail again with the same configuration.")
+	})
+}
+
+func TestUnmatchedMarkers(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Zero(t, unmatchedMarkers(nil))
+	})
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, 2, unmatchedMarkers(entity.Markers{{FaceID: ""}, {FaceID: "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS"}, {}}))
+	})
+}
+
+func TestUnmatchedFromEarlierRuns(t *testing.T) {
+	t.Run("ForwardMigration", func(t *testing.T) {
+		// The configured model's clusters cannot hold a target vector, so an earlier run regenerated it.
+		assert.Equal(t, 5, unmatchedFromEarlierRuns(face.ModelFaceNet, face.ModelSFace, 5))
+	})
+	t.Run("SameSpace", func(t *testing.T) {
+		// Unmatched markers the configured clusters could hold were never regenerated by a migration.
+		assert.Zero(t, unmatchedFromEarlierRuns(face.ModelFaceNet, face.ModelFaceNet, 5))
+		assert.Zero(t, unmatchedFromEarlierRuns("", face.ModelFaceNet, 5))
 	})
 }
 
@@ -554,13 +601,13 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	file := &entity.File{FileHash: "0123456789012345678901234567890123456789", FileName: "missing.jpg", FileRoot: entity.RootOriginals}
 	markers := entity.Markers{{MarkerUID: "m1", MarkerType: entity.MarkerFace, W: 0.5, H: 0.5}}
 
-	result, _, unreadable, err := w.cropMigrationEmbeddings(embedder, file, markers)
+	result, _, unreadable, _, err := w.cropMigrationEmbeddings(embedder, file, markers)
 	require.NoError(t, err)
 	assert.Empty(t, result)
 	// A crop whose source cannot be read is reported apart from a face that was not found again.
 	assert.Equal(t, map[string]bool{"m1": true}, unreadable)
 
-	_, _, _, err = w.cropMigrationEmbeddings(embedder, nil, markers)
+	_, _, _, _, err = w.cropMigrationEmbeddings(embedder, nil, markers)
 	require.Error(t, err)
 
 	successConf := config.NewMinimalTestConfig(t.TempDir())
@@ -570,7 +617,8 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, successConf.ThumbCachePath())
 	require.NoError(t, err)
 	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 64, 64)), thumbName))
-	result, _, unreadable, err = successWorker.cropMigrationEmbeddings(
+	var unembedded map[string]bool
+	result, _, unreadable, unembedded, err = successWorker.cropMigrationEmbeddings(
 		embedder,
 		&entity.File{FileHash: hash},
 		entity.Markers{{MarkerUID: "m2", W: 1, H: 1}},
@@ -578,6 +626,7 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
 	assert.Empty(t, unreadable)
+	assert.Empty(t, unembedded)
 
 	t.Run("RecordsWhatTheCropWasDrawnFrom", func(t *testing.T) {
 		// The extent the vector was sampled at, and how much of the 16 px crop this embedder
@@ -589,7 +638,7 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 
 		file := &entity.File{FileHash: sized, FileWidth: 640, FileHeight: 480}
 
-		_, details, _, cropErr := successWorker.cropMigrationEmbeddings(embedder, file,
+		_, details, _, _, cropErr := successWorker.cropMigrationEmbeddings(embedder, file,
 			entity.Markers{{MarkerUID: "m3", W: 0.02, H: 0.02}, {MarkerUID: "m4", W: 1, H: 1}})
 		require.NoError(t, cropErr)
 
@@ -604,7 +653,7 @@ func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 	w := NewFaces(config.TestConfig())
 
-	result, landmarks, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
+	result, landmarks, _, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
 	require.Error(t, err)
 	assert.Empty(t, result)
 	assert.Empty(t, landmarks)
@@ -658,11 +707,12 @@ func TestFaces_detectMigrationEmbeddings_Landmarks(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 
 	w := NewFaces(c)
-	result, details, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
+	result, details, unembedded, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
 
 	require.NoError(t, err)
 	assert.Zero(t, unaligned, "a detection that placed a complete landmark set aligns onto the template")
 	require.Contains(t, result, marker.MarkerUID)
+	assert.Empty(t, unembedded, "a matched face that was embedded is not a fault")
 	assert.Equal(t, face.DefaultDetector().Name, detectModel)
 	require.Contains(t, details, marker.MarkerUID, "what the detection recorded must travel with the vector")
 
@@ -674,6 +724,12 @@ func TestFaces_detectMigrationEmbeddings_Landmarks(t *testing.T) {
 	// detection the provenance names rather than from whatever placed the marker originally.
 	assert.Positive(t, detection.Score)
 	assert.Positive(t, detection.Size)
+
+	// A face the detection matched that the embedder returns nothing for is a fault, not a miss.
+	result, _, unembedded, _, _, err = w.detectMigrationEmbeddings(&missingFaceEmbedder{oneHotEmbedder{dims: 4}}, file, markers, markers)
+	require.NoError(t, err)
+	assert.Empty(t, result)
+	assert.Equal(t, map[string]bool{marker.MarkerUID: true}, unembedded)
 }
 
 func TestMigrationDetectionThumb(t *testing.T) {
@@ -1143,7 +1199,7 @@ func TestFacesMigrateRerunError_Error(t *testing.T) {
 	t.Run("IdentitiesChanged", func(t *testing.T) {
 		// The rollback is the safe outcome, so the message has to describe the state it
 		// leaves rather than the failure, and name the one action that resolves it.
-		err := &FacesMigrateRerunError{Migrated: 12, Cause: query.ErrFaceMigrationIdentitiesChanged}
+		err := &FacesMigrateRerunError{Unmatched: 12, Cause: query.ErrFaceMigrationIdentitiesChanged}
 
 		assert.Contains(t, err.Error(), "a person assignment changed")
 		assert.Contains(t, err.Error(), "nothing was lost")
@@ -1155,11 +1211,11 @@ func TestFacesMigrateRerunError_Error(t *testing.T) {
 	})
 	t.Run("Unwraps", func(t *testing.T) {
 		// The identity case is the one a caller may want to tell apart from a storage error.
-		err := error(&FacesMigrateRerunError{Migrated: 1, Cause: query.ErrFaceMigrationIdentitiesChanged})
+		err := error(&FacesMigrateRerunError{Unmatched: 1, Cause: query.ErrFaceMigrationIdentitiesChanged})
 		assert.ErrorIs(t, err, query.ErrFaceMigrationIdentitiesChanged)
 	})
 	t.Run("OtherCause", func(t *testing.T) {
-		err := &FacesMigrateRerunError{Migrated: 0, Cause: errors.New("database is locked")}
+		err := &FacesMigrateRerunError{Unmatched: 0, Cause: errors.New("database is locked")}
 
 		assert.Contains(t, err.Error(), "database is locked")
 		assert.NotErrorIs(t, error(err), query.ErrFaceMigrationIdentitiesChanged)

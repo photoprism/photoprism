@@ -136,28 +136,13 @@ func (e *stoppingEmbedder) Run(img image.Image) face.Embeddings {
 	return v
 }
 
-// missingFaceEmbedder returns no vector for any crop, as a detector that does not find the face again.
+// missingFaceEmbedder returns no vector for any crop, as an embedder that fails.
 type missingFaceEmbedder struct {
 	oneHotEmbedder
 }
 
 // Run returns no embeddings.
 func (e *missingFaceEmbedder) Run(image.Image) face.Embeddings { return nil }
-
-// limitEmbedder embeds like oneHotEmbedder for the first limit crops and finds no face after that.
-type limitEmbedder struct {
-	oneHotEmbedder
-	limit int
-}
-
-// Run returns the next one-hot vector until the limit is reached, and no embeddings after it.
-func (e *limitEmbedder) Run(img image.Image) face.Embeddings {
-	if e.n >= e.limit {
-		return nil
-	}
-
-	return e.oneHotEmbedder.Run(img)
-}
 
 // addMigrateTestLibrary creates one named marker per file. Small markers start below the cluster
 // size bar, which the extent a migration samples them at clears.
@@ -174,6 +159,50 @@ func addMigrateTestLibrary(t *testing.T, c *config.Config, files int, small bool
 			require.NoError(t, entity.UnscopedDb().Model(f).
 				UpdateColumns(entity.Values{"file_width": 720, "file_height": 720}).Error)
 		}
+	}
+}
+
+// checkpointMigrateTestMarkers saves target vectors for the first n markers the way an aligned run
+// does, which leaves the state an interrupted run of such a migration leaves behind.
+func checkpointMigrateTestMarkers(t *testing.T, n int) (remaining []string) {
+	t.Helper()
+
+	var markers entity.Markers
+	require.NoError(t, entity.UnscopedDb().Order("file_uid").Find(&markers).Error)
+	require.GreaterOrEqual(t, len(markers), n)
+
+	detector := face.ActiveDetector()
+	require.NotEqual(t, face.DetectorNone, detector, "the detector decides which crops are stale")
+
+	for i, m := range markers {
+		if i >= n {
+			remaining = append(remaining, m.MarkerUID)
+			continue
+		}
+
+		v := make(face.Embedding, 4)
+		v[i%4] = 1
+
+		require.NoError(t, query.SaveFaceMigrationEmbeddings(face.ModelFaceNet, detector,
+			map[string]face.Embeddings{m.MarkerUID: {v}},
+			map[string]query.MigrationDetection{m.MarkerUID: {Size: face.ClusterSizeThreshold,
+				Score: face.ClusterScore(detector) + 10, ThumbSize: face.ClusterSizeThreshold}}))
+	}
+
+	return remaining
+}
+
+// deleteMigrateTestFiles removes the last n file rows from the index, as a purge does when the
+// originals are gone, and leaves their markers behind.
+func deleteMigrateTestFiles(t *testing.T, n int) {
+	t.Helper()
+
+	var files entity.Files
+	require.NoError(t, entity.UnscopedDb().Order("file_uid DESC").Limit(n).Find(&files).Error)
+	require.Len(t, files, n)
+
+	for i := range files {
+		require.NoError(t, entity.Db().Where("file_uid = ?", files[i].FileUID).Delete(&entity.File{}).Error)
 	}
 }
 
@@ -388,14 +417,14 @@ func TestFinalizeRefused(t *testing.T) {
 		// clusterable share was under it - here 7 % - so a total outage finalized and blanked
 		// every failed vector, which is the case the guard was written for.
 		reason := finalizeRefused(FacesMigrateResult{
-			Migrated:              10000,
-			Failed:                190000,
-			Unreadable:            190000,
-			ReadErrors:            190000,
-			AttemptedClusterable:  14000,
-			FoundClusterable:      14000,
-			FailedClusterable:     13300,
-			ReadErrorsClusterable: 13300,
+			Migrated:             10000,
+			Failed:               190000,
+			Unreadable:           190000,
+			ReadErrors:           190000,
+			AttemptedClusterable: 14000,
+			FoundClusterable:     14000,
+			FailedClusterable:    13300,
+			FaultsClusterable:    13300,
 		})
 
 		assert.Contains(t, reason, "could not be re-embedded")
@@ -463,7 +492,7 @@ func TestFinalizeRefused(t *testing.T) {
 		// Earlier successes say nothing about a file this run could not read.
 		reason := finalizeRefused(FacesMigrateResult{
 			Skipped: 1000, SkippedClusterable: 900, Failed: 5, Unreadable: 5, ReadErrors: 5, AttemptedClusterable: 5,
-			FailedClusterable: 5, ReadErrorsClusterable: 5,
+			FailedClusterable: 5, FaultsClusterable: 5,
 		})
 		assert.Contains(t, reason, "none of 5 marker(s)")
 		assert.Contains(t, reason, "their file is missing or unreadable")
@@ -472,13 +501,13 @@ func TestFinalizeRefused(t *testing.T) {
 		// 3 of 20 attempted is above the bound for this run, although it is under 1 % of the library.
 		reason := finalizeRefused(FacesMigrateResult{
 			Migrated: 17, Skipped: 1000, SkippedClusterable: 900, Failed: 3, Unreadable: 3, ReadErrors: 3, AttemptedClusterable: 20,
-			FoundClusterable: 20, FailedClusterable: 3, ReadErrorsClusterable: 3,
+			FoundClusterable: 20, FailedClusterable: 3, FaultsClusterable: 3,
 		})
 		assert.Contains(t, reason, "3 of 20 marker(s)")
 		// A share of unreadable files within the bound of this run leaves the decision to the whole.
 		assert.Empty(t, finalizeRefused(FacesMigrateResult{
 			Migrated: 99, Skipped: 1000, SkippedClusterable: 900, Failed: 1, Unreadable: 1, ReadErrors: 1, AttemptedClusterable: 100,
-			FoundClusterable: 100, FailedClusterable: 1, ReadErrorsClusterable: 1,
+			FoundClusterable: 100, FailedClusterable: 1, FaultsClusterable: 1,
 		}))
 	})
 	t.Run("FreshRunWithoutSuccessesIsRefused", func(t *testing.T) {
@@ -501,25 +530,43 @@ func TestFinalizeRefused(t *testing.T) {
 	})
 }
 
-func TestReadErrorsRefused(t *testing.T) {
-	t.Run("NoReadErrors", func(t *testing.T) {
-		assert.Empty(t, readErrorsRefused(FacesMigrateResult{Failed: 5, Unreadable: 5}))
+func TestFaultsRefused(t *testing.T) {
+	t.Run("NoFaults", func(t *testing.T) {
+		assert.Empty(t, faultsRefused(FacesMigrateResult{Failed: 5, Unreadable: 5}))
 	})
 	t.Run("NothingMigrated", func(t *testing.T) {
-		assert.Contains(t, readErrorsRefused(FacesMigrateResult{Skipped: 100, Failed: 1, Unreadable: 1, ReadErrors: 1}), "none of 1")
+		assert.Contains(t, faultsRefused(FacesMigrateResult{Skipped: 100, Failed: 1, Unreadable: 1, ReadErrors: 1}), "none of 1")
 	})
 	t.Run("AboveTheBoundOfThisRun", func(t *testing.T) {
-		assert.Contains(t, readErrorsRefused(FacesMigrateResult{Migrated: 8, Failed: 2, Unreadable: 2, ReadErrors: 2,
-			AttemptedClusterable: 10, FoundClusterable: 10, FailedClusterable: 2, ReadErrorsClusterable: 2}), "2 of 10")
+		assert.Contains(t, faultsRefused(FacesMigrateResult{Migrated: 8, Failed: 2, Unreadable: 2, ReadErrors: 2,
+			AttemptedClusterable: 10, FoundClusterable: 10, FailedClusterable: 2, FaultsClusterable: 2}), "2 of 10")
 	})
 	t.Run("AttemptsCountedAsFound", func(t *testing.T) {
 		// Successes the save lifted over the bars must not hide read errors below them.
-		reason := readErrorsRefused(FacesMigrateResult{Migrated: 3, Failed: 7, Unreadable: 7, ReadErrors: 7, AttemptedClusterable: 3})
+		reason := faultsRefused(FacesMigrateResult{Migrated: 3, Failed: 7, Unreadable: 7, ReadErrors: 7, AttemptedClusterable: 3})
 		assert.Equal(t, "7 of 10 marker(s) could not be re-embedded, because their file is missing or unreadable", reason)
 	})
+	t.Run("EmbedErrors", func(t *testing.T) {
+		// A face found and not embedded is a fault of this run, like a file it could not read.
+		assert.Contains(t, faultsRefused(FacesMigrateResult{Skipped: 100, SkippedClusterable: 100, Failed: 1, EmbedErrors: 1}), "none of 1")
+		assert.Equal(t, "2 of 10 marker(s) that clear the clustering thresholds could not be re-embedded, because their face could not be embedded",
+			faultsRefused(FacesMigrateResult{Migrated: 8, Failed: 2, EmbedErrors: 2, FoundClusterable: 10, FaultsClusterable: 2}))
+	})
 	t.Run("NothingClusterableFallsBackToEveryMarker", func(t *testing.T) {
-		assert.Contains(t, readErrorsRefused(FacesMigrateResult{Migrated: 8, Failed: 2, Unreadable: 2, ReadErrors: 2}), "2 of 10 marker(s) could not")
-		assert.Empty(t, readErrorsRefused(FacesMigrateResult{Migrated: 99, Failed: 1, Unreadable: 1, ReadErrors: 1}))
+		assert.Contains(t, faultsRefused(FacesMigrateResult{Migrated: 8, Failed: 2, Unreadable: 2, ReadErrors: 2}), "2 of 10 marker(s) could not")
+		assert.Empty(t, faultsRefused(FacesMigrateResult{Migrated: 99, Failed: 1, Unreadable: 1, ReadErrors: 1}))
+	})
+}
+
+func TestFaultCause(t *testing.T) {
+	t.Run("ReadErrors", func(t *testing.T) {
+		assert.Equal(t, ", because their file is missing or unreadable", faultCause(FacesMigrateResult{ReadErrors: 2}))
+	})
+	t.Run("EmbedErrors", func(t *testing.T) {
+		assert.Equal(t, ", because their face could not be embedded", faultCause(FacesMigrateResult{EmbedErrors: 2}))
+	})
+	t.Run("Both", func(t *testing.T) {
+		assert.Contains(t, faultCause(FacesMigrateResult{ReadErrors: 1, EmbedErrors: 1}), "unreadable or their face could not be embedded")
 	})
 }
 
@@ -542,8 +589,15 @@ func TestMigrationFailureCause(t *testing.T) {
 	})
 	t.Run("MoreUnreadableThanFailed", func(t *testing.T) {
 		// Cannot happen, but the subtraction would report a negative count if it did.
-		assert.Contains(t, migrationFailureCause(FacesMigrateResult{Failed: 2, Unreadable: 5}),
-			"their file is missing or unreadable")
+		assert.Equal(t, ", because their file is missing or unreadable", migrationFailureCause(FacesMigrateResult{Failed: 2, Unreadable: 5}))
+	})
+	t.Run("EmbedErrors", func(t *testing.T) {
+		assert.Equal(t, ", because their face could not be embedded", migrationFailureCause(FacesMigrateResult{Failed: 3, EmbedErrors: 3}))
+	})
+	t.Run("AllThree", func(t *testing.T) {
+		assert.Equal(t, ", 1 because the detector did not find their face again, 2 because their face could not be embedded, "+
+			"and 3 because their file is missing or unreadable",
+			migrationFailureCause(FacesMigrateResult{Failed: 6, EmbedErrors: 2, Unreadable: 3}))
 	})
 }
 
@@ -552,13 +606,13 @@ func TestFaces_migrate(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateresume")
 		w := NewFaces(c)
 
-		// 12 of 13 markers reach the target model before the run stops; the last one is never found
-		// again, which is 1 of 13 for the migration as a whole and within the bound.
+		// 12 of 13 markers reached the target model in an earlier run; detection does not find the
+		// last face again, which is 1 of 13 for the migration as a whole and within the bound.
 		addMigrateTestLibrary(t, c, 13, false)
-		remaining := interruptedMigration(t, w, 13, 12)
+		remaining := checkpointMigrateTestMarkers(t, 12)
 
 		plan := FacesMigratePlan{Target: face.ModelFaceNet}
-		result, err := w.migrate(context.Background(), plan, &missingFaceEmbedder{oneHotEmbedder{dims: 4}},
+		result, err := w.migrate(context.Background(), plan, &alignedEmbedder{oneHotEmbedder{dims: 4}},
 			FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
 
 		var incomplete *FacesMigrateIncompleteError
@@ -566,6 +620,7 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Zero(t, result.Migrated)
 		assert.Equal(t, 12, result.Skipped)
 		assert.Equal(t, 1, result.Failed)
+		assert.Zero(t, result.ReadErrors+result.EmbedErrors, "a face not found again is not a fault")
 		assert.True(t, result.ModelRecorded)
 		assert.Equal(t, face.ModelFaceNet, savedFaceModel(t, c))
 
@@ -579,9 +634,33 @@ func TestFaces_migrate(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateresumerefused")
 		w := NewFaces(c)
 
-		// 8 of 13 before the stop, so the 5 the detector does not find again are above the bound.
+		// 8 of 13 in an earlier run, so the 5 faces not found again are above the bound.
 		addMigrateTestLibrary(t, c, 13, false)
-		remaining := interruptedMigration(t, w, 13, 8)
+		remaining := checkpointMigrateTestMarkers(t, 8)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &alignedEmbedder{oneHotEmbedder{dims: 4}},
+			FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		var aborted *FacesMigrateAbortedError
+		require.ErrorAs(t, err, &aborted)
+		assert.Contains(t, aborted.Reason, "5 of 13 marker(s) that clear the clustering thresholds")
+		assert.Equal(t, 8, aborted.Unmatched, "the markers earlier runs regenerated stay unmatched")
+		assert.Contains(t, aborted.Error(), "5 marker(s) whose face was not found again fail again with the same configuration")
+		assert.False(t, result.ModelRecorded)
+		assert.Zero(t, countFaceRows(t))
+
+		kept := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&kept, "marker_uid = ?", remaining[0]).Error)
+		assert.NotEmpty(t, kept.EmbeddingsJSON, "a refused run keeps every previous vector")
+	})
+	t.Run("ResumeWithEmbedErrorsIsRefused", func(t *testing.T) {
+		// A face found and not embedded is a fault of this run, which earlier successes do not dilute.
+		c := newMigrateTestConfig(t, "migrateresumeembed")
+		w := NewFaces(c)
+
+		addMigrateTestLibrary(t, c, 13, false)
+		interruptedMigration(t, w, 13, 12)
 
 		plan := FacesMigratePlan{Target: face.ModelFaceNet}
 		result, err := w.migrate(context.Background(), plan, &missingFaceEmbedder{oneHotEmbedder{dims: 4}},
@@ -589,13 +668,10 @@ func TestFaces_migrate(t *testing.T) {
 
 		var aborted *FacesMigrateAbortedError
 		require.ErrorAs(t, err, &aborted)
-		assert.Contains(t, aborted.Reason, "5 of 13 marker(s) that clear the clustering thresholds")
+		assert.Equal(t, 1, result.EmbedErrors)
+		assert.Contains(t, aborted.Reason, "because their face could not be embedded")
+		assert.Contains(t, aborted.Error(), "1 marker(s) that could not be read or embedded may succeed once the cause is fixed")
 		assert.False(t, result.ModelRecorded)
-		assert.Zero(t, countFaceRows(t))
-
-		kept := entity.Marker{}
-		require.NoError(t, entity.UnscopedDb().First(&kept, "marker_uid = ?", remaining[0]).Error)
-		assert.NotEmpty(t, kept.EmbeddingsJSON, "a refused run keeps every previous vector")
 	})
 	t.Run("ResumeWithUnreadableFilesIsRefused", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateresumeunreadable")
@@ -623,6 +699,7 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Equal(t, 1, result.ReadErrors)
 		assert.Equal(t, 1, result.Unreadable)
 		assert.Contains(t, aborted.Reason, "their file is missing or unreadable")
+		assert.Contains(t, aborted.Error(), "may succeed once the cause is fixed")
 		assert.False(t, result.ModelRecorded)
 	})
 	t.Run("ResumeWithADeletedFileFinalizes", func(t *testing.T) {
@@ -650,16 +727,19 @@ func TestFaces_migrate(t *testing.T) {
 	t.Run("ResumeDecidesLikeOneRun", func(t *testing.T) {
 		// The same library and the same per-marker outcomes, once in one run and once interrupted
 		// and resumed, must reach the same decision - including markers whose saved extent lifts
-		// them over the cluster size bar.
+		// them over the cluster size bar. Files the index no longer lists fail in either.
 		for _, tc := range []struct {
-			name      string
-			files     int
-			succeeded int
-			small     bool
+			name    string
+			files   int
+			deleted int
+			earlier int
+			small   bool
+			refused bool
 		}{
-			{"Finalizes", 13, 12, false},
-			{"Refused", 13, 8, false},
-			{"SmallMarkers", 10, 3, true},
+			{"Finalizes", 13, 1, 6, false, false},
+			{"Refused", 13, 5, 4, false, true},
+			// The failures sit below the size bar and the saved successes above it.
+			{"SmallMarkers", 10, 7, 2, true, false},
 		} {
 			t.Run(tc.name, func(t *testing.T) {
 				plan := FacesMigratePlan{Target: face.ModelFaceNet}
@@ -667,23 +747,27 @@ func TestFaces_migrate(t *testing.T) {
 
 				one := newMigrateTestConfig(t, "migrateonerun")
 				addMigrateTestLibrary(t, one, tc.files, tc.small)
-				single, singleErr := NewFaces(one).migrate(context.Background(), plan,
-					&limitEmbedder{oneHotEmbedder: oneHotEmbedder{dims: 4}, limit: tc.succeeded}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
-				require.Equal(t, tc.succeeded, single.Migrated)
+				deleteMigrateTestFiles(t, tc.deleted)
+				single, singleErr := NewFaces(one).migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt,
+					FacesMigrateResult{Target: face.ModelFaceNet})
+				require.Equal(t, tc.files-tc.deleted, single.Migrated)
+				require.Equal(t, tc.deleted, single.Failed)
 
 				if tc.small {
 					require.Zero(t, single.FailedClusterable, "small markers fail below the size bar")
-					require.Equal(t, tc.succeeded, single.AttemptedClusterable, "the saved extent lifts a success over it")
+					require.Equal(t, single.Migrated, single.AttemptedClusterable, "the saved extent lifts a success over it")
 				}
 
 				var singleAborted *FacesMigrateAbortedError
 				singleRefused := errors.As(singleErr, &singleAborted)
+				require.Equal(t, tc.refused, singleRefused, "one run: %v", singleErr)
 
 				two := newMigrateTestConfig(t, "migratetworuns")
 				w := NewFaces(two)
 				addMigrateTestLibrary(t, two, tc.files, tc.small)
-				interruptedMigration(t, w, tc.files, tc.succeeded)
-				resumed, resumedErr := w.migrate(context.Background(), plan, &missingFaceEmbedder{oneHotEmbedder{dims: 4}}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+				deleteMigrateTestFiles(t, tc.deleted)
+				interruptedMigration(t, w, tc.files, tc.earlier)
+				resumed, resumedErr := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
 
 				var resumedAborted *FacesMigrateAbortedError
 				assert.Equal(t, singleRefused, errors.As(resumedErr, &resumedAborted), "one run: %v, resumed: %v", singleErr, resumedErr)
@@ -724,7 +808,7 @@ func TestFaces_migrate(t *testing.T) {
 
 		require.Error(t, err)
 		assert.Equal(t, 1, result.ReadErrors)
-		assert.Equal(t, 1, result.ReadErrorsClusterable)
+		assert.Equal(t, 1, result.FaultsClusterable)
 		assert.Equal(t, 1, result.Unreadable)
 	})
 	t.Run("RetainedCropFailureIsNotAReadError", func(t *testing.T) {
@@ -746,6 +830,45 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Equal(t, 1, result.Retained)
 		assert.Zero(t, result.Unreadable)
 		assert.Zero(t, result.ReadErrors)
+	})
+	t.Run("ForcedRunNamesEmbedErrors", func(t *testing.T) {
+		// A forced run finalizes through faults, and its closing message names them as recoverable.
+		c := newMigrateTestConfig(t, "migrateforcedembed")
+		w := NewFaces(c)
+
+		addMigrateTestLibrary(t, c, 2, false)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &missingFaceEmbedder{oneHotEmbedder{dims: 4}},
+			FacesMigrateOptions{Target: face.ModelFaceNet, Force: true}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		var incomplete *FacesMigrateIncompleteError
+		require.ErrorAs(t, err, &incomplete)
+		assert.Equal(t, 2, result.EmbedErrors)
+		assert.Equal(t, 2, incomplete.EmbedErrors)
+		assert.Contains(t, err.Error(), "2 lost marker(s) were found but could not be embedded")
+	})
+	t.Run("RetainedEmbedFailureIsNotAFault", func(t *testing.T) {
+		c := newMigrateTestConfig(t, "migrateretainedembed")
+		w := NewFaces(c)
+
+		// The crop is read and not embedded, but the marker keeps its vector, so it is not a fault.
+		f := addMigrateTestFile(t, c, "9898989898989898989898989898989898989898", true)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+		require.NoError(t, entity.UnscopedDb().Model(m).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "thumb_size": 0}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &missingFaceEmbedder{oneHotEmbedder{dims: 4}},
+			FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		require.NoError(t, err)
+		assert.Equal(t, 1, result.Retained)
+		assert.Zero(t, result.EmbedErrors)
+
+		kept := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&kept, "marker_uid = ?", m.MarkerUID).Error)
+		assert.NotEmpty(t, kept.EmbeddingsJSON, "a retained marker keeps its vector")
 	})
 	t.Run("IdentityChangedMidRun", func(t *testing.T) {
 		// The finalize rolls back when a person assignment moved under it. What the
