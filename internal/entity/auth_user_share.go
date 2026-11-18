@@ -113,7 +113,7 @@ func FindUserShare(find UserShare) *UserShare {
 	return m
 }
 
-// FindUserShares finds all shares to which the user has access.
+// FindUserShares finds all shares to which the user has access, ordered by share UID.
 func FindUserShares(userUid string) UserShares {
 	found := UserShares{}
 
@@ -122,7 +122,7 @@ func FindUserShares(userUid string) UserShares {
 	}
 
 	// Find matching record.
-	if err := UnscopedDb().Find(&found, "user_uid = ? AND (expires_at IS NULL OR expires_at > ?)", userUid, Now()).Error; err != nil {
+	if err := UnscopedDb().Where("user_uid = ? AND (expires_at IS NULL OR expires_at > ?)", userUid, Now()).Order("share_uid").Find(&found).Error; err != nil {
 		event.AuditWarn([]string{"user %s", "find shares", status.Error(err)}, clean.Log(userUid))
 		return nil
 	}

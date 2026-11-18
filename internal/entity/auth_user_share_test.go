@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -75,6 +76,17 @@ func TestFindUserShare(t *testing.T) {
 }
 
 func TestFindUserShares(t *testing.T) {
+	t.Run("Order", func(t *testing.T) {
+		userUid := rnd.GenerateUID(UserUID)
+		for _, shareUid := range []string{"as6sg6bxpogaab99", "as6sg6bxpogaab11", "as6sg6bxpogaab55"} {
+			require.NoError(t, UnscopedDb().Create(&UserShare{UserUID: userUid, ShareUID: shareUid, RefID: rnd.RefID(SharePrefix)}).Error)
+		}
+		t.Cleanup(func() { _ = UnscopedDb().Delete(&UserShare{}, "user_uid = ?", userUid).Error })
+
+		found := FindUserShares(userUid)
+		require.Len(t, found, 3)
+		assert.Equal(t, []string{"as6sg6bxpogaab11", "as6sg6bxpogaab55", "as6sg6bxpogaab99"}, []string{found[0].ShareUID, found[1].ShareUID, found[2].ShareUID})
+	})
 	t.Run("Alice", func(t *testing.T) {
 		found := FindUserShares(UserFixtures.Pointer("alice").GetUID())
 		assert.NotNil(t, found)
