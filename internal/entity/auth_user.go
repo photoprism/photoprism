@@ -493,6 +493,10 @@ func (m *User) Delete() (err error) {
 
 	m.RevokeGrants()
 
+	// Release the preview token registrations of the sessions deleted below, after evicting them from the cache.
+	FlushUserSessionCache(m.UserUID)
+	m.releasePreviewTokens()
+
 	if err = UnscopedDb().Delete(&Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
 		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", status.Error(err)}, m.RefID)
 	}
@@ -636,6 +640,15 @@ func (m *User) CanLogIn() bool {
 	} else {
 		return acl.Rules.Allow(acl.ResourceConfig, m.AclRole(), acl.AccessOwn)
 	}
+}
+
+// isInactive reports whether the account is registered, but deleted, expired, deactivated, or without a role.
+func (m *User) isInactive() bool {
+	if m == nil || !m.IsRegistered() {
+		return false
+	}
+
+	return m.IsDisabled() || m.HasProvider(authn.ProviderNone) || m.HasRole(acl.RoleNone)
 }
 
 // DenyLogIn checks if the user should be denied access to the web UI/API
@@ -921,8 +934,8 @@ func (m *User) DetachAuthID() {
 
 		other.AuthID = ""
 		other.AuthProvider = authn.ProviderNone.String()
-		revoked := other.RevokeDerivedSessions(nil)
 		FlushUserSessionCache(other.UserUID)
+		revoked := other.RevokeDerivedSessions(nil)
 
 		event.AuditWarn([]string{"user %s", "auth id detached from user %s", "%d sessions revoked", status.Updated}, m.RefID, other.RefID, revoked)
 	}
@@ -1258,6 +1271,24 @@ func (m *User) IsUnknown() bool {
 	return m.InvalidUID() || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleNone)
 }
 
+// releasePreviewTokens removes the preview token registrations of the account's stored sessions.
+func (m *User) releasePreviewTokens() {
+	var ids []string
+
+	if m.UserUID == "" {
+		return
+	}
+
+	if err := Db().Model(&Session{}).Where("user_uid = ?", m.UserUID).Pluck("id", &ids).Error; err != nil {
+		event.AuditErr([]string{"user %s", "failed to release preview tokens", status.Error(err)}, m.RefID)
+		return
+	}
+
+	for _, id := range ids {
+		PreviewToken.Unset(id)
+	}
+}
+
 // RevokeDerivedSessions deletes user login sessions, including those created using app passwords.
 func (m *User) RevokeDerivedSessions(omit []string) (deleted int) {
 	return m.RevokeSessions(omit, authn.RevokeDerivedSessions)
@@ -1310,6 +1341,11 @@ func (m *User) RevokeSessions(omit []string, scope authn.SessionScope) (deleted 
 		} else {
 			deleted++
 		}
+	}
+
+	// Release the preview token registrations of the sessions an inactive account keeps, such as app passwords.
+	if m.isInactive() {
+		m.releasePreviewTokens()
 	}
 
 	// Return number of deleted sessions.

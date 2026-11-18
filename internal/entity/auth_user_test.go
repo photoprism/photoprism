@@ -2581,6 +2581,7 @@ func TestUser_SetAuthID(t *testing.T) {
 
 		_, err = FindAnySession(login.ID)
 		assert.Error(t, err)
+		assert.Empty(t, PreviewToken.Get(app.ID))
 
 		// App passwords are kept, as after other privilege changes, and are read again with the new provider.
 		found, err := FindSession(app.ID)

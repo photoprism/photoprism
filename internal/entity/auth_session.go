@@ -607,8 +607,12 @@ func (m *Session) SetUser(u *User) *Session {
 		m.AuthScope = u.Scope()
 	}
 
-	// Update the preview token.
-	m.SetPreviewToken(u.PreviewToken)
+	// Update the preview token, which stays registered only while the account is active.
+	if !u.isInactive() {
+		m.SetPreviewToken(u.PreviewToken)
+	} else if m.ID != "" {
+		PreviewToken.Unset(m.ID)
+	}
 
 	return m
 }
