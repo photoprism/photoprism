@@ -521,17 +521,46 @@ func TestStaleMigrationMarkers(t *testing.T) {
 	})
 }
 
+func TestSavedMigrationMarker(t *testing.T) {
+	small := entity.Marker{Size: 10, ThumbSize: 10, Score: face.ClusterScore("") + 10}
+
+	t.Run("RecropRecordsTheExtent", func(t *testing.T) {
+		saved := savedMigrationMarker(small, "", query.MigrationDetection{ThumbSize: 400})
+		assert.Equal(t, 400, saved.ThumbSize)
+		assert.True(t, saved.Clusterable())
+		assert.False(t, small.Clusterable(), "the marker itself is left unchanged")
+	})
+	t.Run("UnmeasuredExtent", func(t *testing.T) {
+		saved := savedMigrationMarker(small, "", query.MigrationDetection{})
+		assert.Equal(t, entity.ThumbSizeUnmeasured, saved.ThumbSize)
+		assert.False(t, saved.Clusterable())
+	})
+	t.Run("RedetectionRecordsItsScoreAndSize", func(t *testing.T) {
+		saved := savedMigrationMarker(small, face.DetectorYuNet, query.MigrationDetection{ThumbSize: 400, Size: 80, Score: 1})
+		assert.Equal(t, face.DetectorYuNet, saved.DetectModel)
+		assert.Equal(t, 80, saved.Size)
+		assert.Equal(t, 1, saved.Score)
+		assert.False(t, saved.Clusterable(), "a score below the bar keeps it out")
+	})
+	t.Run("RedetectionWithoutSizeKeepsTheSize", func(t *testing.T) {
+		saved := savedMigrationMarker(entity.Marker{Size: 70}, face.DetectorYuNet, query.MigrationDetection{Score: 1})
+		assert.Equal(t, 70, saved.Size)
+	})
+}
+
 func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}
 	w := NewFaces(config.TestConfig())
 	file := &entity.File{FileHash: "0123456789012345678901234567890123456789", FileName: "missing.jpg", FileRoot: entity.RootOriginals}
 	markers := entity.Markers{{MarkerUID: "m1", MarkerType: entity.MarkerFace, W: 0.5, H: 0.5}}
 
-	result, _, err := w.cropMigrationEmbeddings(embedder, file, markers)
+	result, _, unreadable, err := w.cropMigrationEmbeddings(embedder, file, markers)
 	require.NoError(t, err)
 	assert.Empty(t, result)
+	// A crop whose source cannot be read is reported apart from a face that was not found again.
+	assert.Equal(t, map[string]bool{"m1": true}, unreadable)
 
-	_, _, err = w.cropMigrationEmbeddings(embedder, nil, markers)
+	_, _, _, err = w.cropMigrationEmbeddings(embedder, nil, markers)
 	require.Error(t, err)
 
 	successConf := config.NewMinimalTestConfig(t.TempDir())
@@ -541,13 +570,14 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, successConf.ThumbCachePath())
 	require.NoError(t, err)
 	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 64, 64)), thumbName))
-	result, _, err = successWorker.cropMigrationEmbeddings(
+	result, _, unreadable, err = successWorker.cropMigrationEmbeddings(
 		embedder,
 		&entity.File{FileHash: hash},
 		entity.Markers{{MarkerUID: "m2", W: 1, H: 1}},
 	)
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
+	assert.Empty(t, unreadable)
 
 	t.Run("RecordsWhatTheCropWasDrawnFrom", func(t *testing.T) {
 		// The extent the vector was sampled at, and how much of the 16 px crop this embedder
@@ -559,7 +589,7 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 
 		file := &entity.File{FileHash: sized, FileWidth: 640, FileHeight: 480}
 
-		_, details, cropErr := successWorker.cropMigrationEmbeddings(embedder, file,
+		_, details, _, cropErr := successWorker.cropMigrationEmbeddings(embedder, file,
 			entity.Markers{{MarkerUID: "m3", W: 0.02, H: 0.02}, {MarkerUID: "m4", W: 1, H: 1}})
 		require.NoError(t, cropErr)
 
