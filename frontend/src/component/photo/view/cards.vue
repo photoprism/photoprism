@@ -83,7 +83,7 @@
         </div>
         <div v-else :data-id="m.ID" :data-uid="m.UID" class="media result" :class="m.classes()" @contextmenu.stop="onContextMenu($event, index)">
           <div
-            :title="m.Title"
+            :title="showTitles && m.Title ? m.Title : m.getOriginalName()"
             :style="`background-image: url(${m.thumbnailUrl('tile_500')})`"
             class="preview"
             @touchstart.passive="input.touchStart($event, index)"
@@ -185,7 +185,7 @@
           <div class="meta">
             <button
               v-if="!showTitles || m.Title"
-              :title="m.Title"
+              :title="showTitles ? m.Title : m.getOriginalName()"
               class="action-title-edit meta-title text-truncate"
               @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)"
             >

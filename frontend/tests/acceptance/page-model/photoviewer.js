@@ -377,7 +377,7 @@ export default class Page {
   }
 
   // openPhotoViewerByTitle opens the lightbox by card title, for pages with no search bar.
-  // `div.preview` carries the title regardless of the showTitles setting.
+  // Requires showTitles, since `div.preview` otherwise carries the file name.
   async openPhotoViewerByTitle(title) {
     const preview = Selector("div.is-photo div.preview", { timeout: 15000 }).withAttribute("title", title);
     await t.expect(preview.visible).ok(`a card titled ${title} must be present`);
