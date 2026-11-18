@@ -158,6 +158,20 @@ func TestFacesMigrateExit(t *testing.T) {
 	})
 }
 
+// TestEmbeddingModelCountMessage pins that rows without a recorded embedding model are named as FaceNet,
+// apart from the rows that record it, rather than as a model of their own.
+func TestEmbeddingModelCountMessage(t *testing.T) {
+	t.Run("Unrecorded", func(t *testing.T) {
+		assert.Equal(t, "faces: 14246 markers have no recorded embedding model (treated as facenet)", embeddingModelCountMessage("", 14246, "marker"))
+		assert.Equal(t, "faces: 399 clusters have no recorded embedding model (treated as facenet)", embeddingModelCountMessage("", 399, "cluster"))
+		assert.Equal(t, "faces: 1 marker has no recorded embedding model (treated as facenet)", embeddingModelCountMessage("", 1, "marker"))
+	})
+	t.Run("Recorded", func(t *testing.T) {
+		assert.Equal(t, "faces: embedding model facenet has 2 markers", embeddingModelCountMessage(face.ModelFaceNet, 2, "marker"))
+		assert.Equal(t, "faces: embedding model sface has 1 cluster", embeddingModelCountMessage(face.ModelSFace, 1, "cluster"))
+	})
+}
+
 // TestFaceModelSwitchedMessage pins that the line ending a migration that recorded its target
 // carries the restart instruction.
 func TestFaceModelSwitchedMessage(t *testing.T) {

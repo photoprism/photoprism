@@ -200,18 +200,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 				clean.Log(conf.OriginalsPath()))
 		}
 		for _, count := range plan.MarkerModels {
-			model := count.EmbedModel
-			if model == "" {
-				model = "legacy"
-			}
-			log.Infof("faces: embedding model %s has %d markers", clean.Log(model), count.Markers)
+			log.Info(embeddingModelCountMessage(count.EmbedModel, count.Markers, "marker"))
 		}
 		for _, count := range plan.FaceModels {
-			model := count.EmbedModel
-			if model == "" {
-				model = "legacy"
-			}
-			log.Infof("faces: embedding model %s has %d clusters", clean.Log(model), count.Faces)
+			log.Info(embeddingModelCountMessage(count.EmbedModel, count.Faces, "cluster"))
 		}
 		if m := face.FindEmbeddingModel(plan.Target); m != nil {
 			log.Infof("faces: %s uses cluster distance %.2f, cluster radius %.2f, and match distance %.2f",
@@ -302,6 +294,26 @@ func facesMigrateAction(ctx *cli.Context) error {
 
 		return facesMigrateExit(migrateErr)
 	})
+}
+
+// embeddingModelCountMessage returns the migration plan line counting the markers or clusters of one
+// embedding model. A blank model predates recording it and is treated as FaceNet, which the line names.
+func embeddingModelCountMessage(model string, count int, noun string) string {
+	if count != 1 {
+		noun += "s"
+	}
+
+	if model == "" {
+		verb := "have"
+
+		if count == 1 {
+			verb = "has"
+		}
+
+		return fmt.Sprintf("faces: %d %s %s no recorded embedding model (treated as %s)", count, noun, verb, face.ModelFaceNet)
+	}
+
+	return fmt.Sprintf("faces: embedding model %s has %d %s", clean.Log(model), count, noun)
 }
 
 // faceModelSwitchedMessage returns the line that ends a migration which recorded its target, and
