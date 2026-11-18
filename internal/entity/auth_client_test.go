@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"sync"
 	"testing"
 	"time"
@@ -1894,5 +1895,16 @@ func TestClient_AuthChanged(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var client *Client
 		assert.True(t, client.AuthChanged())
+	})
+}
+
+func TestClient_JSON(t *testing.T) {
+	t.Run("OmitsIdToken", func(t *testing.T) {
+		c := &Client{ClientUID: rnd.GenerateUID(ClientUID), IdToken: "header.payload.signature"}
+
+		data, err := json.Marshal(c)
+		require.NoError(t, err)
+		assert.NotContains(t, string(data), "IdToken")
+		assert.NotContains(t, string(data), "header.payload.signature")
 	})
 }

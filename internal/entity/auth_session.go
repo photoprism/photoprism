@@ -79,7 +79,7 @@ type Session struct {
 	PreviewToken string          `gorm:"type:bytes;size:64;column:preview_token;default:'';" json:"-" yaml:"-"`
 	AccessToken  string          `gorm:"type:bytes;size:4096;column:access_token;default:'';" json:"-" yaml:"-"`
 	RefreshToken string          `gorm:"type:bytes;size:2048;column:refresh_token;default:'';" json:"-" yaml:"-"`
-	IdToken      string          `gorm:"type:bytes;size:4096;column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	IdToken      string          `gorm:"type:bytes;size:4096;column:id_token;default:'';" json:"-" yaml:"IdToken,omitempty"`
 	UserAgent    string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
 	DataJSON     json.RawMessage `gorm:"type:bytes;size:16384;" json:"-" yaml:"Data,omitempty"`
 	data         *SessionData    `gorm:"-" yaml:"-"`

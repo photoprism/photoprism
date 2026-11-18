@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -1602,5 +1603,16 @@ func TestSession_SetPreviewToken_SignedPreview(t *testing.T) {
 		m := owned.NewSession(ctx, authn.GrantClientCredentials)
 		assert.False(t, m.SignedPreview())
 		assert.Equal(t, alice.PreviewToken, m.PreviewToken)
+	})
+}
+
+func TestSession_JSON(t *testing.T) {
+	t.Run("OmitsIdToken", func(t *testing.T) {
+		s := &Session{ID: rnd.SessionID(rnd.AuthToken()), IdToken: "header.payload.signature"}
+
+		data, err := json.Marshal(s)
+		require.NoError(t, err)
+		assert.NotContains(t, string(data), "IdToken")
+		assert.NotContains(t, string(data), "header.payload.signature")
 	})
 }

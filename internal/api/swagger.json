@@ -2363,9 +2363,6 @@
                 "ID": {
                     "type": "string"
                 },
-                "IdToken": {
-                    "type": "string"
-                },
                 "LastActive": {
                     "type": "integer"
                 },
