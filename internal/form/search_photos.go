@@ -87,7 +87,7 @@ type SearchPhotos struct {
 	Subject     string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`                                                                            // UIDs
 	People      string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject names, combinable with & or |"`                                                                 // Alias for Subjects
 	Subjects    string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"`                                                                                  // People names
-	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, supports * wildcards"`                                                                          // Album UIDs or name
+	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, matches album names that start with the given text"`                                            // Album UIDs or name
 	Albums      string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album names, combinable with & or |"`                                                          // Multi search with and/or
 	Quality     int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                                                           // Photo quality score
 	Added       time.Time `form:"added" example:"added:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content added at or after this time"`              // Pictures added at or after this time

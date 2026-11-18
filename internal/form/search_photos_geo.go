@@ -77,7 +77,7 @@ type SearchPhotosGeo struct {
 	Keywords    string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords, combinable with & or |"`
 	Label       string    `form:"label" example:"label:\"cat|dog&!blurry\"" notes:"Label names: | is OR within a group, & is AND between groups (every positive group must match), leading ! negates a group (e.g. !rejected). Category expansion applies to both positive and negative terms. Escape a literal &, |, or leading ! with \\"`
 	Category    string    `form:"category" example:"category:airport" notes:"Location category type"`
-	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, supports * wildcards"`
+	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, matches album names that start with the given text"`
 	Albums      string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album names, combinable with & or |"`
 	Country     string    `form:"country" example:"country:\"de|us\"" notes:"Country codes, separated by |"`
 	State       string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"State or province names, separated by |"`
