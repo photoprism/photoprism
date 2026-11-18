@@ -842,12 +842,31 @@ func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scor
 	}
 
 	// The one shortfall no threshold explains: a marker older than the newest cluster never counts
-	// toward the trigger again, so an instance can sit on hundreds of them and look idle. Naming
-	// how many a forced run would actually take is what makes the remedy worth weighing.
+	// toward the trigger again, so an instance can sit on hundreds of them and look idle. This report
+	// cannot know whether a forced run already tried them, so it names when one forms clusters.
 	if gates.Recent == 0 && gates.Unclustered > 0 {
-		return fmt.Sprintf("Automatic clustering will not start on its own: %d markers are unclustered, but none was "+
-			"added since the last cluster, and %d of them clear both thresholds. "+
-			`Run "photoprism faces update --force" to cluster them.`, gates.Unclustered, gates.Clusterable)
+		stranded := fmt.Sprintf("Automatic clustering will not start on its own: %d markers are unclustered, but none was "+
+			"added since the last cluster, and %d of them clear both thresholds.", gates.Unclustered, gates.Clusterable)
+
+		// A forced run skips only the trigger, so it still needs the sample count of its smallest pass.
+		if retry > 0 && gates.Clusterable < retry {
+			return stranded + fmt.Sprintf(` "photoprism faces update --force" cannot cluster them either, `+
+				"since it needs %d (face-cluster-core-retry %d).", retry, retry)
+		} else if retry <= 0 && gates.Clusterable < required {
+			return stranded + fmt.Sprintf(` "photoprism faces update --force" cannot cluster them either, `+
+				"since it needs %d (2 x face-cluster-core %d).", required, core)
+		}
+
+		cores := fmt.Sprintf("face-cluster-core %d", core)
+
+		if retry > 0 {
+			cores = fmt.Sprintf("face-cluster-core %d, or face-cluster-core-retry %d over what matching leaves,", core, retry)
+		}
+
+		return stranded + fmt.Sprintf(` Run "photoprism faces update --force" to cluster them. It forms a cluster only `+
+			"where %s of them show one person within a face-cluster-dist of %g, so once a forced run, such as the "+
+			"passes a completed migration runs, changes nothing more, another one helps only once more faces are "+
+			"added or named, or the clustering parameters change.", cores, dist)
 	}
 
 	if gates.Unclustered == 0 {

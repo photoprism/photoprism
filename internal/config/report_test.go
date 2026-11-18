@@ -1170,13 +1170,56 @@ func TestFaceClusterStatusFor(t *testing.T) {
 	t.Run("StrandedBehindTheLastCluster", func(t *testing.T) {
 		// The shortfall no threshold explains: every marker predates the newest cluster, so none
 		// counts toward the trigger again and the instance sits idle looking healthy.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 60, Clusterable: 40}, 8, 60, bar, 4, -1, 0.72)
+
+		assert.Contains(t, status, "60 markers are unclustered")
+		assert.Contains(t, status, "none was added since the last cluster")
+		// What a forced run would take, or the remedy cannot be weighed.
+		assert.Contains(t, status, "40 of them clear both thresholds")
+		// The remedy stays named, since an instance that never ran it can still form clusters.
+		assert.Contains(t, status, `Run "photoprism faces update --force" to cluster them.`)
+		// This report cannot know whether a forced run already tried them, so it names when one helps.
+		assert.Contains(t, status, "It forms a cluster only where face-cluster-core 4 of them show one person within a face-cluster-dist of 0.72")
+		assert.Contains(t, status, "once a forced run, such as the passes a completed migration runs, changes nothing more, "+
+			"another one helps only once more faces are added or named, or the clustering parameters change.")
+		assert.NotContains(t, status, "face-cluster-core-retry")
+	})
+	t.Run("StrandedBelowTheSampleCount", func(t *testing.T) {
+		// A forced run skips only the trigger, so with too few samples and no retry pass it forms nothing.
 		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6, Clusterable: 4}, 8, 60, bar, 4, -1, 0.72)
 
 		assert.Contains(t, status, "6 markers are unclustered")
-		assert.Contains(t, status, "none was added since the last cluster")
-		// What a forced run would take, or the remedy cannot be weighed.
 		assert.Contains(t, status, "4 of them clear both thresholds")
-		assert.Contains(t, status, "faces update --force")
+		assert.Contains(t, status, `"photoprism faces update --force" cannot cluster them either, since it needs 8 (2 x face-cluster-core 4).`)
+		assert.NotContains(t, status, "Run \"photoprism faces update --force\"")
+	})
+	t.Run("StrandedWithRetry", func(t *testing.T) {
+		// The retry pass over what matching leaves runs even below the sample count of the first pass.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6, Clusterable: 4}, 8, 60, bar, 4, 2, 0.72)
+
+		assert.Contains(t, status, `Run "photoprism faces update --force" to cluster them.`)
+		assert.Contains(t, status, "where face-cluster-core 4, or face-cluster-core-retry 2 over what matching leaves, of them show one person")
+		assert.Contains(t, status, "helps only once more faces are added or named")
+	})
+	t.Run("StrandedAtTheSampleCount", func(t *testing.T) {
+		// Exactly the sample count is enough for a forced run, so the remedy is named.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 9, Clusterable: 8}, 8, 60, bar, 4, -1, 0.72)
+
+		assert.Contains(t, status, `Run "photoprism faces update --force" to cluster them.`)
+		assert.NotContains(t, status, "cannot cluster them")
+	})
+	t.Run("StrandedAtTheRetryCount", func(t *testing.T) {
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6, Clusterable: 2}, 8, 60, bar, 4, 2, 0.72)
+
+		assert.Contains(t, status, `Run "photoprism faces update --force" to cluster them.`)
+		assert.NotContains(t, status, "cannot cluster them")
+	})
+	t.Run("StrandedBelowTheRetryCount", func(t *testing.T) {
+		// The retry pass is the smallest a forced run makes, and it still needs face-cluster-core-retry samples.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6, Clusterable: 1}, 8, 60, bar, 4, 2, 0.72)
+
+		assert.Contains(t, status, `"photoprism faces update --force" cannot cluster them either, since it needs 2 (face-cluster-core-retry 2).`)
+		assert.NotContains(t, status, "Run \"photoprism faces update --force\"")
 	})
 	t.Run("VolumeOnly", func(t *testing.T) {
 		// Every marker clears every bar, so naming thresholds would send an operator to tune bars
@@ -1272,4 +1315,12 @@ func TestMaskedSecret(t *testing.T) {
 	t.Run("SameForAnyValue", func(t *testing.T) {
 		assert.Equal(t, maskedSecret("short"), maskedSecret("a considerably longer secret value"))
 	})
+}
+
+// TestFaceFlagsInfo pins that the face options info recommends a forced update after changing the
+// clustering parameters, and says a migration already runs those passes itself.
+func TestFaceFlagsInfo(t *testing.T) {
+	assert.Contains(t, faceFlagsInfo, "After changing any of the clustering parameters, run `photoprism faces update --force`")
+	assert.Contains(t, faceFlagsInfo, "A completed migration already runs these passes itself.")
+	assert.NotContains(t, faceFlagsInfo, "after migration, run")
 }
