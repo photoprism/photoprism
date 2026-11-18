@@ -672,3 +672,81 @@ func TestOAuthToken_InactiveUser(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String())
 	})
 }
+
+// newSessionGrantUser creates an OIDC account with a stored session and returns its auth token.
+func newSessionGrantUser(t *testing.T, name string, expiresAt *time.Time) string {
+	t.Helper()
+
+	u := entity.NewUser()
+	u.UserName = name
+	u.UserRole = acl.RoleAdmin.String()
+	u.CanLogin = true
+	u.AuthProvider = authn.ProviderOIDC.String()
+	require.NoError(t, u.Create())
+	t.Cleanup(func() {
+		u.RevokeSessions(nil, authn.RevokeAllSessions)
+		_ = entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", u.UserUID).Error
+		_ = entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", u.UserUID).Error
+		_ = entity.UnscopedDb().Delete(u).Error
+	})
+
+	s := entity.NewSession(3600, 0)
+	s.SetUser(u)
+	s.SetProvider(authn.ProviderOIDC)
+	require.NoError(t, s.Create())
+
+	if expiresAt != nil {
+		require.NoError(t, u.Updates(entity.Values{"expires_at": expiresAt}))
+		entity.FlushUserSessionCache(u.UserUID)
+	}
+
+	return s.AuthToken()
+}
+
+func TestOAuthToken_SessionGrantAccount(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	OAuthToken(router)
+
+	request := func(name, authToken string) *httptest.ResponseRecorder {
+		data := url.Values{
+			"grant_type":  {authn.GrantSession.String()},
+			"client_name": {"SessionGrantAccount"},
+			"username":    {name},
+			"scope":       {"*"},
+		}
+
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Add(header.ContentType, header.ContentTypeForm)
+		req.Header.Add(header.XAuthToken, authToken)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+		return w
+	}
+
+	t.Run("ActiveAccount", func(t *testing.T) {
+		name := "session-grant-" + rnd.Base36(8)
+		authToken := newSessionGrantUser(t, name, nil)
+		w := request(name, authToken)
+		assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String())
+		assert.NotEmpty(t, gjson.Get(w.Body.String(), "access_token").String())
+		if sid := gjson.Get(w.Body.String(), "session_id").String(); sid != "" {
+			t.Cleanup(func() {
+				if s, err := entity.FindAnySession(sid); err == nil {
+					_ = s.Delete()
+				}
+			})
+		}
+	})
+	t.Run("ExpiredAccount", func(t *testing.T) {
+		expired := time.Now().Add(-time.Hour)
+		name := "session-grant-" + rnd.Base36(8)
+		authToken := newSessionGrantUser(t, name, &expired)
+		w := request(name, authToken)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+		assert.Empty(t, gjson.Get(w.Body.String(), "access_token").String())
+	})
+}

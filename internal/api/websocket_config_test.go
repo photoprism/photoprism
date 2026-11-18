@@ -14,6 +14,7 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -59,6 +60,44 @@ func TestWebSocket_Config(t *testing.T) {
 	t.Run("ClientOutsideScope", func(t *testing.T) {
 		_, sess := newOwnedClientSession(t, "metrics")
 		assert.Empty(t, handshake(t, sess.AuthToken()).Get("previewToken").String())
+	})
+	t.Run("ExpiredAccount", func(t *testing.T) {
+		u := *entity.UserFixtures.Pointer("bob")
+		expired := time.Now().Add(-time.Hour)
+		u.ExpiresAt = &expired
+		sess := entity.NewSession(3600, 0).SetUser(&u)
+		require.NoError(t, sess.Create())
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		ws, _, err := websocket.DefaultDialer.Dial("ws"+strings.TrimPrefix(srv.URL, "http")+"/api/v1/ws", http.Header{"Origin": {srv.URL}})
+		require.NoError(t, err)
+		defer ws.Close()
+
+		require.NoError(t, ws.WriteJSON(map[string]string{"session": sess.AuthToken()}))
+		require.NoError(t, ws.SetReadDeadline(time.Now().Add(10*time.Second)))
+
+		for {
+			_, msg, readErr := ws.ReadMessage()
+			require.NoError(t, readErr)
+
+			if gjson.GetBytes(msg, "event").String() == "config.updated" {
+				assert.Empty(t, gjson.GetBytes(msg, "data.config.previewToken").String())
+				break
+			}
+		}
+
+		// The connection receives events as the unknown user while the account is expired.
+		var bound []string
+
+		wsAuth.mutex.Lock()
+		for connId, sid := range wsAuth.sid {
+			if sid == sess.ID {
+				bound = append(bound, wsAuth.user[connId].UserUID)
+			}
+		}
+		wsAuth.mutex.Unlock()
+
+		assert.Equal(t, []string{entity.UnknownUser.UserUID}, bound)
 	})
 }
 

@@ -62,7 +62,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 
 			if s != nil {
 				// Resolve both principals before taking the lock, since either may query the database.
-				user := *s.GetUser()
+				user := wsSessionUser(s)
 				client := wsSessionClient(s)
 
 				wsAuth.mutex.Lock()
