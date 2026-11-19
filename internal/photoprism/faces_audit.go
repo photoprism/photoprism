@@ -852,10 +852,37 @@ func (w *Faces) auditMarkerSampleShortfall() {
 		english.Plural(shortfall.BelowBar, "marker", "markers"), face.ClusterSizeThreshold, shortfall.Measured)
 
 	if shortfall.Recoverable > 0 {
-		log.Infof("faces: %s of those have originals that hold enough detail, so photoprism faces migrate would sample them above it",
-			english.Plural(shortfall.Recoverable, "marker", "markers"))
+		configured, setting := face.ModelNone, face.ModelNone
+
+		if w.conf != nil {
+			configured, setting = w.conf.FaceModel(), w.conf.FaceModelSetting()
+		}
+
+		log.Info(sampleShortfallAdvice(shortfall.Recoverable, configured, setting))
 	} else {
 		log.Infof("faces: none of them have an original holding enough detail, so no thumbnail size or migration changes it")
+	}
+}
+
+// sampleShortfallAdvice returns the line naming what samples recoverable markers again. Their sample
+// extent is recorded, so a migration to the model they are on skips them unless the detector changed:
+// regenerating the markers samples them again with a usable model, and a library whose model needs
+// TensorFlow or cannot be used here is migrated to the default model, which samples every marker again.
+func sampleShortfallAdvice(recoverable int, configured, setting face.ModelName) string {
+	markers := english.Plural(recoverable, "marker", "markers")
+	model := face.FindEmbeddingModel(face.NormalizeModelName(configured))
+
+	switch {
+	case face.NormalizeModelName(setting) == face.ModelNone:
+		return fmt.Sprintf("faces: %s of those have originals that hold enough detail, "+
+			"but nothing samples them again while face embeddings are disabled", markers)
+	case model == nil || model.RequiresTensorFlow():
+		return fmt.Sprintf("faces: %s of those have originals that hold enough detail; \"%s\" samples them again",
+			markers, face.MigrateCommand(face.DefaultModelName()))
+	default:
+		return fmt.Sprintf("faces: %s of those have originals that hold enough detail; \"photoprism faces reset --detector auto\" "+
+			"samples those detection finds again with the configured model while PHOTOPRISM_THUMB_SIZE_FACE is not 0, "+
+			"and removes the clusters to do so", markers)
 	}
 }
 
