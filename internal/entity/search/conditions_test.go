@@ -7,6 +7,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 
@@ -639,4 +640,100 @@ func textLikes(s []string) []string {
 	}
 
 	return result
+}
+
+func TestInExpr(t *testing.T) {
+	t.Run("MySQLAndSQLiteUnchanged", func(t *testing.T) {
+		for _, d := range []string{dsn.DialectMySQL, dsn.DialectSQLite, ""} {
+			cond, args := inExpr(d, "places.place_city", " Berlin | ham_burg%*! ")
+			assert.Equal(t, "places.place_city IN (?)", cond)
+			assert.Equal(t, []any{[]string{"Berlin", "ham_burg%*!"}}, args)
+		}
+	})
+	t.Run("MySQLAndSQLiteNotClippedOrCapped", func(t *testing.T) {
+		long := strings.Repeat("a|", clean.LengthLimit)
+
+		for _, d := range []string{dsn.DialectMySQL, dsn.DialectSQLite} {
+			_, args := inExpr(d, "places.place_city", long)
+			assert.Equal(t, []any{SplitOr(long)}, args)
+		}
+	})
+	t.Run("PostgreSQLSingle", func(t *testing.T) {
+		cond, args := inExpr(dsn.DialectPostgreSQL, "places.place_city", "Berlin")
+		assert.Equal(t, "(places.place_city ILIKE ? ESCAPE '!')", cond)
+		assert.Equal(t, []any{"Berlin"}, args)
+	})
+	t.Run("PostgreSQLList", func(t *testing.T) {
+		cond, args := inExpr(dsn.DialectPostgreSQL, "places.place_state", "baden-württemberg | Hamburg")
+		assert.Equal(t, "(places.place_state ILIKE ? ESCAPE '!' OR places.place_state ILIKE ? ESCAPE '!')", cond)
+		assert.Equal(t, []any{"baden-württemberg", "Hamburg"}, args)
+	})
+	t.Run("PostgreSQLLiteral", func(t *testing.T) {
+		// Wildcards and the escape character match literally, and "*" is not mapped to "%".
+		cond, args := inExpr(dsn.DialectPostgreSQL, "places.place_city", "a_b%c*d!e")
+		assert.Equal(t, "(places.place_city ILIKE ? ESCAPE '!')", cond)
+		assert.Equal(t, []any{"a!_b!%c*d!!e"}, args)
+	})
+	t.Run("PostgreSQLEscapedSeparator", func(t *testing.T) {
+		cond, args := inExpr(dsn.DialectPostgreSQL, "places.place_city", `a\|b`)
+		assert.Equal(t, "(places.place_city ILIKE ? ESCAPE '!')", cond)
+		assert.Equal(t, []any{"a|b"}, args)
+	})
+	t.Run("PostgreSQLMaxValues", func(t *testing.T) {
+		values := make([]string, MaxSearchValues+1)
+
+		for i := range values {
+			values[i] = fmt.Sprintf("City%d", i)
+		}
+
+		cond, args := inExpr(dsn.DialectPostgreSQL, "places.place_city", strings.Join(values, "|"))
+		assert.Len(t, args, MaxSearchValues)
+		assert.Equal(t, MaxSearchValues, strings.Count(cond, "ILIKE"))
+		assert.Equal(t, "City0", args[0])
+		assert.Equal(t, fmt.Sprintf("City%d", MaxSearchValues-1), args[MaxSearchValues-1])
+
+		cond, args = inExpr(dsn.DialectPostgreSQL, "places.place_city", strings.Join(values[:MaxSearchValues], "|"))
+		assert.Len(t, args, MaxSearchValues)
+		assert.Equal(t, MaxSearchValues, strings.Count(cond, "ILIKE"))
+	})
+	t.Run("PostgreSQLClipped", func(t *testing.T) {
+		// The clip applies before the values are split, so a long last value is cut, not dropped.
+		long := strings.Repeat("a", clean.LengthLimit) + "|b"
+		_, args := inExpr(dsn.DialectPostgreSQL, "places.place_city", long)
+		assert.Equal(t, []any{strings.Repeat("a", clean.LengthLimit)}, args)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		for _, d := range []string{dsn.DialectMySQL, dsn.DialectSQLite, dsn.DialectPostgreSQL} {
+			for _, s := range []string{"", "|", " | "} {
+				cond, args := inExpr(d, "places.place_city", s)
+				assert.Equal(t, "places.place_city IN (?)", cond)
+				assert.Equal(t, []any{SplitOr(s)}, args)
+			}
+		}
+	})
+}
+
+func TestInCond(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		cond, args := inCond("places.place_city", "Berlin|Hamburg")
+		wantCond, wantArgs := inExpr(entity.DbDialect(), "places.place_city", "Berlin|Hamburg")
+		assert.Equal(t, wantCond, cond)
+		assert.Equal(t, wantArgs, args)
+	})
+	t.Run("GeneratedSQL", func(t *testing.T) {
+		// On MariaDB and SQLite, the statement must be identical to a plain IN condition.
+		const s = "Berlin | ham_burg%"
+		dry := entity.Db().Session(&gorm.Session{DryRun: true})
+		cond, args := inCond("places.place_city", s)
+		got := dry.Table("places").Where(cond, args...).Find(&[]entity.Place{}).Statement
+		legacy := dry.Table("places").Where("places.place_city IN (?)", SplitOr(s)).Find(&[]entity.Place{}).Statement
+
+		if entity.DbDialect() == dsn.DialectPostgreSQL {
+			assert.Contains(t, got.SQL.String(), "ILIKE")
+			assert.Equal(t, []any{"Berlin", "ham!_burg!%"}, got.Vars)
+		} else {
+			assert.Equal(t, legacy.SQL.String(), got.SQL.String())
+			assert.Equal(t, legacy.Vars, got.Vars)
+		}
+	})
 }

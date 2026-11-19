@@ -43,6 +43,39 @@ func likeExpr(dialect, col string, binary bool) string {
 	}
 }
 
+// inCond returns a condition and its values that match a text column against any of the values
+// in a search string separated by "|".
+func inCond(col, s string) (string, []any) {
+	return inExpr(entity.DbDialect(), col, s)
+}
+
+// inExpr returns the inCond condition for an SQL dialect: "col IN (?)" with the values unchanged, and on
+// PostgreSQL, whose text comparison is case-sensitive, an exact ILIKE match per value that ignores case.
+// Each ILIKE is a predicate evaluated per row, so at most MaxSearchValues values are compared there.
+func inExpr(dialect, col, s string) (string, []any) {
+	if dialect != dsn.DialectPostgreSQL {
+		return col + " IN (?)", []any{SplitOr(s)}
+	}
+
+	values := SplitOr(ClipSearchTerms(s))
+
+	if len(values) == 0 {
+		return col + " IN (?)", []any{values}
+	} else if len(values) > MaxSearchValues {
+		values = values[:MaxSearchValues]
+	}
+
+	conds := make([]string, len(values))
+	args := make([]any, len(values))
+
+	for i, v := range values {
+		conds[i] = likeExpr(dialect, col, false)
+		args[i] = clean.SqlLike(v)
+	}
+
+	return "(" + strings.Join(conds, " OR ") + ")", args
+}
+
 // searchLikeEscaper escapes "_" and the escape character, and maps the search wildcard "*" to "%".
 var searchLikeEscaper = strings.NewReplacer(clean.SqlLikeEscape, clean.SqlLikeEscape+clean.SqlLikeEscape, "_", clean.SqlLikeEscape+"_", "*", "%")
 
@@ -425,6 +458,10 @@ func SplitOr(s string) (values []string) {
 // Each group adds a separate condition to the statement, and the query builder copies its
 // condition list on every addition, so this count sets the cost.
 const MaxSearchGroups = 32
+
+// MaxSearchValues bounds the number of "|"-separated values a filter compares one by one, since each
+// adds a predicate that is evaluated per row.
+const MaxSearchValues = 32
 
 // SplitAnd splits a search string on AND separators (&) while honoring escape
 // sequences.
