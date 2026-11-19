@@ -741,6 +741,23 @@ func TestAuthorizeSuperAdmin(t *testing.T) {
 	t.Run("NilSession", func(t *testing.T) {
 		assert.False(t, AuthorizeSuperAdmin(nil))
 	})
+	t.Run("ClusterJWTUsersScope", func(t *testing.T) {
+		s := &entity.Session{GrantType: authn.GrantJwtBearer.String(), AuthScope: "cluster users"}
+		assert.True(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("ClusterJWTOtherScope", func(t *testing.T) {
+		s := &entity.Session{GrantType: authn.GrantJwtBearer.String(), AuthScope: "cluster vision"}
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("ClusterJWTUsersReadScope", func(t *testing.T) {
+		s := &entity.Session{GrantType: authn.GrantJwtBearer.String(), AuthScope: "cluster users:read"}
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("ClientUsersScope", func(t *testing.T) {
+		// Only the cluster service principal is exempt; another grant with the same scope is not.
+		s := &entity.Session{GrantType: authn.GrantClientCredentials.String(), AuthScope: "cluster users"}
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
 }
 
 // TestAuthAnyVisionServiceKeyLimit checks that the authentication rate limit applies to service keys in the formats Session() counts.
