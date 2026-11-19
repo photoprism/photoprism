@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** November 11, 2026
+**Last Updated:** November 19, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -58,7 +58,7 @@ Run these commands from the repository root unless noted otherwise. Bare `npm ru
 
 | Package   | Pin      | Reason                                                                                                                                                                                                                                                                                                                         |
 |-----------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `vuetify` | `4.3.3`  | Check the photo edit dialog's Country and Time Zone autocompletes in Chrome before bumping: menus must stay open and filter as you type. The Vuetify 3 appearance depends on the files named in the `//vuetify` entry in `package.json` and [Production Build](#production-build). `@vuetify/v0` is held by the lockfile only. |
+| `vuetify` | `4.3.4`  | Check the photo edit dialog's Country and Time Zone autocompletes in Chrome before bumping: menus must stay open and filter as you type. The Vuetify 3 appearance depends on the files named in the `//vuetify` entry in `package.json` and [Production Build](#production-build). `@vuetify/v0` is held by the lockfile only. |
 | `axios`   | `1.21.1` | Keep an exact version so transport updates receive explicit review and validation. Check request cancellation, authentication, redirects, and error handling when upgrading; `src/common/api.js` handles canceled navigation requests through its error interceptor.                                                           |
 
 ### Override Layer (Transitive Pins)
@@ -93,7 +93,7 @@ The recommended ESLint rules include `no-unassigned-vars`, `no-useless-assignmen
 
 ## Test Toolchain
 
-Vitest 5 and its matching V8 coverage provider use the `.mjs` configs and `forks` pool described above. `@testing-library/jest-dom` 7 requires an `@testing-library/dom` peer, resolved automatically in the workspace lockfile. Tests use V8 coverage, not Babel instrumentation. TestCafe is a separate, globally installed acceptance-test runner, provisioned by `scripts/dist/install-nodejs.sh` and exposed through `npm run testcafe`. Its older runtime dependencies are independent of the workspace lint/build tree and must not be removed merely because Vitest or Vite does not use them. See [Tests & Linting](tests/README.md) for acceptance entry points.
+Vitest 5 and its matching V8 coverage provider use the `.mjs` configs and `forks` pool described above. `@testing-library/jest-dom` 8 requires an `@testing-library/dom` peer, resolved automatically in the workspace lockfile. Tests use V8 coverage, not Babel instrumentation. TestCafe is a separate, globally installed acceptance-test runner, provisioned by `scripts/dist/install-nodejs.sh` and exposed through `npm run testcafe`. Its older runtime dependencies are independent of the workspace lint/build tree and must not be removed merely because Vitest or Vite does not use them. See [Tests & Linting](tests/README.md) for acceptance entry points.
 
 ## Map Rendering & Browser Compatibility
 
