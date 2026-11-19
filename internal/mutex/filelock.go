@@ -75,8 +75,9 @@ func (s FileLockState) HeldBy(pid int, host string) bool {
 }
 
 // String describes the holder for a message telling an operator what is in the way.
+// The time is the holder's last write, which each renewal moves, so it does not name a start.
 func (s FileLockState) String() string {
-	return fmt.Sprintf("%s, running as process %d on %s since %s",
+	return fmt.Sprintf("%s, running as process %d on %s, last updated at %s",
 		s.Action, s.PID, s.Host, s.UpdatedAt.UTC().Format(time.RFC3339))
 }
 

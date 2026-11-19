@@ -68,7 +68,7 @@ func TestFileLockState_String(t *testing.T) {
 		UpdatedAt: time.Date(2026, 8, 24, 9, 44, 0, 0, time.UTC),
 	}
 
-	assert.Equal(t, "faces migration, running as process 4242 on neon since 2026-08-24T09:44:00Z", state.String())
+	assert.Equal(t, "faces migration, running as process 4242 on neon, last updated at 2026-08-24T09:44:00Z", state.String())
 }
 
 func TestReadFileLock(t *testing.T) {
@@ -148,6 +148,8 @@ func TestAcquireFileLock(t *testing.T) {
 		require.Error(t, err)
 		assert.Nil(t, lock)
 		assert.Contains(t, err.Error(), "process 9")
+		assert.Contains(t, err.Error(), ", last updated at ")
+		assert.NotContains(t, err.Error(), " since ")
 		assert.Contains(t, err.Error(), "its lock expires within 5 minutes")
 	})
 	t.Run("TakesOverAnExpiredLock", func(t *testing.T) {
