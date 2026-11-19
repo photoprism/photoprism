@@ -3741,13 +3741,149 @@ func TestUser_SetValuesFromCliAuthID(t *testing.T) {
 	assert.Equal(t, authId, holder().AuthID)
 	assert.Equal(t, authn.ProviderOIDC.String(), holder().AuthProvider)
 
-	// An accepted change takes the auth ID over.
+	// An accepted change sets the auth ID, which is taken over once the account is saved.
 	editor = FindUserByName("usersmod-editor")
 	require.NotNil(t, editor)
-	require.NoError(t, editor.SetValuesFromCli(modContext("--auth-id", authId)))
+	ctx := modContext("--auth-id", authId)
+	require.NoError(t, editor.SetValuesFromCli(ctx))
 	assert.Equal(t, authId, editor.AuthID)
+	assert.Equal(t, authId, holder().AuthID)
+	require.NoError(t, editor.Save())
+	editor.DetachAuthIDFromCli(ctx)
 	assert.Equal(t, "", holder().AuthID)
 	assert.Equal(t, authn.ProviderNone.String(), holder().AuthProvider)
+}
+
+// authIDTestContext returns a CLI context with the auth-id flag set to the arguments.
+func authIDTestContext(t *testing.T, args ...string) *cli.Context {
+	t.Helper()
+
+	set := flag.NewFlagSet("users mod", flag.ContinueOnError)
+	_ = set.String("auth-id", "", "")
+	require.NoError(t, set.Parse(args))
+
+	return cli.NewContext(cli.NewApp(), set, nil)
+}
+
+// failUserRowWrites makes every write to the account row with the UID fail until the test ends.
+func failUserRowWrites(t *testing.T, uid string) {
+	t.Helper()
+
+	name := "test:fail_user_" + strings.ReplaceAll(t.Name(), "/", "_")
+	fail := func(db *gorm.DB) {
+		if u, ok := db.Statement.Model.(*User); ok && u != nil && u.UserUID == uid {
+			_ = db.AddError(errors.New("account write failed"))
+		}
+	}
+
+	require.NoError(t, Db().Callback().Create().Before("gorm:create").Register(name, fail))
+	require.NoError(t, Db().Callback().Update().Before("gorm:update").Register(name, fail))
+	t.Cleanup(func() {
+		_ = Db().Callback().Create().Remove(name)
+		_ = Db().Callback().Update().Remove(name)
+	})
+}
+
+// assertAuthIDHeld asserts whether the holder still has the auth id and its login session.
+func assertAuthIDHeld(t *testing.T, holder *User, sub string, login *Session, held bool) {
+	t.Helper()
+
+	found := FindUserByUID(holder.UserUID)
+	require.NotNil(t, found)
+	_, err := FindAnySession(login.ID)
+
+	if held {
+		assert.Equal(t, sub, found.AuthID)
+		assert.Equal(t, authn.ProviderOIDC.String(), found.AuthProvider)
+		assert.NoError(t, err)
+	} else {
+		assert.Equal(t, "", found.AuthID)
+		assert.Equal(t, authn.ProviderNone.String(), found.AuthProvider)
+		assert.Error(t, err)
+	}
+}
+
+func TestUser_AuthIDWriteOrder(t *testing.T) {
+	// setup returns a holder of a new auth id with a login session, and another account.
+	setup := func(t *testing.T, name string) (holder, taker *User, sub string, login *Session) {
+		sub = rnd.UUID()
+		holder = newAuthIDTestUser(t, name+"-holder", sub, false)
+		login = newAuthIDTestSession(t, holder, authn.ProviderOIDC)
+		taker = newAuthIDTestUser(t, name+"-taker", rnd.UUID(), false)
+		return holder, taker, sub, login
+	}
+	saveForm := func(t *testing.T, m *User, sub string) error {
+		frm, err := m.Form()
+		require.NoError(t, err)
+		frm.AuthProvider = authn.ProviderOIDC.String()
+		frm.AuthID = sub
+		return m.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
+	}
+
+	t.Run("SaveFormWriteFailed", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "order-form-failed")
+		failUserRowWrites(t, taker.UserUID)
+		assert.Error(t, saveForm(t, taker, sub))
+		assertAuthIDHeld(t, holder, sub, login, true)
+	})
+	t.Run("SaveFormSucceeded", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "order-form-saved")
+		require.NoError(t, saveForm(t, taker, sub))
+		assertAuthIDHeld(t, holder, sub, login, false)
+	})
+	t.Run("UpdateAuthIDWriteFailed", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "order-update-failed")
+		failUserRowWrites(t, taker.UserUID)
+		assert.Error(t, taker.UpdateAuthID(sub, ""))
+		assertAuthIDHeld(t, holder, sub, login, true)
+	})
+	t.Run("UpdateAuthIDSucceeded", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "order-update-saved")
+		require.NoError(t, taker.UpdateAuthID(sub, ""))
+		assertAuthIDHeld(t, holder, sub, login, false)
+	})
+	t.Run("RestoreFromCliWriteFailed", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "order-restore-failed")
+		failUserRowWrites(t, taker.UserUID)
+		assert.Error(t, taker.RestoreFromCli(authIDTestContext(t, "--auth-id", sub), ""))
+		assertAuthIDHeld(t, holder, sub, login, true)
+	})
+	t.Run("RestoreFromCliSucceeded", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "order-restore-saved")
+		require.NoError(t, taker.RestoreFromCli(authIDTestContext(t, "--auth-id", sub), ""))
+		assertAuthIDHeld(t, holder, sub, login, false)
+	})
+}
+
+func TestUser_DetachAuthIDFromCli(t *testing.T) {
+	// setup returns a holder of a new auth id with a login session, and a stored account with the same id.
+	setup := func(t *testing.T, name string) (holder, taker *User, sub string, login *Session) {
+		sub = rnd.UUID()
+		holder = newAuthIDTestUser(t, name+"-holder", sub, false)
+		login = newAuthIDTestSession(t, holder, authn.ProviderOIDC)
+		taker = newAuthIDTestUser(t, name+"-taker", rnd.UUID(), false)
+		require.True(t, taker.setAuthID(sub, ""))
+		require.NoError(t, taker.Save())
+		return holder, taker, sub, login
+	}
+
+	t.Run("FlagSet", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "clidetach-set")
+		taker.DetachAuthIDFromCli(authIDTestContext(t, "--auth-id", sub))
+		assertAuthIDHeld(t, holder, sub, login, false)
+	})
+	t.Run("FlagNotSet", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "clidetach-unset")
+		taker.DetachAuthIDFromCli(authIDTestContext(t))
+		assertAuthIDHeld(t, holder, sub, login, true)
+	})
+	t.Run("NilContext", func(t *testing.T) {
+		holder, taker, sub, login := setup(t, "clidetach-nil")
+		taker.DetachAuthIDFromCli(nil)
+		assertAuthIDHeld(t, holder, sub, login, true)
+		var none *User
+		none.DetachAuthIDFromCli(authIDTestContext(t, "--auth-id", sub))
+	})
 }
 
 func TestUser_AuthIDSQLite(t *testing.T) {

@@ -941,17 +941,27 @@ func (m *User) DetachAuthID() {
 	}
 }
 
-// UpdateAuthID updated the custom authentication identifier.
+// UpdateAuthID updates the custom authentication identifier and then detaches it from other accounts.
 func (m *User) UpdateAuthID(id, issuer string) error {
 	if m.InvalidUID() {
 		return errors.New("invalid user uid")
 	}
 
+	detach := m.setAuthID(id, issuer)
+
 	// Update auth id and issuer record.
-	return m.SetAuthID(id, issuer).Updates(Values{
+	if err := m.Updates(Values{
 		"AuthID":     m.AuthID,
 		"AuthIssuer": m.AuthIssuer,
-	})
+	}); err != nil {
+		return err
+	}
+
+	if detach {
+		m.DetachAuthID()
+	}
+
+	return nil
 }
 
 // AuthInfo returns information about the authentication type.
@@ -1935,6 +1945,8 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 	// admin. A trusted cluster service principal has no end-user identity, so
 	// the handler passes byAdmin explicitly instead of relying on u.IsAdmin(),
 	// which a user-less token can never satisfy.
+	detachAuthID := false
+
 	if u != nil && byAdmin {
 		// Restore account.
 		if frm.DeletedAt == nil && m.IsDeleted() {
@@ -1972,7 +1984,7 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 			}
 
 			m.SetMethod(frm.Method())
-			m.SetAuthID(frm.AuthID, frm.AuthIssuer)
+			detachAuthID = m.setAuthID(frm.AuthID, frm.AuthIssuer)
 		}
 
 		m.SetBasePath(frm.BasePath)
@@ -1992,6 +2004,11 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
 		return err
+	}
+
+	// Other accounts are detached only once this one holds the auth id.
+	if detachAuthID {
+		m.DetachAuthID()
 	}
 
 	FlushUserSessionCache(m.UserUID)

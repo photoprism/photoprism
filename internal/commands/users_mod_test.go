@@ -45,6 +45,37 @@ func TestUsersModCommand(t *testing.T) {
 		assert.Equal(t, "us9k2lqd8m3n7abc", m.AuthID)
 		assert.Equal(t, "https://portal.example.com/", m.AuthIssuer)
 	})
+	t.Run("AuthIDTakenOver", func(t *testing.T) {
+		// Setting an auth id that another account holds detaches it from that account once this one is saved.
+		const sub = "usersmod-takeover-4b8d"
+		for _, name := range []string{"takeover-holder", "takeover-taker"} {
+			_, err := RunWithTestContext(UsersAddCommand, []string{"add", "--password=test1234", "--role=admin", name})
+			require.NoError(t, err)
+
+			m := entity.FindUserByName(name)
+			require.NotNil(t, m)
+			t.Cleanup(func() {
+				m.RevokeSessions(nil, authn.RevokeAllSessions)
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.Password{}, "uid = ?", m.UserUID).Error)
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserDetails{}, "user_uid = ?", m.UserUID).Error)
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.UserSettings{}, "user_uid = ?", m.UserUID).Error)
+				assert.NoError(t, entity.UnscopedDb().Delete(&entity.User{}, "user_uid = ?", m.UserUID).Error)
+			})
+		}
+
+		_, err := RunWithTestContext(UsersModCommand, []string{"mod", "--auth=oidc", "--auth-id=" + sub, "takeover-holder"})
+		require.NoError(t, err)
+		require.Equal(t, sub, entity.FindUserByName("takeover-holder").AuthID)
+
+		_, err = RunWithTestContext(UsersModCommand, []string{"mod", "--auth=oidc", "--auth-id=" + sub, "takeover-taker"})
+		require.NoError(t, err)
+		assert.Equal(t, sub, entity.FindUserByName("takeover-taker").AuthID)
+
+		holder := entity.FindUserByName("takeover-holder")
+		require.NotNil(t, holder)
+		assert.Equal(t, "", holder.AuthID)
+		assert.Equal(t, authn.ProviderNone.String(), holder.AuthProvider)
+	})
 	t.Run("SharedEmail", func(t *testing.T) {
 		// Accounts may share an email address, and changing one of them does not depend on it.
 		for _, name := range []string{"sharedmail1", "sharedmail2"} {
