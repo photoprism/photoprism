@@ -72,6 +72,25 @@ func (imp *Import) insufficientStorage() bool {
 // ErrImportBusy is returned by Import.Run when the import has to wait for another task to complete.
 var ErrImportBusy = errors.New("waiting for another task to complete")
 
+// errImportMigration is the ErrImportBusy that Import.Run returns while a face migration holds the
+// lock; it also matches ErrFaceMigration, so callers can tell it apart from another busy task.
+var errImportMigration = importBusyError{reason: ErrFaceMigration}
+
+// importBusyError is an ErrImportBusy with the reason the import had to wait.
+type importBusyError struct {
+	reason error
+}
+
+// Error returns the reason.
+func (e importBusyError) Error() string {
+	return "import " + e.reason.Error()
+}
+
+// Unwrap returns ErrImportBusy and the reason.
+func (e importBusyError) Unwrap() []error {
+	return []error{ErrImportBusy, e.reason}
+}
+
 // ErrImportDest is returned by Import.Run when the destination folder or the Import.Dest pattern gives names that
 // are not supported.
 var ErrImportDest = errors.New("destination is not supported")
@@ -129,7 +148,7 @@ func (imp *Import) Run(opt ImportOptions) (done fs.Done, result error) {
 	// Importing indexes what it moves, so it reaches the same marker writes indexing does.
 	if held := imp.conf.FacesLocked(); held != "" {
 		log.Infof("import: waiting for the %s to complete", held)
-		return done, ErrImportBusy
+		return done, errImportMigration
 	}
 
 	// The same applies once it has completed: its target is recorded rather than loaded here.

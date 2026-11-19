@@ -366,6 +366,22 @@ func facesMigrateExit(err error) error {
 // tests replace them.
 var signalNotify, signalStop, signalIgnored = signal.Notify, signal.Stop, signal.Ignored
 
+// faceMigrationExit returns the exit error for a command that did not run because a face migration
+// holds the lock, naming the holder so an operator can tell which run is in the way.
+func faceMigrationExit(action string, conf *config.Config) error {
+	held := ""
+
+	if conf != nil {
+		held = conf.FacesLocked()
+	}
+
+	if held == "" {
+		held = "face migration"
+	}
+
+	return cli.Exit(fmt.Sprintf("%s: waiting for the %s to complete, run the command again once it has", action, held), 1)
+}
+
 // cancelOnInterrupt returns a context that the first of the signals cancels, so a migration stops at
 // its next checkpoint and releases its lock. The signals then take the action they had before, so a
 // second one ends the process at once; an ignored signal, such as an inherited SIGINT, stays ignored.
@@ -746,7 +762,11 @@ func facesIndexAction(ctx *cli.Context) error {
 			log.Warnf("faces: skipping detection, because %s", conf.VisionModelSkipReason(vision.ModelTypeFace, vision.RunManual))
 		}
 
-		found, indexed = w.Start(opt)
+		var runErr error
+
+		if found, indexed, runErr = w.Run(opt); errors.Is(runErr, photoprism.ErrFaceMigration) {
+			return faceMigrationExit("faces index", conf)
+		}
 
 		log.Infof("index: updated %s [%s]", english.Plural(indexed, "file", "files"), time.Since(indexStart))
 	}

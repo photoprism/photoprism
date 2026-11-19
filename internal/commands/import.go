@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"path/filepath"
 	"strings"
 	"time"
@@ -86,7 +87,11 @@ func importAction(ctx *cli.Context) error {
 	w := get.Import()
 	opt := photoprism.ImportOptionsMove(sourcePath, destFolder)
 
-	imported := w.Start(opt)
+	imported, importErr := w.Run(opt)
+
+	if errors.Is(importErr, photoprism.ErrFaceMigration) {
+		return faceMigrationExit("import", conf)
+	}
 
 	elapsed := time.Since(start)
 

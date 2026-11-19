@@ -1,6 +1,7 @@
 package auto
 
 import (
+	"errors"
 	"path/filepath"
 	"sync"
 	"time"
@@ -60,6 +61,14 @@ func Import() error {
 		return nil
 	}
 
+	// Checked before the import is announced; the trigger is set again, so the files are imported
+	// once the face migration has completed.
+	if held := conf.FacesLocked(); held != "" {
+		log.Debugf("auto-import: waiting for the %s to complete, trying again later", held)
+		ShouldImport()
+		return nil
+	}
+
 	start := time.Now()
 
 	path := filepath.Clean(conf.ImportPath())
@@ -79,7 +88,13 @@ func Import() error {
 		opt = photoprism.ImportOptionsCopy(path, conf.ImportDest())
 	}
 
-	imported := imp.Start(opt)
+	imported, importErr := imp.Run(opt)
+
+	if errors.Is(importErr, photoprism.ErrFaceMigration) {
+		log.Debugf("auto-import: %s, trying again later", importErr)
+		ShouldImport()
+		return nil
+	}
 
 	if imported.Processed() == 0 {
 		return nil

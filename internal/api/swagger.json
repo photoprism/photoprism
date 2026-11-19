@@ -9223,6 +9223,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {

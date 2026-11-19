@@ -16,6 +16,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -69,6 +71,62 @@ func TestStartImport(t *testing.T) {
 		r := PerformRequestWithBody(app, "POST", "/api/v1/import/", `{"move":false}`)
 
 		assert.Equal(t, http.StatusBadRequest, r.Code, r.Body.String())
+	})
+	t.Run("FaceMigrationRunning", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		dir := filepath.Join(conf.ImportPath(), "migration-test-"+rnd.Base36(8))
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		t.Cleanup(func() { _ = os.RemoveAll(dir) })
+		// A picture the import would move, so that nothing being moved shows it did not run.
+		staged := filepath.Join(dir, "migration-test.jpg")
+		require.NoError(t, fs.Copy("./testdata/cat_224x224.jpg", staged, false))
+
+		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		StartImport(router)
+		sub := event.Subscribe("notify.*")
+		defer event.Unsubscribe(sub)
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/import/"+filepath.Base(dir), `{"move":true}`)
+		assert.Equal(t, http.StatusConflict, r.Code, r.Body.String())
+
+		var resp i18n.Response
+		require.NoError(t, json.Unmarshal(r.Body.Bytes(), &resp))
+		assert.Equal(t, i18n.Msg(i18n.ErrMigrationInProgress), resp.Error)
+		assert.FileExists(t, staged, "nothing is moved")
+
+		// The import is neither announced nor reported as completed.
+		select {
+		case msg := <-sub.Receiver:
+			t.Fatalf("unexpected notification %s %v", msg.Name, msg.Fields)
+		case <-time.After(100 * time.Millisecond):
+		}
+	})
+	t.Run("FaceMigrationAfterAuthorization", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		prevAuthMode := conf.AuthMode()
+		conf.SetAuthMode(config.AuthModePasswd)
+		t.Cleanup(func() { conf.SetAuthMode(prevAuthMode) })
+
+		denied, err := entity.AddClientSession("import-lock-test", conf.SessionMaxAge(), "people", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(denied) })
+
+		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		StartImport(router)
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/import/", "{}")
+		assert.Equal(t, http.StatusUnauthorized, r.Code, r.Body.String())
+
+		r = AuthenticatedRequestWithBody(app, "POST", "/api/v1/import/", "{}", denied.AuthToken())
+		assert.Equal(t, http.StatusForbidden, r.Code, r.Body.String())
 	})
 	t.Run("ImportPathInOriginals", func(t *testing.T) {
 		app, router, config := NewApiTest()

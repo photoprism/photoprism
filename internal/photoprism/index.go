@@ -100,8 +100,12 @@ func (ind *Index) abortInsufficientStorage() {
 	ind.Cancel()
 }
 
+// ErrFaceMigration is matched by the errors Index.Run and Import.Run return when they hold off for
+// a face migration, so a caller can tell that wait apart from any other reason a run did not start.
+var ErrFaceMigration = errors.New("waiting for the face migration to complete")
+
 // ErrIndexBusy is returned by Index.Run when indexing has to wait for a face migration to complete.
-var ErrIndexBusy = errors.New("waiting for the face migration to complete")
+var ErrIndexBusy = fmt.Errorf("index %w", ErrFaceMigration)
 
 // Start indexes media files in the originals folder according to the provided options.
 // It streams work to worker goroutines, updates duplicate caches, and returns both

@@ -41,6 +41,7 @@ func TestIndex_Run(t *testing.T) {
 
 		_, _, err = ind.Run(opt)
 		assert.ErrorIs(t, err, ErrIndexBusy)
+		assert.ErrorIs(t, err, ErrFaceMigration)
 	})
 	t.Run("MissingFolder", func(t *testing.T) {
 		require.Empty(t, cfg.FacesLocked())

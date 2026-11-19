@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime/debug"
@@ -29,12 +30,15 @@ func NewIndex(conf *config.Config) *Index {
 
 // StartScheduled starts a scheduled run of the indexing worker based on the current configuration.
 func (w *Index) StartScheduled() {
-	if err := w.Start(); err != nil {
+	if err := w.Start(); errors.Is(err, photoprism.ErrFaceMigration) {
+		log.Infof("scheduler: %s, skipped until the next scheduled run (index)", err)
+	} else if err != nil {
 		log.Errorf("scheduler: %s (index)", err)
 	}
 }
 
-// Start runs the indexing worker once.
+// Start runs the indexing worker once. It returns an error matching photoprism.ErrFaceMigration,
+// and skips the purge, moments and announcement, when indexing waits for a face migration.
 func (w *Index) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -59,7 +63,11 @@ func (w *Index) Start() (err error) {
 	indOpt.Action = photoprism.ActionAutoIndex
 
 	lastRun, lastFound := ind.LastRun()
-	found, indexed := ind.Start(indOpt)
+	found, indexed, runErr := ind.Run(indOpt)
+
+	if errors.Is(runErr, photoprism.ErrFaceMigration) {
+		return runErr
+	}
 
 	if !lastRun.IsZero() && indexed == 0 && len(found) == lastFound {
 		return nil

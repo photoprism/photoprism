@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"path/filepath"
 	"time"
 
@@ -83,7 +84,11 @@ func indexAction(ctx *cli.Context) error {
 		convert := conf.Settings().Index.Convert && conf.SidecarWritable()
 		opt := photoprism.NewIndexOptions(subPath, ctx.Bool("force"), convert, true, false, !ctx.Bool("archived"), conf)
 
-		found, indexed = w.Start(opt)
+		var runErr error
+
+		if found, indexed, runErr = w.Run(opt); errors.Is(runErr, photoprism.ErrFaceMigration) {
+			return faceMigrationExit("index", conf)
+		}
 
 		log.Infof("index: updated %s [%s]", english.Plural(indexed, "file", "files"), time.Since(indexStart))
 	}
