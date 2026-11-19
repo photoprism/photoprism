@@ -145,6 +145,42 @@ func HiddenFaceMarkers() (result []string, err error) {
 	return result, err
 }
 
+// HiddenFaceMarker is a marker of a hidden face cluster.
+type HiddenFaceMarker struct {
+	FaceID    string
+	MarkerUID string
+}
+
+// HiddenFaceMarkerClusters returns the markers of every hidden face cluster with the cluster they belong to.
+func HiddenFaceMarkerClusters() (result []HiddenFaceMarker, err error) {
+	err = Db().Model(&entity.Marker{}).
+		Select("face_id, marker_uid").
+		Where("marker_type = ? AND face_id <> ''", entity.MarkerFace).
+		Where("face_id IN (?)", Db().Model(&entity.Face{}).Select("id").
+			Where("face_hidden = TRUE")).
+		Order("face_id, marker_uid").Scan(&result).Error
+
+	return result, err
+}
+
+// VisibleFaceIDs returns which of the specified face clusters exist and are not hidden.
+func VisibleFaceIDs(ids []string) (result []string, err error) {
+	batchSize := BatchSize()
+
+	for i := 0; i < len(ids); i += batchSize {
+		var batch []string
+
+		if err = Db().Model(&entity.Face{}).Where("face_hidden = FALSE AND id IN (?)", ids[i:min(i+batchSize, len(ids))]).
+			Pluck("id", &batch).Error; err != nil {
+			return result, err
+		}
+
+		result = append(result, batch...)
+	}
+
+	return result, nil
+}
+
 // RestoreHiddenFaces hides the replacement clusters that mostly consist of markers the
 // operator had hidden before, and reports how many were hidden again.
 //

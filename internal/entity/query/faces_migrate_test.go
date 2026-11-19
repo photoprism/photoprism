@@ -176,6 +176,36 @@ func TestHiddenFaceMarkers(t *testing.T) {
 	assert.Contains(t, result, marker.MarkerUID)
 }
 
+func TestHiddenFaceMarkerClusters(t *testing.T) {
+	hiddenFace := &entity.Face{ID: "HIDDENMARKERCLUSTERS00000000000000000000", FaceSrc: entity.SrcAuto, FaceHidden: true,
+		EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
+	require.NoError(t, entity.Db().Create(hiddenFace).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(hiddenFace) })
+
+	marker := &entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: "fs6sg6bw45bnlqdw", MarkerType: entity.MarkerFace,
+		MarkerSrc: entity.SrcImage, FaceID: hiddenFace.ID, W: 0.1, H: 0.1}
+	require.NoError(t, entity.Db().Create(marker).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
+
+	result, err := HiddenFaceMarkerClusters()
+	require.NoError(t, err)
+	assert.Contains(t, result, HiddenFaceMarker{FaceID: hiddenFace.ID, MarkerUID: marker.MarkerUID})
+}
+
+func TestVisibleFaceIDs(t *testing.T) {
+	hidden := &entity.Face{ID: "VISIBLEFACEIDSHIDDEN0000000000000000000", FaceSrc: entity.SrcAuto, FaceHidden: true,
+		EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
+	visible := &entity.Face{ID: "VISIBLEFACEIDSSHOWN00000000000000000000", FaceSrc: entity.SrcAuto,
+		EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
+	require.NoError(t, entity.Db().Create(hidden).Error)
+	require.NoError(t, entity.Db().Create(visible).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(hidden); entity.UnscopedDb().Delete(visible) })
+
+	ids, err := VisibleFaceIDs([]string{hidden.ID, visible.ID, "VISIBLEFACEIDSMISSING00000000000000000"})
+	require.NoError(t, err)
+	assert.Equal(t, []string{visible.ID}, ids)
+}
+
 func TestRestoreHiddenFaces(t *testing.T) {
 	newCluster := func(id string) *entity.Face {
 		f := &entity.Face{ID: id, FaceSrc: entity.SrcAuto, EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}

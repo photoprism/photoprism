@@ -2313,6 +2313,16 @@ func TestConfig_FacesLockFile(t *testing.T) {
 	})
 }
 
+func TestConfig_FacesHiddenFile(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, filepath.Join(c.StoragePath(), "faces-hidden.json"), c.FacesHiddenFile())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Empty(t, (*Config)(nil).FacesHiddenFile())
+	})
+}
+
 func TestConfig_FacesLocked(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

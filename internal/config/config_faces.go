@@ -1527,6 +1527,16 @@ func (c *Config) faceThresholdIsSet(flagName string, value float64) bool {
 	return value != 0
 }
 
+// FacesHiddenFile returns the path where a face embedding migration records which clusters were
+// hidden, until it has hidden their replacements, so a run that stops in between can be completed.
+func (c *Config) FacesHiddenFile() string {
+	if c == nil {
+		return ""
+	}
+
+	return filepath.Join(c.StoragePath(), "faces-hidden.json")
+}
+
 // FacesLockFile returns the path of the lock a face embedding migration holds while it runs.
 //
 // Beside the storage serial rather than in the config or cache path: it describes what this

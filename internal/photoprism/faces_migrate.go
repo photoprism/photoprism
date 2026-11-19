@@ -826,10 +826,25 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 
 	result.PreservedSubjects, result.PreservedMarkers = faceMigrationSubjectCounts(identities)
 
-	// Captured before the clusters are replaced, because that is the last moment the
-	// operator's hide decisions still exist anywhere.
-	hiddenMarkers, err := query.HiddenFaceMarkers()
+	// Captured before any marker is re-embedded, which detaches it from its cluster, and recorded
+	// together with what an earlier run recorded and could not apply, so the decisions outlive a run
+	// that stops or is refused before it hides the replacement clusters.
+	hiddenClusters, err := hiddenFaceClusters()
 	if err != nil {
+		return result, err
+	}
+
+	hiddenFile := w.conf.FacesHiddenFile()
+
+	carried, err := carriedHiddenClusters(hiddenFile)
+	if err != nil {
+		return result, fmt.Errorf("faces: %s (hidden clusters of an earlier migration)", err)
+	}
+
+	hidden := hiddenFacesRecord{Clusters: mergeHiddenClusters(hiddenClusters, carried)}
+	hiddenMarkers := hidden.markers()
+
+	if err = recordHiddenFaces(hiddenFile, plan.Target, hidden.Clusters); err != nil {
 		return result, err
 	}
 
@@ -942,6 +957,11 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		return result, &FacesMigrateRerunError{Unmatched: result.Migrated + result.SkippedUnmatched, Cause: err}
 	}
 
+	// From here on a faces pass with the target loaded may hide the replacements if this run stops.
+	if commitErr := commitHiddenFacesRecord(hiddenFile); commitErr != nil {
+		log.Warnf("faces: %s (record hidden clusters)", commitErr)
+	}
+
 	// The vectors are in the target's space from here on, so the setting follows the data even
 	// when markers failed: a start that read the previous model would hide the whole library
 	// from matching. Both have to happen before the clustering below, which is gated on them,
@@ -960,8 +980,10 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	}
 
 	// Re-clustering has run by now, so the replacement clusters exist to be hidden again.
-	if result.HiddenClusters, err = query.RestoreHiddenFaces(hiddenMarkers); err != nil {
+	if result.HiddenClusters, err = migrationRestoreHiddenFaces(hiddenMarkers); err != nil {
 		return result, unrecordedFaceModel(settingErr, plan.Target, err)
+	} else if err = removeHiddenFacesRecord(hiddenFile); err != nil {
+		log.Warnf("faces: %s (remove hidden cluster record)", err)
 	}
 
 	// Subject covers and counts are denormalized, so without this the People view keeps

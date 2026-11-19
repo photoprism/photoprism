@@ -1311,6 +1311,26 @@ func TestFaces_MigrateLock(t *testing.T) {
 		require.NoError(t, err)
 		lock.Release()
 	})
+	t.Run("CarriesAnEarlierRecord", func(t *testing.T) {
+		// A committed record an earlier run could not apply is carried into this run's own record
+		// before anything else happens, rather than applied or dropped.
+		require.NoError(t, writeHiddenFacesRecord(w.conf.FacesHiddenFile(), hiddenFacesRecord{
+			Clusters: []hiddenCluster{{ID: "MIGRATELOCKCARRIED000000000000000000000", Markers: []string{"ms6sg6b1zzzzzz99"}}},
+			Target:   target, Committed: true}))
+		t.Cleanup(func() { _ = removeHiddenFacesRecord(w.conf.FacesHiddenFile()) })
+
+		ctx, cancel := context.WithCancel(context.Background())
+		cancel()
+
+		_, err := w.Migrate(ctx, FacesMigrateOptions{Target: target})
+		require.ErrorIs(t, err, context.Canceled)
+
+		record, found, err := readHiddenFacesRecord(w.conf.FacesHiddenFile())
+		require.NoError(t, err)
+		require.True(t, found)
+		assert.Contains(t, record.markers(), "ms6sg6b1zzzzzz99")
+		assert.False(t, record.Committed, "this run has not finalized")
+	})
 	t.Run("LiveLockRefusesASecondRun", func(t *testing.T) {
 		lock, err := mutex.AcquireFileLock(lockFile, "faces migration")
 		require.NoError(t, err)
