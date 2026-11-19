@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
+	"syscall"
 	"testing"
 	"time"
 
@@ -444,4 +446,153 @@ func TestFileLock_writeAfterRelease(t *testing.T) {
 	require.NoError(t, lock.write())
 	assert.NoFileExists(t, fileName)
 	assert.Empty(t, FileLockHeld(fileName))
+}
+
+// TestFileLock_writeKeepsATakenOverLock pins that a renewal leaves a lock another holder has alone,
+// while it renews its own, writes a missing or holderless one again, and takes the lock back once
+// the other holder is gone.
+func TestFileLock_writeKeepsATakenOverLock(t *testing.T) {
+	acquire := func(t *testing.T) (*FileLock, string) {
+		t.Helper()
+
+		fileName := filepath.Join(t.TempDir(), "faces.lock")
+		lock, err := AcquireFileLock(fileName, "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		return lock, fileName
+	}
+
+	t.Run("TakenOver", func(t *testing.T) {
+		lock, fileName := acquire(t)
+
+		// The holder was suspended past the expiry and another process took the lock over.
+		writeFileLock(t, fileName, FileLockState{Action: "faces migration", PID: 9, Host: "neon", ExpiresAt: time.Now().Add(time.Minute)})
+
+		require.NoError(t, lock.write())
+		require.NoError(t, lock.write())
+
+		state := ReadFileLock(fileName)
+		assert.Equal(t, 9, state.PID, "the other holder keeps its lock")
+		assert.Equal(t, "neon", state.Host)
+
+		// Once the other holder is gone, the run that is still working takes the lock back.
+		require.NoError(t, os.Remove(fileName))
+		require.NoError(t, lock.write())
+		assert.Equal(t, os.Getpid(), ReadFileLock(fileName).PID)
+	})
+	t.Run("OtherProcessSameHost", func(t *testing.T) {
+		lock, fileName := acquire(t)
+		writeFileLock(t, fileName, FileLockState{Action: "faces migration", PID: os.Getpid() + 1, Host: lock.host,
+			ExpiresAt: time.Now().Add(time.Minute)})
+
+		require.NoError(t, lock.write())
+		assert.Equal(t, os.Getpid()+1, ReadFileLock(fileName).PID)
+	})
+	t.Run("OnlyAPID", func(t *testing.T) {
+		lock, fileName := acquire(t)
+		writeFileLock(t, fileName, FileLockState{Action: "faces migration", PID: 9, ExpiresAt: time.Now().Add(time.Minute)})
+
+		require.NoError(t, lock.write())
+		assert.Equal(t, 9, ReadFileLock(fileName).PID, "a holder named by its process alone is another holder")
+	})
+	t.Run("SameProcessOtherHost", func(t *testing.T) {
+		lock, fileName := acquire(t)
+		writeFileLock(t, fileName, FileLockState{Action: "faces migration", PID: os.Getpid(), Host: lock.host + "-other",
+			ExpiresAt: time.Now().Add(time.Minute)})
+
+		require.NoError(t, lock.write())
+		assert.Equal(t, lock.host+"-other", ReadFileLock(fileName).Host)
+	})
+	t.Run("Own", func(t *testing.T) {
+		lock, fileName := acquire(t)
+
+		first := ReadFileLock(fileName).ExpiresAt
+		time.Sleep(2 * time.Millisecond)
+		require.NoError(t, lock.write())
+
+		state := ReadFileLock(fileName)
+		assert.Equal(t, os.Getpid(), state.PID)
+		assert.True(t, state.ExpiresAt.After(first), "a live holder renews its own lock")
+	})
+	t.Run("StoredIdentity", func(t *testing.T) {
+		// The holder is identified as it was when the lock was taken, so a hostname that changes
+		// meanwhile does not make its own lock look like another holder's.
+		lock, fileName := acquire(t)
+		lock.host = "taken-as"
+		writeFileLock(t, fileName, FileLockState{Action: "faces migration", PID: os.Getpid(), Host: "taken-as",
+			ExpiresAt: time.Now().Add(time.Minute)})
+
+		first := ReadFileLock(fileName).ExpiresAt
+		time.Sleep(2 * time.Millisecond)
+		require.NoError(t, lock.write())
+
+		state := ReadFileLock(fileName)
+		assert.Equal(t, "taken-as", state.Host)
+		assert.True(t, state.ExpiresAt.After(first), "the holder renews its own lock")
+	})
+	t.Run("TakenOverAndExpired", func(t *testing.T) {
+		// The holder that took the lock over was killed and left it to expire.
+		lock, fileName := acquire(t)
+		writeFileLock(t, fileName, FileLockState{Action: "faces migration", PID: 9, Host: "neon", ExpiresAt: time.Now().Add(-time.Minute)})
+
+		require.NoError(t, lock.write())
+		assert.Equal(t, os.Getpid(), ReadFileLock(fileName).PID, "the run that is still working takes it back")
+	})
+	t.Run("Missing", func(t *testing.T) {
+		lock, fileName := acquire(t)
+		require.NoError(t, os.Remove(fileName))
+
+		require.NoError(t, lock.write())
+		assert.Equal(t, os.Getpid(), ReadFileLock(fileName).PID, "a lock file removed by hand is written again")
+	})
+	t.Run("NamesNoHolder", func(t *testing.T) {
+		lock, fileName := acquire(t)
+
+		for _, content := range []string{"", "{}", `{"action":"faces migration"}`, "garbage"} {
+			require.NoError(t, os.WriteFile(fileName, []byte(content), 0o600))
+			require.NoError(t, lock.write())
+			assert.Equal(t, os.Getpid(), ReadFileLock(fileName).PID, content)
+		}
+	})
+}
+
+// TestReadFileLockBounds pins that only a regular lock file of bounded size is read.
+func TestReadFileLockBounds(t *testing.T) {
+	t.Run("NotARegularFile", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "faces.lock")
+		require.NoError(t, syscall.Mkfifo(fileName, 0o600))
+
+		// A pipe is opened without blocking and not read, so a reader returns at once.
+		done := make(chan FileLockState, 1)
+		go func() { done <- ReadFileLock(fileName) }()
+
+		select {
+		case state := <-done:
+			assert.Zero(t, state.PID)
+			assert.True(t, state.Expired())
+		case <-time.After(5 * time.Second):
+			t.Fatal("reading a pipe at the lock name blocked")
+		}
+	})
+	t.Run("Symlink", func(t *testing.T) {
+		dir := t.TempDir()
+		target := filepath.Join(dir, "target.lock")
+		writeFileLock(t, target, FileLockState{Action: "faces migration", PID: 9, Host: "neon", ExpiresAt: time.Now().Add(time.Minute)})
+
+		fileName := filepath.Join(dir, "faces.lock")
+		require.NoError(t, os.Symlink(target, fileName))
+
+		assert.Zero(t, ReadFileLock(fileName).PID)
+	})
+	t.Run("TooLarge", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "faces.lock")
+		// Valid contents, padded past the bound, so only the bound refuses them.
+		content := `{"action":"faces migration","pid":9,"host":"neon"}` + strings.Repeat(" ", fileLockMaxSize)
+		require.NoError(t, os.WriteFile(fileName, []byte(content), 0o600))
+
+		state := ReadFileLock(fileName)
+		assert.Zero(t, state.PID)
+		assert.False(t, state.modTime.IsZero(), "the file exists, so its age still counts")
+	})
 }

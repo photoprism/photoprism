@@ -3,15 +3,20 @@ package mutex
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// fileLockMaxSize bounds the lock file that is read back; a holder writes well under a hundred bytes.
+const fileLockMaxSize = 64 << 10
 
 // FileLockMaxAge is how long a file lock stays valid without being renewed.
 //
@@ -84,10 +89,17 @@ type FileLock struct {
 	done     chan struct{}
 	stop     sync.Once
 
+	// pid and host identify this holder, captured once so that a later change of the hostname
+	// cannot make its own lock look like another holder's.
+	pid  int
+	host string
+
 	// mu orders a renewal against the release, so a renewal already writing when the lock is
 	// released cannot publish the file again after it was removed.
 	mu       sync.Mutex
 	released bool
+	// takenOver is set while another holder has the lock, so that is reported once.
+	takenOver bool
 }
 
 // ReadFileLock returns what a lock file records, or a zero state when it does not exist or
@@ -96,20 +108,29 @@ type FileLock struct {
 func ReadFileLock(fileName string) FileLockState {
 	var state FileLockState
 
-	b, err := os.ReadFile(fileName) //nolint:gosec // path is derived from the storage path
+	// Only a regular file is read, so a link, pipe or device at the name reads as absent; it is opened
+	// without blocking or following a link and checked through the handle the contents come from.
+	f, err := os.OpenFile(fileName, os.O_RDONLY|syscall.O_NONBLOCK|syscall.O_NOFOLLOW, 0) //nolint:gosec // path is derived from the storage path
 	if err != nil {
 		return state
 	}
 
-	if err = json.Unmarshal(b, &state); err != nil {
+	defer f.Close()
+
+	info, err := f.Stat()
+	if err != nil || !info.Mode().IsRegular() {
+		return state
+	}
+
+	b, err := io.ReadAll(io.LimitReader(f, fileLockMaxSize+1))
+
+	if err != nil || len(b) > fileLockMaxSize || json.Unmarshal(b, &state) != nil {
 		state = FileLockState{}
 	}
 
-	// Stat even when the contents could not be read, because a lock file that exists is evidence
+	// Kept even when the contents could not be read, because a lock file that exists is evidence
 	// in itself: its age is what tells an unparsable one apart from an abandoned one.
-	if info, statErr := os.Stat(fileName); statErr == nil {
-		state.modTime = info.ModTime()
-	}
+	state.modTime = info.ModTime()
 
 	return state
 }
@@ -143,7 +164,8 @@ func AcquireFileLock(fileName, action string) (*FileLock, error) {
 		return nil, err
 	}
 
-	lock := &FileLock{fileName: fileName, action: action, done: make(chan struct{})}
+	host, _ := os.Hostname()
+	lock := &FileLock{fileName: fileName, action: action, done: make(chan struct{}), pid: os.Getpid(), host: host}
 
 	if err := lock.create(); err != nil {
 		return nil, err
@@ -189,9 +211,7 @@ func (l *FileLock) create() error {
 
 	// Two processes taking over the same expired lock both rename, and the last one wins the
 	// file. Reading it back is what tells the loser it does not hold what it just wrote.
-	host, _ := os.Hostname()
-
-	if state := ReadFileLock(l.fileName); !state.HeldBy(os.Getpid(), host) {
+	if state := ReadFileLock(l.fileName); !state.HeldBy(l.pid, l.host) {
 		return fileLockHeldError(l.action, state.String())
 	}
 
@@ -222,9 +242,8 @@ func (l *FileLock) Release() {
 		defer l.mu.Unlock()
 
 		l.released = true
-		host, _ := os.Hostname()
 
-		if state := ReadFileLock(l.fileName); !state.HeldBy(os.Getpid(), host) {
+		if state := ReadFileLock(l.fileName); !state.HeldBy(l.pid, l.host) {
 			return
 		}
 
@@ -236,19 +255,20 @@ func (l *FileLock) Release() {
 
 // state returns this holder's lock file contents, with the expiry moved forward.
 func (l *FileLock) state() ([]byte, error) {
-	host, _ := os.Hostname()
 	now := time.Now()
 
 	return json.Marshal(FileLockState{
 		Action:    l.action,
-		PID:       os.Getpid(),
-		Host:      host,
+		PID:       l.pid,
+		Host:      l.host,
 		UpdatedAt: now,
 		ExpiresAt: now.Add(FileLockMaxAge),
 	})
 }
 
-// write records the holder and moves the expiry forward, unless the lock was released.
+// write records the holder and moves the expiry forward, unless the lock was released or another
+// holder has a live lock: a holder that was suspended past the expiry would otherwise write itself back
+// over the lock that replaced its own. A lock file that is missing, names no holder or expired is written again.
 func (l *FileLock) write() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -256,6 +276,17 @@ func (l *FileLock) write() error {
 	if l.released {
 		return nil
 	}
+
+	if state := ReadFileLock(l.fileName); (state.PID != 0 || state.Host != "") && !state.HeldBy(l.pid, l.host) && !state.Expired() {
+		if !l.takenOver {
+			l.takenOver = true
+			log.Warnf("mutex: %s lock is held by another process (%s), not renewing it", l.action, state.String())
+		}
+
+		return nil
+	}
+
+	l.takenOver = false
 
 	b, err := l.state()
 
