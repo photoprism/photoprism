@@ -80,6 +80,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 			return true, nil
 		}
 	}
+
 	// Set up index worker
 	indexJobs := make(chan photoprism.IndexJob)
 
@@ -110,6 +111,13 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		log.Errorf("sync: %s", err)
 		event.Publish("sync.downloaded", event.Data{"account": a, "error": err.Error()})
 		return true, nil
+	}
+
+	// Indexing must not run during a face migration, so nothing is downloaded while one holds the lock;
+	// the account stays in this stage and the next sync run downloads the files once it has completed.
+	if held := w.conf.FacesLocked(); held != "" {
+		log.Infof("sync: waiting for the %s to complete before downloading from %s", held, clean.Log(a.AccName))
+		return false, nil
 	}
 
 	// The stage completes once a run makes no progress, see below.
@@ -148,6 +156,9 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	for _, files := range relatedFiles {
 		if w.conf.InsufficientStorage() {
 			log.Warnf("sync: skipped downloading files from %s due to insufficient storage", clean.Log(a.AccName))
+			return false, nil
+		} else if held := w.conf.FacesLocked(); held != "" {
+			log.Infof("sync: waiting for the %s to complete before downloading more from %s", held, clean.Log(a.AccName))
 			return false, nil
 		}
 

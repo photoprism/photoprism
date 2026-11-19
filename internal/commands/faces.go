@@ -375,6 +375,11 @@ func faceMigrationExit(action string, conf *config.Config) error {
 		held = conf.FacesLocked()
 	}
 
+	return faceMigrationHeldExit(action, held)
+}
+
+// faceMigrationHeldExit returns the exit error for a command that waits for the face migration held.
+func faceMigrationHeldExit(action, held string) error {
 	if held == "" {
 		held = "face migration"
 	}

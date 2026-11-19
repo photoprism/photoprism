@@ -77,6 +77,11 @@ func videoTrimAction(ctx *cli.Context) error {
 		}
 
 		if !ctx.Bool("dry-run") {
+			// Refused before the prompt, so the operator is not asked to confirm a run that cannot start.
+			if refused := videoMigrationRefused(conf, "trim", 0); refused != nil {
+				return refused
+			}
+
 			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Trim %d video files", len(plans))); confirmErr != nil {
 				return confirmErr
 			} else if !proceed {
@@ -93,6 +98,13 @@ func videoTrimAction(ctx *cli.Context) error {
 				log.Infof("trim: would trim %s by %s", clean.Log(plan.IndexPath), trimDuration.String())
 				planned++
 				continue
+			}
+
+			// Changed files are indexed again, which must not happen during a face migration, so the
+			// batch stops before the next file when one holds the lock, including one started meanwhile.
+			if refused := videoMigrationRefused(conf, "trim", processed+failed); refused != nil {
+				log.Info(formatVideoSummary("trim", false, planned, processed, skipped, failed))
+				return refused
 			}
 
 			if err = videoTrimFile(conf, convert, plan, trimDuration, true); err != nil {

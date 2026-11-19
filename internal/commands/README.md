@@ -80,7 +80,7 @@ Every binary sets `commands.HandleExitErr` as its `ExitErrHandler`, which prints
 
 Use `cli.Exit(...)` whenever a code other than `1` applies.
 
-For long-running operations (indexing, importing, backup) that may be canceled by the user, return the underlying `status.ErrCanceled` (or a wrapper) without `cli.Exit` so the CLI exits `0`, and use `cli.Exit(err, 1)` for `status.ErrInsufficientStorage` and other runtime failures so scripts and CI can detect them. `faces migrate` is the exception: an interrupted migration exits `1` and says to run it again, because the library is left between two embedding models until a run finalizes. `index`, `mv`/`import`, `cp`, `dl` and `faces index` exit `1` through `faceMigrationExit` when a face migration holds the lock, since nothing was indexed or imported.
+For long-running operations (indexing, importing, backup) that may be canceled by the user, return the underlying `status.ErrCanceled` (or a wrapper) without `cli.Exit` so the CLI exits `0`, and use `cli.Exit(err, 1)` for `status.ErrInsufficientStorage` and other runtime failures so scripts and CI can detect them. `faces migrate` is the exception: an interrupted migration exits `1` and says to run it again, because the library is left between two embedding models until a run finalizes. `index`, `mv`/`import`, `cp`, `dl`, `faces index` and `video` trim, remux and transcode exit `1` when a face migration holds the lock, since nothing was indexed, imported or changed. A `video` batch that a migration stops partway exits `1` as well, says how many files it processed, and advises `photoprism index` rather than repeating the command, which would change those files again.
 
 ### Configuration & Flags Integration
 
