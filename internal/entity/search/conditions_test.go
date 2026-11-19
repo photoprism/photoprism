@@ -680,6 +680,8 @@ func TestInExpr(t *testing.T) {
 		assert.Equal(t, []any{"a|b"}, args)
 	})
 	t.Run("PostgreSQLMaxValues", func(t *testing.T) {
+		assert.Equal(t, 8, MaxSearchValues)
+
 		values := make([]string, MaxSearchValues+1)
 
 		for i := range values {

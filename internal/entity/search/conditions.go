@@ -461,7 +461,7 @@ const MaxSearchGroups = 32
 
 // MaxSearchValues bounds the number of "|"-separated values a filter compares one by one, since each
 // adds a predicate that is evaluated per row.
-const MaxSearchValues = 32
+const MaxSearchValues = 8
 
 // SplitAnd splits a search string on AND separators (&) while honoring escape
 // sequences.

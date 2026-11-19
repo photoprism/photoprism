@@ -1,7 +1,9 @@
 package search
 
 import (
+	"fmt"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -161,6 +163,28 @@ func TestPhotosFilterPlaceCase(t *testing.T) {
 			expect(t, form.SearchPhotos{City: v})
 			expect(t, form.SearchPhotos{State: v})
 		}
+	})
+	t.Run("MaxSearchValues", func(t *testing.T) {
+		// PostgreSQL compares only the first MaxSearchValues values; MariaDB and SQLite compare all of them.
+		names := make([]string, MaxSearchValues)
+
+		for i := range names {
+			names[i] = fmt.Sprintf("Nowhere%d", i)
+		}
+
+		capped := entity.DbDialect() == dsn.DialectPostgreSQL
+		last := strings.Join(append(names, "Berlin"), "|")
+		first := strings.Join(append([]string{"Berlin"}, names...), "|")
+
+		if capped {
+			expect(t, form.SearchPhotos{City: last})
+			expect(t, form.SearchPhotos{State: strings.Join(append(names, "Hamburg"), "|")})
+		} else {
+			expect(t, form.SearchPhotos{City: last}, berlin)
+			expect(t, form.SearchPhotos{State: strings.Join(append(names, "Hamburg"), "|")}, hamburg)
+		}
+
+		expect(t, form.SearchPhotos{City: first}, berlin)
 	})
 	t.Run("LiteralWildcardCharacters", func(t *testing.T) {
 		expect(t, form.SearchPhotos{City: "Bad_Ort"}, literal)
