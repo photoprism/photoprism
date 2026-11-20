@@ -152,13 +152,13 @@ Run `photoprism --help` in a terminal to get an [overview of the command flags a
 
 PhotoPrism reads settings in the following order (later entries override earlier ones):
 
-| Order | Source                            | Notes                                                                                                                                    |
-|-------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| 1     | Built-in defaults                 | Hard-coded, fall back when nothing else is set.                                                                                          |
-| 2     | `/etc/photoprism/defaults.yml`    | Global defaults for all users on the host; falls back to `<config-path>/defaults.yml` (respects `.yml` / `.yaml`) when missing or empty. |
-| 3     | Environment variables / CLI flags | Combine with service managers or wrappers.                                                                                               |
-| 4     | `<config-path>/options.yml`       | Instance-specific overrides (per user or per deployment).                                                                                |
-| 5     | Runtime changes in the UI         | Persisted to `options.yml`; require a restart when running outside Docker.                                                               |
+| Order | Source                         | Notes                                                                                                                                                  |
+|-------|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1     | Built-in defaults              | Hard-coded, fall back when nothing else is set.                                                                                                        |
+| 2     | `/etc/photoprism/defaults.yml` | Global defaults for all users on the host; falls back to `<config-path>/defaults.yml` (respects `.yml` / `.yaml`) when missing or empty.               |
+| 3     | Environment variables          | Combine with service managers or wrappers.                                                                                                             |
+| 4     | `<config-path>/options.yml`    | Instance-specific overrides (per user or per deployment); settings changed in the UI are saved here and require a restart when running outside Docker. |
+| 5     | CLI flags                      | Override all other sources.                                                                                                                            |
 
 If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/directories.go) will be searched and the first existing directory will be used for the respective path. To simplify [updates](#updates), we recommend **not** storing media, database files, or custom configs in the installation directory itself (for example `/opt/photoprism`); use another base such as `/var/lib/photoprism` or a path under the user’s home directory.
 
