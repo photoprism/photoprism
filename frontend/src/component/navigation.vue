@@ -400,6 +400,32 @@
             </v-list-item>
 
             <v-list-item
+              v-if="isMini && $config.feature('discover')"
+              :to="{ name: 'discover' }"
+              variant="text"
+              class="nav-discover"
+              :ripple="false"
+              @click.stop=""
+            >
+              <v-icon class="ma-auto">mdi-calendar-heart</v-icon>
+            </v-list-item>
+            <v-list-item
+              v-else-if="!isMini && $config.feature('discover')"
+              :to="{ name: 'discover' }"
+              variant="text"
+              class="nav-discover"
+              :ripple="false"
+              @click.stop=""
+            >
+              <v-list-item-title class="nav-menu-item">
+                <v-icon>mdi-calendar-heart</v-icon>
+                <p class="nav-item-title">
+                  {{ $gettext(`Discover`) }}
+                </p>
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
               v-if="isMini && $config.feature('moments')"
               :to="{ name: 'moments' }"
               variant="text"
@@ -732,6 +758,12 @@
             <router-link to="/albums">
               <v-icon>mdi-bookmark</v-icon>
               {{ $gettext(`Albums`) }}
+            </router-link>
+          </div>
+          <div v-if="auth && !routeName('discover') && $config.feature('discover')" class="menu-action nav-discover">
+            <router-link :to="{ name: 'discover' }">
+              <v-icon>mdi-calendar-heart</v-icon>
+              {{ $gettext(`Discover`) }}
             </router-link>
           </div>
           <div v-if="auth && canManagePeople && !routeName('people') && $config.feature('people')" class="menu-action nav-people">

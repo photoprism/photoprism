@@ -63,10 +63,18 @@ msgstr "%{n} etikette gevind"
 msgid "%{n} people found"
 msgstr "%{n} mense gevind"
 
+#: src/page/discover/past.vue:290
+msgid "%{n} pictures"
+msgstr ""
+
 #: src/page/album/photos.vue:395 src/page/album/photos.vue:586
 #: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "%{n} fotos gevind"
+
+#: src/page/discover/past.vue:282
+msgid "%{n} years ago"
+msgstr ""
 
 #: src/common/form.js:311 src/common/form.js:316
 #: src/component/input/chip-selector.vue:277
@@ -84,6 +92,12 @@ msgstr "%{s} is te kort"
 msgid "1 hour"
 msgstr "1 uur"
 
+#: src/page/discover/past.vue:287
+msgid "1 picture"
+msgstr ""
+#: src/page/discover/past.vue:279
+msgid "1 year ago"
+msgstr ""
 #: src/options/options.js:431
 msgid "12 hours"
 msgstr "12 ure"
@@ -1040,10 +1054,6 @@ msgstr "Kleur"
 #: src/component/photo/edit/files.vue:307
 msgid "Color Profile"
 msgstr "Kleur profiel"
-
-#: src/page/discover.vue:5
-msgid "Colors"
-msgstr "Kleure"
 
 #: src/page/connect.vue:141 src/page/connect.vue:151 src/page/connect.vue:123
 msgid "Compare Editions"
@@ -2920,6 +2930,12 @@ msgstr "Geen foto's gevind nie"
 #: src/component/photo/export/dialog.vue:62
 msgid "No preview image available."
 msgstr "Geen voorskoubeeld beskikbaar nie."
+#: src/page/discover/past.vue:127
+msgid "No pictures from this day in past years"
+msgstr ""
+#: src/page/discover/past.vue:127
+msgid "No pictures from this month in past years"
+msgstr ""
 
 #: src/component/photo/view/cards.vue:6 src/component/photo/view/list.vue:6
 #: src/component/photo/view/mosaic.vue:6
@@ -3287,6 +3303,9 @@ msgstr "PhotoPrism+ Lidmaatskap"
 msgid "Photos"
 msgstr "Foto's"
 
+#: src/page/discover/past.vue:130
+msgid "Photos taken in previous years will appear here when they match today's date."
+msgstr ""
 #: src/component/photo/batch-edit.vue:615
 #: src/component/photo/batch-edit.vue:635
 msgid "Picture"
@@ -3783,15 +3802,9 @@ msgstr "Soekfilters"
 #: src/page/auth/consent.vue:169
 msgid "Search and view your photos"
 msgstr "Soek en besigtig jou foto's"
-
 #: src/page/auth/consent.vue:170
 msgid "Search and view your videos"
 msgstr "Soek en besigtig jou video's"
-
-#: src/page/discover.vue:13
-msgid "Season"
-msgstr "Seisoen"
-
 #: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Geheim"
@@ -4038,6 +4051,10 @@ msgstr "Wys die Albums-afdeling om handmatig deur beelde te blaai en dit te orga
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "Wys die Kalender-aansig om die biblioteek volgens jaar en maand te blaai."
 
+#: src/page/settings/general.vue:172
+msgid "Show the Discover section to browse pictures from this day and month in past years."
+msgstr ""
+
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr "Wys die gunstelingafdeling om vinnig toegang tot jou beelde met 'n sterretjie te kry."
@@ -4062,6 +4079,9 @@ msgstr "Wys die Media-afdeling om video's, lewende foto's en animasies te blaai.
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Wys die Plekke-aansig met interaktiewe kaarte sodat jy foto's volgens ligging kan blaai."
 
+#: src/page/discover.vue:29
+msgid "Shuffle"
+msgstr ""
 #: src/common/util.js:967 src/model/file.js:201
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
@@ -4079,10 +4099,6 @@ msgstr "Afteken uit"
 #: src/page/auth/login.vue:153
 msgid "Sign in"
 msgstr "Meld aan"
-
-#: src/page/discover.vue:9
-msgid "Similar"
-msgstr "Soortgelyk"
 
 #: src/component/cluster/node/overview.vue:36 src/locales.js:378
 msgid "Site URL"
@@ -4336,6 +4352,22 @@ msgstr "Hulle formaat word dalk nie ondersteun nie, hulle is nog nie na JPEG omg
 #: src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Tema"
+
+#: src/page/discover.vue:14
+msgid "This Day"
+msgstr ""
+
+#: src/page/discover.vue:13
+msgid "This Day in the Past"
+msgstr ""
+
+#: src/page/discover.vue:18
+msgid "This Month"
+msgstr ""
+
+#: src/page/discover.vue:17
+msgid "This Month in the Past"
+msgstr ""
 
 #: src/component/cluster/instance-access.vue:134
 msgid "This account is missing an ID and can't be edited."
@@ -5090,6 +5122,14 @@ msgstr "{0}-{1} van {2}"
 
 #~ msgid "No Access"
 #~ msgstr "Geen toegang"
+#~ msgid "Colors"
+#~ msgstr "Kleure"
+
+#~ msgid "Season"
+#~ msgstr "Seisoen"
+
+#~ msgid "Similar"
+#~ msgstr "Soortgelyk"
 
 #~ msgid "Advertise URL"
 #~ msgstr "Advertise URL"
