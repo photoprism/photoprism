@@ -3,11 +3,13 @@ import Notifies from "../page-model/notifications";
 const notifies = new Notifies();
 
 export default class Page {
+  // constructor initializes the toolbar selectors.
   constructor() {
     this.view = Selector("div.p-view-select");
     this.camera = Selector("div.p-camera-select");
     this.countries = Selector("div.p-countries-select");
-    this.time = Selector("div.p-time-select");
+    this.sort = Selector("button.action-sort");
+    this.mediaType = Selector("div.p-media-type-select");
     this.search1 = Selector("div.input-search input");
     this.toolbarDescription = Selector(".toolbar-details-panel");
     this.toolbarTitle = Selector("#p-navigation div.v-toolbar-title");
@@ -149,6 +151,7 @@ export default class Page {
     }
   }
 
+  // setFilter selects an option from the expanded search filters.
   async setFilter(filter, option) {
     let filterSelector = "";
 
@@ -159,8 +162,8 @@ export default class Page {
       case "camera":
         filterSelector = "div.p-camera-select";
         break;
-      case "time":
-        filterSelector = "div.p-time-select";
+      case "type":
+        filterSelector = "div.p-media-type-select";
         break;
       case "countries":
         filterSelector = "div.p-countries-select";
