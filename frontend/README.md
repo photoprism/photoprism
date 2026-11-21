@@ -11,6 +11,16 @@ Other frontend documentation lives next to this file:
 - [Common Modules](src/common/README.md) — dialog/focus patterns and shared helpers
 - [Tests & Linting](tests/README.md) — test layout and toolchain validation
 
+## Search & Sort Within Albums
+
+Open an album, folder, moment, calendar month, or place to see its cover, title, and description. Select **Show More** to expand a long description. The toolbar starts with a transparent background and fades into the normal PhotoPrism colors as you scroll past the cover. Opening search uses the standard search field and toolbar colors. Covers keep detected faces clear of the toolbar and caption; group photos may show a blurred backdrop to keep everyone visible.
+
+Select the search icon, enter a word or a filter such as `label:cat`, and press Enter. Results stay within the current album. Use the field's clear button or **Clear Search** in the empty-result view to return to all its photos. Share-link visitors can sort but do not see the search control.
+
+The sort menu supports Date Taken, Title, File Name, File Size, Video Duration, Recently Added, Recently Edited, and Most Relevant. Select an active two-direction option again to reverse it; arrows show the direction. Search and sort are retained in the page URL for reloads and bookmarks. Sorting here does not change the album's saved order: opening it again from the overview uses that saved order.
+
+Users with album management permission can choose **Set as Album Cover** in the photo viewer. The header updates without a page reload, including in other open tabs. Opening a photo's location shows the album on the map without its current text search.
+
 ## Setup & Workspace
 
 Use Node.js 24.15.0 or later (Node.js 25 is not supported) and npm 9 or later; `package.json` declares the engine floors. The root `package.json` owns the npm workspace, and the root `package-lock.json` is the only dependency lockfile. Install from the repository root:

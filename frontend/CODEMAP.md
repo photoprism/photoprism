@@ -85,6 +85,7 @@ Auth, Session, and Config
 Models (REST)
 - Base class: `src/model/rest.js` provides `search`, `find`, `save`, `update`, `remove` for concrete models (`photo`, `album`, `label`, `subject`, etc.)
 - Collection helpers: `src/model/collection.js` adds shared behaviors (for example `setCover`) used by collection-types such as albums and labels.
+- Album detail controls: `src/page/album/photos.vue` owns URL search/order and photo loading; `src/component/album/toolbar.vue` renders controls; `src/component/album/header.vue` loads independent cover metadata and frames the image. `src/common/album-view.js` holds sort, framing, and contrast helpers.
 - Pagination headers used: `X-Count`, `X-Limit`, `X-Offset`
 
 Hidden Error Reasons
