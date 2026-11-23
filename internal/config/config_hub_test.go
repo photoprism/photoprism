@@ -236,7 +236,8 @@ func TestConfig_HubUpdate(t *testing.T) {
 	})
 	t.Run("Disabled", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
-		require.True(t, hub.Disabled())
+		t.Cleanup(hub.ApplyTestConfig)
+		hub.Disable()
 		c.hub = hub.NewConfig("test", c.HubConfigFile(), "", "", "", "")
 		c.SetStarting(true)
 		assert.False(t, c.hubUpdate(nil))
