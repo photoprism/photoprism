@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Gives a TestCafe fixture copy its own instance serial and keeps its hub registration. The restart rules run it
-# before the binary, which reads the serial and would otherwise save a hub.yml without an API key.
+# before the binary, which reads the serial and would otherwise send the fixture's serial to the hub.
 set -euo pipefail
 
 if (( $# < 1 || $# > 2 )); then
