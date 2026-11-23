@@ -95,8 +95,9 @@ expect "UsageArgs" 2 "Usage" "$fx" hubBackup.yml extra
 expect "BackupName" 2 "file name" "$fx" ../hubBackup.yml
 check "UsageUnchanged" test "$(serial "$fx")" == "$archive"
 
-# The first run replaces the archive serial and keeps the key.
+# The first run replaces the archive serial and keeps the key, and the time of hub.yml, on which the next renewal depends.
 chmod 640 "$hub"
+touch -d "2026-01-02 03:04:05" "$hub"
 expect "First" 0 "new instance serial" "$fx" hubBackup.yml
 first=$(serial "$fx")
 check "FirstNewSerial" test "$first" != "$archive"
@@ -108,6 +109,7 @@ check "FirstStatus" grep -qx "Status: ultimate" "$hub"
 check "FirstNoSerial" lacks "Serial:" "$hub"
 check "FirstMode" test "$(stat -c %a "$hub")" == 640
 check "FirstNoTempFile" test -z "$(find "$fx/config-sqlite" -name '.hub.yml.*')"
+check "FirstTimeKept" test "$(stat -c %Y "$hub")" == "$(date -d "2026-01-02 03:04:05" +%s)"
 check "FirstBackupUnchanged" grep -qx "Serial: $archive" "$fx/config-sqlite/hubBackup.yml"
 
 # Later runs keep the serial, also after the binary restored its backup copy and saved it in hub.yml.
@@ -199,8 +201,10 @@ check "NoMarkerKey" grep -qx "Key: $key" "$hub"
 # A hub.yml without a key is restored from the backup without its Serial line.
 nokey=$(fixture nokey)
 edit '/^Key:/d' "$nokey/config-sqlite/hub.yml"
+touch -d "2026-01-03 04:05:06" "$nokey/config-sqlite/hubBackup.yml"
 expect "NoKey" 0 "Restored" "$nokey" hubBackup.yml
 check "NoKeyBackupKey" grep -qx "Key: $other" "$nokey/config-sqlite/hub.yml"
+check "NoKeyBackupTime" test "$(stat -c %Y "$nokey/config-sqlite/hub.yml")" == "$(date -d "2026-01-03 04:05:06" +%s)"
 check "NoKeyNoSerial" lacks "Serial:" "$nokey/config-sqlite/hub.yml"
 check "NoKeyBackupUnchanged" grep -qx "Serial: $archive" "$nokey/config-sqlite/hubBackup.yml"
 quiet "NoKeyAgain" "$nokey" hubBackup.yml
