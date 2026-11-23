@@ -10,15 +10,11 @@ set -e
 # shellcheck source=/dev/null
 . /etc/os-release
 
-# NodeJS major version to be installed (armhf still requires 22.x).
-NODE_MAJOR=24
+# NodeJS major version to be installed.
+NODE_MAJOR=26
 NPM_VERSION=latest
 TESTCAFE_VERSION=3.7.6
 MERMAID_VERSION=latest
-
-if [ "$(dpkg --print-architecture)" = "armhf" ]; then
-  NODE_MAJOR=22
-fi
 
 # Check if NodeJS is installed.
 if which node > /dev/null
