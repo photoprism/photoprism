@@ -1,6 +1,7 @@
 package hub
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -67,6 +68,28 @@ func GetServiceHost() string {
 	}
 
 	return u.Host
+}
+
+// requestError returns the error of a failed service request with the service host and the underlying cause
+// instead of the request URL.
+func requestError(err error) error {
+	var urlErr *url.Error
+
+	if !errors.As(err, &urlErr) || urlErr == nil {
+		return err
+	}
+
+	desc := "service request failed"
+
+	if host := GetServiceHost(); host != "" {
+		desc = fmt.Sprintf("request to %s failed", host)
+	}
+
+	if urlErr.Err == nil {
+		return errors.New(desc)
+	}
+
+	return fmt.Errorf("%s (%w)", desc, urlErr.Err)
 }
 
 // ValidateServiceURL ensures outbound Hub requests use an absolute HTTPS URL.

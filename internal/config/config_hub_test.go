@@ -180,6 +180,28 @@ func TestNewConfig_Reborn(t *testing.T) {
 	assert.False(t, NewConfig(CliTestContext()).reborn)
 }
 
+func TestConfig_RenewApiKeysWithToken_Log(t *testing.T) {
+	// A request that cannot connect is logged with the service host, not the request URL.
+	_, enable := newTestHub(t)
+	c := startHubTestConfig(t, t.TempDir(), enable)
+	key := c.Hub().Key
+	require.NotEmpty(t, key)
+
+	hub.SetBaseURL("https://127.0.0.1:1/v1/hello")
+	hook := captureConfigLog(t)
+	require.NoError(t, c.RenewApiKeysWithToken(""))
+
+	var logged []string
+
+	for _, entry := range hook.AllEntries() {
+		logged = append(logged, entry.Message)
+	}
+
+	require.NotEmpty(t, logged)
+	assert.True(t, namesPath(logged, "request to 127.0.0.1:1 failed"), "%v", logged)
+	assert.False(t, namesPath(logged, "/v1/hello"), "%v", logged)
+}
+
 func TestHubRenewalDue(t *testing.T) {
 	// Whole seconds, so that the limit is exact on file systems that store coarse modification times.
 	now := time.Now().Truncate(time.Second)

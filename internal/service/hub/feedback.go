@@ -72,7 +72,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	if endpointUrl == "" {
 		return errors.New("unable to send feedback (service disabled)")
 	} else if err = ValidateServiceURL(endpointUrl); err != nil {
-		return err
+		return requestError(err)
 	}
 
 	method := http.MethodPost
@@ -84,7 +84,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	if j, reqErr := json.Marshal(feedback); reqErr != nil { //nolint:gosec // G117: request carries the key by design
 		return reqErr
 	} else if req, reqErr = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); reqErr != nil {
-		return reqErr
+		return requestError(reqErr)
 	}
 
 	// Set user agent.
@@ -109,7 +109,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	}
 
 	if err != nil {
-		return err
+		return requestError(err)
 	} else if r.StatusCode >= 400 {
 		err = fmt.Errorf("request to %s failed (error %d)", GetServiceHost(), r.StatusCode)
 		return err

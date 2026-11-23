@@ -1110,7 +1110,7 @@ func (c *Config) RenewApiKeysWithToken(token string) error {
 	}
 
 	if err := c.hub.ReSync(token); err != nil {
-		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
+		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", clean.Error(err))
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
