@@ -65,7 +65,7 @@ haskey() {
 }
 
 # replace writes the given file without Serial lines to hub.yml through a temporary file in the same folder, so that
-# a failed run leaves the previous one, and keeps the time of the given file, on which the next renewal depends.
+# a failed run leaves the previous one, and keeps the time of the given file, on which the renewal window depends.
 # Config folders generated for other databases are linked to it again later.
 replace() {
   hubtmp=$(mktemp "$config/.hub.yml.acceptance-hub.XXXXXX")

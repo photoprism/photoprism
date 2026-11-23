@@ -197,34 +197,6 @@ func TestHubRenewalDue(t *testing.T) {
 	}
 }
 
-func TestHubFileOlder(t *testing.T) {
-	now := time.Now().Truncate(time.Second)
-	fileName := t.TempDir() + "/hub.yml"
-
-	t.Run("Missing", func(t *testing.T) {
-		assert.True(t, hubFileOlder(fileName, now, time.Minute))
-	})
-
-	require.NoError(t, os.WriteFile(fileName, []byte("Key: \n"), 0o600))
-
-	for _, tc := range []struct {
-		name  string
-		age   time.Duration
-		older bool
-	}{
-		{"Recent", 30 * time.Second, false},
-		{"AtLimit", time.Minute, true},
-		{"Old", 2 * time.Minute, true},
-		{"Future", -time.Second, true},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			mtime := now.Add(-tc.age)
-			require.NoError(t, os.Chtimes(fileName, mtime, mtime))
-			assert.Equal(t, tc.older, hubFileOlder(fileName, now, time.Minute))
-		})
-	}
-}
-
 func TestTouchHubFile(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		fileName := t.TempDir() + "/hub.yml"
@@ -270,7 +242,7 @@ func TestConfig_HubUpdate(t *testing.T) {
 		c.SetStarting(true)
 		assert.False(t, c.hubUpdate(nil))
 	})
-	t.Run("Window", func(t *testing.T) {
+	t.Run("StartAndCommands", func(t *testing.T) {
 		_, enable := newTestHub(t)
 		c := NewMinimalTestConfig(t.TempDir())
 		enable()
@@ -281,16 +253,15 @@ func TestConfig_HubUpdate(t *testing.T) {
 		require.NoError(t, os.WriteFile(c.HubConfigFile(), []byte("Key: \n"), 0o600))
 		expired := fmt.Errorf("session expired")
 
+		// A start always renews; other commands only an expired session, and only once the window has passed.
 		c.SetStarting(true)
-		assert.False(t, c.hubUpdate(nil))
-		assert.False(t, c.hubUpdate(expired))
+		assert.True(t, c.hubUpdate(nil))
+		assert.True(t, c.hubUpdate(expired))
 		c.SetStarting(false)
+		assert.False(t, c.hubUpdate(nil))
 		assert.False(t, c.hubUpdate(expired))
 
 		ageHubFile(t, c, time.Hour)
-		c.SetStarting(true)
-		assert.True(t, c.hubUpdate(nil))
-		c.SetStarting(false)
 		assert.False(t, c.hubUpdate(nil))
 		assert.True(t, c.hubUpdate(expired))
 	})
@@ -311,7 +282,8 @@ func TestConfig_HubUpdate(t *testing.T) {
 }
 
 func TestConfig_InitHub(t *testing.T) {
-	t.Run("RestartWithinWindow", func(t *testing.T) {
+	t.Run("Restart", func(t *testing.T) {
+		// Every start renews the stored key, so a membership change applies on restart.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
@@ -319,35 +291,24 @@ func TestConfig_InitHub(t *testing.T) {
 		require.NotEmpty(t, first.Hub().Key)
 		second := startHubTestConfig(t, dataPath, enable)
 
-		assert.Equal(t, []string{http.MethodPost}, h.Methods())
-		assert.Equal(t, first.Hub().Key, second.Hub().Key)
-		assert.Equal(t, first.Hub().Session, second.Hub().Session)
-	})
-	t.Run("RestartAfterWindow", func(t *testing.T) {
-		h, enable := newTestHub(t)
-		dataPath := t.TempDir()
-
-		first := startHubTestConfig(t, dataPath, enable)
-		ageHubFile(t, first, hubRenewAfter+time.Minute)
-		second := startHubTestConfig(t, dataPath, enable)
-
 		require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
+		assert.Equal(t, first.Hub().Key, second.Hub().Key)
 		assert.Equal(t, first.Serial(), h.Requests()[1].Serial)
 		assert.True(t, strings.HasSuffix(h.Requests()[1].Path, "/"+second.Hub().Key))
-		assert.False(t, hubRenewalDue(second.HubConfigFile(), time.Now()))
 	})
 	t.Run("FutureModTime", func(t *testing.T) {
+		// A modification time in the future counts as due, so a wrong clock cannot suppress renewals.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
 		first := startHubTestConfig(t, dataPath, enable)
 		ageHubFile(t, first, -time.Hour)
-		startHubTestConfig(t, dataPath, enable)
+		initHubTestConfig(t, dataPath, enable, false)
 
 		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 	})
 	t.Run("FailedRenewal", func(t *testing.T) {
-		// A failed request also starts the window, so restarts within it do not repeat the request.
+		// Starts renew also after a refused request; the attempt starts the window of other commands.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
@@ -357,10 +318,10 @@ func TestConfig_InitHub(t *testing.T) {
 		h.Fail(http.StatusForbidden)
 
 		startHubTestConfig(t, dataPath, enable)
-		startHubTestConfig(t, dataPath, enable)
 		third := startHubTestConfig(t, dataPath, enable)
+		initHubTestConfig(t, dataPath, enable, false)
 
-		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
+		assert.Equal(t, []string{http.MethodPost, http.MethodPut, http.MethodPut}, h.Methods())
 		assert.Equal(t, key, third.Hub().Key)
 		assert.False(t, hubRenewalDue(third.HubConfigFile(), time.Now()))
 	})
@@ -386,26 +347,23 @@ func TestConfig_InitHub(t *testing.T) {
 		initHubTestConfig(t, dataPath, func() {}, false)
 		assert.True(t, hubRenewalDue(first.HubConfigFile(), time.Now()))
 
-		startHubTestConfig(t, dataPath, enable)
+		initHubTestConfig(t, dataPath, enable, false)
 		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 	})
 	t.Run("ConnectTokenAtStart", func(t *testing.T) {
-		// A token added before a restart is sent once hubConnectAfter has passed, although the window has not.
+		// A token added before a restart is sent at that restart.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
-		first := startHubTestConfig(t, dataPath, enable)
+		startHubTestConfig(t, dataPath, enable)
 		t.Setenv("PHOTOPRISM_CONNECT", "test-connect-token")
 		startHubTestConfig(t, dataPath, enable)
-		require.Equal(t, []string{http.MethodPost}, h.Methods(), "not within hubConnectAfter")
 
-		ageHubFile(t, first, hubConnectAfter+time.Second)
-		startHubTestConfig(t, dataPath, enable)
 		require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 		assert.Equal(t, "test-connect-token", h.Requests()[1].Token)
 	})
-	t.Run("ConnectTokenInterval", func(t *testing.T) {
-		// A token that does not activate is sent at most once per hubConnectAfter.
+	t.Run("ConnectTokenEveryStart", func(t *testing.T) {
+		// A token that does not activate is sent again at every start.
 		for _, tc := range []struct {
 			name   string
 			status int
@@ -414,26 +372,23 @@ func TestConfig_InitHub(t *testing.T) {
 				h, enable := newTestHub(t)
 				dataPath := t.TempDir()
 
-				first := startHubTestConfig(t, dataPath, enable)
+				startHubTestConfig(t, dataPath, enable)
 				t.Setenv("PHOTOPRISM_CONNECT", "test-connect-token")
 				h.Fail(tc.status)
-				ageHubFile(t, first, hubConnectAfter+time.Second)
 
-				for range 4 {
+				for range 3 {
 					startHubTestConfig(t, dataPath, enable)
 				}
 
-				require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
-				assert.False(t, hubFileOlder(first.HubConfigFile(), time.Now(), hubConnectAfter))
-
-				ageHubFile(t, first, hubConnectAfter+time.Second)
-				startHubTestConfig(t, dataPath, enable)
-				assert.Equal(t, []string{http.MethodPost, http.MethodPut, http.MethodPut}, h.Methods())
+				require.Equal(t, []string{http.MethodPost, http.MethodPut, http.MethodPut, http.MethodPut}, h.Methods())
+				for _, r := range h.Requests()[1:] {
+					assert.Equal(t, "test-connect-token", r.Token)
+				}
 			})
 		}
 	})
 	t.Run("ExplicitConnectFailure", func(t *testing.T) {
-		// A failed explicit connect leaves the file as it is, so the next start still renews.
+		// A failed explicit connect leaves the file as it is, so the window of other commands is unchanged.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
@@ -444,11 +399,11 @@ func TestConfig_InitHub(t *testing.T) {
 		assert.True(t, hubRenewalDue(first.HubConfigFile(), time.Now()))
 
 		h.Fail(0)
-		startHubTestConfig(t, dataPath, enable)
+		initHubTestConfig(t, dataPath, enable, false)
 		assert.Equal(t, []string{http.MethodPost, http.MethodPut, http.MethodPut}, h.Methods())
 	})
 	t.Run("SaveFails", func(t *testing.T) {
-		// A file that cannot be saved still gets the time of the attempt, so restarts within the window wait.
+		// A file that cannot be saved still gets the time of the attempt, so other commands wait for the window.
 		if os.Geteuid() == 0 {
 			t.Skip("root can write any file")
 		}
@@ -462,7 +417,7 @@ func TestConfig_InitHub(t *testing.T) {
 		t.Cleanup(func() { _ = os.Chmod(first.HubConfigFile(), 0o600) })
 
 		startHubTestConfig(t, dataPath, enable)
-		startHubTestConfig(t, dataPath, enable)
+		initHubTestConfig(t, dataPath, enable, false)
 
 		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 		assert.False(t, hubRenewalDue(first.HubConfigFile(), time.Now()))
@@ -502,19 +457,18 @@ func TestConfig_InitHub(t *testing.T) {
 		assert.Equal(t, []string{http.MethodPost}, h.Methods())
 	})
 	t.Run("ConnectTokenCommand", func(t *testing.T) {
-		// Only a start bypasses the window, so commands run with the token in their environment do not.
+		// Other commands do not renew a loaded key within the window, also with the token in their environment.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
-		first := startHubTestConfig(t, dataPath, enable)
+		startHubTestConfig(t, dataPath, enable)
 		t.Setenv("PHOTOPRISM_CONNECT", "test-connect-token")
-		ageHubFile(t, first, hubConnectAfter+time.Second)
 		initHubTestConfig(t, dataPath, enable, false)
 
 		assert.Equal(t, []string{http.MethodPost}, h.Methods())
 	})
 	t.Run("ConnectTokenWhenSponsor", func(t *testing.T) {
-		// Once the membership is active, the token no longer bypasses the window.
+		// Once the membership is active, a start renews without sending the token again.
 		h, enable := newTestHub(t)
 		h.Sponsor()
 		dataPath := t.TempDir()
@@ -522,14 +476,10 @@ func TestConfig_InitHub(t *testing.T) {
 
 		first := startHubTestConfig(t, dataPath, enable)
 		require.True(t, first.Hub().Sponsor())
-		ageHubFile(t, first, hubConnectAfter+time.Second)
 		startHubTestConfig(t, dataPath, enable)
-		require.Equal(t, []string{http.MethodPost}, h.Methods())
 
-		// A due renewal of a sponsor does not send the token again.
-		ageHubFile(t, first, hubRenewAfter+time.Second)
-		startHubTestConfig(t, dataPath, enable)
 		require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
+		assert.Equal(t, "test-connect-token", h.Requests()[0].Token)
 		assert.Empty(t, h.Requests()[1].Token)
 	})
 	t.Run("CommandWithoutKey", func(t *testing.T) {

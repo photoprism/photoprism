@@ -95,7 +95,7 @@ expect "UsageArgs" 2 "Usage" "$fx" hubBackup.yml extra
 expect "BackupName" 2 "file name" "$fx" ../hubBackup.yml
 check "UsageUnchanged" test "$(serial "$fx")" == "$archive"
 
-# The first run replaces the archive serial and keeps the key, and the time of hub.yml, on which the next renewal depends.
+# The first run replaces the archive serial and keeps the key, and the time of hub.yml, on which the renewal window depends.
 chmod 640 "$hub"
 touch -d "2026-01-02 03:04:05" "$hub"
 expect "First" 0 "new instance serial" "$fx" hubBackup.yml
