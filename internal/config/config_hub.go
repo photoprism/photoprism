@@ -4,6 +4,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/sevlyar/go-daemon"
+
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -11,6 +13,16 @@ import (
 // hubRenewAfter is how long after the hub config file was last written commands other than start renew an
 // expired or undecodable session again.
 var hubRenewAfter = 10 * time.Minute
+
+// hubWasReborn reports whether this process is the daemon that a start with detach-server spawned; NewConfig
+// records it, as the start command clears the mark before the server runs.
+var hubWasReborn = daemon.WasReborn
+
+// detachingServer reports whether this is a start with detach-server in a process other than the daemon, which
+// then initializes and renews on its own.
+func (c *Config) detachingServer() bool {
+	return c.start && c.DetachServer() && !c.reborn
+}
 
 // hubRenewalDue reports whether the hub config file was last written at least hubRenewAfter ago, has a
 // modification time in the future, or cannot be read.
@@ -26,11 +38,12 @@ func hubRenewalDue(fileName string, now time.Time) bool {
 	return age < 0 || age >= hubRenewAfter
 }
 
-// hubUpdate reports whether initHub requests api credentials after loading the stored ones: always without a key,
-// since activation must precede the database setup, and at every start command, so that membership changes apply
-// on restart; other commands use the stored key and renew only an expired or undecodable session once due.
+// hubUpdate reports whether initHub requests api credentials after loading the stored ones: without a key, as the
+// editions need activation before the database setup, and at every start, so membership changes apply on restart,
+// except in a detach-server start outside the daemon, which leaves both to the daemon; other commands use the
+// stored key and renew only an expired or undecodable session once due.
 func (c *Config) hubUpdate(loadErr error) bool {
-	if hub.Disabled() {
+	if hub.Disabled() || c.detachingServer() {
 		return false
 	}
 

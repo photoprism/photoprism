@@ -95,6 +95,7 @@ type Config struct {
 	tokenKeyOnce   sync.Once
 	env            string
 	start          bool
+	reborn         bool
 	startReport    bool
 	ready          atomic.Bool
 	cache          *gc.Cache
@@ -183,6 +184,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		token:       rnd.Base36(8),
 		env:         os.Getenv("DOCKER_ENV"),
 		start:       start,
+		reborn:      hubWasReborn(),
 		startReport: startReport,
 		cache:       gc.New(time.Minute, 10*time.Minute),
 	}

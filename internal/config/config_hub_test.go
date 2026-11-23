@@ -166,6 +166,20 @@ func ageHubFile(t *testing.T, c *Config, age time.Duration) {
 	require.NoError(t, os.Chtimes(c.HubConfigFile(), mtime, mtime))
 }
 
+func TestNewConfig_Reborn(t *testing.T) {
+	orig := hubWasReborn
+	t.Cleanup(func() { hubWasReborn = orig })
+
+	// The mark is read once, so clearing it later does not change what the config recorded.
+	reborn := true
+	hubWasReborn = func() bool { return reborn }
+	c := NewConfig(CliTestContext())
+	reborn = false
+	assert.True(t, c.reborn)
+
+	assert.False(t, NewConfig(CliTestContext()).reborn)
+}
+
 func TestHubRenewalDue(t *testing.T) {
 	// Whole seconds, so that the limit is exact on file systems that store coarse modification times.
 	now := time.Now().Truncate(time.Second)
@@ -264,6 +278,33 @@ func TestConfig_HubUpdate(t *testing.T) {
 		ageHubFile(t, c, time.Hour)
 		assert.False(t, c.hubUpdate(nil))
 		assert.True(t, c.hubUpdate(expired))
+	})
+	t.Run("DetachServer", func(t *testing.T) {
+		// A start that only spawns the daemon leaves the request to the daemon, also without a key.
+		_, enable := newTestHub(t)
+		c := NewMinimalTestConfig(t.TempDir())
+		enable()
+		c.hub = hub.NewConfig("test", c.HubConfigFile(), "", "", "", "")
+		c.options.DetachServer = true
+		c.SetStarting(true)
+
+		c.reborn = false
+		assert.False(t, c.hubUpdate(nil))
+		assert.True(t, c.detachingServer())
+
+		c.reborn = true
+		assert.True(t, c.hubUpdate(nil))
+		assert.False(t, c.detachingServer())
+
+		// A config report with detach-server set sends nothing either, since it is no daemon.
+		c.reborn = false
+		c.startReport = true
+		assert.False(t, c.hubUpdate(nil))
+		c.startReport = false
+
+		c.SetStarting(false)
+		assert.False(t, c.detachingServer())
+		assert.True(t, c.hubUpdate(nil), "other commands without a key activate")
 	})
 	t.Run("MismatchedSecret", func(t *testing.T) {
 		// A key that does not match its secret is discarded, so the instance activates again.
@@ -510,6 +551,25 @@ func TestConfig_InitHub(t *testing.T) {
 		require.NoError(t, c.RenewApiKeysWithToken("test-connect-token"))
 		require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 		assert.Equal(t, "test-connect-token", h.Requests()[1].Token)
+	})
+	t.Run("DetachServer", func(t *testing.T) {
+		// Only the daemon renews, so a start with detach-server sends one request instead of two.
+		h, enable := newTestHub(t)
+		dataPath := t.TempDir()
+		parentOpts := func(c *Config) { c.options.DetachServer = true }
+		childOpts := func(c *Config) { c.options.DetachServer, c.reborn = true, true }
+
+		parent := startHubTestConfig(t, dataPath, enable, parentOpts)
+		assert.Empty(t, h.Methods())
+		assert.NoFileExists(t, parent.HubConfigFile())
+
+		child := startHubTestConfig(t, dataPath, enable, childOpts)
+		assert.Equal(t, []string{http.MethodPost}, h.Methods())
+		assert.NotEmpty(t, child.Hub().Key)
+
+		startHubTestConfig(t, dataPath, enable, parentOpts)
+		startHubTestConfig(t, dataPath, enable, childOpts)
+		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 	})
 	t.Run("Runtime", func(t *testing.T) {
 		h, enable := newTestHub(t)
