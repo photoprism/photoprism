@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -26,7 +27,7 @@ import (
 //	@Success	200		{object}	places.SearchResults
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	401		{object}	i18n.Response
-//	@Failure	500		{object}	gin.H	"Search service error"
+//	@Failure	500		{object}	i18n.Response
 //	@Router		/api/v1/places/search [get]
 func GetPlacesSearch(router *gin.RouterGroup) {
 	handler := func(c *gin.Context) {
@@ -59,8 +60,8 @@ func GetPlacesSearch(router *gin.RouterGroup) {
 		results, err := places.Search(query, locale, count)
 
 		if err != nil {
-			log.Errorf("places: failed to find locations for query %s", clean.Log(query))
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			event.SystemError([]string{"places", "find locations for query %s", "%s"}, clean.Log(query), clean.Error(err))
+			AbortUnexpectedError(c)
 			return
 		}
 

@@ -12229,9 +12229,9 @@
                         }
                     },
                     "500": {
-                        "description": "Geocoding service error",
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
@@ -12291,9 +12291,9 @@
                         }
                     },
                     "500": {
-                        "description": "Search service error",
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
