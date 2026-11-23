@@ -13,7 +13,7 @@ set -e
 # NodeJS major version to be installed.
 NODE_MAJOR=26
 NPM_VERSION=latest
-TESTCAFE_VERSION=3.7.6
+TESTCAFE_VERSION=3.7.7
 MERMAID_VERSION=latest
 
 # Check if NodeJS is installed.
