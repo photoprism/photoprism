@@ -27,8 +27,16 @@ else
   sudo mkdir -p /etc/apt/keyrings
   curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
-  # Add node repository source to "/etc/apt/sources.list.d/nodesource.list".
-  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+  # Add the node repository as "/etc/apt/sources.list.d/nodesource.sources" (deb822 format),
+  # replacing a one-line "nodesource.list" so that apt does not see the repository twice.
+  sudo rm -f /etc/apt/sources.list.d/nodesource.list /etc/apt/sources.list.d/nodesource.list.bak
+  sudo tee /etc/apt/sources.list.d/nodesource.sources >/dev/null <<EOF
+Types: deb
+URIs: https://deb.nodesource.com/node_${NODE_MAJOR}.x
+Suites: nodistro
+Components: main
+Signed-By: /etc/apt/keyrings/nodesource.gpg
+EOF
 
   sudo apt-get update && sudo apt-get -qq install nodejs
 fi
