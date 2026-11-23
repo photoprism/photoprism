@@ -1125,6 +1125,7 @@ func (c *Config) initHub() {
 	if c.hub != nil {
 		return
 	} else if h := hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.env, c.UserAgent(), c.options.PartnerID); h != nil {
+		h.Runtime = c.Runtime()
 		c.hub = h
 	}
 

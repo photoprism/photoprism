@@ -12,6 +12,7 @@ type Request struct {
 	ClientArch    string `json:"ClientArch"`
 	ClientCPU     int    `json:"ClientCPU"`
 	ClientEnv     string `json:"ClientEnv"`
+	ClientRuntime string `json:"ClientRuntime"`
 	ClientOpt     string `json:"ClientOpt"`
 	PartnerID     string `json:"PartnerID"`
 	ApiToken      string `json:"ApiToken"` //nolint:gosec // G117: Hub API token payload field.
@@ -24,7 +25,7 @@ var ClientOpt = func() string {
 }
 
 // NewRequest creates a new backend key request instance.
-func NewRequest(version, serial, env, partnerId, token string) *Request {
+func NewRequest(version, serial, env, clientRuntime, partnerId, token string) *Request {
 	return &Request{
 		ClientVersion: version,
 		ClientSerial:  serial,
@@ -32,6 +33,7 @@ func NewRequest(version, serial, env, partnerId, token string) *Request {
 		ClientArch:    runtime.GOARCH,
 		ClientCPU:     runtime.NumCPU(),
 		ClientEnv:     env,
+		ClientRuntime: clientRuntime,
 		ClientOpt:     ClientOpt(),
 		PartnerID:     partnerId,
 		ApiToken:      token,

@@ -6,11 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"testing"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
@@ -58,17 +60,50 @@ func TestNewConfig(t *testing.T) {
 }
 
 func TestNewRequest(t *testing.T) {
-	r := NewRequest("test", "zqkunt22r0bewti9", "test", "test", "")
+	r := NewRequest("test", "zqkunt22r0bewti9", "test", "docker", "test", "")
 
 	assert.IsType(t, &Request{}, r)
+	assert.Equal(t, "docker", r.ClientRuntime)
+	assert.Equal(t, "test", r.ClientEnv)
+	assert.Equal(t, "test", r.PartnerID)
 
 	t.Logf("Request: %+v", r)
 
-	if j, err := json.Marshal(r); err != nil { //nolint:gosec // G117: test request
-		t.Fatal(err)
-	} else {
-		t.Logf("JSON: %s", j)
+	j, err := json.Marshal(r) //nolint:gosec // G117: test request
+	require.NoError(t, err)
+
+	// The backends refuse a request that lacks a field they define, so the names must not change.
+	var fields map[string]any
+	require.NoError(t, json.Unmarshal(j, &fields))
+	keys := make([]string, 0, len(fields))
+	for k := range fields {
+		keys = append(keys, k)
 	}
+	assert.ElementsMatch(t, []string{"ClientVersion", "ClientSerial", "ClientOS", "ClientArch", "ClientCPU", "ClientEnv", "ClientRuntime", "ClientOpt", "PartnerID", "ApiToken"}, keys)
+	assert.Equal(t, "docker", fields["ClientRuntime"])
+}
+
+func TestConfig_Runtime(t *testing.T) {
+	t.Run("NotStored", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "hub.yml")
+		c := NewConfig("test", fileName, "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
+		c.Runtime = "docker"
+		require.NoError(t, c.Save())
+		data, err := os.ReadFile(fileName) //nolint:gosec // test file
+		require.NoError(t, err)
+		assert.NotContains(t, string(data), "docker")
+
+		loaded := NewConfig("test", fileName, "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
+		loaded.Runtime = "host"
+		_ = loaded.Load()
+		assert.Equal(t, "host", loaded.Runtime)
+	})
+	t.Run("NotFromResponse", func(t *testing.T) {
+		c := NewConfig("test", "testdata/new.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
+		c.Runtime = "host"
+		require.NoError(t, json.Unmarshal([]byte(`{"Runtime":"docker","runtime":"docker"}`), c))
+		assert.Equal(t, "host", c.Runtime)
+	})
 }
 
 func TestConfig_Refresh(t *testing.T) {

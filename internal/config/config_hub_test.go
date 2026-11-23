@@ -20,10 +20,11 @@ import (
 
 // testHubRequest records a request received by the test hub.
 type testHubRequest struct {
-	Method string
-	Path   string
-	Serial string
-	Token  string
+	Method  string
+	Path    string
+	Serial  string
+	Token   string
+	Runtime string
 }
 
 // testHub is a local hub service that issues a valid key and records the requests it receives.
@@ -88,7 +89,7 @@ func newTestHub(t *testing.T) (h *testHub, enable func()) {
 		_ = json.NewDecoder(r.Body).Decode(&req)
 
 		h.mu.Lock()
-		h.requests = append(h.requests, testHubRequest{Method: r.Method, Path: r.URL.Path, Serial: req.ClientSerial, Token: req.ApiToken})
+		h.requests = append(h.requests, testHubRequest{Method: r.Method, Path: r.URL.Path, Serial: req.ClientSerial, Token: req.ApiToken, Runtime: req.ClientRuntime})
 		h.mu.Unlock()
 
 		if status := int(h.status.Load()); status != 0 {
@@ -423,6 +424,15 @@ func TestConfig_InitHub(t *testing.T) {
 		require.NoError(t, c.RenewApiKeysWithToken("test-connect-token"))
 		require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 		assert.Equal(t, "test-connect-token", h.Requests()[1].Token)
+	})
+	t.Run("Runtime", func(t *testing.T) {
+		h, enable := newTestHub(t)
+		t.Setenv("KUBERNETES_SERVICE_HOST", "10.96.0.1")
+		c := startHubTestConfig(t, t.TempDir(), enable)
+
+		require.Len(t, h.Requests(), 1)
+		assert.Equal(t, "kubernetes", h.Requests()[0].Runtime)
+		assert.Equal(t, "kubernetes", c.Hub().Runtime)
 	})
 	t.Run("ReadOnly", func(t *testing.T) {
 		h, enable := newTestHub(t)
