@@ -83,13 +83,14 @@ endif
 
 # acceptance-env sets the database, folder and port options of a TestCafe server to the fixture in the given folder,
 # so that they also apply if the server cannot load its options file, and removes other paths and cluster options.
+# It limits compression to gzip, since TestCafe's proxy cannot decode the zstd that Chrome 158 also accepts over HTTP.
 acceptance-env = env -u PHOTOPRISM_DATABASE_SERVER -u PHOTOPRISM_DATABASE_NAME -u PHOTOPRISM_DATABASE_USER \
 	-u PHOTOPRISM_DATABASE_PASSWORD -u PHOTOPRISM_SIDECAR_PATH -u PHOTOPRISM_CACHE_PATH -u PHOTOPRISM_USERS_PATH \
 	-u PHOTOPRISM_TEMP_PATH -u PHOTOPRISM_BACKUP_PATH -u PHOTOPRISM_PID_FILENAME -u PHOTOPRISM_LOG_FILENAME \
 	-u PHOTOPRISM_DEFAULTS_YAML -u PHOTOPRISM_PORTAL_URL -u PHOTOPRISM_JOIN_TOKEN -u PHOTOPRISM_NODE_CLIENT_ID \
 	-u PHOTOPRISM_NODE_CLIENT_SECRET -u PHOTOPRISM_CONNECT PHOTOPRISM_DATABASE_DRIVER=sqlite \
 	PHOTOPRISM_DATABASE_DSN="$(1)/index.db" PHOTOPRISM_STORAGE_PATH="$(1)" PHOTOPRISM_ORIGINALS_PATH="$(1)/originals" \
-	PHOTOPRISM_IMPORT_PATH="$(1)/import" PHOTOPRISM_HTTP_PORT=2343
+	PHOTOPRISM_IMPORT_PATH="$(1)/import" PHOTOPRISM_HTTP_PORT=2343 PHOTOPRISM_HTTP_COMPRESSION=gzip
 # acceptance-stage runs the given TestCafe targets in order, then the stop target, also if one of them fails,
 # and exits with the first failure.
 acceptance-stage = $(MAKE) -j1 -S $(1); status=$$?; $(MAKE) -j1 $(2) || [ $$status -ne 0 ] || status=1; exit $$status
