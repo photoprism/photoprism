@@ -180,6 +180,53 @@ func TestNewConfig_Reborn(t *testing.T) {
 	assert.False(t, NewConfig(CliTestContext()).reborn)
 }
 
+func TestConfig_LogMembershipHint(t *testing.T) {
+	sponsor := Sponsor
+	t.Cleanup(func() { Sponsor = sponsor })
+	Sponsor = false
+
+	// hinted returns whether c logged the membership hint.
+	hinted := func(t *testing.T, c *Config) bool {
+		hook := captureConfigLog(t)
+		c.logMembershipHint()
+
+		for _, entry := range hook.AllEntries() {
+			if entry.Message == MsgSponsor {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	t.Run("Start", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Sponsor = false
+		c.SetStarting(true)
+		assert.True(t, hinted(t, c))
+	})
+	t.Run("Daemon", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Sponsor = false
+		c.options.DetachServer, c.reborn = true, true
+		c.SetStarting(true)
+		assert.True(t, hinted(t, c))
+	})
+	t.Run("DetachingParent", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Sponsor = false
+		c.options.DetachServer = true
+		c.SetStarting(true)
+		assert.False(t, hinted(t, c))
+	})
+	t.Run("Sponsor", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Sponsor = true
+		c.SetStarting(true)
+		assert.False(t, hinted(t, c))
+	})
+}
+
 func TestConfig_RenewApiKeysWithToken_Log(t *testing.T) {
 	// A request that cannot connect is logged with the service host, not the request URL.
 	_, enable := newTestHub(t)

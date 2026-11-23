@@ -24,6 +24,17 @@ func (c *Config) detachingServer() bool {
 	return c.start && c.DetachServer() && !c.reborn
 }
 
+// logMembershipHint logs how to become a member unless this instance is a sponsor. A detach-server start outside
+// the daemon skips it, since it did not renew and the daemon logs the hint based on the current membership.
+func (c *Config) logMembershipHint() {
+	if c.Sponsor() || c.detachingServer() {
+		return
+	}
+
+	log.Info(MsgSponsor)
+	log.Info(MsgSignUp)
+}
+
 // hubRenewalDue reports whether the hub config file was last written at least hubRenewAfter ago, has a
 // modification time in the future, or cannot be read.
 func hubRenewalDue(fileName string, now time.Time) bool {

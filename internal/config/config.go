@@ -305,10 +305,7 @@ func (c *Config) Init() error {
 	c.reportDownloadTokenOptions()
 
 	// Show support information.
-	if !c.Sponsor() {
-		log.Info(MsgSponsor)
-		log.Info(MsgSignUp)
-	}
+	c.logMembershipHint()
 
 	// Show log message.
 	log.Debugf("config: successfully initialized [%s]", time.Since(start))
