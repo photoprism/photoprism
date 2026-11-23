@@ -1106,6 +1106,7 @@ func (c *Config) RenewApiKeysWithToken(token string) error {
 
 	if err := c.hub.ReSync(token); err != nil {
 		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
+		touchHubFile(c.hub.FileName)
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
@@ -1127,13 +1128,7 @@ func (c *Config) initHub() {
 		c.hub = h
 	}
 
-	update := c.start
-
-	if err := c.hub.Load(); err != nil {
-		update = true
-	}
-
-	if update {
+	if c.hubUpdate(c.hub.Load()) {
 		c.RenewApiKeys()
 	}
 
