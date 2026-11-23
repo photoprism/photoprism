@@ -106,7 +106,7 @@ require (
 	github.com/dsoprea/go-tiff-image-structure/v2 v2.0.0-20221003165014-8ecc4f52edca
 	github.com/dustin/go-humanize v1.1.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20261016130456-fdd95a3d0543
-	github.com/emersion/go-webdav v0.7.0
+	github.com/emersion/go-webdav v0.8.0
 	github.com/gabriel-vasile/mimetype v1.4.16
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-co-op/gocron/v2 v2.23.2
@@ -122,7 +122,7 @@ require (
 	github.com/jackc/pgx/v5 v5.13.0
 	github.com/jinzhu/inflection v1.0.0
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/compress v1.20.4
+	github.com/klauspost/compress v1.20.5
 	github.com/klauspost/cpuid/v2 v2.4.2
 	github.com/leandro-lugaresi/hub v1.1.2
 	github.com/leonelquinteros/gotext v1.8.0
@@ -148,13 +148,13 @@ require (
 	github.com/sunfish-shogi/bufseekio v0.1.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
-	github.com/tidwall/gjson v1.20.4
+	github.com/tidwall/gjson v1.20.6
 	github.com/ugjka/go-tz/v2 v2.2.10
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.38.0
-	github.com/zitadel/oidc/v3 v3.52.0
+	github.com/zitadel/oidc/v3 v3.53.0
 	golang.org/x/crypto v0.59.0
 	golang.org/x/image v0.48.0
 	golang.org/x/mod v0.43.0
