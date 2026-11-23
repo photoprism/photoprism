@@ -197,6 +197,34 @@ func TestHubRenewalDue(t *testing.T) {
 	}
 }
 
+func TestHubFileOlder(t *testing.T) {
+	now := time.Now().Truncate(time.Second)
+	fileName := t.TempDir() + "/hub.yml"
+
+	t.Run("Missing", func(t *testing.T) {
+		assert.True(t, hubFileOlder(fileName, now, time.Minute))
+	})
+
+	require.NoError(t, os.WriteFile(fileName, []byte("Key: \n"), 0o600))
+
+	for _, tc := range []struct {
+		name  string
+		age   time.Duration
+		older bool
+	}{
+		{"Recent", 30 * time.Second, false},
+		{"AtLimit", time.Minute, true},
+		{"Old", 2 * time.Minute, true},
+		{"Future", -time.Second, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			mtime := now.Add(-tc.age)
+			require.NoError(t, os.Chtimes(fileName, mtime, mtime))
+			assert.Equal(t, tc.older, hubFileOlder(fileName, now, time.Minute))
+		})
+	}
+}
+
 func TestTouchHubFile(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		fileName := t.TempDir() + "/hub.yml"
@@ -362,24 +390,125 @@ func TestConfig_InitHub(t *testing.T) {
 		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 	})
 	t.Run("ConnectTokenAtStart", func(t *testing.T) {
-		// A token added before a restart is sent although the window has not passed.
+		// A token added before a restart is sent once hubConnectAfter has passed, although the window has not.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
-		startHubTestConfig(t, dataPath, enable)
+		first := startHubTestConfig(t, dataPath, enable)
 		t.Setenv("PHOTOPRISM_CONNECT", "test-connect-token")
 		startHubTestConfig(t, dataPath, enable)
+		require.Equal(t, []string{http.MethodPost}, h.Methods(), "not within hubConnectAfter")
 
+		ageHubFile(t, first, hubConnectAfter+time.Second)
+		startHubTestConfig(t, dataPath, enable)
 		require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
 		assert.Equal(t, "test-connect-token", h.Requests()[1].Token)
+	})
+	t.Run("ConnectTokenInterval", func(t *testing.T) {
+		// A token that does not activate is sent at most once per hubConnectAfter.
+		for _, tc := range []struct {
+			name   string
+			status int
+		}{{"Refused", http.StatusForbidden}, {"NotSponsor", 0}} {
+			t.Run(tc.name, func(t *testing.T) {
+				h, enable := newTestHub(t)
+				dataPath := t.TempDir()
+
+				first := startHubTestConfig(t, dataPath, enable)
+				t.Setenv("PHOTOPRISM_CONNECT", "test-connect-token")
+				h.Fail(tc.status)
+				ageHubFile(t, first, hubConnectAfter+time.Second)
+
+				for range 4 {
+					startHubTestConfig(t, dataPath, enable)
+				}
+
+				require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
+				assert.False(t, hubFileOlder(first.HubConfigFile(), time.Now(), hubConnectAfter))
+
+				ageHubFile(t, first, hubConnectAfter+time.Second)
+				startHubTestConfig(t, dataPath, enable)
+				assert.Equal(t, []string{http.MethodPost, http.MethodPut, http.MethodPut}, h.Methods())
+			})
+		}
+	})
+	t.Run("ExplicitConnectFailure", func(t *testing.T) {
+		// A failed explicit connect leaves the file as it is, so the next start still renews.
+		h, enable := newTestHub(t)
+		dataPath := t.TempDir()
+
+		first := startHubTestConfig(t, dataPath, enable)
+		ageHubFile(t, first, time.Hour)
+		h.Fail(http.StatusForbidden)
+		require.Error(t, first.RenewApiKeysWithToken("test-connect-token"))
+		assert.True(t, hubRenewalDue(first.HubConfigFile(), time.Now()))
+
+		h.Fail(0)
+		startHubTestConfig(t, dataPath, enable)
+		assert.Equal(t, []string{http.MethodPost, http.MethodPut, http.MethodPut}, h.Methods())
+	})
+	t.Run("SaveFails", func(t *testing.T) {
+		// A file that cannot be saved still gets the time of the attempt, so restarts within the window wait.
+		if os.Geteuid() == 0 {
+			t.Skip("root can write any file")
+		}
+
+		h, enable := newTestHub(t)
+		dataPath := t.TempDir()
+
+		first := startHubTestConfig(t, dataPath, enable)
+		ageHubFile(t, first, time.Hour)
+		require.NoError(t, os.Chmod(first.HubConfigFile(), 0o444)) //nolint:gosec // read-only on purpose
+		t.Cleanup(func() { _ = os.Chmod(first.HubConfigFile(), 0o600) })
+
+		startHubTestConfig(t, dataPath, enable)
+		startHubTestConfig(t, dataPath, enable)
+
+		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
+		assert.False(t, hubRenewalDue(first.HubConfigFile(), time.Now()))
+	})
+	t.Run("Ticker", func(t *testing.T) {
+		// RenewApiKeys is what the daily tick calls: it renews regardless of the window and starts it again.
+		h, enable := newTestHub(t)
+		c := startHubTestConfig(t, t.TempDir(), enable)
+
+		c.RenewApiKeys()
+		assert.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
+
+		// A refused renewal starts the window as well.
+		ageHubFile(t, c, time.Hour)
+		h.Fail(http.StatusForbidden)
+		c.RenewApiKeys()
+		assert.Equal(t, []string{http.MethodPost, http.MethodPut, http.MethodPut}, h.Methods())
+		assert.False(t, hubRenewalDue(c.HubConfigFile(), time.Now()))
+		h.Fail(0)
+
+		// While hub requests are disabled, it neither requests nor rewrites the file.
+		ageHubFile(t, c, time.Hour)
+		hub.Disable()
+		c.RenewApiKeys()
+		assert.Len(t, h.Methods(), 3)
+		assert.True(t, hubRenewalDue(c.HubConfigFile(), time.Now()))
+	})
+	t.Run("RecentFileWithoutKey", func(t *testing.T) {
+		// A recently written file without a key, e.g. one saved while hub requests were disabled, still activates.
+		h, enable := newTestHub(t)
+		dataPath := t.TempDir()
+		c := NewMinimalTestConfig(dataPath)
+		require.NoError(t, os.MkdirAll(c.ConfigPath(), 0o700))
+		require.NoError(t, os.WriteFile(c.HubConfigFile(), []byte("Key: \n"), 0o600))
+
+		startHubTestConfig(t, dataPath, enable)
+		assert.Equal(t, []string{http.MethodPost}, h.Methods())
 	})
 	t.Run("ConnectTokenCommand", func(t *testing.T) {
 		// Only a start bypasses the window, so commands run with the token in their environment do not.
 		h, enable := newTestHub(t)
 		dataPath := t.TempDir()
 
-		startHubTestConfig(t, dataPath, enable)
+		first := startHubTestConfig(t, dataPath, enable)
 		t.Setenv("PHOTOPRISM_CONNECT", "test-connect-token")
+		ageHubFile(t, first, hubConnectAfter+time.Second)
 		initHubTestConfig(t, dataPath, enable, false)
 
 		assert.Equal(t, []string{http.MethodPost}, h.Methods())
@@ -393,9 +522,15 @@ func TestConfig_InitHub(t *testing.T) {
 
 		first := startHubTestConfig(t, dataPath, enable)
 		require.True(t, first.Hub().Sponsor())
+		ageHubFile(t, first, hubConnectAfter+time.Second)
 		startHubTestConfig(t, dataPath, enable)
+		require.Equal(t, []string{http.MethodPost}, h.Methods())
 
-		assert.Equal(t, []string{http.MethodPost}, h.Methods())
+		// A due renewal of a sponsor does not send the token again.
+		ageHubFile(t, first, hubRenewAfter+time.Second)
+		startHubTestConfig(t, dataPath, enable)
+		require.Equal(t, []string{http.MethodPost, http.MethodPut}, h.Methods())
+		assert.Empty(t, h.Requests()[1].Token)
 	})
 	t.Run("CommandWithoutKey", func(t *testing.T) {
 		h, enable := newTestHub(t)

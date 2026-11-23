@@ -1085,11 +1085,14 @@ func (c *Config) Shutdown() {
 	}
 }
 
-// RenewApiKeys renews the api credentials for maps and places.
+// RenewApiKeys renews the api credentials for maps and places automatically, i.e. when initHub or the daily tick
+// calls it, and then updates the modification time of the hub config file, which the renewal window is based on.
 func (c *Config) RenewApiKeys() {
-	if c.hub == nil {
+	if c.hub == nil || hub.Disabled() {
 		return
 	}
+
+	defer touchHubFile(c.hub.FileName)
 
 	if token := os.Getenv(EnvVar("CONNECT")); token != "" && !c.Hub().Sponsor() {
 		_ = c.RenewApiKeysWithToken(token)
@@ -1106,7 +1109,6 @@ func (c *Config) RenewApiKeysWithToken(token string) error {
 
 	if err := c.hub.ReSync(token); err != nil {
 		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
-		touchHubFile(c.hub.FileName)
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}

@@ -8,12 +8,22 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// hubRenewAfter is how long after the hub config file was last written the stored key is renewed again.
-var hubRenewAfter = 10 * time.Minute
+// hubRenewAfter is how long after the hub config file was last written the stored key is renewed again, and
+// hubConnectAfter how long a start with PHOTOPRISM_CONNECT set waits before sending the token again.
+var (
+	hubRenewAfter   = 10 * time.Minute
+	hubConnectAfter = time.Minute
+)
 
 // hubRenewalDue reports whether the hub config file was last written at least hubRenewAfter ago, has a
 // modification time in the future, or cannot be read, so that frequent restarts do not renew the key each time.
 func hubRenewalDue(fileName string, now time.Time) bool {
+	return hubFileOlder(fileName, now, hubRenewAfter)
+}
+
+// hubFileOlder reports whether the hub config file was last written at least d ago, has a modification time in
+// the future, or cannot be read.
+func hubFileOlder(fileName string, now time.Time, d time.Duration) bool {
 	info, err := os.Stat(fileName)
 
 	if err != nil {
@@ -22,13 +32,13 @@ func hubRenewalDue(fileName string, now time.Time) bool {
 
 	age := now.Sub(info.ModTime())
 
-	return age < 0 || age >= hubRenewAfter
+	return age < 0 || age >= d
 }
 
 // hubUpdate reports whether initHub requests api credentials after loading the stored ones: always without a key,
-// since activation must precede the database setup, and at a start with PHOTOPRISM_CONNECT set while not a
-// sponsor; otherwise once the renewal is due, at server start or, for other commands, if the stored session
-// has expired or could not be decoded.
+// since activation must precede the database setup, at a start with PHOTOPRISM_CONNECT set while not a sponsor
+// once hubConnectAfter has passed, and otherwise once the renewal is due, at server start or, for other commands,
+// if the stored session has expired or could not be decoded.
 func (c *Config) hubUpdate(loadErr error) bool {
 	if hub.Disabled() {
 		return false
@@ -39,7 +49,7 @@ func (c *Config) hubUpdate(loadErr error) bool {
 	switch {
 	case c.hub.Key == "":
 		return true
-	case c.start && os.Getenv(EnvVar("CONNECT")) != "" && !c.hub.Sponsor():
+	case c.start && os.Getenv(EnvVar("CONNECT")) != "" && !c.hub.Sponsor() && hubFileOlder(c.hub.FileName, time.Now(), hubConnectAfter):
 		return true
 	case !hubRenewalDue(c.hub.FileName, time.Now()):
 		return false
@@ -50,8 +60,9 @@ func (c *Config) hubUpdate(loadErr error) bool {
 	}
 }
 
-// touchHubFile sets the modification time of an existing hub config file to now after a failed request, so
-// that the next start within hubRenewAfter does not repeat it. The file contents remain unchanged.
+// touchHubFile sets the modification time of an existing hub config file to the current time of this instance
+// after an automatic request, also when it or the save failed, so that the window starts from the attempt.
+// The file contents remain unchanged.
 func touchHubFile(fileName string) {
 	if _, err := os.Stat(fileName); err != nil {
 		return
