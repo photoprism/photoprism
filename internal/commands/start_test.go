@@ -376,6 +376,32 @@ func TestDetachRequested(t *testing.T) {
 	})
 }
 
+// TestNewDaemonContext checks that the daemon gets the complete command line, also with positional arguments.
+func TestNewDaemonContext(t *testing.T) {
+	conf := config.NewMinimalTestConfig(t.TempDir())
+	orig := os.Args
+	t.Cleanup(func() { os.Args = orig })
+
+	t.Run("Detach", func(t *testing.T) {
+		os.Args = []string{"photoprism", "start", "-d"}
+		dctx := newDaemonContext(conf)
+		assert.Equal(t, []string{"photoprism", "start", "-d"}, dctx.Args)
+		assert.Equal(t, conf.PIDFilename(), dctx.PidFileName)
+		assert.Equal(t, conf.LogFilename(), dctx.LogFileName)
+	})
+	t.Run("PositionalArgument", func(t *testing.T) {
+		os.Args = []string{"photoprism", "--log-level", "info", "start", "-d", "foo"}
+		dctx := newDaemonContext(conf)
+		assert.Equal(t, []string{"photoprism", "--log-level", "info", "start", "-d", "foo"}, dctx.Args)
+	})
+	t.Run("Copy", func(t *testing.T) {
+		os.Args = []string{"photoprism", "start", "-d"}
+		dctx := newDaemonContext(conf)
+		os.Args[1] = "changed"
+		assert.Equal(t, "start", dctx.Args[1])
+	})
+}
+
 // TestDetachDaemon covers starting the daemon with go-daemon and waiting until it has written its process ID.
 func TestDetachDaemon(t *testing.T) {
 	// rebornContext returns a context that starts this test binary as a daemon in the reborn helper mode.
