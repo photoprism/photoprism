@@ -734,8 +734,7 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 			return err
 		}
 
-		_, _, unzipErr := fs.Unzip(zipName, themeDir, 32*fs.MB, 512*fs.MB)
-		return unzipErr
+		return cluster.ExtractTheme(zipName, themeDir)
 	case http.StatusNotFound:
 		return nil
 	case http.StatusUnauthorized, http.StatusForbidden:

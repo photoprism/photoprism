@@ -562,6 +562,61 @@ func TestThemeInstall_Missing(t *testing.T) {
 	assert.Equal(t, nodeThemeDir, c.ThemePath())
 }
 
+func TestThemeInstall_InvalidArchive(t *testing.T) {
+	// The archive holds a valid app.js and an entry that cannot be extracted, so nothing is installed.
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	appJS, _ := zw.Create(fs.AppJsFile)
+	_, _ = appJS.Write([]byte("console.log('theme');\n"))
+	link, _ := zw.CreateHeader(func() *zip.FileHeader {
+		h := &zip.FileHeader{Name: "link.css", Method: zip.Store}
+		h.SetMode(os.ModeSymlink | 0o777)
+		return h
+	}())
+	_, _ = link.Write([]byte("/etc/passwd"))
+	_ = zw.Close()
+
+	var themeAuth string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/v1/cluster/nodes/register":
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+				UUID:    rnd.UUID(),
+				Node:    cluster.Node{ClientID: "cs5gfen1bgxz7s9i", Name: "pp-node-01", Theme: "theme-v1"},
+				Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+				Theme:   "theme-v1",
+			})
+		case "/api/v1/oauth/token":
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]string{"access_token": "tok", "token_type": "Bearer"})
+		case "/api/v1/cluster/theme":
+			themeAuth = r.Header.Get("Authorization")
+			w.Header().Set("Content-Type", "application/zip")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write(buf.Bytes())
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-theme-invalid")
+	c.Options().PortalUrl = srv.URL
+	c.Options().JoinToken = cluster.ExampleJoinToken
+
+	nodeThemeDir := c.NodeThemePath()
+	require.NoError(t, os.RemoveAll(nodeThemeDir))
+
+	_ = InitConfig(c)
+
+	assert.Equal(t, "Bearer tok", themeAuth)
+	assert.NoFileExists(t, filepath.Join(nodeThemeDir, fs.AppJsFile))
+	assert.NoFileExists(t, filepath.Join(nodeThemeDir, "link.css"))
+	assert.Empty(t, c.NodeThemeVersion())
+	assert.NotEqual(t, nodeThemeDir, c.ThemePath())
+}
+
 func TestThemeInstall_VersionMismatch(t *testing.T) {
 	var buf bytes.Buffer
 	zw := zip.NewWriter(&buf)
