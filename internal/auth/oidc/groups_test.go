@@ -274,4 +274,19 @@ func TestGroupsLogString(t *testing.T) {
 		assert.True(t, strings.HasSuffix(result, fmt.Sprintf("g%d and 3 more", GroupsLogMax-1)))
 		assert.NotContains(t, result, fmt.Sprintf("g%d,", GroupsLogMax))
 	})
+	t.Run("Sanitized", func(t *testing.T) {
+		for _, tc := range []struct{ name, group, expected string }{
+			{"C1Control", "\u009b31m", "[U+009B]31m, staff"},
+			{"BidiOverride", "admin\u202eresu", "admin[U+202E]resu, staff"},
+			{"ZeroWidth", "staff\u200b", "staff[U+200B], staff"},
+			{"LineSeparator", "staff\u2028admin", "'staff admin', staff"},
+		} {
+			t.Run(tc.name, func(t *testing.T) {
+				assert.Equal(t, tc.expected, GroupsLogString([]string{tc.group, "staff"}))
+			})
+		}
+	})
+	t.Run("Separator", func(t *testing.T) {
+		assert.Equal(t, "'a, b', c", GroupsLogString([]string{"a, b", "c"}))
+	})
 }

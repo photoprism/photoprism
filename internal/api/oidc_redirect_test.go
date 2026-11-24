@@ -798,7 +798,7 @@ func TestOIDCRedirect_ReceivedGroupsLog(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		conf.Options().OIDCGroup = []string{"photoprism-admin"}
 		app := newOidcTestApp(conf)
-		hook := captureLog(t)
+		hook := captureOidcLog(t, logrus.DebugLevel)
 
 		r := oidcLogin(t, app, "olivia")
 
@@ -809,7 +809,7 @@ func TestOIDCRedirect_ReceivedGroupsLog(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		conf.Options().OIDCGroup = []string{"photoprism-admin"}
 		app := newOidcTestApp(conf)
-		hook := captureLog(t)
+		hook := captureOidcLog(t, logrus.DebugLevel)
 
 		r := oidcLogin(t, app, "oscar")
 
@@ -820,7 +820,7 @@ func TestOIDCRedirect_ReceivedGroupsLog(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		conf.Options().OIDCGroup = []string{"photoprism-admin"}
 		app := newOidcTestApp(conf)
-		hook := captureLog(t)
+		hook := captureOidcLog(t, logrus.DebugLevel)
 
 		r := oidcLogin(t, app, "odette")
 
@@ -831,7 +831,7 @@ func TestOIDCRedirect_ReceivedGroupsLog(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		conf.Options().OIDCGroupRole = []string{"photoprism-admin=admin"}
 		app := newOidcTestApp(conf)
-		hook := captureLog(t)
+		hook := captureOidcLog(t, logrus.DebugLevel)
 
 		r := oidcLogin(t, app, "olivia")
 
@@ -847,21 +847,44 @@ func TestOIDCRedirect_ReceivedGroupsLog(t *testing.T) {
 		t.Cleanup(func() { conf.Options().OIDCGroupClaim = origClaim })
 		conf.Options().OIDCGroupClaim = "roles"
 		app := newOidcTestApp(conf)
-		hook := captureLog(t)
+		hook := captureOidcLog(t, logrus.DebugLevel)
 
 		r := oidcLogin(t, app, "olivia")
 
 		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
 		assert.Equal(t, []string{"oidc: received groups in claim roles (id token 0, userinfo 0, overage false): none"}, oidcReceivedGroupsLog(hook))
 	})
+	t.Run("InfoLevel", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCGroup = []string{"photoprism-admin"}
+		app := newOidcTestApp(conf)
+		hook := captureOidcLog(t, logrus.InfoLevel)
+
+		r := oidcLogin(t, app, "oscar")
+
+		assertOidcLoginRefused(t, r, i18n.ErrForbidden)
+		assert.Empty(t, oidcReceivedGroupsLog(hook))
+	})
 }
 
-// oidcReceivedGroupsLog returns the received groups messages logged at debug level.
+// captureOidcLog replaces the package logger for the duration of a test, logging at the specified level.
+func captureOidcLog(t *testing.T, level logrus.Level) *logtest.Hook {
+	t.Helper()
+
+	hook := captureLog(t)
+	logger, ok := log.(*logrus.Logger)
+	require.True(t, ok)
+	logger.SetLevel(level)
+
+	return hook
+}
+
+// oidcReceivedGroupsLog returns the received groups messages logged at any level.
 func oidcReceivedGroupsLog(hook *logtest.Hook) []string {
 	var messages []string
 
 	for _, entry := range hook.AllEntries() {
-		if entry.Level == logrus.DebugLevel && strings.HasPrefix(entry.Message, "oidc: received groups") {
+		if strings.HasPrefix(entry.Message, "oidc: received groups") {
 			messages = append(messages, entry.Message)
 		}
 	}

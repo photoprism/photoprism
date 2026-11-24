@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
@@ -209,8 +210,10 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Log the received groups at debug level, so a failed group check can be
 		// compared with the configured IDs without decoding the tokens.
-		log.Debugf("oidc: received groups in claim %s (id token %d, userinfo %d, overage %t): %s",
-			clean.Log(groupClaim), idTokenGroupCount, len(moreGroups), groupOverage, oidc.GroupsLogString(oidc.MergeGroups(groups)))
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf("oidc: received groups in claim %s (id token %d, userinfo %d, overage %t): %s",
+				clean.Log(groupClaim), idTokenGroupCount, len(moreGroups), groupOverage, oidc.GroupsLogString(oidc.MergeGroups(groups)))
+		}
 
 		requiredGroups := conf.OIDCGroup()
 
