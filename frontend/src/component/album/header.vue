@@ -25,7 +25,7 @@ export default {
     album: { type: Object, required: true },
     revision: { type: Number, default: 0 },
   },
-  emits: ["appearance", "collapsed", "collapse-progress"],
+  emits: ["collapsed", "collapse-progress"],
   // data initializes independent cover loading and layout state.
   data() {
     return { cover: null, imageUrl: "", frame: {}, tone: albumCoverTone([]), expanded: false, overflowing: false, request: 0, minimumHeight: 0, analyzedHash: "", descriptionHeight: null };
@@ -164,20 +164,17 @@ export default {
         canvas.height = 32;
         const context = canvas.getContext("2d", { willReadFrequently: true });
         context.drawImage(image, 0, 0, 32, 32);
-        const palette = albumCoverTone(context.getImageData(0, 0, 32, 32).data);
-        this.tone = { ...palette, "--album-toolbar-ink": palette["--album-cover-ink"] };
+        this.tone = albumCoverTone(context.getImageData(0, 0, 32, 32).data);
       } catch {
         this.tone = albumCoverTone([]);
       }
       this.analyzedHash = hash;
-      this.$emit("appearance", this.tone);
     },
     // onImageError supplies a readable themed placeholder when no cover can be loaded.
     onImageError() {
       this.analyzedHash = "";
       this.imageUrl = "";
       this.tone = albumCoverTone([]);
-      this.$emit("appearance", this.tone);
     },
     // toggleDescription expands or shortens the caption and measures the resulting frame.
     toggleDescription() {

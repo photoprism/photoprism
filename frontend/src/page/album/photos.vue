@@ -4,7 +4,6 @@
       ref="toolbar"
       :compact="headerCollapsed"
       :collapse-progress="headerProgress"
-      :cover-style="headerStyle"
       :filter="filter"
       :album="model"
       :settings="settings"
@@ -14,7 +13,7 @@
       class="p-page__navigation"
     ></p-album-toolbar>
 
-    <p-album-header :album="model" :revision="headerRevision" @appearance="headerStyle = $event" @collapsed="headerCollapsed = $event" @collapse-progress="headerProgress = $event"></p-album-header>
+    <p-album-header :album="model" :revision="headerRevision" @collapsed="headerCollapsed = $event" @collapse-progress="headerProgress = $event"></p-album-header>
 
     <div v-if="loading" class="p-page__loading">
       <p-loading></p-loading>
@@ -77,7 +76,7 @@ import { ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED } from
 import * as contexts from "options/contexts";
 import PAlbumToolbar from "component/album/toolbar.vue";
 import PAlbumHeader from "component/album/header.vue";
-import { albumOrder, albumCoverTone } from "common/album-view";
+import { albumOrder } from "common/album-view";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
 import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
@@ -137,7 +136,6 @@ export default {
     return {
       headerCollapsed: false,
       headerProgress: 0,
-      headerStyle: albumCoverTone([]),
       headerRevision: 0,
       pendingAlbumUpdate: false,
       searchGeneration: 0,

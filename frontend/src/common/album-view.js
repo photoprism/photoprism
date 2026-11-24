@@ -62,18 +62,25 @@ export function albumCoverFrame(width, height, imageWidth, imageHeight, faces, s
   return { width: w, height: h, left, top };
 }
 
-// albumCoverTone selects contrasting text from sampled RGB pixels.
+// albumCoverTone selects the caption palette from sampled RGB pixels.
 export function albumCoverTone(pixels) {
-  let luminance = 0;
+  let brightPixels = 0;
   for (let i = 0; i < pixels.length; i += 4) {
     const channels = [pixels[i], pixels[i + 1], pixels[i + 2]].map((value) => {
       const s = value / 255;
       return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
     });
-    luminance += 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    const luminance = 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    brightPixels += Number(luminance >= 0.179);
   }
-  const light = pixels.length > 0 && luminance / (pixels.length / 4) > 0.179;
-  return { "--album-cover-ink": light ? "#000" : "#fff", "--album-cover-tint": light ? "255, 255, 255" : "0, 0, 0", "--album-more-color": light ? "#59329a" : "#c2a6ff" };
+  // A wide range of tones can put dark patches under the caption at different widths.
+  const light = pixels.length > 0 && brightPixels >= 0.9 * (pixels.length / 4);
+  return {
+    "--album-cover-ink": light ? "#000" : "#fff",
+    "--album-cover-shade": light ? "0" : "1",
+    "--album-cover-shadow": light ? "255, 255, 255" : "0, 0, 0",
+    "--album-more-color": light ? "#59329a" : "#c2a6ff",
+  };
 }
 
 // albumCollapseProgress fades the toolbar over the final visible portion of the cover.

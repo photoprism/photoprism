@@ -30,16 +30,17 @@ describe("album toolbar controls", () => {
     wrapper.vm.selectSort("size");
     expect(replace).toHaveBeenCalledWith({ query: { q: "cat", order: "size", reverse: "true" } });
   });
-  it("uses one shared toolbar color and normal search colors", async () => {
+  it("uses white cover controls and switches to the theme when searching", async () => {
     mountToolbar();
     await wrapper.setData({ searchOpen: false });
-    await wrapper.setProps({ compact: false, collapseProgress: 0, coverStyle: { "--album-toolbar-ink": "#000" } });
+    await wrapper.setProps({ compact: false, collapseProgress: 0 });
     expect(wrapper.vm.toolbarStyle["--album-toolbar-opacity"]).toBe(0);
-    expect(wrapper.vm.toolbarStyle["--album-toolbar-color"]).toContain("100%");
+    expect(wrapper.vm.toolbarStyle["--album-toolbar-color"]).toContain("white 100%");
     await wrapper.setProps({ collapseProgress: 0.5 });
     expect(wrapper.vm.toolbarStyle["--album-toolbar-opacity"]).toBe(0.5);
     await wrapper.setData({ searchOpen: true });
     expect(wrapper.vm.toolbarStyle["--album-toolbar-opacity"]).toBe(1);
+    expect(wrapper.findComponent({ name: "VTextField" }).props("bgColor")).toBe("surface");
   });
   it("retains the selected view when sorting after a search", () => {
     const { replace } = mountToolbar();
@@ -56,6 +57,24 @@ describe("album toolbar controls", () => {
     wrapper.vm.searchText = "zebra";
     wrapper.vm.submitSearch();
     expect(updateQuery).toHaveBeenLastCalledWith({ q: "zebra" });
+  });
+  it("restores the album toolbar when focus leaves an unsubmitted search", async () => {
+    const { updateQuery } = mountToolbar();
+    await wrapper.setProps({ filter: { q: "" }, compact: false, collapseProgress: 0 });
+    await wrapper.setData({ searchOpen: true, searchText: "zebra" });
+    await wrapper.find(".album-search-field").trigger("focusout");
+    expect(wrapper.find(".album-search-field").exists()).toBe(false);
+    expect(wrapper.find(".action-album-search").exists()).toBe(true);
+    expect(wrapper.vm.searchText).toBe("");
+    expect(updateQuery).not.toHaveBeenCalled();
+  });
+  it("keeps the submitted search visible when focus leaves the field", async () => {
+    const { updateQuery } = mountToolbar();
+    await wrapper.setData({ searchText: "unsubmitted" });
+    await wrapper.find(".album-search-field").trigger("focusout");
+    expect(wrapper.find(".album-search-field").exists()).toBe(true);
+    expect(wrapper.vm.searchText).toBe("cat");
+    expect(updateQuery).not.toHaveBeenCalled();
   });
   it("allows a guest to search and hides search for a share-link visitor", () => {
     mountToolbar("guest");

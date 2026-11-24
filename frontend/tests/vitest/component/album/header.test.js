@@ -58,7 +58,8 @@ describe("album cover header", () => {
     Object.defineProperties(image, { naturalWidth: { value: 1600 }, naturalHeight: { value: 1200 }, complete: { value: true } });
     wrapper.vm.onImageLoad();
     expect(wrapper.vm.tone["--album-cover-ink"]).toBe("#000");
-    expect(wrapper.vm.tone["--album-toolbar-ink"]).toBe("#000");
+    await wrapper.vm.$nextTick();
+    expect(wrapper.element.style.getPropertyValue("--album-cover-shade")).toBe("0");
     context.getImageData.mockReturnValue({ data: new Uint8ClampedArray([0, 0, 0, 255]) });
     wrapper.vm.toggleDescription();
     await wrapper.vm.$nextTick();
@@ -75,7 +76,7 @@ describe("album cover header", () => {
     await wrapper.find(".album-header-more").trigger("click");
     expect(wrapper.find("p").classes()).not.toContain("is-shortened");
     expect(wrapper.find(".album-header-more").attributes("aria-expanded")).toBe("true");
-    expect(wrapper.emitted("appearance").at(-1)[0]["--album-cover-ink"]).toBe("#fff");
+    expect(wrapper.element.style.getPropertyValue("--album-cover-ink")).toBe("#fff");
     expect(wrapper.find("img").exists()).toBe(false);
   });
 });

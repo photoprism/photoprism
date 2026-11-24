@@ -50,15 +50,25 @@ describe("album cover framing", () => {
     expect(albumCoverFrame(100, 100, 200, 100)).toEqual({ width: 200, height: 100, left: -50, top: 0 });
     expect(albumCoverFrame(0, 100, 200, 100).width).toBe(0);
   });
-  it("chooses dark text for white covers and light text for black covers", () => {
-    expect(albumCoverTone([255, 255, 255, 255])["--album-cover-ink"]).toBe("#000");
-    expect(albumCoverTone([0, 0, 0, 255])["--album-cover-ink"]).toBe("#fff");
-    expect(albumCoverTone([])["--album-cover-ink"]).toBe("#fff");
+  it("uses dark text and no caption shade on a bright cover", () => {
+    expect(albumCoverTone([255, 255, 255, 255])).toMatchObject({
+      "--album-cover-ink": "#000",
+      "--album-cover-shade": "0",
+      "--album-cover-shadow": "255, 255, 255",
+    });
   });
-  it("maintains 4.5:1 contrast at both extremes under the caption tint", () => {
-    const linear = (s) => s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-    expect(1.05 / (linear(1 - 0.72) + 0.05)).toBeGreaterThanOrEqual(4.5);
-    expect((linear(0.72) + 0.05) / 0.05).toBeGreaterThanOrEqual(4.5);
+  it("uses white text and a dark caption shade on dark or missing covers", () => {
+    for (const pixels of [[0, 0, 0, 255], []]) {
+      expect(albumCoverTone(pixels)).toMatchObject({
+        "--album-cover-ink": "#fff",
+        "--album-cover-shade": "1",
+        "--album-cover-shadow": "0, 0, 0",
+      });
+    }
+  });
+  it("uses white text on mixed covers with dark areas", () => {
+    const pixels = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255];
+    expect(albumCoverTone(pixels)).toMatchObject({ "--album-cover-ink": "#fff", "--album-cover-shade": "1" });
   });
 });
 

@@ -6,6 +6,7 @@
     class="p-photo-toolbar p-album-toolbar"
     :class="{ 'album-navigation--cover': !compact && !searchOpen }"
     accept-charset="UTF-8"
+    @focusout="onSearchFocusOut"
     @submit.prevent="submitSearch"
   >
     <v-toolbar flat :style="toolbarStyle" :class="{ 'album-toolbar--cover': !compact && !searchOpen }" density="compact" class="page-toolbar">
@@ -21,11 +22,12 @@
         single-line
         rounded="pill"
         variant="solo-filled"
-        color="surface-variant"
+        bg-color="surface"
+        color="on-surface"
         autocorrect="off"
         autocapitalize="none"
         density="compact"
-        class="input-search background-inherit elevation-0 album-search-field"
+        class="input-search elevation-0 album-search-field"
         @click:clear="clearSearch"
         @keydown.esc.stop.prevent="closeSearch"
       ></v-text-field>
@@ -36,38 +38,40 @@
         </router-link>
       </v-toolbar-title>
 
-      <v-btn v-if="canSearch && !searchOpen" icon="mdi-magnify" :title="$gettext('Search This Album')" :aria-label="$gettext('Search This Album')" class="action-album-search" @click="openSearch"></v-btn>
-      <v-menu>
-        <template #activator="{ props: menuProps }">
-          <v-btn v-bind="menuProps" icon :title="$gettext('Sort Order')" :aria-label="$gettext('Sort Order')" class="action-album-sort">
-            <v-icon>mdi-sort</v-icon><v-icon v-if="activeSortOption?.reversible" size="14">{{ sortDescending(activeSortOption) ? 'mdi-arrow-down' : 'mdi-arrow-up' }}</v-icon>
-          </v-btn>
-        </template>
-        <v-list class="album-sort-menu" density="compact">
-          <v-list-item v-for="item in sorting" :key="item.value" :active="isActiveSort(item)" :class="`action-album-sort-${item.value}`" @click="selectSort(item.value)">
-            <v-list-item-title>{{ item.text }}</v-list-item-title>
-            <template v-if="item.reversible" #append>
-              <v-icon size="small">{{ sortDescending(item) ? 'mdi-arrow-down' : 'mdi-arrow-up' }}</v-icon>
-            </template>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <div class="album-toolbar-actions">
+        <v-btn v-if="canSearch && !searchOpen" icon="mdi-magnify" :title="$gettext('Search This Album')" :aria-label="$gettext('Search This Album')" class="action-album-search" @click="openSearch"></v-btn>
+        <v-menu>
+          <template #activator="{ props: menuProps }">
+            <v-btn v-bind="menuProps" icon :title="$gettext('Sort Order')" :aria-label="$gettext('Sort Order')" class="action-album-sort">
+              <v-icon>mdi-sort</v-icon><v-icon v-if="activeSortOption?.reversible" size="14">{{ sortDescending(activeSortOption) ? 'mdi-arrow-down' : 'mdi-arrow-up' }}</v-icon>
+            </v-btn>
+          </template>
+          <v-list class="album-sort-menu" density="compact">
+            <v-list-item v-for="item in sorting" :key="item.value" :active="isActiveSort(item)" :class="`action-album-sort-${item.value}`" @click="selectSort(item.value)">
+              <v-list-item-title>{{ item.text }}</v-list-item-title>
+              <template v-if="item.reversible" #append>
+                <v-icon size="small">{{ sortDescending(item) ? 'mdi-arrow-down' : 'mdi-arrow-up' }}</v-icon>
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-menu>
 
-      <v-menu>
-        <template #activator="{ props: menuProps }">
-          <v-btn v-bind="menuProps" :title="$gettext('Toggle View')" :aria-label="$gettext('Toggle View')" class="action-album-view" icon>
-            <v-icon>{{ settings.view === 'list' ? 'mdi-view-list' : settings.view === 'mosaic' ? 'mdi-view-comfy' : 'mdi-view-column' }}</v-icon>
-            <v-icon class="album-view-arrow" size="12">mdi-menu-down</v-icon>
-          </v-btn>
-        </template>
-        <v-list density="compact">
-          <v-list-item :active="settings.view === 'cards'" prepend-icon="mdi-view-column" :title="$gettext('Cards')" class="action-view-cards" @click="setView('cards')"></v-list-item>
-          <v-list-item v-if="listView" :active="settings.view === 'list'" prepend-icon="mdi-view-list" :title="$gettext('List')" class="action-view-list" @click="setView('list')"></v-list-item>
-          <v-list-item :active="settings.view === 'mosaic'" prepend-icon="mdi-view-comfy" :title="$gettext('Mosaic')" class="action-view-mosaic" @click="setView('mosaic')"></v-list-item>
-        </v-list>
-      </v-menu>
+        <v-menu>
+          <template #activator="{ props: menuProps }">
+            <v-btn v-bind="menuProps" :title="$gettext('Toggle View')" :aria-label="$gettext('Toggle View')" class="action-album-view" icon>
+              <v-icon>{{ settings.view === 'list' ? 'mdi-view-list' : settings.view === 'mosaic' ? 'mdi-view-comfy' : 'mdi-view-column' }}</v-icon>
+              <v-icon class="album-view-arrow" size="12">mdi-menu-down</v-icon>
+            </v-btn>
+          </template>
+          <v-list density="compact">
+            <v-list-item :active="settings.view === 'cards'" prepend-icon="mdi-view-column" :title="$gettext('Cards')" class="action-view-cards" @click="setView('cards')"></v-list-item>
+            <v-list-item v-if="listView" :active="settings.view === 'list'" prepend-icon="mdi-view-list" :title="$gettext('List')" class="action-view-list" @click="setView('list')"></v-list-item>
+            <v-list-item :active="settings.view === 'mosaic'" prepend-icon="mdi-view-comfy" :title="$gettext('Mosaic')" class="action-view-mosaic" @click="setView('mosaic')"></v-list-item>
+          </v-list>
+        </v-menu>
 
-      <p-action-menu :items="menuActions" button-class="ms-1"></p-action-menu>
+        <p-action-menu :items="menuActions" button-class="ms-1"></p-action-menu>
+      </div>
     </v-toolbar>
 
     <p-share-dialog :visible="dialog.share" :model="album" @upload="webdavUpload" @close="dialog.share = false"></p-share-dialog>
@@ -109,7 +113,6 @@ export default {
   props: {
     compact: { type: Boolean, default: true },
     collapseProgress: { type: Number, default: 1 },
-    coverStyle: { type: Object, default: () => ({}) },
     album: {
       type: Object,
       default: () => {},
@@ -167,9 +170,8 @@ export default {
     toolbarStyle() {
       const progress = this.searchOpen ? 1 : this.collapseProgress;
       return {
-        ...this.coverStyle,
         "--album-toolbar-opacity": progress,
-        "--album-toolbar-color": `color-mix(in srgb, var(--album-toolbar-ink, var(--album-cover-ink, #fff)) ${100 - progress * 100}%, rgb(var(--v-theme-on-secondary)) ${progress * 100}%)`,
+        "--album-toolbar-color": `color-mix(in srgb, white ${100 - progress * 100}%, rgb(var(--v-theme-on-secondary)) ${progress * 100}%)`,
       };
     },
     // canSearch distinguishes signed-in album readers from share-link visitors.
@@ -223,7 +225,14 @@ export default {
       this.searchText = "";
       this.updateQuery({ q: "" });
     },
-    // closeSearch closes an empty field or restores the submitted query.
+    // onSearchFocusOut dismisses the draft when focus leaves the search controls.
+    onSearchFocusOut(event) {
+      const field = event.target.closest(".album-search-field");
+      if (field && !field.contains(event.relatedTarget)) {
+        this.closeSearch();
+      }
+    },
+    // closeSearch restores the submitted query and closes the field when no query is active.
     closeSearch() {
       this.searchText = this.filter.q || "";
       this.searchOpen = !!this.filter.q;

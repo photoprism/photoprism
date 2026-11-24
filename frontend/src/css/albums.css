@@ -1,6 +1,5 @@
 .p-album-header {
     --album-cover-ink: #fff;
-    --album-cover-tint: 0, 0, 0;
     position: relative;
     display: flex;
     align-items: flex-end;
@@ -36,13 +35,17 @@
     width: 100%;
     padding: 24px 28px 34px;
     text-align: start;
+    text-shadow:
+        0 0 2px rgba(var(--album-cover-shadow, 0, 0, 0), 0.85),
+        0 0 8px rgba(var(--album-cover-shadow, 0, 0, 0), 0.65);
 }
 
 .album-header-copy::before {
     position: absolute;
     z-index: -1;
-    inset: -140px 0 0;
-    background: linear-gradient(to top, rgba(var(--album-cover-tint), 0.86), rgba(var(--album-cover-tint), 0.72) calc(100% - 140px), transparent);
+    inset: -100px 0 0;
+    background: linear-gradient(to top, rgb(0 0 0 / 68%), rgb(0 0 0 / 60%) calc(100% - 100px), transparent);
+    opacity: var(--album-cover-shade, 1);
     content: "";
 }
 
@@ -80,6 +83,7 @@
     gap: 4px;
     margin-top: 10px;
     color: var(--album-more-color, var(--album-cover-ink));
+    text-shadow: inherit;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -178,10 +182,31 @@
     box-shadow: none !important;
 }
 
-.p-album-toolbar .v-toolbar .v-btn,
-.p-album-toolbar .v-toolbar .v-icon,
+.p-album-toolbar .album-toolbar-actions .v-btn,
+.p-album-toolbar .album-toolbar-actions .v-icon,
 .p-album-toolbar .album-back-link {
     color: inherit !important;
+}
+
+.album-toolbar-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+}
+
+.album-toolbar--cover :is(.album-toolbar-actions, .album-back-link) {
+    background-color: rgb(0 0 0 / calc(0.65 * (1 - var(--album-toolbar-opacity, 0))));
+    border-radius: 999px;
+}
+
+.album-toolbar--cover .album-back-link {
+    width: fit-content;
+    min-height: 36px;
+    padding-inline: 6px 12px;
+}
+
+.album-search-field .v-field {
+    color: rgb(var(--v-theme-on-surface));
 }
 
 .album-header-copy,
