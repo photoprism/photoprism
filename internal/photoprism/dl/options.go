@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"os/exec"
 	"path"
@@ -22,8 +21,6 @@ type Options struct {
 	PlaylistEnd        uint   // --playlist-end
 	FlatPlaylist       bool   // --flat-playlist, faster fetching but with less video info for playlists
 	Downloader         string // --downloader
-	DownloadThumbnail  bool
-	DownloadSubtitles  bool
 	DownloadSections   string // --download-sections
 	Impersonate        string // --impersonate
 	ProxyUrl           string // --proxy URL  http://host:port or socks5://host:port
@@ -35,7 +32,6 @@ type Options struct {
 	// This field remains for tests and non-container scenarios.
 	AddHeaders        []string                      // --add-header "Name: Value" (repeatable)
 	StderrFn          func(cmd *exec.Cmd) io.Writer // if not nil, function to get Writer for stderr
-	HttpClient        *http.Client                  // Client for download thumbnail and subtitles (nil use http.DefaultClient)
 	MergeOutputFormat string                        // --merge-output-format
 	RemuxVideo        string                        // --remux-video
 	RecodeVideo       string                        // --recode-video

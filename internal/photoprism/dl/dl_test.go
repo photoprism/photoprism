@@ -11,18 +11,16 @@ import (
 )
 
 const (
-	testVideoRawURL          = "https://www.youtube.com/watch?v=fD6VYfy3B2s"
-	playlistRawURL           = "https://soundcloud.com/mattheis/sets/kindred-phenomena"
-	channelRawURL            = "https://www.youtube.com/channel/UCHDm-DKoMyJxKVgwGmuTaQA"
-	subtitlesTestVideoRawURL = "https://www.youtube.com/watch?v=QRS8MkLhQmM"
+	testVideoRawURL = "https://www.youtube.com/watch?v=fD6VYfy3B2s"
+	playlistRawURL  = "https://soundcloud.com/mattheis/sets/kindred-phenomena"
+	channelRawURL   = "https://www.youtube.com/channel/UCHDm-DKoMyJxKVgwGmuTaQA"
 )
 
 func TestPlaylist(t *testing.T) {
 	t.Skip("skipping test because playlist URL is unreliable.")
 
 	ydlResult, ydlResultErr := NewMetadata(context.Background(), playlistRawURL, Options{
-		Type:              TypePlaylist,
-		DownloadThumbnail: false,
+		Type: TypePlaylist,
 	})
 
 	if ydlResultErr != nil {
@@ -52,8 +50,7 @@ func TestChannel(t *testing.T) {
 		context.Background(),
 		channelRawURL,
 		Options{
-			Type:              TypeChannel,
-			DownloadThumbnail: false,
+			Type: TypeChannel,
 		},
 	)
 
@@ -98,8 +95,7 @@ func TestPlaylistWithPrivateVideo(t *testing.T) {
 
 	plRawURL := "https://www.youtube.com/playlist?list=PLX0g748fkegS54oiDN4AXKl7BR7mLIydP"
 	ydlResult, ydlResultErr := NewMetadata(context.Background(), plRawURL, Options{
-		Type:              TypePlaylist,
-		DownloadThumbnail: false,
+		Type: TypePlaylist,
 	})
 
 	if ydlResultErr != nil {
@@ -113,46 +109,13 @@ func TestPlaylistWithPrivateVideo(t *testing.T) {
 	}
 }
 
-func TestSubtitles(t *testing.T) {
-	t.Skip("skip youtube for now")
-
-	ydlResult, ydlResultErr := NewMetadata(
-		context.Background(),
-		subtitlesTestVideoRawURL,
-		Options{
-			DownloadSubtitles: true,
-		})
-
-	if ydlResultErr != nil {
-		t.Errorf("failed to download: %s", ydlResultErr)
-	}
-
-	for _, subtitles := range ydlResult.Info.Subtitles {
-		for _, subtitle := range subtitles {
-			if subtitle.Ext == "" {
-				t.Errorf("%s: %s: expected extension", ydlResult.Info.URL, subtitle.Language)
-			}
-			if subtitle.Language == "" {
-				t.Errorf("%s: %s: expected language", ydlResult.Info.URL, subtitle.Language)
-			}
-			if subtitle.URL == "" {
-				t.Errorf("%s: %s: expected url", ydlResult.Info.URL, subtitle.Language)
-			}
-			if len(subtitle.Bytes) == 0 {
-				t.Errorf("%s: %s: expected bytes", ydlResult.Info.URL, subtitle.Language)
-			}
-		}
-	}
-}
-
 func TestErrorNotASingleEntry(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipped download test in short mode")
 	}
 
 	_, ydlResultErr := NewMetadata(context.Background(), playlistRawURL, Options{
-		Type:              TypeSingle,
-		DownloadThumbnail: false,
+		Type: TypeSingle,
 	})
 
 	skipIfRefused(t, ydlResultErr)

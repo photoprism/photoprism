@@ -106,8 +106,7 @@ func TestErrorNotAPlaylist(t *testing.T) {
 	}
 
 	_, ydlResultErr := NewMetadata(context.Background(), testVideoRawURL, Options{
-		Type:              TypePlaylist,
-		DownloadThumbnail: false,
+		Type: TypePlaylist,
 	})
 	if ydlResultErr != ErrNotAPlaylist {
 		t.Errorf("expected is playlist error, got %s", ydlResultErr)
@@ -163,9 +162,7 @@ func TestParseInfo(t *testing.T) {
 	} {
 		t.Run(c.url, func(t *testing.T) {
 			ctx, cancelFn := context.WithCancel(context.Background())
-			ydlResult, err := NewMetadata(ctx, c.url, Options{
-				DownloadThumbnail: true,
-			})
+			ydlResult, err := NewMetadata(ctx, c.url, Options{})
 			if err != nil {
 				cancelFn()
 				t.Errorf("failed to parse: %v", err)
@@ -178,10 +175,6 @@ func TestParseInfo(t *testing.T) {
 
 			if yi.Title != c.expectedTitle {
 				t.Errorf("expected title %q got %q", c.expectedTitle, yi.Title)
-			}
-
-			if yi.Thumbnail != "" && len(yi.ThumbnailBytes) == 0 {
-				t.Errorf("expected thumbnail bytes")
 			}
 
 			var dummy map[string]interface{}
