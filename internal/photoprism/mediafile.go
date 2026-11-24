@@ -907,7 +907,7 @@ func (m *MediaFile) Extension() string {
 		return ""
 	}
 
-	return strings.ToLower(filepath.Ext(m.fileName))
+	return fs.LowerExt(m.fileName)
 }
 
 // IsPreviewImage return true if this media file is a JPEG or PNG image.

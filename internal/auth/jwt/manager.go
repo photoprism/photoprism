@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"crypto/ed25519"
-	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
@@ -374,8 +373,9 @@ func sortKeys(keys []*Key) {
 
 // generateKey creates a fresh Ed25519 key pair, persists it, and returns a clone.
 func (m *Manager) generateKey() (*Key, error) {
-	seed := make([]byte, ed25519.SeedSize)
-	if _, err := rand.Read(seed); err != nil {
+	seed, err := rnd.RandomBytes(ed25519.SeedSize)
+
+	if err != nil {
 		return nil, err
 	}
 

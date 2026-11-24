@@ -3,14 +3,13 @@ package server
 import (
 	"mime"
 	"net/http"
-	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -153,7 +152,7 @@ func siblingExists(fs http.FileSystem, p string) bool {
 // contentTypeForName returns the MIME type for a filename via the stdlib
 // mime package, or "" when the extension is unknown.
 func contentTypeForName(name string) string {
-	ext := strings.ToLower(filepath.Ext(name))
+	ext := fs.LowerExt(name)
 	if ext == "" {
 		return ""
 	}

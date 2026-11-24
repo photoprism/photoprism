@@ -1,7 +1,6 @@
 package config
 
 import (
-	"crypto/sha256"
 	_ "embed"
 	"fmt"
 	"net"
@@ -15,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 //go:embed robots.txt
@@ -48,8 +48,7 @@ func (c *Config) BasePath() string {
 
 // StorageNamespace returns a hashed namespace key for client-side storage.
 func (c *Config) StorageNamespace() string {
-	sum := sha256.Sum256([]byte(c.SiteUrl()))
-	return fmt.Sprintf("%x", sum)
+	return rnd.Sha256([]byte(c.SiteUrl()))
 }
 
 // ApiUri returns the api URI.

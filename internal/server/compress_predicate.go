@@ -1,12 +1,12 @@
 package server
 
 import (
-	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/proxy"
 )
 
@@ -84,7 +84,7 @@ func NewShouldCompressFn(conf *config.Config) func(c *gin.Context) bool {
 		}
 
 		// Exclude known already-compressed/binary extensions.
-		if ext := strings.ToLower(filepath.Ext(path)); ext != "" {
+		if ext := fs.LowerExt(path); ext != "" {
 			if _, ok := excludedExtensions[ext]; ok {
 				return false
 			}

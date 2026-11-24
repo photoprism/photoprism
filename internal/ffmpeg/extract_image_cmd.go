@@ -2,15 +2,14 @@ package ffmpeg
 
 import (
 	"os/exec"
-	"path/filepath"
-	"strings"
 
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // ExtractImageCmd extracts a still image from the specified source video file.
 func ExtractImageCmd(videoName, imageName string, opt *encode.Options) *exec.Cmd {
-	imageExt := strings.ToLower(filepath.Ext(imageName))
+	imageExt := fs.LowerExt(imageName)
 
 	switch imageExt {
 	case ".png":

@@ -25,6 +25,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -265,7 +266,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
 		req, _ := http.NewRequest(http.MethodPost, endpoint.String(), strings.NewReader(string(bodyBytes)))
-		req.Header.Set("Authorization", "Bearer "+authToken)
+		header.SetAuthorization(req, authToken)
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Accept", "application/json")
 
@@ -687,7 +688,7 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/theme"
 
 	req, _ := http.NewRequest(http.MethodGet, endpoint.String(), nil)
-	req.Header.Set("Authorization", "Bearer "+bearer)
+	header.SetAuthorization(req, bearer)
 	req.Header.Set("Accept", "application/zip")
 
 	// Endpoint is derived from the configured Portal URL.

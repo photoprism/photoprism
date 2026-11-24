@@ -357,7 +357,7 @@ func videoTrimCmd(ffmpegBin, srcName, destName string, start, duration time.Dura
 
 // videoTrimFastStart reports whether the trim output should enable faststart for MP4/MOV containers.
 func videoTrimFastStart(destName string) bool {
-	switch strings.ToLower(filepath.Ext(destName)) {
+	switch fs.LowerExt(destName) {
 	case fs.ExtMp4, fs.ExtMov, fs.ExtQT, ".m4v":
 		return true
 	default:

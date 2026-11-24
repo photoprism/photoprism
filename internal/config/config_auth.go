@@ -1,7 +1,6 @@
 package config
 
 import (
-	"crypto/rand"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -17,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -286,8 +286,8 @@ func (c *Config) TokenSigningKey() []byte {
 
 		// Leave the key unset on failure: a partially filled buffer would sign with a guessable — worst
 		// case all-zero — key, which is strictly worse than rejecting every token.
-		key := make([]byte, tokens.KeyLen)
-		if _, err := rand.Read(key); err != nil {
+		key, err := rnd.RandomBytes(tokens.KeyLen)
+		if err != nil {
 			event.SystemError([]string{"config", "token signing key", "generate", "%s"}, clean.ErrorFull(err))
 			return
 		}
