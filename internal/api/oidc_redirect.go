@@ -194,6 +194,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		groups, groupOverage := oidc.GroupsFromClaims(idTokenClaims, groupClaim)
 		moreGroups, moreOverage := oidc.GroupsFromClaims(userInfo.Claims, groupClaim)
+		idTokenGroupCount := len(groups)
 
 		// Merge groups, since some IDPs split memberships across ID tokens and user info.
 		// Appending is safe because downstream helpers normalize and deduplicate.
@@ -205,6 +206,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		if moreOverage {
 			groupOverage = true
 		}
+
+		// Log the received groups at debug level, so a failed group check can be
+		// compared with the configured IDs without decoding the tokens.
+		log.Debugf("oidc: received groups in claim %s (id token %d, userinfo %d, overage %t): %s",
+			clean.Log(groupClaim), idTokenGroupCount, len(moreGroups), groupOverage, oidc.GroupsLogString(oidc.MergeGroups(groups)))
 
 		requiredGroups := conf.OIDCGroup()
 

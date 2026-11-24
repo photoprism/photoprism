@@ -1,6 +1,7 @@
 package oidc
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -249,5 +250,28 @@ func TestEditionRole(t *testing.T) {
 	})
 	t.Run("NotClusterInstanceRole", func(t *testing.T) {
 		assert.Equal(t, acl.RoleGuest, editionRole(acl.RoleVisitor))
+	})
+}
+
+func TestGroupsLogString(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "none", GroupsLogString(nil))
+	})
+	t.Run("List", func(t *testing.T) {
+		assert.Equal(t, "4c0bfcf4-4918-4a16-8f34-c0a8916b928d, stg-sdd-media-viewer",
+			GroupsLogString([]string{"4c0bfcf4-4918-4a16-8f34-c0a8916b928d", "stg-sdd-media-viewer"}))
+	})
+	t.Run("Capped", func(t *testing.T) {
+		groups := make([]string, GroupsLogMax+3)
+
+		for i := range groups {
+			groups[i] = fmt.Sprintf("g%d", i)
+		}
+
+		result := GroupsLogString(groups)
+
+		assert.True(t, strings.HasPrefix(result, "g0, g1, "))
+		assert.True(t, strings.HasSuffix(result, fmt.Sprintf("g%d and 3 more", GroupsLogMax-1)))
+		assert.NotContains(t, result, fmt.Sprintf("g%d,", GroupsLogMax))
 	})
 }

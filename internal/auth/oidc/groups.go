@@ -1,6 +1,7 @@
 package oidc
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -213,4 +214,22 @@ func uniqueGroups(values []string) []string {
 	}
 
 	return result
+}
+
+// GroupsLogMax caps how many group identifiers GroupsLogString includes.
+const GroupsLogMax = 50
+
+// GroupsLogString returns normalized group identifiers, as returned by GroupsFromClaims or
+// MergeGroups, as a comma-separated list for debug logs, limited to GroupsLogMax entries with
+// the number of omitted entries appended. NormalizeGroupID has removed control characters.
+func GroupsLogString(groups []string) string {
+	if len(groups) == 0 {
+		return "none"
+	}
+
+	if len(groups) <= GroupsLogMax {
+		return strings.Join(groups, ", ")
+	}
+
+	return strings.Join(groups[:GroupsLogMax], ", ") + fmt.Sprintf(" and %d more", len(groups)-GroupsLogMax)
 }
