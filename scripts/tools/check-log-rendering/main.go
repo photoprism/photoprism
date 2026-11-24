@@ -350,7 +350,7 @@ func rendered(expr ast.Expr, imports map[string]string) bool {
 				}
 			}
 			return true
-		case modulePath + "pkg/clean.Log", modulePath + "pkg/clean.LogQuote", modulePath + "pkg/clean.LogLower", modulePath + "pkg/clean.LogNames", modulePath + "pkg/clean.LogUri", modulePath + "pkg/clean.Error", modulePath + "pkg/log/status.Error":
+		case modulePath + "pkg/clean.Log", modulePath + "pkg/clean.LogQuote", modulePath + "pkg/clean.LogLower", modulePath + "pkg/clean.LogNames", modulePath + "pkg/clean.LogNamesN", modulePath + "pkg/clean.LogUri", modulePath + "pkg/clean.Error", modulePath + "pkg/log/status.Error":
 			return !credential(expr, imports)
 		}
 	}

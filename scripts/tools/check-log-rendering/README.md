@@ -1,6 +1,6 @@
 # Log Rendering Review Tool
 
-**Last Updated:** September 21, 2026
+**Last Updated:** November 24, 2026
 
 ## Purpose & Scope
 
@@ -40,7 +40,7 @@ candidate, not a demonstrated defect or an instruction to scrub away useful diag
 
 ## Recognized Renderers
 
-Whole-value `clean.Log`, `LogQuote`, `LogLower`, `LogNames`, `LogUri`, `Error` and `status.Error`
+Whole-value `clean.Log`, `LogQuote`, `LogLower`, `LogNames`, `LogNamesN`, `LogUri`, `Error` and `status.Error`
 calls are recognized by import path. `clean.LogUri` is the composed form for a URL, and counts for
 both decisions. `clean.UriRedacted`, `clean.UriRedactedText` and `clean.FileNameRedacted` are
 redactors rather than text renderers: a bare call remains a rendering candidate, while satisfying

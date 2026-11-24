@@ -1,7 +1,6 @@
 package oidc
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -219,23 +218,12 @@ func uniqueGroups(values []string) []string {
 // GroupsLogMax caps how many group identifiers GroupsLogString includes.
 const GroupsLogMax = 50
 
-// GroupsLogString returns group identifiers as a comma-separated list for debug logs, each sanitized
-// with clean.Log, limited to GroupsLogMax entries with the number of omitted entries appended.
+// GroupsLogString returns group identifiers as a comma-separated list for debug logs, sanitized
+// with clean.LogNamesN and limited to GroupsLogMax entries, or "none" if there are none.
 func GroupsLogString(groups []string) string {
 	if len(groups) == 0 {
 		return "none"
 	}
 
-	kept := min(len(groups), GroupsLogMax)
-	out := make([]string, 0, kept)
-
-	for _, group := range groups[:kept] {
-		out = append(out, clean.Log(group))
-	}
-
-	if omitted := len(groups) - kept; omitted > 0 {
-		return strings.Join(out, ", ") + fmt.Sprintf(" and %d more", omitted)
-	}
-
-	return strings.Join(out, ", ")
+	return clean.LogNamesN(groups, GroupsLogMax)
 }

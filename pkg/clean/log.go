@@ -22,11 +22,21 @@ const (
 // the length of the message follows the two limits and not the length of the list. Each name is
 // bounded in bytes rather than characters, which keeps a multi-byte name inside the same budget.
 func LogNames(names []string) string {
+	return LogNamesN(names, LogNamesLimit)
+}
+
+// LogNamesN sanitizes a list of names for logging like LogNames, rendering at most limit names and
+// counting the rest. A limit below 1 uses LogNamesLimit.
+func LogNamesN(names []string, limit int) string {
 	if len(names) == 0 {
 		return "''"
 	}
 
-	kept := min(len(names), LogNamesLimit)
+	if limit < 1 {
+		limit = LogNamesLimit
+	}
+
+	kept := min(len(names), limit)
 	out := make([]string, 0, kept)
 
 	for _, name := range names[:kept] {

@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 func TestGroupsFromClaims(t *testing.T) {
@@ -285,6 +286,21 @@ func TestGroupsLogString(t *testing.T) {
 				assert.Equal(t, tc.expected, GroupsLogString([]string{tc.group, "staff"}))
 			})
 		}
+	})
+	t.Run("LongEntry", func(t *testing.T) {
+		// A long entry is shortened in the middle, so its end stays visible.
+		result := GroupsLogString([]string{strings.Repeat("a", 300) + "-admins", "staff"})
+		entry := strings.TrimSuffix(result, ", staff")
+		assert.LessOrEqual(t, len(entry), clean.LogNamesBytes)
+		assert.True(t, strings.HasPrefix(entry, "aaa"), entry)
+		assert.True(t, strings.HasSuffix(entry, "-admins"), entry)
+		assert.Contains(t, entry, "\u2026")
+	})
+	t.Run("LongMarkers", func(t *testing.T) {
+		// The middle cut keeps whole markers when the rendered form exceeds the budget.
+		entry := GroupsLogString([]string{strings.Repeat("\u009b", 200)})
+		assert.LessOrEqual(t, len(entry), clean.LogNamesBytes)
+		assert.Regexp(t, `^(\[U\+009B\])+\x{2026}(\[U\+009B\])+$`, entry)
 	})
 	t.Run("Separator", func(t *testing.T) {
 		assert.Equal(t, "'a, b', c", GroupsLogString([]string{"a, b", "c"}))
