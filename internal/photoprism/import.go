@@ -751,13 +751,7 @@ func relBelow(dir, folder string, fold bool) (string, bool) {
 		return filepath.Join(folderNames[len(dirNames):]...), true
 	}
 
-	rel, err := filepath.Rel(dir, folder)
-
-	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
-		return "", false
-	}
-
-	return rel, true
+	return fs.RelInside(folder, dir)
 }
 
 // pathNames returns the names in a cleaned path, starting with an empty name if it is absolute.

@@ -9,7 +9,6 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -216,9 +215,7 @@ func resetSidecarOverlap(c *config.Config) string {
 			continue
 		}
 
-		rel, err := filepath.Rel(sidecarPath, resolvedResetPath(dir))
-
-		if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		if _, ok := fs.RelInside(resolvedResetPath(dir), sidecarPath); ok {
 			return dir
 		}
 	}
