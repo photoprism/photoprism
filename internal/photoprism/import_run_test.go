@@ -69,6 +69,7 @@ func TestImport_Run(t *testing.T) {
 		dir := stage(t)
 		done, err := imp.Run(ImportOptionsUpload(dir, ""))
 		assert.ErrorIs(t, err, ErrImportBusy)
+		assert.ErrorIs(t, err, ErrFaceMigration)
 		assert.Empty(t, done)
 		assert.Empty(t, imp.Start(ImportOptionsUpload(dir, "")))
 		lock.Release()
@@ -81,6 +82,7 @@ func TestImport_Run(t *testing.T) {
 		opt.NonBlocking = false
 		done, err := imp.Run(opt)
 		assert.ErrorIs(t, err, ErrImportBusy)
+		assert.NotErrorIs(t, err, ErrFaceMigration, "another task is not a face migration")
 		assert.Empty(t, done)
 		opt.NonBlocking = true
 		done, err = imp.Run(opt)
@@ -203,4 +205,13 @@ func TestImport_Run(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Zero(t, done.Processed())
 	})
+}
+
+// TestImportBusyError pins the text and identity of the error an import waiting for a face migration returns.
+func TestImportBusyError(t *testing.T) {
+	assert.Equal(t, "import waiting for the face migration to complete", errImportMigration.Error())
+	assert.ErrorIs(t, errImportMigration, ErrImportBusy)
+	assert.ErrorIs(t, errImportMigration, ErrFaceMigration)
+	assert.NotErrorIs(t, ErrImportBusy, ErrFaceMigration)
+	assert.Equal(t, "index waiting for the face migration to complete", ErrIndexBusy.Error())
 }

@@ -82,8 +82,10 @@ func FindAnySession(id string) (*Session, error) {
 		// Set session activity timestamp and update the last_active column in the sessions table.
 		found.UpdateLastActive(true)
 
-		// Cache the session only with its client and owner resolved, or with a client that no longer exists.
+		// Cache the session with its client and owner resolved, or with a client that no longer exists, after
+		// resolving its account, which CacheSession reads before registering the preview token.
 		if err := found.resolveClient(); err == nil || errors.Is(err, ErrClientNotFound) {
+			found.GetUser()
 			CacheSession(found, SessionCacheDuration)
 		}
 
@@ -160,7 +162,8 @@ func CacheSession(s *Session, d time.Duration) {
 		d = SessionCacheDuration
 	}
 
-	if s.PreviewToken != "" {
+	// Register the preview token only for an active account, a link visitor, or a session without an account.
+	if s.PreviewToken != "" && ((s.user == nil && (s.UserUID == "" || s.UserUID == Visitor.UserUID)) || (s.user != nil && !s.user.isInactive())) {
 		PreviewToken.Set(s.ID, s.PreviewToken)
 	}
 

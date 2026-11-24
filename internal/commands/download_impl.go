@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -64,6 +65,11 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	// Downloads are imported, so the destination must give names that the index accepts.
 	if err := get.Import().CheckDest(destFolder); err != nil {
 		return err
+	}
+
+	// The temporary downloads are removed afterwards, so nothing is downloaded that could not be imported.
+	if conf.FacesLocked() != "" {
+		return faceMigrationExit("download", conf)
 	}
 
 	// Create session download directory
@@ -241,7 +247,10 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 	log.Infof("importing downloads to %s", clean.Log(filepath.Join(conf.OriginalsPath(), destFolder)))
 	w := get.Import()
 	opt := photoprism.ImportOptionsMove(downloadPath, destFolder)
-	w.Start(opt)
+
+	if _, importErr := w.Run(opt); errors.Is(importErr, photoprism.ErrFaceMigration) {
+		return faceMigrationExit("download", conf)
+	}
 
 	elapsed := time.Since(start)
 	if failures > 0 {

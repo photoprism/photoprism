@@ -1,10 +1,10 @@
 package config
 
 import (
-	"crypto/rand"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -134,6 +135,24 @@ func (c *Config) AdminScope() string {
 	}
 
 	return clean.Scope(c.options.AdminScope)
+}
+
+// AdminOIDCSub returns the OIDC subject linked to the initial admin account, or an empty string if none
+// is configured or the value is invalid.
+func (c *Config) AdminOIDCSub() string {
+	sub := strings.TrimSpace(c.options.AdminOIDCSub)
+
+	if sub == "" {
+		return ""
+	} else if !entity.ValidOIDCSub(sub) {
+		if _, warned := c.warnedOnce.LoadOrStore("admin-oidc-sub: "+sub, true); !warned {
+			event.SystemWarn([]string{"config", "admin oidc sub", "invalid subject, value ignored"})
+		}
+
+		return ""
+	}
+
+	return sub
 }
 
 // PasswordLength returns the minimum password length in characters.
@@ -267,8 +286,8 @@ func (c *Config) TokenSigningKey() []byte {
 
 		// Leave the key unset on failure: a partially filled buffer would sign with a guessable — worst
 		// case all-zero — key, which is strictly worse than rejecting every token.
-		key := make([]byte, tokens.KeyLen)
-		if _, err := rand.Read(key); err != nil {
+		key, err := rnd.RandomBytes(tokens.KeyLen)
+		if err != nil {
 			event.SystemError([]string{"config", "token signing key", "generate", "%s"}, clean.ErrorFull(err))
 			return
 		}

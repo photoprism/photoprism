@@ -89,6 +89,22 @@ func wsSessionClient(s *entity.Session) wsClientRole {
 	return wsClientRole{Role: s.GetClientRole(), Present: true}
 }
 
+// wsSessionUser returns the account a session receives events for, or the unknown user if the account
+// may not use the API, applying the account check authorizeSession applies to sessions of users.
+func wsSessionUser(s *entity.Session) entity.User {
+	if s == nil {
+		return entity.UnknownUser
+	}
+
+	u := s.GetUser()
+
+	if u.IsUnknown() || u.IsDisabled() || s.IsOAuthApp() && u.DenyLogIn() {
+		return entity.UnknownUser
+	}
+
+	return *u
+}
+
 // wsDelivery returns the event name a connection receives for the topic, and reports whether the
 // connection is authorized to receive it at all. A client session receives nothing, whatever its
 // account may subscribe to: clients and agents read through the REST API.

@@ -22,8 +22,8 @@ var runFacesReindex = func(index *Index, opt IndexOptions) (fs.Done, int, error)
 		return nil, 0, fmt.Errorf("faces: index service unavailable")
 	}
 
-	found, updated := index.Start(opt)
-	return found, updated, nil
+	// Reported, so a run held off by a face migration is not taken for markers that were not found.
+	return index.Run(opt)
 }
 
 // Reset removes automatically added face clusters, marker matches, and dangling subjects.

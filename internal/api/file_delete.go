@@ -53,10 +53,13 @@ func DeleteFile(router *gin.RouterGroup) {
 			log.Errorf("files: %s (delete)", err)
 			AbortEntityNotFound(c)
 			return
+		} else if file.PhotoUID != photoUid {
+			log.Errorf("files: %s does not belong to %s (delete)", clean.Log(fileUid), clean.Log(photoUid))
+			AbortEntityNotFound(c)
+			return
 		}
 
-		// Limit the deletion to the file's photo within the session's shared scope. Gating on the
-		// file's own PhotoUID (not the path :uid) prevents pairing an in-scope :uid with an out-of-scope file.
+		// Limit the deletion to the file's photo within the session scope.
 		if !search.PhotoSessionSeesEverything(s) {
 			if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
 				AbortForbidden(c)

@@ -24,8 +24,8 @@ func (w *Faces) reportClusteringSkipped(eligible, required int) {
 		return
 	}
 
-	log.Infof("faces: %d of the %d new markers required for clustering clear the %d px size and %d score thresholds",
-		eligible, required, face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector()))
+	log.Infof("faces: clustering needs %d new markers that clear the %d px size and %d score thresholds, found %d",
+		required, face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector()), eligible)
 }
 
 // reportNoClustersFormed states that a pass ran on enough samples and formed nothing. The run
@@ -331,7 +331,7 @@ func (w *Faces) cluster(opt FacesOptions, core int, retry bool) (added entity.Fa
 		log.Debugf("faces: at least %d samples needed for clustering", opt.SampleThreshold())
 		return added, true, nil
 	} else if embeddings.Dims() < 1 {
-		return added, true, fmt.Errorf("cannot cluster %d samples of different lengths, run photoprism faces migrate", samples)
+		return added, true, fmt.Errorf("cannot cluster %d samples of different lengths, run %s", samples, face.MigrateCommand(current))
 	} else {
 		var c alg.HardClusterer
 

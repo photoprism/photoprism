@@ -1,10 +1,15 @@
 package commands
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
+	"syscall"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
@@ -13,6 +18,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -45,6 +51,32 @@ func TestFacesMigrateAction(t *testing.T) {
 		after, err := query.FaceMigrationCounts(face.ModelFaceNet)
 		require.NoError(t, err)
 		assert.Equal(t, before, after)
+	})
+	t.Run("DryRunReportsTheRisk", func(t *testing.T) {
+		// An empty originals folder and a marker without a vector are both stated before the prompt.
+		originals := options.OriginalsPath
+		options.OriginalsPath = t.TempDir()
+		t.Cleanup(func() { options.OriginalsPath = originals })
+
+		var marker entity.Marker
+		require.NoError(t, entity.UnscopedDb().Where("marker_type = ? AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+			Order("marker_uid").First(&marker).Error)
+		stored := marker.EmbeddingsJSON
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", marker.MarkerUID).
+			UpdateColumn("embeddings_json", []byte("")).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", marker.MarkerUID).
+				UpdateColumn("embeddings_json", []byte(stored)).Error)
+		})
+
+		hook := captureMigrateLog(t)
+
+		_, err := RunWithTestContext(FacesMigrateCommand, []string{"migrate", "--to=facenet", "--dry-run", "--yes"})
+		require.NoError(t, err)
+
+		out := migrateLogMessages(hook)
+		assert.Contains(t, out, "is empty or cannot be read: markers are re-embedded from cached thumbnails")
+		assert.Contains(t, out, "markers hold no vector, so a failed re-embedding loses none")
 	})
 	t.Run("Confirm", func(t *testing.T) {
 		// Without confirmation, the migration neither starts nor changes the configured model, which
@@ -123,6 +155,170 @@ func TestFacesMigrateCommand(t *testing.T) {
 	})
 }
 
+// TestFacesMigrateExit pins that a migration which was applied but lost markers still exits with
+// status 1, so a script can tell it from a clean run, and that its message names no restart.
+func TestFacesMigrateExit(t *testing.T) {
+	t.Run("Incomplete", func(t *testing.T) {
+		for _, incomplete := range []*photoprism.FacesMigrateIncompleteError{
+			{Failed: 900, Clusterable: 3},
+			{Failed: 5, Unreadable: 5},
+			{Failed: 9, Clusterable: 4, Unreadable: 5},
+			{Failed: 7},
+		} {
+			err := facesMigrateExit(incomplete)
+
+			var exit cli.ExitCoder
+			require.ErrorAs(t, err, &exit)
+			assert.Equal(t, 1, exit.ExitCode())
+			assert.Equal(t, incomplete.Error(), err.Error())
+			assert.True(t, strings.HasPrefix(err.Error(), "faces: migration applied; "))
+			// The restart instruction is logged once, with the model the run recorded.
+			assert.NotContains(t, err.Error(), "restart")
+		}
+	})
+	t.Run("Aborted", func(t *testing.T) {
+		aborted := &photoprism.FacesMigrateAbortedError{Failed: 12, Reason: "nothing could be re-embedded"}
+		err := facesMigrateExit(aborted)
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, aborted.Error(), err.Error())
+	})
+	t.Run("Interrupted", func(t *testing.T) {
+		err := facesMigrateExit(fmt.Errorf("faces: %w", context.Canceled))
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, "faces: migration interrupted, run the command again to continue where it stopped", err.Error())
+	})
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, facesMigrateExit(nil))
+	})
+}
+
+// countSignalCalls replaces the signal registration functions with ones that count their calls.
+func countSignalCalls(t *testing.T) (notified, stopped *atomic.Int32) {
+	t.Helper()
+
+	notified, stopped = &atomic.Int32{}, &atomic.Int32{}
+	notify, stop := signalNotify, signalStop
+
+	signalNotify = func(c chan<- os.Signal, sig ...os.Signal) {
+		notified.Add(1)
+		notify(c, sig...)
+	}
+	signalStop = func(c chan<- os.Signal) {
+		stopped.Add(1)
+		stop(c)
+	}
+
+	t.Cleanup(func() { signalNotify, signalStop = notify, stop })
+
+	return notified, stopped
+}
+
+// TestCancelOnInterrupt sends the process a signal it registered for, so a signal that was not
+// caught would end the test binary rather than fail an assertion.
+func TestCancelOnInterrupt(t *testing.T) {
+	t.Run("SignalCancels", func(t *testing.T) {
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+		hook := test.NewLocal(logger)
+		t.Cleanup(hook.Reset)
+
+		notified, stopped := countSignalCalls(t)
+		ctx, stop := cancelOnInterrupt(context.Background(), syscall.SIGUSR2)
+		t.Cleanup(stop)
+		require.Equal(t, int32(1), notified.Load())
+
+		require.NoError(t, syscall.Kill(os.Getpid(), syscall.SIGUSR2))
+
+		select {
+		case <-ctx.Done():
+		case <-time.After(10 * time.Second):
+			t.Fatal("the signal did not cancel the context")
+		}
+
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+
+		// The handler is unregistered before the context is canceled, so a second signal is not
+		// caught, and the warning is logged before it too.
+		assert.Equal(t, int32(1), stopped.Load())
+
+		var warned bool
+		for _, entry := range hook.AllEntries() {
+			warned = warned || strings.Contains(entry.Message, "interrupt again to exit at once")
+		}
+		assert.True(t, warned)
+	})
+	t.Run("StopUnregisters", func(t *testing.T) {
+		_, stopped := countSignalCalls(t)
+		ctx, stop := cancelOnInterrupt(context.Background(), syscall.SIGUSR2)
+		require.NoError(t, ctx.Err())
+
+		stop()
+		stop()
+
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+		assert.Equal(t, int32(2), stopped.Load())
+	})
+	t.Run("IgnoredSignalStaysIgnored", func(t *testing.T) {
+		// Stubbed, since a signal the test really ignored would stay ignored for the whole binary.
+		ignored := signalIgnored
+		signalIgnored = func(sig os.Signal) bool { return sig == syscall.SIGUSR2 }
+		t.Cleanup(func() { signalIgnored = ignored })
+
+		notified, _ := countSignalCalls(t)
+		ctx, stop := cancelOnInterrupt(context.Background(), syscall.SIGUSR2)
+		t.Cleanup(stop)
+
+		assert.Zero(t, notified.Load())
+		assert.NoError(t, ctx.Err())
+
+		stop()
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+	})
+	t.Run("ParentCancels", func(t *testing.T) {
+		parent, cancel := context.WithCancel(context.Background())
+		ctx, stop := cancelOnInterrupt(parent, syscall.SIGUSR2)
+		t.Cleanup(stop)
+
+		cancel()
+
+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
+	})
+	t.Run("NilParent", func(t *testing.T) {
+		//nolint:staticcheck // a nil parent is what a context built without one carries
+		ctx, stop := cancelOnInterrupt(nil, syscall.SIGUSR2)
+		t.Cleanup(stop)
+
+		assert.NoError(t, ctx.Err())
+	})
+}
+
+// TestEmbeddingModelCountMessage pins that rows without a recorded embedding model are named as FaceNet,
+// apart from the rows that record it, rather than as a model of their own.
+func TestEmbeddingModelCountMessage(t *testing.T) {
+	t.Run("Unrecorded", func(t *testing.T) {
+		assert.Equal(t, "faces: 14246 markers have no recorded embedding model (treated as facenet)", embeddingModelCountMessage("", 14246, "marker"))
+		assert.Equal(t, "faces: 399 clusters have no recorded embedding model (treated as facenet)", embeddingModelCountMessage("", 399, "cluster"))
+		assert.Equal(t, "faces: 1 marker has no recorded embedding model (treated as facenet)", embeddingModelCountMessage("", 1, "marker"))
+	})
+	t.Run("Recorded", func(t *testing.T) {
+		assert.Equal(t, "faces: embedding model facenet has 2 markers", embeddingModelCountMessage(face.ModelFaceNet, 2, "marker"))
+		assert.Equal(t, "faces: embedding model sface has 1 cluster", embeddingModelCountMessage(face.ModelSFace, 1, "cluster"))
+	})
+}
+
+// TestFaceModelSwitchedMessage pins that the line ending a migration that recorded its target
+// carries the restart instruction.
+func TestFaceModelSwitchedMessage(t *testing.T) {
+	assert.Equal(t, "faces: the configured face model is now sface, restart the instance to load it",
+		faceModelSwitchedMessage(face.ModelSFace))
+}
+
 func TestPercentOf(t *testing.T) {
 	t.Run("Rounds", func(t *testing.T) {
 		// A share of 14.69, so truncating would report a percent less.
@@ -139,48 +335,103 @@ func TestPercentOf(t *testing.T) {
 	})
 }
 
+// captureMigrateLog records what the migrate command logs, including system log warnings.
+func captureMigrateLog(t *testing.T) *test.Hook {
+	t.Helper()
+
+	logger, ok := log.(*logrus.Logger)
+	require.True(t, ok)
+
+	hook := test.NewLocal(logger)
+	system := event.SystemLog
+	event.SystemLog = logger
+
+	t.Cleanup(func() {
+		event.SystemLog = system
+		hook.Reset()
+	})
+
+	return hook
+}
+
+// migrateLogMessages returns the recorded messages, one per line.
+func migrateLogMessages(hook *test.Hook) string {
+	var b strings.Builder
+
+	for _, entry := range hook.AllEntries() {
+		b.WriteString(entry.Message)
+		b.WriteString("\n")
+	}
+
+	return b.String()
+}
+
+// TestReportOriginalsUnavailable pins that the warning says what the run does without the originals.
+func TestReportOriginalsUnavailable(t *testing.T) {
+	hook := captureMigrateLog(t)
+
+	reportOriginalsUnavailable("/photos/originals")
+
+	out := migrateLogMessages(hook)
+	assert.Contains(t, out, "originals path /photos/originals is empty or cannot be read")
+	assert.Contains(t, out, "re-embedded from cached thumbnails")
+	assert.Contains(t, out, "upscaled where those are smaller than their crops need")
+	assert.Contains(t, out, "fail as read errors")
+	assert.NotContains(t, out, "no marker can be re-embedded")
+	require.NotEmpty(t, hook.AllEntries())
+	assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+}
+
+// TestReportStaleMarkers pins that only markers holding a vector are counted as losing one.
+func TestReportStaleMarkers(t *testing.T) {
+	t.Run("VectorsAndNone", func(t *testing.T) {
+		hook := captureMigrateLog(t)
+
+		reportStaleMarkers(photoprism.FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 1000, Vectors: 713, Ready: 13}})
+
+		out := migrateLogMessages(hook)
+		assert.Contains(t, out, "700 markers must be re-embedded and lose their stored vectors if that fails")
+		assert.Contains(t, out, "287 markers hold no vector")
+		assert.Contains(t, out, "counts toward the share that refuses the finalize")
+
+		// The loss is a warning; markers with nothing to lose are stated for information.
+		entries := hook.AllEntries()
+		require.Len(t, entries, 2)
+		assert.Equal(t, logrus.WarnLevel, entries[0].Level)
+		assert.Equal(t, logrus.InfoLevel, entries[1].Level)
+	})
+	t.Run("OnlyVectorless", func(t *testing.T) {
+		// The library an earlier finalize cleared: nothing it re-embeds can lose a vector.
+		hook := captureMigrateLog(t)
+
+		reportStaleMarkers(photoprism.FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 300, Vectors: 13, Ready: 13}})
+
+		out := migrateLogMessages(hook)
+		assert.NotContains(t, out, "lose their stored vectors")
+		assert.Contains(t, out, "287 markers hold no vector")
+	})
+	t.Run("AllReady", func(t *testing.T) {
+		hook := captureMigrateLog(t)
+
+		reportStaleMarkers(photoprism.FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 50, Vectors: 50, Ready: 50}})
+
+		assert.Empty(t, migrateLogMessages(hook))
+	})
+}
+
 // TestReportMigrationCropCoverage covers the forecast an operator reads before the prompt: how much
 // of the crop detail the cache already holds, how much the run renders for itself, and how much is
 // missing from the originals, which is the only part nothing can recover.
 func TestReportMigrationCropCoverage(t *testing.T) {
-	capture := func(t *testing.T) *test.Hook {
-		t.Helper()
-
-		logger, ok := log.(*logrus.Logger)
-		require.True(t, ok)
-
-		hook := test.NewLocal(logger)
-		system := event.SystemLog
-		event.SystemLog = logger
-
-		t.Cleanup(func() {
-			event.SystemLog = system
-			hook.Reset()
-		})
-
-		return hook
-	}
-
-	messages := func(hook *test.Hook) string {
-		var b strings.Builder
-
-		for _, entry := range hook.AllEntries() {
-			b.WriteString(entry.Message)
-			b.WriteString("\n")
-		}
-
-		return b.String()
-	}
-
 	t.Run("ForecastsTheRendering", func(t *testing.T) {
-		hook := capture(t)
+		hook := captureMigrateLog(t)
 
 		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
 			CropCoverage: query.FaceMigrationCropCounts{Total: 41252, FullDetail: 19501, Upscaled: 15689, SourceTooSmall: 6062},
 			ThumbSize:    thumb.Sizes[thumb.Fit1920],
 		})
 
-		out := messages(hook)
+		out := migrateLogMessages(hook)
 		assert.Contains(t, out, "15689 of 41252 markers (38%)")
 		assert.Contains(t, out, "1920x1200")
 		assert.Contains(t, out, "rendered again from the original")
@@ -191,25 +442,40 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 		assert.NotContains(t, out, "thumb-size")
 	})
 	t.Run("SmallOriginalsAreStatedApart", func(t *testing.T) {
-		hook := capture(t)
+		hook := captureMigrateLog(t)
 
 		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
 			CropCoverage: query.FaceMigrationCropCounts{Total: 100, FullDetail: 40, SourceTooSmall: 60},
 			ThumbSize:    thumb.Sizes[thumb.Fit4096],
 		})
 
-		out := messages(hook)
+		out := migrateLogMessages(hook)
 		assert.NotContains(t, out, "rendered again from the original")
 		assert.Contains(t, out, "60 of 100 markers (60%)")
 		assert.Contains(t, out, "stay upscaled")
 	})
+	t.Run("OriginalsUnavailable", func(t *testing.T) {
+		// Without the originals nothing can be rendered again, so the forecast says the crops stay upscaled.
+		hook := captureMigrateLog(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
+			CropCoverage:         query.FaceMigrationCropCounts{Total: 100, FullDetail: 70, Upscaled: 30},
+			ThumbSize:            thumb.Sizes[thumb.Fit720],
+			OriginalsUnavailable: true,
+		})
+
+		out := migrateLogMessages(hook)
+		assert.Contains(t, out, "30 of 100 markers (30%)")
+		assert.Contains(t, out, "their crops are upscaled")
+		assert.NotContains(t, out, "rendered again from the original")
+	})
 	t.Run("NothingMeasured", func(t *testing.T) {
 		// A library with no renditions at all is cropped from the originals, so there is no
 		// coverage to report on.
-		hook := capture(t)
+		hook := captureMigrateLog(t)
 
 		reportMigrationCropCoverage(photoprism.FacesMigratePlan{})
 
-		assert.Empty(t, messages(hook))
+		assert.Empty(t, migrateLogMessages(hook))
 	})
 }

@@ -683,12 +683,14 @@ func photoQuery(frm *form.SearchPhotos, sess *entity.Session, resultCols string,
 
 	// Filter by location state.
 	if txt.NotEmpty(frm.State) {
-		s = s.Where("places.place_state IN (?)", SplitOr(frm.State))
+		cond, values := inCond("places.place_state", frm.State)
+		s = s.Where(cond, values...)
 	}
 
 	// Filter by location city.
 	if txt.NotEmpty(frm.City) {
-		s = s.Where("places.place_city IN (?)", SplitOr(frm.City))
+		cond, values := inCond("places.place_city", frm.City)
+		s = s.Where(cond, values...)
 	}
 
 	// Filter by location category.

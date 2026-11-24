@@ -538,6 +538,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
 
+			// Clear stale frame data of JPEGs, so only current metadata or the embedded video sets it.
+			if m.IsJpeg() {
+				file.FileFrames = 0
+				file.FileFPS = 0
+				file.FileDuration = 0
+			}
+
 			// Get video metadata from embedded file?
 			if !data.HasVideoEmbedded {
 				file.SetDuration(data.Duration)

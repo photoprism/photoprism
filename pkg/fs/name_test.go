@@ -75,6 +75,48 @@ func TestRelName(t *testing.T) {
 	})
 }
 
+func TestRelInside(t *testing.T) {
+	t.Run("SameDir", func(t *testing.T) {
+		rel, ok := RelInside("/data/backup", "/data/backup")
+		assert.True(t, ok)
+		assert.Equal(t, ".", rel)
+	})
+	t.Run("Inside", func(t *testing.T) {
+		for name, want := range map[string]string{
+			"/data/backup/db.sql":                   "db.sql",
+			"/data/backup/2026/db.sql":              "2026/db.sql",
+			"/data/backup/./db.sql":                 "db.sql",
+			"/data/backup/..db.sql":                 "..db.sql",
+			"/data/backup/a\\..\\b.sql":             "a\\..\\b.sql",
+			"/data/backup/c:db.sql":                 "c:db.sql",
+			"/data/backup/x/../db.sql":              "db.sql",
+			"/data/backup/2026/../../backup/db.sql": "db.sql",
+		} {
+			rel, ok := RelInside(name, "/data/backup")
+			assert.True(t, ok, name)
+			assert.Equal(t, want, rel, name)
+		}
+	})
+	t.Run("Outside", func(t *testing.T) {
+		for _, name := range []string{"/data", "/data/backup2/db.sql", "/data/other/db.sql", "/data/backup/../db.sql", "/etc/passwd"} {
+			rel, ok := RelInside(name, "/data/backup")
+			assert.False(t, ok, name)
+			assert.Empty(t, rel, name)
+		}
+	})
+	t.Run("Relative", func(t *testing.T) {
+		rel, ok := RelInside("backup/db.sql", "backup")
+		assert.True(t, ok)
+		assert.Equal(t, "db.sql", rel)
+		_, ok = RelInside("db.sql", "backup")
+		assert.False(t, ok)
+	})
+	t.Run("MixedAbsAndRelative", func(t *testing.T) {
+		_, ok := RelInside("/data/backup/db.sql", "backup")
+		assert.False(t, ok)
+	})
+}
+
 func TestInDir(t *testing.T) {
 	t.Run("Below", func(t *testing.T) {
 		assert.True(t, InDir("/data/photos/2024/IMG_1.heic", "/data/photos"))

@@ -112,6 +112,18 @@ func RelName(fileName, dir string) string {
 	}
 }
 
+// RelInside returns fileName relative to dir with filepath.Rel and whether it stays inside dir, which includes
+// dir itself ("."). Names are compared lexically, without resolving links or rewriting separators.
+func RelInside(fileName, dir string) (string, bool) {
+	rel, err := filepath.Rel(dir, fileName)
+
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		return "", false
+	}
+
+	return rel, true
+}
+
 // FileNameHidden reports whether a name belongs to a hidden file: one FileNameSystem reports, or one whose name
 // starts with "$" or "~", such as "$RECYCLE.BIN" and "~$report.docx".
 func FileNameHidden(name string) bool {

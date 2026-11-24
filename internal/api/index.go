@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -27,9 +28,9 @@ import (
 //	@Tags		Library
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	i18n.Response
-//	@Failure	400,401,403,413,429,500	{object}	i18n.Response
-//	@Param		options					body		form.IndexOptions	true	"index options"
+//	@Success	200								{object}	i18n.Response
+//	@Failure	400,401,403,409,413,429,500,507	{object}	i18n.Response
+//	@Param		options							body		form.IndexOptions	true	"index options"
 //	@Router		/api/v1/index [post]
 func StartIndexing(router *gin.RouterGroup) {
 	router.POST("/index", func(c *gin.Context) {
@@ -80,6 +81,11 @@ func StartIndexing(router *gin.RouterGroup) {
 			return
 		}
 
+		// Indexing waits for a face migration, so the request is refused before it reports progress.
+		if faceMigrationRunning(c) {
+			return
+		}
+
 		// Configure index options.
 		convert := settings.Index.Convert && conf.SidecarWritable()
 		skipArchived := settings.Index.SkipArchived
@@ -97,8 +103,14 @@ func StartIndexing(router *gin.RouterGroup) {
 		lastRun, lastFound := ind.LastRun()
 		indexStart := time.Now()
 
-		// Update file index.
-		found, indexed := ind.Start(indOpt)
+		// Update file index. A migration that started since the check above is refused with the same
+		// status, although the run was already announced.
+		found, indexed, indexErr := ind.Run(indOpt)
+
+		if errors.Is(indexErr, photoprism.ErrIndexBusy) {
+			AbortMigrationInProgress(c)
+			return
+		}
 
 		// Only run purge and moments if necessary.
 		forceUpdate := indOpt.Rescan || indexed > 0 || lastRun.IsZero()

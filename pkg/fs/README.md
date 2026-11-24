@@ -1,6 +1,6 @@
 ## PhotoPrism — pkg/fs
 
-**Last Updated:** October 29, 2026
+**Last Updated:** November 24, 2026
 
 ### Overview
 
@@ -52,6 +52,7 @@
 ### Recent Changes & Improvements
 
 - Shared `SafeJoin` (`join.go`): normalize `\\`/`/`, use `filepath.Rel` to reject paths escaping `baseDir`, and keep volume/absolute checks. Reused by `Unzip`, the WebDAV sync client, and the server upload handler.
+- `RelInside` (`name.go`) returns a name relative to a folder with `filepath.Rel` and whether it stays inside, the folder itself included. It compares the names lexically, without `SafeJoin`'s separator and volume rewrites, for two paths that are both local, such as the `--path` filename of the database commands, the reset sidecar check and the import folder lookup. Names from archives, requests or remote systems go through `SafeJoin`.
 - Added optional max-entries guard in `Unzip`. A negative `totalSizeLimit` is unlimited, `0` leaves no budget, and a positive value is the remaining budget; each file must leave at least one byte of it, and once one does not fit, no later file entry is extracted.
 - Added pool copy buffers (128–256 KiB) that use `io.CopyBuffer` in `Copy`, `Hash`, `Checksum`, `Sha256`, `WriteFileFromReader` to cut allocations/GC.
 

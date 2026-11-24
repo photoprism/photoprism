@@ -289,7 +289,7 @@ func DeleteAlbumLink(router *gin.RouterGroup) {
 //	@Router		/api/v1/albums/{uid}/links [get]
 func GetAlbumLinks(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/links", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
+		s := AuthAccess(c, acl.ResourceAlbums, acl.ActionView, acl.Permissions{acl.ActionShare})
 
 		if s.Abort(c) {
 			return
@@ -364,7 +364,7 @@ func DeletePhotoLink(router *gin.RouterGroup) {
 // GET /api/v1/photos/:uid/links
 func GetPhotoLinks(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/links", func(c *gin.Context) {
-		s := Auth(c, acl.ResourcePhotos, acl.ActionShare)
+		s := AuthAccess(c, acl.ResourcePhotos, acl.ActionView, acl.Permissions{acl.ActionShare})
 
 		if s.Abort(c) {
 			return
@@ -437,7 +437,7 @@ func DeleteLabelLink(router *gin.RouterGroup) {
 // GET /api/v1/labels/:uid/links
 func GetLabelLinks(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/links", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceLabels, acl.ActionShare)
+		s := AuthAccess(c, acl.ResourceLabels, acl.ActionView, acl.Permissions{acl.ActionShare})
 
 		if s.Abort(c) {
 			return

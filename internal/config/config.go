@@ -87,16 +87,19 @@ type Config struct {
 	warnedOnce    sync.Map
 	faceModel     string
 	faceModelFlag string
-	token         string
-	serial        string
-	tokenKey      []byte
-	tokenKeyOnce  sync.Once
-	env           string
-	start         bool
-	startReport   bool
-	ready         atomic.Bool
-	cache         *gc.Cache
-	testFolder    string
+	// faceUnfinished is the target of an unfinished migration the mismatch check found, if any.
+	faceUnfinished string
+	token          string
+	serial         string
+	tokenKey       []byte
+	tokenKeyOnce   sync.Once
+	env            string
+	start          bool
+	reborn         bool
+	startReport    bool
+	ready          atomic.Bool
+	cache          *gc.Cache
+	testFolder     string
 }
 
 // Values is a shorthand alias for map[string]interface{}.
@@ -181,6 +184,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		token:       rnd.Base36(8),
 		env:         os.Getenv("DOCKER_ENV"),
 		start:       start,
+		reborn:      hubWasReborn(),
 		startReport: startReport,
 		cache:       gc.New(time.Minute, 10*time.Minute),
 	}
@@ -301,10 +305,7 @@ func (c *Config) Init() error {
 	c.reportDownloadTokenOptions()
 
 	// Show support information.
-	if !c.Sponsor() {
-		log.Info(MsgSponsor)
-		log.Info(MsgSignUp)
-	}
+	c.logMembershipHint()
 
 	// Show log message.
 	log.Debugf("config: successfully initialized [%s]", time.Since(start))
@@ -1083,11 +1084,14 @@ func (c *Config) Shutdown() {
 	}
 }
 
-// RenewApiKeys renews the api credentials for maps and places.
+// RenewApiKeys renews the api credentials for maps and places automatically, i.e. when initHub or the daily tick
+// calls it, and then updates the modification time of the hub config file, which the renewal window is based on.
 func (c *Config) RenewApiKeys() {
-	if c.hub == nil {
+	if c.hub == nil || hub.Disabled() {
 		return
 	}
+
+	defer touchHubFile(c.hub.FileName)
 
 	if token := os.Getenv(EnvVar("CONNECT")); token != "" && !c.Hub().Sponsor() {
 		_ = c.RenewApiKeysWithToken(token)
@@ -1103,7 +1107,7 @@ func (c *Config) RenewApiKeysWithToken(token string) error {
 	}
 
 	if err := c.hub.ReSync(token); err != nil {
-		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
+		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", clean.Error(err))
 		if token != "" {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
@@ -1122,16 +1126,11 @@ func (c *Config) initHub() {
 	if c.hub != nil {
 		return
 	} else if h := hub.NewConfig(c.Version(), c.HubConfigFile(), c.serial, c.env, c.UserAgent(), c.options.PartnerID); h != nil {
+		h.Runtime = c.Runtime()
 		c.hub = h
 	}
 
-	update := c.start
-
-	if err := c.hub.Load(); err != nil {
-		update = true
-	}
-
-	if update {
+	if c.hubUpdate(c.hub.Load()) {
 		c.RenewApiKeys()
 	}
 

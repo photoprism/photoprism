@@ -741,6 +741,23 @@ func TestAuthorizeSuperAdmin(t *testing.T) {
 	t.Run("NilSession", func(t *testing.T) {
 		assert.False(t, AuthorizeSuperAdmin(nil))
 	})
+	t.Run("ClusterJWTUsersScope", func(t *testing.T) {
+		s := &entity.Session{GrantType: authn.GrantJwtBearer.String(), AuthScope: "cluster users"}
+		assert.True(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("ClusterJWTOtherScope", func(t *testing.T) {
+		s := &entity.Session{GrantType: authn.GrantJwtBearer.String(), AuthScope: "cluster vision"}
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("ClusterJWTUsersReadScope", func(t *testing.T) {
+		s := &entity.Session{GrantType: authn.GrantJwtBearer.String(), AuthScope: "cluster users:read"}
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("ClientUsersScope", func(t *testing.T) {
+		// Only the cluster service principal is exempt; another grant with the same scope is not.
+		s := &entity.Session{GrantType: authn.GrantClientCredentials.String(), AuthScope: "cluster users"}
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
 }
 
 // TestAuthAnyVisionServiceKeyLimit checks that the authentication rate limit applies to service keys in the formats Session() counts.
@@ -1047,9 +1064,12 @@ func TestAuthAccess_ScopeModifiers(t *testing.T) {
 	GetMomentsTime(router)
 	BatchPhotosEdit(router)
 	BatchPhotosPrivate(router)
+	GetAlbumLinks(router)
+	FindUserSessions(router)
 
 	alice := entity.UserFixtures.Pointer("alice")
 	photoUid := entity.PhotoFixtures.Get("19800101_000002_D640C559").PhotoUID
+	albumUid := entity.AlbumFixtures.Get("christmas2030").AlbumUID
 
 	// The write requests send an empty selection, so a request that passes authorization ends with 400.
 	cases := []struct {
@@ -1063,6 +1083,8 @@ func TestAuthAccess_ScopeModifiers(t *testing.T) {
 		{"Metrics", http.MethodGet, "/api/v1/metrics", "", "metrics", "read", http.StatusOK},
 		{"Folders", http.MethodGet, "/api/v1/folders/originals", "", "files", "read", http.StatusOK},
 		{"MomentsTime", http.MethodGet, "/api/v1/moments/time", "", "calendar", "read", http.StatusOK},
+		{"AlbumLinks", http.MethodGet, "/api/v1/albums/" + albumUid + "/links", "", "albums", "read", http.StatusOK},
+		{"UserSessions", http.MethodGet, "/api/v1/users/" + alice.UserUID + "/sessions?count=10", "", "sessions", "read", http.StatusOK},
 		{"BatchPhotosEdit", http.MethodPost, "/api/v1/batch/photos/edit", `{"photos":[]}`, "photos", "write", http.StatusBadRequest},
 		{"BatchPhotosPrivate", http.MethodPost, "/api/v1/batch/photos/private", `{"photos":[]}`, "photos", "write", http.StatusBadRequest},
 	}
@@ -1071,6 +1093,16 @@ func TestAuthAccess_ScopeModifiers(t *testing.T) {
 		// Guests may read their own settings with a scope limited to read operations.
 		token := scopedUserSessionToken(t, conf, "settings read", entity.UserFixtures.Pointer("guest"))
 		assert.Equal(t, http.StatusOK, AuthenticatedRequest(app, http.MethodGet, "/api/v1/settings", token).Code)
+	})
+	t.Run("GuestAlbumLinks", func(t *testing.T) {
+		// Guests may view shared albums, but not their share links.
+		token := scopedUserSessionToken(t, conf, "", entity.UserFixtures.Pointer("guest"))
+		assert.Equal(t, http.StatusForbidden, AuthenticatedRequest(app, http.MethodGet, "/api/v1/albums/"+albumUid+"/links", token).Code)
+	})
+	t.Run("GuestUserSessions", func(t *testing.T) {
+		guest := entity.UserFixtures.Pointer("guest")
+		token := scopedUserSessionToken(t, conf, "", guest)
+		assert.Equal(t, http.StatusForbidden, AuthenticatedRequest(app, http.MethodGet, "/api/v1/users/"+guest.UserUID+"/sessions?count=10", token).Code)
 	})
 	t.Run("BatchPhotosEditClient", func(t *testing.T) {
 		// A client without an owner is authorized by its client role.

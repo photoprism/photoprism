@@ -20,7 +20,38 @@ func TestFaceMigrationCounts(t *testing.T) {
 	require.NoError(t, err)
 	assert.Positive(t, result.Total)
 	assert.Equal(t, result.Total, result.Valid+result.Invalid)
-	assert.LessOrEqual(t, result.Ready, result.Valid)
+	assert.LessOrEqual(t, result.Ready, result.Vectors)
+	assert.LessOrEqual(t, result.Vectors, result.Valid)
+
+	// Counted independently, so the predicate is checked rather than restated.
+	var vectors int
+	row := Db().Raw("SELECT COUNT(*) FROM markers WHERE marker_type = ? AND marker_invalid = FALSE"+
+		" AND embeddings_json IS NOT NULL AND LENGTH(embeddings_json) > 0", entity.MarkerFace).Row()
+	require.NoError(t, row.Scan(&vectors))
+	assert.Equal(t, vectors, result.Vectors)
+
+	// Holding a vector does not depend on the target, while being ready does.
+	other, err := FaceMigrationCounts(face.ModelSFace)
+	require.NoError(t, err)
+	assert.Equal(t, result.Vectors, other.Vectors)
+	assert.Less(t, other.Ready, other.Vectors)
+
+	// A valid marker whose vector was cleared counts as valid and not as holding one.
+	var marker entity.Marker
+	require.NoError(t, UnscopedDb().Where("marker_type = ? AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Order("marker_uid").First(&marker).Error)
+	stored := marker.EmbeddingsJSON
+	require.NoError(t, UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", marker.MarkerUID).
+		UpdateColumn("embeddings_json", []byte("")).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", marker.MarkerUID).
+			UpdateColumn("embeddings_json", []byte(stored)).Error)
+	})
+
+	cleared, err := FaceMigrationCounts(face.ModelFaceNet)
+	require.NoError(t, err)
+	assert.Equal(t, result.Valid, cleared.Valid)
+	assert.Equal(t, result.Vectors-1, cleared.Vectors)
 
 	_, err = FaceMigrationCounts("")
 	require.Error(t, err)
@@ -143,6 +174,36 @@ func TestHiddenFaceMarkers(t *testing.T) {
 	result, err := HiddenFaceMarkers()
 	require.NoError(t, err)
 	assert.Contains(t, result, marker.MarkerUID)
+}
+
+func TestHiddenFaceMarkerClusters(t *testing.T) {
+	hiddenFace := &entity.Face{ID: "HIDDENMARKERCLUSTERS00000000000000000000", FaceSrc: entity.SrcAuto, FaceHidden: true,
+		EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
+	require.NoError(t, entity.Db().Create(hiddenFace).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(hiddenFace) })
+
+	marker := &entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: "fs6sg6bw45bnlqdw", MarkerType: entity.MarkerFace,
+		MarkerSrc: entity.SrcImage, FaceID: hiddenFace.ID, W: 0.1, H: 0.1}
+	require.NoError(t, entity.Db().Create(marker).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
+
+	result, err := HiddenFaceMarkerClusters()
+	require.NoError(t, err)
+	assert.Contains(t, result, HiddenFaceMarker{FaceID: hiddenFace.ID, MarkerUID: marker.MarkerUID})
+}
+
+func TestVisibleFaceIDs(t *testing.T) {
+	hidden := &entity.Face{ID: "VISIBLEFACEIDSHIDDEN0000000000000000000", FaceSrc: entity.SrcAuto, FaceHidden: true,
+		EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
+	visible := &entity.Face{ID: "VISIBLEFACEIDSSHOWN00000000000000000000", FaceSrc: entity.SrcAuto,
+		EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
+	require.NoError(t, entity.Db().Create(hidden).Error)
+	require.NoError(t, entity.Db().Create(visible).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(hidden); entity.UnscopedDb().Delete(visible) })
+
+	ids, err := VisibleFaceIDs([]string{hidden.ID, visible.ID, "VISIBLEFACEIDSMISSING00000000000000000"})
+	require.NoError(t, err)
+	assert.Equal(t, []string{visible.ID}, ids)
 }
 
 func TestRestoreHiddenFaces(t *testing.T) {

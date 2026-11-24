@@ -33,7 +33,7 @@ A virtual machine with a dedicated operating system environment provides even mo
 
 ### Which Image Should I Use?
 
-> **Use the latest image whenever possible.** The base image used by the top-level [`Dockerfile`](../Dockerfile) is recommended for development. Currently, this is Ubuntu 26.04 LTS ("Resolute Raccoon"), i.e. `photoprism/develop:resolute` and `photoprism/photoprism:resolute`.
+> **Use the latest image whenever possible.** The base image used by the top-level [`Dockerfile`](../Dockerfile) is recommended for development. Currently, this is Ubuntu 26.10 ("Stonking Stingray"), i.e. `photoprism/develop:stonking`, which you can override with `DOCKERFILE_IMAGE_TAG` in your `.env` file. The CE images, i.e. `photoprism/photoprism:ce` and `photoprism/photoprism:preview-ce`, are built on the same base.
 
 New container deployments should pull the `:latest` tag (or an explicit current release tag) from Docker Hub. Contributors setting up a local development environment should follow the [Developer Guide](https://docs.photoprism.app/developer-guide/setup/), which is kept in sync with the top-level `Dockerfile` and `compose.yaml`.
 

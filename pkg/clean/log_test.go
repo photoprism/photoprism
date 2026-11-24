@@ -127,6 +127,38 @@ func TestLogNames(t *testing.T) {
 	})
 }
 
+func TestLogNamesN(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "''", LogNamesN(nil, 50))
+	})
+	t.Run("BelowLimit", func(t *testing.T) {
+		assert.Equal(t, "a, b, c", LogNamesN([]string{"a", "b", "c"}, 50))
+	})
+	t.Run("BeyondLimitIsCounted", func(t *testing.T) {
+		names := make([]string, 53)
+		for i := range names {
+			names[i] = "g"
+		}
+		result := LogNamesN(names, 50)
+		assert.Equal(t, 50, strings.Count(result, "g"))
+		assert.True(t, strings.HasSuffix(result, "g and 3 more"), result)
+	})
+	t.Run("SmallLimit", func(t *testing.T) {
+		assert.Equal(t, "a and 2 more", LogNamesN([]string{"a", "b", "c"}, 1))
+	})
+	t.Run("InvalidLimitUsesDefault", func(t *testing.T) {
+		names := make([]string, LogNamesLimit+2)
+		for i := range names {
+			names[i] = "a.jpg"
+		}
+		assert.Equal(t, LogNames(names), LogNamesN(names, 0))
+		assert.Equal(t, LogNames(names), LogNamesN(names, -1))
+	})
+	t.Run("NamesAreSanitized", func(t *testing.T) {
+		assert.Equal(t, "[U+009B]31m, 'a, b', ?", LogNamesN([]string{"\u009b31m", "a, b", "${x}"}, 50))
+	})
+}
+
 func TestFieldSep(t *testing.T) {
 	sep := string(FieldSep)
 

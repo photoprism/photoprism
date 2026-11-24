@@ -11,6 +11,15 @@ import { $config } from "app/session";
 const flushEvents = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe("model/photo", () => {
+  it("does not select a repaired static JPEG for animation playback", () => {
+    const file = { FileType: "jpg", MediaType: "image", Frames: 0, FPS: 0, Duration: 0, Video: false, Primary: true };
+    const photo = new Photo({ Type: "image", Files: [file] });
+
+    expect(photo.isPlayable()).toBe(false);
+    expect(photo.animatedFile()).toBeUndefined();
+    expect(photo.videoFile()).toBeUndefined();
+  });
+
   // Pins the per-field length caps to the backend VARCHAR + clip ceilings.
   // If a backend bump (internal/entity/photo.go or details.go) changes any
   // of these, this test fails on purpose so the frontend cap moves with it.
@@ -329,6 +338,25 @@ describe("model/photo", () => {
     expect(photo.isVideoFileKept({})).toBe(false);
   });
 
+  it("does not select a file flagged as missing as the original file", () => {
+    const jpg = { UID: "fs6sg6bw45bn0001", Name: "1980/01/kitten.jpg", Root: "/", FileType: "jpg", MediaType: "image", Primary: true, Hash: "f1" };
+    const png = { UID: "fs6sg6bw45bn0002", Name: "1980/01/kitten.png", Root: "/", FileType: "png", MediaType: "image", Missing: true, Hash: "m1" };
+    const cr2 = { UID: "fs6sg6bw45bn0003", Name: "1980/01/kitten.cr2", Root: "/", FileType: "cr2", MediaType: "raw", Missing: true, Hash: "m2" };
+
+    expect(new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [jpg, png] }).originalFile().UID).toBe(jpg.UID);
+    expect(new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "raw", Files: [jpg, cr2] }).originalFile().UID).toBe(jpg.UID);
+    expect(new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [jpg, { ...png, Missing: false }] }).originalFile().UID).toBe(png.UID);
+
+    const mov = { UID: "fs6sg6bw45bn0004", Name: "1980/01/kitten.mov", Root: "/", FileType: "mov", MediaType: "video", Video: true, Missing: true, Hash: "m3" };
+    const mp4 = { UID: "fs6sg6bw45bn0005", Name: "1980/01/kitten.mp4", Root: "/", FileType: "mp4", MediaType: "video", Video: true, Hash: "f2" };
+    const live = { UID: "fs6sg6bw45bn0006", Name: "1980/01/kitten.heic", Root: "/", FileType: "heic", MediaType: "live", Missing: true, Hash: "m4" };
+    const gif = { UID: "fs6sg6bw45bn0007", Name: "1980/01/kitten.gif", Root: "/", FileType: "gif", MediaType: "image", Missing: true, Hash: "m5" };
+
+    expect(new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "video", Files: [jpg, mov, mp4] }).originalFile().UID).toBe(mp4.UID);
+    expect(new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "live", Files: [live, jpg, mp4] }).originalFile().UID).toBe(mp4.UID);
+    expect(new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "animated", Files: [gif, jpg] }).originalFile().UID).toBe(jpg.UID);
+  });
+
   describe("downloadAll", () => {
     const allowAll = (overrides = {}) => ({
       features: { download: true },
@@ -380,6 +408,16 @@ describe("model/photo", () => {
 
       expect(photo.downloadAll()).toEqual({ downloaded: 0, skipped: 2 });
       expect(clicks).toHaveLength(0);
+    });
+
+    it("skips files flagged as missing", () => {
+      mockSettings(allowAll());
+      const png = { ...jpg("m1", "1980/01/kitten.png"), FileType: "png", Missing: true };
+      const xmp = { Hash: "m2", Name: "1980/01/kitten.xmp", Root: "/", FileType: "xmp", MediaType: "sidecar", Sidecar: true, Missing: true };
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [jpg("f1"), png, xmp] });
+
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 2 });
+      expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09"]);
     });
 
     it("reports mixed results when only some files are excluded", () => {

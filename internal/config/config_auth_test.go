@@ -93,6 +93,28 @@ func TestConfig_AdminScope(t *testing.T) {
 	assert.Equal(t, "logs:* photos:view", c.AdminScope())
 }
 
+func TestConfig_AdminOIDCSub(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, "", c.AdminOIDCSub())
+	})
+	t.Run("Valid", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.AdminOIDCSub = "  usg73p55zwgr1gbq "
+		assert.Equal(t, "usg73p55zwgr1gbq", c.AdminOIDCSub())
+	})
+	t.Run("TooShort", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.AdminOIDCSub = "abc"
+		assert.Equal(t, "", c.AdminOIDCSub())
+	})
+	t.Run("ControlCharacters", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.AdminOIDCSub = "abc\x01def"
+		assert.Equal(t, "", c.AdminOIDCSub())
+	})
+}
+
 func TestConfig_PasswordLength(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 8, c.PasswordLength())

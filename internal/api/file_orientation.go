@@ -22,11 +22,11 @@ import (
 //	@Tags		Files
 //	@Accept		json
 //	@Produce	json
-//	@Success	200							{object}	entity.Photo
-//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
-//	@Param		uid							path		string		true	"photo uid"
-//	@Param		fileuid						path		string		true	"file uid"
-//	@Param		file						body		form.File	true	"file orientation"
+//	@Success	200								{object}	entity.Photo
+//	@Failure	400,401,403,404,409,413,429,500	{object}	i18n.Response
+//	@Param		uid								path		string		true	"photo uid"
+//	@Param		fileuid							path		string		true	"file uid"
+//	@Param		file							body		form.File	true	"file orientation"
 //	@Router		/api/v1/photos/{uid}/files/{fileuid}/orientation [put]
 func ChangeFileOrientation(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/files/:file_uid/orientation", func(c *gin.Context) {
@@ -58,8 +58,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 			return
 		}
 
-		// Limit the edit to the file's photo within the session's shared scope. Gating on the file's
-		// own PhotoUID (not the path :uid) prevents pairing an in-scope :uid with an out-of-scope file.
+		// Limit the edit to the file's own photo within the session scope.
 		if !search.PhotoSessionSeesEverything(s) {
 			if visible, vErr := search.PhotoVisibleToSession(m.PhotoUID, s); vErr != nil || !visible {
 				AbortForbidden(c)
@@ -90,6 +89,11 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 
 		// Update orientation if it was changed.
 		if m.Orientation() != frm.Orientation() {
+			// Indexing must not run during a face migration, so nothing is changed while one holds the lock.
+			if faceMigrationRunning(c) {
+				return
+			}
+
 			fileName := photoprism.FileName(m.FileRoot, m.FileName)
 			mf, fileErr := photoprism.NewMediaFile(fileName)
 

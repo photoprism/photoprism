@@ -158,4 +158,17 @@ describe("component/photo/view text isolation", () => {
     expect(list.find(".text-truncate bdi").attributes("dir")).toBe("ltr");
     expect(mountList(contexts.Photos).find(".text-truncate bdi").attributes("dir")).toBe("auto");
   });
+
+  it("uses the displayed name as hover text in cards view", () => {
+    const hidden = mountCards(contexts.Photos, false);
+    expect(hidden.find(".result:not(.placeholder) .preview").attributes("title")).toBe("صورة.dng");
+    expect(hidden.find(".result:not(.placeholder) .meta-title").attributes("title")).toBe("صورة.dng");
+
+    const shown = mountCards(contexts.Photos, true);
+    expect(shown.find(".result:not(.placeholder) .preview").attributes("title")).toBe("صورة من العائلة");
+    expect(shown.find(".result:not(.placeholder) .meta-title").attributes("title")).toBe("صورة من العائلة");
+
+    const untitled = mountCards(contexts.Photos, true, createPhotoStub("", { Title: "" }));
+    expect(untitled.find(".result:not(.placeholder) .preview").attributes("title")).toBe("صورة.dng");
+  });
 });

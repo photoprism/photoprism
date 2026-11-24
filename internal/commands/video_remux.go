@@ -65,6 +65,11 @@ func videoRemuxAction(ctx *cli.Context) error {
 		}
 
 		if !ctx.Bool("dry-run") && len(plans) > 0 {
+			// Refused before the prompt, so the operator is not asked to confirm a run that cannot start.
+			if refused := videoMigrationRefused(conf, "remux", 0); refused != nil {
+				return refused
+			}
+
 			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Remux %d video files", len(plans))); confirmErr != nil {
 				return confirmErr
 			} else if !proceed {
@@ -81,6 +86,13 @@ func videoRemuxAction(ctx *cli.Context) error {
 				log.Infof("remux: would remux %s to %s", clean.Log(plan.SrcPath), clean.Log(plan.DestPath))
 				planned++
 				continue
+			}
+
+			// Changed files are indexed again, which must not happen during a face migration, so the
+			// batch stops before the next file when one holds the lock, including one started meanwhile.
+			if refused := videoMigrationRefused(conf, "remux", processed+failed); refused != nil {
+				log.Info(formatVideoSummary("remux", false, planned, processed, skipped, failed))
+				return refused
 			}
 
 			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name)); err != nil {

@@ -2,7 +2,6 @@ package api
 
 import (
 	"crypto/hmac"
-	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"net/http"
@@ -84,9 +83,7 @@ func oidcSessionSignalKey() []byte {
 			oidcSessionKey = key
 			return
 		}
-		key := make([]byte, oidcSessionKeyLen)
-		_, _ = rand.Read(key)
-		oidcSessionKey = key
+		oidcSessionKey, _ = rnd.RandomBytes(oidcSessionKeyLen)
 		// Console-only: identity-provider key management must not reach the browser log viewer.
 		event.SystemWarn([]string{"oidc", "session signal key", "persist", "using a process-local key, so OP session cookies will not verify across restarts or replicas"})
 	})
@@ -108,8 +105,8 @@ func loadOrCreateOIDCSessionKey() []byte {
 	if err := fs.MkdirAll(dir); err != nil {
 		return nil
 	}
-	key := make([]byte, oidcSessionKeyLen)
-	if _, err := rand.Read(key); err != nil {
+	key, err := rnd.RandomBytes(oidcSessionKeyLen)
+	if err != nil {
 		return nil
 	}
 	if err := os.WriteFile(path, key, fs.ModeSecretFile); err != nil {

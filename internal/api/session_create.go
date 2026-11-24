@@ -175,14 +175,16 @@ func CreateSession(router *gin.RouterGroup) {
 	router.POST("/sessions", createSessionHandler)
 }
 
-// sessionReusable reports whether sign-in may continue an existing session: its row must still exist, and a
-// client session needs an enabled client, a scope that includes creating sessions, and an owner that admits it.
+// sessionReusable reports whether sign-in may continue an existing session: its row must still exist, a registered
+// account must be allowed to sign in, and a client session needs an enabled client, a scope that includes creating
+// sessions, and an owner that admits it.
 func sessionReusable(s *entity.Session) bool {
 	switch {
 	case s == nil || s.VerifyStored() != nil || s.ClientDisabled():
 		return false
 	case !s.IsClient():
-		return true
+		u := s.GetUser()
+		return !s.HasUser() || u.IsVisitor() || u.CanLogIn()
 	case s.IsApplication() && s.GetUser().DenyLogIn():
 		return false
 	case s.HasUser() && s.GetUser().DenyClientAccess():

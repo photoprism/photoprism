@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // DatabaseCommands configures the index database backup, restore, and transfer subcommands.
@@ -79,7 +79,7 @@ func databaseBackupArgs(ctx *cli.Context) (path, fileName string, err error) {
 
 	fileName = filepath.Join(path, fileName)
 
-	if rel, relErr := filepath.Rel(path, fileName); relErr != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+	if _, ok := fs.RelInside(fileName, path); !ok {
 		return "", "", cli.Exit(fmt.Errorf("%s is not in the --path directory", clean.Log(ctx.Args().First())), 2)
 	}
 

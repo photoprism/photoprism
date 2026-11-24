@@ -189,7 +189,7 @@ func TestSqliteRestoreCmd(t *testing.T) {
 
 		dbFile := filepath.Join(t.TempDir(), "restored.db")
 		cmd := sqliteRestoreCmd(bin, dbFile)
-		cmd.Stdin = strings.NewReader(string(dump))
+		cmd.Stdin = restoreReader(dsn.DriverSQLite3, strings.NewReader(string(dump)))
 		out, err := cmd.CombinedOutput()
 		require.NoError(t, err, string(out))
 
@@ -281,6 +281,14 @@ func TestPreparedRestore_Run(t *testing.T) {
 	})
 	t.Run("Sqlite", func(t *testing.T) {
 		assert.Equal(t, dump, received(t, dsn.DriverSQLite3))
+	})
+	t.Run("SqliteSequenceTable", func(t *testing.T) {
+		out := filepath.Join(t.TempDir(), "stdin")
+		restore := preparedRestore{cmd: exec.Command("sh", "-c", `cat > "$0"`, out), driver: dsn.DriverSQLite3} //nolint:gosec // G204: test command
+		require.NoError(t, restore.run(strings.NewReader(sqliteDump(string(sqliteSequenceTable), "\n"))))
+		data, err := os.ReadFile(out) //nolint:gosec // G304: test-owned path
+		require.NoError(t, err)
+		assert.Equal(t, sqliteDump("", "\n"), string(data))
 	})
 	t.Run("Failed", func(t *testing.T) {
 		restore := preparedRestore{cmd: exec.Command("sh", "-c", "cat >/dev/null; echo 'ERROR 2002 (HY000): x' >&2; exit 1"), driver: dsn.DriverMySQL}

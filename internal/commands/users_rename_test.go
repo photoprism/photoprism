@@ -360,6 +360,27 @@ func TestSaveUserRename(t *testing.T) {
 		require.Error(t, SaveUserRename(ctx, get.Config(), m, oldName, false))
 		assert.Nil(t, renameAuditEntry(audit))
 	})
+	t.Run("ErrorKeepsAuthIDHolder", func(t *testing.T) {
+		// An auth id set with the command is detached from another account only once this one is saved.
+		holder, _ := newRenameTestUser(t, "saverename-holder")
+		require.NoError(t, holder.Updates(entity.Values{"auth_provider": authn.ProviderOIDC.String(), "auth_id": "saverename-sub-3e7c"}))
+		m, _ := newRenameTestUser(t, "saverename-taker")
+		ctx := newCommandContext(t, UsersModCommand, "--username=saverename-taker-new", "--auth=oidc", "--auth-id=saverename-sub-3e7c")
+		entity.UserRenameHandlers["zz_rename_test"] = func(*gorm.DB, *entity.User, string, string) error {
+			return errors.New("test error")
+		}
+		t.Cleanup(func() { delete(entity.UserRenameHandlers, "zz_rename_test") })
+
+		oldName, err := PrepareUserRename(ctx, m)
+		require.NoError(t, err)
+		require.NoError(t, m.SetValuesFromCli(ctx))
+		require.Error(t, SaveUserRename(ctx, get.Config(), m, oldName, false))
+
+		found := entity.FindUserByUID(holder.UserUID)
+		require.NotNil(t, found)
+		assert.Equal(t, authn.ProviderOIDC.String(), found.AuthProvider)
+		assert.Equal(t, "saverename-sub-3e7c", found.AuthID)
+	})
 }
 
 func TestWarnOidcEmailUsername(t *testing.T) {

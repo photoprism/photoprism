@@ -20,6 +20,14 @@ const update = async (ctx, entities = [uid]) => {
 };
 
 describe("component/photo/edit/dialog", () => {
+  it("counts only the files the Files tab lists", () => {
+    const fileCount = (Files) => PPhotoEditDialog.computed.fileCount.call({ model: { Files } });
+
+    expect(fileCount([{ UID: "fs6sg6bw45bn0001" }, { UID: "fs6sg6bw45bn0002", Missing: true }])).toBe(1);
+    expect(fileCount([{ UID: "fs6sg6bw45bn0002", Missing: true }])).toBe(0);
+    expect(fileCount(undefined)).toBe(0);
+  });
+
   describe("onUpdate", () => {
     it("applies server values to fields without unsaved edits", async () => {
       const ctx = makeContext({ Title: "Server Title", Caption: "Server caption" });

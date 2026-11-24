@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -75,18 +76,26 @@ func GetSubject(router *gin.RouterGroup) {
 //	@Router		/api/v1/subjects/{uid} [put]
 func UpdateSubject(router *gin.RouterGroup) {
 	router.PUT("/subjects/:uid", func(c *gin.Context) {
+		// Authorized before the lock, so a request that is refused never holds it.
+		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
+
+		if s.Abort(c) {
+			return
+		}
+
+		// Read before the lock, so a body that arrives slowly is not waited for under it.
+		body, ok := readRequestBody(c, MaxMutationRequestBytes)
+
+		if !ok {
+			return
+		}
+
 		if err := mutex.UpdatePeople.Start(); err != nil {
 			AbortBusy(c)
 			return
 		}
 
 		defer mutex.UpdatePeople.Stop()
-
-		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
-
-		if s.Abort(c) {
-			return
-		}
 
 		// Abort if a face migration is rebuilding the people this would rename.
 		if faceMigrationRunning(c) {
@@ -111,14 +120,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
-
-		if err = c.BindJSON(frm); err != nil {
-			if IsRequestBodyTooLarge(err) {
-				AbortRequestTooLarge(c, i18n.ErrBadRequest)
-				return
-			}
-
+		if err = binding.JSON.BindBody(body, frm); err != nil {
 			log.Errorf("subject: %s (update form)", err)
 			AbortBadRequest(c, err)
 			return

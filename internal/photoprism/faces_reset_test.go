@@ -394,3 +394,27 @@ func TestFaces_Reset_ClearsDanglingFaces(t *testing.T) {
 		Where("face_id NOT IN (SELECT id FROM faces)").Count(&dangling).Error)
 	assert.Zero(t, dangling, "no marker may point at a cluster that is gone")
 }
+
+// TestRunFacesReindex pins that a reindex held off by a face migration reports the wait, so the
+// reset is not followed by a report of markers the walk could not find.
+func TestRunFacesReindex(t *testing.T) {
+	c := config.TestConfig()
+	opt := NewIndexOptions("faces-reindex-test-missing", false, false, true, true, true, c)
+
+	t.Run("FacesLocked", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(c.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		_, _, err = runFacesReindex(NewIndex(c, NewConvert(c), NewFiles(), NewPhotos()), opt)
+		assert.ErrorIs(t, err, ErrFaceMigration)
+	})
+	t.Run("NotLocked", func(t *testing.T) {
+		_, _, err := runFacesReindex(NewIndex(c, NewConvert(c), NewFiles(), NewPhotos()), opt)
+		assert.NoError(t, err)
+	})
+	t.Run("NoIndex", func(t *testing.T) {
+		_, _, err := runFacesReindex(nil, opt)
+		assert.Error(t, err)
+	})
+}

@@ -49,6 +49,7 @@ type Config struct {
 	Status    Status     `json:"status" yaml:"Status"`
 	Serial    string     `json:"serial" yaml:"Serial"`
 	Env       string     `json:"-" yaml:"-"`
+	Runtime   string     `json:"-" yaml:"-"`
 	UserAgent string     `json:"-" yaml:"-"`
 	PartnerID string     `json:"-" yaml:"-"`
 }
@@ -233,7 +234,7 @@ func (c *Config) ReSync(token string) (err error) {
 		log.Debugf("config: unable to obtain key for maps and places (service disabled)")
 		return nil
 	} else if err = ValidateServiceURL(endpointUrl); err != nil {
-		return err
+		return requestError(err)
 	}
 
 	var method string
@@ -250,10 +251,10 @@ func (c *Config) ReSync(token string) (err error) {
 	// Create JSON request.
 	var j []byte
 
-	if j, err = json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.PartnerID, token)); err != nil { //nolint:gosec // G117: request carries the token by design
+	if j, err = json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.Runtime, c.PartnerID, token)); err != nil { //nolint:gosec // G117: request carries the token by design
 		return err
 	} else if req, err = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); err != nil {
-		return err
+		return requestError(err)
 	}
 
 	// Set user agent.
@@ -280,7 +281,7 @@ func (c *Config) ReSync(token string) (err error) {
 
 	// Ok?
 	if err != nil {
-		return err
+		return requestError(err)
 	} else if r.StatusCode >= 400 {
 		err = fmt.Errorf("failed to request key from %s (error %d)", GetServiceHost(), r.StatusCode)
 		return err

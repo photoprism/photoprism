@@ -2397,9 +2397,6 @@
                 "ID": {
                     "type": "string"
                 },
-                "IdToken": {
-                    "type": "string"
-                },
                 "LastActive": {
                     "type": "integer"
                 },
@@ -9313,6 +9310,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
@@ -9419,6 +9422,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
@@ -9433,6 +9442,12 @@
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "507": {
+                        "description": "Insufficient Storage",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -11652,6 +11667,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
@@ -11799,6 +11820,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -12289,9 +12316,9 @@
                         }
                     },
                     "500": {
-                        "description": "Geocoding service error",
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
@@ -12351,9 +12378,9 @@
                         }
                     },
                     "500": {
-                        "description": "Search service error",
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },

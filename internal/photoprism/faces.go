@@ -115,9 +115,19 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	defer mutex.FacesWorker.Stop()
 
-	_, err = w.start(opt)
+	if _, err = w.start(opt); err != nil {
+		return err
+	}
 
-	return err
+	// After clustering, which builds the replacements a migration that stopped early left unbuilt, and
+	// only while no migration holds the lock, since a running one applies its own record.
+	if w.conf.FacesLocked() != "" {
+		return nil
+	} else if _, replayErr := w.replayHiddenFaces(); replayErr != nil {
+		log.Warnf("faces: %s (hidden clusters of an earlier migration)", replayErr)
+	}
+
+	return nil
 }
 
 // facesRunResult counts what one clustering and matching pass moved. The steps run in a fixed

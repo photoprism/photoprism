@@ -209,7 +209,10 @@ export default {
             return;
           }
 
-          $notify.error($gettext("Indexing failed"));
+          // A conflict carries its own message, which the API client already shows.
+          if (e?.response?.status !== 409) {
+            $notify.error($gettext("Indexing failed"));
+          }
 
           ctx.busy = false;
           ctx.completed = 0;

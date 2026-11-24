@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -66,4 +67,61 @@ func TestVideoReindexRelated(t *testing.T) {
 		assert.True(t, indexed("IMG.jpg"))
 		assert.False(t, indexed("IMG.x|y.gif"))
 	})
+}
+
+// TestVideoMigrationRefused pins that video commands refuse to change files during a face migration, and
+// that a batch stopped partway says to index the files it processed rather than to repeat the command.
+func TestVideoMigrationRefused(t *testing.T) {
+	conf := get.Config()
+
+	t.Run("NotLocked", func(t *testing.T) {
+		require.Empty(t, conf.FacesLocked())
+		assert.NoError(t, videoMigrationRefused(conf, "trim", 0))
+		assert.NoError(t, videoMigrationRefused(conf, "trim", 3))
+		assert.NoError(t, videoMigrationRefused(nil, "trim", 0))
+	})
+	t.Run("Locked", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		err = videoMigrationRefused(conf, "remux", 0)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "remux: waiting for the faces migration")
+		assert.Contains(t, err.Error(), "run the command again once it has")
+	})
+	t.Run("StoppedPartway", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		err = videoMigrationRefused(conf, "trim", 3)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "trim: stopped for the faces migration")
+		assert.Contains(t, err.Error(), "after 3 files")
+		assert.Contains(t, err.Error(), "run \"photoprism index\" once it has completed")
+		assert.NotContains(t, err.Error(), "run the command again once it has")
+	})
+}
+
+// TestVideoReindexRelatedFaceMigration pins that a file changed before a face migration started is
+// left to the next index, with advice that does not repeat the change.
+func TestVideoReindexRelatedFaceMigration(t *testing.T) {
+	conf := get.Config()
+	dir := filepath.Join(conf.OriginalsPath(), "video-reindex-lock-"+rnd.Base36(8))
+	require.NoError(t, fs.MkdirAll(dir))
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+
+	jpegFile, err := os.Create(filepath.Join(dir, "IMG.jpg")) //nolint:gosec // test-owned path
+	require.NoError(t, err)
+	require.NoError(t, jpeg.Encode(jpegFile, image.NewRGBA(image.Rect(0, 0, 16, 16)), nil))
+	require.NoError(t, jpegFile.Close())
+
+	lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+	require.NoError(t, err)
+	t.Cleanup(lock.Release)
+
+	err = videoReindexRelated(conf, filepath.Join(dir, "IMG.jpg"))
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "run \"photoprism index\" once it has")
 }

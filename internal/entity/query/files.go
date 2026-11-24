@@ -198,7 +198,8 @@ func RenameFile(srcRoot, srcName, destRoot, destName string) error {
 	return Db().Exec("UPDATE files SET file_root = ?, file_name = ?, file_missing = FALSE, deleted_at = NULL WHERE file_root = ? AND file_name = ?", destRoot, destName, srcRoot, srcName).Error
 }
 
-// SetPhotoPrimary sets a new primary image file for a photo.
+// SetPhotoPrimary sets a new primary image file for a photo, or returns an error if the
+// file does not belong to it.
 func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 	if photoUID == "" {
 		return fmt.Errorf("photo uid is missing")
@@ -207,7 +208,13 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 	var files []string
 
 	if fileUID != "" {
-		// Do nothing.
+		var count int64
+
+		if err = Db().Model(&entity.File{}).Where("photo_uid = ? AND file_uid = ?", photoUID, fileUID).Count(&count).Error; err != nil {
+			return err
+		} else if count == 0 {
+			return fmt.Errorf("cannot find file %s of %s", clean.Log(fileUID), clean.Log(photoUID))
+		}
 	} else if err = Db().Model(&entity.File{}).
 		Where("photo_uid = ? AND file_missing = FALSE AND file_type IN (?)", photoUID, media.PreviewExpr).
 		Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {

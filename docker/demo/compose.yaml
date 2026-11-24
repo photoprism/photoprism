@@ -28,7 +28,7 @@ services:
 
   traefik:
     restart: always
-    image: traefik:v3.7
+    image: traefik:v3.8
     container_name: traefik
     ports:
       - "80:80"

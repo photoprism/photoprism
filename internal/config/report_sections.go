@@ -9,7 +9,7 @@ type ReportSection struct {
 
 // see https://docs.photoprism.app/getting-started/config-options/#face-recognition
 var faceFlagsInfo = `!!! info ""
-    Changing the face model requires running ` + "`photoprism faces migrate`" + `. Leaving the distance thresholds unset is recommended since they are calibrated for the configured face model. A range that fits one embedding model does not transfer to another. Higher values cluster more aggressively and produce more false positives. After changing any of the clustering parameters or after migration, run ` + "`photoprism faces update --force`" + `: it clusters what is unassigned and matches every face against the clusters again, so an automatically matched face may end up in a different cluster while a face that you assigned manually keeps its assignment.
+    Changing the face model requires running ` + "`photoprism faces migrate`" + `. Leaving the distance thresholds unset is recommended since they are calibrated for the configured face model. A range that fits one embedding model does not transfer to another. Higher values cluster more aggressively and produce more false positives. After changing any of the clustering parameters, run ` + "`photoprism faces update --force`" + `: it clusters what is unassigned and matches every face against the clusters again, so an automatically matched face may end up in a different cluster while a face that you assigned manually keeps its assignment. A completed migration already runs these passes itself.
 
 We recommend that only advanced users change the detector, model, or clustering parameters:`
 

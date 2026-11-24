@@ -380,6 +380,8 @@ func TestFaces_auditEmbeddingModels(t *testing.T) {
 		assert.Contains(t, strings.Join(warnings, "\n"), face.ModelArcFaceR50)
 		assert.Contains(t, strings.Join(warnings, "\n"), "faces migrate",
 			"the operator is told how to resolve it")
+		// The command names the model in force, so the run regenerates into it rather than the default.
+		assert.Contains(t, strings.Join(warnings, "\n"), "run "+face.MigrateCommand(face.EmbeddingModelName())+" to regenerate")
 	})
 	t.Run("NoModelConfigured", func(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
@@ -589,15 +591,24 @@ func TestFaces_auditMarkerSampleShortfall(t *testing.T) {
 	require.NoError(t, entity.Db().Create(marker).Error)
 	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
 
-	t.Run("NamesWhatAMigrationWouldRecover", func(t *testing.T) {
+	t.Run("NamesWhatCanSampleThemAgain", func(t *testing.T) {
 		face.ClusterSizeThreshold = 112
+
+		if face.NormalizeModelName(w.conf.FaceModel()) != face.DefaultModelName() {
+			t.Skip("faces: the test library is not on the default model")
+		}
 
 		hook := captureLog(t)
 		w.auditMarkerSampleShortfall()
 
+		// A migration to the same model skips a marker whose sample extent is recorded, so the hint
+		// names the command that regenerates the markers instead.
 		reported := strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n")
 		assert.Contains(t, reported, "sampled below the 112 px clustering size")
-		assert.Contains(t, reported, "faces migrate")
+		assert.Contains(t, reported, "1 marker of those have originals that hold enough detail")
+		assert.Contains(t, reported, `"photoprism faces reset --detector auto" samples those detection finds again with the configured model`)
+		assert.Contains(t, reported, "PHOTOPRISM_THUMB_SIZE_FACE is not 0")
+		assert.NotContains(t, reported, "faces migrate")
 	})
 	t.Run("NothingToReport", func(t *testing.T) {
 		// A bar every measured marker clears is not a finding, so it stays out of the report.
@@ -651,4 +662,42 @@ func TestFaces_AuditNamingSources(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestSampleShortfallAdvice pins that the hint names what samples the markers again: the regeneration of
+// the markers with a usable model, the migration to the default model for one that needs TensorFlow or
+// cannot be used here, and nothing while face embeddings are disabled.
+func TestSampleShortfallAdvice(t *testing.T) {
+	t.Run("DefaultModel", func(t *testing.T) {
+		advice := sampleShortfallAdvice(3, face.DefaultModelName(), face.DefaultModelName())
+		assert.Contains(t, advice, "3 markers of those have originals that hold enough detail")
+		assert.Contains(t, advice, `"photoprism faces reset --detector auto" samples those detection finds again with the configured model`)
+		assert.Contains(t, advice, "PHOTOPRISM_THUMB_SIZE_FACE is not 0")
+		assert.NotContains(t, advice, "faces migrate")
+	})
+	t.Run("OtherOnnxModel", func(t *testing.T) {
+		// A library deliberately on another model keeps it.
+		advice := sampleShortfallAdvice(2, face.ModelAuraFace, face.ModelAuraFace)
+		assert.Contains(t, advice, "faces reset --detector auto")
+		assert.NotContains(t, advice, "faces migrate")
+	})
+	t.Run("RequiresTensorFlow", func(t *testing.T) {
+		advice := sampleShortfallAdvice(1, face.ModelFaceNet, face.ModelFaceNet)
+		assert.Contains(t, advice, "1 marker of those")
+		assert.Contains(t, advice, `"`+face.MigrateCommand(face.DefaultModelName())+`" samples them again`)
+		assert.NotContains(t, advice, "faces reset")
+		assert.NotContains(t, advice, face.ModelFaceNet)
+	})
+	t.Run("EmbeddingsDisabled", func(t *testing.T) {
+		advice := sampleShortfallAdvice(1, face.ModelNone, face.ModelNone)
+		assert.Contains(t, advice, "nothing samples them again while face embeddings are disabled")
+		assert.NotContains(t, advice, "photoprism faces")
+	})
+	t.Run("ModelNotUsableHere", func(t *testing.T) {
+		// A configured model that cannot be used here, such as one whose license is refused, resolves
+		// to none, while a migration to the default model still runs.
+		advice := sampleShortfallAdvice(1, face.ModelNone, face.ModelArcFaceR50)
+		assert.Contains(t, advice, `"`+face.MigrateCommand(face.DefaultModelName())+`" samples them again`)
+		assert.NotContains(t, advice, "disabled")
+	})
 }

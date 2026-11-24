@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -123,4 +124,35 @@ func TestConfig_versionEdition(t *testing.T) {
 		c.options.Edition = Portal
 		assert.Equal(t, Portal, c.versionEdition())
 	})
+}
+
+// TestConfig_MigrateDbAdminOIDCSub pins that MigrateDb links the initial admin account to the configured OIDC subject.
+func TestConfig_MigrateDbAdminOIDCSub(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	if TestConfig().DatabaseDriver() != dsn.DriverSQLite3 {
+		t.Skip("requires a SQLite database of its own")
+	}
+
+	admin := entity.Admin
+	c := NewMinimalTestConfigWithDb("migrate-admin-oidc-sub", t.TempDir())
+
+	t.Cleanup(func() {
+		_ = c.CloseDb()
+		entity.Admin = admin
+		entity.SetDbProvider(TestConfig())
+		TestConfig().Propagate()
+	})
+
+	c.options.AdminOIDCSub = "usg73p55zwgr1gbq"
+	require.NoError(t, c.MigrateDb(false, nil))
+
+	user := entity.FindUserByUID(entity.Admin.UserUID)
+	require.NotNil(t, user)
+	assert.Equal(t, authn.ProviderOIDC.String(), user.AuthProvider)
+	assert.Equal(t, "usg73p55zwgr1gbq", user.AuthID)
+	assert.Equal(t, "", user.AuthIssuer)
+	assert.True(t, user.SuperAdmin)
 }

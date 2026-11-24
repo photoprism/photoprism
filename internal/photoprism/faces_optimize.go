@@ -3,14 +3,12 @@ package photoprism
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/internal/event"
 )
 
 // FacesOptimizeResult represents the outcome of Faces.Optimize().
@@ -67,28 +65,7 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 			if len(merge) < face.ManualClusterCore {
 				// Too few to form a cluster: their midpoint would be an embedding or a pair.
 			} else if _, mergeErr := query.MergeFaces(merge, false); mergeErr != nil {
-				if errors.Is(mergeErr, query.ErrRetainedManualClusters) {
-					subject := entity.SubjNames.Log(merge[0].SubjUID)
-					clusterIDs := strings.Join(merge.IDs(), ", ")
-
-					event.SystemWarn([]string{
-						"faces",
-						"optimize",
-						"retained manual clusters after merge",
-						"subject %s, iteration %d, group %d, count %d, ids %s",
-					}, subject, i, j, len(merge), clusterIDs)
-
-					log.Debugf(
-						"faces: retained manual clusters after merge: kept %s [%s] for subject %s (merge) itr %d group %d",
-						english.Plural(len(merge), "candidate cluster", "candidate clusters"),
-						clusterIDs,
-						subject,
-						i,
-						j,
-					)
-				} else {
-					log.Errorf("%s (merge) itr %d group %d count %d", mergeErr, i, j, len(merge))
-				}
+				reportMergeError(mergeErr, i, j, merge)
 			} else {
 				// not exactly right, potentially overcounting
 				// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360
@@ -108,6 +85,21 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 	}
 
 	return result, nil
+}
+
+// reportMergeError logs why a group of manual clusters was not merged.
+// Retained candidates are the expected outcome and repeat on every run, so they are logged at
+// debug level only; any other merge error is logged at error level.
+func reportMergeError(err error, i, j int, merge entity.Faces) {
+	if err == nil {
+		return
+	} else if !errors.Is(err, query.ErrRetainedManualClusters) {
+		log.Errorf("%s (merge) itr %d group %d count %d", err, i, j, len(merge))
+		return
+	}
+
+	// The error names the clusters actually retained, which can be fewer than the candidates.
+	log.Debugf("%s (merge) itr %d group %d count %d", err, i, j, len(merge))
 }
 
 // mergeGroups partitions a subject's clusters into the sets one midpoint can stand for.

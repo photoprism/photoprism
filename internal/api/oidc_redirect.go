@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
@@ -194,6 +195,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		groups, groupOverage := oidc.GroupsFromClaims(idTokenClaims, groupClaim)
 		moreGroups, moreOverage := oidc.GroupsFromClaims(userInfo.Claims, groupClaim)
+		idTokenGroupCount := len(groups)
 
 		// Merge groups, since some IDPs split memberships across ID tokens and user info.
 		// Appending is safe because downstream helpers normalize and deduplicate.
@@ -204,6 +206,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// "Overage" means the IdP omitted some or all groups because the user has too many; tokens carry a marker (`_claim_names.groups`).
 		if moreOverage {
 			groupOverage = true
+		}
+
+		// Log the received groups at debug level, so a failed group check can be
+		// compared with the configured IDs without decoding the tokens.
+		if log.IsLevelEnabled(logrus.DebugLevel) {
+			log.Debugf("oidc: received groups in claim %s (id token %d, userinfo %d, overage %t): %s",
+				clean.Log(groupClaim), idTokenGroupCount, len(moreGroups), groupOverage, oidc.GroupsLogString(oidc.MergeGroups(groups)))
 		}
 
 		requiredGroups := conf.OIDCGroup()
@@ -281,6 +290,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			event.AuditErr([]string{clientIp, "create session", "oidc", userEmail, message})
 			event.LoginError(clientIp, "oidc", userEmail, userAgent, message)
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrForbidden))
+			return
+		}
+
+		// Refuse a subject that cleaning would change, so it is matched exactly as sent.
+		if !entity.ValidOIDCSignInSub(userInfo.Subject) {
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrInvalidAuthID.Error()})
+			event.LoginError(clientIp, "oidc", oidc.Username(userInfo, conf.OIDCUsername()), userAgent, authn.ErrInvalidAuthID.Error())
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		}
 

@@ -308,7 +308,7 @@ write_files:
 
         traefik:
           restart: always
-          image: traefik:v3.7
+          image: traefik:v3.8
           ports:
             - "80:80"
             - "443:443"

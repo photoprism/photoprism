@@ -44,6 +44,8 @@ func SaveUserRename(ctx *cli.Context, conf *config.Config, m *entity.User, oldNa
 		return err
 	}
 
+	m.DetachAuthIDFromCli(ctx)
+
 	if m.UserName != oldName {
 		log.Infof("user %s has been renamed from %s", clean.LogQuote(m.UserName), clean.LogQuote(oldName))
 

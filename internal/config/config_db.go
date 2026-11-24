@@ -580,6 +580,9 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) (err error) {
 		entity.Admin.InitAccount(c.AdminInitName(), c.AdminPassword(), c.AdminScope())
 	}
 
+	// Link the initial Super Admin account to an OIDC subject, if specified.
+	entity.Admin.InitOIDCSub(c.AdminOIDCSub())
+
 	// Start recording warnings and errors after the required database table has been created.
 	entity.LogWarningsAndErrors()
 
@@ -635,6 +638,9 @@ func (c *Config) InitTestDb() {
 	} else {
 		entity.Admin.InitAccount(c.AdminInitName(), c.AdminPassword(), c.AdminScope())
 	}
+
+	// Link the initial Super Admin account to an OIDC subject, if specified.
+	entity.Admin.InitOIDCSub(c.AdminOIDCSub())
 
 	// Start recording warnings and errors after the required table has have been created.
 	entity.LogWarningsAndErrors()

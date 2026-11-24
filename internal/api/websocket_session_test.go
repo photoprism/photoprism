@@ -177,3 +177,28 @@ func TestWebSocket_SessionEnded(t *testing.T) {
 		assert.False(t, closed(conn, 500*time.Millisecond))
 	})
 }
+
+func TestWsSessionUser(t *testing.T) {
+	t.Run("ActiveAccount", func(t *testing.T) {
+		u := *entity.UserFixtures.Pointer("bob")
+		sess := entity.NewSession(3600, 0).SetUser(&u)
+		assert.Equal(t, u.UserUID, wsSessionUser(sess).UserUID)
+	})
+	t.Run("ExpiredAccount", func(t *testing.T) {
+		u := *entity.UserFixtures.Pointer("bob")
+		expired := time.Now().Add(-time.Hour)
+		u.ExpiresAt = &expired
+		sess := entity.NewSession(3600, 0).SetUser(&u)
+		assert.Equal(t, entity.UnknownUser.UserUID, wsSessionUser(sess).UserUID)
+	})
+	t.Run("Visitor", func(t *testing.T) {
+		sess := entity.NewSession(3600, 0).SetUser(&entity.Visitor)
+		assert.Equal(t, entity.Visitor.UserUID, wsSessionUser(sess).UserUID)
+	})
+	t.Run("NoAccount", func(t *testing.T) {
+		assert.Equal(t, entity.UnknownUser.UserUID, wsSessionUser(entity.NewSession(3600, 0)).UserUID)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, entity.UnknownUser.UserUID, wsSessionUser(nil).UserUID)
+	})
+}

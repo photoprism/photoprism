@@ -70,7 +70,7 @@
             <v-icon :size="18" start>mdi-film</v-icon>
             {{ $gettext(`Files`) }}
           </template>
-          <v-badge v-if="model.Files.length" color="surface-variant" inline :content="model.Files.length"></v-badge>
+          <v-badge v-if="fileCount" color="surface-variant" inline :content="fileCount"></v-badge>
         </v-tab>
 
         <v-tab v-if="canEdit" id="tab-info" value="info" ripple>
@@ -162,6 +162,10 @@ export default {
     };
   },
   computed: {
+    // fileCount returns the number of files the Files tab lists, which excludes files flagged as missing.
+    fileCount() {
+      return this.model?.Files?.filter((f) => !f.Missing).length || 0;
+    },
     title() {
       if (this.model && this.model.Title) {
         return this.model.Title;

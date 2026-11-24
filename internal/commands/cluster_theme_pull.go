@@ -1,16 +1,13 @@
 package commands
 
 import (
-	"archive/zip"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -208,7 +205,7 @@ func clusterThemePullAction(ctx *cli.Context) error {
 		}
 
 		// Extract safely into destination.
-		if err := unzipSafe(tmpFile.Name(), dest); err != nil {
+		if err := cluster.ExtractTheme(tmpFile.Name(), dest); err != nil {
 			return err
 		}
 
@@ -307,118 +304,5 @@ func removeDirContents(dir string) error {
 		}
 	}
 
-	return nil
-}
-
-// Theme archive bounds, the same limits as for theme installs at node bootstrap.
-var (
-	themeFileSizeLimit  int64 = 32 * fs.MB
-	themeTotalSizeLimit int64 = 512 * fs.MB
-)
-
-// unzipSafe extracts a theme archive into dest, skipping hidden names and entries outside dest. New files get
-// fs.ModeFile, and a file over themeFileSizeLimit or the themeTotalSizeLimit budget is removed with an error.
-func unzipSafe(zipPath, dest string) error {
-	r, err := zip.OpenReader(zipPath)
-
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if closeErr := r.Close(); closeErr != nil {
-			log.Debugf("cluster: %s (close theme archive)", clean.ErrorFull(closeErr))
-		}
-	}()
-
-	destAbs, err := filepath.Abs(dest)
-
-	if err != nil {
-		return err
-	}
-
-	var total int64
-
-	// Empty theme archives are valid; install succeeds without files.
-	for _, f := range r.File {
-		// ZIP names are always slash-separated regardless of host OS.
-		if strings.Contains(f.Name, `\`) {
-			continue
-		}
-
-		name := path.Clean(strings.TrimSpace(f.Name))
-
-		if name == "." || name == ".." || strings.HasPrefix(name, "../") || path.IsAbs(name) || strings.Contains(name, ":") {
-			continue
-		}
-
-		// Skip entries that look like hidden files or directories.
-		if fs.FileNameSystem(path.Base(name)) {
-			continue
-		}
-
-		nameOS := filepath.FromSlash(name)
-		target := filepath.Join(destAbs, nameOS)
-		targetAbs, targetErr := filepath.Abs(target)
-
-		if targetErr != nil {
-			continue
-		}
-
-		rel, relErr := filepath.Rel(destAbs, targetAbs)
-
-		if relErr != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
-			continue
-		}
-
-		if f.FileInfo().IsDir() {
-			if err = fs.MkdirAll(targetAbs); err != nil {
-				return err
-			}
-			continue
-		}
-
-		// Ensure parent exists
-		if err = fs.MkdirAll(filepath.Dir(targetAbs)); err != nil {
-			return err
-		}
-
-		// Open for read.
-		rc, err := f.Open()
-
-		if err != nil {
-			return err
-		}
-
-		// Create/truncate target.
-		out, err := os.OpenFile(targetAbs, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, fs.ModeFile) //nolint:gosec // paths derived from zip entries validated earlier
-
-		if err != nil {
-			_ = rc.Close()
-			return err
-		}
-
-		// Copy one byte more than the remaining budget allows, so that an oversized file is detected.
-		limit := min(themeFileSizeLimit, themeTotalSizeLimit-total)
-		n, copyErr := io.CopyN(out, rc, limit+1)
-		total += n
-		closeOutErr := out.Close()
-		closeRcErr := rc.Close()
-
-		if n > limit {
-			_ = os.Remove(targetAbs)
-			return fmt.Errorf("theme file %s exceeds the size limit", clean.Log(name))
-		} else if copyErr != nil && !errors.Is(copyErr, io.EOF) {
-			return copyErr
-		}
-
-		if closeOutErr != nil {
-			return closeOutErr
-		}
-
-		if closeRcErr != nil {
-			return closeRcErr
-		}
-	}
 	return nil
 }

@@ -100,10 +100,24 @@ func (ind *Index) abortInsufficientStorage() {
 	ind.Cancel()
 }
 
+// ErrFaceMigration is matched by the errors Index.Run and Import.Run return when they hold off for
+// a face migration, so a caller can tell that wait apart from any other reason a run did not start.
+var ErrFaceMigration = errors.New("waiting for the face migration to complete")
+
+// ErrIndexBusy is returned by Index.Run when indexing has to wait for a face migration to complete.
+var ErrIndexBusy = fmt.Errorf("index %w", ErrFaceMigration)
+
 // Start indexes media files in the originals folder according to the provided options.
 // It streams work to worker goroutines, updates duplicate caches, and returns both
 // the set of processed paths and the number of files that were changed.
 func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
+	found, updated, _ = ind.Run(o)
+	return found, updated
+}
+
+// Run indexes like Start and returns ErrIndexBusy if it did not run because a face migration
+// holds the lock, which a caller that has to answer for the result can report.
+func (ind *Index) Run(o IndexOptions) (found fs.Done, updated int, runErr error) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("index: %s (panic)\nstack: %s", r, debug.Stack())
@@ -114,7 +128,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 	if ind.conf == nil {
 		log.Errorf("index: config is not set")
-		return found, updated
+		return found, updated, nil
 	}
 
 	// Checked here rather than per caller, so the API, the CLI and the workers all inherit it.
@@ -122,7 +136,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	// finalize compares the identity set against a snapshot - a new named marker rolls it back.
 	if held := ind.conf.FacesLocked(); held != "" {
 		log.Infof("index: waiting for the %s to complete", held)
-		return found, updated
+		return found, updated, ErrIndexBusy
 	}
 
 	// Indexing continues after it completed, but its target is recorded in "options.yml" and not
@@ -134,27 +148,27 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 	if resolveErr != nil {
 		event.Error(fmt.Sprintf("index: %s", clean.Error(resolveErr)))
-		return found, updated
+		return found, updated, nil
 	}
 
 	if !fs.PathExists(optionsPath) {
 		event.Error(fmt.Sprintf("index: directory %s not found", clean.Log(displayFolder(optionsPath, originalsPath))))
-		return found, updated
+		return found, updated, nil
 	} else if fs.DirIsEmpty(originalsPath) {
 		event.InfoMsg(i18n.ErrOriginalsEmpty)
-		return found, updated
+		return found, updated, nil
 	}
 
 	// Reset the cached disk usage so a freshly freed disk is detected immediately.
 	disk.FlushFree()
 
 	if ind.storageLow() {
-		return found, updated
+		return found, updated, nil
 	}
 
 	if err := mutex.IndexWorker.Start(); err != nil {
 		event.Warn(fmt.Sprintf("index: %s", err.Error()))
-		return found, updated
+		return found, updated, nil
 	}
 
 	defer mutex.IndexWorker.Stop()
@@ -507,7 +521,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	ind.lastRun = entity.Now()
 	ind.lastFound = len(found)
 
-	return found, updated
+	return found, updated, nil
 }
 
 // LastRun returns the time when the index was last updated and how many files were found.

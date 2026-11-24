@@ -24,7 +24,7 @@ require (
 	github.com/gin-contrib/sse v1.1.2 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.8 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.23.2 // indirect
@@ -64,7 +64,7 @@ require (
 	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
 	github.com/olekukonko/errors v1.3.0 // indirect
 	github.com/olekukonko/ll v0.1.8 // indirect
-	github.com/pandatix/go-abnf v0.5.3 // indirect
+	github.com/pandatix/go-abnf v0.5.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/prometheus/procfs v0.22.0 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
@@ -82,13 +82,14 @@ require (
 	github.com/zitadel/schema v1.3.2 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.9.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.46.0 // indirect
-	go.opentelemetry.io/otel/metric v1.46.0 // indirect
-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
 	golang.org/x/arch v0.27.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
+	golang.org/x/tools v0.52.0 // indirect
 )
 
 require (
@@ -105,12 +106,12 @@ require (
 	github.com/dsoprea/go-tiff-image-structure/v2 v2.0.0-20221003165014-8ecc4f52edca
 	github.com/dustin/go-humanize v1.1.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20261016130456-fdd95a3d0543
-	github.com/emersion/go-webdav v0.7.0
+	github.com/emersion/go-webdav v0.8.0
 	github.com/gabriel-vasile/mimetype v1.4.16
 	github.com/gin-gonic/gin v1.12.0
-	github.com/go-co-op/gocron/v2 v2.23.0
+	github.com/go-co-op/gocron/v2 v2.23.2
 	github.com/go-ldap/ldap/v3 v3.4.15
-	github.com/go-sql-driver/mysql v1.10.1
+	github.com/go-sql-driver/mysql v1.10.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang/geo v0.0.0-20261106073233-5e8d6967632a
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
@@ -118,10 +119,10 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
 	github.com/gosimple/unidecode v1.0.1
-	github.com/jackc/pgx/v5 v5.12.0
+	github.com/jackc/pgx/v5 v5.13.0
 	github.com/jinzhu/inflection v1.0.0
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/compress v1.20.3
+	github.com/klauspost/compress v1.20.5
 	github.com/klauspost/cpuid/v2 v2.4.2
 	github.com/leandro-lugaresi/hub v1.1.2
 	github.com/leonelquinteros/gotext v1.8.0
@@ -139,7 +140,7 @@ require (
 	github.com/pquerna/otp v1.5.0
 	github.com/prometheus/client_golang v1.25.0
 	github.com/prometheus/client_model v0.6.3
-	github.com/prometheus/common v0.73.1
+	github.com/prometheus/common v0.74.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sevlyar/go-daemon v0.1.7
 	github.com/sirupsen/logrus v1.10.2
@@ -147,21 +148,21 @@ require (
 	github.com/sunfish-shogi/bufseekio v0.1.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
-	github.com/tidwall/gjson v1.20.2
-	github.com/ugjka/go-tz/v2 v2.2.9
+	github.com/tidwall/gjson v1.20.6
+	github.com/ugjka/go-tz/v2 v2.2.10
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.38.0
-	github.com/zitadel/oidc/v3 v3.51.17
-	golang.org/x/crypto v0.58.0
-	golang.org/x/image v0.47.0
-	golang.org/x/mod v0.42.0
-	golang.org/x/net v0.62.0
-	golang.org/x/oauth2 v0.37.0
-	golang.org/x/sync v0.24.0
-	golang.org/x/sys v0.49.0
-	golang.org/x/text v0.43.0
+	github.com/zitadel/oidc/v3 v3.53.0
+	golang.org/x/crypto v0.59.0
+	golang.org/x/image v0.48.0
+	golang.org/x/mod v0.43.0
+	golang.org/x/net v0.63.0
+	golang.org/x/oauth2 v0.38.0
+	golang.org/x/sync v0.25.0
+	golang.org/x/sys v0.50.0
+	golang.org/x/text v0.44.0
 	golang.org/x/time v0.16.0
 	gonum.org/v1/gonum v0.17.0
 	google.golang.org/protobuf v1.36.12

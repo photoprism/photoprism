@@ -17,9 +17,9 @@ type SearchPhotosGeo struct {
 	Type        string    `form:"type" example:"type:image|raw|live" notes:"Finds specific media types, such as image, raw, live, video, animated, audio, vector, or document, separated by |"`
 	Path        string    `form:"path" example:"path:2020/Holiday" notes:"Path names separated by |, supports * wildcards"`
 	Folder      string    `form:"folder" example:"folder:\"*/2020\"" notes:"Alias for the path filter"` // Alias for Path
-	Name        string    `form:"name" example:"name:\"IMG_9831-112*\"" notes:"File names without path and extension, separated by |"`
-	Title       string    `form:"title" example:"title:\"Lake*\"" notes:"Searches text in Titles separated by |, or use false to find content without a Title"`
-	Caption     string    `form:"caption" example:"caption:\"Lake*\"" notes:"Searches text in Captions separated by |, or use false to find content without a Caption"`
+	Name        string    `form:"name" example:"name:\"IMG_9831-112*\"" notes:"File names without path and extension, separated by |, supports * wildcards"`
+	Title       string    `form:"title" example:"title:\"Lake*\"" notes:"Searches text in titles separated by |, supports * wildcards, or specify false to find content without a title"`
+	Caption     string    `form:"caption" example:"caption:\"Lake*\"" notes:"Searches text in captions separated by |, supports * wildcards, or specify false to find content without a caption"`
 	Description string    `form:"description" example:"description:\"Lake*\"" notes:"Searches text in titles or captions separated by |, or specify false to find content without a title or caption"`
 	Added       time.Time `form:"added" example:"added:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content added at or after this time"`
 	Updated     time.Time `form:"updated" example:"updated:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content updated at or after this time"`
@@ -77,7 +77,7 @@ type SearchPhotosGeo struct {
 	Keywords    string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords, combinable with & or |"`
 	Label       string    `form:"label" example:"label:\"cat|dog&!blurry\"" notes:"Label names: | is OR within a group, & is AND between groups (every positive group must match), leading ! negates a group (e.g. !rejected). Category expansion applies to both positive and negative terms. Escape a literal &, |, or leading ! with \\"`
 	Category    string    `form:"category" example:"category:airport" notes:"Location category type"`
-	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, supports * wildcards"`
+	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, matches album names that start with the given text"`
 	Albums      string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album names, combinable with & or |"`
 	Country     string    `form:"country" example:"country:\"de|us\"" notes:"Country codes, separated by |"`
 	State       string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"State or province names, separated by |"`

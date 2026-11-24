@@ -27,10 +27,10 @@ import (
 //	@Tags		Photos, Stacks
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid						path		string	true	"photo uid"
-//	@Param		fileuid					path		string	true	"file uid"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,409,429,500	{object}	i18n.Response
+//	@Param		uid							path		string	true	"photo uid"
+//	@Param		fileuid						path		string	true	"file uid"
 //	@Router		/api/v1/photos/{uid}/files/{fileuid}/unstack [post]
 func PhotoUnstack(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/unstack", func(c *gin.Context) {
@@ -50,8 +50,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
-		// Limit the edit to the file's photo within the session's shared scope. Gating on the file's
-		// own PhotoUID (not the path :uid) prevents pairing an in-scope :uid with an out-of-scope file.
+		// Limit the edit to the file's own photo within the session scope.
 		if !search.PhotoSessionSeesEverything(s) {
 			if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
 				AbortForbidden(c)
@@ -115,6 +114,11 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		if err != nil {
 			log.Errorf("photo: cannot find primary file for %s (unstack)", clean.Log(baseName))
 			AbortUnexpectedError(c)
+			return
+		}
+
+		// Indexing must not run during a face migration, so nothing is changed while one holds the lock.
+		if faceMigrationRunning(c) {
 			return
 		}
 

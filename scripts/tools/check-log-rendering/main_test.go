@@ -145,7 +145,7 @@ func TestRendered(t *testing.T) {
 		want        bool
 	}{
 		{"Literal", `"value"`, true}, {"BoolIdentifier", `true`, false}, {"Parentheses", `(clean.Log(name))`, true},
-		{"Names", `clean.LogNames(names)`, true}, {"Lower", `clean.LogLower(name)`, true},
+		{"Names", `clean.LogNames(names)`, true}, {"NamesN", `clean.LogNamesN(names, 50)`, true}, {"Lower", `clean.LogLower(name)`, true},
 		{"Status", `status.Error(err)`, true}, {"Unknown", `safe(name)`, false},
 		{"Mixed", `clean.Log(name)+raw`, false}, {"Credential", `clean.Log(accessToken)`, false},
 		{"RedactedOnly", `clean.UriRedacted(proxy)`, false}, {"RedactedRendered", `clean.Log(clean.UriRedacted(proxy))`, true}, {"RawError", `err.Error()`, false},

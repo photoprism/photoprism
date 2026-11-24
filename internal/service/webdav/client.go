@@ -771,7 +771,7 @@ func (c *Client) Delete(dir string) error {
 
 	defer cancel()
 
-	return client.RemoveAll(ctx, dir)
+	return client.RemoveAll(ctx, dir, nil)
 }
 
 // tempSink returns a unique sibling path for staging a replacement, shortened when the added suffix

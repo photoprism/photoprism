@@ -61,7 +61,7 @@ type Client struct {
 	AuthTokens   int64           `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
 	AuthEnabled  bool            `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
 	RefreshToken string          `gorm:"type:bytes;size:2048;column:refresh_token;default:'';" json:"-" yaml:"-"`
-	IdToken      string          `gorm:"type:bytes;size:2048;column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	IdToken      string          `gorm:"type:bytes;size:2048;column:id_token;default:'';" json:"-" yaml:"IdToken,omitempty"`
 	DataJSON     json.RawMessage `gorm:"type:bytes;size:4096;" json:"-" yaml:"Data,omitempty"`
 	data         *ClientData     `gorm:"-" yaml:"-"`
 	secretHash   string          `gorm:"-" yaml:"-"`

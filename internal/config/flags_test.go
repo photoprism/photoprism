@@ -144,3 +144,10 @@ func TestFlagsWithoutSecret(t *testing.T) {
 		assert.Zero(t, matched)
 	})
 }
+
+// TestFlagsEditionAdminOptions pins that the CE flags omit the admin options only the editions register.
+func TestFlagsEditionAdminOptions(t *testing.T) {
+	for _, f := range Flags {
+		assert.NotContains(t, []string{"admin-scope", "admin-oidc-sub"}, f.Name())
+	}
+}

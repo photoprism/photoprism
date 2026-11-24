@@ -1,6 +1,6 @@
 ## PhotoPrism — OIDC Integration
 
-**Last Updated:** October 17, 2026
+**Last Updated:** November 24, 2026
 
 ### Overview
 
@@ -78,6 +78,7 @@ The following features are supported by the current implementation:
 - On sign-in, the role of an existing account is updated to the Portal-granted or group-mapped role and the change is audited; super admins keep their role, and a promotion the user quota does not allow is not applied. A new account is checked against the quota with the role it receives.
 - Keeps app/directory roles (`roles`, `wids`) separate from security groups to avoid accidental privilege escalation.
 - Claim name is configurable via `--oidc-group-claim` (default `groups`).
+- At debug level (`PHOTOPRISM_DEBUG=true` or `PHOTOPRISM_LOG_LEVEL=debug`), each sign-in logs `oidc: received groups in claim ...` before the required-group check, with the number of groups in the ID token and in userinfo, the overage flag, and the normalized group IDs, so they can be compared with `PHOTOPRISM_OIDC_GROUP` without decoding the tokens.
 - On Portal builds, persists the merged, normalized group set from the ID token and userinfo on the login session (`entity.SessionData.Groups`), so the Portal can evaluate group-based cluster access at authorize time without another IdP round-trip. Instance and CE sessions never store groups, and the session API responses redact the field (`SessionData.Redacted`), so group membership is not exposed to clients.
 
 #### Configuration Options

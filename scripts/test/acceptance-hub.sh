@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Gives a TestCafe fixture copy its own instance serial and keeps its hub registration. The restart rules run it
-# before the binary, which reads the serial and would otherwise save a hub.yml without an API key.
+# before the binary, which reads the serial and would otherwise send the fixture's serial to the hub.
 set -euo pipefail
 
 if (( $# < 1 || $# > 2 )); then
@@ -65,7 +65,8 @@ haskey() {
 }
 
 # replace writes the given file without Serial lines to hub.yml through a temporary file in the same folder, so that
-# a failed run leaves the previous one. Config folders generated for other databases are linked to it again later.
+# a failed run leaves the previous one, and keeps the time of the given file, on which the renewal window depends.
+# Config folders generated for other databases are linked to it again later.
 replace() {
   hubtmp=$(mktemp "$config/.hub.yml.acceptance-hub.XXXXXX")
   trap 'rm -f -- "$hubtmp"' EXIT
@@ -73,6 +74,7 @@ replace() {
   grep -avE "^($bom)?Serial:" -- "$1" >&3 || (( $? == 1 ))
   exec 3>&-
   [[ ! -f "$hub" ]] || chmod --reference="$hub" -- "$hubtmp"
+  touch -r "$1" -- "$hubtmp"
   mv -fT -- "$hubtmp" "$hub"
   trap - EXIT
 }

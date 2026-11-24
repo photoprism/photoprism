@@ -79,7 +79,7 @@ type Session struct {
 	PreviewToken string          `gorm:"type:bytes;size:64;column:preview_token;default:'';" json:"-" yaml:"-"`
 	AccessToken  string          `gorm:"type:bytes;size:4096;column:access_token;default:'';" json:"-" yaml:"-"`
 	RefreshToken string          `gorm:"type:bytes;size:2048;column:refresh_token;default:'';" json:"-" yaml:"-"`
-	IdToken      string          `gorm:"type:bytes;size:4096;column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	IdToken      string          `gorm:"type:bytes;size:4096;column:id_token;default:'';" json:"-" yaml:"IdToken,omitempty"`
 	UserAgent    string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
 	DataJSON     json.RawMessage `gorm:"type:bytes;size:16384;" json:"-" yaml:"Data,omitempty"`
 	data         *SessionData    `gorm:"-" yaml:"-"`
@@ -607,8 +607,12 @@ func (m *Session) SetUser(u *User) *Session {
 		m.AuthScope = u.Scope()
 	}
 
-	// Update the preview token.
-	m.SetPreviewToken(u.PreviewToken)
+	// Update the preview token, which stays registered only while the account is active.
+	if !u.isInactive() {
+		m.SetPreviewToken(u.PreviewToken)
+	} else if m.ID != "" {
+		PreviewToken.Unset(m.ID)
+	}
 
 	return m
 }
@@ -814,7 +818,9 @@ func (m *Session) ChangePassword(newPw string) (err error) {
 		return err
 	}
 
-	m.SetPreviewToken(u.PreviewToken)
+	if !u.isInactive() {
+		m.SetPreviewToken(u.PreviewToken)
+	}
 
 	return nil
 }

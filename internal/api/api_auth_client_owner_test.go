@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -159,6 +160,32 @@ func TestSessionReusable(t *testing.T) {
 		t.Cleanup(func() { _ = sess.Delete() })
 
 		assert.True(t, sessionReusable(sess))
+	})
+	t.Run("ExpiredAccount", func(t *testing.T) {
+		u := *entity.UserFixtures.Pointer("bob")
+		expired := time.Now().Add(-time.Hour)
+		u.ExpiresAt = &expired
+		sess := entity.NewSession(3600, 0).SetUser(&u)
+		require.NoError(t, sess.Save())
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		assert.False(t, sessionReusable(sess))
+	})
+	t.Run("VisitorSession", func(t *testing.T) {
+		sess := entity.NewSession(3600, 0).SetUser(&entity.Visitor)
+		require.NoError(t, sess.Save())
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		assert.True(t, sessionReusable(sess))
+	})
+	t.Run("UnresolvedAccount", func(t *testing.T) {
+		sess := entity.NewSession(3600, 0)
+		sess.UserUID = rnd.GenerateUID(entity.UserUID)
+		sess.UserName = "reuse-unresolved"
+		require.NoError(t, sess.Save())
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		assert.False(t, sessionReusable(sess))
 	})
 	t.Run("RemovedRow", func(t *testing.T) {
 		sess := entity.NewSession(3600, 0).SetUser(entity.UserFixtures.Pointer("alice"))

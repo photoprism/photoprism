@@ -213,6 +213,13 @@ func OAuthToken(router *gin.RouterGroup) {
 
 			actor = fmt.Sprintf("user %s", clean.Log(s.GetUserName()))
 
+			// Only accounts that may sign in can create app passwords.
+			if s.GetUser().DenyLogIn() {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrAccountDisabled.Error(), status.Denied})
+				AbortInvalidCredentials(c)
+				return
+			}
+
 			if s.GetUser().Provider().SupportsPasswordAuthentication() {
 				loginForm := form.Login{
 					Username: s.GetUserName(),

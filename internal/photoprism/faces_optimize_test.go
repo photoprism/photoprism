@@ -1,9 +1,14 @@
 package photoprism
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -11,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestFaces_Optimize(t *testing.T) {
@@ -25,6 +31,68 @@ func TestFaces_Optimize(t *testing.T) {
 	}
 
 	t.Log(r)
+}
+
+// TestReportMergeError pins that retained manual clusters, the expected outcome of a merge that
+// cannot absorb its markers, stay at debug level and reach no system event, while any other merge
+// error is still logged at error level.
+func TestReportMergeError(t *testing.T) {
+	level := log.GetLevel()
+	log.SetLevel(logrus.DebugLevel)
+	t.Cleanup(func() { log.SetLevel(level) })
+
+	merge := entity.Faces{
+		{ID: "RETAINEDAAAAAAAAAAAAAAAAAAAAAAAA", SubjUID: "js6sg6b1qekk9jx1"},
+		{ID: "RETAINEDBBBBBBBBBBBBBBBBBBBBBBBB", SubjUID: "js6sg6b1qekk9jx1"},
+		{ID: "RETAINEDCCCCCCCCCCCCCCCCCCCCCCCC", SubjUID: "js6sg6b1qekk9jx1"},
+	}
+
+	t.Run("RetainedManualClusters", func(t *testing.T) {
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		// System events and user notifications.
+		s := event.Subscribe("system.log.*", "notify.*")
+		t.Cleanup(func() { event.Unsubscribe(s) })
+
+		retained := fmt.Errorf("%w: kept 1 candidate cluster(s) [RETAINEDBBBBBBBBBBBBBBBBBBBBBBBB]", query.ErrRetainedManualClusters)
+		reportMergeError(retained, 0, 2, merge)
+
+		// Positive control: published after the call, so it arrives first unless the call published.
+		event.SystemInfo([]string{"faces", "test marker"})
+
+		select {
+		case msg := <-s.Receiver:
+			assert.Equal(t, "system.log.info", msg.Name, "retained clusters must not publish an event above debug")
+			assert.Contains(t, msg.Fields["message"], "test marker")
+		case <-time.After(time.Second):
+			t.Fatal("positive control event not received")
+		}
+
+		assert.Empty(t, loggedMessages(hook, logrus.InfoLevel), "retained clusters must not log above debug")
+
+		// The debug line names the clusters actually retained, not every candidate.
+		assert.Contains(t, loggedMessages(hook, logrus.DebugLevel), retained.Error()+" (merge) itr 0 group 2 count 3")
+	})
+	t.Run("OtherError", func(t *testing.T) {
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		reportMergeError(errors.New("faces: test merge failure"), 1, 4, merge)
+
+		errs := loggedMessages(hook, logrus.ErrorLevel)
+		require.Len(t, errs, 1, "a merge failure other than retained clusters must log at error level")
+		assert.Equal(t, "faces: test merge failure (merge) itr 1 group 4 count 3", errs[0])
+	})
+	t.Run("NoError", func(t *testing.T) {
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		reportMergeError(nil, 0, 0, merge)
+		reportMergeError(fmt.Errorf("%w", query.ErrRetainedManualClusters), 0, 0, nil)
+
+		assert.Empty(t, loggedMessages(hook, logrus.WarnLevel))
+	})
 }
 
 // TestMergeGroups covers the partition Optimize merges, which has to follow the distances rather
@@ -201,32 +269,36 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 			assert.Len(t, after, 1, "subject %s merges its own core", subjUID)
 		}
 	})
-	// A merge builds its midpoint from the source centroids alone, so it can be narrower than
-	// either source and refuse a marker both of them held. That candidate is then kept and the
-	// midpoint created anyway, leaving the same cluster count - which has to end the pass.
+	// A merge builds its midpoint from the source centroids alone, so it can be narrower than the
+	// sources and refuse a marker one of them held. That candidate is retained beside the midpoint,
+	// which must neither charge a retry for a group of three nor keep the run from ending.
 	t.Run("ConvergesWhenAMergeCannotAbsorbItsMarkers", func(t *testing.T) {
 		w := isolatedTestFaces(t, "faces-optimize-retained")
 
 		const subjUID = "js6sg6b1qekk9jb1"
 
 		base := face.FixtureEmbedding(8601)
-		apart := face.ClusterDist * 0.95
+		apart := face.ClusterDist * 0.6
 
 		c1 := namedFace(t, subjUID, base)
 		c2 := namedFace(t, subjUID, face.FixtureEmbeddingAt(base, apart, 8602))
+		c3 := namedFace(t, subjUID, face.FixtureEmbeddingAt(base, apart, 8604))
 
-		// The marker its own cluster holds, placed where the midpoint will not reach it.
-		stray := face.FixtureEmbeddingAt(c1.Embedding(), apart, 8603)
-		_, radius, _ := face.EmbeddingsMidpoint(face.Embeddings{c1.Embedding(), c2.Embedding()})
-		midpoint, _, _ := face.EmbeddingsMidpoint(face.Embeddings{c1.Embedding(), c2.Embedding()})
+		// The marker the first cluster holds, placed beyond what the group's midpoint accepts by its
+		// own bound, so the fixture holds for every model's thresholds.
+		group := face.Embeddings{c1.Embedding(), c2.Embedding(), c3.Embedding()}
+		midpoint, radius, _ := face.EmbeddingsMidpoint(group)
+		offset := face.Embeddings{c1.Embedding()}.Dist(midpoint)
+		stray := face.FixtureEmbeddingAt(c1.Embedding(), face.AcceptDist(radius)+offset+face.ClusterDist*0.1, 8603)
 
 		require.Greater(t, face.Embeddings{stray}.Dist(midpoint), face.AcceptDist(radius),
 			"the fixture has to reproduce a merge that cannot absorb its own marker")
+		require.Len(t, mergeGroups(entity.Faces{*c1, *c2, *c3}), 1, "the three clusters form one group")
 
 		for _, m := range []struct {
 			face *entity.Face
 			emb  face.Embedding
-		}{{c1, stray}, {c2, c2.Embedding()}} {
+		}{{c1, stray}, {c2, c2.Embedding()}, {c3, c3.Embedding()}} {
 			marker := &entity.Marker{
 				FileUID:    "fs6sg6bw45bnlqdw",
 				MarkerType: entity.MarkerFace,
@@ -246,13 +318,42 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 			require.NoError(t, entity.Db().Create(marker).Error)
 		}
 
-		if _, err := w.OptimizeFor(subjUID); err != nil {
-			t.Fatal(err)
-		}
+		level := log.GetLevel()
+		log.SetLevel(logrus.DebugLevel)
+		t.Cleanup(func() { log.SetLevel(level) })
+
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		first, err := w.OptimizeFor(subjUID)
+		require.NoError(t, err)
+		assert.Zero(t, first.Merged, "a retained merge is not counted as one")
+
+		// The group of three reached the merge and kept the candidate its midpoint could not absorb.
+		debug := strings.Join(loggedMessages(hook, logrus.DebugLevel), "\n")
+		assert.Contains(t, debug, "retained manual clusters after merge")
+		assert.Contains(t, debug, "(merge) itr 0 group 0 count 3")
+		assert.Equal(t, 1, strings.Count(debug, "faces: optimize pass"), "a run ends at the first pass that merges nothing")
+
+		require.NotNil(t, entity.FindFace(c1.ID), "the retained candidate survives")
+		assert.Nil(t, entity.FindFace(c2.ID))
+		assert.Nil(t, entity.FindFace(c3.ID))
+
+		// The next run is offered the retained candidate beside the midpoint the attempt left.
+		after, err := query.ManuallyAddedFaces(false, false, subjUID)
+		require.NoError(t, err)
+		require.Len(t, after, 2)
+		require.Len(t, mergeGroups(after), 1, "the retained candidate and the midpoint form one group")
 
 		second, err := w.OptimizeFor(subjUID)
 		require.NoError(t, err)
 		assert.Zero(t, second.Merged, "a settled subject reports no further merges")
+
+		// The counter is charged only for a pair, which the optimizer never offers.
+		var charged int64
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Face{}).
+			Where("subj_uid = ? AND merge_retry > 0", subjUID).Count(&charged).Error)
+		assert.Zero(t, charged, "no retry is charged for a group of three or more")
 	})
 	// The case the symmetric criterion exists for, and the one every other subtest here misses:
 	// a tight multi-sample cluster accepts almost nothing, so under a predicate reading the anchor's

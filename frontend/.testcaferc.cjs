@@ -21,6 +21,8 @@ module.exports = { // Attach the hook
             },
         },
     },
+    // Use proxy mode, since native automation never starts a test in Chrome 158 (DevExpress/testcafe#8573).
+    disableNativeAutomation: true,
     skipJsErrors: true,
     quarantineMode: false,
     selectorTimeout: 3500,

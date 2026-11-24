@@ -16,6 +16,8 @@ var (
 	uniqueChecksOff = []byte("/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;")
 	// uniqueChecksOn is the line uniqueChecksOff is replaced with.
 	uniqueChecksOn = []byte("/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=1 */;")
+	// sqliteSequenceTable is the line with which sqlite3 3.53 and later create the sqlite_sequence table in a dump.
+	sqliteSequenceTable = []byte("CREATE TABLE IF NOT EXISTS sqlite_sequence(name,seq);")
 )
 
 const (
@@ -26,14 +28,16 @@ const (
 )
 
 // restoreReader returns the input a dump is restored from with the specified driver. A MariaDB or MySQL
-// dump is read through uniqueChecksReader, a PostgreSQL dump through postgresRestrictedReader, and other
-// dumps are returned as they are.
+// dump is read through uniqueChecksReader, a PostgreSQL dump through postgresRestrictedReader, a SQLite
+// dump through sqliteSequenceReader, and other dumps are returned as they are.
 func restoreReader(driver string, r io.Reader) io.Reader {
 	switch driver {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		return &uniqueChecksReader{r: bufio.NewReaderSize(r, uniqueChecksLineBytes)}
 	case dsn.DriverPostgres:
 		return newPostgresRestrictedReader(r)
+	case dsn.DriverSQLite3:
+		return &sqliteSequenceReader{r: bufio.NewReaderSize(r, uniqueChecksLineBytes)}
 	default:
 		return r
 	}
@@ -92,8 +96,55 @@ func (u *uniqueChecksReader) Read(p []byte) (int, error) {
 // isUniqueChecksOff reports whether line is the header line that turns off unique checks, ending with
 // a line break.
 func isUniqueChecksOff(line []byte) bool {
-	rest, ok := bytes.CutPrefix(line, uniqueChecksOff)
+	return isDumpLine(line, uniqueChecksOff)
+}
+
+// isDumpLine reports whether line consists of stmt and a line break.
+func isDumpLine(line, stmt []byte) bool {
+	rest, ok := bytes.CutPrefix(line, stmt)
 	return ok && (bytes.Equal(rest, []byte("\n")) || bytes.Equal(rest, []byte("\r\n")))
+}
+
+// sqliteSequenceReader passes a SQLite dump on unchanged, except that it drops the first whole line that
+// creates the sqlite_sequence table, which the client refuses in safe mode. In a dump of the index, the
+// tables with an AUTOINCREMENT key create it before that line.
+type sqliteSequenceReader struct {
+	r       *bufio.Reader
+	pending []byte
+	err     error
+	partial bool
+	done    bool
+}
+
+// Read reads from the dump, checking each whole line until the one creating sqlite_sequence is dropped.
+func (s *sqliteSequenceReader) Read(p []byte) (int, error) {
+	for len(s.pending) == 0 {
+		if s.err != nil {
+			return 0, s.err
+		} else if s.done {
+			return s.r.Read(p)
+		}
+
+		// The line stays valid until the next read, which happens only once it has been passed on.
+		line, err := s.r.ReadSlice('\n')
+		complete := err == nil
+
+		if !s.partial && complete && isDumpLine(line, sqliteSequenceTable) {
+			line, s.done = nil, true
+		}
+
+		s.partial = !complete
+		s.pending = line
+
+		if err != nil && err != bufio.ErrBufferFull {
+			s.err = err
+		}
+	}
+
+	n := copy(p, s.pending)
+	s.pending = s.pending[n:]
+
+	return n, nil
 }
 
 // postgresHeldBytes bounds the blank lines held back after an "\\unrestrict" line; beyond it, they are passed on.

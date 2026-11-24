@@ -1,6 +1,7 @@
 package oidc
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 func TestGroupsFromClaims(t *testing.T) {
@@ -249,5 +251,58 @@ func TestEditionRole(t *testing.T) {
 	})
 	t.Run("NotClusterInstanceRole", func(t *testing.T) {
 		assert.Equal(t, acl.RoleGuest, editionRole(acl.RoleVisitor))
+	})
+}
+
+func TestGroupsLogString(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "none", GroupsLogString(nil))
+	})
+	t.Run("List", func(t *testing.T) {
+		assert.Equal(t, "4c0bfcf4-4918-4a16-8f34-c0a8916b928d, stg-sdd-media-viewer",
+			GroupsLogString([]string{"4c0bfcf4-4918-4a16-8f34-c0a8916b928d", "stg-sdd-media-viewer"}))
+	})
+	t.Run("Capped", func(t *testing.T) {
+		groups := make([]string, GroupsLogMax+3)
+
+		for i := range groups {
+			groups[i] = fmt.Sprintf("g%d", i)
+		}
+
+		result := GroupsLogString(groups)
+
+		assert.True(t, strings.HasPrefix(result, "g0, g1, "))
+		assert.True(t, strings.HasSuffix(result, fmt.Sprintf("g%d and 3 more", GroupsLogMax-1)))
+		assert.NotContains(t, result, fmt.Sprintf("g%d,", GroupsLogMax))
+	})
+	t.Run("Sanitized", func(t *testing.T) {
+		for _, tc := range []struct{ name, group, expected string }{
+			{"C1Control", "\u009b31m", "[U+009B]31m, staff"},
+			{"BidiOverride", "admin\u202eresu", "admin[U+202E]resu, staff"},
+			{"ZeroWidth", "staff\u200b", "staff[U+200B], staff"},
+			{"LineSeparator", "staff\u2028admin", "'staff admin', staff"},
+		} {
+			t.Run(tc.name, func(t *testing.T) {
+				assert.Equal(t, tc.expected, GroupsLogString([]string{tc.group, "staff"}))
+			})
+		}
+	})
+	t.Run("LongEntry", func(t *testing.T) {
+		// A long entry is shortened in the middle, so its end stays visible.
+		result := GroupsLogString([]string{strings.Repeat("a", 300) + "-admins", "staff"})
+		entry := strings.TrimSuffix(result, ", staff")
+		assert.LessOrEqual(t, len(entry), clean.LogNamesBytes)
+		assert.True(t, strings.HasPrefix(entry, "aaa"), entry)
+		assert.True(t, strings.HasSuffix(entry, "-admins"), entry)
+		assert.Contains(t, entry, "\u2026")
+	})
+	t.Run("LongMarkers", func(t *testing.T) {
+		// The middle cut keeps whole markers when the rendered form exceeds the budget.
+		entry := GroupsLogString([]string{strings.Repeat("\u009b", 200)})
+		assert.LessOrEqual(t, len(entry), clean.LogNamesBytes)
+		assert.Regexp(t, `^(\[U\+009B\])+\x{2026}(\[U\+009B\])+$`, entry)
+	})
+	t.Run("Separator", func(t *testing.T) {
+		assert.Equal(t, "'a, b', c", GroupsLogString([]string{"a, b", "c"}))
 	})
 }

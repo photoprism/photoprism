@@ -7,12 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // Info youtube-dl info
@@ -82,14 +79,12 @@ type Info struct {
 	DiscNumber  float64 `json:"disc_number"`  // Number of the disc or other physical medium the track belongs to
 	ReleaseYear float64 `json:"release_year"` // Year (YYYY) when the album was released
 
-	Type        string `json:"_type"`
-	Direct      bool   `json:"direct"`
-	WebpageURL  string `json:"webpage_url"`
-	Description string `json:"description"`
-	Thumbnail   string `json:"thumbnail"`
-	// don't unmarshal, populated from image thumbnail file
-	ThumbnailBytes []byte      `json:"-"`
-	Thumbnails     []Thumbnail `json:"thumbnails"`
+	Type        string      `json:"_type"`
+	Direct      bool        `json:"direct"`
+	WebpageURL  string      `json:"webpage_url"`
+	Description string      `json:"description"`
+	Thumbnail   string      `json:"thumbnail"`
+	Thumbnails  []Thumbnail `json:"thumbnails"`
 
 	Formats   []Format              `json:"formats"`
 	Subtitles map[string][]Subtitle `json:"subtitles"`
@@ -185,11 +180,6 @@ func infoFromURL(
 			cmd.Args = append(cmd.Args, "--flat-playlist")
 		}
 	case TypeSingle:
-		if options.DownloadSubtitles {
-			cmd.Args = append(cmd.Args,
-				"--all-subs",
-			)
-		}
 		cmd.Args = append(cmd.Args,
 			"--no-playlist",
 		)
@@ -258,51 +248,9 @@ func infoFromURL(
 		return Info{}, nil, fmt.Errorf("unknown error")
 	}
 
-	get := func(rawURL string) (*http.Response, error) {
-		c := http.DefaultClient
-
-		if options.HttpClient != nil {
-			c = options.HttpClient
-		}
-
-		r, httpErr := newExternalGetRequest(rawURL)
-
-		if httpErr != nil {
-			return nil, httpErr
-		}
-
-		for k, v := range info.HTTPHeaders {
-			r.Header.Set(k, v)
-		}
-
-		return c.Do(r) // #nosec G704 URL is parsed and scheme-validated in newExternalGetRequest.
-	}
-
-	if options.DownloadThumbnail && info.Thumbnail != "" {
-		resp, respErr := get(info.Thumbnail)
-		if respErr == nil {
-			buf, _ := io.ReadAll(resp.Body)
-			_ = resp.Body.Close()
-			info.ThumbnailBytes = buf
-		}
-	}
-
 	for language, subtitles := range info.Subtitles {
 		for i := range subtitles {
 			subtitles[i].Language = language
-		}
-	}
-
-	if options.DownloadSubtitles {
-		for _, subtitles := range info.Subtitles {
-			for i, subtitle := range subtitles {
-				resp, respErr := get(subtitle.URL)
-				if respErr == nil {
-					buf, _ := io.ReadAll(resp.Body)
-					_ = resp.Body.Close()
-					subtitles[i].Bytes = buf
-				}
-			}
 		}
 	}
 
@@ -340,14 +288,4 @@ func infoFromURL(
 	}
 
 	return info, stdoutBuf.Bytes(), nil
-}
-
-// newExternalGetRequest creates a GET request for an externally provided URL after basic validation.
-func newExternalGetRequest(rawURL string) (*http.Request, error) {
-	u, err := safe.URL(rawURL)
-	if err != nil {
-		return nil, err
-	}
-
-	return http.NewRequest(http.MethodGet, u.String(), nil)
 }

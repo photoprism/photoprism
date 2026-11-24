@@ -176,6 +176,16 @@ func writeDaemonPid(pidFile string) error {
 	return syscall.Fsync(daemonPidFileFd)
 }
 
+// newDaemonContext returns the context for starting the daemon with the command line of this process as its argv,
+// which go-daemon passes on as given.
+func newDaemonContext(conf *config.Config) *daemon.Context {
+	return &daemon.Context{
+		LogFileName: conf.LogFilename(),
+		PidFileName: conf.PIDFilename(),
+		Args:        append([]string(nil), os.Args...),
+	}
+}
+
 // detachRequested reports whether this process should start the daemon and exit. Otherwise it runs the server, and
 // the daemon marker is removed, so that the programs the server runs do not inherit it.
 func detachRequested(detach bool) bool {
@@ -354,10 +364,7 @@ func startAction(ctx *cli.Context) error {
 	conf.InitDb()
 
 	// Check if the daemon is running, if not, initialize the daemon.
-	dctx := new(daemon.Context)
-	dctx.LogFileName = conf.LogFilename()
-	dctx.PidFileName = conf.PIDFilename()
-	dctx.Args = ctx.Args().Slice()
+	dctx := newDaemonContext(conf)
 
 	if detachRequested(conf.DetachServer()) {
 		conf.Shutdown()

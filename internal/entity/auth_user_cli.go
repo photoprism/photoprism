@@ -9,6 +9,7 @@ import (
 )
 
 // SetValuesFromCli updates user fields based on CLI flags and invalidates sessions after privilege changes.
+// Callers save the account and then call DetachAuthIDFromCli, which detaches a new auth id from other accounts.
 func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	frm := form.NewUserFromCli(ctx)
 
@@ -37,7 +38,7 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		privilegeLevelChange = true
 	}
 
-	// Authentication ID, which is set after validation, since setting it clears the same ID on other accounts.
+	// Authentication ID, which is set after validation and detached from other accounts by DetachAuthIDFromCli.
 	if ctx.IsSet("auth-id") {
 		if frm.AuthID == "" {
 			m.AuthID = ""
@@ -115,7 +116,7 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	}
 
 	if ctx.IsSet("auth-id") && frm.AuthID != "" {
-		m.SetAuthID(frm.AuthID, m.AuthIssuer)
+		m.setAuthID(frm.AuthID, m.AuthIssuer)
 	}
 
 	if privilegeLevelChange {
@@ -125,6 +126,13 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	}
 
 	return nil
+}
+
+// DetachAuthIDFromCli detaches an auth id set with the auth-id flag from other accounts, once this one is saved.
+func (m *User) DetachAuthIDFromCli(ctx *cli.Context) {
+	if m != nil && ctx != nil && ctx.IsSet("auth-id") {
+		m.DetachAuthID()
+	}
 }
 
 // RestoreFromCli restores a deleted account from CLI input and optionally sets a new password.
@@ -146,7 +154,11 @@ func (m *User) RestoreFromCli(ctx *cli.Context, newPassword string) (err error) 
 	// Save values.
 	if err = m.Save(); err != nil {
 		return err
-	} else if newPassword == "" {
+	}
+
+	m.DetachAuthIDFromCli(ctx)
+
+	if newPassword == "" {
 		return nil
 	} else if err = m.SetPassword(newPassword); err != nil {
 		return err

@@ -9,7 +9,6 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -143,6 +142,9 @@ func resetIndexDb(c *config.Config) {
 		entity.Admin.InitAccount(c.AdminInitName(), c.AdminPassword(), c.AdminScope())
 	}
 
+	// Link the initial Super Admin account to an OIDC subject, if specified.
+	entity.Admin.InitOIDCSub(c.AdminOIDCSub())
+
 	log.Infof("completed in %s", time.Since(start))
 }
 
@@ -213,9 +215,7 @@ func resetSidecarOverlap(c *config.Config) string {
 			continue
 		}
 
-		rel, err := filepath.Rel(sidecarPath, resolvedResetPath(dir))
-
-		if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		if _, ok := fs.RelInside(resolvedResetPath(dir), sidecarPath); ok {
 			return dir
 		}
 	}

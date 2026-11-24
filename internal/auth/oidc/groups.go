@@ -214,3 +214,16 @@ func uniqueGroups(values []string) []string {
 
 	return result
 }
+
+// GroupsLogMax caps how many group identifiers GroupsLogString includes.
+const GroupsLogMax = 50
+
+// GroupsLogString returns group identifiers as a comma-separated list for debug logs, sanitized
+// with clean.LogNamesN and limited to GroupsLogMax entries, or "none" if there are none.
+func GroupsLogString(groups []string) string {
+	if len(groups) == 0 {
+		return "none"
+	}
+
+	return clean.LogNamesN(groups, GroupsLogMax)
+}

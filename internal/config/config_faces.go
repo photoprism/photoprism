@@ -734,8 +734,17 @@ func (c *Config) reportIgnoredFaceModel() {
 		return
 	}
 
+	// A model that needs TensorFlow, or one this edition may not use, is not a migration target worth
+	// naming, and the model a completed migration records in the file wins anyway, so nothing is advised.
+	if m := face.FindEmbeddingModel(configured); m == nil || m.RequiresTensorFlow() || face.LicenseRefused(configured, c.Edition()) != nil {
+		log.Infof("config: face model %s is configured but ignored, this library uses %s",
+			clean.Log(configured), clean.Log(inForce))
+
+		return
+	}
+
 	log.Infof("config: face model %s is configured but ignored, this library uses %s "+
-		`(run "photoprism faces migrate --to %s" to change it)`, clean.Log(configured), clean.Log(inForce), clean.Log(configured))
+		`(run "%s" to change it)`, clean.Log(configured), clean.Log(inForce), face.MigrateCommand(configured))
 }
 
 // detectFaceModel returns the model that produced the library's vectors, or the first installed
@@ -784,6 +793,7 @@ func (c *Config) installedFaceModel() face.ModelName {
 // nothing wrong, and indexing keeps adding vectors in a second space beside the first.
 func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount) {
 	name := c.FaceModel()
+	c.faceUnfinished = ""
 
 	// Asked first, and before either unblock below: a migration commits in its own process and
 	// records its target, which nothing reloads here, so naming the model this one still holds
@@ -824,13 +834,60 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 		return
 	}
 
+	// Markers on the default model while the instance holds another are what an interrupted
+	// migration to it leaves behind, so the advice is to finish it rather than to migrate back.
+	if target := unfinishedFaceMigration(counts, name); target != face.ModelNone {
+		reason := fmt.Sprintf("%d marker(s) use the default model %s, as after an unfinished migration, but this instance "+
+			"is configured for %s", stale, clean.Log(target), clean.Log(name))
+
+		c.faceUnfinished = target
+		face.BlockEmbeddings(reason)
+		log.Warnf("faces: %s, so face embeddings are not processed (%s)", reason, c.unfinishedFaceMigrationAdvice())
+
+		return
+	}
+
 	reason := fmt.Sprintf("%d marker(s) use %s, but this instance is configured for %s",
 		stale, txt.JoinAnd(models), clean.Log(name))
 
 	face.BlockEmbeddings(reason)
 
-	log.Warnf(`faces: %s, so face embeddings are not processed (run "photoprism faces migrate --to %s" to migrate them)`,
-		reason, clean.Log(name))
+	log.Warnf(`faces: %s, so face embeddings are not processed (run "%s" to migrate them)`,
+		reason, face.MigrateCommand(name))
+}
+
+// unfinishedFaceMigrationAdvice returns the command that finishes an unfinished migration. A model set
+// by hand instead is overridden by the one the completed migration records, so it needs no other step.
+func (c *Config) unfinishedFaceMigrationAdvice() string {
+	return `run "photoprism faces migrate" to finish it`
+}
+
+// unfinishedFaceMigration returns the default embedding model when every marker the configured one
+// cannot read is on it, which is the state an unfinished migration to it leaves, or ModelNone.
+func unfinishedFaceMigration(counts []query.MarkerEmbeddingModelCount, configured face.ModelName) face.ModelName {
+	target := face.DefaultModelName()
+
+	if configured == face.ModelNone {
+		return face.ModelNone
+	}
+
+	found := false
+
+	for _, count := range counts {
+		if count.Markers < 1 || face.ModelsComparable(count.EmbedModel, configured) {
+			continue
+		} else if !face.ModelsComparable(count.EmbedModel, target) {
+			return face.ModelNone
+		}
+
+		found = true
+	}
+
+	if !found {
+		return face.ModelNone
+	}
+
+	return target
 }
 
 // CheckFaceModelSuperseded pauses face embedding work and asks for a restart when "options.yml"
@@ -1468,6 +1525,16 @@ func (c *Config) faceThresholdIsSet(flagName string, value float64) bool {
 	}
 
 	return value != 0
+}
+
+// FacesHiddenFile returns the path where a face embedding migration records which clusters were
+// hidden, until it has hidden their replacements, so a run that stops in between can be completed.
+func (c *Config) FacesHiddenFile() string {
+	if c == nil {
+		return ""
+	}
+
+	return filepath.Join(c.StoragePath(), "faces-hidden.json")
 }
 
 // FacesLockFile returns the path of the lock a face embedding migration holds while it runs.

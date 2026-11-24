@@ -61,6 +61,11 @@ func videoTranscodeAction(ctx *cli.Context) error {
 		}
 
 		if !ctx.Bool("dry-run") {
+			// Refused before the prompt, so the operator is not asked to confirm a run that cannot start.
+			if refused := videoMigrationRefused(conf, "transcode", 0); refused != nil {
+				return refused
+			}
+
 			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Transcode %d video files", len(plans))); confirmErr != nil {
 				return confirmErr
 			} else if !proceed {
@@ -76,6 +81,13 @@ func videoTranscodeAction(ctx *cli.Context) error {
 				log.Infof("transcode: would transcode %s to %s", clean.Log(plan.SrcPath), clean.Log(plan.DestPath))
 				planned++
 				continue
+			}
+
+			// Changed files are indexed again, which must not happen during a face migration, so the
+			// batch stops before the next file when one holds the lock, including one started meanwhile.
+			if refused := videoMigrationRefused(conf, "transcode", processed+failed); refused != nil {
+				log.Info(formatVideoSummary("transcode", false, planned, processed, skipped, failed))
+				return refused
 			}
 
 			_, err := videoTranscodeFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name))

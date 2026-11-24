@@ -106,13 +106,13 @@ func NewUser() (m *User) {
 	}
 }
 
-// OidcUser creates a new OIDC user entity.
+// OidcUser creates a new OIDC user entity, or an empty one if the subject is not valid for sign-in.
 func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
-	authId := clean.Auth(userInfo.Subject)
-
-	if authId == "" {
+	if !ValidOIDCSignInSub(userInfo.Subject) {
 		return User{}
 	}
+
+	authId := userInfo.Subject
 
 	return User{
 		UserName:     userName,
@@ -493,6 +493,10 @@ func (m *User) Delete() (err error) {
 
 	m.RevokeGrants()
 
+	// Release the preview token registrations of the sessions deleted below, after evicting them from the cache.
+	FlushUserSessionCache(m.UserUID)
+	m.releasePreviewTokens()
+
 	if err = UnscopedDb().Delete(&Session{}, "user_uid = ?", m.UserUID).Error; err != nil {
 		event.AuditErr([]string{"user %s", "delete", "failed to remove sessions", status.Error(err)}, m.RefID)
 	}
@@ -636,6 +640,15 @@ func (m *User) CanLogIn() bool {
 	} else {
 		return acl.Rules.Allow(acl.ResourceConfig, m.AclRole(), acl.AccessOwn)
 	}
+}
+
+// isInactive reports whether the account is registered, but deleted, expired, deactivated, or without a role.
+func (m *User) isInactive() bool {
+	if m == nil || !m.IsRegistered() {
+		return false
+	}
+
+	return m.IsDisabled() || m.HasProvider(authn.ProviderNone) || m.HasRole(acl.RoleNone)
 }
 
 // DenyLogIn checks if the user should be denied access to the web UI/API
@@ -845,39 +858,110 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 	return m
 }
 
-// SetAuthID sets a custom authentication identifier.
+// SetAuthID sets a custom authentication identifier and detaches it from other accounts.
 func (m *User) SetAuthID(id, issuer string) *User {
-	// Update auth id if not empty.
-	if authId := clean.Auth(id); authId == "" {
-		return m
-	} else {
-		m.AuthID = authId
-		m.AuthIssuer = clean.Uri(issuer)
-	}
-
-	// Make sure other users do not use the same identifier.
-	if m.HasUID() && m.AuthProvider != "" {
-		if err := UnscopedDb().Model(&User{}).
-			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = FALSE", m.UserUID, m.AuthProvider, m.AuthID).
-			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
-			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(err)}, m.RefID)
-		}
+	if m.setAuthID(id, issuer) {
+		m.DetachAuthID()
 	}
 
 	return m
 }
 
-// UpdateAuthID updated the custom authentication identifier.
+// setAuthID sets the auth id and issuer if the id is not empty, without changing other accounts.
+func (m *User) setAuthID(id, issuer string) bool {
+	authId := clean.Auth(id)
+
+	if authId == "" {
+		return false
+	}
+
+	m.AuthID = authId
+	m.AuthIssuer = clean.Uri(issuer)
+
+	return true
+}
+
+// FindAuthIDHolders returns the accounts other than uid that hold the auth id for the provider, scoped to
+// accounts without an issuer or with the same issuer as FindUser does, or to any issuer if it is empty.
+func FindAuthIDHolders(provider, authId, issuer, uid string) (holders Users, err error) {
+	if provider == "" || authId == "" {
+		return holders, nil
+	}
+
+	stmt := UnscopedDb().Where("user_uid <> ? AND auth_provider = ? AND auth_id = ?", uid, provider, authId)
+
+	if issuer != "" {
+		stmt = stmt.Where("(auth_issuer = '' OR auth_issuer = ?)", issuer)
+	}
+
+	err = stmt.Find(&holders).Error
+
+	return holders, err
+}
+
+// DetachAuthID sets the provider of other accounts holding the auth id to none and revokes their
+// sessions, as for other privilege changes. Super admins keep the identifier.
+func (m *User) DetachAuthID() {
+	const cond = "user_uid = ? AND auth_provider = ? AND auth_id = ? AND super_admin = FALSE"
+
+	if !m.HasUID() || m.AuthProvider == "" || m.AuthID == "" {
+		return
+	}
+
+	holders, err := FindAuthIDHolders(m.AuthProvider, m.AuthID, m.AuthIssuer, m.UserUID)
+
+	if err != nil {
+		event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(err)}, m.RefID)
+		return
+	}
+
+	for i := range holders {
+		other := &holders[i]
+
+		if other.SuperAdmin {
+			continue
+		}
+
+		res := UnscopedDb().Model(&User{}).Where(cond, other.UserUID, m.AuthProvider, m.AuthID).
+			Updates(Values{"auth_id": "", "auth_provider": authn.ProviderNone})
+
+		if res.Error != nil {
+			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", status.Error(res.Error)}, m.RefID)
+			continue
+		} else if res.RowsAffected == 0 {
+			continue
+		}
+
+		other.AuthID = ""
+		other.AuthProvider = authn.ProviderNone.String()
+		FlushUserSessionCache(other.UserUID)
+		revoked := other.RevokeDerivedSessions(nil)
+
+		event.AuditWarn([]string{"user %s", "auth id detached from user %s", "%d sessions revoked", status.Updated}, m.RefID, other.RefID, revoked)
+	}
+}
+
+// UpdateAuthID updates the custom authentication identifier and then detaches it from other accounts.
 func (m *User) UpdateAuthID(id, issuer string) error {
 	if m.InvalidUID() {
 		return errors.New("invalid user uid")
 	}
 
+	detach := m.setAuthID(id, issuer)
+
 	// Update auth id and issuer record.
-	return m.SetAuthID(id, issuer).Updates(Values{
+	if err := m.Updates(Values{
 		"AuthID":     m.AuthID,
 		"AuthIssuer": m.AuthIssuer,
-	})
+	}); err != nil {
+		return err
+	}
+
+	if detach {
+		m.DetachAuthID()
+	}
+
+	return nil
 }
 
 // AuthInfo returns information about the authentication type.
@@ -1197,6 +1281,24 @@ func (m *User) IsUnknown() bool {
 	return m.InvalidUID() || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleNone)
 }
 
+// releasePreviewTokens removes the preview token registrations of the account's stored sessions.
+func (m *User) releasePreviewTokens() {
+	var ids []string
+
+	if m.UserUID == "" {
+		return
+	}
+
+	if err := Db().Model(&Session{}).Where("user_uid = ?", m.UserUID).Pluck("id", &ids).Error; err != nil {
+		event.AuditErr([]string{"user %s", "failed to release preview tokens", status.Error(err)}, m.RefID)
+		return
+	}
+
+	for _, id := range ids {
+		PreviewToken.Unset(id)
+	}
+}
+
 // RevokeDerivedSessions deletes user login sessions, including those created using app passwords.
 func (m *User) RevokeDerivedSessions(omit []string) (deleted int) {
 	return m.RevokeSessions(omit, authn.RevokeDerivedSessions)
@@ -1249,6 +1351,11 @@ func (m *User) RevokeSessions(omit []string, scope authn.SessionScope) (deleted 
 		} else {
 			deleted++
 		}
+	}
+
+	// Release the preview token registrations of the sessions an inactive account keeps, such as app passwords.
+	if m.isInactive() {
+		m.releasePreviewTokens()
 	}
 
 	// Return number of deleted sessions.
@@ -1577,12 +1684,13 @@ func (m *User) storedEmail() string {
 	return stored.UserEmail
 }
 
-// SetFormValues sets the values specified in the form.
+// SetFormValues sets the values specified in the form; DetachAuthID detaches the auth id from other
+// accounts once the account is saved.
 func (m *User) SetFormValues(frm form.User) *User {
 	m.UserName = frm.Username()
 	m.SetProvider(frm.Provider())
 	m.SetMethod(frm.Method())
-	m.SetAuthID(frm.AuthID, frm.AuthIssuer)
+	m.setAuthID(frm.AuthID, frm.AuthIssuer)
 	m.UserEmail = frm.Email()
 	m.DisplayName = frm.DisplayName
 	m.SuperAdmin = frm.SuperAdmin
@@ -1837,6 +1945,8 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 	// admin. A trusted cluster service principal has no end-user identity, so
 	// the handler passes byAdmin explicitly instead of relying on u.IsAdmin(),
 	// which a user-less token can never satisfy.
+	detachAuthID := false
+
 	if u != nil && byAdmin {
 		// Restore account.
 		if frm.DeletedAt == nil && m.IsDeleted() {
@@ -1874,7 +1984,7 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 			}
 
 			m.SetMethod(frm.Method())
-			m.SetAuthID(frm.AuthID, frm.AuthIssuer)
+			detachAuthID = m.setAuthID(frm.AuthID, frm.AuthIssuer)
 		}
 
 		m.SetBasePath(frm.BasePath)
@@ -1894,6 +2004,11 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) erro
 
 	if err := UnscopedDb().Save(m).Error; err != nil {
 		return err
+	}
+
+	// Other accounts are detached only once this one holds the auth id.
+	if detachAuthID {
+		m.DetachAuthID()
 	}
 
 	FlushUserSessionCache(m.UserUID)

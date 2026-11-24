@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { reactive } from "vue";
 import "../../fixtures";
 import { shallowMount } from "@vue/test-utils";
 import PServiceEdit from "component/service/edit.vue";
@@ -86,7 +87,8 @@ describe("component/service/edit", () => {
 
   describe("syncYaml computed", () => {
     it("reads and writes the option through the Service model", () => {
-      const service = new Service({ ID: 1, AccName: "Sync YAML", SyncYaml: 0 });
+      // The services page passes its model from data(), so the prop is a reactive proxy.
+      const service = reactive(new Service({ ID: 1, AccName: "Sync YAML", SyncYaml: 0 }));
       const wrapper = mountEdit({ service });
 
       expect(wrapper.vm.syncYaml).toBe(true);

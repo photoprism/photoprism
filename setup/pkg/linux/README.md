@@ -143,7 +143,7 @@ After unpacking the binaries you only need a writable configuration and storage 
    sudo chown -R photoprism:photoprism /var/lib/photoprism
    ```
 3. Update `/etc/photoprism/defaults.yml` (or `.yaml`) so `ConfigPath`, `StoragePath`, `OriginalsPath`, and `ImportPath` point outside the installation directory. When the `/etc` file is missing or empty, PhotoPrism automatically loads `<config-path>/defaults.yml`, so you may edit the copy under `PHOTOPRISM_CONFIG_PATH` instead.
-4. Optionally place per-instance overrides in `<config-path>/options.yml`.
+4. Optionally place per-instance overrides in `<config-path>/options.yml`, including passwords, and make it readable only by the user running PhotoPrism, e.g. `chmod 600 <config-path>/options.yml`.
 5. Restart the PhotoPrism service (or rerun the CLI command) so the changes take effect.
 
 Run `photoprism --help` in a terminal to get an [overview of the command flags and environment variables](https://docs.photoprism.app/getting-started/config-options/) available for configuration. Their current values can always be displayed with the `photoprism config` command.
@@ -152,13 +152,13 @@ Run `photoprism --help` in a terminal to get an [overview of the command flags a
 
 PhotoPrism reads settings in the following order (later entries override earlier ones):
 
-| Order | Source                            | Notes                                                                                                                                    |
-|-------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| 1     | Built-in defaults                 | Hard-coded, fall back when nothing else is set.                                                                                          |
-| 2     | `/etc/photoprism/defaults.yml`    | Global defaults for all users on the host; falls back to `<config-path>/defaults.yml` (respects `.yml` / `.yaml`) when missing or empty. |
-| 3     | Environment variables / CLI flags | Combine with service managers or wrappers.                                                                                               |
-| 4     | `<config-path>/options.yml`       | Instance-specific overrides (per user or per deployment).                                                                                |
-| 5     | Runtime changes in the UI         | Persisted to `options.yml`; require a restart when running outside Docker.                                                               |
+| Order | Source                         | Notes                                                                                                                                                  |
+|-------|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1     | Built-in defaults              | Hard-coded, fall back when nothing else is set.                                                                                                        |
+| 2     | `/etc/photoprism/defaults.yml` | Global defaults for all users on the host; falls back to `<config-path>/defaults.yml` (respects `.yml` / `.yaml`) when missing or empty.               |
+| 3     | Environment variables          | Combine with service managers or wrappers.                                                                                                             |
+| 4     | `<config-path>/options.yml`    | Instance-specific overrides (per user or per deployment); settings changed in the UI are saved here and require a restart when running outside Docker. |
+| 5     | CLI flags                      | Override all other sources.                                                                                                                            |
 
 If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/directories.go) will be searched and the first existing directory will be used for the respective path. To simplify [updates](#updates), we recommend **not** storing media, database files, or custom configs in the installation directory itself (for example `/opt/photoprism`); use another base such as `/var/lib/photoprism` or a path under the user’s home directory.
 
@@ -182,6 +182,8 @@ DetectNSFW: false
 UploadNSFW: true
 ```
 
+The `AdminPassword` value in this example only serves as the initial password of the admin account and should be changed after the first login. Since a `defaults.yml` file may be shared by multiple users on a server, a password set there is not considered secure. Note that this value has no effect once the admin account has a password; use the `photoprism passwd [username]` command or the *Account* settings page to change it.
+
 For a list of supported options and their names, see <https://docs.photoprism.app/getting-started/config-files/#config-options>.
 
 When specifying values, make sure that the data type is the [same as in the documentation](https://docs.photoprism.app/getting-started/config-files/#config-options), e.g. *bool* values must be either `true` or `false` and *int* values must be whole numbers without any quotes like in the example above.
@@ -191,6 +193,8 @@ When specifying values, make sure that the data type is the [same as in the docu
 Default config values can be overridden by values [specified in an `options.yml` file](https://docs.photoprism.app/getting-started/config-files/) as well as with command flags and environment variables. To load values from an existing `options.yml` file, you can specify its storage path (excluding the filename) by setting the `ConfigPath` option in your `defaults.yml` file, using the `--config-path` command flag, or with the `PHOTOPRISM_CONFIG_PATH` environment variable.
 
 The values in an `options.yml` file are not global and can be used to customize individual instances e.g. based on the default values in a `defaults.yml` file. Both files allow you to set any of the [supported options](https://docs.photoprism.app/getting-started/config-files/#config-options).
+
+Instance-specific settings such as passwords belong in your `options.yml` file rather than in `defaults.yml`. Make sure it is only readable by the user running PhotoPrism, e.g. with `chmod 600 <config-path>/options.yml`.
 
 Tip: when running PhotoPrism as a systemd service, export environment variables in the service unit or in `/etc/default/photoprism`. For interactive shells, specify the corresponding flags or prefix commands with variables (for example `PHOTOPRISM_DEBUG=true photoprism index`). Use the smallest scope that fits your deployment so updates stay manageable.
 

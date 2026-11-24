@@ -68,3 +68,67 @@ func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
 		assert.Equal(t, header.RobotsNone, w.Header().Get(header.RobotsTag))
 	})
 }
+
+func TestSecurityMiddlewareRobotsTag(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	conf := config.TestConfig()
+
+	origDemo := conf.Options().Demo
+	origPublic := conf.Options().Public
+	origAuthMode := conf.Options().AuthMode
+
+	t.Cleanup(func() {
+		conf.Options().Demo = origDemo
+		conf.Options().Public = origPublic
+		conf.Options().AuthMode = origAuthMode
+	})
+
+	r := gin.New()
+	r.Use(Security(conf))
+
+	landingPath := conf.FrontendUri("")
+	browsePath := conf.FrontendUri("/browse")
+	albumPath := conf.FrontendUri("/albums/as6sg6bxpogaaba8/view")
+
+	for _, p := range []string{landingPath, landingPath + "/", browsePath, albumPath} {
+		r.GET(p, func(c *gin.Context) {
+			c.String(http.StatusOK, "ok")
+		})
+	}
+
+	robotsTag := func(path string) string {
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, httptest.NewRequest(header.MethodGet, path, nil))
+		require.Equal(t, http.StatusOK, w.Code)
+		return w.Header().Get(header.RobotsTag)
+	}
+
+	t.Run("PublicDemoLandingPageIndexable", func(t *testing.T) {
+		conf.Options().Demo = true
+
+		assert.Empty(t, robotsTag(landingPath))
+		assert.Empty(t, robotsTag(landingPath+"/"))
+	})
+	t.Run("PublicDemoOtherRoutesNoIndex", func(t *testing.T) {
+		conf.Options().Demo = true
+
+		assert.Equal(t, header.RobotsNoIndex, robotsTag(browsePath))
+		assert.Equal(t, header.RobotsNoIndex, robotsTag(albumPath))
+	})
+	t.Run("NonDemoNeverIndexable", func(t *testing.T) {
+		conf.Options().Demo = false
+		conf.Options().Public = true
+
+		assert.Equal(t, header.RobotsNone, robotsTag(landingPath+"/"))
+		assert.Equal(t, header.RobotsNone, robotsTag(browsePath))
+	})
+	t.Run("NonPublicNeverIndexable", func(t *testing.T) {
+		conf.Options().Demo = false
+		conf.Options().Public = false
+		conf.Options().AuthMode = config.AuthModePasswd
+
+		assert.Equal(t, header.RobotsNone, robotsTag(landingPath+"/"))
+		assert.Equal(t, header.RobotsNone, robotsTag(browsePath))
+	})
+}
