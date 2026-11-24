@@ -32,21 +32,25 @@
 
 .album-header-copy {
     position: relative;
-    width: 100%;
+    width: fit-content;
+    max-width: 100%;
     padding: 24px 28px 34px;
     text-align: start;
-    text-shadow:
-        0 0 2px rgba(var(--album-cover-shadow, 0, 0, 0), 0.85),
-        0 0 8px rgba(var(--album-cover-shadow, 0, 0, 0), 0.65);
 }
 
 .album-header-copy::before {
     position: absolute;
     z-index: -1;
-    inset: -100px 0 0;
-    background: linear-gradient(to top, rgb(0 0 0 / 68%), rgb(0 0 0 / 60%) calc(100% - 100px), transparent);
-    opacity: var(--album-cover-shade, 1);
+    inset: -64px 0 0;
+    inset-inline-end: -48px;
+    background: linear-gradient(to top, rgb(var(--album-cover-tint, 0, 0, 0)) calc(100% - 64px), transparent);
+    mask-image: linear-gradient(to var(--album-caption-fade, right), black calc(100% - 48px), transparent);
+    opacity: var(--album-cover-shade, 0.55);
     content: "";
+}
+
+:is([dir="rtl"], .v-locale--is-rtl) .p-album-header {
+    --album-caption-fade: left;
 }
 
 .album-header-copy h1 {
@@ -82,8 +86,7 @@
     align-items: center;
     gap: 4px;
     margin-top: 10px;
-    color: var(--album-more-color, var(--album-cover-ink));
-    text-shadow: inherit;
+    color: inherit;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -92,9 +95,7 @@
 .p-album-toolbar .v-toolbar {
     color: var(--album-toolbar-color, rgb(var(--v-theme-on-secondary))) !important;
     background: rgba(var(--v-theme-secondary), var(--album-toolbar-opacity, 1)) !important;
-    transition:
-        background-color 180ms ease,
-        color 180ms ease;
+    transition: background-color 180ms ease;
 }
 
 .p-album-toolbar .v-toolbar__content {
@@ -195,7 +196,7 @@
 }
 
 .album-toolbar--cover :is(.album-toolbar-actions, .album-back-link) {
-    background-color: rgb(0 0 0 / calc(0.65 * (1 - var(--album-toolbar-opacity, 0))));
+    background-color: rgba(var(--album-cover-tint, 0, 0, 0), var(--album-toolbar-shade, 0.55));
     border-radius: 999px;
 }
 
@@ -209,16 +210,9 @@
     color: rgb(var(--v-theme-on-surface));
 }
 
-.album-header-copy,
-.album-header-more {
-    transition: color 650ms ease;
-}
-
 @media (prefers-reduced-motion: reduce) {
     .p-album-toolbar .v-toolbar,
-    .album-header-description,
-    .album-header-copy,
-    .album-header-more {
+    .album-header-description {
         transition: none;
     }
 }

@@ -113,6 +113,7 @@ export default {
   props: {
     compact: { type: Boolean, default: true },
     collapseProgress: { type: Number, default: 1 },
+    coverStyle: { type: Object, default: () => ({}) },
     album: {
       type: Object,
       default: () => {},
@@ -170,8 +171,10 @@ export default {
     toolbarStyle() {
       const progress = this.searchOpen ? 1 : this.collapseProgress;
       return {
+        ...this.coverStyle,
         "--album-toolbar-opacity": progress,
-        "--album-toolbar-color": `color-mix(in srgb, white ${100 - progress * 100}%, rgb(var(--v-theme-on-secondary)) ${progress * 100}%)`,
+        "--album-toolbar-color": progress < 1 ? "var(--album-cover-ink, #fff)" : "rgb(var(--v-theme-on-secondary))",
+        "--album-toolbar-shade": progress > 0 ? "0.55" : this.coverStyle["--album-toolbar-shade"],
       };
     },
     // canSearch distinguishes signed-in album readers from share-link visitors.

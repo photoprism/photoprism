@@ -166,7 +166,8 @@ func wsPayload(topic string, user entity.User, fields event.Data) event.Data {
 // whether it receives the message at all.
 func wsOutgoing(topic, sid string, user entity.User, client wsClientRole, fields event.Data) (ev string, data event.Data, ok bool) {
 	if ev, ok = wsDelivery(topic, sid, user, client); !ok {
-		if topic == "albums.updated" && !client.Present {
+		// Album saves address the owner, and readers of the same album also need to refetch it.
+		if ev == "albums.updated" && (topic == ev || strings.HasPrefix(topic, "user.")) && !client.Present {
 			if session, err := query.Session(sid); err == nil {
 				data, ok = wsAlbumUpdates(&session, fields)
 				return ev, data, ok

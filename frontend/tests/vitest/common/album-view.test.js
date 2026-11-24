@@ -50,25 +50,38 @@ describe("album cover framing", () => {
     expect(albumCoverFrame(100, 100, 200, 100)).toEqual({ width: 200, height: 100, left: -50, top: 0 });
     expect(albumCoverFrame(0, 100, 200, 100).width).toBe(0);
   });
-  it("uses dark text and no caption shade on a bright cover", () => {
+  it("uses no shade on a uniformly light or dark cover", () => {
     expect(albumCoverTone([255, 255, 255, 255])).toMatchObject({
       "--album-cover-ink": "#000",
+      "--album-cover-tint": "255, 255, 255",
       "--album-cover-shade": "0",
-      "--album-cover-shadow": "255, 255, 255",
+      "--album-toolbar-shade": "0",
+    });
+    expect(albumCoverTone([0, 0, 0, 255])).toMatchObject({
+      "--album-cover-ink": "#fff",
+      "--album-cover-tint": "0, 0, 0",
+      "--album-cover-shade": "0",
+      "--album-toolbar-shade": "0",
     });
   });
-  it("uses white text and a dark caption shade on dark or missing covers", () => {
-    for (const pixels of [[0, 0, 0, 255], []]) {
-      expect(albumCoverTone(pixels)).toMatchObject({
-        "--album-cover-ink": "#fff",
-        "--album-cover-shade": "1",
-        "--album-cover-shadow": "0, 0, 0",
-      });
-    }
+  it("shades only the region that needs contrast for the cover's text color", () => {
+    const white = [255, 255, 255, 255];
+    const black = [0, 0, 0, 255];
+    const mostlyWhite = [...white, ...white, ...black];
+    expect(albumCoverTone(mostlyWhite, black, white)).toMatchObject({
+      "--album-cover-ink": "#000",
+      "--album-cover-shade": "0.46",
+      "--album-toolbar-shade": "0",
+    });
+    expect(albumCoverTone(black, black, white)).toMatchObject({
+      "--album-cover-ink": "#fff",
+      "--album-cover-shade": "0",
+      "--album-toolbar-shade": "0.54",
+    });
   });
-  it("uses white text on mixed covers with dark areas", () => {
-    const pixels = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255];
-    expect(albumCoverTone(pixels)).toMatchObject({ "--album-cover-ink": "#fff", "--album-cover-shade": "1" });
+  it("uses a contrast-safe shade where the cover is unavailable", () => {
+    expect(albumCoverTone([])["--album-cover-shade"]).toBe("0.54");
+    expect(albumCoverTone([255, 255, 255, 255], [0, 0, 0, 0])["--album-cover-shade"]).toBe("0.46");
   });
 });
 

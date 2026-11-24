@@ -22,10 +22,10 @@ describe("album URL queries", () => {
     PAlbumPhotos.methods.updateQuery.call(stub, { q: "" });
     expect(stub.$router.replace).toHaveBeenLastCalledWith({ query: { order: "size", reverse: "true", view: "cards" } });
   });
-  it("opens the map with album scope and the clicked location", () => {
+  it("opens the full album map without the active query or the clicked location", () => {
     const stub = { ...queryStub(), hasPlaces: true, canAccessLibrary: true, results: [{ CellID: "47a851" }] };
     PAlbumPhotos.methods.openLocation.call(stub, 0);
-    expect(stub.$router.push).toHaveBeenCalledWith({ name: "places_view", params: { s: stub.uid }, query: { q: "47a851" } });
+    expect(stub.$router.push).toHaveBeenCalledWith({ name: "places_view", params: { s: stub.uid } });
   });
   it("reloads a sort-only change and ignores a superseded response", async () => {
     const deferred = [];

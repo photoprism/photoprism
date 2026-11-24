@@ -42,6 +42,30 @@ func TestWsAlbumUpdates(t *testing.T) {
 	assert.False(t, ok)
 }
 
+// TestWsOwnedAlbumUpdate checks that the owner's save also reaches visitors with a valid link.
+func TestWsOwnedAlbumUpdate(t *testing.T) {
+	_, _, _ = NewApiTest()
+	visitor := entity.NewSession(3600, 0).SetUser(&entity.Visitor)
+	shared := "as6sg6bxpogaaba7"
+	link := entity.NewLink(shared, false, false)
+	require.NoError(t, link.Save())
+	t.Cleanup(func() { _ = link.Delete() })
+	visitor.SetData(&entity.SessionData{Tokens: []string{link.LinkToken}})
+	require.NoError(t, visitor.Create())
+	t.Cleanup(func() { _ = visitor.Delete() })
+
+	topic := "user." + entity.UserFixtures.Get("alice").UserUID + ".albums.updated"
+	fields := event.Data{"entities": []string{shared, "as6sg6bxpogaaba8"}, "Title": "Withheld"}
+	ev, data, ok := wsOutgoing(topic, visitor.ID, entity.Visitor, wsClientRole{}, fields)
+	require.True(t, ok)
+	assert.Equal(t, "albums.updated", ev)
+	assert.Equal(t, event.Data{"entities": []string{shared}}, data)
+
+	require.NoError(t, link.Delete())
+	_, _, ok = wsOutgoing(topic, visitor.ID, entity.Visitor, wsClientRole{}, fields)
+	assert.False(t, ok)
+}
+
 // TestWsAlbumUpdateActivity checks that server notifications do not extend idle sessions.
 func TestWsAlbumUpdateActivity(t *testing.T) {
 	_, _, _ = NewApiTest()

@@ -240,7 +240,11 @@ func photoQuery(frm *form.SearchPhotos, sess *entity.Session, resultCols string,
 	// Set sort order.
 	switch frm.Order {
 	case sortby.Edited:
-		s = s.Where("photos.edited_at IS NOT NULL").Order(OrderExpr("photos.edited_at DESC, files.media_id", frm.Reverse))
+		if frm.Scope != "" {
+			s = s.Order(OrderExprNulls("photos.edited_at DESC, files.time_index", false))
+		} else {
+			s = s.Where("photos.edited_at IS NOT NULL").Order(OrderExpr("photos.edited_at DESC, files.media_id", frm.Reverse))
+		}
 	case sortby.Updated, sortby.UpdatedAt:
 		s = s.Where("photos.updated_at > photos.created_at").Order(OrderExpr("photos.updated_at DESC, files.media_id", frm.Reverse))
 	case sortby.Archived:

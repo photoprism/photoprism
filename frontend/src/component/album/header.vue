@@ -25,10 +25,10 @@ export default {
     album: { type: Object, required: true },
     revision: { type: Number, default: 0 },
   },
-  emits: ["collapsed", "collapse-progress"],
+  emits: ["appearance", "collapsed", "collapse-progress"],
   // data initializes independent cover loading and layout state.
   data() {
-    return { cover: null, imageUrl: "", frame: {}, tone: albumCoverTone([]), expanded: false, overflowing: false, request: 0, minimumHeight: 0, analyzedHash: "", descriptionHeight: null };
+    return { cover: null, imageUrl: "", frame: {}, tone: albumCoverTone([]), expanded: false, overflowing: false, request: 0, minimumHeight: 0, toneLayout: "", descriptionHeight: null };
   },
   computed: {
     // coverKey changes whenever the selected album or its published cover changes.
@@ -151,30 +151,48 @@ export default {
     onImageLoad() {
       this.measure();
     },
-    // updateTone chooses one stable black-or-white palette for the current cover.
+    // updateTone samples the displayed cover behind the caption and toolbar.
     updateTone() {
+      const header = this.$refs.header;
       const image = this.$refs.image;
-      const hash = this.cover?.Hash;
-      if (!hash || hash === this.analyzedHash || !image?.naturalWidth) {
+      const copy = this.$refs.copy;
+      const { width, height, left, top } = this.frame;
+      const copyLeft = copy.offsetLeft;
+      const copyTop = copy.offsetTop;
+      const copyWidth = copy.offsetWidth;
+      const copyHeight = copy.offsetHeight;
+      const toolbarHeight = header.parentElement?.querySelector(".p-album-toolbar .v-toolbar")?.clientHeight || 48;
+      const layout = [this.cover?.Hash, width, height, left, top, header.clientWidth, header.clientHeight, copyLeft, copyTop, copyWidth, copyHeight, toolbarHeight].join(":");
+      if (layout === this.toneLayout || !width || !height || !copyWidth || !copyHeight) {
         return;
       }
       try {
         const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+
         canvas.width = 32;
         canvas.height = 32;
-        const context = canvas.getContext("2d", { willReadFrequently: true });
         context.drawImage(image, 0, 0, 32, 32);
-        this.tone = albumCoverTone(context.getImageData(0, 0, 32, 32).data);
+        const source = context.getImageData(0, 0, 32, 32).data;
+
+        canvas.width = header.clientWidth;
+        canvas.height = header.clientHeight;
+        context.drawImage(image, left, top, width, height);
+        const caption = context.getImageData(copyLeft, copyTop, copyWidth, copyHeight).data;
+        const toolbar = context.getImageData(0, 0, canvas.width, toolbarHeight).data;
+        this.tone = albumCoverTone(source, caption, toolbar);
       } catch {
         this.tone = albumCoverTone([]);
       }
-      this.analyzedHash = hash;
+      this.toneLayout = layout;
+      this.$emit("appearance", this.tone);
     },
     // onImageError supplies a readable themed placeholder when no cover can be loaded.
     onImageError() {
-      this.analyzedHash = "";
+      this.toneLayout = "";
       this.imageUrl = "";
       this.tone = albumCoverTone([]);
+      this.$emit("appearance", this.tone);
     },
     // toggleDescription expands or shortens the caption and measures the resulting frame.
     toggleDescription() {

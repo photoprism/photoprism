@@ -30,16 +30,18 @@ describe("album toolbar controls", () => {
     wrapper.vm.selectSort("size");
     expect(replace).toHaveBeenCalledWith({ query: { q: "cat", order: "size", reverse: "true" } });
   });
-  it("uses white cover controls and switches to the theme when searching", async () => {
+  it("uses the cover palette until the toolbar is compact or search is open", async () => {
     mountToolbar();
     await wrapper.setData({ searchOpen: false });
-    await wrapper.setProps({ compact: false, collapseProgress: 0 });
+    await wrapper.setProps({ compact: false, collapseProgress: 0, coverStyle: { "--album-cover-ink": "#000", "--album-toolbar-shade": "0.2" } });
     expect(wrapper.vm.toolbarStyle["--album-toolbar-opacity"]).toBe(0);
-    expect(wrapper.vm.toolbarStyle["--album-toolbar-color"]).toContain("white 100%");
+    expect(wrapper.vm.toolbarStyle["--album-cover-ink"]).toBe("#000");
+    expect(wrapper.vm.toolbarStyle["--album-toolbar-shade"]).toBe("0.2");
     await wrapper.setProps({ collapseProgress: 0.5 });
     expect(wrapper.vm.toolbarStyle["--album-toolbar-opacity"]).toBe(0.5);
     await wrapper.setData({ searchOpen: true });
     expect(wrapper.vm.toolbarStyle["--album-toolbar-opacity"]).toBe(1);
+    expect(wrapper.vm.toolbarStyle["--album-toolbar-color"]).toBe("rgb(var(--v-theme-on-secondary))");
     expect(wrapper.findComponent({ name: "VTextField" }).props("bgColor")).toBe("surface");
   });
   it("retains the selected view when sorting after a search", () => {

@@ -62,24 +62,73 @@ export function albumCoverFrame(width, height, imageWidth, imageHeight, faces, s
   return { width: w, height: h, left, top };
 }
 
-// albumCoverTone selects the caption palette from sampled RGB pixels.
-export function albumCoverTone(pixels) {
-  let brightPixels = 0;
+// albumCoverLuminance returns the relative luminance of an sRGB color.
+function albumCoverLuminance(r, g, b) {
+  // linear converts one sRGB channel to linear light.
+  const linear = (value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+}
+
+// albumCoverShade gives the minimum scrim opacity for 4.5:1 contrast in the sampled region.
+function albumCoverShade(pixels, darkInk) {
+  const limit = darkInk ? 0.175 : 1.05 / 4.5 - 0.05;
+  const extreme = darkInk ? 0 : 1;
+  const channels = [1 - extreme, 1 - extreme, 1 - extreme];
+
   for (let i = 0; i < pixels.length; i += 4) {
-    const channels = [pixels[i], pixels[i + 1], pixels[i + 2]].map((value) => {
-      const s = value / 255;
-      return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-    });
-    const luminance = 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
-    brightPixels += Number(luminance >= 0.179);
+    if (pixels[i + 3] < 255) {
+      // Uncovered pixels show the blurred backdrop, whose color can vary.
+      channels.fill(extreme);
+      break;
+    }
+    for (let channel = 0; channel < 3; channel++) {
+      const value = pixels[i + channel] / 255;
+      channels[channel] = darkInk ? Math.min(channels[channel], value) : Math.max(channels[channel], value);
+    }
   }
-  // A wide range of tones can put dark patches under the caption at different widths.
-  const light = pixels.length > 0 && brightPixels >= 0.9 * (pixels.length / 4);
+
+  if (!pixels.length) {
+    channels.fill(extreme);
+  }
+
+  const tint = 1 - extreme;
+  // readable checks contrast after blending the scrim with the sampled color.
+  const readable = (opacity) => {
+    const luma = albumCoverLuminance(...channels.map((value) => value * (1 - opacity) + tint * opacity));
+    return darkInk ? luma >= limit : luma <= limit;
+  };
+  if (readable(0)) {
+    return "0";
+  }
+  let min = 0;
+  let max = 100;
+  while (max - min > 1) {
+    const mid = Math.floor((min + max) / 2);
+    if (readable(mid / 100)) {
+      max = mid;
+    } else {
+      min = mid;
+    }
+  }
+  return String(max / 100);
+}
+
+// albumCoverTone chooses one text color per cover and shades the caption and toolbar independently.
+export function albumCoverTone(pixels, caption = pixels, toolbar = pixels) {
+  let bright = 0;
+  let opaque = 0;
+  for (let i = 0; i < pixels.length; i += 4) {
+    if (pixels[i + 3] === 255) {
+      opaque++;
+      bright += Number(albumCoverLuminance(pixels[i] / 255, pixels[i + 1] / 255, pixels[i + 2] / 255) >= 0.179);
+    }
+  }
+  const darkInk = opaque > 0 && bright > opaque / 2;
   return {
-    "--album-cover-ink": light ? "#000" : "#fff",
-    "--album-cover-shade": light ? "0" : "1",
-    "--album-cover-shadow": light ? "255, 255, 255" : "0, 0, 0",
-    "--album-more-color": light ? "#59329a" : "#c2a6ff",
+    "--album-cover-ink": darkInk ? "#000" : "#fff",
+    "--album-cover-tint": darkInk ? "255, 255, 255" : "0, 0, 0",
+    "--album-cover-shade": albumCoverShade(caption, darkInk),
+    "--album-toolbar-shade": albumCoverShade(toolbar, darkInk),
   };
 }
 

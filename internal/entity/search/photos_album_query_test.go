@@ -2,11 +2,13 @@ package search
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -73,6 +75,43 @@ func TestPhotosAlbumQuery(t *testing.T) {
 			all, _, err := Photos(form.SearchPhotos{Scope: a.AlbumUID})
 			require.NoError(t, err)
 			require.Len(t, all, 1)
+		})
+	}
+}
+
+// TestPhotosAlbumRecentlyEdited checks that sorting puts edited album members first without filtering.
+func TestPhotosAlbumRecentlyEdited(t *testing.T) {
+	base := "album-edited-" + rnd.Base36(8)
+	older := scopeBasePathPhoto(t, base, "older")
+	newer := scopeBasePathPhoto(t, base, "newer")
+	unedited := scopeBasePathPhoto(t, base, "unedited")
+	for photo, when := range map[*entity.Photo]time.Time{
+		older: time.Date(2026, 10, 1, 12, 0, 0, 0, time.UTC),
+		newer: time.Date(2026, 10, 2, 12, 0, 0, 0, time.UTC),
+	} {
+		require.NoError(t, entity.Db().Model(photo).UpdateColumn("edited_at", when).Error)
+	}
+	for _, kind := range []string{entity.AlbumManual, entity.AlbumFolder} {
+		t.Run(kind, func(t *testing.T) {
+			album := entity.NewAlbum(base, kind)
+			album.AlbumPath = base
+			if kind == entity.AlbumFolder {
+				album.AlbumFilter = "path:" + base + "/ public:true"
+			}
+			require.NoError(t, album.Create())
+			t.Cleanup(func() {
+				_ = entity.UnscopedDb().Where("album_uid = ?", album.AlbumUID).Delete(&entity.PhotoAlbum{}).Error
+				_ = album.DeletePermanently()
+				entity.FlushAlbumCache()
+			})
+			if kind == entity.AlbumManual {
+				require.Len(t, album.AddPhotos(entity.Photos{older, newer, unedited}), 3)
+			}
+			results, _, err := Photos(form.SearchPhotos{Scope: album.AlbumUID, Order: sortby.Edited, Primary: true})
+			require.NoError(t, err)
+			require.Len(t, results, 3)
+			assert.Equal(t, []string{newer.PhotoUID, older.PhotoUID, unedited.PhotoUID},
+				[]string{results[0].PhotoUID, results[1].PhotoUID, results[2].PhotoUID})
 		})
 	}
 }

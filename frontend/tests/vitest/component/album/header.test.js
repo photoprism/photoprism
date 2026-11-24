@@ -48,24 +48,33 @@ describe("album cover header", () => {
     await flushPromises();
     expect(wrapper.find("img").attributes("src")).toContain("b".repeat(40));
   });
-  it("keeps one cover palette when the description expands or layout changes", async () => {
+  it("samples caption and toolbar regions again when the cover is reframed", async () => {
     vi.spyOn($api, "get").mockResolvedValue({ data: { Hash: "a".repeat(40), Width: 1600, Height: 1200 } });
-    const context = { drawImage: vi.fn(), getImageData: vi.fn(() => ({ data: new Uint8ClampedArray([255, 255, 255, 255]) })) };
+    const white = { data: new Uint8ClampedArray([255, 255, 255, 255]) };
+    const black = { data: new Uint8ClampedArray([0, 0, 0, 255]) };
+    const context = { drawImage: vi.fn(), getImageData: vi.fn().mockReturnValue(white) };
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
     const wrapper = mountHeader();
     await flushPromises();
     const image = wrapper.find("img").element;
+    const copy = wrapper.find(".album-header-copy").element;
+    Object.defineProperties(wrapper.element, { clientWidth: { value: 600 }, clientHeight: { value: 350 } });
+    Object.defineProperties(copy, { offsetWidth: { value: 250 }, offsetHeight: { value: 100, configurable: true } });
     Object.defineProperties(image, { naturalWidth: { value: 1600 }, naturalHeight: { value: 1200 }, complete: { value: true } });
     wrapper.vm.onImageLoad();
     expect(wrapper.vm.tone["--album-cover-ink"]).toBe("#000");
-    await wrapper.vm.$nextTick();
-    expect(wrapper.element.style.getPropertyValue("--album-cover-shade")).toBe("0");
-    context.getImageData.mockReturnValue({ data: new Uint8ClampedArray([0, 0, 0, 255]) });
-    wrapper.vm.toggleDescription();
-    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.tone["--album-cover-shade"]).toBe("0");
+    expect(context.getImageData).toHaveBeenNthCalledWith(2, 0, 0, 250, 100);
+    expect(context.getImageData).toHaveBeenNthCalledWith(3, 0, 0, 600, 48);
     wrapper.vm.measure();
-    expect(wrapper.vm.tone["--album-cover-ink"]).toBe("#000");
-    expect(context.getImageData).toHaveBeenCalledTimes(1);
+    expect(context.getImageData).toHaveBeenCalledTimes(3);
+
+    Object.defineProperty(copy, "offsetHeight", { value: 140 });
+    context.getImageData.mockReturnValueOnce(white).mockReturnValueOnce(black);
+    wrapper.vm.measure();
+    expect(wrapper.emitted("appearance").at(-1)[0]).toMatchObject({
+      "--album-cover-ink": "#000", "--album-cover-shade": "0.46", "--album-toolbar-shade": "0",
+    });
   });
   it("expands a truncated description and keeps a readable missing-cover state", async () => {
     vi.spyOn($api, "get").mockResolvedValue({ data: {} });
