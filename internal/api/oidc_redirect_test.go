@@ -793,6 +793,82 @@ func TestOIDCRedirect_Groups(t *testing.T) {
 	})
 }
 
+func TestOIDCRedirect_ReceivedGroupsLog(t *testing.T) {
+	t.Run("Member", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCGroup = []string{"photoprism-admin"}
+		app := newOidcTestApp(conf)
+		hook := captureLog(t)
+
+		r := oidcLogin(t, app, "olivia")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, []string{"oidc: received groups in claim groups (id token 2, userinfo 2, overage false): photoprism-admin, staff"}, oidcReceivedGroupsLog(hook))
+	})
+	t.Run("NotMember", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCGroup = []string{"photoprism-admin"}
+		app := newOidcTestApp(conf)
+		hook := captureLog(t)
+
+		r := oidcLogin(t, app, "oscar")
+
+		assertOidcLoginRefused(t, r, i18n.ErrForbidden)
+		assert.Equal(t, []string{"oidc: received groups in claim groups (id token 1, userinfo 1, overage false): photoprism-user"}, oidcReceivedGroupsLog(hook))
+	})
+	t.Run("Overage", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCGroup = []string{"photoprism-admin"}
+		app := newOidcTestApp(conf)
+		hook := captureLog(t)
+
+		r := oidcLogin(t, app, "odette")
+
+		assertOidcLoginRefused(t, r, i18n.ErrForbidden)
+		assert.Equal(t, []string{"oidc: received groups in claim groups (id token 0, userinfo 0, overage true): none"}, oidcReceivedGroupsLog(hook))
+	})
+	t.Run("NoRequiredGroup", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		conf.Options().OIDCGroupRole = []string{"photoprism-admin=admin"}
+		app := newOidcTestApp(conf)
+		hook := captureLog(t)
+
+		r := oidcLogin(t, app, "olivia")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		user := findOidcTestUser("sub00000002")
+		require.NotNil(t, user)
+		assert.Equal(t, "admin", user.UserRole)
+		assert.Equal(t, []string{"oidc: received groups in claim groups (id token 2, userinfo 2, overage false): photoprism-admin, staff"}, oidcReceivedGroupsLog(hook))
+	})
+	t.Run("CustomClaim", func(t *testing.T) {
+		conf := useOidcTestConfig(t)
+		origClaim := conf.Options().OIDCGroupClaim
+		t.Cleanup(func() { conf.Options().OIDCGroupClaim = origClaim })
+		conf.Options().OIDCGroupClaim = "roles"
+		app := newOidcTestApp(conf)
+		hook := captureLog(t)
+
+		r := oidcLogin(t, app, "olivia")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Equal(t, []string{"oidc: received groups in claim roles (id token 0, userinfo 0, overage false): none"}, oidcReceivedGroupsLog(hook))
+	})
+}
+
+// oidcReceivedGroupsLog returns the received groups messages logged at debug level.
+func oidcReceivedGroupsLog(hook *logtest.Hook) []string {
+	var messages []string
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.DebugLevel && strings.HasPrefix(entry.Message, "oidc: received groups") {
+			messages = append(messages, entry.Message)
+		}
+	}
+
+	return messages
+}
+
 func TestOIDCRedirect_Email(t *testing.T) {
 	t.Run("Domain", func(t *testing.T) {
 		conf := useOidcTestConfig(t)
