@@ -1,5 +1,6 @@
-import { Selector, t } from "testcafe";
+import { ClientFunction, RequestLogger, Selector, t } from "testcafe";
 import Notifies from "../page-model/notifications";
+import testcafeconfig from "../../testcafeconfig.json";
 const notifies = new Notifies();
 
 export default class Page {
@@ -9,7 +10,10 @@ export default class Page {
     this.camera = Selector("div.p-camera-select");
     this.countries = Selector("div.p-countries-select");
     this.sort = Selector("button.action-sort");
+    this.sortMenu = Selector('.action-menu__list[aria-label="Sort Order"]').filterVisible();
     this.mediaType = Selector("div.p-media-type-select");
+    this.searchFilters = Selector('.input-search [aria-label="Search Filters"]');
+    this.sharedAlbumToolbar = Selector(".p-album-toolbar");
     this.search1 = Selector("div.input-search input");
     this.toolbarDescription = Selector(".toolbar-details-panel");
     this.toolbarTitle = Selector("#p-navigation div.v-toolbar-title");
@@ -19,6 +23,74 @@ export default class Page {
     this.mosaicViewAction = Selector("button.action-view-mosaic");
     this.listViewAction = Selector("button.action-view-list");
     this.searchClearAction = Selector("div.input-search .v-field__clearable", { timeout: 7000 });
+    this.searchParam = ClientFunction((name) => new URLSearchParams(window.location.search).get(name));
+  }
+
+  // openPage navigates to a fixture route, including public share links.
+  async openPage(path) {
+    await t.navigateTo(new URL(path, testcafeconfig.url).href);
+  }
+
+  // openSearch opens a library route and waits for its initial results.
+  async openSearch(path) {
+    await this.openPage("/library/" + path);
+    await notifies.waitForSearchToFinish(7000);
+  }
+
+  // openFilters expands the photo search filters.
+  async openFilters() {
+    if ((await this.searchFilters.getAttribute("aria-expanded")) !== "true") {
+      await t.click(this.searchFilters);
+    }
+    await t.expect(this.searchFilters.getAttribute("aria-expanded")).eql("true");
+  }
+
+  // selectSort clicks a sort row or its direction button and waits for a changed search.
+  async selectSort(value, { direction, search = true } = {}) {
+    if (search) {
+      await notifies.closeAllEventPopups();
+    }
+    const option = direction
+      ? this.sortMenu.find(`button[data-sort="${value}"][data-direction="${direction}"]`)
+      : this.sortMenu.find(`[role="button"][data-sort="${value}"]`);
+    await t.click(this.sort).expect(this.sortMenu.exists).ok().click(option).expect(this.sortMenu.exists).notOk();
+    if (search) {
+      await notifies.waitForSearchToFinish(7000);
+    }
+  }
+
+  // searchRequests records API search responses for the current photo or album results.
+  searchRequests() {
+    return RequestLogger(/\/api\/v1\/(photos|albums)\?/, { logResponseBody: true, stringifyResponseBody: true });
+  }
+
+  // latestRequest returns the latest successful search matching the expected query parameters.
+  latestRequest(requests, params) {
+    return requests.requests.findLast((entry) => this.matchesSearch(entry, params));
+  }
+
+  // matchesSearch reports whether the response belongs to the expected search.
+  matchesSearch(entry, params) {
+    const query = new URL(entry.request.url).searchParams;
+    return entry.response?.statusCode === 200 && Object.entries(params).every(([name, value]) => query.get(name) === value);
+  }
+
+  // searchResults waits for the matching response and returns its results.
+  async searchResults(requests, params) {
+    await t.expect(requests.contains((entry) => this.matchesSearch(entry, params))).ok(JSON.stringify(params));
+    return JSON.parse(this.latestRequest(requests, params).response.body);
+  }
+
+  // expectSort verifies the URL, visible sort label, and API query against the test's expected values.
+  async expectSort(requests, { order, reverse = null, label }) {
+    await t
+      .expect(this.searchParam("order"))
+      .eql(order)
+      .expect(this.searchParam("reverse"))
+      .eql(reverse)
+      .expect(this.sort.getAttribute("title"))
+      .eql(label);
+    return this.searchResults(requests, { order, reverse });
   }
 
   async checkToolbarActionAvailability(action, visible) {
@@ -153,40 +225,47 @@ export default class Page {
 
   // setFilter selects an option from the expanded search filters.
   async setFilter(filter, option) {
-    let filterSelector = "";
+    let field;
 
     switch (filter) {
       case "view":
-        filterSelector = "div.p-view-select";
+        field = this.view;
         break;
       case "camera":
-        filterSelector = "div.p-camera-select";
+        field = this.camera;
         break;
       case "type":
-        filterSelector = "div.p-media-type-select";
+        field = this.mediaType;
         break;
       case "countries":
-        filterSelector = "div.p-countries-select";
+        field = this.countries;
         break;
       case "category":
-        filterSelector = "div.p-category-select";
+        field = Selector("div.p-category-select");
         break;
       default:
         throw "unknown filter";
     }
-    if (!(await Selector(filterSelector).visible)) {
+    if (filter === "type") {
+      await notifies.closeAllEventPopups();
+      await this.openFilters();
+    } else if (!(await field.visible)) {
       await t.click(Selector("i.mdi-tune"));
     }
-    await t.click(filterSelector);
+    await t.click(field);
 
     if (option) {
-      await t.click(Selector('div[role="option"]').withText(option));
+      const options = Selector('div[role="option"]');
+      await t.click(filter === "type" ? options.withExactText(option) : options.withText(option));
     } else {
       await t.click(Selector('div[role="option"]').nth(1));
     }
 
-    if (await Selector(filterSelector).visible) {
-      await t.click(Selector("i.mdi-tune"));
+    if (await field.visible) {
+      await t.click(filter === "type" ? this.searchFilters : Selector("i.mdi-tune"));
+    }
+    if (filter === "type") {
+      await notifies.waitForSearchToFinish(7000);
     }
   }
 }

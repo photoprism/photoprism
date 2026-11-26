@@ -1,155 +1,216 @@
 /* global fixture */
-import { ClientFunction, RequestLogger, Selector } from "testcafe";
 import testcafeconfig from "../../testcafeconfig.json";
+import Album from "../page-model/album";
+import Photo from "../page-model/photo";
+import Toolbar from "../page-model/toolbar";
 
-const requests = RequestLogger((request) => /\/api\/v1\/(photos|albums)\?/.test(request.url), { logResponseBody: true, stringifyResponseBody: true });
-const sortButton = Selector("button.action-sort");
-const routeQuery = ClientFunction(() => window.location.search);
-const sortQuery = ClientFunction(() => {
-  const query = new URLSearchParams(window.location.search);
-  return { order: query.get("order"), reverse: query.get("reverse") === "true" };
-});
-const currentSortLabel = ClientFunction(() => document.querySelector("button.action-sort")?.getAttribute("aria-label"));
-const firstPhoto = Selector(".search-results .is-photo").nth(0);
+const album = new Album();
+const photo = new Photo();
+const toolbar = new Toolbar();
+const requests = toolbar.searchRequests();
+const photoSearch = "browse?q=name:albums-002*&view=cards";
 
-fixture`Photo and Album Sorting`.page`${testcafeconfig.url}`.requestHooks(requests);
+fixture`Test photo and album sorting`.page`${testcafeconfig.url}`.requestHooks(requests);
 
-// openPage opens a deterministic route and waits for its initial search to finish.
-async function openPage(t, path) {
-  requests.clear();
-  await t.navigateTo(new URL(path, new URL("./", testcafeconfig.url)).href);
-  await t.expect(sortButton.hasAttribute("disabled")).notOk();
-}
+test.meta("testID", "sorting-001").meta({ type: "short", mode: "public" })(
+  "Common: Reverse photo dates in both directions and retain the preference",
+  async (t) => {
+    await toolbar.openSearch(`${photoSearch}&order=newest`);
+    await t.expect(photo.firstTitle.innerText).eql("Albums / 2015");
 
-// selectSort selects a row or a direct arrow and waits for the resulting search.
-async function selectSort(t, value, direction) {
-  await t.click(sortButton);
-  const row = Selector(`.p-sort-menu .v-list-item[data-sort="${value}"]`);
-  const active = await row.getAttribute("aria-pressed") === "true";
-  const arrow = Selector(`.p-sort-menu button[data-sort="${value}"][data-direction="ascending"]`);
-  const reversible = await arrow.exists;
-  const defaultAscending = value === "name" || value === "title";
-  const ascending = direction ? direction === "ascending" : active && reversible ? await arrow.getAttribute("aria-pressed") !== "true" : defaultAscending;
-  const expected = {
-    order: value === "newest" && ascending ? "oldest" : value,
-    reverse: value !== "newest" && reversible && ascending !== defaultAscending,
-  };
-  const changed = !active || reversible && (direction === undefined || await arrow.getAttribute("aria-pressed") !== String(ascending));
-  const selector = direction ? `button[data-sort="${value}"][data-direction="${direction}"]` : `.v-list-item[data-sort="${value}"]`;
-  await t.click(Selector(".p-sort-menu").find(selector));
-  await t.expect(Selector(".p-sort-menu").visible).notOk();
-  if (changed) {
-    await t.expect(sortQuery()).eql(expected);
-    await t.expect(requests.contains((entry) => {
-      const query = new URL(entry.request.url).searchParams;
-      return !!entry.response && query.get("order") === expected.order && (query.get("reverse") === "true") === expected.reverse;
-    })).ok();
-  }
-  await t.expect(sortButton.hasAttribute("disabled")).notOk();
-}
-
-// latestRequest returns the most recent completed search request.
-function latestRequest() {
-  return requests.requests.filter((entry) => entry.response).at(-1);
-}
-
-test.meta({ testID: "sorting-001", type: "short", mode: "public" })("Common: Reverse photo dates and retain the preference", async (t) => {
-  await openPage(t, "browse?order=newest&view=cards");
-  requests.clear();
-  await selectSort(t, "newest");
-  await t.expect(routeQuery()).contains("order=oldest");
-  await t.expect(currentSortLabel()).eql("Sorted by Date Taken, oldest first");
-  const request = latestRequest();
-  await t.expect(new URL(request.request.url).searchParams.get("order")).eql("oldest");
-  await t.expect(new URL(request.request.url).searchParams.has("reverse")).notOk();
-  const body = JSON.parse(request.response.body);
-  await t.expect(body.length).gt(0);
-  {
-    await t.expect(firstPhoto.getAttribute("class")).contains(`uid-${body[0].UID}`);
-    const dates = body.map((photo) => photo.TakenAt);
-    await t.expect(dates).eql([...dates].sort());
-  }
-  await openPage(t, "videos?order=size");
-  await openPage(t, "browse");
-  await t.expect(currentSortLabel()).eql("Sorted by Date Taken, oldest first");
-});
-
-test.meta({ testID: "sorting-002", type: "short", mode: "public" })("Common: Select size direction and avoid repeating one-way searches", async (t) => {
-  await openPage(t, "browse?order=newest");
-  requests.clear();
-  await selectSort(t, "size", "ascending");
-  await t.expect(routeQuery()).contains("reverse=true");
-  await t.expect(currentSortLabel()).eql("Sorted by File Size, smallest first");
-  const url = new URL(latestRequest().request.url);
-  await t.expect(url.searchParams.get("order")).eql("size");
-  await t.expect(url.searchParams.get("reverse")).eql("true");
-  const photos = JSON.parse(latestRequest().response.body);
-  await t.expect(photos.length).gt(1);
-  const sizes = photos.map((photo) => photo.Files.find((file) => file.UID === photo.FileUID)?.Size);
-  await t.expect(sizes.every((size) => Number.isFinite(size))).ok();
-  await t.expect(sizes).eql([...sizes].sort((a, b) => a - b));
-  await t.expect(firstPhoto.getAttribute("class")).contains(`uid-${photos[0].UID}`);
-
-  await selectSort(t, "added");
-  requests.clear();
-  await selectSort(t, "added");
-  await t.expect(requests.requests.length).eql(0);
-});
-
-test.meta({ testID: "sorting-003", type: "short", mode: "public" })("Common: Reverse album creation dates and isolate album types", async (t) => {
-  await openPage(t, "albums?order=added");
-  await selectSort(t, "added");
-  await t.expect(currentSortLabel()).eql("Sorted by Date Created, oldest first");
-  const url = new URL(latestRequest().request.url);
-  await t.expect(url.searchParams.get("order")).eql("added");
-  await t.expect(url.searchParams.get("reverse")).eql("true");
-  const albums = JSON.parse(latestRequest().response.body);
-  await t.expect(albums.length).gt(1);
-  const uids = albums.map((album) => album.UID);
-  await t.expect(uids).eql([...uids].sort());
-  await t.expect(Selector(".album-results .result").nth(0).getAttribute("data-uid")).eql(uids[0]);
-
-  await openPage(t, "moments?order=newest");
-  await t.expect(currentSortLabel()).eql("Sorted by Year, newest first");
-  await openPage(t, "albums");
-  await t.expect(currentSortLabel()).eql("Sorted by Date Created, oldest first");
-});
-
-test.meta({ testID: "sorting-004", type: "short", mode: "public" })("Common: Filter media types and remove the All parameter", async (t) => {
-  await openPage(t, "browse?type=raw&year=2018&order=newest");
-  const filtered = JSON.parse(latestRequest().response.body);
-  await t.expect(filtered.length).gt(0);
-  await t.expect(filtered.every((photo) => photo.Type === "raw" && photo.Year === 2018)).ok();
-  await t.click(Selector('.input-search [aria-label="Search Filters"]'));
-  await t.expect(Selector(".p-media-type-select").innerText).contains("RAW");
-  await t.expect(Selector(".p-time-select").exists).notOk();
-  await t.click(Selector(".p-media-type-select"));
-  await t.click(Selector('[role="option"]').withExactText("All"));
-  await t.expect(routeQuery()).notContains("type=");
-  await t.expect(routeQuery()).contains("year=2018");
-  for (const page of ["videos", "live", "animated", "audio"]) {
-    await openPage(t, page);
-    await t.expect(Selector(".p-media-type-select").exists).notOk();
-  }
-});
-
-test.meta({ testID: "sorting-005", type: "short", mode: "public" })("Common: Map every media type to the existing search parameter", async (t) => {
-  await openPage(t, "browse?order=newest&view=cards");
-  for (const [label, type] of [["Photos", "image"], ["Videos", "video"], ["Live", "live"], ["RAW", "raw"], ["Animated", "animated"], ["Vector", "vector"]]) {
-    const field = Selector(".p-media-type-select");
-    if (!(await field.visible)) {
-      await t.click(Selector('.input-search [aria-label="Search Filters"]'));
-    }
     requests.clear();
-    await t.click(field);
-    await t.click(Selector('[role="option"]').withExactText(label));
-    await t.expect(routeQuery()).contains(`type=${type}`);
-    await t.expect(requests.contains((entry) => !!entry.response && new URL(entry.request.url).searchParams.get("type") === type)).ok();
-    await t.expect(sortButton.hasAttribute("disabled")).notOk();
-    const result = JSON.parse(latestRequest().response.body);
-    await t.expect(result.every((photo) => photo.Type === type)).ok();
-    if (["image", "video", "raw"].includes(type)) {
-      await t.expect(result.length).gt(0);
+    await toolbar.selectSort("newest");
+    await toolbar.expectSort(requests, { order: "oldest", label: "Sorted by Date Taken, ascending" });
+    await t.expect(photo.firstTitle.innerText).eql("San Diego / United States / 2015");
+
+    await toolbar.openSearch("videos?order=size&reverse=true&view=cards&q=name:Gopher%7Cpanorama_video_360");
+    await t.expect(photo.firstTitle.innerText).eql("Website / Berlin / 2020");
+
+    requests.clear();
+    await toolbar.openSearch(photoSearch);
+    await toolbar.searchResults(requests, { order: "oldest", reverse: null });
+    await t.expect(toolbar.sort.getAttribute("title")).eql("Sorted by Date Taken, ascending");
+    await t.expect(photo.firstTitle.innerText).eql("San Diego / United States / 2015");
+
+    requests.clear();
+    await toolbar.selectSort("newest");
+    await toolbar.expectSort(requests, { order: "newest", label: "Sorted by Date Taken, descending" });
+    await t.expect(photo.firstTitle.innerText).eql("Albums / 2015");
+  }
+);
+
+test.meta("testID", "sorting-002").meta({ type: "short", mode: "public" })(
+  "Common: Sort photos by file size and recently added",
+  async (t) => {
+    await toolbar.openSearch(`${photoSearch}&order=newest`);
+
+    requests.clear();
+    await toolbar.selectSort("size", { direction: "ascending" });
+    await toolbar.expectSort(requests, { order: "size", reverse: "true", label: "Sorted by File Size, ascending" });
+    await t.expect(photo.firstTitle.innerText).eql("Tower / Cilaos / 2015");
+
+    requests.clear();
+    await toolbar.selectSort("added");
+    await toolbar.expectSort(requests, { order: "added", label: "Sorted by Recently Added" });
+    await t.expect(photo.firstTitle.innerText).eql("Albums / 2015");
+
+    requests.clear();
+    await toolbar.selectSort("added", { search: false });
+    await t.expect(requests.count(() => true)).eql(0);
+    await t.expect(photo.firstTitle.innerText).eql("Albums / 2015");
+  }
+);
+
+test.meta("testID", "sorting-003").meta({ type: "short", mode: "public" })(
+  "Common: Reverse album creation dates and isolate album types",
+  async (t) => {
+    await toolbar.openSearch("albums?order=added");
+    await t.expect(album.firstTitle.innerText).eql("Garden");
+
+    requests.clear();
+    await toolbar.selectSort("added");
+    const albums = await toolbar.expectSort(requests, { order: "added", reverse: "true", label: "Sorted by Date Created, ascending" });
+    await t.expect(album.firstTitle.innerText).eql("Holiday");
+    await t.expect(albums.length).gt(1);
+    const dates = albums.map(({ CreatedAt }) => Date.parse(CreatedAt));
+    await t.expect(dates.every(Number.isFinite)).ok();
+    await t.expect(dates).eql([...dates].sort((a, b) => a - b));
+
+    await toolbar.openSearch("moments?q=201&order=newest");
+    await t.expect(toolbar.sort.getAttribute("title")).eql("Sorted by Year, descending");
+    await t.expect(album.firstTitle.innerText).eql("Greece 2019");
+
+    requests.clear();
+    await toolbar.selectSort("newest");
+    await toolbar.expectSort(requests, { order: "oldest", label: "Sorted by Year, ascending" });
+    await t.expect(album.firstTitle.innerText).eql("France 2017");
+
+    requests.clear();
+    await toolbar.openSearch("albums");
+    await toolbar.searchResults(requests, { type: "album", order: "added", reverse: "true" });
+    await t.expect(toolbar.sort.getAttribute("title")).eql("Sorted by Date Created, ascending");
+    await t.expect(album.firstTitle.innerText).eql("Holiday");
+  }
+);
+
+test.meta("testID", "sorting-004").meta({ type: "short", mode: "public" })(
+  "Common: Clear the media type while retaining the year and hide the filter on fixed-type pages",
+  async (t) => {
+    await toolbar.openSearch("browse?type=raw&year=2018&order=newest");
+    const raw = await toolbar.searchResults(requests, { type: "raw", year: "2018" });
+    await t.expect(raw.length).gt(0);
+    await t.expect(raw.every(({ Type, Year }) => Type === "raw" && Year === 2018)).ok();
+
+    await toolbar.openFilters();
+    await t.expect(toolbar.mediaType.exists).ok();
+    await t.expect(toolbar.mediaType.innerText).contains("Raw");
+
+    requests.clear();
+    await toolbar.setFilter("type", "All");
+    await t.expect(toolbar.searchParam("type")).eql(null).expect(toolbar.searchParam("year")).eql("2018");
+    const all = await toolbar.searchResults(requests, { type: "", year: "2018" });
+    await t.expect(all.every(({ Year }) => Year === 2018)).ok();
+    await t.expect(all.some(({ Type }) => Type !== "raw")).ok();
+
+    for (const path of ["videos", "live", "animated", "audio"]) {
+      await toolbar.openSearch(path);
+      await toolbar.openFilters();
+      await t.expect(toolbar.mediaType.exists).notOk(path);
     }
   }
-});
+);
+
+test.meta("testID", "sorting-005").meta({ type: "short", mode: "public" })(
+  "Common: Filter images, videos, RAW photos, and documents using the search parameter",
+  async (t) => {
+    await toolbar.openSearch("browse?order=newest&view=cards");
+
+    for (const [label, type] of [["Image", "image"], ["Video", "video"], ["Raw", "raw"], ["Document", "document"]]) {
+      requests.clear();
+      await toolbar.setFilter("type", label);
+      await t.expect(toolbar.searchParam("type")).eql(type);
+      const results = await toolbar.searchResults(requests, { type });
+      await t.expect(results.length).gt(0, label);
+      await t.expect(results.every((photo) => photo.Type === type)).ok(label);
+    }
+  }
+);
+
+test.meta("testID", "sorting-006").meta({ type: "short", mode: "public" })(
+  "Common: Sort photos by title and file name",
+  async (t) => {
+    await toolbar.openSearch(`${photoSearch}&order=oldest`);
+    await t.expect(photo.firstTitle.innerText).eql("San Diego / United States / 2015");
+
+    requests.clear();
+    await toolbar.selectSort("title");
+    await toolbar.expectSort(requests, { order: "title", label: "Sorted by Title, ascending" });
+    await t.expect(photo.firstTitle.innerText).eql("Albums / 2015");
+
+    requests.clear();
+    await toolbar.selectSort("name");
+    await toolbar.expectSort(requests, { order: "name", label: "Sorted by File Name, ascending" });
+    await t.expect(photo.firstTitle.innerText).eql("San Diego / United States / 2015");
+  }
+);
+
+test.meta("testID", "sorting-007").meta({ type: "short", mode: "public" })(
+  "Common: Sort videos by duration in both directions",
+  async (t) => {
+    await toolbar.openSearch("videos?order=oldest&view=cards&q=name:Gopher%7Cpanorama_video_360");
+    await t.expect(photo.firstTitle.innerText).eql("Website / Berlin / 2020");
+
+    requests.clear();
+    await toolbar.selectSort("duration");
+    await toolbar.expectSort(requests, { order: "duration", label: "Sorted by Video Duration, descending" });
+    await t.expect(photo.firstTitle.innerText).eql("Panorama Video / 2020");
+
+    requests.clear();
+    await toolbar.selectSort("duration", { direction: "ascending" });
+    await toolbar.expectSort(requests, { order: "duration", reverse: "true", label: "Sorted by Video Duration, ascending" });
+    await t.expect(photo.firstTitle.innerText).eql("Website / Berlin / 2020");
+  }
+);
+
+test.meta("testID", "sorting-008").meta({ type: "short", mode: "public" })(
+  "Common: Sort albums by name, recent edits, favorites, and location",
+  async (t) => {
+    await toolbar.openSearch("albums?order=added");
+
+    requests.clear();
+    await toolbar.selectSort("name");
+    await toolbar.expectSort(requests, { order: "name", label: "Sorted by Name, ascending" });
+    await t.expect(album.firstTitle.innerText).eql("Christmas");
+
+    requests.clear();
+    await toolbar.selectSort("edited");
+    await toolbar.expectSort(requests, { order: "edited", label: "Sorted by Recently Edited" });
+    await t.expect(album.firstTitle.innerText).eql("Garden");
+
+    requests.clear();
+    await toolbar.selectSort("favorites");
+    const favorites = await toolbar.expectSort(requests, { order: "favorites", label: "Sorted by Favorites First" });
+    await t.expect(album.firstTitle.innerText).eql("Christmas");
+    await t.expect(favorites.slice(0, 3).map(({ Title }) => Title)).eql(["Christmas", "Holiday", "Garden"]);
+
+    await toolbar.openSearch("states?order=name");
+
+    requests.clear();
+    await toolbar.selectSort("place");
+    await toolbar.expectSort(requests, { order: "place", label: "Sorted by Location" });
+    await t.expect(album.firstTitle.innerText).eql("North-West District");
+  }
+);
+
+test.meta("testID", "sorting-009").meta({ type: "short", mode: "public" })(
+  "Common: Reverse calendar albums by date",
+  async (t) => {
+    await toolbar.openSearch("calendar?q=2020&order=newest");
+    await t.expect(album.firstTitle.innerText).eql("December 2020");
+
+    requests.clear();
+    await toolbar.selectSort("newest");
+    await toolbar.expectSort(requests, { order: "oldest", label: "Sorted by Date, ascending" });
+    await t.expect(album.firstTitle.innerText).eql("May 2020");
+  }
+);

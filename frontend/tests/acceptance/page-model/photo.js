@@ -4,7 +4,10 @@ import Notifies from "../page-model/notifications";
 const notifies = new Notifies();
 
 export default class Page {
-  constructor() {}
+  // constructor initializes the first photo card title.
+  constructor() {
+    this.firstTitle = Selector(".search-results .is-photo").nth(0).find(".meta-title");
+  }
 
   async getNthPhotoUid(type, nth) {
     if (type === "all") {

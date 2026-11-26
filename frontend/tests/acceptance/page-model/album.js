@@ -3,6 +3,7 @@ import { Selector, t } from "testcafe";
 export default class Page {
   constructor() {
     this.search = Selector(".input-search input");
+    this.firstTitle = Selector(".album-results .result.is-album").nth(0).find(".meta-title");
   }
 
   async getNthAlbumUid(type, nth) {
