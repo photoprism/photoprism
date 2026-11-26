@@ -1,6 +1,6 @@
 ## Frontend Tests & Linting
 
-**Last Updated:** October 2, 2026
+**Last Updated:** November 26, 2026
 
 ### Purpose
 
@@ -77,7 +77,7 @@ Current frontend tool versions are defined in `frontend/package.json` unless sta
 | `eslint-plugin-vuetify`  | `^2.7.3`                 |
 | `prettier`               | `^3.9.9`                 |
 
-TestCafe 3.7.4 is installed globally by `scripts/dist/install-nodejs.sh`, not declared in the workspace. `make -C frontend install-testcafe` installs the latest release explicitly. Verify the active runner with `npm run testcafe --workspace frontend -- --version` and inspect its separate tree with `npm ls --global testcafe --all`. Its legacy runtime dependencies are still needed for acceptance tests; do not prune them based only on workspace imports.
+TestCafe 3.7.8 is installed globally by `scripts/dist/install-nodejs.sh`, not declared in the workspace. `make -C frontend install-testcafe` installs the latest release explicitly. Verify the active runner with `npm run testcafe --workspace frontend -- --version` and inspect its separate tree with `npm ls --global testcafe --all`. Its legacy runtime dependencies are still needed for acceptance tests; do not prune them based only on workspace imports.
 
 ### Upgrade Guidance
 
