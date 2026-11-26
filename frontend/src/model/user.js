@@ -292,9 +292,40 @@ export class User extends RestModel {
       return !!this.AuthID;
     }
     if (this.AuthProvider === "default" && this.showsAuthIdField()) {
-      return !!this.Password || !!this.AuthID;
+      return !!this.Password || this.hasAuthId();
     }
     return true;
+  }
+
+  // hasAuthId reports whether an external identity other than whitespace is set.
+  hasAuthId() {
+    return String(this.AuthID || "").trim() !== "";
+  }
+
+  // newAccountProvider returns the provider a new account is created with. "default" requires a local
+  // password, so an external identity without one creates an account of the provider its field shows:
+  // "ldap" for a Distinguished Name, otherwise "oidc".
+  newAccountProvider() {
+    if (this.AuthProvider === "default" && !this.Password && this.hasAuthId() && this.showsAuthIdField()) {
+      return this.authIdIsDn() ? "ldap" : "oidc";
+    }
+
+    return this.AuthProvider;
+  }
+
+  // save creates a new account with the provider from newAccountProvider, leaving the form values as
+  // entered, or updates an existing account.
+  save() {
+    if (this.hasId()) {
+      return this.update();
+    }
+
+    this.trimInputs();
+
+    const values = this.getValues();
+    values.AuthProvider = this.newAccountProvider();
+
+    return $api.post(this.constructor.getCollectionResource(), values).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   // canEnableLogin reports whether web/API login can be enabled for this account.

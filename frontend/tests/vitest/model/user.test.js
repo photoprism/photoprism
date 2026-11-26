@@ -590,8 +590,14 @@ describe("model/user", () => {
       setExt({ ldap: { enabled: true } });
       // default + LDAP: a globally enabled directory is not enough; a DN (or password) is required.
       expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
-      expect(new User({ AuthProvider: "default", AuthID: "cn=jane,dc=example,dc=com" }).hasLoginCredential()).toBe(true);
-      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      const dnOnly = new User({ AuthProvider: "default", AuthID: "cn=jane,dc=example,dc=com" });
+      expect(dnOnly.hasLoginCredential()).toBe(true);
+      // A DN without a password creates an LDAP account, since "default" requires a local password.
+      expect(dnOnly.newAccountProvider()).toBe("ldap");
+      const withPassword = new User({ AuthProvider: "default", Password: "secret123" });
+      expect(withPassword.hasLoginCredential()).toBe(true);
+      expect(withPassword.newAccountProvider()).toBe("default");
+      expect(new User({ AuthProvider: "default", AuthID: "cn=jane,dc=example,dc=com", Password: "secret123" }).newAccountProvider()).toBe("default");
       // explicit ldap: a DN is optional, so a username-only account is allowed.
       expect(new User({ AuthProvider: "ldap" }).hasLoginCredential()).toBe(true);
     });
@@ -602,6 +608,99 @@ describe("model/user", () => {
     it("defers to the per-field rules for the none provider", () => {
       setExt({ oidc: { enabled: true } });
       expect(new User({ AuthProvider: "none" }).hasLoginCredential()).toBe(true);
+    });
+    it("creates a default account when a password is set", () => {
+      setExt({ oidc: { enabled: true } });
+      const user = new User({ AuthProvider: "default", Password: "secret123" });
+      expect(user.hasLoginCredential()).toBe(true);
+      expect(user.newAccountProvider()).toBe("default");
+      expect(new User({ AuthProvider: "default", Password: "secret123", AuthID: "sub-123" }).newAccountProvider()).toBe("default");
+    });
+    it("creates an oidc account for a Subject ID without a password when OIDC is enabled", () => {
+      setExt({ oidc: { enabled: true } });
+      const user = new User({ AuthProvider: "default", AuthID: "sub-123" });
+      expect(user.hasLoginCredential()).toBe(true);
+      expect(user.newAccountProvider()).toBe("oidc");
+      // With OIDC and LDAP enabled, the field is the Subject ID, so the account is an OIDC account.
+      setExt({ oidc: { enabled: true }, ldap: { enabled: true } });
+      const both = new User({ AuthProvider: "default", AuthID: "sub-123" });
+      expect(both.authIdFieldLabel()).toBe("Subject ID");
+      expect(both.newAccountProvider()).toBe("oidc");
+    });
+    it("requires a password for default when neither OIDC nor LDAP is enabled", () => {
+      const user = new User({ AuthProvider: "default", AuthID: "sub-123" });
+      expect(user.showsAuthIdField()).toBe(false);
+      expect(user.passwordIsRequired()).toBe(true);
+      expect(user.hasLoginCredential()).toBe(false);
+      expect(user.newAccountProvider()).toBe("default");
+    });
+    it("keeps the chosen provider for local and oidc accounts", () => {
+      setExt({ oidc: { enabled: true } });
+      expect(new User({ AuthProvider: "local" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "local", AuthID: "sub-123" }).newAccountProvider()).toBe("local");
+      expect(new User({ AuthProvider: "oidc" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "oidc", AuthID: "sub-123" }).newAccountProvider()).toBe("oidc");
+      expect(new User({ AuthProvider: "default" }).newAccountProvider()).toBe("default");
+    });
+    it("ignores a Subject ID that is only whitespace", () => {
+      setExt({ oidc: { enabled: true } });
+      const user = new User({ AuthProvider: "default", AuthID: "   " });
+      expect(user.hasAuthId()).toBe(false);
+      expect(user.hasLoginCredential()).toBe(false);
+      expect(user.newAccountProvider()).toBe("default");
+      expect(new User({ AuthID: " sub-123 " }).hasAuthId()).toBe(true);
+      expect(new User({ AuthID: null }).hasAuthId()).toBe(false);
+    });
+    it("does not change the provider of an existing account on update", async () => {
+      const { Mock } = await import("../fixtures");
+      setExt({ oidc: { enabled: true } });
+      const user = new User({ ID: 8, UID: "uqxetse3cy5eo9z4", Name: "existing", AuthProvider: "default", AuthID: "", Password: "" });
+      let put;
+      let posted = false;
+      Mock.onPut("api/v1/users/uqxetse3cy5eo9z4").reply((config) => {
+        put = JSON.parse(config.data);
+        return [200, { ...user.getValues(), ...put }];
+      });
+      Mock.onPost("api/v1/users").reply(() => {
+        posted = true;
+        return [500, {}];
+      });
+      user.AuthID = "sub-123";
+
+      await user.save();
+      expect(posted).toBe(false);
+      expect(put).toEqual({ AuthID: "sub-123" });
+      expect(user.AuthProvider).toBe("default");
+
+      Mock.resetHandlers();
+    });
+    it("submits the new account provider without changing the form value", async () => {
+      const { Mock } = await import("../fixtures");
+      setExt({ oidc: { enabled: true } });
+      const user = new User({ Name: "oidc-only", AuthProvider: "default", AuthID: "sub-123", Password: "" });
+      let sent;
+      Mock.onPost("api/v1/users").reply((config) => {
+        sent = JSON.parse(config.data);
+        return [500, {}];
+      });
+
+      await expect(user.save()).rejects.toBeDefined();
+      expect(sent.AuthProvider).toBe("oidc");
+      expect(sent.AuthID).toBe("sub-123");
+      expect(user.AuthProvider).toBe("default");
+
+      Mock.onPost("api/v1/users").reply((config) => {
+        sent = JSON.parse(config.data);
+        return [200, { ...sent, ID: 7, UID: "uqxetse3cy5eo9z3" }];
+      });
+      user.Password = "secret123";
+
+      await user.save();
+      expect(sent.AuthProvider).toBe("default");
+      expect(user.AuthProvider).toBe("default");
+      expect(user.ID).toBe(7);
+
+      Mock.resetHandlers();
     });
   });
 });

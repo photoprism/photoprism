@@ -18,9 +18,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/time/rate"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -592,6 +594,26 @@ func TestOIDCRedirect_Flow(t *testing.T) {
 		assertOidcLoginRefused(t, r, i18n.ErrInvalidCredentials)
 		assert.Equal(t, 1, oidcSessionCount(t, created))
 		assert.Equal(t, "Local Name", findOidcTestUser("sub00000001").DisplayName)
+	})
+	t.Run("PreProvisionedWithoutPassword", func(t *testing.T) {
+		// An account created with only a Subject ID signs in through the provider.
+		conf := useOidcTestConfig(t)
+		app := newOidcTestApp(conf)
+		require.NoError(t, entity.AddUser(form.User{UserName: "oidc-provisioned", UserRole: acl.RoleGuest.String(),
+			AuthProvider: authn.ProviderOIDC.String(), AuthID: "sub00000002", CanLogin: true}))
+		created := entity.FindUserByName("oidc-provisioned")
+		require.NotNil(t, created)
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(created).Error })
+		require.Nil(t, entity.FindPassword(created.UserUID))
+
+		r := oidcLogin(t, app, "olivia")
+
+		require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+		assert.Contains(t, r.Body.String(), `setItem("session.token"`)
+		user := findOidcTestUser("sub00000002")
+		require.NotNil(t, user)
+		assert.Equal(t, created.UserUID, user.UserUID)
+		assert.Equal(t, 1, oidcSessionCount(t, user))
 	})
 	t.Run("MissingState", func(t *testing.T) {
 		// Without the cookies set by the login endpoint, the code exchange fails.
