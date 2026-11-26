@@ -1,6 +1,6 @@
 ## PhotoPrism — OIDC Integration
 
-**Last Updated:** November 24, 2026
+**Last Updated:** November 26, 2026
 
 ### Overview
 
@@ -12,7 +12,7 @@
 - Uses random per-session cookie keys (16‑byte hash + encrypt) and the shared HTTP client defined in `http_client.go`.
 - PKCE is enabled automatically when the provider advertises `S256`.
 - Scopes default to `authn.OidcRequiredScopes` when none are supplied; scopes are cleaned via `clean.Scopes`.
-- Token exchange uses the provider’s userinfo endpoint by default; errors are surfaced via Gin response headers (`oidc_error`) and audit logs.
+- Token exchange uses the provider’s userinfo endpoint by default. A failed exchange runs against `codeExchangeRecorder`, so nothing is written to the response; `CodeExchangeUserInfo` logs one system error with the status and a bounded, redacted cause (client credentials, code and PKCE verifier masked) and returns a generic error, which the audit and login-error records use.
 
 #### Goals
 
@@ -29,7 +29,7 @@
 ### Package Layout (Code Map)
 
 - `oidc.go` — package doc + logger.
-- `client.go` — RP construction (`NewClient`), PKCE detection, auth redirect, code exchange + userinfo retrieval.
+- `client.go` — RP construction (`NewClient`), PKCE detection, auth redirect, code exchange + userinfo retrieval, failure cause logging (`codeExchangeMask`).
 - `nonce.go` — per-request `Nonce` generation and tolerant `CheckNonce` ID-token validation; tests in `nonce_test.go`.
 - `logout.go` — `(*Client).EndSessionURL` builds the RP-initiated logout URL (id_token_hint, post_logout_redirect_uri, client_id, state) for a browser redirect; tests in `logout_test.go`.
 - `http_client.go` — shared HTTP client with TLS toggle and timeouts; helpers for tests in `http_client_test.go`.

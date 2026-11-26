@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** October 23, 2026
+**Last Updated:** November 26, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -144,7 +144,7 @@ Cluster / Portal
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
   - Only `start` joins the cluster and syncs the theme (`Config.Starting()`), but not `start --config` (`Config.StartReport()`); other commands on a node that has not joined yet log a warning instead.
   - Bootstrap treats 400, 401, 403, 404 and 409 as final and retries 429, 5xx and network errors (6 attempts, 15 s apart), then reports the Portal's reason; `cluster register` retries only 429, with backoff.
-  - Theme sync logs at info level when it downloads, updates, or skips a bundle, so operators can trace it in standard log levels.
+  - Theme sync logs at info level when it downloads, updates, or skips a bundle, so operators can trace it in standard log levels. When the Portal refuses the download, or the archive cannot be saved or extracted, it logs one system warning with the version and cause; a Portal that cannot be reached logs at debug.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
 - Portal-only extensions: `portal/internal/portal` (Portal defaults, flags, provisioning options, `/i/*` proxy router).
