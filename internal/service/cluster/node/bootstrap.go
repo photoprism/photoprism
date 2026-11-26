@@ -125,10 +125,38 @@ func bootstrapClusterNode(c *config.Config) {
 	// Pull theme if missing or outdated, and activate it when present.
 	if cluster.BootstrapAutoThemeEnabled {
 		if err = syncNodeTheme(c, u, registerResp); err != nil {
-			// Theme install failures are non-critical; log at debug to avoid noise.
-			log.Debugf("cluster: theme download skipped (%s)", clean.ErrorFull(err))
+			logThemeSyncError(err)
 		}
 		activateNodeThemeIfPresent(c)
+	}
+}
+
+// themeInstallError reports a theme download the Portal refused, or an archive that could not be saved or extracted.
+type themeInstallError struct {
+	Version string
+	Err     error
+}
+
+// Error returns the cause of the failed install.
+func (e *themeInstallError) Error() string { return e.Err.Error() }
+
+// Unwrap returns the cause of the failed install.
+func (e *themeInstallError) Unwrap() error { return e.Err }
+
+// logThemeSyncError logs a failed theme install as a system warning, and other theme sync errors,
+// such as an unreachable Portal, at debug level.
+func logThemeSyncError(err error) {
+	var installErr *themeInstallError
+
+	switch {
+	case err == nil:
+		return
+	case !errors.As(err, &installErr):
+		log.Debugf("cluster: theme download skipped (%s)", clean.ErrorFull(err))
+	case installErr.Version == "":
+		event.SystemWarn([]string{"cluster", "theme install failed", "%s"}, clean.ErrorFull(installErr.Err))
+	default:
+		event.SystemWarn([]string{"cluster", "theme %s install failed", "%s"}, clean.Log(installErr.Version), clean.ErrorFull(installErr.Err))
 	}
 }
 
@@ -706,42 +734,50 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 
 	switch resp.StatusCode {
 	case http.StatusOK:
-		if err = fs.MkdirAll(c.TempPath()); err != nil {
-			return err
+		if err = installNodeTheme(c, resp.Body, themeDir, requiresOverwrite); err != nil {
+			return &themeInstallError{Version: portalVersion, Err: err}
 		}
 
-		zipName := filepath.Join(c.TempPath(), "cluster-theme.zip")
-		var out *os.File
-
-		if out, err = os.Create(zipName); err != nil { //nolint:gosec
-			return err
-		}
-
-		if _, err = io.Copy(out, resp.Body); err != nil {
-			_ = out.Close()
-			return err
-		}
-
-		_ = out.Close()
-
-		if requiresOverwrite && fs.PathExists(themeDir) {
-			if err = os.RemoveAll(themeDir); err != nil {
-				return err
-			}
-		}
-
-		if err = fs.MkdirAll(themeDir); err != nil {
-			return err
-		}
-
-		return cluster.ExtractTheme(zipName, themeDir)
+		return nil
 	case http.StatusNotFound:
 		return nil
-	case http.StatusUnauthorized, http.StatusForbidden:
-		return errors.New(resp.Status)
 	default:
-		return errors.New(resp.Status)
+		return &themeInstallError{Version: portalVersion, Err: errors.New(resp.Status)}
 	}
+}
+
+// installNodeTheme saves a theme archive downloaded from the Portal and extracts it into themeDir,
+// replacing an installed theme if requiresOverwrite is set.
+func installNodeTheme(c *config.Config, body io.Reader, themeDir string, requiresOverwrite bool) error {
+	if err := fs.MkdirAll(c.TempPath()); err != nil {
+		return err
+	}
+
+	zipName := filepath.Join(c.TempPath(), "cluster-theme.zip")
+	out, err := os.Create(zipName) //nolint:gosec
+
+	if err != nil {
+		return err
+	}
+
+	if _, err = io.Copy(out, body); err != nil {
+		_ = out.Close()
+		return err
+	}
+
+	_ = out.Close()
+
+	if requiresOverwrite && fs.PathExists(themeDir) {
+		if err = os.RemoveAll(themeDir); err != nil {
+			return err
+		}
+	}
+
+	if err = fs.MkdirAll(themeDir); err != nil {
+		return err
+	}
+
+	return cluster.ExtractTheme(zipName, themeDir)
 }
 
 // activateNodeThemeIfPresent switches the active theme path to the instance-specific
