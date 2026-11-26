@@ -21,7 +21,7 @@ module.exports = { // Attach the hook
             },
         },
     },
-    // Use proxy mode, since native automation never starts a test in Chrome 158 (DevExpress/testcafe#8573).
+    // Use proxy mode until Plus and Pro pass in native mode, where TestCafe 3.7.7 and earlier never start a test in Chrome 158.
     disableNativeAutomation: true,
     skipJsErrors: true,
     quarantineMode: false,
