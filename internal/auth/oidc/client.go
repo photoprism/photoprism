@@ -2,6 +2,7 @@ package oidc
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net/http"
@@ -21,6 +22,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
+)
+
+const (
+	// codeExchangeBodyLimit is the number of response body bytes kept as the cause of a failed code exchange.
+	codeExchangeBodyLimit = 1024
+	// codeExchangeUnparsed marks a cause that is followed by the unparsed provider response, which is not logged.
+	codeExchangeUnparsed = "failed to unmarshal response"
+	// pkceCookie is the name of the cookie in which the rp package stores the PKCE code verifier.
+	pkceCookie = "pkce"
 )
 
 // Client represents an OpenID Connect (OIDC) Relying Party Client.
@@ -185,23 +195,99 @@ func (c *Client) AuthURLHandler(ctx *gin.Context) {
 	handle(ctx.Writer, ctx.Request)
 }
 
-// codeExchangeRecorder captures the OIDC code-exchange handler's status and
-// headers while discarding its body, so a failure (e.g. a missing state cookie)
-// is reported to the caller instead of being written as a raw error to the real
-// response. The caller renders a branded page in its place.
+// codeExchangeRecorder captures the OIDC code-exchange handler's status, headers,
+// and the first codeExchangeBodyLimit bytes of its body, so a failure is reported
+// to the caller instead of being written to the real response.
 type codeExchangeRecorder struct {
 	header http.Header
 	status int
+	body   []byte
 }
 
+// Header returns the recorded response headers.
 func (w *codeExchangeRecorder) Header() http.Header { return w.header }
+
+// Write keeps the body up to codeExchangeBodyLimit bytes and discards the rest.
 func (w *codeExchangeRecorder) Write(b []byte) (int, error) {
 	if w.status == 0 {
 		w.status = http.StatusOK
 	}
+
+	if n := codeExchangeBodyLimit - len(w.body); n > 0 {
+		w.body = append(w.body, b[:min(n, len(b))]...)
+	}
+
 	return len(b), nil
 }
+
+// WriteHeader records the response status.
 func (w *codeExchangeRecorder) WriteHeader(status int) { w.status = status }
+
+// cause returns the recorded body as the reason for a failed exchange, ending it before an unparsed response,
+// with the request values in mask replaced and URI userinfo and queries redacted.
+func (w *codeExchangeRecorder) cause(mask ...string) string {
+	s := string(w.body)
+
+	// A truncated body ends at the last URI delimiter, so a partial URI is not left unredacted.
+	if len(w.body) >= codeExchangeBodyLimit {
+		if i := strings.LastIndexFunc(s, clean.UriDelimiter); i >= 0 {
+			s = s[:i]
+		} else {
+			s = ""
+		}
+	}
+
+	if s = strings.TrimSpace(s); s == "" {
+		return ""
+	} else if i := strings.Index(s, codeExchangeUnparsed); i >= 0 {
+		s = s[:i+len(codeExchangeUnparsed)]
+	}
+
+	s = clean.UriQueriesRedacted(clean.UriRedactedText(s))
+
+	// Masked after the URI redaction, so a masked word cannot hide a URI from it.
+	for _, v := range mask {
+		if len(v) < 4 {
+			continue
+		}
+
+		s = strings.ReplaceAll(s, v, clean.UriRedactedValue)
+		s = strings.ReplaceAll(s, url.QueryEscape(v), clean.UriRedactedValue)
+	}
+
+	return s
+}
+
+// codeExchangeMask returns the token request values to mask in a logged cause, including the client
+// credentials in the form the HTTP Basic authorization header carries them. The caller-chosen code
+// comes last, so masking it cannot break the match of a value before it.
+func codeExchangeMask(clientId, secret, code, verifier string) []string {
+	var mask []string
+
+	if secret != "" {
+		basic := url.QueryEscape(clientId) + ":" + url.QueryEscape(secret)
+		mask = append(mask, base64.StdEncoding.EncodeToString([]byte(basic)))
+	}
+
+	return append(mask, secret, verifier, code)
+}
+
+// exchangeError returns the error for a failed exchange and the sanitized message to log for it.
+// Only the log message includes the recorded cause; the returned error stays generic.
+func (w *codeExchangeRecorder) exchangeError(mask ...string) (logMsg string, err error) {
+	if oidcErr := w.header.Get("oidc_error"); oidcErr != "" {
+		err = errors.New(oidcErr)
+		return clean.ErrorFull(err), err
+	}
+
+	err = errors.New("failed to exchange token for user info")
+
+	if cause := w.cause(mask...); cause != "" {
+		return clean.ErrorFull(fmt.Errorf("%w: %s", err, cause)), err
+	}
+
+	return clean.ErrorFull(err), err
+}
 
 // CodeExchangeUserInfo verifies a redirect auth request and returns the user information and tokens if successful.
 func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo, tokens *oidc.Tokens[*oidc.IDTokenClaims], err error) {
@@ -222,16 +308,17 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo
 	// Run the exchange against a recorder so a failure isn't written as a raw,
 	// unbranded error to the browser; the caller renders a branded page instead.
 	rec := &codeExchangeRecorder{header: make(http.Header)}
+	verifier, _ := c.CookieHandler().CheckCookie(ctx.Request, pkceCookie)
 	handle(rec, ctx.Request)
 
 	if sc := rec.status; sc != 0 && sc != http.StatusOK {
-		if oidcErr := rec.header.Get("oidc_error"); oidcErr == "" {
-			err = errors.New("failed to exchange token for user info")
-		} else {
-			err = errors.New(oidcErr)
-		}
+		var logMsg string
 
-		event.SystemError([]string{"oidc", "code exchange", "status %d", "%s"}, sc, clean.ErrorFull(err))
+		// The request values are masked in case the provider's response repeats them.
+		cfg := c.OAuthConfig()
+		logMsg, err = rec.exchangeError(codeExchangeMask(cfg.ClientID, cfg.ClientSecret, ctx.Request.FormValue("code"), verifier)...)
+
+		event.SystemError([]string{"oidc", "code exchange", "status %d", "%s"}, sc, logMsg)
 
 		return userInfo, tokens, err
 	}

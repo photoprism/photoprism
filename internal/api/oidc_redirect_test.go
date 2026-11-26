@@ -376,6 +376,13 @@ func newOidcTestApp(conf *config.Config) *gin.Engine {
 func oidcLogin(t *testing.T, app *gin.Engine, loginHint string) *httptest.ResponseRecorder {
 	t.Helper()
 
+	return oidcLoginWith(t, app, loginHint, nil)
+}
+
+// oidcLoginWith signs in like oidcLogin, and lets callback change the query passed to the redirect endpoint.
+func oidcLoginWith(t *testing.T, app *gin.Engine, loginHint string, callback func(url.Values)) *httptest.ResponseRecorder {
+	t.Helper()
+
 	login := PerformRequest(app, http.MethodGet, "/api/v1/oidc/login")
 	require.Equal(t, http.StatusFound, login.Code)
 
@@ -397,9 +404,9 @@ func oidcLogin(t *testing.T, app *gin.Engine, loginHint string) *httptest.Respon
 		CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
 	}
 
-	var callback *url.URL
+	var redirect *url.URL
 
-	for next := authUrl; callback == nil; {
+	for next := authUrl; redirect == nil; {
 		resp, reqErr := client.Get(next.String())
 		require.NoError(t, reqErr)
 		_ = resp.Body.Close()
@@ -409,11 +416,17 @@ func oidcLogin(t *testing.T, app *gin.Engine, loginHint string) *httptest.Respon
 		require.NoError(t, err)
 
 		if strings.HasPrefix(next.String(), oidcTestRedirectUri+"?") {
-			callback = next
+			redirect = next
 		}
 	}
 
-	req := httptest.NewRequest(http.MethodGet, "/api/v1/oidc/redirect?"+callback.RawQuery, nil)
+	if callback != nil {
+		q := redirect.Query()
+		callback(q)
+		redirect.RawQuery = q.Encode()
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/oidc/redirect?"+redirect.RawQuery, nil)
 
 	for _, c := range cookies {
 		req.AddCookie(c)
@@ -585,9 +598,29 @@ func TestOIDCRedirect_Flow(t *testing.T) {
 		conf := useOidcTestConfig(t)
 		app := newOidcTestApp(conf)
 
+		system := captureSystemLog(t)
+
 		r := PerformRequest(app, http.MethodGet, "/api/v1/oidc/redirect?state=s1&code=c1")
 
 		assertOidcLoginRefused(t, r, i18n.ErrUnexpected)
+		assert.True(t, oidcLogContains(system, logrus.ErrorLevel, "failed to exchange token for user info: failed to get state:"))
+	})
+	t.Run("RejectedCode", func(t *testing.T) {
+		// The provider's reason is logged, while the response is the same as for any failed exchange.
+		conf := useOidcTestConfig(t)
+		app := newOidcTestApp(conf)
+		baseline := PerformRequest(app, http.MethodGet, "/api/v1/oidc/redirect?state=s1&code=c1")
+		system := captureSystemLog(t)
+		audit := captureAuditLog(t)
+
+		r := oidcLoginWith(t, app, "olivia", func(q url.Values) { q.Set("code", "rejected") })
+
+		assertOidcLoginRefused(t, r, i18n.ErrUnexpected)
+		assert.Equal(t, baseline.Body.String(), r.Body.String())
+		assert.True(t, oidcLogContains(system, logrus.ErrorLevel, "failed to exchange token for user info: failed to exchange token: oauth2: 'invalid_grant' 'invalid code'"))
+		assert.True(t, oidcLogContains(audit, logrus.ErrorLevel, "failed to exchange token for user info"))
+		assert.False(t, oidcLogContains(audit, logrus.ErrorLevel, "failed to exchange token:"))
+		assert.Nil(t, findOidcTestUser("sub00000002"))
 	})
 }
 
@@ -1478,6 +1511,17 @@ func TestOIDCRedirect_EmailUsername(t *testing.T) {
 		require.NotNil(t, user)
 		assert.Regexp(t, `^oscar[0-9]{6}$`, user.UserName)
 	})
+}
+
+// oidcLogContains reports whether a captured log entry of the given level contains text.
+func oidcLogContains(hook *logtest.Hook, level logrus.Level, text string) bool {
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == level && strings.Contains(entry.Message, text) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // oidcAuditContains reports whether an audit warning contains the specified text.
