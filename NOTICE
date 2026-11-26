@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-11-23
+Date generated: 2026-11-26
 
 ================================================================================
 
@@ -6965,8 +6965,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/tidwall/gjson
-Version: v1.20.6
-License: MIT (https://github.com/tidwall/gjson/blob/v1.20.6/LICENSE)
+Version: v1.20.7
+License: MIT (https://github.com/tidwall/gjson/blob/v1.20.7/LICENSE)
 
 The MIT License (MIT)
 
