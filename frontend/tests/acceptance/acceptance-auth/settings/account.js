@@ -230,3 +230,14 @@ test.meta("testID", "account-008").meta({ type: "short", mode: "auth" })("Common
   await t.expect(Selector("div.text-caption").withText("1 GB of 2 GB used").visible).ok();
   await page.logout();
 });
+
+test.meta("testID", "account-009").meta({ type: "short", mode: "auth" })(
+  "Common: Open and close the empty Connected Apps dialog",
+  async (t) => {
+    await page.login("admin", "photoprism");
+    await menu.openPage("settings");
+    await t.click(settings.accountTab);
+    await account.checkEmptyConnectedApps();
+    await page.logout();
+  }
+);
