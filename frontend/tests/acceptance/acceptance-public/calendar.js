@@ -67,8 +67,8 @@ test.meta("testID", "calendar-002").meta({ mode: "public" })("Common: Update cal
 
   await album.openNthAlbum(0);
 
-  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("March 2014");
-  await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
+  await t.expect(album.headerTitle.innerText).contains("March 2014");
+  await t.expect(album.headerDescription.innerText).contains("We went to ski");
   await menu.openPage("calendar");
   if (t.browser.platform === "mobile") {
     await toolbar.search("category:Mountains");

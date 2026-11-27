@@ -16,7 +16,34 @@ export default class Page {
     this.cardsViewAction = Selector("button.action-view-cards");
     this.mosaicViewAction = Selector("button.action-view-mosaic");
     this.listViewAction = Selector("button.action-view-list");
+    this.albumSearchAction = Selector(".action-album-search");
+    this.albumSearchField = Selector(".album-search-field input");
+    this.albumSortAction = Selector(".action-album-sort");
+    this.albumViewAction = Selector(".action-album-view");
+    this.albumCoverToolbar = Selector(".album-toolbar--cover");
+    this.albumBackLink = Selector(".album-back-link");
+    this.compactAlbumTitle = Selector(".album-breadcrumb-title");
     this.searchClearAction = Selector("div.input-search .v-field__clearable", { timeout: 7000 });
+  }
+
+  // searchAlbum submits a query through the search field of the current album.
+  async searchAlbum(query) {
+    if (!(await this.albumSearchField.visible)) {
+      await t.click(this.albumSearchAction);
+    }
+    await t.typeText(this.albumSearchField, query, { replace: true }).pressKey("enter");
+    await notifies.waitForSearchToFinish(8000);
+  }
+
+  // albumSortOption returns the given album sort menu item.
+  albumSortOption(order) {
+    return Selector(`.action-album-sort-${order}`);
+  }
+
+  // sortAlbum selects an ordering for the current album.
+  async sortAlbum(order) {
+    await t.click(this.albumSortAction).click(this.albumSortOption(order));
+    await notifies.waitForPhotosToLoad(8000);
   }
 
   async checkToolbarActionAvailability(action, visible) {
@@ -107,6 +134,10 @@ export default class Page {
   }
 
   async triggerToolbarAction(action) {
+    if (action.startsWith("view-") && (await this.albumViewAction.visible)) {
+      await t.click(this.albumViewAction).click(Selector(`.v-list-item.action-${action}`));
+      return;
+    }
     if (
       (t.browser.platform === "mobile") &
       (action !== "edit") &

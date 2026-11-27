@@ -61,42 +61,60 @@ func PhotoIds(frm form.SearchPhotos) (files PhotoResults, count int, err error) 
 	return searchPhotos(frm, nil, "photos.id, photos.photo_uid, files.file_uid", false)
 }
 
-// searchPhotos finds photos based on the search form and user session then returns them as
-// PhotoResults. When shared is set, the selection is bounded to public content after any stored
-// album filter has been parsed.
-func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string, shared bool) (results PhotoResults, count int, err error) {
-	start := time.Now()
-
+// photoQuery builds photo predicates without pagination so album membership can be intersected in SQL.
+func photoQuery(frm *form.SearchPhotos, sess *entity.Session, resultCols string, shared bool, membership *entity.Album) (s *gorm.DB, err error) {
 	// Parse query string and filter. A search that can match nothing still runs the scope check below.
+	scope := frm.Scope
 	noMatch := false
+	if membership != nil {
+		if empty, filterErr := form.UnserializeFilter(&form.SearchPhotos{}, membership.AlbumFilter); filterErr != nil {
+			return nil, ErrBadFilter
+		} else {
+			noMatch = empty
+		}
+	}
 
 	if err = frm.ParseQueryString(); errors.Is(err, form.ErrNoMatch) {
 		noMatch = true
 	} else if err != nil {
 		log.Debugf("search: %s", err)
-		return PhotoResults{}, 0, ErrBadRequest
+		return nil, ErrBadRequest
+	}
+
+	if scope != "" {
+		frm.Scope = scope
+	}
+
+	// Album membership comes from the stored filter alone.
+	if membership != nil {
+		frm.Scope, frm.Album, frm.Albums, frm.Filter = "", "", "", ""
+		if membership.AlbumType == entity.AlbumFolder {
+			if p := folderAlbumPath(*membership); p != "" {
+				frm.Path = p
+				noMatch = false
+			} else {
+				noMatch = true
+			}
+		}
 	}
 
 	// Find photos near another?
 	if txt.NotEmpty(frm.Near) {
 		photo := Photo{}
 
-		// Require the reference to be visible to the session before its position is used. A reference
-		// the session may not see takes the same path as a missing one. This block must stay above
-		// the scope block: PhotoVisibleToSession re-enters UserPhotos through the shared smart album
-		// fallback, and the inner form carries no reference only because it is built before one is
-		// deserialized from a stored filter.
+		// Check the reference photo after parsing the filter. Stored membership filters
+		// run without a session, so this lookup does not recurse through session scope.
 		if visible, vErr := PhotoVisibleToSession(frm.Near, sess); vErr != nil {
 			log.Debugf("search: %s (check nearby)", vErr)
-			return PhotoResults{}, 0, ErrNotFound
+			return nil, ErrNotFound
 		} else if !visible {
-			return PhotoResults{}, 0, ErrNotFound
+			return nil, ErrNotFound
 		}
 
 		// Find the picture whose visibility was checked above; the result type has no soft-delete scope.
 		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
 			log.Debugf("search: %s (find nearby)", err)
-			return PhotoResults{}, 0, ErrNotFound
+			return nil, ErrNotFound
 		}
 
 		// Set the S2 Cell ID to search for.
@@ -111,7 +129,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	}
 
 	// Specify table names and joins.
-	s := UnscopedDb().Table(entity.File{}.TableName()).Select(resultCols).
+	s = UnscopedDb().Table(entity.File{}.TableName()).Select(resultCols).
 		Joins("JOIN photos ON files.photo_id = photos.id AND files.media_id IS NOT NULL")
 
 	// Include additional columns from details table?
@@ -140,26 +158,20 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		frm.Scope = strings.ToLower(frm.Scope)
 
 		if idType, idPrefix := rnd.IdType(frm.Scope); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
-			return PhotoResults{}, 0, ErrInvalidId
+			return nil, ErrInvalidId
 		} else if album, albumErr = entity.CachedAlbumByUID(frm.Scope); albumErr != nil || album.AlbumUID == "" {
-			return PhotoResults{}, 0, ErrInvalidId
+			return nil, ErrInvalidId
 		} else if album.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = FALSE AND photos_albums.album_uid = ?", album.AlbumUID)
-		} else if filterNoMatch, formErr := form.UnserializeFilter(&frm, album.AlbumFilter); formErr != nil {
-			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(album.AlbumFilter))
-			return PhotoResults{}, 0, ErrBadFilter
 		} else {
-			frm.Filter = album.AlbumFilter
-
-			// Folder albums show the pictures in their folder, compared by exact path. Folder albums whose
-			// folder is unknown, and other albums whose stored filter can match nothing, show no pictures.
-			if p := folderAlbumPath(album); p != "" {
-				frm.Path = p
-			} else if filterNoMatch || album.AlbumType == entity.AlbumFolder {
-				noMatch = true
+			members := form.SearchPhotos{Filter: album.AlbumFilter, Order: sortby.Newest}
+			memberQuery, queryErr := photoQuery(&members, nil, "files.photo_uid", shared, &album)
+			if queryErr != nil {
+				return nil, queryErr
 			}
-			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
+			s = s.Where("files.photo_uid IN (?)", memberQuery).
+				Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = TRUE AND pa.album_uid = ?)", album.AlbumUID)
 		}
 
 		// Enforce search distance range (km).
@@ -209,7 +221,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if frm.Scope != "" && !album.SharedWithSession(sess) && (sess.DeniesAll(acl.ResourcePhotos, libraryAccess) || sess.NotRegistered()) ||
 			frm.Scope == "" && sess.Denies(acl.ResourcePhotos, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), sessionAuditRole(sess))
-			return PhotoResults{}, 0, ErrForbidden
+			return nil, ErrForbidden
 		}
 
 		// Limit results to the content this session may access.
@@ -219,13 +231,17 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	}
 
 	if noMatch {
-		return PhotoResults{}, 0, nil
+		return s.Where("1 = 0"), nil
 	}
 
 	// Set sort order.
 	switch frm.Order {
 	case sortby.Edited:
-		s = s.Where("photos.edited_at IS NOT NULL").Order(OrderExpr("photos.edited_at DESC, files.media_id", frm.Reverse))
+		if frm.Scope != "" {
+			s = s.Order(OrderExprNulls("photos.edited_at DESC, files.time_index", false))
+		} else {
+			s = s.Where("photos.edited_at IS NOT NULL").Order(OrderExpr("photos.edited_at DESC, files.media_id", frm.Reverse))
+		}
 	case sortby.Updated, sortby.UpdatedAt:
 		s = s.Where("photos.updated_at > photos.created_at").Order(OrderExpr("photos.updated_at DESC, files.media_id", frm.Reverse))
 	case sortby.Archived:
@@ -256,7 +272,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	case sortby.Default, sortby.Imported, sortby.Added:
 		s = s.Order(OrderExpr("files.media_id", frm.Reverse))
 	default:
-		return PhotoResults{}, 0, ErrBadSortOrder
+		return nil, ErrBadSortOrder
 	}
 
 	// Exclude files with errors by default.
@@ -289,7 +305,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		idType, prefix := rnd.ContainsType(ids)
 
 		if idType == rnd.TypeUnknown {
-			return PhotoResults{}, 0, fmt.Errorf("%s ids specified", idType)
+			return nil, fmt.Errorf("%s ids specified", idType)
 		} else if idType.SHA() {
 			s = s.Where("files.file_hash IN (?)", ids)
 		} else if idType == rnd.TypeUID {
@@ -299,25 +315,11 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			case entity.FileUID:
 				s = s.Where("files.file_uid IN (?)", ids)
 			default:
-				return PhotoResults{}, 0, fmt.Errorf("invalid ids specified")
+				return nil, fmt.Errorf("invalid ids specified")
 			}
 		}
-
-		// Find UIDs only to improve performance.
-		if sess == nil && frm.FindUidOnly() {
-			results = make(PhotoResults, 0)
-
-			if result := s.Scan(&results); result.Error != nil {
-				return results, 0, result.Error
-			}
-
-			log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), frm.SerializeAll(), time.Since(start))
-
-			if frm.Merged {
-				return results.Merge()
-			}
-
-			return results, len(results), nil
+		if sess == nil && membership == nil && frm.FindUidOnly() {
+			return s, nil
 		}
 	}
 
@@ -336,7 +338,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 		if labelErr != nil || (sawPositive && len(include) == 0) {
 			log.Debugf("search: label %s not found", clean.LogLower(frm.Label))
-			return PhotoResults{}, 0, nil
+			return s.Where("1 = 0"), nil
 		}
 
 		// JOIN the first positive group so photos_labels.uncertainty is
@@ -886,12 +888,27 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		}
 	}
 
+	return s, nil
+}
+
+// searchPhotos finds photos based on the search form and user session then returns them as
+// PhotoResults. When shared is set, the selection is bounded to public content after any stored
+// album filter has been parsed.
+func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string, shared bool) (results PhotoResults, count int, err error) {
+	start := time.Now()
+	s, err := photoQuery(&frm, sess, resultCols, shared, nil)
+	if err != nil {
+		return PhotoResults{}, 0, err
+	}
+
 	// Search result count and offset.
 	if frm.Count <= 0 || frm.Count > MaxResults {
 		frm.Count = MaxResults
 	}
 
-	s = s.Limit(frm.Count).Offset(frm.Offset)
+	if sess != nil || !frm.FindUidOnly() {
+		s = s.Limit(frm.Count).Offset(frm.Offset)
+	}
 
 	// Query database.
 	results = make(PhotoResults, 0)

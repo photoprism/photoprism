@@ -44,6 +44,7 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })("Common: Create, view,
   await t.click(sharedialog.dialogClose);
   await contextmenu.clearSelection();
   await album.openAlbumWithUid(FirstAlbumUid);
+  await t.expect(toolbar.albumSearchAction.visible).ok();
   const photoCount = await photo.getPhotoCount("all");
   await t.expect(photoCount).eql(2);
   await menu.openPage("folders");
@@ -59,10 +60,9 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })("Common: Create, view,
     .click(sharedialog.dialogClose);
   await contextmenu.clearSelection();
   await t.navigateTo(url);
+  await t.expect(album.headerTitle.withText("Christmas").visible).ok();
 
-  await t.expect(toolbar.toolbarSecondTitle.withText("Christmas").visible).ok();
-
-  await t.click(Selector("div.v-toolbar-title a").withText("Albums"));
+  await t.click(toolbar.albumBackLink);
   const AlbumCount = await album.getAlbumCount("all");
 
   await t.expect(AlbumCount).eql(3);
@@ -74,14 +74,17 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })("Common: Create, view,
 
   await t.useRole(Role.anonymous());
   await t.navigateTo(url);
-
-  await t.expect(toolbar.toolbarSecondTitle.withText("Christmas").visible).ok();
+  await t.expect(album.headerTitle.withText("Christmas").visible).ok();
+  await t.navigateTo(`/library/albums/${FirstAlbumUid}/view?q=title:San%20Diego`);
+  await t.expect(album.headerTitle.withText("Christmas").visible).ok();
+  await t.expect(toolbar.albumCoverToolbar.visible).ok().expect(toolbar.albumSortAction.visible).ok().expect(toolbar.albumSearchAction.exists).notOk();
+  await t.navigateTo(url);
 
   const photoCountShared = await photo.getPhotoCount("all");
   //don't show private photo
   await t.expect(photoCountShared).eql(1);
 
-  await t.click(Selector("div.v-toolbar-title a").withText("Albums"));
+  await t.click(toolbar.albumBackLink);
   const AlbumCountAnonymous = await Selector("div.result.is-album").count;
 
   await t.expect(AlbumCountAnonymous).eql(1);
@@ -131,15 +134,15 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })("Common: Create, view,
   await t
     .expect(Selector(".input-username input").visible)
     .ok()
-    .expect(toolbar.toolbarSecondTitle.withText("Christmas").exists)
+    .expect(album.headerTitle.withText("Christmas").exists)
     .notOk()
-    .expect(toolbar.toolbarSecondTitle.withText("Albums").exists)
+    .expect(toolbar.albumBackLink.exists)
     .notOk();
 });
 
 test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })("Multi-Window: Verify visitor role has limited permissions", async (t) => {
   await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
-  await t.expect(toolbar.toolbarSecondTitle.withText("British Columbia").visible).ok();
+  await t.expect(album.headerTitle.withText("British Columbia").visible).ok();
 
   await toolbar.checkToolbarActionAvailability("edit", false);
   await toolbar.checkToolbarActionAvailability("share", false);
@@ -202,7 +205,7 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })("Multi-
 test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common: Lightbox sidebar shows only restricted metadata on share links", async (t) => {
   await t.useRole(Role.anonymous());
   await t.navigateTo("http://localhost:2343/s/2t6124pb6d/holiday");
-  await t.expect(toolbar.toolbarSecondTitle.withText("Holiday").visible).ok();
+  await t.expect(album.headerTitle.withText("Holiday").visible).ok();
 
   // The album's fully-populated photo, so every "must not be visible" assertion below has real
   // data to withhold. Anchored by title: editions differ in both UID and photo order.

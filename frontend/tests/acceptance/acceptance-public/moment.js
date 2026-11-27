@@ -68,8 +68,8 @@ test.meta("testID", "moments-001").meta({ mode: "public" })("Common: Update mome
 
   await album.openNthAlbum(0);
 
-  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Winter");
-  await t.expect(toolbar.toolbarDescription.innerText).contains("We went to ski");
+  await t.expect(album.headerTitle.innerText).contains("Winter");
+  await t.expect(album.headerDescription.innerText).contains("We went to ski");
 
   await menu.openPage("moments");
   if (t.browser.platform === "mobile") {

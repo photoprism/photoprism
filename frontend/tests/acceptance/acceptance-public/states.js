@@ -68,8 +68,8 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
 
   await album.openNthAlbum(0);
 
-  await t.expect(toolbar.toolbarSecondTitle.innerText).contains("Wonderland");
-  await t.expect(toolbar.toolbarDescription.innerText).contains("We love earth");
+  await t.expect(album.headerTitle.innerText).contains("Wonderland");
+  await t.expect(album.headerDescription.innerText).contains("We love earth");
 
   await menu.openPage("states");
   if (t.browser.platform === "mobile") {

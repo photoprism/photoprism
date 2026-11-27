@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** November 19, 2026
+**Last Updated:** November 26, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
