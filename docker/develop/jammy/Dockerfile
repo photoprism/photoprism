@@ -19,6 +19,7 @@ LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 # Declare build parameters.
 ARG TARGETARCH
 ARG BUILD_TAG
+ARG CHROMIUM_SOURCE
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV DO_NOT_TRACK=true \

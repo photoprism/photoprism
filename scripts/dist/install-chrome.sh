@@ -6,8 +6,8 @@
 #     and Debian, or Chromium as a fallback, see CHROMIUM_SOURCE below.
 #
 # Override the ARM64 browser source via env var (unset or empty selects
-# google; the variable applies when the script is run directly, since the
-# develop Dockerfiles do not pass it through):
+# google; the develop Dockerfiles accept it as a build argument, e.g.
+# --build-arg CHROMIUM_SOURCE=internal):
 #   CHROMIUM_SOURCE=google    (default) — Google Chrome stable, https://dl.google.com/linux/chrome/deb/
 #   CHROMIUM_SOURCE=internal            — Ubuntu: Chromium from https://dl.photoprism.app/dist/chromium/
 #   CHROMIUM_SOURCE=xtradeb             — Ubuntu: Chromium from https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu
