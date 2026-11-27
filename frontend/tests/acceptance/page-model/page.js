@@ -63,6 +63,8 @@ export default class Page {
     await menu.openNav();
     await t.hover(Selector("div.nav-user-avatar"));
     await t.click(Selector(".nav-user-menu__content .action-logout"));
+    // Waits for the redirect to the login page, so that a test ending here does not leave it pending.
+    await t.expect(this.usernameInput.visible).ok();
   }
 
   async openAccount() {
