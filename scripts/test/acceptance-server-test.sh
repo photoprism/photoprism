@@ -15,7 +15,7 @@ pids=()
 failed=0
 
 # cleanup stops the stand-in processes and removes the scratch folder.
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 cleanup() {
   for p in "${pids[@]}"; do kill "$p" 2>/dev/null || true; done
   rm -rf "$tmp"

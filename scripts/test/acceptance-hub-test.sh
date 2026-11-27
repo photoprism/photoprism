@@ -68,7 +68,7 @@ serial() {
 
 # valid reports whether a serial is accepted by the binary: "z", a base-36 time since 2017 that is not in the
 # future, and nine more base-36 digits.
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 valid() {
   local s=$1 t
   [[ "$s" =~ ^z[0-9a-z]{15}$ ]] || return 1
@@ -83,7 +83,7 @@ edit() {
 }
 
 # lacks reports whether the file does not contain the text.
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 lacks() {
   ! grep -q -- "$1" "$2"
 }

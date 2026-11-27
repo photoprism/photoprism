@@ -60,7 +60,7 @@ check() {
 }
 
 # lacks reports whether the file does not contain the text.
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 lacks() {
   ! grep -q -- "$1" "$2"
 }
