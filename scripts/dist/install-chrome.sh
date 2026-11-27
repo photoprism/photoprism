@@ -2,24 +2,23 @@
 
 # Installs a Chromium-based browser on Linux:
 #   - AMD64: Google Chrome stable (apt repo at dl.google.com).
-#   - ARM64:
-#       - Ubuntu hosts: Google Chrome stable from the same apt repo (default),
-#         or Chromium as a fallback, see CHROMIUM_SOURCE below.
-#       - Debian hosts: native apt chromium.
+#   - ARM64: Google Chrome stable from the same apt repo (default), on Ubuntu
+#     and Debian, or Chromium as a fallback, see CHROMIUM_SOURCE below.
 #
-# Override the ARM64 Ubuntu browser source via env var (unset or empty selects
+# Override the ARM64 browser source via env var (unset or empty selects
 # google; the variable applies when the script is run directly, since the
 # develop Dockerfiles do not pass it through):
 #   CHROMIUM_SOURCE=google    (default) — Google Chrome stable, https://dl.google.com/linux/chrome/deb/
-#   CHROMIUM_SOURCE=internal            — Chromium from https://dl.photoprism.app/dist/chromium/
-#   CHROMIUM_SOURCE=xtradeb             — Chromium from https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu
+#   CHROMIUM_SOURCE=internal            — Ubuntu: Chromium from https://dl.photoprism.app/dist/chromium/
+#   CHROMIUM_SOURCE=xtradeb             — Ubuntu: Chromium from https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu
+#   CHROMIUM_SOURCE=debian              — Debian: Chromium from the distribution's own repository
 # The internal mirror is a small reprepro tree of the XtraDeb PPA's chromium /
 # chromium-driver / chromium-sandbox .debs (BSD-1-Clause), kept so builds
 # survive Launchpad outages. Ubuntu's own chromium-browser is a snap-shim
 # transitional package and unusable in Docker.
 # Upstream PPA: https://launchpad.net/~xtradeb/+archive/ubuntu/apps
 #
-# Chromium package set installed on Debian and by the Ubuntu fallbacks (named
+# Chromium package set installed by the fallbacks (named
 # explicitly on the apt-get install line so a missing piece fails fast and visibly):
 #   - chromium                   — the browser binary
 #   - chromium-common            — shared resources (strict-version Depends of chromium)
@@ -175,16 +174,19 @@ EOF
 }
 
 # Adds Google's Chrome apt repo for the given Debian architecture (amd64 or arm64) and installs Chrome stable.
-# The repo is bootstrapped just far enough to install the package; its postinst then installs its own keyring
-# and manages this list itself. Written, not appended, so a re-run cannot leave apt with a duplicate source.
+# The repo is bootstrapped just far enough to install the package; its postinst then replaces the bootstrap list
+# with its own source and keyring.
 install_google_chrome() {
   local arch="$1"
   local keyring="/etc/apt/keyrings/dl-ssl.google.com.gpg"
 
   echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
-  install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --no-tty --batch --yes --dearmor -o "$keyring"
-  echo "deb [arch=${arch} signed-by=${keyring}] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+  # Once installed, the package keeps its own source in google-chrome.sources, so a re-run must not add a second one.
+  if [[ ! -f /etc/apt/sources.list.d/google-chrome.sources ]]; then
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --no-tty --batch --yes --dearmor -o "$keyring"
+    echo "deb [arch=${arch} signed-by=${keyring}] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+  fi
   apt-get update
   apt-get -qq install google-chrome-stable
   install_ai_policies /etc/opt/chrome/policies
@@ -200,10 +202,23 @@ case $DESTARCH in
     set -e
     case $ID in
       debian)
-        echo "Installing Chromium on ${ID} for ${DESTARCH^^}..."
-        apt-get update
-        apt-get -qq install chromium chromium-common chromium-driver chromium-sandbox
-        install_ai_policies /etc/chromium/policies
+        case "${CHROMIUM_SOURCE:-google}" in
+          google)
+            apt-get update
+            apt-get -qq install -y --no-install-recommends ca-certificates curl gnupg
+            install_google_chrome arm64
+            ;;
+          debian)
+            echo "Installing Chromium on ${ID} for ${DESTARCH^^}..."
+            apt-get update
+            apt-get -qq install chromium chromium-common chromium-driver chromium-sandbox
+            install_ai_policies /etc/chromium/policies
+            ;;
+          *)
+            echo "Unknown CHROMIUM_SOURCE='${CHROMIUM_SOURCE}' (expected 'google' or 'debian')" 1>&2
+            exit 1
+            ;;
+        esac
         ;;
 
       ubuntu)
